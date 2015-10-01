@@ -1,74 +1,70 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 9 Oct 2015 17:14:08 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jon Mason <jonmason@broadcom.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [PATCH 04/10] ARM: dts: enable clock support for BCM5301X
-Message-ID: <20151010001408.GX26883@codeaurora.org>
-References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
- <1443826665-17570-5-git-send-email-jonmason@broadcom.com>
- <20151009073540.GO26883@codeaurora.org>
- <20151009182728.GD17527@broadcom.com>
+Return-Path: <sudeep.holla@arm.com>
+Subject: Re: [PATCH 2/2] arm64: dts: mt8173: add timer node
+To: Yingjoe Chen <yingjoe.chen@mediatek.com>
+References: <1442369095-1094-1-git-send-email-yingjoe.chen@mediatek.com>
+ <1442369095-1094-2-git-send-email-yingjoe.chen@mediatek.com>
+ <55FAC570.8040307@arm.com> <1442501816.4784.3.camel@mtksdaap41>
+ <55FAE69C.2000906@arm.com> <1443710016.22188.10.camel@mtksdaap41>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ James Liao <jamesjj.liao@mediatek.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <Catalin.Marinas@arm.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ Sascha Hauer <kernel@pengutronix.de>, Olof Johansson <olof@lixom.net>,
+ "srv_heupstream@mediatek.com" <srv_heupstream@mediatek.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, Daniel Kurtz <djkurtz@chromium.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Eddie Huang <eddie.huang@mediatek.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <560D5227.8050600@arm.com>
+Date: Thu, 1 Oct 2015 16:32:55 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20151009182728.GD17527@broadcom.com>
+In-Reply-To: <1443710016.22188.10.camel@mtksdaap41>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/09, Jon Mason wrote:
-> On Fri, Oct 09, 2015 at 12:35:40AM -0700, Stephen Boyd wrote:
-> > On 10/02, Jon Mason wrote:
-> > 
-> > >  arch/arm/boot/dts/bcm5301x.dtsi | 67 ++++++++++++++++++++++++++++++++++++-----
-> > >  1 file changed, 60 insertions(+), 7 deletions(-)
-> > > 
-> > > diff --git a/arch/arm/boot/dts/bcm5301x.dtsi b/arch/arm/boot/dts/bcm5301x.dtsi
-> > > index 6f50f67..f717859 100644
-> > > --- a/arch/arm/boot/dts/bcm5301x.dtsi
-> > > +++ b/arch/arm/boot/dts/bcm5301x.dtsi
-> > > @@ -55,14 +56,14 @@
-> > >  			compatible = "arm,cortex-a9-global-timer";
-> > >  			reg = <0x0200 0x100>;
-> > >  			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
-> > > -			clocks = <&clk_periph>;
-> > > +			clocks = <&periph_clk>;
-> > >  		};
-> > >  
-> > >  		local-timer@0600 {
-> > >  			compatible = "arm,cortex-a9-twd-timer";
-> > >  			reg = <0x0600 0x100>;
-> > >  			interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>;
-> > > -			clocks = <&clk_periph>;
-> > > +			clocks = <&periph_clk>;
-> > >  		};
-> > >  
-> > >  		gic: interrupt-controller@1000 {
-> > > @@ -94,14 +95,66 @@
-> > >  
-> > >  	clocks {
-> > 
-> > I'd expect this to only contain nodes that don't have a reg
-> > property. Clock providers that have a reg property would go into
-> > some soc node or bus. Perhaps that's the chipcommonA node, or
-> > axi?
-> 
-> This might get a little ugly, as some of the clocks are in the
-> 0x18000000 and others are in 0x19000000.  I would think it better to
-> have them all in one place (as that is more readable).  Do you preferr
-> I split the pieces up into their respective DT nodes?
 
-Are there two clock controllers? Sorry I don't understand the
-architecture here very well. Nodes with reg properties in the
-same range should be near each other. We don't group all i2c
-controllers into the same node because they're logically i2c
-controllers. We express the hierarchy of devices with container
-nodes. The clocks node is only useful for board-level clocks, not
-things that are inside the SoC.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On 01/10/15 15:33, Yingjoe Chen wrote:
+> On Thu, 2015-09-17 at 17:13 +0100, Sudeep Holla wrote:
+>>
+
+[...]
+
+>>
+>> I think your are confusing the system counter with arch timers. System
+>> counter is always-on, but the arch timers(logic implementing timers
+>> comparators) might not be off when the processor is powered down.
+>>
+>> I think you need this timer and are using it for low power idle states
+>> in which case you will use this as a clock event and not clock source.
+>> It will be used as a hardware broadcast event source.
+>>
+>> There's no call to sched_clock_register in mtk_timer.c, so it can't be
+>> the sched clock, so you need to fix the commit log.
+>
+> Hi Sudeep,
+>
+> Sorry for late reply.
+>
+> For sched_clock_register, please see
+> http://lists.infradead.org/pipermail/linux-mediatek/2015-July/001547.html
+> which was accepted in
+> https://git.linaro.org/people/daniel.lezcano/linux.git/shortlog/refs/heads/clockevents/4.4
+>
+
+The commit message makes no sense to me. The counters should continue to
+work as long as they are in always-on domain. Only timers are lost
+when you enter deeper idle states. So I agree with using MTK timer as
+broadcast timer/eventsource. You still didn't answer what's the need
+to use MTK timer as sched clocksource ?
+
+Regards,
+Sudeep
