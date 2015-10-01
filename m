@@ -1,60 +1,139 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-To: <arnd@arndb.de>, <mark.rutland@arm.com>,
- <linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
- <linux-clk@vger.kernel.org>, <olof@lixom.net>
-Subject: [PATCH v3 03/12] Documentation: DT: Add entry for FSL LS2080A QDS and
- RDB boards
-Date: Thu, 15 Oct 2015 12:17:43 +0530
-Message-ID: <1444891672-32117-4-git-send-email-bhupesh.sharma@freescale.com>
-In-Reply-To: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
-References: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:54554 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750988AbbJAWml (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 1 Oct 2015 18:42:41 -0400
+Date: Thu, 1 Oct 2015 15:42:38 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jisheng Zhang <jszhang@marvell.com>
+Cc: sebastian.hesselbarth@gmail.com, catalin.marinas@arm.com,
+	will.deacon@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+	pawel.moll@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] clk: berlin: add clk support for berlin4ct
+Message-ID: <20151001224238.GS19319@codeaurora.org>
+References: <1442931156-5877-1-git-send-email-jszhang@marvell.com>
+ <1442931156-5877-4-git-send-email-jszhang@marvell.com>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: LeoLi@freescale.com, bhupesh.sharma@freescale.com, Catalin.Marinas@arm.com,
- will.deacon@arm.com, stuart.yoder@freescale.com, scottwood@freescale.com,
- bhupesh.linux@gmail.com
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1442931156-5877-4-git-send-email-jszhang@marvell.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds a devicetree binding documentation for Freescale's
-LS2080A QDS and RDB boards.
+On 09/22, Jisheng Zhang wrote:
+> + */
+> +#include <linux/clk-provider.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/slab.h>
+> +
+> +#include "clk.h"
+> +
+> +#define CLK_SOURCE_MAX	5
+> +
+> +static struct clk_onecell_data gateclk_data;
+> +static struct clk_onecell_data clk_data;
+> +
+> +static DEFINE_SPINLOCK(lock);
 
-Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
----
- Documentation/devicetree/bindings/arm/fsl.txt |    8 ++++++++
- 1 file changed, 8 insertions(+)
+This is really generic. How about berlin4ct_lock? That will make
+lockdep happy because the name for the key will have some
+meaning.
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
-index 53f229a..34c88b0 100644
---- a/Documentation/devicetree/bindings/arm/fsl.txt
-+++ b/Documentation/devicetree/bindings/arm/fsl.txt
-@@ -135,3 +135,11 @@ LS2080A ARMv8 based Simulator model
- Required root node properties:
-     - compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
- 
-+LS2080A ARMv8 based QDS Board
-+Required root node properties:
-+    - compatible = "fsl,ls2080a-qds", "fsl,ls2080a";
-+
-+LS2080A ARMv8 based RDB Board
-+Required root node properties:
-+    - compatible = "fsl,ls2080a-rdb", "fsl,ls2080a";
-+
+> +static void __init berlin4ct_gateclk_setup(struct device_node *np)
+> +{
+> +	int i, n, ret;
+> +	void __iomem *base;
+> +	struct clk **clks;
+> +
+> +	base = of_iomap(np, 0);
+> +	if (WARN_ON(!base))
+> +		return;
+> +
+> +	n = ARRAY_SIZE(berlin4ct_gates);
+> +	clks = kzalloc(n * sizeof(struct clk *), GFP_KERNEL);
+
+kcalloc()
+
+> +	if (WARN_ON(!clks))
+
+Same comment about dropping WARN_ON for an allocation failure.
+
+> +		return;
+> +
+> +	for (i = 0; i < n; i++) {
+> +		clks[i] = clk_register_gate(NULL, berlin4ct_gates[i].name,
+> +				berlin4ct_gates[i].parent_name,
+> +				berlin4ct_gates[i].flags, base,
+> +				berlin4ct_gates[i].bit_idx, 0, &lock);
+> +		WARN_ON(IS_ERR(clks[i]));
+> +	}
+> +
+> +	gateclk_data.clks = clks;
+> +	gateclk_data.clk_num = i;
+> +
+> +	ret = of_clk_add_provider(np, of_clk_src_onecell_get,
+> +				  &gateclk_data);
+> +	if (WARN_ON(ret))
+> +		return;
+
+Drop that return please.
+
+> +
+> +}
+> +CLK_OF_DECLARE(berlin4ct_gateclk, "marvell,berlin4ct-gateclk",
+> +	       berlin4ct_gateclk_setup);
+> +
+> +static void __init berlin4ct_clk_setup(struct device_node *np)
+> +{
+> +	int i, n, ret, num_parents;
+> +	void __iomem *base;
+> +	struct clk **clks;
+> +	const char *parent_names[CLK_SOURCE_MAX];
+> +
+> +	num_parents = of_clk_get_parent_count(np);
+> +	if (num_parents <= 0 || num_parents > CLK_SOURCE_MAX)
+> +		return;
+> +
+> +	of_clk_parent_fill(np, parent_names, num_parents);
+> +
+> +	base = of_iomap(np, 0);
+> +	if (WARN_ON(!base))
+> +		return;
+> +
+> +	n = ARRAY_SIZE(berlin4ct_descs);
+> +	clks = kzalloc(n * sizeof(struct clk *), GFP_KERNEL);
+
+kcalloc()
+
+> +	if (WARN_ON(!clks))
+
+Same comment about dropping WARN_ON for an allocation failure.
+
+> +		return;
+> +
+> +	for (i = 0; i < n; i++) {
+> +		clks[i] = berlin_clk_register(berlin4ct_descs[i].name,
+> +				num_parents, parent_names,
+> +				berlin4ct_descs[i].flags,
+> +				base + berlin4ct_descs[i].offset);
+> +		WARN_ON(IS_ERR(clks[i]));
+> +	}
+> +
+> +	clk_data.clks = clks;
+> +	clk_data.clk_num = i;
+> +
+> +	ret = of_clk_add_provider(np, of_clk_src_onecell_get,
+> +				  &clk_data);
+> +	if (WARN_ON(ret))
+> +		return;
+
+Drop that return please.
+
 -- 
-1.7.9.5
-
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
