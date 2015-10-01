@@ -1,41 +1,68 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 1 Oct 2015 10:49:16 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 04/16] clk: at91: make use of syscon to share PMC
- registers in several drivers
-Message-ID: <20151001174916.GD19319@codeaurora.org>
-References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
- <1443629469-15086-5-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <rnayak@codeaurora.org>
+Message-ID: <560CED90.9050201@codeaurora.org>
+Date: Thu, 01 Oct 2015 13:53:44 +0530
+From: Rajendra Nayak <rnayak@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1443629469-15086-5-git-send-email-alexandre.belloni@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+ Mike Turquette <mturquette@baylibre.com>
+CC: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: Make oxili GDSC parent of oxili_cx GDSC
+References: <1443035362-10914-1-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1443035362-10914-1-git-send-email-sboyd@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/30, Alexandre Belloni wrote:
-> From: Boris Brezillon <boris.brezillon@free-electrons.com>
-> 
-> The PMC block is providing several functionnalities:
->  - system clk management
->  - cpuidle
->  - platform suspend
-> 
-> Replace the void __iomem *regs field by a regmap (retrieved using syscon)
-> so that we can later share the regmap across several drivers without
-> exporting a new specific API or a global void __iomem * variable.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+On 09/24/2015 12:39 AM, Stephen Boyd wrote:
+> The oxili_cx GDSC is inside the power domain of the oxili GDSC.
+> Add the dependency so that the CX domain can properly power up.
+>
+> Reported-by: Rob Clark <robdclark@gmail.com>
+> Cc: Rajendra Nayak <rnayak@codeaurora.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 > ---
+>   drivers/clk/qcom/mmcc-msm8974.c | 10 +++++++++-
+>   1 file changed, 9 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
+> index fe8320dc41db..3613db0a73e3 100644
+> --- a/drivers/clk/qcom/mmcc-msm8974.c
+> +++ b/drivers/clk/qcom/mmcc-msm8974.c
+> @@ -2615,6 +2615,7 @@ MODULE_DEVICE_TABLE(of, mmcc_msm8974_match_table);
+>   static int mmcc_msm8974_probe(struct platform_device *pdev)
+>   {
+>   	struct regmap *regmap;
+> +	int ret;
+>
+>   	regmap = qcom_cc_map(pdev, &mmcc_msm8974_desc);
+>   	if (IS_ERR(regmap))
+> @@ -2623,7 +2624,14 @@ static int mmcc_msm8974_probe(struct platform_device *pdev)
+>   	clk_pll_configure_sr_hpm_lp(&mmpll1, regmap, &mmpll1_config, true);
+>   	clk_pll_configure_sr_hpm_lp(&mmpll3, regmap, &mmpll3_config, false);
+>
+> -	return qcom_cc_really_probe(pdev, &mmcc_msm8974_desc, regmap);
+> +	ret = qcom_cc_really_probe(pdev, &mmcc_msm8974_desc, regmap);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = pm_genpd_add_subdomain(&oxili_gdsc.pd, &oxilicx_gdsc.pd);
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+We'll need pm_genpd_add_subdomain() to be EXPORT_SYMBOL_GPL'ed so
+clk-qcom can be built as a module.
+
+It would also be nicer if this parent/child relationship can
+somehow be represented in data (struct gdsc) that gets passed to
+the gdsc driver which then sets it up, instead of individual
+clock drivers doing it.
+
+> +	if (ret)
+> +		qcom_cc_remove(pdev);
+> +	return ret;
+>   }
+>
+>   static int mmcc_msm8974_remove(struct platform_device *pdev)
+>
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+hosted by The Linux Foundation
