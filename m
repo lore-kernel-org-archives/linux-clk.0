@@ -1,112 +1,29 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	bcm-kernel-feedback-list@broadcom.com,
-	devicetree@vger.kernel.org,
-	jonmason@broadcom.com,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	linux@arm.linux.org.uk,
-	sbranden@broadcom.com,
-	rjui@broadcom.com
-Subject: [PATCH v4 3/3] ARM: dts: BCM63xx: Add ARMPLL device tree nodes
-Date: Thu, 29 Oct 2015 18:23:19 -0700
-Message-Id: <1446168199-5959-4-git-send-email-f.fainelli@gmail.com>
-In-Reply-To: <1446168199-5959-1-git-send-email-f.fainelli@gmail.com>
-References: <1446168199-5959-1-git-send-email-f.fainelli@gmail.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Xing Zheng <zhengxing@rock-chips.com>
+Cc: linux-rockchip@lists.infradead.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/8] clk: rockchip: add new clock type and controller for rk3036
+Date: Thu, 01 Oct 2015 10:12:34 +0200
+Message-ID: <17410513.afcQr96dHz@diego>
+In-Reply-To: <1443492833-15630-6-git-send-email-zhengxing@rock-chips.com>
+References: <1443492833-15630-1-git-send-email-zhengxing@rock-chips.com> <1443492833-15630-6-git-send-email-zhengxing@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the ARM PLL controller which comes standard with the Cortex-A9 found
-on the BCM63138 SoCs. This is the same controller as the one found in
-the Broadcom iProc architecture, however, we have a separate compatible
-string to indicate the integration difference, since the hardware is
-different.
+Am Dienstag, 29. September 2015, 10:13:50 schrieb Xing Zheng:
+> The rk3036's pll and clock are different with base on the rk3066(rk3188,
+> rk3288, rk3368 use it), there are different adjust foctors and control
+> registers, so these should be independent and separate from the series
+> of rk3066s.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
-Changes in v4:
-- properly reflect the HW clocking and make it clear that periph_clk
-  is feeding into the ARM PLL clock domain
+subject should probably be like
+clk: rockchip: add new pll-type for rk3036 and similar socs
 
-No changes in v2 or v3
 
- arch/arm/boot/dts/bcm63138.dtsi | 36 ++++++++++++++++++++++++++++--------
- 1 file changed, 28 insertions(+), 8 deletions(-)
+And the general handling should probably be implemented similar to the example 
+I posted in the v2 thread yesterday. [of course folded in and not as a 
+separate patch ;-) ]
 
-diff --git a/arch/arm/boot/dts/bcm63138.dtsi b/arch/arm/boot/dts/bcm63138.dtsi
-index 34cd64051250..d0560e8cd6de 100644
---- a/arch/arm/boot/dts/bcm63138.dtsi
-+++ b/arch/arm/boot/dts/bcm63138.dtsi
-@@ -43,18 +43,31 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		arm_timer_clk: arm_timer_clk {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <500000000>;
--		};
--
-+		/* UBUS peripheral clock */
- 		periph_clk: periph_clk {
- 			#clock-cells = <0>;
- 			compatible = "fixed-clock";
- 			clock-frequency = <50000000>;
- 			clock-output-names = "periph";
- 		};
-+
-+		/* peripheral clock for system timer */
-+		axi_clk: axi_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&armpll>;
-+			clock-div = <2>;
-+			clock-mult = <1>;
-+		};
-+
-+		/* APB bus clock */
-+		apb_clk: apb_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&armpll>;
-+			clock-div = <4>;
-+			clock-mult = <1>;
-+		};
- 	};
- 
- 	/* ARM bus */
-@@ -93,14 +106,14 @@
- 			compatible = "arm,cortex-a9-global-timer";
- 			reg = <0x1e200 0x20>;
- 			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&arm_timer_clk>;
-+			clocks = <&axi_clk>;
- 		};
- 
- 		local_timer: local-timer@1e600 {
- 			compatible = "arm,cortex-a9-twd-timer";
- 			reg = <0x1e600 0x20>;
- 			interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&arm_timer_clk>;
-+			clocks = <&axi_clk>;
- 		};
- 
- 		twd_watchdog: watchdog@1e620 {
-@@ -109,6 +122,13 @@
- 			interrupts = <GIC_PPI 14 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		armpll: armpll {
-+			#clock-cells = <0>;
-+			compatible = "brcm,bcm63138-armpll";
-+			clocks = <&periph_clk>;
-+			reg = <0x20000 0xf00>;
-+		};
-+
- 		pmb0: reset-controller@4800c0 {
- 			compatible = "brcm,bcm63138-pmb";
- 			reg = <0x4800c0 0x10>;
--- 
-2.1.0
+
+Heiko
