@@ -1,76 +1,58 @@
-Return-Path: <olof@lixom.net>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 1 Oct 2015 12:29:29 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Daniel Kurtz <djkurtz@chromium.org>
+Cc: James Liao <jamesjj.liao@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Yingjoe Chen <yingjoe.chen@mediatek.com>,
+	Pi-Cheng Chen <pi-cheng.chen@linaro.org>,
+	linux-mediatek@lists.infradead.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org
+Subject: Re: [GIT PULL] clk: mediatek: New clocks support and fixes
+Message-ID: <20151001192929.GJ19319@codeaurora.org>
+References: <1442915603.24403.2.camel@mtksdaap41>
+ <CAGS+omDcsFXZ2AkS9tma_q+MRnsdDmit-nRXLWAcowRTNgXC=w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAL_Jsq+34sRXe0HWCKNceQfLj=WfDV4-soynumvdnH_nwuj+9g@mail.gmail.com>
-References: <20151014092644.GO14956@sirena.org.uk>
-	<1444909328-24761-1-git-send-email-tomeu.vizoso@collabora.com>
-	<CAOesGMj44N3Xfv_D_iLEzXBrkN6LXBa-uh6m3fi_F2xDenDhMg@mail.gmail.com>
-	<CAL_Jsq+34sRXe0HWCKNceQfLj=WfDV4-soynumvdnH_nwuj+9g@mail.gmail.com>
-Date: Mon, 19 Oct 2015 09:52:44 -0700
-Message-ID: <CAOesGMjzeJYVuNzrtahNxiMk-3Huq76=DVhKixMNC=3vebUc_Q@mail.gmail.com>
-Subject: Re: [GIT PULL] On-demand device probing
-From: Olof Johansson <olof@lixom.net>
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
-	Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	DRI mailing list <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAGS+omDcsFXZ2AkS9tma_q+MRnsdDmit-nRXLWAcowRTNgXC=w@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Oct 17, 2015 at 8:19 AM, Rob Herring <robh+dt@kernel.org> wrote:
-> On Fri, Oct 16, 2015 at 4:23 PM, Olof Johansson <olof@lixom.net> wrote:
->> Hi,
->>
->> I've bisected boot failures in next-20151016 down to patches in this branch:
->>
->> On Thu, Oct 15, 2015 at 4:42 AM, Tomeu Vizoso
->> <tomeu.vizoso@collabora.com> wrote:
->>> Tomeu Vizoso (20):
->>>       driver core: handle -EPROBE_DEFER from bus_type.match()
->>
->> The machine it happened on was OMAP5UEVM:
->>
->> http://arm-soc.lixom.net/bootlogs/next/next-20151016/omap5uevm-arm-omap2plus_defconfig.html
->
-> So this one is because the MMC node numbering changed. I don't know
-> how to fix that other than with aliases, but that doesn't solve
-> backwards compatibility.
+On 09/30, Daniel Kurtz wrote:
+> Hi Mike,
+> 
+> On Tue, Sep 22, 2015 at 5:53 PM, James Liao <jamesjj.liao@mediatek.com> wrote:
+> > This is a collection of new Mediatek clocks support and fixes. These
+> > patches come from Joe [1], Pi-cheng [2] and me [3], including clock
+> > support for subsystems, CPU, GPT and some minor fixes.
+> >
+> > [1] https://patchwork.kernel.org/patch/6777041/
+> > [2] https://patchwork.kernel.org/patch/7174721/
+> > [3] https://lkml.org/lkml/2015/8/10/194
+> >
+> > ----------------------------------------------------------------
+> >
+> > The following changes since commit 1f93e4a96c9109378204c147b3eec0d0e8100fde:
+> >
+> >   Linux 4.3-rc2 (2015-09-20 14:32:34 -0700)
+> >
+> > are available in the git repository at:
+> >
+> >   https://github.com/jamesjjliao/linux.git v4.3-rc2-clk
+> >
+> > for you to fetch changes up to 74219612bb7e25e64409171acada05d9949228f2:
+> >
+> >   arm64: dts: mt8173: Add subsystem clock controller device nodes (2015-07-09 12:58:14 +0800)
+> >
+> 
+> Will this be pulled for 4.3, or is it now destined for 4.4?
+> (sorry if you are receiving a duplicate email, the previous had HTML
+> and was rejected by the lists)
 
-Yep, aliases will take care of it in this case. This is where -next
-fills a great purpose, we can make sure we get those aliases added in
-before the patches go in.
+This won't make v4.3. I see that there's a third pull request
+now, with slightly different contents. Why?
 
->> But I've also seen it on tegra2, that one bisected down to:
->>
->>>      regulator: core: Probe regulators on demand
->>
->> http://arm-soc.lixom.net/bootlogs/next/next-20151016/seaboard-arm-multi_v7_defconfig.html
->
-> This one you need a rootwait I think. The MMC scanning is not
-> guaranteed to be done before the rootfs mounting AFAIK. There may be
-> other problems, but we can't see them since it panics.
-
-Embarrassing, I almost always do this and I'm surprised this machine
-has been this stable without it.
-
-
--Olof
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
