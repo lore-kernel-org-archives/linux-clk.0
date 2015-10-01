@@ -1,52 +1,72 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 2/4] clk: ti816x: Add missing dmtimer clkdev entries
-To: Tony Lindgren <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>,
- Tero Kristo <t-kristo@ti.com>
-Message-ID: <5628A9F7.9090105@baylibre.com>
-Date: Thu, 22 Oct 2015 11:18:47 +0200
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:55306 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750781AbbJAWu3 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 1 Oct 2015 18:50:29 -0400
+Date: Thu, 1 Oct 2015 15:50:27 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jisheng Zhang <jszhang@marvell.com>
+Cc: sebastian.hesselbarth@gmail.com, catalin.marinas@arm.com,
+	will.deacon@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+	pawel.moll@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] dt-bindings: add binding for marvell berlin4ct SoC
+Message-ID: <20151001225027.GT19319@codeaurora.org>
+References: <1442931156-5877-1-git-send-email-jszhang@marvell.com>
+ <1442931156-5877-5-git-send-email-jszhang@marvell.com>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: fisaksen@baylibre.com, linux-kernel@vger.kernel.org,
- Brian Hutchinson <b.hutchman@gmail.com>, linux-omap@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1442931156-5877-5-git-send-email-jszhang@marvell.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add missing clkdev dmtimer related entries for dm816x.
-32Khz and ext sources were missing.
+On 09/22, Jisheng Zhang wrote:
+> +This binding uses the common clock binding[1].
+> +
+> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +
+> +The berlin4ct clock subsystem generates and supplies clock to various
+> +controllers within the berlin4ct SoC. The berlin4ct contains 3 clock controller
+> +blocks: pll, gateclk, berlin-clk.
+> +
+> +Required Properties:
+> +
+> +- compatible: should be one of the following.
+> +  - "marvell,berlin-pll" - pll compatible
+> +  - "marvell,berlin4ct-clk" - berlin clk compatible
+> +  - "marvell,berlin4ct-gateclk" - gateclk compatible
+> +- reg: physical base address of the clock controller and length of memory mapped
+> +  region. For pll, the second reg defines the bypass register base address and
+> +  length of memory mapped region.
+> +- #clock-cells: for pll should 0, for gateclk and berlin clk should be 1.
+> +- #bypass-shift: the bypass bit in bypass register.
+> +
+> +Example:
+> +
+> +syspll: syspll {
+> +	compatible = "marvell,berlin-pll";
+> +	reg = <0xea0200 0x14>, <0xea0710 4>;
+> +	#clock-cells = <0>;
+> +	clocks = <&osc>;
+> +	bypass-shift = /bits/ 8 <0>;
+> +};
+> +
+> +clk: clk {
+> +	compatible = "marvell,berlin4ct-clk";
+> +	reg = <0xea0720 0x144>;
+> +	#clock-cells = <1>;
+> +	clocks = <&syspll>;
+> +};
 
-Cc: Brian Hutchinson <b.hutchman@gmail.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/clk/ti/clk-816x.c | 2 ++
- 1 file changed, 2 insertions(+)
+Is there one clock controller at 0xea0000 of size 0x1000? We've
+been trying to push people towards using the device model and
+writing drivers with probe instead of using CLK_OF_DECLARE() for
+their platform clocks. From the looks of this binding, we're
+splitting up the different types of clocks into their own nodes
+and then registering them with CLK_OF_DECLARE.
 
-diff --git a/drivers/clk/ti/clk-816x.c b/drivers/clk/ti/clk-816x.c
-index 1dfad0c..2a5d84f 100644
---- a/drivers/clk/ti/clk-816x.c
-+++ b/drivers/clk/ti/clk-816x.c
-@@ -20,6 +20,8 @@ static struct ti_dt_clk dm816x_clks[] = {
- 	DT_CLK(NULL, "sys_clkin", "sys_clkin_ck"),
- 	DT_CLK(NULL, "timer_sys_ck", "sys_clkin_ck"),
- 	DT_CLK(NULL, "sys_32k_ck", "sys_32k_ck"),
-+	DT_CLK(NULL, "timer_32k_ck", "sysclk18_ck"),
-+	DT_CLK(NULL, "timer_ext_ck", "tclkin_ck"),
- 	DT_CLK(NULL, "mpu_ck", "mpu_ck"),
- 	DT_CLK(NULL, "timer1_fck", "timer1_fck"),
- 	DT_CLK(NULL, "timer2_fck", "timer2_fck"),
 -- 
-1.9.1
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
