@@ -1,98 +1,41 @@
-Return-Path: <jonmason@broadcom.com>
-Date: Thu, 15 Oct 2015 17:08:11 -0400
-From: Jon Mason <jonmason@broadcom.com>
-To: Scott Branden <sbranden@broadcom.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>, "Hauke
- Mehrtens" <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<bcm-kernel-feedback-list@broadcom.com>, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v3 01/10] ARM: cygnus: fix link failures when
- CONFIG_COMMON_CLK_IPROC is disabled
-Message-ID: <20151015210810.GO32089@broadcom.com>
-References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
- <1444938513-10758-2-git-send-email-jonmason@broadcom.com>
- <56200C82.1070508@broadcom.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 1 Oct 2015 10:49:16 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 04/16] clk: at91: make use of syscon to share PMC
+ registers in several drivers
+Message-ID: <20151001174916.GD19319@codeaurora.org>
+References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
+ <1443629469-15086-5-git-send-email-alexandre.belloni@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <56200C82.1070508@broadcom.com>
-Return-Path: jonmason@broadcom.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1443629469-15086-5-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Oct 15, 2015 at 01:28:50PM -0700, Scott Branden wrote:
-> Jon,
+On 09/30, Alexandre Belloni wrote:
+> From: Boris Brezillon <boris.brezillon@free-electrons.com>
 > 
-> One question below for others to comment on.
+> The PMC block is providing several functionnalities:
+>  - system clk management
+>  - cpuidle
+>  - platform suspend
 > 
-> On 15-10-15 12:48 PM, Jon Mason wrote:
-> >From: Arnd Bergmann <arnd@arndb.de>
-> >
-> >When CONFIG_CYGNUS is set but CONFIG_COMMON_CLK_IPROC is disabled, the
-> >following link failures are caused:
-> >
-> >drivers/built-in.o: In function `cygnus_armpll_init':
-> >:(.init.text+0x1d290): undefined reference to `iproc_armpll_setup'
-> >drivers/built-in.o: In function `cygnus_genpll_clk_init':
-> >:(.init.text+0x1d2c4): undefined reference to `iproc_pll_clk_setup'
-> >drivers/built-in.o: In function `cygnus_lcpll0_clk_init':
-> >:(.init.text+0x1d304): undefined reference to `iproc_pll_clk_setup'
-> >drivers/built-in.o: In function `cygnus_mipipll_clk_init':
-> >:(.init.text+0x1d344): undefined reference to `iproc_pll_clk_setup'
-> >drivers/built-in.o: In function `cygnus_asiu_init':
-> >:(.init.text+0x1d370): undefined reference to `iproc_asiu_setup'
-> >
-> >It is fixed it by always selecting COMMON_CLK_IPROC from
-> >ARCH_BCM_IPROC, and making COMMON_CLK_IPROC a silent option (thus
-> >preventing it from being erroneously disabled by a user).
-> >
-> >Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> >Signed-off-by: Jon Mason <jonmason@broadcom.com>
-> >---
-> >  arch/arm/mach-bcm/Kconfig | 2 +-
-> >  drivers/clk/bcm/Kconfig   | 4 +---
-> >  2 files changed, 2 insertions(+), 4 deletions(-)
-> >
-> >diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
-> >index 1319c3c..84bd265 100644
-> >--- a/arch/arm/mach-bcm/Kconfig
-> >+++ b/arch/arm/mach-bcm/Kconfig
-> >@@ -14,7 +14,7 @@ config ARCH_BCM_IPROC
-> >  	select HAVE_ARM_SCU if SMP
-> >  	select HAVE_ARM_TWD if SMP
-> >  	select ARM_GLOBAL_TIMER
-> >-
-> >+	select COMMON_CLK_IPROC
-> >  	select CLKSRC_MMIO
-> >  	select ARCH_REQUIRE_GPIOLIB
-> >  	select ARM_AMBA
-> >diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
-> >index 88febf5..46ee475 100644
-> >--- a/drivers/clk/bcm/Kconfig
-> >+++ b/drivers/clk/bcm/Kconfig
-> >@@ -9,10 +9,8 @@ config CLK_BCM_KONA
-> >  	  in the BCM281xx and BCM21664 families.
-> >
-> >  config COMMON_CLK_IPROC
-> >-	bool "Broadcom iProc clock support"
-> >-	depends on ARCH_BCM_IPROC
-> >+	bool
-> >  	depends on COMMON_CLK
-> Should these depends on remain?  I think COMMON_CLK_IPROC won't work
-> without them.
-
-The ones that were removed were not necessary (as ARCH_BCM_IPROC now
-selects it).  I left the "depends on COMMON_CLK" in the off chance
-that the dependency chain gets broken some how (as ARCH_BCM_IPROC is
-not selecting COMMON_CLK directly, but it is being selected by
-ARCH_MULTIPLATFORM).
-
-Thanks,
-Jon
-
-> >-	default ARCH_BCM_IPROC
-> >  	help
-> >  	  Enable common clock framework support for Broadcom SoCs
-> >  	  based on the iProc architecture
-> >
+> Replace the void __iomem *regs field by a regmap (retrieved using syscon)
+> so that we can later share the regmap across several drivers without
+> exporting a new specific API or a global void __iomem * variable.
 > 
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> ---
+
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
