@@ -1,80 +1,56 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 2 Oct 2015 11:11:42 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Eddie Huang <eddie.huang@mediatek.com>
-Cc: Daniel Kurtz <djkurtz@chromium.org>,
-	James Liao <jamesjj.liao@mediatek.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Yingjoe Chen <yingjoe.chen@mediatek.com>,
-	Pi-Cheng Chen <pi-cheng.chen@linaro.org>, linux-clk@vger.kernel.org
-Subject: Re: [GIT PULL] clk: mediatek: New clocks support and fixes
-Message-ID: <20151002181142.GN12338@codeaurora.org>
-References: <1442915603.24403.2.camel@mtksdaap41>
- <CAGS+omDcsFXZ2AkS9tma_q+MRnsdDmit-nRXLWAcowRTNgXC=w@mail.gmail.com>
- <20151001192929.GJ19319@codeaurora.org>
- <1443749391.7213.10.camel@mtksdaap41>
+Return-Path: <ludovic.desroches@atmel.com>
+Date: Thu, 1 Oct 2015 10:24:38 +0200
+From: Ludovic Desroches <ludovic.desroches@atmel.com>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+CC: Nicolas Ferre <nicolas.ferre@atmel.com>, Boris Brezillon
+	<boris.brezillon@free-electrons.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	<linux-kernel@vger.kernel.org>, Jean-Christophe Plagniol-Villard
+	<plagnioj@jcrosoft.com>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 08/16] clk: at91: only enable available IRQs
+Message-ID: <20151001082438.GJ31199@odux.rfo.atmel.com>
+References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
+ <1443629469-15086-9-git-send-email-alexandre.belloni@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1443749391.7213.10.camel@mtksdaap41>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1443629469-15086-9-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: ludovic.desroches@atmel.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/02, Eddie Huang wrote:
-> On Thu, 2015-10-01 at 12:29 -0700, Stephen Boyd wrote:
-> > On 09/30, Daniel Kurtz wrote:
-> > > Hi Mike,
-> > > 
-> > > On Tue, Sep 22, 2015 at 5:53 PM, James Liao <jamesjj.liao@mediatek.com> wrote:
-> > > > This is a collection of new Mediatek clocks support and fixes. These
-> > > > patches come from Joe [1], Pi-cheng [2] and me [3], including clock
-> > > > support for subsystems, CPU, GPT and some minor fixes.
-> > > >
-> > > > [1] https://patchwork.kernel.org/patch/6777041/
-> > > > [2] https://patchwork.kernel.org/patch/7174721/
-> > > > [3] https://lkml.org/lkml/2015/8/10/194
-> > > >
-> > > > ----------------------------------------------------------------
-> > > >
-> > > > The following changes since commit 1f93e4a96c9109378204c147b3eec0d0e8100fde:
-> > > >
-> > > >   Linux 4.3-rc2 (2015-09-20 14:32:34 -0700)
-> > > >
-> > > > are available in the git repository at:
-> > > >
-> > > >   https://github.com/jamesjjliao/linux.git v4.3-rc2-clk
-> > > >
-> > > > for you to fetch changes up to 74219612bb7e25e64409171acada05d9949228f2:
-> > > >
-> > > >   arm64: dts: mt8173: Add subsystem clock controller device nodes (2015-07-09 12:58:14 +0800)
-> > > >
-> > > 
-> > > Will this be pulled for 4.3, or is it now destined for 4.4?
-> > > (sorry if you are receiving a duplicate email, the previous had HTML
-> > > and was rejected by the lists)
-> > 
-> > This won't make v4.3. I see that there's a third pull request
-> > now, with slightly different contents. Why?
-> > 
+On Wed, Sep 30, 2015 at 06:11:01PM +0200, Alexandre Belloni wrote:
+> From: Boris Brezillon <boris.brezillon@free-electrons.com>
 > 
-> Sorry not explain in pull request mail. Third pull request remove two
-> patches:
-> 
-> 1. arm64: dts: mt8173: Add subsystem clock controller device nodes
->    I think this should pull by Matthias, so I suggest James remove this
-> patch.
-> 
-> 2. clk: mediatek: Export CPU mux clocks for CPU frequency control
->    Mike said this patch is ok before
-> (http://lists.infradead.org/pipermail/linux-arm-kernel/2015-August/364886.html) 
-> But he told Pi-cheng recently he is working on coordinate clock rate, he
-> suggest Pi-cheng change this patch, other patches are ok. So James
-> remove this patch.
-> Thanks
+> Only enable available IRQs in case writing to a reserved bit has an armful
+> effect.
 
-Ok. Thanks!
+You probably mean disable instead of enable and s/armful/harmful.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> 
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> ---
+>  drivers/clk/at91/pmc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+> index 6c1f08a73373..45dd32bf2531 100644
+> --- a/drivers/clk/at91/pmc.c
+> +++ b/drivers/clk/at91/pmc.c
+> @@ -287,7 +287,7 @@ static int __init atmel_pmc_probe(struct platform_device *pdev)
+>  	if (!pmc->irqdomain)
+>  		return 0;
+>  
+> -	regmap_write(pmc->regmap, AT91_PMC_IDR, 0xffffffff);
+> +	regmap_write(pmc->regmap, AT91_PMC_IDR, pmc->caps->available_irqs);
+>  	ret = request_irq(pmc->virq, pmc_irq_handler,
+>  			  IRQF_SHARED | IRQF_COND_SUSPEND, "pmc", pmc);
+>  	if (ret)
+> -- 
+> 2.1.4
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
