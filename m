@@ -1,55 +1,75 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 12 Oct 2015 11:52:55 -0700
+Date: Thu, 1 Oct 2015 15:56:28 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	kernel-janitors@vger.kernel.org,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: linux-kernel@vger.kernel.org,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>,
-	Jason Cooper <jason@lakedaemon.net>
-Subject: Re: [PATCH 2/2] clk: tegra: delete unneeded of_node_put
-Message-ID: <20151012185255.GC26883@codeaurora.org>
-References: <1444412861-2580-1-git-send-email-Julia.Lawall@lip6.fr>
- <1444412861-2580-3-git-send-email-Julia.Lawall@lip6.fr>
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 14/38] clk: vt8500: fix sign of possible PLL values
+Message-ID: <20151001225628.GU19319@codeaurora.org>
+References: <1442842450-29769-1-git-send-email-a.hajda@samsung.com>
+ <1442842450-29769-15-git-send-email-a.hajda@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1444412861-2580-3-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1442842450-29769-15-git-send-email-a.hajda@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/09, Julia Lawall wrote:
-> for_each_child_of_node performs an of_node_put on each iteration, so
-> putting an of_node_put before a continue results in a double put.
+On 09/21, Andrzej Hajda wrote:
+> With unsigned values underflow in loops can occur resulting in
+> theoretically infinite loops.
 > 
-> The semantic match that finds this problem is as follows
-> (http://coccinelle.lip6.fr):
+> The problem has been detected using proposed semantic patch
+> scripts/coccinelle/tests/unsigned_lesser_than_zero.cocci [1].
 > 
-> // <smpl>
-> @@
-> expression root,e;
-> local idexpression child;
-> iterator name for_each_child_of_node;
-> @@
+> [1]: http://permalink.gmane.org/gmane.linux.kernel/2038576
 > 
->  for_each_child_of_node(root, child) {
->    ... when != of_node_get(child)
-> *  of_node_put(child);
->    ...
-> *  continue;
-> }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 > ---
+>  drivers/clk/clk-vt8500.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-vt8500.c b/drivers/clk/clk-vt8500.c
+> index 37e9288..098e9fa 100644
+> --- a/drivers/clk/clk-vt8500.c
+> +++ b/drivers/clk/clk-vt8500.c
+> @@ -384,7 +384,7 @@ static void vt8500_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+>  static void wm8650_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+>  				u32 *multiplier, u32 *divisor1, u32 *divisor2)
+>  {
+> -	u32 mul, div1, div2;
+> +	int mul, div1, div2;
 
-Applied to clk-next
+Only div2 seems to need the treatment here.
+
+>  	u32 best_mul, best_div1, best_div2;
+>  	unsigned long tclk, rate_err, best_err;
+>  
+> @@ -452,7 +452,7 @@ static u32 wm8750_get_filter(u32 parent_rate, u32 divisor1)
+>  static void wm8750_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+>  				u32 *filter, u32 *multiplier, u32 *divisor1, u32 *divisor2)
+>  {
+> -	u32 mul, div1, div2;
+> +	int mul, div1, div2;
+
+And here div1 and div2 are the only ones.
+
+>  	u32 best_mul, best_div1, best_div2;
+>  	unsigned long tclk, rate_err, best_err;
+>  
+> @@ -496,7 +496,7 @@ static void wm8750_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+>  static void wm8850_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+>  				u32 *multiplier, u32 *divisor1, u32 *divisor2)
+>  {
+> -	u32 mul, div1, div2;
+> +	int mul, div1, div2;
+
+And div1 and div2 here.
+
+Can we focus the changes on the actual problematic variables? I
+suppose this has never mattered because we break out of these
+loops.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
