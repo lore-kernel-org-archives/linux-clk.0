@@ -1,75 +1,84 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:20598 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753704AbbJOHWN (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 15 Oct 2015 03:22:13 -0400
-Subject: Re: [PATCH] clk: Allow drivers to build if COMPILE_TEST is enabled
-To: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Luis de Bethencourt <luisbg@osg.samsung.com>
-References: <1444745898-11537-1-git-send-email-javier@osg.samsung.com>
- <20151014183831.GH26883@codeaurora.org> <561EA831.2070001@osg.samsung.com>
- <CAJKOXPeNGiuokN-NeS068bZqpSaJNz9QvaxoSs33855GY3_N_g@mail.gmail.com>
- <561F5189.3070809@osg.samsung.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, linux-clk@vger.kernel.org
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <561F541D.6010006@samsung.com>
-Date: Thu, 15 Oct 2015 16:22:05 +0900
-MIME-version: 1.0
-In-reply-to: <561F5189.3070809@osg.samsung.com>
-Content-type: text/plain; charset=utf-8
+Received: from mail-lb0-f181.google.com ([209.85.217.181]:34081 "EHLO
+	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750745AbbJAVmH (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 1 Oct 2015 17:42:07 -0400
+MIME-Version: 1.0
+In-Reply-To: <CY1PR0301MB0748A8F37E3FBE1922AF9D3F874C0@CY1PR0301MB0748.namprd03.prod.outlook.com>
+References: <1441350322-4671-1-git-send-email-bhupesh.sharma@freescale.com>
+	<CAL_Jsq+9izV8vkrF1tK96M-VRGTMJ+GN5o=RsnCBDcnh-at5kA@mail.gmail.com>
+	<CALRxmdC9ZzGiw6CVnVTqhH1xvA-P9s8cpYbk8DoVq7CodFS0VA@mail.gmail.com>
+	<CY1PR0301MB0748A8F37E3FBE1922AF9D3F874C0@CY1PR0301MB0748.namprd03.prod.outlook.com>
+Date: Thu, 1 Oct 2015 16:42:05 -0500
+Message-ID: <CADRPPNRz-yM_48HvHYv3r31u_b_tHkAjg5H5r+V2mE2=oJTGDA@mail.gmail.com>
+Subject: Re: [PATCH v2 07/10] dts/ls2085a: Update DTSI to add support of
+ various peripherals
+From: Li Yang <leoli@freescale.com>
+To: Stuart Yoder <stuart.yoder@freescale.com>
+Cc: Rob Herring <robherring2@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Shaohui Xie <Shaohui.Xie@freescale.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Huan Wang <alison.wang@freescale.com>,
+	Sharma Bhupesh <bhupesh.sharma@freescale.com>,
+	Catalin Marinas <Catalin.Marinas@arm.com>,
+	Singh Jaiprakash <jaiprakash.singh@freescale.com>,
+	Will Deacon <will.deacon@arm.com>,
+	"Lian M.H." <Minghuan.Lian@freescale.com>,
+	Scott Wood <scottwood@freescale.com>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Liu Gang <Gang.Liu@freescale.com>,
+	Olof Johansson <olof@lixom.net>,
+	Badola Nikhil-B46172 <nikhil.badola@freescale.com>,
+	Bhupesh SHARMA <bhupesh.linux@gmail.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"Lu Y.B." <yangbo.lu@freescale.com>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 15.10.2015 16:11, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
->>>>
->>>
->>> No, I only build tested on arm32 and x86. The 0-day bot haven't reported a
->>> build error yet and I didn't see any platform dependent code in the drivers.
->>
->> I see you guys with Luis are adding a lot of COMPILE_TEST. But
-> 
-> Yes, the motivation for this was that I've been helping Mauro with a big
-> rework in the media subsystem [0] and was annoying to audit that all the
-> drivers were converted to the new APIs and no compile regressions were
-> introduced in drivers that could not be built with COMPILE_TEST enabled.
-> 
-> Most media drivers are able to be build though so I thought it would be
-> a good idea to extend the build coverage in all the other subsystems.
-> 
->> building only on these two architectures *is not enough*. Run at least
->> armv8, PPC and the x86_64. MIPS would be nice as well (I use the
->> CodeSourcery's MIPS). All of these (ARM64, X86_64, PPC, MIPS) can be
->> easily installed on typical debian-like Linux distro. Really easily.
->>
-> 
-> Thanks, Stephen also pointed out to the toolchains in kernel.org [1].
->  
->> By adding this non-tested build coverage you can actually fail some
->> other architecture's allyesconfig/allmodconfig builds.
->>
-> 
-> Agreed, unfortunately having more build coverage is not as trivial as I
-> originally thought. Not only because it can break the build in obscure
-> archs that I don't have a toolchain to test but also exposes more build
-> warnings (as reported by the 0-day bot) that I've the bandwidth to fix.
-> 
-> So personally I'll stop trying to enabled COMPILE_TEST just to be safe.
+On Thu, Oct 1, 2015 at 3:05 PM, Stuart Yoder <stuart.yoder@freescale.com> wrote:
+> Hi Rob,
+>
+> Had a question about your comments on the patch below.
+>
+> You singled out 3 nodes (gic,uart,clockgen) and said "This should be under a bus node."
+>
+> What is special about those 3 nodes types?  There are a bunch of other memory
+> mapped SoC devices as well in the DTS.
+>
+> I skimmed the dts files under arch/arm64 and it looks like most have a simple-bus
+> SoC node like this where SoC devices are under:
+>
+>         soc {
+>                 #address-cells = <2>;
+>                 #size-cells = <2>;
+>                 compatible = "simple-bus";
+>                 ranges;
+>
+> Is that what you are looking for-- for all SoC devices?
 
-I mean that in general I agree with the idea of COMPILE_TEST. I had
-similar problems when I was changing the power supply API. Build testing
-of each modified file required a lot of effort... but it was doable. I
-just set up a configuration for build server doing all necessary archs
-and configs. With COMPILE_TEST it would be much, much easier!
+I think the key is to have the soc node and have all the on-chip
+devices defined underneath it.
 
-You don't have to give up entirely. Just use more compilers and in the
-same time fix the warnings and errors. Send a patch fixing driver and
-another one adding COMPILE_TEST.
+I read the following from the booting-without-of.txt document:
 
-Best regards,
-Krzysztof
+  f) the /soc<SOCname> node
 
+  This node is used to represent a system-on-a-chip (SoC) and must be
+  present if the processor is a SoC. The top-level soc node contains
+  information that is global to all devices on the SoC. The node name
+  should contain a unit address for the SoC, which is the base address
+  of the memory-mapped register set for the SoC. The name of an SoC
+  node should start with "soc", and the remainder of the name should
+  represent the part number for the soc.  For example, the MPC8540's
+  soc node would be called "soc8540".
 
+A lot of device trees didn't follow the soc<SOCname> naming scheme and
+just used "soc" as the node name.  I am not sure if we want to enforce
+the naming in the future or update the document to make it more relax.
+
+Regards,
+Leo
