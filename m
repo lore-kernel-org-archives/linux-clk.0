@@ -1,58 +1,142 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 1 Oct 2015 15:20:55 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: York Sun <yorksun@freescale.com>, linux-clk@vger.kernel.org,
+Return-Path: <lee@kernel.org>
+Date: Thu, 1 Oct 2015 13:27:06 +0100
+From: Lee Jones <lee@kernel.org>
+To: Eric Anholt <eric@anholt.net>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	Mike Turquette <mturquette@baylibre.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Andrey Filippov <andrey@elphel.com>,
-	Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [Patch v5] driver/clk/clk-si5338: Add common clock framework
- driver for si5338
-Message-ID: <20151001222055.GN19319@codeaurora.org>
-References: <1443141970-21084-1-git-send-email-yorksun@freescale.com>
- <5604A9F0.2050600@roeck-us.net>
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] clk: bcm2835: Add binding docs for the new
+ platform clock driver.
+Message-ID: <20151001122706.GW3214@x1>
+References: <1443475325-22270-1-git-send-email-eric@anholt.net>
+ <1443475325-22270-2-git-send-email-eric@anholt.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5604A9F0.2050600@roeck-us.net>
+In-Reply-To: <1443475325-22270-2-git-send-email-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/24, Guenter Roeck wrote:
-> On 09/24/2015 05:46 PM, York Sun wrote:
-> >+			/* may have some garbage in high bits,
-> >+			 * will be cut of by mask
-> >+			 */
+On Mon, 28 Sep 2015, Eric Anholt wrote:
+
+> Previously we've only supported a few fixed clocks based on
+> assumptions about how the firmware sets up the clocks, but this
+> binding will let us control the actual (audio power domain) clock
+> manager.
 > 
-> Does the clock subsystem use network subsystem style multiline comments ?
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> Acked-by: Stephen Warren <swarren@wwwdotorg.org>
+> ---
+>  .../bindings/clock/brcm,bcm2835-cprman.txt         | 45 +++++++++++++++++++++
+>  include/dt-bindings/clock/bcm2835.h                | 47 ++++++++++++++++++++++
+>  2 files changed, 92 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
+>  create mode 100644 include/dt-bindings/clock/bcm2835.h
 
-No. We follow the traditional multi-line commenting style as in
-Documentation/CodingStyle.
+Acked-by: Lee Jones <lee@kernel.org>
 
-> >+		return ret;
-> >+	}
-> >+
-> >+	/* Check if si5338 exists */
-> >+	if ((n & REG5338_DEV_CONFIG2_MASK) != REG5338_DEV_CONFIG2_VAL) {
-> >+		dev_err(&client->dev,
-> >+			"Chip returned unexpected value from reg %d: %d, expected %d. It is not %s\n",
-> 
-> 0x%x for register values ?
-
-Or %#x
-
-> 
-> >+			REG5338_DEV_CONFIG2, n, REG5338_DEV_CONFIG2_VAL,
-> >+			id->name);
-> >+		return -EIO;
-> >+	}
-> >+
-> >+	dev_info(&client->dev, "Chip %s is found\n", id->name);
-> 
-> I personally dislike that noise.
-> 
-
-Me too.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt b/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
+> new file mode 100644
+> index 0000000..e56a1df
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
+> @@ -0,0 +1,45 @@
+> +Broadcom BCM2835 CPRMAN clocks
+> +
+> +This binding uses the common clock binding:
+> +    Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +
+> +The CPRMAN clock controller generates clocks in the audio power domain
+> +of the BCM2835.  There is a level of PLLs deriving from an external
+> +oscillator, a level of PLL dividers that produce channels off of the
+> +few PLLs, and a level of mostly-generic clock generators sourcing from
+> +the PLL channels.  Most other hardware components source from the
+> +clock generators, but a few (like the ARM or HDMI) will source from
+> +the PLL dividers directly.
+> +
+> +Required properties:
+> +- compatible:	Should be "brcm,bcm2835-cprman"
+> +- #clock-cells:	Should be <1>. The permitted clock-specifier values can be
+> +		  found in include/dt-bindings/clock/bcm2835.h
+> +- reg:		Specifies base physical address and size of the registers
+> +- clocks:	The external oscillator clock phandle
+> +
+> +Example:
+> +
+> +	clk_osc: clock@3 {
+> +		compatible = "fixed-clock";
+> +		reg = <3>;
+> +		#clock-cells = <0>;
+> +		clock-output-names = "osc";
+> +		clock-frequency = <19200000>;
+> +	};
+> +
+> +	clocks: cprman@7e101000 {
+> +		compatible = "brcm,bcm2835-cprman";
+> +		#clock-cells = <1>;
+> +		reg = <0x7e101000 0x2000>;
+> +		clocks = <&clk_osc>;
+> +	};
+> +
+> +	i2c0: i2c@7e205000 {
+> +		compatible = "brcm,bcm2835-i2c";
+> +		reg = <0x7e205000 0x1000>;
+> +		interrupts = <2 21>;
+> +		clocks = <&clocks BCM2835_CLOCK_VPU>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +	};
+> diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
+> new file mode 100644
+> index 0000000..d323efa
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/bcm2835.h
+> @@ -0,0 +1,47 @@
+> +/*
+> + * Copyright (C) 2015 Broadcom Corporation
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License as
+> + * published by the Free Software Foundation version 2.
+> + *
+> + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
+> + * kind, whether express or implied; without even the implied warranty
+> + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#define BCM2835_PLLA			0
+> +#define BCM2835_PLLB			1
+> +#define BCM2835_PLLC			2
+> +#define BCM2835_PLLD			3
+> +#define BCM2835_PLLH			4
+> +
+> +#define BCM2835_PLLA_CORE		5
+> +#define BCM2835_PLLA_PER		6
+> +#define BCM2835_PLLB_ARM		7
+> +#define BCM2835_PLLC_CORE0		8
+> +#define BCM2835_PLLC_CORE1		9
+> +#define BCM2835_PLLC_CORE2		10
+> +#define BCM2835_PLLC_PER		11
+> +#define BCM2835_PLLD_CORE		12
+> +#define BCM2835_PLLD_PER		13
+> +#define BCM2835_PLLH_RCAL		14
+> +#define BCM2835_PLLH_AUX		15
+> +#define BCM2835_PLLH_PIX		16
+> +
+> +#define BCM2835_CLOCK_TIMER		17
+> +#define BCM2835_CLOCK_OTP		18
+> +#define BCM2835_CLOCK_UART		19
+> +#define BCM2835_CLOCK_VPU		20
+> +#define BCM2835_CLOCK_V3D		21
+> +#define BCM2835_CLOCK_ISP		22
+> +#define BCM2835_CLOCK_H264		23
+> +#define BCM2835_CLOCK_VEC		24
+> +#define BCM2835_CLOCK_HSM		25
+> +#define BCM2835_CLOCK_SDRAM		26
+> +#define BCM2835_CLOCK_TSENS		27
+> +#define BCM2835_CLOCK_EMMC		28
+> +#define BCM2835_CLOCK_PERI_IMAGE	29
+> +
+> +#define BCM2835_CLOCK_COUNT		30
