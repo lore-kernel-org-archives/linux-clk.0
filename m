@@ -1,68 +1,110 @@
-Return-Path: <robh+dt@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1445247881.53393.146.camel@infradead.org>
-References: <561E1378.6000906@collabora.com> <20151017065750.GA18607@kroah.com>
- <20151018192931.GY14956@sirena.org.uk> <20151018193757.GA9147@kroah.com>
- <20151018195330.GB14956@sirena.org.uk> <1445247881.53393.146.camel@infradead.org>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Mon, 19 Oct 2015 07:35:05 -0500
-Message-ID: <CAL_JsqKehmSobpbdeXGo=-1pAbtrhCHovyyCWya_MNOhGCi8CQ@mail.gmail.com>
-Subject: Re: [GIT PULL] On-demand device probing
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>,
-	=?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
-	Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
-	Linux USB List <linux-usb@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <magnus.damm@gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com,gaku.inami.xw@bp.renesas.com,mturquette@baylibre.com,linux-sh@vger.kernel.org,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
+Date: Thu, 01 Oct 2015 23:37:57 +0900
+Message-Id: <20151001143757.20618.56442.sendpatchset@little-apple>
+In-Reply-To: <20151001143717.20618.26365.sendpatchset@little-apple>
+References: <20151001143717.20618.26365.sendpatchset@little-apple>
+Subject: [PATCH v8 04/05] clk: shmobile: Add r8a7795 MSSR support
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Oct 19, 2015 at 4:44 AM, David Woodhouse <dwmw2@infradead.org> wrote:
-> On Sun, 2015-10-18 at 20:53 +0100, Mark Brown wrote:
->> On Sun, Oct 18, 2015 at 12:37:57PM -0700, Greg Kroah-Hartman wrote:
->> > On Sun, Oct 18, 2015 at 08:29:31PM +0100, Mark Brown wrote:
->> > > On Fri, Oct 16, 2015 at 11:57:50PM -0700, Greg Kroah-Hartman wrote:
->>
->> > > > I can't see adding calls like this all over the tree just to solve a
->> > > > bus-specific problem, you are adding of_* calls where they aren't
->> > > > needed, or wanted, at all.
->>
->> > > This isn't bus specific, I'm not sure what makes you say that?
->>
->> > You are making it bus-specific by putting these calls all over the tree
->> > in different bus subsystems semi-randomly for all I can determine.
->>
->> Do you mean firmware rather than bus here?  I think that's the confusion
->> I have...
->
-> Certainly, if it literally is adding of_* calls then that would seem to
-> be gratuitously firmware-specific. Nothing should be using those these
-> days; any new code should be using the generic device property APIs
-> (except in special cases).
+From: Magnus Damm <damm+renesas@opensource.se>
 
-See version 2 of the series[1] which did that. It became obvious that
-was pointless because the call paths ended up looking like this:
+Hook up r8a7795 support to the MSSR driver, enable build
+for r8a7795, tie it into the r8a7795 CPG driver and add
+DT binding documentation.
 
-Generic subsystem code -> DT look-up code -> fwnode_probe_device ->
-of_probe_device
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
-Rob
+ Changes since V7: (Magnus Damm <damm+renesas@opensource.se>)
+ - New patch
+ - DT documentation hunks nicked from patch by Geert - thanks!
+  [PATCH v7 05/05] clk: shmobile: rcar-gen3: Add CPG/MSTP Clock Domain support
 
-[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2015-July/361137.html
+ Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt |   26 +++++++++-
+ drivers/clk/shmobile/Makefile                                            |    2 
+ drivers/clk/shmobile/clk-mssr.c                                          |    1 
+ drivers/clk/shmobile/clk-rcar-gen3.c                                     |    2 
+ 4 files changed, 28 insertions(+), 3 deletions(-)
+
+--- 0003/Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt
++++ work/Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt	2015-10-01 23:23:59.780513000 +0900
+@@ -2,6 +2,8 @@
+ 
+ The CPG generates core clocks for the R-Car Gen3 SoCs. It includes three PLLs
+ and several fixed ratio dividers.
++The CPG also provides a Clock Domain for SoC devices, in combination with the
++CPG Module Stop (MSTP) Clocks.
+ 
+ Required Properties:
+ 
+@@ -14,9 +16,17 @@ Required Properties:
+   - clocks: References to the parent clocks: first to the EXTAL clock
+   - #clock-cells: Must be 1
+   - clock-indices: Indices of the exported clocks
++  - #power-domain-cells: Must be 0
+ 
+-Example
+--------
++SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
++through an MSTP clock should refer to the CPG device node in their
++"power-domains" property, as documented by the generic PM domain bindings in
++Documentation/devicetree/bindings/power/power_domain.txt.
++
++Examples
++--------
++
++  - CPG device node:
+ 
+ 	cpg_clocks: cpg_clocks@e6150000 {
+ 		compatible = "renesas,r8a7795-cpg-clocks",
+@@ -29,4 +39,16 @@ Example
+ 				R8A7795_CLK_PLL1 R8A7795_CLK_PLL2
+ 				R8A7795_CLK_PLL3 R8A7795_CLK_PLL4
+ 		>;
++		#power-domain-cells = <0>;
++	};
++
++  - CPG/MSTP Clock Domain member device node:
++
++	scif2: serial@e6e88000 {
++		compatible = "renesas,scif-r8a7795", "renesas,scif";
++		reg = <0 0xe6e88000 0 64>;
++		interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp3_clks RCAR_R8A7795_CLK_SCIF2>;
++		clock-names = "sci_ick";
++		power-domains = <&cpg_clocks>;
+ 	};
+--- 0003/drivers/clk/shmobile/Makefile
++++ work/drivers/clk/shmobile/Makefile	2015-10-01 18:52:50.160513000 +0900
+@@ -8,5 +8,5 @@ obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-
+ obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7795)		+= clk-rcar-gen3.o clk-div6.o
++obj-$(CONFIG_ARCH_R8A7795)		+= clk-rcar-gen3.o clk-mssr.o clk-div6.o
+ obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-mstp.o clk-div6.o
+--- 0004/drivers/clk/shmobile/clk-mssr.c
++++ work/drivers/clk/shmobile/clk-mssr.c	2015-10-01 18:52:50.160513000 +0900
+@@ -307,6 +307,7 @@ static void __init cpg_mssr_init(struct
+ 
+ 	// TODO Register reset controller
+ }
++CLK_OF_DECLARE(cpg_mssr, "renesas,r8a7795-cpg-mssr", cpg_mssr_init);
+ 
+ 
+ #ifdef CONFIG_PM_GENERIC_DOMAINS_OF
+--- 0003/drivers/clk/shmobile/clk-rcar-gen3.c
++++ work/drivers/clk/shmobile/clk-rcar-gen3.c	2015-10-01 18:52:50.160513000 +0900
+@@ -237,6 +237,8 @@ static void __init rcar_gen3_cpg_clocks_
+ 	cpg->data.clk_num = i;
+ 
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
++
++	cpg_mssr_add_clk_domain(np);
+ }
+ CLK_OF_DECLARE(rcar_gen3_cpg_clks, "renesas,rcar-gen3-cpg-clocks",
+ 	       rcar_gen3_cpg_clocks_init);
