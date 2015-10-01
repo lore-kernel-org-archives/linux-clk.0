@@ -1,85 +1,59 @@
-Return-Path: <sbranden@broadcom.com>
-Subject: Re: [PATCH v3 01/10] ARM: cygnus: fix link failures when
- CONFIG_COMMON_CLK_IPROC is disabled
-To: Jon Mason <jonmason@broadcom.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
- <1444938513-10758-2-git-send-email-jonmason@broadcom.com>
-CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
-	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>, Arnd
- Bergmann <arnd@arndb.de>
-From: Scott Branden <sbranden@broadcom.com>
-Message-ID: <56200C82.1070508@broadcom.com>
-Date: Thu, 15 Oct 2015 13:28:50 -0700
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 1 Oct 2015 11:05:34 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Paul Osmialowski <newchief@king.net.pl>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Paul Osmialowski <pawelo@king.net.pl>
+Subject: Re: [PATCH v3] clk: add devm_of_clk_get() and
+ devm_of_clk_get_by_name() functions
+Message-ID: <20151001180534.GH19319@codeaurora.org>
+References: <1443686626-26450-1-git-send-email-newchief@king.net.pl>
 MIME-Version: 1.0
-In-Reply-To: <1444938513-10758-2-git-send-email-jonmason@broadcom.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Return-Path: sbranden@broadcom.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1443686626-26450-1-git-send-email-newchief@king.net.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-Jon,
+On 10/01, Paul Osmialowski wrote:
+> From: Paul Osmialowski <pawelo@king.net.pl>
+> 
+> These two functions are added to ease management of clocks obtained
+> from OF device nodes.
+> 
+> They are particulary useful while iterating over DT subnodes using e.g.
+> for_each_child_of_node(dev->of_node, child) in order do get resources
+> (i.e. clocks) for subdevices defined by these DT subnodes.
+> 
+> For example:
+> 
+> some_device {
+>     compatible = "something"
+>     #address-cells = <1>;
+>     #size-cells = <1>;
+>     ranges;
+> 
+>     subdevice1: some_subdevice@some_address1 {
+>         reg = <0xsome_address1 0xsome_size>
+>         clocks = <&some_clock1>
+>     }
+> 
+>     subdevice2: some_subdevice@some_address2 {
+>         reg = <0xsome_address2 0xsome_size>
+>         clocks = <&some_clock2>
+>     }
+> }
+> 
+> Normally, I'd have to use of_clk_get() on each subdevice node and then
+> worry about proper resource release myself.
+> 
+> IMHO using devres infrastructure for this is far better. This patch adds
+> missing functions needed to do it a better way.
+> 
+> Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
 
-One question below for others to comment on.
+It sounds like your pinctrl binding will be rewritten so that
+there isn't a need for this patch. Consider this patch rejected.
 
-On 15-10-15 12:48 PM, Jon Mason wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> When CONFIG_CYGNUS is set but CONFIG_COMMON_CLK_IPROC is disabled, the
-> following link failures are caused:
->
-> drivers/built-in.o: In function `cygnus_armpll_init':
-> :(.init.text+0x1d290): undefined reference to `iproc_armpll_setup'
-> drivers/built-in.o: In function `cygnus_genpll_clk_init':
-> :(.init.text+0x1d2c4): undefined reference to `iproc_pll_clk_setup'
-> drivers/built-in.o: In function `cygnus_lcpll0_clk_init':
-> :(.init.text+0x1d304): undefined reference to `iproc_pll_clk_setup'
-> drivers/built-in.o: In function `cygnus_mipipll_clk_init':
-> :(.init.text+0x1d344): undefined reference to `iproc_pll_clk_setup'
-> drivers/built-in.o: In function `cygnus_asiu_init':
-> :(.init.text+0x1d370): undefined reference to `iproc_asiu_setup'
->
-> It is fixed it by always selecting COMMON_CLK_IPROC from
-> ARCH_BCM_IPROC, and making COMMON_CLK_IPROC a silent option (thus
-> preventing it from being erroneously disabled by a user).
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Jon Mason <jonmason@broadcom.com>
-> ---
->   arch/arm/mach-bcm/Kconfig | 2 +-
->   drivers/clk/bcm/Kconfig   | 4 +---
->   2 files changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
-> index 1319c3c..84bd265 100644
-> --- a/arch/arm/mach-bcm/Kconfig
-> +++ b/arch/arm/mach-bcm/Kconfig
-> @@ -14,7 +14,7 @@ config ARCH_BCM_IPROC
->   	select HAVE_ARM_SCU if SMP
->   	select HAVE_ARM_TWD if SMP
->   	select ARM_GLOBAL_TIMER
-> -
-> +	select COMMON_CLK_IPROC
->   	select CLKSRC_MMIO
->   	select ARCH_REQUIRE_GPIOLIB
->   	select ARM_AMBA
-> diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
-> index 88febf5..46ee475 100644
-> --- a/drivers/clk/bcm/Kconfig
-> +++ b/drivers/clk/bcm/Kconfig
-> @@ -9,10 +9,8 @@ config CLK_BCM_KONA
->   	  in the BCM281xx and BCM21664 families.
->
->   config COMMON_CLK_IPROC
-> -	bool "Broadcom iProc clock support"
-> -	depends on ARCH_BCM_IPROC
-> +	bool
->   	depends on COMMON_CLK
-Should these depends on remain?  I think COMMON_CLK_IPROC won't work 
-without them.
-> -	default ARCH_BCM_IPROC
->   	help
->   	  Enable common clock framework support for Broadcom SoCs
->   	  based on the iProc architecture
->
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
