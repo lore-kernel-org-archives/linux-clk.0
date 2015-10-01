@@ -1,82 +1,49 @@
-Return-Path: <yingjoe.chen@mediatek.com>
-Message-ID: <1443794444.10908.9.camel@mtksdaap41>
-Subject: Re: [PATCH 2/2] arm64: dts: mt8173: add timer node
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, Daniel Lezcano
-	<daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
-	James Liao <jamesjj.liao@mediatek.com>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "Catalin
- Marinas" <Catalin.Marinas@arm.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	Sascha Hauer <kernel@pengutronix.de>, Olof Johansson <olof@lixom.net>,
-	"srv_heupstream@mediatek.com" <srv_heupstream@mediatek.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Daniel Kurtz <djkurtz@chromium.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Eddie Huang
-	<eddie.huang@mediatek.com>
-Date: Fri, 2 Oct 2015 22:00:44 +0800
-In-Reply-To: <560D5227.8050600@arm.com>
-References: <1442369095-1094-1-git-send-email-yingjoe.chen@mediatek.com>
-	 <1442369095-1094-2-git-send-email-yingjoe.chen@mediatek.com>
-	 <55FAC570.8040307@arm.com> <1442501816.4784.3.camel@mtksdaap41>
-	 <55FAE69C.2000906@arm.com> <1443710016.22188.10.camel@mtksdaap41>
-	 <560D5227.8050600@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 1 Oct 2015 10:35:54 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	"tgih.jun@samsung.com" <tgih.jun@samsung.com>,
+	Jaehoon Chung <jh80.chung@samsung.com>,
+	linux-mmc <linux-mmc@vger.kernel.org>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+	Doug Anderson <dianders@chromium.org>,
+	Alexandru Stan <amstan@chromium.org>
+Subject: Re: [PATCH v2 3/8] mmc: core: Add mmc_regulator_set_vqmmc()
+Message-ID: <20151001173554.GB19319@codeaurora.org>
+References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
+ <17200614.QxCe8zAb7I@diego>
+ <CAPDyKFpis8XnvrppHq7q_7DQeN2UiEpykNTJ=1iJJ9AGOHTW6Q@mail.gmail.com>
+ <2695161.Z1IhqPE0bd@diego>
 MIME-Version: 1.0
-Return-Path: yingjoe.chen@mediatek.com
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <2695161.Z1IhqPE0bd@diego>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2015-10-01 at 16:32 +0100, Sudeep Holla wrote:
+On 10/01, Heiko Stübner wrote:
+> Am Donnerstag, 1. Oktober 2015, 11:54:24 schrieb Ulf Hansson:
+> > On 30 September 2015 at 16:55, Heiko Stübner <heiko@sntech.de> wrote:
+> > > Am Mittwoch, 30. September 2015, 16:42:05 schrieb Ulf Hansson:
+> > >> On 30 September 2015 at 16:07, Heiko Stuebner <heiko@sntech.de> wrote:
+> > > The clock changes of course only touch internals of the phase-clocks, so
+> > > should have no problem going through another tree.
+> > 
+> > What happens if I take mmc and dt changes, wouldn't I need the clock
+> > patches as well?
 > 
-> On 01/10/15 15:33, Yingjoe Chen wrote:
-> > On Thu, 2015-09-17 at 17:13 +0100, Sudeep Holla wrote:
-> >>
+> The API stays of course the same, only the degree to settings translation gets 
+> optimized, so I guess in the worst case you would get no good phase and thus 
+> fall back to non-highspeed modes - but the system would stay running.
 > 
-> [...]
+> But of course, if the clock maintainers could Ack the two clock patches and 
+> everything would stay together that would work even better :-)
 > 
-> >>
-> >> I think your are confusing the system counter with arch timers. System
-> >> counter is always-on, but the arch timers(logic implementing timers
-> >> comparators) might not be off when the processor is powered down.
-> >>
-> >> I think you need this timer and are using it for low power idle states
-> >> in which case you will use this as a clock event and not clock source.
-> >> It will be used as a hardware broadcast event source.
-> >>
-> >> There's no call to sched_clock_register in mtk_timer.c, so it can't be
-> >> the sched clock, so you need to fix the commit log.
-> >
-> > Hi Sudeep,
-> >
-> > Sorry for late reply.
-> >
-> > For sched_clock_register, please see
-> > http://lists.infradead.org/pipermail/linux-mediatek/2015-July/001547.html
-> > which was accepted in
-> > https://git.linaro.org/people/daniel.lezcano/linux.git/shortlog/refs/heads/clockevents/4.4
-> >
-> 
-> The commit message makes no sense to me. The counters should continue to
-> work as long as they are in always-on domain. Only timers are lost
-> when you enter deeper idle states. So I agree with using MTK timer as
-> broadcast timer/eventsource. You still didn't answer what's the need
-> to use MTK timer as sched clocksource ?
 
+If Ulf doesn't want to take them we can apply them to clk tree.
+Otherwise, you can have my acked-by on the clk patches.
 
-Hi, Sudeep,
-
-ARM ARM said the counter should be in always-on domain, but
-unfortunately that not true for mt8173. The last CPU enter idle can
-choose to enter deep idle mode and the counter value would be lost. Our
-firmware backup/recover the counter so it looks like it is stopped.
-That's why I thought we need to use it as sched clocksource.
-
-On mt8173, we will fix the firmware to add missing counts, so it will
-looks like the counter keep counting. But other mediatek platform have
-similar issue, and the 2 counter have same resolution, so I still want
-to keep using GPT as sched clocksource.
-
-Joe.C
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
