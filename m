@@ -1,128 +1,180 @@
-Return-Path: <Julia.Lawall@lip6.fr>
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: kernel-janitors@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jason Cooper <jason@lakedaemon.net>
-Subject: [PATCH 2/5] clk: si5351: add missing of_node_put
-Date: Wed, 21 Oct 2015 22:41:37 +0200
-Message-Id: <1445460100-26727-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
-References: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
+Return-Path: <newchief@king.net.pl>
+From: Paul Osmialowski <newchief@king.net.pl>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Paul Osmialowski <pawelo@king.net.pl>
+Subject: [PATCH v3] clk: add devm_of_clk_get() and devm_of_clk_get_by_name() functions
+Date: Thu,  1 Oct 2015 10:03:46 +0200
+Message-Id: <1443686626-26450-1-git-send-email-newchief@king.net.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-for_each_child_of_node performs an of_node_get on each iteration, so
-a break out of the loop requires an of_node_put.
+From: Paul Osmialowski <pawelo@king.net.pl>
 
-A simplified version of the semantic patch that fixes this problem is as
-follows (http://coccinelle.lip6.fr):
+These two functions are added to ease management of clocks obtained
+from OF device nodes.
 
-// <smpl>
-@@
-expression root,e;
-local idexpression child;
-@@
+They are particulary useful while iterating over DT subnodes using e.g.
+for_each_child_of_node(dev->of_node, child) in order do get resources
+(i.e. clocks) for subdevices defined by these DT subnodes.
 
- for_each_child_of_node(root, child) {
-   ... when != of_node_put(child)
-       when != e = child
-(
-   return child;
-|
-+  of_node_put(child);
-?  return ...;
-)
-   ...
- }
-// </smpl>
+For example:
 
-The resulting puts were manually moved to the end of the function for
-conciseness.
+some_device {
+    compatible = "something"
+    #address-cells = <1>;
+    #size-cells = <1>;
+    ranges;
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+    subdevice1: some_subdevice@some_address1 {
+        reg = <0xsome_address1 0xsome_size>
+        clocks = <&some_clock1>
+    }
 
+    subdevice2: some_subdevice@some_address2 {
+        reg = <0xsome_address2 0xsome_size>
+        clocks = <&some_clock2>
+    }
+}
+
+Normally, I'd have to use of_clk_get() on each subdevice node and then
+worry about proper resource release myself.
+
+IMHO using devres infrastructure for this is far better. This patch adds
+missing functions needed to do it a better way.
+
+Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
 ---
- drivers/clk/clk-si5351.c |   17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ Documentation/driver-model/devres.txt |  2 ++
+ drivers/clk/clk-devres.c              | 46 +++++++++++++++++++++++++++++++++++
+ include/linux/clk.h                   | 46 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 94 insertions(+)
 
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index 5596c0a..e346b22 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -1183,13 +1183,13 @@ static int si5351_dt_parse(struct i2c_client *client,
- 		if (of_property_read_u32(child, "reg", &num)) {
- 			dev_err(&client->dev, "missing reg property of %s\n",
- 				child->name);
--			return -EINVAL;
-+			goto put_child;
- 		}
+diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
+index 831a536..f3ad67a 100644
+--- a/Documentation/driver-model/devres.txt
++++ b/Documentation/driver-model/devres.txt
+@@ -235,6 +235,8 @@ certainly invest a bit more effort into libata core layer).
  
- 		if (num >= 8 ||
- 		    (variant == SI5351_VARIANT_A3 && num >= 3)) {
- 			dev_err(&client->dev, "invalid clkout %d\n", num);
--			return -EINVAL;
-+			goto put_child;
- 		}
+ CLOCK
+   devm_clk_get()
++  devm_of_clk_get()
++  devm_of_clk_get_by_name()
+   devm_clk_put()
  
- 		if (!of_property_read_u32(child, "silabs,multisynth-source",
-@@ -1207,7 +1207,7 @@ static int si5351_dt_parse(struct i2c_client *client,
- 				dev_err(&client->dev,
- 					"invalid parent %d for multisynth %d\n",
- 					val, num);
--				return -EINVAL;
-+				goto put_child;
- 			}
- 		}
- 
-@@ -1230,7 +1230,7 @@ static int si5351_dt_parse(struct i2c_client *client,
- 					dev_err(&client->dev,
- 						"invalid parent %d for clkout %d\n",
- 						val, num);
--					return -EINVAL;
-+					goto put_child;
- 				}
- 				pdata->clkout[num].clkout_src =
- 					SI5351_CLKOUT_SRC_CLKIN;
-@@ -1239,7 +1239,7 @@ static int si5351_dt_parse(struct i2c_client *client,
- 				dev_err(&client->dev,
- 					"invalid parent %d for clkout %d\n",
- 					val, num);
--				return -EINVAL;
-+				goto put_child;
- 			}
- 		}
- 
-@@ -1256,7 +1256,7 @@ static int si5351_dt_parse(struct i2c_client *client,
- 				dev_err(&client->dev,
- 					"invalid drive strength %d for clkout %d\n",
- 					val, num);
--				return -EINVAL;
-+				goto put_child;
- 			}
- 		}
- 
-@@ -1283,7 +1283,7 @@ static int si5351_dt_parse(struct i2c_client *client,
- 				dev_err(&client->dev,
- 					"invalid disable state %d for clkout %d\n",
- 					val, num);
--				return -EINVAL;
-+				goto put_child;
- 			}
- 		}
- 
-@@ -1296,6 +1296,9 @@ static int si5351_dt_parse(struct i2c_client *client,
- 	client->dev.platform_data = pdata;
- 
- 	return 0;
-+put_child:
-+	of_node_put(child);
-+	return -EINVAL;
+ DMA
+diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+index 8f57154..71fcebc 100644
+--- a/drivers/clk/clk-devres.c
++++ b/drivers/clk/clk-devres.c
+@@ -34,6 +34,52 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
  }
- #else
- static int si5351_dt_parse(struct i2c_client *client, enum si5351_variant variant)
+ EXPORT_SYMBOL(devm_clk_get);
+ 
++#if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
++
++struct clk *devm_of_clk_get(struct device *dev, struct device_node *np,
++			    int index)
++{
++	struct clk **ptr, *clk;
++
++	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return ERR_PTR(-ENOMEM);
++
++	clk = of_clk_get(np, index);
++	if (!IS_ERR(clk)) {
++		*ptr = clk;
++		devres_add(dev, ptr);
++	} else {
++		devres_free(ptr);
++	}
++
++	return clk;
++}
++EXPORT_SYMBOL(devm_of_clk_get);
++
++struct clk *devm_of_clk_get_by_name(struct device *dev, struct device_node *np,
++				    const char *name)
++{
++	struct clk **ptr, *clk;
++
++	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return ERR_PTR(-ENOMEM);
++
++	clk = of_clk_get_by_name(np, name);
++	if (!IS_ERR(clk)) {
++		*ptr = clk;
++		devres_add(dev, ptr);
++	} else {
++		devres_free(ptr);
++	}
++
++	return clk;
++}
++EXPORT_SYMBOL(devm_of_clk_get_by_name);
++
++#endif /* defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK) */
++
+ static int devm_clk_match(struct device *dev, void *res, void *data)
+ {
+ 	struct clk **c = res;
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 0df4a51..8f31f9a 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -504,4 +504,50 @@ static inline struct clk *of_clk_get_by_name(struct device_node *np,
+ }
+ #endif
+ 
++#if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
++/**
++ * devm_of_clk_get - obtain a managed reference to a clock producer
++ *                   from device tree node (by index).
++ * @dev: device for clock "consumer"
++ * @np: device tree node
++ * @index: clock consumer index (within the node)
++ *
++ * devm_of_clk_get should not be called from within interrupt context.
++ *
++ * The clock will automatically be freed when the device is unbound
++ * from the bus.
++ */
++struct clk *devm_of_clk_get(struct device *dev, struct device_node *np,
++			    int index);
++
++/**
++ * devm_of_clk_get_by_name - obtain a managed reference to a clock producer
++ *                           from device tree node (by name).
++ * @dev: device for clock "consumer"
++ * @np: device tree node
++ * @name: clock consumer name (within the node)
++ *
++ * devm_of_clk_get_by_name should not be called from within interrupt context.
++ *
++ * The clock will automatically be freed when the device is unbound
++ * from the bus.
++ */
++struct clk *devm_of_clk_get_by_name(struct device *dev, struct device_node *np,
++				    const char *name);
++
++#else
++static inline struct clk *devm_of_clk_get(struct device *dev,
++					  struct device_node *np,
++					  int index)
++{
++	return ERR_PTR(-ENOENT);
++}
++static inline struct clk *devm_of_clk_get_by_name(struct device *dev,
++						  struct device_node *np,
++						  const char *name)
++{
++	return ERR_PTR(-ENOENT);
++}
++#endif
++
+ #endif
+-- 
+2.4.9
