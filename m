@@ -1,68 +1,36 @@
-Return-Path: <Julia.Lawall@lip6.fr>
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: kernel-janitors@vger.kernel.org,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jason Cooper <jason@lakedaemon.net>
-Subject: [PATCH 2/2] clk: tegra: delete unneeded of_node_put
-Date: Fri,  9 Oct 2015 19:47:41 +0200
-Message-Id: <1444412861-2580-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1444412861-2580-1-git-send-email-Julia.Lawall@lip6.fr>
-References: <1444412861-2580-1-git-send-email-Julia.Lawall@lip6.fr>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:59559 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750781AbbJBA0u (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 1 Oct 2015 20:26:50 -0400
+Date: Thu, 1 Oct 2015 17:26:48 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, heikki.krogerus@linux.intel.com,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 5/5] serial: 8250_dw: allow lower reference frequencies
+Message-ID: <20151002002648.GC12338@codeaurora.org>
+References: <1442937252-50281-1-git-send-email-andriy.shevchenko@linux.intel.com>
+ <1442937252-50281-6-git-send-email-andriy.shevchenko@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1442937252-50281-6-git-send-email-andriy.shevchenko@linux.intel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-for_each_child_of_node performs an of_node_put on each iteration, so
-putting an of_node_put before a continue results in a double put.
+On 09/22, Andy Shevchenko wrote:
+> We have couple of standard but rare used baudrates which are not supported by
+> 1,8432MHz reference frequency. Besides that user can potentially ask for any
+> baudrate (via BOTHER flag) and we currently don't fully support that. Since
+> clk-fractional-divider is moved to use rational best approximation for
+> reference frequency we may amend the driver to support whatever user wants.
+> 
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
 
-The semantic match that finds this problem is as follows
-(http://coccinelle.lip6.fr):
+Applied to clk-next
 
-// <smpl>
-@@
-expression root,e;
-local idexpression child;
-iterator name for_each_child_of_node;
-@@
-
- for_each_child_of_node(root, child) {
-   ... when != of_node_get(child)
-*  of_node_put(child);
-   ...
-*  continue;
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/clk/tegra/clk-emc.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
-index 138a94b..e1fe8f3 100644
---- a/drivers/clk/tegra/clk-emc.c
-+++ b/drivers/clk/tegra/clk-emc.c
-@@ -491,10 +491,8 @@ struct clk *tegra_clk_register_emc(void __iomem *base, struct device_node *np,
- 	for_each_child_of_node(np, node) {
- 		err = of_property_read_u32(node, "nvidia,ram-code",
- 					   &node_ram_code);
--		if (err) {
--			of_node_put(node);
-+		if (err)
- 			continue;
--		}
- 
- 		/*
- 		 * Store timings for all ram codes as we cannot read the
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
