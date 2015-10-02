@@ -1,65 +1,79 @@
-Return-Path: <scottwood@freescale.com>
-Message-ID: <1445639975.701.257.camel@freescale.com>
-Subject: Re: [PATCH v3 0/5] clk: qoriq: Move chip-specific knowledge into
- driver
-From: Scott Wood <scottwood@freescale.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar
-	<viresh.kumar@linaro.org>, Russell King <linux@arm.linux.org.uk>,
-	<linux-clk@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <linux-arm-kernel@lists.infradead.org>, Tang
- Yuantian <Yuantian.Tang@freescale.com>, <javier@osg.samsung.com>, Bhupesh
- Sharma <bhupesh.sharma@freescale.com>, Russell King <linux@arm.linux.org.uk>,
-	Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 23 Oct 2015 17:39:35 -0500
-In-Reply-To: <1442723397-26329-1-git-send-email-scottwood@freescale.com>
-References: <1442723397-26329-1-git-send-email-scottwood@freescale.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <1443782220.1714.102.camel@mtksdaap41>
+Subject: Re: [PATCH] soc: mediatek: Fix random hang up issue while kernel
+ init
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Daniel Kurtz <djkurtz@chromium.org>
+CC: Lucas Stach <l.stach@pengutronix.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>,
+	srv_heupstream <srv_heupstream@mediatek.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	Mike Turquette <mturquette@linaro.org>,
+	"Stephen Boyd" <sboyd@codeaurora.org>, <linux-pm@vger.kernel.org>,
+	<rjw@sisk.pl>
+Date: Fri, 2 Oct 2015 18:37:00 +0800
+In-Reply-To: <CAGS+omBQLVGeWrNoD+8L_J0C9DjzkXO_cfph2tQgMGiPBJq2vw@mail.gmail.com>
+References: <1443162717-64831-1-git-send-email-jamesjj.liao@mediatek.com>
+	 <1443169573.3135.9.camel@pengutronix.de> <5607D224.4050801@gmail.com>
+	 <CAGS+omCXMRf4bxWancSJSq2a1pc38TYYY46Os9ASWWCRp95_ig@mail.gmail.com>
+	 <1443604022.3185.17.camel@pengutronix.de>
+	 <1443683750.1714.25.camel@mtksdaap41>
+	 <CAGS+omCpWqtKPKoyjFb=q4BxmfUGGsfvQGEZas8g8VLZKPtKbQ@mail.gmail.com>
+	 <1443691590.1714.73.camel@mtksdaap41>
+	 <CAGS+omCm2pKczooGkMf75HjQL=oF7Ufo6DsRCvvikt0QA1jx-g@mail.gmail.com>
+	 <1443754838.1714.94.camel@mtksdaap41>
+	 <CAGS+omBQLVGeWrNoD+8L_J0C9DjzkXO_cfph2tQgMGiPBJq2vw@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Return-Path: scottwood@freescale.com
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, 2015-09-19 at 23:29 -0500, Scott Wood wrote:
-> The existing device tree bindings are error-prone and inflexible. 
-> Correct the mistake by moving the knowledge into the driver, which has
-> more flexibility in describing the quirks of each chip.  This leaves the
-> device tree to its proper role of identifying a programming interface
-> rather than describing its individual registers.
+HI Daniel,
+
+On Fri, 2015-10-02 at 17:25 +0800, Daniel Kurtz wrote:
+> Actually, I should have proposed adding prepare / unprepare callbacks
+> to mtk_clk_gate_ops in which we prepare_enable/disable_unprepare
+> venc_sel (& mm_sel).
+> This should correctly track all of the clk reference counting needed
+> to access the venc clock control registers.
 > 
-> For more detail, see the commit message of patch 2.
 > 
-> As there are both ARM and PPC patches that depend on this patchset, I'm
-> requesting ACKs from clk and cpufreq in order to put this into a topic
-> branch that both ARM and PPC can pull.
+> However, this would not actually solve the issue that this patch is
+> trying to fix, since nobody would have called the
+> prepare_clk(venc_cke0) before clk_disable_unused_subtree(venc_cke0).
+> Bummer.
+
+Hmm... it's true.
+
+> I think the crux of the original issue is that the mediatek/clk-gate.c
+> is_enabled() callbacks may be called at a point in time when venc_sel
+> is disabled but VENC PD is enabled.
+> So, perhaps an easier, but still a little hacky way out is to keep the
+> clk & PD problems separate, and just check __clk_is_enabled(venc_sel)
+> before reading the venc clk status register.
 > 
-> Scott Wood (5):
->   powerpc/fsl: Move fsl_guts.h out of arch/powerpc
->   clk: qoriq: Move chip-specific knowledge into driver
->   clk: qoriq: Add ls2080a support.
->   clk: Add consumer APIs for discovering possible parent clocks
->   cpufreq: qoriq: Don't look at clock implementation details
+> WDYT?
 
-I've applied the first three patches plus 
-http://patchwork.ozlabs.org/patch/534739/ to the clock branch of 
-scottwood/linux.git to be used as a basis for PPC and ARM device tree patches.
+This may be a way to resolve this issue, but model the prerequisite
+clock of subsystem clocks is not straightforward. And once we model the
+prerequisite clocks, someone may suggest us to enable prerequisite
+clocks before operate subsystem clocks, which may have concerns on
+overhead and complexity.
 
-Note that there is a trivial merge conflict with commit 
-4a7748c3d6419bb8178748 ("clk: Allow drivers to build if COMPILE_TEST is 
-enabled").  Another option is for these patches to go via the clk tree, and 
-the device tree patches will ust go separately.  This would result in 
-intermediate commits where the device tree contains clock information that 
-the clock driver can't handle, but it would be resolved by -rc1 -- and it 
-seems that one of the ARM device tree patches ("dts/ls2080a: Update DTSI to 
-add support of various peripherals") was already merged without waiting for 
-the clock driver patch.  I could still wait until next merge window to rip 
-out the legacy stuff from existing device trees, so it would only affect new 
-functionality.
+> By the way, I'm not really opposed to your current implementation
+> either, I was just helping Matthias & Lucas understand in enough
+> detail that they can help review.
 
-Patch 4 is still waiting for an ack from Russell King, but it appears that 
-patch 5 (which depends on patch 4) can probably wait until the next merge 
-window.  Without those patches, qoriq-cpufreq should still mostly work, as 
-long as the old device trees are used.  Patches 4 and 5 will be needed to 
-make qoriq-cpufreq continue to work with device trees using the new binding.
+I know and many thanks for your suggestion on this patch.
 
--Scott
+
+Best regards,
+
+James
+
