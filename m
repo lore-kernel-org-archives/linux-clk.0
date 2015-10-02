@@ -1,105 +1,140 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v2 10/14] ARM: at91: pm: find and remap the pmc
-Date: Mon, 12 Oct 2015 16:28:47 +0200
-Message-Id: <1444660131-14954-11-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1444660131-14954-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1444660131-14954-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <jonmason@broadcom.com>
+From: Jon Mason <jonmason@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
+	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
+	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
+Subject: [PATCH 01/10] clk: iproc: Add PWRCTRL support
+Date: Fri, 2 Oct 2015 18:57:36 -0400
+Message-ID: <1443826665-17570-2-git-send-email-jonmason@broadcom.com>
+In-Reply-To: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
+References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-To avoid relying on at91_pmc_read(), find the pmc node and remap it
-locally.
+Some iProc SoC clocks use a different way to control clock power, via
+the PWRDWN bit in the PLL control register.  Since the PLL control
+register is used to access the PWRDWN bit, there is no need for the
+pwr_base when this is being used.  A new flag, IPROC_CLK_EMBED_PWRCTRL,
+has been added to identify this usage.  We can use the AON interface to
+write the values to enable/disable PWRDOWN.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Signed-off-by: Jon Mason <jonmason@broadcom.com>
 ---
- arch/arm/mach-at91/pm.c | 32 ++++++++++++++++++++++++++------
- 1 file changed, 26 insertions(+), 6 deletions(-)
+ drivers/clk/bcm/clk-iproc-pll.c | 55 ++++++++++++++++++++++++++++-------------
+ drivers/clk/bcm/clk-iproc.h     |  6 +++++
+ 2 files changed, 44 insertions(+), 17 deletions(-)
 
-diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
-index 5c2b60c5a2a1..1dee29b33ff9 100644
---- a/arch/arm/mach-at91/pm.c
-+++ b/arch/arm/mach-at91/pm.c
-@@ -35,6 +35,8 @@
- #include "generic.h"
- #include "pm.h"
+diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
+index 2dda4e8..e029ab3 100644
+--- a/drivers/clk/bcm/clk-iproc-pll.c
++++ b/drivers/clk/bcm/clk-iproc-pll.c
+@@ -148,14 +148,25 @@ static void __pll_disable(struct iproc_pll *pll)
+ 		writel(val, pll->asiu_base + ctrl->asiu.offset);
+ 	}
  
-+void __iomem *pmc;
-+
- /*
-  * FIXME: this is needed to communicate between the pinctrl driver and
-  * the PM implementation in the machine. Possibly part of the PM
-@@ -85,7 +87,7 @@ static int at91_pm_verify_clocks(void)
- 	unsigned long scsr;
- 	int i;
- 
--	scsr = at91_pmc_read(AT91_PMC_SCSR);
-+	scsr = readl(pmc + AT91_PMC_SCSR);
- 
- 	/* USB must not be using PLLB */
- 	if ((scsr & at91_pm_data.uhp_udp_mask) != 0) {
-@@ -99,8 +101,7 @@ static int at91_pm_verify_clocks(void)
- 
- 		if ((scsr & (AT91_PMC_PCK0 << i)) == 0)
- 			continue;
+-	/* latch input value so core power can be shut down */
+-	val = readl(pll->pwr_base + ctrl->aon.offset);
+-	val |= (1 << ctrl->aon.iso_shift);
+-	writel(val, pll->pwr_base + ctrl->aon.offset);
 -
--		css = at91_pmc_read(AT91_PMC_PCKR(i)) & AT91_PMC_CSS;
-+		css = readl(pmc + AT91_PMC_PCKR(i)) & AT91_PMC_CSS;
- 		if (css != AT91_PMC_CSS_SLOW) {
- 			pr_err("AT91: PM - Suspend-to-RAM with PCK%d src %d\n", i, css);
- 			return 0;
-@@ -143,8 +144,8 @@ static void at91_pm_suspend(suspend_state_t state)
- 	flush_cache_all();
- 	outer_disable();
- 
--	at91_suspend_sram_fn(at91_pmc_base, at91_ramc_base[0],
--				at91_ramc_base[1], pm_data);
-+	at91_suspend_sram_fn(pmc, at91_ramc_base[0],
-+			     at91_ramc_base[1], pm_data);
- 
- 	outer_resume();
- }
-@@ -394,13 +395,32 @@ static void __init at91_pm_sram_init(void)
- 			&at91_pm_suspend_in_sram, at91_pm_suspend_in_sram_sz);
- }
- 
-+static const struct of_device_id atmel_pmc_ids[] = {
-+	{ .compatible = "atmel,at91rm9200-pmc"  },
-+	{ .compatible = "atmel,at91sam9260-pmc" },
-+	{ .compatible = "atmel,at91sam9g45-pmc" },
-+	{ .compatible = "atmel,at91sam9n12-pmc" },
-+	{ .compatible = "atmel,at91sam9x5-pmc" },
-+	{ .compatible = "atmel,sama5d3-pmc" },
-+	{ /* sentinel */ },
-+};
+-	/* power down the core */
+-	val &= ~(bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
+-	writel(val, pll->pwr_base + ctrl->aon.offset);
++	if (ctrl->flags & IPROC_CLK_EMBED_PWRCTRL) {
++		val = readl(pll->pll_base + ctrl->aon.offset);
++		val |= (bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
++		writel(val, pll->pll_base + ctrl->aon.offset);
 +
- static void __init at91_pm_init(void)
- {
--	at91_pm_sram_init();
-+	struct device_node *pmc_np;
- 
- 	if (at91_cpuidle_device.dev.platform_data)
- 		platform_device_register(&at91_cpuidle_device);
- 
-+	pmc_np = of_find_matching_node(NULL, atmel_pmc_ids);
-+	pmc = of_iomap(pmc_np, 0);
-+	if (!pmc) {
-+		pr_info("AT91: PM not supported, PMC not found");
-+		return;
++		if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
++			readl(pll->pll_base + ctrl->aon.offset);
 +	}
 +
-+	at91_pm_sram_init();
++	if (pll->pwr_base) {
++		/* latch input value so core power can be shut down */
++		val = readl(pll->pwr_base + ctrl->aon.offset);
++		val |= (1 << ctrl->aon.iso_shift);
++		writel(val, pll->pwr_base + ctrl->aon.offset);
 +
- 	if (at91_suspend_sram_fn)
- 		suspend_set_ops(&at91_pm_ops);
- 	else
++		/* power down the core */
++		val &= ~(bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
++		writel(val, pll->pwr_base + ctrl->aon.offset);
++	}
+ }
+ 
+ static int __pll_enable(struct iproc_pll *pll)
+@@ -163,11 +174,22 @@ static int __pll_enable(struct iproc_pll *pll)
+ 	const struct iproc_pll_ctrl *ctrl = pll->ctrl;
+ 	u32 val;
+ 
+-	/* power up the PLL and make sure it's not latched */
+-	val = readl(pll->pwr_base + ctrl->aon.offset);
+-	val |= bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift;
+-	val &= ~(1 << ctrl->aon.iso_shift);
+-	writel(val, pll->pwr_base + ctrl->aon.offset);
++	if (ctrl->flags & IPROC_CLK_EMBED_PWRCTRL) {
++		val = readl(pll->pll_base + ctrl->aon.offset);
++		val &= ~(bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
++		writel(val, pll->pll_base + ctrl->aon.offset);
++
++		if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
++			readl(pll->pll_base + ctrl->aon.offset);
++	}
++
++	if (pll->pwr_base) {
++		/* power up the PLL and make sure it's not latched */
++		val = readl(pll->pwr_base + ctrl->aon.offset);
++		val |= bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift;
++		val &= ~(1 << ctrl->aon.iso_shift);
++		writel(val, pll->pwr_base + ctrl->aon.offset);
++	}
+ 
+ 	/* certain PLLs also need to be ungated from the ASIU top level */
+ 	if (ctrl->flags & IPROC_CLK_PLL_ASIU) {
+@@ -610,9 +632,8 @@ void __init iproc_pll_clk_setup(struct device_node *node,
+ 	if (WARN_ON(!pll->pll_base))
+ 		goto err_pll_iomap;
+ 
++	/* Some SoCs do not require the pwr_base, thus failing is not fatal */
+ 	pll->pwr_base = of_iomap(node, 1);
+-	if (WARN_ON(!pll->pwr_base))
+-		goto err_pwr_iomap;
+ 
+ 	/* some PLLs require gating control at the top ASIU level */
+ 	if (pll_ctrl->flags & IPROC_CLK_PLL_ASIU) {
+@@ -695,9 +716,9 @@ err_pll_register:
+ 		iounmap(pll->asiu_base);
+ 
+ err_asiu_iomap:
+-	iounmap(pll->pwr_base);
++	if (pll->pwr_base)
++		iounmap(pll->pwr_base);
+ 
+-err_pwr_iomap:
+ 	iounmap(pll->pll_base);
+ 
+ err_pll_iomap:
+diff --git a/drivers/clk/bcm/clk-iproc.h b/drivers/clk/bcm/clk-iproc.h
+index d834b7a..ff7bfad 100644
+--- a/drivers/clk/bcm/clk-iproc.h
++++ b/drivers/clk/bcm/clk-iproc.h
+@@ -49,6 +49,12 @@
+ #define IPROC_CLK_PLL_NEEDS_SW_CFG BIT(4)
+ 
+ /*
++ * Some PLLs use a different way to control clock power, via the PWRDWN bit in
++ * the PLL control register
++ */
++#define IPROC_CLK_EMBED_PWRCTRL BIT(5)
++
++/*
+  * Parameters for VCO frequency configuration
+  *
+  * VCO frequency =
 -- 
-2.1.4
+1.9.1
