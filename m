@@ -1,53 +1,58 @@
-Return-Path: <B48286@freescale.com>
-From: Zhiqiang Hou <B48286@freescale.com>
-To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-CC: <mark.rutland@arm.com>, <linux@roeck-us.net>, <wsa@the-dreams.de>,
-	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <Mingkai.Hu@freescale.com>,
-	<Shaohui.Xie@freescale.com>, <scottwood@freescale.com>,
-	<bhupesh.sharma@freescale.com>, <Wenbin.Song@freescale.com>,
-	<B48286@freescale.com>
-Subject: [PATCH V4 1/6] i2c: Add i2c support to Freescale Layerscape platforms
-Date: Thu, 15 Oct 2015 20:12:56 +0800
-Message-ID: <1444911181-21696-1-git-send-email-B48286@freescale.com>
-Return-Path: B48286@freescale.com
+Return-Path: <jonmason@broadcom.com>
+From: Jon Mason <jonmason@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
+	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
+	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
+Subject: [PATCH 0/10] clk: iproc: add support for BCM NS, NSP, and NS2 
+Date: Fri, 2 Oct 2015 18:57:35 -0400
+Message-ID: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shaohui Xie <Shaohui.Xie@freescale.com>
+This patch series adds support for the Broadcom Northstar, Northstar
+Plus, and Northstar 2 clocks.  Some slight modifications were necessary
+to clk-iproc-pll to get Northstar and Northstar Plus working, due to
+differences in register layout.  This is the reason why the first patch
+is necessary.  Some more modifications were necessary to clk-iproc-pll
+to get Northstar 2 working, due to differences in register layout (and
+resulting fallout in Cygnus and NSP).  This is the reason why the sixth
+and seventh patches are necessary.  The fifth patch is clean-up to
+prevent accidentally forgetting to adjust for the base write errata
+(which happened a few times, but was caught in internal review).
 
-Modify the I2C_IMX config to support to Layerscape platforms.
+There is a potential merge "race" between the device tree changes and
+the clk changes.  If the device tree changes go in before the clk
+changes, there is a window where there are non-working clk entries in
+the device tree.  So, it makes the most sense for this series to be
+pulled into the clk maintainer's tree solely.  
 
-Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
-Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
-Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
----
-V4: V3 V2
- - No change.
+Also, the Northstar Plus device tree modifications were left out of this
+series due to potential complications with the merging of this series.
+Northstar Plus was recently accepted, and only exists in Florian's tree.
+This would cause merge issues in the clk tree.  So, the NSP device tree
+changes will be submitted at a later date.
 
- drivers/i2c/busses/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks,
+Jon
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index 08b8617..14147ec 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -582,10 +582,10 @@ config I2C_IMG
- 
- config I2C_IMX
- 	tristate "IMX I2C interface"
--	depends on ARCH_MXC
-+	depends on ARCH_MXC || ARCH_LAYERSCAPE
- 	help
- 	  Say Y here if you want to use the IIC bus controller on
--	  the Freescale i.MX/MXC processors.
-+	  the Freescale i.MX/MXC or Layerscape processors.
- 
- 	  This driver can also be built as a module.  If so, the module
- 	  will be called i2c-imx.
--- 
-2.1.0.27.g96db324
+
+ .../bindings/clock/brcm,iproc-clocks.txt           |  78 ++++++
+ arch/arm/boot/dts/bcm5301x.dtsi                    |  67 ++++-
+ arch/arm64/Kconfig.platforms                       |   1 +
+ arch/arm64/boot/dts/broadcom/ns2.dtsi              |  81 ++++++
+ drivers/clk/Makefile                               |   3 +-
+ drivers/clk/bcm/Makefile                           |   3 +
+ drivers/clk/bcm/clk-cygnus.c                       |  17 +-
+ drivers/clk/bcm/clk-iproc-pll.c                    | 183 +++++++------
+ drivers/clk/bcm/clk-iproc.h                        |  22 +-
+ drivers/clk/bcm/clk-ns2.c                          | 290 +++++++++++++++++++++
+ drivers/clk/bcm/clk-nsp.c                          | 143 ++++++++++
+ include/dt-bindings/clock/bcm-ns2.h                |  72 +++++
+ include/dt-bindings/clock/bcm-nsp.h                |  51 ++++
+ 13 files changed, 918 insertions(+), 93 deletions(-)
