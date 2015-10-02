@@ -1,54 +1,79 @@
-Return-Path: <linux@roeck-us.net>
-Subject: Re: [PATCH V3 2/6] watchdog: Add support for Freescale Layerscape
- platforms
-To: Zhiqiang Hou <B48286@freescale.com>,
- linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
- will.deacon@arm.com, linux-i2c@vger.kernel.org,
- linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-clk@vger.kernel.org, mark.rutland@arm.com
-References: <1444822498-16477-1-git-send-email-B48286@freescale.com>
- <1444822498-16477-3-git-send-email-B48286@freescale.com>
-Cc: Mingkai.Hu@freescale.com, Shaohui.Xie@freescale.com,
- scottwood@freescale.com, bhupesh.sharma@freescale.com, leoli@freescale.com,
- wsa@the-dreams.de, wim@iguana.be, corbet@lwn.net, mturquette@baylibre.com,
- sboyd@codeaurora.org, Wenbin.Song@freescale.com
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <561E6169.2000509@roeck-us.net>
-Date: Wed, 14 Oct 2015 07:06:33 -0700
+Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <1444822498-16477-3-git-send-email-B48286@freescale.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+In-Reply-To: <560E3800.1060603@samsung.com>
+References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
+	<CAPDyKFqrkYXsbBJ61yYo0G8za1szARvA=as-5nLTiwGH5pCrEQ@mail.gmail.com>
+	<560DF150.3000906@samsung.com>
+	<3312969.jJ2hfB2JkV@diego>
+	<560E3800.1060603@samsung.com>
+Date: Fri, 2 Oct 2015 10:43:55 +0200
+Message-ID: <CAPDyKFro3Uk3+Jzz3Y0WBKZvTs5LjahT7KgRbh_nWWVBG7V3=w@mail.gmail.com>
+Subject: Re: [PATCH v2 3/8] mmc: core: Add mmc_regulator_set_vqmmc()
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
+	linux-mmc <linux-mmc@vger.kernel.org>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Doug Anderson <dianders@chromium.org>,
+	Alexandru Stan <amstan@chromium.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/14/2015 04:34 AM, Zhiqiang Hou wrote:
-> From: Shaohui Xie <Shaohui.Xie@freescale.com>
+On 2 October 2015 at 09:53, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> On 10/02/2015 04:06 PM, Heiko St=C3=BCbner wrote:
+>> Am Freitag, 2. Oktober 2015, 11:52:00 schrieb Jaehoon Chung:
+>>> On 10/02/2015 06:05 AM, Ulf Hansson wrote:
+>>>> On 1 October 2015 at 19:35, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>>>>> On 10/01, Heiko St=C3=BCbner wrote:
+>>>>>> Am Donnerstag, 1. Oktober 2015, 11:54:24 schrieb Ulf Hansson:
+>>>>>>> On 30 September 2015 at 16:55, Heiko St=C3=BCbner <heiko@sntech.de>=
+ wrote:
+>>>>>>>> Am Mittwoch, 30. September 2015, 16:42:05 schrieb Ulf Hansson:
+>>>>>>>>> On 30 September 2015 at 16:07, Heiko Stuebner <heiko@sntech.de>
+>> wrote:
+>>>>>>>> The clock changes of course only touch internals of the phase-cloc=
+ks,
+>>>>>>>> so
+>>>>>>>> should have no problem going through another tree.
+>>>>>>>
+>>>>>>> What happens if I take mmc and dt changes, wouldn't I need the cloc=
+k
+>>>>>>> patches as well?
+>>>>>>
+>>>>>> The API stays of course the same, only the degree to settings
+>>>>>> translation gets optimized, so I guess in the worst case you would g=
+et
+>>>>>> no good phase and thus fall back to non-highspeed modes - but the
+>>>>>> system would stay running.
+>>>>>>
+>>>>>> But of course, if the clock maintainers could Ack the two clock patc=
+hes
+>>>>>> and
+>>>>>> everything would stay together that would work even better :-)
+>>>>>
+>>>>> If Ulf doesn't want to take them we can apply them to clk tree.
+>>>>> Otherwise, you can have my acked-by on the clk patches.
+>>>>
+>>>> I don't mind picking up the clock patches. So I consider this as an
+>>>> ack for both patch 1 and patch2, thanks.
+>>>>
+>>>> Now, let's give Jaehoon some time to review the dw_mmc parts.
+>>>
+>>> I will check other patches on today, if it's ok, i will apply at my
+>>> repository. Thanks for giving time! :)
+>>
+>> I think Ulf wanted to apply the whole series via the mmc tree directly, =
+but I
+>> guess that is between you two to decide ;-)
 >
-> Modify watchdog/Kconfig file to support Layerscape platforms.
->
-> Signed-off-by: Shaohui Xie <Shaohui.Xie@freescale.com>
-> Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
-> Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+> If it will get Stephen's acked-by, i will pick up all after checked the d=
+wmmc patches. how about?
 
-Acked-by: Guenter Roeck <linux@roeck-us.net>
+Stephen already acked the clock patches from this thread.
 
-> ---
-> V3:
->   - No change.
->
->   drivers/watchdog/Kconfig | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-> index 79e1aa1..448dbaf 100644
-> --- a/drivers/watchdog/Kconfig
-> +++ b/drivers/watchdog/Kconfig
-> @@ -446,7 +446,7 @@ config MAX63XX_WATCHDOG
->
->   config IMX2_WDT
->   	tristate "IMX2+ Watchdog"
-> -	depends on ARCH_MXC
-> +	depends on ARCH_MXC || ARCH_LAYERSCAPE
->   	select REGMAP_MMIO
->   	select WATCHDOG_CORE
->   	help
->
+Perhaps this time, it's easier if you ack the dw_mmc patches and I can
+pick up the hole series? Does that work for you?
+
+Kind regards
+Uffe
