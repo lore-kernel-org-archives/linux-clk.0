@@ -1,33 +1,45 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 15 Oct 2015 12:53:16 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Scott Wood <scottwood@freescale.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	Tang Yuantian <Yuantian.Tang@freescale.com>
-Subject: Re: [PATCH v3 3/5] clk: qoriq: Add ls2080a support.
-Message-ID: <20151015195316.GS4558@codeaurora.org>
-References: <1442723397-26329-1-git-send-email-scottwood@freescale.com>
- <1442723397-26329-4-git-send-email-scottwood@freescale.com>
+Return-Path: <yingjoe.chen@mediatek.com>
+Message-ID: <1443798783.24788.1.camel@mtksdaap41>
+Subject: Re: [PATCH v4 0/3] add GPT timer support for mt8173
+From: Yingjoe Chen <yingjoe.chen@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Sudeep Holla
+	<sudeep.holla@arm.com>, Mark Rutland <mark.rutland@arm.com>
+CC: Rob Herring <robh+dt@kernel.org>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
+	James Liao <jamesjj.liao@mediatek.com>, <devicetree@vger.kernel.org>, "Arnd
+ Bergmann" <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	"Sascha Hauer" <kernel@pengutronix.de>, Olof Johansson <olof@lixom.net>,
+	<srv_heupstream@mediatek.com>, <linux-arm-kernel@lists.infradead.org>,
+	"Daniel Kurtz" <djkurtz@chromium.org>, <linux-clk@vger.kernel.org>,
+	<erin.lo@mediatek.com>
+Date: Fri, 2 Oct 2015 23:13:03 +0800
+In-Reply-To: <1443798319-45744-1-git-send-email-yingjoe.chen@mediatek.com>
+References: <1443798319-45744-1-git-send-email-yingjoe.chen@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1442723397-26329-4-git-send-email-scottwood@freescale.com>
+Return-Path: yingjoe.chen@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/19, Scott Wood wrote:
-> LS2080A is the first implementation of the chassis 3 clockgen, which
-> has a different register layout than previous chips.  It is also little
-> endian, unlike previous chips.
+On Fri, 2015-10-02 at 23:05 +0800, Yingjoe Chen wrote:
+> This is based on v4.3-rc1 + clockevents-4.4[1] and James's mediatek-clk
+> tree[2].
 > 
-> Signed-off-by: Scott Wood <scottwood@freescale.com>
-> ---
+> Changes compare to previous version[3]:
+> - Add more MediaTek SoC to mtk-timer binding
+> - Update commit message to better describe the purpose.
+> 
+> Changes compare to v2[4]:
+> - the first two mtk_timer related changes are removed because they are
+> replaced/accepted in clockevents tree.
+> - Remove 'add 13mhz clock for MT8173' because it is accepted in
+> mediatek-clk tree.
+> - Kconfig.platforms path change.
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Hi Sudeep, Mark,
+
+I just post a new version of this patch. Sorry I forgot to CC you.
+
+Joe.C
