@@ -1,64 +1,62 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-Date: Thu, 15 Oct 2015 10:22:43 +0200
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Gregory CLEMENT
- <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>,
- Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth
- <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH 14/26] clk: mvebu: Convert to clk_hw based provider APIs
-Message-ID: <20151015102243.79d9e5ce@free-electrons.com>
-In-Reply-To: <20151014182138.GD26883@codeaurora.org>
-References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
-	<1438362246-6664-15-git-send-email-sboyd@codeaurora.org>
-	<20151014170922.3027008a@free-electrons.com>
-	<20151014182138.GD26883@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <jh80.chung@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=utf-8
+Message-id: <560DF150.3000906@samsung.com>
+Date: Fri, 02 Oct 2015 11:52:00 +0900
+From: Jaehoon Chung <jh80.chung@samsung.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>,
+ Michael Turquette <mturquette@baylibre.com>,
+ linux-mmc <linux-mmc@vger.kernel.org>, linux-clk@vger.kernel.org,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+ Doug Anderson <dianders@chromium.org>, Alexandru Stan <amstan@chromium.org>
+Subject: Re: [PATCH v2 3/8] mmc: core: Add mmc_regulator_set_vqmmc()
+References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
+ <17200614.QxCe8zAb7I@diego>
+ <CAPDyKFpis8XnvrppHq7q_7DQeN2UiEpykNTJ=1iJJ9AGOHTW6Q@mail.gmail.com>
+ <2695161.Z1IhqPE0bd@diego> <20151001173554.GB19319@codeaurora.org>
+ <CAPDyKFqrkYXsbBJ61yYo0G8za1szARvA=as-5nLTiwGH5pCrEQ@mail.gmail.com>
+In-reply-to: 
+ <CAPDyKFqrkYXsbBJ61yYo0G8za1szARvA=as-5nLTiwGH5pCrEQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Stephen,
-
-On Wed, 14 Oct 2015 11:21:38 -0700, Stephen Boyd wrote:
-
-> How about this patch?
+On 10/02/2015 06:05 AM, Ulf Hansson wrote:
+> On 1 October 2015 at 19:35, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> On 10/01, Heiko St=C3=BCbner wrote:
+>>> Am Donnerstag, 1. Oktober 2015, 11:54:24 schrieb Ulf Hansson:
+>>>> On 30 September 2015 at 16:55, Heiko St=C3=BCbner <heiko@sntech.de> wrote:
+>>>>> Am Mittwoch, 30. September 2015, 16:42:05 schrieb Ulf Hansson:
+>>>>>> On 30 September 2015 at 16:07, Heiko Stuebner <heiko@sntech.de> wrote:
+>>>>> The clock changes of course only touch internals of the phase-clocks, so
+>>>>> should have no problem going through another tree.
+>>>>
+>>>> What happens if I take mmc and dt changes, wouldn't I need the clock
+>>>> patches as well=3F
+>>>
+>>> The API stays of course the same, only the degree to settings translation gets
+>>> optimized, so I guess in the worst case you would get no good phase and thus
+>>> fall back to non-highspeed modes - but the system would stay running.
+>>>
+>>> But of course, if the clock maintainers could Ack the two clock patches and
+>>> everything would stay together that would work even better :-)
+>>>
+>>
+>> If Ulf doesn't want to take them we can apply them to clk tree.
+>> Otherwise, you can have my acked-by on the clk patches.
 > 
-> ---8<----
-> diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
-> index 5837eb8a212f..85da8b983256 100644
-> --- a/drivers/clk/mvebu/clk-cpu.c
-> +++ b/drivers/clk/mvebu/clk-cpu.c
-> @@ -197,6 +197,7 @@ static void __init of_cpu_clk_setup(struct device_node *node)
->  	for_each_node_by_type(dn, "cpu") {
->  		struct clk_init_data init;
->  		struct clk *clk;
-> +		struct clk *parent_clk;
->  		char *clk_name = kzalloc(5, GFP_KERNEL);
->  		int cpu, err;
->  
-> @@ -208,8 +209,9 @@ static void __init of_cpu_clk_setup(struct device_node *node)
->  			goto bail_out;
->  
->  		sprintf(clk_name, "cpu%d", cpu);
-> +		parent_clk = of_clk_get(node, 0);
->  
-> -		cpuclk[cpu].parent_name = of_clk_get_parent_name(node, 0);
-> +		cpuclk[cpu].parent_name = __clk_get_name(parent_clk);
->  		cpuclk[cpu].clk_name = clk_name;
->  		cpuclk[cpu].cpu = cpu;
->  		cpuclk[cpu].reg_base = clock_complex_base;
+> I don't mind picking up the clock patches. So I consider this as an
+> ack for both patch 1 and patch2, thanks.
+> 
+> Now, let's give Jaehoon some time to review the dw_mmc parts.
 
-Applied on top of 4.3-rc5, this patch fixes the problem for me, without
-any change to the Device Tree files.
+I will check other patches on today, if it's ok, i will apply at my repository.
+Thanks for giving time! :)
 
-It's probably the easiest option for 4.3. Do you want me to submit a
-patch, or will you apply it directly to your clk tree?
+Best Regards,
+Jaehoon Chung
 
-Thanks!
-
-Thomas
--- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+> 
+> Kind regards
+> Uffe
+> 
