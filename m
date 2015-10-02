@@ -1,40 +1,67 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 16 Oct 2015 16:41:03 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	mturquette@baylibre.com
-Subject: [GIT PULL] clk: fixes for 4.3-rc6
-Message-ID: <20151016234103.GF10182@codeaurora.org>
+Return-Path: <jonmason@broadcom.com>
+From: Jon Mason <jonmason@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
+	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
+	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
+Subject: [PATCH 03/10] clk: iproc: define Broadcom NSP iProc clock binding
+Date: Fri, 2 Oct 2015 18:57:38 -0400
+Message-ID: <1443826665-17570-4-git-send-email-jonmason@broadcom.com>
+In-Reply-To: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
+References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The following changes since commit 9f30a04d768f64280dc0c40b730746e82f298d88:
+Document the device tree bindings for Broadcom Northstar Plus
+architecture based clock controller
 
-  Merge branch 'for-4.3-rc/ti-clk-fixes' of https://github.com/t-kristo/linux-pm into clk-fixes (2015-10-02 11:22:23 -0700)
+Signed-off-by: Jon Mason <jonmason@broadcom.com>
+---
+ .../bindings/clock/brcm,iproc-clocks.txt           | 30 ++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to e79b202c632f24f49f2eb9459b88b5fd9e332263:
-
-  Partially revert "clk: mvebu: Convert to clk_hw based provider APIs" (2015-10-14 11:28:17 -0700)
-
-----------------------------------------------------------------
-Just one revert for Armada XP devices. The conversion to
-of_clk_get_parent_name() wasn't a direct translation, so we
-revert back to of_clk_get() + __clk_get_name(). We could make
-of_clk_get_parent_name() more robust, but that may have unintended
-side-effects, so we'll do that in the next version.
-
-----------------------------------------------------------------
-Stephen Boyd (1):
-      Partially revert "clk: mvebu: Convert to clk_hw based provider APIs"
-
- drivers/clk/mvebu/clk-cpu.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+index da8d9bb..b3c3e9d 100644
+--- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+@@ -130,3 +130,33 @@ These clock IDs are defined in:
+     ch3_unused mipipll          4       BCM_CYGNUS_MIPIPLL_CH3_UNUSED
+     ch4_unused mipipll          5       BCM_CYGNUS_MIPIPLL_CH4_UNUSED
+     ch5_unused mipipll          6       BCM_CYGNUS_MIPIPLL_CH5_UNUSED
++
++Northstar and Northstar Plus
++------
++PLL and leaf clock compatible strings for Northstar and Northstar Plus are:
++ "brcm,nsp-armpll"
++ "brcm,nsp-genpll"
++ "brcm,nsp-lcpll0"
++
++The following table defines the set of PLL/clock index and ID for Northstar and
++Northstar Plus.  These clock IDs are defined in:
++    "include/dt-bindings/clock/bcm-nsp.h"
++
++    Clock	Source		Index	ID
++    ---		-----		-----	---------
++    crystal	N/A		N/A	N/A
++
++    armpll	crystal		N/A	N/A
++
++    genpll	crystal		0	BCM_NSP_GENPLL
++    phy		genpll		1	BCM_NSP_GENPLL_PHY_CLK
++    ethernetclk	genpll		2	BCM_NSP_GENPLL_ENET_SW_CLK
++    usbclk	genpll		3	BCM_NSP_GENPLL_USB_PHY_REF_CLK
++    iprocfast	genpll		4	BCM_NSP_GENPLL_IPROCFAST_CLK
++    sata1	genpll		5	BCM_NSP_GENPLL_SATA1_CLK
++    sata2	genpll		6	BCM_NSP_GENPLL_SATA2_CLK
++
++    lcpll0	crystal		0	BCM_NSP_LCPLL0
++    pcie_phy	lcpll0		1	BCM_NSP_LCPLL0_PCIE_PHY_REF_CLK
++    sdio	lcpll0		2	BCM_NSP_LCPLL0_SDIO_CLK
++    ddr_phy	lcpll0		3	BCM_NSP_LCPLL0_DDR_PHY_CLK
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
