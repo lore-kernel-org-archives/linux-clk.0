@@ -1,24 +1,40 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 16 Oct 2015 11:55:13 -0700
+Date: Thu, 1 Oct 2015 17:15:39 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk@vger.kernel.org, linux-sh@vger.kernel.org
-Subject: Re: [PATCH] clk: shmobile: mstp: Drop bogus closing parenthesis in
- error message
-Message-ID: <20151016185513.GF23912@codeaurora.org>
-References: <1445008707-27922-1-git-send-email-geert+renesas@glider.be>
+To: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: linux-kernel@lists.codethink.co.uk, stable@vger.kernel.org,
+	mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-omap@vger.kernel.org, t-kristo@ti.com
+Subject: Re: [PATCH v2] clk: ti: fix dual-registration of uart4_ick
+Message-ID: <20151002001539.GA12338@codeaurora.org>
+References: <1443535268-22586-1-git-send-email-ben.dooks@codethink.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1445008707-27922-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1443535268-22586-1-git-send-email-ben.dooks@codethink.co.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/16, Geert Uytterhoeven wrote:
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+On 09/29, Ben Dooks wrote:
+> On the OMAP AM3517 platform the uart4_ick gets registered
+> twice, causing any power managment to /dev/ttyO3 to fail
+> when trying to wake the device up.
+> 
+> This solves the following oops:
+> 
+> [] Unhandled fault: external abort on non-linefetch (0x1028) at 0xfa09e008
+> [] PC is at serial_omap_pm+0x48/0x15c
+> [] LR is at _raw_spin_unlock_irqrestore+0x30/0x5c
+> 
+> Cc: stable@vger.kernel.org
+> Cc: mturquette@baylibre.com
+> Cc: sboyd@codeaurora.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-omap@vger.kernel.org
+> Cc: t-kristo@ti.com
+> Cc: linux-kernel@lists.codethink.co.uk
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 
-Applied to clk-next
+Which patch broke this? Adding a Fixes: line will help us figure
+out where to backport this.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
