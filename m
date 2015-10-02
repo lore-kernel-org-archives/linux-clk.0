@@ -1,61 +1,45 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 19/19] ARM: sun5i: chip: Enable the TV Encoder
-Date: Fri, 30 Oct 2015 15:21:05 +0100
-Message-Id: <1446214865-3972-20-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Message-ID: <1443745434.5336.184.camel@freescale.com>
+Subject: Re: [RFC PATCH 0/8] clk: qoriq: Move chip-specific knowledge into
+ driver
+From: Scott Wood <scottwood@freescale.com>
+To: Michael Turquette <mturquette@linaro.org>
+CC: Tang Yuantian <Yuantian.Tang@freescale.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Liberman Igal-B31950 <Igal.Liberman@freescale.com>,
+	Bucur Madalin-Cristian-B32716 <madalin.bucur@freescale.com>,
+	<linux-clk@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<devicetree@vger.kernel.org>
+Date: Thu, 1 Oct 2015 19:23:54 -0500
+In-Reply-To: <20150811182535.31346.52965@quantum>
+References: <1434682158-7243-1-git-send-email-scottwood@freescale.com>
+	 <20150811182535.31346.52965@quantum>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The TV encoder is used to drive VGA and composite display.
+On Tue, 2015-08-11 at 11:25 -0700, Michael Turquette wrote:
+> Hi Scott,
+> 
+> Quoting Scott Wood (2015-06-18 19:49:10)
+> > The existing device tree bindings are error-prone and inflexible. 
+> > Correct the mistake by moving the knowledge into the driver, which
+> > has more flexibility in describing the quirks of each chip.  This leaves
+> > the device tree to its proper role of identifying a programming interface
+> > rather than describing its individual registers.
+> 
+> Sorry for not responding to this one sooner. Fell through the cracks.
+> 
+> All of the changes to drives/clk/clk-qoriq.c look great to me. I assume
+> you need to keep all of these patches together and want to the take
+> through the freescale tree? If so feel free to add,
+> 
+> Acked-by: Michael Turquette <mturquette@baylibre.com>
 
-Enable it on the CHIP
+Is the ack still valid for the v3 patchset?
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- arch/arm/boot/dts/sun5i-r8.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+-Scott
 
-diff --git a/arch/arm/boot/dts/sun5i-r8.dtsi b/arch/arm/boot/dts/sun5i-r8.dtsi
-index d69df3a73cbf..e39c903da864 100644
---- a/arch/arm/boot/dts/sun5i-r8.dtsi
-+++ b/arch/arm/boot/dts/sun5i-r8.dtsi
-@@ -86,4 +86,16 @@
- 					     "ahb_mali400";
- 		};
- 	};
-+
-+	soc@01c00000 {
-+		tve: encoder@01c0a000 {
-+			compatible = "allwinner,sun4i-a10-tv-encoder";
-+			reg = <0x01c0a000 0x1000>;
-+			clocks = <&ahb_gates 34>;
-+		};
-+	};
-+};
-+
-+&de {
-+	allwinner,tv-encoder = <&tve>;
- };
--- 
-2.6.2
