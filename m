@@ -1,73 +1,64 @@
-Return-Path: <sbranden@broadcom.com>
-Subject: Re: [PATCH v2 7/7] clk: ns2: add clock support for Broadcom Northstar
- 2 SoC
-To: Arnd Bergmann <arnd@arndb.de>, Jon Mason <jonmason@broadcom.com>
-References: <1444770485-11210-1-git-send-email-jonmason@broadcom.com>
- <5280890.6npshDUNFZ@wuerfel> <20151013220450.GO12512@broadcom.com>
- <6427519.eIBEvCNlle@wuerfel>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>, "Hauke
- Mehrtens" <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<bcm-kernel-feedback-list@broadcom.com>
-From: Scott Branden <sbranden@broadcom.com>
-Message-ID: <561EB10B.40502@broadcom.com>
-Date: Wed, 14 Oct 2015 12:46:19 -0700
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, linux-mmc <linux-mmc@vger.kernel.org>, linux-clk@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Doug Anderson <dianders@chromium.org>, Alexandru Stan <amstan@chromium.org>
+Subject: Re: [PATCH v2 3/8] mmc: core: Add mmc_regulator_set_vqmmc()
+Date: Fri, 02 Oct 2015 09:06:48 +0200
+Message-ID: <3312969.jJ2hfB2JkV@diego>
+In-Reply-To: <560DF150.3000906@samsung.com>
+References: <1443622064-14362-1-git-send-email-heiko@sntech.de> <CAPDyKFqrkYXsbBJ61yYo0G8za1szARvA=as-5nLTiwGH5pCrEQ@mail.gmail.com> <560DF150.3000906@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <6427519.eIBEvCNlle@wuerfel>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Return-Path: sbranden@broadcom.com
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 15-10-13 03:23 PM, Arnd Bergmann wrote:
-> On Tuesday 13 October 2015 18:04:50 Jon Mason wrote:
->>
->>> On a related note, I'm seeing problems when CONFIG_CYGNUS is set but
->>> CONFIG_COMMON_CLK_IPROC is disabled, as that currently leads to a link
->>> failure.
->>
->> I can double check, but it should be on by default when Cygnus is
->> enabled.  If you send me the error, I'll be happy to fix it.
->
->
-> The problem is not that it's off by default but that it can be
-> disabled, so it breaks some 'make randconfig' builds with this
-> message:
->
-> drivers/built-in.o: In function `cygnus_armpll_init':
-> :(.init.text+0x1d290): undefined reference to `iproc_armpll_setup'
-> drivers/built-in.o: In function `cygnus_genpll_clk_init':
-> :(.init.text+0x1d2c4): undefined reference to `iproc_pll_clk_setup'
-> drivers/built-in.o: In function `cygnus_lcpll0_clk_init':
-> :(.init.text+0x1d304): undefined reference to `iproc_pll_clk_setup'
-> drivers/built-in.o: In function `cygnus_mipipll_clk_init':
-> :(.init.text+0x1d344): undefined reference to `iproc_pll_clk_setup'
-> drivers/built-in.o: In function `cygnus_asiu_init':
-> :(.init.text+0x1d370): undefined reference to `iproc_asiu_setup'
->
-> My patch fixes it by always selecting COMMON_CLK_IPROC from
-> ARCH_BCM_CYGNUS. I wasn't sure whether you want COMMON_CLK_IPROC
-> to still be user-selectable, so I left that in place. Normally
-> I'd expect it to be a silent option though, that just gets
-> implicitly enabled whenever a platform that needs it is built
-> into the kernel.
-COMMON_CLK_IPROC can be a silent option and selected as Arnd has done below.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Scott Branden <sbranden@broadcom.com>
+Am Freitag, 2. Oktober 2015, 11:52:00 schrieb Jaehoon Chung:
+> On 10/02/2015 06:05 AM, Ulf Hansson wrote:
+> > On 1 October 2015 at 19:35, Stephen Boyd <sboyd@codeaurora.org> wro=
+te:
+> >> On 10/01, Heiko St=FCbner wrote:
+> >>> Am Donnerstag, 1. Oktober 2015, 11:54:24 schrieb Ulf Hansson:
+> >>>> On 30 September 2015 at 16:55, Heiko St=FCbner <heiko@sntech.de>=
+ wrote:
+> >>>>> Am Mittwoch, 30. September 2015, 16:42:05 schrieb Ulf Hansson:
+> >>>>>> On 30 September 2015 at 16:07, Heiko Stuebner <heiko@sntech.de=
+>=20
+wrote:
+> >>>>> The clock changes of course only touch internals of the phase-c=
+locks,
+> >>>>> so
+> >>>>> should have no problem going through another tree.
+> >>>>=20
+> >>>> What happens if I take mmc and dt changes, wouldn't I need the c=
+lock
+> >>>> patches as well?
+> >>>=20
+> >>> The API stays of course the same, only the degree to settings
+> >>> translation gets optimized, so I guess in the worst case you woul=
+d get
+> >>> no good phase and thus fall back to non-highspeed modes - but the=
 
->
-> diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
-> index 1319c3c14327..35234e563cd8 100644
-> --- a/arch/arm/mach-bcm/Kconfig
-> +++ b/arch/arm/mach-bcm/Kconfig
-> @@ -29,6 +29,7 @@ config ARCH_BCM_IPROC
->   config ARCH_BCM_CYGNUS
->   	bool "Broadcom Cygnus Support" if ARCH_MULTI_V7
->   	select ARCH_BCM_IPROC
-> +	select COMMON_CLK_IPROC
->   	help
->   	  Enable support for the Cygnus family,
->   	  which includes the following variants:
->
+> >>> system would stay running.
+> >>>=20
+> >>> But of course, if the clock maintainers could Ack the two clock p=
+atches
+> >>> and
+> >>> everything would stay together that would work even better :-)
+> >>=20
+> >> If Ulf doesn't want to take them we can apply them to clk tree.
+> >> Otherwise, you can have my acked-by on the clk patches.
+> >=20
+> > I don't mind picking up the clock patches. So I consider this as an=
+
+> > ack for both patch 1 and patch2, thanks.
+> >=20
+> > Now, let's give Jaehoon some time to review the dw_mmc parts.
+>=20
+> I will check other patches on today, if it's ok, i will apply at my
+> repository. Thanks for giving time! :)
+
+I think Ulf wanted to apply the whole series via the mmc tree directly,=
+ but I=20
+guess that is between you two to decide ;-)
+
+
+Heiko
