@@ -1,46 +1,45 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: bcm-kernel-feedback-list@broadcom.com,
-	devicetree@vger.kernel.org,
-	jonmason@broadcom.com,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	linux@arm.linux.org.uk,
-	sbranden@broadcom.com,
-	rjui@broadcom.com,
-	Florian Fainelli <f.fainelli@gmail.com>
-Subject: [PATCH v2 1/3] clk: iproc: Extend binding to cover BCM63138
-Date: Mon, 26 Oct 2015 20:53:15 -0700
-Message-Id: <1445917997-3629-2-git-send-email-f.fainelli@gmail.com>
-In-Reply-To: <1445917997-3629-1-git-send-email-f.fainelli@gmail.com>
-References: <1445917997-3629-1-git-send-email-f.fainelli@gmail.com>
+Return-Path: <scottwood@freescale.com>
+Message-ID: <1443745589.5336.185.camel@freescale.com>
+Subject: Re: [RFC PATCH 0/8] clk: qoriq: Move chip-specific knowledge into
+ driver
+From: Scott Wood <scottwood@freescale.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: Tang Yuantian <Yuantian.Tang@freescale.com>, "Rafael J. Wysocki"
+	<rjw@rjwysocki.net>, Liberman Igal-B31950 <Igal.Liberman@freescale.com>,
+	Bucur Madalin-Cristian-B32716 <madalin.bucur@freescale.com>,
+	<linux-clk@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <linux-arm-kernel@lists.infradead.org>,
+	<devicetree@vger.kernel.org>
+Date: Thu, 1 Oct 2015 19:26:29 -0500
+In-Reply-To: <20150811182535.31346.52965@quantum>
+References: <1434682158-7243-1-git-send-email-scottwood@freescale.com>
+	 <20150811182535.31346.52965@quantum>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Return-Path: scottwood@freescale.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Broadcom BCM63138 DSL SoCs have the same ARMPLL clocking infrastructure
-as the Cygnus and iProc chips, add a dedicated compatible string and
-document that the ARMPLL node is a valid node for this chip.
+[Resending to updated e-mail address]
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
-No changes in v2
+On Tue, 2015-08-11 at 11:25 -0700, Michael Turquette wrote:
+> Hi Scott,
+> 
+> Quoting Scott Wood (2015-06-18 19:49:10)
+> > The existing device tree bindings are error-prone and inflexible. 
+> > Correct the mistake by moving the knowledge into the driver, which
+> > has more flexibility in describing the quirks of each chip.  This leaves
+> > the device tree to its proper role of identifying a programming interface
+> > rather than describing its individual registers.
+> 
+> Sorry for not responding to this one sooner. Fell through the cracks.
+> 
+> All of the changes to drives/clk/clk-qoriq.c look great to me. I assume
+> you need to keep all of these patches together and want to the take
+> through the freescale tree? If so feel free to add,
+> 
+> Acked-by: Michael Turquette <mturquette@baylibre.com>
 
- Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt | 5 +++++
- 1 file changed, 5 insertions(+)
+Is the ack still valid for the v3 patchset?
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-index ede65a55e21b..0b35e71b39e8 100644
---- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-@@ -208,3 +208,8 @@ These clock IDs are defined in:
-     ch3_unused	lcpll_ports	4	BCM_NS2_LCPLL_PORTS_CH3_UNUSED
-     ch4_unused	lcpll_ports	5	BCM_NS2_LCPLL_PORTS_CH4_UNUSED
-     ch5_unused	lcpll_ports	6	BCM_NS2_LCPLL_PORTS_CH5_UNUSED
-+
-+BCM63138
-+--------
-+PLL and leaf clock compatible strings for BCM63138 are:
-+    "brcm,bcm63138-armpll"
--- 
-2.1.0
+-Scott
