@@ -1,88 +1,93 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Sun, 25 Oct 2015 07:06:48 +0900
-From: Mark Brown <broonie@kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Tim Bird <tim.bird@sonymobile.com>,
-	"frowand.list@gmail.com" <frowand.list@gmail.com>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>,
-	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	Linux PWM List <linux-pwm@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-Message-ID: <20151024220648.GR29919@sirena.org.uk>
-References: <20151018192931.GY14956@sirena.org.uk>
- <562A5602.7000208@sonymobile.com>
- <CAL_JsqLNSM=+j2r9HPcbSzsZrgnGEY3=kv21EXxisKwP5+57ag@mail.gmail.com>
- <24100858.2KIS8Y2npV@vostro.rjw.lan>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 1 Oct 2015 17:19:05 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Eric Anholt <eric@anholt.net>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/3] clk: bcm2835: Add a driver for the auxiliary
+ peripheral clock gates.
+Message-ID: <20151002001905.GB12338@codeaurora.org>
+References: <1441923750-19404-1-git-send-email-eric@anholt.net>
+ <1441923750-19404-3-git-send-email-eric@anholt.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="FNX2SHge3qdlDajY"
-In-Reply-To: <24100858.2KIS8Y2npV@vostro.rjw.lan>
-Subject: Re: [GIT PULL] On-demand device probing
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1441923750-19404-3-git-send-email-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 09/10, Eric Anholt wrote:
+> diff --git a/drivers/clk/bcm/clk-bcm2835-aux.c b/drivers/clk/bcm/clk-bcm2835-aux.c
+> new file mode 100644
+> index 0000000..1efa6fb
+> --- /dev/null
+> +++ b/drivers/clk/bcm/clk-bcm2835-aux.c
+> @@ -0,0 +1,80 @@
+> +/*
+> + * Copyright (C) 2015 Broadcom
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/clkdev.h>
 
---FNX2SHge3qdlDajY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Is this include used?
 
-On Sat, Oct 24, 2015 at 04:17:12PM +0200, Rafael J. Wysocki wrote:
+> +#include <linux/clk/bcm2835.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/platform_device.h>
+> +#include <dt-bindings/clock/bcm2835-aux.h>
+> +
+> +static int bcm2835_aux_clk_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct clk_onecell_data *onecell;
+> +	const char *parent;
+> +	struct clk *parent_clk;
+> +	void __iomem *reg;
+> +
+> +	parent_clk = of_clk_get(dev->of_node, 0);
+> +	if (IS_ERR(parent_clk))
+> +		return PTR_ERR(parent_clk);
 
-> Well, I'm not quite sure why exactly everyone is so focused on probing here.
+We have a device, any reason we can't use clk_get() directly?
 
-Probe deferral is really noisy even if it's working fine on a given
-system so it's constantly being highlighted to people in a way that
-other issues aren't if you're not directly having problems.
+> +	parent = __clk_get_name(parent_clk);
+> +
+> +	reg = of_iomap(dev->of_node, 0);
 
-There's also the understanding people had that the order things get
-bound changes the ordering for some of the other cases (perhaps it's a
-good idea to do that, it seems likely to be sensible?).
+We have a platform device here, why aren't we using platform
+device APIs like platform_get_resource() and
+devm_ioremap_resource()?
 
+> +	if (!reg)
+> +		return -ENODEV;
+> +
+> +	onecell = kmalloc(sizeof(*onecell), GFP_KERNEL);
+> +	if (!onecell)
+> +		return -ENOMEM;
+> +	onecell->clk_num = BCM2835_AUX_CLOCK_COUNT;
+> +	onecell->clks = kzalloc(sizeof(*onecell->clks) *
 
---FNX2SHge3qdlDajY
-Content-Type: application/pgp-signature; name="signature.asc"
+kcalloc?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+> +				BCM2835_AUX_CLOCK_COUNT, GFP_KERNEL);
+> +	if (!onecell->clks)
+> +		return -ENOMEM;
+> +
 
-iQEcBAEBCAAGBQJWLAD1AAoJECTWi3JdVIfQn9QH/1ZQrvI10PtpWUQHu6GzOxZK
-B1o63z5QhirS2YbZxYLH6hso0K0/4eVmY0VS35L/DM3hRePI1vFZHLKCFH3/jOJX
-AHnTwLpWu9w/iJ3yP7qJuInLq9IYA6Tj32SgYx98IsrN8JhUAFVvn/KM7mJK2jD3
-PdfIDQF5b6ZduAktIUkzKMaYrrxvbRarut+DadjTwJc2so5DvFuIBCBdruGcOOax
-bHfI+PL2ALE+IXn0z7MSioeBvszUB4paMpz7goBvu4OqdOUBxdGz7l0v1BlwI8SL
-X27RYEK77ZN9+DaO0a+OWtQpuYrBIFDnQrN6g+6HuEb2RP5EXZTll7aUeMJ3miw=
-=89D6
------END PGP SIGNATURE-----
-
---FNX2SHge3qdlDajY--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
