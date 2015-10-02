@@ -1,159 +1,82 @@
-Return-Path: <sbranden@broadcom.com>
-Subject: Re: [PATCH] clk: iproc: Make clocks visible options
-To: Jon Mason <jonmason@broadcom.com>
-References: <1445541913-25066-1-git-send-email-jonmason@broadcom.com>
- <56293D26.7080006@broadcom.com> <20151022201433.GK651@broadcom.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>, "Hauke
- Mehrtens" <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
-From: Scott Branden <sbranden@broadcom.com>
-Message-ID: <56296E30.7050804@broadcom.com>
-Date: Thu, 22 Oct 2015 16:16:00 -0700
+Return-Path: <yingjoe.chen@mediatek.com>
+Message-ID: <1443794444.10908.9.camel@mtksdaap41>
+Subject: Re: [PATCH 2/2] arm64: dts: mt8173: add timer node
+From: Yingjoe Chen <yingjoe.chen@mediatek.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
+	James Liao <jamesjj.liao@mediatek.com>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "Catalin
+ Marinas" <Catalin.Marinas@arm.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	Sascha Hauer <kernel@pengutronix.de>, Olof Johansson <olof@lixom.net>,
+	"srv_heupstream@mediatek.com" <srv_heupstream@mediatek.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Daniel Kurtz <djkurtz@chromium.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Eddie Huang
+	<eddie.huang@mediatek.com>
+Date: Fri, 2 Oct 2015 22:00:44 +0800
+In-Reply-To: <560D5227.8050600@arm.com>
+References: <1442369095-1094-1-git-send-email-yingjoe.chen@mediatek.com>
+	 <1442369095-1094-2-git-send-email-yingjoe.chen@mediatek.com>
+	 <55FAC570.8040307@arm.com> <1442501816.4784.3.camel@mtksdaap41>
+	 <55FAE69C.2000906@arm.com> <1443710016.22188.10.camel@mtksdaap41>
+	 <560D5227.8050600@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-In-Reply-To: <20151022201433.GK651@broadcom.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Return-Path: sbranden@broadcom.com
+Return-Path: yingjoe.chen@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jon,
+On Thu, 2015-10-01 at 16:32 +0100, Sudeep Holla wrote:
+> 
+> On 01/10/15 15:33, Yingjoe Chen wrote:
+> > On Thu, 2015-09-17 at 17:13 +0100, Sudeep Holla wrote:
+> >>
+> 
+> [...]
+> 
+> >>
+> >> I think your are confusing the system counter with arch timers. System
+> >> counter is always-on, but the arch timers(logic implementing timers
+> >> comparators) might not be off when the processor is powered down.
+> >>
+> >> I think you need this timer and are using it for low power idle states
+> >> in which case you will use this as a clock event and not clock source.
+> >> It will be used as a hardware broadcast event source.
+> >>
+> >> There's no call to sched_clock_register in mtk_timer.c, so it can't be
+> >> the sched clock, so you need to fix the commit log.
+> >
+> > Hi Sudeep,
+> >
+> > Sorry for late reply.
+> >
+> > For sched_clock_register, please see
+> > http://lists.infradead.org/pipermail/linux-mediatek/2015-July/001547.html
+> > which was accepted in
+> > https://git.linaro.org/people/daniel.lezcano/linux.git/shortlog/refs/heads/clockevents/4.4
+> >
+> 
+> The commit message makes no sense to me. The counters should continue to
+> work as long as they are in always-on domain. Only timers are lost
+> when you enter deeper idle states. So I agree with using MTK timer as
+> broadcast timer/eventsource. You still didn't answer what's the need
+> to use MTK timer as sched clocksource ?
 
 
-On 15-10-22 01:14 PM, Jon Mason wrote:
-> On Thu, Oct 22, 2015 at 12:46:46PM -0700, Scott Branden wrote:
->> Hi Jon,
->>
->> comments inline.
->>
->> On 15-10-22 12:25 PM, Jon Mason wrote:
->>> Make the clocks visible options that can be selected by anyone.  This
->>> avoids the problems of:
->>>   1) Select is a reverse dependency and is hard for people to understand
->>>      and can sometimes be a pain to track down
->> This doesn't make any sense to me - there are many selects in the
->> system and this is one of them.
->
-> This was specifically requested by Stephen Boyd, and the above are
-> his words verbatum
-> https://lkml.org/lkml/2015/10/21/956
->
-Yes, thanks.  Not all of the comments are needed.  If you look closer 
-COMMON_CLK_IPROC should be a non-visible option.  It is just an internal 
-config option used in the Makefile only.  There's no benefit to exposing 
-an option here and adding another layer to the Kconfig hierarchy.
+Hi, Sudeep,
 
-See my proposed (revised) changes below which remove the code bloat and 
-allow build coverage to be increased.  Even if you expose it there are 
-additional changes you need to make to your patchset dealing with 
-COMPILE_TEST
+ARM ARM said the counter should be in always-on domain, but
+unfortunately that not true for mt8173. The last CPU enter idle can
+choose to enter deep idle mode and the counter value would be lost. Our
+firmware backup/recover the counter so it looks like it is stopped.
+That's why I thought we need to use it as sched clocksource.
 
-> Thanks,
-> Jon
->
->>>   2) Build coverage goes down because configs are hidden
->>>   3) Code bloat
->>>
->>> Patch suggested by Stephen Boyd
->>>
->>> Signed-off-by: Jon Mason <jonmason@broadcom.com>
->>> ---
->>>   arch/arm/mach-bcm/Kconfig |  1 -
->>>   drivers/clk/bcm/Kconfig   | 35 ++++++++++++++++++++++++++++++++++-
->>>   drivers/clk/bcm/Makefile  |  7 +++----
->>>   3 files changed, 37 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
->>> index 679798b..cacaaec 100644
->>> --- a/arch/arm/mach-bcm/Kconfig
->>> +++ b/arch/arm/mach-bcm/Kconfig
->>> @@ -14,7 +14,6 @@ config ARCH_BCM_IPROC
->>>   	select HAVE_ARM_SCU if SMP
->>>   	select HAVE_ARM_TWD if SMP
->>>   	select ARM_GLOBAL_TIMER
->>> -	select COMMON_CLK_IPROC
->>>   	select CLKSRC_MMIO
->>>   	select ARCH_REQUIRE_GPIOLIB
->>>   	select ARM_AMBA
->>> diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
->>> index 46ee475..0352ccf 100644
->>> --- a/drivers/clk/bcm/Kconfig
->>> +++ b/drivers/clk/bcm/Kconfig
->>> @@ -9,8 +9,41 @@ config CLK_BCM_KONA
- >  	  in the BCM281xx and BCM21664 families.
- >
- >  config COMMON_CLK_IPROC
- > -	bool
- > +	bool "Broadcom iProc clock support"
-Please leave as is
- > +	depends on ARCH_BCM_IPROC
- >  	depends on COMMON_CLK
- > +	default ARCH_BCM_IPROC
- >  	help
- >  	  Enable common clock framework support for Broadcom SoCs
- >  	  based on the iProc architecture
- > +
- > +if COMMON_CLK_IPROC
-Remove all the changes above from patchset - not needed.
+On mt8173, we will fix the firmware to add missing counts, so it will
+looks like the counter keep counting. But other mediatek platform have
+similar issue, and the 2 counter have same resolution, so I still want
+to keep using GPT as sched clocksource.
 
->>> +config CLK_BCM_CYGNUS
->>> +	bool "Broadcom Cygnus clock support"
->>> +	depends on COMMON_CLK_IPROC
-not needed - keep hidden and do this instead
-select COMMON_CLK_IPROC
->>> +	depends on ARCH_BCM_CYGNUS
-|| COMPILE_TEST
->>> +	default ARCH_BCM_CYGNUS
->>> +	help
->>> +	  Enable common clock framework support for the Broadcom Cygnus SoC
->>> +
->>> +config CLK_BCM_NSP
->> not needed
->>> +	bool "Broadcom Northstar/Northstar Plus clock support"
->>> +	depends on COMMON_CLK_IPROC
-not needed - keep hidden and do this instead
-select COMMON_CLK_IPROC
->>> +	depends on ARCH_BCM_5301X || ARCH_BCM_NSP
-|| COMPILE_TEST
->>> +	default ARCH_BCM_5301X || ARCH_BCM_NSP
->>> +	help
->>> +	  Enable common clock framework support for the Broadcom Northstar and
->>> +	  Northstar Plus SoCs
->>> +
->>> +config CLK_BCM_NS2
->>> +	bool "Broadcom Northstar 2 clock support"
->>> +	depends on ARM64
-|| COMPILE_TEST
->>> +	depends on COMMON_CLK_IPROC
-not needed - keep hidden and do this instead
-select COMMON_CLK_IPROC
->>> +	default ARCH_BCM_IPROC
->>> +	help
->>> +	  Enable common clock framework support for the Broadcom Northstar 2 SoC
->>> +
->>> +endif
-remove endif
->>> diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
->>> index 2d1cbc5..05d5830 100644
->>> --- a/drivers/clk/bcm/Makefile
->>> +++ b/drivers/clk/bcm/Makefile
->>> @@ -3,7 +3,6 @@ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona-setup.o
->>>   obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm281xx.o
->>>   obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm21664.o
->>>   obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-iproc-armpll.o clk-iproc-pll.o clk-iproc-asiu.o
->>> -obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-ns2.o
->> yes, change this one
->>> -obj-$(CONFIG_ARCH_BCM_CYGNUS)	+= clk-cygnus.o
->> you can leave this
->>> -obj-$(CONFIG_ARCH_BCM_NSP)	+= clk-nsp.o
->> you can leave this
->>> -obj-$(CONFIG_ARCH_BCM_5301X)	+= clk-nsp.o
->> and this
->>> +obj-$(CONFIG_CLK_BCM_CYGNUS)	+= clk-cygnus.o
->> no
->>> +obj-$(CONFIG_CLK_BCM_NSP)	+= clk-nsp.o
->> no
->>> +obj-$(CONFIG_CLK_BCM_NS2)	+= clk-ns2.o
->> yes needed
->>>
->>
+Joe.C
