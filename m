@@ -1,103 +1,36 @@
-Return-Path: <slash.tmp@free.fr>
-From: Mason <slash.tmp@free.fr>
-Subject: Two-output clk provider with standard clk consumer
-To: clk <linux-clk@vger.kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Message-ID: <561CC7DA.1070101@free.fr>
-Date: Tue, 13 Oct 2015 10:59:06 +0200
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:59614 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751424AbbJBA1D (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 1 Oct 2015 20:27:03 -0400
+Date: Thu, 1 Oct 2015 17:27:01 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, heikki.krogerus@linux.intel.com,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 1/5] clk: fractional-divider: rename prate ->
+ parent_rate
+Message-ID: <20151002002701.GG12338@codeaurora.org>
+References: <1442937252-50281-1-git-send-email-andriy.shevchenko@linux.intel.com>
+ <1442937252-50281-2-git-send-email-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1442937252-50281-2-git-send-email-andriy.shevchenko@linux.intel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello everyone,
+On 09/22, Andy Shevchenko wrote:
+> Rename function parameter to be more explicit what it is for. This also makes
+> it in align with struct clk_ops.
+> 
+> There is no functional change.
+> 
+> Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
 
-I'm trying to write a clk driver with the following features:
-- a single input (crystal oscillator, modeled by fixed-clock)
-- two separate outputs (cpuclk and sysclk) derived from two
-separate internal PLLs (pll0 and pll1)
+Applied to clk-next
 
-I would like to use cpuclk as the input to a fixed-factor-clock
-node (cpuclk/2).
-
-So the device tree would look like this:
-
-	clocks {
-		ranges;
-		#address-cells = <1>;
-		#size-cells = <1>;
-
-		xtal: xtal {
-			compatible = "fixed-clock";
-			clock-frequency = <27000000>;
-			#clock-cells = <0>;
-		};
-
-		clkgen: clkgen@10000 {
-			compatible = "foo,clkgen";
-			reg = <0x10000 0x30>;
-			clocks = <&xtal>;
-			#clock-cells = <1>;
-		};
-
-		periphclk: periphclk {
-			compatible = "fixed-factor-clock";
-			clocks = <&clkgen 0>;
-			clock-mult = <1>;
-			clock-div  = <2>;
-			#clock-cells = <0>;
-		};
-	};
-
-Does this look OK so far?
-
-
-The driver would look like this:
-(headers and error handling omitted for brevity)
-
-static struct clk *output[2];
-static struct clk_onecell_data clk_data = { output, 2 };
-static void __iomem *clkgen_base;
-
-static void __init make_pll(const char *name, const char *parent, void __iomem *reg)
-{
-	struct clk *clk;
-	unsigned int val, mul, div;
-
-	val = readl_relaxed(reg);
-	mul = foo(val);
-	div = bar(val);
-	clk = clk_register_fixed_factor(NULL, name, parent, 0, mul, div);
-	printk("clk = %p\n", clk);
-}
-
-static void __init clkgen_setup(struct device_node *np)
-{
-	int ret;
-	const char *parent = of_clk_get_parent_name(np, 0);
-
-	clkgen_base = of_iomap(np, 0);
-	make_pll("pll0", parent, clkgen_base + 0);
-	make_pll("pll1", parent, clkgen_base + 8);
-	output[0] = clk_register_divider(NULL, "cpuclk", "pll0", 0,
-			clkgen_base + 0x24, 8, 8, CLK_DIVIDER_ONE_BASED, NULL);
-	output[1] = clk_register_fixed_factor(NULL, "sysclk", "pll1", 0, 1, 3);
-
-	ret = of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
-	printk("ret=%d out0=%p out1=%p\n", ret, output[0], output[1]);
-}
-
-CLK_OF_DECLARE(myclkgen, "foo,clkgen", clkgen_setup);
-
-
-But the periphclk setup fails because the fixed-factor-clock driver only
-looks up the parent name using of_clk_get_parent_name ("clkgen" in my case)
-and calls:
-
-clk_register_fixed_factor(NULL, "periphclk", "clkgen", 0, 1, 2);
-
-Which doesn't keep track of the clkgen output index... <confused>
-
-Can someone please point out what I am missing?
-
-Thanks!
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
