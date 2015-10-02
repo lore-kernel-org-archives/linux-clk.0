@@ -1,49 +1,72 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 1 Oct 2015 10:35:54 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"tgih.jun@samsung.com" <tgih.jun@samsung.com>,
-	Jaehoon Chung <jh80.chung@samsung.com>,
-	linux-mmc <linux-mmc@vger.kernel.org>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-	Doug Anderson <dianders@chromium.org>,
-	Alexandru Stan <amstan@chromium.org>
-Subject: Re: [PATCH v2 3/8] mmc: core: Add mmc_regulator_set_vqmmc()
-Message-ID: <20151001173554.GB19319@codeaurora.org>
-References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
- <17200614.QxCe8zAb7I@diego>
- <CAPDyKFpis8XnvrppHq7q_7DQeN2UiEpykNTJ=1iJJ9AGOHTW6Q@mail.gmail.com>
- <2695161.Z1IhqPE0bd@diego>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <2695161.Z1IhqPE0bd@diego>
+Return-Path: <a.hajda@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, linux-kernel@vger.kernel.org,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+Subject: [PATCH v2 14/38] clk: vt8500: fix sign of possible PLL values
+Date: Fri, 02 Oct 2015 06:49:53 +0200
+Message-id: <1443761393-29366-1-git-send-email-a.hajda@samsung.com>
+In-reply-to: <20151001225628.GU19319@codeaurora.org>
+References: <20151001225628.GU19319@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/01, Heiko Stübner wrote:
-> Am Donnerstag, 1. Oktober 2015, 11:54:24 schrieb Ulf Hansson:
-> > On 30 September 2015 at 16:55, Heiko Stübner <heiko@sntech.de> wrote:
-> > > Am Mittwoch, 30. September 2015, 16:42:05 schrieb Ulf Hansson:
-> > >> On 30 September 2015 at 16:07, Heiko Stuebner <heiko@sntech.de> wrote:
-> > > The clock changes of course only touch internals of the phase-clocks, so
-> > > should have no problem going through another tree.
-> > 
-> > What happens if I take mmc and dt changes, wouldn't I need the clock
-> > patches as well?
-> 
-> The API stays of course the same, only the degree to settings translation gets 
-> optimized, so I guess in the worst case you would get no good phase and thus 
-> fall back to non-highspeed modes - but the system would stay running.
-> 
-> But of course, if the clock maintainers could Ack the two clock patches and 
-> everything would stay together that would work even better :-)
-> 
+With unsigned values underflow in loops can occur resulting in
+theoretically infinite loops.
 
-If Ulf doesn't want to take them we can apply them to clk tree.
-Otherwise, you can have my acked-by on the clk patches.
+The problem has been detected using proposed semantic patch
+scripts/coccinelle/tests/unsigned_lesser_than_zero.cocci [1].
 
+[1]: http://permalink.gmane.org/gmane.linux.kernel/2038576
+
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+Hi Stephen,
+
+This is modified version according to your request, ie only problematic
+variables have changed type.
+I still think that 1st version is better, but of course it is up to you.
+
+Regards
+Andrzej
+
+ drivers/clk/clk-vt8500.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/clk-vt8500.c b/drivers/clk/clk-vt8500.c
+index 37e9288..98c4492 100644
+--- a/drivers/clk/clk-vt8500.c
++++ b/drivers/clk/clk-vt8500.c
+@@ -384,7 +384,8 @@ static void vt8500_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+ static void wm8650_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+ 				u32 *multiplier, u32 *divisor1, u32 *divisor2)
+ {
+-	u32 mul, div1, div2;
++	u32 mul, div1;
++	int div2;
+ 	u32 best_mul, best_div1, best_div2;
+ 	unsigned long tclk, rate_err, best_err;
+ 
+@@ -452,7 +453,8 @@ static u32 wm8750_get_filter(u32 parent_rate, u32 divisor1)
+ static void wm8750_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+ 				u32 *filter, u32 *multiplier, u32 *divisor1, u32 *divisor2)
+ {
+-	u32 mul, div1, div2;
++	u32 mul;
++	int div1, div2;
+ 	u32 best_mul, best_div1, best_div2;
+ 	unsigned long tclk, rate_err, best_err;
+ 
+@@ -496,7 +498,8 @@ static void wm8750_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+ static void wm8850_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+ 				u32 *multiplier, u32 *divisor1, u32 *divisor2)
+ {
+-	u32 mul, div1, div2;
++	u32 mul;
++	int div1, div2;
+ 	u32 best_mul, best_div1, best_div2;
+ 	unsigned long tclk, rate_err, best_err;
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
