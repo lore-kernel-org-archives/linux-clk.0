@@ -1,112 +1,40 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 13/19] drm: sun4i: tv: Add NTSC output standard
-Date: Fri, 30 Oct 2015 15:20:59 +0100
-Message-Id: <1446214865-3972-14-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 2 Oct 2015 11:28:11 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+	linux-clk@vger.kernel.org, "tony@atomide.com" <tony@atomide.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [GIT PULL] clock: ti: fixes for 4.3-rc
+Message-ID: <20151002182811.GP12338@codeaurora.org>
+References: <560E26EC.1030801@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <560E26EC.1030801@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the settings to support the NTSC standard.
+On 10/02, Tero Kristo wrote:
+> Hi Stephen, Mike,
+> 
+> A few TI clock driver fixes to pull against 4.3-rc.
+> 
+> -Tero
+> 
+> ================
+> 
+> The following changes since commit 9ffecb10283508260936b96022d4ee43a7798b4c:
+> 
+>   Linux 4.3-rc3 (2015-09-27 07:50:08 -0400)
+> 
+> are available in the git repository at:
+> 
+>   https://github.com/t-kristo/linux-pm.git for-4.3-rc/ti-clk-fixes
+> 
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/gpu/drm/sun4i/sun4i_tv.c | 45 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+Thanks, pulled. I guess we'll wait until Monday next week to send
+off to Linus so this can go through a couple -next cycles.
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tv.c b/drivers/gpu/drm/sun4i/sun4i_tv.c
-index 4b95d04ff457..b460406d744c 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tv.c
-@@ -175,24 +175,69 @@ struct sun4i_tv {
- 	struct sun4i_drv	*drv;
- };
- 
-+struct video_levels ntsc_video_levels = {
-+	.black = 282,	.blank = 240,
-+};
-+
- struct video_levels pal_video_levels = {
- 	.black = 252,	.blank = 252,
- };
- 
-+struct burst_levels ntsc_burst_levels = {
-+	.cb = 79,	.cr = 0,
-+};
-+
- struct burst_levels pal_burst_levels = {
- 	.cb = 40,	.cr = 40,
- };
- 
-+struct color_gains ntsc_color_gains = {
-+	.cb = 160,	.cr = 160,
-+};
-+
- struct color_gains pal_color_gains = {
- 	.cb = 224,	.cr = 224,
- };
- 
-+struct resync_parameters ntsc_resync_parameters = {
-+	.field = false,	.line = 14,	.pixel = 12,
-+};
-+
- struct resync_parameters pal_resync_parameters = {
- 	.field = true,	.line = 13,	.pixel = 12,
- };
- 
- struct tv_mode tv_modes[] = {
- 	{
-+		.name		= "NTSC",
-+		.mode		= SUN4I_TVE_CFG0_RES_480i,
-+		.chroma_freq	= 0x21f07c1f,
-+		.yc_en		= true,
-+		.dac3_en	= true,
-+		.dac_bit25_en	= true,
-+
-+		.back_porch	= 118,
-+		.front_porch	= 32,
-+		.line_number	= 525,
-+
-+		.hdisplay	= 720,
-+		.hfront_porch	= 18,
-+		.hsync_len	= 2,
-+		.hback_porch	= 118,
-+
-+		.vdisplay	= 480,
-+		.vfront_porch	= 26,
-+		.vsync_len	= 2,
-+		.vback_porch	= 17,
-+
-+		.vblank_level	= 240,
-+
-+		.color_gains	= &ntsc_color_gains,
-+		.burst_levels	= &ntsc_burst_levels,
-+		.video_levels	= &ntsc_video_levels,
-+		.resync_params	= &ntsc_resync_parameters,
-+	},
-+	{
- 		.name		= "PAL",
- 		.mode		= SUN4I_TVE_CFG0_RES_576i,
- 		.chroma_freq	= 0x2a098acb,
 -- 
-2.6.2
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
