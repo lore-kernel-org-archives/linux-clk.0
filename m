@@ -1,156 +1,55 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 1/5] [RFC] clk: shmobile: Add new Renesas CPG/MSSR DT bindings
-Date: Fri, 16 Oct 2015 14:49:16 +0200
-Message-Id: <1444999760-15750-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1444999760-15750-1-git-send-email-geert+renesas@glider.be>
-References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <anholt@eliezer.anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Mike Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] clk: bcm2835: Add support for programming the audio domain clocks.
+In-Reply-To: <20151002000741.GA1213@codeaurora.org>
+References: <1443475325-22270-1-git-send-email-eric@anholt.net> <1443475325-22270-3-git-send-email-eric@anholt.net> <20151002000741.GA1213@codeaurora.org>
+Date: Fri, 02 Oct 2015 12:53:03 -0700
+Message-ID: <87lhblt5cw.fsf@eliezer.anholt.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Renesas ARM SoCs (SH/R-Mobile, R-Car, RZ), the CPG (Clock Pulse
-Generator) and MSSR (Module Standby and Software Reset) blocks are
-intimately connected, and share the same register block.
+--=-=-=
+Content-Type: text/plain
 
-Hence it makes sense to describe these two blocks using a
-single device node in DT, instead of using a hierarchical structure with
-multiple nodes, using a mix of generic and SoC-specific bindings.
+Stephen Boyd <sboyd@codeaurora.org> writes:
 
-These new DT bindings are intended to replace the existing DT bindings
-for CPG core clocks ("renesas,*-cpg-clocks", "renesas,cpg-div6-clock")
-and module clocks ("renesas,*-mstp-clocks"), at least for new SoCs.
+> On 09/28, Eric Anholt wrote:
+>> +
+>> +static const char *bcm2835_clock_per_parents[] = {
+>> +static const char *bcm2835_clock_vpu_parents[] = {
+>> +static const char *bcm2835_clock_osc_parents[] = {
+>
+> Can these parent arrays be const char * const ?
 
-This will make it easier to add module reset support later, which is
-currently not implemented, and difficult to achieve using the existing
-bindings due to the intertwined register layout.
+They couldn't because I was editing them in place to do the
+s/"xosc"/of_clk_get_parent_name()/ edit.  I've moved the edit to being
+in a stack allocation at probe time.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4:
-  - No changes,
+I think I've done all of your suggested changes in the new version (and
+explained the extra ana2 read/write).
 
-v3:
-  - Integrate CPG and MSSR,
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-v2:
-  - Switch from MSTP to MSSR.
----
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt | 71 ++++++++++++++++++++++
- include/dt-bindings/clock/renesas-cpg-mssr.h       | 15 +++++
- 2 files changed, 86 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
- create mode 100644 include/dt-bindings/clock/renesas-cpg-mssr.h
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-new file mode 100644
-index 0000000000000000..a56836aa2131a8db
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-@@ -0,0 +1,71 @@
-+* Renesas Clock Pulse Generator / Module Standby and Software Reset
-+
-+On Renesas ARM SoCs (SH/R-Mobile, R-Car, RZ), the CPG (Clock Pulse Generator)
-+and MSSR (Module Standby and Software Reset) blocks are intimately connected,
-+and share the same register block.
-+
-+They provide the following functionalities:
-+  - The CPG block generates various core clocks,
-+  - The MSSR block provides two functions:
-+      1. Module Standby, providing a Clock Domain to control the clock supply
-+	 to individual SoC devices,
-+      2. Reset Control, to perform a software reset of individual SoC devices.
-+
-+Required Properties:
-+  - compatible: Must be one of:
-+      - "renesas,r8a7791-cpg-mssr" for the r8a7791 SoC
-+      - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC
-+
-+  - reg: Base address and length of the memory resource used by the CPG/MSSR
-+    block
-+
-+  - clocks: References to external parent clocks, one entry for each entry in
-+    clock-names
-+  - clock-names: List of external parent clock names. Valid names are:
-+      - "extal" (r8a7791, r8a7795)
-+      - "extalr" (r8a7795)
-+      - "usb_extal" (r8a7791)
-+
-+  - #clock-cells: Must be 2
-+      - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
-+	and a core clock reference, as defined in
-+	<dt-bindings/clock/*-cpg-mssr.h>.
-+      - For module clocks, the two clock specifier cells must be "CPG_MOD" and
-+	a module number, as defined in the datasheet.
-+
-+  - #power-domain-cells: Must be 0
-+      - SoC devices that are part of the CPG/MSSR Clock Domain and can be
-+	power-managed through Module Standby should refer to the CPG device
-+	node in their "power-domains" property, as documented by the generic PM
-+	Domain bindings in
-+	Documentation/devicetree/bindings/power/power_domain.txt.
-+
-+
-+Examples
-+--------
-+
-+  - CPG device node:
-+
-+	cpg: clock-controller@e6150000 {
-+		compatible = "renesas,r8a7795-cpg-mssr";
-+		reg = <0 0xe6150000 0 0x1000>;
-+		clocks = <&extal_clk>, <&extalr_clk>;
-+		clock-names = "extal", "extalr";
-+		#clock-cells = <2>;
-+		#power-domain-cells = <0>;
-+	};
-+
-+
-+  - CPG/MSSR Clock Domain member device node:
-+
-+	scif2: serial@e6e88000 {
-+		compatible = "renesas,scif-r8a7795", "renesas,scif";
-+		reg = <0 0xe6e88000 0 64>;
-+		interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cpg CPG_MOD 310>;
-+		clock-names = "sci_ick";
-+		dmas = <&dmac1 0x13>, <&dmac1 0x12>;
-+		dma-names = "tx", "rx";
-+		power-domains = <&cpg>;
-+		status = "disabled";
-+	};
-diff --git a/include/dt-bindings/clock/renesas-cpg-mssr.h b/include/dt-bindings/clock/renesas-cpg-mssr.h
-new file mode 100644
-index 0000000000000000..569a3cc33ffb5bc7
---- /dev/null
-+++ b/include/dt-bindings/clock/renesas-cpg-mssr.h
-@@ -0,0 +1,15 @@
-+/*
-+ * Copyright (C) 2015 Renesas Electronics Corp.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_RENESAS_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_RENESAS_CPG_MSSR_H__
-+
-+#define CPG_CORE			0	/* Core Clock */
-+#define CPG_MOD				1	/* Module Clock */
-+
-+#endif /* __DT_BINDINGS_CLOCK_RENESAS_CPG_MSSR_H__ */
--- 
-1.9.1
+iQIcBAEBCgAGBQJWDuCfAAoJELXWKTbR/J7oi/oP/23CxW5II/otWnJ4DMmiLRq5
+sgYnPc5XmXW3mhWnIYnwMcEGWLB6bPMBrp8qw+O1Czs7Cl0sVpW3Y3uQmYKH/u0f
+LiDzSV1J5x5S0dqrDqeM0iKKjX7osHbuTUjLbwFG3FYTa0dNVm6pPF7XDKaM9SAy
+/jXNavYuOgfzhJj6IkVwpm2sIm9qLXxzjYVu9fp5tGHPYAnbHlTzHFff5nuJiecn
++AsXuR8U1ZE/5D8qqHBsSMaNO+AMK85eyb6moKl8BWyW6LhnK21uSh/XYXoD2aTw
+uRzxHQhTc36ADve8e5RlWfFOKKiUo8fGwFsngMIlC5ocdaVxusIcOGTSPQQyp7Zl
+DxHPGReeeMK3vjN+RB1IZPvOAHnu4szUVBnB5F2hCjEA9c+Mtgk2NHU3t7zj0ZIs
+Fw0C9LsPORm0iZLyMXbKbk6q6iTKGrWU54ewXe/ZCh5VXm2qc3vjMZP2IPcDXCWW
+jpUaAurZI0vwMx7irTXMLYlPyYhJKdeXla9s+ZMF1qQnmlVI9l7RC+ud0k2mGdEQ
+/rNe9I/YGDdrR7Ry6I0RMfFP6lmfnCvpziukfgL5Fsy7AnlyPEsL0rf/65aVDz0K
+KMrxOnNmAiHzVzfMA5T4Z8DzjUj1ng6AU8UKsZwSsNZcSO9Ndz7Pe76osW6cpWv0
+t6eyMbXEW/hNaL8Ild2Q
+=FsyV
+-----END PGP SIGNATURE-----
+--=-=-=--
