@@ -1,360 +1,486 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v2 04/14] clk: at91: clk-main: factorize irq handling
-Date: Mon, 12 Oct 2015 16:28:41 +0200
-Message-Id: <1444660131-14954-5-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1444660131-14954-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1444660131-14954-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <mike.looijmans@topic.nl>
+From: Mike Looijmans <mike.looijmans@topic.nl>
+To: sboyd@codeaurora.org, linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Mike Looijmans <mike.looijmans@topic.nl>
+Subject: [PATCH v3] Add driver for the si514 clock generator chip
+Date: Fri,  2 Oct 2015 09:15:29 +0200
+Message-Id: <1443770129-7757-1-git-send-email-mike.looijmans@topic.nl>
+References: <1442487891-20477-1-git-send-email-mike.looijmans@topic.nl>
+In-Reply-To: <20151001233407.GW19319@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The three different irq handlers are doing the same thing, factorize their
-code in a generic irq handler.
+This patch adds the driver and devicetree documentation for the
+Silicon Labs SI514 clock generator chip. This is an I2C controlled
+oscillator capable of generating clock signals ranging from 100kHz
+to 250MHz.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
 ---
- drivers/clk/at91/clk-main.c | 144 +++++++++++++++++++-------------------------
- 1 file changed, 63 insertions(+), 81 deletions(-)
+v3: After review from Stephen Boyd
+    Removed "clock-frequency" DT property
+    Do not enable output if PLL calibration failed
+    Fix parenthesis, multiline comments, spacing
 
-diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
-index c1f119748bdc..5841eb958f83 100644
---- a/drivers/clk/at91/clk-main.c
-+++ b/drivers/clk/at91/clk-main.c
-@@ -34,25 +34,28 @@
- 
- #define MOR_KEY_MASK		(0xff << 16)
- 
--struct clk_main_osc {
-+struct clk_main {
- 	struct clk_hw hw;
- 	struct regmap *regmap;
- 	unsigned int irq;
- 	wait_queue_head_t wait;
- };
- 
--#define to_clk_main_osc(hw) container_of(hw, struct clk_main_osc, hw)
-+#define to_clk_main(hw) container_of(hw, struct clk_main, hw)
+ .../devicetree/bindings/clock/silabs,si514.txt     |  24 ++
+ drivers/clk/Kconfig                                |  10 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-si514.c                            | 383 +++++++++++++++++++++
+ 4 files changed, 418 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/silabs,si514.txt
+ create mode 100644 drivers/clk/clk-si514.c
+
+diff --git a/Documentation/devicetree/bindings/clock/silabs,si514.txt b/Documentation/devicetree/bindings/clock/silabs,si514.txt
+new file mode 100644
+index 0000000..ea1a9db
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/silabs,si514.txt
+@@ -0,0 +1,24 @@
++Binding for Silicon Labs 514 programmable I2C clock generator.
 +
-+struct clk_main_osc {
-+	struct clk_main base;
++Reference
++This binding uses the common clock binding[1]. Details about the device can be
++found in the datasheet[2].
++
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++[2] Si514 datasheet
++    http://www.silabs.com/Support%20Documents/TechnicalDocs/si514.pdf
++
++Required properties:
++ - compatible: Shall be "silabs,si514"
++ - reg: I2C device address.
++ - #clock-cells: From common clock bindings: Shall be 0.
++
++Optional properties:
++ - clock-output-names: From common clock bindings. Recommended to be "si514".
++
++Example:
++	si514: clock-generator@55 {
++		reg = <0x55>;
++		#clock-cells = <0>;
++		compatible = "silabs,si514";
++	};
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 42f7120..6ac7deb5 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -68,6 +68,16 @@ config COMMON_CLK_SI5351
+ 	  This driver supports Silicon Labs 5351A/B/C programmable clock
+ 	  generators.
+ 
++config COMMON_CLK_SI514
++	tristate "Clock driver for SiLabs 514 devices"
++	depends on I2C
++	depends on OF
++	select REGMAP_I2C
++	help
++	---help---
++	  This driver supports the Silicon Labs 514 programmable clock
++	  generator.
++
+ config COMMON_CLK_SI570
+ 	tristate "Clock driver for SiLabs 570 and compatible devices"
+ 	depends on I2C
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index d08b3e5..6594e53 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -37,6 +37,7 @@ obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
+ obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
+ obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
+ obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
++obj-$(CONFIG_COMMON_CLK_SI514)		+= clk-si514.o
+ obj-$(CONFIG_COMMON_CLK_SI570)		+= clk-si570.o
+ obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
+ obj-$(CONFIG_ARCH_STM32)		+= clk-stm32f4.o
+diff --git a/drivers/clk/clk-si514.c b/drivers/clk/clk-si514.c
+new file mode 100644
+index 0000000..779aebc
+--- /dev/null
++++ b/drivers/clk/clk-si514.c
+@@ -0,0 +1,383 @@
++/*
++ * Driver for Silicon Labs Si514 Programmable Oscillator
++ *
++ * Copyright (C) 2015 Topic Embedded Products
++ *
++ * Author: Mike Looijmans <mike.looijmans@topic.nl>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/delay.h>
++#include <linux/module.h>
++#include <linux/i2c.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++
++/* I2C registers */
++#define SI514_REG_LP		0
++#define SI514_REG_M_FRAC1	5
++#define SI514_REG_M_FRAC2	6
++#define SI514_REG_M_FRAC3	7
++#define SI514_REG_M_INT_FRAC	8
++#define SI514_REG_M_INT		9
++#define SI514_REG_HS_DIV	10
++#define SI514_REG_LS_HS_DIV	11
++#define SI514_REG_OE_STATE	14
++#define SI514_REG_RESET		128
++#define SI514_REG_CONTROL	132
++
++/* Register values */
++#define SI514_RESET_RST		BIT(7)
++
++#define SI514_CONTROL_FCAL	BIT(0)
++#define SI514_CONTROL_OE	BIT(2)
++
++#define SI514_MIN_FREQ	    100000U
++#define SI514_MAX_FREQ	 250000000U
++
++#define FXO		  31980000U
++
++#define FVCO_MIN	2080000000U
++#define FVCO_MAX	2500000000U
++
++#define HS_DIV_MAX	1022
++
++struct clk_si514 {
++	struct clk_hw hw;
++	struct regmap *regmap;
++	struct i2c_client *i2c_client;
++};
++#define to_clk_si514(_hw)	container_of(_hw, struct clk_si514, hw)
++
++/* Multiplier/divider settings */
++struct clk_si514_muldiv {
++	u32 m_frac;  /* 29-bit Fractional part of multiplier M */
++	u8 m_int; /* Integer part of multiplier M, 65..78 */
++	u8 ls_div_bits; /* 2nd divider, as 2^x */
++	u16 hs_div; /* 1st divider, must be even and 10<=x<=1022 */
 +};
 +
-+#define to_clk_main_osc(hw) container_of(hw, struct clk_main_osc, base.hw)
- 
- struct clk_main_rc_osc {
--	struct clk_hw hw;
--	struct regmap *regmap;
--	unsigned int irq;
--	wait_queue_head_t wait;
-+	struct clk_main base;
- 	unsigned long frequency;
- 	unsigned long accuracy;
- };
- 
--#define to_clk_main_rc_osc(hw) container_of(hw, struct clk_main_rc_osc, hw)
-+#define to_clk_main_rc_osc(hw) container_of(hw, struct clk_main_rc_osc, base.hw)
- 
- struct clk_rm9200_main {
- 	struct clk_hw hw;
-@@ -62,21 +65,20 @@ struct clk_rm9200_main {
- #define to_clk_rm9200_main(hw) container_of(hw, struct clk_rm9200_main, hw)
- 
- struct clk_sam9x5_main {
--	struct clk_hw hw;
--	struct regmap *regmap;
--	unsigned int irq;
--	wait_queue_head_t wait;
-+	struct clk_main base;
- 	u8 parent;
- };
- 
--#define to_clk_sam9x5_main(hw) container_of(hw, struct clk_sam9x5_main, hw)
-+#define to_clk_sam9x5_main(hw) container_of(hw, struct clk_sam9x5_main, base.hw)
- 
--static irqreturn_t clk_main_osc_irq_handler(int irq, void *dev_id)
-+/* Generic structure */
++/* Enables or disables the output driver */
++static int si514_enable_output(struct clk_si514 *data, bool enable)
++{
++	return regmap_update_bits(data->regmap, SI514_REG_CONTROL,
++		SI514_CONTROL_OE, enable ? SI514_CONTROL_OE : 0);
++}
 +
-+static irqreturn_t clk_main_irq_handler(int irq, void *dev_id)
- {
--	struct clk_main_osc *osc = dev_id;
-+	struct clk_main *clkmain = dev_id;
- 
--	wake_up(&osc->wait);
--	disable_irq_nosync(osc->irq);
-+	wake_up(&clkmain->wait);
-+	disable_irq_nosync(clkmain->irq);
- 
- 	return IRQ_HANDLED;
- }
-@@ -93,7 +95,7 @@ static inline bool clk_main_osc_ready(struct regmap *regmap)
- static int clk_main_osc_prepare(struct clk_hw *hw)
- {
- 	struct clk_main_osc *osc = to_clk_main_osc(hw);
--	struct regmap *regmap = osc->regmap;
-+	struct regmap *regmap = osc->base.regmap;
- 	u32 tmp;
- 
- 	regmap_read(regmap, AT91_CKGR_MOR, &tmp);
-@@ -108,8 +110,8 @@ static int clk_main_osc_prepare(struct clk_hw *hw)
- 	}
- 
- 	while (!clk_main_osc_ready(regmap)) {
--		enable_irq(osc->irq);
--		wait_event(osc->wait,
-+		enable_irq(osc->base.irq);
-+		wait_event(osc->base.wait,
- 			   clk_main_osc_ready(regmap));
- 	}
- 
-@@ -119,7 +121,7 @@ static int clk_main_osc_prepare(struct clk_hw *hw)
- static void clk_main_osc_unprepare(struct clk_hw *hw)
- {
- 	struct clk_main_osc *osc = to_clk_main_osc(hw);
--	struct regmap *regmap = osc->regmap;
-+	struct regmap *regmap = osc->base.regmap;
- 	u32 tmp;
- 
- 	regmap_read(regmap, AT91_CKGR_MOR, &tmp);
-@@ -136,7 +138,7 @@ static void clk_main_osc_unprepare(struct clk_hw *hw)
- static int clk_main_osc_is_prepared(struct clk_hw *hw)
- {
- 	struct clk_main_osc *osc = to_clk_main_osc(hw);
--	struct regmap *regmap = osc->regmap;
-+	struct regmap *regmap = osc->base.regmap;
- 	u32 tmp, status;
- 
- 	regmap_read(regmap, AT91_CKGR_MOR, &tmp);
-@@ -179,14 +181,14 @@ at91_clk_register_main_osc(struct regmap *regmap,
- 	init.num_parents = 1;
- 	init.flags = CLK_IGNORE_UNUSED;
- 
--	osc->hw.init = &init;
--	osc->regmap = regmap;
--	osc->irq = irq;
-+	osc->base.hw.init = &init;
-+	osc->base.regmap = regmap;
-+	osc->base.irq = irq;
- 
--	init_waitqueue_head(&osc->wait);
--	irq_set_status_flags(osc->irq, IRQ_NOAUTOEN);
--	ret = request_irq(osc->irq, clk_main_osc_irq_handler,
--			  IRQF_TRIGGER_HIGH, name, osc);
-+	init_waitqueue_head(&osc->base.wait);
-+	irq_set_status_flags(irq, IRQ_NOAUTOEN);
-+	ret = request_irq(irq, clk_main_irq_handler,
-+			  IRQF_TRIGGER_HIGH, name, &osc->base);
- 	if (ret) {
- 		kfree(osc);
- 		return ERR_PTR(ret);
-@@ -198,7 +200,7 @@ at91_clk_register_main_osc(struct regmap *regmap,
- 				   AT91_PMC_MOSCEN,
- 				   AT91_PMC_OSCBYPASS | AT91_PMC_KEY);
- 
--	clk = clk_register(NULL, &osc->hw);
-+	clk = clk_register(NULL, &osc->base.hw);
- 	if (IS_ERR(clk)) {
- 		free_irq(irq, osc);
- 		kfree(osc);
-@@ -237,16 +239,6 @@ static void __init of_at91rm9200_clk_main_osc_setup(struct device_node *np)
- CLK_OF_DECLARE(at91rm9200_clk_main_osc, "atmel,at91rm9200-clk-main-osc",
- 	       of_at91rm9200_clk_main_osc_setup);
- 
--static irqreturn_t clk_main_rc_osc_irq_handler(int irq, void *dev_id)
--{
--	struct clk_main_rc_osc *osc = dev_id;
--
--	wake_up(&osc->wait);
--	disable_irq_nosync(osc->irq);
--
--	return IRQ_HANDLED;
--}
--
- static bool clk_main_rc_osc_ready(struct regmap *regmap)
- {
- 	unsigned int status;
-@@ -259,7 +251,7 @@ static bool clk_main_rc_osc_ready(struct regmap *regmap)
- static int clk_main_rc_osc_prepare(struct clk_hw *hw)
- {
- 	struct clk_main_rc_osc *osc = to_clk_main_rc_osc(hw);
--	struct regmap *regmap = osc->regmap;
-+	struct regmap *regmap = osc->base.regmap;
- 	unsigned int mor;
- 
- 	regmap_read(regmap, AT91_CKGR_MOR, &mor);
-@@ -270,8 +262,8 @@ static int clk_main_rc_osc_prepare(struct clk_hw *hw)
- 				   AT91_PMC_MOSCRCEN | AT91_PMC_KEY);
- 
- 	while (!clk_main_rc_osc_ready(regmap)) {
--		enable_irq(osc->irq);
--		wait_event(osc->wait,
-+		enable_irq(osc->base.irq);
-+		wait_event(osc->base.wait,
- 			   clk_main_rc_osc_ready(regmap));
- 	}
- 
-@@ -281,7 +273,7 @@ static int clk_main_rc_osc_prepare(struct clk_hw *hw)
- static void clk_main_rc_osc_unprepare(struct clk_hw *hw)
- {
- 	struct clk_main_rc_osc *osc = to_clk_main_rc_osc(hw);
--	struct regmap *regmap = osc->regmap;
-+	struct regmap *regmap = osc->base.regmap;
- 	unsigned int mor;
- 
- 	regmap_read(regmap, AT91_CKGR_MOR, &mor);
-@@ -296,7 +288,7 @@ static void clk_main_rc_osc_unprepare(struct clk_hw *hw)
- static int clk_main_rc_osc_is_prepared(struct clk_hw *hw)
- {
- 	struct clk_main_rc_osc *osc = to_clk_main_rc_osc(hw);
--	struct regmap *regmap = osc->regmap;
-+	struct regmap *regmap = osc->base.regmap;
- 	unsigned int mor, status;
- 
- 	regmap_read(regmap, AT91_CKGR_MOR, &mor);
-@@ -353,20 +345,20 @@ at91_clk_register_main_rc_osc(struct regmap *regmap,
- 	init.num_parents = 0;
- 	init.flags = CLK_IS_ROOT | CLK_IGNORE_UNUSED;
- 
--	osc->hw.init = &init;
--	osc->regmap = regmap;
--	osc->irq = irq;
-+	osc->base.hw.init = &init;
-+	osc->base.regmap = regmap;
-+	osc->base.irq = irq;
- 	osc->frequency = frequency;
- 	osc->accuracy = accuracy;
- 
--	init_waitqueue_head(&osc->wait);
--	irq_set_status_flags(osc->irq, IRQ_NOAUTOEN);
--	ret = request_irq(osc->irq, clk_main_rc_osc_irq_handler,
--			  IRQF_TRIGGER_HIGH, name, osc);
-+	init_waitqueue_head(&osc->base.wait);
-+	irq_set_status_flags(irq, IRQ_NOAUTOEN);
-+	ret = request_irq(irq, clk_main_irq_handler,
-+			  IRQF_TRIGGER_HIGH, name, &osc->base);
- 	if (ret)
- 		return ERR_PTR(ret);
- 
--	clk = clk_register(NULL, &osc->hw);
-+	clk = clk_register(NULL, &osc->base.hw);
- 	if (IS_ERR(clk)) {
- 		free_irq(irq, osc);
- 		kfree(osc);
-@@ -529,16 +521,6 @@ static void __init of_at91rm9200_clk_main_setup(struct device_node *np)
- CLK_OF_DECLARE(at91rm9200_clk_main, "atmel,at91rm9200-clk-main",
- 	       of_at91rm9200_clk_main_setup);
- 
--static irqreturn_t clk_sam9x5_main_irq_handler(int irq, void *dev_id)
--{
--	struct clk_sam9x5_main *clkmain = dev_id;
--
--	wake_up(&clkmain->wait);
--	disable_irq_nosync(clkmain->irq);
--
--	return IRQ_HANDLED;
--}
--
- static inline bool clk_sam9x5_main_ready(struct regmap *regmap)
- {
- 	unsigned int status;
-@@ -551,11 +533,11 @@ static inline bool clk_sam9x5_main_ready(struct regmap *regmap)
- static int clk_sam9x5_main_prepare(struct clk_hw *hw)
- {
- 	struct clk_sam9x5_main *clkmain = to_clk_sam9x5_main(hw);
--	struct regmap *regmap = clkmain->regmap;
-+	struct regmap *regmap = clkmain->base.regmap;
- 
- 	while (!clk_sam9x5_main_ready(regmap)) {
--		enable_irq(clkmain->irq);
--		wait_event(clkmain->wait,
-+		enable_irq(clkmain->base.irq);
-+		wait_event(clkmain->base.wait,
- 			   clk_sam9x5_main_ready(regmap));
- 	}
- 
-@@ -566,7 +548,7 @@ static int clk_sam9x5_main_is_prepared(struct clk_hw *hw)
- {
- 	struct clk_sam9x5_main *clkmain = to_clk_sam9x5_main(hw);
- 
--	return clk_sam9x5_main_ready(clkmain->regmap);
-+	return clk_sam9x5_main_ready(clkmain->base.regmap);
- }
- 
- static unsigned long clk_sam9x5_main_recalc_rate(struct clk_hw *hw,
-@@ -574,13 +556,13 @@ static unsigned long clk_sam9x5_main_recalc_rate(struct clk_hw *hw,
- {
- 	struct clk_sam9x5_main *clkmain = to_clk_sam9x5_main(hw);
- 
--	return clk_main_recalc_rate(clkmain->regmap, parent_rate);
-+	return clk_main_recalc_rate(clkmain->base.regmap, parent_rate);
- }
- 
- static int clk_sam9x5_main_set_parent(struct clk_hw *hw, u8 index)
- {
- 	struct clk_sam9x5_main *clkmain = to_clk_sam9x5_main(hw);
--	struct regmap *regmap = clkmain->regmap;
-+	struct regmap *regmap = clkmain->base.regmap;
- 	unsigned int tmp;
- 
- 	if (index > 1)
-@@ -595,8 +577,8 @@ static int clk_sam9x5_main_set_parent(struct clk_hw *hw, u8 index)
- 		regmap_write(regmap, AT91_CKGR_MOR, tmp & ~AT91_PMC_MOSCSEL);
- 
- 	while (!clk_sam9x5_main_ready(regmap)) {
--		enable_irq(clkmain->irq);
--		wait_event(clkmain->wait,
-+		enable_irq(clkmain->base.irq);
-+		wait_event(clkmain->base.wait,
- 			   clk_sam9x5_main_ready(regmap));
- 	}
- 
-@@ -608,7 +590,7 @@ static u8 clk_sam9x5_main_get_parent(struct clk_hw *hw)
- 	struct clk_sam9x5_main *clkmain = to_clk_sam9x5_main(hw);
- 	unsigned int status;
- 
--	regmap_read(clkmain->regmap, AT91_CKGR_MOR, &status);
-+	regmap_read(clkmain->base.regmap, AT91_CKGR_MOR, &status);
- 
- 	return status & AT91_PMC_MOSCEN ? 1 : 0;
- }
-@@ -650,21 +632,21 @@ at91_clk_register_sam9x5_main(struct regmap *regmap,
- 	init.num_parents = num_parents;
- 	init.flags = CLK_SET_PARENT_GATE;
- 
--	clkmain->hw.init = &init;
--	clkmain->regmap = regmap;
--	clkmain->irq = irq;
--	regmap_read(clkmain->regmap, AT91_CKGR_MOR, &status);
-+	clkmain->base.hw.init = &init;
-+	clkmain->base.regmap = regmap;
-+	clkmain->base.irq = irq;
-+	regmap_read(clkmain->base.regmap, AT91_CKGR_MOR, &status);
- 	clkmain->parent = status & AT91_PMC_MOSCEN ? 1 : 0;
--	init_waitqueue_head(&clkmain->wait);
--	irq_set_status_flags(clkmain->irq, IRQ_NOAUTOEN);
--	ret = request_irq(clkmain->irq, clk_sam9x5_main_irq_handler,
--			  IRQF_TRIGGER_HIGH, name, clkmain);
-+	init_waitqueue_head(&clkmain->base.wait);
-+	irq_set_status_flags(irq, IRQ_NOAUTOEN);
-+	ret = request_irq(irq, clk_main_irq_handler,
-+			  IRQF_TRIGGER_HIGH, name, &clkmain->base);
- 	if (ret)
- 		return ERR_PTR(ret);
- 
--	clk = clk_register(NULL, &clkmain->hw);
-+	clk = clk_register(NULL, &clkmain->base.hw);
- 	if (IS_ERR(clk)) {
--		free_irq(clkmain->irq, clkmain);
-+		free_irq(irq, clkmain);
- 		kfree(clkmain);
- 	}
- 
++/* Retrieve clock multiplier and dividers from hardware */
++static int si514_get_muldiv(struct clk_si514 *data,
++	struct clk_si514_muldiv *settings)
++{
++	int err;
++	u8 reg[7];
++
++	err = regmap_bulk_read(data->regmap, SI514_REG_M_FRAC1,
++			reg, ARRAY_SIZE(reg));
++	if (err)
++		return err;
++
++	settings->m_frac =
++		reg[0] |
++		((u32)reg[1] << 8) |
++		((u32)reg[2] << 16) |
++		((u32)(reg[3] & 0x1F) << 24);
++	settings->m_int = ((reg[4] & 0x3f) << 3) | (reg[3] >> 5);
++	settings->ls_div_bits = (reg[6] >> 4) & 0x07;
++	settings->hs_div = ((u16)(reg[6] & 0x03) << 8) | reg[5];
++	return 0;
++}
++
++static int si514_set_muldiv(struct clk_si514 *data,
++	struct clk_si514_muldiv *settings)
++{
++	u8 lp;
++	u8 reg[7];
++	int err;
++
++	/* Calculate LP1/LP2 according to table 13 in the datasheet */
++	/* 65.259980246 */
++	if (settings->m_int < 65 ||
++		(settings->m_int == 65 && settings->m_frac <= 139575831))
++		lp = 0x22;
++	/* 67.859763463 */
++	else if (settings->m_int < 67 ||
++		(settings->m_int == 67 && settings->m_frac <= 461581994))
++		lp = 0x23;
++	/* 72.937624981 */
++	else if (settings->m_int < 72 ||
++		(settings->m_int == 72 && settings->m_frac <= 503383578))
++		lp = 0x33;
++	/* 75.843265046 */
++	else if (settings->m_int < 75 ||
++		(settings->m_int == 75 && settings->m_frac <= 452724474))
++		lp = 0x34;
++	else
++		lp = 0x44;
++
++	err = regmap_write(data->regmap, SI514_REG_LP, lp);
++	if (err < 0)
++		return err;
++
++	reg[0] = settings->m_frac;
++	reg[1] = settings->m_frac >> 8;
++	reg[2] = settings->m_frac >> 16;
++	reg[3] = (settings->m_frac >> 24) | (settings->m_int << 5);
++	reg[4] = settings->m_int >> 3;
++	reg[5] = settings->hs_div;
++	reg[6] = (settings->hs_div >> 8) | (settings->ls_div_bits << 4);
++
++	err = regmap_bulk_write(data->regmap, SI514_REG_HS_DIV, reg + 5, 2);
++	if (err < 0)
++		return err;
++	/*
++	 * Writing to SI514_REG_M_INT_FRAC triggers the clock change, so that
++	 * must be written last
++	 */
++	return regmap_bulk_write(data->regmap, SI514_REG_M_FRAC1, reg, 5);
++}
++
++/* Calculate divider settings for a given frequency */
++static int si514_calc_muldiv(struct clk_si514_muldiv *settings,
++	unsigned long frequency)
++{
++	u64 m;
++	u32 ls_freq;
++	u32 tmp;
++	u8 res;
++
++	if ((frequency < SI514_MIN_FREQ) || (frequency > SI514_MAX_FREQ))
++		return -EINVAL;
++
++	/* Determine the minimum value of LS_DIV and resulting target freq. */
++	ls_freq = frequency;
++	if (frequency >= (FVCO_MIN / HS_DIV_MAX))
++		settings->ls_div_bits = 0;
++	else {
++		res = 1;
++		tmp = 2 * HS_DIV_MAX;
++		while (tmp <= (HS_DIV_MAX * 32)) {
++			if ((frequency * tmp) >= FVCO_MIN)
++				break;
++			++res;
++			tmp <<= 1;
++		}
++		settings->ls_div_bits = res;
++		ls_freq = frequency << res;
++	}
++
++	/* Determine minimum HS_DIV, round up to even number */
++	settings->hs_div = DIV_ROUND_UP(FVCO_MIN >> 1, ls_freq) << 1;
++
++	/* M = LS_DIV x HS_DIV x frequency / F_XO (in fixed-point) */
++	m = ((u64)(ls_freq * settings->hs_div) << 29) + (FXO / 2);
++	do_div(m, FXO);
++	settings->m_frac = (u32)m & (BIT(29) - 1);
++	settings->m_int = (u32)(m >> 29);
++
++	return 0;
++}
++
++/* Calculate resulting frequency given the register settings */
++static unsigned long si514_calc_rate(struct clk_si514_muldiv *settings)
++{
++	u64 m = settings->m_frac | ((u64)settings->m_int << 29);
++	u32 d = settings->hs_div * BIT(settings->ls_div_bits);
++
++	return ((u32)(((m * FXO) + (FXO / 2)) >> 29)) / d;
++}
++
++static unsigned long si514_recalc_rate(struct clk_hw *hw,
++		unsigned long parent_rate)
++{
++	struct clk_si514 *data = to_clk_si514(hw);
++	struct clk_si514_muldiv settings;
++	int err;
++
++	err = si514_get_muldiv(data, &settings);
++	if (err) {
++		dev_err(&data->i2c_client->dev, "unable to retrieve settings\n");
++		return 0;
++	}
++
++	return si514_calc_rate(&settings);
++}
++
++static long si514_round_rate(struct clk_hw *hw, unsigned long rate,
++		unsigned long *parent_rate)
++{
++	struct clk_si514_muldiv settings;
++	int err;
++
++	if (!rate)
++		return 0;
++
++	err = si514_calc_muldiv(&settings, rate);
++	if (err)
++		return err;
++
++	return si514_calc_rate(&settings);
++}
++
++/*
++ * Update output frequency for big frequency changes (> 1000 ppm).
++ * The chip supports <1000ppm changes "on the fly", we haven't implemented
++ * that here.
++ */
++static int si514_set_rate(struct clk_hw *hw, unsigned long rate,
++		unsigned long parent_rate)
++{
++	struct clk_si514 *data = to_clk_si514(hw);
++	struct clk_si514_muldiv settings;
++	int err;
++
++	err = si514_calc_muldiv(&settings, rate);
++	if (err)
++		return err;
++
++	si514_enable_output(data, false);
++
++	err = si514_set_muldiv(data, &settings);
++	if (err < 0)
++		return err; /* Undefined state now, best to leave disabled */
++
++	/* Trigger calibration */
++	err = regmap_write(data->regmap, SI514_REG_CONTROL, SI514_CONTROL_FCAL);
++	if (err < 0)
++		return err;
++
++	/* Applying a new frequency can take up to 10ms */
++	usleep_range(10000, 12000);
++
++	si514_enable_output(data, true);
++
++	return err;
++}
++
++static const struct clk_ops si514_clk_ops = {
++	.recalc_rate = si514_recalc_rate,
++	.round_rate = si514_round_rate,
++	.set_rate = si514_set_rate,
++};
++
++static bool si514_regmap_is_volatile(struct device *dev, unsigned int reg)
++{
++	switch (reg) {
++	case SI514_REG_CONTROL:
++	case SI514_REG_RESET:
++		return true;
++	default:
++		return false;
++	}
++}
++
++static bool si514_regmap_is_writeable(struct device *dev, unsigned int reg)
++{
++	switch (reg) {
++	case SI514_REG_LP:
++	case SI514_REG_M_FRAC1 ... SI514_REG_LS_HS_DIV:
++	case SI514_REG_OE_STATE:
++	case SI514_REG_RESET:
++	case SI514_REG_CONTROL:
++		return true;
++	default:
++		return false;
++	}
++}
++
++static const struct regmap_config si514_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.cache_type = REGCACHE_RBTREE,
++	.max_register = SI514_REG_CONTROL,
++	.writeable_reg = si514_regmap_is_writeable,
++	.volatile_reg = si514_regmap_is_volatile,
++};
++
++static int si514_probe(struct i2c_client *client,
++		const struct i2c_device_id *id)
++{
++	struct clk_si514 *data;
++	struct clk_init_data init;
++	struct clk *clk;
++	int err;
++
++	data = devm_kzalloc(&client->dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	init.ops = &si514_clk_ops;
++	init.flags = CLK_IS_ROOT;
++	init.num_parents = 0;
++	data->hw.init = &init;
++	data->i2c_client = client;
++
++	if (of_property_read_string(client->dev.of_node, "clock-output-names",
++			&init.name))
++		init.name = client->dev.of_node->name;
++
++	data->regmap = devm_regmap_init_i2c(client, &si514_regmap_config);
++	if (IS_ERR(data->regmap)) {
++		dev_err(&client->dev, "failed to allocate register map\n");
++		return PTR_ERR(data->regmap);
++	}
++
++	i2c_set_clientdata(client, data);
++
++	clk = devm_clk_register(&client->dev, &data->hw);
++	if (IS_ERR(clk)) {
++		dev_err(&client->dev, "clock registration failed\n");
++		return PTR_ERR(clk);
++	}
++	err = of_clk_add_provider(client->dev.of_node, of_clk_src_simple_get,
++			clk);
++	if (err) {
++		dev_err(&client->dev, "unable to add clk provider\n");
++		return err;
++	}
++
++	return 0;
++}
++
++static int si514_remove(struct i2c_client *client)
++{
++	of_clk_del_provider(client->dev.of_node);
++	return 0;
++}
++
++static const struct i2c_device_id si514_id[] = {
++	{ "si514", 0 },
++	{ }
++};
++MODULE_DEVICE_TABLE(i2c, si514_id);
++
++static const struct of_device_id clk_si514_of_match[] = {
++	{ .compatible = "silabs,si514" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, clk_si514_of_match);
++
++static struct i2c_driver si514_driver = {
++	.driver = {
++		.name = "si514",
++		.of_match_table = clk_si514_of_match,
++	},
++	.probe		= si514_probe,
++	.remove		= si514_remove,
++	.id_table	= si514_id,
++};
++module_i2c_driver(si514_driver);
++
++MODULE_AUTHOR("Mike Looijmans <mike.looijmans@topic.nl>");
++MODULE_DESCRIPTION("Si514 driver");
++MODULE_LICENSE("GPL");
 -- 
-2.1.4
+1.9.1
