@@ -1,82 +1,35 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, sjoerd.simons@collabora.co.uk
-Subject: Re: [PATCH 1/3] clk: add flag for clocks that need to be enabled on rate changes
-Date: Fri, 02 Oct 2015 16:12:13 +0200
-Message-ID: <3137165.kmu68gRS44@diego>
-In-Reply-To: <1929669.AsgMSusdJb@phil>
-References: <1929669.AsgMSusdJb@phil>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:59575 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751225AbbJBA0x (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 1 Oct 2015 20:26:53 -0400
+Date: Thu, 1 Oct 2015 17:26:51 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, heikki.krogerus@linux.intel.com,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 4/5] clk: fractional-divider: switch to rational best
+ approximation
+Message-ID: <20151002002651.GD12338@codeaurora.org>
+References: <1442937252-50281-1-git-send-email-andriy.shevchenko@linux.intel.com>
+ <1442937252-50281-5-git-send-email-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1442937252-50281-5-git-send-email-andriy.shevchenko@linux.intel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-any comment on these 3 patches?
-
-Thanks
-Heiko
-
-Am Freitag, 21. August 2015, 19:46:31 schrieb Heiko Stuebner:
-> Some clocks need to be enabled to accept rate changes. This patch adds a
-> new flag CLK_SET_RATE_UNGATE that lets clk_change_rate enable the clock
-> before trying to change the rate and disable it again afterwards.
-> This of course doesn't effect clocks that are already running at that
-> point, as their refcount will only temporarily increase.
+On 09/22, Andy Shevchenko wrote:
+> This patch converts the code to use rational best approximation algorithm which
+> is much more precise.
 > 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+> Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > ---
->  drivers/clk/clk.c            | 18 ++++++++++++++++++
->  include/linux/clk-provider.h |  1 +
->  2 files changed, 19 insertions(+)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 28cd923..564f11e 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1438,6 +1438,15 @@ static void clk_change_rate(struct clk_core *core)
->  	else if (core->parent)
->  		best_parent_rate = core->parent->rate;
-> 
-> +	if (core->flags & CLK_SET_RATE_UNGATE) {
-> +		unsigned long flags;
-> +
-> +		clk_core_prepare(core);
-> +		flags = clk_enable_lock();
-> +		clk_core_enable(core);
-> +		clk_enable_unlock(flags);
-> +	}
-> +
->  	if (core->new_parent && core->new_parent != core->parent) {
->  		old_parent = __clk_set_parent_before(core, core->new_parent);
->  		trace_clk_set_parent(core, core->new_parent);
-> @@ -1464,6 +1473,15 @@ static void clk_change_rate(struct clk_core *core)
-> 
->  	core->rate = clk_recalc(core, best_parent_rate);
-> 
-> +	if (core->flags & CLK_SET_RATE_UNGATE) {
-> +		unsigned long flags;
-> +
-> +		flags = clk_enable_lock();
-> +		clk_core_disable(core);
-> +		clk_enable_unlock(flags);
-> +		clk_core_unprepare(core);
-> +	}
-> +
->  	if (core->notifier_count && old_rate != core->rate)
->  		__clk_notify(core, POST_RATE_CHANGE, old_rate, core->rate);
-> 
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 3ecc07d..21e0025 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -31,6 +31,7 @@
->  #define CLK_SET_RATE_NO_REPARENT BIT(7) /* don't re-parent on rate change
-> */ #define CLK_GET_ACCURACY_NOCACHE BIT(8) /* do not use the cached clk
-> accuracy */ #define CLK_RECALC_NEW_RATES	BIT(9) /* recalc rates after
-> notifications */ +#define CLK_SET_RATE_UNGATE	BIT(10) /* clock needs to run
-> to set rate */
-> 
->  struct clk;
->  struct clk_hw;
+
+Applied to clk-next
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
