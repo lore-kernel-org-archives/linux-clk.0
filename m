@@ -1,37 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:62571 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750820AbbJOOUH (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 15 Oct 2015 10:20:07 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-Cc: mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
-	marc.zyngier@arm.com, linux-clk@vger.kernel.org, olof@lixom.net,
-	bhupesh.linux@gmail.com, will.deacon@arm.com,
-	Catalin.Marinas@arm.com, LeoLi@freescale.com,
-	scottwood@freescale.com, stuart.yoder@freescale.com
-Subject: Re: [PATCH v3 12/12] dts/Makefile: Add build support for LS2080a QDS & RDB board DTS
-Date: Thu, 15 Oct 2015 16:19:38 +0200
-Message-ID: <6113441.JKoMX6G60g@wuerfel>
-In-Reply-To: <1444891672-32117-13-git-send-email-bhupesh.sharma@freescale.com>
-References: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com> <1444891672-32117-13-git-send-email-bhupesh.sharma@freescale.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <s.nawrocki@samsung.com>
+Message-id: <560E53BC.2060609@samsung.com>
+Date: Fri, 02 Oct 2015 11:51:56 +0200
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+MIME-version: 1.0
+To: Mike Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+ linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Subject: [GIT PULL] clk/samsung updates for v4.4
+Content-type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thursday 15 October 2015 12:17:52 Bhupesh Sharma wrote:
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-> index 932001a..57b41c7 100644
-> --- a/arch/arm64/boot/dts/freescale/Makefile
-> +++ b/arch/arm64/boot/dts/freescale/Makefile
-> @@ -1,4 +1,4 @@
-> -dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-simu.dtb
-> +dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-qds.dtb fsl-ls2080a-rdb.dtb fsl-ls2080a-simu.dtb
->   
-> 
 
-Please use one line per dtb file here, for consistency with the other platforms
+The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
 
-	Arnd
+  Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
+
+are available in the git repository at:
+
+  git://linuxtv.org/snawrocki/samsung.git tags/clk-samsung-4.4
+
+for you to fetch changes up to 7993b3ebec979b23c2d7425959c9d232c452498b:
+
+  clk: samsung: exynos7: Add required clock tree for UFS (2015-09-15 11:18:15 +0200)
+
+----------------------------------------------------------------
+Fixes, improvements and addition of some missing features
+of the exynos7 clock controller driver.
+
+----------------------------------------------------------------
+Alim Akhtar (16):
+      clk: samsung: exynos7: Fix CMU TOPC block clock
+      clk: samsung: exynos7: Fix CMU TOP1 block
+      clk: samsung: exynos7: Correct nr_clk_ids for fsys0
+      clk: samsung: exynos7: Correct nr_clk_ids for fsys1
+      clk: samsung: exynos7: Change the CMU_TOPC block clock names
+      clk: samsung: exynos7: Adds missing clocks gates of CMU_TOPC
+      clk: samsung: exynos7: Correct CMU_TOP0 clocks names
+      clk: samsung: exynos7: Correct CMU_TOP1 clocks names
+      clk: samsung: exynos7: Correct CMU_CCORE clocks names
+      clk: samsung: exynos7: Correct CMU_PERIC0 clocks names
+      clk: samsung: exynos7: Correct CMU_PERIC1 clocks names
+      clk: samsung: exynos7: Correct CMU_PERIS clocks names
+      clk: samsung: exynos7: Correct CMU_FSYS0 clocks names
+      clk: samsung: exynos7: Correct CMU_FSYS1 clocks names
+      clk: samsung: exynos7: Add missing fixed_clks to cmu_info
+      clk: samsung: exynos7: Add required clock tree for UFS
+
+ drivers/clk/samsung/clk-exynos7.c       |  465 +++++++++++++++++++++----------
+ include/dt-bindings/clock/exynos7-clk.h |   43 ++-
+ 2 files changed, 357 insertions(+), 151 deletions(-)
+
+-- 
+Regards,
+Sylwester
