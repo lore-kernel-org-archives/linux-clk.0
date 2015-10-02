@@ -1,51 +1,72 @@
-Return-Path: <jszhang@marvell.com>
-Date: Wed, 21 Oct 2015 18:08:56 +0800
-From: Jisheng Zhang <jszhang@marvell.com>
-To: Michael Turquette <mturquette@baylibre.com>
-CC: <sebastian.hesselbarth@gmail.com>, <robh+dt@kernel.org>,
-        <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-        <sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/4] clk: berlin: bg2q: remove CLK_IGNORE_UNUSED flag
- for sdio clk
-Message-ID: <20151021180856.217e11ea@xhacker>
-In-Reply-To: <20151021095454.20687.98330@quantum>
-References: <1445339807-2351-1-git-send-email-jszhang@marvell.com>
-	<1445339807-2351-4-git-send-email-jszhang@marvell.com>
-	<20151021093039.20687.88701@quantum>	<20151021095454.20687.98330@quantum>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 2 Oct 2015 12:18:04 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Looijmans <mike.looijmans@topic.nl>
+Cc: linux-clk@vger.kernel.org, mturquette@baylibre.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] Add driver for the si514 clock generator chip
+Message-ID: <20151002191804.GS12338@codeaurora.org>
+References: <1442487891-20477-1-git-send-email-mike.looijmans@topic.nl>
+ <1443770129-7757-1-git-send-email-mike.looijmans@topic.nl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1443770129-7757-1-git-send-email-mike.looijmans@topic.nl>
 List-ID: <linux-clk.vger.kernel.org>
 
-Dear Michael,
-
-On Wed, 21 Oct 2015 02:54:54 -0700
-Michael Turquette <mturquette@baylibre.com> wrote:
-
-> Quoting Michael Turquette (2015-10-21 02:30:39)
-> > Quoting Jisheng Zhang (2015-10-20 04:16:46)  
-> > > Since we have added the necessary two clks' properties in dts, we can
-> > > remove the "sdio" clk's CLK_IGNORE_UNUSED flag now.
-> > > 
-> > > Signed-off-by: Jisheng Zhang <jszhang@marvell.com>  
-> > 
-> > Applied to clk-next.  
+On 10/02, Mike Looijmans wrote:
+> This patch adds the driver and devicetree documentation for the
+> Silicon Labs SI514 clock generator chip. This is an I2C controlled
+> oscillator capable of generating clock signals ranging from 100kHz
+> to 250MHz.
 > 
-> So the sdhci change was dropped from v2. Do you want me to Ack these
-> instead so you can send them all together?
+> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+> ---
 
-I'll send another patch to for the sdhci change. it doesn't matter even the
-sdhci change delay a merge window because no functionality changes in the
-sdhci commit.
+Applied to clk-next. We can handle any stuff about assigned rates
+in a follow up patch.
 
-It's better we firstly take these clk clean ups because it saves power a bit
-and clean up the CLK_IGNORE_UNUSED flag.
+Also, I squashed in this for some cleanup.
 
-Hi Sebastian,
-
-What do you think?
-
-Thanks,
-Jisheng
+diff --git a/drivers/clk/clk-si514.c b/drivers/clk/clk-si514.c
+index 779aebcd884b..6af7dce54241 100644
+--- a/drivers/clk/clk-si514.c
++++ b/drivers/clk/clk-si514.c
+@@ -16,7 +16,6 @@
+  * GNU General Public License for more details.
+  */
+ 
+-#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ #include <linux/module.h>
+@@ -87,14 +86,11 @@ static int si514_get_muldiv(struct clk_si514 *data,
+ 	if (err)
+ 		return err;
+ 
+-	settings->m_frac =
+-		reg[0] |
+-		((u32)reg[1] << 8) |
+-		((u32)reg[2] << 16) |
+-		((u32)(reg[3] & 0x1F) << 24);
+-	settings->m_int = ((reg[4] & 0x3f) << 3) | (reg[3] >> 5);
++	settings->m_frac = reg[0] | reg[1] << 8 | reg[2] << 16 |
++			   (reg[3] & 0x1F) << 24;
++	settings->m_int = (reg[4] & 0x3f) << 3 | reg[3] >> 5;
+ 	settings->ls_div_bits = (reg[6] >> 4) & 0x07;
+-	settings->hs_div = ((u16)(reg[6] & 0x03) << 8) | reg[5];
++	settings->hs_div = (reg[6] & 0x03) << 8 | reg[5];
+ 	return 0;
+ }
+ 
+@@ -132,7 +128,7 @@ static int si514_set_muldiv(struct clk_si514 *data,
+ 	reg[0] = settings->m_frac;
+ 	reg[1] = settings->m_frac >> 8;
+ 	reg[2] = settings->m_frac >> 16;
+-	reg[3] = (settings->m_frac >> 24) | (settings->m_int << 5);
++	reg[3] = settings->m_frac >> 24 | settings->m_int << 5;
+ 	reg[4] = settings->m_int >> 3;
+ 	reg[5] = settings->hs_div;
+ 	reg[6] = (settings->hs_div >> 8) | (settings->ls_div_bits << 4);
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
