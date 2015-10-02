@@ -1,50 +1,57 @@
-Return-Path: <B48286@freescale.com>
-From: Zhiqiang Hou <B48286@freescale.com>
-To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-CC: <mark.rutland@arm.com>, <linux@roeck-us.net>, <wsa@the-dreams.de>,
-	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <Mingkai.Hu@freescale.com>,
-	<Shaohui.Xie@freescale.com>, <scottwood@freescale.com>,
-	<bhupesh.sharma@freescale.com>, <Wenbin.Song@freescale.com>,
-	<B48286@freescale.com>
-Subject: [PATCH V6 3/6] Documentation: DT: Add entry for FSL LS1043ARDB board
-Date: Fri, 23 Oct 2015 16:01:19 +0800
-Message-ID: <1445587282-29529-3-git-send-email-B48286@freescale.com>
-In-Reply-To: <1445587282-29529-1-git-send-email-B48286@freescale.com>
-References: <1445587282-29529-1-git-send-email-B48286@freescale.com>
-Return-Path: B48286@freescale.com
+Return-Path: <yingjoe.chen@mediatek.com>
+From: Yingjoe Chen <yingjoe.chen@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring
+	<robh+dt@kernel.org>
+CC: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner
+	<tglx@linutronix.de>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
+	<mturquette@baylibre.com>, James Liao <jamesjj.liao@mediatek.com>,
+	<devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Catalin Marinas
+	<catalin.marinas@arm.com>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Olof Johansson <olof@lixom.net>, <srv_heupstream@mediatek.com>,
+	<linux-arm-kernel@lists.infradead.org>, Daniel Kurtz <djkurtz@chromium.org>,
+	<linux-clk@vger.kernel.org>, Yingjoe Chen <yingjoe.chen@mediatek.com>,
+	<erin.lo@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>
+Subject: [PATCH v4 3/3] arm64: dts: mt8173: add timer node
+Date: Fri, 2 Oct 2015 23:05:19 +0800
+Message-ID: <1443798319-45744-4-git-send-email-yingjoe.chen@mediatek.com>
+In-Reply-To: <1443798319-45744-1-git-send-email-yingjoe.chen@mediatek.com>
+References: <1443798319-45744-1-git-send-email-yingjoe.chen@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Return-Path: yingjoe.chen@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mingkai Hu <Mingkai.Hu@freescale.com>
+From: Daniel Kurtz <djkurtz@chromium.org>
 
-Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
-Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+Add device node to enable GPT timer.
+
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+Signed-off-by: Eddie Huang <eddie.huang@mediatek.com>
+Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
 ---
-V6: V5 V4 V3 V2
- - No change.
+ arch/arm64/boot/dts/mediatek/mt8173.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
- Documentation/devicetree/bindings/arm/fsl.txt | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
-index 34c88b0..752a685 100644
---- a/Documentation/devicetree/bindings/arm/fsl.txt
-+++ b/Documentation/devicetree/bindings/arm/fsl.txt
-@@ -131,6 +131,10 @@ Example:
- Freescale ARMv8 based Layerscape SoC family Device Tree Bindings
- ----------------------------------------------------------------
+diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+index d18ee42..d763803 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+@@ -238,6 +238,15 @@
+ 			reg = <0 0x10007000 0 0x100>;
+ 		};
  
-+LS1043A ARMv8 based RDB Board
-+Required root node properties:
-+    - compatible = "fsl,ls1043a-rdb", "fsl,ls1043a";
++		timer: timer@10008000 {
++			compatible = "mediatek,mt8173-timer",
++				     "mediatek,mt6577-timer";
++			reg = <0 0x10008000 0 0x1000>;
++			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&infracfg CLK_INFRA_CLK_13M>,
++				 <&topckgen CLK_TOP_RTC_SEL>;
++		};
 +
- LS2080A ARMv8 based Simulator model
- Required root node properties:
-     - compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
+ 		pwrap: pwrap@1000d000 {
+ 			compatible = "mediatek,mt8173-pwrap";
+ 			reg = <0 0x1000d000 0 0x1000>;
 -- 
-2.1.0.27.g96db324
+1.9.1
