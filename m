@@ -1,72 +1,65 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:29494 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752156AbbJTJXV (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 20 Oct 2015 05:23:21 -0400
-From: Andrzej Hajda <a.hajda@samsung.com>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Hyungwon Hwang <human.hwang@samsung.com>
-Subject: [PATCH 01/10] clk/samsung: exynos5433: add definitions of HDMI-PHY
- output clocks
-Date: Tue, 20 Oct 2015 11:22:32 +0200
-Message-id: <1445332961-25419-2-git-send-email-a.hajda@samsung.com>
-In-reply-to: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
-References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 2 Oct 2015 11:11:23 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Simon <horms@verge.net.au>, Michael Turquette <mturquette@baylibre.com>,
+	Magnus <magnus.damm@gmail.com>, Linux-SH <linux-sh@vger.kernel.org>,
+	Linux-Kernel <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4] clk: add CS2000 Fractional-N driver
+Message-ID: <20151002181123.GM12338@codeaurora.org>
+References: <871te03x17.wl%kuninori.morimoto.gx@renesas.com>
+ <20151002003851.GH12338@codeaurora.org>
+ <87twqarsdf.wl%kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <87twqarsdf.wl%kuninori.morimoto.gx@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-HDMI driver must re-parent respective muxes during HDMI-PHY on/off
-to HDMI-PHY output clocks. To reference those clocks their
-definitions should be added.
+On 10/02, Kuninori Morimoto wrote:
+> 
+> Hi Stephen
+> 
+> Thank you for your review
+> 
+> > > +	init.parent_names	= parent_names;
+> > > +	init.num_parents	= ARRAY_SIZE(parent_names);
+> > > +
+> > > +	priv->hw.init = &init;
+> > > +
+> > > +	clk = clk_register(NULL, &priv->hw);
+> > 
+> > How about using devm_clk_register() and passing the i2c device
+> > down to this function?
+> 
+> Can I confirm ?
+> Does this "i2c device down" means call i2c_set_clientdata()
+> in this function ?
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/clk/samsung/clk-exynos5433.c   | 6 ++++--
- include/dt-bindings/clock/exynos5433.h | 5 ++++-
- 2 files changed, 8 insertions(+), 3 deletions(-)
+I mean passing a struct device pointer to this function and then
+using it here in the clk_register() function.
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 650ec13..e037406 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -2614,8 +2614,10 @@ static struct samsung_fixed_rate_clock disp_fixed_clks[] __initdata = {
- 	FRATE(0, "phyclk_mipidphy0_rxclkesc0_phy", NULL, CLK_IS_ROOT,
- 			100000000),
- 	/* PHY clocks from HDMI_PHY */
--	FRATE(0, "phyclk_hdmiphy_tmds_clko_phy", NULL, CLK_IS_ROOT, 300000000),
--	FRATE(0, "phyclk_hdmiphy_pixel_clko_phy", NULL, CLK_IS_ROOT, 166000000),
-+	FRATE(CLK_PHYCLK_HDMIPHY_TMDS_CLKO_PHY, "phyclk_hdmiphy_tmds_clko_phy",
-+			NULL, CLK_IS_ROOT, 300000000),
-+	FRATE(CLK_PHYCLK_HDMIPHY_PIXEL_CLKO_PHY, "phyclk_hdmiphy_pixel_clko_phy",
-+			NULL, CLK_IS_ROOT, 166000000),
- };
- 
- static struct samsung_mux_clock disp_mux_clks[] __initdata = {
-diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
-index 5bd80d5..4f0d566 100644
---- a/include/dt-bindings/clock/exynos5433.h
-+++ b/include/dt-bindings/clock/exynos5433.h
-@@ -765,7 +765,10 @@
- #define CLK_SCLK_RGB_VCLK				109
- #define CLK_SCLK_RGB_TV_VCLK				110
- 
--#define DISP_NR_CLK					111
-+#define CLK_PHYCLK_HDMIPHY_PIXEL_CLKO_PHY		111
-+#define CLK_PHYCLK_HDMIPHY_TMDS_CLKO_PHY		112
-+
-+#define DISP_NR_CLK					113
- 
- /* CMU_AUD */
- #define CLK_MOUT_AUD_PLL_USER				1
+> 
+> > > +static int cs2000_clk_init(struct cs2000_priv *priv)
+> > > +{
+> > > +	struct device *dev = priv_to_dev(priv);
+> > > +	struct device_node *np = dev->of_node;
+> > > +	u32 rate;
+> > > +	int ch = 0; /* it uses ch0 only at this point */
+> > > +	int ret;
+> > > +
+> > > +	if (of_property_read_u32(np, "clock-frequency", &rate))
+> > 
+> > Why can't we do this with DT assigned rates?
+> 
+> What doesn this "DT assigned rates" mean ?
+> this rate will be used as default output
+
+See the "Assigned clock parents and rates" section of
+Documentation/devicetree/bindings/clock/clock-bindings.txt and
+commit 86be408bfbd8 (clk: Support for clock parents and rates
+assigned from device tree, 2014-06-18).
+
 -- 
-1.9.1
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
