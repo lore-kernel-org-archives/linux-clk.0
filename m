@@ -1,77 +1,85 @@
-Return-Path: <manabian@gmail.com>
+Return-Path: <jonmason@broadcom.com>
+From: Jon Mason <jonmason@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
+	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
+	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
+Subject: [PATCH 08/10] clk: iproc: define Broadcom NS2 iProc clock binding
+Date: Fri, 2 Oct 2015 18:57:43 -0400
+Message-ID: <1443826665-17570-9-git-send-email-jonmason@broadcom.com>
+In-Reply-To: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
+References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
 MIME-Version: 1.0
-In-Reply-To: <20151021093419.20687.69047@quantum>
-References: <1440527643-2960-1-git-send-email-manabian@gmail.com>
-	<1440527643-2960-2-git-send-email-manabian@gmail.com>
-	<20151019222644.GC19782@codeaurora.org>
-	<CAGhQ9Vzi6SqhAfKW9VAeHNT50ywvHCgQ-movNXjc1dKZa9Ex5g@mail.gmail.com>
-	<20151021093419.20687.69047@quantum>
-Date: Wed, 21 Oct 2015 15:22:05 +0200
-Message-ID: <CAGhQ9VwDOwASiTN=KJ_1KjtHf2v7K7aYbqROPK_dVBKEDEXwoQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] clk: lpc18xx-ccu: fix potential system hang when
- disabling unused clocks
-From: Joachim  Eastwood <manabian@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 21 October 2015 at 11:34, Michael Turquette <mturquette@baylibre.com> wrote:
-> Quoting Joachim Eastwood (2015-10-20 03:42:14)
->> On 20 October 2015 at 00:26, Stephen Boyd <sboyd@codeaurora.org> wrote:
->> > On 08/25, Joachim Eastwood wrote:
->> >> CCU branch clock register must only be accessed while the base
->> >> (parent) clock is running. Access with a disabled base clock
->> >> will cause the system to hang. Fix this issue by adding code
->> >> that check if the parent clock is running in the is_enabled
->> >> clk_ops callback.
->> >>
->> >> This hang would occur when disabling unused clocks after AMBA
->> >> runtime pm had already disabled some of the clocks.
->> >>
->> >> Signed-off-by: Joachim Eastwood <manabian@gmail.com>
->> >> ---
->> >>
->> >> No changes from v1.
->> >>
->> >>  drivers/clk/nxp/clk-lpc18xx-ccu.c | 14 ++++++++++++++
->> >>  1 file changed, 14 insertions(+)
->> >>
->> >> diff --git a/drivers/clk/nxp/clk-lpc18xx-ccu.c b/drivers/clk/nxp/clk-lpc18xx-ccu.c
->> >> index eeaee97da110..1845476e635e 100644
->> >> --- a/drivers/clk/nxp/clk-lpc18xx-ccu.c
->> >> +++ b/drivers/clk/nxp/clk-lpc18xx-ccu.c
->> >> @@ -180,6 +180,20 @@ static void lpc18xx_ccu_gate_disable(struct clk_hw *hw)
->> >>  static int lpc18xx_ccu_gate_is_enabled(struct clk_hw *hw)
->> >>  {
->> >>       struct clk_gate *gate = to_clk_gate(hw);
->> >> +     struct clk *parent;
->> >> +
->> >> +     /*
->> >> +      * The branch clock registers are only accessible
->> >> +      * if the base (parent) clock is enabled. Register
->> >> +      * access with a disabled base clock will hang the
->> >> +      * system.
->> >> +      */
->> >> +     parent = clk_get_parent(hw->clk);
->> >
->> > Why not use provider APIs (clk_hw_get_parent and we could add a
->> > clk_hw_is_enabled)?
->>
->> That is simply because I didn't know it existed.
->> Adding a clk_hw_is_enabled() seems like a good idea to me.
->>
->>
->> >I also wonder why we don't just read the
->> > register directly here instead of going through the framework to
->> > find out if the parent is enabled?
->>
->> Reading the register when the parent clock is off will hang the hardware.
->
-> I think Stephen meant, why not simply read the parent clk register?
+Document the device tree bindings for Broadcom Northstar 2 architecture
+based clock controller
 
-The parent clk register is in another hardware block.
+Signed-off-by: Jon Mason <jonmason@broadcom.com>
+---
+ .../bindings/clock/brcm,iproc-clocks.txt           | 48 ++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-
-regards,
-Joachim Eastwood
+diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+index b3c3e9d..ede65a5 100644
+--- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+@@ -160,3 +160,51 @@ Northstar Plus.  These clock IDs are defined in:
+     pcie_phy	lcpll0		1	BCM_NSP_LCPLL0_PCIE_PHY_REF_CLK
+     sdio	lcpll0		2	BCM_NSP_LCPLL0_SDIO_CLK
+     ddr_phy	lcpll0		3	BCM_NSP_LCPLL0_DDR_PHY_CLK
++
++Northstar 2
++-----------
++PLL and leaf clock compatible strings for Northstar 2 are:
++    "brcm,ns2-genpll-scr"
++    "brcm,ns2-genpll-sw"
++    "brcm,ns2-lcpll-ddr"
++    "brcm,ns2-lcpll-ports"
++
++The following table defines the set of PLL/clock index and ID for Northstar 2.
++These clock IDs are defined in:
++    "include/dt-bindings/clock/bcm-ns2.h"
++
++    Clock	Source		Index	ID
++    ---		-----		-----	---------
++    crystal	N/A		N/A	N/A
++
++    genpll_scr	crystal		0	BCM_NS2_GENPLL_SCR
++    scr		genpll_scr	1	BCM_NS2_GENPLL_SCR_SCR_CLK
++    fs		genpll_scr	2	BCM_NS2_GENPLL_SCR_FS_CLK
++    audio_ref	genpll_scr	3	BCM_NS2_GENPLL_SCR_AUDIO_CLK
++    ch3_unused	genpll_scr	4	BCM_NS2_GENPLL_SCR_CH3_UNUSED
++    ch4_unused	genpll_scr	5	BCM_NS2_GENPLL_SCR_CH4_UNUSED
++    ch5_unused	genpll_scr	6	BCM_NS2_GENPLL_SCR_CH5_UNUSED
++
++    genpll_sw	crystal		0	BCM_NS2_GENPLL_SW
++    rpe		genpll_sw	1	BCM_NS2_GENPLL_SW_RPE_CLK
++    250		genpll_sw	2	BCM_NS2_GENPLL_SW_250_CLK
++    nic		genpll_sw	3	BCM_NS2_GENPLL_SW_NIC_CLK
++    chimp	genpll_sw	4	BCM_NS2_GENPLL_SW_CHIMP_CLK
++    port	genpll_sw	5	BCM_NS2_GENPLL_SW_PORT_CLK
++    sdio	genpll_sw	6	BCM_NS2_GENPLL_SW_SDIO_CLK
++
++    lcpll_ddr	crystal		0	BCM_NS2_LCPLL_DDR
++    pcie_sata_usb lcpll_ddr	1	BCM_NS2_LCPLL_DDR_PCIE_SATA_USB_CLK
++    ddr		lcpll_ddr	2	BCM_NS2_LCPLL_DDR_DDR_CLK
++    ch2_unused	lcpll_ddr	3	BCM_NS2_LCPLL_DDR_CH2_UNUSED
++    ch3_unused	lcpll_ddr	4	BCM_NS2_LCPLL_DDR_CH3_UNUSED
++    ch4_unused	lcpll_ddr	5	BCM_NS2_LCPLL_DDR_CH4_UNUSED
++    ch5_unused	lcpll_ddr	6	BCM_NS2_LCPLL_DDR_CH5_UNUSED
++
++    lcpll_ports	crystal		0	BCM_NS2_LCPLL_PORTS
++    wan		lcpll_ports	1	BCM_NS2_LCPLL_PORTS_WAN_CLK
++    rgmii	lcpll_ports	2	BCM_NS2_LCPLL_PORTS_RGMII_CLK
++    ch2_unused	lcpll_ports	3	BCM_NS2_LCPLL_PORTS_CH2_UNUSED
++    ch3_unused	lcpll_ports	4	BCM_NS2_LCPLL_PORTS_CH3_UNUSED
++    ch4_unused	lcpll_ports	5	BCM_NS2_LCPLL_PORTS_CH4_UNUSED
++    ch5_unused	lcpll_ports	6	BCM_NS2_LCPLL_PORTS_CH5_UNUSED
+-- 
+1.9.1
