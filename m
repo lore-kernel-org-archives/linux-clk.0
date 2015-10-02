@@ -1,50 +1,40 @@
-Return-Path: <t-kristo@ti.com>
-To: "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, "tony@atomide.com" <tony@atomide.com>,
-        Stephen
- Boyd <sboyd@codeaurora.org>,
-        Mike Turquette <mturquette@baylibre.com>
-CC: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [GIT PULL] clock: ti: fixes for 4.3-rc
-Message-ID: <560E26EC.1030801@ti.com>
-Date: Fri, 2 Oct 2015 09:40:44 +0300
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 2 Oct 2015 12:32:55 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@stlinux.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] ARM: STi: DT: Add support for stih418 A9 pll
+Message-ID: <20151002193255.GW12338@codeaurora.org>
+References: <1440409251-11166-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1440409251-11166-5-git-send-email-gabriel.fernandez@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1440409251-11166-5-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen, Mike,
+On 08/24, Gabriel Fernandez wrote:
+> Add support for new PLL-type for stih418 A9-PLL.
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+> ---
 
-A few TI clock driver fixes to pull against 4.3-rc.
+I assume this will go through arm-soc?
 
--Tero
-
-================
-
-The following changes since commit 9ffecb10283508260936b96022d4ee43a7798b4c:
-
-   Linux 4.3-rc3 (2015-09-27 07:50:08 -0400)
-
-are available in the git repository at:
-
-   https://github.com/t-kristo/linux-pm.git for-4.3-rc/ti-clk-fixes
-
-for you to fetch changes up to 7aba4f5201d1b7b3ddb0b03883d9edf69851ddad:
-
-   clk: ti: dflt: fix enable_reg validity check (2015-10-02 09:24:28 +0300)
-
-----------------------------------------------------------------
-Ben Dooks (1):
-       clk: ti: fix dual-registration of uart4_ick
-
-Peter Ujfalusi (1):
-       clk: ti: clk-7xx: Remove hardwired ABE clock configuration
-
-Suman Anna (1):
-       clk: ti: dflt: fix enable_reg validity check
-
-  drivers/clk/ti/clk-3xxx.c  |    2 +-
-  drivers/clk/ti/clk-7xx.c   |   18 +-----------------
-  drivers/clk/ti/clkt_dflt.c |    4 ++--
-  3 files changed, 4 insertions(+), 20 deletions(-)
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
