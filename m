@@ -1,57 +1,43 @@
-Return-Path: <yingjoe.chen@mediatek.com>
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring
-	<robh+dt@kernel.org>
-CC: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner
-	<tglx@linutronix.de>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
-	<mturquette@baylibre.com>, James Liao <jamesjj.liao@mediatek.com>,
-	<devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Catalin Marinas
-	<catalin.marinas@arm.com>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Olof Johansson <olof@lixom.net>, <srv_heupstream@mediatek.com>,
-	<linux-arm-kernel@lists.infradead.org>, Daniel Kurtz <djkurtz@chromium.org>,
-	<linux-clk@vger.kernel.org>, Yingjoe Chen <yingjoe.chen@mediatek.com>,
-	<erin.lo@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>
-Subject: [PATCH v4 3/3] arm64: dts: mt8173: add timer node
-Date: Fri, 2 Oct 2015 23:05:19 +0800
-Message-ID: <1443798319-45744-4-git-send-email-yingjoe.chen@mediatek.com>
-In-Reply-To: <1443798319-45744-1-git-send-email-yingjoe.chen@mediatek.com>
-References: <1443798319-45744-1-git-send-email-yingjoe.chen@mediatek.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 2 Oct 2015 12:32:35 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@stlinux.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] drivers: clk: st: Support for enable/disable in
+ Clockgen PLLs
+Message-ID: <20151002193234.GT12338@codeaurora.org>
+References: <1440409251-11166-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1440409251-11166-2-git-send-email-gabriel.fernandez@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yingjoe.chen@mediatek.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1440409251-11166-2-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Daniel Kurtz <djkurtz@chromium.org>
+On 08/24, Gabriel Fernandez wrote:
+> The patch adds support for enable/disable of the Clockgen PLLs.
+> clkgen_pll_enable/clkgen_pll_disable added as generic function for all PLLs.
+> 
+> Signed-off-by: Pankaj Dev <pankaj.dev@st.com>
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+> ---
 
-Add device node to enable GPT timer.
+Applied to clk-next
 
-Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
-Signed-off-by: Eddie Huang <eddie.huang@mediatek.com>
-Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt8173.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index d18ee42..d763803 100644
---- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -238,6 +238,15 @@
- 			reg = <0 0x10007000 0 0x100>;
- 		};
- 
-+		timer: timer@10008000 {
-+			compatible = "mediatek,mt8173-timer",
-+				     "mediatek,mt6577-timer";
-+			reg = <0 0x10008000 0 0x1000>;
-+			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&infracfg CLK_INFRA_CLK_13M>,
-+				 <&topckgen CLK_TOP_RTC_SEL>;
-+		};
-+
- 		pwrap: pwrap@1000d000 {
- 			compatible = "mediatek,mt8173-pwrap";
- 			reg = <0 0x1000d000 0 0x1000>;
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
