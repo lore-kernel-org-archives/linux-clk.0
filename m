@@ -1,86 +1,241 @@
-Return-Path: <yorksun@freescale.com>
-Subject: Re: [Resend Patch v6] driver/clk/clk-si5338: Add common clock
- framework driver for si5338
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1444410574-28677-1-git-send-email-yorksun@freescale.com>
- <20151010000948.GW26883@codeaurora.org> <562165C3.1090103@freescale.com>
- <20151016213139.GE16437@codeaurora.org> <56216E0D.4010709@freescale.com>
- <20151016230555.GE10182@codeaurora.org>
-CC: <linux-clk@vger.kernel.org>, <pmarrecas@outlook.com>, Mike Turquette
-	<mturquette@baylibre.com>, Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>, Guenter Roeck <linux@roeck-us.net>,
-	"Andrey Filippov" <andrey@elphel.com>, Paul Bolle <pebolle@tiscali.nl>
-From: York Sun <yorksun@freescale.com>
-Message-ID: <562191D3.6060702@freescale.com>
-Date: Fri, 16 Oct 2015 17:09:55 -0700
+Return-Path: <jonmason@broadcom.com>
+From: Jon Mason <jonmason@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
+	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
+	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
+Subject: [PATCH 05/10] clk: iproc: Add PLL base write function
+Date: Fri, 2 Oct 2015 18:57:40 -0400
+Message-ID: <1443826665-17570-6-git-send-email-jonmason@broadcom.com>
+In-Reply-To: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
+References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
 MIME-Version: 1.0
-In-Reply-To: <20151016230555.GE10182@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: yorksun@freescale.com
+Content-Type: text/plain
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
+All writes to the PLL base address must be flushed if the
+IPROC_CLK_NEEDS_READ_BACK flag is set.  If we add a function to make the
+necessary write and reads, we can make sure that any future code which
+makes PLL base writes will do the correct thing.
 
+Signed-off-by: Jon Mason <jonmason@broadcom.com>
+---
+ drivers/clk/bcm/clk-iproc-pll.c | 80 +++++++++++++++++------------------------
+ 1 file changed, 33 insertions(+), 47 deletions(-)
 
-On 10/16/2015 04:05 PM, Stephen Boyd wrote:
-> On 10/16, York Sun wrote:
->>
->>
->> On 10/16/2015 02:31 PM, Stephen Boyd wrote:
->>> On 10/16, York Sun wrote:
->>>>
->>>>
->>>> On 10/09/2015 05:09 PM, Stephen Boyd wrote:
->>>>> On 10/09, York Sun wrote:
->>>>>> +/*
->>>>>> + * To support multiple si5338 chips, we cannot use devm_clk_get because
->>>>>> + * each chip has its own clock sources. If device tree is not used,
->>>>>> + * platform driver should provide these clocks. Let the clocks be freed
->>>>>> + * automatically when device is unbound. We implement our own devm_of_clk_get.
->>>>>> + */
->>>>>> +static void devm_of_clk_release(struct device *dev, void *res)
->>>>>> +{
->>>>>> +	clk_put(*(struct clk **)res);
->>>>>> +}
->>>>>> +
->>>>>> +static struct clk *devm_of_clk_get(struct device *dev, struct device_node *np,
->>>>>
->>>>> What is this? I don't get it at all.
->>>>
->>>> Maybe you can help me on this.
->>>> We have two ways to get parent clock. One is from device tree, the other is from
->>>> platform data. When the clock is from platform data, the consumer gets the clock
->>>> and passes it. The clock will be put by the consumer as well. When the parent
->>>> clock comes from device tree, what I am trying to do is to call of_clk_get(),
->>>> without worrying about to call clk_put() later when the driver is removed, so I
->>>> don't have to know where the parent clock data came from.
->>>>
->>>
->>> This driver should always use clk_get() then. If the mode is
->>> device tree, clk_get() will lookup the clock in DT and get it
->>> from there. If the mode is platform data, then we'll fallback to
->>> the clkdev method of clk_get(), which will look for a clk_lookup
->>> created for the device calling clk_get() + the connection id that
->>> was provided by the lookup creator. This driver should always
->>> call clk_put() on the clock when it's done with it, regardless of
->>> DT vs. platform data.
->>>
->>
->> For the platform data mode, I think it is up to the consumer to get and put the
->> parent clocks. The current code is to pass (struct clk *) pointers as parent
->> clocks. Are you suggesting to pass the name of parent clocks?
->>
-> 
-> I'm suggesting to register clocks with clkdev using a device name
-> that matches the consumer. The consumer (this driver?) will
-> simply call clk_get() and clk_put() then, nothing else is needed.
-> I'm not suggesting to pass the names of the parent clocks. It
-> sounds like those are inputs to this device, so we should be
-> calling clk_get() with a device and a connection id to get the
-> clock.
-> 
-
-Thanks. I think I mostly understand the idea. Let me try.
-BTW, I mean the platform device (or whoever uses the output of the clock) is the
-clock consumer.
-
-York
+diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
+index e029ab3..a4602aa 100644
+--- a/drivers/clk/bcm/clk-iproc-pll.c
++++ b/drivers/clk/bcm/clk-iproc-pll.c
+@@ -137,6 +137,18 @@ static int pll_wait_for_lock(struct iproc_pll *pll)
+ 	return -EIO;
+ }
+ 
++static void iproc_pll_write(struct iproc_pll *pll, void __iomem *base,
++			    u32 offset, u32 val)
++{
++	const struct iproc_pll_ctrl *ctrl = pll->ctrl;
++
++	writel(val, base + offset);
++
++	if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK &&
++		     base == pll->pll_base))
++		val = readl(base + offset);
++}
++
+ static void __pll_disable(struct iproc_pll *pll)
+ {
+ 	const struct iproc_pll_ctrl *ctrl = pll->ctrl;
+@@ -145,27 +157,24 @@ static void __pll_disable(struct iproc_pll *pll)
+ 	if (ctrl->flags & IPROC_CLK_PLL_ASIU) {
+ 		val = readl(pll->asiu_base + ctrl->asiu.offset);
+ 		val &= ~(1 << ctrl->asiu.en_shift);
+-		writel(val, pll->asiu_base + ctrl->asiu.offset);
++		iproc_pll_write(pll, pll->asiu_base, ctrl->asiu.offset, val);
+ 	}
+ 
+ 	if (ctrl->flags & IPROC_CLK_EMBED_PWRCTRL) {
+ 		val = readl(pll->pll_base + ctrl->aon.offset);
+ 		val |= (bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
+-		writel(val, pll->pll_base + ctrl->aon.offset);
+-
+-		if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-			readl(pll->pll_base + ctrl->aon.offset);
++		iproc_pll_write(pll, pll->pll_base, ctrl->aon.offset, val);
+ 	}
+ 
+ 	if (pll->pwr_base) {
+ 		/* latch input value so core power can be shut down */
+ 		val = readl(pll->pwr_base + ctrl->aon.offset);
+ 		val |= (1 << ctrl->aon.iso_shift);
+-		writel(val, pll->pwr_base + ctrl->aon.offset);
++		iproc_pll_write(pll, pll->pwr_base, ctrl->aon.offset, val);
+ 
+ 		/* power down the core */
+ 		val &= ~(bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
+-		writel(val, pll->pwr_base + ctrl->aon.offset);
++		iproc_pll_write(pll, pll->pwr_base, ctrl->aon.offset, val);
+ 	}
+ }
+ 
+@@ -177,10 +186,7 @@ static int __pll_enable(struct iproc_pll *pll)
+ 	if (ctrl->flags & IPROC_CLK_EMBED_PWRCTRL) {
+ 		val = readl(pll->pll_base + ctrl->aon.offset);
+ 		val &= ~(bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
+-		writel(val, pll->pll_base + ctrl->aon.offset);
+-
+-		if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-			readl(pll->pll_base + ctrl->aon.offset);
++		iproc_pll_write(pll, pll->pll_base, ctrl->aon.offset, val);
+ 	}
+ 
+ 	if (pll->pwr_base) {
+@@ -188,14 +194,14 @@ static int __pll_enable(struct iproc_pll *pll)
+ 		val = readl(pll->pwr_base + ctrl->aon.offset);
+ 		val |= bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift;
+ 		val &= ~(1 << ctrl->aon.iso_shift);
+-		writel(val, pll->pwr_base + ctrl->aon.offset);
++		iproc_pll_write(pll, pll->pwr_base, ctrl->aon.offset, val);
+ 	}
+ 
+ 	/* certain PLLs also need to be ungated from the ASIU top level */
+ 	if (ctrl->flags & IPROC_CLK_PLL_ASIU) {
+ 		val = readl(pll->asiu_base + ctrl->asiu.offset);
+ 		val |= (1 << ctrl->asiu.en_shift);
+-		writel(val, pll->asiu_base + ctrl->asiu.offset);
++		iproc_pll_write(pll, pll->asiu_base, ctrl->asiu.offset, val);
+ 	}
+ 
+ 	return 0;
+@@ -209,9 +215,7 @@ static void __pll_put_in_reset(struct iproc_pll *pll)
+ 
+ 	val = readl(pll->pll_base + reset->offset);
+ 	val &= ~(1 << reset->reset_shift | 1 << reset->p_reset_shift);
+-	writel(val, pll->pll_base + reset->offset);
+-	if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-		readl(pll->pll_base + reset->offset);
++	iproc_pll_write(pll, pll->pll_base, reset->offset, val);
+ }
+ 
+ static void __pll_bring_out_reset(struct iproc_pll *pll, unsigned int kp,
+@@ -228,9 +232,7 @@ static void __pll_bring_out_reset(struct iproc_pll *pll, unsigned int kp,
+ 	val |=  ki << reset->ki_shift | kp << reset->kp_shift |
+ 		ka << reset->ka_shift;
+ 	val |= 1 << reset->reset_shift | 1 << reset->p_reset_shift;
+-	writel(val, pll->pll_base + reset->offset);
+-	if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-		readl(pll->pll_base + reset->offset);
++	iproc_pll_write(pll, pll->pll_base, reset->offset, val);
+ }
+ 
+ static int pll_set_rate(struct iproc_clk *clk, unsigned int rate_index,
+@@ -285,9 +287,8 @@ static int pll_set_rate(struct iproc_clk *clk, unsigned int rate_index,
+ 	/* put PLL in reset */
+ 	__pll_put_in_reset(pll);
+ 
+-	writel(0, pll->pll_base + ctrl->vco_ctrl.u_offset);
+-	if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-		readl(pll->pll_base + ctrl->vco_ctrl.u_offset);
++	iproc_pll_write(pll, pll->pll_base, ctrl->vco_ctrl.u_offset, 0);
++
+ 	val = readl(pll->pll_base + ctrl->vco_ctrl.l_offset);
+ 
+ 	if (rate >= VCO_LOW && rate < VCO_MID)
+@@ -298,17 +299,13 @@ static int pll_set_rate(struct iproc_clk *clk, unsigned int rate_index,
+ 	else
+ 		val |= (1 << PLL_VCO_HIGH_SHIFT);
+ 
+-	writel(val, pll->pll_base + ctrl->vco_ctrl.l_offset);
+-	if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-		readl(pll->pll_base + ctrl->vco_ctrl.l_offset);
++	iproc_pll_write(pll, pll->pll_base, ctrl->vco_ctrl.l_offset, val);
+ 
+ 	/* program integer part of NDIV */
+ 	val = readl(pll->pll_base + ctrl->ndiv_int.offset);
+ 	val &= ~(bit_mask(ctrl->ndiv_int.width) << ctrl->ndiv_int.shift);
+ 	val |= vco->ndiv_int << ctrl->ndiv_int.shift;
+-	writel(val, pll->pll_base + ctrl->ndiv_int.offset);
+-	if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-		readl(pll->pll_base + ctrl->ndiv_int.offset);
++	iproc_pll_write(pll, pll->pll_base, ctrl->ndiv_int.offset, val);
+ 
+ 	/* program fractional part of NDIV */
+ 	if (ctrl->flags & IPROC_CLK_PLL_HAS_NDIV_FRAC) {
+@@ -316,18 +313,15 @@ static int pll_set_rate(struct iproc_clk *clk, unsigned int rate_index,
+ 		val &= ~(bit_mask(ctrl->ndiv_frac.width) <<
+ 			 ctrl->ndiv_frac.shift);
+ 		val |= vco->ndiv_frac << ctrl->ndiv_frac.shift;
+-		writel(val, pll->pll_base + ctrl->ndiv_frac.offset);
+-		if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-			readl(pll->pll_base + ctrl->ndiv_frac.offset);
++		iproc_pll_write(pll, pll->pll_base, ctrl->ndiv_frac.offset,
++				val);
+ 	}
+ 
+ 	/* program PDIV */
+ 	val = readl(pll->pll_base + ctrl->pdiv.offset);
+ 	val &= ~(bit_mask(ctrl->pdiv.width) << ctrl->pdiv.shift);
+ 	val |= vco->pdiv << ctrl->pdiv.shift;
+-	writel(val, pll->pll_base + ctrl->pdiv.offset);
+-	if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-		readl(pll->pll_base + ctrl->pdiv.offset);
++	iproc_pll_write(pll, pll->pll_base, ctrl->pdiv.offset, val);
+ 
+ 	__pll_bring_out_reset(pll, kp, ka, ki);
+ 
+@@ -467,14 +461,12 @@ static int iproc_clk_enable(struct clk_hw *hw)
+ 	/* channel enable is active low */
+ 	val = readl(pll->pll_base + ctrl->enable.offset);
+ 	val &= ~(1 << ctrl->enable.enable_shift);
+-	writel(val, pll->pll_base + ctrl->enable.offset);
++	iproc_pll_write(pll, pll->pll_base, ctrl->enable.offset, val);
+ 
+ 	/* also make sure channel is not held */
+ 	val = readl(pll->pll_base + ctrl->enable.offset);
+ 	val &= ~(1 << ctrl->enable.hold_shift);
+-	writel(val, pll->pll_base + ctrl->enable.offset);
+-	if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-		readl(pll->pll_base + ctrl->enable.offset);
++	iproc_pll_write(pll, pll->pll_base, ctrl->enable.offset, val);
+ 
+ 	return 0;
+ }
+@@ -491,9 +483,7 @@ static void iproc_clk_disable(struct clk_hw *hw)
+ 
+ 	val = readl(pll->pll_base + ctrl->enable.offset);
+ 	val |= 1 << ctrl->enable.enable_shift;
+-	writel(val, pll->pll_base + ctrl->enable.offset);
+-	if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-		readl(pll->pll_base + ctrl->enable.offset);
++	iproc_pll_write(pll, pll->pll_base, ctrl->enable.offset, val);
+ }
+ 
+ static unsigned long iproc_clk_recalc_rate(struct clk_hw *hw,
+@@ -562,9 +552,7 @@ static int iproc_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		val &= ~(bit_mask(ctrl->mdiv.width) << ctrl->mdiv.shift);
+ 		val |= div << ctrl->mdiv.shift;
+ 	}
+-	writel(val, pll->pll_base + ctrl->mdiv.offset);
+-	if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-		readl(pll->pll_base + ctrl->mdiv.offset);
++	iproc_pll_write(pll, pll->pll_base, ctrl->mdiv.offset, val);
+ 	clk->rate = parent_rate / div;
+ 
+ 	return 0;
+@@ -591,9 +579,7 @@ static void iproc_pll_sw_cfg(struct iproc_pll *pll)
+ 
+ 		val = readl(pll->pll_base + ctrl->sw_ctrl.offset);
+ 		val |= BIT(ctrl->sw_ctrl.shift);
+-		writel(val, pll->pll_base + ctrl->sw_ctrl.offset);
+-		if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-			readl(pll->pll_base + ctrl->sw_ctrl.offset);
++		iproc_pll_write(pll, pll->pll_base, ctrl->sw_ctrl.offset, val);
+ 	}
+ }
+ 
+-- 
+1.9.1
