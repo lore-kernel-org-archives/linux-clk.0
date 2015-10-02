@@ -1,84 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lb0-f181.google.com ([209.85.217.181]:34081 "EHLO
-	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750745AbbJAVmH (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 1 Oct 2015 17:42:07 -0400
+Return-Path: <yingjoe.chen@mediatek.com>
+From: Yingjoe Chen <yingjoe.chen@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring
+	<robh+dt@kernel.org>
+CC: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner
+	<tglx@linutronix.de>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
+	<mturquette@baylibre.com>, James Liao <jamesjj.liao@mediatek.com>,
+	<devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Catalin Marinas
+	<catalin.marinas@arm.com>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Olof Johansson <olof@lixom.net>, <srv_heupstream@mediatek.com>,
+	<linux-arm-kernel@lists.infradead.org>, Daniel Kurtz <djkurtz@chromium.org>,
+	<linux-clk@vger.kernel.org>, Yingjoe Chen <yingjoe.chen@mediatek.com>,
+	<erin.lo@mediatek.com>
+Subject: [PATCH v4 0/3] add GPT timer support for mt8173
+Date: Fri, 2 Oct 2015 23:05:16 +0800
+Message-ID: <1443798319-45744-1-git-send-email-yingjoe.chen@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <CY1PR0301MB0748A8F37E3FBE1922AF9D3F874C0@CY1PR0301MB0748.namprd03.prod.outlook.com>
-References: <1441350322-4671-1-git-send-email-bhupesh.sharma@freescale.com>
-	<CAL_Jsq+9izV8vkrF1tK96M-VRGTMJ+GN5o=RsnCBDcnh-at5kA@mail.gmail.com>
-	<CALRxmdC9ZzGiw6CVnVTqhH1xvA-P9s8cpYbk8DoVq7CodFS0VA@mail.gmail.com>
-	<CY1PR0301MB0748A8F37E3FBE1922AF9D3F874C0@CY1PR0301MB0748.namprd03.prod.outlook.com>
-Date: Thu, 1 Oct 2015 16:42:05 -0500
-Message-ID: <CADRPPNRz-yM_48HvHYv3r31u_b_tHkAjg5H5r+V2mE2=oJTGDA@mail.gmail.com>
-Subject: Re: [PATCH v2 07/10] dts/ls2085a: Update DTSI to add support of
- various peripherals
-From: Li Yang <leoli@freescale.com>
-To: Stuart Yoder <stuart.yoder@freescale.com>
-Cc: Rob Herring <robherring2@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Shaohui Xie <Shaohui.Xie@freescale.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Huan Wang <alison.wang@freescale.com>,
-	Sharma Bhupesh <bhupesh.sharma@freescale.com>,
-	Catalin Marinas <Catalin.Marinas@arm.com>,
-	Singh Jaiprakash <jaiprakash.singh@freescale.com>,
-	Will Deacon <will.deacon@arm.com>,
-	"Lian M.H." <Minghuan.Lian@freescale.com>,
-	Scott Wood <scottwood@freescale.com>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Liu Gang <Gang.Liu@freescale.com>,
-	Olof Johansson <olof@lixom.net>,
-	Badola Nikhil-B46172 <nikhil.badola@freescale.com>,
-	Bhupesh SHARMA <bhupesh.linux@gmail.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"Lu Y.B." <yangbo.lu@freescale.com>, devicetree@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: yingjoe.chen@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Oct 1, 2015 at 3:05 PM, Stuart Yoder <stuart.yoder@freescale.com> wrote:
-> Hi Rob,
->
-> Had a question about your comments on the patch below.
->
-> You singled out 3 nodes (gic,uart,clockgen) and said "This should be under a bus node."
->
-> What is special about those 3 nodes types?  There are a bunch of other memory
-> mapped SoC devices as well in the DTS.
->
-> I skimmed the dts files under arch/arm64 and it looks like most have a simple-bus
-> SoC node like this where SoC devices are under:
->
->         soc {
->                 #address-cells = <2>;
->                 #size-cells = <2>;
->                 compatible = "simple-bus";
->                 ranges;
->
-> Is that what you are looking for-- for all SoC devices?
+This is based on v4.3-rc1 + clockevents-4.4[1] and James's mediatek-clk
+tree[2].
 
-I think the key is to have the soc node and have all the on-chip
-devices defined underneath it.
+Changes compare to previous version[3]:
+- Add more MediaTek SoC to mtk-timer binding
+- Update commit message to better describe the purpose.
 
-I read the following from the booting-without-of.txt document:
+Changes compare to v2[4]:
+- the first two mtk_timer related changes are removed because they are
+replaced/accepted in clockevents tree.
+- Remove 'add 13mhz clock for MT8173' because it is accepted in
+mediatek-clk tree.
+- Kconfig.platforms path change.
 
-  f) the /soc<SOCname> node
+[1]
+https://git.linaro.org/people/daniel.lezcano/linux.git clockevents/4.4
+[2]
+http://lists.infradead.org/pipermail/linux-mediatek/2015-August/002069.html
+[3]
+http://lists.infradead.org/pipermail/linux-mediatek/2015-September/002301.html
+[4]
+http://lists.infradead.org/pipermail/linux-mediatek/2015-July/001544.html
 
-  This node is used to represent a system-on-a-chip (SoC) and must be
-  present if the processor is a SoC. The top-level soc node contains
-  information that is global to all devices on the SoC. The node name
-  should contain a unit address for the SoC, which is the base address
-  of the memory-mapped register set for the SoC. The name of an SoC
-  node should start with "soc", and the remainder of the name should
-  represent the part number for the soc.  For example, the MPC8540's
-  soc node would be called "soc8540".
 
-A lot of device trees didn't follow the soc<SOCname> naming scheme and
-just used "soc" as the node name.  I am not sure if we want to enforce
-the naming in the future or update the document to make it more relax.
+Daniel Kurtz (1):
+  arm64: dts: mt8173: add timer node
 
-Regards,
-Leo
+Yingjoe Chen (2):
+  dt-bindings: add more MediaTek SoC to mtk-timer binding
+  arm64: mediatek: enable MTK_TIMER
+
+ Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt | 8 +++++---
+ arch/arm64/Kconfig.platforms                                   | 1 +
+ arch/arm64/boot/dts/mediatek/mt8173.dtsi                       | 9 +++++++++
+ 3 files changed, 15 insertions(+), 3 deletions(-)
