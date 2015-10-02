@@ -1,99 +1,39 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-sunxi@googlegroups.com,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v5 4/5] clk: sunxi: codec clock support
-Date: Mon, 19 Oct 2015 10:08:58 +0200
-Message-Id: <1445242139-20965-5-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1445242139-20965-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1445242139-20965-1-git-send-email-maxime.ripard@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <magnus.damm@gmail.com>
+Return-Path: <magnus.damm@gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: kuninori.morimoto.gx@renesas.com,gaku.inami.xw@bp.renesas.com,mturquette@baylibre.com,linux-sh@vger.kernel.org,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
+Date: Fri, 02 Oct 2015 10:57:55 +0900
+Message-Id: <20151002015755.7116.10457.sendpatchset@little-apple>
+Subject: [PATCH] clk: shmobile: Fix r8a7795 MSSR support
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Emilio López <emilio@elopez.com.ar>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-The codec clock on sun4i, sun5i and sun7i is a simple gate with PLL2 as
-parent. Add a driver for such a clock.
+This is an incremental fix for the series posted yesterday:
+[PATCH v8 00/05] Renesas R-Car Gen3 CPG support V8
 
-Signed-off-by: Emilio López <emilio@elopez.com.ar>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+As pointed out by Geert, I missed one r8a7791 instance
+when doing manual search-and-replace. This fix will in
+the future be folded into patch 3/5 and 4/5, but for
+now this incremental patch will have to do.
+
+Thanks to Geert for keeping his eyes open!
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- drivers/clk/sunxi/Makefile        |  1 +
- drivers/clk/sunxi/clk-a10-codec.c | 44 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 45 insertions(+)
- create mode 100644 drivers/clk/sunxi/clk-a10-codec.c
 
-diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-index c658a18ba7cb..70a449a419e6 100644
---- a/drivers/clk/sunxi/Makefile
-+++ b/drivers/clk/sunxi/Makefile
-@@ -3,6 +3,7 @@
- #
+ drivers/clk/shmobile/clk-mssr.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- 0005/drivers/clk/shmobile/clk-mssr.c
++++ work/drivers/clk/shmobile/clk-mssr.c	2015-10-02 10:48:27.560513000 +0900
+@@ -323,7 +323,7 @@ static int cpg_mssr_attach_dev(struct ge
+ 	while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", i,
+ 					   &clkspec)) {
+ 		if (of_device_is_compatible(clkspec.np,
+-					    "renesas,r8a7791-cpg-mssr"))
++					    "renesas,r8a7795-cpg-mssr"))
+ 			goto found;
  
- obj-y += clk-sunxi.o clk-factors.o
-+obj-y += clk-a10-codec.o
- obj-y += clk-a10-hosc.o
- obj-y += clk-a10-pll2.o
- obj-y += clk-a20-gmac.o
-diff --git a/drivers/clk/sunxi/clk-a10-codec.c b/drivers/clk/sunxi/clk-a10-codec.c
-new file mode 100644
-index 000000000000..ac321d6a0df5
---- /dev/null
-+++ b/drivers/clk/sunxi/clk-a10-codec.c
-@@ -0,0 +1,44 @@
-+/*
-+ * Copyright 2013 Emilio López
-+ *
-+ * Emilio López <emilio@elopez.com.ar>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+
-+#define SUN4I_CODEC_GATE	31
-+
-+static void __init sun4i_codec_clk_setup(struct device_node *node)
-+{
-+	struct clk *clk;
-+	const char *clk_name = node->name, *parent_name;
-+	void __iomem *reg;
-+
-+	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-+	if (IS_ERR(reg))
-+		return;
-+
-+	of_property_read_string(node, "clock-output-names", &clk_name);
-+	parent_name = of_clk_get_parent_name(node, 0);
-+
-+	clk = clk_register_gate(NULL, clk_name, parent_name,
-+				CLK_SET_RATE_PARENT, reg,
-+				SUN4I_CODEC_GATE, 0, NULL);
-+
-+	if (!IS_ERR(clk))
-+		of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+}
-+CLK_OF_DECLARE(sun4i_codec, "allwinner,sun4i-a10-codec-clk",
-+	       sun4i_codec_clk_setup);
--- 
-2.5.3
+ 		of_node_put(clkspec.np);
