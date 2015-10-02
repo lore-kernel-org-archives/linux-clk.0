@@ -1,23 +1,130 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 16 Oct 2015 11:55:08 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: Use %u to format unsigned int in
- of_clk_src_onecell_get()
-Message-ID: <20151016185508.GD23912@codeaurora.org>
-References: <1445008352-27569-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <jonmason@broadcom.com>
+From: Jon Mason <jonmason@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
+	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
+	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
+Subject: [PATCH 04/10] ARM: dts: enable clock support for BCM5301X
+Date: Fri, 2 Oct 2015 18:57:39 -0400
+Message-ID: <1443826665-17570-5-git-send-email-jonmason@broadcom.com>
+In-Reply-To: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
+References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1445008352-27569-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/16, Geert Uytterhoeven wrote:
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+Replace current device tree dummy clocks with real clock support for
+Broadcom Northstar SoCs.
 
-Applied to clk-next
+Signed-off-by: Jon Mason <jonmason@broadcom.com>
+---
+ arch/arm/boot/dts/bcm5301x.dtsi | 67 ++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 60 insertions(+), 7 deletions(-)
 
+diff --git a/arch/arm/boot/dts/bcm5301x.dtsi b/arch/arm/boot/dts/bcm5301x.dtsi
+index 6f50f67..f717859 100644
+--- a/arch/arm/boot/dts/bcm5301x.dtsi
++++ b/arch/arm/boot/dts/bcm5301x.dtsi
+@@ -8,6 +8,7 @@
+  * Licensed under the GNU/GPL. See COPYING for details.
+  */
+ 
++#include <dt-bindings/clock/bcm-nsp.h>
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/input/input.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+@@ -55,14 +56,14 @@
+ 			compatible = "arm,cortex-a9-global-timer";
+ 			reg = <0x0200 0x100>;
+ 			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&clk_periph>;
++			clocks = <&periph_clk>;
+ 		};
+ 
+ 		local-timer@0600 {
+ 			compatible = "arm,cortex-a9-twd-timer";
+ 			reg = <0x0600 0x100>;
+ 			interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&clk_periph>;
++			clocks = <&periph_clk>;
+ 		};
+ 
+ 		gic: interrupt-controller@1000 {
+@@ -94,14 +95,66 @@
+ 
+ 	clocks {
+ 		#address-cells = <1>;
+-		#size-cells = <0>;
++		#size-cells = <1>;
++		ranges;
+ 
+-		/* As long as we do not have a real clock driver us this
+-		 * fixed clock */
+-		clk_periph: periph {
++		osc: oscillator {
++			#clock-cells = <0>;
+ 			compatible = "fixed-clock";
++			clock-frequency = <25000000>;
++		};
++
++		lcpll0: lcpll0@1800c100 {
++			#clock-cells = <1>;
++			compatible = "brcm,nsp-lcpll0";
++			reg = <0x1800c100 0x14>;
++			clocks = <&osc>;
++			clock-output-names = "lcpll0", "pcie_phy", "sdio",
++					     "ddr_phy";
++		};
++
++		genpll: genpll@1800c140 {
++			#clock-cells = <1>;
++			compatible = "brcm,nsp-genpll";
++			reg = <0x1800c140 0x24>;
++			clocks = <&osc>;
++			clock-output-names = "genpll", "phy", "ethernetclk",
++					     "usbclk", "iprocfast", "sata1",
++					     "sata2";
++		};
++
++		iprocmed: iprocmed {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&genpll BCM_NSP_GENPLL_IPROCFAST_CLK>;
++			clock-div = <2>;
++			clock-mult = <1>;
++			clock-output-names = "iprocmed";
++		};
++
++		iprocslow: iprocslow {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&genpll BCM_NSP_GENPLL_IPROCFAST_CLK>;
++			clock-div = <4>;
++			clock-mult = <1>;
++			clock-output-names = "iprocslow";
++		};
++
++
++		a9pll: arm_clk@19000000 {
++			#clock-cells = <0>;
++			compatible = "brcm,nsp-armpll";
++			clocks = <&osc>;
++			reg = <0x19000000 0x1000>;
++		};
++
++		periph_clk: periph_clk {
+ 			#clock-cells = <0>;
+-			clock-frequency = <400000000>;
++			compatible = "fixed-factor-clock";
++			clocks = <&a9pll>;
++			clock-div = <2>;
++			clock-mult = <1>;
+ 		};
+ 	};
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
