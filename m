@@ -1,46 +1,45 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	agross@codeaurora.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	bjorn.andersson@sonymobile.com,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v3 3/8] clk: qcom: msm8916: Ignore sleep_clk_src registration errors
-Date: Tue, 20 Oct 2015 19:57:55 +0300
-Message-Id: <1445360280-2347-4-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1445360280-2347-1-git-send-email-georgi.djakov@linaro.org>
-References: <1445360280-2347-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 2 Oct 2015 12:32:41 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	Maxime Coquelin <maxime.coquelin@st.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@stlinux.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] drivers: clk: st: Correct the pll-type for A9 for
+ stih418
+Message-ID: <20151002193241.GV12338@codeaurora.org>
+References: <1440409251-11166-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1440409251-11166-4-git-send-email-gabriel.fernandez@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1440409251-11166-4-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-We are moving the sleep clock to the DT. While all patches
-are merged, we will ignore sleep_clk_src registration errors.
-By ignoring this error, the msm8916 boards will continue booting
-during this transition period, otherwise the clock controller
-initialization will fail.
+On 08/24, Gabriel Fernandez wrote:
+> Add support for new PLL-type for stih418 A9-PLL.
+> Currently the 407_A9_PLL type being used, it is corrected with this patch
+> 4600c28 PLL allows to reach higher frequencies
+> so its programming algorithm is extended.
+> 
+> Signed-off-by: Pankaj Dev <pankaj.dev@st.com>
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+> ---
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- drivers/clk/qcom/gcc-msm8916.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Applied to clk-next
 
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index 3c0668b12142..4bb7d8415ba7 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -3364,10 +3364,8 @@ static int gcc_msm8916_probe(struct platform_device *pdev)
- 	if (IS_ERR(clk))
- 		return PTR_ERR(clk);
- 
--	clk = clk_register_fixed_rate(dev, "sleep_clk_src", NULL,
--				      CLK_IS_ROOT, 32768);
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
-+	clk_register_fixed_rate(dev, "sleep_clk_src", NULL,
-+				CLK_IS_ROOT, 32768);
- 
- 	return qcom_cc_probe(pdev, &gcc_msm8916_desc);
- }
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
