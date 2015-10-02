@@ -1,137 +1,83 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 09/13 v2] clk: versatile-icst: add device tree support
-Date: Mon, 26 Oct 2015 14:33:55 +0100
-Message-Id: <1445866435-14048-1-git-send-email-linus.walleij@linaro.org>
+Return-Path: <jh80.chung@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=utf-8
+Message-id: <560E44D2.9060101@samsung.com>
+Date: Fri, 02 Oct 2015 17:48:18 +0900
+From: Jaehoon Chung <jh80.chung@samsung.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ linux-mmc <linux-mmc@vger.kernel.org>, linux-clk@vger.kernel.org,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+ Doug Anderson <dianders@chromium.org>, Alexandru Stan <amstan@chromium.org>
+Subject: Re: [PATCH v2 3/8] mmc: core: Add mmc_regulator_set_vqmmc()
+References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
+ <CAPDyKFqrkYXsbBJ61yYo0G8za1szARvA=as-5nLTiwGH5pCrEQ@mail.gmail.com>
+ <560DF150.3000906@samsung.com> <3312969.jJ2hfB2JkV@diego>
+ <560E3800.1060603@samsung.com>
+ <CAPDyKFro3Uk3+Jzz3Y0WBKZvTs5LjahT7KgRbh_nWWVBG7V3=w@mail.gmail.com>
+In-reply-to: 
+ <CAPDyKFro3Uk3+Jzz3Y0WBKZvTs5LjahT7KgRbh_nWWVBG7V3=w@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds support for the ARM syscon ICST clocks to initialized
-directly from the device tree syscon node on ARM Integrator,
-Versatile and RealView reference designs.
+On 10/02/2015 05:43 PM, Ulf Hansson wrote:
+> On 2 October 2015 at 09:53, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+>> On 10/02/2015 04:06 PM, Heiko St=C3=BCbner wrote:
+>>> Am Freitag, 2. Oktober 2015, 11:52:00 schrieb Jaehoon Chung:
+>>>> On 10/02/2015 06:05 AM, Ulf Hansson wrote:
+>>>>> On 1 October 2015 at 19:35, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>>>>>> On 10/01, Heiko St=C3=BCbner wrote:
+>>>>>>> Am Donnerstag, 1. Oktober 2015, 11:54:24 schrieb Ulf Hansson:
+>>>>>>>> On 30 September 2015 at 16:55, Heiko St=C3=BCbner <heiko@sntech.de> wrote:
+>>>>>>>>> Am Mittwoch, 30. September 2015, 16:42:05 schrieb Ulf Hansson:
+>>>>>>>>>> On 30 September 2015 at 16:07, Heiko Stuebner <heiko@sntech.de>
+>>> wrote:
+>>>>>>>>> The clock changes of course only touch internals of the phase-clocks,
+>>>>>>>>> so
+>>>>>>>>> should have no problem going through another tree.
+>>>>>>>>
+>>>>>>>> What happens if I take mmc and dt changes, wouldn't I need the clock
+>>>>>>>> patches as well=3F
+>>>>>>>
+>>>>>>> The API stays of course the same, only the degree to settings
+>>>>>>> translation gets optimized, so I guess in the worst case you would get
+>>>>>>> no good phase and thus fall back to non-highspeed modes - but the
+>>>>>>> system would stay running.
+>>>>>>>
+>>>>>>> But of course, if the clock maintainers could Ack the two clock patches
+>>>>>>> and
+>>>>>>> everything would stay together that would work even better :-)
+>>>>>>
+>>>>>> If Ulf doesn't want to take them we can apply them to clk tree.
+>>>>>> Otherwise, you can have my acked-by on the clk patches.
+>>>>>
+>>>>> I don't mind picking up the clock patches. So I consider this as an
+>>>>> ack for both patch 1 and patch2, thanks.
+>>>>>
+>>>>> Now, let's give Jaehoon some time to review the dw_mmc parts.
+>>>>
+>>>> I will check other patches on today, if it's ok, i will apply at my
+>>>> repository. Thanks for giving time! :)
+>>>
+>>> I think Ulf wanted to apply the whole series via the mmc tree directly, but I
+>>> guess that is between you two to decide ;-)
+>>
+>> If it will get Stephen's acked-by, i will pick up all after checked the dwmmc patches. how about=3F
+> 
+> Stephen already acked the clock patches from this thread.
+> 
+> Perhaps this time, it's easier if you ack the dw_mmc patches and I can
+> pick up the hole series=3F Does that work for you=3F
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v1->v2:
-- Changed a pr_info() to pr_err()
-- Fixed some space before TAB messages from checkpatch (sorry)
+I doesn't review dwmmc patches (Sorry), could you give me more time=3F
+If you're ok, i will notice to you...then you can pick up all. :)
 
-I'm looking for an ACK from the CLK maintainers to take this
-through the ARM SoC tree once the series stabilize.
----
- drivers/clk/versatile/clk-icst.c | 89 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 88 insertions(+), 1 deletion(-)
+Best Regards,
+Jaehoon Chung
 
-diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
-index 87bd4667b126..e62f8cb2c9b5 100644
---- a/drivers/clk/versatile/clk-icst.c
-+++ b/drivers/clk/versatile/clk-icst.c
-@@ -3,7 +3,7 @@
-  * We wrap the custom interface from <asm/hardware/icst.h> into the generic
-  * clock framework.
-  *
-- * Copyright (C) 2012 Linus Walleij
-+ * Copyright (C) 2012-2015 Linus Walleij
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -206,3 +206,90 @@ struct clk *icst_clk_register(struct device *dev,
- 	return icst_clk_setup(dev, desc, name, parent_name, map);
- }
- EXPORT_SYMBOL_GPL(icst_clk_register);
-+
-+#ifdef CONFIG_OF
-+/*
-+ * In a device tree, an memory-mapped ICST clock appear as a child
-+ * of a syscon node. Assume this and probe it only as a child of a
-+ * syscon.
-+ */
-+
-+static const struct icst_params icst525_params = {
-+	.vco_max	= ICST525_VCO_MAX_5V,
-+	.vco_min	= ICST525_VCO_MIN,
-+	.vd_min		= 8,
-+	.vd_max		= 263,
-+	.rd_min		= 3,
-+	.rd_max		= 65,
-+	.s2div		= icst525_s2div,
-+	.idx2s		= icst525_idx2s,
-+};
-+
-+static const struct icst_params icst307_params = {
-+	.vco_max	= ICST307_VCO_MAX,
-+	.vco_min	= ICST307_VCO_MIN,
-+	.vd_min		= 4 + 8,
-+	.vd_max		= 511 + 8,
-+	.rd_min		= 1 + 2,
-+	.rd_max		= 127 + 2,
-+	.s2div		= icst307_s2div,
-+	.idx2s		= icst307_idx2s,
-+};
-+
-+static void __init of_syscon_icst_setup(struct device_node *np)
-+{
-+	struct device_node *parent;
-+	struct regmap *map;
-+	struct clk_icst_desc icst_desc;
-+	const char *name = np->name;
-+	const char *parent_name;
-+	struct clk *regclk;
-+
-+	/* We do not release this reference, we are using it perpetually */
-+	parent = of_get_parent(np);
-+	if (!parent) {
-+		pr_err("no parent node for syscon ICST clock\n");
-+		return;
-+	}
-+	map = syscon_node_to_regmap(parent);
-+	if (IS_ERR(map)) {
-+		pr_err("no regmap for syscon ICST clock parent\n");
-+		return;
-+	}
-+
-+	if (of_property_read_u32(np, "vco-offset", &icst_desc.vco_offset)) {
-+		pr_err("no VCO register offset for ICST clock\n");
-+		return;
-+	}
-+	if (of_property_read_u32(np, "lock-offset", &icst_desc.lock_offset)) {
-+		pr_err("no lock register offset for ICST clock\n");
-+		return;
-+	}
-+
-+	if (of_device_is_compatible(np, "arm,syscon-icst525"))
-+		icst_desc.params = &icst525_params;
-+	else if (of_device_is_compatible(np, "arm,syscon-icst307"))
-+		icst_desc.params = &icst307_params;
-+	else {
-+		pr_err("unknown ICST clock %s\n", name);
-+		return;
-+	}
-+
-+	/* Parent clock name is not the same as node parent */
-+	parent_name = of_clk_get_parent_name(np, 0);
-+
-+	regclk = icst_clk_setup(NULL, &icst_desc, name, parent_name, map);
-+	if (IS_ERR(regclk)) {
-+		pr_err("error setting up syscon ICST clock %s\n", name);
-+		return;
-+	}
-+	of_clk_add_provider(np, of_clk_src_simple_get, regclk);
-+	pr_debug("registered syscon ICST clock %s\n", name);
-+}
-+
-+CLK_OF_DECLARE(arm_syscon_icst525_clk,
-+	       "arm,syscon-icst525", of_syscon_icst_setup);
-+CLK_OF_DECLARE(arm_syscon_icst307_clk,
-+	       "arm,syscon-icst307", of_syscon_icst_setup);
-+
-+#endif
--- 
-2.4.3
+> 
+> Kind regards
+> Uffe
+> 
