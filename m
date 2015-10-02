@@ -1,123 +1,182 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bn1bon0110.outbound.protection.outlook.com ([157.56.111.110]:60000
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751010AbbJWTxJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Fri, 23 Oct 2015 15:53:09 -0400
-From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-To: <arnd@arndb.de>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
-	<linux-clk@vger.kernel.org>, <olof@lixom.net>
-CC: <bhupesh.linux@gmail.com>, <will.deacon@arm.com>,
-	<Catalin.Marinas@arm.com>, <bhupesh.sharma@freescale.com>,
-	<LeoLi@freescale.com>, <scottwood@freescale.com>,
-	<stuart.yoder@freescale.com>
-Subject: [PATCH v4 02/12] arm64: Rename FSL LS2085A SoC support code to LS2080A
-Date: Sat, 24 Oct 2015 01:01:51 +0530
-Message-ID: <1445628721-10483-3-git-send-email-bhupesh.sharma@freescale.com>
-In-Reply-To: <1445628721-10483-1-git-send-email-bhupesh.sharma@freescale.com>
-References: <1445628721-10483-1-git-send-email-bhupesh.sharma@freescale.com>
+Return-Path: <jonmason@broadcom.com>
+From: Jon Mason <jonmason@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
+	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
+	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
+Subject: [PATCH 06/10] clk: iproc: Split off dig_filter
+Date: Fri, 2 Oct 2015 18:57:41 -0400
+Message-ID: <1443826665-17570-7-git-send-email-jonmason@broadcom.com>
+In-Reply-To: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
+References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Freescale is renaming the LS2085A SoC to LS2080A. This patch
-addresses the same.
+The PLL loop filter/gain can be located in a separate register on some
+SoCs.  Split these off into a separate variable, so that an offset can
+be added if necessary.  Also, make the necessary modifications to the
+Cygnus and NSP drivers for this change.
 
-Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+Signed-off-by: Jon Mason <jonmason@broadcom.com>
 ---
- Documentation/devicetree/bindings/arm/fsl.txt      |    4 ++--
- arch/arm64/boot/dts/freescale/Makefile             |    2 +-
- .../{fsl-ls2085a-simu.dts => fsl-ls2080a-simu.dts} |   10 +++++-----
- .../{fsl-ls2085a.dtsi => fsl-ls2080a.dtsi}         |    6 +++---
- 4 files changed, 11 insertions(+), 11 deletions(-)
- rename arch/arm64/boot/dts/freescale/{fsl-ls2085a-simu.dts => fsl-ls2080a-simu.dts} (90%)
- rename arch/arm64/boot/dts/freescale/{fsl-ls2085a.dtsi => fsl-ls2080a.dtsi} (97%)
+ drivers/clk/bcm/clk-cygnus.c    | 17 +++++++++++------
+ drivers/clk/bcm/clk-iproc-pll.c | 14 +++++++++-----
+ drivers/clk/bcm/clk-iproc.h     | 10 +++++++++-
+ drivers/clk/bcm/clk-nsp.c       | 14 +++++++++-----
+ 4 files changed, 38 insertions(+), 17 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
-index 744b4de..53f229a 100644
---- a/Documentation/devicetree/bindings/arm/fsl.txt
-+++ b/Documentation/devicetree/bindings/arm/fsl.txt
-@@ -131,7 +131,7 @@ Example:
- Freescale ARMv8 based Layerscape SoC family Device Tree Bindings
- ----------------------------------------------------------------
+diff --git a/drivers/clk/bcm/clk-cygnus.c b/drivers/clk/bcm/clk-cygnus.c
+index 316c603..c526143 100644
+--- a/drivers/clk/bcm/clk-cygnus.c
++++ b/drivers/clk/bcm/clk-cygnus.c
+@@ -34,9 +34,11 @@
+ 		{ .offset = o, .en_shift = es, .high_shift = hs, \
+ 		.high_width = hw, .low_shift = ls, .low_width = lw }
  
--LS2085A ARMv8 based Simulator model
-+LS2080A ARMv8 based Simulator model
- Required root node properties:
--    - compatible = "fsl,ls2085a-simu", "fsl,ls2085a";
-+    - compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
+-#define reset_val(o, rs, prs, kis, kiw, kps, kpw, kas, kaw) { .offset = o, \
+-	.reset_shift = rs, .p_reset_shift = prs, .ki_shift = kis, \
+-	.ki_width = kiw, .kp_shift = kps, .kp_width = kpw, .ka_shift = kas, \
++#define reset_val(o, rs, prs) { .offset = o, .reset_shift = rs, \
++	.p_reset_shift = prs }
++
++#define df_val(o, kis, kiw, kps, kpw, kas, kaw) { .offset = o, .ki_shift = kis,\
++	.ki_width = kiw, .kp_shift = kps, .kp_width = kpw, .ka_shift = kas,    \
+ 	.ka_width = kaw }
  
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index fc6fca3c..932001a 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -1,4 +1,4 @@
--dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2085a-simu.dtb
-+dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-simu.dtb
-  
- always		:= $(dtb-y)
- subdir-y	:= $(dts-dirs)
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2085a-simu.dts b/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
-similarity index 90%
-rename from arch/arm64/boot/dts/freescale/fsl-ls2085a-simu.dts
-rename to arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
-index 82e2a6f..33d6d0c 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls2085a-simu.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
-@@ -1,7 +1,7 @@
+ #define vco_ctrl_val(uo, lo) { .u_offset = uo, .l_offset = lo }
+@@ -56,7 +58,8 @@ static const struct iproc_pll_ctrl genpll = {
+ 	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
+ 		IPROC_CLK_PLL_NEEDS_SW_CFG,
+ 	.aon = aon_val(0x0, 2, 1, 0),
+-	.reset = reset_val(0x0, 11, 10, 4, 3, 0, 4, 7, 3),
++	.reset = reset_val(0x0, 11, 10),
++	.dig_filter = df_val(0x0, 4, 3, 0, 4, 7, 3),
+ 	.sw_ctrl = sw_ctrl_val(0x10, 31),
+ 	.ndiv_int = reg_val(0x10, 20, 10),
+ 	.ndiv_frac = reg_val(0x10, 0, 20),
+@@ -114,7 +117,8 @@ CLK_OF_DECLARE(cygnus_genpll, "brcm,cygnus-genpll", cygnus_genpll_clk_init);
+ static const struct iproc_pll_ctrl lcpll0 = {
+ 	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_NEEDS_SW_CFG,
+ 	.aon = aon_val(0x0, 2, 5, 4),
+-	.reset = reset_val(0x0, 31, 30, 27, 3, 23, 4, 19, 4),
++	.reset = reset_val(0x0, 31, 30),
++	.dig_filter = df_val(0x0, 27, 3, 23, 4, 19, 4),
+ 	.sw_ctrl = sw_ctrl_val(0x4, 31),
+ 	.ndiv_int = reg_val(0x4, 16, 10),
+ 	.pdiv = reg_val(0x4, 26, 4),
+@@ -191,7 +195,8 @@ static const struct iproc_pll_ctrl mipipll = {
+ 		 IPROC_CLK_NEEDS_READ_BACK,
+ 	.aon = aon_val(0x0, 4, 17, 16),
+ 	.asiu = asiu_gate_val(0x0, 3),
+-	.reset = reset_val(0x0, 11, 10, 4, 3, 0, 4, 7, 4),
++	.reset = reset_val(0x0, 11, 10),
++	.dig_filter = df_val(0x0, 4, 3, 0, 4, 7, 4),
+ 	.ndiv_int = reg_val(0x10, 20, 10),
+ 	.ndiv_frac = reg_val(0x10, 0, 20),
+ 	.pdiv = reg_val(0x14, 0, 4),
+diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
+index a4602aa..882aced 100644
+--- a/drivers/clk/bcm/clk-iproc-pll.c
++++ b/drivers/clk/bcm/clk-iproc-pll.c
+@@ -224,13 +224,17 @@ static void __pll_bring_out_reset(struct iproc_pll *pll, unsigned int kp,
+ 	u32 val;
+ 	const struct iproc_pll_ctrl *ctrl = pll->ctrl;
+ 	const struct iproc_pll_reset_ctrl *reset = &ctrl->reset;
++	const struct iproc_pll_dig_filter_ctrl *dig_filter = &ctrl->dig_filter;
++
++	val = readl(pll->pll_base + dig_filter->offset);
++	val &= ~(bit_mask(dig_filter->ki_width) << dig_filter->ki_shift |
++		bit_mask(dig_filter->kp_width) << dig_filter->kp_shift |
++		bit_mask(dig_filter->ka_width) << dig_filter->ka_shift);
++	val |= ki << dig_filter->ki_shift | kp << dig_filter->kp_shift |
++	       ka << dig_filter->ka_shift;
++	iproc_pll_write(pll, pll->pll_base, dig_filter->offset, val);
+ 
+ 	val = readl(pll->pll_base + reset->offset);
+-	val &= ~(bit_mask(reset->ki_width) << reset->ki_shift |
+-		 bit_mask(reset->kp_width) << reset->kp_shift |
+-		 bit_mask(reset->ka_width) << reset->ka_shift);
+-	val |=  ki << reset->ki_shift | kp << reset->kp_shift |
+-		ka << reset->ka_shift;
+ 	val |= 1 << reset->reset_shift | 1 << reset->p_reset_shift;
+ 	iproc_pll_write(pll, pll->pll_base, reset->offset, val);
+ }
+diff --git a/drivers/clk/bcm/clk-iproc.h b/drivers/clk/bcm/clk-iproc.h
+index ff7bfad..b71c197 100644
+--- a/drivers/clk/bcm/clk-iproc.h
++++ b/drivers/clk/bcm/clk-iproc.h
+@@ -94,12 +94,19 @@ struct iproc_pll_aon_pwr_ctrl {
+ };
+ 
  /*
-- * Device Tree file for Freescale LS2085a software Simulator model
-+ * Device Tree file for Freescale LS2080a software Simulator model
-  *
-- * Copyright (C) 2014, Freescale Semiconductor
-+ * Copyright (C) 2014-2015, Freescale Semiconductor
-  *
-  * Bhupesh Sharma <bhupesh.sharma@freescale.com>
-  *
-@@ -51,11 +51,11 @@
- 
- /dts-v1/;
- 
--/include/ "fsl-ls2085a.dtsi"
-+/include/ "fsl-ls2080a.dtsi"
- 
- / {
--	model = "Freescale Layerscape 2085a software Simulator model";
--	compatible = "fsl,ls2085a-simu", "fsl,ls2085a";
-+	model = "Freescale Layerscape 2080a software Simulator model";
-+	compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
- 
- 	ethernet@2210000 {
- 		compatible = "smsc,lan91c111";
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2085a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-similarity index 97%
-rename from arch/arm64/boot/dts/freescale/fsl-ls2085a.dtsi
-rename to arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-index e281ceb..9597edf 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls2085a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-@@ -1,7 +1,7 @@
- /*
-- * Device Tree Include file for Freescale Layerscape-2085A family SoC.
-+ * Device Tree Include file for Freescale Layerscape-2080A family SoC.
-  *
-- * Copyright (C) 2014, Freescale Semiconductor
-+ * Copyright (C) 2014-2015, Freescale Semiconductor
-  *
-  * Bhupesh Sharma <bhupesh.sharma@freescale.com>
-  *
-@@ -50,7 +50,7 @@
+- * Control of the PLL reset, with Ki, Kp, and Ka parameters
++ * Control of the PLL reset
   */
+ struct iproc_pll_reset_ctrl {
+ 	unsigned int offset;
+ 	unsigned int reset_shift;
+ 	unsigned int p_reset_shift;
++};
++
++/*
++ * Control of the Ki, Kp, and Ka parameters
++ */
++struct iproc_pll_dig_filter_ctrl {
++	unsigned int offset;
+ 	unsigned int ki_shift;
+ 	unsigned int ki_width;
+ 	unsigned int kp_shift;
+@@ -129,6 +136,7 @@ struct iproc_pll_ctrl {
+ 	struct iproc_pll_aon_pwr_ctrl aon;
+ 	struct iproc_asiu_gate asiu;
+ 	struct iproc_pll_reset_ctrl reset;
++	struct iproc_pll_dig_filter_ctrl dig_filter;
+ 	struct iproc_pll_sw_ctrl sw_ctrl;
+ 	struct iproc_clk_reg_op ndiv_int;
+ 	struct iproc_clk_reg_op ndiv_frac;
+diff --git a/drivers/clk/bcm/clk-nsp.c b/drivers/clk/bcm/clk-nsp.c
+index 708961a..4fc4b1d 100644
+--- a/drivers/clk/bcm/clk-nsp.c
++++ b/drivers/clk/bcm/clk-nsp.c
+@@ -28,9 +28,11 @@
+ #define aon_val(o, pw, ps, is) { .offset = o, .pwr_width = pw, \
+ 	.pwr_shift = ps, .iso_shift = is }
  
- / {
--	compatible = "fsl,ls2085a";
-+	compatible = "fsl,ls2080a";
- 	interrupt-parent = <&gic>;
- 	#address-cells = <2>;
- 	#size-cells = <2>;
+-#define reset_val(o, rs, prs, kis, kiw, kps, kpw, kas, kaw) { .offset = o, \
+-	.reset_shift = rs, .p_reset_shift = prs, .ki_shift = kis, \
+-	.ki_width = kiw, .kp_shift = kps, .kp_width = kpw, .ka_shift = kas, \
++#define reset_val(o, rs, prs) { .offset = o, .reset_shift = rs, \
++	.p_reset_shift = prs }
++
++#define df_val(o, kis, kiw, kps, kpw, kas, kaw) { .offset = o, .ki_shift = kis,\
++	.ki_width = kiw, .kp_shift = kps, .kp_width = kpw, .ka_shift = kas,    \
+ 	.ka_width = kaw }
+ 
+ #define vco_ctrl_val(uo, lo) { .u_offset = uo, .l_offset = lo }
+@@ -47,7 +49,8 @@ CLK_OF_DECLARE(nsp_armpll, "brcm,nsp-armpll", nsp_armpll_init);
+ static const struct iproc_pll_ctrl genpll = {
+ 	.flags = IPROC_CLK_PLL_HAS_NDIV_FRAC | IPROC_CLK_EMBED_PWRCTRL,
+ 	.aon = aon_val(0x0, 1, 12, 0),
+-	.reset = reset_val(0x0, 11, 10, 4, 3, 0, 4, 7, 3),
++	.reset = reset_val(0x0, 11, 10),
++	.dig_filter = df_val(0x0, 4, 3, 0, 4, 7, 3),
+ 	.ndiv_int = reg_val(0x14, 20, 10),
+ 	.ndiv_frac = reg_val(0x14, 0, 20),
+ 	.pdiv = reg_val(0x18, 24, 3),
+@@ -103,7 +106,8 @@ CLK_OF_DECLARE(nsp_genpll_clk, "brcm,nsp-genpll", nsp_genpll_clk_init);
+ static const struct iproc_pll_ctrl lcpll0 = {
+ 	.flags = IPROC_CLK_PLL_HAS_NDIV_FRAC | IPROC_CLK_EMBED_PWRCTRL,
+ 	.aon = aon_val(0x0, 1, 24, 0),
+-	.reset = reset_val(0x0, 23, 22, 16, 3, 12, 4, 19, 4),
++	.reset = reset_val(0x0, 23, 22),
++	.dig_filter = df_val(0x0, 16, 3, 12, 4, 19, 4),
+ 	.ndiv_int = reg_val(0x4, 20, 8),
+ 	.ndiv_frac = reg_val(0x4, 0, 20),
+ 	.pdiv = reg_val(0x4, 28, 3),
 -- 
-1.7.9.5
-
-
+1.9.1
