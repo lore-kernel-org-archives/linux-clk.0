@@ -1,84 +1,70 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-Subject: Re: [PATCH v2 1/2] clk: qcom: common: Add API to register board
- clocks backwards compatibly
-To: Stephen Boyd <sboyd@codeaurora.org>,
- Mike Turquette <mturquette@baylibre.com>
-References: <1445987100-19492-1-git-send-email-sboyd@codeaurora.org>
- <20151028010604.GV19782@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-From: Georgi Djakov <georgi.djakov@linaro.org>
-Message-ID: <56310DDC.6010000@linaro.org>
-Date: Wed, 28 Oct 2015 20:03:08 +0200
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 5 Oct 2015 11:09:29 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>, linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 1/5] clk: Add a basic multiplier clock
+Message-ID: <20151005180929.GB12338@codeaurora.org>
+References: <1443512353-28073-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1443512353-28073-2-git-send-email-maxime.ripard@free-electrons.com>
+ <20151002204308.GY12338@codeaurora.org>
+ <20151005101932.GH2696@lukather>
 MIME-Version: 1.0
-In-Reply-To: <20151028010604.GV19782@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20151005101932.GH2696@lukather>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/28/2015 03:06 AM, Stephen Boyd wrote:
-> On 10/27, Stephen Boyd wrote:
->> +
->> +int qcom_cc_register_board_clk(struct device *dev, const char *path,
->> +			       const char *name, unsigned long rate)
->> +{
->> +	return _qcom_cc_register_board_clk(dev, path, name, rate,
->> +					   !IS_ENABLED(CONFIG_QCOM_RPMCC));
+On 10/05, Maxime Ripard wrote:
+> Hi,
 > 
-> I just realized that we could have this config enabled but the
-> driver never probes on a certain platform. So we'll need to do
-> some sort of search to see if the rpmcc node exists and also
-> check to see if the driver is enabled. I guess we can do that all
-> here in this function as long as we have a compatible =
-> "qcom,rpmcc" as a more generic property for the rpm clock
-> controller node. So if the config is enabled, search the dt tree
-> for a qcom,rpmcc node. If the rpmcc node is there, the last
-> argument is false, otherwise it's true.
+> On Fri, Oct 02, 2015 at 01:43:08PM -0700, Stephen Boyd wrote:
+> > On 09/29, Maxime Ripard wrote:
+> > > +
+> > > +	if (!val && mult->flags & CLK_MULTIPLIER_ZERO_BYPASS)
+> > > +		val = 1;
+> > > +	
+> > > +	return parent_rate * val;
+> > > +}
+> > > +
+> > > +static bool __is_best_rate(unsigned long rate, unsigned long new,
+> > > +			   unsigned long best, unsigned long flags)
+> > > +{
+> > > +	if (flags & CLK_MULTIPLIER_ROUND_CLOSEST)
+> > 
+> > Is the only difference in this function vs the divider one that
+> > flag? Maybe we should make this function generic to the framework
+> > and pass a flag indicating closest or not.
+> 
+> Actually, the logic is also reversed.
+> 
+> The divider driver will always try to find some rate that is higher
+> than the one we already have, without going above than the one
+> requested.
+> 
+> Here, we're tring to be lower than the best rate, without going below
+> the requested rate.
 
-I like the approach.  We could have both compatible strings like:
-compatible = "qcom,rpmcc-msm8916", "qcom,rpmcc";
-
-The only possible issue i could imagine is the case when rpmcc
-driver probe fails - does not enable scaling for example. Then we
-will be left without xo. But maybe we should not handle this
-scenario anyway.
+So then a tri-state flag that indicates, closest, less than,
+greater than?
 
 > 
-> ---8<----
-> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-> index 572851b5bc16..215a41ba0135 100644
-> --- a/drivers/clk/qcom/common.c
-> +++ b/drivers/clk/qcom/common.c
-> @@ -17,6 +17,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/clk-provider.h>
->  #include <linux/reset-controller.h>
-> +#include <linux/of.h>
->  
->  #include "common.h"
->  #include "clk-rcg.h"
-> @@ -152,7 +153,18 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
->  int qcom_cc_register_board_clk(struct device *dev, const char *path,
->  			       const char *name, unsigned long rate)
->  {
-> -	return _qcom_cc_register_board_clk(dev, path, name, rate, true);
-> +	bool add_factor = true;
-> +	struct device_node *node;
-> +
-> +	/* The RPM clock driver will add the factor clock if present */
-> +	if (IS_ENABLED(CONFIG_QCOM_RPMCC)) {
-> +		node = of_find_compatible_node(NULL, NULL, "qcom,rpmcc");
-> +		if (node)
-
-if (node && of_device_is_available(node))
-to handle also the case with status="disabled"
-
-> +			add_factor = false;
-> +		of_node_put(node);
-> +	}
-> +
-> +	return _qcom_cc_register_board_clk(dev, path, name, rate, add_factor);
->  }
->  EXPORT_SYMBOL_GPL(qcom_cc_register_board_clk);
->  
+> > 
+> > > +	unsigned long val;
+> > > +
+> > > +	if (mult->lock)
+> > > +		spin_lock_irqsave(mult->lock, flags);
+> > 
+> > This needs the same "trick" that we did in the generic clock
+> > types to avoid sparse warnings.
 > 
+> The __acquire call ?
+
+Yes.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
