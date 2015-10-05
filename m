@@ -1,42 +1,51 @@
-Return-Path: <jszhang@marvell.com>
-From: Jisheng Zhang <jszhang@marvell.com>
-To: <ulf.hansson@linaro.org>, <sebastian.hesselbarth@gmail.com>,
-        <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Jisheng Zhang <jszhang@marvell.com>
-Subject: [PATCH 4/5] clk: berlin: bg2q: remove CLK_IGNORE_UNUSED flag for sdio clk
-Date: Mon, 12 Oct 2015 13:46:35 +0800
-Message-ID: <1444628796-5484-5-git-send-email-jszhang@marvell.com>
-In-Reply-To: <1444628796-5484-1-git-send-email-jszhang@marvell.com>
-References: <1444628796-5484-1-git-send-email-jszhang@marvell.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 5 Oct 2015 11:13:51 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: Make oxili GDSC parent of oxili_cx GDSC
+Message-ID: <20151005181351.GD12338@codeaurora.org>
+References: <1443035362-10914-1-git-send-email-sboyd@codeaurora.org>
+ <560CED90.9050201@codeaurora.org>
+ <20151001175227.GE19319@codeaurora.org>
+ <20151001190639.GI19319@codeaurora.org>
+ <56120582.1050707@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <56120582.1050707@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Since we have added the necessary axi clk properties in dts, we can
-remove the "sdio" clk's CLK_IGNORE_UNUSED flag now.
+On 10/05, Rajendra Nayak wrote:
+> []...
+> 
+> >>> It would also be nicer if this parent/child relationship can
+> >>> somehow be represented in data (struct gdsc) that gets passed to
+> >>> the gdsc driver which then sets it up, instead of individual
+> >>> clock drivers doing it.
+> >>
+> >> Agreed. I'd rather that we do nothing besides register domains
+> >> and then let the core code handle hooking up domains and
+> >> subdomains.
+> > 
+> > A little closer inspection makes me want to skip this. PM domains
+> > can have multiple "master" domains, and pm_genpd_init() is the
+> > only API that would be able to do the linking. That API is mostly
+> > about initializing things to default values, so it doesn't seem
+> > like a good fit. I'll send a v2 with the remove part and the
+> > exports.
+> 
+> What I was suggesting is that the qcom gdsc driver handle this
+> instead of the qcom clock drivers.
+> Something like..
 
-Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
----
- drivers/clk/berlin/bg2q.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ah ok. This patch will still need the gdscs to be in a certain
+order though so that we don't add a subdomain on an uninitialized
+domain. So I guess some list of pointer pairs to call the
+function on could be done in the qcom_cc_desc structure if we
+need to do this more than a couple times.
 
-diff --git a/drivers/clk/berlin/bg2q.c b/drivers/clk/berlin/bg2q.c
-index 221f40c..243f421 100644
---- a/drivers/clk/berlin/bg2q.c
-+++ b/drivers/clk/berlin/bg2q.c
-@@ -283,7 +283,7 @@ static const struct berlin2_gate_data bg2q_gates[] __initconst = {
- 	{ "usb2",	"perif",	13 },
- 	{ "usb3",	"perif",	14 },
- 	{ "pbridge",	"perif",	15, CLK_IGNORE_UNUSED },
--	{ "sdio",	"perif",	16, CLK_IGNORE_UNUSED },
-+	{ "sdio",	"perif",	16 },
- 	{ "nfc",	"perif",	18 },
- 	{ "pcie",	"perif",	22 },
- };
 -- 
-2.6.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
