@@ -1,83 +1,86 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-Date: Thu, 15 Oct 2015 21:56:48 +0200
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Mon, 5 Oct 2015 11:44:24 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
 To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Gregory CLEMENT
- <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>,
- Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth
- <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH 14/26] clk: mvebu: Convert to clk_hw based provider APIs
-Message-ID: <20151015215648.2024f611@free-electrons.com>
-In-Reply-To: <20151015180903.GG4558@codeaurora.org>
-References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
-	<1438362246-6664-15-git-send-email-sboyd@codeaurora.org>
-	<20151014170922.3027008a@free-electrons.com>
-	<20151014182138.GD26883@codeaurora.org>
-	<20151014221733.65507871@free-electrons.com>
-	<20151014210859.GB4558@codeaurora.org>
-	<20151015104326.6f7e907c@free-electrons.com>
-	<20151015180903.GG4558@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>, linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 5/5] clk: sunxi: mod1 clock support
+Message-ID: <20151005094424.GG2696@lukather>
+References: <1443512353-28073-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1443512353-28073-6-git-send-email-maxime.ripard@free-electrons.com>
+ <20151002204555.GA12338@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="i3lJ51RuaGWuFYNw"
+In-Reply-To: <20151002204555.GA12338@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Stephen,
 
-On Thu, 15 Oct 2015 11:09:03 -0700, Stephen Boyd wrote:
+--i3lJ51RuaGWuFYNw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Good catch! Except we don't need to do all that complicated
-> stuff, right? We can use of_clk_get_from_provider() instead.
-> 
-> ---8<----
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 16b86a551bcb..648fb2c8904d 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3088,7 +3088,7 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
->  		 * registered, we return the node name as the name of
->  		 * the clock as long as #clock-cells = 0.
->  		 */
-> -		clk = of_clk_get(np, index);
-> +		clk = of_clk_get_from_provider(clkspec);
->  		if (IS_ERR(clk)) {
->  			if (clkspec.args_count == 0)
->  				clk_name = clkspec.np->name;
+On Fri, Oct 02, 2015 at 01:45:55PM -0700, Stephen Boyd wrote:
+> On 09/29, Maxime Ripard wrote:
+> > + * (at your option) any later version.
+> > + *
+> > + * This program is distributed in the hope that it will be useful,
+> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> > + * GNU General Public License for more details.
+> > + */
+> > +
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/clkdev.h>
+>=20
+> Is this include used?
 
-I'll re-test this solution tomorrow, just to make sure.
+Fixed.
 
-> > So, what is the plan now ?
-> > 
-> >  - Have the minimal fix in drivers/clk/mvebu/clk-cpu.c for 4.3.
-> 
-> Yep.
+> > +	if (!gate)
+> > +		goto err_free_mux;
+> > +
+> > +	of_property_read_string(node, "clock-output-names", &clk_name);
+> > +
+> > +	while (i < SUN4I_MOD1_MAX_PARENTS &&
+> > +	       (parents[i] =3D of_clk_get_parent_name(node, i)) !=3D NULL)
+>=20
+> Can we use of_clk_parent_fill() here?
 
-I see in your other e-mail that you already applied the fix, so good.
+We can, I switched to it.
 
-> >  - Have the patch improving the of_clk_get_parent_name() logic merged
-> >    in 4.4 + a revert of the fix done for 4.3 in clk-cpu.c. Unless maybe
-> >    you don't want to clutter the core of the clock framework to handle
-> >    this specific case?
-> 
-> Assuming that the patch doesn't cause problems for other
-> platforms, then I think we'll go with this approach.
+Thanks!
+Maxime
 
-Ok. Can you send the patch "properly" so that I can give a formal
-Tested-by ?
-
-> >  - Add the clock-output-names to the Marvell EBU Device Tree files, so
-> >    that in a couple of kernel releases we can remove the hacks and rely
-> >    on the generic logic of of_clk_get_parent_name().
-> > 
-> 
-> Naw, let's not change any DT files for this.
-
-ACK.
-
-Thanks for your help!
-
-Thomas
--- 
-Thomas Petazzoni, CTO, Free Electrons
+--=20
+Maxime Ripard, Free Electrons
 Embedded Linux, Kernel and Android engineering
 http://free-electrons.com
+
+--i3lJ51RuaGWuFYNw
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWEkZ4AAoJEBx+YmzsjxAgAAEP/iShQleVJFS/yYtkbfyhj1g5
+mapu2yNRa5pzqo1Pxwj211yLWmY0FkqCtFTiQMbOm+AG3FWXZROhYyvPK2XypPF4
+i7SjfYH1nf+376IJJedBc+GXEz9QCzCAYuiUAdnD4s1DlB6WrrHz8g+JkbdCTM5f
+P6Vzt/B/42uMomK8kHGEBA+U70TTiqr7HmZ1Jxs2qj+HQHdeMvzgMb9t4kMb4Htz
+ezK/ZsR9++poILSzZD/Y0PuUFCxQK9oHoZBfh+sDNdmyLL6rLiJjphEshZHfxNrS
+w2IDmDBm86T6a6a98nLCGa5MFPWsprwpER0zS+M+OweIhHtJkQCDR6NZS/aA4JNd
+wdFwzZZfdDHXeDKlSuLKekgzyy2VcguJ8W0XyNEM+zYiT3sXalu0M6vGG4z7TUx8
+B05GOnC5CXJK5vjniajepAykhaw3jIoOY2EMRrN/aIWWtod7Xroo94kpoRYx9on3
+IXFguupzTF9/1Xb2q4pft4PeWapqTtHg49b0AkBNRupDPfk7qKvccIEzYFRT2emA
+94uhdn/SAz8PL0id1h7KhXEI5SzBnykgg4YaSbdWeCLHiyr3q0TztacXilAuZBYc
+I05QRxxVTS0jF9ffV75KmLVcD4s5YQz3mqEtpghQPho9/x2zI0PIwd5Cc4QQ5NzV
+tNoKTVpy1kvkEzQa4Iud
+=oY+D
+-----END PGP SIGNATURE-----
+
+--i3lJ51RuaGWuFYNw--
