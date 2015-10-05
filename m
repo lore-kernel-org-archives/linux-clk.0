@@ -1,165 +1,296 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-Date: Thu, 15 Oct 2015 10:43:26 +0200
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Gregory CLEMENT
- <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>,
- Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth
- <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH 14/26] clk: mvebu: Convert to clk_hw based provider APIs
-Message-ID: <20151015104326.6f7e907c@free-electrons.com>
-In-Reply-To: <20151014210859.GB4558@codeaurora.org>
-References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
-	<1438362246-6664-15-git-send-email-sboyd@codeaurora.org>
-	<20151014170922.3027008a@free-electrons.com>
-	<20151014182138.GD26883@codeaurora.org>
-	<20151014221733.65507871@free-electrons.com>
-	<20151014210859.GB4558@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Maxime Coquelin <maxime.coquelin@st.com>,
+	 Michael Turquette <mturquette@baylibre.com>,
+	 Stephen Boyd <sboyd@codeaurora.org>,
+	 Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+	 Pankaj Dev <pankaj.dev@st.com>,
+	 Olivier Bideau <olivier.bideau@st.com>,
+	 Geert Uytterhoeven <geert+renesas@glider.be>,
+	 Fabian Frederick <fabf@skynet.be>,
+	 Rob Herring <robh+dt@kernel.org>,
+	 Pawel Moll <pawel.moll@arm.com>,
+	 Mark Rutland <mark.rutland@arm.com>,
+	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	 Kumar Gala <galak@codeaurora.org>,
+	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	 devicetree@vger.kernel.org,
+	 linux-kernel@vger.kernel.org,
+	 linux-arm-kernel@lists.infradead.org,
+	 kernel@stlinux.com,
+	 linux-clk@vger.kernel.org
+Subject: [PATCH v3 3/4] drivers: clk: st: Correct the pll-type for A9 for stih418
+Date: Mon,  5 Oct 2015 10:06:32 +0200
+Message-Id: <1444032393-13433-4-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1444032393-13433-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1444032393-13433-1-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Stephen,
+Add support for new PLL-type for stih418 A9-PLL.
+Currently the 407_A9_PLL type being used, it is corrected with this patch
+4600c28 PLL allows to reach higher frequencies
+so its programming algorithm is extended.
 
-On Wed, 14 Oct 2015 14:08:59 -0700, Stephen Boyd wrote:
+Signed-off-by: Pankaj Dev <pankaj.dev@st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+---
+ .../devicetree/bindings/clock/st/st,clkgen-pll.txt |   1 +
+ drivers/clk/st/clkgen-pll.c                        | 194 +++++++++++++++++++++
+ 2 files changed, 195 insertions(+)
 
-> Here's that untested patch, which we can throw into clk-next for
-> v4.4
-> 
-> -----8<----
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index b005f666e3a1..16b86a551bcb 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3055,6 +3055,7 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
->  	u32 pv;
->  	int rc;
->  	int count;
-> +	struct clk *clk;
->  
->  	if (index < 0)
->  		return NULL;
-> @@ -3080,8 +3081,25 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
->  
->  	if (of_property_read_string_index(clkspec.np, "clock-output-names",
->  					  index,
-> -					  &clk_name) < 0)
-> -		clk_name = clkspec.np->name;
-> +					  &clk_name) < 0) {
-> +		/*
-> +		 * Best effort to get the name if the clock has been
-> +		 * registered with the framework. If the clock isn't
-> +		 * registered, we return the node name as the name of
-> +		 * the clock as long as #clock-cells = 0.
-> +		 */
-> +		clk = of_clk_get(np, index);
-> +		if (IS_ERR(clk)) {
-> +			if (clkspec.args_count == 0)
-> +				clk_name = clkspec.np->name;
-> +			else
-> +				clk_name = NULL;
-> +		} else {
-> +			clk_name = __clk_get_name(clk);
-> +			clk_put(clk);
-> +		}
-> +	}
-> +
->  
->  	of_node_put(clkspec.np);
->  	return clk_name;
-
-It almost worked, but not completely. The issue is that by the time you
-call of_clk_get(np, index), index is no longer equal to the value
-passed as argument to of_clk_get_parent_name(), it has been modified to
-indicate the index of the *parent* clock.
-
-So, after changing your patch to:
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 0ebcf44..60d2f62 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3052,9 +3052,11 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
-        struct property *prop;
-        const char *clk_name;
-        const __be32 *vp;
-+       int parent_index;
-        u32 pv;
-        int rc;
-        int count;
-+       struct clk *clk;
+diff --git a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
+index e2c6db0..8f84c81 100644
+--- a/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
++++ b/Documentation/devicetree/bindings/clock/st/st,clkgen-pll.txt
+@@ -23,6 +23,7 @@ Required properties:
+ 	"st,stih407-plls-c32-a9",	"st,clkgen-plls-c32"
+ 	"st,plls-c32-cx_0",		"st,clkgen-plls-c32"
+ 	"st,plls-c32-cx_1",		"st,clkgen-plls-c32"
++	"st,stih418-plls-c28-a9",	"st,clkgen-plls-c32"
  
-        if (index < 0)
-                return NULL;
-@@ -3064,14 +3066,14 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
-        if (rc)
-                return NULL;
+ 	"st,stih415-gpu-pll-c32",	"st,clkgengpu-pll-c32"
+ 	"st,stih416-gpu-pll-c32",	"st,clkgengpu-pll-c32"
+diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
+index 22b6201..ba75cae 100644
+--- a/drivers/clk/st/clkgen-pll.c
++++ b/drivers/clk/st/clkgen-pll.c
+@@ -44,6 +44,13 @@ DEFINE_SPINLOCK(clkgen_a9_lock);
  
--       index = clkspec.args_count ? clkspec.args[0] : 0;
-+       parent_index = clkspec.args_count ? clkspec.args[0] : 0;
-        count = 0;
+ #define C32_MAX_ODFS (4)
  
-        /* if there is an indices property, use it to transfer the index
-         * specified into an array offset for the clock-output-names property.
-         */
-        of_property_for_each_u32(clkspec.np, "clock-indices", prop, vp, pv) {
--               if (index == pv) {
-+               if (parent_index == pv) {
-                        index = count;
-                        break;
-                }
-@@ -3079,9 +3081,26 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
-        }
- 
-        if (of_property_read_string_index(clkspec.np, "clock-output-names",
--                                         index,
--                                         &clk_name) < 0)
--               clk_name = clkspec.np->name;
-+                                         parent_index,
-+                                         &clk_name) < 0) {
-+               /*
-+                * Best effort to get the name if the clock has been
-+                * registered with the framework. If the clock isn't
-+                * registered, we return the node name as the name of
-+                * the clock as long as #clock-cells = 0.
-+                */
-+               clk = of_clk_get(np, index);
-+               if (IS_ERR(clk)) {
-+                       if (clkspec.args_count == 0)
-+                               clk_name = clkspec.np->name;
-+                       else
-+                               clk_name = NULL;
-+               } else {
-+                       clk_name = __clk_get_name(clk);
-+                       clk_put(clk);
-+               }
-+       }
++/*
++ * PLL configuration register bits for PLL4600 C28
++ */
++#define C28_NDIV_MASK (0xff)
++#define C28_IDF_MASK (0x7)
++#define C28_ODF_MASK (0x3f)
 +
+ struct clkgen_pll_data {
+ 	struct clkgen_field pdn_status;
+ 	struct clkgen_field pdn_ctrl;
+@@ -68,6 +75,7 @@ static const struct clk_ops st_pll800c65_ops;
+ static const struct clk_ops stm_pll3200c32_ops;
+ static const struct clk_ops stm_pll3200c32_a9_ops;
+ static const struct clk_ops st_pll1200c32_ops;
++static const struct clk_ops stm_pll4600c28_ops;
  
-        of_node_put(clkspec.np);
-        return clk_name;
-
-It does work properly for me, on top of 4.3-rc5, without any change to
-my Device Tree files.
-
-So, what is the plan now ?
-
- - Have the minimal fix in drivers/clk/mvebu/clk-cpu.c for 4.3.
-
- - Have the patch improving the of_clk_get_parent_name() logic merged
-   in 4.4 + a revert of the fix done for 4.3 in clk-cpu.c. Unless maybe
-   you don't want to clutter the core of the clock framework to handle
-   this specific case?
-
- - Add the clock-output-names to the Marvell EBU Device Tree files, so
-   that in a couple of kernel releases we can remove the hacks and rely
-   on the generic logic of of_clk_get_parent_name().
-
-Thanks,
-
-Thomas
+ static const struct clkgen_pll_data st_pll1600c65_ax = {
+ 	.pdn_status	= CLKGEN_FIELD(0x0, 0x1,			19),
+@@ -256,6 +264,22 @@ static const struct clkgen_pll_data st_pll3200c32_407_a9 = {
+ 	.ops		= &stm_pll3200c32_a9_ops,
+ };
+ 
++static struct clkgen_pll_data st_pll4600c28_418_a9 = {
++	/* 418 A9 */
++	.pdn_status	= CLKGEN_FIELD(0x1a8,	0x1,			0),
++	.pdn_ctrl	= CLKGEN_FIELD(0x1a8,	0x1,			0),
++	.locked_status	= CLKGEN_FIELD(0x87c,	0x1,			0),
++	.ndiv		= CLKGEN_FIELD(0x1b0,	C28_NDIV_MASK,		0),
++	.idf		= CLKGEN_FIELD(0x1a8,	C28_IDF_MASK,		25),
++	.num_odfs = 1,
++	.odf		= { CLKGEN_FIELD(0x1b0, C28_ODF_MASK,		8) },
++	.odf_gate	= { CLKGEN_FIELD(0x1ac, 0x1,			28) },
++	.switch2pll_en	= true,
++	.switch2pll	= CLKGEN_FIELD(0x1a4,	0x1,			1),
++	.lock		= &clkgen_a9_lock,
++	.ops		= &stm_pll4600c28_ops,
++};
++
+ /**
+  * DOC: Clock Generated by PLL, rate set and enabled by bootloader
+  *
+@@ -611,6 +635,163 @@ static unsigned long recalc_stm_pll1200c32(struct clk_hw *hw,
+ 	return rate;
+ }
+ 
++/* PLL output structure
++ * FVCO >> /2 >> FVCOBY2 (no output)
++ *                 |> Divider (ODF) >> PHI
++ *
++ * FVCOby2 output = (input * 2 * NDIV) / IDF (assuming FRAC_CONTROL==L)
++ *
++ * Rules:
++ *   4Mhz <= INFF input <= 350Mhz
++ *   4Mhz <= INFIN (INFF / IDF) <= 50Mhz
++ *   19.05Mhz <= FVCOby2 output (PHI w ODF=1) <= 3000Mhz
++ *   1 <= i (register/dec value for IDF) <= 7
++ *   8 <= n (register/dec value for NDIV) <= 246
++ */
++
++static int clk_pll4600c28_get_params(unsigned long input, unsigned long output,
++			  struct stm_pll *pll)
++{
++
++	unsigned long i, infin, n;
++	unsigned long deviation = ~0;
++	unsigned long new_freq, new_deviation;
++
++	/* Output clock range: 19Mhz to 3000Mhz */
++	if (output < 19000000 || output > 3000000000u)
++		return -EINVAL;
++
++	/* For better jitter, IDF should be smallest and NDIV must be maximum */
++	for (i = 1; i <= 7 && deviation; i++) {
++		/* INFIN checks */
++		infin = input / i;
++		if (infin < 4000000 || infin > 50000000)
++			continue;	/* Invalid case */
++
++		n = output / (infin * 2);
++		if (n < 8 || n > 246)
++			continue;	/* Invalid case */
++		if (n < 246)
++			n++;	/* To work around 'y' when n=x.y */
++
++		for (; n >= 8 && deviation; n--) {
++			new_freq = infin * 2 * n;
++			if (new_freq < output)
++				break;	/* Optimization: shorting loop */
++
++			new_deviation = new_freq - output;
++			if (!new_deviation || new_deviation < deviation) {
++				pll->idf  = i;
++				pll->ndiv = n;
++				deviation = new_deviation;
++			}
++		}
++	}
++
++	if (deviation == ~0) /* No solution found */
++		return -EINVAL;
++
++	return 0;
++}
++
++static int clk_pll4600c28_get_rate(unsigned long input, struct stm_pll *pll,
++			unsigned long *rate)
++{
++	if (!pll->idf)
++		pll->idf = 1;
++
++	*rate = (input / pll->idf) * 2 * pll->ndiv;
++
++	return 0;
++}
++
++static unsigned long recalc_stm_pll4600c28(struct clk_hw *hw,
++				    unsigned long parent_rate)
++{
++	struct clkgen_pll *pll = to_clkgen_pll(hw);
++	struct stm_pll params;
++	unsigned long rate;
++
++	if (!clkgen_pll_is_enabled(hw) || !clkgen_pll_is_locked(hw))
++		return 0;
++
++	params.ndiv = CLKGEN_READ(pll, ndiv);
++	params.idf = CLKGEN_READ(pll, idf);
++
++	clk_pll4600c28_get_rate(parent_rate, &params, &rate);
++
++	pr_debug("%s:%s rate %lu\n", __clk_get_name(hw->clk), __func__, rate);
++
++	return rate;
++}
++
++static long round_rate_stm_pll4600c28(struct clk_hw *hw, unsigned long rate,
++				      unsigned long *prate)
++{
++	struct stm_pll params;
++
++	if (!clk_pll4600c28_get_params(*prate, rate, &params)) {
++		clk_pll4600c28_get_rate(*prate, &params, &rate);
++	} else {
++		pr_debug("%s: %s rate %ld Invalid\n", __func__,
++			 __clk_get_name(hw->clk), rate);
++		return 0;
++	}
++
++	pr_debug("%s: %s new rate %ld [ndiv=%u] [idf=%u]\n",
++		 __func__, __clk_get_name(hw->clk),
++		 rate, (unsigned int)params.ndiv,
++		 (unsigned int)params.idf);
++
++	return rate;
++}
++
++static int set_rate_stm_pll4600c28(struct clk_hw *hw, unsigned long rate,
++				   unsigned long parent_rate)
++{
++	struct clkgen_pll *pll = to_clkgen_pll(hw);
++	struct stm_pll params;
++	long hwrate;
++	unsigned long flags = 0;
++
++	if (!rate || !parent_rate)
++		return -EINVAL;
++
++	if (!clk_pll4600c28_get_params(parent_rate, rate, &params)) {
++		clk_pll4600c28_get_rate(parent_rate, &params, &hwrate);
++	} else {
++		pr_debug("%s: %s rate %ld Invalid\n", __func__,
++			 __clk_get_name(hw->clk), rate);
++		return -EINVAL;
++	}
++
++	pr_debug("%s: %s new rate %ld [ndiv=0x%x] [idf=0x%x]\n",
++		 __func__, __clk_get_name(hw->clk),
++		 hwrate, (unsigned int)params.ndiv,
++		 (unsigned int)params.idf);
++
++	if (!hwrate)
++		return -EINVAL;
++
++	pll->ndiv = params.ndiv;
++	pll->idf = params.idf;
++
++	__clkgen_pll_disable(hw);
++
++	if (pll->lock)
++		spin_lock_irqsave(pll->lock, flags);
++
++	CLKGEN_WRITE(pll, ndiv, pll->ndiv);
++	CLKGEN_WRITE(pll, idf, pll->idf);
++
++	if (pll->lock)
++		spin_unlock_irqrestore(pll->lock, flags);
++
++	__clkgen_pll_enable(hw);
++
++	return 0;
++}
++
+ static const struct clk_ops st_pll1600c65_ops = {
+ 	.enable		= clkgen_pll_enable,
+ 	.disable	= clkgen_pll_disable,
+@@ -648,6 +829,15 @@ static const struct clk_ops st_pll1200c32_ops = {
+ 	.recalc_rate	= recalc_stm_pll1200c32,
+ };
+ 
++static const struct clk_ops stm_pll4600c28_ops = {
++	.enable		= clkgen_pll_enable,
++	.disable	= clkgen_pll_disable,
++	.is_enabled	= clkgen_pll_is_enabled,
++	.recalc_rate	= recalc_stm_pll4600c28,
++	.round_rate	= round_rate_stm_pll4600c28,
++	.set_rate	= set_rate_stm_pll4600c28,
++};
++
+ static struct clk * __init clkgen_pll_register(const char *parent_name,
+ 				struct clkgen_pll_data	*pll_data,
+ 				void __iomem *reg,
+@@ -892,6 +1082,10 @@ static const struct of_device_id c32_pll_of_match[] = {
+ 		.compatible = "st,stih407-plls-c32-a9",
+ 		.data = &st_pll3200c32_407_a9,
+ 	},
++	{
++		.compatible = "st,stih418-plls-c28-a9",
++		.data = &st_pll4600c28_418_a9,
++	},
+ 	{}
+ };
+ 
 -- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+1.9.1
