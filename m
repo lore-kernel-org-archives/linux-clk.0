@@ -1,46 +1,53 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 2 Oct 2015 12:45:28 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	kernel@pengutronix.de, patchwork-lst@pengutronix.de
-Subject: Re: [PATCH v4 0/8] i.MX early debug UART clock fixes
-Message-ID: <20151002194528.GX12338@codeaurora.org>
-References: <1442854444-4460-1-git-send-email-l.stach@pengutronix.de>
- <20150924152016.GV3529@tiger>
- <1443108993.8476.10.camel@pengutronix.de>
+Return-Path: <rjw@rjwysocki.net>
+Return-Path: <rjw@rjwysocki.net>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org, Rob Clark <robdclark@gmail.com>, Rajendra Nayak <rnayak@codeaurora.org>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 1/2] PM / Domains: Make pm_genpd_{add,remove}_subdomain() available to modules
+Date: Mon, 05 Oct 2015 22:55:55 +0200
+Message-ID: <6374611.5Nvbqg0Ugs@vostro.rjw.lan>
+In-Reply-To: <1443727374-1539-2-git-send-email-sboyd@codeaurora.org>
+References: <1443727374-1539-1-git-send-email-sboyd@codeaurora.org> <1443727374-1539-2-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1443108993.8476.10.camel@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/24, Lucas Stach wrote:
-> Am Donnerstag, den 24.09.2015, 08:20 -0700 schrieb Shawn Guo:
-> > On Mon, Sep 21, 2015 at 06:53:56PM +0200, Lucas Stach wrote:
-> > > This series fixes a long standing interaction issue between the
-> > > kernels early debug facilities and the i.MX clock drivers.
-> > 
-> > This is fixing some issue but not regression.  As the change basically
-> > has influence on all i.MX platforms, my take is that we should get them
-> > into linux-next for extensive testing and queue for 4.4.  Agree?
-> > 
-> Absolutely, this fixes a bug which should mostly hit developers running
-> with earlyprintk or earlycon, so it's definitely not fixes material.
+On Thursday, October 01, 2015 12:22:53 PM Stephen Boyd wrote:
+> Export these symbols so they can be used in loadable kernel
+> modules.
 > 
-> Please queue it up for 4.4.
+> Cc: Rob Clark <robdclark@gmail.com>
+> Cc: Rajendra Nayak <rnayak@codeaurora.org>
+> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
+> Cc: Kevin Hilman <khilman@kernel.org>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+> 
+>  drivers/base/power/domain.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index cf4950d92937..9b0f5a06a82b 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -1348,6 +1348,7 @@ int pm_genpd_add_subdomain(struct generic_pm_domain *genpd,
+>  
+>  	return ret;
+>  }
+> +EXPORT_SYMBOL_GPL(pm_genpd_add_subdomain);
+>  
+>  /**
+>   * pm_genpd_remove_subdomain - Remove a subdomain from an I/O PM domain.
+> @@ -1395,6 +1396,7 @@ out:
+>  
+>  	return ret;
+>  }
+> +EXPORT_SYMBOL_GPL(pm_genpd_remove_subdomain);
+>  
+>  /* Default device callbacks for generic PM domains. */
 
-Patches look mostly ok to me, but this certainly feels like some
-generic problem that we should handle in the core. Perhaps it
-would make sense to move this over to using the handoff mechanism
-Mike is working on, where we keep the clock on until a consumer
-grabs a reference to the clock?
+This is fine by me, please feel free to add my ACK to it.
 
-So I'm not opposed to merging this for 4.4, but I'd like to see
-it become a generic solution sometime soon, instead of staying as
-a one-off fix for imx platforms.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks,
+Rafael
