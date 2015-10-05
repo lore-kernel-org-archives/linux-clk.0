@@ -1,90 +1,63 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v2 07/14] clk: at91: pmc: merge at91_pmc_init in atmel_pmc_probe
-Date: Mon, 12 Oct 2015 16:28:44 +0200
-Message-Id: <1444660131-14954-8-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1444660131-14954-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1444660131-14954-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:39010 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751083AbbJESK7 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 5 Oct 2015 14:10:59 -0400
+Date: Mon, 5 Oct 2015 11:10:57 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Looijmans <mike.looijmans@topic.nl>
+Cc: linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3] Add driver for the si514 clock generator chip
+Message-ID: <20151005181057.GC12338@codeaurora.org>
+References: <1442487891-20477-1-git-send-email-mike.looijmans@topic.nl>
+ <1443770129-7757-1-git-send-email-mike.looijmans@topic.nl>
+ <20151002191804.GS12338@codeaurora.org>
+ <56121372.6040109@topic.nl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <56121372.6040109@topic.nl>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-at91_pmc_init() doesn't do much anymore, merge it in atmel_pmc_probe().
+On 10/05, Mike Looijmans wrote:
+> ﻿On 02-10-15 21:18, Stephen Boyd wrote:
+> >On 10/02, Mike Looijmans wrote:
+> >>This patch adds the driver and devicetree documentation for the
+> >>Silicon Labs SI514 clock generator chip. This is an I2C controlled
+> >>oscillator capable of generating clock signals ranging from 100kHz
+> >>to 250MHz.
+> >>
+> >>Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+> >>---
+> >
+> >Applied to clk-next. We can handle any stuff about assigned rates
+> >in a follow up patch.
+> >
+> >Also, I squashed in this for some cleanup.
+> >
+> >diff --git a/drivers/clk/clk-si514.c b/drivers/clk/clk-si514.c
+> >index 779aebcd884b..6af7dce54241 100644
+> >--- a/drivers/clk/clk-si514.c
+> >+++ b/drivers/clk/clk-si514.c
+> >@@ -16,7 +16,6 @@
+> >   * GNU General Public License for more details.
+> >   */
+> >
+> >-#include <linux/clk.h>
+> 
+> Interesting - I only added this include because of your comment:
+> "I'd expect some sort of linux/clk.h include here if we're using
+> clk APIs."
+> 
+> Could you elaborate on that, I'm confused now...
+> 
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
----
- drivers/clk/at91/pmc.c | 31 ++++++-------------------------
- 1 file changed, 6 insertions(+), 25 deletions(-)
+The driver is only using the clk provider APIs that are in
+clk-provider.h, because you removed the part that was calling
+clk_set_rate() (which is a clk consumer API). So before that
+change we would have needed the clk.h include, but now it
+compiles fine without it.
 
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 45dd32bf2531..acc8f518b392 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -223,29 +223,6 @@ static const struct at91_pmc_caps sama5d3_caps = {
- 			  AT91_PMC_CFDEV,
- };
- 
--static struct at91_pmc *__init at91_pmc_init(struct device_node *np,
--					     struct regmap *regmap,
--					     void __iomem *regbase, int virq,
--					     const struct at91_pmc_caps *caps)
--{
--	struct at91_pmc *pmc;
--
--	if (!regbase || !virq ||  !caps)
--		return NULL;
--
--	at91_pmc_base = regbase;
--
--	pmc = kzalloc(sizeof(*pmc), GFP_KERNEL);
--	if (!pmc)
--		return NULL;
--
--	pmc->regmap = regmap;
--	pmc->virq = virq;
--	pmc->caps = caps;
--
--	return pmc;
--}
--
- static const struct of_device_id atmel_pmc_dt_ids[] = {
- 	{ .compatible = "atmel,at91rm9200-pmc", .data = &at91rm9200_caps },
- 	{ .compatible = "atmel,at91sam9260-pmc", .data = &at91sam9260_caps },
-@@ -262,11 +239,12 @@ static int __init atmel_pmc_probe(struct platform_device *pdev)
- 	const struct at91_pmc_caps *caps;
- 	struct device_node *np = pdev->dev.of_node;
- 	struct at91_pmc *pmc;
--	void __iomem *regbase = of_iomap(np, 0);
- 	struct regmap *regmap;
- 	int virq;
- 	int ret = 0;
- 
-+	at91_pmc_base = of_iomap(np, 0);
-+
- 	regmap = syscon_node_to_regmap(np);
- 	if (IS_ERR(regmap))
- 		panic("Could not retrieve syscon regmap");
-@@ -278,10 +256,13 @@ static int __init atmel_pmc_probe(struct platform_device *pdev)
- 	of_id = of_match_device(atmel_pmc_dt_ids, &pdev->dev);
- 	caps = of_id->data;
- 
--	pmc = at91_pmc_init(np, regmap, regbase, virq, caps);
-+	pmc = kzalloc(sizeof(*pmc), GFP_KERNEL);
- 	if (!pmc)
- 		return 0;
- 
-+	pmc->regmap = regmap;
-+	pmc->virq = virq;
-+	pmc->caps = caps;
- 	pmc->irqdomain = irq_domain_add_linear(pdev->dev.of_node, 32,
- 					       &pmc_irq_ops, pmc);
- 	if (!pmc->irqdomain)
 -- 
-2.1.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
