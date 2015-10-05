@@ -1,113 +1,450 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Sun, 18 Oct 2015 20:53:30 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>,
-	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org
-Message-ID: <20151018195330.GB14956@sirena.org.uk>
-References: <561E1378.6000906@collabora.com>
- <20151017065750.GA18607@kroah.com>
- <20151018192931.GY14956@sirena.org.uk>
- <20151018193757.GA9147@kroah.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="fJz81ohldq3XijGc"
-In-Reply-To: <20151018193757.GA9147@kroah.com>
-Subject: Re: [GIT PULL] On-demand device probing
+Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Maxime Coquelin <maxime.coquelin@st.com>,
+	 Michael Turquette <mturquette@baylibre.com>,
+	 Stephen Boyd <sboyd@codeaurora.org>,
+	 Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+	 Pankaj Dev <pankaj.dev@st.com>,
+	 Olivier Bideau <olivier.bideau@st.com>,
+	 Geert Uytterhoeven <geert+renesas@glider.be>,
+	 Fabian Frederick <fabf@skynet.be>,
+	 Rob Herring <robh+dt@kernel.org>,
+	 Pawel Moll <pawel.moll@arm.com>,
+	 Mark Rutland <mark.rutland@arm.com>,
+	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	 Kumar Gala <galak@codeaurora.org>,
+	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	 devicetree@vger.kernel.org,
+	 linux-kernel@vger.kernel.org,
+	 linux-arm-kernel@lists.infradead.org,
+	 kernel@stlinux.com,
+	 linux-clk@vger.kernel.org
+Subject: [PATCH v3 2/4] drivers: clk: st: PLL rate change implementation for DVFS
+Date: Mon,  5 Oct 2015 10:06:31 +0200
+Message-Id: <1444032393-13433-3-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1444032393-13433-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1444032393-13433-1-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+Change A9 PLL rate, as per requirement from the cpufreq framework,
+for DVFS. For rate change, the A9 clock needs to be temporarily sourced
+from PLL external to A9 and then sourced back to A9-PLL
 
---fJz81ohldq3XijGc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Pankaj Dev <pankaj.dev@st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+---
+ drivers/clk/st/clkgen-mux.c |   3 +
+ drivers/clk/st/clkgen-pll.c | 220 ++++++++++++++++++++++++++++++++++++++++++--
+ drivers/clk/st/clkgen.h     |   2 +
+ 3 files changed, 215 insertions(+), 10 deletions(-)
 
-On Sun, Oct 18, 2015 at 12:37:57PM -0700, Greg Kroah-Hartman wrote:
-> On Sun, Oct 18, 2015 at 08:29:31PM +0100, Mark Brown wrote:
-> > On Fri, Oct 16, 2015 at 11:57:50PM -0700, Greg Kroah-Hartman wrote:
-
-> > > I can't see adding calls like this all over the tree just to solve a
-> > > bus-specific problem, you are adding of_* calls where they aren't
-> > > needed, or wanted, at all.
-
-> > This isn't bus specific, I'm not sure what makes you say that?
-
-> You are making it bus-specific by putting these calls all over the tree
-> in different bus subsystems semi-randomly for all I can determine.
-
-Do you mean firmware rather than bus here?  I think that's the confusion
-I have...
-
-> > One is that regardless of the actual performance of the system when
-> > deferred probe goes off it splats errors all over the console which
-> > makes it look like something is going wrong even if everything is fine
-> > in the end.  If lots of deferred probing happens then the volume gets
-> > big too.  People find this distracting, noisy and ugly - it obscures
-> > actual issues and trains people to ignore errors.  I do think this is a
-> > reasonable concern and that it's worth trying to mitigate against
-> > deferral for this reason alone.  We don't want to just ignore the errors
-> > and not print anything either since if the resource doesn't appear the
-> > user needs to know what is preventing the driver from instantiating so
-> > they can try to fix it.
-
-> This has come up many times, I have no objection to just turning that
-> message into a debug message that can be dynamically enabled for those
-> people wanting to debug their systems for boot time issues.
-
-It's not just the driver core logging, it's also all the individual
-drivers logging that they failed to get whatever resource since silently
-failing is not a great user experience.  Many, hopefully most, of the
-drivers don't actually have special handling for probe deferral since
-half the beauty of probe deferral is that the subsystem supplying the
-resource can just return -EPROBE_DEFER when it notices something is
-missing but might appear and then the drivers will do the right thing so
-long as they have error handling code that they really should have
-anyway.
-
-We'd need to have a special dev_err() that handled probe deferral
-errors for drivers to use during probe or some other smarts in the
-logging infrastructure.  Which isn't a totally horrible idea.
-
---fJz81ohldq3XijGc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWI/i6AAoJECTWi3JdVIfQHiAH/j87ui2ZA7zZlEigIswdU9WD
-jRpEO3ZVBH3VylDoyoCIEtgolJwSqWV1Qk6c1EVn8vyhrP1+t5HYWvqrz+49KJrX
-AwCkkEKmXiNBtIAENaSsqVTWH3WmwLWYqbaZ3tTM47zN3gVzj/qnaQNs2GMhPQTs
-Y9pCzL1LUTMdviMwoMGtq7Fz9gUu+/pXpj1lT07whQmzfHaiMkcJ35VjHeTMKWnC
-r2moRf5uUgZj7gtylYcItS6hr/6P+X/tc7zY91KEMNo+Qrhdh1eC0H35Lsw8VwGA
-IqYTYWiz802CQiBCvtAXf3UYMrHZiW3MFWE7MD4dPqcl410M8ZscSxJH9Lsiz8k=
-=Y8XH
------END PGP SIGNATURE-----
-
---fJz81ohldq3XijGc--
+diff --git a/drivers/clk/st/clkgen-mux.c b/drivers/clk/st/clkgen-mux.c
+index 4f7f6c0..5dc5ce2 100644
+--- a/drivers/clk/st/clkgen-mux.c
++++ b/drivers/clk/st/clkgen-mux.c
+@@ -17,6 +17,7 @@
+ #include <linux/of_address.h>
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
++#include "clkgen.h"
+ 
+ static DEFINE_SPINLOCK(clkgena_divmux_lock);
+ static DEFINE_SPINLOCK(clkgenf_lock);
+@@ -576,6 +577,7 @@ static struct clkgen_mux_data stih415_a9_mux_data = {
+ 	.offset = 0,
+ 	.shift = 1,
+ 	.width = 2,
++	.lock = &clkgen_a9_lock,
+ };
+ static struct clkgen_mux_data stih416_a9_mux_data = {
+ 	.offset = 0,
+@@ -586,6 +588,7 @@ static struct clkgen_mux_data stih407_a9_mux_data = {
+ 	.offset = 0x1a4,
+ 	.shift = 0,
+ 	.width = 2,
++	.lock = &clkgen_a9_lock,
+ };
+ 
+ static const struct of_device_id mux_of_match[] = {
+diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
+index 092f82c..22b6201 100644
+--- a/drivers/clk/st/clkgen-pll.c
++++ b/drivers/clk/st/clkgen-pll.c
+@@ -23,6 +23,7 @@
+ #include "clkgen.h"
+ 
+ static DEFINE_SPINLOCK(clkgena_c32_odf_lock);
++DEFINE_SPINLOCK(clkgen_a9_lock);
+ 
+ /*
+  * Common PLL configuration register bits for PLL800 and PLL1600 C65
+@@ -39,6 +40,7 @@ static DEFINE_SPINLOCK(clkgena_c32_odf_lock);
+ #define C32_IDF_MASK (0x7)
+ #define C32_ODF_MASK (0x3f)
+ #define C32_LDF_MASK (0x7f)
++#define C32_CP_MASK (0x1f)
+ 
+ #define C32_MAX_ODFS (4)
+ 
+@@ -51,15 +53,20 @@ struct clkgen_pll_data {
+ 	struct clkgen_field pdiv;
+ 	struct clkgen_field idf;
+ 	struct clkgen_field ldf;
++	struct clkgen_field cp;
+ 	unsigned int num_odfs;
+ 	struct clkgen_field odf[C32_MAX_ODFS];
+ 	struct clkgen_field odf_gate[C32_MAX_ODFS];
++	bool switch2pll_en;
++	struct clkgen_field switch2pll;
++	spinlock_t *lock;
+ 	const struct clk_ops *ops;
+ };
+ 
+ static const struct clk_ops st_pll1600c65_ops;
+ static const struct clk_ops st_pll800c65_ops;
+ static const struct clk_ops stm_pll3200c32_ops;
++static const struct clk_ops stm_pll3200c32_a9_ops;
+ static const struct clk_ops st_pll1200c32_ops;
+ 
+ static const struct clkgen_pll_data st_pll1600c65_ax = {
+@@ -242,7 +249,11 @@ static const struct clkgen_pll_data st_pll3200c32_407_a9 = {
+ 	.num_odfs = 1,
+ 	.odf		= { CLKGEN_FIELD(0x1b0, C32_ODF_MASK,		8) },
+ 	.odf_gate	= { CLKGEN_FIELD(0x1ac, 0x1,			28) },
+-	.ops		= &stm_pll3200c32_ops,
++	.switch2pll_en	= true,
++	.cp		= CLKGEN_FIELD(0x1a8,	C32_CP_MASK,		1),
++	.switch2pll	= CLKGEN_FIELD(0x1a4,	0x1,			1),
++	.lock = &clkgen_a9_lock,
++	.ops		= &stm_pll3200c32_a9_ops,
+ };
+ 
+ /**
+@@ -268,10 +279,26 @@ struct clkgen_pll {
+ 	struct clk_hw		hw;
+ 	struct clkgen_pll_data	*data;
+ 	void __iomem		*regs_base;
++	spinlock_t	*lock;
++
++	u32 ndiv;
++	u32 idf;
++	u32 odf;
++	u32 cp;
+ };
+ 
+ #define to_clkgen_pll(_hw) container_of(_hw, struct clkgen_pll, hw)
+ 
++struct stm_pll {
++	unsigned long mdiv;
++	unsigned long ndiv;
++	unsigned long pdiv;
++	unsigned long odf;
++	unsigned long idf;
++	unsigned long ldf;
++	unsigned long cp;
++};
++
+ static int clkgen_pll_is_locked(struct clk_hw *hw)
+ {
+ 	struct clkgen_pll *pll = to_clkgen_pll(hw);
+@@ -287,7 +314,7 @@ static int clkgen_pll_is_enabled(struct clk_hw *hw)
+ 	return !poweroff;
+ }
+ 
+-static int clkgen_pll_enable(struct clk_hw *hw)
++static int __clkgen_pll_enable(struct clk_hw *hw)
+ {
+ 	struct clkgen_pll *pll = to_clkgen_pll(hw);
+ 	void __iomem *base =  pll->regs_base;
+@@ -303,24 +330,62 @@ static int clkgen_pll_enable(struct clk_hw *hw)
+ 	ret = readl_relaxed_poll_timeout(base + field->offset, reg,
+ 			!!((reg >> field->shift) & field->mask),  0, 10000);
+ 
+-	if (!ret)
++	if (!ret) {
++		if (pll->data->switch2pll_en)
++			CLKGEN_WRITE(pll, switch2pll, 0);
++
+ 		pr_debug("%s:%s enabled\n", __clk_get_name(hw->clk), __func__);
++	}
+ 
+ 	return ret;
+ }
+ 
+-static void clkgen_pll_disable(struct clk_hw *hw)
++static int clkgen_pll_enable(struct clk_hw *hw)
++{
++	struct clkgen_pll *pll = to_clkgen_pll(hw);
++	unsigned long flags = 0;
++	int ret = 0;
++
++	if (pll->lock)
++		spin_lock_irqsave(pll->lock, flags);
++
++	ret = __clkgen_pll_enable(hw);
++
++	if (pll->lock)
++		spin_unlock_irqrestore(pll->lock, flags);
++
++	return ret;
++}
++
++static void __clkgen_pll_disable(struct clk_hw *hw)
+ {
+ 	struct clkgen_pll *pll = to_clkgen_pll(hw);
+ 
+ 	if (!clkgen_pll_is_enabled(hw))
+ 		return;
+ 
++	if (pll->data->switch2pll_en)
++		CLKGEN_WRITE(pll, switch2pll, 1);
++
+ 	CLKGEN_WRITE(pll, pdn_ctrl, 1);
+ 
+ 	pr_debug("%s:%s disabled\n", __clk_get_name(hw->clk), __func__);
+ }
+ 
++static void clkgen_pll_disable(struct clk_hw *hw)
++{
++	struct clkgen_pll *pll = to_clkgen_pll(hw);
++	unsigned long flags = 0;
++
++	if (pll->lock)
++		spin_lock_irqsave(pll->lock, flags);
++
++	__clkgen_pll_disable(hw);
++
++	if (pll->lock)
++		spin_unlock_irqrestore(pll->lock, flags);
++}
++
+ static unsigned long recalc_stm_pll800c65(struct clk_hw *hw,
+ 		unsigned long parent_rate)
+ {
+@@ -372,6 +437,67 @@ static unsigned long recalc_stm_pll1600c65(struct clk_hw *hw,
+ 	return rate;
+ }
+ 
++static int clk_pll3200c32_get_params(unsigned long input, unsigned long output,
++			  struct stm_pll *pll)
++{
++	unsigned long i, n;
++	unsigned long deviation = ~0;
++	unsigned long new_freq;
++	long new_deviation;
++	/* Charge pump table: highest ndiv value for cp=6 to 25 */
++	static const unsigned char cp_table[] = {
++		48, 56, 64, 72, 80, 88, 96, 104, 112, 120,
++		128, 136, 144, 152, 160, 168, 176, 184, 192
++	};
++
++	/* Output clock range: 800Mhz to 1600Mhz */
++	if (output < 800000000 || output > 1600000000)
++		return -EINVAL;
++
++	input /= 1000;
++	output /= 1000;
++
++	for (i = 1; i <= 7 && deviation; i++) {
++		n = i * output / (2 * input);
++
++		/* Checks */
++		if (n < 8)
++			continue;
++		if (n > 200)
++			break;
++
++		new_freq = (input * 2 * n) / i;
++
++		new_deviation = abs(new_freq - output);
++
++		if (!new_deviation || new_deviation < deviation) {
++			pll->idf  = i;
++			pll->ndiv = n;
++			deviation = new_deviation;
++		}
++	}
++
++	if (deviation == ~0) /* No solution found */
++		return -EINVAL;
++
++	/* Computing recommended charge pump value */
++	for (pll->cp = 6; pll->ndiv > cp_table[pll->cp-6]; (pll->cp)++)
++		;
++
++	return 0;
++}
++
++static int clk_pll3200c32_get_rate(unsigned long input, struct stm_pll *pll,
++			unsigned long *rate)
++{
++	if (!pll->idf)
++		pll->idf = 1;
++
++	*rate = ((2 * (input / 1000) * pll->ndiv) / pll->idf) * 1000;
++
++	return 0;
++}
++
+ static unsigned long recalc_stm_pll3200c32(struct clk_hw *hw,
+ 		unsigned long parent_rate)
+ {
+@@ -394,6 +520,70 @@ static unsigned long recalc_stm_pll3200c32(struct clk_hw *hw,
+ 	return rate;
+ }
+ 
++static long round_rate_stm_pll3200c32(struct clk_hw *hw, unsigned long rate,
++		unsigned long *prate)
++{
++	struct stm_pll params;
++
++	if (!clk_pll3200c32_get_params(*prate, rate, &params))
++		clk_pll3200c32_get_rate(*prate, &params, &rate);
++	else {
++		pr_debug("%s: %s rate %ld Invalid\n", __func__,
++			 __clk_get_name(hw->clk), rate);
++		return 0;
++	}
++
++	pr_debug("%s: %s new rate %ld [ndiv=%u] [idf=%u]\n",
++		 __func__, __clk_get_name(hw->clk),
++		 rate, (unsigned int)params.ndiv,
++		 (unsigned int)params.idf);
++
++	return rate;
++}
++
++static int set_rate_stm_pll3200c32(struct clk_hw *hw, unsigned long rate,
++				unsigned long parent_rate)
++{
++	struct clkgen_pll *pll = to_clkgen_pll(hw);
++	struct stm_pll params;
++	long hwrate = 0;
++	unsigned long flags = 0;
++
++	if (!rate || !parent_rate)
++		return -EINVAL;
++
++	if (!clk_pll3200c32_get_params(parent_rate, rate, &params))
++		clk_pll3200c32_get_rate(parent_rate, &params, &hwrate);
++
++	pr_debug("%s: %s new rate %ld [ndiv=0x%x] [idf=0x%x]\n",
++		 __func__, __clk_get_name(hw->clk),
++		 hwrate, (unsigned int)params.ndiv,
++		 (unsigned int)params.idf);
++
++	if (!hwrate)
++		return -EINVAL;
++
++	pll->ndiv = params.ndiv;
++	pll->idf = params.idf;
++	pll->cp = params.cp;
++
++	__clkgen_pll_disable(hw);
++
++	if (pll->lock)
++		spin_lock_irqsave(pll->lock, flags);
++
++	CLKGEN_WRITE(pll, ndiv, pll->ndiv);
++	CLKGEN_WRITE(pll, idf, pll->idf);
++	CLKGEN_WRITE(pll, cp, pll->cp);
++
++	if (pll->lock)
++		spin_unlock_irqrestore(pll->lock, flags);
++
++	__clkgen_pll_enable(hw);
++
++	return 0;
++}
++
+ static unsigned long recalc_stm_pll1200c32(struct clk_hw *hw,
+ 		unsigned long parent_rate)
+ {
+@@ -442,6 +632,15 @@ static const struct clk_ops stm_pll3200c32_ops = {
+ 	.recalc_rate	= recalc_stm_pll3200c32,
+ };
+ 
++static const struct clk_ops stm_pll3200c32_a9_ops = {
++	.enable		= clkgen_pll_enable,
++	.disable	= clkgen_pll_disable,
++	.is_enabled	= clkgen_pll_is_enabled,
++	.recalc_rate	= recalc_stm_pll3200c32,
++	.round_rate	= round_rate_stm_pll3200c32,
++	.set_rate	= set_rate_stm_pll3200c32,
++};
++
+ static const struct clk_ops st_pll1200c32_ops = {
+ 	.enable		= clkgen_pll_enable,
+ 	.disable	= clkgen_pll_disable,
+@@ -452,7 +651,7 @@ static const struct clk_ops st_pll1200c32_ops = {
+ static struct clk * __init clkgen_pll_register(const char *parent_name,
+ 				struct clkgen_pll_data	*pll_data,
+ 				void __iomem *reg,
+-				const char *clk_name)
++				const char *clk_name, spinlock_t *lock)
+ {
+ 	struct clkgen_pll *pll;
+ 	struct clk *clk;
+@@ -558,7 +757,7 @@ static void __init clkgena_c65_pll_setup(struct device_node *np)
+ 	 */
+ 	clk_data->clks[0] = clkgen_pll_register(parent_name,
+ 			(struct clkgen_pll_data *) &st_pll1600c65_ax,
+-			reg + CLKGENAx_PLL0_OFFSET, clk_name);
++			reg + CLKGENAx_PLL0_OFFSET, clk_name, NULL);
+ 
+ 	if (IS_ERR(clk_data->clks[0]))
+ 		goto err;
+@@ -587,7 +786,7 @@ static void __init clkgena_c65_pll_setup(struct device_node *np)
+ 	 */
+ 	clk_data->clks[2] = clkgen_pll_register(parent_name,
+ 			(struct clkgen_pll_data *) &st_pll800c65_ax,
+-			reg + CLKGENAx_PLL1_OFFSET, clk_name);
++			reg + CLKGENAx_PLL1_OFFSET, clk_name, NULL);
+ 
+ 	if (IS_ERR(clk_data->clks[2]))
+ 		goto err;
+@@ -614,7 +813,7 @@ static struct clk * __init clkgen_odf_register(const char *parent_name,
+ 	struct clk_gate *gate;
+ 	struct clk_divider *div;
+ 
+-	flags = CLK_GET_RATE_NOCACHE | CLK_SET_RATE_GATE;
++	flags = CLK_GET_RATE_NOCACHE | CLK_SET_RATE_PARENT;
+ 
+ 	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+ 	if (!gate)
+@@ -722,7 +921,8 @@ static void __init clkgen_c32_pll_setup(struct device_node *np)
+ 	if (!pll_base)
+ 		return;
+ 
+-	clk = clkgen_pll_register(parent_name, data, pll_base, np->name);
++	clk = clkgen_pll_register(parent_name, data, pll_base, np->name,
++				  data->lock);
+ 	if (IS_ERR(clk))
+ 		return;
+ 
+@@ -811,7 +1011,7 @@ static void __init clkgengpu_c32_pll_setup(struct device_node *np)
+ 	/*
+ 	 * PLL 1200MHz output
+ 	 */
+-	clk = clkgen_pll_register(parent_name, data, reg, clk_name);
++	clk = clkgen_pll_register(parent_name, data, reg, clk_name, data->lock);
+ 
+ 	if (!IS_ERR(clk))
+ 		of_clk_add_provider(np, of_clk_src_simple_get, clk);
+diff --git a/drivers/clk/st/clkgen.h b/drivers/clk/st/clkgen.h
+index 35c8632..f7ec2d9 100644
+--- a/drivers/clk/st/clkgen.h
++++ b/drivers/clk/st/clkgen.h
+@@ -9,6 +9,8 @@ Copyright (C) 2014 STMicroelectronics
+ #ifndef __CLKGEN_INFO_H
+ #define __CLKGEN_INFO_H
+ 
++extern spinlock_t clkgen_a9_lock;
++
+ struct clkgen_field {
+ 	unsigned int offset;
+ 	unsigned int mask;
+-- 
+1.9.1
