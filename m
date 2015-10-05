@@ -1,95 +1,26 @@
-Return-Path: <tomeu.vizoso@gmail.com>
+Return-Path: <yorksun@freescale.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>
+From: York Sun <yorksun@freescale.com>
+Subject: What's the proper use of con_id in clkdev
+Message-ID: <5612D4D0.30104@freescale.com>
+Date: Mon, 5 Oct 2015 12:51:44 -0700
 MIME-Version: 1.0
-Sender: tomeu.vizoso@gmail.com
-In-Reply-To: <20151026105138.20687.13546@quantum>
-References: <20151018192931.GY14956@sirena.org.uk> <562A5602.7000208@sonymobile.com>
- <CAL_JsqLNSM=+j2r9HPcbSzsZrgnGEY3=kv21EXxisKwP5+57ag@mail.gmail.com>
- <24100858.2KIS8Y2npV@vostro.rjw.lan> <20151024220648.GR29919@sirena.org.uk>
- <CAJZ5v0hPVu7AL8zBdU4Kb7+MVfYv0mTa43RhnCyyPR+RKDbhLA@mail.gmail.com> <20151026105138.20687.13546@quantum>
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Date: Mon, 26 Oct 2015 13:55:29 +0100
-Message-ID: <CAAObsKAFJ+OKiLR2aMOjf15bd7k89EKsKLpd3ubsPMKeGLkRZw@mail.gmail.com>
-Subject: Re: [GIT PULL] On-demand device probing
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tim Bird <tim.bird@sonymobile.com>,
-	"frowand.list@gmail.com" <frowand.list@gmail.com>, Russell King <linux@arm.linux.org.uk>,
-	Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
-	Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>,
-	Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Return-Path: yorksun@freescale.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 26 October 2015 at 11:51, Michael Turquette <mturquette@baylibre.com> wrote:
-> Quoting Rafael J. Wysocki (2015-10-25 06:54:39)
->> On Sun, Oct 25, 2015 at 12:06 AM, Mark Brown <broonie@kernel.org> wrote:
->> > On Sat, Oct 24, 2015 at 04:17:12PM +0200, Rafael J. Wysocki wrote:
->> >
->> >> Well, I'm not quite sure why exactly everyone is so focused on probing here.
->> >
->> > Probe deferral is really noisy even if it's working fine on a given
->> > system so it's constantly being highlighted to people in a way that
->> > other issues aren't if you're not directly having problems.
->> >
->> > There's also the understanding people had that the order things get
->> > bound changes the ordering for some of the other cases (perhaps it's a
->> > good idea to do that, it seems likely to be sensible?).
->>
->> But it really doesn't do that.  Also making it do so doesn't help much
->> in the cases where things can happen asynchronously (system
->> suspend/resume, runtime PM).
->>
->> If, instead, there was a way to specify a functional dependency at the
->> device registration time, it might be used to change the order of
->> everything relevant, including probe.  That should help to reduce the
->> noise you're referring to.
->
-> Taking it a step further, if functional dependencies were understood at
-> link-time then we could optimize link order as well. There are probably
-> lots of optimizations if we only made the effort to understand these
-> dependencies earlier.
->
-> Constructing the device/resource dependency graph before the device ever
-> boots sounds interesting to me.
+Michael and Stephen,
 
-Alexander Holler has been looking at that for some time already.
+Can you help me to understand "#define MAX_CON_ID 16" in clkdev.c? I am trying
+to use clk_get() to acquire the clock with its name. This fails when the clock
+name is more than 15 characters. I traced it to this macro.
 
-Regards,
+The reason of using clk_get() is I don't have device tree for my platform until
+device tree overlay is officially supported. So I use clkdev_add() in the clock
+driver.
 
-Tomeu
+So my issue is with the MAX_CON_ID. Is there a reason to limit it to 16?
+Wouldn't it be better to use kstrdup() in vclkdev_alloc()?
 
-> Regards,
-> Mike
->
->>
->> If the dependency could only be discovered at the probe time, the
->> order of things might be changed in response to letting the driver
->> core know about it rather than "just in case", which should be more
->> efficient.
->>
->> Thanks,
->> Rafael
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+York
