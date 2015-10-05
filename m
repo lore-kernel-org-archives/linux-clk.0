@@ -1,71 +1,53 @@
-Return-Path: <jonmason@broadcom.com>
-Date: Fri, 9 Oct 2015 13:59:45 -0400
-From: Jon Mason <jonmason@broadcom.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Michael Turquette <mturquette@baylibre.com>, Florian Fainelli
-	<f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui
-	<rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<bcm-kernel-feedback-list@broadcom.com>
-Subject: Re: [PATCH 02/10] clk: nsp: add clock support for Broadcom Northstar
- Plus SoC
-Message-ID: <20151009175945.GB17527@broadcom.com>
-References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
- <1443826665-17570-3-git-send-email-jonmason@broadcom.com>
- <20151009073746.GP26883@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20151009073746.GP26883@codeaurora.org>
-Return-Path: jonmason@broadcom.com
+Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Maxime Coquelin <maxime.coquelin@st.com>,
+	 Michael Turquette <mturquette@baylibre.com>,
+	 Stephen Boyd <sboyd@codeaurora.org>,
+	 Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+	 Pankaj Dev <pankaj.dev@st.com>,
+	 Olivier Bideau <olivier.bideau@st.com>,
+	 Geert Uytterhoeven <geert+renesas@glider.be>,
+	 Fabian Frederick <fabf@skynet.be>,
+	 Rob Herring <robh+dt@kernel.org>,
+	 Pawel Moll <pawel.moll@arm.com>,
+	 Mark Rutland <mark.rutland@arm.com>,
+	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	 Kumar Gala <galak@codeaurora.org>,
+	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	 devicetree@vger.kernel.org,
+	 linux-kernel@vger.kernel.org,
+	 linux-arm-kernel@lists.infradead.org,
+	 kernel@stlinux.com,
+	 linux-clk@vger.kernel.org
+Subject: [PATCH v3 0/4] ST PLL improvement
+Date: Mon,  5 Oct 2015 10:06:29 +0200
+Message-Id: <1444032393-13433-1-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 09, 2015 at 12:37:46AM -0700, Stephen Boyd wrote:
-> On 10/02, Jon Mason wrote:
-> > diff --git a/drivers/clk/bcm/clk-nsp.c b/drivers/clk/bcm/clk-nsp.c
-> > new file mode 100644
-> > index 0000000..708961a
-> > --- /dev/null
-> > +++ b/drivers/clk/bcm/clk-nsp.c
-> > @@ -0,0 +1,139 @@
-> > +/*
-> > + * Copyright (C) 2015 Broadcom Corporation
-> > + *
-> > + * This program is free software; you can redistribute it and/or
-> > + * modify it under the terms of the GNU General Public License as
-> > + * published by the Free Software Foundation version 2.
-> > + *
-> > + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-> > + * kind, whether express or implied; without even the implied warranty
-> > + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > + * GNU General Public License for more details.
-> > + */
-> > +
-> > +#include <linux/kernel.h>
-> > +#include <linux/err.h>
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/io.h>
-> > +#include <linux/of.h>
-> > +#include <linux/clkdev.h>
-> 
-> Is this used?
-> 
-> > +#include <linux/of_address.h>
-> > +#include <linux/delay.h>
-> 
-> Is this used?
+Changes in v3:
+ - reorganize patch 1 and 2 to avoid a break git bisect
 
-I removed the clkdev and delay headers, and it appears to be working
-fine without them.  I'll rework this commit and resubmit.
+Changes in v2:
+ - Add const for st_pll4600c28_418_a9 structure
+ - Use readl_relaxed_poll_timeout macro instead Jiffies
+ - Add patch to enable stih418 A9 pll via DT.
 
-Thanks,
-Jon
+This patchset is based on '[PATCH 0/2] ST PLL fixes for 4.3'
 
-> 
-> > +
-> > +#include <dt-bindings/clock/bcm-nsp.h>
-> > +#include "clk-iproc.h"
-> 
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+Gabriel Fernandez (4):
+  drivers: clk: st: Support for enable/disable in Clockgen PLLs
+  drivers: clk: st: PLL rate change implementation for DVFS
+  drivers: clk: st: Correct the pll-type for A9 for stih418
+  ARM: STi: DT: Add support for stih418 A9 pll
+
+ .../devicetree/bindings/clock/st/st,clkgen-pll.txt |   1 +
+ arch/arm/boot/dts/stih418-clock.dtsi               |   2 +-
+ drivers/clk/st/clkgen-mux.c                        |   3 +
+ drivers/clk/st/clkgen-pll.c                        | 468 ++++++++++++++++++++-
+ drivers/clk/st/clkgen.h                            |   2 +
+ 5 files changed, 467 insertions(+), 9 deletions(-)
+
+-- 
+1.9.1
