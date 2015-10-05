@@ -1,82 +1,77 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	devicetree@vger.kernel.org
-Subject: [PATCH 08/13 v2] clk: add ARM syscon ICST device tree bindings
-Date: Mon, 26 Oct 2015 14:33:47 +0100
-Message-Id: <1445866427-14002-1-git-send-email-linus.walleij@linaro.org>
+Return-Path: <rnayak@codeaurora.org>
+Message-ID: <56120582.1050707@codeaurora.org>
+Date: Mon, 05 Oct 2015 10:37:14 +0530
+From: Rajendra Nayak <rnayak@codeaurora.org>
+MIME-Version: 1.0
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Mike Turquette <mturquette@baylibre.com>,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: Make oxili GDSC parent of oxili_cx GDSC
+References: <1443035362-10914-1-git-send-email-sboyd@codeaurora.org> <560CED90.9050201@codeaurora.org> <20151001175227.GE19319@codeaurora.org> <20151001190639.GI19319@codeaurora.org>
+In-Reply-To: <20151001190639.GI19319@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the device tree bindings for the ARM Syscon ICST
-oscillators, which is a register-level interface to the
-Integrated Device Technology (IDT) ICS525 and ICS307
-serially programmable oscillators.
+[]...
 
-Cc: devicetree@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v1->v2:
-- Spelling fixes.
+>>> It would also be nicer if this parent/child relationship can
+>>> somehow be represented in data (struct gdsc) that gets passed to
+>>> the gdsc driver which then sets it up, instead of individual
+>>> clock drivers doing it.
+>>
+>> Agreed. I'd rather that we do nothing besides register domains
+>> and then let the core code handle hooking up domains and
+>> subdomains.
+> 
+> A little closer inspection makes me want to skip this. PM domains
+> can have multiple "master" domains, and pm_genpd_init() is the
+> only API that would be able to do the linking. That API is mostly
+> about initializing things to default values, so it doesn't seem
+> like a good fit. I'll send a v2 with the remove part and the
+> exports.
 
-I'm looking for an ACK from the CLK maintainers to take this
-through the ARM SoC tree once the series stabilize.
----
- .../devicetree/bindings/clock/arm-syscon-icst.txt  | 40 ++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
+What I was suggesting is that the qcom gdsc driver handle this
+instead of the qcom clock drivers.
+Something like..
 
-diff --git a/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt b/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
-new file mode 100644
-index 000000000000..8b7177cecb36
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
-@@ -0,0 +1,40 @@
-+ARM System Controller ICST clocks
-+
-+The ICS525 and ICS307 oscillators are produced by Integrated Devices
-+Technology (IDT). ARM integrated these oscillators deeply into their
-+reference designs by adding special control registers that manage such
-+oscillators to their system controllers.
-+
-+The ARM system controller contains logic to serialize and initialize
-+an ICST clock request after a write to the 32 bit register at an offset
-+into the system controller. Furthermore, to even be able to alter one of
-+these frequencies, the system controller must first be unlocked by
-+writing a special token to another offset in the system controller.
-+
-+The ICST oscillator must be provided inside a system controller node.
-+
-+Required properties:
-+- lock-offset: the offset address into the system controller where the
-+  unlocking register is located
-+- vco-offset: the offset address into the system controller where the
-+  ICST control register is located (even 32 bit address)
-+- compatible: must be one of "arm,syscon-icst525" or "arm,syscon-icst307"
-+- #clock-cells: must be <0>
-+- clocks: parent clock, since the ICST needs a parent clock to derive its
-+  frequency from, this attribute is compulsory.
-+
-+Example:
-+
-+syscon: syscon@10000000 {
-+	compatible = "syscon";
-+	reg = <0x10000000 0x1000>;
-+
-+	oscclk0: osc0@0c {
-+		compatible = "arm,syscon-icst307";
-+		#clock-cells = <0>;
-+		lock-offset = <0x20>;
-+		vco-offset = <0x0c>;
-+		clocks = <&xtal24mhz>;
-+	};
-+	(...)
-+};
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index da9fad8..00edb2d 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -226,6 +226,8 @@ int gdsc_register(struct device *dev, struct gdsc **scs, size_t num,
+ 		if (ret)
+ 			return ret;
+ 		data->domains[i] = &scs[i]->pd;
++		if (scs[i]->parent)
++			pm_genpd_add_subdomain(scs[i]->parent, &scs[i]->pd);
+ 	}
+ 
+ 	return of_genpd_add_provider_onecell(dev->of_node, data);
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index 5ded268..bc5791f 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -49,6 +49,7 @@ struct gdsc {
+ 	struct reset_controller_dev	*rcdev;
+ 	unsigned int			*resets;
+ 	unsigned int			reset_count;
++	struct generic_pm_domain	*parent;
+ };
+ 
+ #ifdef CONFIG_QCOM_GDSC
+diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
+index fe8320d..51ad8de 100644
+--- a/drivers/clk/qcom/mmcc-msm8974.c
++++ b/drivers/clk/qcom/mmcc-msm8974.c
+@@ -2400,6 +2400,7 @@ static struct gdsc oxilicx_gdsc = {
+ 	.pd = {
+ 		.name = "oxilicx",
+ 	},
++	.parent = &oxili_gdsc.pd,
+ 	.pwrsts = PWRSTS_OFF_ON,
+ };
+
 -- 
-2.4.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
