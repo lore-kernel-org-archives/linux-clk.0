@@ -1,59 +1,71 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 21 Oct 2015 16:15:28 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Shawn Guo <shawnguo@kernel.org>, kernel-janitors@vger.kernel.org,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>,
-	Jason Cooper <jason@lakedaemon.net>
-Subject: Re: [PATCH 3/5] clk: imx27: add missing of_node_put
-Message-ID: <20151021231528.GJ19782@codeaurora.org>
-References: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
- <1445460100-26727-4-git-send-email-Julia.Lawall@lip6.fr>
+Return-Path: <tony@atomide.com>
+Date: Mon, 5 Oct 2015 03:17:55 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: Tero Kristo <t-kristo@ti.com>, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-omap@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@lists.codethink.co.uk,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] clk: ti: fix dual-registration of uart4_ick
+Message-ID: <20151005101755.GS23801@atomide.com>
+References: <1443019714-12926-1-git-send-email-ben.dooks@codethink.co.uk>
+ <20150923173040.GI23801@atomide.com>
+ <5604DED0.5050403@ti.com>
+ <560A8DB0.6020109@codethink.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1445460100-26727-4-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <560A8DB0.6020109@codethink.co.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/21, Julia Lawall wrote:
-> for_each_compatible_node performs an of_node_get on each iteration, so a
-> break out of the loop requires an of_node_put.
+* Ben Dooks <ben.dooks@codethink.co.uk> [150929 06:14]:
+> On 25/09/15 06:42, Tero Kristo wrote:
+> > On 09/23/2015 08:30 PM, Tony Lindgren wrote:
+> >> * Ben Dooks <ben.dooks@codethink.co.uk> [150923 07:53]:
+> >>> On the OMAP AM3517 platform the uart4_ick gets registered
+> >>> twice, causing any power managment to /dev/ttyO3 to fail
+> >>> when trying to wake the device up.
+> >>>
+> >>> This solves the following oops:
+> >>>
+> >>> [] Unhandled fault: external abort on non-linefetch (0x1028) at
+> >>> 0xfa09e008
+> >>> [] PC is at serial_omap_pm+0x48/0x15c
+> >>> [] LR is at _raw_spin_unlock_irqrestore+0x30/0x5c
+> >>
+> >> No uart4 on 34xx/35xx, that got introduced with 36xx so:
+> >>
+> >> Acked-by: Tony Lindgren <tony@atomide.com>
+> >>
+> >>> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> >>> ---
+> >>>   drivers/clk/ti/clk-3xxx.c | 1 -
+> >>>   1 file changed, 1 deletion(-)
+> >>>
+> >>> diff --git a/drivers/clk/ti/clk-3xxx.c b/drivers/clk/ti/clk-3xxx.c
+> >>> index 5e12f32..2e7ef1f 100644
+> >>> --- a/drivers/clk/ti/clk-3xxx.c
+> >>> +++ b/drivers/clk/ti/clk-3xxx.c
+> >>> @@ -374,7 +374,6 @@ static struct ti_dt_clk omap3xxx_clks[] = {
+> >>>       DT_CLK(NULL, "gpio2_ick", "gpio2_ick"),
+> >>>       DT_CLK(NULL, "wdt3_ick", "wdt3_ick"),
+> >>>       DT_CLK(NULL, "uart3_ick", "uart3_ick"),
+> >>> -    DT_CLK(NULL, "uart4_ick", "uart4_ick"),
+> >>>       DT_CLK(NULL, "gpt9_ick", "gpt9_ick"),
+> >>>       DT_CLK(NULL, "gpt8_ick", "gpt8_ick"),
+> >>>       DT_CLK(NULL, "gpt7_ick", "gpt7_ick"),
+> > 
+> > NAK.
+> > 
+> > This patch is actually only partially correct, it removes the uart4_ick
+> > alias for omap36xx also. It should be added back to the omap36xx clks
+> > array. Care to post a v2?
 > 
-> The semantic patch that fixes this problem is as follows
-> (http://coccinelle.lip6.fr):
-> 
-> // <smpl>
-> @@
-> local idexpression n;
-> expression e;
-> @@
-> 
->  for_each_compatible_node(n,...) {
->    ...
-> (
->    of_node_put(n);
-> |
->    e = n
-> |
-> +  of_node_put(n);
-> ?  break;
-> )
->    ...
->  }
-> ... when != n
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
+> Thankyou for the feedback. I'll update, but do not have a device to test.
 
-Applied to clk-next
+Hmm but isn't that entry already there for 36xx? So this just removes
+a duplicate for 36xx.. Tero, can you please check again, maybe I'm
+confused.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Regars,
+
+Tony
