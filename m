@@ -1,40 +1,42 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] clk: versatile-icst: fix memory leak
-Date: Fri, 23 Oct 2015 11:36:01 +0200
-Message-Id: <1445592961-30135-1-git-send-email-linus.walleij@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 6 Oct 2015 12:32:13 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, Rob Clark <robdclark@gmail.com>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 1/2] PM / Domains: Make
+ pm_genpd_{add,remove}_subdomain() available to modules
+Message-ID: <20151006193213.GG12338@codeaurora.org>
+References: <1443727374-1539-1-git-send-email-sboyd@codeaurora.org>
+ <1443727374-1539-2-git-send-email-sboyd@codeaurora.org>
+ <6374611.5Nvbqg0Ugs@vostro.rjw.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <6374611.5Nvbqg0Ugs@vostro.rjw.lan>
 List-ID: <linux-clk.vger.kernel.org>
 
-A static code checker found a memory leak in the Versatile
-ICST code. Fix it.
+On 10/05, Rafael J. Wysocki wrote:
+> On Thursday, October 01, 2015 12:22:53 PM Stephen Boyd wrote:
+> >  
+> >  /**
+> >   * pm_genpd_remove_subdomain - Remove a subdomain from an I/O PM domain.
+> > @@ -1395,6 +1396,7 @@ out:
+> >  
+> >  	return ret;
+> >  }
+> > +EXPORT_SYMBOL_GPL(pm_genpd_remove_subdomain);
+> >  
+> >  /* Default device callbacks for generic PM domains. */
+> 
+> This is fine by me, please feel free to add my ACK to it.
+> 
 
-Fixes: a183da637c52 "clk: versatile: respect parent rate in ICST clock"
-Reported-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/clk/versatile/clk-icst.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Thanks. Applied to clk-next.
 
-diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
-index a3893ea2199d..08c5ee976879 100644
---- a/drivers/clk/versatile/clk-icst.c
-+++ b/drivers/clk/versatile/clk-icst.c
-@@ -157,8 +157,10 @@ struct clk *icst_clk_register(struct device *dev,
- 	icst->lockreg = base + desc->lock_offset;
- 
- 	clk = clk_register(dev, &icst->hw);
--	if (IS_ERR(clk))
-+	if (IS_ERR(clk)) {
-+		kfree(pclone);
- 		kfree(icst);
-+	}
- 
- 	return clk;
- }
 -- 
-2.4.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
