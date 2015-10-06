@@ -1,39 +1,61 @@
-Return-Path: <magnus.damm@gmail.com>
-Return-Path: <magnus.damm@gmail.com>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: kuninori.morimoto.gx@renesas.com,gaku.inami.xw@bp.renesas.com,mturquette@baylibre.com,linux-sh@vger.kernel.org,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
-Date: Fri, 02 Oct 2015 10:57:55 +0900
-Message-Id: <20151002015755.7116.10457.sendpatchset@little-apple>
-Subject: [PATCH] clk: shmobile: Fix r8a7795 MSSR support
+Return-Path: <yorksun@freescale.com>
+Subject: Re: What's the proper use of con_id in clkdev
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Stephen Boyd
+	<sboyd@codeaurora.org>
+References: <5612D4D0.30104@freescale.com>
+ <20151006194430.GJ12338@codeaurora.org>
+ <20151006195042.GZ21513@n2100.arm.linux.org.uk>
+CC: Michael Turquette <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>
+From: York Sun <yorksun@freescale.com>
+Message-ID: <561426CB.8020708@freescale.com>
+Date: Tue, 6 Oct 2015 12:53:47 -0700
+MIME-Version: 1.0
+In-Reply-To: <20151006195042.GZ21513@n2100.arm.linux.org.uk>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: yorksun@freescale.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On 10/06/2015 12:50 PM, Russell King - ARM Linux wrote:
+> On Tue, Oct 06, 2015 at 12:44:30PM -0700, Stephen Boyd wrote:
+>> On 10/05, York Sun wrote:
+>>> Michael and Stephen,
+>>>
+>>> Can you help me to understand "#define MAX_CON_ID 16" in clkdev.c? I am trying
+>>> to use clk_get() to acquire the clock with its name. This fails when the clock
+>>> name is more than 15 characters. I traced it to this macro.
+>>>
+>>> The reason of using clk_get() is I don't have device tree for my platform until
+>>> device tree overlay is officially supported. So I use clkdev_add() in the clock
+>>> driver.
+>>>
+>>> So my issue is with the MAX_CON_ID. Is there a reason to limit it to 16?
+>>> Wouldn't it be better to use kstrdup() in vclkdev_alloc()?
+>>>
+>>
+>> Mike and I are not the maintainers of clkdev. The maintainer of
+>> clkdev is Russell King.
+>>
+>> I believe we can't use kstrdup() in vclkdev_alloc() because we
+>> don't know if vclkdev_alloc() is called before the slab
+>> allocators are up and running (this is why we have a
+>> __clkdev_alloc() function). The simplest solution is to use
+>> shorter names, can you do that?
+> 
+> Why does anyone need a _connection_ _id_ longer than 15 characters
+> anyway?
+> 
+> It's not a system clock name - it's supposed to be a device _specific_
+> clock _input_ name.  This statement comes from many years experience,
+> where people have repeatedly passed clk_get(NULL, "global clock name")
+> and eventually run into great problems, ending up having to pass clk
+> connection names through platform data, or clk pointers through
+> platform data.  Both are abhorrent.
+> 
+> Use the API as it was designed to be used: always use
+> clk_get(device, "device-input-name") or clk_get_sys("device-name",
+> "device-input-name") and not clk_get(NULL, "global-clock-name").
+> 
 
-This is an incremental fix for the series posted yesterday:
-[PATCH v8 00/05] Renesas R-Car Gen3 CPG support V8
+Thanks to all for the guidance.
 
-As pointed out by Geert, I missed one r8a7791 instance
-when doing manual search-and-replace. This fix will in
-the future be folded into patch 3/5 and 4/5, but for
-now this incremental patch will have to do.
-
-Thanks to Geert for keeping his eyes open!
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- drivers/clk/shmobile/clk-mssr.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- 0005/drivers/clk/shmobile/clk-mssr.c
-+++ work/drivers/clk/shmobile/clk-mssr.c	2015-10-02 10:48:27.560513000 +0900
-@@ -323,7 +323,7 @@ static int cpg_mssr_attach_dev(struct ge
- 	while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", i,
- 					   &clkspec)) {
- 		if (of_device_is_compatible(clkspec.np,
--					    "renesas,r8a7791-cpg-mssr"))
-+					    "renesas,r8a7795-cpg-mssr"))
- 			goto found;
- 
- 		of_node_put(clkspec.np);
+York
