@@ -1,97 +1,41 @@
-Return-Path: <yorksun@freescale.com>
-Subject: Re: [Resend Patch v6] driver/clk/clk-si5338: Add common clock
- framework driver for si5338
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1444410574-28677-1-git-send-email-yorksun@freescale.com>
- <20151010000948.GW26883@codeaurora.org> <562165C3.1090103@freescale.com>
- <20151016213139.GE16437@codeaurora.org> <56216E0D.4010709@freescale.com>
- <20151016230555.GE10182@codeaurora.org> <562553E4.30906@freescale.com>
- <20151019234348.GE19782@codeaurora.org>
- <CY1PR03MB14694C6FFC8BA80C08EB039ABE390@CY1PR03MB1469.namprd03.prod.outlook.com>
- <20151020003604.GF19782@codeaurora.org> <562598AE.2000600@freescale.com>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"pmarrecas@outlook.com" <pmarrecas@outlook.com>, Mike Turquette
-	<mturquette@baylibre.com>, Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>, Guenter Roeck <linux@roeck-us.net>,
-	"Andrey Filippov" <andrey@elphel.com>, Paul Bolle <pebolle@tiscali.nl>
-From: York Sun <yorksun@freescale.com>
-Message-ID: <562677D5.8080104@freescale.com>
-Date: Tue, 20 Oct 2015 10:20:21 -0700
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 6 Oct 2015 12:44:30 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: York Sun <yorksun@freescale.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	Russell King <linux@arm.linux.org.uk>
+Subject: Re: What's the proper use of con_id in clkdev
+Message-ID: <20151006194430.GJ12338@codeaurora.org>
+References: <5612D4D0.30104@freescale.com>
 MIME-Version: 1.0
-In-Reply-To: <562598AE.2000600@freescale.com>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: yorksun@freescale.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <5612D4D0.30104@freescale.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 10/19/2015 06:28 PM, York Sun wrote:
+On 10/05, York Sun wrote:
+> Michael and Stephen,
 > 
+> Can you help me to understand "#define MAX_CON_ID 16" in clkdev.c? I am trying
+> to use clk_get() to acquire the clock with its name. This fails when the clock
+> name is more than 15 characters. I traced it to this macro.
 > 
-> On 10/19/2015 05:36 PM, Stephen Boyd wrote:
->> On 10/20, York Sun wrote:
->>> Sorry for top posting. I am on outlook web.
->>>
->>> We have no problem with device tree. Let's put it aside.
->>>
->>> When device is not used, the platform data is used to hold the data, filled by a platform device before probing the clock. For my case, the platform device is a PCIe device. It is a multifunction device with I2C controller on it. The pseudo code looks like
->>>
->>> struct i2c_board_info si5338_info[NUM_SI5338_CHIPS] = {
->>>         {
->>>                 .type = "si5338",
->>>                 .platform_data = &si5338_pdata[0],
->>>         },
->>>         {
->>>                 .type = "si5338",
->>>                 .platform_data = &si5338_pdata[1],
->>>         },
->>>         {
->>>                 .type = "si5338",
->>>                 .platform_data = &si5338_pdata[2],
->>>         },
->>>         {
->>>                 .type = "si5338",
->>>                 .platform_data = &si5338_pdata[3],
->>>         },
->>> };
->>> clk = clk_register_fixed_rate(&pdev->dev, "ref25", NULL, CLK_IS_ROOT, 25000000);
->>> for (i = 0; i < NUM_SI5338_CHIPS; i++) {
->>>     si5338_pdata[i].clk_xtal = clk;
->>>     adap = i2c_get_adapter(private->i2c_adp->nr + 1 + i);
->>>     private->i2c_client[i] = i2c_new_probed_device(adap, &si5338_info[i], i2c_si5338_addr, NULL);
->>> }
->>>
->>> You can see, when the fixed-rate clock is registered, the device id of si5338 is unknown yet. (I am using one 25MHz clock to feed multiple si5338, where maybe I should create multiple 25MHz clocks, but that's another discussion.)
->>>
->>> I hope I have made it clear.
->>
->> Yes. It would be great if we could modify the i2c framework to
->> let us create an i2c device but not call device_register() until a later
->> time. So something like this could be done in the platform
->> driver:
->>
->> 	for (i = 0; i < NUM_SI5338_CHIPS; i++) {
->> 	     adap = i2c_get_adapter(private->i2c_adp->nr + 1 + i);
->> 	     private->i2c_client[i] = i2c_new_device_unregistered(adap,
->> 	     				&si5338_info[i], i2c_si5338_addr);
->> 	     clkdev_create(clk, NULL, dev_name(private->i2c_client[i]->dev));
->> 	     device_register(private->i2c_client[i]->dev);
->> 	}
->>
->> Then in the si5338 driver we call devm_clk_get(i2c->dev, NULL)
->> and we get the xtal clock.
->>
+> The reason of using clk_get() is I don't have device tree for my platform until
+> device tree overlay is officially supported. So I use clkdev_add() in the clock
+> driver.
 > 
-> Then what do we do before we have this i2c_new_device_unregistered()? Does my
-> proposal make sense?
+> So my issue is with the MAX_CON_ID. Is there a reason to limit it to 16?
+> Wouldn't it be better to use kstrdup() in vclkdev_alloc()?
 > 
 
-Stephen,
+Mike and I are not the maintainers of clkdev. The maintainer of
+clkdev is Russell King.
 
-How about this? I will use devm_clk_get() when parsing device tree, and still
-pass clk pointer if using platform data. In this way, I don't have to call
-clk_put() in the driver to release the parent clocks. The platform device driver
-is responsible to get the clock and put the clock. It seems reasonable to me. If
-you don't disagree, I will prepare v7 patch for review.
+I believe we can't use kstrdup() in vclkdev_alloc() because we
+don't know if vclkdev_alloc() is called before the slab
+allocators are up and running (this is why we have a
+__clkdev_alloc() function). The simplest solution is to use
+shorter names, can you do that?
 
-York
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
