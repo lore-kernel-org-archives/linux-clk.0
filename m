@@ -1,59 +1,47 @@
-Return-Path: <manabian@gmail.com>
-Return-Path: <manabian@gmail.com>
-From: Joachim Eastwood <manabian@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: Joachim Eastwood <manabian@gmail.com>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 6 Oct 2015 11:06:17 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Cc: Maxime Coquelin <maxime.coquelin@st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>, Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
 	linux-clk@vger.kernel.org
-Subject: [PATCH v3 2/3] clk: lpc18xx-ccu: fix potential system hang when disabling unused clocks
-Date: Sat, 24 Oct 2015 18:55:23 +0200
-Message-Id: <1445705724-20805-3-git-send-email-manabian@gmail.com>
-In-Reply-To: <1445705724-20805-1-git-send-email-manabian@gmail.com>
-References: <1445705724-20805-1-git-send-email-manabian@gmail.com>
+Subject: Re: [PATCH v3 2/4] drivers: clk: st: PLL rate change implementation
+ for DVFS
+Message-ID: <20151006180617.GE12338@codeaurora.org>
+References: <1444032393-13433-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1444032393-13433-3-git-send-email-gabriel.fernandez@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1444032393-13433-3-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-CCU branch clock register must only be accessed while the base
-(parent) clock is running. Access with a disabled base clock
-will cause the system to hang. Fix this issue by adding code
-that check if the parent clock is running in the is_enabled
-clk_ops callback.
+On 10/05, Gabriel Fernandez wrote:
+> @@ -452,7 +651,7 @@ static const struct clk_ops st_pll1200c32_ops = {
+>  static struct clk * __init clkgen_pll_register(const char *parent_name,
+>  				struct clkgen_pll_data	*pll_data,
+>  				void __iomem *reg,
+> -				const char *clk_name)
+> +				const char *clk_name, spinlock_t *lock)
 
-This hang would occur when disabling unused clocks after AMBA
-runtime pm had already disabled some of the clocks.
+Is there a reason we pass lock here but never use it in this
+function?
 
-Signed-off-by: Joachim Eastwood <manabian@gmail.com>
----
- drivers/clk/nxp/clk-lpc18xx-ccu.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+>  {
+>  	struct clkgen_pll *pll;
+>  	struct clk *clk;
 
-diff --git a/drivers/clk/nxp/clk-lpc18xx-ccu.c b/drivers/clk/nxp/clk-lpc18xx-ccu.c
-index eeaee97da110..13aabbb3acbe 100644
---- a/drivers/clk/nxp/clk-lpc18xx-ccu.c
-+++ b/drivers/clk/nxp/clk-lpc18xx-ccu.c
-@@ -179,9 +179,22 @@ static void lpc18xx_ccu_gate_disable(struct clk_hw *hw)
- 
- static int lpc18xx_ccu_gate_is_enabled(struct clk_hw *hw)
- {
--	struct clk_gate *gate = to_clk_gate(hw);
-+	const struct clk_hw *parent;
-+
-+	/*
-+	 * The branch clock registers are only accessible
-+	 * if the base (parent) clock is enabled. Register
-+	 * access with a disabled base clock will hang the
-+	 * system.
-+	 */
-+	parent = clk_hw_get_parent(hw);
-+	if (!parent)
-+		return 0;
-+
-+	if (!clk_hw_is_enabled(parent))
-+		return 0;
- 
--	return clk_readl(gate->reg) & LPC18XX_CCU_RUN;
-+	return clk_gate_ops.is_enabled(hw);
- }
- 
- static const struct clk_ops lpc18xx_ccu_gate_ops = {
 -- 
-1.8.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
