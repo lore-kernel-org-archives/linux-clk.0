@@ -1,83 +1,88 @@
-Return-Path: <rjui@broadcom.com>
-Subject: Re: [PATCH v3 08/10] clk: ns2: add clock support for Broadcom
- Northstar 2 SoC
-To: Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
- <1444938513-10758-9-git-send-email-jonmason@broadcom.com>
- <56200F39.1060102@broadcom.com>
-CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
-	<hauke@hauke-m.de>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
-From: Ray Jui <rjui@broadcom.com>
-Message-ID: <562012A8.8050707@broadcom.com>
-Date: Thu, 15 Oct 2015 13:55:04 -0700
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Xing Zheng <zhengxing@rock-chips.com>
+Cc: linux-rockchip@lists.infradead.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 3/9] clk: rockchip: add clock controller for rk3036
+Date: Wed, 07 Oct 2015 12:24:32 +0200
+Message-ID: <2653032.av3sFfN860@phil>
+In-Reply-To: <56036EAE.9040201@rock-chips.com>
+References: <1442478540-15068-1-git-send-email-zhengxing@rock-chips.com> <5603683F.4020302@rock-chips.com> <56036EAE.9040201@rock-chips.com>
 MIME-Version: 1.0
-In-Reply-To: <56200F39.1060102@broadcom.com>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: rjui@broadcom.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi,
+
+Am Donnerstag, 24. September 2015, 11:31:58 schrieb Xing Zheng:
+> On 2015=E5=B9=B409=E6=9C=8824=E6=97=A5 11:04, Xing Zheng wrote:
+> >>>   #define RK3066_PLL_RATE(_rate, _nr, _nf, _no)    \
+> >>>=20
+> >>> @@ -95,12 +106,31 @@ enum rockchip_pll_type {
+> >>>=20
+> >>>       .nb =3D _nb,                        \
+> >>>  =20
+> >>>   }
+> >>>=20
+> >>> +#define RK3036_PLL_RATE(_rate, _refdiv, _fbdiv, _postdiv1,    \
+> >>> +            _postdiv2, _dsmpd, _frac)        \
+> >>> +{                                \
+> >>> +    .rate    =3D _rate##U,                    \
+> >>> +    .fbdiv =3D _fbdiv,                    \
+> >>> +    .postdiv1 =3D _postdiv1,                    \
+> >>> +    .refdiv =3D _refdiv,                    \
+> >>> +    .postdiv2 =3D _postdiv2,                    \
+> >>> +    .dsmpd =3D _dsmpd,                    \
+> >>> +    .frac =3D _frac,                        \
+> >>> +}
+> >>> +
+> >>>=20
+> >>>   struct rockchip_pll_rate_table {
+> >>>  =20
+> >>>       unsigned long rate;
+> >>>       unsigned int nr;
+> >>>       unsigned int nf;
+> >>>       unsigned int no;
+> >>>       unsigned int nb;
+> >>>=20
+> >>> +    /* for RK3036 */
+> >>> +    unsigned int fbdiv;
+> >>> +    unsigned int postdiv1;
+> >>> +    unsigned int refdiv;
+> >>> +    unsigned int postdiv2;
+> >>> +    unsigned int dsmpd;
+> >>> +    unsigned int frac;
+> >>=20
+> >> same for these 2 ... should be part of the pll addition itself
+> >>=20
+> >   };
+> >=20
+> > Done.
+>=20
+> Sorry, I have one question:
+> The "struct rockchip_pll_rate_table" is called in "rockchip/clk-pll.c=
+"
+> on many functions, I think I could add a struct like:
+> struct rk3036_pll_rate_table {
+>      unsigned int fbdiv;
+>      unsigned int postdiv1;
+>      unsigned int refdiv;
+>      unsigned int postdiv2;
+>      unsigned int dsmpd;
+>      unsigned int frac;
+> };
+> but, it will add many redundancy codes in "rockchip/clk-pll.c" just f=
+or
+> call "struct rk3036_pll_rate_table".
 
 
-On 10/15/2015 1:40 PM, Scott Branden wrote:
-> We need some sort of kconfig option to differentiate NS2 clock driver
-> from being pulled in all the time.
-> 
-> On 15-10-15 12:48 PM, Jon Mason wrote:
->> The Broadcom Northstar 2 SoC is architected under the iProc
->> architecture. It has the following PLLs: GENPLL SCR, GENPLL SW,
->> LCPLL DDR, LCPLL Ports, all derived from an onboard crystal.
->>
->> Signed-off-by: Jon Mason <jonmason@broadcom.com>
->> ---
->>   drivers/clk/Makefile                |   2 +-
->>   drivers/clk/bcm/Makefile            |   1 +
->>   drivers/clk/bcm/clk-ns2.c           | 288
->> ++++++++++++++++++++++++++++++++++++
->>   include/dt-bindings/clock/bcm-ns2.h |  72 +++++++++
->>   4 files changed, 362 insertions(+), 1 deletion(-)
->>   create mode 100644 drivers/clk/bcm/clk-ns2.c
->>   create mode 100644 include/dt-bindings/clock/bcm-ns2.h
->>
->> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
->> index d08b3e5..6124bd3 100644
->> --- a/drivers/clk/Makefile
->> +++ b/drivers/clk/Makefile
->> @@ -47,7 +47,7 @@ obj-$(CONFIG_COMMON_CLK_WM831X)        += clk-wm831x.o
->>   obj-$(CONFIG_COMMON_CLK_XGENE)        += clk-xgene.o
->>   obj-$(CONFIG_COMMON_CLK_PWM)        += clk-pwm.o
->>   obj-$(CONFIG_COMMON_CLK_AT91)        += at91/
->> -obj-$(CONFIG_ARCH_BCM)            += bcm/
->> +obj-y                    += bcm/
->>   obj-$(CONFIG_ARCH_BERLIN)        += berlin/
->>   obj-$(CONFIG_ARCH_HISI)            += hisilicon/
->>   obj-$(CONFIG_ARCH_MXC)            += imx/
->> diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
->> index e258b28..2d1cbc5 100644
->> --- a/drivers/clk/bcm/Makefile
->> +++ b/drivers/clk/bcm/Makefile
->> @@ -3,6 +3,7 @@ obj-$(CONFIG_CLK_BCM_KONA)    += clk-kona-setup.o
->>   obj-$(CONFIG_CLK_BCM_KONA)    += clk-bcm281xx.o
->>   obj-$(CONFIG_CLK_BCM_KONA)    += clk-bcm21664.o
->>   obj-$(CONFIG_COMMON_CLK_IPROC)    += clk-iproc-armpll.o
->> clk-iproc-pll.o clk-iproc-asiu.o
->> +obj-$(CONFIG_COMMON_CLK_IPROC)    += clk-ns2.o
-> 
-> NS2 code is dragged in for all IPROC SoCs.  We need a config option for
-> NS2 (CONFIG_ARCH_BCM_NS2) to avoid this (if Arnd allows this for ARMv8
-> processors... ?).
-> 
-> You can see below ARMv7 processors don't have this problem.
-> 
+One possible solution may be to cast to void* in the general functions,=
+ so=20
+have sturct rk3066_pll_rate_table, rk3036_pll_rate_table, have=20
+rockchip_clk_register_pll and friends handle it as void* and then only =
+have=20
+the rockchip_rk3066_pll_* functions as well as the clk-rkxxxx.c use the=
+m as=20
+their actual type, as they know which they need.
 
-The arm64 maintainers (Catalin, Mark, and etc.) stated they only want
-one ARCH options per chip family.
 
-> If not we need to add CONFIG_CLK_NS2.
-
-If using CONFIG_CLK_NS2, how is it going to be enabled/selected?
-
-Ray
+Heiko
