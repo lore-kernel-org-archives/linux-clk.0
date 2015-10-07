@@ -1,173 +1,52 @@
-Return-Path: <jonmason@broadcom.com>
-From: Jon Mason <jonmason@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
-	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
-	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
-Subject: [RFC 3/5] ARM: dts: enable clock support for BCM5301X
-Date: Tue, 13 Oct 2015 17:22:25 -0400
-Message-ID: <1444771347-11382-4-git-send-email-jonmason@broadcom.com>
-In-Reply-To: <1444771347-11382-1-git-send-email-jonmason@broadcom.com>
-References: <1444771347-11382-1-git-send-email-jonmason@broadcom.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jonmason@broadcom.com
+Return-Path: <gabriel.fernandez@linaro.org>
+Return-Path: <gabriel.fernandez@linaro.org>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+To: Maxime Coquelin <maxime.coquelin@st.com>,
+	 Michael Turquette <mturquette@baylibre.com>,
+	 Stephen Boyd <sboyd@codeaurora.org>,
+	 Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+	 Pankaj Dev <pankaj.dev@st.com>,
+	 Olivier Bideau <olivier.bideau@st.com>,
+	 Geert Uytterhoeven <geert+renesas@glider.be>,
+	 Fabian Frederick <fabf@skynet.be>,
+	 Rob Herring <robh+dt@kernel.org>,
+	 Pawel Moll <pawel.moll@arm.com>,
+	 Mark Rutland <mark.rutland@arm.com>,
+	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	 Kumar Gala <galak@codeaurora.org>,
+	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	 devicetree@vger.kernel.org,
+	 linux-kernel@vger.kernel.org,
+	 linux-arm-kernel@lists.infradead.org,
+	 kernel@stlinux.com,
+	 linux-clk@vger.kernel.org
+Subject: [PATCH v4 4/4] ARM: STi: DT: Add support for stih418 A9 pll
+Date: Wed,  7 Oct 2015 11:08:59 +0200
+Message-Id: <1444208939-10233-5-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1444208939-10233-1-git-send-email-gabriel.fernandez@linaro.org>
+References: <1444208939-10233-1-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Replace current device tree dummy clocks with real clock support for
-Broadcom Northstar SoCs.
+Add support for new PLL-type for stih418 A9-PLL.
 
-Signed-off-by: Jon Mason <jonmason@broadcom.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
 ---
- arch/arm/boot/dts/bcm5301x.dtsi | 88 ++++++++++++++++++++++++++++++++---------
- 1 file changed, 69 insertions(+), 19 deletions(-)
+ arch/arm/boot/dts/stih418-clock.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/bcm5301x.dtsi b/arch/arm/boot/dts/bcm5301x.dtsi
-index 6f50f67..1eca551 100644
---- a/arch/arm/boot/dts/bcm5301x.dtsi
-+++ b/arch/arm/boot/dts/bcm5301x.dtsi
-@@ -8,6 +8,7 @@
-  * Licensed under the GNU/GPL. See COPYING for details.
-  */
+diff --git a/arch/arm/boot/dts/stih418-clock.dtsi b/arch/arm/boot/dts/stih418-clock.dtsi
+index 148e177..ae6d997 100644
+--- a/arch/arm/boot/dts/stih418-clock.dtsi
++++ b/arch/arm/boot/dts/stih418-clock.dtsi
+@@ -44,7 +44,7 @@
  
-+#include <dt-bindings/clock/bcm-nsp.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-@@ -42,41 +43,48 @@
+ 			clockgen_a9_pll: clockgen-a9-pll {
+ 				#clock-cells = <1>;
+-				compatible = "st,stih407-plls-c32-a9", "st,clkgen-plls-c32";
++				compatible = "st,stih418-plls-c28-a9", "st,clkgen-plls-c32";
  
- 	mpcore {
- 		compatible = "simple-bus";
--		ranges = <0x00000000 0x19020000 0x00003000>;
-+		ranges = <0x00000000 0x19000000 0x00023000>;
- 		#address-cells = <1>;
- 		#size-cells = <1>;
+ 				clocks = <&clk_sysin>;
  
--		scu@0000 {
-+		a9pll: arm_clk@00000 {
-+			#clock-cells = <0>;
-+			compatible = "brcm,nsp-armpll";
-+			clocks = <&osc>;
-+			reg = <0x00000 0x1000>;
-+		};
-+
-+		scu@20000 {
- 			compatible = "arm,cortex-a9-scu";
--			reg = <0x0000 0x100>;
-+			reg = <0x20000 0x100>;
- 		};
- 
--		timer@0200 {
-+		timer@20200 {
- 			compatible = "arm,cortex-a9-global-timer";
--			reg = <0x0200 0x100>;
-+			reg = <0x20200 0x100>;
- 			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&clk_periph>;
-+			clocks = <&periph_clk>;
- 		};
- 
--		local-timer@0600 {
-+		local-timer@20600 {
- 			compatible = "arm,cortex-a9-twd-timer";
--			reg = <0x0600 0x100>;
-+			reg = <0x20600 0x100>;
- 			interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&clk_periph>;
-+			clocks = <&periph_clk>;
- 		};
- 
--		gic: interrupt-controller@1000 {
-+		gic: interrupt-controller@21000 {
- 			compatible = "arm,cortex-a9-gic";
- 			#interrupt-cells = <3>;
- 			#address-cells = <0>;
- 			interrupt-controller;
--			reg = <0x1000 0x1000>,
--			      <0x0100 0x100>;
-+			reg = <0x21000 0x1000>,
-+			      <0x20100 0x100>;
- 		};
- 
--		L2: cache-controller@2000 {
-+		L2: cache-controller@22000 {
- 			compatible = "arm,pl310-cache";
--			reg = <0x2000 0x1000>;
-+			reg = <0x22000 0x1000>;
- 			cache-unified;
- 			arm,shared-override;
- 			prefetch-data = <1>;
-@@ -94,14 +102,37 @@
- 
- 	clocks {
- 		#address-cells = <1>;
--		#size-cells = <0>;
-+		#size-cells = <1>;
-+		ranges;
- 
--		/* As long as we do not have a real clock driver us this
--		 * fixed clock */
--		clk_periph: periph {
-+		osc: oscillator {
-+			#clock-cells = <0>;
- 			compatible = "fixed-clock";
-+			clock-frequency = <25000000>;
-+		};
-+
-+		iprocmed: iprocmed {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&genpll BCM_NSP_GENPLL_IPROCFAST_CLK>;
-+			clock-div = <2>;
-+			clock-mult = <1>;
-+		};
-+
-+		iprocslow: iprocslow {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&genpll BCM_NSP_GENPLL_IPROCFAST_CLK>;
-+			clock-div = <4>;
-+			clock-mult = <1>;
-+		};
-+
-+		periph_clk: periph_clk {
- 			#clock-cells = <0>;
--			clock-frequency = <400000000>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&a9pll>;
-+			clock-div = <2>;
-+			clock-mult = <1>;
- 		};
- 	};
- 
-@@ -178,6 +209,25 @@
- 		};
- 	};
- 
-+	lcpll0: lcpll0@1800c100 {
-+		#clock-cells = <1>;
-+		compatible = "brcm,nsp-lcpll0";
-+		reg = <0x1800c100 0x14>;
-+		clocks = <&osc>;
-+		clock-output-names = "lcpll0", "pcie_phy", "sdio",
-+				     "ddr_phy";
-+	};
-+
-+	genpll: genpll@1800c140 {
-+		#clock-cells = <1>;
-+		compatible = "brcm,nsp-genpll";
-+		reg = <0x1800c140 0x24>;
-+		clocks = <&osc>;
-+		clock-output-names = "genpll", "phy", "ethernetclk",
-+				     "usbclk", "iprocfast", "sata1",
-+				     "sata2";
-+	};
-+
- 	nand: nand@18028000 {
- 		compatible = "brcm,nand-iproc", "brcm,brcmnand-v6.1", "brcm,brcmnand";
- 		reg = <0x18028000 0x600>, <0x1811a408 0x600>, <0x18028f00 0x20>;
 -- 
 1.9.1
