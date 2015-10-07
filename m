@@ -1,52 +1,68 @@
-Return-Path: <moinejf@free.fr>
-Date: Wed, 21 Oct 2015 08:15:19 +0200
-From: Jean-Francois Moine <moinejf@free.fr>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Mark Brown <broonie@kernel.org>, "linux-fbdev@vger.kernel.org"
- <linux-fbdev@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Michael
- Turquette <mturquette@baylibre.com>, dri-devel
- <dri-devel@lists.freedesktop.org>, Liam Girdwood <lgirdwood@gmail.com>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Frank Rowand
- <frowand.list@gmail.com>, linux-clk@vger.kernel.org, Russell King
- <linux@arm.linux.org.uk>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
- Lee Jones <lee.jones@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>,
- Linux PWM List <linux-pwm@vger.kernel.org>, Kishon Vijay Abraham I
- <kishon@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Alan Stern
- <stern@rowland.harvard.edu>, Grant Likely <grant.likely@linaro.org>,
- Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre
- Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org"
- <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org"
- <linux-tegra@vger.kernel.org>, Terje =?UTF-8?B?QmVyZ3N0csO2bQ==?=
- <tbergstrom@nvidia.com>, Dan Williams <dan.j.williams@intel.com>, Tomeu
- Vizoso <tomeu.vizoso@collabora.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, "linux-pm@vger.kernel.org"
- <linux-pm@vger.kernel.org>, Linux USB List <linux-usb@vger.kernel.org>,
- Stephen Boyd <sboyd@codeaurora.org>, Sebastian Reichel <sre@kernel.org>,
- Felipe Balbi <balbi@ti.com>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, Vinod Koul <vinod.koul@intel.com>, Jingoo
- Han <jingoohan1@gmail.com>, dmaengine@vger.kernel.org, David Woodhouse
- <dwmw2@infradead.org>
-Subject: Re: [GIT PULL] On-demand device probing
-Message-ID: <20151021081519.13fa548a@OPI2>
-In-Reply-To: <23698237.227MziouDO@vostro.rjw.lan>
-References: <CAAObsKChQN4gg91dCWJS_Co_MrYyBrB1J7gxgGo4hsPXNZRp3g@mail.gmail.com>
-	<Pine.LNX.4.44L0.1510201311260.1855-100000@iolanthe.rowland.org>
-	<20151020193528.GE32054@sirena.org.uk>
-	<23698237.227MziouDO@vostro.rjw.lan>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:47208 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752893AbbJGCap (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 6 Oct 2015 22:30:45 -0400
+Subject: Re: [PATCH v5] clk: bcm2835: Add support for programming the audio
+ domain clocks.
+To: Eric Anholt <eric@anholt.net>
+References: <1444181140-3570-1-git-send-email-eric@anholt.net>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Lee Jones <lee@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Message-ID: <561483D3.70000@wwwdotorg.org>
+Date: Tue, 6 Oct 2015 20:30:43 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1444181140-3570-1-git-send-email-eric@anholt.net>
+Content-Type: text/plain; charset=windows-1252
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Sorry to enter this thread a bit late.
+On 10/06/2015 07:25 PM, Eric Anholt wrote:
+> This adds support for enabling, disabling, and setting the rate of the
+> audio domain clocks.  It will be necessary for setting the pixel clock
+> for HDMI in the VC4 driver and let us write a cpufreq driver.  It will
+> also improve compatibility with user changes to the firmware's
+> config.txt, since our previous fixed clocks are unaware of it.
+> 
+> The firmware also has support for configuring the clocks through the
+> mailbox channel, but the pixel clock setup by the firmware doesn't
+> work, and it's Raspberry Pi specific anyway.  The only conflicts we
+> should have with the firmware would be if we made firmware calls that
+> result in clock management (like opening firmware V3D or ISP access,
+> which we don't support in upstream), or on hardware over-thermal or
+> under-voltage (when the firmware would rewrite PLLB to take the ARM
+> out of overclock).  If that happens, our cached .recalc_rate() results
+> would be incorrect, but that's no worse than our current state where
+> we used fixed clocks.
+> 
+> The existing fixed clocks in the code are left in place to provide
+> backwards compatibility with old device tree files.
 
-About the number of probe deferred messages, I proposed a simple patch to
-reduce them:
+> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
 
-	https://lkml.org/lkml/2013/8/20/218
+> +static const struct bcm2835_pll_ana_bits bcm2835_ana_default = {
+> +	.mask0 = 0,
+> +	.set0 = 0,
+> +	.mask1 = ~((7 << 19) | (15 << 15)),
+> +	.set1 = (2 << 19) | (8 << 15),
+> +	.mask3 = ~(7 << 7),
+> +	.set3 = (6 << 1),
+> +	.fb_prediv_mask = BIT(14),
+> +};
 
-I was wondering how many messages this patch could save...
+Sorry for the slow response, but my previous comment on that block of
+code was regarding the values not matching the values to the fields in
+the struct. For example, in "7 << 19", what do 7 and 19 represent? That
+could be documented by e.g.:
 
---=20
-Ken ar c'henta=C3=B1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+#define FOO_MASK 7
+#define FOO_SHIFT 19
+
+where FOO is the name of the field, and would tie the values into the
+documentation (assuming there is some)
+
+Of course at this stage it's fine to change this later.
