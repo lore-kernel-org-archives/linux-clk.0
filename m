@@ -1,81 +1,43 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:41102 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753086AbbJTJXX (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 20 Oct 2015 05:23:23 -0400
-From: Andrzej Hajda <a.hajda@samsung.com>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Hyungwon Hwang <human.hwang@samsung.com>
-Subject: [PATCH 03/10] drm/exynos/decon5433: add PCLK clock
-Date: Tue, 20 Oct 2015 11:22:34 +0200
-Message-id: <1445332961-25419-4-git-send-email-a.hajda@samsung.com>
-In-reply-to: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
-References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 7 Oct 2015 12:14:59 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Cc: Maxime Coquelin <maxime.coquelin@st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>, Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 2/4] drivers: clk: st: PLL rate change implementation
+ for DVFS
+Message-ID: <20151007191459.GB12345@codeaurora.org>
+References: <1444208939-10233-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1444208939-10233-3-git-send-email-gabriel.fernandez@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1444208939-10233-3-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-PCLK clock is used by DECON IP. The patch also replaces magic number with
-number of clocks in array definition.
+On 10/07, Gabriel Fernandez wrote:
+> Change A9 PLL rate, as per requirement from the cpufreq framework,
+> for DVFS. For rate change, the A9 clock needs to be temporarily sourced
+> from PLL external to A9 and then sourced back to A9-PLL
+> 
+> Signed-off-by: Pankaj Dev <pankaj.dev@st.com>
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+> ---
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+Applied to clk-next
 
-diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-index 1ea26dbb..b25d764 100644
---- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-@@ -27,13 +27,23 @@
- #define CURSOR_WIN	2
- #define MIN_FB_WIDTH_FOR_16WORD_BURST	128
- 
-+static const char * const decon_clks_name[] = {
-+	"pclk",
-+	"aclk_decon",
-+	"aclk_smmu_decon0x",
-+	"aclk_xiu_decon0x",
-+	"pclk_smmu_decon0x",
-+	"sclk_decon_vclk",
-+	"sclk_decon_eclk",
-+};
-+
- struct decon_context {
- 	struct device			*dev;
- 	struct drm_device		*drm_dev;
- 	struct exynos_drm_crtc		*crtc;
- 	struct exynos_drm_plane		planes[WINDOWS_NR];
- 	void __iomem			*addr;
--	struct clk			*clks[6];
-+	struct clk			*clks[ARRAY_SIZE(decon_clks_name)];
- 	unsigned long			irq_flags;
- 	int				pipe;
- 	bool				suspended;
-@@ -45,15 +55,6 @@ struct decon_context {
- 	atomic_t			win_updated;
- };
- 
--static const char * const decon_clks_name[] = {
--	"aclk_decon",
--	"aclk_smmu_decon0x",
--	"aclk_xiu_decon0x",
--	"pclk_smmu_decon0x",
--	"sclk_decon_vclk",
--	"sclk_decon_eclk",
--};
--
- static const uint32_t decon_formats[] = {
- 	DRM_FORMAT_XRGB1555,
- 	DRM_FORMAT_RGB565,
 -- 
-1.9.1
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
