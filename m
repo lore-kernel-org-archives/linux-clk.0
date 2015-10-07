@@ -1,209 +1,48 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 06/13 v2] clk: versatile-icst: convert to use regmap
-Date: Mon, 26 Oct 2015 14:33:26 +0100
-Message-Id: <1445866406-13908-1-git-send-email-linus.walleij@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 7 Oct 2015 12:17:05 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>, linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 1/5] clk: Add a basic multiplier clock
+Message-ID: <20151007191705.GA26883@codeaurora.org>
+References: <1443512353-28073-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1443512353-28073-2-git-send-email-maxime.ripard@free-electrons.com>
+ <20151002204308.GY12338@codeaurora.org>
+ <20151005101932.GH2696@lukather>
+ <20151005180929.GB12338@codeaurora.org>
+ <20151007110457.GF2278@lukather>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20151007110457.GF2278@lukather>
 List-ID: <linux-clk.vger.kernel.org>
 
-Instead of passing around register bases, pass around a regmap
-in this driver. This refactoring make things so much easier when
-we later want to manage an ICST that is part of a syscon.
+On 10/07, Maxime Ripard wrote:
+> On Mon, Oct 05, 2015 at 11:09:29AM -0700, Stephen Boyd wrote:
+> > On 10/05, Maxime Ripard wrote:
+> > > 
+> > > Actually, the logic is also reversed.
+> > > 
+> > > The divider driver will always try to find some rate that is higher
+> > > than the one we already have, without going above than the one
+> > > requested.
+> > > 
+> > > Here, we're tring to be lower than the best rate, without going below
+> > > the requested rate.
+> > 
+> > So then a tri-state flag that indicates, closest, less than,
+> > greater than?
+> 
+> Still, the computation itself is different, and the only consolidation
+> we could possibly do is by not duplicating the ROUND_CLOSEST. We would
+> end up with two different code pathes in the same function, which I
+> feel would make it unnecessarily complex.
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v1->v2:
-- Pass a struct device * pointer to regmap_init_mmio()
+Ok. No worries.
 
-I'm looking for an ACK from the CLK maintainers to take this
-through the ARM SoC tree once the series stabilize.
----
- drivers/clk/versatile/Kconfig    |  1 +
- drivers/clk/versatile/clk-icst.c | 88 +++++++++++++++++++++++++++-------------
- 2 files changed, 61 insertions(+), 28 deletions(-)
-
-diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
-index 1530c9352a76..e091bcec116c 100644
---- a/drivers/clk/versatile/Kconfig
-+++ b/drivers/clk/versatile/Kconfig
-@@ -1,6 +1,7 @@
- config COMMON_CLK_VERSATILE
- 	bool "Clock driver for ARM Reference designs"
- 	depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64
-+	select REGMAP_MMIO
- 	---help---
-           Supports clocking on ARM Reference designs:
- 	  - Integrator/AP and Integrator/CP
-diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
-index 08c5ee976879..5fc22922718a 100644
---- a/drivers/clk/versatile/clk-icst.c
-+++ b/drivers/clk/versatile/clk-icst.c
-@@ -19,9 +19,13 @@
- #include <linux/err.h>
- #include <linux/clk-provider.h>
- #include <linux/io.h>
-+#include <linux/regmap.h>
- 
- #include "clk-icst.h"
- 
-+/* Magic unlocking token used on all Versatile boards */
-+#define VERSATILE_LOCK_VAL	0xA05F
-+
- /**
-  * struct clk_icst - ICST VCO clock wrapper
-  * @hw: corresponding clock hardware entry
-@@ -32,8 +36,9 @@
-  */
- struct clk_icst {
- 	struct clk_hw hw;
--	void __iomem *vcoreg;
--	void __iomem *lockreg;
-+	struct regmap *map;
-+	u32 vcoreg_off;
-+	u32 lockreg_off;
- 	struct icst_params *params;
- 	unsigned long rate;
- };
-@@ -41,53 +46,67 @@ struct clk_icst {
- #define to_icst(_hw) container_of(_hw, struct clk_icst, hw)
- 
- /**
-- * vco_get() - get ICST VCO settings from a certain register
-- * @vcoreg: register containing the VCO settings
-+ * vco_get() - get ICST VCO settings from a certain ICST
-+ * @icst: the ICST clock to get
-+ * @vco: the VCO struct to return the value in
-  */
--static struct icst_vco vco_get(void __iomem *vcoreg)
-+static int vco_get(struct clk_icst *icst, struct icst_vco *vco)
- {
- 	u32 val;
--	struct icst_vco vco;
--
--	val = readl(vcoreg);
--	vco.v = val & 0x1ff;
--	vco.r = (val >> 9) & 0x7f;
--	vco.s = (val >> 16) & 03;
--	return vco;
-+	int ret;
-+
-+	ret = regmap_read(icst->map, icst->vcoreg_off, &val);
-+	if (ret)
-+		return ret;
-+	vco->v = val & 0x1ff;
-+	vco->r = (val >> 9) & 0x7f;
-+	vco->s = (val >> 16) & 03;
-+	return 0;
- }
- 
- /**
-  * vco_set() - commit changes to an ICST VCO
-- * @locreg: register to poke to unlock the VCO for writing
-- * @vcoreg: register containing the VCO settings
-- * @vco: ICST VCO parameters to commit
-+ * @icst: the ICST clock to set
-+ * @vco: the VCO struct to set the changes from
-  */
--static void vco_set(void __iomem *lockreg,
--			void __iomem *vcoreg,
--			struct icst_vco vco)
-+static int vco_set(struct clk_icst *icst, struct icst_vco vco)
- {
- 	u32 val;
-+	int ret;
- 
--	val = readl(vcoreg) & ~0x7ffff;
-+	ret = regmap_read(icst->map, icst->vcoreg_off, &val);
-+	if (ret)
-+		return ret;
- 	val |= vco.v | (vco.r << 9) | (vco.s << 16);
- 
- 	/* This magic unlocks the VCO so it can be controlled */
--	writel(0xa05f, lockreg);
--	writel(val, vcoreg);
-+	ret = regmap_write(icst->map, icst->lockreg_off, VERSATILE_LOCK_VAL);
-+	if (ret)
-+		return ret;
-+	ret = regmap_write(icst->map, icst->vcoreg_off, val);
-+	if (ret)
-+		return ret;
- 	/* This locks the VCO again */
--	writel(0, lockreg);
-+	ret = regmap_write(icst->map, icst->lockreg_off, 0);
-+	if (ret)
-+		return ret;
-+	return 0;
- }
- 
--
- static unsigned long icst_recalc_rate(struct clk_hw *hw,
- 				      unsigned long parent_rate)
- {
- 	struct clk_icst *icst = to_icst(hw);
- 	struct icst_vco vco;
-+	int ret;
- 
- 	if (parent_rate)
- 		icst->params->ref = parent_rate;
--	vco = vco_get(icst->vcoreg);
-+	ret = vco_get(icst, &vco);
-+	if (ret) {
-+		pr_err("ICST: could not get VCO setting\n");
-+		return 0;
-+	}
- 	icst->rate = icst_hz(icst->params, vco);
- 	return icst->rate;
- }
-@@ -112,8 +131,7 @@ static int icst_set_rate(struct clk_hw *hw, unsigned long rate,
- 		icst->params->ref = parent_rate;
- 	vco = icst_hz_to_vco(icst->params, rate);
- 	icst->rate = icst_hz(icst->params, vco);
--	vco_set(icst->lockreg, icst->vcoreg, vco);
--	return 0;
-+	return vco_set(icst, vco);
- }
- 
- static const struct clk_ops icst_ops = {
-@@ -132,6 +150,11 @@ struct clk *icst_clk_register(struct device *dev,
- 	struct clk_icst *icst;
- 	struct clk_init_data init;
- 	struct icst_params *pclone;
-+	struct regmap_config icst_regmap_conf = {
-+		.reg_bits = 32,
-+		.val_bits = 32,
-+		.reg_stride = 4,
-+	};
- 
- 	icst = kzalloc(sizeof(struct clk_icst), GFP_KERNEL);
- 	if (!icst) {
-@@ -151,10 +174,19 @@ struct clk *icst_clk_register(struct device *dev,
- 	init.flags = CLK_IS_ROOT;
- 	init.parent_names = (parent_name ? &parent_name : NULL);
- 	init.num_parents = (parent_name ? 1 : 0);
-+	icst->map = regmap_init_mmio(dev, base, &icst_regmap_conf);
-+	if (IS_ERR(icst->map)) {
-+		int ret;
-+
-+		pr_err("could not initialize ICST regmap\n");
-+		kfree(icst);
-+		ret = PTR_ERR(icst->map);
-+		return ERR_PTR(ret);
-+	}
- 	icst->hw.init = &init;
- 	icst->params = pclone;
--	icst->vcoreg = base + desc->vco_offset;
--	icst->lockreg = base + desc->lock_offset;
-+	icst->vcoreg_off = desc->vco_offset;
-+	icst->lockreg_off = desc->lock_offset;
- 
- 	clk = clk_register(dev, &icst->hw);
- 	if (IS_ERR(clk)) {
 -- 
-2.4.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
