@@ -1,101 +1,43 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 1 Oct 2015 12:47:48 -0700
+Date: Wed, 7 Oct 2015 12:15:03 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Nicolas Ferre <nicolas.ferre@atmel.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PULL] clk: at91: sama5d2 materials
-Message-ID: <20151001194747.GK19319@codeaurora.org>
-References: <20150818102401.17de779b@bbrezillon>
- <20150825191033.31346.67237@quantum>
+To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Cc: Maxime Coquelin <maxime.coquelin@st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	Olivier Bideau <olivier.bideau@st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabian Frederick <fabf@skynet.be>, Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 3/4] drivers: clk: st: Correct the pll-type for A9 for
+ stih418
+Message-ID: <20151007191503.GC12345@codeaurora.org>
+References: <1444208939-10233-1-git-send-email-gabriel.fernandez@linaro.org>
+ <1444208939-10233-4-git-send-email-gabriel.fernandez@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20150825191033.31346.67237@quantum>
+In-Reply-To: <1444208939-10233-4-git-send-email-gabriel.fernandez@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/25, Michael Turquette wrote:
-> Quoting Boris Brezillon (2015-08-18 01:24:01)
-> > Stephen, Mike,
-> > 
-> > Here is a PR for the sama5d2 materials.
-> > I know we're already late in the release cycle and I'm not sure you can
-> > take this PR into account for 4.3, so if you can't could you please
-> > queue it for 4.4?
+On 10/07, Gabriel Fernandez wrote:
+> Add support for new PLL-type for stih418 A9-PLL.
+> Currently the 407_A9_PLL type being used, it is corrected with this patch
+> 4600c28 PLL allows to reach higher frequencies
+> so its programming algorithm is extended.
 > 
-> Queued for 4.4.
-> 
-> Thanks,
-> Mike
-> 
-> > 
-> > Thanks,
-> > 
-> > Boris
-> > 
-> > The following changes since commit c42743f11f58646a50bc4b96da363429dca0c5e6:
-> > 
+> Signed-off-by: Pankaj Dev <pankaj.dev@st.com>
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+> ---
 
-This commit was in clk-next and then got rebased. clk-next isn't
-stable, please don't base pull requests on it. If you have some
-dependency on the patches in there then we need to know so that
-we can provide some branch.
-
-I cherry-picked the 4 patches to clk-next. I had to squash in this fix
-to get it to compile. Please check.
-
----8<----
-diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-index 631123ca6f85..abc80949e1dd 100644
---- a/drivers/clk/at91/clk-generated.c
-+++ b/drivers/clk/at91/clk-generated.c
-@@ -99,22 +99,22 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
- 					struct clk_rate_request *req)
- {
- 	struct clk_generated *gck = to_clk_generated(hw);
--	struct clk *parent = NULL;
-+	struct clk_hw *parent = NULL;
- 	long best_rate = -EINVAL;
- 	unsigned long tmp_rate, min_rate;
- 	int best_diff = -1;
- 	int tmp_diff;
- 	int i;
- 
--	for (i = 0; i < __clk_get_num_parents(hw->clk); i++) {
-+	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
- 		u32 div;
- 		unsigned long parent_rate;
- 
--		parent = clk_get_parent_by_index(hw->clk, i);
-+		parent = clk_hw_get_parent_by_index(hw, i);
- 		if (!parent)
- 			continue;
- 
--		parent_rate = __clk_get_rate(parent);
-+		parent_rate = clk_hw_get_rate(parent);
- 		min_rate = DIV_ROUND_CLOSEST(parent_rate, GENERATED_MAX_DIV + 1);
- 		if (!parent_rate ||
- 		    (gck->range.max && min_rate > gck->range.max))
-@@ -128,7 +128,7 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
- 				best_rate = tmp_rate;
- 				best_diff = tmp_diff;
- 				req->best_parent_rate = parent_rate;
--				req->best_parent_hw = __clk_get_hw(parent);
-+				req->best_parent_hw = parent;
- 			}
- 
- 			if (!best_diff || tmp_rate < req->rate)
-@@ -156,7 +156,7 @@ static int clk_generated_set_parent(struct clk_hw *hw, u8 index)
- {
- 	struct clk_generated *gck = to_clk_generated(hw);
- 
--	if (index >= __clk_get_num_parents(hw->clk))
-+	if (index >= clk_hw_get_num_parents(hw))
- 		return -EINVAL;
- 
- 	gck->parent_id = index;
+Applied to clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
