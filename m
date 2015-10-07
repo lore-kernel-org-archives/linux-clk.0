@@ -1,129 +1,67 @@
-Return-Path: <robdclark@gmail.com>
+Return-Path: <anholt@eliezer.anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Stefan Wahren <info@lategoodbye.de>, linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4] clk: bcm2835: Add support for programming the audio domain clocks.
+In-Reply-To: <56143AC9.60506@lategoodbye.de>
+References: <1443815696-11528-1-git-send-email-eric@anholt.net> <56143AC9.60506@lategoodbye.de>
+Date: Tue, 06 Oct 2015 18:24:44 -0700
+Message-ID: <87bncbo4gz.fsf@eliezer.anholt.net>
 MIME-Version: 1.0
-In-Reply-To: <20151017185915.GA28826@kroah.com>
-References: <561E1378.6000906@collabora.com>
-	<20151017065750.GA18607@kroah.com>
-	<CAL_Jsq+Due3CgV0Z_m4vYQsa+X30DSxgmqz_r=26OrBV7v+H2g@mail.gmail.com>
-	<20151017154709.GE4059@kroah.com>
-	<CAL_JsqJvtKt6FpZgnYcsEm_opr9gK_a013BVpZGvnB=51oSUXg@mail.gmail.com>
-	<20151017165617.GC25156@kroah.com>
-	<CAF6AEGvbYYeZx=YVCv9r5K0xjtLf3gN69gX5DyQ3j0S1qT0Yog@mail.gmail.com>
-	<20151017182755.GA28072@kroah.com>
-	<CAF6AEGuvr6XMMufY0iDCSkp2BNcWa2=xUxjN66+FtQ6ygS-nyQ@mail.gmail.com>
-	<20151017185915.GA28826@kroah.com>
-Date: Sat, 17 Oct 2015 15:39:20 -0400
-Message-ID: <CAF6AEGtqiMv6WSk_NVZqu8tMmVvyZQMK=Ta2dr0c=11ebmPJVw@mail.gmail.com>
-Subject: Re: [GIT PULL] On-demand device probing
-From: Rob Clark <robdclark@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
-	Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
-	Linux USB List <linux-usb@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Oct 17, 2015 at 2:59 PM, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> On Sat, Oct 17, 2015 at 02:45:34PM -0400, Rob Clark wrote:
->> On Sat, Oct 17, 2015 at 2:27 PM, Greg Kroah-Hartman
->> <gregkh@linuxfoundation.org> wrote:
->> > On Sat, Oct 17, 2015 at 01:54:43PM -0400, Rob Clark wrote:
->> >> On Sat, Oct 17, 2015 at 12:56 PM, Greg Kroah-Hartman
->> >> <gregkh@linuxfoundation.org> wrote:
->> >> >> I'm guessing the time is a matter of probing and undoing the probes
->> >> >> rather than slow h/w. We could maybe improve things by making sure
->> >> >> drivers move what they defer on to the beginning of probe, but that
->> >> >> seems like a horrible, fragile hack.
->> >> >
->> >> > How can calling probe and failing cause 2 seconds?  How many different
->> >> > probe calls are failing here?  Again, a boot log graph would be great to
->> >> > see as it will show the root cause, not just guessing at this.
->> >>
->> >>
->> >> just fwiw, but when you have a driver that depends on several other
->> >> drivers (which in turn depend on other drivers and so on), the amount
->> >> of probe-defer we end up seeing is pretty comical.  Yeah, there
->> >> probably is some room to optimize by juggling around order drivers do
->> >> things in probe.  But that doesn't solve the fundamental problem with
->> >> the current state, about probe order having no clue about
->> >> dependencies..
->> >
->> > I can imagine it is a lot of iterations, but how long does it really
->> > take?  How many different devices are involved that it takes multiple
->> > loops in order to finally work out the correct order?  Where is the time
->> > delays here, just calling probe() and having it instantly return
->> > shouldn't take all that long.
+--=-=-=
+Content-Type: text/plain
+
+Stefan Wahren <info@lategoodbye.de> writes:
+
+> Hi Eric,
+>
+> Am 02.10.2015 um 21:54 schrieb Eric Anholt:
+>> This adds support for enabling, disabling, and setting the rate of the
+>> audio domain clocks.  It will be necessary for setting the pixel clock
+>> for HDMI in the VC4 driver and let us write a cpufreq driver.  It will
+>> also improve compatibility with user changes to the firmware's
+>> config.txt, since our previous fixed clocks are unaware of it.
 >>
->> offhand, I think the dependencies go at *least* three levels deep..
->> I'd say, from memory, I see drm/msm taking at least 5 or 6 tries to
->> get all the way through requesting it's various different
->> regulators/clks/gpios.
->
-> And how long does that really take?  Numbers please :)
->
->> I hadn't really paid attention to how many
->> tries the drivers I depend on go through.  (Of those, I take clks from
->> two different clk drivers (which have dependency on a 3rd clk driver),
->> and regulators and gpio's come from at least two places, which in turn
->> have dependencies on clks, etc.)  I don't have really good hard
->> numbers handy (since my observations of this are w/ console over uart
->> which effects timings, and so I see it taking much longer than 2sec)..
->> but the 2sec figure that Tomeu mentioned seemed pretty plausible to
->> me.
+>> The firmware also has support for configuring the clocks through the
+>> mailbox channel, but the pixel clock setup by the firmware doesn't
+>> work, and it's Raspberry Pi specific anyway.  The only conflicts we
+>> should have with the firmware would be if we made firmware calls that
+>> result in clock management (like opening firmware V3D or ISP access,
+>> which we don't support in upstream), or on hardware over-thermal or
+>> under-voltage (when the firmware would rewrite PLLB to take the ARM
+>> out of overclock).  If that happens, our cached .recalc_rate() results
+>> would be incorrect, but that's no worse than our current state where
+>> we used fixed clocks.
 >>
->> I can try to get better #'s... I should have my kernel hat on at least
->> some of the time next week.. but the 2sec figure didn't seem
->> unrealistic to me.
+>> The existing fixed clocks in the code are left in place to provide
+>> backwards compatibility with old device tree files.
 >
-> Based on the time it takes a modern laptop to boot, 2 seconds is
-> forever, there has to be something else going on here other than just
-> calling probe() a bunch of times.  Please use the tools we have to
-> determine this before trying to change the driver core.
+> only a few nits.
 
-yes, I am aware of the tools.. although so far I spend most of my time
-just trying to get things working in the first place ;-)
+I think I've done all of these now, sending out v5.
 
-All I was trying to point out was that Tomeu's figures didn't really
-seem unrealistic.  I mean, given that the average SoC driver probably
-depends on at least one clock and at least one regulator, having to
-probe each driver at least twice seems plausible.  And that having a
-noticeable effect on boot time doesn't seem surprising.  I'm not sure
-that saying 'modern laptop can boot in 2sec' adds much to the
-discussion since I don't think you have quite so much interdependency
-between devices vs random probe order.  I have seen arm devices boot
-to UI in similar times, but that was pre-devicetree days.
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I expect Tomeu has some better number.. if not I can collect some.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
->> Just as an aside, the amount of probe-defer adds quite a lot of noise
->> when you are trying to debug why some driver doesn't probe
->> successfully.  Which itself would be a nice reason to do something
->> more clever..
->
-> People seem to not like the noise, so let's turn off those messages,
-> that should speed things up :)
-
-heh, except for when you are trying to debug what is missing
-preventing the driver you depend on from probing ;-)
-
-BR,
--R
+iQIcBAEBCgAGBQJWFHRcAAoJELXWKTbR/J7omdUQAJLhe4jma2B2Adg05rHi6OgF
+aXfzBN8AK+rDKf2Cv14nmejuBZrg2oNu+DCaOfic0ewl8OtrB4QDAdbHqAlXisUH
+W5dTqKxHN2K9Gxx8A3OJFKzoJCjfXmuD0W3eIdJQDZ7sDh7eOrhiPbWYjl33hg7A
+yE7CnminSRbm1n/vwZgYvLmNNtue6j5zV0E+g6p8+lkjX4ggHPub0tgjJQBAnkGa
+0FgqaNjsQuJyK/ghS1FUWDIRCWrCyx71cDe3dAnJRgbTEIIRojTEdv4xzBNf6PT/
+76xxTOnf55RVi+ePxbR6gFgxyxHgkz5sQXHYDoKbiTdykiGpTDsuF3qrFqTlZ9xh
+aaTiQrQrTtGx+/PSjuNWQhR1ua8HD794yKifQToi80l9XGwL9RZ5T107uwiKFUaf
+7xbdMO10B/TDI99ZFDXeyZ+jeFR9UrOKR/0C2gCzlImLDlhz1uNVM2Qbn4pNruBA
+OaWuNlbRXG7uD2D2VnPMXDarbSPqAKiCMJWv79DTkMoExzQCMyeFf8E6Mp7wA1mS
+gSS88OPZkLfT2zHnlwbeoFAftVH7DZYjuM1TTkGn5GjcrOzSKHDxBnVcV1xFWeUD
+FbP6I3fHeXIQi5syP4NRjyPMQWnFF/H5GISrgvzTqTJ2ZBu5f+Omw9CSYIeqjNia
++VKpmDG2ru08HZv4kbkr
+=Dkgw
+-----END PGP SIGNATURE-----
+--=-=-=--
