@@ -1,88 +1,90 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: linux-rockchip@lists.infradead.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 3/9] clk: rockchip: add clock controller for rk3036
-Date: Wed, 07 Oct 2015 12:24:32 +0200
-Message-ID: <2653032.av3sFfN860@phil>
-In-Reply-To: <56036EAE.9040201@rock-chips.com>
-References: <1442478540-15068-1-git-send-email-zhengxing@rock-chips.com> <5603683F.4020302@rock-chips.com> <56036EAE.9040201@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <jh80.chung@samsung.com>
+Message-id: <5615C3A8.6070207@samsung.com>
+Date: Thu, 08 Oct 2015 10:15:20 +0900
+From: Jaehoon Chung <jh80.chung@samsung.com>
+MIME-version: 1.0
+To: Heiko Stuebner <heiko@sntech.de>, ulf.hansson@linaro.org,
+ mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: linux-mmc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ dianders@chromium.org, amstan@chromium.org
+Subject: Re: [PATCH v2 4/8] mmc: dw_mmc: Use mmc_regulator_set_vqmmc in
+ start_signal_voltage_switch
+References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
+ <1443622064-14362-5-git-send-email-heiko@sntech.de>
+In-reply-to: <1443622064-14362-5-git-send-email-heiko@sntech.de>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Hi, Heiko.
 
-Am Donnerstag, 24. September 2015, 11:31:58 schrieb Xing Zheng:
-> On 2015=E5=B9=B409=E6=9C=8824=E6=97=A5 11:04, Xing Zheng wrote:
-> >>>   #define RK3066_PLL_RATE(_rate, _nr, _nf, _no)    \
-> >>>=20
-> >>> @@ -95,12 +106,31 @@ enum rockchip_pll_type {
-> >>>=20
-> >>>       .nb =3D _nb,                        \
-> >>>  =20
-> >>>   }
-> >>>=20
-> >>> +#define RK3036_PLL_RATE(_rate, _refdiv, _fbdiv, _postdiv1,    \
-> >>> +            _postdiv2, _dsmpd, _frac)        \
-> >>> +{                                \
-> >>> +    .rate    =3D _rate##U,                    \
-> >>> +    .fbdiv =3D _fbdiv,                    \
-> >>> +    .postdiv1 =3D _postdiv1,                    \
-> >>> +    .refdiv =3D _refdiv,                    \
-> >>> +    .postdiv2 =3D _postdiv2,                    \
-> >>> +    .dsmpd =3D _dsmpd,                    \
-> >>> +    .frac =3D _frac,                        \
-> >>> +}
-> >>> +
-> >>>=20
-> >>>   struct rockchip_pll_rate_table {
-> >>>  =20
-> >>>       unsigned long rate;
-> >>>       unsigned int nr;
-> >>>       unsigned int nf;
-> >>>       unsigned int no;
-> >>>       unsigned int nb;
-> >>>=20
-> >>> +    /* for RK3036 */
-> >>> +    unsigned int fbdiv;
-> >>> +    unsigned int postdiv1;
-> >>> +    unsigned int refdiv;
-> >>> +    unsigned int postdiv2;
-> >>> +    unsigned int dsmpd;
-> >>> +    unsigned int frac;
-> >>=20
-> >> same for these 2 ... should be part of the pll addition itself
-> >>=20
-> >   };
-> >=20
-> > Done.
->=20
-> Sorry, I have one question:
-> The "struct rockchip_pll_rate_table" is called in "rockchip/clk-pll.c=
-"
-> on many functions, I think I could add a struct like:
-> struct rk3036_pll_rate_table {
->      unsigned int fbdiv;
->      unsigned int postdiv1;
->      unsigned int refdiv;
->      unsigned int postdiv2;
->      unsigned int dsmpd;
->      unsigned int frac;
-> };
-> but, it will add many redundancy codes in "rockchip/clk-pll.c" just f=
-or
-> call "struct rk3036_pll_rate_table".
+Acked-by: Jaehoon Chung <jh80.chung@samsung.com>
+
+Best Regards,
+Jaehoon Chung
 
 
-One possible solution may be to cast to void* in the general functions,=
- so=20
-have sturct rk3066_pll_rate_table, rk3036_pll_rate_table, have=20
-rockchip_clk_register_pll and friends handle it as void* and then only =
-have=20
-the rockchip_rk3066_pll_* functions as well as the clk-rkxxxx.c use the=
-m as=20
-their actual type, as they know which they need.
-
-
-Heiko
+On 09/30/2015 11:07 PM, Heiko Stuebner wrote:
+> From: Douglas Anderson <dianders@chromium.org>
+> 
+> We've introduced a new helper in the MMC core:
+> mmc_regulator_set_vqmmc().  Let's use this in dw_mmc.  Using this new
+> helper has some advantages:
+> 
+> 1. We get the mmc_regulator_set_vqmmc() behavior of trying to match
+>    VQMMC and VMMC when the signal voltage is 3.3V.  This ensures max
+>    compatibility.
+> 
+> 2. We get rid of a few more warnings when probing unsupported
+>    voltages.
+> 
+> 3. We get rid of some non-dw_mmc specific code in dw_mmc.
+> 
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  drivers/mmc/host/dw_mmc.c | 17 ++++++-----------
+>  1 file changed, 6 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> index fcbf552..b1b7e7f 100644
+> --- a/drivers/mmc/host/dw_mmc.c
+> +++ b/drivers/mmc/host/dw_mmc.c
+> @@ -1279,7 +1279,6 @@ static int dw_mci_switch_voltage(struct mmc_host *mmc, struct mmc_ios *ios)
+>  	const struct dw_mci_drv_data *drv_data = host->drv_data;
+>  	u32 uhs;
+>  	u32 v18 = SDMMC_UHS_18V << slot->id;
+> -	int min_uv, max_uv;
+>  	int ret;
+>  
+>  	if (drv_data && drv_data->switch_voltage)
+> @@ -1291,22 +1290,18 @@ static int dw_mci_switch_voltage(struct mmc_host *mmc, struct mmc_ios *ios)
+>  	 * does no harm but you need to set the regulator directly.  Try both.
+>  	 */
+>  	uhs = mci_readl(host, UHS_REG);
+> -	if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_330) {
+> -		min_uv = 2700000;
+> -		max_uv = 3600000;
+> +	if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_330)
+>  		uhs &= ~v18;
+> -	} else {
+> -		min_uv = 1700000;
+> -		max_uv = 1950000;
+> +	else
+>  		uhs |= v18;
+> -	}
+> +
+>  	if (!IS_ERR(mmc->supply.vqmmc)) {
+> -		ret = regulator_set_voltage(mmc->supply.vqmmc, min_uv, max_uv);
+> +		ret = mmc_regulator_set_vqmmc(mmc, ios);
+>  
+>  		if (ret) {
+>  			dev_dbg(&mmc->class_dev,
+> -					 "Regulator set error %d: %d - %d\n",
+> -					 ret, min_uv, max_uv);
+> +					 "Regulator set error %d - %s V\n",
+> +					 ret, uhs & v18 ? "1.8" : "3.3");
+>  			return ret;
+>  		}
+>  	}
+> 
