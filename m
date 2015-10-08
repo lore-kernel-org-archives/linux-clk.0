@@ -1,595 +1,238 @@
-Return-Path: <B48286@freescale.com>
-From: Zhiqiang Hou <B48286@freescale.com>
-To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-CC: <mark.rutland@arm.com>, <linux@roeck-us.net>, <wsa@the-dreams.de>,
-	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <Mingkai.Hu@freescale.com>,
-	<Shaohui.Xie@freescale.com>, <scottwood@freescale.com>,
-	<bhupesh.sharma@freescale.com>, <Wenbin.Song@freescale.com>,
-	<B48286@freescale.com>, Li Yang <leoli@freescale.com>
-Subject: [PATCH V6 4/6] arm64/ls1043a: add DTS for Freescale LS1043A SoC
-Date: Fri, 23 Oct 2015 16:01:20 +0800
-Message-ID: <1445587282-29529-4-git-send-email-B48286@freescale.com>
-In-Reply-To: <1445587282-29529-1-git-send-email-B48286@freescale.com>
-References: <1445587282-29529-1-git-send-email-B48286@freescale.com>
-Return-Path: B48286@freescale.com
+Return-Path: <slash.tmp@free.fr>
+Subject: Re: [PATCH v1] clk: Sigma Designs Tango4 cpuclk driver
+To: Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>
+Cc: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>,
+ clk <linux-clk@vger.kernel.org>, Mans Rullgard <mans@mansr.com>
+References: <5613DBA2.20708@sigmadesigns.com>
+ <20151008013054.GC26883@codeaurora.org>
+From: Mason <slash.tmp@free.fr>
+Message-ID: <56163BE1.6040402@free.fr>
+Date: Thu, 8 Oct 2015 11:48:17 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20151008013054.GC26883@codeaurora.org>
+Content-Type: text/plain; charset=ISO-8859-15
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mingkai Hu <Mingkai.Hu@freescale.com>
+On 08/10/2015 03:30, Stephen Boyd wrote:
 
-LS1043a is an SoC with 4 ARMv8 A53 cores and most other IP blocks
-similar to LS1021a which complies to Chassis 2.1 spec.
+> Marc Gonzalez wrote:
+>
+>> Date: Tue, 6 Oct 2015 16:07:45 +0200
+>> Subject: [PATCH] clk: Sigma Designs Tango4 cpuclk driver
+> 
+> This part doesn't go here. Please fix your mailer. Also, please
+> add some commit text.
 
-Following levels of DTSI/DTS files have been created for the
-LS1043A SoC family:
+Sorry, I misread the instructions. Next submission will be
+properly formatted.
 
-- fsl-ls1043a.dtsi:
-  DTS-Include file for FSL LS1043A SoC.
+Could you point out the most recent driver additions, so that
+I may copy their log style?
 
-Signed-off-by: Li Yang <leoli@freescale.com>
-Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
-Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
-Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
----
-V6:
- - No change.
+>>  drivers/clk/Makefile     |  1 +
+>>  drivers/clk/clk-tango4.c | 59 ++++++++++++++++++++++++++++++++++++++++++++++++
+> 
+> Is there a DT binding document somewhere?
 
-V5:
- - Move gic, timer and pmu nodes out of SoC node.
+I assume this is a roundabout request for said document? :-)
 
-V4:
- - Add soc node with simple-bus compatible.
- - Add property interrupt-affinity for armv8 pmuv3 node.
+Here's the actual clock tree DT I'm using:
 
-V3:
- - Add device tree node for SATA.
- - Remove properity enable-method for all cpu node.
-   Remove reserved memory region for spin-table.
-
-V2:
- - Add secondary core boot method.
- - Move out the sysclk node from the clockgen node.
- - Correct the reg size of GICC.
-
- arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi | 525 +++++++++++++++++++++++++
- 1 file changed, 525 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-new file mode 100644
-index 0000000..bf5af82
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-@@ -0,0 +1,525 @@
-+/*
-+ * Device Tree Include file for Freescale Layerscape-1043A family SoC.
-+ *
-+ * Copyright 2014-2015, Freescale Semiconductor
-+ *
-+ * Mingkai Hu <Mingkai.hu@freescale.com>
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPLv2 or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This library is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This library is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+
-+/ {
-+	compatible = "fsl,ls1043a";
-+	interrupt-parent = <&gic>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	cpus {
-+		#address-cells = <2>;
-+		#size-cells = <0>;
-+
-+		/*
-+		 * We expect the enable-method for cpu's to be "psci", but this
-+		 * is dependent on the SoC FW, which will fill this in.
-+		 *
-+		 * Currently supported enable-method is psci v0.2
-+		 */
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			reg = <0x0 0x0>;
-+			clocks = <&clockgen 1 0>;
-+		};
-+
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			reg = <0x0 0x1>;
-+			clocks = <&clockgen 1 0>;
-+		};
-+
-+		cpu2: cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			reg = <0x0 0x2>;
-+			clocks = <&clockgen 1 0>;
-+		};
-+
-+		cpu3: cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			reg = <0x0 0x3>;
-+			clocks = <&clockgen 1 0>;
-+		};
-+	};
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x80000000 0 0x80000000>;
-+		      /* DRAM space 1, size: 2GiB DRAM */
-+	};
-+
-+	sysclk: sysclk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <100000000>;
-+		clock-output-names = "sysclk";
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <1 13 0x1>, /* Physical Secure PPI */
-+			     <1 14 0x1>, /* Physical Non-Secure PPI */
-+			     <1 11 0x1>, /* Virtual PPI */
-+			     <1 10 0x1>; /* Hypervisor PPI */
-+	};
-+
-+	pmu {
-+		compatible = "arm,armv8-pmuv3";
-+		interrupts = <0 106 0x4>,
-+			     <0 107 0x4>,
-+			     <0 95 0x4>,
-+			     <0 97 0x4>;
-+		interrupt-affinity = <&cpu0>,
-+				     <&cpu1>,
-+				     <&cpu2>,
-+				     <&cpu3>;
-+	};
-+
-+	gic: interrupt-controller@1400000 {
-+		compatible = "arm,gic-400";
-+		#interrupt-cells = <3>;
-+		interrupt-controller;
-+		reg = <0x0 0x1401000 0 0x1000>, /* GICD */
-+		      <0x0 0x1402000 0 0x2000>, /* GICC */
-+		      <0x0 0x1404000 0 0x2000>, /* GICH */
-+		      <0x0 0x1406000 0 0x2000>; /* GICV */
-+		interrupts = <1 9 0xf08>;
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <2>;
-+		#size-cells = <2>;
++	clocks {
 +		ranges;
++		#address-cells = <1>;
++		#size-cells = <1>;
 +
-+		clockgen: clocking@1ee1000 {
-+			compatible = "fsl,ls1043a-clockgen";
-+			reg = <0x0 0x1ee1000 0x0 0x1000>;
-+			#clock-cells = <2>;
-+			clocks = <&sysclk>;
++		xtal: xtal {
++			compatible = "fixed-clock";
++			clock-frequency = <27000000>;
++			#clock-cells = <0>;
 +		};
 +
-+		scfg: scfg@1570000 {
-+			compatible = "fsl,ls1043a-scfg", "syscon";
-+			reg = <0x0 0x1570000 0x0 0x10000>;
-+			big-endian;
++		pll0: pll0 {
++			compatible = "sigma,tango4-pll";
++			reg = <0x10000 4>;
++			clocks = <&xtal>;
++			#clock-cells = <0>;
 +		};
 +
-+		dcfg: dcfg@1ee0000 {
-+			compatible = "fsl,ls1043a-dcfg", "syscon";
-+			reg = <0x0 0x1ee0000 0x0 0x10000>;
++		pll1: pll1 {
++			compatible = "sigma,tango4-pll";
++			reg = <0x10008 4>;
++			clocks = <&xtal>;
++			#clock-cells = <0>;
 +		};
 +
-+		ifc: ifc@1530000 {
-+			compatible = "fsl,ifc", "simple-bus";
-+			reg = <0x0 0x1530000 0x0 0x10000>;
-+			interrupts = <0 43 0x4>;
++		cpuclk: cpuclk {
++			compatible = "sigma,tango4-cpuclk";
++			reg = <0x10024 4>;
++			clocks = <&pll0>;
++			#clock-cells = <0>;
 +		};
 +
-+		esdhc: esdhc@1560000 {
-+			compatible = "fsl,ls1043a-esdhc", "fsl,esdhc";
-+			reg = <0x0 0x1560000 0x0 0x10000>;
-+			interrupts = <0 62 0x4>;
-+			clock-frequency = <0>;
-+			voltage-ranges = <1800 1800 3300 3300>;
-+			sdhci,auto-cmd12;
-+			big-endian;
-+			bus-width = <4>;
++		periphclk: periphclk {
++			compatible = "fixed-factor-clock";
++			clocks = <&cpuclk>;
++			clock-mult = <1>;
++			clock-div  = <2>;
++			#clock-cells = <0>;
 +		};
 +
-+		dspi0: dspi@2100000 {
-+			compatible = "fsl,ls1043a-dspi", "fsl,ls1021a-v1.0-dspi";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x0 0x2100000 0x0 0x10000>;
-+			interrupts = <0 64 0x4>;
-+			clock-names = "dspi";
-+			clocks = <&clockgen 4 0>;
-+			spi-num-chipselects = <5>;
-+			big-endian;
-+			status = "disabled";
-+		};
-+
-+		dspi1: dspi@2110000 {
-+			compatible = "fsl,ls1043a-dspi", "fsl,ls1021a-v1.0-dspi";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x0 0x2110000 0x0 0x10000>;
-+			interrupts = <0 65 0x4>;
-+			clock-names = "dspi";
-+			clocks = <&clockgen 4 0>;
-+			spi-num-chipselects = <5>;
-+			big-endian;
-+			status = "disabled";
-+		};
-+
-+		i2c0: i2c@2180000 {
-+			compatible = "fsl,vf610-i2c";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x0 0x2180000 0x0 0x10000>;
-+			interrupts = <0 56 0x4>;
-+			clock-names = "i2c";
-+			clocks = <&clockgen 4 0>;
-+			dmas = <&edma0 1 39>,
-+			       <&edma0 1 38>;
-+			dma-names = "tx", "rx";
-+			status = "disabled";
-+		};
-+
-+		i2c1: i2c@2190000 {
-+			compatible = "fsl,vf610-i2c";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x0 0x2190000 0x0 0x10000>;
-+			interrupts = <0 57 0x4>;
-+			clock-names = "i2c";
-+			clocks = <&clockgen 4 0>;
-+			status = "disabled";
-+		};
-+
-+		i2c2: i2c@21a0000 {
-+			compatible = "fsl,vf610-i2c";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x0 0x21a0000 0x0 0x10000>;
-+			interrupts = <0 58 0x4>;
-+			clock-names = "i2c";
-+			clocks = <&clockgen 4 0>;
-+			status = "disabled";
-+		};
-+
-+		i2c3: i2c@21b0000 {
-+			compatible = "fsl,vf610-i2c";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x0 0x21b0000 0x0 0x10000>;
-+			interrupts = <0 59 0x4>;
-+			clock-names = "i2c";
-+			clocks = <&clockgen 4 0>;
-+			status = "disabled";
-+		};
-+
-+		duart0: serial@21c0500 {
-+			compatible = "fsl,ns16550", "ns16550a";
-+			reg = <0x00 0x21c0500 0x0 0x100>;
-+			interrupts = <0 54 0x4>;
-+			clocks = <&clockgen 4 0>;
-+		};
-+
-+		duart1: serial@21c0600 {
-+			compatible = "fsl,ns16550", "ns16550a";
-+			reg = <0x00 0x21c0600 0x0 0x100>;
-+			interrupts = <0 54 0x4>;
-+			clocks = <&clockgen 4 0>;
-+		};
-+
-+		duart2: serial@21d0500 {
-+			compatible = "fsl,ns16550", "ns16550a";
-+			reg = <0x0 0x21d0500 0x0 0x100>;
-+			interrupts = <0 55 0x4>;
-+			clocks = <&clockgen 4 0>;
-+		};
-+
-+		duart3: serial@21d0600 {
-+			compatible = "fsl,ns16550", "ns16550a";
-+			reg = <0x0 0x21d0600 0x0 0x100>;
-+			interrupts = <0 55 0x4>;
-+			clocks = <&clockgen 4 0>;
-+		};
-+
-+		gpio1: gpio@2300000 {
-+			compatible = "fsl,ls1043a-gpio";
-+			reg = <0x0 0x2300000 0x0 0x10000>;
-+			interrupts = <0 66 0x4>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio2: gpio@2310000 {
-+			compatible = "fsl,ls1043a-gpio";
-+			reg = <0x0 0x2310000 0x0 0x10000>;
-+			interrupts = <0 67 0x4>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio3: gpio@2320000 {
-+			compatible = "fsl,ls1043a-gpio";
-+			reg = <0x0 0x2320000 0x0 0x10000>;
-+			interrupts = <0 68 0x4>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio4: gpio@2330000 {
-+			compatible = "fsl,ls1043a-gpio";
-+			reg = <0x0 0x2330000 0x0 0x10000>;
-+			interrupts = <0 134 0x4>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		lpuart0: serial@2950000 {
-+			compatible = "fsl,ls1021a-lpuart";
-+			reg = <0x0 0x2950000 0x0 0x1000>;
-+			interrupts = <0 48 0x4>;
-+			clocks = <&clockgen 0 0>;
-+			clock-names = "ipg";
-+			status = "disabled";
-+		};
-+
-+		lpuart1: serial@2960000 {
-+			compatible = "fsl,ls1021a-lpuart";
-+			reg = <0x0 0x2960000 0x0 0x1000>;
-+			interrupts = <0 49 0x4>;
-+			clocks = <&clockgen 4 0>;
-+			clock-names = "ipg";
-+			status = "disabled";
-+		};
-+
-+		lpuart2: serial@2970000 {
-+			compatible = "fsl,ls1021a-lpuart";
-+			reg = <0x0 0x2970000 0x0 0x1000>;
-+			interrupts = <0 50 0x4>;
-+			clocks = <&clockgen 4 0>;
-+			clock-names = "ipg";
-+			status = "disabled";
-+		};
-+
-+		lpuart3: serial@2980000 {
-+			compatible = "fsl,ls1021a-lpuart";
-+			reg = <0x0 0x2980000 0x0 0x1000>;
-+			interrupts = <0 51 0x4>;
-+			clocks = <&clockgen 4 0>;
-+			clock-names = "ipg";
-+			status = "disabled";
-+		};
-+
-+		lpuart4: serial@2990000 {
-+			compatible = "fsl,ls1021a-lpuart";
-+			reg = <0x0 0x2990000 0x0 0x1000>;
-+			interrupts = <0 52 0x4>;
-+			clocks = <&clockgen 4 0>;
-+			clock-names = "ipg";
-+			status = "disabled";
-+		};
-+
-+		lpuart5: serial@29a0000 {
-+			compatible = "fsl,ls1021a-lpuart";
-+			reg = <0x0 0x29a0000 0x0 0x1000>;
-+			interrupts = <0 53 0x4>;
-+			clocks = <&clockgen 4 0>;
-+			clock-names = "ipg";
-+			status = "disabled";
-+		};
-+
-+		wdog0: wdog@2ad0000 {
-+			compatible = "fsl,ls1043a-wdt", "fsl,imx21-wdt";
-+			reg = <0x0 0x2ad0000 0x0 0x10000>;
-+			interrupts = <0 83 0x4>;
-+			clocks = <&clockgen 4 0>;
-+			clock-names = "wdog";
-+			big-endian;
-+		};
-+
-+		edma0: edma@2c00000 {
-+			#dma-cells = <2>;
-+			compatible = "fsl,vf610-edma";
-+			reg = <0x0 0x2c00000 0x0 0x10000>,
-+			      <0x0 0x2c10000 0x0 0x10000>,
-+			      <0x0 0x2c20000 0x0 0x10000>;
-+			interrupts = <0 103 0x4>,
-+				     <0 103 0x4>;
-+			interrupt-names = "edma-tx", "edma-err";
-+			dma-channels = <32>;
-+			big-endian;
-+			clock-names = "dmamux0", "dmamux1";
-+			clocks = <&clockgen 4 0>,
-+				 <&clockgen 4 0>;
-+		};
-+
-+		usb0: usb3@2f00000 {
-+			compatible = "snps,dwc3";
-+			reg = <0x0 0x2f00000 0x0 0x10000>;
-+			interrupts = <0 60 0x4>;
-+			dr_mode = "host";
-+		};
-+
-+		usb1: usb3@3000000 {
-+			compatible = "snps,dwc3";
-+			reg = <0x0 0x3000000 0x0 0x10000>;
-+			interrupts = <0 61 0x4>;
-+			dr_mode = "host";
-+		};
-+
-+		usb2: usb3@3100000 {
-+			compatible = "snps,dwc3";
-+			reg = <0x0 0x3100000 0x0 0x10000>;
-+			interrupts = <0 63 0x4>;
-+			dr_mode = "host";
-+		};
-+
-+		sata: sata@3200000 {
-+			compatible = "fsl,ls1043a-ahci", "fsl,ls1021a-ahci";
-+			reg = <0x0 0x3200000 0x0 0x10000>;
-+			interrupts = <0 69 0x4>;
-+			clocks = <&clockgen 4 0>;
-+		};
-+
-+		msi1: msi-controller1@1571000 {
-+			compatible = "fsl,1s1043a-msi";
-+			reg = <0x0 0x1571000 0x0 0x4>,
-+			      <0x0 0x1571004 0x0 0x4>;
-+			reg-names = "msiir", "msir";
-+			msi-controller;
-+			interrupts = <0 116 0x4>;
-+		};
-+
-+		msi2: msi-controller2@1572000 {
-+			compatible = "fsl,1s1043a-msi";
-+			reg = <0x0 0x1572000 0x0 0x4>,
-+			      <0x0 0x1572004 0x0 0x4>;
-+			reg-names = "msiir", "msir";
-+			msi-controller;
-+			interrupts = <0 126 0x4>;
-+		};
-+
-+		msi3: msi-controller3@1573000 {
-+			compatible = "fsl,1s1043a-msi";
-+			reg = <0x0 0x1573000 0x0 0x4>,
-+			      <0x0 0x1573004 0x0 0x4>;
-+			reg-names = "msiir", "msir";
-+			msi-controller;
-+			interrupts = <0 160 0x4>;
-+		};
-+
-+		pcie@3400000 {
-+			compatible = "fsl,ls1043a-pcie", "snps,dw-pcie";
-+			reg = <0x00 0x03400000 0x0 0x00100000   /* controller registers */
-+			       0x40 0x00000000 0x0 0x00002000>; /* configuration space */
-+			reg-names = "regs", "config";
-+			interrupts = <0 118 0x4>, /* controller interrupt */
-+				     <0 117 0x4>; /* PME interrupt */
-+			interrupt-names = "intr", "pme";
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			device_type = "pci";
-+			num-lanes = <4>;
-+			bus-range = <0x0 0xff>;
-+			ranges = <0x81000000 0x0 0x00000000 0x40 0x00010000 0x0 0x00010000   /* downstream I/O */
-+				  0x82000000 0x0 0x40000000 0x40 0x40000000 0x0 0x40000000>; /* non-prefetchable memory */
-+			msi-parent = <&msi1>;
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 7>;
-+			interrupt-map = <0000 0 0 1 &gic 0 110 0x4>,
-+					<0000 0 0 2 &gic 0 111 0x4>,
-+					<0000 0 0 3 &gic 0 112 0x4>,
-+					<0000 0 0 4 &gic 0 113 0x4>;
-+		};
-+
-+		pcie@3500000 {
-+			compatible = "fsl,ls1043a-pcie", "snps,dw-pcie";
-+			reg = <0x00 0x03500000 0x0 0x00100000   /* controller registers */
-+			       0x48 0x00000000 0x0 0x00002000>; /* configuration space */
-+			reg-names = "regs", "config";
-+			interrupts = <0 128 0x4>,
-+				     <0 127 0x4>;
-+			interrupt-names = "intr", "pme";
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			device_type = "pci";
-+			num-lanes = <2>;
-+			bus-range = <0x0 0xff>;
-+			ranges = <0x81000000 0x0 0x00000000 0x48 0x00010000 0x0 0x00010000   /* downstream I/O */
-+				  0x82000000 0x0 0x40000000 0x48 0x40000000 0x0 0x40000000>; /* non-prefetchable memory */
-+			msi-parent = <&msi2>;
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 7>;
-+			interrupt-map = <0000 0 0 1 &gic 0 120  0x4>,
-+					<0000 0 0 2 &gic 0 121 0x4>,
-+					<0000 0 0 3 &gic 0 122 0x4>,
-+					<0000 0 0 4 &gic 0 123 0x4>;
-+		};
-+
-+		pcie@3600000 {
-+			compatible = "fsl,ls1043a-pcie", "snps,dw-pcie";
-+			reg = <0x00 0x03600000 0x0 0x00100000   /* controller registers */
-+			       0x50 0x00000000 0x0 0x00002000>; /* configuration space */
-+			reg-names = "regs", "config";
-+			interrupts = <0 162 0x4>,
-+				     <0 161 0x4>;
-+			interrupt-names = "intr", "pme";
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			device_type = "pci";
-+			num-lanes = <2>;
-+			bus-range = <0x0 0xff>;
-+			ranges = <0x81000000 0x0 0x00000000 0x50 0x00010000 0x0 0x00010000   /* downstream I/O */
-+				  0x82000000 0x0 0x40000000 0x50 0x40000000 0x0 0x40000000>; /* non-prefetchable memory */
-+			msi-parent = <&msi3>;
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 7>;
-+			interrupt-map = <0000 0 0 1 &gic 0 154 0x4>,
-+					<0000 0 0 2 &gic 0 155 0x4>,
-+					<0000 0 0 3 &gic 0 156 0x4>,
-+					<0000 0 0 4 &gic 0 157 0x4>;
++		sysclk: sysclk {
++			compatible = "fixed-factor-clock";
++			clocks = <&pll1>;
++			clock-mult = <1>;
++			clock-div  = <3>; /* HW bug precludes other dividers */
++			#clock-cells = <0>;
 +		};
 +	};
-+
-+};
--- 
-2.1.0.27.g96db324
+
+"sigma,tango4-pll" requires two properties:
+- reg: the address of the relevant clkgen register (size 4)
+- clocks: the input clock (must be the crystal oscillator)
+(I don't know if "#clock-cells = <0>;" is required?)
+
+"sigma,tango4-cpuclk" requires two properties:
+- reg: the address of the clkdiv register (size 4)
+- clocks: the input clock (always pll0)
+(I don't know if "#clock-cells = <0>;" is required?)
+
+IIUC, I should provide this documentation in my patch?
+(Will probably require an iteration or two to work out the
+proper format.)
+
+>>  2 files changed, 60 insertions(+)
+>>  create mode 100644 drivers/clk/clk-tango4.c
+>>
+>> diff --git a/drivers/clk/clk-tango4.c b/drivers/clk/clk-tango4.c
+>> new file mode 100644
+>> index 000000000000..9c21e8c0b6e8
+>> --- /dev/null
+>> +++ b/drivers/clk/clk-tango4.c
+>> @@ -0,0 +1,59 @@
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/of_address.h>
+> 
+> We need a few more includes here for iomap, __init, readl().
+
+OK.
+
+<linux/clk-provider.h>
+<linux/of_address.h>
+<linux/init.h>
+<linux/io.h>
+
+>> +#define REG(name, ...) union name { struct { u32 __VA_ARGS__; }; u32 val; }
+>> +
+>> +REG(SYS_clkgen_pll, N:7, :6, K:3, M:3, :5, Isel:3, :3, T:1, B:1);
+> 
+> This is new to me. Using bitfields like this is not really a good
+> idea though. Please just use masks, shifts, etc. instead.
+
+You don't say /why/ it's not a good idea ;-)
+
+The typical objection to bit-fields is that they are not portable.
+As far as the compiler is concerned, the kernel community seems
+to have "standardized" on gcc, for its convenient extensions.
+
+<parenthesis>
+Some people want to compile the kernel with icc or clang, but
+there are several pit-falls.
+https://llvm.linuxfoundation.org/index.php/Main_Page
+https://software.intel.com/sites/default/files/article/146679/linuxkernelbuildwhitepaper.pdf
+</parenthesis>
+
+"bit-fields in gcc" are more easy to deal with than bit-fields
+in general. Their behavior is specified here:
+
+https://gcc.gnu.org/onlinedocs/gcc/Structures-unions-enumerations-and-bit-fields-implementation.html
+
+Since this driver is only intended to be compiled for arm
+(if ARCH_TANGOX), non-portability is not an issue. In gcc,
+the order of allocation of bit-fields within a unit is
+"Determined by [the] ABI". (I'm using EABI)
+
+I've also relied on this gcc extension:
+https://gcc.gnu.org/onlinedocs/gcc/Unnamed-Fields.html
+to be able to write e.g. pll.N
+(It's used elsewhere in the kernel)
+
+What I like about the implementation using bit-fields is
+that one only needs specify the layout, and computing the
+offsets is left to the compiler (which is less error-prone).
+Also the definition is short, and I find that the intent of
+
+  pll.K
+
+is clearer than
+
+  (pll >> 13) & 7
+
+
+[...] That being said, if I must forgo bit-fields to get this
+driver accepted, I can write:
+
+#define PLL_N(val) ((val) >>  0 & 0x7f)
+#define PLL_K(val) ((val) >> 13 & 0x07)
+#define PLL_M(val) ((val) >> 16 & 0x07)
+
+Is that the preferred way?
+
+>> +static void __init tango4_pll_setup(struct device_node *np)
+>> +{
+>> +	unsigned int mul, div;
+>> +	union SYS_clkgen_pll pll;
+>> +	const char *name = np->name;
+>> +	const char *parent = of_clk_get_parent_name(np, 0);
+>> +
+>> +	void __iomem *clkgen_pll = of_iomap(np, 0);
+> 
+> What if of_iomap() fails?
+
+If of_iomap() fails, the system will panic when it tries to
+read from address 0.
+
+I can make it explicit, if you prefer:
+
+	if (clkgen_pll == NULL)
+		panic("%s: invalid reg property\n", np->full_name);
+
+>> +	pll.val = readl_relaxed(clkgen_pll);
+>> +	iounmap(clkgen_pll);
+>> +
+>> +	mul = (pll.N + 1);
+> 
+> Parenthesis are useless, please remove.
+
+They are aesthetic, to align the mul and div expressions.
+
+>> +	div = (pll.M + 1) << pll.K;
+>> +	clk_register_fixed_factor(NULL, name, parent, 0, mul, div);
+>> +}
+>> +
+>> +static void __init tango4_div_setup(struct device_node *np)
+>> +{
+>> +	const char *name = np->name;
+>> +	const char *parent = of_clk_get_parent_name(np, 0);
+>> +	void __iomem *div_ctrl = of_iomap(np, 0);
+>> +
+>> +	clk_register_divider(NULL, name, parent, 0,
+>> +		div_ctrl, 8, 8, CLK_DIVIDER_ONE_BASED, NULL);
+>> +}
+>> +
+>> +CLK_OF_DECLARE(tango4_pll,    "sigma,tango4-pll",    tango4_pll_setup);
+>> +CLK_OF_DECLARE(tango4_cpuclk, "sigma,tango4-cpuclk", tango4_div_setup);
+> 
+> More discussion will come with the binding, but we're pushing
+> people towards making real platform drivers for their clock
+> controllers, instead of parsing everything out of DT and having
+> one node per clock. So if these are picking things out of some
+> larger clock controller block, please rewrite the binding to be a
+> real clock provider.
+
+I don't understand what you wrote.
+
+Could you explain what you meant?
+
+Regards.
