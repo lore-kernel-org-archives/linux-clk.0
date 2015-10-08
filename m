@@ -1,107 +1,49 @@
-Return-Path: <jonmason@broadcom.com>
-Date: Thu, 15 Oct 2015 17:10:25 -0400
-From: Jon Mason <jonmason@broadcom.com>
-To: Scott Branden <sbranden@broadcom.com>
-CC: Ray Jui <rjui@broadcom.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>,
-	Hauke Mehrtens <hauke@hauke-m.de>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
-Subject: Re: [PATCH v3 08/10] clk: ns2: add clock support for Broadcom
- Northstar 2 SoC
-Message-ID: <20151015211025.GP32089@broadcom.com>
-References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
- <1444938513-10758-9-git-send-email-jonmason@broadcom.com>
- <56200F39.1060102@broadcom.com>
- <562012A8.8050707@broadcom.com>
- <562014C9.5070708@broadcom.com>
+Return-Path: <Haibo.Chen@freescale.com>
+From: Haibo Chen <haibo.chen@freescale.com>
+To: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<shawnguo@kernel.org>, <kernel@pengutronix.de>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <jic23@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-iio@vger.kernel.org>
+Subject: [PATCH 5/5] ARM: dts: imx7d-sdb: add ADC support
+Date: Thu, 8 Oct 2015 18:59:08 +0800
+Message-ID: <1444301948-21721-5-git-send-email-haibo.chen@freescale.com>
+In-Reply-To: <1444301948-21721-1-git-send-email-haibo.chen@freescale.com>
+References: <1444301948-21721-1-git-send-email-haibo.chen@freescale.com>
+Return-Path: haibo.chen@freescale.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <562014C9.5070708@broadcom.com>
-Return-Path: jonmason@broadcom.com
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Oct 15, 2015 at 02:04:09PM -0700, Scott Branden wrote:
-> Hi Ray,
-> 
-> Comment at near end.
-> 
-> On 15-10-15 01:55 PM, Ray Jui wrote:
-> >
-> >
-> >On 10/15/2015 1:40 PM, Scott Branden wrote:
-> >>We need some sort of kconfig option to differentiate NS2 clock driver
-> >>from being pulled in all the time.
-> >>
-> >>On 15-10-15 12:48 PM, Jon Mason wrote:
-> >>>The Broadcom Northstar 2 SoC is architected under the iProc
-> >>>architecture. It has the following PLLs: GENPLL SCR, GENPLL SW,
-> >>>LCPLL DDR, LCPLL Ports, all derived from an onboard crystal.
-> >>>
-> >>>Signed-off-by: Jon Mason <jonmason@broadcom.com>
-> >>>---
-> >>>   drivers/clk/Makefile                |   2 +-
-> >>>   drivers/clk/bcm/Makefile            |   1 +
-> >>>   drivers/clk/bcm/clk-ns2.c           | 288
-> >>>++++++++++++++++++++++++++++++++++++
-> >>>   include/dt-bindings/clock/bcm-ns2.h |  72 +++++++++
-> >>>   4 files changed, 362 insertions(+), 1 deletion(-)
-> >>>   create mode 100644 drivers/clk/bcm/clk-ns2.c
-> >>>   create mode 100644 include/dt-bindings/clock/bcm-ns2.h
-> >>>
-> >>>diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> >>>index d08b3e5..6124bd3 100644
-> >>>--- a/drivers/clk/Makefile
-> >>>+++ b/drivers/clk/Makefile
-> >>>@@ -47,7 +47,7 @@ obj-$(CONFIG_COMMON_CLK_WM831X)        += clk-wm831x.o
-> >>>   obj-$(CONFIG_COMMON_CLK_XGENE)        += clk-xgene.o
-> >>>   obj-$(CONFIG_COMMON_CLK_PWM)        += clk-pwm.o
-> >>>   obj-$(CONFIG_COMMON_CLK_AT91)        += at91/
-> >>>-obj-$(CONFIG_ARCH_BCM)            += bcm/
-> >>>+obj-y                    += bcm/
-> >>>   obj-$(CONFIG_ARCH_BERLIN)        += berlin/
-> >>>   obj-$(CONFIG_ARCH_HISI)            += hisilicon/
-> >>>   obj-$(CONFIG_ARCH_MXC)            += imx/
-> >>>diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
-> >>>index e258b28..2d1cbc5 100644
-> >>>--- a/drivers/clk/bcm/Makefile
-> >>>+++ b/drivers/clk/bcm/Makefile
-> >>>@@ -3,6 +3,7 @@ obj-$(CONFIG_CLK_BCM_KONA)    += clk-kona-setup.o
-> >>>   obj-$(CONFIG_CLK_BCM_KONA)    += clk-bcm281xx.o
-> >>>   obj-$(CONFIG_CLK_BCM_KONA)    += clk-bcm21664.o
-> >>>   obj-$(CONFIG_COMMON_CLK_IPROC)    += clk-iproc-armpll.o
-> >>>clk-iproc-pll.o clk-iproc-asiu.o
-> >>>+obj-$(CONFIG_COMMON_CLK_IPROC)    += clk-ns2.o
-> >>
-> >>NS2 code is dragged in for all IPROC SoCs.  We need a config option for
-> >>NS2 (CONFIG_ARCH_BCM_NS2) to avoid this (if Arnd allows this for ARMv8
-> >>processors... ?).
-> >>
-> >>You can see below ARMv7 processors don't have this problem.
-> >>
-> >
-> >The arm64 maintainers (Catalin, Mark, and etc.) stated they only want
-> >one ARCH options per chip family.
-> >
-> >>If not we need to add CONFIG_CLK_NS2.
-> >
-> >If using CONFIG_CLK_NS2, how is it going to be enabled/selected?
-> 
-> Since CONFIG_ARCH_BCM_NS2 isn't "allowed" to be introduced we will
-> need to create and select a CONFIG_CLK_BCM_NS2 in the defconfig
-> instead.
+Add ADC support for imx7d-sdb board.
 
-Is this better than the binary becoming slightly bigger?  I thought
-the extra complexity was worse than having an unused chunk of clk code
-(and Kona is already doing the same thing above).  I believe Ray was
-in agreement with me during the internal review of this code.
+Signed-off-by: Haibo Chen <haibo.chen@freescale.com>
+---
+ arch/arm/boot/dts/imx7d-sdb.dts | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Thanks,
-Jon
-
-> >
-> >Ray
-> >
-> 
-> Regards,
->  Scott
+diff --git a/arch/arm/boot/dts/imx7d-sdb.dts b/arch/arm/boot/dts/imx7d-sdb.dts
+index 432aaf5..b2c4536 100644
+--- a/arch/arm/boot/dts/imx7d-sdb.dts
++++ b/arch/arm/boot/dts/imx7d-sdb.dts
+@@ -97,6 +97,16 @@
+ 	};
+ };
+ 
++&adc1 {
++	vref-supply = <&reg_vref_1v8>;
++	status = "okay";
++};
++
++&adc2 {
++	vref-supply = <&reg_vref_1v8>;
++	status = "okay";
++};
++
+ &cpu0 {
+ 	arm-supply = <&sw1a_reg>;
+ };
+-- 
+1.9.1
