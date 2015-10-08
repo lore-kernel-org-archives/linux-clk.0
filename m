@@ -1,57 +1,59 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <Haibo.Chen@freescale.com>
+From: Haibo Chen <haibo.chen@freescale.com>
+To: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<shawnguo@kernel.org>, <kernel@pengutronix.de>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <jic23@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-iio@vger.kernel.org>
+Subject: [PATCH 4/5] ARM: dts: imx7d.dtsi: add ADC support
+Date: Thu, 8 Oct 2015 18:59:07 +0800
+Message-ID: <1444301948-21721-4-git-send-email-haibo.chen@freescale.com>
+In-Reply-To: <1444301948-21721-1-git-send-email-haibo.chen@freescale.com>
+References: <1444301948-21721-1-git-send-email-haibo.chen@freescale.com>
+Return-Path: haibo.chen@freescale.com
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1446117664-6037-6-git-send-email-geert+renesas@glider.be>
-References: <1446117664-6037-1-git-send-email-geert+renesas@glider.be>
-	<1446117664-6037-6-git-send-email-geert+renesas@glider.be>
-Date: Fri, 30 Oct 2015 09:27:49 +0100
-Message-ID: <CAMuHMdVDb-7AbCLJJAPGPY-dEVPbcevL3K8eA4eQpHL8_3pAOQ@mail.gmail.com>
-Subject: Re: [PATCH v5 5/5] clk: shmobile: r8a7795: Add new CPG/MSSR driver
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux-sh list <linux-sh@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Oct 29, 2015 at 12:21 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> Add a new R-Car H3 Clock Pulse Generator / Module Standby and Software
-> Reset driver, using the new CPG/MSSR driver core.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v5:
+Add imx7d ADC support.
 
->   - Enter shmobile subdir if CONFIG_ARCH_RENESAS=y,
+Signed-off-by: Haibo Chen <haibo.chen@freescale.com>
+---
+ arch/arm/boot/dts/imx7d.dtsi | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-BTW, I kept wondering how I had forgotten that in v4.
-
-Found it: "[PATCH v3 01/04] clk: shmobile: Get rid of
-CONFIG_ARCH_SHMOBILE_MULTI" did ...
-
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -67,6 +67,7 @@ obj-$(CONFIG_COMMON_CLK_QCOM)         += qcom/
->  obj-$(CONFIG_ARCH_ROCKCHIP)            += rockchip/
->  obj-$(CONFIG_COMMON_CLK_SAMSUNG)       += samsung/
->  obj-$(CONFIG_ARCH_SHMOBILE_MULTI)      += shmobile/
-
-... s/CONFIG_ARCH_SHMOBILE_MULTI/CONFIG_ARCH_SHMOBILE/,
-which is IMHO a better solution, but that disappeared in v4 and later.
-
-> +obj-$(CONFIG_ARCH_RENESAS)             += shmobile/
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/imx7d.dtsi b/arch/arm/boot/dts/imx7d.dtsi
+index ebc053a..87c3319 100644
+--- a/arch/arm/boot/dts/imx7d.dtsi
++++ b/arch/arm/boot/dts/imx7d.dtsi
+@@ -583,6 +583,26 @@
+ 			reg = <0x30400000 0x400000>;
+ 			ranges;
+ 
++			adc1: adc@30610000 {
++				compatible = "fsl,imx7d-adc";
++				reg = <0x30610000 0x10000>;
++				interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX7D_ADC_ROOT_CLK>;
++				num-channels = <4>;
++				clock-names = "adc";
++				status = "disabled";
++			};
++
++			adc2: adc@30620000 {
++				compatible = "fsl,imx7d-adc";
++				reg = <0x30620000 0x10000>;
++				interrupts = <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX7D_ADC_ROOT_CLK>;
++				num-channels = <4>;
++				clock-names = "adc";
++				status = "disabled";
++			};
++
+ 			pwm1: pwm@30660000 {
+ 				compatible = "fsl,imx7d-pwm", "fsl,imx27-pwm";
+ 				reg = <0x30660000 0x10000>;
+-- 
+1.9.1
