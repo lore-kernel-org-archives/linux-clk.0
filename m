@@ -1,76 +1,61 @@
-Return-Path: <yorksun@freescale.com>
-Subject: Re: [Patch v6] driver/clk/clk-si5338: Add common clock framework
- driver for si5338
-To: Michael Turquette <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-References: <1444240750-30842-1-git-send-email-yorksun@freescale.com>
- <20151022164642.20687.57688@quantum>
-CC: <linux-clk@vger.kernel.org>, Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>, Guenter Roeck <linux@roeck-us.net>,
-	"Andrey Filippov" <andrey@elphel.com>, Paul Bolle <pebolle@tiscali.nl>
-From: York Sun <yorksun@freescale.com>
-Message-ID: <5629163B.7010708@freescale.com>
-Date: Thu, 22 Oct 2015 10:00:43 -0700
+Return-Path: <Haibo.Chen@freescale.com>
+From: Haibo Chen <haibo.chen@freescale.com>
+To: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<shawnguo@kernel.org>, <kernel@pengutronix.de>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <jic23@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-iio@vger.kernel.org>
+Subject: [PATCH 2/5] Documentation: add the binding file for Freescale imx7d ADC driver
+Date: Thu, 8 Oct 2015 18:59:05 +0800
+Message-ID: <1444301948-21721-2-git-send-email-haibo.chen@freescale.com>
+In-Reply-To: <1444301948-21721-1-git-send-email-haibo.chen@freescale.com>
+References: <1444301948-21721-1-git-send-email-haibo.chen@freescale.com>
+Return-Path: haibo.chen@freescale.com
 MIME-Version: 1.0
-In-Reply-To: <20151022164642.20687.57688@quantum>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: yorksun@freescale.com
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+The patch adds the binding file for Freescale imx7d ADC driver.
 
+Signed-off-by: Haibo Chen <haibo.chen@freescale.com>
+---
+ .../devicetree/bindings/iio/adc/imx7d-adc.txt      | 26 ++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/imx7d-adc.txt
 
-On 10/22/2015 09:46 AM, Michael Turquette wrote:
-> Hello York Sun,
-> 
-> Quoting York Sun (2015-10-07 10:59:10)
->> +static const struct clk_ops si5338_xtal_ops = {
->> +       .prepare = si5338_xtal_prepare,
-> 
-> There are many instances of .prepare where there is no matching
-> .unprepare. Why is that? And what are these .prepare callbacks doing?
-> Are they changing rates or just enabling the clock signals?
-
-These prepare functions set hardware according to their parent clock rate. For
-example, xtal has different setting if the oscillator frequency is above 26MHz,
-under 11MHz, and between.
-
-There is no need to unprepare them.
-
-> 
->> +static const struct clk_ops si5338_clkout_ops = {
->> +       .prepare = si5338_clkout_prepare,
->> +       .unprepare = si5338_clkout_unprepare,
->> +       .enable = si5338_clkout_enable,
->> +       .disable = si5338_clkout_disable,
-> 
-> This is an i2c device, so I'm confused how an .enable or .disable
-> callback is appropriate.
-
-This clock chip can disable individual clock output, and internal module. User
-can select various state for disabled clock, i.e. high, low, high-Z, etc. At
-least, disabling unused clkout saves power. Make sense?
-
-> 
->> +       /*
->> +        * To form clock names, concatentate name prefix with each name.
->> +        * The result string is up to MAX_NAME_LENGTH including termination.
->> +        */
->> +
->> +       /* Register xtal input clock */
->> +       if (!IS_ERR_OR_NULL(drvdata->pxtal)) {
->> +               strlcpy(register_name, drvdata->name_prefix, MAX_NAME_PREFIX);
->> +               strncat(register_name, si5338_input_names[4], STRNCAT_LENGTH);
->> +               drvdata->pxtal_name = __clk_get_name(drvdata->pxtal);
-> 
-> I don't really understand what's going on here. Why is this necessary?
-> Are you not able to get this info from DT?
-
-I write this driver with two things in mind. One is device tree, the other is
-platform data. If device tree is used, everything comes from device tree.
-Otherwise, the data has to come from platform data. The code you are seeing is
-to create unique clock names with prefix, passed from either device tree, or
-platform data. This is needed when multiple chips exist. I am using a system
-with four identical si5338 chips on one card, with up to 15 cards per system.
-
-I am open to suggestion to do things other ways.
-
-York
+diff --git a/Documentation/devicetree/bindings/iio/adc/imx7d-adc.txt b/Documentation/devicetree/bindings/iio/adc/imx7d-adc.txt
+new file mode 100644
+index 0000000..6b21fd27
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/adc/imx7d-adc.txt
+@@ -0,0 +1,26 @@
++Freescale imx7d ADC bindings
++
++The devicetree bingdings are for the nwe ADC driver written for
++imx7d SoC.
++
++Required properties:
++- compatible: Should be "fsl,imx7d-adc"
++- reg: Offset and length of the register set for the ADC device
++- interrupts: The interrupt number for the ADC device
++- clocks: The root clock of the ADC controller
++- clock-names: Must contain "adc", matching entry in the clocks property
++- vref-supply: The regulator supply ADC reference voltage
++
++Optional properties:
++- num-channels: the number of channels used
++
++Example:
++adc1: adc@30610000 {
++	compatible = "fsl,imx7d-adc";
++	reg = <0x30610000 0x10000>;
++	interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
++	clocks = <&clks IMX7D_ADC_ROOT_CLK>;
++	clock-names = "adc";
++	num-channels = <4>;
++	vref-supply = <&reg_vcc_3v3_mcu>;
++};
+-- 
+1.9.1
