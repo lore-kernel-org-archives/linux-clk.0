@@ -1,52 +1,81 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:42832 "EHLO muru.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751961AbbJXBVv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Fri, 23 Oct 2015 21:21:51 -0400
-Date: Fri, 23 Oct 2015 18:21:49 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Paul Walmsley <paul@pwsan.com>, Tero Kristo <t-kristo@ti.com>,
-	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Brian Hutchinson <b.hutchman@gmail.com>,
-	linux-clk@vger.kernel.org, fisaksen@baylibre.com
-Subject: Re: [PATCH 2/4] clk: ti816x: Add missing dmtimer clkdev entries
-Message-ID: <20151024012148.GB3078@atomide.com>
-References: <5628A9F7.9090105@baylibre.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc: linux-rockchip@lists.infradead.org, Jaroslav Kysela <perex@perex.cz>, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 5/8] clk: rockchip: Allow the RK3288 SPDIF clocks to change their parent
+Date: Thu, 08 Oct 2015 17:10:40 +0200
+Message-ID: <11755202.f1LLWMlYi0@phil>
+In-Reply-To: <1444311079-2892-6-git-send-email-sjoerd.simons@collabora.co.uk>
+References: <1444311079-2892-1-git-send-email-sjoerd.simons@collabora.co.uk> <1444311079-2892-6-git-send-email-sjoerd.simons@collabora.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5628A9F7.9090105@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-* Neil Armstrong <narmstrong@baylibre.com> [151022 02:19]:
-> Add missing clkdev dmtimer related entries for dm816x.
-> 32Khz and ext sources were missing.
+Am Donnerstag, 8. Oktober 2015, 15:31:16 schrieb Sjoerd Simons:
+> The clock branches leading to sclk_spdif and sclk_spdif_8ch on RK3288
+> SoCs only feed those clocks, allow those clocks to change their parents
+> all the way up the hierarchy.
 > 
-> Cc: Brian Hutchinson <b.hutchman@gmail.com>
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 
-Tero should queue this one:
+Just as comment, if I'm seeing that right, this patch needs "clk: rockchip: 
+handle mux dependency of fractional dividers" and friends [0] to apply and 
+also actually handle the fractional dividers correctly.
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+For the clock change itself:
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
+
+Heiko
+
+[0] http://lists.infradead.org/pipermail/linux-rockchip/2015-August/003930.html
+
 
 > ---
->  drivers/clk/ti/clk-816x.c | 2 ++
->  1 file changed, 2 insertions(+)
 > 
-> diff --git a/drivers/clk/ti/clk-816x.c b/drivers/clk/ti/clk-816x.c
-> index 1dfad0c..2a5d84f 100644
-> --- a/drivers/clk/ti/clk-816x.c
-> +++ b/drivers/clk/ti/clk-816x.c
-> @@ -20,6 +20,8 @@ static struct ti_dt_clk dm816x_clks[] = {
->  	DT_CLK(NULL, "sys_clkin", "sys_clkin_ck"),
->  	DT_CLK(NULL, "timer_sys_ck", "sys_clkin_ck"),
->  	DT_CLK(NULL, "sys_32k_ck", "sys_32k_ck"),
-> +	DT_CLK(NULL, "timer_32k_ck", "sysclk18_ck"),
-> +	DT_CLK(NULL, "timer_ext_ck", "tclkin_ck"),
->  	DT_CLK(NULL, "mpu_ck", "mpu_ck"),
->  	DT_CLK(NULL, "timer1_fck", "timer1_fck"),
->  	DT_CLK(NULL, "timer2_fck", "timer2_fck"),
-> -- 
-> 1.9.1
+> Changes in v4: None
+> Changes in v3: None
+> Changes in v2: None
+> 
+>  drivers/clk/rockchip/clk-rk3288.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/rockchip/clk-rk3288.c
+> b/drivers/clk/rockchip/clk-rk3288.c index 90c1c9b..4e90252 100644
+> --- a/drivers/clk/rockchip/clk-rk3288.c
+> +++ b/drivers/clk/rockchip/clk-rk3288.c
+> @@ -317,25 +317,25 @@ static struct rockchip_clk_branch
+> rk3288_clk_branches[] __initdata = {
+> 
+>  	MUX(0, "spdif_src", mux_pll_src_cpll_gpll_p, 0,
+>  			RK3288_CLKSEL_CON(5), 15, 1, MFLAGS),
+> -	COMPOSITE_NOMUX(0, "spdif_pre", "spdif_src", 0,
+> +	COMPOSITE_NOMUX(0, "spdif_pre", "spdif_src", CLK_SET_RATE_PARENT,
+>  			RK3288_CLKSEL_CON(5), 0, 7, DFLAGS,
+>  			RK3288_CLKGATE_CON(4), 4, GFLAGS),
+> -	COMPOSITE_FRACMUX(0, "spdif_frac", "spdif_src", 0,
+> +	COMPOSITE_FRACMUX(0, "spdif_frac", "spdif_src", CLK_SET_RATE_PARENT,
+>  			RK3288_CLKSEL_CON(9), 0,
+>  			RK3288_CLKGATE_CON(4), 5, GFLAGS,
+> -		MUX(0, "spdif_mux", mux_spdif_p, 0,
+> +		MUX(0, "spdif_mux", mux_spdif_p, CLK_SET_RATE_PARENT,
+>  				RK3288_CLKSEL_CON(5), 8, 2, MFLAGS)),
+> -	GATE(SCLK_SPDIF, "sclk_spdif", "spdif_mux", 0,
+> +	GATE(SCLK_SPDIF, "sclk_spdif", "spdif_mux", CLK_SET_RATE_PARENT,
+>  			RK3288_CLKGATE_CON(4), 6, GFLAGS),
+> -	COMPOSITE_NOMUX(0, "spdif_8ch_pre", "spdif_src", 0,
+> +	COMPOSITE_NOMUX(0, "spdif_8ch_pre", "spdif_src", CLK_SET_RATE_PARENT,
+>  			RK3288_CLKSEL_CON(40), 0, 7, DFLAGS,
+>  			RK3288_CLKGATE_CON(4), 7, GFLAGS),
+> -	COMPOSITE_FRACMUX(0, "spdif_8ch_frac", "spdif_8ch_pre", 0,
+> +	COMPOSITE_FRACMUX(0, "spdif_8ch_frac", "spdif_8ch_pre",
+> CLK_SET_RATE_PARENT, RK3288_CLKSEL_CON(41), 0,
+>  			RK3288_CLKGATE_CON(4), 8, GFLAGS,
+> -		MUX(0, "spdif_8ch_mux", mux_spdif_8ch_p, 0,
+> +		MUX(0, "spdif_8ch_mux", mux_spdif_8ch_p, CLK_SET_RATE_PARENT,
+>  				RK3288_CLKSEL_CON(40), 8, 2, MFLAGS)),
+> -	GATE(SCLK_SPDIF8CH, "sclk_spdif_8ch", "spdif_8ch_mux", 0,
+> +	GATE(SCLK_SPDIF8CH, "sclk_spdif_8ch", "spdif_8ch_mux",
+> CLK_SET_RATE_PARENT, RK3288_CLKGATE_CON(4), 9, GFLAGS),
+> 
+>  	GATE(0, "sclk_acc_efuse", "xin24m", 0,
