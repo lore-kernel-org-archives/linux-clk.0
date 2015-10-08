@@ -1,71 +1,98 @@
-Return-Path: <Julia.Lawall@lip6.fr>
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: kernel-janitors@vger.kernel.org,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jason Cooper <jason@lakedaemon.net>
-Subject: [PATCH 4/5] clk: imx31: add missing of_node_put
-Date: Wed, 21 Oct 2015 22:41:39 +0200
-Message-Id: <1445460100-26727-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
-References: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 8 Oct 2015 19:13:02 +0800
+From: Jisheng Zhang <jszhang@marvell.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: <sebastian.hesselbarth@gmail.com>, <catalin.marinas@arm.com>,
+	<will.deacon@arm.com>, <mark.rutland@arm.com>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/5] dt-bindings: add binding for marvell berlin4ct SoC
+Message-ID: <20151008191302.6d6d636b@xhacker>
+In-Reply-To: <20151001225027.GT19319@codeaurora.org>
+References: <1442931156-5877-1-git-send-email-jszhang@marvell.com>
+	<1442931156-5877-5-git-send-email-jszhang@marvell.com>
+	<20151001225027.GT19319@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-for_each_compatible_node performs an of_node_get on each iteration, so a
-break out of the loop requires an of_node_put.
+Hi Stephen,
 
-The semantic patch that fixes this problem is as follows
-(http://coccinelle.lip6.fr):
+On Thu, 1 Oct 2015 15:50:27 -0700
+Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-// <smpl>
-@@
-local idexpression n;
-expression e;
-@@
+> On 09/22, Jisheng Zhang wrote:
+> > +This binding uses the common clock binding[1].
+> > +
+> > +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+> > +
+> > +The berlin4ct clock subsystem generates and supplies clock to various
+> > +controllers within the berlin4ct SoC. The berlin4ct contains 3 clock controller
+> > +blocks: pll, gateclk, berlin-clk.
+> > +
+> > +Required Properties:
+> > +
+> > +- compatible: should be one of the following.
+> > +  - "marvell,berlin-pll" - pll compatible
+> > +  - "marvell,berlin4ct-clk" - berlin clk compatible
+> > +  - "marvell,berlin4ct-gateclk" - gateclk compatible
+> > +- reg: physical base address of the clock controller and length of memory mapped
+> > +  region. For pll, the second reg defines the bypass register base address and
+> > +  length of memory mapped region.
+> > +- #clock-cells: for pll should 0, for gateclk and berlin clk should be 1.
+> > +- #bypass-shift: the bypass bit in bypass register.
+> > +
+> > +Example:
+> > +
+> > +syspll: syspll {
+> > +	compatible = "marvell,berlin-pll";
+> > +	reg = <0xea0200 0x14>, <0xea0710 4>;
+> > +	#clock-cells = <0>;
+> > +	clocks = <&osc>;
+> > +	bypass-shift = /bits/ 8 <0>;
+> > +};
+> > +
+> > +clk: clk {
+> > +	compatible = "marvell,berlin4ct-clk";
+> > +	reg = <0xea0720 0x144>;
+> > +	#clock-cells = <1>;
+> > +	clocks = <&syspll>;
+> > +};
+> 
+> Is there one clock controller at 0xea0000 of size 0x1000? We've
 
- for_each_compatible_node(n,...) {
-   ...
-(
-   of_node_put(n);
-|
-   e = n
-|
-+  of_node_put(n);
-?  break;
-)
-   ...
- }
-... when != n
-// </smpl>
+there's no clock controller at 0xea0000 with so big size. In BG4CT, we have
+the following different kind of plls/clks
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+1. cpupll/syspll/mempll: the same IP, the pll register is put with the user
+together, plus one shared bypass control register. For example: mempll register
+is put with DDR controller registers together. cpupll, syspll and mempll share
+the same bypass register: 0xea0710. 
 
----
- drivers/clk/imx/clk-imx31.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+2. gateclks: the clk can only be enabled or disabled, the control bits are put
+into one(or two) register(s)
 
-diff --git a/drivers/clk/imx/clk-imx31.c b/drivers/clk/imx/clk-imx31.c
-index f65b8b1..6a96414 100644
---- a/drivers/clk/imx/clk-imx31.c
-+++ b/drivers/clk/imx/clk-imx31.c
-@@ -233,8 +233,10 @@ int __init mx31_clocks_init_dt(void)
- 		if (!of_device_is_compatible(np, "fsl,imx-osc26m"))
- 			continue;
- 
--		if (!of_property_read_u32(np, "clock-frequency", &fref))
-+		if (!of_property_read_u32(np, "clock-frequency", &fref)) {
-+			of_node_put(np);
- 			break;
-+		}
- 	}
- 
- 	_mx31_clocks_init(fref);
+3. clks: can be disabled/enabled, change the divider, etc.. all these clks
+registers are put together. In this register space, some space may not be used.
+
+
+[PATCH 5/5] shows the layout of the clk/pll registers
+
+> been trying to push people towards using the device model and
+> writing drivers with probe instead of using CLK_OF_DECLARE() for
+
+Is there any existing clk drivers switched to this type. I'll grep and
+take that for an example.
+
+> their platform clocks. From the looks of this binding, we're
+> splitting up the different types of clocks into their own nodes
+> and then registering them with CLK_OF_DECLARE.
+
+Could you please kindly give advice about how to avoid the splitting?
+
+Thanks a lot for review,
+Jisheng
