@@ -1,36 +1,74 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 1 Oct 2015 16:37:01 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3] clk: rockchip: reset init state before mmc card
- initialization
-Message-ID: <20151001233701.GY19319@codeaurora.org>
-References: <1441325733-4131-1-git-send-email-shawn.lin@rock-chips.com>
+Return-Path: <robherring2@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1441325733-4131-1-git-send-email-shawn.lin@rock-chips.com>
+Sender: robherring2@gmail.com
+In-Reply-To: <1444301948-21721-2-git-send-email-haibo.chen@freescale.com>
+References: <1444301948-21721-1-git-send-email-haibo.chen@freescale.com> <1444301948-21721-2-git-send-email-haibo.chen@freescale.com>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 9 Oct 2015 07:59:15 -0500
+Message-ID: <CAL_JsqLpZ9+3L8=3QQt6VhYn=jAkO6kw4C4eHxjGmGwL4O3_vg@mail.gmail.com>
+Subject: Re: [PATCH 2/5] Documentation: add the binding file for Freescale
+ imx7d ADC driver
+To: Haibo Chen <haibo.chen@freescale.com>
+Cc: Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
+	shawnguo@kernel.org, "kernel@pengutronix.de" <kernel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/04, Shawn Lin wrote:
-> mmc host controller's IO input/output timing is unpredictable if
-> bootloader execute tuning for HS200 mode. It might make kernel failed
-> to initialize mmc card in identification mode. The root cause is
-> tuning phase and degree setting for HS200 mode in bootloader aren't
-> applicable to that of identification mode in kernel stage. Anyway, we
-> can't force all bootloaders to reset tuning phase and degree setting
-> before into kernel. Simply reset it in rockchip_clk_register_mmc.
-> 
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
-> 
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+On Thu, Oct 8, 2015 at 5:59 AM, Haibo Chen <haibo.chen@freescale.com> wrote:
+> The patch adds the binding file for Freescale imx7d ADC driver.
+>
+> Signed-off-by: Haibo Chen <haibo.chen@freescale.com>
+
+Acked-by: Rob Herring <robh@kernel.org>
+
 > ---
-
-Applied to clk-next
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>  .../devicetree/bindings/iio/adc/imx7d-adc.txt      | 26 ++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/imx7d-adc.txt
+>
+> diff --git a/Documentation/devicetree/bindings/iio/adc/imx7d-adc.txt b/Documentation/devicetree/bindings/iio/adc/imx7d-adc.txt
+> new file mode 100644
+> index 0000000..6b21fd27
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/imx7d-adc.txt
+> @@ -0,0 +1,26 @@
+> +Freescale imx7d ADC bindings
+> +
+> +The devicetree bingdings are for the nwe ADC driver written for
+> +imx7d SoC.
+> +
+> +Required properties:
+> +- compatible: Should be "fsl,imx7d-adc"
+> +- reg: Offset and length of the register set for the ADC device
+> +- interrupts: The interrupt number for the ADC device
+> +- clocks: The root clock of the ADC controller
+> +- clock-names: Must contain "adc", matching entry in the clocks property
+> +- vref-supply: The regulator supply ADC reference voltage
+> +
+> +Optional properties:
+> +- num-channels: the number of channels used
+> +
+> +Example:
+> +adc1: adc@30610000 {
+> +       compatible = "fsl,imx7d-adc";
+> +       reg = <0x30610000 0x10000>;
+> +       interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
+> +       clocks = <&clks IMX7D_ADC_ROOT_CLK>;
+> +       clock-names = "adc";
+> +       num-channels = <4>;
+> +       vref-supply = <&reg_vcc_3v3_mcu>;
+> +};
+> --
+> 1.9.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
