@@ -1,48 +1,60 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-Date: Wed, 28 Oct 2015 10:48:53 +0100
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, Mark Brown <broonie@kernel.org>,
-	lee.jones@linaro.org, mturquette@baylibre.com,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
-Subject: Re: [rtc-linux] Re: [PATCH v3 5/5] drivers/rtc/rtc-s5m.c: add
- support for S2MPS15 RTC
-Message-ID: <20151028094853.GM22331@piout.net>
-References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
- <1445863883-5187-6-git-send-email-alim.akhtar@samsung.com>
- <56302514.4090407@samsung.com>
- <20151028015323.GZ28319@sirena.org.uk>
- <56303054.8060804@samsung.com>
- <56303DA3.5020306@samsung.com>
- <5630419F.1000300@samsung.com>
+Return-Path: <dianders@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5630419F.1000300@samsung.com>
+Sender: dianders@google.com
+In-Reply-To: <CAD=FV=XdVt5Uop5WAUv6vY3=qPksnc9HzR4C9CBWpXJKuteTEQ@mail.gmail.com>
+References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
+	<CAPDyKFqeo--AiW_zHHrSqoOdFNZ3J_FgJpz2L7Z8gZnNmQZSig@mail.gmail.com>
+	<CAPDyKFr6WV-o8Td9eJVkuCgaeNjdLr2GpaC32c3026bFmOJiYQ@mail.gmail.com>
+	<CAD=FV=XdVt5Uop5WAUv6vY3=qPksnc9HzR4C9CBWpXJKuteTEQ@mail.gmail.com>
+Date: Fri, 9 Oct 2015 13:11:21 -0700
+Message-ID: <CAD=FV=VaZQcbgByQOAQL4qDCCOb_pNRHnXBS77L8D-dc_eYR5A@mail.gmail.com>
+Subject: Re: [PATCH v2 0/8] mmc: dw_mmc-rockchip: allow tuning using the
+ clk-phase api
+From: Doug Anderson <dianders@chromium.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Heiko Stuebner <heiko@sntech.de>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Jaehoon Chung <jh80.chung@samsung.com>,
+	linux-mmc <linux-mmc@vger.kernel.org>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Alexandru Stan <amstan@chromium.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 28/10/2015 at 12:31:43 +0900, Krzysztof Kozlowski wrote :
-> The s2mps13 clock driver added new name and compatible... which was
-> probably totally unneeded (I missed that during review). We don't have
-> to make this as a rule...
-> 
-> Since we do not have any data about future workarounds and the
-> differences then just follow Ockham's razor - use the same name and
-> compatible.
-> 
+Hi,
 
-So you don't care about DT backward compatibility because when a
-workaround will be needed for one of the IPs, then you will have to
-update the old dtb to use it.
+On Fri, Oct 9, 2015 at 10:19 AM, Doug Anderson <dianders@chromium.org> wrote:
+> Hi,
+>
+> On Fri, Oct 9, 2015 at 1:10 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>> Dough, Heiko,
+>>
+>> This patchset seems to be causing a boot regression for exynos5800-peach-pi [1].
+>>
+>> Apparently, the vmmc regulator doesn't exist for one of the controller
+>> but vqmmc is. This leads to the following NULL pointer exception.
+>
+> Ugh.  Hrm, it didn't used to be possible for vmmc to be NULL.  :-/  It
+> changed in v3.16:
+>
+>   4d1f52f mmc: core: Improve support for deferred regulators
+>
+> ...and I didn't notice it (most of my development is done on 3.14).  :(
+>
+>
+> Is it sensible to have vqmmc without vmmc.  One option would be to
+> change mmc_regulator_get_supply() to not even bother trying to get
+> vqmmc if vmmc is not there.
+>
+> Another option would be to just totally fail mmc_regulator_set_vqmmc()
+> always if vmmc is an error.  ...or assume that any bogus vmmc (either
+> vmmc is an error or regulator_get_voltage(vmmc) returns an error) is
+> 3.3V?
+>
+>
+> I guess the safest is to assume that bogus vmmc means 3.3V...
 
-Unless you are sure that the IP is the same, doing
+Ah, doh.  Just noticed Ulf's suggestion all the way at the bottom of
+the crash info, which I somehow missed before.  Yes, let's do that.
+Heiko: are you going to re-post?
 
-{ "s2mps15-rtc",	S2MPS14X },
-
-is probably the best way to handle that. Note that I personally don't
-care about the DT ABI, I'm just pointing out what may happen ;)
-
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+-Doug
