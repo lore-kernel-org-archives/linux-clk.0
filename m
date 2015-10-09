@@ -1,54 +1,35 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 16 Oct 2015 15:11:21 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Ray Jui <rjui@broadcom.com>
-Cc: Jon Mason <jonmason@broadcom.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Hauke Mehrtens <hauke@hauke-m.de>,
-	Scott Branden <sbranden@broadcom.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [RFC 4/5] clk: iproc: define Broadcom NS2 iProc clock binding
-Message-ID: <20151016221121.GD10182@codeaurora.org>
-References: <1444771347-11382-1-git-send-email-jonmason@broadcom.com>
- <1444771347-11382-5-git-send-email-jonmason@broadcom.com>
- <561D84B4.4000002@broadcom.com>
- <20151014154410.GF15160@broadcom.com>
- <561E88A7.2090808@broadcom.com>
+Return-Path: <Marc_Gonzalez@sigmadesigns.com>
+Return-Path: <Marc_Gonzalez@sigmadesigns.com>
+Subject: Re: [PATCH v1] clk: Sigma Designs Tango4 cpuclk driver
+To: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
+	<mturquette@baylibre.com>
+CC: Mason <slash.tmp@free.fr>, clk <linux-clk@vger.kernel.org>
+References: <5613DBA2.20708@sigmadesigns.com>
+ <20151008013054.GC26883@codeaurora.org> <56163BE1.6040402@free.fr>
+From: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
+Message-ID: <56177417.9050203@sigmadesigns.com>
+Date: Fri, 9 Oct 2015 10:00:23 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <561E88A7.2090808@broadcom.com>
+In-Reply-To: <56163BE1.6040402@free.fr>
+Content-Type: text/plain; charset="ISO-8859-15"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/14, Ray Jui wrote:
-> 
-> 
-> On 10/14/2015 8:44 AM, Jon Mason wrote:
-> > On Tue, Oct 13, 2015 at 03:24:52PM -0700, Ray Jui wrote:
-> >> Same as this patch. I thought device tree binding document should go
-> >> with the clock driver changes.
-> >>
-> >> Strictly speaking, device tree binding document should always go before
-> >> the driver changes. In the binding document the DT interface is defined,
-> >> then changes are implemented in the driver.
-> > 
-> > I split them off this way due to the clk maintainer not wanting to
-> > pull in any device tree changes.  Since the documentation is for the
-> > device tree enties, it makes logical sense to me that they be in the
-> > same device tree series.  If Stephen will pull these in with the clk
-> > changes, I am more than happy to have it done by him :)
-> > 
-> > Thanks,
-> > Jon
-> 
-> Yeah the clock maintainers do not pull in device tree changes like
-> *.dtsi and *.dts. But they do take changes including the binding
-> documents and clock driver changes. You can confirm with Stephen.
-> 
+On 08/10/2015 11:48, Mason wrote:
 
-Yes we take bindings (I know I'm replying to an old patch).
+> On 08/10/2015 03:30, Stephen Boyd wrote:
+> 
+>> More discussion will come with the binding, but we're pushing
+>> people towards making real platform drivers for their clock
+>> controllers, instead of parsing everything out of DT and having
+>> one node per clock. So if these are picking things out of some
+>> larger clock controller block, please rewrite the binding to be a
+>> real clock provider.
+> 
+> I don't understand what you wrote.
+> 
+> Could you explain what you meant?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+While the other issues are minor, I will need guidance to understand
+this request.
+
+Regards.
