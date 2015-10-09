@@ -1,29 +1,35 @@
-Return-Path: <wens@csie.org>
+Return-Path: <shawnguo@kernel.org>
+Date: Fri, 9 Oct 2015 11:04:06 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Haibo Chen <haibo.chen@freescale.com>, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	kernel@pengutronix.de, mturquette@baylibre.com, jic23@kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-iio@vger.kernel.org
+Subject: Re: [PATCH 3/5] clk: imx7d: add ADC root clock
+Message-ID: <20151009030406.GF22673@tiger>
+References: <1444301948-21721-1-git-send-email-haibo.chen@freescale.com>
+ <1444301948-21721-3-git-send-email-haibo.chen@freescale.com>
+ <20151008183556.GI26883@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <1444682610-21482-4-git-send-email-maxime.ripard@free-electrons.com>
-References: <1444682610-21482-1-git-send-email-maxime.ripard@free-electrons.com>
- <1444682610-21482-4-git-send-email-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 14 Oct 2015 17:20:51 +0800
-Message-ID: <CAGb2v67wc3E-eBU3KA0jDPMHy3H2chd872QZxcm5s6AsLrh6ig@mail.gmail.com>
-Subject: Re: [PATCH v4 3/5] clk: sunxi: pll2: Add A13 support
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20151008183556.GI26883@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Oct 13, 2015 at 4:43 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The A13, unlike the A10 and A20, doesn't use a pass-through exception for
-> the 0 value in the pre and post dividers, but increments all the values
-> written in the register by one.
->
-> Add an exception for both these cases to handle them nicely.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+On Thu, Oct 08, 2015 at 11:35:56AM -0700, Stephen Boyd wrote:
+> On 10/08, Haibo Chen wrote:
+> > Add ADC root clock support in imx7d clock tree.
+> > 
+> > Signed-off-by: Haibo Chen <haibo.chen@freescale.com>
+> > ---
+> 
+> I see no cover letter indicating how you want this merged, so:
+> 
+> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Applied on IMX tree.
+
+Shawn
