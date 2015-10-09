@@ -1,84 +1,71 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v3 4/5] clk: s2mps15: Add support for S2MPS15 clocks
-To: Alim Akhtar <alim.akhtar@samsung.com>, lee.jones@linaro.org,
- broonie@kernel.org
-References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
- <1445863883-5187-5-git-send-email-alim.akhtar@samsung.com>
-Cc: mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, rtc-linux@googlegroups.com,
- linux-kernel@vger.kernel.org
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <5630234A.8080905@samsung.com>
-Date: Wed, 28 Oct 2015 10:22:18 +0900
-MIME-version: 1.0
-In-reply-to: <1445863883-5187-5-git-send-email-alim.akhtar@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <jonmason@broadcom.com>
+Date: Fri, 9 Oct 2015 13:59:45 -0400
+From: Jon Mason <jonmason@broadcom.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Michael Turquette <mturquette@baylibre.com>, Florian Fainelli
+	<f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui
+	<rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>
+Subject: Re: [PATCH 02/10] clk: nsp: add clock support for Broadcom Northstar
+ Plus SoC
+Message-ID: <20151009175945.GB17527@broadcom.com>
+References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
+ <1443826665-17570-3-git-send-email-jonmason@broadcom.com>
+ <20151009073746.GP26883@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20151009073746.GP26883@codeaurora.org>
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 26.10.2015 21:51, Alim Akhtar wrote:
-> S2MPS15 PMIC has three 32k buffered clocks outputs. This patch
-> adds supports for the same to the s2mps11 clock driver.
+On Fri, Oct 09, 2015 at 12:37:46AM -0700, Stephen Boyd wrote:
+> On 10/02, Jon Mason wrote:
+> > diff --git a/drivers/clk/bcm/clk-nsp.c b/drivers/clk/bcm/clk-nsp.c
+> > new file mode 100644
+> > index 0000000..708961a
+> > --- /dev/null
+> > +++ b/drivers/clk/bcm/clk-nsp.c
+> > @@ -0,0 +1,139 @@
+> > +/*
+> > + * Copyright (C) 2015 Broadcom Corporation
+> > + *
+> > + * This program is free software; you can redistribute it and/or
+> > + * modify it under the terms of the GNU General Public License as
+> > + * published by the Free Software Foundation version 2.
+> > + *
+> > + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
+> > + * kind, whether express or implied; without even the implied warranty
+> > + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> > + * GNU General Public License for more details.
+> > + */
+> > +
+> > +#include <linux/kernel.h>
+> > +#include <linux/err.h>
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/io.h>
+> > +#include <linux/of.h>
+> > +#include <linux/clkdev.h>
 > 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  drivers/clk/Kconfig       |    5 +++--
->  drivers/clk/clk-s2mps11.c |   24 ++++++++++++++++++++++++
->  2 files changed, 27 insertions(+), 2 deletions(-)
+> Is this used?
 > 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index a1fa61159179..037a314b5d76 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -120,9 +120,10 @@ config COMMON_CLK_S2MPS11
->  	tristate "Clock driver for S2MPS1X/S5M8767 MFD"
->  	depends on MFD_SEC_CORE
->  	---help---
-> -	  This driver supports S2MPS11/S2MPS14/S5M8767 crystal oscillator
-> +	  This driver supports S2MPS1X/S5M8767 crystal oscillator
->  	  clock. These multi-function devices have two (S2MPS14) or three
-> -	  (S2MPS11, S5M8767) fixed-rate oscillators, clocked at 32KHz each.
-> +	  (S2MPS11/S2MPS13/S2MPS15/S5M8767) fixed-rate oscillators,
-> +	  clocked at 32KHz each.
->  
->  config CLK_TWL6040
->  	tristate "External McPDM functional clock from twl6040"
-> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-> index d266299dfdb1..455500dca653 100644
-> --- a/drivers/clk/clk-s2mps11.c
-> +++ b/drivers/clk/clk-s2mps11.c
-> @@ -25,6 +25,7 @@
->  #include <linux/mfd/samsung/s2mps11.h>
->  #include <linux/mfd/samsung/s2mps13.h>
->  #include <linux/mfd/samsung/s2mps14.h>
-> +#include <linux/mfd/samsung/s2mps15.h>
->  #include <linux/mfd/samsung/s5m8767.h>
->  #include <linux/mfd/samsung/core.h>
->  
-> @@ -148,6 +149,24 @@ static struct clk_init_data s2mps14_clks_init[S2MPS11_CLKS_NUM] = {
->  	},
->  };
->  
-> +static struct clk_init_data s2mps15_clks_init[S2MPS11_CLKS_NUM] = {
-> +	[S2MPS11_CLK_AP] = {
-> +		.name = "s2mps15_ap",
-> +		.ops = &s2mps11_clk_ops,
-> +		.flags = CLK_IS_ROOT,
-> +	},
-> +	[S2MPS11_CLK_CP] = {
-> +		.name = "s2mps15_cp",
-> +		.ops = &s2mps11_clk_ops,
-> +		.flags = CLK_IS_ROOT,
-> +	},
-> +	[S2MPS11_CLK_BT] = {
-> +		.name = "s2mps15_bt",
-> +		.ops = &s2mps11_clk_ops,
-> +		.flags = CLK_IS_ROOT,
-> +	},
-> +};
+> > +#include <linux/of_address.h>
+> > +#include <linux/delay.h>
+> 
+> Is this used?
 
-I see that for S2MPS13 we already added similar array which duplicates
-the S2MPS11. This actually looks wrong. Just re-use existing
-s2mps11_clks_init.
+I removed the clkdev and delay headers, and it appears to be working
+fine without them.  I'll rework this commit and resubmit.
 
-Best regards,
-Krzysztof
+Thanks,
+Jon
+
+> 
+> > +
+> > +#include <dt-bindings/clock/bcm-nsp.h>
+> > +#include "clk-iproc.h"
+> 
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
