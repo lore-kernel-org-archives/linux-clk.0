@@ -1,93 +1,68 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 1 Oct 2015 17:19:05 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Eric Anholt <eric@anholt.net>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/3] clk: bcm2835: Add a driver for the auxiliary
- peripheral clock gates.
-Message-ID: <20151002001905.GB12338@codeaurora.org>
-References: <1441923750-19404-1-git-send-email-eric@anholt.net>
- <1441923750-19404-3-git-send-email-eric@anholt.net>
+Return-Path: <khilman@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1441923750-19404-3-git-send-email-eric@anholt.net>
+In-Reply-To: <CAD=FV=XfoRoj610zXvBPxAwSO7O_eYGxsAidnEnXx5mK1ANGrg@mail.gmail.com>
+References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
+	<1443622064-14362-5-git-send-email-heiko@sntech.de>
+	<CAMAWPa9o=bQJPK+tJ38=5jngTFcOsAi=s9RcETbPN=3SsyQ8gA@mail.gmail.com>
+	<CAD=FV=XfoRoj610zXvBPxAwSO7O_eYGxsAidnEnXx5mK1ANGrg@mail.gmail.com>
+Date: Fri, 9 Oct 2015 22:17:49 +0200
+Message-ID: <CAMAWPa9rOvwjBRZ7x7xVcEdaTxtWChw1_qXBqk9ziFM-nA=XNw@mail.gmail.com>
+Subject: Re: [PATCH v2 4/8] mmc: dw_mmc: Use mmc_regulator_set_vqmmc in start_signal_voltage_switch
+From: Kevin Hilman <khilman@kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Kevin Hilman <khilman@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, Seungwon Jeon <tgih.jun@samsung.com>,
+	Jaehoon Chung <jh80.chung@samsung.com>, Alexandru Stan <amstan@chromium.org>,
+	linux-mmc <linux-mmc@vger.kernel.org>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tyler Baker <tyler.baker@linaro.org>,
+	Olof Johansson <olof@lixom.net>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/10, Eric Anholt wrote:
-> diff --git a/drivers/clk/bcm/clk-bcm2835-aux.c b/drivers/clk/bcm/clk-bcm2835-aux.c
-> new file mode 100644
-> index 0000000..1efa6fb
-> --- /dev/null
-> +++ b/drivers/clk/bcm/clk-bcm2835-aux.c
-> @@ -0,0 +1,80 @@
-> +/*
-> + * Copyright (C) 2015 Broadcom
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/clkdev.h>
+On Fri, Oct 9, 2015 at 10:12 PM, Doug Anderson <dianders@chromium.org> wrote:
+> Kevin,
+>
+> On Fri, Oct 9, 2015 at 12:06 PM, Kevin Hilman <khilman@kernel.org> wrote:
+>> On Wed, Sep 30, 2015 at 4:07 PM, Heiko Stuebner <heiko@sntech.de> wrote:
+>>> From: Douglas Anderson <dianders@chromium.org>
+>>>
+>>> We've introduced a new helper in the MMC core:
+>>> mmc_regulator_set_vqmmc().  Let's use this in dw_mmc.  Using this new
+>>> helper has some advantages:
+>>>
+>>> 1. We get the mmc_regulator_set_vqmmc() behavior of trying to match
+>>>    VQMMC and VMMC when the signal voltage is 3.3V.  This ensures max
+>>>    compatibility.
+>>>
+>>> 2. We get rid of a few more warnings when probing unsupported
+>>>    voltages.
+>>>
+>>> 3. We get rid of some non-dw_mmc specific code in dw_mmc.
+>>>
+>>> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+>>> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+>>
+>> kernelci.org found a new failure in linux-next on
+>> exynos5800-peach-pi[1] and it was bisected down to this patch, which
+>> has hit linux-next in the form of commit fba2e23128d0 (mmc: dw_mmc:
+>> Use mmc_regulator_set_vqmmc in start_signal_voltage_switch).  Based on
+>> a quick glance at the boot log[2], it looks to be a bad pointer
+>> dereference in regulator_get_voltage().
+>>
+>> I confirmed that reverting this patch on top of next-20151009 gets my
+>> peach-pi booting again.
+>>
+>> Note that the boot failure is only on exynos_defconfig, not multi_v7_defconfig.
+>
+> Right.  See <http://www.spinics.net/lists/arm-kernel/msg450802.html>
+> for discussion.  Ulf responded to the cover letter rather than the
+> individual patch.
 
-Is this include used?
+Ah, I hadn't noticed that.  Thanks.
 
-> +#include <linux/clk/bcm2835.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/platform_device.h>
-> +#include <dt-bindings/clock/bcm2835-aux.h>
-> +
-> +static int bcm2835_aux_clk_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct clk_onecell_data *onecell;
-> +	const char *parent;
-> +	struct clk *parent_clk;
-> +	void __iomem *reg;
-> +
-> +	parent_clk = of_clk_get(dev->of_node, 0);
-> +	if (IS_ERR(parent_clk))
-> +		return PTR_ERR(parent_clk);
+I guess it should be dropped by tomorrow's linux-next then.  I'll keep
+an eye on it.
 
-We have a device, any reason we can't use clk_get() directly?
-
-> +	parent = __clk_get_name(parent_clk);
-> +
-> +	reg = of_iomap(dev->of_node, 0);
-
-We have a platform device here, why aren't we using platform
-device APIs like platform_get_resource() and
-devm_ioremap_resource()?
-
-> +	if (!reg)
-> +		return -ENODEV;
-> +
-> +	onecell = kmalloc(sizeof(*onecell), GFP_KERNEL);
-> +	if (!onecell)
-> +		return -ENOMEM;
-> +	onecell->clk_num = BCM2835_AUX_CLOCK_COUNT;
-> +	onecell->clks = kzalloc(sizeof(*onecell->clks) *
-
-kcalloc?
-
-> +				BCM2835_AUX_CLOCK_COUNT, GFP_KERNEL);
-> +	if (!onecell->clks)
-> +		return -ENOMEM;
-> +
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Kevin
