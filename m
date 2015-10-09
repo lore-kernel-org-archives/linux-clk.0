@@ -1,29 +1,61 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: linux-rockchip@lists.infradead.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/8] clk: rockchip: add new clock type and controller for rk3036
-Date: Thu, 01 Oct 2015 10:12:34 +0200
-Message-ID: <17410513.afcQr96dHz@diego>
-In-Reply-To: <1443492833-15630-6-git-send-email-zhengxing@rock-chips.com>
-References: <1443492833-15630-1-git-send-email-zhengxing@rock-chips.com> <1443492833-15630-6-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 9 Oct 2015 00:37:46 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jon Mason <jonmason@broadcom.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH 02/10] clk: nsp: add clock support for Broadcom Northstar
+ Plus SoC
+Message-ID: <20151009073746.GP26883@codeaurora.org>
+References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
+ <1443826665-17570-3-git-send-email-jonmason@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1443826665-17570-3-git-send-email-jonmason@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 29. September 2015, 10:13:50 schrieb Xing Zheng:
-> The rk3036's pll and clock are different with base on the rk3066(rk3188,
-> rk3288, rk3368 use it), there are different adjust foctors and control
-> registers, so these should be independent and separate from the series
-> of rk3066s.
+On 10/02, Jon Mason wrote:
+> diff --git a/drivers/clk/bcm/clk-nsp.c b/drivers/clk/bcm/clk-nsp.c
+> new file mode 100644
+> index 0000000..708961a
+> --- /dev/null
+> +++ b/drivers/clk/bcm/clk-nsp.c
+> @@ -0,0 +1,139 @@
+> +/*
+> + * Copyright (C) 2015 Broadcom Corporation
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License as
+> + * published by the Free Software Foundation version 2.
+> + *
+> + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
+> + * kind, whether express or implied; without even the implied warranty
+> + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/err.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/io.h>
+> +#include <linux/of.h>
+> +#include <linux/clkdev.h>
 
-subject should probably be like
-clk: rockchip: add new pll-type for rk3036 and similar socs
+Is this used?
 
+> +#include <linux/of_address.h>
+> +#include <linux/delay.h>
 
-And the general handling should probably be implemented similar to the example 
-I posted in the v2 thread yesterday. [of course folded in and not as a 
-separate patch ;-) ]
+Is this used?
 
+> +
+> +#include <dt-bindings/clock/bcm-nsp.h>
+> +#include "clk-iproc.h"
 
-Heiko
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
