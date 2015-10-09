@@ -1,220 +1,162 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bn1bon0140.outbound.protection.outlook.com ([157.56.111.140]:20657
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1753160AbbJWT10 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Fri, 23 Oct 2015 15:27:26 -0400
-From: York Sun <yorksun@freescale.com>
-To: <sboyd@codeaurora.org>, <wsa@the-dreams.de>
-CC: <linux-clk@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-	York Sun <yorksun@freescale.com>
-Subject: [PATCH] driver/i2c: Add API to add new I2C device without registering
-Date: Fri, 23 Oct 2015 12:27:09 -0700
-Message-ID: <1445628429-12993-1-git-send-email-yorksun@freescale.com>
+Return-Path: <jonmason@broadcom.com>
+Date: Fri, 9 Oct 2015 14:27:28 -0400
+From: Jon Mason <jonmason@broadcom.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Michael Turquette <mturquette@baylibre.com>, Florian Fainelli
+	<f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui
+	<rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>
+Subject: Re: [PATCH 04/10] ARM: dts: enable clock support for BCM5301X
+Message-ID: <20151009182728.GD17527@broadcom.com>
+References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
+ <1443826665-17570-5-git-send-email-jonmason@broadcom.com>
+ <20151009073540.GO26883@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20151009073540.GO26883@codeaurora.org>
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Split existing API i2c_new_device(), i2c_new_probed_device() into
-two halves. The first half creates new i2c devices and the second
-half calls device_register(). It allows additional work to be done
-before registering the device.
+On Fri, Oct 09, 2015 at 12:35:40AM -0700, Stephen Boyd wrote:
+> On 10/02, Jon Mason wrote:
+> > Replace current device tree dummy clocks with real clock support for
+> > Broadcom Northstar SoCs.
+> > 
+> > Signed-off-by: Jon Mason <jonmason@broadcom.com>
+> > ---
+> 
+> I'd rather not take any dts changes through clk tree.
 
-Signed-off-by: York Sun <yorksun@freescale.com>
-CC: Wolfram Sang <wsa@the-dreams.de>
-CC: Stephen Boyd <sboyd@codeaurora.org>
-Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/i2c/i2c-core.c |   96 ++++++++++++++++++++++++++++++++++++++----------
- include/linux/i2c.h    |    8 ++++
- 2 files changed, 85 insertions(+), 19 deletions(-)
+Ok, I'll split off the device tree portion of this patch series, and
+submit that after the clk driver portion has been accepted and pushed
+upstream.
 
-diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
-index 5f89f1e..ff941b8 100644
---- a/drivers/i2c/i2c-core.c
-+++ b/drivers/i2c/i2c-core.c
-@@ -980,23 +980,19 @@ static void i2c_dev_set_name(struct i2c_adapter *adap,
- }
- 
- /**
-- * i2c_new_device - instantiate an i2c device
-+ * i2c_new_device_unregistered -- instantiate an i2c device unregistered
-  * @adap: the adapter managing the device
-  * @info: describes one I2C device; bus_num is ignored
-  * Context: can sleep
-  *
-- * Create an i2c device. Binding is handled through driver model
-- * probe()/remove() methods.  A driver may be bound to this device when we
-- * return from this function, or any later moment (e.g. maybe hotplugging will
-- * load the driver module).  This call is not appropriate for use by mainboard
-- * initialization logic, which usually runs during an arch_initcall() long
-- * before any i2c_adapter could exist.
-+ * Create an i2c device but leave it unregistered.
-  *
-  * This returns the new i2c client, which may be saved for later use with
-- * i2c_unregister_device(); or NULL to indicate an error.
-+ * device_register() or i2c_unregister_device(); or NULL to indicate an error.
-  */
- struct i2c_client *
--i2c_new_device(struct i2c_adapter *adap, struct i2c_board_info const *info)
-+i2c_new_device_unregistered(struct i2c_adapter *adap,
-+			    struct i2c_board_info const *info)
- {
- 	struct i2c_client	*client;
- 	int			status;
-@@ -1022,13 +1018,16 @@ i2c_new_device(struct i2c_adapter *adap, struct i2c_board_info const *info)
- 	if (status) {
- 		dev_err(&adap->dev, "Invalid %d-bit I2C address 0x%02hx\n",
- 			client->flags & I2C_CLIENT_TEN ? 10 : 7, client->addr);
--		goto out_err_silent;
-+		goto out_err;
- 	}
- 
- 	/* Check for address business */
- 	status = i2c_check_addr_busy(adap, i2c_encode_flags_to_addr(client));
--	if (status)
-+	if (status) {
-+		dev_err(&adap->dev, "i2c client %s at 0x%02x busy\n",
-+			client->name, client->addr);
- 		goto out_err;
-+	}
- 
- 	client->dev.parent = &client->adapter->dev;
- 	client->dev.bus = &i2c_bus_type;
-@@ -1037,6 +1036,41 @@ i2c_new_device(struct i2c_adapter *adap, struct i2c_board_info const *info)
- 	client->dev.fwnode = info->fwnode;
- 
- 	i2c_dev_set_name(adap, client);
-+
-+	return client;
-+
-+out_err:
-+	kfree(client);
-+	return NULL;
-+}
-+EXPORT_SYMBOL_GPL(i2c_new_device_unregistered);
-+
-+/**
-+ * i2c_new_device - instantiate an i2c device
-+ * @adap: the adapter managing the device
-+ * @info: describes one I2C device; bus_num is ignored
-+ * Context: can sleep
-+ *
-+ * Create an i2c device. Binding is handled through driver model
-+ * probe()/remove() methods.  A driver may be bound to this device when we
-+ * return from this function, or any later moment (e.g. maybe hotplugging will
-+ * load the driver module).  This call is not appropriate for use by mainboard
-+ * initialization logic, which usually runs during an arch_initcall() long
-+ * before any i2c_adapter could exist.
-+ *
-+ * This returns the new i2c client, which may be saved for later use with
-+ * i2c_unregister_device(); or NULL to indicate an error.
-+ */
-+struct i2c_client *
-+i2c_new_device(struct i2c_adapter *adap, struct i2c_board_info const *info)
-+{
-+	struct i2c_client	*client;
-+	int			status;
-+
-+	client = i2c_new_device_unregistered(adap, info);
-+	if (!client)
-+		goto out_err_silent;
-+
- 	status = device_register(&client->dev);
- 	if (status)
- 		goto out_err;
-@@ -1050,7 +1084,6 @@ out_err:
- 	dev_err(&adap->dev, "Failed to register i2c client %s at 0x%02x "
- 		"(%d)\n", client->name, client->addr, status);
- out_err_silent:
--	kfree(client);
- 	return NULL;
- }
- EXPORT_SYMBOL_GPL(i2c_new_device);
-@@ -2455,11 +2488,9 @@ int i2c_probe_func_quick_read(struct i2c_adapter *adap, unsigned short addr)
- }
- EXPORT_SYMBOL_GPL(i2c_probe_func_quick_read);
- 
--struct i2c_client *
--i2c_new_probed_device(struct i2c_adapter *adap,
--		      struct i2c_board_info *info,
--		      unsigned short const *addr_list,
--		      int (*probe)(struct i2c_adapter *, unsigned short addr))
-+static unsigned short address_probe(struct i2c_adapter *adap,
-+		unsigned short const *addr_list,
-+		int (*probe)(struct i2c_adapter *, unsigned short addr))
- {
- 	int i;
- 
-@@ -2486,12 +2517,39 @@ i2c_new_probed_device(struct i2c_adapter *adap,
- 			break;
- 	}
- 
--	if (addr_list[i] == I2C_CLIENT_END) {
-+	return addr_list[i];
-+}
-+
-+struct i2c_client *
-+i2c_new_probed_device_unregistered(struct i2c_adapter *adap,
-+		      struct i2c_board_info *info,
-+		      unsigned short const *addr_list,
-+		      int (*probe)(struct i2c_adapter *, unsigned short addr))
-+{
-+	info->addr = address_probe(adap, addr_list, probe);
-+
-+	if (info->addr == I2C_CLIENT_END) {
-+		dev_dbg(&adap->dev, "Probing failed, no device found\n");
-+		return NULL;
-+	}
-+
-+	return i2c_new_device_unregistered(adap, info);
-+}
-+EXPORT_SYMBOL_GPL(i2c_new_probed_device_unregistered);
-+
-+struct i2c_client *
-+i2c_new_probed_device(struct i2c_adapter *adap,
-+		      struct i2c_board_info *info,
-+		      unsigned short const *addr_list,
-+		      int (*probe)(struct i2c_adapter *, unsigned short addr))
-+{
-+	info->addr = address_probe(adap, addr_list, probe);
-+
-+	if (info->addr == I2C_CLIENT_END) {
- 		dev_dbg(&adap->dev, "Probing failed, no device found\n");
- 		return NULL;
- 	}
- 
--	info->addr = addr_list[i];
- 	return i2c_new_device(adap, info);
- }
- EXPORT_SYMBOL_GPL(i2c_new_probed_device);
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index 768063b..85068ae 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -327,6 +327,9 @@ struct i2c_board_info {
-  */
- extern struct i2c_client *
- i2c_new_device(struct i2c_adapter *adap, struct i2c_board_info const *info);
-+extern struct i2c_client *
-+i2c_new_device_unregistered(struct i2c_adapter *adap,
-+			    struct i2c_board_info const *info);
- 
- /* If you don't know the exact address of an I2C device, use this variant
-  * instead, which can probe for device presence in a list of possible
-@@ -339,6 +342,11 @@ i2c_new_probed_device(struct i2c_adapter *adap,
- 		      struct i2c_board_info *info,
- 		      unsigned short const *addr_list,
- 		      int (*probe)(struct i2c_adapter *, unsigned short addr));
-+extern struct i2c_client *
-+i2c_new_probed_device_unregistered(struct i2c_adapter *adap,
-+		      struct i2c_board_info *info,
-+		      unsigned short const *addr_list,
-+		      int (*probe)(struct i2c_adapter *, unsigned short addr));
- 
- /* Common custom probe functions */
- extern int i2c_probe_func_quick_read(struct i2c_adapter *, unsigned short addr);
--- 
-1.7.9.5
+> 
+> >  arch/arm/boot/dts/bcm5301x.dtsi | 67 ++++++++++++++++++++++++++++++++++++-----
+> >  1 file changed, 60 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/arch/arm/boot/dts/bcm5301x.dtsi b/arch/arm/boot/dts/bcm5301x.dtsi
+> > index 6f50f67..f717859 100644
+> > --- a/arch/arm/boot/dts/bcm5301x.dtsi
+> > +++ b/arch/arm/boot/dts/bcm5301x.dtsi
+> > @@ -55,14 +56,14 @@
+> >  			compatible = "arm,cortex-a9-global-timer";
+> >  			reg = <0x0200 0x100>;
+> >  			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
+> > -			clocks = <&clk_periph>;
+> > +			clocks = <&periph_clk>;
+> >  		};
+> >  
+> >  		local-timer@0600 {
+> >  			compatible = "arm,cortex-a9-twd-timer";
+> >  			reg = <0x0600 0x100>;
+> >  			interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>;
+> > -			clocks = <&clk_periph>;
+> > +			clocks = <&periph_clk>;
+> >  		};
+> >  
+> >  		gic: interrupt-controller@1000 {
+> > @@ -94,14 +95,66 @@
+> >  
+> >  	clocks {
+> 
+> I'd expect this to only contain nodes that don't have a reg
+> property. Clock providers that have a reg property would go into
+> some soc node or bus. Perhaps that's the chipcommonA node, or
+> axi?
 
+This might get a little ugly, as some of the clocks are in the
+0x18000000 and others are in 0x19000000.  I would think it better to
+have them all in one place (as that is more readable).  Do you preferr
+I split the pieces up into their respective DT nodes?
+
+> 
+> >  		#address-cells = <1>;
+> > -		#size-cells = <0>;
+> > +		#size-cells = <1>;
+> > +		ranges;
+> >  
+> > -		/* As long as we do not have a real clock driver us this
+> > -		 * fixed clock */
+> > -		clk_periph: periph {
+> > +		osc: oscillator {
+> > +			#clock-cells = <0>;
+> >  			compatible = "fixed-clock";
+> > +			clock-frequency = <25000000>;
+> > +		};
+> > +
+> > +		lcpll0: lcpll0@1800c100 {
+> > +			#clock-cells = <1>;
+> > +			compatible = "brcm,nsp-lcpll0";
+> > +			reg = <0x1800c100 0x14>;
+> > +			clocks = <&osc>;
+> > +			clock-output-names = "lcpll0", "pcie_phy", "sdio",
+> > +					     "ddr_phy";
+> > +		};
+> > +
+> > +		genpll: genpll@1800c140 {
+> > +			#clock-cells = <1>;
+> > +			compatible = "brcm,nsp-genpll";
+> > +			reg = <0x1800c140 0x24>;
+> > +			clocks = <&osc>;
+> > +			clock-output-names = "genpll", "phy", "ethernetclk",
+> > +					     "usbclk", "iprocfast", "sata1",
+> > +					     "sata2";
+> > +		};
+> > +
+> > +		iprocmed: iprocmed {
+> > +			#clock-cells = <0>;
+> > +			compatible = "fixed-factor-clock";
+> > +			clocks = <&genpll BCM_NSP_GENPLL_IPROCFAST_CLK>;
+> > +			clock-div = <2>;
+> > +			clock-mult = <1>;
+> > +			clock-output-names = "iprocmed";
+> > +		};
+> > +
+> > +		iprocslow: iprocslow {
+> > +			#clock-cells = <0>;
+> > +			compatible = "fixed-factor-clock";
+> > +			clocks = <&genpll BCM_NSP_GENPLL_IPROCFAST_CLK>;
+> > +			clock-div = <4>;
+> > +			clock-mult = <1>;
+> > +			clock-output-names = "iprocslow";
+> > +		};
+> > +
+> > +
+> > +		a9pll: arm_clk@19000000 {
+> > +			#clock-cells = <0>;
+> > +			compatible = "brcm,nsp-armpll";
+> > +			clocks = <&osc>;
+> > +			reg = <0x19000000 0x1000>;
+> > +		};
+> > +
+> > +		periph_clk: periph_clk {
+> >  			#clock-cells = <0>;
+> > -			clock-frequency = <400000000>;
+> > +			compatible = "fixed-factor-clock";
+> > +			clocks = <&a9pll>;
+> > +			clock-div = <2>;
+> > +			clock-mult = <1>;
+> >  		};
+> >  	};
+> >  
+> 
+> We're trying to move away from putting individual clocks into DT
+> like this. Is there some sort of clock controller that's at
+> 0x1800c000, but we're just not exposing all the clocks in there?
+> See this thread for more information on why we'd like to avoid
+> this sort of design:
+> 
+> http://lkml.kernel.org/r/<20150416192014.19585.9663@quantum>
+
+Okay, I'll clean-up the clock-output-names, per the referenced email.
+
+Thanks,
+Jon
+
+> 
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
