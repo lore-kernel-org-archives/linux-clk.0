@@ -1,43 +1,50 @@
-Return-Path: <fainelli@broadcom.com>
-Message-ID: <56295BDD.4000609@broadcom.com>
-Date: Thu, 22 Oct 2015 14:57:49 -0700
-From: Florian Fainelli <fainelli@broadcom.com>
+Return-Path: <jonmason@broadcom.com>
+Date: Fri, 9 Oct 2015 14:01:55 -0400
+From: Jon Mason <jonmason@broadcom.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Michael Turquette <mturquette@baylibre.com>, Florian Fainelli
+	<f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui
+	<rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>
+Subject: Re: [PATCH 05/10] clk: iproc: Add PLL base write function
+Message-ID: <20151009180155.GC17527@broadcom.com>
+References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
+ <1443826665-17570-6-git-send-email-jonmason@broadcom.com>
+ <20151009070357.GN26883@codeaurora.org>
 MIME-Version: 1.0
-To: Jon Mason <jonmason@broadcom.com>, Scott Branden <sbranden@broadcom.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>, "Hauke
- Mehrtens" <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
-Subject: Re: [PATCH] clk: iproc: Make clocks visible options
-References: <1445541913-25066-1-git-send-email-jonmason@broadcom.com> <56293D26.7080006@broadcom.com> <20151022201433.GK651@broadcom.com>
-In-Reply-To: <20151022201433.GK651@broadcom.com>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: fainelli@broadcom.com
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20151009070357.GN26883@codeaurora.org>
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 22/10/15 13:14, Jon Mason wrote:
-> On Thu, Oct 22, 2015 at 12:46:46PM -0700, Scott Branden wrote:
->> Hi Jon,
->>
->> comments inline.
->>
->> On 15-10-22 12:25 PM, Jon Mason wrote:
->>> Make the clocks visible options that can be selected by anyone.  This
->>> avoids the problems of:
->>>  1) Select is a reverse dependency and is hard for people to understand
->>>     and can sometimes be a pain to track down
->> This doesn't make any sense to me - there are many selects in the
->> system and this is one of them.
+On Fri, Oct 09, 2015 at 12:03:57AM -0700, Stephen Boyd wrote:
+> On 10/02, Jon Mason wrote:
+> > diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
+> > index e029ab3..a4602aa 100644
+> > --- a/drivers/clk/bcm/clk-iproc-pll.c
+> > +++ b/drivers/clk/bcm/clk-iproc-pll.c
+> > @@ -137,6 +137,18 @@ static int pll_wait_for_lock(struct iproc_pll *pll)
+> >  	return -EIO;
+> >  }
+> >  
+> > +static void iproc_pll_write(struct iproc_pll *pll, void __iomem *base,
 > 
-> This was specifically requested by Stephen Boyd, and the above are
-> his words verbatum
-> https://lkml.org/lkml/2015/10/21/956
+> Seems that pll could be const too?
 
-I am soon going to introduce a new clock driver under drivers/clk/bcm/
-which is going to need some Kconfig tweaks as well, it would be good if
-we reached consensus on this so Stephen can apply this.
+Yes, and offset can be const too.  I'll make these changes and
+resubmit.
 
-Thanks!
--- 
-Florian
+Thanks,
+Jon
+
+> 
+> > +			    u32 offset, u32 val)
+> > +{
+> > +	const struct iproc_pll_ctrl *ctrl = pll->ctrl;
+> > +
+> 
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
