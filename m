@@ -1,246 +1,142 @@
-Return-Path: <gabriel.fernandez@linaro.org>
-Return-Path: <gabriel.fernandez@linaro.org>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-To: Maxime Coquelin <maxime.coquelin@st.com>,
-	 Michael Turquette <mturquette@baylibre.com>,
-	 Stephen Boyd <sboyd@codeaurora.org>,
-	 Gabriel Fernandez <gabriel.fernandez@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
-	 Pankaj Dev <pankaj.dev@st.com>,
-	 Olivier Bideau <olivier.bideau@st.com>,
-	 Geert Uytterhoeven <geert+renesas@glider.be>,
-	 Fabian Frederick <fabf@skynet.be>,
-	 Rob Herring <robh+dt@kernel.org>,
-	 Pawel Moll <pawel.moll@arm.com>,
-	 Mark Rutland <mark.rutland@arm.com>,
-	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	 Kumar Gala <galak@codeaurora.org>,
-	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	 devicetree@vger.kernel.org,
-	 linux-kernel@vger.kernel.org,
-	 linux-arm-kernel@lists.infradead.org,
-	 kernel@stlinux.com,
-	 linux-clk@vger.kernel.org
-Subject: [PATCH v4 1/4] drivers: clk: st: Support for enable/disable in Clockgen PLLs
-Date: Wed,  7 Oct 2015 11:08:56 +0200
-Message-Id: <1444208939-10233-2-git-send-email-gabriel.fernandez@linaro.org>
-In-Reply-To: <1444208939-10233-1-git-send-email-gabriel.fernandez@linaro.org>
-References: <1444208939-10233-1-git-send-email-gabriel.fernandez@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 9 Oct 2015 00:35:40 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jon Mason <jonmason@broadcom.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH 04/10] ARM: dts: enable clock support for BCM5301X
+Message-ID: <20151009073540.GO26883@codeaurora.org>
+References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
+ <1443826665-17570-5-git-send-email-jonmason@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1443826665-17570-5-git-send-email-jonmason@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The patch adds support for enable/disable of the Clockgen PLLs.
-clkgen_pll_enable/clkgen_pll_disable added as generic function for all PLLs.
+On 10/02, Jon Mason wrote:
+> Replace current device tree dummy clocks with real clock support for
+> Broadcom Northstar SoCs.
+> 
+> Signed-off-by: Jon Mason <jonmason@broadcom.com>
+> ---
 
-Signed-off-by: Pankaj Dev <pankaj.dev@st.com>
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
----
- drivers/clk/st/clkgen-pll.c | 60 ++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 59 insertions(+), 1 deletion(-)
+I'd rather not take any dts changes through clk tree.
 
-diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
-index b2a332c..092f82c 100644
---- a/drivers/clk/st/clkgen-pll.c
-+++ b/drivers/clk/st/clkgen-pll.c
-@@ -18,6 +18,7 @@
- #include <linux/of_address.h>
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/iopoll.h>
- 
- #include "clkgen.h"
- 
-@@ -43,6 +44,7 @@ static DEFINE_SPINLOCK(clkgena_c32_odf_lock);
- 
- struct clkgen_pll_data {
- 	struct clkgen_field pdn_status;
-+	struct clkgen_field pdn_ctrl;
- 	struct clkgen_field locked_status;
- 	struct clkgen_field mdiv;
- 	struct clkgen_field ndiv;
-@@ -62,6 +64,7 @@ static const struct clk_ops st_pll1200c32_ops;
- 
- static const struct clkgen_pll_data st_pll1600c65_ax = {
- 	.pdn_status	= CLKGEN_FIELD(0x0, 0x1,			19),
-+	.pdn_ctrl	= CLKGEN_FIELD(0x10,	0x1,			0),
- 	.locked_status	= CLKGEN_FIELD(0x0, 0x1,			31),
- 	.mdiv		= CLKGEN_FIELD(0x0, C65_MDIV_PLL1600_MASK,	0),
- 	.ndiv		= CLKGEN_FIELD(0x0, C65_NDIV_MASK,		8),
-@@ -70,6 +73,7 @@ static const struct clkgen_pll_data st_pll1600c65_ax = {
- 
- static const struct clkgen_pll_data st_pll800c65_ax = {
- 	.pdn_status	= CLKGEN_FIELD(0x0,	0x1,			19),
-+	.pdn_ctrl	= CLKGEN_FIELD(0xC,	0x1,			1),
- 	.locked_status	= CLKGEN_FIELD(0x0,	0x1,			31),
- 	.mdiv		= CLKGEN_FIELD(0x0,	C65_MDIV_PLL800_MASK,	0),
- 	.ndiv		= CLKGEN_FIELD(0x0,	C65_NDIV_MASK,		8),
-@@ -79,6 +83,7 @@ static const struct clkgen_pll_data st_pll800c65_ax = {
- 
- static const struct clkgen_pll_data st_pll3200c32_a1x_0 = {
- 	.pdn_status	= CLKGEN_FIELD(0x0,	0x1,			31),
-+	.pdn_ctrl	= CLKGEN_FIELD(0x18,	0x1,			0),
- 	.locked_status	= CLKGEN_FIELD(0x4,	0x1,			31),
- 	.ndiv		= CLKGEN_FIELD(0x0,	C32_NDIV_MASK,		0x0),
- 	.idf		= CLKGEN_FIELD(0x4,	C32_IDF_MASK,		0x0),
-@@ -96,6 +101,7 @@ static const struct clkgen_pll_data st_pll3200c32_a1x_0 = {
- 
- static const struct clkgen_pll_data st_pll3200c32_a1x_1 = {
- 	.pdn_status	= CLKGEN_FIELD(0xC,	0x1,			31),
-+	.pdn_ctrl	= CLKGEN_FIELD(0x18,	0x1,			1),
- 	.locked_status	= CLKGEN_FIELD(0x10,	0x1,			31),
- 	.ndiv		= CLKGEN_FIELD(0xC,	C32_NDIV_MASK,		0x0),
- 	.idf		= CLKGEN_FIELD(0x10,	C32_IDF_MASK,		0x0),
-@@ -114,6 +120,7 @@ static const struct clkgen_pll_data st_pll3200c32_a1x_1 = {
- /* 415 specific */
- static const struct clkgen_pll_data st_pll3200c32_a9_415 = {
- 	.pdn_status	= CLKGEN_FIELD(0x0,	0x1,			0),
-+	.pdn_ctrl	= CLKGEN_FIELD(0x0,	0x1,			0),
- 	.locked_status	= CLKGEN_FIELD(0x6C,	0x1,			0),
- 	.ndiv		= CLKGEN_FIELD(0x0,	C32_NDIV_MASK,		9),
- 	.idf		= CLKGEN_FIELD(0x0,	C32_IDF_MASK,		22),
-@@ -125,6 +132,7 @@ static const struct clkgen_pll_data st_pll3200c32_a9_415 = {
- 
- static const struct clkgen_pll_data st_pll3200c32_ddr_415 = {
- 	.pdn_status	= CLKGEN_FIELD(0x0,	0x1,			0),
-+	.pdn_ctrl	= CLKGEN_FIELD(0x0,	0x1,			0),
- 	.locked_status	= CLKGEN_FIELD(0x100,	0x1,			0),
- 	.ndiv		= CLKGEN_FIELD(0x8,	C32_NDIV_MASK,		0),
- 	.idf		= CLKGEN_FIELD(0x0,	C32_IDF_MASK,		25),
-@@ -137,7 +145,8 @@ static const struct clkgen_pll_data st_pll3200c32_ddr_415 = {
- };
- 
- static const struct clkgen_pll_data st_pll1200c32_gpu_415 = {
--	.pdn_status	= CLKGEN_FIELD(0x144,	0x1,			3),
-+	.pdn_status	= CLKGEN_FIELD(0x4,	0x1,			0),
-+	.pdn_ctrl	= CLKGEN_FIELD(0x4,	0x1,			0),
- 	.locked_status	= CLKGEN_FIELD(0x168,	0x1,			0),
- 	.ldf		= CLKGEN_FIELD(0x0,	C32_LDF_MASK,		3),
- 	.idf		= CLKGEN_FIELD(0x0,	C32_IDF_MASK,		0),
-@@ -149,6 +158,7 @@ static const struct clkgen_pll_data st_pll1200c32_gpu_415 = {
- /* 416 specific */
- static const struct clkgen_pll_data st_pll3200c32_a9_416 = {
- 	.pdn_status	= CLKGEN_FIELD(0x0,	0x1,			0),
-+	.pdn_ctrl	= CLKGEN_FIELD(0x0,	0x1,			0),
- 	.locked_status	= CLKGEN_FIELD(0x6C,	0x1,			0),
- 	.ndiv		= CLKGEN_FIELD(0x8,	C32_NDIV_MASK,		0),
- 	.idf		= CLKGEN_FIELD(0x0,	C32_IDF_MASK,		25),
-@@ -160,6 +170,7 @@ static const struct clkgen_pll_data st_pll3200c32_a9_416 = {
- 
- static const struct clkgen_pll_data st_pll3200c32_ddr_416 = {
- 	.pdn_status	= CLKGEN_FIELD(0x0,	0x1,			0),
-+	.pdn_ctrl	= CLKGEN_FIELD(0x0,	0x1,			0),
- 	.locked_status	= CLKGEN_FIELD(0x10C,	0x1,			0),
- 	.ndiv		= CLKGEN_FIELD(0x8,	C32_NDIV_MASK,		0),
- 	.idf		= CLKGEN_FIELD(0x0,	C32_IDF_MASK,		25),
-@@ -173,6 +184,7 @@ static const struct clkgen_pll_data st_pll3200c32_ddr_416 = {
- 
- static const struct clkgen_pll_data st_pll1200c32_gpu_416 = {
- 	.pdn_status	= CLKGEN_FIELD(0x8E4,	0x1,			3),
-+	.pdn_ctrl	= CLKGEN_FIELD(0x8E4,	0x1,			3),
- 	.locked_status	= CLKGEN_FIELD(0x90C,	0x1,			0),
- 	.ldf		= CLKGEN_FIELD(0x0,	C32_LDF_MASK,		3),
- 	.idf		= CLKGEN_FIELD(0x0,	C32_IDF_MASK,		0),
-@@ -184,6 +196,7 @@ static const struct clkgen_pll_data st_pll1200c32_gpu_416 = {
- static const struct clkgen_pll_data st_pll3200c32_407_a0 = {
- 	/* 407 A0 */
- 	.pdn_status	= CLKGEN_FIELD(0x2a0,	0x1,			8),
-+	.pdn_ctrl	= CLKGEN_FIELD(0x2a0,	0x1,			8),
- 	.locked_status	= CLKGEN_FIELD(0x2a0,	0x1,			24),
- 	.ndiv		= CLKGEN_FIELD(0x2a4,	C32_NDIV_MASK,		16),
- 	.idf		= CLKGEN_FIELD(0x2a4,	C32_IDF_MASK,		0x0),
-@@ -196,6 +209,7 @@ static const struct clkgen_pll_data st_pll3200c32_407_a0 = {
- static const struct clkgen_pll_data st_pll3200c32_cx_0 = {
- 	/* 407 C0 PLL0 */
- 	.pdn_status	= CLKGEN_FIELD(0x2a0,	0x1,			8),
-+	.pdn_ctrl	= CLKGEN_FIELD(0x2a0,	0x1,			8),
- 	.locked_status	= CLKGEN_FIELD(0x2a0,	0x1,			24),
- 	.ndiv		= CLKGEN_FIELD(0x2a4,	C32_NDIV_MASK,		16),
- 	.idf		= CLKGEN_FIELD(0x2a4,	C32_IDF_MASK,		0x0),
-@@ -208,6 +222,7 @@ static const struct clkgen_pll_data st_pll3200c32_cx_0 = {
- static const struct clkgen_pll_data st_pll3200c32_cx_1 = {
- 	/* 407 C0 PLL1 */
- 	.pdn_status	= CLKGEN_FIELD(0x2c8,	0x1,			8),
-+	.pdn_ctrl	= CLKGEN_FIELD(0x2c8,	0x1,			8),
- 	.locked_status	= CLKGEN_FIELD(0x2c8,	0x1,			24),
- 	.ndiv		= CLKGEN_FIELD(0x2cc,	C32_NDIV_MASK,		16),
- 	.idf		= CLKGEN_FIELD(0x2cc,	C32_IDF_MASK,		0x0),
-@@ -220,6 +235,7 @@ static const struct clkgen_pll_data st_pll3200c32_cx_1 = {
- static const struct clkgen_pll_data st_pll3200c32_407_a9 = {
- 	/* 407 A9 */
- 	.pdn_status	= CLKGEN_FIELD(0x1a8,	0x1,			0),
-+	.pdn_ctrl	= CLKGEN_FIELD(0x1a8,	0x1,			0),
- 	.locked_status	= CLKGEN_FIELD(0x87c,	0x1,			0),
- 	.ndiv		= CLKGEN_FIELD(0x1b0,	C32_NDIV_MASK,		0),
- 	.idf		= CLKGEN_FIELD(0x1a8,	C32_IDF_MASK,		25),
-@@ -271,6 +287,40 @@ static int clkgen_pll_is_enabled(struct clk_hw *hw)
- 	return !poweroff;
- }
- 
-+static int clkgen_pll_enable(struct clk_hw *hw)
-+{
-+	struct clkgen_pll *pll = to_clkgen_pll(hw);
-+	void __iomem *base =  pll->regs_base;
-+	struct clkgen_field *field = &pll->data->locked_status;
-+	int ret = 0;
-+	u32 reg;
-+
-+	if (clkgen_pll_is_enabled(hw))
-+		return 0;
-+
-+	CLKGEN_WRITE(pll, pdn_ctrl, 0);
-+
-+	ret = readl_relaxed_poll_timeout(base + field->offset, reg,
-+			!!((reg >> field->shift) & field->mask),  0, 10000);
-+
-+	if (!ret)
-+		pr_debug("%s:%s enabled\n", __clk_get_name(hw->clk), __func__);
-+
-+	return ret;
-+}
-+
-+static void clkgen_pll_disable(struct clk_hw *hw)
-+{
-+	struct clkgen_pll *pll = to_clkgen_pll(hw);
-+
-+	if (!clkgen_pll_is_enabled(hw))
-+		return;
-+
-+	CLKGEN_WRITE(pll, pdn_ctrl, 1);
-+
-+	pr_debug("%s:%s disabled\n", __clk_get_name(hw->clk), __func__);
-+}
-+
- static unsigned long recalc_stm_pll800c65(struct clk_hw *hw,
- 		unsigned long parent_rate)
- {
-@@ -372,21 +422,29 @@ static unsigned long recalc_stm_pll1200c32(struct clk_hw *hw,
- }
- 
- static const struct clk_ops st_pll1600c65_ops = {
-+	.enable		= clkgen_pll_enable,
-+	.disable	= clkgen_pll_disable,
- 	.is_enabled	= clkgen_pll_is_enabled,
- 	.recalc_rate	= recalc_stm_pll1600c65,
- };
- 
- static const struct clk_ops st_pll800c65_ops = {
-+	.enable		= clkgen_pll_enable,
-+	.disable	= clkgen_pll_disable,
- 	.is_enabled	= clkgen_pll_is_enabled,
- 	.recalc_rate	= recalc_stm_pll800c65,
- };
- 
- static const struct clk_ops stm_pll3200c32_ops = {
-+	.enable		= clkgen_pll_enable,
-+	.disable	= clkgen_pll_disable,
- 	.is_enabled	= clkgen_pll_is_enabled,
- 	.recalc_rate	= recalc_stm_pll3200c32,
- };
- 
- static const struct clk_ops st_pll1200c32_ops = {
-+	.enable		= clkgen_pll_enable,
-+	.disable	= clkgen_pll_disable,
- 	.is_enabled	= clkgen_pll_is_enabled,
- 	.recalc_rate	= recalc_stm_pll1200c32,
- };
+>  arch/arm/boot/dts/bcm5301x.dtsi | 67 ++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 60 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/bcm5301x.dtsi b/arch/arm/boot/dts/bcm5301x.dtsi
+> index 6f50f67..f717859 100644
+> --- a/arch/arm/boot/dts/bcm5301x.dtsi
+> +++ b/arch/arm/boot/dts/bcm5301x.dtsi
+> @@ -55,14 +56,14 @@
+>  			compatible = "arm,cortex-a9-global-timer";
+>  			reg = <0x0200 0x100>;
+>  			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&clk_periph>;
+> +			clocks = <&periph_clk>;
+>  		};
+>  
+>  		local-timer@0600 {
+>  			compatible = "arm,cortex-a9-twd-timer";
+>  			reg = <0x0600 0x100>;
+>  			interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&clk_periph>;
+> +			clocks = <&periph_clk>;
+>  		};
+>  
+>  		gic: interrupt-controller@1000 {
+> @@ -94,14 +95,66 @@
+>  
+>  	clocks {
+
+I'd expect this to only contain nodes that don't have a reg
+property. Clock providers that have a reg property would go into
+some soc node or bus. Perhaps that's the chipcommonA node, or
+axi?
+
+>  		#address-cells = <1>;
+> -		#size-cells = <0>;
+> +		#size-cells = <1>;
+> +		ranges;
+>  
+> -		/* As long as we do not have a real clock driver us this
+> -		 * fixed clock */
+> -		clk_periph: periph {
+> +		osc: oscillator {
+> +			#clock-cells = <0>;
+>  			compatible = "fixed-clock";
+> +			clock-frequency = <25000000>;
+> +		};
+> +
+> +		lcpll0: lcpll0@1800c100 {
+> +			#clock-cells = <1>;
+> +			compatible = "brcm,nsp-lcpll0";
+> +			reg = <0x1800c100 0x14>;
+> +			clocks = <&osc>;
+> +			clock-output-names = "lcpll0", "pcie_phy", "sdio",
+> +					     "ddr_phy";
+> +		};
+> +
+> +		genpll: genpll@1800c140 {
+> +			#clock-cells = <1>;
+> +			compatible = "brcm,nsp-genpll";
+> +			reg = <0x1800c140 0x24>;
+> +			clocks = <&osc>;
+> +			clock-output-names = "genpll", "phy", "ethernetclk",
+> +					     "usbclk", "iprocfast", "sata1",
+> +					     "sata2";
+> +		};
+> +
+> +		iprocmed: iprocmed {
+> +			#clock-cells = <0>;
+> +			compatible = "fixed-factor-clock";
+> +			clocks = <&genpll BCM_NSP_GENPLL_IPROCFAST_CLK>;
+> +			clock-div = <2>;
+> +			clock-mult = <1>;
+> +			clock-output-names = "iprocmed";
+> +		};
+> +
+> +		iprocslow: iprocslow {
+> +			#clock-cells = <0>;
+> +			compatible = "fixed-factor-clock";
+> +			clocks = <&genpll BCM_NSP_GENPLL_IPROCFAST_CLK>;
+> +			clock-div = <4>;
+> +			clock-mult = <1>;
+> +			clock-output-names = "iprocslow";
+> +		};
+> +
+> +
+> +		a9pll: arm_clk@19000000 {
+> +			#clock-cells = <0>;
+> +			compatible = "brcm,nsp-armpll";
+> +			clocks = <&osc>;
+> +			reg = <0x19000000 0x1000>;
+> +		};
+> +
+> +		periph_clk: periph_clk {
+>  			#clock-cells = <0>;
+> -			clock-frequency = <400000000>;
+> +			compatible = "fixed-factor-clock";
+> +			clocks = <&a9pll>;
+> +			clock-div = <2>;
+> +			clock-mult = <1>;
+>  		};
+>  	};
+>  
+
+We're trying to move away from putting individual clocks into DT
+like this. Is there some sort of clock controller that's at
+0x1800c000, but we're just not exposing all the clocks in there?
+See this thread for more information on why we'd like to avoid
+this sort of design:
+
+http://lkml.kernel.org/r/<20150416192014.19585.9663@quantum>
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
