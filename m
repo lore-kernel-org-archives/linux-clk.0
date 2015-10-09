@@ -1,54 +1,68 @@
-Return-Path: <dianders@google.com>
-MIME-Version: 1.0
-Sender: dianders@google.com
-In-Reply-To: <CAPDyKFr6WV-o8Td9eJVkuCgaeNjdLr2GpaC32c3026bFmOJiYQ@mail.gmail.com>
-References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
-	<CAPDyKFqeo--AiW_zHHrSqoOdFNZ3J_FgJpz2L7Z8gZnNmQZSig@mail.gmail.com>
-	<CAPDyKFr6WV-o8Td9eJVkuCgaeNjdLr2GpaC32c3026bFmOJiYQ@mail.gmail.com>
-Date: Fri, 9 Oct 2015 10:19:58 -0700
-Message-ID: <CAD=FV=XdVt5Uop5WAUv6vY3=qPksnc9HzR4C9CBWpXJKuteTEQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/8] mmc: dw_mmc-rockchip: allow tuning using the
- clk-phase api
-From: Doug Anderson <dianders@chromium.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>,
-	Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>,
+Return-Path: <Julia.Lawall@lip6.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: kernel-janitors@vger.kernel.org,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
 	linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Alexandru Stan <amstan@chromium.org>
-Content-Type: text/plain; charset=UTF-8
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jason Cooper <jason@lakedaemon.net>
+Subject: [PATCH 2/2] clk: tegra: delete unneeded of_node_put
+Date: Fri,  9 Oct 2015 19:47:41 +0200
+Message-Id: <1444412861-2580-3-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1444412861-2580-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1444412861-2580-1-git-send-email-Julia.Lawall@lip6.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+for_each_child_of_node performs an of_node_put on each iteration, so
+putting an of_node_put before a continue results in a double put.
 
-On Fri, Oct 9, 2015 at 1:10 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> Dough, Heiko,
->
-> This patchset seems to be causing a boot regression for exynos5800-peach-pi [1].
->
-> Apparently, the vmmc regulator doesn't exist for one of the controller
-> but vqmmc is. This leads to the following NULL pointer exception.
+The semantic match that finds this problem is as follows
+(http://coccinelle.lip6.fr):
 
-Ugh.  Hrm, it didn't used to be possible for vmmc to be NULL.  :-/  It
-changed in v3.16:
+// <smpl>
+@@
+expression root,e;
+local idexpression child;
+iterator name for_each_child_of_node;
+@@
 
-  4d1f52f mmc: core: Improve support for deferred regulators
+ for_each_child_of_node(root, child) {
+   ... when != of_node_get(child)
+*  of_node_put(child);
+   ...
+*  continue;
+}
+// </smpl>
 
-...and I didn't notice it (most of my development is done on 3.14).  :(
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
+---
+ drivers/clk/tegra/clk-emc.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Is it sensible to have vqmmc without vmmc.  One option would be to
-change mmc_regulator_get_supply() to not even bother trying to get
-vqmmc if vmmc is not there.
-
-Another option would be to just totally fail mmc_regulator_set_vqmmc()
-always if vmmc is an error.  ...or assume that any bogus vmmc (either
-vmmc is an error or regulator_get_voltage(vmmc) returns an error) is
-3.3V?
-
-
-I guess the safest is to assume that bogus vmmc means 3.3V...
-
-
--Doug
+diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
+index 138a94b..e1fe8f3 100644
+--- a/drivers/clk/tegra/clk-emc.c
++++ b/drivers/clk/tegra/clk-emc.c
+@@ -491,10 +491,8 @@ struct clk *tegra_clk_register_emc(void __iomem *base, struct device_node *np,
+ 	for_each_child_of_node(np, node) {
+ 		err = of_property_read_u32(node, "nvidia,ram-code",
+ 					   &node_ram_code);
+-		if (err) {
+-			of_node_put(node);
++		if (err)
+ 			continue;
+-		}
+ 
+ 		/*
+ 		 * Store timings for all ram codes as we cannot read the
