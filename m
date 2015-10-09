@@ -1,72 +1,61 @@
-Return-Path: <prvs=71030a23e=julien.grall@citrix.com>
-Message-ID: <560E5767.2040502@citrix.com>
-Date: Fri, 2 Oct 2015 11:07:35 +0100
-From: Julien Grall <julien.grall@citrix.com>
+Return-Path: <dianders@google.com>
 MIME-Version: 1.0
-To: Maxime Ripard <maxime.ripard@free-electrons.com>, Ian Campbell
-	<ian.campbell@citrix.com>
-CC: Mark Rutland <mark.rutland@arm.com>, <devicetree@vger.kernel.org>, "Pawel
- Moll" <pawel.moll@arm.com>, =?windows-1252?Q?Emilio_L=F3pez?=
-	<emilio@elopez.com.ar>, Michael Turquette <mturquette@baylibre.com>,
-	"Stephen Boyd" <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-	KumarGala <galak@codeaurora.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: "clk: sunxi: Add a simple gates driver" breaks kernel with older
- DTB
-References: <1443689231.16718.225.camel@citrix.com>
- <20151001204506.GR7104@lukather>
-In-Reply-To: <20151001204506.GR7104@lukather>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: julien.grall@citrix.com
+Sender: dianders@google.com
+In-Reply-To: <CAMAWPa9o=bQJPK+tJ38=5jngTFcOsAi=s9RcETbPN=3SsyQ8gA@mail.gmail.com>
+References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
+	<1443622064-14362-5-git-send-email-heiko@sntech.de>
+	<CAMAWPa9o=bQJPK+tJ38=5jngTFcOsAi=s9RcETbPN=3SsyQ8gA@mail.gmail.com>
+Date: Fri, 9 Oct 2015 13:12:10 -0700
+Message-ID: <CAD=FV=XfoRoj610zXvBPxAwSO7O_eYGxsAidnEnXx5mK1ANGrg@mail.gmail.com>
+Subject: Re: [PATCH v2 4/8] mmc: dw_mmc: Use mmc_regulator_set_vqmmc in start_signal_voltage_switch
+From: Doug Anderson <dianders@chromium.org>
+To: Kevin Hilman <khilman@kernel.org>
+Cc: Heiko Stuebner <heiko@sntech.de>, Ulf Hansson <ulf.hansson@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>,
+	Alexandru Stan <amstan@chromium.org>, linux-mmc <linux-mmc@vger.kernel.org>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tyler Baker <tyler.baker@linaro.org>,
+	Olof Johansson <olof@lixom.net>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Maxime,
+Kevin,
 
-On 01/10/15 21:45, Maxime Ripard wrote:
-> On Thu, Oct 01, 2015 at 09:47:11AM +0100, Ian Campbell wrote:
->> Booting a recent kernel with the DTB supplied with Debian Jessie (3.16
->> based) breaks on Cubietruck because that DTB lacks the clock-indices nodes
->> which the new driver from the commit below adds (replacing the hardcoding
->> which used to be in clk-sunxi.c).
+On Fri, Oct 9, 2015 at 12:06 PM, Kevin Hilman <khilman@kernel.org> wrote:
+> On Wed, Sep 30, 2015 at 4:07 PM, Heiko Stuebner <heiko@sntech.de> wrote:
+>> From: Douglas Anderson <dianders@chromium.org>
 >>
->> It is panicing in drivers/clocksource/timer-sun5i.c with:
+>> We've introduced a new helper in the MMC core:
+>> mmc_regulator_set_vqmmc().  Let's use this in dw_mmc.  Using this new
+>> helper has some advantages:
 >>
->> [    0.015413] clocksource: timer: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 79635851949 ns
->> [    0.025049] Kernel panic - not syncing: Can't get timer clock
->> [    0.030794] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.3.0-rc2-arm-native+ #6
->> [    0.038002] Hardware name: Allwinner sun7i (A20) Family
->> [    0.043253] [<c0219794>] (unwind_backtrace) from [<c0214e44>] (show_stack+0x10/0x14)
->> [    0.050992] [<c0214e44>] (show_stack) from [<c048159c>] (dump_stack+0x88/0x98)
->> [    0.058213] [<c048159c>] (dump_stack) from [<c02caa98>] (panic+0xa4/0x22c)
->> [    0.065090] [<c02caa98>] (panic) from [<c0d7c518>] (sun5i_timer_init+0x80/0x384)
->> [    0.072482] [<c0d7c518>] (sun5i_timer_init) from [<c0d7aad0>] (clocksource_of_init+0x4c/0x8c)
->> [    0.081001] [<c0d7aad0>] (clocksource_of_init) from [<c0d39b48>] (start_kernel+0x28c/0x3c4)
->> [    0.089343] [<c0d39b48>] (start_kernel) from [<4020807c>] (0x4020807c)
->> [    0.095866] ---[ end Kernel panic - not syncing: Can't get timer clock
+>> 1. We get the mmc_regulator_set_vqmmc() behavior of trying to match
+>>    VQMMC and VMMC when the signal voltage is 3.3V.  This ensures max
+>>    compatibility.
 >>
->> Reverting ee38b2698ae2 fixes this specific issue for me (it boots further,
->> but there seems to be other problems later when earlycon hands over to
->> proper console, which I've not yet looked into).
+>> 2. We get rid of a few more warnings when probing unsupported
+>>    voltages.
 >>
->> Is this considered acceptable linkage between the kernel and the dtbs?
+>> 3. We get rid of some non-dw_mmc specific code in dw_mmc.
 >>
->> I suspect that even if anyone does care this is going to be an uphill
->> struggle for that minority so I'm going to adjust our test infrastructure
->> to pickup the dtbs from the kernel it is trying to test rather then reusing
->> the one from the OS install.
-> 
-> It's never been something we supported (or even claim to support), so
-> it's actually surprising that it's the only commit that need to be
-> reverted, but yeah, you should keep your DTB in sync.
+>> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+>> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+>
+> kernelci.org found a new failure in linux-next on
+> exynos5800-peach-pi[1] and it was bisected down to this patch, which
+> has hit linux-next in the form of commit fba2e23128d0 (mmc: dw_mmc:
+> Use mmc_regulator_set_vqmmc in start_signal_voltage_switch).  Based on
+> a quick glance at the boot log[2], it looks to be a bad pointer
+> dereference in regulator_get_voltage().
+>
+> I confirmed that reverting this patch on top of next-20151009 gets my
+> peach-pi booting again.
+>
+> Note that the boot failure is only on exynos_defconfig, not multi_v7_defconfig.
 
-I would have though the bindings are stable, i.e the compatibility with
-old DT would have been kept in newer kernel.
+Right.  See <http://www.spinics.net/lists/arm-kernel/msg450802.html>
+for discussion.  Ulf responded to the cover letter rather than the
+individual patch.
 
-So is it something specific to cubietruck? If no, that's very
-unfortunate because it means that you can't re-use the same DT across
-multiple OS and the DT provided by the firmware (if it's built-in).
-
-Regards,
-
--- 
-Julien Grall
+-Doug
