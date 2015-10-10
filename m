@@ -1,124 +1,67 @@
-Return-Path: <linux+mturquette=baylibre.com@arm.linux.org.uk>
-Date: Wed, 21 Oct 2015 18:20:42 +0100
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: frowand.list@gmail.com, Geert Uytterhoeven <geert@linux-m68k.org>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh+dt@kernel.org>,
+Return-Path: <zywang33@gmail.com>
+Return-Path: <zywang33@gmail.com>
+From: Chris Zhong <zyw@rock-chips.com>
+To: heiko@sntech.de,
+	linux-rockchip@lists.infradead.org
+Cc: Chris Zhong <zyw@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	Michael Turquette <mturquette@baylibre.com>,
+	Jeff Chen <cym@rock-chips.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>,
-	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>, dmaengine@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Linux I2C <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	Linux PWM List <linux-pwm@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	Linux Fbdev development list <linux-fbdev@vger.kernel.org>
-Subject: Re: Alternative approach to solve the deferred probe
-Message-ID: <20151021172042.GJ32532@n2100.arm.linux.org.uk>
-References: <CAAObsKDS_+AZ26P_fHc6pvAYrQotsuoO0DEGQUWC514t3DD_jQ@mail.gmail.com>
- <20151019143045.GE32532@n2100.arm.linux.org.uk>
- <CAAObsKDWM6A98tdKHqi4fe5DBf0BmB0JeghcZDWan_PYbyshag@mail.gmail.com>
- <20151019153548.GM32532@n2100.arm.linux.org.uk>
- <CAMuHMdVv=ieYM-Nehp0qV8CEggHEeJ22j-6i_N09rRA_U=2ePw@mail.gmail.com>
- <20151020154656.GY32532@n2100.arm.linux.org.uk>
- <56270D5B.5010902@gmail.com>
- <20151021081847.GB32532@n2100.arm.linux.org.uk>
- <5627B0F7.7010600@gmail.com>
- <5627C381.60602@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5627C381.60602@ti.com>
-Sender: Russell King - ARM Linux <linux@arm.linux.org.uk>
+	linux-kernel@vger.kernel.org,
+	Doug Anderson <dianders@chromium.org>,
+	Kumar Gala <galak@codeaurora.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Sonny Rao <sonnyrao@chromium.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Huang Lin <hl@rock-chips.com>,
+	Roger Chen <roger.chen@rock-chips.com>,
+	Alexandru M Stan <amstan@chromium.org>
+Subject: [PATCH 01/10] clk: rockchip: Add sclk_mipidsi_24m for mipi dsi
+Date: Sat, 10 Oct 2015 17:55:21 +0800
+Message-Id: <1444470930-17150-2-git-send-email-zyw@rock-chips.com>
+In-Reply-To: <1444470930-17150-1-git-send-email-zyw@rock-chips.com>
+References: <1444470930-17150-1-git-send-email-zyw@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Oct 21, 2015 at 07:55:29PM +0300, Grygorii Strashko wrote:
-> On 10/21/2015 06:36 PM, Frank Rowand wrote:
-> > The above is currently the last point for probe to succeed or defer
-> > (until possibly, as you mentioned, module loading resolves the defer).
-> > If a probe defers above, it will defer again below.  The set of defers
-> > should be exactly the same above and below.
-> > 
-> 
-> Unfortunately this is not "the last point for probe to succeed or defer".
+sclk_mipidsi_24m is the gating of mipi dsi phy.
 
-Of course it isn't.  Being pedantic, there's actually no such thing,
-because the point that the kernel as finished booting can never actually
-be determined with things like modules being present.  That's something
-I've acknowledged from the start of this.
+Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+---
 
-> There are still a bunch of drivers in Kernel which will be probed at late_initcall() level.
-> (like ./drivers/net/ethernet/ti/cpsw.c => late_initcall(cpsw_init);
-> Yes - they probably need to be updated to use module_init(), but that's what
-> we have now). Those drivers will re-trigger deferred device probing if their
-> probe succeeded.
+ drivers/clk/rockchip/clk-rk3288.c      | 2 +-
+ include/dt-bindings/clock/rk3288-cru.h | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-Maybe this particular late_initcall() which triggers off the deferred
-probing should be moved to its own really_late_initcall() which happens
-as the very last thing - I think this is intended to run after everything
-else has had a chance to probe once.
-
-> As result, it is impossible to say when will it happen the 
-> "final round of deferred device probing" :( and final list of drivers
-> which was "deferred forever" will be know only when kernel exits to
-> User space  ("deferred forever" - before loading modules).
-> 
-> May be, we also can consider adding debug_fs entry which can be used to
-> display actual state of deferred_probe_pending_list? 
-
-There are complaints in this thread about the existing deferred probing
-implementation being hard to debug - where it's known that a device
-has deferred, but it's not known why that happened.
-
-That would be solved by my proposal, as this final round of probing
-before entering userspace after _all_ normal device probes have been
-attempted once and then we've tried to satisfy the deferred probe
-(okay, that's what it's _supposed_ to be - and as it takes three lines
-to write it, you'll excuse me if I just use the abbreviated "final
-round of deferred probe" which is much shorter - but remember that
-the long version is what I actually mean) would produce a list of
-not only the devices that failed to probe, but also the cause of the
-deferred probes.
-
-My proposal would ensure that subsystems are happier to add these
-prints, because in the normal scenario where we have deferred probing,
-we're not littering the console log with lots of useless failure
-messages which make people stop and think "now did device X probe?"
-It also means scripts in our boot farms can more effectively analyse
-the log and determine whether the boot was actually successful and
-contained no errors.
-
-Merely printing the list of devices which have been deferred is next
-to useless.  The next question will always be "why did device X defer?"
-and if that can't be answered, it means people having to spend a long
-time adding lots of printks to the kernel at lots of -EPROBE_DEFER
-returning sites or in the relevant drivers, tracing through the code
-back towards the -EPROBE_DEFER sites to try and track it down.
-
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 9040878..c7d7ebf 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -709,7 +709,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+ 	GATE(SCLK_LCDC_PWM1, "sclk_lcdc_pwm1", "xin24m", 0, RK3288_CLKGATE_CON(13), 11, GFLAGS),
+ 	GATE(SCLK_PVTM_CORE, "sclk_pvtm_core", "xin24m", 0, RK3288_CLKGATE_CON(5), 9, GFLAGS),
+ 	GATE(SCLK_PVTM_GPU, "sclk_pvtm_gpu", "xin24m", 0, RK3288_CLKGATE_CON(5), 10, GFLAGS),
+-	GATE(0, "sclk_mipidsi_24m", "xin24m", 0, RK3288_CLKGATE_CON(5), 15, GFLAGS),
++	GATE(SCLK_MIPI_24M, "sclk_mipidsi_24m", "xin24m", 0, RK3288_CLKGATE_CON(5), 15, GFLAGS),
+ 
+ 	/* sclk_gpu gates */
+ 	GATE(ACLK_GPU, "aclk_gpu", "sclk_gpu", 0, RK3288_CLKGATE_CON(18), 0, GFLAGS),
+diff --git a/include/dt-bindings/clock/rk3288-cru.h b/include/dt-bindings/clock/rk3288-cru.h
+index c719aac..b07cdd3 100644
+--- a/include/dt-bindings/clock/rk3288-cru.h
++++ b/include/dt-bindings/clock/rk3288-cru.h
+@@ -86,6 +86,7 @@
+ #define SCLK_USBPHY480M_SRC	122
+ #define SCLK_PVTM_CORE		123
+ #define SCLK_PVTM_GPU		124
++#define SCLK_MIPI_24M		125
+ 
+ #define SCLK_MAC		151
+ #define SCLK_MACREF_OUT		152
 -- 
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+2.6.1
