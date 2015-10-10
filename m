@@ -1,108 +1,35 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <shawnguo@kernel.org>
+Date: Sat, 10 Oct 2015 09:11:55 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Shengjiu Wang <shengjiu.wang@freescale.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+	linux@arm.linux.org.uk, pawel.moll@arm.com,
+	ijc+devicetree@hellion.org.uk, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
+	robh+dt@kernel.org, kernel@pengutronix.de, galak@codeaurora.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH V2 1/2] clk: imx6: Add SPDIF_GCLK clock in clock tree
+Message-ID: <20151010011155.GH22673@tiger>
+References: <cover.1442310569.git.shengjiu.wang@freescale.com>
+ <113f1cecf1d83c6b96fd23ab9d7a73d1923e0d21.1442310569.git.shengjiu.wang@freescale.com>
+ <20150923153340.GK3529@tiger>
+ <20150924054321.GA32196@shlinux2>
+ <20150924115737.GM3529@tiger>
+ <20151009091528.GA25804@shlinux2>
 MIME-Version: 1.0
-To: Geert Uytterhoeven <geert@linux-m68k.org>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <CAMuHMdUT=fZKCOCdkn+=grZ0wYATghQhmbX-Y6WJ9+ViZ0cidA@mail.gmail.com>
-Cc: "Geert Uytterhoeven" <geert+renesas@glider.be>,
- "Stephen Boyd" <sboyd@codeaurora.org>,
- "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
- "Magnus Damm" <damm+renesas@opensource.se>,
- "Simon Horman" <horms+renesas@verge.net.au>,
- "Rob Herring" <robh+dt@kernel.org>, "Pawel Moll" <pawel.moll@arm.com>,
- "Mark Rutland" <mark.rutland@arm.com>,
- "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
- "Kumar Gala" <galak@codeaurora.org>, "linux-clk" <linux-clk@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "Linux-sh list" <linux-sh@vger.kernel.org>
-References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be>
- <1444999760-15750-6-git-send-email-geert+renesas@glider.be>
- <20151020122448.20687.11926@quantum>
- <CAMuHMdUT=fZKCOCdkn+=grZ0wYATghQhmbX-Y6WJ9+ViZ0cidA@mail.gmail.com>
-Message-ID: <20151020130004.20687.91058@quantum>
-Subject: Re: [PATCH v4 5/5] [RFC] clk: shmobile: r8a7795: Add new CPG/MSSR driver
-Date: Tue, 20 Oct 2015 06:00:04 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20151009091528.GA25804@shlinux2>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Geert Uytterhoeven (2015-10-20 05:31:12)
-> Hi Mike,
-> =
+On Fri, Oct 09, 2015 at 05:15:30PM +0800, Shengjiu Wang wrote:
+> SPDIF_GCLK is also spdif's clock, it use a same enable bit with SPDIF_ROOT_CLK,
+> We didn't separate them in clock tree before.
 
-> On Tue, Oct 20, 2015 at 2:24 PM, Michael Turquette
-> <mturquette@baylibre.com> wrote:
-> > Quoting Geert Uytterhoeven (2015-10-16 05:49:20)
-> >> +static void __init r8a7795_cpg_mssr_init(struct device_node *np)
-> >> +{
-> >> +       struct regmap *regmap;
-> >> +       u32 reg, cpg_mode;
-> >> +
-> >> +       regmap =3D syscon_regmap_lookup_by_phandle(np, "renesas,modemr=
-");
-> >> +       if (IS_ERR(regmap) ||
-> >> +           of_property_read_u32_index(np, "renesas,modemr", 1, &reg) =
-||
-> >> +           regmap_read(regmap, reg, &cpg_mode)) {
-> >> +               pr_err("%s: failed to parse renesas,modemr\n", np->ful=
-l_name);
-> >> +               return;
-> >> +       }
-> >> +
-> >> +       cpg_pll_config =3D &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_m=
-ode)];
-> >> +       if (!cpg_pll_config->extal_div) {
-> >> +               pr_err("%s: Prohibited setting (cpg_mode=3D0x%x)\n",
-> >> +                      __func__, cpg_mode);
-> >> +               return;
-> >> +       }
-> >> +
-> >> +       cpg_mssr_probe(np, &r8a7795_cpg_mssr_info);
-> >> +}
-> >> +CLK_OF_DECLARE(r8a7795_cpg_mssr, "renesas,r8a7795-cpg-mssr",
-> >> +              r8a7795_cpg_mssr_init);
-> >
-> > Is CLK_OF_DECLARE needed? Is it possible to make this a real
-> > platform_driver =C3=A0 la drivers/clk/qcom/gcc-apq8084.c?
-> =
+Is it the clock described as "Global clock" in Reference Manual, SPDIF
+chapter?  If that's the case, you are just adding a missing SPDIF clock
+rather than fixing a low power mode issue, and I will be fine.  But
+still you should reword the commit log to make it clear, that the patch
+is to correct a SPDIF clock setting issue, which is just discovered by
+low power mode support.
 
-> I tried making it a real platform driver, but it failed: devices that are
-> part of the Clock Domain failed to get their clock (error -2, IIRC, which=
- is
-> -ENOENT), and thus couldn't be instantiated.
-> I didn't look deeper at that time.
-> =
-
-> [... reading code ...]
-> =
-
-> Aha, this may be caused by __of_clk_get_from_provider() returning
-> hardcoded -ENOENT instead of propagating the error returned by
-> __clk_create_clk()?
-
-Well the only other error thrown by __clk_create_clk is -ENOMEM, so I'm
-not sure how that would help things.
-
-The bindings should go in for 4.4, but if the driver is slated for 4.5
-then can you investigate this some more? Stephen and I are on a mission
-to have _real_ clk drivers.
-
-Regards,
-Mike
-
-> =
-
-> Gr{oetje,eeting}s,
-> =
-
->                         Geert
-> =
-
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
-> =
-
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
+Shawn
