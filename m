@@ -1,185 +1,74 @@
-Return-Path: <sebastian.hesselbarth@gmail.com>
-Return-Path: <sebastian.hesselbarth@gmail.com>
-Message-ID: <56201D82.6080106@gmail.com>
-Date: Thu, 15 Oct 2015 23:41:22 +0200
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-To: Jisheng Zhang <jszhang@marvell.com>, ulf.hansson@linaro.org,
- robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
- ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
- mturquette@baylibre.com, sboyd@codeaurora.org
-CC: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/5] mmc: sdhci-pxav3: fix optional clock name
-References: <1444628796-5484-1-git-send-email-jszhang@marvell.com> <1444628796-5484-2-git-send-email-jszhang@marvell.com>
-In-Reply-To: <1444628796-5484-2-git-send-email-jszhang@marvell.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 9 Oct 2015 17:14:08 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jon Mason <jonmason@broadcom.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH 04/10] ARM: dts: enable clock support for BCM5301X
+Message-ID: <20151010001408.GX26883@codeaurora.org>
+References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
+ <1443826665-17570-5-git-send-email-jonmason@broadcom.com>
+ <20151009073540.GO26883@codeaurora.org>
+ <20151009182728.GD17527@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20151009182728.GD17527@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12.10.2015 07:46, Jisheng Zhang wrote:
-> Commit 8afdc9cca27f ("mmc: sdhci-pxav3: Get optional core clock") adds
-> additional optional clock support, but the clock names  isn't correct.
-> The current "io" clock is really the PXAv3 SDHCI IP's "core" clock
-> which is manadatory. The current "core" clock is really the IP's "axi"
-> clock which is optional.
->
-> Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
-> ---
->   .../devicetree/bindings/mmc/sdhci-pxa.txt          |  8 ++---
->   arch/arm/boot/dts/berlin2.dtsi                     |  6 ++--
->   arch/arm/boot/dts/berlin2cd.dtsi                   |  2 +-
->   arch/arm/boot/dts/berlin2q.dtsi                    |  2 +-
->   drivers/mmc/host/sdhci-pxav3.c                     | 40 +++++++++++-----------
->   5 files changed, 29 insertions(+), 29 deletions(-)
+On 10/09, Jon Mason wrote:
+> On Fri, Oct 09, 2015 at 12:35:40AM -0700, Stephen Boyd wrote:
+> > On 10/02, Jon Mason wrote:
+> > 
+> > >  arch/arm/boot/dts/bcm5301x.dtsi | 67 ++++++++++++++++++++++++++++++++++++-----
+> > >  1 file changed, 60 insertions(+), 7 deletions(-)
+> > > 
+> > > diff --git a/arch/arm/boot/dts/bcm5301x.dtsi b/arch/arm/boot/dts/bcm5301x.dtsi
+> > > index 6f50f67..f717859 100644
+> > > --- a/arch/arm/boot/dts/bcm5301x.dtsi
+> > > +++ b/arch/arm/boot/dts/bcm5301x.dtsi
+> > > @@ -55,14 +56,14 @@
+> > >  			compatible = "arm,cortex-a9-global-timer";
+> > >  			reg = <0x0200 0x100>;
+> > >  			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
+> > > -			clocks = <&clk_periph>;
+> > > +			clocks = <&periph_clk>;
+> > >  		};
+> > >  
+> > >  		local-timer@0600 {
+> > >  			compatible = "arm,cortex-a9-twd-timer";
+> > >  			reg = <0x0600 0x100>;
+> > >  			interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>;
+> > > -			clocks = <&clk_periph>;
+> > > +			clocks = <&periph_clk>;
+> > >  		};
+> > >  
+> > >  		gic: interrupt-controller@1000 {
+> > > @@ -94,14 +95,66 @@
+> > >  
+> > >  	clocks {
+> > 
+> > I'd expect this to only contain nodes that don't have a reg
+> > property. Clock providers that have a reg property would go into
+> > some soc node or bus. Perhaps that's the chipcommonA node, or
+> > axi?
+> 
+> This might get a little ugly, as some of the clocks are in the
+> 0x18000000 and others are in 0x19000000.  I would think it better to
+> have them all in one place (as that is more readable).  Do you preferr
+> I split the pieces up into their respective DT nodes?
 
+Are there two clock controllers? Sorry I don't understand the
+architecture here very well. Nodes with reg properties in the
+same range should be near each other. We don't group all i2c
+controllers into the same node because they're logically i2c
+controllers. We express the hierarchy of devices with container
+nodes. The clocks node is only useful for board-level clocks, not
+things that are inside the SoC.
 
-Jisheng,
-
-Please split the DT changes from the driver changes.
-
-> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-pxa.txt b/Documentation/devicetree/bindings/mmc/sdhci-pxa.txt
-> index 3d1b449..25d5ba8 100644
-> --- a/Documentation/devicetree/bindings/mmc/sdhci-pxa.txt
-> +++ b/Documentation/devicetree/bindings/mmc/sdhci-pxa.txt
-> @@ -17,9 +17,9 @@ Required properties:
->   - reg names: should be "sdhci", "mbus", "conf-sdio3". only mandatory
->     for "marvell,armada-380-sdhci"
->   - clocks: Array of clocks required for SDHCI; requires at least one for
-> -    I/O clock.
-> +    core clock.
->   - clock-names: Array of names corresponding to clocks property; shall be
-> -    "io" for I/O clock and "core" for optional core clock.
-> +    "core" for core clock and "axi" for optional axi clock.
-
-s/axi/bus/ ?
-
->   Optional properties:
->   - mrvl,clk-delay-cycles: Specify a number of cycles to delay for tuning.
-> @@ -32,7 +32,7 @@ sdhci@d4280800 {
->   	bus-width = <8>;
->   	interrupts = <27>;
->   	clocks = <&chip CLKID_SDIO1XIN>, <&chip CLKID_SDIO1>;
-> -	clock-names = "io", "core";
-> +	clock-names = "core", "axi";
-
-This will break backward compatibility, right?
-
->   	non-removable;
->   	mrvl,clk-delay-cycles = <31>;
->   };
-> @@ -45,6 +45,6 @@ sdhci@d8000 {
->   		<0x18454 0x4>;
->   	interrupts = <0 25 0x4>;
->   	clocks = <&gateclk 17>;
-> -	clock-names = "io";
-> +	clock-names = "core";
->   	mrvl,clk-delay-cycles = <0x1F>;
->   };
-[...]
-> diff --git a/drivers/mmc/host/sdhci-pxav3.c b/drivers/mmc/host/sdhci-pxav3.c
-> index f5edf9d..cec95f1 100644
-> --- a/drivers/mmc/host/sdhci-pxav3.c
-> +++ b/drivers/mmc/host/sdhci-pxav3.c
-> @@ -59,8 +59,8 @@
->   #define SDCE_MISC_INT_EN	(1<<1)
->
->   struct sdhci_pxa {
-> +	struct clk *clk_axi;
-
-s/clk_axi/clk_bus/g
-
->   	struct clk *clk_core;
-> -	struct clk *clk_io;
->   	u8	power_mode;
->   	void __iomem *sdio3_conf_reg;
->   };
-> @@ -381,20 +381,20 @@ static int sdhci_pxav3_probe(struct platform_device *pdev)
->   	pltfm_host = sdhci_priv(host);
->   	pltfm_host->priv = pxa;
->
-> -	pxa->clk_io = devm_clk_get(dev, "io");
-> -	if (IS_ERR(pxa->clk_io))
-> -		pxa->clk_io = devm_clk_get(dev, NULL);
-> -	if (IS_ERR(pxa->clk_io)) {
-> -		dev_err(dev, "failed to get io clock\n");
-> -		ret = PTR_ERR(pxa->clk_io);
-> +	pxa->clk_core = devm_clk_get(dev, "core");
-
-To maintain backward compatibility, we should still
-devm_clk_get(dev, "io") here - or even better, first
-probe for "io" to catch old binding semantics including
-old "core"/"bus" misnaming.
-
-If we detected old semantics, print a warning that
-firmware should be updated.
-
-Sebastian
-
-> +	if (IS_ERR(pxa->clk_core))
-> +		pxa->clk_core = devm_clk_get(dev, NULL);
-> +	if (IS_ERR(pxa->clk_core)) {
-> +		dev_err(dev, "failed to get core clock\n");
-> +		ret = PTR_ERR(pxa->clk_core);
->   		goto err_clk_get;
->   	}
-> -	pltfm_host->clk = pxa->clk_io;
-> -	clk_prepare_enable(pxa->clk_io);
-> +	pltfm_host->clk = pxa->clk_core;
-> +	clk_prepare_enable(pxa->clk_core);
->
-> -	pxa->clk_core = devm_clk_get(dev, "core");
-> -	if (!IS_ERR(pxa->clk_core))
-> -		clk_prepare_enable(pxa->clk_core);
-> +	pxa->clk_axi = devm_clk_get(dev, "axi");
-> +	if (!IS_ERR(pxa->clk_axi))
-> +		clk_prepare_enable(pxa->clk_axi);
->
->   	/* enable 1/8V DDR capable */
->   	host->mmc->caps |= MMC_CAP_1_8V_DDR;
-> @@ -475,8 +475,8 @@ err_add_host:
->   err_of_parse:
->   err_cd_req:
->   err_mbus_win:
-> -	clk_disable_unprepare(pxa->clk_io);
->   	clk_disable_unprepare(pxa->clk_core);
-> +	clk_disable_unprepare(pxa->clk_axi);
->   err_clk_get:
->   	sdhci_pltfm_free(pdev);
->   	return ret;
-> @@ -494,8 +494,8 @@ static int sdhci_pxav3_remove(struct platform_device *pdev)
->
->   	sdhci_remove_host(host, 1);
->
-> -	clk_disable_unprepare(pxa->clk_io);
->   	clk_disable_unprepare(pxa->clk_core);
-> +	clk_disable_unprepare(pxa->clk_axi);
->
->   	sdhci_pltfm_free(pdev);
->
-> @@ -542,9 +542,9 @@ static int sdhci_pxav3_runtime_suspend(struct device *dev)
->   	if (ret)
->   		return ret;
->
-> -	clk_disable_unprepare(pxa->clk_io);
-> -	if (!IS_ERR(pxa->clk_core))
-> -		clk_disable_unprepare(pxa->clk_core);
-> +	clk_disable_unprepare(pxa->clk_core);
-> +	if (!IS_ERR(pxa->clk_axi))
-> +		clk_disable_unprepare(pxa->clk_axi);
->
->   	return 0;
->   }
-> @@ -555,9 +555,9 @@ static int sdhci_pxav3_runtime_resume(struct device *dev)
->   	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->   	struct sdhci_pxa *pxa = pltfm_host->priv;
->
-> -	clk_prepare_enable(pxa->clk_io);
-> -	if (!IS_ERR(pxa->clk_core))
-> -		clk_prepare_enable(pxa->clk_core);
-> +	clk_prepare_enable(pxa->clk_core);
-> +	if (!IS_ERR(pxa->clk_axi))
-> +		clk_prepare_enable(pxa->clk_axi);
->
->   	return sdhci_runtime_resume_host(host);
->   }
->
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
