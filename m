@@ -1,49 +1,99 @@
-Return-Path: <Haibo.Chen@freescale.com>
-From: Haibo Chen <haibo.chen@freescale.com>
-To: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<shawnguo@kernel.org>, <kernel@pengutronix.de>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <jic23@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-iio@vger.kernel.org>
-Subject: [PATCH 5/5] ARM: dts: imx7d-sdb: add ADC support
-Date: Thu, 8 Oct 2015 18:59:08 +0800
-Message-ID: <1444301948-21721-5-git-send-email-haibo.chen@freescale.com>
-In-Reply-To: <1444301948-21721-1-git-send-email-haibo.chen@freescale.com>
-References: <1444301948-21721-1-git-send-email-haibo.chen@freescale.com>
-Return-Path: haibo.chen@freescale.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <zywang33@gmail.com>
+Return-Path: <zywang33@gmail.com>
+From: Chris Zhong <zyw@rock-chips.com>
+To: heiko@sntech.de,
+	linux-rockchip@lists.infradead.org
+Cc: Chris Zhong <zyw@rock-chips.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	dri-devel@lists.freedesktop.org,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Rob Herring <robh+dt@kernel.org>,
+	David Airlie <airlied@linux.ie>,
+	Jeff Chen <cym@rock-chips.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	linux-clk@vger.kernel.org,
+	Alexandru M Stan <amstan@chromium.org>,
+	Sonny Rao <sonnyrao@chromium.org>,
+	Huang Lin <hl@rock-chips.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vincent Palatin <vpalatin@chromium.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Ajay Kumar <ajaykumar.rs@samsung.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Liu Ying <Ying.liu@freescale.com>,
+	Andrew Bresticker <abrestic@chromium.org>,
+	Doug Anderson <dianders@chromium.org>,
+	linux-kernel@vger.kernel.org,
+	Mark Yao <mark.yao@rock-chips.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sean Paul <seanpaul@chromium.org>,
+	Roger Chen <roger.chen@rock-chips.com>
+Subject: [PATCH 00/10] Add mipi dsi support for rk3288
+Date: Sat, 10 Oct 2015 17:55:20 +0800
+Message-Id: <1444470930-17150-1-git-send-email-zyw@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add ADC support for imx7d-sdb board.
+The rk3288 MIPI DSI is a Synopsys DesignWare MIPI DSI host controller
+IP. This series adds support for a Synopsys DesignWare MIPI DSI host
+controller DRM bridge driver and a rockchip MIPI DSI specific DRM
+driver.
 
-Signed-off-by: Haibo Chen <haibo.chen@freescale.com>
----
- arch/arm/boot/dts/imx7d-sdb.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+This series also includes a DRM panel driver for BOE TV080WUM-NL0 panel.
+This panel only use the MIPI DSI video mode.
 
-diff --git a/arch/arm/boot/dts/imx7d-sdb.dts b/arch/arm/boot/dts/imx7d-sdb.dts
-index 432aaf5..b2c4536 100644
---- a/arch/arm/boot/dts/imx7d-sdb.dts
-+++ b/arch/arm/boot/dts/imx7d-sdb.dts
-@@ -97,6 +97,16 @@
- 	};
- };
- 
-+&adc1 {
-+	vref-supply = <&reg_vref_1v8>;
-+	status = "okay";
-+};
-+
-+&adc2 {
-+	vref-supply = <&reg_vref_1v8>;
-+	status = "okay";
-+};
-+
- &cpu0 {
- 	arm-supply = <&sw1a_reg>;
- };
+The MIPI DSI feature is tested on rk3288 evb board, backport them to
+chrome os kernel v3.14, and it can display normally.
+
+This patchset is base on the patchset from Ying.liu@freescale.com.
+<http://www.spinics.net/lists/dri-devel/msg77181.html>
+
+
+
+Chris Zhong (8):
+  clk: rockchip: Add sclk_mipidsi_24m for mipi dsi
+  drm/rockchip: return a true clock rate to adjusted_mode
+  drm/bridge: Add Synopsys DesignWare MIPI DSI host controller driver
+  drm: rockchip: Support Synopsys DesignWare MIPI DSI host controller
+  Documentation: dt-bindings: Add bindings for rk3288 DW MIPI DSI driver
+  ARM: dts: rockchip: add rk3288 mipi_dsi nodes
+  drm/panel: simple: Add support for BOE TV080WUM-NL0
+  ARM: dts: rockchip: add support mipi panel tv080wum-nl0 for rk3288-evb
+
+Liu Ying (2):
+  drm/dsi: Add a helper to get bits per pixel of MIPI DSI pixel format
+  Documentation: dt-bindings: Add bindings for Synopsys DW MIPI DSI DRM
+    bridge driver
+
+ .../devicetree/bindings/drm/bridge/dw_mipi_dsi.txt |   76 ++
+ .../bindings/video/dw_mipi_dsi_rockchip.txt        |   56 ++
+ arch/arm/boot/dts/rk3288-evb.dtsi                  |   20 +-
+ arch/arm/boot/dts/rk3288.dtsi                      |   39 +
+ drivers/clk/rockchip/clk-rk3288.c                  |    2 +-
+ drivers/gpu/drm/bridge/Kconfig                     |   10 +
+ drivers/gpu/drm/bridge/Makefile                    |    1 +
+ drivers/gpu/drm/bridge/dw_mipi_dsi.c               | 1055 ++++++++++++++++++++
+ drivers/gpu/drm/panel/panel-simple.c               |   33 +
+ drivers/gpu/drm/rockchip/Kconfig                   |   10 +
+ drivers/gpu/drm/rockchip/Makefile                  |    1 +
+ drivers/gpu/drm/rockchip/dw_mipi_dsi_rockchip.c    |  249 +++++
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c        |    9 +
+ include/drm/bridge/dw_mipi_dsi.h                   |   27 +
+ include/drm/drm_mipi_dsi.h                         |   14 +
+ include/dt-bindings/clock/rk3288-cru.h             |    1 +
+ 16 files changed, 1601 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/drm/bridge/dw_mipi_dsi.txt
+ create mode 100644 Documentation/devicetree/bindings/video/dw_mipi_dsi_rockchip.txt
+ create mode 100644 drivers/gpu/drm/bridge/dw_mipi_dsi.c
+ create mode 100644 drivers/gpu/drm/rockchip/dw_mipi_dsi_rockchip.c
+ create mode 100644 include/drm/bridge/dw_mipi_dsi.h
+
 -- 
-1.9.1
+2.6.1
