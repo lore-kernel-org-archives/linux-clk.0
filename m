@@ -1,90 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:36085 "EHLO
-	mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750988AbbJBDAn (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 1 Oct 2015 23:00:43 -0400
-Message-ID: <1443754838.1714.94.camel@mtksdaap41>
-Subject: Re: [PATCH] soc: mediatek: Fix random hang up issue while kernel
- init
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Daniel Kurtz <djkurtz@chromium.org>
-CC: Lucas Stach <l.stach@pengutronix.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>,
-	srv_heupstream <srv_heupstream@mediatek.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	Mike Turquette <mturquette@linaro.org>,
-	"Stephen Boyd" <sboyd@codeaurora.org>, <linux-pm@vger.kernel.org>,
-	<rjw@sisk.pl>
-Date: Fri, 2 Oct 2015 11:00:38 +0800
-In-Reply-To: <CAGS+omCm2pKczooGkMf75HjQL=oF7Ufo6DsRCvvikt0QA1jx-g@mail.gmail.com>
-References: <1443162717-64831-1-git-send-email-jamesjj.liao@mediatek.com>
-	 <1443169573.3135.9.camel@pengutronix.de> <5607D224.4050801@gmail.com>
-	 <CAGS+omCXMRf4bxWancSJSq2a1pc38TYYY46Os9ASWWCRp95_ig@mail.gmail.com>
-	 <1443604022.3185.17.camel@pengutronix.de>
-	 <1443683750.1714.25.camel@mtksdaap41>
-	 <CAGS+omCpWqtKPKoyjFb=q4BxmfUGGsfvQGEZas8g8VLZKPtKbQ@mail.gmail.com>
-	 <1443691590.1714.73.camel@mtksdaap41>
-	 <CAGS+omCm2pKczooGkMf75HjQL=oF7Ufo6DsRCvvikt0QA1jx-g@mail.gmail.com>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, sjoerd.simons@collabora.co.uk
+Subject: Re: [PATCH 1/3] clk: add flag for clocks that need to be enabled on rate changes
+Date: Sun, 11 Oct 2015 12:41:09 +0200
+Message-ID: <13378907.1JCOSf8QGs@diego>
+In-Reply-To: <20151008215840.GJ26883@codeaurora.org>
+References: <1929669.AsgMSusdJb@phil> <3137165.kmu68gRS44@diego> <20151008215840.GJ26883@codeaurora.org>
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Daniel,
+Hi Stephen,
 
-On Thu, 2015-10-01 at 18:08 +0800, Daniel Kurtz wrote:
-> I see two cases where "a power domain is a consumer of a clock":
->   (a) the clock is needed to access the power domain control
-> registers.  The clock must actually be in another power domain, since
-> otherwise you could never turn *on* the power domain in question.
->   (b) the clock is needed to talk to the power domain that is about to
-> turn off, or that was just turned on - these clocks are usually used
-> to control some kind of bus arbitration, etc.  In this case, the
-> clocks are only accessed when the power domain is on.
-> 
-> I would argue that in both cases, the clock should in theory should
-> only be enabled/disabled by the power on/off routine for the duration
-> of time that is needed, and that it should not be "left enabled" by
-> the power domain on/off function...  I can see how this might be a
-> useful optimization - but it also seems like a way to burn extra power
-> by leaving on a clock that is not necessarily being used.
-> 
-> But - perhaps I am over thinking this, and it is standard practice to
-> bundle power domains with the clocks that service components in the
-> power domain.
+Am Donnerstag, 8. Oktober 2015, 14:58:40 schrieb Stephen Boyd:
+> On 10/02, Heiko St=FCbner wrote:
+> > Hi,
+> >=20
+> > any comment on these 3 patches?
+>=20
+> Dong has a similar problem, but those patches conflate this with
+> enabling parent clocks during clk_disable_unused() which makes no
+> sense to me. So I'm ok with the requirement that we turn clocks
+> on to change rates, but I wonder if in this case we need to turn
+> on the clock that's changing rates itself, or if we just need to
+> turn on the parent and/or future parent of the clock during the
+> rate switch. Care to elaborate on that?
 
-Yes, you are right. Power domain on/off operations need clocks to get
-status of the subsystem. Keeping clocks on during power domain on is an
-optimization.
+As you can see in the follow-up patches, the fractional dividers on Roc=
+kchip=20
+SoCs are quite strange in that they even need to have their _downstream=
+_ mux=20
+point to them to actually accept rate changes.
 
-But to model a clock controller as a power domain consumer, or say we
-need to control power domain before clock on/off, is not a good practice
-because we always consider clock operations should be light weight.
-Power domains should be controlled explicitly by subsystem drivers,
-instead of hiding behind clock controls.
+The register value always reflects the value set by the system, but har=
+dware=20
+really only accepts it if the clock is enabled and even the downstream =
+mux=20
+selects the fractional divider as parent (they call it a auto-gating fe=
+ature).
 
-> Or, alternatively, just prepare venc_sel once during init, for each
-> clock controller that needs it, when configuring the clock controller
-> node (for example, in mtk_vencsys_init()). This is similar to how we
-> set up 'critical clocks'.
-> By just preparing the clock, you tell the common clock core:
->  "my clock controller will need this clock later; please make sure
-> that it can be enabled/disabled later during atomic context."
+So in the worst (and current) case, you end up with the register showin=
+g the=20
+right value, but the hardware can use completely different dividers fro=
+m the=20
+previous setting.
 
-In current implementation, PLLs will be turned on in clk_prepare(). So
-if a clock is always prepared, its parent PLL will be kept on even if
-the clock is not enabled. It consumes extra power, so we don't prefer
-this kind of solution.
+That strange behaviour got quite deeply investigated between Rockchip a=
+nd=20
+Google engineers who stumbled upon this in the first place, so I'm reas=
+onably=20
+sure this is the right solution for that clock type :-) .
 
 
-Best regards,
-
-James
-
-
+Heiko
