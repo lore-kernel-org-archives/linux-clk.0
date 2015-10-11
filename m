@@ -1,73 +1,50 @@
-Return-Path: <ukl@pengutronix.de>
-Date: Mon, 19 Oct 2015 20:27:44 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: David Woodhouse <dwmw2@infradead.org>, Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>,
-	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	Linux PWM List <linux-pwm@vger.kernel.org>,
-	Linux USB List <linux-usb@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-Subject: Re: [GIT PULL] On-demand device probing
-Message-ID: <20151019182744.GD4931@pengutronix.de>
-References: <20151017065750.GA18607@kroah.com>
- <20151018192931.GY14956@sirena.org.uk>
- <20151018193757.GA9147@kroah.com>
- <20151018195330.GB14956@sirena.org.uk>
- <1445247881.53393.146.camel@infradead.org>
- <CAL_JsqKehmSobpbdeXGo=-1pAbtrhCHovyyCWya_MNOhGCi8CQ@mail.gmail.com>
- <1445258870.53393.173.camel@infradead.org>
- <20151019145048.GI14956@sirena.org.uk>
- <1445268580.53393.183.camel@infradead.org>
- <20151019154324.GN32532@n2100.arm.linux.org.uk>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc: linux-rockchip@lists.infradead.org, Jaroslav Kysela <perex@perex.cz>, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 5/8] clk: rockchip: Allow the RK3288 SPDIF clocks to change their parent
+Date: Sun, 11 Oct 2015 12:43:27 +0200
+Message-ID: <1745884.LUbKvMh2Tj@diego>
+In-Reply-To: <1444390555.9895.271.camel@collabora.co.uk>
+References: <1444311079-2892-1-git-send-email-sjoerd.simons@collabora.co.uk> <11755202.f1LLWMlYi0@phil> <1444390555.9895.271.camel@collabora.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <20151019154324.GN32532@n2100.arm.linux.org.uk>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Hi Sjoerd,
 
-On Mon, Oct 19, 2015 at 04:43:24PM +0100, Russell King - ARM Linux wrote:
-> It's a bit ironic that you've chosen GPIO as an example there.  The
-> "new" GPIO API (the gpiod_* stuff) only has a fwnode way to get the
-> gpio descriptor.  There's no of_* method.
+Am Freitag, 9. Oktober 2015, 13:35:55 schrieb Sjoerd Simons:
+> On Thu, 2015-10-08 at 17:10 +0200, Heiko Stuebner wrote:
+> > Am Donnerstag, 8. Oktober 2015, 15:31:16 schrieb Sjoerd Simons:
+> > > The clock branches leading to sclk_spdif and sclk_spdif_8ch on
+> > > RK3288
+> > > SoCs only feed those clocks, allow those clocks to change their
+> > > parents
+> > > all the way up the hierarchy.
+> > > 
+> > > Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+> > 
+> > Just as comment, if I'm seeing that right, this patch needs "clk:
+> > rockchip:
+> > handle mux dependency of fractional dividers" and friends [0] to
+> > apply and
+> > also actually handle the fractional dividers correctly.
+> > 
+> > For the clock change itself:
+> > Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> 
+> Oh sorry yes, i completely forgot to at that as note on this patch
+> (series). These are on top of your series as those are required to make
+> things actually work as expected.
+> 
+> Which reminds me, i was wondering how to best move that forward. Could
+> you pick this one up to include it in the next round of your series?
+> (Otherwise i'm happy to rebase it once you do a v2)
 
-Without following all that fwnode discussion:
-gpiod_get et al. should work for you here, doesn't it? It just takes a
-struct device * and I'm happy with it.
+I guess that will depend on how the core series gets handled. Aka if there 
+needs to be a v2 (depending on the clock maintainers) I can pick that up as 
+part of it. Otherwise we'll just need to ping the clock-maintainers separately 
+on this patch if necessary.
 
-Best regards
-Uwe
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Heiko
