@@ -1,71 +1,91 @@
-Return-Path: <tony@atomide.com>
-Date: Mon, 5 Oct 2015 03:17:55 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: Tero Kristo <t-kristo@ti.com>, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux-omap@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@lists.codethink.co.uk,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] clk: ti: fix dual-registration of uart4_ick
-Message-ID: <20151005101755.GS23801@atomide.com>
-References: <1443019714-12926-1-git-send-email-ben.dooks@codethink.co.uk>
- <20150923173040.GI23801@atomide.com>
- <5604DED0.5050403@ti.com>
- <560A8DB0.6020109@codethink.co.uk>
+Return-Path: <jonmason@broadcom.com>
+Date: Mon, 12 Oct 2015 13:57:06 -0400
+From: Jon Mason <jonmason@broadcom.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Michael Turquette <mturquette@baylibre.com>, Florian Fainelli
+	<f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui
+	<rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>
+Subject: Re: [PATCH 04/10] ARM: dts: enable clock support for BCM5301X
+Message-ID: <20151012175706.GF20867@broadcom.com>
+References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
+ <1443826665-17570-5-git-send-email-jonmason@broadcom.com>
+ <20151009073540.GO26883@codeaurora.org>
+ <20151009182728.GD17527@broadcom.com>
+ <20151010001408.GX26883@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <560A8DB0.6020109@codethink.co.uk>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20151010001408.GX26883@codeaurora.org>
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-* Ben Dooks <ben.dooks@codethink.co.uk> [150929 06:14]:
-> On 25/09/15 06:42, Tero Kristo wrote:
-> > On 09/23/2015 08:30 PM, Tony Lindgren wrote:
-> >> * Ben Dooks <ben.dooks@codethink.co.uk> [150923 07:53]:
-> >>> On the OMAP AM3517 platform the uart4_ick gets registered
-> >>> twice, causing any power managment to /dev/ttyO3 to fail
-> >>> when trying to wake the device up.
-> >>>
-> >>> This solves the following oops:
-> >>>
-> >>> [] Unhandled fault: external abort on non-linefetch (0x1028) at
-> >>> 0xfa09e008
-> >>> [] PC is at serial_omap_pm+0x48/0x15c
-> >>> [] LR is at _raw_spin_unlock_irqrestore+0x30/0x5c
-> >>
-> >> No uart4 on 34xx/35xx, that got introduced with 36xx so:
-> >>
-> >> Acked-by: Tony Lindgren <tony@atomide.com>
-> >>
-> >>> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> >>> ---
-> >>>   drivers/clk/ti/clk-3xxx.c | 1 -
-> >>>   1 file changed, 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/clk/ti/clk-3xxx.c b/drivers/clk/ti/clk-3xxx.c
-> >>> index 5e12f32..2e7ef1f 100644
-> >>> --- a/drivers/clk/ti/clk-3xxx.c
-> >>> +++ b/drivers/clk/ti/clk-3xxx.c
-> >>> @@ -374,7 +374,6 @@ static struct ti_dt_clk omap3xxx_clks[] = {
-> >>>       DT_CLK(NULL, "gpio2_ick", "gpio2_ick"),
-> >>>       DT_CLK(NULL, "wdt3_ick", "wdt3_ick"),
-> >>>       DT_CLK(NULL, "uart3_ick", "uart3_ick"),
-> >>> -    DT_CLK(NULL, "uart4_ick", "uart4_ick"),
-> >>>       DT_CLK(NULL, "gpt9_ick", "gpt9_ick"),
-> >>>       DT_CLK(NULL, "gpt8_ick", "gpt8_ick"),
-> >>>       DT_CLK(NULL, "gpt7_ick", "gpt7_ick"),
+On Fri, Oct 09, 2015 at 05:14:08PM -0700, Stephen Boyd wrote:
+> On 10/09, Jon Mason wrote:
+> > On Fri, Oct 09, 2015 at 12:35:40AM -0700, Stephen Boyd wrote:
+> > > On 10/02, Jon Mason wrote:
+> > > 
+> > > >  arch/arm/boot/dts/bcm5301x.dtsi | 67 ++++++++++++++++++++++++++++++++++++-----
+> > > >  1 file changed, 60 insertions(+), 7 deletions(-)
+> > > > 
+> > > > diff --git a/arch/arm/boot/dts/bcm5301x.dtsi b/arch/arm/boot/dts/bcm5301x.dtsi
+> > > > index 6f50f67..f717859 100644
+> > > > --- a/arch/arm/boot/dts/bcm5301x.dtsi
+> > > > +++ b/arch/arm/boot/dts/bcm5301x.dtsi
+> > > > @@ -55,14 +56,14 @@
+> > > >  			compatible = "arm,cortex-a9-global-timer";
+> > > >  			reg = <0x0200 0x100>;
+> > > >  			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
+> > > > -			clocks = <&clk_periph>;
+> > > > +			clocks = <&periph_clk>;
+> > > >  		};
+> > > >  
+> > > >  		local-timer@0600 {
+> > > >  			compatible = "arm,cortex-a9-twd-timer";
+> > > >  			reg = <0x0600 0x100>;
+> > > >  			interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>;
+> > > > -			clocks = <&clk_periph>;
+> > > > +			clocks = <&periph_clk>;
+> > > >  		};
+> > > >  
+> > > >  		gic: interrupt-controller@1000 {
+> > > > @@ -94,14 +95,66 @@
+> > > >  
+> > > >  	clocks {
+> > > 
+> > > I'd expect this to only contain nodes that don't have a reg
+> > > property. Clock providers that have a reg property would go into
+> > > some soc node or bus. Perhaps that's the chipcommonA node, or
+> > > axi?
 > > 
-> > NAK.
-> > 
-> > This patch is actually only partially correct, it removes the uart4_ick
-> > alias for omap36xx also. It should be added back to the omap36xx clks
-> > array. Care to post a v2?
+> > This might get a little ugly, as some of the clocks are in the
+> > 0x18000000 and others are in 0x19000000.  I would think it better to
+> > have them all in one place (as that is more readable).  Do you preferr
+> > I split the pieces up into their respective DT nodes?
 > 
-> Thankyou for the feedback. I'll update, but do not have a device to test.
+> Are there two clock controllers? Sorry I don't understand the
+> architecture here very well. Nodes with reg properties in the
+> same range should be near each other. We don't group all i2c
+> controllers into the same node because they're logically i2c
+> controllers. We express the hierarchy of devices with container
+> nodes. The clocks node is only useful for board-level clocks, not
+> things that are inside the SoC.
 
-Hmm but isn't that entry already there for 36xx? So this just removes
-a duplicate for 36xx.. Tero, can you please check again, maybe I'm
-confused.
+3 clock sources: a9pll, lcpll, and genpll. The first one resides in
+the IP block living at the 0x19000000 address range, while the latter
+two live in the 0x18000000 address range.
 
-Regars,
+I'll split up the clocks amongst the respective entries, per your
+suggestion.
 
-Tony
+Thanks,
+Jon 
+
+
+
+
+> 
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
