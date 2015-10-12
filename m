@@ -1,88 +1,54 @@
-Return-Path: <linux+mturquette=baylibre.com@arm.linux.org.uk>
-Date: Mon, 19 Oct 2015 16:43:24 +0100
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>,
-	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	Linux PWM List <linux-pwm@vger.kernel.org>,
-	Linux USB List <linux-usb@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-Subject: Re: [GIT PULL] On-demand device probing
-Message-ID: <20151019154324.GN32532@n2100.arm.linux.org.uk>
-References: <561E1378.6000906@collabora.com>
- <20151017065750.GA18607@kroah.com>
- <20151018192931.GY14956@sirena.org.uk>
- <20151018193757.GA9147@kroah.com>
- <20151018195330.GB14956@sirena.org.uk>
- <1445247881.53393.146.camel@infradead.org>
- <CAL_JsqKehmSobpbdeXGo=-1pAbtrhCHovyyCWya_MNOhGCi8CQ@mail.gmail.com>
- <1445258870.53393.173.camel@infradead.org>
- <20151019145048.GI14956@sirena.org.uk>
- <1445268580.53393.183.camel@infradead.org>
+Return-Path: <jonmason@broadcom.com>
+Date: Mon, 12 Oct 2015 13:48:53 -0400
+From: Jon Mason <jonmason@broadcom.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Michael Turquette <mturquette@baylibre.com>, Florian Fainelli
+	<f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui
+	<rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>
+Subject: Re: [PATCH 05/10] clk: iproc: Add PLL base write function
+Message-ID: <20151012174853.GD20867@broadcom.com>
+References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
+ <1443826665-17570-6-git-send-email-jonmason@broadcom.com>
+ <20151010002106.GZ26883@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1445268580.53393.183.camel@infradead.org>
-Sender: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20151010002106.GZ26883@codeaurora.org>
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Oct 19, 2015 at 04:29:40PM +0100, David Woodhouse wrote:
-> I don't know that there *is* a coherent plan here to address it all.
+On Fri, Oct 09, 2015 at 05:21:06PM -0700, Stephen Boyd wrote:
+> On 10/02, Jon Mason wrote:
+> > diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
+> > index e029ab3..a4602aa 100644
+> > --- a/drivers/clk/bcm/clk-iproc-pll.c
+> > +++ b/drivers/clk/bcm/clk-iproc-pll.c
+> > @@ -137,6 +137,18 @@ static int pll_wait_for_lock(struct iproc_pll *pll)
+> >  	return -EIO;
+> >  }
+> >  
+> > +static void iproc_pll_write(struct iproc_pll *pll, void __iomem *base,
+> > +			    u32 offset, u32 val)
+> > +{
+> > +	const struct iproc_pll_ctrl *ctrl = pll->ctrl;
+> > +
+> > +	writel(val, base + offset);
+> > +
+> > +	if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK &&
+> > +		     base == pll->pll_base))
+> > +		val = readl(base + offset);
 > 
-> Certainly, we *will* need subsystems to have firmware-specific
-> knowledge in some cases. Take GPIO as an example; ACPI *has* a way to
-> describe GPIO, and properties which reference GPIO pins are intended to
-> work through that — while in DT, properties which reference GPIO pins
-> will have different contents. They'll be compatible at the driver
-> level, in the sense that there's a call to get a given GPIO given the
-> property name, but the subsystems *will* be doing different things
-> behind the scenes.
+> Is there any point to assign val here?
 
-It's a bit ironic that you've chosen GPIO as an example there.  The
-"new" GPIO API (the gpiod_* stuff) only has a fwnode way to get the
-gpio descriptor.  There's no of_* method.
+It is a flush.  The val assignment could be excluded (and thus made
+const) if so desired.
 
-I'd like to use the gpiod_* stuff, but I feel that my options are
-rather limited: either use fwnode_get_named_gpiod() with
-&dev->of_node->fwnode, which seems like a hack by going underneath
-the covers of how fwnode is (partially) implemented with DT, or by
-using of_get_named_gpio() and the converting the gpio number to a
-descriptor via gpio_to_desc().  Both feel very hacky.
+Thanks,
+Jon
 
-If ACPI already handles GPIOs internally, then I'm left wondering
-why GPIO descriptor stuff went down the fwnode route at all - it
-seems rather pointless in this case, and it seems to make the use
-of the gpiod* interfaces where we _do_ need to use it (DT) harder
-and more hacky.
-
--- 
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+> 
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
