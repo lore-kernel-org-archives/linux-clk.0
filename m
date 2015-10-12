@@ -1,137 +1,64 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-sunxi@googlegroups.com,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v5 5/5] clk: sunxi: mod1 clock support
-Date: Mon, 19 Oct 2015 10:08:59 +0200
-Message-Id: <1445242139-20965-6-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1445242139-20965-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1445242139-20965-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+Subject: Re: [PATCH v4 0/3] add GPT timer support for mt8173
+To: Yingjoe Chen <yingjoe.chen@mediatek.com>, Rob Herring <robh+dt@kernel.org>
+References: <1443798319-45744-1-git-send-email-yingjoe.chen@mediatek.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ James Liao <jamesjj.liao@mediatek.com>, devicetree@vger.kernel.org,
+ Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ Sascha Hauer <kernel@pengutronix.de>, Olof Johansson <olof@lixom.net>,
+ srv_heupstream@mediatek.com, linux-arm-kernel@lists.infradead.org,
+ Daniel Kurtz <djkurtz@chromium.org>, linux-clk@vger.kernel.org,
+ erin.lo@mediatek.com
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <561BE13B.5090202@gmail.com>
+Date: Mon, 12 Oct 2015 18:35:07 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1443798319-45744-1-git-send-email-yingjoe.chen@mediatek.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Emilio López <emilio@elopez.com.ar>
 
-The module 1 type of clocks consist of a gate and a mux and are used on
-the audio blocks to mux and gate the PLL2 outputs for AC97, IIS or
-SPDIF. This commit adds support for them on the sunxi clock driver.
 
-Signed-off-by: Emilio López <emilio@elopez.com.ar>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi/Makefile       |  1 +
- drivers/clk/sunxi/clk-a10-mod1.c | 81 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 82 insertions(+)
- create mode 100644 drivers/clk/sunxi/clk-a10-mod1.c
+On 02/10/15 17:05, Yingjoe Chen wrote:
+> This is based on v4.3-rc1 + clockevents-4.4[1] and James's mediatek-clk
+> tree[2].
+>
+> Changes compare to previous version[3]:
+> - Add more MediaTek SoC to mtk-timer binding
+> - Update commit message to better describe the purpose.
+>
+> Changes compare to v2[4]:
+> - the first two mtk_timer related changes are removed because they are
+> replaced/accepted in clockevents tree.
+> - Remove 'add 13mhz clock for MT8173' because it is accepted in
+> mediatek-clk tree.
+> - Kconfig.platforms path change.
+>
+> [1]
+> https://git.linaro.org/people/daniel.lezcano/linux.git clockevents/4.4
+> [2]
+> http://lists.infradead.org/pipermail/linux-mediatek/2015-August/002069.html
+> [3]
+> http://lists.infradead.org/pipermail/linux-mediatek/2015-September/002301.html
+> [4]
+> http://lists.infradead.org/pipermail/linux-mediatek/2015-July/001544.html
+>
+>
+> Daniel Kurtz (1):
+>    arm64: dts: mt8173: add timer node
+>
+> Yingjoe Chen (2):
+>    dt-bindings: add more MediaTek SoC to mtk-timer binding
+>    arm64: mediatek: enable MTK_TIMER
+>
+>   Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt | 8 +++++---
+>   arch/arm64/Kconfig.platforms                                   | 1 +
+>   arch/arm64/boot/dts/mediatek/mt8173.dtsi                       | 9 +++++++++
+>   3 files changed, 15 insertions(+), 3 deletions(-)
+>
 
-diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-index 70a449a419e6..cb4c299214ce 100644
---- a/drivers/clk/sunxi/Makefile
-+++ b/drivers/clk/sunxi/Makefile
-@@ -5,6 +5,7 @@
- obj-y += clk-sunxi.o clk-factors.o
- obj-y += clk-a10-codec.o
- obj-y += clk-a10-hosc.o
-+obj-y += clk-a10-mod1.o
- obj-y += clk-a10-pll2.o
- obj-y += clk-a20-gmac.o
- obj-y += clk-mod0.o
-diff --git a/drivers/clk/sunxi/clk-a10-mod1.c b/drivers/clk/sunxi/clk-a10-mod1.c
-new file mode 100644
-index 000000000000..e9d870de165c
---- /dev/null
-+++ b/drivers/clk/sunxi/clk-a10-mod1.c
-@@ -0,0 +1,81 @@
-+/*
-+ * Copyright 2013 Emilio López
-+ *
-+ * Emilio López <emilio@elopez.com.ar>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/slab.h>
-+
-+static DEFINE_SPINLOCK(mod1_lock);
-+
-+#define SUN4I_MOD1_ENABLE	31
-+#define SUN4I_MOD1_MUX		16
-+#define SUN4I_MOD1_MUX_WIDTH	2
-+#define SUN4I_MOD1_MAX_PARENTS	4
-+
-+static void __init sun4i_mod1_clk_setup(struct device_node *node)
-+{
-+	struct clk *clk;
-+	struct clk_mux *mux;
-+	struct clk_gate *gate;
-+	const char *parents[4];
-+	const char *clk_name = node->name;
-+	void __iomem *reg;
-+	int i;
-+
-+	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-+	if (IS_ERR(reg))
-+		return;
-+
-+	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-+	if (!mux)
-+		goto err_unmap;
-+
-+	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+	if (!gate)
-+		goto err_free_mux;
-+
-+	of_property_read_string(node, "clock-output-names", &clk_name);
-+	i = of_clk_parent_fill(node, parents, SUN4I_MOD1_MAX_PARENTS);
-+
-+	gate->reg = reg;
-+	gate->bit_idx = SUN4I_MOD1_ENABLE;
-+	gate->lock = &mod1_lock;
-+	mux->reg = reg;
-+	mux->shift = SUN4I_MOD1_MUX;
-+	mux->mask = BIT(SUN4I_MOD1_MUX_WIDTH) - 1;
-+	mux->lock = &mod1_lock;
-+
-+	clk = clk_register_composite(NULL, clk_name, parents, i,
-+				     &mux->hw, &clk_mux_ops,
-+				     NULL, NULL,
-+				     &gate->hw, &clk_gate_ops, 0);
-+	if (IS_ERR(clk))
-+		goto err_free_gate;
-+
-+	of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+
-+	return;
-+
-+err_free_gate:
-+	kfree(gate);
-+err_free_mux:
-+	kfree(mux);
-+err_unmap:
-+	iounmap(reg);
-+}
-+CLK_OF_DECLARE(sun4i_mod1, "allwinner,sun4i-a10-mod1-clk",
-+	       sun4i_mod1_clk_setup);
--- 
-2.5.3
+Applied, thanks.
