@@ -1,61 +1,53 @@
-Return-Path: <dianders@google.com>
+Return-Path: <jszhang@marvell.com>
+From: Jisheng Zhang <jszhang@marvell.com>
+To: <ulf.hansson@linaro.org>, <sebastian.hesselbarth@gmail.com>,
+        <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Jisheng Zhang <jszhang@marvell.com>
+Subject: [PATCH 3/5] ARM: dts: berlin: add axi clock for BG2Q sdhci0 and sdhci1
+Date: Mon, 12 Oct 2015 13:46:34 +0800
+Message-ID: <1444628796-5484-4-git-send-email-jszhang@marvell.com>
+In-Reply-To: <1444628796-5484-1-git-send-email-jszhang@marvell.com>
+References: <1444628796-5484-1-git-send-email-jszhang@marvell.com>
 MIME-Version: 1.0
-Sender: dianders@google.com
-In-Reply-To: <CAMAWPa9o=bQJPK+tJ38=5jngTFcOsAi=s9RcETbPN=3SsyQ8gA@mail.gmail.com>
-References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
-	<1443622064-14362-5-git-send-email-heiko@sntech.de>
-	<CAMAWPa9o=bQJPK+tJ38=5jngTFcOsAi=s9RcETbPN=3SsyQ8gA@mail.gmail.com>
-Date: Fri, 9 Oct 2015 13:12:10 -0700
-Message-ID: <CAD=FV=XfoRoj610zXvBPxAwSO7O_eYGxsAidnEnXx5mK1ANGrg@mail.gmail.com>
-Subject: Re: [PATCH v2 4/8] mmc: dw_mmc: Use mmc_regulator_set_vqmmc in start_signal_voltage_switch
-From: Doug Anderson <dianders@chromium.org>
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>,
-	Alexandru Stan <amstan@chromium.org>, linux-mmc <linux-mmc@vger.kernel.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tyler Baker <tyler.baker@linaro.org>,
-	Olof Johansson <olof@lixom.net>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Kevin,
+Add the axi clock for BG2Q's sdhci0 and sdhci1. This would let the axi
+clock be disabled during runtime pm, so saves power a bit.
 
-On Fri, Oct 9, 2015 at 12:06 PM, Kevin Hilman <khilman@kernel.org> wrote:
-> On Wed, Sep 30, 2015 at 4:07 PM, Heiko Stuebner <heiko@sntech.de> wrote:
->> From: Douglas Anderson <dianders@chromium.org>
->>
->> We've introduced a new helper in the MMC core:
->> mmc_regulator_set_vqmmc().  Let's use this in dw_mmc.  Using this new
->> helper has some advantages:
->>
->> 1. We get the mmc_regulator_set_vqmmc() behavior of trying to match
->>    VQMMC and VMMC when the signal voltage is 3.3V.  This ensures max
->>    compatibility.
->>
->> 2. We get rid of a few more warnings when probing unsupported
->>    voltages.
->>
->> 3. We get rid of some non-dw_mmc specific code in dw_mmc.
->>
->> Signed-off-by: Douglas Anderson <dianders@chromium.org>
->> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
->
-> kernelci.org found a new failure in linux-next on
-> exynos5800-peach-pi[1] and it was bisected down to this patch, which
-> has hit linux-next in the form of commit fba2e23128d0 (mmc: dw_mmc:
-> Use mmc_regulator_set_vqmmc in start_signal_voltage_switch).  Based on
-> a quick glance at the boot log[2], it looks to be a bad pointer
-> dereference in regulator_get_voltage().
->
-> I confirmed that reverting this patch on top of next-20151009 gets my
-> peach-pi booting again.
->
-> Note that the boot failure is only on exynos_defconfig, not multi_v7_defconfig.
+Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+---
+ arch/arm/boot/dts/berlin2q.dtsi | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Right.  See <http://www.spinics.net/lists/arm-kernel/msg450802.html>
-for discussion.  Ulf responded to the cover letter rather than the
-individual patch.
-
--Doug
+diff --git a/arch/arm/boot/dts/berlin2q.dtsi b/arch/arm/boot/dts/berlin2q.dtsi
+index 2f12048..a14c9e8 100644
+--- a/arch/arm/boot/dts/berlin2q.dtsi
++++ b/arch/arm/boot/dts/berlin2q.dtsi
+@@ -102,7 +102,8 @@
+ 		sdhci0: sdhci@ab0000 {
+ 			compatible = "mrvl,pxav3-mmc";
+ 			reg = <0xab0000 0x200>;
+-			clocks = <&chip_clk CLKID_SDIO1XIN>;
++			clocks = <&chip_clk CLKID_SDIO1XIN>, <&chip_clk CLKID_SDIO>;
++			clock-names = "core", "axi";
+ 			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
+ 			status = "disabled";
+ 		};
+@@ -110,7 +111,8 @@
+ 		sdhci1: sdhci@ab0800 {
+ 			compatible = "mrvl,pxav3-mmc";
+ 			reg = <0xab0800 0x200>;
+-			clocks = <&chip_clk CLKID_SDIO1XIN>;
++			clocks = <&chip_clk CLKID_SDIO1XIN>, <&chip_clk CLKID_SDIO>;
++			clock-names = "core", "axi";
+ 			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+ 			status = "disabled";
+ 		};
+-- 
+2.6.1
