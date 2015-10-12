@@ -1,137 +1,82 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Georgi Djakov <georgi.djakov@linaro.org>
-Subject: [PATCH v2 1/2] clk: qcom: common: Add API to register board clocks backwards compatibly
-Date: Tue, 27 Oct 2015 16:04:59 -0700
-Message-Id: <1445987100-19492-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC v3 0/3] clk: shmobile: Add new Renesas CPG/MSSR DT bindings
+Date: Mon, 12 Oct 2015 13:37:40 +0200
+Message-Id: <1444649863-17796-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-We want to put the XO board clocks into the dt files, but we also
-need to be backwards compatible with an older dtb. Add an API to
-the common code to do this. This also makes a place for us to
-handle the case when the RPM clock driver is enabled and we don't
-want to register the fixed factor clock.
+	Hi Mike, Stephen, et al.,
 
-Cc: Georgi Djakov <georgi.djakov@linaro.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
+As discussed at ELCE last week, here's my RFC introducing a new unified
+binding for the Renesas CPG (Clock Pulse Generator) and MSSR (Module
+Standby and Software Reset) blocks.  These bindings are supposed to be
+more in-line with current CCF best practices, and allow expansion to
+cover the module reset functionality in the future.  They are intended
+to be used initially for the new R-Car Gen3 SoCs (r8a7795), but we may
+decide to migrate older SoCs somewhen in the future.
 
-Changes from v1:
- * New sleep_clk specific API
- * Added in the RPM enabled config check
- * Always register the board clk if it's missing
+  - The first patch is an RFC introducing the new bindings.
+  - Patches 2 and 3 are Proof-of-Concepts of the CPG Core Clock
+    Definitions for the already supported R-Car M2-W (r8a7791) SoC, and
+    for the new R-Car H3 (r8a7795) SoC.
 
- drivers/clk/qcom/common.c | 76 +++++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/qcom/common.h |  4 +++
- 2 files changed, 80 insertions(+)
+The idea is to get the bindings (for r8a7795) accepted in v4.4, so we
+can continue developing and prepare final support for r8a7795 in v4.5.
 
-diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-index 8fa477293ae0..09b3606e12be 100644
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -88,6 +88,82 @@ static void qcom_cc_gdsc_unregister(void *data)
- 	gdsc_unregister(data);
- }
- 
-+/*
-+ * Backwards compatibility with old DTs. Register a pass-through factor 1/1
-+ * clock to translate 'path' clk into 'name' clk and regsiter the 'path'
-+ * clk as a fixed rate clock if it isn't present.
-+ */
-+static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
-+				       const char *name, unsigned long rate,
-+				       bool add_factor)
-+{
-+	struct device_node *node = NULL;
-+	struct device_node *clocks_node;
-+	struct clk_fixed_factor *factor;
-+	struct clk_fixed_rate *fixed;
-+	struct clk *clk;
-+	struct clk_init_data init_data = { };
-+
-+	clocks_node = of_find_node_by_path("/clocks");
-+	if (clocks_node)
-+		node = of_find_node_by_name(clocks_node, path);
-+	of_node_put(clocks_node);
-+
-+	if (!node) {
-+		fixed = devm_kzalloc(dev, sizeof(*fixed), GFP_KERNEL);
-+		if (!fixed)
-+			return -EINVAL;
-+
-+		fixed->fixed_rate = rate;
-+		fixed->hw.init = &init_data;
-+
-+		init_data.name = path;
-+		init_data.flags = CLK_IS_ROOT;
-+		init_data.ops = &clk_fixed_rate_ops;
-+
-+		clk = devm_clk_register(dev, &fixed->hw);
-+		if (IS_ERR(clk))
-+			return PTR_ERR(clk);
-+	}
-+	of_node_put(node);
-+
-+	if (add_factor) {
-+		factor = devm_kzalloc(dev, sizeof(*factor), GFP_KERNEL);
-+		if (!factor)
-+			return -EINVAL;
-+
-+		factor->mult = factor->div = 1;
-+		factor->hw.init = &init_data;
-+
-+		init_data.name = name;
-+		init_data.parent_names = &path;
-+		init_data.num_parents = 1;
-+		init_data.flags = 0;
-+		init_data.ops = &clk_fixed_factor_ops;
-+
-+		clk = devm_clk_register(dev, &factor->hw);
-+		if (IS_ERR(clk))
-+			return PTR_ERR(clk);
-+	}
-+
-+	return 0;
-+}
-+
-+int qcom_cc_register_board_clk(struct device *dev, const char *path,
-+			       const char *name, unsigned long rate)
-+{
-+	return _qcom_cc_register_board_clk(dev, path, name, rate,
-+					   !IS_ENABLED(CONFIG_QCOM_RPMCC));
-+}
-+EXPORT_SYMBOL_GPL(qcom_cc_register_board_clk);
-+
-+int qcom_cc_register_sleep_clk(struct device *dev)
-+{
-+	return _qcom_cc_register_board_clk(dev, "sleep_clk", "sleep_clk_src",
-+					   32768, true);
-+}
-+EXPORT_SYMBOL_GPL(qcom_cc_register_sleep_clk);
-+
- int qcom_cc_really_probe(struct platform_device *pdev,
- 			 const struct qcom_cc_desc *desc, struct regmap *regmap)
- {
-diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
-index 7c1fba3ebc03..ae9bdeb21f29 100644
---- a/drivers/clk/qcom/common.h
-+++ b/drivers/clk/qcom/common.h
-@@ -37,6 +37,10 @@ extern const struct freq_tbl *qcom_find_freq(const struct freq_tbl *f,
- extern int qcom_find_src_index(struct clk_hw *hw, const struct parent_map *map,
- 			       u8 src);
- 
-+extern int qcom_cc_register_board_clk(struct device *dev, const char *path,
-+				      const char *name, unsigned long rate);
-+extern int qcom_cc_register_sleep_clk(struct device *dev);
-+
- extern struct regmap *qcom_cc_map(struct platform_device *pdev,
- 				  const struct qcom_cc_desc *desc);
- extern int qcom_cc_really_probe(struct platform_device *pdev,
+I will post preliminary code and DT patches for both r8a7791 (POC) and
+r8a7795 (mandatory) as soon as possible.
+
+Thanks for your comments!
+
+References:
+  - v2+ ≈ [PATCH v8 00/05] Renesas R-Car Gen3 CPG support V8"
+    (http://www.spinics.net/lists/linux-clk/msg03288.html)
+  - v2 = "[PATCH/RFC v2 0/4] Renesas CPG/MSTP DT Binding Proposal"
+    (http://www.spinics.net/lists/linux-clk/msg03132.html)
+  - v1 = "Renesas CPG/MSTP DT Binding Proposal"
+    (http://www.spinics.net/lists/linux-clk/msg01189.html)
+
+Geert Uytterhoeven (3):
+  [RFC] clk: shmobile: Add new Renesas CPG/MSSR DT bindings
+  [POC] clk: shmobile: Add r8a7791 CPG Core Clock Definitions
+  [POC] clk: shmobile: Add r8a7795 CPG Core Clock Definitions
+
+ .../devicetree/bindings/clock/renesas,cpg-mssr.txt | 71 ++++++++++++++++++++++
+ include/dt-bindings/clock/r8a7791-cpg-mssr.h       | 22 +++++++
+ include/dt-bindings/clock/r8a7795-cpg-mssr.h       | 17 ++++++
+ include/dt-bindings/clock/renesas-cpg-mssr.h       | 15 +++++
+ 4 files changed, 125 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+ create mode 100644 include/dt-bindings/clock/r8a7791-cpg-mssr.h
+ create mode 100644 include/dt-bindings/clock/r8a7795-cpg-mssr.h
+ create mode 100644 include/dt-bindings/clock/renesas-cpg-mssr.h
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
