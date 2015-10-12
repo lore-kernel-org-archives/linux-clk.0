@@ -1,36 +1,44 @@
-Return-Path: <sboyd@codeaurora.org>
-Subject: Re: [PATCH 09/10] clk: ns2: add clock support for Broadcom Northstar
- 2 SoC
-To: Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>
-References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
- <1443826665-17570-10-git-send-email-jonmason@broadcom.com>
- <20151010003352.GA26883@codeaurora.org> <20151012181929.GG20867@broadcom.com>
- <561D36A6.2080309@broadcom.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>,
- Ray Jui <rjui@broadcom.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
-From: Stephen Boyd <sboyd@codeaurora.org>
-Message-ID: <561D4FE2.4020805@codeaurora.org>
-Date: Tue, 13 Oct 2015 11:39:30 -0700
-MIME-Version: 1.0
-In-Reply-To: <561D36A6.2080309@broadcom.com>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH v2 06/14] clk: at91: only disable available IRQs
+Date: Mon, 12 Oct 2015 16:28:43 +0200
+Message-Id: <1444660131-14954-7-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1444660131-14954-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1444660131-14954-1-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/13/2015 09:51 AM, Scott Branden wrote:
->
-> Is that really necessary at all  I think something like this work
-> instead?
->
-> -obj-$(CONFIG_ARCH_BCM)            += bcm/
-> +obj-y        += bcm/
->
->
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-Yes that's fine too, as long as we don't add any obj-y inside bcm/Makefile
+Only disable available IRQs in case writing to a reserved bit has a harmful
+effect.
 
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+---
+ drivers/clk/at91/pmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+index 6c1f08a73373..45dd32bf2531 100644
+--- a/drivers/clk/at91/pmc.c
++++ b/drivers/clk/at91/pmc.c
+@@ -287,7 +287,7 @@ static int __init atmel_pmc_probe(struct platform_device *pdev)
+ 	if (!pmc->irqdomain)
+ 		return 0;
+ 
+-	regmap_write(pmc->regmap, AT91_PMC_IDR, 0xffffffff);
++	regmap_write(pmc->regmap, AT91_PMC_IDR, pmc->caps->available_irqs);
+ 	ret = request_irq(pmc->virq, pmc_irq_handler,
+ 			  IRQF_SHARED | IRQF_COND_SUSPEND, "pmc", pmc);
+ 	if (ret)
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.4
