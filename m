@@ -1,120 +1,143 @@
-Return-Path: <tomeu.vizoso@gmail.com>
-Return-Path: <tomeu.vizoso@gmail.com>
-Sender: Tomeu Vizoso <tomeu.vizoso@gmail.com>
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Inki Dae <inki.dae@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	devicetree@vger.kernel.org,
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Kumar Gala <galak@codeaurora.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	linux-samsung-soc@vger.kernel.org,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v1 1/2] clk: samsung: exynos5250: Add DISP1 clocks
-Date: Wed, 14 Oct 2015 12:44:16 +0200
-Message-Id: <1444819457-27519-2-git-send-email-tomeu.vizoso@collabora.com>
-In-Reply-To: <1444819457-27519-1-git-send-email-tomeu.vizoso@collabora.com>
-References: <1444819457-27519-1-git-send-email-tomeu.vizoso@collabora.com>
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH v2 02/14] clk: at91: make use of syscon to share PMC registers in several drivers
+Date: Mon, 12 Oct 2015 16:28:39 +0200
+Message-Id: <1444660131-14954-3-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1444660131-14954-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1444660131-14954-1-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-When the DISP1 power domain is powered off, there's two clocks that need
-to be temporarily reparented to OSC, and back to their original parents
-when the domain is powered on again.
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-We expose these two clocks in the DT bindings so that the DT node of the
-power domain can reference them.
+The PMC block is providing several functionnalities:
+ - system clk management
+ - cpuidle
+ - platform suspend
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Replace the void __iomem *regs field by a regmap (retrieved using syscon)
+so that we can later share the regmap across several drivers without
+exporting a new specific API or a global void __iomem * variable.
+
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
+ arch/arm/mach-at91/Kconfig |  1 +
+ drivers/clk/at91/pmc.c     | 12 ++++++++----
+ drivers/clk/at91/pmc.h     | 11 ++++++++---
+ 3 files changed, 17 insertions(+), 7 deletions(-)
 
- drivers/clk/samsung/clk-exynos5250.c   | 16 +++++++++++++++-
- include/dt-bindings/clock/exynos5250.h |  4 +++-
- 2 files changed, 18 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index 55b83c7ef878..918e40fa6aa1 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -222,9 +222,14 @@ PNAME(mout_mpll_user_p)	= { "fin_pll", "mout_mpll" };
- PNAME(mout_bpll_user_p)	= { "fin_pll", "mout_bpll" };
- PNAME(mout_aclk166_p)	= { "mout_cpll", "mout_mpll_user" };
- PNAME(mout_aclk200_p)	= { "mout_mpll_user", "mout_bpll_user" };
-+PNAME(mout_aclk300_p)	= { "mout_aclk300_disp1_mid",
-+			    "mout_aclk300_disp1_mid1" };
- PNAME(mout_aclk400_p)	= { "mout_aclk400_g3d_mid", "mout_gpll" };
- PNAME(mout_aclk200_sub_p) = { "fin_pll", "div_aclk200" };
- PNAME(mout_aclk266_sub_p) = { "fin_pll", "div_aclk266" };
-+PNAME(mout_aclk300_sub_p) = { "fin_pll", "div_aclk300" };
-+PNAME(mout_aclk300_disp1_mid_p) = { "mout_mpll_user", "mout_bpll_user" };
-+PNAME(mout_aclk300_disp1_mid1_p) = { "mout_vpll", "mout_cpll" };
- PNAME(mout_aclk333_sub_p) = { "fin_pll", "div_aclk333" };
- PNAME(mout_aclk400_isp_sub_p) = { "fin_pll", "div_aclk400_isp" };
- PNAME(mout_hdmi_p)	= { "div_hdmi_pixel", "sclk_hdmiphy" };
-@@ -303,9 +308,14 @@ static struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
- 	 */
- 	MUX(0, "mout_aclk166", mout_aclk166_p, SRC_TOP0, 8, 1),
- 	MUX(0, "mout_aclk200", mout_aclk200_p, SRC_TOP0, 12, 1),
-+	MUX(0, "mout_aclk300_disp1_mid", mout_aclk300_disp1_mid_p, SRC_TOP0,
-+		14, 1),
-+	MUX(0, "mout_aclk300", mout_aclk300_p, SRC_TOP0, 15, 1),
- 	MUX(0, "mout_aclk333", mout_aclk166_p, SRC_TOP0, 16, 1),
- 	MUX(0, "mout_aclk400_g3d_mid", mout_aclk200_p, SRC_TOP0, 20, 1),
+diff --git a/arch/arm/mach-at91/Kconfig b/arch/arm/mach-at91/Kconfig
+index 89a755b90db2..3b2f594f2ce7 100644
+--- a/arch/arm/mach-at91/Kconfig
++++ b/arch/arm/mach-at91/Kconfig
+@@ -95,6 +95,7 @@ config HAVE_AT91_USB_CLK
+ config COMMON_CLK_AT91
+ 	bool
+ 	select COMMON_CLK
++	select MFD_SYSCON
  
-+	MUX(0, "mout_aclk300_disp1_mid1", mout_aclk300_disp1_mid1_p, SRC_TOP1,
-+		8, 1),
- 	MUX(0, "mout_aclk400_isp", mout_aclk200_p, SRC_TOP1, 24, 1),
- 	MUX(0, "mout_aclk400_g3d", mout_aclk400_p, SRC_TOP1, 28, 1),
+ config HAVE_AT91_SMD
+ 	bool
+diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+index d1844f1f3729..ba458eae4bda 100644
+--- a/drivers/clk/at91/pmc.c
++++ b/drivers/clk/at91/pmc.c
+@@ -19,6 +19,7 @@
+ #include <linux/irqchip/chained_irq.h>
+ #include <linux/irqdomain.h>
+ #include <linux/of_irq.h>
++#include <linux/mfd/syscon.h>
  
-@@ -316,7 +326,10 @@ static struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
- 	MUX(0, "mout_bpll_user", mout_bpll_user_p, SRC_TOP2, 24, 1),
- 	MUX(CLK_MOUT_GPLL, "mout_gpll", mout_gpll_p, SRC_TOP2, 28, 1),
+ #include <asm/proc-fns.h>
  
--	MUX(0, "mout_aclk200_disp1_sub", mout_aclk200_sub_p, SRC_TOP3, 4, 1),
-+	MUX(CLK_MOUT_ACLK200_DISP1_SUB, "mout_aclk200_disp1_sub",
-+		mout_aclk200_sub_p, SRC_TOP3, 4, 1),
-+	MUX(CLK_MOUT_ACLK300_DISP1_SUB, "mout_aclk300_disp1_sub",
-+		mout_aclk300_sub_p, SRC_TOP3, 6, 1),
- 	MUX(0, "mout_aclk266_gscl_sub", mout_aclk266_sub_p, SRC_TOP3, 8, 1),
- 	MUX(0, "mout_aclk_266_isp_sub", mout_aclk266_sub_p, SRC_TOP3, 16, 1),
- 	MUX(0, "mout_aclk_400_isp_sub", mout_aclk400_isp_sub_p,
-@@ -392,6 +405,7 @@ static struct samsung_div_clock exynos5250_div_clks[] __initdata = {
- 	DIV(0, "div_aclk333", "mout_aclk333", DIV_TOP0, 20, 3),
- 	DIV(0, "div_aclk400_g3d", "mout_aclk400_g3d", DIV_TOP0,
- 							24, 3),
-+	DIV(0, "div_aclk300", "mout_aclk300", DIV_TOP0, 28, 3),
+@@ -215,6 +216,7 @@ static const struct at91_pmc_caps sama5d3_caps = {
+ };
  
- 	DIV(0, "div_aclk400_isp", "mout_aclk400_isp", DIV_TOP1, 20, 3),
- 	DIV(0, "div_aclk66_pre", "mout_mpll_user", DIV_TOP1, 24, 3),
-diff --git a/include/dt-bindings/clock/exynos5250.h b/include/dt-bindings/clock/exynos5250.h
-index 8183d1c237d9..15508adcdfde 100644
---- a/include/dt-bindings/clock/exynos5250.h
-+++ b/include/dt-bindings/clock/exynos5250.h
-@@ -173,8 +173,10 @@
- /* mux clocks */
- #define CLK_MOUT_HDMI		1024
- #define CLK_MOUT_GPLL		1025
-+#define CLK_MOUT_ACLK200_DISP1_SUB	1026
-+#define CLK_MOUT_ACLK300_DISP1_SUB	1027
+ static struct at91_pmc *__init at91_pmc_init(struct device_node *np,
++					     struct regmap *regmap,
+ 					     void __iomem *regbase, int virq,
+ 					     const struct at91_pmc_caps *caps)
+ {
+@@ -230,7 +232,7 @@ static struct at91_pmc *__init at91_pmc_init(struct device_node *np,
+ 		return NULL;
  
- /* must be greater than maximal clock id */
--#define CLK_NR_CLKS		1026
-+#define CLK_NR_CLKS		1028
+ 	spin_lock_init(&pmc->lock);
+-	pmc->regbase = regbase;
++	pmc->regmap = regmap;
+ 	pmc->virq = virq;
+ 	pmc->caps = caps;
  
- #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5250_H */
+@@ -380,16 +382,18 @@ static void __init of_at91_pmc_setup(struct device_node *np,
+ 	void (*clk_setup)(struct device_node *, struct at91_pmc *);
+ 	const struct of_device_id *clk_id;
+ 	void __iomem *regbase = of_iomap(np, 0);
++	struct regmap *regmap;
+ 	int virq;
+ 
+-	if (!regbase)
+-		return;
++	regmap = syscon_node_to_regmap(np);
++	if (IS_ERR(regmap))
++		panic("Could not retrieve syscon regmap");
+ 
+ 	virq = irq_of_parse_and_map(np, 0);
+ 	if (!virq)
+ 		return;
+ 
+-	pmc = at91_pmc_init(np, regbase, virq, caps);
++	pmc = at91_pmc_init(np, regmap, regbase, virq, caps);
+ 	if (!pmc)
+ 		return;
+ 	for_each_child_of_node(np, childnp) {
+diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+index 8b87771c69b2..0247eb0e171b 100644
+--- a/drivers/clk/at91/pmc.h
++++ b/drivers/clk/at91/pmc.h
+@@ -14,6 +14,7 @@
+ 
+ #include <linux/io.h>
+ #include <linux/irqdomain.h>
++#include <linux/regmap.h>
+ #include <linux/spinlock.h>
+ 
+ struct clk_range {
+@@ -28,7 +29,7 @@ struct at91_pmc_caps {
+ };
+ 
+ struct at91_pmc {
+-	void __iomem *regbase;
++	struct regmap *regmap;
+ 	int virq;
+ 	spinlock_t lock;
+ 	const struct at91_pmc_caps *caps;
+@@ -48,12 +49,16 @@ static inline void pmc_unlock(struct at91_pmc *pmc)
+ 
+ static inline u32 pmc_read(struct at91_pmc *pmc, int offset)
+ {
+-	return readl(pmc->regbase + offset);
++	unsigned int ret = 0;
++
++	regmap_read(pmc->regmap, offset, &ret);
++
++	return ret;
+ }
+ 
+ static inline void pmc_write(struct at91_pmc *pmc, int offset, u32 value)
+ {
+-	writel(value, pmc->regbase + offset);
++	regmap_write(pmc->regmap, offset, value);
+ }
+ 
+ int of_at91_get_clk_range(struct device_node *np, const char *propname,
 -- 
-2.5.0
+2.1.4
