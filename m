@@ -1,139 +1,136 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:54554 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750988AbbJAWml (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 1 Oct 2015 18:42:41 -0400
-Date: Thu, 1 Oct 2015 15:42:38 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jisheng Zhang <jszhang@marvell.com>
-Cc: sebastian.hesselbarth@gmail.com, catalin.marinas@arm.com,
-	will.deacon@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
-	pawel.moll@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] clk: berlin: add clk support for berlin4ct
-Message-ID: <20151001224238.GS19319@codeaurora.org>
-References: <1442931156-5877-1-git-send-email-jszhang@marvell.com>
- <1442931156-5877-4-git-send-email-jszhang@marvell.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v4 5/5] clk: sunxi: mod1 clock support
+Date: Mon, 12 Oct 2015 22:43:30 +0200
+Message-Id: <1444682610-21482-6-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1444682610-21482-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1444682610-21482-1-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1442931156-5877-4-git-send-email-jszhang@marvell.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/22, Jisheng Zhang wrote:
-> + */
-> +#include <linux/clk-provider.h>
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/slab.h>
-> +
-> +#include "clk.h"
-> +
-> +#define CLK_SOURCE_MAX	5
-> +
-> +static struct clk_onecell_data gateclk_data;
-> +static struct clk_onecell_data clk_data;
-> +
-> +static DEFINE_SPINLOCK(lock);
+From: Emilio López <emilio@elopez.com.ar>
 
-This is really generic. How about berlin4ct_lock? That will make
-lockdep happy because the name for the key will have some
-meaning.
+The module 1 type of clocks consist of a gate and a mux and are used on
+the audio blocks to mux and gate the PLL2 outputs for AC97, IIS or
+SPDIF. This commit adds support for them on the sunxi clock driver.
 
-> +static void __init berlin4ct_gateclk_setup(struct device_node *np)
-> +{
-> +	int i, n, ret;
-> +	void __iomem *base;
-> +	struct clk **clks;
-> +
-> +	base = of_iomap(np, 0);
-> +	if (WARN_ON(!base))
-> +		return;
-> +
-> +	n = ARRAY_SIZE(berlin4ct_gates);
-> +	clks = kzalloc(n * sizeof(struct clk *), GFP_KERNEL);
+Signed-off-by: Emilio López <emilio@elopez.com.ar>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi/Makefile       |  1 +
+ drivers/clk/sunxi/clk-a10-mod1.c | 81 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 82 insertions(+)
+ create mode 100644 drivers/clk/sunxi/clk-a10-mod1.c
 
-kcalloc()
-
-> +	if (WARN_ON(!clks))
-
-Same comment about dropping WARN_ON for an allocation failure.
-
-> +		return;
-> +
-> +	for (i = 0; i < n; i++) {
-> +		clks[i] = clk_register_gate(NULL, berlin4ct_gates[i].name,
-> +				berlin4ct_gates[i].parent_name,
-> +				berlin4ct_gates[i].flags, base,
-> +				berlin4ct_gates[i].bit_idx, 0, &lock);
-> +		WARN_ON(IS_ERR(clks[i]));
-> +	}
-> +
-> +	gateclk_data.clks = clks;
-> +	gateclk_data.clk_num = i;
-> +
-> +	ret = of_clk_add_provider(np, of_clk_src_onecell_get,
-> +				  &gateclk_data);
-> +	if (WARN_ON(ret))
-> +		return;
-
-Drop that return please.
-
-> +
-> +}
-> +CLK_OF_DECLARE(berlin4ct_gateclk, "marvell,berlin4ct-gateclk",
-> +	       berlin4ct_gateclk_setup);
-> +
-> +static void __init berlin4ct_clk_setup(struct device_node *np)
-> +{
-> +	int i, n, ret, num_parents;
-> +	void __iomem *base;
-> +	struct clk **clks;
-> +	const char *parent_names[CLK_SOURCE_MAX];
-> +
-> +	num_parents = of_clk_get_parent_count(np);
-> +	if (num_parents <= 0 || num_parents > CLK_SOURCE_MAX)
-> +		return;
-> +
-> +	of_clk_parent_fill(np, parent_names, num_parents);
-> +
-> +	base = of_iomap(np, 0);
-> +	if (WARN_ON(!base))
-> +		return;
-> +
-> +	n = ARRAY_SIZE(berlin4ct_descs);
-> +	clks = kzalloc(n * sizeof(struct clk *), GFP_KERNEL);
-
-kcalloc()
-
-> +	if (WARN_ON(!clks))
-
-Same comment about dropping WARN_ON for an allocation failure.
-
-> +		return;
-> +
-> +	for (i = 0; i < n; i++) {
-> +		clks[i] = berlin_clk_register(berlin4ct_descs[i].name,
-> +				num_parents, parent_names,
-> +				berlin4ct_descs[i].flags,
-> +				base + berlin4ct_descs[i].offset);
-> +		WARN_ON(IS_ERR(clks[i]));
-> +	}
-> +
-> +	clk_data.clks = clks;
-> +	clk_data.clk_num = i;
-> +
-> +	ret = of_clk_add_provider(np, of_clk_src_onecell_get,
-> +				  &clk_data);
-> +	if (WARN_ON(ret))
-> +		return;
-
-Drop that return please.
-
+diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+index 70a449a419e6..cb4c299214ce 100644
+--- a/drivers/clk/sunxi/Makefile
++++ b/drivers/clk/sunxi/Makefile
+@@ -5,6 +5,7 @@
+ obj-y += clk-sunxi.o clk-factors.o
+ obj-y += clk-a10-codec.o
+ obj-y += clk-a10-hosc.o
++obj-y += clk-a10-mod1.o
+ obj-y += clk-a10-pll2.o
+ obj-y += clk-a20-gmac.o
+ obj-y += clk-mod0.o
+diff --git a/drivers/clk/sunxi/clk-a10-mod1.c b/drivers/clk/sunxi/clk-a10-mod1.c
+new file mode 100644
+index 000000000000..099dbdab7afe
+--- /dev/null
++++ b/drivers/clk/sunxi/clk-a10-mod1.c
+@@ -0,0 +1,81 @@
++/*
++ * Copyright 2013 Emilio López
++ *
++ * Emilio López <emilio@elopez.com.ar>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/slab.h>
++
++static DEFINE_SPINLOCK(mod1_lock);
++
++#define SUN4I_MOD1_ENABLE	31
++#define SUN4I_MOD1_MUX		16
++#define SUN4I_MOD1_MUX_WIDTH	2
++#define SUN4I_MOD1_MAX_PARENTS	4
++
++static void __init sun4i_mod1_clk_setup(struct device_node *node)
++{
++	struct clk *clk;
++	struct clk_mux *mux;
++	struct clk_gate *gate;
++	const char *parents[4];
++	const char *clk_name = node->name;
++	void __iomem *reg;
++	int i = 0;
++
++	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
++	if (IS_ERR(reg))
++		return;
++
++	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
++	if (!mux)
++		goto err_unmap;
++
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		goto err_free_mux;
++
++	of_property_read_string(node, "clock-output-names", &clk_name);
++	of_clk_parent_fill(node, parents, SUN4I_MOD1_MAX_PARENTS);
++
++	gate->reg = reg;
++	gate->bit_idx = SUN4I_MOD1_ENABLE;
++	gate->lock = &mod1_lock;
++	mux->reg = reg;
++	mux->shift = SUN4I_MOD1_MUX;
++	mux->mask = BIT(SUN4I_MOD1_MUX_WIDTH) - 1;
++	mux->lock = &mod1_lock;
++
++	clk = clk_register_composite(NULL, clk_name, parents, i,
++				     &mux->hw, &clk_mux_ops,
++				     NULL, NULL,
++				     &gate->hw, &clk_gate_ops, 0);
++	if (IS_ERR(clk))
++		goto err_free_gate;
++
++	of_clk_add_provider(node, of_clk_src_simple_get, clk);
++
++	return;
++
++err_free_gate:
++	kfree(gate);
++err_free_mux:
++	kfree(mux);
++err_unmap:
++	iounmap(reg);
++}
++CLK_OF_DECLARE(sun4i_mod1, "allwinner,sun4i-a10-mod1-clk",
++	       sun4i_mod1_clk_setup);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.5.3
