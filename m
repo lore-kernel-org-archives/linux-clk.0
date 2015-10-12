@@ -1,112 +1,99 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Wed, 28 Oct 2015 13:51:49 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: k.kozlowski.k@gmail.com, Alim Akhtar <alim.akhtar@samsung.com>,
-	broonie@kernel.org, mturquette@baylibre.com,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org,
-	Thomas Abraham <thomas.ab@samsung.com>
-Subject: Re: [PATCH v3 2/5] mfd: sec: Add support for S2MPS15 PMIC
-Message-ID: <20151028135149.GF4058@x1>
-References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
- <1445863883-5187-3-git-send-email-alim.akhtar@samsung.com>
- <20151026143411.GL597@x1>
- <563021AF.6030100@samsung.com>
- <20151028084609.GG5828@x1>
- <5630D12C.2030008@samsung.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v4 4/5] clk: sunxi: codec clock support
+Date: Mon, 12 Oct 2015 22:43:29 +0200
+Message-Id: <1444682610-21482-5-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1444682610-21482-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1444682610-21482-1-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <5630D12C.2030008@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 28 Oct 2015, Krzysztof Kozlowski wrote:
+From: Emilio López <emilio@elopez.com.ar>
 
-> W dniu 28.10.2015 o 17:46, Lee Jones pisze:
-> > On Wed, 28 Oct 2015, Krzysztof Kozlowski wrote:
-> > 
-> >> On 26.10.2015 23:34, Lee Jones wrote:
-> >>> On Mon, 26 Oct 2015, Alim Akhtar wrote:
-> >>>
-> >>>> From: Thomas Abraham <thomas.ab@samsung.com>
-> >>>>
-> >>>> Add support for S2MPS15 PMIC which is similar to S2MPS11 PMIC. The S2MPS15
-> >>>> PMIC supports 27 LDO regulators, 10 buck regulators, RTC, three 32.768KHz
-> >>>> clock outputs and battery charger. This patch adds initial support for
-> >>>> LDO and buck regulators of S2MPS15 device.
-> >>>>
-> >>>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> >>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> >>>> [Alim: Added s2mps15_devs like rtc and clk and related changes]
-> >>>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> >>>> ---
-> >>>>  drivers/mfd/sec-core.c              |   31 +++++++
-> >>>>  drivers/mfd/sec-irq.c               |    8 ++
-> >>>>  include/linux/mfd/samsung/core.h    |    1 +
-> >>>>  include/linux/mfd/samsung/s2mps15.h |  158 +++++++++++++++++++++++++++++++++++
-> >>>>  4 files changed, 198 insertions(+)
-> >>>>  create mode 100644 include/linux/mfd/samsung/s2mps15.h
-> >>>
-> >>> I replied to the previous set and won't be reviewing this one until
-> >>> all of the open points are solved.
-> >>
-> >> The naming and compatibles used by the driver are confusing but how it
-> >> was at beginning. Beside the confusion, the names are correct:
-> >>
-> >> 1. Main mfd driver:
-> >>  - compatible: samsung,s2mps1*-pmic
-> >>  - driver name: sec_pmic
-> >>
-> >> 2. Regulator driver:
-> >>  - no compatible (because it always searches for "regulators" subnode of
-> >> its parent... that is the convention/legacy behaviour)
-> >>  - driver name: s2mps1*-pmic
-> >>
-> >> I hope that explains your concerns.
-> > 
-> > It explains *why*, but doesn't ease my concerns in any way.
-> > 
-> > Unfortunately I've only just realised the disparity we have between
-> > MFD and the Regulator subsystem, which is annoying because it's now
-> > almost impossible to rectify.  
-> > 
-> > We should have taken one of two views.  Either a) The MFD is the PMIC
-> > device which encompasses regulator control.  In which case the MFD
-> > and it's corresponding compatible string would be named *-pmic and the
-> > regulator driver would be called *-regulator. Or b) The MFD could be
-> > considered a normal MFD and be named after the model number, then the
-> > regulator 'could' be named *-pmic.
-> > 
-> > However, with reference to b), how much other Power Management does
-> > the regulator driver do besides control regulators?  I suspect not
-> > much.  Therefore my preference would be for a).  My second choice
-> > would be a mixuture of the two where nothing gets named *-pmic.  The
-> > last option on my list would be the current situation where we seem to
-> > be calling both the MFD (PMIC) itself and the Regulator driver
-> > *-pmic, which is not good.
-> 
-> Starting from the description of device-family. This is called "Power
-> Management IC" but it is rather a "Power Deliver/Distribute IC". There
-> isn't any logic inside except enable/disable/configure/set low power
-> mode for regulators.
-> 
-> However in the same time the IC comes (always) with:
->  - 32kHz clocks,
->  - RTC,
->  - backup battery charger (no driver for it),
->  - reset for SoC,
->  - shutdown on thermal alert (also no driver for this control).
-> 
-> The solution a) seems fine to me. Make sense and it looks entirely
-> backward compatible - only driver names will be modified.
+The codec clock on sun4i, sun5i and sun7i is a simple gate with PLL2 as
+parent. Add a driver for such a clock.
 
-Perfect solution from my PoV.
+Signed-off-by: Emilio López <emilio@elopez.com.ar>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi/Makefile        |  1 +
+ drivers/clk/sunxi/clk-a10-codec.c | 44 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 45 insertions(+)
+ create mode 100644 drivers/clk/sunxi/clk-a10-codec.c
 
-Thanks Krzysztof.
-
+diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+index c658a18ba7cb..70a449a419e6 100644
+--- a/drivers/clk/sunxi/Makefile
++++ b/drivers/clk/sunxi/Makefile
+@@ -3,6 +3,7 @@
+ #
+ 
+ obj-y += clk-sunxi.o clk-factors.o
++obj-y += clk-a10-codec.o
+ obj-y += clk-a10-hosc.o
+ obj-y += clk-a10-pll2.o
+ obj-y += clk-a20-gmac.o
+diff --git a/drivers/clk/sunxi/clk-a10-codec.c b/drivers/clk/sunxi/clk-a10-codec.c
+new file mode 100644
+index 000000000000..ac321d6a0df5
+--- /dev/null
++++ b/drivers/clk/sunxi/clk-a10-codec.c
+@@ -0,0 +1,44 @@
++/*
++ * Copyright 2013 Emilio López
++ *
++ * Emilio López <emilio@elopez.com.ar>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++
++#define SUN4I_CODEC_GATE	31
++
++static void __init sun4i_codec_clk_setup(struct device_node *node)
++{
++	struct clk *clk;
++	const char *clk_name = node->name, *parent_name;
++	void __iomem *reg;
++
++	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
++	if (IS_ERR(reg))
++		return;
++
++	of_property_read_string(node, "clock-output-names", &clk_name);
++	parent_name = of_clk_get_parent_name(node, 0);
++
++	clk = clk_register_gate(NULL, clk_name, parent_name,
++				CLK_SET_RATE_PARENT, reg,
++				SUN4I_CODEC_GATE, 0, NULL);
++
++	if (!IS_ERR(clk))
++		of_clk_add_provider(node, of_clk_src_simple_get, clk);
++}
++CLK_OF_DECLARE(sun4i_codec, "allwinner,sun4i-a10-codec-clk",
++	       sun4i_codec_clk_setup);
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.5.3
