@@ -1,119 +1,82 @@
-Return-Path: <gnurou@gmail.com>
+Return-Path: <jonmason@broadcom.com>
+Date: Mon, 12 Oct 2015 13:52:02 -0400
+From: Jon Mason <jonmason@broadcom.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Michael Turquette <mturquette@baylibre.com>, Florian Fainelli
+	<f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui
+	<rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>
+Subject: Re: [PATCH 09/10] clk: ns2: add clock support for Broadcom Northstar
+ 2 SoC
+Message-ID: <20151012175202.GE20867@broadcom.com>
+References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
+ <1443826665-17570-10-git-send-email-jonmason@broadcom.com>
+ <20151010001915.GY26883@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20151019183905.GS32532@n2100.arm.linux.org.uk>
-References: <20151018192931.GY14956@sirena.org.uk> <20151018193757.GA9147@kroah.com>
- <20151018195330.GB14956@sirena.org.uk> <1445247881.53393.146.camel@infradead.org>
- <CAL_JsqKehmSobpbdeXGo=-1pAbtrhCHovyyCWya_MNOhGCi8CQ@mail.gmail.com>
- <1445258870.53393.173.camel@infradead.org> <20151019145048.GI14956@sirena.org.uk>
- <1445268580.53393.183.camel@infradead.org> <20151019154324.GN32532@n2100.arm.linux.org.uk>
- <20151019182744.GD4931@pengutronix.de> <20151019183905.GS32532@n2100.arm.linux.org.uk>
-From: Alexandre Courbot <gnurou@gmail.com>
-Date: Tue, 20 Oct 2015 08:47:21 +0900
-Message-ID: <CAAVeFuKvwYikwjdTHK5Bq+Ot3s3hySe=7e-_8cXFN7tdUV18YA@mail.gmail.com>
-Subject: Re: [GIT PULL] On-demand device probing
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	David Woodhouse <dwmw2@infradead.org>, Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>,
-	=?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
-	Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
-	Linux USB List <linux-usb@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20151010001915.GY26883@codeaurora.org>
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Oct 20, 2015 at 3:39 AM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> On Mon, Oct 19, 2015 at 08:27:44PM +0200, Uwe Kleine-K=C3=B6nig wrote:
->> Hello,
->>
->> On Mon, Oct 19, 2015 at 04:43:24PM +0100, Russell King - ARM Linux wrote=
-:
->> > It's a bit ironic that you've chosen GPIO as an example there.  The
->> > "new" GPIO API (the gpiod_* stuff) only has a fwnode way to get the
->> > gpio descriptor.  There's no of_* method.
->>
->> Without following all that fwnode discussion:
->> gpiod_get et al. should work for you here, doesn't it? It just takes a
->> struct device * and I'm happy with it.
->
-> What if you don't have a struct device?  I had that problem recently
-> when modifying the mvebu PCIe code.  The 'struct device' node doesn't
-> contain the GPIOs, it's the PCIe controller.  Individual ports on the
-> controller are described in DT as sub-nodes, and the sub-nodes can
-> have a GPIO for card reset purposes.  These sub-nodes don't have a
-> struct device.
->
-> Right now, I'm having to do this to work around this issue:
->
->         reset_gpio =3D of_get_named_gpio_flags(child, "reset-gpios", 0, &=
-flags);
->         if (reset_gpio =3D=3D -EPROBE_DEFER) {
->                 ret =3D reset_gpio;
->                 goto err;
->         }
->
->         if (gpio_is_valid(reset_gpio)) {
->                 unsigned long gpio_flags;
->
->                 port->reset_name =3D devm_kasprintf(dev, GFP_KERNEL, "%s-=
-reset",
->                                                   port->name);
->                 if (!port->reset_name) {
->                         ret =3D -ENOMEM;
->                         goto err;
->                 }
->
->                 if (flags & OF_GPIO_ACTIVE_LOW) {
->                         dev_info(dev, "%s: reset gpio is active low\n",
->                                  of_node_full_name(child));
->                         gpio_flags =3D GPIOF_ACTIVE_LOW |
->                                      GPIOF_OUT_INIT_LOW;
->                 } else {
->                         gpio_flags =3D GPIOF_OUT_INIT_HIGH;
->                 }
->
->                 ret =3D devm_gpio_request_one(dev, reset_gpio, gpio_flags=
-,
->                                             port->reset_name);
->                 if (ret) {
->                         if (ret =3D=3D -EPROBE_DEFER)
->                                 goto err;
->                         goto skip;
->                 }
->
->                 port->reset_gpio =3D gpio_to_desc(reset_gpio);
->         }
->
-> Not nice, is it?  Not nice to have that in lots of drivers either.
->
-> However, switching to use any of_* or fwnode_* thing also carries with
-> it another problem: you can't control the name appearing in the
-> allocation, so you end up with a bunch of GPIOs requested with a "reset"
-> name - meaning you lose any identification of which port the GPIO was
-> bound to.
+On Fri, Oct 09, 2015 at 05:19:15PM -0700, Stephen Boyd wrote:
+> On 10/02, Jon Mason wrote:
+> > diff --git a/drivers/clk/bcm/clk-ns2.c b/drivers/clk/bcm/clk-ns2.c
+> > new file mode 100644
+> > index 0000000..1d08281
+> > --- /dev/null
+> > +++ b/drivers/clk/bcm/clk-ns2.c
+> > @@ -0,0 +1,290 @@
+> > +/*
+> > + * Copyright (C) 2015 Broadcom Corporation
+> > + *
+> > + * This program is free software; you can redistribute it and/or
+> > + * modify it under the terms of the GNU General Public License as
+> > + * published by the Free Software Foundation version 2.
+> > + *
+> > + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
+> > + * kind, whether express or implied; without even the implied warranty
+> > + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> > + * GNU General Public License for more details.
+> > + */
+> > +
+> > +#include <linux/kernel.h>
+> > +#include <linux/err.h>
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/io.h>
+> > +#include <linux/of.h>
+> > +#include <linux/clkdev.h>
+> 
+> clkdev looks unused here too?
+> 
+> > +#include <linux/of_address.h>
+> > +#include <linux/delay.h>
+> 
+> And this one?
 
-There are a few holes in the gpiod API. I see two solutions here:
+Yes, already caught this when you mentioned the other file :)
 
-1) extend devm_get_gpiod_from_child() to take an optional name argument
-2) add a function to explicitly change a GPIO's name
+> 
+> > +
+> > +#include <dt-bindings/clock/bcm-ns2.h>
+> > +#include "clk-iproc.h"
+> > +
+> > +#define reg_val(o, s, w) { .offset = o, .shift = s, .width = w, }
+> 
+> I guess we missed this one already, but this isn't a macro
+> resembling a function. Kernel style is to capitalize this sort of
+> macro.
 
-2) seems to be the most generic solution, would that do the trick?
+I agree, but I was following prior example in
+drivers/clk/bcm/clk-cygnus.c.  I can make the changes here and do a
+patch for that file making the necessary changes as well.  Just let me
+know your preference.
 
-(sorry for the off-topic)
+Thanks,
+Jon
+
+> 
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
