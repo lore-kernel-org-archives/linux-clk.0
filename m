@@ -1,40 +1,93 @@
-Return-Path: <jonmason@broadcom.com>
-Date: Tue, 13 Oct 2015 17:10:13 -0400
-From: Jon Mason <jonmason@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
-	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
-	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
-Subject: Re: [PATCH v2 0/10] clk: iproc: add support for BCM NS, NSP, and NS2
-Message-ID: <20151013211013.GL12512@broadcom.com>
-References: <1444770485-11210-1-git-send-email-jonmason@broadcom.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <1444770485-11210-1-git-send-email-jonmason@broadcom.com>
-Return-Path: jonmason@broadcom.com
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH v2 13/14] usb: gadget: atmel: access the PMC using regmap
+Date: Mon, 12 Oct 2015 16:28:50 +0200
+Message-Id: <1444660131-14954-14-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1444660131-14954-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1444660131-14954-1-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Oops, this should be 0/7 not 0/10
+Use regmap to access the PMC to avoid using at91_pmc_read and
+at91_pmc_write.
 
-On Tue, Oct 13, 2015 at 05:07:58PM -0400, Jon Mason wrote:
-> 
-> v2 - Added a patch to change the Cygnus clk macros to uppercase,
-> removed the device tree changes from the series (will send out those as
-> an RFC), and other minor changes that Stephen Boyd requested.
-> 
-> This patch series adds support for the Broadcom Northstar, Northstar
-> Plus, and Northstar 2 clocks.  Some slight modifications were necessary
-> to clk-iproc-pll to get Northstar and Northstar Plus working, due to
-> differences in register layout.  This is the reason why the first patch
-> is necessary.  Some more modifications were necessary to clk-iproc-pll
-> to get Northstar 2 working, due to differences in register layout (and
-> resulting fallout in Cygnus and NSP).  This is the reason why the sixth
-> and seventh patches are necessary.  The fifth patch is clean-up to
-> prevent accidentally forgetting to adjust for the base write errata
-> (which happened a few times, but was caught in internal review).
-> 
-> Thanks,
-> Jon
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Acked-by: Felipe Balbi <balbi@ti.com>
+---
+ drivers/usb/gadget/udc/atmel_usba_udc.c | 20 ++++++++++----------
+ drivers/usb/gadget/udc/atmel_usba_udc.h |  2 ++
+ 2 files changed, 12 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/usb/gadget/udc/atmel_usba_udc.c b/drivers/usb/gadget/udc/atmel_usba_udc.c
+index 3dfada8d6061..40977cd832af 100644
+--- a/drivers/usb/gadget/udc/atmel_usba_udc.c
++++ b/drivers/usb/gadget/udc/atmel_usba_udc.c
+@@ -17,7 +17,9 @@
+ #include <linux/device.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/list.h>
++#include <linux/mfd/syscon.h>
+ #include <linux/platform_device.h>
++#include <linux/regmap.h>
+ #include <linux/usb/ch9.h>
+ #include <linux/usb/gadget.h>
+ #include <linux/usb/atmel_usba_udc.h>
+@@ -1888,20 +1890,15 @@ static int atmel_usba_stop(struct usb_gadget *gadget)
+ #ifdef CONFIG_OF
+ static void at91sam9rl_toggle_bias(struct usba_udc *udc, int is_on)
+ {
+-	unsigned int uckr = at91_pmc_read(AT91_CKGR_UCKR);
+-
+-	if (is_on)
+-		at91_pmc_write(AT91_CKGR_UCKR, uckr | AT91_PMC_BIASEN);
+-	else
+-		at91_pmc_write(AT91_CKGR_UCKR, uckr & ~(AT91_PMC_BIASEN));
++	regmap_update_bits(udc->pmc, AT91_CKGR_UCKR, AT91_PMC_BIASEN,
++			   is_on ? AT91_PMC_BIASEN : 0);
+ }
+ 
+ static void at91sam9g45_pulse_bias(struct usba_udc *udc)
+ {
+-	unsigned int uckr = at91_pmc_read(AT91_CKGR_UCKR);
+-
+-	at91_pmc_write(AT91_CKGR_UCKR, uckr & ~(AT91_PMC_BIASEN));
+-	at91_pmc_write(AT91_CKGR_UCKR, uckr | AT91_PMC_BIASEN);
++	regmap_update_bits(udc->pmc, AT91_CKGR_UCKR, AT91_PMC_BIASEN, 0);
++	regmap_update_bits(udc->pmc, AT91_CKGR_UCKR, AT91_PMC_BIASEN,
++			   AT91_PMC_BIASEN);
+ }
+ 
+ static const struct usba_udc_errata at91sam9rl_errata = {
+@@ -1938,6 +1935,9 @@ static struct usba_ep * atmel_udc_of_init(struct platform_device *pdev,
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	udc->errata = match->data;
++	udc->pmc = syscon_regmap_lookup_by_compatible("atmel,at91sam9g45-pmc");
++	if (udc->errata && IS_ERR(udc->pmc))
++		return ERR_CAST(udc->pmc);
+ 
+ 	udc->num_ep = 0;
+ 
+diff --git a/drivers/usb/gadget/udc/atmel_usba_udc.h b/drivers/usb/gadget/udc/atmel_usba_udc.h
+index ea448a344767..3e1c9d589dfa 100644
+--- a/drivers/usb/gadget/udc/atmel_usba_udc.h
++++ b/drivers/usb/gadget/udc/atmel_usba_udc.h
+@@ -354,6 +354,8 @@ struct usba_udc {
+ 	struct dentry *debugfs_root;
+ 	struct dentry *debugfs_regs;
+ #endif
++
++	struct regmap *pmc;
+ };
+ 
+ static inline struct usba_ep *to_usba_ep(struct usb_ep *ep)
+-- 
+2.1.4
