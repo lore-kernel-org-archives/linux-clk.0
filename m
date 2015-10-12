@@ -1,66 +1,44 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <jszhang@marvell.com>
+From: Jisheng Zhang <jszhang@marvell.com>
+To: <ulf.hansson@linaro.org>, <sebastian.hesselbarth@gmail.com>,
+        <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Jisheng Zhang <jszhang@marvell.com>
+Subject: [PATCH 5/5] clk: berlin: bg2: remove CLK_IGNORE_UNUSED flag for sdio clk
+Date: Mon, 12 Oct 2015 13:46:36 +0800
+Message-ID: <1444628796-5484-6-git-send-email-jszhang@marvell.com>
+In-Reply-To: <1444628796-5484-1-git-send-email-jszhang@marvell.com>
+References: <1444628796-5484-1-git-send-email-jszhang@marvell.com>
 MIME-Version: 1.0
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- "Stephen Boyd" <sboyd@codeaurora.org>,
- "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
- "Magnus Damm" <damm+renesas@opensource.se>,
- "Simon Horman" <horms+renesas@verge.net.au>,
- "Rob Herring" <robh+dt@kernel.org>, "Pawel Moll" <pawel.moll@arm.com>,
- "Mark Rutland" <mark.rutland@arm.com>,
- "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
- "Kumar Gala" <galak@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1444999760-15750-6-git-send-email-geert+renesas@glider.be>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-sh@vger.kernel.org, "Geert Uytterhoeven" <geert+renesas@glider.be>
-References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be>
- <1444999760-15750-6-git-send-email-geert+renesas@glider.be>
-Message-ID: <20151020122448.20687.11926@quantum>
-Subject: Re: [PATCH v4 5/5] [RFC] clk: shmobile: r8a7795: Add new CPG/MSSR driver
-Date: Tue, 20 Oct 2015 05:24:48 -0700
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+The axi clock properties already exists, so there's no need to set this
+flag for sdio0 and sdio1 clk any more.
 
-Quoting Geert Uytterhoeven (2015-10-16 05:49:20)
-> +static void __init r8a7795_cpg_mssr_init(struct device_node *np)
-> +{
-> +       struct regmap *regmap;
-> +       u32 reg, cpg_mode;
-> +
-> +       regmap =3D syscon_regmap_lookup_by_phandle(np, "renesas,modemr");
-> +       if (IS_ERR(regmap) ||
-> +           of_property_read_u32_index(np, "renesas,modemr", 1, &reg) ||
-> +           regmap_read(regmap, reg, &cpg_mode)) {
-> +               pr_err("%s: failed to parse renesas,modemr\n", np->full_n=
-ame);
-> +               return;
-> +       }
-> +
-> +       cpg_pll_config =3D &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode=
-)];
-> +       if (!cpg_pll_config->extal_div) {
-> +               pr_err("%s: Prohibited setting (cpg_mode=3D0x%x)\n",
-> +                      __func__, cpg_mode);
-> +               return;
-> +       }
-> +
-> +       cpg_mssr_probe(np, &r8a7795_cpg_mssr_info);
-> +}
-> +CLK_OF_DECLARE(r8a7795_cpg_mssr, "renesas,r8a7795-cpg-mssr",
-> +              r8a7795_cpg_mssr_init);
+Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+---
+ drivers/clk/berlin/bg2.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Is CLK_OF_DECLARE needed? Is it possible to make this a real
-platform_driver =C3=A0 la drivers/clk/qcom/gcc-apq8084.c?
-
-Sorry if I already asked this in a previous version, but a quick search
-of my email didn't reveal anything.
-
-Regards,
-Mike
-
-> -- =
-
-> 1.9.1
->=20
+diff --git a/drivers/clk/berlin/bg2.c b/drivers/clk/berlin/bg2.c
+index 73153fc..23e0e3b 100644
+--- a/drivers/clk/berlin/bg2.c
++++ b/drivers/clk/berlin/bg2.c
+@@ -490,8 +490,8 @@ static const struct berlin2_gate_data bg2_gates[] __initconst = {
+ 	{ "usb0",	"perif",	11 },
+ 	{ "usb1",	"perif",	12 },
+ 	{ "pbridge",	"perif",	13, CLK_IGNORE_UNUSED },
+-	{ "sdio0",	"perif",	14, CLK_IGNORE_UNUSED },
+-	{ "sdio1",	"perif",	15, CLK_IGNORE_UNUSED },
++	{ "sdio0",	"perif",	14 },
++	{ "sdio1",	"perif",	15 },
+ 	{ "nfc",	"perif",	17 },
+ 	{ "smemc",	"perif",	19 },
+ 	{ "audiohd",	"audiohd_pll",	26 },
+-- 
+2.6.1
