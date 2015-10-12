@@ -1,85 +1,65 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH v2 1/2] clk: samsung: exynos5250: Add DISP1 clocks
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Kukjin Kim <kgene@kernel.org>, Michael Turquette <mturquette@baylibre.com>
-References: <1444905084-22540-1-git-send-email-tomeu.vizoso@collabora.com>
- <1444905084-22540-2-git-send-email-tomeu.vizoso@collabora.com>
- <56203AD3.2050905@samsung.com> <20151016124935.20687.4394@quantum>
- <20151016172651.GB23912@codeaurora.org>
- <CAAObsKAjZX8XxTAFVKq4BCSZSrKG5xQPTue+z+xnJDD8QwK88Q@mail.gmail.com>
- <56218B2D.9040007@kernel.org>
- <CAJKOXPf5Dnh36rrY6Vet13EHKB3gJuU0VnAfsyYnvWTx92O_GA@mail.gmail.com>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Gustavo Padovan <gustavo.padovan@collabora.co.uk>,
- Seung-Woo Kim <sw0312.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Joonyoung Shim <jy0922.shim@samsung.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Kumar Gala <galak@codeaurora.org>,
- Ian Campbell <ijc+devicetree@hellion.org.uk>,
- linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Moll
- <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>,
- linux-clk@vger.kernel.org,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <56221B26.2050407@osg.samsung.com>
-Date: Sat, 17 Oct 2015 11:55:50 +0200
-MIME-Version: 1.0
-In-Reply-To: <CAJKOXPf5Dnh36rrY6Vet13EHKB3gJuU0VnAfsyYnvWTx92O_GA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/POC v3 2/3] clk: shmobile: Add r8a7791 CPG Core Clock Definitions
+Date: Mon, 12 Oct 2015 13:37:42 +0200
+Message-Id: <1444649863-17796-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1444649863-17796-1-git-send-email-geert+renesas@glider.be>
+References: <1444649863-17796-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+Add the R-Car M2-W CPG Core Clocks that are currently needed by the DTS.
+More will be added when needed.
 
-On 10/17/2015 10:53 AM, Krzysztof Kozlowski wrote:
-> 2015-10-17 8:41 GMT+09:00 Kukjin Kim <kgene@kernel.org>:
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This is a Proof-of-Concept. Final definitions and values may be
+different.
 
-[snip]
+ include/dt-bindings/clock/r8a7791-cpg-mssr.h | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r8a7791-cpg-mssr.h
 
->>>
->> So...how can I take 2nd patch of this series in samsung(arm-soc) tree?
->> And this series shouldn't be for fixes for 4.3?...Mike how do you think?
-> 
-> Stephen acked it so I thought everything will go through samsung-soc.
-> 
-> Dear Kukjin,
-> Indeed this can go as fix for current cycle... but in the same time
-> this does not fix any specific regression. Tomeu did not describe when
-> issue happened for the first time so I assumed it was like that
-> always. It's up to you.
->
-
-Sorry for not answering about this series before but I've been in contact
-with Tomeu over IRC before he posted it and since you already added your
-Reviewed-by tag, I didn't feel the need do to it.
-
-This is a regression for 4.3 since S2R was working correctly for 4.2 in
-Snow, I tested after fixing resume with commit 6fd4899a54a5 ("irqchip:
-exynos-combiner: Save IRQ enable set on suspend") and the display was
-always enabled on resume.
-
-I don't have access to a Snow anymore to bisect but I think the regression
-was introduced by some of the changes in 4.3 to migrate the Exynos DRM to
-Atomic Mode Settings. But probably that just exposed a latent bug and it
-was working out of luck since I had the same issue than Tomeu in Exynos5420
-and was fixed in the same way with commits:
-
-885601002998 ("clk: exynos5420: Add IDs for clocks used in DISP1 power domain")
-ea08de16eb1b ("ARM: dts: Add DISP1 power domain for exynos5420")
-
-> Both patches (with Stephen's ack) are in my recent pull request but as
-> usual feel free to cherry pick. I'll drop them from next branch then.
-> 
-> Best regards,
-> Krzysztof
-> --
-
-Best regards,
+diff --git a/include/dt-bindings/clock/r8a7791-cpg-mssr.h b/include/dt-bindings/clock/r8a7791-cpg-mssr.h
+new file mode 100644
+index 0000000000000000..a68093bc77f846fa
+--- /dev/null
++++ b/include/dt-bindings/clock/r8a7791-cpg-mssr.h
+@@ -0,0 +1,22 @@
++/*
++ * Copyright 2013 Ideas On Board SPRL
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_R8A7791_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7791_CPG_MSSR_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a7791 CPG Core Clocks */
++#define R8A7791_CLK_Z			0
++#define R8A7791_CLK_M2			1
++#define R8A7791_CLK_ADSP		2
++#define R8A7791_CLK_SD0			3
++#define R8A7791_CLK_RCAN		4
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7791_CPG_MSSR_H__ */
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+1.9.1
