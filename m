@@ -1,153 +1,47 @@
-Return-Path: <tomeu.vizoso@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 12 Oct 2015 11:46:52 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Eric Anholt <eric@anholt.net>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+	Mike Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v7] clk: bcm2835: Add support for programming the audio
+ domain clocks
+Message-ID: <20151012184652.GB26883@codeaurora.org>
+References: <1444354644-31997-1-git-send-email-eric@anholt.net>
 MIME-Version: 1.0
-Sender: tomeu.vizoso@gmail.com
-In-Reply-To: <20151019143045.GE32532@n2100.arm.linux.org.uk>
-References: <561E1378.6000906@collabora.com> <20151017065750.GA18607@kroah.com>
- <20151018192931.GY14956@sirena.org.uk> <20151018193757.GA9147@kroah.com>
- <20151018195330.GB14956@sirena.org.uk> <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
- <20151019131821.GA32532@n2100.arm.linux.org.uk> <CAAObsKDS_+AZ26P_fHc6pvAYrQotsuoO0DEGQUWC514t3DD_jQ@mail.gmail.com>
- <20151019143045.GE32532@n2100.arm.linux.org.uk>
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Date: Mon, 19 Oct 2015 17:00:54 +0200
-Message-ID: <CAAObsKDWM6A98tdKHqi4fe5DBf0BmB0JeghcZDWan_PYbyshag@mail.gmail.com>
-Subject: Re: [GIT PULL] On-demand device probing
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
-	Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>, Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linux-i2c@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, linux-fbdev@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1444354644-31997-1-git-send-email-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 19 October 2015 at 16:30, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> On Mon, Oct 19, 2015 at 04:10:56PM +0200, Tomeu Vizoso wrote:
->> On 19 October 2015 at 15:18, Russell King - ARM Linux
->> <linux@arm.linux.org.uk> wrote:
->> > On Mon, Oct 19, 2015 at 02:34:22PM +0200, Tomeu Vizoso wrote:
->> >> ... If a device is available and has
->> >> a compatible driver, but it cannot be probed because a dependency
->> >> isn't going to be available, that's an error and is going to cause
->> >> real-world problems unless the device is redundant. Currently we say
->> >> nothing because with deferred probe the probe callbacks are also part
->> >> of the mechanism that determines the dependency order.
->> >
->> > So what if device X depends on device Y, and we have a driver for
->> > device Y built-in to the kernel, but the driver for device X is a
->> > module?
->> >
->> > I don't see this being solvable in the way you describe above - it's
->> > going to identify X as being unable to be satisfied, and report it as
->> > an error - but it's not an error at all.
->>
->> It's going to probe Y at late_initcall, then probe X when its driver
->> is registered. No deferred probes nor messages about it.
->>
->> But if you meant to write the opposite case (X built-in and Y in a
->> module), then I have to ask you in what situation that would make
->> sense.
->
-> I did mean the opposite way around.  It may not make sense if you're
-> targetting a single platform, but it may make sense in a single zImage
-> kernel.
->
-> Consider something like a single zImage kernel that is built with
-> everything built-in to be able to boot and mount rootfs without
-> initramfs support on both platform A and platform B.  Both platforms
-> share some hardware (eg, an I2C GPIO expander) which is built as a
-> module.  It is a resource provider.  Platform B contains a driver
-> which is required to boot on platform A, but not platform B (so the
-> kernel has to have that driver built-in.)  On platform B, there is
-> a dependency to the I2C GPIO expander device.
+On 10/08, Eric Anholt wrote:
+> This adds support for enabling, disabling, and setting the rate of the
+> audio domain clocks.  It will be necessary for setting the pixel clock
+> for HDMI in the VC4 driver and let us write a cpufreq driver.  It will
+> also improve compatibility with user changes to the firmware's
+> config.txt, since our previous fixed clocks are unaware of it.
+> 
+> The firmware also has support for configuring the clocks through the
+> mailbox channel, but the pixel clock setup by the firmware doesn't
+> work, and it's Raspberry Pi specific anyway.  The only conflicts we
+> should have with the firmware would be if we made firmware calls that
+> result in clock management (like opening firmware V3D or ISP access,
+> which we don't support in upstream), or on hardware over-thermal or
+> under-voltage (when the firmware would rewrite PLLB to take the ARM
+> out of overclock).  If that happens, our cached .recalc_rate() results
+> would be incorrect, but that's no worse than our current state where
+> we used fixed clocks.
+> 
+> The existing fixed clocks in the code are left in place to provide
+> backwards compatibility with old device tree files.
+> 
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> Tested-by: Martin Sperl <kernel@martin.sperl.org>
+> ---
 
-I see, in this situation the person trying to find out why some device
-hadn't probed would enable debug logging of failed probes and would
-see one spurious message if there was a deferred probe because of the
-module.
+Applied to clk-next
 
->> >> Having a specific switch for enabling deferred probe logging sounds
->> >> good, but there's going to be hundreds of spurious messages about
->> >> deferred probes that were just deferrals and only one of them is going
->> >> to be the actual error in which a device failed to find a dependency.
->> >
->> > Why would there be?  Sounds like something's very wrong there.
->>
->> Sorry about that, I have checked that only now and I "only" get 39
->> deferred probe messages on exynos5250-snow.
->
-> I typically see one or two, maybe five maximum on the platforms I have
-> here, but normally zero.
-
-Hmm, I have given a look at our lava farm and have seen 2 dozens as
-common (with multi_v7).
-
->> > So, really, after boot and all appropriate modules have been loaded,
->> > you should end up with no deferred probes.  Are you saying that you
->> > still have "hundreds" at that point?  If you do, that sounds like
->> > there's something very wrong.
->>
->> I was talking about messages if we log each -EPROBE_DEFER, not devices
->> that remain to be probed. The point being that right now we don't have
->> a way to know if we are deferring because the dependency will be
->> around later, or if we have a problem and the dependency isn't going
->> to be there at all.
->
-> What's the difference between a dependency which isn't around because
-> the driver is not built into the kernel but is available as a module,
-> and a dependency that isn't around because the module hasn't been
-> loaded yet?
->
-> How do you distinguish between those two scenarios?  In the former
-> scenario, the device will eventually come up when udev loads the
-> module.  In the latter case, it's a persistent failing case.
-
-Agreed, but it's something that doesn't happen often and that's why
-such messages would be at the debug level instead of being warns or
-errors.
-
->> Agreed, with the note from above on why it would be better to only
->> print such a message only when the -EPROBE_DEFER is likely to be a
->> problem.
->
-> ... and my argument is that there's _no way_ to know for certain which
-> deferred probes will be a problem, and which won't.  The only way to
-> definitely know that is if you disable kernel modules, and require
-> all drivers to be built into the kernel.
->
-> What you can do is print those devices which have failed to probe at
-> late_initcall() time - possibly augmenting that with reports from
-> subsystems showing what resources are not available, but that's only
-> a guide, because of the "it might or might not be in a kernel module"
-> problem.
-
-Well, adding those reports would give you a changelog similar to the
-one in this series...
-
-Thanks,
-
-Tomeu
-
-> --
-> FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-> according to speedtest.net.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
