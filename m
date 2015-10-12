@@ -1,188 +1,73 @@
-Return-Path: <lee@kernel.org>
-Date: Thu, 1 Oct 2015 13:25:55 +0100
-From: Lee Jones <lee@kernel.org>
-To: Eric Anholt <eric@anholt.net>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 4/4] ARM: bcm2835: Switch to using the new clock
- driver support.
-Message-ID: <20151001122555.GV3214@x1>
-References: <1443475325-22270-1-git-send-email-eric@anholt.net>
- <1443475325-22270-4-git-send-email-eric@anholt.net>
+	Emilio Lopez <emilio@elopez.com.ar>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v4 0/5] clk: sunxi: Add support for the Audio PLL
+Date: Mon, 12 Oct 2015 22:43:25 +0200
+Message-Id: <1444682610-21482-1-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1443475325-22270-4-git-send-email-eric@anholt.net>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 28 Sep 2015, Eric Anholt wrote:
+Hi,
 
-> This will give us the ability to set the pixel and HDMI state machine
-> clocks for the VC4 KMS driver, change the CPU frequency, and
-> potentially gate clocks in the future (once we also write a power
-> domain driver).  It also gives the uart an explicit clock reference,
-> so that we don't need to change the physical addresses of the old
-> fixed clk_bcm2835.c clocks for Raspberry Pi 2 port.
-> 
-> Two clocks get their frequencies updated as a result of this.  One is
-> uart's apb_pclk, which was previously accidentally grabbing the fixed
-> uart0_pclk due to the apb_pclk not having clk_register_clkdev()
-> called.  The uart doesn't seem to do anything with apb_pclk other than
-> make sure it's on, so that appears safe (also, as far as I can see,
-> the apb clock is actually the same as the VPU clock).  The other is
-> EMMC, which according to the docs was supposed to be in the 50-100Mhz
-> range, but it turns out the firmware needed to change to running it at
-> the 250Mhz core clock speed to avoid a bug in clock domain crossing.
-> 
-> Additionally, anything using BCM2835_CLOCK_VPU will now have a correct
-> clock rate if the user configures the boot-time core clock speed using
-> config.txt.
-> 
-> Signed-off-by: Eric Anholt <eric@anholt.net>
-> Acked-by: Stephen Warren <swarren@wwwdotorg.org>
-> ---
->  arch/arm/boot/dts/bcm2835.dtsi | 52 +++++++++++++++++++++++-------------------
->  1 file changed, 28 insertions(+), 24 deletions(-)
+This serie adds support for the PLL2 aka the Audio PLL on the
+Allwinner A10 and the later SoCs.
 
-Couple of small nits.
+This is the last part of the audio codec support.
 
-> diff --git a/arch/arm/boot/dts/bcm2835.dtsi b/arch/arm/boot/dts/bcm2835.dtsi
-> index 301c73f..a6a55b7 100644
-> --- a/arch/arm/boot/dts/bcm2835.dtsi
-> +++ b/arch/arm/boot/dts/bcm2835.dtsi
-> @@ -1,4 +1,5 @@
->  #include <dt-bindings/pinctrl/bcm2835.h>
-> +#include <dt-bindings/clock/bcm2835.h>
->  #include "skeleton.dtsi"
->  
->  / {
-> @@ -21,6 +22,10 @@
->  			compatible = "brcm,bcm2835-system-timer";
->  			reg = <0x7e003000 0x1000>;
->  			interrupts = <1 0>, <1 1>, <1 2>, <1 3>;
-> +			/* This could be a reference to BCM2835_CLOCK_TIMER,
-> +			 * but we don't have the driver using the common clock
-> +			 * support yet.
-> +			 */
+This serie is built on top of a generic clk-multiplier driver to
+handle clock that multiply their parent clock rate (mostly PLL's), in
+order to provide the driver for the PLL2 base clock, and then adds the
+drivers for the clock that derive from the Audio PLL.
 
-Nit: Please use correct multi-line comment formatting.
+Thanks!
+Maxime
 
->From Documentation/CodingStyle:
+Changes from v3:
+  - Fixed the header issues: removed unused ones, added some others
+  - Added the __acquire / __release call when a spinlock is not defined
 
-/*
- * This is the preferred style for multi-line
- * comments in the Linux kernel source code.
- * Please use it consistently.
- *
- * Description:  A column of asterisks on the left side,
- * with beginning and ending almost-blank lines.
- */
+Changes from v2:
+  - Renamed clk-factor to clk-multiplier
+  - Added an exception for the A13 clock
 
->  			clock-frequency = <1000000>;
->  		};
->  
-> @@ -57,6 +62,17 @@
->  			reg = <0x7e100000 0x28>;
->  		};
->  
-> +		clocks: cprman@7e101000 {
-> +			compatible = "brcm,bcm2835-cprman";
-> +			#clock-cells = <1>;
-> +			reg = <0x7e101000 0x2000>;
-> +
-> +			/* CPRMAN derives everything from the platform's
-> +			 * oscillator.
-> +			 */
+Changes from v1:
+  - Removed a bogus of_iomap in the mod1 clock driver
+  - Wrote the clk-factor driver
+  - Converted the PLL2 clock to that driver
+      
 
-As above.
+Emilio López (2):
+  clk: sunxi: codec clock support
+  clk: sunxi: mod1 clock support
 
-> +			clocks = <&clk_osc>;
-> +		};
-> +
->  		rng@7e104000 {
->  			compatible = "brcm,bcm2835-rng";
->  			reg = <0x7e104000 0x10>;
-> @@ -96,7 +112,9 @@
->  			compatible = "brcm,bcm2835-pl011", "arm,pl011", "arm,primecell";
->  			reg = <0x7e201000 0x1000>;
->  			interrupts = <2 25>;
-> -			clock-frequency = <3000000>;
-> +			clocks = <&clocks BCM2835_CLOCK_UART>,
-> +				 <&clocks BCM2835_CLOCK_VPU>;
-> +			clock-names = "uartclk", "apb_pclk";
->  			arm,primecell-periphid = <0x00241011>;
->  		};
->  
-> @@ -115,7 +133,7 @@
->  			compatible = "brcm,bcm2835-spi";
->  			reg = <0x7e204000 0x1000>;
->  			interrupts = <2 22>;
-> -			clocks = <&clk_spi>;
-> +			clocks = <&clocks BCM2835_CLOCK_VPU>;
->  			#address-cells = <1>;
->  			#size-cells = <0>;
->  			status = "disabled";
-> @@ -125,7 +143,7 @@
->  			compatible = "brcm,bcm2835-i2c";
->  			reg = <0x7e205000 0x1000>;
->  			interrupts = <2 21>;
-> -			clocks = <&clk_i2c>;
-> +			clocks = <&clocks BCM2835_CLOCK_VPU>;
->  			#address-cells = <1>;
->  			#size-cells = <0>;
->  			status = "disabled";
-> @@ -135,7 +153,7 @@
->  			compatible = "brcm,bcm2835-sdhci";
->  			reg = <0x7e300000 0x100>;
->  			interrupts = <2 30>;
-> -			clocks = <&clk_mmc>;
-> +			clocks = <&clocks BCM2835_CLOCK_EMMC>;
->  			status = "disabled";
->  		};
->  
-> @@ -143,7 +161,7 @@
->  			compatible = "brcm,bcm2835-i2c";
->  			reg = <0x7e804000 0x1000>;
->  			interrupts = <2 21>;
-> -			clocks = <&clk_i2c>;
-> +			clocks = <&clocks BCM2835_CLOCK_VPU>;
->  			#address-cells = <1>;
->  			#size-cells = <0>;
->  			status = "disabled";
-> @@ -165,28 +183,14 @@
->  		#address-cells = <1>;
->  		#size-cells = <0>;
->  
-> -		clk_mmc: clock@0 {
-> -			compatible = "fixed-clock";
-> -			reg = <0>;
-> -			#clock-cells = <0>;
-> -			clock-output-names = "mmc";
-> -			clock-frequency = <100000000>;
-> -		};
-> -
-> -		clk_i2c: clock@1 {
-> +		/* The oscillator is the root of the clock tree. */
-> +		clk_osc: clock@3 {
->  			compatible = "fixed-clock";
-> -			reg = <1>;
-> +			reg = <3>;
->  			#clock-cells = <0>;
-> -			clock-output-names = "i2c";
-> -			clock-frequency = <250000000>;
-> +			clock-output-names = "osc";
-> +			clock-frequency = <19200000>;
->  		};
->  
-> -		clk_spi: clock@2 {
-> -			compatible = "fixed-clock";
-> -			reg = <2>;
-> -			#clock-cells = <0>;
-> -			clock-output-names = "spi";
-> -			clock-frequency = <250000000>;
-> -		};
->  	};
->  };
+Maxime Ripard (3):
+  clk: Add a basic multiplier clock
+  clk: sunxi: Add a driver for the PLL2
+  clk: sunxi: pll2: Add A13 support
+
+ drivers/clk/Makefile                       |   1 +
+ drivers/clk/clk-multiplier.c               | 181 ++++++++++++++++++++++++
+ drivers/clk/sunxi/Makefile                 |   3 +
+ drivers/clk/sunxi/clk-a10-codec.c          |  44 ++++++
+ drivers/clk/sunxi/clk-a10-mod1.c           |  81 +++++++++++
+ drivers/clk/sunxi/clk-a10-pll2.c           | 216 +++++++++++++++++++++++++++++
+ include/dt-bindings/clock/sun4i-a10-pll2.h |  53 +++++++
+ include/linux/clk-provider.h               |  42 ++++++
+ 8 files changed, 621 insertions(+)
+ create mode 100644 drivers/clk/clk-multiplier.c
+ create mode 100644 drivers/clk/sunxi/clk-a10-codec.c
+ create mode 100644 drivers/clk/sunxi/clk-a10-mod1.c
+ create mode 100644 drivers/clk/sunxi/clk-a10-pll2.c
+ create mode 100644 include/dt-bindings/clock/sun4i-a10-pll2.h
+
+-- 
+2.5.3
