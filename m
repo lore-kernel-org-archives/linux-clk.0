@@ -1,81 +1,42 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bn1bn0105.outbound.protection.outlook.com ([157.56.110.105]:29588
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1753595AbbJOHEE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 15 Oct 2015 03:04:04 -0400
-From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-To: <arnd@arndb.de>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
-	<linux-clk@vger.kernel.org>, <olof@lixom.net>
-CC: <bhupesh.linux@gmail.com>, <will.deacon@arm.com>,
-	<Catalin.Marinas@arm.com>, <bhupesh.sharma@freescale.com>,
-	<LeoLi@freescale.com>, <scottwood@freescale.com>,
-	<stuart.yoder@freescale.com>,
-	Jaiprakash Singh <b44839@freescale.com>
-Subject: [PATCH v3 04/12] Documentation/dts: Move FSL board-specific bindings out of /powerpc
-Date: Thu, 15 Oct 2015 12:17:44 +0530
-Message-ID: <1444891672-32117-5-git-send-email-bhupesh.sharma@freescale.com>
-In-Reply-To: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
-References: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
+Return-Path: <jszhang@marvell.com>
+From: Jisheng Zhang <jszhang@marvell.com>
+To: <ulf.hansson@linaro.org>, <sebastian.hesselbarth@gmail.com>,
+        <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Jisheng Zhang <jszhang@marvell.com>
+Subject: [PATCH 4/5] clk: berlin: bg2q: remove CLK_IGNORE_UNUSED flag for sdio clk
+Date: Mon, 12 Oct 2015 13:46:35 +0800
+Message-ID: <1444628796-5484-5-git-send-email-jszhang@marvell.com>
+In-Reply-To: <1444628796-5484-1-git-send-email-jszhang@marvell.com>
+References: <1444628796-5484-1-git-send-email-jszhang@marvell.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Since the same board components can be used across ARM and PPC board families,
-this patch moves the FSL board-specific bindings out of bindings/powerpci.
+Since we have added the necessary axi clk properties in dts, we can
+remove the "sdio" clk's CLK_IGNORE_UNUSED flag now.
 
-While at it, this patch also adds the bindings for QIXIS FPGA controller
-found on FSL LS2080A boards. These boards have an on-board FPGA/CPLD
-connected to the IFC controller.
-
-Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-Signed-off-by: Jaiprakash Singh <b44839@freescale.com>
+Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
 ---
- .../{powerpc/fsl/board.txt => board/fsl-board.txt} |   14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
- rename Documentation/devicetree/bindings/{powerpc/fsl/board.txt => board/fsl-board.txt} (90%)
+ drivers/clk/berlin/bg2q.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/powerpc/fsl/board.txt b/Documentation/devicetree/bindings/board/fsl-board.txt
-similarity index 90%
-rename from Documentation/devicetree/bindings/powerpc/fsl/board.txt
-rename to Documentation/devicetree/bindings/board/fsl-board.txt
-index cff38bd..fb7b03e 100644
---- a/Documentation/devicetree/bindings/powerpc/fsl/board.txt
-+++ b/Documentation/devicetree/bindings/board/fsl-board.txt
-@@ -21,11 +21,14 @@ Example:
- 
- This is the memory-mapped registers for on board FPGA.
- 
--Required properities:
-+Required properties:
- - compatible: should be a board-specific string followed by a string
-   indicating the type of FPGA.  Example:
--	"fsl,<board>-fpga", "fsl,fpga-pixis"
-+	"fsl,<board>-fpga", "fsl,fpga-pixis", or
-+	"fsl,<board>-fpga", "fsl,fpga-qixis"
- - reg: should contain the address and the length of the FPGA register set.
-+
-+Optional properties:
- - interrupt-parent: should specify phandle for the interrupt controller.
- - interrupts: should specify event (wakeup) IRQ.
- 
-@@ -38,6 +41,13 @@ Example (P1022DS):
- 		 interrupts = <8 8 0 0>;
- 	 };
- 
-+Example (LS2080A-RDB):
-+
-+        cpld@3,0 {
-+                compatible = "fsl,ls2080ardb-fpga", "fsl,fpga-qixis";
-+                reg = <0x3 0 0x10000>;
-+        };
-+
- * Freescale BCSR GPIO banks
- 
- Some BCSR registers act as simple GPIO controllers, each such
+diff --git a/drivers/clk/berlin/bg2q.c b/drivers/clk/berlin/bg2q.c
+index 221f40c..243f421 100644
+--- a/drivers/clk/berlin/bg2q.c
++++ b/drivers/clk/berlin/bg2q.c
+@@ -283,7 +283,7 @@ static const struct berlin2_gate_data bg2q_gates[] __initconst = {
+ 	{ "usb2",	"perif",	13 },
+ 	{ "usb3",	"perif",	14 },
+ 	{ "pbridge",	"perif",	15, CLK_IGNORE_UNUSED },
+-	{ "sdio",	"perif",	16, CLK_IGNORE_UNUSED },
++	{ "sdio",	"perif",	16 },
+ 	{ "nfc",	"perif",	18 },
+ 	{ "pcie",	"perif",	22 },
+ };
 -- 
-1.7.9.5
-
-
+2.6.1
