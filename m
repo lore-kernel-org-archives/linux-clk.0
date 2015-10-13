@@ -1,176 +1,95 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:41110 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753347AbbJTJX0 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 20 Oct 2015 05:23:26 -0400
-From: Andrzej Hajda <a.hajda@samsung.com>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Hyungwon Hwang <human.hwang@samsung.com>
-Subject: [PATCH 06/10] drm/exynos/decon5433: add function to set particular
- register bits
-Date: Tue, 20 Oct 2015 11:22:37 +0200
-Message-id: <1445332961-25419-7-git-send-email-a.hajda@samsung.com>
-In-reply-to: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
-References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <rjui@broadcom.com>
+Subject: Re: [RFC 4/5] clk: iproc: define Broadcom NS2 iProc clock binding
+To: Jon Mason <jonmason@broadcom.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+References: <1444771347-11382-1-git-send-email-jonmason@broadcom.com>
+ <1444771347-11382-5-git-send-email-jonmason@broadcom.com>
+CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
+	<hauke@hauke-m.de>, Scott Branden <sbranden@broadcom.com>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>
+From: Ray Jui <rjui@broadcom.com>
+Message-ID: <561D84B4.4000002@broadcom.com>
+Date: Tue, 13 Oct 2015 15:24:52 -0700
+MIME-Version: 1.0
+In-Reply-To: <1444771347-11382-5-git-send-email-jonmason@broadcom.com>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: rjui@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The driver often sets only particular bits of configuration registers.
-Using separate function to such action simplifies the code.
+Same as this patch. I thought device tree binding document should go
+with the clock driver changes.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 69 ++++++++-------------------
- 1 file changed, 19 insertions(+), 50 deletions(-)
+Strictly speaking, device tree binding document should always go before
+the driver changes. In the binding document the DT interface is defined,
+then changes are implemented in the driver.
 
-diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-index 83e0939..722c11a 100644
---- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-@@ -62,6 +62,13 @@ static const uint32_t decon_formats[] = {
- 	DRM_FORMAT_ARGB8888,
- };
- 
-+static inline void decon_set_bits(struct decon_context *ctx, u32 reg, u32 mask,
-+				  u32 val)
-+{
-+	val = (val & mask) | (readl(ctx->addr + reg) & ~mask);
-+	writel(val, ctx->addr + reg);
-+}
-+
- static int decon_enable_vblank(struct exynos_drm_crtc *crtc)
- {
- 	struct decon_context *ctx = crtc->ctx;
-@@ -215,16 +222,8 @@ static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned int win,
- static void decon_shadow_protect_win(struct decon_context *ctx, int win,
- 					bool protect)
- {
--	u32 val;
--
--	val = readl(ctx->addr + DECON_SHADOWCON);
--
--	if (protect)
--		val |= SHADOWCON_Wx_PROTECT(win);
--	else
--		val &= ~SHADOWCON_Wx_PROTECT(win);
--
--	writel(val, ctx->addr + DECON_SHADOWCON);
-+	decon_set_bits(ctx, DECON_SHADOWCON, SHADOWCON_Wx_PROTECT(win),
-+		       protect ? ~0 : 0);
- }
- 
- static void decon_atomic_begin(struct exynos_drm_crtc *crtc,
-@@ -278,14 +277,10 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc,
- 	decon_win_set_pixfmt(ctx, win, state->fb);
- 
- 	/* window enable */
--	val = readl(ctx->addr + DECON_WINCONx(win));
--	val |= WINCONx_ENWIN_F;
--	writel(val, ctx->addr + DECON_WINCONx(win));
-+	decon_set_bits(ctx, DECON_WINCONx(win), WINCONx_ENWIN_F, ~0);
- 
- 	/* standalone update */
--	val = readl(ctx->addr + DECON_UPDATE);
--	val |= STANDALONE_UPDATE_F;
--	writel(val, ctx->addr + DECON_UPDATE);
-+	decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
- }
- 
- static void decon_disable_plane(struct exynos_drm_crtc *crtc,
-@@ -293,7 +288,6 @@ static void decon_disable_plane(struct exynos_drm_crtc *crtc,
- {
- 	struct decon_context *ctx = crtc->ctx;
- 	unsigned int win = plane->zpos;
--	u32 val;
- 
- 	if (ctx->suspended)
- 		return;
-@@ -301,16 +295,12 @@ static void decon_disable_plane(struct exynos_drm_crtc *crtc,
- 	decon_shadow_protect_win(ctx, win, true);
- 
- 	/* window disable */
--	val = readl(ctx->addr + DECON_WINCONx(win));
--	val &= ~WINCONx_ENWIN_F;
--	writel(val, ctx->addr + DECON_WINCONx(win));
-+	decon_set_bits(ctx, DECON_WINCONx(win), WINCONx_ENWIN_F, 0);
- 
- 	decon_shadow_protect_win(ctx, win, false);
- 
- 	/* standalone update */
--	val = readl(ctx->addr + DECON_UPDATE);
--	val |= STANDALONE_UPDATE_F;
--	writel(val, ctx->addr + DECON_UPDATE);
-+	decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
- }
- 
- static void decon_atomic_flush(struct exynos_drm_crtc *crtc,
-@@ -416,17 +406,12 @@ static void decon_disable(struct exynos_drm_crtc *crtc)
- void decon_te_irq_handler(struct exynos_drm_crtc *crtc)
- {
- 	struct decon_context *ctx = crtc->ctx;
--	u32 val;
- 
- 	if (!test_bit(BIT_CLKS_ENABLED, &ctx->enabled))
- 		return;
- 
--	if (atomic_add_unless(&ctx->win_updated, -1, 0)) {
--		/* trigger */
--		val = readl(ctx->addr + DECON_TRIGCON);
--		val |= TRIGCON_SWTRIGCMD;
--		writel(val, ctx->addr + DECON_TRIGCON);
--	}
-+	if (atomic_add_unless(&ctx->win_updated, -1, 0))
-+		decon_set_bits(ctx, DECON_TRIGCON, TRIGCON_SWTRIGCMD, ~0);
- 
- 	drm_crtc_handle_vblank(&ctx->crtc->base);
- }
-@@ -435,7 +420,6 @@ static void decon_clear_channels(struct exynos_drm_crtc *crtc)
- {
- 	struct decon_context *ctx = crtc->ctx;
- 	int win, i, ret;
--	u32 val;
- 
- 	DRM_DEBUG_KMS("%s\n", __FILE__);
- 
-@@ -446,25 +430,10 @@ static void decon_clear_channels(struct exynos_drm_crtc *crtc)
- 	}
- 
- 	for (win = 0; win < WINDOWS_NR; win++) {
--		/* shadow update disable */
--		val = readl(ctx->addr + DECON_SHADOWCON);
--		val |= SHADOWCON_Wx_PROTECT(win);
--		writel(val, ctx->addr + DECON_SHADOWCON);
--
--		/* window disable */
--		val = readl(ctx->addr + DECON_WINCONx(win));
--		val &= ~WINCONx_ENWIN_F;
--		writel(val, ctx->addr + DECON_WINCONx(win));
--
--		/* shadow update enable */
--		val = readl(ctx->addr + DECON_SHADOWCON);
--		val &= ~SHADOWCON_Wx_PROTECT(win);
--		writel(val, ctx->addr + DECON_SHADOWCON);
--
--		/* standalone update */
--		val = readl(ctx->addr + DECON_UPDATE);
--		val |= STANDALONE_UPDATE_F;
--		writel(val, ctx->addr + DECON_UPDATE);
-+		decon_shadow_protect_win(ctx, win, true);
-+		decon_set_bits(ctx, DECON_WINCONx(win), WINCONx_ENWIN_F, 0);
-+		decon_shadow_protect_win(ctx, win, false);
-+		decon_set_bits(ctx, DECON_UPDATE, STANDALONE_UPDATE_F, ~0);
- 	}
- 	/* TODO: wait for possible vsync */
- 	msleep(50);
--- 
-1.9.1
+Ray
 
+On 10/13/2015 2:22 PM, Jon Mason wrote:
+> Document the device tree bindings for Broadcom Northstar 2 architecture
+> based clock controller
+> 
+> Signed-off-by: Jon Mason <jonmason@broadcom.com>
+> ---
+>  .../bindings/clock/brcm,iproc-clocks.txt           | 48 ++++++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+> index b3c3e9d..ede65a5 100644
+> --- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+> +++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+> @@ -160,3 +160,51 @@ Northstar Plus.  These clock IDs are defined in:
+>      pcie_phy	lcpll0		1	BCM_NSP_LCPLL0_PCIE_PHY_REF_CLK
+>      sdio	lcpll0		2	BCM_NSP_LCPLL0_SDIO_CLK
+>      ddr_phy	lcpll0		3	BCM_NSP_LCPLL0_DDR_PHY_CLK
+> +
+> +Northstar 2
+> +-----------
+> +PLL and leaf clock compatible strings for Northstar 2 are:
+> +    "brcm,ns2-genpll-scr"
+> +    "brcm,ns2-genpll-sw"
+> +    "brcm,ns2-lcpll-ddr"
+> +    "brcm,ns2-lcpll-ports"
+> +
+> +The following table defines the set of PLL/clock index and ID for Northstar 2.
+> +These clock IDs are defined in:
+> +    "include/dt-bindings/clock/bcm-ns2.h"
+> +
+> +    Clock	Source		Index	ID
+> +    ---		-----		-----	---------
+> +    crystal	N/A		N/A	N/A
+> +
+> +    genpll_scr	crystal		0	BCM_NS2_GENPLL_SCR
+> +    scr		genpll_scr	1	BCM_NS2_GENPLL_SCR_SCR_CLK
+> +    fs		genpll_scr	2	BCM_NS2_GENPLL_SCR_FS_CLK
+> +    audio_ref	genpll_scr	3	BCM_NS2_GENPLL_SCR_AUDIO_CLK
+> +    ch3_unused	genpll_scr	4	BCM_NS2_GENPLL_SCR_CH3_UNUSED
+> +    ch4_unused	genpll_scr	5	BCM_NS2_GENPLL_SCR_CH4_UNUSED
+> +    ch5_unused	genpll_scr	6	BCM_NS2_GENPLL_SCR_CH5_UNUSED
+> +
+> +    genpll_sw	crystal		0	BCM_NS2_GENPLL_SW
+> +    rpe		genpll_sw	1	BCM_NS2_GENPLL_SW_RPE_CLK
+> +    250		genpll_sw	2	BCM_NS2_GENPLL_SW_250_CLK
+> +    nic		genpll_sw	3	BCM_NS2_GENPLL_SW_NIC_CLK
+> +    chimp	genpll_sw	4	BCM_NS2_GENPLL_SW_CHIMP_CLK
+> +    port	genpll_sw	5	BCM_NS2_GENPLL_SW_PORT_CLK
+> +    sdio	genpll_sw	6	BCM_NS2_GENPLL_SW_SDIO_CLK
+> +
+> +    lcpll_ddr	crystal		0	BCM_NS2_LCPLL_DDR
+> +    pcie_sata_usb lcpll_ddr	1	BCM_NS2_LCPLL_DDR_PCIE_SATA_USB_CLK
+> +    ddr		lcpll_ddr	2	BCM_NS2_LCPLL_DDR_DDR_CLK
+> +    ch2_unused	lcpll_ddr	3	BCM_NS2_LCPLL_DDR_CH2_UNUSED
+> +    ch3_unused	lcpll_ddr	4	BCM_NS2_LCPLL_DDR_CH3_UNUSED
+> +    ch4_unused	lcpll_ddr	5	BCM_NS2_LCPLL_DDR_CH4_UNUSED
+> +    ch5_unused	lcpll_ddr	6	BCM_NS2_LCPLL_DDR_CH5_UNUSED
+> +
+> +    lcpll_ports	crystal		0	BCM_NS2_LCPLL_PORTS
+> +    wan		lcpll_ports	1	BCM_NS2_LCPLL_PORTS_WAN_CLK
+> +    rgmii	lcpll_ports	2	BCM_NS2_LCPLL_PORTS_RGMII_CLK
+> +    ch2_unused	lcpll_ports	3	BCM_NS2_LCPLL_PORTS_CH2_UNUSED
+> +    ch3_unused	lcpll_ports	4	BCM_NS2_LCPLL_PORTS_CH3_UNUSED
+> +    ch4_unused	lcpll_ports	5	BCM_NS2_LCPLL_PORTS_CH4_UNUSED
+> +    ch5_unused	lcpll_ports	6	BCM_NS2_LCPLL_PORTS_CH5_UNUSED
+> 
