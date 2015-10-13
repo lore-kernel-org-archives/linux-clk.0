@@ -1,784 +1,211 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <fengguang.wu@intel.com>
+Date: Wed, 14 Oct 2015 01:23:44 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
+	Luis de Bethencourt <luisbg@osg.samsung.com>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 4/5] clk: shmobile: Add new CPG/MSSR driver core
-Date: Thu, 29 Oct 2015 12:21:03 +0100
-Message-Id: <1446117664-6037-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1446117664-6037-1-git-send-email-geert+renesas@glider.be>
-References: <1446117664-6037-1-git-send-email-geert+renesas@glider.be>
+	Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: Allow drivers to build if COMPILE_TEST is enabled
+Message-ID: <201510140120.1VRJNjqC%fengguang.wu@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1444745898-11537-1-git-send-email-javier@osg.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the common core for the new Renesas Clock Pulse Generator / Module
-Standby and Software Reset driver.
+Hi Javier,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[auto build test WARNING on clk/clk-next -- if it's inappropriate base, please suggest rules for selecting the more suitable base]
+
+url:    https://github.com/0day-ci/linux/commits/Javier-Martinez-Canillas/clk-Allow-drivers-to-build-if-COMPILE_TEST-is-enabled/20151013-222133
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/clk/clk-xgene.c:217:12: sparse: context imbalance in 'xgene_clk_enable' - different lock contexts for basic block
+>> drivers/clk/clk-xgene.c:285:9: sparse: context imbalance in 'xgene_clk_disable' - different lock contexts for basic block
+>> drivers/clk/clk-xgene.c:368:9: sparse: context imbalance in 'xgene_clk_set_rate' - different lock contexts for basic block
+--
+>> drivers/clk/keystone/gate.c:117:12: sparse: context imbalance in 'keystone_clk_enable' - different lock contexts for basic block
+>> drivers/clk/keystone/gate.c:147:9: sparse: context imbalance in 'keystone_clk_disable' - different lock contexts for basic block
+
+vim +/xgene_clk_enable +217 drivers/clk/clk-xgene.c
+
+308964ca Loc Ho           2013-06-26  211  	spinlock_t	*lock;
+308964ca Loc Ho           2013-06-26  212  	struct xgene_dev_parameters	param;
+308964ca Loc Ho           2013-06-26  213  };
+308964ca Loc Ho           2013-06-26  214  
+308964ca Loc Ho           2013-06-26  215  #define to_xgene_clk(_hw) container_of(_hw, struct xgene_clk, hw)
+308964ca Loc Ho           2013-06-26  216  
+308964ca Loc Ho           2013-06-26 @217  static int xgene_clk_enable(struct clk_hw *hw)
+308964ca Loc Ho           2013-06-26  218  {
+308964ca Loc Ho           2013-06-26  219  	struct xgene_clk *pclk = to_xgene_clk(hw);
+308964ca Loc Ho           2013-06-26  220  	unsigned long flags = 0;
+308964ca Loc Ho           2013-06-26  221  	u32 data;
+6ae5fd38 Stephen Boyd     2015-05-01  222  	phys_addr_t reg;
+308964ca Loc Ho           2013-06-26  223  
+308964ca Loc Ho           2013-06-26  224  	if (pclk->lock)
+308964ca Loc Ho           2013-06-26  225  		spin_lock_irqsave(pclk->lock, flags);
+308964ca Loc Ho           2013-06-26  226  
+308964ca Loc Ho           2013-06-26  227  	if (pclk->param.csr_reg != NULL) {
+836ee0f7 Stephen Boyd     2015-08-12  228  		pr_debug("%s clock enabled\n", clk_hw_get_name(hw));
+6ae5fd38 Stephen Boyd     2015-05-01  229  		reg = __pa(pclk->param.csr_reg);
+308964ca Loc Ho           2013-06-26  230  		/* First enable the clock */
+308964ca Loc Ho           2013-06-26  231  		data = xgene_clk_read(pclk->param.csr_reg +
+308964ca Loc Ho           2013-06-26  232  					pclk->param.reg_clk_offset);
+308964ca Loc Ho           2013-06-26  233  		data |= pclk->param.reg_clk_mask;
+308964ca Loc Ho           2013-06-26  234  		xgene_clk_write(data, pclk->param.csr_reg +
+308964ca Loc Ho           2013-06-26  235  					pclk->param.reg_clk_offset);
+6ae5fd38 Stephen Boyd     2015-05-01  236  		pr_debug("%s clock PADDR base %pa clk offset 0x%08X mask 0x%08X value 0x%08X\n",
+836ee0f7 Stephen Boyd     2015-08-12  237  			clk_hw_get_name(hw), &reg,
+308964ca Loc Ho           2013-06-26  238  			pclk->param.reg_clk_offset, pclk->param.reg_clk_mask,
+308964ca Loc Ho           2013-06-26  239  			data);
+308964ca Loc Ho           2013-06-26  240  
+308964ca Loc Ho           2013-06-26  241  		/* Second enable the CSR */
+308964ca Loc Ho           2013-06-26  242  		data = xgene_clk_read(pclk->param.csr_reg +
+308964ca Loc Ho           2013-06-26  243  					pclk->param.reg_csr_offset);
+308964ca Loc Ho           2013-06-26  244  		data &= ~pclk->param.reg_csr_mask;
+308964ca Loc Ho           2013-06-26  245  		xgene_clk_write(data, pclk->param.csr_reg +
+308964ca Loc Ho           2013-06-26  246  					pclk->param.reg_csr_offset);
+6ae5fd38 Stephen Boyd     2015-05-01  247  		pr_debug("%s CSR RESET PADDR base %pa csr offset 0x%08X mask 0x%08X value 0x%08X\n",
+836ee0f7 Stephen Boyd     2015-08-12  248  			clk_hw_get_name(hw), &reg,
+308964ca Loc Ho           2013-06-26  249  			pclk->param.reg_csr_offset, pclk->param.reg_csr_mask,
+308964ca Loc Ho           2013-06-26  250  			data);
+308964ca Loc Ho           2013-06-26  251  	}
+308964ca Loc Ho           2013-06-26  252  
+308964ca Loc Ho           2013-06-26  253  	if (pclk->lock)
+308964ca Loc Ho           2013-06-26  254  		spin_unlock_irqrestore(pclk->lock, flags);
+308964ca Loc Ho           2013-06-26  255  
+308964ca Loc Ho           2013-06-26  256  	return 0;
+308964ca Loc Ho           2013-06-26  257  }
+308964ca Loc Ho           2013-06-26  258  
+308964ca Loc Ho           2013-06-26  259  static void xgene_clk_disable(struct clk_hw *hw)
+308964ca Loc Ho           2013-06-26  260  {
+308964ca Loc Ho           2013-06-26  261  	struct xgene_clk *pclk = to_xgene_clk(hw);
+308964ca Loc Ho           2013-06-26  262  	unsigned long flags = 0;
+308964ca Loc Ho           2013-06-26  263  	u32 data;
+308964ca Loc Ho           2013-06-26  264  
+308964ca Loc Ho           2013-06-26  265  	if (pclk->lock)
+308964ca Loc Ho           2013-06-26  266  		spin_lock_irqsave(pclk->lock, flags);
+308964ca Loc Ho           2013-06-26  267  
+308964ca Loc Ho           2013-06-26  268  	if (pclk->param.csr_reg != NULL) {
+836ee0f7 Stephen Boyd     2015-08-12  269  		pr_debug("%s clock disabled\n", clk_hw_get_name(hw));
+308964ca Loc Ho           2013-06-26  270  		/* First put the CSR in reset */
+308964ca Loc Ho           2013-06-26  271  		data = xgene_clk_read(pclk->param.csr_reg +
+308964ca Loc Ho           2013-06-26  272  					pclk->param.reg_csr_offset);
+308964ca Loc Ho           2013-06-26  273  		data |= pclk->param.reg_csr_mask;
+308964ca Loc Ho           2013-06-26  274  		xgene_clk_write(data, pclk->param.csr_reg +
+308964ca Loc Ho           2013-06-26  275  					pclk->param.reg_csr_offset);
+308964ca Loc Ho           2013-06-26  276  
+308964ca Loc Ho           2013-06-26  277  		/* Second disable the clock */
+308964ca Loc Ho           2013-06-26  278  		data = xgene_clk_read(pclk->param.csr_reg +
+308964ca Loc Ho           2013-06-26  279  					pclk->param.reg_clk_offset);
+308964ca Loc Ho           2013-06-26  280  		data &= ~pclk->param.reg_clk_mask;
+308964ca Loc Ho           2013-06-26  281  		xgene_clk_write(data, pclk->param.csr_reg +
+308964ca Loc Ho           2013-06-26  282  					pclk->param.reg_clk_offset);
+308964ca Loc Ho           2013-06-26  283  	}
+308964ca Loc Ho           2013-06-26  284  
+308964ca Loc Ho           2013-06-26 @285  	if (pclk->lock)
+308964ca Loc Ho           2013-06-26  286  		spin_unlock_irqrestore(pclk->lock, flags);
+308964ca Loc Ho           2013-06-26  287  }
+308964ca Loc Ho           2013-06-26  288  
+308964ca Loc Ho           2013-06-26  289  static int xgene_clk_is_enabled(struct clk_hw *hw)
+308964ca Loc Ho           2013-06-26  290  {
+308964ca Loc Ho           2013-06-26  291  	struct xgene_clk *pclk = to_xgene_clk(hw);
+308964ca Loc Ho           2013-06-26  292  	u32 data = 0;
+308964ca Loc Ho           2013-06-26  293  
+308964ca Loc Ho           2013-06-26  294  	if (pclk->param.csr_reg != NULL) {
+836ee0f7 Stephen Boyd     2015-08-12  295  		pr_debug("%s clock checking\n", clk_hw_get_name(hw));
+308964ca Loc Ho           2013-06-26  296  		data = xgene_clk_read(pclk->param.csr_reg +
+308964ca Loc Ho           2013-06-26  297  					pclk->param.reg_clk_offset);
+836ee0f7 Stephen Boyd     2015-08-12  298  		pr_debug("%s clock is %s\n", clk_hw_get_name(hw),
+308964ca Loc Ho           2013-06-26  299  			data & pclk->param.reg_clk_mask ? "enabled" :
+308964ca Loc Ho           2013-06-26  300  							"disabled");
+308964ca Loc Ho           2013-06-26  301  	}
+308964ca Loc Ho           2013-06-26  302  
+308964ca Loc Ho           2013-06-26  303  	if (pclk->param.csr_reg == NULL)
+308964ca Loc Ho           2013-06-26  304  		return 1;
+308964ca Loc Ho           2013-06-26  305  	return data & pclk->param.reg_clk_mask ? 1 : 0;
+308964ca Loc Ho           2013-06-26  306  }
+308964ca Loc Ho           2013-06-26  307  
+308964ca Loc Ho           2013-06-26  308  static unsigned long xgene_clk_recalc_rate(struct clk_hw *hw,
+308964ca Loc Ho           2013-06-26  309  				unsigned long parent_rate)
+308964ca Loc Ho           2013-06-26  310  {
+308964ca Loc Ho           2013-06-26  311  	struct xgene_clk *pclk = to_xgene_clk(hw);
+308964ca Loc Ho           2013-06-26  312  	u32 data;
+308964ca Loc Ho           2013-06-26  313  
+308964ca Loc Ho           2013-06-26  314  	if (pclk->param.divider_reg) {
+308964ca Loc Ho           2013-06-26  315  		data = xgene_clk_read(pclk->param.divider_reg +
+308964ca Loc Ho           2013-06-26  316  					pclk->param.reg_divider_offset);
+308964ca Loc Ho           2013-06-26  317  		data >>= pclk->param.reg_divider_shift;
+308964ca Loc Ho           2013-06-26  318  		data &= (1 << pclk->param.reg_divider_width) - 1;
+308964ca Loc Ho           2013-06-26  319  
+308964ca Loc Ho           2013-06-26  320  		pr_debug("%s clock recalc rate %ld parent %ld\n",
+836ee0f7 Stephen Boyd     2015-08-12  321  			clk_hw_get_name(hw),
+78e50c6d Matthias Brugger 2015-06-17  322  			parent_rate / data, parent_rate);
+78e50c6d Matthias Brugger 2015-06-17  323  
+308964ca Loc Ho           2013-06-26  324  		return parent_rate / data;
+308964ca Loc Ho           2013-06-26  325  	} else {
+308964ca Loc Ho           2013-06-26  326  		pr_debug("%s clock recalc rate %ld parent %ld\n",
+836ee0f7 Stephen Boyd     2015-08-12  327  			clk_hw_get_name(hw), parent_rate, parent_rate);
+308964ca Loc Ho           2013-06-26  328  		return parent_rate;
+308964ca Loc Ho           2013-06-26  329  	}
+308964ca Loc Ho           2013-06-26  330  }
+308964ca Loc Ho           2013-06-26  331  
+308964ca Loc Ho           2013-06-26  332  static int xgene_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+308964ca Loc Ho           2013-06-26  333  				unsigned long parent_rate)
+308964ca Loc Ho           2013-06-26  334  {
+308964ca Loc Ho           2013-06-26  335  	struct xgene_clk *pclk = to_xgene_clk(hw);
+308964ca Loc Ho           2013-06-26  336  	unsigned long flags = 0;
+308964ca Loc Ho           2013-06-26  337  	u32 data;
+308964ca Loc Ho           2013-06-26  338  	u32 divider;
+308964ca Loc Ho           2013-06-26  339  	u32 divider_save;
+308964ca Loc Ho           2013-06-26  340  
+308964ca Loc Ho           2013-06-26  341  	if (pclk->lock)
+308964ca Loc Ho           2013-06-26  342  		spin_lock_irqsave(pclk->lock, flags);
+308964ca Loc Ho           2013-06-26  343  
+308964ca Loc Ho           2013-06-26  344  	if (pclk->param.divider_reg) {
+308964ca Loc Ho           2013-06-26  345  		/* Let's compute the divider */
+308964ca Loc Ho           2013-06-26  346  		if (rate > parent_rate)
+308964ca Loc Ho           2013-06-26  347  			rate = parent_rate;
+308964ca Loc Ho           2013-06-26  348  		divider_save = divider = parent_rate / rate; /* Rounded down */
+308964ca Loc Ho           2013-06-26  349  		divider &= (1 << pclk->param.reg_divider_width) - 1;
+308964ca Loc Ho           2013-06-26  350  		divider <<= pclk->param.reg_divider_shift;
+308964ca Loc Ho           2013-06-26  351  
+308964ca Loc Ho           2013-06-26  352  		/* Set new divider */
+308964ca Loc Ho           2013-06-26  353  		data = xgene_clk_read(pclk->param.divider_reg +
+308964ca Loc Ho           2013-06-26  354  				pclk->param.reg_divider_offset);
+308964ca Loc Ho           2013-06-26  355  		data &= ~((1 << pclk->param.reg_divider_width) - 1);
+308964ca Loc Ho           2013-06-26  356  		data |= divider;
+308964ca Loc Ho           2013-06-26  357  		xgene_clk_write(data, pclk->param.divider_reg +
+308964ca Loc Ho           2013-06-26  358  					pclk->param.reg_divider_offset);
+836ee0f7 Stephen Boyd     2015-08-12  359  		pr_debug("%s clock set rate %ld\n", clk_hw_get_name(hw),
+308964ca Loc Ho           2013-06-26  360  			parent_rate / divider_save);
+308964ca Loc Ho           2013-06-26  361  	} else {
+308964ca Loc Ho           2013-06-26  362  		divider_save = 1;
+308964ca Loc Ho           2013-06-26  363  	}
+308964ca Loc Ho           2013-06-26  364  
+308964ca Loc Ho           2013-06-26  365  	if (pclk->lock)
+308964ca Loc Ho           2013-06-26  366  		spin_unlock_irqrestore(pclk->lock, flags);
+308964ca Loc Ho           2013-06-26  367  
+308964ca Loc Ho           2013-06-26 @368  	return parent_rate / divider_save;
+308964ca Loc Ho           2013-06-26  369  }
+308964ca Loc Ho           2013-06-26  370  
+308964ca Loc Ho           2013-06-26  371  static long xgene_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+
+:::::: The code at line 217 was first introduced by commit
+:::::: 308964caeebc45eb7723c87818076f61fa1a2e1b clk: Add APM X-Gene SoC clock driver
+
+:::::: TO: Loc Ho <lho@apm.com>
+:::::: CC: Mike Turquette <mturquette@linaro.org>
+
 ---
-v5:
-  - Convert from CLK_OF_DECLARE() to a real platform_driver, initialized
-    using platform_driver_probe() from subsys_initcall().
-    Note that arch_initcall() would be OK for arm32, but not for arm64:
-      - arm32 calls of_platform_populate() from arch_initcall(),
-      - arm64 calls of_platform_populate() from arch_initcall_sync().
-  - Implement handling of core clocks that are suitable for power
-    management (not needed for R-Car, but useful for SH-Mobile AG5 and
-    R-Mobile APE6),
-  - Add cpg_mssr_info.init(), as initialization is now done from the
-    core driver,
-  - Move conversion from Module Clock numbers to IDs from run time (C
-    code) to compile time (CPP macros for filling in tables),
-  - Unify some code to handle CLK_TYPE_IN and CLK_TYPE_FF,
-  - Rename from clk-cpg-mssr to renesas-cpg-mssr,
-  - Add include guards to clk-cpg-mssr.h,
-  - Improve struct documentation,
-  - Clean up debugging code,
-  - Drop RFC state,
-
-v4:
-  - New.
----
- drivers/clk/shmobile/renesas-cpg-mssr.c | 587 ++++++++++++++++++++++++++++++++
- drivers/clk/shmobile/renesas-cpg-mssr.h | 131 +++++++
- 2 files changed, 718 insertions(+)
- create mode 100644 drivers/clk/shmobile/renesas-cpg-mssr.c
- create mode 100644 drivers/clk/shmobile/renesas-cpg-mssr.h
-
-diff --git a/drivers/clk/shmobile/renesas-cpg-mssr.c b/drivers/clk/shmobile/renesas-cpg-mssr.c
-new file mode 100644
-index 0000000000000000..e4382ba4e1e31aca
---- /dev/null
-+++ b/drivers/clk/shmobile/renesas-cpg-mssr.c
-@@ -0,0 +1,587 @@
-+/*
-+ * Renesas Clock Pulse Generator / Module Standby and Software Reset
-+ *
-+ * Copyright (C) 2015 Glider bvba
-+ *
-+ * Based on clk-mstp.c, clk-rcar-gen2.c, and clk-rcar-gen3.c
-+ *
-+ * Copyright (C) 2013 Ideas On Board SPRL
-+ * Copyright (C) 2015 Renesas Electronics Corp.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/init.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_clock.h>
-+#include <linux/pm_domain.h>
-+#include <linux/slab.h>
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+#include "renesas-cpg-mssr.h"
-+#include "clk-div6.h"
-+
-+#ifdef DEBUG
-+#define WARN_DEBUG(x)	do { } while (0)
-+#else
-+#define WARN_DEBUG(x)	WARN_ON(x)
-+#endif
-+
-+
-+/*
-+ * Module Standby and Software Reset register offets.
-+ *
-+ * If the registers exist, these are valid for SH-Mobile, R-Mobile,
-+ * R-Car Gen 2, and R-Car Gen 3.
-+ * These are NOT valid for R-Car Gen1 and RZ/A1!
-+ */
-+
-+/*
-+ * Module Stop Status Register offsets
-+ */
-+
-+static const u16 mstpsr[] = {
-+	0x030, 0x038, 0x040, 0x048, 0x04C, 0x03C, 0x1C0, 0x1C4,
-+	0x9A0, 0x9A4, 0x9A8, 0x9AC,
-+};
-+
-+#define	MSTPSR(i)	mstpsr[i]
-+
-+
-+/*
-+ * System Module Stop Control Register offsets
-+ */
-+
-+static const u16 smstpcr[] = {
-+	0x130, 0x134, 0x138, 0x13C, 0x140, 0x144, 0x148, 0x14C,
-+	0x990, 0x994, 0x998, 0x99C,
-+};
-+
-+#define	SMSTPCR(i)	smstpcr[i]
-+
-+
-+/*
-+ * Software Reset Register offsets
-+ */
-+
-+static const u16 srcr[] = {
-+	0x0A0, 0x0A8, 0x0B0, 0x0B8, 0x0BC, 0x0C4, 0x1C8, 0x1CC,
-+	0x920, 0x924, 0x928, 0x92C,
-+};
-+
-+#define	SRCR(i)		srcr[i]
-+
-+
-+/* Realtime Module Stop Control Register offsets */
-+#define RMSTPCR(i)	(smstpcr[i] - 0x20)
-+
-+/* Modem Module Stop Control Register offsets (r8a73a4) */
-+#define MMSTPCR(i)	(smstpcr[i] + 0x20)
-+
-+/* Software Reset Clearing Register offsets */
-+#define	SRSTCLR(i)	(0x940 + (i) * 4)
-+
-+
-+/**
-+ * Clock Pulse Generator / Module Standby and Software Reset Private Data
-+ *
-+ * @dev: CPG/MSSR device
-+ * @base: CPG/MSSR register block base address
-+ * @mstp_lock: protects writes to SMSTPCR
-+ * @clks: Array containing all Core and Module Clocks
-+ * @num_core_clks: Number of Core Clocks in clks[]
-+ * @num_mod_clks: Number of Module Clocks in clks[]
-+ * @last_dt_core_clk: ID of the last Core Clock exported to DT
-+ */
-+struct cpg_mssr_priv {
-+	struct device *dev;
-+	void __iomem *base;
-+	spinlock_t mstp_lock;
-+
-+	struct clk **clks;
-+	unsigned int num_core_clks;
-+	unsigned int num_mod_clks;
-+	unsigned int last_dt_core_clk;
-+};
-+
-+
-+/**
-+ * struct mstp_clock - MSTP gating clock
-+ * @hw: handle between common and hardware-specific interfaces
-+ * @index: MSTP clock number
-+ * @priv: CPG/MSSR private data
-+ */
-+struct mstp_clock {
-+	struct clk_hw hw;
-+	u32 index;
-+	struct cpg_mssr_priv *priv;
-+};
-+
-+#define to_mstp_clock(_hw) container_of(_hw, struct mstp_clock, hw)
-+
-+static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
-+{
-+	struct mstp_clock *clock = to_mstp_clock(hw);
-+	struct cpg_mssr_priv *priv = clock->priv;
-+	unsigned int reg = clock->index / 32;
-+	unsigned int bit = clock->index % 32;
-+	struct device *dev = priv->dev;
-+	u32 bitmask = BIT(bit);
-+	unsigned long flags;
-+	unsigned int i;
-+	u32 value;
-+
-+	dev_dbg(dev, "MSTP %u%02u/%pC %s\n", reg, bit, hw->clk,
-+		enable ? "ON" : "OFF");
-+	spin_lock_irqsave(&priv->mstp_lock, flags);
-+
-+	value = clk_readl(priv->base + SMSTPCR(reg));
-+	if (enable)
-+		value &= ~bitmask;
-+	else
-+		value |= bitmask;
-+	clk_writel(value, priv->base + SMSTPCR(reg));
-+
-+	spin_unlock_irqrestore(&priv->mstp_lock, flags);
-+
-+	if (!enable)
-+		return 0;
-+
-+	for (i = 1000; i > 0; --i) {
-+		if (!(clk_readl(priv->base + MSTPSR(reg)) &
-+		      bitmask))
-+			break;
-+		cpu_relax();
-+	}
-+
-+	if (!i) {
-+		dev_err(dev, "Failed to enable SMSTP %p[%d]\n",
-+			priv->base + SMSTPCR(reg), bit);
-+		return -ETIMEDOUT;
-+	}
-+
-+	return 0;
-+}
-+
-+static int cpg_mstp_clock_enable(struct clk_hw *hw)
-+{
-+	return cpg_mstp_clock_endisable(hw, true);
-+}
-+
-+static void cpg_mstp_clock_disable(struct clk_hw *hw)
-+{
-+	cpg_mstp_clock_endisable(hw, false);
-+}
-+
-+static int cpg_mstp_clock_is_enabled(struct clk_hw *hw)
-+{
-+	struct mstp_clock *clock = to_mstp_clock(hw);
-+	struct cpg_mssr_priv *priv = clock->priv;
-+	u32 value;
-+
-+	value = clk_readl(priv->base + MSTPSR(clock->index / 32));
-+
-+	return !(value & BIT(clock->index % 32));
-+}
-+
-+static const struct clk_ops cpg_mstp_clock_ops = {
-+	.enable = cpg_mstp_clock_enable,
-+	.disable = cpg_mstp_clock_disable,
-+	.is_enabled = cpg_mstp_clock_is_enabled,
-+};
-+
-+static
-+struct clk *cpg_mssr_clk_src_twocell_get(struct of_phandle_args *clkspec,
-+					 void *data)
-+{
-+	unsigned int clkidx = clkspec->args[1];
-+	struct cpg_mssr_priv *priv = data;
-+	struct device *dev = priv->dev;
-+	unsigned int idx;
-+	const char *type;
-+	struct clk *clk;
-+
-+	switch (clkspec->args[0]) {
-+	case CPG_CORE:
-+		type = "core";
-+		if (clkidx > priv->last_dt_core_clk) {
-+			dev_err(dev, "Invalid %s clock index %u\n", type,
-+			       clkidx);
-+			return ERR_PTR(-EINVAL);
-+		}
-+		clk = priv->clks[clkidx];
-+		break;
-+
-+	case CPG_MOD:
-+		type = "module";
-+		idx = MOD_CLK_PACK(clkidx);
-+		if (clkidx % 100 > 31 || idx >= priv->num_mod_clks) {
-+			dev_err(dev, "Invalid %s clock index %u\n", type,
-+				clkidx);
-+			return ERR_PTR(-EINVAL);
-+		}
-+		clk = priv->clks[priv->num_core_clks + idx];
-+		break;
-+
-+	default:
-+		dev_err(dev, "Invalid CPG clock type %u\n", clkspec->args[0]);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	if (IS_ERR(clk))
-+		dev_err(dev, "Cannot get %s clock %u: %ld", type, clkidx,
-+		       PTR_ERR(clk));
-+	else
-+		dev_dbg(dev, "clock (%u, %u) is %pC at %pCr Hz\n",
-+			clkspec->args[0], clkspec->args[1], clk, clk);
-+	return clk;
-+}
-+
-+static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
-+					      const struct cpg_mssr_info *info,
-+					      struct cpg_mssr_priv *priv)
-+{
-+	struct clk *clk = NULL, *parent;
-+	struct device *dev = priv->dev;
-+	unsigned int id = core->id;
-+	const char *parent_name;
-+
-+	WARN_DEBUG(id >= priv->num_core_clks);
-+	WARN_DEBUG(PTR_ERR(priv->clks[id]) != -ENOENT);
-+
-+	switch (core->type) {
-+	case CLK_TYPE_IN:
-+		clk = of_clk_get_by_name(priv->dev->of_node, core->name);
-+		break;
-+
-+	case CLK_TYPE_FF:
-+	case CLK_TYPE_DIV6P1:
-+		WARN_DEBUG(core->parent >= priv->num_core_clks);
-+		parent = priv->clks[core->parent];
-+		if (IS_ERR(parent)) {
-+			clk = parent;
-+			goto fail;
-+		}
-+
-+		parent_name = __clk_get_name(parent);
-+		if (core->type == CLK_TYPE_FF) {
-+			clk = clk_register_fixed_factor(NULL, core->name,
-+							parent_name, 0,
-+							core->mult, core->div);
-+		} else {
-+			clk = cpg_div6_register(core->name, 1, &parent_name,
-+						priv->base + core->offset);
-+		}
-+		break;
-+
-+	default:
-+		if (info->cpg_clk_register)
-+			clk = info->cpg_clk_register(dev, core, info,
-+						     priv->clks, priv->base);
-+		else
-+			dev_err(dev, "%s has unsupported core clock type %u\n",
-+				core->name, core->type);
-+		break;
-+	}
-+
-+	if (IS_ERR_OR_NULL(clk))
-+		goto fail;
-+
-+	dev_dbg(dev, "Core clock %pC at %pCr Hz\n", clk, clk);
-+	priv->clks[id] = clk;
-+	return;
-+
-+fail:
-+	dev_err(dev, "Failed to register %s clock %s: %ld\n", "core,",
-+		core->name, PTR_ERR(clk));
-+}
-+
-+static void __init cpg_mssr_register_mod_clk(const struct mssr_mod_clk *mod,
-+					     const struct cpg_mssr_info *info,
-+					     struct cpg_mssr_priv *priv)
-+{
-+	struct mstp_clock *clock = NULL;
-+	struct device *dev = priv->dev;
-+	unsigned int id = mod->id;
-+	struct clk_init_data init;
-+	struct clk *parent, *clk;
-+	const char *parent_name;
-+	unsigned int i;
-+
-+	WARN_DEBUG(id < priv->num_core_clks);
-+	WARN_DEBUG(id >= priv->num_core_clks + priv->num_mod_clks);
-+	WARN_DEBUG(mod->parent >= priv->num_core_clks + priv->num_mod_clks);
-+	WARN_DEBUG(PTR_ERR(priv->clks[id]) != -ENOENT);
-+
-+	parent = priv->clks[mod->parent];
-+	if (IS_ERR(parent)) {
-+		clk = parent;
-+		goto fail;
-+	}
-+
-+	clock = kzalloc(sizeof(*clock), GFP_KERNEL);
-+	if (!clock) {
-+		clk = ERR_PTR(-ENOMEM);
-+		goto fail;
-+	}
-+
-+	init.name = mod->name;
-+	init.ops = &cpg_mstp_clock_ops;
-+	init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
-+	for (i = 0; i < info->num_crit_mod_clks; i++)
-+		if (id == info->crit_mod_clks[i]) {
-+#ifdef CLK_ENABLE_HAND_OFF
-+			dev_dbg(dev, "MSTP %s setting CLK_ENABLE_HAND_OFF\n",
-+				mod->name);
-+			init.flags |= CLK_ENABLE_HAND_OFF;
-+			break;
-+#else
-+			dev_dbg(dev, "Ignoring MSTP %s to prevent disabling\n",
-+				mod->name);
-+			return;
-+#endif
-+		}
-+
-+	parent_name = __clk_get_name(parent);
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	clock->index = id - priv->num_core_clks;
-+	clock->priv = priv;
-+	clock->hw.init = &init;
-+
-+	clk = clk_register(NULL, &clock->hw);
-+	if (IS_ERR(clk))
-+		goto fail;
-+
-+	dev_dbg(dev, "Module clock %pC at %pCr Hz\n", clk, clk);
-+	priv->clks[id] = clk;
-+	return;
-+
-+fail:
-+	dev_err(dev, "Failed to register %s clock %s: %ld\n", "module,",
-+		mod->name, PTR_ERR(clk));
-+	kfree(clock);
-+}
-+
-+
-+#ifdef CONFIG_PM_GENERIC_DOMAINS_OF
-+struct cpg_mssr_clk_domain {
-+	struct generic_pm_domain genpd;
-+	struct device_node *np;
-+	unsigned int num_core_pm_clks;
-+	unsigned int core_pm_clks[0];
-+};
-+
-+static bool cpg_mssr_is_pm_clk(const struct of_phandle_args *clkspec,
-+			       struct cpg_mssr_clk_domain *pd)
-+{
-+	unsigned int i;
-+
-+	if (clkspec->np != pd->np || clkspec->args_count != 2)
-+		return false;
-+
-+	switch (clkspec->args[0]) {
-+	case CPG_CORE:
-+		for (i = 0; i < pd->num_core_pm_clks; i++)
-+			if (clkspec->args[1] == pd->core_pm_clks[i])
-+				return true;
-+		return false;
-+
-+	case CPG_MOD:
-+		return true;
-+
-+	default:
-+		return false;
-+	}
-+}
-+
-+static int cpg_mssr_attach_dev(struct generic_pm_domain *genpd,
-+			       struct device *dev)
-+{
-+	struct cpg_mssr_clk_domain *pd =
-+		container_of(genpd, struct cpg_mssr_clk_domain, genpd);
-+	struct device_node *np = dev->of_node;
-+	struct of_phandle_args clkspec;
-+	struct clk *clk;
-+	int i = 0;
-+	int error;
-+
-+	while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", i,
-+					   &clkspec)) {
-+		if (cpg_mssr_is_pm_clk(&clkspec, pd))
-+			goto found;
-+
-+		of_node_put(clkspec.np);
-+		i++;
-+	}
-+
-+	return 0;
-+
-+found:
-+	clk = of_clk_get_from_provider(&clkspec);
-+	of_node_put(clkspec.np);
-+
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	error = pm_clk_create(dev);
-+	if (error) {
-+		dev_err(dev, "pm_clk_create failed %d\n", error);
-+		goto fail_put;
-+	}
-+
-+	error = pm_clk_add_clk(dev, clk);
-+	if (error) {
-+		dev_err(dev, "pm_clk_add_clk %pC failed %d\n", clk, error);
-+		goto fail_destroy;
-+	}
-+
-+	return 0;
-+
-+fail_destroy:
-+	pm_clk_destroy(dev);
-+fail_put:
-+	clk_put(clk);
-+	return error;
-+}
-+
-+static void cpg_mssr_detach_dev(struct generic_pm_domain *genpd,
-+				struct device *dev)
-+{
-+	if (!list_empty(&dev->power.subsys_data->clock_list))
-+		pm_clk_destroy(dev);
-+}
-+
-+static int __init cpg_mssr_add_clk_domain(struct device *dev,
-+					  const unsigned int *core_pm_clks,
-+					  unsigned int num_core_pm_clks)
-+{
-+	struct device_node *np = dev->of_node;
-+	struct generic_pm_domain *genpd;
-+	struct cpg_mssr_clk_domain *pd;
-+	size_t pm_size = num_core_pm_clks * sizeof(core_pm_clks[0]);
-+
-+	pd = devm_kzalloc(dev, sizeof(*pd) + pm_size, GFP_KERNEL);
-+	if (!pd)
-+		return -ENOMEM;
-+
-+	pd->np = np;
-+	pd->num_core_pm_clks = num_core_pm_clks;
-+	memcpy(pd->core_pm_clks, core_pm_clks, pm_size);
-+
-+	genpd = &pd->genpd;
-+	genpd->name = np->name;
-+	genpd->flags = GENPD_FLAG_PM_CLK;
-+	pm_genpd_init(genpd, &simple_qos_governor, false);
-+	genpd->attach_dev = cpg_mssr_attach_dev;
-+	genpd->detach_dev = cpg_mssr_detach_dev;
-+
-+	of_genpd_add_provider_simple(np, genpd);
-+	return 0;
-+}
-+#else
-+static inline int cpg_mssr_add_clk_domain(struct device *dev,
-+					  const unsigned int *core_pm_clks,
-+					  unsigned int num_core_pm_clks) {}
-+#endif /* !CONFIG_PM_GENERIC_DOMAINS_OF */
-+
-+
-+static const struct of_device_id cpg_mssr_match[] = {
-+	{ /* sentinel */ }
-+};
-+
-+static void cpg_mssr_del_clk_provider(void *data)
-+{
-+	of_clk_del_provider(data);
-+}
-+
-+static int __init cpg_mssr_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	const struct cpg_mssr_info *info;
-+	struct cpg_mssr_priv *priv;
-+	unsigned int nclks, i;
-+	struct resource *res;
-+	struct clk **clks;
-+	int error;
-+
-+	info = of_match_node(cpg_mssr_match, np)->data;
-+	if (info->init) {
-+		error = info->init(dev);
-+		if (error)
-+			return error;
-+	}
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->dev = dev;
-+	spin_lock_init(&priv->mstp_lock);
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	priv->base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(priv->base))
-+		return PTR_ERR(priv->base);
-+
-+	nclks = info->num_total_core_clks + info->num_hw_mod_clks;
-+	clks = devm_kmalloc_array(dev, nclks, sizeof(*clks), GFP_KERNEL);
-+	if (!clks)
-+		return -ENOMEM;
-+
-+	priv->clks = clks;
-+	priv->num_core_clks = info->num_total_core_clks;
-+	priv->num_mod_clks = info->num_hw_mod_clks;
-+	priv->last_dt_core_clk = info->last_dt_core_clk;
-+
-+	for (i = 0; i < nclks; i++)
-+		clks[i] = ERR_PTR(-ENOENT);
-+
-+	for (i = 0; i < info->num_core_clks; i++)
-+		cpg_mssr_register_core_clk(&info->core_clks[i], info, priv);
-+
-+	for (i = 0; i < info->num_mod_clks; i++)
-+		cpg_mssr_register_mod_clk(&info->mod_clks[i], info, priv);
-+
-+	error = of_clk_add_provider(np, cpg_mssr_clk_src_twocell_get, priv);
-+	if (error)
-+		return error;
-+
-+	devm_add_action(dev, cpg_mssr_del_clk_provider, np);
-+
-+	error = cpg_mssr_add_clk_domain(dev, info->core_pm_clks,
-+					info->num_core_pm_clks);
-+	if (error)
-+		return error;
-+
-+	return 0;
-+}
-+
-+static struct platform_driver cpg_mssr_driver = {
-+	.driver		= {
-+		.name	= "renesas-cpg-mssr",
-+		.of_match_table = cpg_mssr_match,
-+	},
-+};
-+
-+static int __init cpg_mssr_init(void)
-+{
-+	return platform_driver_probe(&cpg_mssr_driver, cpg_mssr_probe);
-+}
-+
-+subsys_initcall(cpg_mssr_init);
-+
-+MODULE_DESCRIPTION("Renesas CPG/MSSR Driver");
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/clk/shmobile/renesas-cpg-mssr.h b/drivers/clk/shmobile/renesas-cpg-mssr.h
-new file mode 100644
-index 0000000000000000..e6d24875b56f7755
---- /dev/null
-+++ b/drivers/clk/shmobile/renesas-cpg-mssr.h
-@@ -0,0 +1,131 @@
-+/*
-+ * Renesas Clock Pulse Generator / Module Standby and Software Reset
-+ *
-+ * Copyright (C) 2015 Glider bvba
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+
-+#ifndef __CLK_RENESAS_CPG_MSSR_H__
-+#define __CLK_RENESAS_CPG_MSSR_H__
-+
-+    /*
-+     * Definitions of CPG Core Clocks
-+     *
-+     * These include:
-+     *   - Clock outputs exported to DT
-+     *   - External input clocks
-+     *   - Internal CPG clocks
-+     */
-+
-+struct cpg_core_clk {
-+	/* Common */
-+	const char *name;
-+	unsigned int id;
-+	unsigned int type;
-+	/* Depending on type */
-+	unsigned int parent;	/* Core Clocks only */
-+	unsigned int div;
-+	unsigned int mult;
-+	unsigned int offset;
-+};
-+
-+enum clk_types {
-+	/* Generic */
-+	CLK_TYPE_IN,		/* External Clock Input */
-+	CLK_TYPE_FF,		/* Fixed Factor Clock */
-+	CLK_TYPE_DIV6P1,	/* DIV6 Clock with 1 parent clock */
-+
-+	/* Custom definitions start here */
-+	CLK_TYPE_CUSTOM,
-+};
-+
-+#define DEF_TYPE(_name, _id, _type...)	\
-+	{ .name = _name, .id = _id, .type = _type }
-+#define DEF_BASE(_name, _id, _type, _parent...)	\
-+	DEF_TYPE(_name, _id, _type, .parent = _parent)
-+
-+#define DEF_INPUT(_name, _id) \
-+	DEF_TYPE(_name, _id, CLK_TYPE_IN)
-+#define DEF_FIXED(_name, _id, _parent, _div, _mult)	\
-+	DEF_BASE(_name, _id, CLK_TYPE_FF, _parent, .div = _div, .mult = _mult)
-+#define DEF_DIV6P1(_name, _id, _parent, _offset)	\
-+	DEF_BASE(_name, _id, CLK_TYPE_DIV6P1, _parent, .offset = _offset)
-+
-+
-+    /*
-+     * Definitions of Module Clocks
-+     */
-+
-+struct mssr_mod_clk {
-+	const char *name;
-+	unsigned int id;
-+	unsigned int parent;	/* Add MOD_CLK_BASE for Module Clocks */
-+};
-+
-+/* Convert from sparse base-100 to packed index space */
-+#define MOD_CLK_PACK(x)	((x) - ((x) / 100) * (100 - 32))
-+
-+#define MOD_CLK_ID(x)	(MOD_CLK_BASE + MOD_CLK_PACK(x))
-+
-+#define DEF_MOD(_name, _mod, _parent...)	\
-+	{ .name = _name, .id = MOD_CLK_ID(_mod), .parent = _parent }
-+
-+
-+struct device_node;
-+
-+    /**
-+     * SoC-specific CPG/MSSR Description
-+     *
-+     * @core_clks: Array of Core Clock definitions
-+     * @num_core_clks: Number of entries in core_clks[]
-+     * @last_dt_core_clk: ID of the last Core Clock exported to DT
-+     * @num_total_core_clks: Total number of Core Clocks (exported + internal)
-+     *
-+     * @mod_clks: Array of Module Clock definitions
-+     * @num_mod_clks: Number of entries in mod_clks[]
-+     * @num_hw_mod_clks: Number of Module Clocks supported by the hardware
-+     *
-+     * @crit_mod_clks: Array with Module Clock IDs of critical clocks that
-+     *                 should not be disabled without a knowledgeable driver
-+     * @num_crit_mod_clks: Number of entries in crit_mod_clks[]
-+     *
-+     * @core_pm_clks: Array with IDs of Core Clocks that are suitable for Power
-+     *                Management, in addition to Module Clocks
-+     * @num_core_pm_clks: Number of entries in core_pm_clks[]
-+     *
-+     * @init: Optional callback to perform SoC-specific initialization
-+     * @cpg_clk_register: Optional callback to handle special Core Clock types
-+     */
-+
-+struct cpg_mssr_info {
-+	/* Core Clocks */
-+	const struct cpg_core_clk *core_clks;
-+	unsigned int num_core_clks;
-+	unsigned int last_dt_core_clk;
-+	unsigned int num_total_core_clks;
-+
-+	/* Module Clocks */
-+	const struct mssr_mod_clk *mod_clks;
-+	unsigned int num_mod_clks;
-+	unsigned int num_hw_mod_clks;
-+
-+	/* Critical Module Clocks that should not be disabled */
-+	const unsigned int *crit_mod_clks;
-+	unsigned int num_crit_mod_clks;
-+
-+	/* Core Clocks suitable for PM, in addition to the Module Clocks */
-+	const unsigned int *core_pm_clks;
-+	unsigned int num_core_pm_clks;
-+
-+	/* Callbacks */
-+	int (*init)(struct device *dev);
-+	struct clk *(*cpg_clk_register)(struct device *dev,
-+					const struct cpg_core_clk *core,
-+					const struct cpg_mssr_info *info,
-+					struct clk **clks, void __iomem *base);
-+};
-+
-+#endif
--- 
-1.9.1
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
