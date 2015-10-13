@@ -1,99 +1,85 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: bcm-kernel-feedback-list@broadcom.com,
-	devicetree@vger.kernel.org,
-	jonmason@broadcom.com,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	linux@arm.linux.org.uk,
-	sbranden@broadcom.com,
-	rjui@broadcom.com,
-	Florian Fainelli <f.fainelli@gmail.com>
-Subject: [PATCH v3 2/3] clk: bcm: Add BCM63138 clock support
-Date: Tue, 27 Oct 2015 16:56:16 -0700
-Message-Id: <1445990177-27474-3-git-send-email-f.fainelli@gmail.com>
-In-Reply-To: <1445990177-27474-1-git-send-email-f.fainelli@gmail.com>
-References: <1445990177-27474-1-git-send-email-f.fainelli@gmail.com>
+Return-Path: <jonmason@broadcom.com>
+From: Jon Mason <jonmason@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
+	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
+	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
+Subject: [RFC 4/5] clk: iproc: define Broadcom NS2 iProc clock binding
+Date: Tue, 13 Oct 2015 17:22:26 -0400
+Message-ID: <1444771347-11382-5-git-send-email-jonmason@broadcom.com>
+In-Reply-To: <1444771347-11382-1-git-send-email-jonmason@broadcom.com>
+References: <1444771347-11382-1-git-send-email-jonmason@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-BCM63138 has a simple clocking domain which is primarily the ARMPLL
-clocking complex, from which the ARM (CPU), APB and AXI clocks would be
-derived from.
+Document the device tree bindings for Broadcom Northstar 2 architecture
+based clock controller
 
-Since the ARMPLL controller is entirely compatible with the iProc ARM
-PLL, we just initialize it without additional parameters.
-
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Jon Mason <jonmason@broadcom.com>
 ---
-Changes in v3:
+ .../bindings/clock/brcm,iproc-clocks.txt           | 48 ++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-- made default depend on ARCH_BCM_63XX per Stephen Boyd's comment
-
-Changes in v2:
-- added COMPILE_TEST per Scott Branden's comment
-
- drivers/clk/bcm/Kconfig       | 10 ++++++++++
- drivers/clk/bcm/Makefile      |  1 +
- drivers/clk/bcm/clk-bcm63xx.c | 22 ++++++++++++++++++++++
- 3 files changed, 33 insertions(+)
- create mode 100644 drivers/clk/bcm/clk-bcm63xx.c
-
-diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
-index 85260fb96b36..f2878459199a 100644
---- a/drivers/clk/bcm/Kconfig
-+++ b/drivers/clk/bcm/Kconfig
-@@ -1,3 +1,13 @@
-+config CLK_BCM_63XX
-+	bool "Broadcom BCM63xx clock support"
-+	depends on ARCH_BCM_63XX || COMPILE_TEST
-+	depends on COMMON_CLK
-+	select COMMON_CLK_IPROC
-+	default ARCH_BCM_63XX
-+	help
-+	  Enable common clock framework support for Broadcom BCM63xx DSL SoCs
-+	  based on the ARM architecture
+diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+index b3c3e9d..ede65a5 100644
+--- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+@@ -160,3 +160,51 @@ Northstar Plus.  These clock IDs are defined in:
+     pcie_phy	lcpll0		1	BCM_NSP_LCPLL0_PCIE_PHY_REF_CLK
+     sdio	lcpll0		2	BCM_NSP_LCPLL0_SDIO_CLK
+     ddr_phy	lcpll0		3	BCM_NSP_LCPLL0_DDR_PHY_CLK
 +
- config CLK_BCM_KONA
- 	bool "Broadcom Kona CCU clock support"
- 	depends on ARCH_BCM_MOBILE || COMPILE_TEST
-diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
-index 3fc95060d875..247c26750d8b 100644
---- a/drivers/clk/bcm/Makefile
-+++ b/drivers/clk/bcm/Makefile
-@@ -1,3 +1,4 @@
-+obj-$(CONFIG_CLK_BCM_63XX)	+= clk-bcm63xx.o
- obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona.o
- obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona-setup.o
- obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm281xx.o
-diff --git a/drivers/clk/bcm/clk-bcm63xx.c b/drivers/clk/bcm/clk-bcm63xx.c
-new file mode 100644
-index 000000000000..fbc17ae5ff2b
---- /dev/null
-+++ b/drivers/clk/bcm/clk-bcm63xx.c
-@@ -0,0 +1,22 @@
-+/*
-+ * Copyright (C) 2015 Broadcom Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation version 2.
-+ *
-+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-+ * kind, whether express or implied; without even the implied warranty
-+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+#include <linux/init.h>
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include "clk-iproc.h"
++Northstar 2
++-----------
++PLL and leaf clock compatible strings for Northstar 2 are:
++    "brcm,ns2-genpll-scr"
++    "brcm,ns2-genpll-sw"
++    "brcm,ns2-lcpll-ddr"
++    "brcm,ns2-lcpll-ports"
 +
-+static void __init bcm63138_armpll_init(struct device_node *node)
-+{
-+	iproc_armpll_setup(node);
-+}
-+CLK_OF_DECLARE(bcm63138_armpll, "brcm,bcm63138-armpll", bcm63138_armpll_init);
++The following table defines the set of PLL/clock index and ID for Northstar 2.
++These clock IDs are defined in:
++    "include/dt-bindings/clock/bcm-ns2.h"
++
++    Clock	Source		Index	ID
++    ---		-----		-----	---------
++    crystal	N/A		N/A	N/A
++
++    genpll_scr	crystal		0	BCM_NS2_GENPLL_SCR
++    scr		genpll_scr	1	BCM_NS2_GENPLL_SCR_SCR_CLK
++    fs		genpll_scr	2	BCM_NS2_GENPLL_SCR_FS_CLK
++    audio_ref	genpll_scr	3	BCM_NS2_GENPLL_SCR_AUDIO_CLK
++    ch3_unused	genpll_scr	4	BCM_NS2_GENPLL_SCR_CH3_UNUSED
++    ch4_unused	genpll_scr	5	BCM_NS2_GENPLL_SCR_CH4_UNUSED
++    ch5_unused	genpll_scr	6	BCM_NS2_GENPLL_SCR_CH5_UNUSED
++
++    genpll_sw	crystal		0	BCM_NS2_GENPLL_SW
++    rpe		genpll_sw	1	BCM_NS2_GENPLL_SW_RPE_CLK
++    250		genpll_sw	2	BCM_NS2_GENPLL_SW_250_CLK
++    nic		genpll_sw	3	BCM_NS2_GENPLL_SW_NIC_CLK
++    chimp	genpll_sw	4	BCM_NS2_GENPLL_SW_CHIMP_CLK
++    port	genpll_sw	5	BCM_NS2_GENPLL_SW_PORT_CLK
++    sdio	genpll_sw	6	BCM_NS2_GENPLL_SW_SDIO_CLK
++
++    lcpll_ddr	crystal		0	BCM_NS2_LCPLL_DDR
++    pcie_sata_usb lcpll_ddr	1	BCM_NS2_LCPLL_DDR_PCIE_SATA_USB_CLK
++    ddr		lcpll_ddr	2	BCM_NS2_LCPLL_DDR_DDR_CLK
++    ch2_unused	lcpll_ddr	3	BCM_NS2_LCPLL_DDR_CH2_UNUSED
++    ch3_unused	lcpll_ddr	4	BCM_NS2_LCPLL_DDR_CH3_UNUSED
++    ch4_unused	lcpll_ddr	5	BCM_NS2_LCPLL_DDR_CH4_UNUSED
++    ch5_unused	lcpll_ddr	6	BCM_NS2_LCPLL_DDR_CH5_UNUSED
++
++    lcpll_ports	crystal		0	BCM_NS2_LCPLL_PORTS
++    wan		lcpll_ports	1	BCM_NS2_LCPLL_PORTS_WAN_CLK
++    rgmii	lcpll_ports	2	BCM_NS2_LCPLL_PORTS_RGMII_CLK
++    ch2_unused	lcpll_ports	3	BCM_NS2_LCPLL_PORTS_CH2_UNUSED
++    ch3_unused	lcpll_ports	4	BCM_NS2_LCPLL_PORTS_CH3_UNUSED
++    ch4_unused	lcpll_ports	5	BCM_NS2_LCPLL_PORTS_CH4_UNUSED
++    ch5_unused	lcpll_ports	6	BCM_NS2_LCPLL_PORTS_CH5_UNUSED
 -- 
-2.1.0
+1.9.1
