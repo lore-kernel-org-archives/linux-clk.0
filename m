@@ -1,166 +1,50 @@
-Return-Path: <grygorii.strashko@ti.com>
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-To: Michael Turquette <mturquette@baylibre.com>, Tero Kristo <t-kristo@ti.com>
-CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Grygorii
- Strashko <grygorii.strashko@ti.com>,
-        Tony Lindgren <tony@atomide.com>, Sekhar
- Nori <nsekhar@ti.com>
-Subject: [PATCH] clk: ti: drop locking code from mux/divider drivers
-Date: Thu, 1 Oct 2015 14:20:37 -0500
-Message-ID: <1443727237-21809-1-git-send-email-grygorii.strashko@ti.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier@osg.samsung.com>, Michael Turquette <mturquette@baylibre.com>
+Cc: linux-rockchip@lists.infradead.org, alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>, linux-clk@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v4 0/8] Add SPDIF support for rockchip
+Date: Tue, 13 Oct 2015 23:51:27 +0200
+Message-ID: <2124073.EESlsqi0cG@diego>
+In-Reply-To: <1444311079-2892-1-git-send-email-sjoerd.simons@collabora.co.uk>
+References: <1444311079-2892-1-git-send-email-sjoerd.simons@collabora.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-TI's mux and divider clock drivers do not require locking and they do
-not initialize internal spinlocks. This code was occasionally
-copy-posted from generic mux/divider drivers. So remove it.
+Am Donnerstag, 8. Oktober 2015, 15:31:11 schrieb Sjoerd Simons:
+> This patchset adds support for the Rockchip SPDIF transceiver as present
+> on RK3066, RK3188 and RK3288 boards and enables it on a Radxa rock pro.
+> Tested on a Radxa Rock Pro board and Radxa Rock 2 Square board.
+> 
+> Quite a few changes since v3 (mostly based on review comment). One
+> important addition is proper RK3288 SoC support; While according to the
+> documentation it has 2 SPDIF "solutions" with the default being the old
+> one, this variation doesn't actually work.. So support has been added
+> to switch to the new SPDIF solution on RK3288.
 
-Cc: Tony Lindgren <tony@atomide.com>
-Cc: Sekhar Nori <nsekhar@ti.com>
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
----
- drivers/clk/ti/divider.c | 16 +++-------------
- drivers/clk/ti/mux.c     | 15 +++------------
- 2 files changed, 6 insertions(+), 25 deletions(-)
+[...]
 
-diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
-index 5b17268..df25583 100644
---- a/drivers/clk/ti/divider.c
-+++ b/drivers/clk/ti/divider.c
-@@ -214,7 +214,6 @@ static int ti_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct clk_divider *divider;
- 	unsigned int div, value;
--	unsigned long flags = 0;
- 	u32 val;
- 
- 	if (!hw || !rate)
-@@ -228,9 +227,6 @@ static int ti_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (value > div_mask(divider))
- 		value = div_mask(divider);
- 
--	if (divider->lock)
--		spin_lock_irqsave(divider->lock, flags);
--
- 	if (divider->flags & CLK_DIVIDER_HIWORD_MASK) {
- 		val = div_mask(divider) << (divider->shift + 16);
- 	} else {
-@@ -240,9 +236,6 @@ static int ti_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 	val |= value << divider->shift;
- 	ti_clk_ll_ops->clk_writel(val, divider->reg);
- 
--	if (divider->lock)
--		spin_unlock_irqrestore(divider->lock, flags);
--
- 	return 0;
- }
- 
-@@ -256,8 +249,7 @@ static struct clk *_register_divider(struct device *dev, const char *name,
- 				     const char *parent_name,
- 				     unsigned long flags, void __iomem *reg,
- 				     u8 shift, u8 width, u8 clk_divider_flags,
--				     const struct clk_div_table *table,
--				     spinlock_t *lock)
-+				     const struct clk_div_table *table)
- {
- 	struct clk_divider *div;
- 	struct clk *clk;
-@@ -288,7 +280,6 @@ static struct clk *_register_divider(struct device *dev, const char *name,
- 	div->shift = shift;
- 	div->width = width;
- 	div->flags = clk_divider_flags;
--	div->lock = lock;
- 	div->hw.init = &init;
- 	div->table = table;
- 
-@@ -421,7 +412,7 @@ struct clk *ti_clk_register_divider(struct ti_clk *setup)
- 
- 	clk = _register_divider(NULL, setup->name, div->parent,
- 				flags, (void __iomem *)reg, div->bit_shift,
--				width, div_flags, table, NULL);
-+				width, div_flags, table);
- 
- 	if (IS_ERR(clk))
- 		kfree(table);
-@@ -584,8 +575,7 @@ static void __init of_ti_divider_clk_setup(struct device_node *node)
- 		goto cleanup;
- 
- 	clk = _register_divider(NULL, node->name, parent_name, flags, reg,
--				shift, width, clk_divider_flags, table,
--				NULL);
-+				shift, width, clk_divider_flags, table);
- 
- 	if (!IS_ERR(clk)) {
- 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
-diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
-index 69f08a1..dab9ba8 100644
---- a/drivers/clk/ti/mux.c
-+++ b/drivers/clk/ti/mux.c
-@@ -69,7 +69,6 @@ static int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index)
- {
- 	struct clk_mux *mux = to_clk_mux(hw);
- 	u32 val;
--	unsigned long flags = 0;
- 
- 	if (mux->table) {
- 		index = mux->table[index];
-@@ -81,9 +80,6 @@ static int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index)
- 			index++;
- 	}
- 
--	if (mux->lock)
--		spin_lock_irqsave(mux->lock, flags);
--
- 	if (mux->flags & CLK_MUX_HIWORD_MASK) {
- 		val = mux->mask << (mux->shift + 16);
- 	} else {
-@@ -93,9 +89,6 @@ static int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index)
- 	val |= index << mux->shift;
- 	ti_clk_ll_ops->clk_writel(val, mux->reg);
- 
--	if (mux->lock)
--		spin_unlock_irqrestore(mux->lock, flags);
--
- 	return 0;
- }
- 
-@@ -109,7 +102,7 @@ static struct clk *_register_mux(struct device *dev, const char *name,
- 				 const char **parent_names, u8 num_parents,
- 				 unsigned long flags, void __iomem *reg,
- 				 u8 shift, u32 mask, u8 clk_mux_flags,
--				 u32 *table, spinlock_t *lock)
-+				 u32 *table)
- {
- 	struct clk_mux *mux;
- 	struct clk *clk;
-@@ -133,7 +126,6 @@ static struct clk *_register_mux(struct device *dev, const char *name,
- 	mux->shift = shift;
- 	mux->mask = mask;
- 	mux->flags = clk_mux_flags;
--	mux->lock = lock;
- 	mux->table = table;
- 	mux->hw.init = &init;
- 
-@@ -175,7 +167,7 @@ struct clk *ti_clk_register_mux(struct ti_clk *setup)
- 
- 	return _register_mux(NULL, setup->name, mux->parents, mux->num_parents,
- 			     flags, (void __iomem *)reg, mux->bit_shift, mask,
--			     mux_flags, NULL, NULL);
-+			     mux_flags, NULL);
- }
- 
- /**
-@@ -227,8 +219,7 @@ static void of_mux_clk_setup(struct device_node *node)
- 	mask = (1 << fls(mask)) - 1;
- 
- 	clk = _register_mux(NULL, node->name, parent_names, num_parents,
--			    flags, reg, shift, mask, clk_mux_flags, NULL,
--			    NULL);
-+			    flags, reg, shift, mask, clk_mux_flags, NULL);
- 
- 	if (!IS_ERR(clk))
- 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
--- 
-2.5.1
+> Sjoerd Simons (8):
+>   ASoC: dt-bindings: add rockchip tranceiver bindings
+>   ASoC: rockchip: Add rockchip SPDIF transceiver driver
+>   ARM: dts: rockchip: Add SPDIF transceiver for RK3188
+>   ARM: dts: rockchip: Add SPDIF optical out on Radxa Rock
+>   clk: rockchip: Allow the RK3288 SPDIF clocks to change their parent
+>   ARM: dts: rockchip: Add SPDIF transceiver for RK3288
+>   ARM: dts: rockchip: Add SPDIF optical out on Radxa Rock2 Square
+>   ARM: multi_v7_defconfig: Add rockchip audio support
+
+After Mark took the two ASoC-specific patches, I've now picked up the 4 dts 
+patches, after removing the #address- and #size-cells lines from them.
+
+Sjoerd, are you sending a followup patch to Mark to also drop them from the 
+binding doc?
+
+Hopefully the clock patch will also find its way into the clock tree, together 
+with the base series for the frac dividers.
+
+And I guess we'll need to prod the armsoc-guys to take the defconfig change 
+too :-)
+
+
+Heiko
