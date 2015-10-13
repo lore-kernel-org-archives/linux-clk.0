@@ -1,47 +1,77 @@
-Return-Path: <scottwood@freescale.com>
-Message-ID: <1444870621.5185.223.camel@freescale.com>
-Subject: Re: [PATCH V3 5/6] clk: qoriq: Add ls1043a support.
-From: Scott Wood <scottwood@freescale.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Zhiqiang Hou <B48286@freescale.com>,
-	<linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <mark.rutland@arm.com>,
-	<Mingkai.Hu@freescale.com>, <Shaohui.Xie@freescale.com>,
-	<bhupesh.sharma@freescale.com>, <leoli@freescale.com>, <wsa@the-dreams.de>,
-	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
-	<Wenbin.Song@freescale.com>
-Date: Wed, 14 Oct 2015 19:57:01 -0500
-In-Reply-To: <20151014183113.GE26883@codeaurora.org>
-References: <1444822498-16477-1-git-send-email-B48286@freescale.com>
-	 <1444822498-16477-6-git-send-email-B48286@freescale.com>
-	 <20151014183113.GE26883@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <rjui@broadcom.com>
+Subject: Re: [RFC 1/5] clk: iproc: define Broadcom NSP iProc clock binding
+To: Jon Mason <jonmason@broadcom.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+References: <1444771347-11382-1-git-send-email-jonmason@broadcom.com>
+ <1444771347-11382-2-git-send-email-jonmason@broadcom.com>
+CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
+	<hauke@hauke-m.de>, Scott Branden <sbranden@broadcom.com>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>
+From: Ray Jui <rjui@broadcom.com>
+Message-ID: <561D8300.3040804@broadcom.com>
+Date: Tue, 13 Oct 2015 15:17:36 -0700
 MIME-Version: 1.0
-Return-Path: scottwood@freescale.com
+In-Reply-To: <1444771347-11382-2-git-send-email-jonmason@broadcom.com>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: rjui@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2015-10-14 at 11:31 -0700, Stephen Boyd wrote:
-> On 10/14, Zhiqiang Hou wrote:
-> > From: Hou Zhiqiang <B48286@freescale.com>
-> > 
-> > Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
-> > ---
+Shouldn't the device tree binding document go with the other patch
+series since both the binding document and drivers are merged by Michael
+or Stephen?
+
+On 10/13/2015 2:22 PM, Jon Mason wrote:
+> Document the device tree bindings for Broadcom Northstar Plus
+> architecture based clock controller
 > 
-> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+> Signed-off-by: Jon Mason <jonmason@broadcom.com>
+> ---
+>  .../bindings/clock/brcm,iproc-clocks.txt           | 30 ++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
 > 
+> diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+> index da8d9bb..b3c3e9d 100644
+> --- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+> +++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+> @@ -130,3 +130,33 @@ These clock IDs are defined in:
+>      ch3_unused mipipll          4       BCM_CYGNUS_MIPIPLL_CH3_UNUSED
+>      ch4_unused mipipll          5       BCM_CYGNUS_MIPIPLL_CH4_UNUSED
+>      ch5_unused mipipll          6       BCM_CYGNUS_MIPIPLL_CH5_UNUSED
+> +
+> +Northstar and Northstar Plus
+> +------
+> +PLL and leaf clock compatible strings for Northstar and Northstar Plus are:
+> + "brcm,nsp-armpll"
+> + "brcm,nsp-genpll"
+> + "brcm,nsp-lcpll0"
 
-Could you ack my clock patchset that this depends on (if there are no 
+So the current clock driver also supports NS? That will be nice and that
+indicates all the clock related registers/offsets are exactly the same
+between NS and NSP?
 
-objections)?  Mike Turquette acked the RFC version a while back, but it's 
-
-changed a bit since then (including the new clk_get_num_parents() and 
-
-clk_get_parent_by_index() -- I CCed Russell King on that but got no 
-
-response), and got no response when I asked whether the ack was still good 
-
-for v3.
-
--Scott
+> +
+> +The following table defines the set of PLL/clock index and ID for Northstar and
+> +Northstar Plus.  These clock IDs are defined in:
+> +    "include/dt-bindings/clock/bcm-nsp.h"
+> +
+> +    Clock	Source		Index	ID
+> +    ---		-----		-----	---------
+> +    crystal	N/A		N/A	N/A
+> +
+> +    armpll	crystal		N/A	N/A
+> +
+> +    genpll	crystal		0	BCM_NSP_GENPLL
+> +    phy		genpll		1	BCM_NSP_GENPLL_PHY_CLK
+> +    ethernetclk	genpll		2	BCM_NSP_GENPLL_ENET_SW_CLK
+> +    usbclk	genpll		3	BCM_NSP_GENPLL_USB_PHY_REF_CLK
+> +    iprocfast	genpll		4	BCM_NSP_GENPLL_IPROCFAST_CLK
+> +    sata1	genpll		5	BCM_NSP_GENPLL_SATA1_CLK
+> +    sata2	genpll		6	BCM_NSP_GENPLL_SATA2_CLK
+> +
+> +    lcpll0	crystal		0	BCM_NSP_LCPLL0
+> +    pcie_phy	lcpll0		1	BCM_NSP_LCPLL0_PCIE_PHY_REF_CLK
+> +    sdio	lcpll0		2	BCM_NSP_LCPLL0_SDIO_CLK
+> +    ddr_phy	lcpll0		3	BCM_NSP_LCPLL0_DDR_PHY_CLK
+> 
