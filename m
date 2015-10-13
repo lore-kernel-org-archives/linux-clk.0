@@ -1,99 +1,140 @@
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
-Subject: Re: [PATCH v4 5/5] [RFC] clk: shmobile: r8a7795: Add new CPG/MSSR driver
-Date: Mon, 26 Oct 2015 04:25:51 +0200
-Message-ID: <1577230.N3FJlP7ehB@avalon>
-In-Reply-To: <CAMuHMdUyu6w0LAoH78H2+VHczrWwozDKMX2j8_A4V=jgz0snwA@mail.gmail.com>
-References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be> <20151024011003.GE19782@codeaurora.org> <CAMuHMdUyu6w0LAoH78H2+VHczrWwozDKMX2j8_A4V=jgz0snwA@mail.gmail.com>
+Return-Path: <jonmason@broadcom.com>
+From: Jon Mason <jonmason@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
+	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
+	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
+Subject: [PATCH v2 2/7] clk: iproc: Add PWRCTRL support
+Date: Tue, 13 Oct 2015 17:08:00 -0400
+Message-ID: <1444770485-11210-3-git-send-email-jonmason@broadcom.com>
+In-Reply-To: <1444770485-11210-1-git-send-email-jonmason@broadcom.com>
+References: <1444770485-11210-1-git-send-email-jonmason@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+Some iProc SoC clocks use a different way to control clock power, via
+the PWRDWN bit in the PLL control register.  Since the PLL control
+register is used to access the PWRDWN bit, there is no need for the
+pwr_base when this is being used.  A new flag, IPROC_CLK_EMBED_PWRCTRL,
+has been added to identify this usage.  We can use the AON interface to
+write the values to enable/disable PWRDOWN.
 
-On Saturday 24 October 2015 19:34:03 Geert Uytterhoeven wrote:
-> On Sat, Oct 24, 2015 at 3:10 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> > On 10/22, Geert Uytterhoeven wrote:
-> >> On Tue, Oct 20, 2015 at 3:07 PM, Geert Uytterhoeven wrote:
-> >>> On Tue, Oct 20, 2015 at 3:00 PM, Michael Turquette wrote:
-> >>>> Quoting Geert Uytterhoeven (2015-10-20 05:31:12)
-> >>>>> On Tue, Oct 20, 2015 at 2:24 PM, Michael Turquette wrote:
-> >>>> The bindings should go in for 4.4, but if the driver is slated for 4.5
-> >>>> then can you investigate this some more? Stephen and I are on a
-> >>>> mission to have _real_ clk drivers.
-> >>> 
-> >>> Sure, I'll have a deeper look.
-> >> 
-> >> And so I did (on r8a7791/koelsch).
-> >> 
-> >> As I want to have as much clock data/code __init as possible (think
-> >> multi-platform kernels --- pinmux data is a disaster here), I have to use
-> >> platform_driver_probe().
+Signed-off-by: Jon Mason <jonmason@broadcom.com>
+---
+ drivers/clk/bcm/clk-iproc-pll.c | 55 ++++++++++++++++++++++++++++-------------
+ drivers/clk/bcm/clk-iproc.h     |  6 +++++
+ 2 files changed, 44 insertions(+), 17 deletions(-)
 
-That sounds like an __init issue, doesn't it ? The CPG driver will always be 
-builtin and probed during the init process, what's preventing us from using 
-normal driver probing ?
-
-> >>   - Calling platform_driver_probe() from core_initcall() or
-> >>     postcore_initcall() is too early, as the platform device for the CPG
-> >>     hasn't been created yet. Hence the CPG Clock Domain isn't registered,
-> >>     and all devices fail to probe as they can't be attached to their
-> >>     Clock Domain.
-> >>     
-> >>       -> This is where the -ENOENT came from (I incorrectly assumed it
-> >>          came from the clock code; sorry for that), and it's converted
-> >>          into -EPROBE_DEFER by genpd_dev_pm_attach().
-> >>   
-> >>   - Calling platform_driver_probe() from arch_initcall() is too late, as
-> >>     the IRQC is initialized first (it's located before the CPG in .dtsi).
-> >>     Hence the IRQC can't find it's Clock Domain, and its probe is
-> >>     deferred. IRQC will be reprobed later, but in the mean time the
-> >>     Ethernet PHY can't find its IRQ, as the of_mdio code uses
-> >>     irq_of_parse_and_map(), which plainly ignores EPROBE_DEFER :-(
-> >>     Nevertheless, Ethernet works...
-> >>   
-> >>   - Using subsys_initcall() and later causes even more probe deferral.
-> >> 
-> >> So that's why I went with CLK_OF_DECLARE() again...
-> > 
-> > Understandable for the few clocks that are used by the interrupt
-> > controller, but for the other clocks, could those be registered
-> > from a real platform device driver probe path? I've been
-> 
-> In this particular case, that would be the IRQC module clocks and its
-> parent, the CP clock, which is derived directly from the external crystal.
-> 
-> If we ever have to do this for the GIC, that's gonna be several more
-> clocks (INTC-SYS / ZS / PLL1 / MAIN / external crystal).
-> 
-> > considering making some API that lets devices associate with the
-> > clocks that the file had to register with CLK_OF_DECLARE(). The
-> > driver would have to be builtin then (no modules) but otherwise
-> > we would be able to benefit from the device driver model for most
-> > other clocks.
-> 
-> To be honest, that still feels like a hack to me.
-> 
-> I hope dependencies and probe order, and obscure drivers not handling
-> deferred probe correctly, will be solved later sooner or later,
-> so hacks like that are no longer needed.
-> 
-> For new SoCs like r8a7795 we can probably just make it a real platform
-> driver, and make sure the irqc node is located after the cpg node in the
-> .dtsi.
-
-That's another hack :-) We really shouldn't depend on DT nodes order.
-
-I'm all for getting rid of CLK_OF_DECLARE
-
-> Upon second thought, that may even be feasible for existing SoCs, as
-> they would need a DTS update to make use of the new bindings/driver anyway,
-> so the irqc node can be moved at the same time. Backwards compatibility
-> through the old bindings/drivers would keep on using CLK_OF_DECLARE().
-
+diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
+index 2dda4e8..e029ab3 100644
+--- a/drivers/clk/bcm/clk-iproc-pll.c
++++ b/drivers/clk/bcm/clk-iproc-pll.c
+@@ -148,14 +148,25 @@ static void __pll_disable(struct iproc_pll *pll)
+ 		writel(val, pll->asiu_base + ctrl->asiu.offset);
+ 	}
+ 
+-	/* latch input value so core power can be shut down */
+-	val = readl(pll->pwr_base + ctrl->aon.offset);
+-	val |= (1 << ctrl->aon.iso_shift);
+-	writel(val, pll->pwr_base + ctrl->aon.offset);
+-
+-	/* power down the core */
+-	val &= ~(bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
+-	writel(val, pll->pwr_base + ctrl->aon.offset);
++	if (ctrl->flags & IPROC_CLK_EMBED_PWRCTRL) {
++		val = readl(pll->pll_base + ctrl->aon.offset);
++		val |= (bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
++		writel(val, pll->pll_base + ctrl->aon.offset);
++
++		if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
++			readl(pll->pll_base + ctrl->aon.offset);
++	}
++
++	if (pll->pwr_base) {
++		/* latch input value so core power can be shut down */
++		val = readl(pll->pwr_base + ctrl->aon.offset);
++		val |= (1 << ctrl->aon.iso_shift);
++		writel(val, pll->pwr_base + ctrl->aon.offset);
++
++		/* power down the core */
++		val &= ~(bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
++		writel(val, pll->pwr_base + ctrl->aon.offset);
++	}
+ }
+ 
+ static int __pll_enable(struct iproc_pll *pll)
+@@ -163,11 +174,22 @@ static int __pll_enable(struct iproc_pll *pll)
+ 	const struct iproc_pll_ctrl *ctrl = pll->ctrl;
+ 	u32 val;
+ 
+-	/* power up the PLL and make sure it's not latched */
+-	val = readl(pll->pwr_base + ctrl->aon.offset);
+-	val |= bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift;
+-	val &= ~(1 << ctrl->aon.iso_shift);
+-	writel(val, pll->pwr_base + ctrl->aon.offset);
++	if (ctrl->flags & IPROC_CLK_EMBED_PWRCTRL) {
++		val = readl(pll->pll_base + ctrl->aon.offset);
++		val &= ~(bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
++		writel(val, pll->pll_base + ctrl->aon.offset);
++
++		if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
++			readl(pll->pll_base + ctrl->aon.offset);
++	}
++
++	if (pll->pwr_base) {
++		/* power up the PLL and make sure it's not latched */
++		val = readl(pll->pwr_base + ctrl->aon.offset);
++		val |= bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift;
++		val &= ~(1 << ctrl->aon.iso_shift);
++		writel(val, pll->pwr_base + ctrl->aon.offset);
++	}
+ 
+ 	/* certain PLLs also need to be ungated from the ASIU top level */
+ 	if (ctrl->flags & IPROC_CLK_PLL_ASIU) {
+@@ -610,9 +632,8 @@ void __init iproc_pll_clk_setup(struct device_node *node,
+ 	if (WARN_ON(!pll->pll_base))
+ 		goto err_pll_iomap;
+ 
++	/* Some SoCs do not require the pwr_base, thus failing is not fatal */
+ 	pll->pwr_base = of_iomap(node, 1);
+-	if (WARN_ON(!pll->pwr_base))
+-		goto err_pwr_iomap;
+ 
+ 	/* some PLLs require gating control at the top ASIU level */
+ 	if (pll_ctrl->flags & IPROC_CLK_PLL_ASIU) {
+@@ -695,9 +716,9 @@ err_pll_register:
+ 		iounmap(pll->asiu_base);
+ 
+ err_asiu_iomap:
+-	iounmap(pll->pwr_base);
++	if (pll->pwr_base)
++		iounmap(pll->pwr_base);
+ 
+-err_pwr_iomap:
+ 	iounmap(pll->pll_base);
+ 
+ err_pll_iomap:
+diff --git a/drivers/clk/bcm/clk-iproc.h b/drivers/clk/bcm/clk-iproc.h
+index d834b7a..ff7bfad 100644
+--- a/drivers/clk/bcm/clk-iproc.h
++++ b/drivers/clk/bcm/clk-iproc.h
+@@ -49,6 +49,12 @@
+ #define IPROC_CLK_PLL_NEEDS_SW_CFG BIT(4)
+ 
+ /*
++ * Some PLLs use a different way to control clock power, via the PWRDWN bit in
++ * the PLL control register
++ */
++#define IPROC_CLK_EMBED_PWRCTRL BIT(5)
++
++/*
+  * Parameters for VCO frequency configuration
+  *
+  * VCO frequency =
 -- 
-Regards,
-
-Laurent Pinchart
+1.9.1
