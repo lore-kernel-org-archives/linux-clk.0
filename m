@@ -1,93 +1,79 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <zhengxing@rock-chips.com>
+Message-ID: <561C7BAD.7020401@rock-chips.com>
+Date: Tue, 13 Oct 2015 11:34:05 +0800
+From: Xing Zheng <zhengxing@rock-chips.com>
 MIME-Version: 1.0
-To: =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- "Sjoerd Simons" <sjoerd.simons@collabora.co.uk>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1745884.LUbKvMh2Tj@diego>
-Cc: linux-rockchip@lists.infradead.org, "Jaroslav Kysela" <perex@perex.cz>,
- devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
- "Mark Brown" <broonie@kernel.org>, linux-kernel@vger.kernel.org,
- "Kumar Gala" <galak@codeaurora.org>,
- "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
- "Takashi Iwai" <tiwai@suse.com>, "Liam Girdwood" <lgirdwood@gmail.com>,
- "Pawel Moll" <pawel.moll@arm.com>, "Rob Herring" <robh+dt@kernel.org>,
- "Mark Rutland" <mark.rutland@arm.com>,
- "Russell King" <linux@arm.linux.org.uk>,
- linux-arm-kernel@lists.infradead.org, "Stephen Boyd" <sboyd@codeaurora.org>,
- linux-clk@vger.kernel.org
-References: <1444311079-2892-1-git-send-email-sjoerd.simons@collabora.co.uk>
- <11755202.f1LLWMlYi0@phil> <1444390555.9895.271.camel@collabora.co.uk>
- <1745884.LUbKvMh2Tj@diego>
-Message-ID: <20151022121000.20687.48364@quantum>
-Subject: Re: [PATCH v4 5/8] clk: rockchip: Allow the RK3288 SPDIF clocks to change
- their parent
-Date: Thu, 22 Oct 2015 05:10:00 -0700
+To: =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>
+CC: Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, sjoerd.simons@collabora.co.uk,
+ zhengxing <zhengxing@rock-chips.com>
+Subject: Re: [PATCH 1/3] clk: add flag for clocks that need to be enabled
+ on rate changes
+References: <1929669.AsgMSusdJb@phil> <20151008215840.GJ26883@codeaurora.org> <13378907.1JCOSf8QGs@diego> <37059102.QWiKhRxp8v@diego>
+In-Reply-To: <37059102.QWiKhRxp8v@diego>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Heiko St=C3=BCbner (2015-10-11 03:43:27)
-> Hi Sjoerd,
-> =
+Hi,
 
-> Am Freitag, 9. Oktober 2015, 13:35:55 schrieb Sjoerd Simons:
-> > On Thu, 2015-10-08 at 17:10 +0200, Heiko Stuebner wrote:
-> > > Am Donnerstag, 8. Oktober 2015, 15:31:16 schrieb Sjoerd Simons:
-> > > > The clock branches leading to sclk_spdif and sclk_spdif_8ch on
-> > > > RK3288
-> > > > SoCs only feed those clocks, allow those clocks to change their
-> > > > parents
-> > > > all the way up the hierarchy.
-> > > > =
+On 2015年10月13日 00:03, Heiko Stübner wrote:
+> Am Sonntag, 11. Oktober 2015, 12:41:09 schrieb Heiko Stübner:
+>> Hi Stephen,
+>>
+>> Am Donnerstag, 8. Oktober 2015, 14:58:40 schrieb Stephen Boyd:
+>>> On 10/02, Heiko Stübner wrote:
+>>>> Hi,
+>>>>
+>>>> any comment on these 3 patches?
+>>> Dong has a similar problem, but those patches conflate this with
+>>> enabling parent clocks during clk_disable_unused() which makes no
+>>> sense to me. So I'm ok with the requirement that we turn clocks
+>>> on to change rates, but I wonder if in this case we need to turn
+>>> on the clock that's changing rates itself, or if we just need to
+>>> turn on the parent and/or future parent of the clock during the
+>>> rate switch. Care to elaborate on that?
+>> As you can see in the follow-up patches, the fractional dividers on Rockchip
+>> SoCs are quite strange in that they even need to have their _downstream_
+>> mux point to them to actually accept rate changes.
+>>
+>> The register value always reflects the value set by the system, but hardware
+>> really only accepts it if the clock is enabled and even the downstream mux
+>> selects the fractional divider as parent (they call it a auto-gating
+>> feature).
+>>
+>> So in the worst (and current) case, you end up with the register showing the
+>> right value, but the hardware can use completely different dividers from
+>> the previous setting.
+>>
+>> That strange behaviour got quite deeply investigated between Rockchip and
+>> Google engineers who stumbled upon this in the first place, so I'm
+>> reasonably sure this is the right solution for that clock type :-) .
+> Xing Zheng now also independently stumbled upon this issue with his rk3036
+> work. And came to the same conclusion that the gate must be enabled as well as
+> the downstream mux be set to the fractional divider for it to actually accept
+> a new setting.
+Yes, I discussed such problems with Heiko about the question:
+The RK3036 i2s frac(CRU_SEL7_CON) set value is invalid when I playback a 
+48KHz music:
+/ # io -4 0x20000060
+20000060: 01003057
+read register is 0x01003057, but the result of frac divider on the basis 
+of default 0x0bb8ea60(numerator=3000, denominator=60000, ratio=20), so 
+the out of mclk remains 594/20=29.7MHz
 
-> > > > Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-> > > =
+I tracked the logs:
+[ 49.770322] clk_fd_set_rate: 91, name: i2s_frac, rate = 12288000, 
+parent_rate = 594000000
+[ 49.778524] clk_fd_set_rate: 107, name: i2s_frac, val = 0x01003057
+[ 49.784714] clk_fd_recalc_rate: 29, name: i2s_frac, parent_rate = 594000000
+[ 49.791707] clk_fd_recalc_rate: 47, name: i2s_frac, val = 0x01003057, m 
+= 256, n = 12375
+[ 49.799836] clk_mux_set_parent: 81, name: i2s_pre
+It seem like set i2s_frac_div then set mux is i2s_pre. I think we should 
+select the correct mux and open clock gate, then set the i2s_frac_div, 
+and I tried to do it, setting i2s_frac_div is vaild and mclk is 
+12.288MHz. Therefore, I think that select parent mux and enable gate 
+should before child node set value.
 
-> > > Just as comment, if I'm seeing that right, this patch needs "clk:
-> > > rockchip:
-> > > handle mux dependency of fractional dividers" and friends [0] to
-> > > apply and
-> > > also actually handle the fractional dividers correctly.
-> > > =
-
-> > > For the clock change itself:
-> > > Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> > =
-
-> > Oh sorry yes, i completely forgot to at that as note on this patch
-> > (series). These are on top of your series as those are required to make
-> > things actually work as expected.
-> > =
-
-> > Which reminds me, i was wondering how to best move that forward. Could
-> > you pick this one up to include it in the next round of your series?
-> > (Otherwise i'm happy to rebase it once you do a v2)
-> =
-
-> I guess that will depend on how the core series gets handled. Aka if ther=
-e =
-
-> needs to be a v2 (depending on the clock maintainers) I can pick that up =
-as =
-
-> part of it. Otherwise we'll just need to ping the clock-maintainers separ=
-ately =
-
-> on this patch if necessary.
-
-I've spoken with Heiko on irc about v2 about using the coordinated clock
-rates patches for handling the mux/fractional dividers thing. I'd prefer
-to use the ccr approach, which puts a delay on that series.
-
-Is there anything wrong with merging this patch #5/8 as-is? Will the
-struct clk_core.rate accounting not match the hardware if we set
-CLK_SET_PARENT_RATE on these clocks?
-
-Regards,
-Mike
-
-> =
-
-> =
-
-> Heiko
->=20
+Thanks. :)
