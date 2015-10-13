@@ -1,59 +1,59 @@
-Return-Path: <linux@roeck-us.net>
-Subject: Re: [PATCH V4 2/6] watchdog: Add support for Freescale Layerscape
- platforms
-To: Zhiqiang Hou <B48286@freescale.com>,
- linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
- will.deacon@arm.com, linux-i2c@vger.kernel.org,
- linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <1444911181-21696-1-git-send-email-B48286@freescale.com>
- <1444911181-21696-2-git-send-email-B48286@freescale.com>
-Cc: mark.rutland@arm.com, wsa@the-dreams.de, wim@iguana.be, corbet@lwn.net,
- mturquette@baylibre.com, sboyd@codeaurora.org, Mingkai.Hu@freescale.com,
- Shaohui.Xie@freescale.com, scottwood@freescale.com,
- bhupesh.sharma@freescale.com, Wenbin.Song@freescale.com
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <561FB74F.5000302@roeck-us.net>
-Date: Thu, 15 Oct 2015 07:25:19 -0700
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Jon Mason <jonmason@broadcom.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH v2 7/7] clk: ns2: add clock support for Broadcom Northstar 2 SoC
+Date: Wed, 14 Oct 2015 00:23:43 +0200
+Message-ID: <6427519.eIBEvCNlle@wuerfel>
+In-Reply-To: <20151013220450.GO12512@broadcom.com>
+References: <1444770485-11210-1-git-send-email-jonmason@broadcom.com> <5280890.6npshDUNFZ@wuerfel> <20151013220450.GO12512@broadcom.com>
 MIME-Version: 1.0
-In-Reply-To: <1444911181-21696-2-git-send-email-B48286@freescale.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/15/2015 05:12 AM, Zhiqiang Hou wrote:
-> From: Shaohui Xie <Shaohui.Xie@freescale.com>
->
-> Modify watchdog/Kconfig file to support Layerscape platforms.
->
-> Signed-off-by: Shaohui Xie <Shaohui.Xie@freescale.com>
-> Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
-> Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
-> ---
-> This patch has been acked in V3 by Guenter Roeck [linux@roeck-us.net].
->
-Here it is again, but if there is no change, please just add the Ack
-to subsequent versions of the patch.
-
-Acked-by: Guenter Roeck <linux@roeck-us.net>
+On Tuesday 13 October 2015 18:04:50 Jon Mason wrote:
+> 
+> > On a related note, I'm seeing problems when CONFIG_CYGNUS is set but
+> > CONFIG_COMMON_CLK_IPROC is disabled, as that currently leads to a link
+> > failure.
+> 
+> I can double check, but it should be on by default when Cygnus is
+> enabled.  If you send me the error, I'll be happy to fix it.
 
 
-> V4: V3 V2
->   - No change.
->
->   drivers/watchdog/Kconfig | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-> index 79e1aa1..448dbaf 100644
-> --- a/drivers/watchdog/Kconfig
-> +++ b/drivers/watchdog/Kconfig
-> @@ -446,7 +446,7 @@ config MAX63XX_WATCHDOG
->
->   config IMX2_WDT
->   	tristate "IMX2+ Watchdog"
-> -	depends on ARCH_MXC
-> +	depends on ARCH_MXC || ARCH_LAYERSCAPE
->   	select REGMAP_MMIO
->   	select WATCHDOG_CORE
->   	help
->
+The problem is not that it's off by default but that it can be
+disabled, so it breaks some 'make randconfig' builds with this
+message:
+
+drivers/built-in.o: In function `cygnus_armpll_init':
+:(.init.text+0x1d290): undefined reference to `iproc_armpll_setup'
+drivers/built-in.o: In function `cygnus_genpll_clk_init':
+:(.init.text+0x1d2c4): undefined reference to `iproc_pll_clk_setup'
+drivers/built-in.o: In function `cygnus_lcpll0_clk_init':
+:(.init.text+0x1d304): undefined reference to `iproc_pll_clk_setup'
+drivers/built-in.o: In function `cygnus_mipipll_clk_init':
+:(.init.text+0x1d344): undefined reference to `iproc_pll_clk_setup'
+drivers/built-in.o: In function `cygnus_asiu_init':
+:(.init.text+0x1d370): undefined reference to `iproc_asiu_setup'
+
+My patch fixes it by always selecting COMMON_CLK_IPROC from
+ARCH_BCM_CYGNUS. I wasn't sure whether you want COMMON_CLK_IPROC
+to still be user-selectable, so I left that in place. Normally
+I'd expect it to be a silent option though, that just gets
+implicitly enabled whenever a platform that needs it is built
+into the kernel.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
+index 1319c3c14327..35234e563cd8 100644
+--- a/arch/arm/mach-bcm/Kconfig
++++ b/arch/arm/mach-bcm/Kconfig
+@@ -29,6 +29,7 @@ config ARCH_BCM_IPROC
+ config ARCH_BCM_CYGNUS
+ 	bool "Broadcom Cygnus Support" if ARCH_MULTI_V7
+ 	select ARCH_BCM_IPROC
++	select COMMON_CLK_IPROC
+ 	help
+ 	  Enable support for the Cygnus family,
+ 	  which includes the following variants:
