@@ -1,71 +1,83 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v3 2/5] mfd: sec: Add support for S2MPS15 PMIC
-To: Alim Akhtar <alim.akhtar@samsung.com>, lee.jones@linaro.org,
- broonie@kernel.org
-References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
- <1445863883-5187-3-git-send-email-alim.akhtar@samsung.com>
-Cc: mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, rtc-linux@googlegroups.com,
- linux-kernel@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <563024A5.1050705@samsung.com>
-Date: Wed, 28 Oct 2015 10:28:05 +0900
-MIME-version: 1.0
-In-reply-to: <1445863883-5187-3-git-send-email-alim.akhtar@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <sbranden@broadcom.com>
+Subject: Re: [PATCH 09/10] clk: ns2: add clock support for Broadcom Northstar
+ 2 SoC
+To: Jon Mason <jonmason@broadcom.com>, Stephen Boyd <sboyd@codeaurora.org>
+References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
+ <1443826665-17570-10-git-send-email-jonmason@broadcom.com>
+ <20151010003352.GA26883@codeaurora.org> <20151012181929.GG20867@broadcom.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Florian Fainelli
+	<f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui
+	<rjui@broadcom.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
+From: Scott Branden <sbranden@broadcom.com>
+Message-ID: <561D36A6.2080309@broadcom.com>
+Date: Tue, 13 Oct 2015 09:51:50 -0700
+MIME-Version: 1.0
+In-Reply-To: <20151012181929.GG20867@broadcom.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: sbranden@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 26.10.2015 21:51, Alim Akhtar wrote:
-> From: Thomas Abraham <thomas.ab@samsung.com>
-> 
-> Add support for S2MPS15 PMIC which is similar to S2MPS11 PMIC. The S2MPS15
-> PMIC supports 27 LDO regulators, 10 buck regulators, RTC, three 32.768KHz
-> clock outputs and battery charger. This patch adds initial support for
-> LDO and buck regulators of S2MPS15 device.
-> 
-> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> [Alim: Added s2mps15_devs like rtc and clk and related changes]
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->  drivers/mfd/sec-core.c              |   31 +++++++
->  drivers/mfd/sec-irq.c               |    8 ++
->  include/linux/mfd/samsung/core.h    |    1 +
->  include/linux/mfd/samsung/s2mps15.h |  158 +++++++++++++++++++++++++++++++++++
->  4 files changed, 198 insertions(+)
->  create mode 100644 include/linux/mfd/samsung/s2mps15.h
-> 
-> diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-> index 2626fc0b5b8c..db3d4d4ff805 100644
-> --- a/drivers/mfd/sec-core.c
-> +++ b/drivers/mfd/sec-core.c
-> @@ -29,6 +29,7 @@
->  #include <linux/mfd/samsung/s2mps11.h>
->  #include <linux/mfd/samsung/s2mps13.h>
->  #include <linux/mfd/samsung/s2mps14.h>
-> +#include <linux/mfd/samsung/s2mps15.h>
->  #include <linux/mfd/samsung/s2mpu02.h>
->  #include <linux/mfd/samsung/s5m8763.h>
->  #include <linux/mfd/samsung/s5m8767.h>
-> @@ -96,6 +97,17 @@ static const struct mfd_cell s2mps14_devs[] = {
->  	}
->  };
->  
-> +static const struct mfd_cell s2mps15_devs[] = {
-> +	{
-> +		.name = "s2mps15-pmic",
-> +	}, {
-> +		.name = "s2mps15-rtc",
-> +	}, {
-> +		.name = "s2mps15-clk",
-> +		.of_compatible = "samsung,s2mps15-clk",
-> +	},
+Hi Jon,
 
-I have different questions here. RTC and CLK module look the same as
-S2MPS14. Then you should existing compatibles and names.
+Comment below.
 
-I'll ask in details about this in separate emails for patch 4 and 5.
-Until questions are resolved, these looks wrong.
+On 15-10-12 11:19 AM, Jon Mason wrote:
+> On Fri, Oct 09, 2015 at 05:33:52PM -0700, Stephen Boyd wrote:
+>> On 10/02, Jon Mason wrote:
+>>> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+>>> index 23800a1..2790f21 100644
+>>> --- a/arch/arm64/Kconfig.platforms
+>>> +++ b/arch/arm64/Kconfig.platforms
+>>> @@ -2,6 +2,7 @@ menu "Platform selection"
+>>>
+>>>   config ARCH_BCM_IPROC
+>>>   	bool "Broadcom iProc SoC Family"
+>>> +	select COMMON_CLK_IPROC
+>>
+>> Given that this is a visible option, I'd expect the defconfig to
+>> enable this.
+>
+> After looking at this again, it is completely unnecessary.  Removed.
+>
+>>
+>>>   	help
+>>>   	  This enables support for Broadcom iProc based SoCs
+>>>
+>>> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+>>> index d08b3e5..ea81eaa 100644
+>>> --- a/drivers/clk/Makefile
+>>> +++ b/drivers/clk/Makefile
+>>> @@ -47,7 +47,8 @@ obj-$(CONFIG_COMMON_CLK_WM831X)		+= clk-wm831x.o
+>>>   obj-$(CONFIG_COMMON_CLK_XGENE)		+= clk-xgene.o
+>>>   obj-$(CONFIG_COMMON_CLK_PWM)		+= clk-pwm.o
+>>>   obj-$(CONFIG_COMMON_CLK_AT91)		+= at91/
+>>> -obj-$(CONFIG_ARCH_BCM)			+= bcm/
+>>> +obj-$(CONFIG_CLK_BCM_KONA)		+= bcm/
+>>> +obj-$(CONFIG_COMMON_CLK_IPROC)		+= bcm/
+>>
+>> Also, perhaps we need some sort of Kconfig thing for overall bcm
+>> clock drivers, so that we don't have duplicate Makefile rules.
+>>
+>> 	config COMMON_CLK_BCM
+>> 		bool "Support for Broadcom clocks"
+>
+> Will do.
 
-Best regards,
-Krzysztof
+Is that really necessary at all  I think something like this work instead?
+
+-obj-$(CONFIG_ARCH_BCM)			+= bcm/
++obj-y		+= bcm/
+
+
+
+>
+> Thanks,
+> Jon
+>
+>
+>>
+>> --
+>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+>> a Linux Foundation Collaborative Project
