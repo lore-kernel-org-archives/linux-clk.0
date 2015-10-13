@@ -1,104 +1,103 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 21 Oct 2015 21:58:56 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL] Allwinner clock changes for 4.4
-Message-ID: <20151021195856.GA5155@lukather>
+Return-Path: <slash.tmp@free.fr>
+From: Mason <slash.tmp@free.fr>
+Subject: Two-output clk provider with standard clk consumer
+To: clk <linux-clk@vger.kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Message-ID: <561CC7DA.1070101@free.fr>
+Date: Tue, 13 Oct 2015 10:59:06 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
+Content-Type: text/plain; charset=ISO-8859-15
 List-ID: <linux-clk.vger.kernel.org>
 
+Hello everyone,
 
---2fHTh5uZTiUOsy+g
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'm trying to write a clk driver with the following features:
+- a single input (crystal oscillator, modeled by fixed-clock)
+- two separate outputs (cpuclk and sysclk) derived from two
+separate internal PLLs (pll0 and pll1)
 
-Hi Mike, Stephen,
+I would like to use cpuclk as the input to a fixed-factor-clock
+node (cpuclk/2).
 
-Please pull the following patches for the next merge window.
+So the device tree would look like this:
+
+	clocks {
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		xtal: xtal {
+			compatible = "fixed-clock";
+			clock-frequency = <27000000>;
+			#clock-cells = <0>;
+		};
+
+		clkgen: clkgen@10000 {
+			compatible = "foo,clkgen";
+			reg = <0x10000 0x30>;
+			clocks = <&xtal>;
+			#clock-cells = <1>;
+		};
+
+		periphclk: periphclk {
+			compatible = "fixed-factor-clock";
+			clocks = <&clkgen 0>;
+			clock-mult = <1>;
+			clock-div  = <2>;
+			#clock-cells = <0>;
+		};
+	};
+
+Does this look OK so far?
+
+
+The driver would look like this:
+(headers and error handling omitted for brevity)
+
+static struct clk *output[2];
+static struct clk_onecell_data clk_data = { output, 2 };
+static void __iomem *clkgen_base;
+
+static void __init make_pll(const char *name, const char *parent, void __iomem *reg)
+{
+	struct clk *clk;
+	unsigned int val, mul, div;
+
+	val = readl_relaxed(reg);
+	mul = foo(val);
+	div = bar(val);
+	clk = clk_register_fixed_factor(NULL, name, parent, 0, mul, div);
+	printk("clk = %p\n", clk);
+}
+
+static void __init clkgen_setup(struct device_node *np)
+{
+	int ret;
+	const char *parent = of_clk_get_parent_name(np, 0);
+
+	clkgen_base = of_iomap(np, 0);
+	make_pll("pll0", parent, clkgen_base + 0);
+	make_pll("pll1", parent, clkgen_base + 8);
+	output[0] = clk_register_divider(NULL, "cpuclk", "pll0", 0,
+			clkgen_base + 0x24, 8, 8, CLK_DIVIDER_ONE_BASED, NULL);
+	output[1] = clk_register_fixed_factor(NULL, "sysclk", "pll1", 0, 1, 3);
+
+	ret = of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+	printk("ret=%d out0=%p out1=%p\n", ret, output[0], output[1]);
+}
+
+CLK_OF_DECLARE(myclkgen, "foo,clkgen", clkgen_setup);
+
+
+But the periphclk setup fails because the fixed-factor-clock driver only
+looks up the parent name using of_clk_get_parent_name ("clkgen" in my case)
+and calls:
+
+clk_register_fixed_factor(NULL, "periphclk", "clkgen", 0, 1, 2);
+
+Which doesn't keep track of the clkgen output index... <confused>
+
+Can someone please point out what I am missing?
 
 Thanks!
-Maxime
-
-The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
-
-  Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git tags/su=
-nxi-clocks-for-4.4
-
-for you to fetch changes up to 9b038bc58ad2658c76fd8b50bb333dfd4454573c:
-
-  clk: sunxi: mod1 clock support (2015-10-21 21:51:29 +0200)
-
-----------------------------------------------------------------
-Allwinner clock additions for 4.4
-
-  - Support for the Audio PLL and child clocks
-  - Support for the A33 AHB gates
-  - New clk-multiplier generic driver
-
-----------------------------------------------------------------
-Emilio L=F3pez (2):
-      clk: sunxi: codec clock support
-      clk: sunxi: mod1 clock support
-
-Maxime Ripard (4):
-      clk: sunxi: Add A33 gates support
-      clk: Add a basic multiplier clock
-      clk: sunxi: Add a driver for the PLL2
-      clk: sunxi: pll2: Add A13 support
-
- drivers/clk/Makefile                       |   1 +
- drivers/clk/clk-multiplier.c               | 181 ++++++++++++++++++++++++
- drivers/clk/sunxi/Makefile                 |   3 +
- drivers/clk/sunxi/clk-a10-codec.c          |  44 ++++++
- drivers/clk/sunxi/clk-a10-mod1.c           |  81 +++++++++++
- drivers/clk/sunxi/clk-a10-pll2.c           | 216 +++++++++++++++++++++++++=
-++++
- drivers/clk/sunxi/clk-simple-gates.c       |   2 +
- include/dt-bindings/clock/sun4i-a10-pll2.h |  53 +++++++
- include/linux/clk-provider.h               |  42 ++++++
- 9 files changed, 623 insertions(+)
- create mode 100644 drivers/clk/clk-multiplier.c
- create mode 100644 drivers/clk/sunxi/clk-a10-codec.c
- create mode 100644 drivers/clk/sunxi/clk-a10-mod1.c
- create mode 100644 drivers/clk/sunxi/clk-a10-pll2.c
- create mode 100644 include/dt-bindings/clock/sun4i-a10-pll2.h
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---2fHTh5uZTiUOsy+g
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWJ+6AAAoJEBx+YmzsjxAgTPkQAJOcRwVGoVi6rSRG8tOLzHtn
-bZzggztyRmP4018jxKDYL/nbC0XqiB+BjV6Zk5clSQL7dOG6EVbxeHRpNcQQ73yy
-JTcC+5O34PAFGaaVCfBoIkiKzosQAV1nlcFovksDkODaswgo5wIKPAP3EOFrtH/i
-LGLRRfXrT2PTlw0SdFbuer/IBoO+zy/xFr25WRR7USpnbIdohIjRwgilrnLWpQct
-Ciw80gScCGX77ypkOV3vaMhOUvwIhymwwupOSYj4eQEL13Jnu6jgFdGAwhnYz0Fu
-UqH4e3ZcaV8oDxZ0tKEddpPoeaxk48n74L5XQX8ETE647nOtz7AMONTL0/fb20me
-egy/zl8ftH5JugD3hVNq1OUouDaL9fPvpBPGWHzgoYMzByVz892yfG2alwTFILJD
-DHzZyjG6cmp5gi0aH5gJveKRQLAVdvovwBsxmoBXjfVeBn3VttF7c93eMOmUe8OE
-auzyKQpO4iD1Gb8x/HCHC+Z0S1EGRXAmbOuXEFzUGEQKATHrnUOJFHJwHyio1ua0
-hGt1yrNFfclkx2AsZYa7vm3qFPh2CFaEZ7d9Bh7OkO8lnmtuoLcIYPdNu8JEGA05
-SJmi7l/VKgS90fSFAPd/G9ch2snQbb0iNclVPTpQkDELSx92Zq6fwzMWoQkw6xou
-TV+yDz/+zmRWkUsrh8FC
-=LJDZ
------END PGP SIGNATURE-----
-
---2fHTh5uZTiUOsy+g--
