@@ -1,45 +1,182 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 2 Oct 2015 11:47:38 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: James Liao <jamesjj.liao@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Yingjoe Chen <yingjoe.chen@mediatek.com>,
-	linux-mediatek@lists.infradead.org,
-	Pi-Cheng Chen <pi-cheng.chen@linaro.org>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [GIT PULL] clk: mediatek: New clocks support and fixes
-Message-ID: <20151002184738.GR12338@codeaurora.org>
-References: <1443678253.1714.2.camel@mtksdaap41>
+Return-Path: <jonmason@broadcom.com>
+From: Jon Mason <jonmason@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
+	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
+	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
+Subject: [RFC 2/5] ARM: dts: enable clock support for Broadcom NSP
+Date: Tue, 13 Oct 2015 17:22:24 -0400
+Message-ID: <1444771347-11382-3-git-send-email-jonmason@broadcom.com>
+In-Reply-To: <1444771347-11382-1-git-send-email-jonmason@broadcom.com>
+References: <1444771347-11382-1-git-send-email-jonmason@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1443678253.1714.2.camel@mtksdaap41>
+Content-Type: text/plain
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/01, James Liao wrote:
-> This is a collection of new Mediatek clocks support and fixes. These
-> patches come from Joe [1] and me [2], including clock
-> support for subsystems, GPT and some minor fixes.
-> 
-> [1] https://patchwork.kernel.org/patch/6777041/
-> [2] https://lkml.org/lkml/2015/8/10/194
-> 
-> ----------------------------------------------------------------
-> 
-> The following changes since commit 9ffecb10283508260936b96022d4ee43a7798b4c:
-> 
->   Linux 4.3-rc3 (2015-09-27 07:50:08 -0400)
-> 
-> are available in the git repository at:
-> 
->   https://github.com/jamesjjliao/linux.git v4.3-rc3-clk
-> 
-> for you to fetch changes up to cdb2bab78aff97101da767b9643fbd692af4623b:
-> 
->   clk: mediatek: Add USB clock support in MT8173 APMIXEDSYS (2015-05-20 15:59:21 +0800)
+Replace current device tree dummy clocks with real clock support for
+Broadcom Northstar Plus SoC
 
-Thanks. Pulled!
+Signed-off-by: Jon Mason <jonmason@broadcom.com>
+---
+ arch/arm/boot/dts/bcm-nsp.dtsi | 93 ++++++++++++++++++++++++++++++++----------
+ 1 file changed, 72 insertions(+), 21 deletions(-)
 
+diff --git a/arch/arm/boot/dts/bcm-nsp.dtsi b/arch/arm/boot/dts/bcm-nsp.dtsi
+index 58aca27..768ee24 100644
+--- a/arch/arm/boot/dts/bcm-nsp.dtsi
++++ b/arch/arm/boot/dts/bcm-nsp.dtsi
+@@ -32,6 +32,7 @@
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/clock/bcm-nsp.h>
+ 
+ #include "skeleton.dtsi"
+ 
+@@ -42,7 +43,7 @@
+ 
+ 	mpcore {
+ 		compatible = "simple-bus";
+-		ranges = <0x00000000 0x19020000 0x00003000>;
++		ranges = <0x00000000 0x19000000 0x00023000>;
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 
+@@ -58,27 +59,34 @@
+ 			};
+ 		};
+ 
+-		L2: l2-cache {
+-			compatible = "arm,pl310-cache";
+-			reg = <0x2000 0x1000>;
+-			cache-unified;
+-			cache-level = <2>;
++		a9pll: arm_clk@0000 {
++			#clock-cells = <0>;
++			compatible = "brcm,nsp-armpll";
++			clocks = <&osc>;
++			reg = <0x0000 0x1000>;
++		};
++
++		timer@20200 {
++			compatible = "arm,cortex-a9-global-timer";
++			reg = <0x20200 0x100>;
++			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&periph_clk>;
+ 		};
+ 
+-		gic: interrupt-controller@19021000 {
++		gic: interrupt-controller@21000 {
+ 			compatible = "arm,cortex-a9-gic";
+ 			#interrupt-cells = <3>;
+ 			#address-cells = <0>;
+ 			interrupt-controller;
+-			reg = <0x1000 0x1000>,
+-			      <0x0100 0x100>;
++			reg = <0x21000 0x1000>,
++			      <0x20100 0x100>;
+ 		};
+ 
+-		timer@19020200 {
+-			compatible = "arm,cortex-a9-global-timer";
+-			reg = <0x0200 0x100>;
+-			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&periph_clk>;
++		L2: l2-cache {
++			compatible = "arm,pl310-cache";
++			reg = <0x22000 0x1000>;
++			cache-unified;
++			cache-level = <2>;
+ 		};
+ 	};
+ 
+@@ -87,33 +95,76 @@
+ 		#size-cells = <1>;
+ 		ranges;
+ 
+-		periph_clk: periph_clk {
++		osc: oscillator {
++			#clock-cells = <0>;
+ 			compatible = "fixed-clock";
++			clock-frequency = <25000000>;
++		};
++
++		iprocmed: iprocmed {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&genpll BCM_NSP_GENPLL_IPROCFAST_CLK>;
++			clock-div = <2>;
++			clock-mult = <1>;
++		};
++
++		iprocslow: iprocslow {
+ 			#clock-cells = <0>;
+-			clock-frequency = <500000000>;
++			compatible = "fixed-factor-clock";
++			clocks = <&genpll BCM_NSP_GENPLL_IPROCFAST_CLK>;
++			clock-div = <4>;
++			clock-mult = <1>;
++		};
++
++		periph_clk: periph_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&a9pll>;
++			clock-div = <2>;
++			clock-mult = <1>;
+ 		};
+ 	};
+ 
+ 	axi {
+ 		compatible = "simple-bus";
+-		ranges = <0x00000000 0x18000000 0x00001000>;
++		ranges = <0x00000000 0x18000000 0x0003f164>;
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 
+-		uart0: serial@18000300 {
++		uart0: serial@00300 {
+ 			compatible = "ns16550a";
+-			reg = <0x0300 0x100>;
++			reg = <0x00300 0x100>;
+ 			interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
+ 			clock-frequency = <62499840>;
+ 			status = "disabled";
+ 		};
+ 
+-		uart1: serial@18000400 {
++		uart1: serial@00400 {
+ 			compatible = "ns16550a";
+-			reg = <0x0400 0x100>;
++			reg = <0x00400 0x100>;
+ 			interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
+ 			clock-frequency = <62499840>;
+ 			status = "disabled";
+ 		};
++
++		lcpll0: lcpll0@3f100 {
++			#clock-cells = <1>;
++			compatible = "brcm,nsp-lcpll0";
++			reg = <0x3f100 0x14>;
++			clocks = <&osc>;
++			clock-output-names = "lcpll0", "pcie_phy", "sdio",
++					     "ddr_phy";
++		};
++
++		genpll: genpll@3f140 {
++			#clock-cells = <1>;
++			compatible = "brcm,nsp-genpll";
++			reg = <0x3f140 0x24>;
++			clocks = <&osc>;
++			clock-output-names = "genpll", "phy", "ethernetclk",
++					     "usbclk", "iprocfast", "sata1",
++					     "sata2";
++		};
+ 	};
+ };
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
