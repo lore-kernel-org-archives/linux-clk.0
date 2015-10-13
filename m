@@ -1,64 +1,67 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <jonmason@broadcom.com>
+From: Jon Mason <jonmason@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
+	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
+	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
+Subject: [RFC 1/5] clk: iproc: define Broadcom NSP iProc clock binding
+Date: Tue, 13 Oct 2015 17:22:23 -0400
+Message-ID: <1444771347-11382-2-git-send-email-jonmason@broadcom.com>
+In-Reply-To: <1444771347-11382-1-git-send-email-jonmason@broadcom.com>
+References: <1444771347-11382-1-git-send-email-jonmason@broadcom.com>
 MIME-Version: 1.0
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>, "Emilio Lopez" <emilio@elopez.com.ar>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1445326609-6314-2-git-send-email-maxime.ripard@free-electrons.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- "Chen-Yu Tsai" <wens@csie.org>, "Hans de Goede" <hdegoede@redhat.com>,
- linux-sunxi@googlegroups.com,
- "Maxime Ripard" <maxime.ripard@free-electrons.com>
-References: <1445326609-6314-1-git-send-email-maxime.ripard@free-electrons.com>
- <1445326609-6314-2-git-send-email-maxime.ripard@free-electrons.com>
-Message-ID: <20151020134343.20687.16333@quantum>
-Subject: Re: [PATCH v6 1/5] clk: Add a basic multiplier clock
-Date: Tue, 20 Oct 2015 06:43:43 -0700
+Content-Type: text/plain
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Maxime,
+Document the device tree bindings for Broadcom Northstar Plus
+architecture based clock controller
 
-Quoting Maxime Ripard (2015-10-20 00:36:45)
-> +struct clk *clk_register_multiplier(struct device *dev, const char *name,
-> +                                   const char *parent_name,
-> +                                   unsigned long flags,
-> +                                   void __iomem *reg, u8 shift, u8 width,
-> +                                   u8 clk_mult_flags, spinlock_t *lock)
-> +{
+Signed-off-by: Jon Mason <jonmason@broadcom.com>
+---
+ .../bindings/clock/brcm,iproc-clocks.txt           | 30 ++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-Patch looks good in general. However this is a good opportunity to stop
-the madness around the registration functions in these basic clock
-types.
-
-clk_register is really all that we need since we've had struct
-clk_init_data for a while. Initializing a multiplier should be as simple
-as:
-
-	struct clk_multiplier clk_foo =3D {
-		.hw.init =3D &(struct clk_init_data){
-			.name =3D "foo",
-			.parent_names =3D (const char *[]){
-				"bar",
-			},
-			.num_parents =3D 1;
-			.ops =3D &clk_multiplier_ops,
-		},
-		.reg =3D 0xd34db33f,
-		.shift =3D 1,
-		.width =3D 2,
-	};
-
-	clk_register(dev, &clk_foo.hw);
-
-This is nice since it turns these basic clocks into even more of a
-library and less of a poor mans driver.
-
-(I really hope the above works. I did not test it)
-
-Is it possible you can convert to using this method, and if it is
-correct for you then just remove clk_multiplier_register altogether? (In
-fact you might not use the registration function at all since you use
-the composite clock...)
-
-Regards,
-Mike
+diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+index da8d9bb..b3c3e9d 100644
+--- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+@@ -130,3 +130,33 @@ These clock IDs are defined in:
+     ch3_unused mipipll          4       BCM_CYGNUS_MIPIPLL_CH3_UNUSED
+     ch4_unused mipipll          5       BCM_CYGNUS_MIPIPLL_CH4_UNUSED
+     ch5_unused mipipll          6       BCM_CYGNUS_MIPIPLL_CH5_UNUSED
++
++Northstar and Northstar Plus
++------
++PLL and leaf clock compatible strings for Northstar and Northstar Plus are:
++ "brcm,nsp-armpll"
++ "brcm,nsp-genpll"
++ "brcm,nsp-lcpll0"
++
++The following table defines the set of PLL/clock index and ID for Northstar and
++Northstar Plus.  These clock IDs are defined in:
++    "include/dt-bindings/clock/bcm-nsp.h"
++
++    Clock	Source		Index	ID
++    ---		-----		-----	---------
++    crystal	N/A		N/A	N/A
++
++    armpll	crystal		N/A	N/A
++
++    genpll	crystal		0	BCM_NSP_GENPLL
++    phy		genpll		1	BCM_NSP_GENPLL_PHY_CLK
++    ethernetclk	genpll		2	BCM_NSP_GENPLL_ENET_SW_CLK
++    usbclk	genpll		3	BCM_NSP_GENPLL_USB_PHY_REF_CLK
++    iprocfast	genpll		4	BCM_NSP_GENPLL_IPROCFAST_CLK
++    sata1	genpll		5	BCM_NSP_GENPLL_SATA1_CLK
++    sata2	genpll		6	BCM_NSP_GENPLL_SATA2_CLK
++
++    lcpll0	crystal		0	BCM_NSP_LCPLL0
++    pcie_phy	lcpll0		1	BCM_NSP_LCPLL0_PCIE_PHY_REF_CLK
++    sdio	lcpll0		2	BCM_NSP_LCPLL0_SDIO_CLK
++    ddr_phy	lcpll0		3	BCM_NSP_LCPLL0_DDR_PHY_CLK
+-- 
+1.9.1
