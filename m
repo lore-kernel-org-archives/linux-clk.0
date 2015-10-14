@@ -1,106 +1,103 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bn1on0136.outbound.protection.outlook.com ([157.56.110.136]:17472
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1753668AbbJOHEh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 15 Oct 2015 03:04:37 -0400
-From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-To: <arnd@arndb.de>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
-	<linux-clk@vger.kernel.org>, <olof@lixom.net>
-CC: <bhupesh.linux@gmail.com>, <will.deacon@arm.com>,
-	<Catalin.Marinas@arm.com>, <bhupesh.sharma@freescale.com>,
-	<LeoLi@freescale.com>, <scottwood@freescale.com>,
-	<stuart.yoder@freescale.com>
-Subject: [PATCH v3 09/12] dts/ls2080a: Update Simulator DTS to add support of various peripherals
-Date: Thu, 15 Oct 2015 12:17:49 +0530
-Message-ID: <1444891672-32117-10-git-send-email-bhupesh.sharma@freescale.com>
-In-Reply-To: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
-References: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 14 Oct 2015 14:08:59 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH 14/26] clk: mvebu: Convert to clk_hw based provider APIs
+Message-ID: <20151014210859.GB4558@codeaurora.org>
+References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+ <1438362246-6664-15-git-send-email-sboyd@codeaurora.org>
+ <20151014170922.3027008a@free-electrons.com>
+ <20151014182138.GD26883@codeaurora.org>
+ <20151014221733.65507871@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20151014221733.65507871@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the LS2080a simulator DTS to add support of various
-peripherals which are supported on the simulator platform and explicitly
-disables those which are yet not supported on the platform.
+On 10/14, Thomas Petazzoni wrote:
+> On Wed, 14 Oct 2015 11:21:38 -0700, Stephen Boyd wrote:
+> 
+> > > Stephen, what do you suggest to fix this issue?
+> > 
+> > Simplest fix is to revert this hunk.
+> 
+> Indeed, this is the simplest fix. But it's going backward with what you
+> were trying to do originally, so it isn't really nice either.
+> 
+> > Longer term, we should look into making of_clk_get_parent_name() use
+> > whatever string has been used when registering the clock,
+> 
+> I am not sure how of_clk_get_parent_name() can know the name of the
+> clock without clock-output-names in the DT. Without clock-output-names,
+> the only way to know the name of the parent clock is to actually ask
+> the driver of the parent clock, no?
 
-Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-Signed-off-by: Scott Wood <scottwood@freescale.com>
----
- arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts |   54 ++++++++++++++++++++
- 1 file changed, 54 insertions(+)
+Yes that's the plan. We would try to resolve the name with
+of_clk_get() and __clk_get_name() if there isn't a
+clock-output-names property. If #clock-cells > 1 and of_clk_get()
+fails, we would return NULL, otherwise for #clock-cells == 0 we
+could fallback on the node name as a last resort. The change here
+is that we don't use the node name for providers with
+#clock-cells > 1 because that doesn't make any sense. We'll also
+try a clk_get() in the case with #clock-cells = 0 and no
+clock-output-names.
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts b/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
-index 33d6d0c..70b0fb4 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
-@@ -57,9 +57,63 @@
- 	model = "Freescale Layerscape 2080a software Simulator model";
- 	compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
+Eventually once we add the ability for OF clk providers to
+register clk_hw pointers instead of clk pointers we'll be able to
+"simplify" the of_clk_get() + __clk_get_name() path with a
+provider clk_hw lookup and clk_hw_get_name() combination, which
+should be faster and avoid any allocations.
+
+Here's that untested patch, which we can throw into clk-next for
+v4.4
+
+-----8<----
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index b005f666e3a1..16b86a551bcb 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3055,6 +3055,7 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
+ 	u32 pv;
+ 	int rc;
+ 	int count;
++	struct clk *clk;
  
-+	aliases {
-+		serial0 = &serial0;
-+		serial1 = &serial1;
-+	};
+ 	if (index < 0)
+ 		return NULL;
+@@ -3080,8 +3081,25 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
+ 
+ 	if (of_property_read_string_index(clkspec.np, "clock-output-names",
+ 					  index,
+-					  &clk_name) < 0)
+-		clk_name = clkspec.np->name;
++					  &clk_name) < 0) {
++		/*
++		 * Best effort to get the name if the clock has been
++		 * registered with the framework. If the clock isn't
++		 * registered, we return the node name as the name of
++		 * the clock as long as #clock-cells = 0.
++		 */
++		clk = of_clk_get(np, index);
++		if (IS_ERR(clk)) {
++			if (clkspec.args_count == 0)
++				clk_name = clkspec.np->name;
++			else
++				clk_name = NULL;
++		} else {
++			clk_name = __clk_get_name(clk);
++			clk_put(clk);
++		}
++	}
 +
- 	ethernet@2210000 {
- 		compatible = "smsc,lan91c111";
- 		reg = <0x0 0x2210000 0x0 0x100>;
- 		interrupts = <0 58 0x1>;
- 	};
- };
-+
-+&esdhc {
-+	status = "disabled";
-+};
-+
-+&ifc {
-+	status = "okay";
-+};
-+
-+&i2c0 {
-+	status = "disabled";
-+};
-+
-+&i2c1 {
-+	status = "disabled";
-+};
-+
-+&i2c2 {
-+	status = "disabled";
-+};
-+
-+&i2c3 {
-+	status = "disabled";
-+};
-+
-+&dspi {
-+	status = "disabled";
-+};
-+
-+&qspi {
-+	status = "disabled";
-+};
-+
-+&sata0 {
-+	status = "disabled";
-+};
-+
-+&sata1 {
-+	status = "disabled";
-+};
-+
-+&usb0 {
-+	status = "disabled";
-+};
-+
-+&usb1 {
-+	status = "disabled";
-+};
-+
+ 
+ 	of_node_put(clkspec.np);
+ 	return clk_name;
+
 -- 
-1.7.9.5
-
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
