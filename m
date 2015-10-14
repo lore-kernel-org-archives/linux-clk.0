@@ -1,78 +1,35 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <javier@osg.samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+To: linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-sunxi@googlegroups.com,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v5 0/5] clk: sunxi: Add support for the Audio PLL
-Date: Mon, 19 Oct 2015 10:08:54 +0200
-Message-Id: <1445242139-20965-1-git-send-email-maxime.ripard@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH] clk: max77802: Update MODULE_AUTHOR() email address
+Date: Wed, 14 Oct 2015 13:18:55 +0200
+Message-Id: <1444821535-12953-1-git-send-email-javier@osg.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+The email address listed in MODULE_AUTHOR() no longer exist so to prevent
+people to send emails to the old address, replace it with my current one.
 
-This serie adds support for the PLL2 aka the Audio PLL on the
-Allwinner A10 and the later SoCs.
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-This is the last part of the audio codec support, it's been around for
-quite a while now, and I expect it to be merged in 4.4.
+---
 
-This serie is built on top of a generic clk-multiplier driver to
-handle clock that multiply their parent clock rate (mostly PLL's), in
-order to provide the driver for the PLL2 base clock, and then adds the
-drivers for the clock that derive from the Audio PLL.
+ drivers/clk/clk-max77802.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
-Maxime
-
-Changes from v4:
-  - Fixed the genmask calls
-  - Fixed the number of parents registration in mod1
-  - Added Chen-Yu's Reviewed-by
-
-Changes from v3:
-  - Fixed the header issues: removed unused ones, added some others
-  - Added the __acquire / __release call when a spinlock is not defined
-
-Changes from v2:
-  - Renamed clk-factor to clk-multiplier
-  - Added an exception for the A13 clock
-
-Changes from v1:
-  - Removed a bogus of_iomap in the mod1 clock driver
-  - Wrote the clk-factor driver
-  - Converted the PLL2 clock to that driver
-
-Emilio López (2):
-  clk: sunxi: codec clock support
-  clk: sunxi: mod1 clock support
-
-Maxime Ripard (3):
-  clk: Add a basic multiplier clock
-  clk: sunxi: Add a driver for the PLL2
-  clk: sunxi: pll2: Add A13 support
-
- drivers/clk/Makefile                       |   1 +
- drivers/clk/clk-multiplier.c               | 181 ++++++++++++++++++++++++
- drivers/clk/sunxi/Makefile                 |   3 +
- drivers/clk/sunxi/clk-a10-codec.c          |  44 ++++++
- drivers/clk/sunxi/clk-a10-mod1.c           |  81 +++++++++++
- drivers/clk/sunxi/clk-a10-pll2.c           | 216 +++++++++++++++++++++++++++++
- include/dt-bindings/clock/sun4i-a10-pll2.h |  53 +++++++
- include/linux/clk-provider.h               |  42 ++++++
- 8 files changed, 621 insertions(+)
- create mode 100644 drivers/clk/clk-multiplier.c
- create mode 100644 drivers/clk/sunxi/clk-a10-codec.c
- create mode 100644 drivers/clk/sunxi/clk-a10-mod1.c
- create mode 100644 drivers/clk/sunxi/clk-a10-pll2.c
- create mode 100644 include/dt-bindings/clock/sun4i-a10-pll2.h
-
+diff --git a/drivers/clk/clk-max77802.c b/drivers/clk/clk-max77802.c
+index 74c49b93a6eb..4a89f7979ba0 100644
+--- a/drivers/clk/clk-max77802.c
++++ b/drivers/clk/clk-max77802.c
+@@ -94,5 +94,5 @@ static struct platform_driver max77802_clk_driver = {
+ module_platform_driver(max77802_clk_driver);
+ 
+ MODULE_DESCRIPTION("MAXIM 77802 Clock Driver");
+-MODULE_AUTHOR("Javier Martinez Canillas <javier.martinez@collabora.co.uk>");
++MODULE_AUTHOR("Javier Martinez Canillas <javier@osg.samsung.com");
+ MODULE_LICENSE("GPL");
 -- 
-2.5.3
+2.4.3
