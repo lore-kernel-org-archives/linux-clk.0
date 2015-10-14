@@ -1,55 +1,47 @@
-Return-Path: <alim.akhtar@samsung.com>
-Message-id: <56303DA3.5020306@samsung.com>
-Date: Wed, 28 Oct 2015 08:44:43 +0530
-From: Alim Akhtar <alim.akhtar@samsung.com>
-MIME-version: 1.0
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Mark Brown <broonie@kernel.org>
-Cc: lee.jones@linaro.org, mturquette@baylibre.com,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] drivers/rtc/rtc-s5m.c: add support for S2MPS15 RTC
-References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
- <1445863883-5187-6-git-send-email-alim.akhtar@samsung.com>
- <56302514.4090407@samsung.com> <20151028015323.GZ28319@sirena.org.uk>
- <56303054.8060804@samsung.com>
-In-reply-to: <56303054.8060804@samsung.com>
-Content-type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 14 Oct 2015 11:32:48 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-kernel@vger.kernel.org,
+	Gustavo Padovan <gustavo.padovan@collabora.co.uk>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>,
+	devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	linux-samsung-soc@vger.kernel.org,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 1/2] clk: samsung: exynos5250: Add DISP1 clocks
+Message-ID: <20151014183248.GG26883@codeaurora.org>
+References: <1444819457-27519-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1444819457-27519-2-git-send-email-tomeu.vizoso@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1444819457-27519-2-git-send-email-tomeu.vizoso@collabora.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+On 10/14, Tomeu Vizoso wrote:
+> When the DISP1 power domain is powered off, there's two clocks that need
+> to be temporarily reparented to OSC, and back to their original parents
+> when the domain is powered on again.
+> 
+> We expose these two clocks in the DT bindings so that the DT node of the
+> power domain can reference them.
+> 
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> ---
 
-On 10/28/2015 07:47 AM, Krzysztof Kozlowski wrote:
-> On 28.10.2015 10:53, Mark Brown wrote:
->> On Wed, Oct 28, 2015 at 10:29:56AM +0900, Krzysztof Kozlowski wrote:
->>
->>> If that's true, then don't add new compatibles, new names etc. Re-use.
->>> No new code needed, no changes needed. Keep it simple.
->>
->> Well, it depends - it can be useful to get the information about it
->> being a different part into DT so that if in future we realise that
->> there is some difference (perhaps a bug workaround even if the IP is
->> intended to be the same).  Though in the case of a MFD that information
->> can be obtained from the MFD for the device.
->
-> We can always differentiate later and introduce new compatible.
-> Declaring a compatible right now would be useful only if we really cared
-> about using the workaround on older DTBs.
->
-> Since I cannot judge the difference (I don't have the datasheet of
-> S2MPS15) then I don't see the need of adding new compatible/name for the
-> "same device".
->
-> Of course maybe there is such need? Alim?
->
-Well I did think of keeping the changes as minimal as possible, like 
-just have "{ "s2mps15-rtc",        S2MPS14X }", since I don't have 
-access to s2mps14 UM, I could not confirm that s2mps14 and s2mps15 are 
-exactly the same w.r.t rtc block. So I proposed the current changes.
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Well I do agree with Mark here, a name/compatible matching with the pmic 
-is good to at least avoid confusion while looking at the sysfs.
-
-> Best regards,
-> Krzysztof
->
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
