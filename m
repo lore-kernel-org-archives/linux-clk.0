@@ -1,77 +1,77 @@
 Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 14 Oct 2015 14:13:51 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: [PATCH] clk: Make of_clk_get_parent_name() robust with #clock-cells = 1
-Date: Thu, 15 Oct 2015 16:19:38 -0700
-Message-Id: <1444951178-18733-1-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <20151015215648.2024f611@free-electrons.com>
-References: <20151015215648.2024f611@free-electrons.com>
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org,
+	Luis de Bethencourt <luisbg@osg.samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: Allow drivers to build if COMPILE_TEST is enabled
+Message-ID: <20151014211351.GC4558@codeaurora.org>
+References: <1444745898-11537-1-git-send-email-javier@osg.samsung.com>
+ <20151014183831.GH26883@codeaurora.org>
+ <561EA831.2070001@osg.samsung.com>
+ <561EAF6F.6080901@osg.samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <561EAF6F.6080901@osg.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-If a clock provider has #clock-cells = 1 and we call
-of_clk_get_parent_name() on it we may end up returning the name
-of the provider node if the provider doesn't have a
-clock-output-names property. This doesn't make sense, especially
-when you consider that calling of_clk_get_parent_name() on such a
-node with different indices will return the same name each time.
+On 10/14, Javier Martinez Canillas wrote:
+> On 10/14/2015 09:08 PM, Javier Martinez Canillas wrote:
+> > Hello Stephen,
+> > 
+> > On 10/14/2015 08:38 PM, Stephen Boyd wrote:
+> >> On 10/13, Javier Martinez Canillas wrote:
+> >>> diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
+> >>> index 1530c9352a76..fc50b6264bed 100644
+> >>> --- a/drivers/clk/versatile/Kconfig
+> >>> +++ b/drivers/clk/versatile/Kconfig
+> >>> @@ -1,6 +1,6 @@
+> >>>  config COMMON_CLK_VERSATILE
+> >>>  	bool "Clock driver for ARM Reference designs"
+> >>> -	depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64
+> >>> +	depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64 || COMPILE_TEST
+> >>
+> >> Have you compiled these drivers on an architecture that doesn't
+> >> have IOMEM? Perhaps tile or um? I'm all for more build coverage,
+> >> but it's not always as simple as just sprinkling some
+> >> COMPILE_TEST around the Kconfigs.
+> >>
+> > 
+> > No, I only build tested on arm32 and x86. The 0-day bot haven't reported a
+> > build error yet and I didn't see any platform dependent code in the drivers.
+> > 
+> 
+> BTW, all clk drivers depends on COMMON_CLK so these won't even be built in
+> tile or um since that symbol isn't selected there. Or did I misunderstand?
+> 
+> Having said that, I see that enabling COMPILE_TEST will attempt to build
+> in many archs [0] that I don't have a toolchain to test. So I'm OK if you
+> drop this patch and sorry for the inconvenience.
+> 
+> [0]:
+> $ git grep "select COMMON_CLK" arch/ | cut -d '/' -f2 | uniq 
+> arc
+> arm
+> arm64
+> h8300
+> microblaze
+> mips
+> powerpc
+> x86
+> xtensa
+> 
 
-Let's try getting the clock from the framework via of_clk_get()
-instead, and only fallback to the node name if we have a provider
-with #clock-cells = 0. This way, we can't hand out the same name
-for different clocks when we don't actually know their names.
+Ah that's good. So assuming someone has built these patches with
+these architectures then we've got it all covered. Do you know if
+kbuild does that? There are a bunch of cross compilers on
+kernel.org that may help[1]. I'll wait to apply the patch once we
+get that confirmation.
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+[1] https://www.kernel.org/pub/tools/crosstool/
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index b005f666e3a1..a0fe9ca1f0af 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3055,6 +3055,7 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
- 	u32 pv;
- 	int rc;
- 	int count;
-+	struct clk *clk;
- 
- 	if (index < 0)
- 		return NULL;
-@@ -3080,8 +3081,25 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
- 
- 	if (of_property_read_string_index(clkspec.np, "clock-output-names",
- 					  index,
--					  &clk_name) < 0)
--		clk_name = clkspec.np->name;
-+					  &clk_name) < 0) {
-+		/*
-+		 * Best effort to get the name if the clock has been
-+		 * registered with the framework. If the clock isn't
-+		 * registered, we return the node name as the name of
-+		 * the clock as long as #clock-cells = 0.
-+		 */
-+		clk = of_clk_get_from_provider(&clkspec);
-+		if (IS_ERR(clk)) {
-+			if (clkspec.args_count == 0)
-+				clk_name = clkspec.np->name;
-+			else
-+				clk_name = NULL;
-+		} else {
-+			clk_name = __clk_get_name(clk);
-+			clk_put(clk);
-+		}
-+	}
-+
- 
- 	of_node_put(clkspec.np);
- 	return clk_name;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
