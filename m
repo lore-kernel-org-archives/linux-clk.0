@@ -1,53 +1,67 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: arm@kernel.org, Kevin Hilman <khilman@linaro.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Subject: Re: [GIT PULL] ARM: berlin: CPU clock driver for v4.4 (round 1)
-Date: Thu, 15 Oct 2015 22:43:37 +0200
-Message-ID: <6081171.fTttdr29KV@wuerfel>
-In-Reply-To: <1444935864-8606-1-git-send-email-sebastian.hesselbarth@gmail.com>
-References: <1444934667-5451-1-git-send-email-sebastian.hesselbarth@gmail.com> <1444935864-8606-1-git-send-email-sebastian.hesselbarth@gmail.com>
-MIME-Version: 1.0
+Return-Path: <B48286@freescale.com>
+From: Hou Zhiqiang <B48286@freescale.com>
+To: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "catalin.marinas@arm.com"
+	<catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>
+CC: Hu Vincent <Mingkai.Hu@freescale.com>, Shaohui Xie
+	<Shaohui.Xie@freescale.com>, Scott Wood <scottwood@freescale.com>, "Sharma
+ Bhupesh" <bhupesh.sharma@freescale.com>, Li Leo <LeoLi@freescale.com>,
+	"wsa@the-dreams.de" <wsa@the-dreams.de>, "wim@iguana.be" <wim@iguana.be>,
+	"corbet@lwn.net" <corbet@lwn.net>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	Wenbin Song <Wenbin.Song@freescale.com>
+Subject: RE: [PATCH V3 0/6] Add LS1043A SoC support 
+Date: Wed, 14 Oct 2015 12:02:07 +0000
+Message-ID: <CY1PR0301MB0780936EF3D2E04A1F7AF5718B3F0@CY1PR0301MB0780.namprd03.prod.outlook.com>
+References: <BN3PR0301MB1249C8F2305C3ED1723055B6843F0@BN3PR0301MB1249.namprd03.prod.outlook.com>
+In-Reply-To: <BN3PR0301MB1249C8F2305C3ED1723055B6843F0@BN3PR0301MB1249.namprd03.prod.outlook.com>
 Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thursday 15 October 2015 21:04:24 Sebastian Hesselbarth wrote:
-> this is the remaining driver changes of the broken PRs sent earlier.
-> Again, as Arnd requested this branch is based on the PR adding the
-> CPUID to the dt-binding include and drops moving the MAX_CLKS
-> define from the driver to the dt-binding include.
+Hi all,
 
-+clk maintainers
+Sorry for my late response due to Chinese National Day holidays.
 
-I've pulled it into next/drivers now to speed things up and given
-that it has Stephen's Ack, but I'd note that now that the dependency
-is handled correctly, this could have gone the normal path through the
-clk maintainers.
+> From: Zhiqiang Hou [mailto:B48286@freescale.com]
+> Sent: Wednesday, October 14, 2015 7:35 PM
+> To: linux-arm-kernel@lists.infradead.org; catalin.marinas@arm.com;
+> will.deacon@arm.com; linux-i2c@vger.kernel.org; linux-
+> watchdog@vger.kernel.org; linux-doc@vger.kernel.org; linux-
+> clk@vger.kernel.org; mark.rutland@arm.com
+> Cc: Hu Mingkai-B21284; Xie Shaohui-B21989; Wood Scott-B07421; Sharma
+> Bhupesh-B45370; Li Yang-Leo-R58472; wsa@the-dreams.de; wim@iguana.be;
+> corbet@lwn.net; mturquette@baylibre.com; sboyd@codeaurora.org; Song
+> Wenbin-B53747
+> Subject: [PATCH V3 0/6] Add LS1043A SoC support
+>=20
+> This patchest adds support for Freescale's LS1043A SoC which is based on
+> ARMv8 architecture.
+>=20
+> Some pending patches are depended on:
+> 1. The LS1043A is belong to Freescale's ARMv8 Layerscape SoC family, so
+> depends on the updating ARCH kconfig patch.
+> https://patchwork.kernel.org/patch/7120101/
+>=20
+> 2. The LS1043A use the new clockgen binding updated by Scott Wood,
+> depends on the patchset:
+> https://patchwork.kernel.org/patch/7225421/
+> https://patchwork.kernel.org/patch/7225461/
+> https://patchwork.kernel.org/patch/7225431/
+> https://patchwork.kernel.org/patch/7225441/
+> https://patchwork.kernel.org/patch/7225451/
+>=20
+> [PATCH V3 1/6] i2c: Add i2c support to Freescale Layerscape platforms
+> [PATCH V3 2/6] watchdog: Add support for Freescale Layerscape [PATCH V3
+> 3/6] Documentation: DT: Add entry for FSL LS1043ARDB board [PATCH V3 4/6]
+> arm64/ls1043a: add DTS for Freescale LS1043A SoC [PATCH V3 5/6] clk:
+> qoriq: Add ls1043a support.
+> [PATCH V3 6/6] dts/ls1043a: add LS1043ARDB board support
 
 Thanks,
-
-	Arnd
-
-> The following changes since commit 28c039eebaaa28def9364b9a12a30192be8b4730:
->   ARM: berlin: dts: add CLKID_CPU for BG2Q (2015-10-15 20:31:41 +0200)
-> 
-> are available in the git repository at:
->   git://git.infradead.org/users/hesselba/linux-berlin.git
->   tags/berlin-new-cpuclk-for-4.4-1> 
-> for you to fetch changes up to 515f1a2027006839c08c842da919abfcc3c7ae2a:
->   clk: berlin: add cpuclk (2015-10-15 20:55:55 +0200)
-> 
-> ----------------------------------------------------------------
-> Marvell Berlin BG2Q CPU clock driver:
-> - add BG2Q CPU clock to clk driver
-> 
-> ----------------------------------------------------------------
-> 
-> Antoine Tenart (1):
->       clk: berlin: add cpuclk
-> 
-> Sebastian Hesselbarth (1):
->       Merge tag 'berlin-dt-cpuclk-for-4.4-1' into berlin/cpuclk
->  
->  drivers/clk/berlin/bg2q.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+Zhiqiang
