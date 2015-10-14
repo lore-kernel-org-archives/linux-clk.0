@@ -1,58 +1,54 @@
-Return-Path: <shengjiu.wang@freescale.com>
-Date: Fri, 9 Oct 2015 17:15:30 +0800
-From: Shengjiu Wang <shengjiu.wang@freescale.com>
-To: Shawn Guo <shawnguo@kernel.org>
-CC: <mturquette@baylibre.com>, <kernel@pengutronix.de>,
-	<sboyd@codeaurora.org>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
-	<mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
-	<galak@codeaurora.org>, <linux@arm.linux.org.uk>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: Re: [PATCH V2 1/2] clk: imx6: Add SPDIF_GCLK clock in clock tree
-Message-ID: <20151009091528.GA25804@shlinux2>
-References: <cover.1442310569.git.shengjiu.wang@freescale.com>
- <113f1cecf1d83c6b96fd23ab9d7a73d1923e0d21.1442310569.git.shengjiu.wang@freescale.com>
- <20150923153340.GK3529@tiger>
- <20150924054321.GA32196@shlinux2>
- <20150924115737.GM3529@tiger>
+Return-Path: <B48286@freescale.com>
+From: Zhiqiang Hou <B48286@freescale.com>
+To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
+	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <mark.rutland@arm.com>
+CC: <Mingkai.Hu@freescale.com>, <Shaohui.Xie@freescale.com>,
+	<scottwood@freescale.com>, <bhupesh.sharma@freescale.com>,
+	<leoli@freescale.com>, <wsa@the-dreams.de>, <wim@iguana.be>,
+	<corbet@lwn.net>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<Wenbin.Song@freescale.com>, Hou Zhiqiang <B48286@freescale.com>
+Subject: [PATCH V3 1/6] i2c: Add i2c support to Freescale Layerscape platforms
+Date: Wed, 14 Oct 2015 19:34:53 +0800
+Message-ID: <1444822498-16477-2-git-send-email-B48286@freescale.com>
+In-Reply-To: <1444822498-16477-1-git-send-email-B48286@freescale.com>
+References: <1444822498-16477-1-git-send-email-B48286@freescale.com>
+Return-Path: B48286@freescale.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20150924115737.GM3529@tiger>
-Return-Path: shengjiu.wang@freescale.com
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 24, 2015 at 04:57:37AM -0700, Shawn Guo wrote:
-> On Thu, Sep 24, 2015 at 01:43:24PM +0800, Shengjiu Wang wrote:
-> > On Wed, Sep 23, 2015 at 08:33:41AM -0700, Shawn Guo wrote:
-> > > On Tue, Sep 15, 2015 at 06:01:01PM +0800, Shengjiu Wang wrote:
-> > > > As spdif driver will register SPDIF clock to regmap, regmap will do
-> > > > clk_prepare in init function, so SPDIF clock is prepared in probe, then its
-> > > > root clock (pll clock) is prepared also, which cause the arm can't enter
-> > > > low power mode.
-> > > 
-> > > Can you help me understand why ARM cannot enter low power mode when pll
-> > > clock is prepared?
-> > > 
-> > > Shawn
-> > Hi Shawn
-> > 
-> >    In i.mx clock framework, when pll clk is prepared, it will be powerup. when
-> > enterring low power idle mode, the powerdown bit is checked, when pll is not
-> > powerdown state, chip will not enter low power idle mode.
-> 
-> So this is not a SPDIF specific problem, and any device driver preparing
-> its clock that is a child of pll clock will run into this problem,
-> right?  If so, we should purchase a more generic solution than such
-> device specific one.
-> 
-> Shawn
-Hi shawn
+From: Shaohui Xie <Shaohui.Xie@freescale.com>
 
-SPDIF_GCLK is also spdif's clock, it use a same enable bit with SPDIF_ROOT_CLK,
-We didn't separate them in clock tree before.
+Modify the I2C_IMX config to support to Layerscape platforms.
 
-I can't find a generic solution. But anyway if there is a solution or not, I
-think we'd better to separate them.
+Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
+Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
+Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+---
+V3:
+ - No change.
 
-best regards
-wang shengjiu
+ drivers/i2c/busses/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index 08b8617..14147ec 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -582,10 +582,10 @@ config I2C_IMG
+ 
+ config I2C_IMX
+ 	tristate "IMX I2C interface"
+-	depends on ARCH_MXC
++	depends on ARCH_MXC || ARCH_LAYERSCAPE
+ 	help
+ 	  Say Y here if you want to use the IIC bus controller on
+-	  the Freescale i.MX/MXC processors.
++	  the Freescale i.MX/MXC or Layerscape processors.
+ 
+ 	  This driver can also be built as a module.  If so, the module
+ 	  will be called i2c-imx.
+-- 
+2.1.0.27.g96db324
