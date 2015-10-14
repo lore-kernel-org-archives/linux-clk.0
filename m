@@ -1,96 +1,29 @@
-Return-Path: <magnus.damm@gmail.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdV=kKS+R4SFHrmZL5pntpdAP1tR1kRyKKsW0fD1nVrj1w@mail.gmail.com>
-References: <20151001143717.20618.26365.sendpatchset@little-apple>
-	<20151001143748.20618.7279.sendpatchset@little-apple>
-	<CAMuHMdV=kKS+R4SFHrmZL5pntpdAP1tR1kRyKKsW0fD1nVrj1w@mail.gmail.com>
-Date: Fri, 2 Oct 2015 13:10:05 +0900
-Message-ID: <CANqRtoRgzKKUi0WL=bPqp2B7K065Frco=S4WrYHD0a1dA7mVYQ@mail.gmail.com>
-Subject: Re: [PATCH v8 03/05] clk: shmobile: Add Renesas Module Standby and
- Reset driver
-From: Magnus Damm <magnus.damm@gmail.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linux-sh list <linux-sh@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+In-Reply-To: <1444682610-21482-4-git-send-email-maxime.ripard@free-electrons.com>
+References: <1444682610-21482-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1444682610-21482-4-git-send-email-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 14 Oct 2015 17:20:51 +0800
+Message-ID: <CAGb2v67wc3E-eBU3KA0jDPMHy3H2chd872QZxcm5s6AsLrh6ig@mail.gmail.com>
+Subject: Re: [PATCH v4 3/5] clk: sunxi: pll2: Add A13 support
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
-
-On Fri, Oct 2, 2015 at 12:28 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Hi Magnus,
+On Tue, Oct 13, 2015 at 4:43 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> The A13, unlike the A10 and A20, doesn't use a pass-through exception for
+> the 0 value in the pre and post dividers, but increments all the values
+> written in the register by one.
 >
-> On Thu, Oct 1, 2015 at 4:37 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
->> From: Geert Uytterhoeven <geert+renesas@glider.be>
->>
->> Add a driver for the Renesas Module Standby and Software Reset module
->> found in several Renesas SoCs.
->>
->> This driver is based on the existing R-Car MSTP driver, and is intended
->> to replace it.
->> The existing driver is limited to Module Standby, and has bindings that
->> are difficult to extend to more register sets for e.g. reset control.
->>
->> TODO:
->>   - Implement module reset handling,
->>   - Write binding documentation.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> Add an exception for both these cases to handle them nicely.
 >
-> Thanks, I'm happy you like it!
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Yeah, it looks good!
-
-I'm interested in learning how to tie in the reset functionality via
-DT though, do we need any integration update for that?
-
->> ---
->>
->>  Changes since V7: (Magnus Damm <damm+renesas@opensource.se>)
->>  - New patch, took local v3 patch from Geert and removed r8a7791 references.
->
-> You forgot one reference indicated below.
-
-Oops, thanks for pointing that out!
-
->>  drivers/clk/shmobile/clk-mssr.c |  392 +++++++++++++++++++++++++++++++++++++++
->>  include/linux/clk/shmobile.h    |    2
->>  2 files changed, 394 insertions(+)
->>
->> --- /dev/null
->> +++ work/drivers/clk/shmobile/clk-mssr.c        2015-10-01 18:38:50.320513000 +0900
->> @@ -0,0 +1,392 @@
->
->> +#ifdef CONFIG_PM_GENERIC_DOMAINS_OF
->> +static int cpg_mssr_attach_dev(struct generic_pm_domain *domain,
->> +                              struct device *dev)
->> +{
->> +       struct device_node *np = dev->of_node;
->> +       struct of_phandle_args clkspec;
->> +       struct clk *clk;
->> +       int i = 0;
->> +       int error;
->> +
->> +       while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", i,
->> +                                          &clkspec)) {
->> +               if (of_device_is_compatible(clkspec.np,
->> +                                           "renesas,r8a7791-cpg-mssr"))
->
-> renesas,r8a7795-cpg-mssr
->
-> Else it won't manage the module clocks, and things may fail miserably.
-
-Thanks, I've cooked up a fix based on your information and posted it as:
-[PATCH] clk: shmobile: Fix r8a7795 MSSR support
-
-Please include the fix in the topic branch. I will fold it in when
-updating the series.
-
-Cheers,
-
-/ magnus
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
