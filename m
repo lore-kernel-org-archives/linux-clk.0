@@ -1,64 +1,50 @@
-Return-Path: <jic23@kernel.org>
-Subject: Re: [PATCH 2/5] Documentation: add the binding file for Freescale
- imx7d ADC driver
-To: Haibo Chen <haibo.chen@freescale.com>, robh+dt@kernel.org,
- pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
- galak@codeaurora.org, shawnguo@kernel.org, kernel@pengutronix.de,
- mturquette@baylibre.com, sboyd@codeaurora.org
-References: <1444301948-21721-1-git-send-email-haibo.chen@freescale.com>
- <1444301948-21721-2-git-send-email-haibo.chen@freescale.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-iio@vger.kernel.org
-From: Jonathan Cameron <jic23@kernel.org>
-Message-ID: <561A64B7.6000006@kernel.org>
-Date: Sun, 11 Oct 2015 14:31:35 +0100
+Return-Path: <B48286@freescale.com>
+From: Zhiqiang Hou <B48286@freescale.com>
+To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
+	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <mark.rutland@arm.com>
+CC: <Mingkai.Hu@freescale.com>, <Shaohui.Xie@freescale.com>,
+	<scottwood@freescale.com>, <bhupesh.sharma@freescale.com>,
+	<leoli@freescale.com>, <wsa@the-dreams.de>, <wim@iguana.be>,
+	<corbet@lwn.net>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<Wenbin.Song@freescale.com>, Hou Zhiqiang <B48286@freescale.com>
+Subject: [PATCH V3 2/6] watchdog: Add support for Freescale Layerscape platforms
+Date: Wed, 14 Oct 2015 19:34:54 +0800
+Message-ID: <1444822498-16477-3-git-send-email-B48286@freescale.com>
+In-Reply-To: <1444822498-16477-1-git-send-email-B48286@freescale.com>
+References: <1444822498-16477-1-git-send-email-B48286@freescale.com>
+Return-Path: B48286@freescale.com
 MIME-Version: 1.0
-In-Reply-To: <1444301948-21721-2-git-send-email-haibo.chen@freescale.com>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/10/15 11:59, Haibo Chen wrote:
-> The patch adds the binding file for Freescale imx7d ADC driver.
-> 
-> Signed-off-by: Haibo Chen <haibo.chen@freescale.com>
-Couple of trivial typos..  otherwise fine.
-> ---
->  .../devicetree/bindings/iio/adc/imx7d-adc.txt      | 26 ++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/imx7d-adc.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/imx7d-adc.txt b/Documentation/devicetree/bindings/iio/adc/imx7d-adc.txt
-> new file mode 100644
-> index 0000000..6b21fd27
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/imx7d-adc.txt
-> @@ -0,0 +1,26 @@
-> +Freescale imx7d ADC bindings
-> +
-> +The devicetree bingdings are for the nwe ADC driver written for
-> +imx7d SoC.
-bindings and new
-> +
-> +Required properties:
-> +- compatible: Should be "fsl,imx7d-adc"
-> +- reg: Offset and length of the register set for the ADC device
-> +- interrupts: The interrupt number for the ADC device
-> +- clocks: The root clock of the ADC controller
-> +- clock-names: Must contain "adc", matching entry in the clocks property
-> +- vref-supply: The regulator supply ADC reference voltage
-> +
-> +Optional properties:
-> +- num-channels: the number of channels used
-> +
-> +Example:
-> +adc1: adc@30610000 {
-> +	compatible = "fsl,imx7d-adc";
-> +	reg = <0x30610000 0x10000>;
-> +	interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
-> +	clocks = <&clks IMX7D_ADC_ROOT_CLK>;
-> +	clock-names = "adc";
-> +	num-channels = <4>;
-> +	vref-supply = <&reg_vcc_3v3_mcu>;
-> +};
-> 
+From: Shaohui Xie <Shaohui.Xie@freescale.com>
+
+Modify watchdog/Kconfig file to support Layerscape platforms.
+
+Signed-off-by: Shaohui Xie <Shaohui.Xie@freescale.com>
+Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
+Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+---
+V3:
+ - No change.
+
+ drivers/watchdog/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index 79e1aa1..448dbaf 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -446,7 +446,7 @@ config MAX63XX_WATCHDOG
+ 
+ config IMX2_WDT
+ 	tristate "IMX2+ Watchdog"
+-	depends on ARCH_MXC
++	depends on ARCH_MXC || ARCH_LAYERSCAPE
+ 	select REGMAP_MMIO
+ 	select WATCHDOG_CORE
+ 	help
+-- 
+2.1.0.27.g96db324
