@@ -1,76 +1,173 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH] clk: ti: fix dual-registration of uart4_ick
-To: Tony Lindgren <tony@atomide.com>, Ben Dooks <ben.dooks@codethink.co.uk>
-References: <1443019714-12926-1-git-send-email-ben.dooks@codethink.co.uk>
- <20150923173040.GI23801@atomide.com> <5604DED0.5050403@ti.com>
- <560A8DB0.6020109@codethink.co.uk> <20151005101755.GS23801@atomide.com>
-CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@lists.codethink.co.uk>, <stable@vger.kernel.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <56126E91.5070201@ti.com>
-Date: Mon, 5 Oct 2015 15:35:29 +0300
+Return-Path: <B48286@freescale.com>
+From: Zhiqiang Hou <B48286@freescale.com>
+To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
+	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <mark.rutland@arm.com>
+CC: <Mingkai.Hu@freescale.com>, <Shaohui.Xie@freescale.com>,
+	<scottwood@freescale.com>, <bhupesh.sharma@freescale.com>,
+	<leoli@freescale.com>, <wsa@the-dreams.de>, <wim@iguana.be>,
+	<corbet@lwn.net>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<Wenbin.Song@freescale.com>, Hou Zhiqiang <B48286@freescale.com>
+Subject: [PATCH V3 6/6] dts/ls1043a: add LS1043ARDB board support
+Date: Wed, 14 Oct 2015 19:34:58 +0800
+Message-ID: <1444822498-16477-7-git-send-email-B48286@freescale.com>
+In-Reply-To: <1444822498-16477-1-git-send-email-B48286@freescale.com>
+References: <1444822498-16477-1-git-send-email-B48286@freescale.com>
+Return-Path: B48286@freescale.com
 MIME-Version: 1.0
-In-Reply-To: <20151005101755.GS23801@atomide.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/05/2015 01:17 PM, Tony Lindgren wrote:
-> * Ben Dooks <ben.dooks@codethink.co.uk> [150929 06:14]:
->> On 25/09/15 06:42, Tero Kristo wrote:
->>> On 09/23/2015 08:30 PM, Tony Lindgren wrote:
->>>> * Ben Dooks <ben.dooks@codethink.co.uk> [150923 07:53]:
->>>>> On the OMAP AM3517 platform the uart4_ick gets registered
->>>>> twice, causing any power managment to /dev/ttyO3 to fail
->>>>> when trying to wake the device up.
->>>>>
->>>>> This solves the following oops:
->>>>>
->>>>> [] Unhandled fault: external abort on non-linefetch (0x1028) at
->>>>> 0xfa09e008
->>>>> [] PC is at serial_omap_pm+0x48/0x15c
->>>>> [] LR is at _raw_spin_unlock_irqrestore+0x30/0x5c
->>>>
->>>> No uart4 on 34xx/35xx, that got introduced with 36xx so:
->>>>
->>>> Acked-by: Tony Lindgren <tony@atomide.com>
->>>>
->>>>> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
->>>>> ---
->>>>>    drivers/clk/ti/clk-3xxx.c | 1 -
->>>>>    1 file changed, 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/clk/ti/clk-3xxx.c b/drivers/clk/ti/clk-3xxx.c
->>>>> index 5e12f32..2e7ef1f 100644
->>>>> --- a/drivers/clk/ti/clk-3xxx.c
->>>>> +++ b/drivers/clk/ti/clk-3xxx.c
->>>>> @@ -374,7 +374,6 @@ static struct ti_dt_clk omap3xxx_clks[] = {
->>>>>        DT_CLK(NULL, "gpio2_ick", "gpio2_ick"),
->>>>>        DT_CLK(NULL, "wdt3_ick", "wdt3_ick"),
->>>>>        DT_CLK(NULL, "uart3_ick", "uart3_ick"),
->>>>> -    DT_CLK(NULL, "uart4_ick", "uart4_ick"),
->>>>>        DT_CLK(NULL, "gpt9_ick", "gpt9_ick"),
->>>>>        DT_CLK(NULL, "gpt8_ick", "gpt8_ick"),
->>>>>        DT_CLK(NULL, "gpt7_ick", "gpt7_ick"),
->>>
->>> NAK.
->>>
->>> This patch is actually only partially correct, it removes the uart4_ick
->>> alias for omap36xx also. It should be added back to the omap36xx clks
->>> array. Care to post a v2?
->>
->> Thankyou for the feedback. I'll update, but do not have a device to test.
->
-> Hmm but isn't that entry already there for 36xx? So this just removes
-> a duplicate for 36xx.. Tero, can you please check again, maybe I'm
-> confused.
+From: Shaohui Xie <Shaohui.Xie@freescale.com>
 
-uart4_ick wasn't there, we only had uart4_fck listed for omap36xx.
+Signed-off-by: Shaohui Xie <Shaohui.Xie@freescale.com>
+Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
+Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
+Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+---
+V3:
+ - No change.
 
--Tero
+V2:
+ - Remove the useless compatible "simple-bus" from cpld node.
 
->
-> Regars,
->
-> Tony
->
+ arch/arm64/boot/dts/freescale/Makefile            |   2 +-
+ arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts | 116 ++++++++++++++++++++++
+ 2 files changed, 117 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts
+
+diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+index 57b41c7..33b1e57 100644
+--- a/arch/arm64/boot/dts/freescale/Makefile
++++ b/arch/arm64/boot/dts/freescale/Makefile
+@@ -1,4 +1,4 @@
+-dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-qds.dtb fsl-ls2080a-rdb.dtb fsl-ls2080a-simu.dtb
++dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-qds.dtb fsl-ls2080a-rdb.dtb fsl-ls2080a-simu.dtb fsl-ls1043a-rdb.dtb
+  
+ always		:= $(dtb-y)
+ subdir-y	:= $(dts-dirs)
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts
+new file mode 100644
+index 0000000..7a351e2
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts
+@@ -0,0 +1,116 @@
++/*
++ * Device Tree Include file for Freescale Layerscape-1043A family SoC.
++ *
++ * Copyright 2014-2015, Freescale Semiconductor
++ *
++ * Mingkai Hu <Mingkai.hu@freescale.com>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPLv2 or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This library is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This library is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++/dts-v1/;
++#include "fsl-ls1043a.dtsi"
++
++/ {
++	model = "LS1043A RDB Board";
++};
++
++&i2c0 {
++	status = "okay";
++	ina220@40 {
++		compatible = "ti,ina220";
++		reg = <0x40>;
++		shunt-resistor = <1000>;
++	};
++	adt7461a@4c {
++		compatible = "adi,adt7461";
++		reg = <0x4c>;
++	};
++	eeprom@56 {
++		compatible = "at24,24c512";
++		reg = <0x52>;
++	};
++	eeprom@57 {
++		compatible = "at24,24c512";
++		reg = <0x53>;
++	};
++	rtc@68 {
++		compatible = "pericom,pt7c4338";
++		reg = <0x68>;
++	};
++};
++
++&ifc {
++	status = "okay";
++	#address-cells = <2>;
++	#size-cells = <1>;
++	/* NOR, NAND Flashes and FPGA on board */
++	ranges = <0x0 0x0 0x0 0x60000000 0x08000000
++		  0x1 0x0 0x0 0x7e800000 0x00010000
++		  0x2 0x0 0x0 0x7fb00000 0x00000100>;
++
++		nor@0,0 {
++			compatible = "cfi-flash";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			reg = <0x0 0x0 0x8000000>;
++			bank-width = <2>;
++			device-width = <1>;
++		};
++
++		nand@1,0 {
++			compatible = "fsl,ifc-nand";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			reg = <0x1 0x0 0x10000>;
++		};
++
++		cpld: board-control@2,0 {
++			compatible = "fsl,ls1043ardb-cpld";
++			reg = <0x2 0x0 0x0000100>;
++		};
++};
++
++&duart0 {
++	status = "okay";
++};
++
++&duart1 {
++	status = "okay";
++};
+-- 
+2.1.0.27.g96db324
