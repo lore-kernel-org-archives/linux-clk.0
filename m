@@ -1,46 +1,32 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 30 Oct 2015 14:37:34 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 04/19] clk: sunxi: Add TCON channel1 clock
-Message-ID: <20151030213734.GI19782@codeaurora.org>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
- <1446214865-3972-5-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Scott Branden <sbranden@broadcom.com>
+Cc: Jon Mason <jonmason@broadcom.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH v2 7/7] clk: ns2: add clock support for Broadcom Northstar 2 SoC
+Date: Wed, 14 Oct 2015 22:16:45 +0200
+Message-ID: <6398606.WW44dcgQDV@wuerfel>
+In-Reply-To: <561EB10B.40502@broadcom.com>
+References: <1444770485-11210-1-git-send-email-jonmason@broadcom.com> <6427519.eIBEvCNlle@wuerfel> <561EB10B.40502@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1446214865-3972-5-git-send-email-maxime.ripard@free-electrons.com>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/30, Maxime Ripard wrote:
-> The TCON is a controller generating the timings to output videos signals,
-> acting like both a CRTC and an encoder.
-> 
-> It has two channels depending on the output, each channel being driven by
-> its own clock (and own clock controller).
-> 
-> Add a driver for the channel 1 clock.
-> 
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+On Wednesday 14 October 2015 12:46:19 Scott Branden wrote:
+> >
+> > My patch fixes it by always selecting COMMON_CLK_IPROC from
+> > ARCH_BCM_CYGNUS. I wasn't sure whether you want COMMON_CLK_IPROC
+> > to still be user-selectable, so I left that in place. Normally
+> > I'd expect it to be a silent option though, that just gets
+> > implicitly enabled whenever a platform that needs it is built
+> > into the kernel.
+> COMMON_CLK_IPROC can be a silent option and selected as Arnd has done below.
 
-Similar comments apply to patches 3 and 4. Was the same code
-copy/pasted two more times and then changed to have different
-values? Looks like we should consolidate all that stuff into
-something more generic so that we don't have the same problems 3
-times.
+Ok, please do that then. If you want to apply my patch directly,
+you can remove that last paragraph from the description.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Acked-by: Scott Branden <sbranden@broadcom.com>
+
+Thanks for taking a look!
+
+	Arnd
