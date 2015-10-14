@@ -1,36 +1,113 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Fri, 9 Oct 2015 11:05:23 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Haibo Chen <haibo.chen@freescale.com>, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	kernel@pengutronix.de, mturquette@baylibre.com, jic23@kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH 3/5] clk: imx7d: add ADC root clock
-Message-ID: <20151009030523.GG22673@tiger>
-References: <1444301948-21721-1-git-send-email-haibo.chen@freescale.com>
- <1444301948-21721-3-git-send-email-haibo.chen@freescale.com>
- <20151008183556.GI26883@codeaurora.org>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20151008183556.GI26883@codeaurora.org>
+In-Reply-To: <1444682610-21482-3-git-send-email-maxime.ripard@free-electrons.com>
+References: <1444682610-21482-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1444682610-21482-3-git-send-email-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 14 Oct 2015 17:47:06 +0800
+Message-ID: <CAGb2v65x0M+5LibdvJvGU0TSF3+WkYDe1gdXr8F=V4-Nypt8Ww@mail.gmail.com>
+Subject: Re: [PATCH v4 2/5] clk: sunxi: Add a driver for the PLL2
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Oct 08, 2015 at 11:35:56AM -0700, Stephen Boyd wrote:
-> On 10/08, Haibo Chen wrote:
-> > Add ADC root clock support in imx7d clock tree.
-> > 
-> > Signed-off-by: Haibo Chen <haibo.chen@freescale.com>
-> > ---
-> 
-> I see no cover letter indicating how you want this merged, so:
-> 
-> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+On Tue, Oct 13, 2015 at 4:43 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> The PLL2 on the A10 and later SoCs is the clock used for all the audio
+> related operations.
+>
+> This clock has a somewhat complex output tree, with three outputs (2X, 4X
+> and 8X) with a fixed divider from the base clock, and an output (1X) with=
+ a
+> post divider.
+>
+> However, we can simplify things since the 1X divider can be fixed, and we
+> end up by having a base clock not exposed to any device (or at least
+> directly, since the 4X output doesn't have any divider), and 4 fixed
+> divider clocks that will be exposed.
+>
+> This clock seems to have been introduced, at least in this form, in the
+> revision B of the A10, but we don't have any information on the clock use=
+d
+> on the revision A.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/clk/sunxi/Makefile                 |   1 +
+>  drivers/clk/sunxi/clk-a10-pll2.c           | 188 +++++++++++++++++++++++=
+++++++
+>  include/dt-bindings/clock/sun4i-a10-pll2.h |  53 ++++++++
+>  3 files changed, 242 insertions(+)
+>  create mode 100644 drivers/clk/sunxi/clk-a10-pll2.c
+>  create mode 100644 include/dt-bindings/clock/sun4i-a10-pll2.h
+>
+> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+> index f5a35b82cc1a..c658a18ba7cb 100644
+> --- a/drivers/clk/sunxi/Makefile
+> +++ b/drivers/clk/sunxi/Makefile
+> @@ -4,6 +4,7 @@
+>
+>  obj-y +=3D clk-sunxi.o clk-factors.o
+>  obj-y +=3D clk-a10-hosc.o
+> +obj-y +=3D clk-a10-pll2.o
+>  obj-y +=3D clk-a20-gmac.o
+>  obj-y +=3D clk-mod0.o
+>  obj-y +=3D clk-simple-gates.o
+> diff --git a/drivers/clk/sunxi/clk-a10-pll2.c b/drivers/clk/sunxi/clk-a10=
+-pll2.c
+> new file mode 100644
+> index 000000000000..b877cc6c3622
+> --- /dev/null
+> +++ b/drivers/clk/sunxi/clk-a10-pll2.c
+> @@ -0,0 +1,188 @@
+> +/*
+> + * Copyright 2013 Emilio L=C3=B3pez
+> + * Emilio L=C3=B3pez <emilio@elopez.com.ar>
+> + *
+> + * Copyright 2015 Maxime Ripard
+> + * Maxime Ripard <maxime.ripard@free-electrons.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/slab.h>
+> +
+> +#include <dt-bindings/clock/sun4i-a10-pll2.h>
+> +
+> +#define SUN4I_PLL2_ENABLE              31
+> +
+> +#define SUN4I_PLL2_PRE_DIV_SHIFT       0
+> +#define SUN4I_PLL2_PRE_DIV_WIDTH       5
+> +#define SUN4I_PLL2_PRE_DIV_MASK                GENMASK(SUN4I_PLL2_PRE_DI=
+V_WIDTH, 0)
+> +
+> +#define SUN4I_PLL2_N_SHIFT             8
+> +#define SUN4I_PLL2_N_WIDTH             7
+> +#define SUN4I_PLL2_N_MASK              GENMASK(SUN4I_PLL2_N_WIDTH, 0)
+> +
+> +#define SUN4I_PLL2_POST_DIV_SHIFT      26
+> +#define SUN4I_PLL2_POST_DIV_WIDTH      4
+> +#define SUN4I_PLL2_POST_DIV_MASK       GENMASK(SUN4I_PLL2_POST_DIV_WIDTH=
+, 0)
 
-To clarify, I applied it on my imx/clk branch, which will be sent to you
-and Mike later.
+GENMASK, like in patch 1, should be GENMASK(width - 1, 0);
 
-Shawn
+Sorry about the multiple replies.
+
+ChenYu
