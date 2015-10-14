@@ -1,46 +1,69 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bn1bon0116.outbound.protection.outlook.com ([157.56.111.116]:60386
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1753829AbbJOHEy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 15 Oct 2015 03:04:54 -0400
-From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-To: <arnd@arndb.de>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
-	<linux-clk@vger.kernel.org>, <olof@lixom.net>
-CC: <bhupesh.linux@gmail.com>, <will.deacon@arm.com>,
-	<Catalin.Marinas@arm.com>, <bhupesh.sharma@freescale.com>,
-	<LeoLi@freescale.com>, <scottwood@freescale.com>,
-	<stuart.yoder@freescale.com>
-Subject: [PATCH v3 12/12] dts/Makefile: Add build support for LS2080a QDS & RDB board DTS
-Date: Thu, 15 Oct 2015 12:17:52 +0530
-Message-ID: <1444891672-32117-13-git-send-email-bhupesh.sharma@freescale.com>
-In-Reply-To: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
-References: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Wed, 14 Oct 2015 22:17:33 +0200
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Gregory CLEMENT
+ <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>,
+ Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth
+ <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH 14/26] clk: mvebu: Convert to clk_hw based provider APIs
+Message-ID: <20151014221733.65507871@free-electrons.com>
+In-Reply-To: <20151014182138.GD26883@codeaurora.org>
+References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+	<1438362246-6664-15-git-send-email-sboyd@codeaurora.org>
+	<20151014170922.3027008a@free-electrons.com>
+	<20151014182138.GD26883@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds build support for LS2080a QDS & RDB board DTS files
-in the arm64 DTS Makefile.
+Hello,
 
-Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
----
- arch/arm64/boot/dts/freescale/Makefile |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for your feedback!
 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 932001a..57b41c7 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -1,4 +1,4 @@
--dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-simu.dtb
-+dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-qds.dtb fsl-ls2080a-rdb.dtb fsl-ls2080a-simu.dtb
-  
- always		:= $(dtb-y)
- subdir-y	:= $(dts-dirs)
+On Wed, 14 Oct 2015 11:21:38 -0700, Stephen Boyd wrote:
+
+> > Stephen, what do you suggest to fix this issue?
+> 
+> Simplest fix is to revert this hunk.
+
+Indeed, this is the simplest fix. But it's going backward with what you
+were trying to do originally, so it isn't really nice either.
+
+> Longer term, we should look into making of_clk_get_parent_name() use
+> whatever string has been used when registering the clock,
+
+I am not sure how of_clk_get_parent_name() can know the name of the
+clock without clock-output-names in the DT. Without clock-output-names,
+the only way to know the name of the parent clock is to actually ask
+the driver of the parent clock, no?
+
+> or completely change how we do parent child linkages so that strings
+> aren't necessary.
+
+Keep the reference to the DT node + "arguments". Not super simple
+either.
+
+> > The easiest solution is to add a clock-output-names property to the
+> > coreclk node. This way, of_clk_get_parent_name() will properly
+> > resolve the clock name to its correct name (i.e, "cpuclk" in our
+> > case) and everything works fine (I've tested). The drawback of this
+> > solution is that it breaks backward compatibility with old DTs: a
+> > 4.2 DT for Armada XP would no longer work with a >= 4.3 kernel.
+> > 
+> > Do you have some other suggestions to make ?
+> > 
+> 
+> How about this patch?
+
+I'll give it a try tomorrow, but since it's essentially a revert of
+your patch, I believe it should work.
+
+Thanks!
+
+Thomas
 -- 
-1.7.9.5
-
-
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
