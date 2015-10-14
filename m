@@ -1,66 +1,73 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH] clk: Allow drivers to build if COMPILE_TEST is enabled
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1444745898-11537-1-git-send-email-javier@osg.samsung.com>
- <20151014183831.GH26883@codeaurora.org> <561EA831.2070001@osg.samsung.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org, Luis de Bethencourt
- <luisbg@osg.samsung.com>, Michael Turquette <mturquette@baylibre.com>,
- Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>,
- linux-clk@vger.kernel.org
-Message-ID: <561EAF6F.6080901@osg.samsung.com>
-Date: Wed, 14 Oct 2015 21:39:27 +0200
+Return-Path: <sbranden@broadcom.com>
+Subject: Re: [PATCH v2 7/7] clk: ns2: add clock support for Broadcom Northstar
+ 2 SoC
+To: Arnd Bergmann <arnd@arndb.de>, Jon Mason <jonmason@broadcom.com>
+References: <1444770485-11210-1-git-send-email-jonmason@broadcom.com>
+ <5280890.6npshDUNFZ@wuerfel> <20151013220450.GO12512@broadcom.com>
+ <6427519.eIBEvCNlle@wuerfel>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>, "Hauke
+ Mehrtens" <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>
+From: Scott Branden <sbranden@broadcom.com>
+Message-ID: <561EB10B.40502@broadcom.com>
+Date: Wed, 14 Oct 2015 12:46:19 -0700
 MIME-Version: 1.0
-In-Reply-To: <561EA831.2070001@osg.samsung.com>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <6427519.eIBEvCNlle@wuerfel>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: sbranden@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/14/2015 09:08 PM, Javier Martinez Canillas wrote:
-> Hello Stephen,
-> 
-> On 10/14/2015 08:38 PM, Stephen Boyd wrote:
->> On 10/13, Javier Martinez Canillas wrote:
->>> diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
->>> index 1530c9352a76..fc50b6264bed 100644
->>> --- a/drivers/clk/versatile/Kconfig
->>> +++ b/drivers/clk/versatile/Kconfig
->>> @@ -1,6 +1,6 @@
->>>  config COMMON_CLK_VERSATILE
->>>  	bool "Clock driver for ARM Reference designs"
->>> -	depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64
->>> +	depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64 || COMPILE_TEST
+On 15-10-13 03:23 PM, Arnd Bergmann wrote:
+> On Tuesday 13 October 2015 18:04:50 Jon Mason wrote:
 >>
->> Have you compiled these drivers on an architecture that doesn't
->> have IOMEM? Perhaps tile or um? I'm all for more build coverage,
->> but it's not always as simple as just sprinkling some
->> COMPILE_TEST around the Kconfigs.
+>>> On a related note, I'm seeing problems when CONFIG_CYGNUS is set but
+>>> CONFIG_COMMON_CLK_IPROC is disabled, as that currently leads to a link
+>>> failure.
 >>
-> 
-> No, I only build tested on arm32 and x86. The 0-day bot haven't reported a
-> build error yet and I didn't see any platform dependent code in the drivers.
-> 
+>> I can double check, but it should be on by default when Cygnus is
+>> enabled.  If you send me the error, I'll be happy to fix it.
+>
+>
+> The problem is not that it's off by default but that it can be
+> disabled, so it breaks some 'make randconfig' builds with this
+> message:
+>
+> drivers/built-in.o: In function `cygnus_armpll_init':
+> :(.init.text+0x1d290): undefined reference to `iproc_armpll_setup'
+> drivers/built-in.o: In function `cygnus_genpll_clk_init':
+> :(.init.text+0x1d2c4): undefined reference to `iproc_pll_clk_setup'
+> drivers/built-in.o: In function `cygnus_lcpll0_clk_init':
+> :(.init.text+0x1d304): undefined reference to `iproc_pll_clk_setup'
+> drivers/built-in.o: In function `cygnus_mipipll_clk_init':
+> :(.init.text+0x1d344): undefined reference to `iproc_pll_clk_setup'
+> drivers/built-in.o: In function `cygnus_asiu_init':
+> :(.init.text+0x1d370): undefined reference to `iproc_asiu_setup'
+>
+> My patch fixes it by always selecting COMMON_CLK_IPROC from
+> ARCH_BCM_CYGNUS. I wasn't sure whether you want COMMON_CLK_IPROC
+> to still be user-selectable, so I left that in place. Normally
+> I'd expect it to be a silent option though, that just gets
+> implicitly enabled whenever a platform that needs it is built
+> into the kernel.
+COMMON_CLK_IPROC can be a silent option and selected as Arnd has done below.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Scott Branden <sbranden@broadcom.com>
 
-BTW, all clk drivers depends on COMMON_CLK so these won't even be built in
-tile or um since that symbol isn't selected there. Or did I misunderstand?
-
-Having said that, I see that enabling COMPILE_TEST will attempt to build
-in many archs [0] that I don't have a toolchain to test. So I'm OK if you
-drop this patch and sorry for the inconvenience.
-
-[0]:
-$ git grep "select COMMON_CLK" arch/ | cut -d '/' -f2 | uniq 
-arc
-arm
-arm64
-h8300
-microblaze
-mips
-powerpc
-x86
-xtensa
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+>
+> diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
+> index 1319c3c14327..35234e563cd8 100644
+> --- a/arch/arm/mach-bcm/Kconfig
+> +++ b/arch/arm/mach-bcm/Kconfig
+> @@ -29,6 +29,7 @@ config ARCH_BCM_IPROC
+>   config ARCH_BCM_CYGNUS
+>   	bool "Broadcom Cygnus Support" if ARCH_MULTI_V7
+>   	select ARCH_BCM_IPROC
+> +	select COMMON_CLK_IPROC
+>   	help
+>   	  Enable support for the Cygnus family,
+>   	  which includes the following variants:
+>
