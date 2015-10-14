@@ -1,55 +1,49 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 15 Oct 2015 12:28:32 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
-	Russell King <linux@arm.linux.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 09/13] clk: versatile-icst: add device tree support
-Message-ID: <20151015192832.GP4558@codeaurora.org>
-References: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
- <1444916813-31024-10-git-send-email-linus.walleij@linaro.org>
+Return-Path: <B48286@freescale.com>
+From: Zhiqiang Hou <B48286@freescale.com>
+To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
+	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <mark.rutland@arm.com>
+CC: <Mingkai.Hu@freescale.com>, <Shaohui.Xie@freescale.com>,
+	<scottwood@freescale.com>, <bhupesh.sharma@freescale.com>,
+	<leoli@freescale.com>, <wsa@the-dreams.de>, <wim@iguana.be>,
+	<corbet@lwn.net>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<Wenbin.Song@freescale.com>, Hou Zhiqiang <B48286@freescale.com>
+Subject: [PATCH V3 3/6] Documentation: DT: Add entry for FSL LS1043ARDB board
+Date: Wed, 14 Oct 2015 19:34:55 +0800
+Message-ID: <1444822498-16477-4-git-send-email-B48286@freescale.com>
+In-Reply-To: <1444822498-16477-1-git-send-email-B48286@freescale.com>
+References: <1444822498-16477-1-git-send-email-B48286@freescale.com>
+Return-Path: B48286@freescale.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1444916813-31024-10-git-send-email-linus.walleij@linaro.org>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/15, Linus Walleij wrote:
-> This adds support for the ARM syscon ICST clocks to initialized
-> directly from the device tree syscon node on ARM Integrator,
-> Versatile and RealView reference designs.
-> 
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: linux-clk@vger.kernel.org
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
+From: Mingkai Hu <Mingkai.Hu@freescale.com>
 
-Also:
+Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
+Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+---
+V3:
+ - No change.
 
-WARNING: please, no space before tabs
-#47: FILE: drivers/clk/versatile/clk-icst.c:221:
-+^I.vd_min ^I= 8,$
+ Documentation/devicetree/bindings/arm/fsl.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-WARNING: please, no space before tabs
-#48: FILE: drivers/clk/versatile/clk-icst.c:222:
-+^I.vd_max ^I= 263,$
-
-WARNING: please, no space before tabs
-#49: FILE: drivers/clk/versatile/clk-icst.c:223:
-+^I.rd_min ^I= 3,$
-
-WARNING: please, no space before tabs
-#50: FILE: drivers/clk/versatile/clk-icst.c:224:
-+^I.rd_max ^I= 65,$
-
-total: 0 errors, 4 warnings, 98 lines checked
-
+diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
+index 34c88b0..752a685 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.txt
++++ b/Documentation/devicetree/bindings/arm/fsl.txt
+@@ -131,6 +131,10 @@ Example:
+ Freescale ARMv8 based Layerscape SoC family Device Tree Bindings
+ ----------------------------------------------------------------
+ 
++LS1043A ARMv8 based RDB Board
++Required root node properties:
++    - compatible = "fsl,ls1043a-rdb", "fsl,ls1043a";
++
+ LS2080A ARMv8 based Simulator model
+ Required root node properties:
+     - compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.0.27.g96db324
