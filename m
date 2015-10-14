@@ -1,84 +1,54 @@
-Return-Path: <Julia.Lawall@lip6.fr>
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: kernel-janitors@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jason Cooper <jason@lakedaemon.net>
-Subject: [PATCH 1/5] clk: add missing of_node_put
-Date: Wed, 21 Oct 2015 22:41:36 +0200
-Message-Id: <1445460100-26727-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
-References: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
+Return-Path: <linux@roeck-us.net>
+Subject: Re: [PATCH V3 2/6] watchdog: Add support for Freescale Layerscape
+ platforms
+To: Zhiqiang Hou <B48286@freescale.com>,
+ linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+ will.deacon@arm.com, linux-i2c@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-clk@vger.kernel.org, mark.rutland@arm.com
+References: <1444822498-16477-1-git-send-email-B48286@freescale.com>
+ <1444822498-16477-3-git-send-email-B48286@freescale.com>
+Cc: Mingkai.Hu@freescale.com, Shaohui.Xie@freescale.com,
+ scottwood@freescale.com, bhupesh.sharma@freescale.com, leoli@freescale.com,
+ wsa@the-dreams.de, wim@iguana.be, corbet@lwn.net, mturquette@baylibre.com,
+ sboyd@codeaurora.org, Wenbin.Song@freescale.com
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <561E6169.2000509@roeck-us.net>
+Date: Wed, 14 Oct 2015 07:06:33 -0700
+MIME-Version: 1.0
+In-Reply-To: <1444822498-16477-3-git-send-email-B48286@freescale.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-for_each_matching_node_and_match performs an of_node_get on each iteration,
-so a break out of the loop requires an of_node_put.
+On 10/14/2015 04:34 AM, Zhiqiang Hou wrote:
+> From: Shaohui Xie <Shaohui.Xie@freescale.com>
+>
+> Modify watchdog/Kconfig file to support Layerscape platforms.
+>
+> Signed-off-by: Shaohui Xie <Shaohui.Xie@freescale.com>
+> Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
+> Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
 
-A simplified version of the semantic patch that fixes this problem is as
-follows (http://coccinelle.lip6.fr):
+Acked-by: Guenter Roeck <linux@roeck-us.net>
 
-// <smpl>
-@@
-expression e1,e2,e;
-local idexpression np;
-@@
-
- for_each_matching_node_and_match(np, e1, e2) {
-   ... when != of_node_put(np)
-       when != e = np
-(
-   return np;
-|
-+  of_node_put(np);
-?  return ...;
-)
-   ...
- }
-// </smpl>
-
-Besides the problem identified by the semantic patch, this patch adds an
-of_node_get in front of saving np in a field of parent, to account for the
-fact that this value will be put on going on to the next element in the
-iteration, and then adds of_node_puts in the two loops where the parent
-pointer can be freed.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/clk/clk.c |    4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index e735eab..11babd1 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3200,12 +3200,15 @@ void __init of_clk_init(const struct of_device_id *matches)
- 			list_for_each_entry_safe(clk_provider, next,
- 						 &clk_provider_list, node) {
- 				list_del(&clk_provider->node);
-+				of_node_put(clk_provider->np);
- 				kfree(clk_provider);
- 			}
-+			of_node_put(np);
- 			return;
- 		}
- 
- 		parent->clk_init_cb = match->data;
-+		of_node_get(np);
- 		parent->np = np;
- 		list_add_tail(&parent->node, &clk_provider_list);
- 	}
-@@ -3220,6 +3223,7 @@ void __init of_clk_init(const struct of_device_id *matches)
- 				of_clk_set_defaults(clk_provider->np, true);
- 
- 				list_del(&clk_provider->node);
-+				of_node_put(clk_provider->np);
- 				kfree(clk_provider);
- 				is_init_done = true;
- 			}
+> ---
+> V3:
+>   - No change.
+>
+>   drivers/watchdog/Kconfig | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> index 79e1aa1..448dbaf 100644
+> --- a/drivers/watchdog/Kconfig
+> +++ b/drivers/watchdog/Kconfig
+> @@ -446,7 +446,7 @@ config MAX63XX_WATCHDOG
+>
+>   config IMX2_WDT
+>   	tristate "IMX2+ Watchdog"
+> -	depends on ARCH_MXC
+> +	depends on ARCH_MXC || ARCH_LAYERSCAPE
+>   	select REGMAP_MMIO
+>   	select WATCHDOG_CORE
+>   	help
+>
