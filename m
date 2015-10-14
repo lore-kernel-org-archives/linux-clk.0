@@ -1,223 +1,63 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
+Return-Path: <tomeu.vizoso@gmail.com>
+Return-Path: <tomeu.vizoso@gmail.com>
+Sender: Tomeu Vizoso <tomeu.vizoso@gmail.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Inki Dae <inki.dae@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>,
+	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
 	devicetree@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 3/5] [RFC] clk: shmobile: div6: Extract cpg_div6_register()
-Date: Fri, 16 Oct 2015 14:49:18 +0200
-Message-Id: <1444999760-15750-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1444999760-15750-1-git-send-email-geert+renesas@glider.be>
-References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be>
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kumar Gala <galak@codeaurora.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	linux-samsung-soc@vger.kernel.org,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v1 0/2] Fix display on second resume on 5250-snow
+Date: Wed, 14 Oct 2015 12:44:15 +0200
+Message-Id: <1444819457-27519-1-git-send-email-tomeu.vizoso@collabora.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Extract cpg_div6_register(), to allow registering div6 clocks from
-another clock driver.
+Hi,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4:
-  - New.
----
- drivers/clk/shmobile/clk-div6.c | 119 +++++++++++++++++++++++++---------------
- drivers/clk/shmobile/clk-div6.h |   3 +
- 2 files changed, 77 insertions(+), 45 deletions(-)
- create mode 100644 drivers/clk/shmobile/clk-div6.h
+as discussed in [0], currently on the second resume from memory the
+display is broken on Snow boards (ARM Samsung Series 3 Chromebook).
 
-diff --git a/drivers/clk/shmobile/clk-div6.c b/drivers/clk/shmobile/clk-div6.c
-index 57016ff9c585fc6e..5e8525fc60427229 100644
---- a/drivers/clk/shmobile/clk-div6.c
-+++ b/drivers/clk/shmobile/clk-div6.c
-@@ -18,6 +18,8 @@
- #include <linux/of_address.h>
- #include <linux/slab.h>
- 
-+#include "clk-div6.h"
-+
- #define CPG_DIV6_CKSTP		BIT(8)
- #define CPG_DIV6_DIV(d)		((d) & 0x3f)
- #define CPG_DIV6_DIV_MASK	0x3f
-@@ -172,60 +174,34 @@ static const struct clk_ops cpg_div6_clock_ops = {
- 	.set_rate = cpg_div6_clock_set_rate,
- };
- 
--static void __init cpg_div6_clock_init(struct device_node *np)
-+struct clk * __init cpg_div6_register(const char *name,
-+				      unsigned int num_parents,
-+				      const char **parent_names,
-+				      void __iomem *reg)
- {
--	unsigned int num_parents, valid_parents;
--	const char **parent_names;
-+	unsigned int valid_parents;
- 	struct clk_init_data init;
- 	struct div6_clock *clock;
--	const char *clk_name = np->name;
- 	struct clk *clk;
- 	unsigned int i;
- 
- 	clock = kzalloc(sizeof(*clock), GFP_KERNEL);
- 	if (!clock)
--		return;
--
--	num_parents = of_clk_get_parent_count(np);
--	if (num_parents < 1) {
--		pr_err("%s: no parent found for %s DIV6 clock\n",
--		       __func__, np->name);
--		return;
--	}
-+		return ERR_PTR(-ENOMEM);
- 
- 	clock->parents = kmalloc_array(num_parents, sizeof(*clock->parents),
--		GFP_KERNEL);
--	parent_names = kmalloc_array(num_parents, sizeof(*parent_names),
--				GFP_KERNEL);
--	if (!parent_names)
--		return;
-+				       GFP_KERNEL);
-+	if (!clock->parents)
-+		return ERR_PTR(-ENOMEM);
- 
--	/* Remap the clock register and read the divisor. Disabling the
--	 * clock overwrites the divisor, so we need to cache its value for the
--	 * enable operation.
--	 */
--	clock->reg = of_iomap(np, 0);
--	if (clock->reg == NULL) {
--		pr_err("%s: failed to map %s DIV6 clock register\n",
--		       __func__, np->name);
--		goto error;
--	}
-+	clock->reg = reg;
- 
-+	/*
-+	 * Read the divisor. Disabling the clock overwrites the divisor, so we
-+	 * need to cache its value for the enable operation.
-+	 */
- 	clock->div = (clk_readl(clock->reg) & CPG_DIV6_DIV_MASK) + 1;
- 
--	/* Parse the DT properties. */
--	of_property_read_string(np, "clock-output-names", &clk_name);
--
--	for (i = 0, valid_parents = 0; i < num_parents; i++) {
--		const char *name = of_clk_get_parent_name(np, i);
--
--		if (name) {
--			parent_names[valid_parents] = name;
--			clock->parents[valid_parents] = i;
--			valid_parents++;
--		}
--	}
--
- 	switch (num_parents) {
- 	case 1:
- 		/* fixed parent clock */
-@@ -243,12 +219,22 @@ static void __init cpg_div6_clock_init(struct device_node *np)
- 		break;
- 	default:
- 		pr_err("%s: invalid number of parents for DIV6 clock %s\n",
--		       __func__, np->name);
-+		       __func__, name);
-+		clk = ERR_PTR(-EINVAL);
- 		goto error;
- 	}
- 
-+	/* Filter out invalid parents */
-+	for (i = 0, valid_parents = 0; i < num_parents; i++) {
-+		if (parent_names[i]) {
-+			parent_names[valid_parents] = parent_names[i];
-+			clock->parents[valid_parents] = i;
-+			valid_parents++;
-+		}
-+	}
-+
- 	/* Register the clock. */
--	init.name = clk_name;
-+	init.name = name;
- 	init.ops = &cpg_div6_clock_ops;
- 	init.flags = CLK_IS_BASIC;
- 	init.parent_names = parent_names;
-@@ -257,6 +243,50 @@ static void __init cpg_div6_clock_init(struct device_node *np)
- 	clock->hw.init = &init;
- 
- 	clk = clk_register(NULL, &clock->hw);
-+	if (!IS_ERR(clk))
-+		return clk;
-+
-+error:
-+	kfree(clock->parents);
-+	kfree(clock);
-+	return clk;
-+}
-+
-+static void __init cpg_div6_clock_init(struct device_node *np)
-+{
-+	unsigned int num_parents;
-+	const char **parent_names;
-+	const char *clk_name = np->name;
-+	void __iomem *reg;
-+	struct clk *clk;
-+	unsigned int i;
-+
-+	num_parents = of_clk_get_parent_count(np);
-+	if (num_parents < 1) {
-+		pr_err("%s: no parent found for %s DIV6 clock\n",
-+		       __func__, np->name);
-+		return;
-+	}
-+
-+	parent_names = kmalloc_array(num_parents, sizeof(*parent_names),
-+				GFP_KERNEL);
-+	if (!parent_names)
-+		return;
-+
-+	reg = of_iomap(np, 0);
-+	if (reg == NULL) {
-+		pr_err("%s: failed to map %s DIV6 clock register\n",
-+		       __func__, np->name);
-+		goto error;
-+	}
-+
-+	/* Parse the DT properties. */
-+	of_property_read_string(np, "clock-output-names", &clk_name);
-+
-+	for (i = 0; i < num_parents; i++)
-+		parent_names[i] = of_clk_get_parent_name(np, i);
-+
-+	clk = cpg_div6_register(clk_name, num_parents, parent_names, reg);
- 	if (IS_ERR(clk)) {
- 		pr_err("%s: failed to register %s DIV6 clock (%ld)\n",
- 		       __func__, np->name, PTR_ERR(clk));
-@@ -269,9 +299,8 @@ static void __init cpg_div6_clock_init(struct device_node *np)
- 	return;
- 
- error:
--	if (clock->reg)
--		iounmap(clock->reg);
-+	if (reg)
-+		iounmap(reg);
- 	kfree(parent_names);
--	kfree(clock);
- }
- CLK_OF_DECLARE(cpg_div6_clk, "renesas,cpg-div6-clock", cpg_div6_clock_init);
-diff --git a/drivers/clk/shmobile/clk-div6.h b/drivers/clk/shmobile/clk-div6.h
-new file mode 100644
-index 0000000000000000..d19531f42953c83f
---- /dev/null
-+++ b/drivers/clk/shmobile/clk-div6.h
-@@ -0,0 +1,3 @@
-+
-+struct clk *cpg_div6_register(const char *name, unsigned int num_parents,
-+			      const char **parent_names, void __iomem *reg);
+The reason is that on resume the contents of register SRC_TOP3 aren't
+what the kernel thinks they are because the HW (or FW) is doing some
+clock reparenting beneath our feet.
+
+This series tasks the kernel to do the reparenting itself so that the HW
+state always matches the kernel's internal state.
+
+Thanks,
+
+Tomeu
+
+[0] http://lkml.kernel.org/g/561CDC33.7050103@collabora.com
+
+
+Tomeu Vizoso (2):
+  clk: samsung: exynos5250: Add DISP1 clocks
+  ARM: dts: exynos5250: Add clocks to DISP1 domain
+
+ arch/arm/boot/dts/exynos5250.dtsi      |  4 ++++
+ drivers/clk/samsung/clk-exynos5250.c   | 16 +++++++++++++++-
+ include/dt-bindings/clock/exynos5250.h |  4 +++-
+ 3 files changed, 22 insertions(+), 2 deletions(-)
+
 -- 
-1.9.1
+2.5.0
