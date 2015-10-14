@@ -1,81 +1,66 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 0/3] ARM: dts: Enable Exynos RNG module
-To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- linux-crypto@vger.kernel.org
-References: <1445230834-32689-1-git-send-email-k.kozlowski@samsung.com>
- <56251627.4050908@math.uni-bielefeld.de>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <562581BD.3070609@samsung.com>
-Date: Tue, 20 Oct 2015 08:50:21 +0900
-MIME-version: 1.0
-In-reply-to: <56251627.4050908@math.uni-bielefeld.de>
-Content-type: text/plain; charset=utf-8
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH] clk: Allow drivers to build if COMPILE_TEST is enabled
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1444745898-11537-1-git-send-email-javier@osg.samsung.com>
+ <20151014183831.GH26883@codeaurora.org> <561EA831.2070001@osg.samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org, Luis de Bethencourt
+ <luisbg@osg.samsung.com>, Michael Turquette <mturquette@baylibre.com>,
+ Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+ linux-clk@vger.kernel.org
+Message-ID: <561EAF6F.6080901@osg.samsung.com>
+Date: Wed, 14 Oct 2015 21:39:27 +0200
+MIME-Version: 1.0
+In-Reply-To: <561EA831.2070001@osg.samsung.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 20.10.2015 01:11, Tobias Jakobi wrote:
-> Hello Krzysztof,
+On 10/14/2015 09:08 PM, Javier Martinez Canillas wrote:
+> Hello Stephen,
 > 
-> I can confirm that this also works on a Odroid-X2, so I guess it's safe
-> to enable the PRNG for all Exynos4412-based Odroid devices.
-
-Sure, I can send a patch for that. I can test it later also on Odroid-U3.
-
-
+> On 10/14/2015 08:38 PM, Stephen Boyd wrote:
+>> On 10/13, Javier Martinez Canillas wrote:
+>>> diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
+>>> index 1530c9352a76..fc50b6264bed 100644
+>>> --- a/drivers/clk/versatile/Kconfig
+>>> +++ b/drivers/clk/versatile/Kconfig
+>>> @@ -1,6 +1,6 @@
+>>>  config COMMON_CLK_VERSATILE
+>>>  	bool "Clock driver for ARM Reference designs"
+>>> -	depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64
+>>> +	depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64 || COMPILE_TEST
+>>
+>> Have you compiled these drivers on an architecture that doesn't
+>> have IOMEM? Perhaps tile or um? I'm all for more build coverage,
+>> but it's not always as simple as just sprinkling some
+>> COMPILE_TEST around the Kconfigs.
+>>
 > 
-> Any chance that you might also take a look at the other hwcrypto stuff
-> on the SoC ('samsung,exynos4210-secss' compatible)?
+> No, I only build tested on arm32 and x86. The 0-day bot haven't reported a
+> build error yet and I didn't see any platform dependent code in the drivers.
+> 
 
-What do you mean? The s5p-sss driver already supports Device Tree.
+BTW, all clk drivers depends on COMMON_CLK so these won't even be built in
+tile or um since that symbol isn't selected there. Or did I misunderstand?
+
+Having said that, I see that enabling COMPILE_TEST will attempt to build
+in many archs [0] that I don't have a toolchain to test. So I'm OK if you
+drop this patch and sorry for the inconvenience.
+
+[0]:
+$ git grep "select COMMON_CLK" arch/ | cut -d '/' -f2 | uniq 
+arc
+arm
+arm64
+h8300
+microblaze
+mips
+powerpc
+x86
+xtensa
 
 Best regards,
-Krzysztof
-
-> 
-> With best wishes,
-> Tobias
-> 
-> 
-> Krzysztof Kozlowski wrote:
->> Hi,
->>
->>
->> The patchset adds necessary clock from Security SubSystem (SSS)
->> and enables the PRNG module of Exynos for Trats2 board.
->>
->> The first patch (clock) is required for other ones so please
->> take everything in one step.
->>
->> The actual Device Tree support (and compatible) was sent in separate
->> patch:
->>  - https://patchwork.kernel.org/patch/7432891/
->>  - http://marc.info/?l=linux-crypto-vger&m=144522952725052&w=2
->>
->> The device can be tested (after applying both patchsets) with:
->> $ echo exynos > /sys/class/misc/hw_random/rng_current
->> $ dd if=/dev/hwrng of=/dev/null bs=1 count=16
->>
->>
->> Best regards,
->> Krzysztof
->>
->> Krzysztof Kozlowski (3):
->>   clk: samsung: exynos4: Add SSS gate clock
->>   ARM: dts: Add PRNG module for exynos4
->>   ARM: dts: Enable PRNG module on exynos4412-trats2
->>
->>  arch/arm/boot/dts/exynos4.dtsi          | 8 ++++++++
->>  arch/arm/boot/dts/exynos4412-trats2.dts | 4 ++++
->>  drivers/clk/samsung/clk-exynos4.c       | 1 +
->>  include/dt-bindings/clock/exynos4.h     | 1 +
->>  4 files changed, 14 insertions(+)
->>
-> 
-> 
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
