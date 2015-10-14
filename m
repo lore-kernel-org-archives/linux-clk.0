@@ -1,146 +1,96 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <B48286@freescale.com>
+From: Zhiqiang Hou <B48286@freescale.com>
+To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
+	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <mark.rutland@arm.com>
+CC: <Mingkai.Hu@freescale.com>, <Shaohui.Xie@freescale.com>,
+	<scottwood@freescale.com>, <bhupesh.sharma@freescale.com>,
+	<leoli@freescale.com>, <wsa@the-dreams.de>, <wim@iguana.be>,
+	<corbet@lwn.net>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<Wenbin.Song@freescale.com>, Hou Zhiqiang <B48286@freescale.com>
+Subject: [PATCH V3 5/6] clk: qoriq: Add ls1043a support.
+Date: Wed, 14 Oct 2015 19:34:57 +0800
+Message-ID: <1444822498-16477-6-git-send-email-B48286@freescale.com>
+In-Reply-To: <1444822498-16477-1-git-send-email-B48286@freescale.com>
+References: <1444822498-16477-1-git-send-email-B48286@freescale.com>
+Return-Path: B48286@freescale.com
 MIME-Version: 1.0
-To: Maxime Ripard <maxime.ripard@free-electrons.com>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20151021145335.GF10947@lukather>
-Cc: "Stephen Boyd" <sboyd@codeaurora.org>, "Emilio Lopez" <emilio@elopez.com.ar>,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- "Chen-Yu Tsai" <wens@csie.org>, "Hans de Goede" <hdegoede@redhat.com>,
- linux-sunxi@googlegroups.com
-References: <1445326609-6314-1-git-send-email-maxime.ripard@free-electrons.com>
- <1445326609-6314-2-git-send-email-maxime.ripard@free-electrons.com>
- <20151020134343.20687.16333@quantum> <20151020144047.GA10947@lukather>
- <20151020162939.20687.32769@quantum> <20151021145335.GF10947@lukather>
-Message-ID: <20151021155312.20687.73917@quantum>
-Subject: Re: [PATCH v6 1/5] clk: Add a basic multiplier clock
-Date: Wed, 21 Oct 2015 08:53:12 -0700
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Maxime Ripard (2015-10-21 07:53:35)
-> On Tue, Oct 20, 2015 at 09:29:39AM -0700, Michael Turquette wrote:
-> > Quoting Maxime Ripard (2015-10-20 07:40:47)
-> > > Hi Mike,
-> > > =
+From: Hou Zhiqiang <B48286@freescale.com>
 
-> > > On Tue, Oct 20, 2015 at 06:43:43AM -0700, Michael Turquette wrote:
-> > > > Hi Maxime,
-> > > > =
+Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+---
+V3:
+ - No change.
 
-> > > > Quoting Maxime Ripard (2015-10-20 00:36:45)
-> > > > > +struct clk *clk_register_multiplier(struct device *dev, const ch=
-ar *name,
-> > > > > +                                   const char *parent_name,
-> > > > > +                                   unsigned long flags,
-> > > > > +                                   void __iomem *reg, u8 shift, =
-u8 width,
-> > > > > +                                   u8 clk_mult_flags, spinlock_t=
- *lock)
-> > > > > +{
-> > > > =
+ drivers/clk/clk-qoriq.c | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-> > > > Patch looks good in general. However this is a good opportunity to =
-stop
-> > > > the madness around the registration functions in these basic clock
-> > > > types.
-> > > > =
-
-> > > > clk_register is really all that we need since we've had struct
-> > > > clk_init_data for a while. Initializing a multiplier should be as s=
-imple
-> > > > as:
-> > > > =
-
-> > > >       struct clk_multiplier clk_foo =3D {
-> > > >               .hw.init =3D &(struct clk_init_data){
-> > > >                       .name =3D "foo",
-> > > >                       .parent_names =3D (const char *[]){
-> > > >                               "bar",
-> > > >                       },
-> > > >                       .num_parents =3D 1;
-> > > >                       .ops =3D &clk_multiplier_ops,
-> > > >               },
-> > > >               .reg =3D 0xd34db33f,
-> > > >               .shift =3D 1,
-> > > >               .width =3D 2,
-> > > >       };
-> > > > =
-
-> > > >       clk_register(dev, &clk_foo.hw);
-> > > > =
-
-> > > > This is nice since it turns these basic clocks into even more of a
-> > > > library and less of a poor mans driver.
-> > > > =
-
-> > > > (I really hope the above works. I did not test it)
-> > > > =
-
-> > > > Is it possible you can convert to using this method, and if it is
-> > > > correct for you then just remove clk_multiplier_register altogether=
-? (In
-> > > > fact you might not use the registration function at all since you u=
-se
-> > > > the composite clock...)
-> > > =
-
-> > > This chunk of code has been here since v2, which has been first posted
-> > > in May, two and half kernel releases ago.
-> > > =
-
-> > > In the meantime, we had a full-blown DMA driver and a quite unusual
-> > > ASoC driver merged. For some reason, this is the only piece of the
-> > > audio support that is missing for us, while at the same time it's the
-> > > most trivial.
-> > > =
-
-> > > If that's the only issue you have with this patch, I'm fine with
-> > > sending a subsequent patch this week. But I'd be really unhappy with
-> > > sending yet another version for a single change, while you had 5
-> > > monthes to review it, and we discussed it several times on IRC and
-> > > face to face.
-> > =
-
-> > The change can go in later. It's not a prerequisite. I had a feeling
-> > you'd be grumpy about me asking but I thought I'd try anyways. I won't
-> > even ask if you got sign-off from Jim on whether this works for his
-> > platforms ;-)
-> =
-
-> I asked several times, he never replied... :/
-> =
-
-> > The copy/paste nature of these basic clock types really sucks and it is
-> > one of many reasons that I am hesitant to accept them and slow to merge
-> > them...
-> =
-
-> I guess we cover all cases now? So it shouldn't grow that much.
-> =
-
-> > Anyways it seems that you are not using the registration function at all
-> > so I might just follow up with a patch to remove it.
-> > =
-
-> > I can pick these 5 patches directly, or do you plan to send a PR?
-> =
-
-> I have a pull request coming for you with a single patch, I can apply
-> them on that branch and send you the PR later today if it's okay?
-
-Sounds good to me.
-
-Regards,
-Mike
-
-> =
-
-> Thanks,
-> Maxime
-> =
-
-> -- =
-
-> Maxime Ripard, Free Electrons
-> Embedded Linux, Kernel and Android engineering
-> http://free-electrons.com
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 7753fa3..e71927b 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -244,6 +244,28 @@ static const struct clockgen_muxinfo clockgen2_cmux_cgb = {
+ 	},
+ };
+ 
++static const struct clockgen_muxinfo ls1043a_hwa1 = {
++	{
++		{},
++		{},
++		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV2 },
++		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV3 },
++		{},
++		{},
++		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV2 },
++		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV3 },
++	},
++};
++
++static const struct clockgen_muxinfo ls1043a_hwa2 = {
++	{
++		{},
++		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV1 },
++		{},
++		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV3 },
++	},
++};
++
+ static const struct clockgen_muxinfo t1023_hwa1 = {
+ 	{
+ 		{},
+@@ -452,6 +474,21 @@ static const struct clockgen_chipinfo chipinfo[] = {
+ 		.pll_mask = 0x03,
+ 	},
+ 	{
++		.compat = "fsl,ls1043a-clockgen",
++		.init_periph = t2080_init_periph,
++		.cmux_groups = {
++			&t1040_cmux
++		},
++		.hwaccel = {
++			&ls1043a_hwa1, &ls1043a_hwa2
++		},
++		.cmux_to_group = {
++			0, -1
++		},
++		.pll_mask = 0x07,
++		.flags = CG_PLL_8BIT,
++	},
++	{
+ 		.compat = "fsl,ls2080a-clockgen",
+ 		.cmux_groups = {
+ 			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
+@@ -1228,6 +1265,7 @@ err:
+ CLK_OF_DECLARE(qoriq_clockgen_1, "fsl,qoriq-clockgen-1.0", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_2, "fsl,qoriq-clockgen-2.0", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1021a, "fsl,ls1021a-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
+ 
+ /* Legacy nodes */
+-- 
+2.1.0.27.g96db324
