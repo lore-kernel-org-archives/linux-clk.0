@@ -1,55 +1,39 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 05/19] clk: sunxi: add DRAM gates
-Date: Fri, 30 Oct 2015 15:20:51 +0100
-Message-Id: <1446214865-3972-6-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <mark.rutland@arm.com>
+Date: Wed, 14 Oct 2015 13:43:53 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Zhiqiang Hou <B48286@freescale.com>
+Cc: linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+	will.deacon@arm.com, linux-i2c@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org, Mingkai.Hu@freescale.com,
+	Shaohui.Xie@freescale.com, scottwood@freescale.com,
+	bhupesh.sharma@freescale.com, leoli@freescale.com,
+	wsa@the-dreams.de, wim@iguana.be, corbet@lwn.net,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	Wenbin.Song@freescale.com
+Subject: Re: [PATCH V3 4/6] arm64/ls1043a: add DTS for Freescale LS1043A SoC
+Message-ID: <20151014124353.GC2150@leverpostej>
+References: <1444822498-16477-1-git-send-email-B48286@freescale.com>
+ <1444822498-16477-5-git-send-email-B48286@freescale.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1444822498-16477-5-git-send-email-B48286@freescale.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The Allwinner SoCs have a gate controller to gate the access to the DRAM
-clock to the some devices that need to access the DRAM directly (mostly
-display / image related IPs).
+Hi,
 
-Use a simple gates driver to support it.
+> +	pmu {
+> +		compatible = "arm,armv8-pmuv3";
+> +		interrupts = <0 106 0x4>,
+> +			     <0 107 0x4>,
+> +			     <0 95 0x4>,
+> +			     <0 97 0x4>;
+> +	};
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi/clk-simple-gates.c | 2 ++
- 1 file changed, 2 insertions(+)
+You should have interrupt-affinity here. See
+Documentation/devicetree/bindings/arm/pmu.txt
 
-diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/clk-simple-gates.c
-index 0214c6548afd..5666c767fa14 100644
---- a/drivers/clk/sunxi/clk-simple-gates.c
-+++ b/drivers/clk/sunxi/clk-simple-gates.c
-@@ -112,6 +112,8 @@ CLK_OF_DECLARE(sun5i_a13_apb0, "allwinner,sun5i-a13-apb0-gates-clk",
- 	       sunxi_simple_gates_init);
- CLK_OF_DECLARE(sun5i_a13_apb1, "allwinner,sun5i-a13-apb1-gates-clk",
- 	       sunxi_simple_gates_init);
-+CLK_OF_DECLARE(sun5i_a13_dram, "allwinner,sun5i-a13-dram-gates-clk",
-+	       sunxi_simple_gates_init);
- CLK_OF_DECLARE(sun6i_a31_ahb1, "allwinner,sun6i-a31-ahb1-gates-clk",
- 	       sunxi_simple_gates_init);
- CLK_OF_DECLARE(sun6i_a31_apb1, "allwinner,sun6i-a31-apb1-gates-clk",
--- 
-2.6.2
+Otherwise this looks ok.
+
+Thanks,
+Mark.
