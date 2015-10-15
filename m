@@ -1,246 +1,420 @@
-Return-Path: <wens@csie.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1446214865-3972-5-git-send-email-maxime.ripard@free-electrons.com>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
- <1446214865-3972-5-git-send-email-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 31 Oct 2015 17:53:26 +0800
-Message-ID: <CAGb2v650S8+8SNNBqx7u8k8wxHm2fSKdht=W3yA9Mh=rpU+hOA@mail.gmail.com>
-Subject: Re: [PATCH 04/19] clk: sunxi: Add TCON channel1 clock
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>, Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset=UTF-8
+To: Wenyou Yang <wenyou.yang@atmel.com>,
+ "Nicolas Ferre" <nicolas.ferre@atmel.com>,
+ "Alexandre Belloni" <alexandre.belloni@free-electrons.com>,
+ "Jean-Christophe Plagniol-Villard" <plagnioj@jcrosoft.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1444880467-18598-3-git-send-email-wenyou.yang@atmel.com>
+Cc: "Russell King" <linux@arm.linux.org.uk>,
+ "Stephen Boyd" <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ "Wenyou Yang" <wenyou.yang@atmel.com>
+References: <1444880467-18598-1-git-send-email-wenyou.yang@atmel.com>
+ <1444880467-18598-3-git-send-email-wenyou.yang@atmel.com>
+Message-ID: <20151015093146.7777.781@quantum>
+Subject: Re: [PATCH 2/2] ARM: at91/pm: add ultra Low-power mode 1(ULP1) support
+Date: Thu, 15 Oct 2015 02:31:46 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 30, 2015 at 10:20 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The TCON is a controller generating the timings to output videos signals,
-> acting like both a CRTC and an encoder.
->
-> It has two channels depending on the output, each channel being driven by
-> its own clock (and own clock controller).
->
-> Add a driver for the channel 1 clock.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Quoting Wenyou Yang (2015-10-14 20:41:07)
+> The Ultra Low-power mode 1(ULP1) is introduced by SAMA5D2.
+> =
+
+> In the ULP1 mode, all the clocks are shut off, inclusive the embedded
+> 12MHz RC oscillator, so as to achieve the lowest power consumption
+> with the system in retention mode and able to resume on the wake up
+> events. As soon as the wake up event is asserted, the embedded 12MHz
+> RC oscillator restarts automatically.
+> =
+
+> The number of wake up sources for the ULP1 mode is limited, the wake
+> up sources should be configured via the PMC_FSMR and PMC_FSPR
+> registers.
+> =
+
+> In this patch, the following wake up sources are enabled,
+>  - WKUP0 pin
+>  - WKUP1 pin to WKUP8 pin (shared with PIOBU0 to PIOBU7)
+>  - RTC alarm
+> =
+
+> Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
+
+For the changes to the clk header:
+
+Acked-by: Michael Turquette <mturquette@baylibre.com>
+
 > ---
->  drivers/clk/sunxi/Makefile             |   1 +
->  drivers/clk/sunxi/clk-sun4i-tcon-ch1.c | 167 +++++++++++++++++++++++++++++++++
->  2 files changed, 168 insertions(+)
->  create mode 100644 drivers/clk/sunxi/clk-sun4i-tcon-ch1.c
+> =
 
-According to the documents I have, this variant of the TCON clock
-is specific to sun5i. On sun4i/sun7i, TCON CH1 clock has the same
-layout as TCON CH0 and the other display clocks.
+>  arch/arm/mach-at91/pm.c         |   29 ++++++++++
+>  arch/arm/mach-at91/pm.h         |    7 +++
+>  arch/arm/mach-at91/pm_suspend.S |  111 +++++++++++++++++++++++++++++++++=
+++++++
+>  include/linux/clk/at91_pmc.h    |   36 +++++++++++++
+>  4 files changed, 183 insertions(+)
+> =
 
->
-> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-> index 7821b2b63d58..ed59ee4b3a85 100644
-> --- a/drivers/clk/sunxi/Makefile
-> +++ b/drivers/clk/sunxi/Makefile
-> @@ -13,6 +13,7 @@ obj-y += clk-simple-gates.o
->  obj-y += clk-sun4i-display.o
->  obj-y += clk-sun4i-pll3.o
->  obj-y += clk-sun4i-tcon-ch0.o
-> +obj-y += clk-sun4i-tcon-ch1.o
->  obj-y += clk-sun8i-mbus.o
->  obj-y += clk-sun9i-core.o
->  obj-y += clk-sun9i-mmc.o
-> diff --git a/drivers/clk/sunxi/clk-sun4i-tcon-ch1.c b/drivers/clk/sunxi/clk-sun4i-tcon-ch1.c
-> new file mode 100644
-> index 000000000000..9f2ab52b0bf9
-> --- /dev/null
-> +++ b/drivers/clk/sunxi/clk-sun4i-tcon-ch1.c
-> @@ -0,0 +1,167 @@
-> +/*
-> + * Copyright 2015 Maxime Ripard
-> + *
-> + * Maxime Ripard <maxime.ripard@free-electrons.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
+> diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
+> index 80e277c..49443d9 100644
+> --- a/arch/arm/mach-at91/pm.c
+> +++ b/arch/arm/mach-at91/pm.c
+> @@ -35,6 +35,11 @@
+>  #include "generic.h"
+>  #include "pm.h"
+>  =
+
+> +#define ULP0_MODE      0x00
+> +#define ULP1_MODE      0x11
 > +
-> +#include <linux/clk-provider.h>
-> +#include <linux/of_address.h>
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
+> +#define SAMA5D2_PMC_VERSION    0x20540
 > +
-> +#define SUN4I_TCON_CH1_SCLK_NAME_LEN   32
-> +
-> +#define SUN4I_A10_TCON_CH1_SCLK1_PARENTS       2
-> +#define SUN4I_A10_TCON_CH1_SCLK2_PARENTS       4
-> +
-> +#define SUN4I_A10_TCON_CH1_SCLK2_GATE_BIT      31
-> +#define SUN4I_A10_TCON_CH1_SCLK2_MUX_MASK      3
-> +#define SUN4I_A10_TCON_CH1_SCLK2_MUX_SHIFT     24
-> +#define SUN4I_A10_TCON_CH1_SCLK2_DIV_WIDTH     4
-> +#define SUN4I_A10_TCON_CH1_SCLK2_DIV_SHIFT     0
-> +
-> +#define SUN4I_A10_TCON_CH1_SCLK1_GATE_BIT      15
-> +#define SUN4I_A10_TCON_CH1_SCLK1_MUX_MASK      1
-> +#define SUN4I_A10_TCON_CH1_SCLK1_MUX_SHIFT     11
-> +
-> +static DEFINE_SPINLOCK(sun4i_a10_tcon_ch1_lock);
-> +
-> +static void __init sun4i_a10_tcon_ch1_setup(struct device_node *node)
+>  /*
+>   * FIXME: this is needed to communicate between the pinctrl driver and
+>   * the PM implementation in the machine. Possibly part of the PM
+> @@ -64,6 +69,23 @@ static int at91_pm_valid_state(suspend_state_t state)
+>         }
+>  }
+>  =
+
+> +static void at91_config_ulp1_wkup_source(void)
 > +{
-> +       const char *sclk1_parents[SUN4I_A10_TCON_CH1_SCLK1_PARENTS];
-> +       const char *sclk2_parents[SUN4I_A10_TCON_CH1_SCLK2_PARENTS];
-> +       const char *sclk1_name = node->name;
-> +       char sclk2_name[SUN4I_TCON_CH1_SCLK_NAME_LEN];
-> +       char sclk2d2_name[SUN4I_TCON_CH1_SCLK_NAME_LEN];
-> +       struct clk_gate *sclk1_gate, *sclk2_gate;
-> +       struct clk_mux *sclk1_mux, *sclk2_mux;
-> +       struct clk *sclk1, *sclk2, *sclk2d2;
-> +       struct clk_divider *sclk2_div;
-> +       void __iomem *reg;
-> +       int i;
+> +       if (at91_pmc_read(AT91_PMC_VERSION) >=3D SAMA5D2_PMC_VERSION) {
+> +               at91_pmc_write(AT91_PMC_FSMR, AT91_PMC_RTCAL |
+> +                                             AT91_PMC_FSTT9 |
+> +                                             AT91_PMC_FSTT8 |
+> +                                             AT91_PMC_FSTT7 |
+> +                                             AT91_PMC_FSTT6 |
+> +                                             AT91_PMC_FSTT5 |
+> +                                             AT91_PMC_FSTT4 |
+> +                                             AT91_PMC_FSTT3 |
+> +                                             AT91_PMC_FSTT2 |
+> +                                             AT91_PMC_FSTT0);
 > +
-> +       of_property_read_string(node, "clock-output-names",
-> +                               &sclk1_name);
-> +
-> +       snprintf(sclk2_name, SUN4I_TCON_CH1_SCLK_NAME_LEN,
-> +                "%s2", sclk1_name);
-> +
-> +       snprintf(sclk2d2_name, SUN4I_TCON_CH1_SCLK_NAME_LEN,
-> +                "%s2d2", sclk1_name);
-> +
-> +       reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-> +       if (IS_ERR(reg)) {
-> +               pr_err("%s: Could not map the clock registers\n", sclk2_name);
-> +               return;
+> +               at91_pmc_write(AT91_PMC_FSPR, 0);
 > +       }
-> +
-> +       for (i = 0; i < SUN4I_A10_TCON_CH1_SCLK2_PARENTS; i++)
-> +               sclk2_parents[i] = of_clk_get_parent_name(node, i);
-> +
-> +       sclk2_mux = kzalloc(sizeof(*sclk2_mux), GFP_KERNEL);
-> +       if (!sclk2_mux)
-> +               return;
-> +
-> +       sclk2_mux->reg = reg;
-> +       sclk2_mux->shift = SUN4I_A10_TCON_CH1_SCLK2_MUX_SHIFT;
-> +       sclk2_mux->mask = SUN4I_A10_TCON_CH1_SCLK2_MUX_MASK;
-> +       sclk2_mux->lock = &sun4i_a10_tcon_ch1_lock;
-> +
-> +       sclk2_gate = kzalloc(sizeof(*sclk2_gate), GFP_KERNEL);
-> +       if (!sclk2_gate)
-> +               goto free_sclk2_mux;
-> +
-> +       sclk2_gate->reg = reg;
-> +       sclk2_gate->bit_idx = SUN4I_A10_TCON_CH1_SCLK2_GATE_BIT;
-> +       sclk2_gate->lock = &sun4i_a10_tcon_ch1_lock;
-> +
-> +       sclk2_div = kzalloc(sizeof(*sclk2_div), GFP_KERNEL);
-> +       if (!sclk2_div)
-> +               goto free_sclk2_gate;
-> +
-> +       sclk2_div->reg = reg;
-> +       sclk2_div->shift = SUN4I_A10_TCON_CH1_SCLK2_DIV_SHIFT;
-> +       sclk2_div->width = SUN4I_A10_TCON_CH1_SCLK2_DIV_WIDTH;
-> +       sclk2_div->lock = &sun4i_a10_tcon_ch1_lock;
-> +
-> +       sclk2 = clk_register_composite(NULL, sclk2_name, sclk2_parents,
-> +                                      SUN4I_A10_TCON_CH1_SCLK2_PARENTS,
-> +                                      &sclk2_mux->hw, &clk_mux_ops,
-> +                                      &sclk2_div->hw, &clk_divider_ops,
-> +                                      &sclk2_gate->hw, &clk_gate_ops,
-> +                                      0);
-> +       if (IS_ERR(sclk2)) {
-> +               pr_err("%s: Couldn't register the clock\n", sclk2_name);
-> +               goto free_sclk2_div;
-> +       }
-> +
-> +       sclk2d2 = clk_register_fixed_factor(NULL, sclk2d2_name, sclk2_name, 0,
-> +                                           1, 2);
-> +       if (IS_ERR(sclk2d2)) {
-> +               pr_err("%s: Couldn't register the clock\n", sclk2d2_name);
-> +               goto free_sclk2;
-> +       }
-> +
-> +       sclk1_parents[0] = sclk2_name;
-> +       sclk1_parents[1] = sclk2d2_name;
-
-Is there any need to expose these 2 clocks via DT using of_clk_add_provider?
-
-Note that these complex clock trees within a clock node breaks the
-assigned-clock-parents mechanism, as you can no longer specify the output
-clock's direct parents.
-
-
-Regards
-ChenYu
-
-> +
-> +       sclk1_mux = kzalloc(sizeof(*sclk1_mux), GFP_KERNEL);
-> +       if (!sclk1_mux)
-> +               goto free_sclk2d2;
-> +
-> +       sclk1_mux->reg = reg;
-> +       sclk1_mux->shift = SUN4I_A10_TCON_CH1_SCLK1_MUX_SHIFT;
-> +       sclk1_mux->mask = SUN4I_A10_TCON_CH1_SCLK1_MUX_MASK;
-> +       sclk1_mux->lock = &sun4i_a10_tcon_ch1_lock;
-> +
-> +       sclk1_gate = kzalloc(sizeof(*sclk1_gate), GFP_KERNEL);
-> +       if (!sclk1_gate)
-> +               goto free_sclk1_mux;
-> +
-> +       sclk1_gate->reg = reg;
-> +       sclk1_gate->bit_idx = SUN4I_A10_TCON_CH1_SCLK1_GATE_BIT;
-> +       sclk1_gate->lock = &sun4i_a10_tcon_ch1_lock;
-> +
-> +       sclk1 = clk_register_composite(NULL, sclk1_name, sclk1_parents,
-> +                                      SUN4I_A10_TCON_CH1_SCLK1_PARENTS,
-> +                                      &sclk1_mux->hw, &clk_mux_ops,
-> +                                      NULL, NULL,
-> +                                      &sclk1_gate->hw, &clk_gate_ops,
-> +                                      0);
-> +       if (IS_ERR(sclk1)) {
-> +               pr_err("%s: Couldn't register the clock\n", sclk1_name);
-> +               goto free_sclk1_gate;
-> +       }
-> +
-> +       of_clk_add_provider(node, of_clk_src_simple_get, sclk1);
-> +
-> +       return;
-> +
-> +free_sclk1_gate:
-> +       kfree(sclk1_gate);
-> +free_sclk1_mux:
-> +       kfree(sclk1_mux);
-> +free_sclk2d2:
-> +       clk_unregister(sclk2d2);
-> +free_sclk2:
-> +       clk_unregister(sclk2);
-> +free_sclk2_div:
-> +       kfree(sclk2_div);
-> +free_sclk2_gate:
-> +       kfree(sclk2_gate);
-> +free_sclk2_mux:
-> +       kfree(sclk2_mux);
 > +}
+>  =
+
+>  static suspend_state_t target_state;
+>  =
+
+> @@ -73,6 +95,9 @@ static suspend_state_t target_state;
+>  static int at91_pm_begin(suspend_state_t state)
+>  {
+>         target_state =3D state;
 > +
-> +CLK_OF_DECLARE(sun4i_a10_tcon_ch1, "allwinner,sun4i-a10-tcon-ch1-clk",
-> +              sun4i_a10_tcon_ch1_setup);
-> --
-> 2.6.2
->
+> +       at91_config_ulp1_wkup_source();
+> +
+>         return 0;
+>  }
+>  =
+
+> @@ -140,6 +165,10 @@ static void at91_pm_suspend(suspend_state_t state)
+>         pm_data |=3D (state =3D=3D PM_SUSPEND_MEM) ?
+>                                 AT91_PM_MODE(AT91_PM_SLOW_CLOCK) : 0;
+>  =
+
+> +       pm_data |=3D ((state =3D=3D PM_SUSPEND_MEM) &&
+> +                   (at91_pmc_read(AT91_PMC_VERSION) >=3D SAMA5D2_PMC_VER=
+SION)) ?
+> +                   AT91_PM_ULP(AT91_PM_ULP1_MODE) : 0;
+> +
+>         flush_cache_all();
+>         outer_disable();
+>  =
+
+> diff --git a/arch/arm/mach-at91/pm.h b/arch/arm/mach-at91/pm.h
+> index 3fcf881..2e76745 100644
+> --- a/arch/arm/mach-at91/pm.h
+> +++ b/arch/arm/mach-at91/pm.h
+> @@ -39,4 +39,11 @@ extern void __iomem *at91_ramc_base[];
+>  =
+
+>  #define        AT91_PM_SLOW_CLOCK      0x01
+>  =
+
+> +#define AT91_PM_ULP_OFFSET     5
+> +#define AT91_PM_ULP_MASK       0x03
+> +#define AT91_PM_ULP(x)         (((x) & AT91_PM_ULP_MASK) << AT91_PM_ULP_=
+OFFSET)
+> +
+> +#define AT91_PM_ULP0_MODE      0x00
+> +#define AT91_PM_ULP1_MODE      0x01
+> +
+>  #endif
+> diff --git a/arch/arm/mach-at91/pm_suspend.S b/arch/arm/mach-at91/pm_susp=
+end.S
+> index 825347b..543c430 100644
+> --- a/arch/arm/mach-at91/pm_suspend.S
+> +++ b/arch/arm/mach-at91/pm_suspend.S
+> @@ -41,6 +41,15 @@ tmp2 .req    r5
+>         .endm
+>  =
+
+>  /*
+> + * Wait for main oscillator selection is done
+> + */
+> +       .macro wait_moscsels
+> +1:     ldr     tmp1, [pmc, #AT91_PMC_SR]
+> +       tst     tmp1, #AT91_PMC_MOSCSELS
+> +       beq     1b
+> +       .endm
+> +
+> +/*
+>   * Wait until PLLA has locked.
+>   */
+>         .macro wait_pllalock
+> @@ -99,6 +108,10 @@ ENTRY(at91_pm_suspend_in_sram)
+>         and     r0, r0, #AT91_PM_MODE_MASK
+>         str     r0, .pm_mode
+>  =
+
+> +       lsr     r0, r3, #AT91_PM_ULP_OFFSET
+> +       and     r0, r0, #AT91_PM_ULP_MASK
+> +       str     r0, .ulp_mode
+> +
+>         /* Active the self-refresh mode */
+>         mov     r0, #SRAMC_SELF_FRESH_ACTIVE
+>         bl      at91_sramc_self_refresh
+> @@ -107,6 +120,14 @@ ENTRY(at91_pm_suspend_in_sram)
+>         tst     r0, #AT91_PM_SLOW_CLOCK
+>         beq     standby_mode
+>  =
+
+> +       ldr     r0, .ulp_mode
+> +       tst     r0, #AT91_PM_ULP1_MODE
+> +       beq     ulp0_mode
+> +
+> +ulp1_mode:
+> +       bl      at91_pm_ulp1_mode
+> +       b       pm_exit
+> +
+>  ulp0_mode:
+>         bl      at91_pm_ulp0_mode
+>         b       pm_exit
+> @@ -313,6 +334,94 @@ ENTRY(at91_pm_ulp0_mode)
+>         mov     pc, lr
+>  ENDPROC(at91_pm_ulp0_mode)
+>  =
+
+> +/*
+> + * void at91_pm_ulp1_mode(void)
+> + *
+> + */
+> +ENTRY(at91_pm_ulp1_mode)
+> +       ldr     pmc, .pmc_base
+> +
+> +       /* Save PMC_MCKR config */
+> +       ldr     tmp1, [pmc, #AT91_PMC_MCKR]
+> +       str     tmp1, .saved_mckr
+> +
+> +       /* Switch the master clock source to main clock */
+> +       bic     tmp1, tmp1, #AT91_PMC_CSS
+> +       orr     tmp1, tmp1, #AT91_PMC_CSS_MAIN
+> +       str     tmp1, [pmc, #AT91_PMC_MCKR]
+> +
+> +       wait_mckrdy
+> +
+> +       /* Save PLLA config, then and disable PLLA */
+> +       ldr     tmp1, [pmc, #AT91_CKGR_PLLAR]
+> +       str     tmp1, .saved_pllar
+> +
+> +       bic     tmp1, tmp1, #AT91_PMC3_MUL
+> +       str     tmp1, [pmc, #AT91_CKGR_PLLAR]
+> +
+> +       /* Switch main clock to 12-MHz RC oscillator */
+> +       ldr     tmp1, [pmc, #AT91_CKGR_MOR]
+> +       bic     tmp1, tmp1, #AT91_PMC_MOSCSEL
+> +       bic     tmp1, tmp1, #AT91_PMC_KEY_MASK
+> +       orr     tmp1, tmp1, #AT91_PMC_KEY
+> +       bic     tmp1, tmp1, #(7 << 4)
+> +       str     tmp1, [pmc, #AT91_CKGR_MOR]
+> +
+> +       wait_moscsels
+> +
+> +       /* Disable the main oscillator */
+> +       ldr     tmp1, [pmc, #AT91_CKGR_MOR]
+> +       bic     tmp1, tmp1, #AT91_PMC_MOSCEN
+> +       bic     tmp1, tmp1, #AT91_PMC_KEY_MASK
+> +       orr     tmp1, tmp1, #AT91_PMC_KEY
+> +       bic     tmp1, tmp1, #(7 << 4)
+> +       str     tmp1, [pmc, #AT91_CKGR_MOR]
+> +
+> +       /* Enter the ULP1 mode by setting WAITMODE bit in CKGR_MOR */
+> +       ldr     tmp1, [pmc, #AT91_CKGR_MOR]
+> +       orr     tmp1, tmp1, #AT91_PMC_WAITMODE
+> +       bic     tmp1, tmp1, #AT91_PMC_KEY_MASK
+> +       orr     tmp1, tmp1, #AT91_PMC_KEY
+> +       bic     tmp1, tmp1, #(7 << 4)
+> +       str     tmp1, [pmc, #AT91_CKGR_MOR]
+> +
+> +       wait_mckrdy
+> +
+> +       /* Enable the main oscillator */
+> +       ldr     tmp1, [pmc, #AT91_CKGR_MOR]
+> +       orr     tmp1, tmp1, #AT91_PMC_MOSCEN
+> +       bic     tmp1, tmp1, #AT91_PMC_KEY_MASK
+> +       orr     tmp1, tmp1, #AT91_PMC_KEY
+> +       bic     tmp1, tmp1, #(7 << 4)
+> +       str     tmp1, [pmc, #AT91_CKGR_MOR]
+> +
+> +       wait_moscrdy
+> +
+> +       /* Switch main clock to the main oscillator */
+> +       ldr     tmp1, [pmc, #AT91_CKGR_MOR]
+> +       orr     tmp1, tmp1, #AT91_PMC_MOSCSEL
+> +       bic     tmp1, tmp1, #AT91_PMC_KEY_MASK
+> +       orr     tmp1, tmp1, #AT91_PMC_KEY
+> +       bic     tmp1, tmp1, #(7 << 4)
+> +       str     tmp1, [pmc, #AT91_CKGR_MOR]
+> +
+> +       wait_moscsels
+> +
+> +       /* Restore PLLA config */
+> +       ldr     tmp1, .saved_pllar
+> +       str     tmp1, [pmc, #AT91_CKGR_PLLAR]
+> +
+> +       wait_pllalock
+> +
+> +       /* Restore PMC_MCKR config */
+> +       ldr     tmp1, .saved_mckr
+> +       str     tmp1, [pmc, #AT91_PMC_MCKR]
+> +
+> +       wait_mckrdy
+> +
+> +       mov     pc, lr
+> +ENDPROC(at91_pm_ulp1_mode)
+> +
+>  .pmc_base:
+>         .word 0
+>  .sramc_base:
+> @@ -323,6 +432,8 @@ ENDPROC(at91_pm_ulp0_mode)
+>         .word 0
+>  .pm_mode:
+>         .word 0
+> +.ulp_mode:
+> +       .word 0
+>  .saved_mckr:
+>         .word 0
+>  .saved_pllar:
+> diff --git a/include/linux/clk/at91_pmc.h b/include/linux/clk/at91_pmc.h
+> index 7669f76..3dc4e60 100644
+> --- a/include/linux/clk/at91_pmc.h
+> +++ b/include/linux/clk/at91_pmc.h
+> @@ -59,8 +59,10 @@ extern void __iomem *at91_pmc_base;
+>  #define        AT91_CKGR_MOR           0x20                    /* Main O=
+scillator Register [not on SAM9RL] */
+>  #define                AT91_PMC_MOSCEN         (1    <<  0)            /=
+* Main Oscillator Enable */
+>  #define                AT91_PMC_OSCBYPASS      (1    <<  1)            /=
+* Oscillator Bypass */
+> +#define                AT91_PMC_WAITMODE       (1    <<  2)            /=
+* Wait Mode Command */
+>  #define                AT91_PMC_MOSCRCEN       (1    <<  3)            /=
+* Main On-Chip RC Oscillator Enable [some SAM9] */
+>  #define                AT91_PMC_OSCOUNT        (0xff <<  8)            /=
+* Main Oscillator Start-up Time */
+> +#define                AT91_PMC_KEY_MASK       (0xff << 16)
+>  #define                AT91_PMC_KEY            (0x37 << 16)            /=
+* MOR Writing Key */
+>  #define                AT91_PMC_MOSCSEL        (1    << 24)            /=
+* Main Oscillator Selection [some SAM9] */
+>  #define                AT91_PMC_CFDEN          (1    << 25)            /=
+* Clock Failure Detector Enable [some SAM9] */
+> @@ -166,6 +168,38 @@ extern void __iomem *at91_pmc_base;
+>  #define                AT91_PMC_CFDEV          (1 << 18)               /=
+* Clock Failure Detector Event [some SAM9] */
+>  #define        AT91_PMC_IMR            0x6c                    /* Interr=
+upt Mask Register */
+>  =
+
+> +#define AT91_PMC_FSMR          0x70                    /* Fast Startup M=
+ode Register */
+> +#define                AT91_PMC_FSTT0          (1 << 0)                /=
+* Fast Startup from WKUP Pin Enable */
+> +#define                AT91_PMC_FSTT1          (1 << 1)                /=
+* Fast Startup from Security Module Enable */
+> +#define                AT91_PMC_FSTT2          (1 << 2)                /=
+* Fast Startup from PIOBU0 Input Enable */
+> +#define                AT91_PMC_FSTT3          (1 << 3)                /=
+* Fast Startup from PIOBU1 Input Enable */
+> +#define                AT91_PMC_FSTT4          (1 << 4)                /=
+* Fast Startup from PIOBU2 Input Enable */
+> +#define                AT91_PMC_FSTT5          (1 << 5)                /=
+* Fast Startup from PIOBU3 Input Enable */
+> +#define                AT91_PMC_FSTT6          (1 << 6)                /=
+* Fast Startup from PIOBU4 Input Enable */
+> +#define                AT91_PMC_FSTT7          (1 << 7)                /=
+* Fast Startup from PIOBU5 Input Enable */
+> +#define                AT91_PMC_FSTT8          (1 << 8)                /=
+* Fast Startup from PIOBU6 Input Enable */
+> +#define                AT91_PMC_FSTT9          (1 << 9)                /=
+* Fast Startup from PIOBU7 Input Enable */
+> +#define                AT91_PMC_FSTT10         (1 << 10)               /=
+* Fast Startup from GMAC Wake-up On LAN Enable */
+> +#define                AT91_PMC_RTCAL          (1 << 17)               /=
+* Fast Startup from RTC Alarm Enable */
+> +#define                AT91_PMC_USBAL          (1 << 18)               /=
+* Fast Startup from USB Resume Enable */
+> +#define                AT91_PMC_SDMMC_CD       (1 << 19)               /=
+* Fast Startup from SDMMC Card Detect Enable */
+> +#define                AT91_PMC_LPM            (1 << 20)               /=
+* Low-power Mode */
+> +#define                AT91_PMC_RXLP_MCE       (1 << 24)               /=
+* Fast Startup from Backup UART Receive Match Condition Enable */
+> +#define                AT91_PMC_ACC_CE         (1 << 25)               /=
+* Fast Startup from Analog Comparator Controller Comparison Enable*/
+> +
+> +#define AT91_PMC_FSPR          0x74                    /* Fast Startup P=
+olarity Register */
+> +#define                AT91_PMC_FSTP0          (1 << 0)                /=
+* WKUP Pin Polarity for Fast Startup */
+> +#define                AT91_PMC_FSTP1          (1 << 1)                /=
+* Security Module Polarity for Fast Startup */
+> +#define                AT91_PMC_FSTP2          (1 << 2)                /=
+* PIOBU0 Pin Polarity for Fast Startup */
+> +#define                AT91_PMC_FSTP3          (1 << 3)                /=
+* PIOBU1 Pin Polarity for Fast Startup */
+> +#define                AT91_PMC_FSTP4          (1 << 4)                /=
+* PIOBU2 Pin Polarity for Fast Startup */
+> +#define                AT91_PMC_FSTP5          (1 << 5)                /=
+* PIOBU3 Pin Polarity for Fast Startup */
+> +#define                AT91_PMC_FSTP6          (1 << 6)                /=
+* PIOBU4 Pin Polarity for Fast Startup */
+> +#define                AT91_PMC_FSTP7          (1 << 7)                /=
+* PIOBU5 Pin Polarity for Fast Startup */
+> +#define                AT91_PMC_FSTP8          (1 << 8)                /=
+* PIOBU6 Pin Polarity for Fast Startup */
+> +#define                AT91_PMC_FSTP9          (1 << 9)                /=
+* PIOBU7 Pin Polarity for Fast Startup */
+> +#define                AT91_PMC_FSTP10         (1 << 10)               /=
+* GMAC Wake-up On LAN Polarity for Fast Startup */
+> +
+>  #define AT91_PMC_PLLICPR       0x80                    /* PLL Charge Pum=
+p Current Register */
+>  =
+
+>  #define AT91_PMC_PROT          0xe4                    /* Write Protect =
+Mode Register [some SAM9] */
+> @@ -177,6 +211,8 @@ extern void __iomem *at91_pmc_base;
+>  #define                AT91_PMC_WPVS           (0x1  <<  0)            /=
+* Write Protect Violation Status */
+>  #define                AT91_PMC_WPVSRC         (0xffff  <<  8)         /=
+* Write Protect Violation Source */
+>  =
+
+> +#define AT91_PMC_VERSION       0xfc
+> +
+>  #define AT91_PMC_PCER1         0x100                   /* Peripheral Clo=
+ck Enable Register 1 [SAMA5 only]*/
+>  #define AT91_PMC_PCDR1         0x104                   /* Peripheral Clo=
+ck Enable Register 1 */
+>  #define AT91_PMC_PCSR1         0x108                   /* Peripheral Clo=
+ck Enable Register 1 */
+> -- =
+
+> 1.7.9.5
+>=20
