@@ -1,34 +1,53 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 8 Oct 2015 14:58:40 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, sjoerd.simons@collabora.co.uk
-Subject: Re: [PATCH 1/3] clk: add flag for clocks that need to be enabled on
- rate changes
-Message-ID: <20151008215840.GJ26883@codeaurora.org>
-References: <1929669.AsgMSusdJb@phil>
- <3137165.kmu68gRS44@diego>
+Return-Path: <B48286@freescale.com>
+From: Zhiqiang Hou <B48286@freescale.com>
+To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
+	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+CC: <mark.rutland@arm.com>, <linux@roeck-us.net>, <wsa@the-dreams.de>,
+	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <Mingkai.Hu@freescale.com>,
+	<Shaohui.Xie@freescale.com>, <scottwood@freescale.com>,
+	<bhupesh.sharma@freescale.com>, <Wenbin.Song@freescale.com>,
+	<B48286@freescale.com>
+Subject: [PATCH V4 2/6] watchdog: Add support for Freescale Layerscape platforms
+Date: Thu, 15 Oct 2015 20:12:57 +0800
+Message-ID: <1444911181-21696-2-git-send-email-B48286@freescale.com>
+In-Reply-To: <1444911181-21696-1-git-send-email-B48286@freescale.com>
+References: <1444911181-21696-1-git-send-email-B48286@freescale.com>
+Return-Path: B48286@freescale.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <3137165.kmu68gRS44@diego>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/02, Heiko Stübner wrote:
-> Hi,
-> 
-> any comment on these 3 patches?
-> 
+From: Shaohui Xie <Shaohui.Xie@freescale.com>
 
-Dong has a similar problem, but those patches conflate this with
-enabling parent clocks during clk_disable_unused() which makes no
-sense to me. So I'm ok with the requirement that we turn clocks
-on to change rates, but I wonder if in this case we need to turn
-on the clock that's changing rates itself, or if we just need to
-turn on the parent and/or future parent of the clock during the
-rate switch. Care to elaborate on that?
+Modify watchdog/Kconfig file to support Layerscape platforms.
 
+Signed-off-by: Shaohui Xie <Shaohui.Xie@freescale.com>
+Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
+Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+---
+This patch has been acked in V3 by Guenter Roeck [linux@roeck-us.net].
+
+V4: V3 V2
+ - No change.
+
+ drivers/watchdog/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index 79e1aa1..448dbaf 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -446,7 +446,7 @@ config MAX63XX_WATCHDOG
+ 
+ config IMX2_WDT
+ 	tristate "IMX2+ Watchdog"
+-	depends on ARCH_MXC
++	depends on ARCH_MXC || ARCH_LAYERSCAPE
+ 	select REGMAP_MMIO
+ 	select WATCHDOG_CORE
+ 	help
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.0.27.g96db324
