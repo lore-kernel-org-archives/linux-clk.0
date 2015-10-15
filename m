@@ -1,156 +1,78 @@
-Return-Path: <wens@csie.org>
+Return-Path: <jonmason@broadcom.com>
+From: Jon Mason <jonmason@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
+	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
+	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>, Arnd
+ Bergmann <arnd@arndb.de>
+Subject: [PATCH v3 01/10] ARM: cygnus: fix link failures when CONFIG_COMMON_CLK_IPROC is disabled
+Date: Thu, 15 Oct 2015 15:48:24 -0400
+Message-ID: <1444938513-10758-2-git-send-email-jonmason@broadcom.com>
+In-Reply-To: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
+References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGb2v67ovfL_VVq2184+k0uMMnPKPqHMAb4rTn5hBGfPv1h1Lg@mail.gmail.com>
-References: <1444682610-21482-1-git-send-email-maxime.ripard@free-electrons.com>
- <1444682610-21482-3-git-send-email-maxime.ripard@free-electrons.com> <CAGb2v67ovfL_VVq2184+k0uMMnPKPqHMAb4rTn5hBGfPv1h1Lg@mail.gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 14 Oct 2015 17:14:57 +0800
-Message-ID: <CAGb2v67bVA=qjM0C3OD8LFtd7uB9CZnNxkhyOYehW6PSujPCpw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/5] clk: sunxi: Add a driver for the PLL2
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Hans de Goede <hdegoede@redhat.com>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Oct 14, 2015 at 5:10 PM, Chen-Yu Tsai <wens@csie.org> wrote:
-> On Tue, Oct 13, 2015 at 4:43 AM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
->> The PLL2 on the A10 and later SoCs is the clock used for all the audio
->> related operations.
->>
->> This clock has a somewhat complex output tree, with three outputs (2X, 4=
-X
->> and 8X) with a fixed divider from the base clock, and an output (1X) wit=
-h a
->> post divider.
->>
->> However, we can simplify things since the 1X divider can be fixed, and w=
-e
->> end up by having a base clock not exposed to any device (or at least
->> directly, since the 4X output doesn't have any divider), and 4 fixed
->> divider clocks that will be exposed.
->>
->> This clock seems to have been introduced, at least in this form, in the
->> revision B of the A10, but we don't have any information on the clock us=
-ed
->> on the revision A.
->>
->> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
->> ---
->>  drivers/clk/sunxi/Makefile                 |   1 +
->>  drivers/clk/sunxi/clk-a10-pll2.c           | 188 ++++++++++++++++++++++=
-+++++++
->>  include/dt-bindings/clock/sun4i-a10-pll2.h |  53 ++++++++
->>  3 files changed, 242 insertions(+)
->>  create mode 100644 drivers/clk/sunxi/clk-a10-pll2.c
->>  create mode 100644 include/dt-bindings/clock/sun4i-a10-pll2.h
->>
->> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
->> index f5a35b82cc1a..c658a18ba7cb 100644
->> --- a/drivers/clk/sunxi/Makefile
->> +++ b/drivers/clk/sunxi/Makefile
->> @@ -4,6 +4,7 @@
->>
->>  obj-y +=3D clk-sunxi.o clk-factors.o
->>  obj-y +=3D clk-a10-hosc.o
->> +obj-y +=3D clk-a10-pll2.o
->>  obj-y +=3D clk-a20-gmac.o
->>  obj-y +=3D clk-mod0.o
->>  obj-y +=3D clk-simple-gates.o
->> diff --git a/drivers/clk/sunxi/clk-a10-pll2.c b/drivers/clk/sunxi/clk-a1=
-0-pll2.c
->> new file mode 100644
->> index 000000000000..b877cc6c3622
->> --- /dev/null
->> +++ b/drivers/clk/sunxi/clk-a10-pll2.c
->> @@ -0,0 +1,188 @@
->> +/*
->> + * Copyright 2013 Emilio L=C3=B3pez
->> + * Emilio L=C3=B3pez <emilio@elopez.com.ar>
->> + *
->> + * Copyright 2015 Maxime Ripard
->> + * Maxime Ripard <maxime.ripard@free-electrons.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License as published by
->> + * the Free Software Foundation; either version 2 of the License, or
->> + * (at your option) any later version.
->> + *
->> + * This program is distributed in the hope that it will be useful,
->> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> + * GNU General Public License for more details.
->> + */
->> +
->> +#include <linux/clk-provider.h>
->> +#include <linux/of.h>
->> +#include <linux/of_address.h>
->> +#include <linux/slab.h>
->> +
->> +#include <dt-bindings/clock/sun4i-a10-pll2.h>
->> +
->> +#define SUN4I_PLL2_ENABLE              31
->> +
->> +#define SUN4I_PLL2_PRE_DIV_SHIFT       0
->> +#define SUN4I_PLL2_PRE_DIV_WIDTH       5
->> +#define SUN4I_PLL2_PRE_DIV_MASK                GENMASK(SUN4I_PLL2_PRE_D=
-IV_WIDTH, 0)
->> +
->> +#define SUN4I_PLL2_N_SHIFT             8
->> +#define SUN4I_PLL2_N_WIDTH             7
->> +#define SUN4I_PLL2_N_MASK              GENMASK(SUN4I_PLL2_N_WIDTH, 0)
->> +
->> +#define SUN4I_PLL2_POST_DIV_SHIFT      26
->> +#define SUN4I_PLL2_POST_DIV_WIDTH      4
->> +#define SUN4I_PLL2_POST_DIV_MASK       GENMASK(SUN4I_PLL2_POST_DIV_WIDT=
-H, 0)
->> +
->> +#define SUN4I_PLL2_POST_DIV_VALUE      4
->> +
->> +#define SUN4I_PLL2_OUTPUTS             4
->> +
->> +static DEFINE_SPINLOCK(sun4i_a10_pll2_lock);
->> +
->> +static void __init sun4i_pll2_setup(struct device_node *node)
->> +{
->> +       const char *clk_name =3D node->name, *parent;
->> +       struct clk **clks, *base_clk, *prediv_clk;
->> +       struct clk_onecell_data *clk_data;
->> +       struct clk_multiplier *mult;
->> +       struct clk_gate *gate;
->> +       void __iomem *reg;
->> +       u32 val;
->> +
->> +       reg =3D of_io_request_and_map(node, 0, of_node_full_name(node));
->> +       if (IS_ERR(reg))
->> +               return;
->> +
->> +       clk_data =3D kzalloc(sizeof(*clk_data), GFP_KERNEL);
->> +       if (!clk_data)
->> +               goto err_unmap;
->> +
->> +       clks =3D kcalloc(SUN4I_PLL2_OUTPUTS, sizeof(struct clk *), GFP_K=
-ERNEL);
->> +       if (!clks)
->> +               goto err_free_data;
->> +
->> +       parent =3D of_clk_get_parent_name(node, 0);
->> +       prediv_clk =3D clk_register_divider(NULL, "pll2-prediv",
->> +                                         parent, 0, reg,
->> +                                         SUN4I_PLL2_PRE_DIV_SHIFT,
->> +                                         SUN4I_PLL2_PRE_DIV_WIDTH,
->> +                                         CLK_DIVIDER_ONE_BASED |
->> +                                         CLK_DIVIDER_ALLOW_ZERO,
->
-> According to the A10 manual, the prediv is zero based, but allows zero.
-> So you should just have CLK_DIVIDER_ALLOW_ZERO here.
+From: Arnd Bergmann <arnd@arndb.de>
 
-My bad, I misread the description in clk-provider.h. Your code is indeed
-correct.
+When CONFIG_CYGNUS is set but CONFIG_COMMON_CLK_IPROC is disabled, the
+following link failures are caused:
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+drivers/built-in.o: In function `cygnus_armpll_init':
+:(.init.text+0x1d290): undefined reference to `iproc_armpll_setup'
+drivers/built-in.o: In function `cygnus_genpll_clk_init':
+:(.init.text+0x1d2c4): undefined reference to `iproc_pll_clk_setup'
+drivers/built-in.o: In function `cygnus_lcpll0_clk_init':
+:(.init.text+0x1d304): undefined reference to `iproc_pll_clk_setup'
+drivers/built-in.o: In function `cygnus_mipipll_clk_init':
+:(.init.text+0x1d344): undefined reference to `iproc_pll_clk_setup'
+drivers/built-in.o: In function `cygnus_asiu_init':
+:(.init.text+0x1d370): undefined reference to `iproc_asiu_setup'
 
-> The rest looks good.
+It is fixed it by always selecting COMMON_CLK_IPROC from
+ARCH_BCM_IPROC, and making COMMON_CLK_IPROC a silent option (thus
+preventing it from being erroneously disabled by a user).
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Jon Mason <jonmason@broadcom.com>
+---
+ arch/arm/mach-bcm/Kconfig | 2 +-
+ drivers/clk/bcm/Kconfig   | 4 +---
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
+index 1319c3c..84bd265 100644
+--- a/arch/arm/mach-bcm/Kconfig
++++ b/arch/arm/mach-bcm/Kconfig
+@@ -14,7 +14,7 @@ config ARCH_BCM_IPROC
+ 	select HAVE_ARM_SCU if SMP
+ 	select HAVE_ARM_TWD if SMP
+ 	select ARM_GLOBAL_TIMER
+-
++	select COMMON_CLK_IPROC
+ 	select CLKSRC_MMIO
+ 	select ARCH_REQUIRE_GPIOLIB
+ 	select ARM_AMBA
+diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+index 88febf5..46ee475 100644
+--- a/drivers/clk/bcm/Kconfig
++++ b/drivers/clk/bcm/Kconfig
+@@ -9,10 +9,8 @@ config CLK_BCM_KONA
+ 	  in the BCM281xx and BCM21664 families.
+ 
+ config COMMON_CLK_IPROC
+-	bool "Broadcom iProc clock support"
+-	depends on ARCH_BCM_IPROC
++	bool
+ 	depends on COMMON_CLK
+-	default ARCH_BCM_IPROC
+ 	help
+ 	  Enable common clock framework support for Broadcom SoCs
+ 	  based on the iProc architecture
+-- 
+1.9.1
