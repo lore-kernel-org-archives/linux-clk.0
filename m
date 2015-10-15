@@ -1,34 +1,175 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 19 Oct 2015 14:49:11 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Ray Jui <rjui@broadcom.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-	Simran Rai <ssimran@broadcom.com>
-Subject: Re: [PATCH] clk: iproc: Fix PLL output frequency calculation
-Message-ID: <20151019214911.GB19782@codeaurora.org>
-References: <1445035458-29340-1-git-send-email-rjui@broadcom.com>
- <1445035458-29340-2-git-send-email-rjui@broadcom.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-bn1on0136.outbound.protection.outlook.com ([157.56.110.136]:33478
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1753384AbbJOHDl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Thu, 15 Oct 2015 03:03:41 -0400
+From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+To: <arnd@arndb.de>, <mark.rutland@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
+	<linux-clk@vger.kernel.org>, <olof@lixom.net>
+CC: <bhupesh.linux@gmail.com>, <will.deacon@arm.com>,
+	<Catalin.Marinas@arm.com>, <bhupesh.sharma@freescale.com>,
+	<LeoLi@freescale.com>, <scottwood@freescale.com>,
+	<stuart.yoder@freescale.com>
+Subject: [PATCH v3 00/12] ARM64: Update support for FSL's LS2085A SoC
+Date: Thu, 15 Oct 2015 12:17:40 +0530
+Message-ID: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1445035458-29340-2-git-send-email-rjui@broadcom.com>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/16, Ray Jui wrote:
-> From: Simran Rai <ssimran@broadcom.com>
-> 
-> This patch affects the clocks that use fractional ndivider in their
-> PLL output frequency calculation. Instead of 2^20 divide factor, the
-> clock's ndiv integer shift was used. Fixed the bug by replacing ndiv
-> integer shift with 2^20 factor.
-> 
-> Signed-off-by: Simran Rai <ssimran@broadcom.com>
-> Signed-off-by: Ray Jui <rjui@broadcom.com>
-> Reviewed-by: Scott Branden <sbranden@broadcom.com>
-> ---
+This is the v3 of the patchset which updates the support for FSL's LS2085A SoC
+which is now being renamed to LS2080A (and is based on ARMv8 architecture).
 
-Did you want any Fixes: tag so this goes back to stable?
+Here is a description of what this patchset tries to achieve:
+(v2 can be viewed here: http://www.spinics.net/lists/arm-kernel/msg442910.html)
+
+  - Patch 1:
+    Freescale will be a supporting a host of ARMv8 based SoCs which
+    will be based on a similar overall SoC architecture. So, this patch
+    converts the existing infrastructure to use the generic convention
+    ARCH_LAYERSCAPE.
+    
+    	Changes since v2:
+	-----------------
+	Minor rewording of Kconfig help text.
+
+  - Patch 2:
+    Freescale is renaming the LS2085A SoC to LS2080A - this patch handles the
+    same.
+    Further details of the LS2080a based platforms can be seen here:
+    http://www.freescale.com/products/arm-processors/qoriq-arm-processors/qoriq-ls2080a-40a-multicore-communications-processors:LS2080A?fsrch=1&sr=1&pageNum=1
+    
+	Changes since v2:
+	-----------------
+	No changes
+
+  - Patch 3:
+    Adds DTS binding documentation for Freescale's LS2080A QDS and RDB boards
+    
+	Changes since v2:
+	-----------------
+	No changes
+
+  - Patch 4:
+    This patch moves the FSL board specific bindings out of 'powerpc/' folder
+    as the same board components can be used for ARM based SoCs as well.
+	
+	Changes since v2:
+	-----------------
+	Minor rewording of commit log. Moved 'interrupt' property to
+	optional as this is not 'Required' for Qixis FPGA controllers.
+
+  - Patch 5:
+    Updates PCIe devicetree binding documentation for LS2080A.
+	
+	Changes since v2:
+	-----------------
+	Minor rewording of commit log.
+
+  - Patch 6:
+    Updates the GPIO devicetree binding documentation for LS2080A.
+	
+	Changes since v2:
+	-----------------
+	Used fsl,qoriq-gpio compatible string for Layerscape SoCs.
+    
+  - Patch 7:
+    Updates the DWC3 USB bindings to provide reference to generic USB
+    bindings.
+	
+	Changes since v2:
+	-----------------
+	New patch
+  
+  - Patch 8:
+    Updates the support of various peripherals (PMU, SMMU, SATA, PCI, SPI)
+    present on FSL LS2080a SoC in the SoC DTSI.
+	
+	Changes since v2:
+	-----------------
+	Added device nodes under the /soc node as suggested by Rob.
+	Removed WDT node.
+
+  - Patch 9:
+    Updates the DTS LS2080a simulator platform to reflect the new
+    peripherals added in the DTSI.
+	
+	Changes since v2:
+	-----------------
+	Added serial alias
+
+  - Patch 10:
+    Remove text about writing to Free Software Foundation
+	
+	Changes since v2:
+	-----------------
+	New patch
+
+ - Patch 11:
+    Adds new DTS files for LS2080a based QDS and RDB boards.
+	
+	Changes since v2:
+	-----------------
+	Added serial alias
+ 
+  - Patch 12:
+    Adds build support for LS2080a QDS and RDB board DTS files.
+	
+	Changes since v2:
+	-----------------
+	No changes
+
+Rebasing details:
+-----------------
+- Rebased against linux-next git tree, branch: master
+
+- Rebased against Scott's latest v3 of QorIQ clk fixes, which can be
+  viewed here:
+  http://linux.freescale.net/patchwork/patch/59805/
+
+Bhupesh Sharma (12):
+  arm64: Use generic Layerscape SoC family naming
+  arm64: Rename FSL LS2085A SoC support code to LS2080A
+  Documentation: DT: Add entry for FSL LS2080A QDS and RDB boards
+  Documentation/dts: Move FSL board-specific bindings out of /powerpc
+  doc/bindings: Update Layerscape PCIe devicetree binding to be more
+    flexible
+  doc/bindings: Update GPIO devicetree binding documentation for
+    LS2080A
+  doc: DTS: Update DWC3 binding to provide reference to generic
+    bindings
+  dts/ls2080a: Update DTSI to add support of various peripherals
+  dts/ls2080a: Update Simulator DTS to add support of various
+    peripherals
+  dts/ls2080a: Remove text about writing to Free Software Foundation
+  dts/ls2080a: Add DTS support for LS2080a QDS & RDB boards
+  dts/Makefile: Add build support for LS2080a QDS & RDB board DTS
+
+ Documentation/devicetree/bindings/arm/fsl.txt      |   16 +-
+ .../{powerpc/fsl/board.txt => board/fsl-board.txt} |   14 +-
+ .../devicetree/bindings/gpio/gpio-mpc8xxx.txt      |    4 +-
+ .../devicetree/bindings/pci/layerscape-pci.txt     |   15 +-
+ Documentation/devicetree/bindings/usb/dwc3.txt     |    3 +-
+ arch/arm64/Kconfig.platforms                       |    6 +-
+ arch/arm64/boot/dts/freescale/Makefile             |    2 +-
+ arch/arm64/boot/dts/freescale/fsl-ls2080a-qds.dts  |  204 ++++++++
+ .../{fsl-ls2085a-simu.dts => fsl-ls2080a-rdb.dts}  |  131 ++++-
+ .../{fsl-ls2085a-simu.dts => fsl-ls2080a-simu.dts} |   69 ++-
+ arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi     |  504 ++++++++++++++++++++
+ arch/arm64/boot/dts/freescale/fsl-ls2085a.dtsi     |  163 -------
+ arch/arm64/configs/defconfig                       |    2 +-
+ 13 files changed, 929 insertions(+), 204 deletions(-)
+ rename Documentation/devicetree/bindings/{powerpc/fsl/board.txt => board/fsl-board.txt} (90%)
+ create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls2080a-qds.dts
+ copy arch/arm64/boot/dts/freescale/{fsl-ls2085a-simu.dts => fsl-ls2080a-rdb.dts} (51%)
+ rename arch/arm64/boot/dts/freescale/{fsl-ls2085a-simu.dts => fsl-ls2080a-simu.dts} (74%)
+ create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+ delete mode 100644 arch/arm64/boot/dts/freescale/fsl-ls2085a.dtsi
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
+
+
