@@ -1,60 +1,55 @@
-Return-Path: <anholt@eliezer.anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Mike Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v5] clk: bcm2835: Add support for programming the audio domain clocks.
-In-Reply-To: <20151008005532.GB26883@codeaurora.org>
-References: <1444181140-3570-1-git-send-email-eric@anholt.net> <20151008005532.GB26883@codeaurora.org>
-Date: Thu, 08 Oct 2015 16:44:31 -0700
-Message-ID: <87h9m17wo0.fsf@eliezer.anholt.net>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 15 Oct 2015 12:26:26 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
+	Russell King <linux@arm.linux.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 09/13] clk: versatile-icst: add device tree support
+Message-ID: <20151015192626.GO4558@codeaurora.org>
+References: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
+ <1444916813-31024-10-git-send-email-linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1444916813-31024-10-git-send-email-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
+On 10/15, Linus Walleij wrote:
+> +
+> +	if (of_device_is_compatible(np, "arm,syscon-icst525"))
+> +		icst_desc.params = &icst525_params;
+> +	else if (of_device_is_compatible(np, "arm,syscon-icst307"))
+> +		icst_desc.params = &icst307_params;
 
-Stephen Boyd <sboyd@codeaurora.org> writes:
+I guess if we add anymore here we should use an of_device_id
+array instead.
 
-> On 10/06, Eric Anholt wrote:
->> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
->> index dd295e4..b4d4421 100644
->> --- a/drivers/clk/bcm/clk-bcm2835.c
->> +++ b/drivers/clk/bcm/clk-bcm2835.c
->> @@ -17,10 +17,273 @@
->>  #include <linux/clk-provider.h>
->>  #include <linux/clkdev.h>
->>  #include <linux/clk/bcm2835.h>
->> +#include <linux/module.h>
->>  #include <linux/of.h>
->> +#include <linux/of_address.h>
->> +#include <linux/platform_device.h>
->> +#include <dt-bindings/clock/bcm2835.h>
->
-> Please include slab.h for the kzalloc usage
+> +	else {
+> +		pr_info("unknown ICST clock %s\n", name);
 
-OK, I think I've done all of your feedback now, as well as Stephen
-Warren's.
+pr_warn? pr_err?
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+> +		return;
+> +	}
+> +
+> +	/* Parent clock name is not the same as node parent */
+> +	parent_name = of_clk_get_parent_name(np, 0);
+> +
+> +	regclk = icst_clk_setup(NULL, &icst_desc, name, parent_name, map);
+> +	if (IS_ERR(regclk)) {
+> +		pr_err("error setting up syscon ICST clock %s\n", name);
+> +		return;
+> +	}
+> +	of_clk_add_provider(np, of_clk_src_simple_get, regclk);
+> +	pr_info("registered syscon ICST clock %s\n", name);
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+debug print? Please remove debug noise.
 
-iQIcBAEBCgAGBQJWFv/fAAoJELXWKTbR/J7oL7sQALQoj96aMWkxSouBnDrm8qdy
-Z6kMVu/djxZPQTf48FRckXfTeaV7rNslxnJV0uWCxhTf8JPKkXvIUMvod46QpEnE
-FKAhuRwG9NQubiw8+ilHv9TIbRwEjtQ8qGO1/2mB+mizHtu3pLum3tgAoqYBUqcn
-M4EA24IUhX2OBFVaNb1pycglrHEFmRn8vTQCZWYMmR45SUXQK2Jgc28LPhLURX7O
-Mh3dhS/HwLeeYQSMHZvDsCoq3ixRyU7KuG2kSyKbkHWigLobkStEcI1Tb9rFQvPP
-zVBmPX8XuiQIK9kZx8Qu8Qiab+GutT7mcofO1QIdTLqQoGv2IsW5xPeVrTjTWNyA
-7cdVPAiVqx2HY6VeIafAKbYHSHsFYMpz+ypOFfESzVfXMtbyErYpUYGmxf5SazVY
-D1CsWavwg2XkXwOyqbQns8WagLs6S4acrSSjwu4qPa/I8cwLDlV+vyxbdnycDtL9
-LydyOtIivb/B95oPvJ7RFC2IeOylu2LYdWQhH/+QZ9cHM9XgXiVHnxRh9oTe3RBe
-sypdBgaCijK3DB842l+7EcA6MynN1IMt0WP5pWvMVExhufrgJckKjU37kyyTwW5H
-RIEz73KC9+k9wBrYkqd9UOIDT/XAOP21dmvypRTqktMAsUmdXjOVebno42iuVfke
-H9T2v8y47Jw4Sz8VSC71
-=wiOp
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
