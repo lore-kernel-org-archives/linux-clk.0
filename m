@@ -1,84 +1,59 @@
-Return-Path: <linux+mturquette=baylibre.com@arm.linux.org.uk>
-Date: Mon, 19 Oct 2015 10:52:14 +0100
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>,
-	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org
-Subject: Re: [GIT PULL] On-demand device probing
-Message-ID: <20151019095214.GW32532@n2100.arm.linux.org.uk>
-References: <561E1378.6000906@collabora.com>
- <20151017065750.GA18607@kroah.com>
- <20151018192931.GY14956@sirena.org.uk>
- <20151018193757.GA9147@kroah.com>
- <20151018195330.GB14956@sirena.org.uk>
- <1445247881.53393.146.camel@infradead.org>
+Return-Path: <linux@roeck-us.net>
+Subject: Re: [PATCH V4 2/6] watchdog: Add support for Freescale Layerscape
+ platforms
+To: Zhiqiang Hou <B48286@freescale.com>,
+ linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+ will.deacon@arm.com, linux-i2c@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <1444911181-21696-1-git-send-email-B48286@freescale.com>
+ <1444911181-21696-2-git-send-email-B48286@freescale.com>
+Cc: mark.rutland@arm.com, wsa@the-dreams.de, wim@iguana.be, corbet@lwn.net,
+ mturquette@baylibre.com, sboyd@codeaurora.org, Mingkai.Hu@freescale.com,
+ Shaohui.Xie@freescale.com, scottwood@freescale.com,
+ bhupesh.sharma@freescale.com, Wenbin.Song@freescale.com
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <561FB74F.5000302@roeck-us.net>
+Date: Thu, 15 Oct 2015 07:25:19 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1445247881.53393.146.camel@infradead.org>
-Sender: Russell King - ARM Linux <linux@arm.linux.org.uk>
+In-Reply-To: <1444911181-21696-2-git-send-email-B48286@freescale.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Oct 19, 2015 at 10:44:41AM +0100, David Woodhouse wrote:
-> On Sun, 2015-10-18 at 20:53 +0100, Mark Brown wrote:
-> > On Sun, Oct 18, 2015 at 12:37:57PM -0700, Greg Kroah-Hartman wrote:
-> > > On Sun, Oct 18, 2015 at 08:29:31PM +0100, Mark Brown wrote:
-> > > > On Fri, Oct 16, 2015 at 11:57:50PM -0700, Greg Kroah-Hartman wrote:
-> > 
-> > > > > I can't see adding calls like this all over the tree just to solve a
-> > > > > bus-specific problem, you are adding of_* calls where they aren't
-> > > > > needed, or wanted, at all.
-> > 
-> > > > This isn't bus specific, I'm not sure what makes you say that?
-> > 
-> > > You are making it bus-specific by putting these calls all over the tree
-> > > in different bus subsystems semi-randomly for all I can determine.
-> > 
-> > Do you mean firmware rather than bus here?  I think that's the confusion
-> > I have...
-> 
-> Certainly, if it literally is adding of_* calls then that would seem to
-> be gratuitously firmware-specific. Nothing should be using those these
-> days; any new code should be using the generic device property APIs
-> (except in special cases).
+On 10/15/2015 05:12 AM, Zhiqiang Hou wrote:
+> From: Shaohui Xie <Shaohui.Xie@freescale.com>
+>
+> Modify watchdog/Kconfig file to support Layerscape platforms.
+>
+> Signed-off-by: Shaohui Xie <Shaohui.Xie@freescale.com>
+> Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
+> Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+> ---
+> This patch has been acked in V3 by Guenter Roeck [linux@roeck-us.net].
+>
+Here it is again, but if there is no change, please just add the Ack
+to subsequent versions of the patch.
 
-I asked Linus Walleij about that with the fwnode_get_named_gpiod() stuff,
-and Linus didn't seem to know how this should be used.
+Acked-by: Guenter Roeck <linux@roeck-us.net>
 
-It doesn't help that dev->fwnode is not initialised, but dev->of_node
-is.  Are we supposed to grope around in dev->of_node for the embedded
-fwnode instead of using dev->fwnode?
 
-At the moment, at least to me, fwnode looks like some kind of
-experimental half-baked thing rather than a real usable solution.
-
--- 
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+> V4: V3 V2
+>   - No change.
+>
+>   drivers/watchdog/Kconfig | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> index 79e1aa1..448dbaf 100644
+> --- a/drivers/watchdog/Kconfig
+> +++ b/drivers/watchdog/Kconfig
+> @@ -446,7 +446,7 @@ config MAX63XX_WATCHDOG
+>
+>   config IMX2_WDT
+>   	tristate "IMX2+ Watchdog"
+> -	depends on ARCH_MXC
+> +	depends on ARCH_MXC || ARCH_LAYERSCAPE
+>   	select REGMAP_MMIO
+>   	select WATCHDOG_CORE
+>   	help
+>
