@@ -1,46 +1,88 @@
-Return-Path: <yingjoe.chen@mediatek.com>
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring
-	<robh+dt@kernel.org>
-CC: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner
-	<tglx@linutronix.de>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
-	<mturquette@baylibre.com>, James Liao <jamesjj.liao@mediatek.com>,
-	<devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Catalin Marinas
-	<catalin.marinas@arm.com>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Olof Johansson <olof@lixom.net>, <srv_heupstream@mediatek.com>,
-	<linux-arm-kernel@lists.infradead.org>, Daniel Kurtz <djkurtz@chromium.org>,
-	<linux-clk@vger.kernel.org>, Yingjoe Chen <yingjoe.chen@mediatek.com>,
-	<erin.lo@mediatek.com>
-Subject: [PATCH v4 2/3] arm64: mediatek: enable MTK_TIMER
-Date: Fri, 2 Oct 2015 23:05:18 +0800
-Message-ID: <1443798319-45744-3-git-send-email-yingjoe.chen@mediatek.com>
-In-Reply-To: <1443798319-45744-1-git-send-email-yingjoe.chen@mediatek.com>
-References: <1443798319-45744-1-git-send-email-yingjoe.chen@mediatek.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 15 Oct 2015 12:23:25 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
+	Russell King <linux@arm.linux.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 08/13] clk: add ARM syscon ICST device tree bindings
+Message-ID: <20151015192325.GN4558@codeaurora.org>
+References: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
+ <1444916813-31024-9-git-send-email-linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yingjoe.chen@mediatek.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1444916813-31024-9-git-send-email-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable MTK_TIMER for MediaTek plaform, which will be used as
-tick broadcast device and schedule clock.
+On 10/15, Linus Walleij wrote:
+> diff --git a/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt b/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
+> new file mode 100644
+> index 000000000000..19eb3aa765c7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
+> @@ -0,0 +1,40 @@
+> +ARM System Controller ICST clocks
+> +
+> +The ICS525 and ICS307 oscillators are produced by Integrated Devices
+> +Technology (IDT). ARM integrated these oscillators deeply into their
+> +reference designs by adding special control registers that manage such
+> +oscillators to their system controllers.
+> +
+> +The ARM system controller contains logic to serialized and initialize
 
-Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
----
- arch/arm64/Kconfig.platforms | 1 +
- 1 file changed, 1 insertion(+)
+serialize ?
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 23800a1..8176455 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -42,6 +42,7 @@ config ARCH_MEDIATEK
- 	bool "Mediatek MT65xx & MT81xx ARMv8 SoC"
- 	select ARM_GIC
- 	select PINCTRL
-+	select MTK_TIMER
- 	help
- 	  Support for Mediatek MT65xx & MT81xx ARMv8 SoCs
- 
+> +an ICST clock request after a write to the 32 bit register at an offset
+> +into the system controller. Further, to even be able to alter one of
+
+Furthermore?
+
+> +these frequencies, the system controller must first be unlocked by
+> +writing a special token to another offset in the system controller.
+
+Sounds like a great design!
+
+> +
+> +The ICST oscillator must be provided inside a system controller node.
+> +
+> +Required properties:
+> +- lock-offset: the offset address into the system controller where the
+> +  unlocking register is located
+> +- vco-offset: the offset address into the system controller where the
+> +  ICST control register is located (even 32 bit address)
+
+Is there any reason why we don't use a reg property for this?
+
+> +- compatible: must be one of "arm,syscon-icst525" or "arm,syscon-icst307"
+> +- #clock-cells: must be <0>
+> +- clocks: parent clock, since the ICST needs a parent clock to derive its
+> +  frequency from, this attribute is compulsory.
+> +
+> +Example:
+> +
+> +syscon: syscon@10000000 {
+> +	compatible = "syscon";
+> +	reg = <0x10000000 0x1000>;
+> +
+> +	oscclk0: osc0@0c {
+> +		compatible = "arm,syscon-icst307";
+> +		#clock-cells = <0>;
+> +		lock-offset = <0x20>;
+> +		vco-offset = <0x0C>;
+
+lowercase the C?
+
+> +		clocks = <&xtal24mhz>;
+> +	};
+> +	(...)
+> +};
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
