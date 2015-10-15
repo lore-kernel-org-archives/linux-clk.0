@@ -1,98 +1,115 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Thu, 8 Oct 2015 19:13:02 +0800
-From: Jisheng Zhang <jszhang@marvell.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: <sebastian.hesselbarth@gmail.com>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <mark.rutland@arm.com>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/5] dt-bindings: add binding for marvell berlin4ct SoC
-Message-ID: <20151008191302.6d6d636b@xhacker>
-In-Reply-To: <20151001225027.GT19319@codeaurora.org>
-References: <1442931156-5877-1-git-send-email-jszhang@marvell.com>
-	<1442931156-5877-5-git-send-email-jszhang@marvell.com>
-	<20151001225027.GT19319@codeaurora.org>
+Return-Path: <rjui@broadcom.com>
+Subject: Re: [PATCH v3 08/10] clk: ns2: add clock support for Broadcom
+ Northstar 2 SoC
+To: Jon Mason <jonmason@broadcom.com>, Scott Branden <sbranden@broadcom.com>
+References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
+ <1444938513-10758-9-git-send-email-jonmason@broadcom.com>
+ <56200F39.1060102@broadcom.com> <562012A8.8050707@broadcom.com>
+ <562014C9.5070708@broadcom.com> <20151015211025.GP32089@broadcom.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>, "Hauke
+ Mehrtens" <hauke@hauke-m.de>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
+From: Ray Jui <rjui@broadcom.com>
+Message-ID: <56201766.9020206@broadcom.com>
+Date: Thu, 15 Oct 2015 14:15:18 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20151015211025.GP32089@broadcom.com>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: rjui@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
 
-On Thu, 1 Oct 2015 15:50:27 -0700
-Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-> On 09/22, Jisheng Zhang wrote:
-> > +This binding uses the common clock binding[1].
-> > +
-> > +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> > +
-> > +The berlin4ct clock subsystem generates and supplies clock to various
-> > +controllers within the berlin4ct SoC. The berlin4ct contains 3 clock controller
-> > +blocks: pll, gateclk, berlin-clk.
-> > +
-> > +Required Properties:
-> > +
-> > +- compatible: should be one of the following.
-> > +  - "marvell,berlin-pll" - pll compatible
-> > +  - "marvell,berlin4ct-clk" - berlin clk compatible
-> > +  - "marvell,berlin4ct-gateclk" - gateclk compatible
-> > +- reg: physical base address of the clock controller and length of memory mapped
-> > +  region. For pll, the second reg defines the bypass register base address and
-> > +  length of memory mapped region.
-> > +- #clock-cells: for pll should 0, for gateclk and berlin clk should be 1.
-> > +- #bypass-shift: the bypass bit in bypass register.
-> > +
-> > +Example:
-> > +
-> > +syspll: syspll {
-> > +	compatible = "marvell,berlin-pll";
-> > +	reg = <0xea0200 0x14>, <0xea0710 4>;
-> > +	#clock-cells = <0>;
-> > +	clocks = <&osc>;
-> > +	bypass-shift = /bits/ 8 <0>;
-> > +};
-> > +
-> > +clk: clk {
-> > +	compatible = "marvell,berlin4ct-clk";
-> > +	reg = <0xea0720 0x144>;
-> > +	#clock-cells = <1>;
-> > +	clocks = <&syspll>;
-> > +};
+On 10/15/2015 2:10 PM, Jon Mason wrote:
+> On Thu, Oct 15, 2015 at 02:04:09PM -0700, Scott Branden wrote:
+>> Hi Ray,
+>>
+>> Comment at near end.
+>>
+>> On 15-10-15 01:55 PM, Ray Jui wrote:
+>>>
+>>>
+>>> On 10/15/2015 1:40 PM, Scott Branden wrote:
+>>>> We need some sort of kconfig option to differentiate NS2 clock driver
+>>> >from being pulled in all the time.
+>>>>
+>>>> On 15-10-15 12:48 PM, Jon Mason wrote:
+>>>>> The Broadcom Northstar 2 SoC is architected under the iProc
+>>>>> architecture. It has the following PLLs: GENPLL SCR, GENPLL SW,
+>>>>> LCPLL DDR, LCPLL Ports, all derived from an onboard crystal.
+>>>>>
+>>>>> Signed-off-by: Jon Mason <jonmason@broadcom.com>
+>>>>> ---
+>>>>>   drivers/clk/Makefile                |   2 +-
+>>>>>   drivers/clk/bcm/Makefile            |   1 +
+>>>>>   drivers/clk/bcm/clk-ns2.c           | 288
+>>>>> ++++++++++++++++++++++++++++++++++++
+>>>>>   include/dt-bindings/clock/bcm-ns2.h |  72 +++++++++
+>>>>>   4 files changed, 362 insertions(+), 1 deletion(-)
+>>>>>   create mode 100644 drivers/clk/bcm/clk-ns2.c
+>>>>>   create mode 100644 include/dt-bindings/clock/bcm-ns2.h
+>>>>>
+>>>>> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+>>>>> index d08b3e5..6124bd3 100644
+>>>>> --- a/drivers/clk/Makefile
+>>>>> +++ b/drivers/clk/Makefile
+>>>>> @@ -47,7 +47,7 @@ obj-$(CONFIG_COMMON_CLK_WM831X)        += clk-wm831x.o
+>>>>>   obj-$(CONFIG_COMMON_CLK_XGENE)        += clk-xgene.o
+>>>>>   obj-$(CONFIG_COMMON_CLK_PWM)        += clk-pwm.o
+>>>>>   obj-$(CONFIG_COMMON_CLK_AT91)        += at91/
+>>>>> -obj-$(CONFIG_ARCH_BCM)            += bcm/
+>>>>> +obj-y                    += bcm/
+>>>>>   obj-$(CONFIG_ARCH_BERLIN)        += berlin/
+>>>>>   obj-$(CONFIG_ARCH_HISI)            += hisilicon/
+>>>>>   obj-$(CONFIG_ARCH_MXC)            += imx/
+>>>>> diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+>>>>> index e258b28..2d1cbc5 100644
+>>>>> --- a/drivers/clk/bcm/Makefile
+>>>>> +++ b/drivers/clk/bcm/Makefile
+>>>>> @@ -3,6 +3,7 @@ obj-$(CONFIG_CLK_BCM_KONA)    += clk-kona-setup.o
+>>>>>   obj-$(CONFIG_CLK_BCM_KONA)    += clk-bcm281xx.o
+>>>>>   obj-$(CONFIG_CLK_BCM_KONA)    += clk-bcm21664.o
+>>>>>   obj-$(CONFIG_COMMON_CLK_IPROC)    += clk-iproc-armpll.o
+>>>>> clk-iproc-pll.o clk-iproc-asiu.o
+>>>>> +obj-$(CONFIG_COMMON_CLK_IPROC)    += clk-ns2.o
+>>>>
+>>>> NS2 code is dragged in for all IPROC SoCs.  We need a config option for
+>>>> NS2 (CONFIG_ARCH_BCM_NS2) to avoid this (if Arnd allows this for ARMv8
+>>>> processors... ?).
+>>>>
+>>>> You can see below ARMv7 processors don't have this problem.
+>>>>
+>>>
+>>> The arm64 maintainers (Catalin, Mark, and etc.) stated they only want
+>>> one ARCH options per chip family.
+>>>
+>>>> If not we need to add CONFIG_CLK_NS2.
+>>>
+>>> If using CONFIG_CLK_NS2, how is it going to be enabled/selected?
+>>
+>> Since CONFIG_ARCH_BCM_NS2 isn't "allowed" to be introduced we will
+>> need to create and select a CONFIG_CLK_BCM_NS2 in the defconfig
+>> instead.
 > 
-> Is there one clock controller at 0xea0000 of size 0x1000? We've
+> Is this better than the binary becoming slightly bigger?  I thought
+> the extra complexity was worse than having an unused chunk of clk code
+> (and Kona is already doing the same thing above).  I believe Ray was
+> in agreement with me during the internal review of this code.
+> 
+> Thanks,
+> Jon
+> 
 
-there's no clock controller at 0xea0000 with so big size. In BG4CT, we have
-the following different kind of plls/clks
+Yes, I'm okay with leaving it as it is. I even prefer changing the
+current Makefile to make all iProc based core clock drivers and SoC
+specific clock tables under CONFIG_COMMON_CLK_IPROC, which is what some
+of the other vendors do.
 
-1. cpupll/syspll/mempll: the same IP, the pll register is put with the user
-together, plus one shared bypass control register. For example: mempll register
-is put with DDR controller registers together. cpupll, syspll and mempll share
-the same bypass register: 0xea0710. 
-
-2. gateclks: the clk can only be enabled or disabled, the control bits are put
-into one(or two) register(s)
-
-3. clks: can be disabled/enabled, change the divider, etc.. all these clks
-registers are put together. In this register space, some space may not be used.
-
-
-[PATCH 5/5] shows the layout of the clk/pll registers
-
-> been trying to push people towards using the device model and
-> writing drivers with probe instead of using CLK_OF_DECLARE() for
-
-Is there any existing clk drivers switched to this type. I'll grep and
-take that for an example.
-
-> their platform clocks. From the looks of this binding, we're
-> splitting up the different types of clocks into their own nodes
-> and then registering them with CLK_OF_DECLARE.
-
-Could you please kindly give advice about how to avoid the splitting?
-
-Thanks a lot for review,
-Jisheng
+>>>
+>>> Ray
+>>>
+>>
+>> Regards,
+>>  Scott
