@@ -1,102 +1,53 @@
-Return-Path: <k.kozlowski.k@gmail.com>
-Return-Path: <k.kozlowski.k@gmail.com>
-Sender: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
-Subject: Re: [PATCH v3 2/5] mfd: sec: Add support for S2MPS15 PMIC
-To: Lee Jones <lee.jones@linaro.org>
-References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
- <1445863883-5187-3-git-send-email-alim.akhtar@samsung.com>
- <20151026143411.GL597@x1> <563021AF.6030100@samsung.com>
- <20151028084609.GG5828@x1>
-Cc: k.kozlowski.k@gmail.com, Alim Akhtar <alim.akhtar@samsung.com>,
- broonie@kernel.org, mturquette@baylibre.com,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org,
- Thomas Abraham <thomas.ab@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-ID: <5630D12C.2030008@samsung.com>
-Date: Wed, 28 Oct 2015 22:44:12 +0900
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-bl2on0133.outbound.protection.outlook.com ([65.55.169.133]:1680
+	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1754518AbbJOHEQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Thu, 15 Oct 2015 03:04:16 -0400
+From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+To: <arnd@arndb.de>, <mark.rutland@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
+	<linux-clk@vger.kernel.org>, <olof@lixom.net>
+CC: <bhupesh.linux@gmail.com>, <will.deacon@arm.com>,
+	<Catalin.Marinas@arm.com>, <bhupesh.sharma@freescale.com>,
+	<LeoLi@freescale.com>, <scottwood@freescale.com>,
+	<stuart.yoder@freescale.com>, Liu Gang <Gang.Liu@freescale.com>
+Subject: [PATCH v3 06/12] doc/bindings: Update GPIO devicetree binding documentation for LS2080A
+Date: Thu, 15 Oct 2015 12:17:46 +0530
+Message-ID: <1444891672-32117-7-git-send-email-bhupesh.sharma@freescale.com>
+In-Reply-To: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
+References: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
 MIME-Version: 1.0
-In-Reply-To: <20151028084609.GG5828@x1>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-W dniu 28.10.2015 o 17:46, Lee Jones pisze:
-> On Wed, 28 Oct 2015, Krzysztof Kozlowski wrote:
-> 
->> On 26.10.2015 23:34, Lee Jones wrote:
->>> On Mon, 26 Oct 2015, Alim Akhtar wrote:
->>>
->>>> From: Thomas Abraham <thomas.ab@samsung.com>
->>>>
->>>> Add support for S2MPS15 PMIC which is similar to S2MPS11 PMIC. The S2MPS15
->>>> PMIC supports 27 LDO regulators, 10 buck regulators, RTC, three 32.768KHz
->>>> clock outputs and battery charger. This patch adds initial support for
->>>> LDO and buck regulators of S2MPS15 device.
->>>>
->>>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
->>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->>>> [Alim: Added s2mps15_devs like rtc and clk and related changes]
->>>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>> ---
->>>>  drivers/mfd/sec-core.c              |   31 +++++++
->>>>  drivers/mfd/sec-irq.c               |    8 ++
->>>>  include/linux/mfd/samsung/core.h    |    1 +
->>>>  include/linux/mfd/samsung/s2mps15.h |  158 +++++++++++++++++++++++++++++++++++
->>>>  4 files changed, 198 insertions(+)
->>>>  create mode 100644 include/linux/mfd/samsung/s2mps15.h
->>>
->>> I replied to the previous set and won't be reviewing this one until
->>> all of the open points are solved.
->>
->> The naming and compatibles used by the driver are confusing but how it
->> was at beginning. Beside the confusion, the names are correct:
->>
->> 1. Main mfd driver:
->>  - compatible: samsung,s2mps1*-pmic
->>  - driver name: sec_pmic
->>
->> 2. Regulator driver:
->>  - no compatible (because it always searches for "regulators" subnode of
->> its parent... that is the convention/legacy behaviour)
->>  - driver name: s2mps1*-pmic
->>
->> I hope that explains your concerns.
-> 
-> It explains *why*, but doesn't ease my concerns in any way.
-> 
-> Unfortunately I've only just realised the disparity we have between
-> MFD and the Regulator subsystem, which is annoying because it's now
-> almost impossible to rectify.  
-> 
-> We should have taken one of two views.  Either a) The MFD is the PMIC
-> device which encompasses regulator control.  In which case the MFD
-> and it's corresponding compatible string would be named *-pmic and the
-> regulator driver would be called *-regulator. Or b) The MFD could be
-> considered a normal MFD and be named after the model number, then the
-> regulator 'could' be named *-pmic.
-> 
-> However, with reference to b), how much other Power Management does
-> the regulator driver do besides control regulators?  I suspect not
-> much.  Therefore my preference would be for a).  My second choice
-> would be a mixuture of the two where nothing gets named *-pmic.  The
-> last option on my list would be the current situation where we seem to
-> be calling both the MFD (PMIC) itself and the Regulator driver
-> *-pmic, which is not good.
+Update the FSL, GPIO binding documentation to add support
+for GPIO controller found on Freescale's LS2080A platform.
 
-Starting from the description of device-family. This is called "Power
-Management IC" but it is rather a "Power Deliver/Distribute IC". There
-isn't any logic inside except enable/disable/configure/set low power
-mode for regulators.
+Signed-off-by: Liu Gang <Gang.Liu@freescale.com>
+Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+---
+ .../devicetree/bindings/gpio/gpio-mpc8xxx.txt      |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-However in the same time the IC comes (always) with:
- - 32kHz clocks,
- - RTC,
- - backup battery charger (no driver for it),
- - reset for SoC,
- - shutdown on thermal alert (also no driver for this control).
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
+index 805ddcd..f2455c5 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
+@@ -1,9 +1,9 @@
+-* Freescale MPC512x/MPC8xxx GPIO controller
++* Freescale MPC512x/MPC8xxx/Layerscape GPIO controller
+ 
+ Required properties:
+ - compatible : Should be "fsl,<soc>-gpio"
+   The following <soc>s are known to be supported:
+-    mpc5121, mpc5125, mpc8349, mpc8572, mpc8610, pq3, qoriq
++    mpc5121, mpc5125, mpc8349, mpc8572, mpc8610, pq3, qoriq.
+ - reg : Address and length of the register set for the device
+ - interrupts : Should be the port interrupt shared by all 32 pins.
+ - #gpio-cells : Should be two.  The first cell is the pin number and
+-- 
+1.7.9.5
 
-The solution a) seems fine to me. Make sense and it looks entirely
-backward compatible - only driver names will be modified.
 
-Best regards,
-Krzysztof
