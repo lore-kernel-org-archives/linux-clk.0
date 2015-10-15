@@ -1,120 +1,422 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH] clk: ti: dflt: fix enable_reg validity check
-To: Suman Anna <s-anna@ti.com>
-References: <1443566267-50225-1-git-send-email-s-anna@ti.com>
-CC: Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <560E25D0.5080902@ti.com>
-Date: Fri, 2 Oct 2015 09:36:00 +0300
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-bn1bbn0103.outbound.protection.outlook.com ([157.56.111.103]:27429
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1753528AbbJOHTv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Thu, 15 Oct 2015 03:19:51 -0400
+From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+To: <arnd@arndb.de>, <mark.rutland@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
+	<linux-clk@vger.kernel.org>, <olof@lixom.net>
+CC: <bhupesh.linux@gmail.com>, <will.deacon@arm.com>,
+	<Catalin.Marinas@arm.com>, <bhupesh.sharma@freescale.com>,
+	<LeoLi@freescale.com>, <scottwood@freescale.com>,
+	<stuart.yoder@freescale.com>
+Subject: [PATCH v3 11/12] dts/ls2080a: Add DTS support for LS2080a QDS & RDB boards
+Date: Thu, 15 Oct 2015 12:17:51 +0530
+Message-ID: <1444891672-32117-12-git-send-email-bhupesh.sharma@freescale.com>
+In-Reply-To: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
+References: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
 MIME-Version: 1.0
-In-Reply-To: <1443566267-50225-1-git-send-email-s-anna@ti.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/30/2015 01:37 AM, Suman Anna wrote:
-> The default clock enabling functions for TI clocks -
-> omap2_dflt_clk_enable() and omap2_dflt_clk_disable() perform a
-> NULL check for the enable_reg field of the clk_hw_omap structure.
-> This enable_reg field however is merely a combination of the index
-> of the master IP module, and the offset from the master IP module's
-> base address. A value of 0 is perfectly valid, and the current error
-> checking will fail in these cases. The issue was found when trying
-> to enable the iva2_ck clock on OMAP3 platforms.
->
-> So, switch the check to use IS_ERR. This correction is similar to the
-> logic used in commit c807dbedb5e5 ("clk: ti: fix ti_clk_get_reg_addr
-> error handling").
->
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> ---
-> Hi Tero,
->
-> Patch done against 4.3-rc3. There are couple of similar checks in
-> drivers/clk/ti/clockdomain.c, but those seem to be ok. This is
-> a non-urgent fix, as there are currently no active users of
-> iva2_ck in the kernel (the MMU node is disabled in DT atm).
->
-> Boot tested on OMAP3 Beagle-XM, AM437x GP EVM, AM335x BeagleBone
-> Black, OMAP4 Panda, OMAP5 uEVM and DRA7 Beagle-X15 boards.
->
-> regards
-> Suman
->
-> Following is the error log from a unit test of the IVA MMU on OMAP3 using
-> some additional patch to enable the DTS node,
->
-> [   86.626342] omap_iommu_test_init: iommu_test_init entered
-> [   86.632080] omap_iommu_test iommu_test: Enabling IOMMU...
-> [   86.647460] omap_iommu_test iommu_test: testing IOMMU 5d000000.mmu
-> [   86.654815] omap2_dflt_clk_enable: iva2_ck missing enable_reg
-> [   86.680938] ------------[ cut here ]------------
-> [   86.685821] WARNING: CPU: 0 PID: 910 at drivers/clk/clk.c:675 clk_disable+0x28/0x34()
-> [   86.694091] Modules linked in: iommu_dt_test(O+)
-> [   86.698974] CPU: 0 PID: 910 Comm: insmod Tainted: G           O    4.3.0-rc3-00008-g61458979cbbe #40
-> [   86.708618] Hardware name: Generic OMAP36xx (Flattened Device Tree)
-> [   86.715240] [<c0017b44>] (unwind_backtrace) from [<c0013eac>] (show_stack+0x10/0x14)
-> [   86.723419] [<c0013eac>] (show_stack) from [<c0342a04>] (dump_stack+0x84/0x9c)
-> [   86.731048] [<c0342a04>] (dump_stack) from [<c003e924>] (warn_slowpath_common+0x78/0xb4)
-> [   86.739593] [<c003e924>] (warn_slowpath_common) from [<c003e9fc>] (warn_slowpath_null+0x1c/0x24)
-> [   86.748870] [<c003e9fc>] (warn_slowpath_null) from [<c04fe4c8>] (clk_disable+0x28/0x34)
-> [   86.757324] [<c04fe4c8>] (clk_disable) from [<c0027da0>] (_disable_clocks+0x18/0x68)
-> [   86.765502] [<c0027da0>] (_disable_clocks) from [<c0029cd0>] (omap_hwmod_deassert_hardreset+0xc8/0x180)
-> [   86.775421] [<c0029cd0>] (omap_hwmod_deassert_hardreset) from [<c002a7cc>] (omap_device_deassert_hardreset+0x34/
-> 0x54)
-> [   86.786621] [<c002a7cc>] (omap_device_deassert_hardreset) from [<c03d91f4>] (omap_iommu_attach_dev+0xbc/0x1fc)
-> [   86.797180] [<c03d91f4>] (omap_iommu_attach_dev) from [<c03d5f9c>] (__iommu_attach_device+0x1c/0x80)
-> [   86.806854] [<c03d5f9c>] (__iommu_attach_device) from [<bf000150>] (omap_iommu_test_probe+0xd0/0x21c [iommu_dt_t
-> est])
-> [   86.818054] [<bf000150>] (omap_iommu_test_probe [iommu_dt_test]) from [<c03e03ec>] (platform_drv_probe+0x44/0xa4
-> )
-> [   86.828857] [<c03e03ec>] (platform_drv_probe) from [<c03de9b0>] (driver_probe_device+0x1f4/0x2f0)
-> [   86.838195] [<c03de9b0>] (driver_probe_device) from [<c03deb40>] (__driver_attach+0x94/0x98)
-> [   86.847045] [<c03deb40>] (__driver_attach) from [<c03dce34>] (bus_for_each_dev+0x6c/0xa0)
-> [   86.855651] [<c03dce34>] (bus_for_each_dev) from [<c03de0d4>] (bus_add_driver+0x18c/0x214)
-> [   86.864349] [<c03de0d4>] (bus_add_driver) from [<c03df494>] (driver_register+0x78/0xf8)
-> [   86.872772] [<c03df494>] (driver_register) from [<c0009804>] (do_one_initcall+0x80/0x1dc)
-> [   86.881378] [<c0009804>] (do_one_initcall) from [<c0118b60>] (do_init_module+0x5c/0x1d0)
-> [   86.889892] [<c0118b60>] (do_init_module) from [<c00cabf4>] (load_module+0x1818/0x1f70)
-> [   86.898315] [<c00cabf4>] (load_module) from [<c00cb428>] (SyS_init_module+0xdc/0x14c)
-> [   86.906555] [<c00cb428>] (SyS_init_module) from [<c000f6e0>] (ret_fast_syscall+0x0/0x1c)
-> [   86.915039] ---[ end trace 49b229a4289ab8b2 ]---
-> [   86.919891] omap_hwmod: mmu_iva: failed to hardreset
-> [   86.925384] omap-iommu 5d000000.mmu: deassert_reset failed: -16
-> [   86.931640] omap_iommu_test iommu_test: can't get omap iommu: -16
-> [   86.938140] omap_iommu_test iommu_test: can't attach iommu device: -16
-> [   86.945068] omap_iommu_test_init failed, ret = -16
->
->   drivers/clk/ti/clkt_dflt.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+This patch adds the LS2080a DTS files for QDS and RDB boards
+which support the LS2080a SoC.
 
-Queued for 4.3-rc-fixes thanks, as I have other patches to push for that.
+Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+Signed-off-by: Scott Wood <scottwood@freescale.com>
+---
+ arch/arm64/boot/dts/freescale/fsl-ls2080a-qds.dts |  204 +++++++++++++++++++++
+ arch/arm64/boot/dts/freescale/fsl-ls2080a-rdb.dts |  166 +++++++++++++++++
+ 2 files changed, 370 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls2080a-qds.dts
+ create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls2080a-rdb.dts
 
--Tero
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls2080a-qds.dts
+new file mode 100644
+index 0000000..4cb996d
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a-qds.dts
+@@ -0,0 +1,204 @@
++/*
++ * Device Tree file for Freescale LS2080a QDS Board.
++ *
++ * Copyright (C) 2015, Freescale Semiconductor
++ *
++ * Bhupesh Sharma <bhupesh.sharma@freescale.com>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPLv2 or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This library is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This library is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++/dts-v1/;
++
++/include/ "fsl-ls2080a.dtsi"
++
++/ {
++	model = "Freescale Layerscape 2080a QDS Board";
++	compatible = "fsl,ls2080a-qds", "fsl,ls2080a";
++
++	aliases {
++		serial0 = &serial0;
++		serial1 = &serial1;
++	};
++
++};
++
++&esdhc {
++	status = "okay";
++};
++
++&ifc {
++	status = "okay";
++	#address-cells = <2>;
++	#size-cells = <1>;
++	ranges = <0x0 0x0 0x5 0x80000000 0x08000000
++		  0x2 0x0 0x5 0x30000000 0x00010000
++		  0x3 0x0 0x5 0x20000000 0x00010000>;
++
++	nor@0,0 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "cfi-flash";
++		reg = <0x0 0x0 0x8000000>;
++		bank-width = <2>;
++		device-width = <1>;
++	};
++
++	nand@2,0 {
++	     compatible = "fsl,ifc-nand";
++	     reg = <0x2 0x0 0x10000>;
++	};
++
++	cpld@3,0 {
++	     reg = <0x3 0x0 0x10000>;
++	     compatible = "fsl,ls2080aqds-fpga", "fsl,fpga-qixis";
++	};
++};
++
++&i2c0 {
++	status = "okay";
++	pca9547@77 {
++		compatible = "nxp,pca9547";
++		reg = <0x77>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		i2c@0 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x00>;
++			rtc@68 {
++				compatible = "dallas,ds3232";
++				reg = <0x68>;
++			};
++		};
++
++		i2c@2 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x02>;
++
++			ina220@40 {
++				compatible = "ti,ina220";
++				reg = <0x40>;
++				shunt-resistor = <500>;
++			};
++
++			ina220@41 {
++				compatible = "ti,ina220";
++				reg = <0x41>;
++				shunt-resistor = <1000>;
++			};
++		};
++
++		i2c@3 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x3>;
++
++			adt7481@4c {
++				compatible = "adi,adt7461";
++				reg = <0x4c>;
++			};
++		};
++	};
++};
++
++&i2c1 {
++	status = "disabled";
++};
++
++&i2c2 {
++	status = "disabled";
++};
++
++&i2c3 {
++	status = "disabled";
++};
++
++&dspi {
++	status = "okay";
++	dflash0: n25q128a {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "st,m25p80";
++		spi-max-frequency = <3000000>;
++		reg = <0>;
++	};
++	dflash1: sst25wf040b {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "st,m25p80";
++		spi-max-frequency = <3000000>;
++		reg = <1>;
++	};
++	dflash2: en25s64 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "st,m25p80";
++		spi-max-frequency = <3000000>;
++		reg = <2>;
++	};
++};
++
++&qspi {
++	status = "okay";
++	qflash0: s25fl008k {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "st,m25p80";
++		spi-max-frequency = <20000000>;
++		reg = <0>;
++	};
++};
++
++&sata0 {
++	status = "okay";
++};
++
++&sata1 {
++	status = "okay";
++};
++
++&usb0 {
++	status = "okay";
++};
++
++&usb1 {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls2080a-rdb.dts
+new file mode 100644
+index 0000000..e127f0b
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a-rdb.dts
+@@ -0,0 +1,166 @@
++/*
++ * Device Tree file for Freescale LS2080a RDB Board.
++ *
++ * Copyright (C) 2015, Freescale Semiconductor
++ *
++ * Bhupesh Sharma <bhupesh.sharma@freescale.com>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPLv2 or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This library is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This library is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++/dts-v1/;
++
++/include/ "fsl-ls2080a.dtsi"
++
++/ {
++	model = "Freescale Layerscape 2080a RDB Board";
++	compatible = "fsl,ls2080a-rdb", "fsl,ls2080a";
++
++	aliases {
++		serial0 = &serial0;
++		serial1 = &serial1;
++	};
++};
++
++&esdhc {
++	status = "okay";
++};
++
++&ifc {
++	status = "okay";
++	#address-cells = <2>;
++	#size-cells = <1>;
++	ranges = <0x0 0x0 0x5 0x80000000 0x08000000
++		  0x2 0x0 0x5 0x30000000 0x00010000
++		  0x3 0x0 0x5 0x20000000 0x00010000>;
++
++	nor@0,0 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "cfi-flash";
++		reg = <0x0 0x0 0x8000000>;
++		bank-width = <2>;
++		device-width = <1>;
++	};
++
++	nand@2,0 {
++	     compatible = "fsl,ifc-nand";
++	     reg = <0x2 0x0 0x10000>;
++	};
++
++	cpld@3,0 {
++	     reg = <0x3 0x0 0x10000>;
++	     compatible = "fsl,ls2080aqds-fpga", "fsl,fpga-qixis";
++	};
++
++};
++
++&i2c0 {
++	status = "okay";
++	pca9547@75 {
++		compatible = "nxp,pca9547";
++		reg = <0x75>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "disabled";
++		i2c@1 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x01>;
++			rtc@68 {
++				compatible = "dallas,ds3232";
++				reg = <0x68>;
++			};
++		};
++
++		i2c@3 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x3>;
++
++			adt7481@4c {
++				compatible = "adi,adt7461";
++				reg = <0x4c>;
++			};
++		};
++	};
++};
++
++&i2c1 {
++	status = "disabled";
++};
++
++&i2c2 {
++	status = "disabled";
++};
++
++&i2c3 {
++	status = "disabled";
++};
++
++&dspi {
++	status = "okay";
++	dflash0: n25q512a {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "st,m25p80";
++		spi-max-frequency = <3000000>;
++		reg = <0>;
++	};
++};
++
++&qspi {
++	status = "disabled";
++};
++
++&sata0 {
++	status = "okay";
++};
++
++&sata1 {
++	status = "okay";
++};
++
++&usb0 {
++	status = "okay";
++};
++
++&usb1 {
++	status = "okay";
++};
+-- 
+1.7.9.5
 
->
-> diff --git a/drivers/clk/ti/clkt_dflt.c b/drivers/clk/ti/clkt_dflt.c
-> index 90d7d8a21c49..1ddc288fce4e 100644
-> --- a/drivers/clk/ti/clkt_dflt.c
-> +++ b/drivers/clk/ti/clkt_dflt.c
-> @@ -222,7 +222,7 @@ int omap2_dflt_clk_enable(struct clk_hw *hw)
->   		}
->   	}
->
-> -	if (unlikely(!clk->enable_reg)) {
-> +	if (unlikely(IS_ERR(clk->enable_reg))) {
->   		pr_err("%s: %s missing enable_reg\n", __func__,
->   		       clk_hw_get_name(hw));
->   		ret = -EINVAL;
-> @@ -264,7 +264,7 @@ void omap2_dflt_clk_disable(struct clk_hw *hw)
->   	u32 v;
->
->   	clk = to_clk_hw_omap(hw);
-> -	if (!clk->enable_reg) {
-> +	if (IS_ERR(clk->enable_reg)) {
->   		/*
->   		 * 'independent' here refers to a clock which is not
->   		 * controlled by its parent.
->
+
