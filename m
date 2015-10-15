@@ -1,208 +1,60 @@
-Return-Path: <frowand.list@gmail.com>
-Return-Path: <frowand.list@gmail.com>
-Message-ID: <56270D5B.5010902@gmail.com>
-Date: Tue, 20 Oct 2015 20:58:19 -0700
-From: Frank Rowand <frowand.list@gmail.com>
-Reply-To: frowand.list@gmail.com
+Return-Path: <jonmason@broadcom.com>
+Date: Thu, 15 Oct 2015 14:43:45 -0400
+From: Jon Mason <jonmason@broadcom.com>
+To: Scott Branden <sbranden@broadcom.com>
+CC: Arnd Bergmann <arnd@arndb.de>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Florian
+ Fainelli" <f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui
+	<rjui@broadcom.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
+Subject: Re: [PATCH v2 7/7] clk: ns2: add clock support for Broadcom
+ Northstar 2 SoC
+Message-ID: <20151015184344.GK32089@broadcom.com>
+References: <1444770485-11210-1-git-send-email-jonmason@broadcom.com>
+ <6427519.eIBEvCNlle@wuerfel>
+ <561EB10B.40502@broadcom.com>
+ <6398606.WW44dcgQDV@wuerfel>
+ <561FF223.2050807@broadcom.com>
 MIME-Version: 1.0
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-CC: Geert Uytterhoeven <geert@linux-m68k.org>,
- Tomeu Vizoso <tomeu.vizoso@collabora.com>,
- Mark Brown <broonie@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Alexandre Courbot <gnurou@gmail.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- David Airlie <airlied@linux.ie>,
- =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom@nvidia.com>,
- Stephen Warren <swarren@wwwdotorg.org>,
- Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>,
- Kishon Vijay Abraham I <kishon@ti.com>,
- Sebastian Reichel <sre@kernel.org>,
- Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
- David Woodhouse <dwmw2@infradead.org>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Felipe Balbi <balbi@ti.com>, Jingoo Han <jingoohan1@gmail.com>,
- Lee Jones <lee.jones@linaro.org>,
- Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
- Tomi Valkeinen <tomi.valkeinen@ti.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- linux-clk <linux-clk@vger.kernel.org>,
- dmaengine@vger.kernel.org,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- Linux I2C <linux-i2c@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- Linux PWM List <linux-pwm@vger.kernel.org>,
- "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
- Linux Fbdev development list <linux-fbdev@vger.kernel.org>
-Subject: Re: Alternative approach to solve the deferred probe
-References: <20151018192931.GY14956@sirena.org.uk> <20151018193757.GA9147@kroah.com> <20151018195330.GB14956@sirena.org.uk> <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com> <20151019131821.GA32532@n2100.arm.linux.org.uk> <CAAObsKDS_+AZ26P_fHc6pvAYrQotsuoO0DEGQUWC514t3DD_jQ@mail.gmail.com> <20151019143045.GE32532@n2100.arm.linux.org.uk> <CAAObsKDWM6A98tdKHqi4fe5DBf0BmB0JeghcZDWan_PYbyshag@mail.gmail.com> <20151019153548.GM32532@n2100.arm.linux.org.uk> <CAMuHMdVv=ieYM-Nehp0qV8CEggHEeJ22j-6i_N09rRA_U=2ePw@mail.gmail.com> <20151020154656.GY32532@n2100.arm.linux.org.uk>
-In-Reply-To: <20151020154656.GY32532@n2100.arm.linux.org.uk>
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <561FF223.2050807@broadcom.com>
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/20/2015 8:46 AM, Russell King - ARM Linux wrote:
-> On Mon, Oct 19, 2015 at 06:21:40PM +0200, Geert Uytterhoeven wrote:
->> Hi Russell,
->>
->> On Mon, Oct 19, 2015 at 5:35 PM, Russell King - ARM Linux
->> <linux@arm.linux.org.uk> wrote:
->>>>> What you can do is print those devices which have failed to probe at
->>>>> late_initcall() time - possibly augmenting that with reports from
->>>>> subsystems showing what resources are not available, but that's only
->>>>> a guide, because of the "it might or might not be in a kernel module"
->>>>> problem.
->>>>
->>>> Well, adding those reports would give you a changelog similar to the
->>>> one in this series...
->>>
->>> I'm not sure about that, because what I was thinking of is adding
->>> a flag which would be set at late_initcall() time prior to running
->>> a final round of deferred device probing.
->>
->> Which round is the final round?
->> That's the one which didn't manage to bind any new devices to drivers,
->> which is something you only know _after_ the round has been run.
->>
->> So I think we need one extra round to handle this.
->>
->>> This flag would then be used in a deferred_warn() printk function
->>> which would normally be silent, but when this flag is set, it would
->>> print the reason for the deferral - and this would replace (or be
->>> added) to the subsystems and drivers which return -EPROBE_DEFER.
->>>
->>> That has the effect of hiding all the deferrals up until just before
->>> launching into userspace, which should then acomplish two things -
->>> firstly, getting rid of the rather useless deferred messages up to
->>> that point, and secondly printing the reason why the remaining
->>> deferrals are happening.
->>>
->>> That should be a small number of new lines plus a one-line change
->>> in subsystems and drivers.
->>
->> Apart from the extra round we probably can't get rid of, that sounds OK to me.
+On Thu, Oct 15, 2015 at 11:36:19AM -0700, Scott Branden wrote:
+> Jon,
 > 
-> Something like this.  I haven't put a lot of effort into it to change all
-> the places which return an -EPROBE_DEFER, and it also looks like we need
-> some helpers to report when we have only an device_node (or should that
-> be fwnode?)  See the commented out of_warn_deferred() in
-> drivers/gpio/gpiolib-of.c.  Adding this stuff in the subsystems searching
-> for resources should make debugging why things are getting deferred easier.
-> 
-> We could make driver_deferred_probe_report something that can be
-> deactivated again after the last deferred probe run, and provide the
-> user with a knob that they can turn it back on again.
-> 
-> I've tried this out on two of my platforms, including forcing
-> driver_deferred_probe_report to be enabled, and I get exactly one
-> deferred probe, so not a particularly good test.
-> 
-> The patch won't apply as-is to mainline for all files; it's based on my
-> tree which has some 360 additional patches (which seems to be about
-> normal for my tree now.)
+> Can you add this to your patchset and change COMMON_CLK_IPROC to a
+> silent option?
 
-I like the concept (I have been thinking along similar lines lately).
-But I think this might make the console messages more confusing than
-they are now.  The problem is that debug, warn, and error messages
-come from a somewhat random set of locations at the moment.  Some
-come from the driver probe routines and some come from the subsystems
-that the probe routines call.  So the patch is suppressing some
-messages, but not others.
+Sure, I'll add this (and make it silent), as well as adding the
+documentation patches back to this series (per Ray's suggestion), and
+will resend.
 
-One thing that seemed pretty obvious from the patches is that the
-current probe routines are somewhat inconsistent in terms of messages,
-and that there is room for a set of best practices for messaging.  That
-is on my long term wish list, but I'm not sure I'll ever chase after
-those windmills.
-
-A couple of specific comments below.
-
+Thanks,
+Jon
 
 > 
->  drivers/base/dd.c                       | 29 +++++++++++++++++++++++++++++
->  drivers/base/power/domain.c             |  7 +++++--
->  drivers/clk/clkdev.c                    |  9 ++++++++-
->  drivers/gpio/gpiolib-of.c               |  5 +++++
->  drivers/gpu/drm/bridge/dw_hdmi.c        |  2 +-
->  drivers/gpu/drm/exynos/exynos_drm_dsi.c |  2 +-
->  drivers/gpu/drm/imx/imx-ldb.c           |  5 +++--
->  drivers/gpu/drm/msm/dsi/dsi.c           |  2 +-
->  drivers/gpu/drm/msm/msm_drv.c           |  3 ++-
->  drivers/gpu/drm/rcar-du/rcar_du_crtc.c  |  3 ++-
->  drivers/of/irq.c                        |  5 ++++-
->  drivers/pci/host/pci-mvebu.c            |  1 +
->  drivers/pinctrl/core.c                  |  5 +++--
->  drivers/pinctrl/devicetree.c            |  4 ++--
->  drivers/regulator/core.c                |  5 +++--
->  include/linux/device.h                  |  1 +
->  16 files changed, 71 insertions(+), 17 deletions(-)
+> On 15-10-14 01:16 PM, Arnd Bergmann wrote:
+> >On Wednesday 14 October 2015 12:46:19 Scott Branden wrote:
+> >>>
+> >>>My patch fixes it by always selecting COMMON_CLK_IPROC from
+> >>>ARCH_BCM_CYGNUS. I wasn't sure whether you want COMMON_CLK_IPROC
+> >>>to still be user-selectable, so I left that in place. Normally
+> >>>I'd expect it to be a silent option though, that just gets
+> >>>implicitly enabled whenever a platform that needs it is built
+> >>>into the kernel.
+> >>COMMON_CLK_IPROC can be a silent option and selected as Arnd has done below.
+> >
+> >Ok, please do that then. If you want to apply my patch directly,
+> >you can remove that last paragraph from the description.
+> >
+> >>>Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> >>Acked-by: Scott Branden <sbranden@broadcom.com>
+> >
+> >Thanks for taking a look!
+> >
+> >	Arnd
+> >
 > 
-> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-> index be0eb4639128..bb12224f2901 100644
-> --- a/drivers/base/dd.c
-> +++ b/drivers/base/dd.c
-> @@ -129,7 +129,29 @@ void driver_deferred_probe_del(struct device *dev)
->  	mutex_unlock(&deferred_probe_mutex);
->  }
->  
-> +static bool driver_deferred_probe_report;
-> +
-> +/**
-> + * dev_warn_deferred() - report why a probe has been deferred
-> + */
-> +void dev_warn_deferred(struct device *dev, const char *fmt, ...)
-> +{
-> +	if (driver_deferred_probe_report) {
-> +		struct va_format vaf;
-> +		va_list ap;
-> +
-> +		va_start(ap, fmt);
-> +		vaf.fmt = fmt;
-> +		vaf.va = &ap;
-> +
-> +		dev_warn(dev, "deferring probe: %pV", &vaf);
-> +		va_end(ap);
-> +	}
-> +}
-> +EXPORT_SYMBOL_GPL(dev_warn_deferred);
-
-The places where dev_warn_deferred() replaces dev_dbg(), we lose the
-ability to turn on debugging and observe the driver reporting the
-specific reason the deferral is occurring. So it would be useful to
-add an "else dev_dbg()" in dev_warn_deferred() to retain that capability.
-
-> +
->  static bool driver_deferred_probe_enable = false;
-> +
->  /**
->   * driver_deferred_probe_trigger() - Kick off re-probing deferred devices
->   *
-> @@ -188,6 +210,13 @@ static int deferred_probe_initcall(void)
->  	driver_deferred_probe_trigger();
-
-Couldn't you put the "driver_deferred_probe_report = true" here?  And then
-not add another round of probes.
-
-
->  	/* Sort as many dependencies as possible before exiting initcalls */
->  	flush_workqueue(deferred_wq);
-> +
-> +	/* Now one final round, reporting any devices that remain deferred */
-> +	driver_deferred_probe_report = true;
-> +	driver_deferred_probe_trigger();
-> +	/* Sort as many dependencies as possible before exiting initcalls */
-> +	flush_workqueue(deferred_wq);
-> +
->  	return 0;
->  }
-
-< snip >
-
--Frank
