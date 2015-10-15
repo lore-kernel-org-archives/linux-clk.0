@@ -1,82 +1,188 @@
-Return-Path: <hauke@hauke-m.de>
-Subject: Re: [PATCH v3 01/10] ARM: cygnus: fix link failures when
- CONFIG_COMMON_CLK_IPROC is disabled
-To: Jon Mason <jonmason@broadcom.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
- <1444938513-10758-2-git-send-email-jonmason@broadcom.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
- Arnd Bergmann <arnd@arndb.de>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Message-ID: <562017FB.3030406@hauke-m.de>
-Date: Thu, 15 Oct 2015 23:17:47 +0200
+Return-Path: <wenyou.yang@atmel.com>
+From: Wenyou Yang <wenyou.yang@atmel.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>, Alexandre Belloni
+	<alexandre.belloni@free-electrons.com>, Jean-Christophe Plagniol-Villard
+	<plagnioj@jcrosoft.com>
+CC: Russell King <linux@arm.linux.org.uk>, Stephen Boyd
+	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, Wenyou Yang <wenyou.yang@atmel.com>
+Subject: [PATCH 1/2] ARM: at91/pm: move enter sleep code to a procedure
+Date: Thu, 15 Oct 2015 11:41:06 +0800
+Message-ID: <1444880467-18598-2-git-send-email-wenyou.yang@atmel.com>
+In-Reply-To: <1444880467-18598-1-git-send-email-wenyou.yang@atmel.com>
+References: <1444880467-18598-1-git-send-email-wenyou.yang@atmel.com>
 MIME-Version: 1.0
-In-Reply-To: <1444938513-10758-2-git-send-email-jonmason@broadcom.com>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain
+Return-Path: wenyou.yang@atmel.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/15/2015 09:48 PM, Jon Mason wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> When CONFIG_CYGNUS is set but CONFIG_COMMON_CLK_IPROC is disabled, the
-> following link failures are caused:
-> 
-> drivers/built-in.o: In function `cygnus_armpll_init':
-> :(.init.text+0x1d290): undefined reference to `iproc_armpll_setup'
-> drivers/built-in.o: In function `cygnus_genpll_clk_init':
-> :(.init.text+0x1d2c4): undefined reference to `iproc_pll_clk_setup'
-> drivers/built-in.o: In function `cygnus_lcpll0_clk_init':
-> :(.init.text+0x1d304): undefined reference to `iproc_pll_clk_setup'
-> drivers/built-in.o: In function `cygnus_mipipll_clk_init':
-> :(.init.text+0x1d344): undefined reference to `iproc_pll_clk_setup'
-> drivers/built-in.o: In function `cygnus_asiu_init':
-> :(.init.text+0x1d370): undefined reference to `iproc_asiu_setup'
-> 
-> It is fixed it by always selecting COMMON_CLK_IPROC from
-> ARCH_BCM_IPROC, and making COMMON_CLK_IPROC a silent option (thus
-> preventing it from being erroneously disabled by a user).
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Jon Mason <jonmason@broadcom.com>
-> ---
->  arch/arm/mach-bcm/Kconfig | 2 +-
->  drivers/clk/bcm/Kconfig   | 4 +---
->  2 files changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
-> index 1319c3c..84bd265 100644
-> --- a/arch/arm/mach-bcm/Kconfig
-> +++ b/arch/arm/mach-bcm/Kconfig
-> @@ -14,7 +14,7 @@ config ARCH_BCM_IPROC
->  	select HAVE_ARM_SCU if SMP
->  	select HAVE_ARM_TWD if SMP
->  	select ARM_GLOBAL_TIMER
-> -
-> +	select COMMON_CLK_IPROC
->  	select CLKSRC_MMIO
->  	select ARCH_REQUIRE_GPIOLIB
->  	select ARM_AMBA
-> diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
-> index 88febf5..46ee475 100644
-> --- a/drivers/clk/bcm/Kconfig
-> +++ b/drivers/clk/bcm/Kconfig
-> @@ -9,10 +9,8 @@ config CLK_BCM_KONA
->  	  in the BCM281xx and BCM21664 families.
->  
->  config COMMON_CLK_IPROC
-> -	bool "Broadcom iProc clock support"
-> -	depends on ARCH_BCM_IPROC
-> +	bool
->  	depends on COMMON_CLK
-> -	default ARCH_BCM_IPROC
->  	help
->  	  Enable common clock framework support for Broadcom SoCs
->  	  based on the iProc architecture
+To make the code more legible and to prepare for the ULP1 support
+in the future, move the Master clock, PLLA, MOR handling code and
+the sleep code to a separate procedure.
 
-A help text is not needed for a silent option.
+Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
+---
 
-Hauke
+ arch/arm/mach-at91/pm_suspend.S |  132 ++++++++++++++++++++-------------------
+ 1 file changed, 68 insertions(+), 64 deletions(-)
+
+diff --git a/arch/arm/mach-at91/pm_suspend.S b/arch/arm/mach-at91/pm_suspend.S
+index 0d95f48..825347b 100644
+--- a/arch/arm/mach-at91/pm_suspend.S
++++ b/arch/arm/mach-at91/pm_suspend.S
+@@ -105,77 +105,19 @@ ENTRY(at91_pm_suspend_in_sram)
+ 
+ 	ldr	r0, .pm_mode
+ 	tst	r0, #AT91_PM_SLOW_CLOCK
+-	beq	skip_disable_main_clock
++	beq	standby_mode
+ 
+-	ldr	pmc, .pmc_base
+-
+-	/* Save Master clock setting */
+-	ldr	tmp1, [pmc, #AT91_PMC_MCKR]
+-	str	tmp1, .saved_mckr
++ulp0_mode:
++	bl	at91_pm_ulp0_mode
++	b	pm_exit
+ 
+-	/*
+-	 * Set the Master clock source to slow clock
+-	 */
+-	bic	tmp1, tmp1, #AT91_PMC_CSS
+-	str	tmp1, [pmc, #AT91_PMC_MCKR]
+-
+-	wait_mckrdy
+-
+-	/* Save PLLA setting and disable it */
+-	ldr	tmp1, [pmc, #AT91_CKGR_PLLAR]
+-	str	tmp1, .saved_pllar
+-
+-	mov	tmp1, #AT91_PMC_PLLCOUNT
+-	orr	tmp1, tmp1, #(1 << 29)		/* bit 29 always set */
+-	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
+-
+-	/* Turn off the main oscillator */
+-	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
+-	bic	tmp1, tmp1, #AT91_PMC_MOSCEN
+-	orr	tmp1, tmp1, #AT91_PMC_KEY
+-	str	tmp1, [pmc, #AT91_CKGR_MOR]
+-
+-skip_disable_main_clock:
++standby_mode:
+ 	ldr	pmc, .pmc_base
+ 
+ 	/* Wait for interrupt */
+ 	at91_cpu_idle
+ 
+-	ldr	r0, .pm_mode
+-	tst	r0, #AT91_PM_SLOW_CLOCK
+-	beq	skip_enable_main_clock
+-
+-	ldr	pmc, .pmc_base
+-
+-	/* Turn on the main oscillator */
+-	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
+-	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
+-	orr	tmp1, tmp1, #AT91_PMC_KEY
+-	str	tmp1, [pmc, #AT91_CKGR_MOR]
+-
+-	wait_moscrdy
+-
+-	/* Restore PLLA setting */
+-	ldr	tmp1, .saved_pllar
+-	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
+-
+-	tst	tmp1, #(AT91_PMC_MUL &  0xff0000)
+-	bne	3f
+-	tst	tmp1, #(AT91_PMC_MUL & ~0xff0000)
+-	beq	4f
+-3:
+-	wait_pllalock
+-4:
+-
+-	/*
+-	 * Restore master clock setting
+-	 */
+-	ldr	tmp1, .saved_mckr
+-	str	tmp1, [pmc, #AT91_PMC_MCKR]
+-
+-	wait_mckrdy
+-
+-skip_enable_main_clock:
++pm_exit:
+ 	/* Exit the self-refresh mode */
+ 	mov	r0, #SRAMC_SELF_FRESH_EXIT
+ 	bl	at91_sramc_self_refresh
+@@ -309,6 +251,68 @@ exit_sramc_sf:
+ 	mov	pc, lr
+ ENDPROC(at91_sramc_self_refresh)
+ 
++/*
++ * void at91_pm_ulp0_mode(void)
++ */
++ENTRY(at91_pm_ulp0_mode)
++	ldr	pmc, .pmc_base
++
++	/* Save PMC_MCKR config */
++	ldr	tmp1, [pmc, #AT91_PMC_MCKR]
++	str	tmp1, .saved_mckr
++
++	/* Switch master clock source to slow clock */
++	bic	tmp1, tmp1, #AT91_PMC_CSS
++	str	tmp1, [pmc, #AT91_PMC_MCKR]
++
++	wait_mckrdy
++
++	/* Save PLLA config, then and disable PLLA */
++	ldr	tmp1, [pmc, #AT91_CKGR_PLLAR]
++	str	tmp1, .saved_pllar
++
++	mov	tmp1, #AT91_PMC_PLLCOUNT
++	orr	tmp1, tmp1, #(1 << 29)
++	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
++
++	/* Turn off the main oscillator */
++	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
++	bic	tmp1, tmp1, #AT91_PMC_MOSCEN
++	orr	tmp1, tmp1, #AT91_PMC_KEY
++	str	tmp1, [pmc, #AT91_CKGR_MOR]
++
++	/* Wait for interrupt */
++	at91_cpu_idle
++
++	/* Turn on the main oscillator */
++	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
++	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
++	orr	tmp1, tmp1, #AT91_PMC_KEY
++	str	tmp1, [pmc, #AT91_CKGR_MOR]
++
++	wait_moscrdy
++
++	/* Restore PLLA config */
++	ldr	tmp1, .saved_pllar
++	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
++
++	tst	tmp1, #(AT91_PMC_MUL &  0xff0000)
++	bne	1f
++	tst	tmp1, #(AT91_PMC_MUL & ~0xff0000)
++	beq	2f
++1:
++	wait_pllalock
++2:
++
++	/* Restore PMC_MCKR config */
++	ldr	tmp1, .saved_mckr
++	str	tmp1, [pmc, #AT91_PMC_MCKR]
++
++	wait_mckrdy
++
++	mov	pc, lr
++ENDPROC(at91_pm_ulp0_mode)
++
+ .pmc_base:
+ 	.word 0
+ .sramc_base:
+-- 
+1.7.9.5
