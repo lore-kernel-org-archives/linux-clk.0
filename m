@@ -1,72 +1,53 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:55306 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750781AbbJAWu3 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 1 Oct 2015 18:50:29 -0400
-Date: Thu, 1 Oct 2015 15:50:27 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jisheng Zhang <jszhang@marvell.com>
-Cc: sebastian.hesselbarth@gmail.com, catalin.marinas@arm.com,
-	will.deacon@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
-	pawel.moll@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] dt-bindings: add binding for marvell berlin4ct SoC
-Message-ID: <20151001225027.GT19319@codeaurora.org>
-References: <1442931156-5877-1-git-send-email-jszhang@marvell.com>
- <1442931156-5877-5-git-send-email-jszhang@marvell.com>
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: arm@kernel.org, Kevin Hilman <khilman@linaro.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Subject: Re: [GIT PULL] ARM: berlin: CPU clock driver for v4.4 (round 1)
+Date: Thu, 15 Oct 2015 22:43:37 +0200
+Message-ID: <6081171.fTttdr29KV@wuerfel>
+In-Reply-To: <1444935864-8606-1-git-send-email-sebastian.hesselbarth@gmail.com>
+References: <1444934667-5451-1-git-send-email-sebastian.hesselbarth@gmail.com> <1444935864-8606-1-git-send-email-sebastian.hesselbarth@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1442931156-5877-5-git-send-email-jszhang@marvell.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/22, Jisheng Zhang wrote:
-> +This binding uses the common clock binding[1].
-> +
-> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +
-> +The berlin4ct clock subsystem generates and supplies clock to various
-> +controllers within the berlin4ct SoC. The berlin4ct contains 3 clock controller
-> +blocks: pll, gateclk, berlin-clk.
-> +
-> +Required Properties:
-> +
-> +- compatible: should be one of the following.
-> +  - "marvell,berlin-pll" - pll compatible
-> +  - "marvell,berlin4ct-clk" - berlin clk compatible
-> +  - "marvell,berlin4ct-gateclk" - gateclk compatible
-> +- reg: physical base address of the clock controller and length of memory mapped
-> +  region. For pll, the second reg defines the bypass register base address and
-> +  length of memory mapped region.
-> +- #clock-cells: for pll should 0, for gateclk and berlin clk should be 1.
-> +- #bypass-shift: the bypass bit in bypass register.
-> +
-> +Example:
-> +
-> +syspll: syspll {
-> +	compatible = "marvell,berlin-pll";
-> +	reg = <0xea0200 0x14>, <0xea0710 4>;
-> +	#clock-cells = <0>;
-> +	clocks = <&osc>;
-> +	bypass-shift = /bits/ 8 <0>;
-> +};
-> +
-> +clk: clk {
-> +	compatible = "marvell,berlin4ct-clk";
-> +	reg = <0xea0720 0x144>;
-> +	#clock-cells = <1>;
-> +	clocks = <&syspll>;
-> +};
+On Thursday 15 October 2015 21:04:24 Sebastian Hesselbarth wrote:
+> this is the remaining driver changes of the broken PRs sent earlier.
+> Again, as Arnd requested this branch is based on the PR adding the
+> CPUID to the dt-binding include and drops moving the MAX_CLKS
+> define from the driver to the dt-binding include.
 
-Is there one clock controller at 0xea0000 of size 0x1000? We've
-been trying to push people towards using the device model and
-writing drivers with probe instead of using CLK_OF_DECLARE() for
-their platform clocks. From the looks of this binding, we're
-splitting up the different types of clocks into their own nodes
-and then registering them with CLK_OF_DECLARE.
++clk maintainers
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I've pulled it into next/drivers now to speed things up and given
+that it has Stephen's Ack, but I'd note that now that the dependency
+is handled correctly, this could have gone the normal path through the
+clk maintainers.
+
+Thanks,
+
+	Arnd
+
+> The following changes since commit 28c039eebaaa28def9364b9a12a30192be8b4730:
+>   ARM: berlin: dts: add CLKID_CPU for BG2Q (2015-10-15 20:31:41 +0200)
+> 
+> are available in the git repository at:
+>   git://git.infradead.org/users/hesselba/linux-berlin.git
+>   tags/berlin-new-cpuclk-for-4.4-1> 
+> for you to fetch changes up to 515f1a2027006839c08c842da919abfcc3c7ae2a:
+>   clk: berlin: add cpuclk (2015-10-15 20:55:55 +0200)
+> 
+> ----------------------------------------------------------------
+> Marvell Berlin BG2Q CPU clock driver:
+> - add BG2Q CPU clock to clk driver
+> 
+> ----------------------------------------------------------------
+> 
+> Antoine Tenart (1):
+>       clk: berlin: add cpuclk
+> 
+> Sebastian Hesselbarth (1):
+>       Merge tag 'berlin-dt-cpuclk-for-4.4-1' into berlin/cpuclk
+>  
+>  drivers/clk/berlin/bg2q.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
