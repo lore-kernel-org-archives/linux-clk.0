@@ -1,40 +1,94 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 21 Oct 2015 16:25:16 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [GIT PULL] Allwinner clock changes for 4.4
-Message-ID: <20151021232516.GM19782@codeaurora.org>
-References: <20151021195856.GA5155@lukather>
+Return-Path: <sbranden@broadcom.com>
+Subject: Re: [PATCH v3 08/10] clk: ns2: add clock support for Broadcom
+ Northstar 2 SoC
+To: Ray Jui <rjui@broadcom.com>, Jon Mason <jonmason@broadcom.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
+ <1444938513-10758-9-git-send-email-jonmason@broadcom.com>
+ <56200F39.1060102@broadcom.com> <562012A8.8050707@broadcom.com>
+CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
+	<hauke@hauke-m.de>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
+From: Scott Branden <sbranden@broadcom.com>
+Message-ID: <562014C9.5070708@broadcom.com>
+Date: Thu, 15 Oct 2015 14:04:09 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20151021195856.GA5155@lukather>
+In-Reply-To: <562012A8.8050707@broadcom.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: sbranden@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/21, Maxime Ripard wrote:
-> Hi Mike, Stephen,
-> 
-> Please pull the following patches for the next merge window.
-> 
-> Thanks!
-> Maxime
-> 
-> The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
-> 
->   Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
-> 
-> are available in the git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git tags/sunxi-clocks-for-4.4
-> 
-> for you to fetch changes up to 9b038bc58ad2658c76fd8b50bb333dfd4454573c:
-> 
->   clk: sunxi: mod1 clock support (2015-10-21 21:51:29 +0200)
-> 
+Hi Ray,
 
-Thanks. Pulled.
+Comment at near end.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On 15-10-15 01:55 PM, Ray Jui wrote:
+>
+>
+> On 10/15/2015 1:40 PM, Scott Branden wrote:
+>> We need some sort of kconfig option to differentiate NS2 clock driver
+>> from being pulled in all the time.
+>>
+>> On 15-10-15 12:48 PM, Jon Mason wrote:
+>>> The Broadcom Northstar 2 SoC is architected under the iProc
+>>> architecture. It has the following PLLs: GENPLL SCR, GENPLL SW,
+>>> LCPLL DDR, LCPLL Ports, all derived from an onboard crystal.
+>>>
+>>> Signed-off-by: Jon Mason <jonmason@broadcom.com>
+>>> ---
+>>>    drivers/clk/Makefile                |   2 +-
+>>>    drivers/clk/bcm/Makefile            |   1 +
+>>>    drivers/clk/bcm/clk-ns2.c           | 288
+>>> ++++++++++++++++++++++++++++++++++++
+>>>    include/dt-bindings/clock/bcm-ns2.h |  72 +++++++++
+>>>    4 files changed, 362 insertions(+), 1 deletion(-)
+>>>    create mode 100644 drivers/clk/bcm/clk-ns2.c
+>>>    create mode 100644 include/dt-bindings/clock/bcm-ns2.h
+>>>
+>>> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+>>> index d08b3e5..6124bd3 100644
+>>> --- a/drivers/clk/Makefile
+>>> +++ b/drivers/clk/Makefile
+>>> @@ -47,7 +47,7 @@ obj-$(CONFIG_COMMON_CLK_WM831X)        += clk-wm831x.o
+>>>    obj-$(CONFIG_COMMON_CLK_XGENE)        += clk-xgene.o
+>>>    obj-$(CONFIG_COMMON_CLK_PWM)        += clk-pwm.o
+>>>    obj-$(CONFIG_COMMON_CLK_AT91)        += at91/
+>>> -obj-$(CONFIG_ARCH_BCM)            += bcm/
+>>> +obj-y                    += bcm/
+>>>    obj-$(CONFIG_ARCH_BERLIN)        += berlin/
+>>>    obj-$(CONFIG_ARCH_HISI)            += hisilicon/
+>>>    obj-$(CONFIG_ARCH_MXC)            += imx/
+>>> diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+>>> index e258b28..2d1cbc5 100644
+>>> --- a/drivers/clk/bcm/Makefile
+>>> +++ b/drivers/clk/bcm/Makefile
+>>> @@ -3,6 +3,7 @@ obj-$(CONFIG_CLK_BCM_KONA)    += clk-kona-setup.o
+>>>    obj-$(CONFIG_CLK_BCM_KONA)    += clk-bcm281xx.o
+>>>    obj-$(CONFIG_CLK_BCM_KONA)    += clk-bcm21664.o
+>>>    obj-$(CONFIG_COMMON_CLK_IPROC)    += clk-iproc-armpll.o
+>>> clk-iproc-pll.o clk-iproc-asiu.o
+>>> +obj-$(CONFIG_COMMON_CLK_IPROC)    += clk-ns2.o
+>>
+>> NS2 code is dragged in for all IPROC SoCs.  We need a config option for
+>> NS2 (CONFIG_ARCH_BCM_NS2) to avoid this (if Arnd allows this for ARMv8
+>> processors... ?).
+>>
+>> You can see below ARMv7 processors don't have this problem.
+>>
+>
+> The arm64 maintainers (Catalin, Mark, and etc.) stated they only want
+> one ARCH options per chip family.
+>
+>> If not we need to add CONFIG_CLK_NS2.
+>
+> If using CONFIG_CLK_NS2, how is it going to be enabled/selected?
+
+Since CONFIG_ARCH_BCM_NS2 isn't "allowed" to be introduced we will need 
+to create and select a CONFIG_CLK_BCM_NS2 in the defconfig instead.
+>
+> Ray
+>
+
+Regards,
+  Scott
