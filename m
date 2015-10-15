@@ -1,52 +1,50 @@
-Return-Path: <B48286@freescale.com>
-From: Zhiqiang Hou <B48286@freescale.com>
-To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-CC: <mark.rutland@arm.com>, <linux@roeck-us.net>, <wsa@the-dreams.de>,
-	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <Mingkai.Hu@freescale.com>,
-	<Shaohui.Xie@freescale.com>, <scottwood@freescale.com>,
-	<bhupesh.sharma@freescale.com>, <Wenbin.Song@freescale.com>,
-	<B48286@freescale.com>
-Subject: [PATCH V5 2/6] watchdog: Add support for Freescale Layerscape platforms
-Date: Mon, 19 Oct 2015 19:56:10 +0800
-Message-ID: <1445255774-32887-2-git-send-email-B48286@freescale.com>
-In-Reply-To: <1445255774-32887-1-git-send-email-B48286@freescale.com>
-References: <1445255774-32887-1-git-send-email-B48286@freescale.com>
-Return-Path: B48286@freescale.com
+Return-Path: <jonmason@broadcom.com>
+Date: Thu, 15 Oct 2015 15:23:05 -0400
+From: Jon Mason <jonmason@broadcom.com>
+To: Arnd Bergmann <arnd@arndb.de>
+CC: Scott Branden <sbranden@broadcom.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Florian
+ Fainelli" <f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui
+	<rjui@broadcom.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
+Subject: Re: [PATCH v2 7/7] clk: ns2: add clock support for Broadcom
+ Northstar 2 SoC
+Message-ID: <20151015192304.GL32089@broadcom.com>
+References: <1444770485-11210-1-git-send-email-jonmason@broadcom.com>
+ <561FF223.2050807@broadcom.com>
+ <20151015184344.GK32089@broadcom.com>
+ <5092107.jzBI3Aa57c@wuerfel>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <5092107.jzBI3Aa57c@wuerfel>
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shaohui Xie <Shaohui.Xie@freescale.com>
+On Thu, Oct 15, 2015 at 08:54:34PM +0200, Arnd Bergmann wrote:
+> On Thursday 15 October 2015 14:43:45 Jon Mason wrote:
+> > On Thu, Oct 15, 2015 at 11:36:19AM -0700, Scott Branden wrote:
+> > > Jon,
+> > > 
+> > > Can you add this to your patchset and change COMMON_CLK_IPROC to a
+> > > silent option?
+> > 
+> > Sure, I'll add this (and make it silent), as well as adding the
+> > documentation patches back to this series (per Ray's suggestion), and
+> > will resend.
+> > 
+> 
+> Thanks!
+> 
+> 	Arnd
 
-Modify watchdog/Kconfig file to support Layerscape platforms.
+I'm tweaking the patch slightly.  So, I'll remove Scott's ack and let
+him re-ack if he still likes it.
 
-Signed-off-by: Shaohui Xie <Shaohui.Xie@freescale.com>
-Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
-Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
-Acked-by: Guenter Roeck <linux@roeck-us.net>
----
-V5: V4 V3 V2
- - No change.
+I moved the selection of the COMMON_CLK_IPROC to ARCH_BCM_IPROC, as
+all iProc SoCs will soon have clk drivers (and enabling it without a
+SoC driver won't hurt anything).  Also, the slient enable option is
+added.
 
- drivers/watchdog/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index 79e1aa1..448dbaf 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -446,7 +446,7 @@ config MAX63XX_WATCHDOG
- 
- config IMX2_WDT
- 	tristate "IMX2+ Watchdog"
--	depends on ARCH_MXC
-+	depends on ARCH_MXC || ARCH_LAYERSCAPE
- 	select REGMAP_MMIO
- 	select WATCHDOG_CORE
- 	help
--- 
-2.1.0.27.g96db324
+Thanks,
+Jon
