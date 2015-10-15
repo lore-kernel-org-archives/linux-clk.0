@@ -1,97 +1,55 @@
-Return-Path: <sbranden@broadcom.com>
-Subject: Re: [PATCH 2/3] clk: bcm: Add BCM63138 clock support
-To: Florian Fainelli <f.fainelli@gmail.com>, <linux-clk@vger.kernel.org>
-References: <1445621448-11894-1-git-send-email-f.fainelli@gmail.com>
- <1445621448-11894-3-git-send-email-f.fainelli@gmail.com>
-CC: <bcm-kernel-feedback-list@broadcom.com>, <devicetree@vger.kernel.org>,
-	<jonmason@broadcom.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
-	<linux@arm.linux.org.uk>, <rjui@broadcom.com>
-From: Scott Branden <sbranden@broadcom.com>
-Message-ID: <562A70D8.1090401@broadcom.com>
-Date: Fri, 23 Oct 2015 10:39:36 -0700
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 15 Oct 2015 12:28:32 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
+	Russell King <linux@arm.linux.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 09/13] clk: versatile-icst: add device tree support
+Message-ID: <20151015192832.GP4558@codeaurora.org>
+References: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
+ <1444916813-31024-10-git-send-email-linus.walleij@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <1445621448-11894-3-git-send-email-f.fainelli@gmail.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Return-Path: sbranden@broadcom.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1444916813-31024-10-git-send-email-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Florian,
-
-You should probably add COMPILE_TEST to increase compiler code coverage.
-
-On 15-10-23 10:30 AM, Florian Fainelli wrote:
-> BCM63138 has a simple clocking domain which is primarily the ARMPLL
-> clocking complex, from which the ARM (CPU), APB and AXI clocks would be
-> derived from.
->
-> Since the ARMPLL controller is entirely compatible with the iProc ARM
-> PLL, we just initialize it without additional parameters.
->
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+On 10/15, Linus Walleij wrote:
+> This adds support for the ARM syscon ICST clocks to initialized
+> directly from the device tree syscon node on ARM Integrator,
+> Versatile and RealView reference designs.
+> 
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
->   drivers/clk/bcm/Kconfig       | 10 ++++++++++
->   drivers/clk/bcm/Makefile      |  1 +
->   drivers/clk/bcm/clk-bcm63xx.c | 22 ++++++++++++++++++++++
->   3 files changed, 33 insertions(+)
->   create mode 100644 drivers/clk/bcm/clk-bcm63xx.c
->
-> diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
-> index 85260fb96b36..eb4daed6aa56 100644
-> --- a/drivers/clk/bcm/Kconfig
-> +++ b/drivers/clk/bcm/Kconfig
-> @@ -1,3 +1,13 @@
-> +config CLK_BCM_63XX
-> +	bool "Broadcom BCM63xx clock support"
-> +	depends on ARCH_BCM_63XX
-|| COMPILE_TEST
-> +	depends on COMMON_CLK
-> +	select COMMON_CLK_IPROC
-> +	default y
-> +	help
-> +	  Enable common clock framework support for Broadcom BCM63xx DSL SoCs
-> +	  based on the ARM architecture
-> +
->   config CLK_BCM_KONA
->   	bool "Broadcom Kona CCU clock support"
->   	depends on ARCH_BCM_MOBILE || COMPILE_TEST
-> diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
-> index 3fc95060d875..247c26750d8b 100644
-> --- a/drivers/clk/bcm/Makefile
-> +++ b/drivers/clk/bcm/Makefile
-> @@ -1,3 +1,4 @@
-> +obj-$(CONFIG_CLK_BCM_63XX)	+= clk-bcm63xx.o
->   obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona.o
->   obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona-setup.o
->   obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm281xx.o
-> diff --git a/drivers/clk/bcm/clk-bcm63xx.c b/drivers/clk/bcm/clk-bcm63xx.c
-> new file mode 100644
-> index 000000000000..b7e0469d0522
-> --- /dev/null
-> +++ b/drivers/clk/bcm/clk-bcm63xx.c
-> @@ -0,0 +1,22 @@
-> +/*
-> + * Copyright (C) 2015 Broadcom Corporation
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License as
-> + * published by the Free Software Foundation version 2.
-> + *
-> + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-> + * kind, whether express or implied; without even the implied warranty
-> + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +#include <linux/kernel.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/of.h>
-> +#include "clk-iproc.h"
-> +
-> +static void __init bcm63138_armpll_init(struct device_node *node)
-> +{
-> +	iproc_armpll_setup(node);
-> +}
-> +CLK_OF_DECLARE(bcm63138_armpll, "brcm,bcm63138-armpll", bcm63138_armpll_init);
->
 
-Regards,
-Scott
+Also:
+
+WARNING: please, no space before tabs
+#47: FILE: drivers/clk/versatile/clk-icst.c:221:
++^I.vd_min ^I= 8,$
+
+WARNING: please, no space before tabs
+#48: FILE: drivers/clk/versatile/clk-icst.c:222:
++^I.vd_max ^I= 263,$
+
+WARNING: please, no space before tabs
+#49: FILE: drivers/clk/versatile/clk-icst.c:223:
++^I.rd_min ^I= 3,$
+
+WARNING: please, no space before tabs
+#50: FILE: drivers/clk/versatile/clk-icst.c:224:
++^I.rd_max ^I= 65,$
+
+total: 0 errors, 4 warnings, 98 lines checked
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
