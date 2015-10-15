@@ -1,67 +1,99 @@
 Return-Path: <B48286@freescale.com>
-From: Hou Zhiqiang <B48286@freescale.com>
-To: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "catalin.marinas@arm.com"
-	<catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>
-CC: Hu Vincent <Mingkai.Hu@freescale.com>, Shaohui Xie
-	<Shaohui.Xie@freescale.com>, Scott Wood <scottwood@freescale.com>, "Sharma
- Bhupesh" <bhupesh.sharma@freescale.com>, Li Leo <LeoLi@freescale.com>,
-	"wsa@the-dreams.de" <wsa@the-dreams.de>, "wim@iguana.be" <wim@iguana.be>,
-	"corbet@lwn.net" <corbet@lwn.net>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	Wenbin Song <Wenbin.Song@freescale.com>
-Subject: RE: [PATCH V3 0/6] Add LS1043A SoC support 
-Date: Wed, 14 Oct 2015 12:02:07 +0000
-Message-ID: <CY1PR0301MB0780936EF3D2E04A1F7AF5718B3F0@CY1PR0301MB0780.namprd03.prod.outlook.com>
-References: <BN3PR0301MB1249C8F2305C3ED1723055B6843F0@BN3PR0301MB1249.namprd03.prod.outlook.com>
-In-Reply-To: <BN3PR0301MB1249C8F2305C3ED1723055B6843F0@BN3PR0301MB1249.namprd03.prod.outlook.com>
-Content-Type: text/plain; charset="us-ascii"
+From: Zhiqiang Hou <B48286@freescale.com>
+To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
+	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+CC: <mark.rutland@arm.com>, <linux@roeck-us.net>, <wsa@the-dreams.de>,
+	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <Mingkai.Hu@freescale.com>,
+	<Shaohui.Xie@freescale.com>, <scottwood@freescale.com>,
+	<bhupesh.sharma@freescale.com>, <Wenbin.Song@freescale.com>,
+	<B48286@freescale.com>
+Subject: [PATCH V4 5/6] clk: qoriq: Add ls1043a support.
+Date: Thu, 15 Oct 2015 20:13:00 +0800
+Message-ID: <1444911181-21696-5-git-send-email-B48286@freescale.com>
+In-Reply-To: <1444911181-21696-1-git-send-email-B48286@freescale.com>
+References: <1444911181-21696-1-git-send-email-B48286@freescale.com>
+Return-Path: B48286@freescale.com
 MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi all,
+From: Hou Zhiqiang <B48286@freescale.com>
 
-Sorry for my late response due to Chinese National Day holidays.
+Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+---
+This patch has been acked in V3 by Stephen Boyd [sboyd@codeaurora.org].
 
-> From: Zhiqiang Hou [mailto:B48286@freescale.com]
-> Sent: Wednesday, October 14, 2015 7:35 PM
-> To: linux-arm-kernel@lists.infradead.org; catalin.marinas@arm.com;
-> will.deacon@arm.com; linux-i2c@vger.kernel.org; linux-
-> watchdog@vger.kernel.org; linux-doc@vger.kernel.org; linux-
-> clk@vger.kernel.org; mark.rutland@arm.com
-> Cc: Hu Mingkai-B21284; Xie Shaohui-B21989; Wood Scott-B07421; Sharma
-> Bhupesh-B45370; Li Yang-Leo-R58472; wsa@the-dreams.de; wim@iguana.be;
-> corbet@lwn.net; mturquette@baylibre.com; sboyd@codeaurora.org; Song
-> Wenbin-B53747
-> Subject: [PATCH V3 0/6] Add LS1043A SoC support
->=20
-> This patchest adds support for Freescale's LS1043A SoC which is based on
-> ARMv8 architecture.
->=20
-> Some pending patches are depended on:
-> 1. The LS1043A is belong to Freescale's ARMv8 Layerscape SoC family, so
-> depends on the updating ARCH kconfig patch.
-> https://patchwork.kernel.org/patch/7120101/
->=20
-> 2. The LS1043A use the new clockgen binding updated by Scott Wood,
-> depends on the patchset:
-> https://patchwork.kernel.org/patch/7225421/
-> https://patchwork.kernel.org/patch/7225461/
-> https://patchwork.kernel.org/patch/7225431/
-> https://patchwork.kernel.org/patch/7225441/
-> https://patchwork.kernel.org/patch/7225451/
->=20
-> [PATCH V3 1/6] i2c: Add i2c support to Freescale Layerscape platforms
-> [PATCH V3 2/6] watchdog: Add support for Freescale Layerscape [PATCH V3
-> 3/6] Documentation: DT: Add entry for FSL LS1043ARDB board [PATCH V3 4/6]
-> arm64/ls1043a: add DTS for Freescale LS1043A SoC [PATCH V3 5/6] clk:
-> qoriq: Add ls1043a support.
-> [PATCH V3 6/6] dts/ls1043a: add LS1043ARDB board support
+V4: V3 V2
+ - No change.
 
-Thanks,
-Zhiqiang
+ drivers/clk/clk-qoriq.c | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 8f9c93b..b189688 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -244,6 +244,28 @@ static const struct clockgen_muxinfo clockgen2_cmux_cgb = {
+ 	},
+ };
+ 
++static const struct clockgen_muxinfo ls1043a_hwa1 = {
++	{
++		{},
++		{},
++		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV2 },
++		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV3 },
++		{},
++		{},
++		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV2 },
++		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV3 },
++	},
++};
++
++static const struct clockgen_muxinfo ls1043a_hwa2 = {
++	{
++		{},
++		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV1 },
++		{},
++		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV3 },
++	},
++};
++
+ static const struct clockgen_muxinfo t1023_hwa1 = {
+ 	{
+ 		{},
+@@ -452,6 +474,21 @@ static const struct clockgen_chipinfo chipinfo[] = {
+ 		.pll_mask = 0x03,
+ 	},
+ 	{
++		.compat = "fsl,ls1043a-clockgen",
++		.init_periph = t2080_init_periph,
++		.cmux_groups = {
++			&t1040_cmux
++		},
++		.hwaccel = {
++			&ls1043a_hwa1, &ls1043a_hwa2
++		},
++		.cmux_to_group = {
++			0, -1
++		},
++		.pll_mask = 0x07,
++		.flags = CG_PLL_8BIT,
++	},
++	{
+ 		.compat = "fsl,ls2080a-clockgen",
+ 		.cmux_groups = {
+ 			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
+@@ -1227,6 +1264,7 @@ err:
+ CLK_OF_DECLARE(qoriq_clockgen_1, "fsl,qoriq-clockgen-1.0", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_2, "fsl,qoriq-clockgen-2.0", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1021a, "fsl,ls1021a-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
+ 
+ /* Legacy nodes */
+-- 
+2.1.0.27.g96db324
