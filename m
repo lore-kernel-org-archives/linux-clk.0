@@ -1,66 +1,59 @@
-Return-Path: <k.kozlowski.k@gmail.com>
-Return-Path: <k.kozlowski.k@gmail.com>
-Sender: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
-Subject: Re: [rtc-linux] Re: [PATCH v3 5/5] drivers/rtc/rtc-s5m.c: add support
- for S2MPS15 RTC
-To: Alim Akhtar <alim.akhtar@samsung.com>,
- Alexandre Belloni <alexandre.belloni@free-electrons.com>
-References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
- <1445863883-5187-6-git-send-email-alim.akhtar@samsung.com>
- <56302514.4090407@samsung.com> <20151028015323.GZ28319@sirena.org.uk>
- <56303054.8060804@samsung.com> <56303DA3.5020306@samsung.com>
- <5630419F.1000300@samsung.com> <20151028094853.GM22331@piout.net>
- <5630A3E2.9010207@samsung.com>
-Cc: k.kozlowski.k@gmail.com, Mark Brown <broonie@kernel.org>,
- lee.jones@linaro.org, mturquette@baylibre.com,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-ID: <5630CF15.50206@samsung.com>
-Date: Wed, 28 Oct 2015 22:35:17 +0900
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+To: <arnd@arndb.de>, <mark.rutland@arm.com>,
+ <linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
+ <linux-clk@vger.kernel.org>, <olof@lixom.net>
+Subject: [PATCH v3 07/12] doc: DTS: Update DWC3 binding to provide reference
+ to generic bindings
+Date: Thu, 15 Oct 2015 12:17:47 +0530
+Message-ID: <1444891672-32117-8-git-send-email-bhupesh.sharma@freescale.com>
+In-Reply-To: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
+References: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
 MIME-Version: 1.0
-In-Reply-To: <5630A3E2.9010207@samsung.com>
-Content-Type: text/plain; charset=windows-1252
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: LeoLi@freescale.com, bhupesh.sharma@freescale.com, Catalin.Marinas@arm.com,
+ will.deacon@arm.com, stuart.yoder@freescale.com, scottwood@freescale.com,
+ bhupesh.linux@gmail.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-W dniu 28.10.2015 o 19:30, Alim Akhtar pisze:
-> Hi Alexandre,
-> 
-> On 10/28/2015 03:18 PM, Alexandre Belloni wrote:
->> On 28/10/2015 at 12:31:43 +0900, Krzysztof Kozlowski wrote :
->>> The s2mps13 clock driver added new name and compatible... which was
->>> probably totally unneeded (I missed that during review). We don't have
->>> to make this as a rule...
->>>
->>> Since we do not have any data about future workarounds and the
->>> differences then just follow Ockham's razor - use the same name and
->>> compatible.
->>>
->>
->> So you don't care about DT backward compatibility because when a
->> workaround will be needed for one of the IPs, then you will have to
->> update the old dtb to use it.
->>
->> Unless you are sure that the IP is the same, doing
->>
->> { "s2mps15-rtc",    S2MPS14X },
->>
->> is probably the best way to handle that. Note that I personally don't
->> care about the DT ABI, I'm just pointing out what may happen ;)
->>
-> Thats what my point is, anyway I am still looking into the fine prints
-> of the s2mps15 and s2mps14 user manual, now I have found at least one
-> difference in their one of the register bit, which might be a good
-> reason to keep s2mps15-rtc device.
+Since the Synopsys DWC3 controller driver inherits the generic bindings
+defined in 'usb/generic.txt', this patch tries to capture the same in
+the DWC3 binging documentation to avoid any confusion in usage of properties
+like 'dr_mode' for certain SoCs like FSL LS2080A.
 
-No, this is not a good reason. Devices may be different but from
-driver's perspective they behave the same. This means for example that
-they use the same compatible. They can use the same driver name.
+Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+---
+ Documentation/devicetree/bindings/usb/dwc3.txt |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-We have for example AHCI driver for entire range of different devices.
-Some of them are different enough that require special code. So they
-have different name and compatible. All of other use the same ahci
-driver. But devices are different...
+diff --git a/Documentation/devicetree/bindings/usb/dwc3.txt b/Documentation/devicetree/bindings/usb/dwc3.txt
+index 9ff48e0..fb2ad0a 100644
+--- a/Documentation/devicetree/bindings/usb/dwc3.txt
++++ b/Documentation/devicetree/bindings/usb/dwc3.txt
+@@ -1,6 +1,7 @@
+ synopsys DWC3 CORE
+ 
+-DWC3- USB3 CONTROLLER
++DWC3- USB3 CONTROLLER. Complies to the generic USB binding properties
++      as described in 'usb/generic.txt'
+ 
+ Required properties:
+  - compatible: must be "snps,dwc3"
+-- 
+1.7.9.5
 
-Best regards,
-Krzysztof
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
