@@ -1,41 +1,48 @@
-Return-Path: <jszhang@marvell.com>
-From: Jisheng Zhang <jszhang@marvell.com>
-To: <sebastian.hesselbarth@gmail.com>, <robh+dt@kernel.org>,
-        <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Jisheng Zhang <jszhang@marvell.com>
-Subject: [PATCH v2 3/4] clk: berlin: bg2q: remove CLK_IGNORE_UNUSED flag for sdio clk
-Date: Tue, 20 Oct 2015 19:16:46 +0800
-Message-ID: <1445339807-2351-4-git-send-email-jszhang@marvell.com>
-In-Reply-To: <1445339807-2351-1-git-send-email-jszhang@marvell.com>
-References: <1445339807-2351-1-git-send-email-jszhang@marvell.com>
+Return-Path: <sbranden@broadcom.com>
+Subject: Re: [PATCH v2 7/7] clk: ns2: add clock support for Broadcom Northstar
+ 2 SoC
+To: Arnd Bergmann <arnd@arndb.de>
+References: <1444770485-11210-1-git-send-email-jonmason@broadcom.com>
+ <6427519.eIBEvCNlle@wuerfel> <561EB10B.40502@broadcom.com>
+ <6398606.WW44dcgQDV@wuerfel>
+CC: Jon Mason <jonmason@broadcom.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Florian
+ Fainelli" <f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui
+	<rjui@broadcom.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
+From: Scott Branden <sbranden@broadcom.com>
+Message-ID: <561FF223.2050807@broadcom.com>
+Date: Thu, 15 Oct 2015 11:36:19 -0700
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <6398606.WW44dcgQDV@wuerfel>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: sbranden@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Since we have added the necessary two clks' properties in dts, we can
-remove the "sdio" clk's CLK_IGNORE_UNUSED flag now.
+Jon,
 
-Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
----
- drivers/clk/berlin/bg2q.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Can you add this to your patchset and change COMMON_CLK_IPROC to a 
+silent option?
 
-diff --git a/drivers/clk/berlin/bg2q.c b/drivers/clk/berlin/bg2q.c
-index 221f40c..243f421 100644
---- a/drivers/clk/berlin/bg2q.c
-+++ b/drivers/clk/berlin/bg2q.c
-@@ -283,7 +283,7 @@ static const struct berlin2_gate_data bg2q_gates[] __initconst = {
- 	{ "usb2",	"perif",	13 },
- 	{ "usb3",	"perif",	14 },
- 	{ "pbridge",	"perif",	15, CLK_IGNORE_UNUSED },
--	{ "sdio",	"perif",	16, CLK_IGNORE_UNUSED },
-+	{ "sdio",	"perif",	16 },
- 	{ "nfc",	"perif",	18 },
- 	{ "pcie",	"perif",	22 },
- };
--- 
-2.6.1
+On 15-10-14 01:16 PM, Arnd Bergmann wrote:
+> On Wednesday 14 October 2015 12:46:19 Scott Branden wrote:
+>>>
+>>> My patch fixes it by always selecting COMMON_CLK_IPROC from
+>>> ARCH_BCM_CYGNUS. I wasn't sure whether you want COMMON_CLK_IPROC
+>>> to still be user-selectable, so I left that in place. Normally
+>>> I'd expect it to be a silent option though, that just gets
+>>> implicitly enabled whenever a platform that needs it is built
+>>> into the kernel.
+>> COMMON_CLK_IPROC can be a silent option and selected as Arnd has done below.
+>
+> Ok, please do that then. If you want to apply my patch directly,
+> you can remove that last paragraph from the description.
+>
+>>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> Acked-by: Scott Branden <sbranden@broadcom.com>
+>
+> Thanks for taking a look!
+>
+> 	Arnd
+>
