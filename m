@@ -1,34 +1,33 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 26 Oct 2015 15:06:41 -0700
+Date: Thu, 15 Oct 2015 11:01:48 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Joachim Eastwood <manabian@gmail.com>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] clk: lpc18xx-cgu: fix potential system hang when
- disabling unused clocks
-Message-ID: <20151026220641.GI19782@codeaurora.org>
-References: <1445705724-20805-1-git-send-email-manabian@gmail.com>
- <1445705724-20805-4-git-send-email-manabian@gmail.com>
+To: Zhiqiang Hou <B48286@freescale.com>
+Cc: linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+	will.deacon@arm.com, linux-i2c@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org, mark.rutland@arm.com, linux@roeck-us.net,
+	wsa@the-dreams.de, wim@iguana.be, corbet@lwn.net,
+	mturquette@baylibre.com, Mingkai.Hu@freescale.com,
+	Shaohui.Xie@freescale.com, scottwood@freescale.com,
+	bhupesh.sharma@freescale.com, Wenbin.Song@freescale.com
+Subject: Re: [PATCH V4 5/6] clk: qoriq: Add ls1043a support.
+Message-ID: <20151015180148.GE4558@codeaurora.org>
+References: <1444911181-21696-1-git-send-email-B48286@freescale.com>
+ <1444911181-21696-5-git-send-email-B48286@freescale.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1445705724-20805-4-git-send-email-manabian@gmail.com>
+In-Reply-To: <1444911181-21696-5-git-send-email-B48286@freescale.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/24, Joachim Eastwood wrote:
-> The clock consumer (CCU) of the CGU must be able to check if a CGU
-> base clock is really running since access to the CCU registers
-> requires a running base clock. Access with a disabled base clock will
-> cause the system to hang. Fix this issue by adding code that check if
-> the parent clock is running in the is_enabled clk_ops callback. Since
-> certain clocks can be cascaded this must be added to all clock gates.
+On 10/15, Zhiqiang Hou wrote:
+> From: Hou Zhiqiang <B48286@freescale.com>
 > 
-> The hang would occur if the boot ROM or boot loader didn't setup and
-> enable the USB0 clock. Then when the clk framework tried to access
-> the CCU register it would hang the system.
-> 
-> Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+> Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
 > ---
+> This patch has been acked in V3 by Stephen Boyd [sboyd@codeaurora.org].
 
-Applied to clk-next
+Yes, please add it into the patches that you send instead of
+putting it below the --- line.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
