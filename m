@@ -1,32 +1,87 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 21 Oct 2015 17:25:24 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jon Mason <jonmason@broadcom.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [PATCH v3 09/10] clk: iproc: define Broadcom NSP iProc clock
- binding
-Message-ID: <20151022002524.GX19782@codeaurora.org>
-References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
- <1444938513-10758-10-git-send-email-jonmason@broadcom.com>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH] clk: Allow drivers to build if COMPILE_TEST is enabled
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Luis de Bethencourt <luisbg@osg.samsung.com>
+References: <1444745898-11537-1-git-send-email-javier@osg.samsung.com>
+ <20151014183831.GH26883@codeaurora.org> <561EA831.2070001@osg.samsung.com>
+ <CAJKOXPeNGiuokN-NeS068bZqpSaJNz9QvaxoSs33855GY3_N_g@mail.gmail.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+ linux-clk@vger.kernel.org
+Message-ID: <561F5189.3070809@osg.samsung.com>
+Date: Thu, 15 Oct 2015 09:11:05 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1444938513-10758-10-git-send-email-jonmason@broadcom.com>
+In-Reply-To: <CAJKOXPeNGiuokN-NeS068bZqpSaJNz9QvaxoSs33855GY3_N_g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/15, Jon Mason wrote:
-> Document the device tree bindings for Broadcom Northstar Plus
-> architecture based clock controller
+Hello Krzysztof,
+
+On 10/15/2015 04:04 AM, Krzysztof Kozlowski wrote:
+> 2015-10-15 4:08 GMT+09:00 Javier Martinez Canillas <javier@osg.samsung.com>:
+>> Hello Stephen,
+>>
+>> On 10/14/2015 08:38 PM, Stephen Boyd wrote:
+>>> On 10/13, Javier Martinez Canillas wrote:
+>>>> diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
+>>>> index 1530c9352a76..fc50b6264bed 100644
+>>>> --- a/drivers/clk/versatile/Kconfig
+>>>> +++ b/drivers/clk/versatile/Kconfig
+>>>> @@ -1,6 +1,6 @@
+>>>>  config COMMON_CLK_VERSATILE
+>>>>      bool "Clock driver for ARM Reference designs"
+>>>> -    depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64
+>>>> +    depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64 || COMPILE_TEST
+>>>
+>>> Have you compiled these drivers on an architecture that doesn't
+>>> have IOMEM? Perhaps tile or um? I'm all for more build coverage,
+>>> but it's not always as simple as just sprinkling some
+>>> COMPILE_TEST around the Kconfigs.
+>>>
+>>
+>> No, I only build tested on arm32 and x86. The 0-day bot haven't reported a
+>> build error yet and I didn't see any platform dependent code in the drivers.
 > 
-> Signed-off-by: Jon Mason <jonmason@broadcom.com>
-> ---
+> I see you guys with Luis are adding a lot of COMPILE_TEST. But
 
-Applied to clk-iproc
+Yes, the motivation for this was that I've been helping Mauro with a big
+rework in the media subsystem [0] and was annoying to audit that all the
+drivers were converted to the new APIs and no compile regressions were
+introduced in drivers that could not be built with COMPILE_TEST enabled.
 
+Most media drivers are able to be build though so I thought it would be
+a good idea to extend the build coverage in all the other subsystems.
+
+> building only on these two architectures *is not enough*. Run at least
+> armv8, PPC and the x86_64. MIPS would be nice as well (I use the
+> CodeSourcery's MIPS). All of these (ARM64, X86_64, PPC, MIPS) can be
+> easily installed on typical debian-like Linux distro. Really easily.
+>
+
+Thanks, Stephen also pointed out to the toolchains in kernel.org [1].
+ 
+> By adding this non-tested build coverage you can actually fail some
+> other architecture's allyesconfig/allmodconfig builds.
+>
+
+Agreed, unfortunately having more build coverage is not as trivial as I
+originally thought. Not only because it can break the build in obscure
+archs that I don't have a toolchain to test but also exposes more build
+warnings (as reported by the 0-day bot) that I've the bandwidth to fix.
+
+So personally I'll stop trying to enabled COMPILE_TEST just to be safe.
+
+> Best regards,
+> Krzysztof
+> 
+
+[0]: http://lists.infradead.org/pipermail/linux-arm-kernel/2015-August/367109.html
+[1]: https://www.kernel.org/pub/tools/crosstool/
+
+Best regards,
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
