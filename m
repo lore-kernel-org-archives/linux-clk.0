@@ -1,176 +1,241 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 15/19] ARM: sun5i: dt: Add display and TCON clocks
-Date: Fri, 30 Oct 2015 15:21:01 +0100
-Message-Id: <1446214865-3972-16-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <jonmason@broadcom.com>
+From: Jon Mason <jonmason@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
+	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
+	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
+Subject: [PATCH v3 05/10] clk: iproc: Add PLL base write function
+Date: Thu, 15 Oct 2015 15:48:28 -0400
+Message-ID: <1444938513-10758-6-git-send-email-jonmason@broadcom.com>
+In-Reply-To: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
+References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable the display and TCON (channel 0 and channel 1) clocks that are going
-to be needed to drive the display engine, tcon and TV encoders.
+All writes to the PLL base address must be flushed if the
+IPROC_CLK_NEEDS_READ_BACK flag is set.  If we add a function to make the
+necessary write and reads, we can make sure that any future code which
+makes PLL base writes will do the correct thing.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Jon Mason <jonmason@broadcom.com>
 ---
- arch/arm/boot/dts/sun5i-a10s.dtsi |  8 +++---
- arch/arm/boot/dts/sun5i-a13.dtsi  |  3 ++-
- arch/arm/boot/dts/sun5i-r8.dtsi   |  5 ++--
- arch/arm/boot/dts/sun5i.dtsi      | 53 +++++++++++++++++++++++++++++++++++++++
- 4 files changed, 63 insertions(+), 6 deletions(-)
+ drivers/clk/bcm/clk-iproc-pll.c | 80 +++++++++++++++++------------------------
+ 1 file changed, 33 insertions(+), 47 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun5i-a10s.dtsi b/arch/arm/boot/dts/sun5i-a10s.dtsi
-index bddd0de88af6..0981a9e2db3b 100644
---- a/arch/arm/boot/dts/sun5i-a10s.dtsi
-+++ b/arch/arm/boot/dts/sun5i-a10s.dtsi
-@@ -65,8 +65,9 @@
- 			compatible = "allwinner,simple-framebuffer",
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "de_be0-lcd0-hdmi";
--			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 43>,
--				 <&ahb_gates 44>;
-+			clocks = <&ahb_gates 36>, <&ahb_gates 43>,
-+				 <&ahb_gates 44>, <&de_be_clk>,
-+				 <&tcon_ch1_clk>;
- 			status = "disabled";
- 		};
+diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
+index e029ab3..74cdd66 100644
+--- a/drivers/clk/bcm/clk-iproc-pll.c
++++ b/drivers/clk/bcm/clk-iproc-pll.c
+@@ -137,6 +137,18 @@ static int pll_wait_for_lock(struct iproc_pll *pll)
+ 	return -EIO;
+ }
  
-@@ -74,7 +75,8 @@
- 			compatible = "allwinner,simple-framebuffer",
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "de_be0-lcd0";
--			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 44>;
-+			clocks = <&ahb_gates 36>, <&ahb_gates 44>,
-+				 <&de_be_clk>, <&tcon_ch0_clk>;
- 			status = "disabled";
- 		};
++static void iproc_pll_write(const struct iproc_pll *pll, void __iomem *base,
++			    const u32 offset, u32 val)
++{
++	const struct iproc_pll_ctrl *ctrl = pll->ctrl;
++
++	writel(val, base + offset);
++
++	if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK &&
++		     base == pll->pll_base))
++		val = readl(base + offset);
++}
++
+ static void __pll_disable(struct iproc_pll *pll)
+ {
+ 	const struct iproc_pll_ctrl *ctrl = pll->ctrl;
+@@ -145,27 +157,24 @@ static void __pll_disable(struct iproc_pll *pll)
+ 	if (ctrl->flags & IPROC_CLK_PLL_ASIU) {
+ 		val = readl(pll->asiu_base + ctrl->asiu.offset);
+ 		val &= ~(1 << ctrl->asiu.en_shift);
+-		writel(val, pll->asiu_base + ctrl->asiu.offset);
++		iproc_pll_write(pll, pll->asiu_base, ctrl->asiu.offset, val);
+ 	}
  
-diff --git a/arch/arm/boot/dts/sun5i-a13.dtsi b/arch/arm/boot/dts/sun5i-a13.dtsi
-index d910d3a6c41c..130644d7e054 100644
---- a/arch/arm/boot/dts/sun5i-a13.dtsi
-+++ b/arch/arm/boot/dts/sun5i-a13.dtsi
-@@ -61,7 +61,8 @@
- 			compatible = "allwinner,simple-framebuffer",
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "de_be0-lcd0";
--			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 44>;
-+			clocks = <&ahb_gates 36>, <&ahb_gates 44>, <&de_be_clk>,
-+				 <&tcon_ch0_clk>;
- 			status = "disabled";
- 		};
- 	};
-diff --git a/arch/arm/boot/dts/sun5i-r8.dtsi b/arch/arm/boot/dts/sun5i-r8.dtsi
-index 0ef865601ac9..b1e4e0170d51 100644
---- a/arch/arm/boot/dts/sun5i-r8.dtsi
-+++ b/arch/arm/boot/dts/sun5i-r8.dtsi
-@@ -51,8 +51,9 @@
- 			compatible = "allwinner,simple-framebuffer",
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "de_be0-lcd0-tve0";
--			clocks = <&pll5 1>, <&ahb_gates 34>, <&ahb_gates 36>,
--				 <&ahb_gates 44>;
-+			clocks = <&ahb_gates 34>, <&ahb_gates 36>,
-+				 <&ahb_gates 44>, <&de_be_clk>,
-+				 <&tcon_ch1_clk>;
- 			status = "disabled";
- 		};
- 	};
-diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
-index bde9a545b79f..861c5a621e70 100644
---- a/arch/arm/boot/dts/sun5i.dtsi
-+++ b/arch/arm/boot/dts/sun5i.dtsi
-@@ -129,6 +129,15 @@
- 			clock-output-names = "pll3";
- 		};
+ 	if (ctrl->flags & IPROC_CLK_EMBED_PWRCTRL) {
+ 		val = readl(pll->pll_base + ctrl->aon.offset);
+ 		val |= (bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
+-		writel(val, pll->pll_base + ctrl->aon.offset);
+-
+-		if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-			readl(pll->pll_base + ctrl->aon.offset);
++		iproc_pll_write(pll, pll->pll_base, ctrl->aon.offset, val);
+ 	}
  
-+		pll3x2: pll3x2_clk {
-+			compatible = "fixed-factor-clock";
-+			#clock-cells = <0>;
-+			clock-div = <1>;
-+			clock-mult = <2>;
-+			clocks = <&pll3>;
-+			clock-output-names = "pll3x2";
-+		};
-+
- 		pll4: clk@01c20018 {
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-pll1-clk";
-@@ -161,6 +170,15 @@
- 			clock-output-names = "pll7";
- 		};
+ 	if (pll->pwr_base) {
+ 		/* latch input value so core power can be shut down */
+ 		val = readl(pll->pwr_base + ctrl->aon.offset);
+ 		val |= (1 << ctrl->aon.iso_shift);
+-		writel(val, pll->pwr_base + ctrl->aon.offset);
++		iproc_pll_write(pll, pll->pwr_base, ctrl->aon.offset, val);
  
-+		pll7x2: pll7x2_clk {
-+			compatible = "fixed-factor-clock";
-+			#clock-cells = <0>;
-+			clock-div = <1>;
-+			clock-mult = <2>;
-+			clocks = <&pll7>;
-+			clock-output-names = "pll7x2";
-+		};
-+
- 		/* dummy is 200M */
- 		cpu: cpu@01c20054 {
- 			#clock-cells = <0>;
-@@ -320,6 +338,41 @@
- 			clock-output-names = "usb_ohci0", "usb_phy";
- 		};
+ 		/* power down the core */
+ 		val &= ~(bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
+-		writel(val, pll->pwr_base + ctrl->aon.offset);
++		iproc_pll_write(pll, pll->pwr_base, ctrl->aon.offset, val);
+ 	}
+ }
  
-+		de_be_clk: clk@01c20104 {
-+			#clock-cells = <0>;
-+			#reset-cells = <0>;
-+			compatible = "allwinner,sun4i-a10-display-clk";
-+			reg = <0x01c20104 0x4>;
-+			clocks = <&pll3>, <&pll7>, <&pll5 1>;
-+			clock-output-names = "de-be";
-+		};
+@@ -177,10 +186,7 @@ static int __pll_enable(struct iproc_pll *pll)
+ 	if (ctrl->flags & IPROC_CLK_EMBED_PWRCTRL) {
+ 		val = readl(pll->pll_base + ctrl->aon.offset);
+ 		val &= ~(bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
+-		writel(val, pll->pll_base + ctrl->aon.offset);
+-
+-		if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-			readl(pll->pll_base + ctrl->aon.offset);
++		iproc_pll_write(pll, pll->pll_base, ctrl->aon.offset, val);
+ 	}
+ 
+ 	if (pll->pwr_base) {
+@@ -188,14 +194,14 @@ static int __pll_enable(struct iproc_pll *pll)
+ 		val = readl(pll->pwr_base + ctrl->aon.offset);
+ 		val |= bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift;
+ 		val &= ~(1 << ctrl->aon.iso_shift);
+-		writel(val, pll->pwr_base + ctrl->aon.offset);
++		iproc_pll_write(pll, pll->pwr_base, ctrl->aon.offset, val);
+ 	}
+ 
+ 	/* certain PLLs also need to be ungated from the ASIU top level */
+ 	if (ctrl->flags & IPROC_CLK_PLL_ASIU) {
+ 		val = readl(pll->asiu_base + ctrl->asiu.offset);
+ 		val |= (1 << ctrl->asiu.en_shift);
+-		writel(val, pll->asiu_base + ctrl->asiu.offset);
++		iproc_pll_write(pll, pll->asiu_base, ctrl->asiu.offset, val);
+ 	}
+ 
+ 	return 0;
+@@ -209,9 +215,7 @@ static void __pll_put_in_reset(struct iproc_pll *pll)
+ 
+ 	val = readl(pll->pll_base + reset->offset);
+ 	val &= ~(1 << reset->reset_shift | 1 << reset->p_reset_shift);
+-	writel(val, pll->pll_base + reset->offset);
+-	if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-		readl(pll->pll_base + reset->offset);
++	iproc_pll_write(pll, pll->pll_base, reset->offset, val);
+ }
+ 
+ static void __pll_bring_out_reset(struct iproc_pll *pll, unsigned int kp,
+@@ -228,9 +232,7 @@ static void __pll_bring_out_reset(struct iproc_pll *pll, unsigned int kp,
+ 	val |=  ki << reset->ki_shift | kp << reset->kp_shift |
+ 		ka << reset->ka_shift;
+ 	val |= 1 << reset->reset_shift | 1 << reset->p_reset_shift;
+-	writel(val, pll->pll_base + reset->offset);
+-	if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-		readl(pll->pll_base + reset->offset);
++	iproc_pll_write(pll, pll->pll_base, reset->offset, val);
+ }
+ 
+ static int pll_set_rate(struct iproc_clk *clk, unsigned int rate_index,
+@@ -285,9 +287,8 @@ static int pll_set_rate(struct iproc_clk *clk, unsigned int rate_index,
+ 	/* put PLL in reset */
+ 	__pll_put_in_reset(pll);
+ 
+-	writel(0, pll->pll_base + ctrl->vco_ctrl.u_offset);
+-	if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-		readl(pll->pll_base + ctrl->vco_ctrl.u_offset);
++	iproc_pll_write(pll, pll->pll_base, ctrl->vco_ctrl.u_offset, 0);
 +
-+		de_fe_clk: clk@01c2010c {
-+			#clock-cells = <0>;
-+			#reset-cells = <0>;
-+			compatible = "allwinner,sun4i-a10-display-clk";
-+			reg = <0x01c2010c 0x4>;
-+			clocks = <&pll3>, <&pll7>, <&pll5 1>;
-+			clock-output-names = "de-fe";
-+		};
-+
-+		tcon_ch0_clk: clk@01c20118 {
-+			#clock-cells = <0>;
-+			#reset-cells = <1>;
-+			compatible = "allwinner,sun4i-a10-tcon-ch0-clk";
-+			reg = <0x01c20118 0x4>;
-+			clocks = <&pll3>, <&pll7>, <&pll3x2>, <&pll7x2>;
-+			clock-output-names = "tcon-ch0-sclk";
-+		};
-+
-+		tcon_ch1_clk: clk@01c2012c {
-+			#clock-cells = <0>;
-+			compatible = "allwinner,sun4i-a10-tcon-ch1-clk";
-+			reg = <0x01c2012c 0x4>;
-+			clocks = <&pll3>, <&pll7>, <&pll3x2>, <&pll7x2>;
-+			clock-output-names = "tcon-ch1-sclk";
-+		};
-+
- 		codec_clk: clk@01c20140 {
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-codec-clk";
+ 	val = readl(pll->pll_base + ctrl->vco_ctrl.l_offset);
+ 
+ 	if (rate >= VCO_LOW && rate < VCO_MID)
+@@ -298,17 +299,13 @@ static int pll_set_rate(struct iproc_clk *clk, unsigned int rate_index,
+ 	else
+ 		val |= (1 << PLL_VCO_HIGH_SHIFT);
+ 
+-	writel(val, pll->pll_base + ctrl->vco_ctrl.l_offset);
+-	if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-		readl(pll->pll_base + ctrl->vco_ctrl.l_offset);
++	iproc_pll_write(pll, pll->pll_base, ctrl->vco_ctrl.l_offset, val);
+ 
+ 	/* program integer part of NDIV */
+ 	val = readl(pll->pll_base + ctrl->ndiv_int.offset);
+ 	val &= ~(bit_mask(ctrl->ndiv_int.width) << ctrl->ndiv_int.shift);
+ 	val |= vco->ndiv_int << ctrl->ndiv_int.shift;
+-	writel(val, pll->pll_base + ctrl->ndiv_int.offset);
+-	if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-		readl(pll->pll_base + ctrl->ndiv_int.offset);
++	iproc_pll_write(pll, pll->pll_base, ctrl->ndiv_int.offset, val);
+ 
+ 	/* program fractional part of NDIV */
+ 	if (ctrl->flags & IPROC_CLK_PLL_HAS_NDIV_FRAC) {
+@@ -316,18 +313,15 @@ static int pll_set_rate(struct iproc_clk *clk, unsigned int rate_index,
+ 		val &= ~(bit_mask(ctrl->ndiv_frac.width) <<
+ 			 ctrl->ndiv_frac.shift);
+ 		val |= vco->ndiv_frac << ctrl->ndiv_frac.shift;
+-		writel(val, pll->pll_base + ctrl->ndiv_frac.offset);
+-		if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-			readl(pll->pll_base + ctrl->ndiv_frac.offset);
++		iproc_pll_write(pll, pll->pll_base, ctrl->ndiv_frac.offset,
++				val);
+ 	}
+ 
+ 	/* program PDIV */
+ 	val = readl(pll->pll_base + ctrl->pdiv.offset);
+ 	val &= ~(bit_mask(ctrl->pdiv.width) << ctrl->pdiv.shift);
+ 	val |= vco->pdiv << ctrl->pdiv.shift;
+-	writel(val, pll->pll_base + ctrl->pdiv.offset);
+-	if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-		readl(pll->pll_base + ctrl->pdiv.offset);
++	iproc_pll_write(pll, pll->pll_base, ctrl->pdiv.offset, val);
+ 
+ 	__pll_bring_out_reset(pll, kp, ka, ki);
+ 
+@@ -467,14 +461,12 @@ static int iproc_clk_enable(struct clk_hw *hw)
+ 	/* channel enable is active low */
+ 	val = readl(pll->pll_base + ctrl->enable.offset);
+ 	val &= ~(1 << ctrl->enable.enable_shift);
+-	writel(val, pll->pll_base + ctrl->enable.offset);
++	iproc_pll_write(pll, pll->pll_base, ctrl->enable.offset, val);
+ 
+ 	/* also make sure channel is not held */
+ 	val = readl(pll->pll_base + ctrl->enable.offset);
+ 	val &= ~(1 << ctrl->enable.hold_shift);
+-	writel(val, pll->pll_base + ctrl->enable.offset);
+-	if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-		readl(pll->pll_base + ctrl->enable.offset);
++	iproc_pll_write(pll, pll->pll_base, ctrl->enable.offset, val);
+ 
+ 	return 0;
+ }
+@@ -491,9 +483,7 @@ static void iproc_clk_disable(struct clk_hw *hw)
+ 
+ 	val = readl(pll->pll_base + ctrl->enable.offset);
+ 	val |= 1 << ctrl->enable.enable_shift;
+-	writel(val, pll->pll_base + ctrl->enable.offset);
+-	if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-		readl(pll->pll_base + ctrl->enable.offset);
++	iproc_pll_write(pll, pll->pll_base, ctrl->enable.offset, val);
+ }
+ 
+ static unsigned long iproc_clk_recalc_rate(struct clk_hw *hw,
+@@ -562,9 +552,7 @@ static int iproc_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		val &= ~(bit_mask(ctrl->mdiv.width) << ctrl->mdiv.shift);
+ 		val |= div << ctrl->mdiv.shift;
+ 	}
+-	writel(val, pll->pll_base + ctrl->mdiv.offset);
+-	if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-		readl(pll->pll_base + ctrl->mdiv.offset);
++	iproc_pll_write(pll, pll->pll_base, ctrl->mdiv.offset, val);
+ 	clk->rate = parent_rate / div;
+ 
+ 	return 0;
+@@ -591,9 +579,7 @@ static void iproc_pll_sw_cfg(struct iproc_pll *pll)
+ 
+ 		val = readl(pll->pll_base + ctrl->sw_ctrl.offset);
+ 		val |= BIT(ctrl->sw_ctrl.shift);
+-		writel(val, pll->pll_base + ctrl->sw_ctrl.offset);
+-		if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+-			readl(pll->pll_base + ctrl->sw_ctrl.offset);
++		iproc_pll_write(pll, pll->pll_base, ctrl->sw_ctrl.offset, val);
+ 	}
+ }
+ 
 -- 
-2.6.2
+1.9.1
