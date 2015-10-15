@@ -1,113 +1,140 @@
-Return-Path: <anholt@eliezer.anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Mike Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v6] clk: bcm2835: Add support for programming the audio domain clocks.
-In-Reply-To: <20151009003721.GM26883@codeaurora.org>
-References: <1444347736-23681-1-git-send-email-eric@anholt.net> <20151009003721.GM26883@codeaurora.org>
-Date: Thu, 08 Oct 2015 18:31:18 -0700
-Message-ID: <874mi03k0p.fsf@eliezer.anholt.net>
+Return-Path: <jonmason@broadcom.com>
+From: Jon Mason <jonmason@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
+	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
+	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
+Subject: [PATCH v3 03/10] clk: iproc: Add PWRCTRL support
+Date: Thu, 15 Oct 2015 15:48:26 -0400
+Message-ID: <1444938513-10758-4-git-send-email-jonmason@broadcom.com>
+In-Reply-To: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
+References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Some iProc SoC clocks use a different way to control clock power, via
+the PWRDWN bit in the PLL control register.  Since the PLL control
+register is used to access the PWRDWN bit, there is no need for the
+pwr_base when this is being used.  A new flag, IPROC_CLK_EMBED_PWRCTRL,
+has been added to identify this usage.  We can use the AON interface to
+write the values to enable/disable PWRDOWN.
 
-Stephen Boyd <sboyd@codeaurora.org> writes:
+Signed-off-by: Jon Mason <jonmason@broadcom.com>
+---
+ drivers/clk/bcm/clk-iproc-pll.c | 55 ++++++++++++++++++++++++++++-------------
+ drivers/clk/bcm/clk-iproc.h     |  6 +++++
+ 2 files changed, 44 insertions(+), 17 deletions(-)
 
-> Please drop the full-stop from your subject lines.
->
-> On 10/08, Eric Anholt wrote:
->> This adds support for enabling, disabling, and setting the rate of the
->> audio domain clocks.  It will be necessary for setting the pixel clock
->> for HDMI in the VC4 driver and let us write a cpufreq driver.  It will
->> also improve compatibility with user changes to the firmware's
->> config.txt, since our previous fixed clocks are unaware of it.
->>=20
->> The firmware also has support for configuring the clocks through the
->> mailbox channel, but the pixel clock setup by the firmware doesn't
->> work, and it's Raspberry Pi specific anyway.  The only conflicts we
->> should have with the firmware would be if we made firmware calls that
->> result in clock management (like opening firmware V3D or ISP access,
->> which we don't support in upstream), or on hardware over-thermal or
->> under-voltage (when the firmware would rewrite PLLB to take the ARM
->> out of overclock).  If that happens, our cached .recalc_rate() results
->> would be incorrect, but that's no worse than our current state where
->> we used fixed clocks.
->>=20
->> The existing fixed clocks in the code are left in place to provide
->> backwards compatibility with old device tree files.
->>=20
->> Signed-off-by: Eric Anholt <eric@anholt.net>
->> Tested-by: Martin Sperl <kernel@martin.sperl.org>
->> ---
->
-> There's a variable length array in here, causing sparse to
-> complain:
->
-> 	drivers/clk/bcm/clk-bcm2835.c:1408:41:
-> 	warning: Variable length array is used.
->
-> This one looks easy enough to fix with another allocation.
-
-We know the bounds of the allocation, which is up to 10 entries
-populated in the 4-bit bitfield.  I've switched to using 1 <<
-CM_SRC_BITS to shut up sparse.
-
-> But then there's some weird casting warning coming from sparse
-> that I honestly don't understand:
->
-> drivers/clk/bcm/clk-bcm2835.c:370:36: warning: cast truncates bits
->from constant value (3fffffffff8000 becomes ffff8000)
->drivers/clk/bcm/clk-bcm2835.c:372:19: warning: cast truncates bits from
->constant value (3ffffffff80 becomes ffffff80)
->drivers/clk/bcm/clk-bcm2835.c:378:37: warning: cast truncates bits from
->constant value (fffffffff80000 becomes fff80000)
->drivers/clk/bcm/clk-bcm2835.c:380:42: warning: cast truncates bits from
->constant value (1fffffffff becomes ffffffff)
->
-> I guess I'll just ignore that for now. A couple nitpicks are
-> left, but nothing major.
-
-That's from GENMASK, which returns an unsigned long, unfortunately.
->
->> +	/* Wait for the PLL to lock. */
->> +	start =3D ktime_get();
->> +	while (!(cprman_read(cprman, CM_LOCK) & data->lock_mask)) {
->> +		ktime_t delta =3D ktime_sub(ktime_get(), start);
->> +
->> +		if (ktime_to_ms(delta) > LOCK_TIMEOUT_MS) {
->
-> Didn't notice this one before. Why not add the LOCK_TIMEOUT_MS to
-> start, and then call ktime_get() in the loop and use
-> ktime_after() to figure out if we're beyond the timeout?
-
-I've switched to that, but I was just modeling off of samsung/clk-pll.c
-(one of the few drivers that doesn't infinite loop).
-
-I've fixed the other devm_clk_register() and the extra parens as well.
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBCgAGBQJWFxjmAAoJELXWKTbR/J7oKBwP/0q/lMy8T7IsHP17dKtV5EXq
-t/NXLjAce00YAnasGFqPzX0PemOz3OR45usmSUpEGVlauEd8qAqz7VsZEKz9ihZV
-pXFVtZa/8dOSGq+sbdl611YfNO/wctlpys/A4e794Xm+TX9h068MWqR128FDu9Yu
-0u/E0TIVKmiyh76/IAW3UXSEeI2qadsR7OLWw/7g6UzniqEfbIJjc23jiQsoEMEk
-bw28Qaaq7fC46T6iU1bKPgujctzCG9pJ0uQIRPxoIo+hIvp2jaoGgIkM20I3lltO
-uVThUD+m/HipV5503YDZ6rvG1ptxoas7/hT7VgVmCoVpTitpFmROrSFklc0eBC1T
-5dudJCGsEG2S1VU3dpah6GnpfbrexqbWjmlh/ucWd8WBfNqMnuYAnGLNKu21GNbs
-WBmtFLcZf2P5BACUpKwS6Eg59lL2Nxt+P/ZywiIWk3TZN6XbXV/W8WaBXlGA26vi
-VuSxi8S+PTjApO0N5Qosids7qzAlTlx44VvcHWv+XQwhOa88mGnS7CtzxSzWvHOU
-7dxa/mq5DvzHHwC7XW9oebkyzuOaMCVCjkq6ZpDYyyU241GfDlpblpiAbqUOlBxZ
-U8dmxmGmEQJwOWV0VHBy+Ms5aT4OON9WxIBwUMB7xanw2HWkjwOkD2Ra1BK6f2Z/
-fhlYZ2liNkDH5goKc5gB
-=ZKt8
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
+index 2dda4e8..e029ab3 100644
+--- a/drivers/clk/bcm/clk-iproc-pll.c
++++ b/drivers/clk/bcm/clk-iproc-pll.c
+@@ -148,14 +148,25 @@ static void __pll_disable(struct iproc_pll *pll)
+ 		writel(val, pll->asiu_base + ctrl->asiu.offset);
+ 	}
+ 
+-	/* latch input value so core power can be shut down */
+-	val = readl(pll->pwr_base + ctrl->aon.offset);
+-	val |= (1 << ctrl->aon.iso_shift);
+-	writel(val, pll->pwr_base + ctrl->aon.offset);
+-
+-	/* power down the core */
+-	val &= ~(bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
+-	writel(val, pll->pwr_base + ctrl->aon.offset);
++	if (ctrl->flags & IPROC_CLK_EMBED_PWRCTRL) {
++		val = readl(pll->pll_base + ctrl->aon.offset);
++		val |= (bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
++		writel(val, pll->pll_base + ctrl->aon.offset);
++
++		if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
++			readl(pll->pll_base + ctrl->aon.offset);
++	}
++
++	if (pll->pwr_base) {
++		/* latch input value so core power can be shut down */
++		val = readl(pll->pwr_base + ctrl->aon.offset);
++		val |= (1 << ctrl->aon.iso_shift);
++		writel(val, pll->pwr_base + ctrl->aon.offset);
++
++		/* power down the core */
++		val &= ~(bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
++		writel(val, pll->pwr_base + ctrl->aon.offset);
++	}
+ }
+ 
+ static int __pll_enable(struct iproc_pll *pll)
+@@ -163,11 +174,22 @@ static int __pll_enable(struct iproc_pll *pll)
+ 	const struct iproc_pll_ctrl *ctrl = pll->ctrl;
+ 	u32 val;
+ 
+-	/* power up the PLL and make sure it's not latched */
+-	val = readl(pll->pwr_base + ctrl->aon.offset);
+-	val |= bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift;
+-	val &= ~(1 << ctrl->aon.iso_shift);
+-	writel(val, pll->pwr_base + ctrl->aon.offset);
++	if (ctrl->flags & IPROC_CLK_EMBED_PWRCTRL) {
++		val = readl(pll->pll_base + ctrl->aon.offset);
++		val &= ~(bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
++		writel(val, pll->pll_base + ctrl->aon.offset);
++
++		if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
++			readl(pll->pll_base + ctrl->aon.offset);
++	}
++
++	if (pll->pwr_base) {
++		/* power up the PLL and make sure it's not latched */
++		val = readl(pll->pwr_base + ctrl->aon.offset);
++		val |= bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift;
++		val &= ~(1 << ctrl->aon.iso_shift);
++		writel(val, pll->pwr_base + ctrl->aon.offset);
++	}
+ 
+ 	/* certain PLLs also need to be ungated from the ASIU top level */
+ 	if (ctrl->flags & IPROC_CLK_PLL_ASIU) {
+@@ -610,9 +632,8 @@ void __init iproc_pll_clk_setup(struct device_node *node,
+ 	if (WARN_ON(!pll->pll_base))
+ 		goto err_pll_iomap;
+ 
++	/* Some SoCs do not require the pwr_base, thus failing is not fatal */
+ 	pll->pwr_base = of_iomap(node, 1);
+-	if (WARN_ON(!pll->pwr_base))
+-		goto err_pwr_iomap;
+ 
+ 	/* some PLLs require gating control at the top ASIU level */
+ 	if (pll_ctrl->flags & IPROC_CLK_PLL_ASIU) {
+@@ -695,9 +716,9 @@ err_pll_register:
+ 		iounmap(pll->asiu_base);
+ 
+ err_asiu_iomap:
+-	iounmap(pll->pwr_base);
++	if (pll->pwr_base)
++		iounmap(pll->pwr_base);
+ 
+-err_pwr_iomap:
+ 	iounmap(pll->pll_base);
+ 
+ err_pll_iomap:
+diff --git a/drivers/clk/bcm/clk-iproc.h b/drivers/clk/bcm/clk-iproc.h
+index d834b7a..ff7bfad 100644
+--- a/drivers/clk/bcm/clk-iproc.h
++++ b/drivers/clk/bcm/clk-iproc.h
+@@ -49,6 +49,12 @@
+ #define IPROC_CLK_PLL_NEEDS_SW_CFG BIT(4)
+ 
+ /*
++ * Some PLLs use a different way to control clock power, via the PWRDWN bit in
++ * the PLL control register
++ */
++#define IPROC_CLK_EMBED_PWRCTRL BIT(5)
++
++/*
+  * Parameters for VCO frequency configuration
+  *
+  * VCO frequency =
+-- 
+1.9.1
