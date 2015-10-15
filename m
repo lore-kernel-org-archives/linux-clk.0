@@ -1,35 +1,66 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:59602 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751419AbbJBA1A (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 1 Oct 2015 20:27:00 -0400
-Date: Thu, 1 Oct 2015 17:26:58 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, heikki.krogerus@linux.intel.com,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v6 2/5] clk: fractional-divider: keep mwidth and nwidth
- internally
-Message-ID: <20151002002658.GF12338@codeaurora.org>
-References: <1442937252-50281-1-git-send-email-andriy.shevchenko@linux.intel.com>
- <1442937252-50281-3-git-send-email-andriy.shevchenko@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1442937252-50281-3-git-send-email-andriy.shevchenko@linux.intel.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <tomeu.vizoso@gmail.com>
+Return-Path: <tomeu.vizoso@gmail.com>
+Sender: Tomeu Vizoso <tomeu.vizoso@gmail.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Inki Dae <inki.dae@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>,
+	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kumar Gala <galak@codeaurora.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	linux-samsung-soc@vger.kernel.org,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 0/2] Fix display on second resume on 5250-snow
+Date: Thu, 15 Oct 2015 12:31:22 +0200
+Message-Id: <1444905084-22540-1-git-send-email-tomeu.vizoso@collabora.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/22, Andy Shevchenko wrote:
-> The patch adds mwidth and nwidth fields to the struct clk_fractional_divider
-> for further usage. While here, use GENMASK() instead of open coding this
-> functionality.
-> 
-> Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
+Hi,
 
-Applied to clk-next
+as discussed in [0], currently on the second resume from memory the
+display is broken on Snow boards (ARM Samsung Series 3 Chromebook).
+
+The reason is that on resume the contents of register SRC_TOP3 aren't
+what the kernel thinks they are because the HW (or FW) is doing some
+clock reparenting beneath our feet.
+
+This series tasks the kernel to do the reparenting itself so that the HW
+state always matches the kernel's internal state.
+
+Thanks,
+
+Tomeu
+
+[0] http://lkml.kernel.org/g/561CDC33.7050103@collabora.com
+
+Changes in v2:
+- Reuse mout_aclk200_p
+- Rename div_aclk300 as div_aclk300_disp
+
+Tomeu Vizoso (2):
+  clk: samsung: exynos5250: Add DISP1 clocks
+  ARM: dts: exynos5250: Add clocks to DISP1 domain
+
+ arch/arm/boot/dts/exynos5250.dtsi      |  4 ++++
+ drivers/clk/samsung/clk-exynos5250.c   | 14 +++++++++++++-
+ include/dt-bindings/clock/exynos5250.h |  4 +++-
+ 3 files changed, 20 insertions(+), 2 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.5.0
