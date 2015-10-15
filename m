@@ -1,42 +1,51 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 6 Oct 2015 12:32:13 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, Rob Clark <robdclark@gmail.com>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 1/2] PM / Domains: Make
- pm_genpd_{add,remove}_subdomain() available to modules
-Message-ID: <20151006193213.GG12338@codeaurora.org>
-References: <1443727374-1539-1-git-send-email-sboyd@codeaurora.org>
- <1443727374-1539-2-git-send-email-sboyd@codeaurora.org>
- <6374611.5Nvbqg0Ugs@vostro.rjw.lan>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <6374611.5Nvbqg0Ugs@vostro.rjw.lan>
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2 1/2] clk: samsung: exynos5250: Add DISP1 clocks
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-kernel@vger.kernel.org
+References: <1444905084-22540-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1444905084-22540-2-git-send-email-tomeu.vizoso@collabora.com>
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>,
+ Javier Martinez Canillas <javier@osg.samsung.com>,
+ Seung-Woo Kim <sw0312.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+ Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>,
+ Joonyoung Shim <jy0922.shim@samsung.com>, devicetree@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kumar Gala <galak@codeaurora.org>,
+ Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ linux-samsung-soc@vger.kernel.org,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Moll <pawel.moll@arm.com>,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <56203AD3.2050905@samsung.com>
+Date: Fri, 16 Oct 2015 08:46:27 +0900
+MIME-version: 1.0
+In-reply-to: <1444905084-22540-2-git-send-email-tomeu.vizoso@collabora.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/05, Rafael J. Wysocki wrote:
-> On Thursday, October 01, 2015 12:22:53 PM Stephen Boyd wrote:
-> >  
-> >  /**
-> >   * pm_genpd_remove_subdomain - Remove a subdomain from an I/O PM domain.
-> > @@ -1395,6 +1396,7 @@ out:
-> >  
-> >  	return ret;
-> >  }
-> > +EXPORT_SYMBOL_GPL(pm_genpd_remove_subdomain);
-> >  
-> >  /* Default device callbacks for generic PM domains. */
+On 15.10.2015 19:31, Tomeu Vizoso wrote:
+> When the DISP1 power domain is powered off, there's two clocks that need
+> to be temporarily reparented to OSC, and back to their original parents
+> when the domain is powered on again.
 > 
-> This is fine by me, please feel free to add my ACK to it.
+> We expose these two clocks in the DT bindings so that the DT node of the
+> power domain can reference them.
+> 
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+> 
+> Changes in v2:
+> - Reuse mout_aclk200_p
+> - Rename div_aclk300 as div_aclk300_disp
+> 
+>  drivers/clk/samsung/clk-exynos5250.c   | 14 +++++++++++++-
+>  include/dt-bindings/clock/exynos5250.h |  4 +++-
+>  2 files changed, 16 insertions(+), 2 deletions(-)
 > 
 
-Thanks. Applied to clk-next.
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best regards,
+Krzysztof
