@@ -1,28 +1,50 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Jon Mason <jonmason@broadcom.com>
-Cc: Scott Branden <sbranden@broadcom.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [PATCH v2 7/7] clk: ns2: add clock support for Broadcom Northstar 2 SoC
-Date: Thu, 15 Oct 2015 20:54:34 +0200
-Message-ID: <5092107.jzBI3Aa57c@wuerfel>
-In-Reply-To: <20151015184344.GK32089@broadcom.com>
-References: <1444770485-11210-1-git-send-email-jonmason@broadcom.com> <561FF223.2050807@broadcom.com> <20151015184344.GK32089@broadcom.com>
+Return-Path: <B48286@freescale.com>
+From: Zhiqiang Hou <B48286@freescale.com>
+To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
+	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+CC: <mark.rutland@arm.com>, <linux@roeck-us.net>, <wsa@the-dreams.de>,
+	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <Mingkai.Hu@freescale.com>,
+	<Shaohui.Xie@freescale.com>, <scottwood@freescale.com>,
+	<bhupesh.sharma@freescale.com>, <Wenbin.Song@freescale.com>,
+	<B48286@freescale.com>
+Subject: [PATCH V4 3/6] Documentation: DT: Add entry for FSL LS1043ARDB board
+Date: Thu, 15 Oct 2015 20:12:58 +0800
+Message-ID: <1444911181-21696-3-git-send-email-B48286@freescale.com>
+In-Reply-To: <1444911181-21696-1-git-send-email-B48286@freescale.com>
+References: <1444911181-21696-1-git-send-email-B48286@freescale.com>
+Return-Path: B48286@freescale.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thursday 15 October 2015 14:43:45 Jon Mason wrote:
-> On Thu, Oct 15, 2015 at 11:36:19AM -0700, Scott Branden wrote:
-> > Jon,
-> > 
-> > Can you add this to your patchset and change COMMON_CLK_IPROC to a
-> > silent option?
-> 
-> Sure, I'll add this (and make it silent), as well as adding the
-> documentation patches back to this series (per Ray's suggestion), and
-> will resend.
-> 
+From: Mingkai Hu <Mingkai.Hu@freescale.com>
 
-Thanks!
+Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
+Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+---
+V4: V3 V2
+ - No change.
 
-	Arnd
+ Documentation/devicetree/bindings/arm/fsl.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
+index 34c88b0..752a685 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.txt
++++ b/Documentation/devicetree/bindings/arm/fsl.txt
+@@ -131,6 +131,10 @@ Example:
+ Freescale ARMv8 based Layerscape SoC family Device Tree Bindings
+ ----------------------------------------------------------------
+ 
++LS1043A ARMv8 based RDB Board
++Required root node properties:
++    - compatible = "fsl,ls1043a-rdb", "fsl,ls1043a";
++
+ LS2080A ARMv8 based Simulator model
+ Required root node properties:
+     - compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
+-- 
+2.1.0.27.g96db324
