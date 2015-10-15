@@ -1,53 +1,75 @@
-Return-Path: <magnus.damm@gmail.com>
-Return-Path: <magnus.damm@gmail.com>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: kuninori.morimoto.gx@renesas.com,gaku.inami.xw@bp.renesas.com,mturquette@baylibre.com,linux-sh@vger.kernel.org,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
-Date: Thu, 01 Oct 2015 23:37:17 +0900
-Message-Id: <20151001143717.20618.26365.sendpatchset@little-apple>
-Subject: [PATCH v8 00/05] Renesas R-Car Gen3 CPG support V8
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+To: <arnd@arndb.de>, <mark.rutland@arm.com>,
+ <linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
+ <linux-clk@vger.kernel.org>, <olof@lixom.net>
+Subject: [PATCH v3 05/12] doc/bindings: Update Layerscape PCIe devicetree
+ binding to be more flexible
+Date: Thu, 15 Oct 2015 12:17:45 +0530
+Message-ID: <1444891672-32117-6-git-send-email-bhupesh.sharma@freescale.com>
+In-Reply-To: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
+References: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: LeoLi@freescale.com, bhupesh.sharma@freescale.com, Catalin.Marinas@arm.com,
+ will.deacon@arm.com, stuart.yoder@freescale.com,
+ Minghuan Lian <Minghuan.Lian@freescale.com>, scottwood@freescale.com,
+ bhupesh.linux@gmail.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Renesas R-Car Gen3 CPG support V8
+Update the definition of the Layerscape PCI compatible string to be more
+flexible, using <soc-name>, so the same binding definition is applicable to
+multiple SoCs.
 
-[PATCH v8 01/05] clk: shmobile: Rework CONFIG_ARCH_SHMOBILE_MULTI
-[PATCH v8 02/05] clk: shmobile: Add Renesas R-Car Gen3 CPG support
-[PATCH v8 03/05] clk: shmobile: Add Renesas Module Standby and Reset driver
-[PATCH v8 04/05] clk: shmobile: Add r8a7795 MSSR support
-[PATCH v8 05/05] drivers: sh: Handle PM_GENERIC_DOMAINS_OF=n with r8a7795 MSSR
-
-Here's an updated R-Car Gen3 clock support patch collection through
-a single "easy to use" patch series for drivers/clk and DT documentation
-bits. This version of the series moves over from MSTP to MSSR so the
-patches below are replaced with patch 3-5 above:
-
-[PATCH v7 02/05] clk: shmobile: Add r8a7795 SoC to MSTP bindings
-[PATCH v7 03/05] clk: shmobile: Make MSTP clock-output-names optional
-[PATCH v7 05/05] clk: shmobile: rcar-gen3: Add CPG/MSTP Clock Domain support
-
-With this V8 series the integration DT bits for MSTP need to be converted
-into MSSR format, an updated integration series will be posted sometime soon.
-
-Apart from MSSR conversion this series requires "clock-output-names" however
-patch 2/5 still needs to be updated. Patch 3/5 and/or patch 4/5 also need
-to be extended to include DT binding information. Apart from lacking DT
-binding documentation I would say that the DT interface is becoming more
-and more stable, so soon it should be possible to fix the integration bits.
-
-For more details please see each individual patch.
-
-Thanks to Geert for doing the heavy lifting with the MSSR driver.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Minghuan Lian <Minghuan.Lian@freescale.com>
+Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
 ---
+ .../devicetree/bindings/pci/layerscape-pci.txt     |   15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
- Developed against 61a7cf8 in renesas-drivers:
+diff --git a/Documentation/devicetree/bindings/pci/layerscape-pci.txt b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+index 6286f04..7d918ab 100644
+--- a/Documentation/devicetree/bindings/pci/layerscape-pci.txt
++++ b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+@@ -1,10 +1,21 @@
+ Freescale Layerscape PCIe controller
+ 
+-This PCIe host controller is based on the Synopsis Designware PCIe IP
++This PCIe host controller is based on the Synopsys Designware PCIe IP
+ and thus inherits all the common properties defined in designware-pcie.txt.
+ 
++Note that since this controller derives its clocks from the Reset
++Configuration Word (RCW) which is used to describe the PLL settings at
++the time of chip-reset, the 'clocks' and 'clock-names' properties from
++'designware-pcie.txt' are optional for this controller.
++
++Also as per the available Reference Manuals, there is no specific 'version'
++register available in the Freescale PCIe controller register set,
++which can allow determining the underlying Designware PCIe controller version
++information.
++
+ Required properties:
+-- compatible: should contain the platform identifier such as "fsl,ls1021a-pcie"
++- compatible: should contain the platform identifier such as "fsl,<soc-name>-pcie",
++  "snps,dw-pcie".
+ - reg: base addresses and lengths of the PCIe controller
+ - interrupts: A list of interrupt outputs of the controller. Must contain an
+   entry for each entry in the interrupt-names property.
+-- 
+1.7.9.5
 
-Documentation/devicetree/bindings/clock/renesas,rcar-gen3-cpg-clocks.txt |   58 +
- drivers/clk/Makefile                                                     |    1 
- drivers/clk/shmobile/Makefile                                            |   25 
- drivers/clk/shmobile/clk-mssr.c                                          |  393 ++++++++++
- drivers/clk/shmobile/clk-rcar-gen3.c                                     |  244 ++++++
- drivers/sh/pm_runtime.c                                                  |    5 
- include/linux/clk/shmobile.h                                             |    2 
- 7 files changed, 712 insertions(+), 16 deletions(-)
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
