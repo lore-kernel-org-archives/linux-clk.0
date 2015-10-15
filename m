@@ -1,237 +1,182 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 03/19] clk: sunxi: Add TCON channel0 clock
-Date: Fri, 30 Oct 2015 15:20:49 +0100
-Message-Id: <1446214865-3972-4-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <jonmason@broadcom.com>
+From: Jon Mason <jonmason@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
+	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
+	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
+Subject: [PATCH v3 06/10] clk: iproc: Split off dig_filter
+Date: Thu, 15 Oct 2015 15:48:29 -0400
+Message-ID: <1444938513-10758-7-git-send-email-jonmason@broadcom.com>
+In-Reply-To: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
+References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The TCON is a controller generating the timings to output videos signals,
-acting like both a CRTC and an encoder.
+The PLL loop filter/gain can be located in a separate register on some
+SoCs.  Split these off into a separate variable, so that an offset can
+be added if necessary.  Also, make the necessary modifications to the
+Cygnus and NSP drivers for this change.
 
-It has two channels depending on the output, each channel being driven by
-its own clock (and own clock controller).
-
-Add a driver for the channel 0 clock.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Jon Mason <jonmason@broadcom.com>
 ---
- drivers/clk/sunxi/Makefile             |   1 +
- drivers/clk/sunxi/clk-sun4i-tcon-ch0.c | 173 +++++++++++++++++++++++++++++++++
- 2 files changed, 174 insertions(+)
- create mode 100644 drivers/clk/sunxi/clk-sun4i-tcon-ch0.c
+ drivers/clk/bcm/clk-cygnus.c    | 17 +++++++++++------
+ drivers/clk/bcm/clk-iproc-pll.c | 14 +++++++++-----
+ drivers/clk/bcm/clk-iproc.h     | 10 +++++++++-
+ drivers/clk/bcm/clk-nsp.c       | 14 +++++++++-----
+ 4 files changed, 38 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-index 40c32ffd912c..7821b2b63d58 100644
---- a/drivers/clk/sunxi/Makefile
-+++ b/drivers/clk/sunxi/Makefile
-@@ -12,6 +12,7 @@ obj-y += clk-mod0.o
- obj-y += clk-simple-gates.o
- obj-y += clk-sun4i-display.o
- obj-y += clk-sun4i-pll3.o
-+obj-y += clk-sun4i-tcon-ch0.o
- obj-y += clk-sun8i-mbus.o
- obj-y += clk-sun9i-core.o
- obj-y += clk-sun9i-mmc.o
-diff --git a/drivers/clk/sunxi/clk-sun4i-tcon-ch0.c b/drivers/clk/sunxi/clk-sun4i-tcon-ch0.c
-new file mode 100644
-index 000000000000..db10cfb94a1d
---- /dev/null
-+++ b/drivers/clk/sunxi/clk-sun4i-tcon-ch0.c
-@@ -0,0 +1,173 @@
+diff --git a/drivers/clk/bcm/clk-cygnus.c b/drivers/clk/bcm/clk-cygnus.c
+index aac82c6..3a228b6 100644
+--- a/drivers/clk/bcm/clk-cygnus.c
++++ b/drivers/clk/bcm/clk-cygnus.c
+@@ -34,9 +34,11 @@
+ 		{ .offset = o, .en_shift = es, .high_shift = hs, \
+ 		.high_width = hw, .low_shift = ls, .low_width = lw }
+ 
+-#define RESET_VAL(o, rs, prs, kis, kiw, kps, kpw, kas, kaw) { .offset = o, \
+-	.reset_shift = rs, .p_reset_shift = prs, .ki_shift = kis, \
+-	.ki_width = kiw, .kp_shift = kps, .kp_width = kpw, .ka_shift = kas, \
++#define RESET_VAL(o, rs, prs) { .offset = o, .reset_shift = rs, \
++	.p_reset_shift = prs }
++
++#define DF_VAL(o, kis, kiw, kps, kpw, kas, kaw) { .offset = o, .ki_shift = kis,\
++	.ki_width = kiw, .kp_shift = kps, .kp_width = kpw, .ka_shift = kas,    \
+ 	.ka_width = kaw }
+ 
+ #define VCO_CTRL_VAL(uo, lo) { .u_offset = uo, .l_offset = lo }
+@@ -56,7 +58,8 @@ static const struct iproc_pll_ctrl genpll = {
+ 	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
+ 		IPROC_CLK_PLL_NEEDS_SW_CFG,
+ 	.aon = AON_VAL(0x0, 2, 1, 0),
+-	.reset = RESET_VAL(0x0, 11, 10, 4, 3, 0, 4, 7, 3),
++	.reset = RESET_VAL(0x0, 11, 10),
++	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
+ 	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
+ 	.ndiv_int = REG_VAL(0x10, 20, 10),
+ 	.ndiv_frac = REG_VAL(0x10, 0, 20),
+@@ -114,7 +117,8 @@ CLK_OF_DECLARE(cygnus_genpll, "brcm,cygnus-genpll", cygnus_genpll_clk_init);
+ static const struct iproc_pll_ctrl lcpll0 = {
+ 	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_NEEDS_SW_CFG,
+ 	.aon = AON_VAL(0x0, 2, 5, 4),
+-	.reset = RESET_VAL(0x0, 31, 30, 27, 3, 23, 4, 19, 4),
++	.reset = RESET_VAL(0x0, 31, 30),
++	.dig_filter = DF_VAL(0x0, 27, 3, 23, 4, 19, 4),
+ 	.sw_ctrl = SW_CTRL_VAL(0x4, 31),
+ 	.ndiv_int = REG_VAL(0x4, 16, 10),
+ 	.pdiv = REG_VAL(0x4, 26, 4),
+@@ -191,7 +195,8 @@ static const struct iproc_pll_ctrl mipipll = {
+ 		 IPROC_CLK_NEEDS_READ_BACK,
+ 	.aon = AON_VAL(0x0, 4, 17, 16),
+ 	.asiu = ASIU_GATE_VAL(0x0, 3),
+-	.reset = RESET_VAL(0x0, 11, 10, 4, 3, 0, 4, 7, 4),
++	.reset = RESET_VAL(0x0, 11, 10),
++	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 4),
+ 	.ndiv_int = REG_VAL(0x10, 20, 10),
+ 	.ndiv_frac = REG_VAL(0x10, 0, 20),
+ 	.pdiv = REG_VAL(0x14, 0, 4),
+diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
+index 74cdd66..d4aab4e 100644
+--- a/drivers/clk/bcm/clk-iproc-pll.c
++++ b/drivers/clk/bcm/clk-iproc-pll.c
+@@ -224,13 +224,17 @@ static void __pll_bring_out_reset(struct iproc_pll *pll, unsigned int kp,
+ 	u32 val;
+ 	const struct iproc_pll_ctrl *ctrl = pll->ctrl;
+ 	const struct iproc_pll_reset_ctrl *reset = &ctrl->reset;
++	const struct iproc_pll_dig_filter_ctrl *dig_filter = &ctrl->dig_filter;
++
++	val = readl(pll->pll_base + dig_filter->offset);
++	val &= ~(bit_mask(dig_filter->ki_width) << dig_filter->ki_shift |
++		bit_mask(dig_filter->kp_width) << dig_filter->kp_shift |
++		bit_mask(dig_filter->ka_width) << dig_filter->ka_shift);
++	val |= ki << dig_filter->ki_shift | kp << dig_filter->kp_shift |
++	       ka << dig_filter->ka_shift;
++	iproc_pll_write(pll, pll->pll_base, dig_filter->offset, val);
+ 
+ 	val = readl(pll->pll_base + reset->offset);
+-	val &= ~(bit_mask(reset->ki_width) << reset->ki_shift |
+-		 bit_mask(reset->kp_width) << reset->kp_shift |
+-		 bit_mask(reset->ka_width) << reset->ka_shift);
+-	val |=  ki << reset->ki_shift | kp << reset->kp_shift |
+-		ka << reset->ka_shift;
+ 	val |= 1 << reset->reset_shift | 1 << reset->p_reset_shift;
+ 	iproc_pll_write(pll, pll->pll_base, reset->offset, val);
+ }
+diff --git a/drivers/clk/bcm/clk-iproc.h b/drivers/clk/bcm/clk-iproc.h
+index ff7bfad..b71c197 100644
+--- a/drivers/clk/bcm/clk-iproc.h
++++ b/drivers/clk/bcm/clk-iproc.h
+@@ -94,12 +94,19 @@ struct iproc_pll_aon_pwr_ctrl {
+ };
+ 
+ /*
+- * Control of the PLL reset, with Ki, Kp, and Ka parameters
++ * Control of the PLL reset
+  */
+ struct iproc_pll_reset_ctrl {
+ 	unsigned int offset;
+ 	unsigned int reset_shift;
+ 	unsigned int p_reset_shift;
++};
++
 +/*
-+ * Copyright 2015 Maxime Ripard
-+ *
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
++ * Control of the Ki, Kp, and Ka parameters
 + */
++struct iproc_pll_dig_filter_ctrl {
++	unsigned int offset;
+ 	unsigned int ki_shift;
+ 	unsigned int ki_width;
+ 	unsigned int kp_shift;
+@@ -129,6 +136,7 @@ struct iproc_pll_ctrl {
+ 	struct iproc_pll_aon_pwr_ctrl aon;
+ 	struct iproc_asiu_gate asiu;
+ 	struct iproc_pll_reset_ctrl reset;
++	struct iproc_pll_dig_filter_ctrl dig_filter;
+ 	struct iproc_pll_sw_ctrl sw_ctrl;
+ 	struct iproc_clk_reg_op ndiv_int;
+ 	struct iproc_clk_reg_op ndiv_frac;
+diff --git a/drivers/clk/bcm/clk-nsp.c b/drivers/clk/bcm/clk-nsp.c
+index bc8ebdcd..cf66f64 100644
+--- a/drivers/clk/bcm/clk-nsp.c
++++ b/drivers/clk/bcm/clk-nsp.c
+@@ -26,9 +26,11 @@
+ #define AON_VAL(o, pw, ps, is) { .offset = o, .pwr_width = pw, \
+ 	.pwr_shift = ps, .iso_shift = is }
+ 
+-#define RESET_VAL(o, rs, prs, kis, kiw, kps, kpw, kas, kaw) { .offset = o, \
+-	.reset_shift = rs, .p_reset_shift = prs, .ki_shift = kis, \
+-	.ki_width = kiw, .kp_shift = kps, .kp_width = kpw, .ka_shift = kas, \
++#define RESET_VAL(o, rs, prs) { .offset = o, .reset_shift = rs, \
++	.p_reset_shift = prs }
 +
-+#include <linux/clk-provider.h>
-+#include <linux/of_address.h>
-+#include <linux/reset-controller.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+
-+#define SUN4I_A10_TCON_CH0_PARENTS	4
-+
-+#define SUN4I_A10_TCON_CH0_GATE_BIT	31
-+#define SUN4I_A10_TCON_CH0_RESET_SHIFT	29
-+#define SUN4I_A10_TCON_CH0_MUX_MASK	3
-+#define SUN4I_A10_TCON_CH0_MUX_SHIFT	24
-+
-+struct reset_data {
-+	void __iomem			*reg;
-+	spinlock_t			*lock;
-+	struct reset_controller_dev	rcdev;
-+};
-+
-+static DEFINE_SPINLOCK(sun4i_a10_tcon_ch0_lock);
-+
-+static int sun4i_a10_tcon_ch0_assert(struct reset_controller_dev *rcdev,
-+				     unsigned long id)
-+{
-+	struct reset_data *data = container_of(rcdev,
-+					       struct reset_data,
-+					       rcdev);
-+	unsigned long flags;
-+	u32 reg;
-+
-+	spin_lock_irqsave(data->lock, flags);
-+
-+	reg = readl(data->reg);
-+	writel(reg & ~BIT(SUN4I_A10_TCON_CH0_RESET_SHIFT + id), data->reg);
-+
-+	spin_unlock_irqrestore(data->lock, flags);
-+
-+	return 0;
-+}
-+
-+static int sun4i_a10_tcon_ch0_deassert(struct reset_controller_dev *rcdev,
-+				       unsigned long id)
-+{
-+	struct reset_data *data = container_of(rcdev,
-+						   struct reset_data,
-+						   rcdev);
-+	unsigned long flags;
-+	u32 reg;
-+
-+	spin_lock_irqsave(data->lock, flags);
-+
-+	reg = readl(data->reg);
-+	writel(reg | BIT(SUN4I_A10_TCON_CH0_RESET_SHIFT + id), data->reg);
-+
-+	spin_unlock_irqrestore(data->lock, flags);
-+
-+	return 0;
-+}
-+
-+static int sun4i_a10_tcon_ch0_status(struct reset_controller_dev *rcdev,
-+				     unsigned long id)
-+{
-+	struct reset_data *data = container_of(rcdev,
-+					       struct reset_data,
-+					       rcdev);
-+
-+	return !(readl(data->reg) & BIT(SUN4I_A10_TCON_CH0_RESET_SHIFT + id));
-+}
-+
-+static struct reset_control_ops sun4i_a10_tcon_ch0_reset_ops = {
-+	.assert		= sun4i_a10_tcon_ch0_assert,
-+	.deassert	= sun4i_a10_tcon_ch0_deassert,
-+	.status		= sun4i_a10_tcon_ch0_status,
-+};
-+
-+static void __init sun4i_a10_tcon_ch0_setup(struct device_node *node)
-+{
-+	const char *parents[SUN4I_A10_TCON_CH0_PARENTS];
-+	const char *clk_name = node->name;
-+	struct reset_data *reset_data;
-+	struct clk_gate *gate;
-+	struct clk_mux *mux;
-+	void __iomem *reg;
-+	struct clk *clk;
-+	int i;
-+
-+	of_property_read_string(node, "clock-output-names", &clk_name);
-+
-+	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-+	if (IS_ERR(reg)) {
-+		pr_err("%s: Could not map the clock registers\n", clk_name);
-+		return;
-+	}
-+
-+	for (i = 0; i < SUN4I_A10_TCON_CH0_PARENTS; i++)
-+		parents[i] = of_clk_get_parent_name(node, i);
-+
-+	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-+	if (!mux)
-+		return;
-+
-+	mux->reg = reg;
-+	mux->shift = SUN4I_A10_TCON_CH0_MUX_SHIFT;
-+	mux->mask = SUN4I_A10_TCON_CH0_MUX_MASK;
-+	mux->lock = &sun4i_a10_tcon_ch0_lock;
-+
-+	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+	if (!gate)
-+		goto free_mux;
-+
-+	gate->reg = reg;
-+	gate->bit_idx = SUN4I_A10_TCON_CH0_GATE_BIT;
-+	gate->lock = &sun4i_a10_tcon_ch0_lock;
-+
-+	clk = clk_register_composite(NULL, clk_name,
-+				     parents, SUN4I_A10_TCON_CH0_PARENTS,
-+				     &mux->hw, &clk_mux_ops,
-+				     NULL, NULL,
-+				     &gate->hw, &clk_gate_ops,
-+				     0);
-+	if (IS_ERR(clk)) {
-+		pr_err("%s: Couldn't register the clock\n", clk_name);
-+		goto free_gate;
-+	}
-+
-+	of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+
-+	reset_data = kzalloc(sizeof(*reset_data), GFP_KERNEL);
-+	if (!reset_data)
-+		goto free_clk;
-+
-+	reset_data->reg = reg;
-+	reset_data->lock = &sun4i_a10_tcon_ch0_lock;
-+	reset_data->rcdev.nr_resets = 2;
-+	reset_data->rcdev.ops = &sun4i_a10_tcon_ch0_reset_ops;
-+	reset_data->rcdev.of_node = node;
-+
-+	if (reset_controller_register(&reset_data->rcdev)) {
-+		pr_err("%s: Couldn't register the reset controller\n",
-+		       clk_name);
-+		goto free_reset;
-+	}
-+
-+	return;
-+
-+free_reset:
-+	kfree(reset_data);
-+free_clk:
-+	clk_unregister(clk);
-+free_gate:
-+	kfree(gate);
-+free_mux:
-+	kfree(mux);
-+}
-+
-+CLK_OF_DECLARE(sun4i_a10_tcon_ch0, "allwinner,sun4i-a10-tcon-ch0-clk",
-+	       sun4i_a10_tcon_ch0_setup);
++#define DF_VAL(o, kis, kiw, kps, kpw, kas, kaw) { .offset = o, .ki_shift = kis,\
++	.ki_width = kiw, .kp_shift = kps, .kp_width = kpw, .ka_shift = kas,    \
+ 	.ka_width = kaw }
+ 
+ #define ENABLE_VAL(o, es, hs, bs) { .offset = o, .enable_shift = es, \
+@@ -43,7 +45,8 @@ CLK_OF_DECLARE(nsp_armpll, "brcm,nsp-armpll", nsp_armpll_init);
+ static const struct iproc_pll_ctrl genpll = {
+ 	.flags = IPROC_CLK_PLL_HAS_NDIV_FRAC | IPROC_CLK_EMBED_PWRCTRL,
+ 	.aon = AON_VAL(0x0, 1, 12, 0),
+-	.reset = RESET_VAL(0x0, 11, 10, 4, 3, 0, 4, 7, 3),
++	.reset = RESET_VAL(0x0, 11, 10),
++	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
+ 	.ndiv_int = REG_VAL(0x14, 20, 10),
+ 	.ndiv_frac = REG_VAL(0x14, 0, 20),
+ 	.pdiv = REG_VAL(0x18, 24, 3),
+@@ -99,7 +102,8 @@ CLK_OF_DECLARE(nsp_genpll_clk, "brcm,nsp-genpll", nsp_genpll_clk_init);
+ static const struct iproc_pll_ctrl lcpll0 = {
+ 	.flags = IPROC_CLK_PLL_HAS_NDIV_FRAC | IPROC_CLK_EMBED_PWRCTRL,
+ 	.aon = AON_VAL(0x0, 1, 24, 0),
+-	.reset = RESET_VAL(0x0, 23, 22, 16, 3, 12, 4, 19, 4),
++	.reset = RESET_VAL(0x0, 23, 22),
++	.dig_filter = DF_VAL(0x0, 16, 3, 12, 4, 19, 4),
+ 	.ndiv_int = REG_VAL(0x4, 20, 8),
+ 	.ndiv_frac = REG_VAL(0x4, 0, 20),
+ 	.pdiv = REG_VAL(0x4, 28, 3),
 -- 
-2.6.2
+1.9.1
