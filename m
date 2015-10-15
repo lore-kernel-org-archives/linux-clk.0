@@ -1,104 +1,51 @@
-Return-Path: <jonmason@broadcom.com>
-From: Jon Mason <jonmason@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
-	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
-	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<bcm-kernel-feedback-list@broadcom.com>
-Subject: [PATCH v2] clk: iproc: Make clocks visible options
-Date: Thu, 29 Oct 2015 16:44:10 -0400
-Message-ID: <1446151450-23563-1-git-send-email-jonmason@broadcom.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.24]:50664 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750820AbbJOORB (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 15 Oct 2015 10:17:01 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	mark.rutland@arm.com, marc.zyngier@arm.com,
+	linux-clk@vger.kernel.org, olof@lixom.net, LeoLi@freescale.com,
+	Catalin.Marinas@arm.com, will.deacon@arm.com,
+	stuart.yoder@freescale.com,
+	Minghuan Lian <Minghuan.Lian@freescale.com>,
+	scottwood@freescale.com, bhupesh.linux@gmail.com
+Subject: Re: [PATCH v3 05/12] doc/bindings: Update Layerscape PCIe devicetree binding to be more flexible
+Date: Thu, 15 Oct 2015 16:16:57 +0200
+Message-ID: <5383901.aC2HYopUNW@wuerfel>
+In-Reply-To: <1444891672-32117-6-git-send-email-bhupesh.sharma@freescale.com>
+References: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com> <1444891672-32117-6-git-send-email-bhupesh.sharma@freescale.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jonmason@broadcom.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Make the clocks visible options that can be selected by anyone.  This
-avoids the problems of:
- 1) Select is a reverse dependency and is hard for people to understand
-    and can sometimes be a pain to track down
- 2) Build coverage goes down because configs are hidden
- 3) Code bloat
+On Thursday 15 October 2015 12:17:45 Bhupesh Sharma wrote:
+> 
+> +Note that since this controller derives its clocks from the Reset
+> +Configuration Word (RCW) which is used to describe the PLL settings at
+> +the time of chip-reset, the 'clocks' and 'clock-names' properties from
+> +'designware-pcie.txt' are optional for this controller.
 
-Patch suggested by Stephen Boyd
+If this is an option for the dw-pcie block, should this description be
+added to the generic binding instead?
 
-Signed-off-by: Jon Mason <jonmason@broadcom.com>
----
- arch/arm/mach-bcm/Kconfig |  1 -
- drivers/clk/bcm/Kconfig   | 30 +++++++++++++++++++++++++++++-
- drivers/clk/bcm/Makefile  |  7 +++----
- 3 files changed, 32 insertions(+), 6 deletions(-)
+> +Also as per the available Reference Manuals, there is no specific 'version'
+> +register available in the Freescale PCIe controller register set,
+> +which can allow determining the underlying Designware PCIe controller version
+> +information.
+> +
+>  Required properties:
+> -- compatible: should contain the platform identifier such as "fsl,ls1021a-pcie"
+> +- compatible: should contain the platform identifier such as "fsl,<soc-name>-pcie",
+> +  "snps,dw-pcie".
 
-diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
-index 679798b..cacaaec 100644
---- a/arch/arm/mach-bcm/Kconfig
-+++ b/arch/arm/mach-bcm/Kconfig
-@@ -14,7 +14,6 @@ config ARCH_BCM_IPROC
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_ARM_TWD if SMP
- 	select ARM_GLOBAL_TIMER
--	select COMMON_CLK_IPROC
- 	select CLKSRC_MMIO
- 	select ARCH_REQUIRE_GPIOLIB
- 	select ARM_AMBA
-diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
-index 46ee475..ad815a5 100644
---- a/drivers/clk/bcm/Kconfig
-+++ b/drivers/clk/bcm/Kconfig
-@@ -9,8 +9,36 @@ config CLK_BCM_KONA
- 	  in the BCM281xx and BCM21664 families.
- 
- config COMMON_CLK_IPROC
--	bool
-+	bool "Broadcom iProc clock support"
-+	depends on ARCH_BCM_IPROC || COMPILE_TEST
- 	depends on COMMON_CLK
-+	default ARCH_BCM_IPROC
- 	help
- 	  Enable common clock framework support for Broadcom SoCs
- 	  based on the iProc architecture
-+
-+if COMMON_CLK_IPROC
-+
-+config CLK_BCM_CYGNUS
-+	bool "Broadcom Cygnus clock support"
-+	depends on ARCH_BCM_CYGNUS || COMPILE_TEST
-+	default ARCH_BCM_CYGNUS
-+	help
-+	  Enable common clock framework support for the Broadcom Cygnus SoC
-+
-+config CLK_BCM_NSP
-+	bool "Broadcom Northstar/Northstar Plus clock support"
-+	depends on ARCH_BCM_5301X || ARCH_BCM_NSP || COMPILE_TEST
-+	default ARCH_BCM_5301X || ARCH_BCM_NSP
-+	help
-+	  Enable common clock framework support for the Broadcom Northstar and
-+	  Northstar Plus SoCs
-+
-+config CLK_BCM_NS2
-+	bool "Broadcom Northstar 2 clock support"
-+	depends on ARM64 || COMPILE_TEST
-+	default ARCH_BCM_IPROC
-+	help
-+	  Enable common clock framework support for the Broadcom Northstar 2 SoC
-+
-+endif
-diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
-index 2d1cbc5..05d5830 100644
---- a/drivers/clk/bcm/Makefile
-+++ b/drivers/clk/bcm/Makefile
-@@ -3,7 +3,6 @@ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona-setup.o
- obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm281xx.o
- obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm21664.o
- obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-iproc-armpll.o clk-iproc-pll.o clk-iproc-asiu.o
--obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-ns2.o
--obj-$(CONFIG_ARCH_BCM_CYGNUS)	+= clk-cygnus.o
--obj-$(CONFIG_ARCH_BCM_NSP)	+= clk-nsp.o
--obj-$(CONFIG_ARCH_BCM_5301X)	+= clk-nsp.o
-+obj-$(CONFIG_CLK_BCM_CYGNUS)	+= clk-cygnus.o
-+obj-$(CONFIG_CLK_BCM_NSP)	+= clk-nsp.o
-+obj-$(CONFIG_CLK_BCM_NS2)	+= clk-ns2.o
--- 
-1.9.1
+You should document all the strings that will be needed here, otherwise a
+driver write does not know what to look for.
+
+If two chips have a 100% identical PCIe implementation, just use the string
+of the older chip for both.
+
+	Arnd
