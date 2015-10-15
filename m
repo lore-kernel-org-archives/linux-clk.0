@@ -1,61 +1,35 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 15 Oct 2015 11:02:40 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH 14/26] clk: mvebu: Convert to clk_hw based provider APIs
+Message-ID: <20151015180240.GF4558@codeaurora.org>
+References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+ <1438362246-6664-15-git-send-email-sboyd@codeaurora.org>
+ <20151014170922.3027008a@free-electrons.com>
+ <20151014182138.GD26883@codeaurora.org>
+ <20151015102243.79d9e5ce@free-electrons.com>
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>, "Ray Jui" <rjui@broadcom.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <56256BA5.3090705@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- bcm-kernel-feedback-list@broadcom.com, "Simran Rai" <ssimran@broadcom.com>
-References: <1445035458-29340-1-git-send-email-rjui@broadcom.com>
- <1445035458-29340-2-git-send-email-rjui@broadcom.com>
- <20151019214911.GB19782@codeaurora.org> <562566C1.8080409@broadcom.com>
- <56256BA5.3090705@codeaurora.org>
-Message-ID: <20151021094617.20687.61996@quantum>
-Subject: Re: [PATCH] clk: iproc: Fix PLL output frequency calculation
-Date: Wed, 21 Oct 2015 02:46:17 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20151015102243.79d9e5ce@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Stephen Boyd (2015-10-19 15:16:05)
-> On 10/19/2015 02:55 PM, Ray Jui wrote:
-> >
-> >
-> > On 15-10-19 02:49 PM, Stephen Boyd wrote:
-> >> On 10/16, Ray Jui wrote:
-> >>> From: Simran Rai <ssimran@broadcom.com>
-> >>>
-> >>> This patch affects the clocks that use fractional ndivider in their
-> >>> PLL output frequency calculation. Instead of 2^20 divide factor, the
-> >>> clock's ndiv integer shift was used. Fixed the bug by replacing ndiv
-> >>> integer shift with 2^20 factor.
-> >>>
-> >>> Signed-off-by: Simran Rai <ssimran@broadcom.com>
-> >>> Signed-off-by: Ray Jui <rjui@broadcom.com>
-> >>> Reviewed-by: Scott Branden <sbranden@broadcom.com>
-> >>> ---
-> >>
-> >> Did you want any Fixes: tag so this goes back to stable?
-> >>
-> >
-> > Yes, we want this fix to go back to the stable kernel.
-> >
-> > I will re-submit the patch with the Fixes: tag and at the same time cc
-> > stable@vger.kernel.org .
-> =
+On 10/15, Thomas Petazzoni wrote:
+> 
+> Applied on top of 4.3-rc5, this patch fixes the problem for me, without
+> any change to the Device Tree files.
+> 
+> It's probably the easiest option for 4.3. Do you want me to submit a
+> patch, or will you apply it directly to your clk tree?
 
-> Please just tell me the commit that this fixes, I can add the tag and
-> apply to the right tree then.
+I've already applied it to clk-fixes, I'll send it off tomorrow
+or the next day.
 
-I applied v2 of this patch and amended the commit log with:
-
-Cc: <stable@vger.kernel.org> # v4.1+
-
-Regards,
-Mike
-
-> =
-
-> -- =
-
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
->=20
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
