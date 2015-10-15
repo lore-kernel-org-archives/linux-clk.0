@@ -1,52 +1,67 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH] clk: Allow drivers to build if COMPILE_TEST is enabled
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1444745898-11537-1-git-send-email-javier@osg.samsung.com>
- <20151014183831.GH26883@codeaurora.org>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org, Luis de Bethencourt
- <luisbg@osg.samsung.com>, Michael Turquette <mturquette@baylibre.com>,
- Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>,
- linux-clk@vger.kernel.org
-Message-ID: <561EA831.2070001@osg.samsung.com>
-Date: Wed, 14 Oct 2015 21:08:33 +0200
+Return-Path: <jonmason@broadcom.com>
+From: Jon Mason <jonmason@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
+	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
+	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
+Subject: [PATCH v3 09/10] clk: iproc: define Broadcom NSP iProc clock binding
+Date: Thu, 15 Oct 2015 15:48:32 -0400
+Message-ID: <1444938513-10758-10-git-send-email-jonmason@broadcom.com>
+In-Reply-To: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
+References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
 MIME-Version: 1.0
-In-Reply-To: <20151014183831.GH26883@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Stephen,
+Document the device tree bindings for Broadcom Northstar Plus
+architecture based clock controller
 
-On 10/14/2015 08:38 PM, Stephen Boyd wrote:
-> On 10/13, Javier Martinez Canillas wrote:
->> diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
->> index 1530c9352a76..fc50b6264bed 100644
->> --- a/drivers/clk/versatile/Kconfig
->> +++ b/drivers/clk/versatile/Kconfig
->> @@ -1,6 +1,6 @@
->>  config COMMON_CLK_VERSATILE
->>  	bool "Clock driver for ARM Reference designs"
->> -	depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64
->> +	depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64 || COMPILE_TEST
-> 
-> Have you compiled these drivers on an architecture that doesn't
-> have IOMEM? Perhaps tile or um? I'm all for more build coverage,
-> but it's not always as simple as just sprinkling some
-> COMPILE_TEST around the Kconfigs.
->
+Signed-off-by: Jon Mason <jonmason@broadcom.com>
+---
+ .../bindings/clock/brcm,iproc-clocks.txt           | 30 ++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-No, I only build tested on arm32 and x86. The 0-day bot haven't reported a
-build error yet and I didn't see any platform dependent code in the drivers.
-
-But you are right that COMPILE_TEST is a little tricky, so maybe is safest
-to drop this patch.
-
-Is just that it would be nice to build as much as possible to make sure that
-subystemms or kernel wide changes don't introduce regressions since that is
-also tricky even when using tools like coccinelle.
-
-Best regards,
+diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+index da8d9bb..b3c3e9d 100644
+--- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+@@ -130,3 +130,33 @@ These clock IDs are defined in:
+     ch3_unused mipipll          4       BCM_CYGNUS_MIPIPLL_CH3_UNUSED
+     ch4_unused mipipll          5       BCM_CYGNUS_MIPIPLL_CH4_UNUSED
+     ch5_unused mipipll          6       BCM_CYGNUS_MIPIPLL_CH5_UNUSED
++
++Northstar and Northstar Plus
++------
++PLL and leaf clock compatible strings for Northstar and Northstar Plus are:
++ "brcm,nsp-armpll"
++ "brcm,nsp-genpll"
++ "brcm,nsp-lcpll0"
++
++The following table defines the set of PLL/clock index and ID for Northstar and
++Northstar Plus.  These clock IDs are defined in:
++    "include/dt-bindings/clock/bcm-nsp.h"
++
++    Clock	Source		Index	ID
++    ---		-----		-----	---------
++    crystal	N/A		N/A	N/A
++
++    armpll	crystal		N/A	N/A
++
++    genpll	crystal		0	BCM_NSP_GENPLL
++    phy		genpll		1	BCM_NSP_GENPLL_PHY_CLK
++    ethernetclk	genpll		2	BCM_NSP_GENPLL_ENET_SW_CLK
++    usbclk	genpll		3	BCM_NSP_GENPLL_USB_PHY_REF_CLK
++    iprocfast	genpll		4	BCM_NSP_GENPLL_IPROCFAST_CLK
++    sata1	genpll		5	BCM_NSP_GENPLL_SATA1_CLK
++    sata2	genpll		6	BCM_NSP_GENPLL_SATA2_CLK
++
++    lcpll0	crystal		0	BCM_NSP_LCPLL0
++    pcie_phy	lcpll0		1	BCM_NSP_LCPLL0_PCIE_PHY_REF_CLK
++    sdio	lcpll0		2	BCM_NSP_LCPLL0_SDIO_CLK
++    ddr_phy	lcpll0		3	BCM_NSP_LCPLL0_DDR_PHY_CLK
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+1.9.1
