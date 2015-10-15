@@ -1,62 +1,60 @@
-Return-Path: <Marc_Gonzalez@sigmadesigns.com>
-Return-Path: <Marc_Gonzalez@sigmadesigns.com>
-Subject: Re: [PATCH v2] clk: tango4: clkgen driver for Tango4 ARM platforms
-To: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
-	<mturquette@baylibre.com>
-CC: clk <linux-clk@vger.kernel.org>, Mason <slash.tmp@free.fr>
-References: <5613DBA2.20708@sigmadesigns.com>
- <20151008013054.GC26883@codeaurora.org> <561FCBB2.8030703@sigmadesigns.com>
-From: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
-Message-ID: <561FCC7A.2090505@sigmadesigns.com>
-Date: Thu, 15 Oct 2015 17:55:38 +0200
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+To: <arnd@arndb.de>, <mark.rutland@arm.com>,
+ <linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
+ <linux-clk@vger.kernel.org>, <olof@lixom.net>
+Subject: [PATCH v3 03/12] Documentation: DT: Add entry for FSL LS2080A QDS and
+ RDB boards
+Date: Thu, 15 Oct 2015 12:17:43 +0530
+Message-ID: <1444891672-32117-4-git-send-email-bhupesh.sharma@freescale.com>
+In-Reply-To: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
+References: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
 MIME-Version: 1.0
-In-Reply-To: <561FCBB2.8030703@sigmadesigns.com>
-Content-Type: text/plain; charset="ISO-8859-1"
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: LeoLi@freescale.com, bhupesh.sharma@freescale.com, Catalin.Marinas@arm.com,
+ will.deacon@arm.com, stuart.yoder@freescale.com, scottwood@freescale.com,
+ bhupesh.linux@gmail.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 15/10/2015 17:52, Marc Gonzalez wrote:
+This patch adds a devicetree binding documentation for Freescale's
+LS2080A QDS and RDB boards.
 
-> Provide support for Sigma Designs Tango4 (ARM-based) clock generator.
-> NOTE: This driver is INCOMPATIBLE with Tango3 clkgen.
-> 
-> Signed-off-by: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
-> ---
-> Changes in v2:
-> Provide missing includes
-> Use masks instead of bit-fields :-(
-> Error handling
-> Style nits
-> Model the clkgen block as a single node
+Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+---
+ Documentation/devicetree/bindings/arm/fsl.txt |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-And the corresponding DT will be along these lines:
-
-	clocks {
-		ranges;
-		#address-cells = <1>;
-		#size-cells = <1>;
-
-		xtal: xtal {
-			compatible = "fixed-clock";
-			clock-frequency = <27000000>;
-			#clock-cells = <0>;
-		};
-
-		clkgen: clkgen@10000 {
-			compatible = "sigma,tango4-clkgen";
-			reg = <0x10000 0x30>;
-			clocks = <&xtal>;
-			clock-output-names = "cpuclk", "sysclk";
-			#clock-cells = <1>;
-		};
-
-		periphclk: periphclk {
-			compatible = "fixed-factor-clock";
-			clocks = <&clkgen 0>;
-			clock-mult = <1>;
-			clock-div  = <2>;
-			#clock-cells = <0>;
-		};
-	};
+diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
+index 53f229a..34c88b0 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.txt
++++ b/Documentation/devicetree/bindings/arm/fsl.txt
+@@ -135,3 +135,11 @@ LS2080A ARMv8 based Simulator model
+ Required root node properties:
+     - compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
+ 
++LS2080A ARMv8 based QDS Board
++Required root node properties:
++    - compatible = "fsl,ls2080a-qds", "fsl,ls2080a";
++
++LS2080A ARMv8 based RDB Board
++Required root node properties:
++    - compatible = "fsl,ls2080a-rdb", "fsl,ls2080a";
++
+-- 
+1.7.9.5
 
 
-Regards.
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
