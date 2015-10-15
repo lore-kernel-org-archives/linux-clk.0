@@ -1,105 +1,57 @@
-Return-Path: <tomeu.vizoso@collabora.com>
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Russell King <linux@arm.linux.org.uk>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Alexandre Courbot <gnurou@gmail.com>,
- Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>,
- =?UTF-8?Q?Terje_Bergstr=c3=b6m?= <tbergstrom@nvidia.com>,
- Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
- Frank Rowand <frowand.list@gmail.com>, Grant Likely
- <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>,
- Sebastian Reichel <sre@kernel.org>,
- Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
- David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Felipe Balbi <balbi@ti.com>,
- Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
- Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
- Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-fbdev@vger.kernel.org
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [GIT PULL] On-demand device probing
-Message-ID: <561E1378.6000906@collabora.com>
-Date: Wed, 14 Oct 2015 10:34:00 +0200
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 15 Oct 2015 11:28:40 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Simon <horms@verge.net.au>, Michael Turquette <mturquette@baylibre.com>,
+	Magnus <magnus.damm@gmail.com>, Linux-SH <linux-sh@vger.kernel.org>,
+	Linux-Kernel <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4] clk: add CS2000 Fractional-N driver
+Message-ID: <20151015182840.GJ4558@codeaurora.org>
+References: <871te03x17.wl%kuninori.morimoto.gx@renesas.com>
+ <20151002003851.GH12338@codeaurora.org>
+ <87twqarsdf.wl%kuninori.morimoto.gx@renesas.com>
+ <20151002181123.GM12338@codeaurora.org>
+ <87r3kwor4d.wl%kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <87r3kwor4d.wl%kuninori.morimoto.gx@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
+On 10/15, Kuninori Morimoto wrote:
+> 
+> I understand. If my understanding is correct, user driver
+> setups/enables this clock.
+> If so, I still want this "clock-frequency" feature.
+> because this clock requests other clock on my board.
+> And requested clock requests this clock too.
+> Thus, these clocks have dead lock on probe time
+> 
+> 	cs2000: clk_multiplier@4f {
+> 		...
+> 		clocks = <&rcar_sound 0>, ...
+> 		...
+> 	};
+> 
+> 	&rcar_sound {
+> 		...
+> 		assigned-clocks = <&cs2000>;
+> 	        assigned-clock-rates = <24576000>;
+> 		...
+> 	};
+> 
 
-here is the pull request you asked for, with no changes from the version
-that I posted last to the list.
+I think you're saying that the clock provider itself can't set
+the rate with assigned-clock-rates? That isn't true, we should be
+able to set the rate of the clock from within the provider node.
 
-The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
+	cs2000: clk_multiplier@4f {
+		assigned-clocks = <&cs2000>;
+		assigned-clock-rates = <24576000>;
+	};
 
-Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
+The above should work.
 
-are available in the git repository at:
-
-git+ssh://git.collabora.co.uk/git/user/tomeu/linux.git
-on-demand-probes-for-next
-
-for you to fetch changes up to 587402133fe433759d2d535e5d92ead87fd7f615:
-
-of/platform: Defer probes of registered devices (2015-10-14 10:08:23 +0200)
-
-----------------------------------------------------------------
-Tomeu Vizoso (20):
-driver core: handle -EPROBE_DEFER from bus_type.match()
-ARM: amba: Move reading of periphid to amba_match()
-of/platform: Point to struct device from device node
-of: add function to allow probing a device from a OF node
-gpio: Probe GPIO drivers on demand
-pinctrl: Probe pinctrl devices on demand
-regulator: core: Probe regulators on demand
-drm: Probe panels on demand
-drm/tegra: Probe dpaux devices on demand
-i2c: core: Probe i2c adapters and devices on demand
-pwm: Probe PWM chip devices on demand
-backlight: Probe backlight devices on demand
-usb: phy: Probe phy devices on demand
-clk: Probe clk providers on demand
-pinctrl: Probe pinctrl devices on demand
-phy: core: Probe phy providers on demand
-dma: of: Probe DMA controllers on demand
-power-supply: Probe power supplies on demand
-driver core: Allow deferring probes until late init
-of/platform: Defer probes of registered devices
-
-drivers/amba/bus.c | 88
-++++++++++++++++++++++++++++++++++++++++++++++------------------------------------------
-drivers/base/Kconfig | 18 ++++++++++++++++++
-drivers/base/dd.c | 30 ++++++++++++++++++++++++++++--
-drivers/clk/clk.c | 3 +++
-drivers/dma/of-dma.c | 3 +++
-drivers/gpio/gpiolib-of.c | 5 +++++
-drivers/gpu/drm/drm_panel.c | 3 +++
-drivers/gpu/drm/tegra/dpaux.c | 3 +++
-drivers/i2c/i2c-core.c | 4 ++++
-drivers/of/device.c | 61
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-drivers/of/platform.c | 30 ++++++++++++++++++------------
-drivers/phy/phy-core.c | 3 +++
-drivers/pinctrl/devicetree.c | 3 +++
-drivers/power/power_supply_core.c | 3 +++
-drivers/pwm/core.c | 3 +++
-drivers/regulator/core.c | 2 ++
-drivers/usb/phy/phy.c | 3 +++
-drivers/video/backlight/backlight.c | 3 +++
-include/linux/device.h | 4 +++-
-include/linux/of.h | 1 +
-include/linux/of_device.h | 3 +++
-21 files changed, 219 insertions(+), 57 deletions(-)
-
-
-Thanks,
-
-Tomeu
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
