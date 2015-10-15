@@ -1,95 +1,64 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Mon, 19 Oct 2015 12:02:38 +0100
-From: Mark Brown <broonie@kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>,
-	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org
-Message-ID: <20151019110238.GE14956@sirena.org.uk>
-References: <561E1378.6000906@collabora.com>
- <20151017065750.GA18607@kroah.com>
- <20151018192931.GY14956@sirena.org.uk>
- <20151018193757.GA9147@kroah.com>
- <20151018195330.GB14956@sirena.org.uk>
- <1445247881.53393.146.camel@infradead.org>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Thu, 15 Oct 2015 10:22:43 +0200
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Gregory CLEMENT
+ <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>,
+ Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth
+ <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH 14/26] clk: mvebu: Convert to clk_hw based provider APIs
+Message-ID: <20151015102243.79d9e5ce@free-electrons.com>
+In-Reply-To: <20151014182138.GD26883@codeaurora.org>
+References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+	<1438362246-6664-15-git-send-email-sboyd@codeaurora.org>
+	<20151014170922.3027008a@free-electrons.com>
+	<20151014182138.GD26883@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="KwgAcZnBnwoMp5TU"
-In-Reply-To: <1445247881.53393.146.camel@infradead.org>
-Subject: Re: [GIT PULL] On-demand device probing
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
+Stephen,
 
---KwgAcZnBnwoMp5TU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Wed, 14 Oct 2015 11:21:38 -0700, Stephen Boyd wrote:
 
-On Mon, Oct 19, 2015 at 10:44:41AM +0100, David Woodhouse wrote:
-> On Sun, 2015-10-18 at 20:53 +0100, Mark Brown wrote:
+> How about this patch?
+> 
+> ---8<----
+> diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
+> index 5837eb8a212f..85da8b983256 100644
+> --- a/drivers/clk/mvebu/clk-cpu.c
+> +++ b/drivers/clk/mvebu/clk-cpu.c
+> @@ -197,6 +197,7 @@ static void __init of_cpu_clk_setup(struct device_node *node)
+>  	for_each_node_by_type(dn, "cpu") {
+>  		struct clk_init_data init;
+>  		struct clk *clk;
+> +		struct clk *parent_clk;
+>  		char *clk_name = kzalloc(5, GFP_KERNEL);
+>  		int cpu, err;
+>  
+> @@ -208,8 +209,9 @@ static void __init of_cpu_clk_setup(struct device_node *node)
+>  			goto bail_out;
+>  
+>  		sprintf(clk_name, "cpu%d", cpu);
+> +		parent_clk = of_clk_get(node, 0);
+>  
+> -		cpuclk[cpu].parent_name = of_clk_get_parent_name(node, 0);
+> +		cpuclk[cpu].parent_name = __clk_get_name(parent_clk);
+>  		cpuclk[cpu].clk_name = clk_name;
+>  		cpuclk[cpu].cpu = cpu;
+>  		cpuclk[cpu].reg_base = clock_complex_base;
 
-> > Do you mean firmware rather than bus here?  I think that's the confusion
-> > I have...
+Applied on top of 4.3-rc5, this patch fixes the problem for me, without
+any change to the Device Tree files.
 
-> Certainly, if it literally is adding of_* calls then that would seem to
-> be gratuitously firmware-specific. Nothing should be using those these
-> days; any new code should be using the generic device property APIs
-> (except in special cases).
+It's probably the easiest option for 4.3. Do you want me to submit a
+patch, or will you apply it directly to your clk tree?
 
-It's not entirely clear to me that we should be moving to fwnode_
-wholesale yet - the last advice was to hold off for a little while which
-makes sense given that the ACPI community still doesn't seem to have
-worked out what it wants to do here and how.  The x86 embedded people
-are all gung ho but it's less clear that anyone else wants to use _DSD
-in quite the same way (I know of some efforts to use _DSD separately to
-the DT compatibility stuff) and there are some vendors who definitely do
-have completely different binding schemes for ACPI and DT and therefore
-specifically care which is in use.
+Thanks!
 
-It would really help if ACPI could get their binding review process in
-place, and if we do want to actually start converting everything to
-fwnode_ we need to start communicating that actively since otherwise
-people can't really be expected to know.
-
---KwgAcZnBnwoMp5TU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWJM3NAAoJECTWi3JdVIfQZWIH+wWlytIatZzb02megHs7cfkS
-XkfoBZZlTpwYYTLooWg9gc7XQ/Hx2qk/CTJwHZOudgYjrig+IWFuwOAU5Vw5YMm8
-7LN539ptj28jYJibjVxoIIX0bRAiQgrG9i3/5K5e6pmGzqnea/D2mu9sG5L2Fz//
-WLK/BYSFuVW6AzmoncTtGgYqECOFDXo8azymWx86d/NlXXMWKIvoEb0qVS+dJrgi
-6U7UQqhp46CwWEX3yk4Yf51Fi1wh6xAaLZcXeXqwvy+rYUXpBRNWKhG+0HR1d+Ep
-lOg6BbeD+4VpVvPL0yFpxmWEnjicr9mB6jVz/tkKq/tVq6aVat5SrbGTs5Tygjg=
-=TjUN
------END PGP SIGNATURE-----
-
---KwgAcZnBnwoMp5TU--
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
