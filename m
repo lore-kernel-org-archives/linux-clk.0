@@ -1,54 +1,77 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH v2] clk: ti: fix dual-registration of uart4_ick
-To: Stephen Boyd <sboyd@codeaurora.org>, Ben Dooks <ben.dooks@codethink.co.uk>
-References: <1443535268-22586-1-git-send-email-ben.dooks@codethink.co.uk>
- <20151002001539.GA12338@codeaurora.org>
-CC: <linux-kernel@lists.codethink.co.uk>, <stable@vger.kernel.org>,
-        <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <560E1F17.9060609@ti.com>
-Date: Fri, 2 Oct 2015 09:07:19 +0300
-MIME-Version: 1.0
-In-Reply-To: <20151002001539.GA12338@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: [PATCH] clk: Make of_clk_get_parent_name() robust with #clock-cells = 1
+Date: Thu, 15 Oct 2015 16:19:38 -0700
+Message-Id: <1444951178-18733-1-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <20151015215648.2024f611@free-electrons.com>
+References: <20151015215648.2024f611@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/02/2015 03:15 AM, Stephen Boyd wrote:
-> On 09/29, Ben Dooks wrote:
->> On the OMAP AM3517 platform the uart4_ick gets registered
->> twice, causing any power managment to /dev/ttyO3 to fail
->> when trying to wake the device up.
->>
->> This solves the following oops:
->>
->> [] Unhandled fault: external abort on non-linefetch (0x1028) at 0xfa09e008
->> [] PC is at serial_omap_pm+0x48/0x15c
->> [] LR is at _raw_spin_unlock_irqrestore+0x30/0x5c
->>
->> Cc: stable@vger.kernel.org
->> Cc: mturquette@baylibre.com
->> Cc: sboyd@codeaurora.org
->> Cc: linux-clk@vger.kernel.org
->> Cc: linux-omap@vger.kernel.org
->> Cc: t-kristo@ti.com
->> Cc: linux-kernel@lists.codethink.co.uk
->> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
->
-> Which patch broke this? Adding a Fixes: line will help us figure
-> out where to backport this.
->
+If a clock provider has #clock-cells = 1 and we call
+of_clk_get_parent_name() on it we may end up returning the name
+of the provider node if the provider doesn't have a
+clock-output-names property. This doesn't make sense, especially
+when you consider that calling of_clk_get_parent_name() on such a
+node with different indices will return the same name each time.
 
-The issue has been around since the legacy clock data code already, I am 
-not quite sure which initially broke it though. As such, we can use the 
-initial clock conversion commit as a fixes by for this:
+Let's try getting the clock from the framework via of_clk_get()
+instead, and only fallback to the node name if we have a provider
+with #clock-cells = 0. This way, we can't hand out the same name
+for different clocks when we don't actually know their names.
 
-commit aafd900cab87d339dc3004c241eebc854005124b
-Author: Tero Kristo <t-kristo@ti.com>
-Date:   Fri Aug 2 14:04:19 2013 +0300
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-     CLK: TI: add omap3 clock init file
-
-I'll add a fixes tag to this and queue it for 4.3-rc-fixes.
-
--Tero
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index b005f666e3a1..a0fe9ca1f0af 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3055,6 +3055,7 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
+ 	u32 pv;
+ 	int rc;
+ 	int count;
++	struct clk *clk;
+ 
+ 	if (index < 0)
+ 		return NULL;
+@@ -3080,8 +3081,25 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
+ 
+ 	if (of_property_read_string_index(clkspec.np, "clock-output-names",
+ 					  index,
+-					  &clk_name) < 0)
+-		clk_name = clkspec.np->name;
++					  &clk_name) < 0) {
++		/*
++		 * Best effort to get the name if the clock has been
++		 * registered with the framework. If the clock isn't
++		 * registered, we return the node name as the name of
++		 * the clock as long as #clock-cells = 0.
++		 */
++		clk = of_clk_get_from_provider(&clkspec);
++		if (IS_ERR(clk)) {
++			if (clkspec.args_count == 0)
++				clk_name = clkspec.np->name;
++			else
++				clk_name = NULL;
++		} else {
++			clk_name = __clk_get_name(clk);
++			clk_put(clk);
++		}
++	}
++
+ 
+ 	of_node_put(clkspec.np);
+ 	return clk_name;
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
