@@ -1,72 +1,83 @@
-Return-Path: <a.hajda@samsung.com>
-From: Andrzej Hajda <a.hajda@samsung.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, linux-kernel@vger.kernel.org,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-Subject: [PATCH v2 14/38] clk: vt8500: fix sign of possible PLL values
-Date: Fri, 02 Oct 2015 06:49:53 +0200
-Message-id: <1443761393-29366-1-git-send-email-a.hajda@samsung.com>
-In-reply-to: <20151001225628.GU19319@codeaurora.org>
-References: <20151001225628.GU19319@codeaurora.org>
+Return-Path: <rjui@broadcom.com>
+Subject: Re: [PATCH v3 08/10] clk: ns2: add clock support for Broadcom
+ Northstar 2 SoC
+To: Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
+ <1444938513-10758-9-git-send-email-jonmason@broadcom.com>
+ <56200F39.1060102@broadcom.com>
+CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
+	<hauke@hauke-m.de>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
+From: Ray Jui <rjui@broadcom.com>
+Message-ID: <562012A8.8050707@broadcom.com>
+Date: Thu, 15 Oct 2015 13:55:04 -0700
+MIME-Version: 1.0
+In-Reply-To: <56200F39.1060102@broadcom.com>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: rjui@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-With unsigned values underflow in loops can occur resulting in
-theoretically infinite loops.
 
-The problem has been detected using proposed semantic patch
-scripts/coccinelle/tests/unsigned_lesser_than_zero.cocci [1].
 
-[1]: http://permalink.gmane.org/gmane.linux.kernel/2038576
+On 10/15/2015 1:40 PM, Scott Branden wrote:
+> We need some sort of kconfig option to differentiate NS2 clock driver
+> from being pulled in all the time.
+> 
+> On 15-10-15 12:48 PM, Jon Mason wrote:
+>> The Broadcom Northstar 2 SoC is architected under the iProc
+>> architecture. It has the following PLLs: GENPLL SCR, GENPLL SW,
+>> LCPLL DDR, LCPLL Ports, all derived from an onboard crystal.
+>>
+>> Signed-off-by: Jon Mason <jonmason@broadcom.com>
+>> ---
+>>   drivers/clk/Makefile                |   2 +-
+>>   drivers/clk/bcm/Makefile            |   1 +
+>>   drivers/clk/bcm/clk-ns2.c           | 288
+>> ++++++++++++++++++++++++++++++++++++
+>>   include/dt-bindings/clock/bcm-ns2.h |  72 +++++++++
+>>   4 files changed, 362 insertions(+), 1 deletion(-)
+>>   create mode 100644 drivers/clk/bcm/clk-ns2.c
+>>   create mode 100644 include/dt-bindings/clock/bcm-ns2.h
+>>
+>> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+>> index d08b3e5..6124bd3 100644
+>> --- a/drivers/clk/Makefile
+>> +++ b/drivers/clk/Makefile
+>> @@ -47,7 +47,7 @@ obj-$(CONFIG_COMMON_CLK_WM831X)        += clk-wm831x.o
+>>   obj-$(CONFIG_COMMON_CLK_XGENE)        += clk-xgene.o
+>>   obj-$(CONFIG_COMMON_CLK_PWM)        += clk-pwm.o
+>>   obj-$(CONFIG_COMMON_CLK_AT91)        += at91/
+>> -obj-$(CONFIG_ARCH_BCM)            += bcm/
+>> +obj-y                    += bcm/
+>>   obj-$(CONFIG_ARCH_BERLIN)        += berlin/
+>>   obj-$(CONFIG_ARCH_HISI)            += hisilicon/
+>>   obj-$(CONFIG_ARCH_MXC)            += imx/
+>> diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+>> index e258b28..2d1cbc5 100644
+>> --- a/drivers/clk/bcm/Makefile
+>> +++ b/drivers/clk/bcm/Makefile
+>> @@ -3,6 +3,7 @@ obj-$(CONFIG_CLK_BCM_KONA)    += clk-kona-setup.o
+>>   obj-$(CONFIG_CLK_BCM_KONA)    += clk-bcm281xx.o
+>>   obj-$(CONFIG_CLK_BCM_KONA)    += clk-bcm21664.o
+>>   obj-$(CONFIG_COMMON_CLK_IPROC)    += clk-iproc-armpll.o
+>> clk-iproc-pll.o clk-iproc-asiu.o
+>> +obj-$(CONFIG_COMMON_CLK_IPROC)    += clk-ns2.o
+> 
+> NS2 code is dragged in for all IPROC SoCs.  We need a config option for
+> NS2 (CONFIG_ARCH_BCM_NS2) to avoid this (if Arnd allows this for ARMv8
+> processors... ?).
+> 
+> You can see below ARMv7 processors don't have this problem.
+> 
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
-Hi Stephen,
+The arm64 maintainers (Catalin, Mark, and etc.) stated they only want
+one ARCH options per chip family.
 
-This is modified version according to your request, ie only problematic
-variables have changed type.
-I still think that 1st version is better, but of course it is up to you.
+> If not we need to add CONFIG_CLK_NS2.
 
-Regards
-Andrzej
+If using CONFIG_CLK_NS2, how is it going to be enabled/selected?
 
- drivers/clk/clk-vt8500.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/clk-vt8500.c b/drivers/clk/clk-vt8500.c
-index 37e9288..98c4492 100644
---- a/drivers/clk/clk-vt8500.c
-+++ b/drivers/clk/clk-vt8500.c
-@@ -384,7 +384,8 @@ static void vt8500_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- static void wm8650_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- 				u32 *multiplier, u32 *divisor1, u32 *divisor2)
- {
--	u32 mul, div1, div2;
-+	u32 mul, div1;
-+	int div2;
- 	u32 best_mul, best_div1, best_div2;
- 	unsigned long tclk, rate_err, best_err;
- 
-@@ -452,7 +453,8 @@ static u32 wm8750_get_filter(u32 parent_rate, u32 divisor1)
- static void wm8750_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- 				u32 *filter, u32 *multiplier, u32 *divisor1, u32 *divisor2)
- {
--	u32 mul, div1, div2;
-+	u32 mul;
-+	int div1, div2;
- 	u32 best_mul, best_div1, best_div2;
- 	unsigned long tclk, rate_err, best_err;
- 
-@@ -496,7 +498,8 @@ static void wm8750_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- static void wm8850_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- 				u32 *multiplier, u32 *divisor1, u32 *divisor2)
- {
--	u32 mul, div1, div2;
-+	u32 mul;
-+	int div1, div2;
- 	u32 best_mul, best_div1, best_div2;
- 	unsigned long tclk, rate_err, best_err;
- 
--- 
-1.9.1
+Ray
