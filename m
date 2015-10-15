@@ -1,53 +1,89 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: shmobile: r8a7778: Make r8a7778_rates[] and r8a7778_divs[] static const
-Date: Fri, 16 Oct 2015 17:14:55 +0200
-Message-Id: <1445008495-27708-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: linux-arm-kernel@lists.infradead.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Russell King <linux@arm.linux.org.uk>
+Cc: Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 08/13] clk: add ARM syscon ICST device tree bindings
+Date: Thu, 15 Oct 2015 15:46:48 +0200
+Message-Id: <1444916813-31024-9-git-send-email-linus.walleij@linaro.org>
+In-Reply-To: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
+References: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-r8a7778_rates[] and r8a7778_divs[] are only used in clk-r8a7778.c, and
-never modified.
+This adds the device tree bindings for the ARM Syscon ICST
+oscillators, which is a register-level interface to the
+Integrated Device Technology (IDT) ICS525 and ICS307
+serially programmable oscillators.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: devicetree@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/clk/shmobile/clk-r8a7778.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+I'm looking for an ACK from the CLK maintainers to take this
+through the ARM SoC tree once the series stabilize.
+---
+ .../devicetree/bindings/clock/arm-syscon-icst.txt  | 40 ++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
 
-diff --git a/drivers/clk/shmobile/clk-r8a7778.c b/drivers/clk/shmobile/clk-r8a7778.c
-index 87c1d2f2fb57a46c..b1741551fff2a6c9 100644
---- a/drivers/clk/shmobile/clk-r8a7778.c
-+++ b/drivers/clk/shmobile/clk-r8a7778.c
-@@ -20,10 +20,10 @@ struct r8a7778_cpg {
- };
- 
- /* PLL multipliers per bits 11, 12, and 18 of MODEMR */
--struct {
-+static const struct {
- 	unsigned long plla_mult;
- 	unsigned long pllb_mult;
--} r8a7778_rates[] __initdata = {
-+} r8a7778_rates[] __initconst = {
- 	[0] = { 21, 21 },
- 	[1] = { 24, 24 },
- 	[2] = { 28, 28 },
-@@ -34,10 +34,10 @@ struct {
- };
- 
- /* Clock dividers per bits 1 and 2 of MODEMR */
--struct {
-+static const struct {
- 	const char *name;
- 	unsigned int div[4];
--} r8a7778_divs[6] __initdata = {
-+} r8a7778_divs[6] __initconst = {
- 	{ "b",   { 12, 12, 16, 18 } },
- 	{ "out", { 12, 12, 16, 18 } },
- 	{ "p",   { 16, 12, 16, 12 } },
+diff --git a/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt b/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
+new file mode 100644
+index 000000000000..19eb3aa765c7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
+@@ -0,0 +1,40 @@
++ARM System Controller ICST clocks
++
++The ICS525 and ICS307 oscillators are produced by Integrated Devices
++Technology (IDT). ARM integrated these oscillators deeply into their
++reference designs by adding special control registers that manage such
++oscillators to their system controllers.
++
++The ARM system controller contains logic to serialized and initialize
++an ICST clock request after a write to the 32 bit register at an offset
++into the system controller. Further, to even be able to alter one of
++these frequencies, the system controller must first be unlocked by
++writing a special token to another offset in the system controller.
++
++The ICST oscillator must be provided inside a system controller node.
++
++Required properties:
++- lock-offset: the offset address into the system controller where the
++  unlocking register is located
++- vco-offset: the offset address into the system controller where the
++  ICST control register is located (even 32 bit address)
++- compatible: must be one of "arm,syscon-icst525" or "arm,syscon-icst307"
++- #clock-cells: must be <0>
++- clocks: parent clock, since the ICST needs a parent clock to derive its
++  frequency from, this attribute is compulsory.
++
++Example:
++
++syscon: syscon@10000000 {
++	compatible = "syscon";
++	reg = <0x10000000 0x1000>;
++
++	oscclk0: osc0@0c {
++		compatible = "arm,syscon-icst307";
++		#clock-cells = <0>;
++		lock-offset = <0x20>;
++		vco-offset = <0x0C>;
++		clocks = <&xtal24mhz>;
++	};
++	(...)
++};
 -- 
-1.9.1
+2.4.3
