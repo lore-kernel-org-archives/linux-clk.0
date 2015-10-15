@@ -1,71 +1,83 @@
-Return-Path: <gregkh@linuxfoundation.org>
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-kernel@lists.codethink.co.uk,
-	Ben Dooks <ben.dooks@codethink.co.uk>,
-	Tero Kristo <t-kristo@ti.com>
-Subject: [PATCH 4.2 243/258] clk: ti: fix dual-registration of uart4_ick
-Date: Sat, 17 Oct 2015 18:59:16 -0700
-Message-Id: <20151018014741.470565271@linuxfoundation.org>
-In-Reply-To: <20151018014729.976101177@linuxfoundation.org>
-References: <20151018014729.976101177@linuxfoundation.org>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Thu, 15 Oct 2015 21:56:48 +0200
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Gregory CLEMENT
+ <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>,
+ Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth
+ <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH 14/26] clk: mvebu: Convert to clk_hw based provider APIs
+Message-ID: <20151015215648.2024f611@free-electrons.com>
+In-Reply-To: <20151015180903.GG4558@codeaurora.org>
+References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
+	<1438362246-6664-15-git-send-email-sboyd@codeaurora.org>
+	<20151014170922.3027008a@free-electrons.com>
+	<20151014182138.GD26883@codeaurora.org>
+	<20151014221733.65507871@free-electrons.com>
+	<20151014210859.GB4558@codeaurora.org>
+	<20151015104326.6f7e907c@free-electrons.com>
+	<20151015180903.GG4558@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-4.2-stable review patch.  If anyone has any objections, please let me know.
+Stephen,
 
-------------------
+On Thu, 15 Oct 2015 11:09:03 -0700, Stephen Boyd wrote:
 
-From: Ben Dooks <ben.dooks@codethink.co.uk>
+> Good catch! Except we don't need to do all that complicated
+> stuff, right? We can use of_clk_get_from_provider() instead.
+> 
+> ---8<----
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 16b86a551bcb..648fb2c8904d 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -3088,7 +3088,7 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
+>  		 * registered, we return the node name as the name of
+>  		 * the clock as long as #clock-cells = 0.
+>  		 */
+> -		clk = of_clk_get(np, index);
+> +		clk = of_clk_get_from_provider(clkspec);
+>  		if (IS_ERR(clk)) {
+>  			if (clkspec.args_count == 0)
+>  				clk_name = clkspec.np->name;
 
-commit 19e79687de22f23bcfb5e79cce3daba20af228d1 upstream.
+I'll re-test this solution tomorrow, just to make sure.
 
-On the OMAP AM3517 platform the uart4_ick gets registered
-twice, causing any power management to /dev/ttyO3 to fail
-when trying to wake the device up.
+> > So, what is the plan now ?
+> > 
+> >  - Have the minimal fix in drivers/clk/mvebu/clk-cpu.c for 4.3.
+> 
+> Yep.
 
-This solves the following oops:
+I see in your other e-mail that you already applied the fix, so good.
 
-[] Unhandled fault: external abort on non-linefetch (0x1028) at 0xfa09e008
-[] PC is at serial_omap_pm+0x48/0x15c
-[] LR is at _raw_spin_unlock_irqrestore+0x30/0x5c
+> >  - Have the patch improving the of_clk_get_parent_name() logic merged
+> >    in 4.4 + a revert of the fix done for 4.3 in clk-cpu.c. Unless maybe
+> >    you don't want to clutter the core of the clock framework to handle
+> >    this specific case?
+> 
+> Assuming that the patch doesn't cause problems for other
+> platforms, then I think we'll go with this approach.
 
-Fixes: aafd900cab87 ("CLK: TI: add omap3 clock init file")
-Cc: mturquette@baylibre.com
-Cc: sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-omap@vger.kernel.org
-Cc: linux-kernel@lists.codethink.co.uk
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Ok. Can you send the patch "properly" so that I can give a formal
+Tested-by ?
 
----
- drivers/clk/ti/clk-3xxx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> >  - Add the clock-output-names to the Marvell EBU Device Tree files, so
+> >    that in a couple of kernel releases we can remove the hacks and rely
+> >    on the generic logic of of_clk_get_parent_name().
+> > 
+> 
+> Naw, let's not change any DT files for this.
 
---- a/drivers/clk/ti/clk-3xxx.c
-+++ b/drivers/clk/ti/clk-3xxx.c
-@@ -163,7 +163,6 @@ static struct ti_dt_clk omap3xxx_clks[]
- 	DT_CLK(NULL, "gpio2_ick", "gpio2_ick"),
- 	DT_CLK(NULL, "wdt3_ick", "wdt3_ick"),
- 	DT_CLK(NULL, "uart3_ick", "uart3_ick"),
--	DT_CLK(NULL, "uart4_ick", "uart4_ick"),
- 	DT_CLK(NULL, "gpt9_ick", "gpt9_ick"),
- 	DT_CLK(NULL, "gpt8_ick", "gpt8_ick"),
- 	DT_CLK(NULL, "gpt7_ick", "gpt7_ick"),
-@@ -308,6 +307,7 @@ static struct ti_dt_clk am35xx_clks[] =
- static struct ti_dt_clk omap36xx_clks[] = {
- 	DT_CLK(NULL, "omap_192m_alwon_fck", "omap_192m_alwon_fck"),
- 	DT_CLK(NULL, "uart4_fck", "uart4_fck"),
-+	DT_CLK(NULL, "uart4_ick", "uart4_ick"),
- 	{ .node_name = NULL },
- };
- 
+ACK.
+
+Thanks for your help!
+
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
