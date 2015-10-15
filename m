@@ -1,83 +1,82 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 19 Oct 2015 17:36:04 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: York Sun <yorksun@freescale.com>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"pmarrecas@outlook.com" <pmarrecas@outlook.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Andrey Filippov <andrey@elphel.com>,
-	Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [Resend Patch v6] driver/clk/clk-si5338: Add common clock
- framework driver for si5338
-Message-ID: <20151020003604.GF19782@codeaurora.org>
-References: <1444410574-28677-1-git-send-email-yorksun@freescale.com>
- <20151010000948.GW26883@codeaurora.org>
- <562165C3.1090103@freescale.com>
- <20151016213139.GE16437@codeaurora.org>
- <56216E0D.4010709@freescale.com>
- <20151016230555.GE10182@codeaurora.org>
- <562553E4.30906@freescale.com>
- <20151019234348.GE19782@codeaurora.org>
- <CY1PR03MB14694C6FFC8BA80C08EB039ABE390@CY1PR03MB1469.namprd03.prod.outlook.com>
+Return-Path: <hauke@hauke-m.de>
+Subject: Re: [PATCH v3 01/10] ARM: cygnus: fix link failures when
+ CONFIG_COMMON_CLK_IPROC is disabled
+To: Jon Mason <jonmason@broadcom.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
+ <1444938513-10758-2-git-send-email-jonmason@broadcom.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+ Arnd Bergmann <arnd@arndb.de>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Message-ID: <562017FB.3030406@hauke-m.de>
+Date: Thu, 15 Oct 2015 23:17:47 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CY1PR03MB14694C6FFC8BA80C08EB039ABE390@CY1PR03MB1469.namprd03.prod.outlook.com>
+In-Reply-To: <1444938513-10758-2-git-send-email-jonmason@broadcom.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/20, York Sun wrote:
-> Sorry for top posting. I am on outlook web.
+On 10/15/2015 09:48 PM, Jon Mason wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> We have no problem with device tree. Let's put it aside.
+> When CONFIG_CYGNUS is set but CONFIG_COMMON_CLK_IPROC is disabled, the
+> following link failures are caused:
 > 
-> When device is not used, the platform data is used to hold the data, filled by a platform device before probing the clock. For my case, the platform device is a PCIe device. It is a multifunction device with I2C controller on it. The pseudo code looks like
+> drivers/built-in.o: In function `cygnus_armpll_init':
+> :(.init.text+0x1d290): undefined reference to `iproc_armpll_setup'
+> drivers/built-in.o: In function `cygnus_genpll_clk_init':
+> :(.init.text+0x1d2c4): undefined reference to `iproc_pll_clk_setup'
+> drivers/built-in.o: In function `cygnus_lcpll0_clk_init':
+> :(.init.text+0x1d304): undefined reference to `iproc_pll_clk_setup'
+> drivers/built-in.o: In function `cygnus_mipipll_clk_init':
+> :(.init.text+0x1d344): undefined reference to `iproc_pll_clk_setup'
+> drivers/built-in.o: In function `cygnus_asiu_init':
+> :(.init.text+0x1d370): undefined reference to `iproc_asiu_setup'
 > 
-> struct i2c_board_info si5338_info[NUM_SI5338_CHIPS] = {
->         {
->                 .type = "si5338",
->                 .platform_data = &si5338_pdata[0],
->         },
->         {
->                 .type = "si5338",
->                 .platform_data = &si5338_pdata[1],
->         },
->         {
->                 .type = "si5338",
->                 .platform_data = &si5338_pdata[2],
->         },
->         {
->                 .type = "si5338",
->                 .platform_data = &si5338_pdata[3],
->         },
-> };
-> clk = clk_register_fixed_rate(&pdev->dev, "ref25", NULL, CLK_IS_ROOT, 25000000);
-> for (i = 0; i < NUM_SI5338_CHIPS; i++) {
->     si5338_pdata[i].clk_xtal = clk;
->     adap = i2c_get_adapter(private->i2c_adp->nr + 1 + i);
->     private->i2c_client[i] = i2c_new_probed_device(adap, &si5338_info[i], i2c_si5338_addr, NULL);
-> }
+> It is fixed it by always selecting COMMON_CLK_IPROC from
+> ARCH_BCM_IPROC, and making COMMON_CLK_IPROC a silent option (thus
+> preventing it from being erroneously disabled by a user).
 > 
-> You can see, when the fixed-rate clock is registered, the device id of si5338 is unknown yet. (I am using one 25MHz clock to feed multiple si5338, where maybe I should create multiple 25MHz clocks, but that's another discussion.)
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Jon Mason <jonmason@broadcom.com>
+> ---
+>  arch/arm/mach-bcm/Kconfig | 2 +-
+>  drivers/clk/bcm/Kconfig   | 4 +---
+>  2 files changed, 2 insertions(+), 4 deletions(-)
 > 
-> I hope I have made it clear.
+> diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
+> index 1319c3c..84bd265 100644
+> --- a/arch/arm/mach-bcm/Kconfig
+> +++ b/arch/arm/mach-bcm/Kconfig
+> @@ -14,7 +14,7 @@ config ARCH_BCM_IPROC
+>  	select HAVE_ARM_SCU if SMP
+>  	select HAVE_ARM_TWD if SMP
+>  	select ARM_GLOBAL_TIMER
+> -
+> +	select COMMON_CLK_IPROC
+>  	select CLKSRC_MMIO
+>  	select ARCH_REQUIRE_GPIOLIB
+>  	select ARM_AMBA
+> diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+> index 88febf5..46ee475 100644
+> --- a/drivers/clk/bcm/Kconfig
+> +++ b/drivers/clk/bcm/Kconfig
+> @@ -9,10 +9,8 @@ config CLK_BCM_KONA
+>  	  in the BCM281xx and BCM21664 families.
+>  
+>  config COMMON_CLK_IPROC
+> -	bool "Broadcom iProc clock support"
+> -	depends on ARCH_BCM_IPROC
+> +	bool
+>  	depends on COMMON_CLK
+> -	default ARCH_BCM_IPROC
+>  	help
+>  	  Enable common clock framework support for Broadcom SoCs
+>  	  based on the iProc architecture
 
-Yes. It would be great if we could modify the i2c framework to
-let us create an i2c device but not call device_register() until a later
-time. So something like this could be done in the platform
-driver:
+A help text is not needed for a silent option.
 
-	for (i = 0; i < NUM_SI5338_CHIPS; i++) {
-	     adap = i2c_get_adapter(private->i2c_adp->nr + 1 + i);
-	     private->i2c_client[i] = i2c_new_device_unregistered(adap,
-	     				&si5338_info[i], i2c_si5338_addr);
-	     clkdev_create(clk, NULL, dev_name(private->i2c_client[i]->dev));
-	     device_register(private->i2c_client[i]->dev);
-	}
-
-Then in the si5338 driver we call devm_clk_get(i2c->dev, NULL)
-and we get the xtal clock.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Hauke
