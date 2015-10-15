@@ -1,94 +1,130 @@
-Return-Path: <sbranden@broadcom.com>
-Subject: Re: [PATCH v3 08/10] clk: ns2: add clock support for Broadcom
- Northstar 2 SoC
-To: Ray Jui <rjui@broadcom.com>, Jon Mason <jonmason@broadcom.com>, "Michael
- Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
- <1444938513-10758-9-git-send-email-jonmason@broadcom.com>
- <56200F39.1060102@broadcom.com> <562012A8.8050707@broadcom.com>
-CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
-	<hauke@hauke-m.de>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
-From: Scott Branden <sbranden@broadcom.com>
-Message-ID: <562014C9.5070708@broadcom.com>
-Date: Thu, 15 Oct 2015 14:04:09 -0700
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+To: <arnd@arndb.de>, <mark.rutland@arm.com>,
+ <linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
+ <linux-clk@vger.kernel.org>, <olof@lixom.net>
+Subject: [PATCH v3 02/12] arm64: Rename FSL LS2085A SoC support code to LS2080A
+Date: Thu, 15 Oct 2015 12:17:42 +0530
+Message-ID: <1444891672-32117-3-git-send-email-bhupesh.sharma@freescale.com>
+In-Reply-To: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
+References: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
 MIME-Version: 1.0
-In-Reply-To: <562012A8.8050707@broadcom.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Return-Path: sbranden@broadcom.com
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: LeoLi@freescale.com, bhupesh.sharma@freescale.com, Catalin.Marinas@arm.com,
+ will.deacon@arm.com, stuart.yoder@freescale.com, scottwood@freescale.com,
+ bhupesh.linux@gmail.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Ray,
+Freescale is renaming the LS2085A SoC to LS2080A. This patch
+addresses the same.
 
-Comment at near end.
+Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+---
+ Documentation/devicetree/bindings/arm/fsl.txt      |    4 ++--
+ arch/arm64/boot/dts/freescale/Makefile             |    2 +-
+ .../{fsl-ls2085a-simu.dts => fsl-ls2080a-simu.dts} |   10 +++++-----
+ .../{fsl-ls2085a.dtsi => fsl-ls2080a.dtsi}         |    6 +++---
+ 4 files changed, 11 insertions(+), 11 deletions(-)
+ rename arch/arm64/boot/dts/freescale/{fsl-ls2085a-simu.dts => fsl-ls2080a-simu.dts} (90%)
+ rename arch/arm64/boot/dts/freescale/{fsl-ls2085a.dtsi => fsl-ls2080a.dtsi} (97%)
 
-On 15-10-15 01:55 PM, Ray Jui wrote:
->
->
-> On 10/15/2015 1:40 PM, Scott Branden wrote:
->> We need some sort of kconfig option to differentiate NS2 clock driver
->> from being pulled in all the time.
->>
->> On 15-10-15 12:48 PM, Jon Mason wrote:
->>> The Broadcom Northstar 2 SoC is architected under the iProc
->>> architecture. It has the following PLLs: GENPLL SCR, GENPLL SW,
->>> LCPLL DDR, LCPLL Ports, all derived from an onboard crystal.
->>>
->>> Signed-off-by: Jon Mason <jonmason@broadcom.com>
->>> ---
->>>    drivers/clk/Makefile                |   2 +-
->>>    drivers/clk/bcm/Makefile            |   1 +
->>>    drivers/clk/bcm/clk-ns2.c           | 288
->>> ++++++++++++++++++++++++++++++++++++
->>>    include/dt-bindings/clock/bcm-ns2.h |  72 +++++++++
->>>    4 files changed, 362 insertions(+), 1 deletion(-)
->>>    create mode 100644 drivers/clk/bcm/clk-ns2.c
->>>    create mode 100644 include/dt-bindings/clock/bcm-ns2.h
->>>
->>> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
->>> index d08b3e5..6124bd3 100644
->>> --- a/drivers/clk/Makefile
->>> +++ b/drivers/clk/Makefile
->>> @@ -47,7 +47,7 @@ obj-$(CONFIG_COMMON_CLK_WM831X)        += clk-wm831x.o
->>>    obj-$(CONFIG_COMMON_CLK_XGENE)        += clk-xgene.o
->>>    obj-$(CONFIG_COMMON_CLK_PWM)        += clk-pwm.o
->>>    obj-$(CONFIG_COMMON_CLK_AT91)        += at91/
->>> -obj-$(CONFIG_ARCH_BCM)            += bcm/
->>> +obj-y                    += bcm/
->>>    obj-$(CONFIG_ARCH_BERLIN)        += berlin/
->>>    obj-$(CONFIG_ARCH_HISI)            += hisilicon/
->>>    obj-$(CONFIG_ARCH_MXC)            += imx/
->>> diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
->>> index e258b28..2d1cbc5 100644
->>> --- a/drivers/clk/bcm/Makefile
->>> +++ b/drivers/clk/bcm/Makefile
->>> @@ -3,6 +3,7 @@ obj-$(CONFIG_CLK_BCM_KONA)    += clk-kona-setup.o
->>>    obj-$(CONFIG_CLK_BCM_KONA)    += clk-bcm281xx.o
->>>    obj-$(CONFIG_CLK_BCM_KONA)    += clk-bcm21664.o
->>>    obj-$(CONFIG_COMMON_CLK_IPROC)    += clk-iproc-armpll.o
->>> clk-iproc-pll.o clk-iproc-asiu.o
->>> +obj-$(CONFIG_COMMON_CLK_IPROC)    += clk-ns2.o
->>
->> NS2 code is dragged in for all IPROC SoCs.  We need a config option for
->> NS2 (CONFIG_ARCH_BCM_NS2) to avoid this (if Arnd allows this for ARMv8
->> processors... ?).
->>
->> You can see below ARMv7 processors don't have this problem.
->>
->
-> The arm64 maintainers (Catalin, Mark, and etc.) stated they only want
-> one ARCH options per chip family.
->
->> If not we need to add CONFIG_CLK_NS2.
->
-> If using CONFIG_CLK_NS2, how is it going to be enabled/selected?
+diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
+index 744b4de..53f229a 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.txt
++++ b/Documentation/devicetree/bindings/arm/fsl.txt
+@@ -131,7 +131,7 @@ Example:
+ Freescale ARMv8 based Layerscape SoC family Device Tree Bindings
+ ----------------------------------------------------------------
+ 
+-LS2085A ARMv8 based Simulator model
++LS2080A ARMv8 based Simulator model
+ Required root node properties:
+-    - compatible = "fsl,ls2085a-simu", "fsl,ls2085a";
++    - compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
+ 
+diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+index fc6fca3c..932001a 100644
+--- a/arch/arm64/boot/dts/freescale/Makefile
++++ b/arch/arm64/boot/dts/freescale/Makefile
+@@ -1,4 +1,4 @@
+-dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2085a-simu.dtb
++dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-simu.dtb
+  
+ always		:= $(dtb-y)
+ subdir-y	:= $(dts-dirs)
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2085a-simu.dts b/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
+similarity index 90%
+rename from arch/arm64/boot/dts/freescale/fsl-ls2085a-simu.dts
+rename to arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
+index 82e2a6f..33d6d0c 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls2085a-simu.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
+@@ -1,7 +1,7 @@
+ /*
+- * Device Tree file for Freescale LS2085a software Simulator model
++ * Device Tree file for Freescale LS2080a software Simulator model
+  *
+- * Copyright (C) 2014, Freescale Semiconductor
++ * Copyright (C) 2014-2015, Freescale Semiconductor
+  *
+  * Bhupesh Sharma <bhupesh.sharma@freescale.com>
+  *
+@@ -51,11 +51,11 @@
+ 
+ /dts-v1/;
+ 
+-/include/ "fsl-ls2085a.dtsi"
++/include/ "fsl-ls2080a.dtsi"
+ 
+ / {
+-	model = "Freescale Layerscape 2085a software Simulator model";
+-	compatible = "fsl,ls2085a-simu", "fsl,ls2085a";
++	model = "Freescale Layerscape 2080a software Simulator model";
++	compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
+ 
+ 	ethernet@2210000 {
+ 		compatible = "smsc,lan91c111";
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2085a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+similarity index 97%
+rename from arch/arm64/boot/dts/freescale/fsl-ls2085a.dtsi
+rename to arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+index e281ceb..9597edf 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls2085a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+@@ -1,7 +1,7 @@
+ /*
+- * Device Tree Include file for Freescale Layerscape-2085A family SoC.
++ * Device Tree Include file for Freescale Layerscape-2080A family SoC.
+  *
+- * Copyright (C) 2014, Freescale Semiconductor
++ * Copyright (C) 2014-2015, Freescale Semiconductor
+  *
+  * Bhupesh Sharma <bhupesh.sharma@freescale.com>
+  *
+@@ -50,7 +50,7 @@
+  */
+ 
+ / {
+-	compatible = "fsl,ls2085a";
++	compatible = "fsl,ls2080a";
+ 	interrupt-parent = <&gic>;
+ 	#address-cells = <2>;
+ 	#size-cells = <2>;
+-- 
+1.7.9.5
 
-Since CONFIG_ARCH_BCM_NS2 isn't "allowed" to be introduced we will need 
-to create and select a CONFIG_CLK_BCM_NS2 in the defconfig instead.
->
-> Ray
->
 
-Regards,
-  Scott
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
