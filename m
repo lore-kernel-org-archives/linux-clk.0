@@ -1,122 +1,53 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <B48286@freescale.com>
+From: Zhiqiang Hou <B48286@freescale.com>
+To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
+	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+CC: <mark.rutland@arm.com>, <linux@roeck-us.net>, <wsa@the-dreams.de>,
+	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <Mingkai.Hu@freescale.com>,
+	<Shaohui.Xie@freescale.com>, <scottwood@freescale.com>,
+	<bhupesh.sharma@freescale.com>, <Wenbin.Song@freescale.com>,
+	<B48286@freescale.com>
+Subject: [PATCH V4 1/6] i2c: Add i2c support to Freescale Layerscape platforms
+Date: Thu, 15 Oct 2015 20:12:56 +0800
+Message-ID: <1444911181-21696-1-git-send-email-B48286@freescale.com>
+Return-Path: B48286@freescale.com
 MIME-Version: 1.0
-To: Maxime Ripard <maxime.ripard@free-electrons.com>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20151020144047.GA10947@lukather>
-Cc: "Stephen Boyd" <sboyd@codeaurora.org>, "Emilio Lopez" <emilio@elopez.com.ar>,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- "Chen-Yu Tsai" <wens@csie.org>, "Hans de Goede" <hdegoede@redhat.com>,
- linux-sunxi@googlegroups.com
-References: <1445326609-6314-1-git-send-email-maxime.ripard@free-electrons.com>
- <1445326609-6314-2-git-send-email-maxime.ripard@free-electrons.com>
- <20151020134343.20687.16333@quantum> <20151020144047.GA10947@lukather>
-Message-ID: <20151020162939.20687.32769@quantum>
-Subject: Re: [PATCH v6 1/5] clk: Add a basic multiplier clock
-Date: Tue, 20 Oct 2015 09:29:39 -0700
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Maxime Ripard (2015-10-20 07:40:47)
-> Hi Mike,
-> =
+From: Shaohui Xie <Shaohui.Xie@freescale.com>
 
-> On Tue, Oct 20, 2015 at 06:43:43AM -0700, Michael Turquette wrote:
-> > Hi Maxime,
-> > =
+Modify the I2C_IMX config to support to Layerscape platforms.
 
-> > Quoting Maxime Ripard (2015-10-20 00:36:45)
-> > > +struct clk *clk_register_multiplier(struct device *dev, const char *=
-name,
-> > > +                                   const char *parent_name,
-> > > +                                   unsigned long flags,
-> > > +                                   void __iomem *reg, u8 shift, u8 w=
-idth,
-> > > +                                   u8 clk_mult_flags, spinlock_t *lo=
-ck)
-> > > +{
-> > =
+Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
+Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
+Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+---
+V4: V3 V2
+ - No change.
 
-> > Patch looks good in general. However this is a good opportunity to stop
-> > the madness around the registration functions in these basic clock
-> > types.
-> > =
+ drivers/i2c/busses/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> > clk_register is really all that we need since we've had struct
-> > clk_init_data for a while. Initializing a multiplier should be as simple
-> > as:
-> > =
-
-> >       struct clk_multiplier clk_foo =3D {
-> >               .hw.init =3D &(struct clk_init_data){
-> >                       .name =3D "foo",
-> >                       .parent_names =3D (const char *[]){
-> >                               "bar",
-> >                       },
-> >                       .num_parents =3D 1;
-> >                       .ops =3D &clk_multiplier_ops,
-> >               },
-> >               .reg =3D 0xd34db33f,
-> >               .shift =3D 1,
-> >               .width =3D 2,
-> >       };
-> > =
-
-> >       clk_register(dev, &clk_foo.hw);
-> > =
-
-> > This is nice since it turns these basic clocks into even more of a
-> > library and less of a poor mans driver.
-> > =
-
-> > (I really hope the above works. I did not test it)
-> > =
-
-> > Is it possible you can convert to using this method, and if it is
-> > correct for you then just remove clk_multiplier_register altogether? (In
-> > fact you might not use the registration function at all since you use
-> > the composite clock...)
-> =
-
-> This chunk of code has been here since v2, which has been first posted
-> in May, two and half kernel releases ago.
-> =
-
-> In the meantime, we had a full-blown DMA driver and a quite unusual
-> ASoC driver merged. For some reason, this is the only piece of the
-> audio support that is missing for us, while at the same time it's the
-> most trivial.
-> =
-
-> If that's the only issue you have with this patch, I'm fine with
-> sending a subsequent patch this week. But I'd be really unhappy with
-> sending yet another version for a single change, while you had 5
-> monthes to review it, and we discussed it several times on IRC and
-> face to face.
-
-The change can go in later. It's not a prerequisite. I had a feeling
-you'd be grumpy about me asking but I thought I'd try anyways. I won't
-even ask if you got sign-off from Jim on whether this works for his
-platforms ;-)
-
-The copy/paste nature of these basic clock types really sucks and it is
-one of many reasons that I am hesitant to accept them and slow to merge
-them...
-
-Anyways it seems that you are not using the registration function at all
-so I might just follow up with a patch to remove it.
-
-I can pick these 5 patches directly, or do you plan to send a PR?
-
-Regards,
-Mike
-
-> =
-
-> Maxime
-> =
-
-> -- =
-
-> Maxime Ripard, Free Electrons
-> Embedded Linux, Kernel and Android engineering
-> http://free-electrons.com
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index 08b8617..14147ec 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -582,10 +582,10 @@ config I2C_IMG
+ 
+ config I2C_IMX
+ 	tristate "IMX I2C interface"
+-	depends on ARCH_MXC
++	depends on ARCH_MXC || ARCH_LAYERSCAPE
+ 	help
+ 	  Say Y here if you want to use the IIC bus controller on
+-	  the Freescale i.MX/MXC processors.
++	  the Freescale i.MX/MXC or Layerscape processors.
+ 
+ 	  This driver can also be built as a module.  If so, the module
+ 	  will be called i2c-imx.
+-- 
+2.1.0.27.g96db324
