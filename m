@@ -1,121 +1,53 @@
-Return-Path: <yingjoe.chen@mediatek.com>
-Message-ID: <1443710016.22188.10.camel@mtksdaap41>
-Subject: Re: [PATCH 2/2] arm64: dts: mt8173: add timer node
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, Daniel Lezcano
-	<daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
-	James Liao <jamesjj.liao@mediatek.com>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "Catalin
- Marinas" <Catalin.Marinas@arm.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	Sascha Hauer <kernel@pengutronix.de>, Olof Johansson <olof@lixom.net>,
-	"srv_heupstream@mediatek.com" <srv_heupstream@mediatek.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Daniel Kurtz <djkurtz@chromium.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Eddie Huang
-	<eddie.huang@mediatek.com>
-Date: Thu, 1 Oct 2015 22:33:36 +0800
-In-Reply-To: <55FAE69C.2000906@arm.com>
-References: <1442369095-1094-1-git-send-email-yingjoe.chen@mediatek.com>
-	 <1442369095-1094-2-git-send-email-yingjoe.chen@mediatek.com>
-	 <55FAC570.8040307@arm.com> <1442501816.4784.3.camel@mtksdaap41>
-	 <55FAE69C.2000906@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <k.kozlowski.k@gmail.com>
 MIME-Version: 1.0
-Return-Path: yingjoe.chen@mediatek.com
+Sender: k.kozlowski.k@gmail.com
+In-Reply-To: <561EA831.2070001@osg.samsung.com>
+References: <1444745898-11537-1-git-send-email-javier@osg.samsung.com>
+	<20151014183831.GH26883@codeaurora.org>
+	<561EA831.2070001@osg.samsung.com>
+Date: Thu, 15 Oct 2015 11:04:46 +0900
+Message-ID: <CAJKOXPeNGiuokN-NeS068bZqpSaJNz9QvaxoSs33855GY3_N_g@mail.gmail.com>
+Subject: Re: [PATCH] clk: Allow drivers to build if COMPILE_TEST is enabled
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Javier Martinez Canillas <javier@osg.samsung.com>, Luis de Bethencourt <luisbg@osg.samsung.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>, Scott Branden <sbranden@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2015-09-17 at 17:13 +0100, Sudeep Holla wrote:
-> 
-> On 17/09/15 15:56, Yingjoe Chen wrote:
-> > On Thu, 2015-09-17 at 14:51 +0100, Sudeep Holla wrote:
-> >>
-> >> On 16/09/15 03:04, Yingjoe Chen wrote:
-> >>> From: Daniel Kurtz <djkurtz@chromium.org>
-> >>>
-> >>> Add device node to enable GPT timer. This timer will be
-> >>> used as sched clock source.
-> >>>
-> >>
-> >> Interesting any known issues with or advantage over the arch timers
-> >> to prefer it as sched clock source. I see even arch timers are present
-> >> in DT, hence the question. Or is it just a incorrect commit log ?
-> >>
-> >> How does this get selected as sched clock source ? I don't see
-> >> sched_clock_register in mtk_timer.c
-> >>
-> >> To be clear, I am not against adding this timer support, but just want
-> >> to know is it preferred for sched clock source ? if yes why ? better
-> >> resolution ?
-> >
-> > Hi Sudeep,
-> >
-> > Thanks for your review.
-> >
-> > I hit the send too soon and missed cover letter, please see:
-> > http://lists.infradead.org/pipermail/linux-mediatek/2015-September/002303.html
-> >
-> 
-> OK
-> 
-> > The main reason to use GPT as sched clock is it won't stop during idle.
-> >
-> >
-> 
-> I think your are confusing the system counter with arch timers. System
-> counter is always-on, but the arch timers(logic implementing timers
-> comparators) might not be off when the processor is powered down.
-> 
-> I think you need this timer and are using it for low power idle states
-> in which case you will use this as a clock event and not clock source.
-> It will be used as a hardware broadcast event source.
-> 
-> There's no call to sched_clock_register in mtk_timer.c, so it can't be
-> the sched clock, so you need to fix the commit log.
+2015-10-15 4:08 GMT+09:00 Javier Martinez Canillas <javier@osg.samsung.com>:
+> Hello Stephen,
+>
+> On 10/14/2015 08:38 PM, Stephen Boyd wrote:
+>> On 10/13, Javier Martinez Canillas wrote:
+>>> diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
+>>> index 1530c9352a76..fc50b6264bed 100644
+>>> --- a/drivers/clk/versatile/Kconfig
+>>> +++ b/drivers/clk/versatile/Kconfig
+>>> @@ -1,6 +1,6 @@
+>>>  config COMMON_CLK_VERSATILE
+>>>      bool "Clock driver for ARM Reference designs"
+>>> -    depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64
+>>> +    depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64 || COMPILE_TEST
+>>
+>> Have you compiled these drivers on an architecture that doesn't
+>> have IOMEM? Perhaps tile or um? I'm all for more build coverage,
+>> but it's not always as simple as just sprinkling some
+>> COMPILE_TEST around the Kconfigs.
+>>
+>
+> No, I only build tested on arm32 and x86. The 0-day bot haven't reported a
+> build error yet and I didn't see any platform dependent code in the drivers.
 
-Hi Sudeep,
+I see you guys with Luis are adding a lot of COMPILE_TEST. But
+building only on these two architectures *is not enough*. Run at least
+armv8, PPC and the x86_64. MIPS would be nice as well (I use the
+CodeSourcery's MIPS). All of these (ARM64, X86_64, PPC, MIPS) can be
+easily installed on typical debian-like Linux distro. Really easily.
 
-Sorry for late reply.
+By adding this non-tested build coverage you can actually fail some
+other architecture's allyesconfig/allmodconfig builds.
 
-For sched_clock_register, please see
-http://lists.infradead.org/pipermail/linux-mediatek/2015-July/001547.html
-which was accepted in
-https://git.linaro.org/people/daniel.lezcano/linux.git/shortlog/refs/heads/clockevents/4.4
-
-
-You are right it is also used as clock event. I think we don't need to
-mention those detail in commit message, so I'll change to just:
-
-"Add device node to enable GPT timer."
-
-> 
-> [...]
-> 
-> >>> diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-> >>> index d18ee42..d763803 100644
-> >>> --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-> >>> +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-> >>> @@ -238,6 +238,15 @@
-> >>>    			reg = <0 0x10007000 0 0x100>;
-> >>>    		};
-> >>>
-> >>> +		timer: timer@10008000 {
-> >>> +			compatible = "mediatek,mt8173-timer",
-> >>
-> >> Missing documentation ? I am referring upstream and it might be in some
-> >> patches already queued perhaps ?
-> >
-> > This is documented in
-> > Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt.
-> > Do you mean I should add "mediatek,mt8173-timer" to that file?
-> >
-> 
-> Yes
-
-Will do in next round.
-Thanks
-
-Joe.C
+Best regards,
+Krzysztof
