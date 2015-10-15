@@ -1,189 +1,310 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <jonmason@broadcom.com>
+From: Jon Mason <jonmason@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
+	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
+	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
+Subject: [PATCH v3 02/10] clk: cygnus: Convert all macros to all caps
+Date: Thu, 15 Oct 2015 15:48:25 -0400
+Message-ID: <1444938513-10758-3-git-send-email-jonmason@broadcom.com>
+In-Reply-To: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
+References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
 MIME-Version: 1.0
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- "Stephen Boyd" <sboyd@codeaurora.org>,
- "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
- "Magnus Damm" <damm+renesas@opensource.se>,
- "Simon Horman" <horms+renesas@verge.net.au>,
- "Rob Herring" <robh+dt@kernel.org>, "Pawel Moll" <pawel.moll@arm.com>,
- "Mark Rutland" <mark.rutland@arm.com>,
- "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
- "Kumar Gala" <galak@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1444999760-15750-2-git-send-email-geert+renesas@glider.be>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-sh@vger.kernel.org, "Geert Uytterhoeven" <geert+renesas@glider.be>
-References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be>
- <1444999760-15750-2-git-send-email-geert+renesas@glider.be>
-Message-ID: <20151020101536.20687.93727@quantum>
-Subject: Re: [PATCH v4 1/5] [RFC] clk: shmobile: Add new Renesas CPG/MSSR DT bindings
-Date: Tue, 20 Oct 2015 03:15:36 -0700
+Content-Type: text/plain
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+The macros that are being used to initialize the values of the clk
+structures should be all caps.  Find and replace all of them with their
+relevant counterparts.
 
-Quoting Geert Uytterhoeven (2015-10-16 05:49:16)
-> On Renesas ARM SoCs (SH/R-Mobile, R-Car, RZ), the CPG (Clock Pulse
-> Generator) and MSSR (Module Standby and Software Reset) blocks are
-> intimately connected, and share the same register block.
-> =
+Signed-off-by: Jon Mason <jonmason@broadcom.com>
+---
+ drivers/clk/bcm/clk-cygnus.c | 146 +++++++++++++++++++++----------------------
+ 1 file changed, 73 insertions(+), 73 deletions(-)
 
-> Hence it makes sense to describe these two blocks using a
-> single device node in DT, instead of using a hierarchical structure with
-> multiple nodes, using a mix of generic and SoC-specific bindings.
-> =
-
-> These new DT bindings are intended to replace the existing DT bindings
-> for CPG core clocks ("renesas,*-cpg-clocks", "renesas,cpg-div6-clock")
-> and module clocks ("renesas,*-mstp-clocks"), at least for new SoCs.
-> =
-
-> This will make it easier to add module reset support later, which is
-> currently not implemented, and difficult to achieve using the existing
-> bindings due to the intertwined register layout.
-> =
-
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Thanks for re-working the binding per our discussion at ELC-E. Please
-feel free to add my Ack to patches #1 and #2.
-
-Regards,
-Mike
-
-> ---
-> v4:
->   - No changes,
-> =
-
-> v3:
->   - Integrate CPG and MSSR,
-> =
-
-> v2:
->   - Switch from MSTP to MSSR.
-> ---
->  .../devicetree/bindings/clock/renesas,cpg-mssr.txt | 71 ++++++++++++++++=
-++++++
->  include/dt-bindings/clock/renesas-cpg-mssr.h       | 15 +++++
->  2 files changed, 86 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-m=
-ssr.txt
->  create mode 100644 include/dt-bindings/clock/renesas-cpg-mssr.h
-> =
-
-> diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt=
- b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-> new file mode 100644
-> index 0000000000000000..a56836aa2131a8db
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-> @@ -0,0 +1,71 @@
-> +* Renesas Clock Pulse Generator / Module Standby and Software Reset
-> +
-> +On Renesas ARM SoCs (SH/R-Mobile, R-Car, RZ), the CPG (Clock Pulse Gener=
-ator)
-> +and MSSR (Module Standby and Software Reset) blocks are intimately conne=
-cted,
-> +and share the same register block.
-> +
-> +They provide the following functionalities:
-> +  - The CPG block generates various core clocks,
-> +  - The MSSR block provides two functions:
-> +      1. Module Standby, providing a Clock Domain to control the clock s=
-upply
-> +        to individual SoC devices,
-> +      2. Reset Control, to perform a software reset of individual SoC de=
-vices.
-> +
-> +Required Properties:
-> +  - compatible: Must be one of:
-> +      - "renesas,r8a7791-cpg-mssr" for the r8a7791 SoC
-> +      - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC
-> +
-> +  - reg: Base address and length of the memory resource used by the CPG/=
-MSSR
-> +    block
-> +
-> +  - clocks: References to external parent clocks, one entry for each ent=
-ry in
-> +    clock-names
-> +  - clock-names: List of external parent clock names. Valid names are:
-> +      - "extal" (r8a7791, r8a7795)
-> +      - "extalr" (r8a7795)
-> +      - "usb_extal" (r8a7791)
-> +
-> +  - #clock-cells: Must be 2
-> +      - For CPG core clocks, the two clock specifier cells must be "CPG_=
-CORE"
-> +       and a core clock reference, as defined in
-> +       <dt-bindings/clock/*-cpg-mssr.h>.
-> +      - For module clocks, the two clock specifier cells must be "CPG_MO=
-D" and
-> +       a module number, as defined in the datasheet.
-> +
-> +  - #power-domain-cells: Must be 0
-> +      - SoC devices that are part of the CPG/MSSR Clock Domain and can be
-> +       power-managed through Module Standby should refer to the CPG devi=
-ce
-> +       node in their "power-domains" property, as documented by the gene=
-ric PM
-> +       Domain bindings in
-> +       Documentation/devicetree/bindings/power/power_domain.txt.
-> +
-> +
-> +Examples
-> +--------
-> +
-> +  - CPG device node:
-> +
-> +       cpg: clock-controller@e6150000 {
-> +               compatible =3D "renesas,r8a7795-cpg-mssr";
-> +               reg =3D <0 0xe6150000 0 0x1000>;
-> +               clocks =3D <&extal_clk>, <&extalr_clk>;
-> +               clock-names =3D "extal", "extalr";
-> +               #clock-cells =3D <2>;
-> +               #power-domain-cells =3D <0>;
-> +       };
-> +
-> +
-> +  - CPG/MSSR Clock Domain member device node:
-> +
-> +       scif2: serial@e6e88000 {
-> +               compatible =3D "renesas,scif-r8a7795", "renesas,scif";
-> +               reg =3D <0 0xe6e88000 0 64>;
-> +               interrupts =3D <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
-> +               clocks =3D <&cpg CPG_MOD 310>;
-> +               clock-names =3D "sci_ick";
-> +               dmas =3D <&dmac1 0x13>, <&dmac1 0x12>;
-> +               dma-names =3D "tx", "rx";
-> +               power-domains =3D <&cpg>;
-> +               status =3D "disabled";
-> +       };
-> diff --git a/include/dt-bindings/clock/renesas-cpg-mssr.h b/include/dt-bi=
-ndings/clock/renesas-cpg-mssr.h
-> new file mode 100644
-> index 0000000000000000..569a3cc33ffb5bc7
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/renesas-cpg-mssr.h
-> @@ -0,0 +1,15 @@
-> +/*
-> + * Copyright (C) 2015 Renesas Electronics Corp.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + */
-> +#ifndef __DT_BINDINGS_CLOCK_RENESAS_CPG_MSSR_H__
-> +#define __DT_BINDINGS_CLOCK_RENESAS_CPG_MSSR_H__
-> +
-> +#define CPG_CORE                       0       /* Core Clock */
-> +#define CPG_MOD                                1       /* Module Clock */
-> +
-> +#endif /* __DT_BINDINGS_CLOCK_RENESAS_CPG_MSSR_H__ */
-> -- =
-
-> 1.9.1
->=20
+diff --git a/drivers/clk/bcm/clk-cygnus.c b/drivers/clk/bcm/clk-cygnus.c
+index 316c603..aac82c6 100644
+--- a/drivers/clk/bcm/clk-cygnus.c
++++ b/drivers/clk/bcm/clk-cygnus.c
+@@ -23,28 +23,28 @@
+ #include <dt-bindings/clock/bcm-cygnus.h>
+ #include "clk-iproc.h"
+ 
+-#define reg_val(o, s, w) { .offset = o, .shift = s, .width = w, }
++#define REG_VAL(o, s, w) { .offset = o, .shift = s, .width = w, }
+ 
+-#define aon_val(o, pw, ps, is) { .offset = o, .pwr_width = pw, \
++#define AON_VAL(o, pw, ps, is) { .offset = o, .pwr_width = pw, \
+ 	.pwr_shift = ps, .iso_shift = is }
+ 
+-#define sw_ctrl_val(o, s) { .offset = o, .shift = s, }
++#define SW_CTRL_VAL(o, s) { .offset = o, .shift = s, }
+ 
+-#define asiu_div_val(o, es, hs, hw, ls, lw) \
++#define ASIU_DIV_VAL(o, es, hs, hw, ls, lw) \
+ 		{ .offset = o, .en_shift = es, .high_shift = hs, \
+ 		.high_width = hw, .low_shift = ls, .low_width = lw }
+ 
+-#define reset_val(o, rs, prs, kis, kiw, kps, kpw, kas, kaw) { .offset = o, \
++#define RESET_VAL(o, rs, prs, kis, kiw, kps, kpw, kas, kaw) { .offset = o, \
+ 	.reset_shift = rs, .p_reset_shift = prs, .ki_shift = kis, \
+ 	.ki_width = kiw, .kp_shift = kps, .kp_width = kpw, .ka_shift = kas, \
+ 	.ka_width = kaw }
+ 
+-#define vco_ctrl_val(uo, lo) { .u_offset = uo, .l_offset = lo }
++#define VCO_CTRL_VAL(uo, lo) { .u_offset = uo, .l_offset = lo }
+ 
+-#define enable_val(o, es, hs, bs) { .offset = o, .enable_shift = es, \
++#define ENABLE_VAL(o, es, hs, bs) { .offset = o, .enable_shift = es, \
+ 	.hold_shift = hs, .bypass_shift = bs }
+ 
+-#define asiu_gate_val(o, es) { .offset = o, .en_shift = es }
++#define ASIU_GATE_VAL(o, es) { .offset = o, .en_shift = es }
+ 
+ static void __init cygnus_armpll_init(struct device_node *node)
+ {
+@@ -55,52 +55,52 @@ CLK_OF_DECLARE(cygnus_armpll, "brcm,cygnus-armpll", cygnus_armpll_init);
+ static const struct iproc_pll_ctrl genpll = {
+ 	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
+ 		IPROC_CLK_PLL_NEEDS_SW_CFG,
+-	.aon = aon_val(0x0, 2, 1, 0),
+-	.reset = reset_val(0x0, 11, 10, 4, 3, 0, 4, 7, 3),
+-	.sw_ctrl = sw_ctrl_val(0x10, 31),
+-	.ndiv_int = reg_val(0x10, 20, 10),
+-	.ndiv_frac = reg_val(0x10, 0, 20),
+-	.pdiv = reg_val(0x14, 0, 4),
+-	.vco_ctrl = vco_ctrl_val(0x18, 0x1c),
+-	.status = reg_val(0x28, 12, 1),
++	.aon = AON_VAL(0x0, 2, 1, 0),
++	.reset = RESET_VAL(0x0, 11, 10, 4, 3, 0, 4, 7, 3),
++	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
++	.ndiv_int = REG_VAL(0x10, 20, 10),
++	.ndiv_frac = REG_VAL(0x10, 0, 20),
++	.pdiv = REG_VAL(0x14, 0, 4),
++	.vco_ctrl = VCO_CTRL_VAL(0x18, 0x1c),
++	.status = REG_VAL(0x28, 12, 1),
+ };
+ 
+ static const struct iproc_clk_ctrl genpll_clk[] = {
+ 	[BCM_CYGNUS_GENPLL_AXI21_CLK] = {
+ 		.channel = BCM_CYGNUS_GENPLL_AXI21_CLK,
+ 		.flags = IPROC_CLK_AON,
+-		.enable = enable_val(0x4, 6, 0, 12),
+-		.mdiv = reg_val(0x20, 0, 8),
++		.enable = ENABLE_VAL(0x4, 6, 0, 12),
++		.mdiv = REG_VAL(0x20, 0, 8),
+ 	},
+ 	[BCM_CYGNUS_GENPLL_250MHZ_CLK] = {
+ 		.channel = BCM_CYGNUS_GENPLL_250MHZ_CLK,
+ 		.flags = IPROC_CLK_AON,
+-		.enable = enable_val(0x4, 7, 1, 13),
+-		.mdiv = reg_val(0x20, 10, 8),
++		.enable = ENABLE_VAL(0x4, 7, 1, 13),
++		.mdiv = REG_VAL(0x20, 10, 8),
+ 	},
+ 	[BCM_CYGNUS_GENPLL_IHOST_SYS_CLK] = {
+ 		.channel = BCM_CYGNUS_GENPLL_IHOST_SYS_CLK,
+ 		.flags = IPROC_CLK_AON,
+-		.enable = enable_val(0x4, 8, 2, 14),
+-		.mdiv = reg_val(0x20, 20, 8),
++		.enable = ENABLE_VAL(0x4, 8, 2, 14),
++		.mdiv = REG_VAL(0x20, 20, 8),
+ 	},
+ 	[BCM_CYGNUS_GENPLL_ENET_SW_CLK] = {
+ 		.channel = BCM_CYGNUS_GENPLL_ENET_SW_CLK,
+ 		.flags = IPROC_CLK_AON,
+-		.enable = enable_val(0x4, 9, 3, 15),
+-		.mdiv = reg_val(0x24, 0, 8),
++		.enable = ENABLE_VAL(0x4, 9, 3, 15),
++		.mdiv = REG_VAL(0x24, 0, 8),
+ 	},
+ 	[BCM_CYGNUS_GENPLL_AUDIO_125_CLK] = {
+ 		.channel = BCM_CYGNUS_GENPLL_AUDIO_125_CLK,
+ 		.flags = IPROC_CLK_AON,
+-		.enable = enable_val(0x4, 10, 4, 16),
+-		.mdiv = reg_val(0x24, 10, 8),
++		.enable = ENABLE_VAL(0x4, 10, 4, 16),
++		.mdiv = REG_VAL(0x24, 10, 8),
+ 	},
+ 	[BCM_CYGNUS_GENPLL_CAN_CLK] = {
+ 		.channel = BCM_CYGNUS_GENPLL_CAN_CLK,
+ 		.flags = IPROC_CLK_AON,
+-		.enable = enable_val(0x4, 11, 5, 17),
+-		.mdiv = reg_val(0x24, 20, 8),
++		.enable = ENABLE_VAL(0x4, 11, 5, 17),
++		.mdiv = REG_VAL(0x24, 20, 8),
+ 	},
+ };
+ 
+@@ -113,51 +113,51 @@ CLK_OF_DECLARE(cygnus_genpll, "brcm,cygnus-genpll", cygnus_genpll_clk_init);
+ 
+ static const struct iproc_pll_ctrl lcpll0 = {
+ 	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_NEEDS_SW_CFG,
+-	.aon = aon_val(0x0, 2, 5, 4),
+-	.reset = reset_val(0x0, 31, 30, 27, 3, 23, 4, 19, 4),
+-	.sw_ctrl = sw_ctrl_val(0x4, 31),
+-	.ndiv_int = reg_val(0x4, 16, 10),
+-	.pdiv = reg_val(0x4, 26, 4),
+-	.vco_ctrl = vco_ctrl_val(0x10, 0x14),
+-	.status = reg_val(0x18, 12, 1),
++	.aon = AON_VAL(0x0, 2, 5, 4),
++	.reset = RESET_VAL(0x0, 31, 30, 27, 3, 23, 4, 19, 4),
++	.sw_ctrl = SW_CTRL_VAL(0x4, 31),
++	.ndiv_int = REG_VAL(0x4, 16, 10),
++	.pdiv = REG_VAL(0x4, 26, 4),
++	.vco_ctrl = VCO_CTRL_VAL(0x10, 0x14),
++	.status = REG_VAL(0x18, 12, 1),
+ };
+ 
+ static const struct iproc_clk_ctrl lcpll0_clk[] = {
+ 	[BCM_CYGNUS_LCPLL0_PCIE_PHY_REF_CLK] = {
+ 		.channel = BCM_CYGNUS_LCPLL0_PCIE_PHY_REF_CLK,
+ 		.flags = IPROC_CLK_AON,
+-		.enable = enable_val(0x0, 7, 1, 13),
+-		.mdiv = reg_val(0x8, 0, 8),
++		.enable = ENABLE_VAL(0x0, 7, 1, 13),
++		.mdiv = REG_VAL(0x8, 0, 8),
+ 	},
+ 	[BCM_CYGNUS_LCPLL0_DDR_PHY_CLK] = {
+ 		.channel = BCM_CYGNUS_LCPLL0_DDR_PHY_CLK,
+ 		.flags = IPROC_CLK_AON,
+-		.enable = enable_val(0x0, 8, 2, 14),
+-		.mdiv = reg_val(0x8, 10, 8),
++		.enable = ENABLE_VAL(0x0, 8, 2, 14),
++		.mdiv = REG_VAL(0x8, 10, 8),
+ 	},
+ 	[BCM_CYGNUS_LCPLL0_SDIO_CLK] = {
+ 		.channel = BCM_CYGNUS_LCPLL0_SDIO_CLK,
+ 		.flags = IPROC_CLK_AON,
+-		.enable = enable_val(0x0, 9, 3, 15),
+-		.mdiv = reg_val(0x8, 20, 8),
++		.enable = ENABLE_VAL(0x0, 9, 3, 15),
++		.mdiv = REG_VAL(0x8, 20, 8),
+ 	},
+ 	[BCM_CYGNUS_LCPLL0_USB_PHY_REF_CLK] = {
+ 		.channel = BCM_CYGNUS_LCPLL0_USB_PHY_REF_CLK,
+ 		.flags = IPROC_CLK_AON,
+-		.enable = enable_val(0x0, 10, 4, 16),
+-		.mdiv = reg_val(0xc, 0, 8),
++		.enable = ENABLE_VAL(0x0, 10, 4, 16),
++		.mdiv = REG_VAL(0xc, 0, 8),
+ 	},
+ 	[BCM_CYGNUS_LCPLL0_SMART_CARD_CLK] = {
+ 		.channel = BCM_CYGNUS_LCPLL0_SMART_CARD_CLK,
+ 		.flags = IPROC_CLK_AON,
+-		.enable = enable_val(0x0, 11, 5, 17),
+-		.mdiv = reg_val(0xc, 10, 8),
++		.enable = ENABLE_VAL(0x0, 11, 5, 17),
++		.mdiv = REG_VAL(0xc, 10, 8),
+ 	},
+ 	[BCM_CYGNUS_LCPLL0_CH5_UNUSED] = {
+ 		.channel = BCM_CYGNUS_LCPLL0_CH5_UNUSED,
+ 		.flags = IPROC_CLK_AON,
+-		.enable = enable_val(0x0, 12, 6, 18),
+-		.mdiv = reg_val(0xc, 20, 8),
++		.enable = ENABLE_VAL(0x0, 12, 6, 18),
++		.mdiv = REG_VAL(0xc, 20, 8),
+ 	},
+ };
+ 
+@@ -189,52 +189,52 @@ static const struct iproc_pll_vco_param mipipll_vco_params[] = {
+ static const struct iproc_pll_ctrl mipipll = {
+ 	.flags = IPROC_CLK_PLL_ASIU | IPROC_CLK_PLL_HAS_NDIV_FRAC |
+ 		 IPROC_CLK_NEEDS_READ_BACK,
+-	.aon = aon_val(0x0, 4, 17, 16),
+-	.asiu = asiu_gate_val(0x0, 3),
+-	.reset = reset_val(0x0, 11, 10, 4, 3, 0, 4, 7, 4),
+-	.ndiv_int = reg_val(0x10, 20, 10),
+-	.ndiv_frac = reg_val(0x10, 0, 20),
+-	.pdiv = reg_val(0x14, 0, 4),
+-	.vco_ctrl = vco_ctrl_val(0x18, 0x1c),
+-	.status = reg_val(0x28, 12, 1),
++	.aon = AON_VAL(0x0, 4, 17, 16),
++	.asiu = ASIU_GATE_VAL(0x0, 3),
++	.reset = RESET_VAL(0x0, 11, 10, 4, 3, 0, 4, 7, 4),
++	.ndiv_int = REG_VAL(0x10, 20, 10),
++	.ndiv_frac = REG_VAL(0x10, 0, 20),
++	.pdiv = REG_VAL(0x14, 0, 4),
++	.vco_ctrl = VCO_CTRL_VAL(0x18, 0x1c),
++	.status = REG_VAL(0x28, 12, 1),
+ };
+ 
+ static const struct iproc_clk_ctrl mipipll_clk[] = {
+ 	[BCM_CYGNUS_MIPIPLL_CH0_UNUSED] = {
+ 		.channel = BCM_CYGNUS_MIPIPLL_CH0_UNUSED,
+ 		.flags = IPROC_CLK_NEEDS_READ_BACK,
+-		.enable = enable_val(0x4, 12, 6, 18),
+-		.mdiv = reg_val(0x20, 0, 8),
++		.enable = ENABLE_VAL(0x4, 12, 6, 18),
++		.mdiv = REG_VAL(0x20, 0, 8),
+ 	},
+ 	[BCM_CYGNUS_MIPIPLL_CH1_LCD] = {
+ 		.channel = BCM_CYGNUS_MIPIPLL_CH1_LCD,
+ 		.flags = IPROC_CLK_NEEDS_READ_BACK,
+-		.enable = enable_val(0x4, 13, 7, 19),
+-		.mdiv = reg_val(0x20, 10, 8),
++		.enable = ENABLE_VAL(0x4, 13, 7, 19),
++		.mdiv = REG_VAL(0x20, 10, 8),
+ 	},
+ 	[BCM_CYGNUS_MIPIPLL_CH2_V3D] = {
+ 		.channel = BCM_CYGNUS_MIPIPLL_CH2_V3D,
+ 		.flags = IPROC_CLK_NEEDS_READ_BACK,
+-		.enable = enable_val(0x4, 14, 8, 20),
+-		.mdiv = reg_val(0x20, 20, 8),
++		.enable = ENABLE_VAL(0x4, 14, 8, 20),
++		.mdiv = REG_VAL(0x20, 20, 8),
+ 	},
+ 	[BCM_CYGNUS_MIPIPLL_CH3_UNUSED] = {
+ 		.channel = BCM_CYGNUS_MIPIPLL_CH3_UNUSED,
+ 		.flags = IPROC_CLK_NEEDS_READ_BACK,
+-		.enable = enable_val(0x4, 15, 9, 21),
+-		.mdiv = reg_val(0x24, 0, 8),
++		.enable = ENABLE_VAL(0x4, 15, 9, 21),
++		.mdiv = REG_VAL(0x24, 0, 8),
+ 	},
+ 	[BCM_CYGNUS_MIPIPLL_CH4_UNUSED] = {
+ 		.channel = BCM_CYGNUS_MIPIPLL_CH4_UNUSED,
+ 		.flags = IPROC_CLK_NEEDS_READ_BACK,
+-		.enable = enable_val(0x4, 16, 10, 22),
+-		.mdiv = reg_val(0x24, 10, 8),
++		.enable = ENABLE_VAL(0x4, 16, 10, 22),
++		.mdiv = REG_VAL(0x24, 10, 8),
+ 	},
+ 	[BCM_CYGNUS_MIPIPLL_CH5_UNUSED] = {
+ 		.channel = BCM_CYGNUS_MIPIPLL_CH5_UNUSED,
+ 		.flags = IPROC_CLK_NEEDS_READ_BACK,
+-		.enable = enable_val(0x4, 17, 11, 23),
+-		.mdiv = reg_val(0x24, 20, 8),
++		.enable = ENABLE_VAL(0x4, 17, 11, 23),
++		.mdiv = REG_VAL(0x24, 20, 8),
+ 	},
+ };
+ 
+@@ -247,15 +247,15 @@ static void __init cygnus_mipipll_clk_init(struct device_node *node)
+ CLK_OF_DECLARE(cygnus_mipipll, "brcm,cygnus-mipipll", cygnus_mipipll_clk_init);
+ 
+ static const struct iproc_asiu_div asiu_div[] = {
+-	[BCM_CYGNUS_ASIU_KEYPAD_CLK] = asiu_div_val(0x0, 31, 16, 10, 0, 10),
+-	[BCM_CYGNUS_ASIU_ADC_CLK] = asiu_div_val(0x4, 31, 16, 10, 0, 10),
+-	[BCM_CYGNUS_ASIU_PWM_CLK] = asiu_div_val(0x8, 31, 16, 10, 0, 10),
++	[BCM_CYGNUS_ASIU_KEYPAD_CLK] = ASIU_DIV_VAL(0x0, 31, 16, 10, 0, 10),
++	[BCM_CYGNUS_ASIU_ADC_CLK] = ASIU_DIV_VAL(0x4, 31, 16, 10, 0, 10),
++	[BCM_CYGNUS_ASIU_PWM_CLK] = ASIU_DIV_VAL(0x8, 31, 16, 10, 0, 10),
+ };
+ 
+ static const struct iproc_asiu_gate asiu_gate[] = {
+-	[BCM_CYGNUS_ASIU_KEYPAD_CLK] = asiu_gate_val(0x0, 7),
+-	[BCM_CYGNUS_ASIU_ADC_CLK] = asiu_gate_val(0x0, 9),
+-	[BCM_CYGNUS_ASIU_PWM_CLK] = asiu_gate_val(IPROC_CLK_INVALID_OFFSET, 0),
++	[BCM_CYGNUS_ASIU_KEYPAD_CLK] = ASIU_GATE_VAL(0x0, 7),
++	[BCM_CYGNUS_ASIU_ADC_CLK] = ASIU_GATE_VAL(0x0, 9),
++	[BCM_CYGNUS_ASIU_PWM_CLK] = ASIU_GATE_VAL(IPROC_CLK_INVALID_OFFSET, 0),
+ };
+ 
+ static void __init cygnus_asiu_init(struct device_node *node)
+-- 
+1.9.1
