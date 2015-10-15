@@ -1,53 +1,81 @@
-Return-Path: <B48286@freescale.com>
-From: Zhiqiang Hou <B48286@freescale.com>
-To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-CC: <mark.rutland@arm.com>, <linux@roeck-us.net>, <wsa@the-dreams.de>,
-	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <Mingkai.Hu@freescale.com>,
-	<Shaohui.Xie@freescale.com>, <scottwood@freescale.com>,
-	<bhupesh.sharma@freescale.com>, <Wenbin.Song@freescale.com>,
-	<B48286@freescale.com>
-Subject: [PATCH V5 1/6] i2c: Add i2c support to Freescale Layerscape platforms
-Date: Mon, 19 Oct 2015 19:56:09 +0800
-Message-ID: <1445255774-32887-1-git-send-email-B48286@freescale.com>
-Return-Path: B48286@freescale.com
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 15 Oct 2015 12:10:26 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
+	Russell King <linux@arm.linux.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 07/13] clk: versatile-icst: refactor to allocate regmap
+ separately
+Message-ID: <20151015191026.GM4558@codeaurora.org>
+References: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
+ <1444916813-31024-8-git-send-email-linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1444916813-31024-8-git-send-email-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shaohui Xie <Shaohui.Xie@freescale.com>
+On 10/15, Linus Walleij wrote:
+> @@ -174,15 +170,7 @@ struct clk *icst_clk_register(struct device *dev,
+>  	init.flags = CLK_IS_ROOT;
+>  	init.parent_names = (parent_name ? &parent_name : NULL);
+>  	init.num_parents = (parent_name ? 1 : 0);
+> -	icst->map = regmap_init_mmio(NULL, base, &icst_regmap_conf);
+> -	if (IS_ERR(icst->map)) {
+> -		int ret;
+> -
+> -		pr_err("could not initialize ICST regmap\n");
+> -		kfree(icst);
+> -		ret = PTR_ERR(icst->map);
+> -		return ERR_PTR(ret);
 
-Modify the I2C_IMX config to support to Layerscape platforms.
+Oh now it gets moved.
 
-Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
-Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
-Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
----
-V5: V4 V3 V2
- - No change.
+> -	}
+> +	icst->map = map;
+>  	icst->hw.init = &init;
+>  	icst->params = pclone;
+>  	icst->vcoreg_off = desc->vco_offset;
+> @@ -194,4 +182,28 @@ struct clk *icst_clk_register(struct device *dev,
+>  
+>  	return clk;
+>  }
+> +
+> +struct clk *icst_clk_register(struct device *dev,
+> +			const struct clk_icst_desc *desc,
+> +			const char *name,
+> +			const char *parent_name,
+> +			void __iomem *base)
+> +{
+> +	struct regmap_config icst_regmap_conf = {
+> +		.reg_bits = 32,
+> +		.val_bits = 32,
+> +		.reg_stride = 4,
+> +	};
+> +	struct regmap *map;
+> +
+> +	map = regmap_init_mmio(NULL, base, &icst_regmap_conf);
 
- drivers/i2c/busses/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Any reason we aren't passing dev as the first argument? Same
+comment applies to patch 6.
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index 08b8617..14147ec 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -582,10 +582,10 @@ config I2C_IMG
- 
- config I2C_IMX
- 	tristate "IMX I2C interface"
--	depends on ARCH_MXC
-+	depends on ARCH_MXC || ARCH_LAYERSCAPE
- 	help
- 	  Say Y here if you want to use the IIC bus controller on
--	  the Freescale i.MX/MXC processors.
-+	  the Freescale i.MX/MXC or Layerscape processors.
- 
- 	  This driver can also be built as a module.  If so, the module
- 	  will be called i2c-imx.
+> +	if (IS_ERR(map)) {
+> +		int ret;
+> +
+> +		pr_err("could not initialize ICST regmap\n");
+> +		ret = PTR_ERR(map);
+> +		return ERR_PTR(ret);
+
+Use ERR_CAST(map) instead.
+
+> +	}
+> +	return icst_clk_setup(dev, desc, name, parent_name, map);
+
 -- 
-2.1.0.27.g96db324
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
