@@ -1,125 +1,216 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Thu, 22 Oct 2015 14:20:21 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: linux-arm-kernel@lists.infradead.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Russell King <linux@arm.linux.org.uk>
+Cc: Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>,
-	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>, dmaengine@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Linux I2C <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	Linux PWM List <linux-pwm@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	Linux Fbdev development list <linux-fbdev@vger.kernel.org>
-Message-ID: <20151022132021.GO8232@sirena.org.uk>
-References: <20151018193757.GA9147@kroah.com>
- <20151018195330.GB14956@sirena.org.uk>
- <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
- <20151019131821.GA32532@n2100.arm.linux.org.uk>
- <CAAObsKDS_+AZ26P_fHc6pvAYrQotsuoO0DEGQUWC514t3DD_jQ@mail.gmail.com>
- <20151019143045.GE32532@n2100.arm.linux.org.uk>
- <CAAObsKDWM6A98tdKHqi4fe5DBf0BmB0JeghcZDWan_PYbyshag@mail.gmail.com>
- <20151019153548.GM32532@n2100.arm.linux.org.uk>
- <CAMuHMdVv=ieYM-Nehp0qV8CEggHEeJ22j-6i_N09rRA_U=2ePw@mail.gmail.com>
- <20151020154656.GY32532@n2100.arm.linux.org.uk>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="MmQIYbZiCoQ2kDro"
-In-Reply-To: <20151020154656.GY32532@n2100.arm.linux.org.uk>
-Subject: Re: Alternative approach to solve the deferred probe (was: [GIT
- PULL] On-demand device probing)
+	linux-clk@vger.kernel.org
+Subject: [PATCH 06/13] clk: versatile-icst: convert to use regmap
+Date: Thu, 15 Oct 2015 15:46:46 +0200
+Message-Id: <1444916813-31024-7-git-send-email-linus.walleij@linaro.org>
+In-Reply-To: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
+References: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+Instead of passing around register bases, pass around a regmap
+in this driver. This refactoring make things so much easier when
+we later want to manage an ICST that is part of a syscon.
 
---MmQIYbZiCoQ2kDro
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+I'm looking for an ACK from the CLK maintainers to take this
+through the ARM SoC tree once the series stabilize.
+---
+ drivers/clk/versatile/Kconfig    |  1 +
+ drivers/clk/versatile/clk-icst.c | 88 +++++++++++++++++++++++++++-------------
+ 2 files changed, 61 insertions(+), 28 deletions(-)
 
-On Tue, Oct 20, 2015 at 04:46:56PM +0100, Russell King - ARM Linux wrote:
-
-> Something like this.  I haven't put a lot of effort into it to change all
-> the places which return an -EPROBE_DEFER, and it also looks like we need
-> some helpers to report when we have only an device_node (or should that
-> be fwnode?)  See the commented out of_warn_deferred() in
-> drivers/gpio/gpiolib-of.c.  Adding this stuff in the subsystems searching
-> for resources should make debugging why things are getting deferred easier.
-
-Yeah, plus I'd expect it to also result in better error reporting
-overall if the subsystems are able to report when they fail to get
-something rather than just returning an error to the driver.
-
-> +/**
-> + * dev_warn_deferred() - report why a probe has been deferred
-> + */
-> +void dev_warn_deferred(struct device *dev, const char *fmt, ...)
-> +{
-> +	if (driver_deferred_probe_report) {
-> +		struct va_format vaf;
-> +		va_list ap;
-> +
-> +		va_start(ap, fmt);
-> +		vaf.fmt = fmt;
-> +		vaf.va = &ap;
-> +
-> +		dev_warn(dev, "deferring probe: %pV", &vaf);
-> +		va_end(ap);
-> +	}
-> +}
-> +EXPORT_SYMBOL_GPL(dev_warn_deferred);
-
-I'm not currently able to think of a nice way of writing this but I think
-what I'd really like to see from a driver point of view is something
-which decays into dev_err() if it's a non-deferral error.  That way
-drivers can have minimal log and return error handling code and we will
-still get the output sensibly.  The best I can think of is something
-like
-
-   void dev_warn_deferred(struct device *dev, int err, const char *fmt, ...)
-
-which requires the caller to pass in err twice to get it logged.  That's
-not a thing of beauty but it gets the job done...  but perhaps your
-original interface is better, it's a bit cleaner.
-
---MmQIYbZiCoQ2kDro
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWKOKUAAoJECTWi3JdVIfQFcwH/2Bsw1x5Qw+VgkL/0LyC6iV4
-8QUyxsL3BhSrQ1Oy5EVszY51yxiqW1bWOKCZKGe8uMuLcHdfpkSypeMNtqeEUKvp
-qfqnzd1DRT2mIy3wIDab7BFEWW+yRDXc+B9cbfkLUX3R3ysMSMNtb8ilZJUk+TLK
-KHxIGcjk7tFpWEtSAlJ+v9im8+HWMsdAioAOKc+lUgWlm9wftuARlM3MacsGfjuA
-33SGbUwuvKMyqsSbflUlZGZQUoGFhxUFSzTqfqBeV3jIWgSyEJCEYxeBTIAlHpTQ
-k9bgJeCmEQlpd8bkv2L85XtQ9D4dMFHhG7KIO+i8gTzPfiLLDl/bo96X9dEK/tE=
-=wdzj
------END PGP SIGNATURE-----
-
---MmQIYbZiCoQ2kDro--
+diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
+index 1530c9352a76..e091bcec116c 100644
+--- a/drivers/clk/versatile/Kconfig
++++ b/drivers/clk/versatile/Kconfig
+@@ -1,6 +1,7 @@
+ config COMMON_CLK_VERSATILE
+ 	bool "Clock driver for ARM Reference designs"
+ 	depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64
++	select REGMAP_MMIO
+ 	---help---
+           Supports clocking on ARM Reference designs:
+ 	  - Integrator/AP and Integrator/CP
+diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
+index a3893ea2199d..da5a3ccbbb96 100644
+--- a/drivers/clk/versatile/clk-icst.c
++++ b/drivers/clk/versatile/clk-icst.c
+@@ -19,9 +19,13 @@
+ #include <linux/err.h>
+ #include <linux/clk-provider.h>
+ #include <linux/io.h>
++#include <linux/regmap.h>
+ 
+ #include "clk-icst.h"
+ 
++/* Magic unlocking token used on all Versatile boards */
++#define VERSATILE_LOCK_VAL	0xA05F
++
+ /**
+  * struct clk_icst - ICST VCO clock wrapper
+  * @hw: corresponding clock hardware entry
+@@ -32,8 +36,9 @@
+  */
+ struct clk_icst {
+ 	struct clk_hw hw;
+-	void __iomem *vcoreg;
+-	void __iomem *lockreg;
++	struct regmap *map;
++	u32 vcoreg_off;
++	u32 lockreg_off;
+ 	struct icst_params *params;
+ 	unsigned long rate;
+ };
+@@ -41,53 +46,67 @@ struct clk_icst {
+ #define to_icst(_hw) container_of(_hw, struct clk_icst, hw)
+ 
+ /**
+- * vco_get() - get ICST VCO settings from a certain register
+- * @vcoreg: register containing the VCO settings
++ * vco_get() - get ICST VCO settings from a certain ICST
++ * @icst: the ICST clock to get
++ * @vco: the VCO struct to return the value in
+  */
+-static struct icst_vco vco_get(void __iomem *vcoreg)
++static int vco_get(struct clk_icst *icst, struct icst_vco *vco)
+ {
+ 	u32 val;
+-	struct icst_vco vco;
+-
+-	val = readl(vcoreg);
+-	vco.v = val & 0x1ff;
+-	vco.r = (val >> 9) & 0x7f;
+-	vco.s = (val >> 16) & 03;
+-	return vco;
++	int ret;
++
++	ret = regmap_read(icst->map, icst->vcoreg_off, &val);
++	if (ret)
++		return ret;
++	vco->v = val & 0x1ff;
++	vco->r = (val >> 9) & 0x7f;
++	vco->s = (val >> 16) & 03;
++	return 0;
+ }
+ 
+ /**
+  * vco_set() - commit changes to an ICST VCO
+- * @locreg: register to poke to unlock the VCO for writing
+- * @vcoreg: register containing the VCO settings
+- * @vco: ICST VCO parameters to commit
++ * @icst: the ICST clock to set
++ * @vco: the VCO struct to set the changes from
+  */
+-static void vco_set(void __iomem *lockreg,
+-			void __iomem *vcoreg,
+-			struct icst_vco vco)
++static int vco_set(struct clk_icst *icst, struct icst_vco vco)
+ {
+ 	u32 val;
++	int ret;
+ 
+-	val = readl(vcoreg) & ~0x7ffff;
++	ret = regmap_read(icst->map, icst->vcoreg_off, &val);
++	if (ret)
++		return ret;
+ 	val |= vco.v | (vco.r << 9) | (vco.s << 16);
+ 
+ 	/* This magic unlocks the VCO so it can be controlled */
+-	writel(0xa05f, lockreg);
+-	writel(val, vcoreg);
++	ret = regmap_write(icst->map, icst->lockreg_off, VERSATILE_LOCK_VAL);
++	if (ret)
++		return ret;
++	ret = regmap_write(icst->map, icst->vcoreg_off, val);
++	if (ret)
++		return ret;
+ 	/* This locks the VCO again */
+-	writel(0, lockreg);
++	ret = regmap_write(icst->map, icst->lockreg_off, 0);
++	if (ret)
++		return ret;
++	return 0;
+ }
+ 
+-
+ static unsigned long icst_recalc_rate(struct clk_hw *hw,
+ 				      unsigned long parent_rate)
+ {
+ 	struct clk_icst *icst = to_icst(hw);
+ 	struct icst_vco vco;
++	int ret;
+ 
+ 	if (parent_rate)
+ 		icst->params->ref = parent_rate;
+-	vco = vco_get(icst->vcoreg);
++	ret = vco_get(icst, &vco);
++	if (ret) {
++		pr_err("ICST: could not get VCO setting\n");
++		return 0;
++	}
+ 	icst->rate = icst_hz(icst->params, vco);
+ 	return icst->rate;
+ }
+@@ -112,8 +131,7 @@ static int icst_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		icst->params->ref = parent_rate;
+ 	vco = icst_hz_to_vco(icst->params, rate);
+ 	icst->rate = icst_hz(icst->params, vco);
+-	vco_set(icst->lockreg, icst->vcoreg, vco);
+-	return 0;
++	return vco_set(icst, vco);
+ }
+ 
+ static const struct clk_ops icst_ops = {
+@@ -132,6 +150,11 @@ struct clk *icst_clk_register(struct device *dev,
+ 	struct clk_icst *icst;
+ 	struct clk_init_data init;
+ 	struct icst_params *pclone;
++	struct regmap_config icst_regmap_conf = {
++		.reg_bits = 32,
++		.val_bits = 32,
++		.reg_stride = 4,
++	};
+ 
+ 	icst = kzalloc(sizeof(struct clk_icst), GFP_KERNEL);
+ 	if (!icst) {
+@@ -151,10 +174,19 @@ struct clk *icst_clk_register(struct device *dev,
+ 	init.flags = CLK_IS_ROOT;
+ 	init.parent_names = (parent_name ? &parent_name : NULL);
+ 	init.num_parents = (parent_name ? 1 : 0);
++	icst->map = regmap_init_mmio(NULL, base, &icst_regmap_conf);
++	if (IS_ERR(icst->map)) {
++		int ret;
++
++		pr_err("could not initialize ICST regmap\n");
++		kfree(icst);
++		ret = PTR_ERR(icst->map);
++		return ERR_PTR(ret);
++	}
+ 	icst->hw.init = &init;
+ 	icst->params = pclone;
+-	icst->vcoreg = base + desc->vco_offset;
+-	icst->lockreg = base + desc->lock_offset;
++	icst->vcoreg_off = desc->vco_offset;
++	icst->lockreg_off = desc->lock_offset;
+ 
+ 	clk = clk_register(dev, &icst->hw);
+ 	if (IS_ERR(clk))
+-- 
+2.4.3
