@@ -1,117 +1,156 @@
-Return-Path: <zhengxing@rock-chips.com>
-Content-Type: multipart/alternative;
-	boundary=Apple-Mail-10537173-9248-455C-BCE7-951783D30B01
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v4 4/8] clk: rockchip: add new pll-type for rk3036 and similar socs
-From: Xing Zheng <zhengxing@rock-chips.com>
-In-Reply-To: <1474048.ydSsx6D3zg@diego>
-Date: Sat, 24 Oct 2015 21:19:51 +0800
-Cc: linux-rockchip@lists.infradead.org,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Message-Id: <35318EAB-055B-48BE-9DF6-62CB92CFEE37@rock-chips.com>
-References: <1445682629-21632-1-git-send-email-zhengxing@rock-chips.com> <1445682629-21632-5-git-send-email-zhengxing@rock-chips.com> <1474048.ydSsx6D3zg@diego>
-To: =?GB2312?Q?Heiko_St=A8=B9bner?= <heiko@sntech.de>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 1/5] [RFC] clk: shmobile: Add new Renesas CPG/MSSR DT bindings
+Date: Fri, 16 Oct 2015 14:49:16 +0200
+Message-Id: <1444999760-15750-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1444999760-15750-1-git-send-email-geert+renesas@glider.be>
+References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
+On Renesas ARM SoCs (SH/R-Mobile, R-Car, RZ), the CPG (Clock Pulse
+Generator) and MSSR (Module Standby and Software Reset) blocks are
+intimately connected, and share the same register block.
 
---Apple-Mail-10537173-9248-455C-BCE7-951783D30B01
-Content-Type: text/plain;
-	charset=gb2312
-Content-Transfer-Encoding: quoted-printable
+Hence it makes sense to describe these two blocks using a
+single device node in DT, instead of using a hierarchical structure with
+multiple nodes, using a mix of generic and SoC-specific bindings.
 
+These new DT bindings are intended to replace the existing DT bindings
+for CPG core clocks ("renesas,*-cpg-clocks", "renesas,cpg-div6-clock")
+and module clocks ("renesas,*-mstp-clocks"), at least for new SoCs.
 
-I'm sorry I ignored this, I'll fix it soon.
+This will make it easier to add module reset support later, which is
+currently not implemented, and difficult to achieve using the existing
+bindings due to the intertwined register layout.
 
-Thanks.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v4:
+  - No changes,
 
-> =D4=DA 2015=C4=EA10=D4=C224=C8=D5=A3=AC19:10=A3=ACHeiko St=A8=B9bner <heik=
-o@sntech.de> =D0=B4=B5=C0=A3=BA
->=20
-> Hi,
->=20
-> Am Samstag, 24. Oktober 2015, 18:30:25 schrieb Xing Zheng:
->> The rk3036's pll and clock are different with base on the rk3066(rk3188,
->> rk3288, rk3368 use it), there are different adjust foctors and control
->> registers, so these should be independent and separate from the series
->> of rk3066s.
->>=20
->> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
->> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
->> ---
->=20
->> +static void rockchip_rk3036_pll_init(struct clk_hw *hw)
->> +{
->=20
-> In the previous version, Stephen requested that we don't use regular clock=
+v3:
+  - Integrate CPG and MSSR,
 
-> APIs in the init-callback. I did a modification for the already present pl=
-l-
-> type in [0], which got already accepted. So you should probably also modif=
-y
-> your pll-type in this fashion :-) .
->=20
-> Oh and I guess patches 3 and 4 should switch places ... adding the pll-typ=
-e
-> before the code in the clock-controller using it.
->=20
->=20
-> Heiko
->=20
->=20
-> [0] https://git.kernel.org/cgit/linux/kernel/git/clk/linux.git/commit/?h=3D=
-clk-next&id=3D8334c0e7b983fb27e0d8788901e9621d1946ba93
->=20
->=20
->=20
+v2:
+  - Switch from MSTP to MSSR.
+---
+ .../devicetree/bindings/clock/renesas,cpg-mssr.txt | 71 ++++++++++++++++++++++
+ include/dt-bindings/clock/renesas-cpg-mssr.h       | 15 +++++
+ 2 files changed, 86 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+ create mode 100644 include/dt-bindings/clock/renesas-cpg-mssr.h
 
---Apple-Mail-10537173-9248-455C-BCE7-951783D30B01
-Content-Type: text/html;
-	charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-<html><head><meta http-equiv=3D"content-type" content=3D"text/html; charset=3D=
-utf-8"></head><body dir=3D"auto"><div><br><div class=3D"text-wrap" style=3D"=
-min-height: 18px;"><div class=3D"translation" style=3D"padding-right: 32px; d=
-irection: ltr;"><span style=3D"background-color: rgba(255, 255, 255, 0);">I'=
-m sorry I ignored this, I'll fix it soon.</span></div><div class=3D"translat=
-ion" style=3D"padding-right: 32px; direction: ltr;"><span style=3D"backgroun=
-d-color: rgba(255, 255, 255, 0);"><br></span></div><div class=3D"translation=
-" style=3D"padding-right: 32px; direction: ltr;"><span style=3D"background-c=
-olor: rgba(255, 255, 255, 0);">Thanks.</span></div></div></div><div><div><br=
-></div>=E5=9C=A8 2015=E5=B9=B410=E6=9C=8824=E6=97=A5=EF=BC=8C19:10=EF=BC=8CH=
-eiko St=C3=BCbner &lt;<a href=3D"mailto:heiko@sntech.de">heiko@sntech.de</a>=
-&gt; =E5=86=99=E9=81=93=EF=BC=9A<br><br></div><blockquote type=3D"cite"><div=
-><span>Hi,</span><br><span></span><br><span>Am Samstag, 24. Oktober 2015, 18=
-:30:25 schrieb Xing Zheng:</span><br><blockquote type=3D"cite"><span>The rk3=
-036's pll and clock are different with base on the rk3066(rk3188,</span><br>=
-</blockquote><blockquote type=3D"cite"><span>rk3288, rk3368 use it), there a=
-re different adjust foctors and control</span><br></blockquote><blockquote t=
-ype=3D"cite"><span>registers, so these should be independent and separate fr=
-om the series</span><br></blockquote><blockquote type=3D"cite"><span>of rk30=
-66s.</span><br></blockquote><blockquote type=3D"cite"><span></span><br></blo=
-ckquote><blockquote type=3D"cite"><span>Signed-off-by: Xing Zheng &lt;<a hre=
-f=3D"mailto:zhengxing@rock-chips.com">zhengxing@rock-chips.com</a>&gt;</span=
-><br></blockquote><blockquote type=3D"cite"><span>Reviewed-by: Heiko Stuebne=
-r &lt;<a href=3D"mailto:heiko@sntech.de">heiko@sntech.de</a>&gt;</span><br><=
-/blockquote><blockquote type=3D"cite"><span>---</span><br></blockquote><bloc=
-kquote type=3D"cite"><span></span><br></blockquote><span></span><br><blockqu=
-ote type=3D"cite"><span>+static void rockchip_rk3036_pll_init(struct clk_hw *=
-hw)</span><br></blockquote><blockquote type=3D"cite"><span>+{</span><br></bl=
-ockquote><span></span><br><span>In the previous version, Stephen requested t=
-hat we don't use regular clock</span><br><span>APIs in the init-callback. I d=
-id a modification for the already present pll-</span><br><span>type in [0], w=
-hich got already accepted. So you should probably also modify</span><br><spa=
-n>your pll-type in this fashion :-) .</span><br><span></span><br><span>Oh an=
-d I guess patches 3 and 4 should switch places ... adding the pll-type</span=
-><br><span>before the code in the clock-controller using it.</span><br><span=
-></span><br><span></span><br><span>Heiko</span><br><span></span><br><span></=
-span><br><span>[0] <a href=3D"https://git.kernel.org/cgit/linux/kernel/git/c=
-lk/linux.git/commit/?h=3Dclk-next&amp;id=3D8334c0e7b983fb27e0d8788901e9621d1=
-946ba93">https://git.kernel.org/cgit/linux/kernel/git/clk/linux.git/commit/?=
-h=3Dclk-next&amp;id=3D8334c0e7b983fb27e0d8788901e9621d1946ba93</a></span><br=
-><span></span><br><span></span><br><span></span><br></div></blockquote></bod=
-y></html>=
-
---Apple-Mail-10537173-9248-455C-BCE7-951783D30B01--
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+new file mode 100644
+index 0000000000000000..a56836aa2131a8db
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+@@ -0,0 +1,71 @@
++* Renesas Clock Pulse Generator / Module Standby and Software Reset
++
++On Renesas ARM SoCs (SH/R-Mobile, R-Car, RZ), the CPG (Clock Pulse Generator)
++and MSSR (Module Standby and Software Reset) blocks are intimately connected,
++and share the same register block.
++
++They provide the following functionalities:
++  - The CPG block generates various core clocks,
++  - The MSSR block provides two functions:
++      1. Module Standby, providing a Clock Domain to control the clock supply
++	 to individual SoC devices,
++      2. Reset Control, to perform a software reset of individual SoC devices.
++
++Required Properties:
++  - compatible: Must be one of:
++      - "renesas,r8a7791-cpg-mssr" for the r8a7791 SoC
++      - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC
++
++  - reg: Base address and length of the memory resource used by the CPG/MSSR
++    block
++
++  - clocks: References to external parent clocks, one entry for each entry in
++    clock-names
++  - clock-names: List of external parent clock names. Valid names are:
++      - "extal" (r8a7791, r8a7795)
++      - "extalr" (r8a7795)
++      - "usb_extal" (r8a7791)
++
++  - #clock-cells: Must be 2
++      - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
++	and a core clock reference, as defined in
++	<dt-bindings/clock/*-cpg-mssr.h>.
++      - For module clocks, the two clock specifier cells must be "CPG_MOD" and
++	a module number, as defined in the datasheet.
++
++  - #power-domain-cells: Must be 0
++      - SoC devices that are part of the CPG/MSSR Clock Domain and can be
++	power-managed through Module Standby should refer to the CPG device
++	node in their "power-domains" property, as documented by the generic PM
++	Domain bindings in
++	Documentation/devicetree/bindings/power/power_domain.txt.
++
++
++Examples
++--------
++
++  - CPG device node:
++
++	cpg: clock-controller@e6150000 {
++		compatible = "renesas,r8a7795-cpg-mssr";
++		reg = <0 0xe6150000 0 0x1000>;
++		clocks = <&extal_clk>, <&extalr_clk>;
++		clock-names = "extal", "extalr";
++		#clock-cells = <2>;
++		#power-domain-cells = <0>;
++	};
++
++
++  - CPG/MSSR Clock Domain member device node:
++
++	scif2: serial@e6e88000 {
++		compatible = "renesas,scif-r8a7795", "renesas,scif";
++		reg = <0 0xe6e88000 0 64>;
++		interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 310>;
++		clock-names = "sci_ick";
++		dmas = <&dmac1 0x13>, <&dmac1 0x12>;
++		dma-names = "tx", "rx";
++		power-domains = <&cpg>;
++		status = "disabled";
++	};
+diff --git a/include/dt-bindings/clock/renesas-cpg-mssr.h b/include/dt-bindings/clock/renesas-cpg-mssr.h
+new file mode 100644
+index 0000000000000000..569a3cc33ffb5bc7
+--- /dev/null
++++ b/include/dt-bindings/clock/renesas-cpg-mssr.h
+@@ -0,0 +1,15 @@
++/*
++ * Copyright (C) 2015 Renesas Electronics Corp.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++#ifndef __DT_BINDINGS_CLOCK_RENESAS_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_RENESAS_CPG_MSSR_H__
++
++#define CPG_CORE			0	/* Core Clock */
++#define CPG_MOD				1	/* Module Clock */
++
++#endif /* __DT_BINDINGS_CLOCK_RENESAS_CPG_MSSR_H__ */
+-- 
+1.9.1
