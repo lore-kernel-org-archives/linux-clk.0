@@ -1,61 +1,58 @@
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
-Subject: Re: [PATCH v4 5/5] [RFC] clk: shmobile: r8a7795: Add new CPG/MSSR driver
-Date: Fri, 30 Oct 2015 15:12:48 +0200
-Message-ID: <27289910.m8I1Q3jp21@avalon>
-In-Reply-To: <CAMuHMdU-TpPcdi_H6bwAxipv8rtC7Njos_49hsEmJCcSCHR_Pw@mail.gmail.com>
-References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be> <1577230.N3FJlP7ehB@avalon> <CAMuHMdU-TpPcdi_H6bwAxipv8rtC7Njos_49hsEmJCcSCHR_Pw@mail.gmail.com>
+Return-Path: <olof@lixom.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1444909328-24761-1-git-send-email-tomeu.vizoso@collabora.com>
+References: <20151014092644.GO14956@sirena.org.uk>
+	<1444909328-24761-1-git-send-email-tomeu.vizoso@collabora.com>
+Date: Fri, 16 Oct 2015 14:23:06 -0700
+Message-ID: <CAOesGMj44N3Xfv_D_iLEzXBrkN6LXBa-uh6m3fi_F2xDenDhMg@mail.gmail.com>
+Subject: Re: [GIT PULL] On-demand device probing
+From: Olof Johansson <olof@lixom.net>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
+	Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	DRI mailing list <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-pwm@vger.kernel.org,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+Hi,
 
-On Monday 26 October 2015 09:03:44 Geert Uytterhoeven wrote:
-> On Mon, Oct 26, 2015 at 3:25 AM, Laurent Pinchart wrote:
-> > On Saturday 24 October 2015 19:34:03 Geert Uytterhoeven wrote:
-> >> On Sat, Oct 24, 2015 at 3:10 AM, Stephen Boyd wrote:
-> >> > On 10/22, Geert Uytterhoeven wrote:
-> >> >> As I want to have as much clock data/code __init as possible (think
-> >> >> multi-platform kernels --- pinmux data is a disaster here), I have to
-> >> >> use platform_driver_probe().
-> > 
-> > That sounds like an __init issue, doesn't it ? The CPG driver will always
-> > be builtin and probed during the init process, what's preventing us from
-> > using normal driver probing ?
-> 
-> When using platform_driver_register(), the tables cannot be __init, as that
-> would cause a section type mismatch. Remember, the driver core handles
-> platform devices appearing later, so .probe() should continue to be
-> available.
+I've bisected boot failures in next-20151016 down to patches in this branch:
 
-Of course, my bad.
+On Thu, Oct 15, 2015 at 4:42 AM, Tomeu Vizoso
+<tomeu.vizoso@collabora.com> wrote:
+> Tomeu Vizoso (20):
+>       driver core: handle -EPROBE_DEFER from bus_type.match()
 
-> Note: in theory it should be possible to compile the CPG/MSSR driver as a
-> module, and have the module in your initramfs. But I don't think anyone
-> really wants to do that?
+The machine it happened on was OMAP5UEVM:
 
-I don't think we should allow that, no.
+http://arm-soc.lixom.net/bootlogs/next/next-20151016/omap5uevm-arm-omap2plus_defconfig.html
 
-> >> For new SoCs like r8a7795 we can probably just make it a real platform
-> >> driver, and make sure the irqc node is located after the cpg node in the
-> >> .dtsi.
-> > 
-> > That's another hack :-) We really shouldn't depend on DT nodes order.
-> 
-> I agree. But if there's an unfixed bug somewhere else, we cannot introduce
-> regressions (for already supported SoCs).
+But I've also seen it on tegra2, that one bisected down to:
 
-Sure, and I'm fine relying on DT nodes order as a short term hack, but we need 
-to design a proper solution for the longer term.
+>      regulator: core: Probe regulators on demand
 
-> > I'm all for getting rid of CLK_OF_DECLARE
-> 
-> Me too.
+http://arm-soc.lixom.net/bootlogs/next/next-20151016/seaboard-arm-multi_v7_defconfig.html
 
--- 
-Regards,
 
-Laurent Pinchart
+
+-Olof
