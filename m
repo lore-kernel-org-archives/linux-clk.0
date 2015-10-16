@@ -1,113 +1,72 @@
-Return-Path: <wens@csie.org>
+Return-Path: <kgene@kernel.org>
+Message-ID: <56218B2D.9040007@kernel.org>
+Date: Sat, 17 Oct 2015 08:41:33 +0900
+From: Kukjin Kim <kgene@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1444682610-21482-3-git-send-email-maxime.ripard@free-electrons.com>
-References: <1444682610-21482-1-git-send-email-maxime.ripard@free-electrons.com>
- <1444682610-21482-3-git-send-email-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 14 Oct 2015 17:47:06 +0800
-Message-ID: <CAGb2v65x0M+5LibdvJvGU0TSF3+WkYDe1gdXr8F=V4-Nypt8Ww@mail.gmail.com>
-Subject: Re: [PATCH v4 2/5] clk: sunxi: Add a driver for the PLL2
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+CC: Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Gustavo Padovan <gustavo.padovan@collabora.co.uk>,
+ Javier Martinez Canillas <javier@osg.samsung.com>,
+ Seung-Woo Kim <sw0312.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+ Inki Dae <inki.dae@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Joonyoung Shim <jy0922.shim@samsung.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Kumar Gala <galak@codeaurora.org>,
+ Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Pawel Moll <pawel.moll@arm.com>,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ linux-clk@vger.kernel.org,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 1/2] clk: samsung: exynos5250: Add DISP1 clocks
+References: <1444905084-22540-1-git-send-email-tomeu.vizoso@collabora.com> <1444905084-22540-2-git-send-email-tomeu.vizoso@collabora.com> <56203AD3.2050905@samsung.com> <20151016124935.20687.4394@quantum> <20151016172651.GB23912@codeaurora.org> <CAAObsKAjZX8XxTAFVKq4BCSZSrKG5xQPTue+z+xnJDD8QwK88Q@mail.gmail.com>
+In-Reply-To: <CAAObsKAjZX8XxTAFVKq4BCSZSrKG5xQPTue+z+xnJDD8QwK88Q@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Oct 13, 2015 at 4:43 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The PLL2 on the A10 and later SoCs is the clock used for all the audio
-> related operations.
->
-> This clock has a somewhat complex output tree, with three outputs (2X, 4X
-> and 8X) with a fixed divider from the base clock, and an output (1X) with=
- a
-> post divider.
->
-> However, we can simplify things since the 1X divider can be fixed, and we
-> end up by having a base clock not exposed to any device (or at least
-> directly, since the 4X output doesn't have any divider), and 4 fixed
-> divider clocks that will be exposed.
->
-> This clock seems to have been introduced, at least in this form, in the
-> revision B of the A10, but we don't have any information on the clock use=
-d
-> on the revision A.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/clk/sunxi/Makefile                 |   1 +
->  drivers/clk/sunxi/clk-a10-pll2.c           | 188 +++++++++++++++++++++++=
-++++++
->  include/dt-bindings/clock/sun4i-a10-pll2.h |  53 ++++++++
->  3 files changed, 242 insertions(+)
->  create mode 100644 drivers/clk/sunxi/clk-a10-pll2.c
->  create mode 100644 include/dt-bindings/clock/sun4i-a10-pll2.h
->
-> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-> index f5a35b82cc1a..c658a18ba7cb 100644
-> --- a/drivers/clk/sunxi/Makefile
-> +++ b/drivers/clk/sunxi/Makefile
-> @@ -4,6 +4,7 @@
->
->  obj-y +=3D clk-sunxi.o clk-factors.o
->  obj-y +=3D clk-a10-hosc.o
-> +obj-y +=3D clk-a10-pll2.o
->  obj-y +=3D clk-a20-gmac.o
->  obj-y +=3D clk-mod0.o
->  obj-y +=3D clk-simple-gates.o
-> diff --git a/drivers/clk/sunxi/clk-a10-pll2.c b/drivers/clk/sunxi/clk-a10=
--pll2.c
-> new file mode 100644
-> index 000000000000..b877cc6c3622
-> --- /dev/null
-> +++ b/drivers/clk/sunxi/clk-a10-pll2.c
-> @@ -0,0 +1,188 @@
-> +/*
-> + * Copyright 2013 Emilio L=C3=B3pez
-> + * Emilio L=C3=B3pez <emilio@elopez.com.ar>
-> + *
-> + * Copyright 2015 Maxime Ripard
-> + * Maxime Ripard <maxime.ripard@free-electrons.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/slab.h>
-> +
-> +#include <dt-bindings/clock/sun4i-a10-pll2.h>
-> +
-> +#define SUN4I_PLL2_ENABLE              31
-> +
-> +#define SUN4I_PLL2_PRE_DIV_SHIFT       0
-> +#define SUN4I_PLL2_PRE_DIV_WIDTH       5
-> +#define SUN4I_PLL2_PRE_DIV_MASK                GENMASK(SUN4I_PLL2_PRE_DI=
-V_WIDTH, 0)
-> +
-> +#define SUN4I_PLL2_N_SHIFT             8
-> +#define SUN4I_PLL2_N_WIDTH             7
-> +#define SUN4I_PLL2_N_MASK              GENMASK(SUN4I_PLL2_N_WIDTH, 0)
-> +
-> +#define SUN4I_PLL2_POST_DIV_SHIFT      26
-> +#define SUN4I_PLL2_POST_DIV_WIDTH      4
-> +#define SUN4I_PLL2_POST_DIV_MASK       GENMASK(SUN4I_PLL2_POST_DIV_WIDTH=
-, 0)
+On 10/17/15 03:56, Tomeu Vizoso wrote:
+> On 16 October 2015 at 19:26, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> On 10/16, Michael Turquette wrote:
+>>> Quoting Krzysztof Kozlowski (2015-10-15 16:46:27)
+>>>> On 15.10.2015 19:31, Tomeu Vizoso wrote:
+>>>>> When the DISP1 power domain is powered off, there's two clocks that need
+>>>>> to be temporarily reparented to OSC, and back to their original parents
+>>>>> when the domain is powered on again.
+>>>>>
+>>>>> We expose these two clocks in the DT bindings so that the DT node of the
+>>>>> power domain can reference them.
+>>>>>
+>>>>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+>>>>> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+>>>>> ---
+>>>>>
+>>>>> Changes in v2:
+>>>>> - Reuse mout_aclk200_p
+>>>>> - Rename div_aclk300 as div_aclk300_disp
+>>>>>
+>>>>>  drivers/clk/samsung/clk-exynos5250.c   | 14 +++++++++++++-
+>>>>>  include/dt-bindings/clock/exynos5250.h |  4 +++-
+>>>>>  2 files changed, 16 insertions(+), 2 deletions(-)
+>>>>>
+>>>>
+>>>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>
+>>> Applied to clk-next.
+>>>
+>>
+>> I think Tomeu wanted to take this through arm-soc? Otherwise
+>> we'll need to provide a stable branch for the dt header.
+> 
+> Hi, Stephen is right, the second patch depends on this one.
+> 
+So...how can I take 2nd patch of this series in samsung(arm-soc) tree?
+And this series shouldn't be for fixes for 4.3?...Mike how do you think?
 
-GENMASK, like in patch 1, should be GENMASK(width - 1, 0);
-
-Sorry about the multiple replies.
-
-ChenYu
+Thanks,
+Kukjin
