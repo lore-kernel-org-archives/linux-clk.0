@@ -1,130 +1,91 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-To: <arnd@arndb.de>, <mark.rutland@arm.com>,
- <linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
- <linux-clk@vger.kernel.org>, <olof@lixom.net>
-Subject: [PATCH v3 02/12] arm64: Rename FSL LS2085A SoC support code to LS2080A
-Date: Thu, 15 Oct 2015 12:17:42 +0530
-Message-ID: <1444891672-32117-3-git-send-email-bhupesh.sharma@freescale.com>
-In-Reply-To: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
-References: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
+Return-Path: <shawnguo@kernel.org>
+Date: Fri, 16 Oct 2015 23:09:44 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: kernel@pengutronix.de, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL] i.MX clock updates for 4.4
+Message-ID: <20151016150944.GG584@tiger>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: LeoLi@freescale.com, bhupesh.sharma@freescale.com, Catalin.Marinas@arm.com,
- will.deacon@arm.com, stuart.yoder@freescale.com, scottwood@freescale.com,
- bhupesh.linux@gmail.com
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-Freescale is renaming the LS2085A SoC to LS2080A. This patch
-addresses the same.
+Hi Mike, Stephen,
 
-Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
----
- Documentation/devicetree/bindings/arm/fsl.txt      |    4 ++--
- arch/arm64/boot/dts/freescale/Makefile             |    2 +-
- .../{fsl-ls2085a-simu.dts => fsl-ls2080a-simu.dts} |   10 +++++-----
- .../{fsl-ls2085a.dtsi => fsl-ls2080a.dtsi}         |    6 +++---
- 4 files changed, 11 insertions(+), 11 deletions(-)
- rename arch/arm64/boot/dts/freescale/{fsl-ls2085a-simu.dts => fsl-ls2080a-simu.dts} (90%)
- rename arch/arm64/boot/dts/freescale/{fsl-ls2085a.dtsi => fsl-ls2080a.dtsi} (97%)
+Please consider to pull the following i.MX clock updates for 4.4.  And
+please keep it stable, as we will merge it into i.MX DT branch as a
+dependency.  Thanks.
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
-index 744b4de..53f229a 100644
---- a/Documentation/devicetree/bindings/arm/fsl.txt
-+++ b/Documentation/devicetree/bindings/arm/fsl.txt
-@@ -131,7 +131,7 @@ Example:
- Freescale ARMv8 based Layerscape SoC family Device Tree Bindings
- ----------------------------------------------------------------
- 
--LS2085A ARMv8 based Simulator model
-+LS2080A ARMv8 based Simulator model
- Required root node properties:
--    - compatible = "fsl,ls2085a-simu", "fsl,ls2085a";
-+    - compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
- 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index fc6fca3c..932001a 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -1,4 +1,4 @@
--dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2085a-simu.dtb
-+dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-simu.dtb
-  
- always		:= $(dtb-y)
- subdir-y	:= $(dts-dirs)
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2085a-simu.dts b/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
-similarity index 90%
-rename from arch/arm64/boot/dts/freescale/fsl-ls2085a-simu.dts
-rename to arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
-index 82e2a6f..33d6d0c 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls2085a-simu.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
-@@ -1,7 +1,7 @@
- /*
-- * Device Tree file for Freescale LS2085a software Simulator model
-+ * Device Tree file for Freescale LS2080a software Simulator model
-  *
-- * Copyright (C) 2014, Freescale Semiconductor
-+ * Copyright (C) 2014-2015, Freescale Semiconductor
-  *
-  * Bhupesh Sharma <bhupesh.sharma@freescale.com>
-  *
-@@ -51,11 +51,11 @@
- 
- /dts-v1/;
- 
--/include/ "fsl-ls2085a.dtsi"
-+/include/ "fsl-ls2080a.dtsi"
- 
- / {
--	model = "Freescale Layerscape 2085a software Simulator model";
--	compatible = "fsl,ls2085a-simu", "fsl,ls2085a";
-+	model = "Freescale Layerscape 2080a software Simulator model";
-+	compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
- 
- 	ethernet@2210000 {
- 		compatible = "smsc,lan91c111";
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2085a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-similarity index 97%
-rename from arch/arm64/boot/dts/freescale/fsl-ls2085a.dtsi
-rename to arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-index e281ceb..9597edf 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls2085a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-@@ -1,7 +1,7 @@
- /*
-- * Device Tree Include file for Freescale Layerscape-2085A family SoC.
-+ * Device Tree Include file for Freescale Layerscape-2080A family SoC.
-  *
-- * Copyright (C) 2014, Freescale Semiconductor
-+ * Copyright (C) 2014-2015, Freescale Semiconductor
-  *
-  * Bhupesh Sharma <bhupesh.sharma@freescale.com>
-  *
-@@ -50,7 +50,7 @@
-  */
- 
- / {
--	compatible = "fsl,ls2085a";
-+	compatible = "fsl,ls2080a";
- 	interrupt-parent = <&gic>;
- 	#address-cells = <2>;
- 	#size-cells = <2>;
--- 
-1.7.9.5
+Shawn
 
+The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
 
+  Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-4.4
+
+for you to fetch changes up to 84a87250ee4e4f7cf5865be9757e2ea758e5cae3:
+
+  clk: imx6: Add SPDIF_GCLK clock in clock tree (2015-10-12 21:55:59 +0800)
+
+----------------------------------------------------------------
+The i.MX clock updates for 4.4:
+ - A couple of fixes on i.MX31 and i.MX35 clock initialization functions
+   which makes mxc_timer_init() currently be called twice for DT boot.
+ - Increase i.MX6UL AXI bus clock rate to 264MHz which is the optimal
+   design target.
+ - Add a few missing clocks, ADC clock for i.MX7D, OCOTP clock for
+   Vybrid, and SPDIF_GCLK for i.MX6.
+ - A series from Lucas to fix early debug UART clock setup.  This is
+   currently a one-off fix for i.MX platform, and can be extended to
+   become a generic solution later.
+
+----------------------------------------------------------------
+Alexander Stein (2):
+      clk: imx35: Do not call mxc_timer_init twice when booting with DT
+      clk: imx31: Do not call mxc_timer_init twice when booting with DT
+
+Anson Huang (1):
+      clk: imx: increase AXI clock rate to 264MHz for i.MX6UL
+
+Haibo Chen (1):
+      clk: imx7d: add ADC root clock
+
+Lucas Stach (8):
+      clk: imx: add common logic to detect early UART usage
+      clk: imx25: retain early UART clocks during kernel init
+      clk: imx27: retain early UART clocks during kernel init
+      clk: imx31: retain early UART clocks during kernel init
+      clk: imx35: retain early UART clocks during kernel init
+      clk: imx5: retain early UART clocks during kernel init
+      clk: imx6: retain early UART clocks during kernel init
+      clk: imx7d: retain early UART clocks during kernel init
+
+Sanchayan Maity (1):
+      clk: clk-vf610: Add clock for Vybrid OCOTP controller
+
+Shengjiu Wang (1):
+      clk: imx6: Add SPDIF_GCLK clock in clock tree
+
+ drivers/clk/imx/clk-imx25.c               | 12 +++++++
+ drivers/clk/imx/clk-imx27.c               | 13 +++++++
+ drivers/clk/imx/clk-imx31.c               | 35 ++++++++++++++----
+ drivers/clk/imx/clk-imx35.c               | 59 +++++++++++++++++++------------
+ drivers/clk/imx/clk-imx51-imx53.c         | 16 +++++++++
+ drivers/clk/imx/clk-imx6q.c               | 12 ++++++-
+ drivers/clk/imx/clk-imx6sl.c              | 12 ++++++-
+ drivers/clk/imx/clk-imx6sx.c              |  9 +++++
+ drivers/clk/imx/clk-imx6ul.c              | 18 ++++++++++
+ drivers/clk/imx/clk-imx7d.c               | 14 ++++++++
+ drivers/clk/imx/clk-vf610.c               |  1 +
+ drivers/clk/imx/clk.c                     | 38 ++++++++++++++++++++
+ drivers/clk/imx/clk.h                     |  1 +
+ include/dt-bindings/clock/imx6qdl-clock.h |  3 +-
+ include/dt-bindings/clock/imx6sl-clock.h  |  3 +-
+ include/dt-bindings/clock/imx6sx-clock.h  |  3 +-
+ include/dt-bindings/clock/imx7d-clock.h   |  3 +-
+ include/dt-bindings/clock/vf610-clock.h   |  3 +-
+ 18 files changed, 219 insertions(+), 36 deletions(-)
