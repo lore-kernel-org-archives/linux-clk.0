@@ -1,66 +1,60 @@
-Return-Path: <robh+dt@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <CAOesGMj44N3Xfv_D_iLEzXBrkN6LXBa-uh6m3fi_F2xDenDhMg@mail.gmail.com>
-References: <20151014092644.GO14956@sirena.org.uk> <1444909328-24761-1-git-send-email-tomeu.vizoso@collabora.com>
- <CAOesGMj44N3Xfv_D_iLEzXBrkN6LXBa-uh6m3fi_F2xDenDhMg@mail.gmail.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Sat, 17 Oct 2015 10:19:27 -0500
-Message-ID: <CAL_Jsq+34sRXe0HWCKNceQfLj=WfDV4-soynumvdnH_nwuj+9g@mail.gmail.com>
-Subject: Re: [GIT PULL] On-demand device probing
-To: Olof Johansson <olof@lixom.net>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
-	Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	DRI mailing list <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH 4/5] clk: berlin: bg2q: remove CLK_IGNORE_UNUSED flag for
+ sdio clk
+To: Michael Turquette <mturquette@baylibre.com>,
+ Jisheng Zhang <jszhang@marvell.com>, ulf.hansson@linaro.org,
+ robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+ ijc+devicetree@hellion.org.uk, galak@codeaurora.org, sboyd@codeaurora.org
+References: <1444628796-5484-1-git-send-email-jszhang@marvell.com>
+ <1444628796-5484-5-git-send-email-jszhang@marvell.com>
+ <20151016124705.20687.51712@quantum>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Message-ID: <5620FB32.8030705@gmail.com>
+Date: Fri, 16 Oct 2015 15:27:14 +0200
+In-Reply-To: <20151016124705.20687.51712@quantum>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 16, 2015 at 4:23 PM, Olof Johansson <olof@lixom.net> wrote:
-> Hi,
+On 16.10.2015 14:47, Michael Turquette wrote:
+> Quoting Jisheng Zhang (2015-10-11 22:46:35)
+>> Since we have added the necessary axi clk properties in dts, we can
+>> remove the "sdio" clk's CLK_IGNORE_UNUSED flag now.
+>>
+>> Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
 >
-> I've bisected boot failures in next-20151016 down to patches in this branch:
->
-> On Thu, Oct 15, 2015 at 4:42 AM, Tomeu Vizoso
-> <tomeu.vizoso@collabora.com> wrote:
->> Tomeu Vizoso (20):
->>       driver core: handle -EPROBE_DEFER from bus_type.match()
->
-> The machine it happened on was OMAP5UEVM:
->
-> http://arm-soc.lixom.net/bootlogs/next/next-20151016/omap5uevm-arm-omap2plus_defconfig.html
+> Applied to clk-next.
 
-So this one is because the MMC node numbering changed. I don't know
-how to fix that other than with aliases, but that doesn't solve
-backwards compatibility.
+Mike,
 
+these two patches will break Berlin SoCs if not applied
+after the sdhci and DT changes went in. Please hold them
+back until the discussion has been settled.
 
-> But I've also seen it on tegra2, that one bisected down to:
+Thanks,
+   Sebastian
+
 >
->>      regulator: core: Probe regulators on demand
->
-> http://arm-soc.lixom.net/bootlogs/next/next-20151016/seaboard-arm-multi_v7_defconfig.html
-
-This one you need a rootwait I think. The MMC scanning is not
-guaranteed to be done before the rootfs mounting AFAIK. There may be
-other problems, but we can't see them since it panics.
-
-Rob
+>> ---
+>>   drivers/clk/berlin/bg2q.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/berlin/bg2q.c b/drivers/clk/berlin/bg2q.c
+>> index 221f40c..243f421 100644
+>> --- a/drivers/clk/berlin/bg2q.c
+>> +++ b/drivers/clk/berlin/bg2q.c
+>> @@ -283,7 +283,7 @@ static const struct berlin2_gate_data bg2q_gates[] __initconst = {
+>>          { "usb2",       "perif",        13 },
+>>          { "usb3",       "perif",        14 },
+>>          { "pbridge",    "perif",        15, CLK_IGNORE_UNUSED },
+>> -       { "sdio",       "perif",        16, CLK_IGNORE_UNUSED },
+>> +       { "sdio",       "perif",        16 },
+>>          { "nfc",        "perif",        18 },
+>>          { "pcie",       "perif",        22 },
+>>   };
+>> --
+>> 2.6.1
+>>
