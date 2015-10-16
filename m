@@ -1,143 +1,223 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v2 02/14] clk: at91: make use of syscon to share PMC registers in several drivers
-Date: Mon, 12 Oct 2015 16:28:39 +0200
-Message-Id: <1444660131-14954-3-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1444660131-14954-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1444660131-14954-1-git-send-email-alexandre.belloni@free-electrons.com>
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 3/5] [RFC] clk: shmobile: div6: Extract cpg_div6_register()
+Date: Fri, 16 Oct 2015 14:49:18 +0200
+Message-Id: <1444999760-15750-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1444999760-15750-1-git-send-email-geert+renesas@glider.be>
+References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Extract cpg_div6_register(), to allow registering div6 clocks from
+another clock driver.
 
-The PMC block is providing several functionnalities:
- - system clk management
- - cpuidle
- - platform suspend
-
-Replace the void __iomem *regs field by a regmap (retrieved using syscon)
-so that we can later share the regmap across several drivers without
-exporting a new specific API or a global void __iomem * variable.
-
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/mach-at91/Kconfig |  1 +
- drivers/clk/at91/pmc.c     | 12 ++++++++----
- drivers/clk/at91/pmc.h     | 11 ++++++++---
- 3 files changed, 17 insertions(+), 7 deletions(-)
+v4:
+  - New.
+---
+ drivers/clk/shmobile/clk-div6.c | 119 +++++++++++++++++++++++++---------------
+ drivers/clk/shmobile/clk-div6.h |   3 +
+ 2 files changed, 77 insertions(+), 45 deletions(-)
+ create mode 100644 drivers/clk/shmobile/clk-div6.h
 
-diff --git a/arch/arm/mach-at91/Kconfig b/arch/arm/mach-at91/Kconfig
-index 89a755b90db2..3b2f594f2ce7 100644
---- a/arch/arm/mach-at91/Kconfig
-+++ b/arch/arm/mach-at91/Kconfig
-@@ -95,6 +95,7 @@ config HAVE_AT91_USB_CLK
- config COMMON_CLK_AT91
- 	bool
- 	select COMMON_CLK
-+	select MFD_SYSCON
+diff --git a/drivers/clk/shmobile/clk-div6.c b/drivers/clk/shmobile/clk-div6.c
+index 57016ff9c585fc6e..5e8525fc60427229 100644
+--- a/drivers/clk/shmobile/clk-div6.c
++++ b/drivers/clk/shmobile/clk-div6.c
+@@ -18,6 +18,8 @@
+ #include <linux/of_address.h>
+ #include <linux/slab.h>
  
- config HAVE_AT91_SMD
- 	bool
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index d1844f1f3729..ba458eae4bda 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -19,6 +19,7 @@
- #include <linux/irqchip/chained_irq.h>
- #include <linux/irqdomain.h>
- #include <linux/of_irq.h>
-+#include <linux/mfd/syscon.h>
- 
- #include <asm/proc-fns.h>
- 
-@@ -215,6 +216,7 @@ static const struct at91_pmc_caps sama5d3_caps = {
++#include "clk-div6.h"
++
+ #define CPG_DIV6_CKSTP		BIT(8)
+ #define CPG_DIV6_DIV(d)		((d) & 0x3f)
+ #define CPG_DIV6_DIV_MASK	0x3f
+@@ -172,60 +174,34 @@ static const struct clk_ops cpg_div6_clock_ops = {
+ 	.set_rate = cpg_div6_clock_set_rate,
  };
  
- static struct at91_pmc *__init at91_pmc_init(struct device_node *np,
-+					     struct regmap *regmap,
- 					     void __iomem *regbase, int virq,
- 					     const struct at91_pmc_caps *caps)
+-static void __init cpg_div6_clock_init(struct device_node *np)
++struct clk * __init cpg_div6_register(const char *name,
++				      unsigned int num_parents,
++				      const char **parent_names,
++				      void __iomem *reg)
  {
-@@ -230,7 +232,7 @@ static struct at91_pmc *__init at91_pmc_init(struct device_node *np,
- 		return NULL;
+-	unsigned int num_parents, valid_parents;
+-	const char **parent_names;
++	unsigned int valid_parents;
+ 	struct clk_init_data init;
+ 	struct div6_clock *clock;
+-	const char *clk_name = np->name;
+ 	struct clk *clk;
+ 	unsigned int i;
  
- 	spin_lock_init(&pmc->lock);
--	pmc->regbase = regbase;
-+	pmc->regmap = regmap;
- 	pmc->virq = virq;
- 	pmc->caps = caps;
- 
-@@ -380,16 +382,18 @@ static void __init of_at91_pmc_setup(struct device_node *np,
- 	void (*clk_setup)(struct device_node *, struct at91_pmc *);
- 	const struct of_device_id *clk_id;
- 	void __iomem *regbase = of_iomap(np, 0);
-+	struct regmap *regmap;
- 	int virq;
- 
--	if (!regbase)
+ 	clock = kzalloc(sizeof(*clock), GFP_KERNEL);
+ 	if (!clock)
 -		return;
-+	regmap = syscon_node_to_regmap(np);
-+	if (IS_ERR(regmap))
-+		panic("Could not retrieve syscon regmap");
+-
+-	num_parents = of_clk_get_parent_count(np);
+-	if (num_parents < 1) {
+-		pr_err("%s: no parent found for %s DIV6 clock\n",
+-		       __func__, np->name);
+-		return;
+-	}
++		return ERR_PTR(-ENOMEM);
  
- 	virq = irq_of_parse_and_map(np, 0);
- 	if (!virq)
- 		return;
+ 	clock->parents = kmalloc_array(num_parents, sizeof(*clock->parents),
+-		GFP_KERNEL);
+-	parent_names = kmalloc_array(num_parents, sizeof(*parent_names),
+-				GFP_KERNEL);
+-	if (!parent_names)
+-		return;
++				       GFP_KERNEL);
++	if (!clock->parents)
++		return ERR_PTR(-ENOMEM);
  
--	pmc = at91_pmc_init(np, regbase, virq, caps);
-+	pmc = at91_pmc_init(np, regmap, regbase, virq, caps);
- 	if (!pmc)
- 		return;
- 	for_each_child_of_node(np, childnp) {
-diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index 8b87771c69b2..0247eb0e171b 100644
---- a/drivers/clk/at91/pmc.h
-+++ b/drivers/clk/at91/pmc.h
-@@ -14,6 +14,7 @@
+-	/* Remap the clock register and read the divisor. Disabling the
+-	 * clock overwrites the divisor, so we need to cache its value for the
+-	 * enable operation.
+-	 */
+-	clock->reg = of_iomap(np, 0);
+-	if (clock->reg == NULL) {
+-		pr_err("%s: failed to map %s DIV6 clock register\n",
+-		       __func__, np->name);
+-		goto error;
+-	}
++	clock->reg = reg;
  
- #include <linux/io.h>
- #include <linux/irqdomain.h>
-+#include <linux/regmap.h>
- #include <linux/spinlock.h>
++	/*
++	 * Read the divisor. Disabling the clock overwrites the divisor, so we
++	 * need to cache its value for the enable operation.
++	 */
+ 	clock->div = (clk_readl(clock->reg) & CPG_DIV6_DIV_MASK) + 1;
  
- struct clk_range {
-@@ -28,7 +29,7 @@ struct at91_pmc_caps {
- };
+-	/* Parse the DT properties. */
+-	of_property_read_string(np, "clock-output-names", &clk_name);
+-
+-	for (i = 0, valid_parents = 0; i < num_parents; i++) {
+-		const char *name = of_clk_get_parent_name(np, i);
+-
+-		if (name) {
+-			parent_names[valid_parents] = name;
+-			clock->parents[valid_parents] = i;
+-			valid_parents++;
+-		}
+-	}
+-
+ 	switch (num_parents) {
+ 	case 1:
+ 		/* fixed parent clock */
+@@ -243,12 +219,22 @@ static void __init cpg_div6_clock_init(struct device_node *np)
+ 		break;
+ 	default:
+ 		pr_err("%s: invalid number of parents for DIV6 clock %s\n",
+-		       __func__, np->name);
++		       __func__, name);
++		clk = ERR_PTR(-EINVAL);
+ 		goto error;
+ 	}
  
- struct at91_pmc {
--	void __iomem *regbase;
-+	struct regmap *regmap;
- 	int virq;
- 	spinlock_t lock;
- 	const struct at91_pmc_caps *caps;
-@@ -48,12 +49,16 @@ static inline void pmc_unlock(struct at91_pmc *pmc)
- 
- static inline u32 pmc_read(struct at91_pmc *pmc, int offset)
- {
--	return readl(pmc->regbase + offset);
-+	unsigned int ret = 0;
++	/* Filter out invalid parents */
++	for (i = 0, valid_parents = 0; i < num_parents; i++) {
++		if (parent_names[i]) {
++			parent_names[valid_parents] = parent_names[i];
++			clock->parents[valid_parents] = i;
++			valid_parents++;
++		}
++	}
 +
-+	regmap_read(pmc->regmap, offset, &ret);
+ 	/* Register the clock. */
+-	init.name = clk_name;
++	init.name = name;
+ 	init.ops = &cpg_div6_clock_ops;
+ 	init.flags = CLK_IS_BASIC;
+ 	init.parent_names = parent_names;
+@@ -257,6 +243,50 @@ static void __init cpg_div6_clock_init(struct device_node *np)
+ 	clock->hw.init = &init;
+ 
+ 	clk = clk_register(NULL, &clock->hw);
++	if (!IS_ERR(clk))
++		return clk;
 +
-+	return ret;
- }
++error:
++	kfree(clock->parents);
++	kfree(clock);
++	return clk;
++}
++
++static void __init cpg_div6_clock_init(struct device_node *np)
++{
++	unsigned int num_parents;
++	const char **parent_names;
++	const char *clk_name = np->name;
++	void __iomem *reg;
++	struct clk *clk;
++	unsigned int i;
++
++	num_parents = of_clk_get_parent_count(np);
++	if (num_parents < 1) {
++		pr_err("%s: no parent found for %s DIV6 clock\n",
++		       __func__, np->name);
++		return;
++	}
++
++	parent_names = kmalloc_array(num_parents, sizeof(*parent_names),
++				GFP_KERNEL);
++	if (!parent_names)
++		return;
++
++	reg = of_iomap(np, 0);
++	if (reg == NULL) {
++		pr_err("%s: failed to map %s DIV6 clock register\n",
++		       __func__, np->name);
++		goto error;
++	}
++
++	/* Parse the DT properties. */
++	of_property_read_string(np, "clock-output-names", &clk_name);
++
++	for (i = 0; i < num_parents; i++)
++		parent_names[i] = of_clk_get_parent_name(np, i);
++
++	clk = cpg_div6_register(clk_name, num_parents, parent_names, reg);
+ 	if (IS_ERR(clk)) {
+ 		pr_err("%s: failed to register %s DIV6 clock (%ld)\n",
+ 		       __func__, np->name, PTR_ERR(clk));
+@@ -269,9 +299,8 @@ static void __init cpg_div6_clock_init(struct device_node *np)
+ 	return;
  
- static inline void pmc_write(struct at91_pmc *pmc, int offset, u32 value)
- {
--	writel(value, pmc->regbase + offset);
-+	regmap_write(pmc->regmap, offset, value);
+ error:
+-	if (clock->reg)
+-		iounmap(clock->reg);
++	if (reg)
++		iounmap(reg);
+ 	kfree(parent_names);
+-	kfree(clock);
  }
- 
- int of_at91_get_clk_range(struct device_node *np, const char *propname,
+ CLK_OF_DECLARE(cpg_div6_clk, "renesas,cpg-div6-clock", cpg_div6_clock_init);
+diff --git a/drivers/clk/shmobile/clk-div6.h b/drivers/clk/shmobile/clk-div6.h
+new file mode 100644
+index 0000000000000000..d19531f42953c83f
+--- /dev/null
++++ b/drivers/clk/shmobile/clk-div6.h
+@@ -0,0 +1,3 @@
++
++struct clk *cpg_div6_register(const char *name, unsigned int num_parents,
++			      const char **parent_names, void __iomem *reg);
 -- 
-2.1.4
+1.9.1
