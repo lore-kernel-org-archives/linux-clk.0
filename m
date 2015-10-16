@@ -1,71 +1,70 @@
-Return-Path: <gregkh@linuxfoundation.org>
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-kernel@lists.codethink.co.uk,
-	Ben Dooks <ben.dooks@codethink.co.uk>,
-	Tero Kristo <t-kristo@ti.com>
-Subject: [PATCH 4.1 190/202] clk: ti: fix dual-registration of uart4_ick
-Date: Sat, 17 Oct 2015 18:59:33 -0700
-Message-Id: <20151018014910.537434996@linuxfoundation.org>
-In-Reply-To: <20151018014901.946875729@linuxfoundation.org>
-References: <20151018014901.946875729@linuxfoundation.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ "Tomeu Vizoso" <tomeu.vizoso@collabora.com>, linux-kernel@vger.kernel.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <56203AD3.2050905@samsung.com>
+Cc: "Gustavo Padovan" <gustavo.padovan@collabora.co.uk>,
+ "Javier Martinez Canillas" <javier@osg.samsung.com>,
+ "Seung-Woo Kim" <sw0312.kim@samsung.com>, "Kukjin Kim" <kgene@kernel.org>,
+ "Inki Dae" <inki.dae@samsung.com>,
+ "Kyungmin Park" <kyungmin.park@samsung.com>,
+ "Joonyoung Shim" <jy0922.shim@samsung.com>, devicetree@vger.kernel.org,
+ "Stephen Boyd" <sboyd@codeaurora.org>, "Kumar Gala" <galak@codeaurora.org>,
+ "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
+ linux-samsung-soc@vger.kernel.org,
+ "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
+ "Pawel Moll" <pawel.moll@arm.com>, "Rob Herring" <robh+dt@kernel.org>,
+ "Mark Rutland" <mark.rutland@arm.com>, "Tomasz Figa" <tomasz.figa@gmail.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1444905084-22540-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1444905084-22540-2-git-send-email-tomeu.vizoso@collabora.com>
+ <56203AD3.2050905@samsung.com>
+Message-ID: <20151016124935.20687.4394@quantum>
+Subject: Re: [PATCH v2 1/2] clk: samsung: exynos5250: Add DISP1 clocks
+Date: Fri, 16 Oct 2015 05:49:35 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-4.1-stable review patch.  If anyone has any objections, please let me know.
+Quoting Krzysztof Kozlowski (2015-10-15 16:46:27)
+> On 15.10.2015 19:31, Tomeu Vizoso wrote:
+> > When the DISP1 power domain is powered off, there's two clocks that need
+> > to be temporarily reparented to OSC, and back to their original parents
+> > when the domain is powered on again.
+> > =
 
-------------------
+> > We expose these two clocks in the DT bindings so that the DT node of the
+> > power domain can reference them.
+> > =
 
-From: Ben Dooks <ben.dooks@codethink.co.uk>
+> > Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> > Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+> > ---
+> > =
 
-commit 19e79687de22f23bcfb5e79cce3daba20af228d1 upstream.
+> > Changes in v2:
+> > - Reuse mout_aclk200_p
+> > - Rename div_aclk300 as div_aclk300_disp
+> > =
 
-On the OMAP AM3517 platform the uart4_ick gets registered
-twice, causing any power management to /dev/ttyO3 to fail
-when trying to wake the device up.
+> >  drivers/clk/samsung/clk-exynos5250.c   | 14 +++++++++++++-
+> >  include/dt-bindings/clock/exynos5250.h |  4 +++-
+> >  2 files changed, 16 insertions(+), 2 deletions(-)
+> > =
 
-This solves the following oops:
+> =
 
-[] Unhandled fault: external abort on non-linefetch (0x1028) at 0xfa09e008
-[] PC is at serial_omap_pm+0x48/0x15c
-[] LR is at _raw_spin_unlock_irqrestore+0x30/0x5c
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Fixes: aafd900cab87 ("CLK: TI: add omap3 clock init file")
-Cc: mturquette@baylibre.com
-Cc: sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-omap@vger.kernel.org
-Cc: linux-kernel@lists.codethink.co.uk
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Applied to clk-next.
 
----
- drivers/clk/ti/clk-3xxx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Regards,
+Mike
 
---- a/drivers/clk/ti/clk-3xxx.c
-+++ b/drivers/clk/ti/clk-3xxx.c
-@@ -163,7 +163,6 @@ static struct ti_dt_clk omap3xxx_clks[]
- 	DT_CLK(NULL, "gpio2_ick", "gpio2_ick"),
- 	DT_CLK(NULL, "wdt3_ick", "wdt3_ick"),
- 	DT_CLK(NULL, "uart3_ick", "uart3_ick"),
--	DT_CLK(NULL, "uart4_ick", "uart4_ick"),
- 	DT_CLK(NULL, "gpt9_ick", "gpt9_ick"),
- 	DT_CLK(NULL, "gpt8_ick", "gpt8_ick"),
- 	DT_CLK(NULL, "gpt7_ick", "gpt7_ick"),
-@@ -308,6 +307,7 @@ static struct ti_dt_clk am35xx_clks[] =
- static struct ti_dt_clk omap36xx_clks[] = {
- 	DT_CLK(NULL, "omap_192m_alwon_fck", "omap_192m_alwon_fck"),
- 	DT_CLK(NULL, "uart4_fck", "uart4_fck"),
-+	DT_CLK(NULL, "uart4_ick", "uart4_ick"),
- 	{ .node_name = NULL },
- };
- 
+> =
+
+> Best regards,
+> Krzysztof
+> =
+
+>=20
