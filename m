@@ -1,99 +1,54 @@
-Return-Path: <zywang33@gmail.com>
-Return-Path: <zywang33@gmail.com>
-From: Chris Zhong <zyw@rock-chips.com>
-To: heiko@sntech.de,
-	linux-rockchip@lists.infradead.org
-Cc: Chris Zhong <zyw@rock-chips.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	dri-devel@lists.freedesktop.org,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Rob Herring <robh+dt@kernel.org>,
-	David Airlie <airlied@linux.ie>,
-	Jeff Chen <cym@rock-chips.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	linux-clk@vger.kernel.org,
-	Alexandru M Stan <amstan@chromium.org>,
-	Sonny Rao <sonnyrao@chromium.org>,
-	Huang Lin <hl@rock-chips.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	devicetree@vger.kernel.org,
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 16 Oct 2015 15:11:21 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Ray Jui <rjui@broadcom.com>
+Cc: Jon Mason <jonmason@broadcom.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vincent Palatin <vpalatin@chromium.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Ajay Kumar <ajaykumar.rs@samsung.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Liu Ying <Ying.liu@freescale.com>,
-	Andrew Bresticker <abrestic@chromium.org>,
-	Doug Anderson <dianders@chromium.org>,
-	linux-kernel@vger.kernel.org,
-	Mark Yao <mark.yao@rock-chips.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sean Paul <seanpaul@chromium.org>,
-	Roger Chen <roger.chen@rock-chips.com>
-Subject: [PATCH 00/10] Add mipi dsi support for rk3288
-Date: Sat, 10 Oct 2015 17:55:20 +0800
-Message-Id: <1444470930-17150-1-git-send-email-zyw@rock-chips.com>
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Hauke Mehrtens <hauke@hauke-m.de>,
+	Scott Branden <sbranden@broadcom.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [RFC 4/5] clk: iproc: define Broadcom NS2 iProc clock binding
+Message-ID: <20151016221121.GD10182@codeaurora.org>
+References: <1444771347-11382-1-git-send-email-jonmason@broadcom.com>
+ <1444771347-11382-5-git-send-email-jonmason@broadcom.com>
+ <561D84B4.4000002@broadcom.com>
+ <20151014154410.GF15160@broadcom.com>
+ <561E88A7.2090808@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <561E88A7.2090808@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The rk3288 MIPI DSI is a Synopsys DesignWare MIPI DSI host controller
-IP. This series adds support for a Synopsys DesignWare MIPI DSI host
-controller DRM bridge driver and a rockchip MIPI DSI specific DRM
-driver.
+On 10/14, Ray Jui wrote:
+> 
+> 
+> On 10/14/2015 8:44 AM, Jon Mason wrote:
+> > On Tue, Oct 13, 2015 at 03:24:52PM -0700, Ray Jui wrote:
+> >> Same as this patch. I thought device tree binding document should go
+> >> with the clock driver changes.
+> >>
+> >> Strictly speaking, device tree binding document should always go before
+> >> the driver changes. In the binding document the DT interface is defined,
+> >> then changes are implemented in the driver.
+> > 
+> > I split them off this way due to the clk maintainer not wanting to
+> > pull in any device tree changes.  Since the documentation is for the
+> > device tree enties, it makes logical sense to me that they be in the
+> > same device tree series.  If Stephen will pull these in with the clk
+> > changes, I am more than happy to have it done by him :)
+> > 
+> > Thanks,
+> > Jon
+> 
+> Yeah the clock maintainers do not pull in device tree changes like
+> *.dtsi and *.dts. But they do take changes including the binding
+> documents and clock driver changes. You can confirm with Stephen.
+> 
 
-This series also includes a DRM panel driver for BOE TV080WUM-NL0 panel.
-This panel only use the MIPI DSI video mode.
-
-The MIPI DSI feature is tested on rk3288 evb board, backport them to
-chrome os kernel v3.14, and it can display normally.
-
-This patchset is base on the patchset from Ying.liu@freescale.com.
-<http://www.spinics.net/lists/dri-devel/msg77181.html>
-
-
-
-Chris Zhong (8):
-  clk: rockchip: Add sclk_mipidsi_24m for mipi dsi
-  drm/rockchip: return a true clock rate to adjusted_mode
-  drm/bridge: Add Synopsys DesignWare MIPI DSI host controller driver
-  drm: rockchip: Support Synopsys DesignWare MIPI DSI host controller
-  Documentation: dt-bindings: Add bindings for rk3288 DW MIPI DSI driver
-  ARM: dts: rockchip: add rk3288 mipi_dsi nodes
-  drm/panel: simple: Add support for BOE TV080WUM-NL0
-  ARM: dts: rockchip: add support mipi panel tv080wum-nl0 for rk3288-evb
-
-Liu Ying (2):
-  drm/dsi: Add a helper to get bits per pixel of MIPI DSI pixel format
-  Documentation: dt-bindings: Add bindings for Synopsys DW MIPI DSI DRM
-    bridge driver
-
- .../devicetree/bindings/drm/bridge/dw_mipi_dsi.txt |   76 ++
- .../bindings/video/dw_mipi_dsi_rockchip.txt        |   56 ++
- arch/arm/boot/dts/rk3288-evb.dtsi                  |   20 +-
- arch/arm/boot/dts/rk3288.dtsi                      |   39 +
- drivers/clk/rockchip/clk-rk3288.c                  |    2 +-
- drivers/gpu/drm/bridge/Kconfig                     |   10 +
- drivers/gpu/drm/bridge/Makefile                    |    1 +
- drivers/gpu/drm/bridge/dw_mipi_dsi.c               | 1055 ++++++++++++++++++++
- drivers/gpu/drm/panel/panel-simple.c               |   33 +
- drivers/gpu/drm/rockchip/Kconfig                   |   10 +
- drivers/gpu/drm/rockchip/Makefile                  |    1 +
- drivers/gpu/drm/rockchip/dw_mipi_dsi_rockchip.c    |  249 +++++
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c        |    9 +
- include/drm/bridge/dw_mipi_dsi.h                   |   27 +
- include/drm/drm_mipi_dsi.h                         |   14 +
- include/dt-bindings/clock/rk3288-cru.h             |    1 +
- 16 files changed, 1601 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/drm/bridge/dw_mipi_dsi.txt
- create mode 100644 Documentation/devicetree/bindings/video/dw_mipi_dsi_rockchip.txt
- create mode 100644 drivers/gpu/drm/bridge/dw_mipi_dsi.c
- create mode 100644 drivers/gpu/drm/rockchip/dw_mipi_dsi_rockchip.c
- create mode 100644 include/drm/bridge/dw_mipi_dsi.h
+Yes we take bindings (I know I'm replying to an old patch).
 
 -- 
-2.6.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
