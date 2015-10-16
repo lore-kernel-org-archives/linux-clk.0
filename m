@@ -1,175 +1,82 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bn1on0136.outbound.protection.outlook.com ([157.56.110.136]:33478
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1753384AbbJOHDl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 15 Oct 2015 03:03:41 -0400
-From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-To: <arnd@arndb.de>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
-	<linux-clk@vger.kernel.org>, <olof@lixom.net>
-CC: <bhupesh.linux@gmail.com>, <will.deacon@arm.com>,
-	<Catalin.Marinas@arm.com>, <bhupesh.sharma@freescale.com>,
-	<LeoLi@freescale.com>, <scottwood@freescale.com>,
-	<stuart.yoder@freescale.com>
-Subject: [PATCH v3 00/12] ARM64: Update support for FSL's LS2085A SoC
-Date: Thu, 15 Oct 2015 12:17:40 +0530
-Message-ID: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 16 Oct 2015 16:05:55 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: York Sun <yorksun@freescale.com>
+Cc: linux-clk@vger.kernel.org, pmarrecas@outlook.com,
+	Mike Turquette <mturquette@baylibre.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Andrey Filippov <andrey@elphel.com>,
+	Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: [Resend Patch v6] driver/clk/clk-si5338: Add common clock
+ framework driver for si5338
+Message-ID: <20151016230555.GE10182@codeaurora.org>
+References: <1444410574-28677-1-git-send-email-yorksun@freescale.com>
+ <20151010000948.GW26883@codeaurora.org>
+ <562165C3.1090103@freescale.com>
+ <20151016213139.GE16437@codeaurora.org>
+ <56216E0D.4010709@freescale.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <56216E0D.4010709@freescale.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is the v3 of the patchset which updates the support for FSL's LS2085A SoC
-which is now being renamed to LS2080A (and is based on ARMv8 architecture).
+On 10/16, York Sun wrote:
+> 
+> 
+> On 10/16/2015 02:31 PM, Stephen Boyd wrote:
+> > On 10/16, York Sun wrote:
+> >>
+> >>
+> >> On 10/09/2015 05:09 PM, Stephen Boyd wrote:
+> >>> On 10/09, York Sun wrote:
+> >>>> +/*
+> >>>> + * To support multiple si5338 chips, we cannot use devm_clk_get because
+> >>>> + * each chip has its own clock sources. If device tree is not used,
+> >>>> + * platform driver should provide these clocks. Let the clocks be freed
+> >>>> + * automatically when device is unbound. We implement our own devm_of_clk_get.
+> >>>> + */
+> >>>> +static void devm_of_clk_release(struct device *dev, void *res)
+> >>>> +{
+> >>>> +	clk_put(*(struct clk **)res);
+> >>>> +}
+> >>>> +
+> >>>> +static struct clk *devm_of_clk_get(struct device *dev, struct device_node *np,
+> >>>
+> >>> What is this? I don't get it at all.
+> >>
+> >> Maybe you can help me on this.
+> >> We have two ways to get parent clock. One is from device tree, the other is from
+> >> platform data. When the clock is from platform data, the consumer gets the clock
+> >> and passes it. The clock will be put by the consumer as well. When the parent
+> >> clock comes from device tree, what I am trying to do is to call of_clk_get(),
+> >> without worrying about to call clk_put() later when the driver is removed, so I
+> >> don't have to know where the parent clock data came from.
+> >>
+> > 
+> > This driver should always use clk_get() then. If the mode is
+> > device tree, clk_get() will lookup the clock in DT and get it
+> > from there. If the mode is platform data, then we'll fallback to
+> > the clkdev method of clk_get(), which will look for a clk_lookup
+> > created for the device calling clk_get() + the connection id that
+> > was provided by the lookup creator. This driver should always
+> > call clk_put() on the clock when it's done with it, regardless of
+> > DT vs. platform data.
+> > 
+> 
+> For the platform data mode, I think it is up to the consumer to get and put the
+> parent clocks. The current code is to pass (struct clk *) pointers as parent
+> clocks. Are you suggesting to pass the name of parent clocks?
+> 
 
-Here is a description of what this patchset tries to achieve:
-(v2 can be viewed here: http://www.spinics.net/lists/arm-kernel/msg442910.html)
-
-  - Patch 1:
-    Freescale will be a supporting a host of ARMv8 based SoCs which
-    will be based on a similar overall SoC architecture. So, this patch
-    converts the existing infrastructure to use the generic convention
-    ARCH_LAYERSCAPE.
-    
-    	Changes since v2:
-	-----------------
-	Minor rewording of Kconfig help text.
-
-  - Patch 2:
-    Freescale is renaming the LS2085A SoC to LS2080A - this patch handles the
-    same.
-    Further details of the LS2080a based platforms can be seen here:
-    http://www.freescale.com/products/arm-processors/qoriq-arm-processors/qoriq-ls2080a-40a-multicore-communications-processors:LS2080A?fsrch=1&sr=1&pageNum=1
-    
-	Changes since v2:
-	-----------------
-	No changes
-
-  - Patch 3:
-    Adds DTS binding documentation for Freescale's LS2080A QDS and RDB boards
-    
-	Changes since v2:
-	-----------------
-	No changes
-
-  - Patch 4:
-    This patch moves the FSL board specific bindings out of 'powerpc/' folder
-    as the same board components can be used for ARM based SoCs as well.
-	
-	Changes since v2:
-	-----------------
-	Minor rewording of commit log. Moved 'interrupt' property to
-	optional as this is not 'Required' for Qixis FPGA controllers.
-
-  - Patch 5:
-    Updates PCIe devicetree binding documentation for LS2080A.
-	
-	Changes since v2:
-	-----------------
-	Minor rewording of commit log.
-
-  - Patch 6:
-    Updates the GPIO devicetree binding documentation for LS2080A.
-	
-	Changes since v2:
-	-----------------
-	Used fsl,qoriq-gpio compatible string for Layerscape SoCs.
-    
-  - Patch 7:
-    Updates the DWC3 USB bindings to provide reference to generic USB
-    bindings.
-	
-	Changes since v2:
-	-----------------
-	New patch
-  
-  - Patch 8:
-    Updates the support of various peripherals (PMU, SMMU, SATA, PCI, SPI)
-    present on FSL LS2080a SoC in the SoC DTSI.
-	
-	Changes since v2:
-	-----------------
-	Added device nodes under the /soc node as suggested by Rob.
-	Removed WDT node.
-
-  - Patch 9:
-    Updates the DTS LS2080a simulator platform to reflect the new
-    peripherals added in the DTSI.
-	
-	Changes since v2:
-	-----------------
-	Added serial alias
-
-  - Patch 10:
-    Remove text about writing to Free Software Foundation
-	
-	Changes since v2:
-	-----------------
-	New patch
-
- - Patch 11:
-    Adds new DTS files for LS2080a based QDS and RDB boards.
-	
-	Changes since v2:
-	-----------------
-	Added serial alias
- 
-  - Patch 12:
-    Adds build support for LS2080a QDS and RDB board DTS files.
-	
-	Changes since v2:
-	-----------------
-	No changes
-
-Rebasing details:
------------------
-- Rebased against linux-next git tree, branch: master
-
-- Rebased against Scott's latest v3 of QorIQ clk fixes, which can be
-  viewed here:
-  http://linux.freescale.net/patchwork/patch/59805/
-
-Bhupesh Sharma (12):
-  arm64: Use generic Layerscape SoC family naming
-  arm64: Rename FSL LS2085A SoC support code to LS2080A
-  Documentation: DT: Add entry for FSL LS2080A QDS and RDB boards
-  Documentation/dts: Move FSL board-specific bindings out of /powerpc
-  doc/bindings: Update Layerscape PCIe devicetree binding to be more
-    flexible
-  doc/bindings: Update GPIO devicetree binding documentation for
-    LS2080A
-  doc: DTS: Update DWC3 binding to provide reference to generic
-    bindings
-  dts/ls2080a: Update DTSI to add support of various peripherals
-  dts/ls2080a: Update Simulator DTS to add support of various
-    peripherals
-  dts/ls2080a: Remove text about writing to Free Software Foundation
-  dts/ls2080a: Add DTS support for LS2080a QDS & RDB boards
-  dts/Makefile: Add build support for LS2080a QDS & RDB board DTS
-
- Documentation/devicetree/bindings/arm/fsl.txt      |   16 +-
- .../{powerpc/fsl/board.txt => board/fsl-board.txt} |   14 +-
- .../devicetree/bindings/gpio/gpio-mpc8xxx.txt      |    4 +-
- .../devicetree/bindings/pci/layerscape-pci.txt     |   15 +-
- Documentation/devicetree/bindings/usb/dwc3.txt     |    3 +-
- arch/arm64/Kconfig.platforms                       |    6 +-
- arch/arm64/boot/dts/freescale/Makefile             |    2 +-
- arch/arm64/boot/dts/freescale/fsl-ls2080a-qds.dts  |  204 ++++++++
- .../{fsl-ls2085a-simu.dts => fsl-ls2080a-rdb.dts}  |  131 ++++-
- .../{fsl-ls2085a-simu.dts => fsl-ls2080a-simu.dts} |   69 ++-
- arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi     |  504 ++++++++++++++++++++
- arch/arm64/boot/dts/freescale/fsl-ls2085a.dtsi     |  163 -------
- arch/arm64/configs/defconfig                       |    2 +-
- 13 files changed, 929 insertions(+), 204 deletions(-)
- rename Documentation/devicetree/bindings/{powerpc/fsl/board.txt => board/fsl-board.txt} (90%)
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls2080a-qds.dts
- copy arch/arm64/boot/dts/freescale/{fsl-ls2085a-simu.dts => fsl-ls2080a-rdb.dts} (51%)
- rename arch/arm64/boot/dts/freescale/{fsl-ls2085a-simu.dts => fsl-ls2080a-simu.dts} (74%)
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
- delete mode 100644 arch/arm64/boot/dts/freescale/fsl-ls2085a.dtsi
+I'm suggesting to register clocks with clkdev using a device name
+that matches the consumer. The consumer (this driver?) will
+simply call clk_get() and clk_put() then, nothing else is needed.
+I'm not suggesting to pass the names of the parent clocks. It
+sounds like those are inputs to this device, so we should be
+calling clk_get() with a device and a connection id to get the
+clock.
 
 -- 
-1.7.9.5
-
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
