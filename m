@@ -1,69 +1,34 @@
-Return-Path: <jh80.chung@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=windows-1252
-Message-id: <560E3800.1060603@samsung.com>
-Date: Fri, 02 Oct 2015 16:53:36 +0900
-From: Jaehoon Chung <jh80.chung@samsung.com>
-To: =?windows-1252?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- linux-mmc <linux-mmc@vger.kernel.org>, linux-clk@vger.kernel.org,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
- Doug Anderson <dianders@chromium.org>, Alexandru Stan <amstan@chromium.org>
-Subject: Re: [PATCH v2 3/8] mmc: core: Add mmc_regulator_set_vqmmc()
-References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
- <CAPDyKFqrkYXsbBJ61yYo0G8za1szARvA=as-5nLTiwGH5pCrEQ@mail.gmail.com>
- <560DF150.3000906@samsung.com> <3312969.jJ2hfB2JkV@diego>
-In-reply-to: <3312969.jJ2hfB2JkV@diego>
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH] clk: xgene: Remove unused setup.h include
+Date: Fri, 16 Oct 2015 12:08:47 -0700
+Message-Id: <1445022527-15605-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/02/2015 04:06 PM, Heiko Stübner wrote:
-> Am Freitag, 2. Oktober 2015, 11:52:00 schrieb Jaehoon Chung:
->> On 10/02/2015 06:05 AM, Ulf Hansson wrote:
->>> On 1 October 2015 at 19:35, Stephen Boyd <sboyd@codeaurora.org> wrote:
->>>> On 10/01, Heiko Stübner wrote:
->>>>> Am Donnerstag, 1. Oktober 2015, 11:54:24 schrieb Ulf Hansson:
->>>>>> On 30 September 2015 at 16:55, Heiko Stübner <heiko@sntech.de> wrote:
->>>>>>> Am Mittwoch, 30. September 2015, 16:42:05 schrieb Ulf Hansson:
->>>>>>>> On 30 September 2015 at 16:07, Heiko Stuebner <heiko@sntech.de> 
-> wrote:
->>>>>>> The clock changes of course only touch internals of the phase-clocks,
->>>>>>> so
->>>>>>> should have no problem going through another tree.
->>>>>>
->>>>>> What happens if I take mmc and dt changes, wouldn't I need the clock
->>>>>> patches as well?
->>>>>
->>>>> The API stays of course the same, only the degree to settings
->>>>> translation gets optimized, so I guess in the worst case you would get
->>>>> no good phase and thus fall back to non-highspeed modes - but the
->>>>> system would stay running.
->>>>>
->>>>> But of course, if the clock maintainers could Ack the two clock patches
->>>>> and
->>>>> everything would stay together that would work even better :-)
->>>>
->>>> If Ulf doesn't want to take them we can apply them to clk tree.
->>>> Otherwise, you can have my acked-by on the clk patches.
->>>
->>> I don't mind picking up the clock patches. So I consider this as an
->>> ack for both patch 1 and patch2, thanks.
->>>
->>> Now, let's give Jaehoon some time to review the dw_mmc parts.
->>
->> I will check other patches on today, if it's ok, i will apply at my
->> repository. Thanks for giving time! :)
-> 
-> I think Ulf wanted to apply the whole series via the mmc tree directly, but I 
-> guess that is between you two to decide ;-)
+This include doesn't look to be used, and compiling this file on
+arm64 still works, so remove it.
 
-If it will get Stephen's acked-by, i will pick up all after checked the dwmmc patches. how about?
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk-xgene.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Best Regards,
-Jaehoon Chung
-
-> 
-> 
-> Heiko
-> 
+diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
+index 96a6190acac2..27c0da29eca3 100644
+--- a/drivers/clk/clk-xgene.c
++++ b/drivers/clk/clk-xgene.c
+@@ -27,7 +27,6 @@
+ #include <linux/clkdev.h>
+ #include <linux/clk-provider.h>
+ #include <linux/of_address.h>
+-#include <asm/setup.h>
+ 
+ /* Register SCU_PCPPLL bit fields */
+ #define N_DIV_RD(src)			(((src) & 0x000001ff))
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
