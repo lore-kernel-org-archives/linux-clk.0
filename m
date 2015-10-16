@@ -1,81 +1,53 @@
-Return-Path: <zhengxing@rock-chips.com>
-Subject: Re: [PATCH v4 4/8] clk: rockchip: add new pll-type for rk3036 and similar
- socs
-From: zhengxing <zhengxing@rock-chips.com>
-Cc: "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, "linux-clk@vger.kernel.org"
- <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Date: Sat, 24 Oct 2015 21:42:23 +0800
-MIME-Version: 1.0
-Message-ID: <1445694140767.idgrp5uq4xltej25t214peu4@android.mail.163.com>
-References: <1445682629-21632-1-git-send-email-zhengxing@rock-chips.com>
- <1445682629-21632-5-git-send-email-zhengxing@rock-chips.com><1474048.ydSsx6D3zg@diego>
-In-Reply-To: <1474048.ydSsx6D3zg@diego>
-Content-Type: multipart/alternative; boundary="__MESSAGE_BODY_PART__1"
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: shmobile: r8a7778: Make r8a7778_rates[] and r8a7778_divs[] static const
+Date: Fri, 16 Oct 2015 17:14:55 +0200
+Message-Id: <1445008495-27708-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
---__MESSAGE_BODY_PART__1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+r8a7778_rates[] and r8a7778_divs[] are only used in clk-r8a7778.c, and
+never modified.
 
-SSdtIHNvcnJ5IEkgaWdub3JlZCB0aGlzLCBJJ2xsIGZpeCBpdCBzb29uLiBUaGFuay4gOikgT24g
-MjAxNS0xMC0yNCAxOToxMCAsIEhlaWtvIFN0w7xibmVyIFdyb3RlOiBIaSwgQW0gU2Ftc3RhZywg
-MjQuIE9rdG9iZXIgMjAxNSwgMTg6MzA6MjUgc2NocmllYiBYaW5nIFpoZW5nOiA+IFRoZSByazMw
-MzYncyBwbGwgYW5kIGNsb2NrIGFyZSBkaWZmZXJlbnQgd2l0aCBiYXNlIG9uIHRoZSByazMwNjYo
-cmszMTg4LCA+IHJrMzI4OCwgcmszMzY4IHVzZSBpdCksIHRoZXJlIGFyZSBkaWZmZXJlbnQgYWRq
-dXN0IGZvY3RvcnMgYW5kIGNvbnRyb2wgPiByZWdpc3RlcnMsIHNvIHRoZXNlIHNob3VsZCBiZSBp
-bmRlcGVuZGVudCBhbmQgc2VwYXJhdGUgZnJvbSB0aGUgc2VyaWVzID4gb2YgcmszMDY2cy4gPiA+
-IFNpZ25lZC1vZmYtYnk6IFhpbmcgWmhlbmcgPHpoZW5neGluZ0Byb2NrLWNoaXBzLmNvbT4gPiBS
-ZXZpZXdlZC1ieTogSGVpa28gU3R1ZWJuZXIgPGhlaWtvQHNudGVjaC5kZT4gPiAtLS0gPiA+ICtz
-dGF0aWMgdm9pZCByb2NrY2hpcF9yazMwMzZfcGxsX2luaXQoc3RydWN0IGNsa19odyAqaHcpID4g
-K3sgSW4gdGhlIHByZXZpb3VzIHZlcnNpb24sIFN0ZXBoZW4gcmVxdWVzdGVkIHRoYXQgd2UgZG9u
-J3QgdXNlIHJlZ3VsYXIgY2xvY2sgQVBJcyBpbiB0aGUgaW5pdC1jYWxsYmFjay4gSSBkaWQgYSBt
-b2RpZmljYXRpb24gZm9yIHRoZSBhbHJlYWR5IHByZXNlbnQgcGxsLSB0eXBlIGluIFswXSwgd2hp
-Y2ggZ290IGFscmVhZHkgYWNjZXB0ZWQuIFNvIHlvdSBzaG91bGQgcHJvYmFibHkgYWxzbyBtb2Rp
-ZnkgeW91ciBwbGwtdHlwZSBpbiB0aGlzIGZhc2hpb24gOi0pIC4gT2ggYW5kIEkgZ3Vlc3MgcGF0
-Y2hlcyAzIGFuZCA0IHNob3VsZCBzd2l0Y2ggcGxhY2VzIC4uLiBhZGRpbmcgdGhlIHBsbC10eXBl
-IGJlZm9yZSB0aGUgY29kZSBpbiB0aGUgY2xvY2stY29udHJvbGxlciB1c2luZyBpdC4gSGVpa28g
-WzBdIGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvY2dpdC9saW51eC9rZXJuZWwvZ2l0L2Nsay9saW51
-eC5naXQvY29tbWl0Lz9oPWNsay1uZXh0JmlkPTgzMzRjMGU3Yjk4M2ZiMjdlMGQ4Nzg4OTAxZTk2
-MjFkMTk0NmJhOTM=
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/shmobile/clk-r8a7778.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---__MESSAGE_BODY_PART__1
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: base64
-
-PGRpdiBzdHlsZT0nbGluZS1oZWlnaHQ6MS40Jz48YnIvPkknbSBzb3JyeSBJIGlnbm9yZWQgdGhp
-cywgSSdsbCBmaXggaXQgc29vbi48YnIvPjxici8+VGhhbmsuICZuYnNwOzopPGJyLz48YnIvPjxi
-ci8+PGJyLz48YnIvPjwvZGl2Pk9uIDIwMTUtMTAtMjQgMTk6MTAgLCAgPGEgaHJlZj0ibWFpbHRv
-OmhlaWtvQHNudGVjaC5kZSI+SGVpa28gU3TDvGJuZXI8L2E+IFdyb3RlOiA8YnI+PGJyPjxibG9j
-a3F1b3RlIGlkPSdudGVzLWFuZHJpb2RtYWlsLXF1b3RlJyBzdHlsZT0ibWFyZ2luOjBweDtwYWRk
-aW5nLWxlZnQ6MWV4O2JvcmRlci1sZWZ0OiNjY2MgMXB4IHNvbGlkIj5IaSwNPGJyLz4NPGJyLz5B
-bSBTYW1zdGFnLCAyNC4gT2t0b2JlciAyMDE1LCAxODozMDoyNSBzY2hyaWViIFhpbmcgWmhlbmc6
-DTxici8+Jmd0OyBUaGUgcmszMDM2J3MgcGxsIGFuZCBjbG9jayBhcmUgZGlmZmVyZW50IHdpdGgg
-YmFzZSBvbiB0aGUgcmszMDY2KHJrMzE4OCwNPGJyLz4mZ3Q7IHJrMzI4OCwgcmszMzY4IHVzZSBp
-dCksIHRoZXJlIGFyZSBkaWZmZXJlbnQgYWRqdXN0IGZvY3RvcnMgYW5kIGNvbnRyb2wNPGJyLz4m
-Z3Q7IHJlZ2lzdGVycywgc28gdGhlc2Ugc2hvdWxkIGJlIGluZGVwZW5kZW50IGFuZCBzZXBhcmF0
-ZSBmcm9tIHRoZSBzZXJpZXMNPGJyLz4mZ3Q7IG9mIHJrMzA2NnMuDTxici8+Jmd0OyANPGJyLz4m
-Z3Q7IFNpZ25lZC1vZmYtYnk6IFhpbmcgWmhlbmcgJmx0O3poZW5neGluZ0Byb2NrLWNoaXBzLmNv
-bSZndDsNPGJyLz4mZ3Q7IFJldmlld2VkLWJ5OiBIZWlrbyBTdHVlYm5lciAmbHQ7aGVpa29Ac250
-ZWNoLmRlJmd0Ow08YnIvPiZndDsgLS0tDTxici8+Jmd0OyANPGJyLz4NPGJyLz4mZ3Q7ICtzdGF0
-aWMgdm9pZCByb2NrY2hpcF9yazMwMzZfcGxsX2luaXQoc3RydWN0IGNsa19odyAqaHcpDTxici8+
-Jmd0OyArew08YnIvPg08YnIvPkluIHRoZSBwcmV2aW91cyB2ZXJzaW9uLCBTdGVwaGVuIHJlcXVl
-c3RlZCB0aGF0IHdlIGRvbid0IHVzZSByZWd1bGFyIGNsb2NrDTxici8+QVBJcyBpbiB0aGUgaW5p
-dC1jYWxsYmFjay4gSSBkaWQgYSBtb2RpZmljYXRpb24gZm9yIHRoZSBhbHJlYWR5IHByZXNlbnQg
-cGxsLQ08YnIvPnR5cGUgaW4gWzBdLCB3aGljaCBnb3QgYWxyZWFkeSBhY2NlcHRlZC4gU28geW91
-IHNob3VsZCBwcm9iYWJseSBhbHNvIG1vZGlmeQ08YnIvPnlvdXIgcGxsLXR5cGUgaW4gdGhpcyBm
-YXNoaW9uIDotKSAuDTxici8+DTxici8+T2ggYW5kIEkgZ3Vlc3MgcGF0Y2hlcyAzIGFuZCA0IHNo
-b3VsZCBzd2l0Y2ggcGxhY2VzIC4uLiBhZGRpbmcgdGhlIHBsbC10eXBlDTxici8+YmVmb3JlIHRo
-ZSBjb2RlIGluIHRoZSBjbG9jay1jb250cm9sbGVyIHVzaW5nIGl0Lg08YnIvPg08YnIvPg08YnIv
-PkhlaWtvDTxici8+DTxici8+DTxici8+WzBdIDxhIGhyZWY9Imh0dHBzOi8vZ2l0Lmtlcm5lbC5v
-cmcvY2dpdC9saW51eC9rZXJuZWwvZ2l0L2Nsay9saW51eC5naXQvY29tbWl0Lz9oPWNsay1uZXh0
-JmFtcDtpZD04MzM0YzBlN2I5ODNmYjI3ZTBkODc4ODkwMWU5NjIxZDE5NDZiYTkzIj5odHRwczov
-L2dpdC5rZXJuZWwub3JnL2NnaXQvbGludXgva2VybmVsL2dpdC9jbGsvbGludXguZ2l0L2NvbW1p
-dC8/aD1jbGstbmV4dCZhbXA7aWQ9ODMzNGMwZTdiOTgzZmIyN2UwZDg3ODg5MDFlOTYyMWQxOTQ2
-YmE5MzwvYT4NPGJyLz4NPGJyLz4NPGJyLz48L2Jsb2NrcXVvdGU+
-
---__MESSAGE_BODY_PART__1--
+diff --git a/drivers/clk/shmobile/clk-r8a7778.c b/drivers/clk/shmobile/clk-r8a7778.c
+index 87c1d2f2fb57a46c..b1741551fff2a6c9 100644
+--- a/drivers/clk/shmobile/clk-r8a7778.c
++++ b/drivers/clk/shmobile/clk-r8a7778.c
+@@ -20,10 +20,10 @@ struct r8a7778_cpg {
+ };
+ 
+ /* PLL multipliers per bits 11, 12, and 18 of MODEMR */
+-struct {
++static const struct {
+ 	unsigned long plla_mult;
+ 	unsigned long pllb_mult;
+-} r8a7778_rates[] __initdata = {
++} r8a7778_rates[] __initconst = {
+ 	[0] = { 21, 21 },
+ 	[1] = { 24, 24 },
+ 	[2] = { 28, 28 },
+@@ -34,10 +34,10 @@ struct {
+ };
+ 
+ /* Clock dividers per bits 1 and 2 of MODEMR */
+-struct {
++static const struct {
+ 	const char *name;
+ 	unsigned int div[4];
+-} r8a7778_divs[6] __initdata = {
++} r8a7778_divs[6] __initconst = {
+ 	{ "b",   { 12, 12, 16, 18 } },
+ 	{ "out", { 12, 12, 16, 18 } },
+ 	{ "p",   { 16, 12, 16, 12 } },
+-- 
+1.9.1
