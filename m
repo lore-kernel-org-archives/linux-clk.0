@@ -1,59 +1,33 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:60146 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752335AbbJTMv5 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 20 Oct 2015 08:51:57 -0400
-Message-id: <562638A4.8090303@samsung.com>
-Date: Tue, 20 Oct 2015 14:50:44 +0200
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-MIME-version: 1.0
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>,
-	Inki Dae <inki.dae@samsung.com>, k.kozlowski.k@gmail.com,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Hyungwon Hwang <human.hwang@samsung.com>
-Subject: Re: [PATCH 04/10] dt-bindings: video: add PCLK clock entry to
- exynos5433-decon
-References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
- <1445332961-25419-5-git-send-email-a.hajda@samsung.com>
- <5626327E.3050002@samsung.com>
-In-reply-to: <5626327E.3050002@samsung.com>
-Content-type: text/plain; charset=iso-8859-2
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <rjui@broadcom.com>
+From: Ray Jui <rjui@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>, Simran Rai <ssimran@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>
+Subject: [PATCH] Fix iProc PLL output clock frequency calculation
+Date: Fri, 16 Oct 2015 15:44:17 -0700
+Message-ID: <1445035458-29340-1-git-send-email-rjui@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: rjui@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 20/10/15 14:24, Krzysztof Kozlowski wrote:
-> W dniu 20.10.2015 o 18:22, Andrzej Hajda pisze:
->> > DECON IP requires this clock to access configuration registers.
->> > 
->> > Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->> > ---
->> >  Documentation/devicetree/bindings/video/exynos5433-decon.txt | 2 +-
->> >  1 file changed, 1 insertion(+), 1 deletion(-)
->> > 
->> > diff --git a/Documentation/devicetree/bindings/video/exynos5433-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
->> > index 377afbf..3dff78b 100644
->> > --- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
->> > +++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
->> > @@ -16,7 +16,7 @@ Required properties:
->> >  - clocks: must include clock specifiers corresponding to entries in the
->> >  	  clock-names property.
->> >  - clock-names: list of clock names sorted in the same order as the clocks
->> > -	       property. Must contain "aclk_decon", "aclk_smmu_decon0x",
->> > +	       property. Must contain "pclk", "aclk_decon", "aclk_smmu_decon0x",
->
-> I assume that old DTB wouldn't work at all, so there is no point in
-> maintaining ABI compatibility?
+This patch fixes incorrect iProc PLL clock frequency calculation. The issue
+is exposed when Cygnus audio PLL was being added.
 
-As you know there is no single exynos5433 board dts that would use
-the DECON IP block in mainline yet. I doubt anyone at this point
-in mainline cares whether we require this additional clock or not.
+This patch is based on v4.3-rc5 and has been tested on Cygnus bcm958305k
+wirelss audio board
+
+This full tree is available here:
+repo: https://github.com/Broadcom/cygnus-linux.git
+branch: iproc-clk-pll-fix-v1
+
+Simran Rai (1):
+  clk: iproc: Fix PLL output frequency calculation
+
+ drivers/clk/bcm/clk-iproc-pll.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
 -- 
-Thanks,
-Sylwester
+1.9.1
