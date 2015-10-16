@@ -1,57 +1,54 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20151015190809.GL4558@codeaurora.org>
-References: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
-	<1444916813-31024-7-git-send-email-linus.walleij@linaro.org>
-	<20151015190809.GL4558@codeaurora.org>
-Date: Fri, 23 Oct 2015 11:27:54 +0200
-Message-ID: <CACRpkdYHJzj_1yNFWcwXh+-3zTzJOSEttZdhZBqkUn1HigZeJA@mail.gmail.com>
-Subject: Re: [PATCH 06/13] clk: versatile-icst: convert to use regmap
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-	Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+To: Jisheng Zhang <jszhang@marvell.com>, ulf.hansson@linaro.org,
+ sebastian.hesselbarth@gmail.com, robh+dt@kernel.org, pawel.moll@arm.com,
+ mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+ sboyd@codeaurora.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1444628796-5484-5-git-send-email-jszhang@marvell.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, "Jisheng Zhang" <jszhang@marvell.com>
+References: <1444628796-5484-1-git-send-email-jszhang@marvell.com>
+ <1444628796-5484-5-git-send-email-jszhang@marvell.com>
+Message-ID: <20151016124705.20687.51712@quantum>
+Subject: Re: [PATCH 4/5] clk: berlin: bg2q: remove CLK_IGNORE_UNUSED flag for sdio clk
+Date: Fri, 16 Oct 2015 05:47:05 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Oct 15, 2015 at 9:08 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 10/15, Linus Walleij wrote:
->> @@ -151,10 +174,19 @@ struct clk *icst_clk_register(struct device *dev,
->>       init.flags = CLK_IS_ROOT;
->>       init.parent_names = (parent_name ? &parent_name : NULL);
->>       init.num_parents = (parent_name ? 1 : 0);
->> +     icst->map = regmap_init_mmio(NULL, base, &icst_regmap_conf);
->> +     if (IS_ERR(icst->map)) {
->> +             int ret;
->> +
->> +             pr_err("could not initialize ICST regmap\n");
->> +             kfree(icst);
->> +             ret = PTR_ERR(icst->map);
->
-> drivers/clk/versatile/clk-icst.c:183
-> icst_clk_register() error: dereferencing freed memory 'icst'
-> drivers/clk/versatile/clk-icst.c:184
-> icst_clk_register() warn: possible memory leak of 'pclone'
+Quoting Jisheng Zhang (2015-10-11 22:46:35)
+> Since we have added the necessary axi clk properties in dts, we can
+> remove the "sdio" clk's CLK_IGNORE_UNUSED flag now.
+> =
 
-The pclone warning is correct, nice catch. (Fixing it.)
+> Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
 
-But for the second warning, whatever static checker you're
-using for this is unable to handle error pointers:
+Applied to clk-next.
 
-    clk = clk_register(dev, &icst->hw);
-    if (IS_ERR(clk))
-        kfree(icst);
+Regards,
+Mike
 
-    return clk;
+> ---
+>  drivers/clk/berlin/bg2q.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> =
 
-It is quite obvious that returning clk (which may be an error code)
-is OK here.
+> diff --git a/drivers/clk/berlin/bg2q.c b/drivers/clk/berlin/bg2q.c
+> index 221f40c..243f421 100644
+> --- a/drivers/clk/berlin/bg2q.c
+> +++ b/drivers/clk/berlin/bg2q.c
+> @@ -283,7 +283,7 @@ static const struct berlin2_gate_data bg2q_gates[] __=
+initconst =3D {
+>         { "usb2",       "perif",        13 },
+>         { "usb3",       "perif",        14 },
+>         { "pbridge",    "perif",        15, CLK_IGNORE_UNUSED },
+> -       { "sdio",       "perif",        16, CLK_IGNORE_UNUSED },
+> +       { "sdio",       "perif",        16 },
+>         { "nfc",        "perif",        18 },
+>         { "pcie",       "perif",        22 },
+>  };
+> -- =
 
-If you want, I may need to add some specific annotation to shut
-up the static checker, any hints?
-
-Yours,
-Linus Walleij
+> 2.6.1
+>=20
