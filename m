@@ -1,73 +1,74 @@
-Return-Path: <eddie.huang@mediatek.com>
-Message-ID: <1443749391.7213.10.camel@mtksdaap41>
-Subject: Re: [GIT PULL] clk: mediatek: New clocks support and fixes
-From: Eddie Huang <eddie.huang@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Daniel Kurtz <djkurtz@chromium.org>, James Liao
-	<jamesjj.liao@mediatek.com>, Mike Turquette <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Pi-Cheng
- Chen <pi-cheng.chen@linaro.org>, <linux-clk@vger.kernel.org>
-Date: Fri, 2 Oct 2015 09:29:51 +0800
-In-Reply-To: <20151001192929.GJ19319@codeaurora.org>
-References: <1442915603.24403.2.camel@mtksdaap41>
-	 <CAGS+omDcsFXZ2AkS9tma_q+MRnsdDmit-nRXLWAcowRTNgXC=w@mail.gmail.com>
-	 <20151001192929.GJ19319@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <tomeu.vizoso@gmail.com>
 MIME-Version: 1.0
-Return-Path: eddie.huang@mediatek.com
+Sender: tomeu.vizoso@gmail.com
+In-Reply-To: <20151016172651.GB23912@codeaurora.org>
+References: <1444905084-22540-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1444905084-22540-2-git-send-email-tomeu.vizoso@collabora.com>
+ <56203AD3.2050905@samsung.com> <20151016124935.20687.4394@quantum> <20151016172651.GB23912@codeaurora.org>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Date: Fri, 16 Oct 2015 20:56:55 +0200
+Message-ID: <CAAObsKAjZX8XxTAFVKq4BCSZSrKG5xQPTue+z+xnJDD8QwK88Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: samsung: exynos5250: Add DISP1 clocks
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Gustavo Padovan <gustavo.padovan@collabora.co.uk>,
+	Javier Martinez Canillas <javier@osg.samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kumar Gala <galak@codeaurora.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Moll <pawel.moll@arm.com>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2015-10-01 at 12:29 -0700, Stephen Boyd wrote:
-> On 09/30, Daniel Kurtz wrote:
-> > Hi Mike,
-> > 
-> > On Tue, Sep 22, 2015 at 5:53 PM, James Liao <jamesjj.liao@mediatek.com> wrote:
-> > > This is a collection of new Mediatek clocks support and fixes. These
-> > > patches come from Joe [1], Pi-cheng [2] and me [3], including clock
-> > > support for subsystems, CPU, GPT and some minor fixes.
-> > >
-> > > [1] https://patchwork.kernel.org/patch/6777041/
-> > > [2] https://patchwork.kernel.org/patch/7174721/
-> > > [3] https://lkml.org/lkml/2015/8/10/194
-> > >
-> > > ----------------------------------------------------------------
-> > >
-> > > The following changes since commit 1f93e4a96c9109378204c147b3eec0d0e8100fde:
-> > >
-> > >   Linux 4.3-rc2 (2015-09-20 14:32:34 -0700)
-> > >
-> > > are available in the git repository at:
-> > >
-> > >   https://github.com/jamesjjliao/linux.git v4.3-rc2-clk
-> > >
-> > > for you to fetch changes up to 74219612bb7e25e64409171acada05d9949228f2:
-> > >
-> > >   arm64: dts: mt8173: Add subsystem clock controller device nodes (2015-07-09 12:58:14 +0800)
-> > >
-> > 
-> > Will this be pulled for 4.3, or is it now destined for 4.4?
-> > (sorry if you are receiving a duplicate email, the previous had HTML
-> > and was rejected by the lists)
-> 
-> This won't make v4.3. I see that there's a third pull request
-> now, with slightly different contents. Why?
-> 
+On 16 October 2015 at 19:26, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 10/16, Michael Turquette wrote:
+>> Quoting Krzysztof Kozlowski (2015-10-15 16:46:27)
+>> > On 15.10.2015 19:31, Tomeu Vizoso wrote:
+>> > > When the DISP1 power domain is powered off, there's two clocks that need
+>> > > to be temporarily reparented to OSC, and back to their original parents
+>> > > when the domain is powered on again.
+>> > >
+>> > > We expose these two clocks in the DT bindings so that the DT node of the
+>> > > power domain can reference them.
+>> > >
+>> > > Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+>> > > Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+>> > > ---
+>> > >
+>> > > Changes in v2:
+>> > > - Reuse mout_aclk200_p
+>> > > - Rename div_aclk300 as div_aclk300_disp
+>> > >
+>> > >  drivers/clk/samsung/clk-exynos5250.c   | 14 +++++++++++++-
+>> > >  include/dt-bindings/clock/exynos5250.h |  4 +++-
+>> > >  2 files changed, 16 insertions(+), 2 deletions(-)
+>> > >
+>> >
+>> > Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>
+>> Applied to clk-next.
+>>
+>
+> I think Tomeu wanted to take this through arm-soc? Otherwise
+> we'll need to provide a stable branch for the dt header.
 
-Sorry not explain in pull request mail. Third pull request remove two
-patches:
+Hi, Stephen is right, the second patch depends on this one.
 
-1. arm64: dts: mt8173: Add subsystem clock controller device nodes
-   I think this should pull by Matthias, so I suggest James remove this
-patch.
+Thanks,
 
-2. clk: mediatek: Export CPU mux clocks for CPU frequency control
-   Mike said this patch is ok before
-(http://lists.infradead.org/pipermail/linux-arm-kernel/2015-August/364886.html) 
-But he told Pi-cheng recently he is working on coordinate clock rate, he
-suggest Pi-cheng change this patch, other patches are ok. So James
-remove this patch.
+Tomeu
 
-Eddie
-Thanks
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
