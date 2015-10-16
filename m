@@ -1,115 +1,102 @@
-Return-Path: <frowand.list@gmail.com>
-Return-Path: <frowand.list@gmail.com>
-Message-ID: <562808AF.7090406@gmail.com>
-Date: Wed, 21 Oct 2015 14:50:39 -0700
-From: Frank Rowand <frowand.list@gmail.com>
-Reply-To: frowand.list@gmail.com
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Rob Herring <robh+dt@kernel.org>
-CC: Mark Brown <broonie@kernel.org>,
- Tomeu Vizoso <tomeu.vizoso@collabora.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Russell King <linux@arm.linux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Vinod Koul <vinod.koul@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Alexandre Courbot <gnurou@gmail.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- David Airlie <airlied@linux.ie>,
- =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom@nvidia.com>,
- Stephen Warren <swarren@wwwdotorg.org>,
- Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>,
- Kishon Vijay Abraham I <kishon@ti.com>,
- Sebastian Reichel <sre@kernel.org>,
- Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
- David Woodhouse <dwmw2@infradead.org>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Felipe Balbi <balbi@ti.com>, Jingoo Han <jingoohan1@gmail.com>,
- Lee Jones <lee.jones@linaro.org>,
- Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
- Tomi Valkeinen <tomi.valkeinen@ti.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- Linux PWM List <linux-pwm@vger.kernel.org>,
- "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
- "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-Subject: Re: [GIT PULL] On-demand device probing
-References: <561E1378.6000906@collabora.com> <20151017065750.GA18607@kroah.com> <20151018192931.GY14956@sirena.org.uk> <20151018193757.GA9147@kroah.com> <20151018195330.GB14956@sirena.org.uk> <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com> <5627B677.5090109@gmail.com> <20151021162758.GP32054@sirena.org.uk> <5627D6E0.5020708@gmail.com> <CAL_Jsq+FPtCuBnte2HTgbdpNYM=v_kLaCRcOC1kMaCQwVC=5Kw@mail.gmail.com>
-In-Reply-To: <CAL_Jsq+FPtCuBnte2HTgbdpNYM=v_kLaCRcOC1kMaCQwVC=5Kw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+To: Stephen Boyd <sboyd@codeaurora.org>,
+ "Thomas Petazzoni" <thomas.petazzoni@free-electrons.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1444951178-18733-1-git-send-email-sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ "Gregory CLEMENT <gregory.clement@free-electrons.com>,
+ Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+ Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
+ geert@linux-m68k.org, magnus.damm@gmail.com
+References: <20151015215648.2024f611@free-electrons.com>
+ <1444951178-18733-1-git-send-email-sboyd@codeaurora.org>
+Message-ID: <20151016125533.20687.23387@quantum>
+Subject: Re: [PATCH] clk: Make of_clk_get_parent_name() robust with #clock-cells = 1
+Date: Fri, 16 Oct 2015 05:55:33 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/21/2015 2:12 PM, Rob Herring wrote:
-> On Wed, Oct 21, 2015 at 1:18 PM, Frank Rowand <frowand.list@gmail.com> wrote:
->> On 10/21/2015 9:27 AM, Mark Brown wrote:
->>> On Wed, Oct 21, 2015 at 08:59:51AM -0700, Frank Rowand wrote:
->>>> On 10/19/2015 5:34 AM, Tomeu Vizoso wrote:
->>>
->>>>> To be clear, I was saying that this series should NOT affect total
->>>>> boot times much.
->>>
->>>> I'm confused.  If I understood correctly, improving boot time was
->>>> the key justification for accepting this patch set.  For example,
->>>> from "[PATCH v7 0/20] On-demand device probing":
->>>>
->>>>    I have a problem with the panel on my Tegra Chromebook taking longer
->>>>    than expected to be ready during boot (Stéphane Marchesin reported what
->>>>    is basically the same issue in [0]), and have looked into ordered
->>>>    probing as a better way of solving this than moving nodes around in the
->>>>    DT or playing with initcall levels and linking order.
->>>>
->>>>    ...
->>>>
->>>>    With this series I get the kernel to output to the panel in 0.5s,
->>>>    instead of 2.8s.
->>>
->>> Overall boot time and time to get some individual built in component up
->>> and running aren't the same thing - what this'll do is get things up
->>> more in the link order of the leaf consumers rather than deferring those
->>> leaf consumers when their dependencies aren't ready yet.
->>
->> Thanks!  I read too much into what was being improved.
->>
->> So this patch series, which on other merits may be a good idea, is as
->> a by product solving a specific ordering issue, moving successful panel
->> initialization to an earlier point in the boot sequence, if I now
->> understand more correctly.
->>
->> In that context, this seems like yet another ad hoc way of causing the
->> probe order to change in a way to solves one specific issue?  Could
->> it just as likely move the boot order of some other driver on some
->> other board later, to the detriment of somebody else?
-> 
-> Time to display on is important for many products. Having the console
-> up as early as possible is another case. CAN bus is another. This is a
-> real problem that is not just bad drivers.
+Cc'ing Geert.
 
-Yes, I agree.
+Quoting Stephen Boyd (2015-10-15 16:19:38)
+> If a clock provider has #clock-cells =3D 1 and we call
+> of_clk_get_parent_name() on it we may end up returning the name
+> of the provider node if the provider doesn't have a
+> clock-output-names property. This doesn't make sense, especially
+> when you consider that calling of_clk_get_parent_name() on such a
+> node with different indices will return the same name each time.
+> =
 
-What I am seeing is that there continues to be a need for the ability
-to explicitly order at least some driver initialization (at some
-granularity), despite the push back against explicit ordering that
-has been present in the past.
+> Let's try getting the clock from the framework via of_clk_get()
+> instead, and only fallback to the node name if we have a provider
+> with #clock-cells =3D 0. This way, we can't hand out the same name
+> for different clocks when we don't actually know their names.
+> =
 
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-> I don't think it is completely ad hoc. Given all devices are
-> registered after drivers, drivers will still probe first in initcall
-> level order and then link order AFAIK. We may not take (more) initcall
-> level tweak hacks, but that is a much more simple change for
-> downstream. Don't get me wrong, I'd really like to see a way to
-> control order independent of initcall level.
-> 
-> Rob
+Geert,
 
-Yep, it is not directly ad hoc, just a fortunate side effect in
-this case.  So just accidently ad hoc. :-)
+Does this approach fix the issues you had removing clock-output-names
+from your clock provider DTS?
 
--Frank
+Regards,
+Mike
+
+> ---
+>  drivers/clk/clk.c | 22 ++++++++++++++++++++--
+>  1 file changed, 20 insertions(+), 2 deletions(-)
+> =
+
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index b005f666e3a1..a0fe9ca1f0af 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -3055,6 +3055,7 @@ const char *of_clk_get_parent_name(struct device_no=
+de *np, int index)
+>         u32 pv;
+>         int rc;
+>         int count;
+> +       struct clk *clk;
+>  =
+
+>         if (index < 0)
+>                 return NULL;
+> @@ -3080,8 +3081,25 @@ const char *of_clk_get_parent_name(struct device_n=
+ode *np, int index)
+>  =
+
+>         if (of_property_read_string_index(clkspec.np, "clock-output-names=
+",
+>                                           index,
+> -                                         &clk_name) < 0)
+> -               clk_name =3D clkspec.np->name;
+> +                                         &clk_name) < 0) {
+> +               /*
+> +                * Best effort to get the name if the clock has been
+> +                * registered with the framework. If the clock isn't
+> +                * registered, we return the node name as the name of
+> +                * the clock as long as #clock-cells =3D 0.
+> +                */
+> +               clk =3D of_clk_get_from_provider(&clkspec);
+> +               if (IS_ERR(clk)) {
+> +                       if (clkspec.args_count =3D=3D 0)
+> +                               clk_name =3D clkspec.np->name;
+> +                       else
+> +                               clk_name =3D NULL;
+> +               } else {
+> +                       clk_name =3D __clk_get_name(clk);
+> +                       clk_put(clk);
+> +               }
+> +       }
+> +
+>  =
+
+>         of_node_put(clkspec.np);
+>         return clk_name;
+> -- =
+
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+>=20
