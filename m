@@ -1,44 +1,30 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v2 06/14] clk: at91: only disable available IRQs
-Date: Mon, 12 Oct 2015 16:28:43 +0200
-Message-Id: <1444660131-14954-7-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1444660131-14954-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1444660131-14954-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 16 Oct 2015 11:57:58 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: Make clk input parameter of __clk_get_name() const
+Message-ID: <20151016185758.GG23912@codeaurora.org>
+References: <1444998921-15549-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1444998921-15549-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
+On 10/16, Geert Uytterhoeven wrote:
+> When calling __clk_get_name() on a const clock:
+> 
+>     warning: passing argument 1 of '__clk_get_name' discards 'const' qualifier from pointer target type
+>     include/linux/clk-provider.h:613:13: note: expected 'struct clk *' but argument is of type 'const struct clk *'
+> 
+> __clk_get_name() does not modify the passed clock, hence make it const.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-Only disable available IRQs in case writing to a reserved bit has a harmful
-effect.
+Applied to clk-next.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
----
- drivers/clk/at91/pmc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 6c1f08a73373..45dd32bf2531 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -287,7 +287,7 @@ static int __init atmel_pmc_probe(struct platform_device *pdev)
- 	if (!pmc->irqdomain)
- 		return 0;
- 
--	regmap_write(pmc->regmap, AT91_PMC_IDR, 0xffffffff);
-+	regmap_write(pmc->regmap, AT91_PMC_IDR, pmc->caps->available_irqs);
- 	ret = request_irq(pmc->virq, pmc_irq_handler,
- 			  IRQF_SHARED | IRQF_COND_SUSPEND, "pmc", pmc);
- 	if (ret)
 -- 
-2.1.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
