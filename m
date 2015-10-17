@@ -1,71 +1,68 @@
-Return-Path: <jonmason@broadcom.com>
-Date: Mon, 12 Oct 2015 14:19:30 -0400
-From: Jon Mason <jonmason@broadcom.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular2.263xmail.com ([211.157.152.3]:57879 "EHLO
+	regular2.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751644AbbJQAuI (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 16 Oct 2015 20:50:08 -0400
+Subject: Re: [PATCH 01/10] clk: rockchip: Add sclk_mipidsi_24m for mipi dsi
 To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Michael Turquette <mturquette@baylibre.com>, Florian Fainelli
-	<f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui
-	<rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<bcm-kernel-feedback-list@broadcom.com>
-Subject: Re: [PATCH 09/10] clk: ns2: add clock support for Broadcom Northstar
- 2 SoC
-Message-ID: <20151012181929.GG20867@broadcom.com>
-References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
- <1443826665-17570-10-git-send-email-jonmason@broadcom.com>
- <20151010003352.GA26883@codeaurora.org>
+References: <1444470930-17150-1-git-send-email-zyw@rock-chips.com>
+ <1444470930-17150-2-git-send-email-zyw@rock-chips.com>
+ <20151016213940.GA10182@codeaurora.org>
+Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Jeff Chen <cym@rock-chips.com>, linux-kernel@vger.kernel.org,
+	Doug Anderson <dianders@chromium.org>,
+	Kumar Gala <galak@codeaurora.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Sonny Rao <sonnyrao@chromium.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Huang Lin <hl@rock-chips.com>,
+	Roger Chen <roger.chen@rock-chips.com>,
+	Alexandru M Stan <amstan@chromium.org>
+From: Chris Zhong <zyw@rock-chips.com>
+Message-ID: <56219B2C.8090902@rock-chips.com>
+Date: Sat, 17 Oct 2015 08:49:48 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20151010003352.GA26883@codeaurora.org>
-Return-Path: jonmason@broadcom.com
+In-Reply-To: <20151016213940.GA10182@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 09, 2015 at 05:33:52PM -0700, Stephen Boyd wrote:
-> On 10/02, Jon Mason wrote:
-> > diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-> > index 23800a1..2790f21 100644
-> > --- a/arch/arm64/Kconfig.platforms
-> > +++ b/arch/arm64/Kconfig.platforms
-> > @@ -2,6 +2,7 @@ menu "Platform selection"
-> >  
-> >  config ARCH_BCM_IPROC
-> >  	bool "Broadcom iProc SoC Family"
-> > +	select COMMON_CLK_IPROC
-> 
-> Given that this is a visible option, I'd expect the defconfig to
-> enable this.
-
-After looking at this again, it is completely unnecessary.  Removed.
-
-> 
-> >  	help
-> >  	  This enables support for Broadcom iProc based SoCs
-> >  
-> > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> > index d08b3e5..ea81eaa 100644
-> > --- a/drivers/clk/Makefile
-> > +++ b/drivers/clk/Makefile
-> > @@ -47,7 +47,8 @@ obj-$(CONFIG_COMMON_CLK_WM831X)		+= clk-wm831x.o
-> >  obj-$(CONFIG_COMMON_CLK_XGENE)		+= clk-xgene.o
-> >  obj-$(CONFIG_COMMON_CLK_PWM)		+= clk-pwm.o
-> >  obj-$(CONFIG_COMMON_CLK_AT91)		+= at91/
-> > -obj-$(CONFIG_ARCH_BCM)			+= bcm/
-> > +obj-$(CONFIG_CLK_BCM_KONA)		+= bcm/
-> > +obj-$(CONFIG_COMMON_CLK_IPROC)		+= bcm/
-> 
-> Also, perhaps we need some sort of Kconfig thing for overall bcm
-> clock drivers, so that we don't have duplicate Makefile rules.
-> 
-> 	config COMMON_CLK_BCM
-> 		bool "Support for Broadcom clocks"
-
-Will do.
-
-Thanks,
-Jon
 
 
-> 
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+On 10/17/2015 05:39 AM, Stephen Boyd wrote:
+> On 10/10, Chris Zhong wrote:
+>> sclk_mipidsi_24m is the gating of mipi dsi phy.
+>>
+>> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+>> ---
+> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+>
+>>   drivers/clk/rockchip/clk-rk3288.c      | 2 +-
+>>   include/dt-bindings/clock/rk3288-cru.h | 1 +
+>>   2 files changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+>> index 9040878..c7d7ebf 100644
+>> --- a/drivers/clk/rockchip/clk-rk3288.c
+>> +++ b/drivers/clk/rockchip/clk-rk3288.c
+>> @@ -709,7 +709,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+>>   	GATE(SCLK_LCDC_PWM1, "sclk_lcdc_pwm1", "xin24m", 0, RK3288_CLKGATE_CON(13), 11, GFLAGS),
+>>   	GATE(SCLK_PVTM_CORE, "sclk_pvtm_core", "xin24m", 0, RK3288_CLKGATE_CON(5), 9, GFLAGS),
+>>   	GATE(SCLK_PVTM_GPU, "sclk_pvtm_gpu", "xin24m", 0, RK3288_CLKGATE_CON(5), 10, GFLAGS),
+>> -	GATE(0, "sclk_mipidsi_24m", "xin24m", 0, RK3288_CLKGATE_CON(5), 15, GFLAGS),
+>> +	GATE(SCLK_MIPI_24M, "sclk_mipidsi_24m", "xin24m", 0, RK3288_CLKGATE_CON(5), 15, GFLAGS),
+>>   
+> It would have been better to make #defines for all these clocks
+> even if they weren't going to be used here. Then we could have
+> applied this patch directly to clk tree without having a clk tree
+> to arm-soc dependency. </grumble>
+>
+Thanks for your great suggestion, I'll defines all clocks at next 
+version patch serial
+
