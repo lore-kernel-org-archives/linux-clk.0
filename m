@@ -1,47 +1,85 @@
-Return-Path: <k.kozlowski@samsung.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+MIME-Version: 1.0
+Sender: k.kozlowski.k@gmail.com
+In-Reply-To: <56218B2D.9040007@kernel.org>
+References: <1444905084-22540-1-git-send-email-tomeu.vizoso@collabora.com>
+	<1444905084-22540-2-git-send-email-tomeu.vizoso@collabora.com>
+	<56203AD3.2050905@samsung.com>
+	<20151016124935.20687.4394@quantum>
+	<20151016172651.GB23912@codeaurora.org>
+	<CAAObsKAjZX8XxTAFVKq4BCSZSrKG5xQPTue+z+xnJDD8QwK88Q@mail.gmail.com>
+	<56218B2D.9040007@kernel.org>
+Date: Sat, 17 Oct 2015 17:53:50 +0900
+Message-ID: <CAJKOXPf5Dnh36rrY6Vet13EHKB3gJuU0VnAfsyYnvWTx92O_GA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: samsung: exynos5250: Add DISP1 clocks
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- linux-crypto@vger.kernel.org
-Cc: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH 2/3] ARM: dts: Add PRNG module for exynos4
-Date: Mon, 19 Oct 2015 14:00:33 +0900
-Message-id: <1445230834-32689-3-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1445230834-32689-1-git-send-email-k.kozlowski@samsung.com>
-References: <1445230834-32689-1-git-send-email-k.kozlowski@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>, Michael Turquette <mturquette@baylibre.com>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Gustavo Padovan <gustavo.padovan@collabora.co.uk>,
+	Javier Martinez Canillas <javier@osg.samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kumar Gala <galak@codeaurora.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Moll <pawel.moll@arm.com>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add Pseudo Random Number Generator (PRNG) node of Security Sub System
-(SSS) to Exynos 4 DTSI.
+2015-10-17 8:41 GMT+09:00 Kukjin Kim <kgene@kernel.org>:
+> On 10/17/15 03:56, Tomeu Vizoso wrote:
+>> On 16 October 2015 at 19:26, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>>> On 10/16, Michael Turquette wrote:
+>>>> Quoting Krzysztof Kozlowski (2015-10-15 16:46:27)
+>>>>> On 15.10.2015 19:31, Tomeu Vizoso wrote:
+>>>>>> When the DISP1 power domain is powered off, there's two clocks that need
+>>>>>> to be temporarily reparented to OSC, and back to their original parents
+>>>>>> when the domain is powered on again.
+>>>>>>
+>>>>>> We expose these two clocks in the DT bindings so that the DT node of the
+>>>>>> power domain can reference them.
+>>>>>>
+>>>>>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+>>>>>> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+>>>>>> ---
+>>>>>>
+>>>>>> Changes in v2:
+>>>>>> - Reuse mout_aclk200_p
+>>>>>> - Rename div_aclk300 as div_aclk300_disp
+>>>>>>
+>>>>>>  drivers/clk/samsung/clk-exynos5250.c   | 14 +++++++++++++-
+>>>>>>  include/dt-bindings/clock/exynos5250.h |  4 +++-
+>>>>>>  2 files changed, 16 insertions(+), 2 deletions(-)
+>>>>>>
+>>>>>
+>>>>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>>
+>>>> Applied to clk-next.
+>>>>
+>>>
+>>> I think Tomeu wanted to take this through arm-soc? Otherwise
+>>> we'll need to provide a stable branch for the dt header.
+>>
+>> Hi, Stephen is right, the second patch depends on this one.
+>>
+> So...how can I take 2nd patch of this series in samsung(arm-soc) tree?
+> And this series shouldn't be for fixes for 4.3?...Mike how do you think?
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/boot/dts/exynos4.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Stephen acked it so I thought everything will go through samsung-soc.
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 3184e10f260a..a6b9913ea2b5 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -954,4 +954,12 @@
- 		power-domains = <&pd_lcd0>;
- 		#iommu-cells = <0>;
- 	};
-+
-+	prng: rng@10830400 {
-+		compatible = "samsung,exynos4-rng";
-+		reg = <0x10830400 0x200>;
-+		clocks = <&clock CLK_SSS>;
-+		clock-names = "secss";
-+		status = "disabled";
-+	};
- };
--- 
-1.9.1
+Dear Kukjin,
+Indeed this can go as fix for current cycle... but in the same time
+this does not fix any specific regression. Tomeu did not describe when
+issue happened for the first time so I assumed it was like that
+always. It's up to you.
+
+Both patches (with Stephen's ack) are in my recent pull request but as
+usual feel free to cherry pick. I'll drop them from next branch then.
+
+Best regards,
+Krzysztof
