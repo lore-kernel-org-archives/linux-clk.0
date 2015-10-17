@@ -1,58 +1,66 @@
-Return-Path: <rjui@broadcom.com>
-Subject: Re: [PATCH 0/3] clk: Broadcom BCM63138 support
-To: Florian Fainelli <f.fainelli@gmail.com>, <linux-clk@vger.kernel.org>
-References: <1445621448-11894-1-git-send-email-f.fainelli@gmail.com>
-CC: <bcm-kernel-feedback-list@broadcom.com>, <devicetree@vger.kernel.org>,
-	<jonmason@broadcom.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
-	<linux@arm.linux.org.uk>, <sbranden@broadcom.com>
-From: Ray Jui <rjui@broadcom.com>
-Message-ID: <562A7DF0.20709@broadcom.com>
-Date: Fri, 23 Oct 2015 11:35:28 -0700
+Return-Path: <robh+dt@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1445621448-11894-1-git-send-email-f.fainelli@gmail.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Return-Path: rjui@broadcom.com
+In-Reply-To: <CAOesGMj44N3Xfv_D_iLEzXBrkN6LXBa-uh6m3fi_F2xDenDhMg@mail.gmail.com>
+References: <20151014092644.GO14956@sirena.org.uk> <1444909328-24761-1-git-send-email-tomeu.vizoso@collabora.com>
+ <CAOesGMj44N3Xfv_D_iLEzXBrkN6LXBa-uh6m3fi_F2xDenDhMg@mail.gmail.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Sat, 17 Oct 2015 10:19:27 -0500
+Message-ID: <CAL_Jsq+34sRXe0HWCKNceQfLj=WfDV4-soynumvdnH_nwuj+9g@mail.gmail.com>
+Subject: Re: [GIT PULL] On-demand device probing
+To: Olof Johansson <olof@lixom.net>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
+	Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	DRI mailing list <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Florian,
+On Fri, Oct 16, 2015 at 4:23 PM, Olof Johansson <olof@lixom.net> wrote:
+> Hi,
+>
+> I've bisected boot failures in next-20151016 down to patches in this branch:
+>
+> On Thu, Oct 15, 2015 at 4:42 AM, Tomeu Vizoso
+> <tomeu.vizoso@collabora.com> wrote:
+>> Tomeu Vizoso (20):
+>>       driver core: handle -EPROBE_DEFER from bus_type.match()
+>
+> The machine it happened on was OMAP5UEVM:
+>
+> http://arm-soc.lixom.net/bootlogs/next/next-20151016/omap5uevm-arm-omap2plus_defconfig.html
 
-On 10/23/2015 10:30 AM, Florian Fainelli wrote:
-> Hi all,
->
-> This patch series adds support for the Broadcom BCM63138 DSL SoCs
-> clocking framework.
->
-> Since the HW is identical to the one found in Broadcom iProc SoCs, but the
-> integration is different (obviously), there is still a new compatible string
-> introduced just in case we happen to find issues in the future.
->
-> This applies on top of clk/next as of
->
-> f63d19ef52aa66e97fca2425974845177ce02b0a ("Merge branch 'clk-iproc' into clk-next")
->
-> Since there is an obvious dependency between patch 2 and 3, we can either
-> merge this through the Clock tree or via a future arm-soc pull requests
-> for Broadcom SoCs.
->
-> Thanks!
->
-> Florian Fainelli (3):
->    clk: iproc: Extend binding to cover BCM63138
->    clk: bcm: Add BCM63138 clock support
->    ARM: dts: BCM63xx: Add ARMPLL device tree nodes
->
->   .../bindings/clock/brcm,iproc-clocks.txt           |  5 +++
->   arch/arm/boot/dts/bcm63138.dtsi                    | 39 ++++++++++++++++------
->   drivers/clk/bcm/Kconfig                            | 10 ++++++
->   drivers/clk/bcm/Makefile                           |  1 +
->   drivers/clk/bcm/clk-bcm63xx.c                      | 22 ++++++++++++
->   5 files changed, 67 insertions(+), 10 deletions(-)
->   create mode 100644 drivers/clk/bcm/clk-bcm63xx.c
->
+So this one is because the MMC node numbering changed. I don't know
+how to fix that other than with aliases, but that doesn't solve
+backwards compatibility.
 
-The entire patch set looks good to me (- Scott's comment of adding 
-COMPILE_TEST to increase build test coverage).
 
-Thanks,
+> But I've also seen it on tegra2, that one bisected down to:
+>
+>>      regulator: core: Probe regulators on demand
+>
+> http://arm-soc.lixom.net/bootlogs/next/next-20151016/seaboard-arm-multi_v7_defconfig.html
 
-Ray
+This one you need a rootwait I think. The MMC scanning is not
+guaranteed to be done before the rootfs mounting AFAIK. There may be
+other problems, but we can't see them since it panics.
+
+Rob
