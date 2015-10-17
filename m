@@ -1,260 +1,61 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 01/19] clk: sunxi: Add display clock
-Date: Fri, 30 Oct 2015 15:20:47 +0100
-Message-Id: <1446214865-3972-2-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <robdclark@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20151017165617.GC25156@kroah.com>
+References: <561E1378.6000906@collabora.com>
+	<20151017065750.GA18607@kroah.com>
+	<CAL_Jsq+Due3CgV0Z_m4vYQsa+X30DSxgmqz_r=26OrBV7v+H2g@mail.gmail.com>
+	<20151017154709.GE4059@kroah.com>
+	<CAL_JsqJvtKt6FpZgnYcsEm_opr9gK_a013BVpZGvnB=51oSUXg@mail.gmail.com>
+	<20151017165617.GC25156@kroah.com>
+Date: Sat, 17 Oct 2015 13:54:43 -0400
+Message-ID: <CAF6AEGvbYYeZx=YVCv9r5K0xjtLf3gN69gX5DyQ3j0S1qT0Yog@mail.gmail.com>
+Subject: Re: [GIT PULL] On-demand device probing
+From: Rob Clark <robdclark@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
+	Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
+	Linux USB List <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The A10 SoCs and its relatives has a special clock controller to drive the
-display engines (both frontend and backend).
+On Sat, Oct 17, 2015 at 12:56 PM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>> I'm guessing the time is a matter of probing and undoing the probes
+>> rather than slow h/w. We could maybe improve things by making sure
+>> drivers move what they defer on to the beginning of probe, but that
+>> seems like a horrible, fragile hack.
+>
+> How can calling probe and failing cause 2 seconds?  How many different
+> probe calls are failing here?  Again, a boot log graph would be great to
+> see as it will show the root cause, not just guessing at this.
 
-Add a driver for it.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi/Makefile            |   1 +
- drivers/clk/sunxi/clk-sun4i-display.c | 199 ++++++++++++++++++++++++++++++++++
- 2 files changed, 200 insertions(+)
- create mode 100644 drivers/clk/sunxi/clk-sun4i-display.c
+just fwiw, but when you have a driver that depends on several other
+drivers (which in turn depend on other drivers and so on), the amount
+of probe-defer we end up seeing is pretty comical.  Yeah, there
+probably is some room to optimize by juggling around order drivers do
+things in probe.  But that doesn't solve the fundamental problem with
+the current state, about probe order having no clue about
+dependencies..
 
-diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-index cb4c299214ce..a9e1a5885846 100644
---- a/drivers/clk/sunxi/Makefile
-+++ b/drivers/clk/sunxi/Makefile
-@@ -9,6 +9,7 @@ obj-y += clk-a10-mod1.o
- obj-y += clk-a10-pll2.o
- obj-y += clk-a20-gmac.o
- obj-y += clk-mod0.o
-+obj-y += clk-sun4i-display.o
- obj-y += clk-simple-gates.o
- obj-y += clk-sun8i-mbus.o
- obj-y += clk-sun9i-core.o
-diff --git a/drivers/clk/sunxi/clk-sun4i-display.c b/drivers/clk/sunxi/clk-sun4i-display.c
-new file mode 100644
-index 000000000000..f13b095c6d7a
---- /dev/null
-+++ b/drivers/clk/sunxi/clk-sun4i-display.c
-@@ -0,0 +1,199 @@
-+/*
-+ * Copyright 2015 Maxime Ripard
-+ *
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of_address.h>
-+#include <linux/reset-controller.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+
-+#define SUN4I_A10_DISPLAY_PARENTS	3
-+
-+#define SUN4I_A10_DISPLAY_GATE_BIT	31
-+#define SUN4I_A10_DISPLAY_RESET_BIT	30
-+#define SUN4I_A10_DISPLAY_MUX_MASK	3
-+#define SUN4I_A10_DISPLAY_MUX_SHIFT	24
-+#define SUN4I_A10_DISPLAY_DIV_WIDTH	4
-+#define SUN4I_A10_DISPLAY_DIV_SHIFT	0
-+
-+struct reset_data {
-+	void __iomem			*reg;
-+	spinlock_t			*lock;
-+	struct reset_controller_dev	rcdev;
-+};
-+
-+static DEFINE_SPINLOCK(sun4i_a10_display_lock);
-+
-+static int sun4i_a10_display_assert(struct reset_controller_dev *rcdev,
-+				    unsigned long id)
-+{
-+	struct reset_data *data = container_of(rcdev,
-+					       struct reset_data,
-+					       rcdev);
-+	unsigned long flags;
-+	u32 reg;
-+
-+	spin_lock_irqsave(data->lock, flags);
-+
-+	reg = readl(data->reg);
-+	writel(reg & ~BIT(SUN4I_A10_DISPLAY_RESET_BIT), data->reg);
-+
-+	spin_unlock_irqrestore(data->lock, flags);
-+
-+	return 0;
-+}
-+
-+static int sun4i_a10_display_deassert(struct reset_controller_dev *rcdev,
-+				      unsigned long id)
-+{
-+	struct reset_data *data = container_of(rcdev,
-+						   struct reset_data,
-+						   rcdev);
-+	unsigned long flags;
-+	u32 reg;
-+
-+	spin_lock_irqsave(data->lock, flags);
-+
-+	reg = readl(data->reg);
-+	writel(reg | BIT(SUN4I_A10_DISPLAY_RESET_BIT), data->reg);
-+
-+	spin_unlock_irqrestore(data->lock, flags);
-+
-+	return 0;
-+}
-+
-+static int sun4i_a10_display_status(struct reset_controller_dev *rcdev,
-+				    unsigned long id)
-+{
-+	struct reset_data *data = container_of(rcdev,
-+					       struct reset_data,
-+					       rcdev);
-+
-+	return !(readl(data->reg) & BIT(SUN4I_A10_DISPLAY_RESET_BIT));
-+}
-+
-+static struct reset_control_ops sun4i_a10_display_reset_ops = {
-+	.assert		= sun4i_a10_display_assert,
-+	.deassert	= sun4i_a10_display_deassert,
-+	.status		= sun4i_a10_display_status,
-+};
-+
-+static int sun4i_a10_display_reset_xlate(struct reset_controller_dev *rcdev,
-+					 const struct of_phandle_args *spec)
-+{
-+	if (WARN_ON(spec->args_count != rcdev->of_reset_n_cells))
-+		return -EINVAL;
-+
-+	/* We only have a single reset signal */
-+	return 0;
-+}
-+
-+static void __init sun4i_a10_display_setup(struct device_node *node)
-+{
-+	const char *parents[SUN4I_A10_DISPLAY_PARENTS];
-+	const char *clk_name = node->name;
-+	struct reset_data *reset_data;
-+	struct clk_divider *div;
-+	struct clk_gate *gate;
-+	struct clk_mux *mux;
-+	void __iomem *reg;
-+	struct clk *clk;
-+	int i;
-+
-+	of_property_read_string(node, "clock-output-names", &clk_name);
-+
-+	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-+	if (IS_ERR(reg)) {
-+		pr_err("%s: Could not map the clock registers\n", clk_name);
-+		return;
-+	}
-+
-+	for (i = 0; i < SUN4I_A10_DISPLAY_PARENTS; i++)
-+		parents[i] = of_clk_get_parent_name(node, i);
-+
-+	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-+	if (!mux)
-+		return;
-+
-+	mux->reg = reg;
-+	mux->shift = SUN4I_A10_DISPLAY_MUX_SHIFT;
-+	mux->mask = SUN4I_A10_DISPLAY_MUX_MASK;
-+	mux->lock = &sun4i_a10_display_lock;
-+
-+	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+	if (!gate)
-+		goto free_mux;
-+
-+	gate->reg = reg;
-+	gate->bit_idx = SUN4I_A10_DISPLAY_GATE_BIT;
-+	gate->lock = &sun4i_a10_display_lock;
-+
-+	div = kzalloc(sizeof(*div), GFP_KERNEL);
-+	if (!div)
-+		goto free_gate;
-+
-+	div->reg = reg;
-+	div->shift = SUN4I_A10_DISPLAY_DIV_SHIFT;
-+	div->width = SUN4I_A10_DISPLAY_DIV_WIDTH;
-+	div->lock = &sun4i_a10_display_lock;
-+
-+	clk = clk_register_composite(NULL, clk_name,
-+				     parents, SUN4I_A10_DISPLAY_PARENTS,
-+				     &mux->hw, &clk_mux_ops,
-+				     &div->hw, &clk_divider_ops,
-+				     &gate->hw, &clk_gate_ops,
-+				     0);
-+	if (IS_ERR(clk)) {
-+		pr_err("%s: Couldn't register the clock\n", clk_name);
-+		goto free_div;
-+	}
-+
-+	of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+
-+	reset_data = kzalloc(sizeof(*reset_data), GFP_KERNEL);
-+	if (!reset_data)
-+		goto free_clk;
-+
-+	reset_data->reg = reg;
-+	reset_data->lock = &sun4i_a10_display_lock;
-+	reset_data->rcdev.nr_resets = 1;
-+	reset_data->rcdev.ops = &sun4i_a10_display_reset_ops;
-+	reset_data->rcdev.of_node = node;
-+	reset_data->rcdev.of_reset_n_cells = 0;
-+	reset_data->rcdev.of_xlate = &sun4i_a10_display_reset_xlate;
-+
-+	if (reset_controller_register(&reset_data->rcdev)) {
-+		pr_err("%s: Couldn't register the reset controller\n",
-+		       clk_name);
-+		goto free_reset;
-+	}
-+
-+	return;
-+
-+free_reset:
-+	kfree(reset_data);
-+free_clk:
-+	clk_unregister(clk);
-+free_div:
-+	kfree(div);
-+free_gate:
-+	kfree(gate);
-+free_mux:
-+	kfree(mux);
-+}
-+
-+CLK_OF_DECLARE(sun4i_a10_display, "allwinner,sun4i-a10-display-clk",
-+	       sun4i_a10_display_setup);
--- 
-2.6.2
+BR,
+-R
