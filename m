@@ -1,366 +1,183 @@
-Return-Path: <sjoerd.simons@collabora.co.uk>
-Message-ID: <1444072188.9895.26.camel@collabora.co.uk>
-Subject: Re: [PATCH 3/3] clk: rockchip: include downstream muxes into
- fractional dividers
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
-Cc: linux-rockchip@lists.infradead.org, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Date: Mon, 05 Oct 2015 21:09:48 +0200
-In-Reply-To: <4275248.XCb031JeuI@phil>
-References: <1929669.AsgMSusdJb@phil> <4275248.XCb031JeuI@phil>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <gregkh@linuxfoundation.org>
+Date: Sat, 17 Oct 2015 09:56:17 -0700
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Rob Herring <robh+dt@kernel.org>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>,
+	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	Linux USB List <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Message-ID: <20151017165617.GC25156@kroah.com>
+References: <561E1378.6000906@collabora.com>
+ <20151017065750.GA18607@kroah.com>
+ <CAL_Jsq+Due3CgV0Z_m4vYQsa+X30DSxgmqz_r=26OrBV7v+H2g@mail.gmail.com>
+ <20151017154709.GE4059@kroah.com>
+ <CAL_JsqJvtKt6FpZgnYcsEm_opr9gK_a013BVpZGvnB=51oSUXg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAL_JsqJvtKt6FpZgnYcsEm_opr9gK_a013BVpZGvnB=51oSUXg@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2015-08-21 at 19:48 +0200, Heiko Stuebner wrote:
-> Use the newly introduced possibility to combine the fractional
-> dividers
-> with their downstream muxes for all fractional dividers on currently
-> supported Rockchip SoCs.
->=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+On Sat, Oct 17, 2015 at 11:28:29AM -0500, Rob Herring wrote:
+> On Sat, Oct 17, 2015 at 10:47 AM, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> > On Sat, Oct 17, 2015 at 10:04:55AM -0500, Rob Herring wrote:
+> >> On Sat, Oct 17, 2015 at 1:57 AM, Greg Kroah-Hartman
+> >> <gregkh@linuxfoundation.org> wrote:
+> >> > On Wed, Oct 14, 2015 at 10:34:00AM +0200, Tomeu Vizoso wrote:
+> >> >> Hi Rob,
+> >> >>
+> >> >> here is the pull request you asked for, with no changes from the version
+> >> >> that I posted last to the list.
+> >> >>
+> >> >> The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
+> >> >>
+> >> >> Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
+> >> >>
+> >> >> are available in the git repository at:
+> >> >>
+> >> >> git+ssh://git.collabora.co.uk/git/user/tomeu/linux.git
+> >> >> on-demand-probes-for-next
+> >> >
+> >> > That's not a signed tag :(
+> >> >
+> >> > Anyway, I REALLY don't like this series (sorry for the delay in
+> >> > reviewing them, normally I trust Rob's judgement...)
+> >>
+> >> We've seen a lot of attempts here. This is really the best solution so
+> >> far in that it is simple, uses existing data from DT, and was low risk
+> >> for breaking platforms (at least I thought it would be). Anyway,
+> >> getting more exposure is why I've put it into -next.
+> >
+> > Exposure is good, now we know it breaks some builds, which was useful :)
+> 
+> Now that I've looked at them, they are somewhat questionable failures.
+> They do show the fragile nature of probe ordering and the implicit
+> dependencies we have.
+> 
+> >> > I can't see adding calls like this all over the tree just to solve a
+> >> > bus-specific problem, you are adding of_* calls where they aren't
+> >> > needed, or wanted, at all.
+> >>
+> >> I think Linus W, Mark B, and I all said a similar thing initially in
+> >> that dependencies should be handled in the driver core. We went down
+> >> the path of making this not firmware (aka bus) specific and an earlier
+> >> version had just that (with fwnode_* calls). That turned out to be
+> >> pointless as the calling locations were almost always in DT specific
+> >> code anyway. If you notice, the calls are next to other DT specific
+> >> calls generally (usually a "get"). So yes, I'd prefer not to have to
+> >> touch every subsystem, but we had to do that anyway to add DT support.
+> >
+> > If they are "next" to a call like that, why not put it in that call?  I
+> > really object to having to "sprinkle" this all over the kernel, for no
+> > obvious reason why that is happening at all (look at the USB patch for
+> > one such example.)
+> 
+> Looking at it again, they are in DT specific code already. The USB one
+> is in devm_usb_get_phy_by_node() which is a DT specific call.
 
-Tested-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Reviewed-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+But that's not very obvious, right?  Especially given that you now have
+to add a new .h file, which implies that suddenly this file is now
+touching a new subsystem.
 
+> >> We've generally split the DT code into the core (in drivers/of) and
+> >> the binding specific (in subsystems). Extracting dependency
+> >> information the DT is going to require binding specific knowledge, so
+> >> subsystem changes are probably unavoidable.
+> >>
+> >> The alternative is we put binding specific knowledge into the core DT
+> >> code to parse dependencies.
+> >>
+> >> > What is the root-problem of your delay in device probing?  I read your
+> >> > last patch series and I can't seem to figure out what the issue is that
+> >> > this is solving in any "better" way from the existing deferred probing.
+> >>
+> >> It saves 2 seconds in the boot time as re-probing takes time. That
+> >> alone seems compelling to me.
+> >
+> > 2 seconds is _forever_, and really seems like some other driver is
+> > sleeping and causing this problem.  What does the bootlog time-chart say
+> > is really causing this long delay?  There's no way we are stuck in some
+> > sort of logic loop for that long (i.e. having to walk the list of
+> > devices somehow.)  This sounds like a driver-specific problem that is
+> > being worked around by having to touch all subsystems, which isn't nice.
+> 
+> I don't think it is one driver as the improvement is seen on multiple
+> platforms. I'll let Tomeu comment further on where the time was spent.
 
-> ---
->  drivers/clk/rockchip/clk-rk3188.c | 80 +++++++++++++++++++----------
-> ----------
->  drivers/clk/rockchip/clk-rk3288.c | 66 ++++++++++++++++-------------
-> ---
->  2 files changed, 74 insertions(+), 72 deletions(-)
->=20
-> diff --git a/drivers/clk/rockchip/clk-rk3188.c
-> b/drivers/clk/rockchip/clk-rk3188.c
-> index ed02bbc..faa6695 100644
-> --- a/drivers/clk/rockchip/clk-rk3188.c
-> +++ b/drivers/clk/rockchip/clk-rk3188.c
-> @@ -335,11 +335,11 @@ static struct rockchip_clk_branch
-> common_clk_branches[] __initdata =3D {
->  	COMPOSITE(0, "hsadc_src", mux_pll_src_gpll_cpll_p, 0,
->  			RK2928_CLKSEL_CON(22), 0, 1, MFLAGS, 8, 8,
-> DFLAGS,
->  			RK2928_CLKGATE_CON(2), 6, GFLAGS),
-> -	COMPOSITE_FRAC(0, "hsadc_frac", "hsadc_src", 0,
-> +	COMPOSITE_FRACMUX(0, "hsadc_frac", "hsadc_src", 0,
->  			RK2928_CLKSEL_CON(23), 0,
-> -			RK2928_CLKGATE_CON(2), 7, GFLAGS),
-> -	MUX(0, "sclk_hsadc_out", mux_sclk_hsadc_p, 0,
-> -			RK2928_CLKSEL_CON(22), 4, 2, MFLAGS),
-> +			RK2928_CLKGATE_CON(2), 7, GFLAGS,
-> +		MUX(0, "sclk_hsadc_out", mux_sclk_hsadc_p, 0,
-> +				RK2928_CLKSEL_CON(22), 4, 2,
-> MFLAGS)),
->  	INVERTER(SCLK_HSADC, "sclk_hsadc", "sclk_hsadc_out",
->  			RK2928_CLKSEL_CON(22), 7, IFLAGS),
-> =20
-> @@ -350,11 +350,11 @@ static struct rockchip_clk_branch
-> common_clk_branches[] __initdata =3D {
->  	COMPOSITE_NOMUX(0, "spdif_pre", "i2s_src", 0,
->  			RK2928_CLKSEL_CON(5), 0, 7, DFLAGS,
->  			RK2928_CLKGATE_CON(0), 13, GFLAGS),
-> -	COMPOSITE_FRAC(0, "spdif_frac", "spdif_pre",
-> CLK_SET_RATE_PARENT,
-> +	COMPOSITE_FRACMUX(0, "spdif_frac", "spdif_pll",
-> CLK_SET_RATE_PARENT,
->  			RK2928_CLKSEL_CON(9), 0,
-> -			RK2928_CLKGATE_CON(0), 14, GFLAGS),
-> -	MUX(SCLK_SPDIF, "sclk_spdif", mux_sclk_spdif_p,
-> CLK_SET_RATE_PARENT,
-> -			RK2928_CLKSEL_CON(5), 8, 2, MFLAGS),
-> +			RK2928_CLKGATE_CON(0), 14, GFLAGS,
-> +		MUX(SCLK_SPDIF, "sclk_spdif", mux_sclk_spdif_p,
-> CLK_SET_RATE_PARENT,
-> +				RK2928_CLKSEL_CON(5), 8, 2,
-> MFLAGS)),
-> =20
->  	/*
->  	 * Clock-Architecture Diagram 4
-> @@ -385,35 +385,35 @@ static struct rockchip_clk_branch
-> common_clk_branches[] __initdata =3D {
->  	COMPOSITE_NOMUX(0, "uart0_pre", "uart_src", 0,
->  			RK2928_CLKSEL_CON(13), 0, 7, DFLAGS,
->  			RK2928_CLKGATE_CON(1), 8, GFLAGS),
-> -	COMPOSITE_FRAC(0, "uart0_frac", "uart0_pre", 0,
-> +	COMPOSITE_FRACMUX(0, "uart0_frac", "uart0_pre", 0,
->  			RK2928_CLKSEL_CON(17), 0,
-> -			RK2928_CLKGATE_CON(1), 9, GFLAGS),
-> -	MUX(SCLK_UART0, "sclk_uart0", mux_sclk_uart0_p, 0,
-> -			RK2928_CLKSEL_CON(13), 8, 2, MFLAGS),
-> +			RK2928_CLKGATE_CON(1), 9, GFLAGS,
-> +		MUX(SCLK_UART0, "sclk_uart0", mux_sclk_uart0_p, 0,
-> +				RK2928_CLKSEL_CON(13), 8, 2,
-> MFLAGS)),
->  	COMPOSITE_NOMUX(0, "uart1_pre", "uart_src", 0,
->  			RK2928_CLKSEL_CON(14), 0, 7, DFLAGS,
->  			RK2928_CLKGATE_CON(1), 10, GFLAGS),
-> -	COMPOSITE_FRAC(0, "uart1_frac", "uart1_pre", 0,
-> +	COMPOSITE_FRACMUX(0, "uart1_frac", "uart1_pre", 0,
->  			RK2928_CLKSEL_CON(18), 0,
-> -			RK2928_CLKGATE_CON(1), 11, GFLAGS),
-> -	MUX(SCLK_UART1, "sclk_uart1", mux_sclk_uart1_p, 0,
-> -			RK2928_CLKSEL_CON(14), 8, 2, MFLAGS),
-> +			RK2928_CLKGATE_CON(1), 11, GFLAGS,
-> +		MUX(SCLK_UART1, "sclk_uart1", mux_sclk_uart1_p, 0,
-> +				RK2928_CLKSEL_CON(14), 8, 2,
-> MFLAGS)),
->  	COMPOSITE_NOMUX(0, "uart2_pre", "uart_src", 0,
->  			RK2928_CLKSEL_CON(15), 0, 7, DFLAGS,
->  			RK2928_CLKGATE_CON(1), 12, GFLAGS),
-> -	COMPOSITE_FRAC(0, "uart2_frac", "uart2_pre", 0,
-> +	COMPOSITE_FRACMUX(0, "uart2_frac", "uart2_pre", 0,
->  			RK2928_CLKSEL_CON(19), 0,
-> -			RK2928_CLKGATE_CON(1), 13, GFLAGS),
-> -	MUX(SCLK_UART2, "sclk_uart2", mux_sclk_uart2_p, 0,
-> -			RK2928_CLKSEL_CON(15), 8, 2, MFLAGS),
-> +			RK2928_CLKGATE_CON(1), 13, GFLAGS,
-> +		MUX(SCLK_UART2, "sclk_uart2", mux_sclk_uart2_p, 0,
-> +				RK2928_CLKSEL_CON(15), 8, 2,
-> MFLAGS)),
->  	COMPOSITE_NOMUX(0, "uart3_pre", "uart_src", 0,
->  			RK2928_CLKSEL_CON(16), 0, 7, DFLAGS,
->  			RK2928_CLKGATE_CON(1), 14, GFLAGS),
-> -	COMPOSITE_FRAC(0, "uart3_frac", "uart3_pre", 0,
-> +	COMPOSITE_FRACMUX(0, "uart3_frac", "uart3_pre", 0,
->  			RK2928_CLKSEL_CON(20), 0,
-> -			RK2928_CLKGATE_CON(1), 15, GFLAGS),
-> -	MUX(SCLK_UART3, "sclk_uart3", mux_sclk_uart3_p, 0,
-> -			RK2928_CLKSEL_CON(16), 8, 2, MFLAGS),
-> +			RK2928_CLKGATE_CON(1), 15, GFLAGS,
-> +		MUX(SCLK_UART3, "sclk_uart3", mux_sclk_uart3_p, 0,
-> +				RK2928_CLKSEL_CON(16), 8, 2,
-> MFLAGS)),
-> =20
->  	GATE(SCLK_JTAG, "jtag", "ext_jtag", 0,
-> RK2928_CLKGATE_CON(1), 3, GFLAGS),
-> =20
-> @@ -584,27 +584,27 @@ static struct rockchip_clk_branch
-> rk3066a_clk_branches[] __initdata =3D {
->  	COMPOSITE_NOMUX(0, "i2s0_pre", "i2s_src", 0,
->  			RK2928_CLKSEL_CON(2), 0, 7, DFLAGS,
->  			RK2928_CLKGATE_CON(0), 7, GFLAGS),
-> -	COMPOSITE_FRAC(0, "i2s0_frac", "i2s0_pre", 0,
-> +	COMPOSITE_FRACMUX(0, "i2s0_frac", "i2s0_pre", 0,
->  			RK2928_CLKSEL_CON(6), 0,
-> -			RK2928_CLKGATE_CON(0), 8, GFLAGS),
-> -	MUX(SCLK_I2S0, "sclk_i2s0", mux_sclk_i2s0_p, 0,
-> -			RK2928_CLKSEL_CON(2), 8, 2, MFLAGS),
-> +			RK2928_CLKGATE_CON(0), 8, GFLAGS,
-> +		MUX(SCLK_I2S0, "sclk_i2s0", mux_sclk_i2s0_p, 0,
-> +				RK2928_CLKSEL_CON(2), 8, 2,
-> MFLAGS)),
->  	COMPOSITE_NOMUX(0, "i2s1_pre", "i2s_src", 0,
->  			RK2928_CLKSEL_CON(3), 0, 7, DFLAGS,
->  			RK2928_CLKGATE_CON(0), 9, GFLAGS),
-> -	COMPOSITE_FRAC(0, "i2s1_frac", "i2s1_pre", 0,
-> +	COMPOSITE_FRACMUX(0, "i2s1_frac", "i2s1_pre", 0,
->  			RK2928_CLKSEL_CON(7), 0,
-> -			RK2928_CLKGATE_CON(0), 10, GFLAGS),
-> -	MUX(SCLK_I2S1, "sclk_i2s1", mux_sclk_i2s1_p, 0,
-> -			RK2928_CLKSEL_CON(3), 8, 2, MFLAGS),
-> +			RK2928_CLKGATE_CON(0), 10, GFLAGS,
-> +		MUX(SCLK_I2S1, "sclk_i2s1", mux_sclk_i2s1_p, 0,
-> +				RK2928_CLKSEL_CON(3), 8, 2,
-> MFLAGS)),
->  	COMPOSITE_NOMUX(0, "i2s2_pre", "i2s_src", 0,
->  			RK2928_CLKSEL_CON(4), 0, 7, DFLAGS,
->  			RK2928_CLKGATE_CON(0), 11, GFLAGS),
-> -	COMPOSITE_FRAC(0, "i2s2_frac", "i2s2_pre", 0,
-> +	COMPOSITE_FRACMUX(0, "i2s2_frac", "i2s2_pre", 0,
->  			RK2928_CLKSEL_CON(8), 0,
-> -			RK2928_CLKGATE_CON(0), 12, GFLAGS),
-> -	MUX(SCLK_I2S2, "sclk_i2s2", mux_sclk_i2s2_p, 0,
-> -			RK2928_CLKSEL_CON(4), 8, 2, MFLAGS),
-> +			RK2928_CLKGATE_CON(0), 12, GFLAGS,
-> +		MUX(SCLK_I2S2, "sclk_i2s2", mux_sclk_i2s2_p, 0,
-> +				RK2928_CLKSEL_CON(4), 8, 2,
-> MFLAGS)),
-> =20
->  	GATE(HCLK_I2S1, "hclk_i2s1", "hclk_cpu", 0,
-> RK2928_CLKGATE_CON(7), 3, GFLAGS),
->  	GATE(HCLK_I2S2, "hclk_i2s2", "hclk_cpu", 0,
-> RK2928_CLKGATE_CON(7), 4, GFLAGS),
-> @@ -691,11 +691,11 @@ static struct rockchip_clk_branch
-> rk3188_clk_branches[] __initdata =3D {
->  	COMPOSITE_NOMUX(0, "i2s0_pre", "i2s_src", 0,
->  			RK2928_CLKSEL_CON(3), 0, 7, DFLAGS,
->  			RK2928_CLKGATE_CON(0), 9, GFLAGS),
-> -	COMPOSITE_FRAC(0, "i2s0_frac", "i2s0_pre", 0,
-> +	COMPOSITE_FRACMUX(0, "i2s0_frac", "i2s0_pre", 0,
->  			RK2928_CLKSEL_CON(7), 0,
-> -			RK2928_CLKGATE_CON(0), 10, GFLAGS),
-> -	MUX(SCLK_I2S0, "sclk_i2s0", mux_sclk_i2s0_p, 0,
-> -			RK2928_CLKSEL_CON(3), 8, 2, MFLAGS),
-> +			RK2928_CLKGATE_CON(0), 10, GFLAGS,
-> +		MUX(SCLK_I2S0, "sclk_i2s0", mux_sclk_i2s0_p, 0,
-> +				RK2928_CLKSEL_CON(3), 8, 2,
-> MFLAGS)),
-> =20
->  	GATE(0, "hclk_imem0", "hclk_cpu", 0, RK2928_CLKGATE_CON(4),
-> 14, GFLAGS),
->  	GATE(0, "hclk_imem1", "hclk_cpu", 0, RK2928_CLKGATE_CON(4),
-> 15, GFLAGS),
-> diff --git a/drivers/clk/rockchip/clk-rk3288.c
-> b/drivers/clk/rockchip/clk-rk3288.c
-> index 0df5bae..18fcdb1 100644
-> --- a/drivers/clk/rockchip/clk-rk3288.c
-> +++ b/drivers/clk/rockchip/clk-rk3288.c
-> @@ -304,11 +304,11 @@ static struct rockchip_clk_branch
-> rk3288_clk_branches[] __initdata =3D {
->  	COMPOSITE(0, "i2s_src", mux_pll_src_cpll_gpll_p, 0,
->  			RK3288_CLKSEL_CON(4), 15, 1, MFLAGS, 0, 7,
-> DFLAGS,
->  			RK3288_CLKGATE_CON(4), 1, GFLAGS),
-> -	COMPOSITE_FRAC(0, "i2s_frac", "i2s_src",
-> CLK_SET_RATE_PARENT,
-> +	COMPOSITE_FRACMUX(0, "i2s_frac", "i2s_src",
-> CLK_SET_RATE_PARENT,
->  			RK3288_CLKSEL_CON(8), 0,
-> -			RK3288_CLKGATE_CON(4), 2, GFLAGS),
-> -	MUX(0, "i2s_pre", mux_i2s_pre_p, CLK_SET_RATE_PARENT,
-> -			RK3288_CLKSEL_CON(4), 8, 2, MFLAGS),
-> +			RK3288_CLKGATE_CON(4), 2, GFLAGS,
-> +		MUX(0, "i2s_pre", mux_i2s_pre_p,
-> CLK_SET_RATE_PARENT,
-> +				RK3288_CLKSEL_CON(4), 8, 2,
-> MFLAGS)),
->  	COMPOSITE_NODIV(SCLK_I2S0_OUT, "i2s0_clkout",
-> mux_i2s_clkout_p, 0,
->  			RK3288_CLKSEL_CON(4), 12, 1, MFLAGS,
->  			RK3288_CLKGATE_CON(4), 0, GFLAGS),
-> @@ -320,20 +320,22 @@ static struct rockchip_clk_branch
-> rk3288_clk_branches[] __initdata =3D {
->  	COMPOSITE_NOMUX(0, "spdif_pre", "spdif_src", 0,
->  			RK3288_CLKSEL_CON(5), 0, 7, DFLAGS,
->  			RK3288_CLKGATE_CON(4), 4, GFLAGS),
-> -	COMPOSITE_FRAC(0, "spdif_frac", "spdif_src", 0,
-> +	COMPOSITE_FRACMUX(0, "spdif_frac", "spdif_src", 0,
->  			RK3288_CLKSEL_CON(9), 0,
-> -			RK3288_CLKGATE_CON(4), 5, GFLAGS),
-> -	COMPOSITE_NODIV(SCLK_SPDIF, "sclk_spdif", mux_spdif_p, 0,
-> -			RK3288_CLKSEL_CON(5), 8, 2, MFLAGS,
-> +			RK3288_CLKGATE_CON(4), 5, GFLAGS,
-> +		MUX(0, "spdif_mux", mux_spdif_p, 0,
-> +				RK3288_CLKSEL_CON(5), 8, 2,
-> MFLAGS)),
-> +	GATE(SCLK_SPDIF, "sclk_spdif", "spdif_mux", 0,
->  			RK3288_CLKGATE_CON(4), 6, GFLAGS),
->  	COMPOSITE_NOMUX(0, "spdif_8ch_pre", "spdif_src", 0,
->  			RK3288_CLKSEL_CON(40), 0, 7, DFLAGS,
->  			RK3288_CLKGATE_CON(4), 7, GFLAGS),
-> -	COMPOSITE_FRAC(0, "spdif_8ch_frac", "spdif_8ch_pre", 0,
-> +	COMPOSITE_FRACMUX(0, "spdif_8ch_frac", "spdif_8ch_pre", 0,
->  			RK3288_CLKSEL_CON(41), 0,
-> -			RK3288_CLKGATE_CON(4), 8, GFLAGS),
-> -	COMPOSITE_NODIV(SCLK_SPDIF8CH, "sclk_spdif_8ch",
-> mux_spdif_8ch_p, 0,
-> -			RK3288_CLKSEL_CON(40), 8, 2, MFLAGS,
-> +			RK3288_CLKGATE_CON(4), 8, GFLAGS,
-> +		MUX(0, "spdif_8ch_mux", mux_spdif_8ch_p, 0,
-> +				RK3288_CLKSEL_CON(40), 8, 2,
-> MFLAGS)),
-> +	GATE(SCLK_SPDIF8CH, "sclk_spdif_8ch", "spdif_8ch_mux", 0,
->  			RK3288_CLKGATE_CON(4), 9, GFLAGS),
-> =20
->  	GATE(0, "sclk_acc_efuse", "xin24m", 0,
-> @@ -536,45 +538,45 @@ static struct rockchip_clk_branch
-> rk3288_clk_branches[] __initdata =3D {
->  	COMPOSITE(0, "uart0_src", mux_pll_src_cpll_gll_usb_npll_p,
-> 0,
->  			RK3288_CLKSEL_CON(13), 13, 2, MFLAGS, 0, 7,
-> DFLAGS,
->  			RK3288_CLKGATE_CON(1), 8, GFLAGS),
-> -	COMPOSITE_FRAC(0, "uart0_frac", "uart0_src",
-> CLK_SET_RATE_PARENT,
-> +	COMPOSITE_FRACMUX(0, "uart0_frac", "uart0_src",
-> CLK_SET_RATE_PARENT,
->  			RK3288_CLKSEL_CON(17), 0,
-> -			RK3288_CLKGATE_CON(1), 9, GFLAGS),
-> -	MUX(SCLK_UART0, "sclk_uart0", mux_uart0_p,
-> CLK_SET_RATE_PARENT,
-> -			RK3288_CLKSEL_CON(13), 8, 2, MFLAGS),
-> +			RK3288_CLKGATE_CON(1), 9, GFLAGS,
-> +		MUX(SCLK_UART0, "sclk_uart0", mux_uart0_p,
-> CLK_SET_RATE_PARENT,
-> +				RK3288_CLKSEL_CON(13), 8, 2,
-> MFLAGS)),
->  	MUX(0, "uart_src", mux_pll_src_cpll_gpll_p, 0,
->  			RK3288_CLKSEL_CON(13), 15, 1, MFLAGS),
->  	COMPOSITE_NOMUX(0, "uart1_src", "uart_src", 0,
->  			RK3288_CLKSEL_CON(14), 0, 7, DFLAGS,
->  			RK3288_CLKGATE_CON(1), 10, GFLAGS),
-> -	COMPOSITE_FRAC(0, "uart1_frac", "uart1_src",
-> CLK_SET_RATE_PARENT,
-> +	COMPOSITE_FRACMUX(0, "uart1_frac", "uart1_src",
-> CLK_SET_RATE_PARENT,
->  			RK3288_CLKSEL_CON(18), 0,
-> -			RK3288_CLKGATE_CON(1), 11, GFLAGS),
-> -	MUX(SCLK_UART1, "sclk_uart1", mux_uart1_p,
-> CLK_SET_RATE_PARENT,
-> -			RK3288_CLKSEL_CON(14), 8, 2, MFLAGS),
-> +			RK3288_CLKGATE_CON(1), 11, GFLAGS,
-> +		MUX(SCLK_UART1, "sclk_uart1", mux_uart1_p,
-> CLK_SET_RATE_PARENT,
-> +				RK3288_CLKSEL_CON(14), 8, 2,
-> MFLAGS)),
->  	COMPOSITE_NOMUX(0, "uart2_src", "uart_src", 0,
->  			RK3288_CLKSEL_CON(15), 0, 7, DFLAGS,
->  			RK3288_CLKGATE_CON(1), 12, GFLAGS),
-> -	COMPOSITE_FRAC(0, "uart2_frac", "uart2_src",
-> CLK_SET_RATE_PARENT,
-> +	COMPOSITE_FRACMUX(0, "uart2_frac", "uart2_src",
-> CLK_SET_RATE_PARENT,
->  			RK3288_CLKSEL_CON(19), 0,
-> -			RK3288_CLKGATE_CON(1), 13, GFLAGS),
-> -	MUX(SCLK_UART2, "sclk_uart2", mux_uart2_p,
-> CLK_SET_RATE_PARENT,
-> -			RK3288_CLKSEL_CON(15), 8, 2, MFLAGS),
-> +			RK3288_CLKGATE_CON(1), 13, GFLAGS,
-> +		MUX(SCLK_UART2, "sclk_uart2", mux_uart2_p,
-> CLK_SET_RATE_PARENT,
-> +				RK3288_CLKSEL_CON(15), 8, 2,
-> MFLAGS)),
->  	COMPOSITE_NOMUX(0, "uart3_src", "uart_src", 0,
->  			RK3288_CLKSEL_CON(16), 0, 7, DFLAGS,
->  			RK3288_CLKGATE_CON(1), 14, GFLAGS),
-> -	COMPOSITE_FRAC(0, "uart3_frac", "uart3_src",
-> CLK_SET_RATE_PARENT,
-> +	COMPOSITE_FRACMUX(0, "uart3_frac", "uart3_src",
-> CLK_SET_RATE_PARENT,
->  			RK3288_CLKSEL_CON(20), 0,
-> -			RK3288_CLKGATE_CON(1), 15, GFLAGS),
-> -	MUX(SCLK_UART3, "sclk_uart3", mux_uart3_p,
-> CLK_SET_RATE_PARENT,
-> -			RK3288_CLKSEL_CON(16), 8, 2, MFLAGS),
-> +			RK3288_CLKGATE_CON(1), 15, GFLAGS,
-> +		MUX(SCLK_UART3, "sclk_uart3", mux_uart3_p,
-> CLK_SET_RATE_PARENT,
-> +				RK3288_CLKSEL_CON(16), 8, 2,
-> MFLAGS)),
->  	COMPOSITE_NOMUX(0, "uart4_src", "uart_src", 0,
->  			RK3288_CLKSEL_CON(3), 0, 7, DFLAGS,
->  			RK3288_CLKGATE_CON(2), 12, GFLAGS),
-> -	COMPOSITE_FRAC(0, "uart4_frac", "uart4_src",
-> CLK_SET_RATE_PARENT,
-> +	COMPOSITE_FRACMUX(0, "uart4_frac", "uart4_src",
-> CLK_SET_RATE_PARENT,
->  			RK3288_CLKSEL_CON(7), 0,
-> -			RK3288_CLKGATE_CON(2), 13, GFLAGS),
-> -	MUX(SCLK_UART4, "sclk_uart4", mux_uart4_p,
-> CLK_SET_RATE_PARENT,
-> -			RK3288_CLKSEL_CON(3), 8, 2, MFLAGS),
-> +			RK3288_CLKGATE_CON(2), 13, GFLAGS,
-> +		MUX(SCLK_UART4, "sclk_uart4", mux_uart4_p,
-> CLK_SET_RATE_PARENT,
-> +				RK3288_CLKSEL_CON(3), 8, 2,
-> MFLAGS)),
-> =20
->  	COMPOSITE(0, "mac_pll_src", mux_pll_src_npll_cpll_gpll_p, 0,
->  			RK3288_CLKSEL_CON(21), 0, 2, MFLAGS, 8, 5,
-> DFLAGS,
+That would be good to know, as 2 seconds is forever (my whole machine
+boots to a gnome login faster than that.)
 
---=20
-Sjoerd Simons
-Collabora Ltd.
+> > Hint, we didn't have to do this type of thing to solve boot delays on
+> > x86 when we had hardware that was slow to initialize, why should DT be
+> > special?  :)
+> 
+> x86 did not need deferred probe either (though we probably can find
+> some initcall ordering hacks). This is an embedded problem, not a DT
+> problem.
+
+x86 is embedded :)
+
+> I'm guessing the time is a matter of probing and undoing the probes
+> rather than slow h/w. We could maybe improve things by making sure
+> drivers move what they defer on to the beginning of probe, but that
+> seems like a horrible, fragile hack.
+
+How can calling probe and failing cause 2 seconds?  How many different
+probe calls are failing here?  Again, a boot log graph would be great to
+see as it will show the root cause, not just guessing at this.
+
+> >> Another downside to deferred probing is you have to touch every driver
+> >> and subsystem to support it. This contains the problem to the
+> >> subsystems.
+> >
+> > But we have deferred probing already, only those drivers that need/want
+> > it have to do anything, why create yet-another model here?
+> 
+> Yes, the only ones needing it are drivers dependent on clocks, gpio,
+> regulators, pwm, pin-ctrl, dma, etc. That's not a small number. This
+> is a side benefit and wouldn't take this series for that reason alone.
+> 
+> I've used the deferred probing is good enough argument myself on
+> previous attempts. The boot time improvements convinced me it is not
+> good enough except for simple cases.
+
+Then let's fix deferred probing to do it "correctly", let's not add
+yet-another-way-to-probe instead please, as we will be forever
+sprinkling these calls around subsystems in a cargo-cult-like manner for
+forever.
+
+thanks,
+
+greg k-h
