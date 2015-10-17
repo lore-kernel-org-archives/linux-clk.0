@@ -1,162 +1,84 @@
-Return-Path: <jonmason@broadcom.com>
-Date: Fri, 9 Oct 2015 14:27:28 -0400
-From: Jon Mason <jonmason@broadcom.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Michael Turquette <mturquette@baylibre.com>, Florian Fainelli
-	<f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui
-	<rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<bcm-kernel-feedback-list@broadcom.com>
-Subject: Re: [PATCH 04/10] ARM: dts: enable clock support for BCM5301X
-Message-ID: <20151009182728.GD17527@broadcom.com>
-References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
- <1443826665-17570-5-git-send-email-jonmason@broadcom.com>
- <20151009073540.GO26883@codeaurora.org>
+Return-Path: <gregkh@linuxfoundation.org>
+Date: Sat, 17 Oct 2015 11:27:55 -0700
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Rob Clark <robdclark@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>,
+	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	Linux USB List <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Message-ID: <20151017182755.GA28072@kroah.com>
+References: <561E1378.6000906@collabora.com>
+ <20151017065750.GA18607@kroah.com>
+ <CAL_Jsq+Due3CgV0Z_m4vYQsa+X30DSxgmqz_r=26OrBV7v+H2g@mail.gmail.com>
+ <20151017154709.GE4059@kroah.com>
+ <CAL_JsqJvtKt6FpZgnYcsEm_opr9gK_a013BVpZGvnB=51oSUXg@mail.gmail.com>
+ <20151017165617.GC25156@kroah.com>
+ <CAF6AEGvbYYeZx=YVCv9r5K0xjtLf3gN69gX5DyQ3j0S1qT0Yog@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20151009073540.GO26883@codeaurora.org>
-Return-Path: jonmason@broadcom.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAF6AEGvbYYeZx=YVCv9r5K0xjtLf3gN69gX5DyQ3j0S1qT0Yog@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 09, 2015 at 12:35:40AM -0700, Stephen Boyd wrote:
-> On 10/02, Jon Mason wrote:
-> > Replace current device tree dummy clocks with real clock support for
-> > Broadcom Northstar SoCs.
-> > 
-> > Signed-off-by: Jon Mason <jonmason@broadcom.com>
-> > ---
+On Sat, Oct 17, 2015 at 01:54:43PM -0400, Rob Clark wrote:
+> On Sat, Oct 17, 2015 at 12:56 PM, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >> I'm guessing the time is a matter of probing and undoing the probes
+> >> rather than slow h/w. We could maybe improve things by making sure
+> >> drivers move what they defer on to the beginning of probe, but that
+> >> seems like a horrible, fragile hack.
+> >
+> > How can calling probe and failing cause 2 seconds?  How many different
+> > probe calls are failing here?  Again, a boot log graph would be great to
+> > see as it will show the root cause, not just guessing at this.
 > 
-> I'd rather not take any dts changes through clk tree.
-
-Ok, I'll split off the device tree portion of this patch series, and
-submit that after the clk driver portion has been accepted and pushed
-upstream.
-
 > 
-> >  arch/arm/boot/dts/bcm5301x.dtsi | 67 ++++++++++++++++++++++++++++++++++++-----
-> >  1 file changed, 60 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/arch/arm/boot/dts/bcm5301x.dtsi b/arch/arm/boot/dts/bcm5301x.dtsi
-> > index 6f50f67..f717859 100644
-> > --- a/arch/arm/boot/dts/bcm5301x.dtsi
-> > +++ b/arch/arm/boot/dts/bcm5301x.dtsi
-> > @@ -55,14 +56,14 @@
-> >  			compatible = "arm,cortex-a9-global-timer";
-> >  			reg = <0x0200 0x100>;
-> >  			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
-> > -			clocks = <&clk_periph>;
-> > +			clocks = <&periph_clk>;
-> >  		};
-> >  
-> >  		local-timer@0600 {
-> >  			compatible = "arm,cortex-a9-twd-timer";
-> >  			reg = <0x0600 0x100>;
-> >  			interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>;
-> > -			clocks = <&clk_periph>;
-> > +			clocks = <&periph_clk>;
-> >  		};
-> >  
-> >  		gic: interrupt-controller@1000 {
-> > @@ -94,14 +95,66 @@
-> >  
-> >  	clocks {
-> 
-> I'd expect this to only contain nodes that don't have a reg
-> property. Clock providers that have a reg property would go into
-> some soc node or bus. Perhaps that's the chipcommonA node, or
-> axi?
+> just fwiw, but when you have a driver that depends on several other
+> drivers (which in turn depend on other drivers and so on), the amount
+> of probe-defer we end up seeing is pretty comical.  Yeah, there
+> probably is some room to optimize by juggling around order drivers do
+> things in probe.  But that doesn't solve the fundamental problem with
+> the current state, about probe order having no clue about
+> dependencies..
 
-This might get a little ugly, as some of the clocks are in the
-0x18000000 and others are in 0x19000000.  I would think it better to
-have them all in one place (as that is more readable).  Do you preferr
-I split the pieces up into their respective DT nodes?
+I can imagine it is a lot of iterations, but how long does it really
+take?  How many different devices are involved that it takes multiple
+loops in order to finally work out the correct order?  Where is the time
+delays here, just calling probe() and having it instantly return
+shouldn't take all that long.
 
-> 
-> >  		#address-cells = <1>;
-> > -		#size-cells = <0>;
-> > +		#size-cells = <1>;
-> > +		ranges;
-> >  
-> > -		/* As long as we do not have a real clock driver us this
-> > -		 * fixed clock */
-> > -		clk_periph: periph {
-> > +		osc: oscillator {
-> > +			#clock-cells = <0>;
-> >  			compatible = "fixed-clock";
-> > +			clock-frequency = <25000000>;
-> > +		};
-> > +
-> > +		lcpll0: lcpll0@1800c100 {
-> > +			#clock-cells = <1>;
-> > +			compatible = "brcm,nsp-lcpll0";
-> > +			reg = <0x1800c100 0x14>;
-> > +			clocks = <&osc>;
-> > +			clock-output-names = "lcpll0", "pcie_phy", "sdio",
-> > +					     "ddr_phy";
-> > +		};
-> > +
-> > +		genpll: genpll@1800c140 {
-> > +			#clock-cells = <1>;
-> > +			compatible = "brcm,nsp-genpll";
-> > +			reg = <0x1800c140 0x24>;
-> > +			clocks = <&osc>;
-> > +			clock-output-names = "genpll", "phy", "ethernetclk",
-> > +					     "usbclk", "iprocfast", "sata1",
-> > +					     "sata2";
-> > +		};
-> > +
-> > +		iprocmed: iprocmed {
-> > +			#clock-cells = <0>;
-> > +			compatible = "fixed-factor-clock";
-> > +			clocks = <&genpll BCM_NSP_GENPLL_IPROCFAST_CLK>;
-> > +			clock-div = <2>;
-> > +			clock-mult = <1>;
-> > +			clock-output-names = "iprocmed";
-> > +		};
-> > +
-> > +		iprocslow: iprocslow {
-> > +			#clock-cells = <0>;
-> > +			compatible = "fixed-factor-clock";
-> > +			clocks = <&genpll BCM_NSP_GENPLL_IPROCFAST_CLK>;
-> > +			clock-div = <4>;
-> > +			clock-mult = <1>;
-> > +			clock-output-names = "iprocslow";
-> > +		};
-> > +
-> > +
-> > +		a9pll: arm_clk@19000000 {
-> > +			#clock-cells = <0>;
-> > +			compatible = "brcm,nsp-armpll";
-> > +			clocks = <&osc>;
-> > +			reg = <0x19000000 0x1000>;
-> > +		};
-> > +
-> > +		periph_clk: periph_clk {
-> >  			#clock-cells = <0>;
-> > -			clock-frequency = <400000000>;
-> > +			compatible = "fixed-factor-clock";
-> > +			clocks = <&a9pll>;
-> > +			clock-div = <2>;
-> > +			clock-mult = <1>;
-> >  		};
-> >  	};
-> >  
-> 
-> We're trying to move away from putting individual clocks into DT
-> like this. Is there some sort of clock controller that's at
-> 0x1800c000, but we're just not exposing all the clocks in there?
-> See this thread for more information on why we'd like to avoid
-> this sort of design:
-> 
-> http://lkml.kernel.org/r/<20150416192014.19585.9663@quantum>
+thanks,
 
-Okay, I'll clean-up the clock-output-names, per the referenced email.
-
-Thanks,
-Jon
-
-> 
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+greg k-h
