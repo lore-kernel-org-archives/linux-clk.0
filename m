@@ -1,51 +1,133 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: bcm-kernel-feedback-list@broadcom.com,
-	devicetree@vger.kernel.org,
-	jonmason@broadcom.com,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	linux@arm.linux.org.uk,
-	sbranden@broadcom.com,
-	rjui@broadcom.com,
-	Florian Fainelli <f.fainelli@gmail.com>
-Subject: [PATCH v3 1/3] clk: iproc: Extend binding to cover BCM63138
-Date: Tue, 27 Oct 2015 16:56:15 -0700
-Message-Id: <1445990177-27474-2-git-send-email-f.fainelli@gmail.com>
-In-Reply-To: <1445990177-27474-1-git-send-email-f.fainelli@gmail.com>
-References: <1445990177-27474-1-git-send-email-f.fainelli@gmail.com>
+Return-Path: <gregkh@linuxfoundation.org>
+Date: Sat, 17 Oct 2015 08:47:09 -0700
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Rob Herring <robh+dt@kernel.org>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>,
+	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	Linux USB List <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Message-ID: <20151017154709.GE4059@kroah.com>
+References: <561E1378.6000906@collabora.com>
+ <20151017065750.GA18607@kroah.com>
+ <CAL_Jsq+Due3CgV0Z_m4vYQsa+X30DSxgmqz_r=26OrBV7v+H2g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAL_Jsq+Due3CgV0Z_m4vYQsa+X30DSxgmqz_r=26OrBV7v+H2g@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Broadcom BCM63138 DSL SoCs have the same ARMPLL clocking infrastructure
-as the Cygnus and iProc chips, add a dedicated compatible string and
-document that the ARMPLL node is a valid node for this chip.
+On Sat, Oct 17, 2015 at 10:04:55AM -0500, Rob Herring wrote:
+> On Sat, Oct 17, 2015 at 1:57 AM, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> > On Wed, Oct 14, 2015 at 10:34:00AM +0200, Tomeu Vizoso wrote:
+> >> Hi Rob,
+> >>
+> >> here is the pull request you asked for, with no changes from the version
+> >> that I posted last to the list.
+> >>
+> >> The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
+> >>
+> >> Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
+> >>
+> >> are available in the git repository at:
+> >>
+> >> git+ssh://git.collabora.co.uk/git/user/tomeu/linux.git
+> >> on-demand-probes-for-next
+> >
+> > That's not a signed tag :(
+> >
+> > Anyway, I REALLY don't like this series (sorry for the delay in
+> > reviewing them, normally I trust Rob's judgement...)
+> 
+> We've seen a lot of attempts here. This is really the best solution so
+> far in that it is simple, uses existing data from DT, and was low risk
+> for breaking platforms (at least I thought it would be). Anyway,
+> getting more exposure is why I've put it into -next.
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
-Changes in v3:
+Exposure is good, now we know it breaks some builds, which was useful :)
 
-- added Rob's Acked-by tag
+> > I can't see adding calls like this all over the tree just to solve a
+> > bus-specific problem, you are adding of_* calls where they aren't
+> > needed, or wanted, at all.
+> 
+> I think Linus W, Mark B, and I all said a similar thing initially in
+> that dependencies should be handled in the driver core. We went down
+> the path of making this not firmware (aka bus) specific and an earlier
+> version had just that (with fwnode_* calls). That turned out to be
+> pointless as the calling locations were almost always in DT specific
+> code anyway. If you notice, the calls are next to other DT specific
+> calls generally (usually a "get"). So yes, I'd prefer not to have to
+> touch every subsystem, but we had to do that anyway to add DT support.
 
-No changes in v2
+If they are "next" to a call like that, why not put it in that call?  I
+really object to having to "sprinkle" this all over the kernel, for no
+obvious reason why that is happening at all (look at the USB patch for
+one such example.)
 
- Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt | 5 +++++
- 1 file changed, 5 insertions(+)
+> We've generally split the DT code into the core (in drivers/of) and
+> the binding specific (in subsystems). Extracting dependency
+> information the DT is going to require binding specific knowledge, so
+> subsystem changes are probably unavoidable.
+> 
+> The alternative is we put binding specific knowledge into the core DT
+> code to parse dependencies.
+> 
+> > What is the root-problem of your delay in device probing?  I read your
+> > last patch series and I can't seem to figure out what the issue is that
+> > this is solving in any "better" way from the existing deferred probing.
+> 
+> It saves 2 seconds in the boot time as re-probing takes time. That
+> alone seems compelling to me.
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-index ede65a55e21b..0b35e71b39e8 100644
---- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-@@ -208,3 +208,8 @@ These clock IDs are defined in:
-     ch3_unused	lcpll_ports	4	BCM_NS2_LCPLL_PORTS_CH3_UNUSED
-     ch4_unused	lcpll_ports	5	BCM_NS2_LCPLL_PORTS_CH4_UNUSED
-     ch5_unused	lcpll_ports	6	BCM_NS2_LCPLL_PORTS_CH5_UNUSED
-+
-+BCM63138
-+--------
-+PLL and leaf clock compatible strings for BCM63138 are:
-+    "brcm,bcm63138-armpll"
--- 
-2.1.0
+2 seconds is _forever_, and really seems like some other driver is
+sleeping and causing this problem.  What does the bootlog time-chart say
+is really causing this long delay?  There's no way we are stuck in some
+sort of logic loop for that long (i.e. having to walk the list of
+devices somehow.)  This sounds like a driver-specific problem that is
+being worked around by having to touch all subsystems, which isn't nice.
+
+Hint, we didn't have to do this type of thing to solve boot delays on
+x86 when we had hardware that was slow to initialize, why should DT be
+special?  :)
+
+> Another downside to deferred probing is you have to touch every driver
+> and subsystem to support it. This contains the problem to the
+> subsystems.
+
+But we have deferred probing already, only those drivers that need/want
+it have to do anything, why create yet-another model here?
+
+thanks,
+
+greg k-h
