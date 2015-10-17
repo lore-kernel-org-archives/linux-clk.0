@@ -1,68 +1,165 @@
-Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:33395 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752262AbbJQQ2y (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Sat, 17 Oct 2015 12:28:54 -0400
 MIME-Version: 1.0
-Sender: k.kozlowski.k@gmail.com
-In-Reply-To: <56221B26.2050407@osg.samsung.com>
-References: <1444905084-22540-1-git-send-email-tomeu.vizoso@collabora.com>
-	<1444905084-22540-2-git-send-email-tomeu.vizoso@collabora.com>
-	<56203AD3.2050905@samsung.com>
-	<20151016124935.20687.4394@quantum>
-	<20151016172651.GB23912@codeaurora.org>
-	<CAAObsKAjZX8XxTAFVKq4BCSZSrKG5xQPTue+z+xnJDD8QwK88Q@mail.gmail.com>
-	<56218B2D.9040007@kernel.org>
-	<CAJKOXPf5Dnh36rrY6Vet13EHKB3gJuU0VnAfsyYnvWTx92O_GA@mail.gmail.com>
-	<56221B26.2050407@osg.samsung.com>
-Date: Sat, 17 Oct 2015 19:08:28 +0900
-Message-ID: <CAJKOXPdvGUbkPB4E5uufQ=a63k7FK7puJjgY7xWnyqjGVhrnGQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] clk: samsung: exynos5250: Add DISP1 clocks
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>, Stephen Boyd <sboyd@codeaurora.org>,
+In-Reply-To: <20151017154709.GE4059@kroah.com>
+References: <561E1378.6000906@collabora.com> <20151017065750.GA18607@kroah.com>
+ <CAL_Jsq+Due3CgV0Z_m4vYQsa+X30DSxgmqz_r=26OrBV7v+H2g@mail.gmail.com> <20151017154709.GE4059@kroah.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Sat, 17 Oct 2015 11:28:29 -0500
+Message-ID: <CAL_JsqJvtKt6FpZgnYcsEm_opr9gK_a013BVpZGvnB=51oSUXg@mail.gmail.com>
+Subject: Re: [GIT PULL] On-demand device probing
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>,
+	=?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kumar Gala <galak@codeaurora.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	Linux USB List <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-2015-10-17 18:55 GMT+09:00 Javier Martinez Canillas <javier@osg.samsung.com>:
-> Hello Krzysztof,
->
-> On 10/17/2015 10:53 AM, Krzysztof Kozlowski wrote:
->> 2015-10-17 8:41 GMT+09:00 Kukjin Kim <kgene@kernel.org>:
->
-> [snip]
->
->>>>
->>> So...how can I take 2nd patch of this series in samsung(arm-soc) tree?
->>> And this series shouldn't be for fixes for 4.3?...Mike how do you think?
+On Sat, Oct 17, 2015 at 10:47 AM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Sat, Oct 17, 2015 at 10:04:55AM -0500, Rob Herring wrote:
+>> On Sat, Oct 17, 2015 at 1:57 AM, Greg Kroah-Hartman
+>> <gregkh@linuxfoundation.org> wrote:
+>> > On Wed, Oct 14, 2015 at 10:34:00AM +0200, Tomeu Vizoso wrote:
+>> >> Hi Rob,
+>> >>
+>> >> here is the pull request you asked for, with no changes from the version
+>> >> that I posted last to the list.
+>> >>
+>> >> The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
+>> >>
+>> >> Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
+>> >>
+>> >> are available in the git repository at:
+>> >>
+>> >> git+ssh://git.collabora.co.uk/git/user/tomeu/linux.git
+>> >> on-demand-probes-for-next
+>> >
+>> > That's not a signed tag :(
+>> >
+>> > Anyway, I REALLY don't like this series (sorry for the delay in
+>> > reviewing them, normally I trust Rob's judgement...)
 >>
->> Stephen acked it so I thought everything will go through samsung-soc.
->>
->> Dear Kukjin,
->> Indeed this can go as fix for current cycle... but in the same time
->> this does not fix any specific regression. Tomeu did not describe when
->> issue happened for the first time so I assumed it was like that
->> always. It's up to you.
->>
+>> We've seen a lot of attempts here. This is really the best solution so
+>> far in that it is simple, uses existing data from DT, and was low risk
+>> for breaking platforms (at least I thought it would be). Anyway,
+>> getting more exposure is why I've put it into -next.
 >
-> Sorry for not answering about this series before but I've been in contact
-> with Tomeu over IRC before he posted it and since you already added your
-> Reviewed-by tag, I didn't feel the need do to it.
->
-> This is a regression for 4.3 since S2R was working correctly for 4.2 in
-> Snow, I tested after fixing resume with commit 6fd4899a54a5 ("irqchip:
-> exynos-combiner: Save IRQ enable set on suspend") and the display was
-> always enabled on resume.
+> Exposure is good, now we know it breaks some builds, which was useful :)
 
-Hmmm, that means the patchset indeed should go as fixes.
+Now that I've looked at them, they are somewhat questionable failures.
+They do show the fragile nature of probe ordering and the implicit
+dependencies we have.
 
-Thanks for details,
-Krzysztof
+>> > I can't see adding calls like this all over the tree just to solve a
+>> > bus-specific problem, you are adding of_* calls where they aren't
+>> > needed, or wanted, at all.
+>>
+>> I think Linus W, Mark B, and I all said a similar thing initially in
+>> that dependencies should be handled in the driver core. We went down
+>> the path of making this not firmware (aka bus) specific and an earlier
+>> version had just that (with fwnode_* calls). That turned out to be
+>> pointless as the calling locations were almost always in DT specific
+>> code anyway. If you notice, the calls are next to other DT specific
+>> calls generally (usually a "get"). So yes, I'd prefer not to have to
+>> touch every subsystem, but we had to do that anyway to add DT support.
+>
+> If they are "next" to a call like that, why not put it in that call?  I
+> really object to having to "sprinkle" this all over the kernel, for no
+> obvious reason why that is happening at all (look at the USB patch for
+> one such example.)
+
+Looking at it again, they are in DT specific code already. The USB one
+is in devm_usb_get_phy_by_node() which is a DT specific call.
+
+>> We've generally split the DT code into the core (in drivers/of) and
+>> the binding specific (in subsystems). Extracting dependency
+>> information the DT is going to require binding specific knowledge, so
+>> subsystem changes are probably unavoidable.
+>>
+>> The alternative is we put binding specific knowledge into the core DT
+>> code to parse dependencies.
+>>
+>> > What is the root-problem of your delay in device probing?  I read your
+>> > last patch series and I can't seem to figure out what the issue is that
+>> > this is solving in any "better" way from the existing deferred probing.
+>>
+>> It saves 2 seconds in the boot time as re-probing takes time. That
+>> alone seems compelling to me.
+>
+> 2 seconds is _forever_, and really seems like some other driver is
+> sleeping and causing this problem.  What does the bootlog time-chart say
+> is really causing this long delay?  There's no way we are stuck in some
+> sort of logic loop for that long (i.e. having to walk the list of
+> devices somehow.)  This sounds like a driver-specific problem that is
+> being worked around by having to touch all subsystems, which isn't nice.
+
+I don't think it is one driver as the improvement is seen on multiple
+platforms. I'll let Tomeu comment further on where the time was spent.
+
+> Hint, we didn't have to do this type of thing to solve boot delays on
+> x86 when we had hardware that was slow to initialize, why should DT be
+> special?  :)
+
+x86 did not need deferred probe either (though we probably can find
+some initcall ordering hacks). This is an embedded problem, not a DT
+problem.
+
+I'm guessing the time is a matter of probing and undoing the probes
+rather than slow h/w. We could maybe improve things by making sure
+drivers move what they defer on to the beginning of probe, but that
+seems like a horrible, fragile hack.
+
+>> Another downside to deferred probing is you have to touch every driver
+>> and subsystem to support it. This contains the problem to the
+>> subsystems.
+>
+> But we have deferred probing already, only those drivers that need/want
+> it have to do anything, why create yet-another model here?
+
+Yes, the only ones needing it are drivers dependent on clocks, gpio,
+regulators, pwm, pin-ctrl, dma, etc. That's not a small number. This
+is a side benefit and wouldn't take this series for that reason alone.
+
+I've used the deferred probing is good enough argument myself on
+previous attempts. The boot time improvements convinced me it is not
+good enough except for simple cases.
+
+Rob
