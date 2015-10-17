@@ -1,51 +1,99 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 06/19] clk: sunxi: Add Allwinner R8 AHB gates support
-Date: Fri, 30 Oct 2015 15:20:52 +0100
-Message-Id: <1446214865-3972-7-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <noralf@tronnes.org>
+Subject: Re: [GIT PULL] On-demand device probing
+To: Rob Clark <robdclark@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <561E1378.6000906@collabora.com>
+ <20151017065750.GA18607@kroah.com>
+ <CAL_Jsq+Due3CgV0Z_m4vYQsa+X30DSxgmqz_r=26OrBV7v+H2g@mail.gmail.com>
+ <20151017154709.GE4059@kroah.com>
+ <CAL_JsqJvtKt6FpZgnYcsEm_opr9gK_a013BVpZGvnB=51oSUXg@mail.gmail.com>
+ <20151017165617.GC25156@kroah.com>
+ <CAF6AEGvbYYeZx=YVCv9r5K0xjtLf3gN69gX5DyQ3j0S1qT0Yog@mail.gmail.com>
+ <20151017182755.GA28072@kroah.com>
+ <CAF6AEGuvr6XMMufY0iDCSkp2BNcWa2=xUxjN66+FtQ6ygS-nyQ@mail.gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+ Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+ Russell King <linux@arm.linux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Alexandre Courbot <gnurou@gmail.com>,
+ Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>,
+ =?UTF-8?Q?Terje_Bergstr=c3=b6m?= <tbergstrom@nvidia.com>,
+ Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
+ Frank Rowand <frowand.list@gmail.com>, Grant Likely
+ <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>,
+ Sebastian Reichel <sre@kernel.org>,
+ Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+ David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Felipe Balbi <balbi@ti.com>,
+ Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+ Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+ Tomi Valkeinen <tomi.valkeinen@ti.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ dri-devel <dri-devel@lists.freedesktop.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ Linux PWM List <linux-pwm@vger.kernel.org>,
+ Linux USB List <linux-usb@vger.kernel.org>,
+ "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+From: =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+Message-ID: <56229BCC.9050603@tronnes.org>
+Date: Sat, 17 Oct 2015 21:04:44 +0200
+MIME-Version: 1.0
+In-Reply-To: <CAF6AEGuvr6XMMufY0iDCSkp2BNcWa2=xUxjN66+FtQ6ygS-nyQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-The R8 has yet another array of gates for AHB. Let's add it to the list of
-compatibles we can deal with.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi/clk-simple-gates.c | 2 ++
- 1 file changed, 2 insertions(+)
+Den 17.10.2015 20:45, skrev Rob Clark:
+> On Sat, Oct 17, 2015 at 2:27 PM, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+>> On Sat, Oct 17, 2015 at 01:54:43PM -0400, Rob Clark wrote:
+>>> On Sat, Oct 17, 2015 at 12:56 PM, Greg Kroah-Hartman
+>>> <gregkh@linuxfoundation.org> wrote:
+>>>>> I'm guessing the time is a matter of probing and undoing the probes
+>>>>> rather than slow h/w. We could maybe improve things by making sure
+>>>>> drivers move what they defer on to the beginning of probe, but that
+>>>>> seems like a horrible, fragile hack.
+>>>> How can calling probe and failing cause 2 seconds?  How many different
+>>>> probe calls are failing here?  Again, a boot log graph would be great to
+>>>> see as it will show the root cause, not just guessing at this.
+>>>
+>>> just fwiw, but when you have a driver that depends on several other
+>>> drivers (which in turn depend on other drivers and so on), the amount
+>>> of probe-defer we end up seeing is pretty comical.  Yeah, there
+>>> probably is some room to optimize by juggling around order drivers do
+>>> things in probe.  But that doesn't solve the fundamental problem with
+>>> the current state, about probe order having no clue about
+>>> dependencies..
+>> I can imagine it is a lot of iterations, but how long does it really
+>> take?  How many different devices are involved that it takes multiple
+>> loops in order to finally work out the correct order?  Where is the time
+>> delays here, just calling probe() and having it instantly return
+>> shouldn't take all that long.
+> offhand, I think the dependencies go at *least* three levels deep..
+> I'd say, from memory, I see drm/msm taking at least 5 or 6 tries to
+> get all the way through requesting it's various different
+> regulators/clks/gpios.  I hadn't really paid attention to how many
+> tries the drivers I depend on go through.  (Of those, I take clks from
+> two different clk drivers (which have dependency on a 3rd clk driver),
+> and regulators and gpio's come from at least two places, which in turn
+> have dependencies on clks, etc.)  I don't have really good hard
+> numbers handy (since my observations of this are w/ console over uart
+> which effects timings, and so I see it taking much longer than 2sec)..
+> but the 2sec figure that Tomeu mentioned seemed pretty plausible to
+> me.
+>
+> I can try to get better #'s... I should have my kernel hat on at least
+> some of the time next week.. but the 2sec figure didn't seem
+> unrealistic to me.
 
-diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/clk-simple-gates.c
-index 5666c767fa14..e3190a8687a8 100644
---- a/drivers/clk/sunxi/clk-simple-gates.c
-+++ b/drivers/clk/sunxi/clk-simple-gates.c
-@@ -158,5 +158,7 @@ CLK_OF_DECLARE(sun5i_a10s_ahb, "allwinner,sun5i-a10s-ahb-gates-clk",
- 	       sun4i_a10_ahb_init);
- CLK_OF_DECLARE(sun5i_a13_ahb, "allwinner,sun5i-a13-ahb-gates-clk",
- 	       sun4i_a10_ahb_init);
-+CLK_OF_DECLARE(sun5i_r8_ahb, "allwinner,sun5i-r8-ahb-gates-clk",
-+	       sun4i_a10_ahb_init);
- CLK_OF_DECLARE(sun7i_a20_ahb, "allwinner,sun7i-a20-ahb-gates-clk",
- 	       sun4i_a10_ahb_init);
--- 
-2.6.2
+Are you saying that the total boot time is increased by 2 sec due to
+deferred probing, or that display initialization is happening 2 sec
+after it's first try?
