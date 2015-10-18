@@ -1,71 +1,40 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lb0-f179.google.com ([209.85.217.179]:33130 "EHLO
-	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753094AbbJNNjH (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 14 Oct 2015 09:39:07 -0400
-Subject: Re: [PATCH v4 3/3] arm64: dts: mt8173: add timer node
-To: Yingjoe Chen <yingjoe.chen@mediatek.com>,
-	Rob Herring <robh+dt@kernel.org>
-References: <1443798319-45744-1-git-send-email-yingjoe.chen@mediatek.com>
- <1443798319-45744-4-git-send-email-yingjoe.chen@mediatek.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <geliangtang@163.com>
+From: Geliang Tang <geliangtang@163.com>
+To: Santosh Shilimkar <ssantosh@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	James Liao <jamesjj.liao@mediatek.com>,
-	devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Olof Johansson <olof@lixom.net>, srv_heupstream@mediatek.com,
-	linux-arm-kernel@lists.infradead.org,
-	Daniel Kurtz <djkurtz@chromium.org>, linux-clk@vger.kernel.org,
-	erin.lo@mediatek.com, Eddie Huang <eddie.huang@mediatek.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <561E5AF5.5020902@gmail.com>
-Date: Wed, 14 Oct 2015 15:39:01 +0200
-MIME-Version: 1.0
-In-Reply-To: <1443798319-45744-4-git-send-email-yingjoe.chen@mediatek.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Jiri Kosina <trivial@kernel.org>
+Cc: Geliang Tang <geliangtang@163.com>,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 6/9] clk: keystone: fix a trivial typo
+Date: Sun, 18 Oct 2015 23:31:12 +0800
+Message-Id: <88b679770e91ce8e3aa2cd25912c6d589563388c.1445181079.git.geliangtang@163.com>
+In-Reply-To: <949f6f3c99f87b57666986dc9f2d1c916935e215.1445181079.git.geliangtang@163.com>
+References: <949f6f3c99f87b57666986dc9f2d1c916935e215.1445181079.git.geliangtang@163.com>
+In-Reply-To: <eb89ced1dda5b521dba1ed6095deef09d577e37a.1445181079.git.geliangtang@163.com>
+References: <949f6f3c99f87b57666986dc9f2d1c916935e215.1445181079.git.geliangtang@163.com> <557286dd38beb4d8d1be28e787ad89611e7cc077.1445181079.git.geliangtang@163.com> <5fea4cd474d5fe49688f88d91cdf5e8019844806.1445181079.git.geliangtang@163.com> <918fdb002ec3b2a9fc5a5d364c0fbaff2f77c5cc.1445181079.git.geliangtang@163.com> <eb89ced1dda5b521dba1ed6095deef09d577e37a.1445181079.git.geliangtang@163.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+s/regsiter/register/
 
+Signed-off-by: Geliang Tang <geliangtang@163.com>
+---
+ drivers/clk/keystone/pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 02/10/15 17:05, Yingjoe Chen wrote:
-> From: Daniel Kurtz <djkurtz@chromium.org>
->
-> Add device node to enable GPT timer.
->
-> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
-> Signed-off-by: Eddie Huang <eddie.huang@mediatek.com>
-> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
-> ---
-
-I reapplied this on v4.4-next/arm64
-
-
->   arch/arm64/boot/dts/mediatek/mt8173.dtsi | 9 +++++++++
->   1 file changed, 9 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-> index d18ee42..d763803 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-> @@ -238,6 +238,15 @@
->   			reg = <0 0x10007000 0 0x100>;
->   		};
->
-> +		timer: timer@10008000 {
-> +			compatible = "mediatek,mt8173-timer",
-> +				     "mediatek,mt6577-timer";
-> +			reg = <0 0x10008000 0 0x1000>;
-> +			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_LOW>;
-> +			clocks = <&infracfg CLK_INFRA_CLK_13M>,
-> +				 <&topckgen CLK_TOP_RTC_SEL>;
-> +		};
-> +
->   		pwrap: pwrap@1000d000 {
->   			compatible = "mediatek,mt8173-pwrap";
->   			reg = <0 0x1000d000 0 0x1000>;
->
+diff --git a/drivers/clk/keystone/pll.c b/drivers/clk/keystone/pll.c
+index 3f553d0..a26ba21 100644
+--- a/drivers/clk/keystone/pll.c
++++ b/drivers/clk/keystone/pll.c
+@@ -157,7 +157,7 @@ out:
+  * _of_clk_init - PLL initialisation via DT
+  * @node: device tree node for this clock
+  * @pllctrl: If true, lower 6 bits of multiplier is in pllm register of
+- *		pll controller, else it is in the control regsiter0(bit 11-6)
++ *		pll controller, else it is in the control register0(bit 11-6)
+  */
+ static void __init _of_pll_clk_init(struct device_node *node, bool pllctrl)
+ {
+-- 
+2.5.0
