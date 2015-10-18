@@ -1,32 +1,71 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 14 Oct 2015 11:31:13 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Zhiqiang Hou <B48286@freescale.com>
-Cc: linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-	will.deacon@arm.com, linux-i2c@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-clk@vger.kernel.org, mark.rutland@arm.com,
-	Mingkai.Hu@freescale.com, Shaohui.Xie@freescale.com,
-	scottwood@freescale.com, bhupesh.sharma@freescale.com,
-	leoli@freescale.com, wsa@the-dreams.de, wim@iguana.be,
-	corbet@lwn.net, mturquette@baylibre.com, Wenbin.Song@freescale.com
-Subject: Re: [PATCH V3 5/6] clk: qoriq: Add ls1043a support.
-Message-ID: <20151014183113.GE26883@codeaurora.org>
-References: <1444822498-16477-1-git-send-email-B48286@freescale.com>
- <1444822498-16477-6-git-send-email-B48286@freescale.com>
+Return-Path: <gregkh@linuxfoundation.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-kernel@lists.codethink.co.uk,
+	Ben Dooks <ben.dooks@codethink.co.uk>,
+	Tero Kristo <t-kristo@ti.com>
+Subject: [PATCH 4.1 190/202] clk: ti: fix dual-registration of uart4_ick
+Date: Sat, 17 Oct 2015 18:59:33 -0700
+Message-Id: <20151018014910.537434996@linuxfoundation.org>
+In-Reply-To: <20151018014901.946875729@linuxfoundation.org>
+References: <20151018014901.946875729@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1444822498-16477-6-git-send-email-B48286@freescale.com>
+Content-Type: text/plain; charset=ISO-8859-15
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/14, Zhiqiang Hou wrote:
-> From: Hou Zhiqiang <B48286@freescale.com>
-> 
-> Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
-> ---
+4.1-stable review patch.  If anyone has any objections, please let me know.
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+------------------
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+
+commit 19e79687de22f23bcfb5e79cce3daba20af228d1 upstream.
+
+On the OMAP AM3517 platform the uart4_ick gets registered
+twice, causing any power management to /dev/ttyO3 to fail
+when trying to wake the device up.
+
+This solves the following oops:
+
+[] Unhandled fault: external abort on non-linefetch (0x1028) at 0xfa09e008
+[] PC is at serial_omap_pm+0x48/0x15c
+[] LR is at _raw_spin_unlock_irqrestore+0x30/0x5c
+
+Fixes: aafd900cab87 ("CLK: TI: add omap3 clock init file")
+Cc: mturquette@baylibre.com
+Cc: sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-omap@vger.kernel.org
+Cc: linux-kernel@lists.codethink.co.uk
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/clk/ti/clk-3xxx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/clk/ti/clk-3xxx.c
++++ b/drivers/clk/ti/clk-3xxx.c
+@@ -163,7 +163,6 @@ static struct ti_dt_clk omap3xxx_clks[]
+ 	DT_CLK(NULL, "gpio2_ick", "gpio2_ick"),
+ 	DT_CLK(NULL, "wdt3_ick", "wdt3_ick"),
+ 	DT_CLK(NULL, "uart3_ick", "uart3_ick"),
+-	DT_CLK(NULL, "uart4_ick", "uart4_ick"),
+ 	DT_CLK(NULL, "gpt9_ick", "gpt9_ick"),
+ 	DT_CLK(NULL, "gpt8_ick", "gpt8_ick"),
+ 	DT_CLK(NULL, "gpt7_ick", "gpt7_ick"),
+@@ -308,6 +307,7 @@ static struct ti_dt_clk am35xx_clks[] =
+ static struct ti_dt_clk omap36xx_clks[] = {
+ 	DT_CLK(NULL, "omap_192m_alwon_fck", "omap_192m_alwon_fck"),
+ 	DT_CLK(NULL, "uart4_fck", "uart4_fck"),
++	DT_CLK(NULL, "uart4_ick", "uart4_ick"),
+ 	{ .node_name = NULL },
+ };
+ 
