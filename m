@@ -1,54 +1,98 @@
-Return-Path: <jonmason@broadcom.com>
-Date: Mon, 12 Oct 2015 13:48:53 -0400
-From: Jon Mason <jonmason@broadcom.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Michael Turquette <mturquette@baylibre.com>, Florian Fainelli
-	<f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui
-	<rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<bcm-kernel-feedback-list@broadcom.com>
-Subject: Re: [PATCH 05/10] clk: iproc: Add PLL base write function
-Message-ID: <20151012174853.GD20867@broadcom.com>
-References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
- <1443826665-17570-6-git-send-email-jonmason@broadcom.com>
- <20151010002106.GZ26883@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20151010002106.GZ26883@codeaurora.org>
-Return-Path: jonmason@broadcom.com
+Return-Path: <stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+To: shawnguo@kernel.org,
+	kernel@pengutronix.de,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: galak@codeaurora.org,
+	ijc+devicetree@hellion.org.uk,
+	mark.rutland@arm.com,
+	pawel.moll@arm.com,
+	robh+dt@kernel.org,
+	Li.Xiubo@freescale.com,
+	zidan.wang@freescale.com,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Agner <stefan@agner.ch>
+Subject: [PATCH 3/3] ARM: dts: vf610: add remaining SAI instaces
+Date: Sat, 17 Oct 2015 21:05:22 -0700
+Message-Id: <1445141122-14183-3-git-send-email-stefan@agner.ch>
+In-Reply-To: <1445141122-14183-1-git-send-email-stefan@agner.ch>
+References: <1445141122-14183-1-git-send-email-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 09, 2015 at 05:21:06PM -0700, Stephen Boyd wrote:
-> On 10/02, Jon Mason wrote:
-> > diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
-> > index e029ab3..a4602aa 100644
-> > --- a/drivers/clk/bcm/clk-iproc-pll.c
-> > +++ b/drivers/clk/bcm/clk-iproc-pll.c
-> > @@ -137,6 +137,18 @@ static int pll_wait_for_lock(struct iproc_pll *pll)
-> >  	return -EIO;
-> >  }
-> >  
-> > +static void iproc_pll_write(struct iproc_pll *pll, void __iomem *base,
-> > +			    u32 offset, u32 val)
-> > +{
-> > +	const struct iproc_pll_ctrl *ctrl = pll->ctrl;
-> > +
-> > +	writel(val, base + offset);
-> > +
-> > +	if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK &&
-> > +		     base == pll->pll_base))
-> > +		val = readl(base + offset);
-> 
-> Is there any point to assign val here?
+This adds the remaining SAI instances SAI0, SAI1 and SAI3. All
+instances are very similar, except that the DMA channel of SAI3
+is available on MUX1 (compared to MUX0 for SAI0-SAI2). Also,
+SAI3 has a slightly different memory map due to a deeper FIFO,
+however in practice the current driver works for SAI3 fine.
 
-It is a flush.  The val assignment could be excluded (and thus made
-const) if so desired.
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm/boot/dts/vfxxx.dtsi | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-Thanks,
-Jon
-
-> 
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+diff --git a/arch/arm/boot/dts/vfxxx.dtsi b/arch/arm/boot/dts/vfxxx.dtsi
+index c2a4d1c..b45bc81 100644
+--- a/arch/arm/boot/dts/vfxxx.dtsi
++++ b/arch/arm/boot/dts/vfxxx.dtsi
+@@ -174,6 +174,34 @@
+ 				status = "disabled";
+ 			};
+ 
++			sai0: sai@4002f000 {
++				compatible = "fsl,vf610-sai";
++				reg = <0x4002f000 0x1000>;
++				interrupts = <84 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks VF610_CLK_SAI0>,
++					<&clks VF610_CLK_SAI0_DIV>,
++					<&clks 0>, <&clks 0>;
++				clock-names = "bus", "mclk1", "mclk2", "mclk3";
++				dma-names = "tx", "rx";
++				dmas = <&edma0 0 17>,
++					<&edma0 0 16>;
++				status = "disabled";
++			};
++
++			sai1: sai@40030000 {
++				compatible = "fsl,vf610-sai";
++				reg = <0x40030000 0x1000>;
++				interrupts = <85 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks VF610_CLK_SAI1>,
++					<&clks VF610_CLK_SAI1_DIV>,
++					<&clks 0>, <&clks 0>;
++				clock-names = "bus", "mclk1", "mclk2", "mclk3";
++				dma-names = "tx", "rx";
++				dmas = <&edma0 0 19>,
++					<&edma0 0 18>;
++				status = "disabled";
++			};
++
+ 			sai2: sai@40031000 {
+ 				compatible = "fsl,vf610-sai";
+ 				reg = <0x40031000 0x1000>;
+@@ -188,6 +216,20 @@
+ 				status = "disabled";
+ 			};
+ 
++			sai3: sai@40032000 {
++				compatible = "fsl,vf610-sai";
++				reg = <0x40032000 0x1000>;
++				interrupts = <87 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks VF610_CLK_SAI3>,
++					<&clks VF610_CLK_SAI3_DIV>,
++					<&clks 0>, <&clks 0>;
++				clock-names = "bus", "mclk1", "mclk2", "mclk3";
++				dma-names = "tx", "rx";
++				dmas = <&edma0 1 9>,
++					<&edma0 1 8>;
++				status = "disabled";
++			};
++
+ 			pit: pit@40037000 {
+ 				compatible = "fsl,vf610-pit";
+ 				reg = <0x40037000 0x1000>;
+-- 
+2.6.1
