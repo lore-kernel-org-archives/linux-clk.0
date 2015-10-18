@@ -1,43 +1,178 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 2 Oct 2015 12:32:35 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	Maxime Coquelin <maxime.coquelin@st.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Pankaj Dev <pankaj.dev@st.com>,
-	Olivier Bideau <olivier.bideau@st.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Fabian Frederick <fabf@skynet.be>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel@stlinux.com, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] drivers: clk: st: Support for enable/disable in
- Clockgen PLLs
-Message-ID: <20151002193234.GT12338@codeaurora.org>
-References: <1440409251-11166-1-git-send-email-gabriel.fernandez@linaro.org>
- <1440409251-11166-2-git-send-email-gabriel.fernandez@linaro.org>
+Return-Path: <hauke@hauke-m.de>
+Subject: Re: [RFC 3/5] ARM: dts: enable clock support for BCM5301X
+To: Jon Mason <jonmason@broadcom.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+References: <1444771347-11382-1-git-send-email-jonmason@broadcom.com>
+ <1444771347-11382-4-git-send-email-jonmason@broadcom.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Message-ID: <56241E6A.2060406@hauke-m.de>
+Date: Mon, 19 Oct 2015 00:34:18 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1440409251-11166-2-git-send-email-gabriel.fernandez@linaro.org>
+In-Reply-To: <1444771347-11382-4-git-send-email-jonmason@broadcom.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/24, Gabriel Fernandez wrote:
-> The patch adds support for enable/disable of the Clockgen PLLs.
-> clkgen_pll_enable/clkgen_pll_disable added as generic function for all PLLs.
+On 10/13/2015 11:22 PM, Jon Mason wrote:
+> Replace current device tree dummy clocks with real clock support for
+> Broadcom Northstar SoCs.
 > 
-> Signed-off-by: Pankaj Dev <pankaj.dev@st.com>
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+> Signed-off-by: Jon Mason <jonmason@broadcom.com>
+
+The clock-frequency of the uarts should also be replaced with the
+correct clock from the clock driver.
+
+Hauke
 > ---
-
-Applied to clk-next
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>  arch/arm/boot/dts/bcm5301x.dtsi | 88 ++++++++++++++++++++++++++++++++---------
+>  1 file changed, 69 insertions(+), 19 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/bcm5301x.dtsi b/arch/arm/boot/dts/bcm5301x.dtsi
+> index 6f50f67..1eca551 100644
+> --- a/arch/arm/boot/dts/bcm5301x.dtsi
+> +++ b/arch/arm/boot/dts/bcm5301x.dtsi
+> @@ -8,6 +8,7 @@
+>   * Licensed under the GNU/GPL. See COPYING for details.
+>   */
+>  
+> +#include <dt-bindings/clock/bcm-nsp.h>
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/input/input.h>
+>  #include <dt-bindings/interrupt-controller/irq.h>
+> @@ -42,41 +43,48 @@
+>  
+>  	mpcore {
+>  		compatible = "simple-bus";
+> -		ranges = <0x00000000 0x19020000 0x00003000>;
+> +		ranges = <0x00000000 0x19000000 0x00023000>;
+>  		#address-cells = <1>;
+>  		#size-cells = <1>;
+>  
+> -		scu@0000 {
+> +		a9pll: arm_clk@00000 {
+> +			#clock-cells = <0>;
+> +			compatible = "brcm,nsp-armpll";
+> +			clocks = <&osc>;
+> +			reg = <0x00000 0x1000>;
+> +		};
+> +
+> +		scu@20000 {
+>  			compatible = "arm,cortex-a9-scu";
+> -			reg = <0x0000 0x100>;
+> +			reg = <0x20000 0x100>;
+>  		};
+>  
+> -		timer@0200 {
+> +		timer@20200 {
+>  			compatible = "arm,cortex-a9-global-timer";
+> -			reg = <0x0200 0x100>;
+> +			reg = <0x20200 0x100>;
+>  			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&clk_periph>;
+> +			clocks = <&periph_clk>;
+>  		};
+>  
+> -		local-timer@0600 {
+> +		local-timer@20600 {
+>  			compatible = "arm,cortex-a9-twd-timer";
+> -			reg = <0x0600 0x100>;
+> +			reg = <0x20600 0x100>;
+>  			interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&clk_periph>;
+> +			clocks = <&periph_clk>;
+>  		};
+>  
+> -		gic: interrupt-controller@1000 {
+> +		gic: interrupt-controller@21000 {
+>  			compatible = "arm,cortex-a9-gic";
+>  			#interrupt-cells = <3>;
+>  			#address-cells = <0>;
+>  			interrupt-controller;
+> -			reg = <0x1000 0x1000>,
+> -			      <0x0100 0x100>;
+> +			reg = <0x21000 0x1000>,
+> +			      <0x20100 0x100>;
+>  		};
+>  
+> -		L2: cache-controller@2000 {
+> +		L2: cache-controller@22000 {
+>  			compatible = "arm,pl310-cache";
+> -			reg = <0x2000 0x1000>;
+> +			reg = <0x22000 0x1000>;
+>  			cache-unified;
+>  			arm,shared-override;
+>  			prefetch-data = <1>;
+> @@ -94,14 +102,37 @@
+>  
+>  	clocks {
+>  		#address-cells = <1>;
+> -		#size-cells = <0>;
+> +		#size-cells = <1>;
+> +		ranges;
+>  
+> -		/* As long as we do not have a real clock driver us this
+> -		 * fixed clock */
+> -		clk_periph: periph {
+> +		osc: oscillator {
+> +			#clock-cells = <0>;
+>  			compatible = "fixed-clock";
+> +			clock-frequency = <25000000>;
+> +		};
+> +
+> +		iprocmed: iprocmed {
+> +			#clock-cells = <0>;
+> +			compatible = "fixed-factor-clock";
+> +			clocks = <&genpll BCM_NSP_GENPLL_IPROCFAST_CLK>;
+> +			clock-div = <2>;
+> +			clock-mult = <1>;
+> +		};
+> +
+> +		iprocslow: iprocslow {
+> +			#clock-cells = <0>;
+> +			compatible = "fixed-factor-clock";
+> +			clocks = <&genpll BCM_NSP_GENPLL_IPROCFAST_CLK>;
+> +			clock-div = <4>;
+> +			clock-mult = <1>;
+> +		};
+> +
+> +		periph_clk: periph_clk {
+>  			#clock-cells = <0>;
+> -			clock-frequency = <400000000>;
+> +			compatible = "fixed-factor-clock";
+> +			clocks = <&a9pll>;
+> +			clock-div = <2>;
+> +			clock-mult = <1>;
+>  		};
+>  	};
+>  
+> @@ -178,6 +209,25 @@
+>  		};
+>  	};
+>  
+> +	lcpll0: lcpll0@1800c100 {
+> +		#clock-cells = <1>;
+> +		compatible = "brcm,nsp-lcpll0";
+> +		reg = <0x1800c100 0x14>;
+> +		clocks = <&osc>;
+> +		clock-output-names = "lcpll0", "pcie_phy", "sdio",
+> +				     "ddr_phy";
+> +	};
+> +
+> +	genpll: genpll@1800c140 {
+> +		#clock-cells = <1>;
+> +		compatible = "brcm,nsp-genpll";
+> +		reg = <0x1800c140 0x24>;
+> +		clocks = <&osc>;
+> +		clock-output-names = "genpll", "phy", "ethernetclk",
+> +				     "usbclk", "iprocfast", "sata1",
+> +				     "sata2";
+> +	};
+> +
+>  	nand: nand@18028000 {
+>  		compatible = "brcm,nand-iproc", "brcm,brcmnand-v6.1", "brcm,brcmnand";
+>  		reg = <0x18028000 0x600>, <0x1811a408 0x600>, <0x18028f00 0x20>;
+> 
