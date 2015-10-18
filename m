@@ -1,220 +1,93 @@
-Return-Path: <alim.akhtar@samsung.com>
-From: Alim Akhtar <alim.akhtar@samsung.com>
-To: lee.jones@linaro.org, broonie@kernel.org
-Cc: k.kozlowski@samsung.com, mturquette@baylibre.com,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org,
- Thomas Abraham <thomas.ab@samsung.com>
-Subject: [PATCH v3 3/5] regulator: s2mps11: add support for S2MPS15 regulators
-Date: Mon, 26 Oct 2015 18:21:20 +0530
-Message-id: <1445863883-5187-4-git-send-email-alim.akhtar@samsung.com>
-In-reply-to: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
-References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
+Return-Path: <broonie@sirena.org.uk>
+Date: Sun, 18 Oct 2015 20:41:24 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>,
+	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	Linux USB List <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Message-ID: <20151018194124.GA14956@sirena.org.uk>
+References: <561E1378.6000906@collabora.com>
+ <20151017065750.GA18607@kroah.com>
+ <CAL_Jsq+Due3CgV0Z_m4vYQsa+X30DSxgmqz_r=26OrBV7v+H2g@mail.gmail.com>
+ <20151017154709.GE4059@kroah.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ylUvUtShPtQAJVVd"
+In-Reply-To: <20151017154709.GE4059@kroah.com>
+Subject: Re: [GIT PULL] On-demand device probing
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Thomas Abraham <thomas.ab@samsung.com>
 
-The S2MPS15 PMIC is similar in functionality to S2MPS11/14 PMIC. It contains
-27 LDO and 10 Buck regulators and allows programming these regulators via a
-I2C interface. This patch adds initial support for LDO/Buck regulators of
-S2MPS15 PMIC.
+--ylUvUtShPtQAJVVd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/regulator/Kconfig   |    4 +-
- drivers/regulator/s2mps11.c |  135 ++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 136 insertions(+), 3 deletions(-)
+On Sat, Oct 17, 2015 at 08:47:09AM -0700, Greg Kroah-Hartman wrote:
+> On Sat, Oct 17, 2015 at 10:04:55AM -0500, Rob Herring wrote:
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 64bccff557be..3e3ee5b88b3f 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -588,10 +588,10 @@ config REGULATOR_S2MPA01
- 	 via I2C bus. S2MPA01 has 10 Bucks and 26 LDO outputs.
- 
- config REGULATOR_S2MPS11
--	tristate "Samsung S2MPS11/S2MPS13/S2MPS14/S2MPU02 voltage regulator"
-+	tristate "Samsung S2MPS11/13/14/15/S2MPU02 voltage regulator"
- 	depends on MFD_SEC_CORE
- 	help
--	 This driver supports a Samsung S2MPS11/S2MPS13/S2MPS14/S2MPU02 voltage
-+	 This driver supports a Samsung S2MPS11/13/14/15/S2MPU02 voltage
- 	 output regulator via I2C bus. The chip is comprised of high efficient
- 	 Buck converters including Dual-Phase Buck converter, Buck-Boost
- 	 converter, various LDOs.
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 72fc3c32db49..12c59158552c 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -32,6 +32,7 @@
- #include <linux/mfd/samsung/s2mps11.h>
- #include <linux/mfd/samsung/s2mps13.h>
- #include <linux/mfd/samsung/s2mps14.h>
-+#include <linux/mfd/samsung/s2mps15.h>
- #include <linux/mfd/samsung/s2mpu02.h>
- 
- /* The highest number of possible regulators for supported devices. */
-@@ -661,6 +662,133 @@ static const struct regulator_desc s2mps14_regulators[] = {
- 				    S2MPS14_BUCK1235_START_SEL),
- };
- 
-+static struct regulator_ops s2mps15_reg_ldo_ops = {
-+	.list_voltage		= regulator_list_voltage_linear_range,
-+	.map_voltage		= regulator_map_voltage_linear_range,
-+	.is_enabled		= regulator_is_enabled_regmap,
-+	.enable			= regulator_enable_regmap,
-+	.disable		= regulator_disable_regmap,
-+	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-+	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
-+};
-+
-+static struct regulator_ops s2mps15_reg_buck_ops = {
-+	.list_voltage		= regulator_list_voltage_linear_range,
-+	.map_voltage		= regulator_map_voltage_linear_range,
-+	.is_enabled		= regulator_is_enabled_regmap,
-+	.enable			= regulator_enable_regmap,
-+	.disable		= regulator_disable_regmap,
-+	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-+	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
-+	.set_voltage_time_sel	= regulator_set_voltage_time_sel,
-+};
-+
-+#define regulator_desc_s2mps15_ldo(num, range) {	\
-+	.name		= "LDO"#num,			\
-+	.id		= S2MPS15_LDO##num,		\
-+	.ops		= &s2mps15_reg_ldo_ops,		\
-+	.type		= REGULATOR_VOLTAGE,		\
-+	.owner		= THIS_MODULE,			\
-+	.linear_ranges	= range,			\
-+	.n_linear_ranges = ARRAY_SIZE(range),		\
-+	.n_voltages	= S2MPS15_LDO_N_VOLTAGES,	\
-+	.vsel_reg	= S2MPS15_REG_L1CTRL + num - 1,	\
-+	.vsel_mask	= S2MPS15_LDO_VSEL_MASK,	\
-+	.enable_reg	= S2MPS15_REG_L1CTRL + num - 1,	\
-+	.enable_mask	= S2MPS15_ENABLE_MASK		\
-+}
-+
-+#define regulator_desc_s2mps15_buck(num, range) {			\
-+	.name		= "BUCK"#num,					\
-+	.id		= S2MPS15_BUCK##num,				\
-+	.ops		= &s2mps15_reg_buck_ops,			\
-+	.type		= REGULATOR_VOLTAGE,				\
-+	.owner		= THIS_MODULE,					\
-+	.linear_ranges	= range,					\
-+	.n_linear_ranges = ARRAY_SIZE(range),				\
-+	.ramp_delay	= 12500,					\
-+	.n_voltages	= S2MPS15_BUCK_N_VOLTAGES,			\
-+	.vsel_reg	= S2MPS15_REG_B1CTRL2 + ((num - 1) * 2),	\
-+	.vsel_mask	= S2MPS15_BUCK_VSEL_MASK,			\
-+	.enable_reg	= S2MPS15_REG_B1CTRL1 + ((num - 1) * 2),	\
-+	.enable_mask	= S2MPS15_ENABLE_MASK				\
-+}
-+
-+/* voltage range for s2mps15 LDO 3, 5, 15, 16, 18, 20, 23 and 27 */
-+static const struct regulator_linear_range s2mps15_ldo_voltage_ranges1[] = {
-+	REGULATOR_LINEAR_RANGE(1000000, 0xc, 0x38, 25000),
-+};
-+
-+/* voltage range for s2mps15 LDO 2, 6, 14, 17, 19, 21, 24 and 25 */
-+static const struct regulator_linear_range s2mps15_ldo_voltage_ranges2[] = {
-+	REGULATOR_LINEAR_RANGE(1800000, 0x0, 0x3f, 25000),
-+};
-+
-+/* voltage range for s2mps15 LDO 4, 11, 12, 13, 22 and 26 */
-+static const struct regulator_linear_range s2mps15_ldo_voltage_ranges3[] = {
-+	REGULATOR_LINEAR_RANGE(700000, 0x0, 0x34, 12500),
-+};
-+
-+/* voltage range for s2mps15 LDO 7, 8, 9 and 10 */
-+static const struct regulator_linear_range s2mps15_ldo_voltage_ranges4[] = {
-+	REGULATOR_LINEAR_RANGE(700000, 0xc, 0x18, 25000),
-+};
-+
-+/* voltage range for s2mps15 LDO 1 */
-+static const struct regulator_linear_range s2mps15_ldo_voltage_ranges5[] = {
-+	REGULATOR_LINEAR_RANGE(500000, 0x0, 0x20, 12500),
-+};
-+
-+/* voltage range for s2mps15 BUCK 1, 2, 3, 4, 5, 6 and 7 */
-+static const struct regulator_linear_range s2mps15_buck_voltage_ranges1[] = {
-+	REGULATOR_LINEAR_RANGE(500000, 0x20, 0xb0, 6250),
-+};
-+
-+/* voltage range for s2mps15 BUCK 8, 9 and 10 */
-+static const struct regulator_linear_range s2mps15_buck_voltage_ranges2[] = {
-+	REGULATOR_LINEAR_RANGE(1000000, 0x20, 0xc0, 12500),
-+};
-+
-+static const struct regulator_desc s2mps15_regulators[] = {
-+	regulator_desc_s2mps15_ldo(1, s2mps15_ldo_voltage_ranges5),
-+	regulator_desc_s2mps15_ldo(2, s2mps15_ldo_voltage_ranges2),
-+	regulator_desc_s2mps15_ldo(3, s2mps15_ldo_voltage_ranges1),
-+	regulator_desc_s2mps15_ldo(4, s2mps15_ldo_voltage_ranges3),
-+	regulator_desc_s2mps15_ldo(5, s2mps15_ldo_voltage_ranges1),
-+	regulator_desc_s2mps15_ldo(6, s2mps15_ldo_voltage_ranges2),
-+	regulator_desc_s2mps15_ldo(7, s2mps15_ldo_voltage_ranges4),
-+	regulator_desc_s2mps15_ldo(8, s2mps15_ldo_voltage_ranges4),
-+	regulator_desc_s2mps15_ldo(9, s2mps15_ldo_voltage_ranges4),
-+	regulator_desc_s2mps15_ldo(10, s2mps15_ldo_voltage_ranges4),
-+	regulator_desc_s2mps15_ldo(11, s2mps15_ldo_voltage_ranges3),
-+	regulator_desc_s2mps15_ldo(12, s2mps15_ldo_voltage_ranges3),
-+	regulator_desc_s2mps15_ldo(13, s2mps15_ldo_voltage_ranges3),
-+	regulator_desc_s2mps15_ldo(14, s2mps15_ldo_voltage_ranges2),
-+	regulator_desc_s2mps15_ldo(15, s2mps15_ldo_voltage_ranges1),
-+	regulator_desc_s2mps15_ldo(16, s2mps15_ldo_voltage_ranges1),
-+	regulator_desc_s2mps15_ldo(17, s2mps15_ldo_voltage_ranges2),
-+	regulator_desc_s2mps15_ldo(18, s2mps15_ldo_voltage_ranges1),
-+	regulator_desc_s2mps15_ldo(19, s2mps15_ldo_voltage_ranges2),
-+	regulator_desc_s2mps15_ldo(20, s2mps15_ldo_voltage_ranges1),
-+	regulator_desc_s2mps15_ldo(21, s2mps15_ldo_voltage_ranges2),
-+	regulator_desc_s2mps15_ldo(22, s2mps15_ldo_voltage_ranges3),
-+	regulator_desc_s2mps15_ldo(23, s2mps15_ldo_voltage_ranges1),
-+	regulator_desc_s2mps15_ldo(24, s2mps15_ldo_voltage_ranges2),
-+	regulator_desc_s2mps15_ldo(25, s2mps15_ldo_voltage_ranges2),
-+	regulator_desc_s2mps15_ldo(26, s2mps15_ldo_voltage_ranges3),
-+	regulator_desc_s2mps15_ldo(27, s2mps15_ldo_voltage_ranges1),
-+	regulator_desc_s2mps15_buck(1, s2mps15_buck_voltage_ranges1),
-+	regulator_desc_s2mps15_buck(2, s2mps15_buck_voltage_ranges1),
-+	regulator_desc_s2mps15_buck(3, s2mps15_buck_voltage_ranges1),
-+	regulator_desc_s2mps15_buck(4, s2mps15_buck_voltage_ranges1),
-+	regulator_desc_s2mps15_buck(5, s2mps15_buck_voltage_ranges1),
-+	regulator_desc_s2mps15_buck(6, s2mps15_buck_voltage_ranges1),
-+	regulator_desc_s2mps15_buck(7, s2mps15_buck_voltage_ranges1),
-+	regulator_desc_s2mps15_buck(8, s2mps15_buck_voltage_ranges2),
-+	regulator_desc_s2mps15_buck(9, s2mps15_buck_voltage_ranges2),
-+	regulator_desc_s2mps15_buck(10, s2mps15_buck_voltage_ranges2),
-+};
-+
- static int s2mps14_pmic_enable_ext_control(struct s2mps11_info *s2mps11,
- 		struct regulator_dev *rdev)
- {
-@@ -974,6 +1102,10 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 		regulators = s2mps14_regulators;
- 		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < s2mps11->rdev_num);
- 		break;
-+	case S2MPS15X:
-+		s2mps11->rdev_num = ARRAY_SIZE(s2mps15_regulators);
-+		regulators = s2mps15_regulators;
-+		break;
- 	case S2MPU02:
- 		s2mps11->rdev_num = ARRAY_SIZE(s2mpu02_regulators);
- 		regulators = s2mpu02_regulators;
-@@ -1070,6 +1202,7 @@ static const struct platform_device_id s2mps11_pmic_id[] = {
- 	{ "s2mps11-pmic", S2MPS11X},
- 	{ "s2mps13-pmic", S2MPS13X},
- 	{ "s2mps14-pmic", S2MPS14X},
-+	{ "s2mps15-pmic", S2MPS15X},
- 	{ "s2mpu02-pmic", S2MPU02},
- 	{ },
- };
-@@ -1097,5 +1230,5 @@ module_exit(s2mps11_pmic_exit);
- 
- /* Module information */
- MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
--MODULE_DESCRIPTION("SAMSUNG S2MPS11/S2MPS14/S2MPU02 Regulator Driver");
-+MODULE_DESCRIPTION("SAMSUNG S2MPS11/S2MPS14/S2MPS15/S2MPU02 Regulator Driver");
- MODULE_LICENSE("GPL");
--- 
-1.7.10.4
+> > I think Linus W, Mark B, and I all said a similar thing initially in
+> > that dependencies should be handled in the driver core. We went down
+> > the path of making this not firmware (aka bus) specific and an earlier
+> > version had just that (with fwnode_* calls). That turned out to be
+> > pointless as the calling locations were almost always in DT specific
+> > code anyway. If you notice, the calls are next to other DT specific
+> > calls generally (usually a "get"). So yes, I'd prefer not to have to
+> > touch every subsystem, but we had to do that anyway to add DT support.
+
+> If they are "next" to a call like that, why not put it in that call?  I
+> really object to having to "sprinkle" this all over the kernel, for no
+> obvious reason why that is happening at all (look at the USB patch for
+> one such example.)
+
+I did ask that question myself IIRC - we could probably get a long way
+by trying to instantiate anything that looks probable when we do a
+phandle lookup on it.
+
+--ylUvUtShPtQAJVVd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWI/XkAAoJECTWi3JdVIfQITcH/jtrvXbuGKZZSYbLjVQcSiWt
+C/MXzYtFbSJgvLgAcxbbegmnGt9ERY0WcETCVaBWpHK3K5vgxFu+9bnWjuFU1FxG
+dH6MBp2mC2A3GiUsaVAo4TSRNoouB34729rfeSCgqEiQ6sK+rksvZWgc/nSJC0TD
+DRJJMQieFUPHW6ywTOHL9allHuOJrmCX6vLyJEoSR1ggcMKoFkAPup3UMSv5Uvgw
+uQHVqaDadofytOa+qSSkrEIkFmUs6raQhh1H2OB2xilFKeXyjvYuo8rvVgSxokti
+RjFEZm/y2U7dzyrXTLPOOup3YPZfXaIxQqSXfMCUmWiAwJSSvK0GeL/IylHRmZM=
+=WR65
+-----END PGP SIGNATURE-----
+
+--ylUvUtShPtQAJVVd--
