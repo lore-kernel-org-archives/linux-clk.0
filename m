@@ -1,123 +1,94 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 19 Oct 2015 17:03:47 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: York Sun <yorksun@freescale.com>
-Cc: linux-clk@vger.kernel.org, pmarrecas@outlook.com,
-	Mike Turquette <mturquette@baylibre.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Andrey Filippov <andrey@elphel.com>,
-	Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [Resend Patch v6] driver/clk/clk-si5338: Add common clock
- framework driver for si5338
-Message-ID: <20151019234348.GE19782@codeaurora.org>
-References: <1444410574-28677-1-git-send-email-yorksun@freescale.com>
- <20151010000948.GW26883@codeaurora.org>
- <562165C3.1090103@freescale.com>
- <20151016213139.GE16437@codeaurora.org>
- <56216E0D.4010709@freescale.com>
- <20151016230555.GE10182@codeaurora.org>
- <562553E4.30906@freescale.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <562553E4.30906@freescale.com>
+Return-Path: <stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+To: shawnguo@kernel.org,
+	kernel@pengutronix.de,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: galak@codeaurora.org,
+	ijc+devicetree@hellion.org.uk,
+	mark.rutland@arm.com,
+	pawel.moll@arm.com,
+	robh+dt@kernel.org,
+	Li.Xiubo@freescale.com,
+	zidan.wang@freescale.com,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Agner <stefan@agner.ch>
+Subject: [PATCH 1/3] ARM: imx: clk-vf610: fix SAI clock tree
+Date: Sat, 17 Oct 2015 21:05:20 -0700
+Message-Id: <1445141122-14183-1-git-send-email-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/19, York Sun wrote:
-> 
-> 
-> On 10/16/2015 04:05 PM, Stephen Boyd wrote:
-> > On 10/16, York Sun wrote:
-> >>
-> >>
-> >> On 10/16/2015 02:31 PM, Stephen Boyd wrote:
-> >>> On 10/16, York Sun wrote:
-> >>>>
-> >>>>
-> >>>> On 10/09/2015 05:09 PM, Stephen Boyd wrote:
-> >>>>> On 10/09, York Sun wrote:
-> >>>>>> +/*
-> >>>>>> + * To support multiple si5338 chips, we cannot use devm_clk_get because
-> >>>>>> + * each chip has its own clock sources. If device tree is not used,
-> >>>>>> + * platform driver should provide these clocks. Let the clocks be freed
-> >>>>>> + * automatically when device is unbound. We implement our own devm_of_clk_get.
-> >>>>>> + */
-> >>>>>> +static void devm_of_clk_release(struct device *dev, void *res)
-> >>>>>> +{
-> >>>>>> +	clk_put(*(struct clk **)res);
-> >>>>>> +}
-> >>>>>> +
-> >>>>>> +static struct clk *devm_of_clk_get(struct device *dev, struct device_node *np,
-> >>>>>
-> >>>>> What is this? I don't get it at all.
-> >>>>
-> >>>> Maybe you can help me on this.
-> >>>> We have two ways to get parent clock. One is from device tree, the other is from
-> >>>> platform data. When the clock is from platform data, the consumer gets the clock
-> >>>> and passes it. The clock will be put by the consumer as well. When the parent
-> >>>> clock comes from device tree, what I am trying to do is to call of_clk_get(),
-> >>>> without worrying about to call clk_put() later when the driver is removed, so I
-> >>>> don't have to know where the parent clock data came from.
-> >>>>
-> >>>
-> >>> This driver should always use clk_get() then. If the mode is
-> >>> device tree, clk_get() will lookup the clock in DT and get it
-> >>> from there. If the mode is platform data, then we'll fallback to
-> >>> the clkdev method of clk_get(), which will look for a clk_lookup
-> >>> created for the device calling clk_get() + the connection id that
-> >>> was provided by the lookup creator. This driver should always
-> >>> call clk_put() on the clock when it's done with it, regardless of
-> >>> DT vs. platform data.
-> >>>
-> >>
-> >> For the platform data mode, I think it is up to the consumer to get and put the
-> >> parent clocks. The current code is to pass (struct clk *) pointers as parent
-> >> clocks. Are you suggesting to pass the name of parent clocks?
-> >>
-> > 
-> > I'm suggesting to register clocks with clkdev using a device name
-> > that matches the consumer. The consumer (this driver?) will
-> > simply call clk_get() and clk_put() then, nothing else is needed.
-> > I'm not suggesting to pass the names of the parent clocks. It
-> > sounds like those are inputs to this device, so we should be
-> > calling clk_get() with a device and a connection id to get the
-> > clock.
-> > 
-> 
-> Stephen,
-> 
-> I am still having difficulty to implement this. The platform device doesn't know
-> the clock device id when probing the clock chip. For my case, the platform
-> device is a PCIe device, with I2C controller on it. The clock chip is on the I2C
-> bus. When the PCIe device is probed, it registers the parent clocks for si5338
-> before calling i2c_new_probed_device(). At this moment, the si5338 doesn't have
-> an instance yet. So the parent clock pointer(s) in platform data structure
-> is/are passed.
-> 
-> I have another solution, let the platform data has clk pointer(s). The clock
-> driver for si5338 will use device tree of_clk_get() if device tree is used, or
-> take the pointer(s) from platform data. Upon driver removal, this driver call
-> clk_put() regardless where the pointer(s) came from. The change will be in my
-> platform device driver. It doesn't need to call clk_put again.
-> 
-> Would it be acceptable?
+The Synchronous Audio Interface (SAI) instances are clocked by
+independent clocks: The bus clock and the audio clock (as shown in
+Figure 51-1 in the Vybrid Reference Manual). The clock gates in
+CCGR0/CCGR1 for SAI0 through SAI3 are bus clock gates, as access
+tests to the registers with/without gating those clocks have shown.
+The audio clock is gated by the SAIx_EN gates in CCM_CSCDR1,
+followed by a clock divider (SAIx_DIV). Currently, the parent of
+the bus clock gates has been assigned to SAIx_DIV, which is not
+involved in the bus clock path for the SAI instances (see chapter
+9.10.12, SAI clocking in the Vybrid Reference Manual).
 
-Sorry I'm a little lost. Where does the platform data come into
-the picture? Is the i2c driver going to the parent device to get
-the platform data?
+Fix this by define the parent clock of VF610_CLK_SAIx to be the bus
+clock.
 
-If we have a way to pass data to the si5338 i2c device, then I
-assume we have a way to get the device name of the i2c device. If
-that's true, then we can create a clk lookup structure with
-clkdev_create() in the place where we have the clock pointer and
-use the dev_name() of the i2c device as the third argument to
-that function.
+If the driver needs the audio clock (when used in master mode), a
+fixed device tree is required which assign the audio clock properly
+to VF610_CLK_SAIx_DIV.
 
-BTW, the i2c device doesn't need to call of_clk_get(), it can
-just call clk_get() and pass the device pointer and it will use
-the DT path if there's a provider. Please don't use of_clk_get()
-when a struct device is present.
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+Hi all,
 
+Patch 1 and 2 are actual fixes and should be applied toghether. If
+the clock tree changes are applied only, master mode won't work
+anymore. With only the device tree changes applied, it probably
+will still work but the VF610_CLK_SAIx_DIV will be enabled twice.
+
+Since Patch 3 also uses the fixed clock layout, it should be
+applied after the clock tree fix too...
+
+Not sure through which tree these changes should go?
+
+--
+Stefan
+
+ drivers/clk/imx/clk-vf610.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
+index bff45ea..42a7a23 100644
+--- a/drivers/clk/imx/clk-vf610.c
++++ b/drivers/clk/imx/clk-vf610.c
+@@ -335,22 +335,22 @@ static void __init vf610_clocks_init(struct device_node *ccm_node)
+ 	clk[VF610_CLK_SAI0_SEL] = imx_clk_mux("sai0_sel", CCM_CSCMR1, 0, 2, sai_sels, 4);
+ 	clk[VF610_CLK_SAI0_EN] = imx_clk_gate("sai0_en", "sai0_sel", CCM_CSCDR1, 16);
+ 	clk[VF610_CLK_SAI0_DIV] = imx_clk_divider("sai0_div", "sai0_en", CCM_CSCDR1, 0, 4);
+-	clk[VF610_CLK_SAI0] = imx_clk_gate2("sai0", "sai0_div", CCM_CCGR0, CCM_CCGRx_CGn(15));
++	clk[VF610_CLK_SAI0] = imx_clk_gate2("sai0", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(15));
+ 
+ 	clk[VF610_CLK_SAI1_SEL] = imx_clk_mux("sai1_sel", CCM_CSCMR1, 2, 2, sai_sels, 4);
+ 	clk[VF610_CLK_SAI1_EN] = imx_clk_gate("sai1_en", "sai1_sel", CCM_CSCDR1, 17);
+ 	clk[VF610_CLK_SAI1_DIV] = imx_clk_divider("sai1_div", "sai1_en", CCM_CSCDR1, 4, 4);
+-	clk[VF610_CLK_SAI1] = imx_clk_gate2("sai1", "sai1_div", CCM_CCGR1, CCM_CCGRx_CGn(0));
++	clk[VF610_CLK_SAI1] = imx_clk_gate2("sai1", "ipg_bus", CCM_CCGR1, CCM_CCGRx_CGn(0));
+ 
+ 	clk[VF610_CLK_SAI2_SEL] = imx_clk_mux("sai2_sel", CCM_CSCMR1, 4, 2, sai_sels, 4);
+ 	clk[VF610_CLK_SAI2_EN] = imx_clk_gate("sai2_en", "sai2_sel", CCM_CSCDR1, 18);
+ 	clk[VF610_CLK_SAI2_DIV] = imx_clk_divider("sai2_div", "sai2_en", CCM_CSCDR1, 8, 4);
+-	clk[VF610_CLK_SAI2] = imx_clk_gate2("sai2", "sai2_div", CCM_CCGR1, CCM_CCGRx_CGn(1));
++	clk[VF610_CLK_SAI2] = imx_clk_gate2("sai2", "ipg_bus", CCM_CCGR1, CCM_CCGRx_CGn(1));
+ 
+ 	clk[VF610_CLK_SAI3_SEL] = imx_clk_mux("sai3_sel", CCM_CSCMR1, 6, 2, sai_sels, 4);
+ 	clk[VF610_CLK_SAI3_EN] = imx_clk_gate("sai3_en", "sai3_sel", CCM_CSCDR1, 19);
+ 	clk[VF610_CLK_SAI3_DIV] = imx_clk_divider("sai3_div", "sai3_en", CCM_CSCDR1, 12, 4);
+-	clk[VF610_CLK_SAI3] = imx_clk_gate2("sai3", "sai3_div", CCM_CCGR1, CCM_CCGRx_CGn(2));
++	clk[VF610_CLK_SAI3] = imx_clk_gate2("sai3", "ipg_bus", CCM_CCGR1, CCM_CCGRx_CGn(2));
+ 
+ 	clk[VF610_CLK_NFC_SEL] = imx_clk_mux("nfc_sel", CCM_CSCMR1, 12, 2, nfc_sels, 4);
+ 	clk[VF610_CLK_NFC_EN] = imx_clk_gate("nfc_en", "nfc_sel", CCM_CSCDR2, 9);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.6.1
