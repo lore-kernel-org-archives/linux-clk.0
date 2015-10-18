@@ -1,70 +1,103 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <broonie@sirena.org.uk>
+Date: Sun, 18 Oct 2015 20:29:31 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>,
+	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org
+Message-ID: <20151018192931.GY14956@sirena.org.uk>
+References: <561E1378.6000906@collabora.com>
+ <20151017065750.GA18607@kroah.com>
 MIME-Version: 1.0
-To: Scott Wood <scottwood@freescale.com>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1444435064.5185.16.camel@freescale.com>
-Cc: "Stephen Boyd" <sboyd@codeaurora.org>,
- "Tang Yuantian" <Yuantian.Tang@freescale.com>,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- "Liberman Igal-B31950" <Igal.Liberman@freescale.com>,
- "Bucur Madalin-Cristian-B32716" <madalin.bucur@freescale.com>,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org
-References: <1434682158-7243-1-git-send-email-scottwood@freescale.com>
- <20150811182535.31346.52965@quantum>
- <1443745589.5336.185.camel@freescale.com>
- <1444435064.5185.16.camel@freescale.com>
-Message-ID: <20151022101116.20687.55089@quantum>
-Subject: Re: [RFC PATCH 0/8] clk: qoriq: Move chip-specific knowledge into driver
-Date: Thu, 22 Oct 2015 03:11:16 -0700
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="UNRiu6AvOPumrTuJ"
+In-Reply-To: <20151017065750.GA18607@kroah.com>
+Subject: Re: [GIT PULL] On-demand device probing
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Scott Wood (2015-10-09 16:57:44)
-> On Thu, 2015-10-01 at 19:26 -0500, Scott Wood wrote:
-> > [Resending to updated e-mail address]
-> > =
 
-> > On Tue, 2015-08-11 at 11:25 -0700, Michael Turquette wrote:
-> > > Hi Scott,
-> > > =
+--UNRiu6AvOPumrTuJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > > Quoting Scott Wood (2015-06-18 19:49:10)
-> > > > The existing device tree bindings are error-prone and inflexible. =
+On Fri, Oct 16, 2015 at 11:57:50PM -0700, Greg Kroah-Hartman wrote:
 
-> > > > Correct the mistake by moving the knowledge into the driver, which
-> > > > has more flexibility in describing the quirks of each chip.  This l=
-eaves
-> > > > the device tree to its proper role of identifying a programming =
+> I can't see adding calls like this all over the tree just to solve a
+> bus-specific problem, you are adding of_* calls where they aren't
+> needed, or wanted, at all.
 
-> > > > interface
-> > > > rather than describing its individual registers.
-> > > =
+This isn't bus specific, I'm not sure what makes you say that?
 
-> > > Sorry for not responding to this one sooner. Fell through the cracks.
-> > > =
+> What is the root-problem of your delay in device probing?  I read your
+> last patch series and I can't seem to figure out what the issue is that
+> this is solving in any "better" way from the existing deferred probing.
 
-> > > All of the changes to drives/clk/clk-qoriq.c look great to me. I assu=
-me
-> > > you need to keep all of these patches together and want to the take
-> > > through the freescale tree? If so feel free to add,
-> > > =
+So, I don't actually have any platforms that are especially bothered by
+this (at least not for my use cases) so there's a bit of educated
+guessing going on here but there's two broad things I'm aware of. =20
 
-> > > Acked-by: Michael Turquette <mturquette@baylibre.com>
-> > =
+One is that regardless of the actual performance of the system when
+deferred probe goes off it splats errors all over the console which
+makes it look like something is going wrong even if everything is fine
+in the end.  If lots of deferred probing happens then the volume gets
+big too.  People find this distracting, noisy and ugly - it obscures
+actual issues and trains people to ignore errors.  I do think this is a
+reasonable concern and that it's worth trying to mitigate against
+deferral for this reason alone.  We don't want to just ignore the errors
+and not print anything either since if the resource doesn't appear the
+user needs to know what is preventing the driver from instantiating so
+they can try to fix it.
 
-> > Is the ack still valid for the v3 patchset?
+The other is that if you're printing to a serial console then that's not
+an especially fast operation so if you're getting lots of messages being
+printed simply physically outputting them takes measurable time.  I'm
+not aware of any performance concerns outside of that, but like I say
+I'm not affected by this myself in any great way.  Obviously this can be
+configured but not having actual errors on the console isn't super
+awesome either for systems that make use of the logging there and we
+don't have a good way of telling what's from deferral and what's not.
 
-Yes. Looks Stephen beat me to it though.
+--UNRiu6AvOPumrTuJ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Regards,
-Mike
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-> =
+iQEcBAEBCAAGBQJWI/MaAAoJECTWi3JdVIfQmtEH/i0fhCiTHqE0Nz3IsEG38cvR
+kYDtb3pOGWST5b/UDQjf1OQqiV4KnXG4/yudegM8Dwl3nxqNEpusHjQU2oew9a1l
+VpkzeB9eHfcvCnoT+h6YgIfjIzIFcfEwbNcDC8PXOQTYoTaOTLH/0zVHvJRFN1Rs
+ufcwAI28sT1bHWRWBnzh3TStrN/z6ivL7Yg9qLVTyGBLTXbWUMFXmDW2WNK11Hn0
+HWJTqVAuodvvKj+FPWK/+dJSJyhwRklDN5IV5TQY3MH2BmraO/H/IqMOqPiNkp1H
+IIV2+WRRW+gxa4RYD0zzKfx+rr8ipcdD/3iqx9DWwz8yC3Gs64q9qwXI4ha7NPs=
+=jM4R
+-----END PGP SIGNATURE-----
 
-> ping
-> =
-
-> -Scott
->=20
+--UNRiu6AvOPumrTuJ--
