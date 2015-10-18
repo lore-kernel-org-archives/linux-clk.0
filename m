@@ -1,91 +1,71 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH] clk: Allow drivers to build if COMPILE_TEST is enabled
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1444745898-11537-1-git-send-email-javier@osg.samsung.com>
- <20151014183831.GH26883@codeaurora.org> <561EA831.2070001@osg.samsung.com>
- <561EAF6F.6080901@osg.samsung.com> <20151014211351.GC4558@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, Luis de Bethencourt
- <luisbg@osg.samsung.com>, Michael Turquette <mturquette@baylibre.com>,
- Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>,
- linux-clk@vger.kernel.org
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <5620EB13.7080201@osg.samsung.com>
-Date: Fri, 16 Oct 2015 14:18:27 +0200
+Return-Path: <gregkh@linuxfoundation.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-kernel@lists.codethink.co.uk,
+	Ben Dooks <ben.dooks@codethink.co.uk>,
+	Tero Kristo <t-kristo@ti.com>
+Subject: [PATCH 4.2 243/258] clk: ti: fix dual-registration of uart4_ick
+Date: Sat, 17 Oct 2015 18:59:16 -0700
+Message-Id: <20151018014741.470565271@linuxfoundation.org>
+In-Reply-To: <20151018014729.976101177@linuxfoundation.org>
+References: <20151018014729.976101177@linuxfoundation.org>
 MIME-Version: 1.0
-In-Reply-To: <20151014211351.GC4558@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=ISO-8859-15
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Stephen,
+4.2-stable review patch.  If anyone has any objections, please let me know.
 
-On 10/14/2015 11:13 PM, Stephen Boyd wrote:
-> On 10/14, Javier Martinez Canillas wrote:
->> On 10/14/2015 09:08 PM, Javier Martinez Canillas wrote:
->>> Hello Stephen,
->>>
->>> On 10/14/2015 08:38 PM, Stephen Boyd wrote:
->>>> On 10/13, Javier Martinez Canillas wrote:
->>>>> diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
->>>>> index 1530c9352a76..fc50b6264bed 100644
->>>>> --- a/drivers/clk/versatile/Kconfig
->>>>> +++ b/drivers/clk/versatile/Kconfig
->>>>> @@ -1,6 +1,6 @@
->>>>>  config COMMON_CLK_VERSATILE
->>>>>  	bool "Clock driver for ARM Reference designs"
->>>>> -	depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64
->>>>> +	depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64 || COMPILE_TEST
->>>>
->>>> Have you compiled these drivers on an architecture that doesn't
->>>> have IOMEM? Perhaps tile or um? I'm all for more build coverage,
->>>> but it's not always as simple as just sprinkling some
->>>> COMPILE_TEST around the Kconfigs.
->>>>
->>>
->>> No, I only build tested on arm32 and x86. The 0-day bot haven't reported a
->>> build error yet and I didn't see any platform dependent code in the drivers.
->>>
->>
->> BTW, all clk drivers depends on COMMON_CLK so these won't even be built in
->> tile or um since that symbol isn't selected there. Or did I misunderstand?
->>
->> Having said that, I see that enabling COMPILE_TEST will attempt to build
->> in many archs [0] that I don't have a toolchain to test. So I'm OK if you
->> drop this patch and sorry for the inconvenience.
->>
->> [0]:
->> $ git grep "select COMMON_CLK" arch/ | cut -d '/' -f2 | uniq 
->> arc
->> arm
->> arm64
->> h8300
->> microblaze
->> mips
->> powerpc
->> x86
->> xtensa
->>
-> 
-> Ah that's good. So assuming someone has built these patches with
-> these architectures then we've got it all covered. Do you know if
-> kbuild does that? There are a bunch of cross compilers on
-> kernel.org that may help[1]. I'll wait to apply the patch once we
-> get that confirmation.
-> 
-> [1] https://www.kernel.org/pub/tools/crosstool/
-> 
+------------------
 
-I built on all those archs and neither allyesconfig nor allmodconfig
-gives me build error or warnings for the partial build M=drivers/clk
+From: Ben Dooks <ben.dooks@codethink.co.uk>
 
-I only had an issue with h8300 since the arch has hardcoded stuff
-in its Makefile like the toolchain file name, I posted a patch [0]
-to fix that but then got a linker issue. This not related to $SUBJECT
-though but to the h8300 arch Makefile.
+commit 19e79687de22f23bcfb5e79cce3daba20af228d1 upstream.
 
-[0]: https://lkml.org/lkml/2015/10/16/342
+On the OMAP AM3517 platform the uart4_ick gets registered
+twice, causing any power management to /dev/ttyO3 to fail
+when trying to wake the device up.
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+This solves the following oops:
+
+[] Unhandled fault: external abort on non-linefetch (0x1028) at 0xfa09e008
+[] PC is at serial_omap_pm+0x48/0x15c
+[] LR is at _raw_spin_unlock_irqrestore+0x30/0x5c
+
+Fixes: aafd900cab87 ("CLK: TI: add omap3 clock init file")
+Cc: mturquette@baylibre.com
+Cc: sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-omap@vger.kernel.org
+Cc: linux-kernel@lists.codethink.co.uk
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/clk/ti/clk-3xxx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/clk/ti/clk-3xxx.c
++++ b/drivers/clk/ti/clk-3xxx.c
+@@ -163,7 +163,6 @@ static struct ti_dt_clk omap3xxx_clks[]
+ 	DT_CLK(NULL, "gpio2_ick", "gpio2_ick"),
+ 	DT_CLK(NULL, "wdt3_ick", "wdt3_ick"),
+ 	DT_CLK(NULL, "uart3_ick", "uart3_ick"),
+-	DT_CLK(NULL, "uart4_ick", "uart4_ick"),
+ 	DT_CLK(NULL, "gpt9_ick", "gpt9_ick"),
+ 	DT_CLK(NULL, "gpt8_ick", "gpt8_ick"),
+ 	DT_CLK(NULL, "gpt7_ick", "gpt7_ick"),
+@@ -308,6 +307,7 @@ static struct ti_dt_clk am35xx_clks[] =
+ static struct ti_dt_clk omap36xx_clks[] = {
+ 	DT_CLK(NULL, "omap_192m_alwon_fck", "omap_192m_alwon_fck"),
+ 	DT_CLK(NULL, "uart4_fck", "uart4_fck"),
++	DT_CLK(NULL, "uart4_ick", "uart4_ick"),
+ 	{ .node_name = NULL },
+ };
+ 
