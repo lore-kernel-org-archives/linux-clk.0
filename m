@@ -1,126 +1,65 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: bcm-kernel-feedback-list@broadcom.com,
-	devicetree@vger.kernel.org,
-	jonmason@broadcom.com,
-	sboyd@codeaurora.org,
+Return-Path: <stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+To: shawnguo@kernel.org,
+	kernel@pengutronix.de,
 	mturquette@baylibre.com,
-	linux@arm.linux.org.uk,
-	sbranden@broadcom.com,
-	rjui@broadcom.com,
-	Florian Fainelli <f.fainelli@gmail.com>
-Subject: [PATCH v2 3/3] ARM: dts: BCM63xx: Add ARMPLL device tree nodes
-Date: Mon, 26 Oct 2015 20:53:17 -0700
-Message-Id: <1445917997-3629-4-git-send-email-f.fainelli@gmail.com>
-In-Reply-To: <1445917997-3629-1-git-send-email-f.fainelli@gmail.com>
-References: <1445917997-3629-1-git-send-email-f.fainelli@gmail.com>
+	sboyd@codeaurora.org
+Cc: galak@codeaurora.org,
+	ijc+devicetree@hellion.org.uk,
+	mark.rutland@arm.com,
+	pawel.moll@arm.com,
+	robh+dt@kernel.org,
+	Li.Xiubo@freescale.com,
+	zidan.wang@freescale.com,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Agner <stefan@agner.ch>
+Subject: [PATCH 2/3] ARM: dts: vf610: fix clock definition for SAI2
+Date: Sat, 17 Oct 2015 21:05:21 -0700
+Message-Id: <1445141122-14183-2-git-send-email-stefan@agner.ch>
+In-Reply-To: <1445141122-14183-1-git-send-email-stefan@agner.ch>
+References: <1445141122-14183-1-git-send-email-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the ARM PLL controller which comes standard with the Cortex-A9 found
-on the BCM63138 SoCs. This is the same controller as the one found in
-the Broadcom iProc architecture, however, we have a separate compatible
-string to indicate the integration difference.
+So far, only the bus clock has been assigned, but in reality the
+SAI IP has for clock inputs. The driver has been updated to
+make use of the additional clock inputs by c3ecef21c3f2 ("ASoC:
+fsl_sai: add sai master mode support"). Due to a bug in the
+clock tree, the audio clock has been enabled none the less by
+the specified bus clock (see "ARM: imx: clk-vf610: fix SAI
+clock tree"), which made master mode even without the proper
+clock assigned working.
 
-While at it, properly rename references to the 50Mhz clock which is in
-fact a crystal/oscillator and updates references to it.
+This patch completes the clock definition for SAI2. On Vybrid,
+only two MCLK out of the four options are available (the first
+being the bus clock itself). See chapter 8.10.1.2.3 of the
+Vybrid Reference manual ("SAI transmitter and receiver options
+for MCLK selection"). Note: The audio clocks are only required
+in master mode.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
-No changes in v2
+ arch/arm/boot/dts/vfxxx.dtsi | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
- arch/arm/boot/dts/bcm63138.dtsi | 39 +++++++++++++++++++++++++++++----------
- 1 file changed, 29 insertions(+), 10 deletions(-)
-
-diff --git a/arch/arm/boot/dts/bcm63138.dtsi b/arch/arm/boot/dts/bcm63138.dtsi
-index 34cd64051250..c146325eebdb 100644
---- a/arch/arm/boot/dts/bcm63138.dtsi
-+++ b/arch/arm/boot/dts/bcm63138.dtsi
-@@ -43,17 +43,29 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		arm_timer_clk: arm_timer_clk {
-+		osc: oscillator {
- 			#clock-cells = <0>;
- 			compatible = "fixed-clock";
--			clock-frequency = <500000000>;
-+			clock-frequency = <50000000>;
-+			clock-output-names = "periph";
- 		};
- 
--		periph_clk: periph_clk {
-+		/* peripheral clock for system timer */
-+		axi_clk: axi_clk {
- 			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <50000000>;
--			clock-output-names = "periph";
-+			compatible = "fixed-factor-clock";
-+			clocks = <&armpll>;
-+			clock-div = <2>;
-+			clock-mult = <1>;
-+		};
-+
-+		/* APB bus clock */
-+		apb_clk: apb_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&armpll>;
-+			clock-div = <4>;
-+			clock-mult = <1>;
- 		};
- 	};
- 
-@@ -93,14 +105,14 @@
- 			compatible = "arm,cortex-a9-global-timer";
- 			reg = <0x1e200 0x20>;
- 			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&arm_timer_clk>;
-+			clocks = <&axi_clk>;
- 		};
- 
- 		local_timer: local-timer@1e600 {
- 			compatible = "arm,cortex-a9-twd-timer";
- 			reg = <0x1e600 0x20>;
- 			interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&arm_timer_clk>;
-+			clocks = <&axi_clk>;
- 		};
- 
- 		twd_watchdog: watchdog@1e620 {
-@@ -109,6 +121,13 @@
- 			interrupts = <GIC_PPI 14 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		armpll: armpll {
-+			#clock-cells = <0>;
-+			compatible = "brcm,bcm63138-armpll";
-+			clocks = <&osc>;
-+			reg = <0x20000 0xf00>;
-+		};
-+
- 		pmb0: reset-controller@4800c0 {
- 			compatible = "brcm,bcm63138-pmb";
- 			reg = <0x4800c0 0x10>;
-@@ -138,7 +157,7 @@
- 			compatible = "brcm,bcm6345-uart";
- 			reg = <0x600 0x1b>;
- 			interrupts = <GIC_SPI 32 0>;
--			clocks = <&periph_clk>;
-+			clocks = <&osc>;
- 			clock-names = "periph";
- 			status = "disabled";
- 		};
-@@ -147,7 +166,7 @@
- 			compatible = "brcm,bcm6345-uart";
- 			reg = <0x620 0x1b>;
- 			interrupts = <GIC_SPI 33 0>;
--			clocks = <&periph_clk>;
-+			clocks = <&osc>;
- 			clock-names = "periph";
- 			status = "disabled";
- 		};
+diff --git a/arch/arm/boot/dts/vfxxx.dtsi b/arch/arm/boot/dts/vfxxx.dtsi
+index 6865137..c2a4d1c 100644
+--- a/arch/arm/boot/dts/vfxxx.dtsi
++++ b/arch/arm/boot/dts/vfxxx.dtsi
+@@ -178,8 +178,10 @@
+ 				compatible = "fsl,vf610-sai";
+ 				reg = <0x40031000 0x1000>;
+ 				interrupts = <86 IRQ_TYPE_LEVEL_HIGH>;
+-				clocks = <&clks VF610_CLK_SAI2>;
+-				clock-names = "sai";
++				clocks = <&clks VF610_CLK_SAI2>,
++					<&clks VF610_CLK_SAI2_DIV>,
++					<&clks 0>, <&clks 0>;
++				clock-names = "bus", "mclk1", "mclk2", "mclk3";
+ 				dma-names = "tx", "rx";
+ 				dmas = <&edma0 0 21>,
+ 					<&edma0 0 20>;
 -- 
-2.1.0
+2.6.1
