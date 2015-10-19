@@ -1,13 +1,10 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Tue, 20 Oct 2015 20:35:28 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Rob Herring <robh@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	David Woodhouse <dwmw2@infradead.org>,
+Return-Path: <linux+mturquette=baylibre.com@arm.linux.org.uk>
+Date: Mon, 19 Oct 2015 16:35:49 +0100
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Mark Brown <broonie@kernel.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Russell King <linux@arm.linux.org.uk>,
+	Rob Herring <robh+dt@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
 	Vinod Koul <vinod.koul@intel.com>,
@@ -24,70 +21,78 @@ Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
 	Kishon Vijay Abraham I <kishon@ti.com>,
 	Sebastian Reichel <sre@kernel.org>,
 	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
 	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
 	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
 	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
 	Tomi Valkeinen <tomi.valkeinen@ti.com>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
 	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-gpio@vger.kernel.org,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
 	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	linux-i2c@vger.kernel.org,
 	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
 	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
 	Linux PWM List <linux-pwm@vger.kernel.org>,
-	Linux USB List <linux-usb@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-Message-ID: <20151020193528.GE32054@sirena.org.uk>
-References: <CAAObsKChQN4gg91dCWJS_Co_MrYyBrB1J7gxgGo4hsPXNZRp3g@mail.gmail.com>
- <Pine.LNX.4.44L0.1510201311260.1855-100000@iolanthe.rowland.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7fVr/IRGAG9sAW4J"
-In-Reply-To: <Pine.LNX.4.44L0.1510201311260.1855-100000@iolanthe.rowland.org>
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	linux-fbdev@vger.kernel.org
 Subject: Re: [GIT PULL] On-demand device probing
+Message-ID: <20151019153548.GM32532@n2100.arm.linux.org.uk>
+References: <561E1378.6000906@collabora.com>
+ <20151017065750.GA18607@kroah.com>
+ <20151018192931.GY14956@sirena.org.uk>
+ <20151018193757.GA9147@kroah.com>
+ <20151018195330.GB14956@sirena.org.uk>
+ <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
+ <20151019131821.GA32532@n2100.arm.linux.org.uk>
+ <CAAObsKDS_+AZ26P_fHc6pvAYrQotsuoO0DEGQUWC514t3DD_jQ@mail.gmail.com>
+ <20151019143045.GE32532@n2100.arm.linux.org.uk>
+ <CAAObsKDWM6A98tdKHqi4fe5DBf0BmB0JeghcZDWan_PYbyshag@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAAObsKDWM6A98tdKHqi4fe5DBf0BmB0JeghcZDWan_PYbyshag@mail.gmail.com>
+Sender: Russell King - ARM Linux <linux@arm.linux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
+On Mon, Oct 19, 2015 at 05:00:54PM +0200, Tomeu Vizoso wrote:
+> On 19 October 2015 at 16:30, Russell King - ARM Linux
+> <linux@arm.linux.org.uk> wrote:
+> > I typically see one or two, maybe five maximum on the platforms I have
+> > here, but normally zero.
+> 
+> Hmm, I have given a look at our lava farm and have seen 2 dozens as
+> common (with multi_v7).
 
---7fVr/IRGAG9sAW4J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+No, because the lava farms tend not to be public.
 
-On Tue, Oct 20, 2015 at 01:14:46PM -0400, Alan Stern wrote:
-> On Tue, 20 Oct 2015, Tomeu Vizoso wrote:
+> > What you can do is print those devices which have failed to probe at
+> > late_initcall() time - possibly augmenting that with reports from
+> > subsystems showing what resources are not available, but that's only
+> > a guide, because of the "it might or might not be in a kernel module"
+> > problem.
+> 
+> Well, adding those reports would give you a changelog similar to the
+> one in this series...
 
-> > This iteration of the series would make this quite easy, as
-> > dependencies are calculated before probes are attempted:
+I'm not sure about that, because what I was thinking of is adding
+a flag which would be set at late_initcall() time prior to running
+a final round of deferred device probing.
 
-> > https://lkml.org/lkml/2015/6/17/311
+This flag would then be used in a deferred_warn() printk function
+which would normally be silent, but when this flag is set, it would
+print the reason for the deferral - and this would replace (or be
+added) to the subsystems and drivers which return -EPROBE_DEFER.
 
-> But what Rafael is proposing is quite general; it would apply to _all_
-> dependencies as opposed to just those present in DT drivers or those=20
-> affecting platform_devices.
+That has the effect of hiding all the deferrals up until just before
+launching into userspace, which should then acomplish two things -
+firstly, getting rid of the rather useless deferred messages up to
+that point, and secondly printing the reason why the remaining
+deferrals are happening.
 
-We'll still need most of the DT bits that are there at the minute (the
-ones strewn around the subsystems) AFAICT since it's at the point where
-we parse the DT and work out what the dependencies are which we probably
-want to do prior to getting the drivers up and will be different for
-ACPI.  I think the level of DT dependency here looks a lot larger than
-it actually is due to the fact that a lot of what's being modified is DT
-parsing code.
+That should be a small number of new lines plus a one-line change
+in subsystems and drivers.
 
---7fVr/IRGAG9sAW4J
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWJpd/AAoJECTWi3JdVIfQyOUH/3aWMFomvCvS2CL4BvzIQDB4
-BphbR2H9ODV06RJMlHiGXa91+iBfp+FxWHQeyoc0ySA1Jn2tzZp8YwHnkNB32MvM
-lh9IOvlTQGwWOFxNNJZeExicoCW4ui3F1sQmcS3ycu9gHHUi/xdqczCFlIeJdJRX
-mSuLTMmuJVsxwFPY/X7EmKZzJLG8eIHWwzkH66432AO4UpU9Bs/dZ5vPxCSCsL89
-xEBG0PSdsFy/hL2Ag1zHZcu49cpEDLK/26vKrW96Ql6dklsfN5D3HDazZ4l0RE0r
-5iF7s3G0fFNpopm+SgwuwWXN92NtcPiHMEfZwLFeekLgyA+fdXC8yesekx0zmVg=
-=cBfe
------END PGP SIGNATURE-----
-
---7fVr/IRGAG9sAW4J--
+-- 
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
