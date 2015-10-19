@@ -1,35 +1,53 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 15 Oct 2015 11:02:40 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH 14/26] clk: mvebu: Convert to clk_hw based provider APIs
-Message-ID: <20151015180240.GF4558@codeaurora.org>
-References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
- <1438362246-6664-15-git-send-email-sboyd@codeaurora.org>
- <20151014170922.3027008a@free-electrons.com>
- <20151014182138.GD26883@codeaurora.org>
- <20151015102243.79d9e5ce@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20151015102243.79d9e5ce@free-electrons.com>
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ linux-crypto@vger.kernel.org
+Cc: Heiner Kallweit <hkallweit1@gmail.com>
+Subject: [PATCH 0/3] ARM: dts: Enable Exynos RNG module
+Date: Mon, 19 Oct 2015 14:00:31 +0900
+Message-id: <1445230834-32689-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/15, Thomas Petazzoni wrote:
-> 
-> Applied on top of 4.3-rc5, this patch fixes the problem for me, without
-> any change to the Device Tree files.
-> 
-> It's probably the easiest option for 4.3. Do you want me to submit a
-> patch, or will you apply it directly to your clk tree?
+Hi,
 
-I've already applied it to clk-fixes, I'll send it off tomorrow
-or the next day.
+
+The patchset adds necessary clock from Security SubSystem (SSS)
+and enables the PRNG module of Exynos for Trats2 board.
+
+The first patch (clock) is required for other ones so please
+take everything in one step.
+
+The actual Device Tree support (and compatible) was sent in separate
+patch:
+ - https://patchwork.kernel.org/patch/7432891/
+ - http://marc.info/?l=linux-crypto-vger&m=144522952725052&w=2
+
+The device can be tested (after applying both patchsets) with:
+$ echo exynos > /sys/class/misc/hw_random/rng_current
+$ dd if=/dev/hwrng of=/dev/null bs=1 count=16
+
+
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (3):
+  clk: samsung: exynos4: Add SSS gate clock
+  ARM: dts: Add PRNG module for exynos4
+  ARM: dts: Enable PRNG module on exynos4412-trats2
+
+ arch/arm/boot/dts/exynos4.dtsi          | 8 ++++++++
+ arch/arm/boot/dts/exynos4412-trats2.dts | 4 ++++
+ drivers/clk/samsung/clk-exynos4.c       | 1 +
+ include/dt-bindings/clock/exynos4.h     | 1 +
+ 4 files changed, 14 insertions(+)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
