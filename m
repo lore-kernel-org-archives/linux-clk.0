@@ -10,44 +10,41 @@ CC: <mark.rutland@arm.com>, <linux@roeck-us.net>, <wsa@the-dreams.de>,
 	<Shaohui.Xie@freescale.com>, <scottwood@freescale.com>,
 	<bhupesh.sharma@freescale.com>, <Wenbin.Song@freescale.com>,
 	<B48286@freescale.com>
-Subject: [PATCH V4 2/6] watchdog: Add support for Freescale Layerscape platforms
-Date: Thu, 15 Oct 2015 20:12:57 +0800
-Message-ID: <1444911181-21696-2-git-send-email-B48286@freescale.com>
-In-Reply-To: <1444911181-21696-1-git-send-email-B48286@freescale.com>
-References: <1444911181-21696-1-git-send-email-B48286@freescale.com>
+Subject: [PATCH V5 3/6] Documentation: DT: Add entry for FSL LS1043ARDB board
+Date: Mon, 19 Oct 2015 19:56:11 +0800
+Message-ID: <1445255774-32887-3-git-send-email-B48286@freescale.com>
+In-Reply-To: <1445255774-32887-1-git-send-email-B48286@freescale.com>
+References: <1445255774-32887-1-git-send-email-B48286@freescale.com>
 Return-Path: B48286@freescale.com
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shaohui Xie <Shaohui.Xie@freescale.com>
+From: Mingkai Hu <Mingkai.Hu@freescale.com>
 
-Modify watchdog/Kconfig file to support Layerscape platforms.
-
-Signed-off-by: Shaohui Xie <Shaohui.Xie@freescale.com>
-Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
+Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
 Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
 ---
-This patch has been acked in V3 by Guenter Roeck [linux@roeck-us.net].
-
-V4: V3 V2
+V5: V4 V3 V2
  - No change.
 
- drivers/watchdog/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/arm/fsl.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index 79e1aa1..448dbaf 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -446,7 +446,7 @@ config MAX63XX_WATCHDOG
+diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
+index 34c88b0..752a685 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.txt
++++ b/Documentation/devicetree/bindings/arm/fsl.txt
+@@ -131,6 +131,10 @@ Example:
+ Freescale ARMv8 based Layerscape SoC family Device Tree Bindings
+ ----------------------------------------------------------------
  
- config IMX2_WDT
- 	tristate "IMX2+ Watchdog"
--	depends on ARCH_MXC
-+	depends on ARCH_MXC || ARCH_LAYERSCAPE
- 	select REGMAP_MMIO
- 	select WATCHDOG_CORE
- 	help
++LS1043A ARMv8 based RDB Board
++Required root node properties:
++    - compatible = "fsl,ls1043a-rdb", "fsl,ls1043a";
++
+ LS2080A ARMv8 based Simulator model
+ Required root node properties:
+     - compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
 -- 
 2.1.0.27.g96db324
