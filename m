@@ -1,259 +1,90 @@
-Return-Path: <jh80.chung@samsung.com>
-Message-id: <5615C3D6.3030005@samsung.com>
-Date: Thu, 08 Oct 2015 10:16:06 +0900
-From: Jaehoon Chung <jh80.chung@samsung.com>
-MIME-version: 1.0
-To: Heiko Stuebner <heiko@sntech.de>, ulf.hansson@linaro.org,
- mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: linux-mmc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- dianders@chromium.org, amstan@chromium.org
-Subject: Re: [PATCH v2 6/8] mmc: dw_mmc-rockchip: MMC tuning with the clock
- phase framework
-References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
- <1443622064-14362-7-git-send-email-heiko@sntech.de>
-In-reply-to: <1443622064-14362-7-git-send-email-heiko@sntech.de>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <robh+dt@kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1445268580.53393.183.camel@infradead.org>
+References: <561E1378.6000906@collabora.com> <20151017065750.GA18607@kroah.com>
+ <20151018192931.GY14956@sirena.org.uk> <20151018193757.GA9147@kroah.com>
+ <20151018195330.GB14956@sirena.org.uk> <1445247881.53393.146.camel@infradead.org>
+ <CAL_JsqKehmSobpbdeXGo=-1pAbtrhCHovyyCWya_MNOhGCi8CQ@mail.gmail.com>
+ <1445258870.53393.173.camel@infradead.org> <20151019145048.GI14956@sirena.org.uk>
+ <1445268580.53393.183.camel@infradead.org>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Mon, 19 Oct 2015 10:58:25 -0500
+Message-ID: <CAL_JsqLwvc1H9kQnWs=mA8P4Mq4izmSSeFU6KRtkExBkzF9ABg@mail.gmail.com>
+Subject: Re: [GIT PULL] On-demand device probing
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>,
+	=?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
+	Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
+	Linux USB List <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi, Heiko.
+On Mon, Oct 19, 2015 at 10:29 AM, David Woodhouse <dwmw2@infradead.org> wro=
+te:
+> On Mon, 2015-10-19 at 15:50 +0100, Mark Brown wrote:
+>> > But the point I'm making is that we are working towards *fixing* that,
+>> > and *not* using DT-specific code in places where we should be using th=
+e
+>> > generic APIs.
+>>
+>> What is the plan for fixing things here?  It's not obvious (at least to
+>> me) that we don't want to have the subsystems having knowledge of how
+>> they are bound to a specific firmware which is what you seem to imply
+>> here.
+>
+> I don't know that there *is* a coherent plan here to address it all.
+>
+> Certainly, we *will* need subsystems to have firmware-specific
+> knowledge in some cases. Take GPIO as an example; ACPI *has* a way to
+> describe GPIO, and properties which reference GPIO pins are intended to
+> work through that =E2=80=94 while in DT, properties which reference GPIO =
+pins
+> will have different contents. They'll be compatible at the driver
+> level, in the sense that there's a call to get a given GPIO given the
+> property name, but the subsystems *will* be doing different things
+> behind the scenes.
+>
+> My plan, such as it is, is to go through the leaf-node drivers which
+> almost definitely *should* be firmware-agnostic, and convert those. And
+> then take stock of what we have left, and work out what, if anything,
+> still needs to be done.
 
-Acked-by: Jaehoon Chung <jh80.chung@samsung.com>
+Many cases are already agnostic in the drivers in terms of the *_get()
+functions. Some are DT specific, but probably because those subsystems
+are new and DT only. In any case, I don't think these 1 line changes
+do anything to make doing conversions here harder.
 
-Best Regards,
-Jaehoon Chung
+>> It seems like we're going to have to refactor these bits of code when
+>> they get generalised anyway so I'm not sure that the additional cost
+>> here is that big.
+>
+> That's an acceptable answer =E2=80=94 "we're adding legacy code here but =
+we
+> know it's going to be refactored anyway". If that's true, all it takes
+> is a note in the commit comment to that effect. That's different from
+> having not thought about it :)
 
+Considering at one point we did create a fwnode based API, we did
+think about it. Plus there was little input from ACPI folks as to
+whether the change was even useful for ACPI case. In any case, we're
+talking about adding 1 line.
 
-On 09/30/2015 11:07 PM, Heiko Stuebner wrote:
-> From: Alexandru M Stan <amstan@chromium.org>
-> 
-> This algorithm will try 1 degree increments, since there's no way to tell
-> what resolution the underlying phase code uses. As an added bonus, doing
-> many tunings yields better results since some tests are run more than once
-> (ex: if the underlying driver uses 45 degree increments, the tuning code
-> will try the same angle more than once).
-> 
-> It will then construct a list of good phase ranges (even ranges that cross
-> 360/0), will pick the biggest range then it will set the sample_clk to the
-> middle of that range.
-> 
-> We do not touch ciu_drive (and by extension define default-drive-phase).
-> Drive phase is mostly used to define minimum hold times, while one could
-> write some code to determine what phase meets the minimum hold time (ex 10
-> degrees) this will not work with the current clock phase framework (which
-> floors angles, so we'll get 0 deg, and there's no way to know what
-> resolution the floors happen at). We assume that the default drive angles
-> set by the hardware are good enough.
-> 
-> If a device has device specific code (like exynos) then that will still
-> take precedence, otherwise this new code will execute. If the device wants
-> to tune, but has no sample_clk defined we'll return EIO with an error
-> message.
-> 
-> Signed-off-by: Alexandru M Stan <amstan@chromium.org>
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  drivers/mmc/host/dw_mmc-rockchip.c | 162 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 162 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/dw_mmc-rockchip.c b/drivers/mmc/host/dw_mmc-rockchip.c
-> index bc76aa2..4b3650f 100644
-> --- a/drivers/mmc/host/dw_mmc-rockchip.c
-> +++ b/drivers/mmc/host/dw_mmc-rockchip.c
-> @@ -13,12 +13,19 @@
->  #include <linux/mmc/host.h>
->  #include <linux/mmc/dw_mmc.h>
->  #include <linux/of_address.h>
-> +#include <linux/slab.h>
->  
->  #include "dw_mmc.h"
->  #include "dw_mmc-pltfm.h"
->  
->  #define RK3288_CLKGEN_DIV       2
->  
-> +struct dw_mci_rockchip_priv_data {
-> +	struct clk		*drv_clk;
-> +	struct clk		*sample_clk;
-> +	int			default_sample_phase;
-> +};
-> +
->  static void dw_mci_rockchip_prepare_command(struct dw_mci *host, u32 *cmdr)
->  {
->  	*cmdr |= SDMMC_CMD_USE_HOLD_REG;
-> @@ -33,6 +40,7 @@ static int dw_mci_rk3288_setup_clock(struct dw_mci *host)
->  
->  static void dw_mci_rk3288_set_ios(struct dw_mci *host, struct mmc_ios *ios)
->  {
-> +	struct dw_mci_rockchip_priv_data *priv = host->priv;
->  	int ret;
->  	unsigned int cclkin;
->  	u32 bus_hz;
-> @@ -66,6 +74,158 @@ static void dw_mci_rk3288_set_ios(struct dw_mci *host, struct mmc_ios *ios)
->  		/* force dw_mci_setup_bus() */
->  		host->current_speed = 0;
->  	}
-> +
-> +	/* Make sure we use phases which we can enumerate with */
-> +	if (!IS_ERR(priv->sample_clk))
-> +		clk_set_phase(priv->sample_clk, priv->default_sample_phase);
-> +}
-> +
-> +#define NUM_PHASES			360
-> +#define TUNING_ITERATION_TO_PHASE(i)	(DIV_ROUND_UP((i) * 360, NUM_PHASES))
-> +
-> +static int dw_mci_rk3288_execute_tuning(struct dw_mci_slot *slot)
-> +{
-> +	struct dw_mci *host = slot->host;
-> +	struct dw_mci_rockchip_priv_data *priv = host->priv;
-> +	struct mmc_host *mmc = slot->mmc;
-> +	int ret = 0;
-> +	int i;
-> +	bool v, prev_v = 0, first_v;
-> +	struct range_t {
-> +		int start;
-> +		int end; /* inclusive */
-> +	};
-> +	struct range_t *ranges;
-> +	unsigned int range_count = 0;
-> +	int longest_range_len = -1;
-> +	int longest_range = -1;
-> +	int middle_phase;
-> +
-> +	if (IS_ERR(priv->sample_clk)) {
-> +		dev_err(host->dev, "Tuning clock (sample_clk) not defined.\n");
-> +		return -EIO;
-> +	}
-> +
-> +	ranges = kmalloc_array(NUM_PHASES / 2 + 1, sizeof(*ranges), GFP_KERNEL);
-> +	if (!ranges)
-> +		return -ENOMEM;
-> +
-> +	/* Try each phase and extract good ranges */
-> +	for (i = 0; i < NUM_PHASES; ) {
-> +		clk_set_phase(priv->sample_clk, TUNING_ITERATION_TO_PHASE(i));
-> +
-> +		v = !mmc_send_tuning(mmc);
-> +
-> +		if (i == 0)
-> +			first_v = v;
-> +
-> +		if ((!prev_v) && v) {
-> +			range_count++;
-> +			ranges[range_count-1].start = i;
-> +		}
-> +		if (v) {
-> +			ranges[range_count-1].end = i;
-> +			i++;
-> +		} else if (i == NUM_PHASES - 1) {
-> +			/* No extra skipping rules if we're at the end */
-> +			i++;
-> +		} else {
-> +			/*
-> +			 * No need to check too close to an invalid
-> +			 * one since testing bad phases is slow.  Skip
-> +			 * 20 degrees.
-> +			 */
-> +			i += DIV_ROUND_UP(20 * NUM_PHASES, 360);
-> +
-> +			/* Always test the last one */
-> +			if (i >= NUM_PHASES)
-> +				i = NUM_PHASES - 1;
-> +		}
-> +
-> +		prev_v = v;
-> +	}
-> +
-> +	if (range_count == 0) {
-> +		dev_warn(host->dev, "All phases bad!");
-> +		ret = -EIO;
-> +		goto free;
-> +	}
-> +
-> +	/* wrap around case, merge the end points */
-> +	if ((range_count > 1) && first_v && v) {
-> +		ranges[0].start = ranges[range_count-1].start;
-> +		range_count--;
-> +	}
-> +
-> +	if (ranges[0].start == 0 && ranges[0].end == NUM_PHASES - 1) {
-> +		clk_set_phase(priv->sample_clk, priv->default_sample_phase);
-> +		dev_info(host->dev, "All phases work, using default phase %d.",
-> +			 priv->default_sample_phase);
-> +		goto free;
-> +	}
-> +
-> +	/* Find the longest range */
-> +	for (i = 0; i < range_count; i++) {
-> +		int len = (ranges[i].end - ranges[i].start + 1);
-> +
-> +		if (len < 0)
-> +			len += NUM_PHASES;
-> +
-> +		if (longest_range_len < len) {
-> +			longest_range_len = len;
-> +			longest_range = i;
-> +		}
-> +
-> +		dev_dbg(host->dev, "Good phase range %d-%d (%d len)\n",
-> +			TUNING_ITERATION_TO_PHASE(ranges[i].start),
-> +			TUNING_ITERATION_TO_PHASE(ranges[i].end),
-> +			len
-> +		);
-> +	}
-> +
-> +	dev_dbg(host->dev, "Best phase range %d-%d (%d len)\n",
-> +		TUNING_ITERATION_TO_PHASE(ranges[longest_range].start),
-> +		TUNING_ITERATION_TO_PHASE(ranges[longest_range].end),
-> +		longest_range_len
-> +	);
-> +
-> +	middle_phase = ranges[longest_range].start + longest_range_len / 2;
-> +	middle_phase %= NUM_PHASES;
-> +	dev_info(host->dev, "Successfully tuned phase to %d\n",
-> +		 TUNING_ITERATION_TO_PHASE(middle_phase));
-> +
-> +	clk_set_phase(priv->sample_clk,
-> +		      TUNING_ITERATION_TO_PHASE(middle_phase));
-> +
-> +free:
-> +	kfree(ranges);
-> +	return ret;
-> +}
-> +
-> +static int dw_mci_rk3288_parse_dt(struct dw_mci *host)
-> +{
-> +	struct device_node *np = host->dev->of_node;
-> +	struct dw_mci_rockchip_priv_data *priv;
-> +
-> +	priv = devm_kzalloc(host->dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	if (of_property_read_u32(np, "rockchip,default-sample-phase",
-> +					&priv->default_sample_phase))
-> +		priv->default_sample_phase = 0;
-> +
-> +	priv->drv_clk = devm_clk_get(host->dev, "ciu-drive");
-> +	if (IS_ERR(priv->drv_clk))
-> +		dev_dbg(host->dev, "ciu_drv not available\n");
-> +
-> +	priv->sample_clk = devm_clk_get(host->dev, "ciu-sample");
-> +	if (IS_ERR(priv->sample_clk))
-> +		dev_dbg(host->dev, "ciu_sample not available\n");
-> +
-> +	host->priv = priv;
-> +
-> +	return 0;
->  }
->  
->  static int dw_mci_rockchip_init(struct dw_mci *host)
-> @@ -95,6 +255,8 @@ static const struct dw_mci_drv_data rk3288_drv_data = {
->  	.caps			= dw_mci_rk3288_dwmmc_caps,
->  	.prepare_command        = dw_mci_rockchip_prepare_command,
->  	.set_ios		= dw_mci_rk3288_set_ios,
-> +	.execute_tuning		= dw_mci_rk3288_execute_tuning,
-> +	.parse_dt		= dw_mci_rk3288_parse_dt,
->  	.setup_clock    = dw_mci_rk3288_setup_clock,
->  	.init			= dw_mci_rockchip_init,
->  };
-> 
+Rob
