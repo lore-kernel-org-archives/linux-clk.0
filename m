@@ -1,82 +1,75 @@
-Return-Path: <jonmason@broadcom.com>
-Date: Mon, 12 Oct 2015 13:52:02 -0400
-From: Jon Mason <jonmason@broadcom.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Michael Turquette <mturquette@baylibre.com>, Florian Fainelli
-	<f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui
-	<rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<bcm-kernel-feedback-list@broadcom.com>
-Subject: Re: [PATCH 09/10] clk: ns2: add clock support for Broadcom Northstar
- 2 SoC
-Message-ID: <20151012175202.GE20867@broadcom.com>
-References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
- <1443826665-17570-10-git-send-email-jonmason@broadcom.com>
- <20151010001915.GY26883@codeaurora.org>
+Return-Path: <rjui@broadcom.com>
+From: Ray Jui <rjui@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>, Simran Rai <ssimran@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, <stable@vger.kernel.org>
+Subject: [PATCH v2] clk: iproc: Fix PLL output frequency calculation
+Date: Mon, 19 Oct 2015 15:27:19 -0700
+Message-ID: <1445293639-5863-2-git-send-email-rjui@broadcom.com>
+In-Reply-To: <1445293639-5863-1-git-send-email-rjui@broadcom.com>
+References: <1445293639-5863-1-git-send-email-rjui@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20151010001915.GY26883@codeaurora.org>
-Return-Path: jonmason@broadcom.com
+Content-Type: text/plain
+Return-Path: rjui@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 09, 2015 at 05:19:15PM -0700, Stephen Boyd wrote:
-> On 10/02, Jon Mason wrote:
-> > diff --git a/drivers/clk/bcm/clk-ns2.c b/drivers/clk/bcm/clk-ns2.c
-> > new file mode 100644
-> > index 0000000..1d08281
-> > --- /dev/null
-> > +++ b/drivers/clk/bcm/clk-ns2.c
-> > @@ -0,0 +1,290 @@
-> > +/*
-> > + * Copyright (C) 2015 Broadcom Corporation
-> > + *
-> > + * This program is free software; you can redistribute it and/or
-> > + * modify it under the terms of the GNU General Public License as
-> > + * published by the Free Software Foundation version 2.
-> > + *
-> > + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-> > + * kind, whether express or implied; without even the implied warranty
-> > + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > + * GNU General Public License for more details.
-> > + */
-> > +
-> > +#include <linux/kernel.h>
-> > +#include <linux/err.h>
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/io.h>
-> > +#include <linux/of.h>
-> > +#include <linux/clkdev.h>
-> 
-> clkdev looks unused here too?
-> 
-> > +#include <linux/of_address.h>
-> > +#include <linux/delay.h>
-> 
-> And this one?
+From: Simran Rai <ssimran@broadcom.com>
 
-Yes, already caught this when you mentioned the other file :)
+This patch affects the clocks that use fractional ndivider in their
+PLL output frequency calculation. Instead of 2^20 divide factor, the
+clock's ndiv integer shift was used. Fixed the bug by replacing ndiv
+integer shift with 2^20 factor.
 
-> 
-> > +
-> > +#include <dt-bindings/clock/bcm-ns2.h>
-> > +#include "clk-iproc.h"
-> > +
-> > +#define reg_val(o, s, w) { .offset = o, .shift = s, .width = w, }
-> 
-> I guess we missed this one already, but this isn't a macro
-> resembling a function. Kernel style is to capitalize this sort of
-> macro.
+Signed-off-by: Simran Rai <ssimran@broadcom.com>
+Signed-off-by: Ray Jui <rjui@broadcom.com>
+Reviewed-by: Scott Branden <sbranden@broadcom.com>
+Fixes: 5fe225c105fd ("clk: iproc: add initial common clock support")
+---
+ drivers/clk/bcm/clk-iproc-pll.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-I agree, but I was following prior example in
-drivers/clk/bcm/clk-cygnus.c.  I can make the changes here and do a
-patch for that file making the necessary changes as well.  Just let me
-know your preference.
-
-Thanks,
-Jon
-
-> 
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
+index 2dda4e8..d679ab8 100644
+--- a/drivers/clk/bcm/clk-iproc-pll.c
++++ b/drivers/clk/bcm/clk-iproc-pll.c
+@@ -345,8 +345,8 @@ static unsigned long iproc_pll_recalc_rate(struct clk_hw *hw,
+ 	struct iproc_pll *pll = clk->pll;
+ 	const struct iproc_pll_ctrl *ctrl = pll->ctrl;
+ 	u32 val;
+-	u64 ndiv;
+-	unsigned int ndiv_int, ndiv_frac, pdiv;
++	u64 ndiv, ndiv_int, ndiv_frac;
++	unsigned int pdiv;
+ 
+ 	if (parent_rate == 0)
+ 		return 0;
+@@ -366,22 +366,19 @@ static unsigned long iproc_pll_recalc_rate(struct clk_hw *hw,
+ 	val = readl(pll->pll_base + ctrl->ndiv_int.offset);
+ 	ndiv_int = (val >> ctrl->ndiv_int.shift) &
+ 		bit_mask(ctrl->ndiv_int.width);
+-	ndiv = (u64)ndiv_int << ctrl->ndiv_int.shift;
++	ndiv = ndiv_int << 20;
+ 
+ 	if (ctrl->flags & IPROC_CLK_PLL_HAS_NDIV_FRAC) {
+ 		val = readl(pll->pll_base + ctrl->ndiv_frac.offset);
+ 		ndiv_frac = (val >> ctrl->ndiv_frac.shift) &
+ 			bit_mask(ctrl->ndiv_frac.width);
+-
+-		if (ndiv_frac != 0)
+-			ndiv = ((u64)ndiv_int << ctrl->ndiv_int.shift) |
+-				ndiv_frac;
++		ndiv += ndiv_frac;
+ 	}
+ 
+ 	val = readl(pll->pll_base + ctrl->pdiv.offset);
+ 	pdiv = (val >> ctrl->pdiv.shift) & bit_mask(ctrl->pdiv.width);
+ 
+-	clk->rate = (ndiv * parent_rate) >> ctrl->ndiv_int.shift;
++	clk->rate = (ndiv * parent_rate) >> 20;
+ 
+ 	if (pdiv == 0)
+ 		clk->rate *= 2;
+-- 
+1.9.1
