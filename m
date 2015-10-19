@@ -1,302 +1,153 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 1 Oct 2015 16:34:07 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Looijmans <mike.looijmans@topic.nl>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] Add driver for the si514 clock generator chip
-Message-ID: <20151001233407.GW19319@codeaurora.org>
-References: <1442478495-23522-1-git-send-email-mike.looijmans@topic.nl>
- <1442487891-20477-1-git-send-email-mike.looijmans@topic.nl>
+Return-Path: <tomeu.vizoso@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1442487891-20477-1-git-send-email-mike.looijmans@topic.nl>
+Sender: tomeu.vizoso@gmail.com
+In-Reply-To: <20151018195330.GB14956@sirena.org.uk>
+References: <561E1378.6000906@collabora.com> <20151017065750.GA18607@kroah.com>
+ <20151018192931.GY14956@sirena.org.uk> <20151018193757.GA9147@kroah.com> <20151018195330.GB14956@sirena.org.uk>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Date: Mon, 19 Oct 2015 14:34:22 +0200
+Message-ID: <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
+Subject: Re: [GIT PULL] On-demand device probing
+To: Mark Brown <broonie@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
+	Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>, Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linux-i2c@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, linux-fbdev@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/17, Mike Looijmans wrote:
-> This patch adds the driver and devicetree documentation for the
-> Silicon Labs SI514 clock generator chip. This is an I2C controlled
-> oscilator capable of generating clock signals ranging from 100kHz
+On 18 October 2015 at 21:53, Mark Brown <broonie@kernel.org> wrote:
+> On Sun, Oct 18, 2015 at 12:37:57PM -0700, Greg Kroah-Hartman wrote:
+>> On Sun, Oct 18, 2015 at 08:29:31PM +0100, Mark Brown wrote:
+>> > On Fri, Oct 16, 2015 at 11:57:50PM -0700, Greg Kroah-Hartman wrote:
+>
+>> > > I can't see adding calls like this all over the tree just to solve a
+>> > > bus-specific problem, you are adding of_* calls where they aren't
+>> > > needed, or wanted, at all.
+>
+>> > This isn't bus specific, I'm not sure what makes you say that?
+>
+>> You are making it bus-specific by putting these calls all over the tree
+>> in different bus subsystems semi-randomly for all I can determine.
+>
+> Do you mean firmware rather than bus here?  I think that's the confusion
+> I have...
 
-s/oscilator/oscillator/
+Hi all,
 
-> to 250MHz.
-> 
-> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
-> ---
-> diff --git a/Documentation/devicetree/bindings/clock/silabs,si514.txt b/Documentation/devicetree/bindings/clock/silabs,si514.txt
-> new file mode 100644
-> index 0000000..05964d1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/silabs,si514.txt
-> @@ -0,0 +1,27 @@
-> +Binding for Silicon Labs 514 programmable I2C clock generator.
-> +
-> +Reference
-> +This binding uses the common clock binding[1]. Details about the device can be
-> +found in the datasheet[2].
-> +
-> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +[2] Si514 datasheet
-> +    http://www.silabs.com/Support%20Documents/TechnicalDocs/si514.pdf
-> +
-> +Required properties:
-> + - compatible: Shall be "silabs,si514"
-> + - reg: I2C device address.
-> + - #clock-cells: From common clock bindings: Shall be 0.
-> +
-> +Optional properties:
-> + - clock-output-names: From common clock bindings. Recommended to be "si514".
-> + - clock-frequency: Output frequency to generate. This defines the output
-> +		    frequency set during boot. It can be reprogrammed during
-> +		    runtime through the common clock framework.
+hope you don't mind I summarize the points taken instead of replying
+to the individual emails. I tried to address all the concerns that
+have been raised again in the cover letter, but I guess I did a bad
+job at explaining myself, so here's another (more in-depth) go at it.
 
-Can we use assigned clock rates instead of this property?
+1) About the sprinkling of calls, everybody agreed it's a bad smell
+from the start, but the intention is to modify the behaviour of the
+already-DT-specific part of each subsystem without duplicating code.
 
-> +
-> +Example:
-> +	si514: clock-generator@55 {
-> +		reg = <0x55>;
-> +		#clock-cells = <0>;
-> +		compatible = "silabs,si514";
-> +	};
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 42f7120..6ac7deb5 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -68,6 +68,16 @@ config COMMON_CLK_SI5351
->  	  This driver supports Silicon Labs 5351A/B/C programmable clock
->  	  generators.
->  
-> +config COMMON_CLK_SI514
-> +	tristate "Clock driver for SiLabs 514 devices"
-> +	depends on I2C
-> +	depends on OF
+A way to avoid the sprinkling would be to move the storage and lookup
+of resources to the core (using classes and their list of devices to
+replace the likes of __of_usb_find_phy). I also like Mark's idea of
+calling of_device_probe from of_parse_phandle, which would be much
+less invasive but I'm not sure if it would be right to call that
+function in all the current cases in which of_parse_phandle is called.
 
-It actually depends on this to build?
+2) About the goal of the series, what matters to my employer is that
+once a device defers its probe it's only going to be reprobed in
+late_initcall, after all the devices have been tentatively probed
+once. In the practice this means that devices get probed in a
+dependency order in which first go devices without dependencies then
+go up the tree until the leave devices (which tend to be the ones with
+effects visible to the user).
 
-> +	select REGMAP_I2C
-> +	help
-> +	---help---
-> +	  This driver supports the Silicon Labs 514 programmable clock
-> +	  generator.
-> +
->  config COMMON_CLK_SI570
->  	tristate "Clock driver for SiLabs 570 and compatible devices"
->  	depends on I2C
-> diff --git a/drivers/clk/clk-si514.c b/drivers/clk/clk-si514.c
-> new file mode 100644
-> index 0000000..ca70818
-> --- /dev/null
-> +++ b/drivers/clk/clk-si514.c
-> @@ -0,0 +1,393 @@
-> +
-> +#include <linux/clk-provider.h>
+This series changes to another dependency order in which when a leaf
+node gets probed, it recursively "pulls" its dependencies. This way we
+stop massively delaying the probing of the display devices and vendors
+can stop carrying sizeable hacks in their trees which just further
+reduce the incentive to upstream.
 
-I'd expect some sort of linux/clk.h include here if we're using
-clk APIs.
+The above is what funds this work, but in my personal opinion the
+biggest advantage of this work is that it makes development on
+embedded platforms more efficient because right now we don't have a
+way of telling if a device deferred its probe because of an ordering
+issue, or because there's a problem. If a device is available and has
+a compatible driver, but it cannot be probed because a dependency
+isn't going to be available, that's an error and is going to cause
+real-world problems unless the device is redundant. Currently we say
+nothing because with deferred probe the probe callbacks are also part
+of the mechanism that determines the dependency order. I have wasted
+countless hours hunting for the reason why a device didn't probe and I
+have heard the same several times from others.
 
-> +#include <linux/delay.h>
-> +#include <linux/module.h>
-> +#include <linux/i2c.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-[...]
-> +
-> +/* Program clock settings into hardware */
+Having a specific switch for enabling deferred probe logging sounds
+good, but there's going to be hundreds of spurious messages about
+deferred probes that were just deferrals and only one of them is going
+to be the actual error in which a device failed to find a dependency.
 
-This comment is useless.
+3) Regarding total boot time, I don't expect this series to make much
+of a difference because though we would save a lot of matching and
+querying for resources, that's little time compared with how long we
+wait for hardware to react during probing. Async probing is more
+likely to help with drivers that take a long time to probe.
 
-> +static int si514_set_muldiv(struct clk_si514 *data,
-> +	struct clk_si514_muldiv *settings)
-> +{
-> +	u8 lp;
-> +	u8 reg[7];
-> +	int err;
-> +
-> +	/* Calculate LP1/LP2 according to table 13 in the datasheet */
-> +	/* 65.259980246 */
-> +	if ((settings->m_int < 65) ||
-> +		((settings->m_int == 65) && (settings->m_frac <= 139575831)))
-> +		lp = 0x22;
-> +	/* 67.859763463 */
-> +	else if ((settings->m_int < 67) ||
-> +		((settings->m_int == 67) && (settings->m_frac <= 461581994)))
-> +		lp = 0x23;
-> +	/* 72.937624981 */
-> +	else if ((settings->m_int < 72) ||
-> +		((settings->m_int == 72) && (settings->m_frac <= 503383578)))
-> +		lp = 0x33;
-> +	/* 75.843265046 */
-> +	else if ((settings->m_int < 75) ||
-> +		((settings->m_int == 75) && (settings->m_frac <= 452724474)))
-> +		lp = 0x34;
+4) About the breakage we have seen, that's not caused so far by
+probing devices on-demand but by delaying probes until all built-in
+drivers have been registered. The latter isn't strictly needed for
+on-demand probing but without it most of the benefits are lost because
+probes of dependencies are going to be deferred because the drivers
+aren't there yet. We could avoid that by registering drivers also
+on-demand but we would need to make the matching information available
+beforehand, which is a massive change in itself. This should speed up
+boot some, and also cause leaf devices to be up earlier.
 
-Drop the extra parenthesis on these if statements.
+One more thing about the breakage we have seen so far is that it's
+generally caused by implicit dependencies and hunting those is
+probably the second biggest timesink of the linux embedded developer
+after failed probes. We depend on hacks such as link order, node order
+in the DT, initcall gerrymandering and a blind hope in things that
+started some time ago to have finished by now. And those implicit
+dependencies are often left completely undocumented. This is really
+fragile and breaks often when changing something unrelated such as
+when adding another revision of a board or soc and a dependency starts
+deferring its probe or is delayed because of something else. Also
+breaks with async probing.
 
-> +	else
-> +		lp = 0x44;
-> +
-> +	err = regmap_write(data->regmap, SI514_REG_LP, lp);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	reg[0] = settings->m_frac & 0xff;
-> +	reg[1] = (settings->m_frac >> 8) & 0xff;
-> +	reg[2] = (settings->m_frac >> 16) & 0xff;
-> +	reg[3] = ((settings->m_frac >> 24) | (settings->m_int << 5)) & 0xff;
-> +	reg[4] = (settings->m_int >> 3) & 0xff;
-> +	reg[5] = (settings->hs_div) & 0xff;
-> +	reg[6] = (((settings->hs_div) >> 8) |
-> +			(settings->ls_div_bits << 4)) & 0xff;
+Delayed probes can be reverted by disabling a Kconfig, so we can fix
+those issues in an ordered manner as time allows (we could disable it
+by default now and add CI jobs with that enabled during a transitory
+period).
 
-The & 0xff part is redundant. Assignment truncates for us.
+Back when I made the series FW-independent with fwnode additions I
+felt in my interaction with the ACPI folks that there's a bit of a
+chasm in this issue between embedded and non-embedded people. This
+could be because with ACPI most of the low-level hw elements such as
+clocks, regulators, gpios and pins are hidden from the kernel and are
+already ready when we start probing devices. With DT, the kernel has
+to initialize all those and only then it can initialize the higher
+level devices that depend on them. This means lots more of devices and
+dependencies and thus we feel more acutely the shortcomings of the
+current device framework at the scale we are using it today.
 
-> +
-> +	err = regmap_bulk_write(data->regmap, SI514_REG_HS_DIV, reg + 5, 2);
-> +	if (err < 0)
-> +		return err;
-> +	/* Writing to SI514_REG_M_INT_FRAC triggers the clock change, so that
-> +	 * must be written last */
+I think that having all dependencies be explicit and represented in
+the device-driver model, along with a more advanced method of ordering
+probes is something that would be good to have at this moment, even if
+it won't benefit all users of the kernel.
 
-Please fix multi-line commenting style.
+Thanks,
 
-> +	return regmap_bulk_write(data->regmap, SI514_REG_M_FRAC1, reg, 5);
-> +}
-> +
-> +/* Calculate divider settings for a given frequency */
-> +static int si514_calc_muldiv(struct clk_si514_muldiv *settings,
-> +	unsigned long frequency)
-> +{
-> +	u64 m;
-> +	u32 ls_freq;
-> +	u32 tmp;
-> +	u8 res;
-> +
-> +	if ((frequency < SI514_MIN_FREQ) || (frequency > SI514_MAX_FREQ))
-> +		return -EINVAL;
-> +
-> +	/* Determine the minimum value of LS_DIV and resulting target freq. */
-> +	ls_freq = frequency;
-> +	if (frequency >= (FVCO_MIN / HS_DIV_MAX))
-> +		settings->ls_div_bits = 0;
-> +	else {
-> +		res = 1;
-> +		tmp = 2 * HS_DIV_MAX;
-> +		while (tmp <= (HS_DIV_MAX*32)) {
-
-Please add some space here between HS_DIV_MAX and 32.
-
-> +			if ((frequency * tmp) >= FVCO_MIN)
-> +				break; /* We're done */
-
-Yep, that's what break in a loop usually means.
-
-> +			++res;
-> +			tmp <<= 1;
-> +		}
-> +		settings->ls_div_bits = res;
-> +		ls_freq = frequency << res;
-> +	}
-> +
-> +	/* Determine minimum HS_DIV, round up to even number */
-> +	settings->hs_div = DIV_ROUND_UP(FVCO_MIN >> 1, ls_freq) << 1;
-> +
-> +	/* M = LS_DIV x HS_DIV x frequency / F_XO (in fixed-point) */
-> +	m = ((u64)(ls_freq * settings->hs_div) << 29) + (FXO/2);
-> +	do_div(m, FXO);
-> +	settings->m_frac = (u32)m & (BIT(29) - 1);
-> +	settings->m_int = (u32)(m >> 29);
-> +
-> +	return 0;
-> +}
-> +
-> +/* Calculate resulting frequency given the register settings */
-> +static unsigned long si514_calc_rate(struct clk_si514_muldiv *settings)
-> +{
-> +	u64 m = settings->m_frac | ((u64)settings->m_int << 29);
-> +
-> +	return ((u32)(((m * FXO) + (FXO/2)) >> 29)) /
-
-Please add space after /
-
-> +		(settings->hs_div * BIT(settings->ls_div_bits));
-
-And drop the extra parenthesis. It would be nice if we didn't do
-it all in one line too. Use some local variables.
-
-> +}
-> +
-[...]
-> +
-> +	err = si514_calc_muldiv(&settings, rate);
-> +	if (err)
-> +		return err;
-> +
-> +	return si514_calc_rate(&settings);
-> +}
-> +
-> +/* Update output frequency for big frequency changes (> 1000 ppm).
-> + * The chip supports <1000ppm changes "on the fly", we haven't implemented
-> + * that here. */
-
-Please fix comment style.
-
-> +static int si514_set_rate(struct clk_hw *hw, unsigned long rate,
-> +		unsigned long parent_rate)
-> +{
-> +	struct clk_si514 *data = to_clk_si514(hw);
-> +	struct clk_si514_muldiv settings;
-> +	int err;
-> +
-> +	err = si514_calc_muldiv(&settings, rate);
-> +	if (err)
-> +		return err;
-> +
-> +	si514_enable_output(data, false);
-> +
-> +	err = si514_set_muldiv(data, &settings);
-> +	if (err < 0)
-> +		return err; /* Undefined state now, best to leave disabled */
-> +
-> +	/* Trigger calibration */
-> +	err = regmap_write(data->regmap, SI514_REG_CONTROL, SI514_CONTROL_FCAL);
-> +
-> +	/* Applying a new frequency can take up to 10ms */
-> +	usleep_range(10000, 12000);
-> +
-> +	si514_enable_output(data, true);
-> +
-
-Should we enable if regmap_write() failed?
-
-> +	return err;
-> +}
-> +
-> +static const struct clk_ops si514_clk_ops = {
-> +	.recalc_rate = si514_recalc_rate,
-> +	.round_rate = si514_round_rate,
-> +	.set_rate = si514_set_rate,
-> +};
-> +
-> +static struct regmap_config si514_regmap_config = {
-
-const?
-
-> +		}
-> +	}
-> +
-> +	/* Display a message indicating that we've successfully registered */
-> +	dev_info(&client->dev, "registered, current frequency %lu Hz\n",
-> +			clk_get_rate(clk));
-
-Please remove this.
-
-> +
-> +	return 0;
-> +}
-> +
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Tomeu
