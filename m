@@ -1,46 +1,84 @@
-Return-Path: <B48286@freescale.com>
-From: Hou Zhiqiang <B48286@freescale.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "catalin.marinas@arm.com"
-	<catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>, "linux@roeck-us.net"
-	<linux@roeck-us.net>, "wsa@the-dreams.de" <wsa@the-dreams.de>,
-	"wim@iguana.be" <wim@iguana.be>, "corbet@lwn.net" <corbet@lwn.net>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, Hu Vincent
-	<Mingkai.Hu@freescale.com>, Shaohui Xie <Shaohui.Xie@freescale.com>, "Scott
- Wood" <scottwood@freescale.com>, Sharma Bhupesh
-	<bhupesh.sharma@freescale.com>, Wenbin Song <Wenbin.Song@freescale.com>
-Subject: RE: [PATCH V4 5/6] clk: qoriq: Add ls1043a support.
-Date: Fri, 16 Oct 2015 02:45:35 +0000
-Message-ID: <CY1PR0301MB0780D9B0CF00A1CF72A9352C8B3D0@CY1PR0301MB0780.namprd03.prod.outlook.com>
-References: <1444911181-21696-1-git-send-email-B48286@freescale.com>
- <1444911181-21696-5-git-send-email-B48286@freescale.com>
- <20151015180148.GE4558@codeaurora.org>
-In-Reply-To: <20151015180148.GE4558@codeaurora.org>
-Content-Type: text/plain; charset="gb2312"
+Return-Path: <linux+mturquette=baylibre.com@arm.linux.org.uk>
+Date: Mon, 19 Oct 2015 10:52:14 +0100
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>,
+	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org
+Subject: Re: [GIT PULL] On-demand device probing
+Message-ID: <20151019095214.GW32532@n2100.arm.linux.org.uk>
+References: <561E1378.6000906@collabora.com>
+ <20151017065750.GA18607@kroah.com>
+ <20151018192931.GY14956@sirena.org.uk>
+ <20151018193757.GA9147@kroah.com>
+ <20151018195330.GB14956@sirena.org.uk>
+ <1445247881.53393.146.camel@infradead.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1445247881.53393.146.camel@infradead.org>
+Sender: Russell King - ARM Linux <linux@arm.linux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU3RlcGhlbiBCb3lkIFtt
-YWlsdG86c2JveWRAY29kZWF1cm9yYS5vcmddDQo+IFNlbnQ6IDIwMTXE6jEw1MIxNsjVIDI6MDIN
-Cj4gVG86IEhvdSBaaGlxaWFuZy1CNDgyODYNCj4gQ2M6IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMu
-aW5mcmFkZWFkLm9yZzsgY2F0YWxpbi5tYXJpbmFzQGFybS5jb207DQo+IHdpbGwuZGVhY29uQGFy
-bS5jb207IGxpbnV4LWkyY0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiB3YXRjaGRvZ0B2Z2Vy
-Lmtlcm5lbC5vcmc7IGxpbnV4LWRvY0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiBjbGtAdmdl
-ci5rZXJuZWwub3JnOyBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsgbGludXhAcm9lY2stdXMubmV0OyB3
-c2FAdGhlLQ0KPiBkcmVhbXMuZGU7IHdpbUBpZ3VhbmEuYmU7IGNvcmJldEBsd24ubmV0OyBtdHVy
-cXVldHRlQGJheWxpYnJlLmNvbTsgSHUNCj4gTWluZ2thaS1CMjEyODQ7IFhpZSBTaGFvaHVpLUIy
-MTk4OTsgV29vZCBTY290dC1CMDc0MjE7IFNoYXJtYSBCaHVwZXNoLQ0KPiBCNDUzNzA7IFNvbmcg
-V2VuYmluLUI1Mzc0Nw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIFY0IDUvNl0gY2xrOiBxb3JpcTog
-QWRkIGxzMTA0M2Egc3VwcG9ydC4NCj4gDQo+IE9uIDEwLzE1LCBaaGlxaWFuZyBIb3Ugd3JvdGU6
-DQo+ID4gRnJvbTogSG91IFpoaXFpYW5nIDxCNDgyODZAZnJlZXNjYWxlLmNvbT4NCj4gPg0KPiA+
-IFNpZ25lZC1vZmYtYnk6IEhvdSBaaGlxaWFuZyA8QjQ4Mjg2QGZyZWVzY2FsZS5jb20+DQo+ID4g
-LS0tDQo+ID4gVGhpcyBwYXRjaCBoYXMgYmVlbiBhY2tlZCBpbiBWMyBieSBTdGVwaGVuIEJveWQg
-W3Nib3lkQGNvZGVhdXJvcmEub3JnXS4NCj4gDQo+IFllcywgcGxlYXNlIGFkZCBpdCBpbnRvIHRo
-ZSBwYXRjaGVzIHRoYXQgeW91IHNlbmQgaW5zdGVhZCBvZiBwdXR0aW5nIGl0DQo+IGJlbG93IHRo
-ZSAtLS0gbGluZS4NCg0KT2ssIHRoYW5rcy4NCg0KWmhpcWlhbmcNCg==
+On Mon, Oct 19, 2015 at 10:44:41AM +0100, David Woodhouse wrote:
+> On Sun, 2015-10-18 at 20:53 +0100, Mark Brown wrote:
+> > On Sun, Oct 18, 2015 at 12:37:57PM -0700, Greg Kroah-Hartman wrote:
+> > > On Sun, Oct 18, 2015 at 08:29:31PM +0100, Mark Brown wrote:
+> > > > On Fri, Oct 16, 2015 at 11:57:50PM -0700, Greg Kroah-Hartman wrote:
+> > 
+> > > > > I can't see adding calls like this all over the tree just to solve a
+> > > > > bus-specific problem, you are adding of_* calls where they aren't
+> > > > > needed, or wanted, at all.
+> > 
+> > > > This isn't bus specific, I'm not sure what makes you say that?
+> > 
+> > > You are making it bus-specific by putting these calls all over the tree
+> > > in different bus subsystems semi-randomly for all I can determine.
+> > 
+> > Do you mean firmware rather than bus here?  I think that's the confusion
+> > I have...
+> 
+> Certainly, if it literally is adding of_* calls then that would seem to
+> be gratuitously firmware-specific. Nothing should be using those these
+> days; any new code should be using the generic device property APIs
+> (except in special cases).
+
+I asked Linus Walleij about that with the fwnode_get_named_gpiod() stuff,
+and Linus didn't seem to know how this should be used.
+
+It doesn't help that dev->fwnode is not initialised, but dev->of_node
+is.  Are we supposed to grope around in dev->of_node for the embedded
+fwnode instead of using dev->fwnode?
+
+At the moment, at least to me, fwnode looks like some kind of
+experimental half-baked thing rather than a real usable solution.
+
+-- 
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
