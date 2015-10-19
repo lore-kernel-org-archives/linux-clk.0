@@ -1,78 +1,52 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 21 Oct 2015 16:13:10 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	kernel-janitors@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>,
-	Jason Cooper <jason@lakedaemon.net>
-Subject: Re: [PATCH 1/5] clk: add missing of_node_put
-Message-ID: <20151021231243.GH19782@codeaurora.org>
-References: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
- <1445460100-26727-2-git-send-email-Julia.Lawall@lip6.fr>
+Return-Path: <B48286@freescale.com>
+From: Zhiqiang Hou <B48286@freescale.com>
+To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
+	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+CC: <mark.rutland@arm.com>, <linux@roeck-us.net>, <wsa@the-dreams.de>,
+	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <Mingkai.Hu@freescale.com>,
+	<Shaohui.Xie@freescale.com>, <scottwood@freescale.com>,
+	<bhupesh.sharma@freescale.com>, <Wenbin.Song@freescale.com>,
+	<B48286@freescale.com>
+Subject: [PATCH V5 2/6] watchdog: Add support for Freescale Layerscape platforms
+Date: Mon, 19 Oct 2015 19:56:10 +0800
+Message-ID: <1445255774-32887-2-git-send-email-B48286@freescale.com>
+In-Reply-To: <1445255774-32887-1-git-send-email-B48286@freescale.com>
+References: <1445255774-32887-1-git-send-email-B48286@freescale.com>
+Return-Path: B48286@freescale.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1445460100-26727-2-git-send-email-Julia.Lawall@lip6.fr>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/21, Julia Lawall wrote:
-> for_each_matching_node_and_match performs an of_node_get on each iteration,
-> so a break out of the loop requires an of_node_put.
-> 
-> A simplified version of the semantic patch that fixes this problem is as
-> follows (http://coccinelle.lip6.fr):
-> 
-> // <smpl>
-> @@
-> expression e1,e2,e;
-> local idexpression np;
-> @@
-> 
->  for_each_matching_node_and_match(np, e1, e2) {
->    ... when != of_node_put(np)
->        when != e = np
-> (
->    return np;
-> |
-> +  of_node_put(np);
-> ?  return ...;
-> )
->    ...
->  }
-> // </smpl>
-> 
-> Besides the problem identified by the semantic patch, this patch adds an
-> of_node_get in front of saving np in a field of parent, to account for the
-> fact that this value will be put on going on to the next element in the
-> iteration, and then adds of_node_puts in the two loops where the parent
-> pointer can be freed.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
+From: Shaohui Xie <Shaohui.Xie@freescale.com>
 
-Applied to clk-next, except I collapsed the of_node_get() into
-the assignment.
+Modify watchdog/Kconfig file to support Layerscape platforms.
 
----8<---
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index d366bfb66c58..2eae76f21d6f 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3205,8 +3205,7 @@ void __init of_clk_init(const struct of_device_id *matches)
- 		}
+Signed-off-by: Shaohui Xie <Shaohui.Xie@freescale.com>
+Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
+Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+Acked-by: Guenter Roeck <linux@roeck-us.net>
+---
+V5: V4 V3 V2
+ - No change.
+
+ drivers/watchdog/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index 79e1aa1..448dbaf 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -446,7 +446,7 @@ config MAX63XX_WATCHDOG
  
- 		parent->clk_init_cb = match->data;
--		of_node_get(np);
--		parent->np = np;
-+		parent->np = of_node_get(np);
- 		list_add_tail(&parent->node, &clk_provider_list);
- 	}
- 
-
+ config IMX2_WDT
+ 	tristate "IMX2+ Watchdog"
+-	depends on ARCH_MXC
++	depends on ARCH_MXC || ARCH_LAYERSCAPE
+ 	select REGMAP_MMIO
+ 	select WATCHDOG_CORE
+ 	help
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.0.27.g96db324
