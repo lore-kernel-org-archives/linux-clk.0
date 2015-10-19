@@ -1,111 +1,76 @@
-Return-Path: <wens@csie.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 19 Oct 2015 15:26:44 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Joachim Eastwood <manabian@gmail.com>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] clk: lpc18xx-ccu: fix potential system hang when
+ disabling unused clocks
+Message-ID: <20151019222644.GC19782@codeaurora.org>
+References: <1440527643-2960-1-git-send-email-manabian@gmail.com>
+ <1440527643-2960-2-git-send-email-manabian@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1445242139-20965-2-git-send-email-maxime.ripard@free-electrons.com>
-References: <1445242139-20965-1-git-send-email-maxime.ripard@free-electrons.com>
- <1445242139-20965-2-git-send-email-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 19 Oct 2015 16:22:15 +0800
-Message-ID: <CAGb2v65bZGQEHyS6UoBUsrDoJ33jYwa--BkmfomZ4AGAy0djNw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/5] clk: Add a basic multiplier clock
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>, linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1440527643-2960-2-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Oct 19, 2015 at 4:08 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Some clocks are using a multiplier component, however, unlike their mux,
-> gate or divider counterpart, these factors don't have a basic clock
-> implementation.
->
-> This leads to code duplication across platforms that want to use that kind
-> of clocks, and the impossibility to use the composite clocks with such a
-> clock without defining your own rate operations.
->
-> Create such a driver in order to remove these issues, and hopefully factor
-> the implementations, reducing code size across platforms and consolidating
-> the various implementations.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+On 08/25, Joachim Eastwood wrote:
+> CCU branch clock register must only be accessed while the base
+> (parent) clock is running. Access with a disabled base clock
+> will cause the system to hang. Fix this issue by adding code
+> that check if the parent clock is running in the is_enabled
+> clk_ops callback.
+> 
+> This hang would occur when disabling unused clocks after AMBA
+> runtime pm had already disabled some of the clocks.
+> 
+> Signed-off-by: Joachim Eastwood <manabian@gmail.com>
 > ---
->  drivers/clk/Makefile         |   1 +
->  drivers/clk/clk-multiplier.c | 181 +++++++++++++++++++++++++++++++++++++++++++
->  include/linux/clk-provider.h |  42 ++++++++++
->  3 files changed, 224 insertions(+)
->  create mode 100644 drivers/clk/clk-multiplier.c
->
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index d08b3e5985be..0b2101039508 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -6,6 +6,7 @@ obj-$(CONFIG_COMMON_CLK)        += clk-divider.o
->  obj-$(CONFIG_COMMON_CLK)       += clk-fixed-factor.o
->  obj-$(CONFIG_COMMON_CLK)       += clk-fixed-rate.o
->  obj-$(CONFIG_COMMON_CLK)       += clk-gate.o
-> +obj-$(CONFIG_COMMON_CLK)       += clk-multiplier.o
->  obj-$(CONFIG_COMMON_CLK)       += clk-mux.o
->  obj-$(CONFIG_COMMON_CLK)       += clk-composite.o
->  obj-$(CONFIG_COMMON_CLK)       += clk-fractional-divider.o
-> diff --git a/drivers/clk/clk-multiplier.c b/drivers/clk/clk-multiplier.c
-> new file mode 100644
-> index 000000000000..fed71de801ca
-> --- /dev/null
-> +++ b/drivers/clk/clk-multiplier.c
-
-<snip>
-
-> +static unsigned long __bestmult(struct clk_hw *hw, unsigned long rate,
-> +                               unsigned long *best_parent_rate,
-> +                               u8 width, unsigned long flags)
-> +{
-> +       unsigned long orig_parent_rate = *best_parent_rate;
-> +       unsigned long parent_rate, current_rate, best_rate = ~0;
-> +       unsigned int i, bestmult = 0;
+> 
+> No changes from v1.
+> 
+>  drivers/clk/nxp/clk-lpc18xx-ccu.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/drivers/clk/nxp/clk-lpc18xx-ccu.c b/drivers/clk/nxp/clk-lpc18xx-ccu.c
+> index eeaee97da110..1845476e635e 100644
+> --- a/drivers/clk/nxp/clk-lpc18xx-ccu.c
+> +++ b/drivers/clk/nxp/clk-lpc18xx-ccu.c
+> @@ -180,6 +180,20 @@ static void lpc18xx_ccu_gate_disable(struct clk_hw *hw)
+>  static int lpc18xx_ccu_gate_is_enabled(struct clk_hw *hw)
+>  {
+>  	struct clk_gate *gate = to_clk_gate(hw);
+> +	struct clk *parent;
 > +
-> +       if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT))
-> +               return rate / *best_parent_rate;
+> +	/*
+> +	 * The branch clock registers are only accessible
+> +	 * if the base (parent) clock is enabled. Register
+> +	 * access with a disabled base clock will hang the
+> +	 * system.
+> +	 */
+> +	parent = clk_get_parent(hw->clk);
+
+Why not use provider APIs (clk_hw_get_parent and we could add a
+clk_hw_is_enabled)? I also wonder why we don't just read the
+register directly here instead of going through the framework to
+find out if the parent is enabled?
+
+It may also make sense to "optimize" the disable unused code to
+do a depth first search for a disabled clock and then disable
+clocks from the leaves to the root. That would avoid this problem
+right?
+
+> +	if (IS_ERR(parent))
+> +		return 0;
 > +
-> +       for (i = 1; i < ((1 << width) - 1); i++) {
-> +               if (rate * i == orig_parent_rate) {
+> +	if (!__clk_is_enabled(parent))
+> +		return 0;
+>  
+>  	return clk_readl(gate->reg) & LPC18XX_CCU_RUN;
+>  }
+> -- 
+> 1.8.0
+> 
 
-The tested multiplier "i" is on the wrong side of the equation when
-compared to the statement "current_rate = parent_rate * i"
-
-Since this should be a clock multiplier, that test can only be true
-when i == 1, given that rate >= parent_rate. In all other cases it'll
-fallback to the clk_hw_round_rate() call below.
-
-Am I missing something?
-
-Otherwise, this is
-
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-
-> +                       /*
-> +                        * This is the best case for us if we have a
-> +                        * perfect match without changing the parent
-> +                        * rate.
-> +                        */
-> +                       *best_parent_rate = orig_parent_rate;
-> +                       return i;
-> +               }
-> +
-> +               parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw),
-> +                                               rate / i);
-> +               current_rate = parent_rate * i;
-> +
-> +               if (__is_best_rate(rate, current_rate, best_rate, flags)) {
-> +                       bestmult = i;
-> +                       best_rate = current_rate;
-> +                       *best_parent_rate = parent_rate;
-> +               }
-> +       }
-> +
-> +       return bestmult;
-> +}
-
-<snip>
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
