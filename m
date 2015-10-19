@@ -1,71 +1,81 @@
-Return-Path: <jh80.chung@samsung.com>
-Message-id: <5615C3C3.5070202@samsung.com>
-Date: Thu, 08 Oct 2015 10:15:47 +0900
-From: Jaehoon Chung <jh80.chung@samsung.com>
-MIME-version: 1.0
-To: Heiko Stuebner <heiko@sntech.de>, ulf.hansson@linaro.org,
- mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: linux-mmc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- dianders@chromium.org, amstan@chromium.org
-Subject: Re: [PATCH v2 5/8] mmc: dw_mmc-rockchip: dt-binding: Add tuning
- related things
-References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
- <1443622064-14362-6-git-send-email-heiko@sntech.de>
-In-reply-to: <1443622064-14362-6-git-send-email-heiko@sntech.de>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 19 Oct 2015 15:27:43 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Joachim Eastwood <manabian@gmail.com>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] clk: lpc18xx-cgu: fix potential system hang when
+ disabling unused clocks
+Message-ID: <20151019222743.GD19782@codeaurora.org>
+References: <1440527643-2960-1-git-send-email-manabian@gmail.com>
+ <1440527643-2960-3-git-send-email-manabian@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1440527643-2960-3-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi, Heiko.
-
-Acked-by: Jaehoon Chung <jh80.chung@samsung.com>
-
-Best Regards,
-Jaehoon Chung
-
-
-On 09/30/2015 11:07 PM, Heiko Stuebner wrote:
-> From: Alexandru M Stan <amstan@chromium.org>
-> 
-> Add ciu_drive, ciu_sample clocks and default-sample-phase. This will later
-> be used by tuning code.
-> 
-> We do not touch ciu_drive (and by extension define default-drive-phase).
-> Drive phase is mostly used to define minimum hold times, while one could
-> write some code to determine what phase meets the minimum hold time
-> (ex 10 degrees) this will not work with the current clock phase framework
-> (which floors angles, so we'll get 0 deg, and there's no way to know what
-> resolution the floors happen at). We assume that the default drive angles
-> set by the hardware are good enough.
-> 
-> Signed-off-by: Alexandru M Stan <amstan@chromium.org>
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
-> index c327c2d..3dc13b6 100644
-> --- a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
-> +++ b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
-> @@ -14,6 +14,19 @@ Required Properties:
->  							before RK3288
->  	- "rockchip,rk3288-dw-mshc": for Rockchip RK3288
+On 08/25, Joachim Eastwood wrote:
+> diff --git a/drivers/clk/nxp/clk-lpc18xx-cgu.c b/drivers/clk/nxp/clk-lpc18xx-cgu.c
+> index e0a3cb8970ab..3d8d0ac38f96 100644
+> --- a/drivers/clk/nxp/clk-lpc18xx-cgu.c
+> +++ b/drivers/clk/nxp/clk-lpc18xx-cgu.c
+> @@ -8,6 +8,7 @@
+>   * warranty of any kind, whether express or implied.
+>   */
 >  
-> +Optional Properties:
-> +* clocks: from common clock binding: if ciu_drive and ciu_sample are
-> +  specified in clock-names, should contain handles to these clocks.
-> +
-> +* clock-names: Apart from the clock-names described in synopsys-dw-mshc.txt
-> +  two more clocks "ciu-drive" and "ciu-sample" are supported. They are used
-> +  to control the clock phases, "ciu-sample" is required for tuning high-
-> +  speed modes.
-> +
-> +* rockchip,default-sample-phase: The default phase to set ciu_sample at
-> +  probing, low speeds or in case where all phases work at tuning time.
-> +  If not specified 0 deg will be used.
-> +
->  Example:
+> +#include <linux/clk.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/delay.h>
+>  #include <linux/kernel.h>
+> @@ -480,6 +481,42 @@ static const struct clk_ops lpc18xx_pll1_ops = {
+>  	.recalc_rate = lpc18xx_pll1_recalc_rate,
+>  };
 >  
->  	rkdwmmc0@12200000 {
-> 
+> +static int lpc18xx_cgu_gate_enabled(struct clk_hw *hw)
+
+s/enabled/enable/?
+
+> +{
+> +	return clk_gate_ops.enable(hw);
+> +}
+> +
+> +static void lpc18xx_cgu_gate_disable(struct clk_hw *hw)
+> +{
+> +	clk_gate_ops.disable(hw);
+> +}
+> +
+> +static int lpc18xx_cgu_gate_is_enabled(struct clk_hw *hw)
+> +{
+> +	struct clk *parent;
+> +
+> +	/*
+> +	 * The consumer of base clocks needs know if the
+> +	 * base clock is really enabled before it can be
+> +	 * accessed. It is therefore necessary to verify
+> +	 * this all the way up.
+> +	 */
+> +	parent = clk_get_parent(hw->clk);
+> +	if (IS_ERR(parent))
+> +		return 0;
+> +
+> +	if (!__clk_is_enabled(parent))
+
+Same comment as in patch 1.
+
+> +		return 0;
+> +
+> +	return clk_gate_ops.is_enabled(hw);
+> +}
+> +
+> +static const struct clk_ops lpc18xx_gate_ops = {
+> +	.enable = lpc18xx_cgu_gate_enabled,
+> +	.disable = lpc18xx_cgu_gate_disable,
+> +	.is_enabled = lpc18xx_cgu_gate_is_enabled,
+> +};
+> +
+>  static struct lpc18xx_cgu_pll_clk lpc18xx_cgu_src_clk_plls[] = {
+>  	LPC1XX_CGU_CLK_PLL(PLL0USB,	pll0_src_ids, pll0_ops),
+>  	LPC1XX_CGU_CLK_PLL(PLL0AUDIO,	pll0_src_ids, pll0_ops),
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
