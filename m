@@ -1,103 +1,155 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <robh@kernel.org>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20151021155057.20687.14055@quantum>
-References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
-	<1438974570-20812-3-git-send-email-mturquette@baylibre.com>
-	<CAMuHMdX8Fq3AfxuZMLe4-CYFzrDiQcwnREQhX5fSGXzYNSkKsA@mail.gmail.com>
-	<20151020124000.20687.60752@quantum>
-	<CAMuHMdWd9LxrSWO5snriW+fb_d8FtMeXUBjp3M-Oeahh+FzJcw@mail.gmail.com>
-	<20151021105932.GP32536@n2100.arm.linux.org.uk>
-	<20151021155057.20687.14055@quantum>
-Date: Wed, 21 Oct 2015 18:46:35 +0200
-Message-ID: <CAMuHMdWgf8DOhaDLcQ=qJx0r7G0zK_yfWRpVOPBV--SW2Rw1kA@mail.gmail.com>
-Subject: Re: [PATCH RFC RFT 2/3] clk: clk_put WARNs if user has not disabled clk
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, Lee Jones <lee.jones@linaro.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>, Tony Lindgren <tony@atomide.com>,
-	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Linux-sh list <linux-sh@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
+In-Reply-To: <1603415.VWFZ8V0WMC@vostro.rjw.lan>
+References: <561E1378.6000906@collabora.com> <1445268580.53393.183.camel@infradead.org>
+ <CAL_JsqLwvc1H9kQnWs=mA8P4Mq4izmSSeFU6KRtkExBkzF9ABg@mail.gmail.com> <1603415.VWFZ8V0WMC@vostro.rjw.lan>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 19 Oct 2015 17:58:40 -0500
+Message-ID: <CAL_JsqKa3MFJUWKV2KxPE_NmrP2g4dOD3zr+0Kyx4yBkDOg2HA@mail.gmail.com>
+Subject: Re: [GIT PULL] On-demand device probing
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: David Woodhouse <dwmw2@infradead.org>, Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
+	Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
+	Linux USB List <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
-
-On Wed, Oct 21, 2015 at 5:50 PM, Michael Turquette
-<mturquette@baylibre.com> wrote:
-> Quoting Russell King - ARM Linux (2015-10-21 03:59:32)
->> On Wed, Oct 21, 2015 at 11:50:07AM +0200, Geert Uytterhoeven wrote:
->> > On Tue, Oct 20, 2015 at 2:40 PM, Michael Turquette
->> > <mturquette@baylibre.com> wrote:
->> > > Why not keep the reference to the struct clk after get'ing it the first
->> > > time?
+On Mon, Oct 19, 2015 at 4:40 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrot=
+e:
+> On Monday, October 19, 2015 10:58:25 AM Rob Herring wrote:
+>> On Mon, Oct 19, 2015 at 10:29 AM, David Woodhouse <dwmw2@infradead.org> =
+wrote:
+>> > On Mon, 2015-10-19 at 15:50 +0100, Mark Brown wrote:
+>> >> > But the point I'm making is that we are working towards *fixing* th=
+at,
+>> >> > and *not* using DT-specific code in places where we should be using=
+ the
+>> >> > generic APIs.
+>> >>
+>> >> What is the plan for fixing things here?  It's not obvious (at least =
+to
+>> >> me) that we don't want to have the subsystems having knowledge of how
+>> >> they are bound to a specific firmware which is what you seem to imply
+>> >> here.
 >> >
->> > And store it where?
+>> > I don't know that there *is* a coherent plan here to address it all.
+>> >
+>> > Certainly, we *will* need subsystems to have firmware-specific
+>> > knowledge in some cases. Take GPIO as an example; ACPI *has* a way to
+>> > describe GPIO, and properties which reference GPIO pins are intended t=
+o
+>> > work through that =E2=80=94 while in DT, properties which reference GP=
+IO pins
+>> > will have different contents. They'll be compatible at the driver
+>> > level, in the sense that there's a call to get a given GPIO given the
+>> > property name, but the subsystems *will* be doing different things
+>> > behind the scenes.
+>> >
+>> > My plan, such as it is, is to go through the leaf-node drivers which
+>> > almost definitely *should* be firmware-agnostic, and convert those. An=
+d
+>> > then take stock of what we have left, and work out what, if anything,
+>> > still needs to be done.
 >>
->> Not my problem :)
+>> Many cases are already agnostic in the drivers in terms of the *_get()
+>> functions. Some are DT specific, but probably because those subsystems
+>> are new and DT only. In any case, I don't think these 1 line changes
+>> do anything to make doing conversions here harder.
 >>
->> Users are supposed to hold on to the reference obtained via clk_get()
->> while they're making use of the clock: in some implementations, this
->> increments the module use count if the clock driver is a module, and
->> may have other effects too.
+>> >> It seems like we're going to have to refactor these bits of code when
+>> >> they get generalised anyway so I'm not sure that the additional cost
+>> >> here is that big.
+>> >
+>> > That's an acceptable answer =E2=80=94 "we're adding legacy code here b=
+ut we
+>> > know it's going to be refactored anyway". If that's true, all it takes
+>> > is a note in the commit comment to that effect. That's different from
+>> > having not thought about it :)
 >>
->> Dropping that while you're still requiring the clock to be enabled is
->> unsafe: if it is provided by a module, then removing and reinserting
->> the module may very well change the enabled state of the clock, it
->> most certainly will disrupt the enable count.
->>
->> It's always been this way, right from the outset, and when I've seen
->> people doing this bollocks, I've always pointed out that it's wrong.
->> Generally, people will fix it once they become aware of it, so it's
->> really that people just don't like reading and conforming to published
->> API requirements.
->>
->> I think the root cause is that people just don't like reading what
->> other people write in terms of documentation, and they prefer to go
->> off and do their own thing, provided it works for them.
+>> Considering at one point we did create a fwnode based API, we did
+>> think about it. Plus there was little input from ACPI folks as to
+>> whether the change was even useful for ACPI case.
 >
-> Right, so in other words this problem must be solved by the caller of
-> clk_get, as it should be. I have never much looked at the pm clk code in
-> question, but I gave it a quick look and came up with some example code
-> that does not compile, in an effort to be as helpful as possible.
+> Well, sorry, but who was asking whom, specifically?
+
+You and linux-acpi have been copied on v2 and later of the entire
+series I think.
+
+> The underlying problem is present in ACPI too and we don't really have a =
+good
+> solution for it.  We might benefit from a common one if it existed.
+
+The problem for DT is we don't generically know what are the
+dependencies at a core level. We could know some or most dependencies
+if phandles (links to other nodes) were typed, but they are not. If
+the core had this information, we could simply control the device
+creation to order probing. Instead, this information is encoded into
+the bindings and binding parsing resides in the subsystems. That
+parsing happens during probe of the client side and is done by the
+subsystems (for common bindings). Since we already do the parsing at
+this point, it is a convenient place to trigger the probe of the
+dependency. Is ACPI going to be similar in this regard?
+
+Fundamentally, it is a question of probe devices when their
+dependencies are present or drivers ensure their dependencies are
+ready. IIRC, init systems went thru a similar debate for service
+dependencies.
+
+>> In any case, we're talking about adding 1 line.
 >
-> Basically I added a flex array to struct pm_clk_notifier_block, so that
-> now there are two flex arrays which is stupid. But I am too lazy to
-> replace the nbclk->clks thing with a malloc after walking all of the
-> clk_id's to figure out the number of clocks. Or we could just add
-> .num_clk to the struct, fix up all 4 users of it and drop the NULL
-> sentinel used the .clk_id's... Hmm that would have been better.
+> But also about making the driver core slighly OF-centric.
 
-Thanks for trying.
+How so? The one line is in DT binding parsing code in subsystems, not
+driver core. The driver core change is we add every device (that
+happened to be created by DT) to the deferred probe list, so they
+don't probe right away.
 
-> index 25266c6..45e58fe 100644
-> --- a/include/linux/pm_clock.h
-> +++ b/include/linux/pm_clock.h
-> @@ -16,6 +16,7 @@ struct pm_clk_notifier_block {
->         struct notifier_block nb;
->         struct dev_pm_domain *pm_domain;
->         char *con_ids[];
-> +       struct clk *clks[];
->  };
+
+> Sure, we need OF-specific code and ACPI-specific code wherever different
+> handling is required, but doing that at the driver core level seems to be
+> a bit of a stretch to me.
 >
->  struct clk;
+> Please note that we don't really have ACPI-specific calls in the driver c=
+ore,
+> although we might have added them long ago even before the OF stuff appea=
+red
+> in the kernel for the first time.  We didn't do that, (among other things=
+)
+> because we didn't want that particular firmware interface to appear speci=
+al
+> in any way and I'm not really sure why it is now OK to make OF look speci=
+al
+> instead.
 
-Unfortunately that won't work: while the .con_ids[] array is per-platform,
-the .clks[] array should be per-device. I.e. it should be tied to the struct
-device, not to the struct pm_clk_notifier_block.
+I don't think DT is special and we avoid DT specific core changes as
+much as possible. I think the difference is DT uses platform_device
+and ACPI does not. It used to be separate, but got merged together
+primarily to support the plethora of existing drivers. Anyway, that is
+all outside of anything in this series.
 
-Gr{oetje,eeting}s,
+> If it is trivial to avoid that (and you seem to be arguing that it is), w=
+hy
+> do we have to do it?
 
-                        Geert
+Sorry, I don't follow what "that" or "it" is.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Rob
