@@ -1,77 +1,39 @@
-Return-Path: <rnayak@codeaurora.org>
-Message-ID: <56120582.1050707@codeaurora.org>
-Date: Mon, 05 Oct 2015 10:37:14 +0530
-From: Rajendra Nayak <rnayak@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 19 Oct 2015 12:59:46 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, Matt Mackall <mpm@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	linux-crypto@vger.kernel.org,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH 1/3] clk: samsung: exynos4: Add SSS gate clock
+Message-ID: <20151019195946.GH10182@codeaurora.org>
+References: <1445230834-32689-1-git-send-email-k.kozlowski@samsung.com>
+ <1445230834-32689-2-git-send-email-k.kozlowski@samsung.com>
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Mike Turquette <mturquette@baylibre.com>,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: Make oxili GDSC parent of oxili_cx GDSC
-References: <1443035362-10914-1-git-send-email-sboyd@codeaurora.org> <560CED90.9050201@codeaurora.org> <20151001175227.GE19319@codeaurora.org> <20151001190639.GI19319@codeaurora.org>
-In-Reply-To: <20151001190639.GI19319@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1445230834-32689-2-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-[]...
-
->>> It would also be nicer if this parent/child relationship can
->>> somehow be represented in data (struct gdsc) that gets passed to
->>> the gdsc driver which then sets it up, instead of individual
->>> clock drivers doing it.
->>
->> Agreed. I'd rather that we do nothing besides register domains
->> and then let the core code handle hooking up domains and
->> subdomains.
+On 10/19, Krzysztof Kozlowski wrote:
+> Add a gate clock for controlling all clocks of Security Sub System
+> (SSS).
 > 
-> A little closer inspection makes me want to skip this. PM domains
-> can have multiple "master" domains, and pm_genpd_init() is the
-> only API that would be able to do the linking. That API is mostly
-> about initializing things to default values, so it doesn't seem
-> like a good fit. I'll send a v2 with the remove part and the
-> exports.
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
 
-What I was suggesting is that the qcom gdsc driver handle this
-instead of the qcom clock drivers.
-Something like..
+The To: list is huge, so I have no idea if you want me to apply
+this patch or not, and given that it's part of a series that has
+dts changes I guess that means it should go through arm-soc:
 
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index da9fad8..00edb2d 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -226,6 +226,8 @@ int gdsc_register(struct device *dev, struct gdsc **scs, size_t num,
- 		if (ret)
- 			return ret;
- 		data->domains[i] = &scs[i]->pd;
-+		if (scs[i]->parent)
-+			pm_genpd_add_subdomain(scs[i]->parent, &scs[i]->pd);
- 	}
- 
- 	return of_genpd_add_provider_onecell(dev->of_node, data);
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index 5ded268..bc5791f 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -49,6 +49,7 @@ struct gdsc {
- 	struct reset_controller_dev	*rcdev;
- 	unsigned int			*resets;
- 	unsigned int			reset_count;
-+	struct generic_pm_domain	*parent;
- };
- 
- #ifdef CONFIG_QCOM_GDSC
-diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
-index fe8320d..51ad8de 100644
---- a/drivers/clk/qcom/mmcc-msm8974.c
-+++ b/drivers/clk/qcom/mmcc-msm8974.c
-@@ -2400,6 +2400,7 @@ static struct gdsc oxilicx_gdsc = {
- 	.pd = {
- 		.name = "oxilicx",
- 	},
-+	.parent = &oxili_gdsc.pd,
- 	.pwrsts = PWRSTS_OFF_ON,
- };
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+a Linux Foundation Collaborative Project
