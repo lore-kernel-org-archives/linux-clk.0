@@ -1,125 +1,174 @@
-Return-Path: <linux+mturquette=baylibre.com@arm.linux.org.uk>
-Date: Mon, 19 Oct 2015 19:39:06 +0100
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: David Woodhouse <dwmw2@infradead.org>, Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>,
-	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	Linux PWM List <linux-pwm@vger.kernel.org>,
-	Linux USB List <linux-usb@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-Subject: Re: [GIT PULL] On-demand device probing
-Message-ID: <20151019183905.GS32532@n2100.arm.linux.org.uk>
-References: <20151018192931.GY14956@sirena.org.uk>
- <20151018193757.GA9147@kroah.com>
- <20151018195330.GB14956@sirena.org.uk>
- <1445247881.53393.146.camel@infradead.org>
- <CAL_JsqKehmSobpbdeXGo=-1pAbtrhCHovyyCWya_MNOhGCi8CQ@mail.gmail.com>
- <1445258870.53393.173.camel@infradead.org>
- <20151019145048.GI14956@sirena.org.uk>
- <1445268580.53393.183.camel@infradead.org>
- <20151019154324.GN32532@n2100.arm.linux.org.uk>
- <20151019182744.GD4931@pengutronix.de>
+Return-Path: <B48286@freescale.com>
+From: Zhiqiang Hou <B48286@freescale.com>
+To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
+	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+CC: <mark.rutland@arm.com>, <linux@roeck-us.net>, <wsa@the-dreams.de>,
+	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <Mingkai.Hu@freescale.com>,
+	<Shaohui.Xie@freescale.com>, <scottwood@freescale.com>,
+	<bhupesh.sharma@freescale.com>, <Wenbin.Song@freescale.com>,
+	<B48286@freescale.com>
+Subject: [PATCH V5 6/6] dts/ls1043a: add LS1043ARDB board support
+Date: Mon, 19 Oct 2015 19:56:14 +0800
+Message-ID: <1445255774-32887-6-git-send-email-B48286@freescale.com>
+In-Reply-To: <1445255774-32887-1-git-send-email-B48286@freescale.com>
+References: <1445255774-32887-1-git-send-email-B48286@freescale.com>
+Return-Path: B48286@freescale.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <20151019182744.GD4931@pengutronix.de>
-Sender: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Oct 19, 2015 at 08:27:44PM +0200, Uwe Kleine-König wrote:
-> Hello,
-> 
-> On Mon, Oct 19, 2015 at 04:43:24PM +0100, Russell King - ARM Linux wrote:
-> > It's a bit ironic that you've chosen GPIO as an example there.  The
-> > "new" GPIO API (the gpiod_* stuff) only has a fwnode way to get the
-> > gpio descriptor.  There's no of_* method.
-> 
-> Without following all that fwnode discussion:
-> gpiod_get et al. should work for you here, doesn't it? It just takes a
-> struct device * and I'm happy with it.
+From: Shaohui Xie <Shaohui.Xie@freescale.com>
 
-What if you don't have a struct device?  I had that problem recently
-when modifying the mvebu PCIe code.  The 'struct device' node doesn't
-contain the GPIOs, it's the PCIe controller.  Individual ports on the
-controller are described in DT as sub-nodes, and the sub-nodes can
-have a GPIO for card reset purposes.  These sub-nodes don't have a
-struct device.
+Signed-off-by: Shaohui Xie <Shaohui.Xie@freescale.com>
+Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
+Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
+Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+---
+V5: V4 V3
+ - No change.
 
-Right now, I'm having to do this to work around this issue:
+V2:
+ - Remove the useless compatible "simple-bus" from cpld node.
 
-        reset_gpio = of_get_named_gpio_flags(child, "reset-gpios", 0, &flags);
-        if (reset_gpio == -EPROBE_DEFER) {
-                ret = reset_gpio;
-                goto err;
-        }
+ arch/arm64/boot/dts/freescale/Makefile            |   2 +-
+ arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts | 116 ++++++++++++++++++++++
+ 2 files changed, 117 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts
 
-        if (gpio_is_valid(reset_gpio)) {
-                unsigned long gpio_flags;
-
-                port->reset_name = devm_kasprintf(dev, GFP_KERNEL, "%s-reset",
-                                                  port->name);
-                if (!port->reset_name) {
-                        ret = -ENOMEM;
-                        goto err;
-                }
-
-                if (flags & OF_GPIO_ACTIVE_LOW) {
-                        dev_info(dev, "%s: reset gpio is active low\n",
-                                 of_node_full_name(child));
-                        gpio_flags = GPIOF_ACTIVE_LOW |
-                                     GPIOF_OUT_INIT_LOW;
-                } else {
-                        gpio_flags = GPIOF_OUT_INIT_HIGH;
-                }
-
-                ret = devm_gpio_request_one(dev, reset_gpio, gpio_flags,
-                                            port->reset_name);
-                if (ret) {
-                        if (ret == -EPROBE_DEFER)
-                                goto err;
-                        goto skip;
-                }
-
-                port->reset_gpio = gpio_to_desc(reset_gpio);
-        }
-
-Not nice, is it?  Not nice to have that in lots of drivers either.
-
-However, switching to use any of_* or fwnode_* thing also carries with
-it another problem: you can't control the name appearing in the
-allocation, so you end up with a bunch of GPIOs requested with a "reset"
-name - meaning you lose any identification of which port the GPIO was
-bound to.
-
+diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+index 57b41c7..33b1e57 100644
+--- a/arch/arm64/boot/dts/freescale/Makefile
++++ b/arch/arm64/boot/dts/freescale/Makefile
+@@ -1,4 +1,4 @@
+-dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-qds.dtb fsl-ls2080a-rdb.dtb fsl-ls2080a-simu.dtb
++dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-qds.dtb fsl-ls2080a-rdb.dtb fsl-ls2080a-simu.dtb fsl-ls1043a-rdb.dtb
+  
+ always		:= $(dtb-y)
+ subdir-y	:= $(dts-dirs)
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts
+new file mode 100644
+index 0000000..7a351e2
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts
+@@ -0,0 +1,116 @@
++/*
++ * Device Tree Include file for Freescale Layerscape-1043A family SoC.
++ *
++ * Copyright 2014-2015, Freescale Semiconductor
++ *
++ * Mingkai Hu <Mingkai.hu@freescale.com>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPLv2 or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This library is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This library is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++/dts-v1/;
++#include "fsl-ls1043a.dtsi"
++
++/ {
++	model = "LS1043A RDB Board";
++};
++
++&i2c0 {
++	status = "okay";
++	ina220@40 {
++		compatible = "ti,ina220";
++		reg = <0x40>;
++		shunt-resistor = <1000>;
++	};
++	adt7461a@4c {
++		compatible = "adi,adt7461";
++		reg = <0x4c>;
++	};
++	eeprom@56 {
++		compatible = "at24,24c512";
++		reg = <0x52>;
++	};
++	eeprom@57 {
++		compatible = "at24,24c512";
++		reg = <0x53>;
++	};
++	rtc@68 {
++		compatible = "pericom,pt7c4338";
++		reg = <0x68>;
++	};
++};
++
++&ifc {
++	status = "okay";
++	#address-cells = <2>;
++	#size-cells = <1>;
++	/* NOR, NAND Flashes and FPGA on board */
++	ranges = <0x0 0x0 0x0 0x60000000 0x08000000
++		  0x1 0x0 0x0 0x7e800000 0x00010000
++		  0x2 0x0 0x0 0x7fb00000 0x00000100>;
++
++		nor@0,0 {
++			compatible = "cfi-flash";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			reg = <0x0 0x0 0x8000000>;
++			bank-width = <2>;
++			device-width = <1>;
++		};
++
++		nand@1,0 {
++			compatible = "fsl,ifc-nand";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			reg = <0x1 0x0 0x10000>;
++		};
++
++		cpld: board-control@2,0 {
++			compatible = "fsl,ls1043ardb-cpld";
++			reg = <0x2 0x0 0x0000100>;
++		};
++};
++
++&duart0 {
++	status = "okay";
++};
++
++&duart1 {
++	status = "okay";
++};
 -- 
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+2.1.0.27.g96db324
