@@ -1,51 +1,98 @@
-Return-Path: <rjw@rjwysocki.net>
-Return-Path: <rjw@rjwysocki.net>
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Rob Herring <robh@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, dmaengine@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>, Linux USB List <linux-usb@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-Subject: Re: [GIT PULL] On-demand device probing
-Date: Thu, 22 Oct 2015 01:39:42 +0200
-Message-ID: <13395371.QJ0TvhYnx8@vostro.rjw.lan>
-In-Reply-To: <CAMuHMdWoSdoT1p0e+Bc9ucrykxO7ESLKYHRzackpVjQAs_XaDg@mail.gmail.com>
-References: <561E1378.6000906@collabora.com> <4903022.NtioyRkmbB@vostro.rjw.lan> <CAMuHMdWoSdoT1p0e+Bc9ucrykxO7ESLKYHRzackpVjQAs_XaDg@mail.gmail.com>
+Return-Path: <B48286@freescale.com>
+From: Zhiqiang Hou <B48286@freescale.com>
+To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
+	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+CC: <mark.rutland@arm.com>, <linux@roeck-us.net>, <wsa@the-dreams.de>,
+	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <Mingkai.Hu@freescale.com>,
+	<Shaohui.Xie@freescale.com>, <scottwood@freescale.com>,
+	<bhupesh.sharma@freescale.com>, <Wenbin.Song@freescale.com>,
+	<B48286@freescale.com>
+Subject: [PATCH V5 5/6] clk: qoriq: Add ls1043a support.
+Date: Mon, 19 Oct 2015 19:56:13 +0800
+Message-ID: <1445255774-32887-5-git-send-email-B48286@freescale.com>
+In-Reply-To: <1445255774-32887-1-git-send-email-B48286@freescale.com>
+References: <1445255774-32887-1-git-send-email-B48286@freescale.com>
+Return-Path: B48286@freescale.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wednesday, October 21, 2015 10:55:14 AM Geert Uytterhoeven wrote:
-> Hi Rafael,
-> 
-> On Wed, Oct 21, 2015 at 1:34 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> > On Tuesday, October 20, 2015 09:15:01 AM Rob Herring wrote:
-> >> On Tue, Oct 20, 2015 at 2:56 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> >> > ACPI uses platform devices too.  In fact, ACPI device objects are enumerated as
-> >> > platform devices by default now.
-> >>
-> >> Okay, I should have grepped for that:
-> >> drivers/base/platform.c:                ACPI_COMPANION_SET(&pdev->dev, NULL);
-> >> drivers/base/platform.c:        len = acpi_device_modalias(dev, buf,
-> >> PAGE_SIZE -1);
-> >> drivers/base/platform.c:        rc = acpi_device_uevent_modalias(dev, env);
-> >> drivers/base/platform.c:        /* Then try ACPI style match */
-> >> drivers/base/platform.c:        if (acpi_driver_match_device(dev, drv))
-> >>
-> >> These are all cases which have DT version as well, so we're not really
-> >> all that different here. There's a few more for DT, but that probably
-> >> means you have just not hit the problems we have yet. For example,
-> >> what happens if you have an interrupt line in which the controller is
-> >> probed after the device connected to the interrupt line? That required
-> >> resolving irqs in platform_get_irq rather than using static resources
-> >> to support deferred probe.
-> >
-> > We don't have this particular problem, because the IRQ controllers are
-> > enumerated in a special way.
-> 
-> What does "in a special way" mean? Can you please be more specific?
-> 
-> Can you have interrupt controllers that depend on clocks, pin controllers,
-> and PM domains?
+From: Hou Zhiqiang <B48286@freescale.com>
 
-Currently, there's no native way to represent those dependencies in ACPI.
+Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+V5: V4 V3 V2
+ - No change.
 
-Thanks,
-Rafael
+ drivers/clk/clk-qoriq.c | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 8f9c93b..b189688 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -244,6 +244,28 @@ static const struct clockgen_muxinfo clockgen2_cmux_cgb = {
+ 	},
+ };
+ 
++static const struct clockgen_muxinfo ls1043a_hwa1 = {
++	{
++		{},
++		{},
++		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV2 },
++		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV3 },
++		{},
++		{},
++		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV2 },
++		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV3 },
++	},
++};
++
++static const struct clockgen_muxinfo ls1043a_hwa2 = {
++	{
++		{},
++		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV1 },
++		{},
++		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV3 },
++	},
++};
++
+ static const struct clockgen_muxinfo t1023_hwa1 = {
+ 	{
+ 		{},
+@@ -452,6 +474,21 @@ static const struct clockgen_chipinfo chipinfo[] = {
+ 		.pll_mask = 0x03,
+ 	},
+ 	{
++		.compat = "fsl,ls1043a-clockgen",
++		.init_periph = t2080_init_periph,
++		.cmux_groups = {
++			&t1040_cmux
++		},
++		.hwaccel = {
++			&ls1043a_hwa1, &ls1043a_hwa2
++		},
++		.cmux_to_group = {
++			0, -1
++		},
++		.pll_mask = 0x07,
++		.flags = CG_PLL_8BIT,
++	},
++	{
+ 		.compat = "fsl,ls2080a-clockgen",
+ 		.cmux_groups = {
+ 			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
+@@ -1227,6 +1264,7 @@ err:
+ CLK_OF_DECLARE(qoriq_clockgen_1, "fsl,qoriq-clockgen-1.0", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_2, "fsl,qoriq-clockgen-2.0", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1021a, "fsl,ls1021a-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
+ 
+ /* Legacy nodes */
+-- 
+2.1.0.27.g96db324
