@@ -1,55 +1,47 @@
-Return-Path: <alim.akhtar@samsung.com>
-From: Alim Akhtar <alim.akhtar@samsung.com>
-To: lee.jones@linaro.org, broonie@kernel.org
-Cc: k.kozlowski@samsung.com, mturquette@baylibre.com,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/5] mfd: sec: add S2MPS15 PMIC support
-Date: Mon, 26 Oct 2015 16:06:38 +0530
-Message-id: <1445855803-26973-1-git-send-email-alim.akhtar@samsung.com>
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ linux-crypto@vger.kernel.org
+Cc: Heiner Kallweit <hkallweit1@gmail.com>
+Subject: [PATCH 2/3] ARM: dts: Add PRNG module for exynos4
+Date: Mon, 19 Oct 2015 14:00:33 +0900
+Message-id: <1445230834-32689-3-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1445230834-32689-1-git-send-email-k.kozlowski@samsung.com>
+References: <1445230834-32689-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Samsung's S2MPS15 PMIC is targetted to be used with Samsung's Exynos7 SoC.
-The S2MPS15 PMIC is similar in functionality to S2MPS11/14 PMIC. It contains
-27 LDO and 10 Buck regulators, RTC, three 32.768 KHz clock outputs and allows
-programming these blocks via a I2C interface. This patch series adds initial
-support for LDO/Buck regulators of S2MPS15 PMIC.
+Add Pseudo Random Number Generator (PRNG) node of Security Sub System
+(SSS) to Exynos 4 DTSI.
 
-Changes since v1:
-* Added suggestion from Krzysztof [1].
-* Added s2mps15's 32.768 clocks support.
-* Added s2mps15's rtc support.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos4.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-V1 of these patches (with a lesser features) were posted a year back,
-since then there is not much progress on this, this is my attempt to
-move things forward.
-
-[1]-> https://lkml.org/lkml/2014/10/14/67
-
-This series is based on linux-next-20151022.
-This is tested on exynos7-espresso board.
-
-Alim Akhtar (2):
-  clk: s2mps15: Add support for S2MPS15 clocks
-  drivers/rtc/rtc-s5m.c: add support for S2MPS15 RTC
-
-Thomas Abraham (3):
-  dt-bindings: mfd: s2mps11: add documentation for s2mps15 PMIC
-  mfd: sec: Add support for S2MPS15 PMIC
-  regulator: s2mps11: add support for S2MPS15 regulators
-
- Documentation/devicetree/bindings/mfd/s2mps11.txt |   23 ++-
- drivers/clk/Kconfig                               |    5 +-
- drivers/clk/clk-s2mps11.c                         |   24 +++
- drivers/mfd/sec-core.c                            |   31 ++++
- drivers/mfd/sec-irq.c                             |    8 +
- drivers/regulator/Kconfig                         |    4 +-
- drivers/regulator/s2mps11.c                       |  135 ++++++++++++++++-
- drivers/rtc/rtc-s5m.c                             |   14 +-
- include/linux/mfd/samsung/core.h                  |    1 +
- include/linux/mfd/samsung/s2mps15.h               |  161 +++++++++++++++++++++
- 10 files changed, 392 insertions(+), 14 deletions(-)
- create mode 100644 include/linux/mfd/samsung/s2mps15.h
-
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index 3184e10f260a..a6b9913ea2b5 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -954,4 +954,12 @@
+ 		power-domains = <&pd_lcd0>;
+ 		#iommu-cells = <0>;
+ 	};
++
++	prng: rng@10830400 {
++		compatible = "samsung,exynos4-rng";
++		reg = <0x10830400 0x200>;
++		clocks = <&clock CLK_SSS>;
++		clock-names = "secss";
++		status = "disabled";
++	};
+ };
 -- 
-1.7.10.4
+1.9.1
