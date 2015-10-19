@@ -1,60 +1,95 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <broonie@sirena.org.uk>
+Date: Mon, 19 Oct 2015 12:02:38 +0100
+From: Mark Brown <broonie@kernel.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>,
+	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org
+Message-ID: <20151019110238.GE14956@sirena.org.uk>
+References: <561E1378.6000906@collabora.com>
+ <20151017065750.GA18607@kroah.com>
+ <20151018192931.GY14956@sirena.org.uk>
+ <20151018193757.GA9147@kroah.com>
+ <20151018195330.GB14956@sirena.org.uk>
+ <1445247881.53393.146.camel@infradead.org>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20151016125533.20687.23387@quantum>
-References: <20151015215648.2024f611@free-electrons.com>
-	<1444951178-18733-1-git-send-email-sboyd@codeaurora.org>
-	<20151016125533.20687.23387@quantum>
-Date: Fri, 16 Oct 2015 15:02:37 +0200
-Message-ID: <CAMuHMdUtxQfkc=a3ObbDserFtSyAPAKvAbywzSFoQZXd7kh=HQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: Make of_clk_get_parent_name() robust with
- #clock-cells = 1
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"Gregory CLEMENT <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>, Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="KwgAcZnBnwoMp5TU"
+In-Reply-To: <1445247881.53393.146.camel@infradead.org>
+Subject: Re: [GIT PULL] On-demand device probing
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
 
-On Fri, Oct 16, 2015 at 2:55 PM, Michael Turquette
-<mturquette@baylibre.com> wrote:
-> Quoting Stephen Boyd (2015-10-15 16:19:38)
->> If a clock provider has #clock-cells = 1 and we call
->> of_clk_get_parent_name() on it we may end up returning the name
->> of the provider node if the provider doesn't have a
->> clock-output-names property. This doesn't make sense, especially
->> when you consider that calling of_clk_get_parent_name() on such a
->> node with different indices will return the same name each time.
->>
->> Let's try getting the clock from the framework via of_clk_get()
->> instead, and only fallback to the node name if we have a provider
->> with #clock-cells = 0. This way, we can't hand out the same name
->> for different clocks when we don't actually know their names.
->>
->> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
->
-> Geert,
->
-> Does this approach fix the issues you had removing clock-output-names
-> from your clock provider DTS?
+--KwgAcZnBnwoMp5TU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I already saw this patch in clk-next, and I think it would fix that issue.
-However, we're no longer seeing the issue, as we no longer have
-fixed-factor-clocks in DT.
+On Mon, Oct 19, 2015 at 10:44:41AM +0100, David Woodhouse wrote:
+> On Sun, 2015-10-18 at 20:53 +0100, Mark Brown wrote:
 
-Thanks!
+> > Do you mean firmware rather than bus here?  I think that's the confusion
+> > I have...
 
-Gr{oetje,eeting}s,
+> Certainly, if it literally is adding of_* calls then that would seem to
+> be gratuitously firmware-specific. Nothing should be using those these
+> days; any new code should be using the generic device property APIs
+> (except in special cases).
 
-                        Geert
+It's not entirely clear to me that we should be moving to fwnode_
+wholesale yet - the last advice was to hold off for a little while which
+makes sense given that the ACPI community still doesn't seem to have
+worked out what it wants to do here and how.  The x86 embedded people
+are all gung ho but it's less clear that anyone else wants to use _DSD
+in quite the same way (I know of some efforts to use _DSD separately to
+the DT compatibility stuff) and there are some vendors who definitely do
+have completely different binding schemes for ACPI and DT and therefore
+specifically care which is in use.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+It would really help if ACPI could get their binding review process in
+place, and if we do want to actually start converting everything to
+fwnode_ we need to start communicating that actively since otherwise
+people can't really be expected to know.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--KwgAcZnBnwoMp5TU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWJM3NAAoJECTWi3JdVIfQZWIH+wWlytIatZzb02megHs7cfkS
+XkfoBZZlTpwYYTLooWg9gc7XQ/Hx2qk/CTJwHZOudgYjrig+IWFuwOAU5Vw5YMm8
+7LN539ptj28jYJibjVxoIIX0bRAiQgrG9i3/5K5e6pmGzqnea/D2mu9sG5L2Fz//
+WLK/BYSFuVW6AzmoncTtGgYqECOFDXo8azymWx86d/NlXXMWKIvoEb0qVS+dJrgi
+6U7UQqhp46CwWEX3yk4Yf51Fi1wh6xAaLZcXeXqwvy+rYUXpBRNWKhG+0HR1d+Ep
+lOg6BbeD+4VpVvPL0yFpxmWEnjicr9mB6jVz/tkKq/tVq6aVat5SrbGTs5Tygjg=
+=TjUN
+-----END PGP SIGNATURE-----
+
+--KwgAcZnBnwoMp5TU--
