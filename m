@@ -1,81 +1,127 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Cc: linux-rockchip@lists.infradead.org, Jaroslav Kysela <perex@perex.cz>, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 5/8] clk: rockchip: Allow the RK3288 SPDIF clocks to change their parent
-Date: Thu, 08 Oct 2015 17:10:40 +0200
-Message-ID: <11755202.f1LLWMlYi0@phil>
-In-Reply-To: <1444311079-2892-6-git-send-email-sjoerd.simons@collabora.co.uk>
-References: <1444311079-2892-1-git-send-email-sjoerd.simons@collabora.co.uk> <1444311079-2892-6-git-send-email-sjoerd.simons@collabora.co.uk>
+Return-Path: <linux+mturquette=baylibre.com@arm.linux.org.uk>
+Date: Mon, 19 Oct 2015 17:45:14 +0100
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>,
+	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>, dmaengine@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	Linux I2C <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	Linux Fbdev development list <linux-fbdev@vger.kernel.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Message-ID: <20151019164513.GP32532@n2100.arm.linux.org.uk>
+References: <20151018192931.GY14956@sirena.org.uk>
+ <20151018193757.GA9147@kroah.com>
+ <20151018195330.GB14956@sirena.org.uk>
+ <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
+ <20151019131821.GA32532@n2100.arm.linux.org.uk>
+ <CAAObsKDS_+AZ26P_fHc6pvAYrQotsuoO0DEGQUWC514t3DD_jQ@mail.gmail.com>
+ <20151019143045.GE32532@n2100.arm.linux.org.uk>
+ <CAAObsKDWM6A98tdKHqi4fe5DBf0BmB0JeghcZDWan_PYbyshag@mail.gmail.com>
+ <20151019153548.GM32532@n2100.arm.linux.org.uk>
+ <CAMuHMdVv=ieYM-Nehp0qV8CEggHEeJ22j-6i_N09rRA_U=2ePw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAMuHMdVv=ieYM-Nehp0qV8CEggHEeJ22j-6i_N09rRA_U=2ePw@mail.gmail.com>
+Sender: Russell King - ARM Linux <linux@arm.linux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Donnerstag, 8. Oktober 2015, 15:31:16 schrieb Sjoerd Simons:
-> The clock branches leading to sclk_spdif and sclk_spdif_8ch on RK3288
-> SoCs only feed those clocks, allow those clocks to change their parents
-> all the way up the hierarchy.
+On Mon, Oct 19, 2015 at 06:21:40PM +0200, Geert Uytterhoeven wrote:
+> Hi Russell,
 > 
-> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-
-Just as comment, if I'm seeing that right, this patch needs "clk: rockchip: 
-handle mux dependency of fractional dividers" and friends [0] to apply and 
-also actually handle the fractional dividers correctly.
-
-For the clock change itself:
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-
-Heiko
-
-[0] http://lists.infradead.org/pipermail/linux-rockchip/2015-August/003930.html
-
-
-> ---
+> On Mon, Oct 19, 2015 at 5:35 PM, Russell King - ARM Linux
+> <linux@arm.linux.org.uk> wrote:
+> >> > What you can do is print those devices which have failed to probe at
+> >> > late_initcall() time - possibly augmenting that with reports from
+> >> > subsystems showing what resources are not available, but that's only
+> >> > a guide, because of the "it might or might not be in a kernel module"
+> >> > problem.
+> >>
+> >> Well, adding those reports would give you a changelog similar to the
+> >> one in this series...
+> >
+> > I'm not sure about that, because what I was thinking of is adding
+> > a flag which would be set at late_initcall() time prior to running
+> > a final round of deferred device probing.
 > 
-> Changes in v4: None
-> Changes in v3: None
-> Changes in v2: None
+> Which round is the final round?
+
+I said "a" not "the".  Maybe I should've said "one last round of deferred
+probing before entering userspace".
+
+> That's the one which didn't manage to bind any new devices to drivers,
+> which is something you only know _after_ the round has been run.
 > 
->  drivers/clk/rockchip/clk-rk3288.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
+> So I think we need one extra round to handle this.
+
+Yes - because the idea is that we do everything we do today without
+printing anything about deferred probes.  We then set a flag which
+indicates we should report defers, and then we trigger another round
+of probes.
+
+If everything probed successfully, the deferred probe list will be
+empty and nothing will be seen.  Otherwise, we should end up with a
+report of all the devices that weren't able to be bound to their
+drivers due to -EPROBE_DEFER.
+
 > 
-> diff --git a/drivers/clk/rockchip/clk-rk3288.c
-> b/drivers/clk/rockchip/clk-rk3288.c index 90c1c9b..4e90252 100644
-> --- a/drivers/clk/rockchip/clk-rk3288.c
-> +++ b/drivers/clk/rockchip/clk-rk3288.c
-> @@ -317,25 +317,25 @@ static struct rockchip_clk_branch
-> rk3288_clk_branches[] __initdata = {
+> > This flag would then be used in a deferred_warn() printk function
+> > which would normally be silent, but when this flag is set, it would
+> > print the reason for the deferral - and this would replace (or be
+> > added) to the subsystems and drivers which return -EPROBE_DEFER.
+> >
+> > That has the effect of hiding all the deferrals up until just before
+> > launching into userspace, which should then acomplish two things -
+> > firstly, getting rid of the rather useless deferred messages up to
+> > that point, and secondly printing the reason why the remaining
+> > deferrals are happening.
+> >
+> > That should be a small number of new lines plus a one-line change
+> > in subsystems and drivers.
 > 
->  	MUX(0, "spdif_src", mux_pll_src_cpll_gpll_p, 0,
->  			RK3288_CLKSEL_CON(5), 15, 1, MFLAGS),
-> -	COMPOSITE_NOMUX(0, "spdif_pre", "spdif_src", 0,
-> +	COMPOSITE_NOMUX(0, "spdif_pre", "spdif_src", CLK_SET_RATE_PARENT,
->  			RK3288_CLKSEL_CON(5), 0, 7, DFLAGS,
->  			RK3288_CLKGATE_CON(4), 4, GFLAGS),
-> -	COMPOSITE_FRACMUX(0, "spdif_frac", "spdif_src", 0,
-> +	COMPOSITE_FRACMUX(0, "spdif_frac", "spdif_src", CLK_SET_RATE_PARENT,
->  			RK3288_CLKSEL_CON(9), 0,
->  			RK3288_CLKGATE_CON(4), 5, GFLAGS,
-> -		MUX(0, "spdif_mux", mux_spdif_p, 0,
-> +		MUX(0, "spdif_mux", mux_spdif_p, CLK_SET_RATE_PARENT,
->  				RK3288_CLKSEL_CON(5), 8, 2, MFLAGS)),
-> -	GATE(SCLK_SPDIF, "sclk_spdif", "spdif_mux", 0,
-> +	GATE(SCLK_SPDIF, "sclk_spdif", "spdif_mux", CLK_SET_RATE_PARENT,
->  			RK3288_CLKGATE_CON(4), 6, GFLAGS),
-> -	COMPOSITE_NOMUX(0, "spdif_8ch_pre", "spdif_src", 0,
-> +	COMPOSITE_NOMUX(0, "spdif_8ch_pre", "spdif_src", CLK_SET_RATE_PARENT,
->  			RK3288_CLKSEL_CON(40), 0, 7, DFLAGS,
->  			RK3288_CLKGATE_CON(4), 7, GFLAGS),
-> -	COMPOSITE_FRACMUX(0, "spdif_8ch_frac", "spdif_8ch_pre", 0,
-> +	COMPOSITE_FRACMUX(0, "spdif_8ch_frac", "spdif_8ch_pre",
-> CLK_SET_RATE_PARENT, RK3288_CLKSEL_CON(41), 0,
->  			RK3288_CLKGATE_CON(4), 8, GFLAGS,
-> -		MUX(0, "spdif_8ch_mux", mux_spdif_8ch_p, 0,
-> +		MUX(0, "spdif_8ch_mux", mux_spdif_8ch_p, CLK_SET_RATE_PARENT,
->  				RK3288_CLKSEL_CON(40), 8, 2, MFLAGS)),
-> -	GATE(SCLK_SPDIF8CH, "sclk_spdif_8ch", "spdif_8ch_mux", 0,
-> +	GATE(SCLK_SPDIF8CH, "sclk_spdif_8ch", "spdif_8ch_mux",
-> CLK_SET_RATE_PARENT, RK3288_CLKGATE_CON(4), 9, GFLAGS),
-> 
->  	GATE(0, "sclk_acc_efuse", "xin24m", 0,
+> Apart from the extra round we probably can't get rid of, that sounds
+> OK to me.
+
+Yes, it means a little longer to boot, but if there's nothing pending
+this _should_ only be microseconds - it should be nothing more than
+setting the flag, possibly taking and releasing a lock, and checking
+that the deferred probe list is empty.
+
+Of course, if the deferred probe list isn't empty, then there'll be
+more expense - but I'm willing to bet that for those developers with
+serial console enabled, the kernel boot will be faster overall due
+to the reduced number of characters printed during the boot.
+
+-- 
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
