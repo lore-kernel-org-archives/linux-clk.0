@@ -1,82 +1,33 @@
 Return-Path: <sboyd@codeaurora.org>
-Subject: Re: [PATCH v2 1/2] clk: qcom: common: Add API to register board
- clocks backwards compatibly
-To: Georgi Djakov <georgi.djakov@linaro.org>,
- Mike Turquette <mturquette@baylibre.com>
-References: <1445987100-19492-1-git-send-email-sboyd@codeaurora.org>
- <20151028010604.GV19782@codeaurora.org> <56310DDC.6010000@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
+Date: Mon, 19 Oct 2015 14:49:11 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-Message-ID: <563112F8.9070401@codeaurora.org>
-Date: Wed, 28 Oct 2015 11:24:56 -0700
+To: Ray Jui <rjui@broadcom.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+	Simran Rai <ssimran@broadcom.com>
+Subject: Re: [PATCH] clk: iproc: Fix PLL output frequency calculation
+Message-ID: <20151019214911.GB19782@codeaurora.org>
+References: <1445035458-29340-1-git-send-email-rjui@broadcom.com>
+ <1445035458-29340-2-git-send-email-rjui@broadcom.com>
 MIME-Version: 1.0
-In-Reply-To: <56310DDC.6010000@linaro.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1445035458-29340-2-git-send-email-rjui@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/28/2015 11:03 AM, Georgi Djakov wrote:
-> On 10/28/2015 03:06 AM, Stephen Boyd wrote:
->> On 10/27, Stephen Boyd wrote:
->>> +
->>> +int qcom_cc_register_board_clk(struct device *dev, const char *path,
->>> +			       const char *name, unsigned long rate)
->>> +{
->>> +	return _qcom_cc_register_board_clk(dev, path, name, rate,
->>> +					   !IS_ENABLED(CONFIG_QCOM_RPMCC));
->> I just realized that we could have this config enabled but the
->> driver never probes on a certain platform. So we'll need to do
->> some sort of search to see if the rpmcc node exists and also
->> check to see if the driver is enabled. I guess we can do that all
->> here in this function as long as we have a compatible =
->> "qcom,rpmcc" as a more generic property for the rpm clock
->> controller node. So if the config is enabled, search the dt tree
->> for a qcom,rpmcc node. If the rpmcc node is there, the last
->> argument is false, otherwise it's true.
-> I like the approach.  We could have both compatible strings like:
-> compatible = "qcom,rpmcc-msm8916", "qcom,rpmcc";
+On 10/16, Ray Jui wrote:
+> From: Simran Rai <ssimran@broadcom.com>
+> 
+> This patch affects the clocks that use fractional ndivider in their
+> PLL output frequency calculation. Instead of 2^20 divide factor, the
+> clock's ndiv integer shift was used. Fixed the bug by replacing ndiv
+> integer shift with 2^20 factor.
+> 
+> Signed-off-by: Simran Rai <ssimran@broadcom.com>
+> Signed-off-by: Ray Jui <rjui@broadcom.com>
+> Reviewed-by: Scott Branden <sbranden@broadcom.com>
+> ---
 
-Exactly.
-
->
-> The only possible issue i could imagine is the case when rpmcc
-> driver probe fails - does not enable scaling for example. Then we
-> will be left without xo. But maybe we should not handle this
-> scenario anyway.
-
-Yeah let's not care until that problem happens.
-
->
->> ---8<----
->> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
->> index 572851b5bc16..215a41ba0135 100644
->> --- a/drivers/clk/qcom/common.c
->> +++ b/drivers/clk/qcom/common.c
->> @@ -17,6 +17,7 @@
->>  #include <linux/platform_device.h>
->>  #include <linux/clk-provider.h>
->>  #include <linux/reset-controller.h>
->> +#include <linux/of.h>
->>  
->>  #include "common.h"
->>  #include "clk-rcg.h"
->> @@ -152,7 +153,18 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
->>  int qcom_cc_register_board_clk(struct device *dev, const char *path,
->>  			       const char *name, unsigned long rate)
->>  {
->> -	return _qcom_cc_register_board_clk(dev, path, name, rate, true);
->> +	bool add_factor = true;
->> +	struct device_node *node;
->> +
->> +	/* The RPM clock driver will add the factor clock if present */
->> +	if (IS_ENABLED(CONFIG_QCOM_RPMCC)) {
->> +		node = of_find_compatible_node(NULL, NULL, "qcom,rpmcc");
->> +		if (node)
-> if (node && of_device_is_available(node))
-> to handle also the case with status="disabled"
-
-Good catch! Looks like we can pass NULL there though so it can be
-simplified slightly.
+Did you want any Fixes: tag so this goes back to stable?
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
