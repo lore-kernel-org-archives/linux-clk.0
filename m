@@ -1,76 +1,73 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 19 Oct 2015 15:26:44 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Joachim Eastwood <manabian@gmail.com>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] clk: lpc18xx-ccu: fix potential system hang when
- disabling unused clocks
-Message-ID: <20151019222644.GC19782@codeaurora.org>
-References: <1440527643-2960-1-git-send-email-manabian@gmail.com>
- <1440527643-2960-2-git-send-email-manabian@gmail.com>
+Return-Path: <ukl@pengutronix.de>
+Date: Mon, 19 Oct 2015 20:27:44 +0200
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: David Woodhouse <dwmw2@infradead.org>, Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>,
+	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	Linux USB List <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Message-ID: <20151019182744.GD4931@pengutronix.de>
+References: <20151017065750.GA18607@kroah.com>
+ <20151018192931.GY14956@sirena.org.uk>
+ <20151018193757.GA9147@kroah.com>
+ <20151018195330.GB14956@sirena.org.uk>
+ <1445247881.53393.146.camel@infradead.org>
+ <CAL_JsqKehmSobpbdeXGo=-1pAbtrhCHovyyCWya_MNOhGCi8CQ@mail.gmail.com>
+ <1445258870.53393.173.camel@infradead.org>
+ <20151019145048.GI14956@sirena.org.uk>
+ <1445268580.53393.183.camel@infradead.org>
+ <20151019154324.GN32532@n2100.arm.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1440527643-2960-2-git-send-email-manabian@gmail.com>
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20151019154324.GN32532@n2100.arm.linux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/25, Joachim Eastwood wrote:
-> CCU branch clock register must only be accessed while the base
-> (parent) clock is running. Access with a disabled base clock
-> will cause the system to hang. Fix this issue by adding code
-> that check if the parent clock is running in the is_enabled
-> clk_ops callback.
-> 
-> This hang would occur when disabling unused clocks after AMBA
-> runtime pm had already disabled some of the clocks.
-> 
-> Signed-off-by: Joachim Eastwood <manabian@gmail.com>
-> ---
-> 
-> No changes from v1.
-> 
->  drivers/clk/nxp/clk-lpc18xx-ccu.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/drivers/clk/nxp/clk-lpc18xx-ccu.c b/drivers/clk/nxp/clk-lpc18xx-ccu.c
-> index eeaee97da110..1845476e635e 100644
-> --- a/drivers/clk/nxp/clk-lpc18xx-ccu.c
-> +++ b/drivers/clk/nxp/clk-lpc18xx-ccu.c
-> @@ -180,6 +180,20 @@ static void lpc18xx_ccu_gate_disable(struct clk_hw *hw)
->  static int lpc18xx_ccu_gate_is_enabled(struct clk_hw *hw)
->  {
->  	struct clk_gate *gate = to_clk_gate(hw);
-> +	struct clk *parent;
-> +
-> +	/*
-> +	 * The branch clock registers are only accessible
-> +	 * if the base (parent) clock is enabled. Register
-> +	 * access with a disabled base clock will hang the
-> +	 * system.
-> +	 */
-> +	parent = clk_get_parent(hw->clk);
+Hello,
 
-Why not use provider APIs (clk_hw_get_parent and we could add a
-clk_hw_is_enabled)? I also wonder why we don't just read the
-register directly here instead of going through the framework to
-find out if the parent is enabled?
+On Mon, Oct 19, 2015 at 04:43:24PM +0100, Russell King - ARM Linux wrote:
+> It's a bit ironic that you've chosen GPIO as an example there.  The
+> "new" GPIO API (the gpiod_* stuff) only has a fwnode way to get the
+> gpio descriptor.  There's no of_* method.
 
-It may also make sense to "optimize" the disable unused code to
-do a depth first search for a disabled clock and then disable
-clocks from the leaves to the root. That would avoid this problem
-right?
+Without following all that fwnode discussion:
+gpiod_get et al. should work for you here, doesn't it? It just takes a
+struct device * and I'm happy with it.
 
-> +	if (IS_ERR(parent))
-> +		return 0;
-> +
-> +	if (!__clk_is_enabled(parent))
-> +		return 0;
->  
->  	return clk_readl(gate->reg) & LPC18XX_CCU_RUN;
->  }
-> -- 
-> 1.8.0
-> 
+Best regards
+Uwe
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
