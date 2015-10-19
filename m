@@ -1,48 +1,36 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <rjui@broadcom.com>
+From: Ray Jui <rjui@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>, Simran Rai <ssimran@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, <stable@vger.kernel.org>
+Subject: [PATCH v2] Fix iProc PLL output clock frequency calculation
+Date: Mon, 19 Oct 2015 15:27:18 -0700
+Message-ID: <1445293639-5863-1-git-send-email-rjui@broadcom.com>
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdYHJzj_1yNFWcwXh+-3zTzJOSEttZdhZBqkUn1HigZeJA@mail.gmail.com>
-References: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
-	<1444916813-31024-7-git-send-email-linus.walleij@linaro.org>
-	<20151015190809.GL4558@codeaurora.org>
-	<CACRpkdYHJzj_1yNFWcwXh+-3zTzJOSEttZdhZBqkUn1HigZeJA@mail.gmail.com>
-Date: Fri, 23 Oct 2015 11:37:09 +0200
-Message-ID: <CACRpkdZ4F=AVMUO_Z742GJuT1g2otp3b_nGhiRKeNc=Rpt36Uw@mail.gmail.com>
-Subject: Re: [PATCH 06/13] clk: versatile-icst: convert to use regmap
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-	Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Return-Path: rjui@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 23, 2015 at 11:27 AM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Thu, Oct 15, 2015 at 9:08 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
->> On 10/15, Linus Walleij wrote:
->>> @@ -151,10 +174,19 @@ struct clk *icst_clk_register(struct device *dev,
->>>       init.flags = CLK_IS_ROOT;
->>>       init.parent_names = (parent_name ? &parent_name : NULL);
->>>       init.num_parents = (parent_name ? 1 : 0);
->>> +     icst->map = regmap_init_mmio(NULL, base, &icst_regmap_conf);
->>> +     if (IS_ERR(icst->map)) {
->>> +             int ret;
->>> +
->>> +             pr_err("could not initialize ICST regmap\n");
->>> +             kfree(icst);
->>> +             ret = PTR_ERR(icst->map);
->>
->> drivers/clk/versatile/clk-icst.c:183
->> icst_clk_register() error: dereferencing freed memory 'icst'
->> drivers/clk/versatile/clk-icst.c:184
->> icst_clk_register() warn: possible memory leak of 'pclone'
->
-> The pclone warning is correct, nice catch. (Fixing it.)
+This patch fixes incorrect iProc PLL clock frequency calculation. The issue
+is exposed when Cygnus audio PLL was being added.
 
-Turns out that this was around for ages, so sent a separate
-fix for -stable.
+This patch is based on v4.3-rc5 and has been tested on Cygnus bcm958305k
+wirelss audio board
 
-Yours,
-Linus Walleij
+This full tree is available here:
+repo: https://github.com/Broadcom/cygnus-linux.git
+branch: iproc-clk-pll-fix-v2
+
+Changes from v1:
+ - Added "Fixes: ..." tag so the patch is merged back to stable kernel
+
+Simran Rai (1):
+  clk: iproc: Fix PLL output frequency calculation
+
+ drivers/clk/bcm/clk-iproc-pll.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
+
+-- 
+1.9.1
