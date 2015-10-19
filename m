@@ -1,64 +1,40 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, linux-mmc <linux-mmc@vger.kernel.org>, linux-clk@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Doug Anderson <dianders@chromium.org>, Alexandru Stan <amstan@chromium.org>
-Subject: Re: [PATCH v2 3/8] mmc: core: Add mmc_regulator_set_vqmmc()
-Date: Fri, 02 Oct 2015 09:06:48 +0200
-Message-ID: <3312969.jJ2hfB2JkV@diego>
-In-Reply-To: <560DF150.3000906@samsung.com>
-References: <1443622064-14362-1-git-send-email-heiko@sntech.de> <CAPDyKFqrkYXsbBJ61yYo0G8za1szARvA=as-5nLTiwGH5pCrEQ@mail.gmail.com> <560DF150.3000906@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/3] clk: samsung: exynos4: Add SSS gate clock
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1445230834-32689-1-git-send-email-k.kozlowski@samsung.com>
+ <1445230834-32689-2-git-send-email-k.kozlowski@samsung.com>
+ <20151019195946.GH10182@codeaurora.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ linux-crypto@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <56258203.8030500@samsung.com>
+Date: Tue, 20 Oct 2015 08:51:31 +0900
+MIME-version: 1.0
+In-reply-to: <20151019195946.GH10182@codeaurora.org>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Freitag, 2. Oktober 2015, 11:52:00 schrieb Jaehoon Chung:
-> On 10/02/2015 06:05 AM, Ulf Hansson wrote:
-> > On 1 October 2015 at 19:35, Stephen Boyd <sboyd@codeaurora.org> wro=
-te:
-> >> On 10/01, Heiko St=FCbner wrote:
-> >>> Am Donnerstag, 1. Oktober 2015, 11:54:24 schrieb Ulf Hansson:
-> >>>> On 30 September 2015 at 16:55, Heiko St=FCbner <heiko@sntech.de>=
- wrote:
-> >>>>> Am Mittwoch, 30. September 2015, 16:42:05 schrieb Ulf Hansson:
-> >>>>>> On 30 September 2015 at 16:07, Heiko Stuebner <heiko@sntech.de=
->=20
-wrote:
-> >>>>> The clock changes of course only touch internals of the phase-c=
-locks,
-> >>>>> so
-> >>>>> should have no problem going through another tree.
-> >>>>=20
-> >>>> What happens if I take mmc and dt changes, wouldn't I need the c=
-lock
-> >>>> patches as well?
-> >>>=20
-> >>> The API stays of course the same, only the degree to settings
-> >>> translation gets optimized, so I guess in the worst case you woul=
-d get
-> >>> no good phase and thus fall back to non-highspeed modes - but the=
+On 20.10.2015 04:59, Stephen Boyd wrote:
+> On 10/19, Krzysztof Kozlowski wrote:
+>> Add a gate clock for controlling all clocks of Security Sub System
+>> (SSS).
+>>
+>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> ---
+> 
+> The To: list is huge, so I have no idea if you want me to apply
+> this patch or not, and given that it's part of a series that has
+> dts changes I guess that means it should go through arm-soc:
+> 
+> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-> >>> system would stay running.
-> >>>=20
-> >>> But of course, if the clock maintainers could Ack the two clock p=
-atches
-> >>> and
-> >>> everything would stay together that would work even better :-)
-> >>=20
-> >> If Ulf doesn't want to take them we can apply them to clk tree.
-> >> Otherwise, you can have my acked-by on the clk patches.
-> >=20
-> > I don't mind picking up the clock patches. So I consider this as an=
+If you are OK with that I would like to push it through arm-soc. Thanks
+for the ack!
 
-> > ack for both patch 1 and patch2, thanks.
-> >=20
-> > Now, let's give Jaehoon some time to review the dw_mmc parts.
->=20
-> I will check other patches on today, if it's ok, i will apply at my
-> repository. Thanks for giving time! :)
-
-I think Ulf wanted to apply the whole series via the mmc tree directly,=
- but I=20
-guess that is between you two to decide ;-)
-
-
-Heiko
+Best regards,
+Krzysztof
