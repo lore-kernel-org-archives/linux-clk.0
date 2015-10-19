@@ -1,12 +1,11 @@
 Return-Path: <linux+mturquette=baylibre.com@arm.linux.org.uk>
-Date: Wed, 21 Oct 2015 21:35:19 +0100
+Date: Mon, 19 Oct 2015 19:39:06 +0100
 From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-To: Frank Rowand <frowand.list@gmail.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: David Woodhouse <dwmw2@infradead.org>, Mark Brown <broonie@kernel.org>,
 	Rob Herring <robh+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
 	Vinod Koul <vinod.koul@intel.com>,
@@ -18,79 +17,108 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
 	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
 	Stephen Warren <swarren@wwwdotorg.org>,
 	Wolfram Sang <wsa@the-dreams.de>,
+	Frank Rowand <frowand.list@gmail.com>,
 	Grant Likely <grant.likely@linaro.org>,
 	Kishon Vijay Abraham I <kishon@ti.com>,
 	Sebastian Reichel <sre@kernel.org>,
 	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>,
 	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
 	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
 	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
 	Tomi Valkeinen <tomi.valkeinen@ti.com>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>, dmaengine@vger.kernel.org,
+	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
 	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
 	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Linux I2C <linux-i2c@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
 	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
 	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
 	Linux PWM List <linux-pwm@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	Linux Fbdev development list <linux-fbdev@vger.kernel.org>
-Subject: Re: Alternative approach to solve the deferred probe
-Message-ID: <20151021203519.GO32532@n2100.arm.linux.org.uk>
-References: <20151019131821.GA32532@n2100.arm.linux.org.uk>
- <CAAObsKDS_+AZ26P_fHc6pvAYrQotsuoO0DEGQUWC514t3DD_jQ@mail.gmail.com>
- <20151019143045.GE32532@n2100.arm.linux.org.uk>
- <CAAObsKDWM6A98tdKHqi4fe5DBf0BmB0JeghcZDWan_PYbyshag@mail.gmail.com>
- <20151019153548.GM32532@n2100.arm.linux.org.uk>
- <CAMuHMdVv=ieYM-Nehp0qV8CEggHEeJ22j-6i_N09rRA_U=2ePw@mail.gmail.com>
- <20151020154656.GY32532@n2100.arm.linux.org.uk>
- <56270D5B.5010902@gmail.com>
- <20151021081847.GB32532@n2100.arm.linux.org.uk>
- <5627B0F7.7010600@gmail.com>
+	Linux USB List <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Message-ID: <20151019183905.GS32532@n2100.arm.linux.org.uk>
+References: <20151018192931.GY14956@sirena.org.uk>
+ <20151018193757.GA9147@kroah.com>
+ <20151018195330.GB14956@sirena.org.uk>
+ <1445247881.53393.146.camel@infradead.org>
+ <CAL_JsqKehmSobpbdeXGo=-1pAbtrhCHovyyCWya_MNOhGCi8CQ@mail.gmail.com>
+ <1445258870.53393.173.camel@infradead.org>
+ <20151019145048.GI14956@sirena.org.uk>
+ <1445268580.53393.183.camel@infradead.org>
+ <20151019154324.GN32532@n2100.arm.linux.org.uk>
+ <20151019182744.GD4931@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5627B0F7.7010600@gmail.com>
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20151019182744.GD4931@pengutronix.de>
 Sender: Russell King - ARM Linux <linux@arm.linux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Oct 21, 2015 at 08:36:23AM -0700, Frank Rowand wrote:
-> On 10/21/2015 1:18 AM, Russell King - ARM Linux wrote:
-> > On Tue, Oct 20, 2015 at 08:58:19PM -0700, Frank Rowand wrote:
-> >> On 10/20/2015 8:46 AM, Russell King - ARM Linux wrote:
+On Mon, Oct 19, 2015 at 08:27:44PM +0200, Uwe Kleine-König wrote:
+> Hello,
 > 
-> < snip >
+> On Mon, Oct 19, 2015 at 04:43:24PM +0100, Russell King - ARM Linux wrote:
+> > It's a bit ironic that you've chosen GPIO as an example there.  The
+> > "new" GPIO API (the gpiod_* stuff) only has a fwnode way to get the
+> > gpio descriptor.  There's no of_* method.
 > 
-> >>> +
-> >>>  static bool driver_deferred_probe_enable = false;
-> >>> +
-> >>>  /**
-> >>>   * driver_deferred_probe_trigger() - Kick off re-probing deferred devices
-> >>>   *
-> >>> @@ -188,6 +210,13 @@ static int deferred_probe_initcall(void)
-> >>>  	driver_deferred_probe_trigger();
-> >>
-> >> Couldn't you put the "driver_deferred_probe_report = true" here?  And then
-> >> not add another round of probes.
-> > 
-> > The idea is not to report anything for drivers that were deferred
-> > during the normal bootup.  The above is part of the normal bootup,
-> > and the deferred activity should not be warned about.
-> 
-> The above is currently the last point for probe to succeed or defer
-> (until possibly, as you mentioned, module loading resolves the defer).
-> If a probe defers above, it will defer again below.  The set of defers
-> should be exactly the same above and below.
+> Without following all that fwnode discussion:
+> gpiod_get et al. should work for you here, doesn't it? It just takes a
+> struct device * and I'm happy with it.
 
-Why should it?  Isn't this late_initcall() the first opportunity that
-deferred devices get to be re-probed from their first set of attempts
-via the drivers having their initcalls called?
+What if you don't have a struct device?  I had that problem recently
+when modifying the mvebu PCIe code.  The 'struct device' node doesn't
+contain the GPIOs, it's the PCIe controller.  Individual ports on the
+controller are described in DT as sub-nodes, and the sub-nodes can
+have a GPIO for card reset purposes.  These sub-nodes don't have a
+struct device.
 
-If what you're saying is true, what's the point of this late_initcall()?
+Right now, I'm having to do this to work around this issue:
 
-<re-cut again, I've no idea why you keep adding it back>
+        reset_gpio = of_get_named_gpio_flags(child, "reset-gpios", 0, &flags);
+        if (reset_gpio == -EPROBE_DEFER) {
+                ret = reset_gpio;
+                goto err;
+        }
+
+        if (gpio_is_valid(reset_gpio)) {
+                unsigned long gpio_flags;
+
+                port->reset_name = devm_kasprintf(dev, GFP_KERNEL, "%s-reset",
+                                                  port->name);
+                if (!port->reset_name) {
+                        ret = -ENOMEM;
+                        goto err;
+                }
+
+                if (flags & OF_GPIO_ACTIVE_LOW) {
+                        dev_info(dev, "%s: reset gpio is active low\n",
+                                 of_node_full_name(child));
+                        gpio_flags = GPIOF_ACTIVE_LOW |
+                                     GPIOF_OUT_INIT_LOW;
+                } else {
+                        gpio_flags = GPIOF_OUT_INIT_HIGH;
+                }
+
+                ret = devm_gpio_request_one(dev, reset_gpio, gpio_flags,
+                                            port->reset_name);
+                if (ret) {
+                        if (ret == -EPROBE_DEFER)
+                                goto err;
+                        goto skip;
+                }
+
+                port->reset_gpio = gpio_to_desc(reset_gpio);
+        }
+
+Not nice, is it?  Not nice to have that in lots of drivers either.
+
+However, switching to use any of_* or fwnode_* thing also carries with
+it another problem: you can't control the name appearing in the
+allocation, so you end up with a bunch of GPIOs requested with a "reset"
+name - meaning you lose any identification of which port the GPIO was
+bound to.
 
 -- 
 FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
