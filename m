@@ -1,95 +1,88 @@
-Return-Path: <ulf.hansson@linaro.org>
+Return-Path: <linux+mturquette=baylibre.com@arm.linux.org.uk>
+Date: Mon, 19 Oct 2015 16:43:24 +0100
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>,
+	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	Linux USB List <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Message-ID: <20151019154324.GN32532@n2100.arm.linux.org.uk>
+References: <561E1378.6000906@collabora.com>
+ <20151017065750.GA18607@kroah.com>
+ <20151018192931.GY14956@sirena.org.uk>
+ <20151018193757.GA9147@kroah.com>
+ <20151018195330.GB14956@sirena.org.uk>
+ <1445247881.53393.146.camel@infradead.org>
+ <CAL_JsqKehmSobpbdeXGo=-1pAbtrhCHovyyCWya_MNOhGCi8CQ@mail.gmail.com>
+ <1445258870.53393.173.camel@infradead.org>
+ <20151019145048.GI14956@sirena.org.uk>
+ <1445268580.53393.183.camel@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <17200614.QxCe8zAb7I@diego>
-References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
-	<1443622064-14362-4-git-send-email-heiko@sntech.de>
-	<CAPDyKFrTNF6RUWs6UdBGoyrp+zzrLf8qAHgBL4xV6fjK_HM_yw@mail.gmail.com>
-	<17200614.QxCe8zAb7I@diego>
-Date: Thu, 1 Oct 2015 11:54:24 +0200
-Message-ID: <CAPDyKFpis8XnvrppHq7q_7DQeN2UiEpykNTJ=1iJJ9AGOHTW6Q@mail.gmail.com>
-Subject: Re: [PATCH v2 3/8] mmc: core: Add mmc_regulator_set_vqmmc()
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	"tgih.jun@samsung.com" <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>,
-	linux-mmc <linux-mmc@vger.kernel.org>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Doug Anderson <dianders@chromium.org>,
-	Alexandru Stan <amstan@chromium.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1445268580.53393.183.camel@infradead.org>
+Sender: Russell King - ARM Linux <linux@arm.linux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 30 September 2015 at 16:55, Heiko St=C3=BCbner <heiko@sntech.de> wrote:
-> Am Mittwoch, 30. September 2015, 16:42:05 schrieb Ulf Hansson:
->> On 30 September 2015 at 16:07, Heiko Stuebner <heiko@sntech.de> wrote:
->> > From: Douglas Anderson <dianders@chromium.org>
->> >
->> > This adds logic to the MMC core to set VQMMC.  This is expected to be
->> > called by MMC drivers like dw_mmc as part of (or instead of) their
->> > start_signal_voltage_switch() callback.
->> >
->> > A few notes:
->> >
->> > * When setting the signal voltage to 3.3V we do our best to make VQMMC
->> >
->> >   and VMMC match.  It's been reported that this makes some old cards
->> >   happy since they were tested back in the day before UHS when VQMMC
->> >   and VMMC were provided by the same regulator.  A nice side effect of
->> >   this is that we don't end up on the hairy edge of VQMMC (2.7V),
->> >   which some EEs claim is a little too close to the minimum for
->> >   comfort.
->> >   This is done in two steps. At first we try to find a VQMMC within
->> >   a 0.3V tolerance of VMMC and if this is not supported by the
->> >   supplying regulator we try to find a suitable voltage within the
->> >   whole 2.7V-3.6V area of the spec.
->> >
->> > * The two step approach is currently necessary, as the used
->> >
->> >   regulator_set_voltage_triplet(min, target, max) uses a simple
->> >
->> >   implementation that just tries two basic steps:
->> >         regulator_set_voltage(target, max);
->> >         regulator_set_voltage(min, target);
->> >
->> >   So with only one step with 2.7-3.6V borders, if a suitable voltage
->> >   is a bit below VMMC, we would directly get the lowest 2.7V
->> >   which some boards (like Rockchips) don't like at all.
->> >
->> > * When setting the signal voltage to 1.8V or 1.2V we aim for that
->> >
->> >   specific voltage instead of picking the lowest one in the range.
->> >
->> > * We very purposely don't print errors in mmc_regulator_set_vqmmc().
->> >
->> >   There are cases where the MMC core will try several different
->> >   voltages and we don't want to pollute the logs.
->> >
->> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
->> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
->>
->> This looks good to me!
->
-> very cool :-)
->
->
->> Once all are happy with the patches, can we take the mmc patches via
->> my mmc tree or does it all have to go together?
->
-> The clock changes of course only touch internals of the phase-clocks, so
-> should have no problem going through another tree.
+On Mon, Oct 19, 2015 at 04:29:40PM +0100, David Woodhouse wrote:
+> I don't know that there *is* a coherent plan here to address it all.
+> 
+> Certainly, we *will* need subsystems to have firmware-specific
+> knowledge in some cases. Take GPIO as an example; ACPI *has* a way to
+> describe GPIO, and properties which reference GPIO pins are intended to
+> work through that — while in DT, properties which reference GPIO pins
+> will have different contents. They'll be compatible at the driver
+> level, in the sense that there's a call to get a given GPIO given the
+> property name, but the subsystems *will* be doing different things
+> behind the scenes.
 
-What happens if I take mmc and dt changes, wouldn't I need the clock
-patches as well?
+It's a bit ironic that you've chosen GPIO as an example there.  The
+"new" GPIO API (the gpiod_* stuff) only has a fwnode way to get the
+gpio descriptor.  There's no of_* method.
 
->
-> For the devicetree part I'm unsure. If the boards enable the tuning-relat=
-ed
-> settings without the new voltage handling, 2.7V gets set on all Rockchip
-> boards which doesn't work on those at all.
->
-> So either the dts patches would need to go into your tree, I would need a
-> stable branch or we could simply postpone dts changes for the next cycle.
->
+I'd like to use the gpiod_* stuff, but I feel that my options are
+rather limited: either use fwnode_get_named_gpiod() with
+&dev->of_node->fwnode, which seems like a hack by going underneath
+the covers of how fwnode is (partially) implemented with DT, or by
+using of_get_named_gpio() and the converting the gpio number to a
+descriptor via gpio_to_desc().  Both feel very hacky.
 
-Kind regards
-Uffe
+If ACPI already handles GPIOs internally, then I'm left wondering
+why GPIO descriptor stuff went down the fwnode route at all - it
+seems rather pointless in this case, and it seems to make the use
+of the gpiod* interfaces where we _do_ need to use it (DT) harder
+and more hacky.
+
+-- 
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
