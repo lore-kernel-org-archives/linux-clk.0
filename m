@@ -1,86 +1,76 @@
-Return-Path: <yingjoe.chen@mediatek.com>
-Message-ID: <1443711053.22188.21.camel@mtksdaap41>
-Subject: Re: [PATCH 2/2] arm64: dts: mt8173: add timer node
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-To: Mark Rutland <mark.rutland@arm.com>
-CC: Sudeep Holla <Sudeep.Holla@arm.com>, James Liao
-	<jamesjj.liao@mediatek.com>, "srv_heupstream@mediatek.com"
-	<srv_heupstream@mediatek.com>, Arnd Bergmann <arnd@arndb.de>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Catalin Marinas
-	<Catalin.Marinas@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Daniel Kurtz <djkurtz@chromium.org>, "Olof
- Johansson" <olof@lixom.net>, Rob Herring <robh+dt@kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	Sascha Hauer <kernel@pengutronix.de>, Matthias Brugger
-	<matthias.bgg@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Eddie Huang
-	<eddie.huang@mediatek.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Date: Thu, 1 Oct 2015 22:50:53 +0800
-In-Reply-To: <20150917164108.GF12808@leverpostej>
-References: <1442369095-1094-1-git-send-email-yingjoe.chen@mediatek.com>
-	 <1442369095-1094-2-git-send-email-yingjoe.chen@mediatek.com>
-	 <55FAC570.8040307@arm.com> <1442501816.4784.3.camel@mtksdaap41>
-	 <20150917164108.GF12808@leverpostej>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <olof@lixom.net>
 MIME-Version: 1.0
-Return-Path: yingjoe.chen@mediatek.com
+In-Reply-To: <CAL_Jsq+34sRXe0HWCKNceQfLj=WfDV4-soynumvdnH_nwuj+9g@mail.gmail.com>
+References: <20151014092644.GO14956@sirena.org.uk>
+	<1444909328-24761-1-git-send-email-tomeu.vizoso@collabora.com>
+	<CAOesGMj44N3Xfv_D_iLEzXBrkN6LXBa-uh6m3fi_F2xDenDhMg@mail.gmail.com>
+	<CAL_Jsq+34sRXe0HWCKNceQfLj=WfDV4-soynumvdnH_nwuj+9g@mail.gmail.com>
+Date: Mon, 19 Oct 2015 09:52:44 -0700
+Message-ID: <CAOesGMjzeJYVuNzrtahNxiMk-3Huq76=DVhKixMNC=3vebUc_Q@mail.gmail.com>
+Subject: Re: [GIT PULL] On-demand device probing
+From: Olof Johansson <olof@lixom.net>
+To: Rob Herring <robh+dt@kernel.org>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
+	Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	DRI mailing list <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2015-09-17 at 17:41 +0100, Mark Rutland wrote:
-> On Thu, Sep 17, 2015 at 03:56:56PM +0100, Yingjoe Chen wrote:
-> > On Thu, 2015-09-17 at 14:51 +0100, Sudeep Holla wrote:
-> > > 
-> > > On 16/09/15 03:04, Yingjoe Chen wrote:
-> > > > From: Daniel Kurtz <djkurtz@chromium.org>
-> > > >
-> > > > Add device node to enable GPT timer. This timer will be
-> > > > used as sched clock source.
-> > > >
-> > > 
-> > > Interesting any known issues with or advantage over the arch timers
-> > > to prefer it as sched clock source. I see even arch timers are present
-> > > in DT, hence the question. Or is it just a incorrect commit log ?
-> > > 
-> > > How does this get selected as sched clock source ? I don't see
-> > > sched_clock_register in mtk_timer.c
-> > > 
-> > > To be clear, I am not against adding this timer support, but just want
-> > > to know is it preferred for sched clock source ? if yes why ? better
-> > > resolution ?
-> > 
-> > Hi Sudeep,
-> > 
-> > Thanks for your review.
-> > 
-> > I hit the send too soon and missed cover letter, please see:
-> > http://lists.infradead.org/pipermail/linux-mediatek/2015-September/002303.html
-> > 
-> > The main reason to use GPT as sched clock is it won't stop during idle.
-> 
-> You don't mean sched clock, you just mean a clock_event_device.
-> 
-> A sched_clock is a high-precision clocksource that is read from (which
-> by definition requires the CPUs to be non-idle). It doesn't have
-> anything to do with interrupts and therefore cannot wake devices from
-> idle.
-> 
-> While the clock_event_device for the generic timer can't necessarily
-> wake CPUs from idle. The generic timer system counter counts even if
-> CPUs are idle, so the generic timer is fine as a sched_clock. 
+On Sat, Oct 17, 2015 at 8:19 AM, Rob Herring <robh+dt@kernel.org> wrote:
+> On Fri, Oct 16, 2015 at 4:23 PM, Olof Johansson <olof@lixom.net> wrote:
+>> Hi,
+>>
+>> I've bisected boot failures in next-20151016 down to patches in this branch:
+>>
+>> On Thu, Oct 15, 2015 at 4:42 AM, Tomeu Vizoso
+>> <tomeu.vizoso@collabora.com> wrote:
+>>> Tomeu Vizoso (20):
+>>>       driver core: handle -EPROBE_DEFER from bus_type.match()
+>>
+>> The machine it happened on was OMAP5UEVM:
+>>
+>> http://arm-soc.lixom.net/bootlogs/next/next-20151016/omap5uevm-arm-omap2plus_defconfig.html
+>
+> So this one is because the MMC node numbering changed. I don't know
+> how to fix that other than with aliases, but that doesn't solve
+> backwards compatibility.
 
-Hi, Mark,
+Yep, aliases will take care of it in this case. This is where -next
+fills a great purpose, we can make sure we get those aliases added in
+before the patches go in.
 
-Thanks for your info and sorry for late reply. 
+>> But I've also seen it on tegra2, that one bisected down to:
+>>
+>>>      regulator: core: Probe regulators on demand
+>>
+>> http://arm-soc.lixom.net/bootlogs/next/next-20151016/seaboard-arm-multi_v7_defconfig.html
+>
+> This one you need a rootwait I think. The MMC scanning is not
+> guaranteed to be done before the rootfs mounting AFAIK. There may be
+> other problems, but we can't see them since it panics.
 
-I notice ARM ARM said the arch timer shouldn't stop when idle, but
-unfortunately that not true for mt8173. The last CPU enter idle can
-choose to enter deep idle mode and the counter value would be lost. Our
-firmware backup/recover the counter so it looks like it is stopped.
+Embarrassing, I almost always do this and I'm surprised this machine
+has been this stable without it.
 
-We will change the firmware to add missing count when back from deep
-idle to make it looks like the counter never stop.
 
-Joe.C
+-Olof
