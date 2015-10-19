@@ -1,34 +1,45 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 1 Oct 2015 17:13:17 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Eric Anholt <eric@anholt.net>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] clk: bcm2835: Add binding docs for the new
- platform clock driver.
-Message-ID: <20151002001317.GC1213@codeaurora.org>
-References: <1443475325-22270-1-git-send-email-eric@anholt.net>
- <1443475325-22270-2-git-send-email-eric@anholt.net>
+Return-Path: <rjui@broadcom.com>
+Subject: Re: [PATCH] clk: iproc: Fix PLL output frequency calculation
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1445035458-29340-1-git-send-email-rjui@broadcom.com>
+ <1445035458-29340-2-git-send-email-rjui@broadcom.com>
+ <20151019214911.GB19782@codeaurora.org>
+CC: Michael Turquette <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>,
+	Simran Rai <ssimran@broadcom.com>
+From: Ray Jui <rjui@broadcom.com>
+Message-ID: <562566C1.8080409@broadcom.com>
+Date: Mon, 19 Oct 2015 14:55:13 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1443475325-22270-2-git-send-email-eric@anholt.net>
+In-Reply-To: <20151019214911.GB19782@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: rjui@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/28, Eric Anholt wrote:
-> Previously we've only supported a few fixed clocks based on
-> assumptions about how the firmware sets up the clocks, but this
-> binding will let us control the actual (audio power domain) clock
-> manager.
-> 
-> Signed-off-by: Eric Anholt <eric@anholt.net>
-> Acked-by: Stephen Warren <swarren@wwwdotorg.org>
-> ---
 
-Applied to clk-bcm2385 and merged into clk-next.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On 15-10-19 02:49 PM, Stephen Boyd wrote:
+> On 10/16, Ray Jui wrote:
+>> From: Simran Rai <ssimran@broadcom.com>
+>>
+>> This patch affects the clocks that use fractional ndivider in their
+>> PLL output frequency calculation. Instead of 2^20 divide factor, the
+>> clock's ndiv integer shift was used. Fixed the bug by replacing ndiv
+>> integer shift with 2^20 factor.
+>>
+>> Signed-off-by: Simran Rai <ssimran@broadcom.com>
+>> Signed-off-by: Ray Jui <rjui@broadcom.com>
+>> Reviewed-by: Scott Branden <sbranden@broadcom.com>
+>> ---
+>
+> Did you want any Fixes: tag so this goes back to stable?
+>
+
+Yes, we want this fix to go back to the stable kernel.
+
+I will re-submit the patch with the Fixes: tag and at the same time cc 
+stable@vger.kernel.org .
+
+Thanks,
+
+Ray
