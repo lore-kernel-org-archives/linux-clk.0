@@ -1,90 +1,32 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Tue, 20 Oct 2015 16:36:12 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Rob Herring <robh@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Russell King <linux@arm.linux.org.uk>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 19 Oct 2015 14:48:23 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geliang Tang <geliangtang@163.com>
+Cc: Santosh Shilimkar <ssantosh@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>,
-	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	Linux PWM List <linux-pwm@vger.kernel.org>,
-	Linux USB List <linux-usb@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-Message-ID: <20151020153612.GB32054@sirena.org.uk>
-References: <CAL_JsqJuu5_Osqi+X6M6UeRDZFQB+_8riYDF1gvsGayk5-4SFw@mail.gmail.com>
- <Pine.LNX.4.44L0.1510201036290.1855-100000@iolanthe.rowland.org>
+	Jiri Kosina <trivial@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 6/9] clk: keystone: fix a trivial typo
+Message-ID: <20151019214823.GA19782@codeaurora.org>
+References: <949f6f3c99f87b57666986dc9f2d1c916935e215.1445181079.git.geliangtang@163.com>
+ <557286dd38beb4d8d1be28e787ad89611e7cc077.1445181079.git.geliangtang@163.com>
+ <5fea4cd474d5fe49688f88d91cdf5e8019844806.1445181079.git.geliangtang@163.com>
+ <918fdb002ec3b2a9fc5a5d364c0fbaff2f77c5cc.1445181079.git.geliangtang@163.com>
+ <eb89ced1dda5b521dba1ed6095deef09d577e37a.1445181079.git.geliangtang@163.com>
+ <88b679770e91ce8e3aa2cd25912c6d589563388c.1445181079.git.geliangtang@163.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="yda//aIZIMrd7mir"
-In-Reply-To: <Pine.LNX.4.44L0.1510201036290.1855-100000@iolanthe.rowland.org>
-Subject: Re: [GIT PULL] On-demand device probing
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <88b679770e91ce8e3aa2cd25912c6d589563388c.1445181079.git.geliangtang@163.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 10/18, Geliang Tang wrote:
+> s/regsiter/register/
+> 
+> Signed-off-by: Geliang Tang <geliangtang@163.com>
+> ---
 
---yda//aIZIMrd7mir
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to clk-next
 
-On Tue, Oct 20, 2015 at 10:40:03AM -0400, Alan Stern wrote:
-
-> Furthermore, that applies only to devices that use synchronous suspend. =
-=20
-> Async suspend is becoming common, and there the only restrictions are=20
-> parent-child relations plus whatever explicit requirements that drivers=
-=20
-> impose by calling device_pm_wait_for_dev().
-
-Hrm, this is the first I'd noticed that feature though I see the initial
-commit dates from January.  It looks like most of the users are PCs at
-the minute but we should be using it more widely for embedded things,
-there's definitely some cases I'm aware of where it will allow us to
-remove some open coding.
-
-It does seem like we want to be feeding dependency information we
-discover for probing way into the suspend dependencies...
-
---yda//aIZIMrd7mir
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWJl9rAAoJECTWi3JdVIfQnkIH/2GzqyZNrVrsXXUVXs+4Shdt
-ktptYpVn9emNkSaj6aqYpyoVmHnvFpXnM5NLdQOURsDRCpkq5+b/yesGl7rqAqH/
-THvORSPwBV0dFdb9TpLYI6dfuOxDl8ufyiMUjxM5l17G636RfipKStJBK5UGHKBK
-8uGvTrUdX+9TpG5tNeC7BOjp/bGjrtKHaiyHbcBjrtUwO4kixDnVvD1qomuwIiIt
-RAHlPGdo4sO6IW0I5HurTI44EWxDxASqNYD4crMFdWgbo5J86QRgzkWJ7yh2d2wm
-P7eRo9qYZkqhKhMc2pKJdiZ7dTnM77cqd17uzOiNDfCRWsvCUP7+2QE2rcyDeZk=
-=XKiJ
------END PGP SIGNATURE-----
-
---yda//aIZIMrd7mir--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
