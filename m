@@ -1,10 +1,11 @@
-Return-Path: <tomeu.vizoso@gmail.com>
-Return-Path: <tomeu.vizoso@gmail.com>
-Sender: Tomeu Vizoso <tomeu.vizoso@gmail.com>
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Russell King <linux@arm.linux.org.uk>,
+Return-Path: <broonie@sirena.org.uk>
+Date: Mon, 19 Oct 2015 15:50:48 +0100
+From: Mark Brown <broonie@kernel.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Russell King <linux@arm.linux.org.uk>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
 	Vinod Koul <vinod.koul@intel.com>,
@@ -13,7 +14,7 @@ Cc: Russell King <linux@arm.linux.org.uk>,
 	Alexandre Courbot <gnurou@gmail.com>,
 	Thierry Reding <thierry.reding@gmail.com>,
 	David Airlie <airlied@linux.ie>,
-	=?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
+	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
 	Stephen Warren <swarren@wwwdotorg.org>,
 	Wolfram Sang <wsa@the-dreams.de>,
 	Frank Rowand <frowand.list@gmail.com>,
@@ -21,97 +22,95 @@ Cc: Russell King <linux@arm.linux.org.uk>,
 	Kishon Vijay Abraham I <kishon@ti.com>,
 	Sebastian Reichel <sre@kernel.org>,
 	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
 	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
 	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-fbdev@vger.kernel.org
-Subject: [GIT PULL] On-demand device probing
-Date: Thu, 15 Oct 2015 13:42:08 +0200
-Message-Id: <1444909328-24761-1-git-send-email-tomeu.vizoso@collabora.com>
-In-Reply-To: <20151014092644.GO14956@sirena.org.uk>
-References: <20151014092644.GO14956@sirena.org.uk>
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	Linux USB List <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Message-ID: <20151019145048.GI14956@sirena.org.uk>
+References: <561E1378.6000906@collabora.com>
+ <20151017065750.GA18607@kroah.com>
+ <20151018192931.GY14956@sirena.org.uk>
+ <20151018193757.GA9147@kroah.com>
+ <20151018195330.GB14956@sirena.org.uk>
+ <1445247881.53393.146.camel@infradead.org>
+ <CAL_JsqKehmSobpbdeXGo=-1pAbtrhCHovyyCWya_MNOhGCi8CQ@mail.gmail.com>
+ <1445258870.53393.173.camel@infradead.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="P75d7mFgfYjpUjsN"
+In-Reply-To: <1445258870.53393.173.camel@infradead.org>
+Subject: Re: [GIT PULL] On-demand device probing
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
 
-this second pull request replaces the last references to device_initcall_sync with late_initcall, as noticed by Frank Rowand.
+--P75d7mFgfYjpUjsN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Also fixes the url of the git repo and the wrapping, as suggested by Mark Brown.
+On Mon, Oct 19, 2015 at 01:47:50PM +0100, David Woodhouse wrote:
+> On Mon, 2015-10-19 at 07:35 -0500, Rob Herring wrote:
 
-Thanks,
+> > See version 2 of the series[1] which did that. It became obvious that
+> > was pointless because the call paths ended up looking like this:
 
-Tomeu
+> > Generic subsystem code -> DT look-up code -> fwnode_probe_device ->
+> > of_probe_device
 
-The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
+> You link to a thread which says that "AT LEAST CURRENTLY, the calling
+> locations [the 'DT look-up code' you mention above] are DT specific
+> functions anyway.
 
-  Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
+> But the point I'm making is that we are working towards *fixing* that,
+> and *not* using DT-specific code in places where we should be using the
+> generic APIs.
 
-are available in the git repository at:
+What is the plan for fixing things here?  It's not obvious (at least to
+me) that we don't want to have the subsystems having knowledge of how
+they are bound to a specific firmware which is what you seem to imply
+here.  That seems like it's going to fall down since the different
+firmware interfaces do have quite different ideas about how things fit
+together at a system level and different compatibility needs which do
+suggest that just trying to do a direct mapping from DT into ACPI may
+well not make people happy but it sounds like that's the intention.
 
-  git://git.collabora.com/git/user/tomeu/linux.git on-demand-probes-for-next
+When it gets to drivers the situation is much more clear since it's
+normally just simple properties, it's generally a bit more worrying if
+drivers are needing to directly interact with cross-device linkage.
+This is all subsystem level code though.
 
-for you to fetch changes up to c074fef5d36e1c27dfdf7474e23c01a1b044ff98:
+> None of that really negates that fact that we are *working* on cleaning
+> these code paths up to be firmware-agnostic, and the fact that we
+> haven't got to this one *yet* isn't necessarily a good reason to make
+> it *worse* by adding new firmware-specificity to it.
 
-  of/platform: Defer probes of registered devices (2015-10-15 13:25:47 +0200)
+It seems like we're going to have to refactor these bits of code when
+they get generalised anyway so I'm not sure that the additional cost
+here is that big.
 
-----------------------------------------------------------------
-Tomeu Vizoso (20):
-      driver core: handle -EPROBE_DEFER from bus_type.match()
-      ARM: amba: Move reading of periphid to amba_match()
-      of/platform: Point to struct device from device node
-      of: add function to allow probing a device from a OF node
-      gpio: Probe GPIO drivers on demand
-      pinctrl: Probe pinctrl devices on demand
-      regulator: core: Probe regulators on demand
-      drm: Probe panels on demand
-      drm/tegra: Probe dpaux devices on demand
-      i2c: core: Probe i2c adapters and devices on demand
-      pwm: Probe PWM chip devices on demand
-      backlight: Probe backlight devices on demand
-      usb: phy: Probe phy devices on demand
-      clk: Probe clk providers on demand
-      pinctrl: Probe pinctrl devices on demand
-      phy: core: Probe phy providers on demand
-      dma: of: Probe DMA controllers on demand
-      power-supply: Probe power supplies on demand
-      driver core: Allow deferring probes until late init
-      of/platform: Defer probes of registered devices
+--P75d7mFgfYjpUjsN
+Content-Type: application/pgp-signature; name="signature.asc"
 
- drivers/amba/bus.c                  | 88 +++++++++++++++++++------------------
- drivers/base/Kconfig                | 18 ++++++++
- drivers/base/dd.c                   | 30 ++++++++++++-
- drivers/clk/clk.c                   |  3 ++
- drivers/dma/of-dma.c                |  3 ++
- drivers/gpio/gpiolib-of.c           |  5 +++
- drivers/gpu/drm/drm_panel.c         |  3 ++
- drivers/gpu/drm/tegra/dpaux.c       |  3 ++
- drivers/i2c/i2c-core.c              |  4 ++
- drivers/of/device.c                 | 61 +++++++++++++++++++++++++
- drivers/of/platform.c               | 30 ++++++++-----
- drivers/phy/phy-core.c              |  3 ++
- drivers/pinctrl/devicetree.c        |  3 ++
- drivers/power/power_supply_core.c   |  3 ++
- drivers/pwm/core.c                  |  3 ++
- drivers/regulator/core.c            |  2 +
- drivers/usb/phy/phy.c               |  3 ++
- drivers/video/backlight/backlight.c |  3 ++
- include/linux/device.h              |  4 +-
- include/linux/of.h                  |  1 +
- include/linux/of_device.h           |  3 ++
- 21 files changed, 219 insertions(+), 57 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWJQNHAAoJECTWi3JdVIfQaREH/3tn5eOlLmrwOqNfDROOkFts
+y5Wy3xg5mX9QlH88z3oxHPnKqWqSKDRoi/VgRujy8dqaZ4PPBKZA2ZuWqf5BAGar
+nAYP9oLWh8/3A0s2NaN6puJYvsmm8287OePqWxHrL+3I6azzj65/LcGx4HmjsM1j
+Z/qZaDh/6LwsBtEUv94Q4nhE+OykmmE7Y9EPmd03QOPrgoJhtQ+rO8JchP9NWkVq
+W3txdv4ktdFc//r6JJG1gemaOmeGXMcGHzKq2ukrQRCDRRhntp83oLQEw2Lx3o+/
+X/gYP+LZR5EL9+mZ6dZgpU5bImqD8cKxsrD30e65xNadnmcfjoXPrUFtQ71t2QQ=
+=1a8f
+-----END PGP SIGNATURE-----
+
+--P75d7mFgfYjpUjsN--
