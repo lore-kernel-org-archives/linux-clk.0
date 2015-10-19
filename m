@@ -1,122 +1,68 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 7 Oct 2015 18:30:54 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	clk <linux-clk@vger.kernel.org>, Mans Rullgard <mans@mansr.com>,
-	Mason <slash.tmp@free.fr>
-Subject: Re: [PATCH v1] clk: Sigma Designs Tango4 cpuclk driver
-Message-ID: <20151008013054.GC26883@codeaurora.org>
-References: <5613DBA2.20708@sigmadesigns.com>
+Return-Path: <robh+dt@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5613DBA2.20708@sigmadesigns.com>
+In-Reply-To: <1445247881.53393.146.camel@infradead.org>
+References: <561E1378.6000906@collabora.com> <20151017065750.GA18607@kroah.com>
+ <20151018192931.GY14956@sirena.org.uk> <20151018193757.GA9147@kroah.com>
+ <20151018195330.GB14956@sirena.org.uk> <1445247881.53393.146.camel@infradead.org>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Mon, 19 Oct 2015 07:35:05 -0500
+Message-ID: <CAL_JsqKehmSobpbdeXGo=-1pAbtrhCHovyyCWya_MNOhGCi8CQ@mail.gmail.com>
+Subject: Re: [GIT PULL] On-demand device probing
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>,
+	=?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
+	Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
+	Linux USB List <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/06, Marc Gonzalez wrote:
-> Date: Tue, 6 Oct 2015 16:07:45 +0200
-> Subject: [PATCH] clk: Sigma Designs Tango4 cpuclk driver
+On Mon, Oct 19, 2015 at 4:44 AM, David Woodhouse <dwmw2@infradead.org> wrote:
+> On Sun, 2015-10-18 at 20:53 +0100, Mark Brown wrote:
+>> On Sun, Oct 18, 2015 at 12:37:57PM -0700, Greg Kroah-Hartman wrote:
+>> > On Sun, Oct 18, 2015 at 08:29:31PM +0100, Mark Brown wrote:
+>> > > On Fri, Oct 16, 2015 at 11:57:50PM -0700, Greg Kroah-Hartman wrote:
+>>
+>> > > > I can't see adding calls like this all over the tree just to solve a
+>> > > > bus-specific problem, you are adding of_* calls where they aren't
+>> > > > needed, or wanted, at all.
+>>
+>> > > This isn't bus specific, I'm not sure what makes you say that?
+>>
+>> > You are making it bus-specific by putting these calls all over the tree
+>> > in different bus subsystems semi-randomly for all I can determine.
+>>
+>> Do you mean firmware rather than bus here?  I think that's the confusion
+>> I have...
+>
+> Certainly, if it literally is adding of_* calls then that would seem to
+> be gratuitously firmware-specific. Nothing should be using those these
+> days; any new code should be using the generic device property APIs
+> (except in special cases).
 
-This part doesn't go here. Please fix your mailer. Also, please
-add some commit text.
+See version 2 of the series[1] which did that. It became obvious that
+was pointless because the call paths ended up looking like this:
 
-> 
-> Signed-off-by: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
-> ---
->  drivers/clk/Makefile     |  1 +
->  drivers/clk/clk-tango4.c | 59 ++++++++++++++++++++++++++++++++++++++++++++++++
+Generic subsystem code -> DT look-up code -> fwnode_probe_device ->
+of_probe_device
 
-Is there a DT binding document somewhere?
+Rob
 
->  2 files changed, 60 insertions(+)
->  create mode 100644 drivers/clk/clk-tango4.c
-> 
-> diff --git a/drivers/clk/clk-tango4.c b/drivers/clk/clk-tango4.c
-> new file mode 100644
-> index 000000000000..9c21e8c0b6e8
-> --- /dev/null
-> +++ b/drivers/clk/clk-tango4.c
-> @@ -0,0 +1,59 @@
-> +#include <linux/clk-provider.h>
-> +#include <linux/of_address.h>
-
-We need a few more includes here for iomap, __init, readl().
-
-> +
-> +#define REG(name, ...) union name { struct { u32 __VA_ARGS__; }; u32 val; }
-> +
-> +REG(SYS_clkgen_pll, N:7, :6, K:3, M:3, :5, Isel:3, :3, T:1, B:1);
-
-This is new to me. Using bitfields like this is not really a good
-idea though. Please just use masks, shifts, etc. instead.
-
-> +/*
-> + * CG0, CG1, CG2, CG3 PLL Control:
-> + * -------------------------------
-> + *
-> + * |    Byte 3     |    Byte 2     |    Byte 1     |    Byte 0     |
-> + * |3 3 2 2 2 2 2 2|2 2 2 2 1 1 1 1|1 1 1 1 1 1    |               |
-> + * |1 0 9 8 7 6 5 4|3 2 1 0 9 8 7 6|5 4 3 2 1 0 9 8|7 6 5 4 3 2 1 0|
-> + * |-|-|-----|-----|---------|-----|-----|---------|-|-------------|
-> + * |B|T|xxxxx|Isel |xxxxxxxxx|  M  |  K  |xxxxxxxxx|x|      N      |
-> + * |-|-|-----|-----|---------|-----|-----|---------|-|-------------|
-> + *
-> + * These registers are used to configure the PLL parameters:
-> + *
-> + * Bits  6 to  0: N[6:0]. Default = 29
-> + * Bits 15 to 13: K[2:0]. Default = 1
-> + * Bit  18 to 16: M[2:0]. Default = 0
-> + * Bits 26 to 24: Isel[2:0] (PLL Input Select). Default = 1
-> + * Bits 30      : T (PLL Test). Default = 0
-> + * Bits 31      : B (PLL Bypass). Default = 0
-> + *
-> + * PLL0 : Out = In * (N+1) / (M+1) / 2^K
-> + * PLL1 : Same as PLL0
-> + * PLL2 : Same as PLL0
-> + * Default values : All PLLs configured to output 405MHz.
-> + */
-> +static void __init tango4_pll_setup(struct device_node *np)
-> +{
-> +	unsigned int mul, div;
-> +	union SYS_clkgen_pll pll;
-> +	const char *name = np->name;
-> +	const char *parent = of_clk_get_parent_name(np, 0);
-> +
-> +	void __iomem *clkgen_pll = of_iomap(np, 0);
-
-What if of_iomap() fails?
-
-> +	pll.val = readl_relaxed(clkgen_pll);
-> +	iounmap(clkgen_pll);
-> +
-> +	mul = (pll.N + 1);
-
-Parenthesis are useless, please remove.
-
-> +	div = (pll.M + 1) << pll.K;
-> +	clk_register_fixed_factor(NULL, name, parent, 0, mul, div);
-> +}
-> +
-> +static void __init tango4_div_setup(struct device_node *np)
-> +{
-> +	const char *name = np->name;
-> +	const char *parent = of_clk_get_parent_name(np, 0);
-> +	void __iomem *div_ctrl = of_iomap(np, 0);
-> +
-> +	clk_register_divider(NULL, name, parent, 0,
-> +		div_ctrl, 8, 8, CLK_DIVIDER_ONE_BASED, NULL);
-> +}
-> +
-> +CLK_OF_DECLARE(tango4_pll,    "sigma,tango4-pll",    tango4_pll_setup);
-> +CLK_OF_DECLARE(tango4_cpuclk, "sigma,tango4-cpuclk", tango4_div_setup);
-
-More discussion will come with the binding, but we're pushing
-people towards making real platform drivers for their clock
-controllers, instead of parsing everything out of DT and having
-one node per clock. So if these are picking things out of some
-larger clock controller block, please rewrite the binding to be a
-real clock provider.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2015-July/361137.html
