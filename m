@@ -1,139 +1,197 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v4 0/5] clk: shmobile: Add new Renesas CPG/MSSR DT bindings
-Date: Fri, 16 Oct 2015 14:49:15 +0200
-Message-Id: <1444999760-15750-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <BATV+0d9053db2e57e75bdf4c+4439+infradead.org+dwmw2@bombadil.srs.infradead.org>
+Message-ID: <1445268580.53393.183.camel@infradead.org>
+Subject: Re: [GIT PULL] On-demand device probing
+From: David Woodhouse <dwmw2@infradead.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+ Russell King <linux@arm.linux.org.uk>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul
+ <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus
+ Walleij <linus.walleij@linaro.org>,  Alexandre Courbot <gnurou@gmail.com>,
+ Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>,
+ Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,  Stephen Warren
+ <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand
+ <frowand.list@gmail.com>,  Grant Likely <grant.likely@linaro.org>, Kishon
+ Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry
+ Eremin-Solenikov <dbaryshkov@gmail.com>, Liam Girdwood
+ <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>, Jingoo Han
+ <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Jean-Christophe
+ Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen
+ <tomi.valkeinen@ti.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+ dmaengine@vger.kernel.org, "linux-gpio@vger.kernel.org"
+ <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List
+ <linux-pwm@vger.kernel.org>,  Linux USB List <linux-usb@vger.kernel.org>,
+ "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Date: Mon, 19 Oct 2015 16:29:40 +0100
+In-Reply-To: <20151019145048.GI14956@sirena.org.uk>
+References: <561E1378.6000906@collabora.com>
+	 <20151017065750.GA18607@kroah.com> <20151018192931.GY14956@sirena.org.uk>
+	 <20151018193757.GA9147@kroah.com> <20151018195330.GB14956@sirena.org.uk>
+	 <1445247881.53393.146.camel@infradead.org>
+	 <CAL_JsqKehmSobpbdeXGo=-1pAbtrhCHovyyCWya_MNOhGCi8CQ@mail.gmail.com>
+	 <1445258870.53393.173.camel@infradead.org>
+	 <20151019145048.GI14956@sirena.org.uk>
+Content-Type: multipart/signed; micalg="sha-1"; protocol="application/x-pkcs7-signature";
+	boundary="=-AxdVhL+VWkAHcSb8DC2N"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen, et al.,
 
-As discussed at ELCE last week, here's my RFC introducing a new unified
-binding and driver for the Renesas CPG (Clock Pulse Generator) and MSSR
-(Module Standby and Software Reset) blocks.  This is supposed to be more
-in-line with current CCF best practices, and allows expansion to cover
-the module reset functionality in the future.
+--=-AxdVhL+VWkAHcSb8DC2N
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The new bindings are intended to be used initially for the new R-Car
-Gen3 SoCs (r8a7795), but we may decide to migrate older SoCs somewhen in
-the future.
+On Mon, 2015-10-19 at 15:50 +0100, Mark Brown wrote:
+> > But the point I'm making is that we are working towards *fixing* that,
+> > and *not* using DT-specific code in places where we should be using the
+> > generic APIs.
+>=20
+> What is the plan for fixing things here?  It's not obvious (at least to
+> me) that we don't want to have the subsystems having knowledge of how
+> they are bound to a specific firmware which is what you seem to imply
+> here.=20
 
-  - Patch 1 introduces the new bindings,
-  - Patch 2 introduces clock definitions for r8a7795, which are
-    technically also part of the binding,
-  - Patch 3 prepares the existing div6 driver for reuse,
-  - Patch 4 introduces the new CPG/MSSR driver core, to be used by
-    several SoC-specific drivers,
-  - Patch 5 introduces the new r8a7795-specific driver.
+I don't know that there *is* a coherent plan here to address it all.
 
-The idea is to get the bindings (for r8a7795, i.e. patches 1 and 2)
-accepted in v4.4, so we can continue developing and prepare final
-support for r8a7795 in v4.5.
+Certainly, we *will* need subsystems to have firmware-specific
+knowledge in some cases. Take GPIO as an example; ACPI *has* a way to
+describe GPIO, and properties which reference GPIO pins are intended to
+work through that =E2=80=94 while in DT, properties which reference GPIO pi=
+ns
+will have different contents. They'll be compatible at the driver
+level, in the sense that there's a call to get a given GPIO given the
+property name, but the subsystems *will* be doing different things
+behind the scenes.
 
-Compared to v3, the major change is the addition of a preliminary
-version of the actual driver.
+My plan, such as it is, is to go through the leaf-node drivers which
+almost definitely *should* be firmware-agnostic, and convert those. And
+then take stock of what we have left, and work out what, if anything,
+still needs to be done.
 
-Implementation notes:
-  - The driver contains lots of pr_debug() and WARN_ON() calls. Many of
-    these will be removed in future versions,
-  - Conversion between (sparse) clock IDs and (packed) clock indices
-    will be reworked. Probably most of it can be handled in a macro when
-    populating the r8a779*_mod_clks[] arrays,
-  - Probably r8a779*_clk_types can be removed in favor of just using
-    CLK_TYPE_CUSTOM, and differentiating based on cpg_core_clk.id. But
-    the clk_types may make it easier to share code between different
-    SoCs of the same family.
-  - Most clock data is __initconst, to save memory in multi-platform
-    kernels,
-  - Setting CLK_ENABLE_HAND_OFF for critical clocks (e.g. the GIC clock)
-    is implemented (if CLK_ENABLE_HAND_OFF is available),
-  - Support for using special core clocks for power management (e.g. the
-    ZB clock on r8a73a4/sh7a0) is not yet fully implemented,
-  - Module clocks in DTS are no longer defines, but literal numbers
-    matching the numbers in the datasheet (just like IRQs),
-  - include/dt-bindings/clock/*-cpg-mssr.h now contains all core clock
-    outputs, as listed in the datasheet,
-  - Should include/dt-bindings/clock/*-cpg-mssr.h use contiguous
-    numbering, or should the same clock use the same number for
-    different SoCs of the same family?
+> It seems like we're going to have to refactor these bits of code when
+> they get generalised anyway so I'm not sure that the additional cost
+> here is that big.
 
-Memory considerations on r8a7791/koelsch:
-  - Static size impact:
-      - DTB: -7.5 KiB
-      - initdata: +8 KiB (due to PAGE_SIZE rounding, actual + ca. 5 KiB)
-      - reserved: -24 KiB (includes unflattened DTB)
-  - However, the big saving seems to be in the runtime memory usage.
-    MemAvailable has increased by 248 KiB, presumably due to less
-    memory being used by the in-memory device tree representation.
+That's an acceptable answer =E2=80=94 "we're adding legacy code here but we
+know it's going to be refactored anyway". If that's true, all it takes
+is a note in the commit comment to that effect. That's different from
+having not thought about it :)
 
-For your convenience, I pushed these patches, the r8a7795 DTS
-conversion, and a Proof-of-Concept for R-Car M2-W (r8a7791) to the
-topic/cpg-mssr-v4 branch (based on topic/gen3-latest) of my
-renesas-drivers repository at
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/cpg-mssr-v4
+--=20
+dwmw2
 
-Thanks for your comments!
 
-References:
-  - v3 = "[PATCH/RFC v3 0/3] clk: shmobile: Add new Renesas CPG/MSSR DT
-    bindings" (http://www.spinics.net/lists/linux-sh/msg45870.html)
-  - v2+ ≈ "[PATCH v8 00/05] Renesas R-Car Gen3 CPG support V8"
-    (http://www.spinics.net/lists/linux-clk/msg03288.html)
-  - v2 = "[PATCH/RFC v2 0/4] Renesas CPG/MSTP DT Binding Proposal"
-    (http://www.spinics.net/lists/linux-clk/msg03132.html)
-  - v1 = "Renesas CPG/MSTP DT Binding Proposal"
-    (http://www.spinics.net/lists/linux-clk/msg01189.html)
+--=-AxdVhL+VWkAHcSb8DC2N
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
 
-Geert Uytterhoeven (5):
-  [RFC] clk: shmobile: Add new Renesas CPG/MSSR DT bindings
-  [RFC] clk: shmobile: Add r8a7795 CPG Core Clock Definitions
-  [RFC] clk: shmobile: div6: Extract cpg_div6_register()
-  [RFC] clk: shmobile: cpg-mssr: Add new CPG/MSSR driver core
-  [RFC] clk: shmobile: r8a7795: Add new CPG/MSSR driver
+MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIISjjCCBicw
+ggUPoAMCAQICAw3vNzANBgkqhkiG9w0BAQUFADCBjDELMAkGA1UEBhMCSUwxFjAUBgNVBAoTDVN0
+YXJ0Q29tIEx0ZC4xKzApBgNVBAsTIlNlY3VyZSBEaWdpdGFsIENlcnRpZmljYXRlIFNpZ25pbmcx
+ODA2BgNVBAMTL1N0YXJ0Q29tIENsYXNzIDEgUHJpbWFyeSBJbnRlcm1lZGlhdGUgQ2xpZW50IENB
+MB4XDTE1MDUwNTA5NDM0MVoXDTE2MDUwNTA5NTMzNlowQjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFk
+ZWFkLm9yZzEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCASIwDQYJKoZIhvcN
+AQEBBQADggEPADCCAQoCggEBAMkbm9kPbx1j/X4RVyf/pPKSYwelcco69TvnQQbKM8m8xkWjXJI1
+jpJ1jMaGUZGFToINMSZi7lZawUozudWbXSKy1SikENSTJHffsdRAIlsp+hR8vWvjsKUry6sEdqPG
+doa5RY7+N4WRusWZDYW/RRWE6i9EL9qV86CVPYqw22UBOUw4/j/HVGCV6TSB8yE5iEwhk/hUuzRr
+FZm1MJMR7mCS7BCR8Lr5jFY61lWpBiXNXIxLZCvDc26KR5L5tYX43iUVO3fzES1GRVoYnxxk2tmz
+fcsZG5vK+Trc9L8OZJfkYrEHH3+Iw41MQ0w/djVtYr1+HYldx0QmYXAtnhIj+UMCAwEAAaOCAtkw
+ggLVMAkGA1UdEwQCMAAwCwYDVR0PBAQDAgSwMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcD
+BDAdBgNVHQ4EFgQUszC96C3w5/2+d+atSr0IpT26YI4wHwYDVR0jBBgwFoAUU3Ltkpzg2ssBXHx+
+ljVO8tS4UYIwHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzCCAUwGA1UdIASCAUMwggE/
+MIIBOwYLKwYBBAGBtTcBAgMwggEqMC4GCCsGAQUFBwIBFiJodHRwOi8vd3d3LnN0YXJ0c3NsLmNv
+bS9wb2xpY3kucGRmMIH3BggrBgEFBQcCAjCB6jAnFiBTdGFydENvbSBDZXJ0aWZpY2F0aW9uIEF1
+dGhvcml0eTADAgEBGoG+VGhpcyBjZXJ0aWZpY2F0ZSB3YXMgaXNzdWVkIGFjY29yZGluZyB0byB0
+aGUgQ2xhc3MgMSBWYWxpZGF0aW9uIHJlcXVpcmVtZW50cyBvZiB0aGUgU3RhcnRDb20gQ0EgcG9s
+aWN5LCByZWxpYW5jZSBvbmx5IGZvciB0aGUgaW50ZW5kZWQgcHVycG9zZSBpbiBjb21wbGlhbmNl
+IG9mIHRoZSByZWx5aW5nIHBhcnR5IG9ibGlnYXRpb25zLjA2BgNVHR8ELzAtMCugKaAnhiVodHRw
+Oi8vY3JsLnN0YXJ0c3NsLmNvbS9jcnR1MS1jcmwuY3JsMIGOBggrBgEFBQcBAQSBgTB/MDkGCCsG
+AQUFBzABhi1odHRwOi8vb2NzcC5zdGFydHNzbC5jb20vc3ViL2NsYXNzMS9jbGllbnQvY2EwQgYI
+KwYBBQUHMAKGNmh0dHA6Ly9haWEuc3RhcnRzc2wuY29tL2NlcnRzL3N1Yi5jbGFzczEuY2xpZW50
+LmNhLmNydDAjBgNVHRIEHDAahhhodHRwOi8vd3d3LnN0YXJ0c3NsLmNvbS8wDQYJKoZIhvcNAQEF
+BQADggEBAHMQmxHHodpS85X8HRyxhvfkys7r+taCNOaNU9cxQu/cZ/6k5nS2qGNMzZ6jb7ueY/V7
+7p+4DW/9ZWODDTf4Fz00mh5SSVc20Bz7t+hhxwHd62PZgENh5i76Qq2tw48U8AsYo5damHby1epf
+neZafLpUkLLO7AGBJIiRVTevdvyXQ0qnixOmKMWyvrhSNGuVIKVdeqLP+102Dwf+dpFyw+j1hz28
+jEEKpHa+NR1b2kXuSPi/rMGhexwlJOh4tK8KQ6Ryr0rIN//NSbOgbyYZrzc/ZUWX9V5OA84ChFb2
+vkFl0OcYrttp/rhDBLITwffPxSZeoBh9H7zYzkbCXKL3BUIwggYnMIIFD6ADAgECAgMN7zcwDQYJ
+KoZIhvcNAQEFBQAwgYwxCzAJBgNVBAYTAklMMRYwFAYDVQQKEw1TdGFydENvbSBMdGQuMSswKQYD
+VQQLEyJTZWN1cmUgRGlnaXRhbCBDZXJ0aWZpY2F0ZSBTaWduaW5nMTgwNgYDVQQDEy9TdGFydENv
+bSBDbGFzcyAxIFByaW1hcnkgSW50ZXJtZWRpYXRlIENsaWVudCBDQTAeFw0xNTA1MDUwOTQzNDFa
+Fw0xNjA1MDUwOTUzMzZaMEIxHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcxIjAgBgkqhkiG
+9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIB
+AQDJG5vZD28dY/1+EVcn/6TykmMHpXHKOvU750EGyjPJvMZFo1ySNY6SdYzGhlGRhU6CDTEmYu5W
+WsFKM7nVm10istUopBDUkyR337HUQCJbKfoUfL1r47ClK8urBHajxnaGuUWO/jeFkbrFmQ2Fv0UV
+hOovRC/alfOglT2KsNtlATlMOP4/x1Rglek0gfMhOYhMIZP4VLs0axWZtTCTEe5gkuwQkfC6+YxW
+OtZVqQYlzVyMS2Qrw3NuikeS+bWF+N4lFTt38xEtRkVaGJ8cZNrZs33LGRubyvk63PS/DmSX5GKx
+Bx9/iMONTENMP3Y1bWK9fh2JXcdEJmFwLZ4SI/lDAgMBAAGjggLZMIIC1TAJBgNVHRMEAjAAMAsG
+A1UdDwQEAwIEsDAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwHQYDVR0OBBYEFLMwvegt
+8Of9vnfmrUq9CKU9umCOMB8GA1UdIwQYMBaAFFNy7ZKc4NrLAVx8fpY1TvLUuFGCMB4GA1UdEQQX
+MBWBE2R3bXcyQGluZnJhZGVhZC5vcmcwggFMBgNVHSAEggFDMIIBPzCCATsGCysGAQQBgbU3AQID
+MIIBKjAuBggrBgEFBQcCARYiaHR0cDovL3d3dy5zdGFydHNzbC5jb20vcG9saWN5LnBkZjCB9wYI
+KwYBBQUHAgIwgeowJxYgU3RhcnRDb20gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkwAwIBARqBvlRo
+aXMgY2VydGlmaWNhdGUgd2FzIGlzc3VlZCBhY2NvcmRpbmcgdG8gdGhlIENsYXNzIDEgVmFsaWRh
+dGlvbiByZXF1aXJlbWVudHMgb2YgdGhlIFN0YXJ0Q29tIENBIHBvbGljeSwgcmVsaWFuY2Ugb25s
+eSBmb3IgdGhlIGludGVuZGVkIHB1cnBvc2UgaW4gY29tcGxpYW5jZSBvZiB0aGUgcmVseWluZyBw
+YXJ0eSBvYmxpZ2F0aW9ucy4wNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5zdGFydHNzbC5j
+b20vY3J0dTEtY3JsLmNybDCBjgYIKwYBBQUHAQEEgYEwfzA5BggrBgEFBQcwAYYtaHR0cDovL29j
+c3Auc3RhcnRzc2wuY29tL3N1Yi9jbGFzczEvY2xpZW50L2NhMEIGCCsGAQUFBzAChjZodHRwOi8v
+YWlhLnN0YXJ0c3NsLmNvbS9jZXJ0cy9zdWIuY2xhc3MxLmNsaWVudC5jYS5jcnQwIwYDVR0SBBww
+GoYYaHR0cDovL3d3dy5zdGFydHNzbC5jb20vMA0GCSqGSIb3DQEBBQUAA4IBAQBzEJsRx6HaUvOV
+/B0csYb35MrO6/rWgjTmjVPXMULv3Gf+pOZ0tqhjTM2eo2+7nmP1e+6fuA1v/WVjgw03+Bc9NJoe
+UklXNtAc+7foYccB3etj2YBDYeYu+kKtrcOPFPALGKOXWph28tXqX53mWny6VJCyzuwBgSSIkVU3
+r3b8l0NKp4sTpijFsr64UjRrlSClXXqiz/tdNg8H/naRcsPo9Yc9vIxBCqR2vjUdW9pF7kj4v6zB
+oXscJSToeLSvCkOkcq9KyDf/zUmzoG8mGa83P2VFl/VeTgPOAoRW9r5BZdDnGK7baf64QwSyE8H3
+z8UmXqAYfR+82M5Gwlyi9wVCMIIGNDCCBBygAwIBAgIBHjANBgkqhkiG9w0BAQUFADB9MQswCQYD
+VQQGEwJJTDEWMBQGA1UEChMNU3RhcnRDb20gTHRkLjErMCkGA1UECxMiU2VjdXJlIERpZ2l0YWwg
+Q2VydGlmaWNhdGUgU2lnbmluZzEpMCcGA1UEAxMgU3RhcnRDb20gQ2VydGlmaWNhdGlvbiBBdXRo
+b3JpdHkwHhcNMDcxMDI0MjEwMTU1WhcNMTcxMDI0MjEwMTU1WjCBjDELMAkGA1UEBhMCSUwxFjAU
+BgNVBAoTDVN0YXJ0Q29tIEx0ZC4xKzApBgNVBAsTIlNlY3VyZSBEaWdpdGFsIENlcnRpZmljYXRl
+IFNpZ25pbmcxODA2BgNVBAMTL1N0YXJ0Q29tIENsYXNzIDEgUHJpbWFyeSBJbnRlcm1lZGlhdGUg
+Q2xpZW50IENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxwmDzM4t2BqxKaQuE6uW
+vooyg4ymiEGWVUet1G8SD+rqvyNH4QrvnEIaFHxOhESip7vMz39ScLpNLbL1QpOlPW/tFIzNHS3q
+d2XRNYG5Sv9RcGE+T4qbLtsjjJbi6sL7Ls/f/X9ftTyhxvxWkf8KW37iKrueKsxw2HqolH7GM6FX
+5UfNAwAu4ZifkpmZzU1slBhyWwaQPEPPZRsWoTb7q8hmgv6Nv3Hg9rmA1/VPBIOQ6SKRkHXG0Hhm
+q1dOFoAFI411+a/9nWm5rcVjGcIWZ2v/43Yksq60jExipA4l5uv9/+Hm33mbgmCszdj/Dthf13tg
+Av2O83hLJ0exTqfrlwIDAQABo4IBrTCCAakwDwYDVR0TAQH/BAUwAwEB/zAOBgNVHQ8BAf8EBAMC
+AQYwHQYDVR0OBBYEFFNy7ZKc4NrLAVx8fpY1TvLUuFGCMB8GA1UdIwQYMBaAFE4L7xqkQFulF2mH
+MMo0aEPQQa7yMGYGCCsGAQUFBwEBBFowWDAnBggrBgEFBQcwAYYbaHR0cDovL29jc3Auc3RhcnRz
+c2wuY29tL2NhMC0GCCsGAQUFBzAChiFodHRwOi8vd3d3LnN0YXJ0c3NsLmNvbS9zZnNjYS5jcnQw
+WwYDVR0fBFQwUjAnoCWgI4YhaHR0cDovL3d3dy5zdGFydHNzbC5jb20vc2ZzY2EuY3JsMCegJaAj
+hiFodHRwOi8vY3JsLnN0YXJ0c3NsLmNvbS9zZnNjYS5jcmwwgYAGA1UdIAR5MHcwdQYLKwYBBAGB
+tTcBAgEwZjAuBggrBgEFBQcCARYiaHR0cDovL3d3dy5zdGFydHNzbC5jb20vcG9saWN5LnBkZjA0
+BggrBgEFBQcCARYoaHR0cDovL3d3dy5zdGFydHNzbC5jb20vaW50ZXJtZWRpYXRlLnBkZjANBgkq
+hkiG9w0BAQUFAAOCAgEACoMIfXirLAZcuGOMXq4cuSN3TaFx2H2GvD5VSy/6rV55BYHbWNaPeQn3
+oBSU8KgQZn/Kck1JxbLpAxVCNtsxeW1R87ifhsYZ0qjdrA9anrW2MAWCtosmAOT4OxK9QPoSjCMx
+M3HbkZCDJgnlE8jMopH21BbyAYr7b5EfGRQJNtgWcvqSXwKHnTutR08+Kkn0KAkXCzeQNLeA5LlY
+UzFyM7kPAp8pIRMQ+seHunmyG642S2+y/qHEdMuGIwpfz3eDF1PdctL04qYK/zu+Qg1Bw0RwgigV
+Zs/0c5HP2/e9DBHh7eSwtzYlk4AUr6yxLlcwSjOfOmKEQ/Q8tzh0IFiNu9IPuTGAPBn4CPxD0+Ru
+8T2wg8/s43R/PT3kd1OEqOJUl7q+h+r6fpvU0Fzxd2tC8Ga6fDEPme+1Nbi+03pVjuZQKbGwKJ66
+gEn06WqaxVZC+J8hh/jR0k9mST1iAZPNYulcNJ8tKmVtjYsv0L1TSm2+NwON58tO+pIVzu3DWwSE
+XSf+qkDavQam+QtEOZxLBXI++aMUEapSn+k3Lxm48ZCYfAWLb/Xj7F5JQMbZvCexglAbYR0kIHqW
+5DnsYSdMD/IplJMojx0NBrxJ3fN9dvX2Y6BIXRsF1du4qESm4/3CKuyUV7p9DW3mPlHTGLvYxnyK
+Qy7VFBkoLINszBrOUeIxggNvMIIDawIBATCBlDCBjDELMAkGA1UEBhMCSUwxFjAUBgNVBAoTDVN0
+YXJ0Q29tIEx0ZC4xKzApBgNVBAsTIlNlY3VyZSBEaWdpdGFsIENlcnRpZmljYXRlIFNpZ25pbmcx
+ODA2BgNVBAMTL1N0YXJ0Q29tIENsYXNzIDEgUHJpbWFyeSBJbnRlcm1lZGlhdGUgQ2xpZW50IENB
+AgMN7zcwCQYFKw4DAhoFAKCCAa8wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0B
+CQUxDxcNMTUxMDE5MTUyOTQwWjAjBgkqhkiG9w0BCQQxFgQUlNXK6jNTh3kLRL94Vr619vYswYYw
+gaUGCSsGAQQBgjcQBDGBlzCBlDCBjDELMAkGA1UEBhMCSUwxFjAUBgNVBAoTDVN0YXJ0Q29tIEx0
+ZC4xKzApBgNVBAsTIlNlY3VyZSBEaWdpdGFsIENlcnRpZmljYXRlIFNpZ25pbmcxODA2BgNVBAMT
+L1N0YXJ0Q29tIENsYXNzIDEgUHJpbWFyeSBJbnRlcm1lZGlhdGUgQ2xpZW50IENBAgMN7zcwgacG
+CyqGSIb3DQEJEAILMYGXoIGUMIGMMQswCQYDVQQGEwJJTDEWMBQGA1UEChMNU3RhcnRDb20gTHRk
+LjErMCkGA1UECxMiU2VjdXJlIERpZ2l0YWwgQ2VydGlmaWNhdGUgU2lnbmluZzE4MDYGA1UEAxMv
+U3RhcnRDb20gQ2xhc3MgMSBQcmltYXJ5IEludGVybWVkaWF0ZSBDbGllbnQgQ0ECAw3vNzANBgkq
+hkiG9w0BAQEFAASCAQCMWtagUjgLq/HfIo0lpRTSInLPuG3295o9/j2mYJrR9gUpSOT6AMUx2zW2
+kJcFArDi3s9/kOuAfiUBQS5dUTYTEdXaAqwN9mZohGAw1hwHeP2bPCqep9ocHtIe7qqoG344nrks
+P9/hgqLVbEdsW/8bE4759evdZg/BgOqcwBB1K/5eoqcV/6x4vo/SnXZv+D/pUdZJAV2lJ08X2RsF
+wQRpn+KRdu3OJHPVuuFPgUgKR2pG2hTJR/0krLwRy2woHiIV+gad1t8n4BAGW0TXXE0UyhrNPayo
+d/H+WFQvN/bTwOILjUdd1ScCAMp8H6dWDO0o9iGZQq/RIijoqPbyohsHAAAAAAAA
 
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |  71 +++
- drivers/clk/shmobile/Makefile                      |   3 +-
- drivers/clk/shmobile/clk-cpg-mssr.c                | 578 +++++++++++++++++++++
- drivers/clk/shmobile/clk-cpg-mssr.h                | 118 +++++
- drivers/clk/shmobile/clk-div6.c                    | 119 +++--
- drivers/clk/shmobile/clk-div6.h                    |   3 +
- drivers/clk/shmobile/clk-r8a7795-cpg-mssr.c        | 373 +++++++++++++
- include/dt-bindings/clock/r8a7795-cpg-mssr.h       |  63 +++
- include/dt-bindings/clock/renesas-cpg-mssr.h       |  15 +
- 9 files changed, 1297 insertions(+), 46 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
- create mode 100644 drivers/clk/shmobile/clk-cpg-mssr.c
- create mode 100644 drivers/clk/shmobile/clk-cpg-mssr.h
- create mode 100644 drivers/clk/shmobile/clk-div6.h
- create mode 100644 drivers/clk/shmobile/clk-r8a7795-cpg-mssr.c
- create mode 100644 include/dt-bindings/clock/r8a7795-cpg-mssr.h
- create mode 100644 include/dt-bindings/clock/renesas-cpg-mssr.h
 
--- 
-1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+--=-AxdVhL+VWkAHcSb8DC2N--
