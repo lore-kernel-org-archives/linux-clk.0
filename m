@@ -1,50 +1,37 @@
-Return-Path: <B48286@freescale.com>
-From: Zhiqiang Hou <B48286@freescale.com>
-To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-CC: <mark.rutland@arm.com>, <linux@roeck-us.net>, <wsa@the-dreams.de>,
-	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <Mingkai.Hu@freescale.com>,
-	<Shaohui.Xie@freescale.com>, <scottwood@freescale.com>,
-	<bhupesh.sharma@freescale.com>, <Wenbin.Song@freescale.com>,
-	<B48286@freescale.com>
-Subject: [PATCH V5 3/6] Documentation: DT: Add entry for FSL LS1043ARDB board
-Date: Mon, 19 Oct 2015 19:56:11 +0800
-Message-ID: <1445255774-32887-3-git-send-email-B48286@freescale.com>
-In-Reply-To: <1445255774-32887-1-git-send-email-B48286@freescale.com>
-References: <1445255774-32887-1-git-send-email-B48286@freescale.com>
-Return-Path: B48286@freescale.com
+Return-Path: <jszhang@marvell.com>
+From: Jisheng Zhang <jszhang@marvell.com>
+To: <sebastian.hesselbarth@gmail.com>, <robh+dt@kernel.org>,
+        <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Jisheng Zhang <jszhang@marvell.com>
+Subject: [PATCH v2 0/4] berlin sdhci clock clean up
+Date: Tue, 20 Oct 2015 19:16:43 +0800
+Message-ID: <1445339807-2351-1-git-send-email-jszhang@marvell.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mingkai Hu <Mingkai.Hu@freescale.com>
+Add or fix the optional clock property, then remove the CLK_IGNORE_UNUSED
+flag for sdio clk(s).
 
-Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
-Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
----
-V5: V4 V3 V2
- - No change.
+Since v1:
+  - remove the "mmc: sdhci-pxav3: fix optional clock name" patch to not
+    block the clock clean up patches, will send another separate patch 
+    after talking with HW people.
 
- Documentation/devicetree/bindings/arm/fsl.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+Jisheng Zhang (4):
+  ARM: dts: berlin: correct BG2Q's sdhci2 2nd clock
+  ARM: dts: berlin: add 2nd clock for BG2Q sdhci0 and sdhci1
+  clk: berlin: bg2q: remove CLK_IGNORE_UNUSED flag for sdio clk
+  clk: berlin: bg2: remove CLK_IGNORE_UNUSED flag for sdio clk
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
-index 34c88b0..752a685 100644
---- a/Documentation/devicetree/bindings/arm/fsl.txt
-+++ b/Documentation/devicetree/bindings/arm/fsl.txt
-@@ -131,6 +131,10 @@ Example:
- Freescale ARMv8 based Layerscape SoC family Device Tree Bindings
- ----------------------------------------------------------------
- 
-+LS1043A ARMv8 based RDB Board
-+Required root node properties:
-+    - compatible = "fsl,ls1043a-rdb", "fsl,ls1043a";
-+
- LS2080A ARMv8 based Simulator model
- Required root node properties:
-     - compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
+ arch/arm/boot/dts/berlin2q.dtsi | 8 +++++---
+ drivers/clk/berlin/bg2.c        | 4 ++--
+ drivers/clk/berlin/bg2q.c       | 2 +-
+ 3 files changed, 8 insertions(+), 6 deletions(-)
+
 -- 
-2.1.0.27.g96db324
+2.6.1
