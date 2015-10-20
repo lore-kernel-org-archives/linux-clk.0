@@ -1,51 +1,43 @@
-Return-Path: <scottwood@freescale.com>
-Message-ID: <1445909666.701.289.camel@freescale.com>
-Subject: Re: [PATCH V6 5/6] clk: qoriq: Add ls1043a support.
-From: Scott Wood <scottwood@freescale.com>
-To: Leo Li <pku.leo@gmail.com>
-CC: Zhiqiang Hou <B48286@freescale.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Catalin Marinas
-	<catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Shaohui Xie
-	<Shaohui.Xie@freescale.com>, <corbet@lwn.net>, Bhupesh Sharma
-	<bhupesh.sharma@freescale.com>, <mturquette@baylibre.com>,
-	<wsa@the-dreams.de>, <sboyd@codeaurora.org>, <wim@iguana.be>, Wenbin Song
-	<Wenbin.Song@freescale.com>, Hu Vincent <Mingkai.Hu@freescale.com>,
-	<linux@roeck-us.net>
-Date: Mon, 26 Oct 2015 20:34:26 -0500
-In-Reply-To: <CADRPPNSS62G3D8ghNjd1kJMSjXkQJ9bfqeTP_ZqMk2ehRN5iyw@mail.gmail.com>
-References: <1445587282-29529-1-git-send-email-B48286@freescale.com>
-	 <1445587282-29529-5-git-send-email-B48286@freescale.com>
-	 <CADRPPNSS62G3D8ghNjd1kJMSjXkQJ9bfqeTP_ZqMk2ehRN5iyw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <jszhang@marvell.com>
+From: Jisheng Zhang <jszhang@marvell.com>
+To: <sebastian.hesselbarth@gmail.com>, <robh+dt@kernel.org>,
+        <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Jisheng Zhang <jszhang@marvell.com>
+Subject: [PATCH v2 4/4] clk: berlin: bg2: remove CLK_IGNORE_UNUSED flag for sdio clk
+Date: Tue, 20 Oct 2015 19:16:47 +0800
+Message-ID: <1445339807-2351-5-git-send-email-jszhang@marvell.com>
+In-Reply-To: <1445339807-2351-1-git-send-email-jszhang@marvell.com>
+References: <1445339807-2351-1-git-send-email-jszhang@marvell.com>
 MIME-Version: 1.0
-Return-Path: scottwood@freescale.com
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2015-10-26 at 17:20 -0500, Leo Li wrote:
-> On Fri, Oct 23, 2015 at 3:01 AM, Zhiqiang Hou <B48286@freescale.com> wrote:
-> > From: Hou Zhiqiang <B48286@freescale.com>
-> > 
-> > Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
-> > Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-> > ---
-> > V6: V5 V4 V3 V2
-> >  - No change.
-> 
-> I know you mentioned the dependency in the summary of the patch
-> series.  But it's not likely these dependencies will be merged through
-> the ARM sub-maintainers tree and be resolved in this merge window.  So
-> it will be better to mention these dependencies here so that this
-> patch will go through the same tree as these dependency patches.
-> 
-> Scott,
-> 
-> What is your plan to merge the clock patches?  This patch need to go
-> together with it.
+The clocks' properties have been already properly set, so there's no
+need to set this flag for sdio0 and sdio1 clk any more.
 
-See https://lists.ozlabs.org/pipermail/linuxppc-dev/2015-October/135565.html
+Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+---
+ drivers/clk/berlin/bg2.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
--Scott
+diff --git a/drivers/clk/berlin/bg2.c b/drivers/clk/berlin/bg2.c
+index 73153fc..23e0e3b 100644
+--- a/drivers/clk/berlin/bg2.c
++++ b/drivers/clk/berlin/bg2.c
+@@ -490,8 +490,8 @@ static const struct berlin2_gate_data bg2_gates[] __initconst = {
+ 	{ "usb0",	"perif",	11 },
+ 	{ "usb1",	"perif",	12 },
+ 	{ "pbridge",	"perif",	13, CLK_IGNORE_UNUSED },
+-	{ "sdio0",	"perif",	14, CLK_IGNORE_UNUSED },
+-	{ "sdio1",	"perif",	15, CLK_IGNORE_UNUSED },
++	{ "sdio0",	"perif",	14 },
++	{ "sdio1",	"perif",	15 },
+ 	{ "nfc",	"perif",	17 },
+ 	{ "smemc",	"perif",	19 },
+ 	{ "audiohd",	"audiohd_pll",	26 },
+-- 
+2.6.1
