@@ -1,73 +1,100 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v4 0/5] clk: sunxi: Add support for the Audio PLL
-Date: Mon, 12 Oct 2015 22:43:25 +0200
-Message-Id: <1444682610-21482-1-git-send-email-maxime.ripard@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:54864 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752407AbbJTMxw (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 20 Oct 2015 08:53:52 -0400
+Subject: Re: [PATCH 09/10] dt-bindings: video: exynos5433-decon: add bindings
+ for DECON-TV
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>
+References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
+ <1445332961-25419-10-git-send-email-a.hajda@samsung.com>
+ <56263400.6010200@samsung.com>
+Cc: k.kozlowski.k@gmail.com,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Hyungwon Hwang <human.hwang@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Message-id: <5626394C.5040202@samsung.com>
+Date: Tue, 20 Oct 2015 14:53:32 +0200
+MIME-version: 1.0
+In-reply-to: <56263400.6010200@samsung.com>
+Content-type: text/plain; charset=iso-8859-2
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 10/20/2015 02:30 PM, Krzysztof Kozlowski wrote:
+> W dniu 20.10.2015 o 18:22, Andrzej Hajda pisze:
+>> DECON-TV(Display and Enhancement Controller for TV) is a variation
+>> of DECON IP. Its main purpose is to produce video stream for HDMI IP.
+>>
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> ---
+>>  .../devicetree/bindings/video/exynos5433-decon.txt  | 21 ++++++++++++---------
+>>  1 file changed, 12 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/video/exynos5433-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+>> index 3dff78b..2a88c8d 100644
+>> --- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+>> +++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+>> @@ -5,24 +5,27 @@ Exynos series of SoCs which transfers the image data from a video memory
+>>  buffer to an external LCD interface.
+>>  
+>>  Required properties:
+>> -- compatible: value should be "samsung,exynos5433-decon";
+>> +- compatible: value should be one of:
+>> +	"samsung,exynos5433-decon", "samsung,exynos5433-decon-tv";
+> Until this point it looked good.
+>
+>>  - reg: physical base address and length of the DECON registers set.
+>> -- interrupts: should contain a list of all DECON IP block interrupts in the
+>> -	      order: VSYNC, LCD_SYSTEM. The interrupt specifier format
+>> -	      depends on the interrupt controller used.
+>> -- interrupt-names: should contain the interrupt names: "vsync", "lcd_sys"
+>> -		   in the same order as they were listed in the interrupts
+>> -		   property.
+>> +- interrupts: should contain interrupt specifier of VSYNC and optionally
+>> +	      LCD_SYSTEM. The interrupt specifier format depends on
+>> +	      the interrupt controller used.
+>> +- interrupt-names: should contain the interrupt name "vsync" and optionally
+>> +		   "lcd_sys" in the same order as they were listed in
+>> +		   the interrupts property.
+> The driver already did not require both interrupts, right? Only one of them?
 
-This serie adds support for the PLL2 aka the Audio PLL on the
-Allwinner A10 and the later SoCs.
+Right. More precisely it did not require since beginning.
 
-This is the last part of the audio codec support.
+>
+>>  - clocks: must include clock specifiers corresponding to entries in the
+>>  	  clock-names property.
+>>  - clock-names: list of clock names sorted in the same order as the clocks
+>>  	       property. Must contain "pclk", "aclk_decon", "aclk_smmu_decon0x",
+>>  	       "aclk_xiu_decon0x", "pclk_smmu_decon0x", clk_decon_vclk",
+>>  	       "sclk_decon_eclk"
+>> +
+>> +Optional properties:
+>>  - ports: contains a port which is connected to mic node. address-cells and
+>> -	 size-cells must 1 and 0, respectively.
+>> +	 size-cells must be 1 and 0, respectively.
+>>  - port: contains an endpoint node which is connected to the endpoint in the mic
+>> -	node. The reg value muset be 0.
+>> +	node. The reg value must be 0.
+>>  - i80-if-timings: specify whether the panel which is connected to decon uses
+>>  		  i80 lcd interface or mipi video interface. This node contains
+>>  		  no timing information as that of fimd does. Because there is
+>>
+> This is cleanup, please split it.
 
-This serie is built on top of a generic clk-multiplier driver to
-handle clock that multiply their parent clock rate (mostly PLL's), in
-order to provide the driver for the PLL2 base clock, and then adds the
-drivers for the clock that derive from the Audio PLL.
+Ok. I will split it into cleanup/fix patch, and 2nd one adding compatible.
 
-Thanks!
-Maxime
+Regards
+Andrzej
+>
+> Best regards,
+> Krzysztof
+>
 
-Changes from v3:
-  - Fixed the header issues: removed unused ones, added some others
-  - Added the __acquire / __release call when a spinlock is not defined
-
-Changes from v2:
-  - Renamed clk-factor to clk-multiplier
-  - Added an exception for the A13 clock
-
-Changes from v1:
-  - Removed a bogus of_iomap in the mod1 clock driver
-  - Wrote the clk-factor driver
-  - Converted the PLL2 clock to that driver
-      
-
-Emilio López (2):
-  clk: sunxi: codec clock support
-  clk: sunxi: mod1 clock support
-
-Maxime Ripard (3):
-  clk: Add a basic multiplier clock
-  clk: sunxi: Add a driver for the PLL2
-  clk: sunxi: pll2: Add A13 support
-
- drivers/clk/Makefile                       |   1 +
- drivers/clk/clk-multiplier.c               | 181 ++++++++++++++++++++++++
- drivers/clk/sunxi/Makefile                 |   3 +
- drivers/clk/sunxi/clk-a10-codec.c          |  44 ++++++
- drivers/clk/sunxi/clk-a10-mod1.c           |  81 +++++++++++
- drivers/clk/sunxi/clk-a10-pll2.c           | 216 +++++++++++++++++++++++++++++
- include/dt-bindings/clock/sun4i-a10-pll2.h |  53 +++++++
- include/linux/clk-provider.h               |  42 ++++++
- 8 files changed, 621 insertions(+)
- create mode 100644 drivers/clk/clk-multiplier.c
- create mode 100644 drivers/clk/sunxi/clk-a10-codec.c
- create mode 100644 drivers/clk/sunxi/clk-a10-mod1.c
- create mode 100644 drivers/clk/sunxi/clk-a10-pll2.c
- create mode 100644 include/dt-bindings/clock/sun4i-a10-pll2.h
-
--- 
-2.5.3
