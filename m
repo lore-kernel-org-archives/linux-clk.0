@@ -1,76 +1,86 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-qk0-f170.google.com ([209.85.220.170]:35180 "EHLO
-	mail-qk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751051AbbJTMz1 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 20 Oct 2015 08:55:27 -0400
+Return-Path: <magnus.damm@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <5626394C.5040202@samsung.com>
-References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
-	<1445332961-25419-10-git-send-email-a.hajda@samsung.com>
-	<56263400.6010200@samsung.com>
-	<5626394C.5040202@samsung.com>
-Date: Tue, 20 Oct 2015 21:55:26 +0900
-Message-ID: <CAJKOXPfXrEwu1egSnLxwYofu_scskkPRKOjOCskObPFn9yVcJw@mail.gmail.com>
-Subject: Re: [PATCH 09/10] dt-bindings: video: exynos5433-decon: add bindings
- for DECON-TV
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Hyungwon Hwang <human.hwang@samsung.com>
+In-Reply-To: <CAMuHMdX8kHcRCkmLbPt7SNC4CZnQm+B834sLdotT2PtQuzFUmA@mail.gmail.com>
+References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be>
+	<1444999760-15750-3-git-send-email-geert+renesas@glider.be>
+	<CAMuHMdX8kHcRCkmLbPt7SNC4CZnQm+B834sLdotT2PtQuzFUmA@mail.gmail.com>
+Date: Wed, 21 Oct 2015 01:21:43 +0900
+Message-ID: <CANqRtoT0qnzM8ZFpKmkm4zBP_TKvaP40EP=MBnHxA0CJKiw2xA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/5] [RFC] clk: shmobile: Add r8a7795 CPG Core Clock Definitions
+From: Magnus Damm <magnus.damm@gmail.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>,
+	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-2015-10-20 21:53 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
-> On 10/20/2015 02:30 PM, Krzysztof Kozlowski wrote:
->> W dniu 20.10.2015 o 18:22, Andrzej Hajda pisze:
->>> DECON-TV(Display and Enhancement Controller for TV) is a variation
->>> of DECON IP. Its main purpose is to produce video stream for HDMI IP.
->>>
->>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->>> ---
->>>  .../devicetree/bindings/video/exynos5433-decon.txt  | 21 ++++++++++++---------
->>>  1 file changed, 12 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/video/exynos5433-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
->>> index 3dff78b..2a88c8d 100644
->>> --- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
->>> +++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
->>> @@ -5,24 +5,27 @@ Exynos series of SoCs which transfers the image data from a video memory
->>>  buffer to an external LCD interface.
->>>
->>>  Required properties:
->>> -- compatible: value should be "samsung,exynos5433-decon";
->>> +- compatible: value should be one of:
->>> +    "samsung,exynos5433-decon", "samsung,exynos5433-decon-tv";
->> Until this point it looked good.
->>
->>>  - reg: physical base address and length of the DECON registers set.
->>> -- interrupts: should contain a list of all DECON IP block interrupts in the
->>> -          order: VSYNC, LCD_SYSTEM. The interrupt specifier format
->>> -          depends on the interrupt controller used.
->>> -- interrupt-names: should contain the interrupt names: "vsync", "lcd_sys"
->>> -               in the same order as they were listed in the interrupts
->>> -               property.
->>> +- interrupts: should contain interrupt specifier of VSYNC and optionally
->>> +          LCD_SYSTEM. The interrupt specifier format depends on
->>> +          the interrupt controller used.
->>> +- interrupt-names: should contain the interrupt name "vsync" and optionally
->>> +               "lcd_sys" in the same order as they were listed in
->>> +               the interrupts property.
->> The driver already did not require both interrupts, right? Only one of them?
+On Tue, Oct 20, 2015 at 7:09 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Fri, Oct 16, 2015 at 2:49 PM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+>> Add all R-Car H3 CPG Core Clock Outputs defined in the datasheet.
 >
-> Right. More precisely it did not require since beginning.
+> Cfr. Table 8.2a ("List of Clocks [R-Car H3]").
 
-So can you move it to the cleanup patch with change below?
+Thanks for this additional information. Would it be possible to add
+that table pointer together with data sheet revision to the commit
+message or a comment in the code so we know which version of the
+documentation this file is based on?
 
-Best regards,
-Krzysztof
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/r8a7795-cpg-mssr.h
+>> @@ -0,0 +1,63 @@
+>> +/*
+>> + * Copyright (C) 2015 Renesas Electronics Corp.
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License as published by
+>> + * the Free Software Foundation; either version 2 of the License, or
+>> + * (at your option) any later version.
+>> + */
+>> +#ifndef __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__
+>> +#define __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__
+>> +
+>> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
+>> +
+>> +/* r8a7795 CPG Core Clocks */
+>> +#define R8A7795_CLK_Z                  0
+>> +#define R8A7795_CLK_Z2                 1
+>> +#define R8A7795_CLK_ZR                 2
+>> +#define R8A7795_CLK_ZG                 3
+>> +#define R8A7795_CLK_ZTR                        4
+>> +#define R8A7795_CLK_ZTRD2              5
+>> +#define R8A7795_CLK_ZT                 6
+>> +#define R8A7795_CLK_ZX                 7
+>> +#define R8A7795_CLK_S0D1               8
+>> +#define R8A7795_CLK_S0D4               9
+>> +#define R8A7795_CLK_S1D1               10
+>> +#define R8A7795_CLK_S1D2               11
+>> +#define R8A7795_CLK_S1D4               12
+>> +#define R8A7795_CLK_S2D1               13
+>> +#define R8A7795_CLK_S2D2               14
+>> +#define R8A7795_CLK_S2D4               15
+>> +#define R8A7795_CLK_S3D1               16
+>> +#define R8A7795_CLK_S3D2               17
+>> +#define R8A7795_CLK_S3D4               18
+>
+> Please note that I deliberately left out S[0-3], as they're used as
+> internal clock
+> sources only.
+
+Omitting internal clock sources sounds sane to me. If you're going to
+update the commit message they may I suggest that you list the
+intentionally omitted clocks there?
+
+Reviewed-by: Magnus Damm <damm+renesas@opensource.se>
+
+Thanks for your help!
+
+Best,
+
+/ magnus
