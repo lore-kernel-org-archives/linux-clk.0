@@ -1,70 +1,69 @@
-Return-Path: <stern+5638bce2@rowland.harvard.edu>
-Date: Tue, 20 Oct 2015 12:04:05 -0400 (EDT)
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Mark Brown <broonie@kernel.org>
-cc: Rob Herring <robh@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-    David Woodhouse <dwmw2@infradead.org>,
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-    Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-    Russell King <linux@arm.linux.org.uk>,
-    Michael Turquette <mturquette@baylibre.com>,
-    Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
-    Dan Williams <dan.j.williams@intel.com>,
-    Linus Walleij <linus.walleij@linaro.org>,
-    Alexandre Courbot <gnurou@gmail.com>,
-    Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>,
-    Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
-    Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
-    Frank Rowand <frowand.list@gmail.com>,
-    Grant Likely <grant.likely@linaro.org>,
-    Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>,
-    Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-    Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
-    Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-    Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-    Tomi Valkeinen <tomi.valkeinen@ti.com>,
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-     <linux-clk@vger.kernel.org>,  <dmaengine@vger.kernel.org>,
-    "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-    dri-devel <dri-devel@lists.freedesktop.org>,
-    "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-    "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-    "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-    "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-    Linux PWM List <linux-pwm@vger.kernel.org>,
-    Linux USB List <linux-usb@vger.kernel.org>,
-    "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-Subject: Re: [GIT PULL] On-demand device probing
-In-Reply-To: <20151020153612.GB32054@sirena.org.uk>
-Message-ID: <Pine.LNX.4.44L0.1510201159400.1855-100000@iolanthe.rowland.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1444999760-15750-2-git-send-email-geert+renesas@glider.be>
+References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be>
+	<1444999760-15750-2-git-send-email-geert+renesas@glider.be>
+Date: Tue, 20 Oct 2015 14:16:34 +0200
+Message-ID: <CAMuHMdVhBipbf13o0jb3H6qmcewh6CCtq3=Hj-9nvgar+AYdFg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/5] [RFC] clk: shmobile: Add new Renesas CPG/MSSR DT bindings
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>,
+	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 20 Oct 2015, Mark Brown wrote:
+On Fri, Oct 16, 2015 at 2:49 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+> @@ -0,0 +1,71 @@
+> +* Renesas Clock Pulse Generator / Module Standby and Software Reset
+> +
+> +On Renesas ARM SoCs (SH/R-Mobile, R-Car, RZ), the CPG (Clock Pulse Generator)
+> +and MSSR (Module Standby and Software Reset) blocks are intimately connected,
+> +and share the same register block.
+> +
+> +They provide the following functionalities:
+> +  - The CPG block generates various core clocks,
+> +  - The MSSR block provides two functions:
+> +      1. Module Standby, providing a Clock Domain to control the clock supply
+> +        to individual SoC devices,
+> +      2. Reset Control, to perform a software reset of individual SoC devices.
+> +
+> +Required Properties:
+> +  - compatible: Must be one of:
+> +      - "renesas,r8a7791-cpg-mssr" for the r8a7791 SoC
 
-> On Tue, Oct 20, 2015 at 10:40:03AM -0400, Alan Stern wrote:
-> 
-> > Furthermore, that applies only to devices that use synchronous suspend.  
-> > Async suspend is becoming common, and there the only restrictions are 
-> > parent-child relations plus whatever explicit requirements that drivers 
-> > impose by calling device_pm_wait_for_dev().
-> 
-> Hrm, this is the first I'd noticed that feature though I see the initial
-> commit dates from January.
+I'll drop the reference to "r8a7791", as we won't convert r8a7791 (yet).
 
-Async suspend and device_pm_wait_for_dev() were added in January 2010, 
-not 2015!
+> +      - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC
+> +
+> +  - reg: Base address and length of the memory resource used by the CPG/MSSR
+> +    block
+> +
+> +  - clocks: References to external parent clocks, one entry for each entry in
+> +    clock-names
+> +  - clock-names: List of external parent clock names. Valid names are:
+> +      - "extal" (r8a7791, r8a7795)
+> +      - "extalr" (r8a7795)
+> +      - "usb_extal" (r8a7791)
 
->  It looks like most of the users are PCs at
-> the minute but we should be using it more widely for embedded things,
-> there's definitely some cases I'm aware of where it will allow us to
-> remove some open coding.
-> 
-> It does seem like we want to be feeding dependency information we
-> discover for probing way into the suspend dependencies...
+Likewise.
 
-Rafael has been thinking about a way to do this systematically.  
-Nothing concrete has emerged yet.
+Gr{oetje,eeting}s,
 
-Alan Stern
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
