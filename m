@@ -1,33 +1,61 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 2 Oct 2015 11:21:33 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Suman Anna <s-anna@ti.com>
-Cc: Tero Kristo <t-kristo@ti.com>, Mike Turquette <mturquette@baylibre.com>,
-	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: ti: dflt: fix enable_reg validity check
-Message-ID: <20151002182133.GO12338@codeaurora.org>
-References: <1443566267-50225-1-git-send-email-s-anna@ti.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-qg0-f48.google.com ([209.85.192.48]:36010 "EHLO
+	mail-qg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750904AbbJTMsX (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 20 Oct 2015 08:48:23 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1443566267-50225-1-git-send-email-s-anna@ti.com>
+In-Reply-To: <56263691.1080804@samsung.com>
+References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
+	<1445332961-25419-5-git-send-email-a.hajda@samsung.com>
+	<5626327E.3050002@samsung.com>
+	<56263691.1080804@samsung.com>
+Date: Tue, 20 Oct 2015 21:48:22 +0900
+Message-ID: <CAJKOXPfWCysCNkuNgLauiEJKgsknntwZk6qyOQc8mhh9aQdG7g@mail.gmail.com>
+Subject: Re: [PATCH 04/10] dt-bindings: video: add PCLK clock entry to exynos5433-decon
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Hyungwon Hwang <human.hwang@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/29, Suman Anna wrote:
-> diff --git a/drivers/clk/ti/clkt_dflt.c b/drivers/clk/ti/clkt_dflt.c
-> index 90d7d8a21c49..1ddc288fce4e 100644
-> --- a/drivers/clk/ti/clkt_dflt.c
-> +++ b/drivers/clk/ti/clkt_dflt.c
-> @@ -222,7 +222,7 @@ int omap2_dflt_clk_enable(struct clk_hw *hw)
->  		}
->  	}
->  
-> -	if (unlikely(!clk->enable_reg)) {
-> +	if (unlikely(IS_ERR(clk->enable_reg))) {
+2015-10-20 21:41 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
+> On 10/20/2015 02:24 PM, Krzysztof Kozlowski wrote:
+>> W dniu 20.10.2015 o 18:22, Andrzej Hajda pisze:
+>>> DECON IP requires this clock to access configuration registers.
+>>>
+>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>>> ---
+>>>  Documentation/devicetree/bindings/video/exynos5433-decon.txt | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/video/exynos5433-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+>>> index 377afbf..3dff78b 100644
+>>> --- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+>>> +++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+>>> @@ -16,7 +16,7 @@ Required properties:
+>>>  - clocks: must include clock specifiers corresponding to entries in the
+>>>        clock-names property.
+>>>  - clock-names: list of clock names sorted in the same order as the clocks
+>>> -           property. Must contain "aclk_decon", "aclk_smmu_decon0x",
+>>> +           property. Must contain "pclk", "aclk_decon", "aclk_smmu_decon0x",
+>> I assume that old DTB wouldn't work at all, so there is no point in
+>> maintaining ABI compatibility?
+>
+> Yes, Exynos 5433 has not yet landed in mainline.
 
-IS_ERR() already has an unlikely inside it, so the unlikely is
-redundant here.
+No, no. I was asking if something using these compatibles would work
+previously or not? The driver provided a compatible, an ABI. Now you
+require additional field for the same compatible, so the ABI changes.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best regards,
+Krzysztof
