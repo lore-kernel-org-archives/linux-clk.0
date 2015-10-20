@@ -1,35 +1,46 @@
-Return-Path: <javier@osg.samsung.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: max77802: Update MODULE_AUTHOR() email address
-Date: Wed, 14 Oct 2015 13:18:55 +0200
-Message-Id: <1444821535-12953-1-git-send-email-javier@osg.samsung.com>
+Return-Path: <rjw@rjwysocki.net>
+Return-Path: <rjw@rjwysocki.net>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Mark Brown <broonie@kernel.org>
+Cc: Alan Stern <stern@rowland.harvard.edu>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Rob Herring <robh@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org, dmaengine@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>, Linux USB List <linux-usb@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Wed, 21 Oct 2015 01:35:38 +0200
+Message-ID: <23698237.227MziouDO@vostro.rjw.lan>
+In-Reply-To: <20151020193528.GE32054@sirena.org.uk>
+References: <CAAObsKChQN4gg91dCWJS_Co_MrYyBrB1J7gxgGo4hsPXNZRp3g@mail.gmail.com> <Pine.LNX.4.44L0.1510201311260.1855-100000@iolanthe.rowland.org> <20151020193528.GE32054@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The email address listed in MODULE_AUTHOR() no longer exist so to prevent
-people to send emails to the old address, replace it with my current one.
+On Tuesday, October 20, 2015 08:35:28 PM Mark Brown wrote:
+> 
+> --7fVr/IRGAG9sAW4J
+> Content-Type: text/plain; charset=us-ascii
+> Content-Disposition: inline
+> Content-Transfer-Encoding: quoted-printable
+> 
+> On Tue, Oct 20, 2015 at 01:14:46PM -0400, Alan Stern wrote:
+> > On Tue, 20 Oct 2015, Tomeu Vizoso wrote:
+> 
+> > > This iteration of the series would make this quite easy, as
+> > > dependencies are calculated before probes are attempted:
+> 
+> > > https://lkml.org/lkml/2015/6/17/311
+> 
+> > But what Rafael is proposing is quite general; it would apply to _all_
+> > dependencies as opposed to just those present in DT drivers or those=20
+> > affecting platform_devices.
+> 
+> We'll still need most of the DT bits that are there at the minute (the
+> ones strewn around the subsystems) AFAICT since it's at the point where
+> we parse the DT and work out what the dependencies are which we probably
+> want to do prior to getting the drivers up and will be different for
+> ACPI.  I think the level of DT dependency here looks a lot larger than
+> it actually is due to the fact that a lot of what's being modified is DT
+> parsing code.
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Right, something will have to register the dependency, or a "link" between
+devices, with the core once we find out that the dependency is there.
 
----
-
- drivers/clk/clk-max77802.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-max77802.c b/drivers/clk/clk-max77802.c
-index 74c49b93a6eb..4a89f7979ba0 100644
---- a/drivers/clk/clk-max77802.c
-+++ b/drivers/clk/clk-max77802.c
-@@ -94,5 +94,5 @@ static struct platform_driver max77802_clk_driver = {
- module_platform_driver(max77802_clk_driver);
- 
- MODULE_DESCRIPTION("MAXIM 77802 Clock Driver");
--MODULE_AUTHOR("Javier Martinez Canillas <javier.martinez@collabora.co.uk>");
-+MODULE_AUTHOR("Javier Martinez Canillas <javier@osg.samsung.com");
- MODULE_LICENSE("GPL");
--- 
-2.4.3
+Thanks,
+Rafael
