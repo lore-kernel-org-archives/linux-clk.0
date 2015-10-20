@@ -1,75 +1,41 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:45458 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751608AbbJTLSs (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 20 Oct 2015 07:18:48 -0400
-Message-id: <562622CF.1070906@samsung.com>
-Date: Tue, 20 Oct 2015 13:17:35 +0200
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-MIME-version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Hyungwon Hwang <human.hwang@samsung.com>
-Subject: Re: [PATCH 01/10] clk/samsung: exynos5433: add definitions of HDMI-PHY
- output clocks
-References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
- <1445332961-25419-2-git-send-email-a.hajda@samsung.com>
- <20151020103416.20687.40409@quantum>
-In-reply-to: <20151020103416.20687.40409@quantum>
-Content-type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jszhang@marvell.com>
+From: Jisheng Zhang <jszhang@marvell.com>
+To: <sebastian.hesselbarth@gmail.com>, <robh+dt@kernel.org>,
+        <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Jisheng Zhang <jszhang@marvell.com>
+Subject: [PATCH v2 3/4] clk: berlin: bg2q: remove CLK_IGNORE_UNUSED flag for sdio clk
+Date: Tue, 20 Oct 2015 19:16:46 +0800
+Message-ID: <1445339807-2351-4-git-send-email-jszhang@marvell.com>
+In-Reply-To: <1445339807-2351-1-git-send-email-jszhang@marvell.com>
+References: <1445339807-2351-1-git-send-email-jszhang@marvell.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 20/10/15 12:34, Michael Turquette wrote:
->> diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
->> > index 5bd80d5..4f0d566 100644
->> > --- a/include/dt-bindings/clock/exynos5433.h
->> > +++ b/include/dt-bindings/clock/exynos5433.h
->> > @@ -765,7 +765,10 @@
->> >  #define CLK_SCLK_RGB_VCLK                              109
->> >  #define CLK_SCLK_RGB_TV_VCLK                           110
->> >  
->> > -#define DISP_NR_CLK                                    111
->> > +#define CLK_PHYCLK_HDMIPHY_PIXEL_CLKO_PHY              111
->> > +#define CLK_PHYCLK_HDMIPHY_TMDS_CLKO_PHY               112
->> > +
->> > +#define DISP_NR_CLK                                    113
->
-> Why break compatibility with older DTBs?
+Since we have added the necessary two clks' properties in dts, we can
+remove the "sdio" clk's CLK_IGNORE_UNUSED flag now.
 
-I used to be resistant to changing those _NR_CLK defines
-in the past but then realized they are not part of the DT ABI.
-These defines are used only in drivers and affect only size
-of the provider's allocated clock array. The confusion may be
-caused by the fact that the whole header is shared by the kernel
-source and dts.
+Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+---
+ drivers/clk/berlin/bg2q.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-$ git grep -l _NR_CLK arch/arm/boot/dts drivers/clk/samsung/
-drivers/clk/samsung/clk-exynos-clkout.c
-drivers/clk/samsung/clk-exynos3250.c
-drivers/clk/samsung/clk-exynos4.c
-drivers/clk/samsung/clk-exynos4415.c
-drivers/clk/samsung/clk-exynos5250.c
-drivers/clk/samsung/clk-exynos5260.c
-drivers/clk/samsung/clk-exynos5410.c
-drivers/clk/samsung/clk-exynos5420.c
-drivers/clk/samsung/clk-exynos5433.c
-drivers/clk/samsung/clk-exynos5440.c
-drivers/clk/samsung/clk-exynos7.c
-
-There is no *_NR_CLK in any dts file.
-New kernel will work will older DTB, the driver will just
-register more clocks, which will not be dereferenced anywhere
-in older dtb.
-
+diff --git a/drivers/clk/berlin/bg2q.c b/drivers/clk/berlin/bg2q.c
+index 221f40c..243f421 100644
+--- a/drivers/clk/berlin/bg2q.c
++++ b/drivers/clk/berlin/bg2q.c
+@@ -283,7 +283,7 @@ static const struct berlin2_gate_data bg2q_gates[] __initconst = {
+ 	{ "usb2",	"perif",	13 },
+ 	{ "usb3",	"perif",	14 },
+ 	{ "pbridge",	"perif",	15, CLK_IGNORE_UNUSED },
+-	{ "sdio",	"perif",	16, CLK_IGNORE_UNUSED },
++	{ "sdio",	"perif",	16 },
+ 	{ "nfc",	"perif",	18 },
+ 	{ "pcie",	"perif",	22 },
+ };
 -- 
-Regards,
-Sylwester
+2.6.1
