@@ -1,73 +1,97 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:35724 "EHLO
-	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751083AbbJ2LZN (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 29 Oct 2015 07:25:13 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>
-Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC] drivers: sh: Handle PM_GENERIC_DOMAINS_OF=n with new r8a7795 CPG/MSSR driver
-Date: Thu, 29 Oct 2015 12:25:14 +0100
-Message-Id: <1446117914-6392-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <yorksun@freescale.com>
+Subject: Re: [Resend Patch v6] driver/clk/clk-si5338: Add common clock
+ framework driver for si5338
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1444410574-28677-1-git-send-email-yorksun@freescale.com>
+ <20151010000948.GW26883@codeaurora.org> <562165C3.1090103@freescale.com>
+ <20151016213139.GE16437@codeaurora.org> <56216E0D.4010709@freescale.com>
+ <20151016230555.GE10182@codeaurora.org> <562553E4.30906@freescale.com>
+ <20151019234348.GE19782@codeaurora.org>
+ <CY1PR03MB14694C6FFC8BA80C08EB039ABE390@CY1PR03MB1469.namprd03.prod.outlook.com>
+ <20151020003604.GF19782@codeaurora.org> <562598AE.2000600@freescale.com>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"pmarrecas@outlook.com" <pmarrecas@outlook.com>, Mike Turquette
+	<mturquette@baylibre.com>, Sebastian Hesselbarth
+	<sebastian.hesselbarth@gmail.com>, Guenter Roeck <linux@roeck-us.net>,
+	"Andrey Filippov" <andrey@elphel.com>, Paul Bolle <pebolle@tiscali.nl>
+From: York Sun <yorksun@freescale.com>
+Message-ID: <562677D5.8080104@freescale.com>
+Date: Tue, 20 Oct 2015 10:20:21 -0700
+MIME-Version: 1.0
+In-Reply-To: <562598AE.2000600@freescale.com>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: yorksun@freescale.com
 List-ID: <linux-clk.vger.kernel.org>
 
-If CONFIG_PM=n (and thus PM_GENERIC_DOMAINS_OF=n), the CPG/MSSR driver
-doesn't install its Clock Domain. Make sure the needed module clocks are
-still enabled by using the Legacy Clock Domain.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-I'd be happy to make CONFIG_PM=y mandatory for new SoCs/DTS, so we can
-drop this patch.
 
-Thoughts?
+On 10/19/2015 06:28 PM, York Sun wrote:
+> 
+> 
+> On 10/19/2015 05:36 PM, Stephen Boyd wrote:
+>> On 10/20, York Sun wrote:
+>>> Sorry for top posting. I am on outlook web.
+>>>
+>>> We have no problem with device tree. Let's put it aside.
+>>>
+>>> When device is not used, the platform data is used to hold the data, filled by a platform device before probing the clock. For my case, the platform device is a PCIe device. It is a multifunction device with I2C controller on it. The pseudo code looks like
+>>>
+>>> struct i2c_board_info si5338_info[NUM_SI5338_CHIPS] = {
+>>>         {
+>>>                 .type = "si5338",
+>>>                 .platform_data = &si5338_pdata[0],
+>>>         },
+>>>         {
+>>>                 .type = "si5338",
+>>>                 .platform_data = &si5338_pdata[1],
+>>>         },
+>>>         {
+>>>                 .type = "si5338",
+>>>                 .platform_data = &si5338_pdata[2],
+>>>         },
+>>>         {
+>>>                 .type = "si5338",
+>>>                 .platform_data = &si5338_pdata[3],
+>>>         },
+>>> };
+>>> clk = clk_register_fixed_rate(&pdev->dev, "ref25", NULL, CLK_IS_ROOT, 25000000);
+>>> for (i = 0; i < NUM_SI5338_CHIPS; i++) {
+>>>     si5338_pdata[i].clk_xtal = clk;
+>>>     adap = i2c_get_adapter(private->i2c_adp->nr + 1 + i);
+>>>     private->i2c_client[i] = i2c_new_probed_device(adap, &si5338_info[i], i2c_si5338_addr, NULL);
+>>> }
+>>>
+>>> You can see, when the fixed-rate clock is registered, the device id of si5338 is unknown yet. (I am using one 25MHz clock to feed multiple si5338, where maybe I should create multiple 25MHz clocks, but that's another discussion.)
+>>>
+>>> I hope I have made it clear.
+>>
+>> Yes. It would be great if we could modify the i2c framework to
+>> let us create an i2c device but not call device_register() until a later
+>> time. So something like this could be done in the platform
+>> driver:
+>>
+>> 	for (i = 0; i < NUM_SI5338_CHIPS; i++) {
+>> 	     adap = i2c_get_adapter(private->i2c_adp->nr + 1 + i);
+>> 	     private->i2c_client[i] = i2c_new_device_unregistered(adap,
+>> 	     				&si5338_info[i], i2c_si5338_addr);
+>> 	     clkdev_create(clk, NULL, dev_name(private->i2c_client[i]->dev));
+>> 	     device_register(private->i2c_client[i]->dev);
+>> 	}
+>>
+>> Then in the si5338 driver we call devm_clk_get(i2c->dev, NULL)
+>> and we get the xtal clock.
+>>
+> 
+> Then what do we do before we have this i2c_new_device_unregistered()? Does my
+> proposal make sense?
+> 
 
-For your convenience, I have push this patch to the
-topic/r8a7795-drivers-sh-v1 branch of my renesas-drivers repository.  A
-full integration for R-Car Gen3 is available in the topic/gen3-latest
-branch.
----
- drivers/sh/pm_runtime.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+Stephen,
 
-diff --git a/drivers/sh/pm_runtime.c b/drivers/sh/pm_runtime.c
-index 91a003011acfacb2..5eeed1db1bb3f9d8 100644
---- a/drivers/sh/pm_runtime.c
-+++ b/drivers/sh/pm_runtime.c
-@@ -32,17 +32,26 @@ static struct pm_clk_notifier_block platform_bus_notifier = {
- 	.con_ids = { NULL, },
- };
- 
-+static const struct of_device_id clk_domain_matches[] = {
-+	{ .compatible = "renesas,cpg-mstp-clocks", },
-+	{ .compatible = "renesas,r8a7795-cpg-mssr", },
-+	{ /* sentinel */ }
-+};
-+
- static int __init sh_pm_runtime_init(void)
- {
- 	if (IS_ENABLED(CONFIG_ARCH_SHMOBILE)) {
--		if (!of_find_compatible_node(NULL, NULL,
--					     "renesas,cpg-mstp-clocks"))
-+		if (!of_find_matching_node(NULL, clk_domain_matches))
- 			return 0;
-+
- 		if (IS_ENABLED(CONFIG_PM_GENERIC_DOMAINS_OF) &&
--		    of_find_node_with_property(NULL, "#power-domain-cells"))
-+		    of_find_node_with_property(NULL, "#power-domain-cells")) {
-+			pr_debug("Using DT Clock Domain\n");
- 			return 0;
-+		}
- 	}
- 
-+	pr_debug("Using Legacy Clock Domain\n");
- 	pm_clk_add_notifier(&platform_bus_type, &platform_bus_notifier);
- 	return 0;
- }
--- 
-1.9.1
+How about this? I will use devm_clk_get() when parsing device tree, and still
+pass clk pointer if using platform data. In this way, I don't have to call
+clk_put() in the driver to release the parent clocks. The platform device driver
+is responsible to get the clock and put the clock. It seems reasonable to me. If
+you don't disagree, I will prepare v7 patch for review.
 
+York
