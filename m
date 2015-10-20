@@ -1,97 +1,155 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: "Rafael J. Wysocki" <rafael@kernel.org>, "Mark Brown" <broonie@kernel.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <CAJZ5v0hPVu7AL8zBdU4Kb7+MVfYv0mTa43RhnCyyPR+RKDbhLA@mail.gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, "Rob Herring" <robh+dt@kernel.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Tim Bird" <tim.bird@sonymobile.com>,
- "frowand.list@gmail.com" <frowand.list@gmail.com>,
- "Tomeu Vizoso" <tomeu.vizoso@collabora.com>,
- "Russell King" <linux@arm.linux.org.uk>,
- "Stephen Boyd" <sboyd@codeaurora.org>, "Vinod Koul" <vinod.koul@intel.com>,
- "Dan Williams" <dan.j.williams@intel.com>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Alexandre Courbot" <gnurou@gmail.com>,
- "Thierry Reding" <thierry.reding@gmail.com>,
- "David Airlie" <airlied@linux.ie>,
- =?utf-8?q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
- "Stephen Warren" <swarren@wwwdotorg.org>, "Wolfram Sang" <wsa@the-dreams.de>,
- "Grant Likely" <grant.likely@linaro.org>,
- "Kishon Vijay Abraham I" <kishon@ti.com>,
- "Sebastian Reichel" <sre@kernel.org>,
- "Dmitry Eremin-Solenikov" <dbaryshkov@gmail.com>,
- "David Woodhouse" <dwmw2@infradead.org>,
- "Liam Girdwood" <lgirdwood@gmail.com>, "Felipe Balbi" <balbi@ti.com>,
- "Jingoo Han" <jingoohan1@gmail.com>, "Lee Jones" <lee.jones@linaro.org>,
- "Jean-Christophe Plagniol-Villard" <plagnioj@jcrosoft.com>,
- "Tomi Valkeinen" <tomi.valkeinen@ti.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- "Linux PWM List" <linux-pwm@vger.kernel.org>,
- "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
- "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-References: <20151018192931.GY14956@sirena.org.uk> <562A5602.7000208@sonymobile.com>
- <CAL_JsqLNSM=+j2r9HPcbSzsZrgnGEY3=kv21EXxisKwP5+57ag@mail.gmail.com>
- <24100858.2KIS8Y2npV@vostro.rjw.lan> <20151024220648.GR29919@sirena.org.uk>
- <CAJZ5v0hPVu7AL8zBdU4Kb7+MVfYv0mTa43RhnCyyPR+RKDbhLA@mail.gmail.com>
-Message-ID: <20151026105138.20687.13546@quantum>
-Subject: Re: [GIT PULL] On-demand device probing
-Date: Mon, 26 Oct 2015 03:51:38 -0700
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Magnus Damm <damm+renesas@opensource.se>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v5 1/2] clk: shmobile: Add new Renesas CPG/MSSR DT bindings
+Date: Tue, 20 Oct 2015 20:49:59 +0200
+Message-Id: <1445367000-11525-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1445367000-11525-1-git-send-email-geert+renesas@glider.be>
+References: <1445367000-11525-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Rafael J. Wysocki (2015-10-25 06:54:39)
-> On Sun, Oct 25, 2015 at 12:06 AM, Mark Brown <broonie@kernel.org> wrote:
-> > On Sat, Oct 24, 2015 at 04:17:12PM +0200, Rafael J. Wysocki wrote:
-> >
-> >> Well, I'm not quite sure why exactly everyone is so focused on probing=
- here.
-> >
-> > Probe deferral is really noisy even if it's working fine on a given
-> > system so it's constantly being highlighted to people in a way that
-> > other issues aren't if you're not directly having problems.
-> >
-> > There's also the understanding people had that the order things get
-> > bound changes the ordering for some of the other cases (perhaps it's a
-> > good idea to do that, it seems likely to be sensible?).
-> =
+On Renesas ARM SoCs (SH/R-Mobile, R-Car, RZ), the CPG (Clock Pulse
+Generator) and MSSR (Module Standby and Software Reset) blocks are
+intimately connected, and share the same register block.
 
-> But it really doesn't do that.  Also making it do so doesn't help much
-> in the cases where things can happen asynchronously (system
-> suspend/resume, runtime PM).
-> =
+Hence it makes sense to describe these two blocks using a
+single device node in DT, instead of using a hierarchical structure with
+multiple nodes, using a mix of generic and SoC-specific bindings.
 
-> If, instead, there was a way to specify a functional dependency at the
-> device registration time, it might be used to change the order of
-> everything relevant, including probe.  That should help to reduce the
-> noise you're referring to.
+These new DT bindings are intended to replace the existing DT bindings
+for CPG core clocks ("renesas,*-cpg-clocks", "renesas,cpg-div6-clock")
+and module clocks ("renesas,*-mstp-clocks"), at least for new SoCs.
 
-Taking it a step further, if functional dependencies were understood at
-link-time then we could optimize link order as well. There are probably
-lots of optimizations if we only made the effort to understand these
-dependencies earlier.
+This will make it easier to add module reset support later, which is
+currently not implemented, and difficult to achieve using the existing
+bindings due to the intertwined register layout.
 
-Constructing the device/resource dependency graph before the device ever
-boots sounds interesting to me.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Michael Turquette <mturquette@baylibre.com>
+Reviewed-by: Magnus Damm <damm+renesas@opensource.se>
+---
+v5:
+  - Add Acked-by, Reviewed-by,
+  - Drop r8a7791.
 
-Regards,
-Mike
+v4:
+  - No changes,
 
-> =
+v3:
+  - Integrate CPG and MSSR,
 
-> If the dependency could only be discovered at the probe time, the
-> order of things might be changed in response to letting the driver
-> core know about it rather than "just in case", which should be more
-> efficient.
-> =
+v2:
+  - Switch from MSTP to MSSR.
 
-> Thanks,
-> Rafael
+ .../devicetree/bindings/clock/renesas,cpg-mssr.txt | 69 ++++++++++++++++++++++
+ include/dt-bindings/clock/renesas-cpg-mssr.h       | 15 +++++
+ 2 files changed, 84 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+ create mode 100644 include/dt-bindings/clock/renesas-cpg-mssr.h
+
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+new file mode 100644
+index 0000000000000000..59297d34b2084429
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+@@ -0,0 +1,69 @@
++* Renesas Clock Pulse Generator / Module Standby and Software Reset
++
++On Renesas ARM SoCs (SH/R-Mobile, R-Car, RZ), the CPG (Clock Pulse Generator)
++and MSSR (Module Standby and Software Reset) blocks are intimately connected,
++and share the same register block.
++
++They provide the following functionalities:
++  - The CPG block generates various core clocks,
++  - The MSSR block provides two functions:
++      1. Module Standby, providing a Clock Domain to control the clock supply
++	 to individual SoC devices,
++      2. Reset Control, to perform a software reset of individual SoC devices.
++
++Required Properties:
++  - compatible: Must be one of:
++      - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC
++
++  - reg: Base address and length of the memory resource used by the CPG/MSSR
++    block
++
++  - clocks: References to external parent clocks, one entry for each entry in
++    clock-names
++  - clock-names: List of external parent clock names. Valid names are:
++      - "extal" (r8a7795)
++      - "extalr" (r8a7795)
++
++  - #clock-cells: Must be 2
++      - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
++	and a core clock reference, as defined in
++	<dt-bindings/clock/*-cpg-mssr.h>.
++      - For module clocks, the two clock specifier cells must be "CPG_MOD" and
++	a module number, as defined in the datasheet.
++
++  - #power-domain-cells: Must be 0
++      - SoC devices that are part of the CPG/MSSR Clock Domain and can be
++	power-managed through Module Standby should refer to the CPG device
++	node in their "power-domains" property, as documented by the generic PM
++	Domain bindings in
++	Documentation/devicetree/bindings/power/power_domain.txt.
++
++
++Examples
++--------
++
++  - CPG device node:
++
++	cpg: clock-controller@e6150000 {
++		compatible = "renesas,r8a7795-cpg-mssr";
++		reg = <0 0xe6150000 0 0x1000>;
++		clocks = <&extal_clk>, <&extalr_clk>;
++		clock-names = "extal", "extalr";
++		#clock-cells = <2>;
++		#power-domain-cells = <0>;
++	};
++
++
++  - CPG/MSSR Clock Domain member device node:
++
++	scif2: serial@e6e88000 {
++		compatible = "renesas,scif-r8a7795", "renesas,scif";
++		reg = <0 0xe6e88000 0 64>;
++		interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cpg CPG_MOD 310>;
++		clock-names = "sci_ick";
++		dmas = <&dmac1 0x13>, <&dmac1 0x12>;
++		dma-names = "tx", "rx";
++		power-domains = <&cpg>;
++		status = "disabled";
++	};
+diff --git a/include/dt-bindings/clock/renesas-cpg-mssr.h b/include/dt-bindings/clock/renesas-cpg-mssr.h
+new file mode 100644
+index 0000000000000000..569a3cc33ffb5bc7
+--- /dev/null
++++ b/include/dt-bindings/clock/renesas-cpg-mssr.h
+@@ -0,0 +1,15 @@
++/*
++ * Copyright (C) 2015 Renesas Electronics Corp.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++#ifndef __DT_BINDINGS_CLOCK_RENESAS_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_RENESAS_CPG_MSSR_H__
++
++#define CPG_CORE			0	/* Core Clock */
++#define CPG_MOD				1	/* Module Clock */
++
++#endif /* __DT_BINDINGS_CLOCK_RENESAS_CPG_MSSR_H__ */
+-- 
+1.9.1
