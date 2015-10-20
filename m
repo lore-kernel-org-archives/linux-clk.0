@@ -1,53 +1,70 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	bcm-kernel-feedback-list@broadcom.com,
-	devicetree@vger.kernel.org,
-	jonmason@broadcom.com,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	linux@arm.linux.org.uk,
-	sbranden@broadcom.com,
-	rjui@broadcom.com
-Subject: [PATCH v4 1/3] clk: iproc: Extend binding to cover BCM63138
-Date: Thu, 29 Oct 2015 18:23:17 -0700
-Message-Id: <1446168199-5959-2-git-send-email-f.fainelli@gmail.com>
-In-Reply-To: <1446168199-5959-1-git-send-email-f.fainelli@gmail.com>
-References: <1446168199-5959-1-git-send-email-f.fainelli@gmail.com>
+Return-Path: <stern+5638bce2@rowland.harvard.edu>
+Date: Tue, 20 Oct 2015 12:04:05 -0400 (EDT)
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Mark Brown <broonie@kernel.org>
+cc: Rob Herring <robh@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+    David Woodhouse <dwmw2@infradead.org>,
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+    Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+    Russell King <linux@arm.linux.org.uk>,
+    Michael Turquette <mturquette@baylibre.com>,
+    Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
+    Dan Williams <dan.j.williams@intel.com>,
+    Linus Walleij <linus.walleij@linaro.org>,
+    Alexandre Courbot <gnurou@gmail.com>,
+    Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>,
+    Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
+    Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
+    Frank Rowand <frowand.list@gmail.com>,
+    Grant Likely <grant.likely@linaro.org>,
+    Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>,
+    Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+    Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
+    Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+    Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+    Tomi Valkeinen <tomi.valkeinen@ti.com>,
+    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+     <linux-clk@vger.kernel.org>,  <dmaengine@vger.kernel.org>,
+    "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+    dri-devel <dri-devel@lists.freedesktop.org>,
+    "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+    "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+    "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+    "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+    Linux PWM List <linux-pwm@vger.kernel.org>,
+    Linux USB List <linux-usb@vger.kernel.org>,
+    "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Subject: Re: [GIT PULL] On-demand device probing
+In-Reply-To: <20151020153612.GB32054@sirena.org.uk>
+Message-ID: <Pine.LNX.4.44L0.1510201159400.1855-100000@iolanthe.rowland.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Broadcom BCM63138 DSL SoCs have the same ARMPLL clocking infrastructure
-as the Cygnus and iProc chips, add a dedicated compatible string and
-document that the ARMPLL node is a valid node for this chip.
+On Tue, 20 Oct 2015, Mark Brown wrote:
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
-No changes in v4
+> On Tue, Oct 20, 2015 at 10:40:03AM -0400, Alan Stern wrote:
+> 
+> > Furthermore, that applies only to devices that use synchronous suspend.  
+> > Async suspend is becoming common, and there the only restrictions are 
+> > parent-child relations plus whatever explicit requirements that drivers 
+> > impose by calling device_pm_wait_for_dev().
+> 
+> Hrm, this is the first I'd noticed that feature though I see the initial
+> commit dates from January.
 
-Changes in v3:
+Async suspend and device_pm_wait_for_dev() were added in January 2010, 
+not 2015!
 
-- added Rob's Acked-by tag
+>  It looks like most of the users are PCs at
+> the minute but we should be using it more widely for embedded things,
+> there's definitely some cases I'm aware of where it will allow us to
+> remove some open coding.
+> 
+> It does seem like we want to be feeding dependency information we
+> discover for probing way into the suspend dependencies...
 
-No changes in v2
+Rafael has been thinking about a way to do this systematically.  
+Nothing concrete has emerged yet.
 
- Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-index ede65a55e21b..0b35e71b39e8 100644
---- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-@@ -208,3 +208,8 @@ These clock IDs are defined in:
-     ch3_unused	lcpll_ports	4	BCM_NS2_LCPLL_PORTS_CH3_UNUSED
-     ch4_unused	lcpll_ports	5	BCM_NS2_LCPLL_PORTS_CH4_UNUSED
-     ch5_unused	lcpll_ports	6	BCM_NS2_LCPLL_PORTS_CH5_UNUSED
-+
-+BCM63138
-+--------
-+PLL and leaf clock compatible strings for BCM63138 are:
-+    "brcm,bcm63138-armpll"
--- 
-2.1.0
+Alan Stern
