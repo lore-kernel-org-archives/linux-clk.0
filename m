@@ -1,57 +1,39 @@
-Return-Path: <yingjoe.chen@mediatek.com>
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring
-	<robh+dt@kernel.org>
-CC: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner
-	<tglx@linutronix.de>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
-	<mturquette@baylibre.com>, James Liao <jamesjj.liao@mediatek.com>,
-	<devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Catalin Marinas
-	<catalin.marinas@arm.com>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Olof Johansson <olof@lixom.net>, <srv_heupstream@mediatek.com>,
-	<linux-arm-kernel@lists.infradead.org>, Daniel Kurtz <djkurtz@chromium.org>,
-	<linux-clk@vger.kernel.org>, Yingjoe Chen <yingjoe.chen@mediatek.com>,
-	<erin.lo@mediatek.com>
-Subject: [PATCH v4 0/3] add GPT timer support for mt8173
-Date: Fri, 2 Oct 2015 23:05:16 +0800
-Message-ID: <1443798319-45744-1-git-send-email-yingjoe.chen@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yingjoe.chen@mediatek.com
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org,
+	agross@codeaurora.org
+Cc: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	bjorn.andersson@sonymobile.com,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v3 2/8] clk: qcom: msm8916: Set the parent of xo to xo_board
+Date: Tue, 20 Oct 2015 19:57:54 +0300
+Message-Id: <1445360280-2347-3-git-send-email-georgi.djakov@linaro.org>
+In-Reply-To: <1445360280-2347-1-git-send-email-georgi.djakov@linaro.org>
+References: <1445360280-2347-1-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is based on v4.3-rc1 + clockevents-4.4[1] and James's mediatek-clk
-tree[2].
+Remove the hard-coded clock rate from the driver and set the XO
+parent to the on-board XO oscillator that is defined in the DT.
 
-Changes compare to previous version[3]:
-- Add more MediaTek SoC to mtk-timer binding
-- Update commit message to better describe the purpose.
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+ drivers/clk/qcom/gcc-msm8916.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes compare to v2[4]:
-- the first two mtk_timer related changes are removed because they are
-replaced/accepted in clockevents tree.
-- Remove 'add 13mhz clock for MT8173' because it is accepted in
-mediatek-clk tree.
-- Kconfig.platforms path change.
-
-[1]
-https://git.linaro.org/people/daniel.lezcano/linux.git clockevents/4.4
-[2]
-http://lists.infradead.org/pipermail/linux-mediatek/2015-August/002069.html
-[3]
-http://lists.infradead.org/pipermail/linux-mediatek/2015-September/002301.html
-[4]
-http://lists.infradead.org/pipermail/linux-mediatek/2015-July/001544.html
-
-
-Daniel Kurtz (1):
-  arm64: dts: mt8173: add timer node
-
-Yingjoe Chen (2):
-  dt-bindings: add more MediaTek SoC to mtk-timer binding
-  arm64: mediatek: enable MTK_TIMER
-
- Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt | 8 +++++---
- arch/arm64/Kconfig.platforms                                   | 1 +
- arch/arm64/boot/dts/mediatek/mt8173.dtsi                       | 9 +++++++++
- 3 files changed, 15 insertions(+), 3 deletions(-)
+diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
+index d0a0313d6bef..3c0668b12142 100644
+--- a/drivers/clk/qcom/gcc-msm8916.c
++++ b/drivers/clk/qcom/gcc-msm8916.c
+@@ -3360,7 +3360,7 @@ static int gcc_msm8916_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 
+ 	/* Temporary until RPM clocks supported */
+-	clk = clk_register_fixed_rate(dev, "xo", NULL, CLK_IS_ROOT, 19200000);
++	clk = clk_register_fixed_factor(dev, "xo", "xo_board", 0, 1, 1);
+ 	if (IS_ERR(clk))
+ 		return PTR_ERR(clk);
+ 
