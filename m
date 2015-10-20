@@ -1,83 +1,108 @@
-Return-Path: <sjoerd.simons@collabora.co.uk>
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-To: linux-rockchip@lists.infradead.org
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	devicetree@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	Heiko Stuebner <heiko@sntech.de>,
-	Mark Brown <broonie@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Kumar Gala <galak@codeaurora.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Takashi Iwai <tiwai@suse.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Sjoerd Simons <sjoerd.simons@collabora.co.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v4 5/8] clk: rockchip: Allow the RK3288 SPDIF clocks to change their parent
-Date: Thu,  8 Oct 2015 15:31:16 +0200
-Message-Id: <1444311079-2892-6-git-send-email-sjoerd.simons@collabora.co.uk>
-In-Reply-To: <1444311079-2892-1-git-send-email-sjoerd.simons@collabora.co.uk>
-References: <1444311079-2892-1-git-send-email-sjoerd.simons@collabora.co.uk>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Geert Uytterhoeven <geert@linux-m68k.org>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <CAMuHMdUT=fZKCOCdkn+=grZ0wYATghQhmbX-Y6WJ9+ViZ0cidA@mail.gmail.com>
+Cc: "Geert Uytterhoeven" <geert+renesas@glider.be>,
+ "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
+ "Magnus Damm" <damm+renesas@opensource.se>,
+ "Simon Horman" <horms+renesas@verge.net.au>,
+ "Rob Herring" <robh+dt@kernel.org>, "Pawel Moll" <pawel.moll@arm.com>,
+ "Mark Rutland" <mark.rutland@arm.com>,
+ "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
+ "Kumar Gala" <galak@codeaurora.org>, "linux-clk" <linux-clk@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "Linux-sh list" <linux-sh@vger.kernel.org>
+References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be>
+ <1444999760-15750-6-git-send-email-geert+renesas@glider.be>
+ <20151020122448.20687.11926@quantum>
+ <CAMuHMdUT=fZKCOCdkn+=grZ0wYATghQhmbX-Y6WJ9+ViZ0cidA@mail.gmail.com>
+Message-ID: <20151020130004.20687.91058@quantum>
+Subject: Re: [PATCH v4 5/5] [RFC] clk: shmobile: r8a7795: Add new CPG/MSSR driver
+Date: Tue, 20 Oct 2015 06:00:04 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-The clock branches leading to sclk_spdif and sclk_spdif_8ch on RK3288
-SoCs only feed those clocks, allow those clocks to change their parents
-all the way up the hierarchy.
+Quoting Geert Uytterhoeven (2015-10-20 05:31:12)
+> Hi Mike,
+> =
 
-Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
----
+> On Tue, Oct 20, 2015 at 2:24 PM, Michael Turquette
+> <mturquette@baylibre.com> wrote:
+> > Quoting Geert Uytterhoeven (2015-10-16 05:49:20)
+> >> +static void __init r8a7795_cpg_mssr_init(struct device_node *np)
+> >> +{
+> >> +       struct regmap *regmap;
+> >> +       u32 reg, cpg_mode;
+> >> +
+> >> +       regmap =3D syscon_regmap_lookup_by_phandle(np, "renesas,modemr=
+");
+> >> +       if (IS_ERR(regmap) ||
+> >> +           of_property_read_u32_index(np, "renesas,modemr", 1, &reg) =
+||
+> >> +           regmap_read(regmap, reg, &cpg_mode)) {
+> >> +               pr_err("%s: failed to parse renesas,modemr\n", np->ful=
+l_name);
+> >> +               return;
+> >> +       }
+> >> +
+> >> +       cpg_pll_config =3D &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_m=
+ode)];
+> >> +       if (!cpg_pll_config->extal_div) {
+> >> +               pr_err("%s: Prohibited setting (cpg_mode=3D0x%x)\n",
+> >> +                      __func__, cpg_mode);
+> >> +               return;
+> >> +       }
+> >> +
+> >> +       cpg_mssr_probe(np, &r8a7795_cpg_mssr_info);
+> >> +}
+> >> +CLK_OF_DECLARE(r8a7795_cpg_mssr, "renesas,r8a7795-cpg-mssr",
+> >> +              r8a7795_cpg_mssr_init);
+> >
+> > Is CLK_OF_DECLARE needed? Is it possible to make this a real
+> > platform_driver =C3=A0 la drivers/clk/qcom/gcc-apq8084.c?
+> =
 
-Changes in v4: None
-Changes in v3: None
-Changes in v2: None
+> I tried making it a real platform driver, but it failed: devices that are
+> part of the Clock Domain failed to get their clock (error -2, IIRC, which=
+ is
+> -ENOENT), and thus couldn't be instantiated.
+> I didn't look deeper at that time.
+> =
 
- drivers/clk/rockchip/clk-rk3288.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+> [... reading code ...]
+> =
 
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index 90c1c9b..4e90252 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -317,25 +317,25 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
- 
- 	MUX(0, "spdif_src", mux_pll_src_cpll_gpll_p, 0,
- 			RK3288_CLKSEL_CON(5), 15, 1, MFLAGS),
--	COMPOSITE_NOMUX(0, "spdif_pre", "spdif_src", 0,
-+	COMPOSITE_NOMUX(0, "spdif_pre", "spdif_src", CLK_SET_RATE_PARENT,
- 			RK3288_CLKSEL_CON(5), 0, 7, DFLAGS,
- 			RK3288_CLKGATE_CON(4), 4, GFLAGS),
--	COMPOSITE_FRACMUX(0, "spdif_frac", "spdif_src", 0,
-+	COMPOSITE_FRACMUX(0, "spdif_frac", "spdif_src", CLK_SET_RATE_PARENT,
- 			RK3288_CLKSEL_CON(9), 0,
- 			RK3288_CLKGATE_CON(4), 5, GFLAGS,
--		MUX(0, "spdif_mux", mux_spdif_p, 0,
-+		MUX(0, "spdif_mux", mux_spdif_p, CLK_SET_RATE_PARENT,
- 				RK3288_CLKSEL_CON(5), 8, 2, MFLAGS)),
--	GATE(SCLK_SPDIF, "sclk_spdif", "spdif_mux", 0,
-+	GATE(SCLK_SPDIF, "sclk_spdif", "spdif_mux", CLK_SET_RATE_PARENT,
- 			RK3288_CLKGATE_CON(4), 6, GFLAGS),
--	COMPOSITE_NOMUX(0, "spdif_8ch_pre", "spdif_src", 0,
-+	COMPOSITE_NOMUX(0, "spdif_8ch_pre", "spdif_src", CLK_SET_RATE_PARENT,
- 			RK3288_CLKSEL_CON(40), 0, 7, DFLAGS,
- 			RK3288_CLKGATE_CON(4), 7, GFLAGS),
--	COMPOSITE_FRACMUX(0, "spdif_8ch_frac", "spdif_8ch_pre", 0,
-+	COMPOSITE_FRACMUX(0, "spdif_8ch_frac", "spdif_8ch_pre", CLK_SET_RATE_PARENT,
- 			RK3288_CLKSEL_CON(41), 0,
- 			RK3288_CLKGATE_CON(4), 8, GFLAGS,
--		MUX(0, "spdif_8ch_mux", mux_spdif_8ch_p, 0,
-+		MUX(0, "spdif_8ch_mux", mux_spdif_8ch_p, CLK_SET_RATE_PARENT,
- 				RK3288_CLKSEL_CON(40), 8, 2, MFLAGS)),
--	GATE(SCLK_SPDIF8CH, "sclk_spdif_8ch", "spdif_8ch_mux", 0,
-+	GATE(SCLK_SPDIF8CH, "sclk_spdif_8ch", "spdif_8ch_mux", CLK_SET_RATE_PARENT,
- 			RK3288_CLKGATE_CON(4), 9, GFLAGS),
- 
- 	GATE(0, "sclk_acc_efuse", "xin24m", 0,
--- 
-2.6.1
+> Aha, this may be caused by __of_clk_get_from_provider() returning
+> hardcoded -ENOENT instead of propagating the error returned by
+> __clk_create_clk()?
+
+Well the only other error thrown by __clk_create_clk is -ENOMEM, so I'm
+not sure how that would help things.
+
+The bindings should go in for 4.4, but if the driver is slated for 4.5
+then can you investigate this some more? Stephen and I are on a mission
+to have _real_ clk drivers.
+
+Regards,
+Mike
+
+> =
+
+> Gr{oetje,eeting}s,
+> =
+
+>                         Geert
+> =
+
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+> =
+
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
