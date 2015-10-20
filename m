@@ -1,345 +1,82 @@
-Return-Path: <wens@csie.org>
+Return-Path: <stern+5638bce2@rowland.harvard.edu>
+Date: Tue, 20 Oct 2015 13:14:46 -0400 (EDT)
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+    "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+    David Woodhouse <dwmw2@infradead.org>,
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+    Russell King <linux@arm.linux.org.uk>,
+    Michael Turquette <mturquette@baylibre.com>,
+    Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
+    Dan Williams <dan.j.williams@intel.com>,
+    Linus Walleij <linus.walleij@linaro.org>,
+    Alexandre Courbot <gnurou@gmail.com>,
+    Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>,
+    =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
+    Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
+    Frank Rowand <frowand.list@gmail.com>,
+    Grant Likely <grant.likely@linaro.org>,
+    Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>,
+    Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+    Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
+    Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+    Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+    Tomi Valkeinen <tomi.valkeinen@ti.com>,
+    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+     <linux-clk@vger.kernel.org>,  <dmaengine@vger.kernel.org>,
+    "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+    dri-devel <dri-devel@lists.freedesktop.org>,
+    "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+    "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+    "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+    "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+    Linux PWM List <linux-pwm@vger.kernel.org>,
+    Linux USB List <linux-usb@vger.kernel.org>,
+    "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Subject: Re: [GIT PULL] On-demand device probing
+In-Reply-To: <CAAObsKChQN4gg91dCWJS_Co_MrYyBrB1J7gxgGo4hsPXNZRp3g@mail.gmail.com>
+Message-ID: <Pine.LNX.4.44L0.1510201311260.1855-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-In-Reply-To: <1444682610-21482-3-git-send-email-maxime.ripard@free-electrons.com>
-References: <1444682610-21482-1-git-send-email-maxime.ripard@free-electrons.com>
- <1444682610-21482-3-git-send-email-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 14 Oct 2015 17:10:59 +0800
-Message-ID: <CAGb2v67ovfL_VVq2184+k0uMMnPKPqHMAb4rTn5hBGfPv1h1Lg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/5] clk: sunxi: Add a driver for the PLL2
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Oct 13, 2015 at 4:43 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The PLL2 on the A10 and later SoCs is the clock used for all the audio
-> related operations.
->
-> This clock has a somewhat complex output tree, with three outputs (2X, 4X
-> and 8X) with a fixed divider from the base clock, and an output (1X) with=
- a
-> post divider.
->
-> However, we can simplify things since the 1X divider can be fixed, and we
-> end up by having a base clock not exposed to any device (or at least
-> directly, since the 4X output doesn't have any divider), and 4 fixed
-> divider clocks that will be exposed.
->
-> This clock seems to have been introduced, at least in this form, in the
-> revision B of the A10, but we don't have any information on the clock use=
-d
-> on the revision A.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/clk/sunxi/Makefile                 |   1 +
->  drivers/clk/sunxi/clk-a10-pll2.c           | 188 +++++++++++++++++++++++=
-++++++
->  include/dt-bindings/clock/sun4i-a10-pll2.h |  53 ++++++++
->  3 files changed, 242 insertions(+)
->  create mode 100644 drivers/clk/sunxi/clk-a10-pll2.c
->  create mode 100644 include/dt-bindings/clock/sun4i-a10-pll2.h
->
-> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-> index f5a35b82cc1a..c658a18ba7cb 100644
-> --- a/drivers/clk/sunxi/Makefile
-> +++ b/drivers/clk/sunxi/Makefile
-> @@ -4,6 +4,7 @@
->
->  obj-y +=3D clk-sunxi.o clk-factors.o
->  obj-y +=3D clk-a10-hosc.o
-> +obj-y +=3D clk-a10-pll2.o
->  obj-y +=3D clk-a20-gmac.o
->  obj-y +=3D clk-mod0.o
->  obj-y +=3D clk-simple-gates.o
-> diff --git a/drivers/clk/sunxi/clk-a10-pll2.c b/drivers/clk/sunxi/clk-a10=
--pll2.c
-> new file mode 100644
-> index 000000000000..b877cc6c3622
-> --- /dev/null
-> +++ b/drivers/clk/sunxi/clk-a10-pll2.c
-> @@ -0,0 +1,188 @@
-> +/*
-> + * Copyright 2013 Emilio L=C3=B3pez
-> + * Emilio L=C3=B3pez <emilio@elopez.com.ar>
-> + *
-> + * Copyright 2015 Maxime Ripard
-> + * Maxime Ripard <maxime.ripard@free-electrons.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/slab.h>
-> +
-> +#include <dt-bindings/clock/sun4i-a10-pll2.h>
-> +
-> +#define SUN4I_PLL2_ENABLE              31
-> +
-> +#define SUN4I_PLL2_PRE_DIV_SHIFT       0
-> +#define SUN4I_PLL2_PRE_DIV_WIDTH       5
-> +#define SUN4I_PLL2_PRE_DIV_MASK                GENMASK(SUN4I_PLL2_PRE_DI=
-V_WIDTH, 0)
-> +
-> +#define SUN4I_PLL2_N_SHIFT             8
-> +#define SUN4I_PLL2_N_WIDTH             7
-> +#define SUN4I_PLL2_N_MASK              GENMASK(SUN4I_PLL2_N_WIDTH, 0)
-> +
-> +#define SUN4I_PLL2_POST_DIV_SHIFT      26
-> +#define SUN4I_PLL2_POST_DIV_WIDTH      4
-> +#define SUN4I_PLL2_POST_DIV_MASK       GENMASK(SUN4I_PLL2_POST_DIV_WIDTH=
-, 0)
-> +
-> +#define SUN4I_PLL2_POST_DIV_VALUE      4
-> +
-> +#define SUN4I_PLL2_OUTPUTS             4
-> +
-> +static DEFINE_SPINLOCK(sun4i_a10_pll2_lock);
-> +
-> +static void __init sun4i_pll2_setup(struct device_node *node)
-> +{
-> +       const char *clk_name =3D node->name, *parent;
-> +       struct clk **clks, *base_clk, *prediv_clk;
-> +       struct clk_onecell_data *clk_data;
-> +       struct clk_multiplier *mult;
-> +       struct clk_gate *gate;
-> +       void __iomem *reg;
-> +       u32 val;
-> +
-> +       reg =3D of_io_request_and_map(node, 0, of_node_full_name(node));
-> +       if (IS_ERR(reg))
-> +               return;
-> +
-> +       clk_data =3D kzalloc(sizeof(*clk_data), GFP_KERNEL);
-> +       if (!clk_data)
-> +               goto err_unmap;
-> +
-> +       clks =3D kcalloc(SUN4I_PLL2_OUTPUTS, sizeof(struct clk *), GFP_KE=
-RNEL);
-> +       if (!clks)
-> +               goto err_free_data;
-> +
-> +       parent =3D of_clk_get_parent_name(node, 0);
-> +       prediv_clk =3D clk_register_divider(NULL, "pll2-prediv",
-> +                                         parent, 0, reg,
-> +                                         SUN4I_PLL2_PRE_DIV_SHIFT,
-> +                                         SUN4I_PLL2_PRE_DIV_WIDTH,
-> +                                         CLK_DIVIDER_ONE_BASED |
-> +                                         CLK_DIVIDER_ALLOW_ZERO,
+On Tue, 20 Oct 2015, Tomeu Vizoso wrote:
 
-According to the A10 manual, the prediv is zero based, but allows zero.
-So you should just have CLK_DIVIDER_ALLOW_ZERO here.
+> On 20 October 2015 at 18:04, Alan Stern <stern@rowland.harvard.edu> wrote:
+> > On Tue, 20 Oct 2015, Mark Brown wrote:
+> >
+> >> On Tue, Oct 20, 2015 at 10:40:03AM -0400, Alan Stern wrote:
+> >>
+> >> > Furthermore, that applies only to devices that use synchronous suspend.
+> >> > Async suspend is becoming common, and there the only restrictions are
+> >> > parent-child relations plus whatever explicit requirements that drivers
+> >> > impose by calling device_pm_wait_for_dev().
+> >>
+> >> Hrm, this is the first I'd noticed that feature though I see the initial
+> >> commit dates from January.
+> >
+> > Async suspend and device_pm_wait_for_dev() were added in January 2010,
+> > not 2015!
+> >
+> >>  It looks like most of the users are PCs at
+> >> the minute but we should be using it more widely for embedded things,
+> >> there's definitely some cases I'm aware of where it will allow us to
+> >> remove some open coding.
+> >>
+> >> It does seem like we want to be feeding dependency information we
+> >> discover for probing way into the suspend dependencies...
+> >
+> > Rafael has been thinking about a way to do this systematically.
+> > Nothing concrete has emerged yet.
+> 
+> This iteration of the series would make this quite easy, as
+> dependencies are calculated before probes are attempted:
+> 
+> https://lkml.org/lkml/2015/6/17/311
 
-The rest looks good.
+But what Rafael is proposing is quite general; it would apply to _all_
+dependencies as opposed to just those present in DT drivers or those 
+affecting platform_devices.
 
-ChenYu
-
-> +                                         &sun4i_a10_pll2_lock);
-> +       if (!prediv_clk) {
-> +               pr_err("Couldn't register the prediv clock\n");
-> +               goto err_free_array;
-> +       }
-> +
-> +       /* Setup the gate part of the PLL2 */
-> +       gate =3D kzalloc(sizeof(struct clk_gate), GFP_KERNEL);
-> +       if (!gate)
-> +               goto err_unregister_prediv;
-> +
-> +       gate->reg =3D reg;
-> +       gate->bit_idx =3D SUN4I_PLL2_ENABLE;
-> +       gate->lock =3D &sun4i_a10_pll2_lock;
-> +
-> +       /* Setup the multiplier part of the PLL2 */
-> +       mult =3D kzalloc(sizeof(struct clk_multiplier), GFP_KERNEL);
-> +       if (!mult)
-> +               goto err_free_gate;
-> +
-> +       mult->reg =3D reg;
-> +       mult->shift =3D SUN4I_PLL2_N_SHIFT;
-> +       mult->width =3D 7;
-> +       mult->flags =3D CLK_MULTIPLIER_ZERO_BYPASS |
-> +                       CLK_MULTIPLIER_ROUND_CLOSEST;
-> +       mult->lock =3D &sun4i_a10_pll2_lock;
-> +
-> +       parent =3D __clk_get_name(prediv_clk);
-> +       base_clk =3D clk_register_composite(NULL, "pll2-base",
-> +                                         &parent, 1,
-> +                                         NULL, NULL,
-> +                                         &mult->hw, &clk_multiplier_ops,
-> +                                         &gate->hw, &clk_gate_ops,
-> +                                         CLK_SET_RATE_PARENT);
-> +       if (!base_clk) {
-> +               pr_err("Couldn't register the base multiplier clock\n");
-> +               goto err_free_multiplier;
-> +       }
-> +
-> +       parent =3D __clk_get_name(base_clk);
-> +
-> +       /*
-> +        * PLL2-1x
-> +        *
-> +        * This is supposed to have a post divider, but we won't need
-> +        * to use it, we just need to initialise it to 4, and use a
-> +        * fixed divider.
-> +        */
-> +       val =3D readl(reg);
-> +       val &=3D ~(SUN4I_PLL2_POST_DIV_MASK << SUN4I_PLL2_POST_DIV_SHIFT)=
-;
-> +       val |=3D SUN4I_PLL2_POST_DIV_VALUE << SUN4I_PLL2_POST_DIV_SHIFT;
-> +       writel(val, reg);
-> +
-> +       of_property_read_string_index(node, "clock-output-names",
-> +                                     SUN4I_A10_PLL2_1X, &clk_name);
-> +       clks[SUN4I_A10_PLL2_1X] =3D clk_register_fixed_factor(NULL, clk_n=
-ame,
-> +                                                           parent,
-> +                                                           CLK_SET_RATE_=
-PARENT,
-> +                                                           1,
-> +                                                           SUN4I_PLL2_PO=
-ST_DIV_VALUE);
-> +       WARN_ON(IS_ERR(clks[SUN4I_A10_PLL2_1X]));
-> +
-> +       /*
-> +        * PLL2-2x
-> +        *
-> +        * This clock doesn't use the post divider, and really is just
-> +        * a fixed divider from the PLL2 base clock.
-> +        */
-> +       of_property_read_string_index(node, "clock-output-names",
-> +                                     SUN4I_A10_PLL2_2X, &clk_name);
-> +       clks[SUN4I_A10_PLL2_2X] =3D clk_register_fixed_factor(NULL, clk_n=
-ame,
-> +                                                           parent,
-> +                                                           CLK_SET_RATE_=
-PARENT,
-> +                                                           1, 2);
-> +       WARN_ON(IS_ERR(clks[SUN4I_A10_PLL2_2X]));
-> +
-> +       /* PLL2-4x */
-> +       of_property_read_string_index(node, "clock-output-names",
-> +                                     SUN4I_A10_PLL2_4X, &clk_name);
-> +       clks[SUN4I_A10_PLL2_4X] =3D clk_register_fixed_factor(NULL, clk_n=
-ame,
-> +                                                           parent,
-> +                                                           CLK_SET_RATE_=
-PARENT,
-> +                                                           1, 1);
-> +       WARN_ON(IS_ERR(clks[SUN4I_A10_PLL2_4X]));
-> +
-> +       /* PLL2-8x */
-> +       of_property_read_string_index(node, "clock-output-names",
-> +                                     SUN4I_A10_PLL2_8X, &clk_name);
-> +       clks[SUN4I_A10_PLL2_8X] =3D clk_register_fixed_factor(NULL, clk_n=
-ame,
-> +                                                           parent,
-> +                                                           CLK_SET_RATE_=
-PARENT,
-> +                                                           2, 1);
-> +       WARN_ON(IS_ERR(clks[SUN4I_A10_PLL2_8X]));
-> +
-> +       clk_data->clks =3D clks;
-> +       clk_data->clk_num =3D SUN4I_PLL2_OUTPUTS;
-> +       of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-> +
-> +       return;
-> +
-> +err_free_multiplier:
-> +       kfree(mult);
-> +err_free_gate:
-> +       kfree(gate);
-> +err_unregister_prediv:
-> +       clk_unregister_divider(prediv_clk);
-> +err_free_array:
-> +       kfree(clks);
-> +err_free_data:
-> +       kfree(clk_data);
-> +err_unmap:
-> +       iounmap(reg);
-> +}
-> +CLK_OF_DECLARE(sun4i_pll2, "allwinner,sun4i-a10-pll2-clk", sun4i_pll2_se=
-tup);
-> diff --git a/include/dt-bindings/clock/sun4i-a10-pll2.h b/include/dt-bind=
-ings/clock/sun4i-a10-pll2.h
-> new file mode 100644
-> index 000000000000..071c8112d531
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/sun4i-a10-pll2.h
-> @@ -0,0 +1,53 @@
-> +/*
-> + * Copyright 2015 Maxime Ripard
-> + *
-> + * Maxime Ripard <maxime.ripard@free-electrons.com>
-> + *
-> + * This file is dual-licensed: you can use it either under the terms
-> + * of the GPL or the X11 license, at your option. Note that this dual
-> + * licensing only applies to this file, and not this project as a
-> + * whole.
-> + *
-> + *  a) This file is free software; you can redistribute it and/or
-> + *     modify it under the terms of the GNU General Public License as
-> + *     published by the Free Software Foundation; either version 2 of th=
-e
-> + *     License, or (at your option) any later version.
-> + *
-> + *     This file is distributed in the hope that it will be useful,
-> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + *     GNU General Public License for more details.
-> + *
-> + * Or, alternatively,
-> + *
-> + *  b) Permission is hereby granted, free of charge, to any person
-> + *     obtaining a copy of this software and associated documentation
-> + *     files (the "Software"), to deal in the Software without
-> + *     restriction, including without limitation the rights to use,
-> + *     copy, modify, merge, publish, distribute, sublicense, and/or
-> + *     sell copies of the Software, and to permit persons to whom the
-> + *     Software is furnished to do so, subject to the following
-> + *     conditions:
-> + *
-> + *     The above copyright notice and this permission notice shall be
-> + *     included in all copies or substantial portions of the Software.
-> + *
-> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-> + *     OTHER DEALINGS IN THE SOFTWARE.
-> + */
-> +
-> +#ifndef __DT_BINDINGS_CLOCK_SUN4I_A10_PLL2_H_
-> +#define __DT_BINDINGS_CLOCK_SUN4I_A10_PLL2_H_
-> +
-> +#define SUN4I_A10_PLL2_1X      0
-> +#define SUN4I_A10_PLL2_2X      1
-> +#define SUN4I_A10_PLL2_4X      2
-> +#define SUN4I_A10_PLL2_8X      3
-> +
-> +#endif /* __DT_BINDINGS_CLOCK_SUN4I_A10_PLL2_H_ */
-> --
-> 2.5.3
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Alan Stern
