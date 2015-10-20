@@ -1,66 +1,210 @@
-Return-Path: <tomeu.vizoso@gmail.com>
-Return-Path: <tomeu.vizoso@gmail.com>
-Sender: Tomeu Vizoso <tomeu.vizoso@gmail.com>
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Inki Dae <inki.dae@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kumar Gala <galak@codeaurora.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	linux-samsung-soc@vger.kernel.org,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 0/2] Fix display on second resume on 5250-snow
-Date: Thu, 15 Oct 2015 12:31:22 +0200
-Message-Id: <1444905084-22540-1-git-send-email-tomeu.vizoso@collabora.com>
+Return-Path: <rjw@rjwysocki.net>
+Return-Path: <rjw@rjwysocki.net>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Rob Herring <robh@kernel.org>
+Cc: David Woodhouse <dwmw2@infradead.org>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org, dmaengine@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>, Linux USB List <linux-usb@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Tue, 20 Oct 2015 09:56:14 +0200
+Message-ID: <4025469.zmyipZqCsP@vostro.rjw.lan>
+In-Reply-To: <CAL_JsqKa3MFJUWKV2KxPE_NmrP2g4dOD3zr+0Kyx4yBkDOg2HA@mail.gmail.com>
+References: <561E1378.6000906@collabora.com> <1603415.VWFZ8V0WMC@vostro.rjw.lan> <CAL_JsqKa3MFJUWKV2KxPE_NmrP2g4dOD3zr+0Kyx4yBkDOg2HA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Monday, October 19, 2015 05:58:40 PM Rob Herring wrote:
+> On Mon, Oct 19, 2015 at 4:40 PM, Rafael J. Wysocki <rjw@rjwysocki.net=
+> wrote:
+> > On Monday, October 19, 2015 10:58:25 AM Rob Herring wrote:
+> >> On Mon, Oct 19, 2015 at 10:29 AM, David Woodhouse <dwmw2@infradead=
+.org> wrote:
+> >> > On Mon, 2015-10-19 at 15:50 +0100, Mark Brown wrote:
+> >> >> > But the point I'm making is that we are working towards *fixi=
+ng* that,
+> >> >> > and *not* using DT-specific code in places where we should be=
+ using the
+> >> >> > generic APIs.
+> >> >>
+> >> >> What is the plan for fixing things here?  It's not obvious (at =
+least to
+> >> >> me) that we don't want to have the subsystems having knowledge =
+of how
+> >> >> they are bound to a specific firmware which is what you seem to=
+ imply
+> >> >> here.
+> >> >
+> >> > I don't know that there *is* a coherent plan here to address it =
+all.
+> >> >
+> >> > Certainly, we *will* need subsystems to have firmware-specific
+> >> > knowledge in some cases. Take GPIO as an example; ACPI *has* a w=
+ay to
+> >> > describe GPIO, and properties which reference GPIO pins are inte=
+nded to
+> >> > work through that =E2=80=94 while in DT, properties which refere=
+nce GPIO pins
+> >> > will have different contents. They'll be compatible at the drive=
+r
+> >> > level, in the sense that there's a call to get a given GPIO give=
+n the
+> >> > property name, but the subsystems *will* be doing different thin=
+gs
+> >> > behind the scenes.
+> >> >
+> >> > My plan, such as it is, is to go through the leaf-node drivers w=
+hich
+> >> > almost definitely *should* be firmware-agnostic, and convert tho=
+se. And
+> >> > then take stock of what we have left, and work out what, if anyt=
+hing,
+> >> > still needs to be done.
+> >>
+> >> Many cases are already agnostic in the drivers in terms of the *_g=
+et()
+> >> functions. Some are DT specific, but probably because those subsys=
+tems
+> >> are new and DT only. In any case, I don't think these 1 line chang=
+es
+> >> do anything to make doing conversions here harder.
+> >>
+> >> >> It seems like we're going to have to refactor these bits of cod=
+e when
+> >> >> they get generalised anyway so I'm not sure that the additional=
+ cost
+> >> >> here is that big.
+> >> >
+> >> > That's an acceptable answer =E2=80=94 "we're adding legacy code =
+here but we
+> >> > know it's going to be refactored anyway". If that's true, all it=
+ takes
+> >> > is a note in the commit comment to that effect. That's different=
+ from
+> >> > having not thought about it :)
+> >>
+> >> Considering at one point we did create a fwnode based API, we did
+> >> think about it. Plus there was little input from ACPI folks as to
+> >> whether the change was even useful for ACPI case.
+> >
+> > Well, sorry, but who was asking whom, specifically?
+>=20
+> You and linux-acpi have been copied on v2 and later of the entire
+> series I think.
 
-as discussed in [0], currently on the second resume from memory the
-display is broken on Snow boards (ARM Samsung Series 3 Chromebook).
+Yes, but it wasn't like a direct request, say "We need your input, so c=
+an you
+please have a look and BTW we want this in 4.4, so please do it ASAP". =
+ In
+which case I'd prioritize that before other things I needed to take car=
+e of.
 
-The reason is that on resume the contents of register SRC_TOP3 aren't
-what the kernel thinks they are because the HW (or FW) is doing some
-clock reparenting beneath our feet.
+> > The underlying problem is present in ACPI too and we don't really h=
+ave a good
+> > solution for it.  We might benefit from a common one if it existed.=
 
-This series tasks the kernel to do the reparenting itself so that the HW
-state always matches the kernel's internal state.
+>=20
+> The problem for DT is we don't generically know what are the
+> dependencies at a core level. We could know some or most dependencies=
+
+> if phandles (links to other nodes) were typed, but they are not. If
+> the core had this information, we could simply control the device
+> creation to order probing. Instead, this information is encoded into
+> the bindings and binding parsing resides in the subsystems. That
+> parsing happens during probe of the client side and is done by the
+> subsystems (for common bindings). Since we already do the parsing at
+> this point, it is a convenient place to trigger the probe of the
+> dependency. Is ACPI going to be similar in this regard?
+
+It is similar in some ways.  For example, if a device's functionality d=
+epends
+on an I2C resource (connection), the core doesn't know that at the devi=
+ce
+creation time at least in some cases.  Same for GPIO, SPI, DMA engines =
+etc.
+
+There is a _DEP object in ACPI that can be used by firmware to tell the=
+ OS
+about those dependencies, but there's no way in the driver core to use =
+that
+information anyway today.
+
+> Fundamentally, it is a question of probe devices when their
+> dependencies are present or drivers ensure their dependencies are
+> ready. IIRC, init systems went thru a similar debate for service
+> dependencies.
+
+The probe ordering is not the entire picture, though.
+
+Even if you get the probe ordering right, the problem is going to show =
+up in
+multiple other places: system suspend/resume, runtime PM, system shutdo=
+wn,
+unbinding of drivers.  In all of those cases it is necessary to handle =
+things
+in a specific order if there is a dependency.
+
+> >> In any case, we're talking about adding 1 line.
+> >
+> > But also about making the driver core slighly OF-centric.
+>=20
+> How so? The one line is in DT binding parsing code in subsystems, not=
+
+> driver core. The driver core change is we add every device (that
+> happened to be created by DT) to the deferred probe list, so they
+> don't probe right away.
+
+The "that happened to be created by DT" part is of concern here.  What =
+is there
+that makes DT special in that respect?  Why shouldn't that be applicabl=
+e to
+devices created by the ACPI core, for example, or by a board file or so=
+mething
+else?
+
+> > Sure, we need OF-specific code and ACPI-specific code wherever diff=
+erent
+> > handling is required, but doing that at the driver core level seems=
+ to be
+> > a bit of a stretch to me.
+> >
+> > Please note that we don't really have ACPI-specific calls in the dr=
+iver core,
+> > although we might have added them long ago even before the OF stuff=
+ appeared
+> > in the kernel for the first time.  We didn't do that, (among other =
+things)
+> > because we didn't want that particular firmware interface to appear=
+ special
+> > in any way and I'm not really sure why it is now OK to make OF look=
+ special
+> > instead.
+>=20
+> I don't think DT is special and we avoid DT specific core changes as
+> much as possible. I think the difference is DT uses platform_device
+> and ACPI does not.
+
+ACPI uses platform devices too.  In fact, ACPI device objects are enume=
+rated as
+platform devices by default now.
+
+Or do you means something else here?
+
+> It used to be separate, but got merged together primarily to support =
+the
+> plethora of existing drivers. Anyway, that is all outside of anything=
+ in this
+> series.
+
+It explains the context of the series, so it is useful to talk about IM=
+O.
+
+>=20
+> > If it is trivial to avoid that (and you seem to be arguing that it =
+is), why
+> > do we have to do it?
+>=20
+> Sorry, I don't follow what "that" or "it" is.
+
+OK, so maybe I misunderstood you, sorry about that.
 
 Thanks,
-
-Tomeu
-
-[0] http://lkml.kernel.org/g/561CDC33.7050103@collabora.com
-
-Changes in v2:
-- Reuse mout_aclk200_p
-- Rename div_aclk300 as div_aclk300_disp
-
-Tomeu Vizoso (2):
-  clk: samsung: exynos5250: Add DISP1 clocks
-  ARM: dts: exynos5250: Add clocks to DISP1 domain
-
- arch/arm/boot/dts/exynos5250.dtsi      |  4 ++++
- drivers/clk/samsung/clk-exynos5250.c   | 14 +++++++++++++-
- include/dt-bindings/clock/exynos5250.h |  4 +++-
- 3 files changed, 20 insertions(+), 2 deletions(-)
-
--- 
-2.5.0
+Rafael
