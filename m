@@ -1,351 +1,139 @@
-Return-Path: <mike.looijmans@topicproducts.com>
-Subject: Re: [PATCH v2] Add driver for the si514 clock generator chip
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1442478495-23522-1-git-send-email-mike.looijmans@topic.nl>
- <1442487891-20477-1-git-send-email-mike.looijmans@topic.nl>
- <20151001233407.GW19319@codeaurora.org>
-CC: <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: Mike Looijmans <mike.looijmans@topic.nl>
-Message-ID: <560E1DF6.9010901@topic.nl>
-Date: Fri, 2 Oct 2015 08:02:30 +0200
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 20 Oct 2015 09:34:50 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH v5 1/5] clk: Add a basic multiplier clock
+Message-ID: <20151020073450.GA2711@lukather>
+References: <1445242139-20965-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1445242139-20965-2-git-send-email-maxime.ripard@free-electrons.com>
+ <CAGb2v65bZGQEHyS6UoBUsrDoJ33jYwa--BkmfomZ4AGAy0djNw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20151001233407.GW19319@codeaurora.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="41bjdpi19TcwJlr2"
+In-Reply-To: <CAGb2v65bZGQEHyS6UoBUsrDoJ33jYwa--BkmfomZ4AGAy0djNw@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-=EF=BB=BFOn 02-10-15 01:34, Stephen Boyd wrote:
-> On 09/17, Mike Looijmans wrote:
->> This patch adds the driver and devicetree documentation for the
->> Silicon Labs SI514 clock generator chip. This is an I2C controlled
->> oscilator capable of generating clock signals ranging from 100kHz
->
-> s/oscilator/oscillator/
->
->> to 250MHz.
->>
->> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
->> ---
->> diff --git a/Documentation/devicetree/bindings/clock/silabs,si514.txt b/=
-Documentation/devicetree/bindings/clock/silabs,si514.txt
->> new file mode 100644
->> index 0000000..05964d1
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/silabs,si514.txt
->> @@ -0,0 +1,27 @@
->> +Binding for Silicon Labs 514 programmable I2C clock generator.
->> +
->> +Reference
->> +This binding uses the common clock binding[1]. Details about the device=
- can be
->> +found in the datasheet[2].
->> +
->> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
->> +[2] Si514 datasheet
->> +    http://www.silabs.com/Support%20Documents/TechnicalDocs/si514.pdf
->> +
->> +Required properties:
->> + - compatible: Shall be "silabs,si514"
->> + - reg: I2C device address.
->> + - #clock-cells: From common clock bindings: Shall be 0.
->> +
->> +Optional properties:
->> + - clock-output-names: From common clock bindings. Recommended to be "s=
-i514".
->> + - clock-frequency: Output frequency to generate. This defines the outp=
-ut
->> +		    frequency set during boot. It can be reprogrammed during
->> +		    runtime through the common clock framework.
->
-> Can we use assigned clock rates instead of this property?
 
-I'll first need to learn what 'assigned clock rates' means. But I suspect t=
-he=20
-answer will be yes.
+--41bjdpi19TcwJlr2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> +
->> +Example:
->> +	si514: clock-generator@55 {
->> +		reg =3D <0x55>;
->> +		#clock-cells =3D <0>;
->> +		compatible =3D "silabs,si514";
->> +	};
->> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
->> index 42f7120..6ac7deb5 100644
->> --- a/drivers/clk/Kconfig
->> +++ b/drivers/clk/Kconfig
->> @@ -68,6 +68,16 @@ config COMMON_CLK_SI5351
->>   	  This driver supports Silicon Labs 5351A/B/C programmable clock
->>   	  generators.
->>
->> +config COMMON_CLK_SI514
->> +	tristate "Clock driver for SiLabs 514 devices"
->> +	depends on I2C
->> +	depends on OF
->
-> It actually depends on this to build?
+On Mon, Oct 19, 2015 at 04:22:15PM +0800, Chen-Yu Tsai wrote:
+> On Mon, Oct 19, 2015 at 4:08 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > Some clocks are using a multiplier component, however, unlike their mux,
+> > gate or divider counterpart, these factors don't have a basic clock
+> > implementation.
+> >
+> > This leads to code duplication across platforms that want to use that k=
+ind
+> > of clocks, and the impossibility to use the composite clocks with such a
+> > clock without defining your own rate operations.
+> >
+> > Create such a driver in order to remove these issues, and hopefully fac=
+tor
+> > the implementations, reducing code size across platforms and consolidat=
+ing
+> > the various implementations.
+> >
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > ---
+> >  drivers/clk/Makefile         |   1 +
+> >  drivers/clk/clk-multiplier.c | 181 +++++++++++++++++++++++++++++++++++=
+++++++++
+> >  include/linux/clk-provider.h |  42 ++++++++++
+> >  3 files changed, 224 insertions(+)
+> >  create mode 100644 drivers/clk/clk-multiplier.c
+> >
+> > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> > index d08b3e5985be..0b2101039508 100644
+> > --- a/drivers/clk/Makefile
+> > +++ b/drivers/clk/Makefile
+> > @@ -6,6 +6,7 @@ obj-$(CONFIG_COMMON_CLK)        +=3D clk-divider.o
+> >  obj-$(CONFIG_COMMON_CLK)       +=3D clk-fixed-factor.o
+> >  obj-$(CONFIG_COMMON_CLK)       +=3D clk-fixed-rate.o
+> >  obj-$(CONFIG_COMMON_CLK)       +=3D clk-gate.o
+> > +obj-$(CONFIG_COMMON_CLK)       +=3D clk-multiplier.o
+> >  obj-$(CONFIG_COMMON_CLK)       +=3D clk-mux.o
+> >  obj-$(CONFIG_COMMON_CLK)       +=3D clk-composite.o
+> >  obj-$(CONFIG_COMMON_CLK)       +=3D clk-fractional-divider.o
+> > diff --git a/drivers/clk/clk-multiplier.c b/drivers/clk/clk-multiplier.c
+> > new file mode 100644
+> > index 000000000000..fed71de801ca
+> > --- /dev/null
+> > +++ b/drivers/clk/clk-multiplier.c
+>=20
+> <snip>
+>=20
+> > +static unsigned long __bestmult(struct clk_hw *hw, unsigned long rate,
+> > +                               unsigned long *best_parent_rate,
+> > +                               u8 width, unsigned long flags)
+> > +{
+> > +       unsigned long orig_parent_rate =3D *best_parent_rate;
+> > +       unsigned long parent_rate, current_rate, best_rate =3D ~0;
+> > +       unsigned int i, bestmult =3D 0;
+> > +
+> > +       if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT))
+> > +               return rate / *best_parent_rate;
+> > +
+> > +       for (i =3D 1; i < ((1 << width) - 1); i++) {
+> > +               if (rate * i =3D=3D orig_parent_rate) {
+>=20
+> The tested multiplier "i" is on the wrong side of the equation when
+> compared to the statement "current_rate =3D parent_rate * i"
+>=20
+> Since this should be a clock multiplier, that test can only be true
+> when i =3D=3D 1, given that rate >=3D parent_rate. In all other cases it'=
+ll
+> fallback to the clk_hw_round_rate() call below.
+>=20
+> Am I missing something?
 
-It calls various 'of_' methods unconditionally, so I'd think so.
+You're totally right, I just completely forgot this comment before
+sending the new version :/
 
->> +	select REGMAP_I2C
->> +	help
->> +	---help---
->> +	  This driver supports the Silicon Labs 514 programmable clock
->> +	  generator.
->> +
->>   config COMMON_CLK_SI570
->>   	tristate "Clock driver for SiLabs 570 and compatible devices"
->>   	depends on I2C
->> diff --git a/drivers/clk/clk-si514.c b/drivers/clk/clk-si514.c
->> new file mode 100644
->> index 0000000..ca70818
->> --- /dev/null
->> +++ b/drivers/clk/clk-si514.c
->> @@ -0,0 +1,393 @@
->> +
->> +#include <linux/clk-provider.h>
->
-> I'd expect some sort of linux/clk.h include here if we're using
-> clk APIs.
+I'll send a new version.
 
-It probably got dragged in by the clk-provider.h include, including it=20
-specifically would be more appropriate.
+> Otherwise, this is
+>=20
+> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 
->
->> +#include <linux/delay.h>
->> +#include <linux/module.h>
->> +#include <linux/i2c.h>
->> +#include <linux/regmap.h>
->> +#include <linux/slab.h>
-> [...]
->> +
->> +/* Program clock settings into hardware */
->
-> This comment is useless.
->
->> +static int si514_set_muldiv(struct clk_si514 *data,
->> +	struct clk_si514_muldiv *settings)
->> +{
->> +	u8 lp;
->> +	u8 reg[7];
->> +	int err;
->> +
->> +	/* Calculate LP1/LP2 according to table 13 in the datasheet */
->> +	/* 65.259980246 */
->> +	if ((settings->m_int < 65) ||
->> +		((settings->m_int =3D=3D 65) && (settings->m_frac <=3D 139575831)))
->> +		lp =3D 0x22;
->> +	/* 67.859763463 */
->> +	else if ((settings->m_int < 67) ||
->> +		((settings->m_int =3D=3D 67) && (settings->m_frac <=3D 461581994)))
->> +		lp =3D 0x23;
->> +	/* 72.937624981 */
->> +	else if ((settings->m_int < 72) ||
->> +		((settings->m_int =3D=3D 72) && (settings->m_frac <=3D 503383578)))
->> +		lp =3D 0x33;
->> +	/* 75.843265046 */
->> +	else if ((settings->m_int < 75) ||
->> +		((settings->m_int =3D=3D 75) && (settings->m_frac <=3D 452724474)))
->> +		lp =3D 0x34;
->
-> Drop the extra parenthesis on these if statements.
->
->> +	else
->> +		lp =3D 0x44;
->> +
->> +	err =3D regmap_write(data->regmap, SI514_REG_LP, lp);
->> +	if (err < 0)
->> +		return err;
->> +
->> +	reg[0] =3D settings->m_frac & 0xff;
->> +	reg[1] =3D (settings->m_frac >> 8) & 0xff;
->> +	reg[2] =3D (settings->m_frac >> 16) & 0xff;
->> +	reg[3] =3D ((settings->m_frac >> 24) | (settings->m_int << 5)) & 0xff;
->> +	reg[4] =3D (settings->m_int >> 3) & 0xff;
->> +	reg[5] =3D (settings->hs_div) & 0xff;
->> +	reg[6] =3D (((settings->hs_div) >> 8) |
->> +			(settings->ls_div_bits << 4)) & 0xff;
->
-> The & 0xff part is redundant. Assignment truncates for us.
->
->> +
->> +	err =3D regmap_bulk_write(data->regmap, SI514_REG_HS_DIV, reg + 5, 2);
->> +	if (err < 0)
->> +		return err;
->> +	/* Writing to SI514_REG_M_INT_FRAC triggers the clock change, so that
->> +	 * must be written last */
->
-> Please fix multi-line commenting style.
->
->> +	return regmap_bulk_write(data->regmap, SI514_REG_M_FRAC1, reg, 5);
->> +}
->> +
->> +/* Calculate divider settings for a given frequency */
->> +static int si514_calc_muldiv(struct clk_si514_muldiv *settings,
->> +	unsigned long frequency)
->> +{
->> +	u64 m;
->> +	u32 ls_freq;
->> +	u32 tmp;
->> +	u8 res;
->> +
->> +	if ((frequency < SI514_MIN_FREQ) || (frequency > SI514_MAX_FREQ))
->> +		return -EINVAL;
->> +
->> +	/* Determine the minimum value of LS_DIV and resulting target freq. */
->> +	ls_freq =3D frequency;
->> +	if (frequency >=3D (FVCO_MIN / HS_DIV_MAX))
->> +		settings->ls_div_bits =3D 0;
->> +	else {
->> +		res =3D 1;
->> +		tmp =3D 2 * HS_DIV_MAX;
->> +		while (tmp <=3D (HS_DIV_MAX*32)) {
->
-> Please add some space here between HS_DIV_MAX and 32.
->
->> +			if ((frequency * tmp) >=3D FVCO_MIN)
->> +				break; /* We're done */
->
-> Yep, that's what break in a loop usually means.
->
->> +			++res;
->> +			tmp <<=3D 1;
->> +		}
->> +		settings->ls_div_bits =3D res;
->> +		ls_freq =3D frequency << res;
->> +	}
->> +
->> +	/* Determine minimum HS_DIV, round up to even number */
->> +	settings->hs_div =3D DIV_ROUND_UP(FVCO_MIN >> 1, ls_freq) << 1;
->> +
->> +	/* M =3D LS_DIV x HS_DIV x frequency / F_XO (in fixed-point) */
->> +	m =3D ((u64)(ls_freq * settings->hs_div) << 29) + (FXO/2);
->> +	do_div(m, FXO);
->> +	settings->m_frac =3D (u32)m & (BIT(29) - 1);
->> +	settings->m_int =3D (u32)(m >> 29);
->> +
->> +	return 0;
->> +}
->> +
->> +/* Calculate resulting frequency given the register settings */
->> +static unsigned long si514_calc_rate(struct clk_si514_muldiv *settings)
->> +{
->> +	u64 m =3D settings->m_frac | ((u64)settings->m_int << 29);
->> +
->> +	return ((u32)(((m * FXO) + (FXO/2)) >> 29)) /
->
-> Please add space after /
->
->> +		(settings->hs_div * BIT(settings->ls_div_bits));
->
-> And drop the extra parenthesis. It would be nice if we didn't do
-> it all in one line too. Use some local variables.
+Thanks!
+Maxime
 
-I'll refactor it into something more readable.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
->> +}
->> +
-> [...]
->> +
->> +	err =3D si514_calc_muldiv(&settings, rate);
->> +	if (err)
->> +		return err;
->> +
->> +	return si514_calc_rate(&settings);
->> +}
->> +
->> +/* Update output frequency for big frequency changes (> 1000 ppm).
->> + * The chip supports <1000ppm changes "on the fly", we haven't implemen=
-ted
->> + * that here. */
->
-> Please fix comment style.
->
->> +static int si514_set_rate(struct clk_hw *hw, unsigned long rate,
->> +		unsigned long parent_rate)
->> +{
->> +	struct clk_si514 *data =3D to_clk_si514(hw);
->> +	struct clk_si514_muldiv settings;
->> +	int err;
->> +
->> +	err =3D si514_calc_muldiv(&settings, rate);
->> +	if (err)
->> +		return err;
->> +
->> +	si514_enable_output(data, false);
->> +
->> +	err =3D si514_set_muldiv(data, &settings);
->> +	if (err < 0)
->> +		return err; /* Undefined state now, best to leave disabled */
->> +
->> +	/* Trigger calibration */
->> +	err =3D regmap_write(data->regmap, SI514_REG_CONTROL, SI514_CONTROL_FC=
-AL);
->> +
->> +	/* Applying a new frequency can take up to 10ms */
->> +	usleep_range(10000, 12000);
->> +
->> +	si514_enable_output(data, true);
->> +
->
-> Should we enable if regmap_write() failed?
+--41bjdpi19TcwJlr2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Good question, I don't recall why I made this choice.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-For a client, when set_rate returns error, it would expect either the clock=
-=20
-still running at the old frequency, or not running at all. From that=20
-perspective, since the PLL has been reprogrammed, the better choice would b=
-e=20
-to leave it disabled. Expected behaviour for the client is going to be to f=
-ix=20
-the I2C bus problems and try again.
+iQIcBAEBAgAGBQJWJe6aAAoJEBx+YmzsjxAgW68P/1+IrvKBu/NTOSfQNP23R9x7
+DEMDrWRV1Vi4SLzJ/jwupLnZoIwgbr19YcGeAFRzooegZwpuEhniqvA1oJNXs0Ac
+LVi40SJn6yOdwEV2BPmnffSl7+e9vpnCfzpRD5wTXB1SFGLYBnq3hXur0n8XPNhP
+dOPe39Qv09gxoNm34xuNCNhwKdLDwa7zHpcrUSj5FUSFtvrVyVFOi2VWUDvO38/x
+pDJAgzI4dKQndNIhLKdjW/V9AEilzRuqDSqzHWhSD/Td9kiXj7lGX9O/U31qaLdM
+BYhJvSu+EGh6YaADc3pZ32SAWW3avE2Ug+U2rXTvxNpwUVlDQ5PqgNq1ff74lKhs
+FPjVZ+1mNAnkJAA7gwA/OQnxsmnP69hkG7s6gfWG5xjE8phlRa91uw8W818Zy5Oj
+djtZg6x7iYoGs2viYJKrYl2pSKR1Wary7U8y3iGxZJEuCVVrM1UhWb+t/9ZBPIWQ
+/W76LvvXEf8Um4ZAPZ7xQzIpZ2f4iNYFSTZf3EZYSJcqVkEt40Z6ZjA3n4l37sSv
+SDAxxtsp1uy6wZMQWR1wATAJ2thVGMosZ42S+hUDE7uUq6Tr4I2+PMkLpb/emZfI
+8qcdRyggF57EJKbtdgFkR+aQ6Bc4UzsVL8LdtlUIrRNjgbE99+lmPfyr0pcWrXDT
+Mgu4RdEconk2Zb6jSK84
+=AJ7y
+-----END PGP SIGNATURE-----
 
->> +	return err;
->> +}
->> +
->> +static const struct clk_ops si514_clk_ops =3D {
->> +	.recalc_rate =3D si514_recalc_rate,
->> +	.round_rate =3D si514_round_rate,
->> +	.set_rate =3D si514_set_rate,
->> +};
->> +
->> +static struct regmap_config si514_regmap_config =3D {
->
-> const?
->
->> +		}
->> +	}
->> +
->> +	/* Display a message indicating that we've successfully registered */
->> +	dev_info(&client->dev, "registered, current frequency %lu Hz\n",
->> +			clk_get_rate(clk));
->
-> Please remove this.
->
->> +
->> +	return 0;
->> +}
->> +
->
-
-I'll post a v2 patch with the requested changes soon. Thank you for your re=
-view.
-
-Mike.
-
-
-Kind regards,
-
-Mike Looijmans
-System Expert
-
-TOPIC Embedded Products
-Eindhovenseweg 32-C, NL-5683 KH Best
-Postbus 440, NL-5680 AK Best
-Telefoon: +31 (0) 499 33 69 79
-Telefax: +31 (0) 499 33 69 70
-E-mail: mike.looijmans@topicproducts.com
-Website: www.topicproducts.com
-
-Please consider the environment before printing this e-mail
+--41bjdpi19TcwJlr2--
