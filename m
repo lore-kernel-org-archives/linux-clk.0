@@ -1,216 +1,116 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: linux-arm-kernel@lists.infradead.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Russell King <linux@arm.linux.org.uk>
-Cc: Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 06/13] clk: versatile-icst: convert to use regmap
-Date: Thu, 15 Oct 2015 15:46:46 +0200
-Message-Id: <1444916813-31024-7-git-send-email-linus.walleij@linaro.org>
-In-Reply-To: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
-References: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Magnus Damm <damm+renesas@opensource.se>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v5 2/2] clk: shmobile: Add r8a7795 CPG Core Clock Definitions
+Date: Tue, 20 Oct 2015 20:50:00 +0200
+Message-Id: <1445367000-11525-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1445367000-11525-1-git-send-email-geert+renesas@glider.be>
+References: <1445367000-11525-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Instead of passing around register bases, pass around a regmap
-in this driver. This refactoring make things so much easier when
-we later want to manage an ICST that is part of a syscon.
+Add all R-Car H3 Clock Pulse Generator Core Clock Outputs, as listed in
+Table 8.2a ("List of Clocks [R-Car H3]") of the R-Car Gen3 datasheet
+(rev. 0.5E).
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-I'm looking for an ACK from the CLK maintainers to take this
-through the ARM SoC tree once the series stabilize.
----
- drivers/clk/versatile/Kconfig    |  1 +
- drivers/clk/versatile/clk-icst.c | 88 +++++++++++++++++++++++++++-------------
- 2 files changed, 61 insertions(+), 28 deletions(-)
+Note that internal CPG clocks (S0, S1, S2, S3, SDSRC, SSPSRC, and
+RPCSRC) are not included, as they're used as internal clock sources
+only.
 
-diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
-index 1530c9352a76..e091bcec116c 100644
---- a/drivers/clk/versatile/Kconfig
-+++ b/drivers/clk/versatile/Kconfig
-@@ -1,6 +1,7 @@
- config COMMON_CLK_VERSATILE
- 	bool "Clock driver for ARM Reference designs"
- 	depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64
-+	select REGMAP_MMIO
- 	---help---
-           Supports clocking on ARM Reference designs:
- 	  - Integrator/AP and Integrator/CP
-diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
-index a3893ea2199d..da5a3ccbbb96 100644
---- a/drivers/clk/versatile/clk-icst.c
-+++ b/drivers/clk/versatile/clk-icst.c
-@@ -19,9 +19,13 @@
- #include <linux/err.h>
- #include <linux/clk-provider.h>
- #include <linux/io.h>
-+#include <linux/regmap.h>
- 
- #include "clk-icst.h"
- 
-+/* Magic unlocking token used on all Versatile boards */
-+#define VERSATILE_LOCK_VAL	0xA05F
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Michael Turquette <mturquette@baylibre.com>
+Reviewed-by: Magnus Damm <damm+renesas@opensource.se>
+---
+v5:
+  - Add Acked-by, Reviewed-by,
+  - Add datasheet table and revision references,
+  - Add internal clock omissions,
+
+v4:
+  - Add all clocks instead of just the ones used by the current DTS,
+
+v3:
+  - New.
+
+ include/dt-bindings/clock/r8a7795-cpg-mssr.h | 63 ++++++++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r8a7795-cpg-mssr.h
+
+diff --git a/include/dt-bindings/clock/r8a7795-cpg-mssr.h b/include/dt-bindings/clock/r8a7795-cpg-mssr.h
+new file mode 100644
+index 0000000000000000..e864aae0a2561c4b
+--- /dev/null
++++ b/include/dt-bindings/clock/r8a7795-cpg-mssr.h
+@@ -0,0 +1,63 @@
++/*
++ * Copyright (C) 2015 Renesas Electronics Corp.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++#ifndef __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__
 +
- /**
-  * struct clk_icst - ICST VCO clock wrapper
-  * @hw: corresponding clock hardware entry
-@@ -32,8 +36,9 @@
-  */
- struct clk_icst {
- 	struct clk_hw hw;
--	void __iomem *vcoreg;
--	void __iomem *lockreg;
-+	struct regmap *map;
-+	u32 vcoreg_off;
-+	u32 lockreg_off;
- 	struct icst_params *params;
- 	unsigned long rate;
- };
-@@ -41,53 +46,67 @@ struct clk_icst {
- #define to_icst(_hw) container_of(_hw, struct clk_icst, hw)
- 
- /**
-- * vco_get() - get ICST VCO settings from a certain register
-- * @vcoreg: register containing the VCO settings
-+ * vco_get() - get ICST VCO settings from a certain ICST
-+ * @icst: the ICST clock to get
-+ * @vco: the VCO struct to return the value in
-  */
--static struct icst_vco vco_get(void __iomem *vcoreg)
-+static int vco_get(struct clk_icst *icst, struct icst_vco *vco)
- {
- 	u32 val;
--	struct icst_vco vco;
--
--	val = readl(vcoreg);
--	vco.v = val & 0x1ff;
--	vco.r = (val >> 9) & 0x7f;
--	vco.s = (val >> 16) & 03;
--	return vco;
-+	int ret;
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
 +
-+	ret = regmap_read(icst->map, icst->vcoreg_off, &val);
-+	if (ret)
-+		return ret;
-+	vco->v = val & 0x1ff;
-+	vco->r = (val >> 9) & 0x7f;
-+	vco->s = (val >> 16) & 03;
-+	return 0;
- }
- 
- /**
-  * vco_set() - commit changes to an ICST VCO
-- * @locreg: register to poke to unlock the VCO for writing
-- * @vcoreg: register containing the VCO settings
-- * @vco: ICST VCO parameters to commit
-+ * @icst: the ICST clock to set
-+ * @vco: the VCO struct to set the changes from
-  */
--static void vco_set(void __iomem *lockreg,
--			void __iomem *vcoreg,
--			struct icst_vco vco)
-+static int vco_set(struct clk_icst *icst, struct icst_vco vco)
- {
- 	u32 val;
-+	int ret;
- 
--	val = readl(vcoreg) & ~0x7ffff;
-+	ret = regmap_read(icst->map, icst->vcoreg_off, &val);
-+	if (ret)
-+		return ret;
- 	val |= vco.v | (vco.r << 9) | (vco.s << 16);
- 
- 	/* This magic unlocks the VCO so it can be controlled */
--	writel(0xa05f, lockreg);
--	writel(val, vcoreg);
-+	ret = regmap_write(icst->map, icst->lockreg_off, VERSATILE_LOCK_VAL);
-+	if (ret)
-+		return ret;
-+	ret = regmap_write(icst->map, icst->vcoreg_off, val);
-+	if (ret)
-+		return ret;
- 	/* This locks the VCO again */
--	writel(0, lockreg);
-+	ret = regmap_write(icst->map, icst->lockreg_off, 0);
-+	if (ret)
-+		return ret;
-+	return 0;
- }
- 
--
- static unsigned long icst_recalc_rate(struct clk_hw *hw,
- 				      unsigned long parent_rate)
- {
- 	struct clk_icst *icst = to_icst(hw);
- 	struct icst_vco vco;
-+	int ret;
- 
- 	if (parent_rate)
- 		icst->params->ref = parent_rate;
--	vco = vco_get(icst->vcoreg);
-+	ret = vco_get(icst, &vco);
-+	if (ret) {
-+		pr_err("ICST: could not get VCO setting\n");
-+		return 0;
-+	}
- 	icst->rate = icst_hz(icst->params, vco);
- 	return icst->rate;
- }
-@@ -112,8 +131,7 @@ static int icst_set_rate(struct clk_hw *hw, unsigned long rate,
- 		icst->params->ref = parent_rate;
- 	vco = icst_hz_to_vco(icst->params, rate);
- 	icst->rate = icst_hz(icst->params, vco);
--	vco_set(icst->lockreg, icst->vcoreg, vco);
--	return 0;
-+	return vco_set(icst, vco);
- }
- 
- static const struct clk_ops icst_ops = {
-@@ -132,6 +150,11 @@ struct clk *icst_clk_register(struct device *dev,
- 	struct clk_icst *icst;
- 	struct clk_init_data init;
- 	struct icst_params *pclone;
-+	struct regmap_config icst_regmap_conf = {
-+		.reg_bits = 32,
-+		.val_bits = 32,
-+		.reg_stride = 4,
-+	};
- 
- 	icst = kzalloc(sizeof(struct clk_icst), GFP_KERNEL);
- 	if (!icst) {
-@@ -151,10 +174,19 @@ struct clk *icst_clk_register(struct device *dev,
- 	init.flags = CLK_IS_ROOT;
- 	init.parent_names = (parent_name ? &parent_name : NULL);
- 	init.num_parents = (parent_name ? 1 : 0);
-+	icst->map = regmap_init_mmio(NULL, base, &icst_regmap_conf);
-+	if (IS_ERR(icst->map)) {
-+		int ret;
++/* r8a7795 CPG Core Clocks */
++#define R8A7795_CLK_Z			0
++#define R8A7795_CLK_Z2			1
++#define R8A7795_CLK_ZR			2
++#define R8A7795_CLK_ZG			3
++#define R8A7795_CLK_ZTR			4
++#define R8A7795_CLK_ZTRD2		5
++#define R8A7795_CLK_ZT			6
++#define R8A7795_CLK_ZX			7
++#define R8A7795_CLK_S0D1		8
++#define R8A7795_CLK_S0D4		9
++#define R8A7795_CLK_S1D1		10
++#define R8A7795_CLK_S1D2		11
++#define R8A7795_CLK_S1D4		12
++#define R8A7795_CLK_S2D1		13
++#define R8A7795_CLK_S2D2		14
++#define R8A7795_CLK_S2D4		15
++#define R8A7795_CLK_S3D1		16
++#define R8A7795_CLK_S3D2		17
++#define R8A7795_CLK_S3D4		18
++#define R8A7795_CLK_LB			19
++#define R8A7795_CLK_CL			20
++#define R8A7795_CLK_ZB3			21
++#define R8A7795_CLK_ZB3D2		22
++#define R8A7795_CLK_CR			23
++#define R8A7795_CLK_CRD2		24
++#define R8A7795_CLK_SD0H		25
++#define R8A7795_CLK_SD0			26
++#define R8A7795_CLK_SD1H		27
++#define R8A7795_CLK_SD1			28
++#define R8A7795_CLK_SD2H		29
++#define R8A7795_CLK_SD2			30
++#define R8A7795_CLK_SD3H		31
++#define R8A7795_CLK_SD3			32
++#define R8A7795_CLK_SSP2		33
++#define R8A7795_CLK_SSP1		34
++#define R8A7795_CLK_SSPRS		35
++#define R8A7795_CLK_RPC			36
++#define R8A7795_CLK_RPCD2		37
++#define R8A7795_CLK_MSO			38
++#define R8A7795_CLK_CANFD		39
++#define R8A7795_CLK_HDMI		40
++#define R8A7795_CLK_CSI0		41
++#define R8A7795_CLK_CSIREF		42
++#define R8A7795_CLK_CP			43
++#define R8A7795_CLK_CPEX		44
++#define R8A7795_CLK_R			45
++#define R8A7795_CLK_OSC			46
 +
-+		pr_err("could not initialize ICST regmap\n");
-+		kfree(icst);
-+		ret = PTR_ERR(icst->map);
-+		return ERR_PTR(ret);
-+	}
- 	icst->hw.init = &init;
- 	icst->params = pclone;
--	icst->vcoreg = base + desc->vco_offset;
--	icst->lockreg = base + desc->lock_offset;
-+	icst->vcoreg_off = desc->vco_offset;
-+	icst->lockreg_off = desc->lock_offset;
- 
- 	clk = clk_register(dev, &icst->hw);
- 	if (IS_ERR(clk))
++#endif /* __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__ */
 -- 
-2.4.3
+1.9.1
