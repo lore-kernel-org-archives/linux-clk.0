@@ -1,51 +1,122 @@
-Return-Path: <B48286@freescale.com>
-From: Hou Zhiqiang <B48286@freescale.com>
-To: Wolfram Sang <wsa@the-dreams.de>
-CC: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "catalin.marinas@arm.com"
-	<catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>, "linux@roeck-us.net"
-	<linux@roeck-us.net>, "wim@iguana.be" <wim@iguana.be>, "corbet@lwn.net"
-	<corbet@lwn.net>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, Hu Vincent
-	<Mingkai.Hu@freescale.com>, Shaohui Xie <Shaohui.Xie@freescale.com>, "Scott
- Wood" <scottwood@freescale.com>, Sharma Bhupesh
-	<bhupesh.sharma@freescale.com>, Wenbin Song <Wenbin.Song@freescale.com>
-Subject: RE: [PATCH V5 1/6] i2c: Add i2c support to Freescale Layerscape
- platforms
-Date: Wed, 21 Oct 2015 04:10:39 +0000
-Message-ID: <CY1PR0301MB078061870608C21CEA37B4288B380@CY1PR0301MB0780.namprd03.prod.outlook.com>
-References: <1445255774-32887-1-git-send-email-B48286@freescale.com>
- <20151020155258.GM5379@katana>
-In-Reply-To: <20151020155258.GM5379@katana>
-Content-Type: text/plain; charset="gb2312"
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
+To: Maxime Ripard <maxime.ripard@free-electrons.com>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20151020144047.GA10947@lukather>
+Cc: "Stephen Boyd" <sboyd@codeaurora.org>, "Emilio Lopez" <emilio@elopez.com.ar>,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ "Chen-Yu Tsai" <wens@csie.org>, "Hans de Goede" <hdegoede@redhat.com>,
+ linux-sunxi@googlegroups.com
+References: <1445326609-6314-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1445326609-6314-2-git-send-email-maxime.ripard@free-electrons.com>
+ <20151020134343.20687.16333@quantum> <20151020144047.GA10947@lukather>
+Message-ID: <20151020162939.20687.32769@quantum>
+Subject: Re: [PATCH v6 1/5] clk: Add a basic multiplier clock
+Date: Tue, 20 Oct 2015 09:29:39 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogV29sZnJhbSBTYW5nIFtt
-YWlsdG86d3NhQHRoZS1kcmVhbXMuZGVdDQo+IFNlbnQ6IDIwMTXE6jEw1MIyMMjVIDIzOjUzDQo+
-IFRvOiBIb3UgWmhpcWlhbmctQjQ4Mjg2DQo+IENjOiBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmlu
-ZnJhZGVhZC5vcmc7IGNhdGFsaW4ubWFyaW5hc0Bhcm0uY29tOw0KPiB3aWxsLmRlYWNvbkBhcm0u
-Y29tOyBsaW51eC1pMmNAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4gd2F0Y2hkb2dAdmdlci5r
-ZXJuZWwub3JnOyBsaW51eC1kb2NAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4gY2xrQHZnZXIu
-a2VybmVsLm9yZzsgbWFyay5ydXRsYW5kQGFybS5jb207IGxpbnV4QHJvZWNrLXVzLm5ldDsNCj4g
-d2ltQGlndWFuYS5iZTsgY29yYmV0QGx3bi5uZXQ7IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOw0K
-PiBzYm95ZEBjb2RlYXVyb3JhLm9yZzsgSHUgTWluZ2thaS1CMjEyODQ7IFhpZSBTaGFvaHVpLUIy
-MTk4OTsgV29vZCBTY290dC0NCj4gQjA3NDIxOyBTaGFybWEgQmh1cGVzaC1CNDUzNzA7IFNvbmcg
-V2VuYmluLUI1Mzc0Nw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIFY1IDEvNl0gaTJjOiBBZGQgaTJj
-IHN1cHBvcnQgdG8gRnJlZXNjYWxlIExheWVyc2NhcGUNCj4gcGxhdGZvcm1zDQo+IA0KPiBPbiBN
-b24sIE9jdCAxOSwgMjAxNSBhdCAwNzo1NjowOVBNICswODAwLCBaaGlxaWFuZyBIb3Ugd3JvdGU6
-DQo+ID4gRnJvbTogU2hhb2h1aSBYaWUgPFNoYW9odWkuWGllQGZyZWVzY2FsZS5jb20+DQo+ID4N
-Cj4gPiBNb2RpZnkgdGhlIEkyQ19JTVggY29uZmlnIHRvIHN1cHBvcnQgdG8gTGF5ZXJzY2FwZSBw
-bGF0Zm9ybXMuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBNaW5na2FpIEh1IDxNaW5na2FpLkh1
-QGZyZWVzY2FsZS5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogV2VuYmluIFNvbmcgPFdlbmJpbi5T
-b25nQGZyZWVzY2FsZS5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogSG91IFpoaXFpYW5nIDxCNDgy
-ODZAZnJlZXNjYWxlLmNvbT4NCj4gDQo+IFRocmVlIHNpZ25lZCBvZmZzIGZvciBhIHNpbXBsZSBL
-Y29uZmlnIGNoYW5nZT8gQW5kIHRoZSBwZXJzb24gZG9pbmcgdGhlDQo+IHBhdGNoIGhhcyBubyBz
-aWduZWQgb2ZmPz8gVGhhdCBsb29rcyB3cm9uZy4gTWF5YmUgdGhlIGFib3ZlIHNpZ25lZCBvZmZz
-DQo+IHNob3VsZCBiZSBhY2tlZCBieT8NCj4gDQoNCldpbGwgYWRkIHRoZSBzaWduZWQtb2ZmIG9m
-IHRoZSBhdXRob3IuDQoNClRoYW5rcywNClpoaXFpYW5nDQo=
+Quoting Maxime Ripard (2015-10-20 07:40:47)
+> Hi Mike,
+> =
+
+> On Tue, Oct 20, 2015 at 06:43:43AM -0700, Michael Turquette wrote:
+> > Hi Maxime,
+> > =
+
+> > Quoting Maxime Ripard (2015-10-20 00:36:45)
+> > > +struct clk *clk_register_multiplier(struct device *dev, const char *=
+name,
+> > > +                                   const char *parent_name,
+> > > +                                   unsigned long flags,
+> > > +                                   void __iomem *reg, u8 shift, u8 w=
+idth,
+> > > +                                   u8 clk_mult_flags, spinlock_t *lo=
+ck)
+> > > +{
+> > =
+
+> > Patch looks good in general. However this is a good opportunity to stop
+> > the madness around the registration functions in these basic clock
+> > types.
+> > =
+
+> > clk_register is really all that we need since we've had struct
+> > clk_init_data for a while. Initializing a multiplier should be as simple
+> > as:
+> > =
+
+> >       struct clk_multiplier clk_foo =3D {
+> >               .hw.init =3D &(struct clk_init_data){
+> >                       .name =3D "foo",
+> >                       .parent_names =3D (const char *[]){
+> >                               "bar",
+> >                       },
+> >                       .num_parents =3D 1;
+> >                       .ops =3D &clk_multiplier_ops,
+> >               },
+> >               .reg =3D 0xd34db33f,
+> >               .shift =3D 1,
+> >               .width =3D 2,
+> >       };
+> > =
+
+> >       clk_register(dev, &clk_foo.hw);
+> > =
+
+> > This is nice since it turns these basic clocks into even more of a
+> > library and less of a poor mans driver.
+> > =
+
+> > (I really hope the above works. I did not test it)
+> > =
+
+> > Is it possible you can convert to using this method, and if it is
+> > correct for you then just remove clk_multiplier_register altogether? (In
+> > fact you might not use the registration function at all since you use
+> > the composite clock...)
+> =
+
+> This chunk of code has been here since v2, which has been first posted
+> in May, two and half kernel releases ago.
+> =
+
+> In the meantime, we had a full-blown DMA driver and a quite unusual
+> ASoC driver merged. For some reason, this is the only piece of the
+> audio support that is missing for us, while at the same time it's the
+> most trivial.
+> =
+
+> If that's the only issue you have with this patch, I'm fine with
+> sending a subsequent patch this week. But I'd be really unhappy with
+> sending yet another version for a single change, while you had 5
+> monthes to review it, and we discussed it several times on IRC and
+> face to face.
+
+The change can go in later. It's not a prerequisite. I had a feeling
+you'd be grumpy about me asking but I thought I'd try anyways. I won't
+even ask if you got sign-off from Jim on whether this works for his
+platforms ;-)
+
+The copy/paste nature of these basic clock types really sucks and it is
+one of many reasons that I am hesitant to accept them and slow to merge
+them...
+
+Anyways it seems that you are not using the registration function at all
+so I might just follow up with a patch to remove it.
+
+I can pick these 5 patches directly, or do you plan to send a PR?
+
+Regards,
+Mike
+
+> =
+
+> Maxime
+> =
+
+> -- =
+
+> Maxime Ripard, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
