@@ -1,104 +1,91 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Wed, 21 Oct 2015 22:03:39 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Frank Rowand <frowand.list@gmail.com>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>,
-	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	linux-i2c@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	Linux PWM List <linux-pwm@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	linux-fbdev@vger.kernel.org
-Message-ID: <20151021210339.GR32054@sirena.org.uk>
-References: <561E1378.6000906@collabora.com>
- <20151017065750.GA18607@kroah.com>
- <20151018192931.GY14956@sirena.org.uk>
- <20151018193757.GA9147@kroah.com>
- <20151018195330.GB14956@sirena.org.uk>
- <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
- <5627B677.5090109@gmail.com>
- <20151021162758.GP32054@sirena.org.uk>
- <5627D6E0.5020708@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:34814 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751901AbbJTMbD (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 20 Oct 2015 08:31:03 -0400
+Subject: Re: [PATCH 09/10] dt-bindings: video: exynos5433-decon: add bindings
+ for DECON-TV
+To: Andrzej Hajda <a.hajda@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>
+References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
+ <1445332961-25419-10-git-send-email-a.hajda@samsung.com>
+Cc: k.kozlowski.k@gmail.com,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Hyungwon Hwang <human.hwang@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-ID: <56263400.6010200@samsung.com>
+Date: Tue, 20 Oct 2015 21:30:56 +0900
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="+HdfuZ4tX+pUSv6/"
-In-Reply-To: <5627D6E0.5020708@gmail.com>
-Subject: Re: [GIT PULL] On-demand device probing
+In-Reply-To: <1445332961-25419-10-git-send-email-a.hajda@samsung.com>
+Content-Type: text/plain; charset=iso-8859-2
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+W dniu 20.10.2015 o 18:22, Andrzej Hajda pisze:
+> DECON-TV(Display and Enhancement Controller for TV) is a variation
+> of DECON IP. Its main purpose is to produce video stream for HDMI IP.
+> 
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+>  .../devicetree/bindings/video/exynos5433-decon.txt  | 21 ++++++++++++---------
+>  1 file changed, 12 insertions(+), 9 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/video/exynos5433-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+> index 3dff78b..2a88c8d 100644
+> --- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+> +++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+> @@ -5,24 +5,27 @@ Exynos series of SoCs which transfers the image data from a video memory
+>  buffer to an external LCD interface.
+>  
+>  Required properties:
+> -- compatible: value should be "samsung,exynos5433-decon";
+> +- compatible: value should be one of:
+> +	"samsung,exynos5433-decon", "samsung,exynos5433-decon-tv";
 
---+HdfuZ4tX+pUSv6/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Until this point it looked good.
 
-On Wed, Oct 21, 2015 at 11:18:08AM -0700, Frank Rowand wrote:
-> On 10/21/2015 9:27 AM, Mark Brown wrote:
+>  - reg: physical base address and length of the DECON registers set.
+> -- interrupts: should contain a list of all DECON IP block interrupts in the
+> -	      order: VSYNC, LCD_SYSTEM. The interrupt specifier format
+> -	      depends on the interrupt controller used.
+> -- interrupt-names: should contain the interrupt names: "vsync", "lcd_sys"
+> -		   in the same order as they were listed in the interrupts
+> -		   property.
+> +- interrupts: should contain interrupt specifier of VSYNC and optionally
+> +	      LCD_SYSTEM. The interrupt specifier format depends on
+> +	      the interrupt controller used.
+> +- interrupt-names: should contain the interrupt name "vsync" and optionally
+> +		   "lcd_sys" in the same order as they were listed in
+> +		   the interrupts property.
 
-> > Overall boot time and time to get some individual built in component up
-> > and running aren't the same thing - what this'll do is get things up
-> > more in the link order of the leaf consumers rather than deferring those
-> > leaf consumers when their dependencies aren't ready yet.
+The driver already did not require both interrupts, right? Only one of them?
 
-> Thanks!  I read too much into what was being improved.
+>  - clocks: must include clock specifiers corresponding to entries in the
+>  	  clock-names property.
+>  - clock-names: list of clock names sorted in the same order as the clocks
+>  	       property. Must contain "pclk", "aclk_decon", "aclk_smmu_decon0x",
+>  	       "aclk_xiu_decon0x", "pclk_smmu_decon0x", clk_decon_vclk",
+>  	       "sclk_decon_eclk"
+> +
+> +Optional properties:
+>  - ports: contains a port which is connected to mic node. address-cells and
+> -	 size-cells must 1 and 0, respectively.
+> +	 size-cells must be 1 and 0, respectively.
+>  - port: contains an endpoint node which is connected to the endpoint in the mic
+> -	node. The reg value muset be 0.
+> +	node. The reg value must be 0.
+>  - i80-if-timings: specify whether the panel which is connected to decon uses
+>  		  i80 lcd interface or mipi video interface. This node contains
+>  		  no timing information as that of fimd does. Because there is
+> 
 
-> So this patch series, which on other merits may be a good idea, is as
-> a by product solving a specific ordering issue, moving successful panel
-> initialization to an earlier point in the boot sequence, if I now
-> understand more correctly.
+This is cleanup, please split it.
 
-Yeah, that's my understanding.
-
-> In that context, this seems like yet another ad hoc way of causing the
-> probe order to change in a way to solves one specific issue?  Could
-> it just as likely move the boot order of some other driver on some
-> other board later, to the detriment of somebody else?
-
-Indeed.  My general feeling is that it does make the link order stuff
-more predictable and easier to work with and it does have other merits
-(in terms of the error reporting, though there's other ways to address
-that like the one Russell is proposing).
-
---+HdfuZ4tX+pUSv6/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWJ/2qAAoJECTWi3JdVIfQ9MgIAIR+qXN0q0pY1zKwb6/58+sQ
-PH/X1p3w5xiusgk/rTw3uRO1aaL7IQc+LReMkk2Hf90C2p6A2vK3mqNnSPZHnGH/
-pvHzDER2FesjNLuaM9GtxZV8lrXu74tUX1y30DgOM6EqJ/RQBr6cSHybcgbTQmHo
-/0NwCPhei2WiLSblE6e9VVqrDC256P9vclzWNSSUCQ3FAo78B2ram74srRdtHfVn
-Tw2ytHO1rEDbzov8n0QJVgU0P9+vpeSwrcLvZgyNNhOXfuGv8Re7TvYw/DkcBYMY
-2UEMarleRtdV9B94IPZoqSui4p939tCdNg0NFfyj0rPSQ4s3Au9dIZ0x4lIjLt8=
-=T1Oq
------END PGP SIGNATURE-----
-
---+HdfuZ4tX+pUSv6/--
+Best regards,
+Krzysztof
