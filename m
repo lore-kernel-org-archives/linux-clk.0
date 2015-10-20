@@ -1,123 +1,63 @@
-Return-Path: <tomeu.vizoso@gmail.com>
-Return-Path: <tomeu.vizoso@gmail.com>
-Sender: Tomeu Vizoso <tomeu.vizoso@gmail.com>
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Inki Dae <inki.dae@samsung.com>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:51062 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752263AbbJTMmN (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 20 Oct 2015 08:42:13 -0400
+Subject: Re: [PATCH 04/10] dt-bindings: video: add PCLK clock entry to
+ exynos5433-decon
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>
+References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
+ <1445332961-25419-5-git-send-email-a.hajda@samsung.com>
+ <5626327E.3050002@samsung.com>
+Cc: k.kozlowski.k@gmail.com,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
 	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kumar Gala <galak@codeaurora.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	linux-samsung-soc@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Kukjin Kim <kgene@kernel.org>,
 	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 1/2] clk: samsung: exynos5250: Add DISP1 clocks
-Date: Thu, 15 Oct 2015 12:31:23 +0200
-Message-Id: <1444905084-22540-2-git-send-email-tomeu.vizoso@collabora.com>
-In-Reply-To: <1444905084-22540-1-git-send-email-tomeu.vizoso@collabora.com>
-References: <1444905084-22540-1-git-send-email-tomeu.vizoso@collabora.com>
+	Hyungwon Hwang <human.hwang@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Message-id: <56263691.1080804@samsung.com>
+Date: Tue, 20 Oct 2015 14:41:53 +0200
+MIME-version: 1.0
+In-reply-to: <5626327E.3050002@samsung.com>
+Content-type: text/plain; charset=iso-8859-2
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-When the DISP1 power domain is powered off, there's two clocks that need
-to be temporarily reparented to OSC, and back to their original parents
-when the domain is powered on again.
+On 10/20/2015 02:24 PM, Krzysztof Kozlowski wrote:
+> W dniu 20.10.2015 o 18:22, Andrzej Hajda pisze:
+>> DECON IP requires this clock to access configuration registers.
+>>
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> ---
+>>  Documentation/devicetree/bindings/video/exynos5433-decon.txt | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/video/exynos5433-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+>> index 377afbf..3dff78b 100644
+>> --- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+>> +++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+>> @@ -16,7 +16,7 @@ Required properties:
+>>  - clocks: must include clock specifiers corresponding to entries in the
+>>  	  clock-names property.
+>>  - clock-names: list of clock names sorted in the same order as the clocks
+>> -	       property. Must contain "aclk_decon", "aclk_smmu_decon0x",
+>> +	       property. Must contain "pclk", "aclk_decon", "aclk_smmu_decon0x",
+> I assume that old DTB wouldn't work at all, so there is no point in
+> maintaining ABI compatibility?
 
-We expose these two clocks in the DT bindings so that the DT node of the
-power domain can reference them.
+Yes, Exynos 5433 has not yet landed in mainline.
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
----
+Regards
+Andrzej
 
-Changes in v2:
-- Reuse mout_aclk200_p
-- Rename div_aclk300 as div_aclk300_disp
+>
+> Best regards,
+> Krzysztof
+>
+>
 
- drivers/clk/samsung/clk-exynos5250.c   | 14 +++++++++++++-
- include/dt-bindings/clock/exynos5250.h |  4 +++-
- 2 files changed, 16 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index 55b83c7ef878..5bebf8cb0d70 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -222,9 +222,13 @@ PNAME(mout_mpll_user_p)	= { "fin_pll", "mout_mpll" };
- PNAME(mout_bpll_user_p)	= { "fin_pll", "mout_bpll" };
- PNAME(mout_aclk166_p)	= { "mout_cpll", "mout_mpll_user" };
- PNAME(mout_aclk200_p)	= { "mout_mpll_user", "mout_bpll_user" };
-+PNAME(mout_aclk300_p)	= { "mout_aclk300_disp1_mid",
-+			    "mout_aclk300_disp1_mid1" };
- PNAME(mout_aclk400_p)	= { "mout_aclk400_g3d_mid", "mout_gpll" };
- PNAME(mout_aclk200_sub_p) = { "fin_pll", "div_aclk200" };
- PNAME(mout_aclk266_sub_p) = { "fin_pll", "div_aclk266" };
-+PNAME(mout_aclk300_sub_p) = { "fin_pll", "div_aclk300_disp" };
-+PNAME(mout_aclk300_disp1_mid1_p) = { "mout_vpll", "mout_cpll" };
- PNAME(mout_aclk333_sub_p) = { "fin_pll", "div_aclk333" };
- PNAME(mout_aclk400_isp_sub_p) = { "fin_pll", "div_aclk400_isp" };
- PNAME(mout_hdmi_p)	= { "div_hdmi_pixel", "sclk_hdmiphy" };
-@@ -303,9 +307,13 @@ static struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
- 	 */
- 	MUX(0, "mout_aclk166", mout_aclk166_p, SRC_TOP0, 8, 1),
- 	MUX(0, "mout_aclk200", mout_aclk200_p, SRC_TOP0, 12, 1),
-+	MUX(0, "mout_aclk300_disp1_mid", mout_aclk200_p, SRC_TOP0, 14, 1),
-+	MUX(0, "mout_aclk300", mout_aclk300_p, SRC_TOP0, 15, 1),
- 	MUX(0, "mout_aclk333", mout_aclk166_p, SRC_TOP0, 16, 1),
- 	MUX(0, "mout_aclk400_g3d_mid", mout_aclk200_p, SRC_TOP0, 20, 1),
- 
-+	MUX(0, "mout_aclk300_disp1_mid1", mout_aclk300_disp1_mid1_p, SRC_TOP1,
-+		8, 1),
- 	MUX(0, "mout_aclk400_isp", mout_aclk200_p, SRC_TOP1, 24, 1),
- 	MUX(0, "mout_aclk400_g3d", mout_aclk400_p, SRC_TOP1, 28, 1),
- 
-@@ -316,7 +324,10 @@ static struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
- 	MUX(0, "mout_bpll_user", mout_bpll_user_p, SRC_TOP2, 24, 1),
- 	MUX(CLK_MOUT_GPLL, "mout_gpll", mout_gpll_p, SRC_TOP2, 28, 1),
- 
--	MUX(0, "mout_aclk200_disp1_sub", mout_aclk200_sub_p, SRC_TOP3, 4, 1),
-+	MUX(CLK_MOUT_ACLK200_DISP1_SUB, "mout_aclk200_disp1_sub",
-+		mout_aclk200_sub_p, SRC_TOP3, 4, 1),
-+	MUX(CLK_MOUT_ACLK300_DISP1_SUB, "mout_aclk300_disp1_sub",
-+		mout_aclk300_sub_p, SRC_TOP3, 6, 1),
- 	MUX(0, "mout_aclk266_gscl_sub", mout_aclk266_sub_p, SRC_TOP3, 8, 1),
- 	MUX(0, "mout_aclk_266_isp_sub", mout_aclk266_sub_p, SRC_TOP3, 16, 1),
- 	MUX(0, "mout_aclk_400_isp_sub", mout_aclk400_isp_sub_p,
-@@ -392,6 +403,7 @@ static struct samsung_div_clock exynos5250_div_clks[] __initdata = {
- 	DIV(0, "div_aclk333", "mout_aclk333", DIV_TOP0, 20, 3),
- 	DIV(0, "div_aclk400_g3d", "mout_aclk400_g3d", DIV_TOP0,
- 							24, 3),
-+	DIV(0, "div_aclk300_disp", "mout_aclk300", DIV_TOP0, 28, 3),
- 
- 	DIV(0, "div_aclk400_isp", "mout_aclk400_isp", DIV_TOP1, 20, 3),
- 	DIV(0, "div_aclk66_pre", "mout_mpll_user", DIV_TOP1, 24, 3),
-diff --git a/include/dt-bindings/clock/exynos5250.h b/include/dt-bindings/clock/exynos5250.h
-index 8183d1c237d9..15508adcdfde 100644
---- a/include/dt-bindings/clock/exynos5250.h
-+++ b/include/dt-bindings/clock/exynos5250.h
-@@ -173,8 +173,10 @@
- /* mux clocks */
- #define CLK_MOUT_HDMI		1024
- #define CLK_MOUT_GPLL		1025
-+#define CLK_MOUT_ACLK200_DISP1_SUB	1026
-+#define CLK_MOUT_ACLK300_DISP1_SUB	1027
- 
- /* must be greater than maximal clock id */
--#define CLK_NR_CLKS		1026
-+#define CLK_NR_CLKS		1028
- 
- #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5250_H */
--- 
-2.5.0
