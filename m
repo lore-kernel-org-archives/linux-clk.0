@@ -1,76 +1,47 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1832656.BCXoHFFChX@avalon>
-References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be>
-	<CAMuHMdVhBipbf13o0jb3H6qmcewh6CCtq3=Hj-9nvgar+AYdFg@mail.gmail.com>
-	<CANqRtoS6QpWJY99aD8KyGHgySxqzzBPic-k_a-VcZE6LVFFRow@mail.gmail.com>
-	<1832656.BCXoHFFChX@avalon>
-Date: Fri, 23 Oct 2015 13:09:22 +0200
-Message-ID: <CAMuHMdW=bNeoXWMbw74HVT4rZGYq=HekW9a=ZfvhS3wpuG1hZg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/5] [RFC] clk: shmobile: Add new Renesas CPG/MSSR DT bindings
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>,
-	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:38215 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751657AbbJTJXb (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 20 Oct 2015 05:23:31 -0400
+From: Andrzej Hajda <a.hajda@samsung.com>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Hyungwon Hwang <human.hwang@samsung.com>
+Subject: [PATCH 08/10] drm/exynos/decon5433: remove duplicated initialization
+Date: Tue, 20 Oct 2015 11:22:39 +0200
+Message-id: <1445332961-25419-9-git-send-email-a.hajda@samsung.com>
+In-reply-to: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
+References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Laurent,
+Field .commit is already initialized few lines above.
 
-On Fri, Oct 23, 2015 at 1:05 PM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Wednesday 21 October 2015 01:01:03 Magnus Damm wrote:
->> On Tue, Oct 20, 2015 at 9:16 PM, Geert Uytterhoeven wrote:
->> > On Fri, Oct 16, 2015 at 2:49 PM, Geert Uytterhoeven wrote:
->> >> --- /dev/null
->> >> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
->> >> @@ -0,0 +1,71 @@
->> >> +* Renesas Clock Pulse Generator / Module Standby and Software Reset
->> >> +
->> >> +On Renesas ARM SoCs (SH/R-Mobile, R-Car, RZ), the CPG (Clock Pulse
->> >> Generator)
->> >> +and MSSR (Module Standby and Software Reset) blocks are intimately
->> >> connected,
->> >> +and share the same register block.
->> >> +
->> >> +They provide the following functionalities:
->> >> +  - The CPG block generates various core clocks,
->> >> +  - The MSSR block provides two functions:
->> >> +      1. Module Standby, providing a Clock Domain to control the clock
->> >> supply
->> >> +        to individual SoC devices,
->> >> +      2. Reset Control, to perform a software reset of individual SoC
->> >> devices.
->> >> +
->> >> +Required Properties:
->> >> +  - compatible: Must be one of:
->> >> +      - "renesas,r8a7791-cpg-mssr" for the r8a7791 SoC
->> >
->> > I'll drop the reference to "r8a7791", as we won't convert r8a7791 (yet).
->
-> I'm fine with supporting r8a7795 only in the initial patch set, but when do we
-> plan to convert r8a7791 ? I think it would be a good idea to validate these
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-That's a political question...
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index 265a77f..3c9aa4e 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -448,7 +448,6 @@ static struct exynos_drm_crtc_ops decon_crtc_ops = {
+ 	.commit			= decon_commit,
+ 	.enable_vblank		= decon_enable_vblank,
+ 	.disable_vblank		= decon_disable_vblank,
+-	.commit			= decon_commit,
+ 	.atomic_begin		= decon_atomic_begin,
+ 	.update_plane		= decon_update_plane,
+ 	.disable_plane		= decon_disable_plane,
+-- 
+1.9.1
 
-> bindings on r8a7791 before considering them as stable.
-
-I did the validation on both r8a7795/salvator-x and r8a7791/koelsch.
-Please try branch topic/cpg-mssr-v4 of renesas-drivers.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
