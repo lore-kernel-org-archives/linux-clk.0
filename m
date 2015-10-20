@@ -1,74 +1,101 @@
-Return-Path: <yorksun@freescale.com>
-Subject: Re: [Resend Patch v6] driver/clk/clk-si5338: Add common clock
- framework driver for si5338
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <20151010000948.GW26883@codeaurora.org>
- <562165C3.1090103@freescale.com> <20151016213139.GE16437@codeaurora.org>
- <56216E0D.4010709@freescale.com> <20151016230555.GE10182@codeaurora.org>
- <562553E4.30906@freescale.com> <20151019234348.GE19782@codeaurora.org>
- <CY1PR03MB14694C6FFC8BA80C08EB039ABE390@CY1PR03MB1469.namprd03.prod.outlook.com>
- <20151020003604.GF19782@codeaurora.org> <562598AE.2000600@freescale.com>
- <20151020174904.GG19782@codeaurora.org>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"pmarrecas@outlook.com" <pmarrecas@outlook.com>, Mike Turquette
-	<mturquette@baylibre.com>, Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>, Guenter Roeck <linux@roeck-us.net>,
-	"Andrey Filippov" <andrey@elphel.com>, Paul Bolle <pebolle@tiscali.nl>
-From: York Sun <yorksun@freescale.com>
-Message-ID: <5626DB8E.3040909@freescale.com>
-Date: Tue, 20 Oct 2015 17:25:50 -0700
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20151020174904.GG19782@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: yorksun@freescale.com
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20151020130004.20687.91058@quantum>
+References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be>
+	<1444999760-15750-6-git-send-email-geert+renesas@glider.be>
+	<20151020122448.20687.11926@quantum>
+	<CAMuHMdUT=fZKCOCdkn+=grZ0wYATghQhmbX-Y6WJ9+ViZ0cidA@mail.gmail.com>
+	<20151020130004.20687.91058@quantum>
+Date: Tue, 20 Oct 2015 15:07:31 +0200
+Message-ID: <CAMuHMdU8TqCpOskWXGPvwrejfEWSw8Fu4FjkWAKyTc0f_MuWzw@mail.gmail.com>
+Subject: Re: [PATCH v4 5/5] [RFC] clk: shmobile: r8a7795: Add new CPG/MSSR driver
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Stephen Boyd <sboyd@codeaurora.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>,
+	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Mike,
 
-
-On 10/20/2015 10:49 AM, Stephen Boyd wrote:
-> On 10/19, York Sun wrote:
+On Tue, Oct 20, 2015 at 3:00 PM, Michael Turquette
+<mturquette@baylibre.com> wrote:
+> Quoting Geert Uytterhoeven (2015-10-20 05:31:12)
+>> On Tue, Oct 20, 2015 at 2:24 PM, Michael Turquette
+>> <mturquette@baylibre.com> wrote:
+>> > Quoting Geert Uytterhoeven (2015-10-16 05:49:20)
+>> >> +static void __init r8a7795_cpg_mssr_init(struct device_node *np)
+>> >> +{
+>> >> +       struct regmap *regmap;
+>> >> +       u32 reg, cpg_mode;
+>> >> +
+>> >> +       regmap =3D syscon_regmap_lookup_by_phandle(np, "renesas,modem=
+r");
+>> >> +       if (IS_ERR(regmap) ||
+>> >> +           of_property_read_u32_index(np, "renesas,modemr", 1, &reg)=
+ ||
+>> >> +           regmap_read(regmap, reg, &cpg_mode)) {
+>> >> +               pr_err("%s: failed to parse renesas,modemr\n", np->fu=
+ll_name);
+>> >> +               return;
+>> >> +       }
+>> >> +
+>> >> +       cpg_pll_config =3D &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_=
+mode)];
+>> >> +       if (!cpg_pll_config->extal_div) {
+>> >> +               pr_err("%s: Prohibited setting (cpg_mode=3D0x%x)\n",
+>> >> +                      __func__, cpg_mode);
+>> >> +               return;
+>> >> +       }
+>> >> +
+>> >> +       cpg_mssr_probe(np, &r8a7795_cpg_mssr_info);
+>> >> +}
+>> >> +CLK_OF_DECLARE(r8a7795_cpg_mssr, "renesas,r8a7795-cpg-mssr",
+>> >> +              r8a7795_cpg_mssr_init);
+>> >
+>> > Is CLK_OF_DECLARE needed? Is it possible to make this a real
+>> > platform_driver =C3=A0 la drivers/clk/qcom/gcc-apq8084.c?
 >>
+>> I tried making it a real platform driver, but it failed: devices that ar=
+e
+>> part of the Clock Domain failed to get their clock (error -2, IIRC, whic=
+h is
+>> -ENOENT), and thus couldn't be instantiated.
+>> I didn't look deeper at that time.
 >>
->> On 10/19/2015 05:36 PM, Stephen Boyd wrote:
->>> On 10/20, York Sun wrote:
->>>>
->>>> You can see, when the fixed-rate clock is registered, the device id of si5338 is unknown yet. (I am using one 25MHz clock to feed multiple si5338, where maybe I should create multiple 25MHz clocks, but that's another discussion.)
->>>>
->>>> I hope I have made it clear.
->>>
->>> Yes. It would be great if we could modify the i2c framework to
->>> let us create an i2c device but not call device_register() until a later
->>> time. So something like this could be done in the platform
->>> driver:
->>>
->>> 	for (i = 0; i < NUM_SI5338_CHIPS; i++) {
->>> 	     adap = i2c_get_adapter(private->i2c_adp->nr + 1 + i);
->>> 	     private->i2c_client[i] = i2c_new_device_unregistered(adap,
->>> 	     				&si5338_info[i], i2c_si5338_addr);
->>> 	     clkdev_create(clk, NULL, dev_name(private->i2c_client[i]->dev));
->>> 	     device_register(private->i2c_client[i]->dev);
->>> 	}
->>>
->>> Then in the si5338 driver we call devm_clk_get(i2c->dev, NULL)
->>> and we get the xtal clock.
->>>
+>> [... reading code ...]
 >>
->> Then what do we do before we have this i2c_new_device_unregistered()? Does my
->> proposal make sense?
-> 
-> There's nothing to do before we make this new API. Make a patch
-> to add the new API, and then use it in the pcie driver. Your
-> proposal makes sense, but it isn't necessary or desirable.
-> 
+>> Aha, this may be caused by __of_clk_get_from_provider() returning
+>> hardcoded -ENOENT instead of propagating the error returned by
+>> __clk_create_clk()?
+>
+> Well the only other error thrown by __clk_create_clk is -ENOMEM, so I'm
+> not sure how that would help things.
 
-Stephen,
+Hmm, you're right.
 
-I am making progress on this direction, but need your guidance on one matter.
+> The bindings should go in for 4.4, but if the driver is slated for 4.5
+> then can you investigate this some more? Stephen and I are on a mission
+> to have _real_ clk drivers.
 
-When device tree is used, devm_clk_get() generates a pr_err if the clock doesn't
-exist. For si5338, it can have one/two/three/four parent clocks. Missing some
-clocks shouldn't be treated as an error. It works but the message is confusing
-and annoying. I am thinking to add flags to mark unused clocks when parsing
-device tree. Please let me know if it is a bad idea.
+Sure, I'll have a deeper look.
 
-York
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
