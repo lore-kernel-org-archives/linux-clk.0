@@ -1,86 +1,90 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Mon, 5 Oct 2015 11:44:24 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>, linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 5/5] clk: sunxi: mod1 clock support
-Message-ID: <20151005094424.GG2696@lukather>
-References: <1443512353-28073-1-git-send-email-maxime.ripard@free-electrons.com>
- <1443512353-28073-6-git-send-email-maxime.ripard@free-electrons.com>
- <20151002204555.GA12338@codeaurora.org>
+Return-Path: <broonie@sirena.org.uk>
+Date: Tue, 20 Oct 2015 16:36:12 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Rob Herring <robh@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>,
+	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	Linux USB List <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Message-ID: <20151020153612.GB32054@sirena.org.uk>
+References: <CAL_JsqJuu5_Osqi+X6M6UeRDZFQB+_8riYDF1gvsGayk5-4SFw@mail.gmail.com>
+ <Pine.LNX.4.44L0.1510201036290.1855-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="i3lJ51RuaGWuFYNw"
-In-Reply-To: <20151002204555.GA12338@codeaurora.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="yda//aIZIMrd7mir"
+In-Reply-To: <Pine.LNX.4.44L0.1510201036290.1855-100000@iolanthe.rowland.org>
+Subject: Re: [GIT PULL] On-demand device probing
 List-ID: <linux-clk.vger.kernel.org>
 
 
---i3lJ51RuaGWuFYNw
+--yda//aIZIMrd7mir
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 02, 2015 at 01:45:55PM -0700, Stephen Boyd wrote:
-> On 09/29, Maxime Ripard wrote:
-> > + * (at your option) any later version.
-> > + *
-> > + * This program is distributed in the hope that it will be useful,
-> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > + * GNU General Public License for more details.
-> > + */
-> > +
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/clkdev.h>
->=20
-> Is this include used?
+On Tue, Oct 20, 2015 at 10:40:03AM -0400, Alan Stern wrote:
 
-Fixed.
+> Furthermore, that applies only to devices that use synchronous suspend. =
+=20
+> Async suspend is becoming common, and there the only restrictions are=20
+> parent-child relations plus whatever explicit requirements that drivers=
+=20
+> impose by calling device_pm_wait_for_dev().
 
-> > +	if (!gate)
-> > +		goto err_free_mux;
-> > +
-> > +	of_property_read_string(node, "clock-output-names", &clk_name);
-> > +
-> > +	while (i < SUN4I_MOD1_MAX_PARENTS &&
-> > +	       (parents[i] =3D of_clk_get_parent_name(node, i)) !=3D NULL)
->=20
-> Can we use of_clk_parent_fill() here?
+Hrm, this is the first I'd noticed that feature though I see the initial
+commit dates from January.  It looks like most of the users are PCs at
+the minute but we should be using it more widely for embedded things,
+there's definitely some cases I'm aware of where it will allow us to
+remove some open coding.
 
-We can, I switched to it.
+It does seem like we want to be feeding dependency information we
+discover for probing way into the suspend dependencies...
 
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---i3lJ51RuaGWuFYNw
+--yda//aIZIMrd7mir
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Version: GnuPG v2
 
-iQIcBAEBAgAGBQJWEkZ4AAoJEBx+YmzsjxAgAAEP/iShQleVJFS/yYtkbfyhj1g5
-mapu2yNRa5pzqo1Pxwj211yLWmY0FkqCtFTiQMbOm+AG3FWXZROhYyvPK2XypPF4
-i7SjfYH1nf+376IJJedBc+GXEz9QCzCAYuiUAdnD4s1DlB6WrrHz8g+JkbdCTM5f
-P6Vzt/B/42uMomK8kHGEBA+U70TTiqr7HmZ1Jxs2qj+HQHdeMvzgMb9t4kMb4Htz
-ezK/ZsR9++poILSzZD/Y0PuUFCxQK9oHoZBfh+sDNdmyLL6rLiJjphEshZHfxNrS
-w2IDmDBm86T6a6a98nLCGa5MFPWsprwpER0zS+M+OweIhHtJkQCDR6NZS/aA4JNd
-wdFwzZZfdDHXeDKlSuLKekgzyy2VcguJ8W0XyNEM+zYiT3sXalu0M6vGG4z7TUx8
-B05GOnC5CXJK5vjniajepAykhaw3jIoOY2EMRrN/aIWWtod7Xroo94kpoRYx9on3
-IXFguupzTF9/1Xb2q4pft4PeWapqTtHg49b0AkBNRupDPfk7qKvccIEzYFRT2emA
-94uhdn/SAz8PL0id1h7KhXEI5SzBnykgg4YaSbdWeCLHiyr3q0TztacXilAuZBYc
-I05QRxxVTS0jF9ffV75KmLVcD4s5YQz3mqEtpghQPho9/x2zI0PIwd5Cc4QQ5NzV
-tNoKTVpy1kvkEzQa4Iud
-=oY+D
+iQEcBAEBCAAGBQJWJl9rAAoJECTWi3JdVIfQnkIH/2GzqyZNrVrsXXUVXs+4Shdt
+ktptYpVn9emNkSaj6aqYpyoVmHnvFpXnM5NLdQOURsDRCpkq5+b/yesGl7rqAqH/
+THvORSPwBV0dFdb9TpLYI6dfuOxDl8ufyiMUjxM5l17G636RfipKStJBK5UGHKBK
+8uGvTrUdX+9TpG5tNeC7BOjp/bGjrtKHaiyHbcBjrtUwO4kixDnVvD1qomuwIiIt
+RAHlPGdo4sO6IW0I5HurTI44EWxDxASqNYD4crMFdWgbo5J86QRgzkWJ7yh2d2wm
+P7eRo9qYZkqhKhMc2pKJdiZ7dTnM77cqd17uzOiNDfCRWsvCUP7+2QE2rcyDeZk=
+=XKiJ
 -----END PGP SIGNATURE-----
 
---i3lJ51RuaGWuFYNw--
+--yda//aIZIMrd7mir--
