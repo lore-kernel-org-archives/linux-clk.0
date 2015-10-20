@@ -1,115 +1,78 @@
-Return-Path: <zywang33@gmail.com>
-Return-Path: <zywang33@gmail.com>
-From: Chris Zhong <zyw@rock-chips.com>
-To: heiko@sntech.de,
-	linux-rockchip@lists.infradead.org
-Cc: Chris Zhong <zyw@rock-chips.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Thierry Reding <treding@nvidia.com>,
-	Takashi Iwai <tiwai@suse.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Kumar Gala <galak@codeaurora.org>,
-	dri-devel@lists.freedesktop.org,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Rob Herring <robh+dt@kernel.org>,
-	Antony Pavlov <antonynpavlov@gmail.com>,
-	David Airlie <airlied@linux.ie>,
-	Jeff Chen <cym@rock-chips.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	linux-clk@vger.kernel.org,
-	Alexandru M Stan <amstan@chromium.org>,
-	Sonny Rao <sonnyrao@chromium.org>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Arnaud Ebalard <arno@natisbad.org>,
-	Huang Lin <hl@rock-chips.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vincent Palatin <vpalatin@chromium.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Ajay Kumar <ajaykumar.rs@samsung.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Liu Ying <Ying.liu@freescale.com>,
-	Doug Anderson <dianders@chromium.org>,
-	linux-kernel@vger.kernel.org,
-	Mark Yao <mark.yao@rock-chips.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Roger Chen <roger.chen@rock-chips.com>
-Subject: [PATCH v2 00/13] Add mipi dsi support for rk3288
-Date: Sat, 31 Oct 2015 20:55:56 +0800
-Message-Id: <1446296170-3702-1-git-send-email-zyw@rock-chips.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:46489 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752826AbbJTJXc (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 20 Oct 2015 05:23:32 -0400
+From: Andrzej Hajda <a.hajda@samsung.com>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Hyungwon Hwang <human.hwang@samsung.com>
+Subject: [PATCH 09/10] dt-bindings: video: exynos5433-decon: add bindings for
+ DECON-TV
+Date: Tue, 20 Oct 2015 11:22:40 +0200
+Message-id: <1445332961-25419-10-git-send-email-a.hajda@samsung.com>
+In-reply-to: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
+References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The rk3288 MIPI DSI is a Synopsys DesignWare MIPI DSI host controller
-IP. This series adds support for a Synopsys DesignWare MIPI DSI host
-controller DRM bridge driver and a rockchip MIPI DSI specific DRM
-driver.
+DECON-TV(Display and Enhancement Controller for TV) is a variation
+of DECON IP. Its main purpose is to produce video stream for HDMI IP.
 
-This series also includes a DRM panel driver for BOE TV080WUM-NL0 panel.
-This panel only use the MIPI DSI video mode.
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ .../devicetree/bindings/video/exynos5433-decon.txt  | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
-The MIPI DSI feature is tested on rk3288 evb board, backport them to
-chrome os kernel v3.14, and it can display normally.
-
-This patchset is base on the patchset from Ying.liu@freescale.com.
-<http://www.spinics.net/lists/dri-devel/msg77181.html>
-
-
-Changes in v2:
-add the mipi clk id in a single patch
-add vendor prefix for boe
-As Thierry.Reding comment, add a documentation for this panel.
-
-Chris Zhong (11):
-  clk: rockchip: add id for mipidsi sclk on rk3288
-  clk: rockchip: add mipidsi clocks on rk3288
-  drm/rockchip: return a true clock rate to adjusted_mode
-  drm/bridge: Add Synopsys DesignWare MIPI DSI host controller driver
-  drm: rockchip: Support Synopsys DesignWare MIPI DSI host controller
-  Documentation: dt-bindings: Add bindings for rk3288 DW MIPI DSI driver
-  ARM: dts: rockchip: add rk3288 mipi_dsi nodes
-  of: add vendor prefix for boe
-  drm/panel: simple: Add support for BOE TV080WUM-NL0
-  drm/panel: simple: Add simple panel device tree binding
-  ARM: dts: rockchip: add support mipi panel tv080wum-nl0 for rk3288-evb
-
-Liu Ying (2):
-  drm/dsi: Add a helper to get bits per pixel of MIPI DSI pixel format
-  Documentation: dt-bindings: Add bindings for Synopsys DW MIPI DSI DRM
-    bridge driver
-
- .../devicetree/bindings/drm/bridge/dw_mipi_dsi.txt |   76 ++
- .../devicetree/bindings/panel/boe,tv080wum-nl0.txt |    7 +
- .../devicetree/bindings/vendor-prefixes.txt        |    1 +
- .../bindings/video/dw_mipi_dsi_rockchip.txt        |   56 ++
- arch/arm/boot/dts/rk3288-evb.dtsi                  |   20 +-
- arch/arm/boot/dts/rk3288.dtsi                      |   39 +
- drivers/clk/rockchip/clk-rk3288.c                  |    2 +-
- drivers/gpu/drm/bridge/Kconfig                     |    9 +
- drivers/gpu/drm/bridge/Makefile                    |    1 +
- drivers/gpu/drm/bridge/dw_mipi_dsi.c               | 1055 ++++++++++++++++++++
- drivers/gpu/drm/panel/panel-simple.c               |   33 +
- drivers/gpu/drm/rockchip/Kconfig                   |   10 +
- drivers/gpu/drm/rockchip/Makefile                  |    1 +
- drivers/gpu/drm/rockchip/dw_mipi_dsi_rockchip.c    |  249 +++++
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c        |    9 +
- include/drm/bridge/dw_mipi_dsi.h                   |   27 +
- include/drm/drm_mipi_dsi.h                         |   14 +
- include/dt-bindings/clock/rk3288-cru.h             |    1 +
- 18 files changed, 1608 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/drm/bridge/dw_mipi_dsi.txt
- create mode 100644 Documentation/devicetree/bindings/panel/boe,tv080wum-nl0.txt
- create mode 100644 Documentation/devicetree/bindings/video/dw_mipi_dsi_rockchip.txt
- create mode 100644 drivers/gpu/drm/bridge/dw_mipi_dsi.c
- create mode 100644 drivers/gpu/drm/rockchip/dw_mipi_dsi_rockchip.c
- create mode 100644 include/drm/bridge/dw_mipi_dsi.h
-
+diff --git a/Documentation/devicetree/bindings/video/exynos5433-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+index 3dff78b..2a88c8d 100644
+--- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
++++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+@@ -5,24 +5,27 @@ Exynos series of SoCs which transfers the image data from a video memory
+ buffer to an external LCD interface.
+ 
+ Required properties:
+-- compatible: value should be "samsung,exynos5433-decon";
++- compatible: value should be one of:
++	"samsung,exynos5433-decon", "samsung,exynos5433-decon-tv";
+ - reg: physical base address and length of the DECON registers set.
+-- interrupts: should contain a list of all DECON IP block interrupts in the
+-	      order: VSYNC, LCD_SYSTEM. The interrupt specifier format
+-	      depends on the interrupt controller used.
+-- interrupt-names: should contain the interrupt names: "vsync", "lcd_sys"
+-		   in the same order as they were listed in the interrupts
+-		   property.
++- interrupts: should contain interrupt specifier of VSYNC and optionally
++	      LCD_SYSTEM. The interrupt specifier format depends on
++	      the interrupt controller used.
++- interrupt-names: should contain the interrupt name "vsync" and optionally
++		   "lcd_sys" in the same order as they were listed in
++		   the interrupts property.
+ - clocks: must include clock specifiers corresponding to entries in the
+ 	  clock-names property.
+ - clock-names: list of clock names sorted in the same order as the clocks
+ 	       property. Must contain "pclk", "aclk_decon", "aclk_smmu_decon0x",
+ 	       "aclk_xiu_decon0x", "pclk_smmu_decon0x", clk_decon_vclk",
+ 	       "sclk_decon_eclk"
++
++Optional properties:
+ - ports: contains a port which is connected to mic node. address-cells and
+-	 size-cells must 1 and 0, respectively.
++	 size-cells must be 1 and 0, respectively.
+ - port: contains an endpoint node which is connected to the endpoint in the mic
+-	node. The reg value muset be 0.
++	node. The reg value must be 0.
+ - i80-if-timings: specify whether the panel which is connected to decon uses
+ 		  i80 lcd interface or mipi video interface. This node contains
+ 		  no timing information as that of fimd does. Because there is
 -- 
-2.6.2
+1.9.1
+
