@@ -1,122 +1,137 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v1 1/2] clk: samsung: exynos5250: Add DISP1 clocks
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-kernel@vger.kernel.org
-References: <1444819457-27519-1-git-send-email-tomeu.vizoso@collabora.com>
- <1444819457-27519-2-git-send-email-tomeu.vizoso@collabora.com>
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>,
- Javier Martinez Canillas <javier@osg.samsung.com>,
- Seung-Woo Kim <sw0312.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>,
- Joonyoung Shim <jy0922.shim@samsung.com>, devicetree@vger.kernel.org,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kumar Gala <galak@codeaurora.org>,
- Ian Campbell <ijc+devicetree@hellion.org.uk>,
- linux-samsung-soc@vger.kernel.org,
- Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Moll <pawel.moll@arm.com>,
- Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <561F034F.8000607@samsung.com>
-Date: Thu, 15 Oct 2015 10:37:19 +0900
-MIME-version: 1.0
-In-reply-to: <1444819457-27519-2-git-send-email-tomeu.vizoso@collabora.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-sunxi@googlegroups.com,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v6 5/5] clk: sunxi: mod1 clock support
+Date: Tue, 20 Oct 2015 09:36:49 +0200
+Message-Id: <1445326609-6314-6-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1445326609-6314-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1445326609-6314-1-git-send-email-maxime.ripard@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 14.10.2015 19:44, Tomeu Vizoso wrote:
-> When the DISP1 power domain is powered off, there's two clocks that need
-> to be temporarily reparented to OSC, and back to their original parents
-> when the domain is powered on again.
-> 
-> We expose these two clocks in the DT bindings so that the DT node of the
-> power domain can reference them.
-> 
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> ---
-> 
->  drivers/clk/samsung/clk-exynos5250.c   | 16 +++++++++++++++-
->  include/dt-bindings/clock/exynos5250.h |  4 +++-
->  2 files changed, 18 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-> index 55b83c7ef878..918e40fa6aa1 100644
-> --- a/drivers/clk/samsung/clk-exynos5250.c
-> +++ b/drivers/clk/samsung/clk-exynos5250.c
-> @@ -222,9 +222,14 @@ PNAME(mout_mpll_user_p)	= { "fin_pll", "mout_mpll" };
->  PNAME(mout_bpll_user_p)	= { "fin_pll", "mout_bpll" };
->  PNAME(mout_aclk166_p)	= { "mout_cpll", "mout_mpll_user" };
->  PNAME(mout_aclk200_p)	= { "mout_mpll_user", "mout_bpll_user" };
-> +PNAME(mout_aclk300_p)	= { "mout_aclk300_disp1_mid",
-> +			    "mout_aclk300_disp1_mid1" };
->  PNAME(mout_aclk400_p)	= { "mout_aclk400_g3d_mid", "mout_gpll" };
->  PNAME(mout_aclk200_sub_p) = { "fin_pll", "div_aclk200" };
->  PNAME(mout_aclk266_sub_p) = { "fin_pll", "div_aclk266" };
-> +PNAME(mout_aclk300_sub_p) = { "fin_pll", "div_aclk300" };
-> +PNAME(mout_aclk300_disp1_mid_p) = { "mout_mpll_user", "mout_bpll_user" };
+From: Emilio López <emilio@elopez.com.ar>
 
-There is no need for that, just use existing mout_aclk200_p.
+The module 1 type of clocks consist of a gate and a mux and are used on
+the audio blocks to mux and gate the PLL2 outputs for AC97, IIS or
+SPDIF. This commit adds support for them on the sunxi clock driver.
 
-> +PNAME(mout_aclk300_disp1_mid1_p) = { "mout_vpll", "mout_cpll" };
->  PNAME(mout_aclk333_sub_p) = { "fin_pll", "div_aclk333" };
->  PNAME(mout_aclk400_isp_sub_p) = { "fin_pll", "div_aclk400_isp" };
->  PNAME(mout_hdmi_p)	= { "div_hdmi_pixel", "sclk_hdmiphy" };
-> @@ -303,9 +308,14 @@ static struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
->  	 */
->  	MUX(0, "mout_aclk166", mout_aclk166_p, SRC_TOP0, 8, 1),
->  	MUX(0, "mout_aclk200", mout_aclk200_p, SRC_TOP0, 12, 1),
-> +	MUX(0, "mout_aclk300_disp1_mid", mout_aclk300_disp1_mid_p, SRC_TOP0,
-> +		14, 1),
-> +	MUX(0, "mout_aclk300", mout_aclk300_p, SRC_TOP0, 15, 1),
->  	MUX(0, "mout_aclk333", mout_aclk166_p, SRC_TOP0, 16, 1),
->  	MUX(0, "mout_aclk400_g3d_mid", mout_aclk200_p, SRC_TOP0, 20, 1),
->  
-> +	MUX(0, "mout_aclk300_disp1_mid1", mout_aclk300_disp1_mid1_p, SRC_TOP1,
-> +		8, 1),
->  	MUX(0, "mout_aclk400_isp", mout_aclk200_p, SRC_TOP1, 24, 1),
->  	MUX(0, "mout_aclk400_g3d", mout_aclk400_p, SRC_TOP1, 28, 1),
->  
-> @@ -316,7 +326,10 @@ static struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
->  	MUX(0, "mout_bpll_user", mout_bpll_user_p, SRC_TOP2, 24, 1),
->  	MUX(CLK_MOUT_GPLL, "mout_gpll", mout_gpll_p, SRC_TOP2, 28, 1),
->  
-> -	MUX(0, "mout_aclk200_disp1_sub", mout_aclk200_sub_p, SRC_TOP3, 4, 1),
-> +	MUX(CLK_MOUT_ACLK200_DISP1_SUB, "mout_aclk200_disp1_sub",
-> +		mout_aclk200_sub_p, SRC_TOP3, 4, 1),
-> +	MUX(CLK_MOUT_ACLK300_DISP1_SUB, "mout_aclk300_disp1_sub",
-> +		mout_aclk300_sub_p, SRC_TOP3, 6, 1),
->  	MUX(0, "mout_aclk266_gscl_sub", mout_aclk266_sub_p, SRC_TOP3, 8, 1),
->  	MUX(0, "mout_aclk_266_isp_sub", mout_aclk266_sub_p, SRC_TOP3, 16, 1),
->  	MUX(0, "mout_aclk_400_isp_sub", mout_aclk400_isp_sub_p,
-> @@ -392,6 +405,7 @@ static struct samsung_div_clock exynos5250_div_clks[] __initdata = {
->  	DIV(0, "div_aclk333", "mout_aclk333", DIV_TOP0, 20, 3),
->  	DIV(0, "div_aclk400_g3d", "mout_aclk400_g3d", DIV_TOP0,
->  							24, 3),
-> +	DIV(0, "div_aclk300", "mout_aclk300", DIV_TOP0, 28, 3),
+Signed-off-by: Emilio López <emilio@elopez.com.ar>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi/Makefile       |  1 +
+ drivers/clk/sunxi/clk-a10-mod1.c | 81 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 82 insertions(+)
+ create mode 100644 drivers/clk/sunxi/clk-a10-mod1.c
 
-Maybe use name "div_aclk300_disp"? There is similar clock for GSCALER,
-so the div_aclk300 would be too generic.
-
-Best regards,
-Krzysztof
-
->  
->  	DIV(0, "div_aclk400_isp", "mout_aclk400_isp", DIV_TOP1, 20, 3),
->  	DIV(0, "div_aclk66_pre", "mout_mpll_user", DIV_TOP1, 24, 3),
-> diff --git a/include/dt-bindings/clock/exynos5250.h b/include/dt-bindings/clock/exynos5250.h
-> index 8183d1c237d9..15508adcdfde 100644
-> --- a/include/dt-bindings/clock/exynos5250.h
-> +++ b/include/dt-bindings/clock/exynos5250.h
-> @@ -173,8 +173,10 @@
->  /* mux clocks */
->  #define CLK_MOUT_HDMI		1024
->  #define CLK_MOUT_GPLL		1025
-> +#define CLK_MOUT_ACLK200_DISP1_SUB	1026
-> +#define CLK_MOUT_ACLK300_DISP1_SUB	1027
->  
->  /* must be greater than maximal clock id */
-> -#define CLK_NR_CLKS		1026
-> +#define CLK_NR_CLKS		1028
->  
->  #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5250_H */
-> 
+diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+index 70a449a419e6..cb4c299214ce 100644
+--- a/drivers/clk/sunxi/Makefile
++++ b/drivers/clk/sunxi/Makefile
+@@ -5,6 +5,7 @@
+ obj-y += clk-sunxi.o clk-factors.o
+ obj-y += clk-a10-codec.o
+ obj-y += clk-a10-hosc.o
++obj-y += clk-a10-mod1.o
+ obj-y += clk-a10-pll2.o
+ obj-y += clk-a20-gmac.o
+ obj-y += clk-mod0.o
+diff --git a/drivers/clk/sunxi/clk-a10-mod1.c b/drivers/clk/sunxi/clk-a10-mod1.c
+new file mode 100644
+index 000000000000..e9d870de165c
+--- /dev/null
++++ b/drivers/clk/sunxi/clk-a10-mod1.c
+@@ -0,0 +1,81 @@
++/*
++ * Copyright 2013 Emilio López
++ *
++ * Emilio López <emilio@elopez.com.ar>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/slab.h>
++
++static DEFINE_SPINLOCK(mod1_lock);
++
++#define SUN4I_MOD1_ENABLE	31
++#define SUN4I_MOD1_MUX		16
++#define SUN4I_MOD1_MUX_WIDTH	2
++#define SUN4I_MOD1_MAX_PARENTS	4
++
++static void __init sun4i_mod1_clk_setup(struct device_node *node)
++{
++	struct clk *clk;
++	struct clk_mux *mux;
++	struct clk_gate *gate;
++	const char *parents[4];
++	const char *clk_name = node->name;
++	void __iomem *reg;
++	int i;
++
++	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
++	if (IS_ERR(reg))
++		return;
++
++	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
++	if (!mux)
++		goto err_unmap;
++
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		goto err_free_mux;
++
++	of_property_read_string(node, "clock-output-names", &clk_name);
++	i = of_clk_parent_fill(node, parents, SUN4I_MOD1_MAX_PARENTS);
++
++	gate->reg = reg;
++	gate->bit_idx = SUN4I_MOD1_ENABLE;
++	gate->lock = &mod1_lock;
++	mux->reg = reg;
++	mux->shift = SUN4I_MOD1_MUX;
++	mux->mask = BIT(SUN4I_MOD1_MUX_WIDTH) - 1;
++	mux->lock = &mod1_lock;
++
++	clk = clk_register_composite(NULL, clk_name, parents, i,
++				     &mux->hw, &clk_mux_ops,
++				     NULL, NULL,
++				     &gate->hw, &clk_gate_ops, 0);
++	if (IS_ERR(clk))
++		goto err_free_gate;
++
++	of_clk_add_provider(node, of_clk_src_simple_get, clk);
++
++	return;
++
++err_free_gate:
++	kfree(gate);
++err_free_mux:
++	kfree(mux);
++err_unmap:
++	iounmap(reg);
++}
++CLK_OF_DECLARE(sun4i_mod1, "allwinner,sun4i-a10-mod1-clk",
++	       sun4i_mod1_clk_setup);
+-- 
+2.6.2
