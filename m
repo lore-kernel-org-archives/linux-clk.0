@@ -1,317 +1,156 @@
-Return-Path: <alim.akhtar@samsung.com>
-From: Alim Akhtar <alim.akhtar@samsung.com>
-To: lee.jones@linaro.org, broonie@kernel.org
-Cc: k.kozlowski@samsung.com, mturquette@baylibre.com,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org,
- Thomas Abraham <thomas.ab@samsung.com>
-Subject: [PATCH v2 2/5] mfd: sec: Add support for S2MPS15 PMIC
-Date: Mon, 26 Oct 2015 16:06:40 +0530
-Message-id: <1445855803-26973-3-git-send-email-alim.akhtar@samsung.com>
-In-reply-to: <1445855803-26973-1-git-send-email-alim.akhtar@samsung.com>
-References: <1445855803-26973-1-git-send-email-alim.akhtar@samsung.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Geert Uytterhoeven <geert@linux-m68k.org>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <CAMuHMdX8Fq3AfxuZMLe4-CYFzrDiQcwnREQhX5fSGXzYNSkKsA@mail.gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk" <linux-clk@vger.kernel.org>,
+ "Stephen Boyd" <sboyd@codeaurora.org>, "Lee Jones" <lee.jones@linaro.org>,
+ "Maxime Ripard" <maxime.ripard@free-electrons.com>,
+ "Sascha Hauer" <s.hauer@pengutronix.de>, "Sekhar Nori" <nsekhar@ti.com>,
+ "Kevin Hilman" <khilman@kernel.org>,
+ "Santosh Shilimkar" <ssantosh@kernel.org>,
+ "Tony Lindgren" <tony@atomide.com>,
+ "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "Linux-sh list" <linux-sh@vger.kernel.org>,
+ "Linux PM list" <linux-pm@vger.kernel.org>
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+ <1438974570-20812-3-git-send-email-mturquette@baylibre.com>
+ <CAMuHMdX8Fq3AfxuZMLe4-CYFzrDiQcwnREQhX5fSGXzYNSkKsA@mail.gmail.com>
+Message-ID: <20151020124000.20687.60752@quantum>
+Subject: Re: [PATCH RFC RFT 2/3] clk: clk_put WARNs if user has not disabled clk
+Date: Tue, 20 Oct 2015 05:40:00 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Thomas Abraham <thomas.ab@samsung.com>
+Hi Geert,
 
-Add support for S2MPS15 PMIC which is similar to S2MPS11 PMIC. The S2MPS15
-PMIC supports 27 LDO regulators, 10 buck regulators, RTC, three 32.768KHz
-clock outputs and battery charger. This patch adds initial support for
-LDO and buck regulators of S2MPS15 device.
+Quoting Geert Uytterhoeven (2015-09-30 08:38:46)
+> Hi Mike,
+> =
 
-Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-[Alim: Added s2mps15_devs like rtc and clk and related changes]
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/mfd/sec-core.c              |   31 +++++++
- drivers/mfd/sec-irq.c               |    8 ++
- include/linux/mfd/samsung/core.h    |    1 +
- include/linux/mfd/samsung/s2mps15.h |  161 +++++++++++++++++++++++++++++++++++
- 4 files changed, 201 insertions(+)
- create mode 100644 include/linux/mfd/samsung/s2mps15.h
+> On Fri, Aug 7, 2015 at 9:09 PM, Michael Turquette
+> <mturquette@baylibre.com> wrote:
+> > From the clk_put kerneldoc in include/linux/clk.h:
+> >
+> > """
+> > Note: drivers must ensure that all clk_enable calls made on this clock
+> > source are balanced by clk_disable calls prior to calling this function.
+> > """
+> >
+> > The common clock framework implementation of the clk.h api has per-user
+> > reference counts for calls to clk_prepare and clk_disable. As such it
+> > can enforce the requirement to properly call clk_disable and
+> > clk_unprepare before calling clk_put.
+> >
+> > Because this requirement is probably violated in many places, this patch
+> > starts with a simple warning. Once offending code has been fixed this
+> > check could additionally release the reference counts automatically.
+> >
+> > Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+> > ---
+> >  drivers/clk/clk.c | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> >
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index 72feee9..6ec0f77 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -2764,6 +2764,14 @@ void __clk_put(struct clk *clk)
+> >             clk->max_rate < clk->core->req_rate)
+> >                 clk_core_set_rate_nolock(clk->core, clk->core->req_rate=
+);
+> >
+> > +       /*
+> > +        * before calling clk_put, all calls to clk_prepare and clk_ena=
+ble from
+> > +        * a given user must be balanced with calls to clk_disable and
+> > +        * clk_unprepare by that same user
+> > +        */
+> > +       WARN_ON(clk->prepare_count);
+> > +       WARN_ON(clk->enable_count);
+> =
 
-diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-index 2626fc0b5b8c..db3d4d4ff805 100644
---- a/drivers/mfd/sec-core.c
-+++ b/drivers/mfd/sec-core.c
-@@ -29,6 +29,7 @@
- #include <linux/mfd/samsung/s2mps11.h>
- #include <linux/mfd/samsung/s2mps13.h>
- #include <linux/mfd/samsung/s2mps14.h>
-+#include <linux/mfd/samsung/s2mps15.h>
- #include <linux/mfd/samsung/s2mpu02.h>
- #include <linux/mfd/samsung/s5m8763.h>
- #include <linux/mfd/samsung/s5m8767.h>
-@@ -96,6 +97,17 @@ static const struct mfd_cell s2mps14_devs[] = {
- 	}
- };
- 
-+static const struct mfd_cell s2mps15_devs[] = {
-+	{
-+		.name = "s2mps15-pmic",
-+	}, {
-+		.name = "s2mps15-rtc",
-+	}, {
-+		.name = "s2mps15-clk",
-+		.of_compatible = "samsung,s2mps15-clk",
-+	},
-+};
-+
- static const struct mfd_cell s2mpa01_devs[] = {
- 	{
- 		.name = "s2mpa01-pmic",
-@@ -125,6 +137,9 @@ static const struct of_device_id sec_dt_match[] = {
- 		.compatible = "samsung,s2mps14-pmic",
- 		.data = (void *)S2MPS14X,
- 	}, {
-+		.compatible = "samsung,s2mps15-pmic",
-+		.data = (void *)S2MPS15X,
-+	}, {
- 		.compatible = "samsung,s2mpa01-pmic",
- 		.data = (void *)S2MPA01,
- 	}, {
-@@ -226,6 +241,15 @@ static const struct regmap_config s2mps14_regmap_config = {
- 	.cache_type = REGCACHE_FLAT,
- };
- 
-+static const struct regmap_config s2mps15_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+
-+	.max_register = S2MPS15_REG_LDODSCH4,
-+	.volatile_reg = s2mps11_volatile,
-+	.cache_type = REGCACHE_FLAT,
-+};
-+
- static const struct regmap_config s2mpu02_regmap_config = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
-@@ -387,6 +411,9 @@ static int sec_pmic_probe(struct i2c_client *i2c,
- 	case S2MPS14X:
- 		regmap = &s2mps14_regmap_config;
- 		break;
-+	case S2MPS15X:
-+		regmap = &s2mps15_regmap_config;
-+		break;
- 	case S5M8763X:
- 		regmap = &s5m8763_regmap_config;
- 		break;
-@@ -445,6 +472,10 @@ static int sec_pmic_probe(struct i2c_client *i2c,
- 		sec_devs = s2mps14_devs;
- 		num_sec_devs = ARRAY_SIZE(s2mps14_devs);
- 		break;
-+	case S2MPS15X:
-+		sec_devs = s2mps15_devs;
-+		num_sec_devs = ARRAY_SIZE(s2mps15_devs);
-+		break;
- 	case S2MPU02:
- 		sec_devs = s2mpu02_devs;
- 		num_sec_devs = ARRAY_SIZE(s2mpu02_devs);
-diff --git a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c
-index 806fa8dbb22d..d77de431cc50 100644
---- a/drivers/mfd/sec-irq.c
-+++ b/drivers/mfd/sec-irq.c
-@@ -407,6 +407,11 @@ static const struct regmap_irq_chip s2mps14_irq_chip = {
- 	S2MPS1X_IRQ_CHIP_COMMON_DATA,
- };
- 
-+static const struct regmap_irq_chip s2mps15_irq_chip = {
-+	.name = "s2mps15",
-+	S2MPS1X_IRQ_CHIP_COMMON_DATA,
-+};
-+
- static const struct regmap_irq_chip s2mpu02_irq_chip = {
- 	.name = "s2mpu02",
- 	.irqs = s2mpu02_irqs,
-@@ -466,6 +471,9 @@ int sec_irq_init(struct sec_pmic_dev *sec_pmic)
- 	case S2MPS14X:
- 		sec_irq_chip = &s2mps14_irq_chip;
- 		break;
-+	case S2MPS15X:
-+		sec_irq_chip = &s2mps15_irq_chip;
-+		break;
- 	case S2MPU02:
- 		sec_irq_chip = &s2mpu02_irq_chip;
- 		break;
-diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
-index a06098639399..6bc4bcd488ac 100644
---- a/include/linux/mfd/samsung/core.h
-+++ b/include/linux/mfd/samsung/core.h
-@@ -44,6 +44,7 @@ enum sec_device_type {
- 	S2MPS11X,
- 	S2MPS13X,
- 	S2MPS14X,
-+	S2MPS15X,
- 	S2MPU02,
- };
- 
-diff --git a/include/linux/mfd/samsung/s2mps15.h b/include/linux/mfd/samsung/s2mps15.h
-new file mode 100644
-index 000000000000..7443af6a4bba
---- /dev/null
-+++ b/include/linux/mfd/samsung/s2mps15.h
-@@ -0,0 +1,161 @@
-+/*
-+ * s2mps15.h
-+ *
-+ * Copyright (c) 2015 Samsung Electronics Co., Ltd
-+ *              http://www.samsung.com
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ */
-+
-+#ifndef __LINUX_MFD_S2MPS15_H
-+#define __LINUX_MFD_S2MPS15_H
-+
-+/* S2MPS15 registers */
-+enum s2mps15_reg {
-+	S2MPS15_REG_ID,
-+	S2MPS15_REG_INT1,
-+	S2MPS15_REG_INT2,
-+	S2MPS15_REG_INT3,
-+	S2MPS15_REG_INT1M,
-+	S2MPS15_REG_INT2M,
-+	S2MPS15_REG_INT3M,
-+	S2MPS15_REG_ST1,
-+	S2MPS15_REG_ST2,
-+	S2MPS15_REG_PWRONSRC,
-+	S2MPS15_REG_OFFSRC,
-+	S2MPS15_REG_BU_CHG,
-+	S2MPS15_REG_RTC_BUF,
-+	S2MPS15_REG_CTRL1,
-+	S2MPS15_REG_CTRL2,
-+	S2MPS15_REG_RSVD1,
-+	S2MPS15_REG_RSVD2,
-+	S2MPS15_REG_RSVD3,
-+	S2MPS15_REG_RSVD4,
-+	S2MPS15_REG_RSVD5,
-+	S2MPS15_REG_RSVD6,
-+	S2MPS15_REG_CTRL3,
-+	S2MPS15_REG_RSVD7,
-+	S2MPS15_REG_RSVD8,
-+	S2MPS15_REG_RSVD9,
-+	S2MPS15_REG_B1CTRL1,
-+	S2MPS15_REG_B1CTRL2,
-+	S2MPS15_REG_B2CTRL1,
-+	S2MPS15_REG_B2CTRL2,
-+	S2MPS15_REG_B3CTRL1,
-+	S2MPS15_REG_B3CTRL2,
-+	S2MPS15_REG_B4CTRL1,
-+	S2MPS15_REG_B4CTRL2,
-+	S2MPS15_REG_B5CTRL1,
-+	S2MPS15_REG_B5CTRL2,
-+	S2MPS15_REG_B6CTRL1,
-+	S2MPS15_REG_B6CTRL2,
-+	S2MPS15_REG_B7CTRL1,
-+	S2MPS15_REG_B7CTRL2,
-+	S2MPS15_REG_B8CTRL1,
-+	S2MPS15_REG_B8CTRL2,
-+	S2MPS15_REG_B9CTRL1,
-+	S2MPS15_REG_B9CTRL2,
-+	S2MPS15_REG_B10CTRL1,
-+	S2MPS15_REG_B10CTRL2,
-+	S2MPS15_REG_BBCTRL1,
-+	S2MPS15_REG_BBCTRL2,
-+	S2MPS15_REG_BRAMP,
-+	S2MPS15_REG_LDODVS1,
-+	S2MPS15_REG_LDODVS2,
-+	S2MPS15_REG_LDODVS3,
-+	S2MPS15_REG_LDODVS4,
-+	S2MPS15_REG_L1CTRL,
-+	S2MPS15_REG_L2CTRL,
-+	S2MPS15_REG_L3CTRL,
-+	S2MPS15_REG_L4CTRL,
-+	S2MPS15_REG_L5CTRL,
-+	S2MPS15_REG_L6CTRL,
-+	S2MPS15_REG_L7CTRL,
-+	S2MPS15_REG_L8CTRL,
-+	S2MPS15_REG_L9CTRL,
-+	S2MPS15_REG_L10CTRL,
-+	S2MPS15_REG_L11CTRL,
-+	S2MPS15_REG_L12CTRL,
-+	S2MPS15_REG_L13CTRL,
-+	S2MPS15_REG_L14CTRL,
-+	S2MPS15_REG_L15CTRL,
-+	S2MPS15_REG_L16CTRL,
-+	S2MPS15_REG_L17CTRL,
-+	S2MPS15_REG_L18CTRL,
-+	S2MPS15_REG_L19CTRL,
-+	S2MPS15_REG_L20CTRL,
-+	S2MPS15_REG_L21CTRL,
-+	S2MPS15_REG_L22CTRL,
-+	S2MPS15_REG_L23CTRL,
-+	S2MPS15_REG_L24CTRL,
-+	S2MPS15_REG_L25CTRL,
-+	S2MPS15_REG_L26CTRL,
-+	S2MPS15_REG_L27CTRL,
-+	S2MPS15_REG_LDODSCH1,
-+	S2MPS15_REG_LDODSCH2,
-+	S2MPS15_REG_LDODSCH3,
-+	S2MPS15_REG_LDODSCH4,
-+};
-+
-+/* S2MPS15 regulator ids */
-+enum s2mps15_regulators {
-+	S2MPS15_LDO1,
-+	S2MPS15_LDO2,
-+	S2MPS15_LDO3,
-+	S2MPS15_LDO4,
-+	S2MPS15_LDO5,
-+	S2MPS15_LDO6,
-+	S2MPS15_LDO7,
-+	S2MPS15_LDO8,
-+	S2MPS15_LDO9,
-+	S2MPS15_LDO10,
-+	S2MPS15_LDO11,
-+	S2MPS15_LDO12,
-+	S2MPS15_LDO13,
-+	S2MPS15_LDO14,
-+	S2MPS15_LDO15,
-+	S2MPS15_LDO16,
-+	S2MPS15_LDO17,
-+	S2MPS15_LDO18,
-+	S2MPS15_LDO19,
-+	S2MPS15_LDO20,
-+	S2MPS15_LDO21,
-+	S2MPS15_LDO22,
-+	S2MPS15_LDO23,
-+	S2MPS15_LDO24,
-+	S2MPS15_LDO25,
-+	S2MPS15_LDO26,
-+	S2MPS15_LDO27,
-+	S2MPS15_BUCK1,
-+	S2MPS15_BUCK2,
-+	S2MPS15_BUCK3,
-+	S2MPS15_BUCK4,
-+	S2MPS15_BUCK5,
-+	S2MPS15_BUCK6,
-+	S2MPS15_BUCK7,
-+	S2MPS15_BUCK8,
-+	S2MPS15_BUCK9,
-+	S2MPS15_BUCK10,
-+	S2MPS15_BUCK11,
-+	S2MPS15_REGULATOR_MAX,
-+};
-+
-+#define S2MPS15_LDO_VSEL_MASK		(0x3F)
-+#define S2MPS15_BUCK_VSEL_MASK		(0xFF)
-+
-+#define S2MPS15_ENABLE_SHIFT		(0x06)
-+#define S2MPS15_ENABLE_MASK		(0x03 << S2MPS15_ENABLE_SHIFT)
-+
-+#define S2MPS15_LDO_N_VOLTAGES		(S2MPS15_LDO_VSEL_MASK + 1)
-+#define S2MPS15_BUCK_N_VOLTAGES	(S2MPS15_BUCK_VSEL_MASK + 1)
-+
-+#endif /*  __LINUX_MFD_S2MPS15_H */
--- 
-1.7.10.4
+> These two WARN_ON()s are triggered a lot when using a legacy clock domain,
+> and CONFIG_PM=3Dn. Indeed, without Runtime PM, the idea is that the modul=
+e clocks
+> get enabled unconditionally, which violates the assumptions above.
+> =
+
+> Cfr. the CONFIG_PM=3Dn version of pm_clk_notify() in
+> drivers/base/power/clock_ops.c, which calls enable_clock():
+> =
+
+>     /**
+>      * enable_clock - Enable a device clock.
+>      * @dev: Device whose clock is to be enabled.
+>      * @con_id: Connection ID of the clock.
+>      */
+>     static void enable_clock(struct device *dev, const char *con_id)
+>     {
+>             struct clk *clk;
+> =
+
+>             clk =3D clk_get(dev, con_id);
+>             if (!IS_ERR(clk)) {
+>                     clk_prepare_enable(clk);
+>                     clk_put(clk);
+
+This is a violation of the clkdev api as defined in include/linux/clk.h:
+
+	/**
+	 * clk_put|------ "free" the clock source
+	 * @clk: clock source
+	 *
+	 * Note: drivers must ensure that all clk_enable calls made on this
+	 * clock source are balanced by clk_disable calls prior to calling
+	 * this function.
+
+So the WARN is doing its job and letting us know about incorrect use of
+the API.
+
+>                     dev_info(dev, "Runtime PM disabled, clock forced on.\=
+n");
+>             }
+>     }
+> =
+
+> I think this affects shmobile, keystone, davinci, omap1, and legacy sh.
+
+Why not keep the reference to the struct clk after get'ing it the first
+time?
+
+> =
+
+> Sorry for not noticing before, we usually build with CONFIG_PM=3Dy.
+> One more reason for making CONFIG_PM=3Dy mandatory on SoCs with clock dom=
+ains?
+
+I don't know about that, but it seems like a reason to fix the clkdev
+usage in the clock domain code.
+
+What do you think?
+
+Regards,
+Mike
+
+> =
+
+> Gr{oetje,eeting}s,
+> =
+
+>                         Geert
+> =
+
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+> =
+
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
