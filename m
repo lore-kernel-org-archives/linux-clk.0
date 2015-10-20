@@ -1,216 +1,85 @@
-Return-Path: <daniel@ffwll.ch>
-Return-Path: <daniel@ffwll.ch>
-Sender: Daniel Vetter <daniel.vetter@ffwll.ch>
-Date: Fri, 30 Oct 2015 15:52:17 +0100
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 00/19] drm: Add Allwinner A10 display engine support
-Message-ID: <20151030145217.GA16848@phenom.ffwll.local>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <yorksun@freescale.com>
+Subject: Re: [Resend Patch v6] driver/clk/clk-si5338: Add common clock
+ framework driver for si5338
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1444410574-28677-1-git-send-email-yorksun@freescale.com>
+ <20151010000948.GW26883@codeaurora.org> <562165C3.1090103@freescale.com>
+ <20151016213139.GE16437@codeaurora.org> <56216E0D.4010709@freescale.com>
+ <20151016230555.GE10182@codeaurora.org> <562553E4.30906@freescale.com>
+ <20151019234348.GE19782@codeaurora.org>
+ <CY1PR03MB14694C6FFC8BA80C08EB039ABE390@CY1PR03MB1469.namprd03.prod.outlook.com>
+ <20151020003604.GF19782@codeaurora.org>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"pmarrecas@outlook.com" <pmarrecas@outlook.com>, Mike Turquette
+	<mturquette@baylibre.com>, Sebastian Hesselbarth
+	<sebastian.hesselbarth@gmail.com>, Guenter Roeck <linux@roeck-us.net>,
+	"Andrey Filippov" <andrey@elphel.com>, Paul Bolle <pebolle@tiscali.nl>
+From: York Sun <yorksun@freescale.com>
+Message-ID: <562598AE.2000600@freescale.com>
+Date: Mon, 19 Oct 2015 18:28:14 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <20151020003604.GF19782@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: yorksun@freescale.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 30, 2015 at 03:20:46PM +0100, Maxime Ripard wrote:
-> Hi everyone,
-> 
-> The Allwinner SoCs (except for the very latest ones) all share the
-> same set of controllers, loosely coupled together to form the display
-> pipeline.
-> 
-> Depending on the SoC, the number of instances of the controller will
-> change (2 instances of each in the A10, only one in the A13, for
-> example), and the output availables will change too (HDMI, composite,
-> VGA on the A20, none of them on the A13).
-> 
-> On most featured SoCs, it looks like that:
-> 
->  +--------------------------------------------+
->  |                    RAM                     |
->  +--------------------------------------------+
->        |            |      |            |
->        v            |      |            v
->  +----------------+ |      | +----------------+
->  |    Frontend    | |      | |    Frontend    |
->  +----------------+ |      | +----------------+
->          |          |      |         |
->          v          |      |         v
->  +----------------+ |      | +----------------+
->  |    Backend     |<+      +>|    Backend     |
->  +----------------+          +----------------+
->          |                           |
->          v                           v
->  +----------------+          +----------------+---> LVDS
->  |      TCON      |          |      TCON      |---> RGB
->  +----------------+          +----------------+
->        |       +---+       +---+          |
->        |           |       |              |
->        v           v       v              v
->  +------------+  +------------+  +------------+---> VGA
->  | TV Encoder |  |    HDMI    |  | TV Encoder |---> Composite
->  +------------+  +------------+  +------------+
-> 
-> The current code only assumes that there is a single instance of all
-> the controllers. It also supports only the RGB and Composite
-> interfaces.
-> 
-> A few more things are missing though, and will be supported
-> eventually:
->   - Overscan support
->   - Asynchronous page flip
->   - Multiple plane support
->   - Composite / VGA Hotplug detection
->   - More outputs
->   - Support for several videos pipelines
-> 
-> And there's one big gotcha: thhe code to parse the mode from the
-> kernel commandline doesn't seem to support named modes. Since we
-> expose the various TV standards through named modes, it means that
-> there's no way to use a particular standard to display something
-> during the kernel boot. The default will always be used, in other
-> words, PAL.
 
-Simply not done yet.
 
-> A few more questions that are probably going to be raised during the
-> review:
->   - How do you associate private data to a mode, for example to deal
->     with the non-generic, driver-specific settings required to deal
->     with the various TV standards? drm_display_mode seems to have a
->     private field, but it isn't always preserved.
-
-Analog TV in general is a giant mess, and there's not really all that much
-of a standardized solution. I also don't have much clue at all about what
-needs to be tuned with analog TV. Probably the best would be to look at
-existing drivers with TV-out support and what kind of properties they
-support. Then standardize them (with relevant helper code in drm core) and
-use that. Additional flags on the mode, especially using the private stuff
-is kinda the deprecated non-atomic approach. If you need private data
-beyond the mode and any additional properties on the crtc (for derived
-state) then just subclass drm_crtc_state and put it there.
-
->   - How do you setup properties in the kernel command line? In order
->     to have a decent display during boot on relevant interfaces, you
->     probably want to setup the overscan beforehand. Overscan seems to
->     be handled through properties, and afaik, there's no way to set
->     that from the cmdline. Should we use a kernel parameter to set the
->     default value instead?
-
-One idea tossed around is to expose them to DT somehow and then just load
-a DT-blob to set them all. That would e.g. also allow to specify firmware
-blob paths to e.g. load the boot splash image (if uboot or similar haven't
-done that yet). I'm personally not sure how much use there is in exposing
-a generic drm property cmdline option ...
-
-What's needed for sure is some generic way to do one initial (atomic)
-modeset to hammer all these settings into the driver. That would be really
-useful to have, since currently that's tied to the fbdev emulation, which
-means if you don't have that it will be simply lost.
-
-Cheers, Daniel
-
+On 10/19/2015 05:36 PM, Stephen Boyd wrote:
+> On 10/20, York Sun wrote:
+>> Sorry for top posting. I am on outlook web.
+>>
+>> We have no problem with device tree. Let's put it aside.
+>>
+>> When device is not used, the platform data is used to hold the data, filled by a platform device before probing the clock. For my case, the platform device is a PCIe device. It is a multifunction device with I2C controller on it. The pseudo code looks like
+>>
+>> struct i2c_board_info si5338_info[NUM_SI5338_CHIPS] = {
+>>         {
+>>                 .type = "si5338",
+>>                 .platform_data = &si5338_pdata[0],
+>>         },
+>>         {
+>>                 .type = "si5338",
+>>                 .platform_data = &si5338_pdata[1],
+>>         },
+>>         {
+>>                 .type = "si5338",
+>>                 .platform_data = &si5338_pdata[2],
+>>         },
+>>         {
+>>                 .type = "si5338",
+>>                 .platform_data = &si5338_pdata[3],
+>>         },
+>> };
+>> clk = clk_register_fixed_rate(&pdev->dev, "ref25", NULL, CLK_IS_ROOT, 25000000);
+>> for (i = 0; i < NUM_SI5338_CHIPS; i++) {
+>>     si5338_pdata[i].clk_xtal = clk;
+>>     adap = i2c_get_adapter(private->i2c_adp->nr + 1 + i);
+>>     private->i2c_client[i] = i2c_new_probed_device(adap, &si5338_info[i], i2c_si5338_addr, NULL);
+>> }
+>>
+>> You can see, when the fixed-rate clock is registered, the device id of si5338 is unknown yet. (I am using one 25MHz clock to feed multiple si5338, where maybe I should create multiple 25MHz clocks, but that's another discussion.)
+>>
+>> I hope I have made it clear.
 > 
-> Thanks!
-> Maxime
+> Yes. It would be great if we could modify the i2c framework to
+> let us create an i2c device but not call device_register() until a later
+> time. So something like this could be done in the platform
+> driver:
 > 
-> Maxime Ripard (19):
->   clk: sunxi: Add display clock
->   clk: sunxi: Add PLL3 clock
->   clk: sunxi: Add TCON channel0 clock
->   clk: sunxi: Add TCON channel1 clock
->   clk: sunxi: add DRAM gates
->   clk: sunxi: Add Allwinner R8 AHB gates support
->   drm/panel: simple: Add timings for the Olimex LCD-OLinuXino-4.3TS
->   drm: Add Allwinner A10 Display Engine support
->   drm: sun4i: Add DT bindings documentation
->   drm: sun4i: Add RGB output
->   drm: sun4i: Add composite output
->   drm: sun4i: tv: Add PAL output standard
->   drm: sun4i: tv: Add NTSC output standard
->   ARM: sun5i: dt: Add pll3 and pll7 clocks
->   ARM: sun5i: dt: Add display and TCON clocks
->   ARM: sun5i: dt: Add DRAM gates
->   ARM: sun5i: dt: Add display blocks to the DTSI
->   ARM: sun5i: r8: Add AHB gates to the DTSI
->   ARM: sun5i: chip: Enable the TV Encoder
+> 	for (i = 0; i < NUM_SI5338_CHIPS; i++) {
+> 	     adap = i2c_get_adapter(private->i2c_adp->nr + 1 + i);
+> 	     private->i2c_client[i] = i2c_new_device_unregistered(adap,
+> 	     				&si5338_info[i], i2c_si5338_addr);
+> 	     clkdev_create(clk, NULL, dev_name(private->i2c_client[i]->dev));
+> 	     device_register(private->i2c_client[i]->dev);
+> 	}
 > 
->  .../devicetree/bindings/drm/sunxi/sun4i-drm.txt    | 122 ++++
->  arch/arm/boot/dts/sun5i-a10s.dtsi                  |   9 +-
->  arch/arm/boot/dts/sun5i-a13.dtsi                   |   3 +-
->  arch/arm/boot/dts/sun5i-r8.dtsi                    |  46 +-
->  arch/arm/boot/dts/sun5i.dtsi                       | 137 +++++
->  drivers/clk/sunxi/Makefile                         |   4 +
->  drivers/clk/sunxi/clk-simple-gates.c               |   4 +
->  drivers/clk/sunxi/clk-sun4i-display.c              | 199 +++++++
->  drivers/clk/sunxi/clk-sun4i-pll3.c                 |  84 +++
->  drivers/clk/sunxi/clk-sun4i-tcon-ch0.c             | 173 ++++++
->  drivers/clk/sunxi/clk-sun4i-tcon-ch1.c             | 167 ++++++
->  drivers/gpu/drm/Kconfig                            |   2 +
->  drivers/gpu/drm/Makefile                           |   3 +-
->  drivers/gpu/drm/panel/panel-simple.c               |  26 +
->  drivers/gpu/drm/sun4i/Kconfig                      |  14 +
->  drivers/gpu/drm/sun4i/Makefile                     |  11 +
->  drivers/gpu/drm/sun4i/sun4i_backend.c              | 271 +++++++++
->  drivers/gpu/drm/sun4i/sun4i_backend.h              | 159 ++++++
->  drivers/gpu/drm/sun4i/sun4i_crtc.c                 | 117 ++++
->  drivers/gpu/drm/sun4i/sun4i_crtc.h                 |  31 ++
->  drivers/gpu/drm/sun4i/sun4i_drv.c                  | 296 ++++++++++
->  drivers/gpu/drm/sun4i/sun4i_drv.h                  |  30 +
->  drivers/gpu/drm/sun4i/sun4i_framebuffer.c          |  54 ++
->  drivers/gpu/drm/sun4i/sun4i_framebuffer.h          |  19 +
->  drivers/gpu/drm/sun4i/sun4i_layer.c                | 111 ++++
->  drivers/gpu/drm/sun4i/sun4i_layer.h                |  30 +
->  drivers/gpu/drm/sun4i/sun4i_rgb.c                  | 243 ++++++++
->  drivers/gpu/drm/sun4i/sun4i_rgb.h                  |  18 +
->  drivers/gpu/drm/sun4i/sun4i_tcon.c                 | 478 ++++++++++++++++
->  drivers/gpu/drm/sun4i/sun4i_tcon.h                 | 182 ++++++
->  drivers/gpu/drm/sun4i/sun4i_tv.c                   | 619 +++++++++++++++++++++
->  drivers/gpu/drm/sun4i/sun4i_tv.h                   |  18 +
->  32 files changed, 3673 insertions(+), 7 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/drm/sunxi/sun4i-drm.txt
->  create mode 100644 drivers/clk/sunxi/clk-sun4i-display.c
->  create mode 100644 drivers/clk/sunxi/clk-sun4i-pll3.c
->  create mode 100644 drivers/clk/sunxi/clk-sun4i-tcon-ch0.c
->  create mode 100644 drivers/clk/sunxi/clk-sun4i-tcon-ch1.c
->  create mode 100644 drivers/gpu/drm/sun4i/Kconfig
->  create mode 100644 drivers/gpu/drm/sun4i/Makefile
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_backend.c
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_backend.h
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_crtc.c
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_crtc.h
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_drv.c
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_drv.h
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_framebuffer.c
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_framebuffer.h
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_layer.c
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_layer.h
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_rgb.c
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_rgb.h
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_tcon.c
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_tcon.h
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_tv.c
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_tv.h
-> 
-> -- 
-> 2.6.2
+> Then in the si5338 driver we call devm_clk_get(i2c->dev, NULL)
+> and we get the xtal clock.
 > 
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Then what do we do before we have this i2c_new_device_unregistered()? Does my
+proposal make sense?
+
+York
