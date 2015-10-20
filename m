@@ -1,179 +1,300 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bn1bon0147.outbound.protection.outlook.com ([157.56.111.147]:4411
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751010AbbJWTw6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Fri, 23 Oct 2015 15:52:58 -0400
-From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-To: <arnd@arndb.de>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
-	<linux-clk@vger.kernel.org>, <olof@lixom.net>
-CC: <bhupesh.linux@gmail.com>, <will.deacon@arm.com>,
-	<Catalin.Marinas@arm.com>, <bhupesh.sharma@freescale.com>,
-	<LeoLi@freescale.com>, <scottwood@freescale.com>,
-	<stuart.yoder@freescale.com>
-Subject: [PATCH v4 00/12] ARM64: Update support for FSL's LS2085A SoC
-Date: Sat, 24 Oct 2015 01:01:49 +0530
-Message-ID: <1445628721-10483-1-git-send-email-bhupesh.sharma@freescale.com>
+Return-Path: <rjw@rjwysocki.net>
+Return-Path: <rjw@rjwysocki.net>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Rob Herring <robh@kernel.org>
+Cc: David Woodhouse <dwmw2@infradead.org>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org, dmaengine@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>, Linux USB List <linux-usb@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Wed, 21 Oct 2015 01:34:10 +0200
+Message-ID: <4903022.NtioyRkmbB@vostro.rjw.lan>
+In-Reply-To: <CAL_JsqJuu5_Osqi+X6M6UeRDZFQB+_8riYDF1gvsGayk5-4SFw@mail.gmail.com>
+References: <561E1378.6000906@collabora.com> <4025469.zmyipZqCsP@vostro.rjw.lan> <CAL_JsqJuu5_Osqi+X6M6UeRDZFQB+_8riYDF1gvsGayk5-4SFw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This is the v4 of the patchset which updates the support for FSL's LS2085A SoC
-which is now being renamed to LS2080A (and is based on ARMv8 architecture).
+On Tuesday, October 20, 2015 09:15:01 AM Rob Herring wrote:
+> On Tue, Oct 20, 2015 at 2:56 AM, Rafael J. Wysocki <rjw@rjwysocki.net=
+> wrote:
+> > On Monday, October 19, 2015 05:58:40 PM Rob Herring wrote:
+> >> On Mon, Oct 19, 2015 at 4:40 PM, Rafael J. Wysocki <rjw@rjwysocki.=
+net> wrote:
+> >> > On Monday, October 19, 2015 10:58:25 AM Rob Herring wrote:
+> >> >> On Mon, Oct 19, 2015 at 10:29 AM, David Woodhouse <dwmw2@infrad=
+ead.org> wrote:
+> >> >> > On Mon, 2015-10-19 at 15:50 +0100, Mark Brown wrote:
+> >> >> >> > But the point I'm making is that we are working towards *f=
+ixing* that,
+> >> >> >> > and *not* using DT-specific code in places where we should=
+ be using the
+> >> >> >> > generic APIs.
+> >> >> >>
+> >> >> >> What is the plan for fixing things here?  It's not obvious (=
+at least to
+> >> >> >> me) that we don't want to have the subsystems having knowled=
+ge of how
+> >> >> >> they are bound to a specific firmware which is what you seem=
+ to imply
+> >> >> >> here.
+> >> >> >
+> >> >> > I don't know that there *is* a coherent plan here to address =
+it all.
+> >> >> >
+> >> >> > Certainly, we *will* need subsystems to have firmware-specifi=
+c
+> >> >> > knowledge in some cases. Take GPIO as an example; ACPI *has* =
+a way to
+> >> >> > describe GPIO, and properties which reference GPIO pins are i=
+ntended to
+> >> >> > work through that =E2=80=94 while in DT, properties which ref=
+erence GPIO pins
+> >> >> > will have different contents. They'll be compatible at the dr=
+iver
+> >> >> > level, in the sense that there's a call to get a given GPIO g=
+iven the
+> >> >> > property name, but the subsystems *will* be doing different t=
+hings
+> >> >> > behind the scenes.
+> >> >> >
+> >> >> > My plan, such as it is, is to go through the leaf-node driver=
+s which
+> >> >> > almost definitely *should* be firmware-agnostic, and convert =
+those. And
+> >> >> > then take stock of what we have left, and work out what, if a=
+nything,
+> >> >> > still needs to be done.
+> >> >>
+> >> >> Many cases are already agnostic in the drivers in terms of the =
+*_get()
+> >> >> functions. Some are DT specific, but probably because those sub=
+systems
+> >> >> are new and DT only. In any case, I don't think these 1 line ch=
+anges
+> >> >> do anything to make doing conversions here harder.
+> >> >>
+> >> >> >> It seems like we're going to have to refactor these bits of =
+code when
+> >> >> >> they get generalised anyway so I'm not sure that the additio=
+nal cost
+> >> >> >> here is that big.
+> >> >> >
+> >> >> > That's an acceptable answer =E2=80=94 "we're adding legacy co=
+de here but we
+> >> >> > know it's going to be refactored anyway". If that's true, all=
+ it takes
+> >> >> > is a note in the commit comment to that effect. That's differ=
+ent from
+> >> >> > having not thought about it :)
+> >> >>
+> >> >> Considering at one point we did create a fwnode based API, we d=
+id
+> >> >> think about it. Plus there was little input from ACPI folks as =
+to
+> >> >> whether the change was even useful for ACPI case.
+> >> >
+> >> > Well, sorry, but who was asking whom, specifically?
+> >>
+> >> You and linux-acpi have been copied on v2 and later of the entire
+> >> series I think.
+> >
+> > Yes, but it wasn't like a direct request, say "We need your input, =
+so can you
+> > please have a look and BTW we want this in 4.4, so please do it ASA=
+P".  In
+> > which case I'd prioritize that before other things I needed to take=
+ care of.
+>=20
+> Fair enough. Can you please review and comment on v7 of the series? W=
+e
+> can discuss at KS as well.
 
-Here is a description of what this patchset tries to achieve:
-(v3 can be viewed here: http://www.spinics.net/lists/arm-kernel/msg452747.html)
+I'll do that.
 
-  - Patch 1:
-    Freescale will be a supporting a host of ARMv8 based SoCs which
-    will be based on a similar overall SoC architecture. So, this patch
-    converts the existing infrastructure to use the generic convention
-    ARCH_LAYERSCAPE.
-    
-    	Changes since v3:
-	-----------------
-	No changes
+I'm in the middle of travel right now and speaking at a conference tomo=
+rrow,
+so I may not be able to get to that for a couple of days, but will do m=
+y best
+to do it as soon as I possibly can.
 
-  - Patch 2:
-    Freescale is renaming the LS2085A SoC to LS2080A - this patch handles the
-    same.
-    Further details of the LS2080a based platforms can be seen here:
-    http://www.freescale.com/products/arm-processors/qoriq-arm-processors/qoriq-ls2080a-40a-multicore-communications-processors:LS2080A?fsrch=1&sr=1&pageNum=1
-    
-	Changes since v3:
-	-----------------
-	No changes
+> >> > The underlying problem is present in ACPI too and we don't reall=
+y have a good
+> >> > solution for it.  We might benefit from a common one if it exist=
+ed.
+> >>
+> >> The problem for DT is we don't generically know what are the
+> >> dependencies at a core level. We could know some or most dependenc=
+ies
+> >> if phandles (links to other nodes) were typed, but they are not. I=
+f
+> >> the core had this information, we could simply control the device
+> >> creation to order probing. Instead, this information is encoded in=
+to
+> >> the bindings and binding parsing resides in the subsystems. That
+> >> parsing happens during probe of the client side and is done by the=
 
-  - Patch 3:
-    Adds DTS binding documentation for Freescale's LS2080A QDS and RDB boards
-    
-	Changes since v3:
-	-----------------
-	No changes
+> >> subsystems (for common bindings). Since we already do the parsing =
+at
+> >> this point, it is a convenient place to trigger the probe of the
+> >> dependency. Is ACPI going to be similar in this regard?
+> >
+> > It is similar in some ways.  For example, if a device's functionali=
+ty depends
+> > on an I2C resource (connection), the core doesn't know that at the =
+device
+> > creation time at least in some cases.  Same for GPIO, SPI, DMA engi=
+nes etc.
+>=20
+> So you will need to create devices, defer their probing and then prob=
+e
+> on demand as well unless you have other ideas how you would do it.
 
-  - Patch 4:
-    This patch moves the FSL board specific bindings out of 'powerpc/' folder
-    as the same board components can be used for ARM based SoCs as well.
-	
-	Changes since v3:
-	-----------------
-	No changes
+Right.
 
-  - Patch 5:
-    Updates PCIe devicetree binding documentation for LS2080A.
-	
-	Changes since v3:
-	-----------------
-	Minor rewording of commit log and making clock-related properties
-	optional in Designware PCIe controller bindings.
+> > There is a _DEP object in ACPI that can be used by firmware to tell=
+ the OS
+> > about those dependencies, but there's no way in the driver core to =
+use that
+> > information anyway today.
+>=20
+> I would think that the equivalent function for ACPI to of_device_prob=
+e
+> could process these if they are generic and you can associate the
+> dependency to a struct device.
 
-  - Patch 6:
-    Updates the GPIO devicetree binding documentation for LS2080A.
-	
-	Changes since v3:
-	-----------------
-	No changes
+Well, something along these lines probably.
 
-  - Patch 7:
-    Updates the DWC3 USB bindings to provide reference to generic USB
-    bindings.
-	
-	Changes since v3:
-	-----------------
-	No changes
+> >> Fundamentally, it is a question of probe devices when their
+> >> dependencies are present or drivers ensure their dependencies are
+> >> ready. IIRC, init systems went thru a similar debate for service
+> >> dependencies.
+> >
+> > The probe ordering is not the entire picture, though.
+> >
+> > Even if you get the probe ordering right, the problem is going to s=
+how up in
+> > multiple other places: system suspend/resume, runtime PM, system sh=
+utdown,
+> > unbinding of drivers.  In all of those cases it is necessary to han=
+dle things
+> > in a specific order if there is a dependency.
+>=20
+> My understanding was with deferred probe that it also solves suspend
+> ordering problems because things are suspended in reverse order of
+> probing. I suppose you could have slightly different dependencies for=
 
-  - Patch 8:
-    Updates the support of various peripherals (PMU, SMMU, SATA, PCI, SPI)
-    present on FSL LS2080a SoC in the SoC DTSI.
-	
-	Changes since v3:
-	-----------------
-	Removed ls1021a-ahci compatible string for sata devices.
-	Added 'status = disabled' for certain peripherals which are not
-	available on simulator platform.
+> suspend, runtime PM, etc. than for probe? Perhaps we need to save the=
 
-  - Patch 9:
-    Updates the DTS LS2080a simulator platform to reflect the new
-    peripherals added in the DTSI.
-	
-	Changes since v3:
-	-----------------
-	Removed the 'status = disabled' for certain peripherals which are not
-	available on simulator platform as this is now handled in the
-	DTSI itself.
+> list of dependencies as we probe them. I don't think that would be to=
+o
+> hard to add on to this series, but then if we don't need it now, why
+> add it?
 
-  - Patch 10:
-    Remove text about writing to Free Software Foundation
-	
-	Changes since v3:
-	-----------------
-	No changes
+As Alan said, there are two problems here.  First off, the ordering of =
+the
+list used by system suspend/resume is the registration ordering, not th=
+e
+probe ordering.  Moreover, though, even if we get the ordering right, i=
+t
+still is not sufficient for devices with async_suspend set.
 
-  - Patch 11:
-    Adds new DTS files for LS2080a based QDS and RDB boards.
-	
-	Changes since v3:
-	-----------------
-	No changes
+To address this, the core will have to make the involved async threads =
+wait
+for each other in accordance with the dependencies too.  That, in turn,=
+ is
+very close to what's needed for runtime PM.
 
-  - Patch 12:
-    Adds build support for LS2080a QDS and RDB board DTS files.
-	
-	Changes since v3:
-	-----------------
-	Moved compilation directives for various DTBs on individual lines
-	inside the Makefile.
+> >> >> In any case, we're talking about adding 1 line.
+> >> >
+> >> > But also about making the driver core slighly OF-centric.
+> >>
+> >> How so? The one line is in DT binding parsing code in subsystems, =
+not
+> >> driver core. The driver core change is we add every device (that
+> >> happened to be created by DT) to the deferred probe list, so they
+> >> don't probe right away.
+> >
+> > The "that happened to be created by DT" part is of concern here.  W=
+hat is there
+> > that makes DT special in that respect?  Why shouldn't that be appli=
+cable to
+> > devices created by the ACPI core, for example, or by a board file o=
+r something
+> > else?
+>=20
+> DT is first. I think both examples could use this. Board files avoid
+> the problem by controlling the registration order with initcall level=
+s
+> and just the call order in the code. You could come up with some way
+> to define dependencies for devices in board files and reuse this
+> mechanism. ACPI could use this as well if the dependencies are handle=
+d
+> in a similar way and it seems like they could be.
+>=20
+> >> > Sure, we need OF-specific code and ACPI-specific code wherever d=
+ifferent
+> >> > handling is required, but doing that at the driver core level se=
+ems to be
+> >> > a bit of a stretch to me.
+> >> >
+> >> > Please note that we don't really have ACPI-specific calls in the=
+ driver core,
+> >> > although we might have added them long ago even before the OF st=
+uff appeared
+> >> > in the kernel for the first time.  We didn't do that, (among oth=
+er things)
+> >> > because we didn't want that particular firmware interface to app=
+ear special
+> >> > in any way and I'm not really sure why it is now OK to make OF l=
+ook special
+> >> > instead.
+> >>
+> >> I don't think DT is special and we avoid DT specific core changes =
+as
+> >> much as possible. I think the difference is DT uses platform_devic=
+e
+> >> and ACPI does not.
+> >
+> > ACPI uses platform devices too.  In fact, ACPI device objects are e=
+numerated as
+> > platform devices by default now.
+>=20
+> Okay, I should have grepped for that:
+> drivers/base/platform.c:                ACPI_COMPANION_SET(&pdev->dev=
+, NULL);
+> drivers/base/platform.c:        len =3D acpi_device_modalias(dev, buf=
+,
+> PAGE_SIZE -1);
+> drivers/base/platform.c:        rc =3D acpi_device_uevent_modalias(de=
+v, env);
+> drivers/base/platform.c:        /* Then try ACPI style match */
+> drivers/base/platform.c:        if (acpi_driver_match_device(dev, drv=
+))
+>=20
+> These are all cases which have DT version as well, so we're not reall=
+y
+> all that different here. There's a few more for DT, but that probably=
 
-Rebasing details:
------------------
-- Rebased against linux-next git tree, branch: master
+> means you have just not hit the problems we have yet. For example,
+> what happens if you have an interrupt line in which the controller is=
 
-- Rebased against Scott's latest v3 of QorIQ clk fixes, which can be
-  viewed here:
-  http://linux.freescale.net/patchwork/patch/59805/
+> probed after the device connected to the interrupt line? That require=
+d
+> resolving irqs in platform_get_irq rather than using static resources=
 
-Bhupesh Sharma (12):
-  arm64: Use generic Layerscape SoC family naming
-  arm64: Rename FSL LS2085A SoC support code to LS2080A
-  Documentation: DT: Add entry for FSL LS2080A QDS and RDB boards
-  Documentation/dts: Move FSL board-specific bindings out of /powerpc
-  doc/bindings: Update Layerscape PCIe devicetree bindings for LS2080A
-  doc/bindings: Update GPIO devicetree binding documentation for
-    LS2080A
-  doc: DTS: Update DWC3 binding to provide reference to generic
-    bindings
-  dts/ls2080a: Update DTSI to add support of various peripherals
-  dts/ls2080a: Update Simulator DTS to add support of various
-    peripherals
-  dts/ls2080a: Remove text about writing to Free Software Foundation
-  dts/ls2080a: Add DTS support for LS2080a QDS & RDB boards
-  dts/Makefile: Add build support for LS2080a QDS & RDB board DTS
+> to support deferred probe.
 
- Documentation/devicetree/bindings/arm/fsl.txt      |   16 +-
- .../{powerpc/fsl/board.txt => board/fsl-board.txt} |   14 +-
- .../devicetree/bindings/gpio/gpio-mpc8xxx.txt      |    4 +-
- .../devicetree/bindings/pci/designware-pcie.txt    |   10 +-
- .../devicetree/bindings/pci/layerscape-pci.txt     |   14 +-
- Documentation/devicetree/bindings/usb/dwc3.txt     |    3 +-
- arch/arm64/Kconfig.platforms                       |    6 +-
- arch/arm64/boot/dts/freescale/Makefile             |    4 +-
- arch/arm64/boot/dts/freescale/fsl-ls2080a-qds.dts  |  204 ++++++++
- .../{fsl-ls2085a-simu.dts => fsl-ls2080a-rdb.dts}  |  131 ++++-
- .../{fsl-ls2085a-simu.dts => fsl-ls2080a-simu.dts} |   25 +-
- arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi     |  515 ++++++++++++++++++++
- arch/arm64/boot/dts/freescale/fsl-ls2085a.dtsi     |  163 -------
- arch/arm64/configs/defconfig                       |    2 +-
- 14 files changed, 902 insertions(+), 209 deletions(-)
- rename Documentation/devicetree/bindings/{powerpc/fsl/board.txt => board/fsl-board.txt} (90%)
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls2080a-qds.dts
- copy arch/arm64/boot/dts/freescale/{fsl-ls2085a-simu.dts => fsl-ls2080a-rdb.dts} (51%)
- rename arch/arm64/boot/dts/freescale/{fsl-ls2085a-simu.dts => fsl-ls2080a-simu.dts} (81%)
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
- delete mode 100644 arch/arm64/boot/dts/freescale/fsl-ls2085a.dtsi
+We don't have this particular problem, because the IRQ controllers are
+enumerated in a special way.
 
--- 
-1.7.9.5
+> Converting things like this to fwnode calls isn't hard to do. There
+> just hasn't been a pressing need or mandate to do so.
 
+Well, to me the problem is actually generic, so it is better to use gen=
+eric
+concepts to start with when trying to address it where that doesn't add=
+ too
+much overhead.  Otherwise it's very easy to lose the broader context fr=
+om
+one's sight and then to start cutting corners.
 
+Thanks,
+Rafael
