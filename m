@@ -1,85 +1,83 @@
-Return-Path: <ulf.hansson@linaro.org>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-sunxi@googlegroups.com,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v6 0/5] clk: sunxi: Add support for the Audio PLL
+Date: Tue, 20 Oct 2015 09:36:44 +0200
+Message-Id: <1445326609-6314-1-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <1443622064-14362-1-git-send-email-heiko@sntech.de>
-References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
-Date: Thu, 8 Oct 2015 19:36:04 +0200
-Message-ID: <CAPDyKFqeo--AiW_zHHrSqoOdFNZ3J_FgJpz2L7Z8gZnNmQZSig@mail.gmail.com>
-Subject: Re: [PATCH v2 0/8] mmc: dw_mmc-rockchip: allow tuning using the
- clk-phase api
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	"tgih.jun@samsung.com" <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>,
-	linux-mmc <linux-mmc@vger.kernel.org>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Doug Anderson <dianders@chromium.org>,
-	Alexandru Stan <amstan@chromium.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 30 September 2015 at 16:07, Heiko Stuebner <heiko@sntech.de> wrote:
-> This series resurrects and adapts some individual patches whose sum
-> enable the dw_mmc hosts on Rockchip socs to tune clock phases using
-> the generic phase api (rk3288 and following have this capability).
->
-> The changes to the original mmc-phase clocks are expanded by further
-> findings resulting from devices being used in the field.
->
-> Similarly the regulator handling changes do use the brand new
-> regulator_set_voltage_triplet call to allow specifying lower and upper
-> limits. One possible point of discussion are the two voltage ranges
-> that are tried for the 3.3V signal level. Trying to stay near vmmc
-> at first and only then opening the range to the full 2.7-3.6V.
->
-> This mainly circumvents a shortcoming of the regulator voltage
-> setting, in that even with regulator_set_voltage_triplet the regulator
-> framework will take the lowest possible voltage when the possible
-> voltages are below the target voltage. While it may be ideal to solve
-> this on the regulator side, I'm not seeing this appearing in the short
-> term, mainly because all regulator parts (including regulator drivers)
-> are keyed to selecting the lowest voltage from the range, while on the
-> mmc side we know which voltages may work and trying this in two steps
-> does not create to much overhead, as unsupported voltages are already
-> filtered out by the regulator_is_voltage_selected calls.
->
-> changes since v1:
-> - address comment from Jaehoon Chung and keep this local to Rockchip
->   for the time being
-> - address comments from Ulf and Doug in making it more explicit
->   that the two-step 3.3V voltage setting essentially works around
->   a limitation of regulator_set_voltage_triplet
->
-> Alexandru M Stan (3):
->   mmc: dw_mmc-rockchip: dt-binding: Add tuning related things
->   mmc: dw_mmc: Generic MMC tuning with the clock phase framework
->   ARM: dts: rockchip: Add drive/sample clocks for rk3288 dw_mmc devices
->
-> Douglas Anderson (4):
->   clk: rockchip: Allow more precision for some mmc clock phases
->   clk: rockchip: Make calculations use rounding
->   mmc: core: Add mmc_regulator_set_vqmmc()
->   mmc: dw_mmc: Use mmc_regulator_set_vqmmc in
->     start_signal_voltage_switch
->
-> Heiko Stuebner (1):
->   ARM: dts: rockchip: add tuning related settings to veyron devices
->
->  .../devicetree/bindings/mmc/rockchip-dw-mshc.txt   |  13 ++
->  arch/arm/boot/dts/rk3288-veyron-sdmmc.dtsi         |   7 +-
->  arch/arm/boot/dts/rk3288-veyron.dtsi               |   6 +
->  arch/arm/boot/dts/rk3288.dtsi                      |  20 ++-
->  drivers/clk/rockchip/clk-mmc-phase.c               |  54 ++++---
->  drivers/mmc/core/core.c                            |  74 ++++++++++
->  drivers/mmc/host/dw_mmc-rockchip.c                 | 162 +++++++++++++++++++++
->  drivers/mmc/host/dw_mmc.c                          |  17 +--
->  include/linux/mmc/host.h                           |   7 +
->  9 files changed, 321 insertions(+), 39 deletions(-)
->
-> --
-> 2.5.1
->
+Hi,
 
-Thanks, applied for next!
+This serie adds support for the PLL2 aka the Audio PLL on the
+Allwinner A10 and the later SoCs.
 
-Kind regards
-Uffe
+This is the last part of the audio codec support, it's been around for
+quite a while now, and I expect it to be merged in 4.4.
+
+This serie is built on top of a generic clk-multiplier driver to
+handle clock that multiply their parent clock rate (mostly PLL's), in
+order to provide the driver for the PLL2 base clock, and then adds the
+drivers for the clock that derive from the Audio PLL.
+
+Thanks!
+Maxime
+
+Changes from v5:
+  - Fixed the multiplier calculation
+  - Added Chen-Yu tags
+
+Changes from v4:
+  - Fixed the genmask calls
+  - Fixed the number of parents registration in mod1
+  - Added Chen-Yu's Reviewed-by
+
+Changes from v3:
+  - Fixed the header issues: removed unused ones, added some others
+  - Added the __acquire / __release call when a spinlock is not
+    defined
+
+Changes from v2:
+  - Renamed clk-factor to clk-multiplier
+  - Added an exception for the A13 clock
+
+Changes from v1:
+  - Removed a bogus of_iomap in the mod1 clock driver
+  - Wrote the clk-factor driver
+  - Converted the PLL2 clock to that driver
+
+Emilio López (2):
+  clk: sunxi: codec clock support
+  clk: sunxi: mod1 clock support
+
+Maxime Ripard (3):
+  clk: Add a basic multiplier clock
+  clk: sunxi: Add a driver for the PLL2
+  clk: sunxi: pll2: Add A13 support
+
+ drivers/clk/Makefile                       |   1 +
+ drivers/clk/clk-multiplier.c               | 181 ++++++++++++++++++++++++
+ drivers/clk/sunxi/Makefile                 |   3 +
+ drivers/clk/sunxi/clk-a10-codec.c          |  44 ++++++
+ drivers/clk/sunxi/clk-a10-mod1.c           |  81 +++++++++++
+ drivers/clk/sunxi/clk-a10-pll2.c           | 216 +++++++++++++++++++++++++++++
+ include/dt-bindings/clock/sun4i-a10-pll2.h |  53 +++++++
+ include/linux/clk-provider.h               |  42 ++++++
+ 8 files changed, 621 insertions(+)
+ create mode 100644 drivers/clk/clk-multiplier.c
+ create mode 100644 drivers/clk/sunxi/clk-a10-codec.c
+ create mode 100644 drivers/clk/sunxi/clk-a10-mod1.c
+ create mode 100644 drivers/clk/sunxi/clk-a10-pll2.c
+ create mode 100644 include/dt-bindings/clock/sun4i-a10-pll2.h
+
+-- 
+2.6.2
