@@ -1,111 +1,78 @@
-Return-Path: <tony@atomide.com>
-From: Tony Lindgren <tony@atomide.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	Brian Hutchinson <b.hutchman@gmail.com>,
-	Felipe Balbi <balbi@ti.com>,
-	Grygorii Strashko <grygorii.strashko@ti.com>,
-	Nishanth Menon <nm@ti.com>,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Sekhar Nori <nsekhar@ti.com>
-Subject: [PATCH] clk: ti: Fix FAPLL udelay in clk_enable with clk_prepare
-Date: Tue, 22 Sep 2015 14:23:05 -0700
-Message-Id: <1442956985-32642-1-git-send-email-tony@atomide.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1444999760-15750-3-git-send-email-geert+renesas@glider.be>
+References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be>
+	<1444999760-15750-3-git-send-email-geert+renesas@glider.be>
+Date: Tue, 20 Oct 2015 12:09:55 +0200
+Message-ID: <CAMuHMdX8kHcRCkmLbPt7SNC4CZnQm+B834sLdotT2PtQuzFUmA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/5] [RFC] clk: shmobile: Add r8a7795 CPG Core Clock Definitions
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>,
+	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-As recently pointed out (again) by Thomas and Russell, we must not
-wait in in clk_enable. The wait for PLL to lock needs to happen
-in clk_prepare instead.
+On Fri, Oct 16, 2015 at 2:49 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> Add all R-Car H3 CPG Core Clock Outputs defined in the datasheet.
 
-It seems this is a common copy paste error with the PLL drivers,
-and similar fixes should be applied to other PLL drivers after
-testing.
+Cfr. Table 8.2a ("List of Clocks [R-Car H3]").
 
-Cc: Brian Hutchinson <b.hutchman@gmail.com>
-Cc: Felipe Balbi <balbi@ti.com>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Nishanth Menon <nm@ti.com>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Sekhar Nori <nsekhar@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- drivers/clk/ti/fapll.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/r8a7795-cpg-mssr.h
+> @@ -0,0 +1,63 @@
+> +/*
+> + * Copyright (C) 2015 Renesas Electronics Corp.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + */
+> +#ifndef __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__
+> +#define __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__
+> +
+> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
+> +
+> +/* r8a7795 CPG Core Clocks */
+> +#define R8A7795_CLK_Z                  0
+> +#define R8A7795_CLK_Z2                 1
+> +#define R8A7795_CLK_ZR                 2
+> +#define R8A7795_CLK_ZG                 3
+> +#define R8A7795_CLK_ZTR                        4
+> +#define R8A7795_CLK_ZTRD2              5
+> +#define R8A7795_CLK_ZT                 6
+> +#define R8A7795_CLK_ZX                 7
+> +#define R8A7795_CLK_S0D1               8
+> +#define R8A7795_CLK_S0D4               9
+> +#define R8A7795_CLK_S1D1               10
+> +#define R8A7795_CLK_S1D2               11
+> +#define R8A7795_CLK_S1D4               12
+> +#define R8A7795_CLK_S2D1               13
+> +#define R8A7795_CLK_S2D2               14
+> +#define R8A7795_CLK_S2D4               15
+> +#define R8A7795_CLK_S3D1               16
+> +#define R8A7795_CLK_S3D2               17
+> +#define R8A7795_CLK_S3D4               18
 
-diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
-index f4b2e98..e1db74a 100644
---- a/drivers/clk/ti/fapll.c
-+++ b/drivers/clk/ti/fapll.c
-@@ -37,7 +37,7 @@
- #define FAPLL_PWD_OFFSET	4
- 
- #define MAX_FAPLL_OUTPUTS	7
--#define FAPLL_MAX_RETRIES	1000
-+#define FAPLL_MAX_RETRIES	5
- 
- #define to_fapll(_hw)		container_of(_hw, struct fapll_data, hw)
- #define to_synth(_hw)		container_of(_hw, struct fapll_synth, hw)
-@@ -126,7 +126,7 @@ static int ti_fapll_wait_lock(struct fapll_data *fd)
- 		if (retries-- <= 0)
- 			break;
- 
--		udelay(1);
-+		usleep_range(200, 300);
- 	}
- 
- 	pr_err("%s failed to lock\n", fd->name);
-@@ -134,7 +134,7 @@ static int ti_fapll_wait_lock(struct fapll_data *fd)
- 	return -ETIMEDOUT;
- }
- 
--static int ti_fapll_enable(struct clk_hw *hw)
-+static int ti_fapll_prepare(struct clk_hw *hw)
- {
- 	struct fapll_data *fd = to_fapll(hw);
- 	u32 v = readl_relaxed(fd->base);
-@@ -146,7 +146,7 @@ static int ti_fapll_enable(struct clk_hw *hw)
- 	return 0;
- }
- 
--static void ti_fapll_disable(struct clk_hw *hw)
-+static void ti_fapll_unprepare(struct clk_hw *hw)
- {
- 	struct fapll_data *fd = to_fapll(hw);
- 	u32 v = readl_relaxed(fd->base);
-@@ -155,7 +155,7 @@ static void ti_fapll_disable(struct clk_hw *hw)
- 	writel_relaxed(v, fd->base);
- }
- 
--static int ti_fapll_is_enabled(struct clk_hw *hw)
-+static int ti_fapll_is_prepared(struct clk_hw *hw)
- {
- 	struct fapll_data *fd = to_fapll(hw);
- 	u32 v = readl_relaxed(fd->base);
-@@ -261,7 +261,7 @@ static int ti_fapll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	v |= pre_div_p << FAPLL_MAIN_DIV_P_SHIFT;
- 	v |= mult_n << FAPLL_MAIN_MULT_N_SHIFT;
- 	writel_relaxed(v, fd->base);
--	if (ti_fapll_is_enabled(hw))
-+	if (ti_fapll_is_prepared(hw))
- 		ti_fapll_wait_lock(fd);
- 	ti_fapll_clear_bypass(fd);
- 
-@@ -269,9 +269,9 @@ static int ti_fapll_set_rate(struct clk_hw *hw, unsigned long rate,
- }
- 
- static struct clk_ops ti_fapll_ops = {
--	.enable = ti_fapll_enable,
--	.disable = ti_fapll_disable,
--	.is_enabled = ti_fapll_is_enabled,
-+	.prepare = ti_fapll_prepare,
-+	.unprepare = ti_fapll_unprepare,
-+	.is_prepared = ti_fapll_is_prepared,
- 	.recalc_rate = ti_fapll_recalc_rate,
- 	.get_parent = ti_fapll_get_parent,
- 	.round_rate = ti_fapll_round_rate,
--- 
-2.1.4
+Please note that I deliberately left out S[0-3], as they're used as
+internal clock
+sources only.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
