@@ -1,170 +1,54 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 09/19] drm: sun4i: Add DT bindings documentation
-Date: Fri, 30 Oct 2015 15:20:55 +0100
-Message-Id: <1446214865-3972-10-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:33931 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752217AbbJTMYh (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 20 Oct 2015 08:24:37 -0400
+Subject: Re: [PATCH 04/10] dt-bindings: video: add PCLK clock entry to
+ exynos5433-decon
+To: Andrzej Hajda <a.hajda@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>
+References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
+ <1445332961-25419-5-git-send-email-a.hajda@samsung.com>
+Cc: k.kozlowski.k@gmail.com,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Hyungwon Hwang <human.hwang@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-ID: <5626327E.3050002@samsung.com>
+Date: Tue, 20 Oct 2015 21:24:30 +0900
+MIME-Version: 1.0
+In-Reply-To: <1445332961-25419-5-git-send-email-a.hajda@samsung.com>
+Content-Type: text/plain; charset=iso-8859-2
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The display pipeline of the Allwinner A10 is involving several loosely
-coupled components.
+W dniu 20.10.2015 o 18:22, Andrzej Hajda pisze:
+> DECON IP requires this clock to access configuration registers.
+> 
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+>  Documentation/devicetree/bindings/video/exynos5433-decon.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/video/exynos5433-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+> index 377afbf..3dff78b 100644
+> --- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+> +++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+> @@ -16,7 +16,7 @@ Required properties:
+>  - clocks: must include clock specifiers corresponding to entries in the
+>  	  clock-names property.
+>  - clock-names: list of clock names sorted in the same order as the clocks
+> -	       property. Must contain "aclk_decon", "aclk_smmu_decon0x",
+> +	       property. Must contain "pclk", "aclk_decon", "aclk_smmu_decon0x",
 
-Add a documentation for the bindings.
+I assume that old DTB wouldn't work at all, so there is no point in
+maintaining ABI compatibility?
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- .../devicetree/bindings/drm/sunxi/sun4i-drm.txt    | 122 +++++++++++++++++++++
- 1 file changed, 122 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/drm/sunxi/sun4i-drm.txt
+Best regards,
+Krzysztof
 
-diff --git a/Documentation/devicetree/bindings/drm/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/drm/sunxi/sun4i-drm.txt
-new file mode 100644
-index 000000000000..dbdccef787b4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/drm/sunxi/sun4i-drm.txt
-@@ -0,0 +1,122 @@
-+Allwinner A10 Display Pipeline
-+==============================
-+
-+The Allwinner A10 Display pipeline is composed of several components
-+that are going to be documented below:
-+
-+TV Encoder
-+----------
-+
-+The TV Encoder supports the composite and VGA output. It is one end of
-+the pipeline.
-+
-+Required properties:
-+ - compatible: value should be "allwinner,sun4i-a10-tv-encoder".
-+ - reg: base address and size of memory-mapped region
-+ - clocks: the clocks driving the TV encoder
-+
-+TCON
-+----
-+
-+The TCON acts as a CRTC and encoder for RGB / LVDS interfaces.
-+
-+Required properties:
-+ - compatible: value should be "allwinner,sun4i-a10-tcon".
-+ - reg: base address and size of memory-mapped region
-+ - interrupts: interrupt associated to this IP
-+ - clocks: phandles to the clocks feeding the TCON. Three are needed:
-+   - 'ahb': the interface clocks
-+   - 'tcon-ch0': The clock driving the TCON channel 0
-+   - 'tcon-ch1': The clock driving the TCON channel 0
-+
-+ - clock-names: the clock names mentionned above
-+ - clock-output-names: Name of the pixel clock created
-+
-+
-+Display Engine Backend
-+----------------------
-+
-+The display engine backend exposes layers and sprites to the
-+system. It's split into two components, the frontend and backend, the
-+frontend doing formats conversion, scaling, deinterlacing, while the
-+backend actually manages the layers.
-+
-+Required properties:
-+  - compatible: value must be one of:
-+    * allwinner,sun5i-a13-display-engine
-+
-+  - reg: base address and size of the memory-mapped region. Two are needed:
-+    * backend0: registers of the display engine backend
-+    * frontend0: registers of the display engine frontend
-+  - reg_names: the region names mentionned above.
-+
-+  - interrupts: frontend interrupt phandle
-+
-+  - clocks: phandles to the clocks feeding the frontend and backend
-+    * backend0-bus: the backend interface clock
-+    * backend0-mod: the backend module clock
-+    * backend0-ram: the backend DRAM clock
-+    * frontend0-bus: the frontend interface clock
-+    * frontend0-mod: the frontend module clock
-+    * frontend0-ram: the frontend DRAM clock
-+  - clock-names: the clock names mentionned above
-+
-+  - resets: phandles to the reset controllers. Two are needed:
-+    * backend0: backend reset controller
-+    * frontend0: frontend reset controller
-+  - reset-names: the reset names mentionned above
-+
-+  - allwinner,tcon: phandle to the TCON in our pipeline
-+
-+Optional properties:
-+  - allwinner,tv-encoder: phandle to the TV Encoder in our pipeline
-+  - allwinner,panel: phandle to the panel used in our RGB interface
-+
-+Example:
-+
-+panel: panel {
-+	compatible = "olimex,lcd-olinuxino-43-ts";
-+};
-+
-+tve: encoder@01c0a000 {
-+	compatible = "allwinner,sun4i-a10-tv-encoder";
-+	reg = <0x01c0a000 0x1000>;
-+	clocks = <&ahb_gates 34>;
-+};
-+
-+tcon: lcd-controller@01c0c000 {
-+	compatible = "allwinner,sun4i-a10-tcon";
-+	reg = <0x01c0c000 0x1000>;
-+	interrupts = <44>;
-+	clocks = <&ahb_gates 36>,
-+		 <&tcon_ch0_clk>,
-+		 <&tcon_ch1_clk>;
-+	clock-names = "ahb",
-+		      "tcon-ch0",
-+		      "tcon-ch1";
-+	clock-output-names = "tcon-pixel-clock";
-+};
-+
-+de: display-engine@01e00000 {
-+	compatible = "allwinner,sun5i-a13-display-engine";
-+	reg = <0x01e00000 0x20000>,
-+	      <0x01e60000 0x10000>;
-+	reg-names = "frontend0",
-+		    "backend0";
-+	interrupts = <47>;
-+	interrupt-names = "engine0";
-+	clocks = <&ahb_gates 46>, <&de_fe_clk>,
-+		 <&dram_gates 25>, <&ahb_gates 44>,
-+		 <&de_be_clk>, <&dram_gates 26>;
-+	clock-names = "frontend0-bus", "frontend0-mod",
-+		      "frontend0-ram", "backend0-bus",
-+		      "backend0-mod", "backend0-ram";
-+	resets = <&de_fe_clk>,
-+		 <&de_be_clk>;
-+	reset-names = "frontend0",
-+		      "backend0";
-+
-+	allwinner,tcon = <&tcon>;
-+	allwinner,tv-encoder = <&tve>;
-+	allwinner,panel = <&panel>;
-+};
--- 
-2.6.2
