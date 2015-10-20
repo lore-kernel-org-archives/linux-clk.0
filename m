@@ -1,36 +1,77 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 1 Oct 2015 15:25:10 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Victorien Vedrine <victorien.vedrine@ophrys.net>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	mturquette@baylibre.com, shawn.guo@linaro.org
-Subject: Re: [PATCH v2] clk:mxs: Fix bug on frequency divider
-Message-ID: <20151001222510.GP19319@codeaurora.org>
-References: <55BBB1AC.6070102@codeaurora.org>
- <1441010707-17178-1-git-send-email-victorien.vedrine@ophrys.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1441010707-17178-1-git-send-email-victorien.vedrine@ophrys.net>
+Return-Path: <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 01/10] clk/samsung: exynos5433: add definitions of HDMI-PHY
+ output clocks
+To: Michael Turquette <mturquette@baylibre.com>,
+ Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
+References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
+ <1445332961-25419-2-git-send-email-a.hajda@samsung.com>
+ <20151020103416.20687.40409@quantum>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org,
+ linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Hyungwon Hwang <human.hwang@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Message-id: <56261A29.9030900@samsung.com>
+Date: Tue, 20 Oct 2015 12:40:41 +0200
+MIME-version: 1.0
+In-reply-to: <20151020103416.20687.40409@quantum>
+Content-type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/31, Victorien Vedrine wrote:
-> On drivers/clk/mxs/clk-frac.c, the function clk_frac_round_rate returned a bad
-> result. The division before multiplication computes a wrong value ; the
-> calculation is inverted to fix the problem. The second issue is that the exact
-> rate have decimals and they are truncate. The consequence is that the function
-> clk_frac_set_rate (which use the result of clk_frac_round_rate) computes a
-> wrong value for the register (the rate generated can be closer to the desired
-> rate). The correction is : if there is decimal to the result, it is rounded to
-> the next larger integer.
-> On drivers/clk/mxs/clk-frac.c, the function clk_frac_recalc_rate returned
-> a bad result. The multiplication is made before the division to compute a
-> correct value.
-> 
-> Signed-off-by: Victorien Vedrine <victorien.vedrine@ophrys.net>
-> ---
+Hello,
 
-Applied to clk-next
+On 2015-10-20 12:34, Michael Turquette wrote:
+> Quoting Andrzej Hajda (2015-10-20 02:22:32)
+>> HDMI driver must re-parent respective muxes during HDMI-PHY on/off
+>> to HDMI-PHY output clocks. To reference those clocks their
+>> definitions should be added.
+>>
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> ---
+>>   drivers/clk/samsung/clk-exynos5433.c   | 6 ++++--
+>>   include/dt-bindings/clock/exynos5433.h | 5 ++++-
+>>   2 files changed, 8 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+>> index 650ec13..e037406 100644
+>> --- a/drivers/clk/samsung/clk-exynos5433.c
+>> +++ b/drivers/clk/samsung/clk-exynos5433.c
+>> @@ -2614,8 +2614,10 @@ static struct samsung_fixed_rate_clock disp_fixed_clks[] __initdata = {
+>>          FRATE(0, "phyclk_mipidphy0_rxclkesc0_phy", NULL, CLK_IS_ROOT,
+>>                          100000000),
+>>          /* PHY clocks from HDMI_PHY */
+>> -       FRATE(0, "phyclk_hdmiphy_tmds_clko_phy", NULL, CLK_IS_ROOT, 300000000),
+>> -       FRATE(0, "phyclk_hdmiphy_pixel_clko_phy", NULL, CLK_IS_ROOT, 166000000),
+>> +       FRATE(CLK_PHYCLK_HDMIPHY_TMDS_CLKO_PHY, "phyclk_hdmiphy_tmds_clko_phy",
+>> +                       NULL, CLK_IS_ROOT, 300000000),
+>> +       FRATE(CLK_PHYCLK_HDMIPHY_PIXEL_CLKO_PHY, "phyclk_hdmiphy_pixel_clko_phy",
+>> +                       NULL, CLK_IS_ROOT, 166000000),
+>>   };
+>>   
+>>   static struct samsung_mux_clock disp_mux_clks[] __initdata = {
+>> diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
+>> index 5bd80d5..4f0d566 100644
+>> --- a/include/dt-bindings/clock/exynos5433.h
+>> +++ b/include/dt-bindings/clock/exynos5433.h
+>> @@ -765,7 +765,10 @@
+>>   #define CLK_SCLK_RGB_VCLK                              109
+>>   #define CLK_SCLK_RGB_TV_VCLK                           110
+>>   
+>> -#define DISP_NR_CLK                                    111
+>> +#define CLK_PHYCLK_HDMIPHY_PIXEL_CLKO_PHY              111
+>> +#define CLK_PHYCLK_HDMIPHY_TMDS_CLKO_PHY               112
+>> +
+>> +#define DISP_NR_CLK                                    113
+> Why break compatibility with older DTBs?
 
+This patch just adds support for 2 more clocks to exynos 5433 clk driver,
+which were previously undefined. How this break compatibility with older 
+DTBs?
+
+Best regards
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
