@@ -1,133 +1,76 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 8 Oct 2015 17:37:22 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Eric Anholt <eric@anholt.net>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
-	Mike Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v6] clk: bcm2835: Add support for programming the audio
- domain clocks.
-Message-ID: <20151009003721.GM26883@codeaurora.org>
-References: <1444347736-23681-1-git-send-email-eric@anholt.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-qk0-f170.google.com ([209.85.220.170]:35180 "EHLO
+	mail-qk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751051AbbJTMz1 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 20 Oct 2015 08:55:27 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1444347736-23681-1-git-send-email-eric@anholt.net>
+In-Reply-To: <5626394C.5040202@samsung.com>
+References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
+	<1445332961-25419-10-git-send-email-a.hajda@samsung.com>
+	<56263400.6010200@samsung.com>
+	<5626394C.5040202@samsung.com>
+Date: Tue, 20 Oct 2015 21:55:26 +0900
+Message-ID: <CAJKOXPfXrEwu1egSnLxwYofu_scskkPRKOjOCskObPFn9yVcJw@mail.gmail.com>
+Subject: Re: [PATCH 09/10] dt-bindings: video: exynos5433-decon: add bindings
+ for DECON-TV
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Hyungwon Hwang <human.hwang@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Please drop the full-stop from your subject lines.
+2015-10-20 21:53 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
+> On 10/20/2015 02:30 PM, Krzysztof Kozlowski wrote:
+>> W dniu 20.10.2015 o 18:22, Andrzej Hajda pisze:
+>>> DECON-TV(Display and Enhancement Controller for TV) is a variation
+>>> of DECON IP. Its main purpose is to produce video stream for HDMI IP.
+>>>
+>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>>> ---
+>>>  .../devicetree/bindings/video/exynos5433-decon.txt  | 21 ++++++++++++---------
+>>>  1 file changed, 12 insertions(+), 9 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/video/exynos5433-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+>>> index 3dff78b..2a88c8d 100644
+>>> --- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+>>> +++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+>>> @@ -5,24 +5,27 @@ Exynos series of SoCs which transfers the image data from a video memory
+>>>  buffer to an external LCD interface.
+>>>
+>>>  Required properties:
+>>> -- compatible: value should be "samsung,exynos5433-decon";
+>>> +- compatible: value should be one of:
+>>> +    "samsung,exynos5433-decon", "samsung,exynos5433-decon-tv";
+>> Until this point it looked good.
+>>
+>>>  - reg: physical base address and length of the DECON registers set.
+>>> -- interrupts: should contain a list of all DECON IP block interrupts in the
+>>> -          order: VSYNC, LCD_SYSTEM. The interrupt specifier format
+>>> -          depends on the interrupt controller used.
+>>> -- interrupt-names: should contain the interrupt names: "vsync", "lcd_sys"
+>>> -               in the same order as they were listed in the interrupts
+>>> -               property.
+>>> +- interrupts: should contain interrupt specifier of VSYNC and optionally
+>>> +          LCD_SYSTEM. The interrupt specifier format depends on
+>>> +          the interrupt controller used.
+>>> +- interrupt-names: should contain the interrupt name "vsync" and optionally
+>>> +               "lcd_sys" in the same order as they were listed in
+>>> +               the interrupts property.
+>> The driver already did not require both interrupts, right? Only one of them?
+>
+> Right. More precisely it did not require since beginning.
 
-On 10/08, Eric Anholt wrote:
-> This adds support for enabling, disabling, and setting the rate of the
-> audio domain clocks.  It will be necessary for setting the pixel clock
-> for HDMI in the VC4 driver and let us write a cpufreq driver.  It will
-> also improve compatibility with user changes to the firmware's
-> config.txt, since our previous fixed clocks are unaware of it.
-> 
-> The firmware also has support for configuring the clocks through the
-> mailbox channel, but the pixel clock setup by the firmware doesn't
-> work, and it's Raspberry Pi specific anyway.  The only conflicts we
-> should have with the firmware would be if we made firmware calls that
-> result in clock management (like opening firmware V3D or ISP access,
-> which we don't support in upstream), or on hardware over-thermal or
-> under-voltage (when the firmware would rewrite PLLB to take the ARM
-> out of overclock).  If that happens, our cached .recalc_rate() results
-> would be incorrect, but that's no worse than our current state where
-> we used fixed clocks.
-> 
-> The existing fixed clocks in the code are left in place to provide
-> backwards compatibility with old device tree files.
-> 
-> Signed-off-by: Eric Anholt <eric@anholt.net>
-> Tested-by: Martin Sperl <kernel@martin.sperl.org>
-> ---
+So can you move it to the cleanup patch with change below?
 
-There's a variable length array in here, causing sparse to
-complain:
-
-	drivers/clk/bcm/clk-bcm2835.c:1408:41:
-	warning: Variable length array is used.
-
-This one looks easy enough to fix with another allocation.
-
-But then there's some weird casting warning coming from sparse
-that I honestly don't understand:
-
-drivers/clk/bcm/clk-bcm2835.c:370:36:
-warning: cast truncates bits from constant value (3fffffffff8000
-becomes ffff8000)
-drivers/clk/bcm/clk-bcm2835.c:372:19:
-warning: cast truncates bits from constant value (3ffffffff80
-becomes ffffff80)
-drivers/clk/bcm/clk-bcm2835.c:378:37:
-warning: cast truncates bits from constant value (fffffffff80000
-becomes fff80000)
-drivers/clk/bcm/clk-bcm2835.c:380:42:
-warning: cast truncates bits from constant value (1fffffffff
-becomes ffffffff)
-
-I guess I'll just ignore that for now. A couple nitpicks are
-left, but nothing major.
-
-> +static void bcm2835_pll_choose_ndiv_and_fdiv(unsigned long rate,
-> +					     unsigned long parent_rate,
-> +					     u32 *ndiv, u32 *fdiv)
-> +{
-> +	u64 div;
-> +
-> +	div = ((u64)rate << A2W_PLL_FRAC_BITS);
-
-Drop the parenthesis here.
-
-> +	/* Wait for the PLL to lock. */
-> +	start = ktime_get();
-> +	while (!(cprman_read(cprman, CM_LOCK) & data->lock_mask)) {
-> +		ktime_t delta = ktime_sub(ktime_get(), start);
-> +
-> +		if (ktime_to_ms(delta) > LOCK_TIMEOUT_MS) {
-
-Didn't notice this one before. Why not add the LOCK_TIMEOUT_MS to
-start, and then call ktime_get() in the loop and use
-ktime_after() to figure out if we're beyond the timeout?
-
-> +			dev_err(cprman->dev, "%s: couldn't lock PLL\n",
-> +				clk_hw_get_name(hw));
-> +			return -ETIMEDOUT;
-> +		}
-> +
-> +		cpu_relax();
-> +	}
-> +
-> +	return 0;
-> +}
-[...]
-> +
-> +
-> +	memset(&init, 0, sizeof(init));
-> +	init.parent_names = &parent;
-> +	init.num_parents = 1;
-> +	init.name = data->name;
-> +	init.flags = CLK_IGNORE_UNUSED;
-> +
-> +	if (data->is_vpu_clock) {
-> +		init.ops = &bcm2835_vpu_clock_clk_ops;
-> +	} else {
-> +		init.ops = &bcm2835_clock_clk_ops;
-> +		init.flags |= CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE;
-> +	}
-> +
-> +	clock = devm_kzalloc(cprman->dev, sizeof(*clock), GFP_KERNEL);
-> +	if (!clock)
-> +		return NULL;
-> +
-> +	clock->cprman = cprman;
-> +	clock->data = data;
-> +	clock->hw.init = &init;
-> +
-> +	return clk_register(cprman->dev, &clock->hw);
-
-devm_clk_register?
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best regards,
+Krzysztof
