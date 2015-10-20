@@ -1,123 +1,75 @@
-Return-Path: <gregkh@linuxfoundation.org>
-Date: Sat, 17 Oct 2015 11:59:15 -0700
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Rob Clark <robdclark@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>,
-	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	Linux PWM List <linux-pwm@vger.kernel.org>,
-	Linux USB List <linux-usb@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-Subject: Re: [GIT PULL] On-demand device probing
-Message-ID: <20151017185915.GA28826@kroah.com>
-References: <561E1378.6000906@collabora.com>
- <20151017065750.GA18607@kroah.com>
- <CAL_Jsq+Due3CgV0Z_m4vYQsa+X30DSxgmqz_r=26OrBV7v+H2g@mail.gmail.com>
- <20151017154709.GE4059@kroah.com>
- <CAL_JsqJvtKt6FpZgnYcsEm_opr9gK_a013BVpZGvnB=51oSUXg@mail.gmail.com>
- <20151017165617.GC25156@kroah.com>
- <CAF6AEGvbYYeZx=YVCv9r5K0xjtLf3gN69gX5DyQ3j0S1qT0Yog@mail.gmail.com>
- <20151017182755.GA28072@kroah.com>
- <CAF6AEGuvr6XMMufY0iDCSkp2BNcWa2=xUxjN66+FtQ6ygS-nyQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAF6AEGuvr6XMMufY0iDCSkp2BNcWa2=xUxjN66+FtQ6ygS-nyQ@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:45458 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751608AbbJTLSs (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 20 Oct 2015 07:18:48 -0400
+Message-id: <562622CF.1070906@samsung.com>
+Date: Tue, 20 Oct 2015 13:17:35 +0200
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+MIME-version: 1.0
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Hyungwon Hwang <human.hwang@samsung.com>
+Subject: Re: [PATCH 01/10] clk/samsung: exynos5433: add definitions of HDMI-PHY
+ output clocks
+References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
+ <1445332961-25419-2-git-send-email-a.hajda@samsung.com>
+ <20151020103416.20687.40409@quantum>
+In-reply-to: <20151020103416.20687.40409@quantum>
+Content-type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Oct 17, 2015 at 02:45:34PM -0400, Rob Clark wrote:
-> On Sat, Oct 17, 2015 at 2:27 PM, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> > On Sat, Oct 17, 2015 at 01:54:43PM -0400, Rob Clark wrote:
-> >> On Sat, Oct 17, 2015 at 12:56 PM, Greg Kroah-Hartman
-> >> <gregkh@linuxfoundation.org> wrote:
-> >> >> I'm guessing the time is a matter of probing and undoing the probes
-> >> >> rather than slow h/w. We could maybe improve things by making sure
-> >> >> drivers move what they defer on to the beginning of probe, but that
-> >> >> seems like a horrible, fragile hack.
-> >> >
-> >> > How can calling probe and failing cause 2 seconds?  How many different
-> >> > probe calls are failing here?  Again, a boot log graph would be great to
-> >> > see as it will show the root cause, not just guessing at this.
-> >>
-> >>
-> >> just fwiw, but when you have a driver that depends on several other
-> >> drivers (which in turn depend on other drivers and so on), the amount
-> >> of probe-defer we end up seeing is pretty comical.  Yeah, there
-> >> probably is some room to optimize by juggling around order drivers do
-> >> things in probe.  But that doesn't solve the fundamental problem with
-> >> the current state, about probe order having no clue about
-> >> dependencies..
-> >
-> > I can imagine it is a lot of iterations, but how long does it really
-> > take?  How many different devices are involved that it takes multiple
-> > loops in order to finally work out the correct order?  Where is the time
-> > delays here, just calling probe() and having it instantly return
-> > shouldn't take all that long.
-> 
-> offhand, I think the dependencies go at *least* three levels deep..
-> I'd say, from memory, I see drm/msm taking at least 5 or 6 tries to
-> get all the way through requesting it's various different
-> regulators/clks/gpios.
+On 20/10/15 12:34, Michael Turquette wrote:
+>> diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
+>> > index 5bd80d5..4f0d566 100644
+>> > --- a/include/dt-bindings/clock/exynos5433.h
+>> > +++ b/include/dt-bindings/clock/exynos5433.h
+>> > @@ -765,7 +765,10 @@
+>> >  #define CLK_SCLK_RGB_VCLK                              109
+>> >  #define CLK_SCLK_RGB_TV_VCLK                           110
+>> >  
+>> > -#define DISP_NR_CLK                                    111
+>> > +#define CLK_PHYCLK_HDMIPHY_PIXEL_CLKO_PHY              111
+>> > +#define CLK_PHYCLK_HDMIPHY_TMDS_CLKO_PHY               112
+>> > +
+>> > +#define DISP_NR_CLK                                    113
+>
+> Why break compatibility with older DTBs?
 
-And how long does that really take?  Numbers please :)
+I used to be resistant to changing those _NR_CLK defines
+in the past but then realized they are not part of the DT ABI.
+These defines are used only in drivers and affect only size
+of the provider's allocated clock array. The confusion may be
+caused by the fact that the whole header is shared by the kernel
+source and dts.
 
-> I hadn't really paid attention to how many
-> tries the drivers I depend on go through.  (Of those, I take clks from
-> two different clk drivers (which have dependency on a 3rd clk driver),
-> and regulators and gpio's come from at least two places, which in turn
-> have dependencies on clks, etc.)  I don't have really good hard
-> numbers handy (since my observations of this are w/ console over uart
-> which effects timings, and so I see it taking much longer than 2sec)..
-> but the 2sec figure that Tomeu mentioned seemed pretty plausible to
-> me.
-> 
-> I can try to get better #'s... I should have my kernel hat on at least
-> some of the time next week.. but the 2sec figure didn't seem
-> unrealistic to me.
+$ git grep -l _NR_CLK arch/arm/boot/dts drivers/clk/samsung/
+drivers/clk/samsung/clk-exynos-clkout.c
+drivers/clk/samsung/clk-exynos3250.c
+drivers/clk/samsung/clk-exynos4.c
+drivers/clk/samsung/clk-exynos4415.c
+drivers/clk/samsung/clk-exynos5250.c
+drivers/clk/samsung/clk-exynos5260.c
+drivers/clk/samsung/clk-exynos5410.c
+drivers/clk/samsung/clk-exynos5420.c
+drivers/clk/samsung/clk-exynos5433.c
+drivers/clk/samsung/clk-exynos5440.c
+drivers/clk/samsung/clk-exynos7.c
 
-Based on the time it takes a modern laptop to boot, 2 seconds is
-forever, there has to be something else going on here other than just
-calling probe() a bunch of times.  Please use the tools we have to
-determine this before trying to change the driver core.
+There is no *_NR_CLK in any dts file.
+New kernel will work will older DTB, the driver will just
+register more clocks, which will not be dereferenced anywhere
+in older dtb.
 
-> Just as an aside, the amount of probe-defer adds quite a lot of noise
-> when you are trying to debug why some driver doesn't probe
-> successfully.  Which itself would be a nice reason to do something
-> more clever..
-
-People seem to not like the noise, so let's turn off those messages,
-that should speed things up :)
-
-thanks,
-
-greg k-h
+-- 
+Regards,
+Sylwester
