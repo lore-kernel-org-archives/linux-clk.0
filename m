@@ -1,86 +1,94 @@
-Return-Path: <jonmason@broadcom.com>
-Date: Thu, 22 Oct 2015 10:18:44 -0400
-From: Jon Mason <jonmason@broadcom.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>,
-	Michael Turquette <mturquette@baylibre.com>, Florian Fainelli
-	<f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<bcm-kernel-feedback-list@broadcom.com>
-Subject: Re: [PATCH v3 08/10] clk: ns2: add clock support for Broadcom
- Northstar 2 SoC
-Message-ID: <20151022141843.GD651@broadcom.com>
-References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
- <1444938513-10758-9-git-send-email-jonmason@broadcom.com>
- <56200F39.1060102@broadcom.com>
- <562012A8.8050707@broadcom.com>
- <562014C9.5070708@broadcom.com>
- <20151015211025.GP32089@broadcom.com>
- <56201766.9020206@broadcom.com>
- <562019DD.3000206@broadcom.com>
- <20151022002246.GV19782@codeaurora.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20151022002246.GV19782@codeaurora.org>
-Return-Path: jonmason@broadcom.com
+To: Andrzej Hajda <a.hajda@samsung.com>, "Inki Dae" <inki.dae@samsung.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1445332961-25419-2-git-send-email-a.hajda@samsung.com>
+Cc: "Andrzej Hajda" <a.hajda@samsung.com>,
+ "Bartlomiej Zolnierkiewicz" <b.zolnierkie@samsung.com>,
+ "Marek Szyprowski" <m.szyprowski@samsung.com>,
+ "Kyungmin Park" <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org,
+ linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, "Kukjin Kim" <kgene@kernel.org>,
+ "Krzysztof Kozlowski" <k.kozlowski@samsung.com>,
+ "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
+ "Hyungwon Hwang" <human.hwang@samsung.com>
+References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
+ <1445332961-25419-2-git-send-email-a.hajda@samsung.com>
+Message-ID: <20151020103416.20687.40409@quantum>
+Subject: Re: [PATCH 01/10] clk/samsung: exynos5433: add definitions of HDMI-PHY
+ output clocks
+Date: Tue, 20 Oct 2015 03:34:16 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Oct 21, 2015 at 05:22:47PM -0700, Stephen Boyd wrote:
-> On 10/15, Scott Branden wrote:
-> > On 15-10-15 02:15 PM, Ray Jui wrote:
-> > >On 10/15/2015 2:10 PM, Jon Mason wrote:
-> > >>On Thu, Oct 15, 2015 at 02:04:09PM -0700, Scott Branden wrote:
-> > >>>On 15-10-15 01:55 PM, Ray Jui wrote:
-> > >>>>On 10/15/2015 1:40 PM, Scott Branden wrote:
-> > >>>>
-> > >>>>If using CONFIG_CLK_NS2, how is it going to be enabled/selected?
-> > >>>
-> > >>>Since CONFIG_ARCH_BCM_NS2 isn't "allowed" to be introduced we will
-> > >>>need to create and select a CONFIG_CLK_BCM_NS2 in the defconfig
-> > >>>instead.
-> > >>
-> > >>Is this better than the binary becoming slightly bigger?  I thought
-> > >>the extra complexity was worse than having an unused chunk of clk code
-> > >>(and Kona is already doing the same thing above).  I believe Ray was
-> > >>in agreement with me during the internal review of this code.
-> > >>
-> > >>Thanks,
-> > >>Jon
-> > >>
-> > >
-> > >Yes, I'm okay with leaving it as it is. I even prefer changing the
-> > >current Makefile to make all iProc based core clock drivers and SoC
-> > >specific clock tables under CONFIG_COMMON_CLK_IPROC, which is what some
-> > >of the other vendors do.
-> > >
-> > I'd leave it exactly as is then rather than pulling in more dead
-> > code when not needed.  This ns2 clock code is very minor compared to
-> > other code bloat in the kernel and drivers.
-> 
-> We should really make these visible options that can be selected
-> by anyone. Having selects in the ARCH config area is simple, but
-> also has some downsides:
-> 
->  1) select is a reverse dependency and is hard for people to
->  understand and can sometimes be a pain to track down
-> 
->  2) build coverage goes down because configs are hidden
-> 
->  3) we get code bloat like is being discussed here
-> 
-> So I'd really like to see someone take a good look at this whole
-> Makefile situation that's going on and clean it up so that
-> they're user visible options and then throw the config options
-> into the defconfig. It isn't going to block this series, but it
-> would be nice to do at some later point.
+Quoting Andrzej Hajda (2015-10-20 02:22:32)
+> HDMI driver must re-parent respective muxes during HDMI-PHY on/off
+> to HDMI-PHY output clocks. To reference those clocks their
+> definitions should be added.
+> =
 
-I'll do a pass at this today and send it out for review.
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5433.c   | 6 ++++--
+>  include/dt-bindings/clock/exynos5433.h | 5 ++++-
+>  2 files changed, 8 insertions(+), 3 deletions(-)
+> =
 
-Thanks,
-Jon
+> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/c=
+lk-exynos5433.c
+> index 650ec13..e037406 100644
+> --- a/drivers/clk/samsung/clk-exynos5433.c
+> +++ b/drivers/clk/samsung/clk-exynos5433.c
+> @@ -2614,8 +2614,10 @@ static struct samsung_fixed_rate_clock disp_fixed_=
+clks[] __initdata =3D {
+>         FRATE(0, "phyclk_mipidphy0_rxclkesc0_phy", NULL, CLK_IS_ROOT,
+>                         100000000),
+>         /* PHY clocks from HDMI_PHY */
+> -       FRATE(0, "phyclk_hdmiphy_tmds_clko_phy", NULL, CLK_IS_ROOT, 30000=
+0000),
+> -       FRATE(0, "phyclk_hdmiphy_pixel_clko_phy", NULL, CLK_IS_ROOT, 1660=
+00000),
+> +       FRATE(CLK_PHYCLK_HDMIPHY_TMDS_CLKO_PHY, "phyclk_hdmiphy_tmds_clko=
+_phy",
+> +                       NULL, CLK_IS_ROOT, 300000000),
+> +       FRATE(CLK_PHYCLK_HDMIPHY_PIXEL_CLKO_PHY, "phyclk_hdmiphy_pixel_cl=
+ko_phy",
+> +                       NULL, CLK_IS_ROOT, 166000000),
+>  };
+>  =
 
-> 
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+>  static struct samsung_mux_clock disp_mux_clks[] __initdata =3D {
+> diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings=
+/clock/exynos5433.h
+> index 5bd80d5..4f0d566 100644
+> --- a/include/dt-bindings/clock/exynos5433.h
+> +++ b/include/dt-bindings/clock/exynos5433.h
+> @@ -765,7 +765,10 @@
+>  #define CLK_SCLK_RGB_VCLK                              109
+>  #define CLK_SCLK_RGB_TV_VCLK                           110
+>  =
+
+> -#define DISP_NR_CLK                                    111
+> +#define CLK_PHYCLK_HDMIPHY_PIXEL_CLKO_PHY              111
+> +#define CLK_PHYCLK_HDMIPHY_TMDS_CLKO_PHY               112
+> +
+> +#define DISP_NR_CLK                                    113
+
+Why break compatibility with older DTBs?
+
+Regards,
+Mike
+
+>  =
+
+>  /* CMU_AUD */
+>  #define CLK_MOUT_AUD_PLL_USER                          1
+> -- =
+
+> 1.9.1
+> =
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
