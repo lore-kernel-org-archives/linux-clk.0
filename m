@@ -1,91 +1,66 @@
-Return-Path: <jonmason@broadcom.com>
-Date: Mon, 12 Oct 2015 13:57:06 -0400
-From: Jon Mason <jonmason@broadcom.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Michael Turquette <mturquette@baylibre.com>, Florian Fainelli
-	<f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui
-	<rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<bcm-kernel-feedback-list@broadcom.com>
-Subject: Re: [PATCH 04/10] ARM: dts: enable clock support for BCM5301X
-Message-ID: <20151012175706.GF20867@broadcom.com>
-References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
- <1443826665-17570-5-git-send-email-jonmason@broadcom.com>
- <20151009073540.GO26883@codeaurora.org>
- <20151009182728.GD17527@broadcom.com>
- <20151010001408.GX26883@codeaurora.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20151010001408.GX26883@codeaurora.org>
-Return-Path: jonmason@broadcom.com
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
+ "Magnus Damm" <damm+renesas@opensource.se>,
+ "Simon Horman" <horms+renesas@verge.net.au>,
+ "Rob Herring" <robh+dt@kernel.org>, "Pawel Moll" <pawel.moll@arm.com>,
+ "Mark Rutland" <mark.rutland@arm.com>,
+ "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
+ "Kumar Gala" <galak@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1444999760-15750-6-git-send-email-geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-sh@vger.kernel.org, "Geert Uytterhoeven" <geert+renesas@glider.be>
+References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be>
+ <1444999760-15750-6-git-send-email-geert+renesas@glider.be>
+Message-ID: <20151020122448.20687.11926@quantum>
+Subject: Re: [PATCH v4 5/5] [RFC] clk: shmobile: r8a7795: Add new CPG/MSSR driver
+Date: Tue, 20 Oct 2015 05:24:48 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 09, 2015 at 05:14:08PM -0700, Stephen Boyd wrote:
-> On 10/09, Jon Mason wrote:
-> > On Fri, Oct 09, 2015 at 12:35:40AM -0700, Stephen Boyd wrote:
-> > > On 10/02, Jon Mason wrote:
-> > > 
-> > > >  arch/arm/boot/dts/bcm5301x.dtsi | 67 ++++++++++++++++++++++++++++++++++++-----
-> > > >  1 file changed, 60 insertions(+), 7 deletions(-)
-> > > > 
-> > > > diff --git a/arch/arm/boot/dts/bcm5301x.dtsi b/arch/arm/boot/dts/bcm5301x.dtsi
-> > > > index 6f50f67..f717859 100644
-> > > > --- a/arch/arm/boot/dts/bcm5301x.dtsi
-> > > > +++ b/arch/arm/boot/dts/bcm5301x.dtsi
-> > > > @@ -55,14 +56,14 @@
-> > > >  			compatible = "arm,cortex-a9-global-timer";
-> > > >  			reg = <0x0200 0x100>;
-> > > >  			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
-> > > > -			clocks = <&clk_periph>;
-> > > > +			clocks = <&periph_clk>;
-> > > >  		};
-> > > >  
-> > > >  		local-timer@0600 {
-> > > >  			compatible = "arm,cortex-a9-twd-timer";
-> > > >  			reg = <0x0600 0x100>;
-> > > >  			interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>;
-> > > > -			clocks = <&clk_periph>;
-> > > > +			clocks = <&periph_clk>;
-> > > >  		};
-> > > >  
-> > > >  		gic: interrupt-controller@1000 {
-> > > > @@ -94,14 +95,66 @@
-> > > >  
-> > > >  	clocks {
-> > > 
-> > > I'd expect this to only contain nodes that don't have a reg
-> > > property. Clock providers that have a reg property would go into
-> > > some soc node or bus. Perhaps that's the chipcommonA node, or
-> > > axi?
-> > 
-> > This might get a little ugly, as some of the clocks are in the
-> > 0x18000000 and others are in 0x19000000.  I would think it better to
-> > have them all in one place (as that is more readable).  Do you preferr
-> > I split the pieces up into their respective DT nodes?
-> 
-> Are there two clock controllers? Sorry I don't understand the
-> architecture here very well. Nodes with reg properties in the
-> same range should be near each other. We don't group all i2c
-> controllers into the same node because they're logically i2c
-> controllers. We express the hierarchy of devices with container
-> nodes. The clocks node is only useful for board-level clocks, not
-> things that are inside the SoC.
+Hi Geert,
 
-3 clock sources: a9pll, lcpll, and genpll. The first one resides in
-the IP block living at the 0x19000000 address range, while the latter
-two live in the 0x18000000 address range.
+Quoting Geert Uytterhoeven (2015-10-16 05:49:20)
+> +static void __init r8a7795_cpg_mssr_init(struct device_node *np)
+> +{
+> +       struct regmap *regmap;
+> +       u32 reg, cpg_mode;
+> +
+> +       regmap =3D syscon_regmap_lookup_by_phandle(np, "renesas,modemr");
+> +       if (IS_ERR(regmap) ||
+> +           of_property_read_u32_index(np, "renesas,modemr", 1, &reg) ||
+> +           regmap_read(regmap, reg, &cpg_mode)) {
+> +               pr_err("%s: failed to parse renesas,modemr\n", np->full_n=
+ame);
+> +               return;
+> +       }
+> +
+> +       cpg_pll_config =3D &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode=
+)];
+> +       if (!cpg_pll_config->extal_div) {
+> +               pr_err("%s: Prohibited setting (cpg_mode=3D0x%x)\n",
+> +                      __func__, cpg_mode);
+> +               return;
+> +       }
+> +
+> +       cpg_mssr_probe(np, &r8a7795_cpg_mssr_info);
+> +}
+> +CLK_OF_DECLARE(r8a7795_cpg_mssr, "renesas,r8a7795-cpg-mssr",
+> +              r8a7795_cpg_mssr_init);
 
-I'll split up the clocks amongst the respective entries, per your
-suggestion.
+Is CLK_OF_DECLARE needed? Is it possible to make this a real
+platform_driver =C3=A0 la drivers/clk/qcom/gcc-apq8084.c?
 
-Thanks,
-Jon 
+Sorry if I already asked this in a previous version, but a quick search
+of my email didn't reveal anything.
 
+Regards,
+Mike
 
+> -- =
 
-
-> 
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+> 1.9.1
+>=20
