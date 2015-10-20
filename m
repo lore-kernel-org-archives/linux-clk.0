@@ -1,198 +1,99 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
 To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>
+Cc: linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Georgi Djakov <georgi.djakov@linaro.org>
-Subject: [PATCH v2 2/2] clk: qcom: Move cxo/pxo/xo into dt files
-Date: Tue, 27 Oct 2015 16:05:00 -0700
-Message-Id: <1445987100-19492-2-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1445987100-19492-1-git-send-email-sboyd@codeaurora.org>
-References: <1445987100-19492-1-git-send-email-sboyd@codeaurora.org>
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-sunxi@googlegroups.com,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v6 4/5] clk: sunxi: codec clock support
+Date: Tue, 20 Oct 2015 09:36:48 +0200
+Message-Id: <1445326609-6314-5-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1445326609-6314-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1445326609-6314-1-git-send-email-maxime.ripard@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Put these clocks into the dt files instead of registering them
-from C code. This provides a few benefits. It allows us to
-specify the frequency of these clocks at the board level instead
-of hard-coding them in the driver. It allows us to insert an RPM
-clock in between the consumers of the crystals and the actual
-clock. And finally, it helps us transition the GCC driver to use
-RPM clocks when that configuration is enabled.
+From: Emilio López <emilio@elopez.com.ar>
 
-Cc: Georgi Djakov <georgi.djakov@linaro.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+The codec clock on sun4i, sun5i and sun7i is a simple gate with PLL2 as
+parent. Add a driver for such a clock.
+
+Signed-off-by: Emilio López <emilio@elopez.com.ar>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 ---
+ drivers/clk/sunxi/Makefile        |  1 +
+ drivers/clk/sunxi/clk-a10-codec.c | 44 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 45 insertions(+)
+ create mode 100644 drivers/clk/sunxi/clk-a10-codec.c
 
-Changes from v1:
- * Convert all armv7 platforms instead of just msm8960
-
- drivers/clk/qcom/gcc-apq8084.c | 16 +++++++---------
- drivers/clk/qcom/gcc-ipq806x.c | 14 ++++++--------
- drivers/clk/qcom/gcc-msm8660.c | 15 +++++++--------
- drivers/clk/qcom/gcc-msm8960.c | 14 ++++++--------
- drivers/clk/qcom/gcc-msm8974.c | 17 +++++++----------
- 5 files changed, 33 insertions(+), 43 deletions(-)
-
-diff --git a/drivers/clk/qcom/gcc-apq8084.c b/drivers/clk/qcom/gcc-apq8084.c
-index 1567c3a79534..070037a29ea5 100644
---- a/drivers/clk/qcom/gcc-apq8084.c
-+++ b/drivers/clk/qcom/gcc-apq8084.c
-@@ -3607,18 +3607,16 @@ MODULE_DEVICE_TABLE(of, gcc_apq8084_match_table);
+diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+index c658a18ba7cb..70a449a419e6 100644
+--- a/drivers/clk/sunxi/Makefile
++++ b/drivers/clk/sunxi/Makefile
+@@ -3,6 +3,7 @@
+ #
  
- static int gcc_apq8084_probe(struct platform_device *pdev)
- {
--	struct clk *clk;
-+	int ret;
- 	struct device *dev = &pdev->dev;
- 
--	/* Temporary until RPM clocks supported */
--	clk = clk_register_fixed_rate(dev, "xo", NULL, CLK_IS_ROOT, 19200000);
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
-+	ret = qcom_cc_register_board_clk(dev, "xo_board", "xo", 19200000);
-+	if (ret)
-+		return ret;
- 
--	clk = clk_register_fixed_rate(dev, "sleep_clk_src", NULL,
--				      CLK_IS_ROOT, 32768);
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
-+	ret = qcom_cc_register_sleep_clk(dev);
-+	if (ret)
-+		return ret;
- 
- 	return qcom_cc_probe(pdev, &gcc_apq8084_desc);
- }
-diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
-index 16fc64c082a5..dd5402bac620 100644
---- a/drivers/clk/qcom/gcc-ipq806x.c
-+++ b/drivers/clk/qcom/gcc-ipq806x.c
-@@ -3023,19 +3023,17 @@ MODULE_DEVICE_TABLE(of, gcc_ipq806x_match_table);
- 
- static int gcc_ipq806x_probe(struct platform_device *pdev)
- {
--	struct clk *clk;
- 	struct device *dev = &pdev->dev;
- 	struct regmap *regmap;
- 	int ret;
- 
--	/* Temporary until RPM clocks supported */
--	clk = clk_register_fixed_rate(dev, "cxo", NULL, CLK_IS_ROOT, 25000000);
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
-+	ret = qcom_cc_register_board_clk(dev, "cxo_board", "cxo", 19200000);
-+	if (ret)
-+		return ret;
- 
--	clk = clk_register_fixed_rate(dev, "pxo", NULL, CLK_IS_ROOT, 25000000);
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
-+	ret = qcom_cc_register_board_clk(dev, "pxo_board", "pxo", 27000000);
-+	if (ret)
-+		return ret;
- 
- 	ret = qcom_cc_probe(pdev, &gcc_ipq806x_desc);
- 	if (ret)
-diff --git a/drivers/clk/qcom/gcc-msm8660.c b/drivers/clk/qcom/gcc-msm8660.c
-index f110bb5a1df3..ad413036f7c7 100644
---- a/drivers/clk/qcom/gcc-msm8660.c
-+++ b/drivers/clk/qcom/gcc-msm8660.c
-@@ -2720,17 +2720,16 @@ MODULE_DEVICE_TABLE(of, gcc_msm8660_match_table);
- 
- static int gcc_msm8660_probe(struct platform_device *pdev)
- {
--	struct clk *clk;
-+	int ret;
- 	struct device *dev = &pdev->dev;
- 
--	/* Temporary until RPM clocks supported */
--	clk = clk_register_fixed_rate(dev, "cxo", NULL, CLK_IS_ROOT, 19200000);
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
-+	ret = qcom_cc_register_board_clk(dev, "cxo_board", "cxo", 19200000);
-+	if (ret)
-+		return ret;
- 
--	clk = clk_register_fixed_rate(dev, "pxo", NULL, CLK_IS_ROOT, 27000000);
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
-+	ret = qcom_cc_register_board_clk(dev, "pxo_board", "pxo", 27000000);
-+	if (ret)
-+		return ret;
- 
- 	return qcom_cc_probe(pdev, &gcc_msm8660_desc);
- }
-diff --git a/drivers/clk/qcom/gcc-msm8960.c b/drivers/clk/qcom/gcc-msm8960.c
-index 66c18bc97857..983dd7dc89a7 100644
---- a/drivers/clk/qcom/gcc-msm8960.c
-+++ b/drivers/clk/qcom/gcc-msm8960.c
-@@ -3503,7 +3503,6 @@ MODULE_DEVICE_TABLE(of, gcc_msm8960_match_table);
- 
- static int gcc_msm8960_probe(struct platform_device *pdev)
- {
--	struct clk *clk;
- 	struct device *dev = &pdev->dev;
- 	const struct of_device_id *match;
- 	struct platform_device *tsens;
-@@ -3513,14 +3512,13 @@ static int gcc_msm8960_probe(struct platform_device *pdev)
- 	if (!match)
- 		return -EINVAL;
- 
--	/* Temporary until RPM clocks supported */
--	clk = clk_register_fixed_rate(dev, "cxo", NULL, CLK_IS_ROOT, 19200000);
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
-+	ret = qcom_cc_register_board_clk(dev, "cxo_board", "cxo", 19200000);
-+	if (ret)
-+		return ret;
- 
--	clk = clk_register_fixed_rate(dev, "pxo", NULL, CLK_IS_ROOT, 27000000);
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
-+	ret = qcom_cc_register_board_clk(dev, "pxo_board", "pxo", 27000000);
-+	if (ret)
-+		return ret;
- 
- 	ret = qcom_cc_probe(pdev, match->data);
- 	if (ret)
-diff --git a/drivers/clk/qcom/gcc-msm8974.c b/drivers/clk/qcom/gcc-msm8974.c
-index 28abb8f8f293..335952db309b 100644
---- a/drivers/clk/qcom/gcc-msm8974.c
-+++ b/drivers/clk/qcom/gcc-msm8974.c
-@@ -2717,7 +2717,7 @@ static void msm8974_pro_clock_override(void)
- 
- static int gcc_msm8974_probe(struct platform_device *pdev)
- {
--	struct clk *clk;
-+	int ret;
- 	struct device *dev = &pdev->dev;
- 	bool pro;
- 	const struct of_device_id *id;
-@@ -2730,16 +2730,13 @@ static int gcc_msm8974_probe(struct platform_device *pdev)
- 	if (pro)
- 		msm8974_pro_clock_override();
- 
--	/* Temporary until RPM clocks supported */
--	clk = clk_register_fixed_rate(dev, "xo", NULL, CLK_IS_ROOT, 19200000);
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
-+	ret = qcom_cc_register_board_clk(dev, "xo_board", "xo", 19200000);
-+	if (ret)
-+		return ret;
- 
--	/* Should move to DT node? */
--	clk = clk_register_fixed_rate(dev, "sleep_clk_src", NULL,
--				      CLK_IS_ROOT, 32768);
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
-+	ret = qcom_cc_register_sleep_clk(dev);
-+	if (ret)
-+		return ret;
- 
- 	return qcom_cc_probe(pdev, &gcc_msm8974_desc);
- }
+ obj-y += clk-sunxi.o clk-factors.o
++obj-y += clk-a10-codec.o
+ obj-y += clk-a10-hosc.o
+ obj-y += clk-a10-pll2.o
+ obj-y += clk-a20-gmac.o
+diff --git a/drivers/clk/sunxi/clk-a10-codec.c b/drivers/clk/sunxi/clk-a10-codec.c
+new file mode 100644
+index 000000000000..ac321d6a0df5
+--- /dev/null
++++ b/drivers/clk/sunxi/clk-a10-codec.c
+@@ -0,0 +1,44 @@
++/*
++ * Copyright 2013 Emilio López
++ *
++ * Emilio López <emilio@elopez.com.ar>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++
++#define SUN4I_CODEC_GATE	31
++
++static void __init sun4i_codec_clk_setup(struct device_node *node)
++{
++	struct clk *clk;
++	const char *clk_name = node->name, *parent_name;
++	void __iomem *reg;
++
++	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
++	if (IS_ERR(reg))
++		return;
++
++	of_property_read_string(node, "clock-output-names", &clk_name);
++	parent_name = of_clk_get_parent_name(node, 0);
++
++	clk = clk_register_gate(NULL, clk_name, parent_name,
++				CLK_SET_RATE_PARENT, reg,
++				SUN4I_CODEC_GATE, 0, NULL);
++
++	if (!IS_ERR(clk))
++		of_clk_add_provider(node, of_clk_src_simple_get, clk);
++}
++CLK_OF_DECLARE(sun4i_codec, "allwinner,sun4i-a10-codec-clk",
++	       sun4i_codec_clk_setup);
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.6.2
