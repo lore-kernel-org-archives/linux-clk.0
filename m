@@ -1,62 +1,43 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bl2on0108.outbound.protection.outlook.com ([65.55.169.108]:3763
-	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752065AbbJWTxy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Fri, 23 Oct 2015 15:53:54 -0400
-From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-To: <arnd@arndb.de>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
-	<linux-clk@vger.kernel.org>, <olof@lixom.net>
-CC: <bhupesh.linux@gmail.com>, <will.deacon@arm.com>,
-	<Catalin.Marinas@arm.com>, <bhupesh.sharma@freescale.com>,
-	<LeoLi@freescale.com>, <scottwood@freescale.com>,
-	<stuart.yoder@freescale.com>
-Subject: [PATCH v4 09/12] dts/ls2080a: Update Simulator DTS to add support of various peripherals
-Date: Sat, 24 Oct 2015 01:01:58 +0530
-Message-ID: <1445628721-10483-10-git-send-email-bhupesh.sharma@freescale.com>
-In-Reply-To: <1445628721-10483-1-git-send-email-bhupesh.sharma@freescale.com>
-References: <1445628721-10483-1-git-send-email-bhupesh.sharma@freescale.com>
+Received: from mail-qg0-f46.google.com ([209.85.192.46]:33333 "EHLO
+	mail-qg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752111AbbJTMUt (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 20 Oct 2015 08:20:49 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
+References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
+Date: Tue, 20 Oct 2015 21:20:48 +0900
+Message-ID: <CAJKOXPcf1V9TEVqYDhHyejhW82A1EeYo+Qn8ksiQC02N=kw+Rw@mail.gmail.com>
+Subject: Re: [PATCH 00/10] drm/exynos/decon5433: add support to DECON-TV
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Inki Dae <inki.dae@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Hyungwon Hwang <human.hwang@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch updates the LS2080a simulator DTS to add support of various
-peripherals which are supported on the simulator platform and explicitly
-disables those which are yet not supported on the platform.
+2015-10-20 18:22 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
+> Hi Inki,
+>
+> This patchset adds support to DECON-TV in Exynos5433 SoC.
+> The main patch is prepended with few preparation patches:
+> - add three clocks required by HDMI pipeline,
+> - small bindings update,
+> - driver cleanup.
+>
+> The patchset is based on the latest exynos-drm-next branch.
 
-Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-Signed-off-by: Scott Wood <scottwood@freescale.com>
----
- arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+So I am assuming this will go through Exynos drm tree. Please ping me
+if you need something from my side (except dt-bindings I guess?).
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts b/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
-index 33d6d0c..3676c02 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
-@@ -57,9 +57,19 @@
- 	model = "Freescale Layerscape 2080a software Simulator model";
- 	compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
- 
-+	aliases {
-+		serial0 = &serial0;
-+		serial1 = &serial1;
-+	};
-+
- 	ethernet@2210000 {
- 		compatible = "smsc,lan91c111";
- 		reg = <0x0 0x2210000 0x0 0x100>;
- 		interrupts = <0 58 0x1>;
- 	};
- };
-+
-+&ifc {
-+	status = "okay";
-+};
-+
--- 
-1.7.9.5
-
-
+Best regards,
+Krzysztof
