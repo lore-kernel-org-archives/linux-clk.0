@@ -1,221 +1,189 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 7 Oct 2015 17:55:32 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Eric Anholt <eric@anholt.net>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
-	Mike Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v5] clk: bcm2835: Add support for programming the audio
- domain clocks.
-Message-ID: <20151008005532.GB26883@codeaurora.org>
-References: <1444181140-3570-1-git-send-email-eric@anholt.net>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1444181140-3570-1-git-send-email-eric@anholt.net>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
+ "Magnus Damm" <damm+renesas@opensource.se>,
+ "Simon Horman" <horms+renesas@verge.net.au>,
+ "Rob Herring" <robh+dt@kernel.org>, "Pawel Moll" <pawel.moll@arm.com>,
+ "Mark Rutland" <mark.rutland@arm.com>,
+ "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
+ "Kumar Gala" <galak@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1444999760-15750-2-git-send-email-geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-sh@vger.kernel.org, "Geert Uytterhoeven" <geert+renesas@glider.be>
+References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be>
+ <1444999760-15750-2-git-send-email-geert+renesas@glider.be>
+Message-ID: <20151020101536.20687.93727@quantum>
+Subject: Re: [PATCH v4 1/5] [RFC] clk: shmobile: Add new Renesas CPG/MSSR DT bindings
+Date: Tue, 20 Oct 2015 03:15:36 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/06, Eric Anholt wrote:
-> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-> index dd295e4..b4d4421 100644
-> --- a/drivers/clk/bcm/clk-bcm2835.c
-> +++ b/drivers/clk/bcm/clk-bcm2835.c
-> @@ -17,10 +17,273 @@
->  #include <linux/clk-provider.h>
->  #include <linux/clkdev.h>
->  #include <linux/clk/bcm2835.h>
-> +#include <linux/module.h>
->  #include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/platform_device.h>
-> +#include <dt-bindings/clock/bcm2835.h>
+Hi Geert,
 
-Please include slab.h for the kzalloc usage
+Quoting Geert Uytterhoeven (2015-10-16 05:49:16)
+> On Renesas ARM SoCs (SH/R-Mobile, R-Car, RZ), the CPG (Clock Pulse
+> Generator) and MSSR (Module Standby and Software Reset) blocks are
+> intimately connected, and share the same register block.
+> =
 
-> +
-> +
-> +static struct clk *bcm2835_register_pll(struct bcm2835_cprman *cprman,
-> +					const struct bcm2835_pll_data *data)
-> +{
-> +	struct bcm2835_pll *pll;
-> +	struct clk_init_data init;
-> +
-> +	memset(&init, 0, sizeof(init));
-> +
-> +	/* All of the PLLs derive from the external oscillator. */
-> +	init.parent_names = &cprman->osc_name;
-> +	init.num_parents = 1;
-> +	init.name = data->name;
-> +	init.ops = &bcm2835_pll_clk_ops;
-> +	init.flags = CLK_IGNORE_UNUSED;
-> +
-> +	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
-> +	if (!pll)
-> +		return NULL;
-> +
-> +	pll->cprman = cprman;
-> +	pll->data = data;
-> +	pll->hw.init = &init;
-> +
-> +	return clk_register(cprman->dev, &pll->hw);
+> Hence it makes sense to describe these two blocks using a
+> single device node in DT, instead of using a hierarchical structure with
+> multiple nodes, using a mix of generic and SoC-specific bindings.
+> =
 
-devm_clk_register?
+> These new DT bindings are intended to replace the existing DT bindings
+> for CPG core clocks ("renesas,*-cpg-clocks", "renesas,cpg-div6-clock")
+> and module clocks ("renesas,*-mstp-clocks"), at least for new SoCs.
+> =
 
-> +}
-> +
-> +static struct clk *
-> +bcm2835_register_pll_divider(struct bcm2835_cprman *cprman,
-> +			     const struct bcm2835_pll_divider_data *data)
-> +{
-> +	struct bcm2835_pll_divider *divider;
-> +	struct clk_init_data init;
-> +	struct clk *clk;
-> +	const char *divider_name;
-> +
-> +	if (data->fixed_divider != 1) {
-> +		divider_name = devm_kasprintf(cprman->dev, GFP_KERNEL,
-> +					      "%s_prediv", data->name);
-> +		if (!divider_name)
-> +			return NULL;
-> +	} else {
-> +		divider_name = data->name;
-> +	}
-> +
-> +	memset(&init, 0, sizeof(init));
-> +
-> +	init.parent_names = &data->source_pll->name;
-> +	init.num_parents = 1;
-> +	init.name = divider_name;
-> +	init.ops = &bcm2835_pll_divider_clk_ops;
-> +	init.flags = (CLK_SET_RATE_PARENT |
-> +		      CLK_IGNORE_UNUSED);
+> This will make it easier to add module reset support later, which is
+> currently not implemented, and difficult to achieve using the existing
+> bindings due to the intertwined register layout.
+> =
 
-Drop () and put on one line.
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> +
-> +	divider = kzalloc(sizeof(*divider), GFP_KERNEL);
+Thanks for re-working the binding per our discussion at ELC-E. Please
+feel free to add my Ack to patches #1 and #2.
 
-Use devm_kzalloc() to auto free on errors?
+Regards,
+Mike
 
-> +	if (!divider)
-> +		return NULL;
-> +
-> +	divider->div.reg = cprman->regs + data->a2w_reg;
-> +	divider->div.shift = A2W_PLL_DIV_SHIFT;
-> +	divider->div.width = A2W_PLL_DIV_BITS;
-> +	divider->div.flags = 0;
-> +	divider->div.lock = &cprman->regs_lock;
-> +	divider->div.hw.init = &init;
-> +	divider->div.table = NULL;
-> +
-> +	divider->cprman = cprman;
-> +	divider->data = data;
-> +
-> +	clk = clk_register(cprman->dev, &divider->div.hw);
+> ---
+> v4:
+>   - No changes,
+> =
 
-devm_clk_register?
+> v3:
+>   - Integrate CPG and MSSR,
+> =
 
-> +	if (IS_ERR(clk))
-> +		return clk;
-> +
-> +	/*
-> +	 * PLLH's channels have a fixed divide by 10 afterwards, which
-> +	 * is what our consumers are actually using.
-> +	 */
-> +	if (data->fixed_divider != 1) {
-> +		return clk_register_fixed_factor(cprman->dev, data->name,
-> +						 divider_name,
-> +						 CLK_SET_RATE_PARENT,
-> +						 1,
-> +						 data->fixed_divider);
-> +	}
-> +
-> +	return clk;
-> +}
-> +
-> +static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
-> +					  const struct bcm2835_clock_data *data)
-> +{
-[..]
-> +
-> +	memset(&init, 0, sizeof(init));
-> +	init.parent_names = &parent;
-> +	init.num_parents = 1;
-> +	init.name = data->name;
-> +	init.flags = CLK_IGNORE_UNUSED;
-> +
-> +	if (data->is_vpu_clock) {
-> +		init.ops = &bcm2835_vpu_clock_clk_ops;
-> +	} else {
-> +		init.ops = &bcm2835_clock_clk_ops;
-> +		init.flags |= CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE;
-> +	}
-> +
-> +	clock = kzalloc(sizeof(*clock), GFP_KERNEL);
+> v2:
+>   - Switch from MSTP to MSSR.
+> ---
+>  .../devicetree/bindings/clock/renesas,cpg-mssr.txt | 71 ++++++++++++++++=
+++++++
+>  include/dt-bindings/clock/renesas-cpg-mssr.h       | 15 +++++
+>  2 files changed, 86 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-m=
+ssr.txt
+>  create mode 100644 include/dt-bindings/clock/renesas-cpg-mssr.h
+> =
 
-devm_kzalloc()?
-
-> +	if (!clock)
-> +		return NULL;
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt=
+ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+> new file mode 100644
+> index 0000000000000000..a56836aa2131a8db
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+> @@ -0,0 +1,71 @@
+> +* Renesas Clock Pulse Generator / Module Standby and Software Reset
 > +
-> +	clock->cprman = cprman;
-> +	clock->data = data;
-> +	clock->hw.init = &init;
+> +On Renesas ARM SoCs (SH/R-Mobile, R-Car, RZ), the CPG (Clock Pulse Gener=
+ator)
+> +and MSSR (Module Standby and Software Reset) blocks are intimately conne=
+cted,
+> +and share the same register block.
 > +
-> +	return clk_register(cprman->dev, &clock->hw);
-
-devm_clk_register()?
-
-> +}
+> +They provide the following functionalities:
+> +  - The CPG block generates various core clocks,
+> +  - The MSSR block provides two functions:
+> +      1. Module Standby, providing a Clock Domain to control the clock s=
+upply
+> +        to individual SoC devices,
+> +      2. Reset Control, to perform a software reset of individual SoC de=
+vices.
 > +
-> +static int bcm2835_clk_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct clk **clks;
-> +	struct bcm2835_cprman *cprman;
+> +Required Properties:
+> +  - compatible: Must be one of:
+> +      - "renesas,r8a7791-cpg-mssr" for the r8a7791 SoC
+> +      - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC
 > +
-> +	cprman = devm_kzalloc(dev, sizeof(*cprman), GFP_KERNEL);
-> +	if (!cprman)
-> +		return -ENOMEM;
+> +  - reg: Base address and length of the memory resource used by the CPG/=
+MSSR
+> +    block
 > +
-> +	spin_lock_init(&cprman->regs_lock);
-> +	cprman->dev = &pdev->dev;
-
-Just use dev?
-
-> +	cprman->regs = of_iomap(dev->of_node, 0);
-
-Please use platform driver APIs:
-
-	platform_get_resource()
-	devm_ioremap_resource()
-
-> +	if (!cprman->regs)
-> +		return -ENODEV;
+> +  - clocks: References to external parent clocks, one entry for each ent=
+ry in
+> +    clock-names
+> +  - clock-names: List of external parent clock names. Valid names are:
+> +      - "extal" (r8a7791, r8a7795)
+> +      - "extalr" (r8a7795)
+> +      - "usb_extal" (r8a7791)
 > +
-> +	cprman->osc_name = of_clk_get_parent_name(dev->of_node, 0);
-> +	if (!cprman->osc_name) {
-> +		iounmap(cprman->regs);
-> +		return -ENODEV;
-> +	}
-[...]
+> +  - #clock-cells: Must be 2
+> +      - For CPG core clocks, the two clock specifier cells must be "CPG_=
+CORE"
+> +       and a core clock reference, as defined in
+> +       <dt-bindings/clock/*-cpg-mssr.h>.
+> +      - For module clocks, the two clock specifier cells must be "CPG_MO=
+D" and
+> +       a module number, as defined in the datasheet.
 > +
-> +	/*
-> +	 * CM_PERIICTL (and CM_PERIACTL, CM_SYSCTL and CM_VPUCTL if
-> +	 * you have the debug bit set in the power manager, which we
-> +	 * don't bother exposing) are individual gates off of the
-> +	 * non-stop vpu clock.
-> +	 */
-> +	clks[BCM2835_CLOCK_PERI_IMAGE] =
-> +		clk_register_gate(dev, "peri_image", "vpu",
-> +				  CLK_IGNORE_UNUSED | CLK_SET_RATE_GATE,
-> +				  cprman->regs + CM_PERIICTL, CM_GATE_BIT,
-> +				  0, &cprman->regs_lock);
+> +  - #power-domain-cells: Must be 0
+> +      - SoC devices that are part of the CPG/MSSR Clock Domain and can be
+> +       power-managed through Module Standby should refer to the CPG devi=
+ce
+> +       node in their "power-domains" property, as documented by the gene=
+ric PM
+> +       Domain bindings in
+> +       Documentation/devicetree/bindings/power/power_domain.txt.
 > +
-> +	return of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get,
+> +
+> +Examples
+> +--------
+> +
+> +  - CPG device node:
+> +
+> +       cpg: clock-controller@e6150000 {
+> +               compatible =3D "renesas,r8a7795-cpg-mssr";
+> +               reg =3D <0 0xe6150000 0 0x1000>;
+> +               clocks =3D <&extal_clk>, <&extalr_clk>;
+> +               clock-names =3D "extal", "extalr";
+> +               #clock-cells =3D <2>;
+> +               #power-domain-cells =3D <0>;
+> +       };
+> +
+> +
+> +  - CPG/MSSR Clock Domain member device node:
+> +
+> +       scif2: serial@e6e88000 {
+> +               compatible =3D "renesas,scif-r8a7795", "renesas,scif";
+> +               reg =3D <0 0xe6e88000 0 64>;
+> +               interrupts =3D <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
+> +               clocks =3D <&cpg CPG_MOD 310>;
+> +               clock-names =3D "sci_ick";
+> +               dmas =3D <&dmac1 0x13>, <&dmac1 0x12>;
+> +               dma-names =3D "tx", "rx";
+> +               power-domains =3D <&cpg>;
+> +               status =3D "disabled";
+> +       };
+> diff --git a/include/dt-bindings/clock/renesas-cpg-mssr.h b/include/dt-bi=
+ndings/clock/renesas-cpg-mssr.h
+> new file mode 100644
+> index 0000000000000000..569a3cc33ffb5bc7
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/renesas-cpg-mssr.h
+> @@ -0,0 +1,15 @@
+> +/*
+> + * Copyright (C) 2015 Renesas Electronics Corp.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + */
+> +#ifndef __DT_BINDINGS_CLOCK_RENESAS_CPG_MSSR_H__
+> +#define __DT_BINDINGS_CLOCK_RENESAS_CPG_MSSR_H__
+> +
+> +#define CPG_CORE                       0       /* Core Clock */
+> +#define CPG_MOD                                1       /* Module Clock */
+> +
+> +#endif /* __DT_BINDINGS_CLOCK_RENESAS_CPG_MSSR_H__ */
+> -- =
 
-Just use dev?
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> 1.9.1
+>=20
