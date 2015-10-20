@@ -1,50 +1,98 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Cc: linux-rockchip@lists.infradead.org, Jaroslav Kysela <perex@perex.cz>, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 5/8] clk: rockchip: Allow the RK3288 SPDIF clocks to change their parent
-Date: Sun, 11 Oct 2015 12:43:27 +0200
-Message-ID: <1745884.LUbKvMh2Tj@diego>
-In-Reply-To: <1444390555.9895.271.camel@collabora.co.uk>
-References: <1444311079-2892-1-git-send-email-sjoerd.simons@collabora.co.uk> <11755202.f1LLWMlYi0@phil> <1444390555.9895.271.camel@collabora.co.uk>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:43611 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751560AbbJTPxN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Tue, 20 Oct 2015 11:53:13 -0400
+Date: Tue, 20 Oct 2015 17:52:58 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Zhiqiang Hou <B48286@freescale.com>
+Cc: linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+	will.deacon@arm.com, linux-i2c@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org, mark.rutland@arm.com,
+	linux@roeck-us.net, wim@iguana.be, corbet@lwn.net,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	Mingkai.Hu@freescale.com, Shaohui.Xie@freescale.com,
+	scottwood@freescale.com, bhupesh.sharma@freescale.com,
+	Wenbin.Song@freescale.com
+Subject: Re: [PATCH V5 1/6] i2c: Add i2c support to Freescale Layerscape
+ platforms
+Message-ID: <20151020155258.GM5379@katana>
+References: <1445255774-32887-1-git-send-email-B48286@freescale.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="9Jdw4pA1x1k2W7MG"
+In-Reply-To: <1445255774-32887-1-git-send-email-B48286@freescale.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sjoerd,
 
-Am Freitag, 9. Oktober 2015, 13:35:55 schrieb Sjoerd Simons:
-> On Thu, 2015-10-08 at 17:10 +0200, Heiko Stuebner wrote:
-> > Am Donnerstag, 8. Oktober 2015, 15:31:16 schrieb Sjoerd Simons:
-> > > The clock branches leading to sclk_spdif and sclk_spdif_8ch on
-> > > RK3288
-> > > SoCs only feed those clocks, allow those clocks to change their
-> > > parents
-> > > all the way up the hierarchy.
-> > > 
-> > > Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-> > 
-> > Just as comment, if I'm seeing that right, this patch needs "clk:
-> > rockchip:
-> > handle mux dependency of fractional dividers" and friends [0] to
-> > apply and
-> > also actually handle the fractional dividers correctly.
-> > 
-> > For the clock change itself:
-> > Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> 
-> Oh sorry yes, i completely forgot to at that as note on this patch
-> (series). These are on top of your series as those are required to make
-> things actually work as expected.
-> 
-> Which reminds me, i was wondering how to best move that forward. Could
-> you pick this one up to include it in the next round of your series?
-> (Otherwise i'm happy to rebase it once you do a v2)
+--9Jdw4pA1x1k2W7MG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I guess that will depend on how the core series gets handled. Aka if there 
-needs to be a v2 (depending on the clock maintainers) I can pick that up as 
-part of it. Otherwise we'll just need to ping the clock-maintainers separately 
-on this patch if necessary.
+On Mon, Oct 19, 2015 at 07:56:09PM +0800, Zhiqiang Hou wrote:
+> From: Shaohui Xie <Shaohui.Xie@freescale.com>
+>=20
+> Modify the I2C_IMX config to support to Layerscape platforms.
+>=20
+> Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
+> Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
+> Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
 
+Three signed offs for a simple Kconfig change? And the person doing
+the patch has no signed off?? That looks wrong. Maybe the above signed
+offs should be acked by?
 
-Heiko
+> ---
+> V5: V4 V3 V2
+>  - No change.
+>=20
+>  drivers/i2c/busses/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+> index 08b8617..14147ec 100644
+> --- a/drivers/i2c/busses/Kconfig
+> +++ b/drivers/i2c/busses/Kconfig
+> @@ -582,10 +582,10 @@ config I2C_IMG
+> =20
+>  config I2C_IMX
+>  	tristate "IMX I2C interface"
+> -	depends on ARCH_MXC
+> +	depends on ARCH_MXC || ARCH_LAYERSCAPE
+>  	help
+>  	  Say Y here if you want to use the IIC bus controller on
+> -	  the Freescale i.MX/MXC processors.
+> +	  the Freescale i.MX/MXC or Layerscape processors.
+> =20
+>  	  This driver can also be built as a module.  If so, the module
+>  	  will be called i2c-imx.
+> --=20
+> 2.1.0.27.g96db324
+>=20
+
+--9Jdw4pA1x1k2W7MG
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWJmNaAAoJEBQN5MwUoCm2GmoP/jRzXnUGzGss8X/pKAnaTGX+
+XkYOSlIabsGjbHVARbMorlYLkvkG0AVt8MpfrXKxHBx/xiCU8HRBwhWZzENCLIbz
+CvVk0vuEQKDm/T6/TcjPlFbbzKwcwEebydcvsEU/VEej/KM7aWldqbYTYSX3lC2n
+bJEOsyvn0tSr6gFFjSS9wyRQZUotbllNWSM9SAzvzMEN91SN+b4vkzTzDwU87q+R
+3HUnpE8/eouHrKh2Q15Ak225l25l5IChso1MhWx5w7cfj80Bx0Ni4t+Nk27FfDND
+uhMQ4UPqguBNxW1USEsEzHAIfG32VT+stURJoO7iw2ggnBOQweIUtCWOITxCLO2z
+jgtDr06CnuqyFQjXsZWsvRo9AXRw+R27ZS0Yt/e7V5w6GHCTv8NIZVoLLphRphI3
+DYNo66Cc9M5T4XUyf+a6jSCzxJ73j3L+9tKG+zOJm/8/ETKNBtVs6UEJN0caVTCL
+CFUgql4ylmxJpIRGKAyS1BkpFd8Li7qtSWbzeJaULjXgl5Ci8GX8YdlqWQGbKSSc
+IBpNFvcJXxlIiFfn3mGsg0y4qm8LS0ONE7mDO1E8X0Qzh9KqlPGsM/G30LfalYOD
+qXyzjL9/DF1Jj/Ei1ThVBFqouRPltFrMlv5RzYJQ41b15um+UYxAvnMicZ4eUVkv
+4ai9Ux1dRiVnvJcBCbQ2
+=EpaM
+-----END PGP SIGNATURE-----
+
+--9Jdw4pA1x1k2W7MG--
