@@ -1,54 +1,149 @@
-Return-Path: <rjw@rjwysocki.net>
-Return-Path: <rjw@rjwysocki.net>
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org, dmaengine@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>, Linux USB List <linux-usb@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-Subject: Re: [GIT PULL] On-demand device probing
-Date: Thu, 22 Oct 2015 02:54:33 +0200
-Message-ID: <1757126.NgBN1ISfc9@vostro.rjw.lan>
-In-Reply-To: <CAAObsKChQN4gg91dCWJS_Co_MrYyBrB1J7gxgGo4hsPXNZRp3g@mail.gmail.com>
-References: <20151020153612.GB32054@sirena.org.uk> <Pine.LNX.4.44L0.1510201159400.1855-100000@iolanthe.rowland.org> <CAAObsKChQN4gg91dCWJS_Co_MrYyBrB1J7gxgGo4hsPXNZRp3g@mail.gmail.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 21 Oct 2015 16:53:35 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v6 1/5] clk: Add a basic multiplier clock
+Message-ID: <20151021145335.GF10947@lukather>
+References: <1445326609-6314-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1445326609-6314-2-git-send-email-maxime.ripard@free-electrons.com>
+ <20151020134343.20687.16333@quantum>
+ <20151020144047.GA10947@lukather>
+ <20151020162939.20687.32769@quantum>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="fwqqG+mf3f7vyBCB"
+In-Reply-To: <20151020162939.20687.32769@quantum>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tuesday, October 20, 2015 06:21:55 PM Tomeu Vizoso wrote:
-> On 20 October 2015 at 18:04, Alan Stern <stern@rowland.harvard.edu> wrote:
-> > On Tue, 20 Oct 2015, Mark Brown wrote:
-> >
-> >> On Tue, Oct 20, 2015 at 10:40:03AM -0400, Alan Stern wrote:
-> >>
-> >> > Furthermore, that applies only to devices that use synchronous suspend.
-> >> > Async suspend is becoming common, and there the only restrictions are
-> >> > parent-child relations plus whatever explicit requirements that drivers
-> >> > impose by calling device_pm_wait_for_dev().
-> >>
-> >> Hrm, this is the first I'd noticed that feature though I see the initial
-> >> commit dates from January.
-> >
-> > Async suspend and device_pm_wait_for_dev() were added in January 2010,
-> > not 2015!
-> >
-> >>  It looks like most of the users are PCs at
-> >> the minute but we should be using it more widely for embedded things,
-> >> there's definitely some cases I'm aware of where it will allow us to
-> >> remove some open coding.
-> >>
-> >> It does seem like we want to be feeding dependency information we
-> >> discover for probing way into the suspend dependencies...
-> >
-> > Rafael has been thinking about a way to do this systematically.
-> > Nothing concrete has emerged yet.
-> 
-> This iteration of the series would make this quite easy, as
-> dependencies are calculated before probes are attempted:
-> 
-> https://lkml.org/lkml/2015/6/17/311
 
-Well, if you know how to represent "links" between devices, the mechanism
-introduced here doesn't really add much value, because in that case the
-core knows what the dependencies are in the first place and can only
-defer the probes that have to be deferred.
+--fwqqG+mf3f7vyBCB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Oct 20, 2015 at 09:29:39AM -0700, Michael Turquette wrote:
+> Quoting Maxime Ripard (2015-10-20 07:40:47)
+> > Hi Mike,
+> >=20
+> > On Tue, Oct 20, 2015 at 06:43:43AM -0700, Michael Turquette wrote:
+> > > Hi Maxime,
+> > >=20
+> > > Quoting Maxime Ripard (2015-10-20 00:36:45)
+> > > > +struct clk *clk_register_multiplier(struct device *dev, const char=
+ *name,
+> > > > +                                   const char *parent_name,
+> > > > +                                   unsigned long flags,
+> > > > +                                   void __iomem *reg, u8 shift, u8=
+ width,
+> > > > +                                   u8 clk_mult_flags, spinlock_t *=
+lock)
+> > > > +{
+> > >=20
+> > > Patch looks good in general. However this is a good opportunity to st=
+op
+> > > the madness around the registration functions in these basic clock
+> > > types.
+> > >=20
+> > > clk_register is really all that we need since we've had struct
+> > > clk_init_data for a while. Initializing a multiplier should be as sim=
+ple
+> > > as:
+> > >=20
+> > >       struct clk_multiplier clk_foo =3D {
+> > >               .hw.init =3D &(struct clk_init_data){
+> > >                       .name =3D "foo",
+> > >                       .parent_names =3D (const char *[]){
+> > >                               "bar",
+> > >                       },
+> > >                       .num_parents =3D 1;
+> > >                       .ops =3D &clk_multiplier_ops,
+> > >               },
+> > >               .reg =3D 0xd34db33f,
+> > >               .shift =3D 1,
+> > >               .width =3D 2,
+> > >       };
+> > >=20
+> > >       clk_register(dev, &clk_foo.hw);
+> > >=20
+> > > This is nice since it turns these basic clocks into even more of a
+> > > library and less of a poor mans driver.
+> > >=20
+> > > (I really hope the above works. I did not test it)
+> > >=20
+> > > Is it possible you can convert to using this method, and if it is
+> > > correct for you then just remove clk_multiplier_register altogether? =
+(In
+> > > fact you might not use the registration function at all since you use
+> > > the composite clock...)
+> >=20
+> > This chunk of code has been here since v2, which has been first posted
+> > in May, two and half kernel releases ago.
+> >=20
+> > In the meantime, we had a full-blown DMA driver and a quite unusual
+> > ASoC driver merged. For some reason, this is the only piece of the
+> > audio support that is missing for us, while at the same time it's the
+> > most trivial.
+> >=20
+> > If that's the only issue you have with this patch, I'm fine with
+> > sending a subsequent patch this week. But I'd be really unhappy with
+> > sending yet another version for a single change, while you had 5
+> > monthes to review it, and we discussed it several times on IRC and
+> > face to face.
+>=20
+> The change can go in later. It's not a prerequisite. I had a feeling
+> you'd be grumpy about me asking but I thought I'd try anyways. I won't
+> even ask if you got sign-off from Jim on whether this works for his
+> platforms ;-)
+
+I asked several times, he never replied... :/
+
+> The copy/paste nature of these basic clock types really sucks and it is
+> one of many reasons that I am hesitant to accept them and slow to merge
+> them...
+
+I guess we cover all cases now? So it shouldn't grow that much.
+
+> Anyways it seems that you are not using the registration function at all
+> so I might just follow up with a patch to remove it.
+>=20
+> I can pick these 5 patches directly, or do you plan to send a PR?
+
+I have a pull request coming for you with a single patch, I can apply
+them on that branch and send you the PR later today if it's okay?
 
 Thanks,
-Rafael
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--fwqqG+mf3f7vyBCB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWJ6bvAAoJEBx+YmzsjxAgELIP/3Kszk5tWro3IyiRGCgMkwB0
+cCpkqlMj+YaM2iD9HVll2XTCjR4xsrHM+YHRgNcbzjtGOsAIbuVuzAlpnstiDSGm
+5qr/rd1iJgX6W35FvIDpI8zrJAZeCfZ/X/JaniqEdXcQfHmJx/9/fY4BrPLMuRs+
+5YEBk3VDTkkak8GZ+DEJDiBuimiSgX0PyBKOjeGMo0oF6YOgT/FaJjtVZ8TdlNfM
+VQo0kvpAKfsm0DHZqSNsk0oHzX0eZi6PvJHxz3iyZZupg3hTb1xa0iRu+InPTA7R
+xfZOJ06WSunsyD4yflTAaFHPANXR2RcbjTPalW/JA/bEvjMn2iK/gzoJF9TsMi3T
+SoVR6YW5meyBp4YcKK+OZVYxZTjcGCO0uYZlfNQnUwOt519tte4qMB0Uo/8WGXwE
+sXRoGQa5QRsRh0MasdiE3GCA3nZsABCi+oZLTK/hNMoQZb3krX0H53DyN5iPoe0T
+yNcBb9ATbNBNUZm0oYopPd1KjMCLroJZSBXix4gBZxkE7ANnxIINITWBKHmqvw0r
+GNUZvaAGIax8e9QL5kH68ct4MKXx5WlFgGueDX0xhbAVPT52bsYJW5KjbIExdozc
+MS5NxSd/z2OO9BoBN/9q2iksMuBjKzeZkQeWqkcZ9oQG4NKVPnOXPn1mhQEfhBiS
+q1CX06SNo40wm+X5Zs2R
+=3eJU
+-----END PGP SIGNATURE-----
+
+--fwqqG+mf3f7vyBCB--
