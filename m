@@ -1,89 +1,90 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 14/19] ARM: sun5i: dt: Add pll3 and pll7 clocks
-Date: Fri, 30 Oct 2015 15:21:00 +0100
-Message-Id: <1446214865-3972-15-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1445367000-11525-1-git-send-email-geert+renesas@glider.be>
+Cc: "Magnus Damm" <damm+renesas@opensource.se>,
+ "Simon Horman" <horms+renesas@verge.net.au>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-sh@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "Geert Uytterhoeven" <geert+renesas@glider.be>
+References: <1445367000-11525-1-git-send-email-geert+renesas@glider.be>
+Message-ID: <20151021092749.20687.86043@quantum>
+Subject: Re: [git pull] clk: shmobile: Add new Renesas CPG/MSSR DT bindings for
+Date: Wed, 21 Oct 2015 02:27:49 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable the pll3 and pll7 clocks in the DT that are used to drive the
-display-related clocks.
+Quoting Geert Uytterhoeven (2015-10-20 11:49:58)
+>         Hi Mike, Stephen,
+> =
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- arch/arm/boot/dts/sun5i.dtsi | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+> The following changes since commit 64291f7db5bd8150a74ad2036f1037e6a0428d=
+f2:
+> =
 
-diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
-index 59a9426e3bd4..bde9a545b79f 100644
---- a/arch/arm/boot/dts/sun5i.dtsi
-+++ b/arch/arm/boot/dts/sun5i.dtsi
-@@ -88,6 +88,15 @@
- 			clock-output-names = "osc24M";
- 		};
- 
-+		osc3M: osc3M_clk {
-+			compatible = "fixed-factor-clock";
-+			#clock-cells = <0>;
-+			clock-div = <8>;
-+			clock-mult = <1>;
-+			clocks = <&osc24M>;
-+			clock-output-names = "osc3M";
-+		};
-+
- 		osc32k: clk@0 {
- 			#clock-cells = <0>;
- 			compatible = "fixed-clock";
-@@ -112,6 +121,14 @@
- 					     "pll2-4x", "pll2-8x";
- 		};
- 
-+		pll3: clk@01c20010 {
-+			#clock-cells = <0>;
-+			compatible = "allwinner,sun4i-a10-pll3-clk";
-+			reg = <0x01c20010 0x4>;
-+			clocks = <&osc3M>;
-+			clock-output-names = "pll3";
-+		};
-+
- 		pll4: clk@01c20018 {
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-pll1-clk";
-@@ -136,6 +153,14 @@
- 			clock-output-names = "pll6_sata", "pll6_other", "pll6";
- 		};
- 
-+		pll7: clk@01c20030 {
-+			#clock-cells = <0>;
-+			compatible = "allwinner,sun4i-a10-pll3-clk";
-+			reg = <0x01c20030 0x4>;
-+			clocks = <&osc3M>;
-+			clock-output-names = "pll7";
-+		};
-+
- 		/* dummy is 200M */
- 		cpu: cpu@01c20054 {
- 			#clock-cells = <0>;
--- 
-2.6.2
+>   Linux 4.2 (2015-08-30 11:34:09 -0700)
+> =
+
+> are available in the git repository at:
+> =
+
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ clk-shmobile-for-v4.4
+
+Pulled.
+
+Thanks,
+Mike
+
+> =
+
+> for you to fetch changes up to 9d0c3c682033d3f10ac1ad8e72ca0c1b48063409:
+> =
+
+>   clk: shmobile: Add r8a7795 CPG Core Clock Definitions (2015-10-20 20:36=
+:00 +0200)
+> =
+
+> Summary:
+>   - clk: shmobile: Add new Renesas CPG/MSSR DT bindings for r8a7795
+> =
+
+> Thanks for pulling!
+> =
+
+> ----------------------------------------------------------------
+> Geert Uytterhoeven (2):
+>       clk: shmobile: Add new Renesas CPG/MSSR DT bindings
+>       clk: shmobile: Add r8a7795 CPG Core Clock Definitions
+> =
+
+>  .../devicetree/bindings/clock/renesas,cpg-mssr.txt | 69 ++++++++++++++++=
+++++++
+>  include/dt-bindings/clock/r8a7795-cpg-mssr.h       | 63 ++++++++++++++++=
+++++
+>  include/dt-bindings/clock/renesas-cpg-mssr.h       | 15 +++++
+>  3 files changed, 147 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-m=
+ssr.txt
+>  create mode 100644 include/dt-bindings/clock/r8a7795-cpg-mssr.h
+>  create mode 100644 include/dt-bindings/clock/renesas-cpg-mssr.h
+> =
+
+> Gr{oetje,eeting}s,
+> =
+
+>                                                 Geert
+> =
+
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+> =
+
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                                             -- Linus Torv=
+alds
