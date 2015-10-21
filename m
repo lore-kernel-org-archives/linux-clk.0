@@ -1,66 +1,136 @@
-Return-Path: <21cnbao@gmail.com>
+Return-Path: <frowand.list@gmail.com>
+Return-Path: <frowand.list@gmail.com>
+Message-ID: <5627D353.2040007@gmail.com>
+Date: Wed, 21 Oct 2015 11:02:59 -0700
+From: Frank Rowand <frowand.list@gmail.com>
+Reply-To: frowand.list@gmail.com
 MIME-Version: 1.0
-In-Reply-To: <20151022121700.20687.9552@quantum>
-References: <1444377931-5178-1-git-send-email-21cnbao@gmail.com> <20151022121700.20687.9552@quantum>
-From: Barry Song <21cnbao@gmail.com>
-Date: Mon, 26 Oct 2015 10:59:56 +0800
-Message-ID: <CAGsJ_4yHQmhJZb5Y2g=9VHtYGzRV5jx7FsLo_ApOXRRPSGpC5g@mail.gmail.com>
-Subject: Re: [PATCH] clk: atlas7: merge lots of discrete clocks into arrays
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>, Guo Zeng <Guo.Zeng@csr.com>,
-	Barry Song <Baohua.Song@csr.com>
-Content-Type: text/plain; charset=UTF-8
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+CC: Russell King - ARM Linux <linux@arm.linux.org.uk>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+ Mark Brown <broonie@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Vinod Koul <vinod.koul@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Alexandre Courbot <gnurou@gmail.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ David Airlie <airlied@linux.ie>,
+ =?windows-1252?Q?Terje_Bergstr=F6m?= <tbergstrom@nvidia.com>,
+ Stephen Warren <swarren@wwwdotorg.org>,
+ Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>,
+ Kishon Vijay Abraham I <kishon@ti.com>,
+ Sebastian Reichel <sre@kernel.org>,
+ Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+ David Woodhouse <dwmw2@infradead.org>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Felipe Balbi <balbi@ti.com>, Jingoo Han <jingoohan1@gmail.com>,
+ Lee Jones <lee.jones@linaro.org>,
+ Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+ Tomi Valkeinen <tomi.valkeinen@ti.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ dmaengine@vger.kernel.org,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ Linux I2C <linux-i2c@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ Linux PWM List <linux-pwm@vger.kernel.org>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ Linux Fbdev development list <linux-fbdev@vger.kernel.org>
+Subject: Re: Alternative approach to solve the deferred probe
+References: <20151018195330.GB14956@sirena.org.uk> <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com> <20151019131821.GA32532@n2100.arm.linux.org.uk> <CAAObsKDS_+AZ26P_fHc6pvAYrQotsuoO0DEGQUWC514t3DD_jQ@mail.gmail.com> <20151019143045.GE32532@n2100.arm.linux.org.uk> <CAAObsKDWM6A98tdKHqi4fe5DBf0BmB0JeghcZDWan_PYbyshag@mail.gmail.com> <20151019153548.GM32532@n2100.arm.linux.org.uk> <CAMuHMdVv=ieYM-Nehp0qV8CEggHEeJ22j-6i_N09rRA_U=2ePw@mail.gmail.com> <20151020154656.GY32532@n2100.arm.linux.org.uk> <56270D5B.5010902@gmail.com> <20151021081847.GB32532@n2100.arm.linux.org.uk> <5627B0F7.7010600@gmail.com> <5627C381.60602@ti.com>
+In-Reply-To: <5627C381.60602@ti.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-2015-10-22 20:17 GMT+08:00 Michael Turquette <mturquette@baylibre.com>:
-> Hello Barry,
->
-> Quoting Barry Song (2015-10-09 01:05:31)
->> From: Guo Zeng <Guo.Zeng@csr.com>
+On 10/21/2015 9:55 AM, Grygorii Strashko wrote:
+> On 10/21/2015 06:36 PM, Frank Rowand wrote:
+>> On 10/21/2015 1:18 AM, Russell King - ARM Linux wrote:
+>>> On Tue, Oct 20, 2015 at 08:58:19PM -0700, Frank Rowand wrote:
+>>>> On 10/20/2015 8:46 AM, Russell King - ARM Linux wrote:
 >>
->> this patch merges lots of discrete dividers, divider tables and dto
->> into arrays, then drops lots of codes.
+>> < snip >
 >>
->> Signed-off-by: Guo Zeng <Guo.Zeng@csr.com>
->> Signed-off-by: Barry Song <Baohua.Song@csr.com>
->> ---
->>  drivers/clk/sirf/clk-atlas7.c | 211 ++++++++++--------------------------------
->>  1 file changed, 47 insertions(+), 164 deletions(-)
->
-> Seems like a nice change with a nice diffstat.
->
->> @@ -719,6 +727,24 @@ static struct atlas7_div_init_data divider_list[] __initdata = {
->>         { "sys2pll_qa20", "sys2pll_fixdiv", "sys2pll_a20", 0, 0, 0, SIRFSOC_CLKC_SHARED_DIVIDER_CFG0, 0, 6, SIRFSOC_CLKC_SHARED_DIVIDER_ENA, 0, &share_div_lock },
->>         { "sys1pll_qa17", "sys1pll_fixdiv", "sys1pll_a17", 0, 0, CLK_IGNORE_UNUSED, SIRFSOC_CLKC_SHARED_DIVIDER_CFG1, 8, 6, SIRFSOC_CLKC_SHARED_DIVIDER_ENA, 20, &share_div_lock },
->>         { "sys0pll_qa20", "sys0pll_fixdiv", "sys0pll_a20", 0, 0, 0, SIRFSOC_CLKC_SHARED_DIVIDER_CFG1, 0, 6, SIRFSOC_CLKC_SHARED_DIVIDER_ENA, 16, &share_div_lock },
->> +       { "sys0pll_div1", "sys0pll_vco", "sys0pll_clk1", 1, 0, 0, SIRFSOC_CLKC_SYS0PLL_AB_CTRL1, 0, 3, SIRFSOC_CLKC_SYS0PLL_AB_CTRL1, 12, &sys0pll_ctrl1_lock },
->> +       { "sys0pll_div2", "sys0pll_vco", "sys0pll_clk2", 1, 0, 0, SIRFSOC_CLKC_SYS0PLL_AB_CTRL1, 4, 3, SIRFSOC_CLKC_SYS0PLL_AB_CTRL1, 13, &sys0pll_ctrl1_lock },
->> +       { "sys0pll_div3", "sys0pll_vco", "sys0pll_clk3", 1, 0, 0, SIRFSOC_CLKC_SYS0PLL_AB_CTRL1, 8, 3, SIRFSOC_CLKC_SYS0PLL_AB_CTRL1, 14, &sys0pll_ctrl1_lock },
->> +       { "sys1pll_div1", "sys1pll_vco", "sys1pll_clk1", 1, 0, 0, SIRFSOC_CLKC_SYS1PLL_AB_CTRL1, 0, 3, SIRFSOC_CLKC_SYS1PLL_AB_CTRL1, 12, &sys1pll_ctrl1_lock },
->> +       { "sys1pll_div2", "sys1pll_vco", "sys1pll_clk2", 1, 0, 0, SIRFSOC_CLKC_SYS1PLL_AB_CTRL1, 4, 3, SIRFSOC_CLKC_SYS1PLL_AB_CTRL1, 13, &sys1pll_ctrl1_lock },
->> +       { "sys1pll_div3", "sys1pll_vco", "sys1pll_clk3", 1, 0, 0, SIRFSOC_CLKC_SYS1PLL_AB_CTRL1, 8, 3, SIRFSOC_CLKC_SYS1PLL_AB_CTRL1, 14, &sys1pll_ctrl1_lock },
->> +       { "sys2pll_div1", "sys2pll_vco", "sys2pll_clk1", 1, 0, 0, SIRFSOC_CLKC_SYS2PLL_AB_CTRL1, 0, 3, SIRFSOC_CLKC_SYS2PLL_AB_CTRL1, 12, &sys2pll_ctrl1_lock },
->> +       { "sys2pll_div2", "sys2pll_vco", "sys2pll_clk2", 1, 0, 0, SIRFSOC_CLKC_SYS2PLL_AB_CTRL1, 4, 3, SIRFSOC_CLKC_SYS2PLL_AB_CTRL1, 13, &sys2pll_ctrl1_lock },
->> +       { "sys2pll_div3", "sys2pll_vco", "sys2pll_clk3", 1, 0, 0, SIRFSOC_CLKC_SYS2PLL_AB_CTRL1, 8, 3, SIRFSOC_CLKC_SYS2PLL_AB_CTRL1, 14, &sys2pll_ctrl1_lock },
->> +       { "sys3pll_div1", "sys3pll_vco", "sys3pll_clk1", 1, 0, 0, SIRFSOC_CLKC_SYS3PLL_AB_CTRL1, 0, 3, SIRFSOC_CLKC_SYS3PLL_AB_CTRL1, 12, &sys3pll_ctrl1_lock },
->> +       { "sys3pll_div2", "sys3pll_vco", "sys3pll_clk2", 1, 0, 0, SIRFSOC_CLKC_SYS3PLL_AB_CTRL1, 4, 3, SIRFSOC_CLKC_SYS3PLL_AB_CTRL1, 13, &sys3pll_ctrl1_lock },
->> +       { "sys3pll_div3", "sys3pll_vco", "sys3pll_clk3", 1, 0, 0, SIRFSOC_CLKC_SYS3PLL_AB_CTRL1, 8, 3, SIRFSOC_CLKC_SYS3PLL_AB_CTRL1, 14, &sys3pll_ctrl1_lock },
->> +       { "cpupll_div1", "cpupll_vco", "cpupll_clk1", 1, 0, 0, SIRFSOC_CLKC_CPUPLL_AB_CTRL1, 0, 3, SIRFSOC_CLKC_CPUPLL_AB_CTRL1, 12, &cpupll_ctrl1_lock },
->> +       { "cpupll_div2", "cpupll_vco", "cpupll_clk2", 1, 0, 0, SIRFSOC_CLKC_CPUPLL_AB_CTRL1, 4, 3, SIRFSOC_CLKC_CPUPLL_AB_CTRL1, 13, &cpupll_ctrl1_lock },
->> +       { "cpupll_div3", "cpupll_vco", "cpupll_clk3", 1, 0, 0, SIRFSOC_CLKC_CPUPLL_AB_CTRL1, 8, 3, SIRFSOC_CLKC_CPUPLL_AB_CTRL1, 14, &cpupll_ctrl1_lock },
->> +       { "mempll_div1", "mempll_vco", "mempll_clk1", 1, 0, 0, SIRFSOC_CLKC_MEMPLL_AB_CTRL1, 0, 3, SIRFSOC_CLKC_MEMPLL_AB_CTRL1, 12, &mempll_ctrl1_lock },
->> +       { "mempll_div2", "mempll_vco", "mempll_clk2", 1, 0, 0, SIRFSOC_CLKC_MEMPLL_AB_CTRL1, 4, 3, SIRFSOC_CLKC_MEMPLL_AB_CTRL1, 13, &mempll_ctrl1_lock },
->> +       { "mempll_div3", "mempll_vco", "mempll_clk3", 1, 0, 0, SIRFSOC_CLKC_MEMPLL_AB_CTRL1, 8, 3, SIRFSOC_CLKC_MEMPLL_AB_CTRL1, 14, &mempll_ctrl1_lock },
->
-> Checkpatch warns on 23 lines that are over 80 character, including some
-> of the code below in atlas7_clk_init.
+>>>>> +
+>>>>>   static bool driver_deferred_probe_enable = false;
+>>>>> +
+>>>>>   /**
+>>>>>    * driver_deferred_probe_trigger() - Kick off re-probing deferred devices
+>>>>>    *
+>>>>> @@ -188,6 +210,13 @@ static int deferred_probe_initcall(void)
+>>>>>   	driver_deferred_probe_trigger();
+>>>>
+>>>> Couldn't you put the "driver_deferred_probe_report = true" here?  And then
+>>>> not add another round of probes.
+>>>
+>>> The idea is not to report anything for drivers that were deferred
+>>> during the normal bootup.  The above is part of the normal bootup,
+>>> and the deferred activity should not be warned about.
+>>
+>> The above is currently the last point for probe to succeed or defer
+>> (until possibly, as you mentioned, module loading resolves the defer).
+>> If a probe defers above, it will defer again below.  The set of defers
+>> should be exactly the same above and below.
+>>
+> 
+> Unfortunately this is not "the last point for probe to succeed or defer".
+> There are still a bunch of drivers in Kernel which will be probed at late_initcall() level.
+> (like ./drivers/net/ethernet/ti/cpsw.c => late_initcall(cpsw_init);
 
-Mike, what if we fix the below "atlas7_clk_init" in this patch because
-it seems "atlas7_div_init_data divider_list" needs another patch since
-the original table has lots of "lines that are over 80 character".
-or do we need to fix  "atlas7_div_init_data divider_list", it seems
-breaking the line makes the codes uglier?
+Yes, cpsw_init() should _not_ be a late_initcall.  This is yet another
+example of playing games with ordering probes that we have been trying
+to eliminate.
 
--barry
+Thanks for pointing out one of the resulting problems this causes for the
+deferred probe mechanism.
+
+> Yes - they probably need to be updated to use module_init(), but that's what
+> we have now). Those drivers will re-trigger deferred device probing if their
+> probe succeeded.
+
+Yes, if cpsw_init() leads to a successful probe, then deferred device probing
+will be re-triggered.  I do not know if cpsw_init() will be called before or
+after deferred_probe_initcall().  The general initcall mechanism does not
+provide any ordering guarantees between the two functions because they are
+at the same initcall level.
+
+> 
+> As result, it is impossible to say when will it happen the 
+> "final round of deferred device probing" :( and final list of drivers which
+> was "deferred forever" will be know only when kernel exits to User space 
+> ("deferred forever" - before loading modules).
+> 
+> May be, we also can consider adding debug_fs entry which can be used to display
+> actual state of deferred_probe_pending_list? 
+> 
+>>>
+>>> If we have any devices still deferring after _this_ round, that must
+>>> indicate that some resource they want is not available, and that
+>>> should be warned about.
+>>>
+>>> Of course, modules can defer too - and I made some suggestions in my
+>>> waffle above the patch about that.
+>>>
+>>
+>> < adding back trimmed, for fuller context >
+>>
+>>>>>   	/* Sort as many dependencies as possible before exiting initcalls */
+>>>>>   	flush_workqueue(deferred_wq);
+>>>>> +
+>>>>> +	/* Now one final round, reporting any devices that remain deferred */
+>>>>> +	driver_deferred_probe_report = true;
+>>>>> +	driver_deferred_probe_trigger();
+>>>>> +	/* Sort as many dependencies as possible before exiting initcalls */
+>>>>> +	flush_workqueue(deferred_wq);
+>>>>> +
+>>>>>   	return 0;
+>>>>>   }
+> 
+> 
