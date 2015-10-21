@@ -1,32 +1,97 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 19 Oct 2015 14:48:23 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geliang Tang <geliangtang@163.com>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Jiri Kosina <trivial@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 6/9] clk: keystone: fix a trivial typo
-Message-ID: <20151019214823.GA19782@codeaurora.org>
-References: <949f6f3c99f87b57666986dc9f2d1c916935e215.1445181079.git.geliangtang@163.com>
- <557286dd38beb4d8d1be28e787ad89611e7cc077.1445181079.git.geliangtang@163.com>
- <5fea4cd474d5fe49688f88d91cdf5e8019844806.1445181079.git.geliangtang@163.com>
- <918fdb002ec3b2a9fc5a5d364c0fbaff2f77c5cc.1445181079.git.geliangtang@163.com>
- <eb89ced1dda5b521dba1ed6095deef09d577e37a.1445181079.git.geliangtang@163.com>
- <88b679770e91ce8e3aa2cd25912c6d589563388c.1445181079.git.geliangtang@163.com>
+Return-Path: <frowand.list@gmail.com>
+Return-Path: <frowand.list@gmail.com>
+Message-ID: <5627D6E0.5020708@gmail.com>
+Date: Wed, 21 Oct 2015 11:18:08 -0700
+From: Frank Rowand <frowand.list@gmail.com>
+Reply-To: frowand.list@gmail.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <88b679770e91ce8e3aa2cd25912c6d589563388c.1445181079.git.geliangtang@163.com>
+To: Mark Brown <broonie@kernel.org>
+CC: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Alexandre Courbot <gnurou@gmail.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ David Airlie <airlied@linux.ie>,
+ =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom@nvidia.com>,
+ Stephen Warren <swarren@wwwdotorg.org>,
+ Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>,
+ Kishon Vijay Abraham I <kishon@ti.com>,
+ Sebastian Reichel <sre@kernel.org>,
+ Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+ David Woodhouse <dwmw2@infradead.org>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Felipe Balbi <balbi@ti.com>, Jingoo Han <jingoohan1@gmail.com>,
+ Lee Jones <lee.jones@linaro.org>,
+ Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+ Tomi Valkeinen <tomi.valkeinen@ti.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-gpio@vger.kernel.org,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ linux-i2c@vger.kernel.org,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ Linux PWM List <linux-pwm@vger.kernel.org>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ linux-fbdev@vger.kernel.org
+Subject: Re: [GIT PULL] On-demand device probing
+References: <561E1378.6000906@collabora.com> <20151017065750.GA18607@kroah.com> <20151018192931.GY14956@sirena.org.uk> <20151018193757.GA9147@kroah.com> <20151018195330.GB14956@sirena.org.uk> <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com> <5627B677.5090109@gmail.com> <20151021162758.GP32054@sirena.org.uk>
+In-Reply-To: <20151021162758.GP32054@sirena.org.uk>
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/18, Geliang Tang wrote:
-> s/regsiter/register/
+On 10/21/2015 9:27 AM, Mark Brown wrote:
+> On Wed, Oct 21, 2015 at 08:59:51AM -0700, Frank Rowand wrote:
+>> On 10/19/2015 5:34 AM, Tomeu Vizoso wrote:
 > 
-> Signed-off-by: Geliang Tang <geliangtang@163.com>
-> ---
+>>> To be clear, I was saying that this series should NOT affect total
+>>> boot times much.
+> 
+>> I'm confused.  If I understood correctly, improving boot time was
+>> the key justification for accepting this patch set.  For example,
+>> from "[PATCH v7 0/20] On-demand device probing":
+>>
+>>    I have a problem with the panel on my Tegra Chromebook taking longer
+>>    than expected to be ready during boot (Stéphane Marchesin reported what
+>>    is basically the same issue in [0]), and have looked into ordered
+>>    probing as a better way of solving this than moving nodes around in the
+>>    DT or playing with initcall levels and linking order.
+>>
+>>    ...
+>>
+>>    With this series I get the kernel to output to the panel in 0.5s,
+>>    instead of 2.8s.
+> 
+> Overall boot time and time to get some individual built in component up
+> and running aren't the same thing - what this'll do is get things up
+> more in the link order of the leaf consumers rather than deferring those
+> leaf consumers when their dependencies aren't ready yet.
 
-Applied to clk-next
+Thanks!  I read too much into what was being improved.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+So this patch series, which on other merits may be a good idea, is as
+a by product solving a specific ordering issue, moving successful panel
+initialization to an earlier point in the boot sequence, if I now
+understand more correctly.
+
+In that context, this seems like yet another ad hoc way of causing the
+probe order to change in a way to solves one specific issue?  Could
+it just as likely move the boot order of some other driver on some
+other board later, to the detriment of somebody else?
+
+
+> 
+>> While not as dramatic as your results, they are somewhat supportive.
+>> What has changed your assessment that the on-demand device probing
+>> patches will give a big boot performance increase?  Do you have
+>> new data or analysis?
+> 
+> See above, my understanding was that the performance improvements were
+> more around improved control/predictability/handwave of the boot
+> ordering rather than total time.
+> 
