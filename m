@@ -1,77 +1,97 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 21 Oct 2015 17:22:47 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Scott Branden <sbranden@broadcom.com>
-Cc: Ray Jui <rjui@broadcom.com>, Jon Mason <jonmason@broadcom.com>,
+Return-Path: <linux+mturquette=baylibre.com@arm.linux.org.uk>
+Date: Wed, 21 Oct 2015 21:35:19 +0100
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: Frank Rowand <frowand.list@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh+dt@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Hauke Mehrtens <hauke@hauke-m.de>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [PATCH v3 08/10] clk: ns2: add clock support for Broadcom
- Northstar 2 SoC
-Message-ID: <20151022002246.GV19782@codeaurora.org>
-References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
- <1444938513-10758-9-git-send-email-jonmason@broadcom.com>
- <56200F39.1060102@broadcom.com>
- <562012A8.8050707@broadcom.com>
- <562014C9.5070708@broadcom.com>
- <20151015211025.GP32089@broadcom.com>
- <56201766.9020206@broadcom.com>
- <562019DD.3000206@broadcom.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>,
+	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>, dmaengine@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	Linux I2C <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	Linux Fbdev development list <linux-fbdev@vger.kernel.org>
+Subject: Re: Alternative approach to solve the deferred probe
+Message-ID: <20151021203519.GO32532@n2100.arm.linux.org.uk>
+References: <20151019131821.GA32532@n2100.arm.linux.org.uk>
+ <CAAObsKDS_+AZ26P_fHc6pvAYrQotsuoO0DEGQUWC514t3DD_jQ@mail.gmail.com>
+ <20151019143045.GE32532@n2100.arm.linux.org.uk>
+ <CAAObsKDWM6A98tdKHqi4fe5DBf0BmB0JeghcZDWan_PYbyshag@mail.gmail.com>
+ <20151019153548.GM32532@n2100.arm.linux.org.uk>
+ <CAMuHMdVv=ieYM-Nehp0qV8CEggHEeJ22j-6i_N09rRA_U=2ePw@mail.gmail.com>
+ <20151020154656.GY32532@n2100.arm.linux.org.uk>
+ <56270D5B.5010902@gmail.com>
+ <20151021081847.GB32532@n2100.arm.linux.org.uk>
+ <5627B0F7.7010600@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <562019DD.3000206@broadcom.com>
+In-Reply-To: <5627B0F7.7010600@gmail.com>
+Sender: Russell King - ARM Linux <linux@arm.linux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/15, Scott Branden wrote:
-> On 15-10-15 02:15 PM, Ray Jui wrote:
-> >On 10/15/2015 2:10 PM, Jon Mason wrote:
-> >>On Thu, Oct 15, 2015 at 02:04:09PM -0700, Scott Branden wrote:
-> >>>On 15-10-15 01:55 PM, Ray Jui wrote:
-> >>>>On 10/15/2015 1:40 PM, Scott Branden wrote:
-> >>>>
-> >>>>If using CONFIG_CLK_NS2, how is it going to be enabled/selected?
-> >>>
-> >>>Since CONFIG_ARCH_BCM_NS2 isn't "allowed" to be introduced we will
-> >>>need to create and select a CONFIG_CLK_BCM_NS2 in the defconfig
-> >>>instead.
+On Wed, Oct 21, 2015 at 08:36:23AM -0700, Frank Rowand wrote:
+> On 10/21/2015 1:18 AM, Russell King - ARM Linux wrote:
+> > On Tue, Oct 20, 2015 at 08:58:19PM -0700, Frank Rowand wrote:
+> >> On 10/20/2015 8:46 AM, Russell King - ARM Linux wrote:
+> 
+> < snip >
+> 
+> >>> +
+> >>>  static bool driver_deferred_probe_enable = false;
+> >>> +
+> >>>  /**
+> >>>   * driver_deferred_probe_trigger() - Kick off re-probing deferred devices
+> >>>   *
+> >>> @@ -188,6 +210,13 @@ static int deferred_probe_initcall(void)
+> >>>  	driver_deferred_probe_trigger();
 > >>
-> >>Is this better than the binary becoming slightly bigger?  I thought
-> >>the extra complexity was worse than having an unused chunk of clk code
-> >>(and Kona is already doing the same thing above).  I believe Ray was
-> >>in agreement with me during the internal review of this code.
-> >>
-> >>Thanks,
-> >>Jon
-> >>
-> >
-> >Yes, I'm okay with leaving it as it is. I even prefer changing the
-> >current Makefile to make all iProc based core clock drivers and SoC
-> >specific clock tables under CONFIG_COMMON_CLK_IPROC, which is what some
-> >of the other vendors do.
-> >
-> I'd leave it exactly as is then rather than pulling in more dead
-> code when not needed.  This ns2 clock code is very minor compared to
-> other code bloat in the kernel and drivers.
+> >> Couldn't you put the "driver_deferred_probe_report = true" here?  And then
+> >> not add another round of probes.
+> > 
+> > The idea is not to report anything for drivers that were deferred
+> > during the normal bootup.  The above is part of the normal bootup,
+> > and the deferred activity should not be warned about.
+> 
+> The above is currently the last point for probe to succeed or defer
+> (until possibly, as you mentioned, module loading resolves the defer).
+> If a probe defers above, it will defer again below.  The set of defers
+> should be exactly the same above and below.
 
-We should really make these visible options that can be selected
-by anyone. Having selects in the ARCH config area is simple, but
-also has some downsides:
+Why should it?  Isn't this late_initcall() the first opportunity that
+deferred devices get to be re-probed from their first set of attempts
+via the drivers having their initcalls called?
 
- 1) select is a reverse dependency and is hard for people to
- understand and can sometimes be a pain to track down
+If what you're saying is true, what's the point of this late_initcall()?
 
- 2) build coverage goes down because configs are hidden
-
- 3) we get code bloat like is being discussed here
-
-So I'd really like to see someone take a good look at this whole
-Makefile situation that's going on and clean it up so that
-they're user visible options and then throw the config options
-into the defconfig. It isn't going to block this series, but it
-would be nice to do at some later point.
+<re-cut again, I've no idea why you keep adding it back>
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
