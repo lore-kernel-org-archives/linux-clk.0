@@ -1,109 +1,99 @@
-Return-Path: <wens@csie.org>
+Return-Path: <frowand.list@gmail.com>
+Return-Path: <frowand.list@gmail.com>
+Message-ID: <5627B0F7.7010600@gmail.com>
+Date: Wed, 21 Oct 2015 08:36:23 -0700
+From: Frank Rowand <frowand.list@gmail.com>
+Reply-To: frowand.list@gmail.com
 MIME-Version: 1.0
-In-Reply-To: <1446214865-3972-4-git-send-email-maxime.ripard@free-electrons.com>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
- <1446214865-3972-4-git-send-email-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 31 Oct 2015 18:19:59 +0800
-Message-ID: <CAGb2v66hjH_GpkXpHdpCM+mUv-CgvqxJNFzsoRJ5MWp04b+jew@mail.gmail.com>
-Subject: Re: [PATCH 03/19] clk: sunxi: Add TCON channel0 clock
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>, Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset=UTF-8
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+CC: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+ Mark Brown <broonie@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Alexandre Courbot <gnurou@gmail.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ David Airlie <airlied@linux.ie>,
+ =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom@nvidia.com>,
+ Stephen Warren <swarren@wwwdotorg.org>,
+ Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>,
+ Kishon Vijay Abraham I <kishon@ti.com>,
+ Sebastian Reichel <sre@kernel.org>,
+ Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+ David Woodhouse <dwmw2@infradead.org>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Felipe Balbi <balbi@ti.com>, Jingoo Han <jingoohan1@gmail.com>,
+ Lee Jones <lee.jones@linaro.org>,
+ Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+ Tomi Valkeinen <tomi.valkeinen@ti.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ dmaengine@vger.kernel.org,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ Linux I2C <linux-i2c@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ Linux PWM List <linux-pwm@vger.kernel.org>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ Linux Fbdev development list <linux-fbdev@vger.kernel.org>
+Subject: Re: Alternative approach to solve the deferred probe
+References: <20151018195330.GB14956@sirena.org.uk> <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com> <20151019131821.GA32532@n2100.arm.linux.org.uk> <CAAObsKDS_+AZ26P_fHc6pvAYrQotsuoO0DEGQUWC514t3DD_jQ@mail.gmail.com> <20151019143045.GE32532@n2100.arm.linux.org.uk> <CAAObsKDWM6A98tdKHqi4fe5DBf0BmB0JeghcZDWan_PYbyshag@mail.gmail.com> <20151019153548.GM32532@n2100.arm.linux.org.uk> <CAMuHMdVv=ieYM-Nehp0qV8CEggHEeJ22j-6i_N09rRA_U=2ePw@mail.gmail.com> <20151020154656.GY32532@n2100.arm.linux.org.uk> <56270D5B.5010902@gmail.com> <20151021081847.GB32532@n2100.arm.linux.org.uk>
+In-Reply-To: <20151021081847.GB32532@n2100.arm.linux.org.uk>
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 10/21/2015 1:18 AM, Russell King - ARM Linux wrote:
+> On Tue, Oct 20, 2015 at 08:58:19PM -0700, Frank Rowand wrote:
+>> On 10/20/2015 8:46 AM, Russell King - ARM Linux wrote:
 
-On Fri, Oct 30, 2015 at 10:20 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The TCON is a controller generating the timings to output videos signals,
-> acting like both a CRTC and an encoder.
->
-> It has two channels depending on the output, each channel being driven by
-> its own clock (and own clock controller).
->
-> Add a driver for the channel 0 clock.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/clk/sunxi/Makefile             |   1 +
->  drivers/clk/sunxi/clk-sun4i-tcon-ch0.c | 173 +++++++++++++++++++++++++++++++++
->  2 files changed, 174 insertions(+)
->  create mode 100644 drivers/clk/sunxi/clk-sun4i-tcon-ch0.c
->
-> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-> index 40c32ffd912c..7821b2b63d58 100644
-> --- a/drivers/clk/sunxi/Makefile
-> +++ b/drivers/clk/sunxi/Makefile
-> @@ -12,6 +12,7 @@ obj-y += clk-mod0.o
->  obj-y += clk-simple-gates.o
->  obj-y += clk-sun4i-display.o
->  obj-y += clk-sun4i-pll3.o
-> +obj-y += clk-sun4i-tcon-ch0.o
->  obj-y += clk-sun8i-mbus.o
->  obj-y += clk-sun9i-core.o
->  obj-y += clk-sun9i-mmc.o
-> diff --git a/drivers/clk/sunxi/clk-sun4i-tcon-ch0.c b/drivers/clk/sunxi/clk-sun4i-tcon-ch0.c
-> new file mode 100644
-> index 000000000000..db10cfb94a1d
-> --- /dev/null
-> +++ b/drivers/clk/sunxi/clk-sun4i-tcon-ch0.c
-> @@ -0,0 +1,173 @@
-> +/*
-> + * Copyright 2015 Maxime Ripard
-> + *
-> + * Maxime Ripard <maxime.ripard@free-electrons.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/of_address.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
-> +
-> +#define SUN4I_A10_TCON_CH0_PARENTS     4
-> +
-> +#define SUN4I_A10_TCON_CH0_GATE_BIT    31
-> +#define SUN4I_A10_TCON_CH0_RESET_SHIFT 29
+< snip >
 
-This is sun5i specific.
+>>> +
+>>>  static bool driver_deferred_probe_enable = false;
+>>> +
+>>>  /**
+>>>   * driver_deferred_probe_trigger() - Kick off re-probing deferred devices
+>>>   *
+>>> @@ -188,6 +210,13 @@ static int deferred_probe_initcall(void)
+>>>  	driver_deferred_probe_trigger();
+>>
+>> Couldn't you put the "driver_deferred_probe_report = true" here?  And then
+>> not add another round of probes.
+> 
+> The idea is not to report anything for drivers that were deferred
+> during the normal bootup.  The above is part of the normal bootup,
+> and the deferred activity should not be warned about.
 
-A10s manual says bit 30 is the LCD reset, while bit 29 is the TV encoder reset.
-A13/R8 don't mention TCON_CH0 clock. A10/A20 have no separate TV encoder reset.
+The above is currently the last point for probe to succeed or defer
+(until possibly, as you mentioned, module loading resolves the defer).
+If a probe defers above, it will defer again below.  The set of defers
+should be exactly the same above and below.
 
-Please rename the clock.
+> 
+> If we have any devices still deferring after _this_ round, that must
+> indicate that some resource they want is not available, and that
+> should be warned about.
+> 
+> Of course, modules can defer too - and I made some suggestions in my
+> waffle above the patch about that.
+> 
 
-ChenYu
+< adding back trimmed, for fuller context >
 
-> +#define SUN4I_A10_TCON_CH0_MUX_MASK    3
-> +#define SUN4I_A10_TCON_CH0_MUX_SHIFT   24
-> +
-> +struct reset_data {
-> +       void __iomem                    *reg;
-> +       spinlock_t                      *lock;
-> +       struct reset_controller_dev     rcdev;
-> +};
-> +
-> +static DEFINE_SPINLOCK(sun4i_a10_tcon_ch0_lock);
-> +
+>>>  	/* Sort as many dependencies as possible before exiting initcalls */
+>>>  	flush_workqueue(deferred_wq);
+>>> +
+>>> +	/* Now one final round, reporting any devices that remain deferred */
+>>> +	driver_deferred_probe_report = true;
+>>> +	driver_deferred_probe_trigger();
+>>> +	/* Sort as many dependencies as possible before exiting initcalls */
+>>> +	flush_workqueue(deferred_wq);
+>>> +
+>>>  	return 0;
+>>>  }
