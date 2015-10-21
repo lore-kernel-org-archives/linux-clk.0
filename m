@@ -1,129 +1,84 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.242]:43236 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751800AbbJBM7O (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 2 Oct 2015 08:59:14 -0400
-Subject: Re: [PULL] clk: at91: sama5d2 materials
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-References: <20150818102401.17de779b@bbrezillon>
- <20150825191033.31346.67237@quantum> <20151001194747.GK19319@codeaurora.org>
- <20151001223837.583b8b2d@bbrezillon>
-CC: Michael Turquette <mturquette@baylibre.com>,
-	"Jean-Christophe Plagniol-Villard" <plagnioj@jcrosoft.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Message-ID: <560E7F6F.5040302@atmel.com>
-Date: Fri, 2 Oct 2015 14:58:23 +0200
-MIME-Version: 1.0
-In-Reply-To: <20151001223837.583b8b2d@bbrezillon>
-Content-Type: text/plain; charset="windows-1252"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <Julia.Lawall@lip6.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: kernel-janitors@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jason Cooper <jason@lakedaemon.net>
+Subject: [PATCH 1/5] clk: add missing of_node_put
+Date: Wed, 21 Oct 2015 22:41:36 +0200
+Message-Id: <1445460100-26727-2-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-Le 01/10/2015 22:38, Boris Brezillon a écrit :
-> Hi Stephen,
-> 
-> On Thu, 1 Oct 2015 12:47:48 -0700
-> Stephen Boyd <sboyd@codeaurora.org> wrote:
-> 
->> On 08/25, Michael Turquette wrote:
->>> Quoting Boris Brezillon (2015-08-18 01:24:01)
->>>> Stephen, Mike,
->>>>
->>>> Here is a PR for the sama5d2 materials.
->>>> I know we're already late in the release cycle and I'm not sure you can
->>>> take this PR into account for 4.3, so if you can't could you please
->>>> queue it for 4.4?
->>>
->>> Queued for 4.4.
->>>
->>> Thanks,
->>> Mike
->>>
->>>>
->>>> Thanks,
->>>>
->>>> Boris
->>>>
->>>> The following changes since commit c42743f11f58646a50bc4b96da363429dca0c5e6:
->>>>
->>
->> This commit was in clk-next and then got rebased. clk-next isn't
->> stable, please don't base pull requests on it. If you have some
->> dependency on the patches in there then we need to know so that
->> we can provide some branch.
-> 
-> Yes, sorry about that, I'll base my future PR on linus' master branch.
-> 
->>
->> I cherry-picked the 4 patches to clk-next. I had to squash in this fix
->> to get it to compile. Please check.
-> 
-> Thanks, looks good to me.
-> Nicolas, can you test it on a real platform?
+for_each_matching_node_and_match performs an of_node_get on each iteration,
+so a break out of the loop requires an of_node_put.
 
-Yep, tested and works okay. So for your changes (and for the record
-actually):
-Tested-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+A simplified version of the semantic patch that fixes this problem is as
+follows (http://coccinelle.lip6.fr):
 
+// <smpl>
+@@
+expression e1,e2,e;
+local idexpression np;
+@@
 
->> ---8<----
->> diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
->> index 631123ca6f85..abc80949e1dd 100644
->> --- a/drivers/clk/at91/clk-generated.c
->> +++ b/drivers/clk/at91/clk-generated.c
->> @@ -99,22 +99,22 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
->>  					struct clk_rate_request *req)
->>  {
->>  	struct clk_generated *gck = to_clk_generated(hw);
->> -	struct clk *parent = NULL;
->> +	struct clk_hw *parent = NULL;
->>  	long best_rate = -EINVAL;
->>  	unsigned long tmp_rate, min_rate;
->>  	int best_diff = -1;
->>  	int tmp_diff;
->>  	int i;
->>  
->> -	for (i = 0; i < __clk_get_num_parents(hw->clk); i++) {
->> +	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
->>  		u32 div;
->>  		unsigned long parent_rate;
->>  
->> -		parent = clk_get_parent_by_index(hw->clk, i);
->> +		parent = clk_hw_get_parent_by_index(hw, i);
->>  		if (!parent)
->>  			continue;
->>  
->> -		parent_rate = __clk_get_rate(parent);
->> +		parent_rate = clk_hw_get_rate(parent);
->>  		min_rate = DIV_ROUND_CLOSEST(parent_rate, GENERATED_MAX_DIV + 1);
->>  		if (!parent_rate ||
->>  		    (gck->range.max && min_rate > gck->range.max))
->> @@ -128,7 +128,7 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
->>  				best_rate = tmp_rate;
->>  				best_diff = tmp_diff;
->>  				req->best_parent_rate = parent_rate;
->> -				req->best_parent_hw = __clk_get_hw(parent);
->> +				req->best_parent_hw = parent;
->>  			}
->>  
->>  			if (!best_diff || tmp_rate < req->rate)
->> @@ -156,7 +156,7 @@ static int clk_generated_set_parent(struct clk_hw *hw, u8 index)
->>  {
->>  	struct clk_generated *gck = to_clk_generated(hw);
->>  
->> -	if (index >= __clk_get_num_parents(hw->clk))
->> +	if (index >= clk_hw_get_num_parents(hw))
->>  		return -EINVAL;
->>  
->>  	gck->parent_id = index;
->>
-> 
-> 
-> 
+ for_each_matching_node_and_match(np, e1, e2) {
+   ... when != of_node_put(np)
+       when != e = np
+(
+   return np;
+|
++  of_node_put(np);
+?  return ...;
+)
+   ...
+ }
+// </smpl>
 
+Besides the problem identified by the semantic patch, this patch adds an
+of_node_get in front of saving np in a field of parent, to account for the
+fact that this value will be put on going on to the next element in the
+iteration, and then adds of_node_puts in the two loops where the parent
+pointer can be freed.
 
--- 
-Nicolas Ferre
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/clk/clk.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index e735eab..11babd1 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3200,12 +3200,15 @@ void __init of_clk_init(const struct of_device_id *matches)
+ 			list_for_each_entry_safe(clk_provider, next,
+ 						 &clk_provider_list, node) {
+ 				list_del(&clk_provider->node);
++				of_node_put(clk_provider->np);
+ 				kfree(clk_provider);
+ 			}
++			of_node_put(np);
+ 			return;
+ 		}
+ 
+ 		parent->clk_init_cb = match->data;
++		of_node_get(np);
+ 		parent->np = np;
+ 		list_add_tail(&parent->node, &clk_provider_list);
+ 	}
+@@ -3220,6 +3223,7 @@ void __init of_clk_init(const struct of_device_id *matches)
+ 				of_clk_set_defaults(clk_provider->np, true);
+ 
+ 				list_del(&clk_provider->node);
++				of_node_put(clk_provider->np);
+ 				kfree(clk_provider);
+ 				is_init_done = true;
+ 			}
