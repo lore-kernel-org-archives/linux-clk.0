@@ -1,58 +1,33 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:38962 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753315AbbJZMAn (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 26 Oct 2015 08:00:43 -0400
-From: Andrzej Hajda <a.hajda@samsung.com>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Hyungwon Hwang <human.hwang@samsung.com>
-Subject: [PATCH v2 09/10] dt-bindings: video: exynos5433-decon: add bindings
- for DECON-TV
-Date: Mon, 26 Oct 2015 12:59:56 +0100
-Message-id: <1445860796-23045-1-git-send-email-a.hajda@samsung.com>
-In-reply-to: <CAJKOXPfXrEwu1egSnLxwYofu_scskkPRKOjOCskObPFn9yVcJw@mail.gmail.com>
-References: <CAJKOXPfXrEwu1egSnLxwYofu_scskkPRKOjOCskObPFn9yVcJw@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 21 Oct 2015 16:54:49 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jon Mason <jonmason@broadcom.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH v3 04/10] clk: nsp: add clock support for Broadcom
+ Northstar Plus SoC
+Message-ID: <20151021235449.GR19782@codeaurora.org>
+References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
+ <1444938513-10758-5-git-send-email-jonmason@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1444938513-10758-5-git-send-email-jonmason@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-DECON-TV(Display and Enhancement Controller for TV) is a variation
-of DECON IP. Its main purpose is to produce video stream for HDMI IP.
+On 10/15, Jon Mason wrote:
+> The Broadcom Northstar Plus SoC is architected under the iProc
+> architecture. It has the following PLLs: ARMPLL, GENPLL, LCPLL0, all
+> derived from an onboard crystal.
+> 
+> Signed-off-by: Jon Mason <jonmason@broadcom.com>
+> ---
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
-Hi Krzysztof,
+Applied to clk-iproc
 
-I have decided to skip cleanup part as it would require more work,
-not related to this patchset.
-
-Regards
-Andrzej
-
- Documentation/devicetree/bindings/video/exynos5433-decon.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/video/exynos5433-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
-index 3dff78b..c9fd7b3 100644
---- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
-+++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
-@@ -5,7 +5,8 @@ Exynos series of SoCs which transfers the image data from a video memory
- buffer to an external LCD interface.
- 
- Required properties:
--- compatible: value should be "samsung,exynos5433-decon";
-+- compatible: value should be one of:
-+	"samsung,exynos5433-decon", "samsung,exynos5433-decon-tv";
- - reg: physical base address and length of the DECON registers set.
- - interrupts: should contain a list of all DECON IP block interrupts in the
- 	      order: VSYNC, LCD_SYSTEM. The interrupt specifier format
 -- 
-1.9.1
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
