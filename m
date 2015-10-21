@@ -1,45 +1,58 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	bcm-kernel-feedback-list@broadcom.com,
-	devicetree@vger.kernel.org,
-	jonmason@broadcom.com,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	linux@arm.linux.org.uk,
-	sbranden@broadcom.com,
-	rjui@broadcom.com
-Subject: [PATCH v4 0/3] clk: Broadcom BCM63138 support
-Date: Thu, 29 Oct 2015 18:23:16 -0700
-Message-Id: <1446168199-5959-1-git-send-email-f.fainelli@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 21 Oct 2015 16:48:10 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jon Mason <jonmason@broadcom.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH v3 03/10] clk: iproc: Add PWRCTRL support
+Message-ID: <20151021234810.GP19782@codeaurora.org>
+References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
+ <1444938513-10758-4-git-send-email-jonmason@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1444938513-10758-4-git-send-email-jonmason@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series adds support for the Broadcom BCM63138 DSL SoCs
-clocking framework.
+On 10/15, Jon Mason wrote:
+> Some iProc SoC clocks use a different way to control clock power, via
+> the PWRDWN bit in the PLL control register.  Since the PLL control
+> register is used to access the PWRDWN bit, there is no need for the
+> pwr_base when this is being used.  A new flag, IPROC_CLK_EMBED_PWRCTRL,
+> has been added to identify this usage.  We can use the AON interface to
+> write the values to enable/disable PWRDOWN.
+> 
+> Signed-off-by: Jon Mason <jonmason@broadcom.com>
+> ---
 
-Since the HW is identical to the one found in Broadcom iProc SoCs, but the
-integration is different (obviously), there is still a new compatible string
-introduced just in case we happen to find issues in the future.
+Applied to clk-next + 
 
-Stephen, could you stage the two patches in a clk-bcm63xx branch that I could
-later utilize while doing the arm-soc DT pull request?
-
-Thank you!
-
-Florian Fainelli (3):
-  clk: iproc: Extend binding to cover BCM63138
-  clk: bcm: Add BCM63138 clock support
-  ARM: dts: BCM63xx: Add ARMPLL device tree nodes
-
- .../bindings/clock/brcm,iproc-clocks.txt           |  5 +++
- arch/arm/boot/dts/bcm63138.dtsi                    | 36 +++++++++++++++++-----
- drivers/clk/bcm/Kconfig                            | 10 ++++++
- drivers/clk/bcm/Makefile                           |  1 +
- drivers/clk/bcm/clk-bcm63xx.c                      | 22 +++++++++++++
- 5 files changed, 66 insertions(+), 8 deletions(-)
- create mode 100644 drivers/clk/bcm/clk-bcm63xx.c
-
+---8<----
+diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
+index 61b49ba24602..fb1e6b1d0df6 100644
+--- a/drivers/clk/bcm/clk-iproc-pll.c
++++ b/drivers/clk/bcm/clk-iproc-pll.c
+@@ -150,7 +150,7 @@ static void __pll_disable(struct iproc_pll *pll)
+ 
+ 	if (ctrl->flags & IPROC_CLK_EMBED_PWRCTRL) {
+ 		val = readl(pll->pll_base + ctrl->aon.offset);
+-		val |= (bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
++		val |= bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift;
+ 		writel(val, pll->pll_base + ctrl->aon.offset);
+ 
+ 		if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
+@@ -160,7 +160,7 @@ static void __pll_disable(struct iproc_pll *pll)
+ 	if (pll->pwr_base) {
+ 		/* latch input value so core power can be shut down */
+ 		val = readl(pll->pwr_base + ctrl->aon.offset);
+-		val |= (1 << ctrl->aon.iso_shift);
++		val |= 1 << ctrl->aon.iso_shift;
+ 		writel(val, pll->pwr_base + ctrl->aon.offset);
+ 
+ 		/* power down the core */
 -- 
-2.1.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
