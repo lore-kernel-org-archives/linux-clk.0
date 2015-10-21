@@ -1,71 +1,93 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:62698 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932190AbbJ1Dbu (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 27 Oct 2015 23:31:50 -0400
-Subject: Re: [PATCH v3 5/5] drivers/rtc/rtc-s5m.c: add support for S2MPS15 RTC
-To: Alim Akhtar <alim.akhtar@samsung.com>,
-	Mark Brown <broonie@kernel.org>
-References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
- <1445863883-5187-6-git-send-email-alim.akhtar@samsung.com>
- <56302514.4090407@samsung.com> <20151028015323.GZ28319@sirena.org.uk>
- <56303054.8060804@samsung.com> <56303DA3.5020306@samsung.com>
-Cc: lee.jones@linaro.org, mturquette@baylibre.com,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <5630419F.1000300@samsung.com>
-Date: Wed, 28 Oct 2015 12:31:43 +0900
-MIME-version: 1.0
-In-reply-to: <56303DA3.5020306@samsung.com>
-Content-type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <robh+dt@kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <5627D6E0.5020708@gmail.com>
+References: <561E1378.6000906@collabora.com> <20151017065750.GA18607@kroah.com>
+ <20151018192931.GY14956@sirena.org.uk> <20151018193757.GA9147@kroah.com>
+ <20151018195330.GB14956@sirena.org.uk> <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
+ <5627B677.5090109@gmail.com> <20151021162758.GP32054@sirena.org.uk> <5627D6E0.5020708@gmail.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Wed, 21 Oct 2015 16:12:44 -0500
+Message-ID: <CAL_Jsq+FPtCuBnte2HTgbdpNYM=v_kLaCRcOC1kMaCQwVC=5Kw@mail.gmail.com>
+Subject: Re: [GIT PULL] On-demand device probing
+To: Frank Rowand <frowand.list@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>,
+	=?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
+	Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>,
+	Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 28.10.2015 12:14, Alim Akhtar wrote:
-> Hello,
-> 
-> On 10/28/2015 07:47 AM, Krzysztof Kozlowski wrote:
->> On 28.10.2015 10:53, Mark Brown wrote:
->>> On Wed, Oct 28, 2015 at 10:29:56AM +0900, Krzysztof Kozlowski wrote:
+On Wed, Oct 21, 2015 at 1:18 PM, Frank Rowand <frowand.list@gmail.com> wrot=
+e:
+> On 10/21/2015 9:27 AM, Mark Brown wrote:
+>> On Wed, Oct 21, 2015 at 08:59:51AM -0700, Frank Rowand wrote:
+>>> On 10/19/2015 5:34 AM, Tomeu Vizoso wrote:
+>>
+>>>> To be clear, I was saying that this series should NOT affect total
+>>>> boot times much.
+>>
+>>> I'm confused.  If I understood correctly, improving boot time was
+>>> the key justification for accepting this patch set.  For example,
+>>> from "[PATCH v7 0/20] On-demand device probing":
 >>>
->>>> If that's true, then don't add new compatibles, new names etc. Re-use.
->>>> No new code needed, no changes needed. Keep it simple.
+>>>    I have a problem with the panel on my Tegra Chromebook taking longer
+>>>    than expected to be ready during boot (St=C3=A9phane Marchesin repor=
+ted what
+>>>    is basically the same issue in [0]), and have looked into ordered
+>>>    probing as a better way of solving this than moving nodes around in =
+the
+>>>    DT or playing with initcall levels and linking order.
 >>>
->>> Well, it depends - it can be useful to get the information about it
->>> being a different part into DT so that if in future we realise that
->>> there is some difference (perhaps a bug workaround even if the IP is
->>> intended to be the same).  Though in the case of a MFD that information
->>> can be obtained from the MFD for the device.
+>>>    ...
+>>>
+>>>    With this series I get the kernel to output to the panel in 0.5s,
+>>>    instead of 2.8s.
 >>
->> We can always differentiate later and introduce new compatible.
->> Declaring a compatible right now would be useful only if we really cared
->> about using the workaround on older DTBs.
->>
->> Since I cannot judge the difference (I don't have the datasheet of
->> S2MPS15) then I don't see the need of adding new compatible/name for the
->> "same device".
->>
->> Of course maybe there is such need? Alim?
->>
-> Well I did think of keeping the changes as minimal as possible, like
-> just have "{ "s2mps15-rtc",        S2MPS14X }", since I don't have
-> access to s2mps14 UM, I could not confirm that s2mps14 and s2mps15 are
-> exactly the same w.r.t rtc block. So I proposed the current changes.
-> 
-> Well I do agree with Mark here, a name/compatible matching with the pmic
-> is good to at least avoid confusion while looking at the sysfs.
+>> Overall boot time and time to get some individual built in component up
+>> and running aren't the same thing - what this'll do is get things up
+>> more in the link order of the leaf consumers rather than deferring those
+>> leaf consumers when their dependencies aren't ready yet.
+>
+> Thanks!  I read too much into what was being improved.
+>
+> So this patch series, which on other merits may be a good idea, is as
+> a by product solving a specific ordering issue, moving successful panel
+> initialization to an earlier point in the boot sequence, if I now
+> understand more correctly.
+>
+> In that context, this seems like yet another ad hoc way of causing the
+> probe order to change in a way to solves one specific issue?  Could
+> it just as likely move the boot order of some other driver on some
+> other board later, to the detriment of somebody else?
 
-What kind of confusion in sysfs? I don't see any... and already the
-s2mps14-rtc name is used for S2MPS11 and S2MPS14.
+Time to display on is important for many products. Having the console
+up as early as possible is another case. CAN bus is another. This is a
+real problem that is not just bad drivers.
 
-The s2mps13 clock driver added new name and compatible... which was
-probably totally unneeded (I missed that during review). We don't have
-to make this as a rule...
+I don't think it is completely ad hoc. Given all devices are
+registered after drivers, drivers will still probe first in initcall
+level order and then link order AFAIK. We may not take (more) initcall
+level tweak hacks, but that is a much more simple change for
+downstream. Don't get me wrong, I'd really like to see a way to
+control order independent of initcall level.
 
-Since we do not have any data about future workarounds and the
-differences then just follow Ockham's razor - use the same name and
-compatible.
-
-Best regards,
-Krzysztof
+Rob
