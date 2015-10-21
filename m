@@ -1,72 +1,52 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 2 Oct 2015 12:18:04 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Looijmans <mike.looijmans@topic.nl>
-Cc: linux-clk@vger.kernel.org, mturquette@baylibre.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] Add driver for the si514 clock generator chip
-Message-ID: <20151002191804.GS12338@codeaurora.org>
-References: <1442487891-20477-1-git-send-email-mike.looijmans@topic.nl>
- <1443770129-7757-1-git-send-email-mike.looijmans@topic.nl>
+Return-Path: <moinejf@free.fr>
+Date: Wed, 21 Oct 2015 08:15:19 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Mark Brown <broonie@kernel.org>, "linux-fbdev@vger.kernel.org"
+ <linux-fbdev@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Michael
+ Turquette <mturquette@baylibre.com>, dri-devel
+ <dri-devel@lists.freedesktop.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Frank Rowand
+ <frowand.list@gmail.com>, linux-clk@vger.kernel.org, Russell King
+ <linux@arm.linux.org.uk>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+ Lee Jones <lee.jones@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>,
+ Linux PWM List <linux-pwm@vger.kernel.org>, Kishon Vijay Abraham I
+ <kishon@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Alan Stern
+ <stern@rowland.harvard.edu>, Grant Likely <grant.likely@linaro.org>,
+ Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre
+ Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org"
+ <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org"
+ <linux-tegra@vger.kernel.org>, Terje =?UTF-8?B?QmVyZ3N0csO2bQ==?=
+ <tbergstrom@nvidia.com>, Dan Williams <dan.j.williams@intel.com>, Tomeu
+ Vizoso <tomeu.vizoso@collabora.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "linux-pm@vger.kernel.org"
+ <linux-pm@vger.kernel.org>, Linux USB List <linux-usb@vger.kernel.org>,
+ Stephen Boyd <sboyd@codeaurora.org>, Sebastian Reichel <sre@kernel.org>,
+ Felipe Balbi <balbi@ti.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, Vinod Koul <vinod.koul@intel.com>, Jingoo
+ Han <jingoohan1@gmail.com>, dmaengine@vger.kernel.org, David Woodhouse
+ <dwmw2@infradead.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Message-ID: <20151021081519.13fa548a@OPI2>
+In-Reply-To: <23698237.227MziouDO@vostro.rjw.lan>
+References: <CAAObsKChQN4gg91dCWJS_Co_MrYyBrB1J7gxgGo4hsPXNZRp3g@mail.gmail.com>
+	<Pine.LNX.4.44L0.1510201311260.1855-100000@iolanthe.rowland.org>
+	<20151020193528.GE32054@sirena.org.uk>
+	<23698237.227MziouDO@vostro.rjw.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1443770129-7757-1-git-send-email-mike.looijmans@topic.nl>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/02, Mike Looijmans wrote:
-> This patch adds the driver and devicetree documentation for the
-> Silicon Labs SI514 clock generator chip. This is an I2C controlled
-> oscillator capable of generating clock signals ranging from 100kHz
-> to 250MHz.
-> 
-> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
-> ---
+Sorry to enter this thread a bit late.
 
-Applied to clk-next. We can handle any stuff about assigned rates
-in a follow up patch.
+About the number of probe deferred messages, I proposed a simple patch to
+reduce them:
 
-Also, I squashed in this for some cleanup.
+	https://lkml.org/lkml/2013/8/20/218
 
-diff --git a/drivers/clk/clk-si514.c b/drivers/clk/clk-si514.c
-index 779aebcd884b..6af7dce54241 100644
---- a/drivers/clk/clk-si514.c
-+++ b/drivers/clk/clk-si514.c
-@@ -16,7 +16,6 @@
-  * GNU General Public License for more details.
-  */
- 
--#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/delay.h>
- #include <linux/module.h>
-@@ -87,14 +86,11 @@ static int si514_get_muldiv(struct clk_si514 *data,
- 	if (err)
- 		return err;
- 
--	settings->m_frac =
--		reg[0] |
--		((u32)reg[1] << 8) |
--		((u32)reg[2] << 16) |
--		((u32)(reg[3] & 0x1F) << 24);
--	settings->m_int = ((reg[4] & 0x3f) << 3) | (reg[3] >> 5);
-+	settings->m_frac = reg[0] | reg[1] << 8 | reg[2] << 16 |
-+			   (reg[3] & 0x1F) << 24;
-+	settings->m_int = (reg[4] & 0x3f) << 3 | reg[3] >> 5;
- 	settings->ls_div_bits = (reg[6] >> 4) & 0x07;
--	settings->hs_div = ((u16)(reg[6] & 0x03) << 8) | reg[5];
-+	settings->hs_div = (reg[6] & 0x03) << 8 | reg[5];
- 	return 0;
- }
- 
-@@ -132,7 +128,7 @@ static int si514_set_muldiv(struct clk_si514 *data,
- 	reg[0] = settings->m_frac;
- 	reg[1] = settings->m_frac >> 8;
- 	reg[2] = settings->m_frac >> 16;
--	reg[3] = (settings->m_frac >> 24) | (settings->m_int << 5);
-+	reg[3] = settings->m_frac >> 24 | settings->m_int << 5;
- 	reg[4] = settings->m_int >> 3;
- 	reg[5] = settings->hs_div;
- 	reg[6] = (settings->hs_div >> 8) | (settings->ls_div_bits << 4);
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I was wondering how many messages this patch could save...
+
+--=20
+Ken ar c'henta=C3=B1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
