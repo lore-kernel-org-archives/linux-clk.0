@@ -1,57 +1,40 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 21 Oct 2015 16:25:16 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [GIT PULL] Allwinner clock changes for 4.4
+Message-ID: <20151021232516.GM19782@codeaurora.org>
+References: <20151021195856.GA5155@lukather>
 MIME-Version: 1.0
-In-Reply-To: <20151026133153.GG8644@n2100.arm.linux.org.uk>
-References: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
-	<1444916813-31024-10-git-send-email-linus.walleij@linaro.org>
-	<20151015192626.GO4558@codeaurora.org>
-	<CACRpkdZUzTsMcFrudF6RRU5_1Njr=8L_XRUEmAWqvEnoJQ96Cw@mail.gmail.com>
-	<20151026133153.GG8644@n2100.arm.linux.org.uk>
-Date: Thu, 29 Oct 2015 14:00:53 +0100
-Message-ID: <CACRpkdZvN4yH6AED4aTK-TDLpJuxKOWV2ivU=NiPV1DEJ8nGJg@mail.gmail.com>
-Subject: Re: [PATCH 09/13] clk: versatile-icst: add device tree support
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-	Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-	Marc Zyngier <marc.zyngier@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Rob Herring <robh@kernel.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20151021195856.GA5155@lukather>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Oct 26, 2015 at 2:31 PM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> [Me]
->> ARM never created any more integrated ICST devices, and
->> they stopped using them since. Those two are the required
->> ones.
->
-> As ARM didn't create any ICST devices at all, that's hardly surprising.
-> These devices are created by Integrated Circuit Systems, Inc.  The 525
-> is a parallel-loaded clock generator, the 307 is a serial-loaded clock
-> generator.
->
-> However, they have no "standard" software interface - indeed, the 525
-> is marketed as a device that needs no processor or software to be used,
-> so it doesn't have a "software" interface as such.
+On 10/21, Maxime Ripard wrote:
+> Hi Mike, Stephen,
+> 
+> Please pull the following patches for the next merge window.
+> 
+> Thanks!
+> Maxime
+> 
+> The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
+> 
+>   Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
+> 
+> are available in the git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git tags/sunxi-clocks-for-4.4
+> 
+> for you to fetch changes up to 9b038bc58ad2658c76fd8b50bb333dfd4454573c:
+> 
+>   clk: sunxi: mod1 clock support (2015-10-21 21:51:29 +0200)
+> 
 
-RIght, I wrote a blurb with the more elaborate and correct story
-for the device tree bindings. I get sloppy sometimes.
+Thanks. Pulled.
 
-> ARM Ltd's hardware on these boards provides interfaces to these, however
-> the underlying ICST support I wrote was factored to separate out the
-> interface from the chip support - I haven't been tracking what's been
-> going on with these, but I hope that separation has been kept as it's
-> entirely logical, and describing these things in DT as an ARM Ltd device,
-> combining the ICST device itself with its interface would be wrong.
-
-So the device tree bindings does say that, and the compatible strings
-are "arm,syscon-icst525" or "arm,syscon-icst307" indicating that it is
-indeed the ARM syscon register-mapped thing, and the ICST sits on
-the back of that register.
-
-The logical separation is indeed kept, if someone ever decides to
-interface the ICST clocks in some other way, the code is reusable.
-
-Yours,
-Linus Walleij
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
