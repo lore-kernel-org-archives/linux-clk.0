@@ -1,56 +1,103 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, sjoerd.simons@collabora.co.uk
-Subject: Re: [PATCH 1/3] clk: add flag for clocks that need to be enabled on rate changes
-Date: Sun, 11 Oct 2015 12:41:09 +0200
-Message-ID: <13378907.1JCOSf8QGs@diego>
-In-Reply-To: <20151008215840.GJ26883@codeaurora.org>
-References: <1929669.AsgMSusdJb@phil> <3137165.kmu68gRS44@diego> <20151008215840.GJ26883@codeaurora.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20151021155057.20687.14055@quantum>
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+	<1438974570-20812-3-git-send-email-mturquette@baylibre.com>
+	<CAMuHMdX8Fq3AfxuZMLe4-CYFzrDiQcwnREQhX5fSGXzYNSkKsA@mail.gmail.com>
+	<20151020124000.20687.60752@quantum>
+	<CAMuHMdWd9LxrSWO5snriW+fb_d8FtMeXUBjp3M-Oeahh+FzJcw@mail.gmail.com>
+	<20151021105932.GP32536@n2100.arm.linux.org.uk>
+	<20151021155057.20687.14055@quantum>
+Date: Wed, 21 Oct 2015 18:46:35 +0200
+Message-ID: <CAMuHMdWgf8DOhaDLcQ=qJx0r7G0zK_yfWRpVOPBV--SW2Rw1kA@mail.gmail.com>
+Subject: Re: [PATCH RFC RFT 2/3] clk: clk_put WARNs if user has not disabled clk
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, Lee Jones <lee.jones@linaro.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>, Tony Lindgren <tony@atomide.com>,
+	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Linux-sh list <linux-sh@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Hi Mike,
 
-Am Donnerstag, 8. Oktober 2015, 14:58:40 schrieb Stephen Boyd:
-> On 10/02, Heiko St=FCbner wrote:
-> > Hi,
-> >=20
-> > any comment on these 3 patches?
->=20
-> Dong has a similar problem, but those patches conflate this with
-> enabling parent clocks during clk_disable_unused() which makes no
-> sense to me. So I'm ok with the requirement that we turn clocks
-> on to change rates, but I wonder if in this case we need to turn
-> on the clock that's changing rates itself, or if we just need to
-> turn on the parent and/or future parent of the clock during the
-> rate switch. Care to elaborate on that?
+On Wed, Oct 21, 2015 at 5:50 PM, Michael Turquette
+<mturquette@baylibre.com> wrote:
+> Quoting Russell King - ARM Linux (2015-10-21 03:59:32)
+>> On Wed, Oct 21, 2015 at 11:50:07AM +0200, Geert Uytterhoeven wrote:
+>> > On Tue, Oct 20, 2015 at 2:40 PM, Michael Turquette
+>> > <mturquette@baylibre.com> wrote:
+>> > > Why not keep the reference to the struct clk after get'ing it the first
+>> > > time?
+>> >
+>> > And store it where?
+>>
+>> Not my problem :)
+>>
+>> Users are supposed to hold on to the reference obtained via clk_get()
+>> while they're making use of the clock: in some implementations, this
+>> increments the module use count if the clock driver is a module, and
+>> may have other effects too.
+>>
+>> Dropping that while you're still requiring the clock to be enabled is
+>> unsafe: if it is provided by a module, then removing and reinserting
+>> the module may very well change the enabled state of the clock, it
+>> most certainly will disrupt the enable count.
+>>
+>> It's always been this way, right from the outset, and when I've seen
+>> people doing this bollocks, I've always pointed out that it's wrong.
+>> Generally, people will fix it once they become aware of it, so it's
+>> really that people just don't like reading and conforming to published
+>> API requirements.
+>>
+>> I think the root cause is that people just don't like reading what
+>> other people write in terms of documentation, and they prefer to go
+>> off and do their own thing, provided it works for them.
+>
+> Right, so in other words this problem must be solved by the caller of
+> clk_get, as it should be. I have never much looked at the pm clk code in
+> question, but I gave it a quick look and came up with some example code
+> that does not compile, in an effort to be as helpful as possible.
+>
+> Basically I added a flex array to struct pm_clk_notifier_block, so that
+> now there are two flex arrays which is stupid. But I am too lazy to
+> replace the nbclk->clks thing with a malloc after walking all of the
+> clk_id's to figure out the number of clocks. Or we could just add
+> .num_clk to the struct, fix up all 4 users of it and drop the NULL
+> sentinel used the .clk_id's... Hmm that would have been better.
 
-As you can see in the follow-up patches, the fractional dividers on Roc=
-kchip=20
-SoCs are quite strange in that they even need to have their _downstream=
-_ mux=20
-point to them to actually accept rate changes.
+Thanks for trying.
 
-The register value always reflects the value set by the system, but har=
-dware=20
-really only accepts it if the clock is enabled and even the downstream =
-mux=20
-selects the fractional divider as parent (they call it a auto-gating fe=
-ature).
+> index 25266c6..45e58fe 100644
+> --- a/include/linux/pm_clock.h
+> +++ b/include/linux/pm_clock.h
+> @@ -16,6 +16,7 @@ struct pm_clk_notifier_block {
+>         struct notifier_block nb;
+>         struct dev_pm_domain *pm_domain;
+>         char *con_ids[];
+> +       struct clk *clks[];
+>  };
+>
+>  struct clk;
 
-So in the worst (and current) case, you end up with the register showin=
-g the=20
-right value, but the hardware can use completely different dividers fro=
-m the=20
-previous setting.
+Unfortunately that won't work: while the .con_ids[] array is per-platform,
+the .clks[] array should be per-device. I.e. it should be tied to the struct
+device, not to the struct pm_clk_notifier_block.
 
-That strange behaviour got quite deeply investigated between Rockchip a=
-nd=20
-Google engineers who stumbled upon this in the first place, so I'm reas=
-onably=20
-sure this is the right solution for that clock type :-) .
+Gr{oetje,eeting}s,
 
+                        Geert
 
-Heiko
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
