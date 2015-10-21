@@ -1,58 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bl2on0146.outbound.protection.outlook.com ([65.55.169.146]:36932
-	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752389AbbJOT6N convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 15 Oct 2015 15:58:13 -0400
-From: Sharma Bhupesh <bhupesh.sharma@freescale.com>
-To: Arnd Bergmann <arnd@arndb.de>
-CC: "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"olof@lixom.net" <olof@lixom.net>,
-	"bhupesh.linux@gmail.com" <bhupesh.linux@gmail.com>,
-	"will.deacon@arm.com" <will.deacon@arm.com>,
-	"Catalin.Marinas@arm.com" <Catalin.Marinas@arm.com>,
-	Li Leo <LeoLi@freescale.com>,
-	Scott Wood <scottwood@freescale.com>,
-	"Stuart Yoder" <stuart.yoder@freescale.com>
-Subject: RE: [PATCH v3 12/12] dts/Makefile: Add build support for LS2080a QDS
- & RDB board DTS
-Date: Thu, 15 Oct 2015 19:58:09 +0000
-Message-ID: <BY1PR0301MB1303114E40DED290D699792A823E0@BY1PR0301MB1303.namprd03.prod.outlook.com>
-References: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
- <1444891672-32117-13-git-send-email-bhupesh.sharma@freescale.com>
- <6113441.JKoMX6G60g@wuerfel>
-In-Reply-To: <6113441.JKoMX6G60g@wuerfel>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+To: Jisheng Zhang <jszhang@marvell.com>, sebastian.hesselbarth@gmail.com,
+ robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+ ijc+devicetree@hellion.org.uk, galak@codeaurora.org, sboyd@codeaurora.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1445339807-2351-5-git-send-email-jszhang@marvell.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ "Jisheng Zhang" <jszhang@marvell.com>
+References: <1445339807-2351-1-git-send-email-jszhang@marvell.com>
+ <1445339807-2351-5-git-send-email-jszhang@marvell.com>
+Message-ID: <20151021093051.20687.11262@quantum>
+Subject: Re: [PATCH v2 4/4] clk: berlin: bg2: remove CLK_IGNORE_UNUSED flag for sdio
+ clk
+Date: Wed, 21 Oct 2015 02:30:51 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-> From: Arnd Bergmann [mailto:arnd@arndb.de]
-> Sent: Thursday, October 15, 2015 7:50 PM
-> 
-> On Thursday 15 October 2015 12:17:52 Bhupesh Sharma wrote:
-> >
-> > diff --git a/arch/arm64/boot/dts/freescale/Makefile
-> b/arch/arm64/boot/dts/freescale/Makefile
-> > index 932001a..57b41c7 100644
-> > --- a/arch/arm64/boot/dts/freescale/Makefile
-> > +++ b/arch/arm64/boot/dts/freescale/Makefile
-> > @@ -1,4 +1,4 @@
-> > -dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-simu.dtb
-> > +dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-qds.dtb fsl-ls2080a-
-> rdb.dtb fsl-ls2080a-simu.dtb
-> >
-> >
-> 
-> Please use one line per dtb file here, for consistency with the other
-> platforms
-> 
+Quoting Jisheng Zhang (2015-10-20 04:16:47)
+> The clocks' properties have been already properly set, so there's no
+> need to set this flag for sdio0 and sdio1 clk any more.
+> =
 
-Ok, will address in v4.
+> Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+
+Applied to clk-next.
 
 Regards,
-Bhupesh
+Mike
+
+> ---
+>  drivers/clk/berlin/bg2.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> =
+
+> diff --git a/drivers/clk/berlin/bg2.c b/drivers/clk/berlin/bg2.c
+> index 73153fc..23e0e3b 100644
+> --- a/drivers/clk/berlin/bg2.c
+> +++ b/drivers/clk/berlin/bg2.c
+> @@ -490,8 +490,8 @@ static const struct berlin2_gate_data bg2_gates[] __i=
+nitconst =3D {
+>         { "usb0",       "perif",        11 },
+>         { "usb1",       "perif",        12 },
+>         { "pbridge",    "perif",        13, CLK_IGNORE_UNUSED },
+> -       { "sdio0",      "perif",        14, CLK_IGNORE_UNUSED },
+> -       { "sdio1",      "perif",        15, CLK_IGNORE_UNUSED },
+> +       { "sdio0",      "perif",        14 },
+> +       { "sdio1",      "perif",        15 },
+>         { "nfc",        "perif",        17 },
+>         { "smemc",      "perif",        19 },
+>         { "audiohd",    "audiohd_pll",  26 },
+> -- =
+
+> 2.6.1
+>=20
