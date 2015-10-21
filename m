@@ -1,41 +1,142 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 6 Oct 2015 12:44:30 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: York Sun <yorksun@freescale.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	Russell King <linux@arm.linux.org.uk>
-Subject: Re: What's the proper use of con_id in clkdev
-Message-ID: <20151006194430.GJ12338@codeaurora.org>
-References: <5612D4D0.30104@freescale.com>
+Return-Path: <frowand.list@gmail.com>
+Return-Path: <frowand.list@gmail.com>
+Message-ID: <5627B677.5090109@gmail.com>
+Date: Wed, 21 Oct 2015 08:59:51 -0700
+From: Frank Rowand <frowand.list@gmail.com>
+Reply-To: frowand.list@gmail.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5612D4D0.30104@freescale.com>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+CC: Mark Brown <broonie@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Alexandre Courbot <gnurou@gmail.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ David Airlie <airlied@linux.ie>,
+ =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom@nvidia.com>,
+ Stephen Warren <swarren@wwwdotorg.org>,
+ Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>,
+ Kishon Vijay Abraham I <kishon@ti.com>,
+ Sebastian Reichel <sre@kernel.org>,
+ Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+ David Woodhouse <dwmw2@infradead.org>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Felipe Balbi <balbi@ti.com>, Jingoo Han <jingoohan1@gmail.com>,
+ Lee Jones <lee.jones@linaro.org>,
+ Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+ Tomi Valkeinen <tomi.valkeinen@ti.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-gpio@vger.kernel.org,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ linux-i2c@vger.kernel.org,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ Linux PWM List <linux-pwm@vger.kernel.org>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ linux-fbdev@vger.kernel.org
+Subject: Re: [GIT PULL] On-demand device probing
+References: <561E1378.6000906@collabora.com> <20151017065750.GA18607@kroah.com> <20151018192931.GY14956@sirena.org.uk> <20151018193757.GA9147@kroah.com> <20151018195330.GB14956@sirena.org.uk> <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
+In-Reply-To: <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/05, York Sun wrote:
-> Michael and Stephen,
-> 
-> Can you help me to understand "#define MAX_CON_ID 16" in clkdev.c? I am trying
-> to use clk_get() to acquire the clock with its name. This fails when the clock
-> name is more than 15 characters. I traced it to this macro.
-> 
-> The reason of using clk_get() is I don't have device tree for my platform until
-> device tree overlay is officially supported. So I use clkdev_add() in the clock
-> driver.
-> 
-> So my issue is with the MAX_CON_ID. Is there a reason to limit it to 16?
-> Wouldn't it be better to use kstrdup() in vclkdev_alloc()?
-> 
+On 10/19/2015 5:34 AM, Tomeu Vizoso wrote:
+> On 18 October 2015 at 21:53, Mark Brown <broonie@kernel.org> wrote:
+>> On Sun, Oct 18, 2015 at 12:37:57PM -0700, Greg Kroah-Hartman wrote:
+>>> On Sun, Oct 18, 2015 at 08:29:31PM +0100, Mark Brown wrote:
+>>>> On Fri, Oct 16, 2015 at 11:57:50PM -0700, Greg Kroah-Hartman wrote:
 
-Mike and I are not the maintainers of clkdev. The maintainer of
-clkdev is Russell King.
+< snip >
 
-I believe we can't use kstrdup() in vclkdev_alloc() because we
-don't know if vclkdev_alloc() is called before the slab
-allocators are up and running (this is why we have a
-__clkdev_alloc() function). The simplest solution is to use
-shorter names, can you do that?
+> hope you don't mind I summarize the points taken instead of replying
+> to the individual emails. I tried to address all the concerns that
+> have been raised again in the cover letter, but I guess I did a bad
+> job at explaining myself, so here's another (more in-depth) go at it.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+< snip >
+
+> 3) Regarding total boot time, I don't expect this series to make much
+> of a difference because though we would save a lot of matching and
+> querying for resources, that's little time compared with how long we
+> wait for hardware to react during probing. Async probing is more
+> likely to help with drivers that take a long time to probe.
+
+And then in your reply to Russell's reply to your email you say:
+
+> To be clear, I was saying that this series should NOT affect total
+> boot times much.
+
+I'm confused.  If I understood correctly, improving boot time was
+the key justification for accepting this patch set.  For example,
+from "[PATCH v7 0/20] On-demand device probing":
+
+   I have a problem with the panel on my Tegra Chromebook taking longer
+   than expected to be ready during boot (Stéphane Marchesin reported what
+   is basically the same issue in [0]), and have looked into ordered
+   probing as a better way of solving this than moving nodes around in the
+   DT or playing with initcall levels and linking order.
+
+   ...
+
+   With this series I get the kernel to output to the panel in 0.5s,
+   instead of 2.8s.
+
+Alexander Holler reported improved boot times for his patch set
+in August, which is another approach to ordering probes
+(http://article.gmane.org/gmane.linux.drivers.devicetree/133010).
+His results for 5 boards was four booted faster, one slightly
+slower:
+
+   Some numbers (5 boots on each board, without and with ordering drivers),
+   all times are seconds.
+
+   Kirkwood (dockstar, armv5):
+
+   Boot to "Freeing unused kernel memory" (includes mounting the rootfs),
+   unordered:
+   4.456016 3.937801 4.114788 4.114526 3.949480 (average 4.1145222)
+   ordered:
+   3.173054 3.164045 3.141418 3.480679 3.459298 (3.2836988)
+   Time needed to sort (of_init_build_order()):
+   0.003024
+   Time needed to match drivers to the order (without calling them):
+   0.002884
+
+   Beagleboard (rev C4, armv7):
+
+   unordered:
+   6.706024 6.821746 6.696014 6.673675 6.769866 (6.733465)
+   ordered:
+   5.544860 5.514160 5.505859 5.527374 5.496795 (5.5178096)
+   sorting: 0.021209
+   matching: 0.006165
+
+   Beaglebone Black (rev A5, armv7):
+
+   unordered:
+   3.826531 3.825662 3.826648 3.825434 3.825263 (3.8259076)
+   ordered:
+   2.838554 2.838322 2.839459 2.838467 2.838421 (2.8386446)
+   sorting: 0.004769
+   matching: 0.004860
+
+   imx6q (armv7):
+
+   unordered:
+   3.451998 3.418864 3.446952 3.429974 3.440996 (3.4377568)
+   ordered:
+   3.538312 3.549019 3.538105 3.515916 3.555715 (3.5394134)
+   sorting: 0.004622
+   matching: 0.003868
+
+While not as dramatic as your results, they are somewhat supportive.
+What has changed your assessment that the on-demand device probing
+patches will give a big boot performance increase?  Do you have
+new data or analysis?
+
+-Frank
