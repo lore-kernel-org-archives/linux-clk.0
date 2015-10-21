@@ -1,227 +1,208 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v2 11/14] ARM: at91: pm: move idle functions to pm.c
-Date: Mon, 12 Oct 2015 16:28:48 +0200
-Message-Id: <1444660131-14954-12-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1444660131-14954-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1444660131-14954-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <frowand.list@gmail.com>
+Return-Path: <frowand.list@gmail.com>
+Message-ID: <56270D5B.5010902@gmail.com>
+Date: Tue, 20 Oct 2015 20:58:19 -0700
+From: Frank Rowand <frowand.list@gmail.com>
+Reply-To: frowand.list@gmail.com
+MIME-Version: 1.0
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+CC: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+ Mark Brown <broonie@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Alexandre Courbot <gnurou@gmail.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ David Airlie <airlied@linux.ie>,
+ =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom@nvidia.com>,
+ Stephen Warren <swarren@wwwdotorg.org>,
+ Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>,
+ Kishon Vijay Abraham I <kishon@ti.com>,
+ Sebastian Reichel <sre@kernel.org>,
+ Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+ David Woodhouse <dwmw2@infradead.org>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Felipe Balbi <balbi@ti.com>, Jingoo Han <jingoohan1@gmail.com>,
+ Lee Jones <lee.jones@linaro.org>,
+ Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+ Tomi Valkeinen <tomi.valkeinen@ti.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ dmaengine@vger.kernel.org,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ Linux I2C <linux-i2c@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ Linux PWM List <linux-pwm@vger.kernel.org>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ Linux Fbdev development list <linux-fbdev@vger.kernel.org>
+Subject: Re: Alternative approach to solve the deferred probe
+References: <20151018192931.GY14956@sirena.org.uk> <20151018193757.GA9147@kroah.com> <20151018195330.GB14956@sirena.org.uk> <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com> <20151019131821.GA32532@n2100.arm.linux.org.uk> <CAAObsKDS_+AZ26P_fHc6pvAYrQotsuoO0DEGQUWC514t3DD_jQ@mail.gmail.com> <20151019143045.GE32532@n2100.arm.linux.org.uk> <CAAObsKDWM6A98tdKHqi4fe5DBf0BmB0JeghcZDWan_PYbyshag@mail.gmail.com> <20151019153548.GM32532@n2100.arm.linux.org.uk> <CAMuHMdVv=ieYM-Nehp0qV8CEggHEeJ22j-6i_N09rRA_U=2ePw@mail.gmail.com> <20151020154656.GY32532@n2100.arm.linux.org.uk>
+In-Reply-To: <20151020154656.GY32532@n2100.arm.linux.org.uk>
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-Avoid using code from clk/at91 for PM.
-This also has the bonus effect of setting arm_pm_idle for sama5 platforms.
+On 10/20/2015 8:46 AM, Russell King - ARM Linux wrote:
+> On Mon, Oct 19, 2015 at 06:21:40PM +0200, Geert Uytterhoeven wrote:
+>> Hi Russell,
+>>
+>> On Mon, Oct 19, 2015 at 5:35 PM, Russell King - ARM Linux
+>> <linux@arm.linux.org.uk> wrote:
+>>>>> What you can do is print those devices which have failed to probe at
+>>>>> late_initcall() time - possibly augmenting that with reports from
+>>>>> subsystems showing what resources are not available, but that's only
+>>>>> a guide, because of the "it might or might not be in a kernel module"
+>>>>> problem.
+>>>>
+>>>> Well, adding those reports would give you a changelog similar to the
+>>>> one in this series...
+>>>
+>>> I'm not sure about that, because what I was thinking of is adding
+>>> a flag which would be set at late_initcall() time prior to running
+>>> a final round of deferred device probing.
+>>
+>> Which round is the final round?
+>> That's the one which didn't manage to bind any new devices to drivers,
+>> which is something you only know _after_ the round has been run.
+>>
+>> So I think we need one extra round to handle this.
+>>
+>>> This flag would then be used in a deferred_warn() printk function
+>>> which would normally be silent, but when this flag is set, it would
+>>> print the reason for the deferral - and this would replace (or be
+>>> added) to the subsystems and drivers which return -EPROBE_DEFER.
+>>>
+>>> That has the effect of hiding all the deferrals up until just before
+>>> launching into userspace, which should then acomplish two things -
+>>> firstly, getting rid of the rather useless deferred messages up to
+>>> that point, and secondly printing the reason why the remaining
+>>> deferrals are happening.
+>>>
+>>> That should be a small number of new lines plus a one-line change
+>>> in subsystems and drivers.
+>>
+>> Apart from the extra round we probably can't get rid of, that sounds OK to me.
+> 
+> Something like this.  I haven't put a lot of effort into it to change all
+> the places which return an -EPROBE_DEFER, and it also looks like we need
+> some helpers to report when we have only an device_node (or should that
+> be fwnode?)  See the commented out of_warn_deferred() in
+> drivers/gpio/gpiolib-of.c.  Adding this stuff in the subsystems searching
+> for resources should make debugging why things are getting deferred easier.
+> 
+> We could make driver_deferred_probe_report something that can be
+> deactivated again after the last deferred probe run, and provide the
+> user with a knob that they can turn it back on again.
+> 
+> I've tried this out on two of my platforms, including forcing
+> driver_deferred_probe_report to be enabled, and I get exactly one
+> deferred probe, so not a particularly good test.
+> 
+> The patch won't apply as-is to mainline for all files; it's based on my
+> tree which has some 360 additional patches (which seems to be about
+> normal for my tree now.)
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
----
- arch/arm/mach-at91/at91rm9200.c |  2 --
- arch/arm/mach-at91/at91sam9.c   |  2 --
- arch/arm/mach-at91/generic.h    |  6 ++----
- arch/arm/mach-at91/pm.c         | 37 ++++++++++++++++++++++++++++++++-----
- arch/arm/mach-at91/sama5.c      |  2 +-
- drivers/clk/at91/pmc.c          | 15 ---------------
- 6 files changed, 35 insertions(+), 29 deletions(-)
+I like the concept (I have been thinking along similar lines lately).
+But I think this might make the console messages more confusing than
+they are now.  The problem is that debug, warn, and error messages
+come from a somewhat random set of locations at the moment.  Some
+come from the driver probe routines and some come from the subsystems
+that the probe routines call.  So the patch is suppressing some
+messages, but not others.
 
-diff --git a/arch/arm/mach-at91/at91rm9200.c b/arch/arm/mach-at91/at91rm9200.c
-index c1a7c6cc00e1..63b4fa25b48a 100644
---- a/arch/arm/mach-at91/at91rm9200.c
-+++ b/arch/arm/mach-at91/at91rm9200.c
-@@ -12,7 +12,6 @@
- #include <linux/of_platform.h>
- 
- #include <asm/mach/arch.h>
--#include <asm/system_misc.h>
- 
- #include "generic.h"
- #include "soc.h"
-@@ -33,7 +32,6 @@ static void __init at91rm9200_dt_device_init(void)
- 
- 	of_platform_populate(NULL, of_default_bus_match_table, NULL, soc_dev);
- 
--	arm_pm_idle = at91rm9200_idle;
- 	at91rm9200_pm_init();
- }
- 
-diff --git a/arch/arm/mach-at91/at91sam9.c b/arch/arm/mach-at91/at91sam9.c
-index 7eb64f763034..cada2a6412b3 100644
---- a/arch/arm/mach-at91/at91sam9.c
-+++ b/arch/arm/mach-at91/at91sam9.c
-@@ -62,8 +62,6 @@ static void __init at91sam9_common_init(void)
- 		soc_dev = soc_device_to_device(soc);
- 
- 	of_platform_populate(NULL, of_default_bus_match_table, NULL, soc_dev);
--
--	arm_pm_idle = at91sam9_idle;
- }
- 
- static void __init at91sam9_dt_device_init(void)
-diff --git a/arch/arm/mach-at91/generic.h b/arch/arm/mach-at91/generic.h
-index b0fa7dc7286d..d224e195706a 100644
---- a/arch/arm/mach-at91/generic.h
-+++ b/arch/arm/mach-at91/generic.h
-@@ -18,20 +18,18 @@
- extern void __init at91_map_io(void);
- extern void __init at91_alt_map_io(void);
- 
--/* idle */
--extern void at91rm9200_idle(void);
--extern void at91sam9_idle(void);
--
- #ifdef CONFIG_PM
- extern void __init at91rm9200_pm_init(void);
- extern void __init at91sam9260_pm_init(void);
- extern void __init at91sam9g45_pm_init(void);
- extern void __init at91sam9x5_pm_init(void);
-+extern void __init sama5_pm_init(void);
- #else
- static inline void __init at91rm9200_pm_init(void) { }
- static inline void __init at91sam9260_pm_init(void) { }
- static inline void __init at91sam9g45_pm_init(void) { }
- static inline void __init at91sam9x5_pm_init(void) { }
-+static inline void __init sama5_pm_init(void) { }
- #endif
- 
- #endif /* _AT91_GENERIC_H */
-diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
-index 1dee29b33ff9..34f7f034c589 100644
---- a/arch/arm/mach-at91/pm.c
-+++ b/arch/arm/mach-at91/pm.c
-@@ -31,6 +31,7 @@
- #include <asm/mach/irq.h>
- #include <asm/fncpy.h>
- #include <asm/cacheflush.h>
-+#include <asm/system_misc.h>
- 
- #include "generic.h"
- #include "pm.h"
-@@ -349,6 +350,21 @@ static __init void at91_dt_ramc(void)
- 	at91_pm_set_standby(standby);
- }
- 
-+void at91rm9200_idle(void)
-+{
-+	/*
-+	 * Disable the processor clock.  The processor will be automatically
-+	 * re-enabled by an interrupt or by a reset.
-+	 */
-+	writel(AT91_PMC_PCK, pmc + AT91_PMC_SCDR);
-+}
-+
-+void at91sam9_idle(void)
-+{
-+	writel(AT91_PMC_PCK, pmc + AT91_PMC_SCDR);
-+	cpu_do_idle();
-+}
-+
- static void __init at91_pm_sram_init(void)
- {
- 	struct gen_pool *sram_pool;
-@@ -405,7 +421,7 @@ static const struct of_device_id atmel_pmc_ids[] = {
- 	{ /* sentinel */ },
- };
- 
--static void __init at91_pm_init(void)
-+static void __init at91_pm_init(void (*pm_idle)(void))
- {
- 	struct device_node *pmc_np;
- 
-@@ -419,6 +435,9 @@ static void __init at91_pm_init(void)
- 		return;
- 	}
- 
-+	if (pm_idle)
-+		arm_pm_idle = pm_idle;
-+
- 	at91_pm_sram_init();
- 
- 	if (at91_suspend_sram_fn)
-@@ -439,7 +458,7 @@ void __init at91rm9200_pm_init(void)
- 	at91_pm_data.uhp_udp_mask = AT91RM9200_PMC_UHP | AT91RM9200_PMC_UDP;
- 	at91_pm_data.memctrl = AT91_MEMCTRL_MC;
- 
--	at91_pm_init();
-+	at91_pm_init(at91rm9200_idle);
- }
- 
- void __init at91sam9260_pm_init(void)
-@@ -447,7 +466,7 @@ void __init at91sam9260_pm_init(void)
- 	at91_dt_ramc();
- 	at91_pm_data.memctrl = AT91_MEMCTRL_SDRAMC;
- 	at91_pm_data.uhp_udp_mask = AT91SAM926x_PMC_UHP | AT91SAM926x_PMC_UDP;
--	at91_pm_init();
-+	at91_pm_init(at91sam9_idle);
- }
- 
- void __init at91sam9g45_pm_init(void)
-@@ -455,7 +474,7 @@ void __init at91sam9g45_pm_init(void)
- 	at91_dt_ramc();
- 	at91_pm_data.uhp_udp_mask = AT91SAM926x_PMC_UHP;
- 	at91_pm_data.memctrl = AT91_MEMCTRL_DDRSDR;
--	at91_pm_init();
-+	at91_pm_init(at91sam9_idle);
- }
- 
- void __init at91sam9x5_pm_init(void)
-@@ -463,5 +482,13 @@ void __init at91sam9x5_pm_init(void)
- 	at91_dt_ramc();
- 	at91_pm_data.uhp_udp_mask = AT91SAM926x_PMC_UHP | AT91SAM926x_PMC_UDP;
- 	at91_pm_data.memctrl = AT91_MEMCTRL_DDRSDR;
--	at91_pm_init();
-+	at91_pm_init(at91sam9_idle);
-+}
-+
-+void __init sama5_pm_init(void)
-+{
-+	at91_dt_ramc();
-+	at91_pm_data.uhp_udp_mask = AT91SAM926x_PMC_UHP | AT91SAM926x_PMC_UDP;
-+	at91_pm_data.memctrl = AT91_MEMCTRL_DDRSDR;
-+	at91_pm_init(NULL);
- }
-diff --git a/arch/arm/mach-at91/sama5.c b/arch/arm/mach-at91/sama5.c
-index d9cf6799aec0..df8fdf1cf66d 100644
---- a/arch/arm/mach-at91/sama5.c
-+++ b/arch/arm/mach-at91/sama5.c
-@@ -51,7 +51,7 @@ static void __init sama5_dt_device_init(void)
- 		soc_dev = soc_device_to_device(soc);
- 
- 	of_platform_populate(NULL, of_default_bus_match_table, NULL, soc_dev);
--	at91sam9x5_pm_init();
-+	sama5_pm_init();
- }
- 
- static const char *const sama5_dt_board_compat[] __initconst = {
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 3aa886849304..3e150967b45e 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -44,21 +44,6 @@ struct at91_pmc {
- void __iomem *at91_pmc_base;
- EXPORT_SYMBOL_GPL(at91_pmc_base);
- 
--void at91rm9200_idle(void)
--{
--	/*
--	 * Disable the processor clock.  The processor will be automatically
--	 * re-enabled by an interrupt or by a reset.
--	 */
--	at91_pmc_write(AT91_PMC_SCDR, AT91_PMC_PCK);
--}
--
--void at91sam9_idle(void)
--{
--	at91_pmc_write(AT91_PMC_SCDR, AT91_PMC_PCK);
--	cpu_do_idle();
--}
--
- int of_at91_get_clk_range(struct device_node *np, const char *propname,
- 			  struct clk_range *range)
- {
--- 
-2.1.4
+One thing that seemed pretty obvious from the patches is that the
+current probe routines are somewhat inconsistent in terms of messages,
+and that there is room for a set of best practices for messaging.  That
+is on my long term wish list, but I'm not sure I'll ever chase after
+those windmills.
+
+A couple of specific comments below.
+
+
+> 
+>  drivers/base/dd.c                       | 29 +++++++++++++++++++++++++++++
+>  drivers/base/power/domain.c             |  7 +++++--
+>  drivers/clk/clkdev.c                    |  9 ++++++++-
+>  drivers/gpio/gpiolib-of.c               |  5 +++++
+>  drivers/gpu/drm/bridge/dw_hdmi.c        |  2 +-
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c |  2 +-
+>  drivers/gpu/drm/imx/imx-ldb.c           |  5 +++--
+>  drivers/gpu/drm/msm/dsi/dsi.c           |  2 +-
+>  drivers/gpu/drm/msm/msm_drv.c           |  3 ++-
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.c  |  3 ++-
+>  drivers/of/irq.c                        |  5 ++++-
+>  drivers/pci/host/pci-mvebu.c            |  1 +
+>  drivers/pinctrl/core.c                  |  5 +++--
+>  drivers/pinctrl/devicetree.c            |  4 ++--
+>  drivers/regulator/core.c                |  5 +++--
+>  include/linux/device.h                  |  1 +
+>  16 files changed, 71 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> index be0eb4639128..bb12224f2901 100644
+> --- a/drivers/base/dd.c
+> +++ b/drivers/base/dd.c
+> @@ -129,7 +129,29 @@ void driver_deferred_probe_del(struct device *dev)
+>  	mutex_unlock(&deferred_probe_mutex);
+>  }
+>  
+> +static bool driver_deferred_probe_report;
+> +
+> +/**
+> + * dev_warn_deferred() - report why a probe has been deferred
+> + */
+> +void dev_warn_deferred(struct device *dev, const char *fmt, ...)
+> +{
+> +	if (driver_deferred_probe_report) {
+> +		struct va_format vaf;
+> +		va_list ap;
+> +
+> +		va_start(ap, fmt);
+> +		vaf.fmt = fmt;
+> +		vaf.va = &ap;
+> +
+> +		dev_warn(dev, "deferring probe: %pV", &vaf);
+> +		va_end(ap);
+> +	}
+> +}
+> +EXPORT_SYMBOL_GPL(dev_warn_deferred);
+
+The places where dev_warn_deferred() replaces dev_dbg(), we lose the
+ability to turn on debugging and observe the driver reporting the
+specific reason the deferral is occurring. So it would be useful to
+add an "else dev_dbg()" in dev_warn_deferred() to retain that capability.
+
+> +
+>  static bool driver_deferred_probe_enable = false;
+> +
+>  /**
+>   * driver_deferred_probe_trigger() - Kick off re-probing deferred devices
+>   *
+> @@ -188,6 +210,13 @@ static int deferred_probe_initcall(void)
+>  	driver_deferred_probe_trigger();
+
+Couldn't you put the "driver_deferred_probe_report = true" here?  And then
+not add another round of probes.
+
+
+>  	/* Sort as many dependencies as possible before exiting initcalls */
+>  	flush_workqueue(deferred_wq);
+> +
+> +	/* Now one final round, reporting any devices that remain deferred */
+> +	driver_deferred_probe_report = true;
+> +	driver_deferred_probe_trigger();
+> +	/* Sort as many dependencies as possible before exiting initcalls */
+> +	flush_workqueue(deferred_wq);
+> +
+>  	return 0;
+>  }
+
+< snip >
+
+-Frank
