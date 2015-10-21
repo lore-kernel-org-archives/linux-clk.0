@@ -1,52 +1,47 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH] clk: versatile: Make depend on OF when COMPILE_TEST
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1445812888-8170-1-git-send-email-javier@osg.samsung.com>
- <20151026185142.GF19782@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, Michael Turquette
- <mturquette@baylibre.com>, Scott Branden <sbranden@broadcom.com>,
- linux-clk@vger.kernel.org
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <562EA365.5080704@osg.samsung.com>
-Date: Tue, 27 Oct 2015 07:04:21 +0900
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 21 Oct 2015 16:51:44 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jon Mason <jonmason@broadcom.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH v3 0/10] clk: iproc: add support for BCM NS, NSP, and NS2
+Message-ID: <20151021235144.GQ19782@codeaurora.org>
+References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
 MIME-Version: 1.0
-In-Reply-To: <20151026185142.GF19782@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Stephen,
+On 10/15, Jon Mason wrote:
+> 
+> v3 - Added a patch to fix cygnus clk link failures, and added back the
+> DT documentation patches that were removed from v2.
+> 
+> v2 - Added a patch to change the Cygnus clk macros to uppercase,
+> removed the device tree changes from the series (will send out those as
+> an RFC), and other minor changes that Stephen Boyd requested.
+> 
+> This patch series adds support for the Broadcom Northstar, Northstar
+> Plus, and Northstar 2 clocks.  Some slight modifications were necessary
+> to clk-iproc-pll to get Northstar and Northstar Plus working, due to
+> differences in register layout.  This is the reason why the first patch
+> is necessary.  Some more modifications were necessary to clk-iproc-pll
+> to get Northstar 2 working, due to differences in register layout (and
+> resulting fallout in Cygnus and NSP).  This is the reason why the sixth
+> and seventh patches are necessary.  The fifth patch is clean-up to
+> prevent accidentally forgetting to adjust for the base write errata
+> (which happened a few times, but was caught in internal review).
+> 
 
-On 10/27/2015 03:51 AM, Stephen Boyd wrote:
-> On 10/26, Javier Martinez Canillas wrote:
->> Commit 4a7748c3d641 ("clk: Allow drivers to build if COMPILE_TEST is
->> enabled") allowed clk drives to be compile tested on other archs but
-> 
-> s/drives/drivers/
-> 
->> the COMMON_CLK_VERSATILE was only enabled on platforms that already
->> selected OF support so the drivers assume it will always be enabled.
->>
->> So, restrict compile test for these drivers only if OF is enabled.
-> 
-> No compiler error message?
-> 
->>
->> Fixes: 4a7748c3d641 ("clk: Allow drivers to build if COMPILE_TEST is enabled")
->> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->>
-> 
-> No Reported-by?
->
+Can you please use git cover-letter format where the diffstat for
+the series is shown? Without that information here I started
+applying patches until I realized this added dt-bindings headers,
+thus probably needing some stable clk branch to pull into arm-soc.
 
-Yes, sorry for forgetting the Reported-by and the build error...
- 
-> I'd prefer we add stubs instead, so I've applied the patch below.
->
-
-Great, thanks!
-
-Best regards,
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
