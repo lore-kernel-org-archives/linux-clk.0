@@ -1,51 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:61352 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754908AbbJ1BG5 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 27 Oct 2015 21:06:57 -0400
-Subject: Re: [PATCH v2 09/10] dt-bindings: video: exynos5433-decon: add
- bindings for DECON-TV
-To: Andrzej Hajda <a.hajda@samsung.com>
-References: <CAJKOXPfXrEwu1egSnLxwYofu_scskkPRKOjOCskObPFn9yVcJw@mail.gmail.com>
- <1445860796-23045-1-git-send-email-a.hajda@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Hyungwon Hwang <human.hwang@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <56301FA7.3000206@samsung.com>
-Date: Wed, 28 Oct 2015 10:06:47 +0900
-MIME-version: 1.0
-In-reply-to: <1445860796-23045-1-git-send-email-a.hajda@samsung.com>
-Content-type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <rjw@rjwysocki.net>
+Return-Path: <rjw@rjwysocki.net>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Rob Herring <robh@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, dmaengine@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>, Linux USB List <linux-usb@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Thu, 22 Oct 2015 01:39:42 +0200
+Message-ID: <13395371.QJ0TvhYnx8@vostro.rjw.lan>
+In-Reply-To: <CAMuHMdWoSdoT1p0e+Bc9ucrykxO7ESLKYHRzackpVjQAs_XaDg@mail.gmail.com>
+References: <561E1378.6000906@collabora.com> <4903022.NtioyRkmbB@vostro.rjw.lan> <CAMuHMdWoSdoT1p0e+Bc9ucrykxO7ESLKYHRzackpVjQAs_XaDg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 26.10.2015 20:59, Andrzej Hajda wrote:
-> DECON-TV(Display and Enhancement Controller for TV) is a variation
-> of DECON IP. Its main purpose is to produce video stream for HDMI IP.
+On Wednesday, October 21, 2015 10:55:14 AM Geert Uytterhoeven wrote:
+> Hi Rafael,
 > 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
-> Hi Krzysztof,
+> On Wed, Oct 21, 2015 at 1:34 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> > On Tuesday, October 20, 2015 09:15:01 AM Rob Herring wrote:
+> >> On Tue, Oct 20, 2015 at 2:56 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> >> > ACPI uses platform devices too.  In fact, ACPI device objects are enumerated as
+> >> > platform devices by default now.
+> >>
+> >> Okay, I should have grepped for that:
+> >> drivers/base/platform.c:                ACPI_COMPANION_SET(&pdev->dev, NULL);
+> >> drivers/base/platform.c:        len = acpi_device_modalias(dev, buf,
+> >> PAGE_SIZE -1);
+> >> drivers/base/platform.c:        rc = acpi_device_uevent_modalias(dev, env);
+> >> drivers/base/platform.c:        /* Then try ACPI style match */
+> >> drivers/base/platform.c:        if (acpi_driver_match_device(dev, drv))
+> >>
+> >> These are all cases which have DT version as well, so we're not really
+> >> all that different here. There's a few more for DT, but that probably
+> >> means you have just not hit the problems we have yet. For example,
+> >> what happens if you have an interrupt line in which the controller is
+> >> probed after the device connected to the interrupt line? That required
+> >> resolving irqs in platform_get_irq rather than using static resources
+> >> to support deferred probe.
+> >
+> > We don't have this particular problem, because the IRQ controllers are
+> > enumerated in a special way.
 > 
-> I have decided to skip cleanup part as it would require more work,
-> not related to this patchset.
+> What does "in a special way" mean? Can you please be more specific?
 > 
-> Regards
-> Andrzej
-> 
->  Documentation/devicetree/bindings/video/exynos5433-decon.txt | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> Can you have interrupt controllers that depend on clocks, pin controllers,
+> and PM domains?
 
-Thanks for splitting this, looks good:
+Currently, there's no native way to represent those dependencies in ACPI.
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Best regards,
-Krzysztof
-
+Thanks,
+Rafael
