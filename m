@@ -1,43 +1,52 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 14 Oct 2015 11:32:48 -0700
+Date: Wed, 21 Oct 2015 16:17:12 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-kernel@vger.kernel.org,
-	Gustavo Padovan <gustavo.padovan@collabora.co.uk>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	devicetree@vger.kernel.org,
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, kernel-janitors@vger.kernel.org,
 	Michael Turquette <mturquette@baylibre.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	linux-samsung-soc@vger.kernel.org,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 1/2] clk: samsung: exynos5250: Add DISP1 clocks
-Message-ID: <20151014183248.GG26883@codeaurora.org>
-References: <1444819457-27519-1-git-send-email-tomeu.vizoso@collabora.com>
- <1444819457-27519-2-git-send-email-tomeu.vizoso@collabora.com>
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>,
+	Jason Cooper <jason@lakedaemon.net>
+Subject: Re: [PATCH 5/5] clk: scpi: add missing of_node_put
+Message-ID: <20151021231712.GL19782@codeaurora.org>
+References: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1445460100-26727-6-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1444819457-27519-2-git-send-email-tomeu.vizoso@collabora.com>
+In-Reply-To: <1445460100-26727-6-git-send-email-Julia.Lawall@lip6.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/14, Tomeu Vizoso wrote:
-> When the DISP1 power domain is powered off, there's two clocks that need
-> to be temporarily reparented to OSC, and back to their original parents
-> when the domain is powered on again.
+On 10/21, Julia Lawall wrote:
+> for_each_available_child_of_node performs an of_node_get on each iteration,
+> so a break out of the loop requires an of_node_put.
 > 
-> We expose these two clocks in the DT bindings so that the DT node of the
-> power domain can reference them.
+> The semantic patch that fixes this problem is as follows
+> (http://coccinelle.lip6.fr):
 > 
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> // <smpl>
+> @@
+> expression root,e;
+> local idexpression child;
+> @@
+> 
+>  for_each_available_child_of_node(root, child) {
+>    ... when != of_node_put(child)
+>        when != e = child
+> (
+>    return child;
+> |
+> +  of_node_put(child);
+> ?  return ...;
+> )
+>    ...
+>  }
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
 > ---
 
 Acked-by: Stephen Boyd <sboyd@codeaurora.org>
