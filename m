@@ -1,103 +1,51 @@
-Return-Path: <Marc_Gonzalez@sigmadesigns.com>
-Return-Path: <Marc_Gonzalez@sigmadesigns.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: clk <linux-clk@vger.kernel.org>, Mans Rullgard <mans@mansr.com>, Mason
-	<slash.tmp@free.fr>
-From: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
-Subject: [PATCH v1] clk: Sigma Designs Tango4 cpuclk driver
-Message-ID: <5613DBA2.20708@sigmadesigns.com>
-Date: Tue, 6 Oct 2015 16:33:06 +0200
+Return-Path: <B48286@freescale.com>
+From: Hou Zhiqiang <B48286@freescale.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+CC: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "catalin.marinas@arm.com"
+	<catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>, "linux@roeck-us.net"
+	<linux@roeck-us.net>, "wim@iguana.be" <wim@iguana.be>, "corbet@lwn.net"
+	<corbet@lwn.net>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, Hu Vincent
+	<Mingkai.Hu@freescale.com>, Shaohui Xie <Shaohui.Xie@freescale.com>, "Scott
+ Wood" <scottwood@freescale.com>, Sharma Bhupesh
+	<bhupesh.sharma@freescale.com>, Wenbin Song <Wenbin.Song@freescale.com>
+Subject: RE: [PATCH V5 1/6] i2c: Add i2c support to Freescale Layerscape
+ platforms
+Date: Wed, 21 Oct 2015 04:10:39 +0000
+Message-ID: <CY1PR0301MB078061870608C21CEA37B4288B380@CY1PR0301MB0780.namprd03.prod.outlook.com>
+References: <1445255774-32887-1-git-send-email-B48286@freescale.com>
+ <20151020155258.GM5379@katana>
+In-Reply-To: <20151020155258.GM5379@katana>
+Content-Type: text/plain; charset="gb2312"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-15"
 List-ID: <linux-clk.vger.kernel.org>
 
-Date: Tue, 6 Oct 2015 16:07:45 +0200
-Subject: [PATCH] clk: Sigma Designs Tango4 cpuclk driver
-
-Signed-off-by: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
----
- drivers/clk/Makefile     |  1 +
- drivers/clk/clk-tango4.c | 59 ++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 60 insertions(+)
- create mode 100644 drivers/clk/clk-tango4.c
-
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index c4cf075a2320..60f42251d32a 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -40,6 +40,7 @@ obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
- obj-$(CONFIG_COMMON_CLK_SI570)		+= clk-si570.o
- obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
- obj-$(CONFIG_ARCH_STM32)		+= clk-stm32f4.o
-+obj-$(CONFIG_ARCH_TANGOX)		+= clk-tango4.o
- obj-$(CONFIG_CLK_TWL6040)		+= clk-twl6040.o
- obj-$(CONFIG_ARCH_U300)			+= clk-u300.o
- obj-$(CONFIG_ARCH_VT8500)		+= clk-vt8500.o
-diff --git a/drivers/clk/clk-tango4.c b/drivers/clk/clk-tango4.c
-new file mode 100644
-index 000000000000..9c21e8c0b6e8
---- /dev/null
-+++ b/drivers/clk/clk-tango4.c
-@@ -0,0 +1,59 @@
-+#include <linux/clk-provider.h>
-+#include <linux/of_address.h>
-+
-+#define REG(name, ...) union name { struct { u32 __VA_ARGS__; }; u32 val; }
-+
-+REG(SYS_clkgen_pll, N:7, :6, K:3, M:3, :5, Isel:3, :3, T:1, B:1);
-+/*
-+ * CG0, CG1, CG2, CG3 PLL Control:
-+ * -------------------------------
-+ *
-+ * |    Byte 3     |    Byte 2     |    Byte 1     |    Byte 0     |
-+ * |3 3 2 2 2 2 2 2|2 2 2 2 1 1 1 1|1 1 1 1 1 1    |               |
-+ * |1 0 9 8 7 6 5 4|3 2 1 0 9 8 7 6|5 4 3 2 1 0 9 8|7 6 5 4 3 2 1 0|
-+ * |-|-|-----|-----|---------|-----|-----|---------|-|-------------|
-+ * |B|T|xxxxx|Isel |xxxxxxxxx|  M  |  K  |xxxxxxxxx|x|      N      |
-+ * |-|-|-----|-----|---------|-----|-----|---------|-|-------------|
-+ *
-+ * These registers are used to configure the PLL parameters:
-+ *
-+ * Bits  6 to  0: N[6:0]. Default = 29
-+ * Bits 15 to 13: K[2:0]. Default = 1
-+ * Bit  18 to 16: M[2:0]. Default = 0
-+ * Bits 26 to 24: Isel[2:0] (PLL Input Select). Default = 1
-+ * Bits 30      : T (PLL Test). Default = 0
-+ * Bits 31      : B (PLL Bypass). Default = 0
-+ *
-+ * PLL0 : Out = In * (N+1) / (M+1) / 2^K
-+ * PLL1 : Same as PLL0
-+ * PLL2 : Same as PLL0
-+ * Default values : All PLLs configured to output 405MHz.
-+ */
-+static void __init tango4_pll_setup(struct device_node *np)
-+{
-+	unsigned int mul, div;
-+	union SYS_clkgen_pll pll;
-+	const char *name = np->name;
-+	const char *parent = of_clk_get_parent_name(np, 0);
-+
-+	void __iomem *clkgen_pll = of_iomap(np, 0);
-+	pll.val = readl_relaxed(clkgen_pll);
-+	iounmap(clkgen_pll);
-+
-+	mul = (pll.N + 1);
-+	div = (pll.M + 1) << pll.K;
-+	clk_register_fixed_factor(NULL, name, parent, 0, mul, div);
-+}
-+
-+static void __init tango4_div_setup(struct device_node *np)
-+{
-+	const char *name = np->name;
-+	const char *parent = of_clk_get_parent_name(np, 0);
-+	void __iomem *div_ctrl = of_iomap(np, 0);
-+
-+	clk_register_divider(NULL, name, parent, 0,
-+		div_ctrl, 8, 8, CLK_DIVIDER_ONE_BASED, NULL);
-+}
-+
-+CLK_OF_DECLARE(tango4_pll,    "sigma,tango4-pll",    tango4_pll_setup);
-+CLK_OF_DECLARE(tango4_cpuclk, "sigma,tango4-cpuclk", tango4_div_setup);
--- 
-2.4.5
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogV29sZnJhbSBTYW5nIFtt
+YWlsdG86d3NhQHRoZS1kcmVhbXMuZGVdDQo+IFNlbnQ6IDIwMTXE6jEw1MIyMMjVIDIzOjUzDQo+
+IFRvOiBIb3UgWmhpcWlhbmctQjQ4Mjg2DQo+IENjOiBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmlu
+ZnJhZGVhZC5vcmc7IGNhdGFsaW4ubWFyaW5hc0Bhcm0uY29tOw0KPiB3aWxsLmRlYWNvbkBhcm0u
+Y29tOyBsaW51eC1pMmNAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4gd2F0Y2hkb2dAdmdlci5r
+ZXJuZWwub3JnOyBsaW51eC1kb2NAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4gY2xrQHZnZXIu
+a2VybmVsLm9yZzsgbWFyay5ydXRsYW5kQGFybS5jb207IGxpbnV4QHJvZWNrLXVzLm5ldDsNCj4g
+d2ltQGlndWFuYS5iZTsgY29yYmV0QGx3bi5uZXQ7IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOw0K
+PiBzYm95ZEBjb2RlYXVyb3JhLm9yZzsgSHUgTWluZ2thaS1CMjEyODQ7IFhpZSBTaGFvaHVpLUIy
+MTk4OTsgV29vZCBTY290dC0NCj4gQjA3NDIxOyBTaGFybWEgQmh1cGVzaC1CNDUzNzA7IFNvbmcg
+V2VuYmluLUI1Mzc0Nw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIFY1IDEvNl0gaTJjOiBBZGQgaTJj
+IHN1cHBvcnQgdG8gRnJlZXNjYWxlIExheWVyc2NhcGUNCj4gcGxhdGZvcm1zDQo+IA0KPiBPbiBN
+b24sIE9jdCAxOSwgMjAxNSBhdCAwNzo1NjowOVBNICswODAwLCBaaGlxaWFuZyBIb3Ugd3JvdGU6
+DQo+ID4gRnJvbTogU2hhb2h1aSBYaWUgPFNoYW9odWkuWGllQGZyZWVzY2FsZS5jb20+DQo+ID4N
+Cj4gPiBNb2RpZnkgdGhlIEkyQ19JTVggY29uZmlnIHRvIHN1cHBvcnQgdG8gTGF5ZXJzY2FwZSBw
+bGF0Zm9ybXMuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBNaW5na2FpIEh1IDxNaW5na2FpLkh1
+QGZyZWVzY2FsZS5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogV2VuYmluIFNvbmcgPFdlbmJpbi5T
+b25nQGZyZWVzY2FsZS5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogSG91IFpoaXFpYW5nIDxCNDgy
+ODZAZnJlZXNjYWxlLmNvbT4NCj4gDQo+IFRocmVlIHNpZ25lZCBvZmZzIGZvciBhIHNpbXBsZSBL
+Y29uZmlnIGNoYW5nZT8gQW5kIHRoZSBwZXJzb24gZG9pbmcgdGhlDQo+IHBhdGNoIGhhcyBubyBz
+aWduZWQgb2ZmPz8gVGhhdCBsb29rcyB3cm9uZy4gTWF5YmUgdGhlIGFib3ZlIHNpZ25lZCBvZmZz
+DQo+IHNob3VsZCBiZSBhY2tlZCBieT8NCj4gDQoNCldpbGwgYWRkIHRoZSBzaWduZWQtb2ZmIG9m
+IHRoZSBhdXRob3IuDQoNClRoYW5rcywNClpoaXFpYW5nDQo=
