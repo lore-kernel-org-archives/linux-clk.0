@@ -1,81 +1,40 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 16 Oct 2015 16:05:55 -0700
+Date: Wed, 21 Oct 2015 16:40:02 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: York Sun <yorksun@freescale.com>
-Cc: linux-clk@vger.kernel.org, pmarrecas@outlook.com,
-	Mike Turquette <mturquette@baylibre.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Andrey Filippov <andrey@elphel.com>,
-	Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [Resend Patch v6] driver/clk/clk-si5338: Add common clock
- framework driver for si5338
-Message-ID: <20151016230555.GE10182@codeaurora.org>
-References: <1444410574-28677-1-git-send-email-yorksun@freescale.com>
- <20151010000948.GW26883@codeaurora.org>
- <562165C3.1090103@freescale.com>
- <20151016213139.GE16437@codeaurora.org>
- <56216E0D.4010709@freescale.com>
+To: Jon Mason <jonmason@broadcom.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v3 01/10] ARM: cygnus: fix link failures when
+ CONFIG_COMMON_CLK_IPROC is disabled
+Message-ID: <20151021234002.GN19782@codeaurora.org>
+References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
+ <1444938513-10758-2-git-send-email-jonmason@broadcom.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <56216E0D.4010709@freescale.com>
+In-Reply-To: <1444938513-10758-2-git-send-email-jonmason@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/16, York Sun wrote:
-> 
-> 
-> On 10/16/2015 02:31 PM, Stephen Boyd wrote:
-> > On 10/16, York Sun wrote:
-> >>
-> >>
-> >> On 10/09/2015 05:09 PM, Stephen Boyd wrote:
-> >>> On 10/09, York Sun wrote:
-> >>>> +/*
-> >>>> + * To support multiple si5338 chips, we cannot use devm_clk_get because
-> >>>> + * each chip has its own clock sources. If device tree is not used,
-> >>>> + * platform driver should provide these clocks. Let the clocks be freed
-> >>>> + * automatically when device is unbound. We implement our own devm_of_clk_get.
-> >>>> + */
-> >>>> +static void devm_of_clk_release(struct device *dev, void *res)
-> >>>> +{
-> >>>> +	clk_put(*(struct clk **)res);
-> >>>> +}
-> >>>> +
-> >>>> +static struct clk *devm_of_clk_get(struct device *dev, struct device_node *np,
-> >>>
-> >>> What is this? I don't get it at all.
-> >>
-> >> Maybe you can help me on this.
-> >> We have two ways to get parent clock. One is from device tree, the other is from
-> >> platform data. When the clock is from platform data, the consumer gets the clock
-> >> and passes it. The clock will be put by the consumer as well. When the parent
-> >> clock comes from device tree, what I am trying to do is to call of_clk_get(),
-> >> without worrying about to call clk_put() later when the driver is removed, so I
-> >> don't have to know where the parent clock data came from.
-> >>
-> > 
-> > This driver should always use clk_get() then. If the mode is
-> > device tree, clk_get() will lookup the clock in DT and get it
-> > from there. If the mode is platform data, then we'll fallback to
-> > the clkdev method of clk_get(), which will look for a clk_lookup
-> > created for the device calling clk_get() + the connection id that
-> > was provided by the lookup creator. This driver should always
-> > call clk_put() on the clock when it's done with it, regardless of
-> > DT vs. platform data.
-> > 
-> 
-> For the platform data mode, I think it is up to the consumer to get and put the
-> parent clocks. The current code is to pass (struct clk *) pointers as parent
-> clocks. Are you suggesting to pass the name of parent clocks?
-> 
+On 10/15, Jon Mason wrote:
+> diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+> index 88febf5..46ee475 100644
+> --- a/drivers/clk/bcm/Kconfig
+> +++ b/drivers/clk/bcm/Kconfig
+> @@ -9,10 +9,8 @@ config CLK_BCM_KONA
+>  	  in the BCM281xx and BCM21664 families.
+>  
+>  config COMMON_CLK_IPROC
+> -	bool "Broadcom iProc clock support"
+> -	depends on ARCH_BCM_IPROC
 
-I'm suggesting to register clocks with clkdev using a device name
-that matches the consumer. The consumer (this driver?) will
-simply call clk_get() and clk_put() then, nothing else is needed.
-I'm not suggesting to pass the names of the parent clocks. It
-sounds like those are inputs to this device, so we should be
-calling clk_get() with a device and a connection id to get the
-clock.
+Another patch added COMPILE_TEST here, so I've removed
+COMPILE_TEST now.
+
+Applied to clk-next.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
