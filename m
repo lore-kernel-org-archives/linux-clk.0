@@ -1,63 +1,104 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:39010 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751083AbbJESK7 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 5 Oct 2015 14:10:59 -0400
-Date: Mon, 5 Oct 2015 11:10:57 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Looijmans <mike.looijmans@topic.nl>
-Cc: linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3] Add driver for the si514 clock generator chip
-Message-ID: <20151005181057.GC12338@codeaurora.org>
-References: <1442487891-20477-1-git-send-email-mike.looijmans@topic.nl>
- <1443770129-7757-1-git-send-email-mike.looijmans@topic.nl>
- <20151002191804.GS12338@codeaurora.org>
- <56121372.6040109@topic.nl>
+Return-Path: <broonie@sirena.org.uk>
+Date: Wed, 21 Oct 2015 22:03:39 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Frank Rowand <frowand.list@gmail.com>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>,
+	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	linux-i2c@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	linux-fbdev@vger.kernel.org
+Message-ID: <20151021210339.GR32054@sirena.org.uk>
+References: <561E1378.6000906@collabora.com>
+ <20151017065750.GA18607@kroah.com>
+ <20151018192931.GY14956@sirena.org.uk>
+ <20151018193757.GA9147@kroah.com>
+ <20151018195330.GB14956@sirena.org.uk>
+ <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
+ <5627B677.5090109@gmail.com>
+ <20151021162758.GP32054@sirena.org.uk>
+ <5627D6E0.5020708@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <56121372.6040109@topic.nl>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="+HdfuZ4tX+pUSv6/"
+In-Reply-To: <5627D6E0.5020708@gmail.com>
+Subject: Re: [GIT PULL] On-demand device probing
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/05, Mike Looijmans wrote:
-> ﻿On 02-10-15 21:18, Stephen Boyd wrote:
-> >On 10/02, Mike Looijmans wrote:
-> >>This patch adds the driver and devicetree documentation for the
-> >>Silicon Labs SI514 clock generator chip. This is an I2C controlled
-> >>oscillator capable of generating clock signals ranging from 100kHz
-> >>to 250MHz.
-> >>
-> >>Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
-> >>---
-> >
-> >Applied to clk-next. We can handle any stuff about assigned rates
-> >in a follow up patch.
-> >
-> >Also, I squashed in this for some cleanup.
-> >
-> >diff --git a/drivers/clk/clk-si514.c b/drivers/clk/clk-si514.c
-> >index 779aebcd884b..6af7dce54241 100644
-> >--- a/drivers/clk/clk-si514.c
-> >+++ b/drivers/clk/clk-si514.c
-> >@@ -16,7 +16,6 @@
-> >   * GNU General Public License for more details.
-> >   */
-> >
-> >-#include <linux/clk.h>
-> 
-> Interesting - I only added this include because of your comment:
-> "I'd expect some sort of linux/clk.h include here if we're using
-> clk APIs."
-> 
-> Could you elaborate on that, I'm confused now...
-> 
 
-The driver is only using the clk provider APIs that are in
-clk-provider.h, because you removed the part that was calling
-clk_set_rate() (which is a clk consumer API). So before that
-change we would have needed the clk.h include, but now it
-compiles fine without it.
+--+HdfuZ4tX+pUSv6/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On Wed, Oct 21, 2015 at 11:18:08AM -0700, Frank Rowand wrote:
+> On 10/21/2015 9:27 AM, Mark Brown wrote:
+
+> > Overall boot time and time to get some individual built in component up
+> > and running aren't the same thing - what this'll do is get things up
+> > more in the link order of the leaf consumers rather than deferring those
+> > leaf consumers when their dependencies aren't ready yet.
+
+> Thanks!  I read too much into what was being improved.
+
+> So this patch series, which on other merits may be a good idea, is as
+> a by product solving a specific ordering issue, moving successful panel
+> initialization to an earlier point in the boot sequence, if I now
+> understand more correctly.
+
+Yeah, that's my understanding.
+
+> In that context, this seems like yet another ad hoc way of causing the
+> probe order to change in a way to solves one specific issue?  Could
+> it just as likely move the boot order of some other driver on some
+> other board later, to the detriment of somebody else?
+
+Indeed.  My general feeling is that it does make the link order stuff
+more predictable and easier to work with and it does have other merits
+(in terms of the error reporting, though there's other ways to address
+that like the one Russell is proposing).
+
+--+HdfuZ4tX+pUSv6/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWJ/2qAAoJECTWi3JdVIfQ9MgIAIR+qXN0q0pY1zKwb6/58+sQ
+PH/X1p3w5xiusgk/rTw3uRO1aaL7IQc+LReMkk2Hf90C2p6A2vK3mqNnSPZHnGH/
+pvHzDER2FesjNLuaM9GtxZV8lrXu74tUX1y30DgOM6EqJ/RQBr6cSHybcgbTQmHo
+/0NwCPhei2WiLSblE6e9VVqrDC256P9vclzWNSSUCQ3FAo78B2ram74srRdtHfVn
+Tw2ytHO1rEDbzov8n0QJVgU0P9+vpeSwrcLvZgyNNhOXfuGv8Re7TvYw/DkcBYMY
+2UEMarleRtdV9B94IPZoqSui4p939tCdNg0NFfyj0rPSQ4s3Au9dIZ0x4lIjLt8=
+=T1Oq
+-----END PGP SIGNATURE-----
+
+--+HdfuZ4tX+pUSv6/--
