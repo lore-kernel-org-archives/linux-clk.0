@@ -1,50 +1,54 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier@osg.samsung.com>, Michael Turquette <mturquette@baylibre.com>
-Cc: linux-rockchip@lists.infradead.org, alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>, linux-clk@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH v4 0/8] Add SPDIF support for rockchip
-Date: Tue, 13 Oct 2015 23:51:27 +0200
-Message-ID: <2124073.EESlsqi0cG@diego>
-In-Reply-To: <1444311079-2892-1-git-send-email-sjoerd.simons@collabora.co.uk>
-References: <1444311079-2892-1-git-send-email-sjoerd.simons@collabora.co.uk>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: Jisheng Zhang <jszhang@marvell.com>, sebastian.hesselbarth@gmail.com,
+ robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+ ijc+devicetree@hellion.org.uk, galak@codeaurora.org, sboyd@codeaurora.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1445339807-2351-4-git-send-email-jszhang@marvell.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ "Jisheng Zhang" <jszhang@marvell.com>
+References: <1445339807-2351-1-git-send-email-jszhang@marvell.com>
+ <1445339807-2351-4-git-send-email-jszhang@marvell.com>
+Message-ID: <20151021093039.20687.88701@quantum>
+Subject: Re: [PATCH v2 3/4] clk: berlin: bg2q: remove CLK_IGNORE_UNUSED flag for sdio
+ clk
+Date: Wed, 21 Oct 2015 02:30:39 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Donnerstag, 8. Oktober 2015, 15:31:11 schrieb Sjoerd Simons:
-> This patchset adds support for the Rockchip SPDIF transceiver as present
-> on RK3066, RK3188 and RK3288 boards and enables it on a Radxa rock pro.
-> Tested on a Radxa Rock Pro board and Radxa Rock 2 Square board.
-> 
-> Quite a few changes since v3 (mostly based on review comment). One
-> important addition is proper RK3288 SoC support; While according to the
-> documentation it has 2 SPDIF "solutions" with the default being the old
-> one, this variation doesn't actually work.. So support has been added
-> to switch to the new SPDIF solution on RK3288.
+Quoting Jisheng Zhang (2015-10-20 04:16:46)
+> Since we have added the necessary two clks' properties in dts, we can
+> remove the "sdio" clk's CLK_IGNORE_UNUSED flag now.
+> =
 
-[...]
+> Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
 
-> Sjoerd Simons (8):
->   ASoC: dt-bindings: add rockchip tranceiver bindings
->   ASoC: rockchip: Add rockchip SPDIF transceiver driver
->   ARM: dts: rockchip: Add SPDIF transceiver for RK3188
->   ARM: dts: rockchip: Add SPDIF optical out on Radxa Rock
->   clk: rockchip: Allow the RK3288 SPDIF clocks to change their parent
->   ARM: dts: rockchip: Add SPDIF transceiver for RK3288
->   ARM: dts: rockchip: Add SPDIF optical out on Radxa Rock2 Square
->   ARM: multi_v7_defconfig: Add rockchip audio support
+Applied to clk-next.
 
-After Mark took the two ASoC-specific patches, I've now picked up the 4 dts 
-patches, after removing the #address- and #size-cells lines from them.
+Regards,
+Mike
 
-Sjoerd, are you sending a followup patch to Mark to also drop them from the 
-binding doc?
+> ---
+>  drivers/clk/berlin/bg2q.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> =
 
-Hopefully the clock patch will also find its way into the clock tree, together 
-with the base series for the frac dividers.
+> diff --git a/drivers/clk/berlin/bg2q.c b/drivers/clk/berlin/bg2q.c
+> index 221f40c..243f421 100644
+> --- a/drivers/clk/berlin/bg2q.c
+> +++ b/drivers/clk/berlin/bg2q.c
+> @@ -283,7 +283,7 @@ static const struct berlin2_gate_data bg2q_gates[] __=
+initconst =3D {
+>         { "usb2",       "perif",        13 },
+>         { "usb3",       "perif",        14 },
+>         { "pbridge",    "perif",        15, CLK_IGNORE_UNUSED },
+> -       { "sdio",       "perif",        16, CLK_IGNORE_UNUSED },
+> +       { "sdio",       "perif",        16 },
+>         { "nfc",        "perif",        18 },
+>         { "pcie",       "perif",        22 },
+>  };
+> -- =
 
-And I guess we'll need to prod the armsoc-guys to take the defconfig change 
-too :-)
-
-
-Heiko
+> 2.6.1
+>=20
