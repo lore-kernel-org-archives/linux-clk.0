@@ -1,61 +1,128 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 9 Oct 2015 00:37:46 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jon Mason <jonmason@broadcom.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [PATCH 02/10] clk: nsp: add clock support for Broadcom Northstar
- Plus SoC
-Message-ID: <20151009073746.GP26883@codeaurora.org>
-References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
- <1443826665-17570-3-git-send-email-jonmason@broadcom.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1443826665-17570-3-git-send-email-jonmason@broadcom.com>
+Return-Path: <Julia.Lawall@lip6.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: kernel-janitors@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jason Cooper <jason@lakedaemon.net>
+Subject: [PATCH 2/5] clk: si5351: add missing of_node_put
+Date: Wed, 21 Oct 2015 22:41:37 +0200
+Message-Id: <1445460100-26727-3-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/02, Jon Mason wrote:
-> diff --git a/drivers/clk/bcm/clk-nsp.c b/drivers/clk/bcm/clk-nsp.c
-> new file mode 100644
-> index 0000000..708961a
-> --- /dev/null
-> +++ b/drivers/clk/bcm/clk-nsp.c
-> @@ -0,0 +1,139 @@
-> +/*
-> + * Copyright (C) 2015 Broadcom Corporation
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License as
-> + * published by the Free Software Foundation version 2.
-> + *
-> + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-> + * kind, whether express or implied; without even the implied warranty
-> + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/err.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/io.h>
-> +#include <linux/of.h>
-> +#include <linux/clkdev.h>
+for_each_child_of_node performs an of_node_get on each iteration, so
+a break out of the loop requires an of_node_put.
 
-Is this used?
+A simplified version of the semantic patch that fixes this problem is as
+follows (http://coccinelle.lip6.fr):
 
-> +#include <linux/of_address.h>
-> +#include <linux/delay.h>
+// <smpl>
+@@
+expression root,e;
+local idexpression child;
+@@
 
-Is this used?
+ for_each_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
+(
+   return child;
+|
++  of_node_put(child);
+?  return ...;
+)
+   ...
+ }
+// </smpl>
 
-> +
-> +#include <dt-bindings/clock/bcm-nsp.h>
-> +#include "clk-iproc.h"
+The resulting puts were manually moved to the end of the function for
+conciseness.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/clk/clk-si5351.c |   17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+index 5596c0a..e346b22 100644
+--- a/drivers/clk/clk-si5351.c
++++ b/drivers/clk/clk-si5351.c
+@@ -1183,13 +1183,13 @@ static int si5351_dt_parse(struct i2c_client *client,
+ 		if (of_property_read_u32(child, "reg", &num)) {
+ 			dev_err(&client->dev, "missing reg property of %s\n",
+ 				child->name);
+-			return -EINVAL;
++			goto put_child;
+ 		}
+ 
+ 		if (num >= 8 ||
+ 		    (variant == SI5351_VARIANT_A3 && num >= 3)) {
+ 			dev_err(&client->dev, "invalid clkout %d\n", num);
+-			return -EINVAL;
++			goto put_child;
+ 		}
+ 
+ 		if (!of_property_read_u32(child, "silabs,multisynth-source",
+@@ -1207,7 +1207,7 @@ static int si5351_dt_parse(struct i2c_client *client,
+ 				dev_err(&client->dev,
+ 					"invalid parent %d for multisynth %d\n",
+ 					val, num);
+-				return -EINVAL;
++				goto put_child;
+ 			}
+ 		}
+ 
+@@ -1230,7 +1230,7 @@ static int si5351_dt_parse(struct i2c_client *client,
+ 					dev_err(&client->dev,
+ 						"invalid parent %d for clkout %d\n",
+ 						val, num);
+-					return -EINVAL;
++					goto put_child;
+ 				}
+ 				pdata->clkout[num].clkout_src =
+ 					SI5351_CLKOUT_SRC_CLKIN;
+@@ -1239,7 +1239,7 @@ static int si5351_dt_parse(struct i2c_client *client,
+ 				dev_err(&client->dev,
+ 					"invalid parent %d for clkout %d\n",
+ 					val, num);
+-				return -EINVAL;
++				goto put_child;
+ 			}
+ 		}
+ 
+@@ -1256,7 +1256,7 @@ static int si5351_dt_parse(struct i2c_client *client,
+ 				dev_err(&client->dev,
+ 					"invalid drive strength %d for clkout %d\n",
+ 					val, num);
+-				return -EINVAL;
++				goto put_child;
+ 			}
+ 		}
+ 
+@@ -1283,7 +1283,7 @@ static int si5351_dt_parse(struct i2c_client *client,
+ 				dev_err(&client->dev,
+ 					"invalid disable state %d for clkout %d\n",
+ 					val, num);
+-				return -EINVAL;
++				goto put_child;
+ 			}
+ 		}
+ 
+@@ -1296,6 +1296,9 @@ static int si5351_dt_parse(struct i2c_client *client,
+ 	client->dev.platform_data = pdata;
+ 
+ 	return 0;
++put_child:
++	of_node_put(child);
++	return -EINVAL;
+ }
+ #else
+ static int si5351_dt_parse(struct i2c_client *client, enum si5351_variant variant)
