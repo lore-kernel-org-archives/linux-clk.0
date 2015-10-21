@@ -1,37 +1,71 @@
-Return-Path: <s-anna@ti.com>
-Subject: Re: [PATCH] clk: ti: dflt: fix enable_reg validity check
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1443566267-50225-1-git-send-email-s-anna@ti.com>
- <20151002182133.GO12338@codeaurora.org>
-CC: Tero Kristo <t-kristo@ti.com>, Mike Turquette <mturquette@baylibre.com>,
-        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <560ED0E0.3060609@ti.com>
-Date: Fri, 2 Oct 2015 13:45:52 -0500
-MIME-Version: 1.0
-In-Reply-To: <20151002182133.GO12338@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
+Return-Path: <Julia.Lawall@lip6.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: kernel-janitors@vger.kernel.org,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jason Cooper <jason@lakedaemon.net>
+Subject: [PATCH 4/5] clk: imx31: add missing of_node_put
+Date: Wed, 21 Oct 2015 22:41:39 +0200
+Message-Id: <1445460100-26727-5-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/02/2015 01:21 PM, Stephen Boyd wrote:
-> On 09/29, Suman Anna wrote:
->> diff --git a/drivers/clk/ti/clkt_dflt.c b/drivers/clk/ti/clkt_dflt.c
->> index 90d7d8a21c49..1ddc288fce4e 100644
->> --- a/drivers/clk/ti/clkt_dflt.c
->> +++ b/drivers/clk/ti/clkt_dflt.c
->> @@ -222,7 +222,7 @@ int omap2_dflt_clk_enable(struct clk_hw *hw)
->>  		}
->>  	}
->>  
->> -	if (unlikely(!clk->enable_reg)) {
->> +	if (unlikely(IS_ERR(clk->enable_reg))) {
-> 
-> IS_ERR() already has an unlikely inside it, so the unlikely is
-> redundant here.
+for_each_compatible_node performs an of_node_get on each iteration, so a
+break out of the loop requires an of_node_put.
 
-Thanks Stephen, didn't realize that. I will fix this up in a subsequent
-patch, Tero has already staged it and sent a PULL request.
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
 
-regards
-Suman
+// <smpl>
+@@
+local idexpression n;
+expression e;
+@@
+
+ for_each_compatible_node(n,...) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
++  of_node_put(n);
+?  break;
+)
+   ...
+ }
+... when != n
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/clk/imx/clk-imx31.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/imx/clk-imx31.c b/drivers/clk/imx/clk-imx31.c
+index f65b8b1..6a96414 100644
+--- a/drivers/clk/imx/clk-imx31.c
++++ b/drivers/clk/imx/clk-imx31.c
+@@ -233,8 +233,10 @@ int __init mx31_clocks_init_dt(void)
+ 		if (!of_device_is_compatible(np, "fsl,imx-osc26m"))
+ 			continue;
+ 
+-		if (!of_property_read_u32(np, "clock-frequency", &fref))
++		if (!of_property_read_u32(np, "clock-frequency", &fref)) {
++			of_node_put(np);
+ 			break;
++		}
+ 	}
+ 
+ 	_mx31_clocks_init(fref);
