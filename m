@@ -1,85 +1,89 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 07/19] drm/panel: simple: Add timings for the Olimex LCD-OLinuXino-4.3TS
-Date: Fri, 30 Oct 2015 15:20:53 +0100
-Message-Id: <1446214865-3972-8-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <562622CF.1070906@samsung.com>
+Cc: "Andrzej Hajda" <a.hajda@samsung.com>, "Inki Dae" <inki.dae@samsung.com>,
+ "Bartlomiej Zolnierkiewicz" <b.zolnierkie@samsung.com>,
+ "Marek Szyprowski" <m.szyprowski@samsung.com>,
+ "Kyungmin Park" <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org,
+ linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, "Kukjin Kim" <kgene@kernel.org>,
+ "Krzysztof Kozlowski" <k.kozlowski@samsung.com>,
+ "Hyungwon Hwang" <human.hwang@samsung.com>
+References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
+ <1445332961-25419-2-git-send-email-a.hajda@samsung.com>
+ <20151020103416.20687.40409@quantum> <562622CF.1070906@samsung.com>
+Message-ID: <20151021085940.20687.94974@quantum>
+Subject: Re: [PATCH 01/10] clk/samsung: exynos5433: add definitions of HDMI-PHY
+ output clocks
+Date: Wed, 21 Oct 2015 01:59:40 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the Olimex LCD-OLinuXino-4.3TS panel to the DRM simple
-panel driver.
+Quoting Sylwester Nawrocki (2015-10-20 04:17:35)
+> On 20/10/15 12:34, Michael Turquette wrote:
+> >> diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindi=
+ngs/clock/exynos5433.h
+> >> > index 5bd80d5..4f0d566 100644
+> >> > --- a/include/dt-bindings/clock/exynos5433.h
+> >> > +++ b/include/dt-bindings/clock/exynos5433.h
+> >> > @@ -765,7 +765,10 @@
+> >> >  #define CLK_SCLK_RGB_VCLK                              109
+> >> >  #define CLK_SCLK_RGB_TV_VCLK                           110
+> >> >  =
 
-It is a 480x272 panel connected through a 24-bits RGB interface.
+> >> > -#define DISP_NR_CLK                                    111
+> >> > +#define CLK_PHYCLK_HDMIPHY_PIXEL_CLKO_PHY              111
+> >> > +#define CLK_PHYCLK_HDMIPHY_TMDS_CLKO_PHY               112
+> >> > +
+> >> > +#define DISP_NR_CLK                                    113
+> >
+> > Why break compatibility with older DTBs?
+> =
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/gpu/drm/panel/panel-simple.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+> I used to be resistant to changing those _NR_CLK defines
+> in the past but then realized they are not part of the DT ABI.
+> These defines are used only in drivers and affect only size
+> of the provider's allocated clock array. The confusion may be
+> caused by the fact that the whole header is shared by the kernel
+> source and dts.
+> =
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index f97b73ec4713..3a9ecb64d1e6 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -1096,6 +1096,29 @@ static const struct panel_desc shelly_sca07010_bfn_lnn = {
- 	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
- };
- 
-+static const struct drm_display_mode olimex_lcd_olinuxino_43ts_mode = {
-+	.clock = 9000,
-+	.hdisplay = 480,
-+	.hsync_start = 480 + 5,
-+	.hsync_end = 480 + 5 + 30,
-+	.htotal = 480 + 5 + 30 + 10,
-+	.vdisplay = 272,
-+	.vsync_start = 272 + 8,
-+	.vsync_end = 272 + 8 + 5,
-+	.vtotal = 272 + 8 + 5 + 3,
-+	.vrefresh = 60,
-+};
-+
-+static const struct panel_desc olimex_lcd_olinuxino_43ts = {
-+	.modes = &olimex_lcd_olinuxino_43ts_mode,
-+	.num_modes = 1,
-+	.size = {
-+		.width = 105,
-+		.height = 67,
-+	},
-+	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
-+};
-+
- static const struct of_device_id platform_of_match[] = {
- 	{
- 		.compatible = "ampire,am800480r3tmqwa1h",
-@@ -1191,6 +1214,9 @@ static const struct of_device_id platform_of_match[] = {
- 		.compatible = "shelly,sca07010-bfn-lnn",
- 		.data = &shelly_sca07010_bfn_lnn,
- 	}, {
-+		.compatible = "olimex,lcd-olinuxino-43-ts",
-+		.data = &olimex_lcd_olinuxino_43ts,
-+	}, {
- 		/* sentinel */
- 	}
- };
--- 
-2.6.2
+> $ git grep -l _NR_CLK arch/arm/boot/dts drivers/clk/samsung/
+> drivers/clk/samsung/clk-exynos-clkout.c
+> drivers/clk/samsung/clk-exynos3250.c
+> drivers/clk/samsung/clk-exynos4.c
+> drivers/clk/samsung/clk-exynos4415.c
+> drivers/clk/samsung/clk-exynos5250.c
+> drivers/clk/samsung/clk-exynos5260.c
+> drivers/clk/samsung/clk-exynos5410.c
+> drivers/clk/samsung/clk-exynos5420.c
+> drivers/clk/samsung/clk-exynos5433.c
+> drivers/clk/samsung/clk-exynos5440.c
+> drivers/clk/samsung/clk-exynos7.c
+> =
+
+> There is no *_NR_CLK in any dts file.
+> New kernel will work will older DTB, the driver will just
+> register more clocks, which will not be dereferenced anywhere
+> in older dtb.
+
+I skimmed through the code too fast. You're right, its a sentinel/max
+value thing which is not part of the ABI.
+
+Pardon the noise. Nothing to see here, move along...
+
+Regards,
+Mike
+
+> =
+
+> -- =
+
+> Regards,
+> Sylwester
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
