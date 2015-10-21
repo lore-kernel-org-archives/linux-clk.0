@@ -1,42 +1,77 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v3 5/5] drivers/rtc/rtc-s5m.c: add support for S2MPS15 RTC
-To: Mark Brown <broonie@kernel.org>
-References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
- <1445863883-5187-6-git-send-email-alim.akhtar@samsung.com>
- <56302514.4090407@samsung.com> <20151028015323.GZ28319@sirena.org.uk>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, lee.jones@linaro.org,
- mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, rtc-linux@googlegroups.com,
- linux-kernel@vger.kernel.org
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <56303054.8060804@samsung.com>
-Date: Wed, 28 Oct 2015 11:17:56 +0900
-MIME-version: 1.0
-In-reply-to: <20151028015323.GZ28319@sirena.org.uk>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <manabian@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20151021093419.20687.69047@quantum>
+References: <1440527643-2960-1-git-send-email-manabian@gmail.com>
+	<1440527643-2960-2-git-send-email-manabian@gmail.com>
+	<20151019222644.GC19782@codeaurora.org>
+	<CAGhQ9Vzi6SqhAfKW9VAeHNT50ywvHCgQ-movNXjc1dKZa9Ex5g@mail.gmail.com>
+	<20151021093419.20687.69047@quantum>
+Date: Wed, 21 Oct 2015 15:22:05 +0200
+Message-ID: <CAGhQ9VwDOwASiTN=KJ_1KjtHf2v7K7aYbqROPK_dVBKEDEXwoQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: lpc18xx-ccu: fix potential system hang when
+ disabling unused clocks
+From: Joachim  Eastwood <manabian@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 28.10.2015 10:53, Mark Brown wrote:
-> On Wed, Oct 28, 2015 at 10:29:56AM +0900, Krzysztof Kozlowski wrote:
-> 
->> If that's true, then don't add new compatibles, new names etc. Re-use.
->> No new code needed, no changes needed. Keep it simple.
-> 
-> Well, it depends - it can be useful to get the information about it
-> being a different part into DT so that if in future we realise that
-> there is some difference (perhaps a bug workaround even if the IP is
-> intended to be the same).  Though in the case of a MFD that information
-> can be obtained from the MFD for the device.
+On 21 October 2015 at 11:34, Michael Turquette <mturquette@baylibre.com> wrote:
+> Quoting Joachim Eastwood (2015-10-20 03:42:14)
+>> On 20 October 2015 at 00:26, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> > On 08/25, Joachim Eastwood wrote:
+>> >> CCU branch clock register must only be accessed while the base
+>> >> (parent) clock is running. Access with a disabled base clock
+>> >> will cause the system to hang. Fix this issue by adding code
+>> >> that check if the parent clock is running in the is_enabled
+>> >> clk_ops callback.
+>> >>
+>> >> This hang would occur when disabling unused clocks after AMBA
+>> >> runtime pm had already disabled some of the clocks.
+>> >>
+>> >> Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+>> >> ---
+>> >>
+>> >> No changes from v1.
+>> >>
+>> >>  drivers/clk/nxp/clk-lpc18xx-ccu.c | 14 ++++++++++++++
+>> >>  1 file changed, 14 insertions(+)
+>> >>
+>> >> diff --git a/drivers/clk/nxp/clk-lpc18xx-ccu.c b/drivers/clk/nxp/clk-lpc18xx-ccu.c
+>> >> index eeaee97da110..1845476e635e 100644
+>> >> --- a/drivers/clk/nxp/clk-lpc18xx-ccu.c
+>> >> +++ b/drivers/clk/nxp/clk-lpc18xx-ccu.c
+>> >> @@ -180,6 +180,20 @@ static void lpc18xx_ccu_gate_disable(struct clk_hw *hw)
+>> >>  static int lpc18xx_ccu_gate_is_enabled(struct clk_hw *hw)
+>> >>  {
+>> >>       struct clk_gate *gate = to_clk_gate(hw);
+>> >> +     struct clk *parent;
+>> >> +
+>> >> +     /*
+>> >> +      * The branch clock registers are only accessible
+>> >> +      * if the base (parent) clock is enabled. Register
+>> >> +      * access with a disabled base clock will hang the
+>> >> +      * system.
+>> >> +      */
+>> >> +     parent = clk_get_parent(hw->clk);
+>> >
+>> > Why not use provider APIs (clk_hw_get_parent and we could add a
+>> > clk_hw_is_enabled)?
+>>
+>> That is simply because I didn't know it existed.
+>> Adding a clk_hw_is_enabled() seems like a good idea to me.
+>>
+>>
+>> >I also wonder why we don't just read the
+>> > register directly here instead of going through the framework to
+>> > find out if the parent is enabled?
+>>
+>> Reading the register when the parent clock is off will hang the hardware.
+>
+> I think Stephen meant, why not simply read the parent clk register?
 
-We can always differentiate later and introduce new compatible.
-Declaring a compatible right now would be useful only if we really cared
-about using the workaround on older DTBs.
+The parent clk register is in another hardware block.
 
-Since I cannot judge the difference (I don't have the datasheet of
-S2MPS15) then I don't see the need of adding new compatible/name for the
-"same device".
 
-Of course maybe there is such need? Alim?
-
-Best regards,
-Krzysztof
+regards,
+Joachim Eastwood
