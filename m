@@ -1,52 +1,71 @@
-Return-Path: <gabriel.fernandez@linaro.org>
-Return-Path: <gabriel.fernandez@linaro.org>
-From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-To: Maxime Coquelin <maxime.coquelin@st.com>,
-	 Michael Turquette <mturquette@baylibre.com>,
-	 Stephen Boyd <sboyd@codeaurora.org>,
-	 Gabriel Fernandez <gabriel.fernandez@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
-	 Pankaj Dev <pankaj.dev@st.com>,
-	 Olivier Bideau <olivier.bideau@st.com>,
-	 Geert Uytterhoeven <geert+renesas@glider.be>,
-	 Fabian Frederick <fabf@skynet.be>,
-	 Rob Herring <robh+dt@kernel.org>,
-	 Pawel Moll <pawel.moll@arm.com>,
-	 Mark Rutland <mark.rutland@arm.com>,
-	 Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	 Kumar Gala <galak@codeaurora.org>,
-	 Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	 devicetree@vger.kernel.org,
-	 linux-kernel@vger.kernel.org,
-	 linux-arm-kernel@lists.infradead.org,
-	 kernel@stlinux.com,
-	 linux-clk@vger.kernel.org
-Subject: [PATCH v3 4/4] ARM: STi: DT: Add support for stih418 A9 pll
-Date: Mon,  5 Oct 2015 10:06:33 +0200
-Message-Id: <1444032393-13433-5-git-send-email-gabriel.fernandez@linaro.org>
-In-Reply-To: <1444032393-13433-1-git-send-email-gabriel.fernandez@linaro.org>
-References: <1444032393-13433-1-git-send-email-gabriel.fernandez@linaro.org>
+Return-Path: <Julia.Lawall@lip6.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: kernel-janitors@vger.kernel.org,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jason Cooper <jason@lakedaemon.net>
+Subject: [PATCH 3/5] clk: imx27: add missing of_node_put
+Date: Wed, 21 Oct 2015 22:41:38 +0200
+Message-Id: <1445460100-26727-4-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for new PLL-type for stih418 A9-PLL.
+for_each_compatible_node performs an of_node_get on each iteration, so a
+break out of the loop requires an of_node_put.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+The semantic patch that fixes this problem is as follows
+(http://coccinelle.lip6.fr):
+
+// <smpl>
+@@
+local idexpression n;
+expression e;
+@@
+
+ for_each_compatible_node(n,...) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
++  of_node_put(n);
+?  break;
+)
+   ...
+ }
+... when != n
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- arch/arm/boot/dts/stih418-clock.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/imx/clk-imx27.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/stih418-clock.dtsi b/arch/arm/boot/dts/stih418-clock.dtsi
-index 148e177..ae6d997 100644
---- a/arch/arm/boot/dts/stih418-clock.dtsi
-+++ b/arch/arm/boot/dts/stih418-clock.dtsi
-@@ -44,7 +44,7 @@
+diff --git a/drivers/clk/imx/clk-imx27.c b/drivers/clk/imx/clk-imx27.c
+index 0d7b8df..cf5cf75 100644
+--- a/drivers/clk/imx/clk-imx27.c
++++ b/drivers/clk/imx/clk-imx27.c
+@@ -261,8 +261,10 @@ static void __init mx27_clocks_init_dt(struct device_node *np)
+ 		if (!of_device_is_compatible(refnp, "fsl,imx-osc26m"))
+ 			continue;
  
- 			clockgen_a9_pll: clockgen-a9-pll {
- 				#clock-cells = <1>;
--				compatible = "st,stih407-plls-c32-a9", "st,clkgen-plls-c32";
-+				compatible = "st,stih418-plls-c28-a9", "st,clkgen-plls-c32";
+-		if (!of_property_read_u32(refnp, "clock-frequency", &fref))
++		if (!of_property_read_u32(refnp, "clock-frequency", &fref)) {
++			of_node_put(refnp);
+ 			break;
++		}
+ 	}
  
- 				clocks = <&clk_sysin>;
- 
--- 
-1.9.1
+ 	ccm = of_iomap(np, 0);
