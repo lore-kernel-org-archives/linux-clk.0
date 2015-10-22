@@ -1,140 +1,90 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <gregkh@linuxfoundation.org>
+Date: Thu, 22 Oct 2015 07:44:05 -0700
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Frank Rowand <frowand.list@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>,
+	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Message-ID: <20151022144405.GC21861@kroah.com>
+References: <20151018192931.GY14956@sirena.org.uk>
+ <20151018193757.GA9147@kroah.com>
+ <20151018195330.GB14956@sirena.org.uk>
+ <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
+ <5627B677.5090109@gmail.com>
+ <20151021162758.GP32054@sirena.org.uk>
+ <5627D6E0.5020708@gmail.com>
+ <CAL_Jsq+FPtCuBnte2HTgbdpNYM=v_kLaCRcOC1kMaCQwVC=5Kw@mail.gmail.com>
+ <562808AF.7090406@gmail.com>
+ <CAAObsKAkyjdvNOS3+nuT0N9sudUFLsZXFtcm6Y038p+HSdsZsg@mail.gmail.com>
 MIME-Version: 1.0
-To: Heiko Stuebner <heiko@sntech.de>, ulf.hansson@linaro.org,
- sboyd@codeaurora.org, tgih.jun@samsung.com, jh80.chung@samsung.com
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1443622064-14362-2-git-send-email-heiko@sntech.de>
-Cc: linux-mmc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- dianders@chromium.org, amstan@chromium.org,
- "Heiko Stuebner" <heiko@sntech.de>
-References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
- <1443622064-14362-2-git-send-email-heiko@sntech.de>
-Message-ID: <20151022120326.20687.80247@quantum>
-Subject: Re: [PATCH v2 1/8] clk: rockchip: Allow more precision for some mmc clock
- phases
-Date: Thu, 22 Oct 2015 05:03:26 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAAObsKAkyjdvNOS3+nuT0N9sudUFLsZXFtcm6Y038p+HSdsZsg@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Heiko Stuebner (2015-09-30 07:07:37)
-> From: Douglas Anderson <dianders@chromium.org>
-> =
+<oops, sent too early...>
 
-> Because of the inexact nature of the extra MMC delay elements (it's
-> not possible to keep the phase monotonic and to also make phases (mod
-> 90) > 70), we previously only allowed phases (mod 90) of 22.5, 45,
-> and 67.5.
-> =
+On Thu, Oct 22, 2015 at 11:05:11AM +0200, Tomeu Vizoso wrote:
+> But that's moot currently because Greg believes that the time spent
+> probing devices at boot time could be reduced enough so that the order
+> in which devices are probed becomes irrelevant. IME that would have to
+> be under 200ms so that the user doesn't notice and that's unicorn-far
+> from any bootlog I have ever seen.
 
-> But it's not the end of the world if the MMC clock phase goes
-> non-monotonic.  At most we'll be 25 degrees off.  It's way better to
-> test more phases to look for bad ones than to be 25 degrees off, because
-> in the case of MMC really the point is to find bad phases and get as far
-> asway from the as possible.  If we get to test extra phases by going
-> slightly non-monotonic then that might be fine.  Worst case we would
-> end up at a phases that's slight differnt than the one we wanted, but
-> at least we'd still be quite far away from the a bad phase.
-> =
+But as no one has actually produced a bootlog, how do you know that?
+Where exactly is your time being spent?  What driver is causing long
+delays?  Why is the long-delay-drivers not being done in their own
+thread?  And most importantly, why are you ignoring the work that people
+did back in 2008 to solve the issue on other hardware platforms?
 
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> =
+> Given that downstreams are already carrying as many hacks as they
+> could think of to speed total boot up, I think this is effectively
+> telling them to go away.
 
-> Fold in more precise variance-values of 44-77 instead of 40-80.
-> Fold in the actual removal of the monotonic requirement and adapt
-> patch message accordingly.
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+No I'm not, I'm asking for real data, not hand-wavy-this-is-going-to
+solve-the-random-issue-i'm-having type patch by putting random calls in
+semi-random subsystems all over the kernel.
 
-Looks good to me. What tree do you want this to go through?
+And when I ask for real data, you respond with the fact that you aren't
+trying to speed up boot time here at all, so what am I supposed to think
+other than that you don't care enough to do the real work and are trying
+to hack the driver core up instead.
 
-Regards,
-Mike
+> Sorry for the rant,
 
-> ---
->  drivers/clk/rockchip/clk-mmc-phase.c | 45 ++++++++++++++++++++++++------=
-------
->  1 file changed, 30 insertions(+), 15 deletions(-)
-> =
+No apologies needed, it's cathartic at times :)
 
-> diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/=
-clk-mmc-phase.c
-> index 9b61342..a797d86 100644
-> --- a/drivers/clk/rockchip/clk-mmc-phase.c
-> +++ b/drivers/clk/rockchip/clk-mmc-phase.c
-> @@ -45,8 +45,8 @@ static unsigned long rockchip_mmc_recalc(struct clk_hw =
-*hw,
->  #define PSECS_PER_SEC 1000000000000LL
->  =
+thanks,
 
->  /*
-> - * Each fine delay is between 40ps-80ps. Assume each fine delay is 60ps =
-to
-> - * simplify calculations. So 45degs could be anywhere between 33deg and =
-66deg.
-> + * Each fine delay is between 44ps-77ps. Assume each fine delay is 60ps =
-to
-> + * simplify calculations. So 45degs could be anywhere between 33deg and =
-57.8deg.
->   */
->  #define ROCKCHIP_MMC_DELAY_ELEMENT_PSEC 60
->  =
-
-> @@ -84,22 +84,37 @@ static int rockchip_mmc_set_phase(struct clk_hw *hw, =
-int degrees)
->         u32 raw_value;
->         u64 delay;
->  =
-
-> -       /* allow 22 to be 22.5 */
-> -       degrees++;
-> -       /* floor to 22.5 increment */
-> -       degrees -=3D ((degrees) * 10 % 225) / 10;
-> -
->         nineties =3D degrees / 90;
-> -       /* 22.5 multiples */
-> -       remainder =3D (degrees % 90) / 22;
-> -
-> +       remainder =3D (degrees % 90);
-> +
-> +       /*
-> +        * Due to the inexact nature of the "fine" delay, we might
-> +        * actually go non-monotonic.  We don't go _too_ monotonic
-> +        * though, so we should be OK.  Here are options of how we may
-> +        * work:
-> +        *
-> +        * Ideally we end up with:
-> +        *   1.0, 2.0, ..., 69.0, 70.0, ...,  89.0, 90.0
-> +        *
-> +        * On one extreme (if delay is actually 44ps):
-> +        *   .73, 1.5, ..., 50.6, 51.3, ...,  65.3, 90.0
-> +        * The other (if delay is actually 77ps):
-> +        *   1.3, 2.6, ..., 88.6. 89.8, ..., 114.0, 90
-> +        *
-> +        * It's possible we might make a delay that is up to 25
-> +        * degrees off from what we think we're making.  That's OK
-> +        * though because we should be REALLY far from any bad range.
-> +        */
-> +
-> +       /*
-> +        * Convert to delay; do a little extra work to make sure we
-> +        * don't overflow 32-bit / 64-bit numbers.
-> +        */
->         delay =3D PSECS_PER_SEC;
-> -       do_div(delay, rate);
-> -       /* / 360 / 22.5 */
-> -       do_div(delay, 16);
-> -       do_div(delay, ROCKCHIP_MMC_DELAY_ELEMENT_PSEC);
-> -
->         delay *=3D remainder;
-> +       do_div(delay, 10000);
-> +       do_div(delay, (rate / 1000) * 36 * ROCKCHIP_MMC_DELAY_ELEMENT_PSE=
-C);
-> +
->         delay_num =3D (u8) min(delay, 255ULL);
->  =
-
->         raw_value =3D delay_num ? ROCKCHIP_MMC_DELAY_SEL : 0;
-> -- =
-
-> 2.5.1
->=20
+greg k-h
