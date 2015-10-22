@@ -1,123 +1,91 @@
-Return-Path: <yorksun@freescale.com>
-From: York Sun <yorksun@freescale.com>
+Return-Path: <julia.lawall@lip6.fr>
+Date: Thu, 22 Oct 2015 07:52:29 +0200 (CEST)
+From: Julia Lawall <julia.lawall@lip6.fr>
 To: Stephen Boyd <sboyd@codeaurora.org>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"pmarrecas@outlook.com" <pmarrecas@outlook.com>, Mike Turquette
-	<mturquette@baylibre.com>, Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>, Guenter Roeck <linux@roeck-us.net>,
-	"Andrey Filippov" <andrey@elphel.com>, Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [Resend Patch v6] driver/clk/clk-si5338: Add common clock
- framework driver for si5338
-Date: Tue, 20 Oct 2015 00:17:36 +0000
-Message-ID: <CY1PR03MB14694C6FFC8BA80C08EB039ABE390@CY1PR03MB1469.namprd03.prod.outlook.com>
-References: <1444410574-28677-1-git-send-email-yorksun@freescale.com>
- <20151010000948.GW26883@codeaurora.org> <562165C3.1090103@freescale.com>
- <20151016213139.GE16437@codeaurora.org> <56216E0D.4010709@freescale.com>
- <20151016230555.GE10182@codeaurora.org>
- <562553E4.30906@freescale.com>,<20151019234348.GE19782@codeaurora.org>
-In-Reply-To: <20151019234348.GE19782@codeaurora.org>
-Content-Type: text/plain; charset="iso-8859-1"
+cc: Michael Turquette <mturquette@baylibre.com>,
+    kernel-janitors@vger.kernel.org, linux-clk@vger.kernel.org,
+    linux-kernel@vger.kernel.org,
+    Russell King - ARM Linux <linux@arm.linux.org.uk>,
+    Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+    Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>,
+    Jason Cooper <jason@lakedaemon.net>
+Subject: Re: [PATCH 1/5] clk: add missing of_node_put
+In-Reply-To: <20151021231243.GH19782@codeaurora.org>
+Message-ID: <alpine.DEB.2.02.1510220752060.2246@localhost6.localdomain6>
+References: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr> <1445460100-26727-2-git-send-email-Julia.Lawall@lip6.fr> <20151021231243.GH19782@codeaurora.org>
 MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Sorry for top posting. I am on outlook web.
 
-We have no problem with device tree. Let's put it aside.
 
-When device is not used, the platform data is used to hold the data, filled=
- by a platform device before probing the clock. For my case, the platform d=
-evice is a PCIe device. It is a multifunction device with I2C controller on=
- it. The pseudo code looks like
+On Wed, 21 Oct 2015, Stephen Boyd wrote:
 
-struct i2c_board_info si5338_info[NUM_SI5338_CHIPS] =3D {
-        {
-                .type =3D "si5338",
-                .platform_data =3D &si5338_pdata[0],
-        },
-        {
-                .type =3D "si5338",
-                .platform_data =3D &si5338_pdata[1],
-        },
-        {
-                .type =3D "si5338",
-                .platform_data =3D &si5338_pdata[2],
-        },
-        {
-                .type =3D "si5338",
-                .platform_data =3D &si5338_pdata[3],
-        },
-};
-clk =3D clk_register_fixed_rate(&pdev->dev, "ref25", NULL, CLK_IS_ROOT, 250=
-00000);
-for (i =3D 0; i < NUM_SI5338_CHIPS; i++) {
-    si5338_pdata[i].clk_xtal =3D clk;
-    adap =3D i2c_get_adapter(private->i2c_adp->nr + 1 + i);
-    private->i2c_client[i] =3D i2c_new_probed_device(adap, &si5338_info[i],=
- i2c_si5338_addr, NULL);
-}
+> On 10/21, Julia Lawall wrote:
+> > for_each_matching_node_and_match performs an of_node_get on each iteration,
+> > so a break out of the loop requires an of_node_put.
+> > 
+> > A simplified version of the semantic patch that fixes this problem is as
+> > follows (http://coccinelle.lip6.fr):
+> > 
+> > // <smpl>
+> > @@
+> > expression e1,e2,e;
+> > local idexpression np;
+> > @@
+> > 
+> >  for_each_matching_node_and_match(np, e1, e2) {
+> >    ... when != of_node_put(np)
+> >        when != e = np
+> > (
+> >    return np;
+> > |
+> > +  of_node_put(np);
+> > ?  return ...;
+> > )
+> >    ...
+> >  }
+> > // </smpl>
+> > 
+> > Besides the problem identified by the semantic patch, this patch adds an
+> > of_node_get in front of saving np in a field of parent, to account for the
+> > fact that this value will be put on going on to the next element in the
+> > iteration, and then adds of_node_puts in the two loops where the parent
+> > pointer can be freed.
+> > 
+> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> > 
+> > ---
+> 
+> Applied to clk-next, except I collapsed the of_node_get() into
+> the assignment.
+> 
+> ---8<---
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index d366bfb66c58..2eae76f21d6f 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -3205,8 +3205,7 @@ void __init of_clk_init(const struct of_device_id *matches)
+>  		}
+>  
+>  		parent->clk_init_cb = match->data;
+> -		of_node_get(np);
+> -		parent->np = np;
+> +		parent->np = of_node_get(np);
 
-You can see, when the fixed-rate clock is registered, the device id of si53=
-38 is unknown yet. (I am using one 25MHz clock to feed multiple si5338, whe=
-re maybe I should create multiple 25MHz clocks, but that's another discussi=
-on.)
+Thanks!
 
-I hope I have made it clear.
+julia
 
-York
-
-________________________________________
-From: Stephen Boyd <sboyd@codeaurora.org>
-Sent: Monday, October 19, 2015 5:03 PM
-To: Sun York-R58495
-Cc: linux-clk@vger.kernel.org; pmarrecas@outlook.com; Mike Turquette; Sebas=
-tian Hesselbarth; Guenter Roeck; Andrey Filippov; Paul Bolle
-Subject: Re: [Resend Patch v6] driver/clk/clk-si5338: Add common clock fram=
-ework driver for si5338
-
-> Stephen,
->
-> I am still having difficulty to implement this. The platform device doesn=
-'t know
-> the clock device id when probing the clock chip. For my case, the platfor=
-m
-> device is a PCIe device, with I2C controller on it. The clock chip is on =
-the I2C
-> bus. When the PCIe device is probed, it registers the parent clocks for s=
-i5338
-> before calling i2c_new_probed_device(). At this moment, the si5338 doesn'=
-t have
-> an instance yet. So the parent clock pointer(s) in platform data structur=
-e
-> is/are passed.
->
-> I have another solution, let the platform data has clk pointer(s). The cl=
-ock
-> driver for si5338 will use device tree of_clk_get() if device tree is use=
-d, or
-> take the pointer(s) from platform data. Upon driver removal, this driver =
-call
-> clk_put() regardless where the pointer(s) came from. The change will be i=
-n my
-> platform device driver. It doesn't need to call clk_put again.
->
-> Would it be acceptable?
-
-Sorry I'm a little lost. Where does the platform data come into
-the picture? Is the i2c driver going to the parent device to get
-the platform data?
-
-If we have a way to pass data to the si5338 i2c device, then I
-assume we have a way to get the device name of the i2c device. If
-that's true, then we can create a clk lookup structure with
-clkdev_create() in the place where we have the clock pointer and
-use the dev_name() of the i2c device as the third argument to
-that function.
-
-BTW, the i2c device doesn't need to call of_clk_get(), it can
-just call clk_get() and pass the device pointer and it will use
-the DT path if there's a provider. Please don't use of_clk_get()
-when a struct device is present.
-
---
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>  		list_add_tail(&parent->node, &clk_provider_list);
+>  	}
+>  
+> 
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
