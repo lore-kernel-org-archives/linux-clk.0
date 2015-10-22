@@ -1,79 +1,109 @@
-Return-Path: <tomeu.vizoso@gmail.com>
+Return-Path: <jonmason@broadcom.com>
+From: Jon Mason <jonmason@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
+	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
+	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>
+Subject: [PATCH] clk: iproc: Make clocks visible options
+Date: Thu, 22 Oct 2015 15:25:13 -0400
+Message-ID: <1445541913-25066-1-git-send-email-jonmason@broadcom.com>
 MIME-Version: 1.0
-Sender: tomeu.vizoso@gmail.com
-In-Reply-To: <Pine.LNX.4.44L0.1510201159400.1855-100000@iolanthe.rowland.org>
-References: <20151020153612.GB32054@sirena.org.uk> <Pine.LNX.4.44L0.1510201159400.1855-100000@iolanthe.rowland.org>
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Date: Tue, 20 Oct 2015 18:21:55 +0200
-Message-ID: <CAAObsKChQN4gg91dCWJS_Co_MrYyBrB1J7gxgGo4hsPXNZRp3g@mail.gmail.com>
-Subject: Re: [GIT PULL] On-demand device probing
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, David Woodhouse <dwmw2@infradead.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>,
-	=?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
-	Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
-	Linux USB List <linux-usb@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 20 October 2015 at 18:04, Alan Stern <stern@rowland.harvard.edu> wrote:
-> On Tue, 20 Oct 2015, Mark Brown wrote:
->
->> On Tue, Oct 20, 2015 at 10:40:03AM -0400, Alan Stern wrote:
->>
->> > Furthermore, that applies only to devices that use synchronous suspend.
->> > Async suspend is becoming common, and there the only restrictions are
->> > parent-child relations plus whatever explicit requirements that drivers
->> > impose by calling device_pm_wait_for_dev().
->>
->> Hrm, this is the first I'd noticed that feature though I see the initial
->> commit dates from January.
->
-> Async suspend and device_pm_wait_for_dev() were added in January 2010,
-> not 2015!
->
->>  It looks like most of the users are PCs at
->> the minute but we should be using it more widely for embedded things,
->> there's definitely some cases I'm aware of where it will allow us to
->> remove some open coding.
->>
->> It does seem like we want to be feeding dependency information we
->> discover for probing way into the suspend dependencies...
->
-> Rafael has been thinking about a way to do this systematically.
-> Nothing concrete has emerged yet.
+Make the clocks visible options that can be selected by anyone.  This
+avoids the problems of:
+ 1) Select is a reverse dependency and is hard for people to understand
+    and can sometimes be a pain to track down
+ 2) Build coverage goes down because configs are hidden
+ 3) Code bloat
 
-This iteration of the series would make this quite easy, as
-dependencies are calculated before probes are attempted:
+Patch suggested by Stephen Boyd
 
-https://lkml.org/lkml/2015/6/17/311
+Signed-off-by: Jon Mason <jonmason@broadcom.com>
+---
+ arch/arm/mach-bcm/Kconfig |  1 -
+ drivers/clk/bcm/Kconfig   | 35 ++++++++++++++++++++++++++++++++++-
+ drivers/clk/bcm/Makefile  |  7 +++----
+ 3 files changed, 37 insertions(+), 6 deletions(-)
 
-Regards,
-
-Tomeu
-
-> Alan Stern
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
+index 679798b..cacaaec 100644
+--- a/arch/arm/mach-bcm/Kconfig
++++ b/arch/arm/mach-bcm/Kconfig
+@@ -14,7 +14,6 @@ config ARCH_BCM_IPROC
+ 	select HAVE_ARM_SCU if SMP
+ 	select HAVE_ARM_TWD if SMP
+ 	select ARM_GLOBAL_TIMER
+-	select COMMON_CLK_IPROC
+ 	select CLKSRC_MMIO
+ 	select ARCH_REQUIRE_GPIOLIB
+ 	select ARM_AMBA
+diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+index 46ee475..0352ccf 100644
+--- a/drivers/clk/bcm/Kconfig
++++ b/drivers/clk/bcm/Kconfig
+@@ -9,8 +9,41 @@ config CLK_BCM_KONA
+ 	  in the BCM281xx and BCM21664 families.
+ 
+ config COMMON_CLK_IPROC
+-	bool
++	bool "Broadcom iProc clock support"
++	depends on ARCH_BCM_IPROC
+ 	depends on COMMON_CLK
++	default ARCH_BCM_IPROC
+ 	help
+ 	  Enable common clock framework support for Broadcom SoCs
+ 	  based on the iProc architecture
++
++if COMMON_CLK_IPROC
++
++comment "Broadcom iProc clocks"
++
++config CLK_BCM_CYGNUS
++	bool "Broadcom Cygnus clock support"
++	depends on COMMON_CLK_IPROC
++	depends on ARCH_BCM_CYGNUS
++	default ARCH_BCM_CYGNUS
++	help
++	  Enable common clock framework support for the Broadcom Cygnus SoC
++
++config CLK_BCM_NSP
++	bool "Broadcom Northstar/Northstar Plus clock support"
++	depends on COMMON_CLK_IPROC
++	depends on ARCH_BCM_5301X || ARCH_BCM_NSP
++	default ARCH_BCM_5301X || ARCH_BCM_NSP
++	help
++	  Enable common clock framework support for the Broadcom Northstar and
++	  Northstar Plus SoCs
++
++config CLK_BCM_NS2
++	bool "Broadcom Northstar 2 clock support"
++	depends on ARM64
++	depends on COMMON_CLK_IPROC
++	default ARCH_BCM_IPROC
++	help
++	  Enable common clock framework support for the Broadcom Northstar 2 SoC
++
++endif
+diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+index 2d1cbc5..05d5830 100644
+--- a/drivers/clk/bcm/Makefile
++++ b/drivers/clk/bcm/Makefile
+@@ -3,7 +3,6 @@ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona-setup.o
+ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm281xx.o
+ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm21664.o
+ obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-iproc-armpll.o clk-iproc-pll.o clk-iproc-asiu.o
+-obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-ns2.o
+-obj-$(CONFIG_ARCH_BCM_CYGNUS)	+= clk-cygnus.o
+-obj-$(CONFIG_ARCH_BCM_NSP)	+= clk-nsp.o
+-obj-$(CONFIG_ARCH_BCM_5301X)	+= clk-nsp.o
++obj-$(CONFIG_CLK_BCM_CYGNUS)	+= clk-cygnus.o
++obj-$(CONFIG_CLK_BCM_NSP)	+= clk-nsp.o
++obj-$(CONFIG_CLK_BCM_NS2)	+= clk-ns2.o
+-- 
+1.9.1
