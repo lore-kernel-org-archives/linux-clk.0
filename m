@@ -1,60 +1,54 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 23 Oct 2015 09:43:47 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Russell King <linux@arm.linux.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 08/13] clk: add ARM syscon ICST device tree bindings
-Message-ID: <20151023164347.GB19782@codeaurora.org>
-References: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
- <1444916813-31024-9-git-send-email-linus.walleij@linaro.org>
- <20151015192325.GN4558@codeaurora.org>
- <CACRpkdbXLs7hP=8WH6uK_3mQQEy4Y6TJsjpt4=LpeT=jmF-9Kw@mail.gmail.com>
+Return-Path: <rjw@rjwysocki.net>
+Return-Path: <rjw@rjwysocki.net>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org, dmaengine@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>, Linux USB List <linux-usb@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Thu, 22 Oct 2015 02:54:33 +0200
+Message-ID: <1757126.NgBN1ISfc9@vostro.rjw.lan>
+In-Reply-To: <CAAObsKChQN4gg91dCWJS_Co_MrYyBrB1J7gxgGo4hsPXNZRp3g@mail.gmail.com>
+References: <20151020153612.GB32054@sirena.org.uk> <Pine.LNX.4.44L0.1510201159400.1855-100000@iolanthe.rowland.org> <CAAObsKChQN4gg91dCWJS_Co_MrYyBrB1J7gxgGo4hsPXNZRp3g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CACRpkdbXLs7hP=8WH6uK_3mQQEy4Y6TJsjpt4=LpeT=jmF-9Kw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/23, Linus Walleij wrote:
-> On Thu, Oct 15, 2015 at 9:23 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> > On 10/15, Linus Walleij wrote:
-> 
-> >> +Required properties:
-> >> +- lock-offset: the offset address into the system controller where the
-> >> +  unlocking register is located
-> >> +- vco-offset: the offset address into the system controller where the
-> >> +  ICST control register is located (even 32 bit address)
+On Tuesday, October 20, 2015 06:21:55 PM Tomeu Vizoso wrote:
+> On 20 October 2015 at 18:04, Alan Stern <stern@rowland.harvard.edu> wrote:
+> > On Tue, 20 Oct 2015, Mark Brown wrote:
 > >
-> > Is there any reason why we don't use a reg property for this?
+> >> On Tue, Oct 20, 2015 at 10:40:03AM -0400, Alan Stern wrote:
+> >>
+> >> > Furthermore, that applies only to devices that use synchronous suspend.
+> >> > Async suspend is becoming common, and there the only restrictions are
+> >> > parent-child relations plus whatever explicit requirements that drivers
+> >> > impose by calling device_pm_wait_for_dev().
+> >>
+> >> Hrm, this is the first I'd noticed that feature though I see the initial
+> >> commit dates from January.
+> >
+> > Async suspend and device_pm_wait_for_dev() were added in January 2010,
+> > not 2015!
+> >
+> >>  It looks like most of the users are PCs at
+> >> the minute but we should be using it more widely for embedded things,
+> >> there's definitely some cases I'm aware of where it will allow us to
+> >> remove some open coding.
+> >>
+> >> It does seem like we want to be feeding dependency information we
+> >> discover for probing way into the suspend dependencies...
+> >
+> > Rafael has been thinking about a way to do this systematically.
+> > Nothing concrete has emerged yet.
 > 
-> Usually reg = <> is used with two (or more) tokens:
+> This iteration of the series would make this quite easy, as
+> dependencies are calculated before probes are attempted:
 > 
-> reg = <phys_addr size>;
-> 
-> The exception being things like I2C addresses which
-> are just one token.
-> 
-> Since in this case, there is a "mother" reg property in the
-> syscon-compatible node, which we are indexing into,
-> it is confusing to use the same name for subnodes.
-> 
-> Also there is a bunch of precedents doing it like this
-> for sybdevices to system controllers, just
-> git grep offset Documentation/devicetree/bindings
-> will give you a bunch of them.
-> 
+> https://lkml.org/lkml/2015/6/17/311
 
-Ok. I'm no DT expert, but it seems odd to have subnodes without a
-reg property.
+Well, if you know how to represent "links" between devices, the mechanism
+introduced here doesn't really add much value, because in that case the
+core knows what the dependencies are in the first place and can only
+defer the probes that have to be deferred.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks,
+Rafael
