@@ -1,65 +1,43 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 2 Oct 2015 11:11:23 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Simon <horms@verge.net.au>, Michael Turquette <mturquette@baylibre.com>,
-	Magnus <magnus.damm@gmail.com>, Linux-SH <linux-sh@vger.kernel.org>,
-	Linux-Kernel <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4] clk: add CS2000 Fractional-N driver
-Message-ID: <20151002181123.GM12338@codeaurora.org>
-References: <871te03x17.wl%kuninori.morimoto.gx@renesas.com>
- <20151002003851.GH12338@codeaurora.org>
- <87twqarsdf.wl%kuninori.morimoto.gx@renesas.com>
+Return-Path: <fainelli@broadcom.com>
+Message-ID: <56295BDD.4000609@broadcom.com>
+Date: Thu, 22 Oct 2015 14:57:49 -0700
+From: Florian Fainelli <fainelli@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <87twqarsdf.wl%kuninori.morimoto.gx@renesas.com>
+To: Jon Mason <jonmason@broadcom.com>, Scott Branden <sbranden@broadcom.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>, "Hauke
+ Mehrtens" <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
+Subject: Re: [PATCH] clk: iproc: Make clocks visible options
+References: <1445541913-25066-1-git-send-email-jonmason@broadcom.com> <56293D26.7080006@broadcom.com> <20151022201433.GK651@broadcom.com>
+In-Reply-To: <20151022201433.GK651@broadcom.com>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: fainelli@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/02, Kuninori Morimoto wrote:
+On 22/10/15 13:14, Jon Mason wrote:
+> On Thu, Oct 22, 2015 at 12:46:46PM -0700, Scott Branden wrote:
+>> Hi Jon,
+>>
+>> comments inline.
+>>
+>> On 15-10-22 12:25 PM, Jon Mason wrote:
+>>> Make the clocks visible options that can be selected by anyone.  This
+>>> avoids the problems of:
+>>>  1) Select is a reverse dependency and is hard for people to understand
+>>>     and can sometimes be a pain to track down
+>> This doesn't make any sense to me - there are many selects in the
+>> system and this is one of them.
 > 
-> Hi Stephen
-> 
-> Thank you for your review
-> 
-> > > +	init.parent_names	= parent_names;
-> > > +	init.num_parents	= ARRAY_SIZE(parent_names);
-> > > +
-> > > +	priv->hw.init = &init;
-> > > +
-> > > +	clk = clk_register(NULL, &priv->hw);
-> > 
-> > How about using devm_clk_register() and passing the i2c device
-> > down to this function?
-> 
-> Can I confirm ?
-> Does this "i2c device down" means call i2c_set_clientdata()
-> in this function ?
+> This was specifically requested by Stephen Boyd, and the above are
+> his words verbatum
+> https://lkml.org/lkml/2015/10/21/956
 
-I mean passing a struct device pointer to this function and then
-using it here in the clk_register() function.
+I am soon going to introduce a new clock driver under drivers/clk/bcm/
+which is going to need some Kconfig tweaks as well, it would be good if
+we reached consensus on this so Stephen can apply this.
 
-> 
-> > > +static int cs2000_clk_init(struct cs2000_priv *priv)
-> > > +{
-> > > +	struct device *dev = priv_to_dev(priv);
-> > > +	struct device_node *np = dev->of_node;
-> > > +	u32 rate;
-> > > +	int ch = 0; /* it uses ch0 only at this point */
-> > > +	int ret;
-> > > +
-> > > +	if (of_property_read_u32(np, "clock-frequency", &rate))
-> > 
-> > Why can't we do this with DT assigned rates?
-> 
-> What doesn this "DT assigned rates" mean ?
-> this rate will be used as default output
-
-See the "Assigned clock parents and rates" section of
-Documentation/devicetree/bindings/clock/clock-bindings.txt and
-commit 86be408bfbd8 (clk: Support for clock parents and rates
-assigned from device tree, 2014-06-18).
-
+Thanks!
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Florian
