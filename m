@@ -1,137 +1,135 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-sunxi@googlegroups.com,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v6 5/5] clk: sunxi: mod1 clock support
-Date: Tue, 20 Oct 2015 09:36:49 +0200
-Message-Id: <1445326609-6314-6-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1445326609-6314-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1445326609-6314-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <CAMuHMdU8TqCpOskWXGPvwrejfEWSw8Fu4FjkWAKyTc0f_MuWzw@mail.gmail.com>
+References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be>
+	<1444999760-15750-6-git-send-email-geert+renesas@glider.be>
+	<20151020122448.20687.11926@quantum>
+	<CAMuHMdUT=fZKCOCdkn+=grZ0wYATghQhmbX-Y6WJ9+ViZ0cidA@mail.gmail.com>
+	<20151020130004.20687.91058@quantum>
+	<CAMuHMdU8TqCpOskWXGPvwrejfEWSw8Fu4FjkWAKyTc0f_MuWzw@mail.gmail.com>
+Date: Thu, 22 Oct 2015 14:58:11 +0200
+Message-ID: <CAMuHMdW4wo0VR2GKeeXhcqwzDF7udkXapFF9fGfEQuh_vSsyoQ@mail.gmail.com>
+Subject: Re: [PATCH v4 5/5] [RFC] clk: shmobile: r8a7795: Add new CPG/MSSR driver
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Stephen Boyd <sboyd@codeaurora.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>,
+	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Emilio López <emilio@elopez.com.ar>
+Hi Mike,
 
-The module 1 type of clocks consist of a gate and a mux and are used on
-the audio blocks to mux and gate the PLL2 outputs for AC97, IIS or
-SPDIF. This commit adds support for them on the sunxi clock driver.
+On Tue, Oct 20, 2015 at 3:07 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Tue, Oct 20, 2015 at 3:00 PM, Michael Turquette
+> <mturquette@baylibre.com> wrote:
+>> Quoting Geert Uytterhoeven (2015-10-20 05:31:12)
+>>> On Tue, Oct 20, 2015 at 2:24 PM, Michael Turquette
+>>> <mturquette@baylibre.com> wrote:
+>>> > Quoting Geert Uytterhoeven (2015-10-16 05:49:20)
+>>> >> +static void __init r8a7795_cpg_mssr_init(struct device_node *np)
+>>> >> +{
+>>> >> +       struct regmap *regmap;
+>>> >> +       u32 reg, cpg_mode;
+>>> >> +
+>>> >> +       regmap =3D syscon_regmap_lookup_by_phandle(np, "renesas,mode=
+mr");
+>>> >> +       if (IS_ERR(regmap) ||
+>>> >> +           of_property_read_u32_index(np, "renesas,modemr", 1, &reg=
+) ||
+>>> >> +           regmap_read(regmap, reg, &cpg_mode)) {
+>>> >> +               pr_err("%s: failed to parse renesas,modemr\n", np->f=
+ull_name);
+>>> >> +               return;
+>>> >> +       }
+>>> >> +
+>>> >> +       cpg_pll_config =3D &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg=
+_mode)];
+>>> >> +       if (!cpg_pll_config->extal_div) {
+>>> >> +               pr_err("%s: Prohibited setting (cpg_mode=3D0x%x)\n",
+>>> >> +                      __func__, cpg_mode);
+>>> >> +               return;
+>>> >> +       }
+>>> >> +
+>>> >> +       cpg_mssr_probe(np, &r8a7795_cpg_mssr_info);
+>>> >> +}
+>>> >> +CLK_OF_DECLARE(r8a7795_cpg_mssr, "renesas,r8a7795-cpg-mssr",
+>>> >> +              r8a7795_cpg_mssr_init);
+>>> >
+>>> > Is CLK_OF_DECLARE needed? Is it possible to make this a real
+>>> > platform_driver =C3=A0 la drivers/clk/qcom/gcc-apq8084.c?
+>>>
+>>> I tried making it a real platform driver, but it failed: devices that a=
+re
+>>> part of the Clock Domain failed to get their clock (error -2, IIRC, whi=
+ch is
+>>> -ENOENT), and thus couldn't be instantiated.
+>>> I didn't look deeper at that time.
+>>>
+>>> [... reading code ...]
+>>>
+>>> Aha, this may be caused by __of_clk_get_from_provider() returning
+>>> hardcoded -ENOENT instead of propagating the error returned by
+>>> __clk_create_clk()?
+>>
+>> Well the only other error thrown by __clk_create_clk is -ENOMEM, so I'm
+>> not sure how that would help things.
+>
+> Hmm, you're right.
+>
+>> The bindings should go in for 4.4, but if the driver is slated for 4.5
+>> then can you investigate this some more? Stephen and I are on a mission
+>> to have _real_ clk drivers.
+>
+> Sure, I'll have a deeper look.
 
-Signed-off-by: Emilio López <emilio@elopez.com.ar>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi/Makefile       |  1 +
- drivers/clk/sunxi/clk-a10-mod1.c | 81 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 82 insertions(+)
- create mode 100644 drivers/clk/sunxi/clk-a10-mod1.c
+And so I did (on r8a7791/koelsch).
 
-diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-index 70a449a419e6..cb4c299214ce 100644
---- a/drivers/clk/sunxi/Makefile
-+++ b/drivers/clk/sunxi/Makefile
-@@ -5,6 +5,7 @@
- obj-y += clk-sunxi.o clk-factors.o
- obj-y += clk-a10-codec.o
- obj-y += clk-a10-hosc.o
-+obj-y += clk-a10-mod1.o
- obj-y += clk-a10-pll2.o
- obj-y += clk-a20-gmac.o
- obj-y += clk-mod0.o
-diff --git a/drivers/clk/sunxi/clk-a10-mod1.c b/drivers/clk/sunxi/clk-a10-mod1.c
-new file mode 100644
-index 000000000000..e9d870de165c
---- /dev/null
-+++ b/drivers/clk/sunxi/clk-a10-mod1.c
-@@ -0,0 +1,81 @@
-+/*
-+ * Copyright 2013 Emilio López
-+ *
-+ * Emilio López <emilio@elopez.com.ar>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/slab.h>
-+
-+static DEFINE_SPINLOCK(mod1_lock);
-+
-+#define SUN4I_MOD1_ENABLE	31
-+#define SUN4I_MOD1_MUX		16
-+#define SUN4I_MOD1_MUX_WIDTH	2
-+#define SUN4I_MOD1_MAX_PARENTS	4
-+
-+static void __init sun4i_mod1_clk_setup(struct device_node *node)
-+{
-+	struct clk *clk;
-+	struct clk_mux *mux;
-+	struct clk_gate *gate;
-+	const char *parents[4];
-+	const char *clk_name = node->name;
-+	void __iomem *reg;
-+	int i;
-+
-+	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-+	if (IS_ERR(reg))
-+		return;
-+
-+	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-+	if (!mux)
-+		goto err_unmap;
-+
-+	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+	if (!gate)
-+		goto err_free_mux;
-+
-+	of_property_read_string(node, "clock-output-names", &clk_name);
-+	i = of_clk_parent_fill(node, parents, SUN4I_MOD1_MAX_PARENTS);
-+
-+	gate->reg = reg;
-+	gate->bit_idx = SUN4I_MOD1_ENABLE;
-+	gate->lock = &mod1_lock;
-+	mux->reg = reg;
-+	mux->shift = SUN4I_MOD1_MUX;
-+	mux->mask = BIT(SUN4I_MOD1_MUX_WIDTH) - 1;
-+	mux->lock = &mod1_lock;
-+
-+	clk = clk_register_composite(NULL, clk_name, parents, i,
-+				     &mux->hw, &clk_mux_ops,
-+				     NULL, NULL,
-+				     &gate->hw, &clk_gate_ops, 0);
-+	if (IS_ERR(clk))
-+		goto err_free_gate;
-+
-+	of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+
-+	return;
-+
-+err_free_gate:
-+	kfree(gate);
-+err_free_mux:
-+	kfree(mux);
-+err_unmap:
-+	iounmap(reg);
-+}
-+CLK_OF_DECLARE(sun4i_mod1, "allwinner,sun4i-a10-mod1-clk",
-+	       sun4i_mod1_clk_setup);
--- 
-2.6.2
+As I want to have as much clock data/code __init as possible (think
+multi-platform kernels --- pinmux data is a disaster here), I have to use
+platform_driver_probe().
+
+  - Calling platform_driver_probe() from core_initcall() or postcore_initca=
+ll()
+    is too early, as the platform device for the CPG hasn't been created ye=
+t.
+    Hence the CPG Clock Domain isn't registered, and all devices fail to pr=
+obe
+    as they can't be attached to their Clock Domain.
+      -> This is where the -ENOENT came from (I incorrectly assumed it came
+         from the clock code; sorry for that), and it's converted into
+         -EPROBE_DEFER by genpd_dev_pm_attach().
+
+  - Calling platform_driver_probe() from arch_initcall() is too late, as th=
+e
+    IRQC is initialized first (it's located before the CPG in .dtsi).
+    Hence the IRQC can't find it's Clock Domain, and its probe is deferred.
+    IRQC will be reprobed later, but in the mean time the Ethernet PHY can'=
+t
+    find its IRQ, as the of_mdio code uses irq_of_parse_and_map(), which
+    plainly ignores EPROBE_DEFER :-(
+    Nevertheless, Ethernet works...
+
+  - Using subsys_initcall() and later causes even more probe deferral.
+
+So that's why I went with CLK_OF_DECLARE() again...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
