@@ -1,34 +1,102 @@
-Return-Path: <slash.tmp@free.fr>
-Subject: Re: [PATCH v4] clk: tango4: clkgen driver for Tango4 platforms
-To: Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>
-Cc: clk <linux-clk@vger.kernel.org>, Rob Herring <robh@kernel.org>,
- Marc Gonzalez <Marc_Gonzalez@sigmadesigns.com>
-References: <562A5506.2070402@sigmadesigns.com>
- <20151029005658.GA19782@codeaurora.org> <563361B8.7090300@sigmadesigns.com>
- <20151030162925.GC19782@codeaurora.org>
-From: Mason <slash.tmp@free.fr>
-Message-ID: <5633BB93.7010701@free.fr>
-Date: Fri, 30 Oct 2015 19:48:51 +0100
+Return-Path: <tomeu.vizoso@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20151030162925.GC19782@codeaurora.org>
-Content-Type: text/plain; charset=ISO-8859-15
+Sender: tomeu.vizoso@gmail.com
+In-Reply-To: <1757126.NgBN1ISfc9@vostro.rjw.lan>
+References: <20151020153612.GB32054@sirena.org.uk> <Pine.LNX.4.44L0.1510201159400.1855-100000@iolanthe.rowland.org>
+ <CAAObsKChQN4gg91dCWJS_Co_MrYyBrB1J7gxgGo4hsPXNZRp3g@mail.gmail.com> <1757126.NgBN1ISfc9@vostro.rjw.lan>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Date: Thu, 22 Oct 2015 11:14:49 +0200
+Message-ID: <CAAObsKAWS83xkptJY+2V6jYddG8S7KpM1PQoXWoEE=b7wCy7cg@mail.gmail.com>
+Subject: Re: [GIT PULL] On-demand device probing
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Alan Stern <stern@rowland.harvard.edu>, Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>, David Woodhouse <dwmw2@infradead.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>,
+	=?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
+	Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
+	Linux USB List <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 30/10/2015 17:29, Stephen Boyd wrote:
+On 22 October 2015 at 02:54, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> On Tuesday, October 20, 2015 06:21:55 PM Tomeu Vizoso wrote:
+>> On 20 October 2015 at 18:04, Alan Stern <stern@rowland.harvard.edu> wrote:
+>> > On Tue, 20 Oct 2015, Mark Brown wrote:
+>> >
+>> >> On Tue, Oct 20, 2015 at 10:40:03AM -0400, Alan Stern wrote:
+>> >>
+>> >> > Furthermore, that applies only to devices that use synchronous suspend.
+>> >> > Async suspend is becoming common, and there the only restrictions are
+>> >> > parent-child relations plus whatever explicit requirements that drivers
+>> >> > impose by calling device_pm_wait_for_dev().
+>> >>
+>> >> Hrm, this is the first I'd noticed that feature though I see the initial
+>> >> commit dates from January.
+>> >
+>> > Async suspend and device_pm_wait_for_dev() were added in January 2010,
+>> > not 2015!
+>> >
+>> >>  It looks like most of the users are PCs at
+>> >> the minute but we should be using it more widely for embedded things,
+>> >> there's definitely some cases I'm aware of where it will allow us to
+>> >> remove some open coding.
+>> >>
+>> >> It does seem like we want to be feeding dependency information we
+>> >> discover for probing way into the suspend dependencies...
+>> >
+>> > Rafael has been thinking about a way to do this systematically.
+>> > Nothing concrete has emerged yet.
+>>
+>> This iteration of the series would make this quite easy, as
+>> dependencies are calculated before probes are attempted:
+>>
+>> https://lkml.org/lkml/2015/6/17/311
+>
+> Well, if you know how to represent "links" between devices, the mechanism
+> introduced here doesn't really add much value, because in that case the
+> core knows what the dependencies are in the first place and can only
+> defer the probes that have to be deferred.
 
-> You should add sigma to the vendor prefix file
-> Documentation/devicetree/bindings/vendor-prefixes.txt
-> 
-> Send that patch to the DT maintainers (Rob has been applying
-> most vendor prefix patches).
+By "here" you mean what you are proposing for ordering device
+suspends, or on-demand probing?
 
-Hmmm, Mans took care of that a month ago... Did the patch fall
-through the cracks perhaps?
+If you meant that probing on-demand is unneeded if we already have
+dependency information, I agree with you and that's why I only pushed
+forward on-demand, as the approach linked above introduced some
+duplication when inferring the dependencies. Maybe that could be
+avoided without too much refactoring.
 
-http://thread.gmane.org/gmane.linux.kernel/2052776
+In any case, Thierry mentioned the other day in #tegra that one could
+also collect dependency information as a follow up to the on-demand
+series by calling device_depend() or such instead of
+of_device_probe().
 
-Should I be looking in Rob's tree?
-https://git.kernel.org/cgit/linux/kernel/git/robh/linux.git/
+Regards,
 
-Regards.
+Tomeu
+
+> Thanks,
+> Rafael
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
