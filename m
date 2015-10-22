@@ -1,140 +1,163 @@
-Return-Path: <jonmason@broadcom.com>
-From: Jon Mason <jonmason@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
-	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
-	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
-Subject: [PATCH v3 03/10] clk: iproc: Add PWRCTRL support
-Date: Thu, 15 Oct 2015 15:48:26 -0400
-Message-ID: <1444938513-10758-4-git-send-email-jonmason@broadcom.com>
-In-Reply-To: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
-References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
+Return-Path: <tomeu.vizoso@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jonmason@broadcom.com
+Sender: tomeu.vizoso@gmail.com
+In-Reply-To: <562808AF.7090406@gmail.com>
+References: <561E1378.6000906@collabora.com> <20151017065750.GA18607@kroah.com>
+ <20151018192931.GY14956@sirena.org.uk> <20151018193757.GA9147@kroah.com>
+ <20151018195330.GB14956@sirena.org.uk> <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
+ <5627B677.5090109@gmail.com> <20151021162758.GP32054@sirena.org.uk>
+ <5627D6E0.5020708@gmail.com> <CAL_Jsq+FPtCuBnte2HTgbdpNYM=v_kLaCRcOC1kMaCQwVC=5Kw@mail.gmail.com>
+ <562808AF.7090406@gmail.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Date: Thu, 22 Oct 2015 11:05:11 +0200
+Message-ID: <CAAObsKAkyjdvNOS3+nuT0N9sudUFLsZXFtcm6Y038p+HSdsZsg@mail.gmail.com>
+Subject: Re: [GIT PULL] On-demand device probing
+To: Frank Rowand <frowand.list@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>,
+	=?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
+	Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>,
+	Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Some iProc SoC clocks use a different way to control clock power, via
-the PWRDWN bit in the PLL control register.  Since the PLL control
-register is used to access the PWRDWN bit, there is no need for the
-pwr_base when this is being used.  A new flag, IPROC_CLK_EMBED_PWRCTRL,
-has been added to identify this usage.  We can use the AON interface to
-write the values to enable/disable PWRDOWN.
+On 21 October 2015 at 23:50, Frank Rowand <frowand.list@gmail.com> wrote:
+> On 10/21/2015 2:12 PM, Rob Herring wrote:
+>> On Wed, Oct 21, 2015 at 1:18 PM, Frank Rowand <frowand.list@gmail.com> w=
+rote:
+>>> On 10/21/2015 9:27 AM, Mark Brown wrote:
+>>>> On Wed, Oct 21, 2015 at 08:59:51AM -0700, Frank Rowand wrote:
+>>>>> On 10/19/2015 5:34 AM, Tomeu Vizoso wrote:
+>>>>
+>>>>>> To be clear, I was saying that this series should NOT affect total
+>>>>>> boot times much.
+>>>>
+>>>>> I'm confused.  If I understood correctly, improving boot time was
+>>>>> the key justification for accepting this patch set.  For example,
+>>>>> from "[PATCH v7 0/20] On-demand device probing":
+>>>>>
+>>>>>    I have a problem with the panel on my Tegra Chromebook taking long=
+er
+>>>>>    than expected to be ready during boot (St=C3=A9phane Marchesin rep=
+orted what
+>>>>>    is basically the same issue in [0]), and have looked into ordered
+>>>>>    probing as a better way of solving this than moving nodes around i=
+n the
+>>>>>    DT or playing with initcall levels and linking order.
+>>>>>
+>>>>>    ...
+>>>>>
+>>>>>    With this series I get the kernel to output to the panel in 0.5s,
+>>>>>    instead of 2.8s.
+>>>>
+>>>> Overall boot time and time to get some individual built in component u=
+p
+>>>> and running aren't the same thing - what this'll do is get things up
+>>>> more in the link order of the leaf consumers rather than deferring tho=
+se
+>>>> leaf consumers when their dependencies aren't ready yet.
+>>>
+>>> Thanks!  I read too much into what was being improved.
+>>>
+>>> So this patch series, which on other merits may be a good idea, is as
+>>> a by product solving a specific ordering issue, moving successful panel
+>>> initialization to an earlier point in the boot sequence, if I now
+>>> understand more correctly.
+>>>
+>>> In that context, this seems like yet another ad hoc way of causing the
+>>> probe order to change in a way to solves one specific issue?  Could
+>>> it just as likely move the boot order of some other driver on some
+>>> other board later, to the detriment of somebody else?
+>>
+>> Time to display on is important for many products. Having the console
+>> up as early as possible is another case. CAN bus is another. This is a
+>> real problem that is not just bad drivers.
+>
+> Yes, I agree.
+>
+> What I am seeing is that there continues to be a need for the ability
+> to explicitly order at least some driver initialization (at some
+> granularity), despite the push back against explicit ordering that
+> has been present in the past.
 
-Signed-off-by: Jon Mason <jonmason@broadcom.com>
----
- drivers/clk/bcm/clk-iproc-pll.c | 55 ++++++++++++++++++++++++++++-------------
- drivers/clk/bcm/clk-iproc.h     |  6 +++++
- 2 files changed, 44 insertions(+), 17 deletions(-)
+The important point that I have struggled to explain is that right now
+for downstreams to influence the order in which devices are probed,
+they have to carry a substantial amount of patches that cannot be ever
+upstreamed. This fiddling with initcall levels and link order means
+changing files that are very frequently changing, increasing the
+amount of work when rebasing and increasing the probability of
+regressions after a rebase.
 
-diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
-index 2dda4e8..e029ab3 100644
---- a/drivers/clk/bcm/clk-iproc-pll.c
-+++ b/drivers/clk/bcm/clk-iproc-pll.c
-@@ -148,14 +148,25 @@ static void __pll_disable(struct iproc_pll *pll)
- 		writel(val, pll->asiu_base + ctrl->asiu.offset);
- 	}
- 
--	/* latch input value so core power can be shut down */
--	val = readl(pll->pwr_base + ctrl->aon.offset);
--	val |= (1 << ctrl->aon.iso_shift);
--	writel(val, pll->pwr_base + ctrl->aon.offset);
--
--	/* power down the core */
--	val &= ~(bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
--	writel(val, pll->pwr_base + ctrl->aon.offset);
-+	if (ctrl->flags & IPROC_CLK_EMBED_PWRCTRL) {
-+		val = readl(pll->pll_base + ctrl->aon.offset);
-+		val |= (bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
-+		writel(val, pll->pll_base + ctrl->aon.offset);
-+
-+		if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
-+			readl(pll->pll_base + ctrl->aon.offset);
-+	}
-+
-+	if (pll->pwr_base) {
-+		/* latch input value so core power can be shut down */
-+		val = readl(pll->pwr_base + ctrl->aon.offset);
-+		val |= (1 << ctrl->aon.iso_shift);
-+		writel(val, pll->pwr_base + ctrl->aon.offset);
-+
-+		/* power down the core */
-+		val &= ~(bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
-+		writel(val, pll->pwr_base + ctrl->aon.offset);
-+	}
- }
- 
- static int __pll_enable(struct iproc_pll *pll)
-@@ -163,11 +174,22 @@ static int __pll_enable(struct iproc_pll *pll)
- 	const struct iproc_pll_ctrl *ctrl = pll->ctrl;
- 	u32 val;
- 
--	/* power up the PLL and make sure it's not latched */
--	val = readl(pll->pwr_base + ctrl->aon.offset);
--	val |= bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift;
--	val &= ~(1 << ctrl->aon.iso_shift);
--	writel(val, pll->pwr_base + ctrl->aon.offset);
-+	if (ctrl->flags & IPROC_CLK_EMBED_PWRCTRL) {
-+		val = readl(pll->pll_base + ctrl->aon.offset);
-+		val &= ~(bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
-+		writel(val, pll->pll_base + ctrl->aon.offset);
-+
-+		if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
-+			readl(pll->pll_base + ctrl->aon.offset);
-+	}
-+
-+	if (pll->pwr_base) {
-+		/* power up the PLL and make sure it's not latched */
-+		val = readl(pll->pwr_base + ctrl->aon.offset);
-+		val |= bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift;
-+		val &= ~(1 << ctrl->aon.iso_shift);
-+		writel(val, pll->pwr_base + ctrl->aon.offset);
-+	}
- 
- 	/* certain PLLs also need to be ungated from the ASIU top level */
- 	if (ctrl->flags & IPROC_CLK_PLL_ASIU) {
-@@ -610,9 +632,8 @@ void __init iproc_pll_clk_setup(struct device_node *node,
- 	if (WARN_ON(!pll->pll_base))
- 		goto err_pll_iomap;
- 
-+	/* Some SoCs do not require the pwr_base, thus failing is not fatal */
- 	pll->pwr_base = of_iomap(node, 1);
--	if (WARN_ON(!pll->pwr_base))
--		goto err_pwr_iomap;
- 
- 	/* some PLLs require gating control at the top ASIU level */
- 	if (pll_ctrl->flags & IPROC_CLK_PLL_ASIU) {
-@@ -695,9 +716,9 @@ err_pll_register:
- 		iounmap(pll->asiu_base);
- 
- err_asiu_iomap:
--	iounmap(pll->pwr_base);
-+	if (pll->pwr_base)
-+		iounmap(pll->pwr_base);
- 
--err_pwr_iomap:
- 	iounmap(pll->pll_base);
- 
- err_pll_iomap:
-diff --git a/drivers/clk/bcm/clk-iproc.h b/drivers/clk/bcm/clk-iproc.h
-index d834b7a..ff7bfad 100644
---- a/drivers/clk/bcm/clk-iproc.h
-+++ b/drivers/clk/bcm/clk-iproc.h
-@@ -49,6 +49,12 @@
- #define IPROC_CLK_PLL_NEEDS_SW_CFG BIT(4)
- 
- /*
-+ * Some PLLs use a different way to control clock power, via the PWRDWN bit in
-+ * the PLL control register
-+ */
-+#define IPROC_CLK_EMBED_PWRCTRL BIT(5)
-+
-+/*
-  * Parameters for VCO frequency configuration
-  *
-  * VCO frequency =
--- 
-1.9.1
+This just adds up to other shortcomings of mainline and ends up with
+the net result of vendors getting stuck with 3.4 kernels on SoCs that
+start production in 2015. Another consequence is that vendors don't
+have a chance to upstream their stuff even if they cared. The
+overarching goal of the project I'm in is to reduce those shortcomings
+that downstreams have to workaround, to facilitate their involvement
+upstream.
+
+With this series, the order in which devices are probed becomes the
+order in which they were registered, which is the order in which the
+devices appear in the FW description of the hw or in the board files
+(much more predictable, which makes for a more robust process). For DT
+and board files, which cover a good part of the consumer devices
+shipped today with Linux, the downstream could just change the order
+of device nodes and get their display or whatever to probe before any
+other devices.
+
+And even if downstream's hw has a SoC .dtsi that exists in mainline,
+they could add a step to their build process that automatically
+reorders the nodes to avoid carrying changes to that DT fragment.
+
+But that's moot currently because Greg believes that the time spent
+probing devices at boot time could be reduced enough so that the order
+in which devices are probed becomes irrelevant. IME that would have to
+be under 200ms so that the user doesn't notice and that's unicorn-far
+from any bootlog I have ever seen.
+
+Given that downstreams are already carrying as many hacks as they
+could think of to speed total boot up, I think this is effectively
+telling them to go away.
+
+Sorry for the rant,
+
+Tomeu
+
+>> I don't think it is completely ad hoc. Given all devices are
+>> registered after drivers, drivers will still probe first in initcall
+>> level order and then link order AFAIK. We may not take (more) initcall
+>> level tweak hacks, but that is a much more simple change for
+>> downstream. Don't get me wrong, I'd really like to see a way to
+>> control order independent of initcall level.
+>>
+>> Rob
+>
+> Yep, it is not directly ad hoc, just a fortunate side effect in
+> this case.  So just accidently ad hoc. :-)
+>
+> -Frank
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" i=
+n
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
