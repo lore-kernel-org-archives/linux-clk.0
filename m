@@ -1,74 +1,125 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <frowand.list@gmail.com>
+Return-Path: <frowand.list@gmail.com>
+Message-ID: <562930AB.1070203@gmail.com>
+Date: Thu, 22 Oct 2015 11:53:31 -0700
+From: Frank Rowand <frowand.list@gmail.com>
+Reply-To: frowand.list@gmail.com
 MIME-Version: 1.0
-In-Reply-To: <20151023162405.GA19782@codeaurora.org>
-References: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
-	<1444916813-31024-7-git-send-email-linus.walleij@linaro.org>
-	<20151015190809.GL4558@codeaurora.org>
-	<CACRpkdYHJzj_1yNFWcwXh+-3zTzJOSEttZdhZBqkUn1HigZeJA@mail.gmail.com>
-	<20151023162405.GA19782@codeaurora.org>
-Date: Tue, 27 Oct 2015 16:56:50 +0100
-Message-ID: <CACRpkda35oVhTJC0N5ee6NAuk-tvwwa6AbFS=MST89C1MTTFxQ@mail.gmail.com>
-Subject: Re: [PATCH 06/13] clk: versatile-icst: convert to use regmap
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-	Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+ Rob Herring <robh+dt@kernel.org>,
+ Mark Brown <broonie@kernel.org>, Russell King <linux@arm.linux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Alexandre Courbot <gnurou@gmail.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ David Airlie <airlied@linux.ie>,
+ =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom@nvidia.com>,
+ Stephen Warren <swarren@wwwdotorg.org>,
+ Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>,
+ Kishon Vijay Abraham I <kishon@ti.com>,
+ Sebastian Reichel <sre@kernel.org>,
+ Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+ David Woodhouse <dwmw2@infradead.org>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Felipe Balbi <balbi@ti.com>, Jingoo Han <jingoohan1@gmail.com>,
+ Lee Jones <lee.jones@linaro.org>,
+ Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+ Tomi Valkeinen <tomi.valkeinen@ti.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ Linux PWM List <linux-pwm@vger.kernel.org>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Subject: Re: [GIT PULL] On-demand device probing
+References: <20151018192931.GY14956@sirena.org.uk> <20151018193757.GA9147@kroah.com> <20151018195330.GB14956@sirena.org.uk> <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com> <5627B677.5090109@gmail.com> <20151021162758.GP32054@sirena.org.uk> <5627D6E0.5020708@gmail.com> <CAL_Jsq+FPtCuBnte2HTgbdpNYM=v_kLaCRcOC1kMaCQwVC=5Kw@mail.gmail.com> <562808AF.7090406@gmail.com> <CAAObsKAkyjdvNOS3+nuT0N9sudUFLsZXFtcm6Y038p+HSdsZsg@mail.gmail.com> <20151022144405.GC21861@kroah.com>
+In-Reply-To: <20151022144405.GC21861@kroah.com>
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 23, 2015 at 6:24 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 10/23, Linus Walleij wrote:
->> On Thu, Oct 15, 2015 at 9:08 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
->> > On 10/15, Linus Walleij wrote:
->> >> @@ -151,10 +174,19 @@ struct clk *icst_clk_register(struct device *dev,
->> >>       init.flags = CLK_IS_ROOT;
->> >>       init.parent_names = (parent_name ? &parent_name : NULL);
->> >>       init.num_parents = (parent_name ? 1 : 0);
->> >> +     icst->map = regmap_init_mmio(NULL, base, &icst_regmap_conf);
->> >> +     if (IS_ERR(icst->map)) {
->> >> +             int ret;
->> >> +
->> >> +             pr_err("could not initialize ICST regmap\n");
->> >> +             kfree(icst);
->> >> +             ret = PTR_ERR(icst->map);
->> >
->> > drivers/clk/versatile/clk-icst.c:183
->> > icst_clk_register() error: dereferencing freed memory 'icst'
->> > drivers/clk/versatile/clk-icst.c:184
->> > icst_clk_register() warn: possible memory leak of 'pclone'
->>
->> The pclone warning is correct, nice catch. (Fixing it.)
->>
->> But for the second warning, whatever static checker you're
->> using for this is unable to handle error pointers:
->>
->>     clk = clk_register(dev, &icst->hw);
->>     if (IS_ERR(clk))
->>         kfree(icst);
->>
->>     return clk;
->>
->> It is quite obvious that returning clk (which may be an error code)
->> is OK here.
->>
->> If you want, I may need to add some specific annotation to shut
->> up the static checker, any hints?
->>
->
-> Huh? I'm totally lost. I use sparse and smatch.
->
->> >> +             kfree(icst);
->> >> +             ret = PTR_ERR(icst->map);
->
-> We just freed icst, and then we dereferenced it in the next line.
-> What does that have to do with error pointers?
+On 10/22/2015 7:44 AM, Greg Kroah-Hartman wrote:
+> <oops, sent too early...>
+> 
+> On Thu, Oct 22, 2015 at 11:05:11AM +0200, Tomeu Vizoso wrote:
+>> But that's moot currently because Greg believes that the time spent
+>> probing devices at boot time could be reduced enough so that the order
+>> in which devices are probed becomes irrelevant. IME that would have to
+>> be under 200ms so that the user doesn't notice and that's unicorn-far
+>> from any bootlog I have ever seen.
+> 
+> But as no one has actually produced a bootlog, how do you know that?
+> Where exactly is your time being spent?  What driver is causing long
+> delays?  Why is the long-delay-drivers not being done in their own
+> thread?  And most importantly, why are you ignoring the work that people
+> did back in 2008 to solve the issue on other hardware platforms?
+> 
+>> Given that downstreams are already carrying as many hacks as they
+>> could think of to speed total boot up, I think this is effectively
+>> telling them to go away.
+> 
+> No I'm not, I'm asking for real data, not hand-wavy-this-is-going-to
+> solve-the-random-issue-i'm-having type patch by putting random calls in
+> semi-random subsystems all over the kernel.
+> 
+> And when I ask for real data, you respond with the fact that you aren't
+> trying to speed up boot time here at all, so what am I supposed to think
 
-Sorry I must have confused patch versions.  :(
+I also had the understanding that this patch series was about improving
+boot time.  But I was kindly corrected that the behavior change was
+getting the panel displaying stuff at an earlier point in the boot sequence,
+_not_ completing the entire boot faster. 
 
-I see the real problem now, so will make a v3 of this.
+The claim for the current series, in patch 0 in v7 is:
 
-Yours,
-Linus Walleij
+   With this series I get the kernel to output to the panel in 0.5s,
+   instead of 2.8s.
+
+Just to get side-tracked, one other approach at ordering to reduce
+deferrals reported a modest boot time reduction for four boards and a
+very slight boot time increase for one other board.) The report of boot
+times with that approach was in:
+
+  http://article.gmane.org/gmane.linux.drivers.devicetree/133010
+
+from Alexander Holler.
+
+I have not searched further to see if there is more data of boot time
+reductions from any of the other attempts to change driver binding
+order to move dependencies before use of a resource.  But whether
+there is a performance improvement or not, there continues to be
+a stream of developers creatively impacting the binding order for
+their specific driver(s) or board.  So it seems that maybe there
+is an underlying problem, or we don't have adequate documentation
+explaining how to avoid a need to order bindings, or the
+documentation exists and is not being read.
+
+I have been defaulting to the position that has been asserted by
+the device tree maintainters, that probe deferrals work just fine
+for at least the majority of cases (and is the message I have been
+sharing in my conference presentations about device tree).  But I
+suspect that there is at least a small minority of cases that are not
+well served by probe deferral.  (Not to be read as an endorsement of
+this specific patch series, just a generic observation.)
+
+-Frank
+
+> other than that you don't care enough to do the real work and are trying
+> to hack the driver core up instead.
+> 
+>> Sorry for the rant,
+> 
+> No apologies needed, it's cathartic at times :)
+> 
+> thanks,
+> 
+> greg k-h
+> .
+> 
