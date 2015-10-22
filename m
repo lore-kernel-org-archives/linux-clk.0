@@ -1,73 +1,140 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bn1on0134.outbound.protection.outlook.com ([157.56.110.134]:64486
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751380AbbJPCo3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 15 Oct 2015 22:44:29 -0400
-From: Hou Zhiqiang <B48286@freescale.com>
-To: Guenter Roeck <linux@roeck-us.net>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"will.deacon@arm.com" <will.deacon@arm.com>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-CC: "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"wsa@the-dreams.de" <wsa@the-dreams.de>,
-	"wim@iguana.be" <wim@iguana.be>, "corbet@lwn.net" <corbet@lwn.net>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	Hu Vincent <Mingkai.Hu@freescale.com>,
-	Shaohui Xie <Shaohui.Xie@freescale.com>,
-	"Scott Wood" <scottwood@freescale.com>,
-	Sharma Bhupesh <bhupesh.sharma@freescale.com>,
-	Wenbin Song <Wenbin.Song@freescale.com>
-Subject: RE: [PATCH V4 2/6] watchdog: Add support for Freescale Layerscape
- platforms
-Date: Fri, 16 Oct 2015 02:44:25 +0000
-Message-ID: <CY1PR0301MB0780DF1B1E70E26836DD261A8B3D0@CY1PR0301MB0780.namprd03.prod.outlook.com>
-References: <1444911181-21696-1-git-send-email-B48286@freescale.com>
- <1444911181-21696-2-git-send-email-B48286@freescale.com>
- <561FB74F.5000302@roeck-us.net>
-In-Reply-To: <561FB74F.5000302@roeck-us.net>
-Content-Type: text/plain; charset="gb2312"
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+To: Heiko Stuebner <heiko@sntech.de>, ulf.hansson@linaro.org,
+ sboyd@codeaurora.org, tgih.jun@samsung.com, jh80.chung@samsung.com
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1443622064-14362-2-git-send-email-heiko@sntech.de>
+Cc: linux-mmc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ dianders@chromium.org, amstan@chromium.org,
+ "Heiko Stuebner" <heiko@sntech.de>
+References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
+ <1443622064-14362-2-git-send-email-heiko@sntech.de>
+Message-ID: <20151022120326.20687.80247@quantum>
+Subject: Re: [PATCH v2 1/8] clk: rockchip: Allow more precision for some mmc clock
+ phases
+Date: Thu, 22 Oct 2015 05:03:26 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogR3VlbnRlciBSb2VjayBb
-bWFpbHRvOmxpbnV4QHJvZWNrLXVzLm5ldF0NCj4gU2VudDogMjAxNcTqMTDUwjE1yNUgMjI6MjUN
-Cj4gVG86IEhvdSBaaGlxaWFuZy1CNDgyODY7IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFk
-ZWFkLm9yZzsNCj4gY2F0YWxpbi5tYXJpbmFzQGFybS5jb207IHdpbGwuZGVhY29uQGFybS5jb207
-IGxpbnV4LWkyY0B2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4LXdhdGNoZG9nQHZnZXIua2VybmVs
-Lm9yZzsgbGludXgtZG9jQHZnZXIua2VybmVsLm9yZzsgbGludXgtDQo+IGNsa0B2Z2VyLmtlcm5l
-bC5vcmcNCj4gQ2M6IG1hcmsucnV0bGFuZEBhcm0uY29tOyB3c2FAdGhlLWRyZWFtcy5kZTsgd2lt
-QGlndWFuYS5iZTsNCj4gY29yYmV0QGx3bi5uZXQ7IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOyBz
-Ym95ZEBjb2RlYXVyb3JhLm9yZzsgSHUNCj4gTWluZ2thaS1CMjEyODQ7IFhpZSBTaGFvaHVpLUIy
-MTk4OTsgV29vZCBTY290dC1CMDc0MjE7IFNoYXJtYSBCaHVwZXNoLQ0KPiBCNDUzNzA7IFNvbmcg
-V2VuYmluLUI1Mzc0Nw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIFY0IDIvNl0gd2F0Y2hkb2c6IEFk
-ZCBzdXBwb3J0IGZvciBGcmVlc2NhbGUNCj4gTGF5ZXJzY2FwZSBwbGF0Zm9ybXMNCj4gDQo+IE9u
-IDEwLzE1LzIwMTUgMDU6MTIgQU0sIFpoaXFpYW5nIEhvdSB3cm90ZToNCj4gPiBGcm9tOiBTaGFv
-aHVpIFhpZSA8U2hhb2h1aS5YaWVAZnJlZXNjYWxlLmNvbT4NCj4gPg0KPiA+IE1vZGlmeSB3YXRj
-aGRvZy9LY29uZmlnIGZpbGUgdG8gc3VwcG9ydCBMYXllcnNjYXBlIHBsYXRmb3Jtcy4NCj4gPg0K
-PiA+IFNpZ25lZC1vZmYtYnk6IFNoYW9odWkgWGllIDxTaGFvaHVpLlhpZUBmcmVlc2NhbGUuY29t
-Pg0KPiA+IFNpZ25lZC1vZmYtYnk6IFdlbmJpbiBTb25nIDxXZW5iaW4uU29uZ0BmcmVlc2NhbGUu
-Y29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEhvdSBaaGlxaWFuZyA8QjQ4Mjg2QGZyZWVzY2FsZS5j
-b20+DQo+ID4gLS0tDQo+ID4gVGhpcyBwYXRjaCBoYXMgYmVlbiBhY2tlZCBpbiBWMyBieSBHdWVu
-dGVyIFJvZWNrIFtsaW51eEByb2Vjay11cy5uZXRdLg0KPiA+DQo+IEhlcmUgaXQgaXMgYWdhaW4s
-IGJ1dCBpZiB0aGVyZSBpcyBubyBjaGFuZ2UsIHBsZWFzZSBqdXN0IGFkZCB0aGUgQWNrIHRvDQo+
-IHN1YnNlcXVlbnQgdmVyc2lvbnMgb2YgdGhlIHBhdGNoLg0KPiANCg0KT2ssIHRoYW5rcy4NCg0K
-PiBBY2tlZC1ieTogR3VlbnRlciBSb2VjayA8bGludXhAcm9lY2stdXMubmV0Pg0KPiANCj4gDQo+
-ID4gVjQ6IFYzIFYyDQo+ID4gICAtIE5vIGNoYW5nZS4NCj4gPg0KPiA+ICAgZHJpdmVycy93YXRj
-aGRvZy9LY29uZmlnIHwgMiArLQ0KPiA+ICAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCsp
-LCAxIGRlbGV0aW9uKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy93YXRjaGRvZy9L
-Y29uZmlnIGIvZHJpdmVycy93YXRjaGRvZy9LY29uZmlnIGluZGV4DQo+ID4gNzllMWFhMS4uNDQ4
-ZGJhZiAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL3dhdGNoZG9nL0tjb25maWcNCj4gPiArKysg
-Yi9kcml2ZXJzL3dhdGNoZG9nL0tjb25maWcNCj4gPiBAQCAtNDQ2LDcgKzQ0Niw3IEBAIGNvbmZp
-ZyBNQVg2M1hYX1dBVENIRE9HDQo+ID4NCj4gPiAgIGNvbmZpZyBJTVgyX1dEVA0KPiA+ICAgCXRy
-aXN0YXRlICJJTVgyKyBXYXRjaGRvZyINCj4gPiAtCWRlcGVuZHMgb24gQVJDSF9NWEMNCj4gPiAr
-CWRlcGVuZHMgb24gQVJDSF9NWEMgfHwgQVJDSF9MQVlFUlNDQVBFDQo+ID4gICAJc2VsZWN0IFJF
-R01BUF9NTUlPDQo+ID4gICAJc2VsZWN0IFdBVENIRE9HX0NPUkUNCj4gPiAgIAloZWxwDQo+ID4N
-Cg0KVGhhbmtzLA0KWmhpcWlhbmcNCg==
+Quoting Heiko Stuebner (2015-09-30 07:07:37)
+> From: Douglas Anderson <dianders@chromium.org>
+> =
+
+> Because of the inexact nature of the extra MMC delay elements (it's
+> not possible to keep the phase monotonic and to also make phases (mod
+> 90) > 70), we previously only allowed phases (mod 90) of 22.5, 45,
+> and 67.5.
+> =
+
+> But it's not the end of the world if the MMC clock phase goes
+> non-monotonic.  At most we'll be 25 degrees off.  It's way better to
+> test more phases to look for bad ones than to be 25 degrees off, because
+> in the case of MMC really the point is to find bad phases and get as far
+> asway from the as possible.  If we get to test extra phases by going
+> slightly non-monotonic then that might be fine.  Worst case we would
+> end up at a phases that's slight differnt than the one we wanted, but
+> at least we'd still be quite far away from the a bad phase.
+> =
+
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> =
+
+> Fold in more precise variance-values of 44-77 instead of 40-80.
+> Fold in the actual removal of the monotonic requirement and adapt
+> patch message accordingly.
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+
+Looks good to me. What tree do you want this to go through?
+
+Regards,
+Mike
+
+> ---
+>  drivers/clk/rockchip/clk-mmc-phase.c | 45 ++++++++++++++++++++++++------=
+------
+>  1 file changed, 30 insertions(+), 15 deletions(-)
+> =
+
+> diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/=
+clk-mmc-phase.c
+> index 9b61342..a797d86 100644
+> --- a/drivers/clk/rockchip/clk-mmc-phase.c
+> +++ b/drivers/clk/rockchip/clk-mmc-phase.c
+> @@ -45,8 +45,8 @@ static unsigned long rockchip_mmc_recalc(struct clk_hw =
+*hw,
+>  #define PSECS_PER_SEC 1000000000000LL
+>  =
+
+>  /*
+> - * Each fine delay is between 40ps-80ps. Assume each fine delay is 60ps =
+to
+> - * simplify calculations. So 45degs could be anywhere between 33deg and =
+66deg.
+> + * Each fine delay is between 44ps-77ps. Assume each fine delay is 60ps =
+to
+> + * simplify calculations. So 45degs could be anywhere between 33deg and =
+57.8deg.
+>   */
+>  #define ROCKCHIP_MMC_DELAY_ELEMENT_PSEC 60
+>  =
+
+> @@ -84,22 +84,37 @@ static int rockchip_mmc_set_phase(struct clk_hw *hw, =
+int degrees)
+>         u32 raw_value;
+>         u64 delay;
+>  =
+
+> -       /* allow 22 to be 22.5 */
+> -       degrees++;
+> -       /* floor to 22.5 increment */
+> -       degrees -=3D ((degrees) * 10 % 225) / 10;
+> -
+>         nineties =3D degrees / 90;
+> -       /* 22.5 multiples */
+> -       remainder =3D (degrees % 90) / 22;
+> -
+> +       remainder =3D (degrees % 90);
+> +
+> +       /*
+> +        * Due to the inexact nature of the "fine" delay, we might
+> +        * actually go non-monotonic.  We don't go _too_ monotonic
+> +        * though, so we should be OK.  Here are options of how we may
+> +        * work:
+> +        *
+> +        * Ideally we end up with:
+> +        *   1.0, 2.0, ..., 69.0, 70.0, ...,  89.0, 90.0
+> +        *
+> +        * On one extreme (if delay is actually 44ps):
+> +        *   .73, 1.5, ..., 50.6, 51.3, ...,  65.3, 90.0
+> +        * The other (if delay is actually 77ps):
+> +        *   1.3, 2.6, ..., 88.6. 89.8, ..., 114.0, 90
+> +        *
+> +        * It's possible we might make a delay that is up to 25
+> +        * degrees off from what we think we're making.  That's OK
+> +        * though because we should be REALLY far from any bad range.
+> +        */
+> +
+> +       /*
+> +        * Convert to delay; do a little extra work to make sure we
+> +        * don't overflow 32-bit / 64-bit numbers.
+> +        */
+>         delay =3D PSECS_PER_SEC;
+> -       do_div(delay, rate);
+> -       /* / 360 / 22.5 */
+> -       do_div(delay, 16);
+> -       do_div(delay, ROCKCHIP_MMC_DELAY_ELEMENT_PSEC);
+> -
+>         delay *=3D remainder;
+> +       do_div(delay, 10000);
+> +       do_div(delay, (rate / 1000) * 36 * ROCKCHIP_MMC_DELAY_ELEMENT_PSE=
+C);
+> +
+>         delay_num =3D (u8) min(delay, 255ULL);
+>  =
+
+>         raw_value =3D delay_num ? ROCKCHIP_MMC_DELAY_SEL : 0;
+> -- =
+
+> 2.5.1
+>=20
