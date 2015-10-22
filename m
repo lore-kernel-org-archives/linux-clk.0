@@ -1,68 +1,91 @@
-Return-Path: <sbranden@broadcom.com>
-Subject: Re: [PATCH v3 08/10] clk: ns2: add clock support for Broadcom
- Northstar 2 SoC
-To: Jon Mason <jonmason@broadcom.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
- <1444938513-10758-9-git-send-email-jonmason@broadcom.com>
-CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
-	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
-From: Scott Branden <sbranden@broadcom.com>
-Message-ID: <56200F39.1060102@broadcom.com>
-Date: Thu, 15 Oct 2015 13:40:25 -0700
+Return-Path: <frowand.list@gmail.com>
+Return-Path: <frowand.list@gmail.com>
+Message-ID: <56282841.3060802@gmail.com>
+Date: Wed, 21 Oct 2015 17:05:21 -0700
+From: Frank Rowand <frowand.list@gmail.com>
+Reply-To: frowand.list@gmail.com
 MIME-Version: 1.0
-In-Reply-To: <1444938513-10758-9-git-send-email-jonmason@broadcom.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Return-Path: sbranden@broadcom.com
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+CC: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+ Mark Brown <broonie@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Alexandre Courbot <gnurou@gmail.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ David Airlie <airlied@linux.ie>,
+ =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom@nvidia.com>,
+ Stephen Warren <swarren@wwwdotorg.org>,
+ Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>,
+ Kishon Vijay Abraham I <kishon@ti.com>,
+ Sebastian Reichel <sre@kernel.org>,
+ Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+ David Woodhouse <dwmw2@infradead.org>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Felipe Balbi <balbi@ti.com>, Jingoo Han <jingoohan1@gmail.com>,
+ Lee Jones <lee.jones@linaro.org>,
+ Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+ Tomi Valkeinen <tomi.valkeinen@ti.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ dmaengine@vger.kernel.org,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ Linux I2C <linux-i2c@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ Linux PWM List <linux-pwm@vger.kernel.org>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ Linux Fbdev development list <linux-fbdev@vger.kernel.org>
+Subject: Re: Alternative approach to solve the deferred probe
+References: <20151019131821.GA32532@n2100.arm.linux.org.uk> <CAAObsKDS_+AZ26P_fHc6pvAYrQotsuoO0DEGQUWC514t3DD_jQ@mail.gmail.com> <20151019143045.GE32532@n2100.arm.linux.org.uk> <CAAObsKDWM6A98tdKHqi4fe5DBf0BmB0JeghcZDWan_PYbyshag@mail.gmail.com> <20151019153548.GM32532@n2100.arm.linux.org.uk> <CAMuHMdVv=ieYM-Nehp0qV8CEggHEeJ22j-6i_N09rRA_U=2ePw@mail.gmail.com> <20151020154656.GY32532@n2100.arm.linux.org.uk> <56270D5B.5010902@gmail.com> <20151021081847.GB32532@n2100.arm.linux.org.uk> <5627B0F7.7010600@gmail.com> <20151021203519.GO32532@n2100.arm.linux.org.uk>
+In-Reply-To: <20151021203519.GO32532@n2100.arm.linux.org.uk>
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-We need some sort of kconfig option to differentiate NS2 clock driver 
-from being pulled in all the time.
+On 10/21/2015 1:35 PM, Russell King - ARM Linux wrote:
+> On Wed, Oct 21, 2015 at 08:36:23AM -0700, Frank Rowand wrote:
+>> On 10/21/2015 1:18 AM, Russell King - ARM Linux wrote:
+>>> On Tue, Oct 20, 2015 at 08:58:19PM -0700, Frank Rowand wrote:
+>>>> On 10/20/2015 8:46 AM, Russell King - ARM Linux wrote:
+>>
+>> < snip >
+>>
+>>>>> +
+>>>>>  static bool driver_deferred_probe_enable = false;
+>>>>> +
+>>>>>  /**
+>>>>>   * driver_deferred_probe_trigger() - Kick off re-probing deferred devices
+>>>>>   *
+>>>>> @@ -188,6 +210,13 @@ static int deferred_probe_initcall(void)
+>>>>>  	driver_deferred_probe_trigger();
+>>>>
+>>>> Couldn't you put the "driver_deferred_probe_report = true" here?  And then
+>>>> not add another round of probes.
+>>>
+>>> The idea is not to report anything for drivers that were deferred
+>>> during the normal bootup.  The above is part of the normal bootup,
+>>> and the deferred activity should not be warned about.
+>>
+>> The above is currently the last point for probe to succeed or defer
+>> (until possibly, as you mentioned, module loading resolves the defer).
+>> If a probe defers above, it will defer again below.  The set of defers
+>> should be exactly the same above and below.
+> 
+> Why should it?
 
-On 15-10-15 12:48 PM, Jon Mason wrote:
-> The Broadcom Northstar 2 SoC is architected under the iProc
-> architecture. It has the following PLLs: GENPLL SCR, GENPLL SW,
-> LCPLL DDR, LCPLL Ports, all derived from an onboard crystal.
->
-> Signed-off-by: Jon Mason <jonmason@broadcom.com>
-> ---
->   drivers/clk/Makefile                |   2 +-
->   drivers/clk/bcm/Makefile            |   1 +
->   drivers/clk/bcm/clk-ns2.c           | 288 ++++++++++++++++++++++++++++++++++++
->   include/dt-bindings/clock/bcm-ns2.h |  72 +++++++++
->   4 files changed, 362 insertions(+), 1 deletion(-)
->   create mode 100644 drivers/clk/bcm/clk-ns2.c
->   create mode 100644 include/dt-bindings/clock/bcm-ns2.h
->
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index d08b3e5..6124bd3 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -47,7 +47,7 @@ obj-$(CONFIG_COMMON_CLK_WM831X)		+= clk-wm831x.o
->   obj-$(CONFIG_COMMON_CLK_XGENE)		+= clk-xgene.o
->   obj-$(CONFIG_COMMON_CLK_PWM)		+= clk-pwm.o
->   obj-$(CONFIG_COMMON_CLK_AT91)		+= at91/
-> -obj-$(CONFIG_ARCH_BCM)			+= bcm/
-> +obj-y					+= bcm/
->   obj-$(CONFIG_ARCH_BERLIN)		+= berlin/
->   obj-$(CONFIG_ARCH_HISI)			+= hisilicon/
->   obj-$(CONFIG_ARCH_MXC)			+= imx/
-> diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
-> index e258b28..2d1cbc5 100644
-> --- a/drivers/clk/bcm/Makefile
-> +++ b/drivers/clk/bcm/Makefile
-> @@ -3,6 +3,7 @@ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona-setup.o
->   obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm281xx.o
->   obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm21664.o
->   obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-iproc-armpll.o clk-iproc-pll.o clk-iproc-asiu.o
-> +obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-ns2.o
+My assertion was incorrect.  A probe in the deferral processing can
+result in the driver being placed on the new deferred list, then when
+a later probe of another deferred driver succeeds, the first driver
+will be moved to the active deferred list, and might succeed on
+the second probe attempt (or with the current messages would result
+in a second set of deferred messages).  So yes, placing
+"driver_deferred_probe_report = true" where your patch put it and
+running through the deferred probe processing again is correct.
 
-NS2 code is dragged in for all IPROC SoCs.  We need a config option for 
-NS2 (CONFIG_ARCH_BCM_NS2) to avoid this (if Arnd allows this for ARMv8 
-processors... ?).
-
-You can see below ARMv7 processors don't have this problem.
-
-If not we need to add CONFIG_CLK_NS2.
+-Frank
