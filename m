@@ -1,44 +1,55 @@
-Return-Path: <jszhang@marvell.com>
-From: Jisheng Zhang <jszhang@marvell.com>
-To: <ulf.hansson@linaro.org>, <sebastian.hesselbarth@gmail.com>,
-        <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Jisheng Zhang <jszhang@marvell.com>
-Subject: [PATCH 5/5] clk: berlin: bg2: remove CLK_IGNORE_UNUSED flag for sdio clk
-Date: Mon, 12 Oct 2015 13:46:36 +0800
-Message-ID: <1444628796-5484-6-git-send-email-jszhang@marvell.com>
-In-Reply-To: <1444628796-5484-1-git-send-email-jszhang@marvell.com>
-References: <1444628796-5484-1-git-send-email-jszhang@marvell.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+To: York Sun <yorksun@freescale.com>,  sboyd@codeaurora.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1444240750-30842-1-git-send-email-yorksun@freescale.com>
+Cc: linux-clk@vger.kernel.org, "York Sun" <yorksun@freescale.com>,
+ "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
+ "Guenter Roeck" <linux@roeck-us.net>, "Andrey Filippov" <andrey@elphel.com>,
+ "Paul Bolle" <pebolle@tiscali.nl>
+References: <1444240750-30842-1-git-send-email-yorksun@freescale.com>
+Message-ID: <20151022164642.20687.57688@quantum>
+Subject: Re: [Patch v6] driver/clk/clk-si5338: Add common clock framework driver for
+ si5338
+Date: Thu, 22 Oct 2015 09:46:42 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-The axi clock properties already exists, so there's no need to set this
-flag for sdio0 and sdio1 clk any more.
+Hello York Sun,
 
-Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
----
- drivers/clk/berlin/bg2.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Quoting York Sun (2015-10-07 10:59:10)
+> +static const struct clk_ops si5338_xtal_ops =3D {
+> +       .prepare =3D si5338_xtal_prepare,
 
-diff --git a/drivers/clk/berlin/bg2.c b/drivers/clk/berlin/bg2.c
-index 73153fc..23e0e3b 100644
---- a/drivers/clk/berlin/bg2.c
-+++ b/drivers/clk/berlin/bg2.c
-@@ -490,8 +490,8 @@ static const struct berlin2_gate_data bg2_gates[] __initconst = {
- 	{ "usb0",	"perif",	11 },
- 	{ "usb1",	"perif",	12 },
- 	{ "pbridge",	"perif",	13, CLK_IGNORE_UNUSED },
--	{ "sdio0",	"perif",	14, CLK_IGNORE_UNUSED },
--	{ "sdio1",	"perif",	15, CLK_IGNORE_UNUSED },
-+	{ "sdio0",	"perif",	14 },
-+	{ "sdio1",	"perif",	15 },
- 	{ "nfc",	"perif",	17 },
- 	{ "smemc",	"perif",	19 },
- 	{ "audiohd",	"audiohd_pll",	26 },
--- 
-2.6.1
+There are many instances of .prepare where there is no matching
+.unprepare. Why is that? And what are these .prepare callbacks doing?
+Are they changing rates or just enabling the clock signals?
+
+> +static const struct clk_ops si5338_clkout_ops =3D {
+> +       .prepare =3D si5338_clkout_prepare,
+> +       .unprepare =3D si5338_clkout_unprepare,
+> +       .enable =3D si5338_clkout_enable,
+> +       .disable =3D si5338_clkout_disable,
+
+This is an i2c device, so I'm confused how an .enable or .disable
+callback is appropriate.
+
+> +       /*
+> +        * To form clock names, concatentate name prefix with each name.
+> +        * The result string is up to MAX_NAME_LENGTH including terminati=
+on.
+> +        */
+> +
+> +       /* Register xtal input clock */
+> +       if (!IS_ERR_OR_NULL(drvdata->pxtal)) {
+> +               strlcpy(register_name, drvdata->name_prefix, MAX_NAME_PRE=
+FIX);
+> +               strncat(register_name, si5338_input_names[4], STRNCAT_LEN=
+GTH);
+> +               drvdata->pxtal_name =3D __clk_get_name(drvdata->pxtal);
+
+I don't really understand what's going on here. Why is this necessary?
+Are you not able to get this info from DT?
+
+Regards,
+Mike
