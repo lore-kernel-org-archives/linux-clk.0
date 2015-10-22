@@ -1,272 +1,134 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:26010 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750970AbbJWNDS (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 23 Oct 2015 09:03:18 -0400
-MIME-version: 1.0
-Content-type: text/plain; charset=utf-8
-Subject: Re: [PATCH 10/10] drm/exynos/decon5433: add support for DECON-TV
-To: Inki Dae <inki.dae@samsung.com>
-References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
- <1445332961-25419-11-git-send-email-a.hajda@samsung.com>
- <562A203B.7060505@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Hyungwon Hwang <human.hwang@samsung.com>
-From: Andrzej Hajda <a.hajda@samsung.com>
-Message-id: <562A300F.2000108@samsung.com>
-Date: Fri, 23 Oct 2015 15:03:11 +0200
-In-reply-to: <562A203B.7060505@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Geert Uytterhoeven <geert@linux-m68k.org>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <CAMuHMdWgf8DOhaDLcQ=qJx0r7G0zK_yfWRpVOPBV--SW2Rw1kA@mail.gmail.com>
+Cc: "Russell King - ARM Linux" <linux@arm.linux.org.uk>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk" <linux-clk@vger.kernel.org>,
+ "Stephen Boyd" <sboyd@codeaurora.org>, "Lee Jones" <lee.jones@linaro.org>,
+ "Maxime Ripard" <maxime.ripard@free-electrons.com>,
+ "Sascha Hauer" <s.hauer@pengutronix.de>, "Sekhar Nori" <nsekhar@ti.com>,
+ "Kevin Hilman" <khilman@kernel.org>,
+ "Santosh Shilimkar" <ssantosh@kernel.org>,
+ "Tony Lindgren" <tony@atomide.com>,
+ "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "Linux-sh list" <linux-sh@vger.kernel.org>,
+ "Linux PM list" <linux-pm@vger.kernel.org>
+References: <1438974570-20812-1-git-send-email-mturquette@baylibre.com>
+ <1438974570-20812-3-git-send-email-mturquette@baylibre.com>
+ <CAMuHMdX8Fq3AfxuZMLe4-CYFzrDiQcwnREQhX5fSGXzYNSkKsA@mail.gmail.com>
+ <20151020124000.20687.60752@quantum>
+ <CAMuHMdWd9LxrSWO5snriW+fb_d8FtMeXUBjp3M-Oeahh+FzJcw@mail.gmail.com>
+ <20151021105932.GP32536@n2100.arm.linux.org.uk>
+ <20151021155057.20687.14055@quantum>
+ <CAMuHMdWgf8DOhaDLcQ=qJx0r7G0zK_yfWRpVOPBV--SW2Rw1kA@mail.gmail.com>
+Message-ID: <20151022095701.20687.92456@quantum>
+Subject: Re: [PATCH RFC RFT 2/3] clk: clk_put WARNs if user has not disabled clk
+Date: Thu, 22 Oct 2015 02:57:01 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/23/2015 01:55 PM, Inki Dae wrote:
-> Hi Andrzej,
->
->
-> 2015년 10월 20일 18:22에 Andrzej Hajda 이(가) 쓴 글:
->> DECON-TV IP is responsible for generating video stream which is transferred
->> to HDMI IP. It is almost fully compatible with DECON IP.
->>
->> The patch is based on initial work of Hyungwon Hwang.
->>
->> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->> ---
->>   drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 154 ++++++++++++++++----------
->>   include/video/exynos5433_decon.h              |  29 +++++
->>   2 files changed, 122 insertions(+), 61 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
->> index 3c9aa4e..fbe1b31 100644
->> --- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
->> +++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
->> @@ -13,6 +13,7 @@
->>   #include <linux/platform_device.h>
->>   #include <linux/clk.h>
->>   #include <linux/component.h>
->> +#include <linux/of_device.h>
->>   #include <linux/of_gpio.h>
->>   #include <linux/pm_runtime.h>
->>
->> @@ -37,6 +38,12 @@ static const char * const decon_clks_name[] = {
->>   	"sclk_decon_eclk",
->>   };
->>
->> +enum decon_iftype {
->> +	IFTYPE_RGB,
->> +	IFTYPE_I80,
->> +	IFTYPE_HDMI
->> +};
->> +
->>   enum decon_flag_bits {
->>   	BIT_CLKS_ENABLED,
->>   	BIT_IRQS_ENABLED,
->> @@ -53,7 +60,8 @@ struct decon_context {
->>   	struct clk			*clks[ARRAY_SIZE(decon_clks_name)];
->>   	int				pipe;
->>   	unsigned long			flags;
->> -	bool				i80_if;
->> +	enum decon_iftype		out_type;
->> +	int				first_win;
->>   };
->>
->>   static const uint32_t decon_formats[] = {
->> @@ -80,7 +88,7 @@ static int decon_enable_vblank(struct exynos_drm_crtc *crtc)
->>
->>   	if (test_and_set_bit(BIT_IRQS_ENABLED, &ctx->flags)) {
->>   		val = VIDINTCON0_INTEN;
->> -		if (ctx->i80_if)
->> +		if (ctx->out_type == IFTYPE_I80)
->>   			val |= VIDINTCON0_FRAMEDONE;
->>   		else
->>   			val |= VIDINTCON0_INTFRMEN;
->> @@ -104,8 +112,11 @@ static void decon_disable_vblank(struct exynos_drm_crtc *crtc)
->>
->>   static void decon_setup_trigger(struct decon_context *ctx)
->>   {
->> -	u32 val = TRIGCON_TRIGEN_PER_F | TRIGCON_TRIGEN_F |
->> -			TRIGCON_TE_AUTO_MASK | TRIGCON_SWTRIGEN;
->> +	u32 val = (ctx->out_type != IFTYPE_HDMI)
->> +		? TRIGCON_TRIGEN_PER_F | TRIGCON_TRIGEN_F |
->> +		  TRIGCON_TE_AUTO_MASK | TRIGCON_SWTRIGEN
->> +		: TRIGCON_TRIGEN_PER_F | TRIGCON_TRIGEN_F |
->> +		  TRIGCON_HWTRIGMASK_I80_RGB | TRIGCON_HWTRIGEN_I80_RGB;
->>   	writel(val, ctx->addr + DECON_TRIGCON);
->>   }
->>
->> @@ -118,13 +129,22 @@ static void decon_commit(struct exynos_drm_crtc *crtc)
->>   	if (test_bit(BIT_SUSPENDED, &ctx->flags))
->>   		return;
->>
->> +	if (ctx->out_type == IFTYPE_HDMI) {
->> +		m->crtc_hsync_start = m->crtc_hdisplay + 10;
->> +		m->crtc_hsync_end = m->crtc_htotal - 92;
->> +		m->crtc_vsync_start = m->crtc_vdisplay + 1;
->> +		m->crtc_vsync_end = m->crtc_vsync_start + 1;
->> +	}
->> +
->> +	decon_set_bits(ctx, DECON_VIDCON0, VIDCON0_ENVID, 0);
->> +
->>   	/* enable clock gate */
->>   	val = CMU_CLKGAGE_MODE_SFR_F | CMU_CLKGAGE_MODE_MEM_F;
->>   	writel(val, ctx->addr + DECON_CMU);
->>
->>   	/* lcd on and use command if */
->>   	val = VIDOUT_LCD_ON;
->> -	if (ctx->i80_if)
->> +	if (ctx->out_type == IFTYPE_I80)
->>   		val |= VIDOUT_COMMAND_IF;
->>   	else
->>   		val |= VIDOUT_RGB_IF;
->> @@ -134,7 +154,7 @@ static void decon_commit(struct exynos_drm_crtc *crtc)
->>   		VIDTCON2_HOZVAL(m->hdisplay - 1);
->>   	writel(val, ctx->addr + DECON_VIDTCON2);
->>
->> -	if (!ctx->i80_if) {
->> +	if (ctx->out_type != IFTYPE_I80) {
->>   		val = VIDTCON00_VBPD_F(
->>   				m->crtc_vtotal - m->crtc_vsync_end - 1) |
->>   			VIDTCON00_VFPD_F(
->> @@ -159,15 +179,9 @@ static void decon_commit(struct exynos_drm_crtc *crtc)
->>   	decon_setup_trigger(ctx);
->>
->>   	/* enable output and display signal */
->> -	val = VIDCON0_ENVID | VIDCON0_ENVID_F;
->> -	writel(val, ctx->addr + DECON_VIDCON0);
->> +	decon_set_bits(ctx, DECON_VIDCON0, VIDCON0_ENVID | VIDCON0_ENVID_F, ~0);
->>   }
->>
->> -#define COORDINATE_X(x)		(((x) & 0xfff) << 12)
->> -#define COORDINATE_Y(x)		((x) & 0xfff)
->> -#define OFFSIZE(x)		(((x) & 0x3fff) << 14)
->> -#define PAGEWIDTH(x)		((x) & 0x3fff)
->> -
->>   static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned int win,
->>   				 struct drm_framebuffer *fb)
->>   {
->> @@ -238,6 +252,10 @@ static void decon_atomic_begin(struct exynos_drm_crtc *crtc,
->>   	decon_shadow_protect_win(ctx, plane->zpos, true);
->>   }
->>
->> +#define BIT_VAL(x, e, s) (((x) & ((1 << ((e) - (s) + 1)) - 1)) << (s))
->> +#define COORDINATE_X(x) BIT_VAL((x), 23, 12)
->> +#define COORDINATE_Y(x) BIT_VAL((x), 11, 0)
->> +
->>   static void decon_update_plane(struct exynos_drm_crtc *crtc,
->>   			       struct exynos_drm_plane *plane)
->>   {
->> @@ -271,8 +289,12 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc,
->>   	val = plane->dma_addr[0] + pitch * plane->crtc_h;
->>   	writel(val, ctx->addr + DECON_VIDW0xADD1B0(win));
->>
->> -	val = OFFSIZE(pitch - plane->crtc_w * bpp)
->> -		| PAGEWIDTH(plane->crtc_w * bpp);
->> +	if (ctx->out_type != IFTYPE_HDMI)
->> +		val = BIT_VAL(pitch - plane->crtc_w * bpp, 27, 14)
->> +			| BIT_VAL(plane->crtc_w * bpp, 13, 0);
->> +	else
->> +		val = BIT_VAL(pitch - plane->crtc_w * bpp, 29, 15)
->> +			| BIT_VAL(plane->crtc_w * bpp, 14, 0);
->>   	writel(val, ctx->addr + DECON_VIDW0xADD2(win));
->>
->>   	decon_win_set_pixfmt(ctx, win, state->fb);
->> @@ -314,7 +336,7 @@ static void decon_atomic_flush(struct exynos_drm_crtc *crtc,
->>
->>   	decon_shadow_protect_win(ctx, plane->zpos, false);
->>
->> -	if (ctx->i80_if)
->> +	if (ctx->out_type == IFTYPE_I80)
->>   		set_bit(BIT_WIN_UPDATED, &ctx->flags);
->>   }
->>
->> @@ -339,6 +361,17 @@ static void decon_swreset(struct decon_context *ctx)
->>   	}
->>
->>   	WARN(tries == 0, "failed to software reset DECON\n");
->> +
->> +	if (ctx->out_type != IFTYPE_HDMI)
->> +		return;
->> +
->> +	writel(VIDCON0_CLKVALUP | VIDCON0_VLCKFREE, ctx->addr + DECON_VIDCON0);
->> +	decon_set_bits(ctx, DECON_CMU,
->> +		       CMU_CLKGAGE_MODE_SFR_F | CMU_CLKGAGE_MODE_MEM_F, ~0);
->> +	writel(VIDCON1_VCLK_RUN_VDEN_DISABLE, ctx->addr + DECON_VIDCON1);
->> +	writel(CRCCTRL_CRCEN | CRCCTRL_CRCSTART_F | CRCCTRL_CRCCLKEN,
->> +	       ctx->addr + DECON_CRCCTRL);
->> +	decon_setup_trigger(ctx);
->>   }
->>
->>   static void decon_enable(struct exynos_drm_crtc *crtc)
->> @@ -387,7 +420,7 @@ static void decon_disable(struct exynos_drm_crtc *crtc)
->>   	 * suspend that connector. Otherwise we might try to scan from
->>   	 * a destroyed buffer later.
->>   	 */
->> -	for (i = 0; i < WINDOWS_NR; i++)
->> +	for (i = ctx->first_win; i < WINDOWS_NR; i++)
->>   		decon_disable_plane(crtc, &ctx->planes[i]);
->>
->>   	decon_swreset(ctx);
->> @@ -461,25 +494,30 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
->>   	struct drm_device *drm_dev = data;
->>   	struct exynos_drm_private *priv = drm_dev->dev_private;
->>   	struct exynos_drm_plane *exynos_plane;
->> +	enum exynos_drm_output_type out_type;
->>   	enum drm_plane_type type;
->> -	unsigned int zpos;
->> +	unsigned int win;
->>   	int ret;
->>
->>   	ctx->drm_dev = drm_dev;
->>   	ctx->pipe = priv->pipe++;
->>
->> -	for (zpos = 0; zpos < WINDOWS_NR; zpos++) {
->> -		type = exynos_plane_get_type(zpos, CURSOR_WIN);
->> -		ret = exynos_plane_init(drm_dev, &ctx->planes[zpos],
->> +	for (win = ctx->first_win; win < WINDOWS_NR; win++) {
->> +		int tmp = (win == ctx->first_win) ? 0 : win;
-> AFAIK, DECON TV for Exynos5433 SoC has four hardware overlays so I guess 
-> you used ctx->first_win to initialize four planes in case of IFTYPE_HDMI.
->
-> However, with IFTYPE_HDMI ctx->first_win has 1, as a result, 
-> ctx->planes[] will have 0, 2nd, 3rd and 4th planes and this means we 
-> should use 0, 2nd ~ 4th hardware overlay excepting 1st overlay. Is this 
-> your intention?
-> Shouldn't ctx->planes[] have 1st, 2nd ,3rd and 4th planes so that we can 
-> use 1st ~ 4th hardware overlay for DECON TV?
->
-> DECON TV for Exynos5433 SoC can use only 1st ~ 4th hardware overlays.
->
-> And other thing, it may be trivial but I think it'd be better to use 
-> 'ovl' instead of 'tmp.
+Quoting Geert Uytterhoeven (2015-10-21 09:46:35)
+> Hi Mike,
+> =
 
-DECON-TV has hardware window 0 with very limited functionality,
-it is just background color, no scanout buffers. So it cannot be used
-as drm plane. ctx->first_win contains value of the 1st valid window.
-There is a question how to map windows to planes. I have chosen
-the simplest solution - n'th hw window is mapped to n'th plane and have
-zpos==n. The only problem is with function exynos_plane_get_type,
-which returns DRM_PLANE_TYPE_PRIMARY only if their 1st argument is equal 0,
-ie it assumes default window is always 0.
-As an simple workaround I used 'tmp' variable which maps 1st window to 0.
-This way exynos_plane_get_type returns expected value for all windows.
-I plan replace this workaround with something nicer, but as it would involve
-changes in other drivers I left this as TODO for later.
-Regarding ctx->planes[], it is static array so it will have always one entry
-invalid in case of TV, with this approach it will be th 0th entry, but with a gain
-of consistency in windows/zpos/planes numbering.
-If you prefer different approach please let me know.
+> On Wed, Oct 21, 2015 at 5:50 PM, Michael Turquette
+> <mturquette@baylibre.com> wrote:
+> > Quoting Russell King - ARM Linux (2015-10-21 03:59:32)
+> >> On Wed, Oct 21, 2015 at 11:50:07AM +0200, Geert Uytterhoeven wrote:
+> >> > On Tue, Oct 20, 2015 at 2:40 PM, Michael Turquette
+> >> > <mturquette@baylibre.com> wrote:
+> >> > > Why not keep the reference to the struct clk after get'ing it the =
+first
+> >> > > time?
+> >> >
+> >> > And store it where?
+> >>
+> >> Not my problem :)
+> >>
+> >> Users are supposed to hold on to the reference obtained via clk_get()
+> >> while they're making use of the clock: in some implementations, this
+> >> increments the module use count if the clock driver is a module, and
+> >> may have other effects too.
+> >>
+> >> Dropping that while you're still requiring the clock to be enabled is
+> >> unsafe: if it is provided by a module, then removing and reinserting
+> >> the module may very well change the enabled state of the clock, it
+> >> most certainly will disrupt the enable count.
+> >>
+> >> It's always been this way, right from the outset, and when I've seen
+> >> people doing this bollocks, I've always pointed out that it's wrong.
+> >> Generally, people will fix it once they become aware of it, so it's
+> >> really that people just don't like reading and conforming to published
+> >> API requirements.
+> >>
+> >> I think the root cause is that people just don't like reading what
+> >> other people write in terms of documentation, and they prefer to go
+> >> off and do their own thing, provided it works for them.
+> >
+> > Right, so in other words this problem must be solved by the caller of
+> > clk_get, as it should be. I have never much looked at the pm clk code in
+> > question, but I gave it a quick look and came up with some example code
+> > that does not compile, in an effort to be as helpful as possible.
+> >
+> > Basically I added a flex array to struct pm_clk_notifier_block, so that
+> > now there are two flex arrays which is stupid. But I am too lazy to
+> > replace the nbclk->clks thing with a malloc after walking all of the
+> > clk_id's to figure out the number of clocks. Or we could just add
+> > .num_clk to the struct, fix up all 4 users of it and drop the NULL
+> > sentinel used the .clk_id's... Hmm that would have been better.
+> =
 
-Regards
-Andrzej
+> Thanks for trying.
+> =
 
->
-> Thanks,
-> Inki Dae
->
+> > index 25266c6..45e58fe 100644
+> > --- a/include/linux/pm_clock.h
+> > +++ b/include/linux/pm_clock.h
+> > @@ -16,6 +16,7 @@ struct pm_clk_notifier_block {
+> >         struct notifier_block nb;
+> >         struct dev_pm_domain *pm_domain;
+> >         char *con_ids[];
+> > +       struct clk *clks[];
+> >  };
+> >
+> >  struct clk;
+> =
 
+> Unfortunately that won't work: while the .con_ids[] array is per-platform,
+> the .clks[] array should be per-device. I.e. it should be tied to the str=
+uct
+> device, not to the struct pm_clk_notifier_block.
+
+Well you're right about that. But the problem needs to be solved at some
+point. There is no good technical reason for this violation to occur
+other than, "it's been this way for a while now, so let's keep it".
+Essentially it's blocking the per-user imbalance checks that I'd like to
+merge.
+
+Or we could accept lots of noisy warns for the CONFIG_PM=3Dn case.
+
+Regards,
+Mike
+
+> =
+
+> Gr{oetje,eeting}s,
+> =
+
+>                         Geert
+> =
+
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+> =
+
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
