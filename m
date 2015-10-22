@@ -1,73 +1,56 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-Message-ID: <562FD230.5090202@gmail.com>
-Date: Tue, 27 Oct 2015 12:36:16 -0700
-From: Florian Fainelli <f.fainelli@gmail.com>
+Return-Path: <jonmason@broadcom.com>
+Date: Thu, 22 Oct 2015 10:16:19 -0400
+From: Jon Mason <jonmason@broadcom.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Michael Turquette <mturquette@baylibre.com>, Florian Fainelli
+	<f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui
+	<rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>
+Subject: Re: [PATCH v3 0/10] clk: iproc: add support for BCM NS, NSP, and NS2
+Message-ID: <20151022141618.GC651@broadcom.com>
+References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
+ <20151021235144.GQ19782@codeaurora.org>
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>,
- Florian Fainelli <f.fainelli@gmail.com>
-CC: linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
- devicetree@vger.kernel.org, jonmason@broadcom.com,
- mturquette@baylibre.com, linux@arm.linux.org.uk, sbranden@broadcom.com,
- rjui@broadcom.com
-Subject: Re: [PATCH v2 2/3] clk: bcm: Add BCM63138 clock support
-References: <1445917997-3629-1-git-send-email-f.fainelli@gmail.com> <1445917997-3629-3-git-send-email-f.fainelli@gmail.com> <20151027174659.GM19782@codeaurora.org>
-In-Reply-To: <20151027174659.GM19782@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20151021235144.GQ19782@codeaurora.org>
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 27/10/15 10:46, Stephen Boyd wrote:
-> On 10/26, Florian Fainelli wrote:
->> diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
->> index 85260fb96b36..a0c18528b70d 100644
->> --- a/drivers/clk/bcm/Kconfig
->> +++ b/drivers/clk/bcm/Kconfig
->> @@ -1,3 +1,13 @@
->> +config CLK_BCM_63XX
->> +	bool "Broadcom BCM63xx clock support"
->> +	depends on ARCH_BCM_63XX || COMPILE_TEST
->> +	depends on COMMON_CLK
->> +	select COMMON_CLK_IPROC
->> +	default y
+On Wed, Oct 21, 2015 at 04:51:44PM -0700, Stephen Boyd wrote:
+> On 10/15, Jon Mason wrote:
+> > 
+> > v3 - Added a patch to fix cygnus clk link failures, and added back the
+> > DT documentation patches that were removed from v2.
+> > 
+> > v2 - Added a patch to change the Cygnus clk macros to uppercase,
+> > removed the device tree changes from the series (will send out those as
+> > an RFC), and other minor changes that Stephen Boyd requested.
+> > 
+> > This patch series adds support for the Broadcom Northstar, Northstar
+> > Plus, and Northstar 2 clocks.  Some slight modifications were necessary
+> > to clk-iproc-pll to get Northstar and Northstar Plus working, due to
+> > differences in register layout.  This is the reason why the first patch
+> > is necessary.  Some more modifications were necessary to clk-iproc-pll
+> > to get Northstar 2 working, due to differences in register layout (and
+> > resulting fallout in Cygnus and NSP).  This is the reason why the sixth
+> > and seventh patches are necessary.  The fifth patch is clean-up to
+> > prevent accidentally forgetting to adjust for the base write errata
+> > (which happened a few times, but was caught in internal review).
+> > 
 > 
-> perhaps default CLK_BCM_63XX?
+> Can you please use git cover-letter format where the diffstat for
+> the series is shown? Without that information here I started
+> applying patches until I realized this added dt-bindings headers,
+> thus probably needing some stable clk branch to pull into arm-soc.
 
-Did you mean default ARCH_BCM_63XX instead?
+My apologies.  I will do so in the future.
+
+Thanks,
+Jon
 
 > 
->> +	help
->> +	  Enable common clock framework support for Broadcom BCM63xx DSL SoCs
->> +	  based on the ARM architecture
->> +
->>  config CLK_BCM_KONA
->>  	bool "Broadcom Kona CCU clock support"
->>  	depends on ARCH_BCM_MOBILE || COMPILE_TEST
->> diff --git a/drivers/clk/bcm/clk-bcm63xx.c b/drivers/clk/bcm/clk-bcm63xx.c
->> new file mode 100644
->> index 000000000000..b7e0469d0522
->> --- /dev/null
->> +++ b/drivers/clk/bcm/clk-bcm63xx.c
->> @@ -0,0 +1,22 @@
->> +/*
->> + * Copyright (C) 2015 Broadcom Corporation
->> + *
->> + * This program is free software; you can redistribute it and/or
->> + * modify it under the terms of the GNU General Public License as
->> + * published by the Free Software Foundation version 2.
->> + *
->> + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
->> + * kind, whether express or implied; without even the implied warranty
->> + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> + * GNU General Public License for more details.
->> + */
->> +#include <linux/kernel.h>
->> +#include <linux/clk-provider.h>
->> +#include <linux/of.h>
-> 
-> #include <linux/init.h> ?
-> 
-> I'm not sure what the kernel.h include is for.
-
-Nothing, init.h is what should be included instead.
--- 
-Florian
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
