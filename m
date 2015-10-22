@@ -1,96 +1,64 @@
-Return-Path: <alim.akhtar@samsung.com>
-Message-id: <562F0B7C.9080307@samsung.com>
-Date: Tue, 27 Oct 2015 10:58:28 +0530
-From: Alim Akhtar <alim.akhtar@samsung.com>
-MIME-version: 1.0
-To: Lee Jones <lee.jones@linaro.org>
-Cc: broonie@kernel.org, k.kozlowski@samsung.com, mturquette@baylibre.com,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org,
- Thomas Abraham <thomas.ab@samsung.com>
-Subject: Re: [PATCH v2 2/5] mfd: sec: Add support for S2MPS15 PMIC
-References: <1445855803-26973-1-git-send-email-alim.akhtar@samsung.com>
- <1445855803-26973-3-git-send-email-alim.akhtar@samsung.com>
- <20151026110611.GH597@x1> <562E1F84.2000105@samsung.com>
- <20151026142930.GJ597@x1>
-In-reply-to: <20151026142930.GJ597@x1>
-Content-type: text/plain; charset=UTF-8; format=flowed
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 22 Oct 2015 10:36:47 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: Remove clk_{register,unregister}_multiplier()
+Message-ID: <20151022083647.GQ10947@lukather>
+References: <1445470433-28374-1-git-send-email-sboyd@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="rUztinBX/EQDJOOk"
+In-Reply-To: <1445470433-28374-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello
 
-On 10/26/2015 07:59 PM, Lee Jones wrote:
-> On Mon, 26 Oct 2015, Alim Akhtar wrote:
->
->> Hi Lee,
->> Thanks for looking into this.
->>
->> On 10/26/2015 04:36 PM, Lee Jones wrote:
->>> On Mon, 26 Oct 2015, Alim Akhtar wrote:
->>>
->>>> From: Thomas Abraham <thomas.ab@samsung.com>
->>>>
->>>> Add support for S2MPS15 PMIC which is similar to S2MPS11 PMIC. The S2MPS15
->>>> PMIC supports 27 LDO regulators, 10 buck regulators, RTC, three 32.768KHz
->>>> clock outputs and battery charger. This patch adds initial support for
->>>> LDO and buck regulators of S2MPS15 device.
->>>>
->>>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
->>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->>>> [Alim: Added s2mps15_devs like rtc and clk and related changes]
->>>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>> ---
->>>>   drivers/mfd/sec-core.c              |   31 +++++++
->>>>   drivers/mfd/sec-irq.c               |    8 ++
->>>>   include/linux/mfd/samsung/core.h    |    1 +
->>>>   include/linux/mfd/samsung/s2mps15.h |  161 +++++++++++++++++++++++++++++++++++
->>>>   4 files changed, 201 insertions(+)
->>>>   create mode 100644 include/linux/mfd/samsung/s2mps15.h
->>>>
->>>> diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
->>>> index 2626fc0b5b8c..db3d4d4ff805 100644
->>>> --- a/drivers/mfd/sec-core.c
->>>> +++ b/drivers/mfd/sec-core.c
->>>> @@ -29,6 +29,7 @@
->>>>   #include <linux/mfd/samsung/s2mps11.h>
->>>>   #include <linux/mfd/samsung/s2mps13.h>
->>>>   #include <linux/mfd/samsung/s2mps14.h>
->>>> +#include <linux/mfd/samsung/s2mps15.h>
->>>>   #include <linux/mfd/samsung/s2mpu02.h>
->>>>   #include <linux/mfd/samsung/s5m8763.h>
->>>>   #include <linux/mfd/samsung/s5m8767.h>
->>>> @@ -96,6 +97,17 @@ static const struct mfd_cell s2mps14_devs[] = {
->>>>   	}
->>>>   };
->>>>
->>>> +static const struct mfd_cell s2mps15_devs[] = {
->>>> +	{
->>>> +		.name = "s2mps15-pmic",
->>>> +	}, {
->>>> +		.name = "s2mps15-rtc",
->>>> +	}, {
->>>
->>> Why don't these have compatibles?
->>>
->> s2mps15-pmic does have compatible below in sec_dt_match[].
->
-> Woah!!  What's going on here?  You're matching the MFD and Regulator
-> drivers with the same compatible string.  And then registering the
-> Regulator device as an MFD.  That's a bit confusing don't you think?
->
-Sorry for the confusion, as explained in the binding documentation,
-S2MPS15 is a multi-function device which has rtc, regulator and clk 
-provider as a sub-blocks. And each of these sub-blocks are represented
-as child node of parent MFD node. Out of these only clk controller child 
-node needs its own compatible string to populate of_node structure of 
-the device so that it can access properties of this sub-node in 
-drivers/clk/clk-s2mps11.c.
-I just followed "Documentation/devicetree/bindings/mfd/s2mps11.txt"
-to implement s2mps15.
+--rUztinBX/EQDJOOk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi!
 
->> s2mps15-rtc does not need one as rtc driver does not support OF yet.
->> So no DT node for this as of now.
->
-> [...]
->
+On Wed, Oct 21, 2015 at 04:33:53PM -0700, Stephen Boyd wrote:
+> These APIs aren't used, so remove them. This can be reverted if
+> we get a user at some point.
+>=20
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Suggested-by: Michael Turquette <mturquette@baylibre.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+
+Reviewed-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--rUztinBX/EQDJOOk
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWKKAfAAoJEBx+YmzsjxAg8EIP/0fkuCWP7Z6+uAY/iV88uuO8
+2Hw5ZShacelvjayRD+gFPSj8zKYVZ4g1blUKod6aaMNvv6113peKud5ovYTE/bv8
+QZ/JMXW9d+V1QVUgKs84x95ggakTPWpkKbifOYW/M06QCpS4+6MumL2dy/fKuJN0
+udvbUz4UXn51GiWp8j7FlypWRVGkF2lPF1O/hjIrrRlMFk1d/87zzA6N0pPT326p
+VbUbvbp8LNgE1MgupASIyueEaJtFoXXIUIzXAhcNesqVU9vfQmwoGg/LPz7kwQ22
+UFWkVRxWjzFQ5IML05Nz6YuU6Q8iaya/g6QjUbSt9afam84RfFWUkXYCA4Xq0+Rm
+byA1r5UFftaYc6QtwY1hCfLs6nWup6CPaU/Lo7QgrB/wvVfQWVbobr/JTwWlP+Io
+ydUloAIxXkcATJ9i/N4xhqNWhfH2jsMqFG5es9PMpe/WCIOCPorRoKPkxF/cuajF
+hKu/FEPeUSwn0ItgzerqHpflxGFGTDrcA7SFU0JAMjV87iro7gyxW2pb1y1bWxYn
+zcMZhy9mADaxTF4ZEDH/xHXU87PmnhijN6bSpHvplHvhyC2UpI/TTzTMzzAv9c+i
+8xflNIbepsTVqURNb8FLpW5GQBYupDwxCgolC6ziLozeGtpDJ/W+J7AdRDsgIPn3
+SSssFDysh/6MvbCO2XwW
+=nudM
+-----END PGP SIGNATURE-----
+
+--rUztinBX/EQDJOOk--
