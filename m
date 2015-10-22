@@ -1,90 +1,32 @@
-Return-Path: <gregkh@linuxfoundation.org>
-Date: Thu, 22 Oct 2015 07:44:05 -0700
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: Frank Rowand <frowand.list@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>,
-	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	Linux PWM List <linux-pwm@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-Subject: Re: [GIT PULL] On-demand device probing
-Message-ID: <20151022144405.GC21861@kroah.com>
-References: <20151018192931.GY14956@sirena.org.uk>
- <20151018193757.GA9147@kroah.com>
- <20151018195330.GB14956@sirena.org.uk>
- <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
- <5627B677.5090109@gmail.com>
- <20151021162758.GP32054@sirena.org.uk>
- <5627D6E0.5020708@gmail.com>
- <CAL_Jsq+FPtCuBnte2HTgbdpNYM=v_kLaCRcOC1kMaCQwVC=5Kw@mail.gmail.com>
- <562808AF.7090406@gmail.com>
- <CAAObsKAkyjdvNOS3+nuT0N9sudUFLsZXFtcm6Y038p+HSdsZsg@mail.gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 21 Oct 2015 17:25:24 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jon Mason <jonmason@broadcom.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH v3 09/10] clk: iproc: define Broadcom NSP iProc clock
+ binding
+Message-ID: <20151022002524.GX19782@codeaurora.org>
+References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
+ <1444938513-10758-10-git-send-email-jonmason@broadcom.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAAObsKAkyjdvNOS3+nuT0N9sudUFLsZXFtcm6Y038p+HSdsZsg@mail.gmail.com>
+In-Reply-To: <1444938513-10758-10-git-send-email-jonmason@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-<oops, sent too early...>
+On 10/15, Jon Mason wrote:
+> Document the device tree bindings for Broadcom Northstar Plus
+> architecture based clock controller
+> 
+> Signed-off-by: Jon Mason <jonmason@broadcom.com>
+> ---
 
-On Thu, Oct 22, 2015 at 11:05:11AM +0200, Tomeu Vizoso wrote:
-> But that's moot currently because Greg believes that the time spent
-> probing devices at boot time could be reduced enough so that the order
-> in which devices are probed becomes irrelevant. IME that would have to
-> be under 200ms so that the user doesn't notice and that's unicorn-far
-> from any bootlog I have ever seen.
+Applied to clk-iproc
 
-But as no one has actually produced a bootlog, how do you know that?
-Where exactly is your time being spent?  What driver is causing long
-delays?  Why is the long-delay-drivers not being done in their own
-thread?  And most importantly, why are you ignoring the work that people
-did back in 2008 to solve the issue on other hardware platforms?
-
-> Given that downstreams are already carrying as many hacks as they
-> could think of to speed total boot up, I think this is effectively
-> telling them to go away.
-
-No I'm not, I'm asking for real data, not hand-wavy-this-is-going-to
-solve-the-random-issue-i'm-having type patch by putting random calls in
-semi-random subsystems all over the kernel.
-
-And when I ask for real data, you respond with the fact that you aren't
-trying to speed up boot time here at all, so what am I supposed to think
-other than that you don't care enough to do the real work and are trying
-to hack the driver core up instead.
-
-> Sorry for the rant,
-
-No apologies needed, it's cathartic at times :)
-
-thanks,
-
-greg k-h
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
