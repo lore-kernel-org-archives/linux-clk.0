@@ -1,67 +1,140 @@
 Return-Path: <jonmason@broadcom.com>
+Date: Thu, 22 Oct 2015 16:14:33 -0400
 From: Jon Mason <jonmason@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
-	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
-	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+To: Scott Branden <sbranden@broadcom.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>, "Hauke
+ Mehrtens" <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
-Subject: [PATCH 03/10] clk: iproc: define Broadcom NSP iProc clock binding
-Date: Fri, 2 Oct 2015 18:57:38 -0400
-Message-ID: <1443826665-17570-4-git-send-email-jonmason@broadcom.com>
-In-Reply-To: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
-References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
+Subject: Re: [PATCH] clk: iproc: Make clocks visible options
+Message-ID: <20151022201433.GK651@broadcom.com>
+References: <1445541913-25066-1-git-send-email-jonmason@broadcom.com>
+ <56293D26.7080006@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <56293D26.7080006@broadcom.com>
 Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Document the device tree bindings for Broadcom Northstar Plus
-architecture based clock controller
+On Thu, Oct 22, 2015 at 12:46:46PM -0700, Scott Branden wrote:
+> Hi Jon,
+> 
+> comments inline.
+> 
+> On 15-10-22 12:25 PM, Jon Mason wrote:
+> >Make the clocks visible options that can be selected by anyone.  This
+> >avoids the problems of:
+> >  1) Select is a reverse dependency and is hard for people to understand
+> >     and can sometimes be a pain to track down
+> This doesn't make any sense to me - there are many selects in the
+> system and this is one of them.
 
-Signed-off-by: Jon Mason <jonmason@broadcom.com>
----
- .../bindings/clock/brcm,iproc-clocks.txt           | 30 ++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+This was specifically requested by Stephen Boyd, and the above are
+his words verbatum
+https://lkml.org/lkml/2015/10/21/956
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-index da8d9bb..b3c3e9d 100644
---- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-@@ -130,3 +130,33 @@ These clock IDs are defined in:
-     ch3_unused mipipll          4       BCM_CYGNUS_MIPIPLL_CH3_UNUSED
-     ch4_unused mipipll          5       BCM_CYGNUS_MIPIPLL_CH4_UNUSED
-     ch5_unused mipipll          6       BCM_CYGNUS_MIPIPLL_CH5_UNUSED
-+
-+Northstar and Northstar Plus
-+------
-+PLL and leaf clock compatible strings for Northstar and Northstar Plus are:
-+ "brcm,nsp-armpll"
-+ "brcm,nsp-genpll"
-+ "brcm,nsp-lcpll0"
-+
-+The following table defines the set of PLL/clock index and ID for Northstar and
-+Northstar Plus.  These clock IDs are defined in:
-+    "include/dt-bindings/clock/bcm-nsp.h"
-+
-+    Clock	Source		Index	ID
-+    ---		-----		-----	---------
-+    crystal	N/A		N/A	N/A
-+
-+    armpll	crystal		N/A	N/A
-+
-+    genpll	crystal		0	BCM_NSP_GENPLL
-+    phy		genpll		1	BCM_NSP_GENPLL_PHY_CLK
-+    ethernetclk	genpll		2	BCM_NSP_GENPLL_ENET_SW_CLK
-+    usbclk	genpll		3	BCM_NSP_GENPLL_USB_PHY_REF_CLK
-+    iprocfast	genpll		4	BCM_NSP_GENPLL_IPROCFAST_CLK
-+    sata1	genpll		5	BCM_NSP_GENPLL_SATA1_CLK
-+    sata2	genpll		6	BCM_NSP_GENPLL_SATA2_CLK
-+
-+    lcpll0	crystal		0	BCM_NSP_LCPLL0
-+    pcie_phy	lcpll0		1	BCM_NSP_LCPLL0_PCIE_PHY_REF_CLK
-+    sdio	lcpll0		2	BCM_NSP_LCPLL0_SDIO_CLK
-+    ddr_phy	lcpll0		3	BCM_NSP_LCPLL0_DDR_PHY_CLK
--- 
-1.9.1
+Thanks,
+Jon
+
+> >  2) Build coverage goes down because configs are hidden
+> >  3) Code bloat
+> >
+> >Patch suggested by Stephen Boyd
+> >
+> >Signed-off-by: Jon Mason <jonmason@broadcom.com>
+> >---
+> >  arch/arm/mach-bcm/Kconfig |  1 -
+> >  drivers/clk/bcm/Kconfig   | 35 ++++++++++++++++++++++++++++++++++-
+> >  drivers/clk/bcm/Makefile  |  7 +++----
+> >  3 files changed, 37 insertions(+), 6 deletions(-)
+> >
+> >diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
+> >index 679798b..cacaaec 100644
+> >--- a/arch/arm/mach-bcm/Kconfig
+> >+++ b/arch/arm/mach-bcm/Kconfig
+> >@@ -14,7 +14,6 @@ config ARCH_BCM_IPROC
+> >  	select HAVE_ARM_SCU if SMP
+> >  	select HAVE_ARM_TWD if SMP
+> >  	select ARM_GLOBAL_TIMER
+> >-	select COMMON_CLK_IPROC
+> Please leave as is
+> >  	select CLKSRC_MMIO
+> >  	select ARCH_REQUIRE_GPIOLIB
+> >  	select ARM_AMBA
+> >diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+> >index 46ee475..0352ccf 100644
+> >--- a/drivers/clk/bcm/Kconfig
+> >+++ b/drivers/clk/bcm/Kconfig
+> >@@ -9,8 +9,41 @@ config CLK_BCM_KONA
+> >  	  in the BCM281xx and BCM21664 families.
+> >
+> >  config COMMON_CLK_IPROC
+> >-	bool
+> >+	bool "Broadcom iProc clock support"
+> Please leave as is
+> >+	depends on ARCH_BCM_IPROC
+> >  	depends on COMMON_CLK
+> >+	default ARCH_BCM_IPROC
+> >  	help
+> >  	  Enable common clock framework support for Broadcom SoCs
+> >  	  based on the iProc architecture
+> >+
+> >+if COMMON_CLK_IPROC
+> >+
+> >+comment "Broadcom iProc clocks"
+> >+
+> >+config CLK_BCM_CYGNUS
+> not needed
+> >+	bool "Broadcom Cygnus clock support"
+> >+	depends on COMMON_CLK_IPROC
+> >+	depends on ARCH_BCM_CYGNUS
+> >+	default ARCH_BCM_CYGNUS
+> >+	help
+> >+	  Enable common clock framework support for the Broadcom Cygnus SoC
+> >+
+> >+config CLK_BCM_NSP
+> not needed
+> >+	bool "Broadcom Northstar/Northstar Plus clock support"
+> >+	depends on COMMON_CLK_IPROC
+> >+	depends on ARCH_BCM_5301X || ARCH_BCM_NSP
+> >+	default ARCH_BCM_5301X || ARCH_BCM_NSP
+> >+	help
+> >+	  Enable common clock framework support for the Broadcom Northstar and
+> >+	  Northstar Plus SoCs
+> >+
+> >+config CLK_BCM_NS2
+> >+	bool "Broadcom Northstar 2 clock support"
+> >+	depends on ARM64
+> || COMPILE_TEST
+> >+	depends on COMMON_CLK_IPROC
+> select COMMON_CLK_IPROC
+> >+	default ARCH_BCM_IPROC
+> >+	help
+> >+	  Enable common clock framework support for the Broadcom Northstar 2 SoC
+> >+
+> >+endif
+> >diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+> >index 2d1cbc5..05d5830 100644
+> >--- a/drivers/clk/bcm/Makefile
+> >+++ b/drivers/clk/bcm/Makefile
+> >@@ -3,7 +3,6 @@ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona-setup.o
+> >  obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm281xx.o
+> >  obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm21664.o
+> >  obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-iproc-armpll.o clk-iproc-pll.o clk-iproc-asiu.o
+> >-obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-ns2.o
+> yes, change this one
+> >-obj-$(CONFIG_ARCH_BCM_CYGNUS)	+= clk-cygnus.o
+> you can leave this
+> >-obj-$(CONFIG_ARCH_BCM_NSP)	+= clk-nsp.o
+> you can leave this
+> >-obj-$(CONFIG_ARCH_BCM_5301X)	+= clk-nsp.o
+> and this
+> >+obj-$(CONFIG_CLK_BCM_CYGNUS)	+= clk-cygnus.o
+> no
+> >+obj-$(CONFIG_CLK_BCM_NSP)	+= clk-nsp.o
+> no
+> >+obj-$(CONFIG_CLK_BCM_NS2)	+= clk-ns2.o
+> yes needed
+> >
+> 
