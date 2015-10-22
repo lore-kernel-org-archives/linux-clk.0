@@ -1,109 +1,140 @@
-Return-Path: <jonmason@broadcom.com>
-From: Jon Mason <jonmason@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
-	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
-	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<bcm-kernel-feedback-list@broadcom.com>
-Subject: [PATCH] clk: iproc: Make clocks visible options
-Date: Thu, 22 Oct 2015 15:25:13 -0400
-Message-ID: <1445541913-25066-1-git-send-email-jonmason@broadcom.com>
+Return-Path: <gregkh@linuxfoundation.org>
+Date: Thu, 22 Oct 2015 07:38:48 -0700
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Frank Rowand <frowand.list@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>,
+	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Message-ID: <20151022143848.GB21861@kroah.com>
+References: <20151018192931.GY14956@sirena.org.uk>
+ <20151018193757.GA9147@kroah.com>
+ <20151018195330.GB14956@sirena.org.uk>
+ <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
+ <5627B677.5090109@gmail.com>
+ <20151021162758.GP32054@sirena.org.uk>
+ <5627D6E0.5020708@gmail.com>
+ <CAL_Jsq+FPtCuBnte2HTgbdpNYM=v_kLaCRcOC1kMaCQwVC=5Kw@mail.gmail.com>
+ <562808AF.7090406@gmail.com>
+ <CAAObsKAkyjdvNOS3+nuT0N9sudUFLsZXFtcm6Y038p+HSdsZsg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jonmason@broadcom.com
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <CAAObsKAkyjdvNOS3+nuT0N9sudUFLsZXFtcm6Y038p+HSdsZsg@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Make the clocks visible options that can be selected by anyone.  This
-avoids the problems of:
- 1) Select is a reverse dependency and is hard for people to understand
-    and can sometimes be a pain to track down
- 2) Build coverage goes down because configs are hidden
- 3) Code bloat
+On Thu, Oct 22, 2015 at 11:05:11AM +0200, Tomeu Vizoso wrote:
+> On 21 October 2015 at 23:50, Frank Rowand <frowand.list@gmail.com> wrote:
+> > On 10/21/2015 2:12 PM, Rob Herring wrote:
+> >> On Wed, Oct 21, 2015 at 1:18 PM, Frank Rowand <frowand.list@gmail.com> wrote:
+> >>> On 10/21/2015 9:27 AM, Mark Brown wrote:
+> >>>> On Wed, Oct 21, 2015 at 08:59:51AM -0700, Frank Rowand wrote:
+> >>>>> On 10/19/2015 5:34 AM, Tomeu Vizoso wrote:
+> >>>>
+> >>>>>> To be clear, I was saying that this series should NOT affect total
+> >>>>>> boot times much.
+> >>>>
+> >>>>> I'm confused.  If I understood correctly, improving boot time was
+> >>>>> the key justification for accepting this patch set.  For example,
+> >>>>> from "[PATCH v7 0/20] On-demand device probing":
+> >>>>>
+> >>>>>    I have a problem with the panel on my Tegra Chromebook taking longer
+> >>>>>    than expected to be ready during boot (Stéphane Marchesin reported what
+> >>>>>    is basically the same issue in [0]), and have looked into ordered
+> >>>>>    probing as a better way of solving this than moving nodes around in the
+> >>>>>    DT or playing with initcall levels and linking order.
+> >>>>>
+> >>>>>    ...
+> >>>>>
+> >>>>>    With this series I get the kernel to output to the panel in 0.5s,
+> >>>>>    instead of 2.8s.
+> >>>>
+> >>>> Overall boot time and time to get some individual built in component up
+> >>>> and running aren't the same thing - what this'll do is get things up
+> >>>> more in the link order of the leaf consumers rather than deferring those
+> >>>> leaf consumers when their dependencies aren't ready yet.
+> >>>
+> >>> Thanks!  I read too much into what was being improved.
+> >>>
+> >>> So this patch series, which on other merits may be a good idea, is as
+> >>> a by product solving a specific ordering issue, moving successful panel
+> >>> initialization to an earlier point in the boot sequence, if I now
+> >>> understand more correctly.
+> >>>
+> >>> In that context, this seems like yet another ad hoc way of causing the
+> >>> probe order to change in a way to solves one specific issue?  Could
+> >>> it just as likely move the boot order of some other driver on some
+> >>> other board later, to the detriment of somebody else?
+> >>
+> >> Time to display on is important for many products. Having the console
+> >> up as early as possible is another case. CAN bus is another. This is a
+> >> real problem that is not just bad drivers.
+> >
+> > Yes, I agree.
+> >
+> > What I am seeing is that there continues to be a need for the ability
+> > to explicitly order at least some driver initialization (at some
+> > granularity), despite the push back against explicit ordering that
+> > has been present in the past.
+> 
+> The important point that I have struggled to explain is that right now
+> for downstreams to influence the order in which devices are probed,
+> they have to carry a substantial amount of patches that cannot be ever
+> upstreamed. This fiddling with initcall levels and link order means
+> changing files that are very frequently changing, increasing the
+> amount of work when rebasing and increasing the probability of
+> regressions after a rebase.
+> 
+> This just adds up to other shortcomings of mainline and ends up with
+> the net result of vendors getting stuck with 3.4 kernels on SoCs that
+> start production in 2015. Another consequence is that vendors don't
+> have a chance to upstream their stuff even if they cared. The
+> overarching goal of the project I'm in is to reduce those shortcomings
+> that downstreams have to workaround, to facilitate their involvement
+> upstream.
 
-Patch suggested by Stephen Boyd
+The init order of drivers has no influence at all on the ability for
+companies to have their individual drivers merged upstream, please don't
+be so dramatic about this.
 
-Signed-off-by: Jon Mason <jonmason@broadcom.com>
----
- arch/arm/mach-bcm/Kconfig |  1 -
- drivers/clk/bcm/Kconfig   | 35 ++++++++++++++++++++++++++++++++++-
- drivers/clk/bcm/Makefile  |  7 +++----
- 3 files changed, 37 insertions(+), 6 deletions(-)
+Worst case, a vendor keeps a single patch to drivers/Makefile in their
+tree that reorders things, yes it will get conflicts on every release,
+but really, it's trivial to maintain if they wish to keep doing this
+type of thing.
 
-diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
-index 679798b..cacaaec 100644
---- a/arch/arm/mach-bcm/Kconfig
-+++ b/arch/arm/mach-bcm/Kconfig
-@@ -14,7 +14,6 @@ config ARCH_BCM_IPROC
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_ARM_TWD if SMP
- 	select ARM_GLOBAL_TIMER
--	select COMMON_CLK_IPROC
- 	select CLKSRC_MMIO
- 	select ARCH_REQUIRE_GPIOLIB
- 	select ARM_AMBA
-diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
-index 46ee475..0352ccf 100644
---- a/drivers/clk/bcm/Kconfig
-+++ b/drivers/clk/bcm/Kconfig
-@@ -9,8 +9,41 @@ config CLK_BCM_KONA
- 	  in the BCM281xx and BCM21664 families.
- 
- config COMMON_CLK_IPROC
--	bool
-+	bool "Broadcom iProc clock support"
-+	depends on ARCH_BCM_IPROC
- 	depends on COMMON_CLK
-+	default ARCH_BCM_IPROC
- 	help
- 	  Enable common clock framework support for Broadcom SoCs
- 	  based on the iProc architecture
-+
-+if COMMON_CLK_IPROC
-+
-+comment "Broadcom iProc clocks"
-+
-+config CLK_BCM_CYGNUS
-+	bool "Broadcom Cygnus clock support"
-+	depends on COMMON_CLK_IPROC
-+	depends on ARCH_BCM_CYGNUS
-+	default ARCH_BCM_CYGNUS
-+	help
-+	  Enable common clock framework support for the Broadcom Cygnus SoC
-+
-+config CLK_BCM_NSP
-+	bool "Broadcom Northstar/Northstar Plus clock support"
-+	depends on COMMON_CLK_IPROC
-+	depends on ARCH_BCM_5301X || ARCH_BCM_NSP
-+	default ARCH_BCM_5301X || ARCH_BCM_NSP
-+	help
-+	  Enable common clock framework support for the Broadcom Northstar and
-+	  Northstar Plus SoCs
-+
-+config CLK_BCM_NS2
-+	bool "Broadcom Northstar 2 clock support"
-+	depends on ARM64
-+	depends on COMMON_CLK_IPROC
-+	default ARCH_BCM_IPROC
-+	help
-+	  Enable common clock framework support for the Broadcom Northstar 2 SoC
-+
-+endif
-diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
-index 2d1cbc5..05d5830 100644
---- a/drivers/clk/bcm/Makefile
-+++ b/drivers/clk/bcm/Makefile
-@@ -3,7 +3,6 @@ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona-setup.o
- obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm281xx.o
- obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm21664.o
- obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-iproc-armpll.o clk-iproc-pll.o clk-iproc-asiu.o
--obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-ns2.o
--obj-$(CONFIG_ARCH_BCM_CYGNUS)	+= clk-cygnus.o
--obj-$(CONFIG_ARCH_BCM_NSP)	+= clk-nsp.o
--obj-$(CONFIG_ARCH_BCM_5301X)	+= clk-nsp.o
-+obj-$(CONFIG_CLK_BCM_CYGNUS)	+= clk-cygnus.o
-+obj-$(CONFIG_CLK_BCM_NSP)	+= clk-nsp.o
-+obj-$(CONFIG_CLK_BCM_NS2)	+= clk-ns2.o
--- 
-1.9.1
+Again, it is _not_ the reason that we are living with 2million+ lines of
+code in vendor kernels.
+
+thanks,
+
+greg k-h
