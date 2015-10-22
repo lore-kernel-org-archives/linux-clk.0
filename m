@@ -1,61 +1,99 @@
-Return-Path: <robdclark@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20151017165617.GC25156@kroah.com>
-References: <561E1378.6000906@collabora.com>
-	<20151017065750.GA18607@kroah.com>
-	<CAL_Jsq+Due3CgV0Z_m4vYQsa+X30DSxgmqz_r=26OrBV7v+H2g@mail.gmail.com>
-	<20151017154709.GE4059@kroah.com>
-	<CAL_JsqJvtKt6FpZgnYcsEm_opr9gK_a013BVpZGvnB=51oSUXg@mail.gmail.com>
-	<20151017165617.GC25156@kroah.com>
-Date: Sat, 17 Oct 2015 13:54:43 -0400
-Message-ID: <CAF6AEGvbYYeZx=YVCv9r5K0xjtLf3gN69gX5DyQ3j0S1qT0Yog@mail.gmail.com>
-Subject: Re: [GIT PULL] On-demand device probing
-From: Rob Clark <robdclark@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
-	Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Felipe Balbi <balbi@ti.com>,
+Return-Path: <broonie@sirena.org.uk>
+Date: Fri, 23 Oct 2015 08:33:10 +0900
+From: Mark Brown <broonie@kernel.org>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>,
+	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
 	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
 	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
 	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
 	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
-	Linux USB List <linux-usb@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
 	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Message-ID: <20151022233310.GD29919@sirena.org.uk>
+References: <20151018195330.GB14956@sirena.org.uk>
+ <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
+ <5627B677.5090109@gmail.com>
+ <20151021162758.GP32054@sirena.org.uk>
+ <5627D6E0.5020708@gmail.com>
+ <CAL_Jsq+FPtCuBnte2HTgbdpNYM=v_kLaCRcOC1kMaCQwVC=5Kw@mail.gmail.com>
+ <562808AF.7090406@gmail.com>
+ <CAAObsKAkyjdvNOS3+nuT0N9sudUFLsZXFtcm6Y038p+HSdsZsg@mail.gmail.com>
+ <20151022144405.GC21861@kroah.com>
+ <20151022150213.GT32532@n2100.arm.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="J5MfuwkIyy7RmF4Q"
+In-Reply-To: <20151022150213.GT32532@n2100.arm.linux.org.uk>
+Subject: Re: [GIT PULL] On-demand device probing
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Oct 17, 2015 at 12:56 PM, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->> I'm guessing the time is a matter of probing and undoing the probes
->> rather than slow h/w. We could maybe improve things by making sure
->> drivers move what they defer on to the beginning of probe, but that
->> seems like a horrible, fragile hack.
->
-> How can calling probe and failing cause 2 seconds?  How many different
-> probe calls are failing here?  Again, a boot log graph would be great to
-> see as it will show the root cause, not just guessing at this.
 
+--J5MfuwkIyy7RmF4Q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-just fwiw, but when you have a driver that depends on several other
-drivers (which in turn depend on other drivers and so on), the amount
-of probe-defer we end up seeing is pretty comical.  Yeah, there
-probably is some room to optimize by juggling around order drivers do
-things in probe.  But that doesn't solve the fundamental problem with
-the current state, about probe order having no clue about
-dependencies..
+On Thu, Oct 22, 2015 at 04:02:13PM +0100, Russell King - ARM Linux wrote:
 
-BR,
--R
+> If it was such a problem, then in the _eight_ days that this has been
+> discussed so far, _someone_ would have sent some data showing the
+> problem.  I think the fact is, there is no data.
+
+> Someone prove me wrong.  Someone post the verifiable data showing that
+> there is a problem to be solved here.
+
+> Someone show what the specific failure cases are that are hampering
+> vendors moving forwards.  Someone show the long boot times by way of
+> kernel message log.  Someone show some evidence of the problems that
+> have been alluded to.
+
+> If no one can show some evidence, there isn't a problem here. :)
+
+Yeah, I'm not convinced the timing is *such* a big deal either - I do
+think that the log spam is a real problem but I think something much
+less invasive like the interface you proposed is good for addressing
+that.
+
+--J5MfuwkIyy7RmF4Q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWKXI1AAoJECTWi3JdVIfQz30H/RIVYugSpt5G4di2CHITc0BQ
+yoflpyMikyLfYkdFzjloKeyEodeVohF661x1e/XN7zhOOoZQD712sSW2D8yBDUT6
+yrEoEHZsxe6SlCqBTUpuev2KOXoQm11HOxNsYjop+0ZDBPfYrG6xIQfu2rRlQDXM
+bSYvTXMmgOb2rTVHhORTbtwgZMAXj3K9BdybHilOAyenxrbCx1uX28RgHYJQ+QDc
+bJvszKCOLJSBYYdn3QFCazwYtS3RtZ4PZtR+ZTfNmliT6dzi5rWcm14n+bIInG6+
+XROzzllUhwfN/h4TKFS5+6PJGCE5lu8AobnBVyoSzSqBHk4uMij6zH7YWdHyHOs=
+=HDzZ
+-----END PGP SIGNATURE-----
+
+--J5MfuwkIyy7RmF4Q--
