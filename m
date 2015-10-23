@@ -1,59 +1,97 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 1 Oct 2015 11:05:34 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Paul Osmialowski <newchief@king.net.pl>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Paul Osmialowski <pawelo@king.net.pl>
-Subject: Re: [PATCH v3] clk: add devm_of_clk_get() and
- devm_of_clk_get_by_name() functions
-Message-ID: <20151001180534.GH19319@codeaurora.org>
-References: <1443686626-26450-1-git-send-email-newchief@king.net.pl>
+Return-Path: <sbranden@broadcom.com>
+Subject: Re: [PATCH 2/3] clk: bcm: Add BCM63138 clock support
+To: Florian Fainelli <f.fainelli@gmail.com>, <linux-clk@vger.kernel.org>
+References: <1445621448-11894-1-git-send-email-f.fainelli@gmail.com>
+ <1445621448-11894-3-git-send-email-f.fainelli@gmail.com>
+CC: <bcm-kernel-feedback-list@broadcom.com>, <devicetree@vger.kernel.org>,
+	<jonmason@broadcom.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+	<linux@arm.linux.org.uk>, <rjui@broadcom.com>
+From: Scott Branden <sbranden@broadcom.com>
+Message-ID: <562A70D8.1090401@broadcom.com>
+Date: Fri, 23 Oct 2015 10:39:36 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1443686626-26450-1-git-send-email-newchief@king.net.pl>
+In-Reply-To: <1445621448-11894-3-git-send-email-f.fainelli@gmail.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: sbranden@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/01, Paul Osmialowski wrote:
-> From: Paul Osmialowski <pawelo@king.net.pl>
-> 
-> These two functions are added to ease management of clocks obtained
-> from OF device nodes.
-> 
-> They are particulary useful while iterating over DT subnodes using e.g.
-> for_each_child_of_node(dev->of_node, child) in order do get resources
-> (i.e. clocks) for subdevices defined by these DT subnodes.
-> 
-> For example:
-> 
-> some_device {
->     compatible = "something"
->     #address-cells = <1>;
->     #size-cells = <1>;
->     ranges;
-> 
->     subdevice1: some_subdevice@some_address1 {
->         reg = <0xsome_address1 0xsome_size>
->         clocks = <&some_clock1>
->     }
-> 
->     subdevice2: some_subdevice@some_address2 {
->         reg = <0xsome_address2 0xsome_size>
->         clocks = <&some_clock2>
->     }
-> }
-> 
-> Normally, I'd have to use of_clk_get() on each subdevice node and then
-> worry about proper resource release myself.
-> 
-> IMHO using devres infrastructure for this is far better. This patch adds
-> missing functions needed to do it a better way.
-> 
-> Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
+Hi Florian,
 
-It sounds like your pinctrl binding will be rewritten so that
-there isn't a need for this patch. Consider this patch rejected.
+You should probably add COMPILE_TEST to increase compiler code coverage.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On 15-10-23 10:30 AM, Florian Fainelli wrote:
+> BCM63138 has a simple clocking domain which is primarily the ARMPLL
+> clocking complex, from which the ARM (CPU), APB and AXI clocks would be
+> derived from.
+>
+> Since the ARMPLL controller is entirely compatible with the iProc ARM
+> PLL, we just initialize it without additional parameters.
+>
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+>   drivers/clk/bcm/Kconfig       | 10 ++++++++++
+>   drivers/clk/bcm/Makefile      |  1 +
+>   drivers/clk/bcm/clk-bcm63xx.c | 22 ++++++++++++++++++++++
+>   3 files changed, 33 insertions(+)
+>   create mode 100644 drivers/clk/bcm/clk-bcm63xx.c
+>
+> diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+> index 85260fb96b36..eb4daed6aa56 100644
+> --- a/drivers/clk/bcm/Kconfig
+> +++ b/drivers/clk/bcm/Kconfig
+> @@ -1,3 +1,13 @@
+> +config CLK_BCM_63XX
+> +	bool "Broadcom BCM63xx clock support"
+> +	depends on ARCH_BCM_63XX
+|| COMPILE_TEST
+> +	depends on COMMON_CLK
+> +	select COMMON_CLK_IPROC
+> +	default y
+> +	help
+> +	  Enable common clock framework support for Broadcom BCM63xx DSL SoCs
+> +	  based on the ARM architecture
+> +
+>   config CLK_BCM_KONA
+>   	bool "Broadcom Kona CCU clock support"
+>   	depends on ARCH_BCM_MOBILE || COMPILE_TEST
+> diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+> index 3fc95060d875..247c26750d8b 100644
+> --- a/drivers/clk/bcm/Makefile
+> +++ b/drivers/clk/bcm/Makefile
+> @@ -1,3 +1,4 @@
+> +obj-$(CONFIG_CLK_BCM_63XX)	+= clk-bcm63xx.o
+>   obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona.o
+>   obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona-setup.o
+>   obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm281xx.o
+> diff --git a/drivers/clk/bcm/clk-bcm63xx.c b/drivers/clk/bcm/clk-bcm63xx.c
+> new file mode 100644
+> index 000000000000..b7e0469d0522
+> --- /dev/null
+> +++ b/drivers/clk/bcm/clk-bcm63xx.c
+> @@ -0,0 +1,22 @@
+> +/*
+> + * Copyright (C) 2015 Broadcom Corporation
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License as
+> + * published by the Free Software Foundation version 2.
+> + *
+> + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
+> + * kind, whether express or implied; without even the implied warranty
+> + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +#include <linux/kernel.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/of.h>
+> +#include "clk-iproc.h"
+> +
+> +static void __init bcm63138_armpll_init(struct device_node *node)
+> +{
+> +	iproc_armpll_setup(node);
+> +}
+> +CLK_OF_DECLARE(bcm63138_armpll, "brcm,bcm63138-armpll", bcm63138_armpll_init);
+>
+
+Regards,
+Scott
