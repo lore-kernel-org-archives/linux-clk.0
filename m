@@ -1,448 +1,293 @@
-Return-Path: <jonmason@broadcom.com>
-From: Jon Mason <jonmason@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
-	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
-	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
-Subject: [PATCH 09/10] clk: ns2: add clock support for Broadcom Northstar 2 SoC
-Date: Fri, 2 Oct 2015 18:57:44 -0400
-Message-ID: <1443826665-17570-10-git-send-email-jonmason@broadcom.com>
-In-Reply-To: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
-References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:36421 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751631AbbJWPF7 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 23 Oct 2015 11:05:59 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jonmason@broadcom.com
+In-Reply-To: <562A300F.2000108@samsung.com>
+References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
+	<1445332961-25419-11-git-send-email-a.hajda@samsung.com>
+	<562A203B.7060505@samsung.com>
+	<562A300F.2000108@samsung.com>
+Date: Sat, 24 Oct 2015 00:05:58 +0900
+Message-ID: <CAAQKjZNa2CcKyNmTtj_7qafop68+UDr8oLGunf0=L_z_sktG-A@mail.gmail.com>
+Subject: Re: [PATCH 10/10] drm/exynos/decon5433: add support for DECON-TV
+From: Inki Dae <inki.dae@samsung.com>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	"linux-samsung-soc@vger.kernel.org"
+	<linux-samsung-soc@vger.kernel.org>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	DRI mailing list <dri-devel@lists.freedesktop.org>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	linux-clk@vger.kernel.org,
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The Broadcom Northstar 2 SoC is architected under the iProc
-architecture. It has the following PLLs: GENPLL SCR, GENPLL SW,
-LCPLL DDR, LCPLL Ports, all derived from an onboard crystal.
+2015-10-23 22:03 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
+>
+> On 10/23/2015 01:55 PM, Inki Dae wrote:
+> > Hi Andrzej,
+> >
+> >
+> > 2015년 10월 20일 18:22에 Andrzej Hajda 이(가) 쓴 글:
+> >> DECON-TV IP is responsible for generating video stream which is transferred
+> >> to HDMI IP. It is almost fully compatible with DECON IP.
+> >>
+> >> The patch is based on initial work of Hyungwon Hwang.
+> >>
+> >> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> >> ---
+> >>   drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 154 ++++++++++++++++----------
+> >>   include/video/exynos5433_decon.h              |  29 +++++
+> >>   2 files changed, 122 insertions(+), 61 deletions(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+> >> index 3c9aa4e..fbe1b31 100644
+> >> --- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+> >> +++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+> >> @@ -13,6 +13,7 @@
+> >>   #include <linux/platform_device.h>
+> >>   #include <linux/clk.h>
+> >>   #include <linux/component.h>
+> >> +#include <linux/of_device.h>
+> >>   #include <linux/of_gpio.h>
+> >>   #include <linux/pm_runtime.h>
+> >>
+> >> @@ -37,6 +38,12 @@ static const char * const decon_clks_name[] = {
+> >>      "sclk_decon_eclk",
+> >>   };
+> >>
+> >> +enum decon_iftype {
+> >> +    IFTYPE_RGB,
+> >> +    IFTYPE_I80,
+> >> +    IFTYPE_HDMI
+> >> +};
+> >> +
+> >>   enum decon_flag_bits {
+> >>      BIT_CLKS_ENABLED,
+> >>      BIT_IRQS_ENABLED,
+> >> @@ -53,7 +60,8 @@ struct decon_context {
+> >>      struct clk                      *clks[ARRAY_SIZE(decon_clks_name)];
+> >>      int                             pipe;
+> >>      unsigned long                   flags;
+> >> -    bool                            i80_if;
+> >> +    enum decon_iftype               out_type;
+> >> +    int                             first_win;
+> >>   };
+> >>
+> >>   static const uint32_t decon_formats[] = {
+> >> @@ -80,7 +88,7 @@ static int decon_enable_vblank(struct exynos_drm_crtc *crtc)
+> >>
+> >>      if (test_and_set_bit(BIT_IRQS_ENABLED, &ctx->flags)) {
+> >>              val = VIDINTCON0_INTEN;
+> >> -            if (ctx->i80_if)
+> >> +            if (ctx->out_type == IFTYPE_I80)
+> >>                      val |= VIDINTCON0_FRAMEDONE;
+> >>              else
+> >>                      val |= VIDINTCON0_INTFRMEN;
+> >> @@ -104,8 +112,11 @@ static void decon_disable_vblank(struct exynos_drm_crtc *crtc)
+> >>
+> >>   static void decon_setup_trigger(struct decon_context *ctx)
+> >>   {
+> >> -    u32 val = TRIGCON_TRIGEN_PER_F | TRIGCON_TRIGEN_F |
+> >> -                    TRIGCON_TE_AUTO_MASK | TRIGCON_SWTRIGEN;
+> >> +    u32 val = (ctx->out_type != IFTYPE_HDMI)
+> >> +            ? TRIGCON_TRIGEN_PER_F | TRIGCON_TRIGEN_F |
+> >> +              TRIGCON_TE_AUTO_MASK | TRIGCON_SWTRIGEN
+> >> +            : TRIGCON_TRIGEN_PER_F | TRIGCON_TRIGEN_F |
+> >> +              TRIGCON_HWTRIGMASK_I80_RGB | TRIGCON_HWTRIGEN_I80_RGB;
+> >>      writel(val, ctx->addr + DECON_TRIGCON);
+> >>   }
+> >>
+> >> @@ -118,13 +129,22 @@ static void decon_commit(struct exynos_drm_crtc *crtc)
+> >>      if (test_bit(BIT_SUSPENDED, &ctx->flags))
+> >>              return;
+> >>
+> >> +    if (ctx->out_type == IFTYPE_HDMI) {
+> >> +            m->crtc_hsync_start = m->crtc_hdisplay + 10;
+> >> +            m->crtc_hsync_end = m->crtc_htotal - 92;
+> >> +            m->crtc_vsync_start = m->crtc_vdisplay + 1;
+> >> +            m->crtc_vsync_end = m->crtc_vsync_start + 1;
+> >> +    }
+> >> +
+> >> +    decon_set_bits(ctx, DECON_VIDCON0, VIDCON0_ENVID, 0);
+> >> +
+> >>      /* enable clock gate */
+> >>      val = CMU_CLKGAGE_MODE_SFR_F | CMU_CLKGAGE_MODE_MEM_F;
+> >>      writel(val, ctx->addr + DECON_CMU);
+> >>
+> >>      /* lcd on and use command if */
+> >>      val = VIDOUT_LCD_ON;
+> >> -    if (ctx->i80_if)
+> >> +    if (ctx->out_type == IFTYPE_I80)
+> >>              val |= VIDOUT_COMMAND_IF;
+> >>      else
+> >>              val |= VIDOUT_RGB_IF;
+> >> @@ -134,7 +154,7 @@ static void decon_commit(struct exynos_drm_crtc *crtc)
+> >>              VIDTCON2_HOZVAL(m->hdisplay - 1);
+> >>      writel(val, ctx->addr + DECON_VIDTCON2);
+> >>
+> >> -    if (!ctx->i80_if) {
+> >> +    if (ctx->out_type != IFTYPE_I80) {
+> >>              val = VIDTCON00_VBPD_F(
+> >>                              m->crtc_vtotal - m->crtc_vsync_end - 1) |
+> >>                      VIDTCON00_VFPD_F(
+> >> @@ -159,15 +179,9 @@ static void decon_commit(struct exynos_drm_crtc *crtc)
+> >>      decon_setup_trigger(ctx);
+> >>
+> >>      /* enable output and display signal */
+> >> -    val = VIDCON0_ENVID | VIDCON0_ENVID_F;
+> >> -    writel(val, ctx->addr + DECON_VIDCON0);
+> >> +    decon_set_bits(ctx, DECON_VIDCON0, VIDCON0_ENVID | VIDCON0_ENVID_F, ~0);
+> >>   }
+> >>
+> >> -#define COORDINATE_X(x)             (((x) & 0xfff) << 12)
+> >> -#define COORDINATE_Y(x)             ((x) & 0xfff)
+> >> -#define OFFSIZE(x)          (((x) & 0x3fff) << 14)
+> >> -#define PAGEWIDTH(x)                ((x) & 0x3fff)
+> >> -
+> >>   static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned int win,
+> >>                               struct drm_framebuffer *fb)
+> >>   {
+> >> @@ -238,6 +252,10 @@ static void decon_atomic_begin(struct exynos_drm_crtc *crtc,
+> >>      decon_shadow_protect_win(ctx, plane->zpos, true);
+> >>   }
+> >>
+> >> +#define BIT_VAL(x, e, s) (((x) & ((1 << ((e) - (s) + 1)) - 1)) << (s))
+> >> +#define COORDINATE_X(x) BIT_VAL((x), 23, 12)
+> >> +#define COORDINATE_Y(x) BIT_VAL((x), 11, 0)
+> >> +
+> >>   static void decon_update_plane(struct exynos_drm_crtc *crtc,
+> >>                             struct exynos_drm_plane *plane)
+> >>   {
+> >> @@ -271,8 +289,12 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc,
+> >>      val = plane->dma_addr[0] + pitch * plane->crtc_h;
+> >>      writel(val, ctx->addr + DECON_VIDW0xADD1B0(win));
+> >>
+> >> -    val = OFFSIZE(pitch - plane->crtc_w * bpp)
+> >> -            | PAGEWIDTH(plane->crtc_w * bpp);
+> >> +    if (ctx->out_type != IFTYPE_HDMI)
+> >> +            val = BIT_VAL(pitch - plane->crtc_w * bpp, 27, 14)
+> >> +                    | BIT_VAL(plane->crtc_w * bpp, 13, 0);
+> >> +    else
+> >> +            val = BIT_VAL(pitch - plane->crtc_w * bpp, 29, 15)
+> >> +                    | BIT_VAL(plane->crtc_w * bpp, 14, 0);
+> >>      writel(val, ctx->addr + DECON_VIDW0xADD2(win));
+> >>
+> >>      decon_win_set_pixfmt(ctx, win, state->fb);
+> >> @@ -314,7 +336,7 @@ static void decon_atomic_flush(struct exynos_drm_crtc *crtc,
+> >>
+> >>      decon_shadow_protect_win(ctx, plane->zpos, false);
+> >>
+> >> -    if (ctx->i80_if)
+> >> +    if (ctx->out_type == IFTYPE_I80)
+> >>              set_bit(BIT_WIN_UPDATED, &ctx->flags);
+> >>   }
+> >>
+> >> @@ -339,6 +361,17 @@ static void decon_swreset(struct decon_context *ctx)
+> >>      }
+> >>
+> >>      WARN(tries == 0, "failed to software reset DECON\n");
+> >> +
+> >> +    if (ctx->out_type != IFTYPE_HDMI)
+> >> +            return;
+> >> +
+> >> +    writel(VIDCON0_CLKVALUP | VIDCON0_VLCKFREE, ctx->addr + DECON_VIDCON0);
+> >> +    decon_set_bits(ctx, DECON_CMU,
+> >> +                   CMU_CLKGAGE_MODE_SFR_F | CMU_CLKGAGE_MODE_MEM_F, ~0);
+> >> +    writel(VIDCON1_VCLK_RUN_VDEN_DISABLE, ctx->addr + DECON_VIDCON1);
+> >> +    writel(CRCCTRL_CRCEN | CRCCTRL_CRCSTART_F | CRCCTRL_CRCCLKEN,
+> >> +           ctx->addr + DECON_CRCCTRL);
+> >> +    decon_setup_trigger(ctx);
+> >>   }
+> >>
+> >>   static void decon_enable(struct exynos_drm_crtc *crtc)
+> >> @@ -387,7 +420,7 @@ static void decon_disable(struct exynos_drm_crtc *crtc)
+> >>       * suspend that connector. Otherwise we might try to scan from
+> >>       * a destroyed buffer later.
+> >>       */
+> >> -    for (i = 0; i < WINDOWS_NR; i++)
+> >> +    for (i = ctx->first_win; i < WINDOWS_NR; i++)
+> >>              decon_disable_plane(crtc, &ctx->planes[i]);
+> >>
+> >>      decon_swreset(ctx);
+> >> @@ -461,25 +494,30 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
+> >>      struct drm_device *drm_dev = data;
+> >>      struct exynos_drm_private *priv = drm_dev->dev_private;
+> >>      struct exynos_drm_plane *exynos_plane;
+> >> +    enum exynos_drm_output_type out_type;
+> >>      enum drm_plane_type type;
+> >> -    unsigned int zpos;
+> >> +    unsigned int win;
+> >>      int ret;
+> >>
+> >>      ctx->drm_dev = drm_dev;
+> >>      ctx->pipe = priv->pipe++;
+> >>
+> >> -    for (zpos = 0; zpos < WINDOWS_NR; zpos++) {
+> >> -            type = exynos_plane_get_type(zpos, CURSOR_WIN);
+> >> -            ret = exynos_plane_init(drm_dev, &ctx->planes[zpos],
+> >> +    for (win = ctx->first_win; win < WINDOWS_NR; win++) {
+> >> +            int tmp = (win == ctx->first_win) ? 0 : win;
+> > AFAIK, DECON TV for Exynos5433 SoC has four hardware overlays so I guess
+> > you used ctx->first_win to initialize four planes in case of IFTYPE_HDMI.
+> >
+> > However, with IFTYPE_HDMI ctx->first_win has 1, as a result,
+> > ctx->planes[] will have 0, 2nd, 3rd and 4th planes and this means we
+> > should use 0, 2nd ~ 4th hardware overlay excepting 1st overlay. Is this
+> > your intention?
+> > Shouldn't ctx->planes[] have 1st, 2nd ,3rd and 4th planes so that we can
+> > use 1st ~ 4th hardware overlay for DECON TV?
+> >
+> > DECON TV for Exynos5433 SoC can use only 1st ~ 4th hardware overlays.
+> >
+> > And other thing, it may be trivial but I think it'd be better to use
+> > 'ovl' instead of 'tmp.
+>
+> DECON-TV has hardware window 0 with very limited functionality,
+> it is just background color, no scanout buffers. So it cannot be used
+> as drm plane. ctx->first_win contains value of the 1st valid window.
+> There is a question how to map windows to planes. I have chosen
+> the simplest solution - n'th hw window is mapped to n'th plane and have
+> zpos==n. The only problem is with function exynos_plane_get_type,
 
-Signed-off-by: Jon Mason <jonmason@broadcom.com>
----
- arch/arm64/Kconfig.platforms        |   1 +
- drivers/clk/Makefile                |   3 +-
- drivers/clk/bcm/Makefile            |   1 +
- drivers/clk/bcm/clk-ns2.c           | 290 ++++++++++++++++++++++++++++++++++++
- include/dt-bindings/clock/bcm-ns2.h |  72 +++++++++
- 5 files changed, 366 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/bcm/clk-ns2.c
- create mode 100644 include/dt-bindings/clock/bcm-ns2.h
+What concerns me was each plane could be mapped to wrong hardware
+overlay. However, this was my miss leading. I missed the variable
+'tmp' is used only to get plane type.
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 23800a1..2790f21 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -2,6 +2,7 @@ menu "Platform selection"
- 
- config ARCH_BCM_IPROC
- 	bool "Broadcom iProc SoC Family"
-+	select COMMON_CLK_IPROC
- 	help
- 	  This enables support for Broadcom iProc based SoCs
- 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index d08b3e5..ea81eaa 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -47,7 +47,8 @@ obj-$(CONFIG_COMMON_CLK_WM831X)		+= clk-wm831x.o
- obj-$(CONFIG_COMMON_CLK_XGENE)		+= clk-xgene.o
- obj-$(CONFIG_COMMON_CLK_PWM)		+= clk-pwm.o
- obj-$(CONFIG_COMMON_CLK_AT91)		+= at91/
--obj-$(CONFIG_ARCH_BCM)			+= bcm/
-+obj-$(CONFIG_CLK_BCM_KONA)		+= bcm/
-+obj-$(CONFIG_COMMON_CLK_IPROC)		+= bcm/
- obj-$(CONFIG_ARCH_BERLIN)		+= berlin/
- obj-$(CONFIG_ARCH_HISI)			+= hisilicon/
- obj-$(CONFIG_ARCH_MXC)			+= imx/
-diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
-index e258b28..2d1cbc5 100644
---- a/drivers/clk/bcm/Makefile
-+++ b/drivers/clk/bcm/Makefile
-@@ -3,6 +3,7 @@ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona-setup.o
- obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm281xx.o
- obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm21664.o
- obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-iproc-armpll.o clk-iproc-pll.o clk-iproc-asiu.o
-+obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-ns2.o
- obj-$(CONFIG_ARCH_BCM_CYGNUS)	+= clk-cygnus.o
- obj-$(CONFIG_ARCH_BCM_NSP)	+= clk-nsp.o
- obj-$(CONFIG_ARCH_BCM_5301X)	+= clk-nsp.o
-diff --git a/drivers/clk/bcm/clk-ns2.c b/drivers/clk/bcm/clk-ns2.c
-new file mode 100644
-index 0000000..1d08281
---- /dev/null
-+++ b/drivers/clk/bcm/clk-ns2.c
-@@ -0,0 +1,290 @@
-+/*
-+ * Copyright (C) 2015 Broadcom Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation version 2.
-+ *
-+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-+ * kind, whether express or implied; without even the implied warranty
-+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/err.h>
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/clkdev.h>
-+#include <linux/of_address.h>
-+#include <linux/delay.h>
-+
-+#include <dt-bindings/clock/bcm-ns2.h>
-+#include "clk-iproc.h"
-+
-+#define reg_val(o, s, w) { .offset = o, .shift = s, .width = w, }
-+
-+#define aon_val(o, pw, ps, is) { .offset = o, .pwr_width = pw, \
-+	.pwr_shift = ps, .iso_shift = is }
-+
-+#define reset_val(o, rs, prs) { .offset = o, .reset_shift = rs, \
-+	.p_reset_shift = prs }
-+
-+#define df_val(o, kis, kiw, kps, kpw, kas, kaw) { .offset = o, .ki_shift = kis,\
-+	.ki_width = kiw, .kp_shift = kps, .kp_width = kpw, .ka_shift = kas,    \
-+	.ka_width = kaw }
-+
-+#define vco_ctrl_val(uo, lo) { .u_offset = uo, .l_offset = lo }
-+
-+#define enable_val(o, es, hs, bs) { .offset = o, .enable_shift = es, \
-+	.hold_shift = hs, .bypass_shift = bs }
-+
-+static const struct iproc_pll_ctrl genpll_scr = {
-+	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_SPLIT_STAT_CTRL,
-+	.aon = aon_val(0x0, 1, 15, 12),
-+	.reset = reset_val(0x4, 2, 1),
-+	.dig_filter = df_val(0x0, 9, 3, 5, 4, 2, 3),
-+	.ndiv_int = reg_val(0x8, 4, 10),
-+	.pdiv = reg_val(0x8, 0, 4),
-+	.vco_ctrl = vco_ctrl_val(0x10, 0xc),
-+	.status = reg_val(0x0, 27, 1),
-+};
-+
-+
-+static const struct iproc_clk_ctrl genpll_scr_clk[] = {
-+	/* bypass_shift, the last value passed into enable_val(), is not defined
-+	 * in NS2.  However, it doesn't appear to be used anywhere, so setting
-+	 * it to 0.
-+	 */
-+	[BCM_NS2_GENPLL_SCR_SCR_CLK] = {
-+		.channel = BCM_NS2_GENPLL_SCR_SCR_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = enable_val(0x0, 18, 12, 0),
-+		.mdiv = reg_val(0x18, 0, 8),
-+	},
-+	[BCM_NS2_GENPLL_SCR_FS_CLK] = {
-+		.channel = BCM_NS2_GENPLL_SCR_FS_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = enable_val(0x0, 19, 13, 0),
-+		.mdiv = reg_val(0x18, 8, 8),
-+	},
-+	[BCM_NS2_GENPLL_SCR_AUDIO_CLK] = {
-+		.channel = BCM_NS2_GENPLL_SCR_AUDIO_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = enable_val(0x0, 20, 14, 0),
-+		.mdiv = reg_val(0x14, 0, 8),
-+	},
-+	[BCM_NS2_GENPLL_SCR_CH3_UNUSED] = {
-+		.channel = BCM_NS2_GENPLL_SCR_CH3_UNUSED,
-+		.flags = IPROC_CLK_AON,
-+		.enable = enable_val(0x0, 21, 15, 0),
-+		.mdiv = reg_val(0x14, 8, 8),
-+	},
-+	[BCM_NS2_GENPLL_SCR_CH4_UNUSED] = {
-+		.channel = BCM_NS2_GENPLL_SCR_CH4_UNUSED,
-+		.flags = IPROC_CLK_AON,
-+		.enable = enable_val(0x0, 22, 16, 0),
-+		.mdiv = reg_val(0x14, 16, 8),
-+	},
-+	[BCM_NS2_GENPLL_SCR_CH5_UNUSED] = {
-+		.channel = BCM_NS2_GENPLL_SCR_CH5_UNUSED,
-+		.flags = IPROC_CLK_AON,
-+		.enable = enable_val(0x0, 23, 17, 0),
-+		.mdiv = reg_val(0x14, 24, 8),
-+	},
-+};
-+
-+static void __init ns2_genpll_scr_clk_init(struct device_node *node)
-+{
-+	iproc_pll_clk_setup(node, &genpll_scr, NULL, 0, genpll_scr_clk,
-+			    ARRAY_SIZE(genpll_scr_clk));
-+}
-+CLK_OF_DECLARE(ns2_genpll_src_clk, "brcm,ns2-genpll-scr",
-+	       ns2_genpll_scr_clk_init);
-+
-+static const struct iproc_pll_ctrl genpll_sw = {
-+	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_SPLIT_STAT_CTRL,
-+	.aon = aon_val(0x0, 2, 9, 8),
-+	.reset = reset_val(0x4, 2, 1),
-+	.dig_filter = df_val(0x0, 9, 3, 5, 4, 2, 3),
-+	.ndiv_int = reg_val(0x8, 4, 10),
-+	.pdiv = reg_val(0x8, 0, 4),
-+	.vco_ctrl = vco_ctrl_val(0x10, 0xc),
-+	.status = reg_val(0x0, 13, 1),
-+};
-+
-+static const struct iproc_clk_ctrl genpll_sw_clk[] = {
-+	/* bypass_shift, the last value passed into enable_val(), is not defined
-+	 * in NS2.  However, it doesn't appear to be used anywhere, so setting
-+	 * it to 0.
-+	 */
-+	[BCM_NS2_GENPLL_SW_RPE_CLK] = {
-+		.channel = BCM_NS2_GENPLL_SW_RPE_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = enable_val(0x0, 18, 12, 0),
-+		.mdiv = reg_val(0x18, 0, 8),
-+	},
-+	[BCM_NS2_GENPLL_SW_250_CLK] = {
-+		.channel = BCM_NS2_GENPLL_SW_250_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = enable_val(0x0, 19, 13, 0),
-+		.mdiv = reg_val(0x18, 8, 8),
-+	},
-+	[BCM_NS2_GENPLL_SW_NIC_CLK] = {
-+		.channel = BCM_NS2_GENPLL_SW_NIC_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = enable_val(0x0, 20, 14, 0),
-+		.mdiv = reg_val(0x14, 0, 8),
-+	},
-+	[BCM_NS2_GENPLL_SW_CHIMP_CLK] = {
-+		.channel = BCM_NS2_GENPLL_SW_CHIMP_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = enable_val(0x0, 21, 15, 0),
-+		.mdiv = reg_val(0x14, 8, 8),
-+	},
-+	[BCM_NS2_GENPLL_SW_PORT_CLK] = {
-+		.channel = BCM_NS2_GENPLL_SW_PORT_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = enable_val(0x0, 22, 16, 0),
-+		.mdiv = reg_val(0x14, 16, 8),
-+	},
-+	[BCM_NS2_GENPLL_SW_SDIO_CLK] = {
-+		.channel = BCM_NS2_GENPLL_SW_SDIO_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = enable_val(0x0, 23, 17, 0),
-+		.mdiv = reg_val(0x14, 24, 8),
-+	},
-+};
-+
-+static void __init ns2_genpll_sw_clk_init(struct device_node *node)
-+{
-+	iproc_pll_clk_setup(node, &genpll_sw, NULL, 0, genpll_sw_clk,
-+			    ARRAY_SIZE(genpll_sw_clk));
-+}
-+CLK_OF_DECLARE(ns2_genpll_sw_clk, "brcm,ns2-genpll-sw",
-+	       ns2_genpll_sw_clk_init);
-+
-+static const struct iproc_pll_ctrl lcpll_ddr = {
-+	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_SPLIT_STAT_CTRL,
-+	.aon = aon_val(0x0, 2, 1, 0),
-+	.reset = reset_val(0x4, 2, 1),
-+	.dig_filter = df_val(0x0, 9, 3, 5, 4, 1, 4),
-+	.ndiv_int = reg_val(0x8, 4, 10),
-+	.pdiv = reg_val(0x8, 0, 4),
-+	.vco_ctrl = vco_ctrl_val(0x10, 0xc),
-+	.status = reg_val(0x0, 0, 1),
-+};
-+
-+static const struct iproc_clk_ctrl lcpll_ddr_clk[] = {
-+	/* bypass_shift, the last value passed into enable_val(), is not defined
-+	 * in NS2.  However, it doesn't appear to be used anywhere, so setting
-+	 * it to 0.
-+	 */
-+	[BCM_NS2_LCPLL_DDR_PCIE_SATA_USB_CLK] = {
-+		.channel = BCM_NS2_LCPLL_DDR_PCIE_SATA_USB_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = enable_val(0x0, 18, 12, 0),
-+		.mdiv = reg_val(0x14, 0, 8),
-+	},
-+	[BCM_NS2_LCPLL_DDR_DDR_CLK] = {
-+		.channel = BCM_NS2_LCPLL_DDR_DDR_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = enable_val(0x0, 19, 13, 0),
-+		.mdiv = reg_val(0x14, 8, 8),
-+	},
-+	[BCM_NS2_LCPLL_DDR_CH2_UNUSED] = {
-+		.channel = BCM_NS2_LCPLL_DDR_CH2_UNUSED,
-+		.flags = IPROC_CLK_AON,
-+		.enable = enable_val(0x0, 20, 14, 0),
-+		.mdiv = reg_val(0x10, 0, 8),
-+	},
-+	[BCM_NS2_LCPLL_DDR_CH3_UNUSED] = {
-+		.channel = BCM_NS2_LCPLL_DDR_CH3_UNUSED,
-+		.flags = IPROC_CLK_AON,
-+		.enable = enable_val(0x0, 21, 15, 0),
-+		.mdiv = reg_val(0x10, 8, 8),
-+	},
-+	[BCM_NS2_LCPLL_DDR_CH4_UNUSED] = {
-+		.channel = BCM_NS2_LCPLL_DDR_CH4_UNUSED,
-+		.flags = IPROC_CLK_AON,
-+		.enable = enable_val(0x0, 22, 16, 0),
-+		.mdiv = reg_val(0x10, 16, 8),
-+	},
-+	[BCM_NS2_LCPLL_DDR_CH5_UNUSED] = {
-+		.channel = BCM_NS2_LCPLL_DDR_CH5_UNUSED,
-+		.flags = IPROC_CLK_AON,
-+		.enable = enable_val(0x0, 23, 17, 0),
-+		.mdiv = reg_val(0x10, 24, 8),
-+	},
-+};
-+
-+static void __init ns2_lcpll_ddr_clk_init(struct device_node *node)
-+{
-+	iproc_pll_clk_setup(node, &lcpll_ddr, NULL, 0, lcpll_ddr_clk,
-+			    ARRAY_SIZE(lcpll_ddr_clk));
-+}
-+CLK_OF_DECLARE(ns2_lcpll_ddr_clk, "brcm,ns2-lcpll-ddr",
-+	       ns2_lcpll_ddr_clk_init);
-+
-+static const struct iproc_pll_ctrl lcpll_ports = {
-+	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_SPLIT_STAT_CTRL,
-+	.aon = aon_val(0x0, 2, 5, 4),
-+	.reset = reset_val(0x4, 2, 1),
-+	.dig_filter = df_val(0x0, 9, 3, 5, 4, 1, 4),
-+	.ndiv_int = reg_val(0x8, 4, 10),
-+	.pdiv = reg_val(0x8, 0, 4),
-+	.vco_ctrl = vco_ctrl_val(0x10, 0xc),
-+	.status = reg_val(0x0, 0, 1),
-+};
-+
-+static const struct iproc_clk_ctrl lcpll_ports_clk[] = {
-+	/* bypass_shift, the last value passed into enable_val(), is not defined
-+	 * in NS2.  However, it doesn't appear to be used anywhere, so setting
-+	 * it to 0.
-+	 */
-+	[BCM_NS2_LCPLL_PORTS_WAN_CLK] = {
-+		.channel = BCM_NS2_LCPLL_PORTS_WAN_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = enable_val(0x0, 18, 12, 0),
-+		.mdiv = reg_val(0x14, 0, 8),
-+	},
-+	[BCM_NS2_LCPLL_PORTS_RGMII_CLK] = {
-+		.channel = BCM_NS2_LCPLL_PORTS_RGMII_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = enable_val(0x0, 19, 13, 0),
-+		.mdiv = reg_val(0x14, 8, 8),
-+	},
-+	[BCM_NS2_LCPLL_PORTS_CH2_UNUSED] = {
-+		.channel = BCM_NS2_LCPLL_PORTS_CH2_UNUSED,
-+		.flags = IPROC_CLK_AON,
-+		.enable = enable_val(0x0, 20, 14, 0),
-+		.mdiv = reg_val(0x10, 0, 8),
-+	},
-+	[BCM_NS2_LCPLL_PORTS_CH3_UNUSED] = {
-+		.channel = BCM_NS2_LCPLL_PORTS_CH3_UNUSED,
-+		.flags = IPROC_CLK_AON,
-+		.enable = enable_val(0x0, 21, 15, 0),
-+		.mdiv = reg_val(0x10, 8, 8),
-+	},
-+	[BCM_NS2_LCPLL_PORTS_CH4_UNUSED] = {
-+		.channel = BCM_NS2_LCPLL_PORTS_CH4_UNUSED,
-+		.flags = IPROC_CLK_AON,
-+		.enable = enable_val(0x0, 22, 16, 0),
-+		.mdiv = reg_val(0x10, 16, 8),
-+	},
-+	[BCM_NS2_LCPLL_PORTS_CH5_UNUSED] = {
-+		.channel = BCM_NS2_LCPLL_PORTS_CH5_UNUSED,
-+		.flags = IPROC_CLK_AON,
-+		.enable = enable_val(0x0, 23, 17, 0),
-+		.mdiv = reg_val(0x10, 24, 8),
-+	},
-+};
-+
-+static void __init ns2_lcpll_ports_clk_init(struct device_node *node)
-+{
-+	iproc_pll_clk_setup(node, &lcpll_ports, NULL, 0, lcpll_ports_clk,
-+			    ARRAY_SIZE(lcpll_ports_clk));
-+}
-+CLK_OF_DECLARE(ns2_lcpll_ports_clk, "brcm,ns2-lcpll-ports",
-+	       ns2_lcpll_ports_clk_init);
-diff --git a/include/dt-bindings/clock/bcm-ns2.h b/include/dt-bindings/clock/bcm-ns2.h
-new file mode 100644
-index 0000000..d99c7a2
---- /dev/null
-+++ b/include/dt-bindings/clock/bcm-ns2.h
-@@ -0,0 +1,72 @@
-+/*
-+ *  BSD LICENSE
-+ *
-+ *  Copyright(c) 2015 Broadcom Corporation.  All rights reserved.
-+ *
-+ *  Redistribution and use in source and binary forms, with or without
-+ *  modification, are permitted provided that the following conditions
-+ *  are met:
-+ *
-+ *    * Redistributions of source code must retain the above copyright
-+ *      notice, this list of conditions and the following disclaimer.
-+ *    * Redistributions in binary form must reproduce the above copyright
-+ *      notice, this list of conditions and the following disclaimer in
-+ *      the documentation and/or other materials provided with the
-+ *      distribution.
-+ *    * Neither the name of Broadcom Corporation nor the names of its
-+ *      contributors may be used to endorse or promote products derived
-+ *      from this software without specific prior written permission.
-+ *
-+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-+ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-+ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-+ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-+ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-+ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-+ *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-+ */
-+
-+#ifndef _CLOCK_BCM_NS2_H
-+#define _CLOCK_BCM_NS2_H
-+
-+/* GENPLL SCR clock channel ID */
-+#define BCM_NS2_GENPLL_SCR		0
-+#define BCM_NS2_GENPLL_SCR_SCR_CLK	1
-+#define BCM_NS2_GENPLL_SCR_FS_CLK	2
-+#define BCM_NS2_GENPLL_SCR_AUDIO_CLK	3
-+#define BCM_NS2_GENPLL_SCR_CH3_UNUSED	4
-+#define BCM_NS2_GENPLL_SCR_CH4_UNUSED	5
-+#define BCM_NS2_GENPLL_SCR_CH5_UNUSED	6
-+
-+/* GENPLL SW clock channel ID */
-+#define BCM_NS2_GENPLL_SW		0
-+#define BCM_NS2_GENPLL_SW_RPE_CLK	1
-+#define BCM_NS2_GENPLL_SW_250_CLK	2
-+#define BCM_NS2_GENPLL_SW_NIC_CLK	3
-+#define BCM_NS2_GENPLL_SW_CHIMP_CLK	4
-+#define BCM_NS2_GENPLL_SW_PORT_CLK	5
-+#define BCM_NS2_GENPLL_SW_SDIO_CLK	6
-+
-+/* LCPLL DDR clock channel ID */
-+#define BCM_NS2_LCPLL_DDR		0
-+#define BCM_NS2_LCPLL_DDR_PCIE_SATA_USB_CLK	1
-+#define BCM_NS2_LCPLL_DDR_DDR_CLK	2
-+#define BCM_NS2_LCPLL_DDR_CH2_UNUSED	3
-+#define BCM_NS2_LCPLL_DDR_CH3_UNUSED	4
-+#define BCM_NS2_LCPLL_DDR_CH4_UNUSED	5
-+#define BCM_NS2_LCPLL_DDR_CH5_UNUSED	6
-+
-+/* LCPLL PORTS clock channel ID */
-+#define BCM_NS2_LCPLL_PORTS		0
-+#define BCM_NS2_LCPLL_PORTS_WAN_CLK	1
-+#define BCM_NS2_LCPLL_PORTS_RGMII_CLK	2
-+#define BCM_NS2_LCPLL_PORTS_CH2_UNUSED	3
-+#define BCM_NS2_LCPLL_PORTS_CH3_UNUSED	4
-+#define BCM_NS2_LCPLL_PORTS_CH4_UNUSED	5
-+#define BCM_NS2_LCPLL_PORTS_CH5_UNUSED	6
-+
-+#endif /* _CLOCK_BCM_NS2_H */
--- 
-1.9.1
+>
+> which returns DRM_PLANE_TYPE_PRIMARY only if their 1st argument is equal 0,
+> ie it assumes default window is always 0.
+> As an simple workaround I used 'tmp' variable which maps 1st window to 0.
+> This way exynos_plane_get_type returns expected value for all windows.
+> I plan replace this workaround with something nicer, but as it would involve
+> changes in other drivers I left this as TODO for later.
+
+Ok, let's have more cleanup later.
+
+Thanks,
+Inki Dae
+
+> Regarding ctx->planes[], it is static array so it will have always one entry
+> invalid in case of TV, with this approach it will be th 0th entry, but with a gain
+> of consistency in windows/zpos/planes numbering.
+> If you prefer different approach please let me know.
+>
+> Regards
+> Andrzej
+>
+> >
+> > Thanks,
+> > Inki Dae
+> >
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
