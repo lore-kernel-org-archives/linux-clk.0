@@ -1,122 +1,123 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v3 4/5] clk: s2mps15: Add support for S2MPS15 clocks
-To: Alim Akhtar <alim.akhtar@samsung.com>, lee.jones@linaro.org,
- broonie@kernel.org
-References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
- <1445863883-5187-5-git-send-email-alim.akhtar@samsung.com>
- <5630243E.1080608@samsung.com> <5630503A.3070404@samsung.com>
- <5630554E.8070301@samsung.com>
-Cc: mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, rtc-linux@googlegroups.com,
- linux-kernel@vger.kernel.org
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <56305EF5.1080709@samsung.com>
-Date: Wed, 28 Oct 2015 14:36:53 +0900
-MIME-version: 1.0
-In-reply-to: <5630554E.8070301@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-bn1bon0110.outbound.protection.outlook.com ([157.56.111.110]:60000
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751010AbbJWTxJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Fri, 23 Oct 2015 15:53:09 -0400
+From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+To: <arnd@arndb.de>, <mark.rutland@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
+	<linux-clk@vger.kernel.org>, <olof@lixom.net>
+CC: <bhupesh.linux@gmail.com>, <will.deacon@arm.com>,
+	<Catalin.Marinas@arm.com>, <bhupesh.sharma@freescale.com>,
+	<LeoLi@freescale.com>, <scottwood@freescale.com>,
+	<stuart.yoder@freescale.com>
+Subject: [PATCH v4 02/12] arm64: Rename FSL LS2085A SoC support code to LS2080A
+Date: Sat, 24 Oct 2015 01:01:51 +0530
+Message-ID: <1445628721-10483-3-git-send-email-bhupesh.sharma@freescale.com>
+In-Reply-To: <1445628721-10483-1-git-send-email-bhupesh.sharma@freescale.com>
+References: <1445628721-10483-1-git-send-email-bhupesh.sharma@freescale.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 28.10.2015 13:55, Alim Akhtar wrote:
-> 
-> 
-> On 10/28/2015 10:04 AM, Krzysztof Kozlowski wrote:
->> On 28.10.2015 10:26, Krzysztof Kozlowski wrote:
->>> On 26.10.2015 21:51, Alim Akhtar wrote:
->>>> S2MPS15 PMIC has three 32k buffered clocks outputs. This patch
->>>> adds supports for the same to the s2mps11 clock driver.
->>>>
->>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->>>> ---
->>>>   drivers/clk/Kconfig       |    5 +++--
->>>>   drivers/clk/clk-s2mps11.c |   24 ++++++++++++++++++++++++
->>>>   2 files changed, 27 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
->>>> index a1fa61159179..037a314b5d76 100644
->>>> --- a/drivers/clk/Kconfig
->>>> +++ b/drivers/clk/Kconfig
->>>> @@ -120,9 +120,10 @@ config COMMON_CLK_S2MPS11
->>>>       tristate "Clock driver for S2MPS1X/S5M8767 MFD"
->>>>       depends on MFD_SEC_CORE
->>>>       ---help---
->>>> -      This driver supports S2MPS11/S2MPS14/S5M8767 crystal oscillator
->>>> +      This driver supports S2MPS1X/S5M8767 crystal oscillator
->>>>         clock. These multi-function devices have two (S2MPS14) or three
->>>> -      (S2MPS11, S5M8767) fixed-rate oscillators, clocked at 32KHz
->>>> each.
->>>> +      (S2MPS11/S2MPS13/S2MPS15/S5M8767) fixed-rate oscillators,
->>>> +      clocked at 32KHz each.
->>>>
->>>>   config CLK_TWL6040
->>>>       tristate "External McPDM functional clock from twl6040"
->>>> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
->>>> index d266299dfdb1..455500dca653 100644
->>>> --- a/drivers/clk/clk-s2mps11.c
->>>> +++ b/drivers/clk/clk-s2mps11.c
->>>> @@ -25,6 +25,7 @@
->>>>   #include <linux/mfd/samsung/s2mps11.h>
->>>>   #include <linux/mfd/samsung/s2mps13.h>
->>>>   #include <linux/mfd/samsung/s2mps14.h>
->>>> +#include <linux/mfd/samsung/s2mps15.h>
->>>>   #include <linux/mfd/samsung/s5m8767.h>
->>>>   #include <linux/mfd/samsung/core.h>
->>>>
->>>> @@ -148,6 +149,24 @@ static struct clk_init_data
->>>> s2mps14_clks_init[S2MPS11_CLKS_NUM] = {
->>>>       },
->>>>   };
->>>>
->>>> +static struct clk_init_data s2mps15_clks_init[S2MPS11_CLKS_NUM] = {
->>>> +    [S2MPS11_CLK_AP] = {
->>>> +        .name = "s2mps15_ap",
->>>> +        .ops = &s2mps11_clk_ops,
->>>> +        .flags = CLK_IS_ROOT,
->>>> +    },
->>>> +    [S2MPS11_CLK_CP] = {
->>>> +        .name = "s2mps15_cp",
->>>> +        .ops = &s2mps11_clk_ops,
->>>> +        .flags = CLK_IS_ROOT,
->>>> +    },
->>>> +    [S2MPS11_CLK_BT] = {
->>>> +        .name = "s2mps15_bt",
->>>> +        .ops = &s2mps11_clk_ops,
->>>> +        .flags = CLK_IS_ROOT,
->>>> +    },
->>>> +};
->>>> +
->>>>   static struct device_node *s2mps11_clk_parse_dt(struct
->>>> platform_device *pdev,
->>>>           struct clk_init_data *clks_init)
->>>>   {
->>>> @@ -207,6 +226,10 @@ static int s2mps11_clk_probe(struct
->>>> platform_device *pdev)
->>>>           s2mps11_reg = S2MPS14_REG_RTCCTRL;
->>>>           clks_init = s2mps14_clks_init;
->>>>           break;
->>>> +    case S2MPS15X:
->>>> +        s2mps11_reg = S2MPS15_REG_RTC_BUF;
->>>> +        clks_init = s2mps15_clks_init;
->>>
->>> Another question (after looking at RTC driver):
->>> Is this the same register address as S2MPS14?
->>
->> I found the answer - this is the same address as in S2MPS13 and S2MPS14:
->> 0xc. The S2MPS14 has only two clocks though but S2MPS13 has three.
->> Again, as in RTC, you should re-use existing support.
->>
->> It looks there is no need for this patch at all.
->>
-> Yes, checked that, rtc looks same to s2mps14 and clk looks same as
-> s2mps13{ not s2mps11}, because of the RTC_BUF address changes.
-> Will drop patch 4 and 5 and use the existing names where applicable.
+Freescale is renaming the LS2085A SoC to LS2080A. This patch
+addresses the same.
 
-Thanks!
+Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+---
+ Documentation/devicetree/bindings/arm/fsl.txt      |    4 ++--
+ arch/arm64/boot/dts/freescale/Makefile             |    2 +-
+ .../{fsl-ls2085a-simu.dts => fsl-ls2080a-simu.dts} |   10 +++++-----
+ .../{fsl-ls2085a.dtsi => fsl-ls2080a.dtsi}         |    6 +++---
+ 4 files changed, 11 insertions(+), 11 deletions(-)
+ rename arch/arm64/boot/dts/freescale/{fsl-ls2085a-simu.dts => fsl-ls2080a-simu.dts} (90%)
+ rename arch/arm64/boot/dts/freescale/{fsl-ls2085a.dtsi => fsl-ls2080a.dtsi} (97%)
 
-> I think I don't have to change the binding or Kconfig changes?
+diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
+index 744b4de..53f229a 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.txt
++++ b/Documentation/devicetree/bindings/arm/fsl.txt
+@@ -131,7 +131,7 @@ Example:
+ Freescale ARMv8 based Layerscape SoC family Device Tree Bindings
+ ----------------------------------------------------------------
+ 
+-LS2085A ARMv8 based Simulator model
++LS2080A ARMv8 based Simulator model
+ Required root node properties:
+-    - compatible = "fsl,ls2085a-simu", "fsl,ls2085a";
++    - compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
+ 
+diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+index fc6fca3c..932001a 100644
+--- a/arch/arm64/boot/dts/freescale/Makefile
++++ b/arch/arm64/boot/dts/freescale/Makefile
+@@ -1,4 +1,4 @@
+-dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2085a-simu.dtb
++dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-simu.dtb
+  
+ always		:= $(dtb-y)
+ subdir-y	:= $(dts-dirs)
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2085a-simu.dts b/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
+similarity index 90%
+rename from arch/arm64/boot/dts/freescale/fsl-ls2085a-simu.dts
+rename to arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
+index 82e2a6f..33d6d0c 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls2085a-simu.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a-simu.dts
+@@ -1,7 +1,7 @@
+ /*
+- * Device Tree file for Freescale LS2085a software Simulator model
++ * Device Tree file for Freescale LS2080a software Simulator model
+  *
+- * Copyright (C) 2014, Freescale Semiconductor
++ * Copyright (C) 2014-2015, Freescale Semiconductor
+  *
+  * Bhupesh Sharma <bhupesh.sharma@freescale.com>
+  *
+@@ -51,11 +51,11 @@
+ 
+ /dts-v1/;
+ 
+-/include/ "fsl-ls2085a.dtsi"
++/include/ "fsl-ls2080a.dtsi"
+ 
+ / {
+-	model = "Freescale Layerscape 2085a software Simulator model";
+-	compatible = "fsl,ls2085a-simu", "fsl,ls2085a";
++	model = "Freescale Layerscape 2080a software Simulator model";
++	compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
+ 
+ 	ethernet@2210000 {
+ 		compatible = "smsc,lan91c111";
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2085a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+similarity index 97%
+rename from arch/arm64/boot/dts/freescale/fsl-ls2085a.dtsi
+rename to arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+index e281ceb..9597edf 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls2085a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+@@ -1,7 +1,7 @@
+ /*
+- * Device Tree Include file for Freescale Layerscape-2085A family SoC.
++ * Device Tree Include file for Freescale Layerscape-2080A family SoC.
+  *
+- * Copyright (C) 2014, Freescale Semiconductor
++ * Copyright (C) 2014-2015, Freescale Semiconductor
+  *
+  * Bhupesh Sharma <bhupesh.sharma@freescale.com>
+  *
+@@ -50,7 +50,7 @@
+  */
+ 
+ / {
+-	compatible = "fsl,ls2085a";
++	compatible = "fsl,ls2080a";
+ 	interrupt-parent = <&gic>;
+ 	#address-cells = <2>;
+ 	#size-cells = <2>;
+-- 
+1.7.9.5
 
-I think you don't have to. Only the main MFD driver will be updated with
-respective child driver names and compatible.
 
-Best regards,
-Krzysztof
