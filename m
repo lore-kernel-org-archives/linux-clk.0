@@ -1,56 +1,51 @@
-Return-Path: <jonmason@broadcom.com>
-Date: Thu, 22 Oct 2015 10:16:19 -0400
-From: Jon Mason <jonmason@broadcom.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Michael Turquette <mturquette@baylibre.com>, Florian Fainelli
-	<f.fainelli@gmail.com>, Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui
-	<rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<bcm-kernel-feedback-list@broadcom.com>
-Subject: Re: [PATCH v3 0/10] clk: iproc: add support for BCM NS, NSP, and NS2
-Message-ID: <20151022141618.GC651@broadcom.com>
-References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
- <20151021235144.GQ19782@codeaurora.org>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20151021235144.GQ19782@codeaurora.org>
-Return-Path: jonmason@broadcom.com
+In-Reply-To: <20151015192325.GN4558@codeaurora.org>
+References: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
+	<1444916813-31024-9-git-send-email-linus.walleij@linaro.org>
+	<20151015192325.GN4558@codeaurora.org>
+Date: Fri, 23 Oct 2015 11:48:09 +0200
+Message-ID: <CACRpkdbXLs7hP=8WH6uK_3mQQEy4Y6TJsjpt4=LpeT=jmF-9Kw@mail.gmail.com>
+Subject: Re: [PATCH 08/13] clk: add ARM syscon ICST device tree bindings
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+	Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Oct 21, 2015 at 04:51:44PM -0700, Stephen Boyd wrote:
-> On 10/15, Jon Mason wrote:
-> > 
-> > v3 - Added a patch to fix cygnus clk link failures, and added back the
-> > DT documentation patches that were removed from v2.
-> > 
-> > v2 - Added a patch to change the Cygnus clk macros to uppercase,
-> > removed the device tree changes from the series (will send out those as
-> > an RFC), and other minor changes that Stephen Boyd requested.
-> > 
-> > This patch series adds support for the Broadcom Northstar, Northstar
-> > Plus, and Northstar 2 clocks.  Some slight modifications were necessary
-> > to clk-iproc-pll to get Northstar and Northstar Plus working, due to
-> > differences in register layout.  This is the reason why the first patch
-> > is necessary.  Some more modifications were necessary to clk-iproc-pll
-> > to get Northstar 2 working, due to differences in register layout (and
-> > resulting fallout in Cygnus and NSP).  This is the reason why the sixth
-> > and seventh patches are necessary.  The fifth patch is clean-up to
-> > prevent accidentally forgetting to adjust for the base write errata
-> > (which happened a few times, but was caught in internal review).
-> > 
-> 
-> Can you please use git cover-letter format where the diffstat for
-> the series is shown? Without that information here I started
-> applying patches until I realized this added dt-bindings headers,
-> thus probably needing some stable clk branch to pull into arm-soc.
+On Thu, Oct 15, 2015 at 9:23 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 10/15, Linus Walleij wrote:
 
-My apologies.  I will do so in the future.
+>> +Required properties:
+>> +- lock-offset: the offset address into the system controller where the
+>> +  unlocking register is located
+>> +- vco-offset: the offset address into the system controller where the
+>> +  ICST control register is located (even 32 bit address)
+>
+> Is there any reason why we don't use a reg property for this?
 
-Thanks,
-Jon
+Usually reg = <> is used with two (or more) tokens:
 
-> 
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+reg = <phys_addr size>;
+
+The exception being things like I2C addresses which
+are just one token.
+
+Since in this case, there is a "mother" reg property in the
+syscon-compatible node, which we are indexing into,
+it is confusing to use the same name for subnodes.
+
+Also there is a bunch of precedents doing it like this
+for sybdevices to system controllers, just
+git grep offset Documentation/devicetree/bindings
+will give you a bunch of them.
+
+(Fixing the spelling comments.)
+
+Yours,
+Linus Walleij
