@@ -1,92 +1,82 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
 To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+	Stephen Boyd <sboyd@codeaurora.org>
 Cc: linux-clk@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 2/5] clk: shmobile: div6: Make clock-output-names optional
-Date: Thu, 29 Oct 2015 12:21:01 +0100
-Message-Id: <1446117664-6037-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1446117664-6037-1-git-send-email-geert+renesas@glider.be>
-References: <1446117664-6037-1-git-send-email-geert+renesas@glider.be>
+	Linus Walleij <linus.walleij@linaro.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH 08/13 v2] clk: add ARM syscon ICST device tree bindings
+Date: Fri, 23 Oct 2015 11:50:26 +0200
+Message-Id: <1445593826-32484-1-git-send-email-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Renesas DIV6 clocks provide a single clock output.  Hence make the
-"clock-output-names" DT property optional instead of mandatory. In case
-the DT property is omitted the DT node name will be used.
+This adds the device tree bindings for the ARM Syscon ICST
+oscillators, which is a register-level interface to the
+Integrated Device Technology (IDT) ICS525 and ICS307
+serially programmable oscillators.
 
-Rename the variable "name" to "clk_name" to make the code more similar
-with fixed-factor-clock.c, and to avoid a conflict with a nested local
-variable while we're at it.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: devicetree@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-v5:
-  - Integrated in this series as a dependency.
----
- .../devicetree/bindings/clock/renesas,cpg-div6-clocks.txt   |  4 ++++
- drivers/clk/shmobile/clk-div6.c                             | 13 +++----------
- 2 files changed, 7 insertions(+), 10 deletions(-)
+ChangeLog v1->v2:
+- Spelling fixes.
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
-index 5ddb68418655d569..86008ad354cf4bbd 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
-@@ -20,6 +20,10 @@ Required Properties:
-     clocks must be specified.  For clocks with multiple parents, invalid
-     settings must be specified as "<0>".
-   - #clock-cells: Must be 0
+I'm looking for an ACK from the CLK maintainers to take this
+through the ARM SoC tree once the series stabilize.
+---
+ .../devicetree/bindings/clock/arm-syscon-icst.txt  | 40 ++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt b/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
+new file mode 100644
+index 000000000000..8b7177cecb36
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
+@@ -0,0 +1,40 @@
++ARM System Controller ICST clocks
 +
++The ICS525 and ICS307 oscillators are produced by Integrated Devices
++Technology (IDT). ARM integrated these oscillators deeply into their
++reference designs by adding special control registers that manage such
++oscillators to their system controllers.
 +
-+Optional Properties:
++The ARM system controller contains logic to serialize and initialize
++an ICST clock request after a write to the 32 bit register at an offset
++into the system controller. Furthermore, to even be able to alter one of
++these frequencies, the system controller must first be unlocked by
++writing a special token to another offset in the system controller.
 +
-   - clock-output-names: The name of the clock as a free-form string
- 
- 
-diff --git a/drivers/clk/shmobile/clk-div6.c b/drivers/clk/shmobile/clk-div6.c
-index 036a692c72195db9..c89566a918290246 100644
---- a/drivers/clk/shmobile/clk-div6.c
-+++ b/drivers/clk/shmobile/clk-div6.c
-@@ -178,10 +178,9 @@ static void __init cpg_div6_clock_init(struct device_node *np)
- 	const char **parent_names;
- 	struct clk_init_data init;
- 	struct div6_clock *clock;
--	const char *name;
-+	const char *clk_name = np->name;
- 	struct clk *clk;
- 	unsigned int i;
--	int ret;
- 
- 	clock = kzalloc(sizeof(*clock), GFP_KERNEL);
- 	if (!clock)
-@@ -215,13 +214,7 @@ static void __init cpg_div6_clock_init(struct device_node *np)
- 	clock->div = (clk_readl(clock->reg) & CPG_DIV6_DIV_MASK) + 1;
- 
- 	/* Parse the DT properties. */
--	ret = of_property_read_string(np, "clock-output-names", &name);
--	if (ret < 0) {
--		pr_err("%s: failed to get %s DIV6 clock output name\n",
--		       __func__, np->name);
--		goto error;
--	}
--
-+	of_property_read_string(np, "clock-output-names", &clk_name);
- 
- 	for (i = 0, valid_parents = 0; i < num_parents; i++) {
- 		const char *name = of_clk_get_parent_name(np, i);
-@@ -255,7 +248,7 @@ static void __init cpg_div6_clock_init(struct device_node *np)
- 	}
- 
- 	/* Register the clock. */
--	init.name = name;
-+	init.name = clk_name;
- 	init.ops = &cpg_div6_clock_ops;
- 	init.flags = CLK_IS_BASIC;
- 	init.parent_names = parent_names;
++The ICST oscillator must be provided inside a system controller node.
++
++Required properties:
++- lock-offset: the offset address into the system controller where the
++  unlocking register is located
++- vco-offset: the offset address into the system controller where the
++  ICST control register is located (even 32 bit address)
++- compatible: must be one of "arm,syscon-icst525" or "arm,syscon-icst307"
++- #clock-cells: must be <0>
++- clocks: parent clock, since the ICST needs a parent clock to derive its
++  frequency from, this attribute is compulsory.
++
++Example:
++
++syscon: syscon@10000000 {
++	compatible = "syscon";
++	reg = <0x10000000 0x1000>;
++
++	oscclk0: osc0@0c {
++		compatible = "arm,syscon-icst307";
++		#clock-cells = <0>;
++		lock-offset = <0x20>;
++		vco-offset = <0x0c>;
++		clocks = <&xtal24mhz>;
++	};
++	(...)
++};
 -- 
-1.9.1
+2.4.3
