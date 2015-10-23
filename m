@@ -1,205 +1,52 @@
-Return-Path: <robh@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1446214865-3972-10-git-send-email-maxime.ripard@free-electrons.com>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
- <1446214865-3972-10-git-send-email-maxime.ripard@free-electrons.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 30 Oct 2015 11:40:03 -0500
-Message-ID: <CAL_JsqLuUUApGAgdw7U8EJ7p5yrYJg8AKFB32AE9Ufrf47=WpQ@mail.gmail.com>
-Subject: Re: [PATCH 09/19] drm: sun4i: Add DT bindings documentation
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>, Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: bcm-kernel-feedback-list@broadcom.com,
+	devicetree@vger.kernel.org,
+	jonmason@broadcom.com,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	linux@arm.linux.org.uk,
+	sbranden@broadcom.com,
+	rjui@broadcom.com,
+	Florian Fainelli <f.fainelli@gmail.com>
+Subject: [PATCH 0/3] clk: Broadcom BCM63138 support
+Date: Fri, 23 Oct 2015 10:30:45 -0700
+Message-Id: <1445621448-11894-1-git-send-email-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 30, 2015 at 9:20 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The display pipeline of the Allwinner A10 is involving several loosely
-> coupled components.
->
-> Add a documentation for the bindings.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  .../devicetree/bindings/drm/sunxi/sun4i-drm.txt    | 122 +++++++++++++++++++++
+Hi all,
 
-bindings/display/sunxi/ please.
+This patch series adds support for the Broadcom BCM63138 DSL SoCs
+clocking framework.
 
->  1 file changed, 122 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/drm/sunxi/sun4i-drm.txt
->
-> diff --git a/Documentation/devicetree/bindings/drm/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/drm/sunxi/sun4i-drm.txt
-> new file mode 100644
-> index 000000000000..dbdccef787b4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/drm/sunxi/sun4i-drm.txt
-> @@ -0,0 +1,122 @@
-> +Allwinner A10 Display Pipeline
-> +==============================
-> +
-> +The Allwinner A10 Display pipeline is composed of several components
-> +that are going to be documented below:
-> +
-> +TV Encoder
-> +----------
-> +
-> +The TV Encoder supports the composite and VGA output. It is one end of
-> +the pipeline.
-> +
-> +Required properties:
-> + - compatible: value should be "allwinner,sun4i-a10-tv-encoder".
-> + - reg: base address and size of memory-mapped region
-> + - clocks: the clocks driving the TV encoder
-> +
-> +TCON
-> +----
-> +
-> +The TCON acts as a CRTC and encoder for RGB / LVDS interfaces.
+Since the HW is identical to the one found in Broadcom iProc SoCs, but the
+integration is different (obviously), there is still a new compatible string
+introduced just in case we happen to find issues in the future.
 
-Lets not carry DRMs old CRTC name into DT bindings. Just say "display
-controller."
+This applies on top of clk/next as of
 
-> +
-> +Required properties:
-> + - compatible: value should be "allwinner,sun4i-a10-tcon".
-> + - reg: base address and size of memory-mapped region
-> + - interrupts: interrupt associated to this IP
-> + - clocks: phandles to the clocks feeding the TCON. Three are needed:
-> +   - 'ahb': the interface clocks
-> +   - 'tcon-ch0': The clock driving the TCON channel 0
-> +   - 'tcon-ch1': The clock driving the TCON channel 0
-> +
-> + - clock-names: the clock names mentionned above
+f63d19ef52aa66e97fca2425974845177ce02b0a ("Merge branch 'clk-iproc' into clk-next")
 
-typo
+Since there is an obvious dependency between patch 2 and 3, we can either
+merge this through the Clock tree or via a future arm-soc pull requests
+for Broadcom SoCs.
 
-> + - clock-output-names: Name of the pixel clock created
-> +
-> +
-> +Display Engine Backend
-> +----------------------
-> +
-> +The display engine backend exposes layers and sprites to the
-> +system. It's split into two components, the frontend and backend, the
-> +frontend doing formats conversion, scaling, deinterlacing, while the
-> +backend actually manages the layers.
-> +
-> +Required properties:
-> +  - compatible: value must be one of:
-> +    * allwinner,sun5i-a13-display-engine
-> +
-> +  - reg: base address and size of the memory-mapped region. Two are needed:
-> +    * backend0: registers of the display engine backend
-> +    * frontend0: registers of the display engine frontend
+Thanks!
 
-Why the zeros? I think they should be dropped.
+Florian Fainelli (3):
+  clk: iproc: Extend binding to cover BCM63138
+  clk: bcm: Add BCM63138 clock support
+  ARM: dts: BCM63xx: Add ARMPLL device tree nodes
 
-> +  - reg_names: the region names mentionned above.
+ .../bindings/clock/brcm,iproc-clocks.txt           |  5 +++
+ arch/arm/boot/dts/bcm63138.dtsi                    | 39 ++++++++++++++++------
+ drivers/clk/bcm/Kconfig                            | 10 ++++++
+ drivers/clk/bcm/Makefile                           |  1 +
+ drivers/clk/bcm/clk-bcm63xx.c                      | 22 ++++++++++++
+ 5 files changed, 67 insertions(+), 10 deletions(-)
+ create mode 100644 drivers/clk/bcm/clk-bcm63xx.c
 
-typo
-
-> +
-> +  - interrupts: frontend interrupt phandle
-> +
-> +  - clocks: phandles to the clocks feeding the frontend and backend
-> +    * backend0-bus: the backend interface clock
-> +    * backend0-mod: the backend module clock
-> +    * backend0-ram: the backend DRAM clock
-> +    * frontend0-bus: the frontend interface clock
-> +    * frontend0-mod: the frontend module clock
-> +    * frontend0-ram: the frontend DRAM clock
-
-Same comment on zeros.
-
-> +  - clock-names: the clock names mentionned above
-
-typo
-
-> +
-> +  - resets: phandles to the reset controllers. Two are needed:
-> +    * backend0: backend reset controller
-> +    * frontend0: frontend reset controller
-> +  - reset-names: the reset names mentionned above
-
-typo. At least you are consistent (unlike English grammar rules). ;)
-
-> +
-> +  - allwinner,tcon: phandle to the TCON in our pipeline
-
-Use of-graph or just let the relationship live in the driver. If there
-is only 1 instance of the blocks, the latter is fine.
-
-> +
-> +Optional properties:
-> +  - allwinner,tv-encoder: phandle to the TV Encoder in our pipeline
-> +  - allwinner,panel: phandle to the panel used in our RGB interface
-
-Use of-graph please.
-
-> +
-> +Example:
-> +
-> +panel: panel {
-> +       compatible = "olimex,lcd-olinuxino-43-ts";
-> +};
-> +
-> +tve: encoder@01c0a000 {
-> +       compatible = "allwinner,sun4i-a10-tv-encoder";
-> +       reg = <0x01c0a000 0x1000>;
-> +       clocks = <&ahb_gates 34>;
-> +};
-> +
-> +tcon: lcd-controller@01c0c000 {
-> +       compatible = "allwinner,sun4i-a10-tcon";
-> +       reg = <0x01c0c000 0x1000>;
-> +       interrupts = <44>;
-> +       clocks = <&ahb_gates 36>,
-> +                <&tcon_ch0_clk>,
-> +                <&tcon_ch1_clk>;
-> +       clock-names = "ahb",
-> +                     "tcon-ch0",
-> +                     "tcon-ch1";
-> +       clock-output-names = "tcon-pixel-clock";
-> +};
-> +
-> +de: display-engine@01e00000 {
-> +       compatible = "allwinner,sun5i-a13-display-engine";
-> +       reg = <0x01e00000 0x20000>,
-> +             <0x01e60000 0x10000>;
-> +       reg-names = "frontend0",
-> +                   "backend0";
-> +       interrupts = <47>;
-> +       interrupt-names = "engine0";
-> +       clocks = <&ahb_gates 46>, <&de_fe_clk>,
-> +                <&dram_gates 25>, <&ahb_gates 44>,
-> +                <&de_be_clk>, <&dram_gates 26>;
-> +       clock-names = "frontend0-bus", "frontend0-mod",
-> +                     "frontend0-ram", "backend0-bus",
-> +                     "backend0-mod", "backend0-ram";
-> +       resets = <&de_fe_clk>,
-> +                <&de_be_clk>;
-> +       reset-names = "frontend0",
-> +                     "backend0";
-> +
-> +       allwinner,tcon = <&tcon>;
-> +       allwinner,tv-encoder = <&tve>;
-> +       allwinner,panel = <&panel>;
-> +};
-> --
-> 2.6.2
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+2.1.0
