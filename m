@@ -1,99 +1,595 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bn1bon0136.outbound.protection.outlook.com ([157.56.111.136]:46520
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1753794AbbJOHDs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 15 Oct 2015 03:03:48 -0400
-From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-To: <arnd@arndb.de>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
-	<linux-clk@vger.kernel.org>, <olof@lixom.net>
-CC: <bhupesh.linux@gmail.com>, <will.deacon@arm.com>,
-	<Catalin.Marinas@arm.com>, <bhupesh.sharma@freescale.com>,
-	<LeoLi@freescale.com>, <scottwood@freescale.com>,
-	<stuart.yoder@freescale.com>
-Subject: [PATCH v3 01/12] arm64: Use generic Layerscape SoC family naming
-Date: Thu, 15 Oct 2015 12:17:41 +0530
-Message-ID: <1444891672-32117-2-git-send-email-bhupesh.sharma@freescale.com>
-In-Reply-To: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
-References: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
+Return-Path: <B48286@freescale.com>
+From: Zhiqiang Hou <B48286@freescale.com>
+To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
+	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+CC: <mark.rutland@arm.com>, <linux@roeck-us.net>, <wsa@the-dreams.de>,
+	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <Mingkai.Hu@freescale.com>,
+	<Shaohui.Xie@freescale.com>, <scottwood@freescale.com>,
+	<bhupesh.sharma@freescale.com>, <Wenbin.Song@freescale.com>,
+	<B48286@freescale.com>, Li Yang <leoli@freescale.com>
+Subject: [PATCH V6 4/6] arm64/ls1043a: add DTS for Freescale LS1043A SoC
+Date: Fri, 23 Oct 2015 16:01:20 +0800
+Message-ID: <1445587282-29529-4-git-send-email-B48286@freescale.com>
+In-Reply-To: <1445587282-29529-1-git-send-email-B48286@freescale.com>
+References: <1445587282-29529-1-git-send-email-B48286@freescale.com>
+Return-Path: B48286@freescale.com
 MIME-Version: 1.0
 Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Freescale will be a spinning-out a set of ARMv8 based SoCs which
-will be based on a similar overall SoC architecture. So, this patch
-converts the existing infrastructure in the arm64/dts, arm64/Kconfig
-and arm64/configs to use the generic convention ARCH_LAYERSCAPE
-in place of the more specific FSL_LS2085A, to save code duplication
-later-on.
+From: Mingkai Hu <Mingkai.Hu@freescale.com>
 
-Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+LS1043a is an SoC with 4 ARMv8 A53 cores and most other IP blocks
+similar to LS1021a which complies to Chassis 2.1 spec.
+
+Following levels of DTSI/DTS files have been created for the
+LS1043A SoC family:
+
+- fsl-ls1043a.dtsi:
+  DTS-Include file for FSL LS1043A SoC.
+
+Signed-off-by: Li Yang <leoli@freescale.com>
+Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
+Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
 ---
- Documentation/devicetree/bindings/arm/fsl.txt |    4 ++--
- arch/arm64/Kconfig.platforms                  |    6 +++---
- arch/arm64/boot/dts/freescale/Makefile        |    2 +-
- arch/arm64/configs/defconfig                  |    2 +-
- 4 files changed, 7 insertions(+), 7 deletions(-)
+V6:
+ - No change.
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
-index 2a3ba73..744b4de 100644
---- a/Documentation/devicetree/bindings/arm/fsl.txt
-+++ b/Documentation/devicetree/bindings/arm/fsl.txt
-@@ -128,8 +128,8 @@ Example:
- 		reg = <0x0 0x1ee0000 0x0 0x10000>;
- 	};
- 
--Freescale LS2085A SoC Device Tree Bindings
--------------------------------------------
-+Freescale ARMv8 based Layerscape SoC family Device Tree Bindings
-+----------------------------------------------------------------
- 
- LS2085A ARMv8 based Simulator model
- Required root node properties:
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 967571d..4043c35 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -29,10 +29,10 @@ config ARCH_EXYNOS7
- 	help
- 	  This enables support for Samsung Exynos7 SoC family
- 
--config ARCH_FSL_LS2085A
--	bool "Freescale LS2085A SOC"
-+config ARCH_LAYERSCAPE
-+	bool "ARMv8 based Freescale Layerscape SoC family"
- 	help
--	  This enables support for Freescale LS2085A SOC.
-+	  This enables support for the Freescale Layerscape SoC family.
- 
- config ARCH_HISI
- 	bool "Hisilicon SoC Family"
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 4f2de3e7..fc6fca3c 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -1,4 +1,4 @@
--dtb-$(CONFIG_ARCH_FSL_LS2085A) += fsl-ls2085a-simu.dtb
-+dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2085a-simu.dtb
-  
- always		:= $(dtb-y)
- subdir-y	:= $(dts-dirs)
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index fc97b84..49f416a 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -34,7 +34,7 @@ CONFIG_MODULE_UNLOAD=y
- CONFIG_ARCH_BCM_IPROC=y
- CONFIG_ARCH_BERLIN=y
- CONFIG_ARCH_EXYNOS7=y
--CONFIG_ARCH_FSL_LS2085A=y
-+CONFIG_ARCH_LAYERSCAPE=y
- CONFIG_ARCH_HISI=y
- CONFIG_ARCH_MEDIATEK=y
- CONFIG_ARCH_ROCKCHIP=y
+V5:
+ - Move gic, timer and pmu nodes out of SoC node.
+
+V4:
+ - Add soc node with simple-bus compatible.
+ - Add property interrupt-affinity for armv8 pmuv3 node.
+
+V3:
+ - Add device tree node for SATA.
+ - Remove properity enable-method for all cpu node.
+   Remove reserved memory region for spin-table.
+
+V2:
+ - Add secondary core boot method.
+ - Move out the sysclk node from the clockgen node.
+ - Correct the reg size of GICC.
+
+ arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi | 525 +++++++++++++++++++++++++
+ 1 file changed, 525 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+new file mode 100644
+index 0000000..bf5af82
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+@@ -0,0 +1,525 @@
++/*
++ * Device Tree Include file for Freescale Layerscape-1043A family SoC.
++ *
++ * Copyright 2014-2015, Freescale Semiconductor
++ *
++ * Mingkai Hu <Mingkai.hu@freescale.com>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPLv2 or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This library is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This library is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++/ {
++	compatible = "fsl,ls1043a";
++	interrupt-parent = <&gic>;
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	cpus {
++		#address-cells = <2>;
++		#size-cells = <0>;
++
++		/*
++		 * We expect the enable-method for cpu's to be "psci", but this
++		 * is dependent on the SoC FW, which will fill this in.
++		 *
++		 * Currently supported enable-method is psci v0.2
++		 */
++		cpu0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x0 0x0>;
++			clocks = <&clockgen 1 0>;
++		};
++
++		cpu1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x0 0x1>;
++			clocks = <&clockgen 1 0>;
++		};
++
++		cpu2: cpu@2 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x0 0x2>;
++			clocks = <&clockgen 1 0>;
++		};
++
++		cpu3: cpu@3 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x0 0x3>;
++			clocks = <&clockgen 1 0>;
++		};
++	};
++
++	memory@80000000 {
++		device_type = "memory";
++		reg = <0x0 0x80000000 0 0x80000000>;
++		      /* DRAM space 1, size: 2GiB DRAM */
++	};
++
++	sysclk: sysclk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <100000000>;
++		clock-output-names = "sysclk";
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts = <1 13 0x1>, /* Physical Secure PPI */
++			     <1 14 0x1>, /* Physical Non-Secure PPI */
++			     <1 11 0x1>, /* Virtual PPI */
++			     <1 10 0x1>; /* Hypervisor PPI */
++	};
++
++	pmu {
++		compatible = "arm,armv8-pmuv3";
++		interrupts = <0 106 0x4>,
++			     <0 107 0x4>,
++			     <0 95 0x4>,
++			     <0 97 0x4>;
++		interrupt-affinity = <&cpu0>,
++				     <&cpu1>,
++				     <&cpu2>,
++				     <&cpu3>;
++	};
++
++	gic: interrupt-controller@1400000 {
++		compatible = "arm,gic-400";
++		#interrupt-cells = <3>;
++		interrupt-controller;
++		reg = <0x0 0x1401000 0 0x1000>, /* GICD */
++		      <0x0 0x1402000 0 0x2000>, /* GICC */
++		      <0x0 0x1404000 0 0x2000>, /* GICH */
++		      <0x0 0x1406000 0 0x2000>; /* GICV */
++		interrupts = <1 9 0xf08>;
++	};
++
++	soc {
++		compatible = "simple-bus";
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		clockgen: clocking@1ee1000 {
++			compatible = "fsl,ls1043a-clockgen";
++			reg = <0x0 0x1ee1000 0x0 0x1000>;
++			#clock-cells = <2>;
++			clocks = <&sysclk>;
++		};
++
++		scfg: scfg@1570000 {
++			compatible = "fsl,ls1043a-scfg", "syscon";
++			reg = <0x0 0x1570000 0x0 0x10000>;
++			big-endian;
++		};
++
++		dcfg: dcfg@1ee0000 {
++			compatible = "fsl,ls1043a-dcfg", "syscon";
++			reg = <0x0 0x1ee0000 0x0 0x10000>;
++		};
++
++		ifc: ifc@1530000 {
++			compatible = "fsl,ifc", "simple-bus";
++			reg = <0x0 0x1530000 0x0 0x10000>;
++			interrupts = <0 43 0x4>;
++		};
++
++		esdhc: esdhc@1560000 {
++			compatible = "fsl,ls1043a-esdhc", "fsl,esdhc";
++			reg = <0x0 0x1560000 0x0 0x10000>;
++			interrupts = <0 62 0x4>;
++			clock-frequency = <0>;
++			voltage-ranges = <1800 1800 3300 3300>;
++			sdhci,auto-cmd12;
++			big-endian;
++			bus-width = <4>;
++		};
++
++		dspi0: dspi@2100000 {
++			compatible = "fsl,ls1043a-dspi", "fsl,ls1021a-v1.0-dspi";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x2100000 0x0 0x10000>;
++			interrupts = <0 64 0x4>;
++			clock-names = "dspi";
++			clocks = <&clockgen 4 0>;
++			spi-num-chipselects = <5>;
++			big-endian;
++			status = "disabled";
++		};
++
++		dspi1: dspi@2110000 {
++			compatible = "fsl,ls1043a-dspi", "fsl,ls1021a-v1.0-dspi";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x2110000 0x0 0x10000>;
++			interrupts = <0 65 0x4>;
++			clock-names = "dspi";
++			clocks = <&clockgen 4 0>;
++			spi-num-chipselects = <5>;
++			big-endian;
++			status = "disabled";
++		};
++
++		i2c0: i2c@2180000 {
++			compatible = "fsl,vf610-i2c";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x2180000 0x0 0x10000>;
++			interrupts = <0 56 0x4>;
++			clock-names = "i2c";
++			clocks = <&clockgen 4 0>;
++			dmas = <&edma0 1 39>,
++			       <&edma0 1 38>;
++			dma-names = "tx", "rx";
++			status = "disabled";
++		};
++
++		i2c1: i2c@2190000 {
++			compatible = "fsl,vf610-i2c";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x2190000 0x0 0x10000>;
++			interrupts = <0 57 0x4>;
++			clock-names = "i2c";
++			clocks = <&clockgen 4 0>;
++			status = "disabled";
++		};
++
++		i2c2: i2c@21a0000 {
++			compatible = "fsl,vf610-i2c";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x21a0000 0x0 0x10000>;
++			interrupts = <0 58 0x4>;
++			clock-names = "i2c";
++			clocks = <&clockgen 4 0>;
++			status = "disabled";
++		};
++
++		i2c3: i2c@21b0000 {
++			compatible = "fsl,vf610-i2c";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x21b0000 0x0 0x10000>;
++			interrupts = <0 59 0x4>;
++			clock-names = "i2c";
++			clocks = <&clockgen 4 0>;
++			status = "disabled";
++		};
++
++		duart0: serial@21c0500 {
++			compatible = "fsl,ns16550", "ns16550a";
++			reg = <0x00 0x21c0500 0x0 0x100>;
++			interrupts = <0 54 0x4>;
++			clocks = <&clockgen 4 0>;
++		};
++
++		duart1: serial@21c0600 {
++			compatible = "fsl,ns16550", "ns16550a";
++			reg = <0x00 0x21c0600 0x0 0x100>;
++			interrupts = <0 54 0x4>;
++			clocks = <&clockgen 4 0>;
++		};
++
++		duart2: serial@21d0500 {
++			compatible = "fsl,ns16550", "ns16550a";
++			reg = <0x0 0x21d0500 0x0 0x100>;
++			interrupts = <0 55 0x4>;
++			clocks = <&clockgen 4 0>;
++		};
++
++		duart3: serial@21d0600 {
++			compatible = "fsl,ns16550", "ns16550a";
++			reg = <0x0 0x21d0600 0x0 0x100>;
++			interrupts = <0 55 0x4>;
++			clocks = <&clockgen 4 0>;
++		};
++
++		gpio1: gpio@2300000 {
++			compatible = "fsl,ls1043a-gpio";
++			reg = <0x0 0x2300000 0x0 0x10000>;
++			interrupts = <0 66 0x4>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
++		gpio2: gpio@2310000 {
++			compatible = "fsl,ls1043a-gpio";
++			reg = <0x0 0x2310000 0x0 0x10000>;
++			interrupts = <0 67 0x4>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
++		gpio3: gpio@2320000 {
++			compatible = "fsl,ls1043a-gpio";
++			reg = <0x0 0x2320000 0x0 0x10000>;
++			interrupts = <0 68 0x4>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
++		gpio4: gpio@2330000 {
++			compatible = "fsl,ls1043a-gpio";
++			reg = <0x0 0x2330000 0x0 0x10000>;
++			interrupts = <0 134 0x4>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
++		lpuart0: serial@2950000 {
++			compatible = "fsl,ls1021a-lpuart";
++			reg = <0x0 0x2950000 0x0 0x1000>;
++			interrupts = <0 48 0x4>;
++			clocks = <&clockgen 0 0>;
++			clock-names = "ipg";
++			status = "disabled";
++		};
++
++		lpuart1: serial@2960000 {
++			compatible = "fsl,ls1021a-lpuart";
++			reg = <0x0 0x2960000 0x0 0x1000>;
++			interrupts = <0 49 0x4>;
++			clocks = <&clockgen 4 0>;
++			clock-names = "ipg";
++			status = "disabled";
++		};
++
++		lpuart2: serial@2970000 {
++			compatible = "fsl,ls1021a-lpuart";
++			reg = <0x0 0x2970000 0x0 0x1000>;
++			interrupts = <0 50 0x4>;
++			clocks = <&clockgen 4 0>;
++			clock-names = "ipg";
++			status = "disabled";
++		};
++
++		lpuart3: serial@2980000 {
++			compatible = "fsl,ls1021a-lpuart";
++			reg = <0x0 0x2980000 0x0 0x1000>;
++			interrupts = <0 51 0x4>;
++			clocks = <&clockgen 4 0>;
++			clock-names = "ipg";
++			status = "disabled";
++		};
++
++		lpuart4: serial@2990000 {
++			compatible = "fsl,ls1021a-lpuart";
++			reg = <0x0 0x2990000 0x0 0x1000>;
++			interrupts = <0 52 0x4>;
++			clocks = <&clockgen 4 0>;
++			clock-names = "ipg";
++			status = "disabled";
++		};
++
++		lpuart5: serial@29a0000 {
++			compatible = "fsl,ls1021a-lpuart";
++			reg = <0x0 0x29a0000 0x0 0x1000>;
++			interrupts = <0 53 0x4>;
++			clocks = <&clockgen 4 0>;
++			clock-names = "ipg";
++			status = "disabled";
++		};
++
++		wdog0: wdog@2ad0000 {
++			compatible = "fsl,ls1043a-wdt", "fsl,imx21-wdt";
++			reg = <0x0 0x2ad0000 0x0 0x10000>;
++			interrupts = <0 83 0x4>;
++			clocks = <&clockgen 4 0>;
++			clock-names = "wdog";
++			big-endian;
++		};
++
++		edma0: edma@2c00000 {
++			#dma-cells = <2>;
++			compatible = "fsl,vf610-edma";
++			reg = <0x0 0x2c00000 0x0 0x10000>,
++			      <0x0 0x2c10000 0x0 0x10000>,
++			      <0x0 0x2c20000 0x0 0x10000>;
++			interrupts = <0 103 0x4>,
++				     <0 103 0x4>;
++			interrupt-names = "edma-tx", "edma-err";
++			dma-channels = <32>;
++			big-endian;
++			clock-names = "dmamux0", "dmamux1";
++			clocks = <&clockgen 4 0>,
++				 <&clockgen 4 0>;
++		};
++
++		usb0: usb3@2f00000 {
++			compatible = "snps,dwc3";
++			reg = <0x0 0x2f00000 0x0 0x10000>;
++			interrupts = <0 60 0x4>;
++			dr_mode = "host";
++		};
++
++		usb1: usb3@3000000 {
++			compatible = "snps,dwc3";
++			reg = <0x0 0x3000000 0x0 0x10000>;
++			interrupts = <0 61 0x4>;
++			dr_mode = "host";
++		};
++
++		usb2: usb3@3100000 {
++			compatible = "snps,dwc3";
++			reg = <0x0 0x3100000 0x0 0x10000>;
++			interrupts = <0 63 0x4>;
++			dr_mode = "host";
++		};
++
++		sata: sata@3200000 {
++			compatible = "fsl,ls1043a-ahci", "fsl,ls1021a-ahci";
++			reg = <0x0 0x3200000 0x0 0x10000>;
++			interrupts = <0 69 0x4>;
++			clocks = <&clockgen 4 0>;
++		};
++
++		msi1: msi-controller1@1571000 {
++			compatible = "fsl,1s1043a-msi";
++			reg = <0x0 0x1571000 0x0 0x4>,
++			      <0x0 0x1571004 0x0 0x4>;
++			reg-names = "msiir", "msir";
++			msi-controller;
++			interrupts = <0 116 0x4>;
++		};
++
++		msi2: msi-controller2@1572000 {
++			compatible = "fsl,1s1043a-msi";
++			reg = <0x0 0x1572000 0x0 0x4>,
++			      <0x0 0x1572004 0x0 0x4>;
++			reg-names = "msiir", "msir";
++			msi-controller;
++			interrupts = <0 126 0x4>;
++		};
++
++		msi3: msi-controller3@1573000 {
++			compatible = "fsl,1s1043a-msi";
++			reg = <0x0 0x1573000 0x0 0x4>,
++			      <0x0 0x1573004 0x0 0x4>;
++			reg-names = "msiir", "msir";
++			msi-controller;
++			interrupts = <0 160 0x4>;
++		};
++
++		pcie@3400000 {
++			compatible = "fsl,ls1043a-pcie", "snps,dw-pcie";
++			reg = <0x00 0x03400000 0x0 0x00100000   /* controller registers */
++			       0x40 0x00000000 0x0 0x00002000>; /* configuration space */
++			reg-names = "regs", "config";
++			interrupts = <0 118 0x4>, /* controller interrupt */
++				     <0 117 0x4>; /* PME interrupt */
++			interrupt-names = "intr", "pme";
++			#address-cells = <3>;
++			#size-cells = <2>;
++			device_type = "pci";
++			num-lanes = <4>;
++			bus-range = <0x0 0xff>;
++			ranges = <0x81000000 0x0 0x00000000 0x40 0x00010000 0x0 0x00010000   /* downstream I/O */
++				  0x82000000 0x0 0x40000000 0x40 0x40000000 0x0 0x40000000>; /* non-prefetchable memory */
++			msi-parent = <&msi1>;
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 7>;
++			interrupt-map = <0000 0 0 1 &gic 0 110 0x4>,
++					<0000 0 0 2 &gic 0 111 0x4>,
++					<0000 0 0 3 &gic 0 112 0x4>,
++					<0000 0 0 4 &gic 0 113 0x4>;
++		};
++
++		pcie@3500000 {
++			compatible = "fsl,ls1043a-pcie", "snps,dw-pcie";
++			reg = <0x00 0x03500000 0x0 0x00100000   /* controller registers */
++			       0x48 0x00000000 0x0 0x00002000>; /* configuration space */
++			reg-names = "regs", "config";
++			interrupts = <0 128 0x4>,
++				     <0 127 0x4>;
++			interrupt-names = "intr", "pme";
++			#address-cells = <3>;
++			#size-cells = <2>;
++			device_type = "pci";
++			num-lanes = <2>;
++			bus-range = <0x0 0xff>;
++			ranges = <0x81000000 0x0 0x00000000 0x48 0x00010000 0x0 0x00010000   /* downstream I/O */
++				  0x82000000 0x0 0x40000000 0x48 0x40000000 0x0 0x40000000>; /* non-prefetchable memory */
++			msi-parent = <&msi2>;
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 7>;
++			interrupt-map = <0000 0 0 1 &gic 0 120  0x4>,
++					<0000 0 0 2 &gic 0 121 0x4>,
++					<0000 0 0 3 &gic 0 122 0x4>,
++					<0000 0 0 4 &gic 0 123 0x4>;
++		};
++
++		pcie@3600000 {
++			compatible = "fsl,ls1043a-pcie", "snps,dw-pcie";
++			reg = <0x00 0x03600000 0x0 0x00100000   /* controller registers */
++			       0x50 0x00000000 0x0 0x00002000>; /* configuration space */
++			reg-names = "regs", "config";
++			interrupts = <0 162 0x4>,
++				     <0 161 0x4>;
++			interrupt-names = "intr", "pme";
++			#address-cells = <3>;
++			#size-cells = <2>;
++			device_type = "pci";
++			num-lanes = <2>;
++			bus-range = <0x0 0xff>;
++			ranges = <0x81000000 0x0 0x00000000 0x50 0x00010000 0x0 0x00010000   /* downstream I/O */
++				  0x82000000 0x0 0x40000000 0x50 0x40000000 0x0 0x40000000>; /* non-prefetchable memory */
++			msi-parent = <&msi3>;
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 7>;
++			interrupt-map = <0000 0 0 1 &gic 0 154 0x4>,
++					<0000 0 0 2 &gic 0 155 0x4>,
++					<0000 0 0 3 &gic 0 156 0x4>,
++					<0000 0 0 4 &gic 0 157 0x4>;
++		};
++	};
++
++};
 -- 
-1.7.9.5
-
-
+2.1.0.27.g96db324
