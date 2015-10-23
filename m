@@ -1,32 +1,48 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 1 Oct 2015 15:56:38 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Zhiqiang Hou <B48286@freescale.com>
-Cc: linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-	will.deacon@arm.com, linux-i2c@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-clk@vger.kernel.org, wsa@the-dreams.de, wim@iguana.be,
-	corbet@lwn.net, mturquette@baylibre.com, Mingkai.Hu@freescale.com,
-	Shaohui.Xie@freescale.com, Wenbin.Song@freescale.com,
-	scottwood@freescale.com, bhupesh.sharma@freescale.com,
-	leoli@freescale.com
-Subject: Re: [PATCH 5/6] clk: qoriq: Add ls1043a support.
-Message-ID: <20151001225638.GV19319@codeaurora.org>
-References: <1442838158-2964-1-git-send-email-B48286@freescale.com>
- <1442838158-2964-6-git-send-email-B48286@freescale.com>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1442838158-2964-6-git-send-email-B48286@freescale.com>
+In-Reply-To: <CACRpkdYHJzj_1yNFWcwXh+-3zTzJOSEttZdhZBqkUn1HigZeJA@mail.gmail.com>
+References: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
+	<1444916813-31024-7-git-send-email-linus.walleij@linaro.org>
+	<20151015190809.GL4558@codeaurora.org>
+	<CACRpkdYHJzj_1yNFWcwXh+-3zTzJOSEttZdhZBqkUn1HigZeJA@mail.gmail.com>
+Date: Fri, 23 Oct 2015 11:37:09 +0200
+Message-ID: <CACRpkdZ4F=AVMUO_Z742GJuT1g2otp3b_nGhiRKeNc=Rpt36Uw@mail.gmail.com>
+Subject: Re: [PATCH 06/13] clk: versatile-icst: convert to use regmap
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+	Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/21, Zhiqiang Hou wrote:
-> From: Hou Zhiqiang <B48286@freescale.com>
-> 
-> Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
-> ---
+On Fri, Oct 23, 2015 at 11:27 AM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> On Thu, Oct 15, 2015 at 9:08 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> On 10/15, Linus Walleij wrote:
+>>> @@ -151,10 +174,19 @@ struct clk *icst_clk_register(struct device *dev,
+>>>       init.flags = CLK_IS_ROOT;
+>>>       init.parent_names = (parent_name ? &parent_name : NULL);
+>>>       init.num_parents = (parent_name ? 1 : 0);
+>>> +     icst->map = regmap_init_mmio(NULL, base, &icst_regmap_conf);
+>>> +     if (IS_ERR(icst->map)) {
+>>> +             int ret;
+>>> +
+>>> +             pr_err("could not initialize ICST regmap\n");
+>>> +             kfree(icst);
+>>> +             ret = PTR_ERR(icst->map);
+>>
+>> drivers/clk/versatile/clk-icst.c:183
+>> icst_clk_register() error: dereferencing freed memory 'icst'
+>> drivers/clk/versatile/clk-icst.c:184
+>> icst_clk_register() warn: possible memory leak of 'pclone'
+>
+> The pclone warning is correct, nice catch. (Fixing it.)
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Turns out that this was around for ages, so sent a separate
+fix for -stable.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Yours,
+Linus Walleij
