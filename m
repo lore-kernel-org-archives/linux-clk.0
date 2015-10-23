@@ -1,77 +1,76 @@
-Return-Path: <rjui@broadcom.com>
-Subject: Re: [RFC 1/5] clk: iproc: define Broadcom NSP iProc clock binding
-To: Jon Mason <jonmason@broadcom.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-References: <1444771347-11382-1-git-send-email-jonmason@broadcom.com>
- <1444771347-11382-2-git-send-email-jonmason@broadcom.com>
-CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
-	<hauke@hauke-m.de>, Scott Branden <sbranden@broadcom.com>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<bcm-kernel-feedback-list@broadcom.com>
-From: Ray Jui <rjui@broadcom.com>
-Message-ID: <561D8300.3040804@broadcom.com>
-Date: Tue, 13 Oct 2015 15:17:36 -0700
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1444771347-11382-2-git-send-email-jonmason@broadcom.com>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: rjui@broadcom.com
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1832656.BCXoHFFChX@avalon>
+References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be>
+	<CAMuHMdVhBipbf13o0jb3H6qmcewh6CCtq3=Hj-9nvgar+AYdFg@mail.gmail.com>
+	<CANqRtoS6QpWJY99aD8KyGHgySxqzzBPic-k_a-VcZE6LVFFRow@mail.gmail.com>
+	<1832656.BCXoHFFChX@avalon>
+Date: Fri, 23 Oct 2015 13:09:22 +0200
+Message-ID: <CAMuHMdW=bNeoXWMbw74HVT4rZGYq=HekW9a=ZfvhS3wpuG1hZg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/5] [RFC] clk: shmobile: Add new Renesas CPG/MSSR DT bindings
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>,
+	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Shouldn't the device tree binding document go with the other patch
-series since both the binding document and drivers are merged by Michael
-or Stephen?
+Hi Laurent,
 
-On 10/13/2015 2:22 PM, Jon Mason wrote:
-> Document the device tree bindings for Broadcom Northstar Plus
-> architecture based clock controller
-> 
-> Signed-off-by: Jon Mason <jonmason@broadcom.com>
-> ---
->  .../bindings/clock/brcm,iproc-clocks.txt           | 30 ++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-> index da8d9bb..b3c3e9d 100644
-> --- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-> +++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-> @@ -130,3 +130,33 @@ These clock IDs are defined in:
->      ch3_unused mipipll          4       BCM_CYGNUS_MIPIPLL_CH3_UNUSED
->      ch4_unused mipipll          5       BCM_CYGNUS_MIPIPLL_CH4_UNUSED
->      ch5_unused mipipll          6       BCM_CYGNUS_MIPIPLL_CH5_UNUSED
-> +
-> +Northstar and Northstar Plus
-> +------
-> +PLL and leaf clock compatible strings for Northstar and Northstar Plus are:
-> + "brcm,nsp-armpll"
-> + "brcm,nsp-genpll"
-> + "brcm,nsp-lcpll0"
+On Fri, Oct 23, 2015 at 1:05 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Wednesday 21 October 2015 01:01:03 Magnus Damm wrote:
+>> On Tue, Oct 20, 2015 at 9:16 PM, Geert Uytterhoeven wrote:
+>> > On Fri, Oct 16, 2015 at 2:49 PM, Geert Uytterhoeven wrote:
+>> >> --- /dev/null
+>> >> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+>> >> @@ -0,0 +1,71 @@
+>> >> +* Renesas Clock Pulse Generator / Module Standby and Software Reset
+>> >> +
+>> >> +On Renesas ARM SoCs (SH/R-Mobile, R-Car, RZ), the CPG (Clock Pulse
+>> >> Generator)
+>> >> +and MSSR (Module Standby and Software Reset) blocks are intimately
+>> >> connected,
+>> >> +and share the same register block.
+>> >> +
+>> >> +They provide the following functionalities:
+>> >> +  - The CPG block generates various core clocks,
+>> >> +  - The MSSR block provides two functions:
+>> >> +      1. Module Standby, providing a Clock Domain to control the clock
+>> >> supply
+>> >> +        to individual SoC devices,
+>> >> +      2. Reset Control, to perform a software reset of individual SoC
+>> >> devices.
+>> >> +
+>> >> +Required Properties:
+>> >> +  - compatible: Must be one of:
+>> >> +      - "renesas,r8a7791-cpg-mssr" for the r8a7791 SoC
+>> >
+>> > I'll drop the reference to "r8a7791", as we won't convert r8a7791 (yet).
+>
+> I'm fine with supporting r8a7795 only in the initial patch set, but when do we
+> plan to convert r8a7791 ? I think it would be a good idea to validate these
 
-So the current clock driver also supports NS? That will be nice and that
-indicates all the clock related registers/offsets are exactly the same
-between NS and NSP?
+That's a political question...
 
-> +
-> +The following table defines the set of PLL/clock index and ID for Northstar and
-> +Northstar Plus.  These clock IDs are defined in:
-> +    "include/dt-bindings/clock/bcm-nsp.h"
-> +
-> +    Clock	Source		Index	ID
-> +    ---		-----		-----	---------
-> +    crystal	N/A		N/A	N/A
-> +
-> +    armpll	crystal		N/A	N/A
-> +
-> +    genpll	crystal		0	BCM_NSP_GENPLL
-> +    phy		genpll		1	BCM_NSP_GENPLL_PHY_CLK
-> +    ethernetclk	genpll		2	BCM_NSP_GENPLL_ENET_SW_CLK
-> +    usbclk	genpll		3	BCM_NSP_GENPLL_USB_PHY_REF_CLK
-> +    iprocfast	genpll		4	BCM_NSP_GENPLL_IPROCFAST_CLK
-> +    sata1	genpll		5	BCM_NSP_GENPLL_SATA1_CLK
-> +    sata2	genpll		6	BCM_NSP_GENPLL_SATA2_CLK
-> +
-> +    lcpll0	crystal		0	BCM_NSP_LCPLL0
-> +    pcie_phy	lcpll0		1	BCM_NSP_LCPLL0_PCIE_PHY_REF_CLK
-> +    sdio	lcpll0		2	BCM_NSP_LCPLL0_SDIO_CLK
-> +    ddr_phy	lcpll0		3	BCM_NSP_LCPLL0_DDR_PHY_CLK
-> 
+> bindings on r8a7791 before considering them as stable.
+
+I did the validation on both r8a7795/salvator-x and r8a7791/koelsch.
+Please try branch topic/cpg-mssr-v4 of renesas-drivers.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
