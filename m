@@ -1,101 +1,68 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:34195 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751624AbbJWInk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Fri, 23 Oct 2015 04:43:40 -0400
+Date: Fri, 23 Oct 2015 10:43:25 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Zhiqiang Hou <B48286@freescale.com>
+Cc: linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+	will.deacon@arm.com, linux-i2c@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org, mark.rutland@arm.com,
+	linux@roeck-us.net, wim@iguana.be, corbet@lwn.net,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	Mingkai.Hu@freescale.com, Shaohui.Xie@freescale.com,
+	scottwood@freescale.com, bhupesh.sharma@freescale.com,
+	Wenbin.Song@freescale.com
+Subject: Re: [PATCH V6 1/6] i2c: Add i2c support to Freescale Layerscape
+ platforms
+Message-ID: <20151023084325.GA13380@katana>
+References: <1445587282-29529-1-git-send-email-B48286@freescale.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20151020130004.20687.91058@quantum>
-References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be>
-	<1444999760-15750-6-git-send-email-geert+renesas@glider.be>
-	<20151020122448.20687.11926@quantum>
-	<CAMuHMdUT=fZKCOCdkn+=grZ0wYATghQhmbX-Y6WJ9+ViZ0cidA@mail.gmail.com>
-	<20151020130004.20687.91058@quantum>
-Date: Tue, 20 Oct 2015 15:07:31 +0200
-Message-ID: <CAMuHMdU8TqCpOskWXGPvwrejfEWSw8Fu4FjkWAKyTc0f_MuWzw@mail.gmail.com>
-Subject: Re: [PATCH v4 5/5] [RFC] clk: shmobile: r8a7795: Add new CPG/MSSR driver
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>,
-	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="AhhlLboLdkugWU4S"
+In-Reply-To: <1445587282-29529-1-git-send-email-B48286@freescale.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
 
-On Tue, Oct 20, 2015 at 3:00 PM, Michael Turquette
-<mturquette@baylibre.com> wrote:
-> Quoting Geert Uytterhoeven (2015-10-20 05:31:12)
->> On Tue, Oct 20, 2015 at 2:24 PM, Michael Turquette
->> <mturquette@baylibre.com> wrote:
->> > Quoting Geert Uytterhoeven (2015-10-16 05:49:20)
->> >> +static void __init r8a7795_cpg_mssr_init(struct device_node *np)
->> >> +{
->> >> +       struct regmap *regmap;
->> >> +       u32 reg, cpg_mode;
->> >> +
->> >> +       regmap =3D syscon_regmap_lookup_by_phandle(np, "renesas,modem=
-r");
->> >> +       if (IS_ERR(regmap) ||
->> >> +           of_property_read_u32_index(np, "renesas,modemr", 1, &reg)=
- ||
->> >> +           regmap_read(regmap, reg, &cpg_mode)) {
->> >> +               pr_err("%s: failed to parse renesas,modemr\n", np->fu=
-ll_name);
->> >> +               return;
->> >> +       }
->> >> +
->> >> +       cpg_pll_config =3D &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_=
-mode)];
->> >> +       if (!cpg_pll_config->extal_div) {
->> >> +               pr_err("%s: Prohibited setting (cpg_mode=3D0x%x)\n",
->> >> +                      __func__, cpg_mode);
->> >> +               return;
->> >> +       }
->> >> +
->> >> +       cpg_mssr_probe(np, &r8a7795_cpg_mssr_info);
->> >> +}
->> >> +CLK_OF_DECLARE(r8a7795_cpg_mssr, "renesas,r8a7795-cpg-mssr",
->> >> +              r8a7795_cpg_mssr_init);
->> >
->> > Is CLK_OF_DECLARE needed? Is it possible to make this a real
->> > platform_driver =C3=A0 la drivers/clk/qcom/gcc-apq8084.c?
->>
->> I tried making it a real platform driver, but it failed: devices that ar=
-e
->> part of the Clock Domain failed to get their clock (error -2, IIRC, whic=
-h is
->> -ENOENT), and thus couldn't be instantiated.
->> I didn't look deeper at that time.
->>
->> [... reading code ...]
->>
->> Aha, this may be caused by __of_clk_get_from_provider() returning
->> hardcoded -ENOENT instead of propagating the error returned by
->> __clk_create_clk()?
->
-> Well the only other error thrown by __clk_create_clk is -ENOMEM, so I'm
-> not sure how that would help things.
+--AhhlLboLdkugWU4S
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hmm, you're right.
+On Fri, Oct 23, 2015 at 04:01:17PM +0800, Zhiqiang Hou wrote:
+> From: Shaohui Xie <Shaohui.Xie@freescale.com>
+>=20
+> Modify the I2C_IMX config to support to Layerscape platforms.
+>=20
+> Signed-off-by: Shaohui Xie <Shaohui.Xie@freescale.com>
+> Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
 
-> The bindings should go in for 4.4, but if the driver is slated for 4.5
-> then can you investigate this some more? Stephen and I are on a mission
-> to have _real_ clk drivers.
+Added COMPILE_TEST and applied to for-next, thanks!
 
-Sure, I'll have a deeper look.
 
-Gr{oetje,eeting}s,
+--AhhlLboLdkugWU4S
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-                        Geert
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+iQIcBAEBAgAGBQJWKfMtAAoJEBQN5MwUoCm2Y6MP/AlcVfAGRZO4gVAJlVoLeBIp
+kln/ZisN9qzfPLj9OcnYzlCKbPY13Tu/5YYCT5/V2aIGOLs30HqPCr8nb9KN7dPu
+scVCHtaqiX/0WP0lYulYFfac4kv7835XOU96mHUNDYjj9ne2bpGhqRWVzdiTCHQc
+66g8qX2lcvrJs0159Zp2DWpymfa4hDVUx0aZExdaHJI9ArCxOf1NHNA3G4k9UQUZ
+Dcd+i4zqDyfd0E87fu3NdFAHvS8TL7VvgQNw3tnoS+G3CeLvz3jzdbKBG8At/7ov
+jBOi3X06mSNCT/Xe7VYTfwquwUC2XIplxynhd67PEy2G8DQLMYfWZJYthpwODCel
+sh0RNG4AbULWPdP7+W8Xqqs5PM+FTlAixZ4FW021t+yel5FaVnzjvD0BWxej4Dlr
+mpyJoIm9WWpHyMNjigwPPRhPUEGoisikG4UxqklykbZv542/RG65aImcLaBegUcX
+aD9upwOUoJH9VTCbY9BjGW5h0iYuThMjuu3r/hH8KAhp8iviDZFWuOgM1WD+hsoC
+iRGZ92l+E9lAXfiDliDNpsSoTM+YVVDsFYXI5ANNzsxTutk30qLrJysXCYJdfs7p
+lg5o0lEoVHra9Oc06mJPO2COnOXIUCJ8qKXkF4jqIuKMX/qFEK2q/G9Y/Dnx4wpR
+izvQXLsRvnVqztNhWnd2
+=6yF3
+-----END PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+--AhhlLboLdkugWU4S--
