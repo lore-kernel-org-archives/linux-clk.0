@@ -1,68 +1,64 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular2.263xmail.com ([211.157.152.3]:57879 "EHLO
-	regular2.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751644AbbJQAuI (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 16 Oct 2015 20:50:08 -0400
-Subject: Re: [PATCH 01/10] clk: rockchip: Add sclk_mipidsi_24m for mipi dsi
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1444470930-17150-1-git-send-email-zyw@rock-chips.com>
- <1444470930-17150-2-git-send-email-zyw@rock-chips.com>
- <20151016213940.GA10182@codeaurora.org>
-Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Jeff Chen <cym@rock-chips.com>, linux-kernel@vger.kernel.org,
-	Doug Anderson <dianders@chromium.org>,
-	Kumar Gala <galak@codeaurora.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Sonny Rao <sonnyrao@chromium.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Huang Lin <hl@rock-chips.com>,
-	Roger Chen <roger.chen@rock-chips.com>,
-	Alexandru M Stan <amstan@chromium.org>
-From: Chris Zhong <zyw@rock-chips.com>
-Message-ID: <56219B2C.8090902@rock-chips.com>
-Date: Sat, 17 Oct 2015 08:49:48 +0800
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
+Subject: Re: [PATCH v4 1/5] [RFC] clk: shmobile: Add new Renesas CPG/MSSR DT bindings
+Date: Fri, 23 Oct 2015 14:11:41 +0300
+Message-ID: <19544825.jsyW3b77En@avalon>
+In-Reply-To: <CAMuHMdW=bNeoXWMbw74HVT4rZGYq=HekW9a=ZfvhS3wpuG1hZg@mail.gmail.com>
+References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be> <1832656.BCXoHFFChX@avalon> <CAMuHMdW=bNeoXWMbw74HVT4rZGYq=HekW9a=ZfvhS3wpuG1hZg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20151016213940.GA10182@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Geert,
 
-
-On 10/17/2015 05:39 AM, Stephen Boyd wrote:
-> On 10/10, Chris Zhong wrote:
->> sclk_mipidsi_24m is the gating of mipi dsi phy.
->>
->> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
->> ---
-> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+On Friday 23 October 2015 13:09:22 Geert Uytterhoeven wrote:
+> On Fri, Oct 23, 2015 at 1:05 PM, Laurent Pinchart wrote:
+> > On Wednesday 21 October 2015 01:01:03 Magnus Damm wrote:
+> >> On Tue, Oct 20, 2015 at 9:16 PM, Geert Uytterhoeven wrote:
+> >>> On Fri, Oct 16, 2015 at 2:49 PM, Geert Uytterhoeven wrote:
+> >>>> --- /dev/null
+> >>>> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+> >>>> @@ -0,0 +1,71 @@
+> >>>> +* Renesas Clock Pulse Generator / Module Standby and Software Reset
+> >>>> +
+> >>>> +On Renesas ARM SoCs (SH/R-Mobile, R-Car, RZ), the CPG (Clock Pulse
+> >>>> Generator)
+> >>>> +and MSSR (Module Standby and Software Reset) blocks are intimately
+> >>>> connected,
+> >>>> +and share the same register block.
+> >>>> +
+> >>>> +They provide the following functionalities:
+> >>>> +  - The CPG block generates various core clocks,
+> >>>> +  - The MSSR block provides two functions:
+> >>>> +      1. Module Standby, providing a Clock Domain to control the
+> >>>> clock supply
+> >>>> +        to individual SoC devices,
+> >>>> +      2. Reset Control, to perform a software reset of individual SoC
+> >>>> devices.
+> >>>> +
+> >>>> +Required Properties:
+> >>>> +  - compatible: Must be one of:
+> >>>> +      - "renesas,r8a7791-cpg-mssr" for the r8a7791 SoC
+> >>> 
+> >>> I'll drop the reference to "r8a7791", as we won't convert r8a7791
+> >>> (yet).
+> > 
+> > I'm fine with supporting r8a7795 only in the initial patch set, but when
+> > do we plan to convert r8a7791 ? I think it would be a good idea to
+> > validate these
 >
->>   drivers/clk/rockchip/clk-rk3288.c      | 2 +-
->>   include/dt-bindings/clock/rk3288-cru.h | 1 +
->>   2 files changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
->> index 9040878..c7d7ebf 100644
->> --- a/drivers/clk/rockchip/clk-rk3288.c
->> +++ b/drivers/clk/rockchip/clk-rk3288.c
->> @@ -709,7 +709,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
->>   	GATE(SCLK_LCDC_PWM1, "sclk_lcdc_pwm1", "xin24m", 0, RK3288_CLKGATE_CON(13), 11, GFLAGS),
->>   	GATE(SCLK_PVTM_CORE, "sclk_pvtm_core", "xin24m", 0, RK3288_CLKGATE_CON(5), 9, GFLAGS),
->>   	GATE(SCLK_PVTM_GPU, "sclk_pvtm_gpu", "xin24m", 0, RK3288_CLKGATE_CON(5), 10, GFLAGS),
->> -	GATE(0, "sclk_mipidsi_24m", "xin24m", 0, RK3288_CLKGATE_CON(5), 15, GFLAGS),
->> +	GATE(SCLK_MIPI_24M, "sclk_mipidsi_24m", "xin24m", 0, RK3288_CLKGATE_CON(5), 15, GFLAGS),
->>   
-> It would have been better to make #defines for all these clocks
-> even if they weren't going to be used here. Then we could have
-> applied this patch directly to clk tree without having a clk tree
-> to arm-soc dependency. </grumble>
->
-Thanks for your great suggestion, I'll defines all clocks at next 
-version patch serial
+> That's a political question...
+> 
+> > bindings on r8a7791 before considering them as stable.
+> 
+> I did the validation on both r8a7795/salvator-x and r8a7791/koelsch.
+> Please try branch topic/cpg-mssr-v4 of renesas-drivers.
 
+If it works what's blocking r8a7791 support from being upstreamed ? :-)
+
+-- 
+Regards,
+
+Laurent Pinchart
