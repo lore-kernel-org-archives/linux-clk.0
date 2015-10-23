@@ -1,71 +1,35 @@
-Return-Path: <gregkh@linuxfoundation.org>
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-kernel@lists.codethink.co.uk,
-	Ben Dooks <ben.dooks@codethink.co.uk>,
-	Tero Kristo <t-kristo@ti.com>
-Subject: [PATCH 3.14 75/79] clk: ti: fix dual-registration of uart4_ick
-Date: Sat, 17 Oct 2015 19:06:07 -0700
-Message-Id: <20151018020216.689127958@linuxfoundation.org>
-In-Reply-To: <20151018020213.322172837@linuxfoundation.org>
-References: <20151018020213.322172837@linuxfoundation.org>
+Return-Path: <grygorii.strashko@ti.com>
+Subject: Re: [PATCH] clk: ti: drop locking code from mux/divider drivers
+To: Michael Turquette <mturquette@baylibre.com>, Tero Kristo <t-kristo@ti.com>
+References: <1443727237-21809-1-git-send-email-grygorii.strashko@ti.com>
+CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        Tony Lindgren
+	<tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <562AA243.5010504@ti.com>
+Date: Sat, 24 Oct 2015 00:10:27 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+In-Reply-To: <1443727237-21809-1-git-send-email-grygorii.strashko@ti.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-3.14-stable review patch.  If anyone has any objections, please let me know.
+On 10/01/2015 10:20 PM, Grygorii Strashko wrote:
+> TI's mux and divider clock drivers do not require locking and they do
+> not initialize internal spinlocks. This code was occasionally
+> copy-posted from generic mux/divider drivers. So remove it.
+>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Cc: Sekhar Nori <nsekhar@ti.com>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> ---
 
-------------------
+Gentle ping.
 
-From: Ben Dooks <ben.dooks@codethink.co.uk>
+>   drivers/clk/ti/divider.c | 16 +++-------------
+>   drivers/clk/ti/mux.c     | 15 +++------------
+>   2 files changed, 6 insertions(+), 25 deletions(-)
+>
 
-commit 19e79687de22f23bcfb5e79cce3daba20af228d1 upstream.
-
-On the OMAP AM3517 platform the uart4_ick gets registered
-twice, causing any power management to /dev/ttyO3 to fail
-when trying to wake the device up.
-
-This solves the following oops:
-
-[] Unhandled fault: external abort on non-linefetch (0x1028) at 0xfa09e008
-[] PC is at serial_omap_pm+0x48/0x15c
-[] LR is at _raw_spin_unlock_irqrestore+0x30/0x5c
-
-Fixes: aafd900cab87 ("CLK: TI: add omap3 clock init file")
-Cc: mturquette@baylibre.com
-Cc: sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-omap@vger.kernel.org
-Cc: linux-kernel@lists.codethink.co.uk
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/clk/ti/clk-3xxx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/drivers/clk/ti/clk-3xxx.c
-+++ b/drivers/clk/ti/clk-3xxx.c
-@@ -174,7 +174,6 @@ static struct ti_dt_clk omap3xxx_clks[]
- 	DT_CLK(NULL, "gpio2_ick", "gpio2_ick"),
- 	DT_CLK(NULL, "wdt3_ick", "wdt3_ick"),
- 	DT_CLK(NULL, "uart3_ick", "uart3_ick"),
--	DT_CLK(NULL, "uart4_ick", "uart4_ick"),
- 	DT_CLK(NULL, "gpt9_ick", "gpt9_ick"),
- 	DT_CLK(NULL, "gpt8_ick", "gpt8_ick"),
- 	DT_CLK(NULL, "gpt7_ick", "gpt7_ick"),
-@@ -317,6 +316,7 @@ static struct ti_dt_clk am35xx_clks[] =
- static struct ti_dt_clk omap36xx_clks[] = {
- 	DT_CLK(NULL, "omap_192m_alwon_fck", "omap_192m_alwon_fck"),
- 	DT_CLK(NULL, "uart4_fck", "uart4_fck"),
-+	DT_CLK(NULL, "uart4_ick", "uart4_ick"),
- 	{ .node_name = NULL },
- };
- 
+-- 
+regards,
+-grygorii
