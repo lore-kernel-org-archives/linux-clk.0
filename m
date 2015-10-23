@@ -1,58 +1,59 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 21 Oct 2015 16:15:46 -0700
+Date: Fri, 23 Oct 2015 09:43:47 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Shawn Guo <shawnguo@kernel.org>, kernel-janitors@vger.kernel.org,
-	Sascha Hauer <kernel@pengutronix.de>,
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Russell King <linux@arm.linux.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>,
-	Jason Cooper <jason@lakedaemon.net>
-Subject: Re: [PATCH 4/5] clk: imx31: add missing of_node_put
-Message-ID: <20151021231546.GK19782@codeaurora.org>
-References: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
- <1445460100-26727-5-git-send-email-Julia.Lawall@lip6.fr>
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 08/13] clk: add ARM syscon ICST device tree bindings
+Message-ID: <20151023164347.GB19782@codeaurora.org>
+References: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
+ <1444916813-31024-9-git-send-email-linus.walleij@linaro.org>
+ <20151015192325.GN4558@codeaurora.org>
+ <CACRpkdbXLs7hP=8WH6uK_3mQQEy4Y6TJsjpt4=LpeT=jmF-9Kw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1445460100-26727-5-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <CACRpkdbXLs7hP=8WH6uK_3mQQEy4Y6TJsjpt4=LpeT=jmF-9Kw@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/21, Julia Lawall wrote:
-> for_each_compatible_node performs an of_node_get on each iteration, so a
-> break out of the loop requires an of_node_put.
+On 10/23, Linus Walleij wrote:
+> On Thu, Oct 15, 2015 at 9:23 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > On 10/15, Linus Walleij wrote:
 > 
-> The semantic patch that fixes this problem is as follows
-> (http://coccinelle.lip6.fr):
+> >> +Required properties:
+> >> +- lock-offset: the offset address into the system controller where the
+> >> +  unlocking register is located
+> >> +- vco-offset: the offset address into the system controller where the
+> >> +  ICST control register is located (even 32 bit address)
+> >
+> > Is there any reason why we don't use a reg property for this?
 > 
-> // <smpl>
-> @@
-> local idexpression n;
-> expression e;
-> @@
+> Usually reg = <> is used with two (or more) tokens:
 > 
->  for_each_compatible_node(n,...) {
->    ...
-> (
->    of_node_put(n);
-> |
->    e = n
-> |
-> +  of_node_put(n);
-> ?  break;
-> )
->    ...
->  }
-> ... when != n
-> // </smpl>
+> reg = <phys_addr size>;
 > 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> The exception being things like I2C addresses which
+> are just one token.
 > 
-> ---
+> Since in this case, there is a "mother" reg property in the
+> syscon-compatible node, which we are indexing into,
+> it is confusing to use the same name for subnodes.
+> 
+> Also there is a bunch of precedents doing it like this
+> for sybdevices to system controllers, just
+> git grep offset Documentation/devicetree/bindings
+> will give you a bunch of them.
+> 
 
-Applied to clk-next
+Ok. I'm no DT expert, but it seems odd to have subnodes without a
+reg property.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
