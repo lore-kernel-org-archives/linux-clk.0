@@ -1,36 +1,81 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 16 Oct 2015 12:09:36 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org,
-	Luis de Bethencourt <luisbg@osg.samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: Allow drivers to build if COMPILE_TEST is enabled
-Message-ID: <20151016190936.GH23912@codeaurora.org>
-References: <1444745898-11537-1-git-send-email-javier@osg.samsung.com>
- <20151014183831.GH26883@codeaurora.org>
- <561EA831.2070001@osg.samsung.com>
- <561EAF6F.6080901@osg.samsung.com>
- <20151014211351.GC4558@codeaurora.org>
- <5620EB13.7080201@osg.samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-bn1on0148.outbound.protection.outlook.com ([157.56.110.148]:59497
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751010AbbJWTxV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Fri, 23 Oct 2015 15:53:21 -0400
+From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+To: <arnd@arndb.de>, <mark.rutland@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
+	<linux-clk@vger.kernel.org>, <olof@lixom.net>
+CC: <bhupesh.linux@gmail.com>, <will.deacon@arm.com>,
+	<Catalin.Marinas@arm.com>, <bhupesh.sharma@freescale.com>,
+	<LeoLi@freescale.com>, <scottwood@freescale.com>,
+	<stuart.yoder@freescale.com>,
+	Jaiprakash Singh <b44839@freescale.com>
+Subject: [PATCH v4 04/12] Documentation/dts: Move FSL board-specific bindings out of /powerpc
+Date: Sat, 24 Oct 2015 01:01:53 +0530
+Message-ID: <1445628721-10483-5-git-send-email-bhupesh.sharma@freescale.com>
+In-Reply-To: <1445628721-10483-1-git-send-email-bhupesh.sharma@freescale.com>
+References: <1445628721-10483-1-git-send-email-bhupesh.sharma@freescale.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5620EB13.7080201@osg.samsung.com>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/16, Javier Martinez Canillas wrote:
-> I built on all those archs and neither allyesconfig nor allmodconfig
-> gives me build error or warnings for the partial build M=drivers/clk
-> 
-> I only had an issue with h8300 since the arch has hardcoded stuff
-> in its Makefile like the toolchain file name, I posted a patch [0]
-> to fix that but then got a linker issue. This not related to $SUBJECT
-> though but to the h8300 arch Makefile.
+Since the same board components can be used across ARM and PPC board families,
+this patch moves the FSL board-specific bindings out of bindings/powerpci.
 
-Ok, sounds good. Applied to clk-next.
+While at it, this patch also adds the bindings for QIXIS FPGA controller
+found on FSL LS2080A boards. These boards have an on-board FPGA/CPLD
+connected to the IFC controller.
 
+Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+Signed-off-by: Jaiprakash Singh <b44839@freescale.com>
+---
+ .../{powerpc/fsl/board.txt => board/fsl-board.txt} |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+ rename Documentation/devicetree/bindings/{powerpc/fsl/board.txt => board/fsl-board.txt} (90%)
+
+diff --git a/Documentation/devicetree/bindings/powerpc/fsl/board.txt b/Documentation/devicetree/bindings/board/fsl-board.txt
+similarity index 90%
+rename from Documentation/devicetree/bindings/powerpc/fsl/board.txt
+rename to Documentation/devicetree/bindings/board/fsl-board.txt
+index cff38bd..fb7b03e 100644
+--- a/Documentation/devicetree/bindings/powerpc/fsl/board.txt
++++ b/Documentation/devicetree/bindings/board/fsl-board.txt
+@@ -21,11 +21,14 @@ Example:
+ 
+ This is the memory-mapped registers for on board FPGA.
+ 
+-Required properities:
++Required properties:
+ - compatible: should be a board-specific string followed by a string
+   indicating the type of FPGA.  Example:
+-	"fsl,<board>-fpga", "fsl,fpga-pixis"
++	"fsl,<board>-fpga", "fsl,fpga-pixis", or
++	"fsl,<board>-fpga", "fsl,fpga-qixis"
+ - reg: should contain the address and the length of the FPGA register set.
++
++Optional properties:
+ - interrupt-parent: should specify phandle for the interrupt controller.
+ - interrupts: should specify event (wakeup) IRQ.
+ 
+@@ -38,6 +41,13 @@ Example (P1022DS):
+ 		 interrupts = <8 8 0 0>;
+ 	 };
+ 
++Example (LS2080A-RDB):
++
++        cpld@3,0 {
++                compatible = "fsl,ls2080ardb-fpga", "fsl,fpga-qixis";
++                reg = <0x3 0 0x10000>;
++        };
++
+ * Freescale BCSR GPIO banks
+ 
+ Some BCSR registers act as simple GPIO controllers, each such
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
+
+
