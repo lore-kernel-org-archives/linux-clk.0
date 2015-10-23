@@ -1,31 +1,50 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: Use %u to format unsigned int in of_clk_src_onecell_get()
-Date: Fri, 16 Oct 2015 17:12:32 +0200
-Message-Id: <1445008352-27569-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <B48286@freescale.com>
+From: Zhiqiang Hou <B48286@freescale.com>
+To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
+	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+CC: <mark.rutland@arm.com>, <linux@roeck-us.net>, <wsa@the-dreams.de>,
+	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <Mingkai.Hu@freescale.com>,
+	<Shaohui.Xie@freescale.com>, <scottwood@freescale.com>,
+	<bhupesh.sharma@freescale.com>, <Wenbin.Song@freescale.com>,
+	<B48286@freescale.com>
+Subject: [PATCH V6 3/6] Documentation: DT: Add entry for FSL LS1043ARDB board
+Date: Fri, 23 Oct 2015 16:01:19 +0800
+Message-ID: <1445587282-29529-3-git-send-email-B48286@freescale.com>
+In-Reply-To: <1445587282-29529-1-git-send-email-B48286@freescale.com>
+References: <1445587282-29529-1-git-send-email-B48286@freescale.com>
+Return-Path: B48286@freescale.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+From: Mingkai Hu <Mingkai.Hu@freescale.com>
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index b005f666e3a1a716..31a5bb08ddf27f0e 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2932,7 +2932,7 @@ struct clk *of_clk_src_onecell_get(struct of_phandle_args *clkspec, void *data)
- 	unsigned int idx = clkspec->args[0];
+Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
+Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+---
+V6: V5 V4 V3 V2
+ - No change.
+
+ Documentation/devicetree/bindings/arm/fsl.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
+index 34c88b0..752a685 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.txt
++++ b/Documentation/devicetree/bindings/arm/fsl.txt
+@@ -131,6 +131,10 @@ Example:
+ Freescale ARMv8 based Layerscape SoC family Device Tree Bindings
+ ----------------------------------------------------------------
  
- 	if (idx >= clk_data->clk_num) {
--		pr_err("%s: invalid clock index %d\n", __func__, idx);
-+		pr_err("%s: invalid clock index %u\n", __func__, idx);
- 		return ERR_PTR(-EINVAL);
- 	}
- 
++LS1043A ARMv8 based RDB Board
++Required root node properties:
++    - compatible = "fsl,ls1043a-rdb", "fsl,ls1043a";
++
+ LS2080A ARMv8 based Simulator model
+ Required root node properties:
+     - compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
 -- 
-1.9.1
+2.1.0.27.g96db324
