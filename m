@@ -1,179 +1,113 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 2 Oct 2015 13:43:08 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>, linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 1/5] clk: Add a basic multiplier clock
-Message-ID: <20151002204308.GY12338@codeaurora.org>
-References: <1443512353-28073-1-git-send-email-maxime.ripard@free-electrons.com>
- <1443512353-28073-2-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-sh@vger.kernel.org
+Subject: Re: [PATCH v4 2/5] [RFC] clk: shmobile: Add r8a7795 CPG Core Clock Definitions
+Date: Fri, 23 Oct 2015 14:21:04 +0300
+Message-ID: <2464036.AexIB1O0H1@avalon>
+In-Reply-To: <1444999760-15750-3-git-send-email-geert+renesas@glider.be>
+References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be> <1444999760-15750-3-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1443512353-28073-2-git-send-email-maxime.ripard@free-electrons.com>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/29, Maxime Ripard wrote:
-> diff --git a/drivers/clk/clk-multiplier.c b/drivers/clk/clk-multiplier.c
-> new file mode 100644
-> index 000000000000..61097e365d55
+Hi Geert,
+
+Thank you for the patch.
+
+On Friday 16 October 2015 14:49:17 Geert Uytterhoeven wrote:
+> Add all R-Car H3 CPG Core Clock Outputs defined in the datasheet.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v4:
+>   - Add all clocks instead of just the ones used by the current DTS.
+> 
+> v3:
+>   - New.
+> ---
+>  include/dt-bindings/clock/r8a7795-cpg-mssr.h | 63 +++++++++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/r8a7795-cpg-mssr.h
+> 
+> diff --git a/include/dt-bindings/clock/r8a7795-cpg-mssr.h
+> b/include/dt-bindings/clock/r8a7795-cpg-mssr.h new file mode 100644
+> index 0000000000000000..e864aae0a2561c4b
 > --- /dev/null
-> +++ b/drivers/clk/clk-multiplier.c
-> @@ -0,0 +1,176 @@
+> +++ b/include/dt-bindings/clock/r8a7795-cpg-mssr.h
+> @@ -0,0 +1,63 @@
 > +/*
-> + * Copyright (C) 2015 Maxime Ripard <maxime.ripard@free-electrons.com>
+> + * Copyright (C) 2015 Renesas Electronics Corp.
 > + *
 > + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
 > + */
-> +#include <linux/module.h>
+> +#ifndef __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__
+> +#define __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__
+> +
+> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
+> +
+> +/* r8a7795 CPG Core Clocks */
+> +#define R8A7795_CLK_Z			0
+> +#define R8A7795_CLK_Z2			1
+> +#define R8A7795_CLK_ZR			2
+> +#define R8A7795_CLK_ZG			3
+> +#define R8A7795_CLK_ZTR			4
+> +#define R8A7795_CLK_ZTRD2		5
+> +#define R8A7795_CLK_ZT			6
+> +#define R8A7795_CLK_ZX			7
+> +#define R8A7795_CLK_S0D1		8
+> +#define R8A7795_CLK_S0D4		9
+> +#define R8A7795_CLK_S1D1		10
+> +#define R8A7795_CLK_S1D2		11
+> +#define R8A7795_CLK_S1D4		12
+> +#define R8A7795_CLK_S2D1		13
+> +#define R8A7795_CLK_S2D2		14
+> +#define R8A7795_CLK_S2D4		15
+> +#define R8A7795_CLK_S3D1		16
+> +#define R8A7795_CLK_S3D2		17
+> +#define R8A7795_CLK_S3D4		18
+> +#define R8A7795_CLK_LB			19
+> +#define R8A7795_CLK_CL			20
+> +#define R8A7795_CLK_ZB3			21
+> +#define R8A7795_CLK_ZB3D2		22
+> +#define R8A7795_CLK_CR			23
+> +#define R8A7795_CLK_CRD2		24
+> +#define R8A7795_CLK_SD0H		25
+> +#define R8A7795_CLK_SD0			26
+> +#define R8A7795_CLK_SD1H		27
+> +#define R8A7795_CLK_SD1			28
+> +#define R8A7795_CLK_SD2H		29
+> +#define R8A7795_CLK_SD2			30
+> +#define R8A7795_CLK_SD3H		31
+> +#define R8A7795_CLK_SD3			32
+> +#define R8A7795_CLK_SSP2		33
+> +#define R8A7795_CLK_SSP1		34
+> +#define R8A7795_CLK_SSPRS		35
+> +#define R8A7795_CLK_RPC			36
+> +#define R8A7795_CLK_RPCD2		37
+> +#define R8A7795_CLK_MSO			38
+> +#define R8A7795_CLK_CANFD		39
+> +#define R8A7795_CLK_HDMI		40
+> +#define R8A7795_CLK_CSI0		41
+> +#define R8A7795_CLK_CSIREF		42
+> +#define R8A7795_CLK_CP			43
+> +#define R8A7795_CLK_CPEX		44
+> +#define R8A7795_CLK_R			45
+> +#define R8A7795_CLK_OSC			46
 
-Maybe export.h is more appropriate?
+Those two clocks are called RCLK and OSCCLK in the datasheet, shouldn't we use 
+those names ?
 
-> +#include <linux/clk-provider.h>
-> +#include <linux/slab.h>
-> +#include <linux/err.h>
-> +#include <linux/of.h>
-> +
-> +#define to_clk_multiplier(_hw) container_of(_hw, struct clk_multiplier, hw)
-> +
-> +static unsigned long __get_mult(struct clk_multiplier *mult,
-> +				unsigned long rate,
-> +				unsigned long parent_rate)
-> +{
-> +	if (mult->flags & CLK_MULTIPLIER_ROUND_CLOSEST)
-> +		return DIV_ROUND_CLOSEST(rate, parent_rate);
+Apart from that,
 
-We should include kernel.h for this macro.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-> +
-> +	return rate / parent_rate;
-> +}
-> +
-> +static unsigned long clk_multiplier_recalc_rate(struct clk_hw *hw,
-> +						unsigned long parent_rate)
-> +{
-> +	struct clk_multiplier *mult = to_clk_multiplier(hw);
-> +	unsigned long val;
-> +	
-> +	val = clk_readl(mult->reg) >> mult->shift;
-> +	val &= GENMASK(mult->width, 0);
-
-and bitops.h for GENMASK
-
-> +
-> +	if (!val && mult->flags & CLK_MULTIPLIER_ZERO_BYPASS)
-> +		val = 1;
-> +	
-> +	return parent_rate * val;
-> +}
-> +
-> +static bool __is_best_rate(unsigned long rate, unsigned long new,
-> +			   unsigned long best, unsigned long flags)
-> +{
-> +	if (flags & CLK_MULTIPLIER_ROUND_CLOSEST)
-
-Is the only difference in this function vs the divider one that
-flag? Maybe we should make this function generic to the framework
-and pass a flag indicating closest or not.
-
-> +		return abs(rate - new) < abs(rate - best);
-> +
-> +	return new >= rate && new < best;
-> +}
-> +
-> +static unsigned long __bestmult(struct clk_hw *hw, unsigned long rate,
-> +				unsigned long *best_parent_rate,
-> +				u8 width, unsigned long flags)
-> +{
-> +	unsigned long orig_parent_rate = *best_parent_rate;
-> +	unsigned long parent_rate, current_rate, best_rate = ~0;
-> +	unsigned int i, bestmult = 0;
-> +
-> +	if (!(__clk_get_flags(hw->clk) & CLK_SET_RATE_PARENT))
-
-Please use clk_hw_get_flags. I'd *really* like to kill
-__clk_get_flags() but we still have one user in omap code.
-
-> +		return rate / *best_parent_rate;
-> +
-> +	for (i = 1; i < ((1 << width) - 1); i++) {
-> +		if (rate * i == orig_parent_rate) {
-> +			/*
-> +			 * This is the best case for us if we have a
-> +			 * perfect match without changing the parent
-> +			 * rate.
-> +			 */
-> +			*best_parent_rate = orig_parent_rate;
-> +			return i;
-> +		}
-> +
-> +		parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw),
-> +						rate / i);
-> +		current_rate = parent_rate * i;
-> +
-> +		if (__is_best_rate(rate, current_rate, best_rate, flags)) {
-> +			bestmult = i;
-> +			best_rate = current_rate;
-> +			*best_parent_rate = parent_rate;
-> +		}
-> +	}
-> +
-> +	return bestmult;
-> +}
-> +
-> +static int clk_multiplier_set_rate(struct clk_hw *hw, unsigned long rate,
-> +			       unsigned long parent_rate)
-> +{
-> +	struct clk_multiplier *mult = to_clk_multiplier(hw);
-> +	unsigned long factor = __get_mult(mult, rate, parent_rate);
-> +	unsigned long uninitialized_var(flags);
-
-hmmm ok. We set it to 0 in other drivers.
-
-> +	unsigned long val;
-> +
-> +	if (mult->lock)
-> +		spin_lock_irqsave(mult->lock, flags);
-
-This needs the same "trick" that we did in the generic clock
-types to avoid sparse warnings.
-
-> +
-> +	val = clk_readl(mult->reg);
-> +	val &= ~GENMASK(mult->width + mult->shift, mult->shift);
-> +	val |= factor << mult->shift;
-> +	clk_writel(val, mult->reg);
-> +
-> +	if (mult->lock)
-> +		spin_unlock_irqrestore(mult->lock, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +struct clk *clk_register_multiplier(struct device *dev, const char *name,
-> +				    const char *parent_name,
-> +				    unsigned long flags,
-> +				    void __iomem *reg, u8 shift, u8 width,
-> +				    u8 clk_mult_flags, spinlock_t *lock)
-> +{
-> +	struct clk_init_data init;
-> +	struct clk_multiplier *mult;
-> +	struct clk *clk;
-> +
-> +	mult = kmalloc(sizeof(*mult), GFP_KERNEL);
-> +	if (!mult) {
-> +		pr_err("%s: could not allocate multiplier clk\n", __func__);
-
-We don't need allocation error messages.
-
-> +		return ERR_PTR(-ENOMEM);
-> +	}
+> +#endif /* __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__ */
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Regards,
+
+Laurent Pinchart
