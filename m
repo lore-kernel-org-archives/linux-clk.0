@@ -1,242 +1,58 @@
-Return-Path: <jonmason@broadcom.com>
-From: Jon Mason <jonmason@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
-	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
-	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
-Subject: [PATCH v2 3/7] clk: nsp: add clock support for Broadcom Northstar Plus SoC
-Date: Tue, 13 Oct 2015 17:08:01 -0400
-Message-ID: <1444770485-11210-4-git-send-email-jonmason@broadcom.com>
-In-Reply-To: <1444770485-11210-1-git-send-email-jonmason@broadcom.com>
-References: <1444770485-11210-1-git-send-email-jonmason@broadcom.com>
+Return-Path: <rjui@broadcom.com>
+Subject: Re: [PATCH 0/3] clk: Broadcom BCM63138 support
+To: Florian Fainelli <f.fainelli@gmail.com>, <linux-clk@vger.kernel.org>
+References: <1445621448-11894-1-git-send-email-f.fainelli@gmail.com>
+CC: <bcm-kernel-feedback-list@broadcom.com>, <devicetree@vger.kernel.org>,
+	<jonmason@broadcom.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+	<linux@arm.linux.org.uk>, <sbranden@broadcom.com>
+From: Ray Jui <rjui@broadcom.com>
+Message-ID: <562A7DF0.20709@broadcom.com>
+Date: Fri, 23 Oct 2015 11:35:28 -0700
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jonmason@broadcom.com
+In-Reply-To: <1445621448-11894-1-git-send-email-f.fainelli@gmail.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: rjui@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The Broadcom Northstar Plus SoC is architected under the iProc
-architecture. It has the following PLLs: ARMPLL, GENPLL, LCPLL0, all
-derived from an onboard crystal.
+Hi Florian,
 
-Signed-off-by: Jon Mason <jonmason@broadcom.com>
----
- drivers/clk/bcm/Makefile            |   2 +
- drivers/clk/bcm/clk-nsp.c           | 135 ++++++++++++++++++++++++++++++++++++
- include/dt-bindings/clock/bcm-nsp.h |  51 ++++++++++++++
- 3 files changed, 188 insertions(+)
- create mode 100644 drivers/clk/bcm/clk-nsp.c
- create mode 100644 include/dt-bindings/clock/bcm-nsp.h
+On 10/23/2015 10:30 AM, Florian Fainelli wrote:
+> Hi all,
+>
+> This patch series adds support for the Broadcom BCM63138 DSL SoCs
+> clocking framework.
+>
+> Since the HW is identical to the one found in Broadcom iProc SoCs, but the
+> integration is different (obviously), there is still a new compatible string
+> introduced just in case we happen to find issues in the future.
+>
+> This applies on top of clk/next as of
+>
+> f63d19ef52aa66e97fca2425974845177ce02b0a ("Merge branch 'clk-iproc' into clk-next")
+>
+> Since there is an obvious dependency between patch 2 and 3, we can either
+> merge this through the Clock tree or via a future arm-soc pull requests
+> for Broadcom SoCs.
+>
+> Thanks!
+>
+> Florian Fainelli (3):
+>    clk: iproc: Extend binding to cover BCM63138
+>    clk: bcm: Add BCM63138 clock support
+>    ARM: dts: BCM63xx: Add ARMPLL device tree nodes
+>
+>   .../bindings/clock/brcm,iproc-clocks.txt           |  5 +++
+>   arch/arm/boot/dts/bcm63138.dtsi                    | 39 ++++++++++++++++------
+>   drivers/clk/bcm/Kconfig                            | 10 ++++++
+>   drivers/clk/bcm/Makefile                           |  1 +
+>   drivers/clk/bcm/clk-bcm63xx.c                      | 22 ++++++++++++
+>   5 files changed, 67 insertions(+), 10 deletions(-)
+>   create mode 100644 drivers/clk/bcm/clk-bcm63xx.c
+>
 
-diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
-index 8a7a477..e258b28 100644
---- a/drivers/clk/bcm/Makefile
-+++ b/drivers/clk/bcm/Makefile
-@@ -4,3 +4,5 @@ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm281xx.o
- obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm21664.o
- obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-iproc-armpll.o clk-iproc-pll.o clk-iproc-asiu.o
- obj-$(CONFIG_ARCH_BCM_CYGNUS)	+= clk-cygnus.o
-+obj-$(CONFIG_ARCH_BCM_NSP)	+= clk-nsp.o
-+obj-$(CONFIG_ARCH_BCM_5301X)	+= clk-nsp.o
-diff --git a/drivers/clk/bcm/clk-nsp.c b/drivers/clk/bcm/clk-nsp.c
-new file mode 100644
-index 0000000..bc8ebdcd
---- /dev/null
-+++ b/drivers/clk/bcm/clk-nsp.c
-@@ -0,0 +1,135 @@
-+/*
-+ * Copyright (C) 2015 Broadcom Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation version 2.
-+ *
-+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-+ * kind, whether express or implied; without even the implied warranty
-+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/err.h>
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+
-+#include <dt-bindings/clock/bcm-nsp.h>
-+#include "clk-iproc.h"
-+
-+#define REG_VAL(o, s, w) { .offset = o, .shift = s, .width = w, }
-+
-+#define AON_VAL(o, pw, ps, is) { .offset = o, .pwr_width = pw, \
-+	.pwr_shift = ps, .iso_shift = is }
-+
-+#define RESET_VAL(o, rs, prs, kis, kiw, kps, kpw, kas, kaw) { .offset = o, \
-+	.reset_shift = rs, .p_reset_shift = prs, .ki_shift = kis, \
-+	.ki_width = kiw, .kp_shift = kps, .kp_width = kpw, .ka_shift = kas, \
-+	.ka_width = kaw }
-+
-+#define ENABLE_VAL(o, es, hs, bs) { .offset = o, .enable_shift = es, \
-+	.hold_shift = hs, .bypass_shift = bs }
-+
-+static void __init nsp_armpll_init(struct device_node *node)
-+{
-+	iproc_armpll_setup(node);
-+}
-+CLK_OF_DECLARE(nsp_armpll, "brcm,nsp-armpll", nsp_armpll_init);
-+
-+static const struct iproc_pll_ctrl genpll = {
-+	.flags = IPROC_CLK_PLL_HAS_NDIV_FRAC | IPROC_CLK_EMBED_PWRCTRL,
-+	.aon = AON_VAL(0x0, 1, 12, 0),
-+	.reset = RESET_VAL(0x0, 11, 10, 4, 3, 0, 4, 7, 3),
-+	.ndiv_int = REG_VAL(0x14, 20, 10),
-+	.ndiv_frac = REG_VAL(0x14, 0, 20),
-+	.pdiv = REG_VAL(0x18, 24, 3),
-+	.status = REG_VAL(0x20, 12, 1),
-+};
-+
-+static const struct iproc_clk_ctrl genpll_clk[] = {
-+	[BCM_NSP_GENPLL_PHY_CLK] = {
-+		.channel = BCM_NSP_GENPLL_PHY_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 12, 6, 18),
-+		.mdiv = REG_VAL(0x18, 16, 8),
-+	},
-+	[BCM_NSP_GENPLL_ENET_SW_CLK] = {
-+		.channel = BCM_NSP_GENPLL_ENET_SW_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 13, 7, 19),
-+		.mdiv = REG_VAL(0x18, 8, 8),
-+	},
-+	[BCM_NSP_GENPLL_USB_PHY_REF_CLK] = {
-+		.channel = BCM_NSP_GENPLL_USB_PHY_REF_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 14, 8, 20),
-+		.mdiv = REG_VAL(0x18, 0, 8),
-+	},
-+	[BCM_NSP_GENPLL_IPROCFAST_CLK] = {
-+		.channel = BCM_NSP_GENPLL_IPROCFAST_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 15, 9, 21),
-+		.mdiv = REG_VAL(0x1c, 16, 8),
-+	},
-+	[BCM_NSP_GENPLL_SATA1_CLK] = {
-+		.channel = BCM_NSP_GENPLL_SATA1_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 16, 10, 22),
-+		.mdiv = REG_VAL(0x1c, 8, 8),
-+	},
-+	[BCM_NSP_GENPLL_SATA2_CLK] = {
-+		.channel = BCM_NSP_GENPLL_SATA2_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 17, 11, 23),
-+		.mdiv = REG_VAL(0x1c, 0, 8),
-+	},
-+};
-+
-+static void __init nsp_genpll_clk_init(struct device_node *node)
-+{
-+	iproc_pll_clk_setup(node, &genpll, NULL, 0, genpll_clk,
-+			    ARRAY_SIZE(genpll_clk));
-+}
-+CLK_OF_DECLARE(nsp_genpll_clk, "brcm,nsp-genpll", nsp_genpll_clk_init);
-+
-+static const struct iproc_pll_ctrl lcpll0 = {
-+	.flags = IPROC_CLK_PLL_HAS_NDIV_FRAC | IPROC_CLK_EMBED_PWRCTRL,
-+	.aon = AON_VAL(0x0, 1, 24, 0),
-+	.reset = RESET_VAL(0x0, 23, 22, 16, 3, 12, 4, 19, 4),
-+	.ndiv_int = REG_VAL(0x4, 20, 8),
-+	.ndiv_frac = REG_VAL(0x4, 0, 20),
-+	.pdiv = REG_VAL(0x4, 28, 3),
-+	.status = REG_VAL(0x10, 12, 1),
-+};
-+
-+static const struct iproc_clk_ctrl lcpll0_clk[] = {
-+	[BCM_NSP_LCPLL0_PCIE_PHY_REF_CLK] = {
-+		.channel = BCM_NSP_LCPLL0_PCIE_PHY_REF_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x0, 6, 3, 9),
-+		.mdiv = REG_VAL(0x8, 24, 8),
-+	},
-+	[BCM_NSP_LCPLL0_SDIO_CLK] = {
-+		.channel = BCM_NSP_LCPLL0_SDIO_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x0, 7, 4, 10),
-+		.mdiv = REG_VAL(0x8, 16, 8),
-+	},
-+	[BCM_NSP_LCPLL0_DDR_PHY_CLK] = {
-+		.channel = BCM_NSP_LCPLL0_DDR_PHY_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x0, 8, 5, 11),
-+		.mdiv = REG_VAL(0x8, 8, 8),
-+	},
-+};
-+
-+static void __init nsp_lcpll0_clk_init(struct device_node *node)
-+{
-+	iproc_pll_clk_setup(node, &lcpll0, NULL, 0, lcpll0_clk,
-+			    ARRAY_SIZE(lcpll0_clk));
-+}
-+CLK_OF_DECLARE(nsp_lcpll0_clk, "brcm,nsp-lcpll0", nsp_lcpll0_clk_init);
-diff --git a/include/dt-bindings/clock/bcm-nsp.h b/include/dt-bindings/clock/bcm-nsp.h
-new file mode 100644
-index 0000000..ad5827c
---- /dev/null
-+++ b/include/dt-bindings/clock/bcm-nsp.h
-@@ -0,0 +1,51 @@
-+/*
-+ *  BSD LICENSE
-+ *
-+ *  Copyright(c) 2015 Broadcom Corporation.  All rights reserved.
-+ *
-+ *  Redistribution and use in source and binary forms, with or without
-+ *  modification, are permitted provided that the following conditions
-+ *  are met:
-+ *
-+ *	* Redistributions of source code must retain the above copyright
-+ *	  notice, this list of conditions and the following disclaimer.
-+ *	* Redistributions in binary form must reproduce the above copyright
-+ *	  notice, this list of conditions and the following disclaimer in
-+ *	  the documentation and/or other materials provided with the
-+ *	  distribution.
-+ *	* Neither the name of Broadcom Corporation nor the names of its
-+ *	  contributors may be used to endorse or promote products derived
-+ *	  from this software without specific prior written permission.
-+ *
-+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-+ *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-+ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-+ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-+ *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-+ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-+ */
-+
-+#ifndef _CLOCK_BCM_NSP_H
-+#define _CLOCK_BCM_NSP_H
-+
-+/* GENPLL clock channel ID */
-+#define BCM_NSP_GENPLL			0
-+#define BCM_NSP_GENPLL_PHY_CLK		1
-+#define BCM_NSP_GENPLL_ENET_SW_CLK	2
-+#define BCM_NSP_GENPLL_USB_PHY_REF_CLK	3
-+#define BCM_NSP_GENPLL_IPROCFAST_CLK	4
-+#define BCM_NSP_GENPLL_SATA1_CLK	5
-+#define BCM_NSP_GENPLL_SATA2_CLK	6
-+
-+/* LCPLL0 clock channel ID */
-+#define BCM_NSP_LCPLL0			0
-+#define BCM_NSP_LCPLL0_PCIE_PHY_REF_CLK	1
-+#define BCM_NSP_LCPLL0_SDIO_CLK		2
-+#define BCM_NSP_LCPLL0_DDR_PHY_CLK	3
-+
-+#endif /* _CLOCK_BCM_NSP_H */
--- 
-1.9.1
+The entire patch set looks good to me (- Scott's comment of adding 
+COMPILE_TEST to increase build test coverage).
+
+Thanks,
+
+Ray
