@@ -1,39 +1,65 @@
-Return-Path: <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v7] clk: bcm2835: Add support for programming the audio
- domain clocks
-To: Eric Anholt <eric@anholt.net>
-References: <1444354644-31997-1-git-send-email-eric@anholt.net>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Lee Jones <lee@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
- Mike Turquette <mturquette@baylibre.com>
-From: Stephen Warren <swarren@wwwdotorg.org>
-Message-ID: <561720F9.1080206@wwwdotorg.org>
-Date: Thu, 8 Oct 2015 20:05:45 -0600
+Return-Path: <scottwood@freescale.com>
+Message-ID: <1445639975.701.257.camel@freescale.com>
+Subject: Re: [PATCH v3 0/5] clk: qoriq: Move chip-specific knowledge into
+ driver
+From: Scott Wood <scottwood@freescale.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar
+	<viresh.kumar@linaro.org>, Russell King <linux@arm.linux.org.uk>,
+	<linux-clk@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <linux-arm-kernel@lists.infradead.org>, Tang
+ Yuantian <Yuantian.Tang@freescale.com>, <javier@osg.samsung.com>, Bhupesh
+ Sharma <bhupesh.sharma@freescale.com>, Russell King <linux@arm.linux.org.uk>,
+	Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 23 Oct 2015 17:39:35 -0500
+In-Reply-To: <1442723397-26329-1-git-send-email-scottwood@freescale.com>
+References: <1442723397-26329-1-git-send-email-scottwood@freescale.com>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-In-Reply-To: <1444354644-31997-1-git-send-email-eric@anholt.net>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: scottwood@freescale.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/08/2015 07:37 PM, Eric Anholt wrote:
-> This adds support for enabling, disabling, and setting the rate of the
-> audio domain clocks.  It will be necessary for setting the pixel clock
-> for HDMI in the VC4 driver and let us write a cpufreq driver.  It will
-> also improve compatibility with user changes to the firmware's
-> config.txt, since our previous fixed clocks are unaware of it.
+On Sat, 2015-09-19 at 23:29 -0500, Scott Wood wrote:
+> The existing device tree bindings are error-prone and inflexible. 
+> Correct the mistake by moving the knowledge into the driver, which has
+> more flexibility in describing the quirks of each chip.  This leaves the
+> device tree to its proper role of identifying a programming interface
+> rather than describing its individual registers.
 > 
-> The firmware also has support for configuring the clocks through the
-> mailbox channel, but the pixel clock setup by the firmware doesn't
-> work, and it's Raspberry Pi specific anyway.  The only conflicts we
-> should have with the firmware would be if we made firmware calls that
-> result in clock management (like opening firmware V3D or ISP access,
-> which we don't support in upstream), or on hardware over-thermal or
-> under-voltage (when the firmware would rewrite PLLB to take the ARM
-> out of overclock).  If that happens, our cached .recalc_rate() results
-> would be incorrect, but that's no worse than our current state where
-> we used fixed clocks.
+> For more detail, see the commit message of patch 2.
 > 
-> The existing fixed clocks in the code are left in place to provide
-> backwards compatibility with old device tree files.
+> As there are both ARM and PPC patches that depend on this patchset, I'm
+> requesting ACKs from clk and cpufreq in order to put this into a topic
+> branch that both ARM and PPC can pull.
+> 
+> Scott Wood (5):
+>   powerpc/fsl: Move fsl_guts.h out of arch/powerpc
+>   clk: qoriq: Move chip-specific knowledge into driver
+>   clk: qoriq: Add ls2080a support.
+>   clk: Add consumer APIs for discovering possible parent clocks
+>   cpufreq: qoriq: Don't look at clock implementation details
 
-Acked-by: Stephen Warren <swarren@wwwdotorg.org>
+I've applied the first three patches plus 
+http://patchwork.ozlabs.org/patch/534739/ to the clock branch of 
+scottwood/linux.git to be used as a basis for PPC and ARM device tree patches.
+
+Note that there is a trivial merge conflict with commit 
+4a7748c3d6419bb8178748 ("clk: Allow drivers to build if COMPILE_TEST is 
+enabled").  Another option is for these patches to go via the clk tree, and 
+the device tree patches will ust go separately.  This would result in 
+intermediate commits where the device tree contains clock information that 
+the clock driver can't handle, but it would be resolved by -rc1 -- and it 
+seems that one of the ARM device tree patches ("dts/ls2080a: Update DTSI to 
+add support of various peripherals") was already merged without waiting for 
+the clock driver patch.  I could still wait until next merge window to rip 
+out the legacy stuff from existing device trees, so it would only affect new 
+functionality.
+
+Patch 4 is still waiting for an ack from Russell King, but it appears that 
+patch 5 (which depends on patch 4) can probably wait until the next merge 
+window.  Without those patches, qoriq-cpufreq should still mostly work, as 
+long as the old device trees are used.  Patches 4 and 5 will be needed to 
+make qoriq-cpufreq continue to work with device trees using the new binding.
+
+-Scott
