@@ -1,58 +1,76 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Magnus Damm <damm+renesas@opensource.se>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] clk: shmobile: Add new Renesas CPG/MSSR DT bindings for
-Date: Tue, 20 Oct 2015 20:49:58 +0200
-Message-Id: <1445367000-11525-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
+Subject: Re: [PATCH v4 1/5] [RFC] clk: shmobile: Add new Renesas CPG/MSSR DT bindings
+Date: Fri, 23 Oct 2015 14:05:34 +0300
+Message-ID: <1832656.BCXoHFFChX@avalon>
+In-Reply-To: <CANqRtoS6QpWJY99aD8KyGHgySxqzzBPic-k_a-VcZE6LVFFRow@mail.gmail.com>
+References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be> <CAMuHMdVhBipbf13o0jb3H6qmcewh6CCtq3=Hj-9nvgar+AYdFg@mail.gmail.com> <CANqRtoS6QpWJY99aD8KyGHgySxqzzBPic-k_a-VcZE6LVFFRow@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen,
+Hello,
 
-The following changes since commit 64291f7db5bd8150a74ad2036f1037e6a0428df2:
+On Wednesday 21 October 2015 01:01:03 Magnus Damm wrote:
+> On Tue, Oct 20, 2015 at 9:16 PM, Geert Uytterhoeven wrote:
+> > On Fri, Oct 16, 2015 at 2:49 PM, Geert Uytterhoeven wrote:
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+> >> @@ -0,0 +1,71 @@
+> >> +* Renesas Clock Pulse Generator / Module Standby and Software Reset
+> >> +
+> >> +On Renesas ARM SoCs (SH/R-Mobile, R-Car, RZ), the CPG (Clock Pulse
+> >> Generator)
+> >> +and MSSR (Module Standby and Software Reset) blocks are intimately
+> >> connected,
+> >> +and share the same register block.
+> >> +
+> >> +They provide the following functionalities:
+> >> +  - The CPG block generates various core clocks,
+> >> +  - The MSSR block provides two functions:
+> >> +      1. Module Standby, providing a Clock Domain to control the clock
+> >> supply
+> >> +        to individual SoC devices,
+> >> +      2. Reset Control, to perform a software reset of individual SoC
+> >> devices.
+> >> +
+> >> +Required Properties:
+> >> +  - compatible: Must be one of:
+> >> +      - "renesas,r8a7791-cpg-mssr" for the r8a7791 SoC
+> > 
+> > I'll drop the reference to "r8a7791", as we won't convert r8a7791 (yet).
 
-  Linux 4.2 (2015-08-30 11:34:09 -0700)
+I'm fine with supporting r8a7795 only in the initial patch set, but when do we 
+plan to convert r8a7791 ? I think it would be a good idea to validate these 
+bindings on r8a7791 before considering them as stable.
 
-are available in the git repository at:
+> >> +      - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC
+> >> +
+> >> +  - reg: Base address and length of the memory resource used by the
+> >> CPG/MSSR
+> >> +    block
+> >> +
+> >> +  - clocks: References to external parent clocks, one entry for each
+> >> entry in
+> >> +    clock-names
+> >> +  - clock-names: List of external parent clock names. Valid names are:
+> >> +      - "extal" (r8a7791, r8a7795)
+> >> +      - "extalr" (r8a7795)
+> >> +      - "usb_extal" (r8a7791)
+> > 
+> > Likewise.
+> 
+> Yeah, dropping r8a7791 from the initial version of this DT binding
+> seems like a good idea to me as well.
+> 
+> All looks good to me. Thanks for preparing this nicely written DT
+> binding document!
+> 
+> Reviewed-by: Magnus Damm <damm+renesas@opensource.se>
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git clk-shmobile-for-v4.4
+-- 
+Regards,
 
-for you to fetch changes up to 9d0c3c682033d3f10ac1ad8e72ca0c1b48063409:
-
-  clk: shmobile: Add r8a7795 CPG Core Clock Definitions (2015-10-20 20:36:00 +0200)
-
-Summary:
-  - clk: shmobile: Add new Renesas CPG/MSSR DT bindings for r8a7795
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Geert Uytterhoeven (2):
-      clk: shmobile: Add new Renesas CPG/MSSR DT bindings
-      clk: shmobile: Add r8a7795 CPG Core Clock Definitions
-
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt | 69 ++++++++++++++++++++++
- include/dt-bindings/clock/r8a7795-cpg-mssr.h       | 63 ++++++++++++++++++++
- include/dt-bindings/clock/renesas-cpg-mssr.h       | 15 +++++
- 3 files changed, 147 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
- create mode 100644 include/dt-bindings/clock/r8a7795-cpg-mssr.h
- create mode 100644 include/dt-bindings/clock/renesas-cpg-mssr.h
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Laurent Pinchart
