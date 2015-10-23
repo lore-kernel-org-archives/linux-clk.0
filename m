@@ -1,64 +1,73 @@
-Return-Path: <jonmason@broadcom.com>
-Date: Thu, 15 Oct 2015 17:04:01 -0400
-From: Jon Mason <jonmason@broadcom.com>
-To: Scott Branden <sbranden@broadcom.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>, "Hauke
- Mehrtens" <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<bcm-kernel-feedback-list@broadcom.com>
-Subject: Re: [PATCH v3 04/10] clk: nsp: add clock support for Broadcom
- Northstar Plus SoC
-Message-ID: <20151015210400.GN32089@broadcom.com>
-References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
- <1444938513-10758-5-git-send-email-jonmason@broadcom.com>
- <56200F95.3040902@broadcom.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 23 Oct 2015 09:24:05 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Russell King <linux@arm.linux.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 06/13] clk: versatile-icst: convert to use regmap
+Message-ID: <20151023162405.GA19782@codeaurora.org>
+References: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
+ <1444916813-31024-7-git-send-email-linus.walleij@linaro.org>
+ <20151015190809.GL4558@codeaurora.org>
+ <CACRpkdYHJzj_1yNFWcwXh+-3zTzJOSEttZdhZBqkUn1HigZeJA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <56200F95.3040902@broadcom.com>
-Return-Path: jonmason@broadcom.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CACRpkdYHJzj_1yNFWcwXh+-3zTzJOSEttZdhZBqkUn1HigZeJA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Oct 15, 2015 at 01:41:57PM -0700, Scott Branden wrote:
-> Jon,
-> 
-> Review below.
-> 
-> On 15-10-15 12:48 PM, Jon Mason wrote:
-> >The Broadcom Northstar Plus SoC is architected under the iProc
-> 
-> Based on changes in Makefile below - should this be for Northstar
-> and Northstar Plus?
-
-Yes, that would be more accurate (or the 5301x/4708 verbage we are
-using now in Linux for that SoC family).  If there is the need for
-another version of this patch, I'll fix it up.
-
-Thanks,
-Jon
-
-> 
-> >architecture. It has the following PLLs: ARMPLL, GENPLL, LCPLL0, all
-> >derived from an onboard crystal.
+On 10/23, Linus Walleij wrote:
+> On Thu, Oct 15, 2015 at 9:08 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > On 10/15, Linus Walleij wrote:
+> >> @@ -151,10 +174,19 @@ struct clk *icst_clk_register(struct device *dev,
+> >>       init.flags = CLK_IS_ROOT;
+> >>       init.parent_names = (parent_name ? &parent_name : NULL);
+> >>       init.num_parents = (parent_name ? 1 : 0);
+> >> +     icst->map = regmap_init_mmio(NULL, base, &icst_regmap_conf);
+> >> +     if (IS_ERR(icst->map)) {
+> >> +             int ret;
+> >> +
+> >> +             pr_err("could not initialize ICST regmap\n");
+> >> +             kfree(icst);
+> >> +             ret = PTR_ERR(icst->map);
 > >
-> >Signed-off-by: Jon Mason <jonmason@broadcom.com>
-> >---
-> >  drivers/clk/bcm/Makefile            |   2 +
-> >  drivers/clk/bcm/clk-nsp.c           | 135 ++++++++++++++++++++++++++++++++++++
-> >  include/dt-bindings/clock/bcm-nsp.h |  51 ++++++++++++++
-> >  3 files changed, 188 insertions(+)
-> >  create mode 100644 drivers/clk/bcm/clk-nsp.c
-> >  create mode 100644 include/dt-bindings/clock/bcm-nsp.h
-> >
-> >diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
-> >index 8a7a477..e258b28 100644
-> >--- a/drivers/clk/bcm/Makefile
-> >+++ b/drivers/clk/bcm/Makefile
-> >@@ -4,3 +4,5 @@ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm281xx.o
-> >  obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm21664.o
-> >  obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-iproc-armpll.o clk-iproc-pll.o clk-iproc-asiu.o
-> >  obj-$(CONFIG_ARCH_BCM_CYGNUS)	+= clk-cygnus.o
-> >+obj-$(CONFIG_ARCH_BCM_NSP)	+= clk-nsp.o
-> >+obj-$(CONFIG_ARCH_BCM_5301X)	+= clk-nsp.o
+> > drivers/clk/versatile/clk-icst.c:183
+> > icst_clk_register() error: dereferencing freed memory 'icst'
+> > drivers/clk/versatile/clk-icst.c:184
+> > icst_clk_register() warn: possible memory leak of 'pclone'
 > 
+> The pclone warning is correct, nice catch. (Fixing it.)
+> 
+> But for the second warning, whatever static checker you're
+> using for this is unable to handle error pointers:
+> 
+>     clk = clk_register(dev, &icst->hw);
+>     if (IS_ERR(clk))
+>         kfree(icst);
+> 
+>     return clk;
+> 
+> It is quite obvious that returning clk (which may be an error code)
+> is OK here.
+> 
+> If you want, I may need to add some specific annotation to shut
+> up the static checker, any hints?
+> 
+
+Huh? I'm totally lost. I use sparse and smatch.
+
+> >> +             kfree(icst);
+> >> +             ret = PTR_ERR(icst->map);
+
+We just freed icst, and then we dereferenced it in the next line.
+What does that have to do with error pointers?
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
