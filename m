@@ -1,341 +1,142 @@
-Return-Path: <jonmason@broadcom.com>
-From: Jon Mason <jonmason@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
-	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
-	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
-Subject: [PATCH v2 6/7] clk: iproc: Separate status and control variables
-Date: Tue, 13 Oct 2015 17:08:04 -0400
-Message-ID: <1444770485-11210-7-git-send-email-jonmason@broadcom.com>
-In-Reply-To: <1444770485-11210-1-git-send-email-jonmason@broadcom.com>
-References: <1444770485-11210-1-git-send-email-jonmason@broadcom.com>
+Return-Path: <Tim.Bird@sonymobile.com>
+Subject: Re: [GIT PULL] On-demand device probing
+To: "frowand.list@gmail.com" <frowand.list@gmail.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>
+References: <20151018192931.GY14956@sirena.org.uk>
+ <20151018193757.GA9147@kroah.com> <20151018195330.GB14956@sirena.org.uk>
+ <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
+ <5627B677.5090109@gmail.com> <20151021162758.GP32054@sirena.org.uk>
+ <5627D6E0.5020708@gmail.com>
+ <CAL_Jsq+FPtCuBnte2HTgbdpNYM=v_kLaCRcOC1kMaCQwVC=5Kw@mail.gmail.com>
+ <562808AF.7090406@gmail.com>
+ <CAAObsKAkyjdvNOS3+nuT0N9sudUFLsZXFtcm6Y038p+HSdsZsg@mail.gmail.com>
+ <20151022144405.GC21861@kroah.com> <562930AB.1070203@gmail.com>
+CC: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Rob Herring
+	<robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>, Russell King
+	<linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan
+ Williams <dan.j.williams@intel.com>, Linus Walleij
+	<linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry
+ Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>,
+	=?UTF-8?Q?Terje_Bergstr=c3=b6m?= <tbergstrom@nvidia.com>, Stephen Warren
+	<swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely
+	<grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian
+ Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	Felipe Balbi <balbi@ti.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones
+	<lee.jones@linaro.org>, Jean-Christophe Plagniol-Villard
+	<plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List
+	<linux-pwm@vger.kernel.org>, "linux-usb@vger.kernel.org"
+	<linux-usb@vger.kernel.org>, "linux-fbdev@vger.kernel.org"
+	<linux-fbdev@vger.kernel.org>
+From: Tim Bird <tim.bird@sonymobile.com>
+Message-ID: <562A5602.7000208@sonymobile.com>
+Date: Fri, 23 Oct 2015 08:45:06 -0700
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jonmason@broadcom.com
+In-Reply-To: <562930AB.1070203@gmail.com>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: tim.bird@sonymobile.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Some PLLs have separate registers for Status and Control.  The means the
-pll_base needs to be split into 2 new variables, so that those PLLs can
-specify device tree registers for those independently.  Also, add a new
-driver flag to identify this presence of the split, and let the driver
-know that additional registers need to be used.
+On 10/22/2015 11:53 AM, Frank Rowand wrote:
+> On 10/22/2015 7:44 AM, Greg Kroah-Hartman wrote:
+>> <oops, sent too early...>
+>>
+>> On Thu, Oct 22, 2015 at 11:05:11AM +0200, Tomeu Vizoso wrote:
+>>> But that's moot currently because Greg believes that the time spent
+>>> probing devices at boot time could be reduced enough so that the order
+>>> in which devices are probed becomes irrelevant. IME that would have to
+>>> be under 200ms so that the user doesn't notice and that's unicorn-far
+>>> from any bootlog I have ever seen.
+>>
+>> But as no one has actually produced a bootlog, how do you know that?
+>> Where exactly is your time being spent?  What driver is causing long
+>> delays?  Why is the long-delay-drivers not being done in their own
+>> thread?  And most importantly, why are you ignoring the work that people
+>> did back in 2008 to solve the issue on other hardware platforms?
+>>
+>>> Given that downstreams are already carrying as many hacks as they
+>>> could think of to speed total boot up, I think this is effectively
+>>> telling them to go away.
+>>
+>> No I'm not, I'm asking for real data, not hand-wavy-this-is-going-to
+>> solve-the-random-issue-i'm-having type patch by putting random calls in
+>> semi-random subsystems all over the kernel.
+>>
+>> And when I ask for real data, you respond with the fact that you aren't
+>> trying to speed up boot time here at all, so what am I supposed to think
+> 
+> I also had the understanding that this patch series was about improving
+> boot time.  But I was kindly corrected that the behavior change was
+> getting the panel displaying stuff at an earlier point in the boot sequence,
+> _not_ completing the entire boot faster. 
+> 
+> The claim for the current series, in patch 0 in v7 is:
+> 
+>    With this series I get the kernel to output to the panel in 0.5s,
+>    instead of 2.8s.
 
-Signed-off-by: Jon Mason <jonmason@broadcom.com>
----
- drivers/clk/bcm/clk-iproc-pll.c | 96 ++++++++++++++++++++++++-----------------
- drivers/clk/bcm/clk-iproc.h     |  6 +++
- 2 files changed, 62 insertions(+), 40 deletions(-)
+It's very common to want to get the display up before the
+rest of the system.  So wanting to accelerate one part of the boot
+at the expense to the rest of the system is a valid use case.
+Deferred initcalls, which is out of tree primarily because it requires
+the type of manual tweaking that Tomeu describes, specifically
+addressed this issue.
+> 
+> Just to get side-tracked, one other approach at ordering to reduce
+> deferrals reported a modest boot time reduction for four boards and a
+> very slight boot time increase for one other board.) The report of boot
+> times with that approach was in:
+> 
+>   http://article.gmane.org/gmane.linux.drivers.devicetree/133010
+> 
+> from Alexander Holler.
+> 
+> I have not searched further to see if there is more data of boot time
+> reductions from any of the other attempts to change driver binding
+> order to move dependencies before use of a resource.  But whether
+> there is a performance improvement or not, there continues to be
+> a stream of developers creatively impacting the binding order for
+> their specific driver(s) or board.  So it seems that maybe there
+> is an underlying problem, or we don't have adequate documentation
+> explaining how to avoid a need to order bindings, or the
+> documentation exists and is not being read.
 
-diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
-index d4aab4e..f128a9d 100644
---- a/drivers/clk/bcm/clk-iproc-pll.c
-+++ b/drivers/clk/bcm/clk-iproc-pll.c
-@@ -74,7 +74,8 @@ struct iproc_clk {
- };
- 
- struct iproc_pll {
--	void __iomem *pll_base;
-+	void __iomem *status_base;
-+	void __iomem *control_base;
- 	void __iomem *pwr_base;
- 	void __iomem *asiu_base;
- 
-@@ -127,7 +128,7 @@ static int pll_wait_for_lock(struct iproc_pll *pll)
- 	const struct iproc_pll_ctrl *ctrl = pll->ctrl;
- 
- 	for (i = 0; i < LOCK_DELAY; i++) {
--		u32 val = readl(pll->pll_base + ctrl->status.offset);
-+		u32 val = readl(pll->status_base + ctrl->status.offset);
- 
- 		if (val & (1 << ctrl->status.shift))
- 			return 0;
-@@ -145,7 +146,7 @@ static void iproc_pll_write(const struct iproc_pll *pll, void __iomem *base,
- 	writel(val, base + offset);
- 
- 	if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK &&
--		     base == pll->pll_base))
-+		     (base == pll->status_base || base == pll->control_base)))
- 		val = readl(base + offset);
- }
- 
-@@ -161,9 +162,9 @@ static void __pll_disable(struct iproc_pll *pll)
- 	}
- 
- 	if (ctrl->flags & IPROC_CLK_EMBED_PWRCTRL) {
--		val = readl(pll->pll_base + ctrl->aon.offset);
-+		val = readl(pll->control_base + ctrl->aon.offset);
- 		val |= (bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
--		iproc_pll_write(pll, pll->pll_base, ctrl->aon.offset, val);
-+		iproc_pll_write(pll, pll->control_base, ctrl->aon.offset, val);
- 	}
- 
- 	if (pll->pwr_base) {
-@@ -184,9 +185,9 @@ static int __pll_enable(struct iproc_pll *pll)
- 	u32 val;
- 
- 	if (ctrl->flags & IPROC_CLK_EMBED_PWRCTRL) {
--		val = readl(pll->pll_base + ctrl->aon.offset);
-+		val = readl(pll->control_base + ctrl->aon.offset);
- 		val &= ~(bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
--		iproc_pll_write(pll, pll->pll_base, ctrl->aon.offset, val);
-+		iproc_pll_write(pll, pll->control_base, ctrl->aon.offset, val);
- 	}
- 
- 	if (pll->pwr_base) {
-@@ -213,9 +214,9 @@ static void __pll_put_in_reset(struct iproc_pll *pll)
- 	const struct iproc_pll_ctrl *ctrl = pll->ctrl;
- 	const struct iproc_pll_reset_ctrl *reset = &ctrl->reset;
- 
--	val = readl(pll->pll_base + reset->offset);
-+	val = readl(pll->control_base + reset->offset);
- 	val &= ~(1 << reset->reset_shift | 1 << reset->p_reset_shift);
--	iproc_pll_write(pll, pll->pll_base, reset->offset, val);
-+	iproc_pll_write(pll, pll->control_base, reset->offset, val);
- }
- 
- static void __pll_bring_out_reset(struct iproc_pll *pll, unsigned int kp,
-@@ -226,17 +227,17 @@ static void __pll_bring_out_reset(struct iproc_pll *pll, unsigned int kp,
- 	const struct iproc_pll_reset_ctrl *reset = &ctrl->reset;
- 	const struct iproc_pll_dig_filter_ctrl *dig_filter = &ctrl->dig_filter;
- 
--	val = readl(pll->pll_base + dig_filter->offset);
-+	val = readl(pll->control_base + dig_filter->offset);
- 	val &= ~(bit_mask(dig_filter->ki_width) << dig_filter->ki_shift |
- 		bit_mask(dig_filter->kp_width) << dig_filter->kp_shift |
- 		bit_mask(dig_filter->ka_width) << dig_filter->ka_shift);
- 	val |= ki << dig_filter->ki_shift | kp << dig_filter->kp_shift |
- 	       ka << dig_filter->ka_shift;
--	iproc_pll_write(pll, pll->pll_base, dig_filter->offset, val);
-+	iproc_pll_write(pll, pll->control_base, dig_filter->offset, val);
- 
--	val = readl(pll->pll_base + reset->offset);
-+	val = readl(pll->control_base + reset->offset);
- 	val |= 1 << reset->reset_shift | 1 << reset->p_reset_shift;
--	iproc_pll_write(pll, pll->pll_base, reset->offset, val);
-+	iproc_pll_write(pll, pll->control_base, reset->offset, val);
- }
- 
- static int pll_set_rate(struct iproc_clk *clk, unsigned int rate_index,
-@@ -291,9 +292,9 @@ static int pll_set_rate(struct iproc_clk *clk, unsigned int rate_index,
- 	/* put PLL in reset */
- 	__pll_put_in_reset(pll);
- 
--	iproc_pll_write(pll, pll->pll_base, ctrl->vco_ctrl.u_offset, 0);
-+	iproc_pll_write(pll, pll->control_base, ctrl->vco_ctrl.u_offset, 0);
- 
--	val = readl(pll->pll_base + ctrl->vco_ctrl.l_offset);
-+	val = readl(pll->control_base + ctrl->vco_ctrl.l_offset);
- 
- 	if (rate >= VCO_LOW && rate < VCO_MID)
- 		val |= (1 << PLL_VCO_LOW_SHIFT);
-@@ -303,29 +304,29 @@ static int pll_set_rate(struct iproc_clk *clk, unsigned int rate_index,
- 	else
- 		val |= (1 << PLL_VCO_HIGH_SHIFT);
- 
--	iproc_pll_write(pll, pll->pll_base, ctrl->vco_ctrl.l_offset, val);
-+	iproc_pll_write(pll, pll->control_base, ctrl->vco_ctrl.l_offset, val);
- 
- 	/* program integer part of NDIV */
--	val = readl(pll->pll_base + ctrl->ndiv_int.offset);
-+	val = readl(pll->control_base + ctrl->ndiv_int.offset);
- 	val &= ~(bit_mask(ctrl->ndiv_int.width) << ctrl->ndiv_int.shift);
- 	val |= vco->ndiv_int << ctrl->ndiv_int.shift;
--	iproc_pll_write(pll, pll->pll_base, ctrl->ndiv_int.offset, val);
-+	iproc_pll_write(pll, pll->control_base, ctrl->ndiv_int.offset, val);
- 
- 	/* program fractional part of NDIV */
- 	if (ctrl->flags & IPROC_CLK_PLL_HAS_NDIV_FRAC) {
--		val = readl(pll->pll_base + ctrl->ndiv_frac.offset);
-+		val = readl(pll->control_base + ctrl->ndiv_frac.offset);
- 		val &= ~(bit_mask(ctrl->ndiv_frac.width) <<
- 			 ctrl->ndiv_frac.shift);
- 		val |= vco->ndiv_frac << ctrl->ndiv_frac.shift;
--		iproc_pll_write(pll, pll->pll_base, ctrl->ndiv_frac.offset,
-+		iproc_pll_write(pll, pll->control_base, ctrl->ndiv_frac.offset,
- 				val);
- 	}
- 
- 	/* program PDIV */
--	val = readl(pll->pll_base + ctrl->pdiv.offset);
-+	val = readl(pll->control_base + ctrl->pdiv.offset);
- 	val &= ~(bit_mask(ctrl->pdiv.width) << ctrl->pdiv.shift);
- 	val |= vco->pdiv << ctrl->pdiv.shift;
--	iproc_pll_write(pll, pll->pll_base, ctrl->pdiv.offset, val);
-+	iproc_pll_write(pll, pll->control_base, ctrl->pdiv.offset, val);
- 
- 	__pll_bring_out_reset(pll, kp, ka, ki);
- 
-@@ -372,7 +373,7 @@ static unsigned long iproc_pll_recalc_rate(struct clk_hw *hw,
- 		return 0;
- 
- 	/* PLL needs to be locked */
--	val = readl(pll->pll_base + ctrl->status.offset);
-+	val = readl(pll->status_base + ctrl->status.offset);
- 	if ((val & (1 << ctrl->status.shift)) == 0) {
- 		clk->rate = 0;
- 		return 0;
-@@ -383,13 +384,13 @@ static unsigned long iproc_pll_recalc_rate(struct clk_hw *hw,
- 	 *
- 	 * ((ndiv_int + ndiv_frac / 2^20) * (parent clock rate / pdiv)
- 	 */
--	val = readl(pll->pll_base + ctrl->ndiv_int.offset);
-+	val = readl(pll->control_base + ctrl->ndiv_int.offset);
- 	ndiv_int = (val >> ctrl->ndiv_int.shift) &
- 		bit_mask(ctrl->ndiv_int.width);
- 	ndiv = (u64)ndiv_int << ctrl->ndiv_int.shift;
- 
- 	if (ctrl->flags & IPROC_CLK_PLL_HAS_NDIV_FRAC) {
--		val = readl(pll->pll_base + ctrl->ndiv_frac.offset);
-+		val = readl(pll->control_base + ctrl->ndiv_frac.offset);
- 		ndiv_frac = (val >> ctrl->ndiv_frac.shift) &
- 			bit_mask(ctrl->ndiv_frac.width);
- 
-@@ -398,7 +399,7 @@ static unsigned long iproc_pll_recalc_rate(struct clk_hw *hw,
- 				ndiv_frac;
- 	}
- 
--	val = readl(pll->pll_base + ctrl->pdiv.offset);
-+	val = readl(pll->control_base + ctrl->pdiv.offset);
- 	pdiv = (val >> ctrl->pdiv.shift) & bit_mask(ctrl->pdiv.width);
- 
- 	clk->rate = (ndiv * parent_rate) >> ctrl->ndiv_int.shift;
-@@ -463,14 +464,14 @@ static int iproc_clk_enable(struct clk_hw *hw)
- 	u32 val;
- 
- 	/* channel enable is active low */
--	val = readl(pll->pll_base + ctrl->enable.offset);
-+	val = readl(pll->control_base + ctrl->enable.offset);
- 	val &= ~(1 << ctrl->enable.enable_shift);
--	iproc_pll_write(pll, pll->pll_base, ctrl->enable.offset, val);
-+	iproc_pll_write(pll, pll->control_base, ctrl->enable.offset, val);
- 
- 	/* also make sure channel is not held */
--	val = readl(pll->pll_base + ctrl->enable.offset);
-+	val = readl(pll->control_base + ctrl->enable.offset);
- 	val &= ~(1 << ctrl->enable.hold_shift);
--	iproc_pll_write(pll, pll->pll_base, ctrl->enable.offset, val);
-+	iproc_pll_write(pll, pll->control_base, ctrl->enable.offset, val);
- 
- 	return 0;
- }
-@@ -485,9 +486,9 @@ static void iproc_clk_disable(struct clk_hw *hw)
- 	if (ctrl->flags & IPROC_CLK_AON)
- 		return;
- 
--	val = readl(pll->pll_base + ctrl->enable.offset);
-+	val = readl(pll->control_base + ctrl->enable.offset);
- 	val |= 1 << ctrl->enable.enable_shift;
--	iproc_pll_write(pll, pll->pll_base, ctrl->enable.offset, val);
-+	iproc_pll_write(pll, pll->control_base, ctrl->enable.offset, val);
- }
- 
- static unsigned long iproc_clk_recalc_rate(struct clk_hw *hw,
-@@ -502,7 +503,7 @@ static unsigned long iproc_clk_recalc_rate(struct clk_hw *hw,
- 	if (parent_rate == 0)
- 		return 0;
- 
--	val = readl(pll->pll_base + ctrl->mdiv.offset);
-+	val = readl(pll->control_base + ctrl->mdiv.offset);
- 	mdiv = (val >> ctrl->mdiv.shift) & bit_mask(ctrl->mdiv.width);
- 	if (mdiv == 0)
- 		mdiv = 256;
-@@ -549,14 +550,14 @@ static int iproc_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (div > 256)
- 		return -EINVAL;
- 
--	val = readl(pll->pll_base + ctrl->mdiv.offset);
-+	val = readl(pll->control_base + ctrl->mdiv.offset);
- 	if (div == 256) {
- 		val &= ~(bit_mask(ctrl->mdiv.width) << ctrl->mdiv.shift);
- 	} else {
- 		val &= ~(bit_mask(ctrl->mdiv.width) << ctrl->mdiv.shift);
- 		val |= div << ctrl->mdiv.shift;
- 	}
--	iproc_pll_write(pll, pll->pll_base, ctrl->mdiv.offset, val);
-+	iproc_pll_write(pll, pll->control_base, ctrl->mdiv.offset, val);
- 	clk->rate = parent_rate / div;
- 
- 	return 0;
-@@ -581,9 +582,10 @@ static void iproc_pll_sw_cfg(struct iproc_pll *pll)
- 	if (ctrl->flags & IPROC_CLK_PLL_NEEDS_SW_CFG) {
- 		u32 val;
- 
--		val = readl(pll->pll_base + ctrl->sw_ctrl.offset);
-+		val = readl(pll->control_base + ctrl->sw_ctrl.offset);
- 		val |= BIT(ctrl->sw_ctrl.shift);
--		iproc_pll_write(pll, pll->pll_base, ctrl->sw_ctrl.offset, val);
-+		iproc_pll_write(pll, pll->control_base, ctrl->sw_ctrl.offset,
-+				val);
- 	}
- }
- 
-@@ -618,8 +620,8 @@ void __init iproc_pll_clk_setup(struct device_node *node,
- 	if (WARN_ON(!pll->clks))
- 		goto err_clks;
- 
--	pll->pll_base = of_iomap(node, 0);
--	if (WARN_ON(!pll->pll_base))
-+	pll->control_base = of_iomap(node, 0);
-+	if (WARN_ON(!pll->control_base))
- 		goto err_pll_iomap;
- 
- 	/* Some SoCs do not require the pwr_base, thus failing is not fatal */
-@@ -632,6 +634,16 @@ void __init iproc_pll_clk_setup(struct device_node *node,
- 			goto err_asiu_iomap;
- 	}
- 
-+	if (pll_ctrl->flags & IPROC_CLK_PLL_SPLIT_STAT_CTRL) {
-+		/* Some SoCs have a split status/control.  If this does not
-+		 * exist, assume they are unified.
-+		 */
-+		pll->status_base = of_iomap(node, 2);
-+		if (!pll->status_base)
-+			goto err_status_iomap;
-+	} else
-+		pll->status_base = pll->control_base;
-+
- 	/* initialize and register the PLL itself */
- 	pll->ctrl = pll_ctrl;
- 
-@@ -702,6 +714,10 @@ err_clk_register:
- 		clk_unregister(pll->clk_data.clks[i]);
- 
- err_pll_register:
-+	if (pll->status_base != pll->control_base)
-+		iounmap(pll->status_base);
-+
-+err_status_iomap:
- 	if (pll->asiu_base)
- 		iounmap(pll->asiu_base);
- 
-@@ -709,7 +725,7 @@ err_asiu_iomap:
- 	if (pll->pwr_base)
- 		iounmap(pll->pwr_base);
- 
--	iounmap(pll->pll_base);
-+	iounmap(pll->control_base);
- 
- err_pll_iomap:
- 	kfree(pll->clks);
-diff --git a/drivers/clk/bcm/clk-iproc.h b/drivers/clk/bcm/clk-iproc.h
-index b71c197..8988de7 100644
---- a/drivers/clk/bcm/clk-iproc.h
-+++ b/drivers/clk/bcm/clk-iproc.h
-@@ -55,6 +55,12 @@
- #define IPROC_CLK_EMBED_PWRCTRL BIT(5)
- 
- /*
-+ * Some PLLs have separate registers for Status and Control.  Identify this to
-+ * let the driver know if additional registers need to be used
-+ */
-+#define IPROC_CLK_PLL_SPLIT_STAT_CTRL BIT(6)
-+
-+/*
-  * Parameters for VCO frequency configuration
-  *
-  * VCO frequency =
--- 
-1.9.1
+Well, I have probe order problems unrelated to boot time, that
+I solved by resorting to putting stuff into modules and loading
+them post-boot.  So I'd be interested in easy solutions to managing
+boot order in mainline.
+
+> 
+> I have been defaulting to the position that has been asserted by
+> the device tree maintainters, that probe deferrals work just fine
+> for at least the majority of cases (and is the message I have been
+> sharing in my conference presentations about device tree).  But I
+> suspect that there is at least a small minority of cases that are not
+> well served by probe deferral.  (Not to be read as an endorsement of
+> this specific patch series, just a generic observation.)
+
+I've been worried about DT overhead adding to boot time for a while.
+And IMHO probe deferral is just about the lamest way to solve boot
+order dependencies I can imagine, from a computer science perspective.
+(Well, there's a certain elegance to it, but it's a stupid "make
+everything re-doable, back up and start over, time-wasting" elegance.)
+
+However, when Android takes 35 seconds to boot, and most people almost never
+cold-boot your product, a few seconds of kernel time-wasting on
+cold-boot seem less important. Alas, when I started working on mobile
+phones I stopped caring much about boot time.
+
+Thus, I've never worried about the DT overhead enough to actually
+measure it, as requested by Greg.  So I'll just shut up now. :-)
+ -- Tim
+  
