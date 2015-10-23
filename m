@@ -1,126 +1,95 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: bcm-kernel-feedback-list@broadcom.com,
-	devicetree@vger.kernel.org,
-	jonmason@broadcom.com,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	linux@arm.linux.org.uk,
-	sbranden@broadcom.com,
-	rjui@broadcom.com,
-	Florian Fainelli <f.fainelli@gmail.com>
-Subject: [PATCH v3 3/3] ARM: dts: BCM63xx: Add ARMPLL device tree nodes
-Date: Tue, 27 Oct 2015 16:56:17 -0700
-Message-Id: <1445990177-27474-4-git-send-email-f.fainelli@gmail.com>
-In-Reply-To: <1445990177-27474-1-git-send-email-f.fainelli@gmail.com>
-References: <1445990177-27474-1-git-send-email-f.fainelli@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-bn1on0112.outbound.protection.outlook.com ([157.56.110.112]:44654
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751010AbbJWTx0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Fri, 23 Oct 2015 15:53:26 -0400
+From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+To: <arnd@arndb.de>, <mark.rutland@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
+	<linux-clk@vger.kernel.org>, <olof@lixom.net>
+CC: <bhupesh.linux@gmail.com>, <will.deacon@arm.com>,
+	<Catalin.Marinas@arm.com>, <bhupesh.sharma@freescale.com>,
+	<LeoLi@freescale.com>, <scottwood@freescale.com>,
+	<stuart.yoder@freescale.com>,
+	Minghuan Lian <Minghuan.Lian@freescale.com>
+Subject: [PATCH v4 05/12] doc/bindings: Update Layerscape PCIe devicetree bindings for LS2080A
+Date: Sat, 24 Oct 2015 01:01:54 +0530
+Message-ID: <1445628721-10483-6-git-send-email-bhupesh.sharma@freescale.com>
+In-Reply-To: <1445628721-10483-1-git-send-email-bhupesh.sharma@freescale.com>
+References: <1445628721-10483-1-git-send-email-bhupesh.sharma@freescale.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the ARM PLL controller which comes standard with the Cortex-A9 found
-on the BCM63138 SoCs. This is the same controller as the one found in
-the Broadcom iProc architecture, however, we have a separate compatible
-string to indicate the integration difference.
+Update the definition of the Layerscape PCI compatible string to add
+support for LS2080A, as the controller on LS2080A is different from
+LS1021A SoC.
 
-While at it, properly rename references to the 50Mhz clock which is in
-fact a crystal/oscillator and updates references to it.
+While at it, move the clock related properties in the Designware PCIe
+controller bindings to 'optional' set of properties.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Minghuan Lian <Minghuan.Lian@freescale.com>
+Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
 ---
-No changes in v2 or v3
+ .../devicetree/bindings/pci/designware-pcie.txt    |   10 +++++-----
+ .../devicetree/bindings/pci/layerscape-pci.txt     |   14 ++++++++++++--
+ 2 files changed, 17 insertions(+), 7 deletions(-)
 
- arch/arm/boot/dts/bcm63138.dtsi | 39 +++++++++++++++++++++++++++++----------
- 1 file changed, 29 insertions(+), 10 deletions(-)
-
-diff --git a/arch/arm/boot/dts/bcm63138.dtsi b/arch/arm/boot/dts/bcm63138.dtsi
-index 34cd64051250..c146325eebdb 100644
---- a/arch/arm/boot/dts/bcm63138.dtsi
-+++ b/arch/arm/boot/dts/bcm63138.dtsi
-@@ -43,17 +43,29 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+index 0036ab3..576218a 100644
+--- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+@@ -14,11 +14,6 @@ Required properties:
+ - interrupt-map-mask and interrupt-map: standard PCI properties
+ 	to define the mapping of the PCIe interface to interrupt
+ 	numbers.
+-- clocks: Must contain an entry for each entry in clock-names.
+-	See ../clocks/clock-bindings.txt for details.
+-- clock-names: Must include the following entries:
+-	- "pcie"
+-	- "pcie_bus"
  
--		arm_timer_clk: arm_timer_clk {
-+		osc: oscillator {
- 			#clock-cells = <0>;
- 			compatible = "fixed-clock";
--			clock-frequency = <500000000>;
-+			clock-frequency = <50000000>;
-+			clock-output-names = "periph";
- 		};
+ Optional properties:
+ - num-lanes: number of lanes to use (this property should be specified unless
+@@ -27,3 +22,8 @@ Optional properties:
+ - bus-range: PCI bus numbers covered (it is recommended for new devicetrees to
+   specify this property, to keep backwards compatibility a range of 0x00-0xff
+   is assumed if not present)
++- clocks: Must contain an entry for each entry in clock-names.
++	See ../clocks/clock-bindings.txt for details.
++- clock-names: Must include the following entries:
++	- "pcie"
++	- "pcie_bus"
+diff --git a/Documentation/devicetree/bindings/pci/layerscape-pci.txt b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+index 6286f04..ac7e07e 100644
+--- a/Documentation/devicetree/bindings/pci/layerscape-pci.txt
++++ b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+@@ -1,10 +1,20 @@
+ Freescale Layerscape PCIe controller
  
--		periph_clk: periph_clk {
-+		/* peripheral clock for system timer */
-+		axi_clk: axi_clk {
- 			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <50000000>;
--			clock-output-names = "periph";
-+			compatible = "fixed-factor-clock";
-+			clocks = <&armpll>;
-+			clock-div = <2>;
-+			clock-mult = <1>;
-+		};
+-This PCIe host controller is based on the Synopsis Designware PCIe IP
++This PCIe host controller is based on the Synopsys Designware PCIe IP
+ and thus inherits all the common properties defined in designware-pcie.txt.
+ 
++This controller derives its clocks from the Reset Configuration Word (RCW)
++which is used to describe the PLL settings at the time of chip-reset.
 +
-+		/* APB bus clock */
-+		apb_clk: apb_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-factor-clock";
-+			clocks = <&armpll>;
-+			clock-div = <4>;
-+			clock-mult = <1>;
- 		};
- 	};
- 
-@@ -93,14 +105,14 @@
- 			compatible = "arm,cortex-a9-global-timer";
- 			reg = <0x1e200 0x20>;
- 			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&arm_timer_clk>;
-+			clocks = <&axi_clk>;
- 		};
- 
- 		local_timer: local-timer@1e600 {
- 			compatible = "arm,cortex-a9-twd-timer";
- 			reg = <0x1e600 0x20>;
- 			interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&arm_timer_clk>;
-+			clocks = <&axi_clk>;
- 		};
- 
- 		twd_watchdog: watchdog@1e620 {
-@@ -109,6 +121,13 @@
- 			interrupts = <GIC_PPI 14 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		armpll: armpll {
-+			#clock-cells = <0>;
-+			compatible = "brcm,bcm63138-armpll";
-+			clocks = <&osc>;
-+			reg = <0x20000 0xf00>;
-+		};
++Also as per the available Reference Manuals, there is no specific 'version'
++register available in the Freescale PCIe controller register set,
++which can allow determining the underlying Designware PCIe controller version
++information.
 +
- 		pmb0: reset-controller@4800c0 {
- 			compatible = "brcm,bcm63138-pmb";
- 			reg = <0x4800c0 0x10>;
-@@ -138,7 +157,7 @@
- 			compatible = "brcm,bcm6345-uart";
- 			reg = <0x600 0x1b>;
- 			interrupts = <GIC_SPI 32 0>;
--			clocks = <&periph_clk>;
-+			clocks = <&osc>;
- 			clock-names = "periph";
- 			status = "disabled";
- 		};
-@@ -147,7 +166,7 @@
- 			compatible = "brcm,bcm6345-uart";
- 			reg = <0x620 0x1b>;
- 			interrupts = <GIC_SPI 33 0>;
--			clocks = <&periph_clk>;
-+			clocks = <&osc>;
- 			clock-names = "periph";
- 			status = "disabled";
- 		};
+ Required properties:
+-- compatible: should contain the platform identifier such as "fsl,ls1021a-pcie"
++- compatible: should contain the platform identifier such as:
++        "fsl,ls1021a-pcie", "snps,dw-pcie"
++        "fsl,ls2080a-pcie", "snps,dw-pcie"
+ - reg: base addresses and lengths of the PCIe controller
+ - interrupts: A list of interrupt outputs of the controller. Must contain an
+   entry for each entry in the interrupt-names property.
 -- 
-2.1.0
+1.7.9.5
+
+
