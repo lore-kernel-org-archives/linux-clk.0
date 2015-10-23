@@ -1,183 +1,99 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v2 01/14] ARM: at91/dt: use syscon for PMC
-Date: Mon, 12 Oct 2015 16:28:38 +0200
-Message-Id: <1444660131-14954-2-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1444660131-14954-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1444660131-14954-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-bn1bon0141.outbound.protection.outlook.com ([157.56.111.141]:29547
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751010AbbJWTxE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Fri, 23 Oct 2015 15:53:04 -0400
+From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+To: <arnd@arndb.de>, <mark.rutland@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
+	<linux-clk@vger.kernel.org>, <olof@lixom.net>
+CC: <bhupesh.linux@gmail.com>, <will.deacon@arm.com>,
+	<Catalin.Marinas@arm.com>, <bhupesh.sharma@freescale.com>,
+	<LeoLi@freescale.com>, <scottwood@freescale.com>,
+	<stuart.yoder@freescale.com>
+Subject: [PATCH v4 01/12] arm64: Use generic Layerscape SoC family naming
+Date: Sat, 24 Oct 2015 01:01:50 +0530
+Message-ID: <1445628721-10483-2-git-send-email-bhupesh.sharma@freescale.com>
+In-Reply-To: <1445628721-10483-1-git-send-email-bhupesh.sharma@freescale.com>
+References: <1445628721-10483-1-git-send-email-bhupesh.sharma@freescale.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The PMC is not only used to drive the clocks but also has some registers
-related to other functions. One of those is for example the USB gadget
-bias.
-Using a syscon allows to properly separate those functions.
+Freescale will be a spinning-out a set of ARMv8 based SoCs which
+will be based on a similar overall SoC architecture. So, this patch
+converts the existing infrastructure in the arm64/dts, arm64/Kconfig
+and arm64/configs to use the generic convention ARCH_LAYERSCAPE
+in place of the more specific FSL_LS2085A, to save code duplication
+later-on.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
 ---
- arch/arm/boot/dts/at91rm9200.dtsi  | 2 +-
- arch/arm/boot/dts/at91sam9260.dtsi | 2 +-
- arch/arm/boot/dts/at91sam9261.dtsi | 2 +-
- arch/arm/boot/dts/at91sam9263.dtsi | 2 +-
- arch/arm/boot/dts/at91sam9g45.dtsi | 2 +-
- arch/arm/boot/dts/at91sam9n12.dtsi | 2 +-
- arch/arm/boot/dts/at91sam9rl.dtsi  | 2 +-
- arch/arm/boot/dts/at91sam9x5.dtsi  | 2 +-
- arch/arm/boot/dts/sama5d2.dtsi     | 2 +-
- arch/arm/boot/dts/sama5d3.dtsi     | 2 +-
- arch/arm/boot/dts/sama5d4.dtsi     | 2 +-
- 11 files changed, 11 insertions(+), 11 deletions(-)
+ Documentation/devicetree/bindings/arm/fsl.txt |    4 ++--
+ arch/arm64/Kconfig.platforms                  |    6 +++---
+ arch/arm64/boot/dts/freescale/Makefile        |    2 +-
+ arch/arm64/configs/defconfig                  |    2 +-
+ 4 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/boot/dts/at91rm9200.dtsi b/arch/arm/boot/dts/at91rm9200.dtsi
-index 60edd8baebb8..39eb1e3fc6b8 100644
---- a/arch/arm/boot/dts/at91rm9200.dtsi
-+++ b/arch/arm/boot/dts/at91rm9200.dtsi
-@@ -97,7 +97,7 @@
- 			};
+diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
+index 2a3ba73..744b4de 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.txt
++++ b/Documentation/devicetree/bindings/arm/fsl.txt
+@@ -128,8 +128,8 @@ Example:
+ 		reg = <0x0 0x1ee0000 0x0 0x10000>;
+ 	};
  
- 			pmc: pmc@fffffc00 {
--				compatible = "atmel,at91rm9200-pmc";
-+				compatible = "atmel,at91rm9200-pmc", "syscon";
- 				reg = <0xfffffc00 0x100>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
-diff --git a/arch/arm/boot/dts/at91sam9260.dtsi b/arch/arm/boot/dts/at91sam9260.dtsi
-index be9c027ddd97..d4884dd1c243 100644
---- a/arch/arm/boot/dts/at91sam9260.dtsi
-+++ b/arch/arm/boot/dts/at91sam9260.dtsi
-@@ -100,7 +100,7 @@
- 			};
+-Freescale LS2085A SoC Device Tree Bindings
+-------------------------------------------
++Freescale ARMv8 based Layerscape SoC family Device Tree Bindings
++----------------------------------------------------------------
  
- 			pmc: pmc@fffffc00 {
--				compatible = "atmel,at91sam9260-pmc";
-+				compatible = "atmel,at91sam9260-pmc", "syscon";
- 				reg = <0xfffffc00 0x100>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
-diff --git a/arch/arm/boot/dts/at91sam9261.dtsi b/arch/arm/boot/dts/at91sam9261.dtsi
-index ce1e3e94a40c..5e09de4eb9cd 100644
---- a/arch/arm/boot/dts/at91sam9261.dtsi
-+++ b/arch/arm/boot/dts/at91sam9261.dtsi
-@@ -568,7 +568,7 @@
- 			};
+ LS2085A ARMv8 based Simulator model
+ Required root node properties:
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 967571d..4043c35 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -29,10 +29,10 @@ config ARCH_EXYNOS7
+ 	help
+ 	  This enables support for Samsung Exynos7 SoC family
  
- 			pmc: pmc@fffffc00 {
--				compatible = "atmel,at91rm9200-pmc";
-+				compatible = "atmel,at91rm9200-pmc", "syscon";
- 				reg = <0xfffffc00 0x100>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
-diff --git a/arch/arm/boot/dts/at91sam9263.dtsi b/arch/arm/boot/dts/at91sam9263.dtsi
-index f1f5fa3a9e6e..93446420af25 100644
---- a/arch/arm/boot/dts/at91sam9263.dtsi
-+++ b/arch/arm/boot/dts/at91sam9263.dtsi
-@@ -93,7 +93,7 @@
- 			};
+-config ARCH_FSL_LS2085A
+-	bool "Freescale LS2085A SOC"
++config ARCH_LAYERSCAPE
++	bool "ARMv8 based Freescale Layerscape SoC family"
+ 	help
+-	  This enables support for Freescale LS2085A SOC.
++	  This enables support for the Freescale Layerscape SoC family.
  
- 			pmc: pmc@fffffc00 {
--				compatible = "atmel,at91rm9200-pmc";
-+				compatible = "atmel,at91rm9200-pmc", "syscon";
- 				reg = <0xfffffc00 0x100>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
-diff --git a/arch/arm/boot/dts/at91sam9g45.dtsi b/arch/arm/boot/dts/at91sam9g45.dtsi
-index 18b8b9e29704..af8b708ac312 100644
---- a/arch/arm/boot/dts/at91sam9g45.dtsi
-+++ b/arch/arm/boot/dts/at91sam9g45.dtsi
-@@ -114,7 +114,7 @@
- 			};
- 
- 			pmc: pmc@fffffc00 {
--				compatible = "atmel,at91sam9g45-pmc";
-+				compatible = "atmel,at91sam9g45-pmc", "syscon";
- 				reg = <0xfffffc00 0x100>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
-diff --git a/arch/arm/boot/dts/at91sam9n12.dtsi b/arch/arm/boot/dts/at91sam9n12.dtsi
-index 32bc9a189db0..95569a87b6c9 100644
---- a/arch/arm/boot/dts/at91sam9n12.dtsi
-+++ b/arch/arm/boot/dts/at91sam9n12.dtsi
-@@ -97,7 +97,7 @@
- 			};
- 
- 			pmc: pmc@fffffc00 {
--				compatible = "atmel,at91sam9n12-pmc";
-+				compatible = "atmel,at91sam9n12-pmc", "syscon";
- 				reg = <0xfffffc00 0x200>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
-diff --git a/arch/arm/boot/dts/at91sam9rl.dtsi b/arch/arm/boot/dts/at91sam9rl.dtsi
-index a0b90aedd3b8..6d829db4e887 100644
---- a/arch/arm/boot/dts/at91sam9rl.dtsi
-+++ b/arch/arm/boot/dts/at91sam9rl.dtsi
-@@ -814,7 +814,7 @@
- 			};
- 
- 			pmc: pmc@fffffc00 {
--				compatible = "atmel,at91sam9g45-pmc";
-+				compatible = "atmel,at91sam9g45-pmc", "syscon";
- 				reg = <0xfffffc00 0x100>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
-diff --git a/arch/arm/boot/dts/at91sam9x5.dtsi b/arch/arm/boot/dts/at91sam9x5.dtsi
-index 747d8f070a5c..0a0ea6bce1b9 100644
---- a/arch/arm/boot/dts/at91sam9x5.dtsi
-+++ b/arch/arm/boot/dts/at91sam9x5.dtsi
-@@ -105,7 +105,7 @@
- 			};
- 
- 			pmc: pmc@fffffc00 {
--				compatible = "atmel,at91sam9x5-pmc";
-+				compatible = "atmel,at91sam9x5-pmc", "syscon";
- 				reg = <0xfffffc00 0x100>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
-diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
-index 034cd48ae28b..780c8afc7600 100644
---- a/arch/arm/boot/dts/sama5d2.dtsi
-+++ b/arch/arm/boot/dts/sama5d2.dtsi
-@@ -286,7 +286,7 @@
- 			};
- 
- 			pmc: pmc@f0014000 {
--				compatible = "atmel,sama5d2-pmc";
-+				compatible = "atmel,sama5d2-pmc", "syscon";
- 				reg = <0xf0014000 0x160>;
- 				interrupts = <74 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
-diff --git a/arch/arm/boot/dts/sama5d3.dtsi b/arch/arm/boot/dts/sama5d3.dtsi
-index 7fa276515f11..fa054b28c2c3 100644
---- a/arch/arm/boot/dts/sama5d3.dtsi
-+++ b/arch/arm/boot/dts/sama5d3.dtsi
-@@ -906,7 +906,7 @@
- 			};
- 
- 			pmc: pmc@fffffc00 {
--				compatible = "atmel,sama5d3-pmc";
-+				compatible = "atmel,sama5d3-pmc", "syscon";
- 				reg = <0xfffffc00 0x120>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
-diff --git a/arch/arm/boot/dts/sama5d4.dtsi b/arch/arm/boot/dts/sama5d4.dtsi
-index 8d1de29e8da1..3ab2c83ecc8b 100644
---- a/arch/arm/boot/dts/sama5d4.dtsi
-+++ b/arch/arm/boot/dts/sama5d4.dtsi
-@@ -386,7 +386,7 @@
- 			};
- 
- 			pmc: pmc@f0018000 {
--				compatible = "atmel,sama5d3-pmc";
-+				compatible = "atmel,sama5d3-pmc", "syscon";
- 				reg = <0xf0018000 0x120>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
+ config ARCH_HISI
+ 	bool "Hisilicon SoC Family"
+diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+index 4f2de3e7..fc6fca3c 100644
+--- a/arch/arm64/boot/dts/freescale/Makefile
++++ b/arch/arm64/boot/dts/freescale/Makefile
+@@ -1,4 +1,4 @@
+-dtb-$(CONFIG_ARCH_FSL_LS2085A) += fsl-ls2085a-simu.dtb
++dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2085a-simu.dtb
+  
+ always		:= $(dtb-y)
+ subdir-y	:= $(dts-dirs)
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index fc97b84..49f416a 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -34,7 +34,7 @@ CONFIG_MODULE_UNLOAD=y
+ CONFIG_ARCH_BCM_IPROC=y
+ CONFIG_ARCH_BERLIN=y
+ CONFIG_ARCH_EXYNOS7=y
+-CONFIG_ARCH_FSL_LS2085A=y
++CONFIG_ARCH_LAYERSCAPE=y
+ CONFIG_ARCH_HISI=y
+ CONFIG_ARCH_MEDIATEK=y
+ CONFIG_ARCH_ROCKCHIP=y
 -- 
-2.1.4
+1.7.9.5
+
+
