@@ -1,78 +1,55 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:46489 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752826AbbJTJXc (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 20 Oct 2015 05:23:32 -0400
-From: Andrzej Hajda <a.hajda@samsung.com>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Hyungwon Hwang <human.hwang@samsung.com>
-Subject: [PATCH 09/10] dt-bindings: video: exynos5433-decon: add bindings for
- DECON-TV
-Date: Tue, 20 Oct 2015 11:22:40 +0200
-Message-id: <1445332961-25419-10-git-send-email-a.hajda@samsung.com>
-In-reply-to: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
-References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <B48286@freescale.com>
+From: Zhiqiang Hou <B48286@freescale.com>
+To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
+	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+CC: <mark.rutland@arm.com>, <linux@roeck-us.net>, <wsa@the-dreams.de>,
+	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <Mingkai.Hu@freescale.com>,
+	<Shaohui.Xie@freescale.com>, <scottwood@freescale.com>,
+	<bhupesh.sharma@freescale.com>, <Wenbin.Song@freescale.com>,
+	<B48286@freescale.com>
+Subject: [PATCH V6 1/6] i2c: Add i2c support to Freescale Layerscape platforms
+Date: Fri, 23 Oct 2015 16:01:17 +0800
+Message-ID: <1445587282-29529-1-git-send-email-B48286@freescale.com>
+Return-Path: B48286@freescale.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-DECON-TV(Display and Enhancement Controller for TV) is a variation
-of DECON IP. Its main purpose is to produce video stream for HDMI IP.
+From: Shaohui Xie <Shaohui.Xie@freescale.com>
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Modify the I2C_IMX config to support to Layerscape platforms.
+
+Signed-off-by: Shaohui Xie <Shaohui.Xie@freescale.com>
+Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
 ---
- .../devicetree/bindings/video/exynos5433-decon.txt  | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+V6:
+ - Remove some Signed-off and add the author's.
 
-diff --git a/Documentation/devicetree/bindings/video/exynos5433-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
-index 3dff78b..2a88c8d 100644
---- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
-+++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
-@@ -5,24 +5,27 @@ Exynos series of SoCs which transfers the image data from a video memory
- buffer to an external LCD interface.
+V5: V4 V3 V2
+ - No change.
+
+ drivers/i2c/busses/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index 08b8617..14147ec 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -582,10 +582,10 @@ config I2C_IMG
  
- Required properties:
--- compatible: value should be "samsung,exynos5433-decon";
-+- compatible: value should be one of:
-+	"samsung,exynos5433-decon", "samsung,exynos5433-decon-tv";
- - reg: physical base address and length of the DECON registers set.
--- interrupts: should contain a list of all DECON IP block interrupts in the
--	      order: VSYNC, LCD_SYSTEM. The interrupt specifier format
--	      depends on the interrupt controller used.
--- interrupt-names: should contain the interrupt names: "vsync", "lcd_sys"
--		   in the same order as they were listed in the interrupts
--		   property.
-+- interrupts: should contain interrupt specifier of VSYNC and optionally
-+	      LCD_SYSTEM. The interrupt specifier format depends on
-+	      the interrupt controller used.
-+- interrupt-names: should contain the interrupt name "vsync" and optionally
-+		   "lcd_sys" in the same order as they were listed in
-+		   the interrupts property.
- - clocks: must include clock specifiers corresponding to entries in the
- 	  clock-names property.
- - clock-names: list of clock names sorted in the same order as the clocks
- 	       property. Must contain "pclk", "aclk_decon", "aclk_smmu_decon0x",
- 	       "aclk_xiu_decon0x", "pclk_smmu_decon0x", clk_decon_vclk",
- 	       "sclk_decon_eclk"
-+
-+Optional properties:
- - ports: contains a port which is connected to mic node. address-cells and
--	 size-cells must 1 and 0, respectively.
-+	 size-cells must be 1 and 0, respectively.
- - port: contains an endpoint node which is connected to the endpoint in the mic
--	node. The reg value muset be 0.
-+	node. The reg value must be 0.
- - i80-if-timings: specify whether the panel which is connected to decon uses
- 		  i80 lcd interface or mipi video interface. This node contains
- 		  no timing information as that of fimd does. Because there is
+ config I2C_IMX
+ 	tristate "IMX I2C interface"
+-	depends on ARCH_MXC
++	depends on ARCH_MXC || ARCH_LAYERSCAPE
+ 	help
+ 	  Say Y here if you want to use the IIC bus controller on
+-	  the Freescale i.MX/MXC processors.
++	  the Freescale i.MX/MXC or Layerscape processors.
+ 
+ 	  This driver can also be built as a module.  If so, the module
+ 	  will be called i2c-imx.
 -- 
-1.9.1
-
+2.1.0.27.g96db324
