@@ -1,34 +1,40 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 15 Oct 2015 11:01:48 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Zhiqiang Hou <B48286@freescale.com>
-Cc: linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-	will.deacon@arm.com, linux-i2c@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-clk@vger.kernel.org, mark.rutland@arm.com, linux@roeck-us.net,
-	wsa@the-dreams.de, wim@iguana.be, corbet@lwn.net,
-	mturquette@baylibre.com, Mingkai.Hu@freescale.com,
-	Shaohui.Xie@freescale.com, scottwood@freescale.com,
-	bhupesh.sharma@freescale.com, Wenbin.Song@freescale.com
-Subject: Re: [PATCH V4 5/6] clk: qoriq: Add ls1043a support.
-Message-ID: <20151015180148.GE4558@codeaurora.org>
-References: <1444911181-21696-1-git-send-email-B48286@freescale.com>
- <1444911181-21696-5-git-send-email-B48286@freescale.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1444911181-21696-5-git-send-email-B48286@freescale.com>
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] clk: versatile-icst: fix memory leak
+Date: Fri, 23 Oct 2015 11:36:01 +0200
+Message-Id: <1445592961-30135-1-git-send-email-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/15, Zhiqiang Hou wrote:
-> From: Hou Zhiqiang <B48286@freescale.com>
-> 
-> Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
-> ---
-> This patch has been acked in V3 by Stephen Boyd [sboyd@codeaurora.org].
+A static code checker found a memory leak in the Versatile
+ICST code. Fix it.
 
-Yes, please add it into the patches that you send instead of
-putting it below the --- line.
+Fixes: a183da637c52 "clk: versatile: respect parent rate in ICST clock"
+Reported-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/clk/versatile/clk-icst.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
+index a3893ea2199d..08c5ee976879 100644
+--- a/drivers/clk/versatile/clk-icst.c
++++ b/drivers/clk/versatile/clk-icst.c
+@@ -157,8 +157,10 @@ struct clk *icst_clk_register(struct device *dev,
+ 	icst->lockreg = base + desc->lock_offset;
+ 
+ 	clk = clk_register(dev, &icst->hw);
+-	if (IS_ERR(clk))
++	if (IS_ERR(clk)) {
++		kfree(pclone);
+ 		kfree(icst);
++	}
+ 
+ 	return clk;
+ }
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.4.3
