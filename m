@@ -1,127 +1,124 @@
-Return-Path: <jonmason@broadcom.com>
-From: Jon Mason <jonmason@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
-	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
-	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
-Subject: [PATCH 10/10] ARM: dts: enable clock support for Broadcom NS2
-Date: Fri, 2 Oct 2015 18:57:45 -0400
-Message-ID: <1443826665-17570-11-git-send-email-jonmason@broadcom.com>
-In-Reply-To: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
-References: <1443826665-17570-1-git-send-email-jonmason@broadcom.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jonmason@broadcom.com
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: bcm-kernel-feedback-list@broadcom.com,
+	devicetree@vger.kernel.org,
+	jonmason@broadcom.com,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	linux@arm.linux.org.uk,
+	sbranden@broadcom.com,
+	rjui@broadcom.com,
+	Florian Fainelli <f.fainelli@gmail.com>
+Subject: [PATCH 3/3] ARM: dts: BCM63xx: Add ARMPLL device tree nodes
+Date: Fri, 23 Oct 2015 10:30:48 -0700
+Message-Id: <1445621448-11894-4-git-send-email-f.fainelli@gmail.com>
+In-Reply-To: <1445621448-11894-1-git-send-email-f.fainelli@gmail.com>
+References: <1445621448-11894-1-git-send-email-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree entries for clock support for Broadcom Northstar 2 SoC
+Add the ARM PLL controller which comes standard with the Cortex-A9 found
+on the BCM63138 SoCs. This is the same controller as the one found in
+the Broadcom iProc architecture, however, we have a separate compatible
+string to indicate the integration difference.
 
-Signed-off-by: Jon Mason <jonmason@broadcom.com>
+While at it, properly rename references to the 50Mhz clock which is in
+fact a crystal/oscillator and updates references to it.
+
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- arch/arm64/boot/dts/broadcom/ns2.dtsi | 81 +++++++++++++++++++++++++++++++++++
- 1 file changed, 81 insertions(+)
+ arch/arm/boot/dts/bcm63138.dtsi | 39 +++++++++++++++++++++++++++++----------
+ 1 file changed, 29 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/broadcom/ns2.dtsi b/arch/arm64/boot/dts/broadcom/ns2.dtsi
-index 3c92d92..0b8921e 100644
---- a/arch/arm64/boot/dts/broadcom/ns2.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/ns2.dtsi
-@@ -31,6 +31,7 @@
-  */
+diff --git a/arch/arm/boot/dts/bcm63138.dtsi b/arch/arm/boot/dts/bcm63138.dtsi
+index 34cd64051250..c146325eebdb 100644
+--- a/arch/arm/boot/dts/bcm63138.dtsi
++++ b/arch/arm/boot/dts/bcm63138.dtsi
+@@ -43,17 +43,29 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
  
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/bcm-ns2.h>
- 
- /memreserve/ 0x84b00000 0x00000008;
- 
-@@ -89,6 +90,86 @@
- 			      IRQ_TYPE_EDGE_RISING)>;
- 	};
- 
-+	clocks {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0 0x6501c000 0x00002000>;
-+
+-		arm_timer_clk: arm_timer_clk {
 +		osc: oscillator {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <25000000>;
-+		};
-+
-+		lcpll_ddr: lcpll_ddr@1058 {
-+			#clock-cells = <1>;
-+			compatible = "brcm,ns2-lcpll-ddr";
-+			reg = <0x1058 0x20>,
-+			      <0x0020 0x4>,
-+			      <0x104c 0x4>;
-+			clocks = <&osc>;
-+			clock-output-names = "lcpll_ddr", "pcie_sata_usb",
-+					     "ddr", "ddr_ch2_unused",
-+					     "ddr_ch3_unused", "ddr_ch4_unused",
-+					     "ddr_ch5_unused";
-+		};
-+
-+		lcpll_ports: lcpll_ports@1078 {
-+			#clock-cells = <1>;
-+			compatible = "brcm,ns2-lcpll-ports";
-+			reg = <0x1078 0x20>,
-+			      <0x0020 0x4>,
-+			      <0x1054 0x4>;
-+			clocks = <&osc>;
-+			clock-output-names = "lcpll_ports", "wan", "rgmii",
-+					     "ports_ch2_unused",
-+					     "ports_ch3_unused",
-+					     "ports_ch4_unused",
-+					     "ports_ch5_unused";
-+		};
-+
-+		genpll_scr: genpll_scr@1098 {
-+			#clock-cells = <1>;
-+			compatible = "brcm,ns2-genpll-scr";
-+			reg = <0x1098 0x32>,
-+			      <0x0020 0x4>,
-+			      <0x1044 0x4>;
-+			clocks = <&osc>;
-+			clock-output-names = "genpll_scr", "scr", "fs",
-+					     "audio_ref", "scr_ch3_unused",
-+					     "scr_ch4_unused", "scr_ch5_unused";
-+		};
-+
-+		genpll_sw: genpll_sw@10c4 {
-+			#clock-cells = <1>;
-+			compatible = "brcm,ns2-genpll-sw";
-+			reg = <0x10c4 0x32>,
-+			      <0x0020 0x4>,
-+			      <0x1044 0x4>;
-+			clocks = <&osc>;
-+			clock-output-names = "genpll_sw", "rpe", "250", "nic",
-+					     "chimp", "port", "sdio";
-+		};
-+
-+		iprocmed: iprocmed {
-+			#clock-cells = <0>;
+ 			#clock-cells = <0>;
+ 			compatible = "fixed-clock";
+-			clock-frequency = <500000000>;
++			clock-frequency = <50000000>;
++			clock-output-names = "periph";
+ 		};
+ 
+-		periph_clk: periph_clk {
++		/* peripheral clock for system timer */
++		axi_clk: axi_clk {
+ 			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <50000000>;
+-			clock-output-names = "periph";
 +			compatible = "fixed-factor-clock";
-+			clocks = <&genpll_scr BCM_NS2_GENPLL_SCR_SCR_CLK>;
++			clocks = <&armpll>;
 +			clock-div = <2>;
 +			clock-mult = <1>;
-+			clock-output-names = "iprocmed";
 +		};
 +
-+		iprocslow: iprocslow {
++		/* APB bus clock */
++		apb_clk: apb_clk {
 +			#clock-cells = <0>;
 +			compatible = "fixed-factor-clock";
-+			clocks = <&genpll_scr BCM_NS2_GENPLL_SCR_SCR_CLK>;
++			clocks = <&armpll>;
 +			clock-div = <4>;
 +			clock-mult = <1>;
-+			clock-output-names = "iprocslow";
+ 		};
+ 	};
+ 
+@@ -93,14 +105,14 @@
+ 			compatible = "arm,cortex-a9-global-timer";
+ 			reg = <0x1e200 0x20>;
+ 			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&arm_timer_clk>;
++			clocks = <&axi_clk>;
+ 		};
+ 
+ 		local_timer: local-timer@1e600 {
+ 			compatible = "arm,cortex-a9-twd-timer";
+ 			reg = <0x1e600 0x20>;
+ 			interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&arm_timer_clk>;
++			clocks = <&axi_clk>;
+ 		};
+ 
+ 		twd_watchdog: watchdog@1e620 {
+@@ -109,6 +121,13 @@
+ 			interrupts = <GIC_PPI 14 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
++		armpll: armpll {
++			#clock-cells = <0>;
++			compatible = "brcm,bcm63138-armpll";
++			clocks = <&osc>;
++			reg = <0x20000 0xf00>;
 +		};
-+	};
 +
- 	soc: soc {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
+ 		pmb0: reset-controller@4800c0 {
+ 			compatible = "brcm,bcm63138-pmb";
+ 			reg = <0x4800c0 0x10>;
+@@ -138,7 +157,7 @@
+ 			compatible = "brcm,bcm6345-uart";
+ 			reg = <0x600 0x1b>;
+ 			interrupts = <GIC_SPI 32 0>;
+-			clocks = <&periph_clk>;
++			clocks = <&osc>;
+ 			clock-names = "periph";
+ 			status = "disabled";
+ 		};
+@@ -147,7 +166,7 @@
+ 			compatible = "brcm,bcm6345-uart";
+ 			reg = <0x620 0x1b>;
+ 			interrupts = <GIC_SPI 33 0>;
+-			clocks = <&periph_clk>;
++			clocks = <&osc>;
+ 			clock-names = "periph";
+ 			status = "disabled";
+ 		};
 -- 
-1.9.1
+2.1.0
