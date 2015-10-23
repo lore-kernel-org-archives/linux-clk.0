@@ -1,71 +1,45 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Wed, 14 Oct 2015 10:26:44 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>,
-	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org
-Message-ID: <20151014092644.GO14956@sirena.org.uk>
-References: <561E1378.6000906@collabora.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-bn1bn0107.outbound.protection.outlook.com ([157.56.110.107]:23884
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1750953AbbJWEus (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Fri, 23 Oct 2015 00:50:48 -0400
+From: Scott Wood <scottwood@freescale.com>
+To: Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>
+CC: <linux-clk@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+	Scott Wood <scottwood@freescale.com>
+Subject: [PATCH] clk: qoriq: Fix wrong data in p2041_cmux_grp2
+Date: Thu, 22 Oct 2015 23:50:34 -0500
+Message-ID: <1445575834-30146-1-git-send-email-scottwood@freescale.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="U+NfgObvpQT1Q9Yq"
-In-Reply-To: <561E1378.6000906@collabora.com>
-Subject: Re: [GIT PULL] On-demand device probing
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Signed-off-by: Scott Wood <scottwood@freescale.com>
+---
+This is on top of http://patchwork.ozlabs.org/patch/519801/
+and I'll apply them together.
 
---U+NfgObvpQT1Q9Yq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+ drivers/clk/clk-qoriq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Wed, Oct 14, 2015 at 10:34:00AM +0200, Tomeu Vizoso wrote:
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 8f9c93b..07985a5 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -128,8 +128,8 @@ static const struct clockgen_muxinfo p2041_cmux_grp1 = {
+ static const struct clockgen_muxinfo p2041_cmux_grp2 = {
+ 	{
+ 		[0] = { CLKSEL_VALID, CGA_PLL1, PLL_DIV1 },
+-		[4] = { CLKSEL_VALID, CGA_PLL1, PLL_DIV2 },
+-		[5] = { CLKSEL_VALID, CGA_PLL2, PLL_DIV1 },
++		[4] = { CLKSEL_VALID, CGA_PLL2, PLL_DIV1 },
++		[5] = { CLKSEL_VALID, CGA_PLL2, PLL_DIV2 },
+ 	}
+ };
+ 
+-- 
+2.1.4
 
-> git+ssh://git.collabora.co.uk/git/user/tomeu/linux.git
-> on-demand-probes-for-next
-
-In don't think that's the URL you intended to use (also everything looks
-word wrapped here)?
-
---U+NfgObvpQT1Q9Yq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWHh/TAAoJECTWi3JdVIfQJFEH/0DtvMyMdmzM7wIicUyiA2lv
-r+3E+VS/zXtD4Nhw0+K6j9xyAsui8izhwzpvIVVa0O4srJiRWnK/MW3actKeVXW1
-vWsNueK1J9TV+6Aq+X29ZM3LIroJzP7cT19kR1v3lh5MOVhzGTkdypnogu4255fq
-sRHkOBWaajzKFCYOsP1iPJQpuyfpBkY7iNix+Kv6HVNWk0dFsQUGHk8+g7Lovu0F
-vJLUDU6V2xSDBI93RFW8llD18AbJuPSH+fsGqVmX59uugnvo+b8kcCp+sFdqRjT8
-BJIw83BYlou79hE+Z4SgLoXI++5w8PLFjXCmzejxxy3zvYyjyfb1FlQ1LKBDbRY=
-=k50d
------END PGP SIGNATURE-----
-
---U+NfgObvpQT1Q9Yq--
