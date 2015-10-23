@@ -1,51 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-by2on0119.outbound.protection.outlook.com ([207.46.100.119]:6912
-	"EHLO na01-by2-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751096AbbJWTxj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Fri, 23 Oct 2015 15:53:39 -0400
-From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-To: <arnd@arndb.de>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
-	<linux-clk@vger.kernel.org>, <olof@lixom.net>
-CC: <bhupesh.linux@gmail.com>, <will.deacon@arm.com>,
-	<Catalin.Marinas@arm.com>, <bhupesh.sharma@freescale.com>,
-	<LeoLi@freescale.com>, <scottwood@freescale.com>,
-	<stuart.yoder@freescale.com>
-Subject: [PATCH v4 07/12] doc: DTS: Update DWC3 binding to provide reference to generic bindings
-Date: Sat, 24 Oct 2015 01:01:56 +0530
-Message-ID: <1445628721-10483-8-git-send-email-bhupesh.sharma@freescale.com>
-In-Reply-To: <1445628721-10483-1-git-send-email-bhupesh.sharma@freescale.com>
-References: <1445628721-10483-1-git-send-email-bhupesh.sharma@freescale.com>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20151015190809.GL4558@codeaurora.org>
+References: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
+	<1444916813-31024-7-git-send-email-linus.walleij@linaro.org>
+	<20151015190809.GL4558@codeaurora.org>
+Date: Fri, 23 Oct 2015 11:27:54 +0200
+Message-ID: <CACRpkdYHJzj_1yNFWcwXh+-3zTzJOSEttZdhZBqkUn1HigZeJA@mail.gmail.com>
+Subject: Re: [PATCH 06/13] clk: versatile-icst: convert to use regmap
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+	Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Since the Synopsys DWC3 controller driver inherits the generic bindings
-defined in 'usb/generic.txt', this patch tries to capture the same in
-the DWC3 binging documentation to avoid any confusion in usage of properties
-like 'dr_mode' for certain SoCs like FSL LS2080A.
+On Thu, Oct 15, 2015 at 9:08 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 10/15, Linus Walleij wrote:
+>> @@ -151,10 +174,19 @@ struct clk *icst_clk_register(struct device *dev,
+>>       init.flags = CLK_IS_ROOT;
+>>       init.parent_names = (parent_name ? &parent_name : NULL);
+>>       init.num_parents = (parent_name ? 1 : 0);
+>> +     icst->map = regmap_init_mmio(NULL, base, &icst_regmap_conf);
+>> +     if (IS_ERR(icst->map)) {
+>> +             int ret;
+>> +
+>> +             pr_err("could not initialize ICST regmap\n");
+>> +             kfree(icst);
+>> +             ret = PTR_ERR(icst->map);
+>
+> drivers/clk/versatile/clk-icst.c:183
+> icst_clk_register() error: dereferencing freed memory 'icst'
+> drivers/clk/versatile/clk-icst.c:184
+> icst_clk_register() warn: possible memory leak of 'pclone'
 
-Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
----
- Documentation/devicetree/bindings/usb/dwc3.txt |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+The pclone warning is correct, nice catch. (Fixing it.)
 
-diff --git a/Documentation/devicetree/bindings/usb/dwc3.txt b/Documentation/devicetree/bindings/usb/dwc3.txt
-index 9ff48e0..fb2ad0a 100644
---- a/Documentation/devicetree/bindings/usb/dwc3.txt
-+++ b/Documentation/devicetree/bindings/usb/dwc3.txt
-@@ -1,6 +1,7 @@
- synopsys DWC3 CORE
- 
--DWC3- USB3 CONTROLLER
-+DWC3- USB3 CONTROLLER. Complies to the generic USB binding properties
-+      as described in 'usb/generic.txt'
- 
- Required properties:
-  - compatible: must be "snps,dwc3"
--- 
-1.7.9.5
+But for the second warning, whatever static checker you're
+using for this is unable to handle error pointers:
 
+    clk = clk_register(dev, &icst->hw);
+    if (IS_ERR(clk))
+        kfree(icst);
 
+    return clk;
+
+It is quite obvious that returning clk (which may be an error code)
+is OK here.
+
+If you want, I may need to add some specific annotation to shut
+up the static checker, any hints?
+
+Yours,
+Linus Walleij
