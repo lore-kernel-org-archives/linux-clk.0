@@ -1,69 +1,48 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 1 Oct 2015 11:03:57 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Paul Osmialowski <pawelo@king.net.pl>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/1] add devm_of_clk_get() and devm_of_clk_get_by_name()
- functions
-Message-ID: <20151001180357.GG19319@codeaurora.org>
-References: <1443081808-19688-1-git-send-email-newchief@king.net.pl>
- <20150928230523.GR23081@codeaurora.org>
- <alpine.LNX.2.00.1509290611050.3931@localhost.localdomain>
- <20150930220415.GD18556@codeaurora.org>
- <alpine.LNX.2.00.1510010943400.25759@localhost.localdomain>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.24]:51443 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751299AbbJWU2f (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 23 Oct 2015 16:28:35 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org,
+	Bjorn Helgaas <bhelgaas@google.com>
+Cc: Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	mark.rutland@arm.com, marc.zyngier@arm.com,
+	linux-clk@vger.kernel.org, olof@lixom.net, LeoLi@freescale.com,
+	Catalin.Marinas@arm.com, will.deacon@arm.com,
+	stuart.yoder@freescale.com,
+	Minghuan Lian <Minghuan.Lian@freescale.com>,
+	scottwood@freescale.com, bhupesh.linux@gmail.com
+Subject: Re: [PATCH v4 05/12] doc/bindings: Update Layerscape PCIe devicetree bindings for LS2080A
+Date: Fri, 23 Oct 2015 22:28:27 +0200
+Message-ID: <4784400.64dhyokllJ@wuerfel>
+In-Reply-To: <1445628721-10483-6-git-send-email-bhupesh.sharma@freescale.com>
+References: <1445628721-10483-1-git-send-email-bhupesh.sharma@freescale.com> <1445628721-10483-6-git-send-email-bhupesh.sharma@freescale.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <alpine.LNX.2.00.1510010943400.25759@localhost.localdomain>
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/01, Paul Osmialowski wrote:
-> Hi Stephen,
+On Saturday 24 October 2015 01:01:54 Bhupesh Sharma wrote:
+> Update the definition of the Layerscape PCI compatible string to add
+> support for LS2080A, as the controller on LS2080A is different from
+> LS1021A SoC.
 > 
-> On Wed, 30 Sep 2015, Stephen Boyd wrote:
+> While at it, move the clock related properties in the Designware PCIe
+> controller bindings to 'optional' set of properties.
 > 
-> > In the pinctrl node we would have
-> > 
-> >  	pinctrl {
-> >  		compatible = "fsl,kenetis70-pinctrl";
-> >  		reg = <0x40049000 0x2000>;
-> >  		clocks = <&sim SIM_CLK_SCGC5_PORTA>, <&sim SIM_CLK_SCGC5_PORTB>;
-> > 
-> > 		uart_default: uart_default {
-> > 			mux {
-> > 				pins = "porta_3", "portb_2";
-> > 				function = "uart";
-> > 			};
-> > 
-> > 			rx {
-> > 				bias-pull-pin-default;
-> > 			};
-> > 		};
-> >  	};
-> > 
-> > And then in the uart node we would have
-> > 
-> > 	uart@f00000 {
-> > 		compatible = "vendor,uart";
-> > 		reg = <0xf00000 0x100>;
-> > 		pinctrl-names = "default";
-> > 		pinctrl-0 = <&uart_default>;
-> > 	};
-> > 
+> Signed-off-by: Minghuan Lian <Minghuan.Lian@freescale.com>
+> Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
+> ---
+>  .../devicetree/bindings/pci/designware-pcie.txt    |   10 +++++-----
+>  .../devicetree/bindings/pci/layerscape-pci.txt     |   14 ++++++++++++--
+>  2 files changed, 17 insertions(+), 7 deletions(-)
 > 
-> Seems like there's another thing I wanted to avoid. The correctness of 
-> these pin strings will not be checked until the runtime. They need to 
-> properly encode pin bank and pin number within the bank. No chances it can 
-> be validated at .dtb build time. But I guess this is proper way for 
-> generic pinctrl bindings. I mostly (but not completely) based my approach 
-> on rockchip examples (e.g. rk3288) but it looks like they are not entirely 
-> sane.
 
-I don't see how it could be validated with the <&port pin
-function config> binding either. Let's hope that people test
-their code, including whatever dts files they produce.
+This one depends on a patch that is in Bjorn's PCI tree but not
+yet in mainline.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Please add my 'Acked-by: Arnd Bergmann <arnd@arndb.de>' and submit it to
+Bjorn so he can apply the patch on top of the other one.
+
+	Arnd
