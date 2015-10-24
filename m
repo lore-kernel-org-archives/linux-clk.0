@@ -1,60 +1,105 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Paul Walmsley <paul@pwsan.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Kumar Gala <galak@codeaurora.org>,
 	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/POC v3 3/3] clk: shmobile: Add r8a7795 CPG Core Clock Definitions
-Date: Mon, 12 Oct 2015 13:37:43 +0200
-Message-Id: <1444649863-17796-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1444649863-17796-1-git-send-email-geert+renesas@glider.be>
-References: <1444649863-17796-1-git-send-email-geert+renesas@glider.be>
+	Rob Herring <robh+dt@kernel.org>,
+	Olof Johansson <olof@lixom.net>, linux-clk@vger.kernel.org,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Pawel Moll <pawel.moll@arm.com>, devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v4 0/8] Build and support rk3036 SoC platform
+Date: Sat, 24 Oct 2015 18:30:21 +0800
+Message-Id: <1445682629-21632-1-git-send-email-zhengxing@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the R-Car H3 CPG Core Clocks that are currently needed by the DTS.
-More will be added when needed.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This is a Proof-of-Concept. Final definitions and values may be
-different.
+Hi,
+  We need to support rk3036 soc platform via upstream, there are
+3 primary parts for the initial release of minimum system: dts,
+pinctrl, and clock tree for rk3036, and additional, we can use
+these startup and run to init processs.
 
- include/dt-bindings/clock/r8a7795-cpg-mssr.h | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
- create mode 100644 include/dt-bindings/clock/r8a7795-cpg-mssr.h
+Thanks.
 
-diff --git a/include/dt-bindings/clock/r8a7795-cpg-mssr.h b/include/dt-bindings/clock/r8a7795-cpg-mssr.h
-new file mode 100644
-index 0000000000000000..c277eb2f48df22ec
---- /dev/null
-+++ b/include/dt-bindings/clock/r8a7795-cpg-mssr.h
-@@ -0,0 +1,17 @@
-+/*
-+ * Copyright (C) 2015 Renesas Electronics Corp.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* r8a7795 CPG Core Clocks */
-+#define R8A7795_CLK_S0D4		0
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__ */
+Changed in v4:
+- add some basic IP modules on rk3036.dtsi
+- optimized supporting smp codes
+
+Changed in v3:
+- optimized some codes based on v2
+- removed the patch "initial set time for rtc-hym8563" (useless)
+- removed the patch "pinctrl" (approved)
+
+Changed in v2:
+- based on v1, add clock controller documentation
+- enable timer5 startup
+- add smp for cpu1
+- initial set time for rtc-hym8563
+
+Changes in v1:
+- add dts, pinctrl and clock tree for rk3036 soc platform
+
+The patchset (8):
+8) rockchip: make sure timer5 is enabled on rk3036 platforms
+7) ARM: dts: enable smp for rk3036
+6) ARM: rockchip: add support smp for rk3036
+5) ARM: dts: rockchip: add core rk3036 dts
+4) clk: rockchip: add new pll-type for rk3036 and similar socs
+3) clk: rockchip: add clock controller for rk3036
+2) clk: rockchip: add dt-binding header for rk3036
+1) dt-bindings: add documentation of rk3036 clock controller
+
+
+Changes in v4:
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
+Heiko Stuebner (1):
+  ARM: rockchip: add support smp for rk3036
+
+Xing Zheng (7):
+  dt-bindings: add documentation of rk3036 clock controller
+  clk: rockchip: add dt-binding header for rk3036
+  clk: rockchip: add clock controller for rk3036
+  clk: rockchip: add new pll-type for rk3036 and similar socs
+  ARM: dts: rockchip: add core rk3036 dts
+  ARM: dts: enable smp for rk3036
+  rockchip: make sure timer5 is enabled on rk3036 platforms
+
+ Documentation/devicetree/bindings/arm/cpus.txt     |    1 +
+ .../bindings/clock/rockchip,rk3036-cru.txt         |   56 ++
+ arch/arm/boot/dts/Makefile                         |    1 +
+ arch/arm/boot/dts/rk3036-evb.dts                   |   64 +++
+ arch/arm/boot/dts/rk3036.dtsi                      |  541 ++++++++++++++++++++
+ arch/arm/mach-rockchip/platsmp.c                   |   45 +-
+ arch/arm/mach-rockchip/rockchip.c                  |   44 +-
+ drivers/clk/rockchip/Makefile                      |    1 +
+ drivers/clk/rockchip/clk-pll.c                     |  243 ++++++++-
+ drivers/clk/rockchip/clk-rk3036.c                  |  500 ++++++++++++++++++
+ drivers/clk/rockchip/clk.h                         |   30 ++
+ include/dt-bindings/clock/rk3036-cru.h             |  195 +++++++
+ 12 files changed, 1691 insertions(+), 30 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3036-cru.txt
+ create mode 100644 arch/arm/boot/dts/rk3036-evb.dts
+ create mode 100644 arch/arm/boot/dts/rk3036.dtsi
+ create mode 100644 drivers/clk/rockchip/clk-rk3036.c
+ create mode 100644 include/dt-bindings/clock/rk3036-cru.h
+
 -- 
-1.9.1
+1.7.9.5
+
+
