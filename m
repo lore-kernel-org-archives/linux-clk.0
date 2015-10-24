@@ -1,190 +1,315 @@
-Return-Path: <Mingkai.Hu@freescale.com>
-From: Hu Vincent <Mingkai.Hu@freescale.com>
-To: Scott Wood <scottwood@freescale.com>, Hou Zhiqiang <B48286@freescale.com>
-CC: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "catalin.marinas@arm.com"
-	<catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>, "linux@roeck-us.net"
-	<linux@roeck-us.net>, "wsa@the-dreams.de" <wsa@the-dreams.de>,
-	"wim@iguana.be" <wim@iguana.be>, "corbet@lwn.net" <corbet@lwn.net>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
-	<sboyd@codeaurora.org>, Shaohui Xie <Shaohui.Xie@freescale.com>, "Sharma
- Bhupesh" <bhupesh.sharma@freescale.com>, Wenbin Song
-	<Wenbin.Song@freescale.com>, Li Leo <LeoLi@freescale.com>, Sharma Bhupesh
-	<bhupesh.sharma@freescale.com>
-Subject: RE: [PATCH V4 4/6] arm64/ls1043a: add DTS for Freescale LS1043A SoC
-Date: Fri, 16 Oct 2015 03:04:53 +0000
-Message-ID: <BN3PR0301MB124963B6511767567A4409BD843D0@BN3PR0301MB1249.namprd03.prod.outlook.com>
-References: <1444911181-21696-1-git-send-email-B48286@freescale.com>
-	 <1444911181-21696-4-git-send-email-B48286@freescale.com>
- <1444941949.5185.270.camel@freescale.com>
-In-Reply-To: <1444941949.5185.270.camel@freescale.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 4/8] clk: rockchip: add new pll-type for rk3036 and similar socs
+Date: Sat, 24 Oct 2015 18:30:25 +0800
+Message-Id: <1445682629-21632-5-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1445682629-21632-1-git-send-email-zhengxing@rock-chips.com>
+References: <1445682629-21632-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogV29vZCBTY290dC1CMDc0
-MjENCj4gU2VudDogRnJpZGF5LCBPY3RvYmVyIDE2LCAyMDE1IDQ6NDYgQU0NCj4gVG86IEhvdSBa
-aGlxaWFuZy1CNDgyODYNCj4gQ2M6IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9y
-ZzsgY2F0YWxpbi5tYXJpbmFzQGFybS5jb207DQo+IHdpbGwuZGVhY29uQGFybS5jb207IGxpbnV4
-LWkyY0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiB3YXRjaGRvZ0B2Z2VyLmtlcm5lbC5vcmc7
-IGxpbnV4LWRvY0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiBjbGtAdmdlci5rZXJuZWwub3Jn
-OyBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsgbGludXhAcm9lY2stdXMubmV0OyB3c2FAdGhlLQ0KPiBk
-cmVhbXMuZGU7IHdpbUBpZ3VhbmEuYmU7IGNvcmJldEBsd24ubmV0OyBtdHVycXVldHRlQGJheWxp
-YnJlLmNvbTsNCj4gc2JveWRAY29kZWF1cm9yYS5vcmc7IEh1IE1pbmdrYWktQjIxMjg0OyBYaWUg
-U2hhb2h1aS1CMjE5ODk7IFNoYXJtYQ0KPiBCaHVwZXNoLUI0NTM3MDsgU29uZyBXZW5iaW4tQjUz
-NzQ3OyBMaSBZYW5nLUxlby1SNTg0NzI7IFNoYXJtYSBCaHVwZXNoLQ0KPiBCNDUzNzANCj4gU3Vi
-amVjdDogUmU6IFtQQVRDSCBWNCA0LzZdIGFybTY0L2xzMTA0M2E6IGFkZCBEVFMgZm9yIEZyZWVz
-Y2FsZSBMUzEwNDNBDQo+IFNvQw0KPiANCj4gT24gVGh1LCAyMDE1LTEwLTE1IGF0IDIwOjEyICsw
-ODAwLCBaaGlxaWFuZyBIb3Ugd3JvdGU6DQo+ID4gRnJvbTogTWluZ2thaSBIdSA8TWluZ2thaS5I
-dUBmcmVlc2NhbGUuY29tPg0KPiA+DQo+ID4gTFMxMDQzYSBpcyBhbiBTb0Mgd2l0aCA0IEFSTXY4
-IEE1MyBjb3JlcyBhbmQgbW9zdCBvdGhlciBJUCBibG9ja3MNCj4gPiBzaW1pbGFyIHRvIExTMTAy
-MWEgd2hpY2ggY29tcGxpZXMgdG8gQ2hhc3NpcyAyLjEgc3BlYy4NCj4gPg0KPiA+IEZvbGxvd2lu
-ZyBsZXZlbHMgb2YgRFRTSS9EVFMgZmlsZXMgaGF2ZSBiZWVuIGNyZWF0ZWQgZm9yIHRoZSBMUzEw
-NDNBDQo+ID4gU29DIGZhbWlseToNCj4gPg0KPiA+IC0gZnNsLWxzMTA0M2EuZHRzaToNCj4gPiAg
-IERUUy1JbmNsdWRlIGZpbGUgZm9yIEZTTCBMUzEwNDNBIFNvQy4NCj4gPg0KPiA+IFNpZ25lZC1v
-ZmYtYnk6IExpIFlhbmcgPGxlb2xpQGZyZWVzY2FsZS5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTog
-SG91IFpoaXFpYW5nIDxCNDgyODZAZnJlZXNjYWxlLmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBN
-aW5na2FpIEh1IDxNaW5na2FpLkh1QGZyZWVzY2FsZS5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTog
-V2VuYmluIFNvbmcgPFdlbmJpbi5Tb25nQGZyZWVzY2FsZS5jb20+DQo+ID4gLS0tDQo+ID4gVjQ6
-DQo+ID4gIC0gQWRkIHNvYyBub2RlIHdpdGggc2ltcGxlLWJ1cyBjb21wYXRpYmxlLg0KPiA+ICAt
-IEFkZCBwcm9wZXJ0eSBpbnRlcnJ1cHQtYWZmaW5pdHkgZm9yIGFybXY4IHBtdXYzIG5vZGUuDQo+
-ID4NCj4gPiBWMzoNCj4gPiAgLSBBZGQgZGV2aWNlIHRyZWUgbm9kZSBmb3IgU0FUQS4NCj4gPiAg
-LSBSZW1vdmUgcHJvcGVyaXR5IGVuYWJsZS1tZXRob2QgZm9yIGFsbCBjcHUgbm9kZS4NCj4gPiAg
-ICBSZW1vdmUgcmVzZXJ2ZWQgbWVtb3J5IHJlZ2lvbiBmb3Igc3Bpbi10YWJsZS4NCj4gPg0KPiA+
-IFYyOg0KPiA+ICAtIEFkZCBzZWNvbmRhcnkgY29yZSBib290IG1ldGhvZC4NCj4gPiAgLSBNb3Zl
-IG91dCB0aGUgc3lzY2xrIG5vZGUgZnJvbSB0aGUgY2xvY2tnZW4gbm9kZS4NCj4gPiAgLSBDb3Jy
-ZWN0IHRoZSByZWcgc2l6ZSBvZiBHSUNDLg0KPiA+DQo+ID4gIGFyY2gvYXJtNjQvYm9vdC9kdHMv
-ZnJlZXNjYWxlL2ZzbC1sczEwNDNhLmR0c2kgfCA1MjUNCj4gPiArKysrKysrKysrKysrKysrKysr
-KysrKysrDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCA1MjUgaW5zZXJ0aW9ucygrKQ0KPiA+ICBjcmVh
-dGUgbW9kZSAxMDA2NDQgYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvZnNsLWxzMTA0M2Eu
-ZHRzaQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxl
-L2ZzbC1sczEwNDNhLmR0c2kNCj4gPiBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL2Zz
-bC1sczEwNDNhLmR0c2kNCj4gPiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPiA+IGluZGV4IDAwMDAw
-MDAuLjFhNWJmNzkNCj4gPiAtLS0gL2Rldi9udWxsDQo+ID4gKysrIGIvYXJjaC9hcm02NC9ib290
-L2R0cy9mcmVlc2NhbGUvZnNsLWxzMTA0M2EuZHRzaQ0KPiA+IEBAIC0wLDAgKzEsNTI1IEBADQo+
-ID4gKy8qDQo+ID4gKyAqIERldmljZSBUcmVlIEluY2x1ZGUgZmlsZSBmb3IgRnJlZXNjYWxlIExh
-eWVyc2NhcGUtMTA0M0EgZmFtaWx5IFNvQy4NCj4gPiArICoNCj4gPiArICogQ29weXJpZ2h0IDIw
-MTQtMjAxNSwgRnJlZXNjYWxlIFNlbWljb25kdWN0b3INCj4gPiArICoNCj4gPiArICogTWluZ2th
-aSBIdSA8TWluZ2thaS5odUBmcmVlc2NhbGUuY29tPg0KPiA+ICsgKg0KPiA+ICsgKiBUaGlzIGZp
-bGUgaXMgZHVhbC1saWNlbnNlZDogeW91IGNhbiB1c2UgaXQgZWl0aGVyIHVuZGVyIHRoZSB0ZXJt
-cw0KPiA+ICsgKiBvZiB0aGUgR1BMdjIgb3IgdGhlIFgxMSBsaWNlbnNlLCBhdCB5b3VyIG9wdGlv
-bi4gTm90ZSB0aGF0IHRoaXMNCj4gPiArZHVhbA0KPiA+ICsgKiBsaWNlbnNpbmcgb25seSBhcHBs
-aWVzIHRvIHRoaXMgZmlsZSwgYW5kIG5vdCB0aGlzIHByb2plY3QgYXMgYQ0KPiA+ICsgKiB3aG9s
-ZS4NCj4gPiArICoNCj4gPiArICogIGEpIFRoaXMgbGlicmFyeSBpcyBmcmVlIHNvZnR3YXJlOyB5
-b3UgY2FuIHJlZGlzdHJpYnV0ZSBpdCBhbmQvb3INCj4gPiArICogICAgIG1vZGlmeSBpdCB1bmRl
-ciB0aGUgdGVybXMgb2YgdGhlIEdOVSBHZW5lcmFsIFB1YmxpYyBMaWNlbnNlIGFzDQo+ID4gKyAq
-ICAgICBwdWJsaXNoZWQgYnkgdGhlIEZyZWUgU29mdHdhcmUgRm91bmRhdGlvbjsgZWl0aGVyIHZl
-cnNpb24gMiBvZg0KPiB0aGUNCj4gPiArICogICAgIExpY2Vuc2UsIG9yIChhdCB5b3VyIG9wdGlv
-bikgYW55IGxhdGVyIHZlcnNpb24uDQo+ID4gKyAqDQo+ID4gKyAqICAgICBUaGlzIGxpYnJhcnkg
-aXMgZGlzdHJpYnV0ZWQgaW4gdGhlIGhvcGUgdGhhdCBpdCB3aWxsIGJlIHVzZWZ1bCwNCj4gPiAr
-ICogICAgIGJ1dCBXSVRIT1VUIEFOWSBXQVJSQU5UWTsgd2l0aG91dCBldmVuIHRoZSBpbXBsaWVk
-IHdhcnJhbnR5IG9mDQo+ID4gKyAqICAgICBNRVJDSEFOVEFCSUxJVFkgb3IgRklUTkVTUyBGT1Ig
-QSBQQVJUSUNVTEFSIFBVUlBPU0UuICBTZWUgdGhlDQo+ID4gKyAqICAgICBHTlUgR2VuZXJhbCBQ
-dWJsaWMgTGljZW5zZSBmb3IgbW9yZSBkZXRhaWxzLg0KPiA+ICsgKg0KPiA+ICsgKiBPciwgYWx0
-ZXJuYXRpdmVseSwNCj4gPiArICoNCj4gPiArICogIGIpIFBlcm1pc3Npb24gaXMgaGVyZWJ5IGdy
-YW50ZWQsIGZyZWUgb2YgY2hhcmdlLCB0byBhbnkgcGVyc29uDQo+ID4gKyAqICAgICBvYnRhaW5p
-bmcgYSBjb3B5IG9mIHRoaXMgc29mdHdhcmUgYW5kIGFzc29jaWF0ZWQgZG9jdW1lbnRhdGlvbg0K
-PiA+ICsgKiAgICAgZmlsZXMgKHRoZSAiU29mdHdhcmUiKSwgdG8gZGVhbCBpbiB0aGUgU29mdHdh
-cmUgd2l0aG91dA0KPiA+ICsgKiAgICAgcmVzdHJpY3Rpb24sIGluY2x1ZGluZyB3aXRob3V0IGxp
-bWl0YXRpb24gdGhlIHJpZ2h0cyB0byB1c2UsDQo+ID4gKyAqICAgICBjb3B5LCBtb2RpZnksIG1l
-cmdlLCBwdWJsaXNoLCBkaXN0cmlidXRlLCBzdWJsaWNlbnNlLCBhbmQvb3INCj4gPiArICogICAg
-IHNlbGwgY29waWVzIG9mIHRoZSBTb2Z0d2FyZSwgYW5kIHRvIHBlcm1pdCBwZXJzb25zIHRvIHdo
-b20gdGhlDQo+ID4gKyAqICAgICBTb2Z0d2FyZSBpcyBmdXJuaXNoZWQgdG8gZG8gc28sIHN1Ympl
-Y3QgdG8gdGhlIGZvbGxvd2luZw0KPiA+ICsgKiAgICAgY29uZGl0aW9uczoNCj4gPiArICoNCj4g
-PiArICogICAgIFRoZSBhYm92ZSBjb3B5cmlnaHQgbm90aWNlIGFuZCB0aGlzIHBlcm1pc3Npb24g
-bm90aWNlIHNoYWxsIGJlDQo+ID4gKyAqICAgICBpbmNsdWRlZCBpbiBhbGwgY29waWVzIG9yIHN1
-YnN0YW50aWFsIHBvcnRpb25zIG9mIHRoZSBTb2Z0d2FyZS4NCj4gPiArICoNCj4gPiArICogICAg
-IFRIRSBTT0ZUV0FSRSBJUyBQUk9WSURFRCAiQVMgSVMiLCBXSVRIT1VUIFdBUlJBTlRZIE9GIEFO
-WSBLSU5ELA0KPiA+ICsgKiAgICAgRVhQUkVTUyBPUiBJTVBMSUVELCBJTkNMVURJTkcgQlVUIE5P
-VCBMSU1JVEVEIFRPIFRIRSBXQVJSQU5USUVTDQo+ID4gKyAqICAgICBPRiBNRVJDSEFOVEFCSUxJ
-VFksIEZJVE5FU1MgRk9SIEEgUEFSVElDVUxBUiBQVVJQT1NFIEFORA0KPiA+ICsgKiAgICAgTk9O
-SU5GUklOR0VNRU5ULiBJTiBOTyBFVkVOVCBTSEFMTCBUSEUgQVVUSE9SUyBPUiBDT1BZUklHSFQN
-Cj4gPiArICogICAgIEhPTERFUlMgQkUgTElBQkxFIEZPUiBBTlkgQ0xBSU0sIERBTUFHRVMgT1Ig
-T1RIRVIgTElBQklMSVRZLA0KPiA+ICsgKiAgICAgV0hFVEhFUiBJTiBBTiBBQ1RJT04gT0YgQ09O
-VFJBQ1QsIFRPUlQgT1IgT1RIRVJXSVNFLCBBUklTSU5HDQo+ID4gKyAqICAgICBGUk9NLCBPVVQg
-T0YgT1IgSU4gQ09OTkVDVElPTiBXSVRIIFRIRSBTT0ZUV0FSRSBPUiBUSEUgVVNFIE9SDQo+ID4g
-KyAqICAgICBPVEhFUiBERUFMSU5HUyBJTiBUSEUgU09GVFdBUkUuDQo+ID4gKyAqLw0KPiA+ICsN
-Cj4gPiArLyB7DQo+ID4gKyAgICAgY29tcGF0aWJsZSA9ICJmc2wsbHMxMDQzYSI7DQo+ID4gKyAg
-ICAgaW50ZXJydXB0LXBhcmVudCA9IDwmZ2ljPjsNCj4gPiArICAgICAjYWRkcmVzcy1jZWxscyA9
-IDwyPjsNCj4gPiArICAgICAjc2l6ZS1jZWxscyA9IDwyPjsNCj4gPiArDQo+ID4gKyAgICAgY3B1
-cyB7DQo+ID4gKyAgICAgICAgICAgICAjYWRkcmVzcy1jZWxscyA9IDwyPjsNCj4gPiArICAgICAg
-ICAgICAgICNzaXplLWNlbGxzID0gPDA+Ow0KPiA+ICsNCj4gPiArICAgICAgICAgICAgIC8qDQo+
-ID4gKyAgICAgICAgICAgICAgKiBXZSBleHBlY3QgdGhlIGVuYWJsZS1tZXRob2QgZm9yIGNwdSdz
-IHRvIGJlICJwc2NpIiwNCj4gYnV0IHRoaXMNCj4gPiArICAgICAgICAgICAgICAqIGlzIGRlcGVu
-ZGVudCBvbiB0aGUgU29DIEZXLCB3aGljaCB3aWxsIGZpbGwgdGhpcyBpbi4NCj4gPiArICAgICAg
-ICAgICAgICAqDQo+ID4gKyAgICAgICAgICAgICAgKiBDdXJyZW50bHkgc3VwcG9ydGVkIGVuYWJs
-ZS1tZXRob2QgaXMgcHNjaSB2MC4yDQo+ID4gKyAgICAgICAgICAgICAgKi8NCj4gPiArICAgICAg
-ICAgICAgIGNwdTA6ICBjcHVAMHsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgZGV2aWNlX3R5
-cGUgPSAiY3B1IjsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgY29tcGF0aWJsZSA9ICJhcm0s
-Y29ydGV4LWE1MyI7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgIHJlZyA9IDwweDAgMHgwPjsN
-Cj4gPiArICAgICAgICAgICAgICAgICAgICAgY2xvY2tzID0gPCZjbG9ja2dlbiAxIDA+Ow0KPiA+
-ICsgICAgICAgICAgICAgfTsNCj4gPiArDQo+ID4gKyAgICAgICAgICAgICBjcHUxOiAgY3B1QDF7
-DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgIGRldmljZV90eXBlID0gImNwdSI7DQo+ID4gKyAg
-ICAgICAgICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAiYXJtLGNvcnRleC1hNTMiOw0KPiA+ICsg
-ICAgICAgICAgICAgICAgICAgICByZWcgPSA8MHgwIDB4MT47DQo+ID4gKyAgICAgICAgICAgICAg
-ICAgICAgIGNsb2NrcyA9IDwmY2xvY2tnZW4gMSAwPjsNCj4gPiArICAgICAgICAgICAgIH07DQo+
-ID4gKw0KPiA+ICsgICAgICAgICAgICAgY3B1MjogIGNwdUAyew0KPiA+ICsgICAgICAgICAgICAg
-ICAgICAgICBkZXZpY2VfdHlwZSA9ICJjcHUiOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICBj
-b21wYXRpYmxlID0gImFybSxjb3J0ZXgtYTUzIjsNCj4gPiArICAgICAgICAgICAgICAgICAgICAg
-cmVnID0gPDB4MCAweDI+Ow0KPiA+ICsgICAgICAgICAgICAgICAgICAgICBjbG9ja3MgPSA8JmNs
-b2NrZ2VuIDEgMD47DQo+ID4gKyAgICAgICAgICAgICB9Ow0KPiA+ICsNCj4gPiArICAgICAgICAg
-ICAgIGNwdTM6ICBjcHVAM3sNCj4gPiArICAgICAgICAgICAgICAgICAgICAgZGV2aWNlX3R5cGUg
-PSAiY3B1IjsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgY29tcGF0aWJsZSA9ICJhcm0sY29y
-dGV4LWE1MyI7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgIHJlZyA9IDwweDAgMHgzPjsNCj4g
-PiArICAgICAgICAgICAgICAgICAgICAgY2xvY2tzID0gPCZjbG9ja2dlbiAxIDA+Ow0KPiA+ICsg
-ICAgICAgICAgICAgfTsNCj4gPiArICAgICB9Ow0KPiA+ICsNCj4gPiArICAgICAgbWVtb3J5QDgw
-MDAwMDAwew0KPiA+ICsgICAgICAgICAgICAgZGV2aWNlX3R5cGUgPSAibWVtb3J5IjsNCj4gPiAr
-ICAgICAgICAgICAgIHJlZyA9IDwweDAgMHg4MDAwMDAwMCAwIDB4ODAwMDAwMDA+Ow0KPiA+ICsg
-ICAgICAgICAgICAgICAgICAgLyogRFJBTSBzcGFjZSAxLCBzaXplOiAyR2lCIERSQU0gKi8NCj4g
-PiArICAgICB9Ow0KPiA+ICsNCj4gPiArICAgICBzeXNjbGs6IHN5c2NsayB7DQo+ID4gKyAgICAg
-ICAgICAgICBjb21wYXRpYmxlID0gImZpeGVkLWNsb2NrIjsNCj4gPiArICAgICAgICAgICAgICNj
-bG9jay1jZWxscyA9IDwwPjsNCj4gPiArICAgICAgICAgICAgIGNsb2NrLWZyZXF1ZW5jeSA9IDwx
-MDAwMDAwMDA+Ow0KPiA+ICsgICAgICAgICAgICAgY2xvY2stb3V0cHV0LW5hbWVzID0gInN5c2Ns
-ayI7DQo+ID4gKyAgICAgfTsNCj4gPiArDQo+ID4gKyAgICAgc29jIHsNCj4gPiArICAgICAgICAg
-ICAgIGNvbXBhdGlibGUgPSAic2ltcGxlLWJ1cyI7DQo+ID4gKyAgICAgICAgICAgICAjYWRkcmVz
-cy1jZWxscyA9IDwyPjsNCj4gPiArICAgICAgICAgICAgICNzaXplLWNlbGxzID0gPDI+Ow0KPiA+
-ICsgICAgICAgICAgICAgcmFuZ2VzOw0KPiA+ICsNCj4gPiArICAgICAgICAgICAgIGNsb2NrZ2Vu
-OiAgY2xvY2tpbmdAMWVlMTAwMHsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgY29tcGF0aWJs
-ZSA9ICJmc2wsbHMxMDQzYS1jbG9ja2dlbiI7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgIHJl
-ZyA9IDwweDAgMHgxZWUxMDAwIDB4MCAweDEwMDA+Ow0KPiA+ICsgICAgICAgICAgICAgICAgICAg
-ICAjY2xvY2stY2VsbHMgPSA8Mj47DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgIGNsb2NrcyA9
-IDwmc3lzY2xrPjsNCj4gPiArICAgICAgICAgICAgIH07DQo+ID4gKw0KPiA+ICsgICAgICAgICAg
-ICAgdGltZXIgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICBjb21wYXRpYmxlID0gImFybSxh
-cm12OC10aW1lciI7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgIGludGVycnVwdHMgPSA8MSAx
-MyAweDE+LCAvKiBQaHlzaWNhbCBTZWN1cmUgUFBJDQo+ICovDQo+ID4gKyAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICA8MSAxNCAweDE+LCAvKiBQaHlzaWNhbCBOb24tU2VjdXJlDQo+
-IFBQSSAqLw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPDEgMTEgMHgx
-PiwgLyogVmlydHVhbCBQUEkgKi8NCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIDwxIDEwIDB4MT47IC8qIEh5cGVydmlzb3IgUFBJICovDQo+ID4gKyAgICAgICAgICAgICB9
-Ow0KPiA+ICsNCj4gPiArICAgICAgICAgICAgIHBtdSB7DQo+ID4gKyAgICAgICAgICAgICAgICAg
-ICAgIGNvbXBhdGlibGUgPSAiYXJtLGFybXY4LXBtdXYzIjsNCj4gPiArICAgICAgICAgICAgICAg
-ICAgICAgaW50ZXJydXB0cyA9IDwwIDEwNiAweDQ+LA0KPiA+ICsgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgPDAgMTA3IDB4ND4sDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICA8MCA5NSAweDQ+LA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgPDAgOTcgMHg0PjsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgaW50ZXJydXB0LWFm
-ZmluaXR5ID0gPCZjcHUwPiwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgPCZjcHUxPiwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgPCZjcHUyPiwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgPCZjcHUzPjsNCj4gPiArICAgICAgICAgICAgIH07DQo+ID4gKw0KPiA+ICsgICAg
-ICAgICAgICAgZ2ljOiAgaW50ZXJydXB0LWNvbnRyb2xsZXJAMTQwMDAwMHsNCj4gPiArICAgICAg
-ICAgICAgICAgICAgICAgY29tcGF0aWJsZSA9ICJhcm0sZ2ljLTQwMCI7DQo+ID4gKyAgICAgICAg
-ICAgICAgICAgICAgICNpbnRlcnJ1cHQtY2VsbHMgPSA8Mz47DQo+ID4gKyAgICAgICAgICAgICAg
-ICAgICAgIGludGVycnVwdC1jb250cm9sbGVyOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICBy
-ZWcgPSA8MHgwIDB4MTQwMTAwMCAwIDB4MTAwMD4sIC8qIEdJQ0QgKi8NCj4gPiArICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgPDB4MCAweDE0MDIwMDAgMCAweDIwMDA+LCAvKiBHSUNDICovDQo+
-ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgIDwweDAgMHgxNDA0MDAwIDAgMHgyMDAwPiwg
-LyogR0lDSCAqLw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICA8MHgwIDB4MTQwNjAw
-MCAwIDB4MjAwMD47IC8qIEdJQ1YgKi8NCj4gPiArICAgICAgICAgICAgICAgICAgICAgaW50ZXJy
-dXB0cyA9IDwxIDkgMHhmMDg+Ow0KPiA+ICsgICAgICAgICAgICAgfTsNCj4gDQo+IFRoZSByZWNl
-bnRseSBwb3N0ZWQgbHMyMDgwIGRldmljZSB0cmVlIHBhdGNoIHB1dHMgcG11LCBnaWMsIGV0Yy4g
-dW5kZXINCj4gdGhlIHJvb3Qgbm9kZSByYXRoZXIgdGhhbiB0aGUgc29jIG5vZGUuICBXaGVyZSBz
-aG91bGQgdGhleSBnbz8gIEF0IGxlYXN0DQo+IGl0IHNob3VsZCBiZSBjb25zaXN0ZW50Li4uDQo+
-IA0KDQpUaGVyZSBpcyBhbHNvIGRpc2N1c3Npb24gYmV0d2VlbiBSb24gYW5kIFN0dWFydCBhYm91
-dCB0aGlzLCBidXQgbm8gY29uY2x1c2lvbiBhYm91dCB3aGVyZSB0byBwdXQgcG11LCBnaWMgbm9k
-ZS4NCklzIHRoZXJlIGFueSBzcGVjaWZpYyByZWFzb24gdG8gcHV0IHRoZW0gb3V0IG9mIHRoZSBT
-b0M/DQoNClRoYW5rcywNCk1pbmdrYWkNCg==
+The rk3036's pll and clock are different with base on the rk3066(rk3188,
+rk3288, rk3368 use it), there are different adjust foctors and control
+registers, so these should be independent and separate from the series
+of rk3066s.
+
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+---
+
+Changes in v4: None
+
+ drivers/clk/rockchip/clk-pll.c |  243 +++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 242 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index 4881eb8..a435503 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -2,6 +2,9 @@
+  * Copyright (c) 2014 MundoReader S.L.
+  * Author: Heiko Stuebner <heiko@sntech.de>
+  *
++ * Copyright (c) 2015 Rockchip Electronics Co. Ltd.
++ * Author: Xing Zheng <zhengxing@rock-chips.com>
++ *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+  * the Free Software Foundation; either version 2 of the License, or
+@@ -19,6 +22,7 @@
+ #include <linux/delay.h>
+ #include <linux/clk-provider.h>
+ #include <linux/regmap.h>
++#include <linux/clk.h>
+ #include "clk.h"
+ 
+ #define PLL_MODE_MASK		0x3
+@@ -108,6 +112,237 @@ static int rockchip_pll_wait_lock(struct rockchip_clk_pll *pll)
+ }
+ 
+ /**
++ * PLL used in RK3036
++ */
++
++#define RK3036_PLLCON(i)			(i * 0x4)
++#define RK3036_PLLCON0_FBDIV_MASK		0xfff
++#define RK3036_PLLCON0_FBDIV_SHIFT		0
++#define RK3036_PLLCON0_POSTDIV1_MASK		0x7
++#define RK3036_PLLCON0_POSTDIV1_SHIFT		12
++#define RK3036_PLLCON1_REFDIV_MASK		0x3f
++#define RK3036_PLLCON1_REFDIV_SHIFT		0
++#define RK3036_PLLCON1_POSTDIV2_MASK		0x7
++#define RK3036_PLLCON1_POSTDIV2_SHIFT		6
++#define RK3036_PLLCON1_DSMPD_MASK		0x1
++#define RK3036_PLLCON1_DSMPD_SHIFT		12
++#define RK3036_PLLCON2_FRAC_MASK		0xffffff
++#define RK3036_PLLCON2_FRAC_SHIFT		0
++
++#define RK3036_PLLCON1_PWRDOWN			(1 << 13)
++
++static unsigned long rockchip_rk3036_pll_recalc_rate(struct clk_hw *hw,
++						     unsigned long prate)
++{
++	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
++	unsigned int fbdiv, postdiv1, refdiv, postdiv2, dsmpd, frac;
++	u64 rate64 = prate;
++	u32 pllcon;
++
++	pllcon = readl_relaxed(pll->reg_base + RK3036_PLLCON(0));
++	fbdiv = ((pllcon >> RK3036_PLLCON0_FBDIV_SHIFT) & RK3036_PLLCON0_FBDIV_MASK);
++	postdiv1 = ((pllcon >> RK3036_PLLCON0_POSTDIV1_SHIFT) & RK3036_PLLCON0_POSTDIV1_MASK);
++
++	pllcon = readl_relaxed(pll->reg_base + RK3036_PLLCON(1));
++	refdiv = ((pllcon >> RK3036_PLLCON1_REFDIV_SHIFT) & RK3036_PLLCON1_REFDIV_MASK);
++	postdiv2 = ((pllcon >> RK3036_PLLCON1_POSTDIV2_SHIFT) & RK3036_PLLCON1_POSTDIV2_MASK);
++	dsmpd = ((pllcon >> RK3036_PLLCON1_DSMPD_SHIFT) & RK3036_PLLCON1_DSMPD_MASK);
++
++	pllcon = readl_relaxed(pll->reg_base + RK3036_PLLCON(2));
++	frac = ((pllcon >> RK3036_PLLCON2_FRAC_SHIFT) & RK3036_PLLCON2_FRAC_MASK);
++
++	rate64 *= fbdiv;
++	do_div(rate64, refdiv);
++
++	if (dsmpd == 0) {
++		/* fractional mode */
++		u64 frac_rate64 = prate * frac;
++
++		do_div(frac_rate64, refdiv);
++		rate64 += frac_rate64 >> 24;
++	}
++
++	do_div(rate64, postdiv1);
++	do_div(rate64, postdiv2);
++
++	return (unsigned long)rate64;
++}
++
++static int rockchip_rk3036_pll_set_rate(struct clk_hw *hw, unsigned long drate,
++					unsigned long prate)
++{
++	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
++	const struct rockchip_pll_rate_table *rate;
++	unsigned long old_rate = rockchip_rk3036_pll_recalc_rate(hw, prate);
++	struct regmap *grf = rockchip_clk_get_grf();
++	struct clk_mux *pll_mux = &pll->pll_mux;
++	const struct clk_ops *pll_mux_ops = pll->pll_mux_ops;
++	u32 pllcon;
++	int rate_change_remuxed = 0;
++	int cur_parent;
++	int ret;
++
++	if (IS_ERR(grf)) {
++		pr_debug("%s: grf regmap not available, aborting rate change\n",
++			 __func__);
++		return PTR_ERR(grf);
++	}
++
++	pr_debug("%s: changing %s from %lu to %lu with a parent rate of %lu\n",
++		 __func__, __clk_get_name(hw->clk), old_rate, drate, prate);
++
++	/* Get required rate settings from table */
++	rate = rockchip_get_pll_settings(pll, drate);
++	if (!rate) {
++		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
++			drate, __clk_get_name(hw->clk));
++		return -EINVAL;
++	}
++
++	pr_debug("%s: rate settings for %lu fbdiv: %d, postdiv1: %d, refdiv: %d, postdiv2: %d, dsmpd: %d, frac: %d\n",
++		__func__, rate->rate,
++		rate->fbdiv, rate->postdiv1, rate->refdiv, rate->postdiv2, rate->dsmpd, rate->frac);
++
++	cur_parent = pll_mux_ops->get_parent(&pll_mux->hw);
++	if (cur_parent == PLL_MODE_NORM) {
++		pll_mux_ops->set_parent(&pll_mux->hw, PLL_MODE_SLOW);
++		rate_change_remuxed = 1;
++	}
++
++	/* update pll values */
++	writel_relaxed(HIWORD_UPDATE(rate->fbdiv, RK3036_PLLCON0_FBDIV_MASK,
++					  RK3036_PLLCON0_FBDIV_SHIFT) |
++		       HIWORD_UPDATE(rate->postdiv1, RK3036_PLLCON0_POSTDIV1_MASK,
++					     RK3036_PLLCON0_POSTDIV1_SHIFT),
++		       pll->reg_base + RK3036_PLLCON(0));
++
++	writel_relaxed(HIWORD_UPDATE(rate->refdiv, RK3036_PLLCON1_REFDIV_MASK,
++						   RK3036_PLLCON1_REFDIV_SHIFT) |
++		       HIWORD_UPDATE(rate->postdiv2, RK3036_PLLCON1_POSTDIV2_MASK,
++						     RK3036_PLLCON1_POSTDIV2_SHIFT) |
++		       HIWORD_UPDATE(rate->dsmpd, RK3036_PLLCON1_DSMPD_MASK,
++						  RK3036_PLLCON1_DSMPD_SHIFT),
++		       pll->reg_base + RK3036_PLLCON(1));
++
++	/* GPLL CON2 is not HIWORD_MASK */
++	pllcon = readl_relaxed(pll->reg_base + RK3036_PLLCON(2));
++	pllcon &= ~(RK3036_PLLCON2_FRAC_MASK << RK3036_PLLCON2_FRAC_SHIFT);
++	pllcon |= rate->frac << RK3036_PLLCON2_FRAC_SHIFT;
++	writel_relaxed(pllcon, pll->reg_base + RK3036_PLLCON(2));
++
++	/* wait for the pll to lock */
++	ret = rockchip_pll_wait_lock(pll);
++	if (ret) {
++		pr_warn("%s: pll did not lock, trying to restore old rate %lu\n",
++			__func__, old_rate);
++		rockchip_rk3036_pll_set_rate(hw, old_rate, prate);
++	}
++
++	if (rate_change_remuxed)
++		pll_mux_ops->set_parent(&pll_mux->hw, PLL_MODE_NORM);
++
++	return ret;
++}
++
++static int rockchip_rk3036_pll_enable(struct clk_hw *hw)
++{
++	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
++
++	writel(HIWORD_UPDATE(0, RK3036_PLLCON1_PWRDOWN, 0),
++	       pll->reg_base + RK3036_PLLCON(1));
++
++	return 0;
++}
++
++static void rockchip_rk3036_pll_disable(struct clk_hw *hw)
++{
++	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
++
++	writel(HIWORD_UPDATE(RK3036_PLLCON1_PWRDOWN,
++			     RK3036_PLLCON1_PWRDOWN, 0),
++	       pll->reg_base + RK3036_PLLCON(1));
++}
++
++static int rockchip_rk3036_pll_is_enabled(struct clk_hw *hw)
++{
++	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
++	u32 pllcon = readl(pll->reg_base + RK3036_PLLCON(1));
++
++	return !(pllcon & RK3036_PLLCON1_PWRDOWN);
++}
++
++static void rockchip_rk3036_pll_init(struct clk_hw *hw)
++{
++	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
++	const struct rockchip_pll_rate_table *rate;
++	unsigned int fbdiv, postdiv1, refdiv, postdiv2, dsmpd, frac;
++	unsigned long drate;
++	u32 pllcon;
++
++	if (!(pll->flags & ROCKCHIP_PLL_SYNC_RATE))
++		return;
++
++	drate = clk_hw_get_rate(hw);
++	rate = rockchip_get_pll_settings(pll, drate);
++
++	/* when no rate setting for the current rate, rely on clk_set_rate */
++	if (!rate)
++		return;
++
++	pllcon = readl_relaxed(pll->reg_base + RK3036_PLLCON(0));
++	fbdiv = ((pllcon >> RK3036_PLLCON0_FBDIV_SHIFT) & RK3036_PLLCON0_FBDIV_MASK);
++	postdiv1 = ((pllcon >> RK3036_PLLCON0_POSTDIV1_SHIFT) & RK3036_PLLCON0_POSTDIV1_MASK);
++
++	pllcon = readl_relaxed(pll->reg_base + RK3036_PLLCON(1));
++	refdiv = ((pllcon >> RK3036_PLLCON1_REFDIV_SHIFT) & RK3036_PLLCON1_REFDIV_MASK);
++	postdiv2 = ((pllcon >> RK3036_PLLCON1_POSTDIV2_SHIFT) & RK3036_PLLCON1_POSTDIV2_MASK);
++	dsmpd = ((pllcon >> RK3036_PLLCON1_DSMPD_SHIFT) & RK3036_PLLCON1_DSMPD_MASK);
++
++	pllcon = readl_relaxed(pll->reg_base + RK3036_PLLCON(2));
++	frac = ((pllcon >> RK3036_PLLCON2_FRAC_SHIFT) & RK3036_PLLCON2_FRAC_MASK);
++
++	pr_debug("%s: pll %s@%lu: Hz\n", __func__, __clk_get_name(hw->clk), drate);
++	pr_debug("old - fbdiv: %d, postdiv1: %d, refdiv: %d, postdiv2: %d, dsmpd: %d, frac: %d\n",
++		fbdiv, postdiv1, refdiv, postdiv2, dsmpd, frac);
++	pr_debug("new - fbdiv: %d, postdiv1: %d, refdiv: %d, postdiv2: %d, dsmpd: %d, frac: %d\n",
++		rate->fbdiv, rate->postdiv1, rate->refdiv, rate->postdiv2, rate->dsmpd, rate->frac);
++
++	if (rate->fbdiv != fbdiv || rate->postdiv1 != postdiv1 || rate->refdiv != refdiv ||
++		rate->postdiv2 != postdiv2 || rate->dsmpd != dsmpd || rate->frac != frac) {
++		struct clk *parent = clk_get_parent(hw->clk);
++		unsigned long prate;
++
++		if (!parent) {
++			pr_warn("%s: parent of %s not available\n",
++				__func__, __clk_get_name(hw->clk));
++			return;
++		}
++
++		pr_debug("%s: pll %s: rate params do not match rate table, adjusting\n",
++			 __func__, __clk_get_name(hw->clk));
++		prate = clk_get_rate(parent);
++		rockchip_rk3036_pll_set_rate(hw, drate, prate);
++	}
++}
++
++static const struct clk_ops rockchip_rk3036_pll_clk_norate_ops = {
++	.recalc_rate = rockchip_rk3036_pll_recalc_rate,
++	.enable = rockchip_rk3036_pll_enable,
++	.disable = rockchip_rk3036_pll_disable,
++	.is_enabled = rockchip_rk3036_pll_is_enabled,
++};
++
++static const struct clk_ops rockchip_rk3036_pll_clk_ops = {
++	.recalc_rate = rockchip_rk3036_pll_recalc_rate,
++	.round_rate = rockchip_pll_round_rate,
++	.set_rate = rockchip_rk3036_pll_set_rate,
++	.enable = rockchip_rk3036_pll_enable,
++	.disable = rockchip_rk3036_pll_disable,
++	.is_enabled = rockchip_rk3036_pll_is_enabled,
++	.init = rockchip_rk3036_pll_init,
++};
++
++/**
+  * PLL used in RK3066, RK3188 and RK3288
+  */
+ 
+@@ -376,7 +611,7 @@ struct clk *rockchip_clk_register_pll(enum rockchip_pll_type pll_type,
+ 	pll_mux->lock = lock;
+ 	pll_mux->hw.init = &init;
+ 
+-	if (pll_type == pll_rk3066)
++	if (pll_type == pll_rk3036 || pll_type == pll_rk3066)
+ 		pll_mux->flags |= CLK_MUX_HIWORD_MASK;
+ 
+ 	/* the actual muxing is xin24m, pll-output, xin32k */
+@@ -421,6 +656,12 @@ struct clk *rockchip_clk_register_pll(enum rockchip_pll_type pll_type,
+ 	}
+ 
+ 	switch (pll_type) {
++	case pll_rk3036:
++		if (!pll->rate_table)
++			init.ops = &rockchip_rk3036_pll_clk_norate_ops;
++		else
++			init.ops = &rockchip_rk3036_pll_clk_ops;
++		break;
+ 	case pll_rk3066:
+ 		if (!pll->rate_table)
+ 			init.ops = &rockchip_rk3066_pll_clk_norate_ops;
+-- 
+1.7.9.5
