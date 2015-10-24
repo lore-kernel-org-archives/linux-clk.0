@@ -1,56 +1,58 @@
-Return-Path: <ludovic.desroches@atmel.com>
-Date: Thu, 1 Oct 2015 10:24:38 +0200
-From: Ludovic Desroches <ludovic.desroches@atmel.com>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-CC: Nicolas Ferre <nicolas.ferre@atmel.com>, Boris Brezillon
-	<boris.brezillon@free-electrons.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	<linux-kernel@vger.kernel.org>, Jean-Christophe Plagniol-Villard
-	<plagnioj@jcrosoft.com>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 08/16] clk: at91: only enable available IRQs
-Message-ID: <20151001082438.GJ31199@odux.rfo.atmel.com>
-References: <1443629469-15086-1-git-send-email-alexandre.belloni@free-electrons.com>
- <1443629469-15086-9-git-send-email-alexandre.belloni@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <1443629469-15086-9-git-send-email-alexandre.belloni@free-electrons.com>
-Return-Path: ludovic.desroches@atmel.com
+Return-Path: <manabian@gmail.com>
+Return-Path: <manabian@gmail.com>
+From: Joachim Eastwood <manabian@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: Joachim Eastwood <manabian@gmail.com>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v3 0/3] Fix unused clock disabling on LPC18xx
+Date: Sat, 24 Oct 2015 18:55:21 +0200
+Message-Id: <1445705724-20805-1-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Sep 30, 2015 at 06:11:01PM +0200, Alexandre Belloni wrote:
-> From: Boris Brezillon <boris.brezillon@free-electrons.com>
-> 
-> Only enable available IRQs in case writing to a reserved bit has an armful
-> effect.
+I have finally managed to track down the reason for the hang that would
+occur when disabling clocks on lpc18xx under certain conditions. These
+conditions depend on boot mode used, what the boot loader does and if
+certain devices are enabled.
 
-You probably mean disable instead of enable and s/armful/harmful.
+One of reasons why it took me a while was that my primary platform was
+not affected by it and the data sheet has a rather misleading typo.
 
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> ---
->  drivers/clk/at91/pmc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-> index 6c1f08a73373..45dd32bf2531 100644
-> --- a/drivers/clk/at91/pmc.c
-> +++ b/drivers/clk/at91/pmc.c
-> @@ -287,7 +287,7 @@ static int __init atmel_pmc_probe(struct platform_device *pdev)
->  	if (!pmc->irqdomain)
->  		return 0;
->  
-> -	regmap_write(pmc->regmap, AT91_PMC_IDR, 0xffffffff);
-> +	regmap_write(pmc->regmap, AT91_PMC_IDR, pmc->caps->available_irqs);
->  	ret = request_irq(pmc->virq, pmc_irq_handler,
->  			  IRQF_SHARED | IRQF_COND_SUSPEND, "pmc", pmc);
->  	if (ret)
-> -- 
-> 2.1.4
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+The hang will occur if the boot rom/loader doesn't setup USB0 clocks
+and if certain AMBA devices are enabled (PL022 SSP and maybe others).
+
+Cause of the hang is that the CCU registers can not be accessed if the
+base (parent) clock is not enabled. To make sure the parent is running
+a check for this has been added to the is_enabled clk_ops callback.
+Since clocks in the CGU can be cascaded this check must also be added
+here.
+
+To better understand the clock system on lpc18xx please take the time
+to look at the diagrams on:
+https://github.com/manabian/linux-lpc/wiki/LPC18xx-LPC43xx-clocks
+
+This version address the comments from Stephen Boyd.
+
+Changes since v3:
+ - add clk_hw_is_enabled
+ - fix typo on CGU gate enable function
+ - use clk_hw_get_parent() insted of clk_get_parent()
+ - rebase on v4.3-rc1
+
+Changes since v2:
+ - Add clk.h to cgu since it uses clk_get_parent().
+ - Rebase on clk-next
+
+Joachim Eastwood (3):
+  clk: Add clk_hw_is_enabled() for use by clk providers
+  clk: lpc18xx-ccu: fix potential system hang when disabling unused clocks
+  clk: lpc18xx-cgu: fix potential system hang when disabling unused clocks
+
+ drivers/clk/clk.c                 |  5 +++++
+ drivers/clk/nxp/clk-lpc18xx-ccu.c | 17 ++++++++++++++--
+ drivers/clk/nxp/clk-lpc18xx-cgu.c | 42 ++++++++++++++++++++++++++++++++++++---
+ include/linux/clk-provider.h      |  1 +
+ 4 files changed, 60 insertions(+), 5 deletions(-)
+
+-- 
+1.8.0
