@@ -1,78 +1,73 @@
-Return-Path: <jonmason@broadcom.com>
-From: Jon Mason <jonmason@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
-	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
-	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>, Arnd
- Bergmann <arnd@arndb.de>
-Subject: [PATCH v3 01/10] ARM: cygnus: fix link failures when CONFIG_COMMON_CLK_IPROC is disabled
-Date: Thu, 15 Oct 2015 15:48:24 -0400
-Message-ID: <1444938513-10758-2-git-send-email-jonmason@broadcom.com>
-In-Reply-To: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
-References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jonmason@broadcom.com
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <562930AB.1070203@gmail.com>
+References: <20151018192931.GY14956@sirena.org.uk>
+	<20151018193757.GA9147@kroah.com>
+	<20151018195330.GB14956@sirena.org.uk>
+	<CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
+	<5627B677.5090109@gmail.com>
+	<20151021162758.GP32054@sirena.org.uk>
+	<5627D6E0.5020708@gmail.com>
+	<CAL_Jsq+FPtCuBnte2HTgbdpNYM=v_kLaCRcOC1kMaCQwVC=5Kw@mail.gmail.com>
+	<562808AF.7090406@gmail.com>
+	<CAAObsKAkyjdvNOS3+nuT0N9sudUFLsZXFtcm6Y038p+HSdsZsg@mail.gmail.com>
+	<20151022144405.GC21861@kroah.com>
+	<562930AB.1070203@gmail.com>
+Date: Sat, 24 Oct 2015 19:55:51 +0200
+Message-ID: <CAMuHMdUOtx+rsV9FkYqgj3g5S0cqD6qH=gp6p-69Ord8gykY3w@mail.gmail.com>
+Subject: Re: [GIT PULL] On-demand device probing
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Frank Rowand <frowand.list@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
+	Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>,
+	Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	dmaengine@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Thu, Oct 22, 2015 at 8:53 PM, Frank Rowand <frowand.list@gmail.com> wrote:
+> I have been defaulting to the position that has been asserted by
+> the device tree maintainters, that probe deferrals work just fine
+> for at least the majority of cases (and is the message I have been
+> sharing in my conference presentations about device tree).  But I
+> suspect that there is at least a small minority of cases that are not
+> well served by probe deferral.  (Not to be read as an endorsement of
+> this specific patch series, just a generic observation.)
 
-When CONFIG_CYGNUS is set but CONFIG_COMMON_CLK_IPROC is disabled, the
-following link failures are caused:
+Yep, once in a while people still stumble on obscure subsystems and drivers
+not supporting probe deferral. Usually they don't fail with a big bang, so
+everything seems fine.
 
-drivers/built-in.o: In function `cygnus_armpll_init':
-:(.init.text+0x1d290): undefined reference to `iproc_armpll_setup'
-drivers/built-in.o: In function `cygnus_genpll_clk_init':
-:(.init.text+0x1d2c4): undefined reference to `iproc_pll_clk_setup'
-drivers/built-in.o: In function `cygnus_lcpll0_clk_init':
-:(.init.text+0x1d304): undefined reference to `iproc_pll_clk_setup'
-drivers/built-in.o: In function `cygnus_mipipll_clk_init':
-:(.init.text+0x1d344): undefined reference to `iproc_pll_clk_setup'
-drivers/built-in.o: In function `cygnus_asiu_init':
-:(.init.text+0x1d370): undefined reference to `iproc_asiu_setup'
+E.g. last week's "of_mdiobus_register_phy() and deferred probe"
+(https://lkml.org/lkml/2015/10/22/377).
 
-It is fixed it by always selecting COMMON_CLK_IPROC from
-ARCH_BCM_IPROC, and making COMMON_CLK_IPROC a silent option (thus
-preventing it from being erroneously disabled by a user).
+Gr{oetje,eeting}s,
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Jon Mason <jonmason@broadcom.com>
----
- arch/arm/mach-bcm/Kconfig | 2 +-
- drivers/clk/bcm/Kconfig   | 4 +---
- 2 files changed, 2 insertions(+), 4 deletions(-)
+                        Geert
 
-diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
-index 1319c3c..84bd265 100644
---- a/arch/arm/mach-bcm/Kconfig
-+++ b/arch/arm/mach-bcm/Kconfig
-@@ -14,7 +14,7 @@ config ARCH_BCM_IPROC
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_ARM_TWD if SMP
- 	select ARM_GLOBAL_TIMER
--
-+	select COMMON_CLK_IPROC
- 	select CLKSRC_MMIO
- 	select ARCH_REQUIRE_GPIOLIB
- 	select ARM_AMBA
-diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
-index 88febf5..46ee475 100644
---- a/drivers/clk/bcm/Kconfig
-+++ b/drivers/clk/bcm/Kconfig
-@@ -9,10 +9,8 @@ config CLK_BCM_KONA
- 	  in the BCM281xx and BCM21664 families.
- 
- config COMMON_CLK_IPROC
--	bool "Broadcom iProc clock support"
--	depends on ARCH_BCM_IPROC
-+	bool
- 	depends on COMMON_CLK
--	default ARCH_BCM_IPROC
- 	help
- 	  Enable common clock framework support for Broadcom SoCs
- 	  based on the iProc architecture
--- 
-1.9.1
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
