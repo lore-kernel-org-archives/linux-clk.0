@@ -1,38 +1,81 @@
-Return-Path: <jonmason@broadcom.com>
-From: Jon Mason <jonmason@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
-	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
-	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
-Subject: [PATCH v3 0/10] clk: iproc: add support for BCM NS, NSP, and NS2 
-Date: Thu, 15 Oct 2015 15:48:23 -0400
-Message-ID: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
+Return-Path: <zhengxing@rock-chips.com>
+Subject: Re: [PATCH v4 4/8] clk: rockchip: add new pll-type for rk3036 and similar
+ socs
+From: zhengxing <zhengxing@rock-chips.com>
+Cc: "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>
+To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+Date: Sat, 24 Oct 2015 21:42:23 +0800
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jonmason@broadcom.com
+Message-ID: <1445694140767.idgrp5uq4xltej25t214peu4@android.mail.163.com>
+References: <1445682629-21632-1-git-send-email-zhengxing@rock-chips.com>
+ <1445682629-21632-5-git-send-email-zhengxing@rock-chips.com><1474048.ydSsx6D3zg@diego>
+In-Reply-To: <1474048.ydSsx6D3zg@diego>
+Content-Type: multipart/alternative; boundary="__MESSAGE_BODY_PART__1"
 List-ID: <linux-clk.vger.kernel.org>
 
+--__MESSAGE_BODY_PART__1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-v3 - Added a patch to fix cygnus clk link failures, and added back the
-DT documentation patches that were removed from v2.
+SSdtIHNvcnJ5IEkgaWdub3JlZCB0aGlzLCBJJ2xsIGZpeCBpdCBzb29uLiBUaGFuay4gOikgT24g
+MjAxNS0xMC0yNCAxOToxMCAsIEhlaWtvIFN0w7xibmVyIFdyb3RlOiBIaSwgQW0gU2Ftc3RhZywg
+MjQuIE9rdG9iZXIgMjAxNSwgMTg6MzA6MjUgc2NocmllYiBYaW5nIFpoZW5nOiA+IFRoZSByazMw
+MzYncyBwbGwgYW5kIGNsb2NrIGFyZSBkaWZmZXJlbnQgd2l0aCBiYXNlIG9uIHRoZSByazMwNjYo
+cmszMTg4LCA+IHJrMzI4OCwgcmszMzY4IHVzZSBpdCksIHRoZXJlIGFyZSBkaWZmZXJlbnQgYWRq
+dXN0IGZvY3RvcnMgYW5kIGNvbnRyb2wgPiByZWdpc3RlcnMsIHNvIHRoZXNlIHNob3VsZCBiZSBp
+bmRlcGVuZGVudCBhbmQgc2VwYXJhdGUgZnJvbSB0aGUgc2VyaWVzID4gb2YgcmszMDY2cy4gPiA+
+IFNpZ25lZC1vZmYtYnk6IFhpbmcgWmhlbmcgPHpoZW5neGluZ0Byb2NrLWNoaXBzLmNvbT4gPiBS
+ZXZpZXdlZC1ieTogSGVpa28gU3R1ZWJuZXIgPGhlaWtvQHNudGVjaC5kZT4gPiAtLS0gPiA+ICtz
+dGF0aWMgdm9pZCByb2NrY2hpcF9yazMwMzZfcGxsX2luaXQoc3RydWN0IGNsa19odyAqaHcpID4g
+K3sgSW4gdGhlIHByZXZpb3VzIHZlcnNpb24sIFN0ZXBoZW4gcmVxdWVzdGVkIHRoYXQgd2UgZG9u
+J3QgdXNlIHJlZ3VsYXIgY2xvY2sgQVBJcyBpbiB0aGUgaW5pdC1jYWxsYmFjay4gSSBkaWQgYSBt
+b2RpZmljYXRpb24gZm9yIHRoZSBhbHJlYWR5IHByZXNlbnQgcGxsLSB0eXBlIGluIFswXSwgd2hp
+Y2ggZ290IGFscmVhZHkgYWNjZXB0ZWQuIFNvIHlvdSBzaG91bGQgcHJvYmFibHkgYWxzbyBtb2Rp
+ZnkgeW91ciBwbGwtdHlwZSBpbiB0aGlzIGZhc2hpb24gOi0pIC4gT2ggYW5kIEkgZ3Vlc3MgcGF0
+Y2hlcyAzIGFuZCA0IHNob3VsZCBzd2l0Y2ggcGxhY2VzIC4uLiBhZGRpbmcgdGhlIHBsbC10eXBl
+IGJlZm9yZSB0aGUgY29kZSBpbiB0aGUgY2xvY2stY29udHJvbGxlciB1c2luZyBpdC4gSGVpa28g
+WzBdIGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvY2dpdC9saW51eC9rZXJuZWwvZ2l0L2Nsay9saW51
+eC5naXQvY29tbWl0Lz9oPWNsay1uZXh0JmlkPTgzMzRjMGU3Yjk4M2ZiMjdlMGQ4Nzg4OTAxZTk2
+MjFkMTk0NmJhOTM=
 
-v2 - Added a patch to change the Cygnus clk macros to uppercase,
-removed the device tree changes from the series (will send out those as
-an RFC), and other minor changes that Stephen Boyd requested.
+--__MESSAGE_BODY_PART__1
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-This patch series adds support for the Broadcom Northstar, Northstar
-Plus, and Northstar 2 clocks.  Some slight modifications were necessary
-to clk-iproc-pll to get Northstar and Northstar Plus working, due to
-differences in register layout.  This is the reason why the first patch
-is necessary.  Some more modifications were necessary to clk-iproc-pll
-to get Northstar 2 working, due to differences in register layout (and
-resulting fallout in Cygnus and NSP).  This is the reason why the sixth
-and seventh patches are necessary.  The fifth patch is clean-up to
-prevent accidentally forgetting to adjust for the base write errata
-(which happened a few times, but was caught in internal review).
+PGRpdiBzdHlsZT0nbGluZS1oZWlnaHQ6MS40Jz48YnIvPkknbSBzb3JyeSBJIGlnbm9yZWQgdGhp
+cywgSSdsbCBmaXggaXQgc29vbi48YnIvPjxici8+VGhhbmsuICZuYnNwOzopPGJyLz48YnIvPjxi
+ci8+PGJyLz48YnIvPjwvZGl2Pk9uIDIwMTUtMTAtMjQgMTk6MTAgLCAgPGEgaHJlZj0ibWFpbHRv
+OmhlaWtvQHNudGVjaC5kZSI+SGVpa28gU3TDvGJuZXI8L2E+IFdyb3RlOiA8YnI+PGJyPjxibG9j
+a3F1b3RlIGlkPSdudGVzLWFuZHJpb2RtYWlsLXF1b3RlJyBzdHlsZT0ibWFyZ2luOjBweDtwYWRk
+aW5nLWxlZnQ6MWV4O2JvcmRlci1sZWZ0OiNjY2MgMXB4IHNvbGlkIj5IaSwNPGJyLz4NPGJyLz5B
+bSBTYW1zdGFnLCAyNC4gT2t0b2JlciAyMDE1LCAxODozMDoyNSBzY2hyaWViIFhpbmcgWmhlbmc6
+DTxici8+Jmd0OyBUaGUgcmszMDM2J3MgcGxsIGFuZCBjbG9jayBhcmUgZGlmZmVyZW50IHdpdGgg
+YmFzZSBvbiB0aGUgcmszMDY2KHJrMzE4OCwNPGJyLz4mZ3Q7IHJrMzI4OCwgcmszMzY4IHVzZSBp
+dCksIHRoZXJlIGFyZSBkaWZmZXJlbnQgYWRqdXN0IGZvY3RvcnMgYW5kIGNvbnRyb2wNPGJyLz4m
+Z3Q7IHJlZ2lzdGVycywgc28gdGhlc2Ugc2hvdWxkIGJlIGluZGVwZW5kZW50IGFuZCBzZXBhcmF0
+ZSBmcm9tIHRoZSBzZXJpZXMNPGJyLz4mZ3Q7IG9mIHJrMzA2NnMuDTxici8+Jmd0OyANPGJyLz4m
+Z3Q7IFNpZ25lZC1vZmYtYnk6IFhpbmcgWmhlbmcgJmx0O3poZW5neGluZ0Byb2NrLWNoaXBzLmNv
+bSZndDsNPGJyLz4mZ3Q7IFJldmlld2VkLWJ5OiBIZWlrbyBTdHVlYm5lciAmbHQ7aGVpa29Ac250
+ZWNoLmRlJmd0Ow08YnIvPiZndDsgLS0tDTxici8+Jmd0OyANPGJyLz4NPGJyLz4mZ3Q7ICtzdGF0
+aWMgdm9pZCByb2NrY2hpcF9yazMwMzZfcGxsX2luaXQoc3RydWN0IGNsa19odyAqaHcpDTxici8+
+Jmd0OyArew08YnIvPg08YnIvPkluIHRoZSBwcmV2aW91cyB2ZXJzaW9uLCBTdGVwaGVuIHJlcXVl
+c3RlZCB0aGF0IHdlIGRvbid0IHVzZSByZWd1bGFyIGNsb2NrDTxici8+QVBJcyBpbiB0aGUgaW5p
+dC1jYWxsYmFjay4gSSBkaWQgYSBtb2RpZmljYXRpb24gZm9yIHRoZSBhbHJlYWR5IHByZXNlbnQg
+cGxsLQ08YnIvPnR5cGUgaW4gWzBdLCB3aGljaCBnb3QgYWxyZWFkeSBhY2NlcHRlZC4gU28geW91
+IHNob3VsZCBwcm9iYWJseSBhbHNvIG1vZGlmeQ08YnIvPnlvdXIgcGxsLXR5cGUgaW4gdGhpcyBm
+YXNoaW9uIDotKSAuDTxici8+DTxici8+T2ggYW5kIEkgZ3Vlc3MgcGF0Y2hlcyAzIGFuZCA0IHNo
+b3VsZCBzd2l0Y2ggcGxhY2VzIC4uLiBhZGRpbmcgdGhlIHBsbC10eXBlDTxici8+YmVmb3JlIHRo
+ZSBjb2RlIGluIHRoZSBjbG9jay1jb250cm9sbGVyIHVzaW5nIGl0Lg08YnIvPg08YnIvPg08YnIv
+PkhlaWtvDTxici8+DTxici8+DTxici8+WzBdIDxhIGhyZWY9Imh0dHBzOi8vZ2l0Lmtlcm5lbC5v
+cmcvY2dpdC9saW51eC9rZXJuZWwvZ2l0L2Nsay9saW51eC5naXQvY29tbWl0Lz9oPWNsay1uZXh0
+JmFtcDtpZD04MzM0YzBlN2I5ODNmYjI3ZTBkODc4ODkwMWU5NjIxZDE5NDZiYTkzIj5odHRwczov
+L2dpdC5rZXJuZWwub3JnL2NnaXQvbGludXgva2VybmVsL2dpdC9jbGsvbGludXguZ2l0L2NvbW1p
+dC8/aD1jbGstbmV4dCZhbXA7aWQ9ODMzNGMwZTdiOTgzZmIyN2UwZDg3ODg5MDFlOTYyMWQxOTQ2
+YmE5MzwvYT4NPGJyLz4NPGJyLz4NPGJyLz48L2Jsb2NrcXVvdGU+
 
-Thanks,
-Jon
+--__MESSAGE_BODY_PART__1--
