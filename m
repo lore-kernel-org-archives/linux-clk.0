@@ -1,59 +1,71 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-To: <arnd@arndb.de>, <mark.rutland@arm.com>,
- <linux-arm-kernel@lists.infradead.org>, <marc.zyngier@arm.com>,
- <linux-clk@vger.kernel.org>, <olof@lixom.net>
-Subject: [PATCH v3 07/12] doc: DTS: Update DWC3 binding to provide reference
- to generic bindings
-Date: Thu, 15 Oct 2015 12:17:47 +0530
-Message-ID: <1444891672-32117-8-git-send-email-bhupesh.sharma@freescale.com>
-In-Reply-To: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
-References: <1444891672-32117-1-git-send-email-bhupesh.sharma@freescale.com>
+Return-Path: <rjwysocki@gmail.com>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: LeoLi@freescale.com, bhupesh.sharma@freescale.com, Catalin.Marinas@arm.com,
- will.deacon@arm.com, stuart.yoder@freescale.com, scottwood@freescale.com,
- bhupesh.linux@gmail.com
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Sender: rjwysocki@gmail.com
+In-Reply-To: <20151024220648.GR29919@sirena.org.uk>
+References: <20151018192931.GY14956@sirena.org.uk>
+	<562A5602.7000208@sonymobile.com>
+	<CAL_JsqLNSM=+j2r9HPcbSzsZrgnGEY3=kv21EXxisKwP5+57ag@mail.gmail.com>
+	<24100858.2KIS8Y2npV@vostro.rjw.lan>
+	<20151024220648.GR29919@sirena.org.uk>
+Date: Sun, 25 Oct 2015 14:54:39 +0100
+Message-ID: <CAJZ5v0hPVu7AL8zBdU4Kb7+MVfYv0mTa43RhnCyyPR+RKDbhLA@mail.gmail.com>
+Subject: Re: [GIT PULL] On-demand device probing
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tim Bird <tim.bird@sonymobile.com>,
+	"frowand.list@gmail.com" <frowand.list@gmail.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
+	Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>,
+	Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Since the Synopsys DWC3 controller driver inherits the generic bindings
-defined in 'usb/generic.txt', this patch tries to capture the same in
-the DWC3 binging documentation to avoid any confusion in usage of properties
-like 'dr_mode' for certain SoCs like FSL LS2080A.
+On Sun, Oct 25, 2015 at 12:06 AM, Mark Brown <broonie@kernel.org> wrote:
+> On Sat, Oct 24, 2015 at 04:17:12PM +0200, Rafael J. Wysocki wrote:
+>
+>> Well, I'm not quite sure why exactly everyone is so focused on probing here.
+>
+> Probe deferral is really noisy even if it's working fine on a given
+> system so it's constantly being highlighted to people in a way that
+> other issues aren't if you're not directly having problems.
+>
+> There's also the understanding people had that the order things get
+> bound changes the ordering for some of the other cases (perhaps it's a
+> good idea to do that, it seems likely to be sensible?).
 
-Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
----
- Documentation/devicetree/bindings/usb/dwc3.txt |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+But it really doesn't do that.  Also making it do so doesn't help much
+in the cases where things can happen asynchronously (system
+suspend/resume, runtime PM).
 
-diff --git a/Documentation/devicetree/bindings/usb/dwc3.txt b/Documentation/devicetree/bindings/usb/dwc3.txt
-index 9ff48e0..fb2ad0a 100644
---- a/Documentation/devicetree/bindings/usb/dwc3.txt
-+++ b/Documentation/devicetree/bindings/usb/dwc3.txt
-@@ -1,6 +1,7 @@
- synopsys DWC3 CORE
- 
--DWC3- USB3 CONTROLLER
-+DWC3- USB3 CONTROLLER. Complies to the generic USB binding properties
-+      as described in 'usb/generic.txt'
- 
- Required properties:
-  - compatible: must be "snps,dwc3"
--- 
-1.7.9.5
+If, instead, there was a way to specify a functional dependency at the
+device registration time, it might be used to change the order of
+everything relevant, including probe.  That should help to reduce the
+noise you're referring to.
 
+If the dependency could only be discovered at the probe time, the
+order of things might be changed in response to letting the driver
+core know about it rather than "just in case", which should be more
+efficient.
 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Thanks,
+Rafael
