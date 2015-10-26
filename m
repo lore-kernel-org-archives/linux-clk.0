@@ -1,80 +1,99 @@
-Return-Path: <magnus.damm@gmail.com>
-Return-Path: <magnus.damm@gmail.com>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: kuninori.morimoto.gx@renesas.com,linux-sh@vger.kernel.org,mturquette@baylibre.com,gaku.inami.xw@bp.renesas.com,sboyd@codeaurora.org,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>
-Date: Thu, 01 Oct 2015 23:37:27 +0900
-Message-Id: <20151001143727.20618.78251.sendpatchset@little-apple>
-In-Reply-To: <20151001143717.20618.26365.sendpatchset@little-apple>
-References: <20151001143717.20618.26365.sendpatchset@little-apple>
-Subject: [PATCH v8 01/05] clk: shmobile: Rework CONFIG_ARCH_SHMOBILE_MULTI
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
+Subject: Re: [PATCH v4 5/5] [RFC] clk: shmobile: r8a7795: Add new CPG/MSSR driver
+Date: Mon, 26 Oct 2015 04:25:51 +0200
+Message-ID: <1577230.N3FJlP7ehB@avalon>
+In-Reply-To: <CAMuHMdUyu6w0LAoH78H2+VHczrWwozDKMX2j8_A4V=jgz0snwA@mail.gmail.com>
+References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be> <20151024011003.GE19782@codeaurora.org> <CAMuHMdUyu6w0LAoH78H2+VHczrWwozDKMX2j8_A4V=jgz0snwA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hi Geert,
 
-Shmobile is all multiplatform these days, so in get rid of the
-reference to CONFIG_ARCH_SHMOBILE_MULTI in drivers/clk/shmobile/.
+On Saturday 24 October 2015 19:34:03 Geert Uytterhoeven wrote:
+> On Sat, Oct 24, 2015 at 3:10 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > On 10/22, Geert Uytterhoeven wrote:
+> >> On Tue, Oct 20, 2015 at 3:07 PM, Geert Uytterhoeven wrote:
+> >>> On Tue, Oct 20, 2015 at 3:00 PM, Michael Turquette wrote:
+> >>>> Quoting Geert Uytterhoeven (2015-10-20 05:31:12)
+> >>>>> On Tue, Oct 20, 2015 at 2:24 PM, Michael Turquette wrote:
+> >>>> The bindings should go in for 4.4, but if the driver is slated for 4.5
+> >>>> then can you investigate this some more? Stephen and I are on a
+> >>>> mission to have _real_ clk drivers.
+> >>> 
+> >>> Sure, I'll have a deeper look.
+> >> 
+> >> And so I did (on r8a7791/koelsch).
+> >> 
+> >> As I want to have as much clock data/code __init as possible (think
+> >> multi-platform kernels --- pinmux data is a disaster here), I have to use
+> >> platform_driver_probe().
 
-Also instead of always enabling DIV6 and MSTP adjust the Makefile
-to enable DIV6 and MSTP depending on if they are included in the
-SoC or not.
+That sounds like an __init issue, doesn't it ? The CPG driver will always be 
+builtin and probed during the init process, what's preventing us from using 
+normal driver probing ?
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
+> >>   - Calling platform_driver_probe() from core_initcall() or
+> >>     postcore_initcall() is too early, as the platform device for the CPG
+> >>     hasn't been created yet. Hence the CPG Clock Domain isn't registered,
+> >>     and all devices fail to probe as they can't be attached to their
+> >>     Clock Domain.
+> >>     
+> >>       -> This is where the -ENOENT came from (I incorrectly assumed it
+> >>          came from the clock code; sorry for that), and it's converted
+> >>          into -EPROBE_DEFER by genpd_dev_pm_attach().
+> >>   
+> >>   - Calling platform_driver_probe() from arch_initcall() is too late, as
+> >>     the IRQC is initialized first (it's located before the CPG in .dtsi).
+> >>     Hence the IRQC can't find it's Clock Domain, and its probe is
+> >>     deferred. IRQC will be reprobed later, but in the mean time the
+> >>     Ethernet PHY can't find its IRQ, as the of_mdio code uses
+> >>     irq_of_parse_and_map(), which plainly ignores EPROBE_DEFER :-(
+> >>     Nevertheless, Ethernet works...
+> >>   
+> >>   - Using subsys_initcall() and later causes even more probe deferral.
+> >> 
+> >> So that's why I went with CLK_OF_DECLARE() again...
+> > 
+> > Understandable for the few clocks that are used by the interrupt
+> > controller, but for the other clocks, could those be registered
+> > from a real platform device driver probe path? I've been
+> 
+> In this particular case, that would be the IRQC module clocks and its
+> parent, the CP clock, which is derived directly from the external crystal.
+> 
+> If we ever have to do this for the GIC, that's gonna be several more
+> clocks (INTC-SYS / ZS / PLL1 / MAIN / external crystal).
+> 
+> > considering making some API that lets devices associate with the
+> > clocks that the file had to register with CLK_OF_DECLARE(). The
+> > driver would have to be builtin then (no modules) but otherwise
+> > we would be able to benefit from the device driver model for most
+> > other clocks.
+> 
+> To be honest, that still feels like a hack to me.
+> 
+> I hope dependencies and probe order, and obscure drivers not handling
+> deferred probe correctly, will be solved later sooner or later,
+> so hacks like that are no longer needed.
+> 
+> For new SoCs like r8a7795 we can probably just make it a real platform
+> driver, and make sure the irqc node is located after the cpg node in the
+> .dtsi.
 
- Earlier known as "clk: shmobile: Get rid of CONFIG_ARCH_SHMOBILE_MULTI"
+That's another hack :-) We really shouldn't depend on DT nodes order.
 
- Changes since V7:
- - None
+I'm all for getting rid of CLK_OF_DECLARE
 
-Changes since V6:
- - None
+> Upon second thought, that may even be feasible for existing SoCs, as
+> they would need a DTS update to make use of the new bindings/driver anyway,
+> so the irqc node can be moved at the same time. Backwards compatibility
+> through the old bindings/drivers would keep on using CLK_OF_DECLARE().
 
- Changes since V5:
- - None
+-- 
+Regards,
 
- Changes since V4:
- - Added Acked-by from Laurent
-
- Changes since V3:
- - Got rid of hunks that modified drivers/clk/Makefile
- - This to prevent build issue with non-CCF enabled SH arch
- - A nice side effect is that this patch now can be merged any time
-
- Changes since V2:
- - Fixed patch subject typo CONFIG_SHMOBILE_MULTI -> CONFIG_ARCH_SHMOBILE_MULTI
-
- Changes since V1:
- - Added Acked-by from Geert
-
- drivers/clk/shmobile/Makefile |   22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
-
---- 0001/drivers/clk/shmobile/Makefile
-+++ work/drivers/clk/shmobile/Makefile	2015-08-29 16:14:57.522366518 +0900
-@@ -1,13 +1,11 @@
- obj-$(CONFIG_ARCH_EMEV2)		+= clk-emev2.o
--obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o
--obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o
--obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o
--obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
--obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
--obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o
--obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o
--obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o
--obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o
--obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o
--obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-div6.o
--obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-mstp.o
-+obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o clk-mstp.o
-+obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o clk-mstp.o
-+obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o clk-mstp.o
-+obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-mstp.o clk-div6.o
+Laurent Pinchart
