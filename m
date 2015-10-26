@@ -1,48 +1,62 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:51443 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751299AbbJWU2f (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 23 Oct 2015 16:28:35 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-arm-kernel@lists.infradead.org,
-	Bjorn Helgaas <bhelgaas@google.com>
-Cc: Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	mark.rutland@arm.com, marc.zyngier@arm.com,
-	linux-clk@vger.kernel.org, olof@lixom.net, LeoLi@freescale.com,
-	Catalin.Marinas@arm.com, will.deacon@arm.com,
-	stuart.yoder@freescale.com,
-	Minghuan Lian <Minghuan.Lian@freescale.com>,
-	scottwood@freescale.com, bhupesh.linux@gmail.com
-Subject: Re: [PATCH v4 05/12] doc/bindings: Update Layerscape PCIe devicetree bindings for LS2080A
-Date: Fri, 23 Oct 2015 22:28:27 +0200
-Message-ID: <4784400.64dhyokllJ@wuerfel>
-In-Reply-To: <1445628721-10483-6-git-send-email-bhupesh.sharma@freescale.com>
-References: <1445628721-10483-1-git-send-email-bhupesh.sharma@freescale.com> <1445628721-10483-6-git-send-email-bhupesh.sharma@freescale.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 26 Oct 2015 11:51:42 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Scott Branden <sbranden@broadcom.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: versatile: Make depend on OF when COMPILE_TEST
+Message-ID: <20151026185142.GF19782@codeaurora.org>
+References: <1445812888-8170-1-git-send-email-javier@osg.samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1445812888-8170-1-git-send-email-javier@osg.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Saturday 24 October 2015 01:01:54 Bhupesh Sharma wrote:
-> Update the definition of the Layerscape PCI compatible string to add
-> support for LS2080A, as the controller on LS2080A is different from
-> LS1021A SoC.
+On 10/26, Javier Martinez Canillas wrote:
+> Commit 4a7748c3d641 ("clk: Allow drivers to build if COMPILE_TEST is
+> enabled") allowed clk drives to be compile tested on other archs but
+
+s/drives/drivers/
+
+> the COMMON_CLK_VERSATILE was only enabled on platforms that already
+> selected OF support so the drivers assume it will always be enabled.
 > 
-> While at it, move the clock related properties in the Designware PCIe
-> controller bindings to 'optional' set of properties.
+> So, restrict compile test for these drivers only if OF is enabled.
+
+No compiler error message?
+
 > 
-> Signed-off-by: Minghuan Lian <Minghuan.Lian@freescale.com>
-> Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
-> ---
->  .../devicetree/bindings/pci/designware-pcie.txt    |   10 +++++-----
->  .../devicetree/bindings/pci/layerscape-pci.txt     |   14 ++++++++++++--
->  2 files changed, 17 insertions(+), 7 deletions(-)
+> Fixes: 4a7748c3d641 ("clk: Allow drivers to build if COMPILE_TEST is enabled")
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 > 
 
-This one depends on a patch that is in Bjorn's PCI tree but not
-yet in mainline.
+No Reported-by?
 
-Please add my 'Acked-by: Arnd Bergmann <arnd@arndb.de>' and submit it to
-Bjorn so he can apply the patch on top of the other one.
+I'd prefer we add stubs instead, so I've applied the patch below.
 
-	Arnd
+---8<---
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index bbb8fed11e44..dbedee565ad7 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -691,6 +691,15 @@ static inline struct clk *of_clk_src_onecell_get(
+ {
+ 	return ERR_PTR(-ENOENT);
+ }
++static inline int of_clk_get_parent_count(struct device_node *np)
++{
++	return 0;
++}
++static inline int of_clk_parent_fill(struct device_node *np,
++				     const char **parents, unsigned int size)
++{
++	return 0;
++}
+ static inline const char *of_clk_get_parent_name(struct device_node *np,
+ 						 int index)
+ {
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
