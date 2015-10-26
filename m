@@ -1,64 +1,114 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <1446214865-3972-20-git-send-email-maxime.ripard@free-electrons.com>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
- <1446214865-3972-20-git-send-email-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 30 Oct 2015 23:20:41 +0800
-Message-ID: <CAGb2v66vjp=5GtGD-0i3OOw-wK3H4bogfvPoNzuwYvY8vt4fMQ@mail.gmail.com>
-Subject: Re: [PATCH 19/19] ARM: sun5i: chip: Enable the TV Encoder
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	dri-devel@lists.freedesktop.org, linux-sunxi <linux-sunxi@googlegroups.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>, Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <alim.akhtar@samsung.com>
+Message-id: <562E1FB5.1000600@samsung.com>
+Date: Mon, 26 Oct 2015 18:12:29 +0530
+From: Alim Akhtar <alim.akhtar@samsung.com>
+MIME-version: 1.0
+To: Lee Jones <lee.jones@linaro.org>
+Cc: broonie@kernel.org, k.kozlowski@samsung.com, mturquette@baylibre.com,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org,
+ Thomas Abraham <thomas.ab@samsung.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] dt-bindings: mfd: s2mps11: add documentation for
+ s2mps15 PMIC
+References: <1445855803-26973-1-git-send-email-alim.akhtar@samsung.com>
+ <1445855803-26973-2-git-send-email-alim.akhtar@samsung.com>
+ <20151026110924.GI597@x1>
+In-reply-to: <20151026110924.GI597@x1>
+Content-type: text/plain; charset=UTF-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 30, 2015 at 10:21 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The TV encoder is used to drive VGA and composite display.
->
-> Enable it on the CHIP
 
-The commit message does not match the contents. Missing a patch? :)
 
-ChenYu
+On 10/26/2015 04:39 PM, Lee Jones wrote:
+> On Mon, 26 Oct 2015, Alim Akhtar wrote:
+>
+>> From: Thomas Abraham <thomas.ab@samsung.com>
+>>
+>> Add dt-binding documentation for s2mps15 PMIC device. The s2mps15 device
+>> is similar to s2mps11/14 PMIC device and has 27 LDO and 10 buck regulators.
+>>
+>> Cc: devicetree@vger.kernel.org
+>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> ---
+>>   Documentation/devicetree/bindings/mfd/s2mps11.txt |   23 ++++++++++++++-------
+>>   1 file changed, 15 insertions(+), 8 deletions(-)
+>
+> Nothing to controversial here.
+>
+> For my own reference:
+>    Acked-by: Lee Jones <lee.jones@linaro.org>
+>
+Thanks, will send v3 of this series.
 
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  arch/arm/boot/dts/sun5i-r8.dtsi | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/sun5i-r8.dtsi b/arch/arm/boot/dts/sun5i-r8.dtsi
-> index d69df3a73cbf..e39c903da864 100644
-> --- a/arch/arm/boot/dts/sun5i-r8.dtsi
-> +++ b/arch/arm/boot/dts/sun5i-r8.dtsi
-> @@ -86,4 +86,16 @@
->                                              "ahb_mali400";
->                 };
->         };
-> +
-> +       soc@01c00000 {
-> +               tve: encoder@01c0a000 {
-> +                       compatible = "allwinner,sun4i-a10-tv-encoder";
-> +                       reg = <0x01c0a000 0x1000>;
-> +                       clocks = <&ahb_gates 34>;
-> +               };
-> +       };
-> +};
-> +
-> +&de {
-> +       allwinner,tv-encoder = <&tve>;
->  };
-> --
-> 2.6.2
+>> diff --git a/Documentation/devicetree/bindings/mfd/s2mps11.txt b/Documentation/devicetree/bindings/mfd/s2mps11.txt
+>> index 890f0b0e1643..c0427c9d0886 100644
+>> --- a/Documentation/devicetree/bindings/mfd/s2mps11.txt
+>> +++ b/Documentation/devicetree/bindings/mfd/s2mps11.txt
+>> @@ -1,5 +1,5 @@
+>>
+>> -* Samsung S2MPS11, S2MPS13, S2MPS14 and S2MPU02 Voltage and Current Regulator
+>> +* Samsung S2MPS11/13/14/15 and S2MPU02 Voltage and Current Regulator
+>>
+>>   The Samsung S2MPS11 is a multi-function device which includes voltage and
+>>   current regulators, RTC, charger controller and other sub-blocks. It is
+>> @@ -7,8 +7,12 @@ interfaced to the host controller using an I2C interface. Each sub-block is
+>>   addressed by the host system using different I2C slave addresses.
+>>
+>>   Required properties:
+>> -- compatible: Should be "samsung,s2mps11-pmic" or "samsung,s2mps13-pmic"
+>> -	      or "samsung,s2mps14-pmic" or "samsung,s2mpu02-pmic".
+>> +- compatible: Should be one of the following
+>> +	- "samsung,s2mps11-pmic"
+>> +	- "samsung,s2mps13-pmic"
+>> +	- "samsung,s2mps14-pmic"
+>> +	- "samsung,s2mps15-pmic"
+>> +	- "samsung,s2mpu02-pmic".
+>>   - reg: Specifies the I2C slave address of the pmic block. It should be 0x66.
+>>
+>>   Optional properties:
+>> @@ -24,7 +28,7 @@ Optional properties:
+>>     unwanted buck warm reset (setting buck voltages to default values).
+>>
+>>   Optional nodes:
+>> -- clocks: s2mps11, s2mps13 and s5m8767 provide three(AP/CP/BT) buffered 32.768
+>> +- clocks: s2mps11, s2mps13, s2mps15 and s5m8767 provide three(AP/CP/BT) buffered 32.768
+>>     KHz outputs, so to register these as clocks with common clock framework
+>>     instantiate a sub-node named "clocks". It uses the common clock binding
+>>     documented in :
+>> @@ -37,12 +41,13 @@ Optional nodes:
+>>       the clock which they consume.
+>>       Clock               ID           Devices
+>>       ----------------------------------------------------------
+>> -    32KhzAP		0            S2MPS11, S2MPS13, S2MPS14, S5M8767
+>> -    32KhzCP		1            S2MPS11, S2MPS13, S5M8767
+>> -    32KhzBT		2            S2MPS11, S2MPS13, S2MPS14, S5M8767
+>> +    32KhzAP		0            S2MPS11, S2MPS13, S2MPS14, S2MPS15, S5M8767
+>> +    32KhzCP		1            S2MPS11, S2MPS13, S2MPS15, S5M8767
+>> +    32KhzBT		2            S2MPS11, S2MPS13, S2MPS14, S2MPS15, S5M8767
+>>
+>>     - compatible: Should be one of: "samsung,s2mps11-clk", "samsung,s2mps13-clk",
+>> -		"samsung,s2mps14-clk", "samsung,s5m8767-clk"
+>> +		"samsung,s2mps14-clk", "samsung,s2mps15-clk",
+>> +		"samsung,s5m8767-clk"
+>>
+>>   - regulators: The regulators of s2mps11 that have to be instantiated should be
+>>   included in a sub-node named 'regulators'. Regulator nodes included in this
+>> @@ -90,6 +95,7 @@ as per the datasheet of s2mps11.
+>>   			- S2MPS11: 1 to 38
+>>   			- S2MPS13: 1 to 40
+>>   			- S2MPS14: 1 to 25
+>> +			- S2MPS15: 1 to 27
+>>   			- S2MPU02: 1 to 28
+>>   		  - Example: LDO1, LDO2, LDO28
+>>   	- BUCKn
+>> @@ -97,6 +103,7 @@ as per the datasheet of s2mps11.
+>>   			- S2MPS11: 1 to 10
+>>   			- S2MPS13: 1 to 10
+>>   			- S2MPS14: 1 to 5
+>> +			- S2MPS15: 1 to 10
+>>   			- S2MPU02: 1 to 7
+>>   		  - Example: BUCK1, BUCK2, BUCK9
+>>
 >
