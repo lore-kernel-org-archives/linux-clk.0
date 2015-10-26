@@ -1,54 +1,209 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <CAMuHMdW4wo0VR2GKeeXhcqwzDF7udkXapFF9fGfEQuh_vSsyoQ@mail.gmail.com>
-References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be>
-	<1444999760-15750-6-git-send-email-geert+renesas@glider.be>
-	<20151020122448.20687.11926@quantum>
-	<CAMuHMdUT=fZKCOCdkn+=grZ0wYATghQhmbX-Y6WJ9+ViZ0cidA@mail.gmail.com>
-	<20151020130004.20687.91058@quantum>
-	<CAMuHMdU8TqCpOskWXGPvwrejfEWSw8Fu4FjkWAKyTc0f_MuWzw@mail.gmail.com>
-	<CAMuHMdW4wo0VR2GKeeXhcqwzDF7udkXapFF9fGfEQuh_vSsyoQ@mail.gmail.com>
-Date: Thu, 29 Oct 2015 15:03:51 +0100
-Message-ID: <CAMuHMdX1AeBJdF1RBeByHKPVonXmdZiE-ZumphR2RLmJ+4wUzg@mail.gmail.com>
-Subject: Re: [PATCH v4 5/5] [RFC] clk: shmobile: r8a7795: Add new CPG/MSSR driver
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>,
-	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 06/13 v2] clk: versatile-icst: convert to use regmap
+Date: Mon, 26 Oct 2015 14:33:26 +0100
+Message-Id: <1445866406-13908-1-git-send-email-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Oct 22, 2015 at 2:58 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
->   - Calling platform_driver_probe() from arch_initcall() is too late, as the
->     IRQC is initialized first (it's located before the CPG in .dtsi).
->     Hence the IRQC can't find it's Clock Domain, and its probe is deferred.
->     IRQC will be reprobed later, but in the mean time the Ethernet PHY can't
->     find its IRQ, as the of_mdio code uses irq_of_parse_and_map(), which
->     plainly ignores EPROBE_DEFER :-(
->     Nevertheless, Ethernet works...
+Instead of passing around register bases, pass around a regmap
+in this driver. This refactoring make things so much easier when
+we later want to manage an ICST that is part of a syscon.
 
-To correct myself: renesas-irqc is initialized first because it uses
-postcore_initcall().
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ChangeLog v1->v2:
+- Pass a struct device * pointer to regmap_init_mmio()
 
-The of_mdio issue on R-Car Gen2 boards can be worked around by changing that
-to device_initcall(). That would cause a few more probe deferrals on R-Mobile
-APE6 (r8a73a4), where IRQC is not only the external interrupt controller,
-but also the parent interrupt controller of the PFC/GPIO combo.
+I'm looking for an ACK from the CLK maintainers to take this
+through the ARM SoC tree once the series stabilize.
+---
+ drivers/clk/versatile/Kconfig    |  1 +
+ drivers/clk/versatile/clk-icst.c | 88 +++++++++++++++++++++++++++-------------
+ 2 files changed, 61 insertions(+), 28 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
+index 1530c9352a76..e091bcec116c 100644
+--- a/drivers/clk/versatile/Kconfig
++++ b/drivers/clk/versatile/Kconfig
+@@ -1,6 +1,7 @@
+ config COMMON_CLK_VERSATILE
+ 	bool "Clock driver for ARM Reference designs"
+ 	depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64
++	select REGMAP_MMIO
+ 	---help---
+           Supports clocking on ARM Reference designs:
+ 	  - Integrator/AP and Integrator/CP
+diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
+index 08c5ee976879..5fc22922718a 100644
+--- a/drivers/clk/versatile/clk-icst.c
++++ b/drivers/clk/versatile/clk-icst.c
+@@ -19,9 +19,13 @@
+ #include <linux/err.h>
+ #include <linux/clk-provider.h>
+ #include <linux/io.h>
++#include <linux/regmap.h>
+ 
+ #include "clk-icst.h"
+ 
++/* Magic unlocking token used on all Versatile boards */
++#define VERSATILE_LOCK_VAL	0xA05F
++
+ /**
+  * struct clk_icst - ICST VCO clock wrapper
+  * @hw: corresponding clock hardware entry
+@@ -32,8 +36,9 @@
+  */
+ struct clk_icst {
+ 	struct clk_hw hw;
+-	void __iomem *vcoreg;
+-	void __iomem *lockreg;
++	struct regmap *map;
++	u32 vcoreg_off;
++	u32 lockreg_off;
+ 	struct icst_params *params;
+ 	unsigned long rate;
+ };
+@@ -41,53 +46,67 @@ struct clk_icst {
+ #define to_icst(_hw) container_of(_hw, struct clk_icst, hw)
+ 
+ /**
+- * vco_get() - get ICST VCO settings from a certain register
+- * @vcoreg: register containing the VCO settings
++ * vco_get() - get ICST VCO settings from a certain ICST
++ * @icst: the ICST clock to get
++ * @vco: the VCO struct to return the value in
+  */
+-static struct icst_vco vco_get(void __iomem *vcoreg)
++static int vco_get(struct clk_icst *icst, struct icst_vco *vco)
+ {
+ 	u32 val;
+-	struct icst_vco vco;
+-
+-	val = readl(vcoreg);
+-	vco.v = val & 0x1ff;
+-	vco.r = (val >> 9) & 0x7f;
+-	vco.s = (val >> 16) & 03;
+-	return vco;
++	int ret;
++
++	ret = regmap_read(icst->map, icst->vcoreg_off, &val);
++	if (ret)
++		return ret;
++	vco->v = val & 0x1ff;
++	vco->r = (val >> 9) & 0x7f;
++	vco->s = (val >> 16) & 03;
++	return 0;
+ }
+ 
+ /**
+  * vco_set() - commit changes to an ICST VCO
+- * @locreg: register to poke to unlock the VCO for writing
+- * @vcoreg: register containing the VCO settings
+- * @vco: ICST VCO parameters to commit
++ * @icst: the ICST clock to set
++ * @vco: the VCO struct to set the changes from
+  */
+-static void vco_set(void __iomem *lockreg,
+-			void __iomem *vcoreg,
+-			struct icst_vco vco)
++static int vco_set(struct clk_icst *icst, struct icst_vco vco)
+ {
+ 	u32 val;
++	int ret;
+ 
+-	val = readl(vcoreg) & ~0x7ffff;
++	ret = regmap_read(icst->map, icst->vcoreg_off, &val);
++	if (ret)
++		return ret;
+ 	val |= vco.v | (vco.r << 9) | (vco.s << 16);
+ 
+ 	/* This magic unlocks the VCO so it can be controlled */
+-	writel(0xa05f, lockreg);
+-	writel(val, vcoreg);
++	ret = regmap_write(icst->map, icst->lockreg_off, VERSATILE_LOCK_VAL);
++	if (ret)
++		return ret;
++	ret = regmap_write(icst->map, icst->vcoreg_off, val);
++	if (ret)
++		return ret;
+ 	/* This locks the VCO again */
+-	writel(0, lockreg);
++	ret = regmap_write(icst->map, icst->lockreg_off, 0);
++	if (ret)
++		return ret;
++	return 0;
+ }
+ 
+-
+ static unsigned long icst_recalc_rate(struct clk_hw *hw,
+ 				      unsigned long parent_rate)
+ {
+ 	struct clk_icst *icst = to_icst(hw);
+ 	struct icst_vco vco;
++	int ret;
+ 
+ 	if (parent_rate)
+ 		icst->params->ref = parent_rate;
+-	vco = vco_get(icst->vcoreg);
++	ret = vco_get(icst, &vco);
++	if (ret) {
++		pr_err("ICST: could not get VCO setting\n");
++		return 0;
++	}
+ 	icst->rate = icst_hz(icst->params, vco);
+ 	return icst->rate;
+ }
+@@ -112,8 +131,7 @@ static int icst_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		icst->params->ref = parent_rate;
+ 	vco = icst_hz_to_vco(icst->params, rate);
+ 	icst->rate = icst_hz(icst->params, vco);
+-	vco_set(icst->lockreg, icst->vcoreg, vco);
+-	return 0;
++	return vco_set(icst, vco);
+ }
+ 
+ static const struct clk_ops icst_ops = {
+@@ -132,6 +150,11 @@ struct clk *icst_clk_register(struct device *dev,
+ 	struct clk_icst *icst;
+ 	struct clk_init_data init;
+ 	struct icst_params *pclone;
++	struct regmap_config icst_regmap_conf = {
++		.reg_bits = 32,
++		.val_bits = 32,
++		.reg_stride = 4,
++	};
+ 
+ 	icst = kzalloc(sizeof(struct clk_icst), GFP_KERNEL);
+ 	if (!icst) {
+@@ -151,10 +174,19 @@ struct clk *icst_clk_register(struct device *dev,
+ 	init.flags = CLK_IS_ROOT;
+ 	init.parent_names = (parent_name ? &parent_name : NULL);
+ 	init.num_parents = (parent_name ? 1 : 0);
++	icst->map = regmap_init_mmio(dev, base, &icst_regmap_conf);
++	if (IS_ERR(icst->map)) {
++		int ret;
++
++		pr_err("could not initialize ICST regmap\n");
++		kfree(icst);
++		ret = PTR_ERR(icst->map);
++		return ERR_PTR(ret);
++	}
+ 	icst->hw.init = &init;
+ 	icst->params = pclone;
+-	icst->vcoreg = base + desc->vco_offset;
+-	icst->lockreg = base + desc->lock_offset;
++	icst->vcoreg_off = desc->vco_offset;
++	icst->lockreg_off = desc->lock_offset;
+ 
+ 	clk = clk_register(dev, &icst->hw);
+ 	if (IS_ERR(clk)) {
+-- 
+2.4.3
