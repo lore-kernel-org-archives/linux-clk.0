@@ -1,180 +1,114 @@
-Return-Path: <tomeu.vizoso@gmail.com>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Mon, 26 Oct 2015 11:09:24 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: broonie@kernel.org, k.kozlowski@samsung.com, mturquette@baylibre.com,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org,
+	Thomas Abraham <thomas.ab@samsung.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] dt-bindings: mfd: s2mps11: add documentation for
+ s2mps15 PMIC
+Message-ID: <20151026110924.GI597@x1>
+References: <1445855803-26973-1-git-send-email-alim.akhtar@samsung.com>
+ <1445855803-26973-2-git-send-email-alim.akhtar@samsung.com>
 MIME-Version: 1.0
-Sender: tomeu.vizoso@gmail.com
-In-Reply-To: <20151019131821.GA32532@n2100.arm.linux.org.uk>
-References: <561E1378.6000906@collabora.com> <20151017065750.GA18607@kroah.com>
- <20151018192931.GY14956@sirena.org.uk> <20151018193757.GA9147@kroah.com>
- <20151018195330.GB14956@sirena.org.uk> <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
- <20151019131821.GA32532@n2100.arm.linux.org.uk>
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Date: Mon, 19 Oct 2015 16:10:56 +0200
-Message-ID: <CAAObsKDS_+AZ26P_fHc6pvAYrQotsuoO0DEGQUWC514t3DD_jQ@mail.gmail.com>
-Subject: Re: [GIT PULL] On-demand device probing
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
-	Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>, Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linux-i2c@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, linux-fbdev@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1445855803-26973-2-git-send-email-alim.akhtar@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 19 October 2015 at 15:18, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> On Mon, Oct 19, 2015 at 02:34:22PM +0200, Tomeu Vizoso wrote:
->> ... If a device is available and has
->> a compatible driver, but it cannot be probed because a dependency
->> isn't going to be available, that's an error and is going to cause
->> real-world problems unless the device is redundant. Currently we say
->> nothing because with deferred probe the probe callbacks are also part
->> of the mechanism that determines the dependency order.
->
-> So what if device X depends on device Y, and we have a driver for
-> device Y built-in to the kernel, but the driver for device X is a
-> module?
->
-> I don't see this being solvable in the way you describe above - it's
-> going to identify X as being unable to be satisfied, and report it as
-> an error - but it's not an error at all.
+On Mon, 26 Oct 2015, Alim Akhtar wrote:
 
-It's going to probe Y at late_initcall, then probe X when its driver
-is registered. No deferred probes nor messages about it.
+> From: Thomas Abraham <thomas.ab@samsung.com>
+> 
+> Add dt-binding documentation for s2mps15 PMIC device. The s2mps15 device
+> is similar to s2mps11/14 PMIC device and has 27 LDO and 10 buck regulators.
+> 
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  Documentation/devicetree/bindings/mfd/s2mps11.txt |   23 ++++++++++++++-------
+>  1 file changed, 15 insertions(+), 8 deletions(-)
 
-But if you meant to write the opposite case (X built-in and Y in a
-module), then I have to ask you in what situation that would make
-sense.
+Nothing to controversial here.
 
->> Having a specific switch for enabling deferred probe logging sounds
->> good, but there's going to be hundreds of spurious messages about
->> deferred probes that were just deferrals and only one of them is going
->> to be the actual error in which a device failed to find a dependency.
->
-> Why would there be?  Sounds like something's very wrong there.
+For my own reference:
+  Acked-by: Lee Jones <lee.jones@linaro.org>
 
-Sorry about that, I have checked that only now and I "only" get 39
-deferred probe messages on exynos5250-snow.
+> diff --git a/Documentation/devicetree/bindings/mfd/s2mps11.txt b/Documentation/devicetree/bindings/mfd/s2mps11.txt
+> index 890f0b0e1643..c0427c9d0886 100644
+> --- a/Documentation/devicetree/bindings/mfd/s2mps11.txt
+> +++ b/Documentation/devicetree/bindings/mfd/s2mps11.txt
+> @@ -1,5 +1,5 @@
+>  
+> -* Samsung S2MPS11, S2MPS13, S2MPS14 and S2MPU02 Voltage and Current Regulator
+> +* Samsung S2MPS11/13/14/15 and S2MPU02 Voltage and Current Regulator
+>  
+>  The Samsung S2MPS11 is a multi-function device which includes voltage and
+>  current regulators, RTC, charger controller and other sub-blocks. It is
+> @@ -7,8 +7,12 @@ interfaced to the host controller using an I2C interface. Each sub-block is
+>  addressed by the host system using different I2C slave addresses.
+>  
+>  Required properties:
+> -- compatible: Should be "samsung,s2mps11-pmic" or "samsung,s2mps13-pmic"
+> -	      or "samsung,s2mps14-pmic" or "samsung,s2mpu02-pmic".
+> +- compatible: Should be one of the following
+> +	- "samsung,s2mps11-pmic"
+> +	- "samsung,s2mps13-pmic"
+> +	- "samsung,s2mps14-pmic"
+> +	- "samsung,s2mps15-pmic"
+> +	- "samsung,s2mpu02-pmic".
+>  - reg: Specifies the I2C slave address of the pmic block. It should be 0x66.
+>  
+>  Optional properties:
+> @@ -24,7 +28,7 @@ Optional properties:
+>    unwanted buck warm reset (setting buck voltages to default values).
+>  
+>  Optional nodes:
+> -- clocks: s2mps11, s2mps13 and s5m8767 provide three(AP/CP/BT) buffered 32.768
+> +- clocks: s2mps11, s2mps13, s2mps15 and s5m8767 provide three(AP/CP/BT) buffered 32.768
+>    KHz outputs, so to register these as clocks with common clock framework
+>    instantiate a sub-node named "clocks". It uses the common clock binding
+>    documented in :
+> @@ -37,12 +41,13 @@ Optional nodes:
+>      the clock which they consume.
+>      Clock               ID           Devices
+>      ----------------------------------------------------------
+> -    32KhzAP		0            S2MPS11, S2MPS13, S2MPS14, S5M8767
+> -    32KhzCP		1            S2MPS11, S2MPS13, S5M8767
+> -    32KhzBT		2            S2MPS11, S2MPS13, S2MPS14, S5M8767
+> +    32KhzAP		0            S2MPS11, S2MPS13, S2MPS14, S2MPS15, S5M8767
+> +    32KhzCP		1            S2MPS11, S2MPS13, S2MPS15, S5M8767
+> +    32KhzBT		2            S2MPS11, S2MPS13, S2MPS14, S2MPS15, S5M8767
+>  
+>    - compatible: Should be one of: "samsung,s2mps11-clk", "samsung,s2mps13-clk",
+> -		"samsung,s2mps14-clk", "samsung,s5m8767-clk"
+> +		"samsung,s2mps14-clk", "samsung,s2mps15-clk",
+> +		"samsung,s5m8767-clk"
+>  
+>  - regulators: The regulators of s2mps11 that have to be instantiated should be
+>  included in a sub-node named 'regulators'. Regulator nodes included in this
+> @@ -90,6 +95,7 @@ as per the datasheet of s2mps11.
+>  			- S2MPS11: 1 to 38
+>  			- S2MPS13: 1 to 40
+>  			- S2MPS14: 1 to 25
+> +			- S2MPS15: 1 to 27
+>  			- S2MPU02: 1 to 28
+>  		  - Example: LDO1, LDO2, LDO28
+>  	- BUCKn
+> @@ -97,6 +103,7 @@ as per the datasheet of s2mps11.
+>  			- S2MPS11: 1 to 10
+>  			- S2MPS13: 1 to 10
+>  			- S2MPS14: 1 to 5
+> +			- S2MPS15: 1 to 10
+>  			- S2MPU02: 1 to 7
+>  		  - Example: BUCK1, BUCK2, BUCK9
+>  
 
-> You should only get deferred probes for devices which are declared to
-> be present, but their resources have not yet been satisfied.  It
-> doesn't change anything if you have a kernel with lots of device drivers
-> or just the device drivers you need - the device drivers you don't need
-> do not contribute to the deferred probing in any way.
-
-I don't think that the number of registered drivers affects the number
-of probes that get deferred (but I'm not sure why you mention that).
-
-> So, really, after boot and all appropriate modules have been loaded,
-> you should end up with no deferred probes.  Are you saying that you
-> still have "hundreds" at that point?  If you do, that sounds like
-> there's something very wrong.
-
-I was talking about messages if we log each -EPROBE_DEFER, not devices
-that remain to be probed. The point being that right now we don't have
-a way to know if we are deferring because the dependency will be
-around later, or if we have a problem and the dependency isn't going
-to be there at all.
-
-If we had a way to enable printing the cause of each -EPROBE_DEFER,
-right now that would print 39 messages of this board that are only due
-to ordering. The actual issue would be printed in exactly the same way
-somewhere in the middle.
-
->> 3) Regarding total boot time, I don't expect this series to make much
->> of a difference because though we would save a lot of matching and
->> querying for resources, that's little time compared with how long we
->> wait for hardware to react during probing. Async probing is more
->> likely to help with drivers that take a long time to probe.
->
-> For me, on my fastest ARM board, though running serial console:
->
-> [    2.293468] VFS: Mounted root (ext4 filesystem) on device 179:1.
->
-> There's a couple of delays in there, but they're not down to deferred
-> probing.  The biggest one is serial console startup (due to the time
-> it takes to write out the initial kernel messages):
->
-> [    0.289962] f1012000.serial: ttyS0 at MMIO 0xf1012000 (irq = 23, base_baud = 15625000) is a 16550A
-> [    0.944124] console [ttyS0] enabled
->
-> and DSA switch initialisation:
->
-> [    1.530655] libphy: dsa slave smi: probed
-> [    2.034426] dsa dsa@0 lan6 (uninitialized): attached PHY at address 0 [Generic PHY]
->
-> I'm not sure what causes that, but at a guess it's having to talk to the
-> DSA switch over the MDIO bus via several layers of indirect accesses.
-> Of course, serial console adds to the boot time significantly anyway,
-> especially at the "standard" kernel logging level.
-
-Yes, I don't think it makes any sense to measure boot times with the
-serial console on, because it's not comparable to production and
-because printing an additional line during boot affects significantly
-the times.
-
-To be clear, I was saying that this series should NOT affect total
-boot times much.
-
->> One more thing about the breakage we have seen so far is that it's
->> generally caused by implicit dependencies and hunting those is
->> probably the second biggest timesink of the linux embedded developer
->> after failed probes.
->
-> ... which is generally caused by the crappy code which the average
-> embedded Linux developer creates, particularly with the crappy error
-> messages they like creating.  For the most part, they _might_ as well
-> just print "Error!\n" and be done with it, for all the use they are.
-> When creating an error print, your average embedded Linux developer
-> fails to print the _reason_ why something failed, which makes debugging
-> it much harder.
->
-> The first thing I do when I touch code that needs this kind of debugging
-> is to go through and add printing of the error code.  That normally lets
-> me quickly narrow down what's failed.
->
-> If embedded Linux developers are struggling with this, they only have
-> themselves to blame.
->
-> In the case of deferred probing, what _may_ help is if we got rid of the
-> core code printing that driver X requested deferred probing, instead
-> moving the responsibility to report this onto the driver or subsystem.
-> Resource claiming generally has the struct device, and can use dev_warn()
-> to report which device is being probed, along with which resource is
-> not yet available.
-
-Agreed, with the note from above on why it would be better to only
-print such a message only when the -EPROBE_DEFER is likely to be a
-problem.
-
-> This debug problem is solvable without needing to resort to complex
-> probing solutions.
-
-If you really think anything in this series is complex, you should
-look at the other ones that tried to accomplish the same!
-
-Thanks,
-
-Tomeu
-
-> --
-> FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-> according to speedtest.net.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
