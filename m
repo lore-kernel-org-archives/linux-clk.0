@@ -1,157 +1,326 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:54654 "EHLO
-	mx0a-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753780AbbJHK4X (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 8 Oct 2015 06:56:23 -0400
-Date: Thu, 8 Oct 2015 18:52:11 +0800
-From: Jisheng Zhang <jszhang@marvell.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: <sebastian.hesselbarth@gmail.com>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <mark.rutland@arm.com>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/5] clk: berlin: add common pll driver
-Message-ID: <20151008185211.65089e99@xhacker>
-In-Reply-To: <20151001223220.GQ19319@codeaurora.org>
-References: <1442931156-5877-1-git-send-email-jszhang@marvell.com>
-	<1442931156-5877-2-git-send-email-jszhang@marvell.com>
-	<20151001223220.GQ19319@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <21cnbao@gmail.com>
+Return-Path: <21cnbao@gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	workgroup.linux@csr.com,
+	Guo Zeng <Guo.Zeng@csr.com>,
+	Barry Song <Baohua.Song@csr.com>
+Subject: [PATCH v2] clk: atlas7: merge lots of discrete clocks into arrays
+Date: Mon, 26 Oct 2015 09:47:23 +0000
+Message-Id: <1445852843-23551-1-git-send-email-21cnbao@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+From: Guo Zeng <Guo.Zeng@csr.com>
 
-On Thu, 1 Oct 2015 15:32:20 -0700
-Stephen Boyd <sboyd@codeaurora.org> wrote:
+this patch merges lots of discrete dividers, divider tables and dto
+into arrays, then drops lots of codes.
 
-> On 09/22, Jisheng Zhang wrote:
-> > diff --git a/drivers/clk/berlin/pll.c b/drivers/clk/berlin/pll.c
-> > new file mode 100644
-> > index 0000000..9aad0b6
-> > --- /dev/null
-> > +++ b/drivers/clk/berlin/pll.c
-> > @@ -0,0 +1,119 @@
-> > +
-> > +#define to_berlin_pll(hw)       container_of(hw, struct berlin_pll, hw)
-> > +
-> > +static u8 vcodiv_berlin[] = {1, 2, 4, 8, 16, 32, 64, 128};
-> 
-> This is an array of 1 << index position...
+Signed-off-by: Guo Zeng <Guo.Zeng@csr.com>
+Signed-off-by: Barry Song <Baohua.Song@csr.com>
+---
+ -v2: fix some checkpatch issues
 
-oops, yes! I didn't realize this before! Accept all the comments below, will
-update in v2.
+ drivers/clk/sirf/clk-atlas7.c | 221 +++++++++++-------------------------------
+ 1 file changed, 55 insertions(+), 166 deletions(-)
 
-Thanks a lot for review,
-Jisheng
-
-> 
-> > +
-> > +static unsigned long berlin_pll_recalc_rate(struct clk_hw *hw,
-> > +					    unsigned long parent_rate)
-> > +{
-> > +	u32 val, fbdiv, rfdiv, vcodivsel, bypass;
-> > +	struct berlin_pll *pll = to_berlin_pll(hw);
-> > +
-> > +	bypass = readl_relaxed(pll->bypass);
-> > +	if (bypass & (1 << pll->bypass_shift))
-> > +		return parent_rate;
-> > +
-> > +	val = readl_relaxed(pll->ctrl + PLL_CTRL0);
-> > +	fbdiv = (val >> 12) & 0x1FF;
-> > +	rfdiv = (val >> 3) & 0x1FF;
-> > +	val = readl_relaxed(pll->ctrl + PLL_CTRL1);
-> > +	vcodivsel = (val >> 9) & 0x7;
-> > +	return parent_rate * fbdiv * 4 / rfdiv /
-> > +		vcodiv_berlin[vcodivsel];
-> 
-> so we can replace this with 1 << vcodivsel?
-> 
-> > +}
-> > +
-> > +static u8 berlin_pll_get_parent(struct clk_hw *hw)
-> > +{
-> > +	struct berlin_pll *pll = to_berlin_pll(hw);
-> > +	u32 bypass = readl_relaxed(pll->bypass);
-> > +
-> > +	if (bypass & (1 << pll->bypass_shift))
-> > +		return 1;
-> > +	else
-> > +		return 0;
-> 
-> Simplify this to 
-> 
-> 	if (bypass & (1 << pll->bypass_shift))
-> 		return 1;
-> 	return 0;
-> 
-> or
-> 
-> 	return !!(bypass & (1 << pll->bypass_shift)) 
-> 
-> > +}
-> > +
-> > +static const struct clk_ops berlin_pll_ops = {
-> > +	.recalc_rate	= berlin_pll_recalc_rate,
-> > +	.get_parent	= berlin_pll_get_parent,
-> > +};
-> > +
-> > +void __init berlin_pll_setup(struct device_node *np)
-> 
-> static?
-> 
-> > +{
-> > +	struct clk_init_data init;
-> > +	struct berlin_pll *pll;
-> > +	const char *parent_names[PLL_SOURCE_MAX];
-> > +	struct clk *clk;
-> > +	int ret, num_parents;
-> > +
-> > +	num_parents = of_clk_get_parent_count(np);
-> > +	if (num_parents <= 0 || num_parents > PLL_SOURCE_MAX)
-> > +		return;
-> > +
-> > +	of_clk_parent_fill(np, parent_names, num_parents);
-> > +
-> > +	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
-> > +	if (WARN_ON(!pll))
-> 
-> We already print a big warning on allocation failures, so drop
-> the WARN_ON please.
-> 
-> > +		return;
-> > +
-> > +	pll->ctrl = of_iomap(np, 0);
-> > +	pll->bypass = of_iomap(np, 1);
-> > +	ret = of_property_read_u8(np, "bypass-shift", &pll->bypass_shift);
-> > +	if (WARN_ON(!pll->ctrl || !pll->bypass || ret))
-> > +		return;
-> > +
-> > +	init.name = np->name;
-> > +	init.ops = &berlin_pll_ops;
-> > +	init.parent_names = parent_names;
-> > +	init.num_parents = num_parents;
-> 
-> init.flags is not initialized. Please initialize the init struct
-> on the stack to 0 to avoid future problems.
-> 
-> > +
-> > +	pll->hw.init = &init;
-> > +
-> > +	clk = clk_register(NULL, &pll->hw);
-> > +	if (WARN_ON(IS_ERR(clk)))
-> > +		return;
-> > +
-> > +	ret = of_clk_add_provider(np, of_clk_src_simple_get, clk);
-> > +	if (WARN_ON(ret))
-> > +		return;
-> 
-> This return is useless.
-> 
-> > +}
-> 
-
+diff --git a/drivers/clk/sirf/clk-atlas7.c b/drivers/clk/sirf/clk-atlas7.c
+index 957aae6..2289b20 100644
+--- a/drivers/clk/sirf/clk-atlas7.c
++++ b/drivers/clk/sirf/clk-atlas7.c
+@@ -211,6 +211,8 @@
+ #define SIRFSOC_NOC_CLK_SLVRDY_CLR		0x02EC
+ #define SIRFSOC_NOC_CLK_IDLE_STATUS		0x02F4
+ 
++#define SIRFSOC_DIVIDOR_TYPE_TABLE	0x1
++
+ struct clk_pll {
+ 	struct clk_hw hw;
+ 	u16 regofs;  /* register offset */
+@@ -653,6 +655,12 @@ static struct clk_dto clk_disp1_dto = {
+ 	},
+ };
+ 
++static struct clk_dto *dto_list[] __initdata = {
++	&clk_audio_dto,
++	&clk_disp0_dto,
++	&clk_disp1_dto,
++};
++
+ static struct atlas7_div_init_data divider_list[] __initdata = {
+ 	/* div_name, parent_name, gate_name, clk_flag, divider_flag, gate_flag, div_offset, shift, wdith, gate_offset, bit_enable, lock */
+ 	{ "sys0pll_qa1", "sys0pll_fixdiv", "sys0pll_a1", 0, 0, 0, SIRFSOC_CLKC_USBPHY_CLKDIV_CFG, 0, 6, SIRFSOC_CLKC_USBPHY_CLKDIV_ENA, 0, &usbphy_div_lock },
+@@ -719,6 +727,24 @@ static struct atlas7_div_init_data divider_list[] __initdata = {
+ 	{ "sys2pll_qa20", "sys2pll_fixdiv", "sys2pll_a20", 0, 0, 0, SIRFSOC_CLKC_SHARED_DIVIDER_CFG0, 0, 6, SIRFSOC_CLKC_SHARED_DIVIDER_ENA, 0, &share_div_lock },
+ 	{ "sys1pll_qa17", "sys1pll_fixdiv", "sys1pll_a17", 0, 0, CLK_IGNORE_UNUSED, SIRFSOC_CLKC_SHARED_DIVIDER_CFG1, 8, 6, SIRFSOC_CLKC_SHARED_DIVIDER_ENA, 20, &share_div_lock },
+ 	{ "sys0pll_qa20", "sys0pll_fixdiv", "sys0pll_a20", 0, 0, 0, SIRFSOC_CLKC_SHARED_DIVIDER_CFG1, 0, 6, SIRFSOC_CLKC_SHARED_DIVIDER_ENA, 16, &share_div_lock },
++	{ "sys0pll_div1", "sys0pll_vco", "sys0pll_clk1", 1, 0, 0, SIRFSOC_CLKC_SYS0PLL_AB_CTRL1, 0, 3, SIRFSOC_CLKC_SYS0PLL_AB_CTRL1, 12, &sys0pll_ctrl1_lock },
++	{ "sys0pll_div2", "sys0pll_vco", "sys0pll_clk2", 1, 0, 0, SIRFSOC_CLKC_SYS0PLL_AB_CTRL1, 4, 3, SIRFSOC_CLKC_SYS0PLL_AB_CTRL1, 13, &sys0pll_ctrl1_lock },
++	{ "sys0pll_div3", "sys0pll_vco", "sys0pll_clk3", 1, 0, 0, SIRFSOC_CLKC_SYS0PLL_AB_CTRL1, 8, 3, SIRFSOC_CLKC_SYS0PLL_AB_CTRL1, 14, &sys0pll_ctrl1_lock },
++	{ "sys1pll_div1", "sys1pll_vco", "sys1pll_clk1", 1, 0, 0, SIRFSOC_CLKC_SYS1PLL_AB_CTRL1, 0, 3, SIRFSOC_CLKC_SYS1PLL_AB_CTRL1, 12, &sys1pll_ctrl1_lock },
++	{ "sys1pll_div2", "sys1pll_vco", "sys1pll_clk2", 1, 0, 0, SIRFSOC_CLKC_SYS1PLL_AB_CTRL1, 4, 3, SIRFSOC_CLKC_SYS1PLL_AB_CTRL1, 13, &sys1pll_ctrl1_lock },
++	{ "sys1pll_div3", "sys1pll_vco", "sys1pll_clk3", 1, 0, 0, SIRFSOC_CLKC_SYS1PLL_AB_CTRL1, 8, 3, SIRFSOC_CLKC_SYS1PLL_AB_CTRL1, 14, &sys1pll_ctrl1_lock },
++	{ "sys2pll_div1", "sys2pll_vco", "sys2pll_clk1", 1, 0, 0, SIRFSOC_CLKC_SYS2PLL_AB_CTRL1, 0, 3, SIRFSOC_CLKC_SYS2PLL_AB_CTRL1, 12, &sys2pll_ctrl1_lock },
++	{ "sys2pll_div2", "sys2pll_vco", "sys2pll_clk2", 1, 0, 0, SIRFSOC_CLKC_SYS2PLL_AB_CTRL1, 4, 3, SIRFSOC_CLKC_SYS2PLL_AB_CTRL1, 13, &sys2pll_ctrl1_lock },
++	{ "sys2pll_div3", "sys2pll_vco", "sys2pll_clk3", 1, 0, 0, SIRFSOC_CLKC_SYS2PLL_AB_CTRL1, 8, 3, SIRFSOC_CLKC_SYS2PLL_AB_CTRL1, 14, &sys2pll_ctrl1_lock },
++	{ "sys3pll_div1", "sys3pll_vco", "sys3pll_clk1", 1, 0, 0, SIRFSOC_CLKC_SYS3PLL_AB_CTRL1, 0, 3, SIRFSOC_CLKC_SYS3PLL_AB_CTRL1, 12, &sys3pll_ctrl1_lock },
++	{ "sys3pll_div2", "sys3pll_vco", "sys3pll_clk2", 1, 0, 0, SIRFSOC_CLKC_SYS3PLL_AB_CTRL1, 4, 3, SIRFSOC_CLKC_SYS3PLL_AB_CTRL1, 13, &sys3pll_ctrl1_lock },
++	{ "sys3pll_div3", "sys3pll_vco", "sys3pll_clk3", 1, 0, 0, SIRFSOC_CLKC_SYS3PLL_AB_CTRL1, 8, 3, SIRFSOC_CLKC_SYS3PLL_AB_CTRL1, 14, &sys3pll_ctrl1_lock },
++	{ "cpupll_div1", "cpupll_vco", "cpupll_clk1", 1, 0, 0, SIRFSOC_CLKC_CPUPLL_AB_CTRL1, 0, 3, SIRFSOC_CLKC_CPUPLL_AB_CTRL1, 12, &cpupll_ctrl1_lock },
++	{ "cpupll_div2", "cpupll_vco", "cpupll_clk2", 1, 0, 0, SIRFSOC_CLKC_CPUPLL_AB_CTRL1, 4, 3, SIRFSOC_CLKC_CPUPLL_AB_CTRL1, 13, &cpupll_ctrl1_lock },
++	{ "cpupll_div3", "cpupll_vco", "cpupll_clk3", 1, 0, 0, SIRFSOC_CLKC_CPUPLL_AB_CTRL1, 8, 3, SIRFSOC_CLKC_CPUPLL_AB_CTRL1, 14, &cpupll_ctrl1_lock },
++	{ "mempll_div1", "mempll_vco", "mempll_clk1", 1, 0, 0, SIRFSOC_CLKC_MEMPLL_AB_CTRL1, 0, 3, SIRFSOC_CLKC_MEMPLL_AB_CTRL1, 12, &mempll_ctrl1_lock },
++	{ "mempll_div2", "mempll_vco", "mempll_clk2", 1, 0, 0, SIRFSOC_CLKC_MEMPLL_AB_CTRL1, 4, 3, SIRFSOC_CLKC_MEMPLL_AB_CTRL1, 13, &mempll_ctrl1_lock },
++	{ "mempll_div3", "mempll_vco", "mempll_clk3", 1, 0, 0, SIRFSOC_CLKC_MEMPLL_AB_CTRL1, 8, 3, SIRFSOC_CLKC_MEMPLL_AB_CTRL1, 14, &mempll_ctrl1_lock },
+ };
+ 
+ static const char * const i2s_clk_parents[] = {
+@@ -1199,7 +1225,8 @@ static struct atlas7_unit_init_data unit_list[] __initdata = {
+ 	{ 141, "thcgum_sys", "sys_mux", 0, SIRFSOC_CLKC_LEAF_CLK_EN0_SET, 3, 0, 0, &leaf0_gate_lock },
+ };
+ 
+-static struct clk *atlas7_clks[ARRAY_SIZE(unit_list) + ARRAY_SIZE(mux_list)];
++static struct clk *atlas7_clks[ARRAY_SIZE(unit_list) + ARRAY_SIZE(mux_list) +
++			ARRAY_SIZE(divider_list) + ARRAY_SIZE(dto_list)];
+ 
+ static int unit_clk_is_enabled(struct clk_hw *hw)
+ {
+@@ -1461,88 +1488,14 @@ static void __init atlas7_clk_init(struct device_node *np)
+ 	clk = clk_register(NULL, &clk_sys3pll.hw);
+ 	BUG_ON(!clk);
+ 
+-	clk = clk_register_divider_table(NULL, "cpupll_div1", "cpupll_vco", 0,
+-			 sirfsoc_clk_vbase + SIRFSOC_CLKC_CPUPLL_AB_CTRL1, 0, 3, 0,
+-			 pll_div_table, &cpupll_ctrl1_lock);
+-	BUG_ON(!clk);
+-	clk = clk_register_divider_table(NULL, "cpupll_div2", "cpupll_vco", 0,
+-			 sirfsoc_clk_vbase + SIRFSOC_CLKC_CPUPLL_AB_CTRL1, 4, 3, 0,
+-			 pll_div_table, &cpupll_ctrl1_lock);
+-	BUG_ON(!clk);
+-	clk = clk_register_divider_table(NULL, "cpupll_div3", "cpupll_vco", 0,
+-			 sirfsoc_clk_vbase + SIRFSOC_CLKC_CPUPLL_AB_CTRL1, 8, 3, 0,
+-			 pll_div_table, &cpupll_ctrl1_lock);
+-	BUG_ON(!clk);
+-
+-	clk = clk_register_divider_table(NULL, "mempll_div1", "mempll_vco", 0,
+-			 sirfsoc_clk_vbase + SIRFSOC_CLKC_MEMPLL_AB_CTRL1, 0, 3, 0,
+-			 pll_div_table, &mempll_ctrl1_lock);
+-	BUG_ON(!clk);
+-	clk = clk_register_divider_table(NULL, "mempll_div2", "mempll_vco", 0,
+-			 sirfsoc_clk_vbase + SIRFSOC_CLKC_MEMPLL_AB_CTRL1, 4, 3, 0,
+-			 pll_div_table, &mempll_ctrl1_lock);
+-	BUG_ON(!clk);
+-	clk = clk_register_divider_table(NULL, "mempll_div3", "mempll_vco", 0,
+-			 sirfsoc_clk_vbase + SIRFSOC_CLKC_MEMPLL_AB_CTRL1, 8, 3, 0,
+-			 pll_div_table, &mempll_ctrl1_lock);
+-	BUG_ON(!clk);
+-
+-	clk = clk_register_divider_table(NULL, "sys0pll_div1", "sys0pll_vco", 0,
+-			 sirfsoc_clk_vbase + SIRFSOC_CLKC_SYS0PLL_AB_CTRL1, 0, 3, 0,
+-			 pll_div_table, &sys0pll_ctrl1_lock);
+-	BUG_ON(!clk);
+-	clk = clk_register_divider_table(NULL, "sys0pll_div2", "sys0pll_vco", 0,
+-			 sirfsoc_clk_vbase + SIRFSOC_CLKC_SYS0PLL_AB_CTRL1, 4, 3, 0,
+-			 pll_div_table, &sys0pll_ctrl1_lock);
+-	BUG_ON(!clk);
+-	clk = clk_register_divider_table(NULL, "sys0pll_div3", "sys0pll_vco", 0,
+-			 sirfsoc_clk_vbase + SIRFSOC_CLKC_SYS0PLL_AB_CTRL1, 8, 3, 0,
+-			 pll_div_table, &sys0pll_ctrl1_lock);
+-	BUG_ON(!clk);
+ 	clk = clk_register_fixed_factor(NULL, "sys0pll_fixdiv", "sys0pll_vco",
+ 					CLK_SET_RATE_PARENT, 1, 2);
+-
+-	clk = clk_register_divider_table(NULL, "sys1pll_div1", "sys1pll_vco", 0,
+-			 sirfsoc_clk_vbase + SIRFSOC_CLKC_SYS1PLL_AB_CTRL1, 0, 3, 0,
+-			 pll_div_table, &sys1pll_ctrl1_lock);
+-	BUG_ON(!clk);
+-	clk = clk_register_divider_table(NULL, "sys1pll_div2", "sys1pll_vco", 0,
+-			 sirfsoc_clk_vbase + SIRFSOC_CLKC_SYS1PLL_AB_CTRL1, 4, 3, 0,
+-			 pll_div_table, &sys1pll_ctrl1_lock);
+-	BUG_ON(!clk);
+-	clk = clk_register_divider_table(NULL, "sys1pll_div3", "sys1pll_vco", 0,
+-			 sirfsoc_clk_vbase + SIRFSOC_CLKC_SYS1PLL_AB_CTRL1, 8, 3, 0,
+-			 pll_div_table, &sys1pll_ctrl1_lock);
+ 	BUG_ON(!clk);
+ 	clk = clk_register_fixed_factor(NULL, "sys1pll_fixdiv", "sys1pll_vco",
+ 					CLK_SET_RATE_PARENT, 1, 2);
+-
+-	clk = clk_register_divider_table(NULL, "sys2pll_div1", "sys2pll_vco", 0,
+-			 sirfsoc_clk_vbase + SIRFSOC_CLKC_SYS2PLL_AB_CTRL1, 0, 3, 0,
+-			 pll_div_table, &sys2pll_ctrl1_lock);
+-	BUG_ON(!clk);
+-	clk = clk_register_divider_table(NULL, "sys2pll_div2", "sys2pll_vco", 0,
+-			 sirfsoc_clk_vbase + SIRFSOC_CLKC_SYS2PLL_AB_CTRL1, 4, 3, 0,
+-			 pll_div_table, &sys2pll_ctrl1_lock);
+-	BUG_ON(!clk);
+-	clk = clk_register_divider_table(NULL, "sys2pll_div3", "sys2pll_vco", 0,
+-			 sirfsoc_clk_vbase + SIRFSOC_CLKC_SYS2PLL_AB_CTRL1, 8, 3, 0,
+-			 pll_div_table, &sys2pll_ctrl1_lock);
+ 	BUG_ON(!clk);
+ 	clk = clk_register_fixed_factor(NULL, "sys2pll_fixdiv", "sys2pll_vco",
+ 					CLK_SET_RATE_PARENT, 1, 2);
+-
+-	clk = clk_register_divider_table(NULL, "sys3pll_div1", "sys3pll_vco", 0,
+-			 sirfsoc_clk_vbase + SIRFSOC_CLKC_SYS3PLL_AB_CTRL1, 0, 3, 0,
+-			 pll_div_table, &sys3pll_ctrl1_lock);
+-	BUG_ON(!clk);
+-	clk = clk_register_divider_table(NULL, "sys3pll_div2", "sys3pll_vco", 0,
+-			 sirfsoc_clk_vbase + SIRFSOC_CLKC_SYS3PLL_AB_CTRL1, 4, 3, 0,
+-			 pll_div_table, &sys3pll_ctrl1_lock);
+-	BUG_ON(!clk);
+-	clk = clk_register_divider_table(NULL, "sys3pll_div3", "sys3pll_vco", 0,
+-			 sirfsoc_clk_vbase + SIRFSOC_CLKC_SYS3PLL_AB_CTRL1, 8, 3, 0,
+-			 pll_div_table, &sys3pll_ctrl1_lock);
+ 	BUG_ON(!clk);
+ 	clk = clk_register_fixed_factor(NULL, "sys3pll_fixdiv", "sys3pll_vco",
+ 					CLK_SET_RATE_PARENT, 1, 2);
+@@ -1552,104 +1505,37 @@ static void __init atlas7_clk_init(struct device_node *np)
+ 					CLK_SET_RATE_PARENT, 1, 4);
+ 
+ 	BUG_ON(!clk);
+-	clk = clk_register_gate(NULL, "cpupll_clk1", "cpupll_div1",
+-		CLK_SET_RATE_PARENT, sirfsoc_clk_vbase + SIRFSOC_CLKC_CPUPLL_AB_CTRL1,
+-				12, 0, &cpupll_ctrl1_lock);
+-	BUG_ON(!clk);
+-	clk = clk_register_gate(NULL, "cpupll_clk2", "cpupll_div2",
+-		CLK_SET_RATE_PARENT, sirfsoc_clk_vbase + SIRFSOC_CLKC_CPUPLL_AB_CTRL1,
+-				13, 0, &cpupll_ctrl1_lock);
+-	BUG_ON(!clk);
+-	clk = clk_register_gate(NULL, "cpupll_clk3", "cpupll_div3",
+-		CLK_SET_RATE_PARENT, sirfsoc_clk_vbase + SIRFSOC_CLKC_CPUPLL_AB_CTRL1,
+-				14, 0, &cpupll_ctrl1_lock);
+-	BUG_ON(!clk);
+-
+-	clk = clk_register_gate(NULL, "mempll_clk1", "mempll_div1",
+-		CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+-		sirfsoc_clk_vbase + SIRFSOC_CLKC_MEMPLL_AB_CTRL1,
+-		12, 0, &mempll_ctrl1_lock);
+-	BUG_ON(!clk);
+-	clk = clk_register_gate(NULL, "mempll_clk2", "mempll_div2",
+-		CLK_SET_RATE_PARENT, sirfsoc_clk_vbase + SIRFSOC_CLKC_MEMPLL_AB_CTRL1,
+-				13, 0, &mempll_ctrl1_lock);
+-	BUG_ON(!clk);
+-	clk = clk_register_gate(NULL, "mempll_clk3", "mempll_div3",
+-		CLK_SET_RATE_PARENT, sirfsoc_clk_vbase + SIRFSOC_CLKC_MEMPLL_AB_CTRL1,
+-				14, 0, &mempll_ctrl1_lock);
+-	BUG_ON(!clk);
+-
+-	clk = clk_register_gate(NULL, "sys0pll_clk1", "sys0pll_div1",
+-		CLK_SET_RATE_PARENT, sirfsoc_clk_vbase + SIRFSOC_CLKC_SYS0PLL_AB_CTRL1,
+-				12, 0, &sys0pll_ctrl1_lock);
+-	BUG_ON(!clk);
+-	clk = clk_register_gate(NULL, "sys0pll_clk2", "sys0pll_div2",
+-		CLK_SET_RATE_PARENT, sirfsoc_clk_vbase + SIRFSOC_CLKC_SYS0PLL_AB_CTRL1,
+-				13, 0, &sys0pll_ctrl1_lock);
+-	BUG_ON(!clk);
+-	clk = clk_register_gate(NULL, "sys0pll_clk3", "sys0pll_div3",
+-		CLK_SET_RATE_PARENT, sirfsoc_clk_vbase + SIRFSOC_CLKC_SYS0PLL_AB_CTRL1,
+-				14, 0, &sys0pll_ctrl1_lock);
+-	BUG_ON(!clk);
+-
+-	clk = clk_register_gate(NULL, "sys1pll_clk1", "sys1pll_div1",
+-		CLK_SET_RATE_PARENT, sirfsoc_clk_vbase + SIRFSOC_CLKC_SYS1PLL_AB_CTRL1,
+-				12, 0, &sys1pll_ctrl1_lock);
+-	BUG_ON(!clk);
+-	clk = clk_register_gate(NULL, "sys1pll_clk2", "sys1pll_div2",
+-		CLK_SET_RATE_PARENT, sirfsoc_clk_vbase + SIRFSOC_CLKC_SYS1PLL_AB_CTRL1,
+-				13, 0, &sys1pll_ctrl1_lock);
+-	BUG_ON(!clk);
+-	clk = clk_register_gate(NULL, "sys1pll_clk3", "sys1pll_div3",
+-		CLK_SET_RATE_PARENT, sirfsoc_clk_vbase + SIRFSOC_CLKC_SYS1PLL_AB_CTRL1,
+-				14, 0, &sys1pll_ctrl1_lock);
+-	BUG_ON(!clk);
+ 
+-	clk = clk_register_gate(NULL, "sys2pll_clk1", "sys2pll_div1",
+-		CLK_SET_RATE_PARENT, sirfsoc_clk_vbase + SIRFSOC_CLKC_SYS2PLL_AB_CTRL1,
+-				12, 0, &sys2pll_ctrl1_lock);
+-	BUG_ON(!clk);
+-	clk = clk_register_gate(NULL, "sys2pll_clk2", "sys2pll_div2",
+-		CLK_SET_RATE_PARENT, sirfsoc_clk_vbase + SIRFSOC_CLKC_SYS2PLL_AB_CTRL1,
+-				13, 0, &sys2pll_ctrl1_lock);
+-	BUG_ON(!clk);
+-	clk = clk_register_gate(NULL, "sys2pll_clk3", "sys2pll_div3",
+-		CLK_SET_RATE_PARENT, sirfsoc_clk_vbase + SIRFSOC_CLKC_SYS2PLL_AB_CTRL1,
+-				14, 0, &sys2pll_ctrl1_lock);
+-	BUG_ON(!clk);
+-
+-	clk = clk_register_gate(NULL, "sys3pll_clk1", "sys3pll_div1",
+-		CLK_SET_RATE_PARENT, sirfsoc_clk_vbase + SIRFSOC_CLKC_SYS3PLL_AB_CTRL1,
+-				12, 0, &sys3pll_ctrl1_lock);
+-	BUG_ON(!clk);
+-	clk = clk_register_gate(NULL, "sys3pll_clk2", "sys3pll_div2",
+-		CLK_SET_RATE_PARENT, sirfsoc_clk_vbase + SIRFSOC_CLKC_SYS3PLL_AB_CTRL1,
+-				13, 0, &sys3pll_ctrl1_lock);
+-	BUG_ON(!clk);
+-	clk = clk_register_gate(NULL, "sys3pll_clk3", "sys3pll_div3",
+-		CLK_SET_RATE_PARENT, sirfsoc_clk_vbase + SIRFSOC_CLKC_SYS3PLL_AB_CTRL1,
+-				14, 0, &sys3pll_ctrl1_lock);
+-	BUG_ON(!clk);
+-
+-	clk = clk_register(NULL, &clk_audio_dto.hw);
+-	BUG_ON(!clk);
+-
+-	clk = clk_register(NULL, &clk_disp0_dto.hw);
+-	BUG_ON(!clk);
++	for (i = 0; i < ARRAY_SIZE(dto_list); i++) {
++		clk = clk_register(NULL, &dto_list[i]->hw);
++		BUG_ON(!clk);
+ 
+-	clk = clk_register(NULL, &clk_disp1_dto.hw);
+-	BUG_ON(!clk);
++		atlas7_clks[ARRAY_SIZE(unit_list) + ARRAY_SIZE(mux_list) +
++			ARRAY_SIZE(divider_list) + i] = clk;
++	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(divider_list); i++) {
+ 		div = &divider_list[i];
+-		clk = clk_register_divider(NULL, div->div_name,
+-			div->parent_name, div->divider_flags, sirfsoc_clk_vbase + div->div_offset,
+-			div->shift, div->width, 0, div->lock);
++		if (div->flags == SIRFSOC_DIVIDOR_TYPE_TABLE)
++			clk = clk_register_divider_table(NULL, div->div_name,
++				div->parent_name, div->divider_flags,
++				sirfsoc_clk_vbase + div->div_offset,
++				div->shift, div->width, 0, pll_div_table,
++				div->lock);
++		else
++			clk = clk_register_divider(NULL, div->div_name,
++				div->parent_name, div->divider_flags,
++				sirfsoc_clk_vbase + div->div_offset,
++				div->shift, div->width, 0, div->lock);
+ 		BUG_ON(!clk);
++
+ 		clk = clk_register_gate(NULL, div->gate_name, div->div_name,
+ 			div->gate_flags, sirfsoc_clk_vbase + div->gate_offset,
+ 				div->gate_bit, 0, div->lock);
+ 		BUG_ON(!clk);
++
++		atlas7_clks[ARRAY_SIZE(unit_list) +
++				ARRAY_SIZE(mux_list) + i] = clk;
+ 	}
+ 	/* ignore selector status register check */
+ 	for (i = 0; i < ARRAY_SIZE(mux_list); i++) {
+@@ -1665,13 +1551,16 @@ static void __init atlas7_clk_init(struct device_node *np)
+ 
+ 	for (i = 0; i < ARRAY_SIZE(unit_list); i++) {
+ 		unit = &unit_list[i];
+-		atlas7_clks[i] = atlas7_unit_clk_register(NULL, unit->unit_name, unit->parent_name,
+-				unit->flags, unit->regofs, unit->bit, unit->type, unit->idle_bit, unit->lock);
++		atlas7_clks[i] = atlas7_unit_clk_register(NULL, unit->unit_name,
++				unit->parent_name, unit->flags, unit->regofs,
++				unit->bit, unit->type, unit->idle_bit,
++				unit->lock);
+ 		BUG_ON(!atlas7_clks[i]);
+ 	}
+ 
+ 	clk_data.clks = atlas7_clks;
+-	clk_data.clk_num = ARRAY_SIZE(unit_list) + ARRAY_SIZE(mux_list);
++	clk_data.clk_num = ARRAY_SIZE(unit_list) + ARRAY_SIZE(mux_list) +
++		ARRAY_SIZE(divider_list) + ARRAY_SIZE(dto_list);
+ 
+ 	ret = of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+ 	BUG_ON(ret);
+-- 
+1.9.1
