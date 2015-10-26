@@ -1,110 +1,102 @@
-Return-Path: <alim.akhtar@samsung.com>
-Message-id: <56319E36.1000700@samsung.com>
-Date: Thu, 29 Oct 2015 09:49:02 +0530
-From: Alim Akhtar <alim.akhtar@samsung.com>
-MIME-version: 1.0
-To: Lee Jones <lee.jones@linaro.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: k.kozlowski.k@gmail.com, broonie@kernel.org, mturquette@baylibre.com,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org,
- Thomas Abraham <thomas.ab@samsung.com>
-Subject: Re: [PATCH v3 2/5] mfd: sec: Add support for S2MPS15 PMIC
-References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
- <1445863883-5187-3-git-send-email-alim.akhtar@samsung.com>
- <20151026143411.GL597@x1> <563021AF.6030100@samsung.com>
- <20151028084609.GG5828@x1> <5630D12C.2030008@samsung.com>
- <20151028135149.GF4058@x1>
-In-reply-to: <20151028135149.GF4058@x1>
-Content-type: text/plain; charset=UTF-8; format=flowed
+Return-Path: <broonie@sirena.org.uk>
+Date: Mon, 26 Oct 2015 10:12:24 +0900
+From: Mark Brown <broonie@kernel.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Tim Bird <tim.bird@sonymobile.com>,
+	"frowand.list@gmail.com" <frowand.list@gmail.com>,
+	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@linux.ie>,
+	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Grant Likely <grant.likely@linaro.org>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	Linux PWM List <linux-pwm@vger.kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Message-ID: <20151026011224.GV29919@sirena.org.uk>
+References: <20151018192931.GY14956@sirena.org.uk>
+ <562A5602.7000208@sonymobile.com>
+ <CAL_JsqLNSM=+j2r9HPcbSzsZrgnGEY3=kv21EXxisKwP5+57ag@mail.gmail.com>
+ <24100858.2KIS8Y2npV@vostro.rjw.lan>
+ <20151024220648.GR29919@sirena.org.uk>
+ <CAJZ5v0hPVu7AL8zBdU4Kb7+MVfYv0mTa43RhnCyyPR+RKDbhLA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="CSNFvL6ilyiKL/Hs"
+In-Reply-To: <CAJZ5v0hPVu7AL8zBdU4Kb7+MVfYv0mTa43RhnCyyPR+RKDbhLA@mail.gmail.com>
+Subject: Re: [GIT PULL] On-demand device probing
 List-ID: <linux-clk.vger.kernel.org>
 
 
+--CSNFvL6ilyiKL/Hs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 10/28/2015 07:21 PM, Lee Jones wrote:
-> On Wed, 28 Oct 2015, Krzysztof Kozlowski wrote:
->
->> W dniu 28.10.2015 o 17:46, Lee Jones pisze:
->>> On Wed, 28 Oct 2015, Krzysztof Kozlowski wrote:
->>>
->>>> On 26.10.2015 23:34, Lee Jones wrote:
->>>>> On Mon, 26 Oct 2015, Alim Akhtar wrote:
->>>>>
->>>>>> From: Thomas Abraham <thomas.ab@samsung.com>
->>>>>>
->>>>>> Add support for S2MPS15 PMIC which is similar to S2MPS11 PMIC. The S2MPS15
->>>>>> PMIC supports 27 LDO regulators, 10 buck regulators, RTC, three 32.768KHz
->>>>>> clock outputs and battery charger. This patch adds initial support for
->>>>>> LDO and buck regulators of S2MPS15 device.
->>>>>>
->>>>>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
->>>>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->>>>>> [Alim: Added s2mps15_devs like rtc and clk and related changes]
->>>>>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>>>> ---
->>>>>>   drivers/mfd/sec-core.c              |   31 +++++++
->>>>>>   drivers/mfd/sec-irq.c               |    8 ++
->>>>>>   include/linux/mfd/samsung/core.h    |    1 +
->>>>>>   include/linux/mfd/samsung/s2mps15.h |  158 +++++++++++++++++++++++++++++++++++
->>>>>>   4 files changed, 198 insertions(+)
->>>>>>   create mode 100644 include/linux/mfd/samsung/s2mps15.h
->>>>>
->>>>> I replied to the previous set and won't be reviewing this one until
->>>>> all of the open points are solved.
->>>>
->>>> The naming and compatibles used by the driver are confusing but how it
->>>> was at beginning. Beside the confusion, the names are correct:
->>>>
->>>> 1. Main mfd driver:
->>>>   - compatible: samsung,s2mps1*-pmic
->>>>   - driver name: sec_pmic
->>>>
->>>> 2. Regulator driver:
->>>>   - no compatible (because it always searches for "regulators" subnode of
->>>> its parent... that is the convention/legacy behaviour)
->>>>   - driver name: s2mps1*-pmic
->>>>
->>>> I hope that explains your concerns.
->>>
->>> It explains *why*, but doesn't ease my concerns in any way.
->>>
->>> Unfortunately I've only just realised the disparity we have between
->>> MFD and the Regulator subsystem, which is annoying because it's now
->>> almost impossible to rectify.
->>>
->>> We should have taken one of two views.  Either a) The MFD is the PMIC
->>> device which encompasses regulator control.  In which case the MFD
->>> and it's corresponding compatible string would be named *-pmic and the
->>> regulator driver would be called *-regulator. Or b) The MFD could be
->>> considered a normal MFD and be named after the model number, then the
->>> regulator 'could' be named *-pmic.
->>>
->>> However, with reference to b), how much other Power Management does
->>> the regulator driver do besides control regulators?  I suspect not
->>> much.  Therefore my preference would be for a).  My second choice
->>> would be a mixuture of the two where nothing gets named *-pmic.  The
->>> last option on my list would be the current situation where we seem to
->>> be calling both the MFD (PMIC) itself and the Regulator driver
->>> *-pmic, which is not good.
->>
->> Starting from the description of device-family. This is called "Power
->> Management IC" but it is rather a "Power Deliver/Distribute IC". There
->> isn't any logic inside except enable/disable/configure/set low power
->> mode for regulators.
->>
->> However in the same time the IC comes (always) with:
->>   - 32kHz clocks,
->>   - RTC,
->>   - backup battery charger (no driver for it),
->>   - reset for SoC,
->>   - shutdown on thermal alert (also no driver for this control).
->>
->> The solution a) seems fine to me. Make sense and it looks entirely
->> backward compatible - only driver names will be modified.
->
-> Perfect solution from my PoV.
->
-> Thanks Krzysztof.
->
-Thanks Jones/Krzysztof as always.
-Will update the patches.
+On Sun, Oct 25, 2015 at 02:54:39PM +0100, Rafael J. Wysocki wrote:
+> On Sun, Oct 25, 2015 at 12:06 AM, Mark Brown <broonie@kernel.org> wrote:
+
+> > There's also the understanding people had that the order things get
+> > bound changes the ordering for some of the other cases (perhaps it's a
+> > good idea to do that, it seems likely to be sensible?).
+
+> But it really doesn't do that.  Also making it do so doesn't help much
+> in the cases where things can happen asynchronously (system
+> suspend/resume, runtime PM).
+
+Yeah, people seem to have that impression though. :(
+
+> If, instead, there was a way to specify a functional dependency at the
+> device registration time, it might be used to change the order of
+> everything relevant, including probe.  That should help to reduce the
+> noise you're referring to.
+
+This links back to the idea of having generic support for pre-probe
+actions which is also generally useful (the ability to do things like
+power on regulators for devices on enumerable buses so they can be
+enumerated as standard). =20
+
+--CSNFvL6ilyiKL/Hs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWLX34AAoJECTWi3JdVIfQxWcH/1aCaKRkQgKa9vAZbBaq2sSf
+30EqKg/SLlEPyozfvQqz8QTpxr1XYD4iJ3qT3048aeuYApT7TZVZUMpSpeLuuWcN
+Cmi76xZim7KYTRuT+iFewFse+gaKJyl1zpU+2O0R4VpWxUe2fxwJY159CgqS8/cO
+rv3tQ03svICO5hrXlW9tS/Z/hoGZe9FQiiWYvmvdcM3XEKYkKY9m8B0B64OJ/8Sp
+WmN+EQ1sevAGuMoa3EWIZDhYIbICzBSHA8WLWolALOmEmFEHiz/fjBSf5rYaD42U
+68oNScKwVepB4LeewE+syAzBFVMow0SfbpI6dfbwaiS64BNVbMzP5X5Jq04MZMY=
+=w1Sh
+-----END PGP SIGNATURE-----
+
+--CSNFvL6ilyiKL/Hs--
