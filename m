@@ -1,142 +1,35 @@
-Return-Path: <Tim.Bird@sonymobile.com>
-Subject: Re: [GIT PULL] On-demand device probing
-To: "frowand.list@gmail.com" <frowand.list@gmail.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>
-References: <20151018192931.GY14956@sirena.org.uk>
- <20151018193757.GA9147@kroah.com> <20151018195330.GB14956@sirena.org.uk>
- <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
- <5627B677.5090109@gmail.com> <20151021162758.GP32054@sirena.org.uk>
- <5627D6E0.5020708@gmail.com>
- <CAL_Jsq+FPtCuBnte2HTgbdpNYM=v_kLaCRcOC1kMaCQwVC=5Kw@mail.gmail.com>
- <562808AF.7090406@gmail.com>
- <CAAObsKAkyjdvNOS3+nuT0N9sudUFLsZXFtcm6Y038p+HSdsZsg@mail.gmail.com>
- <20151022144405.GC21861@kroah.com> <562930AB.1070203@gmail.com>
-CC: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Rob Herring
-	<robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>, Russell King
-	<linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan
- Williams <dan.j.williams@intel.com>, Linus Walleij
-	<linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry
- Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>,
-	=?UTF-8?Q?Terje_Bergstr=c3=b6m?= <tbergstrom@nvidia.com>, Stephen Warren
-	<swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely
-	<grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian
- Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Felipe Balbi <balbi@ti.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones
-	<lee.jones@linaro.org>, Jean-Christophe Plagniol-Villard
-	<plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List
-	<linux-pwm@vger.kernel.org>, "linux-usb@vger.kernel.org"
-	<linux-usb@vger.kernel.org>, "linux-fbdev@vger.kernel.org"
-	<linux-fbdev@vger.kernel.org>
-From: Tim Bird <tim.bird@sonymobile.com>
-Message-ID: <562A5602.7000208@sonymobile.com>
-Date: Fri, 23 Oct 2015 08:45:06 -0700
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 26 Oct 2015 15:06:41 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Joachim Eastwood <manabian@gmail.com>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] clk: lpc18xx-cgu: fix potential system hang when
+ disabling unused clocks
+Message-ID: <20151026220641.GI19782@codeaurora.org>
+References: <1445705724-20805-1-git-send-email-manabian@gmail.com>
+ <1445705724-20805-4-git-send-email-manabian@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <562930AB.1070203@gmail.com>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: tim.bird@sonymobile.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1445705724-20805-4-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/22/2015 11:53 AM, Frank Rowand wrote:
-> On 10/22/2015 7:44 AM, Greg Kroah-Hartman wrote:
->> <oops, sent too early...>
->>
->> On Thu, Oct 22, 2015 at 11:05:11AM +0200, Tomeu Vizoso wrote:
->>> But that's moot currently because Greg believes that the time spent
->>> probing devices at boot time could be reduced enough so that the order
->>> in which devices are probed becomes irrelevant. IME that would have to
->>> be under 200ms so that the user doesn't notice and that's unicorn-far
->>> from any bootlog I have ever seen.
->>
->> But as no one has actually produced a bootlog, how do you know that?
->> Where exactly is your time being spent?  What driver is causing long
->> delays?  Why is the long-delay-drivers not being done in their own
->> thread?  And most importantly, why are you ignoring the work that people
->> did back in 2008 to solve the issue on other hardware platforms?
->>
->>> Given that downstreams are already carrying as many hacks as they
->>> could think of to speed total boot up, I think this is effectively
->>> telling them to go away.
->>
->> No I'm not, I'm asking for real data, not hand-wavy-this-is-going-to
->> solve-the-random-issue-i'm-having type patch by putting random calls in
->> semi-random subsystems all over the kernel.
->>
->> And when I ask for real data, you respond with the fact that you aren't
->> trying to speed up boot time here at all, so what am I supposed to think
+On 10/24, Joachim Eastwood wrote:
+> The clock consumer (CCU) of the CGU must be able to check if a CGU
+> base clock is really running since access to the CCU registers
+> requires a running base clock. Access with a disabled base clock will
+> cause the system to hang. Fix this issue by adding code that check if
+> the parent clock is running in the is_enabled clk_ops callback. Since
+> certain clocks can be cascaded this must be added to all clock gates.
 > 
-> I also had the understanding that this patch series was about improving
-> boot time.  But I was kindly corrected that the behavior change was
-> getting the panel displaying stuff at an earlier point in the boot sequence,
-> _not_ completing the entire boot faster. 
+> The hang would occur if the boot ROM or boot loader didn't setup and
+> enable the USB0 clock. Then when the clk framework tried to access
+> the CCU register it would hang the system.
 > 
-> The claim for the current series, in patch 0 in v7 is:
-> 
->    With this series I get the kernel to output to the panel in 0.5s,
->    instead of 2.8s.
+> Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+> ---
 
-It's very common to want to get the display up before the
-rest of the system.  So wanting to accelerate one part of the boot
-at the expense to the rest of the system is a valid use case.
-Deferred initcalls, which is out of tree primarily because it requires
-the type of manual tweaking that Tomeu describes, specifically
-addressed this issue.
-> 
-> Just to get side-tracked, one other approach at ordering to reduce
-> deferrals reported a modest boot time reduction for four boards and a
-> very slight boot time increase for one other board.) The report of boot
-> times with that approach was in:
-> 
->   http://article.gmane.org/gmane.linux.drivers.devicetree/133010
-> 
-> from Alexander Holler.
-> 
-> I have not searched further to see if there is more data of boot time
-> reductions from any of the other attempts to change driver binding
-> order to move dependencies before use of a resource.  But whether
-> there is a performance improvement or not, there continues to be
-> a stream of developers creatively impacting the binding order for
-> their specific driver(s) or board.  So it seems that maybe there
-> is an underlying problem, or we don't have adequate documentation
-> explaining how to avoid a need to order bindings, or the
-> documentation exists and is not being read.
+Applied to clk-next
 
-Well, I have probe order problems unrelated to boot time, that
-I solved by resorting to putting stuff into modules and loading
-them post-boot.  So I'd be interested in easy solutions to managing
-boot order in mainline.
-
-> 
-> I have been defaulting to the position that has been asserted by
-> the device tree maintainters, that probe deferrals work just fine
-> for at least the majority of cases (and is the message I have been
-> sharing in my conference presentations about device tree).  But I
-> suspect that there is at least a small minority of cases that are not
-> well served by probe deferral.  (Not to be read as an endorsement of
-> this specific patch series, just a generic observation.)
-
-I've been worried about DT overhead adding to boot time for a while.
-And IMHO probe deferral is just about the lamest way to solve boot
-order dependencies I can imagine, from a computer science perspective.
-(Well, there's a certain elegance to it, but it's a stupid "make
-everything re-doable, back up and start over, time-wasting" elegance.)
-
-However, when Android takes 35 seconds to boot, and most people almost never
-cold-boot your product, a few seconds of kernel time-wasting on
-cold-boot seem less important. Alas, when I started working on mobile
-phones I stopped caring much about boot time.
-
-Thus, I've never worried about the DT overhead enough to actually
-measure it, as requested by Greg.  So I'll just shut up now. :-)
- -- Tim
-  
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
