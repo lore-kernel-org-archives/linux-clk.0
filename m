@@ -1,123 +1,61 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 16/19] ARM: sun5i: dt: Add DRAM gates
-Date: Fri, 30 Oct 2015 15:21:02 +0100
-Message-Id: <1446214865-3972-17-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1445812888-8170-1-git-send-email-javier@osg.samsung.com>
+References: <1445812888-8170-1-git-send-email-javier@osg.samsung.com>
+Date: Mon, 26 Oct 2015 10:02:13 +0100
+Message-ID: <CAMuHMdVGjDdJFWQTYgTpYfOTpNf_JhgXWUXLrLoVhhd=5qVEzQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: versatile: Make depend on OF when COMPILE_TEST
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Scott Branden <sbranden@broadcom.com>, linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The DRAM gates control whether the image / display devices on the SoC have
-access to the DRAM clock or not.
+On Sun, Oct 25, 2015 at 11:41 PM, Javier Martinez Canillas
+<javier@osg.samsung.com> wrote:
+> Commit 4a7748c3d641 ("clk: Allow drivers to build if COMPILE_TEST is
+> enabled") allowed clk drives to be compile tested on other archs but
+> the COMMON_CLK_VERSATILE was only enabled on platforms that already
+> selected OF support so the drivers assume it will always be enabled.
+>
+> So, restrict compile test for these drivers only if OF is enabled.
+>
+> Fixes: 4a7748c3d641 ("clk: Allow drivers to build if COMPILE_TEST is enabled")
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>
+> ---
+>
+>  drivers/clk/versatile/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
+> index fc50b6264bed..e85863cf145f 100644
+> --- a/drivers/clk/versatile/Kconfig
+> +++ b/drivers/clk/versatile/Kconfig
+> @@ -1,6 +1,6 @@
+>  config COMMON_CLK_VERSATILE
+>         bool "Clock driver for ARM Reference designs"
+> -       depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64 || COMPILE_TEST
+> +       depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64 || (COMPILE_TEST && OF)
 
-Enable it.
+I would separate the infrastructure and platform dependencies, like
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- arch/arm/boot/dts/sun5i-a10s.dtsi |  5 +++--
- arch/arm/boot/dts/sun5i-a13.dtsi  |  2 +-
- arch/arm/boot/dts/sun5i-r8.dtsi   |  2 +-
- arch/arm/boot/dts/sun5i.dtsi      | 19 +++++++++++++++++++
- 4 files changed, 24 insertions(+), 4 deletions(-)
+        depends on OF
+        depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS
+|| ARM64 || COMPILE_TEST
 
-diff --git a/arch/arm/boot/dts/sun5i-a10s.dtsi b/arch/arm/boot/dts/sun5i-a10s.dtsi
-index 0981a9e2db3b..c996b5d1851a 100644
---- a/arch/arm/boot/dts/sun5i-a10s.dtsi
-+++ b/arch/arm/boot/dts/sun5i-a10s.dtsi
-@@ -67,7 +67,7 @@
- 			allwinner,pipeline = "de_be0-lcd0-hdmi";
- 			clocks = <&ahb_gates 36>, <&ahb_gates 43>,
- 				 <&ahb_gates 44>, <&de_be_clk>,
--				 <&tcon_ch1_clk>;
-+				 <&tcon_ch1_clk>, <&dram_gates 26>;
- 			status = "disabled";
- 		};
- 
-@@ -76,7 +76,8 @@
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "de_be0-lcd0";
- 			clocks = <&ahb_gates 36>, <&ahb_gates 44>,
--				 <&de_be_clk>, <&tcon_ch0_clk>;
-+				 <&de_be_clk>, <&tcon_ch0_clk>,
-+				 <&dram_gates 26>;
- 			status = "disabled";
- 		};
- 
-diff --git a/arch/arm/boot/dts/sun5i-a13.dtsi b/arch/arm/boot/dts/sun5i-a13.dtsi
-index 130644d7e054..17b36b942d38 100644
---- a/arch/arm/boot/dts/sun5i-a13.dtsi
-+++ b/arch/arm/boot/dts/sun5i-a13.dtsi
-@@ -62,7 +62,7 @@
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "de_be0-lcd0";
- 			clocks = <&ahb_gates 36>, <&ahb_gates 44>, <&de_be_clk>,
--				 <&tcon_ch0_clk>;
-+				 <&tcon_ch0_clk>, <&dram_gates 26>;
- 			status = "disabled";
- 		};
- 	};
-diff --git a/arch/arm/boot/dts/sun5i-r8.dtsi b/arch/arm/boot/dts/sun5i-r8.dtsi
-index b1e4e0170d51..691d3de75b35 100644
---- a/arch/arm/boot/dts/sun5i-r8.dtsi
-+++ b/arch/arm/boot/dts/sun5i-r8.dtsi
-@@ -53,7 +53,7 @@
- 			allwinner,pipeline = "de_be0-lcd0-tve0";
- 			clocks = <&ahb_gates 34>, <&ahb_gates 36>,
- 				 <&ahb_gates 44>, <&de_be_clk>,
--				 <&tcon_ch1_clk>;
-+				 <&tcon_ch1_clk>, <&dram_gates 26>;
- 			status = "disabled";
- 		};
- 	};
-diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
-index 861c5a621e70..426db76c0fe6 100644
---- a/arch/arm/boot/dts/sun5i.dtsi
-+++ b/arch/arm/boot/dts/sun5i.dtsi
-@@ -338,6 +338,25 @@
- 			clock-output-names = "usb_ohci0", "usb_phy";
- 		};
- 
-+		dram_gates: clk@01c20100 {
-+			#clock-cells = <1>;
-+			compatible = "allwinner,sun5i-a13-dram-gates-clk";
-+			reg = <0x01c20100 0x4>;
-+			clocks = <&pll5 0>;
-+			clock-indices = <0>,
-+					<1>,
-+					<25>,
-+					<26>,
-+					<29>,
-+					<31>;
-+			clock-output-names = "dram_ve",
-+					     "dram_csi",
-+					     "dram_de_fe",
-+					     "dram_de_be",
-+					     "dram_ace",
-+					     "dram_iep";
-+		};
-+
- 		de_be_clk: clk@01c20104 {
- 			#clock-cells = <0>;
- 			#reset-cells = <0>;
--- 
-2.6.2
+But it's of course up to the maintainer to decide.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
