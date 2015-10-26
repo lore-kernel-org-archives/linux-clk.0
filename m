@@ -1,60 +1,71 @@
-Return-Path: <dianders@google.com>
+Return-Path: <pku.leo@gmail.com>
 MIME-Version: 1.0
-Sender: dianders@google.com
-In-Reply-To: <CAD=FV=XdVt5Uop5WAUv6vY3=qPksnc9HzR4C9CBWpXJKuteTEQ@mail.gmail.com>
-References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
-	<CAPDyKFqeo--AiW_zHHrSqoOdFNZ3J_FgJpz2L7Z8gZnNmQZSig@mail.gmail.com>
-	<CAPDyKFr6WV-o8Td9eJVkuCgaeNjdLr2GpaC32c3026bFmOJiYQ@mail.gmail.com>
-	<CAD=FV=XdVt5Uop5WAUv6vY3=qPksnc9HzR4C9CBWpXJKuteTEQ@mail.gmail.com>
-Date: Fri, 9 Oct 2015 13:11:21 -0700
-Message-ID: <CAD=FV=VaZQcbgByQOAQL4qDCCOb_pNRHnXBS77L8D-dc_eYR5A@mail.gmail.com>
-Subject: Re: [PATCH v2 0/8] mmc: dw_mmc-rockchip: allow tuning using the
- clk-phase api
-From: Doug Anderson <dianders@chromium.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Jaehoon Chung <jh80.chung@samsung.com>,
-	linux-mmc <linux-mmc@vger.kernel.org>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Alexandru Stan <amstan@chromium.org>
+Sender: pku.leo@gmail.com
+In-Reply-To: <1445587282-29529-4-git-send-email-B48286@freescale.com>
+References: <1445587282-29529-1-git-send-email-B48286@freescale.com>
+	<1445587282-29529-4-git-send-email-B48286@freescale.com>
+Date: Mon, 26 Oct 2015 17:45:22 -0500
+Message-ID: <CADRPPNSdZS0DrxauhA8AmWQrZMLUs06fxLyp4kXonooESVRiXw@mail.gmail.com>
+Subject: Re: [PATCH V6 4/6] arm64/ls1043a: add DTS for Freescale LS1043A SoC
+From: Li Yang <leoli@freescale.com>
+To: Zhiqiang Hou <B48286@freescale.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, linux-watchdog@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>, Shaohui Xie <Shaohui.Xie@freescale.com>, corbet@lwn.net,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>, mturquette@baylibre.com, wsa@the-dreams.de,
+	sboyd@codeaurora.org, wim@iguana.be, Wenbin Song <Wenbin.Song@freescale.com>,
+	Scott Wood <scottwood@freescale.com>, Hu Vincent <Mingkai.Hu@freescale.com>, linux@roeck-us.net
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Fri, Oct 23, 2015 at 3:01 AM, Zhiqiang Hou <B48286@freescale.com> wrote:
+> From: Mingkai Hu <Mingkai.Hu@freescale.com>
+>
+> LS1043a is an SoC with 4 ARMv8 A53 cores and most other IP blocks
+> similar to LS1021a which complies to Chassis 2.1 spec.
+>
+> Following levels of DTSI/DTS files have been created for the
+> LS1043A SoC family:
+>
+> - fsl-ls1043a.dtsi:
+>   DTS-Include file for FSL LS1043A SoC.
+>
+> Signed-off-by: Li Yang <leoli@freescale.com>
+> Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+> Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
+> Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
 
-On Fri, Oct 9, 2015 at 10:19 AM, Doug Anderson <dianders@chromium.org> wrote:
-> Hi,
->
-> On Fri, Oct 9, 2015 at 1:10 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->> Dough, Heiko,
->>
->> This patchset seems to be causing a boot regression for exynos5800-peach-pi [1].
->>
->> Apparently, the vmmc regulator doesn't exist for one of the controller
->> but vqmmc is. This leads to the following NULL pointer exception.
->
-> Ugh.  Hrm, it didn't used to be possible for vmmc to be NULL.  :-/  It
-> changed in v3.16:
->
->   4d1f52f mmc: core: Improve support for deferred regulators
->
-> ...and I didn't notice it (most of my development is done on 3.14).  :(
->
->
-> Is it sensible to have vqmmc without vmmc.  One option would be to
-> change mmc_regulator_get_supply() to not even bother trying to get
-> vqmmc if vmmc is not there.
->
-> Another option would be to just totally fail mmc_regulator_set_vqmmc()
-> always if vmmc is an error.  ...or assume that any bogus vmmc (either
-> vmmc is an error or regulator_get_voltage(vmmc) returns an error) is
-> 3.3V?
->
->
-> I guess the safest is to assume that bogus vmmc means 3.3V...
+Hi Arnd,
 
-Ah, doh.  Just noticed Ulf's suggestion all the way at the bottom of
-the crash info, which I somehow missed before.  Yes, let's do that.
-Heiko: are you going to re-post?
+Can you also review and merge the LS1043 device tree related patches
+in the series(3/6,4/6,6/6)?
 
--Doug
+Regards,
+Leo
+
+> ---
+> V6:
+>  - No change.
+>
+> V5:
+>  - Move gic, timer and pmu nodes out of SoC node.
+>
+> V4:
+>  - Add soc node with simple-bus compatible.
+>  - Add property interrupt-affinity for armv8 pmuv3 node.
+>
+> V3:
+>  - Add device tree node for SATA.
+>  - Remove properity enable-method for all cpu node.
+>    Remove reserved memory region for spin-table.
+>
+> V2:
+>  - Add secondary core boot method.
+>  - Move out the sysclk node from the clockgen node.
+>  - Correct the reg size of GICC.
+>
+>  arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi | 525 +++++++++++++++++++++++++
+>  1 file changed, 525 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
