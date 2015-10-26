@@ -1,120 +1,115 @@
-Return-Path: <sbranden@broadcom.com>
-Subject: Re: [PATCH v3 08/10] clk: ns2: add clock support for Broadcom
- Northstar 2 SoC
-To: Ray Jui <rjui@broadcom.com>, Jon Mason <jonmason@broadcom.com>
-References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
- <1444938513-10758-9-git-send-email-jonmason@broadcom.com>
- <56200F39.1060102@broadcom.com> <562012A8.8050707@broadcom.com>
- <562014C9.5070708@broadcom.com> <20151015211025.GP32089@broadcom.com>
- <56201766.9020206@broadcom.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>, "Hauke
- Mehrtens" <hauke@hauke-m.de>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
-From: Scott Branden <sbranden@broadcom.com>
-Message-ID: <562019DD.3000206@broadcom.com>
-Date: Thu, 15 Oct 2015 14:25:49 -0700
-MIME-Version: 1.0
-In-Reply-To: <56201766.9020206@broadcom.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Return-Path: sbranden@broadcom.com
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 07/13 v2] clk: versatile-icst: refactor to allocate regmap separately
+Date: Mon, 26 Oct 2015 14:33:39 +0100
+Message-Id: <1445866419-13955-1-git-send-email-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 15-10-15 02:15 PM, Ray Jui wrote:
->
->
-> On 10/15/2015 2:10 PM, Jon Mason wrote:
->> On Thu, Oct 15, 2015 at 02:04:09PM -0700, Scott Branden wrote:
->>> Hi Ray,
->>>
->>> Comment at near end.
->>>
->>> On 15-10-15 01:55 PM, Ray Jui wrote:
->>>>
->>>>
->>>> On 10/15/2015 1:40 PM, Scott Branden wrote:
->>>>> We need some sort of kconfig option to differentiate NS2 clock driver
->>>> >from being pulled in all the time.
->>>>>
->>>>> On 15-10-15 12:48 PM, Jon Mason wrote:
->>>>>> The Broadcom Northstar 2 SoC is architected under the iProc
->>>>>> architecture. It has the following PLLs: GENPLL SCR, GENPLL SW,
->>>>>> LCPLL DDR, LCPLL Ports, all derived from an onboard crystal.
->>>>>>
->>>>>> Signed-off-by: Jon Mason <jonmason@broadcom.com>
->>>>>> ---
->>>>>>    drivers/clk/Makefile                |   2 +-
->>>>>>    drivers/clk/bcm/Makefile            |   1 +
->>>>>>    drivers/clk/bcm/clk-ns2.c           | 288
->>>>>> ++++++++++++++++++++++++++++++++++++
->>>>>>    include/dt-bindings/clock/bcm-ns2.h |  72 +++++++++
->>>>>>    4 files changed, 362 insertions(+), 1 deletion(-)
->>>>>>    create mode 100644 drivers/clk/bcm/clk-ns2.c
->>>>>>    create mode 100644 include/dt-bindings/clock/bcm-ns2.h
->>>>>>
->>>>>> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
->>>>>> index d08b3e5..6124bd3 100644
->>>>>> --- a/drivers/clk/Makefile
->>>>>> +++ b/drivers/clk/Makefile
->>>>>> @@ -47,7 +47,7 @@ obj-$(CONFIG_COMMON_CLK_WM831X)        += clk-wm831x.o
->>>>>>    obj-$(CONFIG_COMMON_CLK_XGENE)        += clk-xgene.o
->>>>>>    obj-$(CONFIG_COMMON_CLK_PWM)        += clk-pwm.o
->>>>>>    obj-$(CONFIG_COMMON_CLK_AT91)        += at91/
->>>>>> -obj-$(CONFIG_ARCH_BCM)            += bcm/
->>>>>> +obj-y                    += bcm/
->>>>>>    obj-$(CONFIG_ARCH_BERLIN)        += berlin/
->>>>>>    obj-$(CONFIG_ARCH_HISI)            += hisilicon/
->>>>>>    obj-$(CONFIG_ARCH_MXC)            += imx/
->>>>>> diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
->>>>>> index e258b28..2d1cbc5 100644
->>>>>> --- a/drivers/clk/bcm/Makefile
->>>>>> +++ b/drivers/clk/bcm/Makefile
->>>>>> @@ -3,6 +3,7 @@ obj-$(CONFIG_CLK_BCM_KONA)    += clk-kona-setup.o
->>>>>>    obj-$(CONFIG_CLK_BCM_KONA)    += clk-bcm281xx.o
->>>>>>    obj-$(CONFIG_CLK_BCM_KONA)    += clk-bcm21664.o
->>>>>>    obj-$(CONFIG_COMMON_CLK_IPROC)    += clk-iproc-armpll.o
->>>>>> clk-iproc-pll.o clk-iproc-asiu.o
->>>>>> +obj-$(CONFIG_COMMON_CLK_IPROC)    += clk-ns2.o
->>>>>
->>>>> NS2 code is dragged in for all IPROC SoCs.  We need a config option for
->>>>> NS2 (CONFIG_ARCH_BCM_NS2) to avoid this (if Arnd allows this for ARMv8
->>>>> processors... ?).
->>>>>
->>>>> You can see below ARMv7 processors don't have this problem.
->>>>>
->>>>
->>>> The arm64 maintainers (Catalin, Mark, and etc.) stated they only want
->>>> one ARCH options per chip family.
->>>>
->>>>> If not we need to add CONFIG_CLK_NS2.
->>>>
->>>> If using CONFIG_CLK_NS2, how is it going to be enabled/selected?
->>>
->>> Since CONFIG_ARCH_BCM_NS2 isn't "allowed" to be introduced we will
->>> need to create and select a CONFIG_CLK_BCM_NS2 in the defconfig
->>> instead.
->>
->> Is this better than the binary becoming slightly bigger?  I thought
->> the extra complexity was worse than having an unused chunk of clk code
->> (and Kona is already doing the same thing above).  I believe Ray was
->> in agreement with me during the internal review of this code.
->>
->> Thanks,
->> Jon
->>
->
-> Yes, I'm okay with leaving it as it is. I even prefer changing the
-> current Makefile to make all iProc based core clock drivers and SoC
-> specific clock tables under CONFIG_COMMON_CLK_IPROC, which is what some
-> of the other vendors do.
->
-I'd leave it exactly as is then rather than pulling in more dead code 
-when not needed.  This ns2 clock code is very minor compared to other 
-code bloat in the kernel and drivers.
->>>>
->>>> Ray
->>>>
->>>
->>> Regards,
->>>   Scott
+Break out the registration function so it creates a regmap and
+pass to the setup function, so the latter can be shared with
+a device tree probe function that already has a regmap.
+
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ChangeLog v1->v2:
+- Use ERR_CAST() instead of unnecessary intermediate ret variable
+- Pass struct device * pointer to regmap_init_mmio()
+
+I'm looking for an ACK from the CLK maintainers to take this
+through the ARM SoC tree once the series stabilize.
+---
+ drivers/clk/versatile/clk-icst.c | 47 ++++++++++++++++++++++++----------------
+ 1 file changed, 28 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
+index 5fc22922718a..87bd4667b126 100644
+--- a/drivers/clk/versatile/clk-icst.c
++++ b/drivers/clk/versatile/clk-icst.c
+@@ -20,6 +20,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/io.h>
+ #include <linux/regmap.h>
++#include <linux/mfd/syscon.h>
+ 
+ #include "clk-icst.h"
+ 
+@@ -140,21 +141,16 @@ static const struct clk_ops icst_ops = {
+ 	.set_rate = icst_set_rate,
+ };
+ 
+-struct clk *icst_clk_register(struct device *dev,
+-			const struct clk_icst_desc *desc,
+-			const char *name,
+-			const char *parent_name,
+-			void __iomem *base)
++static struct clk *icst_clk_setup(struct device *dev,
++				  const struct clk_icst_desc *desc,
++				  const char *name,
++				  const char *parent_name,
++				  struct regmap *map)
+ {
+ 	struct clk *clk;
+ 	struct clk_icst *icst;
+ 	struct clk_init_data init;
+ 	struct icst_params *pclone;
+-	struct regmap_config icst_regmap_conf = {
+-		.reg_bits = 32,
+-		.val_bits = 32,
+-		.reg_stride = 4,
+-	};
+ 
+ 	icst = kzalloc(sizeof(struct clk_icst), GFP_KERNEL);
+ 	if (!icst) {
+@@ -174,15 +170,7 @@ struct clk *icst_clk_register(struct device *dev,
+ 	init.flags = CLK_IS_ROOT;
+ 	init.parent_names = (parent_name ? &parent_name : NULL);
+ 	init.num_parents = (parent_name ? 1 : 0);
+-	icst->map = regmap_init_mmio(dev, base, &icst_regmap_conf);
+-	if (IS_ERR(icst->map)) {
+-		int ret;
+-
+-		pr_err("could not initialize ICST regmap\n");
+-		kfree(icst);
+-		ret = PTR_ERR(icst->map);
+-		return ERR_PTR(ret);
+-	}
++	icst->map = map;
+ 	icst->hw.init = &init;
+ 	icst->params = pclone;
+ 	icst->vcoreg_off = desc->vco_offset;
+@@ -196,4 +184,25 @@ struct clk *icst_clk_register(struct device *dev,
+ 
+ 	return clk;
+ }
++
++struct clk *icst_clk_register(struct device *dev,
++			const struct clk_icst_desc *desc,
++			const char *name,
++			const char *parent_name,
++			void __iomem *base)
++{
++	struct regmap_config icst_regmap_conf = {
++		.reg_bits = 32,
++		.val_bits = 32,
++		.reg_stride = 4,
++	};
++	struct regmap *map;
++
++	map = regmap_init_mmio(dev, base, &icst_regmap_conf);
++	if (IS_ERR(map)) {
++		pr_err("could not initialize ICST regmap\n");
++		return ERR_CAST(map);
++	}
++	return icst_clk_setup(dev, desc, name, parent_name, map);
++}
+ EXPORT_SYMBOL_GPL(icst_clk_register);
+-- 
+2.4.3
