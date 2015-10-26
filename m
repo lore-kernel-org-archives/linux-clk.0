@@ -1,102 +1,58 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v3 4/5] clk: s2mps15: Add support for S2MPS15 clocks
-To: Alim Akhtar <alim.akhtar@samsung.com>, lee.jones@linaro.org,
- broonie@kernel.org
-References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
- <1445863883-5187-5-git-send-email-alim.akhtar@samsung.com>
- <5630243E.1080608@samsung.com>
-Cc: mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, rtc-linux@googlegroups.com,
- linux-kernel@vger.kernel.org
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <5630503A.3070404@samsung.com>
-Date: Wed, 28 Oct 2015 13:34:02 +0900
-MIME-version: 1.0
-In-reply-to: <5630243E.1080608@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:38962 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753315AbbJZMAn (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 26 Oct 2015 08:00:43 -0400
+From: Andrzej Hajda <a.hajda@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Hyungwon Hwang <human.hwang@samsung.com>
+Subject: [PATCH v2 09/10] dt-bindings: video: exynos5433-decon: add bindings
+ for DECON-TV
+Date: Mon, 26 Oct 2015 12:59:56 +0100
+Message-id: <1445860796-23045-1-git-send-email-a.hajda@samsung.com>
+In-reply-to: <CAJKOXPfXrEwu1egSnLxwYofu_scskkPRKOjOCskObPFn9yVcJw@mail.gmail.com>
+References: <CAJKOXPfXrEwu1egSnLxwYofu_scskkPRKOjOCskObPFn9yVcJw@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 28.10.2015 10:26, Krzysztof Kozlowski wrote:
-> On 26.10.2015 21:51, Alim Akhtar wrote:
->> S2MPS15 PMIC has three 32k buffered clocks outputs. This patch
->> adds supports for the same to the s2mps11 clock driver.
->>
->> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->> ---
->>  drivers/clk/Kconfig       |    5 +++--
->>  drivers/clk/clk-s2mps11.c |   24 ++++++++++++++++++++++++
->>  2 files changed, 27 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
->> index a1fa61159179..037a314b5d76 100644
->> --- a/drivers/clk/Kconfig
->> +++ b/drivers/clk/Kconfig
->> @@ -120,9 +120,10 @@ config COMMON_CLK_S2MPS11
->>  	tristate "Clock driver for S2MPS1X/S5M8767 MFD"
->>  	depends on MFD_SEC_CORE
->>  	---help---
->> -	  This driver supports S2MPS11/S2MPS14/S5M8767 crystal oscillator
->> +	  This driver supports S2MPS1X/S5M8767 crystal oscillator
->>  	  clock. These multi-function devices have two (S2MPS14) or three
->> -	  (S2MPS11, S5M8767) fixed-rate oscillators, clocked at 32KHz each.
->> +	  (S2MPS11/S2MPS13/S2MPS15/S5M8767) fixed-rate oscillators,
->> +	  clocked at 32KHz each.
->>  
->>  config CLK_TWL6040
->>  	tristate "External McPDM functional clock from twl6040"
->> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
->> index d266299dfdb1..455500dca653 100644
->> --- a/drivers/clk/clk-s2mps11.c
->> +++ b/drivers/clk/clk-s2mps11.c
->> @@ -25,6 +25,7 @@
->>  #include <linux/mfd/samsung/s2mps11.h>
->>  #include <linux/mfd/samsung/s2mps13.h>
->>  #include <linux/mfd/samsung/s2mps14.h>
->> +#include <linux/mfd/samsung/s2mps15.h>
->>  #include <linux/mfd/samsung/s5m8767.h>
->>  #include <linux/mfd/samsung/core.h>
->>  
->> @@ -148,6 +149,24 @@ static struct clk_init_data s2mps14_clks_init[S2MPS11_CLKS_NUM] = {
->>  	},
->>  };
->>  
->> +static struct clk_init_data s2mps15_clks_init[S2MPS11_CLKS_NUM] = {
->> +	[S2MPS11_CLK_AP] = {
->> +		.name = "s2mps15_ap",
->> +		.ops = &s2mps11_clk_ops,
->> +		.flags = CLK_IS_ROOT,
->> +	},
->> +	[S2MPS11_CLK_CP] = {
->> +		.name = "s2mps15_cp",
->> +		.ops = &s2mps11_clk_ops,
->> +		.flags = CLK_IS_ROOT,
->> +	},
->> +	[S2MPS11_CLK_BT] = {
->> +		.name = "s2mps15_bt",
->> +		.ops = &s2mps11_clk_ops,
->> +		.flags = CLK_IS_ROOT,
->> +	},
->> +};
->> +
->>  static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev,
->>  		struct clk_init_data *clks_init)
->>  {
->> @@ -207,6 +226,10 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
->>  		s2mps11_reg = S2MPS14_REG_RTCCTRL;
->>  		clks_init = s2mps14_clks_init;
->>  		break;
->> +	case S2MPS15X:
->> +		s2mps11_reg = S2MPS15_REG_RTC_BUF;
->> +		clks_init = s2mps15_clks_init;
-> 
-> Another question (after looking at RTC driver):
-> Is this the same register address as S2MPS14?
+DECON-TV(Display and Enhancement Controller for TV) is a variation
+of DECON IP. Its main purpose is to produce video stream for HDMI IP.
 
-I found the answer - this is the same address as in S2MPS13 and S2MPS14:
-0xc. The S2MPS14 has only two clocks though but S2MPS13 has three.
-Again, as in RTC, you should re-use existing support.
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+Hi Krzysztof,
 
-It looks there is no need for this patch at all.
+I have decided to skip cleanup part as it would require more work,
+not related to this patchset.
 
-Best regards,
-Krzysztof
+Regards
+Andrzej
+
+ Documentation/devicetree/bindings/video/exynos5433-decon.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/video/exynos5433-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+index 3dff78b..c9fd7b3 100644
+--- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
++++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+@@ -5,7 +5,8 @@ Exynos series of SoCs which transfers the image data from a video memory
+ buffer to an external LCD interface.
+ 
+ Required properties:
+-- compatible: value should be "samsung,exynos5433-decon";
++- compatible: value should be one of:
++	"samsung,exynos5433-decon", "samsung,exynos5433-decon-tv";
+ - reg: physical base address and length of the DECON registers set.
+ - interrupts: should contain a list of all DECON IP block interrupts in the
+ 	      order: VSYNC, LCD_SYSTEM. The interrupt specifier format
+-- 
+1.9.1
+
