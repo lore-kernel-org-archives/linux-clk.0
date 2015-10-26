@@ -1,477 +1,58 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	agross@codeaurora.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	bjorn.andersson@sonymobile.com,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v3 5/8] clk: qcom: Add support for RPM Clocks
-Date: Tue, 20 Oct 2015 19:57:57 +0300
-Message-Id: <1445360280-2347-6-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1445360280-2347-1-git-send-email-georgi.djakov@linaro.org>
-References: <1445360280-2347-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <alim.akhtar@samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+To: lee.jones@linaro.org, broonie@kernel.org
+Cc: k.kozlowski@samsung.com, mturquette@baylibre.com,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/5] mfd: sec: add S2MPS15 PMIC support
+Date: Mon, 26 Oct 2015 18:21:17 +0530
+Message-id: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds initial support for clocks controlled by the Resource
-Power Manager (RPM) processor found on some Qualcomm SoCs.
+Samsung's S2MPS15 PMIC is targetted to be used with Samsung's Exynos7 SoC.
+The S2MPS15 PMIC is similar in functionality to S2MPS11/14 PMIC. It contains
+27 LDO and 10 Buck regulators, RTC, three 32.768 KHz clock outputs and allows
+programming these blocks via a I2C interface. This patch series adds initial
+support for LDO/Buck regulators of S2MPS15 PMIC.
 
-The RPM is a dedicated hardware engine for managing the shared
-SoC resources in order to keep the lowest power profile. It
-communicates with other hardware subsystems via shared memory
-and accepts clock requests, aggregates the requests and turns
-the clocks on/off or scales them on demand.
+Changes since v2:
+* Addressed Lee Jones review comments.
 
-This driver is based on the codeaurora.org driver:
-https://www.codeaurora.org/cgit/quic/la/kernel/msm-3.10/tree/drivers/clk/qcom/clock-rpm.c
+Changes since v1:
+* Added suggestion from Krzysztof [1].
+* Added s2mps15's 32.768 clocks support.
+* Added s2mps15's rtc support.
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- drivers/clk/qcom/Kconfig       |    3 +
- drivers/clk/qcom/Makefile      |    1 +
- drivers/clk/qcom/clk-smd-rpm.c |  260 ++++++++++++++++++++++++++++++++++++++++
- drivers/clk/qcom/clk-smd-rpm.h |  142 ++++++++++++++++++++++
- 4 files changed, 406 insertions(+)
- create mode 100644 drivers/clk/qcom/clk-smd-rpm.c
- create mode 100644 drivers/clk/qcom/clk-smd-rpm.h
+V1 of these patches (with a lesser features) were posted a year back,
+since then there is not much progress on this, this is my attempt to
+move things forward.
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index ee4c83aab4f4..f06a331e9a24 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -1,3 +1,6 @@
-+config QCOM_CLK_SMD_RPM
-+	bool
-+
- config QCOM_GDSC
- 	bool
- 	select PM_GENERIC_DOMAINS if PM
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index fe6252349e55..b0bc0d3d585f 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -9,6 +9,7 @@ clk-qcom-y += clk-branch.o
- clk-qcom-y += clk-regmap-divider.o
- clk-qcom-y += clk-regmap-mux.o
- clk-qcom-y += reset.o
-+clk-qcom-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
- clk-qcom-$(CONFIG_QCOM_GDSC) += gdsc.o
- 
- obj-$(CONFIG_APQ_GCC_8084) += gcc-apq8084.o
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-new file mode 100644
-index 000000000000..aa634bdf0aae
---- /dev/null
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -0,0 +1,260 @@
-+/*
-+ * Copyright (c) 2015, Linaro Limited
-+ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/export.h>
-+#include <linux/kernel.h>
-+#include <linux/mutex.h>
-+#include <linux/soc/qcom/smd-rpm.h>
-+
-+#include "clk-smd-rpm.h"
-+
-+#define to_clk_smd_rpm(_hw) container_of(_hw, struct clk_smd_rpm, hw)
-+
-+static DEFINE_MUTEX(rpm_clk_lock);
-+
-+static int clk_smd_rpm_set_rate_active(struct clk_smd_rpm *r,
-+				       unsigned long value)
-+{
-+	struct clk_smd_rpm_req req = {
-+		.key = r->rpm_key,
-+		.nbytes = sizeof(u32),
-+		.value = DIV_ROUND_UP(value, 1000), /* RPM expects kHz */
-+	};
-+
-+	return qcom_rpm_smd_write(r->rpm, QCOM_SMD_RPM_ACTIVE_STATE,
-+				  r->rpm_res_type, r->rpm_clk_id, &req,
-+				  sizeof(req));
-+}
-+
-+static int clk_smd_rpm_set_rate_sleep(struct clk_smd_rpm *r,
-+				      unsigned long value)
-+{
-+	struct clk_smd_rpm_req req = {
-+		.key = r->rpm_key,
-+		.nbytes = sizeof(u32),
-+		.value = DIV_ROUND_UP(value, 1000), /* RPM expects kHz */
-+	};
-+
-+	return qcom_rpm_smd_write(r->rpm, QCOM_SMD_RPM_SLEEP_STATE,
-+				  r->rpm_res_type, r->rpm_clk_id, &req,
-+				  sizeof(req));
-+}
-+
-+static void to_active_sleep(struct clk_smd_rpm *r, unsigned long rate,
-+			    unsigned long *active, unsigned long *sleep)
-+{
-+	*active = rate;
-+
-+	/*
-+	 * Active-only clocks don't care what the rate is during sleep. So,
-+	 * they vote for zero.
-+	 */
-+	if (r->active_only)
-+		*sleep = 0;
-+	else
-+		*sleep = *active;
-+}
-+
-+static int clk_smd_rpm_prepare(struct clk_hw *hw)
-+{
-+	struct clk_smd_rpm *r = to_clk_smd_rpm(hw);
-+	struct clk_smd_rpm *peer = r->peer;
-+	unsigned long this_rate = 0, this_sleep_rate = 0;
-+	unsigned long peer_rate = 0, peer_sleep_rate = 0;
-+	unsigned long active_rate, sleep_rate;
-+	int ret = 0;
-+
-+	mutex_lock(&rpm_clk_lock);
-+
-+	/* Don't send requests to the RPM if the rate has not been set. */
-+	if (!r->rate)
-+		goto out;
-+
-+	to_active_sleep(r, r->rate, &this_rate, &this_sleep_rate);
-+
-+	/* Take peer clock's rate into account only if it's enabled. */
-+	if (peer->enabled)
-+		to_active_sleep(peer, peer->rate,
-+				&peer_rate, &peer_sleep_rate);
-+
-+	active_rate = max(this_rate, peer_rate);
-+
-+	if (r->branch)
-+		active_rate = !!active_rate;
-+
-+	ret = clk_smd_rpm_set_rate_active(r, active_rate);
-+	if (ret)
-+		goto out;
-+
-+	sleep_rate = max(this_sleep_rate, peer_sleep_rate);
-+	if (r->branch)
-+		sleep_rate = !!sleep_rate;
-+
-+	ret = clk_smd_rpm_set_rate_sleep(r, sleep_rate);
-+	if (ret)
-+		/* Undo the active set vote and restore it */
-+		ret = clk_smd_rpm_set_rate_active(r, peer_rate);
-+
-+out:
-+	if (!ret)
-+		r->enabled = true;
-+
-+	mutex_unlock(&rpm_clk_lock);
-+
-+	return ret;
-+}
-+
-+static void clk_smd_rpm_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_smd_rpm *r = to_clk_smd_rpm(hw);
-+
-+	mutex_lock(&rpm_clk_lock);
-+
-+	if (r->rate) {
-+		struct clk_smd_rpm *peer = r->peer;
-+		unsigned long peer_rate = 0, peer_sleep_rate = 0;
-+		unsigned long active_rate, sleep_rate;
-+		int ret;
-+
-+		/* Take peer clock's rate into account only if it's enabled. */
-+		if (peer->enabled)
-+			to_active_sleep(peer, peer->rate, &peer_rate,
-+					&peer_sleep_rate);
-+
-+		active_rate = r->branch ? !!peer_rate : peer_rate;
-+		ret = clk_smd_rpm_set_rate_active(r, active_rate);
-+		if (ret)
-+			goto out;
-+
-+		sleep_rate = r->branch ? !!peer_sleep_rate : peer_sleep_rate;
-+		ret = clk_smd_rpm_set_rate_sleep(r, sleep_rate);
-+		if (ret)
-+			goto out;
-+	}
-+	r->enabled = false;
-+
-+out:
-+	mutex_unlock(&rpm_clk_lock);
-+}
-+
-+static int clk_smd_rpm_set_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long parent_rate)
-+{
-+	struct clk_smd_rpm *r = to_clk_smd_rpm(hw);
-+	int ret = 0;
-+
-+	mutex_lock(&rpm_clk_lock);
-+
-+	if (r->enabled) {
-+		struct clk_smd_rpm *peer = r->peer;
-+		unsigned long active_rate, sleep_rate;
-+		unsigned long this_rate = 0, this_sleep_rate = 0;
-+		unsigned long peer_rate = 0, peer_sleep_rate = 0;
-+
-+		to_active_sleep(r, rate, &this_rate, &this_sleep_rate);
-+
-+		/* Take peer clock's rate into account only if it's enabled. */
-+		if (peer->enabled)
-+			to_active_sleep(peer, peer->rate,
-+					&peer_rate, &peer_sleep_rate);
-+
-+		active_rate = max(this_rate, peer_rate);
-+		ret = clk_smd_rpm_set_rate_active(r, active_rate);
-+		if (ret)
-+			goto out;
-+
-+		sleep_rate = max(this_sleep_rate, peer_sleep_rate);
-+		ret = clk_smd_rpm_set_rate_sleep(r, sleep_rate);
-+		if (ret)
-+			goto out;
-+	}
-+	r->rate = rate;
-+out:
-+	mutex_unlock(&rpm_clk_lock);
-+
-+	return ret;
-+}
-+
-+static long clk_smd_rpm_round_rate(struct clk_hw *hw, unsigned long rate,
-+				   unsigned long *parent_rate)
-+{
-+	/*
-+	 * RPM handles rate rounding and we don't have a way to
-+	 * know what the rate will be, so just return whatever
-+	 * rate is requested.
-+	 */
-+	return rate;
-+}
-+
-+static unsigned long clk_smd_rpm_recalc_rate(struct clk_hw *hw,
-+					     unsigned long parent_rate)
-+{
-+	struct clk_smd_rpm *r = to_clk_smd_rpm(hw);
-+
-+	/*
-+	 * RPM handles rate rounding and we don't have a way to
-+	 * know what the rate will be, so just return whatever
-+	 * rate was set.
-+	 */
-+	return r->rate;
-+}
-+
-+int clk_smd_rpm_enable_scaling(struct qcom_smd_rpm *rpm)
-+{
-+	int ret;
-+	struct clk_smd_rpm_req req = {
-+		.key = QCOM_RPM_SMD_KEY_ENABLE,
-+		.nbytes = sizeof(u32),
-+		.value = 1,
-+	};
-+
-+	ret = qcom_rpm_smd_write(rpm, QCOM_SMD_RPM_SLEEP_STATE,
-+				 QCOM_SMD_RPM_MISC_CLK,
-+				 QCOM_RPM_SCALING_ENABLE_ID, &req, sizeof(req));
-+	if (ret) {
-+		pr_err("RPM clock scaling (sleep set) not enabled!\n");
-+		return ret;
-+	}
-+
-+	ret = qcom_rpm_smd_write(rpm, QCOM_SMD_RPM_ACTIVE_STATE,
-+				 QCOM_SMD_RPM_MISC_CLK,
-+				 QCOM_RPM_SCALING_ENABLE_ID, &req, sizeof(req));
-+	if (ret) {
-+		pr_err("RPM clock scaling (active set) not enabled!\n");
-+		return ret;
-+	}
-+
-+	pr_debug("%s: RPM clock scaling is enabled\n", __func__);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(clk_smd_rpm_enable_scaling);
-+
-+const struct clk_ops clk_smd_rpm_ops = {
-+	.prepare = clk_smd_rpm_prepare,
-+	.unprepare = clk_smd_rpm_unprepare,
-+	.set_rate = clk_smd_rpm_set_rate,
-+	.round_rate = clk_smd_rpm_round_rate,
-+	.recalc_rate = clk_smd_rpm_recalc_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_smd_rpm_ops);
-+
-+const struct clk_ops clk_smd_rpm_branch_ops = {
-+	.prepare = clk_smd_rpm_prepare,
-+	.unprepare = clk_smd_rpm_unprepare,
-+	.round_rate = clk_smd_rpm_round_rate,
-+	.recalc_rate = clk_smd_rpm_recalc_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_smd_rpm_branch_ops);
-diff --git a/drivers/clk/qcom/clk-smd-rpm.h b/drivers/clk/qcom/clk-smd-rpm.h
-new file mode 100644
-index 000000000000..d5dafad6b0fc
---- /dev/null
-+++ b/drivers/clk/qcom/clk-smd-rpm.h
-@@ -0,0 +1,142 @@
-+/*
-+ * Copyright (c) 2015, Linaro Limited
-+ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef __QCOM_CLK_SMD_RPM_H__
-+#define __QCOM_CLK_SMD_RPM_H__
-+
-+#include <linux/clk-provider.h>
-+
-+#define QCOM_RPM_KEY_SOFTWARE_ENABLE			0x6e657773
-+#define QCOM_RPM_KEY_PIN_CTRL_CLK_BUFFER_ENABLE_KEY	0x62636370
-+#define QCOM_RPM_SMD_KEY_RATE				0x007a484b
-+#define QCOM_RPM_SMD_KEY_ENABLE				0x62616e45
-+#define QCOM_RPM_SMD_KEY_STATE				0x54415453
-+#define QCOM_RPM_SCALING_ENABLE_ID			0x2
-+
-+struct qcom_smd_rpm;
-+
-+struct clk_smd_rpm {
-+	const int rpm_res_type;
-+	const int rpm_key;
-+	const int rpm_clk_id;
-+	const int rpm_status_id;
-+	const bool active_only;
-+	bool enabled;
-+	bool branch;
-+	struct clk_smd_rpm *peer;
-+	struct clk_hw hw;
-+	unsigned long rate;
-+	struct qcom_smd_rpm *rpm;
-+};
-+
-+struct clk_smd_rpm_req {
-+	__le32 key;
-+	__le32 nbytes;
-+	__le32 value;
-+};
-+
-+extern const struct clk_ops clk_smd_rpm_ops;
-+extern const struct clk_ops clk_smd_rpm_branch_ops;
-+int clk_smd_rpm_enable_scaling(struct qcom_smd_rpm *rpm);
-+
-+#define __DEFINE_CLK_SMD_RPM(_name, active, type, r_id, stat_id, dep, key) \
-+	static struct clk_smd_rpm active; \
-+	static struct clk_smd_rpm _name = { \
-+		.rpm_res_type = (type), \
-+		.rpm_clk_id = (r_id), \
-+		.rpm_status_id = (stat_id), \
-+		.rpm_key = (key), \
-+		.peer = &active, \
-+		.rate = INT_MAX, \
-+		.hw.init = &(struct clk_init_data){ \
-+			.ops = &clk_smd_rpm_ops, \
-+			.name = #_name, \
-+			.parent_names = (const char *[]){ "xo_board" }, \
-+			.num_parents = 1, \
-+		}, \
-+	}; \
-+	static struct clk_smd_rpm active = { \
-+		.rpm_res_type = (type), \
-+		.rpm_clk_id = (r_id), \
-+		.rpm_status_id = (stat_id), \
-+		.rpm_key = (key), \
-+		.peer = &_name, \
-+		.active_only = true, \
-+		.rate = INT_MAX, \
-+		.hw.init = &(struct clk_init_data){ \
-+			.ops = &clk_smd_rpm_ops, \
-+			.name = #active, \
-+			.parent_names = (const char *[]){ "xo_board" }, \
-+			.num_parents = 1, \
-+		}, \
-+	};
-+
-+#define __DEFINE_CLK_SMD_RPM_BRANCH(_name, active, type, r_id, stat_id, r, \
-+				key) \
-+	static struct clk_smd_rpm active; \
-+	static struct clk_smd_rpm _name = { \
-+		.rpm_res_type = (type), \
-+		.rpm_clk_id = (r_id), \
-+		.rpm_status_id = (stat_id), \
-+		.rpm_key = (key), \
-+		.peer = &active, \
-+		.branch = true, \
-+		.rate = (r), \
-+		.hw.init = &(struct clk_init_data){ \
-+			.ops = &clk_smd_rpm_branch_ops, \
-+			.name = #_name, \
-+			.parent_names = (const char *[]){ "xo_board" }, \
-+			.num_parents = 1, \
-+		}, \
-+	}; \
-+	static struct clk_smd_rpm active = { \
-+		.rpm_res_type = (type), \
-+		.rpm_clk_id = (r_id), \
-+		.rpm_status_id = (stat_id), \
-+		.rpm_key = (key), \
-+		.peer = &_name, \
-+		.active_only = true, \
-+		.branch = true, \
-+		.rate = (r), \
-+		.hw.init = &(struct clk_init_data){ \
-+			.ops = &clk_smd_rpm_branch_ops, \
-+			.name = #active, \
-+			.parent_names = (const char *[]){ "xo_board" }, \
-+			.num_parents = 1, \
-+		}, \
-+	};
-+
-+#define DEFINE_CLK_SMD_RPM(_name, active, type, r_id, dep) \
-+		__DEFINE_CLK_SMD_RPM(_name, active, type, r_id, 0, dep, \
-+		QCOM_RPM_SMD_KEY_RATE)
-+
-+#define DEFINE_CLK_SMD_RPM_BRANCH(_name, active, type, r_id, r) \
-+		__DEFINE_CLK_SMD_RPM_BRANCH(_name, active, type, r_id, 0, r, \
-+		QCOM_RPM_SMD_KEY_ENABLE)
-+
-+#define DEFINE_CLK_SMD_RPM_QDSS(_name, active, type, r_id) \
-+		__DEFINE_CLK_SMD_RPM(_name, active, type, r_id, \
-+		0, 0, QCOM_RPM_SMD_KEY_STATE)
-+
-+#define DEFINE_CLK_SMD_RPM_XO_BUFFER(_name, active, r_id) \
-+		__DEFINE_CLK_SMD_RPM_BRANCH(_name, active, \
-+		QCOM_SMD_RPM_CLK_BUF_A, r_id, 0, 1000, \
-+		QCOM_RPM_KEY_SOFTWARE_ENABLE)
-+
-+#define DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(_name, active, r_id) \
-+		__DEFINE_CLK_SMD_RPM_BRANCH(_name, active, \
-+		QCOM_SMD_RPM_CLK_BUF_A, r_id, 0, 1000, \
-+		QCOM_RPM_KEY_PIN_CTRL_CLK_BUFFER_ENABLE_KEY)
-+
-+#endif
+[1]-> https://lkml.org/lkml/2014/10/14/67
+
+This series is based on linux-next-20151022.
+This is tested on exynos7-espresso board.
+
+Alim Akhtar (2):
+  clk: s2mps15: Add support for S2MPS15 clocks
+  drivers/rtc/rtc-s5m.c: add support for S2MPS15 RTC
+
+Thomas Abraham (3):
+  dt-bindings: mfd: s2mps11: add documentation for s2mps15 PMIC
+  mfd: sec: Add support for S2MPS15 PMIC
+  regulator: s2mps11: add support for S2MPS15 regulators
+
+ Documentation/devicetree/bindings/mfd/s2mps11.txt |   23 +--
+ drivers/clk/Kconfig                               |    5 +-
+ drivers/clk/clk-s2mps11.c                         |   24 ++++
+ drivers/mfd/sec-core.c                            |   31 ++++
+ drivers/mfd/sec-irq.c                             |    8 ++
+ drivers/regulator/Kconfig                         |    4 +-
+ drivers/regulator/s2mps11.c                       |  135 +++++++++++++++++-
+ drivers/rtc/rtc-s5m.c                             |   14 +-
+ include/linux/mfd/samsung/core.h                  |    1 +
+ include/linux/mfd/samsung/s2mps15.h               |  158 +++++++++++++++++++++
+ 10 files changed, 389 insertions(+), 14 deletions(-)
+ create mode 100644 include/linux/mfd/samsung/s2mps15.h
+
+-- 
+1.7.10.4
