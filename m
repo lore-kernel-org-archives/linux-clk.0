@@ -1,164 +1,108 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 30 Oct 2015 14:29:02 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Paul Walmsley <paul@pwsan.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Kumar Gala <galak@codeaurora.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Rob Herring <robh+dt@kernel.org>,
+	Olof Johansson <olof@lixom.net>,
+	linux-clk@vger.kernel.org,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
 	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 01/19] clk: sunxi: Add display clock
-Message-ID: <20151030212902.GG19782@codeaurora.org>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
- <1446214865-3972-2-git-send-email-maxime.ripard@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1446214865-3972-2-git-send-email-maxime.ripard@free-electrons.com>
+	Mark Rutland <mark.rutland@arm.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v5 0/8] Build and support rk3036 SoC platform
+Date: Mon, 26 Oct 2015 12:25:31 +0800
+Message-Id: <1445833539-6484-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/30, Maxime Ripard wrote:
-> diff --git a/drivers/clk/sunxi/clk-sun4i-display.c b/drivers/clk/sunxi/clk-sun4i-display.c
-> new file mode 100644
-> index 000000000000..f13b095c6d7a
-> --- /dev/null
-> +++ b/drivers/clk/sunxi/clk-sun4i-display.c
-> @@ -0,0 +1,199 @@
-> +/*
-> + * Copyright 2015 Maxime Ripard
-> + *
-> + * Maxime Ripard <maxime.ripard@free-electrons.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
 
-#include <linux/kernel.h> for container_of?
+Hi,
+  We need to support rk3036 soc platform via upstream, there are
+3 primary parts for the initial release of minimum system: dts,
+pinctrl, and clock tree for rk3036, and additional, we can use
+these startup and run to init processs.
 
-> +#include <linux/clk-provider.h>
-> +#include <linux/of_address.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
-> +
-> +#define SUN4I_A10_DISPLAY_PARENTS	3
-> +
-> +#define SUN4I_A10_DISPLAY_GATE_BIT	31
-> +#define SUN4I_A10_DISPLAY_RESET_BIT	30
-> +#define SUN4I_A10_DISPLAY_MUX_MASK	3
-> +#define SUN4I_A10_DISPLAY_MUX_SHIFT	24
-> +#define SUN4I_A10_DISPLAY_DIV_WIDTH	4
-> +#define SUN4I_A10_DISPLAY_DIV_SHIFT	0
-> +
-> +struct reset_data {
-> +	void __iomem			*reg;
-> +	spinlock_t			*lock;
-> +	struct reset_controller_dev	rcdev;
-> +};
-> +
-> +static DEFINE_SPINLOCK(sun4i_a10_display_lock);
-> +
-> +static int sun4i_a10_display_assert(struct reset_controller_dev *rcdev,
-> +				    unsigned long id)
-> +{
-> +	struct reset_data *data = container_of(rcdev,
-> +					       struct reset_data,
-> +					       rcdev);
+Thanks.
 
-Can this be a macro rcdev_to_reset_data() or something?
+Changed in v5:
+- don't use clk_ APIs in the pll init-callback
 
-> +	unsigned long flags;
-[..]
-> +
-> +static int sun4i_a10_display_status(struct reset_controller_dev *rcdev,
-> +				    unsigned long id)
-> +{
-> +	struct reset_data *data = container_of(rcdev,
-> +					       struct reset_data,
-> +					       rcdev);
-> +
-> +	return !(readl(data->reg) & BIT(SUN4I_A10_DISPLAY_RESET_BIT));
-> +}
-> +
-> +static struct reset_control_ops sun4i_a10_display_reset_ops = {
+Changed in v4:
+- add some basic IP modules on rk3036.dtsi
+- optimized supporting smp codes
 
-Someone should make it so this can be const...
+Changed in v3:
+- optimized some codes based on v2
+- removed the patch "initial set time for rtc-hym8563" (useless)
+- removed the patch "pinctrl" (approved)
 
-> +	.assert		= sun4i_a10_display_assert,
-> +	.deassert	= sun4i_a10_display_deassert,
-> +	.status		= sun4i_a10_display_status,
-> +};
-> +
-> +static int sun4i_a10_display_reset_xlate(struct reset_controller_dev *rcdev,
-> +					 const struct of_phandle_args *spec)
-> +{
-> +	if (WARN_ON(spec->args_count != rcdev->of_reset_n_cells))
-> +		return -EINVAL;
+Changed in v2:
+- based on v1, add clock controller documentation
+- enable timer5 startup
+- add smp for cpu1
+- initial set time for rtc-hym8563
 
-Do we really need this check? Seems like something the reset core
-should handle.
+Changes in v1:
+- add dts, pinctrl and clock tree for rk3036 soc platform
 
-> +
-> +	/* We only have a single reset signal */
-> +	return 0;
-> +}
-> +
-> +static void __init sun4i_a10_display_setup(struct device_node *node)
-> +{
-> +	const char *parents[SUN4I_A10_DISPLAY_PARENTS];
-> +	const char *clk_name = node->name;
-> +	struct reset_data *reset_data;
-> +	struct clk_divider *div;
-> +	struct clk_gate *gate;
-> +	struct clk_mux *mux;
-> +	void __iomem *reg;
-> +	struct clk *clk;
-> +	int i;
-> +
-> +	of_property_read_string(node, "clock-output-names", &clk_name);
-> +
-> +	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-> +	if (IS_ERR(reg)) {
-> +		pr_err("%s: Could not map the clock registers\n", clk_name);
-> +		return;
-> +	}
-> +
-> +	for (i = 0; i < SUN4I_A10_DISPLAY_PARENTS; i++)
-> +		parents[i] = of_clk_get_parent_name(node, i);
+The patchset (8):
+8) rockchip: make sure timer5 is enabled on rk3036 platforms
+7) ARM: dts: enable smp for rk3036
+6) ARM: rockchip: add support smp for rk3036
+5) ARM: dts: rockchip: add core rk3036 dts
+4) clk: rockchip: add new pll-type for rk3036 and similar socs
+3) clk: rockchip: add clock controller for rk3036
+2) clk: rockchip: add dt-binding header for rk3036
+1) dt-bindings: add documentation of rk3036 clock controller
 
-of_clk_parent_fill()?
 
-> +
-> +	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-> +	if (!mux)
-[..]
-> +		goto free_reset;
-> +	}
-> +
-> +	return;
-> +
-> +free_reset:
-> +	kfree(reset_data);
-> +free_clk:
-> +	clk_unregister(clk);
+Changes in v5:
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-We really ought to have a clk_composite_unregister() API.
+Heiko Stuebner (1):
+  ARM: rockchip: add support smp for rk3036
+
+Xing Zheng (7):
+  dt-bindings: add documentation of rk3036 clock controller
+  clk: rockchip: add dt-binding header for rk3036
+  clk: rockchip: add clock controller for rk3036
+  clk: rockchip: add new pll-type for rk3036 and similar socs
+  ARM: dts: rockchip: add core rk3036 dts
+  ARM: dts: enable smp for rk3036
+  rockchip: make sure timer5 is enabled on rk3036 platforms
+
+ Documentation/devicetree/bindings/arm/cpus.txt     |    1 +
+ .../bindings/clock/rockchip,rk3036-cru.txt         |   56 ++
+ arch/arm/boot/dts/Makefile                         |    1 +
+ arch/arm/boot/dts/rk3036-evb.dts                   |   64 +++
+ arch/arm/boot/dts/rk3036.dtsi                      |  541 ++++++++++++++++++++
+ arch/arm/mach-rockchip/platsmp.c                   |   45 +-
+ arch/arm/mach-rockchip/rockchip.c                  |   44 +-
+ drivers/clk/rockchip/Makefile                      |    1 +
+ drivers/clk/rockchip/clk-pll.c                     |  249 ++++++++-
+ drivers/clk/rockchip/clk-rk3036.c                  |  500 ++++++++++++++++++
+ drivers/clk/rockchip/clk.h                         |   30 ++
+ include/dt-bindings/clock/rk3036-cru.h             |  195 +++++++
+ 12 files changed, 1697 insertions(+), 30 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3036-cru.txt
+ create mode 100644 arch/arm/boot/dts/rk3036-evb.dts
+ create mode 100644 arch/arm/boot/dts/rk3036.dtsi
+ create mode 100644 drivers/clk/rockchip/clk-rk3036.c
+ create mode 100644 include/dt-bindings/clock/rk3036-cru.h
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
