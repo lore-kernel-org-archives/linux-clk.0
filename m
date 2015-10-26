@@ -1,100 +1,43 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Message-ID: <1443736737.5336.158.camel@freescale.com>
-Subject: Re: [PATCH v2 07/10] dts/ls2085a: Update DTSI to add support of
- various peripherals
-From: Scott Wood <scottwood@freescale.com>
-To: Li Yang <leoli@freescale.com>
-Date: Thu, 1 Oct 2015 16:58:57 -0500
-In-Reply-To: <CADRPPNRz-yM_48HvHYv3r31u_b_tHkAjg5H5r+V2mE2=oJTGDA@mail.gmail.com>
-References: <1441350322-4671-1-git-send-email-bhupesh.sharma@freescale.com>
- <CAL_Jsq+9izV8vkrF1tK96M-VRGTMJ+GN5o=RsnCBDcnh-at5kA@mail.gmail.com>
- <CALRxmdC9ZzGiw6CVnVTqhH1xvA-P9s8cpYbk8DoVq7CodFS0VA@mail.gmail.com>
- <CY1PR0301MB0748A8F37E3FBE1922AF9D3F874C0@CY1PR0301MB0748.namprd03.prod.outlook.com>
- <CADRPPNRz-yM_48HvHYv3r31u_b_tHkAjg5H5r+V2mE2=oJTGDA@mail.gmail.com>
+Return-Path: <pku.leo@gmail.com>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
- Shaohui Xie <Shaohui.Xie@freescale.com>, Arnd Bergmann <arnd@arndb.de>,
- Huan Wang <alison.wang@freescale.com>,
- Sharma Bhupesh <bhupesh.sharma@freescale.com>,
- Catalin Marinas <Catalin.Marinas@arm.com>, Olof Johansson <olof@lixom.net>,
- Singh Jaiprakash <jaiprakash.singh@freescale.com>,
- Stuart Yoder <stuart.yoder@freescale.com>, Will Deacon <will.deacon@arm.com>,
- "Lian
- M.H." <Minghuan.Lian@freescale.com>, Liu Gang <Gang.Liu@freescale.com>,
- Rob Herring <robherring2@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>,
- Badola Nikhil-B46172 <nikhil.badola@freescale.com>,
- Bhupesh SHARMA <bhupesh.linux@gmail.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- "Lu Y.B." <yangbo.lu@freescale.com>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <1445587282-29529-5-git-send-email-B48286@freescale.com>
+References: <1445587282-29529-1-git-send-email-B48286@freescale.com>
+	<1445587282-29529-5-git-send-email-B48286@freescale.com>
+Date: Mon, 26 Oct 2015 17:20:27 -0500
+Message-ID: <CADRPPNSS62G3D8ghNjd1kJMSjXkQJ9bfqeTP_ZqMk2ehRN5iyw@mail.gmail.com>
+Subject: Re: [PATCH V6 5/6] clk: qoriq: Add ls1043a support.
+From: Leo Li <pku.leo@gmail.com>
+To: Zhiqiang Hou <B48286@freescale.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, linux-watchdog@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>, Shaohui Xie <Shaohui.Xie@freescale.com>, corbet@lwn.net,
+	Bhupesh Sharma <bhupesh.sharma@freescale.com>, mturquette@baylibre.com, wsa@the-dreams.de,
+	sboyd@codeaurora.org, wim@iguana.be, Wenbin Song <Wenbin.Song@freescale.com>,
+	Scott Wood <scottwood@freescale.com>, Hu Vincent <Mingkai.Hu@freescale.com>, linux@roeck-us.net
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2015-10-01 at 16:42 -0500, Li Yang wrote:
-> On Thu, Oct 1, 2015 at 3:05 PM, Stuart Yoder <stuart.yoder@freescale.com> 
-> wrote:
-> > Hi Rob,
-> > 
-> > Had a question about your comments on the patch below.
-> > 
-> > You singled out 3 nodes (gic,uart,clockgen) and said "This should be 
-> > under a bus node."
-> > 
-> > What is special about those 3 nodes types?  There are a bunch of other 
-> > memory
-> > mapped SoC devices as well in the DTS.
-> > 
-> > I skimmed the dts files under arch/arm64 and it looks like most have a 
-> > simple-bus
-> > SoC node like this where SoC devices are under:
-> > 
-> >         soc {
-> >                 #address-cells = <2>;
-> >                 #size-cells = <2>;
-> >                 compatible = "simple-bus";
-> >                 ranges;
-> > 
-> > Is that what you are looking for-- for all SoC devices?
-> 
-> I think the key is to have the soc node and have all the on-chip
-> devices defined underneath it.
-> 
-> I read the following from the booting-without-of.txt document:
-> 
->   f) the /soc<SOCname> node
-> 
->   This node is used to represent a system-on-a-chip (SoC) and must be
->   present if the processor is a SoC. The top-level soc node contains
->   information that is global to all devices on the SoC. The node name
->   should contain a unit address for the SoC, which is the base address
->   of the memory-mapped register set for the SoC. The name of an SoC
->   node should start with "soc", and the remainder of the name should
->   represent the part number for the soc.  For example, the MPC8540's
->   soc node would be called "soc8540".
-> 
-> A lot of device trees didn't follow the soc<SOCname> naming scheme and
-> just used "soc" as the node name.  I am not sure if we want to enforce
-> the naming in the future or update the document to make it more relax.
+On Fri, Oct 23, 2015 at 3:01 AM, Zhiqiang Hou <B48286@freescale.com> wrote:
+> From: Hou Zhiqiang <B48286@freescale.com>
+>
+> Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+> V6: V5 V4 V3 V2
+>  - No change.
 
-Update the document.  Having the SoC name in the node name was a pain, which 
-is why we don't do it anymore.  Ideally, this text should be moved into a 
-binding for Freescale PPC/LS SoCs.  It really doesn't have the broad 
-applicability that this historical document suggests, and even on our SoCs it 
-doesn't represent the entire SoC.  It represents CCSR/IMMR.
+I know you mentioned the dependency in the summary of the patch
+series.  But it's not likely these dependencies will be merged through
+the ARM sub-maintainers tree and be resolved in this merge window.  So
+it will be better to mention these dependencies here so that this
+patch will go through the same tree as these dependency patches.
 
--Scott
+Scott,
 
+What is your plan to merge the clock patches?  This patch need to go
+together with it.
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Regards,
+Leo
