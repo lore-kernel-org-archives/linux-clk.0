@@ -1,31 +1,27 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 21 Oct 2015 17:25:31 -0700
+Date: Mon, 26 Oct 2015 15:06:34 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jon Mason <jonmason@broadcom.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [PATCH v3 10/10] clk: iproc: define Broadcom NS2 iProc clock
- binding
-Message-ID: <20151022002531.GY19782@codeaurora.org>
-References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
- <1444938513-10758-11-git-send-email-jonmason@broadcom.com>
+To: Joachim Eastwood <manabian@gmail.com>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] clk: Add clk_hw_is_enabled() for use by clk
+ providers
+Message-ID: <20151026220634.GG19782@codeaurora.org>
+References: <1445705724-20805-1-git-send-email-manabian@gmail.com>
+ <1445705724-20805-2-git-send-email-manabian@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1444938513-10758-11-git-send-email-jonmason@broadcom.com>
+In-Reply-To: <1445705724-20805-2-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/15, Jon Mason wrote:
-> Document the device tree bindings for Broadcom Northstar 2 architecture
-> based clock controller
+On 10/24, Joachim Eastwood wrote:
+> Add clk_hw_is_enabled() to the provider APIs so clk providers can
+> use a struct clk_hw instead of a struct clk to check if a clk is
+> enabled or not.
 > 
-> Signed-off-by: Jon Mason <jonmason@broadcom.com>
+> Signed-off-by: Joachim Eastwood <manabian@gmail.com>
 > ---
 
-Applied to clk-iproc
+Applied to clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
