@@ -1,115 +1,55 @@
-Return-Path: <rjui@broadcom.com>
-Subject: Re: [PATCH v3 08/10] clk: ns2: add clock support for Broadcom
- Northstar 2 SoC
-To: Jon Mason <jonmason@broadcom.com>, Scott Branden <sbranden@broadcom.com>
-References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
- <1444938513-10758-9-git-send-email-jonmason@broadcom.com>
- <56200F39.1060102@broadcom.com> <562012A8.8050707@broadcom.com>
- <562014C9.5070708@broadcom.com> <20151015211025.GP32089@broadcom.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>, "Hauke
- Mehrtens" <hauke@hauke-m.de>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
-From: Ray Jui <rjui@broadcom.com>
-Message-ID: <56201766.9020206@broadcom.com>
-Date: Thu, 15 Oct 2015 14:15:18 -0700
-MIME-Version: 1.0
-In-Reply-To: <20151015211025.GP32089@broadcom.com>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: rjui@broadcom.com
+Return-Path: <alim.akhtar@samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+To: lee.jones@linaro.org, broonie@kernel.org
+Cc: k.kozlowski@samsung.com, mturquette@baylibre.com,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/5] mfd: sec: add S2MPS15 PMIC support
+Date: Mon, 26 Oct 2015 16:06:38 +0530
+Message-id: <1445855803-26973-1-git-send-email-alim.akhtar@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Samsung's S2MPS15 PMIC is targetted to be used with Samsung's Exynos7 SoC.
+The S2MPS15 PMIC is similar in functionality to S2MPS11/14 PMIC. It contains
+27 LDO and 10 Buck regulators, RTC, three 32.768 KHz clock outputs and allows
+programming these blocks via a I2C interface. This patch series adds initial
+support for LDO/Buck regulators of S2MPS15 PMIC.
 
+Changes since v1:
+* Added suggestion from Krzysztof [1].
+* Added s2mps15's 32.768 clocks support.
+* Added s2mps15's rtc support.
 
-On 10/15/2015 2:10 PM, Jon Mason wrote:
-> On Thu, Oct 15, 2015 at 02:04:09PM -0700, Scott Branden wrote:
->> Hi Ray,
->>
->> Comment at near end.
->>
->> On 15-10-15 01:55 PM, Ray Jui wrote:
->>>
->>>
->>> On 10/15/2015 1:40 PM, Scott Branden wrote:
->>>> We need some sort of kconfig option to differentiate NS2 clock driver
->>> >from being pulled in all the time.
->>>>
->>>> On 15-10-15 12:48 PM, Jon Mason wrote:
->>>>> The Broadcom Northstar 2 SoC is architected under the iProc
->>>>> architecture. It has the following PLLs: GENPLL SCR, GENPLL SW,
->>>>> LCPLL DDR, LCPLL Ports, all derived from an onboard crystal.
->>>>>
->>>>> Signed-off-by: Jon Mason <jonmason@broadcom.com>
->>>>> ---
->>>>>   drivers/clk/Makefile                |   2 +-
->>>>>   drivers/clk/bcm/Makefile            |   1 +
->>>>>   drivers/clk/bcm/clk-ns2.c           | 288
->>>>> ++++++++++++++++++++++++++++++++++++
->>>>>   include/dt-bindings/clock/bcm-ns2.h |  72 +++++++++
->>>>>   4 files changed, 362 insertions(+), 1 deletion(-)
->>>>>   create mode 100644 drivers/clk/bcm/clk-ns2.c
->>>>>   create mode 100644 include/dt-bindings/clock/bcm-ns2.h
->>>>>
->>>>> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
->>>>> index d08b3e5..6124bd3 100644
->>>>> --- a/drivers/clk/Makefile
->>>>> +++ b/drivers/clk/Makefile
->>>>> @@ -47,7 +47,7 @@ obj-$(CONFIG_COMMON_CLK_WM831X)        += clk-wm831x.o
->>>>>   obj-$(CONFIG_COMMON_CLK_XGENE)        += clk-xgene.o
->>>>>   obj-$(CONFIG_COMMON_CLK_PWM)        += clk-pwm.o
->>>>>   obj-$(CONFIG_COMMON_CLK_AT91)        += at91/
->>>>> -obj-$(CONFIG_ARCH_BCM)            += bcm/
->>>>> +obj-y                    += bcm/
->>>>>   obj-$(CONFIG_ARCH_BERLIN)        += berlin/
->>>>>   obj-$(CONFIG_ARCH_HISI)            += hisilicon/
->>>>>   obj-$(CONFIG_ARCH_MXC)            += imx/
->>>>> diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
->>>>> index e258b28..2d1cbc5 100644
->>>>> --- a/drivers/clk/bcm/Makefile
->>>>> +++ b/drivers/clk/bcm/Makefile
->>>>> @@ -3,6 +3,7 @@ obj-$(CONFIG_CLK_BCM_KONA)    += clk-kona-setup.o
->>>>>   obj-$(CONFIG_CLK_BCM_KONA)    += clk-bcm281xx.o
->>>>>   obj-$(CONFIG_CLK_BCM_KONA)    += clk-bcm21664.o
->>>>>   obj-$(CONFIG_COMMON_CLK_IPROC)    += clk-iproc-armpll.o
->>>>> clk-iproc-pll.o clk-iproc-asiu.o
->>>>> +obj-$(CONFIG_COMMON_CLK_IPROC)    += clk-ns2.o
->>>>
->>>> NS2 code is dragged in for all IPROC SoCs.  We need a config option for
->>>> NS2 (CONFIG_ARCH_BCM_NS2) to avoid this (if Arnd allows this for ARMv8
->>>> processors... ?).
->>>>
->>>> You can see below ARMv7 processors don't have this problem.
->>>>
->>>
->>> The arm64 maintainers (Catalin, Mark, and etc.) stated they only want
->>> one ARCH options per chip family.
->>>
->>>> If not we need to add CONFIG_CLK_NS2.
->>>
->>> If using CONFIG_CLK_NS2, how is it going to be enabled/selected?
->>
->> Since CONFIG_ARCH_BCM_NS2 isn't "allowed" to be introduced we will
->> need to create and select a CONFIG_CLK_BCM_NS2 in the defconfig
->> instead.
-> 
-> Is this better than the binary becoming slightly bigger?  I thought
-> the extra complexity was worse than having an unused chunk of clk code
-> (and Kona is already doing the same thing above).  I believe Ray was
-> in agreement with me during the internal review of this code.
-> 
-> Thanks,
-> Jon
-> 
+V1 of these patches (with a lesser features) were posted a year back,
+since then there is not much progress on this, this is my attempt to
+move things forward.
 
-Yes, I'm okay with leaving it as it is. I even prefer changing the
-current Makefile to make all iProc based core clock drivers and SoC
-specific clock tables under CONFIG_COMMON_CLK_IPROC, which is what some
-of the other vendors do.
+[1]-> https://lkml.org/lkml/2014/10/14/67
 
->>>
->>> Ray
->>>
->>
->> Regards,
->>  Scott
+This series is based on linux-next-20151022.
+This is tested on exynos7-espresso board.
+
+Alim Akhtar (2):
+  clk: s2mps15: Add support for S2MPS15 clocks
+  drivers/rtc/rtc-s5m.c: add support for S2MPS15 RTC
+
+Thomas Abraham (3):
+  dt-bindings: mfd: s2mps11: add documentation for s2mps15 PMIC
+  mfd: sec: Add support for S2MPS15 PMIC
+  regulator: s2mps11: add support for S2MPS15 regulators
+
+ Documentation/devicetree/bindings/mfd/s2mps11.txt |   23 ++-
+ drivers/clk/Kconfig                               |    5 +-
+ drivers/clk/clk-s2mps11.c                         |   24 +++
+ drivers/mfd/sec-core.c                            |   31 ++++
+ drivers/mfd/sec-irq.c                             |    8 +
+ drivers/regulator/Kconfig                         |    4 +-
+ drivers/regulator/s2mps11.c                       |  135 ++++++++++++++++-
+ drivers/rtc/rtc-s5m.c                             |   14 +-
+ include/linux/mfd/samsung/core.h                  |    1 +
+ include/linux/mfd/samsung/s2mps15.h               |  161 +++++++++++++++++++++
+ 10 files changed, 392 insertions(+), 14 deletions(-)
+ create mode 100644 include/linux/mfd/samsung/s2mps15.h
+
+-- 
+1.7.10.4
