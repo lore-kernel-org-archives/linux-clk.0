@@ -1,114 +1,125 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 27 Oct 2015 16:23:28 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: agross@codeaurora.org, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, bjorn.andersson@sonymobile.com,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v3 6/8] clk: qcom: Add RPM clock controller driver
-Message-ID: <20151027232328.GT19782@codeaurora.org>
-References: <1445360280-2347-1-git-send-email-georgi.djakov@linaro.org>
- <1445360280-2347-7-git-send-email-georgi.djakov@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1445360280-2347-7-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <alim.akhtar@samsung.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+To: lee.jones@linaro.org, broonie@kernel.org
+Cc: k.kozlowski@samsung.com, mturquette@baylibre.com,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 5/5] drivers/rtc/rtc-s5m.c: add support for S2MPS15 RTC
+Date: Mon, 26 Oct 2015 18:21:22 +0530
+Message-id: <1445863883-5187-6-git-send-email-alim.akhtar@samsung.com>
+In-reply-to: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
+References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/20, Georgi Djakov wrote:
-> diff --git a/drivers/clk/qcom/rpmcc.c b/drivers/clk/qcom/rpmcc.c
-> new file mode 100644
-> index 000000000000..88283e2c95f7
-> --- /dev/null
-> +++ b/drivers/clk/qcom/rpmcc.c
-> @@ -0,0 +1,198 @@
-> +/*
-> + * Copyright (c) 2015, Linaro Limited
-> + * Copyright (c) 2014, The Linux Foundation. All rights reserved.
-> + *
-> + * This software is licensed under the terms of the GNU General Public
-> + * License version 2, as published by the Free Software Foundation, and
-> + * may be copied, distributed, and modified under those terms.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/clk.h>
+RTC found in s2mps15 is almost same as one found in s2mps14.
+This patch add required changes to enable s2mps15 rtc timer.
 
-Is this include used?
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+---
+ drivers/rtc/rtc-s5m.c |   14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-> +#include <linux/clk-provider.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/soc/qcom/smd-rpm.h>
-
-Is this include used?
-
-Add init.h for __init usage.
-
-> +
-> +#include "clk-smd-rpm.h"
-> +#include <dt-bindings/clock/qcom,rpmcc-msm8916.h>
-[..]
-> +
-> +static struct clk_smd_rpm *rpmcc_msm8916_clks[] = {
-
-Can this be const?
-
-> +	[RPM_XO_CLK_SRC] = &xo,
-> +	[RPM_XO_A_CLK_SRC] = &xo_a,
-> +	[RPM_PCNOC_CLK] = &pcnoc_clk,
-> +	[RPM_PCNOC_A_CLK] = &pcnoc_a_clk,
-[..]
-> +
-> +static int rpmcc_probe(struct platform_device *pdev)
-> +{
-> +	struct clk **clks;
-> +	struct clk *clk;
-> +	struct clk_smd_rpm **rpm_clks;
-> +	struct rpm_cc *rcc;
-> +	const struct rpmcc_desc *desc;
-> +	struct qcom_smd_rpm *rpm;
-> +	struct clk_onecell_data *data;
-> +	int ret, i;
-> +	size_t num_clks;
-> +	const struct of_device_id *match;
-> +
-> +	rpm = dev_get_drvdata(pdev->dev.parent);
-> +	if (!rpm) {
-> +		dev_err(&pdev->dev, "Unable to retrieve handle to RPM\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	match = of_match_device(rpmcc_match_table, &pdev->dev);
-
-of_device_get_match_data() please
-
-> +	if (!match)
-> +		return -EINVAL;
-> +
-> +	desc = match->data;
-> +	rpm_clks = desc->clks;
-> +	num_clks = desc->num_clks;
-> +
-[..]
-> +	}
-> +
-> +	ret = of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get,
-> +				  data);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return clk_smd_rpm_enable_scaling(rpm);
-
-We should unregister the provider if clk_smd_rpm_enable_scaling()
-fails.
-
+diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+index f2504b4eef34..ac3286a267ba 100644
+--- a/drivers/rtc/rtc-s5m.c
++++ b/drivers/rtc/rtc-s5m.c
+@@ -188,6 +188,7 @@ static inline int s5m_check_peding_alarm_interrupt(struct s5m_rtc_info *info,
+ 		ret = regmap_read(info->regmap, S5M_RTC_STATUS, &val);
+ 		val &= S5M_ALARM0_STATUS;
+ 		break;
++	case S2MPS15X:
+ 	case S2MPS14X:
+ 	case S2MPS13X:
+ 		ret = regmap_read(info->s5m87xx->regmap_pmic, S2MPS14_REG_ST2,
+@@ -253,6 +254,7 @@ static inline int s5m8767_rtc_set_alarm_reg(struct s5m_rtc_info *info)
+ 		data &= ~S5M_RTC_TIME_EN_MASK;
+ 		break;
+ 	case S2MPS14X:
++	case S2MPS15X:
+ 		data |= S2MPS_RTC_RUDR_MASK;
+ 		break;
+ 	case S2MPS13X:
+@@ -317,7 +319,8 @@ static int s5m_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ 	u8 data[info->regs->regs_count];
+ 	int ret;
+ 
+-	if (info->device_type == S2MPS14X || info->device_type == S2MPS13X) {
++	if (info->device_type == S2MPS14X || info->device_type == S2MPS15X ||
++						info->device_type == S2MPS13X) {
+ 		ret = regmap_update_bits(info->regmap,
+ 				info->regs->rtc_udr_update,
+ 				S2MPS_RTC_RUDR_MASK, S2MPS_RTC_RUDR_MASK);
+@@ -339,6 +342,7 @@ static int s5m_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ 		break;
+ 
+ 	case S5M8767X:
++	case S2MPS15X:
+ 	case S2MPS14X:
+ 	case S2MPS13X:
+ 		s5m8767_data_to_tm(data, tm, info->rtc_24hr_mode);
+@@ -366,6 +370,7 @@ static int s5m_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 		s5m8763_tm_to_data(tm, data);
+ 		break;
+ 	case S5M8767X:
++	case S2MPS15X:
+ 	case S2MPS14X:
+ 	case S2MPS13X:
+ 		ret = s5m8767_tm_to_data(tm, data);
+@@ -414,6 +419,7 @@ static int s5m_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 		break;
+ 
+ 	case S5M8767X:
++	case S2MPS15X:
+ 	case S2MPS14X:
+ 	case S2MPS13X:
+ 		s5m8767_data_to_tm(data, &alrm->time, info->rtc_24hr_mode);
+@@ -463,6 +469,7 @@ static int s5m_rtc_stop_alarm(struct s5m_rtc_info *info)
+ 		break;
+ 
+ 	case S5M8767X:
++	case S2MPS15X:
+ 	case S2MPS14X:
+ 	case S2MPS13X:
+ 		for (i = 0; i < info->regs->regs_count; i++)
+@@ -508,6 +515,7 @@ static int s5m_rtc_start_alarm(struct s5m_rtc_info *info)
+ 		break;
+ 
+ 	case S5M8767X:
++	case S2MPS15X:
+ 	case S2MPS14X:
+ 	case S2MPS13X:
+ 		data[RTC_SEC] |= ALARM_ENABLE_MASK;
+@@ -548,6 +556,7 @@ static int s5m_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 		break;
+ 
+ 	case S5M8767X:
++	case S2MPS15X:
+ 	case S2MPS14X:
+ 	case S2MPS13X:
+ 		s5m8767_tm_to_data(&alrm->time, data);
+@@ -631,6 +640,7 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
+ 		ret = regmap_raw_write(info->regmap, S5M_ALARM0_CONF, data, 2);
+ 		break;
+ 
++	case S2MPS15X:
+ 	case S2MPS14X:
+ 	case S2MPS13X:
+ 		data[0] = (0 << BCD_EN_SHIFT) | (1 << MODEL24_SHIFT);
+@@ -679,6 +689,7 @@ static int s5m_rtc_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	switch (platform_get_device_id(pdev)->driver_data) {
++	case S2MPS15X:
+ 	case S2MPS14X:
+ 	case S2MPS13X:
+ 		regmap_cfg = &s2mps14_rtc_regmap_config;
+@@ -805,6 +816,7 @@ static const struct platform_device_id s5m_rtc_id[] = {
+ 	{ "s5m-rtc",		S5M8767X },
+ 	{ "s2mps13-rtc",	S2MPS13X },
+ 	{ "s2mps14-rtc",	S2MPS14X },
++	{ "s2mps15-rtc",	S2MPS15X },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(platform, s5m_rtc_id);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.10.4
