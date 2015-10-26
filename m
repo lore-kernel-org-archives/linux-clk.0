@@ -1,94 +1,51 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 26 Oct 2015 15:44:34 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: agross@codeaurora.org, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, bjorn.andersson@sonymobile.com,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v3 3/8] clk: qcom: msm8916: Ignore sleep_clk_src
+ registration errors
+Message-ID: <20151026224434.GK19782@codeaurora.org>
+References: <1445360280-2347-1-git-send-email-georgi.djakov@linaro.org>
+ <1445360280-2347-4-git-send-email-georgi.djakov@linaro.org>
 MIME-Version: 1.0
-To: Andrzej Hajda <a.hajda@samsung.com>, "Inki Dae" <inki.dae@samsung.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1445332961-25419-2-git-send-email-a.hajda@samsung.com>
-Cc: "Andrzej Hajda" <a.hajda@samsung.com>,
- "Bartlomiej Zolnierkiewicz" <b.zolnierkie@samsung.com>,
- "Marek Szyprowski" <m.szyprowski@samsung.com>,
- "Kyungmin Park" <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org,
- linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, "Kukjin Kim" <kgene@kernel.org>,
- "Krzysztof Kozlowski" <k.kozlowski@samsung.com>,
- "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
- "Hyungwon Hwang" <human.hwang@samsung.com>
-References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
- <1445332961-25419-2-git-send-email-a.hajda@samsung.com>
-Message-ID: <20151020103416.20687.40409@quantum>
-Subject: Re: [PATCH 01/10] clk/samsung: exynos5433: add definitions of HDMI-PHY
- output clocks
-Date: Tue, 20 Oct 2015 03:34:16 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1445360280-2347-4-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Andrzej Hajda (2015-10-20 02:22:32)
-> HDMI driver must re-parent respective muxes during HDMI-PHY on/off
-> to HDMI-PHY output clocks. To reference those clocks their
-> definitions should be added.
-> =
-
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+On 10/20, Georgi Djakov wrote:
+> We are moving the sleep clock to the DT. While all patches
+> are merged, we will ignore sleep_clk_src registration errors.
+> By ignoring this error, the msm8916 boards will continue booting
+> during this transition period, otherwise the clock controller
+> initialization will fail.
+> 
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 > ---
->  drivers/clk/samsung/clk-exynos5433.c   | 6 ++++--
->  include/dt-bindings/clock/exynos5433.h | 5 ++++-
->  2 files changed, 8 insertions(+), 3 deletions(-)
-> =
+>  drivers/clk/qcom/gcc-msm8916.c |    6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
+> index 3c0668b12142..4bb7d8415ba7 100644
+> --- a/drivers/clk/qcom/gcc-msm8916.c
+> +++ b/drivers/clk/qcom/gcc-msm8916.c
+> @@ -3364,10 +3364,8 @@ static int gcc_msm8916_probe(struct platform_device *pdev)
+>  	if (IS_ERR(clk))
+>  		return PTR_ERR(clk);
+>  
+> -	clk = clk_register_fixed_rate(dev, "sleep_clk_src", NULL,
+> -				      CLK_IS_ROOT, 32768);
+> -	if (IS_ERR(clk))
+> -		return PTR_ERR(clk);
+> +	clk_register_fixed_rate(dev, "sleep_clk_src", NULL,
+> +				CLK_IS_ROOT, 32768);
+>  
 
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/c=
-lk-exynos5433.c
-> index 650ec13..e037406 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -2614,8 +2614,10 @@ static struct samsung_fixed_rate_clock disp_fixed_=
-clks[] __initdata =3D {
->         FRATE(0, "phyclk_mipidphy0_rxclkesc0_phy", NULL, CLK_IS_ROOT,
->                         100000000),
->         /* PHY clocks from HDMI_PHY */
-> -       FRATE(0, "phyclk_hdmiphy_tmds_clko_phy", NULL, CLK_IS_ROOT, 30000=
-0000),
-> -       FRATE(0, "phyclk_hdmiphy_pixel_clko_phy", NULL, CLK_IS_ROOT, 1660=
-00000),
-> +       FRATE(CLK_PHYCLK_HDMIPHY_TMDS_CLKO_PHY, "phyclk_hdmiphy_tmds_clko=
-_phy",
-> +                       NULL, CLK_IS_ROOT, 300000000),
-> +       FRATE(CLK_PHYCLK_HDMIPHY_PIXEL_CLKO_PHY, "phyclk_hdmiphy_pixel_cl=
-ko_phy",
-> +                       NULL, CLK_IS_ROOT, 166000000),
->  };
->  =
+And we might as well do the same check here too. We can remove
+the code in a year or something.
 
->  static struct samsung_mux_clock disp_mux_clks[] __initdata =3D {
-> diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings=
-/clock/exynos5433.h
-> index 5bd80d5..4f0d566 100644
-> --- a/include/dt-bindings/clock/exynos5433.h
-> +++ b/include/dt-bindings/clock/exynos5433.h
-> @@ -765,7 +765,10 @@
->  #define CLK_SCLK_RGB_VCLK                              109
->  #define CLK_SCLK_RGB_TV_VCLK                           110
->  =
-
-> -#define DISP_NR_CLK                                    111
-> +#define CLK_PHYCLK_HDMIPHY_PIXEL_CLKO_PHY              111
-> +#define CLK_PHYCLK_HDMIPHY_TMDS_CLKO_PHY               112
-> +
-> +#define DISP_NR_CLK                                    113
-
-Why break compatibility with older DTBs?
-
-Regards,
-Mike
-
->  =
-
->  /* CMU_AUD */
->  #define CLK_MOUT_AUD_PLL_USER                          1
-> -- =
-
-> 1.9.1
-> =
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
