@@ -1,41 +1,50 @@
-Return-Path: <shengjiu.wang@freescale.com>
-Date: Sat, 10 Oct 2015 09:45:54 +0800
-From: Shengjiu Wang <shengjiu.wang@freescale.com>
-To: Shawn Guo <shawnguo@kernel.org>
-CC: <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-	<linux@arm.linux.org.uk>, <pawel.moll@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <linux-kernel@vger.kernel.org>, <robh+dt@kernel.org>,
-	<kernel@pengutronix.de>, <galak@codeaurora.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH V2 1/2] clk: imx6: Add SPDIF_GCLK clock in clock tree
-Message-ID: <20151010014553.GB25804@shlinux2>
-References: <cover.1442310569.git.shengjiu.wang@freescale.com>
- <113f1cecf1d83c6b96fd23ab9d7a73d1923e0d21.1442310569.git.shengjiu.wang@freescale.com>
- <20150923153340.GK3529@tiger>
- <20150924054321.GA32196@shlinux2>
- <20150924115737.GM3529@tiger>
- <20151009091528.GA25804@shlinux2>
- <20151010011155.GH22673@tiger>
+Return-Path: <rjw@rjwysocki.net>
+Return-Path: <rjw@rjwysocki.net>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org, dmaengine@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>, Linux USB List <linux-usb@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Tue, 27 Oct 2015 06:03:43 +0100
+Message-ID: <10275162.nPuKaJCcTU@vostro.rjw.lan>
+In-Reply-To: <Pine.LNX.4.44L0.1510201159400.1855-100000@iolanthe.rowland.org>
+References: <Pine.LNX.4.44L0.1510201159400.1855-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20151010011155.GH22673@tiger>
-Return-Path: shengjiu.wang@freescale.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Oct 10, 2015 at 09:11:55AM +0800, Shawn Guo wrote:
-> On Fri, Oct 09, 2015 at 05:15:30PM +0800, Shengjiu Wang wrote:
-> > SPDIF_GCLK is also spdif's clock, it use a same enable bit with SPDIF_ROOT_CLK,
-> > We didn't separate them in clock tree before.
+On Tuesday, October 20, 2015 12:04:05 PM Alan Stern wrote:
+> On Tue, 20 Oct 2015, Mark Brown wrote:
 > 
-> Is it the clock described as "Global clock" in Reference Manual, SPDIF
-Yes.
-> chapter?  If that's the case, you are just adding a missing SPDIF clock
-> rather than fixing a low power mode issue, and I will be fine.  But
-> still you should reword the commit log to make it clear, that the patch
-> is to correct a SPDIF clock setting issue, which is just discovered by
-> low power mode support.
+> > On Tue, Oct 20, 2015 at 10:40:03AM -0400, Alan Stern wrote:
+> > 
+> > > Furthermore, that applies only to devices that use synchronous suspend.  
+> > > Async suspend is becoming common, and there the only restrictions are 
+> > > parent-child relations plus whatever explicit requirements that drivers 
+> > > impose by calling device_pm_wait_for_dev().
+> > 
+> > Hrm, this is the first I'd noticed that feature though I see the initial
+> > commit dates from January.
 > 
-Ok, I will refine the patch comments, and send it later.
+> Async suspend and device_pm_wait_for_dev() were added in January 2010, 
+> not 2015!
+> 
+> >  It looks like most of the users are PCs at
+> > the minute but we should be using it more widely for embedded things,
+> > there's definitely some cases I'm aware of where it will allow us to
+> > remove some open coding.
+> > 
+> > It does seem like we want to be feeding dependency information we
+> > discover for probing way into the suspend dependencies...
+> 
+> Rafael has been thinking about a way to do this systematically.  
+> Nothing concrete has emerged yet.
 
-> Shawn
+Well, good point. :-)
+
+I've been kind of struggling with finding time to work on the patches lately
+and some aspects of the design are still not finalized.  It seems, though, that
+it can be beneficial to discuss the approach in general, so let me start a new
+thread for that.
+
+Thanks,
+Rafael
