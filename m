@@ -1,85 +1,99 @@
-Return-Path: <gregkh@linuxfoundation.org>
-Date: Sun, 18 Oct 2015 12:37:57 -0700
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>,
-	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org
-Subject: Re: [GIT PULL] On-demand device probing
-Message-ID: <20151018193757.GA9147@kroah.com>
-References: <561E1378.6000906@collabora.com>
- <20151017065750.GA18607@kroah.com>
- <20151018192931.GY14956@sirena.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20151018192931.GY14956@sirena.org.uk>
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: bcm-kernel-feedback-list@broadcom.com,
+	devicetree@vger.kernel.org,
+	jonmason@broadcom.com,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	linux@arm.linux.org.uk,
+	sbranden@broadcom.com,
+	rjui@broadcom.com,
+	Florian Fainelli <f.fainelli@gmail.com>
+Subject: [PATCH v3 2/3] clk: bcm: Add BCM63138 clock support
+Date: Tue, 27 Oct 2015 16:56:16 -0700
+Message-Id: <1445990177-27474-3-git-send-email-f.fainelli@gmail.com>
+In-Reply-To: <1445990177-27474-1-git-send-email-f.fainelli@gmail.com>
+References: <1445990177-27474-1-git-send-email-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Oct 18, 2015 at 08:29:31PM +0100, Mark Brown wrote:
-> On Fri, Oct 16, 2015 at 11:57:50PM -0700, Greg Kroah-Hartman wrote:
-> 
-> > I can't see adding calls like this all over the tree just to solve a
-> > bus-specific problem, you are adding of_* calls where they aren't
-> > needed, or wanted, at all.
-> 
-> This isn't bus specific, I'm not sure what makes you say that?
+BCM63138 has a simple clocking domain which is primarily the ARMPLL
+clocking complex, from which the ARM (CPU), APB and AXI clocks would be
+derived from.
 
-You are making it bus-specific by putting these calls all over the tree
-in different bus subsystems semi-randomly for all I can determine.
+Since the ARMPLL controller is entirely compatible with the iProc ARM
+PLL, we just initialize it without additional parameters.
 
-> > What is the root-problem of your delay in device probing?  I read your
-> > last patch series and I can't seem to figure out what the issue is that
-> > this is solving in any "better" way from the existing deferred probing.
-> 
-> So, I don't actually have any platforms that are especially bothered by
-> this (at least not for my use cases) so there's a bit of educated
-> guessing going on here but there's two broad things I'm aware of.  
-> 
-> One is that regardless of the actual performance of the system when
-> deferred probe goes off it splats errors all over the console which
-> makes it look like something is going wrong even if everything is fine
-> in the end.  If lots of deferred probing happens then the volume gets
-> big too.  People find this distracting, noisy and ugly - it obscures
-> actual issues and trains people to ignore errors.  I do think this is a
-> reasonable concern and that it's worth trying to mitigate against
-> deferral for this reason alone.  We don't want to just ignore the errors
-> and not print anything either since if the resource doesn't appear the
-> user needs to know what is preventing the driver from instantiating so
-> they can try to fix it.
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+Changes in v3:
 
-This has come up many times, I have no objection to just turning that
-message into a debug message that can be dynamically enabled for those
-people wanting to debug their systems for boot time issues.
+- made default depend on ARCH_BCM_63XX per Stephen Boyd's comment
 
-Please send a patch to do so.
+Changes in v2:
+- added COMPILE_TEST per Scott Branden's comment
 
-thanks,
+ drivers/clk/bcm/Kconfig       | 10 ++++++++++
+ drivers/clk/bcm/Makefile      |  1 +
+ drivers/clk/bcm/clk-bcm63xx.c | 22 ++++++++++++++++++++++
+ 3 files changed, 33 insertions(+)
+ create mode 100644 drivers/clk/bcm/clk-bcm63xx.c
 
-greg k-h
+diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+index 85260fb96b36..f2878459199a 100644
+--- a/drivers/clk/bcm/Kconfig
++++ b/drivers/clk/bcm/Kconfig
+@@ -1,3 +1,13 @@
++config CLK_BCM_63XX
++	bool "Broadcom BCM63xx clock support"
++	depends on ARCH_BCM_63XX || COMPILE_TEST
++	depends on COMMON_CLK
++	select COMMON_CLK_IPROC
++	default ARCH_BCM_63XX
++	help
++	  Enable common clock framework support for Broadcom BCM63xx DSL SoCs
++	  based on the ARM architecture
++
+ config CLK_BCM_KONA
+ 	bool "Broadcom Kona CCU clock support"
+ 	depends on ARCH_BCM_MOBILE || COMPILE_TEST
+diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+index 3fc95060d875..247c26750d8b 100644
+--- a/drivers/clk/bcm/Makefile
++++ b/drivers/clk/bcm/Makefile
+@@ -1,3 +1,4 @@
++obj-$(CONFIG_CLK_BCM_63XX)	+= clk-bcm63xx.o
+ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona.o
+ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona-setup.o
+ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm281xx.o
+diff --git a/drivers/clk/bcm/clk-bcm63xx.c b/drivers/clk/bcm/clk-bcm63xx.c
+new file mode 100644
+index 000000000000..fbc17ae5ff2b
+--- /dev/null
++++ b/drivers/clk/bcm/clk-bcm63xx.c
+@@ -0,0 +1,22 @@
++/*
++ * Copyright (C) 2015 Broadcom Corporation
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation version 2.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether express or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++#include <linux/init.h>
++#include <linux/clk-provider.h>
++#include <linux/of.h>
++#include "clk-iproc.h"
++
++static void __init bcm63138_armpll_init(struct device_node *node)
++{
++	iproc_armpll_setup(node);
++}
++CLK_OF_DECLARE(bcm63138_armpll, "brcm,bcm63138-armpll", bcm63138_armpll_init);
+-- 
+2.1.0
