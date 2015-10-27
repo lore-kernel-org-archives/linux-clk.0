@@ -1,157 +1,93 @@
-Return-Path: <robh+dt@kernel.org>
+Return-Path: <robh@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <562A5602.7000208@sonymobile.com>
-References: <20151018192931.GY14956@sirena.org.uk> <20151018193757.GA9147@kroah.com>
- <20151018195330.GB14956@sirena.org.uk> <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
- <5627B677.5090109@gmail.com> <20151021162758.GP32054@sirena.org.uk>
- <5627D6E0.5020708@gmail.com> <CAL_Jsq+FPtCuBnte2HTgbdpNYM=v_kLaCRcOC1kMaCQwVC=5Kw@mail.gmail.com>
- <562808AF.7090406@gmail.com> <CAAObsKAkyjdvNOS3+nuT0N9sudUFLsZXFtcm6Y038p+HSdsZsg@mail.gmail.com>
- <20151022144405.GC21861@kroah.com> <562930AB.1070203@gmail.com> <562A5602.7000208@sonymobile.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Fri, 23 Oct 2015 11:34:34 -0500
-Message-ID: <CAL_JsqLNSM=+j2r9HPcbSzsZrgnGEY3=kv21EXxisKwP5+57ag@mail.gmail.com>
-Subject: Re: [GIT PULL] On-demand device probing
-To: Tim Bird <tim.bird@sonymobile.com>
-Cc: "frowand.list@gmail.com" <frowand.list@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mark Brown <broonie@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
-	Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>,
-	Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+In-Reply-To: <1445866427-14002-1-git-send-email-linus.walleij@linaro.org>
+References: <1445866427-14002-1-git-send-email-linus.walleij@linaro.org>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 27 Oct 2015 03:04:46 -0500
+Message-ID: <CAL_JsqJoGXQ88p2mbUKKN7QcKdu-DgB20xc9NiPCuEvtcRdzLA@mail.gmail.com>
+Subject: Re: [PATCH 08/13 v2] clk: add ARM syscon ICST device tree bindings
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 23, 2015 at 10:45 AM, Tim Bird <tim.bird@sonymobile.com> wrote:
-> On 10/22/2015 11:53 AM, Frank Rowand wrote:
->> On 10/22/2015 7:44 AM, Greg Kroah-Hartman wrote:
->>> <oops, sent too early...>
->>>
->>> On Thu, Oct 22, 2015 at 11:05:11AM +0200, Tomeu Vizoso wrote:
->>>> But that's moot currently because Greg believes that the time spent
->>>> probing devices at boot time could be reduced enough so that the order
->>>> in which devices are probed becomes irrelevant. IME that would have to
->>>> be under 200ms so that the user doesn't notice and that's unicorn-far
->>>> from any bootlog I have ever seen.
->>>
->>> But as no one has actually produced a bootlog, how do you know that?
->>> Where exactly is your time being spent?  What driver is causing long
->>> delays?  Why is the long-delay-drivers not being done in their own
->>> thread?  And most importantly, why are you ignoring the work that people
->>> did back in 2008 to solve the issue on other hardware platforms?
->>>
->>>> Given that downstreams are already carrying as many hacks as they
->>>> could think of to speed total boot up, I think this is effectively
->>>> telling them to go away.
->>>
->>> No I'm not, I'm asking for real data, not hand-wavy-this-is-going-to
->>> solve-the-random-issue-i'm-having type patch by putting random calls in
->>> semi-random subsystems all over the kernel.
->>>
->>> And when I ask for real data, you respond with the fact that you aren't
->>> trying to speed up boot time here at all, so what am I supposed to think
->>
->> I also had the understanding that this patch series was about improving
->> boot time.  But I was kindly corrected that the behavior change was
->> getting the panel displaying stuff at an earlier point in the boot sequence,
->> _not_ completing the entire boot faster.
->>
->> The claim for the current series, in patch 0 in v7 is:
->>
->>    With this series I get the kernel to output to the panel in 0.5s,
->>    instead of 2.8s.
+On Mon, Oct 26, 2015 at 8:33 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> This adds the device tree bindings for the ARM Syscon ICST
+> oscillators, which is a register-level interface to the
+> Integrated Device Technology (IDT) ICS525 and ICS307
+> serially programmable oscillators.
 >
-> It's very common to want to get the display up before the
-> rest of the system.  So wanting to accelerate one part of the boot
-> at the expense to the rest of the system is a valid use case.
-> Deferred initcalls, which is out of tree primarily because it requires
-> the type of manual tweaking that Tomeu describes, specifically
-> addressed this issue.
+> Cc: devicetree@vger.kernel.org
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-Agreed and other folks will want other things up first. But it seems
-we are getting lucky with link order with the speed ups in this case.
-We need a way to specify priority of probing devices. If we have that
-piece, then all this plumbing can be used. A simple solution would be
-looking at stdout-path to get the console device to probe. That would
-be trivial to add on top of this. That may work for the display too,
-but you may not want the console on the display. That wouldn't work
-for CAN bus either, but then I'm not sure there is a generic solution
-for its requirements (respond within 50ms IIRC).
+Acked-by: Rob Herring <robh@kernel.org>
 
->> Just to get side-tracked, one other approach at ordering to reduce
->> deferrals reported a modest boot time reduction for four boards and a
->> very slight boot time increase for one other board.) The report of boot
->> times with that approach was in:
->>
->>   http://article.gmane.org/gmane.linux.drivers.devicetree/133010
->>
->> from Alexander Holler.
->>
->> I have not searched further to see if there is more data of boot time
->> reductions from any of the other attempts to change driver binding
->> order to move dependencies before use of a resource.  But whether
->> there is a performance improvement or not, there continues to be
->> a stream of developers creatively impacting the binding order for
->> their specific driver(s) or board.  So it seems that maybe there
->> is an underlying problem, or we don't have adequate documentation
->> explaining how to avoid a need to order bindings, or the
->> documentation exists and is not being read.
+> ---
+> ChangeLog v1->v2:
+> - Spelling fixes.
 >
-> Well, I have probe order problems unrelated to boot time, that
-> I solved by resorting to putting stuff into modules and loading
-> them post-boot.  So I'd be interested in easy solutions to managing
-> boot order in mainline.
-
-I take it that this series doesn't help those problems?
-
->> I have been defaulting to the position that has been asserted by
->> the device tree maintainters, that probe deferrals work just fine
->> for at least the majority of cases (and is the message I have been
->> sharing in my conference presentations about device tree).  But I
->> suspect that there is at least a small minority of cases that are not
->> well served by probe deferral.  (Not to be read as an endorsement of
->> this specific patch series, just a generic observation.)
+> I'm looking for an ACK from the CLK maintainers to take this
+> through the ARM SoC tree once the series stabilize.
+> ---
+>  .../devicetree/bindings/clock/arm-syscon-icst.txt  | 40 ++++++++++++++++++++++
+>  1 file changed, 40 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
 >
-> I've been worried about DT overhead adding to boot time for a while.
-
-Always beating up DT... ;) Yes, I'm sure there is some overhead, but
-looking at bootgraph there's much longer items not related to DT (USB,
-MMC and anything over I2C seem to be typical). With DT we lost most
-control of the order, and at the same time we added a load of new
-subsystems that are dependencies.
-
-> And IMHO probe deferral is just about the lamest way to solve boot
-> order dependencies I can imagine, from a computer science perspective.
-> (Well, there's a certain elegance to it, but it's a stupid "make
-> everything re-doable, back up and start over, time-wasting" elegance.)
-
-Exactly. That was a large part of my accepting it.
-
-> However, when Android takes 35 seconds to boot, and most people almost never
-> cold-boot your product, a few seconds of kernel time-wasting on
-> cold-boot seem less important. Alas, when I started working on mobile
-> phones I stopped caring much about boot time.
+> diff --git a/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt b/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
+> new file mode 100644
+> index 000000000000..8b7177cecb36
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
+> @@ -0,0 +1,40 @@
+> +ARM System Controller ICST clocks
+> +
+> +The ICS525 and ICS307 oscillators are produced by Integrated Devices
+> +Technology (IDT). ARM integrated these oscillators deeply into their
+> +reference designs by adding special control registers that manage such
+> +oscillators to their system controllers.
+> +
+> +The ARM system controller contains logic to serialize and initialize
+> +an ICST clock request after a write to the 32 bit register at an offset
+> +into the system controller. Furthermore, to even be able to alter one of
+> +these frequencies, the system controller must first be unlocked by
+> +writing a special token to another offset in the system controller.
+> +
+> +The ICST oscillator must be provided inside a system controller node.
+> +
+> +Required properties:
+> +- lock-offset: the offset address into the system controller where the
+> +  unlocking register is located
+> +- vco-offset: the offset address into the system controller where the
+> +  ICST control register is located (even 32 bit address)
+> +- compatible: must be one of "arm,syscon-icst525" or "arm,syscon-icst307"
+> +- #clock-cells: must be <0>
+> +- clocks: parent clock, since the ICST needs a parent clock to derive its
+> +  frequency from, this attribute is compulsory.
+> +
+> +Example:
+> +
+> +syscon: syscon@10000000 {
+> +       compatible = "syscon";
+> +       reg = <0x10000000 0x1000>;
+> +
+> +       oscclk0: osc0@0c {
+> +               compatible = "arm,syscon-icst307";
+> +               #clock-cells = <0>;
+> +               lock-offset = <0x20>;
+> +               vco-offset = <0x0c>;
+> +               clocks = <&xtal24mhz>;
+> +       };
+> +       (...)
+> +};
+> --
+> 2.4.3
 >
-> Thus, I've never worried about the DT overhead enough to actually
-> measure it, as requested by Greg.  So I'll just shut up now. :-)
-
-That would be a challenge to measure since it is distributed.
-
-Rob
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
