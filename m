@@ -1,59 +1,44 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:41093 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751107AbbJTJXQ (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 20 Oct 2015 05:23:16 -0400
-From: Andrzej Hajda <a.hajda@samsung.com>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Hyungwon Hwang <human.hwang@samsung.com>
-Subject: [PATCH 00/10] drm/exynos/decon5433: add support to DECON-TV
-Date: Tue, 20 Oct 2015 11:22:31 +0200
-Message-id: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 27 Oct 2015 13:41:11 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+	devicetree@vger.kernel.org, jonmason@broadcom.com,
+	mturquette@baylibre.com, linux@arm.linux.org.uk,
+	sbranden@broadcom.com, rjui@broadcom.com
+Subject: Re: [PATCH v2 2/3] clk: bcm: Add BCM63138 clock support
+Message-ID: <20151027204111.GO19782@codeaurora.org>
+References: <1445917997-3629-1-git-send-email-f.fainelli@gmail.com>
+ <1445917997-3629-3-git-send-email-f.fainelli@gmail.com>
+ <20151027174659.GM19782@codeaurora.org>
+ <562FD230.5090202@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <562FD230.5090202@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Inki,
+On 10/27, Florian Fainelli wrote:
+> On 27/10/15 10:46, Stephen Boyd wrote:
+> > On 10/26, Florian Fainelli wrote:
+> >> diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+> >> index 85260fb96b36..a0c18528b70d 100644
+> >> --- a/drivers/clk/bcm/Kconfig
+> >> +++ b/drivers/clk/bcm/Kconfig
+> >> @@ -1,3 +1,13 @@
+> >> +config CLK_BCM_63XX
+> >> +	bool "Broadcom BCM63xx clock support"
+> >> +	depends on ARCH_BCM_63XX || COMPILE_TEST
+> >> +	depends on COMMON_CLK
+> >> +	select COMMON_CLK_IPROC
+> >> +	default y
+> > 
+> > perhaps default CLK_BCM_63XX?
+> 
+> Did you mean default ARCH_BCM_63XX instead?
+> 
 
-This patchset adds support to DECON-TV in Exynos5433 SoC.
-The main patch is prepended with few preparation patches:
-- add three clocks required by HDMI pipeline,
-- small bindings update,
-- driver cleanup.
-
-The patchset is based on the latest exynos-drm-next branch.
-
-Regards
-Andrzej
-
-
-Andrzej Hajda (10):
-  clk/samsung: exynos5433: add definitions of HDMI-PHY output clocks
-  clk/samsung: exynos5433: add pclk_decon clock
-  drm/exynos/decon5433: add PCLK clock
-  dt-bindings: video: add PCLK clock entry to exynos5433-decon
-  drm/exynos/decon5433: fix timing registers writes
-  drm/exynos/decon5433: add function to set particular register bits
-  drm/exynos/decon5433: merge different flag fields
-  drm/exynos/decon5433: remove duplicated initialization
-  dt-bindings: video: exynos5433-decon: add bindings for DECON-TV
-  drm/exynos/decon5433: add support for DECON-TV
-
- .../devicetree/bindings/video/exynos5433-decon.txt |  23 +-
- drivers/clk/samsung/clk-exynos5433.c               |   8 +-
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c      | 320 ++++++++++-----------
- include/dt-bindings/clock/exynos5433.h             |   7 +-
- include/video/exynos5433_decon.h                   |  29 ++
- 5 files changed, 214 insertions(+), 173 deletions(-)
+Yes.
 
 -- 
-1.9.1
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
