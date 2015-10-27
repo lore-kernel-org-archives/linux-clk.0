@@ -1,75 +1,126 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Fri, 30 Oct 2015 18:37:38 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 09/19] drm: sun4i: Add DT bindings documentation
-Message-ID: <20151030173738.GD17183@ulmo.nvidia.com>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
- <1446214865-3972-10-git-send-email-maxime.ripard@free-electrons.com>
- <CAL_JsqLuUUApGAgdw7U8EJ7p5yrYJg8AKFB32AE9Ufrf47=WpQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="DiL7RhKs8rK9YGuF"
-In-Reply-To: <CAL_JsqLuUUApGAgdw7U8EJ7p5yrYJg8AKFB32AE9Ufrf47=WpQ@mail.gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: bcm-kernel-feedback-list@broadcom.com,
+	devicetree@vger.kernel.org,
+	jonmason@broadcom.com,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	linux@arm.linux.org.uk,
+	sbranden@broadcom.com,
+	rjui@broadcom.com,
+	Florian Fainelli <f.fainelli@gmail.com>
+Subject: [PATCH v2 3/3] ARM: dts: BCM63xx: Add ARMPLL device tree nodes
+Date: Mon, 26 Oct 2015 20:53:17 -0700
+Message-Id: <1445917997-3629-4-git-send-email-f.fainelli@gmail.com>
+In-Reply-To: <1445917997-3629-1-git-send-email-f.fainelli@gmail.com>
+References: <1445917997-3629-1-git-send-email-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Add the ARM PLL controller which comes standard with the Cortex-A9 found
+on the BCM63138 SoCs. This is the same controller as the one found in
+the Broadcom iProc architecture, however, we have a separate compatible
+string to indicate the integration difference.
 
---DiL7RhKs8rK9YGuF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+While at it, properly rename references to the 50Mhz clock which is in
+fact a crystal/oscillator and updates references to it.
 
-On Fri, Oct 30, 2015 at 11:40:03AM -0500, Rob Herring wrote:
-> On Fri, Oct 30, 2015 at 9:20 AM, Maxime Ripard
-[...]
-> > +Optional properties:
-> > +  - allwinner,tv-encoder: phandle to the TV Encoder in our pipeline
-> > +  - allwinner,panel: phandle to the panel used in our RGB interface
->=20
-> Use of-graph please.
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+No changes in v2
 
-Why? Panels are a really simple resource and a simple phandle is fully
-capable of describing the relationship.
+ arch/arm/boot/dts/bcm63138.dtsi | 39 +++++++++++++++++++++++++++++----------
+ 1 file changed, 29 insertions(+), 10 deletions(-)
 
-Thierry
-
---DiL7RhKs8rK9YGuF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJWM6rhAAoJEN0jrNd/PrOhe5MP/Rz/SQpr6XBAaweD0OTh1bj8
-2u3x4pyBd4Z73GS/nVzflQjZf4B6AqwkvV/Nrrr9E2pdo91uacdfL3uW6n7tLIIM
-y0rkDnx5YNTkkM8CM9X4wiziYGuJ0oSxTauw1nH2TEpYf0pFzfrDI16u5mJT0/vS
-oL+4Iv5kt1F1/Fnk7ttAioEpvhhz9nMuTqzAI7cajq34CN9s6w2J1pizWQokxJI/
-w719JEPIL6Qu8d4cx5N7J7XBaP9giBjSvCsR+ShobF35N5hO1U/JoCGnwZaw81H1
-W/vl3xiQwn9PZKZk/fiUguHrfFSXcdLmEFCXn6l9Rxr0lTWmkArF+XfDj/g+BrKB
-4Y65KTvHLaUWEPL0Zyt/us6rZGoULSV73wZYLmBttkSgDDdVWeTx9R9llsU5CwJG
-pHdSf/WF4lZ5KKQw+H/ajFly+jxQLi34mCugaNkWJZ1jmLVE/XVRyXe4GeeuS8rO
-31EprNW6EViDFL2VDqo2R2Pu5XKyEcYHuRzBXCSCuZe1FdNkbtoESq+HnqbhF911
-Ni5aTra90uAE3cO15w15sLfKxdIadnI7WpgbTGEG+CfVVY3Fra/hNE9hdMTlwTNb
-hNodQv+gnrjmCeYaiJPyg4lWXqEqqeOOd40POR9L7RGeyvXRDYiB/q0S4l2eIRKj
-LP2c5ial8yO7oeFJx4MP
-=RgVR
------END PGP SIGNATURE-----
-
---DiL7RhKs8rK9YGuF--
+diff --git a/arch/arm/boot/dts/bcm63138.dtsi b/arch/arm/boot/dts/bcm63138.dtsi
+index 34cd64051250..c146325eebdb 100644
+--- a/arch/arm/boot/dts/bcm63138.dtsi
++++ b/arch/arm/boot/dts/bcm63138.dtsi
+@@ -43,17 +43,29 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		arm_timer_clk: arm_timer_clk {
++		osc: oscillator {
+ 			#clock-cells = <0>;
+ 			compatible = "fixed-clock";
+-			clock-frequency = <500000000>;
++			clock-frequency = <50000000>;
++			clock-output-names = "periph";
+ 		};
+ 
+-		periph_clk: periph_clk {
++		/* peripheral clock for system timer */
++		axi_clk: axi_clk {
+ 			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <50000000>;
+-			clock-output-names = "periph";
++			compatible = "fixed-factor-clock";
++			clocks = <&armpll>;
++			clock-div = <2>;
++			clock-mult = <1>;
++		};
++
++		/* APB bus clock */
++		apb_clk: apb_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&armpll>;
++			clock-div = <4>;
++			clock-mult = <1>;
+ 		};
+ 	};
+ 
+@@ -93,14 +105,14 @@
+ 			compatible = "arm,cortex-a9-global-timer";
+ 			reg = <0x1e200 0x20>;
+ 			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&arm_timer_clk>;
++			clocks = <&axi_clk>;
+ 		};
+ 
+ 		local_timer: local-timer@1e600 {
+ 			compatible = "arm,cortex-a9-twd-timer";
+ 			reg = <0x1e600 0x20>;
+ 			interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&arm_timer_clk>;
++			clocks = <&axi_clk>;
+ 		};
+ 
+ 		twd_watchdog: watchdog@1e620 {
+@@ -109,6 +121,13 @@
+ 			interrupts = <GIC_PPI 14 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
++		armpll: armpll {
++			#clock-cells = <0>;
++			compatible = "brcm,bcm63138-armpll";
++			clocks = <&osc>;
++			reg = <0x20000 0xf00>;
++		};
++
+ 		pmb0: reset-controller@4800c0 {
+ 			compatible = "brcm,bcm63138-pmb";
+ 			reg = <0x4800c0 0x10>;
+@@ -138,7 +157,7 @@
+ 			compatible = "brcm,bcm6345-uart";
+ 			reg = <0x600 0x1b>;
+ 			interrupts = <GIC_SPI 32 0>;
+-			clocks = <&periph_clk>;
++			clocks = <&osc>;
+ 			clock-names = "periph";
+ 			status = "disabled";
+ 		};
+@@ -147,7 +166,7 @@
+ 			compatible = "brcm,bcm6345-uart";
+ 			reg = <0x620 0x1b>;
+ 			interrupts = <GIC_SPI 33 0>;
+-			clocks = <&periph_clk>;
++			clocks = <&osc>;
+ 			clock-names = "periph";
+ 			status = "disabled";
+ 		};
+-- 
+2.1.0
