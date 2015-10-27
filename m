@@ -1,85 +1,126 @@
-Return-Path: <jonmason@broadcom.com>
-From: Jon Mason <jonmason@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
-	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
-	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
-Subject: [RFC 4/5] clk: iproc: define Broadcom NS2 iProc clock binding
-Date: Tue, 13 Oct 2015 17:22:26 -0400
-Message-ID: <1444771347-11382-5-git-send-email-jonmason@broadcom.com>
-In-Reply-To: <1444771347-11382-1-git-send-email-jonmason@broadcom.com>
-References: <1444771347-11382-1-git-send-email-jonmason@broadcom.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jonmason@broadcom.com
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: bcm-kernel-feedback-list@broadcom.com,
+	devicetree@vger.kernel.org,
+	jonmason@broadcom.com,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	linux@arm.linux.org.uk,
+	sbranden@broadcom.com,
+	rjui@broadcom.com,
+	Florian Fainelli <f.fainelli@gmail.com>
+Subject: [PATCH v3 3/3] ARM: dts: BCM63xx: Add ARMPLL device tree nodes
+Date: Tue, 27 Oct 2015 16:56:17 -0700
+Message-Id: <1445990177-27474-4-git-send-email-f.fainelli@gmail.com>
+In-Reply-To: <1445990177-27474-1-git-send-email-f.fainelli@gmail.com>
+References: <1445990177-27474-1-git-send-email-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Document the device tree bindings for Broadcom Northstar 2 architecture
-based clock controller
+Add the ARM PLL controller which comes standard with the Cortex-A9 found
+on the BCM63138 SoCs. This is the same controller as the one found in
+the Broadcom iProc architecture, however, we have a separate compatible
+string to indicate the integration difference.
 
-Signed-off-by: Jon Mason <jonmason@broadcom.com>
+While at it, properly rename references to the 50Mhz clock which is in
+fact a crystal/oscillator and updates references to it.
+
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- .../bindings/clock/brcm,iproc-clocks.txt           | 48 ++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+No changes in v2 or v3
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-index b3c3e9d..ede65a5 100644
---- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-@@ -160,3 +160,51 @@ Northstar Plus.  These clock IDs are defined in:
-     pcie_phy	lcpll0		1	BCM_NSP_LCPLL0_PCIE_PHY_REF_CLK
-     sdio	lcpll0		2	BCM_NSP_LCPLL0_SDIO_CLK
-     ddr_phy	lcpll0		3	BCM_NSP_LCPLL0_DDR_PHY_CLK
+ arch/arm/boot/dts/bcm63138.dtsi | 39 +++++++++++++++++++++++++++++----------
+ 1 file changed, 29 insertions(+), 10 deletions(-)
+
+diff --git a/arch/arm/boot/dts/bcm63138.dtsi b/arch/arm/boot/dts/bcm63138.dtsi
+index 34cd64051250..c146325eebdb 100644
+--- a/arch/arm/boot/dts/bcm63138.dtsi
++++ b/arch/arm/boot/dts/bcm63138.dtsi
+@@ -43,17 +43,29 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		arm_timer_clk: arm_timer_clk {
++		osc: oscillator {
+ 			#clock-cells = <0>;
+ 			compatible = "fixed-clock";
+-			clock-frequency = <500000000>;
++			clock-frequency = <50000000>;
++			clock-output-names = "periph";
+ 		};
+ 
+-		periph_clk: periph_clk {
++		/* peripheral clock for system timer */
++		axi_clk: axi_clk {
+ 			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <50000000>;
+-			clock-output-names = "periph";
++			compatible = "fixed-factor-clock";
++			clocks = <&armpll>;
++			clock-div = <2>;
++			clock-mult = <1>;
++		};
 +
-+Northstar 2
-+-----------
-+PLL and leaf clock compatible strings for Northstar 2 are:
-+    "brcm,ns2-genpll-scr"
-+    "brcm,ns2-genpll-sw"
-+    "brcm,ns2-lcpll-ddr"
-+    "brcm,ns2-lcpll-ports"
++		/* APB bus clock */
++		apb_clk: apb_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&armpll>;
++			clock-div = <4>;
++			clock-mult = <1>;
+ 		};
+ 	};
+ 
+@@ -93,14 +105,14 @@
+ 			compatible = "arm,cortex-a9-global-timer";
+ 			reg = <0x1e200 0x20>;
+ 			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&arm_timer_clk>;
++			clocks = <&axi_clk>;
+ 		};
+ 
+ 		local_timer: local-timer@1e600 {
+ 			compatible = "arm,cortex-a9-twd-timer";
+ 			reg = <0x1e600 0x20>;
+ 			interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&arm_timer_clk>;
++			clocks = <&axi_clk>;
+ 		};
+ 
+ 		twd_watchdog: watchdog@1e620 {
+@@ -109,6 +121,13 @@
+ 			interrupts = <GIC_PPI 14 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
++		armpll: armpll {
++			#clock-cells = <0>;
++			compatible = "brcm,bcm63138-armpll";
++			clocks = <&osc>;
++			reg = <0x20000 0xf00>;
++		};
 +
-+The following table defines the set of PLL/clock index and ID for Northstar 2.
-+These clock IDs are defined in:
-+    "include/dt-bindings/clock/bcm-ns2.h"
-+
-+    Clock	Source		Index	ID
-+    ---		-----		-----	---------
-+    crystal	N/A		N/A	N/A
-+
-+    genpll_scr	crystal		0	BCM_NS2_GENPLL_SCR
-+    scr		genpll_scr	1	BCM_NS2_GENPLL_SCR_SCR_CLK
-+    fs		genpll_scr	2	BCM_NS2_GENPLL_SCR_FS_CLK
-+    audio_ref	genpll_scr	3	BCM_NS2_GENPLL_SCR_AUDIO_CLK
-+    ch3_unused	genpll_scr	4	BCM_NS2_GENPLL_SCR_CH3_UNUSED
-+    ch4_unused	genpll_scr	5	BCM_NS2_GENPLL_SCR_CH4_UNUSED
-+    ch5_unused	genpll_scr	6	BCM_NS2_GENPLL_SCR_CH5_UNUSED
-+
-+    genpll_sw	crystal		0	BCM_NS2_GENPLL_SW
-+    rpe		genpll_sw	1	BCM_NS2_GENPLL_SW_RPE_CLK
-+    250		genpll_sw	2	BCM_NS2_GENPLL_SW_250_CLK
-+    nic		genpll_sw	3	BCM_NS2_GENPLL_SW_NIC_CLK
-+    chimp	genpll_sw	4	BCM_NS2_GENPLL_SW_CHIMP_CLK
-+    port	genpll_sw	5	BCM_NS2_GENPLL_SW_PORT_CLK
-+    sdio	genpll_sw	6	BCM_NS2_GENPLL_SW_SDIO_CLK
-+
-+    lcpll_ddr	crystal		0	BCM_NS2_LCPLL_DDR
-+    pcie_sata_usb lcpll_ddr	1	BCM_NS2_LCPLL_DDR_PCIE_SATA_USB_CLK
-+    ddr		lcpll_ddr	2	BCM_NS2_LCPLL_DDR_DDR_CLK
-+    ch2_unused	lcpll_ddr	3	BCM_NS2_LCPLL_DDR_CH2_UNUSED
-+    ch3_unused	lcpll_ddr	4	BCM_NS2_LCPLL_DDR_CH3_UNUSED
-+    ch4_unused	lcpll_ddr	5	BCM_NS2_LCPLL_DDR_CH4_UNUSED
-+    ch5_unused	lcpll_ddr	6	BCM_NS2_LCPLL_DDR_CH5_UNUSED
-+
-+    lcpll_ports	crystal		0	BCM_NS2_LCPLL_PORTS
-+    wan		lcpll_ports	1	BCM_NS2_LCPLL_PORTS_WAN_CLK
-+    rgmii	lcpll_ports	2	BCM_NS2_LCPLL_PORTS_RGMII_CLK
-+    ch2_unused	lcpll_ports	3	BCM_NS2_LCPLL_PORTS_CH2_UNUSED
-+    ch3_unused	lcpll_ports	4	BCM_NS2_LCPLL_PORTS_CH3_UNUSED
-+    ch4_unused	lcpll_ports	5	BCM_NS2_LCPLL_PORTS_CH4_UNUSED
-+    ch5_unused	lcpll_ports	6	BCM_NS2_LCPLL_PORTS_CH5_UNUSED
+ 		pmb0: reset-controller@4800c0 {
+ 			compatible = "brcm,bcm63138-pmb";
+ 			reg = <0x4800c0 0x10>;
+@@ -138,7 +157,7 @@
+ 			compatible = "brcm,bcm6345-uart";
+ 			reg = <0x600 0x1b>;
+ 			interrupts = <GIC_SPI 32 0>;
+-			clocks = <&periph_clk>;
++			clocks = <&osc>;
+ 			clock-names = "periph";
+ 			status = "disabled";
+ 		};
+@@ -147,7 +166,7 @@
+ 			compatible = "brcm,bcm6345-uart";
+ 			reg = <0x620 0x1b>;
+ 			interrupts = <GIC_SPI 33 0>;
+-			clocks = <&periph_clk>;
++			clocks = <&osc>;
+ 			clock-names = "periph";
+ 			status = "disabled";
+ 		};
 -- 
-1.9.1
+2.1.0
