@@ -1,103 +1,39 @@
-Return-Path: <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 0/3] ARM: dts: Enable Exynos RNG module
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- linux-crypto@vger.kernel.org
-Cc: Heiner Kallweit <hkallweit1@gmail.com>
-References: <1445230834-32689-1-git-send-email-k.kozlowski@samsung.com>
- <56251627.4050908@math.uni-bielefeld.de> <562581BD.3070609@samsung.com>
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Message-ID: <562C1B17.3080303@math.uni-bielefeld.de>
-Date: Sun, 25 Oct 2015 01:58:15 +0200
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 27 Oct 2015 16:17:16 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: agross@codeaurora.org, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, bjorn.andersson@sonymobile.com,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v3 1/8] arm64: dts: qcom: 8x16: Add fixed rate on-board
+ oscillator
+Message-ID: <20151027231716.GS19782@codeaurora.org>
+References: <1445360280-2347-1-git-send-email-georgi.djakov@linaro.org>
+ <1445360280-2347-2-git-send-email-georgi.djakov@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <562581BD.3070609@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1445360280-2347-2-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+On 10/20, Georgi Djakov wrote:
+> diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+> index 8748fcca70f4..355a2acea796 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+> @@ -80,6 +80,15 @@
+>  			     <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+>  	};
+>  
+> +	clocks {
+> +		xo_board: xo_board {
+> +			compatible = "fixed-clock";
+> +			#clock-cells = <0>;
+> +			clock-frequency = <19200000>;
+> +			clock-output-names = "xo_board";
 
+clock-output-names isn't necessary here because the node name is
+the same and we use that by default.
 
-Krzysztof Kozlowski wrote:
-> On 20.10.2015 01:11, Tobias Jakobi wrote:
->> Hello Krzysztof,
->>
->> I can confirm that this also works on a Odroid-X2, so I guess it's safe
->> to enable the PRNG for all Exynos4412-based Odroid devices.
-> 
-> Sure, I can send a patch for that. I can test it later also on Odroid-U3.
-Thanks already!
-
-
-
->> Any chance that you might also take a look at the other hwcrypto stuff
->> on the SoC ('samsung,exynos4210-secss' compatible)?
-> 
-> What do you mean? The s5p-sss driver already supports Device Tree.
-The driver supports DT, but it doesn't really work.
-
-I'm using the following DT entry to let the driver probe correctly:
-https://github.com/tobiasjakobi/linux-odroid/commit/82c00cddb5cbf89fad994784c28c8125beae8e13
-
-But the crypto self-test fails on boot:
-alg: skcipher: encryption failed on test 1 for ecb-aes-s5p: ret=22
-
-
-Another problems is that SSS and PRNG can't be used at the same time,
-since they both use common hardware resources (I think it was IO).
-
-
-With best wishes,
-Tobias
-
-
-> Best regards,
-> Krzysztof
-> 
->>
->> With best wishes,
->> Tobias
->>
->>
->> Krzysztof Kozlowski wrote:
->>> Hi,
->>>
->>>
->>> The patchset adds necessary clock from Security SubSystem (SSS)
->>> and enables the PRNG module of Exynos for Trats2 board.
->>>
->>> The first patch (clock) is required for other ones so please
->>> take everything in one step.
->>>
->>> The actual Device Tree support (and compatible) was sent in separate
->>> patch:
->>>  - https://patchwork.kernel.org/patch/7432891/
->>>  - http://marc.info/?l=linux-crypto-vger&m=144522952725052&w=2
->>>
->>> The device can be tested (after applying both patchsets) with:
->>> $ echo exynos > /sys/class/misc/hw_random/rng_current
->>> $ dd if=/dev/hwrng of=/dev/null bs=1 count=16
->>>
->>>
->>> Best regards,
->>> Krzysztof
->>>
->>> Krzysztof Kozlowski (3):
->>>   clk: samsung: exynos4: Add SSS gate clock
->>>   ARM: dts: Add PRNG module for exynos4
->>>   ARM: dts: Enable PRNG module on exynos4412-trats2
->>>
->>>  arch/arm/boot/dts/exynos4.dtsi          | 8 ++++++++
->>>  arch/arm/boot/dts/exynos4412-trats2.dts | 4 ++++
->>>  drivers/clk/samsung/clk-exynos4.c       | 1 +
->>>  include/dt-bindings/clock/exynos4.h     | 1 +
->>>  4 files changed, 14 insertions(+)
->>>
->>
->>
-> 
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
