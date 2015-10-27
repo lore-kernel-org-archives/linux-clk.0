@@ -1,59 +1,96 @@
-Return-Path: <ulf.hansson@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <20151001173554.GB19319@codeaurora.org>
-References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
-	<17200614.QxCe8zAb7I@diego>
-	<CAPDyKFpis8XnvrppHq7q_7DQeN2UiEpykNTJ=1iJJ9AGOHTW6Q@mail.gmail.com>
-	<2695161.Z1IhqPE0bd@diego>
-	<20151001173554.GB19319@codeaurora.org>
-Date: Thu, 1 Oct 2015 23:05:12 +0200
-Message-ID: <CAPDyKFqrkYXsbBJ61yYo0G8za1szARvA=as-5nLTiwGH5pCrEQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/8] mmc: core: Add mmc_regulator_set_vqmmc()
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>,
-	Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>,
-	linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Doug Anderson <dianders@chromium.org>,
-	Alexandru Stan <amstan@chromium.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <alim.akhtar@samsung.com>
+Message-id: <562F0B7C.9080307@samsung.com>
+Date: Tue, 27 Oct 2015 10:58:28 +0530
+From: Alim Akhtar <alim.akhtar@samsung.com>
+MIME-version: 1.0
+To: Lee Jones <lee.jones@linaro.org>
+Cc: broonie@kernel.org, k.kozlowski@samsung.com, mturquette@baylibre.com,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org,
+ Thomas Abraham <thomas.ab@samsung.com>
+Subject: Re: [PATCH v2 2/5] mfd: sec: Add support for S2MPS15 PMIC
+References: <1445855803-26973-1-git-send-email-alim.akhtar@samsung.com>
+ <1445855803-26973-3-git-send-email-alim.akhtar@samsung.com>
+ <20151026110611.GH597@x1> <562E1F84.2000105@samsung.com>
+ <20151026142930.GJ597@x1>
+In-reply-to: <20151026142930.GJ597@x1>
+Content-type: text/plain; charset=UTF-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 1 October 2015 at 19:35, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 10/01, Heiko St=C3=BCbner wrote:
->> Am Donnerstag, 1. Oktober 2015, 11:54:24 schrieb Ulf Hansson:
->> > On 30 September 2015 at 16:55, Heiko St=C3=BCbner <heiko@sntech.de> wr=
-ote:
->> > > Am Mittwoch, 30. September 2015, 16:42:05 schrieb Ulf Hansson:
->> > >> On 30 September 2015 at 16:07, Heiko Stuebner <heiko@sntech.de> wro=
-te:
->> > > The clock changes of course only touch internals of the phase-clocks=
-, so
->> > > should have no problem going through another tree.
->> >
->> > What happens if I take mmc and dt changes, wouldn't I need the clock
->> > patches as well?
->>
->> The API stays of course the same, only the degree to settings translatio=
-n gets
->> optimized, so I guess in the worst case you would get no good phase and =
-thus
->> fall back to non-highspeed modes - but the system would stay running.
->>
->> But of course, if the clock maintainers could Ack the two clock patches =
-and
->> everything would stay together that would work even better :-)
->>
+Hello
+
+On 10/26/2015 07:59 PM, Lee Jones wrote:
+> On Mon, 26 Oct 2015, Alim Akhtar wrote:
 >
-> If Ulf doesn't want to take them we can apply them to clk tree.
-> Otherwise, you can have my acked-by on the clk patches.
+>> Hi Lee,
+>> Thanks for looking into this.
+>>
+>> On 10/26/2015 04:36 PM, Lee Jones wrote:
+>>> On Mon, 26 Oct 2015, Alim Akhtar wrote:
+>>>
+>>>> From: Thomas Abraham <thomas.ab@samsung.com>
+>>>>
+>>>> Add support for S2MPS15 PMIC which is similar to S2MPS11 PMIC. The S2MPS15
+>>>> PMIC supports 27 LDO regulators, 10 buck regulators, RTC, three 32.768KHz
+>>>> clock outputs and battery charger. This patch adds initial support for
+>>>> LDO and buck regulators of S2MPS15 device.
+>>>>
+>>>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+>>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>>>> [Alim: Added s2mps15_devs like rtc and clk and related changes]
+>>>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>> ---
+>>>>   drivers/mfd/sec-core.c              |   31 +++++++
+>>>>   drivers/mfd/sec-irq.c               |    8 ++
+>>>>   include/linux/mfd/samsung/core.h    |    1 +
+>>>>   include/linux/mfd/samsung/s2mps15.h |  161 +++++++++++++++++++++++++++++++++++
+>>>>   4 files changed, 201 insertions(+)
+>>>>   create mode 100644 include/linux/mfd/samsung/s2mps15.h
+>>>>
+>>>> diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+>>>> index 2626fc0b5b8c..db3d4d4ff805 100644
+>>>> --- a/drivers/mfd/sec-core.c
+>>>> +++ b/drivers/mfd/sec-core.c
+>>>> @@ -29,6 +29,7 @@
+>>>>   #include <linux/mfd/samsung/s2mps11.h>
+>>>>   #include <linux/mfd/samsung/s2mps13.h>
+>>>>   #include <linux/mfd/samsung/s2mps14.h>
+>>>> +#include <linux/mfd/samsung/s2mps15.h>
+>>>>   #include <linux/mfd/samsung/s2mpu02.h>
+>>>>   #include <linux/mfd/samsung/s5m8763.h>
+>>>>   #include <linux/mfd/samsung/s5m8767.h>
+>>>> @@ -96,6 +97,17 @@ static const struct mfd_cell s2mps14_devs[] = {
+>>>>   	}
+>>>>   };
+>>>>
+>>>> +static const struct mfd_cell s2mps15_devs[] = {
+>>>> +	{
+>>>> +		.name = "s2mps15-pmic",
+>>>> +	}, {
+>>>> +		.name = "s2mps15-rtc",
+>>>> +	}, {
+>>>
+>>> Why don't these have compatibles?
+>>>
+>> s2mps15-pmic does have compatible below in sec_dt_match[].
+>
+> Woah!!  What's going on here?  You're matching the MFD and Regulator
+> drivers with the same compatible string.  And then registering the
+> Regulator device as an MFD.  That's a bit confusing don't you think?
+>
+Sorry for the confusion, as explained in the binding documentation,
+S2MPS15 is a multi-function device which has rtc, regulator and clk 
+provider as a sub-blocks. And each of these sub-blocks are represented
+as child node of parent MFD node. Out of these only clk controller child 
+node needs its own compatible string to populate of_node structure of 
+the device so that it can access properties of this sub-node in 
+drivers/clk/clk-s2mps11.c.
+I just followed "Documentation/devicetree/bindings/mfd/s2mps11.txt"
+to implement s2mps15.
 
-I don't mind picking up the clock patches. So I consider this as an
-ack for both patch 1 and patch2, thanks.
 
-Now, let's give Jaehoon some time to review the dw_mmc parts.
-
-Kind regards
-Uffe
+>> s2mps15-rtc does not need one as rtc driver does not support OF yet.
+>> So no DT node for this as of now.
+>
+> [...]
+>
