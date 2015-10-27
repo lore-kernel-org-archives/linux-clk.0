@@ -1,37 +1,49 @@
-Return-Path: <jszhang@marvell.com>
-From: Jisheng Zhang <jszhang@marvell.com>
-To: <sebastian.hesselbarth@gmail.com>, <robh+dt@kernel.org>,
-        <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Jisheng Zhang <jszhang@marvell.com>
-Subject: [PATCH v2 0/4] berlin sdhci clock clean up
-Date: Tue, 20 Oct 2015 19:16:43 +0800
-Message-ID: <1445339807-2351-1-git-send-email-jszhang@marvell.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: bcm-kernel-feedback-list@broadcom.com,
+	devicetree@vger.kernel.org,
+	jonmason@broadcom.com,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	linux@arm.linux.org.uk,
+	sbranden@broadcom.com,
+	rjui@broadcom.com,
+	Florian Fainelli <f.fainelli@gmail.com>
+Subject: [PATCH v2 0/3] clk: Broadcom BCM63138 support
+Date: Mon, 26 Oct 2015 20:53:14 -0700
+Message-Id: <1445917997-3629-1-git-send-email-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add or fix the optional clock property, then remove the CLK_IGNORE_UNUSED
-flag for sdio clk(s).
+Hi all,
 
-Since v1:
-  - remove the "mmc: sdhci-pxav3: fix optional clock name" patch to not
-    block the clock clean up patches, will send another separate patch 
-    after talking with HW people.
+This patch series adds support for the Broadcom BCM63138 DSL SoCs
+clocking framework.
 
-Jisheng Zhang (4):
-  ARM: dts: berlin: correct BG2Q's sdhci2 2nd clock
-  ARM: dts: berlin: add 2nd clock for BG2Q sdhci0 and sdhci1
-  clk: berlin: bg2q: remove CLK_IGNORE_UNUSED flag for sdio clk
-  clk: berlin: bg2: remove CLK_IGNORE_UNUSED flag for sdio clk
+Since the HW is identical to the one found in Broadcom iProc SoCs, but the
+integration is different (obviously), there is still a new compatible string
+introduced just in case we happen to find issues in the future.
 
- arch/arm/boot/dts/berlin2q.dtsi | 8 +++++---
- drivers/clk/berlin/bg2.c        | 4 ++--
- drivers/clk/berlin/bg2q.c       | 2 +-
- 3 files changed, 8 insertions(+), 6 deletions(-)
+This applies on top of clk/next as of
+679c51cffc3b316bd89ecc91ef92603dd6d4fc68 ("clk: Add stubs for of_clk_*() APIs when CONFIG_OF=n")
+
+Since there is an obvious dependency between patch 2 and 3, we can either
+merge this through the Clock tree or via a future arm-soc pull requests
+for Broadcom SoCs.
+
+Florian Fainelli (3):
+  clk: iproc: Extend binding to cover BCM63138
+  clk: bcm: Add BCM63138 clock support
+  ARM: dts: BCM63xx: Add ARMPLL device tree nodes
+
+ .../bindings/clock/brcm,iproc-clocks.txt           |  5 +++
+ arch/arm/boot/dts/bcm63138.dtsi                    | 39 ++++++++++++++++------
+ drivers/clk/bcm/Kconfig                            | 10 ++++++
+ drivers/clk/bcm/Makefile                           |  1 +
+ drivers/clk/bcm/clk-bcm63xx.c                      | 22 ++++++++++++
+ 5 files changed, 67 insertions(+), 10 deletions(-)
+ create mode 100644 drivers/clk/bcm/clk-bcm63xx.c
 
 -- 
-2.6.1
+2.1.0
