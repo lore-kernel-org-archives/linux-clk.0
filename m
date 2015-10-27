@@ -1,53 +1,74 @@
-Return-Path: <rjw@rjwysocki.net>
-Return-Path: <rjw@rjwysocki.net>
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org, Rob Clark <robdclark@gmail.com>, Rajendra Nayak <rnayak@codeaurora.org>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 1/2] PM / Domains: Make pm_genpd_{add,remove}_subdomain() available to modules
-Date: Mon, 05 Oct 2015 22:55:55 +0200
-Message-ID: <6374611.5Nvbqg0Ugs@vostro.rjw.lan>
-In-Reply-To: <1443727374-1539-2-git-send-email-sboyd@codeaurora.org>
-References: <1443727374-1539-1-git-send-email-sboyd@codeaurora.org> <1443727374-1539-2-git-send-email-sboyd@codeaurora.org>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20151023162405.GA19782@codeaurora.org>
+References: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
+	<1444916813-31024-7-git-send-email-linus.walleij@linaro.org>
+	<20151015190809.GL4558@codeaurora.org>
+	<CACRpkdYHJzj_1yNFWcwXh+-3zTzJOSEttZdhZBqkUn1HigZeJA@mail.gmail.com>
+	<20151023162405.GA19782@codeaurora.org>
+Date: Tue, 27 Oct 2015 16:56:50 +0100
+Message-ID: <CACRpkda35oVhTJC0N5ee6NAuk-tvwwa6AbFS=MST89C1MTTFxQ@mail.gmail.com>
+Subject: Re: [PATCH 06/13] clk: versatile-icst: convert to use regmap
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+	Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thursday, October 01, 2015 12:22:53 PM Stephen Boyd wrote:
-> Export these symbols so they can be used in loadable kernel
-> modules.
-> 
-> Cc: Rob Clark <robdclark@gmail.com>
-> Cc: Rajendra Nayak <rnayak@codeaurora.org>
-> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
-> Cc: Kevin Hilman <khilman@kernel.org>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
-> 
->  drivers/base/power/domain.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index cf4950d92937..9b0f5a06a82b 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -1348,6 +1348,7 @@ int pm_genpd_add_subdomain(struct generic_pm_domain *genpd,
->  
->  	return ret;
->  }
-> +EXPORT_SYMBOL_GPL(pm_genpd_add_subdomain);
->  
->  /**
->   * pm_genpd_remove_subdomain - Remove a subdomain from an I/O PM domain.
-> @@ -1395,6 +1396,7 @@ out:
->  
->  	return ret;
->  }
-> +EXPORT_SYMBOL_GPL(pm_genpd_remove_subdomain);
->  
->  /* Default device callbacks for generic PM domains. */
+On Fri, Oct 23, 2015 at 6:24 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 10/23, Linus Walleij wrote:
+>> On Thu, Oct 15, 2015 at 9:08 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> > On 10/15, Linus Walleij wrote:
+>> >> @@ -151,10 +174,19 @@ struct clk *icst_clk_register(struct device *dev,
+>> >>       init.flags = CLK_IS_ROOT;
+>> >>       init.parent_names = (parent_name ? &parent_name : NULL);
+>> >>       init.num_parents = (parent_name ? 1 : 0);
+>> >> +     icst->map = regmap_init_mmio(NULL, base, &icst_regmap_conf);
+>> >> +     if (IS_ERR(icst->map)) {
+>> >> +             int ret;
+>> >> +
+>> >> +             pr_err("could not initialize ICST regmap\n");
+>> >> +             kfree(icst);
+>> >> +             ret = PTR_ERR(icst->map);
+>> >
+>> > drivers/clk/versatile/clk-icst.c:183
+>> > icst_clk_register() error: dereferencing freed memory 'icst'
+>> > drivers/clk/versatile/clk-icst.c:184
+>> > icst_clk_register() warn: possible memory leak of 'pclone'
+>>
+>> The pclone warning is correct, nice catch. (Fixing it.)
+>>
+>> But for the second warning, whatever static checker you're
+>> using for this is unable to handle error pointers:
+>>
+>>     clk = clk_register(dev, &icst->hw);
+>>     if (IS_ERR(clk))
+>>         kfree(icst);
+>>
+>>     return clk;
+>>
+>> It is quite obvious that returning clk (which may be an error code)
+>> is OK here.
+>>
+>> If you want, I may need to add some specific annotation to shut
+>> up the static checker, any hints?
+>>
+>
+> Huh? I'm totally lost. I use sparse and smatch.
+>
+>> >> +             kfree(icst);
+>> >> +             ret = PTR_ERR(icst->map);
+>
+> We just freed icst, and then we dereferenced it in the next line.
+> What does that have to do with error pointers?
 
-This is fine by me, please feel free to add my ACK to it.
+Sorry I must have confused patch versions.  :(
 
-Thanks,
-Rafael
+I see the real problem now, so will make a v3 of this.
+
+Yours,
+Linus Walleij
