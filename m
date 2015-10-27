@@ -1,77 +1,95 @@
-Return-Path: <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 01/10] clk/samsung: exynos5433: add definitions of HDMI-PHY
- output clocks
-To: Michael Turquette <mturquette@baylibre.com>,
- Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
-References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
- <1445332961-25419-2-git-send-email-a.hajda@samsung.com>
- <20151020103416.20687.40409@quantum>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org,
- linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Hyungwon Hwang <human.hwang@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Message-id: <56261A29.9030900@samsung.com>
-Date: Tue, 20 Oct 2015 12:40:41 +0200
-MIME-version: 1.0
-In-reply-to: <20151020103416.20687.40409@quantum>
-Content-type: text/plain; charset=utf-8; format=flowed
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: bcm-kernel-feedback-list@broadcom.com,
+	devicetree@vger.kernel.org,
+	jonmason@broadcom.com,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	linux@arm.linux.org.uk,
+	sbranden@broadcom.com,
+	rjui@broadcom.com,
+	Florian Fainelli <f.fainelli@gmail.com>
+Subject: [PATCH v2 2/3] clk: bcm: Add BCM63138 clock support
+Date: Mon, 26 Oct 2015 20:53:16 -0700
+Message-Id: <1445917997-3629-3-git-send-email-f.fainelli@gmail.com>
+In-Reply-To: <1445917997-3629-1-git-send-email-f.fainelli@gmail.com>
+References: <1445917997-3629-1-git-send-email-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+BCM63138 has a simple clocking domain which is primarily the ARMPLL
+clocking complex, from which the ARM (CPU), APB and AXI clocks would be
+derived from.
 
-On 2015-10-20 12:34, Michael Turquette wrote:
-> Quoting Andrzej Hajda (2015-10-20 02:22:32)
->> HDMI driver must re-parent respective muxes during HDMI-PHY on/off
->> to HDMI-PHY output clocks. To reference those clocks their
->> definitions should be added.
->>
->> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->> ---
->>   drivers/clk/samsung/clk-exynos5433.c   | 6 ++++--
->>   include/dt-bindings/clock/exynos5433.h | 5 ++++-
->>   2 files changed, 8 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
->> index 650ec13..e037406 100644
->> --- a/drivers/clk/samsung/clk-exynos5433.c
->> +++ b/drivers/clk/samsung/clk-exynos5433.c
->> @@ -2614,8 +2614,10 @@ static struct samsung_fixed_rate_clock disp_fixed_clks[] __initdata = {
->>          FRATE(0, "phyclk_mipidphy0_rxclkesc0_phy", NULL, CLK_IS_ROOT,
->>                          100000000),
->>          /* PHY clocks from HDMI_PHY */
->> -       FRATE(0, "phyclk_hdmiphy_tmds_clko_phy", NULL, CLK_IS_ROOT, 300000000),
->> -       FRATE(0, "phyclk_hdmiphy_pixel_clko_phy", NULL, CLK_IS_ROOT, 166000000),
->> +       FRATE(CLK_PHYCLK_HDMIPHY_TMDS_CLKO_PHY, "phyclk_hdmiphy_tmds_clko_phy",
->> +                       NULL, CLK_IS_ROOT, 300000000),
->> +       FRATE(CLK_PHYCLK_HDMIPHY_PIXEL_CLKO_PHY, "phyclk_hdmiphy_pixel_clko_phy",
->> +                       NULL, CLK_IS_ROOT, 166000000),
->>   };
->>   
->>   static struct samsung_mux_clock disp_mux_clks[] __initdata = {
->> diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
->> index 5bd80d5..4f0d566 100644
->> --- a/include/dt-bindings/clock/exynos5433.h
->> +++ b/include/dt-bindings/clock/exynos5433.h
->> @@ -765,7 +765,10 @@
->>   #define CLK_SCLK_RGB_VCLK                              109
->>   #define CLK_SCLK_RGB_TV_VCLK                           110
->>   
->> -#define DISP_NR_CLK                                    111
->> +#define CLK_PHYCLK_HDMIPHY_PIXEL_CLKO_PHY              111
->> +#define CLK_PHYCLK_HDMIPHY_TMDS_CLKO_PHY               112
->> +
->> +#define DISP_NR_CLK                                    113
-> Why break compatibility with older DTBs?
+Since the ARMPLL controller is entirely compatible with the iProc ARM
+PLL, we just initialize it without additional parameters.
 
-This patch just adds support for 2 more clocks to exynos 5433 clk driver,
-which were previously undefined. How this break compatibility with older 
-DTBs?
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+Changes in v2:
+- added COMPILE_TEST
 
-Best regards
+ drivers/clk/bcm/Kconfig       | 10 ++++++++++
+ drivers/clk/bcm/Makefile      |  1 +
+ drivers/clk/bcm/clk-bcm63xx.c | 22 ++++++++++++++++++++++
+ 3 files changed, 33 insertions(+)
+ create mode 100644 drivers/clk/bcm/clk-bcm63xx.c
+
+diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+index 85260fb96b36..a0c18528b70d 100644
+--- a/drivers/clk/bcm/Kconfig
++++ b/drivers/clk/bcm/Kconfig
+@@ -1,3 +1,13 @@
++config CLK_BCM_63XX
++	bool "Broadcom BCM63xx clock support"
++	depends on ARCH_BCM_63XX || COMPILE_TEST
++	depends on COMMON_CLK
++	select COMMON_CLK_IPROC
++	default y
++	help
++	  Enable common clock framework support for Broadcom BCM63xx DSL SoCs
++	  based on the ARM architecture
++
+ config CLK_BCM_KONA
+ 	bool "Broadcom Kona CCU clock support"
+ 	depends on ARCH_BCM_MOBILE || COMPILE_TEST
+diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+index 3fc95060d875..247c26750d8b 100644
+--- a/drivers/clk/bcm/Makefile
++++ b/drivers/clk/bcm/Makefile
+@@ -1,3 +1,4 @@
++obj-$(CONFIG_CLK_BCM_63XX)	+= clk-bcm63xx.o
+ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona.o
+ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona-setup.o
+ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm281xx.o
+diff --git a/drivers/clk/bcm/clk-bcm63xx.c b/drivers/clk/bcm/clk-bcm63xx.c
+new file mode 100644
+index 000000000000..b7e0469d0522
+--- /dev/null
++++ b/drivers/clk/bcm/clk-bcm63xx.c
+@@ -0,0 +1,22 @@
++/*
++ * Copyright (C) 2015 Broadcom Corporation
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation version 2.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether express or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++#include <linux/kernel.h>
++#include <linux/clk-provider.h>
++#include <linux/of.h>
++#include "clk-iproc.h"
++
++static void __init bcm63138_armpll_init(struct device_node *node)
++{
++	iproc_armpll_setup(node);
++}
++CLK_OF_DECLARE(bcm63138_armpll, "brcm,bcm63138-armpll", bcm63138_armpll_init);
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.1.0
