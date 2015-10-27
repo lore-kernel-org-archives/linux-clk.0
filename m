@@ -1,251 +1,49 @@
-Return-Path: <robh@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <4025469.zmyipZqCsP@vostro.rjw.lan>
-References: <561E1378.6000906@collabora.com> <1603415.VWFZ8V0WMC@vostro.rjw.lan>
- <CAL_JsqKa3MFJUWKV2KxPE_NmrP2g4dOD3zr+0Kyx4yBkDOg2HA@mail.gmail.com> <4025469.zmyipZqCsP@vostro.rjw.lan>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 20 Oct 2015 09:15:01 -0500
-Message-ID: <CAL_JsqJuu5_Osqi+X6M6UeRDZFQB+_8riYDF1gvsGayk5-4SFw@mail.gmail.com>
-Subject: Re: [GIT PULL] On-demand device probing
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: David Woodhouse <dwmw2@infradead.org>, Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
-	Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
-	Linux USB List <linux-usb@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: bcm-kernel-feedback-list@broadcom.com,
+	devicetree@vger.kernel.org,
+	jonmason@broadcom.com,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	linux@arm.linux.org.uk,
+	sbranden@broadcom.com,
+	rjui@broadcom.com,
+	Florian Fainelli <f.fainelli@gmail.com>
+Subject: [PATCH v3 0/3] clk: Broadcom BCM63138 support
+Date: Tue, 27 Oct 2015 16:56:14 -0700
+Message-Id: <1445990177-27474-1-git-send-email-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Oct 20, 2015 at 2:56 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrot=
-e:
-> On Monday, October 19, 2015 05:58:40 PM Rob Herring wrote:
->> On Mon, Oct 19, 2015 at 4:40 PM, Rafael J. Wysocki <rjw@rjwysocki.net> w=
-rote:
->> > On Monday, October 19, 2015 10:58:25 AM Rob Herring wrote:
->> >> On Mon, Oct 19, 2015 at 10:29 AM, David Woodhouse <dwmw2@infradead.or=
-g> wrote:
->> >> > On Mon, 2015-10-19 at 15:50 +0100, Mark Brown wrote:
->> >> >> > But the point I'm making is that we are working towards *fixing*=
- that,
->> >> >> > and *not* using DT-specific code in places where we should be us=
-ing the
->> >> >> > generic APIs.
->> >> >>
->> >> >> What is the plan for fixing things here?  It's not obvious (at lea=
-st to
->> >> >> me) that we don't want to have the subsystems having knowledge of =
-how
->> >> >> they are bound to a specific firmware which is what you seem to im=
-ply
->> >> >> here.
->> >> >
->> >> > I don't know that there *is* a coherent plan here to address it all=
-.
->> >> >
->> >> > Certainly, we *will* need subsystems to have firmware-specific
->> >> > knowledge in some cases. Take GPIO as an example; ACPI *has* a way =
-to
->> >> > describe GPIO, and properties which reference GPIO pins are intende=
-d to
->> >> > work through that =E2=80=94 while in DT, properties which reference=
- GPIO pins
->> >> > will have different contents. They'll be compatible at the driver
->> >> > level, in the sense that there's a call to get a given GPIO given t=
-he
->> >> > property name, but the subsystems *will* be doing different things
->> >> > behind the scenes.
->> >> >
->> >> > My plan, such as it is, is to go through the leaf-node drivers whic=
-h
->> >> > almost definitely *should* be firmware-agnostic, and convert those.=
- And
->> >> > then take stock of what we have left, and work out what, if anythin=
-g,
->> >> > still needs to be done.
->> >>
->> >> Many cases are already agnostic in the drivers in terms of the *_get(=
-)
->> >> functions. Some are DT specific, but probably because those subsystem=
-s
->> >> are new and DT only. In any case, I don't think these 1 line changes
->> >> do anything to make doing conversions here harder.
->> >>
->> >> >> It seems like we're going to have to refactor these bits of code w=
-hen
->> >> >> they get generalised anyway so I'm not sure that the additional co=
-st
->> >> >> here is that big.
->> >> >
->> >> > That's an acceptable answer =E2=80=94 "we're adding legacy code her=
-e but we
->> >> > know it's going to be refactored anyway". If that's true, all it ta=
-kes
->> >> > is a note in the commit comment to that effect. That's different fr=
-om
->> >> > having not thought about it :)
->> >>
->> >> Considering at one point we did create a fwnode based API, we did
->> >> think about it. Plus there was little input from ACPI folks as to
->> >> whether the change was even useful for ACPI case.
->> >
->> > Well, sorry, but who was asking whom, specifically?
->>
->> You and linux-acpi have been copied on v2 and later of the entire
->> series I think.
->
-> Yes, but it wasn't like a direct request, say "We need your input, so can=
- you
-> please have a look and BTW we want this in 4.4, so please do it ASAP".  I=
-n
-> which case I'd prioritize that before other things I needed to take care =
-of.
+Hi all,
 
-Fair enough. Can you please review and comment on v7 of the series? We
-can discuss at KS as well.
+This patch series adds support for the Broadcom BCM63138 DSL SoCs
+clocking framework.
 
->> > The underlying problem is present in ACPI too and we don't really have=
- a good
->> > solution for it.  We might benefit from a common one if it existed.
->>
->> The problem for DT is we don't generically know what are the
->> dependencies at a core level. We could know some or most dependencies
->> if phandles (links to other nodes) were typed, but they are not. If
->> the core had this information, we could simply control the device
->> creation to order probing. Instead, this information is encoded into
->> the bindings and binding parsing resides in the subsystems. That
->> parsing happens during probe of the client side and is done by the
->> subsystems (for common bindings). Since we already do the parsing at
->> this point, it is a convenient place to trigger the probe of the
->> dependency. Is ACPI going to be similar in this regard?
->
-> It is similar in some ways.  For example, if a device's functionality dep=
-ends
-> on an I2C resource (connection), the core doesn't know that at the device
-> creation time at least in some cases.  Same for GPIO, SPI, DMA engines et=
-c.
+Since the HW is identical to the one found in Broadcom iProc SoCs, but the
+integration is different (obviously), there is still a new compatible string
+introduced just in case we happen to find issues in the future.
 
-So you will need to create devices, defer their probing and then probe
-on demand as well unless you have other ideas how you would do it.
+This applies on top of clk/next as of
+679c51cffc3b316bd89ecc91ef92603dd6d4fc68 ("clk: Add stubs for of_clk_*() APIs when CONFIG_OF=n")
 
-> There is a _DEP object in ACPI that can be used by firmware to tell the O=
-S
-> about those dependencies, but there's no way in the driver core to use th=
-at
-> information anyway today.
+Since there is an obvious dependency between patch 2 and 3, we can either
+merge this through the Clock tree or via a future arm-soc pull requests
+for Broadcom SoCs.
 
-I would think that the equivalent function for ACPI to of_device_probe
-could process these if they are generic and you can associate the
-dependency to a struct device.
+Florian Fainelli (3):
+  clk: iproc: Extend binding to cover BCM63138
+  clk: bcm: Add BCM63138 clock support
+  ARM: dts: BCM63xx: Add ARMPLL device tree nodes
 
->> Fundamentally, it is a question of probe devices when their
->> dependencies are present or drivers ensure their dependencies are
->> ready. IIRC, init systems went thru a similar debate for service
->> dependencies.
->
-> The probe ordering is not the entire picture, though.
->
-> Even if you get the probe ordering right, the problem is going to show up=
- in
-> multiple other places: system suspend/resume, runtime PM, system shutdown=
-,
-> unbinding of drivers.  In all of those cases it is necessary to handle th=
-ings
-> in a specific order if there is a dependency.
+ .../bindings/clock/brcm,iproc-clocks.txt           |  5 +++
+ arch/arm/boot/dts/bcm63138.dtsi                    | 39 ++++++++++++++++------
+ drivers/clk/bcm/Kconfig                            | 10 ++++++
+ drivers/clk/bcm/Makefile                           |  1 +
+ drivers/clk/bcm/clk-bcm63xx.c                      | 22 ++++++++++++
+ 5 files changed, 67 insertions(+), 10 deletions(-)
+ create mode 100644 drivers/clk/bcm/clk-bcm63xx.c
 
-My understanding was with deferred probe that it also solves suspend
-ordering problems because things are suspended in reverse order of
-probing. I suppose you could have slightly different dependencies for
-suspend, runtime PM, etc. than for probe? Perhaps we need to save the
-list of dependencies as we probe them. I don't think that would be too
-hard to add on to this series, but then if we don't need it now, why
-add it?
-
->> >> In any case, we're talking about adding 1 line.
->> >
->> > But also about making the driver core slighly OF-centric.
->>
->> How so? The one line is in DT binding parsing code in subsystems, not
->> driver core. The driver core change is we add every device (that
->> happened to be created by DT) to the deferred probe list, so they
->> don't probe right away.
->
-> The "that happened to be created by DT" part is of concern here.  What is=
- there
-> that makes DT special in that respect?  Why shouldn't that be applicable =
-to
-> devices created by the ACPI core, for example, or by a board file or some=
-thing
-> else?
-
-DT is first. I think both examples could use this. Board files avoid
-the problem by controlling the registration order with initcall levels
-and just the call order in the code. You could come up with some way
-to define dependencies for devices in board files and reuse this
-mechanism. ACPI could use this as well if the dependencies are handled
-in a similar way and it seems like they could be.
-
->> > Sure, we need OF-specific code and ACPI-specific code wherever differe=
-nt
->> > handling is required, but doing that at the driver core level seems to=
- be
->> > a bit of a stretch to me.
->> >
->> > Please note that we don't really have ACPI-specific calls in the drive=
-r core,
->> > although we might have added them long ago even before the OF stuff ap=
-peared
->> > in the kernel for the first time.  We didn't do that, (among other thi=
-ngs)
->> > because we didn't want that particular firmware interface to appear sp=
-ecial
->> > in any way and I'm not really sure why it is now OK to make OF look sp=
-ecial
->> > instead.
->>
->> I don't think DT is special and we avoid DT specific core changes as
->> much as possible. I think the difference is DT uses platform_device
->> and ACPI does not.
->
-> ACPI uses platform devices too.  In fact, ACPI device objects are enumera=
-ted as
-> platform devices by default now.
-
-Okay, I should have grepped for that:
-drivers/base/platform.c:                ACPI_COMPANION_SET(&pdev->dev, NULL=
-);
-drivers/base/platform.c:        len =3D acpi_device_modalias(dev, buf,
-PAGE_SIZE -1);
-drivers/base/platform.c:        rc =3D acpi_device_uevent_modalias(dev, env=
-);
-drivers/base/platform.c:        /* Then try ACPI style match */
-drivers/base/platform.c:        if (acpi_driver_match_device(dev, drv))
-
-These are all cases which have DT version as well, so we're not really
-all that different here. There's a few more for DT, but that probably
-means you have just not hit the problems we have yet. For example,
-what happens if you have an interrupt line in which the controller is
-probed after the device connected to the interrupt line? That required
-resolving irqs in platform_get_irq rather than using static resources
-to support deferred probe.
-
-Converting things like this to fwnode calls isn't hard to do. There
-just hasn't been a pressing need or mandate to do so.
-
-Rob
+-- 
+2.1.0
