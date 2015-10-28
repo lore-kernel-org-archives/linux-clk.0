@@ -1,30 +1,55 @@
-Return-Path: <jonmason@broadcom.com>
-From: Jon Mason <jonmason@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
-	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
-	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
-Subject: [PATCH 0/5] ARM: dts: add device tree support for NS, NSP, and NS2 clocks
-Date: Tue, 13 Oct 2015 17:22:22 -0400
-Message-ID: <1444771347-11382-1-git-send-email-jonmason@broadcom.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jonmason@broadcom.com
+Return-Path: <alim.akhtar@samsung.com>
+Message-id: <56303DA3.5020306@samsung.com>
+Date: Wed, 28 Oct 2015 08:44:43 +0530
+From: Alim Akhtar <alim.akhtar@samsung.com>
+MIME-version: 1.0
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: lee.jones@linaro.org, mturquette@baylibre.com,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/5] drivers/rtc/rtc-s5m.c: add support for S2MPS15 RTC
+References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
+ <1445863883-5187-6-git-send-email-alim.akhtar@samsung.com>
+ <56302514.4090407@samsung.com> <20151028015323.GZ28319@sirena.org.uk>
+ <56303054.8060804@samsung.com>
+In-reply-to: <56303054.8060804@samsung.com>
+Content-type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
+Hello,
 
-This patch series adds device tree support for the Broadcom Northstar,
-Northstar Plus, and Northstar 2 clocks.  This is being sent as a
-separate patch series due to the the clk maintainer(s) not wanting to
-pull in device tree changes into the clk repo.  This series is an RFC
-due to a potential merge "race" between the device tree changes and the
-clk changes.  If the device tree changes go in before the clk changes,
-there is a window where there are non-working clk entries in the device
-tree.  So, these patches will be officially pushed once the clk changes
-are merged.
+On 10/28/2015 07:47 AM, Krzysztof Kozlowski wrote:
+> On 28.10.2015 10:53, Mark Brown wrote:
+>> On Wed, Oct 28, 2015 at 10:29:56AM +0900, Krzysztof Kozlowski wrote:
+>>
+>>> If that's true, then don't add new compatibles, new names etc. Re-use.
+>>> No new code needed, no changes needed. Keep it simple.
+>>
+>> Well, it depends - it can be useful to get the information about it
+>> being a different part into DT so that if in future we realise that
+>> there is some difference (perhaps a bug workaround even if the IP is
+>> intended to be the same).  Though in the case of a MFD that information
+>> can be obtained from the MFD for the device.
+>
+> We can always differentiate later and introduce new compatible.
+> Declaring a compatible right now would be useful only if we really cared
+> about using the workaround on older DTBs.
+>
+> Since I cannot judge the difference (I don't have the datasheet of
+> S2MPS15) then I don't see the need of adding new compatible/name for the
+> "same device".
+>
+> Of course maybe there is such need? Alim?
+>
+Well I did think of keeping the changes as minimal as possible, like 
+just have "{ "s2mps15-rtc",        S2MPS14X }", since I don't have 
+access to s2mps14 UM, I could not confirm that s2mps14 and s2mps15 are 
+exactly the same w.r.t rtc block. So I proposed the current changes.
 
-Thanks,
-Jon
+Well I do agree with Mark here, a name/compatible matching with the pmic 
+is good to at least avoid confusion while looking at the sysfs.
+
+> Best regards,
+> Krzysztof
+>
