@@ -1,56 +1,131 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+Message-ID: <56315CF8.8070904@gmail.com>
+Date: Wed, 28 Oct 2015 16:40:40 -0700
+From: Florian Fainelli <f.fainelli@gmail.com>
 MIME-Version: 1.0
-To: Jisheng Zhang <jszhang@marvell.com>, sebastian.hesselbarth@gmail.com,
- robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
- ijc+devicetree@hellion.org.uk, galak@codeaurora.org, sboyd@codeaurora.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1445339807-2351-5-git-send-email-jszhang@marvell.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "Jisheng Zhang" <jszhang@marvell.com>
-References: <1445339807-2351-1-git-send-email-jszhang@marvell.com>
- <1445339807-2351-5-git-send-email-jszhang@marvell.com>
-Message-ID: <20151021093051.20687.11262@quantum>
-Subject: Re: [PATCH v2 4/4] clk: berlin: bg2: remove CLK_IGNORE_UNUSED flag for sdio
- clk
-Date: Wed, 21 Oct 2015 02:30:51 -0700
+To: Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org
+CC: bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
+ jonmason@broadcom.com, sboyd@codeaurora.org, mturquette@baylibre.com,
+ linux@arm.linux.org.uk, sbranden@broadcom.com, rjui@broadcom.com
+Subject: Re: [PATCH v3 3/3] ARM: dts: BCM63xx: Add ARMPLL device tree nodes
+References: <1445990177-27474-1-git-send-email-f.fainelli@gmail.com> <1445990177-27474-4-git-send-email-f.fainelli@gmail.com>
+In-Reply-To: <1445990177-27474-4-git-send-email-f.fainelli@gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Jisheng Zhang (2015-10-20 04:16:47)
-> The clocks' properties have been already properly set, so there's no
-> need to set this flag for sdio0 and sdio1 clk any more.
-> =
+On 27/10/15 16:56, Florian Fainelli wrote:
+> Add the ARM PLL controller which comes standard with the Cortex-A9 found
+> on the BCM63138 SoCs. This is the same controller as the one found in
+> the Broadcom iProc architecture, however, we have a separate compatible
+> string to indicate the integration difference.
+> 
+> While at it, properly rename references to the 50Mhz clock which is in
+> fact a crystal/oscillator and updates references to it.
 
-> Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+The periph_clk is actually the correct one, and is different from the
+oscillator, I will resubmit these patches shortly to better match the
+chip clocking.
 
-Applied to clk-next.
-
-Regards,
-Mike
-
+> 
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 > ---
->  drivers/clk/berlin/bg2.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> =
+> No changes in v2 or v3
+> 
+>  arch/arm/boot/dts/bcm63138.dtsi | 39 +++++++++++++++++++++++++++++----------
+>  1 file changed, 29 insertions(+), 10 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/bcm63138.dtsi b/arch/arm/boot/dts/bcm63138.dtsi
+> index 34cd64051250..c146325eebdb 100644
+> --- a/arch/arm/boot/dts/bcm63138.dtsi
+> +++ b/arch/arm/boot/dts/bcm63138.dtsi
+> @@ -43,17 +43,29 @@
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+>  
+> -		arm_timer_clk: arm_timer_clk {
+> +		osc: oscillator {
+>  			#clock-cells = <0>;
+>  			compatible = "fixed-clock";
+> -			clock-frequency = <500000000>;
+> +			clock-frequency = <50000000>;
+> +			clock-output-names = "periph";
+>  		};
+>  
+> -		periph_clk: periph_clk {
+> +		/* peripheral clock for system timer */
+> +		axi_clk: axi_clk {
+>  			#clock-cells = <0>;
+> -			compatible = "fixed-clock";
+> -			clock-frequency = <50000000>;
+> -			clock-output-names = "periph";
+> +			compatible = "fixed-factor-clock";
+> +			clocks = <&armpll>;
+> +			clock-div = <2>;
+> +			clock-mult = <1>;
+> +		};
+> +
+> +		/* APB bus clock */
+> +		apb_clk: apb_clk {
+> +			#clock-cells = <0>;
+> +			compatible = "fixed-factor-clock";
+> +			clocks = <&armpll>;
+> +			clock-div = <4>;
+> +			clock-mult = <1>;
+>  		};
+>  	};
+>  
+> @@ -93,14 +105,14 @@
+>  			compatible = "arm,cortex-a9-global-timer";
+>  			reg = <0x1e200 0x20>;
+>  			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&arm_timer_clk>;
+> +			clocks = <&axi_clk>;
+>  		};
+>  
+>  		local_timer: local-timer@1e600 {
+>  			compatible = "arm,cortex-a9-twd-timer";
+>  			reg = <0x1e600 0x20>;
+>  			interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&arm_timer_clk>;
+> +			clocks = <&axi_clk>;
+>  		};
+>  
+>  		twd_watchdog: watchdog@1e620 {
+> @@ -109,6 +121,13 @@
+>  			interrupts = <GIC_PPI 14 IRQ_TYPE_LEVEL_HIGH>;
+>  		};
+>  
+> +		armpll: armpll {
+> +			#clock-cells = <0>;
+> +			compatible = "brcm,bcm63138-armpll";
+> +			clocks = <&osc>;
+> +			reg = <0x20000 0xf00>;
+> +		};
+> +
+>  		pmb0: reset-controller@4800c0 {
+>  			compatible = "brcm,bcm63138-pmb";
+>  			reg = <0x4800c0 0x10>;
+> @@ -138,7 +157,7 @@
+>  			compatible = "brcm,bcm6345-uart";
+>  			reg = <0x600 0x1b>;
+>  			interrupts = <GIC_SPI 32 0>;
+> -			clocks = <&periph_clk>;
+> +			clocks = <&osc>;
+>  			clock-names = "periph";
+>  			status = "disabled";
+>  		};
+> @@ -147,7 +166,7 @@
+>  			compatible = "brcm,bcm6345-uart";
+>  			reg = <0x620 0x1b>;
+>  			interrupts = <GIC_SPI 33 0>;
+> -			clocks = <&periph_clk>;
+> +			clocks = <&osc>;
+>  			clock-names = "periph";
+>  			status = "disabled";
+>  		};
+> 
 
-> diff --git a/drivers/clk/berlin/bg2.c b/drivers/clk/berlin/bg2.c
-> index 73153fc..23e0e3b 100644
-> --- a/drivers/clk/berlin/bg2.c
-> +++ b/drivers/clk/berlin/bg2.c
-> @@ -490,8 +490,8 @@ static const struct berlin2_gate_data bg2_gates[] __i=
-nitconst =3D {
->         { "usb0",       "perif",        11 },
->         { "usb1",       "perif",        12 },
->         { "pbridge",    "perif",        13, CLK_IGNORE_UNUSED },
-> -       { "sdio0",      "perif",        14, CLK_IGNORE_UNUSED },
-> -       { "sdio1",      "perif",        15, CLK_IGNORE_UNUSED },
-> +       { "sdio0",      "perif",        14 },
-> +       { "sdio1",      "perif",        15 },
->         { "nfc",        "perif",        17 },
->         { "smemc",      "perif",        19 },
->         { "audiohd",    "audiohd_pll",  26 },
-> -- =
 
-> 2.6.1
->=20
+-- 
+Florian
