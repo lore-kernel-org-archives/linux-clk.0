@@ -1,116 +1,71 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Magnus Damm <damm+renesas@opensource.se>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 2/2] clk: shmobile: Add r8a7795 CPG Core Clock Definitions
-Date: Tue, 20 Oct 2015 20:50:00 +0200
-Message-Id: <1445367000-11525-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1445367000-11525-1-git-send-email-geert+renesas@glider.be>
-References: <1445367000-11525-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v3 2/5] mfd: sec: Add support for S2MPS15 PMIC
+To: Alim Akhtar <alim.akhtar@samsung.com>, lee.jones@linaro.org,
+ broonie@kernel.org
+References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
+ <1445863883-5187-3-git-send-email-alim.akhtar@samsung.com>
+Cc: mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, rtc-linux@googlegroups.com,
+ linux-kernel@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <563024A5.1050705@samsung.com>
+Date: Wed, 28 Oct 2015 10:28:05 +0900
+MIME-version: 1.0
+In-reply-to: <1445863883-5187-3-git-send-email-alim.akhtar@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Add all R-Car H3 Clock Pulse Generator Core Clock Outputs, as listed in
-Table 8.2a ("List of Clocks [R-Car H3]") of the R-Car Gen3 datasheet
-(rev. 0.5E).
+On 26.10.2015 21:51, Alim Akhtar wrote:
+> From: Thomas Abraham <thomas.ab@samsung.com>
+> 
+> Add support for S2MPS15 PMIC which is similar to S2MPS11 PMIC. The S2MPS15
+> PMIC supports 27 LDO regulators, 10 buck regulators, RTC, three 32.768KHz
+> clock outputs and battery charger. This patch adds initial support for
+> LDO and buck regulators of S2MPS15 device.
+> 
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> [Alim: Added s2mps15_devs like rtc and clk and related changes]
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  drivers/mfd/sec-core.c              |   31 +++++++
+>  drivers/mfd/sec-irq.c               |    8 ++
+>  include/linux/mfd/samsung/core.h    |    1 +
+>  include/linux/mfd/samsung/s2mps15.h |  158 +++++++++++++++++++++++++++++++++++
+>  4 files changed, 198 insertions(+)
+>  create mode 100644 include/linux/mfd/samsung/s2mps15.h
+> 
+> diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+> index 2626fc0b5b8c..db3d4d4ff805 100644
+> --- a/drivers/mfd/sec-core.c
+> +++ b/drivers/mfd/sec-core.c
+> @@ -29,6 +29,7 @@
+>  #include <linux/mfd/samsung/s2mps11.h>
+>  #include <linux/mfd/samsung/s2mps13.h>
+>  #include <linux/mfd/samsung/s2mps14.h>
+> +#include <linux/mfd/samsung/s2mps15.h>
+>  #include <linux/mfd/samsung/s2mpu02.h>
+>  #include <linux/mfd/samsung/s5m8763.h>
+>  #include <linux/mfd/samsung/s5m8767.h>
+> @@ -96,6 +97,17 @@ static const struct mfd_cell s2mps14_devs[] = {
+>  	}
+>  };
+>  
+> +static const struct mfd_cell s2mps15_devs[] = {
+> +	{
+> +		.name = "s2mps15-pmic",
+> +	}, {
+> +		.name = "s2mps15-rtc",
+> +	}, {
+> +		.name = "s2mps15-clk",
+> +		.of_compatible = "samsung,s2mps15-clk",
+> +	},
 
-Note that internal CPG clocks (S0, S1, S2, S3, SDSRC, SSPSRC, and
-RPCSRC) are not included, as they're used as internal clock sources
-only.
+I have different questions here. RTC and CLK module look the same as
+S2MPS14. Then you should existing compatibles and names.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Michael Turquette <mturquette@baylibre.com>
-Reviewed-by: Magnus Damm <damm+renesas@opensource.se>
----
-v5:
-  - Add Acked-by, Reviewed-by,
-  - Add datasheet table and revision references,
-  - Add internal clock omissions,
+I'll ask in details about this in separate emails for patch 4 and 5.
+Until questions are resolved, these looks wrong.
 
-v4:
-  - Add all clocks instead of just the ones used by the current DTS,
-
-v3:
-  - New.
-
- include/dt-bindings/clock/r8a7795-cpg-mssr.h | 63 ++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
- create mode 100644 include/dt-bindings/clock/r8a7795-cpg-mssr.h
-
-diff --git a/include/dt-bindings/clock/r8a7795-cpg-mssr.h b/include/dt-bindings/clock/r8a7795-cpg-mssr.h
-new file mode 100644
-index 0000000000000000..e864aae0a2561c4b
---- /dev/null
-+++ b/include/dt-bindings/clock/r8a7795-cpg-mssr.h
-@@ -0,0 +1,63 @@
-+/*
-+ * Copyright (C) 2015 Renesas Electronics Corp.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* r8a7795 CPG Core Clocks */
-+#define R8A7795_CLK_Z			0
-+#define R8A7795_CLK_Z2			1
-+#define R8A7795_CLK_ZR			2
-+#define R8A7795_CLK_ZG			3
-+#define R8A7795_CLK_ZTR			4
-+#define R8A7795_CLK_ZTRD2		5
-+#define R8A7795_CLK_ZT			6
-+#define R8A7795_CLK_ZX			7
-+#define R8A7795_CLK_S0D1		8
-+#define R8A7795_CLK_S0D4		9
-+#define R8A7795_CLK_S1D1		10
-+#define R8A7795_CLK_S1D2		11
-+#define R8A7795_CLK_S1D4		12
-+#define R8A7795_CLK_S2D1		13
-+#define R8A7795_CLK_S2D2		14
-+#define R8A7795_CLK_S2D4		15
-+#define R8A7795_CLK_S3D1		16
-+#define R8A7795_CLK_S3D2		17
-+#define R8A7795_CLK_S3D4		18
-+#define R8A7795_CLK_LB			19
-+#define R8A7795_CLK_CL			20
-+#define R8A7795_CLK_ZB3			21
-+#define R8A7795_CLK_ZB3D2		22
-+#define R8A7795_CLK_CR			23
-+#define R8A7795_CLK_CRD2		24
-+#define R8A7795_CLK_SD0H		25
-+#define R8A7795_CLK_SD0			26
-+#define R8A7795_CLK_SD1H		27
-+#define R8A7795_CLK_SD1			28
-+#define R8A7795_CLK_SD2H		29
-+#define R8A7795_CLK_SD2			30
-+#define R8A7795_CLK_SD3H		31
-+#define R8A7795_CLK_SD3			32
-+#define R8A7795_CLK_SSP2		33
-+#define R8A7795_CLK_SSP1		34
-+#define R8A7795_CLK_SSPRS		35
-+#define R8A7795_CLK_RPC			36
-+#define R8A7795_CLK_RPCD2		37
-+#define R8A7795_CLK_MSO			38
-+#define R8A7795_CLK_CANFD		39
-+#define R8A7795_CLK_HDMI		40
-+#define R8A7795_CLK_CSI0		41
-+#define R8A7795_CLK_CSIREF		42
-+#define R8A7795_CLK_CP			43
-+#define R8A7795_CLK_CPEX		44
-+#define R8A7795_CLK_R			45
-+#define R8A7795_CLK_OSC			46
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__ */
--- 
-1.9.1
+Best regards,
+Krzysztof
