@@ -1,79 +1,73 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 27 Oct 2015 10:46:59 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-	devicetree@vger.kernel.org, jonmason@broadcom.com,
-	mturquette@baylibre.com, linux@arm.linux.org.uk,
-	sbranden@broadcom.com, rjui@broadcom.com
-Subject: Re: [PATCH v2 2/3] clk: bcm: Add BCM63138 clock support
-Message-ID: <20151027174659.GM19782@codeaurora.org>
-References: <1445917997-3629-1-git-send-email-f.fainelli@gmail.com>
- <1445917997-3629-3-git-send-email-f.fainelli@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1445917997-3629-3-git-send-email-f.fainelli@gmail.com>
+Return-Path: <alim.akhtar@samsung.com>
+Message-id: <5630421B.5010803@samsung.com>
+Date: Wed, 28 Oct 2015 09:03:47 +0530
+From: Alim Akhtar <alim.akhtar@samsung.com>
+MIME-version: 1.0
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: lee.jones@linaro.org, mturquette@baylibre.com,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/5] drivers/rtc/rtc-s5m.c: add support for S2MPS15 RTC
+References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
+ <1445863883-5187-6-git-send-email-alim.akhtar@samsung.com>
+ <56302514.4090407@samsung.com> <20151028015323.GZ28319@sirena.org.uk>
+ <56303054.8060804@samsung.com> <56303DA3.5020306@samsung.com>
+ <5630419F.1000300@samsung.com>
+In-reply-to: <5630419F.1000300@samsung.com>
+Content-type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/26, Florian Fainelli wrote:
-> diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
-> index 85260fb96b36..a0c18528b70d 100644
-> --- a/drivers/clk/bcm/Kconfig
-> +++ b/drivers/clk/bcm/Kconfig
-> @@ -1,3 +1,13 @@
-> +config CLK_BCM_63XX
-> +	bool "Broadcom BCM63xx clock support"
-> +	depends on ARCH_BCM_63XX || COMPILE_TEST
-> +	depends on COMMON_CLK
-> +	select COMMON_CLK_IPROC
-> +	default y
 
-perhaps default CLK_BCM_63XX?
 
-> +	help
-> +	  Enable common clock framework support for Broadcom BCM63xx DSL SoCs
-> +	  based on the ARM architecture
-> +
->  config CLK_BCM_KONA
->  	bool "Broadcom Kona CCU clock support"
->  	depends on ARCH_BCM_MOBILE || COMPILE_TEST
-> diff --git a/drivers/clk/bcm/clk-bcm63xx.c b/drivers/clk/bcm/clk-bcm63xx.c
-> new file mode 100644
-> index 000000000000..b7e0469d0522
-> --- /dev/null
-> +++ b/drivers/clk/bcm/clk-bcm63xx.c
-> @@ -0,0 +1,22 @@
-> +/*
-> + * Copyright (C) 2015 Broadcom Corporation
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License as
-> + * published by the Free Software Foundation version 2.
-> + *
-> + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-> + * kind, whether express or implied; without even the implied warranty
-> + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +#include <linux/kernel.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/of.h>
-
-#include <linux/init.h> ?
-
-I'm not sure what the kernel.h include is for.
-
-> +#include "clk-iproc.h"
-> +
-> +static void __init bcm63138_armpll_init(struct device_node *node)
-> +{
-> +	iproc_armpll_setup(node);
-> +}
-> +CLK_OF_DECLARE(bcm63138_armpll, "brcm,bcm63138-armpll", bcm63138_armpll_init);
-> -- 
-> 2.1.0
-> 
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On 10/28/2015 09:01 AM, Krzysztof Kozlowski wrote:
+> On 28.10.2015 12:14, Alim Akhtar wrote:
+>> Hello,
+>>
+>> On 10/28/2015 07:47 AM, Krzysztof Kozlowski wrote:
+>>> On 28.10.2015 10:53, Mark Brown wrote:
+>>>> On Wed, Oct 28, 2015 at 10:29:56AM +0900, Krzysztof Kozlowski wrote:
+>>>>
+>>>>> If that's true, then don't add new compatibles, new names etc. Re-use.
+>>>>> No new code needed, no changes needed. Keep it simple.
+>>>>
+>>>> Well, it depends - it can be useful to get the information about it
+>>>> being a different part into DT so that if in future we realise that
+>>>> there is some difference (perhaps a bug workaround even if the IP is
+>>>> intended to be the same).  Though in the case of a MFD that information
+>>>> can be obtained from the MFD for the device.
+>>>
+>>> We can always differentiate later and introduce new compatible.
+>>> Declaring a compatible right now would be useful only if we really cared
+>>> about using the workaround on older DTBs.
+>>>
+>>> Since I cannot judge the difference (I don't have the datasheet of
+>>> S2MPS15) then I don't see the need of adding new compatible/name for the
+>>> "same device".
+>>>
+>>> Of course maybe there is such need? Alim?
+>>>
+>> Well I did think of keeping the changes as minimal as possible, like
+>> just have "{ "s2mps15-rtc",        S2MPS14X }", since I don't have
+>> access to s2mps14 UM, I could not confirm that s2mps14 and s2mps15 are
+>> exactly the same w.r.t rtc block. So I proposed the current changes.
+>>
+>> Well I do agree with Mark here, a name/compatible matching with the pmic
+>> is good to at least avoid confusion while looking at the sysfs.
+>
+> What kind of confusion in sysfs? I don't see any... and already the
+> s2mps14-rtc name is used for S2MPS11 and S2MPS14.
+>
+> The s2mps13 clock driver added new name and compatible... which was
+> probably totally unneeded (I missed that during review). We don't have
+> to make this as a rule...
+>
+> Since we do not have any data about future workarounds and the
+> differences then just follow Ockham's razor - use the same name and
+> compatible.
+>
+ok, have request s2smp14 UM, will cross check and update accordingly.
+Thanks.
+> Best regards,
+> Krzysztof
+>
