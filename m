@@ -1,37 +1,112 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 27 Oct 2015 16:01:55 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Georgi Djakov <georgi.djakov@linaro.org>
-Subject: Re: [PATCH 1/2] clk: qcom: common: Add API to register board clocks
- backwards compatibly
-Message-ID: <20151027230155.GQ19782@codeaurora.org>
-References: <1445908827-31015-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Wed, 28 Oct 2015 13:51:49 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: k.kozlowski.k@gmail.com, Alim Akhtar <alim.akhtar@samsung.com>,
+	broonie@kernel.org, mturquette@baylibre.com,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org,
+	Thomas Abraham <thomas.ab@samsung.com>
+Subject: Re: [PATCH v3 2/5] mfd: sec: Add support for S2MPS15 PMIC
+Message-ID: <20151028135149.GF4058@x1>
+References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
+ <1445863883-5187-3-git-send-email-alim.akhtar@samsung.com>
+ <20151026143411.GL597@x1>
+ <563021AF.6030100@samsung.com>
+ <20151028084609.GG5828@x1>
+ <5630D12C.2030008@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1445908827-31015-1-git-send-email-sboyd@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <5630D12C.2030008@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/26, Stephen Boyd wrote:
-> We want to put the XO board clocks into the dt files. Add an API
-> to do this generically. This also makes a place for us to handle
-> the case where the RPM driver is enabled or disabled.
-> 
-> Cc: Georgi Djakov <georgi.djakov@linaro.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
-> 
-> I'm also thinking that maybe we should register the board clock if it
-> isn't there in DT and then we'll either register the pass through or
-> we'll skip it depending on if the RPM driver is enabled. That
-> way the RPM driver doesn't need to know anything, just register the
-> clock with parent as the board clock.
+On Wed, 28 Oct 2015, Krzysztof Kozlowski wrote:
 
-That seems like a better idea. v2 coming with that change and a
-sleep_clk specific API, plus all the armv7 platforms converted.
+> W dniu 28.10.2015 o 17:46, Lee Jones pisze:
+> > On Wed, 28 Oct 2015, Krzysztof Kozlowski wrote:
+> > 
+> >> On 26.10.2015 23:34, Lee Jones wrote:
+> >>> On Mon, 26 Oct 2015, Alim Akhtar wrote:
+> >>>
+> >>>> From: Thomas Abraham <thomas.ab@samsung.com>
+> >>>>
+> >>>> Add support for S2MPS15 PMIC which is similar to S2MPS11 PMIC. The S2MPS15
+> >>>> PMIC supports 27 LDO regulators, 10 buck regulators, RTC, three 32.768KHz
+> >>>> clock outputs and battery charger. This patch adds initial support for
+> >>>> LDO and buck regulators of S2MPS15 device.
+> >>>>
+> >>>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> >>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> >>>> [Alim: Added s2mps15_devs like rtc and clk and related changes]
+> >>>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> >>>> ---
+> >>>>  drivers/mfd/sec-core.c              |   31 +++++++
+> >>>>  drivers/mfd/sec-irq.c               |    8 ++
+> >>>>  include/linux/mfd/samsung/core.h    |    1 +
+> >>>>  include/linux/mfd/samsung/s2mps15.h |  158 +++++++++++++++++++++++++++++++++++
+> >>>>  4 files changed, 198 insertions(+)
+> >>>>  create mode 100644 include/linux/mfd/samsung/s2mps15.h
+> >>>
+> >>> I replied to the previous set and won't be reviewing this one until
+> >>> all of the open points are solved.
+> >>
+> >> The naming and compatibles used by the driver are confusing but how it
+> >> was at beginning. Beside the confusion, the names are correct:
+> >>
+> >> 1. Main mfd driver:
+> >>  - compatible: samsung,s2mps1*-pmic
+> >>  - driver name: sec_pmic
+> >>
+> >> 2. Regulator driver:
+> >>  - no compatible (because it always searches for "regulators" subnode of
+> >> its parent... that is the convention/legacy behaviour)
+> >>  - driver name: s2mps1*-pmic
+> >>
+> >> I hope that explains your concerns.
+> > 
+> > It explains *why*, but doesn't ease my concerns in any way.
+> > 
+> > Unfortunately I've only just realised the disparity we have between
+> > MFD and the Regulator subsystem, which is annoying because it's now
+> > almost impossible to rectify.  
+> > 
+> > We should have taken one of two views.  Either a) The MFD is the PMIC
+> > device which encompasses regulator control.  In which case the MFD
+> > and it's corresponding compatible string would be named *-pmic and the
+> > regulator driver would be called *-regulator. Or b) The MFD could be
+> > considered a normal MFD and be named after the model number, then the
+> > regulator 'could' be named *-pmic.
+> > 
+> > However, with reference to b), how much other Power Management does
+> > the regulator driver do besides control regulators?  I suspect not
+> > much.  Therefore my preference would be for a).  My second choice
+> > would be a mixuture of the two where nothing gets named *-pmic.  The
+> > last option on my list would be the current situation where we seem to
+> > be calling both the MFD (PMIC) itself and the Regulator driver
+> > *-pmic, which is not good.
+> 
+> Starting from the description of device-family. This is called "Power
+> Management IC" but it is rather a "Power Deliver/Distribute IC". There
+> isn't any logic inside except enable/disable/configure/set low power
+> mode for regulators.
+> 
+> However in the same time the IC comes (always) with:
+>  - 32kHz clocks,
+>  - RTC,
+>  - backup battery charger (no driver for it),
+>  - reset for SoC,
+>  - shutdown on thermal alert (also no driver for this control).
+> 
+> The solution a) seems fine to me. Make sense and it looks entirely
+> backward compatible - only driver names will be modified.
+
+Perfect solution from my PoV.
+
+Thanks Krzysztof.
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
