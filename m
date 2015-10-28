@@ -1,103 +1,56 @@
-Return-Path: <javier@osg.samsung.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-To: linux-kernel@vger.kernel.org
-Cc: Luis de Bethencourt <luisbg@osg.samsung.com>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Scott Branden <sbranden@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: Allow drivers to build if COMPILE_TEST is enabled
-Date: Tue, 13 Oct 2015 16:18:18 +0200
-Message-Id: <1444745898-11537-1-git-send-email-javier@osg.samsung.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Sender: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
+Subject: Re: [rtc-linux] Re: [PATCH v3 5/5] drivers/rtc/rtc-s5m.c: add support
+ for S2MPS15 RTC
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
+ <1445863883-5187-6-git-send-email-alim.akhtar@samsung.com>
+ <56302514.4090407@samsung.com> <20151028015323.GZ28319@sirena.org.uk>
+ <56303054.8060804@samsung.com> <56303DA3.5020306@samsung.com>
+ <5630419F.1000300@samsung.com> <20151028094853.GM22331@piout.net>
+Cc: k.kozlowski.k@gmail.com, Alim Akhtar <alim.akhtar@samsung.com>,
+ Mark Brown <broonie@kernel.org>, lee.jones@linaro.org,
+ mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, rtc-linux@googlegroups.com,
+ linux-kernel@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-ID: <5630CE44.7070204@samsung.com>
+Date: Wed, 28 Oct 2015 22:31:48 +0900
+MIME-Version: 1.0
+In-Reply-To: <20151028094853.GM22331@piout.net>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-These drivers only have runtime but no build time dependencies so can be
-built for testing purposes if the Kconfig COMPILE_TEST option is enabled.
+W dniu 28.10.2015 o 18:48, Alexandre Belloni pisze:
+> On 28/10/2015 at 12:31:43 +0900, Krzysztof Kozlowski wrote :
+>> The s2mps13 clock driver added new name and compatible... which was
+>> probably totally unneeded (I missed that during review). We don't have
+>> to make this as a rule...
+>>
+>> Since we do not have any data about future workarounds and the
+>> differences then just follow Ockham's razor - use the same name and
+>> compatible.
+>>
+> 
+> So you don't care about DT backward compatibility because when a
+> workaround will be needed for one of the IPs, then you will have to
+> update the old dtb to use it.
 
-This is useful to have more build coverage and make sure that drivers are
-not affected by changes that could cause build regressions.
+Nope, DTB does not contain the name for RTC driver (s2mps15-rtc). It
+will be exactly the same.
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> 
+> Unless you are sure that the IP is the same, doing
+> 
+> { "s2mps15-rtc",	S2MPS14X },
+> 
+> is probably the best way to handle that. Note that I personally don't
+> care about the DT ABI, I'm just pointing out what may happen ;)
 
----
+In case of RTC driver there is no chance of DT ABI issues here.
 
- drivers/clk/Kconfig           | 8 ++++----
- drivers/clk/bcm/Kconfig       | 4 ++--
- drivers/clk/versatile/Kconfig | 2 +-
- 3 files changed, 7 insertions(+), 7 deletions(-)
+The clock driver is different because it contain a compatible.
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 573517151976..57316528e924 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -124,7 +124,7 @@ config CLK_TWL6040
- 
- config COMMON_CLK_AXI_CLKGEN
- 	tristate "AXI clkgen driver"
--	depends on ARCH_ZYNQ || MICROBLAZE
-+	depends on ARCH_ZYNQ || MICROBLAZE || COMPILE_TEST
- 	help
- 	---help---
- 	  Support for the Analog Devices axi-clkgen pcore clock generator for Xilinx
-@@ -132,7 +132,7 @@ config COMMON_CLK_AXI_CLKGEN
- 
- config CLK_QORIQ
- 	bool "Clock driver for Freescale QorIQ platforms"
--	depends on (PPC_E500MC || ARM) && OF
-+	depends on (PPC_E500MC || ARM || COMPILE_TEST) && OF
- 	---help---
- 	  This adds the clock driver support for Freescale QorIQ platforms
- 	  using common clock framework.
-@@ -140,13 +140,13 @@ config CLK_QORIQ
- config COMMON_CLK_XGENE
- 	bool "Clock driver for APM XGene SoC"
- 	default y
--	depends on ARM64
-+	depends on ARM64 || COMPILE_TEST
- 	---help---
- 	  Sypport for the APM X-Gene SoC reference, PLL, and device clocks.
- 
- config COMMON_CLK_KEYSTONE
- 	tristate "Clock drivers for Keystone based SOCs"
--	depends on ARCH_KEYSTONE && OF
-+	depends on (ARCH_KEYSTONE || COMPILE_TEST) && OF
- 	---help---
-           Supports clock drivers for Keystone based SOCs. These SOCs have local
- 	  a power sleep control module that gate the clock to the IPs and PLLs.
-diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
-index 88febf53b276..561e9dc6d40d 100644
---- a/drivers/clk/bcm/Kconfig
-+++ b/drivers/clk/bcm/Kconfig
-@@ -1,6 +1,6 @@
- config CLK_BCM_KONA
- 	bool "Broadcom Kona CCU clock support"
--	depends on ARCH_BCM_MOBILE
-+	depends on ARCH_BCM_MOBILE || COMPILE_TEST
- 	depends on COMMON_CLK
- 	default y
- 	help
-@@ -10,7 +10,7 @@ config CLK_BCM_KONA
- 
- config COMMON_CLK_IPROC
- 	bool "Broadcom iProc clock support"
--	depends on ARCH_BCM_IPROC
-+	depends on ARCH_BCM_IPROC || COMPILE_TEST
- 	depends on COMMON_CLK
- 	default ARCH_BCM_IPROC
- 	help
-diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
-index 1530c9352a76..fc50b6264bed 100644
---- a/drivers/clk/versatile/Kconfig
-+++ b/drivers/clk/versatile/Kconfig
-@@ -1,6 +1,6 @@
- config COMMON_CLK_VERSATILE
- 	bool "Clock driver for ARM Reference designs"
--	depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64
-+	depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64 || COMPILE_TEST
- 	---help---
-           Supports clocking on ARM Reference designs:
- 	  - Integrator/AP and Integrator/CP
--- 
-2.4.3
+Best regards,
+Krzysztof
