@@ -1,45 +1,100 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 27 Oct 2015 14:08:38 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-	devicetree@vger.kernel.org, jonmason@broadcom.com,
-	mturquette@baylibre.com, linux@arm.linux.org.uk,
-	sbranden@broadcom.com, rjui@broadcom.com
-Subject: Re: [PATCH v2 0/3] clk: Broadcom BCM63138 support
-Message-ID: <20151027210838.GP19782@codeaurora.org>
-References: <1445917997-3629-1-git-send-email-f.fainelli@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Sender: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
+Subject: Re: [PATCH v3 2/5] mfd: sec: Add support for S2MPS15 PMIC
+To: Alim Akhtar <alim.akhtar@samsung.com>, Lee Jones <lee.jones@linaro.org>
+References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
+ <1445863883-5187-3-git-send-email-alim.akhtar@samsung.com>
+ <20151026143411.GL597@x1> <563021AF.6030100@samsung.com>
+ <20151028084609.GG5828@x1> <5630AFC7.2030901@samsung.com>
+Cc: k.kozlowski.k@gmail.com, broonie@kernel.org, mturquette@baylibre.com,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org,
+ Thomas Abraham <thomas.ab@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-ID: <5630D20E.6010409@samsung.com>
+Date: Wed, 28 Oct 2015 22:47:58 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1445917997-3629-1-git-send-email-f.fainelli@gmail.com>
+In-Reply-To: <5630AFC7.2030901@samsung.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/26, Florian Fainelli wrote:
-> Hi all,
+W dniu 28.10.2015 o 20:21, Alim Akhtar pisze:
+> Hello,
 > 
-> This patch series adds support for the Broadcom BCM63138 DSL SoCs
-> clocking framework.
+> On 10/28/2015 02:16 PM, Lee Jones wrote:
+>> On Wed, 28 Oct 2015, Krzysztof Kozlowski wrote:
+>>
+>>> On 26.10.2015 23:34, Lee Jones wrote:
+>>>> On Mon, 26 Oct 2015, Alim Akhtar wrote:
+>>>>
+>>>>> From: Thomas Abraham <thomas.ab@samsung.com>
+>>>>>
+>>>>> Add support for S2MPS15 PMIC which is similar to S2MPS11 PMIC. The
+>>>>> S2MPS15
+>>>>> PMIC supports 27 LDO regulators, 10 buck regulators, RTC, three
+>>>>> 32.768KHz
+>>>>> clock outputs and battery charger. This patch adds initial support for
+>>>>> LDO and buck regulators of S2MPS15 device.
+>>>>>
+>>>>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+>>>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>>>>> [Alim: Added s2mps15_devs like rtc and clk and related changes]
+>>>>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>>> ---
+>>>>>   drivers/mfd/sec-core.c              |   31 +++++++
+>>>>>   drivers/mfd/sec-irq.c               |    8 ++
+>>>>>   include/linux/mfd/samsung/core.h    |    1 +
+>>>>>   include/linux/mfd/samsung/s2mps15.h |  158
+>>>>> +++++++++++++++++++++++++++++++++++
+>>>>>   4 files changed, 198 insertions(+)
+>>>>>   create mode 100644 include/linux/mfd/samsung/s2mps15.h
+>>>>
+>>>> I replied to the previous set and won't be reviewing this one until
+>>>> all of the open points are solved.
+>>>
+>>> The naming and compatibles used by the driver are confusing but how it
+>>> was at beginning. Beside the confusion, the names are correct:
+>>>
+>>> 1. Main mfd driver:
+>>>   - compatible: samsung,s2mps1*-pmic
+>>>   - driver name: sec_pmic
+>>>
+>>> 2. Regulator driver:
+>>>   - no compatible (because it always searches for "regulators"
+>>> subnode of
+>>> its parent... that is the convention/legacy behaviour)
+>>>   - driver name: s2mps1*-pmic
+>>>
+>>> I hope that explains your concerns.
+>>
+>> It explains *why*, but doesn't ease my concerns in any way.
+>>
+>> Unfortunately I've only just realised the disparity we have between
+>> MFD and the Regulator subsystem, which is annoying because it's now
+>> almost impossible to rectify.
+>>
+>> We should have taken one of two views.  Either a) The MFD is the PMIC
+>> device which encompasses regulator control.  In which case the MFD
+>> and it's corresponding compatible string would be named *-pmic and the
+>> regulator driver would be called *-regulator. Or b) The MFD could be
+>> considered a normal MFD and be named after the model number, then the
+>> regulator 'could' be named *-pmic.
+>>
+>> However, with reference to b), how much other Power Management does
+>> the regulator driver do besides control regulators?  I suspect not
+>> much.  Therefore my preference would be for a).  My second choice
+>> would be a mixuture of the two where nothing gets named *-pmic.  The
+>> last option on my list would be the current situation where we seem to
+>> be calling both the MFD (PMIC) itself and the Regulator driver
+>> *-pmic, which is not good.
+>>
+> Well, I would have also preferred option a), but keeping existing DT
+> bindings, looks like we need to go with the current situation.
+> Krzysztof any thought on this?
 > 
-> Since the HW is identical to the one found in Broadcom iProc SoCs, but the
-> integration is different (obviously), there is still a new compatible string
-> introduced just in case we happen to find issues in the future.
-> 
-> This applies on top of clk/next as of
-> 679c51cffc3b316bd89ecc91ef92603dd6d4fc68 ("clk: Add stubs for of_clk_*() APIs when CONFIG_OF=n")
-> 
-> Since there is an obvious dependency between patch 2 and 3, we can either
-> merge this through the Clock tree or via a future arm-soc pull requests
-> for Broadcom SoCs.
 
-One way to avoid the dependency would be to stage the first two
-patches in clk tree under clk-bcm63xxx and then pull that into
-your local branch via git FETCH && git checkout FETCH_HEAD and
-then apply the 3rd patch on top, tag it and send it off to
-arm-soc. This way, when arm-soc merges into linus' tree the
-dependency is taken care of and we don't take anything for dtsi
-files through the clk tree. It looks like nothing bad will happen
-if patch 2 is merged before patch 3.
+Looks good to me. Please, go ahead.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best regards,
+Krzysztof
