@@ -1,93 +1,84 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Sun, 18 Oct 2015 20:41:24 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@linux.ie>,
-	Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Grant Likely <grant.likely@linaro.org>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	Linux PWM List <linux-pwm@vger.kernel.org>,
-	Linux USB List <linux-usb@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-Message-ID: <20151018194124.GA14956@sirena.org.uk>
-References: <561E1378.6000906@collabora.com>
- <20151017065750.GA18607@kroah.com>
- <CAL_Jsq+Due3CgV0Z_m4vYQsa+X30DSxgmqz_r=26OrBV7v+H2g@mail.gmail.com>
- <20151017154709.GE4059@kroah.com>
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+Subject: Re: [PATCH v2 1/2] clk: qcom: common: Add API to register board
+ clocks backwards compatibly
+To: Stephen Boyd <sboyd@codeaurora.org>,
+ Mike Turquette <mturquette@baylibre.com>
+References: <1445987100-19492-1-git-send-email-sboyd@codeaurora.org>
+ <20151028010604.GV19782@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+From: Georgi Djakov <georgi.djakov@linaro.org>
+Message-ID: <56310DDC.6010000@linaro.org>
+Date: Wed, 28 Oct 2015 20:03:08 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ylUvUtShPtQAJVVd"
-In-Reply-To: <20151017154709.GE4059@kroah.com>
-Subject: Re: [GIT PULL] On-demand device probing
+In-Reply-To: <20151028010604.GV19782@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
+On 10/28/2015 03:06 AM, Stephen Boyd wrote:
+> On 10/27, Stephen Boyd wrote:
+>> +
+>> +int qcom_cc_register_board_clk(struct device *dev, const char *path,
+>> +			       const char *name, unsigned long rate)
+>> +{
+>> +	return _qcom_cc_register_board_clk(dev, path, name, rate,
+>> +					   !IS_ENABLED(CONFIG_QCOM_RPMCC));
+> 
+> I just realized that we could have this config enabled but the
+> driver never probes on a certain platform. So we'll need to do
+> some sort of search to see if the rpmcc node exists and also
+> check to see if the driver is enabled. I guess we can do that all
+> here in this function as long as we have a compatible =
+> "qcom,rpmcc" as a more generic property for the rpm clock
+> controller node. So if the config is enabled, search the dt tree
+> for a qcom,rpmcc node. If the rpmcc node is there, the last
+> argument is false, otherwise it's true.
 
---ylUvUtShPtQAJVVd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I like the approach.  We could have both compatible strings like:
+compatible = "qcom,rpmcc-msm8916", "qcom,rpmcc";
 
-On Sat, Oct 17, 2015 at 08:47:09AM -0700, Greg Kroah-Hartman wrote:
-> On Sat, Oct 17, 2015 at 10:04:55AM -0500, Rob Herring wrote:
+The only possible issue i could imagine is the case when rpmcc
+driver probe fails - does not enable scaling for example. Then we
+will be left without xo. But maybe we should not handle this
+scenario anyway.
 
-> > I think Linus W, Mark B, and I all said a similar thing initially in
-> > that dependencies should be handled in the driver core. We went down
-> > the path of making this not firmware (aka bus) specific and an earlier
-> > version had just that (with fwnode_* calls). That turned out to be
-> > pointless as the calling locations were almost always in DT specific
-> > code anyway. If you notice, the calls are next to other DT specific
-> > calls generally (usually a "get"). So yes, I'd prefer not to have to
-> > touch every subsystem, but we had to do that anyway to add DT support.
+> 
+> ---8<----
+> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> index 572851b5bc16..215a41ba0135 100644
+> --- a/drivers/clk/qcom/common.c
+> +++ b/drivers/clk/qcom/common.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/reset-controller.h>
+> +#include <linux/of.h>
+>  
+>  #include "common.h"
+>  #include "clk-rcg.h"
+> @@ -152,7 +153,18 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
+>  int qcom_cc_register_board_clk(struct device *dev, const char *path,
+>  			       const char *name, unsigned long rate)
+>  {
+> -	return _qcom_cc_register_board_clk(dev, path, name, rate, true);
+> +	bool add_factor = true;
+> +	struct device_node *node;
+> +
+> +	/* The RPM clock driver will add the factor clock if present */
+> +	if (IS_ENABLED(CONFIG_QCOM_RPMCC)) {
+> +		node = of_find_compatible_node(NULL, NULL, "qcom,rpmcc");
+> +		if (node)
 
-> If they are "next" to a call like that, why not put it in that call?  I
-> really object to having to "sprinkle" this all over the kernel, for no
-> obvious reason why that is happening at all (look at the USB patch for
-> one such example.)
+if (node && of_device_is_available(node))
+to handle also the case with status="disabled"
 
-I did ask that question myself IIRC - we could probably get a long way
-by trying to instantiate anything that looks probable when we do a
-phandle lookup on it.
-
---ylUvUtShPtQAJVVd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWI/XkAAoJECTWi3JdVIfQITcH/jtrvXbuGKZZSYbLjVQcSiWt
-C/MXzYtFbSJgvLgAcxbbegmnGt9ERY0WcETCVaBWpHK3K5vgxFu+9bnWjuFU1FxG
-dH6MBp2mC2A3GiUsaVAo4TSRNoouB34729rfeSCgqEiQ6sK+rksvZWgc/nSJC0TD
-DRJJMQieFUPHW6ywTOHL9allHuOJrmCX6vLyJEoSR1ggcMKoFkAPup3UMSv5Uvgw
-uQHVqaDadofytOa+qSSkrEIkFmUs6raQhh1H2OB2xilFKeXyjvYuo8rvVgSxokti
-RjFEZm/y2U7dzyrXTLPOOup3YPZfXaIxQqSXfMCUmWiAwJSSvK0GeL/IylHRmZM=
-=WR65
------END PGP SIGNATURE-----
-
---ylUvUtShPtQAJVVd--
+> +			add_factor = false;
+> +		of_node_put(node);
+> +	}
+> +
+> +	return _qcom_cc_register_board_clk(dev, path, name, rate, add_factor);
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_cc_register_board_clk);
+>  
+> 
