@@ -1,103 +1,102 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 14 Oct 2015 14:08:59 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH 14/26] clk: mvebu: Convert to clk_hw based provider APIs
-Message-ID: <20151014210859.GB4558@codeaurora.org>
-References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
- <1438362246-6664-15-git-send-email-sboyd@codeaurora.org>
- <20151014170922.3027008a@free-electrons.com>
- <20151014182138.GD26883@codeaurora.org>
- <20151014221733.65507871@free-electrons.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Sender: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
+Subject: Re: [PATCH v3 2/5] mfd: sec: Add support for S2MPS15 PMIC
+To: Lee Jones <lee.jones@linaro.org>
+References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
+ <1445863883-5187-3-git-send-email-alim.akhtar@samsung.com>
+ <20151026143411.GL597@x1> <563021AF.6030100@samsung.com>
+ <20151028084609.GG5828@x1>
+Cc: k.kozlowski.k@gmail.com, Alim Akhtar <alim.akhtar@samsung.com>,
+ broonie@kernel.org, mturquette@baylibre.com,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org,
+ Thomas Abraham <thomas.ab@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-ID: <5630D12C.2030008@samsung.com>
+Date: Wed, 28 Oct 2015 22:44:12 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20151014221733.65507871@free-electrons.com>
+In-Reply-To: <20151028084609.GG5828@x1>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/14, Thomas Petazzoni wrote:
-> On Wed, 14 Oct 2015 11:21:38 -0700, Stephen Boyd wrote:
+W dniu 28.10.2015 o 17:46, Lee Jones pisze:
+> On Wed, 28 Oct 2015, Krzysztof Kozlowski wrote:
 > 
-> > > Stephen, what do you suggest to fix this issue?
-> > 
-> > Simplest fix is to revert this hunk.
+>> On 26.10.2015 23:34, Lee Jones wrote:
+>>> On Mon, 26 Oct 2015, Alim Akhtar wrote:
+>>>
+>>>> From: Thomas Abraham <thomas.ab@samsung.com>
+>>>>
+>>>> Add support for S2MPS15 PMIC which is similar to S2MPS11 PMIC. The S2MPS15
+>>>> PMIC supports 27 LDO regulators, 10 buck regulators, RTC, three 32.768KHz
+>>>> clock outputs and battery charger. This patch adds initial support for
+>>>> LDO and buck regulators of S2MPS15 device.
+>>>>
+>>>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+>>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>>>> [Alim: Added s2mps15_devs like rtc and clk and related changes]
+>>>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>> ---
+>>>>  drivers/mfd/sec-core.c              |   31 +++++++
+>>>>  drivers/mfd/sec-irq.c               |    8 ++
+>>>>  include/linux/mfd/samsung/core.h    |    1 +
+>>>>  include/linux/mfd/samsung/s2mps15.h |  158 +++++++++++++++++++++++++++++++++++
+>>>>  4 files changed, 198 insertions(+)
+>>>>  create mode 100644 include/linux/mfd/samsung/s2mps15.h
+>>>
+>>> I replied to the previous set and won't be reviewing this one until
+>>> all of the open points are solved.
+>>
+>> The naming and compatibles used by the driver are confusing but how it
+>> was at beginning. Beside the confusion, the names are correct:
+>>
+>> 1. Main mfd driver:
+>>  - compatible: samsung,s2mps1*-pmic
+>>  - driver name: sec_pmic
+>>
+>> 2. Regulator driver:
+>>  - no compatible (because it always searches for "regulators" subnode of
+>> its parent... that is the convention/legacy behaviour)
+>>  - driver name: s2mps1*-pmic
+>>
+>> I hope that explains your concerns.
 > 
-> Indeed, this is the simplest fix. But it's going backward with what you
-> were trying to do originally, so it isn't really nice either.
+> It explains *why*, but doesn't ease my concerns in any way.
 > 
-> > Longer term, we should look into making of_clk_get_parent_name() use
-> > whatever string has been used when registering the clock,
+> Unfortunately I've only just realised the disparity we have between
+> MFD and the Regulator subsystem, which is annoying because it's now
+> almost impossible to rectify.  
 > 
-> I am not sure how of_clk_get_parent_name() can know the name of the
-> clock without clock-output-names in the DT. Without clock-output-names,
-> the only way to know the name of the parent clock is to actually ask
-> the driver of the parent clock, no?
+> We should have taken one of two views.  Either a) The MFD is the PMIC
+> device which encompasses regulator control.  In which case the MFD
+> and it's corresponding compatible string would be named *-pmic and the
+> regulator driver would be called *-regulator. Or b) The MFD could be
+> considered a normal MFD and be named after the model number, then the
+> regulator 'could' be named *-pmic.
+> 
+> However, with reference to b), how much other Power Management does
+> the regulator driver do besides control regulators?  I suspect not
+> much.  Therefore my preference would be for a).  My second choice
+> would be a mixuture of the two where nothing gets named *-pmic.  The
+> last option on my list would be the current situation where we seem to
+> be calling both the MFD (PMIC) itself and the Regulator driver
+> *-pmic, which is not good.
 
-Yes that's the plan. We would try to resolve the name with
-of_clk_get() and __clk_get_name() if there isn't a
-clock-output-names property. If #clock-cells > 1 and of_clk_get()
-fails, we would return NULL, otherwise for #clock-cells == 0 we
-could fallback on the node name as a last resort. The change here
-is that we don't use the node name for providers with
-#clock-cells > 1 because that doesn't make any sense. We'll also
-try a clk_get() in the case with #clock-cells = 0 and no
-clock-output-names.
+Starting from the description of device-family. This is called "Power
+Management IC" but it is rather a "Power Deliver/Distribute IC". There
+isn't any logic inside except enable/disable/configure/set low power
+mode for regulators.
 
-Eventually once we add the ability for OF clk providers to
-register clk_hw pointers instead of clk pointers we'll be able to
-"simplify" the of_clk_get() + __clk_get_name() path with a
-provider clk_hw lookup and clk_hw_get_name() combination, which
-should be faster and avoid any allocations.
+However in the same time the IC comes (always) with:
+ - 32kHz clocks,
+ - RTC,
+ - backup battery charger (no driver for it),
+ - reset for SoC,
+ - shutdown on thermal alert (also no driver for this control).
 
-Here's that untested patch, which we can throw into clk-next for
-v4.4
+The solution a) seems fine to me. Make sense and it looks entirely
+backward compatible - only driver names will be modified.
 
------8<----
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index b005f666e3a1..16b86a551bcb 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3055,6 +3055,7 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
- 	u32 pv;
- 	int rc;
- 	int count;
-+	struct clk *clk;
- 
- 	if (index < 0)
- 		return NULL;
-@@ -3080,8 +3081,25 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
- 
- 	if (of_property_read_string_index(clkspec.np, "clock-output-names",
- 					  index,
--					  &clk_name) < 0)
--		clk_name = clkspec.np->name;
-+					  &clk_name) < 0) {
-+		/*
-+		 * Best effort to get the name if the clock has been
-+		 * registered with the framework. If the clock isn't
-+		 * registered, we return the node name as the name of
-+		 * the clock as long as #clock-cells = 0.
-+		 */
-+		clk = of_clk_get(np, index);
-+		if (IS_ERR(clk)) {
-+			if (clkspec.args_count == 0)
-+				clk_name = clkspec.np->name;
-+			else
-+				clk_name = NULL;
-+		} else {
-+			clk_name = __clk_get_name(clk);
-+			clk_put(clk);
-+		}
-+	}
-+
- 
- 	of_node_put(clkspec.np);
- 	return clk_name;
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best regards,
+Krzysztof
