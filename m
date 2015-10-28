@@ -1,47 +1,84 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 6 Oct 2015 11:06:17 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Gabriel Fernandez <gabriel.fernandez@linaro.org>
-Cc: Maxime Coquelin <maxime.coquelin@st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Pankaj Dev <pankaj.dev@st.com>,
-	Olivier Bideau <olivier.bideau@st.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Fabian Frederick <fabf@skynet.be>, Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel@stlinux.com,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] drivers: clk: st: PLL rate change implementation
- for DVFS
-Message-ID: <20151006180617.GE12338@codeaurora.org>
-References: <1444032393-13433-1-git-send-email-gabriel.fernandez@linaro.org>
- <1444032393-13433-3-git-send-email-gabriel.fernandez@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1444032393-13433-3-git-send-email-gabriel.fernandez@linaro.org>
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v3 4/5] clk: s2mps15: Add support for S2MPS15 clocks
+To: Alim Akhtar <alim.akhtar@samsung.com>, lee.jones@linaro.org,
+ broonie@kernel.org
+References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
+ <1445863883-5187-5-git-send-email-alim.akhtar@samsung.com>
+Cc: mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, rtc-linux@googlegroups.com,
+ linux-kernel@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <5630234A.8080905@samsung.com>
+Date: Wed, 28 Oct 2015 10:22:18 +0900
+MIME-version: 1.0
+In-reply-to: <1445863883-5187-5-git-send-email-alim.akhtar@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/05, Gabriel Fernandez wrote:
-> @@ -452,7 +651,7 @@ static const struct clk_ops st_pll1200c32_ops = {
->  static struct clk * __init clkgen_pll_register(const char *parent_name,
->  				struct clkgen_pll_data	*pll_data,
->  				void __iomem *reg,
-> -				const char *clk_name)
-> +				const char *clk_name, spinlock_t *lock)
+On 26.10.2015 21:51, Alim Akhtar wrote:
+> S2MPS15 PMIC has three 32k buffered clocks outputs. This patch
+> adds supports for the same to the s2mps11 clock driver.
+> 
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  drivers/clk/Kconfig       |    5 +++--
+>  drivers/clk/clk-s2mps11.c |   24 ++++++++++++++++++++++++
+>  2 files changed, 27 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index a1fa61159179..037a314b5d76 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -120,9 +120,10 @@ config COMMON_CLK_S2MPS11
+>  	tristate "Clock driver for S2MPS1X/S5M8767 MFD"
+>  	depends on MFD_SEC_CORE
+>  	---help---
+> -	  This driver supports S2MPS11/S2MPS14/S5M8767 crystal oscillator
+> +	  This driver supports S2MPS1X/S5M8767 crystal oscillator
+>  	  clock. These multi-function devices have two (S2MPS14) or three
+> -	  (S2MPS11, S5M8767) fixed-rate oscillators, clocked at 32KHz each.
+> +	  (S2MPS11/S2MPS13/S2MPS15/S5M8767) fixed-rate oscillators,
+> +	  clocked at 32KHz each.
+>  
+>  config CLK_TWL6040
+>  	tristate "External McPDM functional clock from twl6040"
+> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+> index d266299dfdb1..455500dca653 100644
+> --- a/drivers/clk/clk-s2mps11.c
+> +++ b/drivers/clk/clk-s2mps11.c
+> @@ -25,6 +25,7 @@
+>  #include <linux/mfd/samsung/s2mps11.h>
+>  #include <linux/mfd/samsung/s2mps13.h>
+>  #include <linux/mfd/samsung/s2mps14.h>
+> +#include <linux/mfd/samsung/s2mps15.h>
+>  #include <linux/mfd/samsung/s5m8767.h>
+>  #include <linux/mfd/samsung/core.h>
+>  
+> @@ -148,6 +149,24 @@ static struct clk_init_data s2mps14_clks_init[S2MPS11_CLKS_NUM] = {
+>  	},
+>  };
+>  
+> +static struct clk_init_data s2mps15_clks_init[S2MPS11_CLKS_NUM] = {
+> +	[S2MPS11_CLK_AP] = {
+> +		.name = "s2mps15_ap",
+> +		.ops = &s2mps11_clk_ops,
+> +		.flags = CLK_IS_ROOT,
+> +	},
+> +	[S2MPS11_CLK_CP] = {
+> +		.name = "s2mps15_cp",
+> +		.ops = &s2mps11_clk_ops,
+> +		.flags = CLK_IS_ROOT,
+> +	},
+> +	[S2MPS11_CLK_BT] = {
+> +		.name = "s2mps15_bt",
+> +		.ops = &s2mps11_clk_ops,
+> +		.flags = CLK_IS_ROOT,
+> +	},
+> +};
 
-Is there a reason we pass lock here but never use it in this
-function?
+I see that for S2MPS13 we already added similar array which duplicates
+the S2MPS11. This actually looks wrong. Just re-use existing
+s2mps11_clks_init.
 
->  {
->  	struct clkgen_pll *pll;
->  	struct clk *clk;
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best regards,
+Krzysztof
