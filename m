@@ -1,100 +1,122 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Emilio Lopez <emilio@elopez.com.ar>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v4 3/5] clk: sunxi: pll2: Add A13 support
-Date: Mon, 12 Oct 2015 22:43:28 +0200
-Message-Id: <1444682610-21482-4-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1444682610-21482-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1444682610-21482-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v3 4/5] clk: s2mps15: Add support for S2MPS15 clocks
+To: Alim Akhtar <alim.akhtar@samsung.com>, lee.jones@linaro.org,
+ broonie@kernel.org
+References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
+ <1445863883-5187-5-git-send-email-alim.akhtar@samsung.com>
+ <5630243E.1080608@samsung.com> <5630503A.3070404@samsung.com>
+ <5630554E.8070301@samsung.com>
+Cc: mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, rtc-linux@googlegroups.com,
+ linux-kernel@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <56305EF5.1080709@samsung.com>
+Date: Wed, 28 Oct 2015 14:36:53 +0900
+MIME-version: 1.0
+In-reply-to: <5630554E.8070301@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-The A13, unlike the A10 and A20, doesn't use a pass-through exception for
-the 0 value in the pre and post dividers, but increments all the values
-written in the register by one.
+On 28.10.2015 13:55, Alim Akhtar wrote:
+> 
+> 
+> On 10/28/2015 10:04 AM, Krzysztof Kozlowski wrote:
+>> On 28.10.2015 10:26, Krzysztof Kozlowski wrote:
+>>> On 26.10.2015 21:51, Alim Akhtar wrote:
+>>>> S2MPS15 PMIC has three 32k buffered clocks outputs. This patch
+>>>> adds supports for the same to the s2mps11 clock driver.
+>>>>
+>>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>>>> ---
+>>>>   drivers/clk/Kconfig       |    5 +++--
+>>>>   drivers/clk/clk-s2mps11.c |   24 ++++++++++++++++++++++++
+>>>>   2 files changed, 27 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+>>>> index a1fa61159179..037a314b5d76 100644
+>>>> --- a/drivers/clk/Kconfig
+>>>> +++ b/drivers/clk/Kconfig
+>>>> @@ -120,9 +120,10 @@ config COMMON_CLK_S2MPS11
+>>>>       tristate "Clock driver for S2MPS1X/S5M8767 MFD"
+>>>>       depends on MFD_SEC_CORE
+>>>>       ---help---
+>>>> -      This driver supports S2MPS11/S2MPS14/S5M8767 crystal oscillator
+>>>> +      This driver supports S2MPS1X/S5M8767 crystal oscillator
+>>>>         clock. These multi-function devices have two (S2MPS14) or three
+>>>> -      (S2MPS11, S5M8767) fixed-rate oscillators, clocked at 32KHz
+>>>> each.
+>>>> +      (S2MPS11/S2MPS13/S2MPS15/S5M8767) fixed-rate oscillators,
+>>>> +      clocked at 32KHz each.
+>>>>
+>>>>   config CLK_TWL6040
+>>>>       tristate "External McPDM functional clock from twl6040"
+>>>> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+>>>> index d266299dfdb1..455500dca653 100644
+>>>> --- a/drivers/clk/clk-s2mps11.c
+>>>> +++ b/drivers/clk/clk-s2mps11.c
+>>>> @@ -25,6 +25,7 @@
+>>>>   #include <linux/mfd/samsung/s2mps11.h>
+>>>>   #include <linux/mfd/samsung/s2mps13.h>
+>>>>   #include <linux/mfd/samsung/s2mps14.h>
+>>>> +#include <linux/mfd/samsung/s2mps15.h>
+>>>>   #include <linux/mfd/samsung/s5m8767.h>
+>>>>   #include <linux/mfd/samsung/core.h>
+>>>>
+>>>> @@ -148,6 +149,24 @@ static struct clk_init_data
+>>>> s2mps14_clks_init[S2MPS11_CLKS_NUM] = {
+>>>>       },
+>>>>   };
+>>>>
+>>>> +static struct clk_init_data s2mps15_clks_init[S2MPS11_CLKS_NUM] = {
+>>>> +    [S2MPS11_CLK_AP] = {
+>>>> +        .name = "s2mps15_ap",
+>>>> +        .ops = &s2mps11_clk_ops,
+>>>> +        .flags = CLK_IS_ROOT,
+>>>> +    },
+>>>> +    [S2MPS11_CLK_CP] = {
+>>>> +        .name = "s2mps15_cp",
+>>>> +        .ops = &s2mps11_clk_ops,
+>>>> +        .flags = CLK_IS_ROOT,
+>>>> +    },
+>>>> +    [S2MPS11_CLK_BT] = {
+>>>> +        .name = "s2mps15_bt",
+>>>> +        .ops = &s2mps11_clk_ops,
+>>>> +        .flags = CLK_IS_ROOT,
+>>>> +    },
+>>>> +};
+>>>> +
+>>>>   static struct device_node *s2mps11_clk_parse_dt(struct
+>>>> platform_device *pdev,
+>>>>           struct clk_init_data *clks_init)
+>>>>   {
+>>>> @@ -207,6 +226,10 @@ static int s2mps11_clk_probe(struct
+>>>> platform_device *pdev)
+>>>>           s2mps11_reg = S2MPS14_REG_RTCCTRL;
+>>>>           clks_init = s2mps14_clks_init;
+>>>>           break;
+>>>> +    case S2MPS15X:
+>>>> +        s2mps11_reg = S2MPS15_REG_RTC_BUF;
+>>>> +        clks_init = s2mps15_clks_init;
+>>>
+>>> Another question (after looking at RTC driver):
+>>> Is this the same register address as S2MPS14?
+>>
+>> I found the answer - this is the same address as in S2MPS13 and S2MPS14:
+>> 0xc. The S2MPS14 has only two clocks though but S2MPS13 has three.
+>> Again, as in RTC, you should re-use existing support.
+>>
+>> It looks there is no need for this patch at all.
+>>
+> Yes, checked that, rtc looks same to s2mps14 and clk looks same as
+> s2mps13{ not s2mps11}, because of the RTC_BUF address changes.
+> Will drop patch 4 and 5 and use the existing names where applicable.
 
-Add an exception for both these cases to handle them nicely.
+Thanks!
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi/clk-a10-pll2.c | 38 +++++++++++++++++++++++++++++++++-----
- 1 file changed, 33 insertions(+), 5 deletions(-)
+> I think I don't have to change the binding or Kconfig changes?
 
-diff --git a/drivers/clk/sunxi/clk-a10-pll2.c b/drivers/clk/sunxi/clk-a10-pll2.c
-index b877cc6c3622..bae9235f7528 100644
---- a/drivers/clk/sunxi/clk-a10-pll2.c
-+++ b/drivers/clk/sunxi/clk-a10-pll2.c
-@@ -41,9 +41,15 @@
- 
- #define SUN4I_PLL2_OUTPUTS		4
- 
-+struct sun4i_pll2_data {
-+	u32	post_div_offset;
-+	u32	pre_div_flags;
-+};
-+
- static DEFINE_SPINLOCK(sun4i_a10_pll2_lock);
- 
--static void __init sun4i_pll2_setup(struct device_node *node)
-+static void __init sun4i_pll2_setup(struct device_node *node,
-+				    struct sun4i_pll2_data *data)
- {
- 	const char *clk_name = node->name, *parent;
- 	struct clk **clks, *base_clk, *prediv_clk;
-@@ -70,8 +76,7 @@ static void __init sun4i_pll2_setup(struct device_node *node)
- 					  parent, 0, reg,
- 					  SUN4I_PLL2_PRE_DIV_SHIFT,
- 					  SUN4I_PLL2_PRE_DIV_WIDTH,
--					  CLK_DIVIDER_ONE_BASED |
--					  CLK_DIVIDER_ALLOW_ZERO,
-+					  data->pre_div_flags,
- 					  &sun4i_a10_pll2_lock);
- 	if (!prediv_clk) {
- 		pr_err("Couldn't register the prediv clock\n");
-@@ -122,7 +127,7 @@ static void __init sun4i_pll2_setup(struct device_node *node)
- 	 */
- 	val = readl(reg);
- 	val &= ~(SUN4I_PLL2_POST_DIV_MASK << SUN4I_PLL2_POST_DIV_SHIFT);
--	val |= SUN4I_PLL2_POST_DIV_VALUE << SUN4I_PLL2_POST_DIV_SHIFT;
-+	val |= (SUN4I_PLL2_POST_DIV_VALUE - data->post_div_offset) << SUN4I_PLL2_POST_DIV_SHIFT;
- 	writel(val, reg);
- 
- 	of_property_read_string_index(node, "clock-output-names",
-@@ -185,4 +190,27 @@ err_free_data:
- err_unmap:
- 	iounmap(reg);
- }
--CLK_OF_DECLARE(sun4i_pll2, "allwinner,sun4i-a10-pll2-clk", sun4i_pll2_setup);
-+
-+static struct sun4i_pll2_data sun4i_a10_pll2_data = {
-+	.pre_div_flags	= CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO,
-+};
-+
-+static void __init sun4i_a10_pll2_setup(struct device_node *node)
-+{
-+	sun4i_pll2_setup(node, &sun4i_a10_pll2_data);
-+}
-+
-+CLK_OF_DECLARE(sun4i_a10_pll2, "allwinner,sun4i-a10-pll2-clk",
-+	       sun4i_a10_pll2_setup);
-+
-+static struct sun4i_pll2_data sun5i_a13_pll2_data = {
-+	.post_div_offset	= 1,
-+};
-+
-+static void __init sun5i_a13_pll2_setup(struct device_node *node)
-+{
-+	sun4i_pll2_setup(node, &sun5i_a13_pll2_data);
-+}
-+
-+CLK_OF_DECLARE(sun5i_a13_pll2, "allwinner,sun5i-a13-pll2-clk",
-+	       sun5i_a13_pll2_setup);
--- 
-2.5.3
+I think you don't have to. Only the main MFD driver will be updated with
+respective child driver names and compatible.
+
+Best regards,
+Krzysztof
