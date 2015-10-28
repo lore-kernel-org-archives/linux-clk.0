@@ -1,63 +1,66 @@
-Return-Path: <tomeu.vizoso@gmail.com>
-Return-Path: <tomeu.vizoso@gmail.com>
-Sender: Tomeu Vizoso <tomeu.vizoso@gmail.com>
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Inki Dae <inki.dae@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kumar Gala <galak@codeaurora.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	linux-samsung-soc@vger.kernel.org,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v1 0/2] Fix display on second resume on 5250-snow
-Date: Wed, 14 Oct 2015 12:44:15 +0200
-Message-Id: <1444819457-27519-1-git-send-email-tomeu.vizoso@collabora.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Sender: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
+Subject: Re: [rtc-linux] Re: [PATCH v3 5/5] drivers/rtc/rtc-s5m.c: add support
+ for S2MPS15 RTC
+To: Alim Akhtar <alim.akhtar@samsung.com>,
+ Alexandre Belloni <alexandre.belloni@free-electrons.com>
+References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
+ <1445863883-5187-6-git-send-email-alim.akhtar@samsung.com>
+ <56302514.4090407@samsung.com> <20151028015323.GZ28319@sirena.org.uk>
+ <56303054.8060804@samsung.com> <56303DA3.5020306@samsung.com>
+ <5630419F.1000300@samsung.com> <20151028094853.GM22331@piout.net>
+ <5630A3E2.9010207@samsung.com>
+Cc: k.kozlowski.k@gmail.com, Mark Brown <broonie@kernel.org>,
+ lee.jones@linaro.org, mturquette@baylibre.com,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-ID: <5630CF15.50206@samsung.com>
+Date: Wed, 28 Oct 2015 22:35:17 +0900
+MIME-Version: 1.0
+In-Reply-To: <5630A3E2.9010207@samsung.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+W dniu 28.10.2015 o 19:30, Alim Akhtar pisze:
+> Hi Alexandre,
+> 
+> On 10/28/2015 03:18 PM, Alexandre Belloni wrote:
+>> On 28/10/2015 at 12:31:43 +0900, Krzysztof Kozlowski wrote :
+>>> The s2mps13 clock driver added new name and compatible... which was
+>>> probably totally unneeded (I missed that during review). We don't have
+>>> to make this as a rule...
+>>>
+>>> Since we do not have any data about future workarounds and the
+>>> differences then just follow Ockham's razor - use the same name and
+>>> compatible.
+>>>
+>>
+>> So you don't care about DT backward compatibility because when a
+>> workaround will be needed for one of the IPs, then you will have to
+>> update the old dtb to use it.
+>>
+>> Unless you are sure that the IP is the same, doing
+>>
+>> { "s2mps15-rtc",    S2MPS14X },
+>>
+>> is probably the best way to handle that. Note that I personally don't
+>> care about the DT ABI, I'm just pointing out what may happen ;)
+>>
+> Thats what my point is, anyway I am still looking into the fine prints
+> of the s2mps15 and s2mps14 user manual, now I have found at least one
+> difference in their one of the register bit, which might be a good
+> reason to keep s2mps15-rtc device.
 
-as discussed in [0], currently on the second resume from memory the
-display is broken on Snow boards (ARM Samsung Series 3 Chromebook).
+No, this is not a good reason. Devices may be different but from
+driver's perspective they behave the same. This means for example that
+they use the same compatible. They can use the same driver name.
 
-The reason is that on resume the contents of register SRC_TOP3 aren't
-what the kernel thinks they are because the HW (or FW) is doing some
-clock reparenting beneath our feet.
+We have for example AHCI driver for entire range of different devices.
+Some of them are different enough that require special code. So they
+have different name and compatible. All of other use the same ahci
+driver. But devices are different...
 
-This series tasks the kernel to do the reparenting itself so that the HW
-state always matches the kernel's internal state.
-
-Thanks,
-
-Tomeu
-
-[0] http://lkml.kernel.org/g/561CDC33.7050103@collabora.com
-
-
-Tomeu Vizoso (2):
-  clk: samsung: exynos5250: Add DISP1 clocks
-  ARM: dts: exynos5250: Add clocks to DISP1 domain
-
- arch/arm/boot/dts/exynos5250.dtsi      |  4 ++++
- drivers/clk/samsung/clk-exynos5250.c   | 16 +++++++++++++++-
- include/dt-bindings/clock/exynos5250.h |  4 +++-
- 3 files changed, 22 insertions(+), 2 deletions(-)
-
--- 
-2.5.0
+Best regards,
+Krzysztof
