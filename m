@@ -1,143 +1,103 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: linux-arm-kernel@lists.infradead.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Russell King <linux@arm.linux.org.uk>
-Cc: Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 09/13] clk: versatile-icst: add device tree support
-Date: Thu, 15 Oct 2015 15:46:49 +0200
-Message-Id: <1444916813-31024-10-git-send-email-linus.walleij@linaro.org>
-In-Reply-To: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
-References: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 27 Oct 2015 17:34:42 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jon Mason <jonmason@broadcom.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH] clk: iproc: Make clocks visible options
+Message-ID: <20151028003442.GU19782@codeaurora.org>
+References: <1445541913-25066-1-git-send-email-jonmason@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1445541913-25066-1-git-send-email-jonmason@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds support for the ARM syscon ICST clocks to initialized
-directly from the device tree syscon node on ARM Integrator,
-Versatile and RealView reference designs.
+The thread didn't seem to finish, so here's some review.
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-I'm looking for an ACK from the CLK maintainers to take this
-through the ARM SoC tree once the series stabilize.
----
- drivers/clk/versatile/clk-icst.c | 89 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 88 insertions(+), 1 deletion(-)
+On 10/22, Jon Mason wrote:
+> diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+> index 46ee475..0352ccf 100644
+> --- a/drivers/clk/bcm/Kconfig
+> +++ b/drivers/clk/bcm/Kconfig
+> @@ -9,8 +9,41 @@ config CLK_BCM_KONA
+>  	  in the BCM281xx and BCM21664 families.
+>  
+>  config COMMON_CLK_IPROC
+> -	bool
+> +	bool "Broadcom iProc clock support"
+> +	depends on ARCH_BCM_IPROC
 
-diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
-index ab5d5f73818b..b2dc06923ac1 100644
---- a/drivers/clk/versatile/clk-icst.c
-+++ b/drivers/clk/versatile/clk-icst.c
-@@ -3,7 +3,7 @@
-  * We wrap the custom interface from <asm/hardware/icst.h> into the generic
-  * clock framework.
-  *
-- * Copyright (C) 2012 Linus Walleij
-+ * Copyright (C) 2012-2015 Linus Walleij
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -207,3 +207,90 @@ struct clk *icst_clk_register(struct device *dev,
- 	return icst_clk_setup(dev, desc, name, parent_name, map);
- }
- EXPORT_SYMBOL_GPL(icst_clk_register);
-+
-+#ifdef CONFIG_OF
-+/*
-+ * In a device tree, an memory-mapped ICST clock appear as a child
-+ * of a syscon node. Assume this and probe it only as a child of a
-+ * syscon.
-+ */
-+
-+static const struct icst_params icst525_params = {
-+	.vco_max	= ICST525_VCO_MAX_5V,
-+	.vco_min	= ICST525_VCO_MIN,
-+	.vd_min 	= 8,
-+	.vd_max 	= 263,
-+	.rd_min 	= 3,
-+	.rd_max 	= 65,
-+	.s2div		= icst525_s2div,
-+	.idx2s		= icst525_idx2s,
-+};
-+
-+static const struct icst_params icst307_params = {
-+	.vco_max	= ICST307_VCO_MAX,
-+	.vco_min	= ICST307_VCO_MIN,
-+	.vd_min		= 4 + 8,
-+	.vd_max		= 511 + 8,
-+	.rd_min		= 1 + 2,
-+	.rd_max		= 127 + 2,
-+	.s2div		= icst307_s2div,
-+	.idx2s		= icst307_idx2s,
-+};
-+
-+static void __init of_syscon_icst_setup(struct device_node *np)
-+{
-+	struct device_node *parent;
-+	struct regmap *map;
-+	struct clk_icst_desc icst_desc;
-+	const char *name = np->name;
-+	const char *parent_name;
-+	struct clk *regclk;
-+
-+	/* We do not release this reference, we are using it perpetually */
-+	parent = of_get_parent(np);
-+	if (!parent) {
-+		pr_err("no parent node for syscon ICST clock\n");
-+		return;
-+	}
-+	map = syscon_node_to_regmap(parent);
-+	if (IS_ERR(map)) {
-+		pr_err("no regmap for syscon ICST clock parent\n");
-+		return;
-+	}
-+
-+	if (of_property_read_u32(np, "vco-offset", &icst_desc.vco_offset)) {
-+		pr_err("no VCO register offset for ICST clock\n");
-+		return;
-+	}
-+	if (of_property_read_u32(np, "lock-offset", &icst_desc.lock_offset)) {
-+		pr_err("no lock register offset for ICST clock\n");
-+		return;
-+	}
-+
-+	if (of_device_is_compatible(np, "arm,syscon-icst525"))
-+		icst_desc.params = &icst525_params;
-+	else if (of_device_is_compatible(np, "arm,syscon-icst307"))
-+		icst_desc.params = &icst307_params;
-+	else {
-+		pr_info("unknown ICST clock %s\n", name);
-+		return;
-+	}
-+
-+	/* Parent clock name is not the same as node parent */
-+	parent_name = of_clk_get_parent_name(np, 0);
-+
-+	regclk = icst_clk_setup(NULL, &icst_desc, name, parent_name, map);
-+	if (IS_ERR(regclk)) {
-+		pr_err("error setting up syscon ICST clock %s\n", name);
-+		return;
-+	}
-+	of_clk_add_provider(np, of_clk_src_simple_get, regclk);
-+	pr_info("registered syscon ICST clock %s\n", name);
-+}
-+
-+CLK_OF_DECLARE(arm_syscon_icst525_clk,
-+	       "arm,syscon-icst525", of_syscon_icst_setup);
-+CLK_OF_DECLARE(arm_syscon_icst307_clk,
-+	       "arm,syscon-icst307", of_syscon_icst_setup);
-+
-+#endif
+Plus || COMPILE_TEST?
+
+>  	depends on COMMON_CLK
+> +	default ARCH_BCM_IPROC
+>  	help
+>  	  Enable common clock framework support for Broadcom SoCs
+>  	  based on the iProc architecture
+
+It's nice that we're grouping the different platforms under one
+umbrella config for the iProc architecture. That way we don't
+have to see it unless we're targeting the platform. We should
+probably do something similar for kona too in case anyone cares
+about code bloat there.
+
+> +
+> +if COMMON_CLK_IPROC
+> +
+> +comment "Broadcom iProc clocks"
+
+Please remove this comment block and drop the depends on
+COMMON_CLK_IPROC in the configs below. The if section will keep
+things properly indented and avoid duplicating that depends on
+statement. Plus the comment pretty much duplicates what is
+already in the help for COMMON_CLK_IPROC.
+
+We can make COMMON_CLK_IPROC into a hidden option and introduce a
+new grouping config if we really care about that case where the
+base support is built but there aren't any users. I'd rather not
+care though to simplify things.
+
+> +
+> +config CLK_BCM_CYGNUS
+> +	bool "Broadcom Cygnus clock support"
+> +	depends on COMMON_CLK_IPROC
+> +	depends on ARCH_BCM_CYGNUS
+
+Plus || COMPILE_TEST?
+
+> +	default ARCH_BCM_CYGNUS
+> +	help
+> +	  Enable common clock framework support for the Broadcom Cygnus SoC
+> +
+> +config CLK_BCM_NSP
+> +	bool "Broadcom Northstar/Northstar Plus clock support"
+> +	depends on COMMON_CLK_IPROC
+> +	depends on ARCH_BCM_5301X || ARCH_BCM_NSP
+
+Plus || COMPILE_TEST?
+
+> +	default ARCH_BCM_5301X || ARCH_BCM_NSP
+> +	help
+> +	  Enable common clock framework support for the Broadcom Northstar and
+> +	  Northstar Plus SoCs
+> +
+> +config CLK_BCM_NS2
+> +	bool "Broadcom Northstar 2 clock support"
+> +	depends on ARM64
+
+Plus || COMPILE_TEST?
+
+> +	depends on COMMON_CLK_IPROC
+> +	default ARCH_BCM_IPROC
+> +	help
+> +	  Enable common clock framework support for the Broadcom Northstar 2 SoC
+> +
+> +endif
+
 -- 
-2.4.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
