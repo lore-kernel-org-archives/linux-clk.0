@@ -1,54 +1,70 @@
-Return-Path: <B48286@freescale.com>
-From: Zhiqiang Hou <B48286@freescale.com>
-To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <mark.rutland@arm.com>
-CC: <Mingkai.Hu@freescale.com>, <Shaohui.Xie@freescale.com>,
-	<scottwood@freescale.com>, <bhupesh.sharma@freescale.com>,
-	<leoli@freescale.com>, <wsa@the-dreams.de>, <wim@iguana.be>,
-	<corbet@lwn.net>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<Wenbin.Song@freescale.com>, Hou Zhiqiang <B48286@freescale.com>
-Subject: [PATCH V3 1/6] i2c: Add i2c support to Freescale Layerscape platforms
-Date: Wed, 14 Oct 2015 19:34:53 +0800
-Message-ID: <1444822498-16477-2-git-send-email-B48286@freescale.com>
-In-Reply-To: <1444822498-16477-1-git-send-email-B48286@freescale.com>
-References: <1444822498-16477-1-git-send-email-B48286@freescale.com>
-Return-Path: B48286@freescale.com
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 27 Oct 2015 18:06:04 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Georgi Djakov <georgi.djakov@linaro.org>
+Subject: Re: [PATCH v2 1/2] clk: qcom: common: Add API to register board
+ clocks backwards compatibly
+Message-ID: <20151028010604.GV19782@codeaurora.org>
+References: <1445987100-19492-1-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1445987100-19492-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shaohui Xie <Shaohui.Xie@freescale.com>
+On 10/27, Stephen Boyd wrote:
+> +
+> +int qcom_cc_register_board_clk(struct device *dev, const char *path,
+> +			       const char *name, unsigned long rate)
+> +{
+> +	return _qcom_cc_register_board_clk(dev, path, name, rate,
+> +					   !IS_ENABLED(CONFIG_QCOM_RPMCC));
 
-Modify the I2C_IMX config to support to Layerscape platforms.
+I just realized that we could have this config enabled but the
+driver never probes on a certain platform. So we'll need to do
+some sort of search to see if the rpmcc node exists and also
+check to see if the driver is enabled. I guess we can do that all
+here in this function as long as we have a compatible =
+"qcom,rpmcc" as a more generic property for the rpm clock
+controller node. So if the config is enabled, search the dt tree
+for a qcom,rpmcc node. If the rpmcc node is there, the last
+argument is false, otherwise it's true.
 
-Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
-Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
-Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
----
-V3:
- - No change.
-
- drivers/i2c/busses/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index 08b8617..14147ec 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -582,10 +582,10 @@ config I2C_IMG
+---8<----
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index 572851b5bc16..215a41ba0135 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -17,6 +17,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/clk-provider.h>
+ #include <linux/reset-controller.h>
++#include <linux/of.h>
  
- config I2C_IMX
- 	tristate "IMX I2C interface"
--	depends on ARCH_MXC
-+	depends on ARCH_MXC || ARCH_LAYERSCAPE
- 	help
- 	  Say Y here if you want to use the IIC bus controller on
--	  the Freescale i.MX/MXC processors.
-+	  the Freescale i.MX/MXC or Layerscape processors.
+ #include "common.h"
+ #include "clk-rcg.h"
+@@ -152,7 +153,18 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
+ int qcom_cc_register_board_clk(struct device *dev, const char *path,
+ 			       const char *name, unsigned long rate)
+ {
+-	return _qcom_cc_register_board_clk(dev, path, name, rate, true);
++	bool add_factor = true;
++	struct device_node *node;
++
++	/* The RPM clock driver will add the factor clock if present */
++	if (IS_ENABLED(CONFIG_QCOM_RPMCC)) {
++		node = of_find_compatible_node(NULL, NULL, "qcom,rpmcc");
++		if (node)
++			add_factor = false;
++		of_node_put(node);
++	}
++
++	return _qcom_cc_register_board_clk(dev, path, name, rate, add_factor);
+ }
+ EXPORT_SYMBOL_GPL(qcom_cc_register_board_clk);
  
- 	  This driver can also be built as a module.  If so, the module
- 	  will be called i2c-imx.
 -- 
-2.1.0.27.g96db324
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
