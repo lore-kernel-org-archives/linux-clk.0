@@ -1,58 +1,104 @@
-Return-Path: <manabian@gmail.com>
-Return-Path: <manabian@gmail.com>
-From: Joachim Eastwood <manabian@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: Joachim Eastwood <manabian@gmail.com>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v3 0/3] Fix unused clock disabling on LPC18xx
-Date: Sat, 24 Oct 2015 18:55:21 +0200
-Message-Id: <1445705724-20805-1-git-send-email-manabian@gmail.com>
+Return-Path: <jonmason@broadcom.com>
+From: Jon Mason <jonmason@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
+	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
+	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>
+Subject: [PATCH v2] clk: iproc: Make clocks visible options
+Date: Thu, 29 Oct 2015 16:44:10 -0400
+Message-ID: <1446151450-23563-1-git-send-email-jonmason@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: jonmason@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-I have finally managed to track down the reason for the hang that would
-occur when disabling clocks on lpc18xx under certain conditions. These
-conditions depend on boot mode used, what the boot loader does and if
-certain devices are enabled.
+Make the clocks visible options that can be selected by anyone.  This
+avoids the problems of:
+ 1) Select is a reverse dependency and is hard for people to understand
+    and can sometimes be a pain to track down
+ 2) Build coverage goes down because configs are hidden
+ 3) Code bloat
 
-One of reasons why it took me a while was that my primary platform was
-not affected by it and the data sheet has a rather misleading typo.
+Patch suggested by Stephen Boyd
 
-The hang will occur if the boot rom/loader doesn't setup USB0 clocks
-and if certain AMBA devices are enabled (PL022 SSP and maybe others).
+Signed-off-by: Jon Mason <jonmason@broadcom.com>
+---
+ arch/arm/mach-bcm/Kconfig |  1 -
+ drivers/clk/bcm/Kconfig   | 30 +++++++++++++++++++++++++++++-
+ drivers/clk/bcm/Makefile  |  7 +++----
+ 3 files changed, 32 insertions(+), 6 deletions(-)
 
-Cause of the hang is that the CCU registers can not be accessed if the
-base (parent) clock is not enabled. To make sure the parent is running
-a check for this has been added to the is_enabled clk_ops callback.
-Since clocks in the CGU can be cascaded this check must also be added
-here.
-
-To better understand the clock system on lpc18xx please take the time
-to look at the diagrams on:
-https://github.com/manabian/linux-lpc/wiki/LPC18xx-LPC43xx-clocks
-
-This version address the comments from Stephen Boyd.
-
-Changes since v3:
- - add clk_hw_is_enabled
- - fix typo on CGU gate enable function
- - use clk_hw_get_parent() insted of clk_get_parent()
- - rebase on v4.3-rc1
-
-Changes since v2:
- - Add clk.h to cgu since it uses clk_get_parent().
- - Rebase on clk-next
-
-Joachim Eastwood (3):
-  clk: Add clk_hw_is_enabled() for use by clk providers
-  clk: lpc18xx-ccu: fix potential system hang when disabling unused clocks
-  clk: lpc18xx-cgu: fix potential system hang when disabling unused clocks
-
- drivers/clk/clk.c                 |  5 +++++
- drivers/clk/nxp/clk-lpc18xx-ccu.c | 17 ++++++++++++++--
- drivers/clk/nxp/clk-lpc18xx-cgu.c | 42 ++++++++++++++++++++++++++++++++++++---
- include/linux/clk-provider.h      |  1 +
- 4 files changed, 60 insertions(+), 5 deletions(-)
-
+diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
+index 679798b..cacaaec 100644
+--- a/arch/arm/mach-bcm/Kconfig
++++ b/arch/arm/mach-bcm/Kconfig
+@@ -14,7 +14,6 @@ config ARCH_BCM_IPROC
+ 	select HAVE_ARM_SCU if SMP
+ 	select HAVE_ARM_TWD if SMP
+ 	select ARM_GLOBAL_TIMER
+-	select COMMON_CLK_IPROC
+ 	select CLKSRC_MMIO
+ 	select ARCH_REQUIRE_GPIOLIB
+ 	select ARM_AMBA
+diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+index 46ee475..ad815a5 100644
+--- a/drivers/clk/bcm/Kconfig
++++ b/drivers/clk/bcm/Kconfig
+@@ -9,8 +9,36 @@ config CLK_BCM_KONA
+ 	  in the BCM281xx and BCM21664 families.
+ 
+ config COMMON_CLK_IPROC
+-	bool
++	bool "Broadcom iProc clock support"
++	depends on ARCH_BCM_IPROC || COMPILE_TEST
+ 	depends on COMMON_CLK
++	default ARCH_BCM_IPROC
+ 	help
+ 	  Enable common clock framework support for Broadcom SoCs
+ 	  based on the iProc architecture
++
++if COMMON_CLK_IPROC
++
++config CLK_BCM_CYGNUS
++	bool "Broadcom Cygnus clock support"
++	depends on ARCH_BCM_CYGNUS || COMPILE_TEST
++	default ARCH_BCM_CYGNUS
++	help
++	  Enable common clock framework support for the Broadcom Cygnus SoC
++
++config CLK_BCM_NSP
++	bool "Broadcom Northstar/Northstar Plus clock support"
++	depends on ARCH_BCM_5301X || ARCH_BCM_NSP || COMPILE_TEST
++	default ARCH_BCM_5301X || ARCH_BCM_NSP
++	help
++	  Enable common clock framework support for the Broadcom Northstar and
++	  Northstar Plus SoCs
++
++config CLK_BCM_NS2
++	bool "Broadcom Northstar 2 clock support"
++	depends on ARM64 || COMPILE_TEST
++	default ARCH_BCM_IPROC
++	help
++	  Enable common clock framework support for the Broadcom Northstar 2 SoC
++
++endif
+diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+index 2d1cbc5..05d5830 100644
+--- a/drivers/clk/bcm/Makefile
++++ b/drivers/clk/bcm/Makefile
+@@ -3,7 +3,6 @@ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona-setup.o
+ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm281xx.o
+ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm21664.o
+ obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-iproc-armpll.o clk-iproc-pll.o clk-iproc-asiu.o
+-obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-ns2.o
+-obj-$(CONFIG_ARCH_BCM_CYGNUS)	+= clk-cygnus.o
+-obj-$(CONFIG_ARCH_BCM_NSP)	+= clk-nsp.o
+-obj-$(CONFIG_ARCH_BCM_5301X)	+= clk-nsp.o
++obj-$(CONFIG_CLK_BCM_CYGNUS)	+= clk-cygnus.o
++obj-$(CONFIG_CLK_BCM_NSP)	+= clk-nsp.o
++obj-$(CONFIG_CLK_BCM_NS2)	+= clk-ns2.o
 -- 
-1.8.0
+1.9.1
