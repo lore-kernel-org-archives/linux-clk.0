@@ -1,40 +1,73 @@
-Return-Path: <geliangtang@163.com>
-From: Geliang Tang <geliangtang@163.com>
-To: Santosh Shilimkar <ssantosh@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Jiri Kosina <trivial@kernel.org>
-Cc: Geliang Tang <geliangtang@163.com>,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 6/9] clk: keystone: fix a trivial typo
-Date: Sun, 18 Oct 2015 23:31:12 +0800
-Message-Id: <88b679770e91ce8e3aa2cd25912c6d589563388c.1445181079.git.geliangtang@163.com>
-In-Reply-To: <949f6f3c99f87b57666986dc9f2d1c916935e215.1445181079.git.geliangtang@163.com>
-References: <949f6f3c99f87b57666986dc9f2d1c916935e215.1445181079.git.geliangtang@163.com>
-In-Reply-To: <eb89ced1dda5b521dba1ed6095deef09d577e37a.1445181079.git.geliangtang@163.com>
-References: <949f6f3c99f87b57666986dc9f2d1c916935e215.1445181079.git.geliangtang@163.com> <557286dd38beb4d8d1be28e787ad89611e7cc077.1445181079.git.geliangtang@163.com> <5fea4cd474d5fe49688f88d91cdf5e8019844806.1445181079.git.geliangtang@163.com> <918fdb002ec3b2a9fc5a5d364c0fbaff2f77c5cc.1445181079.git.geliangtang@163.com> <eb89ced1dda5b521dba1ed6095deef09d577e37a.1445181079.git.geliangtang@163.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from laurent.telenet-ops.be ([195.130.137.89]:35724 "EHLO
+	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751083AbbJ2LZN (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 29 Oct 2015 07:25:13 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <damm+renesas@opensource.se>
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC] drivers: sh: Handle PM_GENERIC_DOMAINS_OF=n with new r8a7795 CPG/MSSR driver
+Date: Thu, 29 Oct 2015 12:25:14 +0100
+Message-Id: <1446117914-6392-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-s/regsiter/register/
+If CONFIG_PM=n (and thus PM_GENERIC_DOMAINS_OF=n), the CPG/MSSR driver
+doesn't install its Clock Domain. Make sure the needed module clocks are
+still enabled by using the Legacy Clock Domain.
 
-Signed-off-by: Geliang Tang <geliangtang@163.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/keystone/pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'd be happy to make CONFIG_PM=y mandatory for new SoCs/DTS, so we can
+drop this patch.
 
-diff --git a/drivers/clk/keystone/pll.c b/drivers/clk/keystone/pll.c
-index 3f553d0..a26ba21 100644
---- a/drivers/clk/keystone/pll.c
-+++ b/drivers/clk/keystone/pll.c
-@@ -157,7 +157,7 @@ out:
-  * _of_clk_init - PLL initialisation via DT
-  * @node: device tree node for this clock
-  * @pllctrl: If true, lower 6 bits of multiplier is in pllm register of
-- *		pll controller, else it is in the control regsiter0(bit 11-6)
-+ *		pll controller, else it is in the control register0(bit 11-6)
-  */
- static void __init _of_pll_clk_init(struct device_node *node, bool pllctrl)
+Thoughts?
+
+For your convenience, I have push this patch to the
+topic/r8a7795-drivers-sh-v1 branch of my renesas-drivers repository.  A
+full integration for R-Car Gen3 is available in the topic/gen3-latest
+branch.
+---
+ drivers/sh/pm_runtime.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/sh/pm_runtime.c b/drivers/sh/pm_runtime.c
+index 91a003011acfacb2..5eeed1db1bb3f9d8 100644
+--- a/drivers/sh/pm_runtime.c
++++ b/drivers/sh/pm_runtime.c
+@@ -32,17 +32,26 @@ static struct pm_clk_notifier_block platform_bus_notifier = {
+ 	.con_ids = { NULL, },
+ };
+ 
++static const struct of_device_id clk_domain_matches[] = {
++	{ .compatible = "renesas,cpg-mstp-clocks", },
++	{ .compatible = "renesas,r8a7795-cpg-mssr", },
++	{ /* sentinel */ }
++};
++
+ static int __init sh_pm_runtime_init(void)
  {
+ 	if (IS_ENABLED(CONFIG_ARCH_SHMOBILE)) {
+-		if (!of_find_compatible_node(NULL, NULL,
+-					     "renesas,cpg-mstp-clocks"))
++		if (!of_find_matching_node(NULL, clk_domain_matches))
+ 			return 0;
++
+ 		if (IS_ENABLED(CONFIG_PM_GENERIC_DOMAINS_OF) &&
+-		    of_find_node_with_property(NULL, "#power-domain-cells"))
++		    of_find_node_with_property(NULL, "#power-domain-cells")) {
++			pr_debug("Using DT Clock Domain\n");
+ 			return 0;
++		}
+ 	}
+ 
++	pr_debug("Using Legacy Clock Domain\n");
+ 	pm_clk_add_notifier(&platform_bus_type, &platform_bus_notifier);
+ 	return 0;
+ }
 -- 
-2.5.0
+1.9.1
+
