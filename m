@@ -1,41 +1,118 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 21 Oct 2015 16:40:02 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jon Mason <jonmason@broadcom.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Hauke Mehrtens <hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v3 01/10] ARM: cygnus: fix link failures when
- CONFIG_COMMON_CLK_IPROC is disabled
-Message-ID: <20151021234002.GN19782@codeaurora.org>
-References: <1444938513-10758-1-git-send-email-jonmason@broadcom.com>
- <1444938513-10758-2-git-send-email-jonmason@broadcom.com>
+Return-Path: <Wenyou.Yang@atmel.com>
+Subject: Re: [PATCH v2 10/14] ARM: at91: pm: find and remap the pmc
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>, Nicolas Ferre
+	<nicolas.ferre@atmel.com>, Boris Brezillon
+	<boris.brezillon@free-electrons.com>
+References: <1444660131-14954-1-git-send-email-alexandre.belloni@free-electrons.com>
+ <1444660131-14954-11-git-send-email-alexandre.belloni@free-electrons.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, <linux-kernel@vger.kernel.org>, "Jean-Christophe
+ Plagniol-Villard" <plagnioj@jcrosoft.com>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+From: "Yang, Wenyou" <wenyou.yang@atmel.com>
+Message-ID: <56317B57.5040703@atmel.com>
+Date: Thu, 29 Oct 2015 09:50:15 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1444938513-10758-2-git-send-email-jonmason@broadcom.com>
+In-Reply-To: <1444660131-14954-11-git-send-email-alexandre.belloni@free-electrons.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: wenyou.yang@atmel.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/15, Jon Mason wrote:
-> diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
-> index 88febf5..46ee475 100644
-> --- a/drivers/clk/bcm/Kconfig
-> +++ b/drivers/clk/bcm/Kconfig
-> @@ -9,10 +9,8 @@ config CLK_BCM_KONA
->  	  in the BCM281xx and BCM21664 families.
->  
->  config COMMON_CLK_IPROC
-> -	bool "Broadcom iProc clock support"
-> -	depends on ARCH_BCM_IPROC
+Hi Alexandre,
 
-Another patch added COMPILE_TEST here, so I've removed
-COMPILE_TEST now.
+Trivial comments.
 
-Applied to clk-next.
+On 2015/10/12 22:28, Alexandre Belloni wrote:
+> To avoid relying on at91_pmc_read(), find the pmc node and remap it
+> locally.
+>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> ---
+>   arch/arm/mach-at91/pm.c | 32 ++++++++++++++++++++++++++------
+>   1 file changed, 26 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
+> index 5c2b60c5a2a1..1dee29b33ff9 100644
+> --- a/arch/arm/mach-at91/pm.c
+> +++ b/arch/arm/mach-at91/pm.c
+> @@ -35,6 +35,8 @@
+>   #include "generic.h"
+>   #include "pm.h"
+>   
+> +void __iomem *pmc;
+> +
+>   /*
+>    * FIXME: this is needed to communicate between the pinctrl driver and
+>    * the PM implementation in the machine. Possibly part of the PM
+> @@ -85,7 +87,7 @@ static int at91_pm_verify_clocks(void)
+>   	unsigned long scsr;
+>   	int i;
+>   
+> -	scsr = at91_pmc_read(AT91_PMC_SCSR);
+> +	scsr = readl(pmc + AT91_PMC_SCSR);
+>   
+>   	/* USB must not be using PLLB */
+>   	if ((scsr & at91_pm_data.uhp_udp_mask) != 0) {
+> @@ -99,8 +101,7 @@ static int at91_pm_verify_clocks(void)
+>   
+>   		if ((scsr & (AT91_PMC_PCK0 << i)) == 0)
+>   			continue;
+> -
+> -		css = at91_pmc_read(AT91_PMC_PCKR(i)) & AT91_PMC_CSS;
+> +		css = readl(pmc + AT91_PMC_PCKR(i)) & AT91_PMC_CSS;
+>   		if (css != AT91_PMC_CSS_SLOW) {
+>   			pr_err("AT91: PM - Suspend-to-RAM with PCK%d src %d\n", i, css);
+>   			return 0;
+> @@ -143,8 +144,8 @@ static void at91_pm_suspend(suspend_state_t state)
+>   	flush_cache_all();
+>   	outer_disable();
+>   
+> -	at91_suspend_sram_fn(at91_pmc_base, at91_ramc_base[0],
+> -				at91_ramc_base[1], pm_data);
+> +	at91_suspend_sram_fn(pmc, at91_ramc_base[0],
+> +			     at91_ramc_base[1], pm_data);
+>   
+>   	outer_resume();
+>   }
+> @@ -394,13 +395,32 @@ static void __init at91_pm_sram_init(void)
+>   			&at91_pm_suspend_in_sram, at91_pm_suspend_in_sram_sz);
+>   }
+>   
+> +static const struct of_device_id atmel_pmc_ids[] = {
+> +	{ .compatible = "atmel,at91rm9200-pmc"  },
+> +	{ .compatible = "atmel,at91sam9260-pmc" },
+> +	{ .compatible = "atmel,at91sam9g45-pmc" },
+> +	{ .compatible = "atmel,at91sam9n12-pmc" },
+> +	{ .compatible = "atmel,at91sam9x5-pmc" },
+> +	{ .compatible = "atmel,sama5d3-pmc" },
+> +	{ /* sentinel */ },
+Do we need  compatible for sama5d2 pmc used in sama5d2.dtsi?
+{ .compatible = "atmel,sama5d2-pmc" },
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> +};
+> +
+>   static void __init at91_pm_init(void)
+>   {
+> -	at91_pm_sram_init();
+> +	struct device_node *pmc_np;
+>   
+>   	if (at91_cpuidle_device.dev.platform_data)
+>   		platform_device_register(&at91_cpuidle_device);
+>   
+> +	pmc_np = of_find_matching_node(NULL, atmel_pmc_ids);
+> +	pmc = of_iomap(pmc_np, 0);
+> +	if (!pmc) {
+> +		pr_info("AT91: PM not supported, PMC not found");
+Should need "\n" before end of printout.
+
+> +		return;
+> +	}
+> +
+> +	at91_pm_sram_init();
+> +
+>   	if (at91_suspend_sram_fn)
+>   		suspend_set_ops(&at91_pm_ops);
+>   	else
+
+Best Regards,
+Wenyou Yang
