@@ -1,45 +1,39 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Message-ID: <1443745434.5336.184.camel@freescale.com>
-Subject: Re: [RFC PATCH 0/8] clk: qoriq: Move chip-specific knowledge into
- driver
-From: Scott Wood <scottwood@freescale.com>
-To: Michael Turquette <mturquette@linaro.org>
-CC: Tang Yuantian <Yuantian.Tang@freescale.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Liberman Igal-B31950 <Igal.Liberman@freescale.com>,
-	Bucur Madalin-Cristian-B32716 <madalin.bucur@freescale.com>,
-	<linux-clk@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<devicetree@vger.kernel.org>
-Date: Thu, 1 Oct 2015 19:23:54 -0500
-In-Reply-To: <20150811182535.31346.52965@quantum>
-References: <1434682158-7243-1-git-send-email-scottwood@freescale.com>
-	 <20150811182535.31346.52965@quantum>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <Wenyou.Yang@atmel.com>
+Subject: Re: [PATCH v2 03/14] clk: at91: make use of syscon/regmap internally
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>, Nicolas Ferre
+	<nicolas.ferre@atmel.com>, Boris Brezillon
+	<boris.brezillon@free-electrons.com>
+References: <1444660131-14954-1-git-send-email-alexandre.belloni@free-electrons.com>
+ <1444660131-14954-4-git-send-email-alexandre.belloni@free-electrons.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, <linux-kernel@vger.kernel.org>, "Jean-Christophe
+ Plagniol-Villard" <plagnioj@jcrosoft.com>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+From: "Yang, Wenyou" <wenyou.yang@atmel.com>
+Message-ID: <56317BDB.1050209@atmel.com>
+Date: Thu, 29 Oct 2015 09:52:27 +0800
 MIME-Version: 1.0
-Sender: linux-pm-owner@vger.kernel.org
+In-Reply-To: <1444660131-14954-4-git-send-email-alexandre.belloni@free-electrons.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: wenyou.yang@atmel.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2015-08-11 at 11:25 -0700, Michael Turquette wrote:
-> Hi Scott,
-> 
-> Quoting Scott Wood (2015-06-18 19:49:10)
-> > The existing device tree bindings are error-prone and inflexible. 
-> > Correct the mistake by moving the knowledge into the driver, which
-> > has more flexibility in describing the quirks of each chip.  This leaves
-> > the device tree to its proper role of identifying a programming interface
-> > rather than describing its individual registers.
-> 
-> Sorry for not responding to this one sooner. Fell through the cracks.
-> 
-> All of the changes to drives/clk/clk-qoriq.c look great to me. I assume
-> you need to keep all of these patches together and want to the take
-> through the freescale tree? If so feel free to add,
-> 
-> Acked-by: Michael Turquette <mturquette@baylibre.com>
 
-Is the ack still valid for the v3 patchset?
 
--Scott
+On 2015/10/12 22:28, Alexandre Belloni wrote:
+> diff --git a/drivers/clk/at91/clk-h32mx.c b/drivers/clk/at91/clk-h32mx.c
+> index 61566bcefa53..a0fe54a96031 100644
+> --- a/drivers/clk/at91/clk-h32mx.c
+> +++ b/drivers/clk/at91/clk-h32mx.c
+> @@ -24,6 +24,9 @@
+>   #include <linux/irq.h>
+>   #include <linux/sched.h>
+>   #include <linux/wait.h>
+> +#include <linux/regmap.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/regmap.h>
+Repeated  #include <linux/regmap.h> .
 
+
+Best Regards,
+Wenyou Yang
