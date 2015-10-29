@@ -1,51 +1,32 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 1 Oct 2015 12:06:39 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: Make oxili GDSC parent of oxili_cx GDSC
-Message-ID: <20151001190639.GI19319@codeaurora.org>
-References: <1443035362-10914-1-git-send-email-sboyd@codeaurora.org>
- <560CED90.9050201@codeaurora.org>
- <20151001175227.GE19319@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20151001175227.GE19319@codeaurora.org>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Jiri Kosina <trivial@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] [trivial] clk: Spelling s/derefing/dereferencing/
+Date: Thu, 29 Oct 2015 20:55:00 +0100
+Message-Id: <1446148500-20480-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/01, Stephen Boyd wrote:
-> On 10/01, Rajendra Nayak wrote:
-> > On 09/24/2015 12:39 AM, Stephen Boyd wrote:
-> > >+
-> > >+	ret = pm_genpd_add_subdomain(&oxili_gdsc.pd, &oxilicx_gdsc.pd);
-> > 
-> > We'll need pm_genpd_add_subdomain() to be EXPORT_SYMBOL_GPL'ed so
-> > clk-qcom can be built as a module.
-> 
-> Good catch! Do we need to call pm_genpd_remove_subdomain() too?
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Looks like yes.
-
-> 
-> > 
-> > It would also be nicer if this parent/child relationship can
-> > somehow be represented in data (struct gdsc) that gets passed to
-> > the gdsc driver which then sets it up, instead of individual
-> > clock drivers doing it.
-> 
-> Agreed. I'd rather that we do nothing besides register domains
-> and then let the core code handle hooking up domains and
-> subdomains.
-
-A little closer inspection makes me want to skip this. PM domains
-can have multiple "master" domains, and pm_genpd_init() is the
-only API that would be able to do the linking. That API is mostly
-about initializing things to default values, so it doesn't seem
-like a good fit. I'll send a v2 with the remove part and the
-exports.
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index a5202df30bb27598..77835e408fe67049 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1981,7 +1981,7 @@ bool clk_is_match(const struct clk *p, const struct clk *q)
+ 	if (p == q)
+ 		return true;
+ 
+-	/* true if clk->core pointers match. Avoid derefing garbage */
++	/* true if clk->core pointers match. Avoid dereferencing garbage */
+ 	if (!IS_ERR_OR_NULL(p) && !IS_ERR_OR_NULL(q))
+ 		if (p->core == q->core)
+ 			return true;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
