@@ -1,93 +1,56 @@
-Return-Path: <robh+dt@kernel.org>
+Return-Path: <pku.leo@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <5627D6E0.5020708@gmail.com>
-References: <561E1378.6000906@collabora.com> <20151017065750.GA18607@kroah.com>
- <20151018192931.GY14956@sirena.org.uk> <20151018193757.GA9147@kroah.com>
- <20151018195330.GB14956@sirena.org.uk> <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
- <5627B677.5090109@gmail.com> <20151021162758.GP32054@sirena.org.uk> <5627D6E0.5020708@gmail.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Wed, 21 Oct 2015 16:12:44 -0500
-Message-ID: <CAL_Jsq+FPtCuBnte2HTgbdpNYM=v_kLaCRcOC1kMaCQwVC=5Kw@mail.gmail.com>
-Subject: Re: [GIT PULL] On-demand device probing
-To: Frank Rowand <frowand.list@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>,
-	=?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>,
-	Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>,
-	Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Sender: pku.leo@gmail.com
+In-Reply-To: <1445587282-29529-6-git-send-email-B48286@freescale.com>
+References: <1445587282-29529-1-git-send-email-B48286@freescale.com>
+	<1445587282-29529-6-git-send-email-B48286@freescale.com>
+Date: Thu, 29 Oct 2015 15:33:06 -0500
+Message-ID: <CADRPPNRKXDAQHijZtJOYo9wMPaciJnoQYhR1UWRgFGUXY=iAMg@mail.gmail.com>
+Subject: Re: [PATCH V6 6/6] dts/ls1043a: add LS1043ARDB board support
+From: Li Yang <leoli@freescale.com>
+To: Zhiqiang Hou <B48286@freescale.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, linux-watchdog@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>, Shaohui Xie <Shaohui.Xie@freescale.com>,
+	Jonathan Corbet <corbet@lwn.net>, Bhupesh Sharma <bhupesh.sharma@freescale.com>,
+	Michael Turquette <mturquette@baylibre.com>, wsa@the-dreams.de, sboyd@codeaurora.org,
+	wim@iguana.be, Wenbin Song <Wenbin.Song@freescale.com>,
+	Scott Wood <scottwood@freescale.com>, Hu Vincent <Mingkai.Hu@freescale.com>, linux@roeck-us.net
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Oct 21, 2015 at 1:18 PM, Frank Rowand <frowand.list@gmail.com> wrot=
-e:
-> On 10/21/2015 9:27 AM, Mark Brown wrote:
->> On Wed, Oct 21, 2015 at 08:59:51AM -0700, Frank Rowand wrote:
->>> On 10/19/2015 5:34 AM, Tomeu Vizoso wrote:
->>
->>>> To be clear, I was saying that this series should NOT affect total
->>>> boot times much.
->>
->>> I'm confused.  If I understood correctly, improving boot time was
->>> the key justification for accepting this patch set.  For example,
->>> from "[PATCH v7 0/20] On-demand device probing":
->>>
->>>    I have a problem with the panel on my Tegra Chromebook taking longer
->>>    than expected to be ready during boot (St=C3=A9phane Marchesin repor=
-ted what
->>>    is basically the same issue in [0]), and have looked into ordered
->>>    probing as a better way of solving this than moving nodes around in =
-the
->>>    DT or playing with initcall levels and linking order.
->>>
->>>    ...
->>>
->>>    With this series I get the kernel to output to the panel in 0.5s,
->>>    instead of 2.8s.
->>
->> Overall boot time and time to get some individual built in component up
->> and running aren't the same thing - what this'll do is get things up
->> more in the link order of the leaf consumers rather than deferring those
->> leaf consumers when their dependencies aren't ready yet.
+On Fri, Oct 23, 2015 at 3:01 AM, Zhiqiang Hou <B48286@freescale.com> wrote:
+> From: Shaohui Xie <Shaohui.Xie@freescale.com>
 >
-> Thanks!  I read too much into what was being improved.
+> Signed-off-by: Shaohui Xie <Shaohui.Xie@freescale.com>
+> Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
+> Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
+> Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+> ---
+> V6: V5 V4 V3
+>  - No change.
 >
-> So this patch series, which on other merits may be a good idea, is as
-> a by product solving a specific ordering issue, moving successful panel
-> initialization to an earlier point in the boot sequence, if I now
-> understand more correctly.
+> V2:
+>  - Remove the useless compatible "simple-bus" from cpld node.
 >
-> In that context, this seems like yet another ad hoc way of causing the
-> probe order to change in a way to solves one specific issue?  Could
-> it just as likely move the boot order of some other driver on some
-> other board later, to the detriment of somebody else?
+>  arch/arm64/boot/dts/freescale/Makefile            |   2 +-
+>  arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts | 116 ++++++++++++++++++++++
+>  2 files changed, 117 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts
+>
+> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+> index 57b41c7..33b1e57 100644
+> --- a/arch/arm64/boot/dts/freescale/Makefile
+> +++ b/arch/arm64/boot/dts/freescale/Makefile
+> @@ -1,4 +1,4 @@
+> -dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-qds.dtb fsl-ls2080a-rdb.dtb fsl-ls2080a-simu.dtb
+> +dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-qds.dtb fsl-ls2080a-rdb.dtb fsl-ls2080a-simu.dtb fsl-ls1043a-rdb.dtb
 
-Time to display on is important for many products. Having the console
-up as early as possible is another case. CAN bus is another. This is a
-real problem that is not just bad drivers.
+I tried to apply the patch, but it can not be applied due to the
+change from a depending ls2080 patch.  I will help to respin this
+patch and resend the three device tree related patches.
 
-I don't think it is completely ad hoc. Given all devices are
-registered after drivers, drivers will still probe first in initcall
-level order and then link order AFAIK. We may not take (more) initcall
-level tweak hacks, but that is a much more simple change for
-downstream. Don't get me wrong, I'd really like to see a way to
-control order independent of initcall level.
-
-Rob
+Regards,
+Leo
