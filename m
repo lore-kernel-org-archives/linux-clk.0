@@ -1,54 +1,92 @@
-Return-Path: <B48286@freescale.com>
-From: Zhiqiang Hou <B48286@freescale.com>
-To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-CC: <mark.rutland@arm.com>, <linux@roeck-us.net>, <wsa@the-dreams.de>,
-	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <Mingkai.Hu@freescale.com>,
-	<Shaohui.Xie@freescale.com>, <scottwood@freescale.com>,
-	<bhupesh.sharma@freescale.com>, <Wenbin.Song@freescale.com>,
-	<B48286@freescale.com>
-Subject: [PATCH V6 2/6] watchdog: Add support for Freescale Layerscape platforms
-Date: Fri, 23 Oct 2015 16:01:18 +0800
-Message-ID: <1445587282-29529-2-git-send-email-B48286@freescale.com>
-In-Reply-To: <1445587282-29529-1-git-send-email-B48286@freescale.com>
-References: <1445587282-29529-1-git-send-email-B48286@freescale.com>
-Return-Path: B48286@freescale.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v5 2/5] clk: shmobile: div6: Make clock-output-names optional
+Date: Thu, 29 Oct 2015 12:21:01 +0100
+Message-Id: <1446117664-6037-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1446117664-6037-1-git-send-email-geert+renesas@glider.be>
+References: <1446117664-6037-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shaohui Xie <Shaohui.Xie@freescale.com>
+Renesas DIV6 clocks provide a single clock output.  Hence make the
+"clock-output-names" DT property optional instead of mandatory. In case
+the DT property is omitted the DT node name will be used.
 
-Modify watchdog/Kconfig file to support Layerscape platforms.
+Rename the variable "name" to "clk_name" to make the code more similar
+with fixed-factor-clock.c, and to avoid a conflict with a nested local
+variable while we're at it.
 
-Signed-off-by: Shaohui Xie <Shaohui.Xie@freescale.com>
-Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
-Acked-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-V6:
- - Remove a Signed-off.
+v5:
+  - Integrated in this series as a dependency.
+---
+ .../devicetree/bindings/clock/renesas,cpg-div6-clocks.txt   |  4 ++++
+ drivers/clk/shmobile/clk-div6.c                             | 13 +++----------
+ 2 files changed, 7 insertions(+), 10 deletions(-)
 
-V5: V4 V3 V2
- - No change.
-
- drivers/watchdog/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index 79e1aa1..448dbaf 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -446,7 +446,7 @@ config MAX63XX_WATCHDOG
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
+index 5ddb68418655d569..86008ad354cf4bbd 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
+@@ -20,6 +20,10 @@ Required Properties:
+     clocks must be specified.  For clocks with multiple parents, invalid
+     settings must be specified as "<0>".
+   - #clock-cells: Must be 0
++
++
++Optional Properties:
++
+   - clock-output-names: The name of the clock as a free-form string
  
- config IMX2_WDT
- 	tristate "IMX2+ Watchdog"
--	depends on ARCH_MXC
-+	depends on ARCH_MXC || ARCH_LAYERSCAPE
- 	select REGMAP_MMIO
- 	select WATCHDOG_CORE
- 	help
+ 
+diff --git a/drivers/clk/shmobile/clk-div6.c b/drivers/clk/shmobile/clk-div6.c
+index 036a692c72195db9..c89566a918290246 100644
+--- a/drivers/clk/shmobile/clk-div6.c
++++ b/drivers/clk/shmobile/clk-div6.c
+@@ -178,10 +178,9 @@ static void __init cpg_div6_clock_init(struct device_node *np)
+ 	const char **parent_names;
+ 	struct clk_init_data init;
+ 	struct div6_clock *clock;
+-	const char *name;
++	const char *clk_name = np->name;
+ 	struct clk *clk;
+ 	unsigned int i;
+-	int ret;
+ 
+ 	clock = kzalloc(sizeof(*clock), GFP_KERNEL);
+ 	if (!clock)
+@@ -215,13 +214,7 @@ static void __init cpg_div6_clock_init(struct device_node *np)
+ 	clock->div = (clk_readl(clock->reg) & CPG_DIV6_DIV_MASK) + 1;
+ 
+ 	/* Parse the DT properties. */
+-	ret = of_property_read_string(np, "clock-output-names", &name);
+-	if (ret < 0) {
+-		pr_err("%s: failed to get %s DIV6 clock output name\n",
+-		       __func__, np->name);
+-		goto error;
+-	}
+-
++	of_property_read_string(np, "clock-output-names", &clk_name);
+ 
+ 	for (i = 0, valid_parents = 0; i < num_parents; i++) {
+ 		const char *name = of_clk_get_parent_name(np, i);
+@@ -255,7 +248,7 @@ static void __init cpg_div6_clock_init(struct device_node *np)
+ 	}
+ 
+ 	/* Register the clock. */
+-	init.name = name;
++	init.name = clk_name;
+ 	init.ops = &cpg_div6_clock_ops;
+ 	init.flags = CLK_IS_BASIC;
+ 	init.parent_names = parent_names;
 -- 
-2.1.0.27.g96db324
+1.9.1
