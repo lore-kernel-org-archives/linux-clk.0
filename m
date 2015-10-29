@@ -1,91 +1,110 @@
-Return-Path: <frowand.list@gmail.com>
-Return-Path: <frowand.list@gmail.com>
-Message-ID: <56282841.3060802@gmail.com>
-Date: Wed, 21 Oct 2015 17:05:21 -0700
-From: Frank Rowand <frowand.list@gmail.com>
-Reply-To: frowand.list@gmail.com
-MIME-Version: 1.0
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-CC: Geert Uytterhoeven <geert@linux-m68k.org>,
- Tomeu Vizoso <tomeu.vizoso@collabora.com>,
- Mark Brown <broonie@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Alexandre Courbot <gnurou@gmail.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- David Airlie <airlied@linux.ie>,
- =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom@nvidia.com>,
- Stephen Warren <swarren@wwwdotorg.org>,
- Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>,
- Kishon Vijay Abraham I <kishon@ti.com>,
- Sebastian Reichel <sre@kernel.org>,
- Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
- David Woodhouse <dwmw2@infradead.org>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Felipe Balbi <balbi@ti.com>, Jingoo Han <jingoohan1@gmail.com>,
- Lee Jones <lee.jones@linaro.org>,
- Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
- Tomi Valkeinen <tomi.valkeinen@ti.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- linux-clk <linux-clk@vger.kernel.org>,
- dmaengine@vger.kernel.org,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- Linux I2C <linux-i2c@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- Linux PWM List <linux-pwm@vger.kernel.org>,
- "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
- Linux Fbdev development list <linux-fbdev@vger.kernel.org>
-Subject: Re: Alternative approach to solve the deferred probe
-References: <20151019131821.GA32532@n2100.arm.linux.org.uk> <CAAObsKDS_+AZ26P_fHc6pvAYrQotsuoO0DEGQUWC514t3DD_jQ@mail.gmail.com> <20151019143045.GE32532@n2100.arm.linux.org.uk> <CAAObsKDWM6A98tdKHqi4fe5DBf0BmB0JeghcZDWan_PYbyshag@mail.gmail.com> <20151019153548.GM32532@n2100.arm.linux.org.uk> <CAMuHMdVv=ieYM-Nehp0qV8CEggHEeJ22j-6i_N09rRA_U=2ePw@mail.gmail.com> <20151020154656.GY32532@n2100.arm.linux.org.uk> <56270D5B.5010902@gmail.com> <20151021081847.GB32532@n2100.arm.linux.org.uk> <5627B0F7.7010600@gmail.com> <20151021203519.GO32532@n2100.arm.linux.org.uk>
-In-Reply-To: <20151021203519.GO32532@n2100.arm.linux.org.uk>
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <alim.akhtar@samsung.com>
+Message-id: <56319E36.1000700@samsung.com>
+Date: Thu, 29 Oct 2015 09:49:02 +0530
+From: Alim Akhtar <alim.akhtar@samsung.com>
+MIME-version: 1.0
+To: Lee Jones <lee.jones@linaro.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: k.kozlowski.k@gmail.com, broonie@kernel.org, mturquette@baylibre.com,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org,
+ Thomas Abraham <thomas.ab@samsung.com>
+Subject: Re: [PATCH v3 2/5] mfd: sec: Add support for S2MPS15 PMIC
+References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
+ <1445863883-5187-3-git-send-email-alim.akhtar@samsung.com>
+ <20151026143411.GL597@x1> <563021AF.6030100@samsung.com>
+ <20151028084609.GG5828@x1> <5630D12C.2030008@samsung.com>
+ <20151028135149.GF4058@x1>
+In-reply-to: <20151028135149.GF4058@x1>
+Content-type: text/plain; charset=UTF-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/21/2015 1:35 PM, Russell King - ARM Linux wrote:
-> On Wed, Oct 21, 2015 at 08:36:23AM -0700, Frank Rowand wrote:
->> On 10/21/2015 1:18 AM, Russell King - ARM Linux wrote:
->>> On Tue, Oct 20, 2015 at 08:58:19PM -0700, Frank Rowand wrote:
->>>> On 10/20/2015 8:46 AM, Russell King - ARM Linux wrote:
->>
->> < snip >
->>
->>>>> +
->>>>>  static bool driver_deferred_probe_enable = false;
->>>>> +
->>>>>  /**
->>>>>   * driver_deferred_probe_trigger() - Kick off re-probing deferred devices
->>>>>   *
->>>>> @@ -188,6 +210,13 @@ static int deferred_probe_initcall(void)
->>>>>  	driver_deferred_probe_trigger();
->>>>
->>>> Couldn't you put the "driver_deferred_probe_report = true" here?  And then
->>>> not add another round of probes.
+
+
+On 10/28/2015 07:21 PM, Lee Jones wrote:
+> On Wed, 28 Oct 2015, Krzysztof Kozlowski wrote:
+>
+>> W dniu 28.10.2015 o 17:46, Lee Jones pisze:
+>>> On Wed, 28 Oct 2015, Krzysztof Kozlowski wrote:
 >>>
->>> The idea is not to report anything for drivers that were deferred
->>> during the normal bootup.  The above is part of the normal bootup,
->>> and the deferred activity should not be warned about.
+>>>> On 26.10.2015 23:34, Lee Jones wrote:
+>>>>> On Mon, 26 Oct 2015, Alim Akhtar wrote:
+>>>>>
+>>>>>> From: Thomas Abraham <thomas.ab@samsung.com>
+>>>>>>
+>>>>>> Add support for S2MPS15 PMIC which is similar to S2MPS11 PMIC. The S2MPS15
+>>>>>> PMIC supports 27 LDO regulators, 10 buck regulators, RTC, three 32.768KHz
+>>>>>> clock outputs and battery charger. This patch adds initial support for
+>>>>>> LDO and buck regulators of S2MPS15 device.
+>>>>>>
+>>>>>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+>>>>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>>>>>> [Alim: Added s2mps15_devs like rtc and clk and related changes]
+>>>>>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>>>> ---
+>>>>>>   drivers/mfd/sec-core.c              |   31 +++++++
+>>>>>>   drivers/mfd/sec-irq.c               |    8 ++
+>>>>>>   include/linux/mfd/samsung/core.h    |    1 +
+>>>>>>   include/linux/mfd/samsung/s2mps15.h |  158 +++++++++++++++++++++++++++++++++++
+>>>>>>   4 files changed, 198 insertions(+)
+>>>>>>   create mode 100644 include/linux/mfd/samsung/s2mps15.h
+>>>>>
+>>>>> I replied to the previous set and won't be reviewing this one until
+>>>>> all of the open points are solved.
+>>>>
+>>>> The naming and compatibles used by the driver are confusing but how it
+>>>> was at beginning. Beside the confusion, the names are correct:
+>>>>
+>>>> 1. Main mfd driver:
+>>>>   - compatible: samsung,s2mps1*-pmic
+>>>>   - driver name: sec_pmic
+>>>>
+>>>> 2. Regulator driver:
+>>>>   - no compatible (because it always searches for "regulators" subnode of
+>>>> its parent... that is the convention/legacy behaviour)
+>>>>   - driver name: s2mps1*-pmic
+>>>>
+>>>> I hope that explains your concerns.
+>>>
+>>> It explains *why*, but doesn't ease my concerns in any way.
+>>>
+>>> Unfortunately I've only just realised the disparity we have between
+>>> MFD and the Regulator subsystem, which is annoying because it's now
+>>> almost impossible to rectify.
+>>>
+>>> We should have taken one of two views.  Either a) The MFD is the PMIC
+>>> device which encompasses regulator control.  In which case the MFD
+>>> and it's corresponding compatible string would be named *-pmic and the
+>>> regulator driver would be called *-regulator. Or b) The MFD could be
+>>> considered a normal MFD and be named after the model number, then the
+>>> regulator 'could' be named *-pmic.
+>>>
+>>> However, with reference to b), how much other Power Management does
+>>> the regulator driver do besides control regulators?  I suspect not
+>>> much.  Therefore my preference would be for a).  My second choice
+>>> would be a mixuture of the two where nothing gets named *-pmic.  The
+>>> last option on my list would be the current situation where we seem to
+>>> be calling both the MFD (PMIC) itself and the Regulator driver
+>>> *-pmic, which is not good.
 >>
->> The above is currently the last point for probe to succeed or defer
->> (until possibly, as you mentioned, module loading resolves the defer).
->> If a probe defers above, it will defer again below.  The set of defers
->> should be exactly the same above and below.
-> 
-> Why should it?
-
-My assertion was incorrect.  A probe in the deferral processing can
-result in the driver being placed on the new deferred list, then when
-a later probe of another deferred driver succeeds, the first driver
-will be moved to the active deferred list, and might succeed on
-the second probe attempt (or with the current messages would result
-in a second set of deferred messages).  So yes, placing
-"driver_deferred_probe_report = true" where your patch put it and
-running through the deferred probe processing again is correct.
-
--Frank
+>> Starting from the description of device-family. This is called "Power
+>> Management IC" but it is rather a "Power Deliver/Distribute IC". There
+>> isn't any logic inside except enable/disable/configure/set low power
+>> mode for regulators.
+>>
+>> However in the same time the IC comes (always) with:
+>>   - 32kHz clocks,
+>>   - RTC,
+>>   - backup battery charger (no driver for it),
+>>   - reset for SoC,
+>>   - shutdown on thermal alert (also no driver for this control).
+>>
+>> The solution a) seems fine to me. Make sense and it looks entirely
+>> backward compatible - only driver names will be modified.
+>
+> Perfect solution from my PoV.
+>
+> Thanks Krzysztof.
+>
+Thanks Jones/Krzysztof as always.
+Will update the patches.
