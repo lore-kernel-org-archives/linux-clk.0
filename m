@@ -1,61 +1,37 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <wenyou.yang@atmel.com>
+From: Wenyou Yang <wenyou.yang@atmel.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>, Alexandre Belloni
+	<alexandre.belloni@free-electrons.com>, Jean-Christophe Plagniol-Villard
+	<plagnioj@jcrosoft.com>
+CC: Russell King <linux@arm.linux.org.uk>, Stephen Boyd
+	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, "Rob
+ Herring" <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland
+	<mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "Kumar
+ Gala" <galak@codeaurora.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>, Wenyou Yang
+	<wenyou.yang@atmel.com>
+Subject: [RFC PATCH 0/2] ARM: at91/pm: init fast startup signal to the PMC
+Date: Thu, 29 Oct 2015 13:55:45 +0800
+Message-ID: <1446098147-32487-1-git-send-email-wenyou.yang@atmel.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1445812888-8170-1-git-send-email-javier@osg.samsung.com>
-References: <1445812888-8170-1-git-send-email-javier@osg.samsung.com>
-Date: Mon, 26 Oct 2015 10:02:13 +0100
-Message-ID: <CAMuHMdVGjDdJFWQTYgTpYfOTpNf_JhgXWUXLrLoVhhd=5qVEzQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: versatile: Make depend on OF when COMPILE_TEST
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Scott Branden <sbranden@broadcom.com>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Return-Path: wenyou.yang@atmel.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Oct 25, 2015 at 11:41 PM, Javier Martinez Canillas
-<javier@osg.samsung.com> wrote:
-> Commit 4a7748c3d641 ("clk: Allow drivers to build if COMPILE_TEST is
-> enabled") allowed clk drives to be compile tested on other archs but
-> the COMMON_CLK_VERSATILE was only enabled on platforms that already
-> selected OF support so the drivers assume it will always be enabled.
->
-> So, restrict compile test for these drivers only if OF is enabled.
->
-> Fixes: 4a7748c3d641 ("clk: Allow drivers to build if COMPILE_TEST is enabled")
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
->
-> ---
->
->  drivers/clk/versatile/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
-> index fc50b6264bed..e85863cf145f 100644
-> --- a/drivers/clk/versatile/Kconfig
-> +++ b/drivers/clk/versatile/Kconfig
-> @@ -1,6 +1,6 @@
->  config COMMON_CLK_VERSATILE
->         bool "Clock driver for ARM Reference designs"
-> -       depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64 || COMPILE_TEST
-> +       depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64 || (COMPILE_TEST && OF)
+This patch is to initialize the fast startup signal to the PMC.
 
-I would separate the infrastructure and platform dependencies, like
+The patch is based on patch set:
+http://lists.infradead.org/pipermail/linux-arm-kernel/2015-October/376493.html
 
-        depends on OF
-        depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS
-|| ARM64 || COMPILE_TEST
 
-But it's of course up to the maintainer to decide.
+Wenyou Yang (2):
+  ARM: at91: pm: init fast startup trigger signals to PMC
+  ARM: at91/dt: sama5d2_xplained: add pmc_fast_restart node
 
-Gr{oetje,eeting}s,
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts |    8 ++++
+ arch/arm/mach-at91/pm.c                     |   60 +++++++++++++++++++++++++++
+ include/linux/clk/at91_pmc.h                |   32 ++++++++++++++
+ 3 files changed, 100 insertions(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+1.7.9.5
