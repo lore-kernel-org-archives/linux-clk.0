@@ -1,74 +1,57 @@
-Return-Path: <tomeu.vizoso@gmail.com>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: kbuild test robot <fengguang.wu@intel.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: Use static inline functions instead of macros for dummies
+Date: Thu, 29 Oct 2015 22:12:56 +0100
+Message-Id: <1446153176-29865-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Sender: tomeu.vizoso@gmail.com
-In-Reply-To: <20151016172651.GB23912@codeaurora.org>
-References: <1444905084-22540-1-git-send-email-tomeu.vizoso@collabora.com>
- <1444905084-22540-2-git-send-email-tomeu.vizoso@collabora.com>
- <56203AD3.2050905@samsung.com> <20151016124935.20687.4394@quantum> <20151016172651.GB23912@codeaurora.org>
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Date: Fri, 16 Oct 2015 20:56:55 +0200
-Message-ID: <CAAObsKAjZX8XxTAFVKq4BCSZSrKG5xQPTue+z+xnJDD8QwK88Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] clk: samsung: exynos5250: Add DISP1 clocks
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Gustavo Padovan <gustavo.padovan@collabora.co.uk>,
-	Javier Martinez Canillas <javier@osg.samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kumar Gala <galak@codeaurora.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 16 October 2015 at 19:26, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 10/16, Michael Turquette wrote:
->> Quoting Krzysztof Kozlowski (2015-10-15 16:46:27)
->> > On 15.10.2015 19:31, Tomeu Vizoso wrote:
->> > > When the DISP1 power domain is powered off, there's two clocks that need
->> > > to be temporarily reparented to OSC, and back to their original parents
->> > > when the domain is powered on again.
->> > >
->> > > We expose these two clocks in the DT bindings so that the DT node of the
->> > > power domain can reference them.
->> > >
->> > > Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
->> > > Acked-by: Stephen Boyd <sboyd@codeaurora.org>
->> > > ---
->> > >
->> > > Changes in v2:
->> > > - Reuse mout_aclk200_p
->> > > - Rename div_aclk300 as div_aclk300_disp
->> > >
->> > >  drivers/clk/samsung/clk-exynos5250.c   | 14 +++++++++++++-
->> > >  include/dt-bindings/clock/exynos5250.h |  4 +++-
->> > >  2 files changed, 16 insertions(+), 2 deletions(-)
->> > >
->> >
->> > Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>
->> Applied to clk-next.
->>
->
-> I think Tomeu wanted to take this through arm-soc? Otherwise
-> we'll need to provide a stable branch for the dt header.
+if CONFIG_OF=n:
 
-Hi, Stephen is right, the second patch depends on this one.
+    drivers/clk/clk-cs2000-cp.c: In function ‘cs2000_remove’:
+    drivers/clk/clk-cs2000-cp.c:453:22: warning: unused variable ‘np’ [-Wunused-variable]
+      struct device_node *np = dev->of_node;
+			  ^
 
-Thanks,
+Convert dummies of_clk_del_provider() and of_clk_init() from macros to
+static inline functions to kill such compiler warnings.
 
-Tomeu
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ include/linux/clk-provider.h | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index eb5a23e8bf0219ac..61d30af2a85382a8 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -717,8 +717,7 @@ static inline int of_clk_add_provider(struct device_node *np,
+ {
+ 	return 0;
+ }
+-#define of_clk_del_provider(np) \
+-	{ while (0); }
++static inline void of_clk_del_provider(struct device_node *np) {}
+ static inline struct clk *of_clk_src_simple_get(
+ 	struct of_phandle_args *clkspec, void *data)
+ {
+@@ -743,8 +742,7 @@ static inline const char *of_clk_get_parent_name(struct device_node *np,
+ {
+ 	return NULL;
+ }
+-#define of_clk_init(matches) \
+-	{ while (0); }
++static inline void of_clk_init(const struct of_device_id *matches) {}
+ #endif /* CONFIG_OF */
+ 
+ /*
+-- 
+1.9.1
