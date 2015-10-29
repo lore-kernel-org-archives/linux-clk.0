@@ -1,86 +1,57 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 15 Oct 2015 11:09:03 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH 14/26] clk: mvebu: Convert to clk_hw based provider APIs
-Message-ID: <20151015180903.GG4558@codeaurora.org>
-References: <1438362246-6664-1-git-send-email-sboyd@codeaurora.org>
- <1438362246-6664-15-git-send-email-sboyd@codeaurora.org>
- <20151014170922.3027008a@free-electrons.com>
- <20151014182138.GD26883@codeaurora.org>
- <20151014221733.65507871@free-electrons.com>
- <20151014210859.GB4558@codeaurora.org>
- <20151015104326.6f7e907c@free-electrons.com>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20151015104326.6f7e907c@free-electrons.com>
+In-Reply-To: <20151026133153.GG8644@n2100.arm.linux.org.uk>
+References: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
+	<1444916813-31024-10-git-send-email-linus.walleij@linaro.org>
+	<20151015192626.GO4558@codeaurora.org>
+	<CACRpkdZUzTsMcFrudF6RRU5_1Njr=8L_XRUEmAWqvEnoJQ96Cw@mail.gmail.com>
+	<20151026133153.GG8644@n2100.arm.linux.org.uk>
+Date: Thu, 29 Oct 2015 14:00:53 +0100
+Message-ID: <CACRpkdZvN4yH6AED4aTK-TDLpJuxKOWV2ivU=NiPV1DEJ8nGJg@mail.gmail.com>
+Subject: Re: [PATCH 09/13] clk: versatile-icst: add device tree support
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+	Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+	Marc Zyngier <marc.zyngier@arm.com>, Will Deacon <will.deacon@arm.com>,
+	Rob Herring <robh@kernel.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/15, Thomas Petazzoni wrote:
-> Stephen,
-> 
-> On Wed, 14 Oct 2015 14:08:59 -0700, Stephen Boyd wrote:
-> 
-> > Here's that untested patch, which we can throw into clk-next for
-> > v4.4
-> 
-> It almost worked, but not completely. The issue is that by the time you
-> call of_clk_get(np, index), index is no longer equal to the value
-> passed as argument to of_clk_get_parent_name(), it has been modified to
-> indicate the index of the *parent* clock.
-> 
-> So, after changing your patch to:
-[...]
-> It does work properly for me, on top of 4.3-rc5, without any change to
-> my Device Tree files.
+On Mon, Oct 26, 2015 at 2:31 PM, Russell King - ARM Linux
+<linux@arm.linux.org.uk> wrote:
+> [Me]
+>> ARM never created any more integrated ICST devices, and
+>> they stopped using them since. Those two are the required
+>> ones.
+>
+> As ARM didn't create any ICST devices at all, that's hardly surprising.
+> These devices are created by Integrated Circuit Systems, Inc.  The 525
+> is a parallel-loaded clock generator, the 307 is a serial-loaded clock
+> generator.
+>
+> However, they have no "standard" software interface - indeed, the 525
+> is marketed as a device that needs no processor or software to be used,
+> so it doesn't have a "software" interface as such.
 
-Good catch! Except we don't need to do all that complicated
-stuff, right? We can use of_clk_get_from_provider() instead.
+RIght, I wrote a blurb with the more elaborate and correct story
+for the device tree bindings. I get sloppy sometimes.
 
----8<----
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 16b86a551bcb..648fb2c8904d 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3088,7 +3088,7 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
- 		 * registered, we return the node name as the name of
- 		 * the clock as long as #clock-cells = 0.
- 		 */
--		clk = of_clk_get(np, index);
-+		clk = of_clk_get_from_provider(clkspec);
- 		if (IS_ERR(clk)) {
- 			if (clkspec.args_count == 0)
- 				clk_name = clkspec.np->name;
+> ARM Ltd's hardware on these boards provides interfaces to these, however
+> the underlying ICST support I wrote was factored to separate out the
+> interface from the chip support - I haven't been tracking what's been
+> going on with these, but I hope that separation has been kept as it's
+> entirely logical, and describing these things in DT as an ARM Ltd device,
+> combining the ICST device itself with its interface would be wrong.
 
-> 
-> So, what is the plan now ?
-> 
->  - Have the minimal fix in drivers/clk/mvebu/clk-cpu.c for 4.3.
+So the device tree bindings does say that, and the compatible strings
+are "arm,syscon-icst525" or "arm,syscon-icst307" indicating that it is
+indeed the ARM syscon register-mapped thing, and the ICST sits on
+the back of that register.
 
-Yep.
+The logical separation is indeed kept, if someone ever decides to
+interface the ICST clocks in some other way, the code is reusable.
 
-> 
->  - Have the patch improving the of_clk_get_parent_name() logic merged
->    in 4.4 + a revert of the fix done for 4.3 in clk-cpu.c. Unless maybe
->    you don't want to clutter the core of the clock framework to handle
->    this specific case?
-
-Assuming that the patch doesn't cause problems for other
-platforms, then I think we'll go with this approach.
-
-> 
->  - Add the clock-output-names to the Marvell EBU Device Tree files, so
->    that in a couple of kernel releases we can remove the hacks and rely
->    on the generic logic of of_clk_get_parent_name().
-> 
-
-Naw, let's not change any DT files for this.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Yours,
+Linus Walleij
