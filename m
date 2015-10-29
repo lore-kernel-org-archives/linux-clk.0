@@ -1,67 +1,113 @@
-Return-Path: <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH 0/3] ARM: dts: Enable Exynos RNG module
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- linux-crypto@vger.kernel.org
-Cc: Heiner Kallweit <hkallweit1@gmail.com>
-References: <1445230834-32689-1-git-send-email-k.kozlowski@samsung.com>
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Message-ID: <56251627.4050908@math.uni-bielefeld.de>
-Date: Mon, 19 Oct 2015 18:11:19 +0200
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 28 Oct 2015 17:56:58 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	clk <linux-clk@vger.kernel.org>, Mason <slash.tmp@free.fr>
+Subject: Re: [PATCH v3] clk: tango4: clkgen driver for Tango4 ARM platforms
+Message-ID: <20151029005658.GA19782@codeaurora.org>
+References: <562A5506.2070402@sigmadesigns.com>
 MIME-Version: 1.0
-In-Reply-To: <1445230834-32689-1-git-send-email-k.kozlowski@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <562A5506.2070402@sigmadesigns.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+On 10/23, Marc Gonzalez wrote:
+> diff --git a/drivers/clk/clk-tango4.c b/drivers/clk/clk-tango4.c
+> new file mode 100644
+> index 000000000000..9fbee8ce4a95
+> --- /dev/null
+> +++ b/drivers/clk/clk-tango4.c
+> @@ -0,0 +1,57 @@
+> +#include <linux/clk-provider.h>
+> +#include <linux/of_address.h>
 
-I can confirm that this also works on a Odroid-X2, so I guess it's safe
-to enable the PRNG for all Exynos4412-based Odroid devices.
+#include <linux/of.h> for of_property_read_string_index() ?
 
-Any chance that you might also take a look at the other hwcrypto stuff
-on the SoC ('samsung,exynos4210-secss' compatible)?
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +
+> +static struct clk *out[2];
+> +static struct clk_onecell_data clk_data = { out, 2 };
+> +static void __iomem *clkgen_base;
 
-With best wishes,
-Tobias
+This can be a local variable that's passed to the make_pll
+function.
 
+> +
+> +#define sysclk_div (clkgen_base + 0x20)
+> +#define cpuclk_div (clkgen_base + 0x24)
 
-Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> 
-> The patchset adds necessary clock from Security SubSystem (SSS)
-> and enables the PRNG module of Exynos for Trats2 board.
-> 
-> The first patch (clock) is required for other ones so please
-> take everything in one step.
-> 
-> The actual Device Tree support (and compatible) was sent in separate
-> patch:
->  - https://patchwork.kernel.org/patch/7432891/
->  - http://marc.info/?l=linux-crypto-vger&m=144522952725052&w=2
-> 
-> The device can be tested (after applying both patchsets) with:
-> $ echo exynos > /sys/class/misc/hw_random/rng_current
-> $ dd if=/dev/hwrng of=/dev/null bs=1 count=16
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
-> Krzysztof Kozlowski (3):
->   clk: samsung: exynos4: Add SSS gate clock
->   ARM: dts: Add PRNG module for exynos4
->   ARM: dts: Enable PRNG module on exynos4412-trats2
-> 
->  arch/arm/boot/dts/exynos4.dtsi          | 8 ++++++++
->  arch/arm/boot/dts/exynos4412-trats2.dts | 4 ++++
->  drivers/clk/samsung/clk-exynos4.c       | 1 +
->  include/dt-bindings/clock/exynos4.h     | 1 +
->  4 files changed, 14 insertions(+)
-> 
+And these macros can be numbers only.
+
+> +
+> +#define PLL_N(val) ((val) >>  0 & 0x7f)
+> +#define PLL_K(val) ((val) >> 13 & 0x07)
+> +#define PLL_M(val) ((val) >> 16 & 0x07)
+> +
+> +#define DIV_INDEX ((readl_relaxed(clkgen_base + 0x3c) >> 8) & 15)
+
+Don't do this. It's just confusing. I read the usage of this
+macro below and thought this was a constant. 0x3c should be some
+other #define and then DIV_INDEX should be:
+
+	#define DIV_INDEX(val) (((val) >> 8) & 0x15)
+
+> +
+> +static void __init make_pll(const char *name, const char *parent, int offset)
+> +{
+> +	unsigned int val, mul, div;
+
+val should be u32 type. mul and div can be unsigned int.
+
+> +
+> +	val = readl_relaxed(clkgen_base + offset);
+> +	mul =  PLL_N(val) + 1;
+> +	div = (PLL_M(val) + 1) << PLL_K(val);
+> +	clk_register_fixed_factor(NULL, name, parent, 0, mul, div);
+> +}
+> +
+> +static const u8 tab[16] __initconst = { 2, 4, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4 };
+> +
+> +static void __init tango4_clkgen_setup(struct device_node *np)
+> +{
+> +	int ret, div;
+> +	const char *name = NULL;
+> +	const char *parent = of_clk_get_parent_name(np, 0);
+> +
+> +	clkgen_base = of_iomap(np, 0);
+> +	if (clkgen_base == NULL)
+
+if (!clkgen_base) is more common/desired.
+
+> +		panic("%s: invalid address\n", np->full_name);
+> +
+> +	make_pll("pll0", parent, 0);
+> +	make_pll("pll1", parent, 8);
+> +
+> +	of_property_read_string_index(np, "clock-output-names", 0, &name);
+
+Do we even need to do this? The clock names can come from the
+driver because this is tango4 specific code.
+
+> +	out[0] = clk_register_divider(NULL, name, "pll0", 0,
+> +			cpuclk_div, 8, 8, CLK_DIVIDER_ONE_BASED, NULL);
+
+I'd rather see clkgen_base + CPUCLK_DIV. Macro names are
+typically uppercase.
+
+> +
+> +	div = readl_relaxed(sysclk_div) & BIT(23) ? tab[DIV_INDEX] : 4;
+> +	of_property_read_string_index(np, "clock-output-names", 1, &name);
+> +	out[1] = clk_register_fixed_factor(NULL, name, "pll1", 0, 1, div);
+> +
+> +	ret = of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+> +	if (IS_ERR(out[0]) || IS_ERR(out[1]) || ret < 0)
+> +		panic("%s: clk registration failed\n", np->full_name);
+> +}
+> +
+> +CLK_OF_DECLARE(tango4_clkgen, "sigma,tango4-clkgen", tango4_clkgen_setup);
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
