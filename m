@@ -1,88 +1,45 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 30 Oct 2015 09:29:25 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	clk <linux-clk@vger.kernel.org>, Mason <slash.tmp@free.fr>
+Subject: Re: [PATCH v4] clk: tango4: clkgen driver for Tango4 platforms
+Message-ID: <20151030162925.GC19782@codeaurora.org>
+References: <562A5506.2070402@sigmadesigns.com>
+ <20151029005658.GA19782@codeaurora.org>
+ <563361B8.7090300@sigmadesigns.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20151001143748.20618.7279.sendpatchset@little-apple>
-References: <20151001143717.20618.26365.sendpatchset@little-apple>
-	<20151001143748.20618.7279.sendpatchset@little-apple>
-Date: Thu, 1 Oct 2015 17:28:29 +0200
-Message-ID: <CAMuHMdV=kKS+R4SFHrmZL5pntpdAP1tR1kRyKKsW0fD1nVrj1w@mail.gmail.com>
-Subject: Re: [PATCH v8 03/05] clk: shmobile: Add Renesas Module Standby and
- Reset driver
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linux-sh list <linux-sh@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <563361B8.7090300@sigmadesigns.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Magnus,
-
-On Thu, Oct 1, 2015 at 4:37 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> From: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Add a driver for the Renesas Module Standby and Software Reset module
-> found in several Renesas SoCs.
->
-> This driver is based on the existing R-Car MSTP driver, and is intended
-> to replace it.
-> The existing driver is limited to Module Standby, and has bindings that
-> are difficult to extend to more register sets for e.g. reset control.
->
-> TODO:
->   - Implement module reset handling,
->   - Write binding documentation.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-
-Thanks, I'm happy you like it!
-
-> ---
->
->  Changes since V7: (Magnus Damm <damm+renesas@opensource.se>)
->  - New patch, took local v3 patch from Geert and removed r8a7791 references.
-
-You forgot one reference indicated below.
-
->  drivers/clk/shmobile/clk-mssr.c |  392 +++++++++++++++++++++++++++++++++++++++
->  include/linux/clk/shmobile.h    |    2
->  2 files changed, 394 insertions(+)
->
+On 10/30, Marc Gonzalez wrote:
+> diff --git a/Documentation/devicetree/bindings/clock/tango4-clock.txt b/Documentation/devicetree/bindings/clock/tango4-clock.txt
+> new file mode 100644
+> index 000000000000..19c580a7bda2
 > --- /dev/null
-> +++ work/drivers/clk/shmobile/clk-mssr.c        2015-10-01 18:38:50.320513000 +0900
-> @@ -0,0 +1,392 @@
-
-> +#ifdef CONFIG_PM_GENERIC_DOMAINS_OF
-> +static int cpg_mssr_attach_dev(struct generic_pm_domain *domain,
-> +                              struct device *dev)
-> +{
-> +       struct device_node *np = dev->of_node;
-> +       struct of_phandle_args clkspec;
-> +       struct clk *clk;
-> +       int i = 0;
-> +       int error;
+> +++ b/Documentation/devicetree/bindings/clock/tango4-clock.txt
+> @@ -0,0 +1,23 @@
+> +* Sigma Designs Tango4 Clock Generator
 > +
-> +       while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", i,
-> +                                          &clkspec)) {
-> +               if (of_device_is_compatible(clkspec.np,
-> +                                           "renesas,r8a7791-cpg-mssr"))
+> +The Tango4 clock generator outputs cpu_clk and sys_clk (the latter is used
+> +for RAM and various peripheral devices). The clock binding described here
+> +is applicable to all Tango4 SoCs.
+> +
+> +Required Properties:
+> +
+> +- compatible: should be "sigma,tango4-clkgen".
 
-renesas,r8a7795-cpg-mssr
+You should add sigma to the vendor prefix file
+Documentation/devicetree/bindings/vendor-prefixes.txt
 
-Else it won't manage the module clocks, and things may fail miserably.
+Send that patch to the DT maintainers (Rob has been applying most
+vendor prefix patches).
 
-> +                       goto found;
+Otherwise this patch looks fine and I'll apply it to clk-next
+after v4.4-rc1 comes out (in about 2 weeks). We'll target v4.5.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
