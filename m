@@ -1,56 +1,64 @@
-Return-Path: <pku.leo@gmail.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Sender: pku.leo@gmail.com
-In-Reply-To: <1445587282-29529-6-git-send-email-B48286@freescale.com>
-References: <1445587282-29529-1-git-send-email-B48286@freescale.com>
-	<1445587282-29529-6-git-send-email-B48286@freescale.com>
-Date: Thu, 29 Oct 2015 15:33:06 -0500
-Message-ID: <CADRPPNRKXDAQHijZtJOYo9wMPaciJnoQYhR1UWRgFGUXY=iAMg@mail.gmail.com>
-Subject: Re: [PATCH V6 6/6] dts/ls1043a: add LS1043ARDB board support
-From: Li Yang <leoli@freescale.com>
-To: Zhiqiang Hou <B48286@freescale.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, linux-watchdog@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
-	Mark Rutland <mark.rutland@arm.com>, Shaohui Xie <Shaohui.Xie@freescale.com>,
-	Jonathan Corbet <corbet@lwn.net>, Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Michael Turquette <mturquette@baylibre.com>, wsa@the-dreams.de, sboyd@codeaurora.org,
-	wim@iguana.be, Wenbin Song <Wenbin.Song@freescale.com>,
-	Scott Wood <scottwood@freescale.com>, Hu Vincent <Mingkai.Hu@freescale.com>, linux@roeck-us.net
+In-Reply-To: <1446214865-3972-20-git-send-email-maxime.ripard@free-electrons.com>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1446214865-3972-20-git-send-email-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 30 Oct 2015 23:20:41 +0800
+Message-ID: <CAGb2v66vjp=5GtGD-0i3OOw-wK3H4bogfvPoNzuwYvY8vt4fMQ@mail.gmail.com>
+Subject: Re: [PATCH 19/19] ARM: sun5i: chip: Enable the TV Encoder
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	dri-devel@lists.freedesktop.org, linux-sunxi <linux-sunxi@googlegroups.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>, Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 23, 2015 at 3:01 AM, Zhiqiang Hou <B48286@freescale.com> wrote:
-> From: Shaohui Xie <Shaohui.Xie@freescale.com>
+On Fri, Oct 30, 2015 at 10:21 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> The TV encoder is used to drive VGA and composite display.
 >
-> Signed-off-by: Shaohui Xie <Shaohui.Xie@freescale.com>
-> Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
-> Signed-off-by: Wenbin Song <Wenbin.Song@freescale.com>
-> Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
+> Enable it on the CHIP
+
+The commit message does not match the contents. Missing a patch? :)
+
+ChenYu
+
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 > ---
-> V6: V5 V4 V3
->  - No change.
+>  arch/arm/boot/dts/sun5i-r8.dtsi | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 >
-> V2:
->  - Remove the useless compatible "simple-bus" from cpld node.
+> diff --git a/arch/arm/boot/dts/sun5i-r8.dtsi b/arch/arm/boot/dts/sun5i-r8.dtsi
+> index d69df3a73cbf..e39c903da864 100644
+> --- a/arch/arm/boot/dts/sun5i-r8.dtsi
+> +++ b/arch/arm/boot/dts/sun5i-r8.dtsi
+> @@ -86,4 +86,16 @@
+>                                              "ahb_mali400";
+>                 };
+>         };
+> +
+> +       soc@01c00000 {
+> +               tve: encoder@01c0a000 {
+> +                       compatible = "allwinner,sun4i-a10-tv-encoder";
+> +                       reg = <0x01c0a000 0x1000>;
+> +                       clocks = <&ahb_gates 34>;
+> +               };
+> +       };
+> +};
+> +
+> +&de {
+> +       allwinner,tv-encoder = <&tve>;
+>  };
+> --
+> 2.6.2
 >
->  arch/arm64/boot/dts/freescale/Makefile            |   2 +-
->  arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts | 116 ++++++++++++++++++++++
->  2 files changed, 117 insertions(+), 1 deletion(-)
->  create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts
->
-> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-> index 57b41c7..33b1e57 100644
-> --- a/arch/arm64/boot/dts/freescale/Makefile
-> +++ b/arch/arm64/boot/dts/freescale/Makefile
-> @@ -1,4 +1,4 @@
-> -dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-qds.dtb fsl-ls2080a-rdb.dtb fsl-ls2080a-simu.dtb
-> +dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-qds.dtb fsl-ls2080a-rdb.dtb fsl-ls2080a-simu.dtb fsl-ls1043a-rdb.dtb
-
-I tried to apply the patch, but it can not be applied due to the
-change from a depending ls2080 patch.  I will help to respin this
-patch and resend the three device tree related patches.
-
-Regards,
-Leo
