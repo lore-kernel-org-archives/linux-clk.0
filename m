@@ -1,61 +1,237 @@
-Return-Path: <linux+mturquette=baylibre.com@arm.linux.org.uk>
-Date: Mon, 26 Oct 2015 13:31:53 +0000
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Arnd Bergmann <arnd@arndb.de>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 09/13] clk: versatile-icst: add device tree support
-Message-ID: <20151026133153.GG8644@n2100.arm.linux.org.uk>
-References: <1444916813-31024-1-git-send-email-linus.walleij@linaro.org>
- <1444916813-31024-10-git-send-email-linus.walleij@linaro.org>
- <20151015192626.GO4558@codeaurora.org>
- <CACRpkdZUzTsMcFrudF6RRU5_1Njr=8L_XRUEmAWqvEnoJQ96Cw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CACRpkdZUzTsMcFrudF6RRU5_1Njr=8L_XRUEmAWqvEnoJQ96Cw@mail.gmail.com>
-Sender: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 03/19] clk: sunxi: Add TCON channel0 clock
+Date: Fri, 30 Oct 2015 15:20:49 +0100
+Message-Id: <1446214865-3972-4-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Oct 26, 2015 at 02:14:15PM +0100, Linus Walleij wrote:
-> On Thu, Oct 15, 2015 at 9:26 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> > On 10/15, Linus Walleij wrote:
-> >> +
-> >> +     if (of_device_is_compatible(np, "arm,syscon-icst525"))
-> >> +             icst_desc.params = &icst525_params;
-> >> +     else if (of_device_is_compatible(np, "arm,syscon-icst307"))
-> >> +             icst_desc.params = &icst307_params;
-> >
-> > I guess if we add anymore here we should use an of_device_id
-> > array instead.
-> 
-> As it happens those two are gonna be it.
-> 
-> ARM never created any more integrated ICST devices, and
-> they stopped using them since. Those two are the required
-> ones.
+The TCON is a controller generating the timings to output videos signals,
+acting like both a CRTC and an encoder.
 
-As ARM didn't create any ICST devices at all, that's hardly surprising.
-These devices are created by Integrated Circuit Systems, Inc.  The 525
-is a parallel-loaded clock generator, the 307 is a serial-loaded clock
-generator.
+It has two channels depending on the output, each channel being driven by
+its own clock (and own clock controller).
 
-However, they have no "standard" software interface - indeed, the 525
-is marketed as a device that needs no processor or software to be used,
-so it doesn't have a "software" interface as such.
+Add a driver for the channel 0 clock.
 
-ARM Ltd's hardware on these boards provides interfaces to these, however
-the underlying ICST support I wrote was factored to separate out the
-interface from the chip support - I haven't been tracking what's been
-going on with these, but I hope that separation has been kept as it's
-entirely logical, and describing these things in DT as an ARM Ltd device,
-combining the ICST device itself with its interface would be wrong.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi/Makefile             |   1 +
+ drivers/clk/sunxi/clk-sun4i-tcon-ch0.c | 173 +++++++++++++++++++++++++++++++++
+ 2 files changed, 174 insertions(+)
+ create mode 100644 drivers/clk/sunxi/clk-sun4i-tcon-ch0.c
 
+diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+index 40c32ffd912c..7821b2b63d58 100644
+--- a/drivers/clk/sunxi/Makefile
++++ b/drivers/clk/sunxi/Makefile
+@@ -12,6 +12,7 @@ obj-y += clk-mod0.o
+ obj-y += clk-simple-gates.o
+ obj-y += clk-sun4i-display.o
+ obj-y += clk-sun4i-pll3.o
++obj-y += clk-sun4i-tcon-ch0.o
+ obj-y += clk-sun8i-mbus.o
+ obj-y += clk-sun9i-core.o
+ obj-y += clk-sun9i-mmc.o
+diff --git a/drivers/clk/sunxi/clk-sun4i-tcon-ch0.c b/drivers/clk/sunxi/clk-sun4i-tcon-ch0.c
+new file mode 100644
+index 000000000000..db10cfb94a1d
+--- /dev/null
++++ b/drivers/clk/sunxi/clk-sun4i-tcon-ch0.c
+@@ -0,0 +1,173 @@
++/*
++ * Copyright 2015 Maxime Ripard
++ *
++ * Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/of_address.h>
++#include <linux/reset-controller.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++
++#define SUN4I_A10_TCON_CH0_PARENTS	4
++
++#define SUN4I_A10_TCON_CH0_GATE_BIT	31
++#define SUN4I_A10_TCON_CH0_RESET_SHIFT	29
++#define SUN4I_A10_TCON_CH0_MUX_MASK	3
++#define SUN4I_A10_TCON_CH0_MUX_SHIFT	24
++
++struct reset_data {
++	void __iomem			*reg;
++	spinlock_t			*lock;
++	struct reset_controller_dev	rcdev;
++};
++
++static DEFINE_SPINLOCK(sun4i_a10_tcon_ch0_lock);
++
++static int sun4i_a10_tcon_ch0_assert(struct reset_controller_dev *rcdev,
++				     unsigned long id)
++{
++	struct reset_data *data = container_of(rcdev,
++					       struct reset_data,
++					       rcdev);
++	unsigned long flags;
++	u32 reg;
++
++	spin_lock_irqsave(data->lock, flags);
++
++	reg = readl(data->reg);
++	writel(reg & ~BIT(SUN4I_A10_TCON_CH0_RESET_SHIFT + id), data->reg);
++
++	spin_unlock_irqrestore(data->lock, flags);
++
++	return 0;
++}
++
++static int sun4i_a10_tcon_ch0_deassert(struct reset_controller_dev *rcdev,
++				       unsigned long id)
++{
++	struct reset_data *data = container_of(rcdev,
++						   struct reset_data,
++						   rcdev);
++	unsigned long flags;
++	u32 reg;
++
++	spin_lock_irqsave(data->lock, flags);
++
++	reg = readl(data->reg);
++	writel(reg | BIT(SUN4I_A10_TCON_CH0_RESET_SHIFT + id), data->reg);
++
++	spin_unlock_irqrestore(data->lock, flags);
++
++	return 0;
++}
++
++static int sun4i_a10_tcon_ch0_status(struct reset_controller_dev *rcdev,
++				     unsigned long id)
++{
++	struct reset_data *data = container_of(rcdev,
++					       struct reset_data,
++					       rcdev);
++
++	return !(readl(data->reg) & BIT(SUN4I_A10_TCON_CH0_RESET_SHIFT + id));
++}
++
++static struct reset_control_ops sun4i_a10_tcon_ch0_reset_ops = {
++	.assert		= sun4i_a10_tcon_ch0_assert,
++	.deassert	= sun4i_a10_tcon_ch0_deassert,
++	.status		= sun4i_a10_tcon_ch0_status,
++};
++
++static void __init sun4i_a10_tcon_ch0_setup(struct device_node *node)
++{
++	const char *parents[SUN4I_A10_TCON_CH0_PARENTS];
++	const char *clk_name = node->name;
++	struct reset_data *reset_data;
++	struct clk_gate *gate;
++	struct clk_mux *mux;
++	void __iomem *reg;
++	struct clk *clk;
++	int i;
++
++	of_property_read_string(node, "clock-output-names", &clk_name);
++
++	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
++	if (IS_ERR(reg)) {
++		pr_err("%s: Could not map the clock registers\n", clk_name);
++		return;
++	}
++
++	for (i = 0; i < SUN4I_A10_TCON_CH0_PARENTS; i++)
++		parents[i] = of_clk_get_parent_name(node, i);
++
++	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
++	if (!mux)
++		return;
++
++	mux->reg = reg;
++	mux->shift = SUN4I_A10_TCON_CH0_MUX_SHIFT;
++	mux->mask = SUN4I_A10_TCON_CH0_MUX_MASK;
++	mux->lock = &sun4i_a10_tcon_ch0_lock;
++
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		goto free_mux;
++
++	gate->reg = reg;
++	gate->bit_idx = SUN4I_A10_TCON_CH0_GATE_BIT;
++	gate->lock = &sun4i_a10_tcon_ch0_lock;
++
++	clk = clk_register_composite(NULL, clk_name,
++				     parents, SUN4I_A10_TCON_CH0_PARENTS,
++				     &mux->hw, &clk_mux_ops,
++				     NULL, NULL,
++				     &gate->hw, &clk_gate_ops,
++				     0);
++	if (IS_ERR(clk)) {
++		pr_err("%s: Couldn't register the clock\n", clk_name);
++		goto free_gate;
++	}
++
++	of_clk_add_provider(node, of_clk_src_simple_get, clk);
++
++	reset_data = kzalloc(sizeof(*reset_data), GFP_KERNEL);
++	if (!reset_data)
++		goto free_clk;
++
++	reset_data->reg = reg;
++	reset_data->lock = &sun4i_a10_tcon_ch0_lock;
++	reset_data->rcdev.nr_resets = 2;
++	reset_data->rcdev.ops = &sun4i_a10_tcon_ch0_reset_ops;
++	reset_data->rcdev.of_node = node;
++
++	if (reset_controller_register(&reset_data->rcdev)) {
++		pr_err("%s: Couldn't register the reset controller\n",
++		       clk_name);
++		goto free_reset;
++	}
++
++	return;
++
++free_reset:
++	kfree(reset_data);
++free_clk:
++	clk_unregister(clk);
++free_gate:
++	kfree(gate);
++free_mux:
++	kfree(mux);
++}
++
++CLK_OF_DECLARE(sun4i_a10_tcon_ch0, "allwinner,sun4i-a10-tcon-ch0-clk",
++	       sun4i_a10_tcon_ch0_setup);
 -- 
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+2.6.2
