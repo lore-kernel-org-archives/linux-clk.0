@@ -1,113 +1,181 @@
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-sh@vger.kernel.org
-Subject: Re: [PATCH v4 2/5] [RFC] clk: shmobile: Add r8a7795 CPG Core Clock Definitions
-Date: Fri, 23 Oct 2015 14:21:04 +0300
-Message-ID: <2464036.AexIB1O0H1@avalon>
-In-Reply-To: <1444999760-15750-3-git-send-email-geert+renesas@glider.be>
-References: <1444999760-15750-1-git-send-email-geert+renesas@glider.be> <1444999760-15750-3-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 00/19] drm: Add Allwinner A10 display engine support
+Date: Fri, 30 Oct 2015 15:20:46 +0100
+Message-Id: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+Hi everyone,
 
-Thank you for the patch.
+The Allwinner SoCs (except for the very latest ones) all share the
+same set of controllers, loosely coupled together to form the display
+pipeline.
 
-On Friday 16 October 2015 14:49:17 Geert Uytterhoeven wrote:
-> Add all R-Car H3 CPG Core Clock Outputs defined in the datasheet.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v4:
->   - Add all clocks instead of just the ones used by the current DTS.
-> 
-> v3:
->   - New.
-> ---
->  include/dt-bindings/clock/r8a7795-cpg-mssr.h | 63 +++++++++++++++++++++++++
->  1 file changed, 63 insertions(+)
->  create mode 100644 include/dt-bindings/clock/r8a7795-cpg-mssr.h
-> 
-> diff --git a/include/dt-bindings/clock/r8a7795-cpg-mssr.h
-> b/include/dt-bindings/clock/r8a7795-cpg-mssr.h new file mode 100644
-> index 0000000000000000..e864aae0a2561c4b
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/r8a7795-cpg-mssr.h
-> @@ -0,0 +1,63 @@
-> +/*
-> + * Copyright (C) 2015 Renesas Electronics Corp.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + */
-> +#ifndef __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__
-> +#define __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__
-> +
-> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
-> +
-> +/* r8a7795 CPG Core Clocks */
-> +#define R8A7795_CLK_Z			0
-> +#define R8A7795_CLK_Z2			1
-> +#define R8A7795_CLK_ZR			2
-> +#define R8A7795_CLK_ZG			3
-> +#define R8A7795_CLK_ZTR			4
-> +#define R8A7795_CLK_ZTRD2		5
-> +#define R8A7795_CLK_ZT			6
-> +#define R8A7795_CLK_ZX			7
-> +#define R8A7795_CLK_S0D1		8
-> +#define R8A7795_CLK_S0D4		9
-> +#define R8A7795_CLK_S1D1		10
-> +#define R8A7795_CLK_S1D2		11
-> +#define R8A7795_CLK_S1D4		12
-> +#define R8A7795_CLK_S2D1		13
-> +#define R8A7795_CLK_S2D2		14
-> +#define R8A7795_CLK_S2D4		15
-> +#define R8A7795_CLK_S3D1		16
-> +#define R8A7795_CLK_S3D2		17
-> +#define R8A7795_CLK_S3D4		18
-> +#define R8A7795_CLK_LB			19
-> +#define R8A7795_CLK_CL			20
-> +#define R8A7795_CLK_ZB3			21
-> +#define R8A7795_CLK_ZB3D2		22
-> +#define R8A7795_CLK_CR			23
-> +#define R8A7795_CLK_CRD2		24
-> +#define R8A7795_CLK_SD0H		25
-> +#define R8A7795_CLK_SD0			26
-> +#define R8A7795_CLK_SD1H		27
-> +#define R8A7795_CLK_SD1			28
-> +#define R8A7795_CLK_SD2H		29
-> +#define R8A7795_CLK_SD2			30
-> +#define R8A7795_CLK_SD3H		31
-> +#define R8A7795_CLK_SD3			32
-> +#define R8A7795_CLK_SSP2		33
-> +#define R8A7795_CLK_SSP1		34
-> +#define R8A7795_CLK_SSPRS		35
-> +#define R8A7795_CLK_RPC			36
-> +#define R8A7795_CLK_RPCD2		37
-> +#define R8A7795_CLK_MSO			38
-> +#define R8A7795_CLK_CANFD		39
-> +#define R8A7795_CLK_HDMI		40
-> +#define R8A7795_CLK_CSI0		41
-> +#define R8A7795_CLK_CSIREF		42
-> +#define R8A7795_CLK_CP			43
-> +#define R8A7795_CLK_CPEX		44
-> +#define R8A7795_CLK_R			45
-> +#define R8A7795_CLK_OSC			46
+Depending on the SoC, the number of instances of the controller will
+change (2 instances of each in the A10, only one in the A13, for
+example), and the output availables will change too (HDMI, composite,
+VGA on the A20, none of them on the A13).
 
-Those two clocks are called RCLK and OSCCLK in the datasheet, shouldn't we use 
-those names ?
+On most featured SoCs, it looks like that:
 
-Apart from that,
+ +--------------------------------------------+
+ |                    RAM                     |
+ +--------------------------------------------+
+       |            |      |            |
+       v            |      |            v
+ +----------------+ |      | +----------------+
+ |    Frontend    | |      | |    Frontend    |
+ +----------------+ |      | +----------------+
+         |          |      |         |
+         v          |      |         v
+ +----------------+ |      | +----------------+
+ |    Backend     |<+      +>|    Backend     |
+ +----------------+          +----------------+
+         |                           |
+         v                           v
+ +----------------+          +----------------+---> LVDS
+ |      TCON      |          |      TCON      |---> RGB
+ +----------------+          +----------------+
+       |       +---+       +---+          |
+       |           |       |              |
+       v           v       v              v
+ +------------+  +------------+  +------------+---> VGA
+ | TV Encoder |  |    HDMI    |  | TV Encoder |---> Composite
+ +------------+  +------------+  +------------+
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+The current code only assumes that there is a single instance of all
+the controllers. It also supports only the RGB and Composite
+interfaces.
 
-> +#endif /* __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__ */
+A few more things are missing though, and will be supported
+eventually:
+  - Overscan support
+  - Asynchronous page flip
+  - Multiple plane support
+  - Composite / VGA Hotplug detection
+  - More outputs
+  - Support for several videos pipelines
+
+And there's one big gotcha: thhe code to parse the mode from the
+kernel commandline doesn't seem to support named modes. Since we
+expose the various TV standards through named modes, it means that
+there's no way to use a particular standard to display something
+during the kernel boot. The default will always be used, in other
+words, PAL.
+
+A few more questions that are probably going to be raised during the
+review:
+  - How do you associate private data to a mode, for example to deal
+    with the non-generic, driver-specific settings required to deal
+    with the various TV standards? drm_display_mode seems to have a
+    private field, but it isn't always preserved.
+  - How do you setup properties in the kernel command line? In order
+    to have a decent display during boot on relevant interfaces, you
+    probably want to setup the overscan beforehand. Overscan seems to
+    be handled through properties, and afaik, there's no way to set
+    that from the cmdline. Should we use a kernel parameter to set the
+    default value instead?
+
+Thanks!
+Maxime
+
+Maxime Ripard (19):
+  clk: sunxi: Add display clock
+  clk: sunxi: Add PLL3 clock
+  clk: sunxi: Add TCON channel0 clock
+  clk: sunxi: Add TCON channel1 clock
+  clk: sunxi: add DRAM gates
+  clk: sunxi: Add Allwinner R8 AHB gates support
+  drm/panel: simple: Add timings for the Olimex LCD-OLinuXino-4.3TS
+  drm: Add Allwinner A10 Display Engine support
+  drm: sun4i: Add DT bindings documentation
+  drm: sun4i: Add RGB output
+  drm: sun4i: Add composite output
+  drm: sun4i: tv: Add PAL output standard
+  drm: sun4i: tv: Add NTSC output standard
+  ARM: sun5i: dt: Add pll3 and pll7 clocks
+  ARM: sun5i: dt: Add display and TCON clocks
+  ARM: sun5i: dt: Add DRAM gates
+  ARM: sun5i: dt: Add display blocks to the DTSI
+  ARM: sun5i: r8: Add AHB gates to the DTSI
+  ARM: sun5i: chip: Enable the TV Encoder
+
+ .../devicetree/bindings/drm/sunxi/sun4i-drm.txt    | 122 ++++
+ arch/arm/boot/dts/sun5i-a10s.dtsi                  |   9 +-
+ arch/arm/boot/dts/sun5i-a13.dtsi                   |   3 +-
+ arch/arm/boot/dts/sun5i-r8.dtsi                    |  46 +-
+ arch/arm/boot/dts/sun5i.dtsi                       | 137 +++++
+ drivers/clk/sunxi/Makefile                         |   4 +
+ drivers/clk/sunxi/clk-simple-gates.c               |   4 +
+ drivers/clk/sunxi/clk-sun4i-display.c              | 199 +++++++
+ drivers/clk/sunxi/clk-sun4i-pll3.c                 |  84 +++
+ drivers/clk/sunxi/clk-sun4i-tcon-ch0.c             | 173 ++++++
+ drivers/clk/sunxi/clk-sun4i-tcon-ch1.c             | 167 ++++++
+ drivers/gpu/drm/Kconfig                            |   2 +
+ drivers/gpu/drm/Makefile                           |   3 +-
+ drivers/gpu/drm/panel/panel-simple.c               |  26 +
+ drivers/gpu/drm/sun4i/Kconfig                      |  14 +
+ drivers/gpu/drm/sun4i/Makefile                     |  11 +
+ drivers/gpu/drm/sun4i/sun4i_backend.c              | 271 +++++++++
+ drivers/gpu/drm/sun4i/sun4i_backend.h              | 159 ++++++
+ drivers/gpu/drm/sun4i/sun4i_crtc.c                 | 117 ++++
+ drivers/gpu/drm/sun4i/sun4i_crtc.h                 |  31 ++
+ drivers/gpu/drm/sun4i/sun4i_drv.c                  | 296 ++++++++++
+ drivers/gpu/drm/sun4i/sun4i_drv.h                  |  30 +
+ drivers/gpu/drm/sun4i/sun4i_framebuffer.c          |  54 ++
+ drivers/gpu/drm/sun4i/sun4i_framebuffer.h          |  19 +
+ drivers/gpu/drm/sun4i/sun4i_layer.c                | 111 ++++
+ drivers/gpu/drm/sun4i/sun4i_layer.h                |  30 +
+ drivers/gpu/drm/sun4i/sun4i_rgb.c                  | 243 ++++++++
+ drivers/gpu/drm/sun4i/sun4i_rgb.h                  |  18 +
+ drivers/gpu/drm/sun4i/sun4i_tcon.c                 | 478 ++++++++++++++++
+ drivers/gpu/drm/sun4i/sun4i_tcon.h                 | 182 ++++++
+ drivers/gpu/drm/sun4i/sun4i_tv.c                   | 619 +++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun4i_tv.h                   |  18 +
+ 32 files changed, 3673 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/drm/sunxi/sun4i-drm.txt
+ create mode 100644 drivers/clk/sunxi/clk-sun4i-display.c
+ create mode 100644 drivers/clk/sunxi/clk-sun4i-pll3.c
+ create mode 100644 drivers/clk/sunxi/clk-sun4i-tcon-ch0.c
+ create mode 100644 drivers/clk/sunxi/clk-sun4i-tcon-ch1.c
+ create mode 100644 drivers/gpu/drm/sun4i/Kconfig
+ create mode 100644 drivers/gpu/drm/sun4i/Makefile
+ create mode 100644 drivers/gpu/drm/sun4i/sun4i_backend.c
+ create mode 100644 drivers/gpu/drm/sun4i/sun4i_backend.h
+ create mode 100644 drivers/gpu/drm/sun4i/sun4i_crtc.c
+ create mode 100644 drivers/gpu/drm/sun4i/sun4i_crtc.h
+ create mode 100644 drivers/gpu/drm/sun4i/sun4i_drv.c
+ create mode 100644 drivers/gpu/drm/sun4i/sun4i_drv.h
+ create mode 100644 drivers/gpu/drm/sun4i/sun4i_framebuffer.c
+ create mode 100644 drivers/gpu/drm/sun4i/sun4i_framebuffer.h
+ create mode 100644 drivers/gpu/drm/sun4i/sun4i_layer.c
+ create mode 100644 drivers/gpu/drm/sun4i/sun4i_layer.h
+ create mode 100644 drivers/gpu/drm/sun4i/sun4i_rgb.c
+ create mode 100644 drivers/gpu/drm/sun4i/sun4i_rgb.h
+ create mode 100644 drivers/gpu/drm/sun4i/sun4i_tcon.c
+ create mode 100644 drivers/gpu/drm/sun4i/sun4i_tcon.h
+ create mode 100644 drivers/gpu/drm/sun4i/sun4i_tv.c
+ create mode 100644 drivers/gpu/drm/sun4i/sun4i_tv.h
 
 -- 
-Regards,
-
-Laurent Pinchart
+2.6.2
