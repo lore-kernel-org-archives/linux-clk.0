@@ -1,82 +1,248 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v3 0/3] clk: shmobile: Add new Renesas CPG/MSSR DT bindings
-Date: Mon, 12 Oct 2015 13:37:40 +0200
-Message-Id: <1444649863-17796-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>, linux-clk@vger.kernel.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/5] clk: shmobile: div6: Extract cpg_div6_register()
+Date: Fri, 30 Oct 2015 15:54:57 +0200
+Message-ID: <2017139.CLh1RkkDeg@avalon>
+In-Reply-To: <1446117664-6037-4-git-send-email-geert+renesas@glider.be>
+References: <1446117664-6037-1-git-send-email-geert+renesas@glider.be> <1446117664-6037-4-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen, et al.,
+Hi Geert,
 
-As discussed at ELCE last week, here's my RFC introducing a new unified
-binding for the Renesas CPG (Clock Pulse Generator) and MSSR (Module
-Standby and Software Reset) blocks.  These bindings are supposed to be
-more in-line with current CCF best practices, and allow expansion to
-cover the module reset functionality in the future.  They are intended
-to be used initially for the new R-Car Gen3 SoCs (r8a7795), but we may
-decide to migrate older SoCs somewhen in the future.
+Thank you for the patch.
 
-  - The first patch is an RFC introducing the new bindings.
-  - Patches 2 and 3 are Proof-of-Concepts of the CPG Core Clock
-    Definitions for the already supported R-Car M2-W (r8a7791) SoC, and
-    for the new R-Car H3 (r8a7795) SoC.
+On Thursday 29 October 2015 12:21:02 Geert Uytterhoeven wrote:
+> Extract cpg_div6_register(), to allow registering div6 clocks from
+> another clock driver.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The idea is to get the bindings (for r8a7795) accepted in v4.4, so we
-can continue developing and prepare final support for r8a7795 in v4.5.
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-I will post preliminary code and DT patches for both r8a7791 (POC) and
-r8a7795 (mandatory) as soon as possible.
-
-Thanks for your comments!
-
-References:
-  - v2+ ≈ [PATCH v8 00/05] Renesas R-Car Gen3 CPG support V8"
-    (http://www.spinics.net/lists/linux-clk/msg03288.html)
-  - v2 = "[PATCH/RFC v2 0/4] Renesas CPG/MSTP DT Binding Proposal"
-    (http://www.spinics.net/lists/linux-clk/msg03132.html)
-  - v1 = "Renesas CPG/MSTP DT Binding Proposal"
-    (http://www.spinics.net/lists/linux-clk/msg01189.html)
-
-Geert Uytterhoeven (3):
-  [RFC] clk: shmobile: Add new Renesas CPG/MSSR DT bindings
-  [POC] clk: shmobile: Add r8a7791 CPG Core Clock Definitions
-  [POC] clk: shmobile: Add r8a7795 CPG Core Clock Definitions
-
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt | 71 ++++++++++++++++++++++
- include/dt-bindings/clock/r8a7791-cpg-mssr.h       | 22 +++++++
- include/dt-bindings/clock/r8a7795-cpg-mssr.h       | 17 ++++++
- include/dt-bindings/clock/renesas-cpg-mssr.h       | 15 +++++
- 4 files changed, 125 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
- create mode 100644 include/dt-bindings/clock/r8a7791-cpg-mssr.h
- create mode 100644 include/dt-bindings/clock/r8a7795-cpg-mssr.h
- create mode 100644 include/dt-bindings/clock/renesas-cpg-mssr.h
+> ---
+> v5:
+>   - Document cpg_div6_register(),
+>   - Free clock on clock->parents allocation failure,
+>   - Add include guards to clk-div6.h,
+>   - Drop RFC state,
+> 
+> v4:
+>   - New.
+> ---
+>  drivers/clk/shmobile/clk-div6.c | 132 ++++++++++++++++++++++++------------
+>  drivers/clk/shmobile/clk-div6.h |   7 +++
+>  2 files changed, 94 insertions(+), 45 deletions(-)
+>  create mode 100644 drivers/clk/shmobile/clk-div6.h
+> 
+> diff --git a/drivers/clk/shmobile/clk-div6.c
+> b/drivers/clk/shmobile/clk-div6.c index c89566a918290246..5970d6a1506a9075
+> 100644
+> --- a/drivers/clk/shmobile/clk-div6.c
+> +++ b/drivers/clk/shmobile/clk-div6.c
+> @@ -18,6 +18,8 @@
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+> 
+> +#include "clk-div6.h"
+> +
+>  #define CPG_DIV6_CKSTP		BIT(8)
+>  #define CPG_DIV6_DIV(d)		((d) & 0x3f)
+>  #define CPG_DIV6_DIV_MASK	0x3f
+> @@ -172,60 +174,44 @@ static const struct clk_ops cpg_div6_clock_ops = {
+>  	.set_rate = cpg_div6_clock_set_rate,
+>  };
+> 
+> -static void __init cpg_div6_clock_init(struct device_node *np)
+> +
+> +/**
+> + * cpg_div6_register - Register a DIV6 clock
+> + * @name: Name of the DIV6 clock
+> + * @num_parents: Number of parent clocks of the DIV6 clock (1, 4, or 8)
+> + * @parent_names: Array containing the names of the parent clocks
+> + * @reg: Mapped register used to control the DIV6 clock
+> + */
+> +struct clk * __init cpg_div6_register(const char *name,
+> +				      unsigned int num_parents,
+> +				      const char **parent_names,
+> +				      void __iomem *reg)
+>  {
+> -	unsigned int num_parents, valid_parents;
+> -	const char **parent_names;
+> +	unsigned int valid_parents;
+>  	struct clk_init_data init;
+>  	struct div6_clock *clock;
+> -	const char *clk_name = np->name;
+>  	struct clk *clk;
+>  	unsigned int i;
+> 
+>  	clock = kzalloc(sizeof(*clock), GFP_KERNEL);
+>  	if (!clock)
+> -		return;
+> +		return ERR_PTR(-ENOMEM);
+> 
+> -	num_parents = of_clk_get_parent_count(np);
+> -	if (num_parents < 1) {
+> -		pr_err("%s: no parent found for %s DIV6 clock\n",
+> -		       __func__, np->name);
+> -		return;
+> +	clock->parents = kmalloc_array(num_parents, sizeof(*clock->parents),
+> +				       GFP_KERNEL);
+> +	if (!clock->parents) {
+> +		clk = ERR_PTR(-ENOMEM);
+> +		goto free_clock;
+>  	}
+> 
+> -	clock->parents = kmalloc_array(num_parents, sizeof(*clock->parents),
+> -		GFP_KERNEL);
+> -	parent_names = kmalloc_array(num_parents, sizeof(*parent_names),
+> -				GFP_KERNEL);
+> -	if (!parent_names)
+> -		return;
+> +	clock->reg = reg;
+> 
+> -	/* Remap the clock register and read the divisor. Disabling the
+> -	 * clock overwrites the divisor, so we need to cache its value for the
+> -	 * enable operation.
+> +	/*
+> +	 * Read the divisor. Disabling the clock overwrites the divisor, so we
+> +	 * need to cache its value for the enable operation.
+>  	 */
+> -	clock->reg = of_iomap(np, 0);
+> -	if (clock->reg == NULL) {
+> -		pr_err("%s: failed to map %s DIV6 clock register\n",
+> -		       __func__, np->name);
+> -		goto error;
+> -	}
+> -
+>  	clock->div = (clk_readl(clock->reg) & CPG_DIV6_DIV_MASK) + 1;
+> 
+> -	/* Parse the DT properties. */
+> -	of_property_read_string(np, "clock-output-names", &clk_name);
+> -
+> -	for (i = 0, valid_parents = 0; i < num_parents; i++) {
+> -		const char *name = of_clk_get_parent_name(np, i);
+> -
+> -		if (name) {
+> -			parent_names[valid_parents] = name;
+> -			clock->parents[valid_parents] = i;
+> -			valid_parents++;
+> -		}
+> -	}
+> -
+>  	switch (num_parents) {
+>  	case 1:
+>  		/* fixed parent clock */
+> @@ -243,12 +229,22 @@ static void __init cpg_div6_clock_init(struct
+> device_node *np) break;
+>  	default:
+>  		pr_err("%s: invalid number of parents for DIV6 clock %s\n",
+> -		       __func__, np->name);
+> -		goto error;
+> +		       __func__, name);
+> +		clk = ERR_PTR(-EINVAL);
+> +		goto free_parents;
+> +	}
+> +
+> +	/* Filter out invalid parents */
+> +	for (i = 0, valid_parents = 0; i < num_parents; i++) {
+> +		if (parent_names[i]) {
+> +			parent_names[valid_parents] = parent_names[i];
+> +			clock->parents[valid_parents] = i;
+> +			valid_parents++;
+> +		}
+>  	}
+> 
+>  	/* Register the clock. */
+> -	init.name = clk_name;
+> +	init.name = name;
+>  	init.ops = &cpg_div6_clock_ops;
+>  	init.flags = CLK_IS_BASIC;
+>  	init.parent_names = parent_names;
+> @@ -257,6 +253,53 @@ static void __init cpg_div6_clock_init(struct
+> device_node *np) clock->hw.init = &init;
+> 
+>  	clk = clk_register(NULL, &clock->hw);
+> +	if (IS_ERR(clk))
+> +		goto free_parents;
+> +
+> +	return clk;
+> +
+> +free_parents:
+> +	kfree(clock->parents);
+> +free_clock:
+> +	kfree(clock);
+> +	return clk;
+> +}
+> +
+> +static void __init cpg_div6_clock_init(struct device_node *np)
+> +{
+> +	unsigned int num_parents;
+> +	const char **parent_names;
+> +	const char *clk_name = np->name;
+> +	void __iomem *reg;
+> +	struct clk *clk;
+> +	unsigned int i;
+> +
+> +	num_parents = of_clk_get_parent_count(np);
+> +	if (num_parents < 1) {
+> +		pr_err("%s: no parent found for %s DIV6 clock\n",
+> +		       __func__, np->name);
+> +		return;
+> +	}
+> +
+> +	parent_names = kmalloc_array(num_parents, sizeof(*parent_names),
+> +				GFP_KERNEL);
+> +	if (!parent_names)
+> +		return;
+> +
+> +	reg = of_iomap(np, 0);
+> +	if (reg == NULL) {
+> +		pr_err("%s: failed to map %s DIV6 clock register\n",
+> +		       __func__, np->name);
+> +		goto error;
+> +	}
+> +
+> +	/* Parse the DT properties. */
+> +	of_property_read_string(np, "clock-output-names", &clk_name);
+> +
+> +	for (i = 0; i < num_parents; i++)
+> +		parent_names[i] = of_clk_get_parent_name(np, i);
+> +
+> +	clk = cpg_div6_register(clk_name, num_parents, parent_names, reg);
+>  	if (IS_ERR(clk)) {
+>  		pr_err("%s: failed to register %s DIV6 clock (%ld)\n",
+>  		       __func__, np->name, PTR_ERR(clk));
+> @@ -269,9 +312,8 @@ static void __init cpg_div6_clock_init(struct
+> device_node *np) return;
+> 
+>  error:
+> -	if (clock->reg)
+> -		iounmap(clock->reg);
+> +	if (reg)
+> +		iounmap(reg);
+>  	kfree(parent_names);
+> -	kfree(clock);
+>  }
+>  CLK_OF_DECLARE(cpg_div6_clk, "renesas,cpg-div6-clock",
+> cpg_div6_clock_init); diff --git a/drivers/clk/shmobile/clk-div6.h
+> b/drivers/clk/shmobile/clk-div6.h new file mode 100644
+> index 0000000000000000..9a85a95188daa813
+> --- /dev/null
+> +++ b/drivers/clk/shmobile/clk-div6.h
+> @@ -0,0 +1,7 @@
+> +#ifndef __SHMOBILE_CLK_DIV6_H__
+> +#define __SHMOBILE_CLK_DIV6_H__
+> +
+> +struct clk *cpg_div6_register(const char *name, unsigned int num_parents,
+> +			      const char **parent_names, void __iomem *reg);
+> +
+> +#endif
 
 -- 
-1.9.1
+Regards,
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Laurent Pinchart
