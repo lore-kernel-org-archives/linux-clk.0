@@ -1,98 +1,75 @@
-Return-Path: <B48286@freescale.com>
-From: Zhiqiang Hou <B48286@freescale.com>
-To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-CC: <mark.rutland@arm.com>, <linux@roeck-us.net>, <wsa@the-dreams.de>,
-	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <Mingkai.Hu@freescale.com>,
-	<Shaohui.Xie@freescale.com>, <scottwood@freescale.com>,
-	<bhupesh.sharma@freescale.com>, <Wenbin.Song@freescale.com>,
-	<B48286@freescale.com>
-Subject: [PATCH V5 5/6] clk: qoriq: Add ls1043a support.
-Date: Mon, 19 Oct 2015 19:56:13 +0800
-Message-ID: <1445255774-32887-5-git-send-email-B48286@freescale.com>
-In-Reply-To: <1445255774-32887-1-git-send-email-B48286@freescale.com>
-References: <1445255774-32887-1-git-send-email-B48286@freescale.com>
-Return-Path: B48286@freescale.com
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Fri, 30 Oct 2015 18:37:38 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 09/19] drm: sun4i: Add DT bindings documentation
+Message-ID: <20151030173738.GD17183@ulmo.nvidia.com>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1446214865-3972-10-git-send-email-maxime.ripard@free-electrons.com>
+ <CAL_JsqLuUUApGAgdw7U8EJ7p5yrYJg8AKFB32AE9Ufrf47=WpQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="DiL7RhKs8rK9YGuF"
+In-Reply-To: <CAL_JsqLuUUApGAgdw7U8EJ7p5yrYJg8AKFB32AE9Ufrf47=WpQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Hou Zhiqiang <B48286@freescale.com>
 
-Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
----
-V5: V4 V3 V2
- - No change.
+--DiL7RhKs8rK9YGuF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- drivers/clk/clk-qoriq.c | 38 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+On Fri, Oct 30, 2015 at 11:40:03AM -0500, Rob Herring wrote:
+> On Fri, Oct 30, 2015 at 9:20 AM, Maxime Ripard
+[...]
+> > +Optional properties:
+> > +  - allwinner,tv-encoder: phandle to the TV Encoder in our pipeline
+> > +  - allwinner,panel: phandle to the panel used in our RGB interface
+>=20
+> Use of-graph please.
 
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index 8f9c93b..b189688 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -244,6 +244,28 @@ static const struct clockgen_muxinfo clockgen2_cmux_cgb = {
- 	},
- };
- 
-+static const struct clockgen_muxinfo ls1043a_hwa1 = {
-+	{
-+		{},
-+		{},
-+		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV2 },
-+		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV3 },
-+		{},
-+		{},
-+		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV2 },
-+		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV3 },
-+	},
-+};
-+
-+static const struct clockgen_muxinfo ls1043a_hwa2 = {
-+	{
-+		{},
-+		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV1 },
-+		{},
-+		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV3 },
-+	},
-+};
-+
- static const struct clockgen_muxinfo t1023_hwa1 = {
- 	{
- 		{},
-@@ -452,6 +474,21 @@ static const struct clockgen_chipinfo chipinfo[] = {
- 		.pll_mask = 0x03,
- 	},
- 	{
-+		.compat = "fsl,ls1043a-clockgen",
-+		.init_periph = t2080_init_periph,
-+		.cmux_groups = {
-+			&t1040_cmux
-+		},
-+		.hwaccel = {
-+			&ls1043a_hwa1, &ls1043a_hwa2
-+		},
-+		.cmux_to_group = {
-+			0, -1
-+		},
-+		.pll_mask = 0x07,
-+		.flags = CG_PLL_8BIT,
-+	},
-+	{
- 		.compat = "fsl,ls2080a-clockgen",
- 		.cmux_groups = {
- 			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
-@@ -1227,6 +1264,7 @@ err:
- CLK_OF_DECLARE(qoriq_clockgen_1, "fsl,qoriq-clockgen-1.0", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_2, "fsl,qoriq-clockgen-2.0", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls1021a, "fsl,ls1021a-clockgen", clockgen_init);
-+CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
- 
- /* Legacy nodes */
--- 
-2.1.0.27.g96db324
+Why? Panels are a really simple resource and a simple phandle is fully
+capable of describing the relationship.
+
+Thierry
+
+--DiL7RhKs8rK9YGuF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJWM6rhAAoJEN0jrNd/PrOhe5MP/Rz/SQpr6XBAaweD0OTh1bj8
+2u3x4pyBd4Z73GS/nVzflQjZf4B6AqwkvV/Nrrr9E2pdo91uacdfL3uW6n7tLIIM
+y0rkDnx5YNTkkM8CM9X4wiziYGuJ0oSxTauw1nH2TEpYf0pFzfrDI16u5mJT0/vS
+oL+4Iv5kt1F1/Fnk7ttAioEpvhhz9nMuTqzAI7cajq34CN9s6w2J1pizWQokxJI/
+w719JEPIL6Qu8d4cx5N7J7XBaP9giBjSvCsR+ShobF35N5hO1U/JoCGnwZaw81H1
+W/vl3xiQwn9PZKZk/fiUguHrfFSXcdLmEFCXn6l9Rxr0lTWmkArF+XfDj/g+BrKB
+4Y65KTvHLaUWEPL0Zyt/us6rZGoULSV73wZYLmBttkSgDDdVWeTx9R9llsU5CwJG
+pHdSf/WF4lZ5KKQw+H/ajFly+jxQLi34mCugaNkWJZ1jmLVE/XVRyXe4GeeuS8rO
+31EprNW6EViDFL2VDqo2R2Pu5XKyEcYHuRzBXCSCuZe1FdNkbtoESq+HnqbhF911
+Ni5aTra90uAE3cO15w15sLfKxdIadnI7WpgbTGEG+CfVVY3Fra/hNE9hdMTlwTNb
+hNodQv+gnrjmCeYaiJPyg4lWXqEqqeOOd40POR9L7RGeyvXRDYiB/q0S4l2eIRKj
+LP2c5ial8yO7oeFJx4MP
+=RgVR
+-----END PGP SIGNATURE-----
+
+--DiL7RhKs8rK9YGuF--
