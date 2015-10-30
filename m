@@ -1,51 +1,96 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Wed, 28 Oct 2015 10:53:23 +0900
-From: Mark Brown <broonie@kernel.org>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, lee.jones@linaro.org,
-	mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, rtc-linux@googlegroups.com,
-	linux-kernel@vger.kernel.org
-Message-ID: <20151028015323.GZ28319@sirena.org.uk>
-References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
- <1445863883-5187-6-git-send-email-alim.akhtar@samsung.com>
- <56302514.4090407@samsung.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 30 Oct 2015 14:32:01 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 02/19] clk: sunxi: Add PLL3 clock
+Message-ID: <20151030213155.GH19782@codeaurora.org>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1446214865-3972-3-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="KQ2iXOoQ638mtNze"
-In-Reply-To: <56302514.4090407@samsung.com>
-Subject: Re: [PATCH v3 5/5] drivers/rtc/rtc-s5m.c: add support for S2MPS15 RTC
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1446214865-3972-3-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 10/30, Maxime Ripard wrote:
+> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+> index a9e1a5885846..40c32ffd912c 100644
+> --- a/drivers/clk/sunxi/Makefile
+> +++ b/drivers/clk/sunxi/Makefile
+> @@ -9,8 +9,9 @@ obj-y += clk-a10-mod1.o
+>  obj-y += clk-a10-pll2.o
+>  obj-y += clk-a20-gmac.o
+>  obj-y += clk-mod0.o
+> -obj-y += clk-sun4i-display.o
+>  obj-y += clk-simple-gates.o
+> +obj-y += clk-sun4i-display.o
 
---KQ2iXOoQ638mtNze
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Put this in the right place in patch 1 please.
 
-On Wed, Oct 28, 2015 at 10:29:56AM +0900, Krzysztof Kozlowski wrote:
+> +obj-y += clk-sun4i-pll3.o
+>  obj-y += clk-sun8i-mbus.o
+>  obj-y += clk-sun9i-core.o
+>  obj-y += clk-sun9i-mmc.o
+> diff --git a/drivers/clk/sunxi/clk-sun4i-pll3.c b/drivers/clk/sunxi/clk-sun4i-pll3.c
+> new file mode 100644
+> index 000000000000..7ea178bf19fa
+> --- /dev/null
+> +++ b/drivers/clk/sunxi/clk-sun4i-pll3.c
+> @@ -0,0 +1,84 @@
+> +/*
+> + * Copyright 2015 Maxime Ripard
+> + *
+> + * Maxime Ripard <maxime.ripard@free-electrons.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/of_address.h>
 
-> If that's true, then don't add new compatibles, new names etc. Re-use.
-> No new code needed, no changes needed. Keep it simple.
+#include <linux/of.h> for of_property_read_string()
 
-Well, it depends - it can be useful to get the information about it
-being a different part into DT so that if in future we realise that
-there is some difference (perhaps a bug workaround even if the IP is
-intended to be the same).  Though in the case of a MFD that information
-can be obtained from the MFD for the device.
+> +#include <linux/slab.h>
+> +#include <linux/spinlock.h>
+> +
+> +#define SUN4I_A10_PLL3_GATE_BIT	31
+[...]
+> +
+> +	clk = clk_register_composite(NULL, clk_name,
+> +				     &parent, 1,
+> +				     NULL, NULL,
+> +				     &mult->hw, &clk_factor_ops,
+> +				     &gate->hw, &clk_gate_ops,
+> +				     0);
+> +	if (IS_ERR(clk)) {
+> +		pr_err("%s: Couldn't register the clock\n", clk_name);
+> +		goto free_mult;
+> +	}
+> +
+> +	of_clk_add_provider(node, of_clk_src_simple_get, clk);
 
---KQ2iXOoQ638mtNze
-Content-Type: application/pgp-signature; name="signature.asc"
+I hope this doesn't fail.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWMCqPAAoJECTWi3JdVIfQ4xYH/j4G3S5X7WjyczTIZ00O2321
-T1RDXLoEYYjVS0AvRTNbR15/mFw2Zbm3Tpq14EpoWItBNP3VNmjknWH2N+3dEiFA
-nD2xto1RCCzXb/4Vi908Y39rqEN2MRcjO4NtPh0ZEH3RnbKfCj4/X+F8Kv4MWVm3
-4pBDefmn0JhyS1VxlVfPV5Ot/jApXZTei2OWI/iwBtATaIwa41z0EdWCUrAzONld
-RQMmG8UK1NYbsED3bqiLtVatNED/oAlgaHGslxgA4pUbc52Jk7cS/cO3fK+RmOS/
-Ji9IeIOfmWSgHMl0aqKiBBn8tQca5ou6q32rRgYiwLEorsE9Iq1+pKaWAbmtUzY=
-=7yDC
------END PGP SIGNATURE-----
-
---KQ2iXOoQ638mtNze--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
