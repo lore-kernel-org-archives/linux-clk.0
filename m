@@ -1,57 +1,112 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 15 Oct 2015 11:28:40 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Simon <horms@verge.net.au>, Michael Turquette <mturquette@baylibre.com>,
-	Magnus <magnus.damm@gmail.com>, Linux-SH <linux-sh@vger.kernel.org>,
-	Linux-Kernel <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4] clk: add CS2000 Fractional-N driver
-Message-ID: <20151015182840.GJ4558@codeaurora.org>
-References: <871te03x17.wl%kuninori.morimoto.gx@renesas.com>
- <20151002003851.GH12338@codeaurora.org>
- <87twqarsdf.wl%kuninori.morimoto.gx@renesas.com>
- <20151002181123.GM12338@codeaurora.org>
- <87r3kwor4d.wl%kuninori.morimoto.gx@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <87r3kwor4d.wl%kuninori.morimoto.gx@renesas.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 13/19] drm: sun4i: tv: Add NTSC output standard
+Date: Fri, 30 Oct 2015 15:20:59 +0100
+Message-Id: <1446214865-3972-14-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/15, Kuninori Morimoto wrote:
-> 
-> I understand. If my understanding is correct, user driver
-> setups/enables this clock.
-> If so, I still want this "clock-frequency" feature.
-> because this clock requests other clock on my board.
-> And requested clock requests this clock too.
-> Thus, these clocks have dead lock on probe time
-> 
-> 	cs2000: clk_multiplier@4f {
-> 		...
-> 		clocks = <&rcar_sound 0>, ...
-> 		...
-> 	};
-> 
-> 	&rcar_sound {
-> 		...
-> 		assigned-clocks = <&cs2000>;
-> 	        assigned-clock-rates = <24576000>;
-> 		...
-> 	};
-> 
+Add the settings to support the NTSC standard.
 
-I think you're saying that the clock provider itself can't set
-the rate with assigned-clock-rates? That isn't true, we should be
-able to set the rate of the clock from within the provider node.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/gpu/drm/sun4i/sun4i_tv.c | 45 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-	cs2000: clk_multiplier@4f {
-		assigned-clocks = <&cs2000>;
-		assigned-clock-rates = <24576000>;
-	};
-
-The above should work.
-
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tv.c b/drivers/gpu/drm/sun4i/sun4i_tv.c
+index 4b95d04ff457..b460406d744c 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tv.c
+@@ -175,24 +175,69 @@ struct sun4i_tv {
+ 	struct sun4i_drv	*drv;
+ };
+ 
++struct video_levels ntsc_video_levels = {
++	.black = 282,	.blank = 240,
++};
++
+ struct video_levels pal_video_levels = {
+ 	.black = 252,	.blank = 252,
+ };
+ 
++struct burst_levels ntsc_burst_levels = {
++	.cb = 79,	.cr = 0,
++};
++
+ struct burst_levels pal_burst_levels = {
+ 	.cb = 40,	.cr = 40,
+ };
+ 
++struct color_gains ntsc_color_gains = {
++	.cb = 160,	.cr = 160,
++};
++
+ struct color_gains pal_color_gains = {
+ 	.cb = 224,	.cr = 224,
+ };
+ 
++struct resync_parameters ntsc_resync_parameters = {
++	.field = false,	.line = 14,	.pixel = 12,
++};
++
+ struct resync_parameters pal_resync_parameters = {
+ 	.field = true,	.line = 13,	.pixel = 12,
+ };
+ 
+ struct tv_mode tv_modes[] = {
+ 	{
++		.name		= "NTSC",
++		.mode		= SUN4I_TVE_CFG0_RES_480i,
++		.chroma_freq	= 0x21f07c1f,
++		.yc_en		= true,
++		.dac3_en	= true,
++		.dac_bit25_en	= true,
++
++		.back_porch	= 118,
++		.front_porch	= 32,
++		.line_number	= 525,
++
++		.hdisplay	= 720,
++		.hfront_porch	= 18,
++		.hsync_len	= 2,
++		.hback_porch	= 118,
++
++		.vdisplay	= 480,
++		.vfront_porch	= 26,
++		.vsync_len	= 2,
++		.vback_porch	= 17,
++
++		.vblank_level	= 240,
++
++		.color_gains	= &ntsc_color_gains,
++		.burst_levels	= &ntsc_burst_levels,
++		.video_levels	= &ntsc_video_levels,
++		.resync_params	= &ntsc_resync_parameters,
++	},
++	{
+ 		.name		= "PAL",
+ 		.mode		= SUN4I_TVE_CFG0_RES_576i,
+ 		.chroma_freq	= 0x2a098acb,
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.6.2
