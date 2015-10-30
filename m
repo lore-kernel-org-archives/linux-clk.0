@@ -1,47 +1,50 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 12 Oct 2015 11:46:52 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Eric Anholt <eric@anholt.net>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
-	Mike Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v7] clk: bcm2835: Add support for programming the audio
- domain clocks
-Message-ID: <20151012184652.GB26883@codeaurora.org>
-References: <1444354644-31997-1-git-send-email-eric@anholt.net>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1444354644-31997-1-git-send-email-eric@anholt.net>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <5167960.XIHmLIjGds@avalon>
+References: <1446117664-6037-1-git-send-email-geert+renesas@glider.be>
+	<1446117664-6037-3-git-send-email-geert+renesas@glider.be>
+	<5167960.XIHmLIjGds@avalon>
+Date: Fri, 30 Oct 2015 14:57:14 +0100
+Message-ID: <CAMuHMdWkxzCommSv1UNY=LesAER_uFfkPfbuG3JLHYUtf2-mwg@mail.gmail.com>
+Subject: Re: [PATCH v5 2/5] clk: shmobile: div6: Make clock-output-names optional
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Magnus Damm <damm+renesas@opensource.se>,
+	Simon Horman <horms+renesas@verge.net.au>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux-sh list <linux-sh@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/08, Eric Anholt wrote:
-> This adds support for enabling, disabling, and setting the rate of the
-> audio domain clocks.  It will be necessary for setting the pixel clock
-> for HDMI in the VC4 driver and let us write a cpufreq driver.  It will
-> also improve compatibility with user changes to the firmware's
-> config.txt, since our previous fixed clocks are unaware of it.
-> 
-> The firmware also has support for configuring the clocks through the
-> mailbox channel, but the pixel clock setup by the firmware doesn't
-> work, and it's Raspberry Pi specific anyway.  The only conflicts we
-> should have with the firmware would be if we made firmware calls that
-> result in clock management (like opening firmware V3D or ISP access,
-> which we don't support in upstream), or on hardware over-thermal or
-> under-voltage (when the firmware would rewrite PLLB to take the ARM
-> out of overclock).  If that happens, our cached .recalc_rate() results
-> would be incorrect, but that's no worse than our current state where
-> we used fixed clocks.
-> 
-> The existing fixed clocks in the code are left in place to provide
-> backwards compatibility with old device tree files.
-> 
-> Signed-off-by: Eric Anholt <eric@anholt.net>
-> Tested-by: Martin Sperl <kernel@martin.sperl.org>
-> ---
+On Fri, Oct 30, 2015 at 2:47 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Thursday 29 October 2015 12:21:01 Geert Uytterhoeven wrote:
+>> Renesas DIV6 clocks provide a single clock output.  Hence make the
+>> "clock-output-names" DT property optional instead of mandatory. In case
+>> the DT property is omitted the DT node name will be used.
+>>
+>> Rename the variable "name" to "clk_name" to make the code more similar
+>> with fixed-factor-clock.c, and to avoid a conflict with a nested local
+>> variable while we're at it.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>> v5:
+>>   - Integrated in this series as a dependency.
+>
+> The patch looks sane, by why is it a dependency ?
 
-Applied to clk-next
+Sorry, the cover letter is clearer about this: "contextual dependency".
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
