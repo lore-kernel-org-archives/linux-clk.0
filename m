@@ -1,64 +1,76 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 2 Oct 2015 11:10:42 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Looijmans <mike.looijmans@topic.nl>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] Add driver for the si514 clock generator chip
-Message-ID: <20151002181042.GL12338@codeaurora.org>
-References: <1442478495-23522-1-git-send-email-mike.looijmans@topic.nl>
- <1442487891-20477-1-git-send-email-mike.looijmans@topic.nl>
- <20151001233407.GW19319@codeaurora.org>
- <560E1DF6.9010901@topic.nl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <560E1DF6.9010901@topic.nl>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 18/19] ARM: sun5i: r8: Add AHB gates to the DTSI
+Date: Fri, 30 Oct 2015 15:21:04 +0100
+Message-Id: <1446214865-3972-19-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/02, Mike Looijmans wrote:
-> ﻿On 02-10-15 01:34, Stephen Boyd wrote:
-> >>+ - clock-output-names: From common clock bindings. Recommended to be "si514".
-> >>+ - clock-frequency: Output frequency to generate. This defines the output
-> >>+		    frequency set during boot. It can be reprogrammed during
-> >>+		    runtime through the common clock framework.
-> >
-> >Can we use assigned clock rates instead of this property?
-> 
-> I'll first need to learn what 'assigned clock rates' means. But I
-> suspect the answer will be yes.
+Add the gates definition to the R8 DTSI.
 
-See the "Assigned clock parents and rates" section of
-Documentation/devicetree/bindings/clock/clock-bindings.txt and
-commit 86be408bfbd8 (clk: Support for clock parents and rates
-assigned from device tree, 2014-06-18).
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ arch/arm/boot/dts/sun5i-r8.dtsi | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-> 
-> >>+
-> >>+Example:
-> >>+	si514: clock-generator@55 {
-> >>+		reg = <0x55>;
-> >>+		#clock-cells = <0>;
-> >>+		compatible = "silabs,si514";
-> >>+	};
-> >>diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> >>index 42f7120..6ac7deb5 100644
-> >>--- a/drivers/clk/Kconfig
-> >>+++ b/drivers/clk/Kconfig
-> >>@@ -68,6 +68,16 @@ config COMMON_CLK_SI5351
-> >>  	  This driver supports Silicon Labs 5351A/B/C programmable clock
-> >>  	  generators.
-> >>
-> >>+config COMMON_CLK_SI514
-> >>+	tristate "Clock driver for SiLabs 514 devices"
-> >>+	depends on I2C
-> >>+	depends on OF
-> >
-> >It actually depends on this to build?
-> 
-> It calls various 'of_' methods unconditionally, so I'd think so.
-
-Aren't there stubs for those if CONFIG_OF=n?
-
+diff --git a/arch/arm/boot/dts/sun5i-r8.dtsi b/arch/arm/boot/dts/sun5i-r8.dtsi
+index 691d3de75b35..d69df3a73cbf 100644
+--- a/arch/arm/boot/dts/sun5i-r8.dtsi
++++ b/arch/arm/boot/dts/sun5i-r8.dtsi
+@@ -57,4 +57,33 @@
+ 			status = "disabled";
+ 		};
+ 	};
++
++	clocks {
++		ahb_gates: clk@01c20060 {
++			#clock-cells = <1>;
++			compatible = "allwinner,sun5i-r8-ahb-gates-clk";
++			reg = <0x01c20060 0x8>;
++			clocks = <&ahb>;
++			clock-indices = <0>, <1>,
++					<2>, <5>, <6>,
++					<7>, <8>, <9>,
++					<10>, <13>,
++					<14>, <20>,
++					<21>, <22>,
++					<28>, <32>, <34>,
++					<36>, <40>, <44>,
++					<46>, <51>,
++					<52>;
++			clock-output-names = "ahb_usbotg", "ahb_ehci",
++					     "ahb_ohci", "ahb_ss", "ahb_dma",
++					     "ahb_bist", "ahb_mmc0", "ahb_mmc1",
++					     "ahb_mmc2", "ahb_nand",
++					     "ahb_sdram", "ahb_spi0",
++					     "ahb_spi1", "ahb_spi2",
++					     "ahb_stimer", "ahb_ve", "ahb_tve",
++					     "ahb_lcd", "ahb_csi", "ahb_de_be",
++					     "ahb_de_fe", "ahb_iep",
++					     "ahb_mali400";
++		};
++	};
+ };
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.6.2
