@@ -1,105 +1,53 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	Paul Walmsley <paul@pwsan.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Kumar Gala <galak@codeaurora.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Rob Herring <robh+dt@kernel.org>,
-	Olof Johansson <olof@lixom.net>, linux-clk@vger.kernel.org,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Pawel Moll <pawel.moll@arm.com>, devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v4 0/8] Build and support rk3036 SoC platform
-Date: Sat, 24 Oct 2015 18:30:21 +0800
-Message-Id: <1445682629-21632-1-git-send-email-zhengxing@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	devicetree@vger.kernel.org,
+	jonmason@broadcom.com,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	linux@arm.linux.org.uk,
+	sbranden@broadcom.com,
+	rjui@broadcom.com
+Subject: [PATCH v4 1/3] clk: iproc: Extend binding to cover BCM63138
+Date: Thu, 29 Oct 2015 18:23:17 -0700
+Message-Id: <1446168199-5959-2-git-send-email-f.fainelli@gmail.com>
+In-Reply-To: <1446168199-5959-1-git-send-email-f.fainelli@gmail.com>
+References: <1446168199-5959-1-git-send-email-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Broadcom BCM63138 DSL SoCs have the same ARMPLL clocking infrastructure
+as the Cygnus and iProc chips, add a dedicated compatible string and
+document that the ARMPLL node is a valid node for this chip.
 
-Hi,
-  We need to support rk3036 soc platform via upstream, there are
-3 primary parts for the initial release of minimum system: dts,
-pinctrl, and clock tree for rk3036, and additional, we can use
-these startup and run to init processs.
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+No changes in v4
 
-Thanks.
+Changes in v3:
 
-Changed in v4:
-- add some basic IP modules on rk3036.dtsi
-- optimized supporting smp codes
+- added Rob's Acked-by tag
 
-Changed in v3:
-- optimized some codes based on v2
-- removed the patch "initial set time for rtc-hym8563" (useless)
-- removed the patch "pinctrl" (approved)
+No changes in v2
 
-Changed in v2:
-- based on v1, add clock controller documentation
-- enable timer5 startup
-- add smp for cpu1
-- initial set time for rtc-hym8563
+ Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Changes in v1:
-- add dts, pinctrl and clock tree for rk3036 soc platform
-
-The patchset (8):
-8) rockchip: make sure timer5 is enabled on rk3036 platforms
-7) ARM: dts: enable smp for rk3036
-6) ARM: rockchip: add support smp for rk3036
-5) ARM: dts: rockchip: add core rk3036 dts
-4) clk: rockchip: add new pll-type for rk3036 and similar socs
-3) clk: rockchip: add clock controller for rk3036
-2) clk: rockchip: add dt-binding header for rk3036
-1) dt-bindings: add documentation of rk3036 clock controller
-
-
-Changes in v4:
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-Heiko Stuebner (1):
-  ARM: rockchip: add support smp for rk3036
-
-Xing Zheng (7):
-  dt-bindings: add documentation of rk3036 clock controller
-  clk: rockchip: add dt-binding header for rk3036
-  clk: rockchip: add clock controller for rk3036
-  clk: rockchip: add new pll-type for rk3036 and similar socs
-  ARM: dts: rockchip: add core rk3036 dts
-  ARM: dts: enable smp for rk3036
-  rockchip: make sure timer5 is enabled on rk3036 platforms
-
- Documentation/devicetree/bindings/arm/cpus.txt     |    1 +
- .../bindings/clock/rockchip,rk3036-cru.txt         |   56 ++
- arch/arm/boot/dts/Makefile                         |    1 +
- arch/arm/boot/dts/rk3036-evb.dts                   |   64 +++
- arch/arm/boot/dts/rk3036.dtsi                      |  541 ++++++++++++++++++++
- arch/arm/mach-rockchip/platsmp.c                   |   45 +-
- arch/arm/mach-rockchip/rockchip.c                  |   44 +-
- drivers/clk/rockchip/Makefile                      |    1 +
- drivers/clk/rockchip/clk-pll.c                     |  243 ++++++++-
- drivers/clk/rockchip/clk-rk3036.c                  |  500 ++++++++++++++++++
- drivers/clk/rockchip/clk.h                         |   30 ++
- include/dt-bindings/clock/rk3036-cru.h             |  195 +++++++
- 12 files changed, 1691 insertions(+), 30 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3036-cru.txt
- create mode 100644 arch/arm/boot/dts/rk3036-evb.dts
- create mode 100644 arch/arm/boot/dts/rk3036.dtsi
- create mode 100644 drivers/clk/rockchip/clk-rk3036.c
- create mode 100644 include/dt-bindings/clock/rk3036-cru.h
-
+diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+index ede65a55e21b..0b35e71b39e8 100644
+--- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+@@ -208,3 +208,8 @@ These clock IDs are defined in:
+     ch3_unused	lcpll_ports	4	BCM_NS2_LCPLL_PORTS_CH3_UNUSED
+     ch4_unused	lcpll_ports	5	BCM_NS2_LCPLL_PORTS_CH4_UNUSED
+     ch5_unused	lcpll_ports	6	BCM_NS2_LCPLL_PORTS_CH5_UNUSED
++
++BCM63138
++--------
++PLL and leaf clock compatible strings for BCM63138 are:
++    "brcm,bcm63138-armpll"
 -- 
-1.7.9.5
-
-
+2.1.0
