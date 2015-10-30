@@ -1,39 +1,34 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	agross@codeaurora.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	bjorn.andersson@sonymobile.com,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v3 2/8] clk: qcom: msm8916: Set the parent of xo to xo_board
-Date: Tue, 20 Oct 2015 19:57:54 +0300
-Message-Id: <1445360280-2347-3-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1445360280-2347-1-git-send-email-georgi.djakov@linaro.org>
-References: <1445360280-2347-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <slash.tmp@free.fr>
+Subject: Re: [PATCH v4] clk: tango4: clkgen driver for Tango4 platforms
+To: Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>
+Cc: clk <linux-clk@vger.kernel.org>, Rob Herring <robh@kernel.org>,
+ Marc Gonzalez <Marc_Gonzalez@sigmadesigns.com>
+References: <562A5506.2070402@sigmadesigns.com>
+ <20151029005658.GA19782@codeaurora.org> <563361B8.7090300@sigmadesigns.com>
+ <20151030162925.GC19782@codeaurora.org>
+From: Mason <slash.tmp@free.fr>
+Message-ID: <5633BB93.7010701@free.fr>
+Date: Fri, 30 Oct 2015 19:48:51 +0100
+MIME-Version: 1.0
+In-Reply-To: <20151030162925.GC19782@codeaurora.org>
+Content-Type: text/plain; charset=ISO-8859-15
 List-ID: <linux-clk.vger.kernel.org>
 
-Remove the hard-coded clock rate from the driver and set the XO
-parent to the on-board XO oscillator that is defined in the DT.
+On 30/10/2015 17:29, Stephen Boyd wrote:
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- drivers/clk/qcom/gcc-msm8916.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> You should add sigma to the vendor prefix file
+> Documentation/devicetree/bindings/vendor-prefixes.txt
+> 
+> Send that patch to the DT maintainers (Rob has been applying
+> most vendor prefix patches).
 
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index d0a0313d6bef..3c0668b12142 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -3360,7 +3360,7 @@ static int gcc_msm8916_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 
- 	/* Temporary until RPM clocks supported */
--	clk = clk_register_fixed_rate(dev, "xo", NULL, CLK_IS_ROOT, 19200000);
-+	clk = clk_register_fixed_factor(dev, "xo", "xo_board", 0, 1, 1);
- 	if (IS_ERR(clk))
- 		return PTR_ERR(clk);
- 
+Hmmm, Mans took care of that a month ago... Did the patch fall
+through the cracks perhaps?
+
+http://thread.gmane.org/gmane.linux.kernel/2052776
+
+Should I be looking in Rob's tree?
+https://git.kernel.org/cgit/linux/kernel/git/robh/linux.git/
+
+Regards.
