@@ -1,97 +1,98 @@
-Return-Path: <frowand.list@gmail.com>
-Return-Path: <frowand.list@gmail.com>
-Message-ID: <5627D6E0.5020708@gmail.com>
-Date: Wed, 21 Oct 2015 11:18:08 -0700
-From: Frank Rowand <frowand.list@gmail.com>
-Reply-To: frowand.list@gmail.com
-MIME-Version: 1.0
-To: Mark Brown <broonie@kernel.org>
-CC: Tomeu Vizoso <tomeu.vizoso@collabora.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Alexandre Courbot <gnurou@gmail.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- David Airlie <airlied@linux.ie>,
- =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom@nvidia.com>,
- Stephen Warren <swarren@wwwdotorg.org>,
- Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>,
- Kishon Vijay Abraham I <kishon@ti.com>,
- Sebastian Reichel <sre@kernel.org>,
- Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>,
- David Woodhouse <dwmw2@infradead.org>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Felipe Balbi <balbi@ti.com>, Jingoo Han <jingoohan1@gmail.com>,
- Lee Jones <lee.jones@linaro.org>,
- Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
- Tomi Valkeinen <tomi.valkeinen@ti.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-gpio@vger.kernel.org,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- linux-i2c@vger.kernel.org,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- Linux PWM List <linux-pwm@vger.kernel.org>,
- "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
- linux-fbdev@vger.kernel.org
-Subject: Re: [GIT PULL] On-demand device probing
-References: <561E1378.6000906@collabora.com> <20151017065750.GA18607@kroah.com> <20151018192931.GY14956@sirena.org.uk> <20151018193757.GA9147@kroah.com> <20151018195330.GB14956@sirena.org.uk> <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com> <5627B677.5090109@gmail.com> <20151021162758.GP32054@sirena.org.uk>
-In-Reply-To: <20151021162758.GP32054@sirena.org.uk>
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 17/19] ARM: sun5i: dt: Add display blocks to the DTSI
+Date: Fri, 30 Oct 2015 15:21:03 +0100
+Message-Id: <1446214865-3972-18-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/21/2015 9:27 AM, Mark Brown wrote:
-> On Wed, Oct 21, 2015 at 08:59:51AM -0700, Frank Rowand wrote:
->> On 10/19/2015 5:34 AM, Tomeu Vizoso wrote:
-> 
->>> To be clear, I was saying that this series should NOT affect total
->>> boot times much.
-> 
->> I'm confused.  If I understood correctly, improving boot time was
->> the key justification for accepting this patch set.  For example,
->> from "[PATCH v7 0/20] On-demand device probing":
->>
->>    I have a problem with the panel on my Tegra Chromebook taking longer
->>    than expected to be ready during boot (Stéphane Marchesin reported what
->>    is basically the same issue in [0]), and have looked into ordered
->>    probing as a better way of solving this than moving nodes around in the
->>    DT or playing with initcall levels and linking order.
->>
->>    ...
->>
->>    With this series I get the kernel to output to the panel in 0.5s,
->>    instead of 2.8s.
-> 
-> Overall boot time and time to get some individual built in component up
-> and running aren't the same thing - what this'll do is get things up
-> more in the link order of the leaf consumers rather than deferring those
-> leaf consumers when their dependencies aren't ready yet.
+The TCON and Display Engines are the two most important members of the
+display pipeline.
 
-Thanks!  I read too much into what was being improved.
+With this alone, we can already use the display to an RGB interface.
 
-So this patch series, which on other merits may be a good idea, is as
-a by product solving a specific ordering issue, moving successful panel
-initialization to an earlier point in the boot sequence, if I now
-understand more correctly.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ arch/arm/boot/dts/sun5i.dtsi | 40 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-In that context, this seems like yet another ad hoc way of causing the
-probe order to change in a way to solves one specific issue?  Could
-it just as likely move the boot order of some other driver on some
-other board later, to the detriment of somebody else?
-
-
-> 
->> While not as dramatic as your results, they are somewhat supportive.
->> What has changed your assessment that the on-demand device probing
->> patches will give a big boot performance increase?  Do you have
->> new data or analysis?
-> 
-> See above, my understanding was that the performance improvements were
-> more around improved control/predictability/handwave of the boot
-> ordering rather than total time.
-> 
+diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
+index 426db76c0fe6..a67f4bdf5bcc 100644
+--- a/arch/arm/boot/dts/sun5i.dtsi
++++ b/arch/arm/boot/dts/sun5i.dtsi
+@@ -481,6 +481,20 @@
+ 			#size-cells = <0>;
+ 		};
+ 
++		tcon: lcd-controller@01c0c000 {
++			compatible = "allwinner,sun4i-a10-tcon";
++			reg = <0x01c0c000 0x1000>;
++			interrupts = <44>;
++			clocks = <&ahb_gates 36>,
++				 <&tcon_ch0_clk>,
++				 <&tcon_ch1_clk>;
++			clock-names = "ahb",
++				      "tcon-ch0",
++				      "tcon-ch1";
++			clock-output-names = "tcon-pixel-clock";
++			status = "disabled";
++		};
++
+ 		mmc0: mmc@01c0f000 {
+ 			compatible = "allwinner,sun5i-a13-mmc";
+ 			reg = <0x01c0f000 0x1000>;
+@@ -767,5 +781,31 @@
+ 			interrupts = <82>, <83>;
+ 			clocks = <&ahb_gates 28>;
+ 		};
++
++		de: display-engine@01e00000 {
++			compatible = "allwinner,sun5i-a13-display-engine";
++			reg = <0x01e00000 0x20000>,
++			      <0x01e60000 0x10000>;
++			reg-names = "frontend0",
++				    "backend0";
++			interrupts = <47>;
++			interrupt-names = "engine0";
++			clocks = <&ahb_gates 46>, <&de_fe_clk>,
++				 <&dram_gates 25>, <&ahb_gates 44>,
++				 <&de_be_clk>, <&dram_gates 26>;
++			clock-names = "frontend0-bus", "frontend0-mod",
++				      "frontend0-ram", "backend0-bus",
++				      "backend0-mod", "backend0-ram";
++			resets = <&de_fe_clk>,
++				 <&de_be_clk>;
++			reset-names = "frontend0",
++				      "backend0";
++
++			allwinner,tcon = <&tcon>;
++
++			assigned-clocks = <&de_be_clk>;
++			assigned-clock-rates = <300000000>;
++			status = "disabled";
++		};
+ 	};
+ };
+-- 
+2.6.2
