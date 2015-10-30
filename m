@@ -1,56 +1,170 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 21 Oct 2015 16:17:12 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, kernel-janitors@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
 	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>,
-	Jason Cooper <jason@lakedaemon.net>
-Subject: Re: [PATCH 5/5] clk: scpi: add missing of_node_put
-Message-ID: <20151021231712.GL19782@codeaurora.org>
-References: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
- <1445460100-26727-6-git-send-email-Julia.Lawall@lip6.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1445460100-26727-6-git-send-email-Julia.Lawall@lip6.fr>
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 09/19] drm: sun4i: Add DT bindings documentation
+Date: Fri, 30 Oct 2015 15:20:55 +0100
+Message-Id: <1446214865-3972-10-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/21, Julia Lawall wrote:
-> for_each_available_child_of_node performs an of_node_get on each iteration,
-> so a break out of the loop requires an of_node_put.
-> 
-> The semantic patch that fixes this problem is as follows
-> (http://coccinelle.lip6.fr):
-> 
-> // <smpl>
-> @@
-> expression root,e;
-> local idexpression child;
-> @@
-> 
->  for_each_available_child_of_node(root, child) {
->    ... when != of_node_put(child)
->        when != e = child
-> (
->    return child;
-> |
-> +  of_node_put(child);
-> ?  return ...;
-> )
->    ...
->  }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
+The display pipeline of the Allwinner A10 is involving several loosely
+coupled components.
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Add a documentation for the bindings.
 
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ .../devicetree/bindings/drm/sunxi/sun4i-drm.txt    | 122 +++++++++++++++++++++
+ 1 file changed, 122 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/drm/sunxi/sun4i-drm.txt
+
+diff --git a/Documentation/devicetree/bindings/drm/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/drm/sunxi/sun4i-drm.txt
+new file mode 100644
+index 000000000000..dbdccef787b4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/drm/sunxi/sun4i-drm.txt
+@@ -0,0 +1,122 @@
++Allwinner A10 Display Pipeline
++==============================
++
++The Allwinner A10 Display pipeline is composed of several components
++that are going to be documented below:
++
++TV Encoder
++----------
++
++The TV Encoder supports the composite and VGA output. It is one end of
++the pipeline.
++
++Required properties:
++ - compatible: value should be "allwinner,sun4i-a10-tv-encoder".
++ - reg: base address and size of memory-mapped region
++ - clocks: the clocks driving the TV encoder
++
++TCON
++----
++
++The TCON acts as a CRTC and encoder for RGB / LVDS interfaces.
++
++Required properties:
++ - compatible: value should be "allwinner,sun4i-a10-tcon".
++ - reg: base address and size of memory-mapped region
++ - interrupts: interrupt associated to this IP
++ - clocks: phandles to the clocks feeding the TCON. Three are needed:
++   - 'ahb': the interface clocks
++   - 'tcon-ch0': The clock driving the TCON channel 0
++   - 'tcon-ch1': The clock driving the TCON channel 0
++
++ - clock-names: the clock names mentionned above
++ - clock-output-names: Name of the pixel clock created
++
++
++Display Engine Backend
++----------------------
++
++The display engine backend exposes layers and sprites to the
++system. It's split into two components, the frontend and backend, the
++frontend doing formats conversion, scaling, deinterlacing, while the
++backend actually manages the layers.
++
++Required properties:
++  - compatible: value must be one of:
++    * allwinner,sun5i-a13-display-engine
++
++  - reg: base address and size of the memory-mapped region. Two are needed:
++    * backend0: registers of the display engine backend
++    * frontend0: registers of the display engine frontend
++  - reg_names: the region names mentionned above.
++
++  - interrupts: frontend interrupt phandle
++
++  - clocks: phandles to the clocks feeding the frontend and backend
++    * backend0-bus: the backend interface clock
++    * backend0-mod: the backend module clock
++    * backend0-ram: the backend DRAM clock
++    * frontend0-bus: the frontend interface clock
++    * frontend0-mod: the frontend module clock
++    * frontend0-ram: the frontend DRAM clock
++  - clock-names: the clock names mentionned above
++
++  - resets: phandles to the reset controllers. Two are needed:
++    * backend0: backend reset controller
++    * frontend0: frontend reset controller
++  - reset-names: the reset names mentionned above
++
++  - allwinner,tcon: phandle to the TCON in our pipeline
++
++Optional properties:
++  - allwinner,tv-encoder: phandle to the TV Encoder in our pipeline
++  - allwinner,panel: phandle to the panel used in our RGB interface
++
++Example:
++
++panel: panel {
++	compatible = "olimex,lcd-olinuxino-43-ts";
++};
++
++tve: encoder@01c0a000 {
++	compatible = "allwinner,sun4i-a10-tv-encoder";
++	reg = <0x01c0a000 0x1000>;
++	clocks = <&ahb_gates 34>;
++};
++
++tcon: lcd-controller@01c0c000 {
++	compatible = "allwinner,sun4i-a10-tcon";
++	reg = <0x01c0c000 0x1000>;
++	interrupts = <44>;
++	clocks = <&ahb_gates 36>,
++		 <&tcon_ch0_clk>,
++		 <&tcon_ch1_clk>;
++	clock-names = "ahb",
++		      "tcon-ch0",
++		      "tcon-ch1";
++	clock-output-names = "tcon-pixel-clock";
++};
++
++de: display-engine@01e00000 {
++	compatible = "allwinner,sun5i-a13-display-engine";
++	reg = <0x01e00000 0x20000>,
++	      <0x01e60000 0x10000>;
++	reg-names = "frontend0",
++		    "backend0";
++	interrupts = <47>;
++	interrupt-names = "engine0";
++	clocks = <&ahb_gates 46>, <&de_fe_clk>,
++		 <&dram_gates 25>, <&ahb_gates 44>,
++		 <&de_be_clk>, <&dram_gates 26>;
++	clock-names = "frontend0-bus", "frontend0-mod",
++		      "frontend0-ram", "backend0-bus",
++		      "backend0-mod", "backend0-ram";
++	resets = <&de_fe_clk>,
++		 <&de_be_clk>;
++	reset-names = "frontend0",
++		      "backend0";
++
++	allwinner,tcon = <&tcon>;
++	allwinner,tv-encoder = <&tve>;
++	allwinner,panel = <&panel>;
++};
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.6.2
