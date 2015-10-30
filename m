@@ -1,100 +1,112 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:61555 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753733AbbJ1B03 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 27 Oct 2015 21:26:29 -0400
-Subject: Re: [PATCH v3 4/5] clk: s2mps15: Add support for S2MPS15 clocks
-To: Alim Akhtar <alim.akhtar@samsung.com>, lee.jones@linaro.org,
-	broonie@kernel.org
-References: <1445863883-5187-1-git-send-email-alim.akhtar@samsung.com>
- <1445863883-5187-5-git-send-email-alim.akhtar@samsung.com>
-Cc: mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, rtc-linux@googlegroups.com,
-	linux-kernel@vger.kernel.org
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <5630243E.1080608@samsung.com>
-Date: Wed, 28 Oct 2015 10:26:22 +0900
-MIME-version: 1.0
-In-reply-to: <1445863883-5187-5-git-send-email-alim.akhtar@samsung.com>
-Content-type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	devicetree@vger.kernel.org,
+	jonmason@broadcom.com,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	linux@arm.linux.org.uk,
+	sbranden@broadcom.com,
+	rjui@broadcom.com
+Subject: [PATCH v4 3/3] ARM: dts: BCM63xx: Add ARMPLL device tree nodes
+Date: Thu, 29 Oct 2015 18:23:19 -0700
+Message-Id: <1446168199-5959-4-git-send-email-f.fainelli@gmail.com>
+In-Reply-To: <1446168199-5959-1-git-send-email-f.fainelli@gmail.com>
+References: <1446168199-5959-1-git-send-email-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 26.10.2015 21:51, Alim Akhtar wrote:
-> S2MPS15 PMIC has three 32k buffered clocks outputs. This patch
-> adds supports for the same to the s2mps11 clock driver.
-> 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  drivers/clk/Kconfig       |    5 +++--
->  drivers/clk/clk-s2mps11.c |   24 ++++++++++++++++++++++++
->  2 files changed, 27 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index a1fa61159179..037a314b5d76 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -120,9 +120,10 @@ config COMMON_CLK_S2MPS11
->  	tristate "Clock driver for S2MPS1X/S5M8767 MFD"
->  	depends on MFD_SEC_CORE
->  	---help---
-> -	  This driver supports S2MPS11/S2MPS14/S5M8767 crystal oscillator
-> +	  This driver supports S2MPS1X/S5M8767 crystal oscillator
->  	  clock. These multi-function devices have two (S2MPS14) or three
-> -	  (S2MPS11, S5M8767) fixed-rate oscillators, clocked at 32KHz each.
-> +	  (S2MPS11/S2MPS13/S2MPS15/S5M8767) fixed-rate oscillators,
-> +	  clocked at 32KHz each.
->  
->  config CLK_TWL6040
->  	tristate "External McPDM functional clock from twl6040"
-> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-> index d266299dfdb1..455500dca653 100644
-> --- a/drivers/clk/clk-s2mps11.c
-> +++ b/drivers/clk/clk-s2mps11.c
-> @@ -25,6 +25,7 @@
->  #include <linux/mfd/samsung/s2mps11.h>
->  #include <linux/mfd/samsung/s2mps13.h>
->  #include <linux/mfd/samsung/s2mps14.h>
-> +#include <linux/mfd/samsung/s2mps15.h>
->  #include <linux/mfd/samsung/s5m8767.h>
->  #include <linux/mfd/samsung/core.h>
->  
-> @@ -148,6 +149,24 @@ static struct clk_init_data s2mps14_clks_init[S2MPS11_CLKS_NUM] = {
->  	},
->  };
->  
-> +static struct clk_init_data s2mps15_clks_init[S2MPS11_CLKS_NUM] = {
-> +	[S2MPS11_CLK_AP] = {
-> +		.name = "s2mps15_ap",
-> +		.ops = &s2mps11_clk_ops,
-> +		.flags = CLK_IS_ROOT,
-> +	},
-> +	[S2MPS11_CLK_CP] = {
-> +		.name = "s2mps15_cp",
-> +		.ops = &s2mps11_clk_ops,
-> +		.flags = CLK_IS_ROOT,
-> +	},
-> +	[S2MPS11_CLK_BT] = {
-> +		.name = "s2mps15_bt",
-> +		.ops = &s2mps11_clk_ops,
-> +		.flags = CLK_IS_ROOT,
-> +	},
-> +};
-> +
->  static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev,
->  		struct clk_init_data *clks_init)
->  {
-> @@ -207,6 +226,10 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
->  		s2mps11_reg = S2MPS14_REG_RTCCTRL;
->  		clks_init = s2mps14_clks_init;
->  		break;
-> +	case S2MPS15X:
-> +		s2mps11_reg = S2MPS15_REG_RTC_BUF;
-> +		clks_init = s2mps15_clks_init;
+Add the ARM PLL controller which comes standard with the Cortex-A9 found
+on the BCM63138 SoCs. This is the same controller as the one found in
+the Broadcom iProc architecture, however, we have a separate compatible
+string to indicate the integration difference, since the hardware is
+different.
 
-Another question (after looking at RTC driver):
-Is this the same register address as S2MPS14?
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+Changes in v4:
+- properly reflect the HW clocking and make it clear that periph_clk
+  is feeding into the ARM PLL clock domain
 
-Best regards,
-Krzysztof
+No changes in v2 or v3
 
+ arch/arm/boot/dts/bcm63138.dtsi | 36 ++++++++++++++++++++++++++++--------
+ 1 file changed, 28 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm/boot/dts/bcm63138.dtsi b/arch/arm/boot/dts/bcm63138.dtsi
+index 34cd64051250..d0560e8cd6de 100644
+--- a/arch/arm/boot/dts/bcm63138.dtsi
++++ b/arch/arm/boot/dts/bcm63138.dtsi
+@@ -43,18 +43,31 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		arm_timer_clk: arm_timer_clk {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <500000000>;
+-		};
+-
++		/* UBUS peripheral clock */
+ 		periph_clk: periph_clk {
+ 			#clock-cells = <0>;
+ 			compatible = "fixed-clock";
+ 			clock-frequency = <50000000>;
+ 			clock-output-names = "periph";
+ 		};
++
++		/* peripheral clock for system timer */
++		axi_clk: axi_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&armpll>;
++			clock-div = <2>;
++			clock-mult = <1>;
++		};
++
++		/* APB bus clock */
++		apb_clk: apb_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clocks = <&armpll>;
++			clock-div = <4>;
++			clock-mult = <1>;
++		};
+ 	};
+ 
+ 	/* ARM bus */
+@@ -93,14 +106,14 @@
+ 			compatible = "arm,cortex-a9-global-timer";
+ 			reg = <0x1e200 0x20>;
+ 			interrupts = <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&arm_timer_clk>;
++			clocks = <&axi_clk>;
+ 		};
+ 
+ 		local_timer: local-timer@1e600 {
+ 			compatible = "arm,cortex-a9-twd-timer";
+ 			reg = <0x1e600 0x20>;
+ 			interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&arm_timer_clk>;
++			clocks = <&axi_clk>;
+ 		};
+ 
+ 		twd_watchdog: watchdog@1e620 {
+@@ -109,6 +122,13 @@
+ 			interrupts = <GIC_PPI 14 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
++		armpll: armpll {
++			#clock-cells = <0>;
++			compatible = "brcm,bcm63138-armpll";
++			clocks = <&periph_clk>;
++			reg = <0x20000 0xf00>;
++		};
++
+ 		pmb0: reset-controller@4800c0 {
+ 			compatible = "brcm,bcm63138-pmb";
+ 			reg = <0x4800c0 0x10>;
+-- 
+2.1.0
