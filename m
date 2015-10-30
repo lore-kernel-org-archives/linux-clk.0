@@ -1,45 +1,89 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 30 Oct 2015 09:29:25 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	clk <linux-clk@vger.kernel.org>, Mason <slash.tmp@free.fr>
-Subject: Re: [PATCH v4] clk: tango4: clkgen driver for Tango4 platforms
-Message-ID: <20151030162925.GC19782@codeaurora.org>
-References: <562A5506.2070402@sigmadesigns.com>
- <20151029005658.GA19782@codeaurora.org>
- <563361B8.7090300@sigmadesigns.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <563361B8.7090300@sigmadesigns.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 14/19] ARM: sun5i: dt: Add pll3 and pll7 clocks
+Date: Fri, 30 Oct 2015 15:21:00 +0100
+Message-Id: <1446214865-3972-15-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/30, Marc Gonzalez wrote:
-> diff --git a/Documentation/devicetree/bindings/clock/tango4-clock.txt b/Documentation/devicetree/bindings/clock/tango4-clock.txt
-> new file mode 100644
-> index 000000000000..19c580a7bda2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/tango4-clock.txt
-> @@ -0,0 +1,23 @@
-> +* Sigma Designs Tango4 Clock Generator
-> +
-> +The Tango4 clock generator outputs cpu_clk and sys_clk (the latter is used
-> +for RAM and various peripheral devices). The clock binding described here
-> +is applicable to all Tango4 SoCs.
-> +
-> +Required Properties:
-> +
-> +- compatible: should be "sigma,tango4-clkgen".
+Enable the pll3 and pll7 clocks in the DT that are used to drive the
+display-related clocks.
 
-You should add sigma to the vendor prefix file
-Documentation/devicetree/bindings/vendor-prefixes.txt
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ arch/arm/boot/dts/sun5i.dtsi | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-Send that patch to the DT maintainers (Rob has been applying most
-vendor prefix patches).
-
-Otherwise this patch looks fine and I'll apply it to clk-next
-after v4.4-rc1 comes out (in about 2 weeks). We'll target v4.5.
-
+diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
+index 59a9426e3bd4..bde9a545b79f 100644
+--- a/arch/arm/boot/dts/sun5i.dtsi
++++ b/arch/arm/boot/dts/sun5i.dtsi
+@@ -88,6 +88,15 @@
+ 			clock-output-names = "osc24M";
+ 		};
+ 
++		osc3M: osc3M_clk {
++			compatible = "fixed-factor-clock";
++			#clock-cells = <0>;
++			clock-div = <8>;
++			clock-mult = <1>;
++			clocks = <&osc24M>;
++			clock-output-names = "osc3M";
++		};
++
+ 		osc32k: clk@0 {
+ 			#clock-cells = <0>;
+ 			compatible = "fixed-clock";
+@@ -112,6 +121,14 @@
+ 					     "pll2-4x", "pll2-8x";
+ 		};
+ 
++		pll3: clk@01c20010 {
++			#clock-cells = <0>;
++			compatible = "allwinner,sun4i-a10-pll3-clk";
++			reg = <0x01c20010 0x4>;
++			clocks = <&osc3M>;
++			clock-output-names = "pll3";
++		};
++
+ 		pll4: clk@01c20018 {
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun4i-a10-pll1-clk";
+@@ -136,6 +153,14 @@
+ 			clock-output-names = "pll6_sata", "pll6_other", "pll6";
+ 		};
+ 
++		pll7: clk@01c20030 {
++			#clock-cells = <0>;
++			compatible = "allwinner,sun4i-a10-pll3-clk";
++			reg = <0x01c20030 0x4>;
++			clocks = <&osc3M>;
++			clock-output-names = "pll7";
++		};
++
+ 		/* dummy is 200M */
+ 		cpu: cpu@01c20054 {
+ 			#clock-cells = <0>;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.6.2
