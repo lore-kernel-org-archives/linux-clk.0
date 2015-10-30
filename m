@@ -1,91 +1,56 @@
-Return-Path: <julia.lawall@lip6.fr>
-Date: Thu, 22 Oct 2015 07:52:29 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: Stephen Boyd <sboyd@codeaurora.org>
-cc: Michael Turquette <mturquette@baylibre.com>,
-    kernel-janitors@vger.kernel.org, linux-clk@vger.kernel.org,
-    linux-kernel@vger.kernel.org,
-    Russell King - ARM Linux <linux@arm.linux.org.uk>,
-    Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-    Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>,
-    Jason Cooper <jason@lakedaemon.net>
-Subject: Re: [PATCH 1/5] clk: add missing of_node_put
-In-Reply-To: <20151021231243.GH19782@codeaurora.org>
-Message-ID: <alpine.DEB.2.02.1510220752060.2246@localhost6.localdomain6>
-References: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr> <1445460100-26727-2-git-send-email-Julia.Lawall@lip6.fr> <20151021231243.GH19782@codeaurora.org>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <1446214865-3972-7-git-send-email-maxime.ripard@free-electrons.com>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1446214865-3972-7-git-send-email-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 31 Oct 2015 00:01:01 +0800
+Message-ID: <CAGb2v64ErryRq+-fToWihKONO5tgPxyydZ78gzsYYYJtOMGxWw@mail.gmail.com>
+Subject: Re: [PATCH 06/19] clk: sunxi: Add Allwinner R8 AHB gates support
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>, Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On Wed, 21 Oct 2015, Stephen Boyd wrote:
-
-> On 10/21, Julia Lawall wrote:
-> > for_each_matching_node_and_match performs an of_node_get on each iteration,
-> > so a break out of the loop requires an of_node_put.
-> > 
-> > A simplified version of the semantic patch that fixes this problem is as
-> > follows (http://coccinelle.lip6.fr):
-> > 
-> > // <smpl>
-> > @@
-> > expression e1,e2,e;
-> > local idexpression np;
-> > @@
-> > 
-> >  for_each_matching_node_and_match(np, e1, e2) {
-> >    ... when != of_node_put(np)
-> >        when != e = np
-> > (
-> >    return np;
-> > |
-> > +  of_node_put(np);
-> > ?  return ...;
-> > )
-> >    ...
-> >  }
-> > // </smpl>
-> > 
-> > Besides the problem identified by the semantic patch, this patch adds an
-> > of_node_get in front of saving np in a field of parent, to account for the
-> > fact that this value will be put on going on to the next element in the
-> > iteration, and then adds of_node_puts in the two loops where the parent
-> > pointer can be freed.
-> > 
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> > 
-> > ---
-> 
-> Applied to clk-next, except I collapsed the of_node_get() into
-> the assignment.
-> 
-> ---8<---
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index d366bfb66c58..2eae76f21d6f 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3205,8 +3205,7 @@ void __init of_clk_init(const struct of_device_id *matches)
->  		}
->  
->  		parent->clk_init_cb = match->data;
-> -		of_node_get(np);
-> -		parent->np = np;
-> +		parent->np = of_node_get(np);
-
-Thanks!
-
-julia
-
->  		list_add_tail(&parent->node, &clk_provider_list);
->  	}
->  
-> 
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+On Fri, Oct 30, 2015 at 10:20 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> The R8 has yet another array of gates for AHB. Let's add it to the list of
+> compatibles we can deal with.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/clk/sunxi/clk-simple-gates.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/clk-simple-gates.c
+> index 5666c767fa14..e3190a8687a8 100644
+> --- a/drivers/clk/sunxi/clk-simple-gates.c
+> +++ b/drivers/clk/sunxi/clk-simple-gates.c
+> @@ -158,5 +158,7 @@ CLK_OF_DECLARE(sun5i_a10s_ahb, "allwinner,sun5i-a10s-ahb-gates-clk",
+>                sun4i_a10_ahb_init);
+>  CLK_OF_DECLARE(sun5i_a13_ahb, "allwinner,sun5i-a13-ahb-gates-clk",
+>                sun4i_a10_ahb_init);
+> +CLK_OF_DECLARE(sun5i_r8_ahb, "allwinner,sun5i-r8-ahb-gates-clk",
+> +              sun4i_a10_ahb_init);
+>  CLK_OF_DECLARE(sun7i_a20_ahb, "allwinner,sun7i-a20-ahb-gates-clk",
+>                sun4i_a10_ahb_init);
 > --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+> 2.6.2
+>
+
+Please also update Documentation/devicetree/bindings/clock/sunxi.txt
+
+Otherwise,
+
+Acked-by: Chen-Yu Tsai <wens@csie.org>
