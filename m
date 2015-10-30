@@ -1,96 +1,176 @@
-Return-Path: <sjoerd.simons@collabora.co.uk>
-Message-ID: <1444072153.9895.25.camel@collabora.co.uk>
-Subject: Re: [PATCH 1/3] clk: add flag for clocks that need to be enabled on
- rate changes
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Date: Mon, 05 Oct 2015 21:09:13 +0200
-In-Reply-To: <1929669.AsgMSusdJb@phil>
-References: <1929669.AsgMSusdJb@phil>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 15/19] ARM: sun5i: dt: Add display and TCON clocks
+Date: Fri, 30 Oct 2015 15:21:01 +0100
+Message-Id: <1446214865-3972-16-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2015-08-21 at 19:46 +0200, Heiko Stuebner wrote:
-> Some clocks need to be enabled to accept rate changes. This patch
-> adds a
-> new flag CLK_SET_RATE_UNGATE that lets clk_change_rate enable the
-> clock
-> before trying to change the rate and disable it again afterwards.
-> This of course doesn't effect clocks that are already running at that
-> point, as their refcount will only temporarily increase.
->=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Enable the display and TCON (channel 0 and channel 1) clocks that are going
+to be needed to drive the display engine, tcon and TV encoders.
 
-Tested-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Reviewed-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ arch/arm/boot/dts/sun5i-a10s.dtsi |  8 +++---
+ arch/arm/boot/dts/sun5i-a13.dtsi  |  3 ++-
+ arch/arm/boot/dts/sun5i-r8.dtsi   |  5 ++--
+ arch/arm/boot/dts/sun5i.dtsi      | 53 +++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 63 insertions(+), 6 deletions(-)
 
-> ---
->  drivers/clk/clk.c            | 18 ++++++++++++++++++
->  include/linux/clk-provider.h |  1 +
->  2 files changed, 19 insertions(+)
->=20
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 28cd923..564f11e 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1438,6 +1438,15 @@ static void clk_change_rate(struct clk_core
-> *core)
->  	else if (core->parent)
->  		best_parent_rate =3D core->parent->rate;
-> =20
-> +	if (core->flags & CLK_SET_RATE_UNGATE) {
-> +		unsigned long flags;
-> +
-> +		clk_core_prepare(core);
-> +		flags =3D clk_enable_lock();
-> +		clk_core_enable(core);
-> +		clk_enable_unlock(flags);
-> +	}
-> +
->  	if (core->new_parent && core->new_parent !=3D core->parent) {
->  		old_parent =3D __clk_set_parent_before(core, core
-> ->new_parent);
->  		trace_clk_set_parent(core, core->new_parent);
-> @@ -1464,6 +1473,15 @@ static void clk_change_rate(struct clk_core
-> *core)
-> =20
->  	core->rate =3D clk_recalc(core, best_parent_rate);
-> =20
-> +	if (core->flags & CLK_SET_RATE_UNGATE) {
-> +		unsigned long flags;
-> +
-> +		flags =3D clk_enable_lock();
-> +		clk_core_disable(core);
-> +		clk_enable_unlock(flags);
-> +		clk_core_unprepare(core);
-> +	}
-> +
->  	if (core->notifier_count && old_rate !=3D core->rate)
->  		__clk_notify(core, POST_RATE_CHANGE, old_rate, core
-> ->rate);
-> =20
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk
-> -provider.h
-> index 3ecc07d..21e0025 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -31,6 +31,7 @@
->  #define CLK_SET_RATE_NO_REPARENT BIT(7) /* don't re-parent on rate
-> change */
->  #define CLK_GET_ACCURACY_NOCACHE BIT(8) /* do not use the cached clk
-> accuracy */
->  #define CLK_RECALC_NEW_RATES	BIT(9) /* recalc rates after
-> notifications */
-> +#define CLK_SET_RATE_UNGATE	BIT(10) /* clock needs to run to
-> set rate */
-> =20
->  struct clk;
->  struct clk_hw;
-
---=20
-Sjoerd Simons
-Collabora Ltd.
+diff --git a/arch/arm/boot/dts/sun5i-a10s.dtsi b/arch/arm/boot/dts/sun5i-a10s.dtsi
+index bddd0de88af6..0981a9e2db3b 100644
+--- a/arch/arm/boot/dts/sun5i-a10s.dtsi
++++ b/arch/arm/boot/dts/sun5i-a10s.dtsi
+@@ -65,8 +65,9 @@
+ 			compatible = "allwinner,simple-framebuffer",
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_be0-lcd0-hdmi";
+-			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 43>,
+-				 <&ahb_gates 44>;
++			clocks = <&ahb_gates 36>, <&ahb_gates 43>,
++				 <&ahb_gates 44>, <&de_be_clk>,
++				 <&tcon_ch1_clk>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -74,7 +75,8 @@
+ 			compatible = "allwinner,simple-framebuffer",
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_be0-lcd0";
+-			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 44>;
++			clocks = <&ahb_gates 36>, <&ahb_gates 44>,
++				 <&de_be_clk>, <&tcon_ch0_clk>;
+ 			status = "disabled";
+ 		};
+ 
+diff --git a/arch/arm/boot/dts/sun5i-a13.dtsi b/arch/arm/boot/dts/sun5i-a13.dtsi
+index d910d3a6c41c..130644d7e054 100644
+--- a/arch/arm/boot/dts/sun5i-a13.dtsi
++++ b/arch/arm/boot/dts/sun5i-a13.dtsi
+@@ -61,7 +61,8 @@
+ 			compatible = "allwinner,simple-framebuffer",
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_be0-lcd0";
+-			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 44>;
++			clocks = <&ahb_gates 36>, <&ahb_gates 44>, <&de_be_clk>,
++				 <&tcon_ch0_clk>;
+ 			status = "disabled";
+ 		};
+ 	};
+diff --git a/arch/arm/boot/dts/sun5i-r8.dtsi b/arch/arm/boot/dts/sun5i-r8.dtsi
+index 0ef865601ac9..b1e4e0170d51 100644
+--- a/arch/arm/boot/dts/sun5i-r8.dtsi
++++ b/arch/arm/boot/dts/sun5i-r8.dtsi
+@@ -51,8 +51,9 @@
+ 			compatible = "allwinner,simple-framebuffer",
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_be0-lcd0-tve0";
+-			clocks = <&pll5 1>, <&ahb_gates 34>, <&ahb_gates 36>,
+-				 <&ahb_gates 44>;
++			clocks = <&ahb_gates 34>, <&ahb_gates 36>,
++				 <&ahb_gates 44>, <&de_be_clk>,
++				 <&tcon_ch1_clk>;
+ 			status = "disabled";
+ 		};
+ 	};
+diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
+index bde9a545b79f..861c5a621e70 100644
+--- a/arch/arm/boot/dts/sun5i.dtsi
++++ b/arch/arm/boot/dts/sun5i.dtsi
+@@ -129,6 +129,15 @@
+ 			clock-output-names = "pll3";
+ 		};
+ 
++		pll3x2: pll3x2_clk {
++			compatible = "fixed-factor-clock";
++			#clock-cells = <0>;
++			clock-div = <1>;
++			clock-mult = <2>;
++			clocks = <&pll3>;
++			clock-output-names = "pll3x2";
++		};
++
+ 		pll4: clk@01c20018 {
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun4i-a10-pll1-clk";
+@@ -161,6 +170,15 @@
+ 			clock-output-names = "pll7";
+ 		};
+ 
++		pll7x2: pll7x2_clk {
++			compatible = "fixed-factor-clock";
++			#clock-cells = <0>;
++			clock-div = <1>;
++			clock-mult = <2>;
++			clocks = <&pll7>;
++			clock-output-names = "pll7x2";
++		};
++
+ 		/* dummy is 200M */
+ 		cpu: cpu@01c20054 {
+ 			#clock-cells = <0>;
+@@ -320,6 +338,41 @@
+ 			clock-output-names = "usb_ohci0", "usb_phy";
+ 		};
+ 
++		de_be_clk: clk@01c20104 {
++			#clock-cells = <0>;
++			#reset-cells = <0>;
++			compatible = "allwinner,sun4i-a10-display-clk";
++			reg = <0x01c20104 0x4>;
++			clocks = <&pll3>, <&pll7>, <&pll5 1>;
++			clock-output-names = "de-be";
++		};
++
++		de_fe_clk: clk@01c2010c {
++			#clock-cells = <0>;
++			#reset-cells = <0>;
++			compatible = "allwinner,sun4i-a10-display-clk";
++			reg = <0x01c2010c 0x4>;
++			clocks = <&pll3>, <&pll7>, <&pll5 1>;
++			clock-output-names = "de-fe";
++		};
++
++		tcon_ch0_clk: clk@01c20118 {
++			#clock-cells = <0>;
++			#reset-cells = <1>;
++			compatible = "allwinner,sun4i-a10-tcon-ch0-clk";
++			reg = <0x01c20118 0x4>;
++			clocks = <&pll3>, <&pll7>, <&pll3x2>, <&pll7x2>;
++			clock-output-names = "tcon-ch0-sclk";
++		};
++
++		tcon_ch1_clk: clk@01c2012c {
++			#clock-cells = <0>;
++			compatible = "allwinner,sun4i-a10-tcon-ch1-clk";
++			reg = <0x01c2012c 0x4>;
++			clocks = <&pll3>, <&pll7>, <&pll3x2>, <&pll7x2>;
++			clock-output-names = "tcon-ch1-sclk";
++		};
++
+ 		codec_clk: clk@01c20140 {
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun4i-a10-codec-clk";
+-- 
+2.6.2
