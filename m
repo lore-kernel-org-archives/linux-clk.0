@@ -1,98 +1,123 @@
-Return-Path: <B48286@freescale.com>
-From: Zhiqiang Hou <B48286@freescale.com>
-To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-CC: <mark.rutland@arm.com>, <linux@roeck-us.net>, <wsa@the-dreams.de>,
-	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <Mingkai.Hu@freescale.com>,
-	<Shaohui.Xie@freescale.com>, <scottwood@freescale.com>,
-	<bhupesh.sharma@freescale.com>, <Wenbin.Song@freescale.com>,
-	<B48286@freescale.com>
-Subject: [PATCH V6 5/6] clk: qoriq: Add ls1043a support.
-Date: Fri, 23 Oct 2015 16:01:21 +0800
-Message-ID: <1445587282-29529-5-git-send-email-B48286@freescale.com>
-In-Reply-To: <1445587282-29529-1-git-send-email-B48286@freescale.com>
-References: <1445587282-29529-1-git-send-email-B48286@freescale.com>
-Return-Path: B48286@freescale.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 16/19] ARM: sun5i: dt: Add DRAM gates
+Date: Fri, 30 Oct 2015 15:21:02 +0100
+Message-Id: <1446214865-3972-17-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Hou Zhiqiang <B48286@freescale.com>
+The DRAM gates control whether the image / display devices on the SoC have
+access to the DRAM clock or not.
 
-Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Enable it.
+
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
-V6: V5 V4 V3 V2
- - No change.
+ arch/arm/boot/dts/sun5i-a10s.dtsi |  5 +++--
+ arch/arm/boot/dts/sun5i-a13.dtsi  |  2 +-
+ arch/arm/boot/dts/sun5i-r8.dtsi   |  2 +-
+ arch/arm/boot/dts/sun5i.dtsi      | 19 +++++++++++++++++++
+ 4 files changed, 24 insertions(+), 4 deletions(-)
 
- drivers/clk/clk-qoriq.c | 38 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
-
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index 8f9c93b..b189688 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -244,6 +244,28 @@ static const struct clockgen_muxinfo clockgen2_cmux_cgb = {
- 	},
- };
+diff --git a/arch/arm/boot/dts/sun5i-a10s.dtsi b/arch/arm/boot/dts/sun5i-a10s.dtsi
+index 0981a9e2db3b..c996b5d1851a 100644
+--- a/arch/arm/boot/dts/sun5i-a10s.dtsi
++++ b/arch/arm/boot/dts/sun5i-a10s.dtsi
+@@ -67,7 +67,7 @@
+ 			allwinner,pipeline = "de_be0-lcd0-hdmi";
+ 			clocks = <&ahb_gates 36>, <&ahb_gates 43>,
+ 				 <&ahb_gates 44>, <&de_be_clk>,
+-				 <&tcon_ch1_clk>;
++				 <&tcon_ch1_clk>, <&dram_gates 26>;
+ 			status = "disabled";
+ 		};
  
-+static const struct clockgen_muxinfo ls1043a_hwa1 = {
-+	{
-+		{},
-+		{},
-+		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV2 },
-+		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV3 },
-+		{},
-+		{},
-+		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV2 },
-+		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV3 },
-+	},
-+};
-+
-+static const struct clockgen_muxinfo ls1043a_hwa2 = {
-+	{
-+		{},
-+		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV1 },
-+		{},
-+		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV3 },
-+	},
-+};
-+
- static const struct clockgen_muxinfo t1023_hwa1 = {
- 	{
- 		{},
-@@ -452,6 +474,21 @@ static const struct clockgen_chipinfo chipinfo[] = {
- 		.pll_mask = 0x03,
- 	},
- 	{
-+		.compat = "fsl,ls1043a-clockgen",
-+		.init_periph = t2080_init_periph,
-+		.cmux_groups = {
-+			&t1040_cmux
-+		},
-+		.hwaccel = {
-+			&ls1043a_hwa1, &ls1043a_hwa2
-+		},
-+		.cmux_to_group = {
-+			0, -1
-+		},
-+		.pll_mask = 0x07,
-+		.flags = CG_PLL_8BIT,
-+	},
-+	{
- 		.compat = "fsl,ls2080a-clockgen",
- 		.cmux_groups = {
- 			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
-@@ -1227,6 +1264,7 @@ err:
- CLK_OF_DECLARE(qoriq_clockgen_1, "fsl,qoriq-clockgen-1.0", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_2, "fsl,qoriq-clockgen-2.0", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls1021a, "fsl,ls1021a-clockgen", clockgen_init);
-+CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
+@@ -76,7 +76,8 @@
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_be0-lcd0";
+ 			clocks = <&ahb_gates 36>, <&ahb_gates 44>,
+-				 <&de_be_clk>, <&tcon_ch0_clk>;
++				 <&de_be_clk>, <&tcon_ch0_clk>,
++				 <&dram_gates 26>;
+ 			status = "disabled";
+ 		};
  
- /* Legacy nodes */
+diff --git a/arch/arm/boot/dts/sun5i-a13.dtsi b/arch/arm/boot/dts/sun5i-a13.dtsi
+index 130644d7e054..17b36b942d38 100644
+--- a/arch/arm/boot/dts/sun5i-a13.dtsi
++++ b/arch/arm/boot/dts/sun5i-a13.dtsi
+@@ -62,7 +62,7 @@
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_be0-lcd0";
+ 			clocks = <&ahb_gates 36>, <&ahb_gates 44>, <&de_be_clk>,
+-				 <&tcon_ch0_clk>;
++				 <&tcon_ch0_clk>, <&dram_gates 26>;
+ 			status = "disabled";
+ 		};
+ 	};
+diff --git a/arch/arm/boot/dts/sun5i-r8.dtsi b/arch/arm/boot/dts/sun5i-r8.dtsi
+index b1e4e0170d51..691d3de75b35 100644
+--- a/arch/arm/boot/dts/sun5i-r8.dtsi
++++ b/arch/arm/boot/dts/sun5i-r8.dtsi
+@@ -53,7 +53,7 @@
+ 			allwinner,pipeline = "de_be0-lcd0-tve0";
+ 			clocks = <&ahb_gates 34>, <&ahb_gates 36>,
+ 				 <&ahb_gates 44>, <&de_be_clk>,
+-				 <&tcon_ch1_clk>;
++				 <&tcon_ch1_clk>, <&dram_gates 26>;
+ 			status = "disabled";
+ 		};
+ 	};
+diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
+index 861c5a621e70..426db76c0fe6 100644
+--- a/arch/arm/boot/dts/sun5i.dtsi
++++ b/arch/arm/boot/dts/sun5i.dtsi
+@@ -338,6 +338,25 @@
+ 			clock-output-names = "usb_ohci0", "usb_phy";
+ 		};
+ 
++		dram_gates: clk@01c20100 {
++			#clock-cells = <1>;
++			compatible = "allwinner,sun5i-a13-dram-gates-clk";
++			reg = <0x01c20100 0x4>;
++			clocks = <&pll5 0>;
++			clock-indices = <0>,
++					<1>,
++					<25>,
++					<26>,
++					<29>,
++					<31>;
++			clock-output-names = "dram_ve",
++					     "dram_csi",
++					     "dram_de_fe",
++					     "dram_de_be",
++					     "dram_ace",
++					     "dram_iep";
++		};
++
+ 		de_be_clk: clk@01c20104 {
+ 			#clock-cells = <0>;
+ 			#reset-cells = <0>;
 -- 
-2.1.0.27.g96db324
+2.6.2
