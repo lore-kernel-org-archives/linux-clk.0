@@ -1,112 +1,260 @@
-Return-Path: <khilman@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1443622064-14362-5-git-send-email-heiko@sntech.de>
-References: <1443622064-14362-1-git-send-email-heiko@sntech.de>
-	<1443622064-14362-5-git-send-email-heiko@sntech.de>
-Date: Fri, 9 Oct 2015 21:06:25 +0200
-Message-ID: <CAMAWPa9o=bQJPK+tJ38=5jngTFcOsAi=s9RcETbPN=3SsyQ8gA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/8] mmc: dw_mmc: Use mmc_regulator_set_vqmmc in start_signal_voltage_switch
-From: Kevin Hilman <khilman@kernel.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, tgih.jun@samsung.com, jh80.chung@samsung.com,
-	Alexandru Stan <amstan@chromium.org>, linux-mmc <linux-mmc@vger.kernel.org>,
-	Doug Anderson <dianders@chromium.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tyler Baker <tyler.baker@linaro.org>,
-	Olof Johansson <olof@lixom.net>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 01/19] clk: sunxi: Add display clock
+Date: Fri, 30 Oct 2015 15:20:47 +0100
+Message-Id: <1446214865-3972-2-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Sep 30, 2015 at 4:07 PM, Heiko Stuebner <heiko@sntech.de> wrote:
-> From: Douglas Anderson <dianders@chromium.org>
->
-> We've introduced a new helper in the MMC core:
-> mmc_regulator_set_vqmmc().  Let's use this in dw_mmc.  Using this new
-> helper has some advantages:
->
-> 1. We get the mmc_regulator_set_vqmmc() behavior of trying to match
->    VQMMC and VMMC when the signal voltage is 3.3V.  This ensures max
->    compatibility.
->
-> 2. We get rid of a few more warnings when probing unsupported
->    voltages.
->
-> 3. We get rid of some non-dw_mmc specific code in dw_mmc.
->
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+The A10 SoCs and its relatives has a special clock controller to drive the
+display engines (both frontend and backend).
 
-kernelci.org found a new failure in linux-next on
-exynos5800-peach-pi[1] and it was bisected down to this patch, which
-has hit linux-next in the form of commit fba2e23128d0 (mmc: dw_mmc:
-Use mmc_regulator_set_vqmmc in start_signal_voltage_switch).  Based on
-a quick glance at the boot log[2], it looks to be a bad pointer
-dereference in regulator_get_voltage().
+Add a driver for it.
 
-I confirmed that reverting this patch on top of next-20151009 gets my
-peach-pi booting again.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi/Makefile            |   1 +
+ drivers/clk/sunxi/clk-sun4i-display.c | 199 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 200 insertions(+)
+ create mode 100644 drivers/clk/sunxi/clk-sun4i-display.c
 
-Note that the boot failure is only on exynos_defconfig, not multi_v7_defconfig.
-
-Kevin
-
-
-[1] http://kernelci.org/boot/exynos5800-peach-pi/job/next/kernel/next-20151009/defconfig/exynos_defconfig/lab/lab-khilman/?_id=56177d3659b514a50c6c3267
-
-[2] http://storage.kernelci.org/next/next-20151009/arm-exynos_defconfig/lab-khilman/boot-exynos5800-peach-pi.html
-
-
-> ---
->  drivers/mmc/host/dw_mmc.c | 17 ++++++-----------
->  1 file changed, 6 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index fcbf552..b1b7e7f 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -1279,7 +1279,6 @@ static int dw_mci_switch_voltage(struct mmc_host *mmc, struct mmc_ios *ios)
->         const struct dw_mci_drv_data *drv_data = host->drv_data;
->         u32 uhs;
->         u32 v18 = SDMMC_UHS_18V << slot->id;
-> -       int min_uv, max_uv;
->         int ret;
->
->         if (drv_data && drv_data->switch_voltage)
-> @@ -1291,22 +1290,18 @@ static int dw_mci_switch_voltage(struct mmc_host *mmc, struct mmc_ios *ios)
->          * does no harm but you need to set the regulator directly.  Try both.
->          */
->         uhs = mci_readl(host, UHS_REG);
-> -       if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_330) {
-> -               min_uv = 2700000;
-> -               max_uv = 3600000;
-> +       if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_330)
->                 uhs &= ~v18;
-> -       } else {
-> -               min_uv = 1700000;
-> -               max_uv = 1950000;
-> +       else
->                 uhs |= v18;
-> -       }
-> +
->         if (!IS_ERR(mmc->supply.vqmmc)) {
-> -               ret = regulator_set_voltage(mmc->supply.vqmmc, min_uv, max_uv);
-> +               ret = mmc_regulator_set_vqmmc(mmc, ios);
->
->                 if (ret) {
->                         dev_dbg(&mmc->class_dev,
-> -                                        "Regulator set error %d: %d - %d\n",
-> -                                        ret, min_uv, max_uv);
-> +                                        "Regulator set error %d - %s V\n",
-> +                                        ret, uhs & v18 ? "1.8" : "3.3");
->                         return ret;
->                 }
->         }
-> --
-> 2.5.1
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+index cb4c299214ce..a9e1a5885846 100644
+--- a/drivers/clk/sunxi/Makefile
++++ b/drivers/clk/sunxi/Makefile
+@@ -9,6 +9,7 @@ obj-y += clk-a10-mod1.o
+ obj-y += clk-a10-pll2.o
+ obj-y += clk-a20-gmac.o
+ obj-y += clk-mod0.o
++obj-y += clk-sun4i-display.o
+ obj-y += clk-simple-gates.o
+ obj-y += clk-sun8i-mbus.o
+ obj-y += clk-sun9i-core.o
+diff --git a/drivers/clk/sunxi/clk-sun4i-display.c b/drivers/clk/sunxi/clk-sun4i-display.c
+new file mode 100644
+index 000000000000..f13b095c6d7a
+--- /dev/null
++++ b/drivers/clk/sunxi/clk-sun4i-display.c
+@@ -0,0 +1,199 @@
++/*
++ * Copyright 2015 Maxime Ripard
++ *
++ * Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/of_address.h>
++#include <linux/reset-controller.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++
++#define SUN4I_A10_DISPLAY_PARENTS	3
++
++#define SUN4I_A10_DISPLAY_GATE_BIT	31
++#define SUN4I_A10_DISPLAY_RESET_BIT	30
++#define SUN4I_A10_DISPLAY_MUX_MASK	3
++#define SUN4I_A10_DISPLAY_MUX_SHIFT	24
++#define SUN4I_A10_DISPLAY_DIV_WIDTH	4
++#define SUN4I_A10_DISPLAY_DIV_SHIFT	0
++
++struct reset_data {
++	void __iomem			*reg;
++	spinlock_t			*lock;
++	struct reset_controller_dev	rcdev;
++};
++
++static DEFINE_SPINLOCK(sun4i_a10_display_lock);
++
++static int sun4i_a10_display_assert(struct reset_controller_dev *rcdev,
++				    unsigned long id)
++{
++	struct reset_data *data = container_of(rcdev,
++					       struct reset_data,
++					       rcdev);
++	unsigned long flags;
++	u32 reg;
++
++	spin_lock_irqsave(data->lock, flags);
++
++	reg = readl(data->reg);
++	writel(reg & ~BIT(SUN4I_A10_DISPLAY_RESET_BIT), data->reg);
++
++	spin_unlock_irqrestore(data->lock, flags);
++
++	return 0;
++}
++
++static int sun4i_a10_display_deassert(struct reset_controller_dev *rcdev,
++				      unsigned long id)
++{
++	struct reset_data *data = container_of(rcdev,
++						   struct reset_data,
++						   rcdev);
++	unsigned long flags;
++	u32 reg;
++
++	spin_lock_irqsave(data->lock, flags);
++
++	reg = readl(data->reg);
++	writel(reg | BIT(SUN4I_A10_DISPLAY_RESET_BIT), data->reg);
++
++	spin_unlock_irqrestore(data->lock, flags);
++
++	return 0;
++}
++
++static int sun4i_a10_display_status(struct reset_controller_dev *rcdev,
++				    unsigned long id)
++{
++	struct reset_data *data = container_of(rcdev,
++					       struct reset_data,
++					       rcdev);
++
++	return !(readl(data->reg) & BIT(SUN4I_A10_DISPLAY_RESET_BIT));
++}
++
++static struct reset_control_ops sun4i_a10_display_reset_ops = {
++	.assert		= sun4i_a10_display_assert,
++	.deassert	= sun4i_a10_display_deassert,
++	.status		= sun4i_a10_display_status,
++};
++
++static int sun4i_a10_display_reset_xlate(struct reset_controller_dev *rcdev,
++					 const struct of_phandle_args *spec)
++{
++	if (WARN_ON(spec->args_count != rcdev->of_reset_n_cells))
++		return -EINVAL;
++
++	/* We only have a single reset signal */
++	return 0;
++}
++
++static void __init sun4i_a10_display_setup(struct device_node *node)
++{
++	const char *parents[SUN4I_A10_DISPLAY_PARENTS];
++	const char *clk_name = node->name;
++	struct reset_data *reset_data;
++	struct clk_divider *div;
++	struct clk_gate *gate;
++	struct clk_mux *mux;
++	void __iomem *reg;
++	struct clk *clk;
++	int i;
++
++	of_property_read_string(node, "clock-output-names", &clk_name);
++
++	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
++	if (IS_ERR(reg)) {
++		pr_err("%s: Could not map the clock registers\n", clk_name);
++		return;
++	}
++
++	for (i = 0; i < SUN4I_A10_DISPLAY_PARENTS; i++)
++		parents[i] = of_clk_get_parent_name(node, i);
++
++	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
++	if (!mux)
++		return;
++
++	mux->reg = reg;
++	mux->shift = SUN4I_A10_DISPLAY_MUX_SHIFT;
++	mux->mask = SUN4I_A10_DISPLAY_MUX_MASK;
++	mux->lock = &sun4i_a10_display_lock;
++
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		goto free_mux;
++
++	gate->reg = reg;
++	gate->bit_idx = SUN4I_A10_DISPLAY_GATE_BIT;
++	gate->lock = &sun4i_a10_display_lock;
++
++	div = kzalloc(sizeof(*div), GFP_KERNEL);
++	if (!div)
++		goto free_gate;
++
++	div->reg = reg;
++	div->shift = SUN4I_A10_DISPLAY_DIV_SHIFT;
++	div->width = SUN4I_A10_DISPLAY_DIV_WIDTH;
++	div->lock = &sun4i_a10_display_lock;
++
++	clk = clk_register_composite(NULL, clk_name,
++				     parents, SUN4I_A10_DISPLAY_PARENTS,
++				     &mux->hw, &clk_mux_ops,
++				     &div->hw, &clk_divider_ops,
++				     &gate->hw, &clk_gate_ops,
++				     0);
++	if (IS_ERR(clk)) {
++		pr_err("%s: Couldn't register the clock\n", clk_name);
++		goto free_div;
++	}
++
++	of_clk_add_provider(node, of_clk_src_simple_get, clk);
++
++	reset_data = kzalloc(sizeof(*reset_data), GFP_KERNEL);
++	if (!reset_data)
++		goto free_clk;
++
++	reset_data->reg = reg;
++	reset_data->lock = &sun4i_a10_display_lock;
++	reset_data->rcdev.nr_resets = 1;
++	reset_data->rcdev.ops = &sun4i_a10_display_reset_ops;
++	reset_data->rcdev.of_node = node;
++	reset_data->rcdev.of_reset_n_cells = 0;
++	reset_data->rcdev.of_xlate = &sun4i_a10_display_reset_xlate;
++
++	if (reset_controller_register(&reset_data->rcdev)) {
++		pr_err("%s: Couldn't register the reset controller\n",
++		       clk_name);
++		goto free_reset;
++	}
++
++	return;
++
++free_reset:
++	kfree(reset_data);
++free_clk:
++	clk_unregister(clk);
++free_div:
++	kfree(div);
++free_gate:
++	kfree(gate);
++free_mux:
++	kfree(mux);
++}
++
++CLK_OF_DECLARE(sun4i_a10_display, "allwinner,sun4i-a10-display-clk",
++	       sun4i_a10_display_setup);
+-- 
+2.6.2
