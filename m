@@ -1,49 +1,149 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:29494 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753467AbbJTJX1 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 20 Oct 2015 05:23:27 -0400
-From: Andrzej Hajda <a.hajda@samsung.com>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Hyungwon Hwang <human.hwang@samsung.com>
-Subject: [PATCH 04/10] dt-bindings: video: add PCLK clock entry to
- exynos5433-decon
-Date: Tue, 20 Oct 2015 11:22:35 +0200
-Message-id: <1445332961-25419-5-git-send-email-a.hajda@samsung.com>
-In-reply-to: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
-References: <1445332961-25419-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 02/19] clk: sunxi: Add PLL3 clock
+Date: Fri, 30 Oct 2015 15:20:48 +0100
+Message-Id: <1446214865-3972-3-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-DECON IP requires this clock to access configuration registers.
+The A10 SoCs and relatives have a PLL controller to drive the PLL3 and
+PLL7, clocked from a 3MHz oscillator, that drives the display related
+clocks (GPU, display engine, TCON, etc.)
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Add a driver for it.
+
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- Documentation/devicetree/bindings/video/exynos5433-decon.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/sunxi/Makefile         |  3 +-
+ drivers/clk/sunxi/clk-sun4i-pll3.c | 84 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 86 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/sunxi/clk-sun4i-pll3.c
 
-diff --git a/Documentation/devicetree/bindings/video/exynos5433-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
-index 377afbf..3dff78b 100644
---- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
-+++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
-@@ -16,7 +16,7 @@ Required properties:
- - clocks: must include clock specifiers corresponding to entries in the
- 	  clock-names property.
- - clock-names: list of clock names sorted in the same order as the clocks
--	       property. Must contain "aclk_decon", "aclk_smmu_decon0x",
-+	       property. Must contain "pclk", "aclk_decon", "aclk_smmu_decon0x",
- 	       "aclk_xiu_decon0x", "pclk_smmu_decon0x", clk_decon_vclk",
- 	       "sclk_decon_eclk"
- - ports: contains a port which is connected to mic node. address-cells and
+diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+index a9e1a5885846..40c32ffd912c 100644
+--- a/drivers/clk/sunxi/Makefile
++++ b/drivers/clk/sunxi/Makefile
+@@ -9,8 +9,9 @@ obj-y += clk-a10-mod1.o
+ obj-y += clk-a10-pll2.o
+ obj-y += clk-a20-gmac.o
+ obj-y += clk-mod0.o
+-obj-y += clk-sun4i-display.o
+ obj-y += clk-simple-gates.o
++obj-y += clk-sun4i-display.o
++obj-y += clk-sun4i-pll3.o
+ obj-y += clk-sun8i-mbus.o
+ obj-y += clk-sun9i-core.o
+ obj-y += clk-sun9i-mmc.o
+diff --git a/drivers/clk/sunxi/clk-sun4i-pll3.c b/drivers/clk/sunxi/clk-sun4i-pll3.c
+new file mode 100644
+index 000000000000..7ea178bf19fa
+--- /dev/null
++++ b/drivers/clk/sunxi/clk-sun4i-pll3.c
+@@ -0,0 +1,84 @@
++/*
++ * Copyright 2015 Maxime Ripard
++ *
++ * Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/of_address.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++
++#define SUN4I_A10_PLL3_GATE_BIT	31
++#define SUN4I_A10_PLL3_DIV_WIDTH	7
++#define SUN4I_A10_PLL3_DIV_SHIFT	0
++
++static DEFINE_SPINLOCK(sun4i_a10_pll3_lock);
++
++static void __init sun4i_a10_pll3_setup(struct device_node *node)
++{
++	const char *clk_name = node->name, *parent;
++	struct clk_factor *mult;
++	struct clk_gate *gate;
++	void __iomem *reg;
++	struct clk *clk;
++
++	of_property_read_string(node, "clock-output-names", &clk_name);
++	parent = of_clk_get_parent_name(node, 0);
++
++	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
++	if (IS_ERR(reg)) {
++		pr_err("%s: Could not map the clock registers\n", clk_name);
++		return;
++	}
++
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		return;
++
++	gate->reg = reg;
++	gate->bit_idx = SUN4I_A10_PLL3_GATE_BIT;
++	gate->lock = &sun4i_a10_pll3_lock;
++
++	mult = kzalloc(sizeof(*mult), GFP_KERNEL);
++	if (!mult)
++		goto free_gate;
++
++	mult->reg = reg;
++	mult->shift = SUN4I_A10_PLL3_DIV_SHIFT;
++	mult->width = SUN4I_A10_PLL3_DIV_WIDTH;
++	mult->lock = &sun4i_a10_pll3_lock;
++
++	clk = clk_register_composite(NULL, clk_name,
++				     &parent, 1,
++				     NULL, NULL,
++				     &mult->hw, &clk_factor_ops,
++				     &gate->hw, &clk_gate_ops,
++				     0);
++	if (IS_ERR(clk)) {
++		pr_err("%s: Couldn't register the clock\n", clk_name);
++		goto free_mult;
++	}
++
++	of_clk_add_provider(node, of_clk_src_simple_get, clk);
++
++	return;
++
++free_mult:
++	kfree(mult);
++free_gate:
++	kfree(gate);
++}
++
++CLK_OF_DECLARE(sun4i_a10_pll3, "allwinner,sun4i-a10-pll3-clk",
++	       sun4i_a10_pll3_setup);
 -- 
-1.9.1
-
+2.6.2
