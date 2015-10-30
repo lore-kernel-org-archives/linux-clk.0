@@ -1,71 +1,46 @@
-Return-Path: <Julia.Lawall@lip6.fr>
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: kernel-janitors@vger.kernel.org,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 30 Oct 2015 14:37:34 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
 	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jason Cooper <jason@lakedaemon.net>
-Subject: [PATCH 3/5] clk: imx27: add missing of_node_put
-Date: Wed, 21 Oct 2015 22:41:38 +0200
-Message-Id: <1445460100-26727-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
-References: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
+	Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 04/19] clk: sunxi: Add TCON channel1 clock
+Message-ID: <20151030213734.GI19782@codeaurora.org>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1446214865-3972-5-git-send-email-maxime.ripard@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1446214865-3972-5-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-for_each_compatible_node performs an of_node_get on each iteration, so a
-break out of the loop requires an of_node_put.
+On 10/30, Maxime Ripard wrote:
+> The TCON is a controller generating the timings to output videos signals,
+> acting like both a CRTC and an encoder.
+> 
+> It has two channels depending on the output, each channel being driven by
+> its own clock (and own clock controller).
+> 
+> Add a driver for the channel 1 clock.
+> 
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-The semantic patch that fixes this problem is as follows
-(http://coccinelle.lip6.fr):
+Similar comments apply to patches 3 and 4. Was the same code
+copy/pasted two more times and then changed to have different
+values? Looks like we should consolidate all that stuff into
+something more generic so that we don't have the same problems 3
+times.
 
-// <smpl>
-@@
-local idexpression n;
-expression e;
-@@
-
- for_each_compatible_node(n,...) {
-   ...
-(
-   of_node_put(n);
-|
-   e = n
-|
-+  of_node_put(n);
-?  break;
-)
-   ...
- }
-... when != n
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/clk/imx/clk-imx27.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/imx/clk-imx27.c b/drivers/clk/imx/clk-imx27.c
-index 0d7b8df..cf5cf75 100644
---- a/drivers/clk/imx/clk-imx27.c
-+++ b/drivers/clk/imx/clk-imx27.c
-@@ -261,8 +261,10 @@ static void __init mx27_clocks_init_dt(struct device_node *np)
- 		if (!of_device_is_compatible(refnp, "fsl,imx-osc26m"))
- 			continue;
- 
--		if (!of_property_read_u32(refnp, "clock-frequency", &fref))
-+		if (!of_property_read_u32(refnp, "clock-frequency", &fref)) {
-+			of_node_put(refnp);
- 			break;
-+		}
- 	}
- 
- 	ccm = of_iomap(np, 0);
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
