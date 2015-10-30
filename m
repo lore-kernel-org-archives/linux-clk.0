@@ -1,140 +1,164 @@
-Return-Path: <jonmason@broadcom.com>
-From: Jon Mason <jonmason@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: Florian Fainelli <f.fainelli@gmail.com>, Hauke Mehrtens
-	<hauke@hauke-m.de>, Ray Jui <rjui@broadcom.com>, Scott Branden
-	<sbranden@broadcom.com>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>
-Subject: [PATCH v2 2/7] clk: iproc: Add PWRCTRL support
-Date: Tue, 13 Oct 2015 17:08:00 -0400
-Message-ID: <1444770485-11210-3-git-send-email-jonmason@broadcom.com>
-In-Reply-To: <1444770485-11210-1-git-send-email-jonmason@broadcom.com>
-References: <1444770485-11210-1-git-send-email-jonmason@broadcom.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 30 Oct 2015 14:29:02 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 01/19] clk: sunxi: Add display clock
+Message-ID: <20151030212902.GG19782@codeaurora.org>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1446214865-3972-2-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jonmason@broadcom.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1446214865-3972-2-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some iProc SoC clocks use a different way to control clock power, via
-the PWRDWN bit in the PLL control register.  Since the PLL control
-register is used to access the PWRDWN bit, there is no need for the
-pwr_base when this is being used.  A new flag, IPROC_CLK_EMBED_PWRCTRL,
-has been added to identify this usage.  We can use the AON interface to
-write the values to enable/disable PWRDOWN.
+On 10/30, Maxime Ripard wrote:
+> diff --git a/drivers/clk/sunxi/clk-sun4i-display.c b/drivers/clk/sunxi/clk-sun4i-display.c
+> new file mode 100644
+> index 000000000000..f13b095c6d7a
+> --- /dev/null
+> +++ b/drivers/clk/sunxi/clk-sun4i-display.c
+> @@ -0,0 +1,199 @@
+> +/*
+> + * Copyright 2015 Maxime Ripard
+> + *
+> + * Maxime Ripard <maxime.ripard@free-electrons.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
 
-Signed-off-by: Jon Mason <jonmason@broadcom.com>
----
- drivers/clk/bcm/clk-iproc-pll.c | 55 ++++++++++++++++++++++++++++-------------
- drivers/clk/bcm/clk-iproc.h     |  6 +++++
- 2 files changed, 44 insertions(+), 17 deletions(-)
+#include <linux/kernel.h> for container_of?
 
-diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
-index 2dda4e8..e029ab3 100644
---- a/drivers/clk/bcm/clk-iproc-pll.c
-+++ b/drivers/clk/bcm/clk-iproc-pll.c
-@@ -148,14 +148,25 @@ static void __pll_disable(struct iproc_pll *pll)
- 		writel(val, pll->asiu_base + ctrl->asiu.offset);
- 	}
- 
--	/* latch input value so core power can be shut down */
--	val = readl(pll->pwr_base + ctrl->aon.offset);
--	val |= (1 << ctrl->aon.iso_shift);
--	writel(val, pll->pwr_base + ctrl->aon.offset);
--
--	/* power down the core */
--	val &= ~(bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
--	writel(val, pll->pwr_base + ctrl->aon.offset);
-+	if (ctrl->flags & IPROC_CLK_EMBED_PWRCTRL) {
-+		val = readl(pll->pll_base + ctrl->aon.offset);
-+		val |= (bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
-+		writel(val, pll->pll_base + ctrl->aon.offset);
-+
-+		if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
-+			readl(pll->pll_base + ctrl->aon.offset);
-+	}
-+
-+	if (pll->pwr_base) {
-+		/* latch input value so core power can be shut down */
-+		val = readl(pll->pwr_base + ctrl->aon.offset);
-+		val |= (1 << ctrl->aon.iso_shift);
-+		writel(val, pll->pwr_base + ctrl->aon.offset);
-+
-+		/* power down the core */
-+		val &= ~(bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
-+		writel(val, pll->pwr_base + ctrl->aon.offset);
-+	}
- }
- 
- static int __pll_enable(struct iproc_pll *pll)
-@@ -163,11 +174,22 @@ static int __pll_enable(struct iproc_pll *pll)
- 	const struct iproc_pll_ctrl *ctrl = pll->ctrl;
- 	u32 val;
- 
--	/* power up the PLL and make sure it's not latched */
--	val = readl(pll->pwr_base + ctrl->aon.offset);
--	val |= bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift;
--	val &= ~(1 << ctrl->aon.iso_shift);
--	writel(val, pll->pwr_base + ctrl->aon.offset);
-+	if (ctrl->flags & IPROC_CLK_EMBED_PWRCTRL) {
-+		val = readl(pll->pll_base + ctrl->aon.offset);
-+		val &= ~(bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift);
-+		writel(val, pll->pll_base + ctrl->aon.offset);
-+
-+		if (unlikely(ctrl->flags & IPROC_CLK_NEEDS_READ_BACK))
-+			readl(pll->pll_base + ctrl->aon.offset);
-+	}
-+
-+	if (pll->pwr_base) {
-+		/* power up the PLL and make sure it's not latched */
-+		val = readl(pll->pwr_base + ctrl->aon.offset);
-+		val |= bit_mask(ctrl->aon.pwr_width) << ctrl->aon.pwr_shift;
-+		val &= ~(1 << ctrl->aon.iso_shift);
-+		writel(val, pll->pwr_base + ctrl->aon.offset);
-+	}
- 
- 	/* certain PLLs also need to be ungated from the ASIU top level */
- 	if (ctrl->flags & IPROC_CLK_PLL_ASIU) {
-@@ -610,9 +632,8 @@ void __init iproc_pll_clk_setup(struct device_node *node,
- 	if (WARN_ON(!pll->pll_base))
- 		goto err_pll_iomap;
- 
-+	/* Some SoCs do not require the pwr_base, thus failing is not fatal */
- 	pll->pwr_base = of_iomap(node, 1);
--	if (WARN_ON(!pll->pwr_base))
--		goto err_pwr_iomap;
- 
- 	/* some PLLs require gating control at the top ASIU level */
- 	if (pll_ctrl->flags & IPROC_CLK_PLL_ASIU) {
-@@ -695,9 +716,9 @@ err_pll_register:
- 		iounmap(pll->asiu_base);
- 
- err_asiu_iomap:
--	iounmap(pll->pwr_base);
-+	if (pll->pwr_base)
-+		iounmap(pll->pwr_base);
- 
--err_pwr_iomap:
- 	iounmap(pll->pll_base);
- 
- err_pll_iomap:
-diff --git a/drivers/clk/bcm/clk-iproc.h b/drivers/clk/bcm/clk-iproc.h
-index d834b7a..ff7bfad 100644
---- a/drivers/clk/bcm/clk-iproc.h
-+++ b/drivers/clk/bcm/clk-iproc.h
-@@ -49,6 +49,12 @@
- #define IPROC_CLK_PLL_NEEDS_SW_CFG BIT(4)
- 
- /*
-+ * Some PLLs use a different way to control clock power, via the PWRDWN bit in
-+ * the PLL control register
-+ */
-+#define IPROC_CLK_EMBED_PWRCTRL BIT(5)
-+
-+/*
-  * Parameters for VCO frequency configuration
-  *
-  * VCO frequency =
+> +#include <linux/clk-provider.h>
+> +#include <linux/of_address.h>
+> +#include <linux/reset-controller.h>
+> +#include <linux/slab.h>
+> +#include <linux/spinlock.h>
+> +
+> +#define SUN4I_A10_DISPLAY_PARENTS	3
+> +
+> +#define SUN4I_A10_DISPLAY_GATE_BIT	31
+> +#define SUN4I_A10_DISPLAY_RESET_BIT	30
+> +#define SUN4I_A10_DISPLAY_MUX_MASK	3
+> +#define SUN4I_A10_DISPLAY_MUX_SHIFT	24
+> +#define SUN4I_A10_DISPLAY_DIV_WIDTH	4
+> +#define SUN4I_A10_DISPLAY_DIV_SHIFT	0
+> +
+> +struct reset_data {
+> +	void __iomem			*reg;
+> +	spinlock_t			*lock;
+> +	struct reset_controller_dev	rcdev;
+> +};
+> +
+> +static DEFINE_SPINLOCK(sun4i_a10_display_lock);
+> +
+> +static int sun4i_a10_display_assert(struct reset_controller_dev *rcdev,
+> +				    unsigned long id)
+> +{
+> +	struct reset_data *data = container_of(rcdev,
+> +					       struct reset_data,
+> +					       rcdev);
+
+Can this be a macro rcdev_to_reset_data() or something?
+
+> +	unsigned long flags;
+[..]
+> +
+> +static int sun4i_a10_display_status(struct reset_controller_dev *rcdev,
+> +				    unsigned long id)
+> +{
+> +	struct reset_data *data = container_of(rcdev,
+> +					       struct reset_data,
+> +					       rcdev);
+> +
+> +	return !(readl(data->reg) & BIT(SUN4I_A10_DISPLAY_RESET_BIT));
+> +}
+> +
+> +static struct reset_control_ops sun4i_a10_display_reset_ops = {
+
+Someone should make it so this can be const...
+
+> +	.assert		= sun4i_a10_display_assert,
+> +	.deassert	= sun4i_a10_display_deassert,
+> +	.status		= sun4i_a10_display_status,
+> +};
+> +
+> +static int sun4i_a10_display_reset_xlate(struct reset_controller_dev *rcdev,
+> +					 const struct of_phandle_args *spec)
+> +{
+> +	if (WARN_ON(spec->args_count != rcdev->of_reset_n_cells))
+> +		return -EINVAL;
+
+Do we really need this check? Seems like something the reset core
+should handle.
+
+> +
+> +	/* We only have a single reset signal */
+> +	return 0;
+> +}
+> +
+> +static void __init sun4i_a10_display_setup(struct device_node *node)
+> +{
+> +	const char *parents[SUN4I_A10_DISPLAY_PARENTS];
+> +	const char *clk_name = node->name;
+> +	struct reset_data *reset_data;
+> +	struct clk_divider *div;
+> +	struct clk_gate *gate;
+> +	struct clk_mux *mux;
+> +	void __iomem *reg;
+> +	struct clk *clk;
+> +	int i;
+> +
+> +	of_property_read_string(node, "clock-output-names", &clk_name);
+> +
+> +	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
+> +	if (IS_ERR(reg)) {
+> +		pr_err("%s: Could not map the clock registers\n", clk_name);
+> +		return;
+> +	}
+> +
+> +	for (i = 0; i < SUN4I_A10_DISPLAY_PARENTS; i++)
+> +		parents[i] = of_clk_get_parent_name(node, i);
+
+of_clk_parent_fill()?
+
+> +
+> +	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
+> +	if (!mux)
+[..]
+> +		goto free_reset;
+> +	}
+> +
+> +	return;
+> +
+> +free_reset:
+> +	kfree(reset_data);
+> +free_clk:
+> +	clk_unregister(clk);
+
+We really ought to have a clk_composite_unregister() API.
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
