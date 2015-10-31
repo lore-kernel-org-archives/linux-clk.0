@@ -1,42 +1,95 @@
-Return-Path: <javier@osg.samsung.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Scott Branden <sbranden@broadcom.com>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: versatile: Make depend on OF when COMPILE_TEST
-Date: Mon, 26 Oct 2015 07:41:28 +0900
-Message-Id: <1445812888-8170-1-git-send-email-javier@osg.samsung.com>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <1446214865-3972-2-git-send-email-maxime.ripard@free-electrons.com>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1446214865-3972-2-git-send-email-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 31 Oct 2015 18:28:16 +0800
+Message-ID: <CAGb2v65uzLgKkxKh9RN58w1FZGRJKSbMFmdhZxnRzCdCArBuPw@mail.gmail.com>
+Subject: Re: [PATCH 01/19] clk: sunxi: Add display clock
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>, Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Commit 4a7748c3d641 ("clk: Allow drivers to build if COMPILE_TEST is
-enabled") allowed clk drives to be compile tested on other archs but
-the COMMON_CLK_VERSATILE was only enabled on platforms that already
-selected OF support so the drivers assume it will always be enabled.
+Hi,
 
-So, restrict compile test for these drivers only if OF is enabled.
+On Fri, Oct 30, 2015 at 10:20 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> The A10 SoCs and its relatives has a special clock controller to drive the
+> display engines (both frontend and backend).
+>
+> Add a driver for it.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/clk/sunxi/Makefile            |   1 +
+>  drivers/clk/sunxi/clk-sun4i-display.c | 199 ++++++++++++++++++++++++++++++++++
+>  2 files changed, 200 insertions(+)
+>  create mode 100644 drivers/clk/sunxi/clk-sun4i-display.c
+>
+> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+> index cb4c299214ce..a9e1a5885846 100644
+> --- a/drivers/clk/sunxi/Makefile
+> +++ b/drivers/clk/sunxi/Makefile
+> @@ -9,6 +9,7 @@ obj-y += clk-a10-mod1.o
+>  obj-y += clk-a10-pll2.o
+>  obj-y += clk-a20-gmac.o
+>  obj-y += clk-mod0.o
+> +obj-y += clk-sun4i-display.o
+>  obj-y += clk-simple-gates.o
+>  obj-y += clk-sun8i-mbus.o
+>  obj-y += clk-sun9i-core.o
+> diff --git a/drivers/clk/sunxi/clk-sun4i-display.c b/drivers/clk/sunxi/clk-sun4i-display.c
+> new file mode 100644
+> index 000000000000..f13b095c6d7a
+> --- /dev/null
+> +++ b/drivers/clk/sunxi/clk-sun4i-display.c
+> @@ -0,0 +1,199 @@
+> +/*
+> + * Copyright 2015 Maxime Ripard
+> + *
+> + * Maxime Ripard <maxime.ripard@free-electrons.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/of_address.h>
+> +#include <linux/reset-controller.h>
+> +#include <linux/slab.h>
+> +#include <linux/spinlock.h>
+> +
+> +#define SUN4I_A10_DISPLAY_PARENTS      3
 
-Fixes: 4a7748c3d641 ("clk: Allow drivers to build if COMPILE_TEST is enabled")
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Can we change this to 4, so we can reuse this for TCON clocks on sun4i/sun7i?
 
----
+Thanks
 
- drivers/clk/versatile/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ChenYu
 
-diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
-index fc50b6264bed..e85863cf145f 100644
---- a/drivers/clk/versatile/Kconfig
-+++ b/drivers/clk/versatile/Kconfig
-@@ -1,6 +1,6 @@
- config COMMON_CLK_VERSATILE
- 	bool "Clock driver for ARM Reference designs"
--	depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64 || COMPILE_TEST
-+	depends on ARCH_INTEGRATOR || ARCH_REALVIEW || ARCH_VEXPRESS || ARM64 || (COMPILE_TEST && OF)
- 	---help---
-           Supports clocking on ARM Reference designs:
- 	  - Integrator/AP and Integrator/CP
--- 
-2.4.3
+> +#define SUN4I_A10_DISPLAY_GATE_BIT     31
+> +#define SUN4I_A10_DISPLAY_RESET_BIT    30
+> +#define SUN4I_A10_DISPLAY_MUX_MASK     3
+> +#define SUN4I_A10_DISPLAY_MUX_SHIFT    24
+> +#define SUN4I_A10_DISPLAY_DIV_WIDTH    4
+> +#define SUN4I_A10_DISPLAY_DIV_SHIFT    0
