@@ -1,118 +1,43 @@
-Return-Path: <Wenyou.Yang@atmel.com>
-Subject: Re: [PATCH v2 10/14] ARM: at91: pm: find and remap the pmc
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>, Nicolas Ferre
-	<nicolas.ferre@atmel.com>, Boris Brezillon
-	<boris.brezillon@free-electrons.com>
-References: <1444660131-14954-1-git-send-email-alexandre.belloni@free-electrons.com>
- <1444660131-14954-11-git-send-email-alexandre.belloni@free-electrons.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, <linux-kernel@vger.kernel.org>, "Jean-Christophe
- Plagniol-Villard" <plagnioj@jcrosoft.com>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-From: "Yang, Wenyou" <wenyou.yang@atmel.com>
-Message-ID: <56317B57.5040703@atmel.com>
-Date: Thu, 29 Oct 2015 09:50:15 +0800
-MIME-Version: 1.0
-In-Reply-To: <1444660131-14954-11-git-send-email-alexandre.belloni@free-electrons.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Return-Path: wenyou.yang@atmel.com
+Return-Path: <zywang33@gmail.com>
+Return-Path: <zywang33@gmail.com>
+From: Chris Zhong <zyw@rock-chips.com>
+To: heiko@sntech.de,
+	linux-rockchip@lists.infradead.org
+Cc: Chris Zhong <zyw@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 02/13] clk: rockchip: add mipidsi clocks on rk3288
+Date: Sat, 31 Oct 2015 20:55:58 +0800
+Message-Id: <1446296170-3702-3-git-send-email-zyw@rock-chips.com>
+In-Reply-To: <1446296170-3702-1-git-send-email-zyw@rock-chips.com>
+References: <1446296170-3702-1-git-send-email-zyw@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Alexandre,
+sclk_mipidsi_24m is the gating of mipi dsi phy.
 
-Trivial comments.
+Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+---
 
-On 2015/10/12 22:28, Alexandre Belloni wrote:
-> To avoid relying on at91_pmc_read(), find the pmc node and remap it
-> locally.
->
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> ---
->   arch/arm/mach-at91/pm.c | 32 ++++++++++++++++++++++++++------
->   1 file changed, 26 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
-> index 5c2b60c5a2a1..1dee29b33ff9 100644
-> --- a/arch/arm/mach-at91/pm.c
-> +++ b/arch/arm/mach-at91/pm.c
-> @@ -35,6 +35,8 @@
->   #include "generic.h"
->   #include "pm.h"
->   
-> +void __iomem *pmc;
-> +
->   /*
->    * FIXME: this is needed to communicate between the pinctrl driver and
->    * the PM implementation in the machine. Possibly part of the PM
-> @@ -85,7 +87,7 @@ static int at91_pm_verify_clocks(void)
->   	unsigned long scsr;
->   	int i;
->   
-> -	scsr = at91_pmc_read(AT91_PMC_SCSR);
-> +	scsr = readl(pmc + AT91_PMC_SCSR);
->   
->   	/* USB must not be using PLLB */
->   	if ((scsr & at91_pm_data.uhp_udp_mask) != 0) {
-> @@ -99,8 +101,7 @@ static int at91_pm_verify_clocks(void)
->   
->   		if ((scsr & (AT91_PMC_PCK0 << i)) == 0)
->   			continue;
-> -
-> -		css = at91_pmc_read(AT91_PMC_PCKR(i)) & AT91_PMC_CSS;
-> +		css = readl(pmc + AT91_PMC_PCKR(i)) & AT91_PMC_CSS;
->   		if (css != AT91_PMC_CSS_SLOW) {
->   			pr_err("AT91: PM - Suspend-to-RAM with PCK%d src %d\n", i, css);
->   			return 0;
-> @@ -143,8 +144,8 @@ static void at91_pm_suspend(suspend_state_t state)
->   	flush_cache_all();
->   	outer_disable();
->   
-> -	at91_suspend_sram_fn(at91_pmc_base, at91_ramc_base[0],
-> -				at91_ramc_base[1], pm_data);
-> +	at91_suspend_sram_fn(pmc, at91_ramc_base[0],
-> +			     at91_ramc_base[1], pm_data);
->   
->   	outer_resume();
->   }
-> @@ -394,13 +395,32 @@ static void __init at91_pm_sram_init(void)
->   			&at91_pm_suspend_in_sram, at91_pm_suspend_in_sram_sz);
->   }
->   
-> +static const struct of_device_id atmel_pmc_ids[] = {
-> +	{ .compatible = "atmel,at91rm9200-pmc"  },
-> +	{ .compatible = "atmel,at91sam9260-pmc" },
-> +	{ .compatible = "atmel,at91sam9g45-pmc" },
-> +	{ .compatible = "atmel,at91sam9n12-pmc" },
-> +	{ .compatible = "atmel,at91sam9x5-pmc" },
-> +	{ .compatible = "atmel,sama5d3-pmc" },
-> +	{ /* sentinel */ },
-Do we need  compatible for sama5d2 pmc used in sama5d2.dtsi?
-{ .compatible = "atmel,sama5d2-pmc" },
+Changes in v2: None
 
-> +};
-> +
->   static void __init at91_pm_init(void)
->   {
-> -	at91_pm_sram_init();
-> +	struct device_node *pmc_np;
->   
->   	if (at91_cpuidle_device.dev.platform_data)
->   		platform_device_register(&at91_cpuidle_device);
->   
-> +	pmc_np = of_find_matching_node(NULL, atmel_pmc_ids);
-> +	pmc = of_iomap(pmc_np, 0);
-> +	if (!pmc) {
-> +		pr_info("AT91: PM not supported, PMC not found");
-Should need "\n" before end of printout.
+ drivers/clk/rockchip/clk-rk3288.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +		return;
-> +	}
-> +
-> +	at91_pm_sram_init();
-> +
->   	if (at91_suspend_sram_fn)
->   		suspend_set_ops(&at91_pm_ops);
->   	else
-
-Best Regards,
-Wenyou Yang
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 9040878..c7d7ebf 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -709,7 +709,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+ 	GATE(SCLK_LCDC_PWM1, "sclk_lcdc_pwm1", "xin24m", 0, RK3288_CLKGATE_CON(13), 11, GFLAGS),
+ 	GATE(SCLK_PVTM_CORE, "sclk_pvtm_core", "xin24m", 0, RK3288_CLKGATE_CON(5), 9, GFLAGS),
+ 	GATE(SCLK_PVTM_GPU, "sclk_pvtm_gpu", "xin24m", 0, RK3288_CLKGATE_CON(5), 10, GFLAGS),
+-	GATE(0, "sclk_mipidsi_24m", "xin24m", 0, RK3288_CLKGATE_CON(5), 15, GFLAGS),
++	GATE(SCLK_MIPI_24M, "sclk_mipidsi_24m", "xin24m", 0, RK3288_CLKGATE_CON(5), 15, GFLAGS),
+ 
+ 	/* sclk_gpu gates */
+ 	GATE(ACLK_GPU, "aclk_gpu", "sclk_gpu", 0, RK3288_CLKGATE_CON(18), 0, GFLAGS),
+-- 
+2.6.2
