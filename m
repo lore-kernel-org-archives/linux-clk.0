@@ -1,93 +1,115 @@
-Return-Path: <robh@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1445866427-14002-1-git-send-email-linus.walleij@linaro.org>
-References: <1445866427-14002-1-git-send-email-linus.walleij@linaro.org>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 27 Oct 2015 03:04:46 -0500
-Message-ID: <CAL_JsqJoGXQ88p2mbUKKN7QcKdu-DgB20xc9NiPCuEvtcRdzLA@mail.gmail.com>
-Subject: Re: [PATCH 08/13 v2] clk: add ARM syscon ICST device tree bindings
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <zywang33@gmail.com>
+Return-Path: <zywang33@gmail.com>
+From: Chris Zhong <zyw@rock-chips.com>
+To: heiko@sntech.de,
+	linux-rockchip@lists.infradead.org
+Cc: Chris Zhong <zyw@rock-chips.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Thierry Reding <treding@nvidia.com>,
+	Takashi Iwai <tiwai@suse.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Kumar Gala <galak@codeaurora.org>,
+	dri-devel@lists.freedesktop.org,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Rob Herring <robh+dt@kernel.org>,
+	Antony Pavlov <antonynpavlov@gmail.com>,
+	David Airlie <airlied@linux.ie>,
+	Jeff Chen <cym@rock-chips.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
 	linux-clk@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+	Alexandru M Stan <amstan@chromium.org>,
+	Sonny Rao <sonnyrao@chromium.org>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Arnaud Ebalard <arno@natisbad.org>,
+	Huang Lin <hl@rock-chips.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vincent Palatin <vpalatin@chromium.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Ajay Kumar <ajaykumar.rs@samsung.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Liu Ying <Ying.liu@freescale.com>,
+	Doug Anderson <dianders@chromium.org>,
+	linux-kernel@vger.kernel.org,
+	Mark Yao <mark.yao@rock-chips.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Roger Chen <roger.chen@rock-chips.com>
+Subject: [PATCH v2 00/13] Add mipi dsi support for rk3288
+Date: Sat, 31 Oct 2015 20:55:56 +0800
+Message-Id: <1446296170-3702-1-git-send-email-zyw@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Oct 26, 2015 at 8:33 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> This adds the device tree bindings for the ARM Syscon ICST
-> oscillators, which is a register-level interface to the
-> Integrated Device Technology (IDT) ICS525 and ICS307
-> serially programmable oscillators.
->
-> Cc: devicetree@vger.kernel.org
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: linux-clk@vger.kernel.org
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+The rk3288 MIPI DSI is a Synopsys DesignWare MIPI DSI host controller
+IP. This series adds support for a Synopsys DesignWare MIPI DSI host
+controller DRM bridge driver and a rockchip MIPI DSI specific DRM
+driver.
 
-Acked-by: Rob Herring <robh@kernel.org>
+This series also includes a DRM panel driver for BOE TV080WUM-NL0 panel.
+This panel only use the MIPI DSI video mode.
 
-> ---
-> ChangeLog v1->v2:
-> - Spelling fixes.
->
-> I'm looking for an ACK from the CLK maintainers to take this
-> through the ARM SoC tree once the series stabilize.
-> ---
->  .../devicetree/bindings/clock/arm-syscon-icst.txt  | 40 ++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
->
-> diff --git a/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt b/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
-> new file mode 100644
-> index 000000000000..8b7177cecb36
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
-> @@ -0,0 +1,40 @@
-> +ARM System Controller ICST clocks
-> +
-> +The ICS525 and ICS307 oscillators are produced by Integrated Devices
-> +Technology (IDT). ARM integrated these oscillators deeply into their
-> +reference designs by adding special control registers that manage such
-> +oscillators to their system controllers.
-> +
-> +The ARM system controller contains logic to serialize and initialize
-> +an ICST clock request after a write to the 32 bit register at an offset
-> +into the system controller. Furthermore, to even be able to alter one of
-> +these frequencies, the system controller must first be unlocked by
-> +writing a special token to another offset in the system controller.
-> +
-> +The ICST oscillator must be provided inside a system controller node.
-> +
-> +Required properties:
-> +- lock-offset: the offset address into the system controller where the
-> +  unlocking register is located
-> +- vco-offset: the offset address into the system controller where the
-> +  ICST control register is located (even 32 bit address)
-> +- compatible: must be one of "arm,syscon-icst525" or "arm,syscon-icst307"
-> +- #clock-cells: must be <0>
-> +- clocks: parent clock, since the ICST needs a parent clock to derive its
-> +  frequency from, this attribute is compulsory.
-> +
-> +Example:
-> +
-> +syscon: syscon@10000000 {
-> +       compatible = "syscon";
-> +       reg = <0x10000000 0x1000>;
-> +
-> +       oscclk0: osc0@0c {
-> +               compatible = "arm,syscon-icst307";
-> +               #clock-cells = <0>;
-> +               lock-offset = <0x20>;
-> +               vco-offset = <0x0c>;
-> +               clocks = <&xtal24mhz>;
-> +       };
-> +       (...)
-> +};
-> --
-> 2.4.3
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The MIPI DSI feature is tested on rk3288 evb board, backport them to
+chrome os kernel v3.14, and it can display normally.
+
+This patchset is base on the patchset from Ying.liu@freescale.com.
+<http://www.spinics.net/lists/dri-devel/msg77181.html>
+
+
+Changes in v2:
+add the mipi clk id in a single patch
+add vendor prefix for boe
+As Thierry.Reding comment, add a documentation for this panel.
+
+Chris Zhong (11):
+  clk: rockchip: add id for mipidsi sclk on rk3288
+  clk: rockchip: add mipidsi clocks on rk3288
+  drm/rockchip: return a true clock rate to adjusted_mode
+  drm/bridge: Add Synopsys DesignWare MIPI DSI host controller driver
+  drm: rockchip: Support Synopsys DesignWare MIPI DSI host controller
+  Documentation: dt-bindings: Add bindings for rk3288 DW MIPI DSI driver
+  ARM: dts: rockchip: add rk3288 mipi_dsi nodes
+  of: add vendor prefix for boe
+  drm/panel: simple: Add support for BOE TV080WUM-NL0
+  drm/panel: simple: Add simple panel device tree binding
+  ARM: dts: rockchip: add support mipi panel tv080wum-nl0 for rk3288-evb
+
+Liu Ying (2):
+  drm/dsi: Add a helper to get bits per pixel of MIPI DSI pixel format
+  Documentation: dt-bindings: Add bindings for Synopsys DW MIPI DSI DRM
+    bridge driver
+
+ .../devicetree/bindings/drm/bridge/dw_mipi_dsi.txt |   76 ++
+ .../devicetree/bindings/panel/boe,tv080wum-nl0.txt |    7 +
+ .../devicetree/bindings/vendor-prefixes.txt        |    1 +
+ .../bindings/video/dw_mipi_dsi_rockchip.txt        |   56 ++
+ arch/arm/boot/dts/rk3288-evb.dtsi                  |   20 +-
+ arch/arm/boot/dts/rk3288.dtsi                      |   39 +
+ drivers/clk/rockchip/clk-rk3288.c                  |    2 +-
+ drivers/gpu/drm/bridge/Kconfig                     |    9 +
+ drivers/gpu/drm/bridge/Makefile                    |    1 +
+ drivers/gpu/drm/bridge/dw_mipi_dsi.c               | 1055 ++++++++++++++++++++
+ drivers/gpu/drm/panel/panel-simple.c               |   33 +
+ drivers/gpu/drm/rockchip/Kconfig                   |   10 +
+ drivers/gpu/drm/rockchip/Makefile                  |    1 +
+ drivers/gpu/drm/rockchip/dw_mipi_dsi_rockchip.c    |  249 +++++
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c        |    9 +
+ include/drm/bridge/dw_mipi_dsi.h                   |   27 +
+ include/drm/drm_mipi_dsi.h                         |   14 +
+ include/dt-bindings/clock/rk3288-cru.h             |    1 +
+ 18 files changed, 1608 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/drm/bridge/dw_mipi_dsi.txt
+ create mode 100644 Documentation/devicetree/bindings/panel/boe,tv080wum-nl0.txt
+ create mode 100644 Documentation/devicetree/bindings/video/dw_mipi_dsi_rockchip.txt
+ create mode 100644 drivers/gpu/drm/bridge/dw_mipi_dsi.c
+ create mode 100644 drivers/gpu/drm/rockchip/dw_mipi_dsi_rockchip.c
+ create mode 100644 include/drm/bridge/dw_mipi_dsi.h
+
+-- 
+2.6.2
