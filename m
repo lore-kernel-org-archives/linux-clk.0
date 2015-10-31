@@ -1,55 +1,246 @@
-Return-Path: <B48286@freescale.com>
-From: Zhiqiang Hou <B48286@freescale.com>
-To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-CC: <mark.rutland@arm.com>, <linux@roeck-us.net>, <wsa@the-dreams.de>,
-	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <Mingkai.Hu@freescale.com>,
-	<Shaohui.Xie@freescale.com>, <scottwood@freescale.com>,
-	<bhupesh.sharma@freescale.com>, <Wenbin.Song@freescale.com>,
-	<B48286@freescale.com>
-Subject: [PATCH V6 1/6] i2c: Add i2c support to Freescale Layerscape platforms
-Date: Fri, 23 Oct 2015 16:01:17 +0800
-Message-ID: <1445587282-29529-1-git-send-email-B48286@freescale.com>
-Return-Path: B48286@freescale.com
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1446214865-3972-5-git-send-email-maxime.ripard@free-electrons.com>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1446214865-3972-5-git-send-email-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 31 Oct 2015 17:53:26 +0800
+Message-ID: <CAGb2v650S8+8SNNBqx7u8k8wxHm2fSKdht=W3yA9Mh=rpU+hOA@mail.gmail.com>
+Subject: Re: [PATCH 04/19] clk: sunxi: Add TCON channel1 clock
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>, Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shaohui Xie <Shaohui.Xie@freescale.com>
+On Fri, Oct 30, 2015 at 10:20 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> The TCON is a controller generating the timings to output videos signals,
+> acting like both a CRTC and an encoder.
+>
+> It has two channels depending on the output, each channel being driven by
+> its own clock (and own clock controller).
+>
+> Add a driver for the channel 1 clock.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/clk/sunxi/Makefile             |   1 +
+>  drivers/clk/sunxi/clk-sun4i-tcon-ch1.c | 167 +++++++++++++++++++++++++++++++++
+>  2 files changed, 168 insertions(+)
+>  create mode 100644 drivers/clk/sunxi/clk-sun4i-tcon-ch1.c
 
-Modify the I2C_IMX config to support to Layerscape platforms.
+According to the documents I have, this variant of the TCON clock
+is specific to sun5i. On sun4i/sun7i, TCON CH1 clock has the same
+layout as TCON CH0 and the other display clocks.
 
-Signed-off-by: Shaohui Xie <Shaohui.Xie@freescale.com>
-Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
----
-V6:
- - Remove some Signed-off and add the author's.
+>
+> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+> index 7821b2b63d58..ed59ee4b3a85 100644
+> --- a/drivers/clk/sunxi/Makefile
+> +++ b/drivers/clk/sunxi/Makefile
+> @@ -13,6 +13,7 @@ obj-y += clk-simple-gates.o
+>  obj-y += clk-sun4i-display.o
+>  obj-y += clk-sun4i-pll3.o
+>  obj-y += clk-sun4i-tcon-ch0.o
+> +obj-y += clk-sun4i-tcon-ch1.o
+>  obj-y += clk-sun8i-mbus.o
+>  obj-y += clk-sun9i-core.o
+>  obj-y += clk-sun9i-mmc.o
+> diff --git a/drivers/clk/sunxi/clk-sun4i-tcon-ch1.c b/drivers/clk/sunxi/clk-sun4i-tcon-ch1.c
+> new file mode 100644
+> index 000000000000..9f2ab52b0bf9
+> --- /dev/null
+> +++ b/drivers/clk/sunxi/clk-sun4i-tcon-ch1.c
+> @@ -0,0 +1,167 @@
+> +/*
+> + * Copyright 2015 Maxime Ripard
+> + *
+> + * Maxime Ripard <maxime.ripard@free-electrons.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/of_address.h>
+> +#include <linux/slab.h>
+> +#include <linux/spinlock.h>
+> +
+> +#define SUN4I_TCON_CH1_SCLK_NAME_LEN   32
+> +
+> +#define SUN4I_A10_TCON_CH1_SCLK1_PARENTS       2
+> +#define SUN4I_A10_TCON_CH1_SCLK2_PARENTS       4
+> +
+> +#define SUN4I_A10_TCON_CH1_SCLK2_GATE_BIT      31
+> +#define SUN4I_A10_TCON_CH1_SCLK2_MUX_MASK      3
+> +#define SUN4I_A10_TCON_CH1_SCLK2_MUX_SHIFT     24
+> +#define SUN4I_A10_TCON_CH1_SCLK2_DIV_WIDTH     4
+> +#define SUN4I_A10_TCON_CH1_SCLK2_DIV_SHIFT     0
+> +
+> +#define SUN4I_A10_TCON_CH1_SCLK1_GATE_BIT      15
+> +#define SUN4I_A10_TCON_CH1_SCLK1_MUX_MASK      1
+> +#define SUN4I_A10_TCON_CH1_SCLK1_MUX_SHIFT     11
+> +
+> +static DEFINE_SPINLOCK(sun4i_a10_tcon_ch1_lock);
+> +
+> +static void __init sun4i_a10_tcon_ch1_setup(struct device_node *node)
+> +{
+> +       const char *sclk1_parents[SUN4I_A10_TCON_CH1_SCLK1_PARENTS];
+> +       const char *sclk2_parents[SUN4I_A10_TCON_CH1_SCLK2_PARENTS];
+> +       const char *sclk1_name = node->name;
+> +       char sclk2_name[SUN4I_TCON_CH1_SCLK_NAME_LEN];
+> +       char sclk2d2_name[SUN4I_TCON_CH1_SCLK_NAME_LEN];
+> +       struct clk_gate *sclk1_gate, *sclk2_gate;
+> +       struct clk_mux *sclk1_mux, *sclk2_mux;
+> +       struct clk *sclk1, *sclk2, *sclk2d2;
+> +       struct clk_divider *sclk2_div;
+> +       void __iomem *reg;
+> +       int i;
+> +
+> +       of_property_read_string(node, "clock-output-names",
+> +                               &sclk1_name);
+> +
+> +       snprintf(sclk2_name, SUN4I_TCON_CH1_SCLK_NAME_LEN,
+> +                "%s2", sclk1_name);
+> +
+> +       snprintf(sclk2d2_name, SUN4I_TCON_CH1_SCLK_NAME_LEN,
+> +                "%s2d2", sclk1_name);
+> +
+> +       reg = of_io_request_and_map(node, 0, of_node_full_name(node));
+> +       if (IS_ERR(reg)) {
+> +               pr_err("%s: Could not map the clock registers\n", sclk2_name);
+> +               return;
+> +       }
+> +
+> +       for (i = 0; i < SUN4I_A10_TCON_CH1_SCLK2_PARENTS; i++)
+> +               sclk2_parents[i] = of_clk_get_parent_name(node, i);
+> +
+> +       sclk2_mux = kzalloc(sizeof(*sclk2_mux), GFP_KERNEL);
+> +       if (!sclk2_mux)
+> +               return;
+> +
+> +       sclk2_mux->reg = reg;
+> +       sclk2_mux->shift = SUN4I_A10_TCON_CH1_SCLK2_MUX_SHIFT;
+> +       sclk2_mux->mask = SUN4I_A10_TCON_CH1_SCLK2_MUX_MASK;
+> +       sclk2_mux->lock = &sun4i_a10_tcon_ch1_lock;
+> +
+> +       sclk2_gate = kzalloc(sizeof(*sclk2_gate), GFP_KERNEL);
+> +       if (!sclk2_gate)
+> +               goto free_sclk2_mux;
+> +
+> +       sclk2_gate->reg = reg;
+> +       sclk2_gate->bit_idx = SUN4I_A10_TCON_CH1_SCLK2_GATE_BIT;
+> +       sclk2_gate->lock = &sun4i_a10_tcon_ch1_lock;
+> +
+> +       sclk2_div = kzalloc(sizeof(*sclk2_div), GFP_KERNEL);
+> +       if (!sclk2_div)
+> +               goto free_sclk2_gate;
+> +
+> +       sclk2_div->reg = reg;
+> +       sclk2_div->shift = SUN4I_A10_TCON_CH1_SCLK2_DIV_SHIFT;
+> +       sclk2_div->width = SUN4I_A10_TCON_CH1_SCLK2_DIV_WIDTH;
+> +       sclk2_div->lock = &sun4i_a10_tcon_ch1_lock;
+> +
+> +       sclk2 = clk_register_composite(NULL, sclk2_name, sclk2_parents,
+> +                                      SUN4I_A10_TCON_CH1_SCLK2_PARENTS,
+> +                                      &sclk2_mux->hw, &clk_mux_ops,
+> +                                      &sclk2_div->hw, &clk_divider_ops,
+> +                                      &sclk2_gate->hw, &clk_gate_ops,
+> +                                      0);
+> +       if (IS_ERR(sclk2)) {
+> +               pr_err("%s: Couldn't register the clock\n", sclk2_name);
+> +               goto free_sclk2_div;
+> +       }
+> +
+> +       sclk2d2 = clk_register_fixed_factor(NULL, sclk2d2_name, sclk2_name, 0,
+> +                                           1, 2);
+> +       if (IS_ERR(sclk2d2)) {
+> +               pr_err("%s: Couldn't register the clock\n", sclk2d2_name);
+> +               goto free_sclk2;
+> +       }
+> +
+> +       sclk1_parents[0] = sclk2_name;
+> +       sclk1_parents[1] = sclk2d2_name;
 
-V5: V4 V3 V2
- - No change.
+Is there any need to expose these 2 clocks via DT using of_clk_add_provider?
 
- drivers/i2c/busses/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Note that these complex clock trees within a clock node breaks the
+assigned-clock-parents mechanism, as you can no longer specify the output
+clock's direct parents.
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index 08b8617..14147ec 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -582,10 +582,10 @@ config I2C_IMG
- 
- config I2C_IMX
- 	tristate "IMX I2C interface"
--	depends on ARCH_MXC
-+	depends on ARCH_MXC || ARCH_LAYERSCAPE
- 	help
- 	  Say Y here if you want to use the IIC bus controller on
--	  the Freescale i.MX/MXC processors.
-+	  the Freescale i.MX/MXC or Layerscape processors.
- 
- 	  This driver can also be built as a module.  If so, the module
- 	  will be called i2c-imx.
--- 
-2.1.0.27.g96db324
+
+Regards
+ChenYu
+
+> +
+> +       sclk1_mux = kzalloc(sizeof(*sclk1_mux), GFP_KERNEL);
+> +       if (!sclk1_mux)
+> +               goto free_sclk2d2;
+> +
+> +       sclk1_mux->reg = reg;
+> +       sclk1_mux->shift = SUN4I_A10_TCON_CH1_SCLK1_MUX_SHIFT;
+> +       sclk1_mux->mask = SUN4I_A10_TCON_CH1_SCLK1_MUX_MASK;
+> +       sclk1_mux->lock = &sun4i_a10_tcon_ch1_lock;
+> +
+> +       sclk1_gate = kzalloc(sizeof(*sclk1_gate), GFP_KERNEL);
+> +       if (!sclk1_gate)
+> +               goto free_sclk1_mux;
+> +
+> +       sclk1_gate->reg = reg;
+> +       sclk1_gate->bit_idx = SUN4I_A10_TCON_CH1_SCLK1_GATE_BIT;
+> +       sclk1_gate->lock = &sun4i_a10_tcon_ch1_lock;
+> +
+> +       sclk1 = clk_register_composite(NULL, sclk1_name, sclk1_parents,
+> +                                      SUN4I_A10_TCON_CH1_SCLK1_PARENTS,
+> +                                      &sclk1_mux->hw, &clk_mux_ops,
+> +                                      NULL, NULL,
+> +                                      &sclk1_gate->hw, &clk_gate_ops,
+> +                                      0);
+> +       if (IS_ERR(sclk1)) {
+> +               pr_err("%s: Couldn't register the clock\n", sclk1_name);
+> +               goto free_sclk1_gate;
+> +       }
+> +
+> +       of_clk_add_provider(node, of_clk_src_simple_get, sclk1);
+> +
+> +       return;
+> +
+> +free_sclk1_gate:
+> +       kfree(sclk1_gate);
+> +free_sclk1_mux:
+> +       kfree(sclk1_mux);
+> +free_sclk2d2:
+> +       clk_unregister(sclk2d2);
+> +free_sclk2:
+> +       clk_unregister(sclk2);
+> +free_sclk2_div:
+> +       kfree(sclk2_div);
+> +free_sclk2_gate:
+> +       kfree(sclk2_gate);
+> +free_sclk2_mux:
+> +       kfree(sclk2_mux);
+> +}
+> +
+> +CLK_OF_DECLARE(sun4i_a10_tcon_ch1, "allwinner,sun4i-a10-tcon-ch1-clk",
+> +              sun4i_a10_tcon_ch1_setup);
+> --
+> 2.6.2
+>
