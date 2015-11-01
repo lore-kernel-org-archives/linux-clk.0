@@ -1,49 +1,48 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from vps0.lunn.ch ([178.209.37.122]:43209 "EHLO vps0.lunn.ch"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752010AbbK0Tx6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Fri, 27 Nov 2015 14:53:58 -0500
-Date: Fri, 27 Nov 2015 20:53:51 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: Gregory Clement <gregory.clement@free-electrons.com>,
-	Jason Cooper <jason@lakedaemon.net>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>
-Subject: Re: [PATCH 1/3] dt-bindings: add Marvell core PLL and clock divider
- PMU documentation
-Message-ID: <20151127195351.GC14645@lunn.ch>
-References: <E1a24wj-0004iw-Rf@rmk-PC.arm.linux.org.uk>
+Return-Path: <robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <E1a24wj-0004iw-Rf@rmk-PC.arm.linux.org.uk>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20151030173738.GD17183@ulmo.nvidia.com>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1446214865-3972-10-git-send-email-maxime.ripard@free-electrons.com>
+ <CAL_JsqLuUUApGAgdw7U8EJ7p5yrYJg8AKFB32AE9Ufrf47=WpQ@mail.gmail.com> <20151030173738.GD17183@ulmo.nvidia.com>
+From: Rob Herring <robh@kernel.org>
+Date: Sun, 1 Nov 2015 08:28:59 -0600
+Message-ID: <CAL_Jsq+viBYCzw_YvVu0zVbPFb8r42+ma-wBcw1bbyOKUTaEYg@mail.gmail.com>
+Subject: Re: [PATCH 09/19] drm: sun4i: Add DT bindings documentation
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>, Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Nov 26, 2015 at 10:23:21PM +0000, Russell King wrote:
-> Add documentation for the Marvell clock divider driver, which is used
-> to source clocks for the AXI bus, video decoder, GPU and LCD blocks.
-> 
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> ---
->  .../bindings/clock/dove-divider-clock.txt          | 28 ++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/dove-divider-clock.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/dove-divider-clock.txt b/Documentation/devicetree/bindings/clock/dove-divider-clock.txt
-> new file mode 100644
-> index 000000000000..0c602de279e5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/dove-divider-clock.txt
-> @@ -0,0 +1,28 @@
-> +PLl divider based Dove clocks
+On Fri, Oct 30, 2015 at 12:37 PM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> On Fri, Oct 30, 2015 at 11:40:03AM -0500, Rob Herring wrote:
+>> On Fri, Oct 30, 2015 at 9:20 AM, Maxime Ripard
+> [...]
+>> > +Optional properties:
+>> > +  - allwinner,tv-encoder: phandle to the TV Encoder in our pipeline
+>> > +  - allwinner,panel: phandle to the panel used in our RGB interface
+>>
+>> Use of-graph please.
+>
+> Why? Panels are a really simple resource and a simple phandle is fully
+> capable of describing the relationship.
 
-Nit pick. It would be nice if the second L of PLL was also a capital.
+So we can have some consistency in bindings and common parsing code.
+It is simple when it is just a panel, but when it can be tv-encoder or
+other board level downstream bridge devices it doesn't stay so simple.
+Also, we already have a simple way to do panels which is as a child
+node. Let's not have a third way.
 
-Acked-by: Andrew Lunn <andrew@lunn.ch>
-
-	  Andrew
+Rob
