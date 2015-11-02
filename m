@@ -1,92 +1,56 @@
-Return-Path: <jszhang@marvell.com>
-From: Jisheng Zhang <jszhang@marvell.com>
-To: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <sebastian.hesselbarth@gmail.com>, <antoine.tenart@free-electrons.com>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        Jisheng
- Zhang <jszhang@marvell.com>
-Subject: [PATCH v2 6/6] arm64: dts: berlin4ct: add pll and clock nodes
-Date: Fri, 20 Nov 2015 16:42:32 +0800
-Message-ID: <1448008952-1787-7-git-send-email-jszhang@marvell.com>
-In-Reply-To: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
-References: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:47327 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751423AbbKBNYE (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 2 Nov 2015 08:24:04 -0500
+Message-ID: <1446470642.3442.54.camel@pengutronix.de>
+Subject: Re: ML for reset controller sub-system?
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date: Mon, 02 Nov 2015 14:24:02 +0100
+In-Reply-To: <CAK7LNARGbHqn9D3fDtN9xzwzFoYCur2qJUnnyRA4Q52D9XUVVA@mail.gmail.com>
+References: <CAK7LNARGbHqn9D3fDtN9xzwzFoYCur2qJUnnyRA4Q52D9XUVVA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add syspll, mempll, cpupll, gateclk and berlin-clk nodes.
+Hi Masahiro,
 
-Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
----
- arch/arm64/boot/dts/marvell/berlin4ct.dtsi | 38 ++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+Am Montag, den 02.11.2015, 22:05 +0900 schrieb Masahiro Yamada:
+> Hi Philipp,
+> 
+> 
+> I searched for the reset controller entry in MAINTAINERS.
+> 
+> 
+> RESET CONTROLLER FRAMEWORK
+> M:      Philipp Zabel <p.zabel@pengutronix.de>
+> S:      Maintained
+> F:      drivers/reset/
+> F:      Documentation/devicetree/bindings/reset/
+> F:      include/dt-bindings/reset/
+> F:      include/linux/reset.h
+> F:      include/linux/reset-controller.h
+> 
+> 
+> Nothing is mentioned which mailing list
+> reset controller patches should be sent to.
+> 
+> Please advise me.
 
-diff --git a/arch/arm64/boot/dts/marvell/berlin4ct.dtsi b/arch/arm64/boot/dts/marvell/berlin4ct.dtsi
-index a4a1876..808a997 100644
---- a/arch/arm64/boot/dts/marvell/berlin4ct.dtsi
-+++ b/arch/arm64/boot/dts/marvell/berlin4ct.dtsi
-@@ -42,6 +42,7 @@
-  *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
-+#include <dt-bindings/clock/berlin4ct.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
- / {
-@@ -135,6 +136,22 @@
- 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
- 		};
- 
-+		cpupll: cpupll {
-+			compatible = "marvell,berlin-pll";
-+			reg = <0x922000 0x14>, <0xea0710 4>;
-+			#clock-cells = <0>;
-+			clocks = <&osc>, <&clk CLK_CPUFASTREF>;
-+			bypass-shift = /bits/ 8 <2>;
-+		};
-+
-+		mempll: mempll {
-+			compatible = "marvell,berlin-pll";
-+			reg = <0x940034 0x14>, <0xea0710 4>;
-+			#clock-cells = <0>;
-+			clocks = <&osc>, <&clk CLK_MEMFASTREF>;
-+			bypass-shift = /bits/ 8 <1>;
-+		};
-+
- 		apb@e80000 {
- 			compatible = "simple-bus";
- 			#address-cells = <1>;
-@@ -225,6 +242,27 @@
- 			};
- 		};
- 
-+		syspll: syspll {
-+			compatible = "marvell,berlin-pll";
-+			reg = <0xea0200 0x14>, <0xea0710 4>;
-+			#clock-cells = <0>;
-+			clocks = <&osc>;
-+			bypass-shift = /bits/ 8 <0>;
-+		};
-+
-+		gateclk: gateclk {
-+			compatible = "marvell,berlin4ct-gateclk";
-+			reg = <0xea0700 4>;
-+			#clock-cells = <1>;
-+		};
-+
-+		clk: clk {
-+			compatible = "marvell,berlin4ct-clk";
-+			reg = <0xea0720 0x144>;
-+			#clock-cells = <1>;
-+			clocks = <&syspll>;
-+		};
-+
- 		soc_pinctrl: pin-controller@ea8000 {
- 			compatible = "marvell,berlin4ct-soc-pinctrl";
- 			reg = <0xea8000 0x14>;
--- 
-2.6.2
+There is no special reset-controller mailing list. Due to the low amount
+of patches until now, I'm just using linux-kernel@vger.kernel.org.
+scripts/get_maintainer.pl should give you the right list for existing
+drivers.
+
+For new drivers consider adding the SoC/architecture specific mailing
+list to --cc, especially when coordination between reset and other
+drivers is needed during bringup. If new device tree bindings are added,
+always include devicetree@vger.kernel.org.
+
+best regards
+Philipp
+
