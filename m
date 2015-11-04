@@ -1,31 +1,39 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 20 Nov 2015 16:31:30 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Tero Kristo <t-kristo@ti.com>, kernel-janitors@vger.kernel.org,
+Return-Path: <repk@triplefau.lt>
+From: Remi Pommarel <repk@triplefau.lt>
+To: Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
 	Michael Turquette <mturquette@baylibre.com>,
-	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: ti: dra7: constify clk_hw_omap_ops structure
-Message-ID: <20151121003130.GB28998@codeaurora.org>
-References: <1447616894-31717-1-git-send-email-Julia.Lawall@lip6.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1447616894-31717-1-git-send-email-Julia.Lawall@lip6.fr>
+Cc: Remi Pommarel <repk@triplefau.lt>
+Subject: [PATCH 0/2] Add PWM clock support for bcm2835
+Date: Thu,  5 Nov 2015 00:08:20 +0100
+Message-Id: <1446678502-16243-1-git-send-email-repk@triplefau.lt>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/15, Julia Lawall wrote:
-> The clk_hw_omap_ops structures are never modified, so declare this one as
-> const, like the others.
-> 
-> Done with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
+Hi,
 
-Applied to clk-next
+This patchset add support for pwm clock. At boot, this clock does not have a
+default parent nor a default rate set. Thus we should be able to change its
+parent to get this clock working. The current clock implementation is using a
+mux to select the parent, but these clocks need to add a password (0x5a) in
+higher register bits when changing parent. So a generic mux cannot be used
+here.
+
+The first patch fix the clock parent selection, while the second one is actually
+adding the pwm clock registration.
+
+Remi Pommarel (2):
+  clk: bcm2835: Support for clock parent selection
+  clk: bcm2835: Add PWM clock support
+
+ arch/arm/boot/dts/bcm2835.dtsi      |   8 ++
+ drivers/clk/bcm/clk-bcm2835.c       | 144 ++++++++++++++++++++++++------------
+ include/dt-bindings/clock/bcm2835.h |   3 +-
+ 3 files changed, 108 insertions(+), 47 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.0.1
