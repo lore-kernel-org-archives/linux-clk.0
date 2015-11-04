@@ -1,61 +1,53 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-Message-ID: <564E712C.50309@gmail.com>
-Date: Thu, 19 Nov 2015 17:02:36 -0800
-From: Florian Fainelli <f.fainelli@gmail.com>
+Return-Path: <nicolas.pitre@linaro.org>
+Return-Path: <nicolas.pitre@linaro.org>
+Date: Tue, 3 Nov 2015 19:46:23 -0500 (EST)
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+    Michael Turquette <mturquette@baylibre.com>
+cc: linux-clk@vger.kernel.org
+Subject: [PATCH] imx/clk-pllv1: fix wrong do_div() usage
+Message-ID: <alpine.LFD.2.20.1511031941300.630@knanqh.ubzr>
 MIME-Version: 1.0
-To: Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org
-CC: bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
- jonmason@broadcom.com, sboyd@codeaurora.org, mturquette@baylibre.com,
- linux@arm.linux.org.uk, sbranden@broadcom.com, rjui@broadcom.com
-Subject: Re: [PATCH v4 0/3] clk: Broadcom BCM63138 support
-References: <1446168199-5959-1-git-send-email-f.fainelli@gmail.com> <564E70A4.8060001@gmail.com>
-In-Reply-To: <564E70A4.8060001@gmail.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On 19/11/15 17:00, Florian Fainelli wrote:
-> On 29/10/15 18:23, Florian Fainelli wrote:
->> This patch series adds support for the Broadcom BCM63138 DSL SoCs
->> clocking framework.
->>
->> Since the HW is identical to the one found in Broadcom iProc SoCs, but the
->> integration is different (obviously), there is still a new compatible string
->> introduced just in case we happen to find issues in the future.
->>
->> Stephen, could you stage the two patches in a clk-bcm63xx branch that I could
->> later utilize while doing the arm-soc DT pull request?
-> 
-> Stephen, can you queue the first two patches in a topic branch for me to
-> merge as part of the commit adding the DTS changes?
+do_div() is meant to be used with an unsigned dividend.
 
-Well, now that I look back at the changes, you can actually merge the
-two patches in clk-next, and the DTS changes can come in before or
-after, it does not really matter, this would not cause breakage or
-anything. Sorry for the noise.
+Signed-off-by: Nicolas Pitre <nico@linaro.org>
 
-> 
-> Thanks!
-> 
->>
->> Thank you!
->>
->> Florian Fainelli (3):
->>   clk: iproc: Extend binding to cover BCM63138
->>   clk: bcm: Add BCM63138 clock support
->>   ARM: dts: BCM63xx: Add ARMPLL device tree nodes
->>
->>  .../bindings/clock/brcm,iproc-clocks.txt           |  5 +++
->>  arch/arm/boot/dts/bcm63138.dtsi                    | 36 +++++++++++++++++-----
->>  drivers/clk/bcm/Kconfig                            | 10 ++++++
->>  drivers/clk/bcm/Makefile                           |  1 +
->>  drivers/clk/bcm/clk-bcm63xx.c                      | 22 +++++++++++++
->>  5 files changed, 66 insertions(+), 8 deletions(-)
->>  create mode 100644 drivers/clk/bcm/clk-bcm63xx.c
->>
-> 
-> 
-
-
--- 
-Florian
+diff --git a/drivers/clk/imx/clk-pllv1.c b/drivers/clk/imx/clk-pllv1.c
+index 8564e4342c..82fe3662b5 100644
+--- a/drivers/clk/imx/clk-pllv1.c
++++ b/drivers/clk/imx/clk-pllv1.c
+@@ -52,7 +52,7 @@ static unsigned long clk_pllv1_recalc_rate(struct clk_hw *hw,
+ 		unsigned long parent_rate)
+ {
+ 	struct clk_pllv1 *pll = to_clk_pllv1(hw);
+-	long long ll;
++	unsigned long long ull;
+ 	int mfn_abs;
+ 	unsigned int mfi, mfn, mfd, pd;
+ 	u32 reg;
+@@ -94,16 +94,16 @@ static unsigned long clk_pllv1_recalc_rate(struct clk_hw *hw,
+ 	rate = parent_rate * 2;
+ 	rate /= pd + 1;
+ 
+-	ll = (unsigned long long)rate * mfn_abs;
++	ull = (unsigned long long)rate * mfn_abs;
+ 
+-	do_div(ll, mfd + 1);
++	do_div(ull, mfd + 1);
+ 
+ 	if (mfn_is_negative(pll, mfn))
+-		ll = -ll;
++		ull = (rate * mfi) - ull;
++	else
++		ull = (rate * mfi) + ull;
+ 
+-	ll = (rate * mfi) + ll;
+-
+-	return ll;
++	return ull;
+ }
+ 
+ static struct clk_ops clk_pllv1_ops = {
