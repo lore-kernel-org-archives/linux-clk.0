@@ -1,55 +1,51 @@
-Return-Path: <Ping.Bai@freescale.com>
-From: Bai Ping <b51503@freescale.com>
-To: <shawnguo@kernel.org>, <kernel@pengutronix.de>
-CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH] clk: imx: Replace clk error check with imx_check_clocks()
-Date: Thu, 26 Nov 2015 10:18:43 +0800
-Message-ID: <1448504323-17737-1-git-send-email-b51503@freescale.com>
-Return-Path: b51503@freescale.com
+Return-Path: <nicolas.pitre@linaro.org>
+Return-Path: <nicolas.pitre@linaro.org>
+Date: Tue, 3 Nov 2015 20:01:40 -0500 (EST)
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+    Michael Turquette <mturquette@baylibre.com>
+cc: linux-clk@vger.kernel.org
+Subject: [PATCH] imx/clk-pllv2: fix wrong do_div() usage
+Message-ID: <alpine.LFD.2.20.1511031958530.630@knanqh.ubzr>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-As we already have a 'imx_check_clocks' to do the clock error
-check, so cleanup the error check code.
+do_div() is meant to be used with an unsigned dividend.
 
-Signed-off-by: Bai Ping <b51503@freescale.com>
----
- drivers/clk/imx/clk-imx6ul.c | 4 +---
- drivers/clk/imx/clk-imx7d.c  | 5 +----
- 2 files changed, 2 insertions(+), 7 deletions(-)
+Signed-off-by: Nicolas Pitre <nico@linaro.org>
 
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index 01718d0..08692d7 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -399,9 +399,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	/* mask handshake of mmdc */
- 	writel_relaxed(BM_CCM_CCDR_MMDC_CH0_MASK, base + CCDR);
+diff --git a/drivers/clk/imx/clk-pllv2.c b/drivers/clk/imx/clk-pllv2.c
+index 20889d59b4..5fa6d1deac 100644
+--- a/drivers/clk/imx/clk-pllv2.c
++++ b/drivers/clk/imx/clk-pllv2.c
+@@ -79,7 +79,7 @@ static unsigned long __clk_pllv2_recalc_rate(unsigned long parent_rate,
+ {
+ 	long mfi, mfn, mfd, pdf, ref_clk, mfn_abs;
+ 	unsigned long dbl;
+-	s64 temp;
++	u64 temp;
  
--	for (i = 0; i < ARRAY_SIZE(clks); i++)
--		if (IS_ERR(clks[i]))
--			pr_err("i.MX6UL clk %d: register failed with %ld\n", i, PTR_ERR(clks[i]));
-+	imx_check_clocks(clks, ARRAY_SIZE(clks));
+ 	dbl = dp_ctl & MXC_PLL_DP_CTL_DPDCK0_2_EN;
  
- 	clk_data.clks = clks;
- 	clk_data.clk_num = ARRAY_SIZE(clks);
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 581b428..fbb6a8c 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -839,10 +839,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 					 clks[IMX7D_PLL_ARM_MAIN_CLK],
- 					 clks[IMX7D_PLL_SYS_MAIN_CLK]);
+@@ -102,8 +102,9 @@ static unsigned long __clk_pllv2_recalc_rate(unsigned long parent_rate,
+ 	temp = (u64) ref_clk * mfn_abs;
+ 	do_div(temp, mfd + 1);
+ 	if (mfn < 0)
+-		temp = -temp;
+-	temp = (ref_clk * mfi) + temp;
++		temp = (ref_clk * mfi) - temp;
++	else
++		temp = (ref_clk * mfi) + temp;
  
--	for (i = 0; i < ARRAY_SIZE(clks); i++)
--		if (IS_ERR(clks[i]))
--			pr_err("i.MX7D clk %d: register failed with %ld\n",
--					i, PTR_ERR(clks[i]));
-+	imx_check_clocks(clks, ARRAY_SIZE(clks));
+ 	return temp;
+ }
+@@ -130,7 +131,7 @@ static int __clk_pllv2_set_rate(unsigned long rate, unsigned long parent_rate,
+ {
+ 	u32 reg;
+ 	long mfi, pdf, mfn, mfd = 999999;
+-	s64 temp64;
++	u64 temp64;
+ 	unsigned long quad_parent_rate;
  
- 	clk_data.clks = clks;
- 	clk_data.clk_num = ARRAY_SIZE(clks);
--- 
-1.9.1
+ 	quad_parent_rate = 4 * parent_rate;
