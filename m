@@ -1,110 +1,370 @@
-Return-Path: <robh@kernel.org>
-Date: Tue, 17 Nov 2015 13:30:46 -0600
-From: Rob Herring <robh@kernel.org>
-To: Carlo Caione <carlo@caione.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux@arm.linux.org.uk, linux-meson@googlegroups.com,
-	drake@endlessm.com, jerry.cao@amlogic.com, victor.wan@amlogic.com,
-	pawel.moll@arm.com, arnd@arndb.de,
-	Carlo Caione <carlo@endlessm.com>
-Subject: Re: [PATCH 5/7] Documentation: bindings: Add SMP related
- documentation
-Message-ID: <20151117193046.GA31149@rob-hp-laptop>
-References: <1447772202-12418-1-git-send-email-carlo@caione.org>
- <1447772202-12418-6-git-send-email-carlo@caione.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1447772202-12418-6-git-send-email-carlo@caione.org>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Jens Kuske <jenskuske@gmail.com>
+Cc: Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH] clk: sunxi: Refactor A31 PLL6 so that it can be reused
+Date: Wed,  4 Nov 2015 07:44:56 -0800
+Message-Id: <1446651896-22902-1-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1445964626-6484-2-git-send-email-jenskuske@gmail.com>
+References: <1445964626-6484-2-git-send-email-jenskuske@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Nov 17, 2015 at 03:56:40PM +0100, Carlo Caione wrote:
-> From: Carlo Caione <carlo@endlessm.com>
+Remove the fixed dividers from the PLL6 driver to be able to have a
+reusable driver that can be used across several SoCs that share the same
+controller, but don't have the same set of dividers for this clock, and to
+also be reused multiple times in the same SoC, since we're droping the
+clock name.
 
-Please give some indication in the subject what platform this change is 
-for:
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+Hi Jens,
 
-dt-bindings: amlogic: ...
+Here is an alternative (untested) patch to deal with the PLL6 issue you're
+experiencing with the H3.
 
-> 
-> With this patch we add documentation for:
-> 
-> * power-management-unit: the PMU is used to bring up the cores during
->   SMP operations
-> * sram: among other things the sram is used to store the first code
->   executed by the core when it is powered up
-> * cpu-enable-method: the CPU enable method used by Amlogic Meson8b SoCs
-> 
-> Signed-off-by: Carlo Caione <carlo@endlessm.com>
-> ---
->  .../devicetree/bindings/arm/amlogic/pmu.txt        | 16 +++++++
->  .../devicetree/bindings/arm/amlogic/smp-sram.txt   | 32 +++++++++++++
->  .../arm/cpu-enable-method/amlogic,meson8b-smp      | 53 ++++++++++++++++++++++
+It doesn't rely on parsing clock-output-names that turns out to be pretty
+fragile.
 
+Let me know what you think,
+Maxime
 
-> diff --git a/Documentation/devicetree/bindings/arm/cpu-enable-method/amlogic,meson8b-smp b/Documentation/devicetree/bindings/arm/cpu-enable-method/amlogic,meson8b-smp
-> new file mode 100644
-> index 0000000..95ee458b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/cpu-enable-method/amlogic,meson8b-smp
-> @@ -0,0 +1,53 @@
-> +=========================================================
-> +Secondary CPU enable-method "amlogic,meson8b-smp" binding
-> +=========================================================
-> +
-> +This document describes the "amlogic,meson8b-smp" method for enabling secondary
-> +CPUs. To apply to all CPUs, a single "amlogic,meson8b-smp" enable method should
-> +be defined in the "cpus" node.
-> +
-> +Enable method name:	"amlogic,meson8b-smp"
+ arch/arm/boot/dts/sun6i-a31.dtsi     | 45 +++++++++++++++++++++---------------
+ arch/arm/boot/dts/sun8i-a23-a33.dtsi | 25 +++++++++++++-------
+ arch/arm/boot/dts/sun8i-a23.dtsi     |  2 +-
+ arch/arm/boot/dts/sun8i-a33.dtsi     |  4 ++--
+ drivers/clk/sunxi/clk-sunxi.c        | 12 +---------
+ 5 files changed, 48 insertions(+), 40 deletions(-)
 
-Just add this to Documentation/devicetree/bindings/arm/cpus.txt and 
-remove this file.
-
-> +Compatible machines:	"amlogic,meson8b"
-> +Compatible CPUs:	"arm,cortex-a5"
-> +Related properties:	(none)
-> +
-> +Example:
-> +
-> +	cpus {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		enable-method = "amlogic,meson8b-smp";
-> +
-> +		cpu@200 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a5";
-> +			next-level-cache = <&L2>;
-> +			reg = <0x200>;
-> +			resets = <&clkc RST_CORE0>;
-> +		};
-> +
-> +		cpu@201 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a5";
-> +			next-level-cache = <&L2>;
-> +			reg = <0x201>;
-> +			resets = <&clkc RST_CORE1>;
-> +		};
-> +
-> +		cpu@202 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a5";
-> +			next-level-cache = <&L2>;
-> +			reg = <0x202>;
-> +			resets = <&clkc RST_CORE2>;
-> +		};
-> +
-> +		cpu@203 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a5";
-> +			next-level-cache = <&L2>;
-> +			reg = <0x203>;
-> +			resets = <&clkc RST_CORE3>;
-> +		};
-> +	};
-> +
-> -- 
-> 2.5.0
-> 
+diff --git a/arch/arm/boot/dts/sun6i-a31.dtsi b/arch/arm/boot/dts/sun6i-a31.dtsi
+index b6ad7850fac6..85486797112e 100644
+--- a/arch/arm/boot/dts/sun6i-a31.dtsi
++++ b/arch/arm/boot/dts/sun6i-a31.dtsi
+@@ -65,7 +65,7 @@
+ 			compatible = "allwinner,simple-framebuffer",
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_be0-lcd0-hdmi";
+-			clocks = <&pll6 0>;
++			clocks = <&pll6d2>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -73,7 +73,7 @@
+ 			compatible = "allwinner,simple-framebuffer",
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_be0-lcd0";
+-			clocks = <&pll6 0>;
++			clocks = <&pll6d2>;
+ 			status = "disabled";
+ 		};
+ 	};
+@@ -201,11 +201,20 @@
+ 		};
+ 
+ 		pll6: clk@01c20028 {
+-			#clock-cells = <1>;
++			#clock-cells = <0>;
+ 			compatible = "allwinner,sun6i-a31-pll6-clk";
+ 			reg = <0x01c20028 0x4>;
+ 			clocks = <&osc24M>;
+-			clock-output-names = "pll6", "pll6x2";
++			clock-output-names = "pll6";
++		};
++
++                pll6d2: pll6d2_clk {
++			compatible = "fixed-factor-clock";
++			#clock-cells = <0>;
++			clock-div = <2>;
++			clock-mult = <1>;
++			clocks = <&pll6d2>;
++			clock-output-names = "pll6d2";
+ 		};
+ 
+ 		cpu: cpu@01c20050 {
+@@ -235,7 +244,7 @@
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun6i-a31-ahb1-clk";
+ 			reg = <0x01c20054 0x4>;
+-			clocks = <&osc32k>, <&osc24M>, <&axi>, <&pll6 0>;
++			clocks = <&osc32k>, <&osc24M>, <&axi>, <&pll6d2>;
+ 			clock-output-names = "ahb1";
+ 
+ 			/*
+@@ -244,7 +253,7 @@
+ 			 * controller requires AHB1 clocked from PLL6.
+ 			 */
+ 			assigned-clocks = <&ahb1>;
+-			assigned-clock-parents = <&pll6 0>;
++			assigned-clock-parents = <&pll6d2>;
+ 		};
+ 
+ 		ahb1_gates: clk@01c20060 {
+@@ -307,7 +316,7 @@
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun4i-a10-apb1-clk";
+ 			reg = <0x01c20058 0x4>;
+-			clocks = <&osc32k>, <&osc24M>, <&pll6 0>, <&pll6 0>;
++			clocks = <&osc32k>, <&osc24M>, <&pll6d2>, <&pll6d2>;
+ 			clock-output-names = "apb2";
+ 		};
+ 
+@@ -331,7 +340,7 @@
+ 			#clock-cells = <1>;
+ 			compatible = "allwinner,sun4i-a10-mmc-clk";
+ 			reg = <0x01c20088 0x4>;
+-			clocks = <&osc24M>, <&pll6 0>;
++			clocks = <&osc24M>, <&pll6d2>;
+ 			clock-output-names = "mmc0",
+ 					     "mmc0_output",
+ 					     "mmc0_sample";
+@@ -341,7 +350,7 @@
+ 			#clock-cells = <1>;
+ 			compatible = "allwinner,sun4i-a10-mmc-clk";
+ 			reg = <0x01c2008c 0x4>;
+-			clocks = <&osc24M>, <&pll6 0>;
++			clocks = <&osc24M>, <&pll6d2>;
+ 			clock-output-names = "mmc1",
+ 					     "mmc1_output",
+ 					     "mmc1_sample";
+@@ -351,7 +360,7 @@
+ 			#clock-cells = <1>;
+ 			compatible = "allwinner,sun4i-a10-mmc-clk";
+ 			reg = <0x01c20090 0x4>;
+-			clocks = <&osc24M>, <&pll6 0>;
++			clocks = <&osc24M>, <&pll6d2>;
+ 			clock-output-names = "mmc2",
+ 					     "mmc2_output",
+ 					     "mmc2_sample";
+@@ -361,7 +370,7 @@
+ 			#clock-cells = <1>;
+ 			compatible = "allwinner,sun4i-a10-mmc-clk";
+ 			reg = <0x01c20094 0x4>;
+-			clocks = <&osc24M>, <&pll6 0>;
++			clocks = <&osc24M>, <&pll6d2>;
+ 			clock-output-names = "mmc3",
+ 					     "mmc3_output",
+ 					     "mmc3_sample";
+@@ -371,7 +380,7 @@
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun4i-a10-mod0-clk";
+ 			reg = <0x01c2009c 0x4>;
+-			clocks = <&osc24M>, <&pll6 0>;
++			clocks = <&osc24M>, <&pll6d2>;
+ 			clock-output-names = "ss";
+ 		};
+ 
+@@ -379,7 +388,7 @@
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun4i-a10-mod0-clk";
+ 			reg = <0x01c200a0 0x4>;
+-			clocks = <&osc24M>, <&pll6 0>;
++			clocks = <&osc24M>, <&pll6d2>;
+ 			clock-output-names = "spi0";
+ 		};
+ 
+@@ -387,7 +396,7 @@
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun4i-a10-mod0-clk";
+ 			reg = <0x01c200a4 0x4>;
+-			clocks = <&osc24M>, <&pll6 0>;
++			clocks = <&osc24M>, <&pll6d2>;
+ 			clock-output-names = "spi1";
+ 		};
+ 
+@@ -395,7 +404,7 @@
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun4i-a10-mod0-clk";
+ 			reg = <0x01c200a8 0x4>;
+-			clocks = <&osc24M>, <&pll6 0>;
++			clocks = <&osc24M>, <&pll6d2>;
+ 			clock-output-names = "spi2";
+ 		};
+ 
+@@ -403,7 +412,7 @@
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun4i-a10-mod0-clk";
+ 			reg = <0x01c200ac 0x4>;
+-			clocks = <&osc24M>, <&pll6 0>;
++			clocks = <&osc24M>, <&pll6d2>;
+ 			clock-output-names = "spi3";
+ 		};
+ 
+@@ -1042,8 +1051,8 @@
+ 			ar100: ar100_clk {
+ 				compatible = "allwinner,sun6i-a31-ar100-clk";
+ 				#clock-cells = <0>;
+-				clocks = <&osc32k>, <&osc24M>, <&pll6 0>,
+-					 <&pll6 0>;
++				clocks = <&osc32k>, <&osc24M>, <&pll6d2>,
++					 <&pll6d2>;
+ 				clock-output-names = "ar100";
+ 			};
+ 
+diff --git a/arch/arm/boot/dts/sun8i-a23-a33.dtsi b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
+index 0c0964d4fa1f..f325a336a8e1 100644
+--- a/arch/arm/boot/dts/sun8i-a23-a33.dtsi
++++ b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
+@@ -60,7 +60,7 @@
+ 			compatible = "allwinner,simple-framebuffer",
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_be0-lcd0";
+-			clocks = <&pll6 0>;
++			clocks = <&pll6d2>;
+ 			status = "disabled";
+ 		};
+ 	};
+@@ -129,11 +129,20 @@
+ 		};
+ 
+ 		pll6: clk@01c20028 {
+-			#clock-cells = <1>;
++			#clock-cells = <0>;
+ 			compatible = "allwinner,sun6i-a31-pll6-clk";
+ 			reg = <0x01c20028 0x4>;
+ 			clocks = <&osc24M>;
+-			clock-output-names = "pll6", "pll6x2";
++			clock-output-names = "pll6";
++		};
++
++                pll6d2: pll6d2_clk {
++			compatible = "fixed-factor-clock";
++			#clock-cells = <0>;
++			clock-div = <2>;
++			clock-mult = <1>;
++			clocks = <&pll6>;
++			clock-output-names = "pll6d2";
+ 		};
+ 
+ 		cpu: cpu_clk@01c20050 {
+@@ -163,7 +172,7 @@
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun6i-a31-ahb1-clk";
+ 			reg = <0x01c20054 0x4>;
+-			clocks = <&osc32k>, <&osc24M>, <&axi>, <&pll6 0>;
++			clocks = <&osc32k>, <&osc24M>, <&axi>, <&pll6d2>;
+ 			clock-output-names = "ahb1";
+ 		};
+ 
+@@ -190,7 +199,7 @@
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun4i-a10-apb1-clk";
+ 			reg = <0x01c20058 0x4>;
+-			clocks = <&osc32k>, <&osc24M>, <&pll6 0>, <&pll6 0>;
++			clocks = <&osc32k>, <&osc24M>, <&pll6d2>, <&pll6d2>;
+ 			clock-output-names = "apb2";
+ 		};
+ 
+@@ -213,7 +222,7 @@
+ 			#clock-cells = <1>;
+ 			compatible = "allwinner,sun4i-a10-mmc-clk";
+ 			reg = <0x01c20088 0x4>;
+-			clocks = <&osc24M>, <&pll6 0>;
++			clocks = <&osc24M>, <&pll6d2>;
+ 			clock-output-names = "mmc0",
+ 					     "mmc0_output",
+ 					     "mmc0_sample";
+@@ -223,7 +232,7 @@
+ 			#clock-cells = <1>;
+ 			compatible = "allwinner,sun4i-a10-mmc-clk";
+ 			reg = <0x01c2008c 0x4>;
+-			clocks = <&osc24M>, <&pll6 0>;
++			clocks = <&osc24M>, <&pll6d2>;
+ 			clock-output-names = "mmc1",
+ 					     "mmc1_output",
+ 					     "mmc1_sample";
+@@ -233,7 +242,7 @@
+ 			#clock-cells = <1>;
+ 			compatible = "allwinner,sun4i-a10-mmc-clk";
+ 			reg = <0x01c20090 0x4>;
+-			clocks = <&osc24M>, <&pll6 0>;
++			clocks = <&osc24M>, <&pll6d2>;
+ 			clock-output-names = "mmc2",
+ 					     "mmc2_output",
+ 					     "mmc2_sample";
+diff --git a/arch/arm/boot/dts/sun8i-a23.dtsi b/arch/arm/boot/dts/sun8i-a23.dtsi
+index 92e6616979ea..709d7a833531 100644
+--- a/arch/arm/boot/dts/sun8i-a23.dtsi
++++ b/arch/arm/boot/dts/sun8i-a23.dtsi
+@@ -79,7 +79,7 @@
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun8i-a23-mbus-clk";
+ 			reg = <0x01c2015c 0x4>;
+-			clocks = <&osc24M>, <&pll6 1>, <&pll5>;
++			clocks = <&osc24M>, <&pll6>, <&pll5>;
+ 			clock-output-names = "mbus";
+ 		};
+ 	};
+diff --git a/arch/arm/boot/dts/sun8i-a33.dtsi b/arch/arm/boot/dts/sun8i-a33.dtsi
+index 001d8402ca18..a40d458aa81f 100644
+--- a/arch/arm/boot/dts/sun8i-a33.dtsi
++++ b/arch/arm/boot/dts/sun8i-a33.dtsi
+@@ -103,7 +103,7 @@
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun4i-a10-mod0-clk";
+ 			reg = <0x01c2009c 0x4>;
+-			clocks = <&osc24M>, <&pll6 0>;
++			clocks = <&osc24M>, <&pll6d2>;
+ 			clock-output-names = "ss";
+ 		};
+ 
+@@ -111,7 +111,7 @@
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun8i-a23-mbus-clk";
+ 			reg = <0x01c2015c 0x4>;
+-			clocks = <&osc24M>, <&pll6 1>, <&pll5>, <&pll11>;
++			clocks = <&osc24M>, <&pll6>, <&pll5>, <&pll11>;
+ 			clock-output-names = "mbus";
+ 		};
+ 	};
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index 9c79af0c03b2..e4efc02e4cac 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -718,7 +718,6 @@ static const struct factors_data sun6i_a31_pll6_data __initconst = {
+ 	.enable = 31,
+ 	.table = &sun6i_a31_pll6_config,
+ 	.getter = sun6i_a31_get_pll6_factors,
+-	.name = "pll6x2",
+ };
+ 
+ static const struct factors_data sun5i_a13_ahb_data __initconst = {
+@@ -951,15 +950,6 @@ static const struct divs_data pll6_divs_data __initconst = {
+ 	}
+ };
+ 
+-static const struct divs_data sun6i_a31_pll6_divs_data __initconst = {
+-	.factors = &sun6i_a31_pll6_data,
+-	.ndivs = 2,
+-	.div = {
+-		{ .fixed = 2 }, /* normal output */
+-		{ .self = 1 }, /* base factor clock, 2x */
+-	}
+-};
+-
+ /**
+  * sunxi_divs_clk_setup() - Setup function for leaf divisors on clocks
+  *
+@@ -1101,6 +1091,7 @@ free_clkdata:
+ static const struct of_device_id clk_factors_match[] __initconst = {
+ 	{.compatible = "allwinner,sun4i-a10-pll1-clk", .data = &sun4i_pll1_data,},
+ 	{.compatible = "allwinner,sun6i-a31-pll1-clk", .data = &sun6i_a31_pll1_data,},
++	{.compatible = "allwinner,sun6i-a31-pll6-clk", .data = &sun6i_a31_pll6_data,},
+ 	{.compatible = "allwinner,sun8i-a23-pll1-clk", .data = &sun8i_a23_pll1_data,},
+ 	{.compatible = "allwinner,sun7i-a20-pll4-clk", .data = &sun7i_a20_pll4_data,},
+ 	{.compatible = "allwinner,sun5i-a13-ahb-clk", .data = &sun5i_a13_ahb_data,},
+@@ -1122,7 +1113,6 @@ static const struct of_device_id clk_div_match[] __initconst = {
+ static const struct of_device_id clk_divs_match[] __initconst = {
+ 	{.compatible = "allwinner,sun4i-a10-pll5-clk", .data = &pll5_divs_data,},
+ 	{.compatible = "allwinner,sun4i-a10-pll6-clk", .data = &pll6_divs_data,},
+-	{.compatible = "allwinner,sun6i-a31-pll6-clk", .data = &sun6i_a31_pll6_divs_data,},
+ 	{}
+ };
+ 
+-- 
+2.6.2
