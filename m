@@ -1,53 +1,62 @@
-Return-Path: <t-kristo@ti.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        <linux-clk@vger.kernel.org>
-CC: "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "tony@atomide.com" <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [GIT PULL] clk: ti: fixes for 4.4-rc
-Message-ID: <5654301D.8070007@ti.com>
-Date: Tue, 24 Nov 2015 11:38:37 +0200
+Return-Path: <jean-michel.hautbois@veo-labs.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <CALHpu366MPbxJinVL2QFM11gMHx-T=M9QXNoznOTh++oHGGmrA@mail.gmail.com>
+References: <CAH-u=82M1yCmPjBg5qeiC8JiHjM8+WsP+utX_VPKfJwJsu0QFg@mail.gmail.com>
+ <CALHpu366MPbxJinVL2QFM11gMHx-T=M9QXNoznOTh++oHGGmrA@mail.gmail.com>
+From: Jean-Michel Hautbois <jean-michel.hautbois@veo-labs.com>
+Date: Wed, 4 Nov 2015 20:33:04 +0100
+Message-ID: <CAH-u=81hMAF=r6rUKF+iuta3nC6n+4EDDz7Rn2-oGYbkbN0Jyg@mail.gmail.com>
+Subject: Re: i.MX6: Increasing VPU frequency
+To: Jon Nettleton <jon.nettleton@gmail.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, sboyd@codeaurora.org,
+	Michael Turquette <mturquette@baylibre.com>, Sascha Hauer <kernel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@freescale.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Michael, Stephen,
+2015-11-04 18:04 GMT+01:00 Jon Nettleton <jon.nettleton@gmail.com>:
+> On Wed, Nov 4, 2015 at 5:52 PM, Jean-Michel Hautbois
+> <jean-michel.hautbois@veo-labs.com> wrote:
+>> Hi !
+>>
+>> I can see in FSL kernel that VPU is configurable to 352M (it defaults
+>> at 264MHz in mainline I think).
+>> In the TRM, it is even specified at 352MHz as a default frequency,
+>> with a maximum of 540MHz.
+>>
+>> Would it be possible to allow this clock rating modification if, for
+>> instance, we select a performance governor in cpufreq, or if a coda
+>> encoder is started with 1080p for instance ?
+>> If so, then how is it doable properly ?
+>
+> For some reason the FSL kernel configures the VPU to run at 352Mhz in
+> a very odd way that requires limiting the min cpu-frequency to 792Mhz.
+> It also requires clocking down a bunch of devices on pll2_pfd2_396m to
+> 352Mhz.
+>
+> The simple solution to this is to instead parent the VPU to
+> pll2_pfd0_352m which is unused.  I have found by default it is stable
+> decoding but unstable encoding at 352Mhz, most likely due to the
+> voltage changes needed that limiting the min cpu-freq to 792Mhz
+> provides.  However everything seems to work quite reliably clocking
+> that pfd to 327Mhz, which still gives a boost of almost 24%
+>
+> In my testing the performance gain in then going from 327 to 352 is
+> minimal.  Generally I think you hit AXI bus limitations rather than
+> VPU performance.
 
-Here are some TI clock driver fixes for 4.4-rc.
+Interesting.
+So you propose to add something like the following in
+drivers/clk/imx/clk-imx6q.cdrivers/clk/imx/clk-imx6q.c :
+imx_clk_set_rate(clk[IMX6QDL_CLK_PLL2_PFD0_352M], 327000000);
+imx_clk_set_parent(clk[IMX6QDL_CLK_VPU_AXI_SEL],
+clk[IMX6QDL_CLK_PLL2_PFD0_352M]);
 
--Tero
+This should end up with a fastest VPU (in fact ~25% boost is good).
+Is it the correct way to do it ?
+Should it be done in coda instead ? And only when needed ?
 
-================================================================
-
-The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
-
-   Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
-
-are available in the git repository at:
-
-   https://github.com/t-kristo/linux-pm.git for-4.4-rc/ti-clk-fixes
-
-for you to fetch changes up to 167af5ef2cdba14ff14a13c91e5532ed479083d8:
-
-   clk: ti: drop locking code from mux/divider drivers (2015-11-24 
-11:30:27 +0200)
-
-----------------------------------------------------------------
-Grygorii Strashko (1):
-       clk: ti: drop locking code from mux/divider drivers
-
-Neil Armstrong (1):
-       clk: ti816x: Add missing dmtimer clkdev entries
-
-Nicolas Pitre (2):
-       clk: ti: clkt_dpll: fix wrong do_div() usage
-       clk: ti: fapll: fix wrong do_div() usage
-
-  drivers/clk/ti/clk-816x.c  |    2 ++
-  drivers/clk/ti/clkt_dpll.c |    4 ++--
-  drivers/clk/ti/divider.c   |   16 +++-------------
-  drivers/clk/ti/fapll.c     |    4 ++--
-  drivers/clk/ti/mux.c       |   15 +++------------
-  5 files changed, 12 insertions(+), 29 deletions(-)
+Thanks,
+JM
