@@ -1,46 +1,38 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:42268 "EHLO
-	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759025AbbKSScB (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 19 Nov 2015 13:32:01 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-sh@vger.kernel.org, linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] drivers: sh: clk: Cleanup clock API
-Date: Thu, 19 Nov 2015 19:32:05 +0100
-Message-Id: <1447957927-32738-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <nicolas.pitre@linaro.org>
+Return-Path: <nicolas.pitre@linaro.org>
+Date: Tue, 3 Nov 2015 23:17:11 -0500 (EST)
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+To: Tero Kristo <t-kristo@ti.com>, Michael Turquette <mturquette@baylibre.com>
+cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH] ti/fapll: fix wrong do_div() usage
+Message-ID: <alpine.LFD.2.20.1511032314240.630@knanqh.ubzr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Simon, Magnus,
+do_div() is meant to be used with an unsigned dividend.
 
-This patch series cleans up the clock API on legacy SH, to make it more
-similar with the Common Clock Framework.  This will avoid different
-behavior in drivers shared between legacy and CCF-based platforms (e.g.
-SCIF).
+Signed-off-by: Nicolas Pitre <nico@linaro.org>
 
-Thanks for applying!
-
-Geert Uytterhoeven (2):
-  drivers: sh: clk: Avoid crashes when passing NULL clocks
-  drivers: sh: clk: Remove obsolete and unused clk_round_parent()
-
- drivers/sh/clk/core.c  | 100 ++++++-------------------------------------------
- include/linux/sh_clk.h |   4 --
- 2 files changed, 12 insertions(+), 92 deletions(-)
-
--- 
-1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
+index f4b2e9888b..66a0d0ed8b 100644
+--- a/drivers/clk/ti/fapll.c
++++ b/drivers/clk/ti/fapll.c
+@@ -168,7 +168,7 @@ static unsigned long ti_fapll_recalc_rate(struct clk_hw *hw,
+ {
+ 	struct fapll_data *fd = to_fapll(hw);
+ 	u32 fapll_n, fapll_p, v;
+-	long long rate;
++	u64 rate;
+ 
+ 	if (ti_fapll_clock_is_bypass(fd))
+ 		return parent_rate;
+@@ -314,7 +314,7 @@ static unsigned long ti_fapll_synth_recalc_rate(struct clk_hw *hw,
+ {
+ 	struct fapll_synth *synth = to_synth(hw);
+ 	u32 synth_div_m;
+-	long long rate;
++	u64 rate;
+ 
+ 	/* The audio_pll_clk1 is hardwired to produce 32.768KiHz clock */
+ 	if (!synth->div)
