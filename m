@@ -1,105 +1,104 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 6 Nov 2015 14:32:29 -0800
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.130]:47854 "EHLO
+	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1031944AbbKEHet (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 5 Nov 2015 02:34:49 -0500
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org, kmixter@google.com,
+	benchan@google.com, Xing Zheng <zhengxing@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 09/19] drm: sun4i: Add DT bindings documentation
-Message-ID: <20151106223229.GM6114@lukather>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
- <1446214865-3972-10-git-send-email-maxime.ripard@free-electrons.com>
- <CAL_JsqLuUUApGAgdw7U8EJ7p5yrYJg8AKFB32AE9Ufrf47=WpQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cO2ZlOvi7VNgmdOy"
-In-Reply-To: <CAL_JsqLuUUApGAgdw7U8EJ7p5yrYJg8AKFB32AE9Ufrf47=WpQ@mail.gmail.com>
+	Kumar Gala <galak@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v7 0/6] Build and support rk3036 SoC platform
+Date: Thu,  5 Nov 2015 15:33:54 +0800
+Message-Id: <1446708840-12038-1-git-send-email-zhengxing@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
---cO2ZlOvi7VNgmdOy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
+  We need to support rk3036 soc platform via upstream, there are
+some primary parts for the initial release of minimum system: dts,
+clk-pll, smp, and clock tree for rk3036, and additional, we can use
+these startup and run to init processs.
 
-Hi Rob,
+Thanks.
 
-On Fri, Oct 30, 2015 at 11:40:03AM -0500, Rob Herring wrote:
-> > +Display Engine Backend
-> > +----------------------
-> > +
-> > +The display engine backend exposes layers and sprites to the
-> > +system. It's split into two components, the frontend and backend, the
-> > +frontend doing formats conversion, scaling, deinterlacing, while the
-> > +backend actually manages the layers.
-> > +
-> > +Required properties:
-> > +  - compatible: value must be one of:
-> > +    * allwinner,sun5i-a13-display-engine
-> > +
-> > +  - reg: base address and size of the memory-mapped region. Two are ne=
-eded:
-> > +    * backend0: registers of the display engine backend
-> > +    * frontend0: registers of the display engine frontend
->=20
-> Why the zeros? I think they should be dropped.
+Changed in v7:
+- removed the patch "make sure timer5 is enabled on rk3036 platforms" (applied)
+- removed the patch "add support smp for rk3036" (applied)
 
-We have SoCs that have two backends and two frontends, hence why I
-added 0. I guess I can also add several devices for them, but then I'd
-need to move to the component framework I guess (which was the plan anyway).
+Changed in v6:
+- add hardware timer in dtsi and some the aliases of basic modules
 
-> > +
-> > +  - allwinner,tcon: phandle to the TCON in our pipeline
->=20
-> Use of-graph or just let the relationship live in the driver. If there
-> is only 1 instance of the blocks, the latter is fine.
+Changed in v5:
+- don't use clk_ APIs in the pll init-callback
 
-We can also have several TCON instances in the SoC, and even though
-you can on a theorical point of view use any TCON with any backend,
-usually you're tied because of how the pins are routed on the boards.
+Changed in v4:
+- add some basic IP modules on rk3036.dtsi
+- optimized supporting smp codes
 
-Thanks!
-Maxime
+Changed in v3:
+- optimized some codes based on v2
+- removed the patch "initial set time for rtc-hym8563" (useless)
+- removed the patch "pinctrl" (approved)
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Changed in v2:
+- based on v1, add clock controller documentation
+- enable timer5 startup
+- add smp for cpu1
+- initial set time for rtc-hym8563
 
---cO2ZlOvi7VNgmdOy
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Changes in v1:
+- add dts, pinctrl and clock tree for rk3036 soc platform
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+The patchset (6):
+6) ARM: dts: enable smp for rk3036
+5) ARM: dts: rockchip: add core rk3036 dts
+4) clk: rockchip: add clock controller for rk3036
+3) clk: rockchip: add new pll-type for rk3036 and similar socs
+2) clk: rockchip: add dt-binding header for rk3036
+1) dt-bindings: add documentation of rk3036 clock controller
 
-iQIcBAEBAgAGBQJWPSp9AAoJEBx+YmzsjxAgimwP/2I7iIkZYajB5ZrsxAiDOQfU
-dRu0Sr4HoCU6+Ok2M01dPwn/V5+qQ+PrqFbKLW/SQ+TmH1WQhs7HS1oYmPkB6J4B
-VMz/9RCzX3Eo8lDWw/nclTRrwZIKlOMFqx4aYQgnx0wusTVOrzziAlnW/slqpOhU
-jXl20LMIeMdVy32SqK1CvT9LyzfIFpmsu9hOdfQDGyT+axanaBflkS/OAzhOmjkT
-moYYxr+05/blOUxlvFBegW4gNj45XTpVRkImEkvrZsNhdJokiNRae8IEBA8pm7f2
-UhaTT+FJdUatMbSn0tfD5QOQ7M0dmqiqsxqWHuK84msTkJy4mqYrU9yiv43L9jYw
-myEL+vnLRgXDHKGC0OZLsQJaGnoSxmtG5s8aAlUzZyv4t5aS9DDbcenH1BXCP771
-XypEszvQx2e/5RS/d9LNQC1OjcDUEcPQaYpQjwQha9WYjxKhe+TTlcNCyKXStk3d
-8MxZaQJzPwFTZBWbALbvBd4yxw9lM4iteG9Y5ury9T7kgLKwMJoT7UH1niup58xR
-cI21R2rCHW/2T48oCXqQDnrGZrVPheOpVyB0zeRGF5+bVVprpg8v/v0AfioH0v1f
-rfV4W4m2D7LXTPU5doe7OhO6rWsX52aCOJ6XaZnxlLx4dFokoTvQVYBfvsTFs2ou
-fyZNARsigPyUyMG2KuTM
-=6kHb
------END PGP SIGNATURE-----
 
---cO2ZlOvi7VNgmdOy--
+Changes in v7:
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
+Xing Zheng (6):
+  dt-bindings: add documentation of rk3036 clock controller
+  clk: rockchip: add dt-binding header for rk3036
+  clk: rockchip: add new pll-type for rk3036 and similar socs
+  clk: rockchip: add clock controller for rk3036
+  ARM: dts: rockchip: add core rk3036 dts
+  ARM: dts: enable smp for rk3036
+
+ .../bindings/clock/rockchip,rk3036-cru.txt         |   56 ++
+ arch/arm/boot/dts/Makefile                         |    1 +
+ arch/arm/boot/dts/rk3036-evb.dts                   |   64 +++
+ arch/arm/boot/dts/rk3036.dtsi                      |  552 ++++++++++++++++++++
+ drivers/clk/rockchip/Makefile                      |    1 +
+ drivers/clk/rockchip/clk-pll.c                     |  249 ++++++++-
+ drivers/clk/rockchip/clk-rk3036.c                  |  478 +++++++++++++++++
+ drivers/clk/rockchip/clk.h                         |   32 +-
+ include/dt-bindings/clock/rk3036-cru.h             |  193 +++++++
+ 9 files changed, 1624 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3036-cru.txt
+ create mode 100644 arch/arm/boot/dts/rk3036-evb.dts
+ create mode 100644 arch/arm/boot/dts/rk3036.dtsi
+ create mode 100644 drivers/clk/rockchip/clk-rk3036.c
+ create mode 100644 include/dt-bindings/clock/rk3036-cru.h
+
+-- 
+1.7.9.5
+
+
