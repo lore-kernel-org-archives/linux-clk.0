@@ -1,180 +1,92 @@
-Return-Path: <sebastian.hesselbarth@gmail.com>
-Return-Path: <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH v2 6/6] arm64: dts: berlin4ct: add pll and clock nodes
-To: Jisheng Zhang <jszhang@marvell.com>
-References: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
- <1448008952-1787-7-git-send-email-jszhang@marvell.com>
- <564F8B73.7070403@gmail.com> <20151123152158.483aa6b5@xhacker>
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
- ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
- catalin.marinas@arm.com, will.deacon@arm.com, mturquette@baylibre.com,
- sboyd@codeaurora.org, antoine.tenart@free-electrons.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Message-ID: <5652CEB2.9030902@gmail.com>
-Date: Mon, 23 Nov 2015 09:30:42 +0100
-In-Reply-To: <20151123152158.483aa6b5@xhacker>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <jon.nettleton@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <CAH-u=83K7EPQ57cP=GQ6duH=bEwYxoC=YU+urLsg9kCo9eOQwA@mail.gmail.com>
+References: <CAH-u=82M1yCmPjBg5qeiC8JiHjM8+WsP+utX_VPKfJwJsu0QFg@mail.gmail.com>
+	<CALHpu366MPbxJinVL2QFM11gMHx-T=M9QXNoznOTh++oHGGmrA@mail.gmail.com>
+	<CAH-u=81hMAF=r6rUKF+iuta3nC6n+4EDDz7Rn2-oGYbkbN0Jyg@mail.gmail.com>
+	<CALHpu34iKGTE=tENJTFOu13LxSozRjU9bwmGxnigUXgTDsXAQw@mail.gmail.com>
+	<CAH-u=83K7EPQ57cP=GQ6duH=bEwYxoC=YU+urLsg9kCo9eOQwA@mail.gmail.com>
+Date: Thu, 5 Nov 2015 07:46:38 +0100
+Message-ID: <CALHpu35hgmw0YrmfBj2uOLbSu05fmGcqgsosLt=XOxCpkVGjDw@mail.gmail.com>
+Subject: Re: i.MX6: Increasing VPU frequency
+From: Jon Nettleton <jon.nettleton@gmail.com>
+To: Jean-Michel Hautbois <jean-michel.hautbois@veo-labs.com>
+Cc: Fabio Estevam <fabio.estevam@freescale.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Michael Turquette <mturquette@baylibre.com>, Sascha Hauer <kernel@pengutronix.de>,
+	linux-clk@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, sboyd@codeaurora.org,
+	Shawn Guo <shawnguo@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 23.11.2015 08:21, Jisheng Zhang wrote:
-> On Fri, 20 Nov 2015 22:06:59 +0100
-> Sebastian Hesselbarth wrote:
->> On 20.11.2015 09:42, Jisheng Zhang wrote:
->>> Add syspll, mempll, cpupll, gateclk and berlin-clk nodes.
->>>
->>> Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
->>> ---
-[...]
->>> +		syspll: syspll {
->>> +			compatible = "marvell,berlin-pll";
->>> +			reg = <0xea0200 0x14>, <0xea0710 4>;
->>> +			#clock-cells = <0>;
->>> +			clocks = <&osc>;
->>> +			bypass-shift = /bits/ 8 <0>;
->>> +		};
->>> +
->>> +		gateclk: gateclk {
->>> +			compatible = "marvell,berlin4ct-gateclk";
->>> +			reg = <0xea0700 4>;
->>> +			#clock-cells = <1>;
->>> +		};
->>> +
->>> +		clk: clk {
->>> +			compatible = "marvell,berlin4ct-clk";
->>> +			reg = <0xea0720 0x144>;
+On Thu, Nov 5, 2015 at 7:43 AM, Jean-Michel Hautbois
+<jean-michel.hautbois@veo-labs.com> wrote:
+>
+> Le 5 nov. 2015 05:23, "Jon Nettleton" <jon.nettleton@gmail.com> a =C3=A9c=
+rit :
 >>
->> Looking at the reg ranges, I'd say that they are all clock related
->> and pretty close to each other:
+>> On Wed, Nov 4, 2015 at 8:33 PM, Jean-Michel Hautbois
+>> <jean-michel.hautbois@veo-labs.com> wrote:
+>> > 2015-11-04 18:04 GMT+01:00 Jon Nettleton <jon.nettleton@gmail.com>:
+>> >> On Wed, Nov 4, 2015 at 5:52 PM, Jean-Michel Hautbois
+>> >> <jean-michel.hautbois@veo-labs.com> wrote:
+>> >>> Hi !
+>> >>>
+>> >>> I can see in FSL kernel that VPU is configurable to 352M (it default=
+s
+>> >>> at 264MHz in mainline I think).
+>> >>> In the TRM, it is even specified at 352MHz as a default frequency,
+>> >>> with a maximum of 540MHz.
+>> >>>
+>> >>> Would it be possible to allow this clock rating modification if, for
+>> >>> instance, we select a performance governor in cpufreq, or if a coda
+>> >>> encoder is started with 1080p for instance ?
+>> >>> If so, then how is it doable properly ?
+>> >>
+>> >> For some reason the FSL kernel configures the VPU to run at 352Mhz in
+>> >> a very odd way that requires limiting the min cpu-frequency to 792Mhz=
+.
+>> >> It also requires clocking down a bunch of devices on pll2_pfd2_396m t=
+o
+>> >> 352Mhz.
+>> >>
+>> >> The simple solution to this is to instead parent the VPU to
+>> >> pll2_pfd0_352m which is unused.  I have found by default it is stable
+>> >> decoding but unstable encoding at 352Mhz, most likely due to the
+>> >> voltage changes needed that limiting the min cpu-freq to 792Mhz
+>> >> provides.  However everything seems to work quite reliably clocking
+>> >> that pfd to 327Mhz, which still gives a boost of almost 24%
+>> >>
+>> >> In my testing the performance gain in then going from 327 to 352 is
+>> >> minimal.  Generally I think you hit AXI bus limitations rather than
+>> >> VPU performance.
+>> >
+>> > Interesting.
+>> > So you propose to add something like the following in
+>> > drivers/clk/imx/clk-imx6q.cdrivers/clk/imx/clk-imx6q.c :
+>> > imx_clk_set_rate(clk[IMX6QDL_CLK_PLL2_PFD0_352M], 327000000);
+>> > imx_clk_set_parent(clk[IMX6QDL_CLK_VPU_AXI_SEL],
+>> > clk[IMX6QDL_CLK_PLL2_PFD0_352M]);
+>> >
+>> > This should end up with a fastest VPU (in fact ~25% boost is good).
+>> > Is it the correct way to do it ?
+>> > Should it be done in coda instead ? And only when needed ?
 >>
->> gateclk: reg = <0xea0700 4>;
->> bypass:  reg = <0xea0710 4>;
->> clk:     reg = <0xea0720 0x144>;
+>> That is how I have done it.  I was going to implement dvfs for the vpu
+>> but found that this change really added minimal power and thermal
+>> overhead.  Without looking it up I believe I only saw a 10-20mA rise
+>> in power usage and virtually no thermal differences.
 >
-> Although these ranges sit close, but we should represent HW structure as you
-> said.
+> OK so it could even be integrated mainline... Should it be driven by DT
+> maybe?
+> Is it OK to have VPU at 327MHz and CPU at 396MHz?
+>
 
-Then how do you argue that you have to share the gate clock register
-with every PLL? The answer is quite simple: You are not separating by
-HW either but existing SW API.
-
-If you would really want to just describe the HW, then you'd have to
-have a single node for _all_ clocks that get controlled by 0xea0700/0x4,
-feed some 32+ clocks into the node, and out again. Obviously, this
-isn't what we want, right?
-
-So, the idea of berlin2 sysctrl nodes (and similar other SoCs) is: Some
-SoCs just dump some functions into a bunch of registers with no
-particular order. We'd never find a good representation for that in DT,
-so we don't bother to try but let the driver implementation deal with
-the mess. Using "simple-mfd" is a nice solution to scattered registers
-please have a look at it and come up with a cleaner separation for bg4
-clock.
-
-> First of all, let me describe the clks/plls in BG4CT. BG4CT contains:
->
-> two kinds of PLL: normal PLL and AVPLL. These PLLs are put with their users
-> together. For example: mempll pll registers <0xf7940034, 0x14> is put together
-> with mem controller registers. AVPLL control registers are put with AV devices.
-
-Why didn't you choose to have a memory-controller node that provides
-mempll clock then? I am open to having multiple nodes providing clocks
-but having a node for every clock in any subsystem is something I'll
-not even think about.
-
-> You can also check mempll, cpupll and syspll ranges:
->
-> cpupll: <0x922000 0x14>
->
-> mempll: <0x940034 0x14>
->
-> syspll: <0xea0200 0x14>
->
->
-> We have three normal PLLS: cpupll, mempll and syspll. All these three PLLs use
-> 25MHZ osc as clocksource. These plls can be bypassed. when syspll is bypassed
-> the 25MHZ osc is directly output to syspllclk. When mempll/cpupll is bypassed,
-> its corresponding fastrefclk is directly output to ddrphyclk/cpuclk:
->
->
->         ---25MHZ osc----------|\
->             ________            | |-- syspllclk
->         ---| SYSPLL |---------|/
->
->
->
->         ---cpufastrefclk------|\
->             ________            | |-- cpuclk
->         ---| CPUPLL |---------|/
->
->
->         ---memfastrefclk------|\
->             ________            | |-- ddrphyclk
->         ---| MEMPLL |---------|/
->
-> NOTE: the fastrefclk is the so called normal clk below.
->
->
->
-> two kinds of clk: normal clk and gate clk. The normal clk supports changing
-> divider, selecting clock source, disabling/enabling etc. The gate clk only
-> supports disabling/enabling. normal clks use syspllclk as clocksource, while
-> gate clks use perifsysclk as clocksource.
->
->
-> So what's the representing HW structure in fact? Here is my proposal:
-> 1. have mempll, cpupll and syspll node in dts
-
-No.
-
-> 2. one gateclk node in dts for gateclks
-
-No.
-
-> 3. one normalclk node in dts for normal clks
-
-No.
-
-> 4. one ccf clock-mux for cpuclk, ddrphyclk and syspllclk.
-
-No.
-
-> what do you think?
-
-I think that the current separation is not a good one. I am open for
-suggestions but I am not accepting single PLL/clock nodes.
-
->  From another side, let's have a look at driver/clk/mvebu. As can be seen,
-> different clks register are close each other, for example, gateclk and coreclk
-> in arch/arm/boot/dts/armada-xp.dtsi.
->
-> And drivers/clk/sunxi, arch/arm/boot/dts/sun7i-a20.dtsi, the pll4, pll12, gt_clk
-> and ahb*, apb* etc...
->
-> why these SoCs don't merge clocks/gates/plls to a single clock complex node?
-> I think that's because they are representing real HW structure.
-
-These SoC (at least mvebu) didn't merge them into a single clock
-complex node because nobody had a better idea or an impression of
-the consequences. Looking back with the idea of syscon/simple-mfd
-we probably would have chosen to separate differently.
-
->> So, please just follow the OF/driver structure we already
->> have for Berlin2.
-
-To repeat: "please just follow the OF/driver structure we already
-have for Berlin2"
-
-Sebastian
-
->>> +			#clock-cells = <1>;
->>> +			clocks = <&syspll>;
->>> +		};
->>> +
->>>   		soc_pinctrl: pin-controller@ea8000 {
->>>   			compatible = "marvell,berlin4ct-soc-pinctrl";
->>>   			reg = <0xea8000 0x14>;
->>>
->>
->
+This can certainly be changed per device via device-tree.  It does run
+fine with the cpu at 396MHz, that limitation was previously imposed
+due to the clock parent that was being used when the VPU was clocked
+to 352MHz.  There have been hints in commits that higher cpu core
+voltage is needed, but I have not found any instability so don't
+believe this is the case.  Obviously the more people that we can have
+test this change the better.
