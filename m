@@ -1,230 +1,82 @@
-Return-Path: <lars@metafoo.de>
-From: Lars-Peter Clausen <lars@metafoo.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lars-Peter Clausen <lars@metafoo.de>
-Subject: [PATCH 1/2] clk: axi-clkgen: Remove version 1 support
-Date: Mon, 30 Nov 2015 17:54:55 +0100
-Message-Id: <1448902496-21218-1-git-send-email-lars@metafoo.de>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Fri, 6 Nov 2015 11:37:41 -0800
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi <linux-sunxi@googlegroups.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 19/19] ARM: sun5i: chip: Enable the TV Encoder
+Message-ID: <20151106193741.GJ6114@lukather>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1446214865-3972-20-git-send-email-maxime.ripard@free-electrons.com>
+ <CAGb2v66vjp=5GtGD-0i3OOw-wK3H4bogfvPoNzuwYvY8vt4fMQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="C4ZO9l7mQWyMv5+Y"
+In-Reply-To: <CAGb2v66vjp=5GtGD-0i3OOw-wK3H4bogfvPoNzuwYvY8vt4fMQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Version 1 of the axi-clkgen core has not been used in new designs for over
-two years now. This is a soft peripheral used in FPGAs and anybody who has
-updated their kernel to the latest version will also have updated the
-bitstream containing the clock generator. So it should be safe to drop
-support for this now.
 
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
----
- drivers/clk/clk-axi-clkgen.c | 125 ++-----------------------------------------
- 1 file changed, 4 insertions(+), 121 deletions(-)
+--C4ZO9l7mQWyMv5+Y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
-index 3bcd42f..8dedc60 100644
---- a/drivers/clk/clk-axi-clkgen.c
-+++ b/drivers/clk/clk-axi-clkgen.c
-@@ -16,18 +16,6 @@
- #include <linux/module.h>
- #include <linux/err.h>
- 
--#define AXI_CLKGEN_V1_REG_UPDATE_ENABLE	0x04
--#define AXI_CLKGEN_V1_REG_CLK_OUT1	0x08
--#define AXI_CLKGEN_V1_REG_CLK_OUT2	0x0c
--#define AXI_CLKGEN_V1_REG_CLK_DIV	0x10
--#define AXI_CLKGEN_V1_REG_CLK_FB1	0x14
--#define AXI_CLKGEN_V1_REG_CLK_FB2	0x18
--#define AXI_CLKGEN_V1_REG_LOCK1		0x1c
--#define AXI_CLKGEN_V1_REG_LOCK2		0x20
--#define AXI_CLKGEN_V1_REG_LOCK3		0x24
--#define AXI_CLKGEN_V1_REG_FILTER1	0x28
--#define AXI_CLKGEN_V1_REG_FILTER2	0x2c
--
- #define AXI_CLKGEN_V2_REG_RESET		0x40
- #define AXI_CLKGEN_V2_REG_DRP_CNTRL	0x70
- #define AXI_CLKGEN_V2_REG_DRP_STATUS	0x74
-@@ -51,40 +39,11 @@
- #define MMCM_REG_FILTER1	0x4e
- #define MMCM_REG_FILTER2	0x4f
- 
--struct axi_clkgen;
--
--struct axi_clkgen_mmcm_ops {
--	void (*enable)(struct axi_clkgen *axi_clkgen, bool enable);
--	int (*write)(struct axi_clkgen *axi_clkgen, unsigned int reg,
--		     unsigned int val, unsigned int mask);
--	int (*read)(struct axi_clkgen *axi_clkgen, unsigned int reg,
--		    unsigned int *val);
--};
--
- struct axi_clkgen {
- 	void __iomem *base;
--	const struct axi_clkgen_mmcm_ops *mmcm_ops;
- 	struct clk_hw clk_hw;
- };
- 
--static void axi_clkgen_mmcm_enable(struct axi_clkgen *axi_clkgen,
--	bool enable)
--{
--	axi_clkgen->mmcm_ops->enable(axi_clkgen, enable);
--}
--
--static int axi_clkgen_mmcm_write(struct axi_clkgen *axi_clkgen,
--	unsigned int reg, unsigned int val, unsigned int mask)
--{
--	return axi_clkgen->mmcm_ops->write(axi_clkgen, reg, val, mask);
--}
--
--static int axi_clkgen_mmcm_read(struct axi_clkgen *axi_clkgen,
--	unsigned int reg, unsigned int *val)
--{
--	return axi_clkgen->mmcm_ops->read(axi_clkgen, reg, val);
--}
--
- static uint32_t axi_clkgen_lookup_filter(unsigned int m)
- {
- 	switch (m) {
-@@ -207,70 +166,6 @@ static void axi_clkgen_read(struct axi_clkgen *axi_clkgen,
- 	*val = readl(axi_clkgen->base + reg);
- }
- 
--static unsigned int axi_clkgen_v1_map_mmcm_reg(unsigned int reg)
--{
--	switch (reg) {
--	case MMCM_REG_CLKOUT0_1:
--		return AXI_CLKGEN_V1_REG_CLK_OUT1;
--	case MMCM_REG_CLKOUT0_2:
--		return AXI_CLKGEN_V1_REG_CLK_OUT2;
--	case MMCM_REG_CLK_FB1:
--		return AXI_CLKGEN_V1_REG_CLK_FB1;
--	case MMCM_REG_CLK_FB2:
--		return AXI_CLKGEN_V1_REG_CLK_FB2;
--	case MMCM_REG_CLK_DIV:
--		return AXI_CLKGEN_V1_REG_CLK_DIV;
--	case MMCM_REG_LOCK1:
--		return AXI_CLKGEN_V1_REG_LOCK1;
--	case MMCM_REG_LOCK2:
--		return AXI_CLKGEN_V1_REG_LOCK2;
--	case MMCM_REG_LOCK3:
--		return AXI_CLKGEN_V1_REG_LOCK3;
--	case MMCM_REG_FILTER1:
--		return AXI_CLKGEN_V1_REG_FILTER1;
--	case MMCM_REG_FILTER2:
--		return AXI_CLKGEN_V1_REG_FILTER2;
--	default:
--		return 0;
--	}
--}
--
--static int axi_clkgen_v1_mmcm_write(struct axi_clkgen *axi_clkgen,
--	unsigned int reg, unsigned int val, unsigned int mask)
--{
--	reg = axi_clkgen_v1_map_mmcm_reg(reg);
--	if (reg == 0)
--		return -EINVAL;
--
--	axi_clkgen_write(axi_clkgen, reg, val);
--
--	return 0;
--}
--
--static int axi_clkgen_v1_mmcm_read(struct axi_clkgen *axi_clkgen,
--	unsigned int reg, unsigned int *val)
--{
--	reg = axi_clkgen_v1_map_mmcm_reg(reg);
--	if (reg == 0)
--		return -EINVAL;
--
--	axi_clkgen_read(axi_clkgen, reg, val);
--
--	return 0;
--}
--
--static void axi_clkgen_v1_mmcm_enable(struct axi_clkgen *axi_clkgen,
--	bool enable)
--{
--	axi_clkgen_write(axi_clkgen, AXI_CLKGEN_V1_REG_UPDATE_ENABLE, enable);
--}
--
--static const struct axi_clkgen_mmcm_ops axi_clkgen_v1_mmcm_ops = {
--	.write = axi_clkgen_v1_mmcm_write,
--	.read = axi_clkgen_v1_mmcm_read,
--	.enable = axi_clkgen_v1_mmcm_enable,
--};
--
- static int axi_clkgen_wait_non_busy(struct axi_clkgen *axi_clkgen)
- {
- 	unsigned int timeout = 10000;
-@@ -286,7 +181,7 @@ static int axi_clkgen_wait_non_busy(struct axi_clkgen *axi_clkgen)
- 	return val & 0xffff;
- }
- 
--static int axi_clkgen_v2_mmcm_read(struct axi_clkgen *axi_clkgen,
-+static int axi_clkgen_mmcm_read(struct axi_clkgen *axi_clkgen,
- 	unsigned int reg, unsigned int *val)
- {
- 	unsigned int reg_val;
-@@ -310,7 +205,7 @@ static int axi_clkgen_v2_mmcm_read(struct axi_clkgen *axi_clkgen,
- 	return 0;
- }
- 
--static int axi_clkgen_v2_mmcm_write(struct axi_clkgen *axi_clkgen,
-+static int axi_clkgen_mmcm_write(struct axi_clkgen *axi_clkgen,
- 	unsigned int reg, unsigned int val, unsigned int mask)
- {
- 	unsigned int reg_val = 0;
-@@ -321,7 +216,7 @@ static int axi_clkgen_v2_mmcm_write(struct axi_clkgen *axi_clkgen,
- 		return ret;
- 
- 	if (mask != 0xffff) {
--		axi_clkgen_v2_mmcm_read(axi_clkgen, reg, &reg_val);
-+		axi_clkgen_mmcm_read(axi_clkgen, reg, &reg_val);
- 		reg_val &= ~mask;
- 	}
- 
-@@ -332,7 +227,7 @@ static int axi_clkgen_v2_mmcm_write(struct axi_clkgen *axi_clkgen,
- 	return 0;
- }
- 
--static void axi_clkgen_v2_mmcm_enable(struct axi_clkgen *axi_clkgen,
-+static void axi_clkgen_mmcm_enable(struct axi_clkgen *axi_clkgen,
- 	bool enable)
- {
- 	unsigned int val = AXI_CLKGEN_V2_RESET_ENABLE;
-@@ -343,12 +238,6 @@ static void axi_clkgen_v2_mmcm_enable(struct axi_clkgen *axi_clkgen,
- 	axi_clkgen_write(axi_clkgen, AXI_CLKGEN_V2_REG_RESET, val);
- }
- 
--static const struct axi_clkgen_mmcm_ops axi_clkgen_v2_mmcm_ops = {
--	.write = axi_clkgen_v2_mmcm_write,
--	.read = axi_clkgen_v2_mmcm_read,
--	.enable = axi_clkgen_v2_mmcm_enable,
--};
--
- static struct axi_clkgen *clk_hw_to_axi_clkgen(struct clk_hw *clk_hw)
- {
- 	return container_of(clk_hw, struct axi_clkgen, clk_hw);
-@@ -470,11 +359,7 @@ static const struct clk_ops axi_clkgen_ops = {
- 
- static const struct of_device_id axi_clkgen_ids[] = {
- 	{
--		.compatible = "adi,axi-clkgen-1.00.a",
--		.data = &axi_clkgen_v1_mmcm_ops
--	}, {
- 		.compatible = "adi,axi-clkgen-2.00.a",
--		.data = &axi_clkgen_v2_mmcm_ops,
- 	},
- 	{ },
- };
-@@ -501,8 +386,6 @@ static int axi_clkgen_probe(struct platform_device *pdev)
- 	if (!axi_clkgen)
- 		return -ENOMEM;
- 
--	axi_clkgen->mmcm_ops = id->data;
--
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	axi_clkgen->base = devm_ioremap_resource(&pdev->dev, mem);
- 	if (IS_ERR(axi_clkgen->base))
--- 
-2.1.4
+Hi Chen-Yu,
+
+On Fri, Oct 30, 2015 at 11:20:41PM +0800, Chen-Yu Tsai wrote:
+> On Fri, Oct 30, 2015 at 10:21 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > The TV encoder is used to drive VGA and composite display.
+> >
+> > Enable it on the CHIP
+>=20
+> The commit message does not match the contents. Missing a patch? :)
+
+No, I changed the commit a bit, and forgot to update the message :)
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--C4ZO9l7mQWyMv5+Y
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWPQGFAAoJEBx+YmzsjxAgnUwP/0Wwym558rJlXdBWxA4fLbpl
+K22UrDT2qfcLz9KCtNA4lvuCd+oxy9k0SKwN5Wg0bJmOHMHQfa2m8pQz1keaN1L9
+cP/X+bfg63oA398iKOuOoQMsAtUWGYo5iuty0274T4CkJsRl7yiolsizN2AjcXVk
+YAsqKR6kMBBT4cj3GfnFdMwXOqwbWT1xKy+s6khg0/LCCfdg2kOH6bg2hKq93QzN
++8WUvKCvrG0LsS6FO76WnLhIa8vPJK+wia1ymvWl7cVVf7pLoEinDDwHt0nVY0gT
+wYOqg1RLLvCJZ0joHyOxekc4Y2LuJsgXCp3yFYlYOYYLa2ckNACL/u341KUKzlP+
+P48VzWq6FkLDMF1ynxnar+uavU0ZAJKoNUDevU9ha/Oe49XN38JzfetRt3qu4coL
+pEd7KK9sVswp1AR6PX9/cgVQGcvYyEv1LWLI5KBQOabTU8vhE8YAn2/oDXegO2w7
+gj+q8FJ3afbq8hB8a+QMf2s4V3dNBN8NWSmEhRjmRaTfZP7F1yaHX5WXuPTn2yLl
+0ayq39Oj7Hly00+qMEefujLl6UY26WeIOMxyZpph498CVFpW3oL+Ky+uhkWv9HbV
+IFx/V2ueSIjjx+S6eg0Cn/iLWhXazDiBOyaTvDW+/wbUtSTgXoTpM255dd4hzP3J
+bi9VYrD1yrcL+BDKy7ei
+=orX4
+-----END PGP SIGNATURE-----
+
+--C4ZO9l7mQWyMv5+Y--
