@@ -1,65 +1,54 @@
-Return-Path: <djkurtz@google.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Sender: djkurtz@google.com
-In-Reply-To: <1442230072-31593-1-git-send-email-pi-cheng.chen@linaro.org>
-References: <1442230072-31593-1-git-send-email-pi-cheng.chen@linaro.org>
-From: Daniel Kurtz <djkurtz@chromium.org>
-Date: Mon, 30 Nov 2015 11:48:00 +0800
-Message-ID: <CAGS+omCkYTPyjMk6QaoxGAL4QVU8VcpWyFqWhST+iP2EFRcRYg@mail.gmail.com>
-Subject: Re: [PATCH v6] clk: mediatek: Export CPU mux clocks for CPU frequency control
-To: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	James Liao <jamesjj.liao@mediatek.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>, linux-clk@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Linaro Kernel Mailman List <linaro-kernel@lists.linaro.org>
+In-Reply-To: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 9 Nov 2015 11:43:44 +0800
+Message-ID: <CAGb2v678TOTbAcJMbdLsg1AB-ze_hchG0Yw4or1ENwu_YzQGfw@mail.gmail.com>
+Subject: Re: [PATCH 00/19] drm: Add Allwinner A10 display engine support
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>, Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Pi-Cheng and Michael,
+Hi Maxime,
 
-On Mon, Sep 14, 2015 at 7:27 PM, Pi-Cheng Chen <pi-cheng.chen@linaro.org> wrote:
-> From: "pi-cheng.chen" <pi-cheng.chen@linaro.org>
->
-> This patch adds CPU mux clocks which are used by Mediatek cpufreq driver
-> for intermediate clock source switching.
+On Fri, Oct 30, 2015 at 10:20 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Maxime Ripard (19):
+>   clk: sunxi: Add display clock
+>   clk: sunxi: Add PLL3 clock
+>   clk: sunxi: Add TCON channel0 clock
+>   clk: sunxi: Add TCON channel1 clock
+>   clk: sunxi: add DRAM gates
+>   clk: sunxi: Add Allwinner R8 AHB gates support
+>   drm/panel: simple: Add timings for the Olimex LCD-OLinuXino-4.3TS
+>   drm: Add Allwinner A10 Display Engine support
+>   drm: sun4i: Add DT bindings documentation
+>   drm: sun4i: Add RGB output
+>   drm: sun4i: Add composite output
+>   drm: sun4i: tv: Add PAL output standard
+>   drm: sun4i: tv: Add NTSC output standard
+>   ARM: sun5i: dt: Add pll3 and pll7 clocks
+>   ARM: sun5i: dt: Add display and TCON clocks
+>   ARM: sun5i: dt: Add DRAM gates
+>   ARM: sun5i: dt: Add display blocks to the DTSI
+>   ARM: sun5i: r8: Add AHB gates to the DTSI
+>   ARM: sun5i: chip: Enable the TV Encoder
 
-It looks like this patch was never picked up.
-It is required for MT8173 cpufreq.
+Can you add a patch adding the clock compatibles to
+Documentation/devicetree/bindings/clock/sunxi.txt?
 
-What is the plan to get this one merged?
-
--Dan
-
->
-> Signed-off-by: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-> ---
-> Changes in v6:
-> - Relace __clk_get_num_parents with clk_hw_get_num_parents to reflect
->   API change
->
-> Changes in v5:
-> - Replace __initdata with __initconst to fix compiling error
->
-> Changes in v4:
-> - Fix some minor issues for v3
-> - Rebase to the patch that adds 13mhz clock for MT8173[1]
->
-> Changes in v3:
-> - Rebase to 4.2-rc1
-> - Fix some issues of v2
->
-> Changes in v2:
-> - Remove use of .determine_rate callback
-> ---
->  drivers/clk/mediatek/Makefile          |   2 +-
->  drivers/clk/mediatek/clk-cpumux.c      | 127 +++++++++++++++++++++++++++++++++
->  drivers/clk/mediatek/clk-cpumux.h      |  22 ++++++
->  drivers/clk/mediatek/clk-mt8173.c      |  23 ++++++
->  include/dt-bindings/clock/mt8173-clk.h |   4 +-
->  5 files changed, 176 insertions(+), 2 deletions(-)
->  create mode 100644 drivers/clk/mediatek/clk-cpumux.c
->  create mode 100644 drivers/clk/mediatek/clk-cpumux.h
-
-[snip]
+Thanks
+ChenYu
