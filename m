@@ -1,106 +1,33 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=UTF-8
-Message-id: <564945A6.904@samsung.com>
-Date: Mon, 16 Nov 2015 11:55:34 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
- Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>,
- Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
- Kevin Hilman <khilman@linaro.org>
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 2/2] arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into
- ARCH_EXYNOS
-References: <1447637775-9887-1-git-send-email-k.kozlowski@samsung.com>
- <1447637775-9887-3-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1447637775-9887-3-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <1446214865-3972-15-git-send-email-maxime.ripard@free-electrons.com>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1446214865-3972-15-git-send-email-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 9 Nov 2015 12:24:40 +0800
+Message-ID: <CAGb2v64XBOUoOaVZ64HMJ8Gi=1p2nOH9rL0RCzwkvKpoyUzZfw@mail.gmail.com>
+Subject: Re: [PATCH 14/19] ARM: sun5i: dt: Add pll3 and pll7 clocks
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>, Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Fri, Oct 30, 2015 at 10:21 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Enable the pll3 and pll7 clocks in the DT that are used to drive the
+> display-related clocks.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-On 2015=EB=85=84 11=EC=9B=94 16=EC=9D=BC 10:36, Krzysztof Kozlowski wrote:
-> The ARMv8 Exynos family SoCs in Linux kernel are currently:
->  - Exynos5433 (controlled by ARCH_EXYNOS),
->  - Exynos7 (controlled by ARCH_EXYNOS7).
-> 
-> It duplicates Kconfig symbols unnecessarily, so consolidate them into
-> one ARCH_EXYNOS. Future SoCs could fall also under the ARCH_EXYNOS
-> symbol.
-> 
-> The commit should not bring any visible functional change.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->  arch/arm64/Kconfig.platforms        | 11 ++---------
->  arch/arm64/boot/dts/exynos/Makefile |  2 +-
->  arch/arm64/configs/defconfig        |  2 +-
->  3 files changed, 4 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-> index 4043c35962cc..afa19baca94e 100644
-> --- a/arch/arm64/Kconfig.platforms
-> +++ b/arch/arm64/Kconfig.platforms
-> @@ -13,21 +13,14 @@ config ARCH_BERLIN
->  	  This enables support for Marvell Berlin SoC Family
->  
->  config ARCH_EXYNOS
-> -	bool
-> -	help
-> -	  This enables support for Samsung Exynos SoC family
-> -
-> -config ARCH_EXYNOS7
-> -	bool "ARMv8 based Samsung Exynos7"
-> -	select ARCH_EXYNOS
-> +	bool "ARMv8 based Samsung Exynos SoC family"
->  	select COMMON_CLK_SAMSUNG
->  	select HAVE_S3C2410_WATCHDOG if WATCHDOG
->  	select HAVE_S3C_RTC if RTC_CLASS
->  	select PINCTRL
->  	select PINCTRL_EXYNOS
-> -
->  	help
-> -	  This enables support for Samsung Exynos7 SoC family
-> +	  This enables support for Samsung Exynos ARMv8 SoC family
->  
->  config ARCH_LAYERSCAPE
->  	bool "ARMv8 based Freescale Layerscape SoC family"
-> diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-> index 20310e5b6d6f..50c9b9383cfa 100644
-> --- a/arch/arm64/boot/dts/exynos/Makefile
-> +++ b/arch/arm64/boot/dts/exynos/Makefile
-> @@ -1,4 +1,4 @@
-> -dtb-$(CONFIG_ARCH_EXYNOS7) +=3D exynos7-espresso.dtb
-> +dtb-$(CONFIG_ARCH_EXYNOS) +=3D exynos7-espresso.dtb
->  
->  always		:=3D $(dtb-y)
->  subdir-y	:=3D $(dts-dirs)
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index bdd7aa358d2a..a396fa7c69a5 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -33,7 +33,7 @@ CONFIG_MODULE_UNLOAD=3Dy
->  # CONFIG_IOSCHED_DEADLINE is not set
->  CONFIG_ARCH_BCM_IPROC=3Dy
->  CONFIG_ARCH_BERLIN=3Dy
-> -CONFIG_ARCH_EXYNOS7=3Dy
-> +CONFIG_ARCH_EXYNOS=3Dy
->  CONFIG_ARCH_LAYERSCAPE=3Dy
->  CONFIG_ARCH_HISI=3Dy
->  CONFIG_ARCH_MEDIATEK=3Dy
-> 
-
-When I sent the EXYNOS5433 patch[1], we don't want to add the each config
-for each Exynos SoC. So, I think this patch is good to use only one ARCH_EXYNOS config
-for all ARMv8 Exynos SoC.
-[1] https://lkml.org/lkml/2015/2/24/85
-
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-Regards,
-Chanwoo Choi
+Acked-by: Chen-Yu Tsai <wens@csie.org>
