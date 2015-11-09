@@ -1,127 +1,70 @@
-Return-Path: <zywang33@gmail.com>
-Return-Path: <zywang33@gmail.com>
-From: Chris Zhong <zyw@rock-chips.com>
-To: heiko@sntech.de,
-	linux-rockchip@lists.infradead.org,
-	mark.yao@rock-chips.com,
-	treding@nvidia.com
-Cc: Chris Zhong <zyw@rock-chips.com>,
-	Liu Ying <Ying.Liu@freescale.com>,
-	Takashi Iwai <tiwai@suse.de>,
-	Kumar Gala <galak@codeaurora.org>,
-	dri-devel@lists.freedesktop.org,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Rob Herring <robh+dt@kernel.org>,
-	David Airlie <airlied@linux.ie>,
-	Jeff Chen <cym@rock-chips.com>,
-	linux-clk@vger.kernel.org,
-	Alexandru M Stan <amstan@chromium.org>,
-	Sonny Rao <sonnyrao@chromium.org>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Huang Lin <hl@rock-chips.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vincent Palatin <vpalatin@chromium.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Ajay Kumar <ajaykumar.rs@samsung.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Liu Ying <Ying.liu@freescale.com>,
-	Doug Anderson <dianders@chromium.org>,
-	linux-kernel@vger.kernel.org,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Roger Chen <roger.chen@rock-chips.com>
-Subject: [PATCH v5 0/11] Add mipi dsi support for rk3288
-Date: Thu, 26 Nov 2015 15:50:14 +0800
-Message-Id: <1448524225-5489-1-git-send-email-zyw@rock-chips.com>
+Return-Path: <andy.shevchenko@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <877flsknmk.wl%kuninori.morimoto.gx@renesas.com>
+References: <874mhmuyg8.wl%kuninori.morimoto.gx@renesas.com>
+	<CAHp75VcKnJr2zaFky9_G-qetdiuB8fS=r8r7hQTbYPUwEZ7n4g@mail.gmail.com>
+	<877flsknmk.wl%kuninori.morimoto.gx@renesas.com>
+Date: Mon, 9 Nov 2015 11:21:46 +0200
+Message-ID: <CAHp75VdYL_fjvcG3Ss=yk=E1i5JKox9-sTaFzKjG8O1Osez5tQ@mail.gmail.com>
+Subject: Re: [PATCH v5] clk: add CS2000 Fractional-N driver
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Simon <horms@verge.net.au>,
+	Michael Turquette <mturquette@baylibre.com>, Magnus <magnus.damm@gmail.com>,
+	Linux-SH <linux-sh@vger.kernel.org>, Linux-Kernel <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The rk3288 MIPI DSI is a Synopsys DesignWare MIPI DSI host controller
-IP. This series adds support for a Synopsys DesignWare MIPI DSI host
-controller DRM bridge driver and a rockchip MIPI DSI specific DRM
-driver.
+On Mon, Nov 9, 2015 at 2:49 AM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
 
-This series also includes a DRM panel driver for BOE TV080WUM-NL0 panel.
-This panel only use the MIPI DSI video mode.
+>> > +static int cs2000_wait_pll_lock(struct cs2000_priv *priv)
+>> > +{
+>> > +       struct device *dev =3D priv_to_dev(priv);
+>> > +       s32 val;
+>> > +       unsigned int i;
+>> > +
+>> > +       for (i =3D 0; i < 256; i++) {
+>> > +               val =3D cs2000_read(priv, DEVICE_CTRL);
+>> > +               if (val < 0)
+>> > +                       return val;
+>> > +               if (!(val & PLL_UNLOCK))
+>> > +                       return 0;
+>> > +               udelay(1);
+>> > +       }
+>>
+>> unsigned int i =3D 256;
+>>
+>> do {
+>> val =3D read();
+>> =E2=80=A6
+>> while ((val & PLL_UNLOCK) && --i);
+>>
+>> if (!i) {
+>>  =E2=80=A6
+>>  return -EIO;
+>>
+>> Actually -ETIMEDOUT ?
+>>
+>> }
+>
+> What is the motivation of above ?
+> It needs "i" anyway ? it needs to check (val < 0) anyway ?
+> what is the difference between do {} while <-> for(xxx)
 
-The MIPI DSI feature is tested on rk3288 evb board, backport them to
-chrome os kernel v3.14, and it can display normally.
+Just a style.
+Still the question about error code.
 
-This patchset is base on the patchset from Ying.liu@freescale.com.
-<http://www.spinics.net/lists/dri-devel/msg77181.html>
+>> > +       of_property_read_string(np, "clock-output-names", &name);
+>>
+>> What about device property API?
+>
+> Sorry, which API ?
+> Many other clk-xxx.c are using this style ?
 
-Changes in v5:
-- change the mipidsi clk to SCLK_MIPIDSI_24M
-- modify the mipidsi clk name to SCLK_MIPIDSI_24M
-Adviced by Thierry
-- use hyphens instead of underscore
-- use encoder in drm_bridge
-- reformatting the dptdin table
-- use readx_poll_timeout to check register
-- use msleep to wait
-- add a comment to explain how to program phy
-- change the program code to symbolic names
-- check this for validity of find_panel and clk_prepare_enable
-- eliminate the configuration clock
-- some optimization for coding style
-- modify the clk name to SCLK_MIPIDSI_24M
-- add a blank line befor lcd_en
+Never mind then.
 
-Changes in v4:
-- use clk_round_rate to check the clock rate in vop_crtc_mode_fixup
-- remove the cfg clk
-- remove gpr property from example, since it is noused now.
-- add the description about ports
-- eliminate some warnning
-
-Changes in v3:
-- move the dw_mipi_dsi.txt to Documentation/devicetree/bindings/display/bridge
-- move dw_mipi_dsi_rockchip.txt to bindings/display/rockchip/
-
-Changes in v2:
-- add the mipi clk id in a single patch
-
-Chris Zhong (9):
-  clk: rockchip: add id for mipidsi sclk on rk3288
-  clk: rockchip: add mipidsi clocks on rk3288
-  drm/rockchip: return a true clock rate to adjusted_mode
-  drm: bridge: allow some funcs to be optional
-  drm/bridge: Add Synopsys DesignWare MIPI DSI host controller driver
-  drm: rockchip: Support Synopsys DesignWare MIPI DSI host controller
-  Documentation: dt-bindings: Add bindings for rk3288 DW MIPI DSI driver
-  ARM: dts: rockchip: add rk3288 mipi_dsi nodes
-  ARM: dts: rockchip: add support mipi panel tv080wum-nl0 for rk3288-evb
-
-Liu Ying (2):
-  drm/dsi: Add a helper to get bits per pixel of MIPI DSI pixel format
-  Documentation: dt-bindings: Add bindings for DW MIPI DSI
-
- .../bindings/display/bridge/dw_mipi_dsi.txt        |   74 ++
- .../display/rockchip/dw_mipi_dsi_rockchip.txt      |   56 +
- arch/arm/boot/dts/rk3288-evb.dtsi                  |   20 +-
- arch/arm/boot/dts/rk3288.dtsi                      |   39 +
- drivers/clk/rockchip/clk-rk3288.c                  |    2 +-
- drivers/gpu/drm/bridge/Kconfig                     |   10 +
- drivers/gpu/drm/bridge/Makefile                    |    1 +
- drivers/gpu/drm/bridge/dw-mipi-dsi.c               | 1084 ++++++++++++++++++++
- drivers/gpu/drm/drm_bridge.c                       |    6 +-
- drivers/gpu/drm/rockchip/Kconfig                   |   10 +
- drivers/gpu/drm/rockchip/Makefile                  |    1 +
- drivers/gpu/drm/rockchip/dw_mipi_dsi_rockchip.c    |  249 +++++
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c        |    8 +
- include/drm/bridge/dw_mipi_dsi.h                   |   28 +
- include/drm/drm_mipi_dsi.h                         |   14 +
- include/dt-bindings/clock/rk3288-cru.h             |    1 +
- 16 files changed, 1599 insertions(+), 4 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/dw_mipi_dsi.txt
- create mode 100644 Documentation/devicetree/bindings/display/rockchip/dw_mipi_dsi_rockchip.txt
- create mode 100644 drivers/gpu/drm/bridge/dw-mipi-dsi.c
- create mode 100644 drivers/gpu/drm/rockchip/dw_mipi_dsi_rockchip.c
- create mode 100644 include/drm/bridge/dw_mipi_dsi.h
-
--- 
-2.6.3
+--=20
+With Best Regards,
+Andy Shevchenko
