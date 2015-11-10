@@ -1,56 +1,87 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 20 Nov 2015 15:49:00 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-	devicetree@vger.kernel.org, jonmason@broadcom.com,
-	mturquette@baylibre.com, linux@arm.linux.org.uk,
-	sbranden@broadcom.com, rjui@broadcom.com
-Subject: Re: [PATCH v4 0/3] clk: Broadcom BCM63138 support
-Message-ID: <20151120234900.GE9555@codeaurora.org>
-References: <1446168199-5959-1-git-send-email-f.fainelli@gmail.com>
- <564E70A4.8060001@gmail.com>
- <564E712C.50309@gmail.com>
- <20151120184612.GT32672@codeaurora.org>
- <564F6ABC.5020006@gmail.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Chris Zhong <zyw@rock-chips.com>
+Cc: dianders@chromium.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: rockchip: switch PLLs to slow mode before reboot for rk3288
+Date: Tue, 10 Nov 2015 11:56:53 +0100
+Message-ID: <1571498.9yAnv9q8Vm@phil>
+In-Reply-To: <1447148131-30041-1-git-send-email-zyw@rock-chips.com>
+References: <1447148131-30041-1-git-send-email-zyw@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <564F6ABC.5020006@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/20, Florian Fainelli wrote:
-> On 20/11/15 10:46, Stephen Boyd wrote:
-> > On 11/19, Florian Fainelli wrote:
-> >> On 19/11/15 17:00, Florian Fainelli wrote:
-> >>> On 29/10/15 18:23, Florian Fainelli wrote:
-> >>>> This patch series adds support for the Broadcom BCM63138 DSL SoCs
-> >>>> clocking framework.
-> >>>>
-> >>>> Since the HW is identical to the one found in Broadcom iProc SoCs, but the
-> >>>> integration is different (obviously), there is still a new compatible string
-> >>>> introduced just in case we happen to find issues in the future.
-> >>>>
-> >>>> Stephen, could you stage the two patches in a clk-bcm63xx branch that I could
-> >>>> later utilize while doing the arm-soc DT pull request?
-> >>>
-> >>> Stephen, can you queue the first two patches in a topic branch for me to
-> >>> merge as part of the commit adding the DTS changes?
-> >>
-> >> Well, now that I look back at the changes, you can actually merge the
-> >> two patches in clk-next, and the DTS changes can come in before or
-> >> after, it does not really matter, this would not cause breakage or
-> >> anything. Sorry for the noise.
-> > 
-> > Really? I thought if the clk patches aren't there then the dts
-> > change would cause some clocks to be orphaned. If that's ok with
-> > you it's ok with me.
+Hi Chris,
+
+Am Dienstag, 10. November 2015, 17:35:31 schrieb Chris Zhong:
+> We've been seeing some crashes at reboot test on rk3288-based systems,
+> which boards have not reset pin connected to NPOR, they reboot by
+> setting 0xfdb9 to RK3288_GLB_SRST_FST register. If the APLL works in
+> a high frequency mode, some IPs might hang during soft reset.
+> It appears that we can fix the problem by switching to slow mode before
+> reboot, just like what we did before suspend.
 > 
-> Woah, I guess I was not thinking very clearly yesterday, yes, we need to
-> bundle these changes together, so if you are still okay with the topic
-> branch for me to include as a merge commit, that's fine with me as well.
+> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+> 
+> ---
+> 
+>  drivers/clk/rockchip/clk-rk3288.c | 31 +++++++++++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+> 
+> diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-
+rk3288.c
+> index 9040878..524662c 100644
+> --- a/drivers/clk/rockchip/clk-rk3288.c
+> +++ b/drivers/clk/rockchip/clk-rk3288.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/clk-provider.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+> +#include <linux/reboot.h>
+>  #include <linux/syscore_ops.h>
+>  #include <dt-bindings/clock/rk3288-cru.h>
+>  #include "clk.h"
+> @@ -855,6 +856,34 @@ static void rk3288_clk_sleep_init(void __iomem 
+*reg_base)
+>  static void rk3288_clk_sleep_init(void __iomem *reg_base) {}
+>  #endif
+>  
+> +void __iomem *mode_con_reg;
+> +static int rk3288_restart_notify(struct notifier_block *this,
+> +				   unsigned long mode, void *cmd)
+> +{
+> +	writel(0xf3030000, mode_con_reg);
+> +	return NOTIFY_DONE;
+> +}
+> +
+> +static struct notifier_block rk3288_restart_handler = {
+> +	.notifier_call = rk3288_restart_notify,
+> +	/* Switch PLLs other than DPLL (for SDRAM) to slow mode before reboot
+> +	 * to avoid crashes in reset, so this priority must bigger than the one
+> +	 * in rockchip_restart_handler.
+> +	 */
+> +	.priority = 129,
+> +};
+> +
+> +void __init rk3288_register_restart_notifier(void __iomem *reg)
+> +{
+> +	int ret;
+> +
+> +	mode_con_reg = reg;
+> +	ret = register_restart_handler(&rk3288_restart_handler);
+> +	if (ret)
+> +		pr_err("%s: cannot register restart handler, %d\n",
+> +		       __func__, ret);
+> +}
+> +
 
-Ok. Done.
+restart_handlers are really _only_ supposed to be used for actions actually 
+restarting the system, not stuff that needs to be done before.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+In the rockchip clock case, we already have the syscore_ops defined doing the 
+suspend/resume handling, so you could simply define a .shutdown callback which 
+also gets called from kernel_restart() [0], so runs at nearly the same time.
+
+Heiko
+
+[0] http://lxr.free-electrons.com/source/kernel/reboot.c#L214
