@@ -1,34 +1,89 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 30 Nov 2015 11:35:38 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	mturquette@baylibre.com, tony@atomide.com, paul@pwsan.com,
+Return-Path: <zywang33@gmail.com>
+Return-Path: <zywang33@gmail.com>
+From: Chris Zhong <zyw@rock-chips.com>
+To: dianders@chromium.org
+Cc: Chris Zhong <zyw@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: ti: omap5+: dpll: implement errata i810
-Message-ID: <20151130193538.GJ11298@codeaurora.org>
-References: <1448894605-30097-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1448894605-30097-1-git-send-email-t-kristo@ti.com>
+Subject: [PATCH] clk: rockchip: switch PLLs to slow mode before reboot for rk3288
+Date: Tue, 10 Nov 2015 17:35:31 +0800
+Message-Id: <1447148131-30041-1-git-send-email-zyw@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/30, Tero Kristo wrote:
-> Errata i810 states that DPLL controller can get stuck while transitioning
-> to a power saving state, while its M/N ratio is being re-programmed.
-> 
-> As a workaround, before re-programming the M/N ratio, SW has to ensure
-> the DPLL cannot start an idle state transition. SW can disable DPLL
-> idling by setting the DPLL AUTO_DPLL_MODE=0 or keeping a clock request
-> active by setting a dependent clock domain in SW_WKUP.
-> 
-> This errata impacts OMAP5 and DRA7 chips, so enable the errata for these.
-> 
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> ---
+We've been seeing some crashes at reboot test on rk3288-based systems,
+which boards have not reset pin connected to NPOR, they reboot by
+setting 0xfdb9 to RK3288_GLB_SRST_FST register. If the APLL works in
+a high frequency mode, some IPs might hang during soft reset.
+It appears that we can fix the problem by switching to slow mode before
+reboot, just like what we did before suspend.
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Chris Zhong <zyw@rock-chips.com>
 
+---
+
+ drivers/clk/rockchip/clk-rk3288.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 9040878..524662c 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -16,6 +16,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/reboot.h>
+ #include <linux/syscore_ops.h>
+ #include <dt-bindings/clock/rk3288-cru.h>
+ #include "clk.h"
+@@ -855,6 +856,34 @@ static void rk3288_clk_sleep_init(void __iomem *reg_base)
+ static void rk3288_clk_sleep_init(void __iomem *reg_base) {}
+ #endif
+ 
++void __iomem *mode_con_reg;
++static int rk3288_restart_notify(struct notifier_block *this,
++				   unsigned long mode, void *cmd)
++{
++	writel(0xf3030000, mode_con_reg);
++	return NOTIFY_DONE;
++}
++
++static struct notifier_block rk3288_restart_handler = {
++	.notifier_call = rk3288_restart_notify,
++	/* Switch PLLs other than DPLL (for SDRAM) to slow mode before reboot
++	 * to avoid crashes in reset, so this priority must bigger than the one
++	 * in rockchip_restart_handler.
++	 */
++	.priority = 129,
++};
++
++void __init rk3288_register_restart_notifier(void __iomem *reg)
++{
++	int ret;
++
++	mode_con_reg = reg;
++	ret = register_restart_handler(&rk3288_restart_handler);
++	if (ret)
++		pr_err("%s: cannot register restart handler, %d\n",
++		       __func__, ret);
++}
++
+ static void __init rk3288_clk_init(struct device_node *np)
+ {
+ 	void __iomem *reg_base;
+@@ -910,6 +939,8 @@ static void __init rk3288_clk_init(struct device_node *np)
+ 	rockchip_register_softrst(np, 12, reg_base + RK3288_SOFTRST_CON(0),
+ 				  ROCKCHIP_SOFTRST_HIWORD_MASK);
+ 
++	rk3288_register_restart_notifier(reg_base + RK3288_MODE_CON);
++
+ 	rockchip_register_restart_notifier(RK3288_GLB_SRST_FST);
+ 	rk3288_clk_sleep_init(reg_base);
+ }
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.6.3
