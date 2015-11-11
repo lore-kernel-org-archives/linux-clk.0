@@ -1,47 +1,73 @@
-Return-Path: <jon.nettleton@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from conssluserg002.nifty.com ([202.248.44.40]:63910 "EHLO
+	conssluserg002-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751285AbbKKDQq (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 10 Nov 2015 22:16:46 -0500
 MIME-Version: 1.0
-In-Reply-To: <CAH-u=82M1yCmPjBg5qeiC8JiHjM8+WsP+utX_VPKfJwJsu0QFg@mail.gmail.com>
-References: <CAH-u=82M1yCmPjBg5qeiC8JiHjM8+WsP+utX_VPKfJwJsu0QFg@mail.gmail.com>
-Date: Wed, 4 Nov 2015 18:04:55 +0100
-Message-ID: <CALHpu366MPbxJinVL2QFM11gMHx-T=M9QXNoznOTh++oHGGmrA@mail.gmail.com>
-Subject: Re: i.MX6: Increasing VPU frequency
-From: Jon Nettleton <jon.nettleton@gmail.com>
-To: Jean-Michel Hautbois <jean-michel.hautbois@veo-labs.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, sboyd@codeaurora.org,
-	mturquette@baylibre.com, Sascha Hauer <kernel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@freescale.com>
+Date: Wed, 11 Nov 2015 12:16:27 +0900
+Message-ID: <CAK7LNASM+tJpd-kBHGHe7TXWm4i-UEfbq7T3dn99p2fKFwtxAA@mail.gmail.com>
+Subject: How to implement common clk in multi function controller?
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Nov 4, 2015 at 5:52 PM, Jean-Michel Hautbois
-<jean-michel.hautbois@veo-labs.com> wrote:
-> Hi !
->
-> I can see in FSL kernel that VPU is configurable to 352M (it defaults
-> at 264MHz in mainline I think).
-> In the TRM, it is even specified at 352MHz as a default frequency,
-> with a maximum of 540MHz.
->
-> Would it be possible to allow this clock rating modification if, for
-> instance, we select a performance governor in cpufreq, or if a coda
-> encoder is started with 1080p for instance ?
-> If so, then how is it doable properly ?
+Hi.
 
-For some reason the FSL kernel configures the VPU to run at 352Mhz in
-a very odd way that requires limiting the min cpu-frequency to 792Mhz.
-It also requires clocking down a bunch of devices on pll2_pfd2_396m to
-352Mhz.
+I am implementing clk and reset drivers for my SoCs.
+(drivers/clk/uniphier/* and drivers/reset/uniphier/*)
 
-The simple solution to this is to instead parent the VPU to
-pll2_pfd0_352m which is unused.  I have found by default it is stable
-decoding but unstable encoding at 352Mhz, most likely due to the
-voltage changes needed that limiting the min cpu-freq to 792Mhz
-provides.  However everything seems to work quite reliably clocking
-that pfd to 327Mhz, which still gives a boost of almost 24%
 
-In my testing the performance gain in then going from 327 to 352 is
-minimal.  Generally I think you hit AXI bus limitations rather than
-VPU performance.
+In my SoCs, one hardware block contains various
+registers for both clock and reset controlling.
+(so, it is like a MFD system controller device).
+I think it is a common case.
 
--Jon
+
+I am guessing my device tree would be like follows:
+(one syscon device contains clk and rst devices under it)
+
+syscon {
+     compatible = "socionext,uniphier-syscon",
+                 "syscon", "simple-mfd";
+     reg = <...   ...>;
+
+     clk_ctrl {
+            .compatible = "socionext,uniphier-clkctrl";
+            #clock-cells = <1>;
+     };
+
+     rst_ctrl {
+             .compatible = "socionext,uniphier-rstctrl";
+             #reset-cells = <1>;
+     };
+};
+
+
+
+One problem I noticed was,
+we are supposed to use regmap for register access
+if we use syscon.
+
+OTOH, common clk APIs such as clk-gate, clk-divider
+expect simple register access via writel()/readl().
+
+Is it a good idea to expand such APIs to regmap?
+
+
+Of course, I could my own uniphier/clk-gate.c
+to use regmap as other SoCs do.
+
+But, I think regmap is general demand, so
+I am wondering if it could be supported in common parts.
+
+Or, any other good solution exists?
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
