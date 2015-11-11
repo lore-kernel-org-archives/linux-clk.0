@@ -1,164 +1,202 @@
-Return-Path: <jszhang@marvell.com>
-Date: Mon, 23 Nov 2015 13:56:53 +0800
-From: Jisheng Zhang <jszhang@marvell.com>
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-CC: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <antoine.tenart@free-electrons.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 4/6] clk: berlin: add clk support for berlin4ct
-Message-ID: <20151123135653.7e2919d7@xhacker>
-In-Reply-To: <564F8902.4000405@gmail.com>
-References: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
-	<1448008952-1787-5-git-send-email-jszhang@marvell.com>
-	<564F8902.4000405@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Return-Path: <repk@triplefau.lt>
+From: Remi Pommarel <repk@triplefau.lt>
+To: Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Remi Pommarel <repk@triplefau.lt>
+Subject: [PATCH v2 2/3] clk: bcm2835: Support for clock parent selection
+Date: Wed, 11 Nov 2015 15:22:44 +0100
+Message-Id: <1447251765-16297-3-git-send-email-repk@triplefau.lt>
+In-Reply-To: <1447251765-16297-1-git-send-email-repk@triplefau.lt>
+References: <1447251765-16297-1-git-send-email-repk@triplefau.lt>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 20 Nov 2015 21:56:34 +0100
-Sebastian Hesselbarth wrote:
+Some bcm2835 clocks used by hardware (like "PWM" or "H264") can have multiple
+parent clocks. These clocks divide the rate of a parent which can be selected by
+setting the proper bits in the clock control register.
 
-> On 20.11.2015 09:42, Jisheng Zhang wrote:
-> > This patch supports the gateclk and berlin-clk in berlin4ct SoC.
-> > 
-> > Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
-> > ---
-> >  drivers/clk/berlin/Makefile        |  2 +-
-> >  drivers/clk/berlin/clk-berlin4ct.c | 97 ++++++++++++++++++++++++++++++++++++++
-> >  2 files changed, 98 insertions(+), 1 deletion(-)
-> >  create mode 100644 drivers/clk/berlin/clk-berlin4ct.c
-> > 
-> > diff --git a/drivers/clk/berlin/Makefile b/drivers/clk/berlin/Makefile
-> > index fc92151..accfc3a 100644
-> > --- a/drivers/clk/berlin/Makefile
-> > +++ b/drivers/clk/berlin/Makefile
-> > @@ -1,5 +1,5 @@
-> >  obj-y += berlin2-avpll.o berlin2-pll.o berlin2-div.o
-> > -obj-y += pll.o clk.o gate.o
-> > +obj-y += pll.o clk.o gate.o clk-berlin4ct.o  
-> 
-> This will always compile clk-berlin4ct unconditionally on bg2x too.
+Previously all these parents where handled by a mux clock. But a mux clock
+cannot be used because updating clock control register to select parent needs a
+password to be xor'd with the parent index.
 
-Indeed. this also always compile bg2x clk driver on BG4x too. Is it fine to
-introduce config option? any suggestion?
+This patch get rid of mux clock and make these clocks handle their own parent,
+allowing them to select the one to use.
 
-> 
-> Also, keep the naming style.
+Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+---
+ drivers/clk/bcm/clk-bcm2835.c | 122 ++++++++++++++++++++++++++----------------
+ 1 file changed, 77 insertions(+), 45 deletions(-)
 
-will do in v3
-
-> 
-> Sebastian
-> 
-> >  obj-$(CONFIG_MACH_BERLIN_BG2)	+= bg2.o
-> >  obj-$(CONFIG_MACH_BERLIN_BG2CD)	+= bg2.o
-> >  obj-$(CONFIG_MACH_BERLIN_BG2Q)	+= bg2q.o
-> > diff --git a/drivers/clk/berlin/clk-berlin4ct.c b/drivers/clk/berlin/clk-berlin4ct.c
-> > new file mode 100644
-> > index 0000000..0d994a4
-> > --- /dev/null
-> > +++ b/drivers/clk/berlin/clk-berlin4ct.c
-> > @@ -0,0 +1,97 @@
-> > +/*
-> > + * Copyright (c) 2015 Marvell Technology Group Ltd.
-> > + *
-> > + * Author: Jisheng Zhang <jszhang@marvell.com>
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify it
-> > + * under the terms and conditions of the GNU General Public License,
-> > + * version 2, as published by the Free Software Foundation.
-> > + *
-> > + * This program is distributed in the hope it will be useful, but WITHOUT
-> > + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> > + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> > + * more details.
-> > + *
-> > + * You should have received a copy of the GNU General Public License along with
-> > + * this program.  If not, see <http://www.gnu.org/licenses/>.
-> > + */
-> > +
-> > +#include <linux/clk-provider.h>
-> > +
-> > +#include "clk.h"
-> > +
-> > +static struct clk_onecell_data gateclk_data;
-> > +static struct clk_onecell_data clk_data;
-> > +
-> > +static const struct gateclk_desc berlin4ct_gates[] __initconst = {
-> > +	{ "tspsysclk",		"perifsysclk",	0 },
-> > +	{ "usb0coreclk",	"perifsysclk",	1 },
-> > +	{ "zspsysclk",		"perifsysclk",	2 },
-> > +	{ "sdiosysclk",		"perifsysclk",	3 },
-> > +	{ "ethcoreclk",		"perifsysclk",	4 },
-> > +	{ "pcie0sys",		"perifsysclk",	6 },
-> > +	{ "sata0core",		"perifsysclk",	7 },
-> > +	{ "nfcsysclk",		"perifsysclk",	8 },
-> > +	{ "emmcsysclk",		"perifsysclk",	9 },
-> > +	{ "ihb0sysclk",		"perifsysclk",	10 },
-> > +};
-> > +
-> > +static void __init berlin4ct_gateclk_setup(struct device_node *np)
-> > +{
-> > +	int n = ARRAY_SIZE(berlin4ct_gates);
-> > +
-> > +	berlin_gateclk_setup(np, berlin4ct_gates, &gateclk_data, n);
-> > +}
-> > +CLK_OF_DECLARE(berlin4ct_gateclk, "marvell,berlin4ct-gateclk",
-> > +	       berlin4ct_gateclk_setup);
-> > +
-> > +static const struct clk_desc berlin4ct_descs[] __initconst = {
-> > +	{ "cpufastrefclk",	0x0 },
-> > +	{ "memfastrefclk",	0x4 },
-> > +	{ "cfgclk",		0x20,	CLK_IGNORE_UNUSED },
-> > +	{ "perifsysclk",	0x24,	CLK_IGNORE_UNUSED },
-> > +	{ "hbclk",		0x28 },
-> > +	{ "atbclk",		0x2c },
-> > +	{ "decoderclk",		0x40 },
-> > +	{ "decoderm3clk",	0x44 },
-> > +	{ "decoderpcubeclk",	0x48 },
-> > +	{ "encoderclk",		0x4c },
-> > +	{ "ovpcoreclk",		0x50 },
-> > +	{ "gfx2dcoreclk",	0x60 },
-> > +	{ "gfx3dcoreclk",	0x64 },
-> > +	{ "gfx3dshclk",		0x68 },
-> > +	{ "gfx3dsysclk",	0x6c },
-> > +	{ "gfx2dsysclk",	0x70 },
-> > +	{ "aviosysclk",		0x80 },
-> > +	{ "vppsysclk",		0x84 },
-> > +	{ "eddcclk",		0x88 },
-> > +	{ "aviobiuclk",		0x8c },
-> > +	{ "zspclk",		0xa0 },
-> > +	{ "tspclk",		0xc0 },
-> > +	{ "tsprefclk",		0xc4 },
-> > +	{ "ndsclk",		0xc8 },
-> > +	{ "nocsclk",		0xcc },
-> > +	{ "apbcoreclk",		0xd0,	CLK_IGNORE_UNUSED },
-> > +	{ "emmcclk",		0xe0 },
-> > +	{ "sd0clk",		0xe4 },
-> > +	{ "sd1clk",		0xe8 },
-> > +	{ "dllmstrefclk",	0xec },
-> > +	{ "gethrgmiiclk",	0xf0 },
-> > +	{ "gethrgmiisysclk",	0xf4 },
-> > +	{ "usim0clk",		0x100 },
-> > +	{ "pcietestclk",	0x110 },
-> > +	{ "usb2testclk",	0x120 },
-> > +	{ "usb3testclk",	0x124 },
-> > +	{ "usb3coreclk",	0x128 },
-> > +	{ "nfceccclk",		0x130 },
-> > +	{ "bcmclk",		0x140 },
-> > +};
-> > +
-> > +static void __init berlin4ct_clk_setup(struct device_node *np)
-> > +{
-> > +	int n = ARRAY_SIZE(berlin4ct_descs);
-> > +
-> > +	berlin_clk_setup(np, berlin4ct_descs, &clk_data, n);
-> > +}
-> > +CLK_OF_DECLARE(berlin4ct_clk, "marvell,berlin4ct-clk",
-> > +	       berlin4ct_clk_setup);
-> >   
-> 
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 1237716..2b01a53 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1198,16 +1198,6 @@ static long bcm2835_clock_rate_from_divisor(struct bcm2835_clock *clock,
+ 	return temp;
+ }
+ 
+-static long bcm2835_clock_round_rate(struct clk_hw *hw,
+-				     unsigned long rate,
+-				     unsigned long *parent_rate)
+-{
+-	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
+-	u32 div = bcm2835_clock_choose_div(hw, rate, *parent_rate);
+-
+-	return bcm2835_clock_rate_from_divisor(clock, *parent_rate, div);
+-}
+-
+ static unsigned long bcm2835_clock_get_rate(struct clk_hw *hw,
+ 					    unsigned long parent_rate)
+ {
+@@ -1279,13 +1269,75 @@ static int bcm2835_clock_set_rate(struct clk_hw *hw,
+ 	return 0;
+ }
+ 
++static int bcm2835_clock_determine_rate(struct clk_hw *hw,
++		struct clk_rate_request *req)
++{
++	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
++	struct clk_hw *parent, *best_parent = NULL;
++	struct clk_rate_request parent_req;
++	unsigned long rate, best_rate = 0;
++	unsigned long prate, best_prate = 0;
++	size_t i;
++	u32 div;
++
++	/*
++	 * Select parent clock that results in the closest but lower rate
++	 */
++	for (i = 0; i < clk_hw_get_num_parents(hw); ++i) {
++		parent = clk_hw_get_parent_by_index(hw, i);
++		if (!parent)
++			continue;
++		parent_req = *req;
++		prate = clk_hw_get_rate(parent);
++		div = bcm2835_clock_choose_div(hw, req->rate, prate);
++		rate = bcm2835_clock_rate_from_divisor(clock, prate, div);
++		if (rate > best_rate && rate <= req->rate) {
++			best_parent = parent;
++			best_prate = prate;
++			best_rate = rate;
++		}
++	}
++
++	if (!best_parent)
++		return -EINVAL;
++
++	req->best_parent_hw = best_parent;
++	req->best_parent_rate = best_prate;
++
++	return 0;
++}
++
++static int bcm2835_clock_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
++	struct bcm2835_cprman *cprman = clock->cprman;
++	const struct bcm2835_clock_data *data = clock->data;
++	u8 src = (index << CM_SRC_SHIFT) & CM_SRC_MASK;
++
++	cprman_write(cprman, data->ctl_reg, src);
++	return 0;
++}
++
++static u8 bcm2835_clock_get_parent(struct clk_hw *hw)
++{
++	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
++	struct bcm2835_cprman *cprman = clock->cprman;
++	const struct bcm2835_clock_data *data = clock->data;
++	u32 src = cprman_read(cprman, data->ctl_reg);
++
++	return (src & CM_SRC_MASK) >> CM_SRC_SHIFT;
++}
++
++
+ static const struct clk_ops bcm2835_clock_clk_ops = {
+ 	.is_prepared = bcm2835_clock_is_on,
+ 	.prepare = bcm2835_clock_on,
+ 	.unprepare = bcm2835_clock_off,
+ 	.recalc_rate = bcm2835_clock_get_rate,
+ 	.set_rate = bcm2835_clock_set_rate,
+-	.round_rate = bcm2835_clock_round_rate,
++	.determine_rate = bcm2835_clock_determine_rate,
++	.set_parent = bcm2835_clock_set_parent,
++	.get_parent = bcm2835_clock_get_parent,
+ };
+ 
+ static int bcm2835_vpu_clock_is_on(struct clk_hw *hw)
+@@ -1301,7 +1353,9 @@ static const struct clk_ops bcm2835_vpu_clock_clk_ops = {
+ 	.is_prepared = bcm2835_vpu_clock_is_on,
+ 	.recalc_rate = bcm2835_clock_get_rate,
+ 	.set_rate = bcm2835_clock_set_rate,
+-	.round_rate = bcm2835_clock_round_rate,
++	.determine_rate = bcm2835_clock_determine_rate,
++	.set_parent = bcm2835_clock_set_parent,
++	.get_parent = bcm2835_clock_get_parent,
+ };
+ 
+ static struct clk *bcm2835_register_pll(struct bcm2835_cprman *cprman,
+@@ -1395,45 +1449,23 @@ static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
+ {
+ 	struct bcm2835_clock *clock;
+ 	struct clk_init_data init;
+-	const char *parent;
++	const char *parents[1 << CM_SRC_BITS];
++	size_t i;
+ 
+ 	/*
+-	 * Most of the clock generators have a mux field, so we
+-	 * instantiate a generic mux as our parent to handle it.
++	 * Replace our "xosc" references with the oscillator's
++	 * actual name.
+ 	 */
+-	if (data->num_mux_parents) {
+-		const char *parents[1 << CM_SRC_BITS];
+-		int i;
+-
+-		parent = devm_kasprintf(cprman->dev, GFP_KERNEL,
+-					"mux_%s", data->name);
+-		if (!parent)
+-			return NULL;
+-
+-		/*
+-		 * Replace our "xosc" references with the oscillator's
+-		 * actual name.
+-		 */
+-		for (i = 0; i < data->num_mux_parents; i++) {
+-			if (strcmp(data->parents[i], "xosc") == 0)
+-				parents[i] = cprman->osc_name;
+-			else
+-				parents[i] = data->parents[i];
+-		}
+-
+-		clk_register_mux(cprman->dev, parent,
+-				 parents, data->num_mux_parents,
+-				 CLK_SET_RATE_PARENT,
+-				 cprman->regs + data->ctl_reg,
+-				 CM_SRC_SHIFT, CM_SRC_BITS,
+-				 0, &cprman->regs_lock);
+-	} else {
+-		parent = data->parents[0];
++	for (i = 0; i < data->num_mux_parents; i++) {
++		if (strcmp(data->parents[i], "xosc") == 0)
++			parents[i] = cprman->osc_name;
++		else
++			parents[i] = data->parents[i];
+ 	}
+ 
+ 	memset(&init, 0, sizeof(init));
+-	init.parent_names = &parent;
+-	init.num_parents = 1;
++	init.parent_names = parents;
++	init.num_parents = data->num_mux_parents;
+ 	init.name = data->name;
+ 	init.flags = CLK_IGNORE_UNUSED;
+ 
+-- 
+2.0.1
