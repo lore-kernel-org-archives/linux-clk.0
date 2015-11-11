@@ -1,56 +1,59 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 25 Nov 2015 13:32:22 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, Eric Miao <eric.y.miao@gmail.com>,
+Return-Path: <repk@triplefau.lt>
+From: Remi Pommarel <repk@triplefau.lt>
+To: Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
 	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Chao Xie <chao.xie@marvell.com>,
-	Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/7] clk: mmp: stop using platform headers
-Message-ID: <20151125213222.GF11298@codeaurora.org>
-References: <1448465875-435039-1-git-send-email-arnd@arndb.de>
- <1448465875-435039-2-git-send-email-arnd@arndb.de>
- <20151125192114.GB11298@codeaurora.org>
- <3508030.Q62gfHvXvx@wuerfel>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <3508030.Q62gfHvXvx@wuerfel>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Remi Pommarel <repk@triplefau.lt>
+Subject: [PATCH v2 1/3] clk: bcm2835: Always round up clock divisor
+Date: Wed, 11 Nov 2015 15:22:43 +0100
+Message-Id: <1447251765-16297-2-git-send-email-repk@triplefau.lt>
+In-Reply-To: <1447251765-16297-1-git-send-email-repk@triplefau.lt>
+References: <1447251765-16297-1-git-send-email-repk@triplefau.lt>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/25, Arnd Bergmann wrote:
-> On Wednesday 25 November 2015 11:21:14 Stephen Boyd wrote:
-> > On 11/25, Arnd Bergmann wrote:
-> > > diff --git a/drivers/clk/mmp/clk-mmp2.c b/drivers/clk/mmp/clk-mmp2.c
-> > > index 09d2832fbd78..38931dbd1eff 100644
-> > > --- a/drivers/clk/mmp/clk-mmp2.c
-> > > +++ b/drivers/clk/mmp/clk-mmp2.c
-> > > @@ -9,6 +9,7 @@
-> > >   * warranty of any kind, whether express or implied.
-> > >   */
-> > >  
-> > > +#include <linux/clk.h>
-> > 
-> > Why are we adding this include? I don't see any clk consumer API
-> > usage being added.
-> 
-> drivers/clk/mmp/clk-pxa910.c: In function 'pxa910_clk_init':
-> drivers/clk/mmp/clk-pxa910.c:166:2: error: implicit declaration of function 'clk_set_rate' [-Werror=implicit-function-declaration]
->   clk_set_rate(uart_pll, 14745600);
->   ^
-> drivers/clk/mmp/clk-pxa910.c:209:2: error: implicit declaration of function 'clk_set_parent' [-Werror=implicit-function-declaration]
->   clk_set_parent(clk, uart_pll);
->   ^
-> 
-> Is there anything I need to change here?
-> 
+Make bcm2835_clock_choose_div always round up the chosen MASH divisor so that
+the resulting average rate will not be higher than the requested one.
 
-Hmph. I seems this broke when we removed the clk.h include from
-clk-provider.h, but nobody has noticed for months. Can you make a
-different commit to add the header? Otherwise we're sneaking in
-that include to get this file to compile again.
+Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+---
+ drivers/clk/bcm/clk-bcm2835.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 39bf582..1237716 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1152,18 +1152,19 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
+ {
+ 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
+ 	const struct bcm2835_clock_data *data = clock->data;
+-	u32 unused_frac_mask = GENMASK(CM_DIV_FRAC_BITS - data->frac_bits, 0);
++	u32 unused_frac_mask =
++		GENMASK(CM_DIV_FRAC_BITS - data->frac_bits, 0) >> 1;
+ 	u64 temp = (u64)parent_rate << CM_DIV_FRAC_BITS;
++	u64 rem;
+ 	u32 div;
+ 
+-	do_div(temp, rate);
++	rem = do_div(temp, rate);
+ 	div = temp;
+ 
+-	/* Round and mask off the unused bits */
+-	if (unused_frac_mask != 0) {
+-		div += unused_frac_mask >> 1;
+-		div &= ~unused_frac_mask;
+-	}
++	/* Round up and mask off the unused bits */
++	if ((div & unused_frac_mask) != 0 || rem != 0)
++		div += unused_frac_mask + 1;
++	div &= ~unused_frac_mask;
+ 
+ 	/* Clamp to the limits. */
+ 	div = max(div, unused_frac_mask + 1);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.0.1
