@@ -1,100 +1,79 @@
-Return-Path: <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH 2/2] arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into
- ARCH_EXYNOS
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
- Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>,
- Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
- Kevin Hilman <khilman@linaro.org>
-References: <1447637775-9887-1-git-send-email-k.kozlowski@samsung.com>
- <1447637775-9887-3-git-send-email-k.kozlowski@samsung.com>
-From: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Message-id: <564AAC54.8000800@samsung.com>
-Date: Tue, 17 Nov 2015 09:55:56 +0530
-MIME-version: 1.0
-In-reply-to: <1447637775-9887-3-git-send-email-k.kozlowski@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <repk@triplefau.lt>
+From: Remi Pommarel <repk@triplefau.lt>
+To: Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Remi Pommarel <repk@triplefau.lt>
+Subject: [PATCH v2 3/3] clk: bcm2835: Add PWM clock support
+Date: Wed, 11 Nov 2015 15:22:45 +0100
+Message-Id: <1447251765-16297-4-git-send-email-repk@triplefau.lt>
+In-Reply-To: <1447251765-16297-1-git-send-email-repk@triplefau.lt>
+References: <1447251765-16297-1-git-send-email-repk@triplefau.lt>
 List-ID: <linux-clk.vger.kernel.org>
 
+Register the pwm clock for bcm2835.
 
+Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+---
+ drivers/clk/bcm/clk-bcm2835.c       | 14 ++++++++++++++
+ include/dt-bindings/clock/bcm2835.h |  3 ++-
+ 2 files changed, 16 insertions(+), 1 deletion(-)
 
-On Monday 16 November 2015 07:06 AM, Krzysztof Kozlowski wrote:
-> The ARMv8 Exynos family SoCs in Linux kernel are currently:
->  - Exynos5433 (controlled by ARCH_EXYNOS),
->  - Exynos7 (controlled by ARCH_EXYNOS7).
-> 
-> It duplicates Kconfig symbols unnecessarily, so consolidate them into
-> one ARCH_EXYNOS. Future SoCs could fall also under the ARCH_EXYNOS
-> symbol.
-> 
-> The commit should not bring any visible functional change.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->  arch/arm64/Kconfig.platforms        | 11 ++---------
->  arch/arm64/boot/dts/exynos/Makefile |  2 +-
->  arch/arm64/configs/defconfig        |  2 +-
->  3 files changed, 4 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-> index 4043c35962cc..afa19baca94e 100644
-> --- a/arch/arm64/Kconfig.platforms
-> +++ b/arch/arm64/Kconfig.platforms
-> @@ -13,21 +13,14 @@ config ARCH_BERLIN
->  	  This enables support for Marvell Berlin SoC Family
->  
->  config ARCH_EXYNOS
-> -	bool
-> -	help
-> -	  This enables support for Samsung Exynos SoC family
-> -
-> -config ARCH_EXYNOS7
-> -	bool "ARMv8 based Samsung Exynos7"
-> -	select ARCH_EXYNOS
-> +	bool "ARMv8 based Samsung Exynos SoC family"
->  	select COMMON_CLK_SAMSUNG
->  	select HAVE_S3C2410_WATCHDOG if WATCHDOG
->  	select HAVE_S3C_RTC if RTC_CLASS
->  	select PINCTRL
->  	select PINCTRL_EXYNOS
-> -
->  	help
-> -	  This enables support for Samsung Exynos7 SoC family
-> +	  This enables support for Samsung Exynos ARMv8 SoC family
->  
->  config ARCH_LAYERSCAPE
->  	bool "ARMv8 based Freescale Layerscape SoC family"
-> diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-> index 20310e5b6d6f..50c9b9383cfa 100644
-> --- a/arch/arm64/boot/dts/exynos/Makefile
-> +++ b/arch/arm64/boot/dts/exynos/Makefile
-> @@ -1,4 +1,4 @@
-> -dtb-$(CONFIG_ARCH_EXYNOS7) += exynos7-espresso.dtb
-> +dtb-$(CONFIG_ARCH_EXYNOS) += exynos7-espresso.dtb
->  
->  always		:= $(dtb-y)
->  subdir-y	:= $(dts-dirs)
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index bdd7aa358d2a..a396fa7c69a5 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -33,7 +33,7 @@ CONFIG_MODULE_UNLOAD=y
->  # CONFIG_IOSCHED_DEADLINE is not set
->  CONFIG_ARCH_BCM_IPROC=y
->  CONFIG_ARCH_BERLIN=y
-> -CONFIG_ARCH_EXYNOS7=y
-> +CONFIG_ARCH_EXYNOS=y
->  CONFIG_ARCH_LAYERSCAPE=y
->  CONFIG_ARCH_HISI=y
->  CONFIG_ARCH_MEDIATEK=y
-> 
-
-Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-
-Thanks,
-Pankaj Dubey
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 2b01a53..db378f3 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -39,6 +39,7 @@
+ 
+ #include <linux/clk-provider.h>
+ #include <linux/clkdev.h>
++#include <linux/clk.h>
+ #include <linux/clk/bcm2835.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+@@ -807,6 +808,16 @@ static const struct bcm2835_clock_data bcm2835_clock_emmc_data = {
+ 	.frac_bits = 8,
+ };
+ 
++static const struct bcm2835_clock_data bcm2835_clock_pwm_data = {
++	.name = "pwm",
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
++	.parents = bcm2835_clock_per_parents,
++	.ctl_reg = CM_PWMCTL,
++	.div_reg = CM_PWMDIV,
++	.int_bits = 12,
++	.frac_bits = 12,
++};
++
+ struct bcm2835_pll {
+ 	struct clk_hw hw;
+ 	struct bcm2835_cprman *cprman;
+@@ -1583,6 +1594,9 @@ static int bcm2835_clk_probe(struct platform_device *pdev)
+ 				  cprman->regs + CM_PERIICTL, CM_GATE_BIT,
+ 				  0, &cprman->regs_lock);
+ 
++	clks[BCM2835_CLOCK_PWM] =
++		bcm2835_register_clock(cprman, &bcm2835_clock_pwm_data);
++
+ 	return of_clk_add_provider(dev->of_node, of_clk_src_onecell_get,
+ 				   &cprman->onecell);
+ }
+diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
+index d323efa..61f1d20 100644
+--- a/include/dt-bindings/clock/bcm2835.h
++++ b/include/dt-bindings/clock/bcm2835.h
+@@ -43,5 +43,6 @@
+ #define BCM2835_CLOCK_TSENS		27
+ #define BCM2835_CLOCK_EMMC		28
+ #define BCM2835_CLOCK_PERI_IMAGE	29
++#define BCM2835_CLOCK_PWM		30
+ 
+-#define BCM2835_CLOCK_COUNT		30
++#define BCM2835_CLOCK_COUNT		31
+-- 
+2.0.1
