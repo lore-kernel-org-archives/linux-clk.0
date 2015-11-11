@@ -1,38 +1,97 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 00/16] clk: a collection of various clean-ups and improvements
-Date: Mon, 30 Nov 2015 16:34:37 +0900
-Message-Id: <1448868893-4575-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mleia.com ([178.79.152.223]:48941 "EHLO mail.mleia.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751386AbbKKJan (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Wed, 11 Nov 2015 04:30:43 -0500
+Message-ID: <56430AC0.5090707@mleia.com>
+Date: Wed, 11 Nov 2015 11:30:40 +0200
+From: Vladimir Zapolskiy <vz@mleia.com>
+MIME-Version: 1.0
+To: Masahiro Yamada <yamada.masahiro@socionext.com>,
+	linux-clk@vger.kernel.org
+CC: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: How to implement common clk in multi function controller?
+References: <CAK7LNASM+tJpd-kBHGHe7TXWm4i-UEfbq7T3dn99p2fKFwtxAA@mail.gmail.com>
+In-Reply-To: <CAK7LNASM+tJpd-kBHGHe7TXWm4i-UEfbq7T3dn99p2fKFwtxAA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Many refactoring, with detection of circular parent looping.
+Hi Masahiro,
 
+On 11.11.2015 05:16, Masahiro Yamada wrote:
+> Hi.
+> 
+> I am implementing clk and reset drivers for my SoCs.
+> (drivers/clk/uniphier/* and drivers/reset/uniphier/*)
+> 
+> 
+> In my SoCs, one hardware block contains various
+> registers for both clock and reset controlling.
+> (so, it is like a MFD system controller device).
+> I think it is a common case.
+> 
 
-Masahiro Yamada (16):
-  clk: remove unused first argument of __clk_init()
-  clk: change the argument of __clk_init() into pointer to clk_core
-  clk: rename __clk_init() into __clk_core_init()
-  clk: remove unnecessary !core->parents conditional
-  clk: change sizeof(struct clk *) to sizeof(*core->parents)
-  clk: move core->parents allocation to clk_register()
-  clk: simplify clk_core_get_parent_by_index()
-  clk: drop the initial core->parents look-ups from __clk_core_init()
-  clk: replace pr_warn() with pr_err() for fatal cases
-  clk: move checking .git_parent to __clk_core_init()
-  clk: simplify __clk_init_parent()
-  clk: avoid circular clock topology
-  clk: walk the orphan clock list more simply
-  clk: make sure parent is not NULL in clk_fetch_parent_index()
-  clk: simplify clk_fetch_parent_index() function
-  clk: slightly optimize clk_core_set_parent()
+I met the same problem with LPC32xx clocks, one hardware block
+contains clock controller, power controller, wakeup
+controllers and partially pinmux and dma configuration.
 
- drivers/clk/clk.c | 214 ++++++++++++++++++++++--------------------------------
- 1 file changed, 85 insertions(+), 129 deletions(-)
+I've sent a mmio version for review some time ago, but I had
+to change interface to regmap recently.
 
--- 
-1.9.1
+> I am guessing my device tree would be like follows:
+> (one syscon device contains clk and rst devices under it)
+> 
+> syscon {
+>      compatible = "socionext,uniphier-syscon",
+>                  "syscon", "simple-mfd";
+>      reg = <...   ...>;
+> 
+>      clk_ctrl {
+>             .compatible = "socionext,uniphier-clkctrl";
+>             #clock-cells = <1>;
+>      };
+> 
+>      rst_ctrl {
+>              .compatible = "socionext,uniphier-rstctrl";
+>              #reset-cells = <1>;
+>      };
+> };
+> 
+
+Eventually I implement the same layout, but replace "syscon" and
+"simple-mfd" with "simple-bus" only.
+
+For a single interface syscon_node_to_regmap() I don't see a point to
+add a dependency on MFD and syscon.
+
+> 
+> One problem I noticed was,
+> we are supposed to use regmap for register access
+> if we use syscon.
+>
+> OTOH, common clk APIs such as clk-gate, clk-divider
+> expect simple register access via writel()/readl().
+> 
+> Is it a good idea to expand such APIs to regmap?
+
+It might be a good idea.
+
+> 
+> Of course, I could my own uniphier/clk-gate.c
+> to use regmap as other SoCs do.
+> 
+> But, I think regmap is general demand, so
+> I am wondering if it could be supported in common parts.
+> 
+> Or, any other good solution exists?
+>
+
+I had to copy low-level parts from clk-gate, clk-divider and clk-mux to
+my driver and reimplement them on regmap API, of course I won't call
+this as a good solution, but if regmap is unavoidable, that's what remains.
+
+--
+With best wishes,
+Vladimir
