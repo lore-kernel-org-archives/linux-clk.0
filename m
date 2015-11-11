@@ -1,89 +1,122 @@
-Return-Path: <vz@mleia.com>
-From: Vladimir Zapolskiy <vz@mleia.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <zywang33@gmail.com>
+Return-Path: <zywang33@gmail.com>
+From: Chris Zhong <zyw@rock-chips.com>
+To: dianders@chromium.org
+Cc: Chris Zhong <zyw@rock-chips.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: Russell King <linux@arm.linux.org.uk>,
-	Roland Stigge <stigge@antcom.de>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 00/11] clk: lpc32xx: add clock support for NXP LPC32xx
-Date: Fri, 20 Nov 2015 03:05:00 +0200
-Message-Id: <1447981511-29653-1-git-send-email-vz@mleia.com>
+Subject: [PATCH v2] clk: rockchip: switch PLLs to slow mode before reboot for rk3288
+Date: Wed, 11 Nov 2015 13:48:11 +0800
+Message-Id: <1447220891-14900-1-git-send-email-zyw@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This changeset adds common clock framework driver for NXP LPC32xx
-boards.
+We've been seeing some crashes at reboot test on rk3288-based systems,
+which boards have not reset pin connected to NPOR, they reboot by
+setting 0xfdb9 to RK3288_GLB_SRST_FST register. If the APLL works in
+a high frequency mode, some IPs might hang during soft reset.
+It appears that we can fix the problem by switching to slow mode before
+reboot, just like what we did before suspend.
 
-The changeset has dependencies on the recent updates to LPC32xx DTS:
-  http://permalink.gmane.org/gmane.linux.ports.arm.kernel/456304
+Signed-off-by: Chris Zhong <zyw@rock-chips.com>
 
-The RFC version of CCF driver 9/11 can be found here:
-  http://www.spinics.net/lists/devicetree/msg100583.html
+---
 
-Changes from RFC to v1:
-* added definitions of a missed IRDA clock,
-* renamed compatible property from lpc32xx-scb to lpc32xx-clk
-* switched to regmap interface instead of mmio, this is required to
-  secure access to registers shared between pinmux, dma and clock
-  driver, unfortunately this change has to pull some code snippets
-  from common gate, divider and mux helpers rebased on regmap API,
-* split clock definitions from the driver to be able to update
-  dts files separately from CCF driver.
+Changes in v2:
+replace restart_handlers with the shutdown callback of syscore
 
-The driver is written from scratch, here are main functional
-differences with the legacy driver arch/arm/mach-lpc32xx/clock.c:
-* serialized access to SCB registers,
-* reworked routines to select PLL parameters,
-* now the clock driver has detailed description of all clocks,
-  the original driver misses several clock entries and most of fine
-  grained clock controls, here every mux and divider are accounted,
-* now clocks and clock hierarchies can be described in board DT file,
-* sophisticated management of USB clocks, for example now USB device
-  controller needs only one clock instead of USB PLL, USB OTG and USB
-  device clocks,
-* other benefits from a driver powered by CCF.
+ drivers/clk/rockchip/clk-rk3288.c | 36 +++++++++++++++++++-----------------
+ 1 file changed, 19 insertions(+), 17 deletions(-)
 
-Patch 9/11 may produce false positives from checkpatch, the fix
-to checkpatch can be found in Andrew's tree.
-
-Vladimir Zapolskiy (11):
-  dt-bindings: clock: add description of LPC32xx clock controller
-  dt-bindings: clock: add description of LPC32xx USB clock controller
-  dt-bindings: clock: add NXP LPC32xx clock list for consumers
-  arm: dts: lpc32xx: add device nodes for external oscillators
-  arm: dts: lpc32xx: add clock controller device node
-  arm: dts: lpc32xx: add clock properties to device nodes
-  arm: dts: lpc32xx: add USB clock controller
-  clk: lpc18xx: add NXP specific common clock framework selection
-  clk: lpc32xx: add common clock framework driver
-  arm: lpc32xx: switch to common clock framework
-  arm: dts: lpc32xx: remove clock frequency property from UART device
-    nodes
-
- .../devicetree/bindings/clock/nxp,lpc3220-clk.txt  |   30 +
- .../bindings/clock/nxp,lpc3220-usb-clk.txt         |   22 +
- arch/arm/Kconfig                                   |    4 +-
- arch/arm/boot/dts/lpc32xx.dtsi                     |   87 +-
- arch/arm/mach-lpc32xx/Makefile                     |    3 +-
- arch/arm/mach-lpc32xx/clock.c                      | 1284 ----------------
- arch/arm/mach-lpc32xx/phy3250.c                    |    1 -
- arch/arm/mach-lpc32xx/serial.c                     |    3 -
- arch/arm/mach-lpc32xx/timer.c                      |  144 --
- drivers/clk/Kconfig                                |    6 +
- drivers/clk/Makefile                               |    2 +-
- drivers/clk/nxp/Makefile                           |    1 +
- drivers/clk/nxp/clk-lpc32xx.c                      | 1562 ++++++++++++++++++++
- include/dt-bindings/clock/lpc32xx-clock.h          |   56 +
- 14 files changed, 1765 insertions(+), 1440 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
- create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt
- delete mode 100644 arch/arm/mach-lpc32xx/clock.c
- delete mode 100644 arch/arm/mach-lpc32xx/timer.c
- create mode 100644 drivers/clk/nxp/clk-lpc32xx.c
- create mode 100644 include/dt-bindings/clock/lpc32xx-clock.h
-
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 9040878..5ce44af 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -16,6 +16,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/reboot.h>
+ #include <linux/syscore_ops.h>
+ #include <dt-bindings/clock/rk3288-cru.h>
+ #include "clk.h"
+@@ -783,9 +784,9 @@ static const char *const rk3288_critical_clocks[] __initconst = {
+ 	"pclk_pd_pmu",
+ };
+ 
+-#ifdef CONFIG_PM_SLEEP
+ static void __iomem *rk3288_cru_base;
+ 
++#ifdef CONFIG_PM_SLEEP
+ /* Some CRU registers will be reset in maskrom when the system
+  * wakes up from fastboot.
+  * So save them before suspend, restore them after resume.
+@@ -839,34 +840,32 @@ static void rk3288_clk_resume(void)
+ 			       rk3288_cru_base + reg_id);
+ 	}
+ }
++#endif
+ 
+-static struct syscore_ops rk3288_clk_syscore_ops = {
+-	.suspend = rk3288_clk_suspend,
+-	.resume = rk3288_clk_resume,
+-};
+-
+-static void rk3288_clk_sleep_init(void __iomem *reg_base)
++static void rk3288_clk_shutdown(void)
+ {
+-	rk3288_cru_base = reg_base;
+-	register_syscore_ops(&rk3288_clk_syscore_ops);
++	writel_relaxed(0xf3030000, rk3288_cru_base + RK3288_MODE_CON);
+ }
+ 
+-#else /* CONFIG_PM_SLEEP */
+-static void rk3288_clk_sleep_init(void __iomem *reg_base) {}
++static struct syscore_ops rk3288_clk_syscore_ops = {
++#ifdef CONFIG_PM_SLEEP
++	.suspend = rk3288_clk_suspend,
++	.resume = rk3288_clk_resume,
+ #endif
++	.shutdown = rk3288_clk_shutdown,
++};
+ 
+ static void __init rk3288_clk_init(struct device_node *np)
+ {
+-	void __iomem *reg_base;
+ 	struct clk *clk;
+ 
+-	reg_base = of_iomap(np, 0);
+-	if (!reg_base) {
++	rk3288_cru_base = of_iomap(np, 0);
++	if (!rk3288_cru_base) {
+ 		pr_err("%s: could not map cru region\n", __func__);
+ 		return;
+ 	}
+ 
+-	rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
++	rockchip_clk_init(np, rk3288_cru_base, CLK_NR_CLKS);
+ 
+ 	/* xin12m is created by an cru-internal divider */
+ 	clk = clk_register_fixed_factor(NULL, "xin12m", "xin24m", 0, 1, 2);
+@@ -907,10 +906,13 @@ static void __init rk3288_clk_init(struct device_node *np)
+ 			&rk3288_cpuclk_data, rk3288_cpuclk_rates,
+ 			ARRAY_SIZE(rk3288_cpuclk_rates));
+ 
+-	rockchip_register_softrst(np, 12, reg_base + RK3288_SOFTRST_CON(0),
++	rockchip_register_softrst(np, 12,
++				  rk3288_cru_base + RK3288_SOFTRST_CON(0),
+ 				  ROCKCHIP_SOFTRST_HIWORD_MASK);
+ 
+ 	rockchip_register_restart_notifier(RK3288_GLB_SRST_FST);
+-	rk3288_clk_sleep_init(reg_base);
++
++	register_syscore_ops(&rk3288_clk_syscore_ops);
++;
+ }
+ CLK_OF_DECLARE(rk3288_cru, "rockchip,rk3288-cru", rk3288_clk_init);
 -- 
-2.1.4
+2.6.3
