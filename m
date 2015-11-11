@@ -1,54 +1,118 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 18 Nov 2015 12:34:33 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+Return-Path: <zywang33@gmail.com>
+Return-Path: <zywang33@gmail.com>
+From: Chris Zhong <zyw@rock-chips.com>
+To: dianders@chromium.org
+Cc: Chris Zhong <zyw@rock-chips.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: add generic driver for fixed rate clock
-Message-ID: <20151118203433.GE32672@codeaurora.org>
-References: <1378010420-20031-1-git-send-email-stefan.kristiansson@saunalahti.fi>
- <CAMuHMdXhxuawY-V+35YoeZWZ3jZ-Vj_MzuRDGBfDD9i9iy=oGA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAMuHMdXhxuawY-V+35YoeZWZ3jZ-Vj_MzuRDGBfDD9i9iy=oGA@mail.gmail.com>
+	Heiko Stuebner <heiko@sntech.de>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3] clk: rockchip: switch PLLs to slow mode before reboot for rk3288
+Date: Wed, 11 Nov 2015 15:09:59 +0800
+Message-Id: <1447225799-23996-1-git-send-email-zyw@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/17, Geert Uytterhoeven wrote:
-> Hi Stefan,
-> 
-> (quoting the full driver, as it predates linux-clk)
-> 
-> On Sun, Sep 1, 2013 at 6:40 AM, Stefan Kristiansson
-> <stefan.kristiansson@saunalahti.fi> wrote:
-> > This adds a simple driver with the only purpose to initialise
-> > the fixed rate clock.
-> > This is useful for systems that do not wish to use seperate init
-> > code for the fixed rate clock init, but rather only rely on a
-> > device tree description of it.
-> >
-> > Signed-off-by: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
-> 
-> Thanks, this is still very useful!
-> 
-> I stumbled across this old patch while trying to instantiate a fixed rate
-> clock from a DT overlay.
-> Without this, the clock is never instantiated, as drivers/clk/clk-fixed-rate.c
-> uses CLK_OF_DECLARE() :-( With your driver, it works as expected
-> (after fixing the modpost complaint, cfr. below).
-> 
-> However, I think that instead of creating a new driver, you should just add
-> the meat of clk-generic-fixed.c to clk-fixed-rate.c.
+We've been seeing some crashes at reboot test on rk3288-based systems,
+which boards have not reset pin connected to NPOR, they reboot by
+setting 0xfdb9 to RK3288_GLB_SRST_FST register. If the APLL works in
+a high frequency mode, some IPs might hang during soft reset.
+It appears that we can fix the problem by switching to slow mode before
+reboot, just like what we did before suspend.
 
-Hm... what happens when of_clk_init() runs and instantiates the
-clock, and then of_platform_populate() runs and creates the clock
-again? The platform device probe fails because the framework
-checks to make sure two clocks don't have the same name? I guess
-that's going to work, but it doesn't make me feel good.
+Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
+---
+
+Changes in v3:
+remove include reboot.h
+
+Changes in v2:
+replace restart_handlers with the shutdown callback of syscore
+
+ drivers/clk/rockchip/clk-rk3288.c | 35 ++++++++++++++++++-----------------
+ 1 file changed, 18 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 9040878..3002d7d 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -783,9 +783,9 @@ static const char *const rk3288_critical_clocks[] __initconst = {
+ 	"pclk_pd_pmu",
+ };
+ 
+-#ifdef CONFIG_PM_SLEEP
+ static void __iomem *rk3288_cru_base;
+ 
++#ifdef CONFIG_PM_SLEEP
+ /* Some CRU registers will be reset in maskrom when the system
+  * wakes up from fastboot.
+  * So save them before suspend, restore them after resume.
+@@ -839,34 +839,32 @@ static void rk3288_clk_resume(void)
+ 			       rk3288_cru_base + reg_id);
+ 	}
+ }
++#endif
+ 
+-static struct syscore_ops rk3288_clk_syscore_ops = {
+-	.suspend = rk3288_clk_suspend,
+-	.resume = rk3288_clk_resume,
+-};
+-
+-static void rk3288_clk_sleep_init(void __iomem *reg_base)
++static void rk3288_clk_shutdown(void)
+ {
+-	rk3288_cru_base = reg_base;
+-	register_syscore_ops(&rk3288_clk_syscore_ops);
++	writel_relaxed(0xf3030000, rk3288_cru_base + RK3288_MODE_CON);
+ }
+ 
+-#else /* CONFIG_PM_SLEEP */
+-static void rk3288_clk_sleep_init(void __iomem *reg_base) {}
++static struct syscore_ops rk3288_clk_syscore_ops = {
++#ifdef CONFIG_PM_SLEEP
++	.suspend = rk3288_clk_suspend,
++	.resume = rk3288_clk_resume,
+ #endif
++	.shutdown = rk3288_clk_shutdown,
++};
+ 
+ static void __init rk3288_clk_init(struct device_node *np)
+ {
+-	void __iomem *reg_base;
+ 	struct clk *clk;
+ 
+-	reg_base = of_iomap(np, 0);
+-	if (!reg_base) {
++	rk3288_cru_base = of_iomap(np, 0);
++	if (!rk3288_cru_base) {
+ 		pr_err("%s: could not map cru region\n", __func__);
+ 		return;
+ 	}
+ 
+-	rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
++	rockchip_clk_init(np, rk3288_cru_base, CLK_NR_CLKS);
+ 
+ 	/* xin12m is created by an cru-internal divider */
+ 	clk = clk_register_fixed_factor(NULL, "xin12m", "xin24m", 0, 1, 2);
+@@ -907,10 +905,13 @@ static void __init rk3288_clk_init(struct device_node *np)
+ 			&rk3288_cpuclk_data, rk3288_cpuclk_rates,
+ 			ARRAY_SIZE(rk3288_cpuclk_rates));
+ 
+-	rockchip_register_softrst(np, 12, reg_base + RK3288_SOFTRST_CON(0),
++	rockchip_register_softrst(np, 12,
++				  rk3288_cru_base + RK3288_SOFTRST_CON(0),
+ 				  ROCKCHIP_SOFTRST_HIWORD_MASK);
+ 
+ 	rockchip_register_restart_notifier(RK3288_GLB_SRST_FST);
+-	rk3288_clk_sleep_init(reg_base);
++
++	register_syscore_ops(&rk3288_clk_syscore_ops);
++;
+ }
+ CLK_OF_DECLARE(rk3288_cru, "rockchip,rk3288-cru", rk3288_clk_init);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.6.3
