@@ -1,78 +1,127 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Julia Lawall <Julia.Lawall@lip6.fr>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v4 17/24] backlight: pwm_bl: remove useless call to pwm_set_period
-Date: Mon, 16 Nov 2015 09:56:40 +0100
-Message-Id: <1447664207-24370-18-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Chris Zhong <zyw@rock-chips.com>
+Cc: dianders@chromium.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] clk: rockchip: switch PLLs to slow mode before reboot for rk3288
+Date: Wed, 11 Nov 2015 07:59:14 +0100
+Message-ID: <5837542.TKsKPxNRPz@phil>
+In-Reply-To: <1447220891-14900-1-git-send-email-zyw@rock-chips.com>
+References: <1447220891-14900-1-git-send-email-zyw@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-The PWM period will be set when calling pwm_config. Remove this useless
-call to pwm_set_period, which might mess up with the initial PWM state
-once we have added proper support for PWM init state retrieval.
+Hi Chris,
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Acked-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/video/backlight/pwm_bl.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+one nit below, otherwise
 
-diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-index 54d5a03..5ff2976 100644
---- a/drivers/video/backlight/pwm_bl.c
-+++ b/drivers/video/backlight/pwm_bl.c
-@@ -292,12 +292,14 @@ static int pwm_backlight_probe(struct platform_device *pdev)
- 	 * period, parsed from the DT, in the PWM device. For the non-DT case,
- 	 * set the period from platform data if it has not already been set
- 	 * via the PWM lookup table.
-+	 * FIXME: This assignment should be dropped as soon as all the boards
-+	 * have moved to the PWM lookup table approach. The same goes for the
-+	 * pb->period field which should be replaced by
-+	 * pwm_get_default_period() calls.
- 	 */
- 	pb->period = pwm_get_default_period(pb->pwm);
--	if (!pb->period && (data->pwm_period_ns > 0)) {
-+	if (!pb->period && (data->pwm_period_ns > 0))
- 		pb->period = data->pwm_period_ns;
--		pwm_set_period(pb->pwm, data->pwm_period_ns);
--	}
- 
- 	pb->lth_brightness = data->lth_brightness * (pb->period / pb->scale);
- 
--- 
-2.1.4
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
+Am Mittwoch, 11. November 2015, 13:48:11 schrieb Chris Zhong:
+> We've been seeing some crashes at reboot test on rk3288-based systems,
+> which boards have not reset pin connected to NPOR, they reboot by
+> setting 0xfdb9 to RK3288_GLB_SRST_FST register. If the APLL works in
+> a high frequency mode, some IPs might hang during soft reset.
+> It appears that we can fix the problem by switching to slow mode before
+> reboot, just like what we did before suspend.
+> 
+> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+> 
+> ---
+> 
+> Changes in v2:
+> replace restart_handlers with the shutdown callback of syscore
+> 
+>  drivers/clk/rockchip/clk-rk3288.c | 36 +++++++++++++++++++-----------------
+>  1 file changed, 19 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+> index 9040878..5ce44af 100644
+> --- a/drivers/clk/rockchip/clk-rk3288.c
+> +++ b/drivers/clk/rockchip/clk-rk3288.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/clk-provider.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+> +#include <linux/reboot.h>
+
+unrelated change?
+
+>  #include <linux/syscore_ops.h>
+>  #include <dt-bindings/clock/rk3288-cru.h>
+>  #include "clk.h"
+> @@ -783,9 +784,9 @@ static const char *const rk3288_critical_clocks[] __initconst = {
+>  	"pclk_pd_pmu",
+>  };
+>  
+> -#ifdef CONFIG_PM_SLEEP
+>  static void __iomem *rk3288_cru_base;
+>  
+> +#ifdef CONFIG_PM_SLEEP
+>  /* Some CRU registers will be reset in maskrom when the system
+>   * wakes up from fastboot.
+>   * So save them before suspend, restore them after resume.
+> @@ -839,34 +840,32 @@ static void rk3288_clk_resume(void)
+>  			       rk3288_cru_base + reg_id);
+>  	}
+>  }
+> +#endif
+>  
+> -static struct syscore_ops rk3288_clk_syscore_ops = {
+> -	.suspend = rk3288_clk_suspend,
+> -	.resume = rk3288_clk_resume,
+> -};
+> -
+> -static void rk3288_clk_sleep_init(void __iomem *reg_base)
+> +static void rk3288_clk_shutdown(void)
+>  {
+> -	rk3288_cru_base = reg_base;
+> -	register_syscore_ops(&rk3288_clk_syscore_ops);
+> +	writel_relaxed(0xf3030000, rk3288_cru_base + RK3288_MODE_CON);
+>  }
+>  
+> -#else /* CONFIG_PM_SLEEP */
+> -static void rk3288_clk_sleep_init(void __iomem *reg_base) {}
+> +static struct syscore_ops rk3288_clk_syscore_ops = {
+> +#ifdef CONFIG_PM_SLEEP
+> +	.suspend = rk3288_clk_suspend,
+> +	.resume = rk3288_clk_resume,
+>  #endif
+> +	.shutdown = rk3288_clk_shutdown,
+> +};
+>  
+>  static void __init rk3288_clk_init(struct device_node *np)
+>  {
+> -	void __iomem *reg_base;
+>  	struct clk *clk;
+>  
+> -	reg_base = of_iomap(np, 0);
+> -	if (!reg_base) {
+> +	rk3288_cru_base = of_iomap(np, 0);
+> +	if (!rk3288_cru_base) {
+>  		pr_err("%s: could not map cru region\n", __func__);
+>  		return;
+>  	}
+>  
+> -	rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
+> +	rockchip_clk_init(np, rk3288_cru_base, CLK_NR_CLKS);
+>  
+>  	/* xin12m is created by an cru-internal divider */
+>  	clk = clk_register_fixed_factor(NULL, "xin12m", "xin24m", 0, 1, 2);
+> @@ -907,10 +906,13 @@ static void __init rk3288_clk_init(struct device_node *np)
+>  			&rk3288_cpuclk_data, rk3288_cpuclk_rates,
+>  			ARRAY_SIZE(rk3288_cpuclk_rates));
+>  
+> -	rockchip_register_softrst(np, 12, reg_base + RK3288_SOFTRST_CON(0),
+> +	rockchip_register_softrst(np, 12,
+> +				  rk3288_cru_base + RK3288_SOFTRST_CON(0),
+>  				  ROCKCHIP_SOFTRST_HIWORD_MASK);
+>  
+>  	rockchip_register_restart_notifier(RK3288_GLB_SRST_FST);
+> -	rk3288_clk_sleep_init(reg_base);
+> +
+> +	register_syscore_ops(&rk3288_clk_syscore_ops);
+> +;
+>  }
+>  CLK_OF_DECLARE(rk3288_cru, "rockchip,rk3288-cru", rk3288_clk_init);
+> 
