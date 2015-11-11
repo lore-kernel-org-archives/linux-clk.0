@@ -1,150 +1,168 @@
-Return-Path: <jszhang@marvell.com>
-From: Jisheng Zhang <jszhang@marvell.com>
-To: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <sebastian.hesselbarth@gmail.com>, <antoine.tenart@free-electrons.com>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        Jisheng
- Zhang <jszhang@marvell.com>
-Subject: [PATCH v2 3/6] clk: berlin: add common gateclk driver for newer SoCs
-Date: Fri, 20 Nov 2015 16:42:29 +0800
-Message-ID: <1448008952-1787-4-git-send-email-jszhang@marvell.com>
-In-Reply-To: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
-References: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 11 Nov 2015 14:14:12 -0800
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>
+Subject: Re: [PATCH 08/19] drm: Add Allwinner A10 Display Engine support
+Message-ID: <20151111221412.GH6114@lukather>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1446214865-3972-9-git-send-email-maxime.ripard@free-electrons.com>
+ <20151030144409.GZ16848@phenom.ffwll.local>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="qPhbOctOI3h5o759"
+In-Reply-To: <20151030144409.GZ16848@phenom.ffwll.local>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add common gateclk driver for Marvell SoCs newer than BG2, BG2CD,
-BG2Q. berlin_gateclk_setup() is provided to setup and register such
-kind of clks.
 
-Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
----
- drivers/clk/berlin/Makefile |  2 +-
- drivers/clk/berlin/clk.h    | 12 ++++++++
- drivers/clk/berlin/gate.c   | 73 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 86 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/berlin/gate.c
+--qPhbOctOI3h5o759
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/berlin/Makefile b/drivers/clk/berlin/Makefile
-index ee2e09d..fc92151 100644
---- a/drivers/clk/berlin/Makefile
-+++ b/drivers/clk/berlin/Makefile
-@@ -1,5 +1,5 @@
- obj-y += berlin2-avpll.o berlin2-pll.o berlin2-div.o
--obj-y += pll.o clk.o
-+obj-y += pll.o clk.o gate.o
- obj-$(CONFIG_MACH_BERLIN_BG2)	+= bg2.o
- obj-$(CONFIG_MACH_BERLIN_BG2CD)	+= bg2.o
- obj-$(CONFIG_MACH_BERLIN_BG2Q)	+= bg2q.o
-diff --git a/drivers/clk/berlin/clk.h b/drivers/clk/berlin/clk.h
-index 5e5680e..4d8af6c 100644
---- a/drivers/clk/berlin/clk.h
-+++ b/drivers/clk/berlin/clk.h
-@@ -25,9 +25,21 @@ struct clk_desc {
- 	unsigned long	flags;
- };
- 
-+struct gateclk_desc {
-+	const char	*name;
-+	const char	*parent_name;
-+	u8		bit_idx;
-+	unsigned long	flags;
-+};
-+
- void __init berlin_clk_setup(struct device_node *np,
- 			     const struct clk_desc *desc,
- 			     struct clk_onecell_data *clk_data,
- 			     int n);
- 
-+void __init berlin_gateclk_setup(struct device_node *np,
-+				 const struct gateclk_desc *descs,
-+				 struct clk_onecell_data *clk_data,
-+				 int n);
-+
- #endif
-diff --git a/drivers/clk/berlin/gate.c b/drivers/clk/berlin/gate.c
-new file mode 100644
-index 0000000..35200d2
---- /dev/null
-+++ b/drivers/clk/berlin/gate.c
-@@ -0,0 +1,73 @@
-+/*
-+ * Copyright (c) 2015 Marvell Technology Group Ltd.
-+ *
-+ * Author: Jisheng Zhang <jszhang@marvell.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License along with
-+ * this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock_types.h>
-+
-+#include "clk.h"
-+
-+static DEFINE_SPINLOCK(berlin_gateclk_lock);
-+
-+void __init berlin_gateclk_setup(struct device_node *np,
-+				 const struct gateclk_desc *descs,
-+				 struct clk_onecell_data *clk_data,
-+				 int n)
-+{
-+	int i, ret;
-+	void __iomem *base;
-+	struct clk **clks;
-+
-+	clks = kcalloc(n, sizeof(struct clk *), GFP_KERNEL);
-+	if (!clks)
-+		return;
-+
-+	base = of_iomap(np, 0);
-+	if (WARN_ON(!base))
-+		goto err_iomap;
-+
-+	for (i = 0; i < n; i++) {
-+		struct clk *clk;
-+
-+		clk = clk_register_gate(NULL, descs[i].name,
-+				descs[i].parent_name,
-+				descs[i].flags, base,
-+				descs[i].bit_idx, 0,
-+				&berlin_gateclk_lock);
-+		if (WARN_ON(IS_ERR(clk)))
-+			goto err_clk_register;
-+		clks[i] = clk;
-+	}
-+
-+	clk_data->clks = clks;
-+	clk_data->clk_num = i;
-+
-+	ret = of_clk_add_provider(np, of_clk_src_onecell_get, clk_data);
-+	if (WARN_ON(ret))
-+		goto err_clk_register;
-+	return;
-+
-+err_clk_register:
-+	for (i = 0; i < n; i++)
-+		clk_unregister(clks[i]);
-+	iounmap(base);
-+err_iomap:
-+	kfree(clks);
-+}
--- 
-2.6.2
+Hi Daniel,
+
+Thanks for your review!
+
+On Fri, Oct 30, 2015 at 03:44:09PM +0100, Daniel Vetter wrote:
+> > +static void sun4i_crtc_disable(struct drm_crtc *crtc)
+> > +{
+> > +	struct sun4i_crtc *scrtc =3D drm_crtc_to_sun4i_crtc(crtc);
+> > +	struct sun4i_drv *drv =3D scrtc->drv;
+> > +
+> > +	DRM_DEBUG_DRIVER("Disabling the CRTC\n");
+> > +
+> > +	if (!scrtc->enabled)
+> > +		return;
+>=20
+> Please don't do this - the atomic state should always reflect the true hw
+> state (fix that up with either hw state readout or reset in the ->reset
+> callbacks), and the atomic helpers guarantee that they'll never call you
+> when not needed. If you don't trust them do a WARN_ON at least, but no
+> early silent returns.
+>=20
+> Personally I'd just rip it out, it's too much trouble. And for debugging
+> the atomic helpers already trace it all (or at least should).
+
+Ok. Is there a preferred way to do HW state readout, or should I just
+add that to my probe?
+
+> > +static int sun4i_drv_connector_plug_all(struct drm_device *drm)
+>=20
+> Laurent Pinchart has this as a rfc patch for drm core, please coordinate
+> with him and rebase on top of his patches.
+
+Ack, I will.
+
+> > +static int sun4i_drv_enable_vblank(struct drm_device *drm, int pipe)
+> > +{
+> > +	struct sun4i_drv *drv =3D drm->dev_private;
+> > +	struct sun4i_tcon *tcon =3D drv->tcon;
+> > +
+> > +	DRM_DEBUG_DRIVER("Enabling VBLANK on pipe %d\n", pipe);
+> > +
+> > +	sun4i_tcon_enable_vblank(tcon, true);
+> > +
+> > +	return 0;
+>=20
+> atomic helpers rely on enable_vblank failing correctly when the pipe is
+> off and vlbanks will never happen. You probably need a correct error code
+> here that checks crtc->state->active (well not that directly but something
+> derived from it, since the pointer chase would be racy).
+
+Ok.
+
+> I know it's a bit a mess since we don't have kms-native vblank driver
+> hooks yet and really the drm core should get this right for you. It'll
+> happen eventually, but drm_irq.c is a bit moldy ;-)
+
+I can't really use drm_irq anyway, since we don't have a single
+interrupt for the VBLANK, but two, that we have to use depending on
+the output.
+
+> > +static void sun4i_drv_disable_vblank(struct drm_device *drm, int pipe)
+> > +{
+> > +	struct sun4i_drv *drv =3D drm->dev_private;
+> > +	struct sun4i_tcon *tcon =3D drv->tcon;
+> > +
+> > +	DRM_DEBUG_DRIVER("Disabling VBLANK on pipe %d\n", pipe);
+> > +
+> > +	sun4i_tcon_enable_vblank(tcon, false);
+> > +}
+> > +
+> > +static int sun4i_drv_load(struct drm_device *drm, unsigned long flags)
+>=20
+> load/unload callbacks are depracated since fundamentally racy, and we
+> can't fix that due to the pile of legacy dri1 drivers. Please use
+> drm_dev_alloc/register/unregister/unref functions instead, with the
+> load/unload code placed in between to avoid races with userspace seeing
+> the device/driver (e.g. in sysfs) while it's in a partially defunct state.
+>=20
+> Relevant kerneldoc has the details, at least in linux-next.
+
+Ok.
+
+> > +static void sun4i_backend_layer_atomic_update(struct drm_plane *plane,
+> > +					      struct drm_plane_state *old_state)
+> > +{
+> > +	struct sun4i_layer *layer =3D plane_to_sun4i_layer(plane);
+> > +	struct sun4i_drv *drv =3D layer->drv;
+> > +	struct sun4i_backend *backend =3D drv->backend;
+> > +
+> > +	sun4i_backend_update_layer_coord(backend, layer->id, plane);
+> > +	sun4i_backend_update_layer_formats(backend, layer->id, plane);
+> > +	sun4i_backend_update_layer_buffer(backend, layer->id, plane);
+> > +	sun4i_backend_layer_enable(backend, layer->id, true);
+> > +	sun4i_backend_commit(backend);
+>=20
+> Not idea how exactly your hw works, but the call to sun4i_backend_commit
+> probably should be in the crtc->atomic_flush function, to make sure that
+> plane updates across multiple planes are indeed atomic.
+
+The hardware will not take the register writes into account until a
+bit is set (in the _commit function), so I guess putting it in
+atomic_flush makes sense.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--qPhbOctOI3h5o759
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWQ720AAoJEBx+YmzsjxAgqDUQAJJ0RjttqmgDoNtDhWgjw+To
+HQeI+bXYaHmHyyNOpEQ7+zTHOBL1gf+60XFrpsYpZvWqkgqZkkZugpeRAVr/M0e8
+2IuqBgIpiUJGYVFBtT/HOqN7sUGdxyGPLhO3LoycPEKzOXODDCF43OmdSfjlQrKF
+dzuwpaVP5YJedEfC7Tu5v8H4wG8E310/2e27u/t0MbfucMfCsScFwaOkhzUdhAOO
+oPixR21SjT5+PGMKnIkFHgIxs1oWVDidrkWZ1iqscUA1yHh6JJ3Pw1OsoYYunNi4
+BAzx7rJOroIzsdCOZMi0ZzljR10NmdswAPq6qck1X4sYmRUwRHKUnwM4NkIa4fjP
+JWG3K0wLqsjEZvGWvGEFuTlzStItpNp00CA46F7GOf+WCGeXk6lqklkrd+6iaBPB
+O3VzBc7xXSIgowYl0iomzeov08sQnTpI5yOZy4XVi74Gz3qD38WR3renebmkmQ0W
+AdqWFOU2ceDE2x/fww21RN/dDuvaHEgX4JNiRPZarbB4YCdlfp1r2qd3pAhBVJCt
+FBRA8RIauxvMqhzvkSsuJ+QvLESNXB5QxZLjsPDcQ8YXVicMw93pgdUtZVcVz9QK
+lsFUuM5+vCcoGvxOf7b88U/T6OH95mBeXGg2pZldoZnQB1isLx74rfLW85rqizn/
+u5CHtx6OFVlGoJJC2BYO
+=ZWcD
+-----END PGP SIGNATURE-----
+
+--qPhbOctOI3h5o759--
