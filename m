@@ -1,39 +1,64 @@
-Return-Path: <repk@triplefau.lt>
-From: Remi Pommarel <repk@triplefau.lt>
-To: Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Remi Pommarel <repk@triplefau.lt>
-Subject: [PATCH 0/2] Add PWM clock support for bcm2835
-Date: Thu,  5 Nov 2015 00:08:20 +0100
-Message-Id: <1446678502-16243-1-git-send-email-repk@triplefau.lt>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 12 Nov 2015 12:31:54 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 01/19] clk: sunxi: Add display clock
+Message-ID: <20151112203154.GE15032@codeaurora.org>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1446214865-3972-2-git-send-email-maxime.ripard@free-electrons.com>
+ <20151030212902.GG19782@codeaurora.org>
+ <20151106233926.GN6114@lukather>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20151106233926.GN6114@lukather>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 11/06, Maxime Ripard wrote:
+> Hi Stephen,
+> 
+> Thanks for your feedback!
+> 
+> On Fri, Oct 30, 2015 at 02:29:02PM -0700, Stephen Boyd wrote:
+> > > +
+> > > +	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
+> > > +	if (!mux)
+> > [..]
+> > > +		goto free_reset;
+> > > +	}
+> > > +
+> > > +	return;
+> > > +
+> > > +free_reset:
+> > > +	kfree(reset_data);
+> > > +free_clk:
+> > > +	clk_unregister(clk);
+> > 
+> > We really ought to have a clk_composite_unregister() API.
+> 
+> Can we?
+> 
+> We can always unregister the clock itself, but do we have a way to
+> retrieve the structure that has been allocated in there?
+> 
+> (note that it also applies to the generic clocks registration: muxes,
+> dividers, and so on).
 
-This patchset add support for pwm clock. At boot, this clock does not have a
-default parent nor a default rate set. Thus we should be able to change its
-parent to get this clock working. The current clock implementation is using a
-mux to select the parent, but these clocks need to add a password (0x5a) in
-higher register bits when changing parent. So a generic mux cannot be used
-here.
-
-The first patch fix the clock parent selection, while the second one is actually
-adding the pwm clock registration.
-
-Remi Pommarel (2):
-  clk: bcm2835: Support for clock parent selection
-  clk: bcm2835: Add PWM clock support
-
- arch/arm/boot/dts/bcm2835.dtsi      |   8 ++
- drivers/clk/bcm/clk-bcm2835.c       | 144 ++++++++++++++++++++++++------------
- include/dt-bindings/clock/bcm2835.h |   3 +-
- 3 files changed, 108 insertions(+), 47 deletions(-)
+Yes we have a way. We've done the same sort of design for other
+generic clocks. Do the __clk_get_hw() thing like in clk-divider.c
 
 -- 
-2.0.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
