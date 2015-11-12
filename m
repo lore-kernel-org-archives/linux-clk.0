@@ -1,45 +1,95 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-Message-ID: <5654FD46.30907@gmail.com>
-Date: Tue, 24 Nov 2015 16:13:58 -0800
-From: Florian Fainelli <f.fainelli@gmail.com>
-MIME-Version: 1.0
-To: Ray Jui <rjui@broadcom.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-CC: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- bcm-kernel-feedback-list@broadcom.com, Simran Rai <ssimran@broadcom.com>
-Subject: Re: [PATCH v2 0/4] Add Cygnus audio clock support
-References: <1448301027-27061-1-git-send-email-rjui@broadcom.com>
-In-Reply-To: <1448301027-27061-1-git-send-email-rjui@broadcom.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v6 2/5] clk: shmobile: div6: Make clock-output-names optional
+Date: Thu, 12 Nov 2015 16:54:43 +0100
+Message-Id: <1447343686-2038-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1447343686-2038-1-git-send-email-geert+renesas@glider.be>
+References: <1447343686-2038-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 23/11/15 09:50, Ray Jui wrote:
-> This patch series adds support for the Cygnus audio clock based on existing
-> iProc clock support
-> 
-> This patch series is developed based on v4.4-rc1 with full tree available
-> on GITHUB:
-> repo: https://github.com/Broadcom/cygnus-linux.git
-> branch: cygnus-audio-clk-v2
-> 
-> Changes from v1:
->  - Remove function prototype of a non-exist function 'iproc_audiopll_clk_setup'
->  - Remove __init macros from all functions prototypes in iproc-clk.h
-> 
-> Ray Jui (1):
->   clk: iproc: Remove __init from header
-> 
-> Simran Rai (3):
->   Documentation: dt-bindings: Add DT bindings for Cygnus audio clock
->   clk: iproc: Add support for Cygnus audio clocks
->   ARM: dts: enable audio clock support for Cygnus
+Renesas DIV6 clocks provide a single clock output.  Hence make the
+"clock-output-names" DT property optional instead of mandatory. In case
+the DT property is omitted the DT node name will be used.
 
-Stephen, Mike, do these clock changes look sensible to you? If so, could
-you also put the drivers/clk/ changes in a branch that I could merge as
-part of including the DTS changes?
+Rename the variable "name" to "clk_name" to make the code more similar
+with fixed-factor-clock.c, and to avoid a conflict with a nested local
+variable while we're at it.
 
-Thanks!
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v6:
+  - No changes,
+
+v5:
+  - Integrated in this series as a contextual dependency.
+---
+ .../devicetree/bindings/clock/renesas,cpg-div6-clocks.txt   |  4 ++++
+ drivers/clk/shmobile/clk-div6.c                             | 13 +++----------
+ 2 files changed, 7 insertions(+), 10 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
+index 38dcf03701430e60..ae36ab84291988b7 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
+@@ -20,6 +20,10 @@ Required Properties:
+     clocks must be specified.  For clocks with multiple parents, invalid
+     settings must be specified as "<0>".
+   - #clock-cells: Must be 0
++
++
++Optional Properties:
++
+   - clock-output-names: The name of the clock as a free-form string
+ 
+ 
+diff --git a/drivers/clk/shmobile/clk-div6.c b/drivers/clk/shmobile/clk-div6.c
+index b4c8d6746f68a7b8..57016ff9c585fc6e 100644
+--- a/drivers/clk/shmobile/clk-div6.c
++++ b/drivers/clk/shmobile/clk-div6.c
+@@ -178,10 +178,9 @@ static void __init cpg_div6_clock_init(struct device_node *np)
+ 	const char **parent_names;
+ 	struct clk_init_data init;
+ 	struct div6_clock *clock;
+-	const char *name;
++	const char *clk_name = np->name;
+ 	struct clk *clk;
+ 	unsigned int i;
+-	int ret;
+ 
+ 	clock = kzalloc(sizeof(*clock), GFP_KERNEL);
+ 	if (!clock)
+@@ -215,13 +214,7 @@ static void __init cpg_div6_clock_init(struct device_node *np)
+ 	clock->div = (clk_readl(clock->reg) & CPG_DIV6_DIV_MASK) + 1;
+ 
+ 	/* Parse the DT properties. */
+-	ret = of_property_read_string(np, "clock-output-names", &name);
+-	if (ret < 0) {
+-		pr_err("%s: failed to get %s DIV6 clock output name\n",
+-		       __func__, np->name);
+-		goto error;
+-	}
+-
++	of_property_read_string(np, "clock-output-names", &clk_name);
+ 
+ 	for (i = 0, valid_parents = 0; i < num_parents; i++) {
+ 		const char *name = of_clk_get_parent_name(np, i);
+@@ -255,7 +248,7 @@ static void __init cpg_div6_clock_init(struct device_node *np)
+ 	}
+ 
+ 	/* Register the clock. */
+-	init.name = name;
++	init.name = clk_name;
+ 	init.ops = &cpg_div6_clock_ops;
+ 	init.flags = CLK_IS_BASIC;
+ 	init.parent_names = parent_names;
 -- 
-Florian
+1.9.1
