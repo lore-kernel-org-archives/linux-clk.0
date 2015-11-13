@@ -1,41 +1,38 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: fix a typo in comment block of clk_notifier_register()
-Date: Mon, 30 Nov 2015 16:40:51 +0900
-Message-Id: <1448869251-6219-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <rnayak@codeaurora.org>
+Message-ID: <564564CA.5040608@codeaurora.org>
+Date: Fri, 13 Nov 2015 09:49:22 +0530
+From: Rajendra Nayak <rnayak@codeaurora.org>
+MIME-Version: 1.0
+To: Stephen Boyd <sboyd@codeaurora.org>,
+ Mike Turquette <mturquette@baylibre.com>
+CC: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Rob Clark <robdclark@gmail.com>,
+ "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+ Kevin Hilman <khilman@kernel.org>,
+ linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 2/2] clk: qcom: Make oxili GDSC parent of oxili_cx
+ GDSC
+References: <1443727374-1539-1-git-send-email-sboyd@codeaurora.org> <1443727374-1539-3-git-send-email-sboyd@codeaurora.org> <20151006193217.GH12338@codeaurora.org>
+In-Reply-To: <20151006193217.GH12338@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-The word "cases" is doubled.  Keep decent forms for the following
-lines.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+On 10/07/2015 01:02 AM, Stephen Boyd wrote:
+> On 10/01, Stephen Boyd wrote:
+>> The oxili_cx GDSC is inside the power domain of the oxili GDSC.
+>> Add the dependency so that the CX domain can properly power up.
+>>
+>> Reported-by: Rob Clark <robdclark@gmail.com>
+>> Cc: Rajendra Nayak <rnayak@codeaurora.org>
+>> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+>> ---
+> 
+> Applied to clk-next
 
- drivers/clk/clk.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+I don't see this in clk-next. Was this dropped for some reason?
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index efb0dfd..6d9cd05 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2806,10 +2806,9 @@ void __clk_put(struct clk *clk)
-  * re-enter into the clk framework by calling any top-level clk APIs;
-  * this will cause a nested prepare_lock mutex.
-  *
-- * In all notification cases cases (pre, post and abort rate change) the
-- * original clock rate is passed to the callback via struct
-- * clk_notifier_data.old_rate and the new frequency is passed via struct
-- * clk_notifier_data.new_rate.
-+ * In all notification cases (pre, post and abort rate change) the original
-+ * clock rate is passed to the callback via struct clk_notifier_data.old_rate
-+ * and the new frequency is passed via struct clk_notifier_data.new_rate.
-  *
-  * clk_notifier_register() must be called from non-atomic context.
-  * Returns -EINVAL if called with null arguments, -ENOMEM upon
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
