@@ -1,92 +1,47 @@
-Return-Path: <alim.akhtar@samsung.com>
-Message-id: <564D4BBA.5060406@samsung.com>
-Date: Thu, 19 Nov 2015 09:40:34 +0530
-From: Alim Akhtar <alim.akhtar@samsung.com>
-MIME-version: 1.0
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
- Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>,
- Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
- Kevin Hilman <khilman@linaro.org>
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [1/2] clk: samsung: Don't build ARMv8 clock drivers on ARMv7
-References: <1447637775-9887-2-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1447637775-9887-2-git-send-email-k.kozlowski@samsung.com>
-Content-type: text/plain; charset=ISO-8859-1; format=flowed
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f50.google.com ([74.125.82.50]:35775 "EHLO
+	mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933104AbbKMQaL (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 13 Nov 2015 11:30:11 -0500
+Received: by wmdw130 with SMTP id w130so35979550wmd.0
+        for <linux-clk@vger.kernel.org>; Fri, 13 Nov 2015 08:30:09 -0800 (PST)
+From: Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH v2 2/4] clk: ti816x: Add missing dmtimer clkdev entries
+To: Tony Lindgren <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>,
+	Tero Kristo <t-kristo@ti.com>
+Cc: linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Brian Hutchinson <b.hutchman@gmail.com>,
+	linux-clk@vger.kernel.org, fisaksen@baylibre.com
+Message-ID: <56461006.5080309@baylibre.com>
+Date: Fri, 13 Nov 2015 17:29:58 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Krzysztof,
+Add missing clkdev dmtimer related entries for dm816x.
+32Khz and ext sources were missing.
 
-On 11/16/2015 07:06 AM, Krzysztof Kozlowski wrote:
-> Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
-> so it is built also on ARMv7. This does not bring any kind of benefit.
-> There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
-> multi_v7 for ARMv7).
->
-> Instead build clock drivers only for respective SoC's architecture.
->
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->
+Cc: Brian Hutchinson <b.hutchman@gmail.com>
+Acked-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/clk/ti/clk-816x.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Tested $SUBJECT patch on exynos7-espresso board, so
-Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
-
-> ---
-> drivers/clk/samsung/Kconfig  | 13 +++++++++++++
->   drivers/clk/samsung/Makefile |  4 ++--
->   2 files changed, 15 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-> index 84196ecdaa12..5f138fc4d84d 100644
-> --- a/drivers/clk/samsung/Kconfig
-> +++ b/drivers/clk/samsung/Kconfig
-> @@ -2,6 +2,7 @@ config COMMON_CLK_SAMSUNG
->   	bool
->   	select COMMON_CLK
->
-> +# ARMv7 SoCs:
->   config S3C2410_COMMON_CLK
->   	bool
->   	select COMMON_CLK_SAMSUNG
-> @@ -24,3 +25,15 @@ config S3C2443_COMMON_CLK
->   	bool
->   	select COMMON_CLK_SAMSUNG
->
-> +# ARMv8 SoCs:
-> +config EXYNOS5433_COMMON_CLK
-> +	bool
-> +	depends on ARM64 || COMPILE_TEST
-> +	default ARCH_EXYNOS
-> +	select COMMON_CLK_SAMSUNG
-> +
-> +config EXYNOS7_COMMON_CLK
-> +	bool
-> +	depends on ARM64 || COMPILE_TEST
-> +	default ARCH_EXYNOS
-> +	select COMMON_CLK_SAMSUNG
-> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-> index 5f6833ea355d..a31332a24ef4 100644
-> --- a/drivers/clk/samsung/Makefile
-> +++ b/drivers/clk/samsung/Makefile
-> @@ -10,11 +10,11 @@ obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
->   obj-$(CONFIG_SOC_EXYNOS5260)	+= clk-exynos5260.o
->   obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
->   obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
-> -obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos5433.o
-> +obj-$(CONFIG_EXYNOS5433_COMMON_CLK)	+= clk-exynos5433.o
->   obj-$(CONFIG_SOC_EXYNOS5440)	+= clk-exynos5440.o
->   obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-audss.o
->   obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-clkout.o
-> -obj-$(CONFIG_ARCH_EXYNOS7)	+= clk-exynos7.o
-> +obj-$(CONFIG_EXYNOS7_COMMON_CLK)	+= clk-exynos7.o
->   obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
->   obj-$(CONFIG_S3C2410_COMMON_DCLK)+= clk-s3c2410-dclk.o
->   obj-$(CONFIG_S3C2412_COMMON_CLK)+= clk-s3c2412.o
->
+diff --git a/drivers/clk/ti/clk-816x.c b/drivers/clk/ti/clk-816x.c
+index 1dfad0c..2a5d84f 100644
+--- a/drivers/clk/ti/clk-816x.c
++++ b/drivers/clk/ti/clk-816x.c
+@@ -20,6 +20,8 @@ static struct ti_dt_clk dm816x_clks[] = {
+ 	DT_CLK(NULL, "sys_clkin", "sys_clkin_ck"),
+ 	DT_CLK(NULL, "timer_sys_ck", "sys_clkin_ck"),
+ 	DT_CLK(NULL, "sys_32k_ck", "sys_32k_ck"),
++	DT_CLK(NULL, "timer_32k_ck", "sysclk18_ck"),
++	DT_CLK(NULL, "timer_ext_ck", "tclkin_ck"),
+ 	DT_CLK(NULL, "mpu_ck", "mpu_ck"),
+ 	DT_CLK(NULL, "timer1_fck", "timer1_fck"),
+ 	DT_CLK(NULL, "timer2_fck", "timer2_fck"),
+-- 
+1.9.1
