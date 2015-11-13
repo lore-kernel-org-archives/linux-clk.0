@@ -1,37 +1,52 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 20 Nov 2015 11:16:33 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	kbuild test robot <fengguang.wu@intel.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: Use static inline functions instead of macros for
- dummies
-Message-ID: <20151120191633.GY32672@codeaurora.org>
-References: <1446153176-29865-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <rnayak@codeaurora.org>
+Message-ID: <5645830B.9000400@codeaurora.org>
+Date: Fri, 13 Nov 2015 11:58:27 +0530
+From: Rajendra Nayak <rnayak@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1446153176-29865-1-git-send-email-geert+renesas@glider.be>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Mike Turquette <mturquette@baylibre.com>,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Rob Clark <robdclark@gmail.com>,
+ "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+ Kevin Hilman <khilman@kernel.org>,
+ linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 2/2] clk: qcom: Make oxili GDSC parent of oxili_cx
+ GDSC
+References: <1443727374-1539-1-git-send-email-sboyd@codeaurora.org> <1443727374-1539-3-git-send-email-sboyd@codeaurora.org> <20151006193217.GH12338@codeaurora.org> <564564CA.5040608@codeaurora.org> <20151113061409.GI15032@codeaurora.org>
+In-Reply-To: <20151113061409.GI15032@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/29, Geert Uytterhoeven wrote:
-> if CONFIG_OF=n:
-> 
->     drivers/clk/clk-cs2000-cp.c: In function ‘cs2000_remove’:
->     drivers/clk/clk-cs2000-cp.c:453:22: warning: unused variable ‘np’ [-Wunused-variable]
->       struct device_node *np = dev->of_node;
-> 			  ^
-> 
-> Convert dummies of_clk_del_provider() and of_clk_init() from macros to
-> static inline functions to kill such compiler warnings.
-> 
-> Reported-by: kbuild test robot <fengguang.wu@intel.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
 
-Applied to clk-next
+
+On 11/13/2015 11:44 AM, Stephen Boyd wrote:
+> On 11/13, Rajendra Nayak wrote:
+>>
+>> On 10/07/2015 01:02 AM, Stephen Boyd wrote:
+>>> On 10/01, Stephen Boyd wrote:
+>>>> The oxili_cx GDSC is inside the power domain of the oxili GDSC.
+>>>> Add the dependency so that the CX domain can properly power up.
+>>>>
+>>>> Reported-by: Rob Clark <robdclark@gmail.com>
+>>>> Cc: Rajendra Nayak <rnayak@codeaurora.org>
+>>>> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+>>>> ---
+>>>
+>>> Applied to clk-next
+>>
+>> I don't see this in clk-next. Was this dropped for some reason?
+>>
+> 
+> Hm.. It's merged into Linus' tree now
+> 
+> b68f2c3b882202aba97a488c1fede0e99f7261e2
+> 
+> unless I missed something.
+
+right, sorry, I seemed to be wrongly looking at the gcc driver instead
+of mmcc.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+hosted by The Linux Foundation
