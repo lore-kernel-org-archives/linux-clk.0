@@ -1,78 +1,67 @@
-Return-Path: <tomasz.figa@gmail.com>
+Return-Path: <michael@amarulasolutions.com>
+Return-Path: <michael@amarulasolutions.com>
+Date: Sun, 15 Nov 2015 11:38:04 +0100
+From: Michael Trimarchi <michael@amarulasolutions.com>
+To: shawnguo@kernel.org
+Cc: kernel@pengutronix.de, mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V2] clk: imx: clk-imx6q: Let OSC to be routed to anaclk2/2b
+Message-ID: <20151115103800.GB9808@panicking>
+References: <1446991642-3088-1-git-send-email-michael@amarulasolutions.com>
+ <20151115101938.GA9808@panicking>
 MIME-Version: 1.0
-In-Reply-To: <1447637775-9887-3-git-send-email-k.kozlowski@samsung.com>
-References: <1447637775-9887-1-git-send-email-k.kozlowski@samsung.com>
-	<1447637775-9887-3-git-send-email-k.kozlowski@samsung.com>
-Date: Thu, 19 Nov 2015 13:23:55 +0900
-Message-ID: <CA+Ln22FP60Zc4cQmztNTy+2ZbhE1T7pgPXBMb9T=YZcYPo0EdA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS
-From: Tomasz Figa <tomasz.figa@gmail.com>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
-	linux-kernel <linux-kernel@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>,
-	Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Kevin Hilman <khilman@linaro.org>, Pankaj Dubey <pankaj.dubey@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20151115101938.GA9808@panicking>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Krzysztof,
+OSC can be used as USB hub source clock. An example we can route to
+CLK2_P imx6 pin.
 
-2015-11-16 10:36 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
-> The ARMv8 Exynos family SoCs in Linux kernel are currently:
->  - Exynos5433 (controlled by ARCH_EXYNOS),
->  - Exynos7 (controlled by ARCH_EXYNOS7).
->
-> It duplicates Kconfig symbols unnecessarily, so consolidate them into
-> one ARCH_EXYNOS. Future SoCs could fall also under the ARCH_EXYNOS
-> symbol.
->
-> The commit should not bring any visible functional change.
+This show a usage example:
 
-I think this basically matches the general recommendation for ARM64,
-so excluding the single nitpick inline and assuming that, after this
-patch, grep ARCH_EXYNOS7 gives no results:
+[...]
+	usb_hub: usb-hub {
+		compatible = "smsc,usb3503a";
+		clocks = <&clks IMX6QDL_CLK_LVDS2_GATE>;
+		clock-names = "refclk";
+	};
+};
 
-Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
+[...]
+&clks {
+        assigned-clocks = <&clks IMX6QDL_CLK_LVDS2_SEL>;
+        assigned-clock-parents = <&clks IMX6QDL_CLK_OSC>;
+};
 
->
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->  arch/arm64/Kconfig.platforms        | 11 ++---------
->  arch/arm64/boot/dts/exynos/Makefile |  2 +-
->  arch/arm64/configs/defconfig        |  2 +-
->  3 files changed, 4 insertions(+), 11 deletions(-)
->
-> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-> index 4043c35962cc..afa19baca94e 100644
-> --- a/arch/arm64/Kconfig.platforms
-> +++ b/arch/arm64/Kconfig.platforms
-> @@ -13,21 +13,14 @@ config ARCH_BERLIN
->           This enables support for Marvell Berlin SoC Family
->
->  config ARCH_EXYNOS
-> -       bool
-> -       help
-> -         This enables support for Samsung Exynos SoC family
-> -
-> -config ARCH_EXYNOS7
-> -       bool "ARMv8 based Samsung Exynos7"
-> -       select ARCH_EXYNOS
-> +       bool "ARMv8 based Samsung Exynos SoC family"
->         select COMMON_CLK_SAMSUNG
->         select HAVE_S3C2410_WATCHDOG if WATCHDOG
->         select HAVE_S3C_RTC if RTC_CLASS
->         select PINCTRL
->         select PINCTRL_EXYNOS
-> -
->         help
-> -         This enables support for Samsung Exynos7 SoC family
-> +         This enables support for Samsung Exynos ARMv8 SoC family
+/sys/kernel/debug/clk/clk_summary
 
-nit: Sounds a little bit strange. Maybe "This enables support for
-ARMv8 based Samsung Exynos SoC family"?
+osc                                 5            5    24000000          0 0
+[...]
+    lvds2_sel                       1            1    24000000          0 0
+       lvds2_gate                   1            1    24000000          0 0
+[...]
 
-Best regards,
-Tomasz
+Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+---
+Changes in v2:
+	- rework the commit message to give a better description
+
+ drivers/clk/imx/clk-imx6q.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index b2c1c04..8fe0015 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -70,7 +70,8 @@ static const char *cko_sels[] = { "cko1", "cko2", };
+ static const char *lvds_sels[] = {
+ 	"dummy", "dummy", "dummy", "dummy", "dummy", "dummy",
+ 	"pll4_audio", "pll5_video", "pll8_mlb", "enet_ref",
+-	"pcie_ref_125m", "sata_ref_100m",
++	"pcie_ref_125m", "sata_ref_100m",  "usbphy1", "usbphy2",
++	"dummy", "dummy", "dummy", "dummy", "osc",
+ };
+ static const char *pll_bypass_src_sels[] = { "osc", "lvds1_in", "lvds2_in", "dummy", };
+ static const char *pll1_bypass_sels[] = { "pll1", "pll1_bypass_src", };
+-- 
+2.6.3
