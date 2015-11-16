@@ -1,56 +1,69 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:47327 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751423AbbKBNYE (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 2 Nov 2015 08:24:04 -0500
-Message-ID: <1446470642.3442.54.camel@pengutronix.de>
-Subject: Re: ML for reset controller sub-system?
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date: Mon, 02 Nov 2015 14:24:02 +0100
-In-Reply-To: <CAK7LNARGbHqn9D3fDtN9xzwzFoYCur2qJUnnyRA4Q52D9XUVVA@mail.gmail.com>
-References: <CAK7LNARGbHqn9D3fDtN9xzwzFoYCur2qJUnnyRA4Q52D9XUVVA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Julia Lawall <Julia.Lawall@lip6.fr>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v4 11/24] fbdev: use pwm_get/set_default_xxx() helpers where appropriate
+Date: Mon, 16 Nov 2015 09:56:34 +0100
+Message-Id: <1447664207-24370-12-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Masahiro,
+pwm_set/get_default_xxx() helpers have been introduced to differentiate
+the default PWM states (those retrieved through DT, PWM lookup table or
+statically assigned by the driver) and the current ones.
+Make use of those helpers where appropriate.
 
-Am Montag, den 02.11.2015, 22:05 +0900 schrieb Masahiro Yamada:
-> Hi Philipp,
-> 
-> 
-> I searched for the reset controller entry in MAINTAINERS.
-> 
-> 
-> RESET CONTROLLER FRAMEWORK
-> M:      Philipp Zabel <p.zabel@pengutronix.de>
-> S:      Maintained
-> F:      drivers/reset/
-> F:      Documentation/devicetree/bindings/reset/
-> F:      include/dt-bindings/reset/
-> F:      include/linux/reset.h
-> F:      include/linux/reset-controller.h
-> 
-> 
-> Nothing is mentioned which mailing list
-> reset controller patches should be sent to.
-> 
-> Please advise me.
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/video/fbdev/ssd1307fb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-There is no special reset-controller mailing list. Due to the low amount
-of patches until now, I'm just using linux-kernel@vger.kernel.org.
-scripts/get_maintainer.pl should give you the right list for existing
-drivers.
-
-For new drivers consider adding the SoC/architecture specific mailing
-list to --cc, especially when coordination between reset and other
-drivers is needed during bringup. If new device tree bindings are added,
-always include devicetree@vger.kernel.org.
-
-best regards
-Philipp
-
+diff --git a/drivers/video/fbdev/ssd1307fb.c b/drivers/video/fbdev/ssd1307fb.c
+index fa34808..81f4885 100644
+--- a/drivers/video/fbdev/ssd1307fb.c
++++ b/drivers/video/fbdev/ssd1307fb.c
+@@ -294,7 +294,7 @@ static int ssd1307fb_init(struct ssd1307fb_par *par)
+ 			return PTR_ERR(par->pwm);
+ 		}
+ 
+-		par->pwm_period = pwm_get_period(par->pwm);
++		par->pwm_period = pwm_get_default_period(par->pwm);
+ 		/* Enable the PWM */
+ 		pwm_config(par->pwm, par->pwm_period / 2, par->pwm_period);
+ 		pwm_enable(par->pwm);
+-- 
+2.1.4
