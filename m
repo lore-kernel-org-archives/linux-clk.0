@@ -1,236 +1,117 @@
-Return-Path: <jszhang@marvell.com>
-Date: Mon, 23 Nov 2015 16:54:44 +0800
-From: Jisheng Zhang <jszhang@marvell.com>
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-CC: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <antoine.tenart@free-electrons.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 6/6] arm64: dts: berlin4ct: add pll and clock nodes
-Message-ID: <20151123165444.740b457c@xhacker>
-In-Reply-To: <5652CEB2.9030902@gmail.com>
-References: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
-	<1448008952-1787-7-git-send-email-jszhang@marvell.com>
-	<564F8B73.7070403@gmail.com>	<20151123152158.483aa6b5@xhacker>
-	<5652CEB2.9030902@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Sender: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
+Subject: Re: [PATCH v4 05/24] misc: max77693-haptic: use pwm_get_xxx() helpers
+ where appropriate
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+ Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org
+References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1447664207-24370-6-git-send-email-boris.brezillon@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org,
+ Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>,
+ Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+ Joachim Eastwood <manabian@gmail.com>,
+ Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+ Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org,
+ Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+ linux-fbdev@vger.kernel.org,
+ Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+ Tomi Valkeinen <tomi.valkeinen@ti.com>,
+ Robert Jarzmik <robert.jarzmik@free.fr>,
+ Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+ Julia Lawall <Julia.Lawall@lip6.fr>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, k.kozlowski.k@gmail.com
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-ID: <5649D5D0.6080204@samsung.com>
+Date: Mon, 16 Nov 2015 22:10:40 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+In-Reply-To: <1447664207-24370-6-git-send-email-boris.brezillon@free-electrons.com>
+Content-Type: text/plain; charset=iso-8859-2
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 23 Nov 2015 09:30:42 +0100
-Sebastian Hesselbarth wrote:
+W dniu 16.11.2015 o 17:56, Boris Brezillon pisze:
+> Use pwm_get_xxx() helpers instead of directly accessing the pwm->xxx field.
+> Doing that will ease adaptation of the PWM framework to support atomic
+> update.
+> 
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> ---
+> Patch generated with the following coccinelle script:
+> 
+> --->8---
+> virtual patch
+> 
+> @@
+> struct pwm_device *p;
+> expression e;
+> @@
+> (
+> -(p)->polarity = e;
+> +pwm_set_polarity((p), e);
+> |
+> -(p)->polarity
+> +pwm_get_polarity((p))
+> |
+> -(p)->period = e;
+> +pwm_set_period((p), e);
+> |
+> -(p)->period
+> +pwm_get_period((p))
+> |
+> -(p)->duty_cycle = e;
+> +pwm_set_duty_cycle((p), e);
+> |
+> -(p)->duty_cycle
+> +pwm_get_duty_cycle((p))
+> )
+> --->8---
+> ---
+>  drivers/input/misc/max77693-haptic.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/input/misc/max77693-haptic.c b/drivers/input/misc/max77693-haptic.c
+> index 6d96bff..a038fb3 100644
+> --- a/drivers/input/misc/max77693-haptic.c
+> +++ b/drivers/input/misc/max77693-haptic.c
+> @@ -70,10 +70,11 @@ struct max77693_haptic {
+>  
+>  static int max77693_haptic_set_duty_cycle(struct max77693_haptic *haptic)
+>  {
+> -	int delta = (haptic->pwm_dev->period + haptic->pwm_duty) / 2;
+> +	int delta = (pwm_get_period((haptic->pwm_dev)) + haptic->pwm_duty) / 2;
 
-> On 23.11.2015 08:21, Jisheng Zhang wrote:
-> > On Fri, 20 Nov 2015 22:06:59 +0100
-> > Sebastian Hesselbarth wrote:  
-> >> On 20.11.2015 09:42, Jisheng Zhang wrote:  
-> >>> Add syspll, mempll, cpupll, gateclk and berlin-clk nodes.
-> >>>
-> >>> Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
-> >>> ---  
-> [...]
-> >>> +		syspll: syspll {
-> >>> +			compatible = "marvell,berlin-pll";
-> >>> +			reg = <0xea0200 0x14>, <0xea0710 4>;
-> >>> +			#clock-cells = <0>;
-> >>> +			clocks = <&osc>;
-> >>> +			bypass-shift = /bits/ 8 <0>;
-> >>> +		};
-> >>> +
-> >>> +		gateclk: gateclk {
-> >>> +			compatible = "marvell,berlin4ct-gateclk";
-> >>> +			reg = <0xea0700 4>;
-> >>> +			#clock-cells = <1>;
-> >>> +		};
-> >>> +
-> >>> +		clk: clk {
-> >>> +			compatible = "marvell,berlin4ct-clk";
-> >>> +			reg = <0xea0720 0x144>;  
-> >>
-> >> Looking at the reg ranges, I'd say that they are all clock related
-> >> and pretty close to each other:
-> >>
-> >> gateclk: reg = <0xea0700 4>;
-> >> bypass:  reg = <0xea0710 4>;
-> >> clk:     reg = <0xea0720 0x144>;  
-> >
-> > Although these ranges sit close, but we should represent HW structure as you
-> > said.  
-> 
-> Then how do you argue that you have to share the gate clock register
-> with every PLL? The answer is quite simple: You are not separating by
-> HW either but existing SW API.
+Double parentheses over argument are not needed so just:
+pwm_get_period(haptic->pwm_dev) + ...
 
-No, PLLs don't share register any more. You can find what all clock nodes will
-look like in:
+Beside that patch looks good, so with removing parentheses here and below:
 
-http://lists.infradead.org/pipermail/linux-arm-kernel/2015-November/387322.html
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-> 
-> If you would really want to just describe the HW, then you'd have to
-> have a single node for _all_ clocks that get controlled by 0xea0700/0x4,
-> feed some 32+ clocks into the node, and out again. Obviously, this
-> isn't what we want, right?
+Best regards,
+Krzysztof
 
-I represented the HW by "kind", for example, gateclks, common-clks, pllclk.
-And let common PLLs follow this rule as well:
-
-one node for all common plls
-
-reg <0x922000 0x14>, <0x940034 0x14>, <0xea0200 0x14>
-
-> 
-> So, the idea of berlin2 sysctrl nodes (and similar other SoCs) is: Some
-> SoCs just dump some functions into a bunch of registers with no
-> particular order. We'd never find a good representation for that in DT,
-> so we don't bother to try but let the driver implementation deal with
-> the mess. Using "simple-mfd" is a nice solution to scattered registers
-> please have a look at it and come up with a cleaner separation for bg4
-> clock.
-> 
-> > First of all, let me describe the clks/plls in BG4CT. BG4CT contains:
-> >
-> > two kinds of PLL: normal PLL and AVPLL. These PLLs are put with their users
-> > together. For example: mempll pll registers <0xf7940034, 0x14> is put together
-> > with mem controller registers. AVPLL control registers are put with AV devices.  
-> 
-> Why didn't you choose to have a memory-controller node that provides
-> mempll clock then? I am open to having multiple nodes providing clocks
-> but having a node for every clock in any subsystem is something I'll
-> not even think about.
-
-OK. As you said, "SoCs just dump some functions into a bunch of registers with
-no particular order", BG4CT is now cleaner, all common-clks are put together,
-gate-clks are put together, pllclks are put together, only the common PLLs
-are dumped here and there. So how about representing the HW by "kind", one
-node for common plls, one node for gateclks, one node for common clks and 
-one node for pllclks?
-
-                pll: pll {
-                        compatible = "marvell,berlin4ct-pll";
-                        reg = <0x922000 0x14>, <0x940034 0x14>, <0xea0200 0x14>
-                        #clock-cells = <0>;
-                        clocks = <&osc>;
-                };
-
-		pllclk: pllclk {
-                        compatible = "marvell,berlin4ct-pllclk";
-                        reg = <0xea0710 4>
-                        #clock-cells = <1>;
-		};
-
-                gateclk: gateclk {
-                        compatible = "marvell,berlin4ct-gateclk";
-                        reg = <0xea0700 4>;
-                        #clock-cells = <1>;
-                };
-
-                clk: clk {
-                        compatible = "marvell,berlin4ct-clk";
-                        reg = <0xea0720 0x144>;
-                        #clock-cells = <1>;
-                        clocks = <&pllclk SYSPLLCLK>;
-                };
-
-thanks
-
-> 
-> > You can also check mempll, cpupll and syspll ranges:
-> >
-> > cpupll: <0x922000 0x14>
-> >
-> > mempll: <0x940034 0x14>
-> >
-> > syspll: <0xea0200 0x14>
-> >
-> >
-> > We have three normal PLLS: cpupll, mempll and syspll. All these three PLLs use
-> > 25MHZ osc as clocksource. These plls can be bypassed. when syspll is bypassed
-> > the 25MHZ osc is directly output to syspllclk. When mempll/cpupll is bypassed,
-> > its corresponding fastrefclk is directly output to ddrphyclk/cpuclk:
-> >
-> >
-> >         ---25MHZ osc----------|\
-> >             ________            | |-- syspllclk
-> >         ---| SYSPLL |---------|/
-> >
-> >
-> >
-> >         ---cpufastrefclk------|\
-> >             ________            | |-- cpuclk
-> >         ---| CPUPLL |---------|/
-> >
-> >
-> >         ---memfastrefclk------|\
-> >             ________            | |-- ddrphyclk
-> >         ---| MEMPLL |---------|/
-> >
-> > NOTE: the fastrefclk is the so called normal clk below.
-> >
-> >
-> >
-> > two kinds of clk: normal clk and gate clk. The normal clk supports changing
-> > divider, selecting clock source, disabling/enabling etc. The gate clk only
-> > supports disabling/enabling. normal clks use syspllclk as clocksource, while
-> > gate clks use perifsysclk as clocksource.
-> >
-> >
-> > So what's the representing HW structure in fact? Here is my proposal:
-> > 1. have mempll, cpupll and syspll node in dts  
-> 
-> No.
-> 
-> > 2. one gateclk node in dts for gateclks  
-> 
-> No.
-> 
-> > 3. one normalclk node in dts for normal clks  
-> 
-> No.
-> 
-> > 4. one ccf clock-mux for cpuclk, ddrphyclk and syspllclk.  
-> 
-> No.
-> 
-> > what do you think?  
-> 
-> I think that the current separation is not a good one. I am open for
-> suggestions but I am not accepting single PLL/clock nodes.
-> 
-> >  From another side, let's have a look at driver/clk/mvebu. As can be seen,
-> > different clks register are close each other, for example, gateclk and coreclk
-> > in arch/arm/boot/dts/armada-xp.dtsi.
-> >
-> > And drivers/clk/sunxi, arch/arm/boot/dts/sun7i-a20.dtsi, the pll4, pll12, gt_clk
-> > and ahb*, apb* etc...
-> >
-> > why these SoCs don't merge clocks/gates/plls to a single clock complex node?
-> > I think that's because they are representing real HW structure.  
-> 
-> These SoC (at least mvebu) didn't merge them into a single clock
-> complex node because nobody had a better idea or an impression of
-> the consequences. Looking back with the idea of syscon/simple-mfd
-> we probably would have chosen to separate differently.
-> 
-> >> So, please just follow the OF/driver structure we already
-> >> have for Berlin2.  
-> 
-> To repeat: "please just follow the OF/driver structure we already
-> have for Berlin2"
-> 
-> Sebastian
-> 
-> >>> +			#clock-cells = <1>;
-> >>> +			clocks = <&syspll>;
-> >>> +		};
-> >>> +
-> >>>   		soc_pinctrl: pin-controller@ea8000 {
-> >>>   			compatible = "marvell,berlin4ct-soc-pinctrl";
-> >>>   			reg = <0xea8000 0x14>;
-> >>>  
-> >>  
-> >  
+>  	int error;
+>  
+> -	error = pwm_config(haptic->pwm_dev, delta, haptic->pwm_dev->period);
+> +	error = pwm_config(haptic->pwm_dev, delta,
+> +			   pwm_get_period((haptic->pwm_dev)));
+>  	if (error) {
+>  		dev_err(haptic->dev, "failed to configure pwm: %d\n", error);
+>  		return error;
+> @@ -245,7 +246,7 @@ static int max77693_haptic_play_effect(struct input_dev *dev, void *data,
+>  	 * The formula to convert magnitude to pwm_duty as follows:
+>  	 * - pwm_duty = (magnitude * pwm_period) / MAX_MAGNITUDE(0xFFFF)
+>  	 */
+> -	period_mag_multi = (u64)haptic->pwm_dev->period * haptic->magnitude;
+> +	period_mag_multi = (u64)pwm_get_period((haptic->pwm_dev)) * haptic->magnitude;
+>  	haptic->pwm_duty = (unsigned int)(period_mag_multi >>
+>  						MAX_MAGNITUDE_SHIFT);
+>  
 > 
