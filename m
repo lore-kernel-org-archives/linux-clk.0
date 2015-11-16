@@ -1,8 +1,8 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:35543 "EHLO
+Received: from smtp.codeaurora.org ([198.145.29.96]:44061 "EHLO
 	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752278AbbKPVCT (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 16 Nov 2015 16:02:19 -0500
+	with ESMTP id S1751921AbbKPW5Y (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 16 Nov 2015 17:57:24 -0500
 From: Matthew McClintock <mmcclint@qca.qualcomm.com>
 To: Andy Gross <agross@codeaurora.org>, linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org
@@ -12,12 +12,9 @@ Cc: Varadarajan Narayanan <varada@codeaurora.org>,
 	Pradeep Banavathi <pradeepb@codeaurora.org>,
 	Senthilkumar N L <snlakshm@codeaurora.org>,
 	Matthew McClintock <mmcclint@codeaurora.org>
-Subject: [PATCH v2 2/5] clk: qcom: Add IPQ4019 Global Clock Controller support
-Date: Mon, 16 Nov 2015 15:02:02 -0600
-Message-Id: <1447707725-19449-2-git-send-email-mmcclint@qca.qualcomm.com>
-In-Reply-To: <1447707725-19449-1-git-send-email-mmcclint@qca.qualcomm.com>
-References: <1446758697-31198-1-git-send-email-mmcclint@codeaurora.org>
- <1447707725-19449-1-git-send-email-mmcclint@qca.qualcomm.com>
+Subject: [PATCH v3 2/5] clk: qcom: Add IPQ4019 Global Clock Controller support
+Date: Mon, 16 Nov 2015 16:57:15 -0600
+Message-Id: <1447714635-25177-1-git-send-email-mmcclint@qca.qualcomm.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
@@ -32,24 +29,28 @@ Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
 Signed-off-by: Matthew McClintock <mmcclint@codeaurora.org>
 ---
 
-v2 - drop calls qcom_cc_remove, gcc_ipq4019_remove
-   - move defines into clk structs
-   - remove src,cfg in struct initializations
-   - make hex values lowercase
-   - clean up MODULE_ALIAS and MODULE_DESCRIPTION
-   - change tabs after define to spacein dt include files
-   - remove extra AUDIO_BLK_ARES define
-   - remove unneeded of_match_device from gcc_ipq4019_probe
-   - move sleep_clk and xo to soc and board level dts
-   - drop all the (not required) fixed-clocks for now
-   - combine reset dts include files into one overall dts include
+v2:
+- drop calls qcom_cc_remove, gcc_ipq4019_remove
+- move defines into clk structs
+- remove src,cfg in struct initializations
+- make hex values lowercase
+- clean up MODULE_ALIAS and MODULE_DESCRIPTION
+- change tabs after define to spacein dt include files
+- remove extra AUDIO_BLK_ARES define
+- remove unneeded of_match_device from gcc_ipq4019_probe
+- move sleep_clk and xo to soc and board level dts
+- drop all the (not required) fixed-clocks for now
+- combine reset dts include files into one overall dts include
+
+v3:
+- fix unused variable from refactored code
 
  .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
  drivers/clk/qcom/Kconfig                           |    9 +
  drivers/clk/qcom/Makefile                          |    1 +
- drivers/clk/qcom/gcc-ipq4019.c                     | 1358 ++++++++++++++++++++
+ drivers/clk/qcom/gcc-ipq4019.c                     | 1355 ++++++++++++++++++++
  include/dt-bindings/clock/qcom,gcc-ipq4019.h       |  158 +++
- 5 files changed, 1527 insertions(+)
+ 5 files changed, 1524 insertions(+)
  create mode 100644 drivers/clk/qcom/gcc-ipq4019.c
  create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq4019.h
 
@@ -99,10 +100,10 @@ index fe62523..c88d92f 100644
  obj-$(CONFIG_MSM_GCC_8660) += gcc-msm8660.o
 diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
 new file mode 100644
-index 0000000..a2bbb91
+index 0000000..21def7f
 --- /dev/null
 +++ b/drivers/clk/qcom/gcc-ipq4019.c
-@@ -0,0 +1,1358 @@
+@@ -0,0 +1,1355 @@
 +/*
 + * Copyright (c) 2015 The Linux Foundation. All rights reserved.
 + *
@@ -1431,9 +1432,6 @@ index 0000000..a2bbb91
 +
 +static int gcc_ipq4019_probe(struct platform_device *pdev)
 +{
-+	struct device *dev = &pdev->dev;
-+
-+
 +	return qcom_cc_probe(pdev, &gcc_ipq4019_desc);
 +}
 +
