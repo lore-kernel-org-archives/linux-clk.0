@@ -1,110 +1,91 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 30 Nov 2015 16:49:46 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] clk: split of_clk_get_parent_name() into two
- functions
-Message-ID: <20151201004946.GD17532@codeaurora.org>
-References: <1448004981-11133-1-git-send-email-yamada.masahiro@socionext.com>
- <1448004981-11133-3-git-send-email-yamada.masahiro@socionext.com>
- <20151121003702.GC28998@codeaurora.org>
- <CAK7LNATR3Y0T5XEGA4WQJksTO7qoCEjR+TKC0YmvVUZhLdiPSg@mail.gmail.com>
- <CAK7LNATzraLEavLGHR0c1-0J1-CzvCsfgW1URitAFOnej7+-Ug@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAK7LNATzraLEavLGHR0c1-0J1-CzvCsfgW1URitAFOnej7+-Ug@mail.gmail.com>
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+ Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>,
+ Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
+ Kevin Hilman <khilman@linaro.org>
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH 2/2] arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into
+ ARCH_EXYNOS
+Date: Mon, 16 Nov 2015 10:36:15 +0900
+Message-id: <1447637775-9887-3-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1447637775-9887-1-git-send-email-k.kozlowski@samsung.com>
+References: <1447637775-9887-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/24, Masahiro Yamada wrote:
-> Hi Stephen,
-> 
-> 
-> 2015-11-22 14:44 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> > Hi Stephen,
-> >
-> >
-> > 2015-11-21 9:37 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
-> >> On 11/20, Masahiro Yamada wrote:
-> >>> Currently, there is no function to get the clock name of the given
-> >>> node.  Create a new helper function, of_clk_get_name().  This is
-> >>> useful to get the clock name where "clock-indices" property is used.
-> >>>
-> >>>   of_clk_get_name(): get the clock name in the given node
-> >>>   of_clk_get_parent_name(): get the name of the parent clock
-> >>>
-> >>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> >>> ---
-> >>>
-> >>> I want to use of_clk_get_name() for my clk drivers for my SoCs,
-> >>> which I will submit later.
-> >>>
-> >>> I found this helper function is useful.
-> >>
-> >> I don't see how this is useful. Is the new driver so generic it
-> >> doesn't know what clocks it's outputting? We've been trying to
-> >> move people away from using clock-output-names, so most likely
-> >> this sort of information should be conveyed from DT via the
-> >> compatible string and a table in the driver that matches up the
-> >> compatible string with the list of clock names.
-> >
-> >
-> > What I implemented in my driver was:
-> >
-> > [1] Use the clock names built in the driver, if "clock-output-names"
-> >     is missing in the DT.
-> >
-> > [2] If "clock-output-names" is specified, the driver overrides
-> >     the clock names, respecting the "clock-output-names".
-> >
-> >
-> > The following is a snippet from my driver code.
-> >
-> >
-> >     /*
-> >      * update the clock name with the one provided by
-> >      * clock-output-names property, if exists
-> >      */
-> >     new_name = of_clk_get_name(np, index);
-> >     if (new_name)
-> >             init_data[i].name = new_name;
-> >     else
-> >             pr_info("DT does not specify output name for %s[%d]\n",
-> >                     np->name, index);
-> >
-> >
-> > I read the Documentation/devicetree/bindings/clock-bindings.txt
-> > before I stared my driver development.
-> >
-> > I did not know we are deprecating the "clock-output-names".
-> > (Should it be mentioned in the clock-bindings.txt?)
-> 
-> 
-> 
-> 
-> Please let me clarify the driver implementation guideline.
-> 
-> [1] Do not add "clock-output-names" in new device trees.
-> [2] New clock drivers should not rely on "clock-output-names" at all.
-> 
-> 
-> Is this correct?
-> 
+The ARMv8 Exynos family SoCs in Linux kernel are currently:
+ - Exynos5433 (controlled by ARCH_EXYNOS),
+ - Exynos7 (controlled by ARCH_EXYNOS7).
 
-Seems a little extreme, but yes, we would like to see clock
-provider drivers stop using clock-output-names. The binding isn't
-deprecated, so we shouldn't say that in the binding document, but
-perhaps we could add a comment that it's strongly suggested that
-another way be found.
+It duplicates Kconfig symbols unnecessarily, so consolidate them into
+one ARCH_EXYNOS. Future SoCs could fall also under the ARCH_EXYNOS
+symbol.
 
-The only use I can think of is for something like fixed rate
-clocks or other pure DT described clocks that want to tell us
-their name. But the end goal is to make that irrelevant by using
-something besides strings (or at least, user definded strings) to
-describe the linkages between clocks in the clock tree. When this
-is done, the clock-output-names property will be unused.
+The commit should not bring any visible functional change.
 
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm64/Kconfig.platforms        | 11 ++---------
+ arch/arm64/boot/dts/exynos/Makefile |  2 +-
+ arch/arm64/configs/defconfig        |  2 +-
+ 3 files changed, 4 insertions(+), 11 deletions(-)
+
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 4043c35962cc..afa19baca94e 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -13,21 +13,14 @@ config ARCH_BERLIN
+ 	  This enables support for Marvell Berlin SoC Family
+ 
+ config ARCH_EXYNOS
+-	bool
+-	help
+-	  This enables support for Samsung Exynos SoC family
+-
+-config ARCH_EXYNOS7
+-	bool "ARMv8 based Samsung Exynos7"
+-	select ARCH_EXYNOS
++	bool "ARMv8 based Samsung Exynos SoC family"
+ 	select COMMON_CLK_SAMSUNG
+ 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+ 	select HAVE_S3C_RTC if RTC_CLASS
+ 	select PINCTRL
+ 	select PINCTRL_EXYNOS
+-
+ 	help
+-	  This enables support for Samsung Exynos7 SoC family
++	  This enables support for Samsung Exynos ARMv8 SoC family
+ 
+ config ARCH_LAYERSCAPE
+ 	bool "ARMv8 based Freescale Layerscape SoC family"
+diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+index 20310e5b6d6f..50c9b9383cfa 100644
+--- a/arch/arm64/boot/dts/exynos/Makefile
++++ b/arch/arm64/boot/dts/exynos/Makefile
+@@ -1,4 +1,4 @@
+-dtb-$(CONFIG_ARCH_EXYNOS7) += exynos7-espresso.dtb
++dtb-$(CONFIG_ARCH_EXYNOS) += exynos7-espresso.dtb
+ 
+ always		:= $(dtb-y)
+ subdir-y	:= $(dts-dirs)
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index bdd7aa358d2a..a396fa7c69a5 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -33,7 +33,7 @@ CONFIG_MODULE_UNLOAD=y
+ # CONFIG_IOSCHED_DEADLINE is not set
+ CONFIG_ARCH_BCM_IPROC=y
+ CONFIG_ARCH_BERLIN=y
+-CONFIG_ARCH_EXYNOS7=y
++CONFIG_ARCH_EXYNOS=y
+ CONFIG_ARCH_LAYERSCAPE=y
+ CONFIG_ARCH_HISI=y
+ CONFIG_ARCH_MEDIATEK=y
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
