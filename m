@@ -1,93 +1,186 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from pandora.arm.linux.org.uk ([78.32.30.218]:35716 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754450AbbK0Uju (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 27 Nov 2015 15:39:50 -0500
-Date: Fri, 27 Nov 2015 20:39:32 +0000
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-To: Rob Herring <robh@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Jason Cooper <jason@lakedaemon.net>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>
-Subject: Re: [PATCH 1/3] dt-bindings: add Marvell core PLL and clock divider
- PMU documentation
-Message-ID: <20151127203932.GP8644@n2100.arm.linux.org.uk>
-References: <E1a24wj-0004iw-Rf@rmk-PC.arm.linux.org.uk>
- <20151127202114.GA613@rob-hp-laptop>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20151127202114.GA613@rob-hp-laptop>
+Received: from down.free-electrons.com ([37.187.137.238]:34687 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752245AbbKPI5V (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 16 Nov 2015 03:57:21 -0500
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>, linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Julia Lawall <Julia.Lawall@lip6.fr>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v4 23/24] pwm: rockchip: add support for atomic update
+Date: Mon, 16 Nov 2015 09:56:46 +0100
+Message-Id: <1447664207-24370-24-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Nov 27, 2015 at 02:21:14PM -0600, Rob Herring wrote:
-> On Thu, Nov 26, 2015 at 10:23:21PM +0000, Russell King wrote:
-> > Add documentation for the Marvell clock divider driver, which is used
-> > to source clocks for the AXI bus, video decoder, GPU and LCD blocks.
-> > 
-> > Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> > ---
-> >  .../bindings/clock/dove-divider-clock.txt          | 28 ++++++++++++++++++++++
-> >  1 file changed, 28 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/dove-divider-clock.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/dove-divider-clock.txt b/Documentation/devicetree/bindings/clock/dove-divider-clock.txt
-> > new file mode 100644
-> > index 000000000000..0c602de279e5
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/dove-divider-clock.txt
-> > @@ -0,0 +1,28 @@
-> > +PLl divider based Dove clocks
-> > +
-> > +Marvell Dove has a 2GHz PLL, which feeds into a set of dividers to provide
-> > +high speed clocks for a number of peripherals.  These dividers are part of
-> > +the PMU, and thus this node should be a child of the PMU node.
-> 
-> It seems a bit strange to just be documenting these clocks. What about 
-> the rest of the SOC clocks?
+Implement the ->apply() function to add support for atomic update.
 
-This is all that this pair of registers provide.
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Tested-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/pwm/pwm-rockchip.c | 53 +++++++++++++++++++++++++---------------------
+ 1 file changed, 29 insertions(+), 24 deletions(-)
 
-The SoC has other clocks handled by other DT nodes - for Dove, we now
-have:
-
-        gate_clk: clock-gating-ctrl@0038 {
-                compatible = "marvell,dove-gating-clock";
-                reg = <0x0038 0x4>;
-                clocks = <&core_clk 0>;
-                #clock-cells = <1>;
-        };
-        divider_clk: core-clock@0064 {
-                compatible = "marvell,dove-divider-clock";
-                reg = <0x0064 0x8>;
-                #clock-cells = <1>;
-        };
-        core_clk: core-clocks@0214 {
-                compatible = "marvell,dove-core-clock";
-                reg = <0x0214 0x4>;
-                #clock-cells = <1>;
-        };
-
-and all three of these are part of the PMU register block.  I'm not sure
-why the mvebu maintainers decided to minutely describe the PMU like this,
-but unfortunately that's the structure we have.
-
-What's more silly is that the "dove-core-clock" appears to disagree in
-terminology with the manual - there's a "Core PLL" which supplies the
-dividers in the "divider_clk" block, and is entirely separate from the
-CPU PLL which "core_clk" is describing.
-
-IMHO, it would've been cleaner to have these components registered
-separately from a central PMU driver (as I'm doing with the power
-domains, resets and IRQs that are part of the PMU), but my view is
-limited to Dove and not the other mvebu clocks, so there may be a good
-reason for it.
-
+diff --git a/drivers/pwm/pwm-rockchip.c b/drivers/pwm/pwm-rockchip.c
+index 6eab25c..48b814d 100644
+--- a/drivers/pwm/pwm-rockchip.c
++++ b/drivers/pwm/pwm-rockchip.c
+@@ -50,7 +50,8 @@ struct rockchip_pwm_data {
+ 	const struct pwm_ops *ops;
+ 
+ 	void (*set_enable)(struct pwm_chip *chip,
+-			   struct pwm_device *pwm, bool enable);
++			   struct pwm_device *pwm, bool enable,
++			   enum pwm_polarity polarity);
+ 	void (*reset_state)(struct pwm_chip *chip, struct pwm_device *pwm);
+ };
+ 
+@@ -60,7 +61,8 @@ static inline struct rockchip_pwm_chip *to_rockchip_pwm_chip(struct pwm_chip *c)
+ }
+ 
+ static void rockchip_pwm_set_enable_v1(struct pwm_chip *chip,
+-				       struct pwm_device *pwm, bool enable)
++				       struct pwm_device *pwm, bool enable,
++				       enum pwm_polarity polarity)
+ {
+ 	struct rockchip_pwm_chip *pc = to_rockchip_pwm_chip(chip);
+ 	u32 enable_conf = PWM_CTRL_OUTPUT_EN | PWM_CTRL_TIMER_EN;
+@@ -89,14 +91,15 @@ static void rockchip_pwm_reset_state_v1(struct pwm_chip *chip,
+ }
+ 
+ static void rockchip_pwm_set_enable_v2(struct pwm_chip *chip,
+-				       struct pwm_device *pwm, bool enable)
++				       struct pwm_device *pwm, bool enable,
++				       enum pwm_polarity polarity)
+ {
+ 	struct rockchip_pwm_chip *pc = to_rockchip_pwm_chip(chip);
+ 	u32 enable_conf = PWM_OUTPUT_LEFT | PWM_LP_DISABLE | PWM_ENABLE |
+ 			  PWM_CONTINUOUS;
+ 	u32 val;
+ 
+-	if (pwm_get_polarity(pwm) == PWM_POLARITY_INVERSED)
++	if (polarity == PWM_POLARITY_INVERSED)
+ 		enable_conf |= PWM_DUTY_NEGATIVE | PWM_INACTIVE_POSITIVE;
+ 	else
+ 		enable_conf |= PWM_DUTY_POSITIVE | PWM_INACTIVE_NEGATIVE;
+@@ -165,7 +168,6 @@ static int rockchip_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	struct rockchip_pwm_chip *pc = to_rockchip_pwm_chip(chip);
+ 	unsigned long period, duty;
+ 	u64 clk_rate, div;
+-	int ret;
+ 
+ 	clk_rate = clk_get_rate(pc->clk);
+ 
+@@ -182,15 +184,8 @@ static int rockchip_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	do_div(div, pc->data->prescaler * NSEC_PER_SEC);
+ 	duty = div;
+ 
+-	ret = clk_enable(pc->clk);
+-	if (ret)
+-		return ret;
+-
+ 	writel(period, pc->base + pc->data->regs.period);
+ 	writel(duty, pc->base + pc->data->regs.duty);
+-	writel(0, pc->base + pc->data->regs.cntr);
+-
+-	clk_disable(pc->clk);
+ 
+ 	return 0;
+ }
+@@ -208,43 +203,53 @@ static int rockchip_pwm_set_polarity(struct pwm_chip *chip,
+ 	return 0;
+ }
+ 
+-static int rockchip_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
++static int rockchip_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
++			      const struct pwm_state *state)
+ {
+ 	struct rockchip_pwm_chip *pc = to_rockchip_pwm_chip(chip);
++	bool enabled = pwm_is_enabled(pwm);
+ 	int ret;
+ 
+ 	ret = clk_enable(pc->clk);
+ 	if (ret)
+ 		return ret;
+ 
+-	pc->data->set_enable(chip, pwm, true);
++	if (state->polarity != pwm_get_polarity(pwm) && enabled) {
++		pc->data->set_enable(chip, pwm, false, state->polarity);
++		enabled = false;
++	}
+ 
+-	return 0;
+-}
++	ret = rockchip_pwm_config(chip, pwm, state->duty_cycle, state->period);
++	if (ret) {
++		if (enabled != pwm_is_enabled(pwm))
++			pc->data->set_enable(chip, pwm, !enabled,
++					     state->polarity);
+ 
+-static void rockchip_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+-{
+-	struct rockchip_pwm_chip *pc = to_rockchip_pwm_chip(chip);
++		goto out;
++	}
+ 
+-	pc->data->set_enable(chip, pwm, false);
++	if (state->enabled != enabled)
++		pc->data->set_enable(chip, pwm, state->enabled,
++				     state->polarity);
+ 
++out:
+ 	clk_disable(pc->clk);
++
++	return ret;
+ }
+ 
+ static const struct pwm_ops rockchip_pwm_ops_v1 = {
+ 	.reset_state = rockchip_pwm_reset_state,
+ 	.config = rockchip_pwm_config,
+-	.enable = rockchip_pwm_enable,
+-	.disable = rockchip_pwm_disable,
++	.apply = rockchip_pwm_apply,
+ 	.owner = THIS_MODULE,
+ };
+ 
+ static const struct pwm_ops rockchip_pwm_ops_v2 = {
+ 	.reset_state = rockchip_pwm_reset_state,
+ 	.config = rockchip_pwm_config,
++	.apply = rockchip_pwm_apply,
+ 	.set_polarity = rockchip_pwm_set_polarity,
+-	.enable = rockchip_pwm_enable,
+-	.disable = rockchip_pwm_disable,
+ 	.owner = THIS_MODULE,
+ };
+ 
 -- 
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+2.1.4
+
