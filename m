@@ -1,87 +1,27 @@
-Return-Path: <vz@mleia.com>
-Message-ID: <564F630D.5090201@mleia.com>
-Date: Fri, 20 Nov 2015 20:14:37 +0200
-From: Vladimir Zapolskiy <vz@mleia.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Julia Lawall <Julia.Lawall@lip6.fr>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 00/24] pwm: add support for atomic update
+Date: Mon, 16 Nov 2015 15:45:17 +0100
+Message-ID: <3500453.9dNCEh5KzI@diego>
+In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
 MIME-Version: 1.0
-To: Rob Herring <robh@kernel.org>
-CC: Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Arnd Bergmann <arnd@arndb.de>, Russell King <linux@arm.linux.org.uk>,
- Roland Stigge <stigge@antcom.de>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 02/11] dt-bindings: clock: add description of LPC32xx
- USB clock controller
-References: <1447981511-29653-1-git-send-email-vz@mleia.com> <1447981511-29653-3-git-send-email-vz@mleia.com> <20151120164133.GA9011@rob-hp-laptop>
-In-Reply-To: <20151120164133.GA9011@rob-hp-laptop>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 20.11.2015 18:41, Rob Herring wrote:
-> On Fri, Nov 20, 2015 at 03:05:02AM +0200, Vladimir Zapolskiy wrote:
->> NXP LPC32xx USB controller has a subdevice, which controls USB AHB
->> slave, USB OTG, USB OHCI, USB device and I2C controller to USB phy
->> clocks, this change adds description of the clock controller, for more
->> details reference LPC32xx User's Manual, namely USB control, OTG clock
->> control and OTG clock status registers.
->>
->> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
->> ---
->>  .../bindings/clock/nxp,lpc3220-usb-clk.txt         | 22 ++++++++++++++++++++++
->>  1 file changed, 22 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt
->>
->> diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt b/Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt
->> new file mode 100644
->> index 0000000..67fba7f
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt
->> @@ -0,0 +1,22 @@
->> +NXP LPC32xx USB Clock Controller
->> +
->> +Required properties:
->> +- compatible: should be "nxp,lpc3220-usb-clk"
->> +- reg:  should contain clock controller registers location and length
->> +- #clock-cells: must be 1, the cell holds id of a clock provided by the
->> +  USB clock controller
->> +
->> +Examples:
->> +
->> +	usb {
+Hi Boris,
+
+Am Montag, 16. November 2015, 09:56:23 schrieb Boris Brezillon:
+> Hello,
 > 
-> I don't understand the full structure of USB blocks. Can you make the 
-> example complete. All the blocks are a child of this node?
+> This series adds support for atomic PWM update, or IOW, the capability
+> to update all the parameters of a PWM device (enabled/disabled, period,
+> duty and polarity) in one go.
 
-Yes, all the blocks are children of this node.
+you already include my tested-by tags, but anyway, the series still works 
+nicely on 4.4-rc1 on my veyron chromebook.
 
-USB controller contains 5 subdevices, interestingly one of these
-subdevices, I2C controller, is the same as a general purpose I2C
-controller device.
 
-Please find some description here:
-http://www.spinics.net/lists/devicetree/msg98538.html
-
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		compatible = "simple-bus";
->> +		ranges = <0x0 0x31020000 0x00001000>;
->> +
->> +		usbclk: clock-controller@F00 {
-> lower case                               ^
-> 
->> +			compatible = "nxp,lpc3220-usb-clk";
->> +			reg = <0xF00 0x100>;
-> 
-> lower case
-
-Ok, thanks for pointing it out.
-
->> +			#clock-cells = <1>;
->> +		};
->> +	};
->> -- 
->> 2.1.4
->>
-
---
-Vladimir
+Heiko
