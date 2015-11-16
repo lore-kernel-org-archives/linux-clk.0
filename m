@@ -1,64 +1,85 @@
-Return-Path: <robh@kernel.org>
-Date: Mon, 30 Nov 2015 11:14:06 -0600
-From: Rob Herring <robh@kernel.org>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 2/5] clk: sunxi: Add sun9i A80 apbs gates support
-Message-ID: <20151130171406.GA10111@rob-hp-laptop>
-References: <1448766190-11345-1-git-send-email-wens@csie.org>
- <1448766190-11345-3-git-send-email-wens@csie.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1448766190-11345-3-git-send-email-wens@csie.org>
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Julia Lawall <Julia.Lawall@lip6.fr>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v4 12/24] misc: max77693: use pwm_get/set_default_xxx() helpers where appropriate
+Date: Mon, 16 Nov 2015 09:56:35 +0100
+Message-Id: <1447664207-24370-13-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Nov 29, 2015 at 11:03:07AM +0800, Chen-Yu Tsai wrote:
-> This patch adds support for the PRCM apbs clock gates found on the
-> Allwinner A80 SoC.
-> 
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+pwm_set/get_default_xxx() helpers have been introduced to differentiate
+the default PWM states (those retrieved through DT, PWM lookup table or
+statically assigned by the driver) and the current ones.
+Make use of those helpers where appropriate.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/input/misc/max77693-haptic.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-> ---
->  Documentation/devicetree/bindings/clock/sunxi.txt | 1 +
->  drivers/clk/sunxi/clk-simple-gates.c              | 2 ++
->  2 files changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-> index a94bb56a0e9e..b6859ed6913f 100644
-> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
-> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-> @@ -55,6 +55,7 @@ Required properties:
->  	"allwinner,sun9i-a80-apb1-gates-clk" - for the APB1 gates on A80
->  	"allwinner,sun6i-a31-apb2-gates-clk" - for the APB2 gates on A31
->  	"allwinner,sun8i-a23-apb2-gates-clk" - for the APB2 gates on A23
-> +	"allwinner,sun9i-a80-apbs-gates-clk" - for the APBS gates on A80
->  	"allwinner,sun5i-a13-mbus-clk" - for the MBUS clock on A13
->  	"allwinner,sun4i-a10-mmc-clk" - for the MMC clock
->  	"allwinner,sun9i-a80-mmc-clk" - for mmc module clocks on A80
-> diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/clk-simple-gates.c
-> index 0214c6548afd..c8acc0612c15 100644
-> --- a/drivers/clk/sunxi/clk-simple-gates.c
-> +++ b/drivers/clk/sunxi/clk-simple-gates.c
-> @@ -140,6 +140,8 @@ CLK_OF_DECLARE(sun9i_a80_apb0, "allwinner,sun9i-a80-apb0-gates-clk",
->  	       sunxi_simple_gates_init);
->  CLK_OF_DECLARE(sun9i_a80_apb1, "allwinner,sun9i-a80-apb1-gates-clk",
->  	       sunxi_simple_gates_init);
-> +CLK_OF_DECLARE(sun9i_a80_apbs, "allwinner,sun9i-a80-apbs-gates-clk",
-> +	       sunxi_simple_gates_init);
->  
->  static const int sun4i_a10_ahb_critical_clocks[] __initconst = {
->  	14,	/* ahb_sdram */
-> -- 
-> 2.6.2
-> 
+diff --git a/drivers/input/misc/max77693-haptic.c b/drivers/input/misc/max77693-haptic.c
+index a038fb3..89f5055 100644
+--- a/drivers/input/misc/max77693-haptic.c
++++ b/drivers/input/misc/max77693-haptic.c
+@@ -70,11 +70,12 @@ struct max77693_haptic {
+ 
+ static int max77693_haptic_set_duty_cycle(struct max77693_haptic *haptic)
+ {
+-	int delta = (pwm_get_period((haptic->pwm_dev)) + haptic->pwm_duty) / 2;
++	int delta = (pwm_get_default_period((haptic->pwm_dev)) +
++		     haptic->pwm_duty) / 2;
+ 	int error;
+ 
+ 	error = pwm_config(haptic->pwm_dev, delta,
+-			   pwm_get_period((haptic->pwm_dev)));
++			   pwm_get_default_period((haptic->pwm_dev)));
+ 	if (error) {
+ 		dev_err(haptic->dev, "failed to configure pwm: %d\n", error);
+ 		return error;
+@@ -246,7 +247,8 @@ static int max77693_haptic_play_effect(struct input_dev *dev, void *data,
+ 	 * The formula to convert magnitude to pwm_duty as follows:
+ 	 * - pwm_duty = (magnitude * pwm_period) / MAX_MAGNITUDE(0xFFFF)
+ 	 */
+-	period_mag_multi = (u64)pwm_get_period((haptic->pwm_dev)) * haptic->magnitude;
++	period_mag_multi = (u64)pwm_get_default_period((haptic->pwm_dev)) *
++			   haptic->magnitude;
+ 	haptic->pwm_duty = (unsigned int)(period_mag_multi >>
+ 						MAX_MAGNITUDE_SHIFT);
+ 
+-- 
+2.1.4
