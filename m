@@ -1,75 +1,112 @@
-Return-Path: <yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-In-Reply-To: <20151124005324.GM19156@codeaurora.org>
-References: <1448004981-11133-1-git-send-email-yamada.masahiro@socionext.com>
-	<1448004981-11133-2-git-send-email-yamada.masahiro@socionext.com>
-	<20151120174509.GQ32672@codeaurora.org>
-	<CAK7LNASQGBn32N4=CM+notaVv1ZLotaydRhe-GiOF6nLhbmABA@mail.gmail.com>
-	<20151124005324.GM19156@codeaurora.org>
-Date: Mon, 30 Nov 2015 17:34:24 +0900
-Message-ID: <CAK7LNASVzPndasdNE+EX1pB_VmDp_OjBYv2D1FKqL8JbCFkCuA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] clk: let of_clk_get_parent_name() fail for invalid clock-indices
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ben Dooks <ben.dooks@codethink.co.uk>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Julia Lawall <Julia.Lawall@lip6.fr>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v4 05/24] misc: max77693-haptic: use pwm_get_xxx() helpers where appropriate
+Date: Mon, 16 Nov 2015 09:56:28 +0100
+Message-Id: <1447664207-24370-6-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Use pwm_get_xxx() helpers instead of directly accessing the pwm->xxx field.
+Doing that will ease adaptation of the PWM framework to support atomic
+update.
 
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+Patch generated with the following coccinelle script:
 
+--->8---
+virtual patch
 
->>
->> Of course we can, although we have to mention "clock-indices" twice.
->>
->> A good thing for of_get_property() is that we can get both the value
->> and the length
->> at the same time.
->>
->
-> Ok. Well if we don't want to count them again, perhaps a goto
-> jump over an unconditional return NULL would be better?
->
->         of_property_for_each_u32(clkspec.np, "clock-indices", prop, vp, pv) {
->                 if (index == pv) {
->                         index = count;
->                         goto found;
->                 }
->                 count++;
->         }
->
->         return NULL;
-> found:
->
-> Or since the macro for of_property_for_each_u32() tests the vp
-> poitner for NULL, we can check that pointer too...
->
->         of_property_for_each_u32(clkspec.np, "clock-indices", prop, vp, pv) {
->                 if (index == pv) {
->                         index = count;
->                         break;
->                 }
->                 count++;
->         }
->
->         /* We didn't find anything */
->         if (!vp)
->                 return NULL;
->
-> I guess I prefer the latter approach here.
->
+@@
+struct pwm_device *p;
+expression e;
+@@
+(
+-(p)->polarity = e;
++pwm_set_polarity((p), e);
+|
+-(p)->polarity
++pwm_get_polarity((p))
+|
+-(p)->period = e;
++pwm_set_period((p), e);
+|
+-(p)->period
++pwm_get_period((p))
+|
+-(p)->duty_cycle = e;
++pwm_set_duty_cycle((p), e);
+|
+-(p)->duty_cycle
++pwm_get_duty_cycle((p))
+)
+--->8---
+---
+ drivers/input/misc/max77693-haptic.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-No.
-
-Neither of your two suggestions works because they are false positive.
-
-With your way, if "clock-indices" does not exist, of_clk_get_parent_name()
-would return NULL;  in this case it should just parse "clock-output-names",
-assuming that the clock names are simply indexed from zero.
-
-
+diff --git a/drivers/input/misc/max77693-haptic.c b/drivers/input/misc/max77693-haptic.c
+index 6d96bff..a038fb3 100644
+--- a/drivers/input/misc/max77693-haptic.c
++++ b/drivers/input/misc/max77693-haptic.c
+@@ -70,10 +70,11 @@ struct max77693_haptic {
+ 
+ static int max77693_haptic_set_duty_cycle(struct max77693_haptic *haptic)
+ {
+-	int delta = (haptic->pwm_dev->period + haptic->pwm_duty) / 2;
++	int delta = (pwm_get_period((haptic->pwm_dev)) + haptic->pwm_duty) / 2;
+ 	int error;
+ 
+-	error = pwm_config(haptic->pwm_dev, delta, haptic->pwm_dev->period);
++	error = pwm_config(haptic->pwm_dev, delta,
++			   pwm_get_period((haptic->pwm_dev)));
+ 	if (error) {
+ 		dev_err(haptic->dev, "failed to configure pwm: %d\n", error);
+ 		return error;
+@@ -245,7 +246,7 @@ static int max77693_haptic_play_effect(struct input_dev *dev, void *data,
+ 	 * The formula to convert magnitude to pwm_duty as follows:
+ 	 * - pwm_duty = (magnitude * pwm_period) / MAX_MAGNITUDE(0xFFFF)
+ 	 */
+-	period_mag_multi = (u64)haptic->pwm_dev->period * haptic->magnitude;
++	period_mag_multi = (u64)pwm_get_period((haptic->pwm_dev)) * haptic->magnitude;
+ 	haptic->pwm_duty = (unsigned int)(period_mag_multi >>
+ 						MAX_MAGNITUDE_SHIFT);
+ 
 -- 
-Best Regards
-Masahiro Yamada
+2.1.4
