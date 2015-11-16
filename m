@@ -1,53 +1,127 @@
-Return-Path: <nicolas.pitre@linaro.org>
-Return-Path: <nicolas.pitre@linaro.org>
-Date: Tue, 3 Nov 2015 19:46:23 -0500 (EST)
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-    Michael Turquette <mturquette@baylibre.com>
-cc: linux-clk@vger.kernel.org
-Subject: [PATCH] imx/clk-pllv1: fix wrong do_div() usage
-Message-ID: <alpine.LFD.2.20.1511031941300.630@knanqh.ubzr>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Mon, 16 Nov 2015 19:06:46 +0100
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Joachim  Eastwood <manabian@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
+ Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Mark Brown
+ <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski
+ <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare
+ <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov
+ <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Bryan Wu
+ <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski
+ <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard
+ <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+ linux-sunxi@googlegroups.com, Thomas Petazzoni
+ <thomas.petazzoni@free-electrons.com>, Heiko Stuebner <heiko@sntech.de>,
+ linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, Lee
+ Jones <lee.jones@linaro.org>, linux-fbdev@vger.kernel.org, Jean-Christophe
+ Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen
+ <tomi.valkeinen@ti.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Alexandre
+ Belloni <alexandre.belloni@free-electrons.com>, Julia Lawall
+ <Julia.Lawall@lip6.fr>, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "Ariel D'Alessandro"
+ <ariel@vanguardiasur.com.ar>
+Subject: Re: [PATCH v4 02/24] pwm: use pwm_get_xxx() helpers where
+ appropriate
+Message-ID: <20151116190646.1d5ba16e@bbrezillon>
+In-Reply-To: <CAGhQ9VwEuwazF5Kdw=9R60EovVoiwen6fXiVjL+=EddXPYVGAg@mail.gmail.com>
+References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1447664207-24370-3-git-send-email-boris.brezillon@free-electrons.com>
+	<CAGhQ9VwEuwazF5Kdw=9R60EovVoiwen6fXiVjL+=EddXPYVGAg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-do_div() is meant to be used with an unsigned dividend.
+Hi Joachim,
 
-Signed-off-by: Nicolas Pitre <nico@linaro.org>
+On Mon, 16 Nov 2015 18:46:44 +0100
+Joachim  Eastwood <manabian@gmail.com> wrote:
 
-diff --git a/drivers/clk/imx/clk-pllv1.c b/drivers/clk/imx/clk-pllv1.c
-index 8564e4342c..82fe3662b5 100644
---- a/drivers/clk/imx/clk-pllv1.c
-+++ b/drivers/clk/imx/clk-pllv1.c
-@@ -52,7 +52,7 @@ static unsigned long clk_pllv1_recalc_rate(struct clk_hw *hw,
- 		unsigned long parent_rate)
- {
- 	struct clk_pllv1 *pll = to_clk_pllv1(hw);
--	long long ll;
-+	unsigned long long ull;
- 	int mfn_abs;
- 	unsigned int mfi, mfn, mfd, pd;
- 	u32 reg;
-@@ -94,16 +94,16 @@ static unsigned long clk_pllv1_recalc_rate(struct clk_hw *hw,
- 	rate = parent_rate * 2;
- 	rate /= pd + 1;
- 
--	ll = (unsigned long long)rate * mfn_abs;
-+	ull = (unsigned long long)rate * mfn_abs;
- 
--	do_div(ll, mfd + 1);
-+	do_div(ull, mfd + 1);
- 
- 	if (mfn_is_negative(pll, mfn))
--		ll = -ll;
-+		ull = (rate * mfi) - ull;
-+	else
-+		ull = (rate * mfi) + ull;
- 
--	ll = (rate * mfi) + ll;
--
--	return ll;
-+	return ull;
- }
- 
- static struct clk_ops clk_pllv1_ops = {
+> Hi Boris
+> 
+> (Adding Ariel for pwm-lpc18xx-sct)
+> 
+> On 16 November 2015 at 09:56, Boris Brezillon
+> <boris.brezillon@free-electrons.com> wrote:
+> > Use pwm_get_xxx() helpers instead of directly accessing the pwm->xxx field.
+> > Doing that will ease adaptation of the PWM framework to support atomic
+> > update.
+> >
+> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > ---
+> > Patch generated with the following coccinelle script:
+> >
+> > --->8---
+> > virtual patch
+> >
+> > @@
+> > struct pwm_device *p;
+> > expression e;
+> > @@
+> > (
+> > -(p)->polarity = e;
+> > +pwm_set_polarity((p), e);
+> > |
+> > -(p)->polarity
+> > +pwm_get_polarity((p))
+> > |
+> > -(p)->period = e;
+> > +pwm_set_period((p), e);
+> > |
+> > -(p)->period
+> > +pwm_get_period((p))
+> > |
+> > -(p)->duty_cycle = e;
+> > +pwm_set_duty_cycle((p), e);
+> > |
+> > -(p)->duty_cycle
+> > +pwm_get_duty_cycle((p))
+> > )
+> > --->8---
+> > ---
+> >  drivers/pwm/pwm-crc.c         | 2 +-
+> >  drivers/pwm/pwm-lpc18xx-sct.c | 2 +-
+> >  2 files changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/pwm/pwm-crc.c b/drivers/pwm/pwm-crc.c
+> > index 7101c70..2f88543 100644
+> > --- a/drivers/pwm/pwm-crc.c
+> > +++ b/drivers/pwm/pwm-crc.c
+> > @@ -75,7 +75,7 @@ static int crc_pwm_config(struct pwm_chip *c, struct pwm_device *pwm,
+> >                 return -EINVAL;
+> >         }
+> >
+> > -       if (pwm->period != period_ns) {
+> > +       if (pwm_get_period((pwm)) != period_ns) {
+> >                 int clk_div;
+> >
+> >                 /* changing the clk divisor, need to disable fisrt */
+> > diff --git a/drivers/pwm/pwm-lpc18xx-sct.c b/drivers/pwm/pwm-lpc18xx-sct.c
+> > index 9163085..091fa13 100644
+> > --- a/drivers/pwm/pwm-lpc18xx-sct.c
+> > +++ b/drivers/pwm/pwm-lpc18xx-sct.c
+> > @@ -249,7 +249,7 @@ static int lpc18xx_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
+> >                            LPC18XX_PWM_EVSTATEMSK(lpc18xx_data->duty_event),
+> >                            LPC18XX_PWM_EVSTATEMSK_ALL);
+> >
+> > -       if (pwm->polarity == PWM_POLARITY_NORMAL) {
+> > +       if (pwm_get_polarity((pwm)) == PWM_POLARITY_NORMAL) {
+> 
+> What is the deal with the double parentheses?
+> 
+> Think I saw that in some of the other patches as well.
+
+It comes from a typo in my coccinelle script. I already fixed it and
+regenerated the faulty patches, so please ignore this aspect while
+reviewing (this will be addressed in the next version).
+
+Thanks,
+
+Boris
+
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
