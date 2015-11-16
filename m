@@ -1,49 +1,88 @@
-Return-Path: <myungjoo.ham@samsung.com>
-Return-path: <myungjoo.ham@samsung.com>
-Date: Mon, 23 Nov 2015 08:09:45 +0000 (GMT)
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: [PATCH 1/2] clk: rockchip: dmc: support rk3399 dmc clock driver
-To: Lin Huang <hl@rock-chips.com>, "heiko@sntech.de" <heiko@sntech.de>,
- "dianders@chromium.org" <dianders@chromium.org>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
- "dbasehore@chromium.org" <dbasehore@chromium.org>,
- "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Reply-to: myungjoo.ham@samsung.com
-MIME-version: 1.0
-Content-type: text/plain; charset=utf-8
-MIME-version: 1.0
-Message-id: <68719599.130141448266183403.JavaMail.weblogic@epmlwas06a>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Mon, 16 Nov 2015 17:53:22 +0100
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
+ Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Mark Brown
+ <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski
+ <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare
+ <jdelvare@suse.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie
+ <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>,
+ linux-leds@vger.kernel.org, Maxime Ripard
+ <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+ linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas
+ Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner
+ <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han
+ <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+ linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard
+ <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Robert
+ Jarzmik <robert.jarzmik@free.fr>, Alexandre Belloni
+ <alexandre.belloni@free-electrons.com>, Julia Lawall
+ <Julia.Lawall@lip6.fr>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 04/24] hwmon: pwm-fan: use pwm_get_xxx() helpers
+ where appropriate
+Message-ID: <20151116175322.48dba6f9@bbrezillon>
+In-Reply-To: <5649FD5B.3000208@roeck-us.net>
+References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1447664207-24370-5-git-send-email-boris.brezillon@free-electrons.com>
+	<5649FD5B.3000208@roeck-us.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-PiArc3RhdGljIHVuc2lnbmVkIGxvbmcgcmszMzk5X2RtY2Nsa19yZWNhbGNfcmF0ZShzdHJ1Y3Qg
-Y2xrX2h3ICpodywNCj4gKwkJCQkJICAgICAgIHVuc2lnbmVkIGxvbmcgcGFyZW50X3JhdGUpDQo+
-ICt7DQo+ICsJc3RydWN0IHJrMzM5OV9kbWNjbGsgKmRtYyA9IHRvX3JrMzM5OV9kbWNjbGsoJmh3
-KTsNCj4gKwl1MzIgdmFsOw0KPiArDQo+ICsJLyoNCj4gKwkgKiBHZXQgcGFyZW50IHJhdGUgc2lu
-Y2UgaXQgY2hhbmdlZCBpbiB0aGlzIGNsa3Mgc2V0X3JhdGUgb3AuIFRoZSBwYXJlbnQNCj4gKwkg
-KiByYXRlIHBhc3NlZCBpbnRvIHRoaXMgZnVuY3Rpb24gaXMgY2FjaGVkIGJlZm9yZSBzZXRfcmF0
-ZSBpcyBjYWxsZWQgaW4NCj4gKwkgKiB0aGUgY29tbW9uIGNsayBjb2RlLCBzbyB3ZSBoYXZlIHRv
-IGdldCBpdCBoZXJlLg0KPiArCSAqLw0KPiArCXBhcmVudF9yYXRlID0gY2xrX2dldF9yYXRlKGNs
-a19nZXRfcGFyZW50KGh3LT5jbGspKTsNCj4gKw0KPiArCXZhbCA9IHJlYWRsKGRtYy0+Y3J1ICsg
-Q1JVX0NMS1NFTDZfQ09OKTsNCj4gKwl2YWwgPSAodmFsID4+IENMS19ERFJDX0RJVl9DT05fU0hJ
-RlQpICYgQ0xLX0REUkNfRElWX0NPTl9NQVNLOw0KPiArDQo+ICsJcmV0dXJuIHBhcmVudF9yYXRl
-IC8gKHZhbCArIDEpOw0KPiArfQ0KPiArDQo+ICsvKg0KPiArICogVE9ETzogc2V0IGRkciBmcmVx
-dWNuZXkgaW4gZGNmIHdoaWNoIHJ1biBpbiBBVEYNCj4gKyAqLw0KPiArc3RhdGljIGludCByazMz
-OTlfZG1jY2xrX3NldF9yYXRlKHN0cnVjdCBjbGtfaHcgKmh3LCB1bnNpZ25lZCBsb25nIHJhdGUs
-DQo+ICsJCQkJICB1bnNpZ25lZCBsb25nIHBhcmVudF9yYXRlKQ0KPiArew0KPiArCXJldHVybiAw
-Ow0KPiArfQ0KDQpJcyBpdCBjb3JyZWN0IHRoYXQgeW91IGRpZG4ndCBmaWxsIHRoaXMgdXAgYmVj
-YXVzZSB5b3VyDQpUcnVzdHpvbmUgZHJpdmVyIChTTUMpIGlzIG5vdCByZWFkeSB5ZXQ/DQoNClRo
-ZW4sIHdoeSBkb24ndCB5b3UgZmlsbCB0aGF0IGZ1bmN0aW9uIGFzc3VtaW5nIHRoYXQgVHJ1c3Ra
-b25lIGlzIG5vdCBhY3RpdmF0ZWQNCmFuZCBhZGQgU01DIGNhbGwgZnVuY3Rpb25zIHdpdGggaWYg
-b3IgI2lmIGFmdGVyIGl0cyBUcnVzdFpvbmUgZHJpdmVyIGlzIHJlYWR5Pw0KDQpPciBkb2VzIHlv
-dXIgU29DIG1hbmRhdGUgdGhlIHVzYWdlIG90IFRydXN0Wm9uZSwgcmVzdHJpY3RpbmcgdGhlIHVz
-YWdlDQpvZiBDUlVfQ0xLU0VMNl9DT04gd3JpdGU/IChJIGRvbid0IHNlZSB3aHkgU29DIHZlbmRv
-cnMgd2lsbCBkbyB0aGlzLi4pDQoNCg0KSSdsbCBiZSByZWFkeSB0byBtZXJnZSB0aGUgUkszMzk5
-IGRldmZyZXEgZHJpdmVyIGlmIHlvdQ0KZmlsbCB0aGlzIHVwIChhc3N1bWluZyB0aGF0IFRaIGlz
-IG5vdCBlbmFibGVkKSBvcg0KYWRkIFRaIGRyaXZlciBhbmQgU01DIGNhbGxzLg0KDQoNCkNoZWVy
-cywNCk15dW5nSm9vDQpwcy4gYWNjb3JkaW5nIHRvIHJrMzM5X2RtY2Nsa19yZWNhbGNfcmF0ZSgp
-LCBmaWxsaW5nIHJrMzM5X2RtY2Nsa19zZXRfcmF0ZQ0KYXNzdW1pbmcgdGhhdCBUWiBpcyBub3Qg
-ZW5hYmxlZCBzZWVtcyB0cml2aWFsLg==
+On Mon, 16 Nov 2015 07:59:23 -0800
+Guenter Roeck <linux@roeck-us.net> wrote:
+
+> On 11/16/2015 12:56 AM, Boris Brezillon wrote:
+> > Use pwm_get_xxx() helpers instead of directly accessing the pwm->xxx field.
+> > Doing that will ease adaptation of the PWM framework to support atomic
+> > update.
+> >
+> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > ---
+> > Patch generated with the following coccinelle script:
+> >
+> > --->8---
+> > virtual patch
+> >
+> > @@
+> > struct pwm_device *p;
+> > expression e;
+> > @@
+> > (
+> > -(p)->polarity = e;
+> > +pwm_set_polarity((p), e);
+> > |
+> > -(p)->polarity
+> > +pwm_get_polarity((p))
+> 
+> s/((p))/(p)/
+> 
+> > |
+> > -(p)->period = e;
+> > +pwm_set_period((p), e);
+> > |
+> > -(p)->period
+> > +pwm_get_period((p))
+> 
+> s/((p))/(p)/
+> 
+> > |
+> > -(p)->duty_cycle = e;
+> > +pwm_set_duty_cycle((p), e);
+> 
+> The (p) seems unnecessary here.
+
+I don't get this one. You mean I should drop one the parenthesis around
+p, right?
+
+
+
+
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
