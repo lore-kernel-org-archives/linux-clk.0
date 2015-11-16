@@ -1,159 +1,135 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux@roeck-us.net>
+Subject: Re: [PATCH v4 04/24] hwmon: pwm-fan: use pwm_get_xxx() helpers where
+ appropriate
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+ Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org
+References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1447664207-24370-5-git-send-email-boris.brezillon@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
+ Jean Delvare <jdelvare@suse.com>, Dmitry Torokhov
+ <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org,
+ Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>,
+ Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+ Joachim Eastwood <manabian@gmail.com>,
+ Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+ Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org,
+ Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+ linux-fbdev@vger.kernel.org,
+ Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+ Tomi Valkeinen <tomi.valkeinen@ti.com>,
+ Robert Jarzmik <robert.jarzmik@free.fr>,
+ Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+ Julia Lawall <Julia.Lawall@lip6.fr>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <5649FD5B.3000208@roeck-us.net>
+Date: Mon, 16 Nov 2015 07:59:23 -0800
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1378010420-20031-1-git-send-email-stefan.kristiansson@saunalahti.fi>
-References: <1378010420-20031-1-git-send-email-stefan.kristiansson@saunalahti.fi>
-Date: Tue, 17 Nov 2015 16:46:29 +0100
-Message-ID: <CAMuHMdXhxuawY-V+35YoeZWZ3jZ-Vj_MzuRDGBfDD9i9iy=oGA@mail.gmail.com>
-Subject: Re: [PATCH] clk: add generic driver for fixed rate clock
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1447664207-24370-5-git-send-email-boris.brezillon@free-electrons.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stefan,
-
-(quoting the full driver, as it predates linux-clk)
-
-On Sun, Sep 1, 2013 at 6:40 AM, Stefan Kristiansson
-<stefan.kristiansson@saunalahti.fi> wrote:
-> This adds a simple driver with the only purpose to initialise
-> the fixed rate clock.
-> This is useful for systems that do not wish to use seperate init
-> code for the fixed rate clock init, but rather only rely on a
-> device tree description of it.
+On 11/16/2015 12:56 AM, Boris Brezillon wrote:
+> Use pwm_get_xxx() helpers instead of directly accessing the pwm->xxx field.
+> Doing that will ease adaptation of the PWM framework to support atomic
+> update.
 >
-> Signed-off-by: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
-
-Thanks, this is still very useful!
-
-I stumbled across this old patch while trying to instantiate a fixed rate
-clock from a DT overlay.
-Without this, the clock is never instantiated, as drivers/clk/clk-fixed-rate.c
-uses CLK_OF_DECLARE() :-( With your driver, it works as expected
-(after fixing the modpost complaint, cfr. below).
-
-However, I think that instead of creating a new driver, you should just add
-the meat of clk-generic-fixed.c to clk-fixed-rate.c.
-
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 > ---
->  drivers/clk/Kconfig             |  8 ++++++
->  drivers/clk/Makefile            |  1 +
->  drivers/clk/clk-generic-fixed.c | 59 +++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 68 insertions(+)
->  create mode 100644 drivers/clk/clk-generic-fixed.c
+> Patch generated with the following coccinelle script:
 >
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 51380d6..7c8ea78 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -87,6 +87,14 @@ config CLK_PPC_CORENET
->           This adds the clock driver support for Freescale PowerPC corenet
->           platforms using common clock framework.
+> --->8---
+> virtual patch
 >
-> +config COMMON_CLK_GENERIC_FIXED
-> +       tristate "Generic fixed rate clock driver"
-> +       depends on OF
-> +       ---help---
-> +         Driver for systems that do not want to register their fixed rate
-> +         clocks through init code, but rather through the device tree
-> +         description.
-> +
->  endmenu
+> @@
+> struct pwm_device *p;
+> expression e;
+> @@
+> (
+> -(p)->polarity = e;
+> +pwm_set_polarity((p), e);
+> |
+> -(p)->polarity
+> +pwm_get_polarity((p))
+
+s/((p))/(p)/
+
+> |
+> -(p)->period = e;
+> +pwm_set_period((p), e);
+> |
+> -(p)->period
+> +pwm_get_period((p))
+
+s/((p))/(p)/
+
+> |
+> -(p)->duty_cycle = e;
+> +pwm_set_duty_cycle((p), e);
+
+The (p) seems unnecessary here.
+
+> |
+> -(p)->duty_cycle
+> +pwm_get_duty_cycle((p))
+
+s/((p))/(p)/
+
+> )
+> --->8---
+> ---
+>   drivers/hwmon/pwm-fan.c | 13 +++++++------
+>   1 file changed, 7 insertions(+), 6 deletions(-)
 >
->  source "drivers/clk/mvebu/Kconfig"
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index 4038c2b..2d46647 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -8,6 +8,7 @@ obj-$(CONFIG_COMMON_CLK)        += clk-fixed-rate.o
->  obj-$(CONFIG_COMMON_CLK)       += clk-gate.o
->  obj-$(CONFIG_COMMON_CLK)       += clk-mux.o
->  obj-$(CONFIG_COMMON_CLK)       += clk-composite.o
-> +obj-$(CONFIG_COMMON_CLK_GENERIC_FIXED) += clk-generic-fixed.o
+> diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
+> index 3e23003..105b964 100644
+> --- a/drivers/hwmon/pwm-fan.c
+> +++ b/drivers/hwmon/pwm-fan.c
+> @@ -47,8 +47,8 @@ static int  __set_pwm(struct pwm_fan_ctx *ctx, unsigned long pwm)
+>   	if (ctx->pwm_value == pwm)
+>   		goto exit_set_pwm_err;
 >
->  # SoCs specific
->  obj-$(CONFIG_ARCH_BCM2835)     += clk-bcm2835.o
-> diff --git a/drivers/clk/clk-generic-fixed.c b/drivers/clk/clk-generic-fixed.c
-> new file mode 100644
-> index 0000000..85df8a8
-> --- /dev/null
-> +++ b/drivers/clk/clk-generic-fixed.c
-> @@ -0,0 +1,59 @@
-> +/*
-> + * Copyright 2013 Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * Generic driver for fixed rate clock
-> + */
-> +#include <linux/platform_device.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/clk.h>
-> +#include <linux/of.h>
-> +#include <linux/module.h>
-> +
-> +static const struct of_device_id generic_fixed_clk_match[] __initconst = {
+> -	duty = DIV_ROUND_UP(pwm * (ctx->pwm->period - 1), MAX_PWM);
+> -	ret = pwm_config(ctx->pwm, duty, ctx->pwm->period);
+> +	duty = DIV_ROUND_UP(pwm * (pwm_get_period((ctx->pwm)) - 1), MAX_PWM);
+> +	ret = pwm_config(ctx->pwm, duty, pwm_get_period((ctx->pwm)));
 
-Please drop the __initconst, as it causes a section mismatch.
+Please drop all the unnecessary ( ).
 
-> +       { .compatible = "fixed-clock",},
-> +       {}
-> +};
-> +
-> +static int generic_fixed_clk_probe(struct platform_device *pdev)
-> +{
-> +       of_fixed_clk_setup(pdev->dev.of_node);
-> +
-> +       return 0;
-> +}
-> +
-> +static int generic_fixed_clk_remove(struct platform_device *pdev)
-> +{
-> +       of_clk_del_provider(pdev->dev.of_node);
-> +
-> +       return 0;
-> +}
-> +
-> +static struct platform_driver generic_fixed_clk_driver = {
-> +       .driver = {
-> +               .name = "generic-fixed-clk",
-> +               .owner = THIS_MODULE,
-> +               .of_match_table = generic_fixed_clk_match,
-> +       },
-> +       .probe  = generic_fixed_clk_probe,
-> +       .remove = generic_fixed_clk_remove,
-> +};
-> +
-> +static int __init generic_fixed_clk_init(void)
-> +{
-> +       return platform_driver_register(&generic_fixed_clk_driver);
-> +}
-> +subsys_initcall(generic_fixed_clk_init);
-> +
-> +static void __exit generic_fixed_exit(void)
-> +{
-> +       platform_driver_unregister(&generic_fixed_clk_driver);
-> +}
-> +module_exit(generic_fixed_exit);
-> +
-> +MODULE_AUTHOR("Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>");
-> +MODULE_DESCRIPTION("Generic driver for fixed rate clock");
-> +MODULE_LICENSE("GPL v2");
+Thanks,
+Guenter
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>   	if (ret)
+>   		goto exit_set_pwm_err;
+>
+> @@ -234,10 +234,10 @@ static int pwm_fan_probe(struct platform_device *pdev)
+>   	platform_set_drvdata(pdev, ctx);
+>
+>   	/* Set duty cycle to maximum allowed */
+> -	duty_cycle = ctx->pwm->period - 1;
+> +	duty_cycle = pwm_get_period((ctx->pwm)) - 1;
+>   	ctx->pwm_value = MAX_PWM;
+>
+> -	ret = pwm_config(ctx->pwm, duty_cycle, ctx->pwm->period);
+> +	ret = pwm_config(ctx->pwm, duty_cycle, pwm_get_period((ctx->pwm)));
+>   	if (ret) {
+>   		dev_err(&pdev->dev, "Failed to configure PWM\n");
+>   		return ret;
+> @@ -309,8 +309,9 @@ static int pwm_fan_resume(struct device *dev)
+>   	if (ctx->pwm_value == 0)
+>   		return 0;
+>
+> -	duty = DIV_ROUND_UP(ctx->pwm_value * (ctx->pwm->period - 1), MAX_PWM);
+> -	ret = pwm_config(ctx->pwm, duty, ctx->pwm->period);
+> +	duty = DIV_ROUND_UP(ctx->pwm_value * (pwm_get_period((ctx->pwm)) - 1),
+> +			    MAX_PWM);
+> +	ret = pwm_config(ctx->pwm, duty, pwm_get_period((ctx->pwm)));
+>   	if (ret)
+>   		return ret;
+>   	return pwm_enable(ctx->pwm);
+>
