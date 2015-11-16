@@ -1,101 +1,131 @@
-Return-Path: <simon@fire.lp0.eu>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kevin Cernekee <cernekee@gmail.com>,
- Florian Fainelli <f.fainelli@gmail.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-From: Simon Arlott <simon@fire.lp0.eu>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-clk@vger.kernel.org, linux-mips@linux-mips.org,
- Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Kumar Gala <galak@codeaurora.org>
-Subject: [PATCH 1/2] clk: Add brcm,bcm63xx-gate-clk device tree binding
-Message-ID: <565CB727.7030209@simon.arlott.org.uk>
-Date: Mon, 30 Nov 2015 20:52:55 +0000
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Julia Lawall <Julia.Lawall@lip6.fr>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v4 16/24] pwm: move the enabled/disabled info to pwm_state struct
+Date: Mon, 16 Nov 2015 09:56:39 +0100
+Message-Id: <1447664207-24370-17-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree binding for the BCM63xx's gated clocks.
+Prepare the transition to PWM atomic update by moving the enabled/disabled
+state into the pwm_state struct. This way we can easily update the whole
+PWM state by copying the new state in the ->state field.
 
-The BCM63xx contains clocks gated with a register. Clocks are indexed
-by bits in the register and are active high. Clock gate bits are
-interleaved with other status bits and configurable clocks in the same
-register.
-
-Signed-off-by: Simon Arlott <simon@fire.lp0.eu>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Tested-by: Heiko Stuebner <heiko@sntech.de>
 ---
- .../bindings/clock/brcm,bcm63xx-gate-clk.txt       | 58 ++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm63xx-gate-clk.txt
+ drivers/pwm/core.c  | 17 +++++++++++++----
+ include/linux/pwm.h |  7 ++++---
+ 2 files changed, 17 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm63xx-gate-clk.txt b/Documentation/devicetree/bindings/clock/brcm,bcm63xx-gate-clk.txt
-new file mode 100644
-index 0000000..3f4ead1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/brcm,bcm63xx-gate-clk.txt
-@@ -0,0 +1,58 @@
-+Broadcom BCM63xx clocks
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index f1c6769..6bbda6c 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -508,10 +508,10 @@ int pwm_enable(struct pwm_device *pwm)
+ 
+ 	mutex_lock(&pwm->lock);
+ 
+-	if (!test_and_set_bit(PWMF_ENABLED, &pwm->flags)) {
++	if (!pwm_is_enabled(pwm)) {
+ 		err = pwm->chip->ops->enable(pwm->chip, pwm);
+-		if (err)
+-			clear_bit(PWMF_ENABLED, &pwm->flags);
++		if (!err)
++			pwm->state.enabled = true;
+ 	}
+ 
+ 	mutex_unlock(&pwm->lock);
+@@ -526,8 +526,17 @@ EXPORT_SYMBOL_GPL(pwm_enable);
+  */
+ void pwm_disable(struct pwm_device *pwm)
+ {
+-	if (pwm && test_and_clear_bit(PWMF_ENABLED, &pwm->flags))
++	if (!pwm)
++		return;
 +
-+This binding uses the common clock binding:
-+	Documentation/devicetree/bindings/clock/clock-bindings.txt
++	mutex_lock(&pwm->lock);
 +
-+The BCM63xx contains clocks gated with a register. Clocks are indexed
-+by bits in the register and are active high. Clock gate bits are
-+interleaved with other status bits and configurable clocks in the same
-+register.
++	if (pwm_is_enabled(pwm)) {
+ 		pwm->chip->ops->disable(pwm->chip, pwm);
++		pwm->state.enabled = false;
++	}
 +
-+Required properties:
-+- compatible:	Should be "brcm,bcm<soc>-gate-clk", "brcm,bcm63xx-gate-clk"
-+- #clock-cells:	Should be <1>.
-+- regmap:	The register map phandle
-+- offset:	Offset in the register map for the reboot register (in bytes)
-+- clocks:	The external oscillator clock phandle
-+
-+Example:
-+
-+periph_clk: periph_clk {
-+	compatible = "brcm,bcm63168-gate-clk", "brcm,bcm63xx-gate-clk";
-+	regmap = <&periph_cntl>;
-+	offset = <0x4>;
-+
-+	#clock-cells = <1>;
-+	clock-indices =
-+		<1>,          <2>,        <3>,       <4>,     <5>,
-+		<6>,          <7>,        <8>,       <9>,     <10>,
-+		<11>,         <12>,       <13>,      <14>,    <15>,
-+		<16>,         <17>,       <18>,      <19>,    <20>,
-+		<27>,         <31>;
-+	clock-output-names =
-+		"vdsl_qproc", "vdsl_afe", "vdsl",    "mips",  "wlan_ocp",
-+		"dect",       "fap0",     "fap1",    "sar",   "robosw",
-+		"pcm",        "usbd",     "usbh",    "ipsec", "spi",
-+		"hsspi",      "pcie",     "phymips", "gmac",  "nand",
-+		"tbus",       "robosw250";
-+};
-+
-+timer_clk: timer_clk {
-+	compatible = "brcm,bcm63168-gate-clk", "brcm,bcm63xx-gate-clk";
-+	regmap = <&timer_cntl>;
-+	offset = <0x4>;
-+
-+	#clock-cells = <1>;
-+	clock-indices = <17>, <18>;
-+	clock-output-names = "uto_extin", "usb_ref";
-+};
-+
-+ehci0: usb@10002500 {
-+	compatible = "brcm,bcm63168-ehci", "brcm,bcm63xx-ehci", "generic-ehci";
-+	reg = <0x10002500 0x100>;
-+	big-endian;
-+	interrupt-parent = <&periph_intc>;
-+	interrupts = <10>;
-+	clocks = <&periph_clk 13>, <&timer_clk 18>;
-+	phys = <&usbh>;
-+};
++	mutex_unlock(&pwm->lock);
+ }
+ EXPORT_SYMBOL_GPL(pwm_disable);
+ 
+diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+index af42299..398c58c 100644
+--- a/include/linux/pwm.h
++++ b/include/linux/pwm.h
+@@ -76,8 +76,7 @@ enum pwm_polarity {
+ 
+ enum {
+ 	PWMF_REQUESTED = 1 << 0,
+-	PWMF_ENABLED = 1 << 1,
+-	PWMF_EXPORTED = 1 << 2,
++	PWMF_EXPORTED = 1 << 1,
+ };
+ 
+ /*
+@@ -85,11 +84,13 @@ enum {
+  * @period: PWM period (in nanoseconds)
+  * @duty_cycle: PWM duty cycle (in nanoseconds)
+  * @polarity: PWM polarity
++ * @enabled: PWM enabled status
+  */
+ struct pwm_state {
+ 	unsigned int period;
+ 	unsigned int duty_cycle;
+ 	enum pwm_polarity polarity;
++	bool enabled;
+ };
+ 
+ /**
+@@ -117,7 +118,7 @@ struct pwm_device {
+ 
+ static inline bool pwm_is_enabled(const struct pwm_device *pwm)
+ {
+-	return test_bit(PWMF_ENABLED, &pwm->flags);
++	return pwm->state.enabled;
+ }
+ 
+ static inline void pwm_set_period(struct pwm_device *pwm, unsigned int period)
 -- 
 2.1.4
-
--- 
-Simon Arlott
