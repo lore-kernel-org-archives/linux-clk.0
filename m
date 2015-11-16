@@ -1,25 +1,93 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 20 Nov 2015 09:21:47 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: use IS_ERR_OR_NULL(hw) instead of !hw || IS_ERR(hw)
-Message-ID: <20151120172147.GP32672@codeaurora.org>
-References: <1447997929-780-1-git-send-email-yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1447997929-780-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <cw00.choi@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=UTF-8
+Message-id: <564947E1.1030409@samsung.com>
+Date: Mon, 16 Nov 2015 12:05:05 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+ Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>,
+ Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
+ Kevin Hilman <khilman@linaro.org>
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH 1/2] clk: samsung: Don't build ARMv8 clock drivers on ARMv7
+References: <1447637775-9887-1-git-send-email-k.kozlowski@samsung.com>
+ <1447637775-9887-2-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1447637775-9887-2-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/20, Masahiro Yamada wrote:
-> This minor refactoring does not change the function behavior.
+Hi,
+
+On 2015=EB=85=84 11=EC=9B=94 16=EC=9D=BC 10:36, Krzysztof Kozlowski wrote:
+> Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
+> so it is built also on ARMv7. This does not bring any kind of benefit.
+> There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
+> multi_v7 for ARMv7).
 > 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Instead build clock drivers only for respective SoC's architecture.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 > ---
+>  drivers/clk/samsung/Kconfig  | 13 +++++++++++++
+>  drivers/clk/samsung/Makefile |  4 ++--
+>  2 files changed, 15 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+> index 84196ecdaa12..5f138fc4d84d 100644
+> --- a/drivers/clk/samsung/Kconfig
+> +++ b/drivers/clk/samsung/Kconfig
+> @@ -2,6 +2,7 @@ config COMMON_CLK_SAMSUNG
+>  	bool
+>  	select COMMON_CLK
+>  
+> +# ARMv7 SoCs:
+>  config S3C2410_COMMON_CLK
+>  	bool
+>  	select COMMON_CLK_SAMSUNG
+> @@ -24,3 +25,15 @@ config S3C2443_COMMON_CLK
+>  	bool
+>  	select COMMON_CLK_SAMSUNG
+>  
+> +# ARMv8 SoCs:
+> +config EXYNOS5433_COMMON_CLK
+> +	bool
+> +	depends on ARM64 || COMPILE_TEST
+> +	default ARCH_EXYNOS
+> +	select COMMON_CLK_SAMSUNG
+> +
+> +config EXYNOS7_COMMON_CLK
+> +	bool
+> +	depends on ARM64 || COMPILE_TEST
+> +	default ARCH_EXYNOS
+> +	select COMMON_CLK_SAMSUNG
+> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
+> index 5f6833ea355d..a31332a24ef4 100644
+> --- a/drivers/clk/samsung/Makefile
+> +++ b/drivers/clk/samsung/Makefile
+> @@ -10,11 +10,11 @@ obj-$(CONFIG_SOC_EXYNOS5250)	+=3D clk-exynos5250.o
+>  obj-$(CONFIG_SOC_EXYNOS5260)	+=3D clk-exynos5260.o
+>  obj-$(CONFIG_SOC_EXYNOS5410)	+=3D clk-exynos5410.o
+>  obj-$(CONFIG_SOC_EXYNOS5420)	+=3D clk-exynos5420.o
+> -obj-$(CONFIG_ARCH_EXYNOS)	+=3D clk-exynos5433.o
+> +obj-$(CONFIG_EXYNOS5433_COMMON_CLK)	+=3D clk-exynos5433.o
+>  obj-$(CONFIG_SOC_EXYNOS5440)	+=3D clk-exynos5440.o
+>  obj-$(CONFIG_ARCH_EXYNOS)	+=3D clk-exynos-audss.o
+>  obj-$(CONFIG_ARCH_EXYNOS)	+=3D clk-exynos-clkout.o
+> -obj-$(CONFIG_ARCH_EXYNOS7)	+=3D clk-exynos7.o
+> +obj-$(CONFIG_EXYNOS7_COMMON_CLK)	+=3D clk-exynos7.o
+>  obj-$(CONFIG_S3C2410_COMMON_CLK)+=3D clk-s3c2410.o
+>  obj-$(CONFIG_S3C2410_COMMON_DCLK)+=3D clk-s3c2410-dclk.o
+>  obj-$(CONFIG_S3C2412_COMMON_CLK)+=3D clk-s3c2412.o
+> 
 
-Applied to clk-next
+Looks good to me.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+Regards,
+Chanwoo Choi
