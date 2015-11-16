@@ -1,58 +1,168 @@
-Return-Path: <bjorn@kryo.se>
-MIME-Version: 1.0
-In-Reply-To: <20151124005919.GN19156@codeaurora.org>
-References: <1447941480-27487-1-git-send-email-georgi.djakov@linaro.org>
-	<1447941480-27487-5-git-send-email-georgi.djakov@linaro.org>
-	<20151121003953.GD28998@codeaurora.org>
-	<20151122021820.GK30882@usrtlx11787.corpusers.net>
-	<20151124005919.GN19156@codeaurora.org>
-Date: Fri, 27 Nov 2015 08:24:30 -0800
-Message-ID: <CAJAp7OjM-No4Ji6eeFjvNHfmPgu6FZi8FTPRayv=-0DOsB4Aww@mail.gmail.com>
-Subject: Re: [PATCH v4 4/5] clk: qcom: Add RPM clock controller driver
-From: Bjorn Andersson <bjorn@kryo.se>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>,
-	Georgi Djakov <georgi.djakov@linaro.org>, "agross@codeaurora.org" <agross@codeaurora.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Julia Lawall <Julia.Lawall@lip6.fr>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v4 15/24] pwm: define a new pwm_state struct
+Date: Mon, 16 Nov 2015 09:56:38 +0100
+Message-Id: <1447664207-24370-16-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Nov 23, 2015 at 4:59 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 11/21, Bjorn Andersson wrote:
->> On Fri 20 Nov 16:39 PST 2015, Stephen Boyd wrote:
-[..]
->> Do you foresee that there will be an implementation of the generic rpmcc
->> or is it just a way to "standardize" the dt binding?
->>
->
-> I don't see any problem with implementing the RPM clock
-> controller as one file or two files (one for platform bus based
-> RPM modules and one for SMD bus RPM modules). The compatible can
-> be the same for both struct driver instances, while the bus will
-> pick the right driver. I suspect we'll need SoC specific
-> compatibles though to export the right set of clocks, so having
-> the generic compatible is mostly to find these rpm clock
-> controllers so that we know to skip registering the XO clock from
-> the GCC driver and not some generic implementation of the driver.
->
+The PWM state, represented by its period, duty_cycle and polarity,
+is currently directly stored in the PWM device.
+Declare a pwm_state structure embedding those field so that we can later
+use this struct to atomically update all the PWM parameters at once.
 
-Ahh, now I get it. So the generic rpmcc to be able to check if we have
-a rpmcc instance and then the specific for the actual implementation.
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/pwm/core.c  |  6 +++---
+ include/linux/pwm.h | 30 +++++++++++++++++++-----------
+ 2 files changed, 22 insertions(+), 14 deletions(-)
 
-I'm +1 on that.
-
-> There's probably a subset of the clocks that's always the same
-> between devices, so if we had to we could match the generic
-> compatible and provide limited functionality.
->
-
-After looking at a couple of platforms I don't think it's worth the
-effort of having a common list of rpm clocks. My suggestion is that we
-just continue with the suggested approach (having platform specific
-rpmcc defines and tables)
-
-Regards,
-Bjorn
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index 59073a1..f1c6769 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -447,8 +447,8 @@ int pwm_config(struct pwm_device *pwm, int duty_ns, int period_ns)
+ 	if (err)
+ 		return err;
+ 
+-	pwm->duty_cycle = duty_ns;
+-	pwm->period = period_ns;
++	pwm->state.duty_cycle = duty_ns;
++	pwm->state.period = period_ns;
+ 
+ 	return 0;
+ }
+@@ -485,7 +485,7 @@ int pwm_set_polarity(struct pwm_device *pwm, enum pwm_polarity polarity)
+ 	if (err)
+ 		goto unlock;
+ 
+-	pwm->polarity = polarity;
++	pwm->state.polarity = polarity;
+ 
+ unlock:
+ 	mutex_unlock(&pwm->lock);
+diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+index 8ba57fc..af42299 100644
+--- a/include/linux/pwm.h
++++ b/include/linux/pwm.h
+@@ -80,6 +80,18 @@ enum {
+ 	PWMF_EXPORTED = 1 << 2,
+ };
+ 
++/*
++ * struct pwm_state - state of a PWM channel
++ * @period: PWM period (in nanoseconds)
++ * @duty_cycle: PWM duty cycle (in nanoseconds)
++ * @polarity: PWM polarity
++ */
++struct pwm_state {
++	unsigned int period;
++	unsigned int duty_cycle;
++	enum pwm_polarity polarity;
++};
++
+ /**
+  * struct pwm_device - PWM channel object
+  * @label: name of the PWM device
+@@ -89,9 +101,7 @@ enum {
+  * @chip: PWM chip providing this PWM device
+  * @chip_data: chip-private data associated with the PWM device
+  * @lock: used to serialize accesses to the PWM device where necessary
+- * @period: period of the PWM signal (in nanoseconds)
+- * @duty_cycle: duty cycle of the PWM signal (in nanoseconds)
+- * @polarity: polarity of the PWM signal
++ * @state: curent PWM channel state
+  */
+ struct pwm_device {
+ 	const char *label;
+@@ -102,9 +112,7 @@ struct pwm_device {
+ 	void *chip_data;
+ 	struct mutex lock;
+ 
+-	unsigned int period;
+-	unsigned int duty_cycle;
+-	enum pwm_polarity polarity;
++	struct pwm_state state;
+ };
+ 
+ static inline bool pwm_is_enabled(const struct pwm_device *pwm)
+@@ -115,7 +123,7 @@ static inline bool pwm_is_enabled(const struct pwm_device *pwm)
+ static inline void pwm_set_period(struct pwm_device *pwm, unsigned int period)
+ {
+ 	if (pwm)
+-		pwm->period = period;
++		pwm->state.period = period;
+ }
+ 
+ static inline void pwm_set_default_period(struct pwm_device *pwm,
+@@ -126,7 +134,7 @@ static inline void pwm_set_default_period(struct pwm_device *pwm,
+ 
+ static inline unsigned int pwm_get_period(const struct pwm_device *pwm)
+ {
+-	return pwm ? pwm->period : 0;
++	return pwm ? pwm->state.period : 0;
+ }
+ 
+ static inline unsigned int pwm_get_default_period(const struct pwm_device *pwm)
+@@ -137,12 +145,12 @@ static inline unsigned int pwm_get_default_period(const struct pwm_device *pwm)
+ static inline void pwm_set_duty_cycle(struct pwm_device *pwm, unsigned int duty)
+ {
+ 	if (pwm)
+-		pwm->duty_cycle = duty;
++		pwm->state.duty_cycle = duty;
+ }
+ 
+ static inline unsigned int pwm_get_duty_cycle(const struct pwm_device *pwm)
+ {
+-	return pwm ? pwm->duty_cycle : 0;
++	return pwm ? pwm->state.duty_cycle : 0;
+ }
+ 
+ /*
+@@ -158,7 +166,7 @@ static inline void pwm_set_default_polarity(struct pwm_device *pwm,
+ 
+ static inline enum pwm_polarity pwm_get_polarity(const struct pwm_device *pwm)
+ {
+-	return pwm ? pwm->polarity : PWM_POLARITY_NORMAL;
++	return pwm ? pwm->state.polarity : PWM_POLARITY_NORMAL;
+ }
+ 
+ /**
+-- 
+2.1.4
