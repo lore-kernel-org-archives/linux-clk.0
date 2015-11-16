@@ -1,157 +1,81 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 25 Nov 2015 15:18:22 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 1/5] clk: sunxi: Add CLK_OF_DECLARE support for
- sun8i-a23-apb0-clk driver
-Message-ID: <20151125141822.GM32142@lukather>
-References: <1448357536-26613-1-git-send-email-wens@csie.org>
- <1448357536-26613-2-git-send-email-wens@csie.org>
+Return-Path: <broonie@sirena.org.uk>
+Date: Mon, 16 Nov 2015 10:55:58 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Julia Lawall <Julia.Lawall@lip6.fr>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Message-ID: <20151116105558.GB31303@sirena.org.uk>
+References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1447664207-24370-10-git-send-email-boris.brezillon@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="anmYPbAsEPjx7802"
-In-Reply-To: <1448357536-26613-2-git-send-email-wens@csie.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="z6Eq5LdranGa6ru8"
+In-Reply-To: <1447664207-24370-10-git-send-email-boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH v4 09/24] regulator: pwm: use pwm_get/set_default_xxx()
+ helpers where appropriate
 List-ID: <linux-clk.vger.kernel.org>
 
 
---anmYPbAsEPjx7802
+--z6Eq5LdranGa6ru8
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 24, 2015 at 05:32:12PM +0800, Chen-Yu Tsai wrote:
-> The APBS clock on sun9i is the same as the APB0 clock on sun8i. With
-> sun9i we are supporting the PRCM clocks by using CLK_OF_DECLARE,
-> instead of through a PRCM mfd device and subdevices for each clock
-> and reset control. As such we need a CLK_OF_DECLARE version of
-> the sun8i-a23-apb0-clk driver.
->=20
-> Also, build it for all Allwinner/sunxi platforms, and not just for
-> configurations with MFD_SUN6I_PRCM enabled.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  drivers/clk/sunxi/Makefile         |  4 ++--
->  drivers/clk/sunxi/clk-sun8i-apb0.c | 43 ++++++++++++++++++++++++++++++++=
-++++++
->  2 files changed, 45 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-> index cb4c299214ce..121333ce34ea 100644
-> --- a/drivers/clk/sunxi/Makefile
-> +++ b/drivers/clk/sunxi/Makefile
-> @@ -10,11 +10,11 @@ obj-y +=3D clk-a10-pll2.o
->  obj-y +=3D clk-a20-gmac.o
->  obj-y +=3D clk-mod0.o
->  obj-y +=3D clk-simple-gates.o
-> +obj-y +=3D clk-sun8i-apb0.o
->  obj-y +=3D clk-sun8i-mbus.o
->  obj-y +=3D clk-sun9i-core.o
->  obj-y +=3D clk-sun9i-mmc.o
->  obj-y +=3D clk-usb.o
+On Mon, Nov 16, 2015 at 09:56:32AM +0100, Boris Brezillon wrote:
+
+> +++ b/drivers/regulator/pwm-regulator.c
+> @@ -56,7 +56,7 @@ static int pwm_regulator_set_voltage_sel(struct regulat=
+or_dev *rdev,
+>  	int dutycycle;
+>  	int ret;
 > =20
->  obj-$(CONFIG_MFD_SUN6I_PRCM) +=3D \
-> -	clk-sun6i-ar100.o clk-sun6i-apb0.o clk-sun6i-apb0-gates.o \
-> -	clk-sun8i-apb0.o
-> +	clk-sun6i-ar100.o clk-sun6i-apb0.o clk-sun6i-apb0-gates.o
-
-I'd really prefer not to build a driver that is used only on a few
-SoCs if the support for these SoCs are not even enabled.
-
-> diff --git a/drivers/clk/sunxi/clk-sun8i-apb0.c b/drivers/clk/sunxi/clk-s=
-un8i-apb0.c
-> index 7ae5d2c2cde1..11b2f2fde245 100644
-> --- a/drivers/clk/sunxi/clk-sun8i-apb0.c
-> +++ b/drivers/clk/sunxi/clk-sun8i-apb0.c
-> @@ -17,8 +17,51 @@
->  #include <linux/clk-provider.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> +#include <linux/of_address.h>
->  #include <linux/platform_device.h>
+> -	pwm_reg_period =3D pwm_get_period(drvdata->pwm);
+> +	pwm_reg_period =3D pwm_get_default_period(drvdata->pwm);
 > =20
-> +static void sun8i_a23_apb0_setup(struct device_node *node)
-> +{
-> +	const char *clk_name =3D node->name;
-> +	const char *clk_parent;
-> +	void __iomem *reg;
-> +	struct resource res;
-> +	struct clk *clk;
-> +	int ret;
-> +
-> +	reg =3D of_io_request_and_map(node, 0, of_node_full_name(node));
-> +	if (IS_ERR(reg))
-> +		return;
-> +
-> +	clk_parent =3D of_clk_get_parent_name(node, 0);
-> +	if (!clk_parent)
-> +		goto err_unmap;
-> +
-> +	of_property_read_string(node, "clock-output-names", &clk_name);
-> +
-> +	/* The A23 APB0 clock is a standard 2 bit wide divider clock */
-> +	clk =3D clk_register_divider(NULL, clk_name, clk_parent, 0, reg,
-> +				   0, 2, CLK_DIVIDER_POWER_OF_TWO, NULL);
-> +	if (IS_ERR(clk))
-> +		goto err_unmap;
-> +
-> +	ret =3D of_clk_add_provider(node, of_clk_src_simple_get, clk);
-> +	if (ret)
-> +		goto err_unregister;
-> +
-> +	return;
-> +
-> +err_unregister:
-> +	clk_unregister_divider(clk);
-> +
-> +err_unmap:
-> +	iounmap(reg);
-> +	of_address_to_resource(node, 0, &res);
-> +	release_mem_region(res.start, resource_size(&res));
-> +}
-> +CLK_OF_DECLARE(sun8i_a23_apb0, "allwinner,sun8i-a23-apb0-clk",
-> +	       sun8i_a23_apb0_setup);
+>  	dutycycle =3D (pwm_reg_period *
+>  		    drvdata->duty_cycle_table[selector].dutycycle) / 100;
 
-So, beside the memory request / mapping, everything else is
-duplicated? Can't you just create a common function and call it from
-both?
+It's not clear to me that we're not looking for the current period here
+or in the other use.  Won't configuring based on a period other than the
+one that has been set give the wrong answer?
 
-Thanks,
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---anmYPbAsEPjx7802
+--z6Eq5LdranGa6ru8
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Version: GnuPG v2
 
-iQIcBAEBAgAGBQJWVcMuAAoJEBx+YmzsjxAgKaYP/iihm9DHT50xf2FmvS7iKDtw
-YFxU9k+4c6egiNrrhyyyzG6gX2zmPtA+Dayd+VBovKjL65HgmwJH1pVRdaskh5VN
-A/EF19js+Bt7g6gETiEwgUr6mkZY8M63EBZEGieVXexwZvv/B+l+KKtLBm18Xdt/
-67NVObxo9oxA4sJfZPwc5zGi3ETbx6sJKyPFBpfL5G3ri/sOvye21Fx7+4y9TRQL
-Uww98Vfjtv2r2SBUafDLkJv40iKfdj2OMAGDBwiuoEeyjp2L2vNr2qdfPBsXxDZt
-tXk0kH7hZ4AlrNxLvJu8zNUpzDA5jaKYAgt/6enEERofScKSX8Mdv10o5i2jo9bG
-oiZ2IeBr/c8hKTYWloCdzNGepVGL+vKfLLZi/MSlY7JU4kbfQLQnlTK2HcMM6Dkx
-DSukeegHYKDv/yjoQJClrTMGpMeBi5V/mskWR5Y66Kfm7p52iTfQcoeM/RufpnDg
-nY2t97+71KA3lFgLM21JkfQ3zRqPv5CwfT6Gb4vSW6Uous/I4hPmcCmkVOqtY2FB
-3eSovqx9d2k1QCM/r/ra8jWU5vvJsCpW4fMV21QXkoJ3kXq1XH2UtuAzgh2iS7iF
-TDLX8YsCP8vxbMmj1P7XDaObw6lXNziLJSwVvky+IA+PtjDn7LHr6H51w+8tACfo
-wya3izr48J4A/TqcJYll
-=fBzF
+iQEcBAEBCAAGBQJWSbY+AAoJECTWi3JdVIfQP9YH/3HzShiMLEHM9htE9zNi+b1X
+MKled9NiDc/GeTF0N91okJI0AYB953qVhV2jETJCizDuZlnLQS5o4d4dwFMcxo5V
+073JdENcBmchGG17/ZXvRViugGvrNtlGr9GetDwiL0CvD0kAxDnhWEoo/KPKsK05
+PEUzGzCsmaAsREQrybun3RQZHqBuBltRt1rYY8dO67r9DmYiqgOP6OUUC5Ra7W/m
+VkUjVpTMQh9CgjYpnMbXOTVo1K2H8RTS8Dd1httZ/jAbgeXo839WSmxynpWOz089
++OPFh9ouikJsJ29QUyBCqXuXozYcSOpQP80sFx+Jv8QyrEXGihhzEiG2pFxlYsE=
+=WKGz
 -----END PGP SIGNATURE-----
 
---anmYPbAsEPjx7802--
+--z6Eq5LdranGa6ru8--
