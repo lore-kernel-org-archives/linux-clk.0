@@ -1,26 +1,109 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 30 Nov 2015 12:59:10 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH] imx/clk-pllv1: fix wrong do_div() usage
-Message-ID: <20151130205910.GR11298@codeaurora.org>
-References: <alpine.LFD.2.20.1511031941300.630@knanqh.ubzr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <alpine.LFD.2.20.1511031941300.630@knanqh.ubzr>
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Julia Lawall <Julia.Lawall@lip6.fr>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v4 18/24] pwm: declare a default PWM state
+Date: Mon, 16 Nov 2015 09:56:41 +0100
+Message-Id: <1447664207-24370-19-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/03, Nicolas Pitre wrote:
-> do_div() is meant to be used with an unsigned dividend.
-> 
-> Signed-off-by: Nicolas Pitre <nico@linaro.org>
-> 
+Prepare the addition of the PWM initial state retrieval by adding a default
+state where all the parameters retrieved from DT, platform data or
+statically forced by the hardware will be stored.
+Once done we will be able to store the initial state in the ->state field
+without risking to loose the default parameters.
 
-Applied to clk-fixes
+Update the pwm_set/get_default_xxx helpers accordingly.
 
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Tested-by: Heiko Stuebner <heiko@sntech.de>
+---
+ include/linux/pwm.h | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+index 398c58c..292e7da 100644
+--- a/include/linux/pwm.h
++++ b/include/linux/pwm.h
+@@ -103,6 +103,7 @@ struct pwm_state {
+  * @chip_data: chip-private data associated with the PWM device
+  * @lock: used to serialize accesses to the PWM device where necessary
+  * @state: curent PWM channel state
++ * @default_state: default PWM channel state
+  */
+ struct pwm_device {
+ 	const char *label;
+@@ -114,6 +115,7 @@ struct pwm_device {
+ 	struct mutex lock;
+ 
+ 	struct pwm_state state;
++	struct pwm_state default_state;
+ };
+ 
+ static inline bool pwm_is_enabled(const struct pwm_device *pwm)
+@@ -130,7 +132,8 @@ static inline void pwm_set_period(struct pwm_device *pwm, unsigned int period)
+ static inline void pwm_set_default_period(struct pwm_device *pwm,
+ 					  unsigned int period)
+ {
+-	pwm_set_period(pwm, period);
++	if (pwm)
++		pwm->default_state.period = period;
+ }
+ 
+ static inline unsigned int pwm_get_period(const struct pwm_device *pwm)
+@@ -140,7 +143,7 @@ static inline unsigned int pwm_get_period(const struct pwm_device *pwm)
+ 
+ static inline unsigned int pwm_get_default_period(const struct pwm_device *pwm)
+ {
+-	return pwm_get_period(pwm);
++	return pwm ? pwm->default_state.period : 0;
+ }
+ 
+ static inline void pwm_set_duty_cycle(struct pwm_device *pwm, unsigned int duty)
+@@ -162,7 +165,8 @@ int pwm_set_polarity(struct pwm_device *pwm, enum pwm_polarity polarity);
+ static inline void pwm_set_default_polarity(struct pwm_device *pwm,
+ 					    enum pwm_polarity polarity)
+ {
+-	pwm_set_polarity(pwm, polarity);
++	if (pwm)
++		pwm->default_state.polarity = polarity;
+ }
+ 
+ static inline enum pwm_polarity pwm_get_polarity(const struct pwm_device *pwm)
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.4
