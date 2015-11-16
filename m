@@ -1,73 +1,73 @@
-Return-Path: <zhengxing@rock-chips.com>
-Message-ID: <56540880.6010601@rock-chips.com>
-Date: Tue, 24 Nov 2015 14:49:36 +0800
-From: Xing Zheng <zhengxing@rock-chips.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>, linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Julia Lawall <Julia.Lawall@lip6.fr>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v4 21/24] pwm: add information about polarity, duty cycle and period to debugfs
+Date: Mon, 16 Nov 2015 09:56:44 +0100
+Message-Id: <1447664207-24370-22-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
 MIME-Version: 1.0
-To: =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>
-CC: linux-rockchip@lists.infradead.org, kmixter@google.com,
- benchan@google.com, devicetree@vger.kernel.org,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kumar Gala <galak@codeaurora.org>,
- linux-kernel@vger.kernel.org,
- Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v7 0/6] Build and support rk3036 SoC platform
-References: <1446708840-12038-1-git-send-email-zhengxing@rock-chips.com> <1518219.zj9d8yfxJz@diego>
-In-Reply-To: <1518219.zj9d8yfxJz@diego>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-OK, Thanks Heiko. :-)
+From: Heiko Stübner <heiko@sntech.de>
 
-On 2015年11月24日 08:03, Heiko Stübner wrote:
-> Hi Xing Zheng,
->
-> Am Donnerstag, 5. November 2015, 15:33:54 schrieb Xing Zheng:
->> Hi,
->>    We need to support rk3036 soc platform via upstream, there are
->> some primary parts for the initial release of minimum system: dts,
->> clk-pll, smp, and clock tree for rk3036, and additional, we can use
->> these startup and run to init processs.
-> [...]
->
-> after talking with Mike and agreeing that I'm again taking the regular
-> clock patches to them, I've applied all of this to appropriate branches.
-> I did some cosmetics, as explained below.
->
->
->> Xing Zheng (6):
->>    dt-bindings: add documentation of rk3036 clock controller
->>    clk: rockchip: add dt-binding header for rk3036
->>    clk: rockchip: add new pll-type for rk3036 and similar socs
-> - wrapped some overly long lines, otherwise this is similar to what
->    Stephen already took for the rk3066-pll-type.
->
->
->>    clk: rockchip: add clock controller for rk3036
->>    ARM: dts: rockchip: add core rk3036 dts
-> - split off the evb into a separate patch
-> - reordered some nodes (please order by the address (the @xxxxxxxx)
-> - reordered some properties
-> - fixed the gic cpu masks
->
->
->>    ARM: dts: enable smp for rk3036
-> folded into the core dtsi addition
->
->
-> Please take a final look at [0] to make sure I didn't mess up anything.
->
->
-> Thanks
-> Heiko
->
->
-> [0]
-> https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.git/log/?h=v4.5-clk/next
-> https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.git/log/?h=v4.5-armsoc/dts32
->
->
->
+The pwm-states make it possible to also output the polarity, duty cycle
+and period information in the debugfs pwm summary-outout.
+This makes it easier to gather overview information about pwms without
+needing to walk through the sysfs attributes of every pwm.
+
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/pwm/core.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index fbc71d3..1619101 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -1035,6 +1035,11 @@ static void pwm_dbg_show(struct pwm_chip *chip, struct seq_file *s)
+ 		if (pwm_is_enabled(pwm))
+ 			seq_puts(s, " enabled");
+ 
++		seq_printf(s, " period:%uns", pwm_get_period(pwm));
++		seq_printf(s, " duty:%uns", pwm_get_duty_cycle(pwm));
++		seq_printf(s, " polarity:%s", pwm_get_polarity(pwm) ? "inverse"
++								    : "normal");
++
+ 		seq_puts(s, "\n");
+ 	}
+ }
+-- 
+2.1.4
+
