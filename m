@@ -1,92 +1,125 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:34795 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752446AbbKPI5R (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 16 Nov 2015 03:57:17 -0500
+Return-Path: <boris.brezillon@free-electrons.com>
 From: Boris Brezillon <boris.brezillon@free-electrons.com>
 To: Thierry Reding <thierry.reding@gmail.com>,
 	linux-pwm@vger.kernel.org
 Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
 	Mark Brown <broonie@kernel.org>,
 	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
 	Jean Delvare <jdelvare@suse.com>,
 	Guenter Roeck <linux@roeck-us.net>,
 	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
 	Richard Purdie <rpurdie@rpsys.net>,
 	Jacek Anaszewski <j.anaszewski@samsung.com>,
 	linux-leds@vger.kernel.org,
 	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
 	Joachim Eastwood <manabian@gmail.com>,
 	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
 	Heiko Stuebner <heiko@sntech.de>,
 	linux-rockchip@lists.infradead.org,
 	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>, linux-fbdev@vger.kernel.org,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
 	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
 	Tomi Valkeinen <tomi.valkeinen@ti.com>,
 	Robert Jarzmik <robert.jarzmik@free.fr>,
 	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
 	Julia Lawall <Julia.Lawall@lip6.fr>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
 	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v4 19/24] pwm: add the PWM initial state retrieval infra
-Date: Mon, 16 Nov 2015 09:56:42 +0100
-Message-Id: <1447664207-24370-20-git-send-email-boris.brezillon@free-electrons.com>
+Subject: [PATCH v4 04/24] hwmon: pwm-fan: use pwm_get_xxx() helpers where appropriate
+Date: Mon, 16 Nov 2015 09:56:27 +0100
+Message-Id: <1447664207-24370-5-git-send-email-boris.brezillon@free-electrons.com>
 In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
 References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a ->reset_state() function to the pwm_ops struct to let PWM drivers
-initialize the PWM state attached to a PWM device.
+Use pwm_get_xxx() helpers instead of directly accessing the pwm->xxx field.
+Doing that will ease adaptation of the PWM framework to support atomic
+update.
 
 Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
 ---
- drivers/pwm/core.c  | 3 +++
- include/linux/pwm.h | 4 ++++
- 2 files changed, 7 insertions(+)
+Patch generated with the following coccinelle script:
 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index 6bbda6c..ce8b373 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -271,6 +271,9 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
- 		pwm_set_default_polarity(pwm, polarity);
- 		mutex_init(&pwm->lock);
+--->8---
+virtual patch
+
+@@
+struct pwm_device *p;
+expression e;
+@@
+(
+-(p)->polarity = e;
++pwm_set_polarity((p), e);
+|
+-(p)->polarity
++pwm_get_polarity((p))
+|
+-(p)->period = e;
++pwm_set_period((p), e);
+|
+-(p)->period
++pwm_get_period((p))
+|
+-(p)->duty_cycle = e;
++pwm_set_duty_cycle((p), e);
+|
+-(p)->duty_cycle
++pwm_get_duty_cycle((p))
+)
+--->8---
+---
+ drivers/hwmon/pwm-fan.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
+index 3e23003..105b964 100644
+--- a/drivers/hwmon/pwm-fan.c
++++ b/drivers/hwmon/pwm-fan.c
+@@ -47,8 +47,8 @@ static int  __set_pwm(struct pwm_fan_ctx *ctx, unsigned long pwm)
+ 	if (ctx->pwm_value == pwm)
+ 		goto exit_set_pwm_err;
  
-+		if (chip->ops->reset_state)
-+			chip->ops->reset_state(chip, pwm);
-+
- 		radix_tree_insert(&pwm_tree, pwm->pwm, pwm);
- 	}
+-	duty = DIV_ROUND_UP(pwm * (ctx->pwm->period - 1), MAX_PWM);
+-	ret = pwm_config(ctx->pwm, duty, ctx->pwm->period);
++	duty = DIV_ROUND_UP(pwm * (pwm_get_period((ctx->pwm)) - 1), MAX_PWM);
++	ret = pwm_config(ctx->pwm, duty, pwm_get_period((ctx->pwm)));
+ 	if (ret)
+ 		goto exit_set_pwm_err;
  
-diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index 292e7da..caa0ffe 100644
---- a/include/linux/pwm.h
-+++ b/include/linux/pwm.h
-@@ -182,6 +182,9 @@ static inline enum pwm_polarity pwm_get_polarity(const struct pwm_device *pwm)
-  * @set_polarity: configure the polarity of this PWM
-  * @enable: enable PWM output toggling
-  * @disable: disable PWM output toggling
-+ * @reset_state: reset the current PWM state (pwm->state) to the actual
-+ *		 hardware state. This function is only called once per
-+ *		 PWM device when the PWM chip is registered.
-  * @dbg_show: optional routine to show contents in debugfs
-  * @owner: helps prevent removal of modules exporting active PWMs
-  */
-@@ -194,6 +197,7 @@ struct pwm_ops {
- 			    enum pwm_polarity polarity);
- 	int (*enable)(struct pwm_chip *chip, struct pwm_device *pwm);
- 	void (*disable)(struct pwm_chip *chip, struct pwm_device *pwm);
-+	void (*reset_state)(struct pwm_chip *chip, struct pwm_device *pwm);
- #ifdef CONFIG_DEBUG_FS
- 	void (*dbg_show)(struct pwm_chip *chip, struct seq_file *s);
- #endif
+@@ -234,10 +234,10 @@ static int pwm_fan_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, ctx);
+ 
+ 	/* Set duty cycle to maximum allowed */
+-	duty_cycle = ctx->pwm->period - 1;
++	duty_cycle = pwm_get_period((ctx->pwm)) - 1;
+ 	ctx->pwm_value = MAX_PWM;
+ 
+-	ret = pwm_config(ctx->pwm, duty_cycle, ctx->pwm->period);
++	ret = pwm_config(ctx->pwm, duty_cycle, pwm_get_period((ctx->pwm)));
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to configure PWM\n");
+ 		return ret;
+@@ -309,8 +309,9 @@ static int pwm_fan_resume(struct device *dev)
+ 	if (ctx->pwm_value == 0)
+ 		return 0;
+ 
+-	duty = DIV_ROUND_UP(ctx->pwm_value * (ctx->pwm->period - 1), MAX_PWM);
+-	ret = pwm_config(ctx->pwm, duty, ctx->pwm->period);
++	duty = DIV_ROUND_UP(ctx->pwm_value * (pwm_get_period((ctx->pwm)) - 1),
++			    MAX_PWM);
++	ret = pwm_config(ctx->pwm, duty, pwm_get_period((ctx->pwm)));
+ 	if (ret)
+ 		return ret;
+ 	return pwm_enable(ctx->pwm);
 -- 
 2.1.4
-
