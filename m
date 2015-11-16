@@ -1,168 +1,118 @@
-Return-Path: <robh@kernel.org>
-Date: Mon, 23 Nov 2015 15:37:08 -0600
-From: Rob Herring <robh@kernel.org>
-To: Josef Gajdusek <atx@atx.name>
-Cc: linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	gpatchesrdh@mveas.com, mturquette@linaro.org, hdegoede@redhat.com,
-	sboyd@codeaurora.org, mturquette@baylibre.com, emilio@elopez.com.ar,
-	linux@arm.linux.org.uk, edubezval@gmail.com, rui.zhang@intel.com,
-	wens@csie.org, maxime.ripard@free-electrons.com,
-	galak@codeaurora.org, ijc+devicetree@hellion.org.uk,
-	mark.rutland@arm.com, pawel.moll@arm.com
-Subject: Re: [PATCH v2 2/5] clk: sunxi: Add driver for the H3 THS clock
-Message-ID: <20151123213708.GA12308@rob-hp-laptop>
-References: <cover.1448263428.git.atx@atx.name>
- <077fddc9c8d41d4cf55b1dd1c7180c4adee0fce4.1448263428.git.atx@atx.name>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Mon, 16 Nov 2015 17:00:40 +0100
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Thierry Reding
+ <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Mike Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-clk@vger.kernel.org, Mark Brown <broonie@kernel.org>, Liam Girdwood
+ <lgirdwood@gmail.com>, Kamil Debski <k.debski@samsung.com>,
+ lm-sensors@lm-sensors.org, Jean Delvare <jdelvare@suse.com>, Dmitry
+ Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Bryan Wu
+ <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski
+ <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard
+ <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+ linux-sunxi@googlegroups.com, Joachim Eastwood <manabian@gmail.com>, Thomas
+ Petazzoni <thomas.petazzoni@free-electrons.com>, Heiko Stuebner
+ <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jingoo Han
+ <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+ linux-fbdev@vger.kernel.org, Jean-Christophe Plagniol-Villard
+ <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Robert
+ Jarzmik <robert.jarzmik@free.fr>, Alexandre Belloni
+ <alexandre.belloni@free-electrons.com>, Julia Lawall
+ <Julia.Lawall@lip6.fr>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, k.kozlowski.k@gmail.com
+Subject: Re: [PATCH v4 05/24] misc: max77693-haptic: use pwm_get_xxx()
+ helpers where appropriate
+Message-ID: <20151116170040.00110079@bbrezillon>
+In-Reply-To: <5649FC75.8020203@roeck-us.net>
+References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1447664207-24370-6-git-send-email-boris.brezillon@free-electrons.com>
+	<5649D5D0.6080204@samsung.com>
+	<20151116145509.3ea50eb0@bbrezillon>
+	<5649FC75.8020203@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <077fddc9c8d41d4cf55b1dd1c7180c4adee0fce4.1448263428.git.atx@atx.name>
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Nov 23, 2015 at 09:02:49AM +0100, Josef Gajdusek wrote:
-> This patch adds a driver for the THS clock which is present on the
-> Allwinner H3.
-> 
-> Signed-off-by: Josef Gajdusek <atx@atx.name>
+On Mon, 16 Nov 2015 07:55:33 -0800
+Guenter Roeck <linux@roeck-us.net> wrote:
 
-Acked-by: Rob Herring <robh@kernel.org>
+> On 11/16/2015 05:55 AM, Boris Brezillon wrote:
+> > Hi Krzysztof,
+> >
+> > On Mon, 16 Nov 2015 22:10:40 +0900
+> > Krzysztof Kozlowski <k.kozlowski@samsung.com> wrote:
+> >
+> >> W dniu 16.11.2015 o 17:56, Boris Brezillon pisze:
+> >>> Use pwm_get_xxx() helpers instead of directly accessing the pwm->xxx field.
+> >>> Doing that will ease adaptation of the PWM framework to support atomic
+> >>> update.
+> >>>
+> >>> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> >>> ---
+> >>> Patch generated with the following coccinelle script:
+> >>>
+> >>> --->8---
+> >>> virtual patch
+> >>>
+> >>> @@
+> >>> struct pwm_device *p;
+> >>> expression e;
+> >>> @@
+> >>> (
+> >>> -(p)->polarity = e;
+> >>> +pwm_set_polarity((p), e);
+> >>> |
+> >>> -(p)->polarity
+> >>> +pwm_get_polarity((p))
+> >>> |
+> >>> -(p)->period = e;
+> >>> +pwm_set_period((p), e);
+> >>> |
+> >>> -(p)->period
+> >>> +pwm_get_period((p))
+> >>> |
+> >>> -(p)->duty_cycle = e;
+> >>> +pwm_set_duty_cycle((p), e);
+> >>> |
+> >>> -(p)->duty_cycle
+> >>> +pwm_get_duty_cycle((p))
+> >>> )
+> >>> --->8---
+> >>> ---
+> >>>   drivers/input/misc/max77693-haptic.c | 7 ++++---
+> >>>   1 file changed, 4 insertions(+), 3 deletions(-)
+> >>>
+> >>> diff --git a/drivers/input/misc/max77693-haptic.c b/drivers/input/misc/max77693-haptic.c
+> >>> index 6d96bff..a038fb3 100644
+> >>> --- a/drivers/input/misc/max77693-haptic.c
+> >>> +++ b/drivers/input/misc/max77693-haptic.c
+> >>> @@ -70,10 +70,11 @@ struct max77693_haptic {
+> >>>
+> >>>   static int max77693_haptic_set_duty_cycle(struct max77693_haptic *haptic)
+> >>>   {
+> >>> -	int delta = (haptic->pwm_dev->period + haptic->pwm_duty) / 2;
+> >>> +	int delta = (pwm_get_period((haptic->pwm_dev)) + haptic->pwm_duty) / 2;
+> >>
+> >> Double parentheses over argument are not needed so just:
+> >> pwm_get_period(haptic->pwm_dev) + ...
+> >
+> > Actually it was generated with coccinelle, hence I didn't fix existing
+> > coding style issues, but I have no problem fixing them.
+> >
+> There was no existing coding style issue. Your coccinelle script introduces it.
+> You might want to consider updating your script and remove the unnecessary (( ))
+> from it.
 
-> ---
->  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
->  drivers/clk/sunxi/Makefile                        |  1 +
->  drivers/clk/sunxi/clk-h3-ths.c                    | 98 +++++++++++++++++++++++
->  3 files changed, 100 insertions(+)
->  create mode 100644 drivers/clk/sunxi/clk-h3-ths.c
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-> index 23e7bce..6d63b35 100644
-> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
-> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-> @@ -73,6 +73,7 @@ Required properties:
->  	"allwinner,sun8i-h3-usb-clk" - for usb gates + resets on H3
->  	"allwinner,sun9i-a80-usb-mod-clk" - for usb gates + resets on A80
->  	"allwinner,sun9i-a80-usb-phy-clk" - for usb phy gates + resets on A80
-> +	"allwinner,sun8i-h3-ths-clk" - for THS on H3
->  
->  Required properties for all clocks:
->  - reg : shall be the control register address for the clock.
-> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-> index f520af6..1bf8e1c 100644
-> --- a/drivers/clk/sunxi/Makefile
-> +++ b/drivers/clk/sunxi/Makefile
-> @@ -8,6 +8,7 @@ obj-y += clk-a10-hosc.o
->  obj-y += clk-a10-mod1.o
->  obj-y += clk-a10-pll2.o
->  obj-y += clk-a20-gmac.o
-> +obj-y += clk-h3-ths.o
->  obj-y += clk-mod0.o
->  obj-y += clk-simple-gates.o
->  obj-y += clk-sun8i-bus-gates.o
-> diff --git a/drivers/clk/sunxi/clk-h3-ths.c b/drivers/clk/sunxi/clk-h3-ths.c
-> new file mode 100644
-> index 0000000..663afc0
-> --- /dev/null
-> +++ b/drivers/clk/sunxi/clk-h3-ths.c
-> @@ -0,0 +1,98 @@
-> +/*
-> + * Sunxi THS clock driver
-> + *
-> + * Copyright (C) 2015 Josef Gajdusek
-> + *
-> + * This software is licensed under the terms of the GNU General Public
-> + * License version 2, as published by the Free Software Foundation, and
-> + * may be copied, distributed, and modified under those terms.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-> + * GNU General Public License for more details.
-> + *
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/of_address.h>
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
-> +
-> +#define SUN8I_H3_THS_CLK_ENABLE				31
-> +#define SUN8I_H3_THS_CLK_DIVIDER_SHIFT		0
-> +#define SUN8I_H3_THS_CLK_DIVIDER_WIDTH		2
-> +
-> +static DEFINE_SPINLOCK(sun8i_h3_ths_clk_lock);
-> +
-> +static const struct clk_div_table sun8i_h3_ths_clk_table[] __initconst = {
-> +	{ .val = 0, .div = 1 },
-> +	{ .val = 1, .div = 2 },
-> +	{ .val = 2, .div = 4 },
-> +	{ .val = 3, .div = 6 },
-> +	{ } /* sentinel */
-> +};
-> +
-> +static void __init sun8i_h3_ths_clk_setup(struct device_node *node)
-> +{
-> +	struct clk *clk;
-> +	struct clk_gate *gate;
-> +	struct clk_divider *div;
-> +	const char *parent;
-> +	const char *clk_name = node->name;
-> +	void __iomem *reg;
-> +	int err;
-> +
-> +	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-> +
-> +	if (IS_ERR(reg))
-> +		return;
-> +
-> +	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-> +	if (!gate)
-> +		goto err_unmap;
-> +
-> +	div = kzalloc(sizeof(*gate), GFP_KERNEL);
-> +	if (!div)
-> +		goto err_gate_free;
-> +
-> +	of_property_read_string(node, "clock-output-names", &clk_name);
-> +	parent = of_clk_get_parent_name(node, 0);
-> +
-> +	gate->reg = reg;
-> +	gate->bit_idx = SUN8I_H3_THS_CLK_ENABLE;
-> +	gate->lock = &sun8i_h3_ths_clk_lock;
-> +
-> +	div->reg = reg;
-> +	div->shift = SUN8I_H3_THS_CLK_DIVIDER_SHIFT;
-> +	div->width = SUN8I_H3_THS_CLK_DIVIDER_WIDTH;
-> +	div->table = sun8i_h3_ths_clk_table;
-> +	div->lock = &sun8i_h3_ths_clk_lock;
-> +
-> +	clk = clk_register_composite(NULL, clk_name, &parent, 1,
-> +				     NULL, NULL,
-> +				     &div->hw, &clk_divider_ops,
-> +				     &gate->hw, &clk_gate_ops,
-> +				     CLK_SET_RATE_PARENT);
-> +
-> +	if (IS_ERR(clk))
-> +		goto err_div_free;
-> +
-> +	err = of_clk_add_provider(node, of_clk_src_simple_get, clk);
-> +	if (err)
-> +		goto err_unregister_clk;
-> +
-> +	return;
-> +
-> +err_unregister_clk:
-> +	clk_unregister(clk);
-> +err_gate_free:
-> +	kfree(gate);
-> +err_div_free:
-> +	kfree(div);
-> +err_unmap:
-> +	iounmap(reg);
-> +}
-> +
-> +CLK_OF_DECLARE(sun8i_h3_ths_clk, "allwinner,sun8i-h3-ths-clk",
-> +	       sun8i_h3_ths_clk_setup);
-> -- 
-> 2.4.10
-> 
+My bad, you are right: my script is buggy. I'll fix that.
+
+Thanks,
+
+Boris
+
+
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
