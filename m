@@ -1,58 +1,74 @@
-Return-Path: <tyler.baker@linaro.org>
+Return-Path: <gabriel.fernandez@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20151125151100.GA31492@ulmo.nvidia.com>
-References: <1448032264-29622-1-git-send-email-jonathanh@nvidia.com>
-	<CANMBJr7vYb+kuUBzsC8i4b=b6DRVsbqnf5OrVtj6kVS2RMNgfQ@mail.gmail.com>
-	<20151125151100.GA31492@ulmo.nvidia.com>
-Date: Wed, 25 Nov 2015 07:52:13 -0800
-Message-ID: <CANMBJr598C1nd7awHdDx_j1uVNbnnAju1sgCvdmg1p6VO-FupQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: tegra: Fix bypassing of PLLs
-From: Tyler Baker <tyler.baker@linaro.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rhyland Klein <rklein@nvidia.com>,
-	"Kevin's boot bot" <khilman@kernel.org>
+In-Reply-To: <3719029.IbREgssWiU@wuerfel>
+References: <3719029.IbREgssWiU@wuerfel>
+From: Gabriel Fernandez <gabriel.fernandez@linaro.org>
+Date: Mon, 16 Nov 2015 09:27:11 +0100
+Message-ID: <CAG374jDjjWTSwW+Sbu=fX77pWk2OB-=J1z3zbcjwuobxgJMH2g@mail.gmail.com>
+Subject: Re: [PATCH] clk: st: avoid uninitialized variable use
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	"kernel@stlinux.com" <kernel@stlinux.com>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Patrice Chotard <patrice.chotard@st.com>,
+	Pankaj Dev <pankaj.dev@st.com>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Maxime Coquelin <maxime.coquelin@st.com>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 25 November 2015 at 07:11, Thierry Reding <thierry.reding@gmail.com> wrote:
-> On Mon, Nov 23, 2015 at 03:18:59PM -0800, Tyler Baker wrote:
->> Hi Jon,
->>
->> On 20 November 2015 at 07:11, Jon Hunter <jonathanh@nvidia.com> wrote:
->> > The _clk_disable_pll() function will attempt to place a PLL into bypass
->> > if the TEGRA_PLL_BYPASS is specified for the PLL and then disable the PLL
->> > by clearing the enable bit. To place the PLL into bypass, the bypass bit
->> > needs to be set and not cleared. Fix this by setting the bypass bit and
->> > not clearing it.
->> >
->> > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->>
->> The kernelci.org bot recently detected a jetson-tk1 boot failure[1][2]
->> in the tegra tree. This boot failure has only been observed when
->> booting with a multi_v7_defconfig kernel variant. The bot bisected[3]
->> this boot failure to this commit, and I confirmed reverting it on top
->> of the tegra for-next branch resolves the issue. The ramdisk[4] used
->> for booting is loaded with the modules from the build. It appears to
->> me that as the modules are being loaded in userspace by eudev the
->> jetson-tk1 locks up. I've sifted through the console logs a bit, and
->> found this splat to be most interesting[5].  Can you confirm this
->> issue on your end?
+On 12 November 2015 at 15:24, Arnd Bergmann <arnd@arndb.de> wrote:
+> quadfs_pll_fs660c32_round_rate prints a few structure members
+> that are never initialized, and also doesn't print the only one
+> it cares about. We get a gcc warning about the ones that
+> are printed:
 >
-> Just to close the loop on this: we've discussed this on IRC and came to
-> the conclusion that not using the bypass mode is safer (switching into
-> and out of bypass can glitch). I've dropped this patch for now and Jon
-> will be looking into a second revision of the patch which, in addition
-> to fixing bypass (the fix is legit, it just happens to break because of
-> the glitch, most likely), will also remove the BYPASS flag setting so
-> that bypass will not be used.
+> clk/st/clkgen-fsyn.c:560:93: warning: 'params.sdiv' may be used uninitialized in this function
+> clk/st/clkgen-fsyn.c:560:93: warning: 'params.mdiv' may be used uninitialized in this function
+> clk/st/clkgen-fsyn.c:560:93: warning: 'params.pe' may be used uninitialized in this function
+> clk/st/clkgen-fsyn.c:560:93: warning: 'params.nsdiv' may be used uninitialized in this function
+>
+> This changes the code to no longer print uninitialized data, and
+> for good measure it also prints the ndiv member that is being
+> set.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes: 5f7aa9071e93 ("clk: st: Support for QUADFS inside ClockGenB/C/D/E/F")
+>
+> diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
+> index 576cd0354d48..ccb324d97160 100644
+> --- a/drivers/clk/st/clkgen-fsyn.c
+> +++ b/drivers/clk/st/clkgen-fsyn.c
+> @@ -549,19 +549,20 @@ static int clk_fs660c32_vco_get_params(unsigned long input,
+>         return 0;
+>  }
+>
+> -static long quadfs_pll_fs660c32_round_rate(struct clk_hw *hw, unsigned long rate
+> -               , unsigned long *prate)
+> +static long quadfs_pll_fs660c32_round_rate(struct clk_hw *hw,
+> +                                          unsigned long rate,
+> +                                          unsigned long *prate)
+>  {
+>         struct stm_fs params;
+>
+> -       if (!clk_fs660c32_vco_get_params(*prate, rate, &params))
+> -               clk_fs660c32_vco_get_rate(*prate, &params, &rate);
+> +       if (clk_fs660c32_vco_get_params(*prate, rate, &params))
+> +               return rate;
+>
+> -       pr_debug("%s: %s new rate %ld [sdiv=0x%x,md=0x%x,pe=0x%x,nsdiv3=%u]\n",
+> +       clk_fs660c32_vco_get_rate(*prate, &params, &rate);
+> +
+> +       pr_debug("%s: %s new rate %ld [ndiv=%u]\n",
+>                  __func__, clk_hw_get_name(hw),
+> -                rate, (unsigned int)params.sdiv,
+> -                (unsigned int)params.mdiv,
+> -                (unsigned int)params.pe, (unsigned int)params.nsdiv);
+> +                rate, (unsigned int)params.ndiv);
+>
+>         return rate;
+>  }
+>
+>
+Acked-by: Gabriel Fernandez <gabriel.fernandez@linaro.org>
 
-Thanks for the update, I appreciate you guys looking into this issue.
-Please CC me on any fixes, I can re-test and give my tested-by.
-
-Cheers,
-
-Tyler
+Thanks
