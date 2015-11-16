@@ -1,158 +1,107 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-kernel@vger.kernel.org,
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	linux-pwm@vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH 1/6] clk: qcom: gdsc: Add support for hierarchical power domains
-Date: Thu, 26 Nov 2015 11:24:52 +0530
-Message-Id: <1448517297-32419-2-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1448517297-32419-1-git-send-email-rnayak@codeaurora.org>
-References: <1448517297-32419-1-git-send-email-rnayak@codeaurora.org>
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	lm-sensors@lm-sensors.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org,
+	Bryan Wu <cooloney@gmail.com>,
+	Richard Purdie <rpurdie@rpsys.net>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	linux-leds@vger.kernel.org,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com,
+	Joachim Eastwood <manabian@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	linux-fbdev@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Julia Lawall <Julia.Lawall@lip6.fr>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v4 24/24] regulator: pwm: properly initialize the ->state field
+Date: Mon, 16 Nov 2015 09:56:47 +0100
+Message-Id: <1447664207-24370-25-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some qcom SoCs' can have hierarchical power domains. Let the gdsc structs
-specify the parents (if any) and the driver add genpd subdomains for them.
+The ->state field is currently initialized to 0, thus referencing the
+voltage selector at index 0, which might not reflect the current voltage
+value.
+If possible, retrieve the current voltage selector from the PWM state, else
+return -EINVAL.
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Tested-by: Heiko Stuebner <heiko@sntech.de>
+Acked-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/clk/qcom/common.c | 14 +++++++++-----
- drivers/clk/qcom/gdsc.c   | 27 +++++++++++++++++++++++++--
- drivers/clk/qcom/gdsc.h   | 17 ++++++++++++-----
- 3 files changed, 46 insertions(+), 12 deletions(-)
+ drivers/regulator/pwm-regulator.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-index 8fa4772..cf100f9 100644
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -98,6 +98,7 @@ int qcom_cc_really_probe(struct platform_device *pdev,
- 	struct clk **clks;
- 	struct qcom_reset_controller *reset;
- 	struct qcom_cc *cc;
-+	struct gdsc_desc *scd;
- 	size_t num_clks = desc->num_clks;
- 	struct clk_regmap **rclks = desc->clks;
- 
-@@ -143,15 +144,18 @@ int qcom_cc_really_probe(struct platform_device *pdev,
- 	devm_add_action(dev, qcom_cc_reset_unregister, &reset->rcdev);
- 
- 	if (desc->gdscs && desc->num_gdscs) {
--		ret = gdsc_register(dev, desc->gdscs, desc->num_gdscs,
--				    &reset->rcdev, regmap);
-+		scd = devm_kzalloc(dev, sizeof(*scd), GFP_KERNEL);
-+		if (!scd)
-+			return -ENOMEM;
-+		scd->dev = dev;
-+		scd->scs = desc->gdscs;
-+		scd->num = desc->num_gdscs;
-+		ret = gdsc_register(scd, &reset->rcdev, regmap);
- 		if (ret)
- 			return ret;
-+		devm_add_action(dev, qcom_cc_gdsc_unregister, scd);
- 	}
- 
--	devm_add_action(dev, qcom_cc_gdsc_unregister, dev);
--
--
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(qcom_cc_really_probe);
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index da9fad8..a164c38 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -201,11 +201,14 @@ static int gdsc_init(struct gdsc *sc)
- 	return 0;
- }
- 
--int gdsc_register(struct device *dev, struct gdsc **scs, size_t num,
-+int gdsc_register(struct gdsc_desc *desc,
- 		  struct reset_controller_dev *rcdev, struct regmap *regmap)
- {
- 	int i, ret;
- 	struct genpd_onecell_data *data;
-+	struct device *dev = desc->dev;
-+	struct gdsc **scs = desc->scs;
-+	size_t num = desc->num;
- 
- 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
-@@ -228,10 +231,30 @@ int gdsc_register(struct device *dev, struct gdsc **scs, size_t num,
- 		data->domains[i] = &scs[i]->pd;
- 	}
- 
-+	/* Add subdomains */
-+	for (i = 0; i < num; i++) {
-+		if (!scs[i])
-+			continue;
-+		if (scs[i]->parent)
-+			pm_genpd_add_subdomain(scs[i]->parent, &scs[i]->pd);
-+	}
-+
- 	return of_genpd_add_provider_onecell(dev->of_node, data);
- }
- 
--void gdsc_unregister(struct device *dev)
-+void gdsc_unregister(struct gdsc_desc *desc)
- {
-+	int i;
-+	struct device *dev = desc->dev;
-+	struct gdsc **scs = desc->scs;
-+	size_t num = desc->num;
-+
-+	/* Remove subdomains */
-+	for (i = 0; i < num; i++) {
-+		if (!scs[i])
-+			continue;
-+		if (scs[i]->parent)
-+			pm_genpd_remove_subdomain(scs[i]->parent, &scs[i]->pd);
-+	}
- 	of_genpd_del_provider(dev->of_node);
- }
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index 5ded268..4e9dfc1 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -41,6 +41,7 @@ struct reset_controller_dev;
+diff --git a/drivers/regulator/pwm-regulator.c b/drivers/regulator/pwm-regulator.c
+index 9ffdbd6..449e3b3 100644
+--- a/drivers/regulator/pwm-regulator.c
++++ b/drivers/regulator/pwm-regulator.c
+@@ -41,10 +41,35 @@ struct pwm_voltages {
+ /**
+  * Voltage table call-backs
   */
- struct gdsc {
- 	struct generic_pm_domain	pd;
-+	struct generic_pm_domain	*parent;
- 	struct regmap			*regmap;
- 	unsigned int			gdscr;
- 	unsigned int			*cxcs;
-@@ -51,18 +52,24 @@ struct gdsc {
- 	unsigned int			reset_count;
- };
- 
-+struct gdsc_desc {
-+	struct device *dev;
-+	struct gdsc **scs;
-+	size_t num;
-+};
++static void pwm_regulator_init_state(struct regulator_dev *rdev)
++{
++	struct pwm_regulator_data *drvdata = rdev_get_drvdata(rdev);
++	struct pwm_state pwm_state;
++	unsigned int dutycycle;
++	int i;
 +
- #ifdef CONFIG_QCOM_GDSC
--int gdsc_register(struct device *, struct gdsc **, size_t n,
--		  struct reset_controller_dev *, struct regmap *);
--void gdsc_unregister(struct device *);
-+int gdsc_register(struct gdsc_desc *desc, struct reset_controller_dev *,
-+		  struct regmap *);
-+void gdsc_unregister(struct gdsc_desc *desc);
- #else
--static inline int gdsc_register(struct device *d, struct gdsc **g, size_t n,
-+static inline int gdsc_register(struct gdsc_desc *desc,
- 				struct reset_controller_dev *rcdev,
- 				struct regmap *r)
++	pwm_get_state(drvdata->pwm, &pwm_state);
++
++	if (!pwm_state.period)
++		return;
++
++	dutycycle = (pwm_state.duty_cycle * 100) / pwm_state.period;
++
++	for (i = 0; i < rdev->desc->n_voltages; i++) {
++		if (dutycycle == drvdata->duty_cycle_table[i].dutycycle) {
++			drvdata->state = i;
++			return;
++		}
++	}
++}
++
+ static int pwm_regulator_get_voltage_sel(struct regulator_dev *rdev)
  {
- 	return -ENOSYS;
+ 	struct pwm_regulator_data *drvdata = rdev_get_drvdata(rdev);
+ 
++	if (drvdata->state < 0)
++		pwm_regulator_init_state(rdev);
++
+ 	return drvdata->state;
  }
  
--static inline void gdsc_unregister(struct device *d) {};
-+static inline void gdsc_unregister(struct gdsc_desc *desc) {};
- #endif /* CONFIG_QCOM_GDSC */
- #endif /* __QCOM_GDSC_H__ */
+@@ -211,6 +236,7 @@ static int pwm_regulator_init_table(struct platform_device *pdev,
+ 		return ret;
+ 	}
+ 
++	drvdata->state			= -EINVAL;
+ 	drvdata->duty_cycle_table	= duty_cycle_table;
+ 	pwm_regulator_desc.ops		= &pwm_regulator_voltage_table_ops;
+ 	pwm_regulator_desc.n_voltages	= length / sizeof(*duty_cycle_table);
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.1.4
