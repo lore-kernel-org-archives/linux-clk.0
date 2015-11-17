@@ -1,144 +1,60 @@
-Return-Path: <wens@mirror2.csie.ntu.edu.tw>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
+Return-Path: <carlo.caione@gmail.com>
+Return-Path: <carlo.caione@gmail.com>
+Sender: Carlo Caione <carlo.caione@gmail.com>
+From: Carlo Caione <carlo@caione.org>
+To: robh+dt@kernel.org,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 4/5] ARM: dts: sun9i: Add A80 PRCM clocks and reset control nodes
-Date: Tue, 24 Nov 2015 17:32:15 +0800
-Message-Id: <1448357536-26613-5-git-send-email-wens@csie.org>
-In-Reply-To: <1448357536-26613-1-git-send-email-wens@csie.org>
-References: <1448357536-26613-1-git-send-email-wens@csie.org>
+	mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux@arm.linux.org.uk,
+	linux-meson@googlegroups.com,
+	drake@endlessm.com,
+	jerry.cao@amlogic.com,
+	victor.wan@amlogic.com,
+	pawel.moll@arm.com,
+	arnd@arndb.de
+Cc: Carlo Caione <carlo@endlessm.com>
+Subject: [PATCH 0/7] Add basic SMP support for Amlogic Meson8b
+Date: Tue, 17 Nov 2015 15:56:35 +0100
+Message-Id: <1447772202-12418-1-git-send-email-carlo@caione.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the supported PRCM clocks and reset controls to the A80 dtsi.
-The DAUDIO module clocks are not supported yet.
+From: Carlo Caione <carlo@endlessm.com>
 
-Also update clock and reset phandles for r_uart.
+This patchset adds SMP support for Amlogic Meson8b SoCs.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- arch/arm/boot/dts/sun9i-a80.dtsi | 79 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 78 insertions(+), 1 deletion(-)
+Patch 1 fix some paramater for L2 cache needed for SMP.
+Patches 2-4 add a small reset controller used to reset the CPU cores at boot.
+Patches 5-7 deal with the SMP code itself.
 
-diff --git a/arch/arm/boot/dts/sun9i-a80.dtsi b/arch/arm/boot/dts/sun9i-a80.dtsi
-index 1118bf5cc4fb..a4ce348c0831 100644
---- a/arch/arm/boot/dts/sun9i-a80.dtsi
-+++ b/arch/arm/boot/dts/sun9i-a80.dtsi
-@@ -164,6 +164,14 @@
- 					     "usb_phy2", "usb_hsic_12M";
- 		};
- 
-+		pll3: clk@06000008 {
-+			/* placeholder until implemented */
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-rate = <0>;
-+			clock-output-names = "pll3";
-+		};
-+
- 		pll4: clk@0600000c {
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun9i-a80-pll4-clk";
-@@ -350,6 +358,68 @@
- 					"apb1_uart2", "apb1_uart3",
- 					"apb1_uart4", "apb1_uart5";
- 		};
-+
-+		cpus_clk: clk@08001410 {
-+			compatible = "allwinner,sun9i-a80-cpus-clk";
-+			reg = <0x08001410 0x4>;
-+			#clock-cells = <0>;
-+			clocks = <&osc32k>, <&osc24M>, <&pll4>, <&pll3>;
-+			clock-output-names = "cpus";
-+		};
-+
-+		ahbs: ahbs_clk {
-+			compatible = "fixed-factor-clock";
-+			#clock-cells = <0>;
-+			clock-div = <1>;
-+			clock-mult = <1>;
-+			clocks = <&cpus_clk>;
-+			clock-output-names = "ahbs";
-+		};
-+
-+		apbs: clk@0800141c {
-+			compatible = "allwinner,sun8i-a23-apb0-clk";
-+			reg = <0x0800141c 0x4>;
-+			#clock-cells = <0>;
-+			clocks = <&ahbs>;
-+			clock-output-names = "apbs";
-+		};
-+
-+		apbs_gates: clk@08001428 {
-+			compatible = "allwinner,sun9i-a80-apbs-gates-clk";
-+			reg = <0x08001428 0x4>;
-+			#clock-cells = <1>;
-+			clocks = <&apbs>;
-+			clock-indices = <0>, <1>,
-+					<2>, <3>,
-+					<4>, <5>,
-+					<6>, <7>,
-+					<12>, <13>,
-+					<16>, <17>,
-+					<18>, <20>;
-+			clock-output-names = "apbs_pio", "apbs_ir",
-+					"apbs_timer", "apbs_rsb",
-+					"apbs_uart", "apbs_1wire",
-+					"apbs_i2c0", "apbs_i2c1",
-+					"apbs_ps2_0", "apbs_ps2_1",
-+					"apbs_dma", "apbs_i2s0",
-+					"apbs_i2s1", "apbs_twd";
-+		};
-+
-+		r_1wire_clk: clk@08001450 {
-+			reg = <0x08001450 0x4>;
-+			#clock-cells = <0>;
-+			compatible = "allwinner,sun4i-a10-mod0-clk";
-+			clocks = <&osc32k>, <&osc24M>;
-+			clock-output-names = "r_1wire";
-+		};
-+
-+		r_ir_clk: clk@08001454 {
-+			reg = <0x08001454 0x4>;
-+			#clock-cells = <0>;
-+			compatible = "allwinner,sun4i-a10-mod0-clk";
-+			clocks = <&osc32k>, <&osc24M>;
-+			clock-output-names = "r_ir";
-+		};
- 	};
- 
- 	soc {
-@@ -764,13 +834,20 @@
- 			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		apbs_rst: reset@080014b0 {
-+			reg = <0x080014b0 0x4>;
-+			compatible = "allwinner,sun6i-a31-clock-reset";
-+			#reset-cells = <1>;
-+		};
-+
- 		r_uart: serial@08002800 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x08002800 0x400>;
- 			interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
--			clocks = <&osc24M>;
-+			clocks = <&apbs_gates 4>;
-+			resets = <&apbs_rst 4>;
- 			status = "disabled";
- 		};
- 	};
+Carlo Caione (7):
+  ARM: DTS: meson8b: Extend L2 cache controller node
+  Documentation: bindings: Define CPU reset controller
+  clk: meson8b: Add reset controller for CPU cores
+  ARM: DTS: meson8b: Enable reset controller
+  Documentation: bindings: Add SMP related documentation
+  ARM: meson8b: Add SMP bringup code
+  ARM: DTS: meson8b: Add SMP related nodes
+
+ .../devicetree/bindings/arm/amlogic/pmu.txt        |  16 ++
+ .../devicetree/bindings/arm/amlogic/smp-sram.txt   |  32 +++
+ .../arm/cpu-enable-method/amlogic,meson8b-smp      |  53 +++++
+ .../bindings/clock/amlogic,meson8b-clkc.txt        |   6 +-
+ arch/arm/boot/dts/meson8b.dtsi                     |  32 +++
+ arch/arm/mach-meson/Kconfig                        |   1 +
+ arch/arm/mach-meson/Makefile                       |   1 +
+ arch/arm/mach-meson/platsmp.c                      | 228 +++++++++++++++++++++
+ drivers/clk/meson/clk-cpu.c                        |  60 +++++-
+ drivers/clk/meson/clkc.c                           |   5 +-
+ drivers/clk/meson/clkc.h                           |   6 +-
+ drivers/clk/meson/meson8b-clkc.c                   |   4 +-
+ include/dt-bindings/clock/meson8b-clkc.h           |   5 +
+ 13 files changed, 441 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/amlogic/pmu.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/amlogic/smp-sram.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/cpu-enable-method/amlogic,meson8b-smp
+ create mode 100644 arch/arm/mach-meson/platsmp.c
+
 -- 
-2.6.2
+2.5.0
