@@ -1,52 +1,49 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-Message-ID: <564E70A4.8060001@gmail.com>
-Date: Thu, 19 Nov 2015 17:00:20 -0800
-From: Florian Fainelli <f.fainelli@gmail.com>
+Return-Path: <Zhiqiang.Hou@freescale.com>
+From: Zhiqiang Hou <Zhiqiang.Hou@freescale.com>
+To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
+	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+CC: <mark.rutland@arm.com>, <linux@roeck-us.net>, <wsa@the-dreams.de>,
+	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <Mingkai.Hu@freescale.com>,
+	<Shaohui.Xie@freescale.com>, <scottwood@freescale.com>,
+	<bhupesh.sharma@freescale.com>, <Wenbin.Song@freescale.com>,
+	<B48286@freescale.com>, Hou Zhiqiang <Zhiqiang.Hou@freescale.com>
+Subject: [PATCHv8 1/5] i2c: imx: fix a compiling error
+Date: Tue, 17 Nov 2015 17:53:18 +0800
+Message-ID: <1447754002-40555-1-git-send-email-Zhiqiang.Hou@freescale.com>
 MIME-Version: 1.0
-To: linux-clk@vger.kernel.org
-CC: bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
- jonmason@broadcom.com, sboyd@codeaurora.org, mturquette@baylibre.com,
- linux@arm.linux.org.uk, sbranden@broadcom.com, rjui@broadcom.com
-Subject: Re: [PATCH v4 0/3] clk: Broadcom BCM63138 support
-References: <1446168199-5959-1-git-send-email-f.fainelli@gmail.com>
-In-Reply-To: <1446168199-5959-1-git-send-email-f.fainelli@gmail.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="UTF-8"
+Return-Path: Zhiqiang.Hou@freescale.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 29/10/15 18:23, Florian Fainelli wrote:
-> This patch series adds support for the Broadcom BCM63138 DSL SoCs
-> clocking framework.
-> 
-> Since the HW is identical to the one found in Broadcom iProc SoCs, but the
-> integration is different (obviously), there is still a new compatible string
-> introduced just in case we happen to find issues in the future.
-> 
-> Stephen, could you stage the two patches in a clk-bcm63xx branch that I could
-> later utilize while doing the arm-soc DT pull request?
+From: Hou Zhiqiang <Zhiqiang.Hou@freescale.com>
 
-Stephen, can you queue the first two patches in a topic branch for me to
-merge as part of the commit adding the DTS changes?
+drivers/i2c/busses/i2c-imx.c:978:2: error: implicit declaration of
+function ‘pinctrl_select_state’ [-Werror=implicit-function-declaration]
+  pinctrl_select_state(i2c_imx->pinctrl, i2c_imx->pinctrl_pins_gpio);
+  ^
 
-Thanks!
+Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@freescale.com>
+---
+V8:
+ - New patch.
 
-> 
-> Thank you!
-> 
-> Florian Fainelli (3):
->   clk: iproc: Extend binding to cover BCM63138
->   clk: bcm: Add BCM63138 clock support
->   ARM: dts: BCM63xx: Add ARMPLL device tree nodes
-> 
->  .../bindings/clock/brcm,iproc-clocks.txt           |  5 +++
->  arch/arm/boot/dts/bcm63138.dtsi                    | 36 +++++++++++++++++-----
->  drivers/clk/bcm/Kconfig                            | 10 ++++++
->  drivers/clk/bcm/Makefile                           |  1 +
->  drivers/clk/bcm/clk-bcm63xx.c                      | 22 +++++++++++++
->  5 files changed, 66 insertions(+), 8 deletions(-)
->  create mode 100644 drivers/clk/bcm/clk-bcm63xx.c
-> 
+ drivers/i2c/busses/i2c-imx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-
+diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+index 1e4d99d..9bb0b05 100644
+--- a/drivers/i2c/busses/i2c-imx.c
++++ b/drivers/i2c/busses/i2c-imx.c
+@@ -50,6 +50,7 @@
+ #include <linux/of_device.h>
+ #include <linux/of_dma.h>
+ #include <linux/of_gpio.h>
++#include <linux/pinctrl/consumer.h>
+ #include <linux/platform_data/i2c-imx.h>
+ #include <linux/platform_device.h>
+ #include <linux/sched.h>
 -- 
-Florian
+2.1.0.27.g96db324
