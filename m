@@ -1,67 +1,110 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.10]:61618 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750919AbbKYV0h (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 25 Nov 2015 16:26:37 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Eric Miao <eric.y.miao@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Chao Xie <chao.xie@marvell.com>,
-	Mike Turquette <mturquette@linaro.org>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/7] clk: mmp: stop using platform headers
-Date: Wed, 25 Nov 2015 22:26:01 +0100
-Message-ID: <3508030.Q62gfHvXvx@wuerfel>
-In-Reply-To: <20151125192114.GB11298@codeaurora.org>
-References: <1448465875-435039-1-git-send-email-arnd@arndb.de> <1448465875-435039-2-git-send-email-arnd@arndb.de> <20151125192114.GB11298@codeaurora.org>
+Return-Path: <robh@kernel.org>
+Date: Tue, 17 Nov 2015 13:30:46 -0600
+From: Rob Herring <robh@kernel.org>
+To: Carlo Caione <carlo@caione.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux@arm.linux.org.uk, linux-meson@googlegroups.com,
+	drake@endlessm.com, jerry.cao@amlogic.com, victor.wan@amlogic.com,
+	pawel.moll@arm.com, arnd@arndb.de,
+	Carlo Caione <carlo@endlessm.com>
+Subject: Re: [PATCH 5/7] Documentation: bindings: Add SMP related
+ documentation
+Message-ID: <20151117193046.GA31149@rob-hp-laptop>
+References: <1447772202-12418-1-git-send-email-carlo@caione.org>
+ <1447772202-12418-6-git-send-email-carlo@caione.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1447772202-12418-6-git-send-email-carlo@caione.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wednesday 25 November 2015 11:21:14 Stephen Boyd wrote:
-> On 11/25, Arnd Bergmann wrote:
-> > diff --git a/drivers/clk/mmp/clk-mmp2.c b/drivers/clk/mmp/clk-mmp2.c
-> > index 09d2832fbd78..38931dbd1eff 100644
-> > --- a/drivers/clk/mmp/clk-mmp2.c
-> > +++ b/drivers/clk/mmp/clk-mmp2.c
-> > @@ -9,6 +9,7 @@
-> >   * warranty of any kind, whether express or implied.
-> >   */
-> >  
-> > +#include <linux/clk.h>
+On Tue, Nov 17, 2015 at 03:56:40PM +0100, Carlo Caione wrote:
+> From: Carlo Caione <carlo@endlessm.com>
+
+Please give some indication in the subject what platform this change is 
+for:
+
+dt-bindings: amlogic: ...
+
 > 
-> Why are we adding this include? I don't see any clk consumer API
-> usage being added.
+> With this patch we add documentation for:
+> 
+> * power-management-unit: the PMU is used to bring up the cores during
+>   SMP operations
+> * sram: among other things the sram is used to store the first code
+>   executed by the core when it is powered up
+> * cpu-enable-method: the CPU enable method used by Amlogic Meson8b SoCs
+> 
+> Signed-off-by: Carlo Caione <carlo@endlessm.com>
+> ---
+>  .../devicetree/bindings/arm/amlogic/pmu.txt        | 16 +++++++
+>  .../devicetree/bindings/arm/amlogic/smp-sram.txt   | 32 +++++++++++++
+>  .../arm/cpu-enable-method/amlogic,meson8b-smp      | 53 ++++++++++++++++++++++
 
-Without these #includes, I get a build error:
 
-drivers/clk/mmp/clk-mmp2.c: In function 'mmp2_clk_init':
-drivers/clk/mmp/clk-mmp2.c:192:2: error: implicit declaration of function 'clk_set_rate' [-Werror=implicit-function-declaration]
-  clk_set_rate(clk, 14745600);
-  ^
-drivers/clk/mmp/clk-mmp2.c:251:2: error: implicit declaration of function 'clk_set_parent' [-Werror=implicit-function-declaration]
-  clk_set_parent(clk, vctcxo);
-  ^
-drivers/clk/mmp/clk-pxa168.c: In function 'pxa168_clk_init':
-drivers/clk/mmp/clk-pxa168.c:161:2: error: implicit declaration of function 'clk_set_rate' [-Werror=implicit-function-declaration]
-  clk_set_rate(uart_pll, 14745600);
-  ^
-drivers/clk/mmp/clk-pxa168.c:204:2: error: implicit declaration of function 'clk_set_parent' [-Werror=implicit-function-declaration]
-  clk_set_parent(clk, uart_pll);
-  ^
-drivers/clk/mmp/clk-pxa910.c: In function 'pxa910_clk_init':
-drivers/clk/mmp/clk-pxa910.c:166:2: error: implicit declaration of function 'clk_set_rate' [-Werror=implicit-function-declaration]
-  clk_set_rate(uart_pll, 14745600);
-  ^
-drivers/clk/mmp/clk-pxa910.c:209:2: error: implicit declaration of function 'clk_set_parent' [-Werror=implicit-function-declaration]
-  clk_set_parent(clk, uart_pll);
-  ^
+> diff --git a/Documentation/devicetree/bindings/arm/cpu-enable-method/amlogic,meson8b-smp b/Documentation/devicetree/bindings/arm/cpu-enable-method/amlogic,meson8b-smp
+> new file mode 100644
+> index 0000000..95ee458b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/cpu-enable-method/amlogic,meson8b-smp
+> @@ -0,0 +1,53 @@
+> +=========================================================
+> +Secondary CPU enable-method "amlogic,meson8b-smp" binding
+> +=========================================================
+> +
+> +This document describes the "amlogic,meson8b-smp" method for enabling secondary
+> +CPUs. To apply to all CPUs, a single "amlogic,meson8b-smp" enable method should
+> +be defined in the "cpus" node.
+> +
+> +Enable method name:	"amlogic,meson8b-smp"
 
-Is there anything I need to change here?
+Just add this to Documentation/devicetree/bindings/arm/cpus.txt and 
+remove this file.
 
-	Arnd
+> +Compatible machines:	"amlogic,meson8b"
+> +Compatible CPUs:	"arm,cortex-a5"
+> +Related properties:	(none)
+> +
+> +Example:
+> +
+> +	cpus {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		enable-method = "amlogic,meson8b-smp";
+> +
+> +		cpu@200 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a5";
+> +			next-level-cache = <&L2>;
+> +			reg = <0x200>;
+> +			resets = <&clkc RST_CORE0>;
+> +		};
+> +
+> +		cpu@201 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a5";
+> +			next-level-cache = <&L2>;
+> +			reg = <0x201>;
+> +			resets = <&clkc RST_CORE1>;
+> +		};
+> +
+> +		cpu@202 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a5";
+> +			next-level-cache = <&L2>;
+> +			reg = <0x202>;
+> +			resets = <&clkc RST_CORE2>;
+> +		};
+> +
+> +		cpu@203 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a5";
+> +			next-level-cache = <&L2>;
+> +			reg = <0x203>;
+> +			resets = <&clkc RST_CORE3>;
+> +		};
+> +	};
+> +
+> -- 
+> 2.5.0
+> 
