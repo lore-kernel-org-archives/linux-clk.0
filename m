@@ -1,35 +1,75 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 20 Nov 2015 10:54:56 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Nicolas Ferre <nicolas.ferre@atmel.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: at91: Revert "keep slow clk enabled to prevent
- system hang"
-Message-ID: <20151120185456.GV32672@codeaurora.org>
-References: <1447759593-20816-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <robh@kernel.org>
+Date: Tue, 17 Nov 2015 13:32:18 -0600
+From: Rob Herring <robh@kernel.org>
+To: Carlo Caione <carlo@caione.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux@arm.linux.org.uk, linux-meson@googlegroups.com,
+	drake@endlessm.com, jerry.cao@amlogic.com, victor.wan@amlogic.com,
+	pawel.moll@arm.com, arnd@arndb.de,
+	Carlo Caione <carlo@endlessm.com>
+Subject: Re: [PATCH 2/7] Documentation: bindings: Define CPU reset controller
+Message-ID: <20151117193218.GA2096@rob-hp-laptop>
+References: <1447772202-12418-1-git-send-email-carlo@caione.org>
+ <1447772202-12418-3-git-send-email-carlo@caione.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1447759593-20816-1-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1447772202-12418-3-git-send-email-carlo@caione.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/17, Alexandre Belloni wrote:
-> Commit dca1a4b5ff6e ("clk: at91: keep slow clk enabled to prevent system
-> hang") added a workaround for the slow clock as it is not properly handled
-> by its users.
+On Tue, Nov 17, 2015 at 03:56:37PM +0100, Carlo Caione wrote:
+> From: Carlo Caione <carlo@endlessm.com>
+
+Same here, a more specific subject please.
+
+Otherwise, looks fine.
+
 > 
-> Now that the slow clock is taken properly by the drivers, this workaround
-> is not necessary anymore, revert it.
+> The clock controller on Amlogic Meson8b SoCs has been extended with a
+> reset controller used to reset the CPU cores. It is used during SMP
+> bringup.
 > 
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> Acked-by: Michael Turquette <mturquette@baylibre.com>
+> With this patch we extend the clock controller documentation.
+> 
+> Signed-off-by: Carlo Caione <carlo@endlessm.com>
 > ---
-
-Applied to clk-next
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>  Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+> index 2b7b3fa..feeb4de 100644
+> --- a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+> @@ -1,7 +1,8 @@
+>  * Amlogic Meson8b Clock and Reset Unit
+>  
+>  The Amlogic Meson8b clock controller generates and supplies clock to various
+> -controllers within the SoC.
+> +controllers within the SoC and also implements a reset controller for the CPU
+> +cores.
+>  
+>  Required Properties:
+>  
+> @@ -13,16 +14,19 @@ Required Properties:
+>  	   mapped region.
+>  
+>  - #clock-cells: should be 1.
+> +- #reset-cells: should be 1.
+>  
+>  Each clock is assigned an identifier and client nodes can use this identifier
+>  to specify the clock which they consume. All available clocks are defined as
+>  preprocessor macros in the dt-bindings/clock/meson8b-clkc.h header and can be
+>  used in device tree sources.
+> +Similar identifiers exist for the CPU core reset lines.
+>  
+>  Example: Clock controller node:
+>  
+>  	clkc: clock-controller@c1104000 {
+>  		#clock-cells = <1>;
+> +		#reset-cells = <1>;
+>  		compatible = "amlogic,meson8b-clkc";
+>  		reg = <0xc1108000 0x4>, <0xc1104000 0x460>;
+>  	};
+> -- 
+> 2.5.0
+> 
