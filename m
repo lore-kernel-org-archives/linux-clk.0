@@ -1,293 +1,292 @@
-Return-Path: <jszhang@marvell.com>
-From: Jisheng Zhang <jszhang@marvell.com>
-To: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <sebastian.hesselbarth@gmail.com>, <antoine.tenart@free-electrons.com>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        Jisheng
- Zhang <jszhang@marvell.com>
-Subject: [PATCH v2 2/6] clk: berlin: add common clk driver for newer SoCs
-Date: Fri, 20 Nov 2015 16:42:28 +0800
-Message-ID: <1448008952-1787-3-git-send-email-jszhang@marvell.com>
-In-Reply-To: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
-References: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <carlo.caione@gmail.com>
+Return-Path: <carlo.caione@gmail.com>
+Sender: Carlo Caione <carlo.caione@gmail.com>
+From: Carlo Caione <carlo@caione.org>
+To: robh+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux@arm.linux.org.uk,
+	linux-meson@googlegroups.com,
+	drake@endlessm.com,
+	jerry.cao@amlogic.com,
+	victor.wan@amlogic.com,
+	pawel.moll@arm.com,
+	arnd@arndb.de
+Cc: Carlo Caione <carlo@endlessm.com>
+Subject: [PATCH 6/7] ARM: meson8b: Add SMP bringup code
+Date: Tue, 17 Nov 2015 15:56:41 +0100
+Message-Id: <1447772202-12418-7-git-send-email-carlo@caione.org>
+In-Reply-To: <1447772202-12418-1-git-send-email-carlo@caione.org>
+References: <1447772202-12418-1-git-send-email-carlo@caione.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add common clk driver for Marvell SoCs newer than BG2, BG2CD, BG2Q.
-berlin_clk_setup() is provided to setup and register such kind of clks.
+From: Carlo Caione <carlo@endlessm.com>
 
-Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+This adds the necessary SMP-operations and startup code to use the
+additional cores on the Amlogic Meson8b SoCs.
+
+Signed-off-by: Carlo Caione <carlo@endlessm.com>
 ---
- drivers/clk/berlin/Makefile |   2 +-
- drivers/clk/berlin/clk.c    | 203 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/berlin/clk.h    |  33 +++++++
- 3 files changed, 237 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/berlin/clk.c
- create mode 100644 drivers/clk/berlin/clk.h
+ arch/arm/mach-meson/Kconfig   |   1 +
+ arch/arm/mach-meson/Makefile  |   1 +
+ arch/arm/mach-meson/platsmp.c | 228 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 230 insertions(+)
+ create mode 100644 arch/arm/mach-meson/platsmp.c
 
-diff --git a/drivers/clk/berlin/Makefile b/drivers/clk/berlin/Makefile
-index eee42b0..ee2e09d 100644
---- a/drivers/clk/berlin/Makefile
-+++ b/drivers/clk/berlin/Makefile
-@@ -1,5 +1,5 @@
- obj-y += berlin2-avpll.o berlin2-pll.o berlin2-div.o
--obj-y += pll.o
-+obj-y += pll.o clk.o
- obj-$(CONFIG_MACH_BERLIN_BG2)	+= bg2.o
- obj-$(CONFIG_MACH_BERLIN_BG2CD)	+= bg2.o
- obj-$(CONFIG_MACH_BERLIN_BG2Q)	+= bg2q.o
-diff --git a/drivers/clk/berlin/clk.c b/drivers/clk/berlin/clk.c
+diff --git a/arch/arm/mach-meson/Kconfig b/arch/arm/mach-meson/Kconfig
+index 5d56f86..e171744 100644
+--- a/arch/arm/mach-meson/Kconfig
++++ b/arch/arm/mach-meson/Kconfig
+@@ -6,6 +6,7 @@ menuconfig ARCH_MESON
+ 	select CACHE_L2X0
+ 	select PINCTRL
+ 	select PINCTRL_MESON
++	select HAVE_ARM_SCU if SMP
+ 
+ if ARCH_MESON
+ 
+diff --git a/arch/arm/mach-meson/Makefile b/arch/arm/mach-meson/Makefile
+index 9d7380e..bc26c85 100644
+--- a/arch/arm/mach-meson/Makefile
++++ b/arch/arm/mach-meson/Makefile
+@@ -1 +1,2 @@
+ obj-$(CONFIG_ARCH_MESON) += meson.o
++obj-$(CONFIG_SMP) += platsmp.o
+diff --git a/arch/arm/mach-meson/platsmp.c b/arch/arm/mach-meson/platsmp.c
 new file mode 100644
-index 0000000..70f2b9d
+index 0000000..37c9102
 --- /dev/null
-+++ b/drivers/clk/berlin/clk.c
-@@ -0,0 +1,203 @@
++++ b/arch/arm/mach-meson/platsmp.c
+@@ -0,0 +1,228 @@
 +/*
-+ * Copyright (c) 2015 Marvell Technology Group Ltd.
++ * Copyright (C) 2015 Carlo Caione <carlo@endlessm.com>
 + *
-+ * Author: Jisheng Zhang <jszhang@marvell.com>
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
 + *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
++ * This program is distributed in the hope that it will be useful, but WITHOUT
 + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
 + * more details.
 + *
-+ * You should have received a copy of the GNU General Public License along with
-+ * this program.  If not, see <http://www.gnu.org/licenses/>.
 + */
 +
-+#include <linux/clk-provider.h>
++#include <linux/delay.h>
++#include <linux/init.h>
 +#include <linux/io.h>
 +#include <linux/of.h>
 +#include <linux/of_address.h>
-+#include <linux/slab.h>
++#include <linux/regmap.h>
++#include <linux/reset.h>
++#include <linux/smp.h>
++#include <linux/mfd/syscon.h>
++#include <asm/smp_scu.h>
++#include <asm/smp_plat.h>
 +
-+#include "clk.h"
++#define MESON_CPU_CTRL_REG			(0x00)
++#define MESON_CPU_CTRL_ADDR_REG(c)		(0x04 + ((c - 1) << 2))
 +
-+#define CLKEN		(1 << 0)
-+#define CLKPLLSEL_MASK	7
-+#define CLKPLLSEL_SHIFT	1
-+#define CLKPLLSWITCH	(1 << 4)
-+#define CLKSWITCH	(1 << 5)
-+#define CLKD3SWITCH	(1 << 6)
-+#define CLKSEL_MASK	7
-+#define CLKSEL_SHIFT	7
++#define MESON_CPU_AO_RTI_PWR_A9_CNTL0		(0x00)
++#define MESON_CPU_AO_RTI_PWR_A9_CNTL1		(0x04)
++#define MESON_CPU_AO_RTI_PWR_A9_MEM_PD0		(0x14)
 +
-+#define CLK_SOURCE_MAX	5
++#define MESON_CPU_PWR_A9_CNTL0_M(c)		(0x03 << ((c * 2) + 16))
++#define MESON_CPU_PWR_A9_CNTL1_M(c)		(0x03 << ((c + 1) << 1))
++#define MESON_CPU_PWR_A9_MEM_PD0_M(c)		(0x0f << (32 - (c * 4)))
++#define MESON_CPU_PWR_A9_CNTL1_ST(c)		(0x01 << (c + 16))
 +
-+struct berlin_clk {
-+	struct clk_hw hw;
-+	void __iomem *base;
-+};
++static void __iomem *sram_base;
++static void __iomem *scu_base;
++static struct regmap *pmu;
 +
-+#define to_berlin_clk(hw)	container_of(hw, struct berlin_clk, hw)
-+
-+static u8 clk_div[] = {1, 2, 4, 6, 8, 12, 1, 1};
-+
-+static unsigned long berlin_clk_recalc_rate(struct clk_hw *hw,
-+					unsigned long parent_rate)
++static void __init meson8b_smp_prepare_cpus(unsigned int max_cpus)
 +{
-+	u32 val, divider;
-+	struct berlin_clk *clk = to_berlin_clk(hw);
++	static struct device_node *node;
 +
-+	val = readl_relaxed(clk->base);
-+	if (val & CLKD3SWITCH)
-+		divider = 3;
-+	else {
-+		if (val & CLKSWITCH) {
-+			val >>= CLKSEL_SHIFT;
-+			val &= CLKSEL_MASK;
-+			divider = clk_div[val];
-+		} else
-+			divider = 1;
++	/* SMP SRAM */
++	node = of_find_compatible_node(NULL, NULL, "amlogic,meson8b-smp-sram");
++	if (!node) {
++		pr_err("Missing SRAM node\n");
++		return;
 +	}
 +
-+	return parent_rate / divider;
++	sram_base = of_iomap(node, 0);
++	if (!sram_base) {
++		pr_err("Couldn't map SRAM registers\n");
++		return;
++	}
++
++	/* PMU */
++	pmu = syscon_regmap_lookup_by_compatible("amlogic,meson8b-pmu");
++	if (IS_ERR(pmu)) {
++		pr_err("Couldn't map PMU registors\n");
++		return;
++	}
++
++	/* SCU */
++	node = of_find_compatible_node(NULL, NULL, "arm,cortex-a5-scu");
++	if (!node) {
++		pr_err("Missing SCU node\n");
++		return;
++	}
++
++	scu_base = of_iomap(node, 0);
++	if (!scu_base) {
++		pr_err("Couln't map SCU registers\n");
++		return;
++	}
++
++	scu_enable(scu_base);
 +}
 +
-+static u8 berlin_clk_get_parent(struct clk_hw *hw)
++static struct reset_control *meson_get_core_reset(int cpu)
 +{
-+	u32 val;
-+	struct berlin_clk *clk = to_berlin_clk(hw);
++	struct device_node *np;
 +
-+	val = readl_relaxed(clk->base);
-+	if (val & CLKPLLSWITCH) {
-+		val >>= CLKPLLSEL_SHIFT;
-+		val &= CLKPLLSEL_MASK;
-+		return val;
++	np = of_get_cpu_node(cpu, 0);
++
++	return of_reset_control_get(np, NULL);
++}
++
++static int meson8b_set_cpu_power_ctrl(unsigned int cpu, bool is_power_on)
++{
++	struct reset_control *rstc = meson_get_core_reset(cpu);
++	int ret;
++	u32 val;
++
++	if (is_power_on) {
++
++		/* CPU power UP */
++		ret = regmap_update_bits(pmu, MESON_CPU_AO_RTI_PWR_A9_CNTL0,
++					 MESON_CPU_PWR_A9_CNTL0_M(cpu), 0);
++		if (ret < 0) {
++			pr_err("Couldn't power up the CPU\n");
++			return ret;
++		}
++
++		udelay(5);
++
++		/* Reset enable */
++		reset_control_assert(rstc);
++
++		/* Memory power UP */
++		ret = regmap_update_bits(pmu, MESON_CPU_AO_RTI_PWR_A9_MEM_PD0,
++					 MESON_CPU_PWR_A9_MEM_PD0_M(cpu), 0);
++		if (ret < 0) {
++			pr_err("Couldn't power up the memory\n");
++			return ret;
++		}
++
++		/* Wake up CPU */
++		ret = regmap_update_bits(pmu, MESON_CPU_AO_RTI_PWR_A9_CNTL1,
++					 MESON_CPU_PWR_A9_CNTL1_M(cpu), 0);
++		if (ret < 0) {
++			pr_err("Couldn't wake up the CPU\n");
++			return ret;
++		}
++
++		udelay(10);
++
++		val = 0;
++		while (!(val & MESON_CPU_PWR_A9_CNTL1_ST(cpu))) {
++			ret = regmap_read(pmu, MESON_CPU_AO_RTI_PWR_A9_CNTL1, &val);
++			if (ret < 0) {
++				pr_err("CPU wake up failed\n");
++				return ret;
++			}
++		}
++
++		/* Isolation disable */
++		ret = regmap_update_bits(pmu, MESON_CPU_AO_RTI_PWR_A9_CNTL0,
++					 BIT(cpu), 0);
++		if (ret < 0) {
++			pr_err("Error when disabling isolation\n");
++			return ret;
++		}
++
++		/* Reset disable */
++		reset_control_deassert(rstc);
++
++	} else {
++
++		/* CPU power DOWN */
++		ret = regmap_update_bits(pmu, MESON_CPU_AO_RTI_PWR_A9_CNTL0,
++					 MESON_CPU_PWR_A9_CNTL0_M(cpu), 0x3);
++		if (ret < 0) {
++			pr_err("Couldn't power down the CPU\n");
++			return ret;
++		}
++
++		/* Isolation enable */
++		ret = regmap_update_bits(pmu, MESON_CPU_AO_RTI_PWR_A9_CNTL0,
++					 BIT(cpu), 0x3);
++		if (ret < 0) {
++			pr_err("Error when enabling isolation\n");
++			return ret;
++		}
++
++		udelay(10);
++
++		/* Sleep status */
++		ret = regmap_update_bits(pmu, MESON_CPU_AO_RTI_PWR_A9_CNTL1,
++					 MESON_CPU_PWR_A9_CNTL1_M(cpu), 0x3);
++		if (ret < 0) {
++			pr_err("Couldn't change sleep status\n");
++			return ret;
++		}
++
++		/* Memory power DOWN */
++		ret = regmap_update_bits(pmu, MESON_CPU_AO_RTI_PWR_A9_MEM_PD0,
++					 MESON_CPU_PWR_A9_MEM_PD0_M(cpu), 0xf);
++		if (ret < 0) {
++			pr_err("Couldn't power down the memory\n");
++			return ret;
++		}
 +	}
 +
 +	return 0;
 +}
 +
-+static int berlin_clk_enable(struct clk_hw *hw)
++static int meson8b_smp_boot_secondary(unsigned int cpu, struct task_struct *idle)
 +{
-+	u32 val;
-+	struct berlin_clk *clk = to_berlin_clk(hw);
++	unsigned long timeout;
++	int ret;
++	u32 reg;
 +
-+	val = readl_relaxed(clk->base);
-+	val |= CLKEN;
-+	writel_relaxed(val, clk->base);
++	ret = meson8b_set_cpu_power_ctrl(cpu, 1);
++	if (ret < 0)
++		return ret;
++
++	timeout = jiffies + (10 * HZ);
++	while (readl(sram_base + MESON_CPU_CTRL_ADDR_REG(cpu)))
++		if (!time_before(jiffies, timeout))
++			return -EPERM;
++
++	udelay(100);
++	writel(virt_to_phys(secondary_startup), sram_base + MESON_CPU_CTRL_ADDR_REG(cpu));
++
++	reg = readl(sram_base + MESON_CPU_CTRL_REG);
++	reg |= (BIT(cpu) | BIT(0));
++	writel(reg, sram_base + MESON_CPU_CTRL_REG);
 +
 +	return 0;
 +}
 +
-+static void berlin_clk_disable(struct clk_hw *hw)
++static void meson8b_smp_secondary_init(unsigned int cpu)
 +{
-+	u32 val;
-+	struct berlin_clk *clk = to_berlin_clk(hw);
-+
-+	val = readl_relaxed(clk->base);
-+	val &= ~CLKEN;
-+	writel_relaxed(val, clk->base);
++	scu_power_mode(scu_base, SCU_PM_NORMAL);
 +}
 +
-+static int berlin_clk_is_enabled(struct clk_hw *hw)
-+{
-+	u32 val;
-+	struct berlin_clk *clk = to_berlin_clk(hw);
-+
-+	val = readl_relaxed(clk->base);
-+	val &= CLKEN;
-+
-+	return val ? 1 : 0;
-+}
-+
-+static const struct clk_ops berlin_clk_ops = {
-+	.recalc_rate	= berlin_clk_recalc_rate,
-+	.get_parent	= berlin_clk_get_parent,
-+	.enable		= berlin_clk_enable,
-+	.disable	= berlin_clk_disable,
-+	.is_enabled	= berlin_clk_is_enabled,
++static struct smp_operations meson8b_smp_ops __initdata = {
++	.smp_prepare_cpus	= meson8b_smp_prepare_cpus,
++	.smp_boot_secondary	= meson8b_smp_boot_secondary,
++	.smp_secondary_init	= meson8b_smp_secondary_init,
 +};
 +
-+static struct clk * __init
-+berlin_clk_register(const char *name, int num_parents,
-+		    const char **parent_names, unsigned long flags,
-+		    void __iomem *base)
-+{
-+	struct clk *clk;
-+	struct berlin_clk *bclk;
-+	struct clk_init_data init;
-+
-+	bclk = kzalloc(sizeof(*bclk), GFP_KERNEL);
-+	if (!bclk)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &berlin_clk_ops;
-+	init.parent_names = parent_names;
-+	init.num_parents = num_parents;
-+	init.flags = flags;
-+
-+	bclk->base = base;
-+	bclk->hw.init = &init;
-+
-+	clk = clk_register(NULL, &bclk->hw);
-+	if (IS_ERR(clk))
-+		kfree(bclk);
-+
-+	return clk;
-+}
-+
-+void __init berlin_clk_setup(struct device_node *np,
-+			     const struct clk_desc *descs,
-+			     struct clk_onecell_data *clk_data,
-+			     int n)
-+{
-+	int i, ret, num_parents;
-+	void __iomem *base;
-+	struct clk **clks;
-+	const char *parent_names[CLK_SOURCE_MAX];
-+
-+	num_parents = of_clk_get_parent_count(np);
-+	if (num_parents <= 0 || num_parents > CLK_SOURCE_MAX)
-+		return;
-+
-+	of_clk_parent_fill(np, parent_names, num_parents);
-+
-+	clks = kcalloc(n, sizeof(struct clk *), GFP_KERNEL);
-+	if (!clks)
-+		return;
-+
-+	base = of_iomap(np, 0);
-+	if (WARN_ON(!base))
-+		goto err_iomap;
-+
-+	for (i = 0; i < n; i++) {
-+		struct clk *clk;
-+
-+		clk = berlin_clk_register(descs[i].name,
-+				num_parents, parent_names,
-+				descs[i].flags,
-+				base + descs[i].offset);
-+		if (WARN_ON(IS_ERR(clks[i])))
-+			goto err_clk_register;
-+		clks[i] = clk;
-+	}
-+
-+	clk_data->clks = clks;
-+	clk_data->clk_num = i;
-+
-+	ret = of_clk_add_provider(np, of_clk_src_onecell_get, clk_data);
-+	if (WARN_ON(ret))
-+		goto err_clk_register;
-+	return;
-+
-+err_clk_register:
-+	for (i = 0; i < n; i++)
-+		clk_unregister(clks[i]);
-+	iounmap(base);
-+err_iomap:
-+	kfree(clks);
-+}
-diff --git a/drivers/clk/berlin/clk.h b/drivers/clk/berlin/clk.h
-new file mode 100644
-index 0000000..5e5680e
---- /dev/null
-+++ b/drivers/clk/berlin/clk.h
-@@ -0,0 +1,33 @@
-+/*
-+ * Copyright (c) 2015 Marvell Technology Group Ltd.
-+ *
-+ * Author: Jisheng Zhang <jszhang@marvell.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License along with
-+ * this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#ifndef __BERLIN_CLK_H
-+#define __BERLIN_CLK_H
-+
-+struct clk_desc {
-+	const char	*name;
-+	u32		offset;
-+	unsigned long	flags;
-+};
-+
-+void __init berlin_clk_setup(struct device_node *np,
-+			     const struct clk_desc *desc,
-+			     struct clk_onecell_data *clk_data,
-+			     int n);
-+
-+#endif
++CPU_METHOD_OF_DECLARE(meson8b_smp, "amlogic,meson8b-smp", &meson8b_smp_ops);
 -- 
-2.6.2
+2.5.0
