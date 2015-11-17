@@ -1,58 +1,79 @@
-Return-Path: <vz@mleia.com>
-From: Vladimir Zapolskiy <vz@mleia.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: Russell King <linux@arm.linux.org.uk>,
-	Roland Stigge <stigge@antcom.de>,
-	linux-clk@vger.kernel.org,
+Return-Path: <carlo.caione@gmail.com>
+Return-Path: <carlo.caione@gmail.com>
+Sender: Carlo Caione <carlo.caione@gmail.com>
+From: Carlo Caione <carlo@caione.org>
+To: robh+dt@kernel.org,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 05/11] arm: dts: lpc32xx: add clock controller device node
-Date: Fri, 20 Nov 2015 03:05:05 +0200
-Message-Id: <1447981511-29653-6-git-send-email-vz@mleia.com>
-In-Reply-To: <1447981511-29653-1-git-send-email-vz@mleia.com>
-References: <1447981511-29653-1-git-send-email-vz@mleia.com>
+	linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux@arm.linux.org.uk,
+	linux-meson@googlegroups.com,
+	drake@endlessm.com,
+	jerry.cao@amlogic.com,
+	victor.wan@amlogic.com,
+	pawel.moll@arm.com,
+	arnd@arndb.de
+Cc: Carlo Caione <carlo@endlessm.com>
+Subject: [PATCH 4/7] ARM: DTS: meson8b: Enable reset controller
+Date: Tue, 17 Nov 2015 15:56:39 +0100
+Message-Id: <1447772202-12418-5-git-send-email-carlo@caione.org>
+In-Reply-To: <1447772202-12418-1-git-send-email-carlo@caione.org>
+References: <1447772202-12418-1-git-send-email-carlo@caione.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-NXP LPC32xx SoC has a clocking and power control unit (CPC) as a part
-of system control block (SCB). CPC is supplied by two external
-oscillators and it manages core and most of peripheral clocks, the
-change adds SCB and CPC descriptions to shared LPC32xx dtsi file.
+From: Carlo Caione <carlo@endlessm.com>
 
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+Extend the CPU nodes to use the reset controller.
+
+Signed-off-by: Carlo Caione <carlo@endlessm.com>
 ---
- arch/arm/boot/dts/lpc32xx.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ arch/arm/boot/dts/meson8b.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/boot/dts/lpc32xx.dtsi b/arch/arm/boot/dts/lpc32xx.dtsi
-index a9f2d9a..65023c1 100644
---- a/arch/arm/boot/dts/lpc32xx.dtsi
-+++ b/arch/arm/boot/dts/lpc32xx.dtsi
-@@ -247,6 +247,23 @@
- 			compatible = "simple-bus";
- 			ranges = <0x20000000 0x20000000 0x30000000>;
+diff --git a/arch/arm/boot/dts/meson8b.dtsi b/arch/arm/boot/dts/meson8b.dtsi
+index 745f0f9..977d55f 100644
+--- a/arch/arm/boot/dts/meson8b.dtsi
++++ b/arch/arm/boot/dts/meson8b.dtsi
+@@ -60,6 +60,7 @@
+ 			compatible = "arm,cortex-a5";
+ 			next-level-cache = <&L2>;
+ 			reg = <0x200>;
++			resets = <&clkc RST_CORE0>;
+ 		};
  
-+			/* System Control Block */
-+			scb {
-+				compatible = "simple-bus";
-+				ranges = <0x0 0x040004000 0x00001000>;
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+
-+				clk: clock-controller@0 {
-+					compatible = "nxp,lpc3220-clk";
-+					reg = <0x00 0x114>;
-+					#clock-cells = <1>;
-+
-+					clocks = <&xtal_32k>, <&xtal>;
-+					clock-names = "xtal_32k", "xtal";
-+				};
-+			};
-+
- 			/*
- 			 * MIC Interrupt controller includes:
- 			 *   MIC @40008000
+ 		cpu@201 {
+@@ -67,6 +68,7 @@
+ 			compatible = "arm,cortex-a5";
+ 			next-level-cache = <&L2>;
+ 			reg = <0x201>;
++			resets = <&clkc RST_CORE1>;
+ 		};
+ 
+ 		cpu@202 {
+@@ -74,6 +76,7 @@
+ 			compatible = "arm,cortex-a5";
+ 			next-level-cache = <&L2>;
+ 			reg = <0x202>;
++			resets = <&clkc RST_CORE2>;
+ 		};
+ 
+ 		cpu@203 {
+@@ -81,6 +84,7 @@
+ 			compatible = "arm,cortex-a5";
+ 			next-level-cache = <&L2>;
+ 			reg = <0x203>;
++			resets = <&clkc RST_CORE3>;
+ 		};
+ 	};
+ 
+@@ -153,6 +157,7 @@
+ 		};
+ 
+ 		clkc: clock-controller@c1104000 {
++			#reset-cells = <1>;
+ 			#clock-cells = <1>;
+ 			compatible = "amlogic,meson8b-clkc";
+ 			reg = <0xc1108000 0x4>, <0xc1104000 0x460>;
 -- 
-2.1.4
+2.5.0
