@@ -1,56 +1,96 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Eric Miao <eric.y.miao@gmail.com>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 3/7] ARM: mohawk: allow building with MMU disabled
-Date: Wed, 25 Nov 2015 16:37:51 +0100
-Message-Id: <1448465875-435039-4-git-send-email-arnd@arndb.de>
-In-Reply-To: <1448465875-435039-1-git-send-email-arnd@arndb.de>
-References: <1448465875-435039-1-git-send-email-arnd@arndb.de>
+Return-Path: <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH 1/2] clk: samsung: Don't build ARMv8 clock drivers on ARMv7
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+ Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>,
+ Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
+ Kevin Hilman <khilman@linaro.org>
+References: <1447637775-9887-1-git-send-email-k.kozlowski@samsung.com>
+ <1447637775-9887-2-git-send-email-k.kozlowski@samsung.com>
+From: "pankaj.dubey" <pankaj.dubey@samsung.com>
+Message-id: <564AADB2.3030400@samsung.com>
+Date: Tue, 17 Nov 2015 10:01:46 +0530
+MIME-version: 1.0
+In-reply-to: <1447637775-9887-2-git-send-email-k.kozlowski@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-It is in principle possible to build an MMP kernel for
-the mohawk CPU with the MMU code disabled, except for one
-simple build error:
 
-proc-mohawk.S:345: Error: invalid operands (*UND* and *UND* sections) for `|'
-proc-mohawk.S:345: Error: invalid operands (*ABS* and *UND* sections) for `|'
-proc-mohawk.S:345: Error: invalid operands (*UND* and *UND* sections) for `|'
-proc-mohawk.S:345: Error: invalid operands (*UND* and *UND* sections) for `|'
-proc-mohawk.S:345: Error: undefined symbol L_PTE_USER used as an immediate value
 
-This patch changes the proc-mohawk code to do the same as the
-other CPUs and not try to actually do anything for the
-cpu_mohawk_set_pte_ext function, which won't be used anyway.
+On Monday 16 November 2015 07:06 AM, Krzysztof Kozlowski wrote:
+> Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
+> so it is built also on ARMv7. This does not bring any kind of benefit.
+> There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
+> multi_v7 for ARMv7).
+> 
+> Instead build clock drivers only for respective SoC's architecture.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  drivers/clk/samsung/Kconfig  | 13 +++++++++++++
+>  drivers/clk/samsung/Makefile |  4 ++--
+>  2 files changed, 15 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+> index 84196ecdaa12..5f138fc4d84d 100644
+> --- a/drivers/clk/samsung/Kconfig
+> +++ b/drivers/clk/samsung/Kconfig
+> @@ -2,6 +2,7 @@ config COMMON_CLK_SAMSUNG
+>  	bool
+>  	select COMMON_CLK
+>  
+> +# ARMv7 SoCs:
+>  config S3C2410_COMMON_CLK
+>  	bool
+>  	select COMMON_CLK_SAMSUNG
+> @@ -24,3 +25,15 @@ config S3C2443_COMMON_CLK
+>  	bool
+>  	select COMMON_CLK_SAMSUNG
+>  
+> +# ARMv8 SoCs:
+> +config EXYNOS5433_COMMON_CLK
+> +	bool
+> +	depends on ARM64 || COMPILE_TEST
+> +	default ARCH_EXYNOS
+> +	select COMMON_CLK_SAMSUNG
+> +
+> +config EXYNOS7_COMMON_CLK
+> +	bool
+> +	depends on ARM64 || COMPILE_TEST
+> +	default ARCH_EXYNOS
+> +	select COMMON_CLK_SAMSUNG
+> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
+> index 5f6833ea355d..a31332a24ef4 100644
+> --- a/drivers/clk/samsung/Makefile
+> +++ b/drivers/clk/samsung/Makefile
+> @@ -10,11 +10,11 @@ obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
+>  obj-$(CONFIG_SOC_EXYNOS5260)	+= clk-exynos5260.o
+>  obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
+>  obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
+> -obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos5433.o
+> +obj-$(CONFIG_EXYNOS5433_COMMON_CLK)	+= clk-exynos5433.o
+>  obj-$(CONFIG_SOC_EXYNOS5440)	+= clk-exynos5440.o
+>  obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-audss.o
+>  obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-clkout.o
+> -obj-$(CONFIG_ARCH_EXYNOS7)	+= clk-exynos7.o
+> +obj-$(CONFIG_EXYNOS7_COMMON_CLK)	+= clk-exynos7.o
+>  obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
+>  obj-$(CONFIG_S3C2410_COMMON_DCLK)+= clk-s3c2410-dclk.o
+>  obj-$(CONFIG_S3C2412_COMMON_CLK)+= clk-s3c2412.o
+> 
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/mm/proc-mohawk.S | 2 ++
- 1 file changed, 2 insertions(+)
+So in this approach we need to add separate config for clock support of
+each ARM64 Exynos64 SoC. Is this fine?
 
-diff --git a/arch/arm/mm/proc-mohawk.S b/arch/arm/mm/proc-mohawk.S
-index d65edf717bf7..6f07d2ef4ff2 100644
---- a/arch/arm/mm/proc-mohawk.S
-+++ b/arch/arm/mm/proc-mohawk.S
-@@ -342,11 +342,13 @@ ENTRY(cpu_mohawk_switch_mm)
-  */
- 	.align	5
- ENTRY(cpu_mohawk_set_pte_ext)
-+#ifdef CONFIG_MMU
- 	armv3_set_pte_ext
- 	mov	r0, r0
- 	mcr	p15, 0, r0, c7, c10, 1		@ clean D entry
- 	mcr	p15, 0, r0, c7, c10, 4		@ drain WB
- 	ret	lr
-+#endif
- 
- .globl	cpu_mohawk_suspend_size
- .equ	cpu_mohawk_suspend_size, 4 * 6
--- 
-2.1.0.rc2
+Can we club compilation of each ARM64 Exynos SoC clock file under
+EXYNOS7_COMMON_CLK? As for all ARM64 SoC there is single defconfig and
+binary.
+
+
+Thanks,
+Pankaj Dubey
