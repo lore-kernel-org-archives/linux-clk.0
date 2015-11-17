@@ -1,79 +1,165 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Julia Lawall <Julia.Lawall@lip6.fr>,
+Return-Path: <carlo.caione@gmail.com>
+Return-Path: <carlo.caione@gmail.com>
+Sender: Carlo Caione <carlo.caione@gmail.com>
+From: Carlo Caione <carlo@caione.org>
+To: robh+dt@kernel.org,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v4 09/24] regulator: pwm: use pwm_get/set_default_xxx() helpers where appropriate
-Date: Mon, 16 Nov 2015 09:56:32 +0100
-Message-Id: <1447664207-24370-10-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+	mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux@arm.linux.org.uk,
+	linux-meson@googlegroups.com,
+	drake@endlessm.com,
+	jerry.cao@amlogic.com,
+	victor.wan@amlogic.com,
+	pawel.moll@arm.com,
+	arnd@arndb.de
+Cc: Carlo Caione <carlo@endlessm.com>
+Subject: [PATCH 5/7] Documentation: bindings: Add SMP related documentation
+Date: Tue, 17 Nov 2015 15:56:40 +0100
+Message-Id: <1447772202-12418-6-git-send-email-carlo@caione.org>
+In-Reply-To: <1447772202-12418-1-git-send-email-carlo@caione.org>
+References: <1447772202-12418-1-git-send-email-carlo@caione.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-pwm_set/get_default_xxx() helpers have been introduced to differentiate
-the default PWM states (those retrieved through DT, PWM lookup table or
-statically assigned by the driver) and the current ones.
-Make use of those helpers where appropriate.
+From: Carlo Caione <carlo@endlessm.com>
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
+With this patch we add documentation for:
+
+* power-management-unit: the PMU is used to bring up the cores during
+  SMP operations
+* sram: among other things the sram is used to store the first code
+  executed by the core when it is powered up
+* cpu-enable-method: the CPU enable method used by Amlogic Meson8b SoCs
+
+Signed-off-by: Carlo Caione <carlo@endlessm.com>
 ---
- drivers/regulator/pwm-regulator.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/arm/amlogic/pmu.txt        | 16 +++++++
+ .../devicetree/bindings/arm/amlogic/smp-sram.txt   | 32 +++++++++++++
+ .../arm/cpu-enable-method/amlogic,meson8b-smp      | 53 ++++++++++++++++++++++
+ 3 files changed, 101 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/amlogic/pmu.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/amlogic/smp-sram.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/cpu-enable-method/amlogic,meson8b-smp
 
-diff --git a/drivers/regulator/pwm-regulator.c b/drivers/regulator/pwm-regulator.c
-index 3aca067b..9ffdbd6 100644
---- a/drivers/regulator/pwm-regulator.c
-+++ b/drivers/regulator/pwm-regulator.c
-@@ -56,7 +56,7 @@ static int pwm_regulator_set_voltage_sel(struct regulator_dev *rdev,
- 	int dutycycle;
- 	int ret;
- 
--	pwm_reg_period = pwm_get_period(drvdata->pwm);
-+	pwm_reg_period = pwm_get_default_period(drvdata->pwm);
- 
- 	dutycycle = (pwm_reg_period *
- 		    drvdata->duty_cycle_table[selector].dutycycle) / 100;
-@@ -131,7 +131,7 @@ static int pwm_regulator_set_voltage(struct regulator_dev *rdev,
- {
- 	struct pwm_regulator_data *drvdata = rdev_get_drvdata(rdev);
- 	unsigned int ramp_delay = rdev->constraints->ramp_delay;
--	unsigned int period = pwm_get_period(drvdata->pwm);
-+	unsigned int period = pwm_get_default_period(drvdata->pwm);
- 	int duty_cycle;
- 	int ret;
- 
+diff --git a/Documentation/devicetree/bindings/arm/amlogic/pmu.txt b/Documentation/devicetree/bindings/arm/amlogic/pmu.txt
+new file mode 100644
+index 0000000..7b9b2da
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/amlogic/pmu.txt
+@@ -0,0 +1,16 @@
++Amlogic power-management-unit:
++-------------------------------
++
++The pmu is used to turn off and on different power domains of the SoCs
++This includes the power to the CPU cores.
++
++Required node properties:
++- compatible value : = "amlogic,meson8b-pmu";
++- reg : physical base address and the size of the registers window
++
++Example:
++
++	pmu@c81000e4 {
++		compatible = "amlogic,meson8b-pmu", "syscon";
++		reg = <0xc81000e0 0x18>;
++	};
+diff --git a/Documentation/devicetree/bindings/arm/amlogic/smp-sram.txt b/Documentation/devicetree/bindings/arm/amlogic/smp-sram.txt
+new file mode 100644
+index 0000000..455ca20
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/amlogic/smp-sram.txt
+@@ -0,0 +1,32 @@
++Amlogic SRAM for smp bringup:
++------------------------------
++
++Amlogic's smp-capable SoCs use part of the sram for the bringup of the cores.
++Once the core gets powered up it executes the code that is residing at a
++specific location.
++
++Therefore a reserved section sub-node has to be added to the mmio-sram
++declaration.
++
++Required sub-node properties:
++- compatible : should be "amlogic,meson8b-smp-sram"
++
++The rest of the properties should follow the generic mmio-sram discription
++found in ../../misc/sram.txt
++
++Example:
++
++	sram: sram@d9000000 {
++		compatible = "mmio-sram";
++		reg = <0xd9000000 0x20000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0xd9000000 0x20000>;
++
++		smp-sram@1ff80 {
++			compatible = "amlogic,meson8b-smp-sram";
++			reg = <0x1ff80 0x8>;
++		};
++	};
++
++
+diff --git a/Documentation/devicetree/bindings/arm/cpu-enable-method/amlogic,meson8b-smp b/Documentation/devicetree/bindings/arm/cpu-enable-method/amlogic,meson8b-smp
+new file mode 100644
+index 0000000..95ee458b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/cpu-enable-method/amlogic,meson8b-smp
+@@ -0,0 +1,53 @@
++=========================================================
++Secondary CPU enable-method "amlogic,meson8b-smp" binding
++=========================================================
++
++This document describes the "amlogic,meson8b-smp" method for enabling secondary
++CPUs. To apply to all CPUs, a single "amlogic,meson8b-smp" enable method should
++be defined in the "cpus" node.
++
++Enable method name:	"amlogic,meson8b-smp"
++Compatible machines:	"amlogic,meson8b"
++Compatible CPUs:	"arm,cortex-a5"
++Related properties:	(none)
++
++Example:
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		enable-method = "amlogic,meson8b-smp";
++
++		cpu@200 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a5";
++			next-level-cache = <&L2>;
++			reg = <0x200>;
++			resets = <&clkc RST_CORE0>;
++		};
++
++		cpu@201 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a5";
++			next-level-cache = <&L2>;
++			reg = <0x201>;
++			resets = <&clkc RST_CORE1>;
++		};
++
++		cpu@202 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a5";
++			next-level-cache = <&L2>;
++			reg = <0x202>;
++			resets = <&clkc RST_CORE2>;
++		};
++
++		cpu@203 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a5";
++			next-level-cache = <&L2>;
++			reg = <0x203>;
++			resets = <&clkc RST_CORE3>;
++		};
++	};
++
 -- 
-2.1.4
+2.5.0
