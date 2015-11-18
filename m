@@ -1,136 +1,89 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 06/16] clk: move core->parents allocation to clk_register()
-Date: Mon, 30 Nov 2015 16:34:43 +0900
-Message-Id: <1448868893-4575-7-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1448868893-4575-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1448868893-4575-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <anholt@eliezer.anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Remi Pommarel <repk@triplefau.lt>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Remi Pommarel <repk@triplefau.lt>
+Subject: Re: [PATCH v2 1/3] clk: bcm2835: Always round up clock divisor
+In-Reply-To: <1447251765-16297-2-git-send-email-repk@triplefau.lt>
+References: <1447251765-16297-1-git-send-email-repk@triplefau.lt> <1447251765-16297-2-git-send-email-repk@triplefau.lt>
+Date: Wed, 18 Nov 2015 10:25:45 -0800
+Message-ID: <87h9kj2mhi.fsf@eliezer.anholt.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently, __clk_core_init() allows failure of the kcalloc() for the
-core->parents.  So, clk_fetch_parent_index() and __clk_init_parent()
-also try to allocate core->parents in case it has not been allocated
-yet.  Scattering memory allocation here and there makes things
-complicated.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Like other clk_core members, allocate core->parents in clk_register()
-and let it fail in case of memory shortage.  If we cannot allocate
-such a small piece of memory, the system is already insane.  There is
-no point to postpone the memory allocation.
+Remi Pommarel <repk@triplefau.lt> writes:
 
-Also, allocate core->parents regardless of core->num_parents.  We want
-it even if core->num_parents == 1 because clk_fetch_parent_index()
-might be called against the clk_core with a single parent.
+> Make bcm2835_clock_choose_div always round up the chosen MASH divisor so =
+that
+> the resulting average rate will not be higher than the requested one.
+>
+> Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+> ---
+>  drivers/clk/bcm/clk-bcm2835.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+> index 39bf582..1237716 100644
+> --- a/drivers/clk/bcm/clk-bcm2835.c
+> +++ b/drivers/clk/bcm/clk-bcm2835.c
+> @@ -1152,18 +1152,19 @@ static u32 bcm2835_clock_choose_div(struct clk_hw=
+ *hw,
+>  {
+>  	struct bcm2835_clock *clock =3D bcm2835_clock_from_hw(hw);
+>  	const struct bcm2835_clock_data *data =3D clock->data;
+> -	u32 unused_frac_mask =3D GENMASK(CM_DIV_FRAC_BITS - data->frac_bits, 0);
+> +	u32 unused_frac_mask =3D
+> +		GENMASK(CM_DIV_FRAC_BITS - data->frac_bits, 0) >> 1;
+>  	u64 temp =3D (u64)parent_rate << CM_DIV_FRAC_BITS;
+> +	u64 rem;
+>  	u32 div;
+>=20=20
+> -	do_div(temp, rate);
+> +	rem =3D do_div(temp, rate);
+>  	div =3D temp;
+>=20=20
+> -	/* Round and mask off the unused bits */
+> -	if (unused_frac_mask !=3D 0) {
+> -		div +=3D unused_frac_mask >> 1;
+> -		div &=3D ~unused_frac_mask;
+> -	}
+> +	/* Round up and mask off the unused bits */
+> +	if ((div & unused_frac_mask) !=3D 0 || rem !=3D 0)
+> +		div +=3D unused_frac_mask + 1;
+> +	div &=3D ~unused_frac_mask;
 
-If core->num_parents == 0, core->parents is set to ZERO_SIZE_PTR. It
-is harmless because no access happens to core->parents in such a case.
+Suppose we've got 8 of our 12 frac bits populated.  You've added a ">>
+1" to the unused_frac_mask, so it's only 0x7 instead of 0xf.  When you
+say "round up", you add 0x8 (the high bit of the unused mask") then and
+with ~0x7.  If you started with 0x1 in the low bits of div, you'd end up
+with 0x8, so you've set an unused bit instead of actually rounding up.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Did my logic work, here?  I think you just want to drop the ">>1" in
+unused_frac_mask.
 
- drivers/clk/clk.c | 51 +++++++++++++++++++--------------------------------
- 1 file changed, 19 insertions(+), 32 deletions(-)
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 0f80c69..e05084e 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1067,13 +1067,6 @@ static int clk_fetch_parent_index(struct clk_core *core,
- {
- 	int i;
- 
--	if (!core->parents) {
--		core->parents = kcalloc(core->num_parents,
--					sizeof(*core->parents), GFP_KERNEL);
--		if (!core->parents)
--			return -ENOMEM;
--	}
--
- 	/*
- 	 * find index of new parent clock using cached parent ptrs,
- 	 * or if not yet cached, use string name comparison and cache
-@@ -1700,11 +1693,6 @@ static struct clk_core *__clk_init_parent(struct clk_core *core)
- 
- 	index = core->ops->get_parent(core->hw);
- 
--	if (!core->parents)
--		core->parents =
--			kcalloc(core->num_parents, sizeof(*core->parents),
--					GFP_KERNEL);
--
- 	ret = clk_core_get_parent_by_index(core, index);
- 
- out:
-@@ -2343,26 +2331,15 @@ static int __clk_core_init(struct clk_core *core)
- 				__func__, core->name);
- 
- 	/*
--	 * Allocate an array of struct clk *'s to avoid unnecessary string
--	 * look-ups of clk's possible parents.  This can fail for clocks passed
--	 * in to clk_init during early boot; thus any access to core->parents[]
--	 * must always check for a NULL pointer and try to populate it if
--	 * necessary.
-+	 * clk_core_lookup returns NULL for parents that have not been
-+	 * clk_init'd; thus any access to clk->parents[] must check
-+	 * for a NULL pointer.  We can always perform lazy lookups for
-+	 * missing parents later on.
- 	 */
--	if (core->num_parents > 1) {
--		core->parents = kcalloc(core->num_parents,
--					sizeof(*core->parents), GFP_KERNEL);
--		/*
--		 * clk_core_lookup returns NULL for parents that have not been
--		 * clk_init'd; thus any access to clk->parents[] must check
--		 * for a NULL pointer.  We can always perform lazy lookups for
--		 * missing parents later on.
--		 */
--		if (core->parents)
--			for (i = 0; i < core->num_parents; i++)
--				core->parents[i] =
--					clk_core_lookup(core->parent_names[i]);
--	}
-+	if (core->parents)
-+		for (i = 0; i < core->num_parents; i++)
-+			core->parents[i] =
-+				clk_core_lookup(core->parent_names[i]);
- 
- 	core->parent = __clk_init_parent(core);
- 
-@@ -2560,12 +2537,20 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
- 		}
- 	}
- 
-+	/* avoid unnecessary string look-ups of clk_core's possible parents. */
-+	core->parents = kcalloc(core->num_parents, sizeof(*core->parents),
-+				GFP_KERNEL);
-+	if (!core->parents) {
-+		ret = -ENOMEM;
-+		goto fail_parents;
-+	};
-+
- 	INIT_HLIST_HEAD(&core->clks);
- 
- 	hw->clk = __clk_create_clk(hw, NULL, NULL);
- 	if (IS_ERR(hw->clk)) {
- 		ret = PTR_ERR(hw->clk);
--		goto fail_parent_names_copy;
-+		goto fail_parents;
- 	}
- 
- 	ret = __clk_core_init(core);
-@@ -2575,6 +2560,8 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
- 	__clk_free_clk(hw->clk);
- 	hw->clk = NULL;
- 
-+fail_parents:
-+	kfree(core->parents);
- fail_parent_names_copy:
- 	while (--i >= 0)
- 		kfree_const(core->parent_names[i]);
--- 
-1.9.1
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJWTMKqAAoJELXWKTbR/J7oFbAP/RRzh/WofbiKoFE2W34d1ZBd
+N3X8jmM0PyyXuCOmp1TqmYovOobqL8bDzNSWqEcvsvUUZNmC5hhETTGs4msP2xpb
+m9eu/KqdXZpgLni3W62r/2QImZqbui76gBmJsXPOlsZFMuxEvEAv5BT5BZOn0OGk
+hQ9yzCPRThinA8P4DRf608e3fyNFOgOOMiMKDqbgPsDpUG7m6mOVqkgJeV/mkuJ6
+mIYEJP3BP5WBefxXS6nkVDda7CmaT2Oj+DP2OejX+UI9srNMPDXggJLZIqhdJgph
+afFTuWx4yScP4B2Mo2v3Bs8Cd3HB4FJWL+Ozl3JrX7xCWQsWTKBj+v60N4x5HzkF
+imDSQf3qUv9J1jcsXQLsvTIa0zo88MT1Eqce0ZaH1fekMlJHVZ7Vh13TkoQ9/HCq
+YyAi5Z5ZX/EB//gqPT4dHOr3QhBWSrSjOvLOlEiLcH+z4xX8+hBEYEX1J9vvvZiv
+KDuDSTneHqAGBJBl6eBLVZ0p0by3yJEFsDYREPCMqe8zS/VpqliZnBMhpB8MXa5T
+1I8+hUXO3mnMlUJB3JSlHPdsT3Rhf1oCx+jq32hXNcdfuKz8LDR7/I7qzadRHZF9
+yoiZaJ8UOhIX8Atz9yPtgavkrXXlafUl2vcT4oB5X/F3YjT1Sfxx44wI6SLWysZa
+rh/3rUsmcE3fjYS/UCPU
+=rpD/
+-----END PGP SIGNATURE-----
+--=-=-=--
