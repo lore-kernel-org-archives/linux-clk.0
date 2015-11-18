@@ -1,48 +1,47 @@
-Return-Path: <rjui@broadcom.com>
-From: Ray Jui <rjui@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<bcm-kernel-feedback-list@broadcom.com>, Simran Rai <ssimran@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>
-Subject: [PATCH 3/3] ARM: dts: enable audio clock support for Cygnus
-Date: Wed, 18 Nov 2015 10:08:09 -0800
-Message-ID: <1447870089-2382-4-git-send-email-rjui@broadcom.com>
-In-Reply-To: <1447870089-2382-1-git-send-email-rjui@broadcom.com>
-References: <1447870089-2382-1-git-send-email-rjui@broadcom.com>
+Return-Path: <khilman@deeprootsystems.com>
+Return-Path: <khilman@deeprootsystems.com>
+From: Kevin Hilman <khilman@kernel.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,  linux-kernel@vger.kernel.org,  linux-clk@vger.kernel.org,  linux-arm-msm@vger.kernel.org,  Simon Arlott <simon@fire.lp0.eu>,  Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] clk: qcom: Specify LE device endianness
+References: <1447108254-19864-1-git-send-email-sboyd@codeaurora.org>
+Date: Wed, 18 Nov 2015 13:55:45 -0800
+In-Reply-To: <1447108254-19864-1-git-send-email-sboyd@codeaurora.org> (Stephen
+	Boyd's message of "Mon, 9 Nov 2015 14:30:54 -0800")
+Message-ID: <7h610zx99a.fsf@deeprootsystems.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: rjui@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Simran Rai <ssimran@broadcom.com>
+Stephen Boyd <sboyd@codeaurora.org> writes:
 
-Add audio clock to the existing Broadcom Cygnus clock DT
+> All these clock controllers are little endian devices, but so far
+> we've been relying on the regmap mmio bus handling this for us
+> without explicitly stating that fact. After commit 4a98da2164cf
+> (regmap-mmio: Use native endianness for read/write, 2015-10-29),
+> the regmap mmio bus will read/write with the __raw_*() IO
+> accessors, instead of using the readl/writel() APIs that do
+> proper byte swapping for little endian devices.
+>
+> So if we're running on a big endian processor and haven't
+> specified the endianness explicitly in the regmap config or in
+> DT, we're going to switch from doing little endian byte swapping
+> to big endian accesses without byte swapping, leading to some
+> confusing results. On my apq8074 dragonboard, this causes the
+> device to fail to boot as we access the clock controller with
+> big endian IO accesses even though the device is little endian.
+>
+> Specify the endianness explicitly so that the regmap core
+> properly byte swaps the accesses for us.
+>
+> Reported-by: Kevin Hilman <khilman@linaro.org>
+> Cc: Simon Arlott <simon@fire.lp0.eu>
+> Cc: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Signed-off-by: Simran Rai <ssimran@broadcom.com>
-Reviewed-by: Ray Jui <rjui@broadcom.com>
-Reviewed-by: Scott Branden <sbranden@broadcom.com>
----
- arch/arm/boot/dts/bcm-cygnus-clock.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Tested-by: Kevin Hilman <khilman@linaro.org>
 
-diff --git a/arch/arm/boot/dts/bcm-cygnus-clock.dtsi b/arch/arm/boot/dts/bcm-cygnus-clock.dtsi
-index 32bcd45..80b6ba4 100644
---- a/arch/arm/boot/dts/bcm-cygnus-clock.dtsi
-+++ b/arch/arm/boot/dts/bcm-cygnus-clock.dtsi
-@@ -121,4 +121,13 @@ clocks {
- 		clocks = <&osc>;
- 		clock-output-names = "keypad", "adc/touch", "pwm";
- 	};
-+
-+	audiopll: audiopll {
-+		#clock-cells = <1>;
-+		compatible = "brcm,cygnus-audiopll";
-+		reg = <0x180aeb00 0x68>;
-+		clocks = <&osc>;
-+		clock-output-names = "audiopll", "ch0_audio",
-+					"ch1_audio", "ch2_audio";
-+	};
- };
--- 
-1.9.1
+Verified that this patch on top of next-20151118 gets my 2 8x94 boards
+booting again with big-endian kernel.
+
+Kevin
