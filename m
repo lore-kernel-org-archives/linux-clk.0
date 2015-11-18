@@ -1,49 +1,54 @@
-Return-Path: <wens@csie.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 18 Nov 2015 12:34:33 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: add generic driver for fixed rate clock
+Message-ID: <20151118203433.GE32672@codeaurora.org>
+References: <1378010420-20031-1-git-send-email-stefan.kristiansson@saunalahti.fi>
+ <CAMuHMdXhxuawY-V+35YoeZWZ3jZ-Vj_MzuRDGBfDD9i9iy=oGA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1446651896-22902-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1445964626-6484-2-git-send-email-jenskuske@gmail.com> <1446651896-22902-1-git-send-email-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 5 Nov 2015 10:28:00 +0800
-Message-ID: <CAGb2v651vNyUqE_LXYnuYNhN0siywtg7Pt1TDQZUMxwZ3psmJg@mail.gmail.com>
-Subject: Re: [PATCH] clk: sunxi: Refactor A31 PLL6 so that it can be reused
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Jens Kuske <jenskuske@gmail.com>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>, Hans de Goede <hdegoede@redhat.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAMuHMdXhxuawY-V+35YoeZWZ3jZ-Vj_MzuRDGBfDD9i9iy=oGA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Nov 4, 2015 at 11:44 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Remove the fixed dividers from the PLL6 driver to be able to have a
-> reusable driver that can be used across several SoCs that share the same
-> controller, but don't have the same set of dividers for this clock, and to
-> also be reused multiple times in the same SoC, since we're droping the
-> clock name.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
-> Hi Jens,
->
-> Here is an alternative (untested) patch to deal with the PLL6 issue you're
-> experiencing with the H3.
->
-> It doesn't rely on parsing clock-output-names that turns out to be pretty
-> fragile.
+On 11/17, Geert Uytterhoeven wrote:
+> Hi Stefan,
+> 
+> (quoting the full driver, as it predates linux-clk)
+> 
+> On Sun, Sep 1, 2013 at 6:40 AM, Stefan Kristiansson
+> <stefan.kristiansson@saunalahti.fi> wrote:
+> > This adds a simple driver with the only purpose to initialise
+> > the fixed rate clock.
+> > This is useful for systems that do not wish to use seperate init
+> > code for the fixed rate clock init, but rather only rely on a
+> > device tree description of it.
+> >
+> > Signed-off-by: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
+> 
+> Thanks, this is still very useful!
+> 
+> I stumbled across this old patch while trying to instantiate a fixed rate
+> clock from a DT overlay.
+> Without this, the clock is never instantiated, as drivers/clk/clk-fixed-rate.c
+> uses CLK_OF_DECLARE() :-( With your driver, it works as expected
+> (after fixing the modpost complaint, cfr. below).
+> 
+> However, I think that instead of creating a new driver, you should just add
+> the meat of clk-generic-fixed.c to clk-fixed-rate.c.
 
-A quick look through. I've no problems with changing the design, but I'd
-like to keep the original names, i.e. pll6x2 for the clock module bits,
-and pll6 for the fixed divider. It better matches the user manual.
+Hm... what happens when of_clk_init() runs and instantiates the
+clock, and then of_platform_populate() runs and creates the clock
+again? The platform device probe fails because the framework
+checks to make sure two clocks don't have the same name? I guess
+that's going to work, but it doesn't make me feel good.
 
->From the PLL6 register description:
-In the Clock Control Module, PLL(2X) output = PLL * 2= 24 MHz * N * K.
-
-And all places that use the "normal" output say PLL_PERIPH (that is PLL6),
-while MBUS on A23/A33 use the 2X output, and say PLL_PERIPH(2X).
-
-On the side, do we want to get rid of all the divs clocks?
-
-Regards
-ChenYu
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
