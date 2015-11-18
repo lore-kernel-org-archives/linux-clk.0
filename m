@@ -1,118 +1,81 @@
-Return-Path: <zywang33@gmail.com>
-Return-Path: <zywang33@gmail.com>
-From: Chris Zhong <zyw@rock-chips.com>
-To: dianders@chromium.org
-Cc: Chris Zhong <zyw@rock-chips.com>,
+Return-Path: <repk@triplefau.lt>
+Date: Wed, 18 Nov 2015 20:11:41 +0100
+From: Remi Pommarel <repk@triplefau.lt>
+To: Eric Anholt <eric@anholt.net>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Heiko Stuebner <heiko@sntech.de>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3] clk: rockchip: switch PLLs to slow mode before reboot for rk3288
-Date: Wed, 11 Nov 2015 15:09:59 +0800
-Message-Id: <1447225799-23996-1-git-send-email-zyw@rock-chips.com>
+	linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] clk: bcm2835: Always round up clock divisor
+Message-ID: <20151118191141.GB491@cruxbox>
+References: <1447251765-16297-1-git-send-email-repk@triplefau.lt>
+ <1447251765-16297-2-git-send-email-repk@triplefau.lt>
+ <87h9kj2mhi.fsf@eliezer.anholt.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <87h9kj2mhi.fsf@eliezer.anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-We've been seeing some crashes at reboot test on rk3288-based systems,
-which boards have not reset pin connected to NPOR, they reboot by
-setting 0xfdb9 to RK3288_GLB_SRST_FST register. If the APLL works in
-a high frequency mode, some IPs might hang during soft reset.
-It appears that we can fix the problem by switching to slow mode before
-reboot, just like what we did before suspend.
+Hi,
 
-Signed-off-by: Chris Zhong <zyw@rock-chips.com>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+On Wed, Nov 18, 2015 at 10:25:45AM -0800, Eric Anholt wrote:
+> Remi Pommarel <repk@triplefau.lt> writes:
+> 
+> > Make bcm2835_clock_choose_div always round up the chosen MASH divisor so that
+> > the resulting average rate will not be higher than the requested one.
+> >
+> > Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+> > ---
+> >  drivers/clk/bcm/clk-bcm2835.c | 15 ++++++++-------
+> >  1 file changed, 8 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+> > index 39bf582..1237716 100644
+> > --- a/drivers/clk/bcm/clk-bcm2835.c
+> > +++ b/drivers/clk/bcm/clk-bcm2835.c
+> > @@ -1152,18 +1152,19 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
+> >  {
+> >  	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
+> >  	const struct bcm2835_clock_data *data = clock->data;
+> > -	u32 unused_frac_mask = GENMASK(CM_DIV_FRAC_BITS - data->frac_bits, 0);
+> > +	u32 unused_frac_mask =
+> > +		GENMASK(CM_DIV_FRAC_BITS - data->frac_bits, 0) >> 1;
+> >  	u64 temp = (u64)parent_rate << CM_DIV_FRAC_BITS;
+> > +	u64 rem;
+> >  	u32 div;
+> >  
+> > -	do_div(temp, rate);
+> > +	rem = do_div(temp, rate);
+> >  	div = temp;
+> >  
+> > -	/* Round and mask off the unused bits */
+> > -	if (unused_frac_mask != 0) {
+> > -		div += unused_frac_mask >> 1;
+> > -		div &= ~unused_frac_mask;
+> > -	}
+> > +	/* Round up and mask off the unused bits */
+> > +	if ((div & unused_frac_mask) != 0 || rem != 0)
+> > +		div += unused_frac_mask + 1;
+> > +	div &= ~unused_frac_mask;
+> 
+> Suppose we've got 8 of our 12 frac bits populated.  You've added a ">>
+> 1" to the unused_frac_mask, so it's only 0x7 instead of 0xf.  When you
+> say "round up", you add 0x8 (the high bit of the unused mask") then and
+> with ~0x7.  If you started with 0x1 in the low bits of div, you'd end up
+> with 0x8, so you've set an unused bit instead of actually rounding up.
+> 
+> Did my logic work, here?  I think you just want to drop the ">>1" in
+> unused_frac_mask.
 
----
+I don't think so.
 
-Changes in v3:
-remove include reboot.h
+If we have 8 of our 12 frac bits populated GENMASK(12 - 8, 0) will be 0x1f
+because GENMASK(4, 0) generates a mask from bit at position 0 to bit at
+position 4 inclusively (which is the fifth bit). So GENMASK(4, 0) >> 1 will
+be 0xf which is what we want here.
 
-Changes in v2:
-replace restart_handlers with the shutdown callback of syscore
+Thanks,
 
- drivers/clk/rockchip/clk-rk3288.c | 35 ++++++++++++++++++-----------------
- 1 file changed, 18 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index 9040878..3002d7d 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -783,9 +783,9 @@ static const char *const rk3288_critical_clocks[] __initconst = {
- 	"pclk_pd_pmu",
- };
- 
--#ifdef CONFIG_PM_SLEEP
- static void __iomem *rk3288_cru_base;
- 
-+#ifdef CONFIG_PM_SLEEP
- /* Some CRU registers will be reset in maskrom when the system
-  * wakes up from fastboot.
-  * So save them before suspend, restore them after resume.
-@@ -839,34 +839,32 @@ static void rk3288_clk_resume(void)
- 			       rk3288_cru_base + reg_id);
- 	}
- }
-+#endif
- 
--static struct syscore_ops rk3288_clk_syscore_ops = {
--	.suspend = rk3288_clk_suspend,
--	.resume = rk3288_clk_resume,
--};
--
--static void rk3288_clk_sleep_init(void __iomem *reg_base)
-+static void rk3288_clk_shutdown(void)
- {
--	rk3288_cru_base = reg_base;
--	register_syscore_ops(&rk3288_clk_syscore_ops);
-+	writel_relaxed(0xf3030000, rk3288_cru_base + RK3288_MODE_CON);
- }
- 
--#else /* CONFIG_PM_SLEEP */
--static void rk3288_clk_sleep_init(void __iomem *reg_base) {}
-+static struct syscore_ops rk3288_clk_syscore_ops = {
-+#ifdef CONFIG_PM_SLEEP
-+	.suspend = rk3288_clk_suspend,
-+	.resume = rk3288_clk_resume,
- #endif
-+	.shutdown = rk3288_clk_shutdown,
-+};
- 
- static void __init rk3288_clk_init(struct device_node *np)
- {
--	void __iomem *reg_base;
- 	struct clk *clk;
- 
--	reg_base = of_iomap(np, 0);
--	if (!reg_base) {
-+	rk3288_cru_base = of_iomap(np, 0);
-+	if (!rk3288_cru_base) {
- 		pr_err("%s: could not map cru region\n", __func__);
- 		return;
- 	}
- 
--	rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
-+	rockchip_clk_init(np, rk3288_cru_base, CLK_NR_CLKS);
- 
- 	/* xin12m is created by an cru-internal divider */
- 	clk = clk_register_fixed_factor(NULL, "xin12m", "xin24m", 0, 1, 2);
-@@ -907,10 +905,13 @@ static void __init rk3288_clk_init(struct device_node *np)
- 			&rk3288_cpuclk_data, rk3288_cpuclk_rates,
- 			ARRAY_SIZE(rk3288_cpuclk_rates));
- 
--	rockchip_register_softrst(np, 12, reg_base + RK3288_SOFTRST_CON(0),
-+	rockchip_register_softrst(np, 12,
-+				  rk3288_cru_base + RK3288_SOFTRST_CON(0),
- 				  ROCKCHIP_SOFTRST_HIWORD_MASK);
- 
- 	rockchip_register_restart_notifier(RK3288_GLB_SRST_FST);
--	rk3288_clk_sleep_init(reg_base);
-+
-+	register_syscore_ops(&rk3288_clk_syscore_ops);
-+;
- }
- CLK_OF_DECLARE(rk3288_cru, "rockchip,rk3288-cru", rk3288_clk_init);
 -- 
-2.6.3
+Remi Pommarel
