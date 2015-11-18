@@ -1,62 +1,27 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 30 Nov 2015 16:58:02 -0800
+Date: Wed, 18 Nov 2015 14:24:46 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-gpio@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: let of_clk_get_parent_name() fail for invalid
- clock-indices
-Message-ID: <20151201005802.GE17532@codeaurora.org>
-References: <1448873164-22415-1-git-send-email-yamada.masahiro@socionext.com>
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: versatile: fix memory leak
+Message-ID: <20151118222446.GG32672@codeaurora.org>
+References: <1447681600-14120-1-git-send-email-sudipm.mukherjee@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1448873164-22415-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1447681600-14120-1-git-send-email-sudipm.mukherjee@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/30, Masahiro Yamada wrote:
-> Currently, of_clk_get_parent_name() returns a wrong parent clock name
-> when "clock-indices" property exists and the target index is not
-> found in the property.  In this case, NULL should be returned.
+On 11/16, Sudip Mukherjee wrote:
+> If of_clk_parent_fill() fails then we printed an error message and
+> returned. But we missed freeing sp810.
 > 
-> For example,
-> 
->         oscillator {
->                 compatible = "myclocktype";
->                 #clock-cells = <1>;
->                 clock-indices = <1>, <3>;
->                 clock-output-names = "clka", "clkb";
->         };
-> 
->         consumer {
->                 compatible = "myclockconsumer";
->                 clocks = <&oscillator 0>, <&oscillator 1>;
->         };
-> 
-> Currently, of_clk_get_parent_name(consumer_np, 0) returns "clka"
-> (and of_clk_get_parent_name(consumer_np, 1) also returns "clka",
-> this is correct).   Because the "clock-indices" in the clock parent
-> does not contain <0>, of_clk_get_parent_name(consumer_np, 0) should
-> return NULL.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
+> ---
 
-Here's the proposed alternative, if you agree I will merge it
-with the above commit text and attribution to you.
+Applied to clk-next
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index a66efc9d8bfc..f54583a9835a 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3079,6 +3079,9 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
- 		}
- 		count++;
- 	}
-+	/* We went off the end of 'clock-indices' without finding it */
-+	if (!vp && count)
-+		return NULL;
- 
- 	if (of_property_read_string_index(clkspec.np, "clock-output-names",
- 					  index,
+We don't need that error message on allocation failure either.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
