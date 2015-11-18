@@ -1,52 +1,59 @@
-Return-Path: <rnayak@codeaurora.org>
-Message-ID: <5645830B.9000400@codeaurora.org>
-Date: Fri, 13 Nov 2015 11:58:27 +0530
-From: Rajendra Nayak <rnayak@codeaurora.org>
-MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Mike Turquette <mturquette@baylibre.com>,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Rob Clark <robdclark@gmail.com>,
- "Rafael J . Wysocki" <rjw@rjwysocki.net>,
- Kevin Hilman <khilman@kernel.org>,
- linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 2/2] clk: qcom: Make oxili GDSC parent of oxili_cx
- GDSC
-References: <1443727374-1539-1-git-send-email-sboyd@codeaurora.org> <1443727374-1539-3-git-send-email-sboyd@codeaurora.org> <20151006193217.GH12338@codeaurora.org> <564564CA.5040608@codeaurora.org> <20151113061409.GI15032@codeaurora.org>
-In-Reply-To: <20151113061409.GI15032@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Rajendra Nayak <rnayak@codeaurora.com>
+Subject: [PATCH 0/5] Add support for MSM8996 clock controllers
+Date: Tue, 17 Nov 2015 17:07:19 -0800
+Message-Id: <1447808844-27049-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+These patches add support for the global and multimedia clock controllers
+found on MSM8996 devices. The first patch allows us to implement a
+"power of two" divider of different widths with a table based divider.
+The second patch adds support for Alpha PLLs and the 3rd and 5th patches
+add support for the two clock controllers. The fourth patch is
+a new type of clock ops for the graphics clock that does some custom
+ping-pong between different PLLs when switching graphics frequencies.
 
+Some work is still pending, mostly adding GDSCs and configuring the
+multimedia PLLs for FSM voting mode vs. manually enabling and
+disabling them. So a v2 is probably going to come out after
+some more testing is done.
 
-On 11/13/2015 11:44 AM, Stephen Boyd wrote:
-> On 11/13, Rajendra Nayak wrote:
->>
->> On 10/07/2015 01:02 AM, Stephen Boyd wrote:
->>> On 10/01, Stephen Boyd wrote:
->>>> The oxili_cx GDSC is inside the power domain of the oxili GDSC.
->>>> Add the dependency so that the CX domain can properly power up.
->>>>
->>>> Reported-by: Rob Clark <robdclark@gmail.com>
->>>> Cc: Rajendra Nayak <rnayak@codeaurora.org>
->>>> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
->>>> ---
->>>
->>> Applied to clk-next
->>
->> I don't see this in clk-next. Was this dropped for some reason?
->>
-> 
-> Hm.. It's merged into Linus' tree now
-> 
-> b68f2c3b882202aba97a488c1fede0e99f7261e2
-> 
-> unless I missed something.
+Cc: Rajendra Nayak <rnayak@codeaurora.com>
 
-right, sorry, I seemed to be wrongly looking at the gcc driver instead
-of mmcc.
+Stephen Boyd (5):
+  clk: divider: Cap table divider values to 'width' member
+  clk: qcom: Add Alpha PLL support
+  clk: qcom: Add MSM8996 Global Clock Control (GCC) driver
+  clk: qcom: Add gfx3d ping-pong PLL frequency switching
+  clk: qcom: Add MSM8996 Multimedia Clock Controller (MMCC) driver
+
+ .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
+ .../devicetree/bindings/clock/qcom,mmcc.txt        |    1 +
+ drivers/clk/clk-divider.c                          |    9 +-
+ drivers/clk/qcom/Kconfig                           |   17 +
+ drivers/clk/qcom/Makefile                          |    3 +
+ drivers/clk/qcom/clk-alpha-pll.c                   |  355 +++
+ drivers/clk/qcom/clk-alpha-pll.h                   |   57 +
+ drivers/clk/qcom/clk-rcg.h                         |    1 +
+ drivers/clk/qcom/clk-rcg2.c                        |   87 +
+ drivers/clk/qcom/gcc-msm8996.c                     | 3332 ++++++++++++++++++++
+ drivers/clk/qcom/mmcc-msm8996.c                    | 3209 +++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-msm8996.h       |  333 ++
+ include/dt-bindings/clock/qcom,mmcc-msm8996.h      |  285 ++
+ 13 files changed, 7686 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/clk/qcom/clk-alpha-pll.c
+ create mode 100644 drivers/clk/qcom/clk-alpha-pll.h
+ create mode 100644 drivers/clk/qcom/gcc-msm8996.c
+ create mode 100644 drivers/clk/qcom/mmcc-msm8996.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-msm8996.h
+ create mode 100644 include/dt-bindings/clock/qcom,mmcc-msm8996.h
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
