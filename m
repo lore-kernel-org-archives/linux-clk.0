@@ -1,147 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:42271 "EHLO
-	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758821AbbKSScB (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 19 Nov 2015 13:32:01 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-sh@vger.kernel.org, linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] drivers: sh: clk: Remove obsolete and unused clk_round_parent()
-Date: Thu, 19 Nov 2015 19:32:07 +0100
-Message-Id: <1447957927-32738-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1447957927-32738-1-git-send-email-geert+renesas@glider.be>
-References: <1447957927-32738-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <nyushchenko@dev.rtsoft.ru>
+Message-ID: <564DD51A.8040100@dev.rtsoft.ru>
+Date: Thu, 19 Nov 2015 16:56:42 +0300
+From: Nikita Yushchenko <nyushchenko@dev.rtsoft.ru>
+MIME-Version: 1.0
+To: "meta-freescale@yoctoproject.org" <meta-freescale@yoctoproject.org>,
+ Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <kernel@pengutronix.de>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: Gennady Kuznetsov <kuznetsovg@dev.rtsoft.ru>
+Subject: imx6dl clock setup incorrectness
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-clk_round_parent() was only ever used by AP4EVB, until commit
-b24bd7e97b3784af ("ARM: shmobile: Remove AP4EVB board support").
+Hi
 
-The Common Clock Framework does not provide clk_round_parent(), hence
-remove it.
+While working with board with imx6s cpu, with kernel based on linux-imx
+imx_3.14.28_1.0.0_ga branch, I noticed this message in boot log:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/sh/clk/core.c  | 88 --------------------------------------------------
- include/linux/sh_clk.h |  4 ---
- 2 files changed, 92 deletions(-)
+> failed to set parent of clk gpu2d_core_sel to pll2_pfd1_594m
 
-diff --git a/drivers/sh/clk/core.c b/drivers/sh/clk/core.c
-index c9afc5681474..92863e3818e5 100644
---- a/drivers/sh/clk/core.c
-+++ b/drivers/sh/clk/core.c
-@@ -567,94 +567,6 @@ long clk_round_rate(struct clk *clk, unsigned long rate)
- }
- EXPORT_SYMBOL_GPL(clk_round_rate);
- 
--long clk_round_parent(struct clk *clk, unsigned long target,
--		      unsigned long *best_freq, unsigned long *parent_freq,
--		      unsigned int div_min, unsigned int div_max)
--{
--	struct cpufreq_frequency_table *freq, *best = NULL;
--	unsigned long error = ULONG_MAX, freq_high, freq_low, div;
--	struct clk *parent = clk_get_parent(clk);
--
--	if (!parent) {
--		*parent_freq = 0;
--		*best_freq = clk_round_rate(clk, target);
--		return abs(target - *best_freq);
--	}
--
--	cpufreq_for_each_valid_entry(freq, parent->freq_table) {
--		if (unlikely(freq->frequency / target <= div_min - 1)) {
--			unsigned long freq_max;
--
--			freq_max = (freq->frequency + div_min / 2) / div_min;
--			if (error > target - freq_max) {
--				error = target - freq_max;
--				best = freq;
--				if (best_freq)
--					*best_freq = freq_max;
--			}
--
--			pr_debug("too low freq %u, error %lu\n", freq->frequency,
--				 target - freq_max);
--
--			if (!error)
--				break;
--
--			continue;
--		}
--
--		if (unlikely(freq->frequency / target >= div_max)) {
--			unsigned long freq_min;
--
--			freq_min = (freq->frequency + div_max / 2) / div_max;
--			if (error > freq_min - target) {
--				error = freq_min - target;
--				best = freq;
--				if (best_freq)
--					*best_freq = freq_min;
--			}
--
--			pr_debug("too high freq %u, error %lu\n", freq->frequency,
--				 freq_min - target);
--
--			if (!error)
--				break;
--
--			continue;
--		}
--
--		div = freq->frequency / target;
--		freq_high = freq->frequency / div;
--		freq_low = freq->frequency / (div + 1);
--
--		if (freq_high - target < error) {
--			error = freq_high - target;
--			best = freq;
--			if (best_freq)
--				*best_freq = freq_high;
--		}
--
--		if (target - freq_low < error) {
--			error = target - freq_low;
--			best = freq;
--			if (best_freq)
--				*best_freq = freq_low;
--		}
--
--		pr_debug("%u / %lu = %lu, / %lu = %lu, best %lu, parent %u\n",
--			 freq->frequency, div, freq_high, div + 1, freq_low,
--			 *best_freq, best->frequency);
--
--		if (!error)
--			break;
--	}
--
--	if (parent_freq)
--		*parent_freq = best->frequency;
--
--	return error;
--}
--EXPORT_SYMBOL_GPL(clk_round_parent);
--
- #ifdef CONFIG_PM
- static void clks_core_resume(void)
- {
-diff --git a/include/linux/sh_clk.h b/include/linux/sh_clk.h
-index 1f208b2a1ed6..645896b81244 100644
---- a/include/linux/sh_clk.h
-+++ b/include/linux/sh_clk.h
-@@ -113,10 +113,6 @@ long clk_rate_div_range_round(struct clk *clk, unsigned int div_min,
- long clk_rate_mult_range_round(struct clk *clk, unsigned int mult_min,
- 			       unsigned int mult_max, unsigned long rate);
- 
--long clk_round_parent(struct clk *clk, unsigned long target,
--		      unsigned long *best_freq, unsigned long *parent_freq,
--		      unsigned int div_min, unsigned int div_max);
--
- #define SH_CLK_MSTP(_parent, _enable_reg, _enable_bit, _status_reg, _flags) \
- {									\
- 	.parent		= _parent,					\
--- 
-1.9.1
 
+I looked into it and found that:
+
+- CCM_CBCMR register layout is different between imx6q/imx6d and
+imc6dl/imx6s (at least manuals state that)
+
+- clock setup in clk-imx6q.c (that is used both got imx6q/imx6d and
+imx6dl/imx6s) creates gpu2d_core_sel clock object as described in imx6q
+manual (i.e. using bits 18:19 of CCM_CBCMR register)
+
+- however per imx6dl manual, these bits contain different field
+(mlb_sys_sel) on imx6dl/imx6s, and gpu2d_core sel is in bits 8:9
+
+- imx6q has different clock selector, gpu3d_shader_clk_sel, in bits 8:9,
+and existing code unconditionally creates gpu3d_shader_clk_sel clock object
+
+- per manual, gpu3d_shader_clk_sel does not exist on imx6qdl/imx6s
+
+- however gpu driver (which also is common between imx6q/imx6d and
+imc6dl/imx6s) does use gpu3d_shader_clk which is child of
+gpu3d_shader_clk_sel. Which means that it is not possible to simply
+change clock object creation code to match manuals.
+
+
+I'm looking for advice how to fix this situation properly.
+
+
+Btw situation is the same in mainline kernel - clock setup code in
+mainline is moved to drivers/clk/imx/ but still has the same incorrectness.
+
+
+Nikita
