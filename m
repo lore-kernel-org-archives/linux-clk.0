@@ -1,60 +1,83 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2] clk: s3c2410: removed unneeded variable in
- s3c24xx_clkout_set_parent
-To: "Mutharaju, Prasanna (P.)" <mkarthi3@visteon.com>,
- Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-References: <20151130072852.GA25202@jci-VirtualBox>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <565BFB57.2000701@samsung.com>
-Date: Mon, 30 Nov 2015 16:31:35 +0900
-MIME-version: 1.0
-In-reply-to: <20151130072852.GA25202@jci-VirtualBox>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <emil.l.velikov@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <1447904131-29328-1-git-send-email-zyw@rock-chips.com>
+References: <1447904131-29328-1-git-send-email-zyw@rock-chips.com>
+Date: Thu, 19 Nov 2015 14:41:41 +0000
+Message-ID: <CACvgo53YOMpbz1TdVmRBPPz4dv=X+8FoEo0ZcfN5DwbDYi2ZzQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/12] Add mipi dsi support for rk3288
+From: Emil Velikov <emil.l.velikov@gmail.com>
+To: Chris Zhong <zyw@rock-chips.com>
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	linux-rockchip <linux-rockchip@lists.infradead.org>, Mark Yao <mark.yao@rock-chips.com>,
+	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Kever Yang <kever.yang@rock-chips.com>, ML dri-devel <dri-devel@lists.freedesktop.org>,
+	"Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	Vincent Palatin <vpalatin@chromium.org>, Jeff Chen <cym@rock-chips.com>,
+	Ajay Kumar <ajaykumar.rs@samsung.com>, Andrew Bresticker <abrestic@chromium.org>,
+	Russell King <rmk+kernel@arm.linux.org.uk>, Thierry Reding <treding@nvidia.com>,
+	devicetree@vger.kernel.org, Alexandru M Stan <amstan@chromium.org>,
+	Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Rob Herring <robh+dt@kernel.org>, Roger Chen <roger.chen@rock-chips.com>,
+	Russell King <linux@arm.linux.org.uk>, Sonny Rao <sonnyrao@chromium.org>,
+	LAKML <linux-arm-kernel@lists.infradead.org>, Huang Lin <hl@rock-chips.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Doug Anderson <dianders@chromium.org>,
+	Kumar Gala <galak@codeaurora.org>, Andy Yan <andy.yan@rock-chips.com>,
+	"David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 30.11.2015 16:28, Mutharaju, Prasanna (P.) wrote:
-> From: Prasanna Karthik <mkarthi3@visteon.com>
-> 
-> Remove unneeded variable used to store return value.
-> V2: Modified subject  
+On 19 November 2015 at 03:35, Chris Zhong <zyw@rock-chips.com> wrote:
+> The rk3288 MIPI DSI is a Synopsys DesignWare MIPI DSI host controller
+> IP. This series adds support for a Synopsys DesignWare MIPI DSI host
+> controller DRM bridge driver and a rockchip MIPI DSI specific DRM
+> driver.
+>
+> This series also includes a DRM panel driver for BOE TV080WUM-NL0 panel.
+> This panel only use the MIPI DSI video mode.
+>
+> The MIPI DSI feature is tested on rk3288 evb board, backport them to
+> chrome os kernel v3.14, and it can display normally.
+>
+> This patchset is base on the patchset from Ying.liu@freescale.com.
+> <http://www.spinics.net/lists/dri-devel/msg77181.html>
+>
+>
+> Changes in v3:
+> move the dw_mipi_dsi.txt to Documentation/devicetree/bindings/display/bridge
+> move dw_mipi_dsi_rockchip.txt to bindings/display/rockchip/
+> move boe,tv080wum-nl0.txt to bindings/display/panel/
+>
+> Changes in v2:
+> add the mipi clk id in a single patch
+> As Thierry.Reding comment, add a documentation for this panel.
+>
+> Chris Zhong (10):
+>   clk: rockchip: add id for mipidsi sclk on rk3288
+>   clk: rockchip: add mipidsi clocks on rk3288
+>   drm/rockchip: return a true clock rate to adjusted_mode
+>   drm/bridge: Add Synopsys DesignWare MIPI DSI host controller driver
+Did you actually rewrite the patch from Liu Ying ?
+Out of curiosity what was the obstacle of this work getting merged ?
 
-Changelog (v2) should go after '---' separator so it won't get included
-in the commit message.
+>   drm: rockchip: Support Synopsys DesignWare MIPI DSI host controller
+>   Documentation: dt-bindings: Add bindings for rk3288 DW MIPI DSI driver
+>   ARM: dts: rockchip: add rk3288 mipi_dsi nodes
+>   drm/panel: simple: Add support for BOE TV080WUM-NL0
+>   drm/panel: simple: Add boe,tv080wum-nl0 simple panel device tree
+>     binding
+As the DT people will tell you - there is no BOE vendor in
+bindings/vendor-prefixes.txt.
 
-Now I see that you Signed-off-by is okay - same email address... I got
-confused by the difference in name.
+>   ARM: dts: rockchip: add support mipi panel tv080wum-nl0 for rk3288-evb
+>
+> Liu Ying (2):
+>   drm/dsi: Add a helper to get bits per pixel of MIPI DSI pixel format
+>   Documentation: dt-bindings: Add bindings for Synopsys DW MIPI DSI DRM
+>     bridge driver
+>
+>From the above 12 patches only ~6 reached this mailing list is that
+intentional ? Previously I've seen people CC dri-devel for their
+panel/bridge DT patches.
 
-Best regards,
-Krzysztof
-
-> 
-> Signed-off-by: Prasanna Karthik <mkarthi3@visteon.com>
-> ---
->  drivers/clk/samsung/clk-s3c2410-dclk.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
-> index e9eb935..ec6fb14 100644
-> --- a/drivers/clk/samsung/clk-s3c2410-dclk.c
-> +++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
-> @@ -77,12 +77,11 @@ static u8 s3c24xx_clkout_get_parent(struct clk_hw *hw)
->  static int s3c24xx_clkout_set_parent(struct clk_hw *hw, u8 index)
->  {
->  	struct s3c24xx_clkout *clkout = to_s3c24xx_clkout(hw);
-> -	int ret = 0;
->  
->  	s3c2410_modify_misccr((clkout->mask << clkout->shift),
->  			      (index << clkout->shift));
->  
-> -	return ret;
-> +	return 0;
->  }
->  
->  static const struct clk_ops s3c24xx_clkout_ops = {
-> 
+Regards,
+Emil
