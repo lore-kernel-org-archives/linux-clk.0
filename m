@@ -1,230 +1,119 @@
-Return-Path: <heiko.stuebner@collabora.com>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko.stuebner@collabora.com>
-To: mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: [RFC PATCH v3] clk: defer clk_gets on orphan clocks
-Date: Tue, 24 Nov 2015 13:42:35 +0100
-Message-ID: <1483326.lTmfGmv5pO@diego>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/2] clk: samsung: Don't build ARMv8 clock drivers on ARMv7
+To: Tomasz Figa <tomasz.figa@gmail.com>
+References: <1447637775-9887-1-git-send-email-k.kozlowski@samsung.com>
+ <1447637775-9887-2-git-send-email-k.kozlowski@samsung.com>
+ <CA+Ln22HAGwfPDqXBQatBraLd=DyGYF2WyV4wJ9RvGOc58puymQ@mail.gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+ linux-clk@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+ Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>,
+ Arnd Bergmann <arnd@arndb.de>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ Kevin Hilman <khilman@linaro.org>, Pankaj Dubey <pankaj.dubey@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <564D5552.4070806@samsung.com>
+Date: Thu, 19 Nov 2015 13:51:30 +0900
+MIME-version: 1.0
+In-reply-to: 
+ <CA+Ln22HAGwfPDqXBQatBraLd=DyGYF2WyV4wJ9RvGOc58puymQ@mail.gmail.com>
+Content-type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Orphan clocks or children of orphan clocks don't have rate information at
-all and can produce strange results if they're allowed to be used and the
-parent becomes available later on.
+On 19.11.2015 13:18, Tomasz Figa wrote:
+> Hi Krzysztof,
+> 
+> Good idea, just a couple of nits inline. Other than that:
+> 
+> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+> 
+> 2015-11-16 10:36 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
+>> Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
+>> so it is built also on ARMv7. This does not bring any kind of benefit.
+>> There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
+>> multi_v7 for ARMv7).
+>>
+>> Instead build clock drivers only for respective SoC's architecture.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> ---
+>>  drivers/clk/samsung/Kconfig  | 13 +++++++++++++
+>>  drivers/clk/samsung/Makefile |  4 ++--
+>>  2 files changed, 15 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+>> index 84196ecdaa12..5f138fc4d84d 100644
+>> --- a/drivers/clk/samsung/Kconfig
+>> +++ b/drivers/clk/samsung/Kconfig
+>> @@ -2,6 +2,7 @@ config COMMON_CLK_SAMSUNG
+>>         bool
+>>         select COMMON_CLK
+>>
+>> +# ARMv7 SoCs:
+> 
+> nit: I'm not aware of any recent upgrade of the S3C24xx line-up to
+> ARMv7 cores. ;) I'd suggest "32-bit ARM SoCs" or just "ARM SoCs"...
 
-This change, based on one from Stephen Boyd, defers __clk_create_clk()
-calls on orphan clocks in all regular cases.
+okay
 
-One special case that gets handled, is accessing such orphan clocks when
-handling assigned-clocks configurations. In the boot-defaults it may be
-the case that a clock is connected to an orphan parent which then might
-be needed to get reparented to an actually usable clock using
-assigned-clock-parents. In this case even orphaned clocks should be
-usable, but only for the set-parent case.
+> 
+>>  config S3C2410_COMMON_CLK
+>>         bool
+>>         select COMMON_CLK_SAMSUNG
+>> @@ -24,3 +25,15 @@ config S3C2443_COMMON_CLK
+>>         bool
+>>         select COMMON_CLK_SAMSUNG
+>>
+>> +# ARMv8 SoCs:
+> 
+> and then here "64-bit ARM SoCs" or "ARM64 SoCs", whichever you prefer.
+> I'd lean towards simple "ARM" and "ARM64".
 
-The added of_clk_get_from_provider_with_orphans() is only available
-to ccf internal parts to prevent abuse.
+ARM64 sounds good.
 
-Signed-off-by: Heiko Stuebner <heiko.stuebner@collabora.com>
----
-This of course will still break sunxi, hence the RFC state for now.
-As there is work pending for critical/handed-off clocks, I'm hoping
-this can move forward at some point :-) .
+> 
+>> +config EXYNOS5433_COMMON_CLK
+>> +       bool
+>> +       depends on ARM64 || COMPILE_TEST
+>> +       default ARCH_EXYNOS
+> 
+> nit: bool and default can be combined into def_bool ARCH_EXYNOS
+> 
 
-I'd mainly like to get feedback if the assigned-clocks case looks ok
-or should move somewhere else.
+Right.
 
-changes in v3:
-- add special handling for assigned-clock-parents to allow reparenting
-  of orphaned child-clocks.
+>> +       select COMMON_CLK_SAMSUNG
+>> +
+>> +config EXYNOS7_COMMON_CLK
+>> +       bool
+>> +       depends on ARM64 || COMPILE_TEST
+>> +       default ARCH_EXYNOS
+> 
+> nit: See above.
+> 
+> However, I don't think we can disable compilation of particular 64-bit
+> SoCs, so maybe there isn't much sense in splitting their clock drivers
+> into separate symbols?
 
-changes in v2 (Stephens version):
-- find a better place for the deferral
+To me it does not really matter. Indeed as you said one cannot disable
+building of one particular Exynos SoCs.
 
- drivers/clk/clk-conf.c |  5 +++--
- drivers/clk/clk.c      | 48 ++++++++++++++++++++++++++++++++++++++----------
- drivers/clk/clk.h      | 10 +++++++---
- drivers/clk/clkdev.c   |  4 ++--
- 4 files changed, 50 insertions(+), 17 deletions(-)
+However we could still want not build some parts of such SoCs (like
+clock, pinctrl etc). I don't see much benefit for such case except when
+someone would like to drastically reduce the size of kernel image (for
+whatever reasons he has.).
 
-diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
-index 43a218f..60ebfd9 100644
---- a/drivers/clk/clk-conf.c
-+++ b/drivers/clk/clk-conf.c
-@@ -13,6 +13,7 @@
- #include <linux/device.h>
- #include <linux/of.h>
- #include <linux/printk.h>
-+#include "clk.h"
- 
- static int __set_clk_parents(struct device_node *node, bool clk_supplier)
- {
-@@ -38,7 +39,7 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
- 		}
- 		if (clkspec.np == node && !clk_supplier)
- 			return 0;
--		pclk = of_clk_get_from_provider(&clkspec);
-+		pclk = of_clk_get_from_provider_with_orphans(&clkspec);
- 		if (IS_ERR(pclk)) {
- 			pr_warn("clk: couldn't get parent clock %d for %s\n",
- 				index, node->full_name);
-@@ -53,7 +54,7 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
- 			rc = 0;
- 			goto err;
- 		}
--		clk = of_clk_get_from_provider(&clkspec);
-+		clk = of_clk_get_from_provider_with_orphans(&clkspec);
- 		if (IS_ERR(clk)) {
- 			pr_warn("clk: couldn't get parent clock %d for %s\n",
- 				index, node->full_name);
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index f13c3f4..46760cb 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2476,15 +2476,11 @@ out:
- 	return ret;
- }
- 
--struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
--			     const char *con_id)
-+static struct clk *clk_hw_create_clk(struct clk_hw *hw, const char *dev_id,
-+				     const char *con_id)
- {
- 	struct clk *clk;
- 
--	/* This is to allow this function to be chained to others */
--	if (!hw || IS_ERR(hw))
--		return (struct clk *) hw;
--
- 	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
- 	if (!clk)
- 		return ERR_PTR(-ENOMEM);
-@@ -2501,6 +2497,19 @@ struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
- 	return clk;
- }
- 
-+struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
-+			     const char *con_id, bool with_orphans)
-+{
-+	/* This is to allow this function to be chained to others */
-+	if (!hw || IS_ERR(hw))
-+		return (struct clk *) hw;
-+
-+	if (hw->core->orphan && !with_orphans)
-+		return ERR_PTR(-EPROBE_DEFER);
-+
-+	return clk_hw_create_clk(hw, dev_id, con_id);
-+}
-+
- void __clk_free_clk(struct clk *clk)
- {
- 	clk_prepare_lock();
-@@ -2569,7 +2578,7 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
- 
- 	INIT_HLIST_HEAD(&core->clks);
- 
--	hw->clk = __clk_create_clk(hw, NULL, NULL);
-+	hw->clk = clk_hw_create_clk(hw, NULL, NULL);
- 	if (IS_ERR(hw->clk)) {
- 		ret = PTR_ERR(hw->clk);
- 		goto fail_parent_names_copy;
-@@ -3002,7 +3011,8 @@ void of_clk_del_provider(struct device_node *np)
- EXPORT_SYMBOL_GPL(of_clk_del_provider);
- 
- struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
--				       const char *dev_id, const char *con_id)
-+				       const char *dev_id, const char *con_id,
-+				       bool with_orphans)
- {
- 	struct of_clk_provider *provider;
- 	struct clk *clk = ERR_PTR(-EPROBE_DEFER);
-@@ -3017,7 +3027,7 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
- 			clk = provider->get(clkspec, provider->data);
- 		if (!IS_ERR(clk)) {
- 			clk = __clk_create_clk(__clk_get_hw(clk), dev_id,
--					       con_id);
-+					       con_id, with_orphans);
- 
- 			if (!IS_ERR(clk) && !__clk_get(clk)) {
- 				__clk_free_clk(clk);
-@@ -3042,7 +3052,25 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
-  */
- struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
- {
--	return __of_clk_get_from_provider(clkspec, NULL, __func__);
-+	return __of_clk_get_from_provider(clkspec, NULL, __func__, false);
-+}
-+
-+/**
-+ * of_clk_get_from_provider_with_orphans() - Lookup clock from a clock provider
-+ * @clkspec: pointer to a clock specifier data structure
-+ *
-+ * This function looks up a struct clk from the registered list of clock
-+ * providers, an input is a clock specifier data structure as returned
-+ * from the of_parse_phandle_with_args() function call.
-+ *
-+ * The difference to of_clk_get_from_provider() is that this function will
-+ * also successfully lookup orphan-clocks, as it in some cases may be
-+ * necessary to access such orphan-clocks as well.
-+ */
-+struct clk *
-+of_clk_get_from_provider_with_orphans(struct of_phandle_args *clkspec)
-+{
-+	return __of_clk_get_from_provider(clkspec, NULL, __func__, true);
- }
- 
- int of_clk_get_parent_count(struct device_node *np)
-diff --git a/drivers/clk/clk.h b/drivers/clk/clk.h
-index 00b35a1..5a70f09 100644
---- a/drivers/clk/clk.h
-+++ b/drivers/clk/clk.h
-@@ -13,17 +13,21 @@ struct clk_hw;
- 
- #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
- struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
--				       const char *dev_id, const char *con_id);
-+				       const char *dev_id, const char *con_id,
-+				       bool with_orphans);
-+struct clk *
-+of_clk_get_from_provider_with_orphans(struct of_phandle_args *clkspec);
- #endif
- 
- #ifdef CONFIG_COMMON_CLK
- struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
--			     const char *con_id);
-+			     const char *con_id, bool with_orphans);
- void __clk_free_clk(struct clk *clk);
- #else
- /* All these casts to avoid ifdefs in clkdev... */
- static inline struct clk *
--__clk_create_clk(struct clk_hw *hw, const char *dev_id, const char *con_id)
-+__clk_create_clk(struct clk_hw *hw, const char *dev_id, const char *con_id,
-+		 bool with_orphans)
- {
- 	return (struct clk *)hw;
- }
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index 779b6ff..eda20c2 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -43,7 +43,7 @@ static struct clk *__of_clk_get(struct device_node *np, int index,
- 	if (rc)
- 		return ERR_PTR(rc);
- 
--	clk = __of_clk_get_from_provider(&clkspec, dev_id, con_id);
-+	clk = __of_clk_get_from_provider(&clkspec, dev_id, con_id, false);
- 	of_node_put(clkspec.np);
- 
- 	return clk;
-@@ -177,7 +177,7 @@ struct clk *clk_get_sys(const char *dev_id, const char *con_id)
- 	if (!cl)
- 		goto out;
- 
--	clk = __clk_create_clk(cl->clk_hw, dev_id, con_id);
-+	clk = __clk_create_clk(cl->clk_hw, dev_id, con_id, false);
- 	if (IS_ERR(clk))
- 		goto out;
- 
--- 
-2.6.1
+On the other hand having separate symbols causes duplication and
+obfuscates a little the Kconfig/Makefile. I like keeping things simple
+so one symbol for all ARM64 Exynos clocks sounds good.
+
+Sylwester preferred current approach. You and Pankaj seem to prefer one
+symbol-way.
+
+Should we make a voting? :)
+
+Best regards,
+Krzysztof
