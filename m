@@ -1,75 +1,102 @@
-Return-Path: <clabbe.montjoie@gmail.com>
-Return-Path: <clabbe.montjoie@gmail.com>
-From: LABBE Corentin <clabbe.montjoie@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: LABBE Corentin <clabbe.montjoie@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] clk: palmas: constify the palmas_clks_of_match_data structure
-Date: Wed, 25 Nov 2015 13:52:01 +0100
-Message-Id: <1448455923-28670-1-git-send-email-clabbe.montjoie@gmail.com>
+Return-Path: <alim.akhtar@samsung.com>
+Message-id: <564D4A36.8040803@samsung.com>
+Date: Thu, 19 Nov 2015 09:34:06 +0530
+From: Alim Akhtar <alim.akhtar@samsung.com>
+MIME-version: 1.0
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+ Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>,
+ Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
+ Kevin Hilman <khilman@linaro.org>
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [2/2] arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into
+ ARCH_EXYNOS
+References: <1447637775-9887-3-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1447637775-9887-3-git-send-email-k.kozlowski@samsung.com>
+Content-type: text/plain; charset=ISO-8859-1; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-The palmas_clks_of_match_data structures are never modified.
-This patch constify them.
+Hi Krzysztof,
 
-Signed-off-by: LABBE Corentin <clabbe.montjoie@gmail.com>
----
- drivers/clk/clk-palmas.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+On 11/16/2015 07:06 AM, Krzysztof Kozlowski wrote:
+> The ARMv8 Exynos family SoCs in Linux kernel are currently:
+>   - Exynos5433 (controlled by ARCH_EXYNOS),
+>   - Exynos7 (controlled by ARCH_EXYNOS7).
+>
+> It duplicates Kconfig symbols unnecessarily, so consolidate them into
+> one ARCH_EXYNOS. Future SoCs could fall also under the ARCH_EXYNOS
+> symbol.
+>
+> The commit should not bring any visible functional change.
+>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+>
 
-diff --git a/drivers/clk/clk-palmas.c b/drivers/clk/clk-palmas.c
-index 8e3039f..c55e774 100644
---- a/drivers/clk/clk-palmas.c
-+++ b/drivers/clk/clk-palmas.c
-@@ -44,7 +44,7 @@ struct palmas_clock_info {
- 	struct clk *clk;
- 	struct clk_hw hw;
- 	struct palmas *palmas;
--	struct palmas_clk32k_desc *clk_desc;
-+	const struct palmas_clk32k_desc *clk_desc;
- 	int ext_control_pin;
- };
- 
-@@ -125,10 +125,10 @@ static struct clk_ops palmas_clks_ops = {
- 
- struct palmas_clks_of_match_data {
- 	struct clk_init_data init;
--	struct palmas_clk32k_desc desc;
-+	const struct palmas_clk32k_desc desc;
- };
- 
--static struct palmas_clks_of_match_data palmas_of_clk32kg = {
-+static const struct palmas_clks_of_match_data palmas_of_clk32kg = {
- 	.init = {
- 		.name = "clk32kg",
- 		.ops = &palmas_clks_ops,
-@@ -144,7 +144,7 @@ static struct palmas_clks_of_match_data palmas_of_clk32kg = {
- 	},
- };
- 
--static struct palmas_clks_of_match_data palmas_of_clk32kgaudio = {
-+static const struct palmas_clks_of_match_data palmas_of_clk32kgaudio = {
- 	.init = {
- 		.name = "clk32kgaudio",
- 		.ops = &palmas_clks_ops,
-@@ -240,14 +240,14 @@ static int palmas_clks_probe(struct platform_device *pdev)
- {
- 	struct palmas *palmas = dev_get_drvdata(pdev->dev.parent);
- 	struct device_node *node = pdev->dev.of_node;
--	struct palmas_clks_of_match_data *match_data;
-+	const struct palmas_clks_of_match_data *match_data;
- 	const struct of_device_id *match;
- 	struct palmas_clock_info *cinfo;
- 	struct clk *clk;
- 	int ret;
- 
- 	match = of_match_device(palmas_clks_of_match, &pdev->dev);
--	match_data = (struct palmas_clks_of_match_data *)match->data;
-+	match_data = match->data;
- 
- 	cinfo = devm_kzalloc(&pdev->dev, sizeof(*cinfo), GFP_KERNEL);
- 	if (!cinfo)
--- 
-2.4.10
+Tested on exynos7-espresso board, so
+Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
+
+> ---
+> arch/arm64/Kconfig.platforms        | 11 ++---------
+>   arch/arm64/boot/dts/exynos/Makefile |  2 +-
+>   arch/arm64/configs/defconfig        |  2 +-
+>   3 files changed, 4 insertions(+), 11 deletions(-)
+>
+> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> index 4043c35962cc..afa19baca94e 100644
+> --- a/arch/arm64/Kconfig.platforms
+> +++ b/arch/arm64/Kconfig.platforms
+> @@ -13,21 +13,14 @@ config ARCH_BERLIN
+>   	  This enables support for Marvell Berlin SoC Family
+>
+>   config ARCH_EXYNOS
+> -	bool
+> -	help
+> -	  This enables support for Samsung Exynos SoC family
+> -
+> -config ARCH_EXYNOS7
+> -	bool "ARMv8 based Samsung Exynos7"
+> -	select ARCH_EXYNOS
+> +	bool "ARMv8 based Samsung Exynos SoC family"
+>   	select COMMON_CLK_SAMSUNG
+>   	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+>   	select HAVE_S3C_RTC if RTC_CLASS
+>   	select PINCTRL
+>   	select PINCTRL_EXYNOS
+> -
+>   	help
+> -	  This enables support for Samsung Exynos7 SoC family
+> +	  This enables support for Samsung Exynos ARMv8 SoC family
+>
+>   config ARCH_LAYERSCAPE
+>   	bool "ARMv8 based Freescale Layerscape SoC family"
+> diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+> index 20310e5b6d6f..50c9b9383cfa 100644
+> --- a/arch/arm64/boot/dts/exynos/Makefile
+> +++ b/arch/arm64/boot/dts/exynos/Makefile
+> @@ -1,4 +1,4 @@
+> -dtb-$(CONFIG_ARCH_EXYNOS7) += exynos7-espresso.dtb
+> +dtb-$(CONFIG_ARCH_EXYNOS) += exynos7-espresso.dtb
+>
+>   always		:= $(dtb-y)
+>   subdir-y	:= $(dts-dirs)
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index bdd7aa358d2a..a396fa7c69a5 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -33,7 +33,7 @@ CONFIG_MODULE_UNLOAD=y
+>   # CONFIG_IOSCHED_DEADLINE is not set
+>   CONFIG_ARCH_BCM_IPROC=y
+>   CONFIG_ARCH_BERLIN=y
+> -CONFIG_ARCH_EXYNOS7=y
+> +CONFIG_ARCH_EXYNOS=y
+>   CONFIG_ARCH_LAYERSCAPE=y
+>   CONFIG_ARCH_HISI=y
+>   CONFIG_ARCH_MEDIATEK=y
+>
