@@ -1,109 +1,56 @@
-Return-Path: <atx@atx.name>
-From: Josef Gajdusek <atx@atx.name>
-To: linux-sunxi@googlegroups.com
-Cc: Josef Gajdusek <atx@atx.name>,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	gpatchesrdh@mveas.com,
-	mturquette@linaro.org,
-	hdegoede@redhat.com,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	emilio@elopez.com.ar,
-	linux@arm.linux.org.uk,
-	edubezval@gmail.com,
-	rui.zhang@intel.com,
-	wens@csie.org,
-	maxime.ripard@free-electrons.com,
-	galak@codeaurora.org,
-	ijc+devicetree@hellion.org.uk,
-	mark.rutland@arm.com,
-	pawel.moll@arm.com,
-	robh+dt@kernel.org
-Subject: [PATCH v2 5/5] ARM: dts: sun8i: Add THS node to the H3 .dtsi
-Date: Mon, 23 Nov 2015 09:02:52 +0100
-Message-Id: <0fff612e26bf9cda9027a4175e16d25a0c2cc62c.1448263428.git.atx@atx.name>
-In-Reply-To: <cover.1448263428.git.atx@atx.name>
-References: <cover.1448263428.git.atx@atx.name>
-In-Reply-To: <cover.1448263428.git.atx@atx.name>
-References: <cover.1448263428.git.atx@atx.name>
+Return-Path: <tomasz.figa@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <564D5552.4070806@samsung.com>
+References: <1447637775-9887-1-git-send-email-k.kozlowski@samsung.com>
+	<1447637775-9887-2-git-send-email-k.kozlowski@samsung.com>
+	<CA+Ln22HAGwfPDqXBQatBraLd=DyGYF2WyV4wJ9RvGOc58puymQ@mail.gmail.com>
+	<564D5552.4070806@samsung.com>
+Date: Thu, 19 Nov 2015 18:16:18 +0900
+Message-ID: <CA+Ln22GTPFk6KpWZPDzLRBqO8B+iwwesQEzBwYikXnf0gr3Csg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: samsung: Don't build ARMv8 clock drivers on ARMv7
+From: Tomasz Figa <tomasz.figa@gmail.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel <linux-kernel@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>,
+	Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Kevin Hilman <khilman@linaro.org>, Pankaj Dubey <pankaj.dubey@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds nodes for the THS driver and the THS clock to the Allwinner
-H3 .dtsi file.
+2015-11-19 13:51 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
+> On 19.11.2015 13:18, Tomasz Figa wrote:
+>> However, I don't think we can disable compilation of particular 64-bit
+>> SoCs, so maybe there isn't much sense in splitting their clock drivers
+>> into separate symbols?
+>
+> To me it does not really matter. Indeed as you said one cannot disable
+> building of one particular Exynos SoCs.
+>
+> However we could still want not build some parts of such SoCs (like
+> clock, pinctrl etc). I don't see much benefit for such case except when
+> someone would like to drastically reduce the size of kernel image (for
+> whatever reasons he has.).
 
-Signed-off-by: Josef Gajdusek <atx@atx.name>
----
- arch/arm/boot/dts/sun8i-h3.dtsi | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+Can we really build a kernel that support selected Exynos SoC without
+its clock driver? Actually I don't think we even allow deselecting
+clock drivers currently, because they are not visible in menuconfig.
+Unless there is a clear goal to separate ARCH level Kconfig symbol for
+particular ARM64-based Exynos SoCs, I don't think it makes any sense
+to keep the clock-related symbols separate.
 
-diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
-index 58de718..48500d4 100644
---- a/arch/arm/boot/dts/sun8i-h3.dtsi
-+++ b/arch/arm/boot/dts/sun8i-h3.dtsi
-@@ -77,6 +77,14 @@
- 		};
- 	};
- 
-+	thermal-zones {
-+		cpu_thermal: cpu_thermal {
-+			polling-delay-passive = <1000>;
-+			polling-delay = <5000>;
-+			thermal-sensors = <&ths 0>;
-+		};
-+	};
-+
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-@@ -236,6 +244,14 @@
- 					"ahb1_ephy", "ahb1_dbg";
- 		};
- 
-+		ths_clk: clk@01c20074 {
-+			#clock-cells = <0>;
-+			compatible = "allwinner,sun8i-h3-ths-clk";
-+			reg = <0x01c20074 0x4>;
-+			clocks = <&osc24M>;
-+			clock-output-names = "ths";
-+		};
-+
- 		mmc0_clk: clk@01c20088 {
- 			#clock-cells = <1>;
- 			compatible = "allwinner,sun4i-a10-mmc-clk";
-@@ -364,6 +380,10 @@
- 			reg = <0x01c14000 0x400>;
- 			#address-cells = <1>;
- 			#size-cells = <1>;
-+
-+			ths_calibration: calib@234 {
-+				reg = <0x234 0x4>;
-+			};
- 		};
- 
- 		usbphy: phy@01c19400 {
-@@ -529,6 +549,19 @@
- 			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		ths: ths@01c25000 {
-+			#thermal-sensor-cells = <0>;
-+			compatible = "allwinner,sun8i-h3-ths";
-+			reg = <0x01c25000 0x88>;
-+			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
-+			resets = <&bus_rst 104>;
-+			reset-names = "ahb";
-+			clocks = <&bus_gates 72>, <&ths_clk>;
-+			clock-names = "ahb", "ths";
-+			nvmem-cells = <&ths_calibration>;
-+			nvmem-cell-names = "calibration";
-+		};
-+
- 		uart0: serial@01c28000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x01c28000 0x400>;
--- 
-2.4.10
+>
+> On the other hand having separate symbols causes duplication and
+> obfuscates a little the Kconfig/Makefile. I like keeping things simple
+> so one symbol for all ARM64 Exynos clocks sounds good.
+>
+> Sylwester preferred current approach. You and Pankaj seem to prefer one
+> symbol-way.
+
+Hmm, I read Sylwester's post as a reply to your original message and
+not Pankaj's. Sylwester, could you clarify?
+
+Best regards,
+Tomasz
