@@ -1,31 +1,53 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 20 Nov 2015 15:48:24 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-	devicetree@vger.kernel.org, jonmason@broadcom.com,
-	mturquette@baylibre.com, linux@arm.linux.org.uk,
-	sbranden@broadcom.com, rjui@broadcom.com
-Subject: Re: [PATCH v4 1/3] clk: iproc: Extend binding to cover BCM63138
-Message-ID: <20151120234824.GC9555@codeaurora.org>
-References: <1446168199-5959-1-git-send-email-f.fainelli@gmail.com>
- <1446168199-5959-2-git-send-email-f.fainelli@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1446168199-5959-2-git-send-email-f.fainelli@gmail.com>
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org,
+	agross@codeaurora.org
+Cc: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	bjorn.andersson@sonymobile.com,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v4 2/5] arm64: dts: qcom: msm8916: Add fixed rate on-board oscillator
+Date: Thu, 19 Nov 2015 15:57:57 +0200
+Message-Id: <1447941480-27487-3-git-send-email-georgi.djakov@linaro.org>
+In-Reply-To: <1447941480-27487-1-git-send-email-georgi.djakov@linaro.org>
+References: <1447941480-27487-1-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/29, Florian Fainelli wrote:
-> Broadcom BCM63138 DSL SoCs have the same ARMPLL clocking infrastructure
-> as the Cygnus and iProc chips, add a dedicated compatible string and
-> document that the ARMPLL node is a valid node for this chip.
-> 
-> Acked-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
+Currently the rates of the xo and sleep clocks are hard-coded in the
+GCC driver, but this is a board layout description that actually should
+be in the DT. Moving them into DT also allows us to insert the RPM
+controlled clocks between the DT and GCC clocks.
 
-Applied to clk-bcm63xx
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/msm8916.dtsi |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+index 80cf15087d01..d577127cc81e 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+@@ -95,6 +95,20 @@
+ 			     <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+ 	};
+ 
++	clocks {
++		xo_board: xo_board {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <19200000>;
++		};
++
++		sleep_clk: sleep_clk {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++		};
++	};
++
+ 	soc: soc {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
