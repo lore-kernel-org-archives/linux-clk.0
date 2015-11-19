@@ -1,96 +1,44 @@
-Return-Path: <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH 1/2] clk: samsung: Don't build ARMv8 clock drivers on ARMv7
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
- Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>,
- Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
- Kevin Hilman <khilman@linaro.org>
-References: <1447637775-9887-1-git-send-email-k.kozlowski@samsung.com>
- <1447637775-9887-2-git-send-email-k.kozlowski@samsung.com>
-From: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Message-id: <564AADB2.3030400@samsung.com>
-Date: Tue, 17 Nov 2015 10:01:46 +0530
-MIME-version: 1.0
-In-reply-to: <1447637775-9887-2-git-send-email-k.kozlowski@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <rklein@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: move _calc_dynamic_ram_rate out of #ifdef
+To: Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>
+References: <4290741.p1jMzEOUEU@wuerfel>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>, Stephen Warren
+	<swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>,
+	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+From: Rhyland Klein <rklein@nvidia.com>
+Message-ID: <564E4FC7.9040302@nvidia.com>
+Date: Thu, 19 Nov 2015 17:40:07 -0500
+MIME-Version: 1.0
+In-Reply-To: <4290741.p1jMzEOUEU@wuerfel>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On Monday 16 November 2015 07:06 AM, Krzysztof Kozlowski wrote:
-> Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
-> so it is built also on ARMv7. This does not bring any kind of benefit.
-> There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
-> multi_v7 for ARMv7).
+On 11/19/2015 5:32 PM, Arnd Bergmann wrote:
+> _calc_dynamic_ram_rate is defined inside an #ifdef but called
+> later in the same file outside of that #ifdef, which can cause a
+> build error:
 > 
-> Instead build clock drivers only for respective SoC's architecture.
+> drivers/clk/tegra/clk-pll.c: In function '_tegra_clk_register_pll':
+> drivers/clk/tegra/clk-pll.c:1541:29: error: '_calc_dynamic_ramp_rate' undeclared (first use in this function)
 > 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->  drivers/clk/samsung/Kconfig  | 13 +++++++++++++
->  drivers/clk/samsung/Makefile |  4 ++--
->  2 files changed, 15 insertions(+), 2 deletions(-)
+> This moves both _calc_dynamic_ram_rate and _pll_fixed_mdiv in
+> front of the #ifdef to make all configurations compile again.
 > 
-> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-> index 84196ecdaa12..5f138fc4d84d 100644
-> --- a/drivers/clk/samsung/Kconfig
-> +++ b/drivers/clk/samsung/Kconfig
-> @@ -2,6 +2,7 @@ config COMMON_CLK_SAMSUNG
->  	bool
->  	select COMMON_CLK
->  
-> +# ARMv7 SoCs:
->  config S3C2410_COMMON_CLK
->  	bool
->  	select COMMON_CLK_SAMSUNG
-> @@ -24,3 +25,15 @@ config S3C2443_COMMON_CLK
->  	bool
->  	select COMMON_CLK_SAMSUNG
->  
-> +# ARMv8 SoCs:
-> +config EXYNOS5433_COMMON_CLK
-> +	bool
-> +	depends on ARM64 || COMPILE_TEST
-> +	default ARCH_EXYNOS
-> +	select COMMON_CLK_SAMSUNG
-> +
-> +config EXYNOS7_COMMON_CLK
-> +	bool
-> +	depends on ARM64 || COMPILE_TEST
-> +	default ARCH_EXYNOS
-> +	select COMMON_CLK_SAMSUNG
-> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-> index 5f6833ea355d..a31332a24ef4 100644
-> --- a/drivers/clk/samsung/Makefile
-> +++ b/drivers/clk/samsung/Makefile
-> @@ -10,11 +10,11 @@ obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
->  obj-$(CONFIG_SOC_EXYNOS5260)	+= clk-exynos5260.o
->  obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
->  obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
-> -obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos5433.o
-> +obj-$(CONFIG_EXYNOS5433_COMMON_CLK)	+= clk-exynos5433.o
->  obj-$(CONFIG_SOC_EXYNOS5440)	+= clk-exynos5440.o
->  obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-audss.o
->  obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-clkout.o
-> -obj-$(CONFIG_ARCH_EXYNOS7)	+= clk-exynos7.o
-> +obj-$(CONFIG_EXYNOS7_COMMON_CLK)	+= clk-exynos7.o
->  obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
->  obj-$(CONFIG_S3C2410_COMMON_DCLK)+= clk-s3c2410-dclk.o
->  obj-$(CONFIG_S3C2412_COMMON_CLK)+= clk-s3c2412.o
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes: 44c8b9fa432c ("clk: tegra: pll: Fix _pll_ramp_calc_pll logic and _calc_dynamic_ramp_rate")
+> ----
+> The patch that caused it appears to be older, but I only ran into
+> the randconfig bug today for the first time. Apparently the commit
+> is only in linux-next at the moment, not in 4.4-rc1
 > 
 
-So in this approach we need to add separate config for clock support of
-each ARM64 Exynos64 SoC. Is this fine?
+Acked-by: Rhyland Klein <rklein@nvidia.com>
 
-Can we club compilation of each ARM64 Exynos SoC clock file under
-EXYNOS7_COMMON_CLK? As for all ARM64 SoC there is single defconfig and
-binary.
+-rhyland
 
-
-Thanks,
-Pankaj Dubey
+-- 
+nvpublic
