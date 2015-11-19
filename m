@@ -1,90 +1,40 @@
-Return-Path: <net147@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <1446214865-3972-12-git-send-email-maxime.ripard@free-electrons.com>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
-	<1446214865-3972-12-git-send-email-maxime.ripard@free-electrons.com>
-Date: Mon, 2 Nov 2015 13:53:20 +1100
-Message-ID: <CANwerB0tva90mj7Anits0gfecQuLcDZ-BEctc0VNAY+Oq0dLbA@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH 11/19] drm: sun4i: Add composite output
-From: Jonathan Liu <net147@gmail.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>,
-	devicetree <devicetree@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>, Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <p.zabel@pengutronix.de>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	James Liao <jamesjj.liao@mediatek.com>,
+	Daniel Kurtz <djkurtz@chromium.org>,
+	"Joe.C" <yingjoe.chen@mediatek.com>,
+	kernel@pengutronix.de,
+	linux-clk@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH 0/2] MT8173 clock changes for DRM
+Date: Thu, 19 Nov 2015 16:59:46 +0100
+Message-Id: <1447948788-21105-1-git-send-email-p.zabel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 31 October 2015 at 01:20, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Some Allwinner SoCs have an IP called the TV encoder that is used to output
-> composite and VGA signals. In such a case, we need to use the second TCON
-> channel.
->
-> Add support for that TV encoder.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/gpu/drm/sun4i/Makefile    |   1 +
->  drivers/gpu/drm/sun4i/sun4i_drv.c |  10 +-
->  drivers/gpu/drm/sun4i/sun4i_tv.c  | 532 ++++++++++++++++++++++++++++++++++++++
->  drivers/gpu/drm/sun4i/sun4i_tv.h  |  18 ++
->  4 files changed, 560 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_tv.c
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_tv.h
->
-> diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makefile
-> index 4d230b658a05..fc0dc8be82d9 100644
-> --- a/drivers/gpu/drm/sun4i/Makefile
-> +++ b/drivers/gpu/drm/sun4i/Makefile
-> @@ -6,5 +6,6 @@ sun4i-drm-y += sun4i_layer.o
->  sun4i-drm-y += sun4i_tcon.o
->
->  sun4i-drm-y += sun4i_rgb.o
-> +sun4i-drm-y += sun4i_tv.o
->
->  obj-$(CONFIG_DRM_SUN4I)                += sun4i-drm.o
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-> index f2c9c8a2eb75..3cf7a9e89afa 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-> @@ -22,6 +22,7 @@
->  #include "sun4i_layer.h"
->  #include "sun4i_rgb.h"
->  #include "sun4i_tcon.h"
-> +#include "sun4i_tv.h"
->
->  static void sun4i_drv_preclose(struct drm_device *drm,
->                                struct drm_file *file_priv)
-> @@ -134,12 +135,18 @@ static int sun4i_drv_load(struct drm_device *drm, unsigned long flags)
->                 goto err_free_crtc;
->         }
->
-> +       ret = sun4i_tv_init(drm);
-> +       if (ret) {
-> +               dev_err(drm->dev, "Couldn't create our RGB output\n");
+Hi,
 
-RGB should be composite. Seems like a copy-paste error.
+I have sent these two as part of the MT8173 DRM/KMS driver patch series [1],
+but not yet to the clock list. I'd be happy to get some review and
+suggestions on how to best merge them, given the dependency of the DRM/KMS
+driver on these changes.
 
-> +               goto err_free_rgb;
-> +       }
-> +
->         /* Create our framebuffer */
->         drv->fbdev = sun4i_framebuffer_init(drm);
->         if (IS_ERR(drv->fbdev)) {
->                 dev_err(drm->dev, "Couldn't create our framebuffer\n");
->                 ret = PTR_ERR(drv->fbdev);
-> -               goto err_free_rgb;
-> +               goto err_free_tv;
->         }
->
->         /* Enable connectors polling */
+[1] http://www.spinics.net/lists/dri-devel/msg94500.html
 
-Regards,
-Jonathan
+best regards
+Philipp
+
+Philipp Zabel (2):
+  clk: mediatek: make dpi0_sel and hdmi_sel not propagate rate changes
+  clk: mediatek: Add hdmi_ref HDMI PHY PLL reference clock output
+
+ drivers/clk/mediatek/clk-mt8173.c      | 9 +++++++--
+ drivers/clk/mediatek/clk-mtk.h         | 7 +++++--
+ include/dt-bindings/clock/mt8173-clk.h | 3 ++-
+ 3 files changed, 14 insertions(+), 5 deletions(-)
+
+-- 
+2.6.2
