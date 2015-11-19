@@ -1,49 +1,46 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
- Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>,
- Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
- Kevin Hilman <khilman@linaro.org>
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 0/2] arm64: EXYNOS: Consolidate Exynos7 symbol
-Date: Mon, 16 Nov 2015 10:36:13 +0900
-Message-id: <1447637775-9887-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <huanglin821201@gmail.com>
+Return-Path: <huanglin821201@gmail.com>
+From: Lin Huang <hl@rock-chips.com>
+To: heiko@sntech.de,
+	dianders@chromium.org,
+	mturquette@baylibre.com,
+	myungjoo.ham@samsung.com,
+	kyungmin.park@samsung.com
+Cc: linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org,
+	dbasehore@chromium.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Lin Huang <hl@rock-chips.com>
+Subject: [PATCH 0/2] Bring up rk3399 ddr frequency scaling 
+Date: Thu, 19 Nov 2015 18:21:09 +0800
+Message-Id: <1447928471-14448-1-git-send-email-hl@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+these patchset bring up rk3399 ddr frequency scaling flow,
+use devfreq framework and simple_ondemand policy. Ddr set
+rate function will implement in dcf controller which run in
+the ATF, and rk3399 ATF not ready now, so we need finish it
+when rk3399 ATF ready.
 
-We don't need ARCH_EXYNOS7 symbol because all ARMv8 platforms should
-fall under generic ARCH_EXYNOS. In the same time there is no sense
-in building clocks for these ARMv8 SoCs on ARMv7 builds. In future
-this will also influence PMU [1] driver.
+Lin Huang (2):
+  clk: rockchip: dmc: support rk3399 dmc clock driver
+  devfreq: rockchip: support rk3399 dmc devfreq
 
-Patch 2 *depends* on patch 1. With ack from clock guys everything could
-go through ARM64 tree... or the opposite path.
-
-Best regards,
-Krzysztof
-
-
-[1] https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg48090.html
-
-
-
-Krzysztof Kozlowski (2):
-  clk: samsung: Don't build ARMv8 clock drivers on ARMv7
-  arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS
-
- arch/arm64/Kconfig.platforms        | 11 ++---------
- arch/arm64/boot/dts/exynos/Makefile |  2 +-
- arch/arm64/configs/defconfig        |  2 +-
- drivers/clk/samsung/Kconfig         | 13 +++++++++++++
- drivers/clk/samsung/Makefile        |  4 ++--
- 5 files changed, 19 insertions(+), 13 deletions(-)
+ drivers/clk/rockchip/Makefile         |   1 +
+ drivers/clk/rockchip/clk-rk3399-dmc.c | 196 ++++++++++++++++++++
+ drivers/devfreq/Kconfig               |   1 +
+ drivers/devfreq/Makefile              |   1 +
+ drivers/devfreq/rockchip/Kconfig      |   8 +
+ drivers/devfreq/rockchip/Makefile     |   1 +
+ drivers/devfreq/rockchip/rk3399_dmc.c | 327 ++++++++++++++++++++++++++++++++++
+ include/soc/rockchip/rk3399-dmc-clk.h |  36 ++++
+ 8 files changed, 571 insertions(+)
+ create mode 100644 drivers/clk/rockchip/clk-rk3399-dmc.c
+ create mode 100644 drivers/devfreq/rockchip/Kconfig
+ create mode 100644 drivers/devfreq/rockchip/Makefile
+ create mode 100644 drivers/devfreq/rockchip/rk3399_dmc.c
+ create mode 100644 include/soc/rockchip/rk3399-dmc-clk.h
 
 -- 
 1.9.1
