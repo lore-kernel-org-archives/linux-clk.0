@@ -1,81 +1,76 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Roland Stigge <stigge@antcom.de>, devicetree@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 09/11] clk: lpc32xx: add common clock framework driver
-Date: Fri, 20 Nov 2015 21:20:26 +0100
-Message-ID: <4933690.HhBPeGYMb3@wuerfel>
-In-Reply-To: <564F6172.3090509@mleia.com>
-References: <1447981511-29653-1-git-send-email-vz@mleia.com> <3762298.NKYXldtldq@wuerfel> <564F6172.3090509@mleia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org,
+	agross@codeaurora.org
+Cc: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	bjorn.andersson@sonymobile.com,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v4 0/5] Add initial support for RPM clocks
+Date: Thu, 19 Nov 2015 15:57:55 +0200
+Message-Id: <1447941480-27487-1-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday 20 November 2015 20:07:46 Vladimir Zapolskiy wrote:
-> On 20.11.2015 16:04, Arnd Bergmann wrote:
-> > On Friday 20 November 2015 03:05:09 Vladimir Zapolskiy wrote:
-> >> +
-> >> +struct clk_proto_t {
-> >> +       const char *name;
-> >> +       const u8 parents[LPC32XX_CLK_PARENTS_MAX];
-> >> +       u8 num_parents;
-> >> +       unsigned long flags;
-> >> +};
-> >> +
-> >> +#define CLK_PREFIX(LITERAL)            LPC32XX_CLK_ ## LITERAL
-> >> +#define NUMARGS(...)   (sizeof((int[]){__VA_ARGS__})/sizeof(int))
-> >> +
-> >> +#define LPC32XX_CLK_DEFINE(_idx, _name, _flags, ...)           \
-> >> +       [CLK_PREFIX(_idx)] = {                                  \
-> >> +               .name = #_name,                                 \
-> >> +               .flags = _flags,                                \
-> >> +               .parents = { __VA_ARGS__ },                     \
-> >> +               .num_parents = NUMARGS(__VA_ARGS__),            \
-> >> +        }
-> >> +
-> > 
-> > Try to not outsmart yourself with the macros. It's better to avoid
-> > string concatenation so it's possible to grep for uses of some
-> > constant.
-> > 
-> > I would probably not use a macro at all here and just open-code the
-> > entire table. If you ensure that '0' is not a valid parent, then
-> > you can leave out the .num_parents field and just look for the
-> > zero-termination.
-> 
-> Macros are here for simplicity, code size reduction and to avoid some
-> stupid mistakes like different number of .parents and .num_parents.
-> 
-> I believe macro unwrapping in this code will add another 1000 LoC and
-> will result in quite unreadable and less maintainable code.
+This patchset adds initial support for the clocks controlled by
+the RPM (Resource Power Manager) processor on Qualcomm platforms.
 
-I mean specifically the macro above:
+The RPM is a dedicated hardware engine for managing the shared
+SoC resources in order to keep the lowest power profile. It
+communicates with other hardware subsystems via shared memory
+and accepts clock requests, aggregates the requests and turns
+the clocks on/off or scales them on demand.
 
-static const struct clk_proto_t clk_proto[LPC32XX_CLK_CCF_MAX] __initconst = {
-+       LPC32XX_CLK_DEFINE(XTAL, xtal, 0x0),
-+       LPC32XX_CLK_DEFINE(XTAL_32K, xtal_32k, 0x0),
-+
-+       LPC32XX_CLK_DEFINE(RTC, rtc, 0x0, LPC32XX_CLK_XTAL_32K),
-+       LPC32XX_CLK_DEFINE(OSC, osc, CLK_IGNORE_UNUSED, LPC32XX_CLK_XTAL),
-+       LPC32XX_CLK_DEFINE(SYS, sys, CLK_IGNORE_UNUSED,
-+               LPC32XX_CLK_OSC, LPC32XX_CLK_PLL397X),
-+       LPC32XX_CLK_DEFINE(PLL397X, pll_397x, CLK_IGNORE_UNUSED,
-+               LPC32XX_CLK_RTC),
+Until now the RPM clock controller was not supported and a hard-
+coded fixed-rate clocks were registered in the drivers. Now we
+are moving the on-board clocks to the DT (where they actually
+belong). If the RPM clock controller is enabled we insert it
+right after the DT clocks making it a parent of some GCC clocks.
 
-can become
+The DT patches should go through the soc/qcom tree. This also
+depends on smem and smd.
 
-static const struct clk_proto_t clk_proto[] __initconst = {
-	[LPC32XX_CLK_XTAL]	= { "xtal" },
-	[LPC32XX_CLK_XTAL_32K]	= { "xtal_32k" },
-	[LPC32XX_CLK_RTC]	= { "rtc",
-			.parents = { LPC32XX_CLK_XTAL_32K, 0 } },
-	[LPC32XX_CLK_OSC]	= { "osc", CLK_IGNORE_UNUSED,
-			.parents = { LPC32XX_CLK_XTAL, 0 } },
-	[LPC32XX_CLK_SYS]	= { "sys", CLK_IGNORE_UNUSED,
-			.parents = { LPC32XX_CLK_OSC, LPC32XX_CLK_PLL397X, 0) },
-	[LPC32XX_CLK_PLL397X]	= { "pll_397x", CLK_IGNORE_UNUSED,
-			.parents = { LPC32XX_CLK_RTC, 0 },
+Changes since v3 (https://lkml.org/lkml/2015/10/20/613)
+* Drop some of the patches as now we handle both scenarios -
+  RPMCC enabled or disabled.
+* Addressed more comments from Stephen. Thanks again!
 
-Not harder to read at all, not really longer, but easier to grep for.
+Changes since v2 (https://lkml.org/lkml/2015/8/3/513)
+* Addressed various comments from Stephen. Thanks!
+* Added sleep sets support.
+* Added a mutex in the RPM driver.
+* Support both scenarios - RPMCC enabled or disabled.
+* Make RPMCC more generic in order to support other SMD RPM
+  based platforms.
 
-	Arnd
+Changes since v1 (https://lkml.org/lkml/2015/7/9/257):
+* Changed the driver name to clk-smd-rpm, also build it only
+  when it is needed - suggested by Srini and Bjorn.
+* More detailed binding example.
+* Minor changes.
+
+
+Georgi Djakov (5):
+  clk: qcom: msm8916: Move xo and sleep clocks into DT
+  arm64: dts: qcom: msm8916: Add fixed rate on-board oscillator
+  clk: qcom: Add support for RPM Clocks
+  clk: qcom: Add RPM clock controller driver
+  arm64: dts: qcom: msm8916: Add RPMCC DT node
+
+ .../devicetree/bindings/clock/qcom,rpmcc.txt       |   35 +++
+ arch/arm64/boot/dts/qcom/msm8916.dtsi              |   20 ++
+ drivers/clk/qcom/Kconfig                           |   11 +
+ drivers/clk/qcom/Makefile                          |    2 +
+ drivers/clk/qcom/clk-smd-rpm.c                     |  263 ++++++++++++++++++++
+ drivers/clk/qcom/clk-smd-rpm.h                     |  142 +++++++++++
+ drivers/clk/qcom/gcc-msm8916.c                     |   16 +-
+ drivers/clk/qcom/rpmcc.c                           |  206 +++++++++++++++
+ include/dt-bindings/clock/qcom,rpmcc-msm8916.h     |   44 ++++
+ 9 files changed, 730 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+ create mode 100644 drivers/clk/qcom/clk-smd-rpm.c
+ create mode 100644 drivers/clk/qcom/clk-smd-rpm.h
+ create mode 100644 drivers/clk/qcom/rpmcc.c
+ create mode 100644 include/dt-bindings/clock/qcom,rpmcc-msm8916.h
