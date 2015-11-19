@@ -1,97 +1,116 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mleia.com ([178.79.152.223]:48941 "EHLO mail.mleia.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751386AbbKKJan (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Wed, 11 Nov 2015 04:30:43 -0500
-Message-ID: <56430AC0.5090707@mleia.com>
-Date: Wed, 11 Nov 2015 11:30:40 +0200
-From: Vladimir Zapolskiy <vz@mleia.com>
+Return-Path: <stefan@agner.ch>
 MIME-Version: 1.0
-To: Masahiro Yamada <yamada.masahiro@socionext.com>,
-	linux-clk@vger.kernel.org
-CC: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: How to implement common clk in multi function controller?
-References: <CAK7LNASM+tJpd-kBHGHe7TXWm4i-UEfbq7T3dn99p2fKFwtxAA@mail.gmail.com>
-In-Reply-To: <CAK7LNASM+tJpd-kBHGHe7TXWm4i-UEfbq7T3dn99p2fKFwtxAA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Date: Wed, 18 Nov 2015 17:58:34 -0800
+From: Stefan Agner <stefan@agner.ch>
+To: shawnguo@kernel.org, kernel@pengutronix.de, mturquette@baylibre.com,
+ sboyd@codeaurora.org
+Cc: galak@codeaurora.org, ijc+devicetree@hellion.org.uk,
+ mark.rutland@arm.com, pawel.moll@arm.com, robh+dt@kernel.org,
+ Li.Xiubo@freescale.com, zidan.wang@freescale.com,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] ARM: imx: clk-vf610: fix SAI clock tree
+In-Reply-To: <1445141122-14183-1-git-send-email-stefan@agner.ch>
+References: <1445141122-14183-1-git-send-email-stefan@agner.ch>
+Message-ID: <303ceb58a66266515be33d1943091908@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Masahiro,
+Hi Shawn,
 
-On 11.11.2015 05:16, Masahiro Yamada wrote:
-> Hi.
-> 
-> I am implementing clk and reset drivers for my SoCs.
-> (drivers/clk/uniphier/* and drivers/reset/uniphier/*)
-> 
-> 
-> In my SoCs, one hardware block contains various
-> registers for both clock and reset controlling.
-> (so, it is like a MFD system controller device).
-> I think it is a common case.
-> 
-
-I met the same problem with LPC32xx clocks, one hardware block
-contains clock controller, power controller, wakeup
-controllers and partially pinmux and dma configuration.
-
-I've sent a mmio version for review some time ago, but I had
-to change interface to regmap recently.
-
-> I am guessing my device tree would be like follows:
-> (one syscon device contains clk and rst devices under it)
-> 
-> syscon {
->      compatible = "socionext,uniphier-syscon",
->                  "syscon", "simple-mfd";
->      reg = <...   ...>;
-> 
->      clk_ctrl {
->             .compatible = "socionext,uniphier-clkctrl";
->             #clock-cells = <1>;
->      };
-> 
->      rst_ctrl {
->              .compatible = "socionext,uniphier-rstctrl";
->              #reset-cells = <1>;
->      };
-> };
-> 
-
-Eventually I implement the same layout, but replace "syscon" and
-"simple-mfd" with "simple-bus" only.
-
-For a single interface syscon_node_to_regmap() I don't see a point to
-add a dependency on MFD and syscon.
-
-> 
-> One problem I noticed was,
-> we are supposed to use regmap for register access
-> if we use syscon.
->
-> OTOH, common clk APIs such as clk-gate, clk-divider
-> expect simple register access via writel()/readl().
-> 
-> Is it a good idea to expand such APIs to regmap?
-
-It might be a good idea.
-
-> 
-> Of course, I could my own uniphier/clk-gate.c
-> to use regmap as other SoCs do.
-> 
-> But, I think regmap is general demand, so
-> I am wondering if it could be supported in common parts.
-> 
-> Or, any other good solution exists?
->
-
-I had to copy low-level parts from clk-gate, clk-divider and clk-mux to
-my driver and reimplement them on regmap API, of course I won't call
-this as a good solution, but if regmap is unavoidable, that's what remains.
+Any thoughts on that patchset? I kind of hoped that it would make it
+into 4.4 since it actually fixes issues (at least 1 and 2)... That said,
+I don't think it is stable material since it also breaks the device
+tree...
 
 --
-With best wishes,
-Vladimir
+Stefan
+
+On 2015-10-17 21:05, Stefan Agner wrote:
+> The Synchronous Audio Interface (SAI) instances are clocked by
+> independent clocks: The bus clock and the audio clock (as shown in
+> Figure 51-1 in the Vybrid Reference Manual). The clock gates in
+> CCGR0/CCGR1 for SAI0 through SAI3 are bus clock gates, as access
+> tests to the registers with/without gating those clocks have shown.
+> The audio clock is gated by the SAIx_EN gates in CCM_CSCDR1,
+> followed by a clock divider (SAIx_DIV). Currently, the parent of
+> the bus clock gates has been assigned to SAIx_DIV, which is not
+> involved in the bus clock path for the SAI instances (see chapter
+> 9.10.12, SAI clocking in the Vybrid Reference Manual).
+> 
+> Fix this by define the parent clock of VF610_CLK_SAIx to be the bus
+> clock.
+> 
+> If the driver needs the audio clock (when used in master mode), a
+> fixed device tree is required which assign the audio clock properly
+> to VF610_CLK_SAIx_DIV.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+> Hi all,
+> 
+> Patch 1 and 2 are actual fixes and should be applied toghether. If
+> the clock tree changes are applied only, master mode won't work
+> anymore. With only the device tree changes applied, it probably
+> will still work but the VF610_CLK_SAIx_DIV will be enabled twice.
+> 
+> Since Patch 3 also uses the fixed clock layout, it should be
+> applied after the clock tree fix too...
+> 
+> Not sure through which tree these changes should go?
+> 
+> --
+> Stefan
+> 
+>  drivers/clk/imx/clk-vf610.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
+> index bff45ea..42a7a23 100644
+> --- a/drivers/clk/imx/clk-vf610.c
+> +++ b/drivers/clk/imx/clk-vf610.c
+> @@ -335,22 +335,22 @@ static void __init vf610_clocks_init(struct
+> device_node *ccm_node)
+>  	clk[VF610_CLK_SAI0_SEL] = imx_clk_mux("sai0_sel", CCM_CSCMR1, 0, 2,
+> sai_sels, 4);
+>  	clk[VF610_CLK_SAI0_EN] = imx_clk_gate("sai0_en", "sai0_sel", CCM_CSCDR1, 16);
+>  	clk[VF610_CLK_SAI0_DIV] = imx_clk_divider("sai0_div", "sai0_en",
+> CCM_CSCDR1, 0, 4);
+> -	clk[VF610_CLK_SAI0] = imx_clk_gate2("sai0", "sai0_div", CCM_CCGR0,
+> CCM_CCGRx_CGn(15));
+> +	clk[VF610_CLK_SAI0] = imx_clk_gate2("sai0", "ipg_bus", CCM_CCGR0,
+> CCM_CCGRx_CGn(15));
+>  
+>  	clk[VF610_CLK_SAI1_SEL] = imx_clk_mux("sai1_sel", CCM_CSCMR1, 2, 2,
+> sai_sels, 4);
+>  	clk[VF610_CLK_SAI1_EN] = imx_clk_gate("sai1_en", "sai1_sel", CCM_CSCDR1, 17);
+>  	clk[VF610_CLK_SAI1_DIV] = imx_clk_divider("sai1_div", "sai1_en",
+> CCM_CSCDR1, 4, 4);
+> -	clk[VF610_CLK_SAI1] = imx_clk_gate2("sai1", "sai1_div", CCM_CCGR1,
+> CCM_CCGRx_CGn(0));
+> +	clk[VF610_CLK_SAI1] = imx_clk_gate2("sai1", "ipg_bus", CCM_CCGR1,
+> CCM_CCGRx_CGn(0));
+>  
+>  	clk[VF610_CLK_SAI2_SEL] = imx_clk_mux("sai2_sel", CCM_CSCMR1, 4, 2,
+> sai_sels, 4);
+>  	clk[VF610_CLK_SAI2_EN] = imx_clk_gate("sai2_en", "sai2_sel", CCM_CSCDR1, 18);
+>  	clk[VF610_CLK_SAI2_DIV] = imx_clk_divider("sai2_div", "sai2_en",
+> CCM_CSCDR1, 8, 4);
+> -	clk[VF610_CLK_SAI2] = imx_clk_gate2("sai2", "sai2_div", CCM_CCGR1,
+> CCM_CCGRx_CGn(1));
+> +	clk[VF610_CLK_SAI2] = imx_clk_gate2("sai2", "ipg_bus", CCM_CCGR1,
+> CCM_CCGRx_CGn(1));
+>  
+>  	clk[VF610_CLK_SAI3_SEL] = imx_clk_mux("sai3_sel", CCM_CSCMR1, 6, 2,
+> sai_sels, 4);
+>  	clk[VF610_CLK_SAI3_EN] = imx_clk_gate("sai3_en", "sai3_sel", CCM_CSCDR1, 19);
+>  	clk[VF610_CLK_SAI3_DIV] = imx_clk_divider("sai3_div", "sai3_en",
+> CCM_CSCDR1, 12, 4);
+> -	clk[VF610_CLK_SAI3] = imx_clk_gate2("sai3", "sai3_div", CCM_CCGR1,
+> CCM_CCGRx_CGn(2));
+> +	clk[VF610_CLK_SAI3] = imx_clk_gate2("sai3", "ipg_bus", CCM_CCGR1,
+> CCM_CCGRx_CGn(2));
+>  
+>  	clk[VF610_CLK_NFC_SEL] = imx_clk_mux("nfc_sel", CCM_CSCMR1, 12, 2,
+> nfc_sels, 4);
+>  	clk[VF610_CLK_NFC_EN] = imx_clk_gate("nfc_en", "nfc_sel", CCM_CSCDR2, 9);
