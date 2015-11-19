@@ -1,66 +1,113 @@
-Return-Path: <vz@mleia.com>
-From: Vladimir Zapolskiy <vz@mleia.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: Russell King <linux@arm.linux.org.uk>,
-	Roland Stigge <stigge@antcom.de>,
+Return-Path: <zywang33@gmail.com>
+Return-Path: <zywang33@gmail.com>
+From: Chris Zhong <zyw@rock-chips.com>
+To: heiko@sntech.de,
+	linux-rockchip@lists.infradead.org,
+	Mark Yao <mark.yao@rock-chips.com>
+Cc: Chris Zhong <zyw@rock-chips.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Kumar Gala <galak@codeaurora.org>,
+	dri-devel@lists.freedesktop.org,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Rob Herring <robh+dt@kernel.org>,
+	David Airlie <airlied@linux.ie>,
+	Jeff Chen <cym@rock-chips.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
 	linux-clk@vger.kernel.org,
+	Alexandru M Stan <amstan@chromium.org>,
+	Sonny Rao <sonnyrao@chromium.org>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Huang Lin <hl@rock-chips.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Pawel Moll <pawel.moll@arm.com>,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 04/11] arm: dts: lpc32xx: add device nodes for external oscillators
-Date: Fri, 20 Nov 2015 03:05:04 +0200
-Message-Id: <1447981511-29653-5-git-send-email-vz@mleia.com>
-In-Reply-To: <1447981511-29653-1-git-send-email-vz@mleia.com>
-References: <1447981511-29653-1-git-send-email-vz@mleia.com>
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vincent Palatin <vpalatin@chromium.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Ajay Kumar <ajaykumar.rs@samsung.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Liu Ying <Ying.liu@freescale.com>,
+	Andrew Bresticker <abrestic@chromium.org>,
+	Doug Anderson <dianders@chromium.org>,
+	linux-kernel@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Roger Chen <roger.chen@rock-chips.com>
+Subject: [PATCH v3 00/12] Add mipi dsi support for rk3288
+Date: Thu, 19 Nov 2015 11:35:18 +0800
+Message-Id: <1447904131-29328-1-git-send-email-zyw@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-NXP LPC32xx SoC has two external oscillators - one is mandatory and
-always on 32768 Hz oscillator and one optional 10-20MHz oscillator,
-which is practically always present on LPC32xx boards, because its
-presence is needed to supply USB controller clock and by default it
-supplies ARM and most of the peripheral clocks, LPC32xx User's Manual
-references it as a main oscillator.
+The rk3288 MIPI DSI is a Synopsys DesignWare MIPI DSI host controller
+IP. This series adds support for a Synopsys DesignWare MIPI DSI host
+controller DRM bridge driver and a rockchip MIPI DSI specific DRM
+driver.
 
-The change adds device nodes for both oscillators, frequency of
-the main oscillator is selected to be 13MHz by default, this variant
-is found on all LPC32xx reference boards.
+This series also includes a DRM panel driver for BOE TV080WUM-NL0 panel.
+This panel only use the MIPI DSI video mode.
 
-The device nodes for external oscillators are needed to describe input
-clocks of LPC32xx clock controller.
+The MIPI DSI feature is tested on rk3288 evb board, backport them to
+chrome os kernel v3.14, and it can display normally.
 
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
----
- arch/arm/boot/dts/lpc32xx.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+This patchset is base on the patchset from Ying.liu@freescale.com.
+<http://www.spinics.net/lists/dri-devel/msg77181.html>
 
-diff --git a/arch/arm/boot/dts/lpc32xx.dtsi b/arch/arm/boot/dts/lpc32xx.dtsi
-index c85cf97..a9f2d9a 100644
---- a/arch/arm/boot/dts/lpc32xx.dtsi
-+++ b/arch/arm/boot/dts/lpc32xx.dtsi
-@@ -28,6 +28,22 @@
- 		};
- 	};
- 
-+	clocks {
-+		xtal_32k: xtal_32k {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <32768>;
-+			clock-output-names = "xtal_32k";
-+		};
-+
-+		xtal: xtal {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <13000000>;
-+			clock-output-names = "xtal";
-+		};
-+	};
-+
- 	ahb {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
+
+Changes in v3:
+move the dw_mipi_dsi.txt to Documentation/devicetree/bindings/display/bridge
+move dw_mipi_dsi_rockchip.txt to bindings/display/rockchip/
+move boe,tv080wum-nl0.txt to bindings/display/panel/
+
+Changes in v2:
+add the mipi clk id in a single patch
+As Thierry.Reding comment, add a documentation for this panel.
+
+Chris Zhong (10):
+  clk: rockchip: add id for mipidsi sclk on rk3288
+  clk: rockchip: add mipidsi clocks on rk3288
+  drm/rockchip: return a true clock rate to adjusted_mode
+  drm/bridge: Add Synopsys DesignWare MIPI DSI host controller driver
+  drm: rockchip: Support Synopsys DesignWare MIPI DSI host controller
+  Documentation: dt-bindings: Add bindings for rk3288 DW MIPI DSI driver
+  ARM: dts: rockchip: add rk3288 mipi_dsi nodes
+  drm/panel: simple: Add support for BOE TV080WUM-NL0
+  drm/panel: simple: Add boe,tv080wum-nl0 simple panel device tree
+    binding
+  ARM: dts: rockchip: add support mipi panel tv080wum-nl0 for rk3288-evb
+
+Liu Ying (2):
+  drm/dsi: Add a helper to get bits per pixel of MIPI DSI pixel format
+  Documentation: dt-bindings: Add bindings for Synopsys DW MIPI DSI DRM
+    bridge driver
+
+ .../bindings/display/bridge/dw_mipi_dsi.txt        |   76 ++
+ .../bindings/display/panel/boe,tv080wum-nl0.txt    |    7 +
+ .../display/rockchip/dw_mipi_dsi_rockchip.txt      |   56 ++
+ arch/arm/boot/dts/rk3288-evb.dtsi                  |   20 +-
+ arch/arm/boot/dts/rk3288.dtsi                      |   39 +
+ drivers/clk/rockchip/clk-rk3288.c                  |    2 +-
+ drivers/gpu/drm/bridge/Kconfig                     |   11 +
+ drivers/gpu/drm/bridge/Makefile                    |    1 +
+ drivers/gpu/drm/bridge/dw_mipi_dsi.c               | 1055 ++++++++++++++++++++
+ drivers/gpu/drm/panel/panel-simple.c               |   33 +
+ drivers/gpu/drm/rockchip/Kconfig                   |   10 +
+ drivers/gpu/drm/rockchip/Makefile                  |    1 +
+ drivers/gpu/drm/rockchip/dw_mipi_dsi_rockchip.c    |  249 +++++
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c        |    9 +
+ include/drm/bridge/dw_mipi_dsi.h                   |   27 +
+ include/drm/drm_mipi_dsi.h                         |   14 +
+ include/dt-bindings/clock/rk3288-cru.h             |    1 +
+ 17 files changed, 1609 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/dw_mipi_dsi.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/boe,tv080wum-nl0.txt
+ create mode 100644 Documentation/devicetree/bindings/display/rockchip/dw_mipi_dsi_rockchip.txt
+ create mode 100644 drivers/gpu/drm/bridge/dw_mipi_dsi.c
+ create mode 100644 drivers/gpu/drm/rockchip/dw_mipi_dsi_rockchip.c
+ create mode 100644 include/drm/bridge/dw_mipi_dsi.h
+
 -- 
-2.1.4
+2.6.3
