@@ -1,60 +1,121 @@
-Return-Path: <repk@triplefau.lt>
-Date: Sun, 29 Nov 2015 23:25:49 +0100
-From: Remi Pommarel <repk@triplefau.lt>
-To: Stefan Wahren <info@lategoodbye.de>
-Cc: Eric Anholt <eric@anholt.net>, Lee Jones <lee@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bart Tanghe <bart.tanghe@thomasmore.be>
-Subject: Re: [PATCH v2 0/3] Add PWM clock support for bcm2835
-Message-ID: <20151129222549.GI491@cruxbox>
-References: <1447251765-16297-1-git-send-email-repk@triplefau.lt>
- <565A13F7.3020905@lategoodbye.de>
- <20151129003121.GH491@cruxbox>
- <565B6CA0.2070702@lategoodbye.de>
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Thierry Reding <treding@nvidia.com>
+Cc: Rhyland Klein <rklein@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: tegra: move _calc_dynamic_ram_rate out of #ifdef
+Date: Thu, 19 Nov 2015 23:32:33 +0100
+Message-ID: <4290741.p1jMzEOUEU@wuerfel>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <565B6CA0.2070702@lategoodbye.de>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Nov 29, 2015 at 10:22:40PM +0100, Stefan Wahren wrote:
-> Hi Remi,
-> 
-> Am 29.11.2015 um 01:31 schrieb Remi Pommarel:
-> >Hi Stefan,
-> >
-> >On Sat, Nov 28, 2015 at 09:52:07PM +0100, Stefan Wahren wrote:
-> >>i applied the series including the devicetree modification, but it
-> >>doesn't work for me.
-> >>
-> >>First of all i get an ugly division by zero warning from the pwm
-> >>driver. The pwm driver still assume a fixed clock and doesn't handle
-> >>the error cases of clk_get_rate(). I attached a patch at the end.
-> >
-> >Yes the devicetree patch from patchset version one does not work with
-> >this version.
-> 
-> thanks. I successfully tested the pwm with the led pwm driver.
-> 
+_calc_dynamic_ram_rate is defined inside an #ifdef but called
+later in the same file outside of that #ifdef, which can cause a
+build error:
 
-Good news, thank you.
+drivers/clk/tegra/clk-pll.c: In function '_tegra_clk_register_pll':
+drivers/clk/tegra/clk-pll.c:1541:29: error: '_calc_dynamic_ramp_rate' undeclared (first use in this function)
 
-> >I haven't sent the modified devicetree because Eric said
-> >it is better to send it in a separate patchset. If you want to test it I
-> >attached the working devicetree patch at the end.
-> 
-> I don't think that he said that. He wanted you to send the
-> devicetree changes as a separate patch. So it should be okay if it's
-> part of the same patchset.
-> 
+This moves both _calc_dynamic_ram_rate and _pll_fixed_mdiv in
+front of the #ifdef to make all configurations compile again.
 
-I could have misunderstood him, sorry about that. I will send a
-devicetree separated patch with the next version if Eric agrees with the
-GENMASK logic used in my first patch.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 44c8b9fa432c ("clk: tegra: pll: Fix _pll_ramp_calc_pll logic and _calc_dynamic_ramp_rate")
+----
+The patch that caused it appears to be older, but I only ran into
+the randconfig bug today for the first time. Apparently the commit
+is only in linux-next at the moment, not in 4.4-rc1
 
-Best Regards,
-
--- 
-Remi
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 9734ffa185d3..94f3a6d34e3a 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -967,11 +967,6 @@ const struct clk_ops tegra_clk_plle_ops = {
+ 	.enable = clk_plle_enable,
+ };
+ 
+-#if defined(CONFIG_ARCH_TEGRA_114_SOC) || \
+-	defined(CONFIG_ARCH_TEGRA_124_SOC) || \
+-	defined(CONFIG_ARCH_TEGRA_132_SOC) || \
+-	defined(CONFIG_ARCH_TEGRA_210_SOC)
+-
+ static int _pll_fixed_mdiv(struct tegra_clk_pll_params *pll_params,
+ 			   unsigned long parent_rate)
+ {
+@@ -990,6 +985,40 @@ static int _pll_fixed_mdiv(struct tegra_clk_pll_params *pll_params,
+ 		return 1;
+ }
+ 
++static int _calc_dynamic_ramp_rate(struct clk_hw *hw,
++				struct tegra_clk_pll_freq_table *cfg,
++				unsigned long rate, unsigned long parent_rate)
++{
++	struct tegra_clk_pll *pll = to_clk_pll(hw);
++	unsigned int p;
++	int p_div;
++
++	if (!rate)
++		return -EINVAL;
++
++	p = DIV_ROUND_UP(pll->params->vco_min, rate);
++	cfg->m = _pll_fixed_mdiv(pll->params, parent_rate);
++	cfg->output_rate = rate * p;
++	cfg->n = cfg->output_rate * cfg->m / parent_rate;
++	cfg->input_rate = parent_rate;
++
++	p_div = _p_div_to_hw(hw, p);
++	if (p_div < 0)
++		return p_div;
++
++	cfg->p = p_div;
++
++	if (cfg->n > divn_max(pll) || cfg->output_rate > pll->params->vco_max)
++		return -EINVAL;
++
++	return 0;
++}
++
++#if defined(CONFIG_ARCH_TEGRA_114_SOC) || \
++	defined(CONFIG_ARCH_TEGRA_124_SOC) || \
++	defined(CONFIG_ARCH_TEGRA_132_SOC) || \
++	defined(CONFIG_ARCH_TEGRA_210_SOC)
++
+ u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate)
+ {
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+@@ -1039,35 +1068,6 @@ static int _setup_dynamic_ramp(struct tegra_clk_pll_params *pll_params,
+ 	return 0;
+ }
+ 
+-static int _calc_dynamic_ramp_rate(struct clk_hw *hw,
+-				struct tegra_clk_pll_freq_table *cfg,
+-				unsigned long rate, unsigned long parent_rate)
+-{
+-	struct tegra_clk_pll *pll = to_clk_pll(hw);
+-	unsigned int p;
+-	int p_div;
+-
+-	if (!rate)
+-		return -EINVAL;
+-
+-	p = DIV_ROUND_UP(pll->params->vco_min, rate);
+-	cfg->m = _pll_fixed_mdiv(pll->params, parent_rate);
+-	cfg->output_rate = rate * p;
+-	cfg->n = cfg->output_rate * cfg->m / parent_rate;
+-	cfg->input_rate = parent_rate;
+-
+-	p_div = _p_div_to_hw(hw, p);
+-	if (p_div < 0)
+-		return p_div;
+-
+-	cfg->p = p_div;
+-
+-	if (cfg->n > divn_max(pll) || cfg->output_rate > pll->params->vco_max)
+-		return -EINVAL;
+-
+-	return 0;
+-}
+-
+ static int _pll_ramp_calc_pll(struct clk_hw *hw,
+ 			      struct tegra_clk_pll_freq_table *cfg,
+ 			      unsigned long rate, unsigned long parent_rate)
