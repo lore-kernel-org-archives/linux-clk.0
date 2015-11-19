@@ -1,140 +1,78 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH 2/6] clk: qcom: gdsc: Add support for gdscs with gds hw controller
-Date: Thu, 26 Nov 2015 11:24:53 +0530
-Message-Id: <1448517297-32419-3-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1448517297-32419-1-git-send-email-rnayak@codeaurora.org>
-References: <1448517297-32419-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <tomasz.figa@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <1447637775-9887-3-git-send-email-k.kozlowski@samsung.com>
+References: <1447637775-9887-1-git-send-email-k.kozlowski@samsung.com>
+	<1447637775-9887-3-git-send-email-k.kozlowski@samsung.com>
+Date: Thu, 19 Nov 2015 13:23:55 +0900
+Message-ID: <CA+Ln22FP60Zc4cQmztNTy+2ZbhE1T7pgPXBMb9T=YZcYPo0EdA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS
+From: Tomasz Figa <tomasz.figa@gmail.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel <linux-kernel@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>,
+	Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Kevin Hilman <khilman@linaro.org>, Pankaj Dubey <pankaj.dubey@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Some gdsc power domains can have a gds_hw_controller block inside
-to help ensure all slave devices within the power domain are idle
-before the gdsc is actually switched off.
-This is mainly useful in power domains which host a MMU, in which
-case its necessary to make sure there are no outstanding MMU operations
-or pending bus transactions before the power domain is turned off.
+Hi Krzysztof,
 
-In gdscs with gds_hw_controller block, its necessary to check the
-gds_hw_ctrl status bits instead of the ones in gdscr, to determine
-the state of the powerdomain.
+2015-11-16 10:36 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
+> The ARMv8 Exynos family SoCs in Linux kernel are currently:
+>  - Exynos5433 (controlled by ARCH_EXYNOS),
+>  - Exynos7 (controlled by ARCH_EXYNOS7).
+>
+> It duplicates Kconfig symbols unnecessarily, so consolidate them into
+> one ARCH_EXYNOS. Future SoCs could fall also under the ARCH_EXYNOS
+> symbol.
+>
+> The commit should not bring any visible functional change.
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- drivers/clk/qcom/gdsc.c | 38 ++++++++++++++++++++++----------------
- drivers/clk/qcom/gdsc.h |  2 ++
- 2 files changed, 24 insertions(+), 16 deletions(-)
+I think this basically matches the general recommendation for ARM64,
+so excluding the single nitpick inline and assuming that, after this
+patch, grep ARCH_EXYNOS7 gives no results:
 
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index a164c38..fb2e43c 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -42,12 +42,12 @@
- 
- #define domain_to_gdsc(domain) container_of(domain, struct gdsc, pd)
- 
--static int gdsc_is_enabled(struct gdsc *sc)
-+static int gdsc_is_enabled(struct gdsc *sc, unsigned int reg)
- {
- 	u32 val;
- 	int ret;
- 
--	ret = regmap_read(sc->regmap, sc->gdscr, &val);
-+	ret = regmap_read(sc->regmap, reg, &val);
- 	if (ret)
- 		return ret;
- 
-@@ -58,30 +58,34 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
- {
- 	int ret;
- 	u32 val = en ? 0 : SW_COLLAPSE_MASK;
--	u32 check = en ? PWR_ON_MASK : 0;
- 	unsigned long timeout;
-+	unsigned int status_reg = sc->gdscr;
- 
- 	ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
- 	if (ret)
- 		return ret;
- 
- 	timeout = jiffies + usecs_to_jiffies(TIMEOUT_US);
--	do {
--		ret = regmap_read(sc->regmap, sc->gdscr, &val);
--		if (ret)
--			return ret;
- 
--		if ((val & PWR_ON_MASK) == check)
-+	if (sc->gds_hw_ctrl) {
-+		status_reg = sc->gds_hw_ctrl;
-+	/*
-+	 * The gds hw controller asserts/de-asserts the status bit soon
-+	 * after it receives a power on/off request from a master.
-+	 * The controller then takes around 8 xo cycles to start its internal
-+	 * state machine and update the status bit. During this time, the
-+	 * status bit does not reflect the true status of the core.
-+	 * Add a delay of 1 us between writing to the SW_COLLAPSE bit and
-+	 * polling the status bit
-+	 */
-+		udelay(1);
-+	}
-+
-+	do {
-+		if (gdsc_is_enabled(sc, status_reg) == en)
- 			return 0;
- 	} while (time_before(jiffies, timeout));
- 
--	ret = regmap_read(sc->regmap, sc->gdscr, &val);
--	if (ret)
--		return ret;
--
--	if ((val & PWR_ON_MASK) == check)
--		return 0;
--
- 	return -ETIMEDOUT;
- }
- 
-@@ -165,6 +169,7 @@ static int gdsc_init(struct gdsc *sc)
- {
- 	u32 mask, val;
- 	int on, ret;
-+	unsigned int reg;
- 
- 	/*
- 	 * Disable HW trigger: collapse/restore occur based on registers writes.
-@@ -185,7 +190,8 @@ static int gdsc_init(struct gdsc *sc)
- 			return ret;
- 	}
- 
--	on = gdsc_is_enabled(sc);
-+	reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
-+	on = gdsc_is_enabled(sc, reg);
- 	if (on < 0)
- 		return on;
- 
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index 4e9dfc1..66a43be 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -32,6 +32,7 @@ struct reset_controller_dev;
-  * @pd: generic power domain
-  * @regmap: regmap for MMIO accesses
-  * @gdscr: gsdc control register
-+ * @gds_hw_ctrl: gds_hw_ctrl register
-  * @cxcs: offsets of branch registers to toggle mem/periph bits in
-  * @cxc_count: number of @cxcs
-  * @pwrsts: Possible powerdomain power states
-@@ -44,6 +45,7 @@ struct gdsc {
- 	struct generic_pm_domain	*parent;
- 	struct regmap			*regmap;
- 	unsigned int			gdscr;
-+	unsigned int			gds_hw_ctrl;
- 	unsigned int			*cxcs;
- 	unsigned int			cxc_count;
- 	const u8			pwrsts;
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
+
+>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  arch/arm64/Kconfig.platforms        | 11 ++---------
+>  arch/arm64/boot/dts/exynos/Makefile |  2 +-
+>  arch/arm64/configs/defconfig        |  2 +-
+>  3 files changed, 4 insertions(+), 11 deletions(-)
+>
+> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> index 4043c35962cc..afa19baca94e 100644
+> --- a/arch/arm64/Kconfig.platforms
+> +++ b/arch/arm64/Kconfig.platforms
+> @@ -13,21 +13,14 @@ config ARCH_BERLIN
+>           This enables support for Marvell Berlin SoC Family
+>
+>  config ARCH_EXYNOS
+> -       bool
+> -       help
+> -         This enables support for Samsung Exynos SoC family
+> -
+> -config ARCH_EXYNOS7
+> -       bool "ARMv8 based Samsung Exynos7"
+> -       select ARCH_EXYNOS
+> +       bool "ARMv8 based Samsung Exynos SoC family"
+>         select COMMON_CLK_SAMSUNG
+>         select HAVE_S3C2410_WATCHDOG if WATCHDOG
+>         select HAVE_S3C_RTC if RTC_CLASS
+>         select PINCTRL
+>         select PINCTRL_EXYNOS
+> -
+>         help
+> -         This enables support for Samsung Exynos7 SoC family
+> +         This enables support for Samsung Exynos ARMv8 SoC family
+
+nit: Sounds a little bit strange. Maybe "This enables support for
+ARMv8 based Samsung Exynos SoC family"?
+
+Best regards,
+Tomasz
