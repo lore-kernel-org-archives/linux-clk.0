@@ -1,57 +1,45 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	agross@codeaurora.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	bjorn.andersson@sonymobile.com,
+Return-Path: <zywang33@gmail.com>
+Return-Path: <zywang33@gmail.com>
+From: Chris Zhong <zyw@rock-chips.com>
+To: heiko@sntech.de,
+	linux-rockchip@lists.infradead.org,
+	Mark Yao <mark.yao@rock-chips.com>
+Cc: Chris Zhong <zyw@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v4 1/5] clk: qcom: msm8916: Move xo and sleep clocks into DT
-Date: Thu, 19 Nov 2015 15:57:56 +0200
-Message-Id: <1447941480-27487-2-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1447941480-27487-1-git-send-email-georgi.djakov@linaro.org>
-References: <1447941480-27487-1-git-send-email-georgi.djakov@linaro.org>
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 02/12] clk: rockchip: add mipidsi clocks on rk3288
+Date: Thu, 19 Nov 2015 11:35:20 +0800
+Message-Id: <1447904131-29328-3-git-send-email-zyw@rock-chips.com>
+In-Reply-To: <1447904131-29328-1-git-send-email-zyw@rock-chips.com>
+References: <1447904131-29328-1-git-send-email-zyw@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Move the xo and sleep clocks to device-tree, instead of hard-coding
-them in the driver. This allows us to insert the RPM clocks (if they
-are enabled) in between the on-board oscillators and the actual clock.
+sclk_mipidsi_24m is the gating of mipi dsi phy.
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+Signed-off-by: Chris Zhong <zyw@rock-chips.com>
 ---
- drivers/clk/qcom/gcc-msm8916.c |   16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index d0a0313d6bef..8cc9b2868b41 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -3356,18 +3356,16 @@ MODULE_DEVICE_TABLE(of, gcc_msm8916_match_table);
+Changes in v3: None
+Changes in v2: None
+
+ drivers/clk/rockchip/clk-rk3288.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 9040878..c7d7ebf 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -709,7 +709,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+ 	GATE(SCLK_LCDC_PWM1, "sclk_lcdc_pwm1", "xin24m", 0, RK3288_CLKGATE_CON(13), 11, GFLAGS),
+ 	GATE(SCLK_PVTM_CORE, "sclk_pvtm_core", "xin24m", 0, RK3288_CLKGATE_CON(5), 9, GFLAGS),
+ 	GATE(SCLK_PVTM_GPU, "sclk_pvtm_gpu", "xin24m", 0, RK3288_CLKGATE_CON(5), 10, GFLAGS),
+-	GATE(0, "sclk_mipidsi_24m", "xin24m", 0, RK3288_CLKGATE_CON(5), 15, GFLAGS),
++	GATE(SCLK_MIPI_24M, "sclk_mipidsi_24m", "xin24m", 0, RK3288_CLKGATE_CON(5), 15, GFLAGS),
  
- static int gcc_msm8916_probe(struct platform_device *pdev)
- {
--	struct clk *clk;
-+	int ret;
- 	struct device *dev = &pdev->dev;
- 
--	/* Temporary until RPM clocks supported */
--	clk = clk_register_fixed_rate(dev, "xo", NULL, CLK_IS_ROOT, 19200000);
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
-+	ret = qcom_cc_register_board_clk(dev, "xo_board", "xo", 19200000);
-+	if (ret)
-+		return ret;
- 
--	clk = clk_register_fixed_rate(dev, "sleep_clk_src", NULL,
--				      CLK_IS_ROOT, 32768);
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
-+	ret = qcom_cc_register_sleep_clk(dev);
-+	if (ret)
-+		return ret;
- 
- 	return qcom_cc_probe(pdev, &gcc_msm8916_desc);
- }
+ 	/* sclk_gpu gates */
+ 	GATE(ACLK_GPU, "aclk_gpu", "sclk_gpu", 0, RK3288_CLKGATE_CON(18), 0, GFLAGS),
+-- 
+2.6.3
