@@ -1,64 +1,37 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Vladimir Zapolskiy <vz@mleia.com>, Roland Stigge <stigge@antcom.de>, devicetree@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 03/11] dt-bindings: clock: add NXP LPC32xx clock list for consumers
-Date: Fri, 20 Nov 2015 22:07:16 +0100
-Message-ID: <5570695.dzvsXZ7sfz@wuerfel>
-In-Reply-To: <564F5F2E.70607@mleia.com>
-References: <1447981511-29653-1-git-send-email-vz@mleia.com> <4268221.QhjAE5RLYk@wuerfel> <564F5F2E.70607@mleia.com>
+Return-Path: <stefan.kristiansson@saunalahti.fi>
+Date: Thu, 19 Nov 2015 22:25:37 +0200
+From: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: add generic driver for fixed rate clock
+Message-ID: <20151119202536.GA9332@chokladfabriken.org>
+References: <1378010420-20031-1-git-send-email-stefan.kristiansson@saunalahti.fi>
+ <CAMuHMdXhxuawY-V+35YoeZWZ3jZ-Vj_MzuRDGBfDD9i9iy=oGA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAMuHMdXhxuawY-V+35YoeZWZ3jZ-Vj_MzuRDGBfDD9i9iy=oGA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday 20 November 2015 19:58:06 Vladimir Zapolskiy wrote:
-> On 20.11.2015 15:56, Arnd Bergmann wrote:
-> > On Friday 20 November 2015 03:05:03 Vladimir Zapolskiy wrote:
-> >> +
-> >> +/* LPC32XX System Control Block clocks */
-> >> +#define LPC32XX_CLK_RTC                0
-> >> +#define LPC32XX_CLK_DMA                1
-> >> +#define LPC32XX_CLK_MLC                2
-> >> +#define LPC32XX_CLK_SLC                3
-> >> +#define LPC32XX_CLK_LCD                4
-> >> +#define LPC32XX_CLK_MAC                5
-> >> +#define LPC32XX_CLK_SD         6
-> >> +#define LPC32XX_CLK_DDRAM      7
-> >> +#define LPC32XX_CLK_SSP0       8
-> >> +#define LPC32XX_CLK_SSP1       9
-> >> +#define LPC32XX_CLK_UART3      10
-> >> +#define LPC32XX_CLK_UART4      11
-> >> +#define LPC32XX_CLK_UART5      12
-> >> +#define LPC32XX_CLK_UART6      13
-> >> +#define LPC32XX_CLK_IRDA       14
-> >> +#define LPC32XX_CLK_I2C1       15
-> >>
-> > 
-> > Any chance we can avoid the include file? This is going to make it really
-> > hard to merge everything in one merge window with the dependencies between
-> > the driver, the bindings and the platform code.
+On Tue, Nov 17, 2015 at 04:46:29PM +0100, Geert Uytterhoeven wrote:
+> Thanks, this is still very useful!
 > 
-> I see only one option to avoid this commit, namely squash it with the
-> CCF driver and merge it before making changes in DTS.
-> 
-> However I suppose ARM trees won't be synced on clk tree, so probably it
-> won't simplify maintainer's work.
+> I stumbled across this old patch while trying to instantiate a fixed rate
+> clock from a DT overlay.
+> Without this, the clock is never instantiated, as drivers/clk/clk-fixed-rate.c
+> uses CLK_OF_DECLARE() :-( With your driver, it works as expected
+> (after fixing the modpost complaint, cfr. below).
+>
 
-I think the best way for this would then be to have one git branch that
-contains the binding header, and base the other patches on top of that
-branch, for both the changes going into the clk git and arm-soc.
+Ah, I'm glad that this old thing was of use to someone else than me ;)
 
-That way, both have the commit we need, but we don't get duplicate
-commits when they are both merged into mainline.
+> However, I think that instead of creating a new driver, you should just add
+> the meat of clk-generic-fixed.c to clk-fixed-rate.c.
 
-> > If there is a way to describe the clocks based on numbers from the
-> > data sheet instead of making up your own, that makes life much
-> > easier for us.
-> 
-> There are no any clock numbers in the datasheet, unfortunately.
+Sure, that sounds reasonable, I'll take a second bat at this patch and do that.
 
-I was thinking that maybe there would be a logical numbering based
-on the register layout, e.g. a tuple of register index and bit position,
-but it seems that the mmio area is too irregular to make that easy.
-
-	Arnd
+Stefan
