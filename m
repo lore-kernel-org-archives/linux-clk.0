@@ -1,111 +1,108 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:37336 "EHLO
-	mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751031AbbK1JgB (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sat, 28 Nov 2015 04:36:01 -0500
-Subject: Re: [PATCH 1/3] dt-bindings: add Marvell core PLL and clock divider
- PMU documentation
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>,
-	Rob Herring <robh@kernel.org>
-References: <E1a24wj-0004iw-Rf@rmk-PC.arm.linux.org.uk>
- <20151127202114.GA613@rob-hp-laptop>
- <20151127203932.GP8644@n2100.arm.linux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Jason Cooper <jason@lakedaemon.net>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Message-ID: <5659757B.7060904@gmail.com>
-Date: Sat, 28 Nov 2015 10:35:55 +0100
-In-Reply-To: <20151127203932.GP8644@n2100.arm.linux.org.uk>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 19 Nov 2015 16:43:47 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Wynter Woods <wynter@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 05/19] clk: sunxi: add DRAM gates
+Message-ID: <20151119154347.GR32142@lukather>
+References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1446214865-3972-6-git-send-email-maxime.ripard@free-electrons.com>
+ <CAGb2v66B7X5xQGMq_MzAHGz4OLsnDQStVHcQaMGO+HYY43kjBQ@mail.gmail.com>
+ <CAGb2v65qjKCNER=5Gq5UXnvY_nia+EQYRAk3U9hokmXuxHoi_Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="brdEIFGMNIjz5YJG"
+In-Reply-To: <CAGb2v65qjKCNER=5Gq5UXnvY_nia+EQYRAk3U9hokmXuxHoi_Q@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 27.11.2015 21:39, Russell King - ARM Linux wrote:
-> On Fri, Nov 27, 2015 at 02:21:14PM -0600, Rob Herring wrote:
->> On Thu, Nov 26, 2015 at 10:23:21PM +0000, Russell King wrote:
->>> Add documentation for the Marvell clock divider driver, which is used
->>> to source clocks for the AXI bus, video decoder, GPU and LCD blocks.
->>>
->>> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
->>> ---
->>>  .../bindings/clock/dove-divider-clock.txt          | 28 ++++++++++++++++++++++
->>>  1 file changed, 28 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/clock/dove-divider-clock.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/dove-divider-clock.txt b/Documentation/devicetree/bindings/clock/dove-divider-clock.txt
->>> new file mode 100644
->>> index 000000000000..0c602de279e5
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/clock/dove-divider-clock.txt
->>> @@ -0,0 +1,28 @@
->>> +PLl divider based Dove clocks
->>> +
->>> +Marvell Dove has a 2GHz PLL, which feeds into a set of dividers to provide
->>> +high speed clocks for a number of peripherals.  These dividers are part of
->>> +the PMU, and thus this node should be a child of the PMU node.
->>
->> It seems a bit strange to just be documenting these clocks. What about 
->> the rest of the SOC clocks?
-> 
-> This is all that this pair of registers provide.
-> 
-> The SoC has other clocks handled by other DT nodes - for Dove, we now
-> have:
-> 
->         gate_clk: clock-gating-ctrl@0038 {
->                 compatible = "marvell,dove-gating-clock";
->                 reg = <0x0038 0x4>;
->                 clocks = <&core_clk 0>;
->                 #clock-cells = <1>;
->         };
->         divider_clk: core-clock@0064 {
->                 compatible = "marvell,dove-divider-clock";
->                 reg = <0x0064 0x8>;
->                 #clock-cells = <1>;
->         };
->         core_clk: core-clocks@0214 {
->                 compatible = "marvell,dove-core-clock";
->                 reg = <0x0214 0x4>;
->                 #clock-cells = <1>;
->         };
-> 
-> and all three of these are part of the PMU register block.  I'm not sure
-> why the mvebu maintainers decided to minutely describe the PMU like this,
-> but unfortunately that's the structure we have.
-> 
-> What's more silly is that the "dove-core-clock" appears to disagree in
-> terminology with the manual - there's a "Core PLL" which supplies the
-> dividers in the "divider_clk" block, and is entirely separate from the
-> CPU PLL which "core_clk" is describing.
-> 
-> IMHO, it would've been cleaner to have these components registered
-> separately from a central PMU driver (as I'm doing with the power
-> domains, resets and IRQs that are part of the PMU), but my view is
-> limited to Dove and not the other mvebu clocks, so there may be a good
-> reason for it.
-> 
 
-Rob, Russell,
+--brdEIFGMNIjz5YJG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-the main reason why dove clocks are the way they are is that back
-when we thought of the bindings for mvebu SoC clocks, CCF and DT was
-in its very beginning. Looking back, some decisions shouldn't have
-been made that way. Also, we tried to describe Dove and the other SoCs
-similarily, but Dove is always a little odd.
+On Fri, Nov 13, 2015 at 04:08:53PM +0800, Chen-Yu Tsai wrote:
+> On Mon, Nov 9, 2015 at 12:18 PM, Chen-Yu Tsai <wens@csie.org> wrote:
+> > On Fri, Oct 30, 2015 at 10:20 PM, Maxime Ripard
+> > <maxime.ripard@free-electrons.com> wrote:
+> >> The Allwinner SoCs have a gate controller to gate the access to the DR=
+AM
+> >> clock to the some devices that need to access the DRAM directly (mostly
+> >> display / image related IPs).
+> >>
+> >> Use a simple gates driver to support it.
+> >>
+> >> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> >
+> > Acked-by: Chen-Yu Tsai <wens@csie.org>
+> >
+> >> ---
+> >>  drivers/clk/sunxi/clk-simple-gates.c | 2 ++
+> >>  1 file changed, 2 insertions(+)
+> >>
+> >> diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/=
+clk-simple-gates.c
+> >> index 0214c6548afd..5666c767fa14 100644
+> >> --- a/drivers/clk/sunxi/clk-simple-gates.c
+> >> +++ b/drivers/clk/sunxi/clk-simple-gates.c
+> >> @@ -112,6 +112,8 @@ CLK_OF_DECLARE(sun5i_a13_apb0, "allwinner,sun5i-a1=
+3-apb0-gates-clk",
+> >>                sunxi_simple_gates_init);
+> >>  CLK_OF_DECLARE(sun5i_a13_apb1, "allwinner,sun5i-a13-apb1-gates-clk",
+> >>                sunxi_simple_gates_init);
+> >> +CLK_OF_DECLARE(sun5i_a13_dram, "allwinner,sun5i-a13-dram-gates-clk",
+> >> +              sunxi_simple_gates_init);
+>=20
+> Nit: Since the compatible added is sun5i, could you mention it in the
+> commit message,
+> to avoid confusion when we do this for the other families?
 
->From todays point of view, I certainly agree with Russell that all
-PMU related stuff is best kept in a single PMU node.
+It will be fixed in the v2.
 
-Thanks for providing the patches, I appreciate the extra work of
-separating those from your working trees.
+Thanks!
+Maxime
 
-Acked-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
-Sebastian
+--brdEIFGMNIjz5YJG
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWTe4zAAoJEBx+YmzsjxAgDo8P/iFXFpCX/bidKQEske1yAuox
+f2W8fa0yyFoYGTtmdiOjIrV+Fhxp1fWuPWYuDXFb8tpWVkz1hjm85LsOnxwfqpWo
+/L5plB3DS0LfqLATg6ieNTmJXGmnO7Q22TSQBzFcjPicogZzNbEU7ICfTVYp+qvd
+hMTSN8rASMSdcMhLaFJfaM8gRZ8k+JFPhulVgQQOG6N3SqTn3M6BtFG473rKJ1Hc
+t/8T0X2Byq/gi/1VOuw+CzmHL0xB0J3SSXXrDxCeqielZhuQGlBCOjg5UgUOpn16
+0dlgVXqHWi8YXH6SV9APbrK67+RJPNGnUovO0vqgWNbojtk8S+wdGncT70A3eOXw
+ZnNmNZik/TilWENIKjfRQYKjexQOivLKELCaZA3hecSq3LKBDbD0+WMchgE/IjkW
+oXKlJIZ16MNBK2NBhp6MG7PwBU6WDkroighK5jcAmXG56gsVyN7vrDqrzUsSyRRS
+rJLbj7zo64sAQ+UNbwIpcfqQ/D34CVXNdPc6mCxaMXPdlfSBDdQzxsOx/eITRzEa
+1WNdrcoEep28KIgFI0Oma39fu7f58ouTjztRop2/4GDofz7Qic/TxzJJWg5BnjcH
+h79p8YaTUuxyTXHhiT4wsswahQL5gJmJC0mkluQKvEX/7TFO+rHwht2MghCY9Ern
+VnkGKnCbP/UfCLeXYsTi
+=sVMs
+-----END PGP SIGNATURE-----
+
+--brdEIFGMNIjz5YJG--
