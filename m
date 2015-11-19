@@ -1,105 +1,416 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 1/2] clk: samsung: Don't build ARMv8 clock drivers on ARMv7
-To: "pankaj.dubey" <pankaj.dubey@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
- Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>,
- Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
- Kevin Hilman <khilman@linaro.org>
-References: <1447637775-9887-1-git-send-email-k.kozlowski@samsung.com>
- <1447637775-9887-2-git-send-email-k.kozlowski@samsung.com>
- <564AADB2.3030400@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <564AAF70.9080507@samsung.com>
-Date: Tue, 17 Nov 2015 13:39:12 +0900
-MIME-version: 1.0
-In-reply-to: <564AADB2.3030400@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <huanglin821201@gmail.com>
+Return-Path: <huanglin821201@gmail.com>
+From: Lin Huang <hl@rock-chips.com>
+To: heiko@sntech.de,
+	dianders@chromium.org,
+	mturquette@baylibre.com,
+	myungjoo.ham@samsung.com,
+	kyungmin.park@samsung.com
+Cc: linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org,
+	dbasehore@chromium.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Lin Huang <hl@rock-chips.com>
+Subject: [PATCH 2/2] devfreq: rockchip: support rk3399 dmc devfreq
+Date: Thu, 19 Nov 2015 18:21:11 +0800
+Message-Id: <1447928471-14448-3-git-send-email-hl@rock-chips.com>
+In-Reply-To: <1447928471-14448-1-git-send-email-hl@rock-chips.com>
+References: <1447928471-14448-1-git-send-email-hl@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 17.11.2015 13:31, pankaj.dubey wrote:
-> 
-> 
-> On Monday 16 November 2015 07:06 AM, Krzysztof Kozlowski wrote:
->> Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
->> so it is built also on ARMv7. This does not bring any kind of benefit.
->> There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
->> multi_v7 for ARMv7).
->>
->> Instead build clock drivers only for respective SoC's architecture.
->>
->> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->> ---
->>  drivers/clk/samsung/Kconfig  | 13 +++++++++++++
->>  drivers/clk/samsung/Makefile |  4 ++--
->>  2 files changed, 15 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
->> index 84196ecdaa12..5f138fc4d84d 100644
->> --- a/drivers/clk/samsung/Kconfig
->> +++ b/drivers/clk/samsung/Kconfig
->> @@ -2,6 +2,7 @@ config COMMON_CLK_SAMSUNG
->>  	bool
->>  	select COMMON_CLK
->>  
->> +# ARMv7 SoCs:
->>  config S3C2410_COMMON_CLK
->>  	bool
->>  	select COMMON_CLK_SAMSUNG
->> @@ -24,3 +25,15 @@ config S3C2443_COMMON_CLK
->>  	bool
->>  	select COMMON_CLK_SAMSUNG
->>  
->> +# ARMv8 SoCs:
->> +config EXYNOS5433_COMMON_CLK
->> +	bool
->> +	depends on ARM64 || COMPILE_TEST
->> +	default ARCH_EXYNOS
->> +	select COMMON_CLK_SAMSUNG
->> +
->> +config EXYNOS7_COMMON_CLK
->> +	bool
->> +	depends on ARM64 || COMPILE_TEST
->> +	default ARCH_EXYNOS
->> +	select COMMON_CLK_SAMSUNG
->> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
->> index 5f6833ea355d..a31332a24ef4 100644
->> --- a/drivers/clk/samsung/Makefile
->> +++ b/drivers/clk/samsung/Makefile
->> @@ -10,11 +10,11 @@ obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
->>  obj-$(CONFIG_SOC_EXYNOS5260)	+= clk-exynos5260.o
->>  obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
->>  obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
->> -obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos5433.o
->> +obj-$(CONFIG_EXYNOS5433_COMMON_CLK)	+= clk-exynos5433.o
->>  obj-$(CONFIG_SOC_EXYNOS5440)	+= clk-exynos5440.o
->>  obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-audss.o
->>  obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-clkout.o
->> -obj-$(CONFIG_ARCH_EXYNOS7)	+= clk-exynos7.o
->> +obj-$(CONFIG_EXYNOS7_COMMON_CLK)	+= clk-exynos7.o
->>  obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
->>  obj-$(CONFIG_S3C2410_COMMON_DCLK)+= clk-s3c2410-dclk.o
->>  obj-$(CONFIG_S3C2412_COMMON_CLK)+= clk-s3c2412.o
->>
-> 
-> So in this approach we need to add separate config for clock support of
-> each ARM64 Exynos64 SoC. Is this fine?
-> 
-> Can we club compilation of each ARM64 Exynos SoC clock file under
-> EXYNOS7_COMMON_CLK? As for all ARM64 SoC there is single defconfig and
-> binary.
+rk3399 do ddr frequency scaling use devfreq framework,
+use simple_ondemand policy, and use rk3399 dfi controller
+to get ddr busy time.
 
-Yes, it can be one config symbol for all clocks of ARMv8 Exynos SoCs.
->From my point of view both has some advantages and disadvantages (kernel
-size, granularity, number of Kconfig symbols etc.) and I don't mind
-choosing different than I selected before.
+Signed-off-by: Lin Huang <hl@rock-chips.com>
+---
+ drivers/devfreq/Kconfig               |   1 +
+ drivers/devfreq/Makefile              |   1 +
+ drivers/devfreq/rockchip/Kconfig      |   8 +
+ drivers/devfreq/rockchip/Makefile     |   1 +
+ drivers/devfreq/rockchip/rk3399_dmc.c | 327 ++++++++++++++++++++++++++++++++++
+ 5 files changed, 338 insertions(+)
+ create mode 100644 drivers/devfreq/rockchip/Kconfig
+ create mode 100644 drivers/devfreq/rockchip/Makefile
+ create mode 100644 drivers/devfreq/rockchip/rk3399_dmc.c
 
-Any opinion from Samsung clock maintainers? Which do you prefer?
-
-Best regards,
-Krzysztof
-it even looks
+diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+index 64281bb..acb2a57 100644
+--- a/drivers/devfreq/Kconfig
++++ b/drivers/devfreq/Kconfig
+@@ -99,5 +99,6 @@ config ARM_TEGRA_DEVFREQ
+          operating frequencies and voltages with OPP support.
+ 
+ source "drivers/devfreq/event/Kconfig"
++source "drivers/devfreq/rockchip/Kconfig"
+ 
+ endif # PM_DEVFREQ
+diff --git a/drivers/devfreq/Makefile b/drivers/devfreq/Makefile
+index 5134f9e..d844e23 100644
+--- a/drivers/devfreq/Makefile
++++ b/drivers/devfreq/Makefile
+@@ -9,6 +9,7 @@ obj-$(CONFIG_DEVFREQ_GOV_USERSPACE)	+= governor_userspace.o
+ obj-$(CONFIG_ARM_EXYNOS4_BUS_DEVFREQ)	+= exynos/
+ obj-$(CONFIG_ARM_EXYNOS5_BUS_DEVFREQ)	+= exynos/
+ obj-$(CONFIG_ARM_TEGRA_DEVFREQ)		+= tegra-devfreq.o
++obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
+ 
+ # DEVFREQ Event Drivers
+ obj-$(CONFIG_PM_DEVFREQ_EVENT)		+= event/
+diff --git a/drivers/devfreq/rockchip/Kconfig b/drivers/devfreq/rockchip/Kconfig
+new file mode 100644
+index 0000000..ceb7f37
+--- /dev/null
++++ b/drivers/devfreq/rockchip/Kconfig
+@@ -0,0 +1,8 @@
++config ARM_RK3399_DMC_DEVFREQ
++	tristate "ARM RK3399 DMC DEVFREQ Driver"
++	depends on ARCH_ROCKCHIP
++	select PM_OPP
++	select DEVFREQ_GOV_SIMPLE_ONDEMAND
++	help
++	  This adds the DEVFREQ driver for the RK3399 dmc. It sets the frequency
++	  for the memory controller and reads the usage counts from hardware.
+diff --git a/drivers/devfreq/rockchip/Makefile b/drivers/devfreq/rockchip/Makefile
+new file mode 100644
+index 0000000..c62c105
+--- /dev/null
++++ b/drivers/devfreq/rockchip/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_ARM_RK3399_DMC_DEVFREQ)	+= rk3399_dmc.o
+diff --git a/drivers/devfreq/rockchip/rk3399_dmc.c b/drivers/devfreq/rockchip/rk3399_dmc.c
+new file mode 100644
+index 0000000..6bf4230
+--- /dev/null
++++ b/drivers/devfreq/rockchip/rk3399_dmc.c
+@@ -0,0 +1,327 @@
++/*
++ * Copyright (c) 2014, Fuzhou Rockchip Electronics Co., Ltd
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ */
++
++#include <linux/clk.h>
++#include <linux/completion.h>
++#include <linux/delay.h>
++#include <linux/devfreq.h>
++#include <linux/io.h>
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/platform_device.h>
++#include <linux/pm_opp.h>
++#include <linux/regmap.h>
++#include <linux/regulator/consumer.h>
++#include <linux/rwsem.h>
++#include <linux/suspend.h>
++#include <linux/syscore_ops.h>
++#include <soc/rockchip/rk3399-dmc-clk.h>
++
++#define RK3399_DMC_NUM_CH	2
++
++/* DDRMON_CTRL */
++#define DDRMON_CTRL	0x04
++#define LPDDR4_EN	(1 << 4)
++#define HARDWARE_EN	(1 << 3)
++#define LPDDR3_EN	(1 << 2)
++#define SOFTWARE_EN	(1 << 1)
++#define TIME_CNT_EN	(1 << 0)
++
++#define DDRMON_CH0_COUNT_NUM		0x28
++#define DDRMON_CH0_DFI_ACCESS_NUM	0x2c
++#define DDRMON_CH1_COUNT_NUM		0x3c
++#define DDRMON_CH1_DFI_ACCESS_NUM	0x40
++
++struct dmc_usage {
++	u32 access;
++	u32 total;
++};
++
++struct rk3399_dmcfreq {
++	struct device *clk_dev;
++	struct devfreq *devfreq;
++	struct devfreq_simple_ondemand_data ondemand_data;
++	struct clk *dmc_clk;
++	struct regulator *vdd_logic;
++	struct dmc_usage ch_usage[RK3399_DMC_NUM_CH];
++	struct rk3399_dmcclk *dmc_data;
++	struct mutex lock;
++	unsigned long rate, target_rate;
++	unsigned long volt, target_volt;
++};
++
++static struct rk3399_dmcfreq dmcfreq;
++
++static int rk3399_dmcfreq_target(struct device *dev, unsigned long *freq,
++				 u32 flags)
++{
++	struct dev_pm_opp *opp;
++	unsigned long old_clk_rate = dmcfreq.rate;
++	unsigned long target_volt, target_rate;
++	int err;
++
++	rcu_read_lock();
++	opp = devfreq_recommended_opp(dev, freq, flags);
++	if (IS_ERR(opp)) {
++		rcu_read_unlock();
++		return PTR_ERR(opp);
++	}
++	target_rate = dev_pm_opp_get_freq(opp);
++	target_volt = dev_pm_opp_get_voltage(opp);
++
++	opp = devfreq_recommended_opp(dev, &dmcfreq.rate, flags);
++	if (IS_ERR(opp)) {
++		rcu_read_unlock();
++		return PTR_ERR(opp);
++	}
++	dmcfreq.volt = dev_pm_opp_get_voltage(opp);
++	rcu_read_unlock();
++
++	if (dmcfreq.rate == dmcfreq.target_rate)
++		return 0;
++
++	mutex_lock(&dmcfreq.lock);
++
++	if (old_clk_rate < target_rate) {
++		err = regulator_set_voltage(dmcfreq.vdd_logic, target_volt,
++					    target_volt);
++		if (err) {
++			dev_err(dev, "Unable to set vol %lu\n", target_volt);
++			goto out;
++		}
++	}
++
++	err = clk_set_rate(dmcfreq.dmc_clk, target_rate);
++	if (err) {
++		dev_err(dev,
++			"Unable to set freq %lu. Current freq %lu. Error %d\n",
++			target_rate, old_clk_rate, err);
++		regulator_set_voltage(dmcfreq.vdd_logic, dmcfreq.volt,
++				      dmcfreq.volt);
++		goto out;
++	}
++
++	dmcfreq.rate = target_rate;
++
++	if (old_clk_rate > target_rate)
++		err = regulator_set_voltage(dmcfreq.vdd_logic, target_volt,
++					    target_volt);
++	if (err)
++		dev_err(dev, "Unable to set vol %lu\n", target_volt);
++out:
++	mutex_unlock(&dmcfreq.lock);
++	return err;
++}
++
++static void rk3399_dmc_start_hardware_counter(void)
++{
++	void __iomem *ctrl_regs = dmcfreq.dmc_data->ctrl_regs;
++	void __iomem *dfi_regs = dmcfreq.dmc_data->dfi_regs;
++	u32 val;
++	u32 ddr_type;
++
++	/* get ddr type */
++	val = readl_relaxed(ctrl_regs + DENALI_CTL_00);
++	ddr_type = (val >> DRAM_CLASS_SHIFT) & DRAM_CLASS_MASK;
++
++	/* set ddr type to dfi */
++	val = readl_relaxed(dfi_regs + DDRMON_CTRL);
++	if (ddr_type == LPDDR3) {
++		val &= ~LPDDR4_EN;
++		val |= LPDDR3_EN;
++	} else if (ddr_type == LPDDR4) {
++		val &= ~LPDDR3_EN;
++		val |= LPDDR4_EN;
++	} else
++		val &= ~(LPDDR3_EN | LPDDR4_EN);
++
++	/* enable count, use software mode */
++	val &= ~HARDWARE_EN;
++	val |= SOFTWARE_EN;
++
++	writel_relaxed(val, dfi_regs + DDRMON_CTRL);
++}
++
++static void rk3399_dmc_stop_hardware_counter(void)
++{
++	void __iomem *dfi_regs = dmcfreq.dmc_data->dfi_regs;
++	u32 val;
++
++	val = readl_relaxed(dfi_regs + DDRMON_CTRL);
++	val &= ~SOFTWARE_EN;
++	writel_relaxed(val, dfi_regs + DDRMON_CTRL);
++}
++
++static int rk3399_dmc_get_busier_ch(void)
++{
++	u32 tmp, max = 0;
++	u32 i, busier_ch = 0;
++	void __iomem *dfi_regs = dmcfreq.dmc_data->dfi_regs;
++
++	rk3399_dmc_stop_hardware_counter();
++
++	/* Find out which channel is busier */
++	for (i = 0; i < RK3399_DMC_NUM_CH; i++) {
++		dmcfreq.ch_usage[i].access = readl_relaxed(dfi_regs +
++				DDRMON_CH0_DFI_ACCESS_NUM + i * 20);
++		dmcfreq.ch_usage[i].total = readl_relaxed(dfi_regs +
++				DDRMON_CH0_COUNT_NUM + i * 20);
++		tmp = dmcfreq.ch_usage[i].access;
++		if (tmp > max) {
++			busier_ch = i;
++			max = tmp;
++		}
++	}
++	rk3399_dmc_start_hardware_counter();
++
++	return busier_ch;
++}
++
++static int rk3399_dmcfreq_get_dev_status(struct device *dev,
++					 struct devfreq_dev_status *stat)
++{
++	int busier_ch;
++
++	busier_ch = rk3399_dmc_get_busier_ch();
++	stat->current_frequency = dmcfreq.rate;
++	stat->busy_time = dmcfreq.ch_usage[busier_ch].access;
++	stat->total_time = dmcfreq.ch_usage[busier_ch].total;
++
++	return 0;
++}
++
++static int rk3399_dmcfreq_get_cur_freq(struct device *dev, unsigned long *freq)
++{
++	*freq = dmcfreq.rate;
++	return 0;
++}
++
++static void rk3399_dmcfreq_exit(struct device *dev)
++{
++	devfreq_unregister_opp_notifier(dmcfreq.clk_dev, dmcfreq.devfreq);
++}
++
++static struct devfreq_dev_profile rk3399_devfreq_dmc_profile = {
++	.polling_ms	= 200,
++	.target		= rk3399_dmcfreq_target,
++	.get_dev_status	= rk3399_dmcfreq_get_dev_status,
++	.get_cur_freq	= rk3399_dmcfreq_get_cur_freq,
++	.exit		= rk3399_dmcfreq_exit,
++};
++
++static __maybe_unused int rk3399_dmcfreq_suspend(struct device *dev)
++{
++	unsigned long freq = ULONG_MAX;
++
++	dev_info(dmcfreq.clk_dev, "suspending DVFS and going to max freq\n");
++	devfreq_suspend_device(dmcfreq.devfreq);
++	rk3399_dmc_stop_hardware_counter();
++	rk3399_dmcfreq_target(dmcfreq.clk_dev, &freq, 0);
++
++	return 0;
++}
++
++static __maybe_unused int rk3399_dmcfreq_resume(struct device *dev)
++{
++	dev_info(dmcfreq.clk_dev, "resuming DVFS\n");
++	rk3399_dmc_start_hardware_counter();
++	devfreq_resume_device(dmcfreq.devfreq);
++
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(rk3399_dmcfreq_pm, rk3399_dmcfreq_suspend,
++			 rk3399_dmcfreq_resume);
++
++static void rk3399_dmcfreq_shutdown(void)
++{
++	devfreq_suspend_device(dmcfreq.devfreq);
++}
++
++static struct syscore_ops rk3399_dmcfreq_syscore_ops = {
++	.shutdown = rk3399_dmcfreq_shutdown,
++};
++
++static int rk3399_dmcfreq_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++
++	dmcfreq.clk_dev = dev->parent;
++	mutex_init(&dmcfreq.lock);
++
++	dmcfreq.dmc_data =
++		(struct rk3399_dmcclk *)dev_get_drvdata(dmcfreq.clk_dev);
++
++	dmcfreq.vdd_logic = regulator_get(dmcfreq.clk_dev, "logic");
++	if (IS_ERR(dmcfreq.vdd_logic)) {
++		dev_err(dev, "Cannot get the regulator \"vdd_logic\"\n");
++		return PTR_ERR(dmcfreq.vdd_logic);
++	}
++
++	dmcfreq.dmc_clk = devm_clk_get(dev, "dmc_clk");
++	if (IS_ERR(dmcfreq.dmc_clk)) {
++		dev_err(dev, "Cannot get the clk dmc_clk\n");
++		return PTR_ERR(dmcfreq.dmc_clk);
++	};
++
++	/*
++	 * We add a devfreq driver to our parent since it has a device tree node
++	 * with operating points.
++	 */
++	if (dev_pm_opp_of_add_table(dmcfreq.clk_dev)) {
++		dev_err(dev, "Invalid operating-points in device tree.\n");
++		return -EINVAL;
++	}
++
++	of_property_read_u32(dmcfreq.clk_dev->of_node, "upthreshold",
++				&dmcfreq.ondemand_data.upthreshold);
++
++	of_property_read_u32(dmcfreq.clk_dev->of_node, "downdifferential",
++				&dmcfreq.ondemand_data.downdifferential);
++
++	dmcfreq.devfreq = devfreq_add_device(dmcfreq.clk_dev,
++					     &rk3399_devfreq_dmc_profile,
++					     "simple_ondemand",
++					     &dmcfreq.ondemand_data);
++	if (IS_ERR(dmcfreq.devfreq))
++		return PTR_ERR(dmcfreq.devfreq);
++
++	devfreq_register_opp_notifier(dmcfreq.clk_dev, dmcfreq.devfreq);
++
++	register_syscore_ops(&rk3399_dmcfreq_syscore_ops);
++
++	return 0;
++}
++
++static int rk3399_dmcfreq_remove(struct platform_device *pdev)
++{
++	devfreq_remove_device(dmcfreq.devfreq);
++	regulator_put(dmcfreq.vdd_logic);
++
++	return 0;
++}
++
++static struct platform_driver rk3399_dmcfreq_driver = {
++	.probe	= rk3399_dmcfreq_probe,
++	.remove	= rk3399_dmcfreq_remove,
++	.driver = {
++		.name	= "rk3399-dmc-freq",
++		.pm	= &rk3399_dmcfreq_pm,
++	},
++};
++module_platform_driver(rk3399_dmcfreq_driver);
++
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("RK3399 dmcfreq driver with devfreq framework");
+-- 
+1.9.1
