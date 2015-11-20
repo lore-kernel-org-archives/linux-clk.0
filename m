@@ -1,135 +1,150 @@
-Return-Path: <linux@roeck-us.net>
-Subject: Re: [PATCH v4 04/24] hwmon: pwm-fan: use pwm_get_xxx() helpers where
- appropriate
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
- Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org
-References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
- <1447664207-24370-5-git-send-email-boris.brezillon@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
- Jean Delvare <jdelvare@suse.com>, Dmitry Torokhov
- <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org,
- Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>,
- Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
- Joachim Eastwood <manabian@gmail.com>,
- Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
- Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org,
- Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
- linux-fbdev@vger.kernel.org,
- Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
- Tomi Valkeinen <tomi.valkeinen@ti.com>,
- Robert Jarzmik <robert.jarzmik@free.fr>,
- Alexandre Belloni <alexandre.belloni@free-electrons.com>,
- Julia Lawall <Julia.Lawall@lip6.fr>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <5649FD5B.3000208@roeck-us.net>
-Date: Mon, 16 Nov 2015 07:59:23 -0800
+Return-Path: <jszhang@marvell.com>
+From: Jisheng Zhang <jszhang@marvell.com>
+To: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <sebastian.hesselbarth@gmail.com>, <antoine.tenart@free-electrons.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        Jisheng
+ Zhang <jszhang@marvell.com>
+Subject: [PATCH v2 3/6] clk: berlin: add common gateclk driver for newer SoCs
+Date: Fri, 20 Nov 2015 16:42:29 +0800
+Message-ID: <1448008952-1787-4-git-send-email-jszhang@marvell.com>
+In-Reply-To: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
+References: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
 MIME-Version: 1.0
-In-Reply-To: <1447664207-24370-5-git-send-email-boris.brezillon@free-electrons.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/16/2015 12:56 AM, Boris Brezillon wrote:
-> Use pwm_get_xxx() helpers instead of directly accessing the pwm->xxx field.
-> Doing that will ease adaptation of the PWM framework to support atomic
-> update.
->
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> ---
-> Patch generated with the following coccinelle script:
->
-> --->8---
-> virtual patch
->
-> @@
-> struct pwm_device *p;
-> expression e;
-> @@
-> (
-> -(p)->polarity = e;
-> +pwm_set_polarity((p), e);
-> |
-> -(p)->polarity
-> +pwm_get_polarity((p))
+Add common gateclk driver for Marvell SoCs newer than BG2, BG2CD,
+BG2Q. berlin_gateclk_setup() is provided to setup and register such
+kind of clks.
 
-s/((p))/(p)/
+Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+---
+ drivers/clk/berlin/Makefile |  2 +-
+ drivers/clk/berlin/clk.h    | 12 ++++++++
+ drivers/clk/berlin/gate.c   | 73 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 86 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/berlin/gate.c
 
-> |
-> -(p)->period = e;
-> +pwm_set_period((p), e);
-> |
-> -(p)->period
-> +pwm_get_period((p))
-
-s/((p))/(p)/
-
-> |
-> -(p)->duty_cycle = e;
-> +pwm_set_duty_cycle((p), e);
-
-The (p) seems unnecessary here.
-
-> |
-> -(p)->duty_cycle
-> +pwm_get_duty_cycle((p))
-
-s/((p))/(p)/
-
-> )
-> --->8---
-> ---
->   drivers/hwmon/pwm-fan.c | 13 +++++++------
->   1 file changed, 7 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
-> index 3e23003..105b964 100644
-> --- a/drivers/hwmon/pwm-fan.c
-> +++ b/drivers/hwmon/pwm-fan.c
-> @@ -47,8 +47,8 @@ static int  __set_pwm(struct pwm_fan_ctx *ctx, unsigned long pwm)
->   	if (ctx->pwm_value == pwm)
->   		goto exit_set_pwm_err;
->
-> -	duty = DIV_ROUND_UP(pwm * (ctx->pwm->period - 1), MAX_PWM);
-> -	ret = pwm_config(ctx->pwm, duty, ctx->pwm->period);
-> +	duty = DIV_ROUND_UP(pwm * (pwm_get_period((ctx->pwm)) - 1), MAX_PWM);
-> +	ret = pwm_config(ctx->pwm, duty, pwm_get_period((ctx->pwm)));
-
-Please drop all the unnecessary ( ).
-
-Thanks,
-Guenter
-
->   	if (ret)
->   		goto exit_set_pwm_err;
->
-> @@ -234,10 +234,10 @@ static int pwm_fan_probe(struct platform_device *pdev)
->   	platform_set_drvdata(pdev, ctx);
->
->   	/* Set duty cycle to maximum allowed */
-> -	duty_cycle = ctx->pwm->period - 1;
-> +	duty_cycle = pwm_get_period((ctx->pwm)) - 1;
->   	ctx->pwm_value = MAX_PWM;
->
-> -	ret = pwm_config(ctx->pwm, duty_cycle, ctx->pwm->period);
-> +	ret = pwm_config(ctx->pwm, duty_cycle, pwm_get_period((ctx->pwm)));
->   	if (ret) {
->   		dev_err(&pdev->dev, "Failed to configure PWM\n");
->   		return ret;
-> @@ -309,8 +309,9 @@ static int pwm_fan_resume(struct device *dev)
->   	if (ctx->pwm_value == 0)
->   		return 0;
->
-> -	duty = DIV_ROUND_UP(ctx->pwm_value * (ctx->pwm->period - 1), MAX_PWM);
-> -	ret = pwm_config(ctx->pwm, duty, ctx->pwm->period);
-> +	duty = DIV_ROUND_UP(ctx->pwm_value * (pwm_get_period((ctx->pwm)) - 1),
-> +			    MAX_PWM);
-> +	ret = pwm_config(ctx->pwm, duty, pwm_get_period((ctx->pwm)));
->   	if (ret)
->   		return ret;
->   	return pwm_enable(ctx->pwm);
->
+diff --git a/drivers/clk/berlin/Makefile b/drivers/clk/berlin/Makefile
+index ee2e09d..fc92151 100644
+--- a/drivers/clk/berlin/Makefile
++++ b/drivers/clk/berlin/Makefile
+@@ -1,5 +1,5 @@
+ obj-y += berlin2-avpll.o berlin2-pll.o berlin2-div.o
+-obj-y += pll.o clk.o
++obj-y += pll.o clk.o gate.o
+ obj-$(CONFIG_MACH_BERLIN_BG2)	+= bg2.o
+ obj-$(CONFIG_MACH_BERLIN_BG2CD)	+= bg2.o
+ obj-$(CONFIG_MACH_BERLIN_BG2Q)	+= bg2q.o
+diff --git a/drivers/clk/berlin/clk.h b/drivers/clk/berlin/clk.h
+index 5e5680e..4d8af6c 100644
+--- a/drivers/clk/berlin/clk.h
++++ b/drivers/clk/berlin/clk.h
+@@ -25,9 +25,21 @@ struct clk_desc {
+ 	unsigned long	flags;
+ };
+ 
++struct gateclk_desc {
++	const char	*name;
++	const char	*parent_name;
++	u8		bit_idx;
++	unsigned long	flags;
++};
++
+ void __init berlin_clk_setup(struct device_node *np,
+ 			     const struct clk_desc *desc,
+ 			     struct clk_onecell_data *clk_data,
+ 			     int n);
+ 
++void __init berlin_gateclk_setup(struct device_node *np,
++				 const struct gateclk_desc *descs,
++				 struct clk_onecell_data *clk_data,
++				 int n);
++
+ #endif
+diff --git a/drivers/clk/berlin/gate.c b/drivers/clk/berlin/gate.c
+new file mode 100644
+index 0000000..35200d2
+--- /dev/null
++++ b/drivers/clk/berlin/gate.c
+@@ -0,0 +1,73 @@
++/*
++ * Copyright (c) 2015 Marvell Technology Group Ltd.
++ *
++ * Author: Jisheng Zhang <jszhang@marvell.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/slab.h>
++#include <linux/spinlock_types.h>
++
++#include "clk.h"
++
++static DEFINE_SPINLOCK(berlin_gateclk_lock);
++
++void __init berlin_gateclk_setup(struct device_node *np,
++				 const struct gateclk_desc *descs,
++				 struct clk_onecell_data *clk_data,
++				 int n)
++{
++	int i, ret;
++	void __iomem *base;
++	struct clk **clks;
++
++	clks = kcalloc(n, sizeof(struct clk *), GFP_KERNEL);
++	if (!clks)
++		return;
++
++	base = of_iomap(np, 0);
++	if (WARN_ON(!base))
++		goto err_iomap;
++
++	for (i = 0; i < n; i++) {
++		struct clk *clk;
++
++		clk = clk_register_gate(NULL, descs[i].name,
++				descs[i].parent_name,
++				descs[i].flags, base,
++				descs[i].bit_idx, 0,
++				&berlin_gateclk_lock);
++		if (WARN_ON(IS_ERR(clk)))
++			goto err_clk_register;
++		clks[i] = clk;
++	}
++
++	clk_data->clks = clks;
++	clk_data->clk_num = i;
++
++	ret = of_clk_add_provider(np, of_clk_src_onecell_get, clk_data);
++	if (WARN_ON(ret))
++		goto err_clk_register;
++	return;
++
++err_clk_register:
++	for (i = 0; i < n; i++)
++		clk_unregister(clks[i]);
++	iounmap(base);
++err_iomap:
++	kfree(clks);
++}
+-- 
+2.6.2
