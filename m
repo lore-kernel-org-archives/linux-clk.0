@@ -1,58 +1,44 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:37278 "EHLO
-	mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752944AbbKBUxm (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 2 Nov 2015 15:53:42 -0500
-Received: by wmff134 with SMTP id f134so70927506wmf.0
-        for <linux-clk@vger.kernel.org>; Mon, 02 Nov 2015 12:53:41 -0800 (PST)
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Vladimir Zapolskiy <vz@mleia.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Roland Stigge <stigge@antcom.de>, devicetree@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 09/11] clk: lpc32xx: add common clock framework driver
+Date: Fri, 20 Nov 2015 15:04:11 +0100
+Message-ID: <3762298.NKYXldtldq@wuerfel>
+In-Reply-To: <1447981511-29653-10-git-send-email-vz@mleia.com>
+References: <1447981511-29653-1-git-send-email-vz@mleia.com> <1447981511-29653-10-git-send-email-vz@mleia.com>
 MIME-Version: 1.0
-In-Reply-To: <4784400.64dhyokllJ@wuerfel>
-References: <1445628721-10483-1-git-send-email-bhupesh.sharma@freescale.com>
- <1445628721-10483-6-git-send-email-bhupesh.sharma@freescale.com> <4784400.64dhyokllJ@wuerfel>
-From: Bjorn Helgaas <bhelgaas@google.com>
-Date: Mon, 2 Nov 2015 14:53:21 -0600
-Message-ID: <CAErSpo7T5vHE2oAp4jgt1gK7vtfQn1eMo6Aam4v9J-CTzhJH-Q@mail.gmail.com>
-Subject: Re: [PATCH v4 05/12] doc/bindings: Update Layerscape PCIe devicetree
- bindings for LS2080A
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm <linux-arm-kernel@lists.infradead.org>,
-	Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Marc Zyngier <marc.zyngier@arm.com>, linux-clk@vger.kernel.org,
-	"Olof Johansson (olof@lixom.net)" <olof@lixom.net>,
-	LeoLi@freescale.com, Catalin Marinas <Catalin.Marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Stuart Yoder <stuart.yoder@freescale.com>,
-	Minghuan Lian <Minghuan.Lian@freescale.com>,
-	Scott Wood <scottwood@freescale.com>, bhupesh.linux@gmail.com
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 23, 2015 at 3:28 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Saturday 24 October 2015 01:01:54 Bhupesh Sharma wrote:
->> Update the definition of the Layerscape PCI compatible string to add
->> support for LS2080A, as the controller on LS2080A is different from
->> LS1021A SoC.
->>
->> While at it, move the clock related properties in the Designware PCIe
->> controller bindings to 'optional' set of properties.
->>
->> Signed-off-by: Minghuan Lian <Minghuan.Lian@freescale.com>
->> Signed-off-by: Bhupesh Sharma <bhupesh.sharma@freescale.com>
->> ---
->>  .../devicetree/bindings/pci/designware-pcie.txt    |   10 +++++-----
->>  .../devicetree/bindings/pci/layerscape-pci.txt     |   14 ++++++++++++--
->>  2 files changed, 17 insertions(+), 7 deletions(-)
->>
->
-> This one depends on a patch that is in Bjorn's PCI tree but not
-> yet in mainline.
->
-> Please add my 'Acked-by: Arnd Bergmann <arnd@arndb.de>' and submit it to
-> Bjorn so he can apply the patch on top of the other one.
+On Friday 20 November 2015 03:05:09 Vladimir Zapolskiy wrote:
+> +
+> +struct clk_proto_t {
+> +       const char *name;
+> +       const u8 parents[LPC32XX_CLK_PARENTS_MAX];
+> +       u8 num_parents;
+> +       unsigned long flags;
+> +};
+> +
+> +#define CLK_PREFIX(LITERAL)            LPC32XX_CLK_ ## LITERAL
+> +#define NUMARGS(...)   (sizeof((int[]){__VA_ARGS__})/sizeof(int))
+> +
+> +#define LPC32XX_CLK_DEFINE(_idx, _name, _flags, ...)           \
+> +       [CLK_PREFIX(_idx)] = {                                  \
+> +               .name = #_name,                                 \
+> +               .flags = _flags,                                \
+> +               .parents = { __VA_ARGS__ },                     \
+> +               .num_parents = NUMARGS(__VA_ARGS__),            \
+> +        }
+> +
 
-I applied this for v4.4.  I split it into two because the DesignWare
-patch doesn't look related to the Layerscape patch.
+Try to not outsmart yourself with the macros. It's better to avoid
+string concatenation so it's possible to grep for uses of some
+constant.
 
-Bjorn
+I would probably not use a macro at all here and just open-code the
+entire table. If you ensure that '0' is not a valid parent, then
+you can leave out the .num_parents field and just look for the
+zero-termination.
+
+	Arnd
