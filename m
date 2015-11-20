@@ -1,78 +1,62 @@
-Return-Path: <yamada.masahiro@socionext.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 20 Nov 2015 13:14:13 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Tyler Baker <tyler.baker@linaro.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Simon Arlott <simon@fire.lp0.eu>, Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] clk: qcom: Specify LE device endianness
+Message-ID: <20151120211413.GA9555@codeaurora.org>
+References: <1447108254-19864-1-git-send-email-sboyd@codeaurora.org>
+ <CANMBJr7BugBZH189O51bfWc1v9jipp6onkZSMijD3Gv_idf7Pg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20151121003702.GC28998@codeaurora.org>
-References: <1448004981-11133-1-git-send-email-yamada.masahiro@socionext.com>
-	<1448004981-11133-3-git-send-email-yamada.masahiro@socionext.com>
-	<20151121003702.GC28998@codeaurora.org>
-Date: Sun, 22 Nov 2015 14:44:47 +0900
-Message-ID: <CAK7LNATR3Y0T5XEGA4WQJksTO7qoCEjR+TKC0YmvVUZhLdiPSg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] clk: split of_clk_get_parent_name() into two functions
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CANMBJr7BugBZH189O51bfWc1v9jipp6onkZSMijD3Gv_idf7Pg@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+On 11/20, Tyler Baker wrote:
+> On 9 November 2015 at 14:30, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > All these clock controllers are little endian devices, but so far
+> > we've been relying on the regmap mmio bus handling this for us
+> > without explicitly stating that fact. After commit 4a98da2164cf
+> > (regmap-mmio: Use native endianness for read/write, 2015-10-29),
+> > the regmap mmio bus will read/write with the __raw_*() IO
+> > accessors, instead of using the readl/writel() APIs that do
+> > proper byte swapping for little endian devices.
+> >
+> > So if we're running on a big endian processor and haven't
+> > specified the endianness explicitly in the regmap config or in
+> > DT, we're going to switch from doing little endian byte swapping
+> > to big endian accesses without byte swapping, leading to some
+> > confusing results. On my apq8074 dragonboard, this causes the
+> > device to fail to boot as we access the clock controller with
+> > big endian IO accesses even though the device is little endian.
+> >
+> > Specify the endianness explicitly so that the regmap core
+> > properly byte swaps the accesses for us.
+> >
+> > Reported-by: Kevin Hilman <khilman@linaro.org>
+> > Cc: Simon Arlott <simon@fire.lp0.eu>
+> > Cc: Mark Brown <broonie@kernel.org>
+> > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> 
+> Tested-by: Tyler Baker <tyler.baker@linaro.org>
+> 
+> The kernelci.org bot also reported boot failures[1] for the
+> apq8016-sbc in next-20151120 with CONFIG_CPU_BIG_ENDIAN=y enabled.
+> I've bisected the failure down to the same offending remap-mmio patch
+> listed above. I've confirmed this patch applied on top of
+> next-20151120 fixes the boot issue for the apq8016-sbc as well.
+> 
+> Any updates or comments on this patch? I'd like to see this fix in
+> linux-next, as it has been broken for over a week and could be masking
+> new issues.
 
-
-2015-11-21 9:37 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
-> On 11/20, Masahiro Yamada wrote:
->> Currently, there is no function to get the clock name of the given
->> node.  Create a new helper function, of_clk_get_name().  This is
->> useful to get the clock name where "clock-indices" property is used.
->>
->>   of_clk_get_name(): get the clock name in the given node
->>   of_clk_get_parent_name(): get the name of the parent clock
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> ---
->>
->> I want to use of_clk_get_name() for my clk drivers for my SoCs,
->> which I will submit later.
->>
->> I found this helper function is useful.
->
-> I don't see how this is useful. Is the new driver so generic it
-> doesn't know what clocks it's outputting? We've been trying to
-> move people away from using clock-output-names, so most likely
-> this sort of information should be conveyed from DT via the
-> compatible string and a table in the driver that matches up the
-> compatible string with the list of clock names.
-
-
-What I implemented in my driver was:
-
-[1] Use the clock names built in the driver, if "clock-output-names"
-    is missing in the DT.
-
-[2] If "clock-output-names" is specified, the driver overrides
-    the clock names, respecting the "clock-output-names".
-
-
-The following is a snippet from my driver code.
-
-
-    /*
-     * update the clock name with the one provided by
-     * clock-output-names property, if exists
-     */
-    new_name = of_clk_get_name(np, index);
-    if (new_name)
-            init_data[i].name = new_name;
-    else
-            pr_info("DT does not specify output name for %s[%d]\n",
-                    np->name, index);
-
-
-I read the Documentation/devicetree/bindings/clock-bindings.txt
-before I stared my driver development.
-
-I did not know we are deprecating the "clock-output-names".
-(Should it be mentioned in the clock-bindings.txt?)
-
+Yeah I've been lagging on applying patches. I need to send more
+patches for other regmap-mmio users too. I'll cook those up right
+now and send them off.
 
 -- 
-Best Regards
-Masahiro Yamada
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
