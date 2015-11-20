@@ -1,69 +1,65 @@
-Return-Path: <mkarthi3@visteon.com>
-From: "Mutharaju, Prasanna (P.)" <mkarthi3@visteon.com>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-CC: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki
-	<s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, "Michael
- Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org"
-	<linux-samsung-soc@vger.kernel.org>
-Subject: Re: [PATCH v2] clk: s3c2410: removed unneeded variable in
- s3c24xx_clkout_set_parent
-Date: Mon, 30 Nov 2015 08:05:18 +0000
-Message-ID: <20151130080514.GA27761@jci-VirtualBox>
-References: <20151130072852.GA25202@jci-VirtualBox>
- <565BFB57.2000701@samsung.com>
-In-Reply-To: <565BFB57.2000701@samsung.com>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <wsa@the-dreams.de>
+Date: Fri, 20 Nov 2015 15:59:13 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Zhiqiang Hou <Zhiqiang.Hou@freescale.com>
+Cc: linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+	will.deacon@arm.com, linux-i2c@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org, mark.rutland@arm.com, linux@roeck-us.net,
+	wim@iguana.be, corbet@lwn.net, mturquette@baylibre.com,
+	sboyd@codeaurora.org, Mingkai.Hu@freescale.com,
+	Shaohui.Xie@freescale.com, scottwood@freescale.com,
+	bhupesh.sharma@freescale.com, Wenbin.Song@freescale.com,
+	B48286@freescale.com
+Subject: Re: [PATCHv8 1/5] i2c: imx: fix a compiling error
+Message-ID: <20151120145913.GB1752@katana>
+References: <1447754002-40555-1-git-send-email-Zhiqiang.Hou@freescale.com>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="IrhDeMKUP4DT/M7F"
+In-Reply-To: <1447754002-40555-1-git-send-email-Zhiqiang.Hou@freescale.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Nov 30, 2015 at 04:31:35PM +0900, Krzysztof Kozlowski wrote:
-> On 30.11.2015 16:28, Mutharaju, Prasanna (P.) wrote:
-> > From: Prasanna Karthik <mkarthi3@visteon.com>
-> >=20
-> > Remove unneeded variable used to store return value.
-> > V2: Modified subject =20
+
+--IrhDeMKUP4DT/M7F
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Nov 17, 2015 at 05:53:18PM +0800, Zhiqiang Hou wrote:
+> From: Hou Zhiqiang <Zhiqiang.Hou@freescale.com>
 >=20
-> Changelog (v2) should go after '---' separator so it won't get included
-> in the commit message.
+> drivers/i2c/busses/i2c-imx.c:978:2: error: implicit declaration of
+> function =E2=80=98pinctrl_select_state=E2=80=99 [-Werror=3Dimplicit-funct=
+ion-declaration]
+>   pinctrl_select_state(i2c_imx->pinctrl, i2c_imx->pinctrl_pins_gpio);
+>   ^
 >=20
+> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@freescale.com>
 
-Done in v3.=20
+Applied to for-current, thanks!
 
-> Now I see that you Signed-off-by is okay - same email address... I got
-> confused by the difference in name.
 
-Yeah, my gitconfig and outlook account differ little.=20
+--IrhDeMKUP4DT/M7F
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-> Best regards,
-> Krzysztof
-> >=20
-> > Signed-off-by: Prasanna Karthik <mkarthi3@visteon.com>
-> > ---
-> >  drivers/clk/samsung/clk-s3c2410-dclk.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsu=
-ng/clk-s3c2410-dclk.c
-> > index e9eb935..ec6fb14 100644
-> > --- a/drivers/clk/samsung/clk-s3c2410-dclk.c
-> > +++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
-> > @@ -77,12 +77,11 @@ static u8 s3c24xx_clkout_get_parent(struct clk_hw *=
-hw)
-> >  static int s3c24xx_clkout_set_parent(struct clk_hw *hw, u8 index)
-> >  {
-> >  	struct s3c24xx_clkout *clkout =3D to_s3c24xx_clkout(hw);
-> > -	int ret =3D 0;
-> > =20
-> >  	s3c2410_modify_misccr((clkout->mask << clkout->shift),
-> >  			      (index << clkout->shift));
-> > =20
-> > -	return ret;
-> > +	return 0;
-> >  }
-> > =20
-> >  static const struct clk_ops s3c24xx_clkout_ops =3D {
-> >=20
-> =
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWTzVBAAoJEBQN5MwUoCm2y8UP/0gfMsczqO2iwBCCPslkIE4m
+8ABnrXW3RsbF+ox1EAEtpY/d4Sc9PNpRqqh5Zf3VNm8UU36rbn/2DP3yNqNwybv4
+mK+uQWOUI3pIbMaxWj61smKp2tG4ZorPqOlMeD7fdalEHk/HAIsKLqmxFgF2wRIH
+23JjjQxXDrlNeS4whSD/RZpgjnoon812OfGQM3qbMaZpylVGDByqCXdXOcAM0T6W
+XbYK4BAnpK9bYQCpT/aL0YnBroq1a5ojaj0rVAJQSoAi1bIYHKdSrHxT11aqzGlQ
+ZlHPgUV2BEmyOJarQ6DOytuwIjt1qaFgdBHq533+9udvGc5s+oaMtWN///PMlyKo
+u9RQZXLSJJKHpgNa38qhGNkoYqLroS6cc3Vyxlzief6Qrobvq87LZZWkQpyU6St1
+SYaK4W/3NpLgj2ZZvyW5FyMQWNHw8BC95VvImK//UTzUrl5kjdg6RjOE/b+1gGCQ
+Sl9jm1sMrOdrGGd9pxqyW9PQIbKm/KykcI12+SUcwmD0UMs3cW3FLIul9Zut4/vD
+uUiGU42wdtUiJZOcWeNHRV5pN+lJwaaQBc+OydOJF8XTW+OJNNbf+0TWxWuAFXZg
+gLWbojrPBgRP9MfRVbD3QMg4j/RYH3ZutKay7cZ31KREM7izS/GlAAO1dH3k/hhP
+UZH3iDoESnT9U92Bwa2R
+=vItH
+-----END PGP SIGNATURE-----
+
+--IrhDeMKUP4DT/M7F--
