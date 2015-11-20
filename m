@@ -1,103 +1,39 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Nicolas Ferre <nicolas.ferre@atmel.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH] clk: at91: Revert "keep slow clk enabled to prevent system hang"
-Date: Tue, 17 Nov 2015 12:26:33 +0100
-Message-Id: <1447759593-20816-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:35307 "EHLO
+	mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161067AbbKTIum (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 20 Nov 2015 03:50:42 -0500
+Date: Fri, 20 Nov 2015 09:50:39 +0100
+From: Valentin Rothberg <valentinrothberg@gmail.com>
+To: marc_gonzalez@sigmadesigns.com
+Cc: sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, Paul Bolle <pebolle@tiscali.nl>,
+	Andreas Ziegler <ziegler@cs.fau.de>
+Subject: clk: tango4: undefined CONFIG_ARCH_TANGOX
+Message-ID: <20151120085039.GA2832@debian-vm>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Commit dca1a4b5ff6e ("clk: at91: keep slow clk enabled to prevent system
-hang") added a workaround for the slow clock as it is not properly handled
-by its users.
+Hi Marc,
 
-Now that the slow clock is taken properly by the drivers, this workaround
-is not necessary anymore, revert it.
+your commit ed12dfc92f01 ("clk: tango4: clkgen driver for Tango4
+platforms") has shown up in today's linux-next tree (i.e.,
+next-20151120) adding the following build condition to the tango4 clk
+driver:
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Acked-by: Michael Turquette <mturquette@baylibre.com>
----
-This patch is now ready to be applied as all the other necessary changes are in
-4.4.
+drivers/clk/Makefile:45:obj-$(CONFIG_ARCH_TANGOX) += clk-tango4.o
 
-Changes in v5:
- - rebased on v4.4-rc1
- - removed a blank line
- - remove clk.h inclusion
+However, ARCH_TANGOX is nowhere defined in Kconfig so that the driver
+cannot be compiled at the current state.  I checked the LKML, and found
+a bunch of patches referencing ARCH_TANGOX as well, but I could not find
+any patch adding this option.
 
- drivers/clk/at91/clk-slow.c | 29 -----------------------------
- 1 file changed, 29 deletions(-)
+Is there a patch queued somewhere that adds ARCH_TANGOX?
 
-diff --git a/drivers/clk/at91/clk-slow.c b/drivers/clk/at91/clk-slow.c
-index d0d5076a9b94..6f99a530ead6 100644
---- a/drivers/clk/at91/clk-slow.c
-+++ b/drivers/clk/at91/clk-slow.c
-@@ -10,7 +10,6 @@
-  *
-  */
- 
--#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/clkdev.h>
- #include <linux/slab.h>
-@@ -72,8 +71,6 @@ struct clk_sam9x5_slow {
- 
- #define to_clk_sam9x5_slow(hw) container_of(hw, struct clk_sam9x5_slow, hw)
- 
--static struct clk *slow_clk;
--
- static int clk_slow_osc_prepare(struct clk_hw *hw)
- {
- 	struct clk_slow_osc *osc = to_clk_slow_osc(hw);
-@@ -360,8 +357,6 @@ at91_clk_register_sam9x5_slow(void __iomem *sckcr,
- 	clk = clk_register(NULL, &slowck->hw);
- 	if (IS_ERR(clk))
- 		kfree(slowck);
--	else
--		slow_clk = clk;
- 
- 	return clk;
- }
-@@ -433,8 +428,6 @@ at91_clk_register_sam9260_slow(struct at91_pmc *pmc,
- 	clk = clk_register(NULL, &slowck->hw);
- 	if (IS_ERR(clk))
- 		kfree(slowck);
--	else
--		slow_clk = clk;
- 
- 	return clk;
- }
-@@ -462,25 +455,3 @@ void __init of_at91sam9260_clk_slow_setup(struct device_node *np,
- 
- 	of_clk_add_provider(np, of_clk_src_simple_get, clk);
- }
--
--/*
-- * FIXME: All slow clk users are not properly claiming it (get + prepare +
-- * enable) before using it.
-- * If all users properly claiming this clock decide that they don't need it
-- * anymore (or are removed), it is disabled while faulty users are still
-- * requiring it, and the system hangs.
-- * Prevent this clock from being disabled until all users are properly
-- * requesting it.
-- * Once this is done we should remove this function and the slow_clk variable.
-- */
--static int __init of_at91_clk_slow_retain(void)
--{
--	if (!slow_clk)
--		return 0;
--
--	__clk_get(slow_clk);
--	clk_prepare_enable(slow_clk);
--
--	return 0;
--}
--arch_initcall(of_at91_clk_slow_retain);
--- 
-2.5.0
+I detected the issue with scripts/checkkconfigsymbols.py by diffing
+yesterday's and today's linux-next.
+
+Kind regards,
+ Valentin
