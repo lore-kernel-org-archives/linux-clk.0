@@ -1,81 +1,24 @@
-Return-Path: <repk@triplefau.lt>
-Date: Wed, 18 Nov 2015 20:11:41 +0100
-From: Remi Pommarel <repk@triplefau.lt>
-To: Eric Anholt <eric@anholt.net>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 20 Nov 2015 11:03:25 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] clk: bcm2835: Always round up clock divisor
-Message-ID: <20151118191141.GB491@cruxbox>
-References: <1447251765-16297-1-git-send-email-repk@triplefau.lt>
- <1447251765-16297-2-git-send-email-repk@triplefau.lt>
- <87h9kj2mhi.fsf@eliezer.anholt.net>
+Subject: Re: [PATCH] clk: fix a typo in comment block of struct
+ clk_rate_request
+Message-ID: <20151120190324.GX32672@codeaurora.org>
+References: <1446714154-2071-1-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <87h9kj2mhi.fsf@eliezer.anholt.net>
+In-Reply-To: <1446714154-2071-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 11/05, Masahiro Yamada wrote:
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-On Wed, Nov 18, 2015 at 10:25:45AM -0800, Eric Anholt wrote:
-> Remi Pommarel <repk@triplefau.lt> writes:
-> 
-> > Make bcm2835_clock_choose_div always round up the chosen MASH divisor so that
-> > the resulting average rate will not be higher than the requested one.
-> >
-> > Signed-off-by: Remi Pommarel <repk@triplefau.lt>
-> > ---
-> >  drivers/clk/bcm/clk-bcm2835.c | 15 ++++++++-------
-> >  1 file changed, 8 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-> > index 39bf582..1237716 100644
-> > --- a/drivers/clk/bcm/clk-bcm2835.c
-> > +++ b/drivers/clk/bcm/clk-bcm2835.c
-> > @@ -1152,18 +1152,19 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
-> >  {
-> >  	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
-> >  	const struct bcm2835_clock_data *data = clock->data;
-> > -	u32 unused_frac_mask = GENMASK(CM_DIV_FRAC_BITS - data->frac_bits, 0);
-> > +	u32 unused_frac_mask =
-> > +		GENMASK(CM_DIV_FRAC_BITS - data->frac_bits, 0) >> 1;
-> >  	u64 temp = (u64)parent_rate << CM_DIV_FRAC_BITS;
-> > +	u64 rem;
-> >  	u32 div;
-> >  
-> > -	do_div(temp, rate);
-> > +	rem = do_div(temp, rate);
-> >  	div = temp;
-> >  
-> > -	/* Round and mask off the unused bits */
-> > -	if (unused_frac_mask != 0) {
-> > -		div += unused_frac_mask >> 1;
-> > -		div &= ~unused_frac_mask;
-> > -	}
-> > +	/* Round up and mask off the unused bits */
-> > +	if ((div & unused_frac_mask) != 0 || rem != 0)
-> > +		div += unused_frac_mask + 1;
-> > +	div &= ~unused_frac_mask;
-> 
-> Suppose we've got 8 of our 12 frac bits populated.  You've added a ">>
-> 1" to the unused_frac_mask, so it's only 0x7 instead of 0xf.  When you
-> say "round up", you add 0x8 (the high bit of the unused mask") then and
-> with ~0x7.  If you started with 0x1 in the low bits of div, you'd end up
-> with 0x8, so you've set an unused bit instead of actually rounding up.
-> 
-> Did my logic work, here?  I think you just want to drop the ">>1" in
-> unused_frac_mask.
-
-I don't think so.
-
-If we have 8 of our 12 frac bits populated GENMASK(12 - 8, 0) will be 0x1f
-because GENMASK(4, 0) generates a mask from bit at position 0 to bit at
-position 4 inclusively (which is the fifth bit). So GENMASK(4, 0) >> 1 will
-be 0xf which is what we want here.
-
-Thanks,
+Applied to clk-next
 
 -- 
-Remi Pommarel
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
