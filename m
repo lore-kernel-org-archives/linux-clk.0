@@ -1,48 +1,29 @@
-Return-Path: <robh@kernel.org>
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Roland Stigge <stigge@antcom.de>, devicetree@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 01/11] dt-bindings: clock: add description of LPC32xx clock controller
+Date: Fri, 20 Nov 2015 21:03:03 +0100
+Message-ID: <6347608.0ASvek9R2Z@wuerfel>
+In-Reply-To: <564F5FDC.2070001@mleia.com>
+References: <1447981511-29653-1-git-send-email-vz@mleia.com> <3740707.LksPCoyRXC@wuerfel> <564F5FDC.2070001@mleia.com>
 MIME-Version: 1.0
-In-Reply-To: <20151030173738.GD17183@ulmo.nvidia.com>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
- <1446214865-3972-10-git-send-email-maxime.ripard@free-electrons.com>
- <CAL_JsqLuUUApGAgdw7U8EJ7p5yrYJg8AKFB32AE9Ufrf47=WpQ@mail.gmail.com> <20151030173738.GD17183@ulmo.nvidia.com>
-From: Rob Herring <robh@kernel.org>
-Date: Sun, 1 Nov 2015 08:28:59 -0600
-Message-ID: <CAL_Jsq+viBYCzw_YvVu0zVbPFb8r42+ma-wBcw1bbyOKUTaEYg@mail.gmail.com>
-Subject: Re: [PATCH 09/19] drm: sun4i: Add DT bindings documentation
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>, Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 30, 2015 at 12:37 PM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Fri, Oct 30, 2015 at 11:40:03AM -0500, Rob Herring wrote:
->> On Fri, Oct 30, 2015 at 9:20 AM, Maxime Ripard
-> [...]
->> > +Optional properties:
->> > +  - allwinner,tv-encoder: phandle to the TV Encoder in our pipeline
->> > +  - allwinner,panel: phandle to the panel used in our RGB interface
->>
->> Use of-graph please.
->
-> Why? Panels are a really simple resource and a simple phandle is fully
-> capable of describing the relationship.
+On Friday 20 November 2015 20:01:00 Vladimir Zapolskiy wrote:
+> > 
+> > Please use a specific model number without 'xx' wildcards. If you have
+> > multiple chips that are mutually compatible, pick one as the base number
+> > and then list the others as more specific instances, like
+> > 
+> >       compatible = "nxp,lpc3250-clk", "nxp,lpc3220-clk";
+> 
+> Do you ask me to change a title? You may see that compatible property
+> does not contain any wildcards?
+> 
 
-So we can have some consistency in bindings and common parsing code.
-It is simple when it is just a panel, but when it can be tv-encoder or
-other board level downstream bridge devices it doesn't stay so simple.
-Also, we already have a simple way to do panels which is as a child
-node. Let's not have a third way.
+Nevermind, I saw so many 'xx's that I didn't notice you got the
+important one right.
 
-Rob
+	Arnd
