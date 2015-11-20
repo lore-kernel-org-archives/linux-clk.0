@@ -1,73 +1,112 @@
-Return-Path: <robh@kernel.org>
-Date: Fri, 20 Nov 2015 10:41:33 -0600
-From: Rob Herring <robh@kernel.org>
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Russell King <linux@arm.linux.org.uk>,
-	Roland Stigge <stigge@antcom.de>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 02/11] dt-bindings: clock: add description of LPC32xx USB
- clock controller
-Message-ID: <20151120164133.GA9011@rob-hp-laptop>
-References: <1447981511-29653-1-git-send-email-vz@mleia.com>
- <1447981511-29653-3-git-send-email-vz@mleia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1447981511-29653-3-git-send-email-vz@mleia.com>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH v2 6/6] arm64: dts: berlin4ct: add pll and clock nodes
+To: Jisheng Zhang <jszhang@marvell.com>, robh+dt@kernel.org,
+ pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+ galak@codeaurora.org, catalin.marinas@arm.com, will.deacon@arm.com,
+ mturquette@baylibre.com, sboyd@codeaurora.org,
+ antoine.tenart@free-electrons.com
+References: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
+ <1448008952-1787-7-git-send-email-jszhang@marvell.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Message-ID: <564F8B73.7070403@gmail.com>
+Date: Fri, 20 Nov 2015 22:06:59 +0100
+In-Reply-To: <1448008952-1787-7-git-send-email-jszhang@marvell.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Nov 20, 2015 at 03:05:02AM +0200, Vladimir Zapolskiy wrote:
-> NXP LPC32xx USB controller has a subdevice, which controls USB AHB
-> slave, USB OTG, USB OHCI, USB device and I2C controller to USB phy
-> clocks, this change adds description of the clock controller, for more
-> details reference LPC32xx User's Manual, namely USB control, OTG clock
-> control and OTG clock status registers.
+On 20.11.2015 09:42, Jisheng Zhang wrote:
+> Add syspll, mempll, cpupll, gateclk and berlin-clk nodes.
 > 
-> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+> Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
 > ---
->  .../bindings/clock/nxp,lpc3220-usb-clk.txt         | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt
+>  arch/arm64/boot/dts/marvell/berlin4ct.dtsi | 38 ++++++++++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt b/Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt
-> new file mode 100644
-> index 0000000..67fba7f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt
-> @@ -0,0 +1,22 @@
-> +NXP LPC32xx USB Clock Controller
+> diff --git a/arch/arm64/boot/dts/marvell/berlin4ct.dtsi b/arch/arm64/boot/dts/marvell/berlin4ct.dtsi
+> index a4a1876..808a997 100644
+> --- a/arch/arm64/boot/dts/marvell/berlin4ct.dtsi
+> +++ b/arch/arm64/boot/dts/marvell/berlin4ct.dtsi
+> @@ -42,6 +42,7 @@
+>   *     OTHER DEALINGS IN THE SOFTWARE.
+>   */
+>  
+> +#include <dt-bindings/clock/berlin4ct.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  
+>  / {
+> @@ -135,6 +136,22 @@
+>  			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+>  		};
+>  
+> +		cpupll: cpupll {
+> +			compatible = "marvell,berlin-pll";
+> +			reg = <0x922000 0x14>, <0xea0710 4>;
+> +			#clock-cells = <0>;
+> +			clocks = <&osc>, <&clk CLK_CPUFASTREF>;
+> +			bypass-shift = /bits/ 8 <2>;
+> +		};
 > +
-> +Required properties:
-> +- compatible: should be "nxp,lpc3220-usb-clk"
-> +- reg:  should contain clock controller registers location and length
-> +- #clock-cells: must be 1, the cell holds id of a clock provided by the
-> +  USB clock controller
+> +		mempll: mempll {
+> +			compatible = "marvell,berlin-pll";
+> +			reg = <0x940034 0x14>, <0xea0710 4>;
+
+Whenever you see overlapping/repeating reg ranges, e.g. <0xea0710 4>
+you can be sure you are not representing HW structure but driver
+structure here.
+
+Please merge clocks/gates/plls to a single clock complex node
+and deal with the internals by using "simple-mfd" and "syscon" regmaps.
+
+> +			#clock-cells = <0>;
+> +			clocks = <&osc>, <&clk CLK_MEMFASTREF>;
+> +			bypass-shift = /bits/ 8 <1>;
+> +		};
 > +
-> +Examples:
+>  		apb@e80000 {
+>  			compatible = "simple-bus";
+>  			#address-cells = <1>;
+> @@ -225,6 +242,27 @@
+>  			};
+>  		};
+>  
+> +		syspll: syspll {
+> +			compatible = "marvell,berlin-pll";
+> +			reg = <0xea0200 0x14>, <0xea0710 4>;
+> +			#clock-cells = <0>;
+> +			clocks = <&osc>;
+> +			bypass-shift = /bits/ 8 <0>;
+> +		};
 > +
-> +	usb {
-
-I don't understand the full structure of USB blocks. Can you make the 
-example complete. All the blocks are a child of this node?
-
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		compatible = "simple-bus";
-> +		ranges = <0x0 0x31020000 0x00001000>;
-> +
-> +		usbclk: clock-controller@F00 {
-lower case                               ^
-
-> +			compatible = "nxp,lpc3220-usb-clk";
-> +			reg = <0xF00 0x100>;
-
-lower case
-
+> +		gateclk: gateclk {
+> +			compatible = "marvell,berlin4ct-gateclk";
+> +			reg = <0xea0700 4>;
 > +			#clock-cells = <1>;
 > +		};
-> +	};
-> -- 
-> 2.1.4
+> +
+> +		clk: clk {
+> +			compatible = "marvell,berlin4ct-clk";
+> +			reg = <0xea0720 0x144>;
+
+Looking at the reg ranges, I'd say that they are all clock related
+and pretty close to each other:
+
+gateclk: reg = <0xea0700 4>;
+bypass:  reg = <0xea0710 4>;
+clk:     reg = <0xea0720 0x144>;
+
+So, please just follow the OF/driver structure we already
+have for Berlin2.
+
+Sebastian
+
+> +			#clock-cells = <1>;
+> +			clocks = <&syspll>;
+> +		};
+> +
+>  		soc_pinctrl: pin-controller@ea8000 {
+>  			compatible = "marvell,berlin4ct-soc-pinctrl";
+>  			reg = <0xea8000 0x14>;
 > 
