@@ -1,62 +1,40 @@
-Return-Path: <jean-michel.hautbois@veo-labs.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 20 Nov 2015 09:17:44 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: versatile: fix memory leak
+Message-ID: <20151120171744.GN32672@codeaurora.org>
+References: <1447681600-14120-1-git-send-email-sudipm.mukherjee@gmail.com>
+ <20151118222446.GG32672@codeaurora.org>
+ <20151120085815.GB4485@sudip-pc>
 MIME-Version: 1.0
-In-Reply-To: <CALHpu366MPbxJinVL2QFM11gMHx-T=M9QXNoznOTh++oHGGmrA@mail.gmail.com>
-References: <CAH-u=82M1yCmPjBg5qeiC8JiHjM8+WsP+utX_VPKfJwJsu0QFg@mail.gmail.com>
- <CALHpu366MPbxJinVL2QFM11gMHx-T=M9QXNoznOTh++oHGGmrA@mail.gmail.com>
-From: Jean-Michel Hautbois <jean-michel.hautbois@veo-labs.com>
-Date: Wed, 4 Nov 2015 20:33:04 +0100
-Message-ID: <CAH-u=81hMAF=r6rUKF+iuta3nC6n+4EDDz7Rn2-oGYbkbN0Jyg@mail.gmail.com>
-Subject: Re: i.MX6: Increasing VPU frequency
-To: Jon Nettleton <jon.nettleton@gmail.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, sboyd@codeaurora.org,
-	Michael Turquette <mturquette@baylibre.com>, Sascha Hauer <kernel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@freescale.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20151120085815.GB4485@sudip-pc>
 List-ID: <linux-clk.vger.kernel.org>
 
-2015-11-04 18:04 GMT+01:00 Jon Nettleton <jon.nettleton@gmail.com>:
-> On Wed, Nov 4, 2015 at 5:52 PM, Jean-Michel Hautbois
-> <jean-michel.hautbois@veo-labs.com> wrote:
->> Hi !
->>
->> I can see in FSL kernel that VPU is configurable to 352M (it defaults
->> at 264MHz in mainline I think).
->> In the TRM, it is even specified at 352MHz as a default frequency,
->> with a maximum of 540MHz.
->>
->> Would it be possible to allow this clock rating modification if, for
->> instance, we select a performance governor in cpufreq, or if a coda
->> encoder is started with 1080p for instance ?
->> If so, then how is it doable properly ?
->
-> For some reason the FSL kernel configures the VPU to run at 352Mhz in
-> a very odd way that requires limiting the min cpu-frequency to 792Mhz.
-> It also requires clocking down a bunch of devices on pll2_pfd2_396m to
-> 352Mhz.
->
-> The simple solution to this is to instead parent the VPU to
-> pll2_pfd0_352m which is unused.  I have found by default it is stable
-> decoding but unstable encoding at 352Mhz, most likely due to the
-> voltage changes needed that limiting the min cpu-freq to 792Mhz
-> provides.  However everything seems to work quite reliably clocking
-> that pfd to 327Mhz, which still gives a boost of almost 24%
->
-> In my testing the performance gain in then going from 327 to 352 is
-> minimal.  Generally I think you hit AXI bus limitations rather than
-> VPU performance.
+On 11/20, Sudip Mukherjee wrote:
+> On Wed, Nov 18, 2015 at 02:24:46PM -0800, Stephen Boyd wrote:
+> > On 11/16, Sudip Mukherjee wrote:
+> > > If of_clk_parent_fill() fails then we printed an error message and
+> > > returned. But we missed freeing sp810.
+> > > 
+> > > Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
+> > > ---
+> > 
+> > Applied to clk-next
+> 
+> Thanks.
+> > 
+> > We don't need that error message on allocation failure either.
+> 
+> I sent another patch to remove the error message on kzalloc failure. Did
+> you mean that one or did you mean the error message for
+> of_clk_parent_fill()?
 
-Interesting.
-So you propose to add something like the following in
-drivers/clk/imx/clk-imx6q.cdrivers/clk/imx/clk-imx6q.c :
-imx_clk_set_rate(clk[IMX6QDL_CLK_PLL2_PFD0_352M], 327000000);
-imx_clk_set_parent(clk[IMX6QDL_CLK_VPU_AXI_SEL],
-clk[IMX6QDL_CLK_PLL2_PFD0_352M]);
+Yes I meant the one you removed. Thanks.
 
-This should end up with a fastest VPU (in fact ~25% boost is good).
-Is it the correct way to do it ?
-Should it be done in coda instead ? And only when needed ?
-
-Thanks,
-JM
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
