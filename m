@@ -1,66 +1,45 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 20 Nov 2015 16:39:53 -0800
+Date: Fri, 20 Nov 2015 13:14:52 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: agross@codeaurora.org, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, bjorn.andersson@sonymobile.com,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v4 4/5] clk: qcom: Add RPM clock controller driver
-Message-ID: <20151121003953.GD28998@codeaurora.org>
-References: <1447941480-27487-1-git-send-email-georgi.djakov@linaro.org>
- <1447941480-27487-5-git-send-email-georgi.djakov@linaro.org>
+To: Mike Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, Simon Arlott <simon@fire.lp0.eu>,
+	Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] clk: qcom: Specify LE device endianness
+Message-ID: <20151120211452.GB9555@codeaurora.org>
+References: <1447108254-19864-1-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1447941480-27487-5-git-send-email-georgi.djakov@linaro.org>
+In-Reply-To: <1447108254-19864-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/19, Georgi Djakov wrote:
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-> new file mode 100644
-> index 000000000000..bd0fd0cd50dc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-> @@ -0,0 +1,35 @@
-> +Qualcomm RPM Clock Controller Binding
-> +------------------------------------------------
-> +The RPM is a dedicated hardware engine for managing the shared
-> +SoC resources in order to keep the lowest power profile. It
-> +communicates with other hardware subsystems via shared memory
-> +and accepts clock requests, aggregates the requests and turns
-> +the clocks on/off or scales them on demand.
-> +
-> +Required properties :
-> +- compatible : shall contain only one of the following:
-> +
-> +			"qcom,rpmcc-msm8916"
+On 11/09, Stephen Boyd wrote:
+> All these clock controllers are little endian devices, but so far
+> we've been relying on the regmap mmio bus handling this for us
+> without explicitly stating that fact. After commit 4a98da2164cf
+> (regmap-mmio: Use native endianness for read/write, 2015-10-29),
+> the regmap mmio bus will read/write with the __raw_*() IO
+> accessors, instead of using the readl/writel() APIs that do
+> proper byte swapping for little endian devices.
+> 
+> So if we're running on a big endian processor and haven't
+> specified the endianness explicitly in the regmap config or in
+> DT, we're going to switch from doing little endian byte swapping
+> to big endian accesses without byte swapping, leading to some
+> confusing results. On my apq8074 dragonboard, this causes the
+> device to fail to boot as we access the clock controller with
+> big endian IO accesses even though the device is little endian.
+> 
+> Specify the endianness explicitly so that the regmap core
+> properly byte swaps the accesses for us.
+> 
+> Reported-by: Kevin Hilman <khilman@linaro.org>
+> Cc: Simon Arlott <simon@fire.lp0.eu>
+> Cc: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
 
-We need to add qcom,rpmcc as a generic compatible as well.
-
-> +
-> +- #clock-cells : shall contain 1
-> +
-> +Example:
-> +	smd {
-> +		compatible = "qcom,smd";
-> +
-> +		rpm {
-> +			interrupts = <0 168 1>;
-> +			qcom,ipc = <&apcs 8 0>;
-> +			qcom,smd-edge = <15>;
-> +
-> +			rpm_requests {
-> +				compatible = "qcom,rpm-msm8916";
-> +				qcom,smd-channels = "rpm_requests";
-> +
-> +				rpmcc: qcom,rpmcc {
-> +					compatible = "qcom,rpmcc-msm8916";
-And here in the example too.
-
-> +					#clock-cells = <1>;
-> +				};
-> +			};
-> +		};
-> +	};
+Applied to clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
