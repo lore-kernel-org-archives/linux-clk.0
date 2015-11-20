@@ -1,56 +1,330 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org
-Subject: [PATCH v2 0/5] Add support for MSM8996 clock controllers
-Date: Mon, 30 Nov 2015 17:31:37 -0800
-Message-Id: <1448933502-11944-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.132]:53833 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758915AbbKTBh3 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 19 Nov 2015 20:37:29 -0500
+Message-ID: <564E794B.8070002@rock-chips.com>
+Date: Fri, 20 Nov 2015 09:37:15 +0800
+From: hl <hl@rock-chips.com>
+MIME-Version: 1.0
+To: Heiko Stuebner <heiko@sntech.de>
+CC: dianders@chromium.org, mturquette@baylibre.com,
+	myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+	linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+	dbasehore@chromium.org, linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: rockchip: dmc: support rk3399 dmc clock driver
+References: <1447928471-14448-1-git-send-email-hl@rock-chips.com> <1447928471-14448-2-git-send-email-hl@rock-chips.com> <42589302.5BMrDbIv8M@phil>
+In-Reply-To: <42589302.5BMrDbIv8M@phil>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-These patches add support for the global and multimedia clock controllers
-found on MSM8996 devices. The first patch allows us to implement a
-"power of two" divider of different widths with a table based divider.
-The second patch adds support for Alpha PLLs and the 3rd and 5th patches
-add support for the two clock controllers. The fourth patch is
-a new type of clock ops for the graphics clock that does some custom
-ping-pong between different PLLs when switching graphics frequencies.
+Hi Heiko,
 
-Changes from v1:
- * Added some missing clocks in gcc and mmcc drivers
- * Updated PLL settings in mmcc
-
-Stephen Boyd (5):
-  clk: divider: Cap table divider values to 'width' member
-  clk: qcom: Add Alpha PLL support
-  clk: qcom: Add MSM8996 Global Clock Control (GCC) driver
-  clk: qcom: Add gfx3d ping-pong PLL frequency switching
-  clk: qcom: Add MSM8996 Multimedia Clock Controller (MMCC) driver
-
- .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
- .../devicetree/bindings/clock/qcom,mmcc.txt        |    1 +
- drivers/clk/clk-divider.c                          |    9 +-
- drivers/clk/qcom/Kconfig                           |   17 +
- drivers/clk/qcom/Makefile                          |    3 +
- drivers/clk/qcom/clk-alpha-pll.c                   |  355 ++
- drivers/clk/qcom/clk-alpha-pll.h                   |   57 +
- drivers/clk/qcom/clk-rcg.h                         |    1 +
- drivers/clk/qcom/clk-rcg2.c                        |   87 +
- drivers/clk/qcom/gcc-msm8996.c                     | 3422 ++++++++++++++++++++
- drivers/clk/qcom/mmcc-msm8996.c                    | 3217 ++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-msm8996.h       |  339 ++
- include/dt-bindings/clock/qcom,mmcc-msm8996.h      |  285 ++
- 13 files changed, 7790 insertions(+), 4 deletions(-)
- create mode 100644 drivers/clk/qcom/clk-alpha-pll.c
- create mode 100644 drivers/clk/qcom/clk-alpha-pll.h
- create mode 100644 drivers/clk/qcom/gcc-msm8996.c
- create mode 100644 drivers/clk/qcom/mmcc-msm8996.c
- create mode 100644 include/dt-bindings/clock/qcom,gcc-msm8996.h
- create mode 100644 include/dt-bindings/clock/qcom,mmcc-msm8996.h
+On 20/11/15 05:47, Heiko Stuebner wrote:
+> Hi Lin,
+>
+> Am Donnerstag, 19. November 2015, 18:21:10 schrieb Lin Huang:
+>> support rk3399 dmc clock driver. Note, ddr set rate function will
+>> use dcf controller which run in ATF, it need to fishish it when rk3399
+>> arm trust firmware ready.
+> this unfinalized state is slightly unfortunate and I think this code will
+> need to wait until CRU and DDRC specs are available.
+>
+> Because this is clearly part of the CRU (labeled CRU_CLKSEL6_CON etc)
+> so shouldn't be a separate driver at all and also what your driver currently
+> only does can still simply be described in the regular scheme as part of
+> a full clock driver like
+>
+> PNAME(mux_ddrc_p) = { "pll_dpll", "pll_gpll", "pll_alpll", "pll_abpll" };
+> COMPOSITE_NOGATE(0, "ddrc", mux_ddrc_p, 0,
+> 					RK3399_CLKSEL_CON(6), 4, 2, MFLAGS, 0, 3,
+> 					DFLAGS | CLK_DIVIDER_POWER_OF_TWO),
+>
+> So the code needs to actually demonstrate why a separate clock type is
+> really necessary.
+>
+> I do understand that we will probably need a special way to talk to this
+> dcf controller but seeing how this interaction will work is really a
+> prequisite to finding a correct solution.
+     if we can use common clock driver, i can put the dfi controller as 
+a  independent driver
+     into devfreq,  this is the best way. But how do we separate the ddr 
+clk_set_rate() ,
+     so we can manipulate dcf controller(actually, we use SMC handle dcf 
+controller in arm trust firmware ),
+     i check clock driver code, it seem there is not way to do that for now.
+>
+> Heiko
+>
+>> ---
+>>   drivers/clk/rockchip/Makefile         |   1 +
+>>   drivers/clk/rockchip/clk-rk3399-dmc.c | 196 ++++++++++++++++++++++++++++++++++
+>>   include/soc/rockchip/rk3399-dmc-clk.h |  36 +++++++
+>>   3 files changed, 233 insertions(+)
+>>   create mode 100644 drivers/clk/rockchip/clk-rk3399-dmc.c
+>>   create mode 100644 include/soc/rockchip/rk3399-dmc-clk.h
+>>
+>> diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
+>> index b27edd6..98bd955 100644
+>> --- a/drivers/clk/rockchip/Makefile
+>> +++ b/drivers/clk/rockchip/Makefile
+>> @@ -13,3 +13,4 @@ obj-$(CONFIG_RESET_CONTROLLER)	+= softrst.o
+>>   obj-y	+= clk-rk3188.o
+>>   obj-y	+= clk-rk3288.o
+>>   obj-y	+= clk-rk3368.o
+>> +obj-y	+= clk-rk3399-dmc.o
+>> diff --git a/drivers/clk/rockchip/clk-rk3399-dmc.c b/drivers/clk/rockchip/clk-rk3399-dmc.c
+>> new file mode 100644
+>> index 0000000..03cc044
+>> --- /dev/null
+>> +++ b/drivers/clk/rockchip/clk-rk3399-dmc.c
+>> @@ -0,0 +1,196 @@
+>> +/*
+>> + * Copyright (c) 2014, Fuzhou Rockchip Electronics Co., Ltd
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify it
+>> + * under the terms and conditions of the GNU General Public License,
+>> + * version 2, as published by the Free Software Foundation.
+>> + *
+>> + * This program is distributed in the hope it will be useful, but WITHOUT
+>> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+>> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+>> + * more details.
+>> + */
+>> +
+>> +#include <linux/slab.h>
+>> +#include <linux/clk.h>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/clkdev.h>
+>> +#include <linux/io.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/of_irq.h>
+>> +#include <linux/platform_device.h>
+>> +#include <soc/rockchip/rk3399-dmc-clk.h>
+>> +
+>> +#define to_rk3399_dmcclk(obj)	container_of(obj, struct rk3399_dmcclk, hw)
+>> +
+>> +/* CRU_CLKSEL6_CON*/
+>> +#define CRU_CLKSEL6_CON		0x118
+>> +#define CLK_DDRC_PLL_SEL_SHIFT	0x4
+>> +#define CLK_DDRC_PLL_SEL_MASK	0x3
+>> +#define CLK_DDRC_DIV_CON_SHIFT	0
+>> +#define CLK_DDRC_DIV_CON_MASK	0x07
+>> +
+>> +static unsigned long rk3399_dmcclk_recalc_rate(struct clk_hw *hw,
+>> +					       unsigned long parent_rate)
+>> +{
+>> +	struct rk3399_dmcclk *dmc = to_rk3399_dmcclk(&hw);
+>> +	u32 val;
+>> +
+>> +	/*
+>> +	 * Get parent rate since it changed in this clks set_rate op. The parent
+>> +	 * rate passed into this function is cached before set_rate is called in
+>> +	 * the common clk code, so we have to get it here.
+>> +	 */
+>> +	parent_rate = clk_get_rate(clk_get_parent(hw->clk));
+>> +
+>> +	val = readl(dmc->cru + CRU_CLKSEL6_CON);
+>> +	val = (val >> CLK_DDRC_DIV_CON_SHIFT) & CLK_DDRC_DIV_CON_MASK;
+>> +
+>> +	return parent_rate / (val + 1);
+>> +}
+>> +
+>> +/*
+>> + * TODO: set ddr frequcney in dcf which run in ATF
+>> + */
+>> +static int rk3399_dmcclk_set_rate(struct clk_hw *hw, unsigned long rate,
+>> +				  unsigned long parent_rate)
+>> +{
+>> +	return 0;
+>> +}
+>> +
+>> +static u8 rk3399_dmcclk_get_parent(struct clk_hw *hw)
+>> +{
+>> +	struct rk3399_dmcclk *dmc = to_rk3399_dmcclk(&hw);
+>> +	u32 val;
+>> +
+>> +	val = readl(dmc->cru + CRU_CLKSEL6_CON);
+>> +
+>> +	return (val >> CLK_DDRC_PLL_SEL_SHIFT) &
+>> +		CLK_DDRC_PLL_SEL_MASK;
+>> +}
+>> +
+>> +static const struct clk_ops rk3399_dmcclk_ops = {
+>> +	.recalc_rate = rk3399_dmcclk_recalc_rate,
+>> +	.set_rate = rk3399_dmcclk_set_rate,
+>> +	.get_parent = rk3399_dmcclk_get_parent,
+>> +};
+>> +
+>> +static const char *parent_clk_names[] = {
+>> +	"pll_dpll",
+>> +	"pll_gpll",
+>> +	"pll_alpll",
+>> +	"pll_abpll",
+>> +};
+>> +
+>> +static int rk3399_register_dmcclk(struct rk3399_dmcclk *dmc)
+>> +{
+>> +	struct clk_init_data init;
+>> +	struct clk *clk;
+>> +
+>> +	init.name = "dmc_clk";
+>> +	init.parent_names = parent_clk_names;
+>> +	init.num_parents = ARRAY_SIZE(parent_clk_names);
+>> +	init.ops = &rk3399_dmcclk_ops;
+>> +	init.flags = 0;
+>> +	dmc->hw->init = &init;
+>> +
+>> +	clk = devm_clk_register(dmc->dev, dmc->hw);
+>> +	if (IS_ERR(clk)) {
+>> +		dev_err(dmc->dev, "could not register cpuclk dmc_clk\n");
+>> +		return PTR_ERR(clk);
+>> +	}
+>> +	clk_register_clkdev(clk, "dmc_clk", NULL);
+>> +	of_clk_add_provider(dmc->dev->of_node, of_clk_src_simple_get, clk);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int rk3399_dmcclk_probe(struct platform_device *pdev)
+>> +{
+>> +	struct rk3399_dmcclk *dmc;
+>> +	struct resource *res;
+>> +	struct device_node *node;
+>> +	int ret;
+>> +
+>> +	dmc = devm_kzalloc(&pdev->dev, sizeof(*dmc), GFP_KERNEL);
+>> +	if (!dmc)
+>> +		return -ENOMEM;
+>> +
+>> +	dmc->hw = devm_kzalloc(&pdev->dev, sizeof(*dmc->hw), GFP_KERNEL);
+>> +	if (!dmc->hw)
+>> +		return -ENOMEM;
+>> +
+>> +	dmc->dev = &pdev->dev;
+>> +
+>> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +	dmc->ctrl_regs = devm_ioremap_resource(&pdev->dev, res);
+>> +	if (IS_ERR(dmc->ctrl_regs))
+>> +		return PTR_ERR(dmc->ctrl_regs);
+>> +
+>> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+>> +	dmc->dfi_regs = devm_ioremap_resource(&pdev->dev, res);
+>> +	if (IS_ERR(dmc->dfi_regs))
+>> +		return PTR_ERR(dmc->dfi_regs);
+>> +
+>> +	node = of_parse_phandle(dmc->dev->of_node, "rockchip,cru", 0);
+>> +	if (!node)
+>> +		return -ENODEV;
+>> +
+>> +	ret = of_address_to_resource(node, 0, res);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	dmc->cru = devm_ioremap_resource(&pdev->dev, res);
+>> +	if (IS_ERR(dmc->cru))
+>> +		return PTR_ERR(dmc->cru);
+>> +
+>> +	/* register dpllddr clock */
+>> +	ret = rk3399_register_dmcclk(dmc);
+>> +	if (ret) {
+>> +		dev_err(dmc->dev, "failed to register clk dmc_clk %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	platform_set_drvdata(pdev, dmc);
+>> +	platform_device_register_data(dmc->dev, "rk3399-dmc-freq",
+>> +				      PLATFORM_DEVID_AUTO, NULL, 0);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct of_device_id rk3399_dmcclk_of_match[] = {
+>> +	{ .compatible = "rockchip,rk3399-dmc", },
+>> +	{ },
+>> +};
+>> +MODULE_DEVICE_TABLE(of, rk3399_dmcclk_of_match);
+>> +
+>> +
+>> +static struct platform_driver rk3399_dmcclk_driver = {
+>> +	.probe = rk3399_dmcclk_probe,
+>> +	.driver = {
+>> +		.name = "rk3399-dmc",
+>> +		.of_match_table = rk3399_dmcclk_of_match,
+>> +		.suppress_bind_attrs = true,
+>> +	},
+>> +};
+>> +
+>> +static int __init rk3399_dmcclk_modinit(void)
+>> +{
+>> +	int ret;
+>> +
+>> +	ret = platform_driver_register(&rk3399_dmcclk_driver);
+>> +	if (ret < 0)
+>> +		pr_err("Failed to register platform driver %s\n",
+>> +				rk3399_dmcclk_driver.driver.name);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +module_init(rk3399_dmcclk_modinit);
+>> +
+>> +MODULE_DESCRIPTION("rockchip rk3399 DMC CLK driver");
+>> +MODULE_LICENSE("GPL v2");
+>> +
+>> diff --git a/include/soc/rockchip/rk3399-dmc-clk.h b/include/soc/rockchip/rk3399-dmc-clk.h
+>> new file mode 100644
+>> index 0000000..b53fc23
+>> --- /dev/null
+>> +++ b/include/soc/rockchip/rk3399-dmc-clk.h
+>> @@ -0,0 +1,36 @@
+>> +/*
+>> +* Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+>> +*
+>> +* This program is free software; you can redistribute it and/or modify it
+>> +* under the terms of the GNU General Public License as published by the
+>> +* Free Software Foundation; either version 2 of the License, or (at your
+>> +* option) any later version.
+>> +*/
+>> +
+>> +#ifndef _RK3399_DMC_CLK_H
+>> +#define _RK3399_DMC_CLK_H
+>> +
+>> +enum dram_type_tag {
+>> +	DDR3 = 6,
+>> +	LPDDR3 = 7,
+>> +	LPDDR4 = 0x0b,
+>> +};
+>> +
+>> +/* DENALI_CTL_00 */
+>> +#define DENALI_CTL_00		0x00
+>> +#define DRAM_CLASS_MASK		0x0f
+>> +#define DRAM_CLASS_SHIFT	0x8
+>> +
+>> +struct rk3399_dmcclk {
+>> +	struct device *dev;
+>> +	struct clk_hw *hw;
+>> +	u32 cur_freq;
+>> +	u32 target_freq;
+>> +	u32 ddr_type;
+>> +	void __iomem *ctrl_regs;
+>> +	void __iomem *dfi_regs;
+>> +	void __iomem *cru;
+>> +};
+>> +
+>> +#endif
+>> +
+>>
+>
+>
+>
 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Lin Huang
+
+
