@@ -1,96 +1,145 @@
-Return-Path: <yamada.masahiro@socionext.com>
+Return-Path: <emil.l.velikov@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNATR3Y0T5XEGA4WQJksTO7qoCEjR+TKC0YmvVUZhLdiPSg@mail.gmail.com>
-References: <1448004981-11133-1-git-send-email-yamada.masahiro@socionext.com>
-	<1448004981-11133-3-git-send-email-yamada.masahiro@socionext.com>
-	<20151121003702.GC28998@codeaurora.org>
-	<CAK7LNATR3Y0T5XEGA4WQJksTO7qoCEjR+TKC0YmvVUZhLdiPSg@mail.gmail.com>
-Date: Tue, 24 Nov 2015 13:25:08 +0900
-Message-ID: <CAK7LNATzraLEavLGHR0c1-0J1-CzvCsfgW1URitAFOnej7+-Ug@mail.gmail.com>
-Subject: Re: [PATCH 3/3] clk: split of_clk_get_parent_name() into two functions
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <564EC575.90109@rock-chips.com>
+References: <1447904131-29328-1-git-send-email-zyw@rock-chips.com>
+	<CACvgo53YOMpbz1TdVmRBPPz4dv=X+8FoEo0ZcfN5DwbDYi2ZzQ@mail.gmail.com>
+	<564EC575.90109@rock-chips.com>
+Date: Fri, 20 Nov 2015 12:19:54 +0000
+Message-ID: <CACvgo52SDcRtkNuNSF6dsw_TXV5wrMmW4_ci_4uX63CJrcBg+w@mail.gmail.com>
+Subject: Re: [PATCH v3 00/12] Add mipi dsi support for rk3288
+From: Emil Velikov <emil.l.velikov@gmail.com>
+To: Chris Zhong <zyw@rock-chips.com>
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	linux-rockchip <linux-rockchip@lists.infradead.org>, Mark Yao <mark.yao@rock-chips.com>,
+	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Kever Yang <kever.yang@rock-chips.com>, ML dri-devel <dri-devel@lists.freedesktop.org>,
+	"Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	Vincent Palatin <vpalatin@chromium.org>, Jeff Chen <cym@rock-chips.com>,
+	Ajay Kumar <ajaykumar.rs@samsung.com>, Andrew Bresticker <abrestic@chromium.org>,
+	Russell King <rmk+kernel@arm.linux.org.uk>, Thierry Reding <treding@nvidia.com>,
+	devicetree@vger.kernel.org, Alexandru M Stan <amstan@chromium.org>,
+	Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Rob Herring <robh+dt@kernel.org>, Roger Chen <roger.chen@rock-chips.com>,
+	Russell King <linux@arm.linux.org.uk>, Sonny Rao <sonnyrao@chromium.org>,
+	LAKML <linux-arm-kernel@lists.infradead.org>, Huang Lin <hl@rock-chips.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Doug Anderson <dianders@chromium.org>,
+	Kumar Gala <galak@codeaurora.org>, Andy Yan <andy.yan@rock-chips.com>,
+	"David S. Miller" <davem@davemloft.net>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
-
-
-2015-11-22 14:44 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> Hi Stephen,
+On 20 November 2015 at 07:02, Chris Zhong <zyw@rock-chips.com> wrote:
+> Hi Emil
 >
->
-> 2015-11-21 9:37 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
->> On 11/20, Masahiro Yamada wrote:
->>> Currently, there is no function to get the clock name of the given
->>> node.  Create a new helper function, of_clk_get_name().  This is
->>> useful to get the clock name where "clock-indices" property is used.
->>>
->>>   of_clk_get_name(): get the clock name in the given node
->>>   of_clk_get_parent_name(): get the name of the parent clock
->>>
->>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->>> ---
->>>
->>> I want to use of_clk_get_name() for my clk drivers for my SoCs,
->>> which I will submit later.
->>>
->>> I found this helper function is useful.
+> On 11/19/2015 10:41 PM, Emil Velikov wrote:
 >>
->> I don't see how this is useful. Is the new driver so generic it
->> doesn't know what clocks it's outputting? We've been trying to
->> move people away from using clock-output-names, so most likely
->> this sort of information should be conveyed from DT via the
->> compatible string and a table in the driver that matches up the
->> compatible string with the list of clock names.
+>> On 19 November 2015 at 03:35, Chris Zhong <zyw@rock-chips.com> wrote:
+>>>
+>>> The rk3288 MIPI DSI is a Synopsys DesignWare MIPI DSI host controller
+>>> IP. This series adds support for a Synopsys DesignWare MIPI DSI host
+>>> controller DRM bridge driver and a rockchip MIPI DSI specific DRM
+>>> driver.
+>>>
+>>> This series also includes a DRM panel driver for BOE TV080WUM-NL0 panel.
+>>> This panel only use the MIPI DSI video mode.
+>>>
+>>> The MIPI DSI feature is tested on rk3288 evb board, backport them to
+>>> chrome os kernel v3.14, and it can display normally.
+>>>
+>>> This patchset is base on the patchset from Ying.liu@freescale.com.
+>>> <http://www.spinics.net/lists/dri-devel/msg77181.html>
+>>>
+>>>
+>>> Changes in v3:
+>>> move the dw_mipi_dsi.txt to
+>>> Documentation/devicetree/bindings/display/bridge
+>>> move dw_mipi_dsi_rockchip.txt to bindings/display/rockchip/
+>>> move boe,tv080wum-nl0.txt to bindings/display/panel/
+>>>
+>>> Changes in v2:
+>>> add the mipi clk id in a single patch
+>>> As Thierry.Reding comment, add a documentation for this panel.
+>>>
+>>> Chris Zhong (10):
+>>>    clk: rockchip: add id for mipidsi sclk on rk3288
+>>>    clk: rockchip: add mipidsi clocks on rk3288
+>>>    drm/rockchip: return a true clock rate to adjusted_mode
+>>>    drm/bridge: Add Synopsys DesignWare MIPI DSI host controller driver
+>>
+>> Did you actually rewrite the patch from Liu Ying ?
 >
+> I modify the dw_mipi_dsi.c based on the patch from Liu Ying.
+If you base your work on top of (i.e. you rework) someone else's patch
+you should retain this authorship and signed-off-by line. This of
+course is not limited to the above patch but a general rule, afaik.
+
+>>
+>> Out of curiosity what was the obstacle of this work getting merged ?
 >
-> What I implemented in my driver was:
+> There are different version dw controller, and it is too hard to merge them,
+> since most registers are different.
+Have you discussed this limitation with Liu ? Does your work handle
+both versions of the controller ? If so your commit message should say
+something about that. Here are some good sources on the whats and whys
+wrt writing good commit messages [1] [2]
+
+[1] http://who-t.blogspot.co.uk/2009/12/on-commit-messages.html
+[2] http://chris.beams.io/posts/git-commit/
+
+>>
+>>
+>>>    drm: rockchip: Support Synopsys DesignWare MIPI DSI host controller
+>>>    Documentation: dt-bindings: Add bindings for rk3288 DW MIPI DSI driver
+>>>    ARM: dts: rockchip: add rk3288 mipi_dsi nodes
+>>>    drm/panel: simple: Add support for BOE TV080WUM-NL0
+>>>    drm/panel: simple: Add boe,tv080wum-nl0 simple panel device tree
+>>>      binding
+>>
+>> As the DT people will tell you - there is no BOE vendor in
+>> bindings/vendor-prefixes.txt.
 >
-> [1] Use the clock names built in the driver, if "clock-output-names"
->     is missing in the DT.
+> Yes, I have post a verdor patch in v2 series,
+> <https://patchwork.kernel.org/patch/7530791/>
+> Maybe I should add it back to series with
 >
-> [2] If "clock-output-names" is specified, the driver overrides
->     the clock names, respecting the "clock-output-names".
+> Acked-by: Rob Herring<robh@kernel.org>
 >
+If a patch has been reviewed/acked that's great. Add the tag, but
+please do not drop patches until they are merged. In the latter case
+you can mention that your series depends on branch X from repo Y.
+
+>>
+>>>    ARM: dts: rockchip: add support mipi panel tv080wum-nl0 for rk3288-evb
+>>>
+>>> Liu Ying (2):
+>>>    drm/dsi: Add a helper to get bits per pixel of MIPI DSI pixel format
+>>>    Documentation: dt-bindings: Add bindings for Synopsys DW MIPI DSI DRM
+>>>      bridge driver
+>>>
+>> >From the above 12 patches only ~6 reached this mailing list is that
+>> intentional ? Previously I've seen people CC dri-devel for their
+>> panel/bridge DT patches.
 >
-> The following is a snippet from my driver code.
+> I use the patman to post the series, forgot to add you and Thierry to the
+> to-list.
+> I will fix in next version series. Thanks for your reply.
 >
->
->     /*
->      * update the clock name with the one provided by
->      * clock-output-names property, if exists
->      */
->     new_name = of_clk_get_name(np, index);
->     if (new_name)
->             init_data[i].name = new_name;
->     else
->             pr_info("DT does not specify output name for %s[%d]\n",
->                     np->name, index);
->
->
-> I read the Documentation/devicetree/bindings/clock-bindings.txt
-> before I stared my driver development.
->
-> I did not know we are deprecating the "clock-output-names".
-> (Should it be mentioned in the clock-bindings.txt?)
+No need to add me bth. Thierry on the other hand should be Cc'd on the
+patches where he's the maintainer.
 
+As the To/Cc list is already quite excessive - I'd suggest following
+the approach used by veterans in kernel development.
 
+I'm not a veteran kernel dev, but this is what I've noticed over the years:
+ - Subsystem foo - mailing-list, maintainer(s), and optionally the top
+1-2 developers
+ - Other subsystems - mailing-list and optionally the maintainer(s).
 
+Thus in the case of the panel driver you'll get - dri-devel, Thierry
+and optionally(?) devicetree
+For the DT binding for the panel driver - devicetree, Rob, dri-devel, Thierry.
 
-Please let me clarify the driver implementation guideline.
+...I think you get the idea :-)
 
-[1] Do not add "clock-output-names" in new device trees.
-[2] New clock drivers should not rely on "clock-output-names" at all.
-
-
-Is this correct?
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Regards,
+Emil
