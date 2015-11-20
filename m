@@ -1,42 +1,40 @@
-Return-Path: <jacob@teenage.engineering>
-Return-Path: <jacob@teenage.engineering>
-From: Jacob Siverskog <jacob@teenage.engineering>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 20 Nov 2015 10:41:08 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jacob Siverskog <jacob@teenage.engineering>
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Belisko Marek <marek.belisko@gmail.com>,
-	Jacob Siverskog <jacob@teenage.engineering>
-Subject: [PATCH v2] clk: si5351: Add PLL soft reset
-Date: Fri, 20 Nov 2015 18:22:16 +0100
-Message-Id: <1448040137-21400-1-git-send-email-jacob@teenage.engineering>
-In-Reply-To: <CAEnXRPvCLRDFotc8FkS35df1PoLUW=X=1bTTUHR=UhRU_9zrCw@mail.gmail.com>
-References: <CAEnXRPvCLRDFotc8FkS35df1PoLUW=X=1bTTUHR=UhRU_9zrCw@mail.gmail.com>
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Belisko Marek <marek.belisko@gmail.com>,
+	Jens Rudberg <jens@teenage.engineering>
+Subject: Re: [PATCH v3 1/1] clk: si5351: Add PLL soft reset
+Message-ID: <20151120184108.GS32672@codeaurora.org>
+References: <564F5E8F.80709@gmail.com>
+ <1448042593-23670-1-git-send-email-jacob@teenage.engineering>
+ <1448042593-23670-2-git-send-email-jacob@teenage.engineering>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1448042593-23670-2-git-send-email-jacob@teenage.engineering>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi!
-A representative from SiLabs writes: "All the currently published versions
-of the Si5351 (v1.0) and AN619 (v0.6) do not include the “Si5351A/C only”
-disclaimer. Based on this and our current understanding, I see no issue
-performing a PLLB reset for ‘B’ type devices.". Hence, it should not be
-any issues always performing the PLL reset.
+On 11/20, Jacob Siverskog wrote:
+> This is according to figure 12 ("I2C Programming Procedure") in
+> "Si5351A/B/C Data Sheet"
+> (https://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351-B.pdf).
+> 
+> Without the PLL soft reset, we were unable to get three outputs
+> working at the same time.
+> 
+> According to Silicon Labs support, performing PLL soft reset will only
+> be noticeable if the PLL parameters have been changed.
+> 
+> Signed-off-by: Jacob Siverskog <jacob@teenage.engineering>
+> Signed-off-by: Jens Rudberg <jens@teenage.engineering>
+> Acked-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> ---
 
+Applied to clk-next
 
-Changes in v2:
-- Output disabling and power down removed in order to prevent
-  breaking systems requiring always-enabled clocks
-- Cosmetic changes
-
-     Jacob
-
-Jacob Siverskog (1):
-  clk: si5351: Add PLL soft reset
-
- drivers/clk/clk-si5351.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
---
-2.6.3
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
