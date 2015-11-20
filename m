@@ -1,50 +1,26 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH] ti/fapll: fix wrong do_div() usage
-To: Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>
-References: <alpine.LFD.2.20.1511032314240.630@knanqh.ubzr>
-CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <56542F74.3080200@ti.com>
-Date: Tue, 24 Nov 2015 11:35:48 +0200
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 20 Nov 2015 09:17:28 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: versatile: remove unneeded error message
+Message-ID: <20151120171728.GM32672@codeaurora.org>
+References: <1448009548-30317-1-git-send-email-sudipm.mukherjee@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.LFD.2.20.1511032314240.630@knanqh.ubzr>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1448009548-30317-1-git-send-email-sudipm.mukherjee@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/04/2015 06:17 AM, Nicolas Pitre wrote:
-> do_div() is meant to be used with an unsigned dividend.
->
-> Signed-off-by: Nicolas Pitre <nico@linaro.org>
+On 11/20, Sudip Mukherjee wrote:
+> If kzalloc fails we will already have many messages in the log and we do
+> not need another message to know that kzalloc for sp810 has failed.
+> 
+> Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
+> ---
 
-Fixed Subject locally to format "clk: ti: %s".
+Applied to clk-next
 
-Queued for 4.4-rc-fixes, thanks.
-
--Tero
-
->
-> diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
-> index f4b2e9888b..66a0d0ed8b 100644
-> --- a/drivers/clk/ti/fapll.c
-> +++ b/drivers/clk/ti/fapll.c
-> @@ -168,7 +168,7 @@ static unsigned long ti_fapll_recalc_rate(struct clk_hw *hw,
->   {
->   	struct fapll_data *fd = to_fapll(hw);
->   	u32 fapll_n, fapll_p, v;
-> -	long long rate;
-> +	u64 rate;
->
->   	if (ti_fapll_clock_is_bypass(fd))
->   		return parent_rate;
-> @@ -314,7 +314,7 @@ static unsigned long ti_fapll_synth_recalc_rate(struct clk_hw *hw,
->   {
->   	struct fapll_synth *synth = to_synth(hw);
->   	u32 synth_div_m;
-> -	long long rate;
-> +	u64 rate;
->
->   	/* The audio_pll_clk1 is hardwired to produce 32.768KiHz clock */
->   	if (!synth->div)
->
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
