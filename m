@@ -1,46 +1,73 @@
-Return-Path: <repk@triplefau.lt>
-From: Remi Pommarel <repk@triplefau.lt>
-To: Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
+Return-Path: <robh@kernel.org>
+Date: Fri, 20 Nov 2015 10:41:33 -0600
+From: Rob Herring <robh@kernel.org>
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Remi Pommarel <repk@triplefau.lt>
-Subject: [PATCH v2 0/3] Add PWM clock support for bcm2835
-Date: Wed, 11 Nov 2015 15:22:42 +0100
-Message-Id: <1447251765-16297-1-git-send-email-repk@triplefau.lt>
+	Arnd Bergmann <arnd@arndb.de>,
+	Russell King <linux@arm.linux.org.uk>,
+	Roland Stigge <stigge@antcom.de>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 02/11] dt-bindings: clock: add description of LPC32xx USB
+ clock controller
+Message-ID: <20151120164133.GA9011@rob-hp-laptop>
+References: <1447981511-29653-1-git-send-email-vz@mleia.com>
+ <1447981511-29653-3-git-send-email-vz@mleia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1447981511-29653-3-git-send-email-vz@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Fri, Nov 20, 2015 at 03:05:02AM +0200, Vladimir Zapolskiy wrote:
+> NXP LPC32xx USB controller has a subdevice, which controls USB AHB
+> slave, USB OTG, USB OHCI, USB device and I2C controller to USB phy
+> clocks, this change adds description of the clock controller, for more
+> details reference LPC32xx User's Manual, namely USB control, OTG clock
+> control and OTG clock status registers.
+> 
+> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+> ---
+>  .../bindings/clock/nxp,lpc3220-usb-clk.txt         | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt b/Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt
+> new file mode 100644
+> index 0000000..67fba7f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt
+> @@ -0,0 +1,22 @@
+> +NXP LPC32xx USB Clock Controller
+> +
+> +Required properties:
+> +- compatible: should be "nxp,lpc3220-usb-clk"
+> +- reg:  should contain clock controller registers location and length
+> +- #clock-cells: must be 1, the cell holds id of a clock provided by the
+> +  USB clock controller
+> +
+> +Examples:
+> +
+> +	usb {
 
-This patchset adds support for pwm clock. At boot, this clock does not have a
-default parent nor a default rate set. Thus we should be able to change its
-parent to get this clock working. The current clock implementation is using a
-mux to select the parent, but these clocks need to add a password (0x5a) in
-higher register bits when changing parent. So a generic mux cannot be used
-here.
+I don't understand the full structure of USB blocks. Can you make the 
+example complete. All the blocks are a child of this node?
 
-The two first patches fix the clock parent selection, while the second one is
-actually adding the pwm clock registration.
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		compatible = "simple-bus";
+> +		ranges = <0x0 0x31020000 0x00001000>;
+> +
+> +		usbclk: clock-controller@F00 {
+lower case                               ^
 
-Changes since v1:
-	- determine_rate now based its parent selection upon divided rate
-	  instead of the parent one
-	- bcm2835_clock_choose_div has been modified to produce an avarage rate
-	  lower or equal to the requested one
-	- devicetree modifications have removed to be send in another patch
+> +			compatible = "nxp,lpc3220-usb-clk";
+> +			reg = <0xF00 0x100>;
 
-Remi Pommarel (3):
-  clk: bcm2835: Always round up clock divisor
-  clk: bcm2835: Support for clock parent selection
-  clk: bcm2835: Add PWM clock support
+lower case
 
- drivers/clk/bcm/clk-bcm2835.c       | 151 +++++++++++++++++++++++-------------
- include/dt-bindings/clock/bcm2835.h |   3 +-
- 2 files changed, 101 insertions(+), 53 deletions(-)
-
--- 
-2.0.1
+> +			#clock-cells = <1>;
+> +		};
+> +	};
+> -- 
+> 2.1.4
+> 
