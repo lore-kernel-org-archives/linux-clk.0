@@ -1,66 +1,138 @@
-Return-Path: <wens@csie.org>
+Return-Path: <jszhang@marvell.com>
+From: Jisheng Zhang <jszhang@marvell.com>
+To: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <sebastian.hesselbarth@gmail.com>, <antoine.tenart@free-electrons.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        Jisheng
+ Zhang <jszhang@marvell.com>
+Subject: [PATCH v2 5/6] dt-bindings: add binding for marvell berlin4ct SoC
+Date: Fri, 20 Nov 2015 16:42:31 +0800
+Message-ID: <1448008952-1787-6-git-send-email-jszhang@marvell.com>
+In-Reply-To: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
+References: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGb2v66B7X5xQGMq_MzAHGz4OLsnDQStVHcQaMGO+HYY43kjBQ@mail.gmail.com>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
- <1446214865-3972-6-git-send-email-maxime.ripard@free-electrons.com> <CAGb2v66B7X5xQGMq_MzAHGz4OLsnDQStVHcQaMGO+HYY43kjBQ@mail.gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 13 Nov 2015 16:08:53 +0800
-Message-ID: <CAGb2v65qjKCNER=5Gq5UXnvY_nia+EQYRAk3U9hokmXuxHoi_Q@mail.gmail.com>
-Subject: Re: [PATCH 05/19] clk: sunxi: add DRAM gates
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>, Wynter Woods <wynter@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Nov 9, 2015 at 12:18 PM, Chen-Yu Tsai <wens@csie.org> wrote:
-> On Fri, Oct 30, 2015 at 10:20 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
->> The Allwinner SoCs have a gate controller to gate the access to the DRAM
->> clock to the some devices that need to access the DRAM directly (mostly
->> display / image related IPs).
->>
->> Use a simple gates driver to support it.
->>
->> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
->
-> Acked-by: Chen-Yu Tsai <wens@csie.org>
->
->> ---
->>  drivers/clk/sunxi/clk-simple-gates.c | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/clk-simple-gates.c
->> index 0214c6548afd..5666c767fa14 100644
->> --- a/drivers/clk/sunxi/clk-simple-gates.c
->> +++ b/drivers/clk/sunxi/clk-simple-gates.c
->> @@ -112,6 +112,8 @@ CLK_OF_DECLARE(sun5i_a13_apb0, "allwinner,sun5i-a13-apb0-gates-clk",
->>                sunxi_simple_gates_init);
->>  CLK_OF_DECLARE(sun5i_a13_apb1, "allwinner,sun5i-a13-apb1-gates-clk",
->>                sunxi_simple_gates_init);
->> +CLK_OF_DECLARE(sun5i_a13_dram, "allwinner,sun5i-a13-dram-gates-clk",
->> +              sunxi_simple_gates_init);
+This adds a dt-binding include for Marvell berlin4ct clock IDs.
 
-Nit: Since the compatible added is sun5i, could you mention it in the
-commit message,
-to avoid confusion when we do this for the other families?
+Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+---
+ .../bindings/clock/marvell,berlin4ct.txt           | 38 +++++++++++++++
+ include/dt-bindings/clock/berlin4ct.h              | 56 ++++++++++++++++++++++
+ 2 files changed, 94 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/marvell,berlin4ct.txt
+ create mode 100644 include/dt-bindings/clock/berlin4ct.h
 
-Thanks
-
->>  CLK_OF_DECLARE(sun6i_a31_ahb1, "allwinner,sun6i-a31-ahb1-gates-clk",
->>                sunxi_simple_gates_init);
->>  CLK_OF_DECLARE(sun6i_a31_apb1, "allwinner,sun6i-a31-apb1-gates-clk",
->> --
->> 2.6.2
->>
+diff --git a/Documentation/devicetree/bindings/clock/marvell,berlin4ct.txt b/Documentation/devicetree/bindings/clock/marvell,berlin4ct.txt
+new file mode 100644
+index 0000000..a489473
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/marvell,berlin4ct.txt
+@@ -0,0 +1,38 @@
++* Marvell berlin4ct Clock Controllers
++
++This binding uses the common clock binding[1].
++
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++The berlin4ct clock subsystem generates and supplies clock to various
++controllers within the berlin4ct SoC. The berlin4ct contains 3 clock controller
++blocks: pll, gateclk, berlin-clk.
++
++Required Properties:
++
++- compatible: should be one of the following.
++  - "marvell,berlin-pll" - pll compatible
++  - "marvell,berlin4ct-clk" - berlin clk compatible
++  - "marvell,berlin4ct-gateclk" - gateclk compatible
++- reg: physical base address of the clock controller and length of memory mapped
++  region. For pll, the second reg defines the bypass register base address and
++  length of memory mapped region.
++- #clock-cells: for pll should 0, for gateclk and berlin clk should be 1.
++- #bypass-shift: the bypass bit in bypass register.
++
++Example:
++
++syspll: syspll {
++	compatible = "marvell,berlin-pll";
++	reg = <0xea0200 0x14>, <0xea0710 4>;
++	#clock-cells = <0>;
++	clocks = <&osc>;
++	bypass-shift = /bits/ 8 <0>;
++};
++
++clk: clk {
++	compatible = "marvell,berlin4ct-clk";
++	reg = <0xea0720 0x144>;
++	#clock-cells = <1>;
++	clocks = <&syspll>;
++};
+diff --git a/include/dt-bindings/clock/berlin4ct.h b/include/dt-bindings/clock/berlin4ct.h
+new file mode 100644
+index 0000000..abd5873
+--- /dev/null
++++ b/include/dt-bindings/clock/berlin4ct.h
+@@ -0,0 +1,56 @@
++/*
++ * Berlin BG4CT clock tree IDs
++ */
++
++/* GATE CLK */
++#define GATECLK_TSPSYS		0
++#define GATECLK_USB0CORE	1
++#define GATECLK_ZSPSYS		2
++#define GATECLK_SDIOSYS		3
++#define GATECLK_ETHCORE		4
++#define GATECLK_PCIE0SYS	5
++#define GATECLK_SATA0CORE	6
++#define GATECLK_NFCSYS		7
++#define GATECLK_EMMCSYS		8
++#define GATECLK_IHB0SYS		9
++
++/* BERLIN CLK */
++#define CLK_CPUFASTREF		0
++#define CLK_MEMFASTREF		1
++#define CLK_CFG			2
++#define CLK_PERIFSYS		3
++#define CLK_HB			4
++#define CLK_ATB			5
++#define CLK_DECODER		6
++#define CLK_DECODERM3		7
++#define CLK_DECODERPCUBE	8
++#define CLK_ENCODER		9
++#define CLK_OVPCORE		10
++#define CLK_GFX2DCORE		11
++#define CLK_GFX3DCORE		12
++#define CLK_GFX3DSH		13
++#define CLK_GFX3DSYS		14
++#define CLK_GFX2DSYS		15
++#define CLK_AVIOSYS		16
++#define CLK_VPPSYS		17
++#define CLK_EDDC		18
++#define CLK_AVIOBIU		19
++#define CLK_ZSP			20
++#define CLK_TSP			21
++#define CLK_TSPREF		22
++#define CLK_NDS			23
++#define CLK_NOCS		24
++#define CLK_APBCORE		25
++#define CLK_EMMC		26
++#define CLK_SD0			27
++#define CLK_SD1			28
++#define CLK_DLLMSTREF		29
++#define CLK_GETHRGMII		30
++#define CLK_GETHRGMIISYS	31
++#define CLK_USIM0		32
++#define CLK_PCIETEST		33
++#define CLK_USB2TEST		34
++#define CLK_USB3TEST		35
++#define CLK_USB3CORE		36
++#define CLK_NFCECC		37
++#define CLK_BCM			38
+-- 
+2.6.2
