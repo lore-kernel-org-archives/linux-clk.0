@@ -1,67 +1,151 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: Fix bypassing of PLLs
-To: Tyler Baker <tyler.baker@linaro.org>, Thierry Reding
-	<thierry.reding@gmail.com>
-References: <1448032264-29622-1-git-send-email-jonathanh@nvidia.com>
- <CANMBJr7vYb+kuUBzsC8i4b=b6DRVsbqnf5OrVtj6kVS2RMNgfQ@mail.gmail.com>
- <20151125151100.GA31492@ulmo.nvidia.com>
- <CANMBJr598C1nd7awHdDx_j1uVNbnnAju1sgCvdmg1p6VO-FupQ@mail.gmail.com>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Rhyland Klein <rklein@nvidia.com>, "Kevin's
- boot bot" <khilman@kernel.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <5655F489.6080808@nvidia.com>
-Date: Wed, 25 Nov 2015 17:48:57 +0000
-MIME-Version: 1.0
-In-Reply-To: <CANMBJr598C1nd7awHdDx_j1uVNbnnAju1sgCvdmg1p6VO-FupQ@mail.gmail.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH v2 4/6] clk: berlin: add clk support for berlin4ct
+To: Jisheng Zhang <jszhang@marvell.com>, robh+dt@kernel.org,
+ pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+ galak@codeaurora.org, catalin.marinas@arm.com, will.deacon@arm.com,
+ mturquette@baylibre.com, sboyd@codeaurora.org,
+ antoine.tenart@free-electrons.com
+References: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
+ <1448008952-1787-5-git-send-email-jszhang@marvell.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Message-ID: <564F8902.4000405@gmail.com>
+Date: Fri, 20 Nov 2015 21:56:34 +0100
+In-Reply-To: <1448008952-1787-5-git-send-email-jszhang@marvell.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-
-On 25/11/15 15:52, Tyler Baker wrote:
-> On 25 November 2015 at 07:11, Thierry Reding <thierry.reding@gmail.com> wrote:
->> On Mon, Nov 23, 2015 at 03:18:59PM -0800, Tyler Baker wrote:
->>> Hi Jon,
->>>
->>> On 20 November 2015 at 07:11, Jon Hunter <jonathanh@nvidia.com> wrote:
->>>> The _clk_disable_pll() function will attempt to place a PLL into bypass
->>>> if the TEGRA_PLL_BYPASS is specified for the PLL and then disable the PLL
->>>> by clearing the enable bit. To place the PLL into bypass, the bypass bit
->>>> needs to be set and not cleared. Fix this by setting the bypass bit and
->>>> not clearing it.
->>>>
->>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->>>
->>> The kernelci.org bot recently detected a jetson-tk1 boot failure[1][2]
->>> in the tegra tree. This boot failure has only been observed when
->>> booting with a multi_v7_defconfig kernel variant. The bot bisected[3]
->>> this boot failure to this commit, and I confirmed reverting it on top
->>> of the tegra for-next branch resolves the issue. The ramdisk[4] used
->>> for booting is loaded with the modules from the build. It appears to
->>> me that as the modules are being loaded in userspace by eudev the
->>> jetson-tk1 locks up. I've sifted through the console logs a bit, and
->>> found this splat to be most interesting[5].  Can you confirm this
->>> issue on your end?
->>
->> Just to close the loop on this: we've discussed this on IRC and came to
->> the conclusion that not using the bypass mode is safer (switching into
->> and out of bypass can glitch). I've dropped this patch for now and Jon
->> will be looking into a second revision of the patch which, in addition
->> to fixing bypass (the fix is legit, it just happens to break because of
->> the glitch, most likely), will also remove the BYPASS flag setting so
->> that bypass will not be used.
+On 20.11.2015 09:42, Jisheng Zhang wrote:
+> This patch supports the gateclk and berlin-clk in berlin4ct SoC.
 > 
-> Thanks for the update, I appreciate you guys looking into this issue.
-> Please CC me on any fixes, I can re-test and give my tested-by.
+> Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+> ---
+>  drivers/clk/berlin/Makefile        |  2 +-
+>  drivers/clk/berlin/clk-berlin4ct.c | 97 ++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 98 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clk/berlin/clk-berlin4ct.c
+> 
+> diff --git a/drivers/clk/berlin/Makefile b/drivers/clk/berlin/Makefile
+> index fc92151..accfc3a 100644
+> --- a/drivers/clk/berlin/Makefile
+> +++ b/drivers/clk/berlin/Makefile
+> @@ -1,5 +1,5 @@
+>  obj-y += berlin2-avpll.o berlin2-pll.o berlin2-div.o
+> -obj-y += pll.o clk.o gate.o
+> +obj-y += pll.o clk.o gate.o clk-berlin4ct.o
 
-No problem. On 2nd thoughts I am wondering if there is any value in
-bypassing the PLL when disabling it. I will look into this and see what
-I find out.
+This will always compile clk-berlin4ct unconditionally on bg2x too.
 
-Cheers
-Jon
+Also, keep the naming style.
+
+Sebastian
+
+>  obj-$(CONFIG_MACH_BERLIN_BG2)	+= bg2.o
+>  obj-$(CONFIG_MACH_BERLIN_BG2CD)	+= bg2.o
+>  obj-$(CONFIG_MACH_BERLIN_BG2Q)	+= bg2q.o
+> diff --git a/drivers/clk/berlin/clk-berlin4ct.c b/drivers/clk/berlin/clk-berlin4ct.c
+> new file mode 100644
+> index 0000000..0d994a4
+> --- /dev/null
+> +++ b/drivers/clk/berlin/clk-berlin4ct.c
+> @@ -0,0 +1,97 @@
+> +/*
+> + * Copyright (c) 2015 Marvell Technology Group Ltd.
+> + *
+> + * Author: Jisheng Zhang <jszhang@marvell.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + *
+> + * You should have received a copy of the GNU General Public License along with
+> + * this program.  If not, see <http://www.gnu.org/licenses/>.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +
+> +#include "clk.h"
+> +
+> +static struct clk_onecell_data gateclk_data;
+> +static struct clk_onecell_data clk_data;
+> +
+> +static const struct gateclk_desc berlin4ct_gates[] __initconst = {
+> +	{ "tspsysclk",		"perifsysclk",	0 },
+> +	{ "usb0coreclk",	"perifsysclk",	1 },
+> +	{ "zspsysclk",		"perifsysclk",	2 },
+> +	{ "sdiosysclk",		"perifsysclk",	3 },
+> +	{ "ethcoreclk",		"perifsysclk",	4 },
+> +	{ "pcie0sys",		"perifsysclk",	6 },
+> +	{ "sata0core",		"perifsysclk",	7 },
+> +	{ "nfcsysclk",		"perifsysclk",	8 },
+> +	{ "emmcsysclk",		"perifsysclk",	9 },
+> +	{ "ihb0sysclk",		"perifsysclk",	10 },
+> +};
+> +
+> +static void __init berlin4ct_gateclk_setup(struct device_node *np)
+> +{
+> +	int n = ARRAY_SIZE(berlin4ct_gates);
+> +
+> +	berlin_gateclk_setup(np, berlin4ct_gates, &gateclk_data, n);
+> +}
+> +CLK_OF_DECLARE(berlin4ct_gateclk, "marvell,berlin4ct-gateclk",
+> +	       berlin4ct_gateclk_setup);
+> +
+> +static const struct clk_desc berlin4ct_descs[] __initconst = {
+> +	{ "cpufastrefclk",	0x0 },
+> +	{ "memfastrefclk",	0x4 },
+> +	{ "cfgclk",		0x20,	CLK_IGNORE_UNUSED },
+> +	{ "perifsysclk",	0x24,	CLK_IGNORE_UNUSED },
+> +	{ "hbclk",		0x28 },
+> +	{ "atbclk",		0x2c },
+> +	{ "decoderclk",		0x40 },
+> +	{ "decoderm3clk",	0x44 },
+> +	{ "decoderpcubeclk",	0x48 },
+> +	{ "encoderclk",		0x4c },
+> +	{ "ovpcoreclk",		0x50 },
+> +	{ "gfx2dcoreclk",	0x60 },
+> +	{ "gfx3dcoreclk",	0x64 },
+> +	{ "gfx3dshclk",		0x68 },
+> +	{ "gfx3dsysclk",	0x6c },
+> +	{ "gfx2dsysclk",	0x70 },
+> +	{ "aviosysclk",		0x80 },
+> +	{ "vppsysclk",		0x84 },
+> +	{ "eddcclk",		0x88 },
+> +	{ "aviobiuclk",		0x8c },
+> +	{ "zspclk",		0xa0 },
+> +	{ "tspclk",		0xc0 },
+> +	{ "tsprefclk",		0xc4 },
+> +	{ "ndsclk",		0xc8 },
+> +	{ "nocsclk",		0xcc },
+> +	{ "apbcoreclk",		0xd0,	CLK_IGNORE_UNUSED },
+> +	{ "emmcclk",		0xe0 },
+> +	{ "sd0clk",		0xe4 },
+> +	{ "sd1clk",		0xe8 },
+> +	{ "dllmstrefclk",	0xec },
+> +	{ "gethrgmiiclk",	0xf0 },
+> +	{ "gethrgmiisysclk",	0xf4 },
+> +	{ "usim0clk",		0x100 },
+> +	{ "pcietestclk",	0x110 },
+> +	{ "usb2testclk",	0x120 },
+> +	{ "usb3testclk",	0x124 },
+> +	{ "usb3coreclk",	0x128 },
+> +	{ "nfceccclk",		0x130 },
+> +	{ "bcmclk",		0x140 },
+> +};
+> +
+> +static void __init berlin4ct_clk_setup(struct device_node *np)
+> +{
+> +	int n = ARRAY_SIZE(berlin4ct_descs);
+> +
+> +	berlin_clk_setup(np, berlin4ct_descs, &clk_data, n);
+> +}
+> +CLK_OF_DECLARE(berlin4ct_clk, "marvell,berlin4ct-clk",
+> +	       berlin4ct_clk_setup);
+> 
