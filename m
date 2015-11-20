@@ -1,64 +1,52 @@
-Return-Path: <jacob@teenage.engineering>
-Return-Path: <jacob@teenage.engineering>
-From: Jacob Siverskog <jacob@teenage.engineering>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Jacob Siverskog <jacob@teenage.engineering>,
-	Jens Rudberg <jens@teenage.engineering>
-Subject: [PATCH] clk: si5351: Add setup steps
-Date: Thu, 19 Nov 2015 14:40:10 +0100
-Message-Id: <1447940410-9728-1-git-send-email-jacob@teenage.engineering>
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+Message-ID: <564E70A4.8060001@gmail.com>
+Date: Thu, 19 Nov 2015 17:00:20 -0800
+From: Florian Fainelli <f.fainelli@gmail.com>
+MIME-Version: 1.0
+To: linux-clk@vger.kernel.org
+CC: bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
+ jonmason@broadcom.com, sboyd@codeaurora.org, mturquette@baylibre.com,
+ linux@arm.linux.org.uk, sbranden@broadcom.com, rjui@broadcom.com
+Subject: Re: [PATCH v4 0/3] clk: Broadcom BCM63138 support
+References: <1446168199-5959-1-git-send-email-f.fainelli@gmail.com>
+In-Reply-To: <1446168199-5959-1-git-send-email-f.fainelli@gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This is according to figure 12 ("I2C Programming Procedure") in
-"Si5351A/B/C Data Sheet"
-(https://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351-B.pdf).
+On 29/10/15 18:23, Florian Fainelli wrote:
+> This patch series adds support for the Broadcom BCM63138 DSL SoCs
+> clocking framework.
+> 
+> Since the HW is identical to the one found in Broadcom iProc SoCs, but the
+> integration is different (obviously), there is still a new compatible string
+> introduced just in case we happen to find issues in the future.
+> 
+> Stephen, could you stage the two patches in a clk-bcm63xx branch that I could
+> later utilize while doing the arm-soc DT pull request?
 
-Without the PLL soft reset, we were unable to get three outputs
-working at the same time.
+Stephen, can you queue the first two patches in a topic branch for me to
+merge as part of the commit adding the DTS changes?
 
-According to Silicon Labs support, performing PLL soft reset will only
-be noticable if the PLL parameters have been changed.
+Thanks!
 
-Signed-off-by: Jacob Siverskog <jacob@teenage.engineering>
-Signed-off-by: Jens Rudberg <jens@teenage.engineering>
----
- drivers/clk/clk-si5351.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+> 
+> Thank you!
+> 
+> Florian Fainelli (3):
+>   clk: iproc: Extend binding to cover BCM63138
+>   clk: bcm: Add BCM63138 clock support
+>   ARM: dts: BCM63xx: Add ARMPLL device tree nodes
+> 
+>  .../bindings/clock/brcm,iproc-clocks.txt           |  5 +++
+>  arch/arm/boot/dts/bcm63138.dtsi                    | 36 +++++++++++++++++-----
+>  drivers/clk/bcm/Kconfig                            | 10 ++++++
+>  drivers/clk/bcm/Makefile                           |  1 +
+>  drivers/clk/bcm/clk-bcm63xx.c                      | 22 +++++++++++++
+>  5 files changed, 66 insertions(+), 8 deletions(-)
+>  create mode 100644 drivers/clk/bcm/clk-bcm63xx.c
+> 
 
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index e346b22..110de35 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -1091,6 +1091,11 @@ static int si5351_clkout_set_rate(struct clk_hw *hw, unsigned long rate,
- 	si5351_set_bits(hwdata->drvdata, SI5351_CLK0_CTRL + hwdata->num,
- 			SI5351_CLK_POWERDOWN, 0);
- 
-+	/* do a pll soft reset on both plls, needed in some cases to get all
-+	 * outputs running */
-+	si5351_reg_write(hwdata->drvdata, SI5351_PLL_RESET,
-+			 SI5351_PLL_RESET_A | SI5351_PLL_RESET_B);
-+
- 	dev_dbg(&hwdata->drvdata->client->dev,
- 		"%s - %s: rdiv = %u, parent_rate = %lu, rate = %lu\n",
- 		__func__, clk_hw_get_name(hw), (1 << rdiv),
-@@ -1359,6 +1364,14 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 		return PTR_ERR(drvdata->regmap);
- 	}
- 
-+	/* Disable outputs */
-+	si5351_reg_write(drvdata, SI5351_OUTPUT_ENABLE_CTRL, 0xff);
-+
-+	/* Power down all output drivers */
-+	for (n = 0; n < 8; n++) {
-+		si5351_reg_write(drvdata, SI5351_CLK0_CTRL + n, 0x80);
-+	}
-+
- 	/* Disable interrupts */
- 	si5351_reg_write(drvdata, SI5351_INTERRUPT_MASK, 0xf0);
- 	/* Ensure pll select is on XTAL for Si5351A/B */
+
 -- 
-2.6.3
+Florian
