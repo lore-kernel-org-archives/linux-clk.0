@@ -1,34 +1,39 @@
-Return-Path: <mike.looijmans@topic.nl>
-From: Mike Looijmans <mike.looijmans@topic.nl>
-To: linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
-        linux-kernel@vger.kernel.org, Mike Looijmans <mike.looijmans@topic.nl>
-Subject: [PATCH 2/3] drivers/clk/Kconfig: Fix typo "Sypport" instead of "Support"
-Date: Tue,  3 Nov 2015 12:55:53 +0100
-Message-Id: <1446551754-26208-3-git-send-email-mike.looijmans@topic.nl>
-In-Reply-To: <1446551754-26208-1-git-send-email-mike.looijmans@topic.nl>
-References: <1446551754-26208-1-git-send-email-mike.looijmans@topic.nl>
+Return-Path: <sudipm.mukherjee@gmail.com>
+Return-Path: <sudipm.mukherjee@gmail.com>
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH] clk: versatile: remove unneeded error message
+Date: Fri, 20 Nov 2015 14:22:28 +0530
+Message-Id: <1448009548-30317-1-git-send-email-sudipm.mukherjee@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Simple cosmetic fix.
+If kzalloc fails we will already have many messages in the log and we do
+not need another message to know that kzalloc for sp810 has failed.
 
-Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
 ---
- drivers/clk/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/versatile/clk-sp810.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 7205d2b..48ec7d3 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -154,7 +154,7 @@ config COMMON_CLK_PWM
- config COMMON_CLK_PXA
- 	def_bool COMMON_CLK && ARCH_PXA
- 	help
--	  Sypport for the Marvell PXA SoC.
-+	  Support for the Marvell PXA SoC.
+diff --git a/drivers/clk/versatile/clk-sp810.c b/drivers/clk/versatile/clk-sp810.c
+index 6a36c8b..e78755e 100644
+--- a/drivers/clk/versatile/clk-sp810.c
++++ b/drivers/clk/versatile/clk-sp810.c
+@@ -95,10 +95,8 @@ static void __init clk_sp810_of_setup(struct device_node *node)
+ 	int i;
+ 	bool deprecated;
  
- config COMMON_CLK_CDCE706
- 	tristate "Clock driver for TI CDCE706 clock synthesizer"
+-	if (!sp810) {
+-		pr_err("Failed to allocate memory for SP810!\n");
++	if (!sp810)
+ 		return;
+-	}
+ 
+ 	if (of_clk_parent_fill(node, parent_names, num) != num) {
+ 		pr_warn("Failed to obtain parent clocks for SP810!\n");
 -- 
 1.9.1
