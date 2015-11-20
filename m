@@ -1,67 +1,91 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 24 Nov 2015 09:45:31 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Josef Gajdusek <atx@atx.name>
-Cc: linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	gpatchesrdh@mveas.com, mturquette@linaro.org, hdegoede@redhat.com,
-	sboyd@codeaurora.org, mturquette@baylibre.com, emilio@elopez.com.ar,
-	linux@arm.linux.org.uk, edubezval@gmail.com, rui.zhang@intel.com,
-	wens@csie.org, galak@codeaurora.org, ijc+devicetree@hellion.org.uk,
-	mark.rutland@arm.com, pawel.moll@arm.com, robh+dt@kernel.org
-Subject: Re: [PATCH v2 5/5] ARM: dts: sun8i: Add THS node to the H3 .dtsi
-Message-ID: <20151124084531.GK32142@lukather>
-References: <cover.1448263428.git.atx@atx.name>
- <0fff612e26bf9cda9027a4175e16d25a0c2cc62c.1448263428.git.atx@atx.name>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="1QzJaSEX5hKRjM1z"
-In-Reply-To: <0fff612e26bf9cda9027a4175e16d25a0c2cc62c.1448263428.git.atx@atx.name>
+Return-Path: <vz@mleia.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: Russell King <linux@arm.linux.org.uk>,
+	Roland Stigge <stigge@antcom.de>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 03/11] dt-bindings: clock: add NXP LPC32xx clock list for consumers
+Date: Fri, 20 Nov 2015 03:05:03 +0200
+Message-Id: <1447981511-29653-4-git-send-email-vz@mleia.com>
+In-Reply-To: <1447981511-29653-1-git-send-email-vz@mleia.com>
+References: <1447981511-29653-1-git-send-email-vz@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+The change adds a list of NXP LPC32xx clocks, which can be requested
+by clock consumers.
 
---1QzJaSEX5hKRjM1z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+---
+ include/dt-bindings/clock/lpc32xx-clock.h | 56 +++++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
+ create mode 100644 include/dt-bindings/clock/lpc32xx-clock.h
 
-On Mon, Nov 23, 2015 at 09:02:52AM +0100, Josef Gajdusek wrote:
-> +		ths: ths@01c25000 {
-> +			#thermal-sensor-cells =3D <0>;
-> +			compatible =3D "allwinner,sun8i-h3-ths";
-> +			reg =3D <0x01c25000 0x88>;
-
-The datasheet says the size is 0x400, any particular reason to have a
-
-Thanks,
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---1QzJaSEX5hKRjM1z
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWVCOrAAoJEBx+YmzsjxAgHn8P/RNoAmuUKvT34eXQ5cFmz8cd
-LS1DDrfvGkdHC9aOL92B8TSnyetBOS68tI3eLkW2sgagi1qbj0o1snjf73P8nFCc
-eTGSYT6J4ewmaPuPfnEOYidGHYpk1rfoUfvyDr6WtbKZvdiZV718LFsF0m+wPJTG
-Qi8WiYIkfdwHRfnxiuaCeGJ1dbKF2pXtP3aGc3EkiBP7hFfaoXcl4KFyc0+qUvTw
-1aWxBkV8EawfdK4I5C3OnCB/8bPZb8bsmlMhPydca23SnYBT4wYcT+oRrlOpdvmj
-FuXqVSBw1agDZ7t2XaxW0rvJdB0HqAUx9yZNJqA+3AlCSQXQ+NfUSZi1mkd7z1R4
-X6yIDCI82WdoJcOtrkIgd+emATYZVjvrmNU7CH+O0YFYUKG4TWRJqk+FSmu89C4i
-ZXjoLruE4sOmGZDyUM/PAcKnBpTdWnQd2IvHyar5KUsKy6GB5xm+UrWLN4jJUMW6
-e/B4dgEYkvUunRorQ5JuXHDur79CJieHQ85cOZ8zf/JZ8b4JJRtXyJORCSmZ7chy
-57DADYWMi8+X48cYtKfT80S/Be6KOIcNvmDWsVUobclwy9PElifJj+UBnDOmqK47
-qHB+21HHqkD5dvaZS0ragyeN4XZqqz055KjA1SswI6oZ855Zr2I83UXFOkLOQodQ
-9EuPNWhW5r4/a0VyjRpi
-=f4uw
------END PGP SIGNATURE-----
-
---1QzJaSEX5hKRjM1z--
+diff --git a/include/dt-bindings/clock/lpc32xx-clock.h b/include/dt-bindings/clock/lpc32xx-clock.h
+new file mode 100644
+index 0000000..6f4036a
+--- /dev/null
++++ b/include/dt-bindings/clock/lpc32xx-clock.h
+@@ -0,0 +1,56 @@
++/*
++ * Copyright (c) 2015 Vladimir Zapolskiy <vz@mleia.com>
++ *
++ * This code is released using a dual license strategy: BSD/GPL
++ * You can choose the licence that better fits your requirements.
++ *
++ * Released under the terms of 3-clause BSD License
++ * Released under the terms of GNU General Public License Version 2.0
++ *
++ */
++
++#ifndef __DT_BINDINGS_LPC32XX_CLOCK_H
++#define __DT_BINDINGS_LPC32XX_CLOCK_H
++
++/* LPC32XX System Control Block clocks */
++#define LPC32XX_CLK_RTC		0
++#define LPC32XX_CLK_DMA		1
++#define LPC32XX_CLK_MLC		2
++#define LPC32XX_CLK_SLC		3
++#define LPC32XX_CLK_LCD		4
++#define LPC32XX_CLK_MAC		5
++#define LPC32XX_CLK_SD		6
++#define LPC32XX_CLK_DDRAM	7
++#define LPC32XX_CLK_SSP0	8
++#define LPC32XX_CLK_SSP1	9
++#define LPC32XX_CLK_UART3	10
++#define LPC32XX_CLK_UART4	11
++#define LPC32XX_CLK_UART5	12
++#define LPC32XX_CLK_UART6	13
++#define LPC32XX_CLK_IRDA	14
++#define LPC32XX_CLK_I2C1	15
++#define LPC32XX_CLK_I2C2	16
++#define LPC32XX_CLK_TIMER0	17
++#define LPC32XX_CLK_TIMER1	18
++#define LPC32XX_CLK_TIMER2	19
++#define LPC32XX_CLK_TIMER3	20
++#define LPC32XX_CLK_TIMER4	21
++#define LPC32XX_CLK_TIMER5	22
++#define LPC32XX_CLK_WDOG	23
++#define LPC32XX_CLK_I2S0	24
++#define LPC32XX_CLK_I2S1	25
++#define LPC32XX_CLK_SPI1	26
++#define LPC32XX_CLK_SPI2	27
++#define LPC32XX_CLK_MCPWM	28
++#define LPC32XX_CLK_HSTIMER	29
++#define LPC32XX_CLK_KEY		30
++#define LPC32XX_CLK_PWM1	31
++#define LPC32XX_CLK_PWM2	32
++#define LPC32XX_CLK_ADC		33
++
++/* LPC32XX USB clocks */
++#define LPC32XX_USB_CLK_I2C	0
++#define LPC32XX_USB_CLK_DEVICE	1
++#define LPC32XX_USB_CLK_HOST	2
++
++#endif /* __DT_BINDINGS_LPC32XX_CLOCK_H */
+-- 
+2.1.4
