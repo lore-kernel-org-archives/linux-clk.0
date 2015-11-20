@@ -1,82 +1,58 @@
-Return-Path: <sebastian.hesselbarth@gmail.com>
-Return-Path: <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH] clk: si5351: Add setup steps
-To: Jacob Siverskog <jacob@teenage.engineering>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <1447940410-9728-1-git-send-email-jacob@teenage.engineering>
-Cc: Jens Rudberg <jens@teenage.engineering>
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Message-ID: <564E386F.9020209@gmail.com>
-Date: Thu, 19 Nov 2015 22:00:31 +0100
-In-Reply-To: <1447940410-9728-1-git-send-email-jacob@teenage.engineering>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <tyler.baker@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <1447108254-19864-1-git-send-email-sboyd@codeaurora.org>
+References: <1447108254-19864-1-git-send-email-sboyd@codeaurora.org>
+Date: Fri, 20 Nov 2015 12:18:06 -0800
+Message-ID: <CANMBJr7BugBZH189O51bfWc1v9jipp6onkZSMijD3Gv_idf7Pg@mail.gmail.com>
+Subject: Re: [PATCH] clk: qcom: Specify LE device endianness
+From: Tyler Baker <tyler.baker@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, Simon Arlott <simon@fire.lp0.eu>,
+	Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 19.11.2015 14:40, Jacob Siverskog wrote:
-> This is according to figure 12 ("I2C Programming Procedure") in
-> "Si5351A/B/C Data Sheet"
-> (https://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351-B.pdf).
-> 
-> Without the PLL soft reset, we were unable to get three outputs
-> working at the same time.
-> 
-> According to Silicon Labs support, performing PLL soft reset will only
-> be noticable if the PLL parameters have been changed.
-> 
-> Signed-off-by: Jacob Siverskog <jacob@teenage.engineering>
-> Signed-off-by: Jens Rudberg <jens@teenage.engineering>
-> ---
->  drivers/clk/clk-si5351.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+On 9 November 2015 at 14:30, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> All these clock controllers are little endian devices, but so far
+> we've been relying on the regmap mmio bus handling this for us
+> without explicitly stating that fact. After commit 4a98da2164cf
+> (regmap-mmio: Use native endianness for read/write, 2015-10-29),
+> the regmap mmio bus will read/write with the __raw_*() IO
+> accessors, instead of using the readl/writel() APIs that do
+> proper byte swapping for little endian devices.
+>
+> So if we're running on a big endian processor and haven't
+> specified the endianness explicitly in the regmap config or in
+> DT, we're going to switch from doing little endian byte swapping
+> to big endian accesses without byte swapping, leading to some
+> confusing results. On my apq8074 dragonboard, this causes the
+> device to fail to boot as we access the clock controller with
+> big endian IO accesses even though the device is little endian.
+>
+> Specify the endianness explicitly so that the regmap core
+> properly byte swaps the accesses for us.
+>
+> Reported-by: Kevin Hilman <khilman@linaro.org>
+> Cc: Simon Arlott <simon@fire.lp0.eu>
+> Cc: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Jacob,
+Tested-by: Tyler Baker <tyler.baker@linaro.org>
 
-thanks for the patches! However, besides Mareks comments I have
-some more below.
+The kernelci.org bot also reported boot failures[1] for the
+apq8016-sbc in next-20151120 with CONFIG_CPU_BIG_ENDIAN=y enabled.
+I've bisected the failure down to the same offending remap-mmio patch
+listed above. I've confirmed this patch applied on top of
+next-20151120 fixes the boot issue for the apq8016-sbc as well.
 
-> diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-> index e346b22..110de35 100644
-> --- a/drivers/clk/clk-si5351.c
-> +++ b/drivers/clk/clk-si5351.c
-> @@ -1091,6 +1091,11 @@ static int si5351_clkout_set_rate(struct clk_hw *hw, unsigned long rate,
->  	si5351_set_bits(hwdata->drvdata, SI5351_CLK0_CTRL + hwdata->num,
->  			SI5351_CLK_POWERDOWN, 0);
->  
-> +	/* do a pll soft reset on both plls, needed in some cases to get all
-> +	 * outputs running */
-> +	si5351_reg_write(hwdata->drvdata, SI5351_PLL_RESET,
-> +			 SI5351_PLL_RESET_A | SI5351_PLL_RESET_B);
-> +
->  	dev_dbg(&hwdata->drvdata->client->dev,
->  		"%s - %s: rdiv = %u, parent_rate = %lu, rate = %lu\n",
->  		__func__, clk_hw_get_name(hw), (1 << rdiv),
-> @@ -1359,6 +1364,14 @@ static int si5351_i2c_probe(struct i2c_client *client,
->  		return PTR_ERR(drvdata->regmap);
->  	}
->  
-> +	/* Disable outputs */
-> +	si5351_reg_write(drvdata, SI5351_OUTPUT_ENABLE_CTRL, 0xff);
-> +
-> +	/* Power down all output drivers */
-> +	for (n = 0; n < 8; n++) {
-> +		si5351_reg_write(drvdata, SI5351_CLK0_CTRL + n, 0x80);
-> +	}
+Any updates or comments on this patch? I'd like to see this fix in
+linux-next, as it has been broken for over a week and could be masking
+new issues.
 
-Is disabling outputs and clock drivers required?
+Cheers,
 
-If we disable the clocks here unconditionally, it will
-break those systems that require specific outputs to be always
-enabled. Consider one clock output driving your SoC or similar.
+Tyler
 
-If it is really required, you'll have to mention that in the
-patch description and we need to find a way to tag specific
-outputs to be never disabled.
-
-Sebastian
-
->  	/* Disable interrupts */
->  	si5351_reg_write(drvdata, SI5351_INTERRUPT_MASK, 0xf0);
->  	/* Ensure pll select is on XTAL for Si5351A/B */
-> 
+[1] http://kernelci.org/boot/all/job/next/kernel/next-20151120/
