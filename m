@@ -1,71 +1,66 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga03-in.huawei.com ([119.145.14.66]:31460 "EHLO
-	szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750732AbbK1HXJ (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sat, 28 Nov 2015 02:23:09 -0500
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@linaro.org>, <sboyd@codeaurora.org>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>
-CC: <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linuxarm@huawei.com>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<ml.yang@hisilicon.com>, Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [PATCH 0/5] arm, hisi: enable Hi3519 soc
-Date: Sat, 28 Nov 2015 15:01:16 +0800
-Message-ID: <1448694076-31141-1-git-send-email-xuejiancheng@huawei.com>
+Return-Path: <jszhang@marvell.com>
+From: Jisheng Zhang <jszhang@marvell.com>
+To: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <sebastian.hesselbarth@gmail.com>, <antoine.tenart@free-electrons.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        Jisheng
+ Zhang <jszhang@marvell.com>
+Subject: [PATCH v2 0/6] Add Marvell berlin4ct clk support
+Date: Fri, 20 Nov 2015 16:42:26 +0800
+Message-ID: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Add berlin4ct clk driver. The berlin4ct SoC contains:
 
-Hi3519 soc is mainly used for ip camera and sport DV solutions. This patchset adds initial support
-for Hi3519 soc. It includes clock driver, arch configuration, device tree and debug uart configuration.
-It has been tested on hi3519 reference board.
+two kinds of PLL: normal PLL and AVPLL. The normal PLL support is done.
+The AVPLL support is in TODO list.
 
-Spi-nor flash driver and other peripheral drivers will be submitted later.
+two kinds of clk: normal clk and gate clk. The normal clk supports changing
+divider, selecting clock source, disabling/enabling etc. The gate clk only
+supports disabling/enabling. Both are supported in this series.
 
-Any comments will be appreciated!
+Since v1:
+ - rebased on v4.4-rc1
+ - refactor out common code from clk-berlin4ct.c
+ - s/lock/berlin4ct_gateclk_lock
+ - drop WARN_ON for an allocation failure
+ - s/kzalloc/kcalloc
+ - add necessary handling in error code path, such as free memory, iounmap etc.
+ - initialize init.flags
+ - drop vcodiv_berlin[] array
 
-Thanks!
 
-Jiancheng Xue (5):
-  clk: hi3519: add CRG driver for hisilicon hi3519 soc
-  ARM: hisi: enable Hi3519 soc
-  ARM: dts: add dts files for hi3519-demb board
-  ARM: config: enable ARCH_HI3519
-  ARM: debug: add Hi3519 debug uart
+Jisheng Zhang (6):
+  clk: berlin: add common pll driver
+  clk: berlin: add common clk driver for newer SoCs
+  clk: berlin: add common gateclk driver for newer SoCs
+  clk: berlin: add clk support for berlin4ct
+  dt-bindings: add binding for marvell berlin4ct SoC
+  arm64: dts: berlin4ct: add pll and clock nodes
 
- .../devicetree/bindings/clock/hi3519-clock.txt     |  46 +++++++
- arch/arm/Kconfig.debug                             |  10 ++
- arch/arm/boot/dts/Makefile                         |   2 +
- arch/arm/boot/dts/hi3519-demb.dts                  |  55 ++++++++
- arch/arm/boot/dts/hi3519.dtsi                      | 129 ++++++++++++++++++
- arch/arm/configs/hisi_defconfig                    |   1 +
- arch/arm/mach-hisi/Kconfig                         |   9 ++
- arch/arm/mach-hisi/hisilicon.c                     |   9 ++
- drivers/clk/hisilicon/Makefile                     |   1 +
- drivers/clk/hisilicon/clk-hi3519.c                 | 130 ++++++++++++++++++
- drivers/clk/hisilicon/reset.c                      | 149 +++++++++++++++++++++
- drivers/clk/hisilicon/reset.h                      |  25 ++++
- include/dt-bindings/clock/hi3519-clock.h           |  78 +++++++++++
- 13 files changed, 644 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/hi3519-clock.txt
- create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
- create mode 100644 arch/arm/boot/dts/hi3519.dtsi
- create mode 100644 drivers/clk/hisilicon/clk-hi3519.c
- create mode 100644 drivers/clk/hisilicon/reset.c
- create mode 100644 drivers/clk/hisilicon/reset.h
- create mode 100644 include/dt-bindings/clock/hi3519-clock.h
+ .../bindings/clock/marvell,berlin4ct.txt           |  38 ++++
+ arch/arm64/boot/dts/marvell/berlin4ct.dtsi         |  38 ++++
+ drivers/clk/berlin/Makefile                        |   1 +
+ drivers/clk/berlin/clk-berlin4ct.c                 |  97 ++++++++++
+ drivers/clk/berlin/clk.c                           | 203 +++++++++++++++++++++
+ drivers/clk/berlin/clk.h                           |  45 +++++
+ drivers/clk/berlin/gate.c                          |  73 ++++++++
+ drivers/clk/berlin/pll.c                           | 133 ++++++++++++++
+ include/dt-bindings/clock/berlin4ct.h              |  56 ++++++
+ 9 files changed, 684 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/marvell,berlin4ct.txt
+ create mode 100644 drivers/clk/berlin/clk-berlin4ct.c
+ create mode 100644 drivers/clk/berlin/clk.c
+ create mode 100644 drivers/clk/berlin/clk.h
+ create mode 100644 drivers/clk/berlin/gate.c
+ create mode 100644 drivers/clk/berlin/pll.c
+ create mode 100644 include/dt-bindings/clock/berlin4ct.h
 
 -- 
-1.9.1
-
+2.6.2
