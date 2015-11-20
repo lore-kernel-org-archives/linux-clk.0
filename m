@@ -1,109 +1,38 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <tony@atomide.com>,
-        <paul@pwsan.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH] clk: ti: omap5+: dpll: implement errata i810
-Date: Mon, 30 Nov 2015 16:43:25 +0200
-Message-ID: <1448894605-30097-1-git-send-email-t-kristo@ti.com>
+Return-Path: <sudipm.mukherjee@gmail.com>
+Return-Path: <sudipm.mukherjee@gmail.com>
+Date: Fri, 20 Nov 2015 14:28:15 +0530
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: versatile: fix memory leak
+Message-ID: <20151120085815.GB4485@sudip-pc>
+References: <1447681600-14120-1-git-send-email-sudipm.mukherjee@gmail.com>
+ <20151118222446.GG32672@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20151118222446.GG32672@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Errata i810 states that DPLL controller can get stuck while transitioning
-to a power saving state, while its M/N ratio is being re-programmed.
+On Wed, Nov 18, 2015 at 02:24:46PM -0800, Stephen Boyd wrote:
+> On 11/16, Sudip Mukherjee wrote:
+> > If of_clk_parent_fill() fails then we printed an error message and
+> > returned. But we missed freeing sp810.
+> > 
+> > Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
+> > ---
+> 
+> Applied to clk-next
 
-As a workaround, before re-programming the M/N ratio, SW has to ensure
-the DPLL cannot start an idle state transition. SW can disable DPLL
-idling by setting the DPLL AUTO_DPLL_MODE=0 or keeping a clock request
-active by setting a dependent clock domain in SW_WKUP.
+Thanks.
+> 
+> We don't need that error message on allocation failure either.
 
-This errata impacts OMAP5 and DRA7 chips, so enable the errata for these.
+I sent another patch to remove the error message on kzalloc failure. Did
+you mean that one or did you mean the error message for
+of_clk_parent_fill()?
+I could not find any message being printed if of_clk_parent_fill() fails
+so kept it as it is.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- arch/arm/mach-omap2/clock.c |    4 ++++
- drivers/clk/ti/dpll3xxx.c   |   25 ++++++++++++++++++++++++-
- include/linux/clk/ti.h      |    1 +
- 3 files changed, 29 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
-index acb60ed..d058125 100644
---- a/arch/arm/mach-omap2/clock.c
-+++ b/arch/arm/mach-omap2/clock.c
-@@ -225,5 +225,9 @@ void __init ti_clk_init_features(void)
- 	if (omap_rev() == OMAP3430_REV_ES1_0)
- 		features.flags |= TI_CLK_DPLL4_DENY_REPROGRAM;
- 
-+	/* Errata I810 for omap5 / dra7 */
-+	if (soc_is_omap54xx() || soc_is_dra7xx())
-+		features.flags |= TI_CLK_ERRATA_I810;
-+
- 	ti_clk_setup_features(&features);
- }
-diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
-index f4dec00..1c30038 100644
---- a/drivers/clk/ti/dpll3xxx.c
-+++ b/drivers/clk/ti/dpll3xxx.c
-@@ -305,8 +305,9 @@ static void _lookup_sddiv(struct clk_hw_omap *clk, u8 *sd_div, u16 m, u8 n)
- static int omap3_noncore_dpll_program(struct clk_hw_omap *clk, u16 freqsel)
- {
- 	struct dpll_data *dd = clk->dpll_data;
--	u8 dco, sd_div;
-+	u8 dco, sd_div, ai = 0;
- 	u32 v;
-+	bool errata_i810;
- 
- 	/* 3430 ES2 TRM: 4.7.6.9 DPLL Programming Sequence */
- 	_omap3_noncore_dpll_bypass(clk);
-@@ -350,6 +351,25 @@ static int omap3_noncore_dpll_program(struct clk_hw_omap *clk, u16 freqsel)
- 		v |= sd_div << __ffs(dd->sddiv_mask);
- 	}
- 
-+	/*
-+	 * Errata i810 - DPLL controller can get stuck while transitioning
-+	 * to a power saving state. Software must ensure the DPLL can not
-+	 * transition to a low power state while changing M/N values.
-+	 * Easiest way to accomplish this is to prevent DPLL autoidle
-+	 * before doing the M/N re-program.
-+	 */
-+	errata_i810 = ti_clk_get_features()->flags & TI_CLK_ERRATA_I810;
-+
-+	if (errata_i810) {
-+		ai = omap3_dpll_autoidle_read(clk);
-+		if (ai) {
-+			omap3_dpll_deny_idle(clk);
-+
-+			/* OCP barrier */
-+			omap3_dpll_autoidle_read(clk);
-+		}
-+	}
-+
- 	ti_clk_ll_ops->clk_writel(v, dd->mult_div1_reg);
- 
- 	/* Set 4X multiplier and low-power mode */
-@@ -379,6 +399,9 @@ static int omap3_noncore_dpll_program(struct clk_hw_omap *clk, u16 freqsel)
- 
- 	_omap3_noncore_dpll_lock(clk);
- 
-+	if (errata_i810 && ai)
-+		omap3_dpll_allow_idle(clk);
-+
- 	return 0;
- }
- 
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index 223be69..75205df 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -286,6 +286,7 @@ struct ti_clk_features {
- #define TI_CLK_DPLL_HAS_FREQSEL			BIT(0)
- #define TI_CLK_DPLL4_DENY_REPROGRAM		BIT(1)
- #define TI_CLK_DISABLE_CLKDM_CONTROL		BIT(2)
-+#define TI_CLK_ERRATA_I810			BIT(3)
- 
- void ti_clk_setup_features(struct ti_clk_features *features);
- const struct ti_clk_features *ti_clk_get_features(void);
--- 
-1.7.9.5
+regards
+sudip
