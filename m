@@ -1,44 +1,102 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 16/16] clk: slightly optimize clk_core_set_parent()
-Date: Mon, 30 Nov 2015 16:34:53 +0900
-Message-Id: <1448868893-4575-17-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1448868893-4575-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1448868893-4575-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+ Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>,
+ Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
+ Kevin Hilman <khilman@linaro.org>, devicetree@vger.kernel.org,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v2 2/2] arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into
+ ARCH_EXYNOS
+Date: Fri, 20 Nov 2015 09:12:41 +0900
+Message-id: <1447978361-18010-3-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1447978361-18010-1-git-send-email-k.kozlowski@samsung.com>
+References: <1447978361-18010-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-If clk_fetch_parent_index() fails, p_rate is unused.  Move the
-assignment after the error checking.
+The ARMv8 Exynos family SoCs in Linux kernel are currently:
+ - Exynos5433 (controlled by ARCH_EXYNOS),
+ - Exynos7 (controlled by ARCH_EXYNOS7).
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+It duplicates Kconfig symbols unnecessarily, so consolidate them into
+one ARCH_EXYNOS. Future SoCs could fall also under the ARCH_EXYNOS
+symbol.
+
+The commit should not bring any visible functional change.
+
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
+Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
+
 ---
 
- drivers/clk/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes since v1:
+1. Minor cleanups after Tomasz's comments.
+2. Added tags: Chanwoo's, Pankaj's, Alim's and Tomasz's.
+---
+ arch/arm64/Kconfig.platforms        | 11 ++---------
+ arch/arm64/boot/dts/exynos/Makefile |  2 +-
+ arch/arm64/configs/defconfig        |  2 +-
+ 3 files changed, 4 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 8a6a33b..479a754 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1730,13 +1730,13 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
- 	/* try finding the new parent index */
- 	if (parent) {
- 		p_index = clk_fetch_parent_index(core, parent);
--		p_rate = parent->rate;
- 		if (p_index < 0) {
- 			pr_debug("%s: clk %s can not be parent of clk %s\n",
- 					__func__, parent->name, core->name);
- 			ret = p_index;
- 			goto out;
- 		}
-+		p_rate = parent->rate;
- 	}
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 4043c35962cc..64f1116640bc 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -13,21 +13,14 @@ config ARCH_BERLIN
+ 	  This enables support for Marvell Berlin SoC Family
  
- 	/* propagate PRE_RATE_CHANGE notifications */
+ config ARCH_EXYNOS
+-	bool
+-	help
+-	  This enables support for Samsung Exynos SoC family
+-
+-config ARCH_EXYNOS7
+-	bool "ARMv8 based Samsung Exynos7"
+-	select ARCH_EXYNOS
++	bool "ARMv8 based Samsung Exynos SoC family"
+ 	select COMMON_CLK_SAMSUNG
+ 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+ 	select HAVE_S3C_RTC if RTC_CLASS
+ 	select PINCTRL
+ 	select PINCTRL_EXYNOS
+-
+ 	help
+-	  This enables support for Samsung Exynos7 SoC family
++	  This enables support for ARMv8 based Samsung Exynos SoC family.
+ 
+ config ARCH_LAYERSCAPE
+ 	bool "ARMv8 based Freescale Layerscape SoC family"
+diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+index 20310e5b6d6f..50c9b9383cfa 100644
+--- a/arch/arm64/boot/dts/exynos/Makefile
++++ b/arch/arm64/boot/dts/exynos/Makefile
+@@ -1,4 +1,4 @@
+-dtb-$(CONFIG_ARCH_EXYNOS7) += exynos7-espresso.dtb
++dtb-$(CONFIG_ARCH_EXYNOS) += exynos7-espresso.dtb
+ 
+ always		:= $(dtb-y)
+ subdir-y	:= $(dts-dirs)
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index bdd7aa358d2a..a396fa7c69a5 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -33,7 +33,7 @@ CONFIG_MODULE_UNLOAD=y
+ # CONFIG_IOSCHED_DEADLINE is not set
+ CONFIG_ARCH_BCM_IPROC=y
+ CONFIG_ARCH_BERLIN=y
+-CONFIG_ARCH_EXYNOS7=y
++CONFIG_ARCH_EXYNOS=y
+ CONFIG_ARCH_LAYERSCAPE=y
+ CONFIG_ARCH_HISI=y
+ CONFIG_ARCH_MEDIATEK=y
 -- 
 1.9.1
