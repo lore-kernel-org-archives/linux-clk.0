@@ -1,76 +1,64 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	agross@codeaurora.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	bjorn.andersson@sonymobile.com,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v4 0/5] Add initial support for RPM clocks
-Date: Thu, 19 Nov 2015 15:57:55 +0200
-Message-Id: <1447941480-27487-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Vladimir Zapolskiy <vz@mleia.com>, Roland Stigge <stigge@antcom.de>, devicetree@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 03/11] dt-bindings: clock: add NXP LPC32xx clock list for consumers
+Date: Fri, 20 Nov 2015 22:07:16 +0100
+Message-ID: <5570695.dzvsXZ7sfz@wuerfel>
+In-Reply-To: <564F5F2E.70607@mleia.com>
+References: <1447981511-29653-1-git-send-email-vz@mleia.com> <4268221.QhjAE5RLYk@wuerfel> <564F5F2E.70607@mleia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset adds initial support for the clocks controlled by
-the RPM (Resource Power Manager) processor on Qualcomm platforms.
+On Friday 20 November 2015 19:58:06 Vladimir Zapolskiy wrote:
+> On 20.11.2015 15:56, Arnd Bergmann wrote:
+> > On Friday 20 November 2015 03:05:03 Vladimir Zapolskiy wrote:
+> >> +
+> >> +/* LPC32XX System Control Block clocks */
+> >> +#define LPC32XX_CLK_RTC                0
+> >> +#define LPC32XX_CLK_DMA                1
+> >> +#define LPC32XX_CLK_MLC                2
+> >> +#define LPC32XX_CLK_SLC                3
+> >> +#define LPC32XX_CLK_LCD                4
+> >> +#define LPC32XX_CLK_MAC                5
+> >> +#define LPC32XX_CLK_SD         6
+> >> +#define LPC32XX_CLK_DDRAM      7
+> >> +#define LPC32XX_CLK_SSP0       8
+> >> +#define LPC32XX_CLK_SSP1       9
+> >> +#define LPC32XX_CLK_UART3      10
+> >> +#define LPC32XX_CLK_UART4      11
+> >> +#define LPC32XX_CLK_UART5      12
+> >> +#define LPC32XX_CLK_UART6      13
+> >> +#define LPC32XX_CLK_IRDA       14
+> >> +#define LPC32XX_CLK_I2C1       15
+> >>
+> > 
+> > Any chance we can avoid the include file? This is going to make it really
+> > hard to merge everything in one merge window with the dependencies between
+> > the driver, the bindings and the platform code.
+> 
+> I see only one option to avoid this commit, namely squash it with the
+> CCF driver and merge it before making changes in DTS.
+> 
+> However I suppose ARM trees won't be synced on clk tree, so probably it
+> won't simplify maintainer's work.
 
-The RPM is a dedicated hardware engine for managing the shared
-SoC resources in order to keep the lowest power profile. It
-communicates with other hardware subsystems via shared memory
-and accepts clock requests, aggregates the requests and turns
-the clocks on/off or scales them on demand.
+I think the best way for this would then be to have one git branch that
+contains the binding header, and base the other patches on top of that
+branch, for both the changes going into the clk git and arm-soc.
 
-Until now the RPM clock controller was not supported and a hard-
-coded fixed-rate clocks were registered in the drivers. Now we
-are moving the on-board clocks to the DT (where they actually
-belong). If the RPM clock controller is enabled we insert it
-right after the DT clocks making it a parent of some GCC clocks.
+That way, both have the commit we need, but we don't get duplicate
+commits when they are both merged into mainline.
 
-The DT patches should go through the soc/qcom tree. This also
-depends on smem and smd.
+> > If there is a way to describe the clocks based on numbers from the
+> > data sheet instead of making up your own, that makes life much
+> > easier for us.
+> 
+> There are no any clock numbers in the datasheet, unfortunately.
 
-Changes since v3 (https://lkml.org/lkml/2015/10/20/613)
-* Drop some of the patches as now we handle both scenarios -
-  RPMCC enabled or disabled.
-* Addressed more comments from Stephen. Thanks again!
+I was thinking that maybe there would be a logical numbering based
+on the register layout, e.g. a tuple of register index and bit position,
+but it seems that the mmio area is too irregular to make that easy.
 
-Changes since v2 (https://lkml.org/lkml/2015/8/3/513)
-* Addressed various comments from Stephen. Thanks!
-* Added sleep sets support.
-* Added a mutex in the RPM driver.
-* Support both scenarios - RPMCC enabled or disabled.
-* Make RPMCC more generic in order to support other SMD RPM
-  based platforms.
-
-Changes since v1 (https://lkml.org/lkml/2015/7/9/257):
-* Changed the driver name to clk-smd-rpm, also build it only
-  when it is needed - suggested by Srini and Bjorn.
-* More detailed binding example.
-* Minor changes.
-
-
-Georgi Djakov (5):
-  clk: qcom: msm8916: Move xo and sleep clocks into DT
-  arm64: dts: qcom: msm8916: Add fixed rate on-board oscillator
-  clk: qcom: Add support for RPM Clocks
-  clk: qcom: Add RPM clock controller driver
-  arm64: dts: qcom: msm8916: Add RPMCC DT node
-
- .../devicetree/bindings/clock/qcom,rpmcc.txt       |   35 +++
- arch/arm64/boot/dts/qcom/msm8916.dtsi              |   20 ++
- drivers/clk/qcom/Kconfig                           |   11 +
- drivers/clk/qcom/Makefile                          |    2 +
- drivers/clk/qcom/clk-smd-rpm.c                     |  263 ++++++++++++++++++++
- drivers/clk/qcom/clk-smd-rpm.h                     |  142 +++++++++++
- drivers/clk/qcom/gcc-msm8916.c                     |   16 +-
- drivers/clk/qcom/rpmcc.c                           |  206 +++++++++++++++
- include/dt-bindings/clock/qcom,rpmcc-msm8916.h     |   44 ++++
- 9 files changed, 730 insertions(+), 9 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
- create mode 100644 drivers/clk/qcom/clk-smd-rpm.c
- create mode 100644 drivers/clk/qcom/clk-smd-rpm.h
- create mode 100644 drivers/clk/qcom/rpmcc.c
- create mode 100644 include/dt-bindings/clock/qcom,rpmcc-msm8916.h
+	Arnd
