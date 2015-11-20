@@ -1,73 +1,74 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>, linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Julia Lawall <Julia.Lawall@lip6.fr>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v4 21/24] pwm: add information about polarity, duty cycle and period to debugfs
-Date: Mon, 16 Nov 2015 09:56:44 +0100
-Message-Id: <1447664207-24370-22-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <treding@nvidia.com>
+Date: Fri, 20 Nov 2015 16:10:32 +0100
+From: Thierry Reding <treding@nvidia.com>
+To: Arnd Bergmann <arnd@arndb.de>
+CC: Rhyland Klein <rklein@nvidia.com>, Peter De Schrijver
+	<pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>, <linux-kernel@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] clk: tegra: move _calc_dynamic_ram_rate out of #ifdef
+Message-ID: <20151120151031.GD3300@ulmo.nvidia.com>
+References: <4290741.p1jMzEOUEU@wuerfel>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <4290741.p1jMzEOUEU@wuerfel>
+Return-Path: treding@nvidia.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="xXmbgvnjoT4axfJE"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Heiko Stübner <heiko@sntech.de>
+--xXmbgvnjoT4axfJE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The pwm-states make it possible to also output the polarity, duty cycle
-and period information in the debugfs pwm summary-outout.
-This makes it easier to gather overview information about pwms without
-needing to walk through the sysfs attributes of every pwm.
+On Thu, Nov 19, 2015 at 11:32:33PM +0100, Arnd Bergmann wrote:
+> _calc_dynamic_ram_rate is defined inside an #ifdef but called
+> later in the same file outside of that #ifdef, which can cause a
+> build error:
+>=20
+> drivers/clk/tegra/clk-pll.c: In function '_tegra_clk_register_pll':
+> drivers/clk/tegra/clk-pll.c:1541:29: error: '_calc_dynamic_ramp_rate' und=
+eclared (first use in this function)
+>=20
+> This moves both _calc_dynamic_ram_rate and _pll_fixed_mdiv in
+> front of the #ifdef to make all configurations compile again.
+>=20
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes: 44c8b9fa432c ("clk: tegra: pll: Fix _pll_ramp_calc_pll logic and _=
+calc_dynamic_ramp_rate")
+> ----
+> The patch that caused it appears to be older, but I only ran into
+> the randconfig bug today for the first time. Apparently the commit
+> is only in linux-next at the moment, not in 4.4-rc1
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- drivers/pwm/core.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Hmm... this looks familiar, I thought I had included an equivalent patch
+in the clock tree. I'll go do some digging, but this looks exactly like
+what I had done at the time.
 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index fbc71d3..1619101 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -1035,6 +1035,11 @@ static void pwm_dbg_show(struct pwm_chip *chip, struct seq_file *s)
- 		if (pwm_is_enabled(pwm))
- 			seq_puts(s, " enabled");
- 
-+		seq_printf(s, " period:%uns", pwm_get_period(pwm));
-+		seq_printf(s, " duty:%uns", pwm_get_duty_cycle(pwm));
-+		seq_printf(s, " polarity:%s", pwm_get_polarity(pwm) ? "inverse"
-+								    : "normal");
-+
- 		seq_puts(s, "\n");
- 	}
- }
--- 
-2.1.4
+Thanks,
+Thierry
 
+--xXmbgvnjoT4axfJE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJWTzfmAAoJEN0jrNd/PrOhxC0QAL0mKUm99890XJQWumHt3akC
+e7nPpyPLhi9s89HzoPd1y1BwI9lT2mY/09OAxeAsgM//7blAucf+9+HSLmPe7JJc
+puLZYDXy6QAgmqqPODFahJcemU6PfRcU+JDM5+73Ym6lc71v3KEsFKtqWhy+FT+a
+XO02Vw9IL8w5pN1QtZ2jG0l4T8Rj2V66WreGl4+4/of6F/IL+p/MrIV7tNdaFDdi
+brWKGLBh21ihHjmhd/5W2UkpSlg+lbl5O7JJlCeneHfSVHXhYXvXiK1zziUeMSo+
+P6BASGqY+K88s0i+dQt+VOUpgUJP+swFY60eH3ynjc69/+QMRdafyKUsRtIDvryY
+Smr8YRXGypmHfyDPdZJEgnineGscfy2Yxl/AHub5/QNaa7OJE/Rj2vTBq+e+j7SP
+RAO/UAcNDQ1R7k3jb1/lz62s7GBAmt5MJJ+Q9WXWgxF8wxHOayD7D7dlMquWvCzP
+YOsVwymMb5CRcs2DxuSsFVPojtc4bVYiXopMg1DfL+uCKFx+qEM7EeyoIDKHfKvd
+l1SQ+5T4EOKx5NnmmEN9aXXBIJS9taep2Yyr2AUv/yerSgAByOplwki0JiKzpRky
+GGhL6wmkzSpmxgwmQYxFn9nKYgd8DuciJOh47qpQ8w6tFL/Ub08kFemow2dnF93B
+8O1rQ4OGzgFRf48nDnDx
+=K6N1
+-----END PGP SIGNATURE-----
+
+--xXmbgvnjoT4axfJE--
