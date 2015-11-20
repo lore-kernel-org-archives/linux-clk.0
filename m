@@ -1,29 +1,52 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 30 Nov 2015 16:36:01 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Simon <horms@verge.net.au>, Michael Turquette <mturquette@baylibre.com>,
-	Magnus <magnus.damm@gmail.com>, Linux-SH <linux-sh@vger.kernel.org>,
-	Linux-Kernel <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v6] clk: add CS2000 Fractional-N driver
-Message-ID: <20151201003601.GA17532@codeaurora.org>
-References: <87k2pqlkx1.wl%kuninori.morimoto.gx@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <87k2pqlkx1.wl%kuninori.morimoto.gx@renesas.com>
+Return-Path: <zywang33@gmail.com>
+Return-Path: <zywang33@gmail.com>
+From: Chris Zhong <zyw@rock-chips.com>
+To: heiko@sntech.de,
+	linux-rockchip@lists.infradead.org,
+	mark.yao@rock-chips.com,
+	treding@nvidia.com,
+	emil.l.velikov@gmail.com
+Cc: airlied@linux.ie,
+	ajaykumar.rs@samsung.com,
+	rmk+kernel@arm.linux.org.uk,
+	dri-devel@lists.freedesktop.org,
+	Chris Zhong <zyw@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 02/13] clk: rockchip: add mipidsi clocks on rk3288
+Date: Fri, 20 Nov 2015 16:15:28 +0800
+Message-Id: <1448007339-10966-3-git-send-email-zyw@rock-chips.com>
+In-Reply-To: <1448007339-10966-1-git-send-email-zyw@rock-chips.com>
+References: <1448007339-10966-1-git-send-email-zyw@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/10, Kuninori Morimoto wrote:
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> 
-> This patch adds CS2000 Fractional-N driver as clock provider.
-> 
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> ---
+sclk_mipidsi_24m is the gating of mipi dsi phy.
 
-Applied to clk-next
+Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+---
 
+Changes in v4: None
+Changes in v3: None
+Changes in v2: None
+
+ drivers/clk/rockchip/clk-rk3288.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 9040878..c7d7ebf 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -709,7 +709,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+ 	GATE(SCLK_LCDC_PWM1, "sclk_lcdc_pwm1", "xin24m", 0, RK3288_CLKGATE_CON(13), 11, GFLAGS),
+ 	GATE(SCLK_PVTM_CORE, "sclk_pvtm_core", "xin24m", 0, RK3288_CLKGATE_CON(5), 9, GFLAGS),
+ 	GATE(SCLK_PVTM_GPU, "sclk_pvtm_gpu", "xin24m", 0, RK3288_CLKGATE_CON(5), 10, GFLAGS),
+-	GATE(0, "sclk_mipidsi_24m", "xin24m", 0, RK3288_CLKGATE_CON(5), 15, GFLAGS),
++	GATE(SCLK_MIPI_24M, "sclk_mipidsi_24m", "xin24m", 0, RK3288_CLKGATE_CON(5), 15, GFLAGS),
+ 
+ 	/* sclk_gpu gates */
+ 	GATE(ACLK_GPU, "aclk_gpu", "sclk_gpu", 0, RK3288_CLKGATE_CON(18), 0, GFLAGS),
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.6.3
