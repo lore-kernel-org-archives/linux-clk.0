@@ -1,138 +1,316 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 6 Nov 2015 11:42:20 -0800
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 01/19] clk: sunxi: Add display clock
-Message-ID: <20151106194220.GK6114@lukather>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
- <1446214865-3972-2-git-send-email-maxime.ripard@free-electrons.com>
- <CAGb2v65uzLgKkxKh9RN58w1FZGRJKSbMFmdhZxnRzCdCArBuPw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="b/6gol1SqNxk8K3i"
-In-Reply-To: <CAGb2v65uzLgKkxKh9RN58w1FZGRJKSbMFmdhZxnRzCdCArBuPw@mail.gmail.com>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH v2 2/6] clk: berlin: add common clk driver for newer SoCs
+To: Jisheng Zhang <jszhang@marvell.com>, robh+dt@kernel.org,
+ pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+ galak@codeaurora.org, catalin.marinas@arm.com, will.deacon@arm.com,
+ mturquette@baylibre.com, sboyd@codeaurora.org,
+ antoine.tenart@free-electrons.com
+References: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
+ <1448008952-1787-3-git-send-email-jszhang@marvell.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Message-ID: <564F8869.6040307@gmail.com>
+Date: Fri, 20 Nov 2015 21:54:01 +0100
+In-Reply-To: <1448008952-1787-3-git-send-email-jszhang@marvell.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
+On 20.11.2015 09:42, Jisheng Zhang wrote:
+> Add common clk driver for Marvell SoCs newer than BG2, BG2CD, BG2Q.
+> berlin_clk_setup() is provided to setup and register such kind of clks.
+> 
+> Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+> ---
+>  drivers/clk/berlin/Makefile |   2 +-
+>  drivers/clk/berlin/clk.c    | 203 ++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/berlin/clk.h    |  33 +++++++
+>  3 files changed, 237 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clk/berlin/clk.c
+>  create mode 100644 drivers/clk/berlin/clk.h
+> 
+> diff --git a/drivers/clk/berlin/Makefile b/drivers/clk/berlin/Makefile
+> index eee42b0..ee2e09d 100644
+> --- a/drivers/clk/berlin/Makefile
+> +++ b/drivers/clk/berlin/Makefile
+> @@ -1,5 +1,5 @@
+>  obj-y += berlin2-avpll.o berlin2-pll.o berlin2-div.o
+> -obj-y += pll.o
+> +obj-y += pll.o clk.o
 
---b/6gol1SqNxk8K3i
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Same comment about the naming convention.
 
-Hi,
+>  obj-$(CONFIG_MACH_BERLIN_BG2)	+= bg2.o
+>  obj-$(CONFIG_MACH_BERLIN_BG2CD)	+= bg2.o
+>  obj-$(CONFIG_MACH_BERLIN_BG2Q)	+= bg2q.o
+> diff --git a/drivers/clk/berlin/clk.c b/drivers/clk/berlin/clk.c
+> new file mode 100644
+> index 0000000..70f2b9d
+> --- /dev/null
+> +++ b/drivers/clk/berlin/clk.c
+> @@ -0,0 +1,203 @@
+> +/*
+> + * Copyright (c) 2015 Marvell Technology Group Ltd.
+> + *
+> + * Author: Jisheng Zhang <jszhang@marvell.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + *
+> + * You should have received a copy of the GNU General Public License along with
+> + * this program.  If not, see <http://www.gnu.org/licenses/>.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/io.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/slab.h>
+> +
+> +#include "clk.h"
+> +
+> +#define CLKEN		(1 << 0)
 
-On Sat, Oct 31, 2015 at 06:28:16PM +0800, Chen-Yu Tsai wrote:
-> Hi,
->=20
-> On Fri, Oct 30, 2015 at 10:20 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > The A10 SoCs and its relatives has a special clock controller to drive =
-the
-> > display engines (both frontend and backend).
-> >
-> > Add a driver for it.
-> >
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > ---
-> >  drivers/clk/sunxi/Makefile            |   1 +
-> >  drivers/clk/sunxi/clk-sun4i-display.c | 199 ++++++++++++++++++++++++++=
-++++++++
-> >  2 files changed, 200 insertions(+)
-> >  create mode 100644 drivers/clk/sunxi/clk-sun4i-display.c
-> >
-> > diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-> > index cb4c299214ce..a9e1a5885846 100644
-> > --- a/drivers/clk/sunxi/Makefile
-> > +++ b/drivers/clk/sunxi/Makefile
-> > @@ -9,6 +9,7 @@ obj-y +=3D clk-a10-mod1.o
-> >  obj-y +=3D clk-a10-pll2.o
-> >  obj-y +=3D clk-a20-gmac.o
-> >  obj-y +=3D clk-mod0.o
-> > +obj-y +=3D clk-sun4i-display.o
-> >  obj-y +=3D clk-simple-gates.o
-> >  obj-y +=3D clk-sun8i-mbus.o
-> >  obj-y +=3D clk-sun9i-core.o
-> > diff --git a/drivers/clk/sunxi/clk-sun4i-display.c b/drivers/clk/sunxi/=
-clk-sun4i-display.c
-> > new file mode 100644
-> > index 000000000000..f13b095c6d7a
-> > --- /dev/null
-> > +++ b/drivers/clk/sunxi/clk-sun4i-display.c
-> > @@ -0,0 +1,199 @@
-> > +/*
-> > + * Copyright 2015 Maxime Ripard
-> > + *
-> > + * Maxime Ripard <maxime.ripard@free-electrons.com>
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify
-> > + * it under the terms of the GNU General Public License as published by
-> > + * the Free Software Foundation; either version 2 of the License, or
-> > + * (at your option) any later version.
-> > + *
-> > + * This program is distributed in the hope that it will be useful,
-> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > + * GNU General Public License for more details.
-> > + */
-> > +
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/of_address.h>
-> > +#include <linux/reset-controller.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/spinlock.h>
-> > +
-> > +#define SUN4I_A10_DISPLAY_PARENTS      3
->=20
-> Can we change this to 4, so we can reuse this for TCON clocks on
-> sun4i/sun7i?
+#define CLKEN	BIT(0)
 
-Good point, I'll change this.
+> +#define CLKPLLSEL_MASK	7
 
-Thanks!
-Maxime
+Please use hex numbers for the mask.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+> +#define CLKPLLSEL_SHIFT	1
+> +#define CLKPLLSWITCH	(1 << 4)
+> +#define CLKSWITCH	(1 << 5)
+> +#define CLKD3SWITCH	(1 << 6)
 
---b/6gol1SqNxk8K3i
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+BIT() again.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+> +#define CLKSEL_MASK	7
 
-iQIcBAEBAgAGBQJWPQKcAAoJEBx+YmzsjxAgotMQAImQAMzj4xBgrkO078gGHdH/
-Iw4BR0QrYYu5Dp4Sp1Xxgib/i9S1mLjRer6Vr+R3YiFPTy7FPsogekR+xjF4lrQo
-HcKPl1iXVenC1O9+R573UkDsEITgX9nHHo02iCKS+45QjaaXiZT/ny+aSqYbg4bn
-4P835Hg0vhXKNtDEJY4RMKwkwt0NERwGCdHxXY2g1V7EK1AyIeaLa0UsXfyDmFEM
-4AfV4GwBirxhV60hneb6RSTUREnq/MRMU1jYwHLg5rAvxp+CyVwEvxAhsOiIt596
-6NQtsisZPHxcF6eXDp8mLmVBpSpdsSu39wkiCbbi1xBfYUhl6G+cnCPXAZ6o2XSX
-maQDsFqeIp0gisN816pOuR+wSu9XYokzWMdbUyMj6Z/x/n1Qaypv2SyISnNxZh/n
-v/LQWKO1SqKmdWVWMzXVI+XMCF7cXPld/eH+9ELNz47IrNyqlcRGJyjMTBA9cffY
-mpWHEJGj0jlMG9mgqN/FYzGRmiCmwxZ60sPa/w+8u6Zc5g8V7shMxGbX345k9Owq
-xaIYLqbgl7OOw/UJZuOYpw20mddwHRJ8d/5L4cKrAv/5fvNPZnYhBiSwrekaUAMs
-QP9KzdrNM4po9jIdyE1FVnF778OWL1lefKNbBFu+o5We39bwzyL/Vs0DhSRBxRfT
-e/rBd7dCSa4ryuFU1dmk
-=vHmC
------END PGP SIGNATURE-----
+Hex again.
 
---b/6gol1SqNxk8K3i--
+> +#define CLKSEL_SHIFT	7
+> +
+> +#define CLK_SOURCE_MAX	5
+> +
+> +struct berlin_clk {
+> +	struct clk_hw hw;
+> +	void __iomem *base;
+> +};
+> +
+> +#define to_berlin_clk(hw)	container_of(hw, struct berlin_clk, hw)
+> +
+> +static u8 clk_div[] = {1, 2, 4, 6, 8, 12, 1, 1};
+
+Hmm, this pretty much looks like berlin2-div dividers...
+
+> +static unsigned long berlin_clk_recalc_rate(struct clk_hw *hw,
+> +					unsigned long parent_rate)
+> +{
+> +	u32 val, divider;
+> +	struct berlin_clk *clk = to_berlin_clk(hw);
+> +
+> +	val = readl_relaxed(clk->base);
+> +	if (val & CLKD3SWITCH)
+> +		divider = 3;
+
+and this looks like berlin2-div structure, doesn't it?
+
+Again, please reuse what is already available.
+
+Sebastian
+
+> +	else {
+> +		if (val & CLKSWITCH) {
+> +			val >>= CLKSEL_SHIFT;
+> +			val &= CLKSEL_MASK;
+> +			divider = clk_div[val];
+> +		} else
+> +			divider = 1;
+> +	}
+> +
+> +	return parent_rate / divider;
+> +}
+> +
+> +static u8 berlin_clk_get_parent(struct clk_hw *hw)
+> +{
+> +	u32 val;
+> +	struct berlin_clk *clk = to_berlin_clk(hw);
+> +
+> +	val = readl_relaxed(clk->base);
+> +	if (val & CLKPLLSWITCH) {
+> +		val >>= CLKPLLSEL_SHIFT;
+> +		val &= CLKPLLSEL_MASK;
+> +		return val;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int berlin_clk_enable(struct clk_hw *hw)
+> +{
+> +	u32 val;
+> +	struct berlin_clk *clk = to_berlin_clk(hw);
+> +
+> +	val = readl_relaxed(clk->base);
+> +	val |= CLKEN;
+> +	writel_relaxed(val, clk->base);
+> +
+> +	return 0;
+> +}
+> +
+> +static void berlin_clk_disable(struct clk_hw *hw)
+> +{
+> +	u32 val;
+> +	struct berlin_clk *clk = to_berlin_clk(hw);
+> +
+> +	val = readl_relaxed(clk->base);
+> +	val &= ~CLKEN;
+> +	writel_relaxed(val, clk->base);
+> +}
+> +
+> +static int berlin_clk_is_enabled(struct clk_hw *hw)
+> +{
+> +	u32 val;
+> +	struct berlin_clk *clk = to_berlin_clk(hw);
+> +
+> +	val = readl_relaxed(clk->base);
+> +	val &= CLKEN;
+> +
+> +	return val ? 1 : 0;
+> +}
+> +
+> +static const struct clk_ops berlin_clk_ops = {
+> +	.recalc_rate	= berlin_clk_recalc_rate,
+> +	.get_parent	= berlin_clk_get_parent,
+> +	.enable		= berlin_clk_enable,
+> +	.disable	= berlin_clk_disable,
+> +	.is_enabled	= berlin_clk_is_enabled,
+> +};
+> +
+> +static struct clk * __init
+> +berlin_clk_register(const char *name, int num_parents,
+> +		    const char **parent_names, unsigned long flags,
+> +		    void __iomem *base)
+> +{
+> +	struct clk *clk;
+> +	struct berlin_clk *bclk;
+> +	struct clk_init_data init;
+> +
+> +	bclk = kzalloc(sizeof(*bclk), GFP_KERNEL);
+> +	if (!bclk)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	init.name = name;
+> +	init.ops = &berlin_clk_ops;
+> +	init.parent_names = parent_names;
+> +	init.num_parents = num_parents;
+> +	init.flags = flags;
+> +
+> +	bclk->base = base;
+> +	bclk->hw.init = &init;
+> +
+> +	clk = clk_register(NULL, &bclk->hw);
+> +	if (IS_ERR(clk))
+> +		kfree(bclk);
+> +
+> +	return clk;
+> +}
+> +
+> +void __init berlin_clk_setup(struct device_node *np,
+> +			     const struct clk_desc *descs,
+> +			     struct clk_onecell_data *clk_data,
+> +			     int n)
+> +{
+> +	int i, ret, num_parents;
+> +	void __iomem *base;
+> +	struct clk **clks;
+> +	const char *parent_names[CLK_SOURCE_MAX];
+> +
+> +	num_parents = of_clk_get_parent_count(np);
+> +	if (num_parents <= 0 || num_parents > CLK_SOURCE_MAX)
+> +		return;
+> +
+> +	of_clk_parent_fill(np, parent_names, num_parents);
+> +
+> +	clks = kcalloc(n, sizeof(struct clk *), GFP_KERNEL);
+> +	if (!clks)
+> +		return;
+> +
+> +	base = of_iomap(np, 0);
+> +	if (WARN_ON(!base))
+> +		goto err_iomap;
+> +
+> +	for (i = 0; i < n; i++) {
+> +		struct clk *clk;
+> +
+> +		clk = berlin_clk_register(descs[i].name,
+> +				num_parents, parent_names,
+> +				descs[i].flags,
+> +				base + descs[i].offset);
+> +		if (WARN_ON(IS_ERR(clks[i])))
+> +			goto err_clk_register;
+> +		clks[i] = clk;
+> +	}
+> +
+> +	clk_data->clks = clks;
+> +	clk_data->clk_num = i;
+> +
+> +	ret = of_clk_add_provider(np, of_clk_src_onecell_get, clk_data);
+> +	if (WARN_ON(ret))
+> +		goto err_clk_register;
+> +	return;
+> +
+> +err_clk_register:
+> +	for (i = 0; i < n; i++)
+> +		clk_unregister(clks[i]);
+> +	iounmap(base);
+> +err_iomap:
+> +	kfree(clks);
+> +}
+> diff --git a/drivers/clk/berlin/clk.h b/drivers/clk/berlin/clk.h
+> new file mode 100644
+> index 0000000..5e5680e
+> --- /dev/null
+> +++ b/drivers/clk/berlin/clk.h
+> @@ -0,0 +1,33 @@
+> +/*
+> + * Copyright (c) 2015 Marvell Technology Group Ltd.
+> + *
+> + * Author: Jisheng Zhang <jszhang@marvell.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + *
+> + * You should have received a copy of the GNU General Public License along with
+> + * this program.  If not, see <http://www.gnu.org/licenses/>.
+> + */
+> +
+> +#ifndef __BERLIN_CLK_H
+> +#define __BERLIN_CLK_H
+> +
+> +struct clk_desc {
+> +	const char	*name;
+> +	u32		offset;
+> +	unsigned long	flags;
+> +};
+> +
+> +void __init berlin_clk_setup(struct device_node *np,
+> +			     const struct clk_desc *desc,
+> +			     struct clk_onecell_data *clk_data,
+> +			     int n);
+> +
+> +#endif
+> 
