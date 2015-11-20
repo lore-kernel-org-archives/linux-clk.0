@@ -1,137 +1,58 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <vz@mleia.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+To: Rob Herring <robh+dt@kernel.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: Russell King <linux@arm.linux.org.uk>,
+	Roland Stigge <stigge@antcom.de>,
 	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Julia Lawall <Julia.Lawall@lip6.fr>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v4 07/24] pwm: use pwm_get/set_default_xxx() helpers where appropriate
-Date: Mon, 16 Nov 2015 09:56:30 +0100
-Message-Id: <1447664207-24370-8-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 05/11] arm: dts: lpc32xx: add clock controller device node
+Date: Fri, 20 Nov 2015 03:05:05 +0200
+Message-Id: <1447981511-29653-6-git-send-email-vz@mleia.com>
+In-Reply-To: <1447981511-29653-1-git-send-email-vz@mleia.com>
+References: <1447981511-29653-1-git-send-email-vz@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-pwm_set/get_default_xxx() helpers have been introduced to differentiate
-the default PWM states (those retrieved through DT, PWM lookup table or
-statically assigned by the driver) and the current PWM ones.
-Make use of those helpers where appropriate.
+NXP LPC32xx SoC has a clocking and power control unit (CPC) as a part
+of system control block (SCB). CPC is supplied by two external
+oscillators and it manages core and most of peripheral clocks, the
+change adds SCB and CPC descriptions to shared LPC32xx dtsi file.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
-Reviewed-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
 ---
- drivers/pwm/core.c      | 14 +++++++-------
- drivers/pwm/pwm-pxa.c   |  2 +-
- drivers/pwm/pwm-sun4i.c |  3 ++-
- 3 files changed, 10 insertions(+), 9 deletions(-)
+ arch/arm/boot/dts/lpc32xx.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index d24ca5f..59073a1 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -146,12 +146,12 @@ of_pwm_xlate_with_flags(struct pwm_chip *pc, const struct of_phandle_args *args)
- 	if (IS_ERR(pwm))
- 		return pwm;
+diff --git a/arch/arm/boot/dts/lpc32xx.dtsi b/arch/arm/boot/dts/lpc32xx.dtsi
+index a9f2d9a..65023c1 100644
+--- a/arch/arm/boot/dts/lpc32xx.dtsi
++++ b/arch/arm/boot/dts/lpc32xx.dtsi
+@@ -247,6 +247,23 @@
+ 			compatible = "simple-bus";
+ 			ranges = <0x20000000 0x20000000 0x30000000>;
  
--	pwm_set_period(pwm, args->args[1]);
-+	pwm_set_default_period(pwm, args->args[1]);
- 
- 	if (args->args[2] & PWM_POLARITY_INVERTED)
--		pwm_set_polarity(pwm, PWM_POLARITY_INVERSED);
-+		pwm_set_default_polarity(pwm, PWM_POLARITY_INVERSED);
- 	else
--		pwm_set_polarity(pwm, PWM_POLARITY_NORMAL);
-+		pwm_set_default_polarity(pwm, PWM_POLARITY_NORMAL);
- 
- 	return pwm;
- }
-@@ -172,7 +172,7 @@ of_pwm_simple_xlate(struct pwm_chip *pc, const struct of_phandle_args *args)
- 	if (IS_ERR(pwm))
- 		return pwm;
- 
--	pwm_set_period(pwm, args->args[1]);
-+	pwm_set_default_period(pwm, args->args[1]);
- 
- 	return pwm;
- }
-@@ -268,7 +268,7 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
- 		pwm->chip = chip;
- 		pwm->pwm = chip->base + i;
- 		pwm->hwpwm = i;
--		pwm->polarity = polarity;
-+		pwm_set_default_polarity(pwm, polarity);
- 		mutex_init(&pwm->lock);
- 
- 		radix_tree_insert(&pwm_tree, pwm->pwm, pwm);
-@@ -751,8 +751,8 @@ struct pwm_device *pwm_get(struct device *dev, const char *con_id)
- 	if (IS_ERR(pwm))
- 		goto out;
- 
--	pwm_set_period(pwm, chosen->period);
--	pwm_set_polarity(pwm, chosen->polarity);
-+	pwm_set_default_period(pwm, chosen->period);
-+	pwm_set_default_polarity(pwm, chosen->polarity);
- 
- out:
- 	mutex_unlock(&pwm_lookup_lock);
-diff --git a/drivers/pwm/pwm-pxa.c b/drivers/pwm/pwm-pxa.c
-index cb2f702..65b80aa 100644
---- a/drivers/pwm/pwm-pxa.c
-+++ b/drivers/pwm/pwm-pxa.c
-@@ -160,7 +160,7 @@ pxa_pwm_of_xlate(struct pwm_chip *pc, const struct of_phandle_args *args)
- 	if (IS_ERR(pwm))
- 		return pwm;
- 
--	pwm_set_period(pwm, args->args[0]);
-+	pwm_set_default_period(pwm, args->args[0]);
- 
- 	return pwm;
- }
-diff --git a/drivers/pwm/pwm-sun4i.c b/drivers/pwm/pwm-sun4i.c
-index 67af9f6..f6a7451 100644
---- a/drivers/pwm/pwm-sun4i.c
-+++ b/drivers/pwm/pwm-sun4i.c
-@@ -354,7 +354,8 @@ static int sun4i_pwm_probe(struct platform_device *pdev)
- 	val = sun4i_pwm_readl(pwm, PWM_CTRL_REG);
- 	for (i = 0; i < pwm->chip.npwm; i++)
- 		if (!(val & BIT_CH(PWM_ACT_STATE, i)))
--			pwm->chip.pwms[i].polarity = PWM_POLARITY_INVERSED;
-+			pwm_set_default_polarity(&pwm->chip.pwms[i],
-+						 PWM_POLARITY_INVERSED);
- 	clk_disable_unprepare(pwm->clk);
- 
- 	return 0;
++			/* System Control Block */
++			scb {
++				compatible = "simple-bus";
++				ranges = <0x0 0x040004000 0x00001000>;
++				#address-cells = <1>;
++				#size-cells = <1>;
++
++				clk: clock-controller@0 {
++					compatible = "nxp,lpc3220-clk";
++					reg = <0x00 0x114>;
++					#clock-cells = <1>;
++
++					clocks = <&xtal_32k>, <&xtal>;
++					clock-names = "xtal_32k", "xtal";
++				};
++			};
++
+ 			/*
+ 			 * MIC Interrupt controller includes:
+ 			 *   MIC @40008000
 -- 
 2.1.4
