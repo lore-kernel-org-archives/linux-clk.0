@@ -1,30 +1,27 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 20 Nov 2015 16:41:41 -0800
+Date: Fri, 20 Nov 2015 11:18:22 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: agross@codeaurora.org, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, bjorn.andersson@sonymobile.com,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v4 2/5] arm64: dts: qcom: msm8916: Add fixed rate
- on-board oscillator
-Message-ID: <20151121004141.GF28998@codeaurora.org>
-References: <1447941480-27487-1-git-send-email-georgi.djakov@linaro.org>
- <1447941480-27487-3-git-send-email-georgi.djakov@linaro.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Jiri Kosina <trivial@kernel.org>, linux-clk@vger.kernel.org,
+	linux-sh@vger.kernel.org
+Subject: Re: [PATCH] [trivial] clk: shmobile: rcar-gen2: Spelling/Grammar:
+ dependant of, ouput
+Message-ID: <20151120191822.GA32672@codeaurora.org>
+References: <1446148443-20414-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1447941480-27487-3-git-send-email-georgi.djakov@linaro.org>
+In-Reply-To: <1446148443-20414-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/19, Georgi Djakov wrote:
-> Currently the rates of the xo and sleep clocks are hard-coded in the
-> GCC driver, but this is a board layout description that actually should
-> be in the DT. Moving them into DT also allows us to insert the RPM
-> controlled clocks between the DT and GCC clocks.
+On 10/29, Geert Uytterhoeven wrote:
+> s/dependant of/dependent on/
+> s/ouput/output/
 > 
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
 
-I'll leave this one to Andy.
+Applied to clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
