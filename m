@@ -1,45 +1,75 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 30 Nov 2015 12:55:03 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Stefan Agner <stefan@agner.ch>
-Cc: shawnguo@kernel.org, kernel@pengutronix.de, mturquette@baylibre.com,
-	galak@codeaurora.org, ijc+devicetree@hellion.org.uk,
-	mark.rutland@arm.com, pawel.moll@arm.com, robh+dt@kernel.org,
-	Li.Xiubo@freescale.com, zidan.wang@freescale.com,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] ARM: imx: clk-vf610: fix SAI clock tree
-Message-ID: <20151130205503.GO11298@codeaurora.org>
-References: <1445141122-14183-1-git-send-email-stefan@agner.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1445141122-14183-1-git-send-email-stefan@agner.ch>
+Return-Path: <vz@mleia.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: Russell King <linux@arm.linux.org.uk>,
+	Roland Stigge <stigge@antcom.de>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Joachim Eastwood <manabian@gmail.com>
+Subject: [PATCH 08/11] clk: lpc18xx: add NXP specific common clock framework selection
+Date: Fri, 20 Nov 2015 03:05:08 +0200
+Message-Id: <1447981511-29653-9-git-send-email-vz@mleia.com>
+In-Reply-To: <1447981511-29653-1-git-send-email-vz@mleia.com>
+References: <1447981511-29653-1-git-send-email-vz@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/17, Stefan Agner wrote:
-> The Synchronous Audio Interface (SAI) instances are clocked by
-> independent clocks: The bus clock and the audio clock (as shown in
-> Figure 51-1 in the Vybrid Reference Manual). The clock gates in
-> CCGR0/CCGR1 for SAI0 through SAI3 are bus clock gates, as access
-> tests to the registers with/without gating those clocks have shown.
-> The audio clock is gated by the SAIx_EN gates in CCM_CSCDR1,
-> followed by a clock divider (SAIx_DIV). Currently, the parent of
-> the bus clock gates has been assigned to SAIx_DIV, which is not
-> involved in the bus clock path for the SAI instances (see chapter
-> 9.10.12, SAI clocking in the Vybrid Reference Manual).
-> 
-> Fix this by define the parent clock of VF610_CLK_SAIx to be the bus
-> clock.
-> 
-> If the driver needs the audio clock (when used in master mode), a
-> fixed device tree is required which assign the audio clock properly
-> to VF610_CLK_SAIx_DIV.
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
+The change adds COMMON_CLK_NXP configuration symbol and enables it for
+NXP LPC18XX architecture, this is needed to reuse drivers/clk/nxp
+folder for NXP common clock framework drivers other than LPC18XX one.
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Joachim Eastwood <manabian@gmail.com>
+---
+ arch/arm/Kconfig     | 1 +
+ drivers/clk/Kconfig  | 5 +++++
+ drivers/clk/Makefile | 2 +-
+ 3 files changed, 7 insertions(+), 1 deletion(-)
 
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 0365cbb..c318277 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -952,6 +952,7 @@ config ARCH_LPC18XX
+ 	select ARCH_HAS_RESET_CONTROLLER
+ 	select ARM_AMBA
+ 	select CLKSRC_LPC32XX
++	select COMMON_CLK
+ 	select PINCTRL
+ 	help
+ 	  Support for NXP's LPC18xx Cortex-M3 and LPC43xx Cortex-M4
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index c3e3a02..7fc1eb9 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -175,6 +175,11 @@ config COMMON_CLK_PWM
+ 	  Adapter driver so that any PWM output can be (mis)used as clock signal
+ 	  at 50% duty cycle.
+ 
++config COMMON_CLK_NXP
++	def_bool COMMON_CLK && ARCH_LPC18XX
++	---help---
++	  Support for clock providers on NXP platforms.
++
+ config COMMON_CLK_PXA
+ 	def_bool COMMON_CLK && ARCH_PXA
+ 	---help---
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 820714c..15603c1 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -62,8 +62,8 @@ endif
+ obj-$(CONFIG_PLAT_ORION)		+= mvebu/
+ obj-$(CONFIG_ARCH_MESON)		+= meson/
+ obj-$(CONFIG_ARCH_MXS)			+= mxs/
+-obj-$(CONFIG_ARCH_LPC18XX)		+= nxp/
+ obj-$(CONFIG_MACH_PISTACHIO)		+= pistachio/
++obj-$(CONFIG_COMMON_CLK_NXP)		+= nxp/
+ obj-$(CONFIG_COMMON_CLK_PXA)		+= pxa/
+ obj-$(CONFIG_COMMON_CLK_QCOM)		+= qcom/
+ obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.4
