@@ -1,63 +1,293 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] CLK: s3c2410: removed unneeded code in
- s3c24xx_clkout_set_parent
-To: "Mutharaju, Prasanna (P.)" <mkarthi3@visteon.com>,
- Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-References: <20151130070044.GA23071@jci-VirtualBox>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <565BF67F.3070705@samsung.com>
-Date: Mon, 30 Nov 2015 16:10:55 +0900
-MIME-version: 1.0
-In-reply-to: <20151130070044.GA23071@jci-VirtualBox>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <jszhang@marvell.com>
+From: Jisheng Zhang <jszhang@marvell.com>
+To: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <sebastian.hesselbarth@gmail.com>, <antoine.tenart@free-electrons.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        Jisheng
+ Zhang <jszhang@marvell.com>
+Subject: [PATCH v2 2/6] clk: berlin: add common clk driver for newer SoCs
+Date: Fri, 20 Nov 2015 16:42:28 +0800
+Message-ID: <1448008952-1787-3-git-send-email-jszhang@marvell.com>
+In-Reply-To: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
+References: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 30.11.2015 16:01, Mutharaju, Prasanna (P.) wrote:
-> From: Prasanna Karthik <mkarthi3@visteon.com>
-> 
-> Remove unneeded variable used to store return value.
-> 
-> Signed-off-by: Prasanna Karthik <mkarthi3@visteon.com>
+Add common clk driver for Marvell SoCs newer than BG2, BG2CD, BG2Q.
+berlin_clk_setup() is provided to setup and register such kind of clks.
 
-You need to sign it off too.
+Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+---
+ drivers/clk/berlin/Makefile |   2 +-
+ drivers/clk/berlin/clk.c    | 203 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/berlin/clk.h    |  33 +++++++
+ 3 files changed, 237 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/berlin/clk.c
+ create mode 100644 drivers/clk/berlin/clk.h
 
-The prefix in subject should be lowercase 'clk:' and you are removing
-rather a variable, not code.
-
-The patch looks good, so with these changes:
-
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Best regards,
-Krzysztof
-
-
-> ---
->  drivers/clk/samsung/clk-s3c2410-dclk.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
-> index e9eb935..ec6fb14 100644
-> --- a/drivers/clk/samsung/clk-s3c2410-dclk.c
-> +++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
-> @@ -77,12 +77,11 @@ static u8 s3c24xx_clkout_get_parent(struct clk_hw *hw)
->  static int s3c24xx_clkout_set_parent(struct clk_hw *hw, u8 index)
->  {
->  	struct s3c24xx_clkout *clkout = to_s3c24xx_clkout(hw);
-> -	int ret = 0;
->  
->  	s3c2410_modify_misccr((clkout->mask << clkout->shift),
->  			      (index << clkout->shift));
->  
-> -	return ret;
-> +	return 0;
->  }
->  
->  static const struct clk_ops s3c24xx_clkout_ops = {
-> 
+diff --git a/drivers/clk/berlin/Makefile b/drivers/clk/berlin/Makefile
+index eee42b0..ee2e09d 100644
+--- a/drivers/clk/berlin/Makefile
++++ b/drivers/clk/berlin/Makefile
+@@ -1,5 +1,5 @@
+ obj-y += berlin2-avpll.o berlin2-pll.o berlin2-div.o
+-obj-y += pll.o
++obj-y += pll.o clk.o
+ obj-$(CONFIG_MACH_BERLIN_BG2)	+= bg2.o
+ obj-$(CONFIG_MACH_BERLIN_BG2CD)	+= bg2.o
+ obj-$(CONFIG_MACH_BERLIN_BG2Q)	+= bg2q.o
+diff --git a/drivers/clk/berlin/clk.c b/drivers/clk/berlin/clk.c
+new file mode 100644
+index 0000000..70f2b9d
+--- /dev/null
++++ b/drivers/clk/berlin/clk.c
+@@ -0,0 +1,203 @@
++/*
++ * Copyright (c) 2015 Marvell Technology Group Ltd.
++ *
++ * Author: Jisheng Zhang <jszhang@marvell.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/slab.h>
++
++#include "clk.h"
++
++#define CLKEN		(1 << 0)
++#define CLKPLLSEL_MASK	7
++#define CLKPLLSEL_SHIFT	1
++#define CLKPLLSWITCH	(1 << 4)
++#define CLKSWITCH	(1 << 5)
++#define CLKD3SWITCH	(1 << 6)
++#define CLKSEL_MASK	7
++#define CLKSEL_SHIFT	7
++
++#define CLK_SOURCE_MAX	5
++
++struct berlin_clk {
++	struct clk_hw hw;
++	void __iomem *base;
++};
++
++#define to_berlin_clk(hw)	container_of(hw, struct berlin_clk, hw)
++
++static u8 clk_div[] = {1, 2, 4, 6, 8, 12, 1, 1};
++
++static unsigned long berlin_clk_recalc_rate(struct clk_hw *hw,
++					unsigned long parent_rate)
++{
++	u32 val, divider;
++	struct berlin_clk *clk = to_berlin_clk(hw);
++
++	val = readl_relaxed(clk->base);
++	if (val & CLKD3SWITCH)
++		divider = 3;
++	else {
++		if (val & CLKSWITCH) {
++			val >>= CLKSEL_SHIFT;
++			val &= CLKSEL_MASK;
++			divider = clk_div[val];
++		} else
++			divider = 1;
++	}
++
++	return parent_rate / divider;
++}
++
++static u8 berlin_clk_get_parent(struct clk_hw *hw)
++{
++	u32 val;
++	struct berlin_clk *clk = to_berlin_clk(hw);
++
++	val = readl_relaxed(clk->base);
++	if (val & CLKPLLSWITCH) {
++		val >>= CLKPLLSEL_SHIFT;
++		val &= CLKPLLSEL_MASK;
++		return val;
++	}
++
++	return 0;
++}
++
++static int berlin_clk_enable(struct clk_hw *hw)
++{
++	u32 val;
++	struct berlin_clk *clk = to_berlin_clk(hw);
++
++	val = readl_relaxed(clk->base);
++	val |= CLKEN;
++	writel_relaxed(val, clk->base);
++
++	return 0;
++}
++
++static void berlin_clk_disable(struct clk_hw *hw)
++{
++	u32 val;
++	struct berlin_clk *clk = to_berlin_clk(hw);
++
++	val = readl_relaxed(clk->base);
++	val &= ~CLKEN;
++	writel_relaxed(val, clk->base);
++}
++
++static int berlin_clk_is_enabled(struct clk_hw *hw)
++{
++	u32 val;
++	struct berlin_clk *clk = to_berlin_clk(hw);
++
++	val = readl_relaxed(clk->base);
++	val &= CLKEN;
++
++	return val ? 1 : 0;
++}
++
++static const struct clk_ops berlin_clk_ops = {
++	.recalc_rate	= berlin_clk_recalc_rate,
++	.get_parent	= berlin_clk_get_parent,
++	.enable		= berlin_clk_enable,
++	.disable	= berlin_clk_disable,
++	.is_enabled	= berlin_clk_is_enabled,
++};
++
++static struct clk * __init
++berlin_clk_register(const char *name, int num_parents,
++		    const char **parent_names, unsigned long flags,
++		    void __iomem *base)
++{
++	struct clk *clk;
++	struct berlin_clk *bclk;
++	struct clk_init_data init;
++
++	bclk = kzalloc(sizeof(*bclk), GFP_KERNEL);
++	if (!bclk)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &berlin_clk_ops;
++	init.parent_names = parent_names;
++	init.num_parents = num_parents;
++	init.flags = flags;
++
++	bclk->base = base;
++	bclk->hw.init = &init;
++
++	clk = clk_register(NULL, &bclk->hw);
++	if (IS_ERR(clk))
++		kfree(bclk);
++
++	return clk;
++}
++
++void __init berlin_clk_setup(struct device_node *np,
++			     const struct clk_desc *descs,
++			     struct clk_onecell_data *clk_data,
++			     int n)
++{
++	int i, ret, num_parents;
++	void __iomem *base;
++	struct clk **clks;
++	const char *parent_names[CLK_SOURCE_MAX];
++
++	num_parents = of_clk_get_parent_count(np);
++	if (num_parents <= 0 || num_parents > CLK_SOURCE_MAX)
++		return;
++
++	of_clk_parent_fill(np, parent_names, num_parents);
++
++	clks = kcalloc(n, sizeof(struct clk *), GFP_KERNEL);
++	if (!clks)
++		return;
++
++	base = of_iomap(np, 0);
++	if (WARN_ON(!base))
++		goto err_iomap;
++
++	for (i = 0; i < n; i++) {
++		struct clk *clk;
++
++		clk = berlin_clk_register(descs[i].name,
++				num_parents, parent_names,
++				descs[i].flags,
++				base + descs[i].offset);
++		if (WARN_ON(IS_ERR(clks[i])))
++			goto err_clk_register;
++		clks[i] = clk;
++	}
++
++	clk_data->clks = clks;
++	clk_data->clk_num = i;
++
++	ret = of_clk_add_provider(np, of_clk_src_onecell_get, clk_data);
++	if (WARN_ON(ret))
++		goto err_clk_register;
++	return;
++
++err_clk_register:
++	for (i = 0; i < n; i++)
++		clk_unregister(clks[i]);
++	iounmap(base);
++err_iomap:
++	kfree(clks);
++}
+diff --git a/drivers/clk/berlin/clk.h b/drivers/clk/berlin/clk.h
+new file mode 100644
+index 0000000..5e5680e
+--- /dev/null
++++ b/drivers/clk/berlin/clk.h
+@@ -0,0 +1,33 @@
++/*
++ * Copyright (c) 2015 Marvell Technology Group Ltd.
++ *
++ * Author: Jisheng Zhang <jszhang@marvell.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifndef __BERLIN_CLK_H
++#define __BERLIN_CLK_H
++
++struct clk_desc {
++	const char	*name;
++	u32		offset;
++	unsigned long	flags;
++};
++
++void __init berlin_clk_setup(struct device_node *np,
++			     const struct clk_desc *desc,
++			     struct clk_onecell_data *clk_data,
++			     int n);
++
++#endif
+-- 
+2.6.2
