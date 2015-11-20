@@ -1,29 +1,39 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Roland Stigge <stigge@antcom.de>, devicetree@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 01/11] dt-bindings: clock: add description of LPC32xx clock controller
-Date: Fri, 20 Nov 2015 21:03:03 +0100
-Message-ID: <6347608.0ASvek9R2Z@wuerfel>
-In-Reply-To: <564F5FDC.2070001@mleia.com>
-References: <1447981511-29653-1-git-send-email-vz@mleia.com> <3740707.LksPCoyRXC@wuerfel> <564F5FDC.2070001@mleia.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 20 Nov 2015 11:17:53 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Jiri Kosina <trivial@kernel.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] [trivial] clk: Spelling s/derefing/dereferencing/
+Message-ID: <20151120191752.GZ32672@codeaurora.org>
+References: <1446148500-20480-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1446148500-20480-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday 20 November 2015 20:01:00 Vladimir Zapolskiy wrote:
-> > 
-> > Please use a specific model number without 'xx' wildcards. If you have
-> > multiple chips that are mutually compatible, pick one as the base number
-> > and then list the others as more specific instances, like
-> > 
-> >       compatible = "nxp,lpc3250-clk", "nxp,lpc3220-clk";
-> 
-> Do you ask me to change a title? You may see that compatible property
-> does not contain any wildcards?
-> 
+On 10/29, Geert Uytterhoeven wrote:
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-Nevermind, I saw so many 'xx's that I didn't notice you got the
-important one right.
+Applied to clk-next....
 
-	Arnd
+>  drivers/clk/clk.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index a5202df30bb27598..77835e408fe67049 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1981,7 +1981,7 @@ bool clk_is_match(const struct clk *p, const struct clk *q)
+>  	if (p == q)
+>  		return true;
+>  
+> -	/* true if clk->core pointers match. Avoid derefing garbage */
+> +	/* true if clk->core pointers match. Avoid dereferencing garbage */
+
+derefing isn't a word? :)
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
