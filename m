@@ -1,71 +1,68 @@
-Return-Path: <luis.henriques@canonical.com>
-From: Luis Henriques <luis.henriques@canonical.com>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	kernel-team@lists.ubuntu.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-kernel@lists.codethink.co.uk,
-	Ben Dooks <ben.dooks@codethink.co.uk>,
-	Tero Kristo <t-kristo@ti.com>,
-	Luis Henriques <luis.henriques@canonical.com>
-Subject: [PATCH 3.16.y-ckt 08/94] clk: ti: fix dual-registration of uart4_ick
-Date: Fri, 13 Nov 2015 10:09:02 +0000
-Message-Id: <1447409428-12178-9-git-send-email-luis.henriques@canonical.com>
-In-Reply-To: <1447409428-12178-1-git-send-email-luis.henriques@canonical.com>
-References: <1447409428-12178-1-git-send-email-luis.henriques@canonical.com>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH v2] clk: si5351: Add PLL soft reset
+To: Jacob Siverskog <jacob@teenage.engineering>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <CAEnXRPvCLRDFotc8FkS35df1PoLUW=X=1bTTUHR=UhRU_9zrCw@mail.gmail.com>
+ <1448040137-21400-1-git-send-email-jacob@teenage.engineering>
+ <1448040137-21400-2-git-send-email-jacob@teenage.engineering>
+Cc: Belisko Marek <marek.belisko@gmail.com>,
+ Jens Rudberg <jens@teenage.engineering>
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Message-ID: <564F5E8F.80709@gmail.com>
+Date: Fri, 20 Nov 2015 18:55:27 +0100
+In-Reply-To: <1448040137-21400-2-git-send-email-jacob@teenage.engineering>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-3.16.7-ckt20 -stable review patch.  If anyone has any objections, please let me know.
+On 20.11.2015 18:22, Jacob Siverskog wrote:
+> This is according to figure 12 ("I2C Programming Procedure") in
+> "Si5351A/B/C Data Sheet"
+> (https://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351-B.pdf).
+>
+> Without the PLL soft reset, we were unable to get three outputs
+> working at the same time.
+>
+> According to Silicon Labs support, performing PLL soft reset will only
+> be noticeable if the PLL parameters have been changed.
+>
+> Signed-off-by: Jacob Siverskog <jacob@teenage.engineering>
+> Signed-off-by: Jens Rudberg <jens@teenage.engineering>
+> ---
+>   drivers/clk/clk-si5351.c | 6 ++++++
+>   1 file changed, 6 insertions(+)
+>
+> diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+> index e346b22..984c058 100644
+> --- a/drivers/clk/clk-si5351.c
+> +++ b/drivers/clk/clk-si5351.c
+> @@ -1091,6 +1091,12 @@ static int si5351_clkout_set_rate(struct clk_hw *hw, unsigned long rate,
+>   	si5351_set_bits(hwdata->drvdata, SI5351_CLK0_CTRL + hwdata->num,
+>   			SI5351_CLK_POWERDOWN, 0);
+>
+> +	/* do a pll soft reset on both plls, needed in some cases to get all
+> +	 * outputs running
+> +	 */
 
-------------------
+Common convention for multi-line comments usually is:
 
-From: Ben Dooks <ben.dooks@codethink.co.uk>
+/*
+  * Do a PLL soft reset on both PLLs required to get
+  * all outputs running.
+  */
 
-commit 19e79687de22f23bcfb5e79cce3daba20af228d1 upstream.
+After you fixed the style issue, you can add my
 
-On the OMAP AM3517 platform the uart4_ick gets registered
-twice, causing any power management to /dev/ttyO3 to fail
-when trying to wake the device up.
+Acked-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-This solves the following oops:
+Thanks!
 
-[] Unhandled fault: external abort on non-linefetch (0x1028) at 0xfa09e008
-[] PC is at serial_omap_pm+0x48/0x15c
-[] LR is at _raw_spin_unlock_irqrestore+0x30/0x5c
-
-Fixes: aafd900cab87 ("CLK: TI: add omap3 clock init file")
-Cc: mturquette@baylibre.com
-Cc: sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-omap@vger.kernel.org
-Cc: linux-kernel@lists.codethink.co.uk
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Luis Henriques <luis.henriques@canonical.com>
----
- drivers/clk/ti/clk-3xxx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/ti/clk-3xxx.c b/drivers/clk/ti/clk-3xxx.c
-index 0d1750a8aea4..088930c3ee4b 100644
---- a/drivers/clk/ti/clk-3xxx.c
-+++ b/drivers/clk/ti/clk-3xxx.c
-@@ -170,7 +170,6 @@ static struct ti_dt_clk omap3xxx_clks[] = {
- 	DT_CLK(NULL, "gpio2_ick", "gpio2_ick"),
- 	DT_CLK(NULL, "wdt3_ick", "wdt3_ick"),
- 	DT_CLK(NULL, "uart3_ick", "uart3_ick"),
--	DT_CLK(NULL, "uart4_ick", "uart4_ick"),
- 	DT_CLK(NULL, "gpt9_ick", "gpt9_ick"),
- 	DT_CLK(NULL, "gpt8_ick", "gpt8_ick"),
- 	DT_CLK(NULL, "gpt7_ick", "gpt7_ick"),
-@@ -313,6 +312,7 @@ static struct ti_dt_clk am35xx_clks[] = {
- static struct ti_dt_clk omap36xx_clks[] = {
- 	DT_CLK(NULL, "omap_192m_alwon_fck", "omap_192m_alwon_fck"),
- 	DT_CLK(NULL, "uart4_fck", "uart4_fck"),
-+	DT_CLK(NULL, "uart4_ick", "uart4_ick"),
- 	{ .node_name = NULL },
- };
- 
+> +	si5351_reg_write(hwdata->drvdata, SI5351_PLL_RESET,
+> +			 SI5351_PLL_RESET_A | SI5351_PLL_RESET_B);
+> +
+>   	dev_dbg(&hwdata->drvdata->client->dev,
+>   		"%s - %s: rdiv = %u, parent_rate = %lu, rate = %lu\n",
+>   		__func__, clk_hw_get_name(hw), (1 << rdiv),
+>
