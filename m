@@ -1,38 +1,32 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 30 Nov 2015 12:55:37 -0800
+Date: Fri, 20 Nov 2015 15:48:34 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Stefan Agner <stefan@agner.ch>, kernel@pengutronix.de,
-	mturquette@baylibre.com, galak@codeaurora.org,
-	ijc+devicetree@hellion.org.uk, mark.rutland@arm.com,
-	pawel.moll@arm.com, robh+dt@kernel.org, Li.Xiubo@freescale.com,
-	zidan.wang@freescale.com, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] ARM: imx: clk-vf610: fix SAI clock tree
-Message-ID: <20151130205537.GP11298@codeaurora.org>
-References: <1445141122-14183-1-git-send-email-stefan@agner.ch>
- <20151123014613.GB13744@tiger>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+	devicetree@vger.kernel.org, jonmason@broadcom.com,
+	mturquette@baylibre.com, linux@arm.linux.org.uk,
+	sbranden@broadcom.com, rjui@broadcom.com
+Subject: Re: [PATCH v4 2/3] clk: bcm: Add BCM63138 clock support
+Message-ID: <20151120234834.GD9555@codeaurora.org>
+References: <1446168199-5959-1-git-send-email-f.fainelli@gmail.com>
+ <1446168199-5959-3-git-send-email-f.fainelli@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20151123014613.GB13744@tiger>
+In-Reply-To: <1446168199-5959-3-git-send-email-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/23, Shawn Guo wrote:
-> On Sat, Oct 17, 2015 at 09:05:20PM -0700, Stefan Agner wrote:
-> > 
-> > Since Patch 3 also uses the fixed clock layout, it should be
-> > applied after the clock tree fix too...
-> > 
-> > Not sure through which tree these changes should go?
+On 10/29, Florian Fainelli wrote:
+> BCM63138 has a simple clocking domain which is primarily the ARMPLL
+> clocking complex, from which the ARM (CPU), APB and AXI clocks would be
+> derived from.
 > 
-> Mike, Stephen,
+> Since the ARMPLL controller is entirely compatible with the iProc ARM
+> PLL, we just initialize it without additional parameters.
 > 
-> Can I have your ACK on patch #1 so that I can send it together with 
-> #2 for v4.4-rc inclusion?
-> 
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
 
-Yes that's fine.
+Applied to clk-bcm63xx
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
