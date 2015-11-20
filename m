@@ -1,61 +1,69 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: Gabriel Fernandez <gabriel.fernandez@linaro.org>, Pankaj Dev <pankaj.dev@st.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@stlinux.com, Maxime Coquelin <maxime.coquelin@st.com>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Patrice Chotard <patrice.chotard@st.com>
-Subject: [PATCH] clk: st: avoid uninitialized variable use
-Date: Thu, 12 Nov 2015 15:24:29 +0100
-Message-ID: <3719029.IbREgssWiU@wuerfel>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from unicorn.mansr.com ([81.2.72.234]:54361 "EHLO unicorn.mansr.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754664AbbKTMk0 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 20 Nov 2015 07:40:26 -0500
+From: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
+To: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
+Cc: Valentin Rothberg <valentinrothberg@gmail.com>,
+	<sboyd@codeaurora.org>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, Paul Bolle <pebolle@tiscali.nl>,
+	Andreas Ziegler <ziegler@cs.fau.de>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Kevin Hilman <khilman@kernel.org>,
+	Olof Johansson <olof@lixom.net>, Rob Herring <robh@kernel.org>
+Subject: Re: clk: tango4: undefined CONFIG_ARCH_TANGOX
+References: <20151120085039.GA2832@debian-vm>
+	<564EEB0F.9000208@sigmadesigns.com>
+Date: Fri, 20 Nov 2015 12:40:23 +0000
+In-Reply-To: <564EEB0F.9000208@sigmadesigns.com> (Marc Gonzalez's message of
+	"Fri, 20 Nov 2015 10:42:39 +0100")
+Message-ID: <yw1x37w0ete0.fsf@unicorn.mansr.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-quadfs_pll_fs660c32_round_rate prints a few structure members
-that are never initialized, and also doesn't print the only one
-it cares about. We get a gcc warning about the ones that
-are printed:
+Marc Gonzalez <marc_gonzalez@sigmadesigns.com> writes:
 
-clk/st/clkgen-fsyn.c:560:93: warning: 'params.sdiv' may be used uninitialized in this function
-clk/st/clkgen-fsyn.c:560:93: warning: 'params.mdiv' may be used uninitialized in this function
-clk/st/clkgen-fsyn.c:560:93: warning: 'params.pe' may be used uninitialized in this function
-clk/st/clkgen-fsyn.c:560:93: warning: 'params.nsdiv' may be used uninitialized in this function
+> On 20/11/2015 09:50, Valentin Rothberg wrote:
+>
+>> your commit ed12dfc92f01 ("clk: tango4: clkgen driver for Tango4
+>> platforms") has shown up in today's linux-next tree (i.e.,
+>> next-20151120) adding the following build condition to the tango4 clk
+>> driver:
+>> 
+>> drivers/clk/Makefile:45:obj-$(CONFIG_ARCH_TANGOX) += clk-tango4.o
+>> 
+>> However, ARCH_TANGOX is nowhere defined in Kconfig so that the driver
+>> cannot be compiled at the current state.  I checked the LKML, and found
+>> a bunch of patches referencing ARCH_TANGOX as well, but I could not find
+>> any patch adding this option.
+>> 
+>> Is there a patch queued somewhere that adds ARCH_TANGOX?
+>
+> Hello Valentin,
+>
+> Platform support has not been accepted yet.
+>
+> http://thread.gmane.org/gmane.linux.ports.arm.kernel/456280
+>
+> In fact, Kevin Hilman has pointed out that the arch should not
+> be called TANGOX, because X is a wildcard.
+>
+> (However, several unrelated drivers have been submitted with
+> TANGOX in the name. Is that a problem?)
+>
+> tango3 was a MIPS-based design
+> tango4 is an ARM-based design (with one MIPS-based outlier).
+> tango5 is an ARM-based design
+>
+> Although Mans is against the idea, I believe there should be one
+> different clk driver for each arch.
 
-This changes the code to no longer print uninitialized data, and
-for good measure it also prints the ndiv member that is being
-set.
+It's essentially the same clock generator.  It should be a single
+driver.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Fixes: 5f7aa9071e93 ("clk: st: Support for QUADFS inside ClockGenB/C/D/E/F")
-
-diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
-index 576cd0354d48..ccb324d97160 100644
---- a/drivers/clk/st/clkgen-fsyn.c
-+++ b/drivers/clk/st/clkgen-fsyn.c
-@@ -549,19 +549,20 @@ static int clk_fs660c32_vco_get_params(unsigned long input,
- 	return 0;
- }
- 
--static long quadfs_pll_fs660c32_round_rate(struct clk_hw *hw, unsigned long rate
--		, unsigned long *prate)
-+static long quadfs_pll_fs660c32_round_rate(struct clk_hw *hw,
-+					   unsigned long rate,
-+					   unsigned long *prate)
- {
- 	struct stm_fs params;
- 
--	if (!clk_fs660c32_vco_get_params(*prate, rate, &params))
--		clk_fs660c32_vco_get_rate(*prate, &params, &rate);
-+	if (clk_fs660c32_vco_get_params(*prate, rate, &params))
-+		return rate;
- 
--	pr_debug("%s: %s new rate %ld [sdiv=0x%x,md=0x%x,pe=0x%x,nsdiv3=%u]\n",
-+	clk_fs660c32_vco_get_rate(*prate, &params, &rate);
-+
-+	pr_debug("%s: %s new rate %ld [ndiv=%u]\n",
- 		 __func__, clk_hw_get_name(hw),
--		 rate, (unsigned int)params.sdiv,
--		 (unsigned int)params.mdiv,
--		 (unsigned int)params.pe, (unsigned int)params.nsdiv);
-+		 rate, (unsigned int)params.ndiv);
- 
- 	return rate;
- }
+-- 
+Måns Rullgård
+mans@mansr.com
