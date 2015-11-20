@@ -1,50 +1,27 @@
-Return-Path: <Zhiqiang.Hou@freescale.com>
-From: Zhiqiang Hou <Zhiqiang.Hou@freescale.com>
-To: <linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-CC: <mark.rutland@arm.com>, <linux@roeck-us.net>, <wsa@the-dreams.de>,
-	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <Mingkai.Hu@freescale.com>,
-	<Shaohui.Xie@freescale.com>, <scottwood@freescale.com>,
-	<bhupesh.sharma@freescale.com>, <Wenbin.Song@freescale.com>,
-	<B48286@freescale.com>
-Subject: [PATCHv8 3/5] Documentation: DT: Add entry for Freescale LS1043a-RDB board
-Date: Tue, 17 Nov 2015 17:53:20 +0800
-Message-ID: <1447754002-40555-3-git-send-email-Zhiqiang.Hou@freescale.com>
-In-Reply-To: <1447754002-40555-1-git-send-email-Zhiqiang.Hou@freescale.com>
-References: <1447754002-40555-1-git-send-email-Zhiqiang.Hou@freescale.com>
-Return-Path: Zhiqiang.Hou@freescale.com
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 20 Nov 2015 09:18:22 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] clk: remove redundant negative index check in
+ of_clk_get_parent_name()
+Message-ID: <20151120171822.GO32672@codeaurora.org>
+References: <1448004981-11133-1-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1448004981-11133-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mingkai Hu <Mingkai.Hu@freescale.com>
+On 11/20, Masahiro Yamada wrote:
+> This if-block can be dropped because the of_parse_phandle_with_args()
+> in the following line returns -EINVAL for negative index.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-Signed-off-by: Mingkai Hu <Mingkai.Hu@freescale.com>
-Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
----
-V8 - V2:
- - No change.
+Applied to clk-next
 
- Documentation/devicetree/bindings/arm/fsl.txt | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
-index 34c88b0..752a685 100644
---- a/Documentation/devicetree/bindings/arm/fsl.txt
-+++ b/Documentation/devicetree/bindings/arm/fsl.txt
-@@ -131,6 +131,10 @@ Example:
- Freescale ARMv8 based Layerscape SoC family Device Tree Bindings
- ----------------------------------------------------------------
- 
-+LS1043A ARMv8 based RDB Board
-+Required root node properties:
-+    - compatible = "fsl,ls1043a-rdb", "fsl,ls1043a";
-+
- LS2080A ARMv8 based Simulator model
- Required root node properties:
-     - compatible = "fsl,ls2080a-simu", "fsl,ls2080a";
 -- 
-2.1.0.27.g96db324
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
