@@ -1,75 +1,218 @@
-Return-Path: <vz@mleia.com>
-From: Vladimir Zapolskiy <vz@mleia.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: Russell King <linux@arm.linux.org.uk>,
-	Roland Stigge <stigge@antcom.de>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Joachim Eastwood <manabian@gmail.com>
-Subject: [PATCH 08/11] clk: lpc18xx: add NXP specific common clock framework selection
-Date: Fri, 20 Nov 2015 03:05:08 +0200
-Message-Id: <1447981511-29653-9-git-send-email-vz@mleia.com>
-In-Reply-To: <1447981511-29653-1-git-send-email-vz@mleia.com>
-References: <1447981511-29653-1-git-send-email-vz@mleia.com>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH v2 1/6] clk: berlin: add common pll driver
+To: Jisheng Zhang <jszhang@marvell.com>, robh+dt@kernel.org,
+ pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+ galak@codeaurora.org, catalin.marinas@arm.com, will.deacon@arm.com,
+ mturquette@baylibre.com, sboyd@codeaurora.org,
+ antoine.tenart@free-electrons.com
+References: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
+ <1448008952-1787-2-git-send-email-jszhang@marvell.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Message-ID: <564F869A.3090904@gmail.com>
+Date: Fri, 20 Nov 2015 21:46:18 +0100
+In-Reply-To: <1448008952-1787-2-git-send-email-jszhang@marvell.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-The change adds COMMON_CLK_NXP configuration symbol and enables it for
-NXP LPC18XX architecture, this is needed to reuse drivers/clk/nxp
-folder for NXP common clock framework drivers other than LPC18XX one.
+On 20.11.2015 09:42, Jisheng Zhang wrote:
+> Add pll driver for Marvell SoCs newer than BG2, BG2CD, BG2Q.
+> 
+> Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+> ---
+>  drivers/clk/berlin/Makefile |   1 +
+>  drivers/clk/berlin/pll.c    | 133 ++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 134 insertions(+)
+>  create mode 100644 drivers/clk/berlin/pll.c
+> 
+> diff --git a/drivers/clk/berlin/Makefile b/drivers/clk/berlin/Makefile
+> index 2a36ab7..eee42b0 100644
+> --- a/drivers/clk/berlin/Makefile
+> +++ b/drivers/clk/berlin/Makefile
+> @@ -1,4 +1,5 @@
+>  obj-y += berlin2-avpll.o berlin2-pll.o berlin2-div.o
+> +obj-y += pll.o
 
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Joachim Eastwood <manabian@gmail.com>
----
- arch/arm/Kconfig     | 1 +
- drivers/clk/Kconfig  | 5 +++++
- drivers/clk/Makefile | 2 +-
- 3 files changed, 7 insertions(+), 1 deletion(-)
+Jisheng,
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 0365cbb..c318277 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -952,6 +952,7 @@ config ARCH_LPC18XX
- 	select ARCH_HAS_RESET_CONTROLLER
- 	select ARM_AMBA
- 	select CLKSRC_LPC32XX
-+	select COMMON_CLK
- 	select PINCTRL
- 	help
- 	  Support for NXP's LPC18xx Cortex-M3 and LPC43xx Cortex-M4
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index c3e3a02..7fc1eb9 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -175,6 +175,11 @@ config COMMON_CLK_PWM
- 	  Adapter driver so that any PWM output can be (mis)used as clock signal
- 	  at 50% duty cycle.
- 
-+config COMMON_CLK_NXP
-+	def_bool COMMON_CLK && ARCH_LPC18XX
-+	---help---
-+	  Support for clock providers on NXP platforms.
-+
- config COMMON_CLK_PXA
- 	def_bool COMMON_CLK && ARCH_PXA
- 	---help---
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 820714c..15603c1 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -62,8 +62,8 @@ endif
- obj-$(CONFIG_PLAT_ORION)		+= mvebu/
- obj-$(CONFIG_ARCH_MESON)		+= meson/
- obj-$(CONFIG_ARCH_MXS)			+= mxs/
--obj-$(CONFIG_ARCH_LPC18XX)		+= nxp/
- obj-$(CONFIG_MACH_PISTACHIO)		+= pistachio/
-+obj-$(CONFIG_COMMON_CLK_NXP)		+= nxp/
- obj-$(CONFIG_COMMON_CLK_PXA)		+= pxa/
- obj-$(CONFIG_COMMON_CLK_QCOM)		+= qcom/
- obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
--- 
-2.1.4
+please keep the naming style of files as we already have,
+e.g. at least name the files for this driver berlin4-pll.
+
+Even better you find the differences and merge it with
+the berlin2-pll driver.
+
+In general, I am not going to Ack any Berlin clock drivers
+that expose the clock tree in any way. We recently merged
+the Berlin2 clock stuff to a common OF node, I am not going
+through the same mess for BG4 again.
+
+>  obj-$(CONFIG_MACH_BERLIN_BG2)	+= bg2.o
+>  obj-$(CONFIG_MACH_BERLIN_BG2CD)	+= bg2.o
+>  obj-$(CONFIG_MACH_BERLIN_BG2Q)	+= bg2q.o
+> diff --git a/drivers/clk/berlin/pll.c b/drivers/clk/berlin/pll.c
+> new file mode 100644
+> index 0000000..435445e
+> --- /dev/null
+> +++ b/drivers/clk/berlin/pll.c
+> @@ -0,0 +1,133 @@
+> +/*
+> + * Copyright (c) 2015 Marvell Technology Group Ltd.
+> + *
+> + * Author: Jisheng Zhang <jszhang@marvell.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + *
+> + * You should have received a copy of the GNU General Public License along with
+> + * this program.  If not, see <http://www.gnu.org/licenses/>.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/io.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/slab.h>
+> +
+> +#define PLL_CTRL0	0x0
+> +#define PLL_CTRL1	0x4
+> +#define PLL_CTRL2	0x8
+> +#define PLL_CTRL3	0xC
+> +#define PLL_CTRL4	0x10
+> +#define PLL_STATUS	0x14
+> +
+> +#define PLL_SOURCE_MAX	2
+> +
+> +struct berlin_pll {
+> +	struct clk_hw	hw;
+> +	void __iomem	*ctrl;
+> +	void __iomem	*bypass;
+> +	u8		bypass_shift;
+> +};
+> +
+> +#define to_berlin_pll(hw)       container_of(hw, struct berlin_pll, hw)
+> +
+> +static unsigned long berlin_pll_recalc_rate(struct clk_hw *hw,
+> +					    unsigned long parent_rate)
+> +{
+> +	u32 val, fbdiv, rfdiv, vcodivsel, bypass;
+> +	struct berlin_pll *pll = to_berlin_pll(hw);
+> +
+> +	bypass = readl_relaxed(pll->bypass);
+> +	if (bypass & (1 << pll->bypass_shift))
+> +		return parent_rate;
+
+Bypass could be modelled as a ccf clock-mux:
+
+REF ---+------------|\
+       |    _____   | |-- OUT
+       +---| PLL |--|/
+
+Please reuse what is already available.
+
+> +	val = readl_relaxed(pll->ctrl + PLL_CTRL0);
+> +	fbdiv = (val >> 12) & 0x1FF;
+> +	rfdiv = (val >> 3) & 0x1FF;
+
+Please get rid of any magic numbers.
+
+> +	val = readl_relaxed(pll->ctrl + PLL_CTRL1);
+> +	vcodivsel = (val >> 9) & 0x7;
+> +	return parent_rate * fbdiv * 4 / rfdiv /
+> +		(1 << vcodivsel);
+
+A comment at the top of recalc_rate how output frequency is
+calculated would be great.
+
+> +}
+> +
+> +static u8 berlin_pll_get_parent(struct clk_hw *hw)
+> +{
+> +	struct berlin_pll *pll = to_berlin_pll(hw);
+> +	u32 bypass = readl_relaxed(pll->bypass);
+> +
+> +	return !!(bypass & (1 << pll->bypass_shift));
+> +}
+> +
+> +static const struct clk_ops berlin_pll_ops = {
+> +	.recalc_rate	= berlin_pll_recalc_rate,
+> +	.get_parent	= berlin_pll_get_parent,
+> +};
+> +
+> +static void __init berlin_pll_setup(struct device_node *np)
+> +{
+> +	struct clk_init_data init;
+> +	struct berlin_pll *pll;
+> +	const char *parent_names[PLL_SOURCE_MAX];
+> +	struct clk *clk;
+> +	int ret, num_parents;
+> +	u8 bypass_shift;
+> +
+> +	num_parents = of_clk_get_parent_count(np);
+> +	if (num_parents <= 0 || num_parents > PLL_SOURCE_MAX)
+> +		return;
+> +
+> +	ret = of_property_read_u8(np, "bypass-shift", &bypass_shift);
+> +	if (ret)
+> +		return;
+
+The name "bypass" implies you can either choose to output the PLL
+generated clock or pass the parent clock, i.e. bypass the PLL.
+
+How can you choose from two parents then?
+
+> +	of_clk_parent_fill(np, parent_names, num_parents);
+> +
+> +	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
+> +	if (!pll)
+> +		return;
+> +
+> +	pll->ctrl = of_iomap(np, 0);
+> +	if (WARN_ON(!pll->ctrl))
+> +		goto err_iomap_ctrl;
+> +
+> +	pll->bypass = of_iomap(np, 1);
+> +	if (WARN_ON(!pll->bypass))
+> +		goto err_iomap_bypass;
+> +
+> +	init.name = np->name;
+> +	init.flags = 0;
+> +	init.ops = &berlin_pll_ops;
+> +	init.parent_names = parent_names;
+> +	init.num_parents = num_parents;
+> +
+> +	pll->hw.init = &init;
+> +	pll->bypass_shift = bypass_shift;
+> +
+> +	clk = clk_register(NULL, &pll->hw);
+> +	if (WARN_ON(IS_ERR(clk)))
+> +		goto err_clk_register;
+> +
+> +	ret = of_clk_add_provider(np, of_clk_src_simple_get, clk);
+> +	if (WARN_ON(ret))
+> +		goto err_clk_add;
+> +	return;
+> +
+> +err_clk_add:
+> +	clk_unregister(clk);
+> +err_clk_register:
+> +	iounmap(pll->bypass);
+> +err_iomap_bypass:
+> +	iounmap(pll->ctrl);
+> +err_iomap_ctrl:
+> +	kfree(pll);
+> +}
+> +CLK_OF_DECLARE(berlin_pll, "marvell,berlin-pll", berlin_pll_setup);
+
+Just to repeat: I will not Ack any clk driver that is exposed to DT
+except a single bg4 clock complex node. Have a look at BG2x clock
+drivers and rework bg4 to have the same structure.
+
+Sebastian
