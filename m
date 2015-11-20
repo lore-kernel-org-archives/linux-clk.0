@@ -1,42 +1,89 @@
-Return-Path: <Ping.Bai@freescale.com>
-From: Bai Ping <b51503@freescale.com>
-To: <shawnguo@kernel.org>, <kernel@pengutronix.de>
-CC: <l.stach@pengutronix.de>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-Subject: [PATCH 2/3] ARM: dts: imx: modify the clocks used by cpufreq driver
-Date: Tue, 24 Nov 2015 18:25:15 +0800
-Message-ID: <1448360716-1741-2-git-send-email-b51503@freescale.com>
-In-Reply-To: <1448360716-1741-1-git-send-email-b51503@freescale.com>
-References: <1448360716-1741-1-git-send-email-b51503@freescale.com>
-Return-Path: b51503@freescale.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+ Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>,
+ Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
+ Kevin Hilman <khilman@linaro.org>, devicetree@vger.kernel.org,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v2 1/2] clk: samsung: Don't build ARMv8 clock drivers on ARMv7
+Date: Fri, 20 Nov 2015 09:12:40 +0900
+Message-id: <1447978361-18010-2-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1447978361-18010-1-git-send-email-k.kozlowski@samsung.com>
+References: <1447978361-18010-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-As on i.MX7D, we using a virtual arm clk for CPU frequency
-scaling, so correct the clocks info used by the cpufreq driver.
+Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
+so it is built also on ARMv7. This does not bring any kind of benefit.
+There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
+multi_v7 for ARMv7).
 
-Signed-off-by: Bai Ping <b51503@freescale.com>
+Instead build clock drivers only for respective SoC's architecture.
+
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+
 ---
- arch/arm/boot/dts/imx7d.dtsi | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/imx7d.dtsi b/arch/arm/boot/dts/imx7d.dtsi
-index ebc053a..489604a 100644
---- a/arch/arm/boot/dts/imx7d.dtsi
-+++ b/arch/arm/boot/dts/imx7d.dtsi
-@@ -85,9 +85,7 @@
- 				792000	975000
- 			>;
- 			clock-latency = <61036>; /* two CLK32 periods */
--			clocks = <&clks IMX7D_ARM_A7_ROOT_CLK>, <&clks IMX7D_ARM_A7_ROOT_SRC>,
--				 <&clks IMX7D_PLL_ARM_MAIN_CLK>, <&clks IMX7D_PLL_SYS_MAIN_CLK>;
--			clock-names = "arm", "arm_root_src", "pll_arm", "pll_sys_main";
-+			clocks = <&clks IMX7D_CLK_ARM>;
- 		};
+Changes since v1:
+1. Use one Kconfig symbol for clocks of all ARM64 SoCs (after
+   discussion): EXYNOS_ARM64_COMMON_CLK.
+2. Minor cleanups after Tomasz's comments.
+3. Added tags: Chanwoo's, Sylwester's, Alim's and Tomasz's (the tags
+   were given for v1 but assuming that change from 1. is not major
+   enough to require re-tagging).
+---
+ drivers/clk/samsung/Kconfig  | 6 ++++++
+ drivers/clk/samsung/Makefile | 4 ++--
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+index 84196ecdaa12..3a2c032965e6 100644
+--- a/drivers/clk/samsung/Kconfig
++++ b/drivers/clk/samsung/Kconfig
+@@ -2,6 +2,7 @@ config COMMON_CLK_SAMSUNG
+ 	bool
+ 	select COMMON_CLK
  
- 		cpu1: cpu@1 {
++# ARM SoCs:
+ config S3C2410_COMMON_CLK
+ 	bool
+ 	select COMMON_CLK_SAMSUNG
+@@ -24,3 +25,8 @@ config S3C2443_COMMON_CLK
+ 	bool
+ 	select COMMON_CLK_SAMSUNG
+ 
++# ARM64 SoCs (e.g. Exynos5433, Exynos7):
++config EXYNOS_ARM64_COMMON_CLK
++	def_bool ARCH_EXYNOS
++	depends on ARM64 || COMPILE_TEST
++	select COMMON_CLK_SAMSUNG
+diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
+index 5f6833ea355d..fc367d4b2902 100644
+--- a/drivers/clk/samsung/Makefile
++++ b/drivers/clk/samsung/Makefile
+@@ -10,11 +10,11 @@ obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
+ obj-$(CONFIG_SOC_EXYNOS5260)	+= clk-exynos5260.o
+ obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
+ obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
+-obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos5433.o
++obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos5433.o
+ obj-$(CONFIG_SOC_EXYNOS5440)	+= clk-exynos5440.o
+ obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-audss.o
+ obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-clkout.o
+-obj-$(CONFIG_ARCH_EXYNOS7)	+= clk-exynos7.o
++obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos7.o
+ obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
+ obj-$(CONFIG_S3C2410_COMMON_DCLK)+= clk-s3c2410-dclk.o
+ obj-$(CONFIG_S3C2412_COMMON_CLK)+= clk-s3c2412.o
 -- 
 1.9.1
