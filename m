@@ -1,99 +1,53 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Julia Lawall <Julia.Lawall@lip6.fr>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v4 13/24] hwmon: pwm-fan: use pwm_get/set_default_xxx() helpers where appropriate
-Date: Mon, 16 Nov 2015 09:56:36 +0100
-Message-Id: <1447664207-24370-14-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <rjui@broadcom.com>
+Subject: Re: [PATCH 2/3] clk: iproc: Add support for Cygnus audio clocks
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1447870089-2382-1-git-send-email-rjui@broadcom.com>
+ <1447870089-2382-3-git-send-email-rjui@broadcom.com>
+ <20151121002119.GA28998@codeaurora.org>
+CC: Michael Turquette <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>,
+	Simran Rai <ssimran@broadcom.com>
+From: Ray Jui <rjui@broadcom.com>
+Message-ID: <564FC186.5010608@broadcom.com>
+Date: Fri, 20 Nov 2015 16:57:42 -0800
+MIME-Version: 1.0
+In-Reply-To: <20151121002119.GA28998@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: rjui@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-pwm_set/get_default_xxx() helpers have been introduced to differentiate
-the default PWM states (those retrieved through DT, PWM lookup table or
-statically assigned by the driver) and the current ones.
-Make use of those helpers where appropriate.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- drivers/hwmon/pwm-fan.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
-index 105b964..989d7b4 100644
---- a/drivers/hwmon/pwm-fan.c
-+++ b/drivers/hwmon/pwm-fan.c
-@@ -47,8 +47,9 @@ static int  __set_pwm(struct pwm_fan_ctx *ctx, unsigned long pwm)
- 	if (ctx->pwm_value == pwm)
- 		goto exit_set_pwm_err;
- 
--	duty = DIV_ROUND_UP(pwm * (pwm_get_period((ctx->pwm)) - 1), MAX_PWM);
--	ret = pwm_config(ctx->pwm, duty, pwm_get_period((ctx->pwm)));
-+	duty = DIV_ROUND_UP(pwm * (pwm_get_default_period((ctx->pwm)) - 1),
-+			    MAX_PWM);
-+	ret = pwm_config(ctx->pwm, duty, pwm_get_default_period((ctx->pwm)));
- 	if (ret)
- 		goto exit_set_pwm_err;
- 
-@@ -234,10 +235,11 @@ static int pwm_fan_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, ctx);
- 
- 	/* Set duty cycle to maximum allowed */
--	duty_cycle = pwm_get_period((ctx->pwm)) - 1;
-+	duty_cycle = pwm_get_default_period((ctx->pwm)) - 1;
- 	ctx->pwm_value = MAX_PWM;
- 
--	ret = pwm_config(ctx->pwm, duty_cycle, pwm_get_period((ctx->pwm)));
-+	ret = pwm_config(ctx->pwm, duty_cycle,
-+			 pwm_get_default_period((ctx->pwm)));
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to configure PWM\n");
- 		return ret;
-@@ -309,9 +311,10 @@ static int pwm_fan_resume(struct device *dev)
- 	if (ctx->pwm_value == 0)
- 		return 0;
- 
--	duty = DIV_ROUND_UP(ctx->pwm_value * (pwm_get_period((ctx->pwm)) - 1),
-+	duty = DIV_ROUND_UP(ctx->pwm_value *
-+			    (pwm_get_default_period((ctx->pwm)) - 1),
- 			    MAX_PWM);
--	ret = pwm_config(ctx->pwm, duty, pwm_get_period((ctx->pwm)));
-+	ret = pwm_config(ctx->pwm, duty, pwm_get_default_period((ctx->pwm)));
- 	if (ret)
- 		return ret;
- 	return pwm_enable(ctx->pwm);
--- 
-2.1.4
+On 11/20/2015 4:21 PM, Stephen Boyd wrote:
+> On 11/18, Ray Jui wrote:
+>> diff --git a/drivers/clk/bcm/clk-iproc.h b/drivers/clk/bcm/clk-iproc.h
+>> index 8988de7..e2a7748 100644
+>> --- a/drivers/clk/bcm/clk-iproc.h
+>> +++ b/drivers/clk/bcm/clk-iproc.h
+>> @@ -194,5 +215,11 @@ void __init iproc_asiu_setup(struct device_node *node,
+>>   			     const struct iproc_asiu_div *div,
+>>   			     const struct iproc_asiu_gate *gate,
+>>   			     unsigned int num_clks);
+>> +void __init iproc_audiopll_clk_setup(struct device_node *node,
+>> +				const struct iproc_pll_ctrl *pll_ctrl,
+>> +				const struct iproc_pll_vco_param *vco,
+>> +				unsigned int num_vco_entries,
+>> +				const struct iproc_clk_ctrl *clk_ctrl,
+>> +				unsigned int num_clks);
+>
+> We don't need __init in header files. And is this even used or
+> defined anywhere?
+>
+
+Does it make more sense if I add an incremental patch to remove all of 
+the __init in this header?
+
+Ah, this is a mistake. cygnus_audiopll_clk_init is already defined in 
+clk-cygnus.c and is meant to call iproc_pll_clk_setup to set up the 
+clock. iproc_pll_clk_setup is already declared in this header.
+
+iproc_audiopll_clk_setup should be removed here.
+
+Thanks,
+
+Ray
