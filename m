@@ -1,54 +1,31 @@
-Return-Path: <jacob@teenage.engineering>
-Return-Path: <jacob@teenage.engineering>
-From: Jacob Siverskog <jacob@teenage.engineering>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Belisko Marek <marek.belisko@gmail.com>,
-	Jacob Siverskog <jacob@teenage.engineering>,
-	Jens Rudberg <jens@teenage.engineering>
-Subject: [PATCH v2] clk: si5351: Add PLL soft reset
-Date: Fri, 20 Nov 2015 18:22:17 +0100
-Message-Id: <1448040137-21400-2-git-send-email-jacob@teenage.engineering>
-In-Reply-To: <1448040137-21400-1-git-send-email-jacob@teenage.engineering>
-References: <CAEnXRPvCLRDFotc8FkS35df1PoLUW=X=1bTTUHR=UhRU_9zrCw@mail.gmail.com>
- <1448040137-21400-1-git-send-email-jacob@teenage.engineering>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 20 Nov 2015 16:31:30 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Tero Kristo <t-kristo@ti.com>, kernel-janitors@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: ti: dra7: constify clk_hw_omap_ops structure
+Message-ID: <20151121003130.GB28998@codeaurora.org>
+References: <1447616894-31717-1-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1447616894-31717-1-git-send-email-Julia.Lawall@lip6.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is according to figure 12 ("I2C Programming Procedure") in
-"Si5351A/B/C Data Sheet"
-(https://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351-B.pdf).
+On 11/15, Julia Lawall wrote:
+> The clk_hw_omap_ops structures are never modified, so declare this one as
+> const, like the others.
+> 
+> Done with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
 
-Without the PLL soft reset, we were unable to get three outputs
-working at the same time.
+Applied to clk-next
 
-According to Silicon Labs support, performing PLL soft reset will only
-be noticeable if the PLL parameters have been changed.
-
-Signed-off-by: Jacob Siverskog <jacob@teenage.engineering>
-Signed-off-by: Jens Rudberg <jens@teenage.engineering>
----
- drivers/clk/clk-si5351.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index e346b22..984c058 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -1091,6 +1091,12 @@ static int si5351_clkout_set_rate(struct clk_hw *hw, unsigned long rate,
- 	si5351_set_bits(hwdata->drvdata, SI5351_CLK0_CTRL + hwdata->num,
- 			SI5351_CLK_POWERDOWN, 0);
- 
-+	/* do a pll soft reset on both plls, needed in some cases to get all
-+	 * outputs running
-+	 */
-+	si5351_reg_write(hwdata->drvdata, SI5351_PLL_RESET,
-+			 SI5351_PLL_RESET_A | SI5351_PLL_RESET_B);
-+
- 	dev_dbg(&hwdata->drvdata->client->dev,
- 		"%s - %s: rdiv = %u, parent_rate = %lu, rate = %lu\n",
- 		__func__, clk_hw_get_name(hw), (1 << rdiv),
 -- 
-2.6.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
