@@ -1,85 +1,183 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from exsmtp01.microchip.com ([198.175.253.37]:14782 "EHLO
+	email.microchip.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1759225AbbKUATK (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 20 Nov 2015 19:19:10 -0500
+From: Joshua Henderson <joshua.henderson@microchip.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <linux-mips@linux-mips.org>,
+	Joshua Henderson <joshua.henderson@microchip.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Andrei Pistirica <andrei.pistirica@microchip.com>,
+	Andrew Bresticker <abrestic@chromium.org>,
+	Andy Green <andy.green@linaro.org>,
+	Ben Hutchings <ben@decadent.org.uk>,
+	Chaotian Jing <chaotian.jing@mediatek.com>,
+	"Corneliu Doban" <cdoban@broadcom.com>,
+	Cristian Birsan <cristian.birsan@microchip.com>,
+	<devicetree@vger.kernel.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	"Jean Delvare" <jdelvare@suse.de>, Kevin Hao <haokexin@gmail.com>,
+	<linux-api@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+	<linux-serial@vger.kernel.org>, Lokesh Vutla <lokeshvutla@ti.com>,
+	"ludovic.desroches@atmel.com" <ludovic.desroches@atmel.com>,
+	"Luis de Bethencourt" <luisbg@osg.samsung.com>,
+	Paul Burton <paul.burton@imgtec.com>,
+	Purna Chandra Mandal <purna.mandal@microchip.com>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Scott Branden <sbranden@broadcom.com>,
+	Shawn Lin <shawn.lin@rock-chips.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Julia Lawall <Julia.Lawall@lip6.fr>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v4 12/24] misc: max77693: use pwm_get/set_default_xxx() helpers where appropriate
-Date: Mon, 16 Nov 2015 09:56:35 +0100
-Message-Id: <1447664207-24370-13-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Vincent Yang <vincent.yang.fujitsu@gmail.com>,
+	Weijun Yang <Weijun.Yang@csr.com>,
+	yangbo lu <yangbo.lu@freescale.com>
+Subject: [PATCH 00/14] Initial Microchip PIC32MZDA Support
+Date: Fri, 20 Nov 2015 17:17:12 -0700
+Message-ID: <1448065205-15762-1-git-send-email-joshua.henderson@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-pwm_set/get_default_xxx() helpers have been introduced to differentiate
-the default PWM states (those retrieved through DT, PWM lookup table or
-statically assigned by the driver) and the current ones.
-Make use of those helpers where appropriate.
+This patch series adds support for the Microchip PIC32MZDA MIPS
+platform. All drivers required to boot from MMC uSD card are
+included. Clock and external interrupt controller drivers are
+included. USART, console, and SDHCI peripheral drivers along with
+the dependent pinctrl driver are included. This has been tested on
+an applicable PIC32MZDA Starter Kit. A tree with these changes is
+available at [0].
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- drivers/input/misc/max77693-haptic.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+[0] https://github.com/joshua-henderson/linux/tree/pic32-upstream-v1
 
-diff --git a/drivers/input/misc/max77693-haptic.c b/drivers/input/misc/max77693-haptic.c
-index a038fb3..89f5055 100644
---- a/drivers/input/misc/max77693-haptic.c
-+++ b/drivers/input/misc/max77693-haptic.c
-@@ -70,11 +70,12 @@ struct max77693_haptic {
- 
- static int max77693_haptic_set_duty_cycle(struct max77693_haptic *haptic)
- {
--	int delta = (pwm_get_period((haptic->pwm_dev)) + haptic->pwm_duty) / 2;
-+	int delta = (pwm_get_default_period((haptic->pwm_dev)) +
-+		     haptic->pwm_duty) / 2;
- 	int error;
- 
- 	error = pwm_config(haptic->pwm_dev, delta,
--			   pwm_get_period((haptic->pwm_dev)));
-+			   pwm_get_default_period((haptic->pwm_dev)));
- 	if (error) {
- 		dev_err(haptic->dev, "failed to configure pwm: %d\n", error);
- 		return error;
-@@ -246,7 +247,8 @@ static int max77693_haptic_play_effect(struct input_dev *dev, void *data,
- 	 * The formula to convert magnitude to pwm_duty as follows:
- 	 * - pwm_duty = (magnitude * pwm_period) / MAX_MAGNITUDE(0xFFFF)
- 	 */
--	period_mag_multi = (u64)pwm_get_period((haptic->pwm_dev)) * haptic->magnitude;
-+	period_mag_multi = (u64)pwm_get_default_period((haptic->pwm_dev)) *
-+			   haptic->magnitude;
- 	haptic->pwm_duty = (unsigned int)(period_mag_multi >>
- 						MAX_MAGNITUDE_SHIFT);
- 
--- 
-2.1.4
+Andrei Pistirica (6):
+  DEVICETREE: Add bindings for PIC32 pin control and GPIO
+  pinctrl: Add PIC32 pin control driver
+  DEVICETREE: Add bindings for PIC32 usart driver
+  serial: pic32_uart: Add PIC32 uart driver
+  mmc: sdhci-pic32: Add PIC32 SDHC host controller driver
+  DEVICETREE: Add bindings for PIC32 SDHC host controller
+
+Cristian Birsan (2):
+  DEVICETREE: Add bindings for PIC32 interrupt controller
+  irqchip: irq-pic32-evic: Add support for PIC32 interrupt controller
+
+Joshua Henderson (4):
+  DEVICETREE: Add bindings for PIC32/MZDA platforms
+  MIPS: Add support for PIC32MZDA platform
+  MIPS: dts: Add initial DTS for the PIC32MZDA Starter Kit
+  MIPS: pic32mzda: Add initial PIC32MZDA Starter Kit defconfig
+
+Purna Chandra Mandal (2):
+  DEVICETREE: Add PIC32 clock binding documentation
+  clk: clk-pic32: Add PIC32 clock driver
+
+ .../devicetree/bindings/clock/microchip,pic32.txt  |  263 +++
+ .../bindings/gpio/microchip,pic32-gpio.txt         |   33 +
+ .../microchip,pic32mz-evic.txt                     |   65 +
+ .../bindings/mips/pic32/microchip,pic32mzda.txt    |   33 +
+ .../devicetree/bindings/mmc/sdhci-pic32.txt        |   24 +
+ .../bindings/pinctrl/microchip,pic32-pinctrl.txt   |  100 +
+ .../bindings/serial/microchip,pic32-usart.txt      |   29 +
+ arch/mips/Kbuild.platforms                         |    1 +
+ arch/mips/Kconfig                                  |    9 +
+ arch/mips/boot/dts/Makefile                        |    1 +
+ arch/mips/boot/dts/pic32/Makefile                  |   12 +
+ arch/mips/boot/dts/pic32/pic32mzda-clk.dtsi        |  251 +++
+ arch/mips/boot/dts/pic32/pic32mzda.dtsi            |  280 +++
+ arch/mips/boot/dts/pic32/pic32mzda_sk.dts          |  150 ++
+ arch/mips/configs/pic32mzda_defconfig              |   88 +
+ .../include/asm/mach-pic32/cpu-feature-overrides.h |   32 +
+ arch/mips/include/asm/mach-pic32/gpio.h            |   26 +
+ arch/mips/include/asm/mach-pic32/irq.h             |   22 +
+ arch/mips/include/asm/mach-pic32/pic32.h           |   44 +
+ arch/mips/include/asm/mach-pic32/spaces.h          |   24 +
+ arch/mips/pic32/Kconfig                            |   50 +
+ arch/mips/pic32/Makefile                           |    6 +
+ arch/mips/pic32/Platform                           |    7 +
+ arch/mips/pic32/common/Makefile                    |    5 +
+ arch/mips/pic32/common/irq.c                       |   20 +
+ arch/mips/pic32/common/reset.c                     |   62 +
+ arch/mips/pic32/pic32mzda/Makefile                 |    9 +
+ arch/mips/pic32/pic32mzda/config.c                 |  148 ++
+ arch/mips/pic32/pic32mzda/early_clk.c              |  106 +
+ arch/mips/pic32/pic32mzda/early_console.c          |  171 ++
+ arch/mips/pic32/pic32mzda/early_pin.c              |  275 +++
+ arch/mips/pic32/pic32mzda/early_pin.h              |  241 +++
+ arch/mips/pic32/pic32mzda/init.c                   |  156 ++
+ arch/mips/pic32/pic32mzda/pic32mzda.h              |   30 +
+ arch/mips/pic32/pic32mzda/time.c                   |   47 +
+ drivers/clk/Kconfig                                |    3 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/clk-pic32.c                            | 1947 ++++++++++++++++++
+ drivers/irqchip/Makefile                           |    1 +
+ drivers/irqchip/irq-pic32-evic.c                   |  309 +++
+ drivers/mmc/host/Kconfig                           |   11 +
+ drivers/mmc/host/Makefile                          |    1 +
+ drivers/mmc/host/sdhci-pic32.c                     |  354 ++++
+ drivers/pinctrl/Kconfig                            |   17 +
+ drivers/pinctrl/Makefile                           |    2 +
+ drivers/pinctrl/pinctrl-pic32.c                    | 2127 ++++++++++++++++++++
+ drivers/pinctrl/pinctrl-pic32.h                    |  158 ++
+ drivers/pinctrl/pinctrl-pic32mzda.c                |  294 +++
+ drivers/pinctrl/pinctrl-pic32mzda.h                |   40 +
+ drivers/tty/serial/Kconfig                         |   21 +
+ drivers/tty/serial/Makefile                        |    1 +
+ drivers/tty/serial/pic32_uart.c                    |  930 +++++++++
+ drivers/tty/serial/pic32_uart.h                    |  199 ++
+ .../interrupt-controller/microchip,pic32mz-evic.h  |  238 +++
+ include/dt-bindings/pinctrl/pic32mzda.h            |  404 ++++
+ include/linux/irqchip/pic32-evic.h                 |   19 +
+ include/linux/platform_data/sdhci-pic32.h          |   22 +
+ include/uapi/linux/serial_core.h                   |    3 +
+ 58 files changed, 9922 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/microchip,pic32.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/microchip,pic32-gpio.txt
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/microchip,pic32mz-evic.txt
+ create mode 100644 Documentation/devicetree/bindings/mips/pic32/microchip,pic32mzda.txt
+ create mode 100644 Documentation/devicetree/bindings/mmc/sdhci-pic32.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/microchip,pic32-pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/serial/microchip,pic32-usart.txt
+ create mode 100644 arch/mips/boot/dts/pic32/Makefile
+ create mode 100644 arch/mips/boot/dts/pic32/pic32mzda-clk.dtsi
+ create mode 100644 arch/mips/boot/dts/pic32/pic32mzda.dtsi
+ create mode 100644 arch/mips/boot/dts/pic32/pic32mzda_sk.dts
+ create mode 100644 arch/mips/configs/pic32mzda_defconfig
+ create mode 100644 arch/mips/include/asm/mach-pic32/cpu-feature-overrides.h
+ create mode 100644 arch/mips/include/asm/mach-pic32/gpio.h
+ create mode 100644 arch/mips/include/asm/mach-pic32/irq.h
+ create mode 100644 arch/mips/include/asm/mach-pic32/pic32.h
+ create mode 100644 arch/mips/include/asm/mach-pic32/spaces.h
+ create mode 100644 arch/mips/pic32/Kconfig
+ create mode 100644 arch/mips/pic32/Makefile
+ create mode 100644 arch/mips/pic32/Platform
+ create mode 100644 arch/mips/pic32/common/Makefile
+ create mode 100644 arch/mips/pic32/common/irq.c
+ create mode 100644 arch/mips/pic32/common/reset.c
+ create mode 100644 arch/mips/pic32/pic32mzda/Makefile
+ create mode 100644 arch/mips/pic32/pic32mzda/config.c
+ create mode 100644 arch/mips/pic32/pic32mzda/early_clk.c
+ create mode 100644 arch/mips/pic32/pic32mzda/early_console.c
+ create mode 100644 arch/mips/pic32/pic32mzda/early_pin.c
+ create mode 100644 arch/mips/pic32/pic32mzda/early_pin.h
+ create mode 100644 arch/mips/pic32/pic32mzda/init.c
+ create mode 100644 arch/mips/pic32/pic32mzda/pic32mzda.h
+ create mode 100644 arch/mips/pic32/pic32mzda/time.c
+ create mode 100644 drivers/clk/clk-pic32.c
+ create mode 100644 drivers/irqchip/irq-pic32-evic.c
+ create mode 100644 drivers/mmc/host/sdhci-pic32.c
+ create mode 100644 drivers/pinctrl/pinctrl-pic32.c
+ create mode 100644 drivers/pinctrl/pinctrl-pic32.h
+ create mode 100644 drivers/pinctrl/pinctrl-pic32mzda.c
+ create mode 100644 drivers/pinctrl/pinctrl-pic32mzda.h
+ create mode 100644 drivers/tty/serial/pic32_uart.c
+ create mode 100644 drivers/tty/serial/pic32_uart.h
+ create mode 100644 include/dt-bindings/interrupt-controller/microchip,pic32mz-evic.h
+ create mode 100644 include/dt-bindings/pinctrl/pic32mzda.h
+ create mode 100644 include/linux/irqchip/pic32-evic.h
+ create mode 100644 include/linux/platform_data/sdhci-pic32.h
+
+--
+1.7.9.5
+
