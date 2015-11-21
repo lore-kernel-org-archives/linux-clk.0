@@ -1,48 +1,38 @@
-Return-Path: <mkarthi3@visteon.com>
-From: "Mutharaju, Prasanna (P.)" <mkarthi3@visteon.com>
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski
-	<k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org"
-	<linux-samsung-soc@vger.kernel.org>
-Subject: [PATCH] CLK: s3c2410: removed unneeded code in
- s3c24xx_clkout_set_parent
-Date: Mon, 30 Nov 2015 07:01:08 +0000
-Message-ID: <20151130070044.GA23071@jci-VirtualBox>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 20 Nov 2015 16:21:19 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Ray Jui <rjui@broadcom.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+	Simran Rai <ssimran@broadcom.com>
+Subject: Re: [PATCH 2/3] clk: iproc: Add support for Cygnus audio clocks
+Message-ID: <20151121002119.GA28998@codeaurora.org>
+References: <1447870089-2382-1-git-send-email-rjui@broadcom.com>
+ <1447870089-2382-3-git-send-email-rjui@broadcom.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1447870089-2382-3-git-send-email-rjui@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Prasanna Karthik <mkarthi3@visteon.com>
+On 11/18, Ray Jui wrote:
+> diff --git a/drivers/clk/bcm/clk-iproc.h b/drivers/clk/bcm/clk-iproc.h
+> index 8988de7..e2a7748 100644
+> --- a/drivers/clk/bcm/clk-iproc.h
+> +++ b/drivers/clk/bcm/clk-iproc.h
+> @@ -194,5 +215,11 @@ void __init iproc_asiu_setup(struct device_node *node,
+>  			     const struct iproc_asiu_div *div,
+>  			     const struct iproc_asiu_gate *gate,
+>  			     unsigned int num_clks);
+> +void __init iproc_audiopll_clk_setup(struct device_node *node,
+> +				const struct iproc_pll_ctrl *pll_ctrl,
+> +				const struct iproc_pll_vco_param *vco,
+> +				unsigned int num_vco_entries,
+> +				const struct iproc_clk_ctrl *clk_ctrl,
+> +				unsigned int num_clks);
 
-Remove unneeded variable used to store return value.
+We don't need __init in header files. And is this even used or
+defined anywhere?
 
-Signed-off-by: Prasanna Karthik <mkarthi3@visteon.com>
----
- drivers/clk/samsung/clk-s3c2410-dclk.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/c=
-lk-s3c2410-dclk.c
-index e9eb935..ec6fb14 100644
---- a/drivers/clk/samsung/clk-s3c2410-dclk.c
-+++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
-@@ -77,12 +77,11 @@ static u8 s3c24xx_clkout_get_parent(struct clk_hw *hw)
- static int s3c24xx_clkout_set_parent(struct clk_hw *hw, u8 index)
- {
- 	struct s3c24xx_clkout *clkout =3D to_s3c24xx_clkout(hw);
--	int ret =3D 0;
-=20
- 	s3c2410_modify_misccr((clkout->mask << clkout->shift),
- 			      (index << clkout->shift));
-=20
--	return ret;
-+	return 0;
- }
-=20
- static const struct clk_ops s3c24xx_clkout_ops =3D {
---=20
-1.9.1
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
