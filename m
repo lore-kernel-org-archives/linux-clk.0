@@ -1,59 +1,76 @@
-Return-Path: <repk@triplefau.lt>
-From: Remi Pommarel <repk@triplefau.lt>
-To: Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <festevam@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <564DD51A.8040100@dev.rtsoft.ru>
+References: <564DD51A.8040100@dev.rtsoft.ru>
+Date: Sat, 21 Nov 2015 17:23:27 -0200
+Message-ID: <CAOMZO5DOwy1oDbNsEDmQ+a4EcCo7QOv0ZYsJ93gj=4oNUNqANA@mail.gmail.com>
+Subject: Re: imx6dl clock setup incorrectness
+From: Fabio Estevam <festevam@gmail.com>
+To: Nikita Yushchenko <nyushchenko@dev.rtsoft.ru>
+Cc: "meta-freescale@yoctoproject.org" <meta-freescale@yoctoproject.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>, Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Remi Pommarel <repk@triplefau.lt>
-Subject: [PATCH v2 1/3] clk: bcm2835: Always round up clock divisor
-Date: Wed, 11 Nov 2015 15:22:43 +0100
-Message-Id: <1447251765-16297-2-git-send-email-repk@triplefau.lt>
-In-Reply-To: <1447251765-16297-1-git-send-email-repk@triplefau.lt>
-References: <1447251765-16297-1-git-send-email-repk@triplefau.lt>
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Gennady Kuznetsov <kuznetsovg@dev.rtsoft.ru>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Make bcm2835_clock_choose_div always round up the chosen MASH divisor so that
-the resulting average rate will not be higher than the requested one.
+On Thu, Nov 19, 2015 at 11:56 AM, Nikita Yushchenko
+<nyushchenko@dev.rtsoft.ru> wrote:
+> Hi
+>
+> While working with board with imx6s cpu, with kernel based on linux-imx
+> imx_3.14.28_1.0.0_ga branch, I noticed this message in boot log:
+>
+>> failed to set parent of clk gpu2d_core_sel to pll2_pfd1_594m
+>
+>
+> I looked into it and found that:
+>
+> - CCM_CBCMR register layout is different between imx6q/imx6d and
+> imc6dl/imx6s (at least manuals state that)
+>
+> - clock setup in clk-imx6q.c (that is used both got imx6q/imx6d and
+> imx6dl/imx6s) creates gpu2d_core_sel clock object as described in imx6q
+> manual (i.e. using bits 18:19 of CCM_CBCMR register)
+>
+> - however per imx6dl manual, these bits contain different field
+> (mlb_sys_sel) on imx6dl/imx6s, and gpu2d_core sel is in bits 8:9
+>
+> - imx6q has different clock selector, gpu3d_shader_clk_sel, in bits 8:9,
+> and existing code unconditionally creates gpu3d_shader_clk_sel clock object
+>
+> - per manual, gpu3d_shader_clk_sel does not exist on imx6qdl/imx6s
+>
+> - however gpu driver (which also is common between imx6q/imx6d and
+> imc6dl/imx6s) does use gpu3d_shader_clk which is child of
+> gpu3d_shader_clk_sel. Which means that it is not possible to simply
+> change clock object creation code to match manuals.
+>
+>
+> I'm looking for advice how to fix this situation properly.
+>
+>
+> Btw situation is the same in mainline kernel - clock setup code in
+> mainline is moved to drivers/clk/imx/ but still has the same incorrectness.
 
-Signed-off-by: Remi Pommarel <repk@triplefau.lt>
----
- drivers/clk/bcm/clk-bcm2835.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+Isn't this handled by the following commit?
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 39bf582..1237716 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1152,18 +1152,19 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
- {
- 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
- 	const struct bcm2835_clock_data *data = clock->data;
--	u32 unused_frac_mask = GENMASK(CM_DIV_FRAC_BITS - data->frac_bits, 0);
-+	u32 unused_frac_mask =
-+		GENMASK(CM_DIV_FRAC_BITS - data->frac_bits, 0) >> 1;
- 	u64 temp = (u64)parent_rate << CM_DIV_FRAC_BITS;
-+	u64 rem;
- 	u32 div;
- 
--	do_div(temp, rate);
-+	rem = do_div(temp, rate);
- 	div = temp;
- 
--	/* Round and mask off the unused bits */
--	if (unused_frac_mask != 0) {
--		div += unused_frac_mask >> 1;
--		div &= ~unused_frac_mask;
--	}
-+	/* Round up and mask off the unused bits */
-+	if ((div & unused_frac_mask) != 0 || rem != 0)
-+		div += unused_frac_mask + 1;
-+	div &= ~unused_frac_mask;
- 
- 	/* Clamp to the limits. */
- 	div = max(div, unused_frac_mask + 1);
--- 
-2.0.1
+commit 2e603ad98460fd0efab71e618d49a2ffc9aef67b
+Author: Dirk Behme <dirk.behme@de.bosch.com>
+Date:   Fri May 3 11:08:45 2013 +0200
+
+    ARM: i.MX6: clk: add i.MX6 DualLite differences
+
+    The CCM_CBCMR register (address 0x02C4018) has different meaning
+    between the i.MX6 Quad/Dual and the i.MX6 Solo/DualLite.
+
+    Compared to the i.MX6 Quad/Dual, the CCM_CBCMR register in the
+    i.MX6 Solo/DualLite doesn't have a gpu3d_shader configuration and
+    moves the gpu2_core configuration at that place.
+
+    Handle these i.MX6 Quad/Dual vs. i.MX6 Solo/DualLite clock differences
+    by using cpu_is_mx6dl().
+
+    Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+    Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
