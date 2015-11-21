@@ -1,38 +1,60 @@
-Return-Path: <nicolas.pitre@linaro.org>
-Return-Path: <nicolas.pitre@linaro.org>
-Date: Tue, 3 Nov 2015 23:17:11 -0500 (EST)
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-To: Tero Kristo <t-kristo@ti.com>, Michael Turquette <mturquette@baylibre.com>
-cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH] ti/fapll: fix wrong do_div() usage
-Message-ID: <alpine.LFD.2.20.1511032314240.630@knanqh.ubzr>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 20 Nov 2015 17:05:01 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Ray Jui <rjui@broadcom.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+	Simran Rai <ssimran@broadcom.com>
+Subject: Re: [PATCH 2/3] clk: iproc: Add support for Cygnus audio clocks
+Message-ID: <20151121010501.GA19156@codeaurora.org>
+References: <1447870089-2382-1-git-send-email-rjui@broadcom.com>
+ <1447870089-2382-3-git-send-email-rjui@broadcom.com>
+ <20151121002119.GA28998@codeaurora.org>
+ <564FC186.5010608@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <564FC186.5010608@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-do_div() is meant to be used with an unsigned dividend.
+On 11/20, Ray Jui wrote:
+> 
+> 
+> On 11/20/2015 4:21 PM, Stephen Boyd wrote:
+> >On 11/18, Ray Jui wrote:
+> >>diff --git a/drivers/clk/bcm/clk-iproc.h b/drivers/clk/bcm/clk-iproc.h
+> >>index 8988de7..e2a7748 100644
+> >>--- a/drivers/clk/bcm/clk-iproc.h
+> >>+++ b/drivers/clk/bcm/clk-iproc.h
+> >>@@ -194,5 +215,11 @@ void __init iproc_asiu_setup(struct device_node *node,
+> >>  			     const struct iproc_asiu_div *div,
+> >>  			     const struct iproc_asiu_gate *gate,
+> >>  			     unsigned int num_clks);
+> >>+void __init iproc_audiopll_clk_setup(struct device_node *node,
+> >>+				const struct iproc_pll_ctrl *pll_ctrl,
+> >>+				const struct iproc_pll_vco_param *vco,
+> >>+				unsigned int num_vco_entries,
+> >>+				const struct iproc_clk_ctrl *clk_ctrl,
+> >>+				unsigned int num_clks);
+> >
+> >We don't need __init in header files. And is this even used or
+> >defined anywhere?
+> >
+> 
+> Does it make more sense if I add an incremental patch to remove all
+> of the __init in this header?
 
-Signed-off-by: Nicolas Pitre <nico@linaro.org>
+That patch is welcome.
 
-diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
-index f4b2e9888b..66a0d0ed8b 100644
---- a/drivers/clk/ti/fapll.c
-+++ b/drivers/clk/ti/fapll.c
-@@ -168,7 +168,7 @@ static unsigned long ti_fapll_recalc_rate(struct clk_hw *hw,
- {
- 	struct fapll_data *fd = to_fapll(hw);
- 	u32 fapll_n, fapll_p, v;
--	long long rate;
-+	u64 rate;
- 
- 	if (ti_fapll_clock_is_bypass(fd))
- 		return parent_rate;
-@@ -314,7 +314,7 @@ static unsigned long ti_fapll_synth_recalc_rate(struct clk_hw *hw,
- {
- 	struct fapll_synth *synth = to_synth(hw);
- 	u32 synth_div_m;
--	long long rate;
-+	u64 rate;
- 
- 	/* The audio_pll_clk1 is hardwired to produce 32.768KiHz clock */
- 	if (!synth->div)
+> 
+> Ah, this is a mistake. cygnus_audiopll_clk_init is already defined
+> in clk-cygnus.c and is meant to call iproc_pll_clk_setup to set up
+> the clock. iproc_pll_clk_setup is already declared in this header.
+> 
+> iproc_audiopll_clk_setup should be removed here.
+> 
+
+Ok.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
