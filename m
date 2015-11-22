@@ -1,82 +1,92 @@
-Return-Path: <wens@csie.org>
+Return-Path: <manabian@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20151125173252.GN32142@lukather>
-References: <1448357536-26613-1-git-send-email-wens@csie.org>
- <1448357536-26613-4-git-send-email-wens@csie.org> <20151125173252.GN32142@lukather>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 27 Nov 2015 15:13:55 +0800
-Message-ID: <CAGb2v64+LS4QA_xfnbdMUwd0simjpXoSQKRdvPcC1rsjhBHK8w@mail.gmail.com>
-Subject: Re: [PATCH v3 3/5] clk: sunxi: Add sun9i A80 cpus (cpu special) clock support
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+In-Reply-To: <1447981511-29653-9-git-send-email-vz@mleia.com>
+References: <1447981511-29653-1-git-send-email-vz@mleia.com>
+	<1447981511-29653-9-git-send-email-vz@mleia.com>
+Date: Sun, 22 Nov 2015 21:38:08 +0100
+Message-ID: <CAGhQ9VzrGA3jZBKiZzDr=6pGUnbs0aHdKxsxwmkyMWMT+xYghg@mail.gmail.com>
+Subject: Re: [PATCH 08/11] clk: lpc18xx: add NXP specific common clock
+ framework selection
+From: Joachim  Eastwood <manabian@gmail.com>
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>, Arnd Bergmann <arnd@arndb.de>,
+	Russell King <linux@arm.linux.org.uk>, Roland Stigge <stigge@antcom.de>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Nov 26, 2015 at 1:32 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Hi,
+Hi Vladimir,
+
+On 20 November 2015 at 02:05, Vladimir Zapolskiy <vz@mleia.com> wrote:
+> The change adds COMMON_CLK_NXP configuration symbol and enables it for
+> NXP LPC18XX architecture, this is needed to reuse drivers/clk/nxp
+> folder for NXP common clock framework drivers other than LPC18XX one.
 >
-> On Tue, Nov 24, 2015 at 05:32:14PM +0800, Chen-Yu Tsai wrote:
->> The "cpus" clock is the clock for the embedded processor in the A80.
->> It is also part of the PRCM clock tree. This clock includes a pre-
->> divider on one of its inputs. For now we are using a custom clock
->> driver for it. In the future we may want to develop a generalized
->> driver for these types of clocks, which also includes the AHB clock
->> driver on sun[5678]i.
->>
->> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->> ---
->>
->> Hi Maxime,
->>
->> I'll do the factors clock refactoring mentioned during the discussion
->> around v2 later on.
+> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+> Cc: Joachim Eastwood <manabian@gmail.com>
+> ---
+>  arch/arm/Kconfig     | 1 +
+>  drivers/clk/Kconfig  | 5 +++++
+>  drivers/clk/Makefile | 2 +-
+>  3 files changed, 7 insertions(+), 1 deletion(-)
 >
-> I have no idea what you are talking about :)
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 0365cbb..c318277 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -952,6 +952,7 @@ config ARCH_LPC18XX
+>         select ARCH_HAS_RESET_CONTROLLER
+>         select ARM_AMBA
+>         select CLKSRC_LPC32XX
+> +       select COMMON_CLK
 
-Then I guess I have more time to figure something out. :)
+COMMON_CLK is already selected by ARM_SINGLE_ARMV7M which ARCH_LPC18XX
+depends on so this hunk should not be necessary.
 
->>
->> ---
->>  Documentation/devicetree/bindings/clock/sunxi.txt |   1 +
->>  drivers/clk/sunxi/Makefile                        |   1 +
->>  drivers/clk/sunxi/clk-sun9i-cpus.c                | 240 ++++++++++++++++++++++
->>  3 files changed, 242 insertions(+)
->>  create mode 100644 drivers/clk/sunxi/clk-sun9i-cpus.c
->>
->> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
->> index b6859ed6913f..153ac72869e8 100644
->> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
->> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
->> @@ -27,6 +27,7 @@ Required properties:
->>       "allwinner,sun5i-a10s-ahb-gates-clk" - for the AHB gates on A10s
->>       "allwinner,sun7i-a20-ahb-gates-clk" - for the AHB gates on A20
->>       "allwinner,sun6i-a31-ar100-clk" - for the AR100 on A31
->> +     "allwinner,sun9i-a80-cpus-clk" - for the CPUS on A80
->>       "allwinner,sun6i-a31-ahb1-clk" - for the AHB1 clock on A31
->>       "allwinner,sun6i-a31-ahb1-gates-clk" - for the AHB1 gates on A31
->>       "allwinner,sun8i-a23-ahb1-gates-clk" - for the AHB1 gates on A23
->> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
->> index 121333ce34ea..07d914c3f6d1 100644
->> --- a/drivers/clk/sunxi/Makefile
->> +++ b/drivers/clk/sunxi/Makefile
->> @@ -13,6 +13,7 @@ obj-y += clk-simple-gates.o
->>  obj-y += clk-sun8i-apb0.o
->>  obj-y += clk-sun8i-mbus.o
->>  obj-y += clk-sun9i-core.o
->> +obj-y += clk-sun9i-cpus.o
+>         select PINCTRL
+>         help
+>           Support for NXP's LPC18xx Cortex-M3 and LPC43xx Cortex-M4
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index c3e3a02..7fc1eb9 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -175,6 +175,11 @@ config COMMON_CLK_PWM
+>           Adapter driver so that any PWM output can be (mis)used as clock signal
+>           at 50% duty cycle.
 >
-> Same thing here, if it's only used in the A80, just compile it when
-> ARCH_SUN9I is compiled.
+> +config COMMON_CLK_NXP
+> +       def_bool COMMON_CLK && ARCH_LPC18XX
+> +       ---help---
+> +         Support for clock providers on NXP platforms.
+> +
+>  config COMMON_CLK_PXA
+>         def_bool COMMON_CLK && ARCH_PXA
+>         ---help---
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index 820714c..15603c1 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -62,8 +62,8 @@ endif
+>  obj-$(CONFIG_PLAT_ORION)               += mvebu/
+>  obj-$(CONFIG_ARCH_MESON)               += meson/
+>  obj-$(CONFIG_ARCH_MXS)                 += mxs/
+> -obj-$(CONFIG_ARCH_LPC18XX)             += nxp/
+>  obj-$(CONFIG_MACH_PISTACHIO)           += pistachio/
+> +obj-$(CONFIG_COMMON_CLK_NXP)           += nxp/
+>  obj-$(CONFIG_COMMON_CLK_PXA)           += pxa/
+>  obj-$(CONFIG_COMMON_CLK_QCOM)          += qcom/
+>  obj-$(CONFIG_ARCH_ROCKCHIP)            += rockchip/
+> --
 
-Sure. Should I add a patch changing the ones already in? sun9i-core
-and sun9i-mmc that is.
+Other than the one comment above it looks good to me:
+Acked-by: Joachim Eastwood <manabian@gmail.com>
 
-Thanks
-ChenYu
+I'll try to find the time look through the other patches you have for
+lpc32xx. I also have a EA LPC3250 dev kit v2
+(http://embeddedartists.com/products/kits/lpc3250_kit_v2.php) in my
+collection.
+
+regards,
+Joachim Eastwood
