@@ -1,68 +1,81 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:27190 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752447AbbK3IDO (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 30 Nov 2015 03:03:14 -0500
-Subject: Re: [PATCH v3] clk: s3c2410: removed unneeded variable in
- s3c24xx_clkout_set_parent
-To: "Mutharaju, Prasanna (P.)" <mkarthi3@visteon.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-References: <20151130075219.GA27737@jci-VirtualBox>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linux-samsung-soc@vger.kernel.org"
-	<linux-samsung-soc@vger.kernel.org>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <565C02BB.5090506@samsung.com>
-Date: Mon, 30 Nov 2015 17:03:07 +0900
-MIME-version: 1.0
-In-reply-to: <20151130075219.GA27737@jci-VirtualBox>
-Content-type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <atx@atx.name>
+From: Josef Gajdusek <atx@atx.name>
+To: linux-sunxi@googlegroups.com
+Cc: Josef Gajdusek <atx@atx.name>,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	gpatchesrdh@mveas.com,
+	mturquette@linaro.org,
+	hdegoede@redhat.com,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	emilio@elopez.com.ar,
+	linux@arm.linux.org.uk,
+	edubezval@gmail.com,
+	rui.zhang@intel.com,
+	wens@csie.org,
+	maxime.ripard@free-electrons.com,
+	galak@codeaurora.org,
+	ijc+devicetree@hellion.org.uk,
+	mark.rutland@arm.com,
+	pawel.moll@arm.com,
+	robh+dt@kernel.org
+Subject: [PATCH v2 4/5] dt-bindings: document sun8i_ths
+Date: Mon, 23 Nov 2015 09:02:51 +0100
+Message-Id: <20e229f191031b0b0bff96dee118d1f2d988d7b3.1448263428.git.atx@atx.name>
+In-Reply-To: <cover.1448263428.git.atx@atx.name>
+References: <cover.1448263428.git.atx@atx.name>
+In-Reply-To: <cover.1448263428.git.atx@atx.name>
+References: <cover.1448263428.git.atx@atx.name>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 30.11.2015 16:52, Mutharaju, Prasanna (P.) wrote:
-> From: Prasanna Karthik <mkarthi3@visteon.com>
-> 
-> Remove unneeded variable used to store return value.
-> ---
-> v3: Modified subject and changelog comments
-> ---
-> 
-> Signed-off-by: Prasanna Karthik <mkarthi3@visteon.com>
+This patch adds the binding documentation for the sun8i_ths driver
 
-... and now download the patch and try to apply it with "git am". What
-is missing? :)
+Signed-off-by: Josef Gajdusek <atx@atx.name>
+---
+ .../devicetree/bindings/thermal/sun8i-ths.txt      | 31 ++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/thermal/sun8i-ths.txt
 
-Best regards,
-Krzysztof
-
-> ---
->  drivers/clk/samsung/clk-s3c2410-dclk.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
-> index e9eb935..ec6fb14 100644
-> --- a/drivers/clk/samsung/clk-s3c2410-dclk.c
-> +++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
-> @@ -77,12 +77,11 @@ static u8 s3c24xx_clkout_get_parent(struct clk_hw *hw)
->  static int s3c24xx_clkout_set_parent(struct clk_hw *hw, u8 index)
->  {
->  	struct s3c24xx_clkout *clkout = to_s3c24xx_clkout(hw);
-> -	int ret = 0;
->  
->  	s3c2410_modify_misccr((clkout->mask << clkout->shift),
->  			      (index << clkout->shift));
->  
-> -	return ret;
-> +	return 0;
->  }
->  
->  static const struct clk_ops s3c24xx_clkout_ops = {
-> 
-
+diff --git a/Documentation/devicetree/bindings/thermal/sun8i-ths.txt b/Documentation/devicetree/bindings/thermal/sun8i-ths.txt
+new file mode 100644
+index 0000000..67056bf
+--- /dev/null
++++ b/Documentation/devicetree/bindings/thermal/sun8i-ths.txt
+@@ -0,0 +1,31 @@
++* sun8i THS
++
++Required properties:
++- compatible : "allwinner,sun8i-h3-ths"
++- reg : Address range of the thermal registers and location of the calibration
++        value
++- resets : Must contain an entry for each entry in reset-names.
++           see ../reset/reset.txt for details
++- reset-names : Must include the name "ahb"
++- clocks : Must contain an entry for each entry in clock-names.
++- clock-names : Must contain "ahb" for the bus gate and "ths" for the THS
++  clock
++
++Optional properties:
++- nvmem-cells : Must contain an entry for each entry in nvmem-cell-names
++- nvmem-cell-names : Must contain "calibration" for the cell containing the
++  temperature calibration cell, if available
++
++Example:
++ths: ths@01c25000 {
++	#thermal-sensor-cells = <0>;
++	compatible = "allwinner,sun8i-h3-ths";
++	reg = <0x01c25000 0x88>, <0x01c14234 0x4>;
++	interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
++	resets = <&bus_rst 136>;
++	reset-names = "ahb";
++	clocks = <&bus_gates 72>, <&ths_clk>;
++	clock-names = "ahb", "ths";
++	nvmem-cells = <&ths_calibration>;
++	nvmem-cell-names = "calibration";
++};
+-- 
+2.4.10
