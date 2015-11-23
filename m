@@ -1,73 +1,178 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 23 Nov 2015 16:59:19 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Cc: Georgi Djakov <georgi.djakov@linaro.org>,
-	"agross@codeaurora.org" <agross@codeaurora.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH v4 4/5] clk: qcom: Add RPM clock controller driver
-Message-ID: <20151124005919.GN19156@codeaurora.org>
-References: <1447941480-27487-1-git-send-email-georgi.djakov@linaro.org>
- <1447941480-27487-5-git-send-email-georgi.djakov@linaro.org>
- <20151121003953.GD28998@codeaurora.org>
- <20151122021820.GK30882@usrtlx11787.corpusers.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20151122021820.GK30882@usrtlx11787.corpusers.net>
+Return-Path: <plaes@plaes.org>
+Message-ID: <1448274489.27496.1.camel@plaes.org>
+Subject: Re: [linux-sunxi] [PATCH v2 2/5] clk: sunxi: Add driver for the H3
+ THS clock
+From: Priit Laes <plaes@plaes.org>
+To: atx@atx.name, linux-sunxi@googlegroups.com
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, gpatchesrdh@mveas.com, mturquette@linaro.org,
+	hdegoede@redhat.com, sboyd@codeaurora.org, mturquette@baylibre.com,
+	emilio@elopez.com.ar, linux@arm.linux.org.uk, edubezval@gmail.com,
+	rui.zhang@intel.com, wens@csie.org, maxime.ripard@free-electrons.com,
+	galak@codeaurora.org, ijc+devicetree@hellion.org.uk, mark.rutland@arm.com,
+	pawel.moll@arm.com, robh+dt@kernel.org
+Date: Mon, 23 Nov 2015 12:28:09 +0200
+In-Reply-To: <077fddc9c8d41d4cf55b1dd1c7180c4adee0fce4.1448263428.git.atx@atx.name>
+References: <cover.1448263428.git.atx@atx.name>
+	 <077fddc9c8d41d4cf55b1dd1c7180c4adee0fce4.1448263428.git.atx@atx.name>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/21, Bjorn Andersson wrote:
-> On Fri 20 Nov 16:39 PST 2015, Stephen Boyd wrote:
+On Mon, 2015-11-23 at 09:02 +0100, Josef Gajdusek wrote:
+> This patch adds a driver for the THS clock which is present on the
+> Allwinner H3.
 > 
-> > On 11/19, Georgi Djakov wrote:
-> > > diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-> > > new file mode 100644
-> > > index 000000000000..bd0fd0cd50dc
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-> > > @@ -0,0 +1,35 @@
-> > > +Qualcomm RPM Clock Controller Binding
-> > > +------------------------------------------------
-> > > +The RPM is a dedicated hardware engine for managing the shared
-> > > +SoC resources in order to keep the lowest power profile. It
-> > > +communicates with other hardware subsystems via shared memory
-> > > +and accepts clock requests, aggregates the requests and turns
-> > > +the clocks on/off or scales them on demand.
-> > > +
-> > > +Required properties :
-> > > +- compatible : shall contain only one of the following:
-> > > +
-> > > +			"qcom,rpmcc-msm8916"
-> > 
-> > We need to add qcom,rpmcc as a generic compatible as well.
-> > 
+> Signed-off-by: Josef Gajdusek <atx@atx.name>
+> ---
+>  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+>  drivers/clk/sunxi/Makefile                        |  1 +
+>  drivers/clk/sunxi/clk-h3-ths.c                    | 98
+> +++++++++++++++++++++++
+>  3 files changed, 100 insertions(+)
+>  create mode 100644 drivers/clk/sunxi/clk-h3-ths.c
 > 
-> The binding is generic and the clock defines global, so this should work
-> fine on the dt side of things. But how do we implement this?
-> 
-> Which set of clocks does the generic rpmcc actually provide?
-> 
-> Do you foresee that there will be an implementation of the generic rpmcc
-> or is it just a way to "standardize" the dt binding?
-> 
+> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt
+> b/Documentation/devicetree/bindings/clock/sunxi.txt
+> index 23e7bce..6d63b35 100644
+> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
+> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+> @@ -73,6 +73,7 @@ Required properties:
+>  	"allwinner,sun8i-h3-usb-clk" - for usb gates + resets on H3
+>  	"allwinner,sun9i-a80-usb-mod-clk" - for usb gates + resets
+> on A80
+>  	"allwinner,sun9i-a80-usb-phy-clk" - for usb phy gates +
+> resets on A80
+> +	"allwinner,sun8i-h3-ths-clk" - for THS on H3
+>  
+>  Required properties for all clocks:
+>  - reg : shall be the control register address for the clock.
+> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+> index f520af6..1bf8e1c 100644
+> --- a/drivers/clk/sunxi/Makefile
+> +++ b/drivers/clk/sunxi/Makefile
+> @@ -8,6 +8,7 @@ obj-y += clk-a10-hosc.o
+>  obj-y += clk-a10-mod1.o
+>  obj-y += clk-a10-pll2.o
+>  obj-y += clk-a20-gmac.o
+> +obj-y += clk-h3-ths.o
+>  obj-y += clk-mod0.o
+>  obj-y += clk-simple-gates.o
+>  obj-y += clk-sun8i-bus-gates.o
+> diff --git a/drivers/clk/sunxi/clk-h3-ths.c b/drivers/clk/sunxi/clk-
+> h3-ths.c
+> new file mode 100644
+> index 0000000..663afc0
+> --- /dev/null
+> +++ b/drivers/clk/sunxi/clk-h3-ths.c
+> @@ -0,0 +1,98 @@
+> +/*
+> + * Sunxi THS clock driver
 
-I don't see any problem with implementing the RPM clock
-controller as one file or two files (one for platform bus based
-RPM modules and one for SMD bus RPM modules). The compatible can
-be the same for both struct driver instances, while the bus will
-pick the right driver. I suspect we'll need SoC specific
-compatibles though to export the right set of clocks, so having
-the generic compatible is mostly to find these rpm clock
-controllers so that we know to skip registering the XO clock from
-the GCC driver and not some generic implementation of the driver.
+This should be "Allwinner H3 THS clock driver"
 
-There's probably a subset of the clocks that's always the same
-between devices, so if we had to we could match the generic
-compatible and provide limited functionality.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> + *
+> + * Copyright (C) 2015 Josef Gajdusek
+> + *
+> + * This software is licensed under the terms of the GNU General
+> Public
+> + * License version 2, as published by the Free Software Foundation,
+> and
+> + * may be copied, distributed, and modified under those terms.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+> + * GNU General Public License for more details.
+> + *
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/of_address.h>
+> +#include <linux/slab.h>
+> +#include <linux/spinlock.h>
+> +
+> +#define SUN8I_H3_THS_CLK_ENABLE				31
+> +#define SUN8I_H3_THS_CLK_DIVIDER_SHIFT		0
+> +#define SUN8I_H3_THS_CLK_DIVIDER_WIDTH		2
+> +
+> +static DEFINE_SPINLOCK(sun8i_h3_ths_clk_lock);
+> +
+> +static const struct clk_div_table sun8i_h3_ths_clk_table[]
+> __initconst = {
+> +	{ .val = 0, .div = 1 },
+> +	{ .val = 1, .div = 2 },
+> +	{ .val = 2, .div = 4 },
+> +	{ .val = 3, .div = 6 },
+> +	{ } /* sentinel */
+> +};
+> +
+> +static void __init sun8i_h3_ths_clk_setup(struct device_node *node)
+> +{
+> +	struct clk *clk;
+> +	struct clk_gate *gate;
+> +	struct clk_divider *div;
+> +	const char *parent;
+> +	const char *clk_name = node->name;
+> +	void __iomem *reg;
+> +	int err;
+> +
+> +	reg = of_io_request_and_map(node, 0,
+> of_node_full_name(node));
+> +
+> +	if (IS_ERR(reg))
+> +		return;
+> +
+> +	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+> +	if (!gate)
+> +		goto err_unmap;
+> +
+> +	div = kzalloc(sizeof(*gate), GFP_KERNEL);
+> +	if (!div)
+> +		goto err_gate_free;
+> +
+> +	of_property_read_string(node, "clock-output-names",
+> &clk_name);
+> +	parent = of_clk_get_parent_name(node, 0);
+> +
+> +	gate->reg = reg;
+> +	gate->bit_idx = SUN8I_H3_THS_CLK_ENABLE;
+> +	gate->lock = &sun8i_h3_ths_clk_lock;
+> +
+> +	div->reg = reg;
+> +	div->shift = SUN8I_H3_THS_CLK_DIVIDER_SHIFT;
+> +	div->width = SUN8I_H3_THS_CLK_DIVIDER_WIDTH;
+> +	div->table = sun8i_h3_ths_clk_table;
+> +	div->lock = &sun8i_h3_ths_clk_lock;
+> +
+> +	clk = clk_register_composite(NULL, clk_name, &parent, 1,
+> +				     NULL, NULL,
+> +				     &div->hw, &clk_divider_ops,
+> +				     &gate->hw, &clk_gate_ops,
+> +				     CLK_SET_RATE_PARENT);
+> +
+> +	if (IS_ERR(clk))
+> +		goto err_div_free;
+> +
+> +	err = of_clk_add_provider(node, of_clk_src_simple_get, clk);
+> +	if (err)
+> +		goto err_unregister_clk;
+> +
+> +	return;
+> +
+> +err_unregister_clk:
+> +	clk_unregister(clk);
+> +err_gate_free:
+> +	kfree(gate);
+> +err_div_free:
+> +	kfree(div);
+> +err_unmap:
+> +	iounmap(reg);
+> +}
+> +
+> +CLK_OF_DECLARE(sun8i_h3_ths_clk, "allwinner,sun8i-h3-ths-clk",
+> +	       sun8i_h3_ths_clk_setup);
+> -- 
+> 2.4.10
+> 
