@@ -1,64 +1,86 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Mon, 23 Nov 2015 13:57:12 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: Sascha Hauer <kernel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] imx/clk-pllv2: fix wrong do_div() usage
-Message-ID: <20151123055712.GJ13744@tiger>
-References: <alpine.LFD.2.20.1511031958530.630@knanqh.ubzr>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Mon, 23 Nov 2015 13:43:56 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Josef Gajdusek <atx@atx.name>
+Cc: linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	gpatchesrdh@mveas.com, mturquette@linaro.org, hdegoede@redhat.com,
+	sboyd@codeaurora.org, mturquette@baylibre.com, emilio@elopez.com.ar,
+	linux@arm.linux.org.uk, edubezval@gmail.com, rui.zhang@intel.com,
+	wens@csie.org, galak@codeaurora.org, ijc+devicetree@hellion.org.uk,
+	mark.rutland@arm.com, pawel.moll@arm.com, robh+dt@kernel.org
+Subject: Re: [PATCH v2 1/5] ARM: dts: sun8i: Add SID node
+Message-ID: <20151123124356.GW32142@lukather>
+References: <cover.1448263428.git.atx@atx.name>
+ <b897b1c8741c8a871163b84d01b480f99329536d.1448263428.git.atx@atx.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <alpine.LFD.2.20.1511031958530.630@knanqh.ubzr>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="1lE8Wy7Exphh2Vpg"
+In-Reply-To: <b897b1c8741c8a871163b84d01b480f99329536d.1448263428.git.atx@atx.name>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Nov 03, 2015 at 08:01:40PM -0500, Nicolas Pitre wrote:
-> do_div() is meant to be used with an unsigned dividend.
-> 
-> Signed-off-by: Nicolas Pitre <nico@linaro.org>
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+--1lE8Wy7Exphh2Vpg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Mike, Stephen,
+Hi,
 
-Can you please apply it for v4.4-rc?  Or I will queue it for v4.5-rc1.
+On Mon, Nov 23, 2015 at 09:02:48AM +0100, Josef Gajdusek wrote:
+> Add a node describing the Security ID memory to the
+> Allwinner H3 .dtsi file.
+>=20
+> Signed-off-by: Josef Gajdusek <atx@atx.name>
+> ---
+>  arch/arm/boot/dts/sun8i-h3.dtsi | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>=20
+> diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3=
+=2Edtsi
+> index 0faa38a..58de718 100644
+> --- a/arch/arm/boot/dts/sun8i-h3.dtsi
+> +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+> @@ -359,6 +359,13 @@
+>  			#size-cells =3D <0>;
+>  		};
+> =20
+> +		sid: eeprom@01c14000 {
+> +			compatible =3D "allwinner,sun4i-a10-sid";
+> +			reg =3D <0x01c14000 0x400>;
 
-Shawn
+The datasheet says it's 256 bytes wide, while the size here is of 1kB,
+is it intentional?
 
-> 
-> diff --git a/drivers/clk/imx/clk-pllv2.c b/drivers/clk/imx/clk-pllv2.c
-> index 20889d59b4..5fa6d1deac 100644
-> --- a/drivers/clk/imx/clk-pllv2.c
-> +++ b/drivers/clk/imx/clk-pllv2.c
-> @@ -79,7 +79,7 @@ static unsigned long __clk_pllv2_recalc_rate(unsigned long parent_rate,
->  {
->  	long mfi, mfn, mfd, pdf, ref_clk, mfn_abs;
->  	unsigned long dbl;
-> -	s64 temp;
-> +	u64 temp;
->  
->  	dbl = dp_ctl & MXC_PLL_DP_CTL_DPDCK0_2_EN;
->  
-> @@ -102,8 +102,9 @@ static unsigned long __clk_pllv2_recalc_rate(unsigned long parent_rate,
->  	temp = (u64) ref_clk * mfn_abs;
->  	do_div(temp, mfd + 1);
->  	if (mfn < 0)
-> -		temp = -temp;
-> -	temp = (ref_clk * mfi) + temp;
-> +		temp = (ref_clk * mfi) - temp;
-> +	else
-> +		temp = (ref_clk * mfi) + temp;
->  
->  	return temp;
->  }
-> @@ -130,7 +131,7 @@ static int __clk_pllv2_set_rate(unsigned long rate, unsigned long parent_rate,
->  {
->  	u32 reg;
->  	long mfi, pdf, mfn, mfd = 999999;
-> -	s64 temp64;
-> +	u64 temp64;
->  	unsigned long quad_parent_rate;
->  
->  	quad_parent_rate = 4 * parent_rate;
-> 
+Thanks,
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--1lE8Wy7Exphh2Vpg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWUwoMAAoJEBx+YmzsjxAg/6oP/2zEs+uvvg+BMHaiwjVQ0WZf
+1/+uNTq4q87jl9cl2L2jsNTf+V9hZhUOI4irZ4aDR55M06pTuoCH8l8WtMqALPtQ
+3UK8bHI0mgFnxooFN+QrBUOwCnNPakGy1lmDfwOUVdu4+HFgG2IDRWDEysEsBdAD
+WPni+DOjmFgkTxv05IgwR4e9xL+E+jzi4HR50izswRt9l/55DwxN/hE0iFsiED5y
+S9k1wzQ1usjw7ilMYOR6fH0UUVgMkA5p4ooedjpFRK8sIOVC2oa9SjQ7mU3FZDa+
+wBP5E3aUx6wqrAYILYeSLGdLhsbGRu/fhqGbtk0FSRXPZr2HBo3umk4hFnWjeR5f
+JHDj9ihcPc/Ti2Mf902NPhpAkHal/fkKloipN6dz5QBHfoK56Ejnl1GWulA2zJUy
+BGHbAqDKGnNwWpKDOJEaUxmBZCXN1PaE8XhyPZ/ajLvRQzo4+hZjE4w4hOwSmK6A
+Dck0M63Hfgov8FaOrGStwMoZVB9MSYagYEnZH4Di2ubG7DBzMEdXHDvQB0HaflDg
+uP5zXb9Y6+81GA9joitV/QGA467YYYxnA2eZbnQ9tNK4WoR31/GnDRZgguzuhg+l
+uJWdDzyegheQYLt8tB7q57kTea5BRcx2HLPg6x+T4z/huLXppoPd+mCyHSfXOfte
+SpD+8+n6jXw3v0fk5CJA
+=OeCS
+-----END PGP SIGNATURE-----
+
+--1lE8Wy7Exphh2Vpg--
