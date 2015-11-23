@@ -1,125 +1,68 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Julia Lawall <Julia.Lawall@lip6.fr>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v4 00/24] pwm: add support for atomic update
-Date: Mon, 16 Nov 2015 09:56:23 +0100
-Message-Id: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <shawnguo@kernel.org>
+Date: Mon, 23 Nov 2015 11:04:05 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stefan Agner <stefan@agner.ch>
+Cc: kernel@pengutronix.de, mturquette@baylibre.com, sboyd@codeaurora.org,
+	galak@codeaurora.org, ijc+devicetree@hellion.org.uk,
+	mark.rutland@arm.com, pawel.moll@arm.com, robh+dt@kernel.org,
+	Li.Xiubo@freescale.com, zidan.wang@freescale.com,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] ARM: dts: vf610: fix clock definition for SAI2
+Message-ID: <20151123030405.GC13744@tiger>
+References: <1445141122-14183-1-git-send-email-stefan@agner.ch>
+ <1445141122-14183-2-git-send-email-stefan@agner.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1445141122-14183-2-git-send-email-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+On Sat, Oct 17, 2015 at 09:05:21PM -0700, Stefan Agner wrote:
+> So far, only the bus clock has been assigned, but in reality the
+> SAI IP has for clock inputs. The driver has been updated to
 
-This series adds support for atomic PWM update, or IOW, the capability
-to update all the parameters of a PWM device (enabled/disabled, period,
-duty and polarity) in one go.
+s/for/four
 
-Best Regards,
+Will fix it up when applying.
 
-Boris
+Shawn
 
-Changes since v3:
-- rebased on pwm/for-next after pulling 4.4-rc1
-- replace direct access to pwm fields by pwm_get/set_xxx() helpers, thus
-  fixing some build errors
-- split changes to allow each maintainer to review/ack or take the
-  modification through its subsystem
-
-Changes since v2:
-- rebased on top of 4.3-rc2
-- reintroduced pwm-regulator patches
-
-Changes since v1:
-- dropped applied patches
-- squashed Heiko's fixes into the rockchip driver changes
-- made a few cosmetic changes
-- added kerneldoc comments
-- added Heiko's patch to display more information in debugfs
-- dropped pwm-regulator patches (should be submitted separately)
-
-Boris Brezillon (23):
-  pwm: rcar: make use of pwm_is_enabled()
-  pwm: use pwm_get_xxx() helpers where appropriate
-  clk: pwm: use pwm_get_xxx() helpers where appropriate
-  hwmon: pwm-fan: use pwm_get_xxx() helpers where appropriate
-  misc: max77693-haptic: use pwm_get_xxx() helpers where appropriate
-  pwm: introduce default period and polarity concepts
-  pwm: use pwm_get/set_default_xxx() helpers where appropriate
-  leds: pwm: use pwm_get/set_default_xxx() helpers where appropriate
-  regulator: pwm: use pwm_get/set_default_xxx() helpers where
-    appropriate
-  backlight: pwm: use pwm_get/set_default_xxx() helpers where
-    appropriate
-  fbdev: use pwm_get/set_default_xxx() helpers where appropriate
-  misc: max77693: use pwm_get/set_default_xxx() helpers where
-    appropriate
-  hwmon: pwm-fan: use pwm_get/set_default_xxx() helpers where
-    appropriate
-  clk: pwm: use pwm_get/set_default_xxx() helpers where appropriate
-  pwm: define a new pwm_state struct
-  pwm: move the enabled/disabled info to pwm_state struct
-  backlight: pwm_bl: remove useless call to pwm_set_period
-  pwm: declare a default PWM state
-  pwm: add the PWM initial state retrieval infra
-  pwm: add the core infrastructure to allow atomic update
-  pwm: rockchip: add initial state retrieval
-  pwm: rockchip: add support for atomic update
-  regulator: pwm: properly initialize the ->state field
-
-Heiko Stübner (1):
-  pwm: add information about polarity, duty cycle and period to debugfs
-
- drivers/clk/clk-pwm.c                |  11 +--
- drivers/hwmon/pwm-fan.c              |  16 ++--
- drivers/input/misc/max77693-haptic.c |   9 +-
- drivers/leds/leds-pwm.c              |   2 +-
- drivers/pwm/core.c                   | 169 +++++++++++++++++++++++++++++++----
- drivers/pwm/pwm-crc.c                |   2 +-
- drivers/pwm/pwm-lpc18xx-sct.c        |   2 +-
- drivers/pwm/pwm-pxa.c                |   2 +-
- drivers/pwm/pwm-rcar.c               |   2 +-
- drivers/pwm/pwm-rockchip.c           | 119 +++++++++++++++++++-----
- drivers/pwm/pwm-sun4i.c              |   3 +-
- drivers/regulator/pwm-regulator.c    |  30 ++++++-
- drivers/video/backlight/lm3630a_bl.c |   4 +-
- drivers/video/backlight/pwm_bl.c     |  10 ++-
- drivers/video/fbdev/ssd1307fb.c      |   2 +-
- include/linux/pwm.h                  |  89 +++++++++++++++---
- 16 files changed, 386 insertions(+), 86 deletions(-)
-
--- 
-2.1.4
+> make use of the additional clock inputs by c3ecef21c3f2 ("ASoC:
+> fsl_sai: add sai master mode support"). Due to a bug in the
+> clock tree, the audio clock has been enabled none the less by
+> the specified bus clock (see "ARM: imx: clk-vf610: fix SAI
+> clock tree"), which made master mode even without the proper
+> clock assigned working.
+> 
+> This patch completes the clock definition for SAI2. On Vybrid,
+> only two MCLK out of the four options are available (the first
+> being the bus clock itself). See chapter 8.10.1.2.3 of the
+> Vybrid Reference manual ("SAI transmitter and receiver options
+> for MCLK selection"). Note: The audio clocks are only required
+> in master mode.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>  arch/arm/boot/dts/vfxxx.dtsi | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/vfxxx.dtsi b/arch/arm/boot/dts/vfxxx.dtsi
+> index 6865137..c2a4d1c 100644
+> --- a/arch/arm/boot/dts/vfxxx.dtsi
+> +++ b/arch/arm/boot/dts/vfxxx.dtsi
+> @@ -178,8 +178,10 @@
+>  				compatible = "fsl,vf610-sai";
+>  				reg = <0x40031000 0x1000>;
+>  				interrupts = <86 IRQ_TYPE_LEVEL_HIGH>;
+> -				clocks = <&clks VF610_CLK_SAI2>;
+> -				clock-names = "sai";
+> +				clocks = <&clks VF610_CLK_SAI2>,
+> +					<&clks VF610_CLK_SAI2_DIV>,
+> +					<&clks 0>, <&clks 0>;
+> +				clock-names = "bus", "mclk1", "mclk2", "mclk3";
+>  				dma-names = "tx", "rx";
+>  				dmas = <&edma0 0 21>,
+>  					<&edma0 0 20>;
+> -- 
+> 2.6.1
+> 
