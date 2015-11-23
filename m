@@ -1,122 +1,260 @@
-Return-Path: <anholt@eliezer.anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Remi Pommarel <repk@triplefau.lt>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Remi Pommarel <repk@triplefau.lt>
-Subject: Re: [PATCH 1/2] clk: bcm2835: Support for clock parent selection
-In-Reply-To: <1446678502-16243-2-git-send-email-repk@triplefau.lt>
-References: <1446678502-16243-1-git-send-email-repk@triplefau.lt> <1446678502-16243-2-git-send-email-repk@triplefau.lt>
-Date: Wed, 04 Nov 2015 18:03:31 -0800
-Message-ID: <87si4l2oek.fsf@eliezer.anholt.net>
+Return-Path: <jszhang@marvell.com>
+Date: Mon, 23 Nov 2015 16:14:29 +0800
+From: Jisheng Zhang <jszhang@marvell.com>
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+CC: <mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <pawel.moll@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <catalin.marinas@arm.com>,
+        <mturquette@baylibre.com>, <will.deacon@arm.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <antoine.tenart@free-electrons.com>, <robh+dt@kernel.org>,
+        <galak@codeaurora.org>, <sboyd@codeaurora.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 6/6] arm64: dts: berlin4ct: add pll and clock nodes
+Message-ID: <20151123161429.2a3a9243@xhacker>
+In-Reply-To: <20151123152158.483aa6b5@xhacker>
+References: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
+	<1448008952-1787-7-git-send-email-jszhang@marvell.com>
+	<564F8B73.7070403@gmail.com>	<20151123152158.483aa6b5@xhacker>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="US-ASCII"
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Dear all,
 
-Remi Pommarel <repk@triplefau.lt> writes:
+On Mon, 23 Nov 2015 15:21:58 +0800
+Jisheng Zhang wrote:
 
-> Some bcm2835 clocks used by hardware (like "PWM" or "H264") can have mult=
-iple
-> parents. These clocks divide the rate of one parent which can be selected=
- by
-> setting the proper bits in their clock control register.
->
-> Previously all these parents where handled by a mux clock. But a mux clock
-> cannot be used because updating clock control register to select parent n=
-eeds a
-> password to be xor'd with the parent index.
+> Dear Sebastian,
+> 
+> On Fri, 20 Nov 2015 22:06:59 +0100
+> Sebastian Hesselbarth wrote:
+> 
+> > On 20.11.2015 09:42, Jisheng Zhang wrote:  
+> > > Add syspll, mempll, cpupll, gateclk and berlin-clk nodes.
+> > > 
+> > > Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+> > > ---
+> > >  arch/arm64/boot/dts/marvell/berlin4ct.dtsi | 38 ++++++++++++++++++++++++++++++
+> > >  1 file changed, 38 insertions(+)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/marvell/berlin4ct.dtsi b/arch/arm64/boot/dts/marvell/berlin4ct.dtsi
+> > > index a4a1876..808a997 100644
+> > > --- a/arch/arm64/boot/dts/marvell/berlin4ct.dtsi
+> > > +++ b/arch/arm64/boot/dts/marvell/berlin4ct.dtsi
+> > > @@ -42,6 +42,7 @@
+> > >   *     OTHER DEALINGS IN THE SOFTWARE.
+> > >   */
+> > >  
+> > > +#include <dt-bindings/clock/berlin4ct.h>
+> > >  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > >  
+> > >  / {
+> > > @@ -135,6 +136,22 @@
+> > >  			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+> > >  		};
+> > >  
+> > > +		cpupll: cpupll {
+> > > +			compatible = "marvell,berlin-pll";
+> > > +			reg = <0x922000 0x14>, <0xea0710 4>;
+> > > +			#clock-cells = <0>;
+> > > +			clocks = <&osc>, <&clk CLK_CPUFASTREF>;
+> > > +			bypass-shift = /bits/ 8 <2>;
+> > > +		};
+> > > +
+> > > +		mempll: mempll {
+> > > +			compatible = "marvell,berlin-pll";
+> > > +			reg = <0x940034 0x14>, <0xea0710 4>;    
+> > 
+> > Whenever you see overlapping/repeating reg ranges, e.g. <0xea0710 4>
+> > you can be sure you are not representing HW structure but driver
+> > structure here.
+> > 
+> > Please merge clocks/gates/plls to a single clock complex node
+> > and deal with the internals by using "simple-mfd" and "syscon" regmaps.
+> >   
+> > > +			#clock-cells = <0>;
+> > > +			clocks = <&osc>, <&clk CLK_MEMFASTREF>;
+> > > +			bypass-shift = /bits/ 8 <1>;
+> > > +		};
+> > > +
+> > >  		apb@e80000 {
+> > >  			compatible = "simple-bus";
+> > >  			#address-cells = <1>;
+> > > @@ -225,6 +242,27 @@
+> > >  			};
+> > >  		};
+> > >  
+> > > +		syspll: syspll {
+> > > +			compatible = "marvell,berlin-pll";
+> > > +			reg = <0xea0200 0x14>, <0xea0710 4>;
+> > > +			#clock-cells = <0>;
+> > > +			clocks = <&osc>;
+> > > +			bypass-shift = /bits/ 8 <0>;
+> > > +		};
+> > > +
+> > > +		gateclk: gateclk {
+> > > +			compatible = "marvell,berlin4ct-gateclk";
+> > > +			reg = <0xea0700 4>;
+> > > +			#clock-cells = <1>;
+> > > +		};
+> > > +
+> > > +		clk: clk {
+> > > +			compatible = "marvell,berlin4ct-clk";
+> > > +			reg = <0xea0720 0x144>;    
+> > 
+> > Looking at the reg ranges, I'd say that they are all clock related
+> > and pretty close to each other:
+> > 
+> > gateclk: reg = <0xea0700 4>;
+> > bypass:  reg = <0xea0710 4>;
+> > clk:     reg = <0xea0720 0x144>;  
+> 
+> Although these ranges sit close, but we should represent HW structure as you
+> said.
+> 
+> First of all, let me describe the clks/plls in BG4CT. BG4CT contains:
+> 
+> two kinds of PLL: normal PLL and AVPLL. These PLLs are put with their users
+> together. For example: mempll pll registers <0xf7940034, 0x14> is put together
+> with mem controller registers. AVPLL control registers are put with AV devices.
+> You can also check mempll, cpupll and syspll ranges:
+> 
+> cpupll: <0x922000 0x14>
+> 
+> mempll: <0x940034 0x14>
+> 
+> syspll: <0xea0200 0x14>
+> 
+> 
+> We have three normal PLLS: cpupll, mempll and syspll. All these three PLLs use
+> 25MHZ osc as clocksource. These plls can be bypassed. when syspll is bypassed
+> the 25MHZ osc is directly output to syspllclk. When mempll/cpupll is bypassed,
+> its corresponding fastrefclk is directly output to ddrphyclk/cpuclk: 
+> 
+> 
+>        ---25MHZ osc----------|\
+>            ________            | |-- syspllclk
+>        ---| SYSPLL |---------|/
+> 
+> 
+> 
+>        ---cpufastrefclk------|\
+>            ________            | |-- cpuclk
+>        ---| CPUPLL |---------|/
+> 
+> 
+>        ---memfastrefclk------|\
+>            ________            | |-- ddrphyclk
+>        ---| MEMPLL |---------|/
+> 
+> NOTE: the fastrefclk is the so called normal clk below.
+> 
+> 
+> 
+> two kinds of clk: normal clk and gate clk. The normal clk supports changing
+> divider, selecting clock source, disabling/enabling etc. The gate clk only
+> supports disabling/enabling. normal clks use syspllclk as clocksource, while
+> gate clks use perifsysclk as clocksource.
+> 
 
-Good point.  I previously was doing parent detection from muxes
-manually, then simplified to using the generic mux later.  I didn't have
-any clocks I wanted to change mux on, so I missed this requirement.
 
-It looks like there's not too much work to folding the muxing back into
-the driver, so it seems like you have a good plan.
+I hope I have described the BG4CT HW clk/pll clearly, I really need your advice
+about my proposal. The clk nodes in my proposal will finally look like:
 
-> -static long bcm2835_clock_round_rate(struct clk_hw *hw,
-> -				     unsigned long rate,
-> -				     unsigned long *parent_rate)
-> -{
-> -	struct bcm2835_clock *clock =3D bcm2835_clock_from_hw(hw);
-> -	u32 div =3D bcm2835_clock_choose_div(hw, rate, *parent_rate);
-> -
-> -	return bcm2835_clock_rate_from_divisor(clock, *parent_rate, div);
-> -}
-> -
->  static unsigned long bcm2835_clock_get_rate(struct clk_hw *hw,
->  					    unsigned long parent_rate)
->  {
-> @@ -1278,13 +1268,69 @@ static int bcm2835_clock_set_rate(struct clk_hw *=
-hw,
->  	return 0;
->  }
->=20=20
-> +static int bcm2835_clock_determine_source(struct clk_hw *hw,
-> +		struct clk_rate_request *req)
-> +{
-> +	struct clk_hw *parent, *best_parent =3D NULL;
-> +	struct clk_rate_request parent_req;
-> +	unsigned long prate, best_rate =3D ULONG_MAX;
-> +	size_t i;
-> +
-> +	/*
-> +	 * Select parent clock that has the closest but higher rate
-> +	 */
-> +	for (i =3D 0; i < clk_hw_get_num_parents(hw); ++i) {
-> +		parent =3D clk_hw_get_parent_by_index(hw, i);
-> +		if (!parent)
-> +			continue;
-> +		parent_req =3D *req;
-> +		prate =3D clk_hw_get_rate(parent);
-> +		if (prate < best_rate && prate >=3D req->rate) {
-> +			best_parent =3D parent;
-> +			best_rate =3D prate;
-> +		}
-> +	}
-> +
-> +	if (!best_parent)
-> +		return -EINVAL;
-> +
-> +	req->best_parent_hw =3D best_parent;
-> +	req->best_parent_rate =3D best_rate;
-> +
-> +	return 0;
-> +}
 
-It looks like you've dropped the use of the divisor off of the PLL
-channel when setting a rate.  That seems bad for all the other clocks in
-the system, and a feature we couldn't lose.
+                cpupll: cpupll {
+                        compatible = "marvell,berlin-pll";
+                        reg = <0x922000 0x14>
+                        #clock-cells = <0>;
+                        clocks = <&osc>;
+                };
 
-Also, you're choosing the lowest but higher rate, while
-mux_is_better_rate() chooses the highest but lower rate (which seems
-much safer).  What led to that choice?
+		mempll: mempll {
+                        compatible = "marvell,berlin-pll";
+                        reg = <0x940034 0x14>
+                        #clock-cells = <0>;
+                        clocks = <&osc>;
+                };
 
-Also, if we're going to have this function, I think it should be called
-"bcm2835_clock_determine_rate" to match the method name.
+                syspll: syspll {
+                        compatible = "marvell,berlin-pll";
+                        reg = <0xea0200 0x14>
+                        #clock-cells = <0>;
+                        clocks = <&osc>;
+                };
 
-The parent get/setting looks good, though.
+		pllclk: pllclk {
+                        compatible = "marvell,berlin4ct-pllclk";
+                        reg = <0xea0710 4>
+                        #clock-cells = <1>;
+		};
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+                gateclk: gateclk {
+                        compatible = "marvell,berlin4ct-gateclk";
+                        reg = <0xea0700 4>;
+                        #clock-cells = <1>;
+                };
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+                clk: clk {
+                        compatible = "marvell,berlin4ct-clk";
+                        reg = <0xea0720 0x144>;
+                        #clock-cells = <1>;
+                        clocks = <&pllclk SYSPLLCLK>;
+                };
 
-iQIcBAEBCgAGBQJWOrjzAAoJELXWKTbR/J7oFwwQALeYXA1EP7yEG+tIYYEK3s+L
-x+BvJ48kdHDD7cYVnDWzViyo/ivbPrDS7BgflogFd1cpSR1lopM8/PBsJ7wNWXvQ
-nageUxR5XgiDcouxV9svIDDoVnqxFE0DUBYuaHUxAlxfYlLiTtE5G0KG9LRixQCS
-j7g1IihbXPKSstCmf0bGzlktQJkKNALDxqt+qW9bhpCAW8b05P6s39GIJjglFZRv
-b/Fm7O2rp1duEiNxXjG+yNEstNyHUe9H0kkjW/PdXwdUwYspR1pU5hWR2eqNm2jT
-mI4rnZ7Nzal5k50YZ720EejXr1C8UG8q0KdiyZcV4xJeLfQ3muycv2dquH8v3YwM
-O1L7WNmcZc1qewL7siKeQUM4tLQnklhJQ1tLTa0TafL17vSOI3JKrySLuqihJGiD
-IYzkGb5Y2Sztr+gsIQtSGYH0H8yslu5B0im5oJQMVWXqs4KdPy6pEJ6zCNaLoFBo
-04WEudgcXcZglVuQfPkR9onR+9AIADIbJVXOEdbpoSoqIdEPLOcLlRlbGV6PWIxI
-d3PFvkSazUkndRCOjK+hSca1xJsVaeNupM5DWiWzPCj/N7KcEAtJGIa1jG0eLKYa
-SYvwmD+lhc/YZP9xmn7SQb2akewEO1PtXJNgXCJNGKvlHMczhHdFwxttc6lI+NDF
-q7O/ZM2XGPAq5p28Zdsk
-=Qb/t
------END PGP SIGNATURE-----
---=-=-=--
+Using the ccf clk-mux, there's no overlapping/repeating reg ranges any more.
+
+If you want more BG4CT clk/pll details, please let me know.
+
+Thanks,
+Jisheng
+
+> 
+> So what's the representing HW structure in fact? Here is my proposal:
+> 
+> 1. have mempll, cpupll and syspll node in dts
+> 
+> 2. one gateclk node in dts for gateclks
+> 
+> 3. one normalclk node in dts for normal clks
+> 
+> 4. one ccf clock-mux for cpuclk, ddrphyclk and syspllclk.
+> 
+> what do you think?
+> 
+> 
+> From another side, let's have a look at driver/clk/mvebu. As can be seen,
+> different clks register are close each other, for example, gateclk and coreclk
+> in arch/arm/boot/dts/armada-xp.dtsi.
+> 
+> And drivers/clk/sunxi, arch/arm/boot/dts/sun7i-a20.dtsi, the pll4, pll12, gt_clk
+> and ahb*, apb* etc... 
+> 
+> why these SoCs don't merge clocks/gates/plls to a single clock complex node? 
+> I think that's because they are representing real HW structure.
+> 
+> Thanks,
+> Jisheng
+> 
+> 
+> > 
+> > So, please just follow the OF/driver structure we already
+> > have for Berlin2.
+> > 
+> > Sebastian
+> >   
+> > > +			#clock-cells = <1>;
+> > > +			clocks = <&syspll>;
+> > > +		};
+> > > +
+> > >  		soc_pinctrl: pin-controller@ea8000 {
+> > >  			compatible = "marvell,berlin4ct-soc-pinctrl";
+> > >  			reg = <0xea8000 0x14>;
+> > >     
+> >   
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
