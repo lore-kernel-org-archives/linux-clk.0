@@ -1,138 +1,104 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org
-Subject: [PATCH v2 4/5] clk: qcom: Add gfx3d ping-pong PLL frequency switching
-Date: Mon, 30 Nov 2015 17:31:41 -0800
-Message-Id: <1448933502-11944-5-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1448933502-11944-1-git-send-email-sboyd@codeaurora.org>
-References: <1448933502-11944-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <shawnguo@kernel.org>
+Date: Mon, 23 Nov 2015 09:46:13 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stefan Agner <stefan@agner.ch>
+Cc: kernel@pengutronix.de, mturquette@baylibre.com, sboyd@codeaurora.org,
+	galak@codeaurora.org, ijc+devicetree@hellion.org.uk,
+	mark.rutland@arm.com, pawel.moll@arm.com, robh+dt@kernel.org,
+	Li.Xiubo@freescale.com, zidan.wang@freescale.com,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] ARM: imx: clk-vf610: fix SAI clock tree
+Message-ID: <20151123014613.GB13744@tiger>
+References: <1445141122-14183-1-git-send-email-stefan@agner.ch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1445141122-14183-1-git-send-email-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-The GPU clocks on msm8996 have three dedicated PLLs, MMPLL2,
-MMPLL8, and MMPLL9. We leave MMPLL9 at the maximum speed (624
-MHz), and we use MMPLL2 and MMPLL8 for the other frequencies. To
-make switching frequencies faster, we ping-pong between MMPLL2
-and MMPLL8 when we're switching between frequencies that aren't
-the maximum. Implement custom rcg clk ops for this type of
-frequency switching.
+On Sat, Oct 17, 2015 at 09:05:20PM -0700, Stefan Agner wrote:
+> The Synchronous Audio Interface (SAI) instances are clocked by
+> independent clocks: The bus clock and the audio clock (as shown in
+> Figure 51-1 in the Vybrid Reference Manual). The clock gates in
+> CCGR0/CCGR1 for SAI0 through SAI3 are bus clock gates, as access
+> tests to the registers with/without gating those clocks have shown.
+> The audio clock is gated by the SAIx_EN gates in CCM_CSCDR1,
+> followed by a clock divider (SAIx_DIV). Currently, the parent of
+> the bus clock gates has been assigned to SAIx_DIV, which is not
+> involved in the bus clock path for the SAI instances (see chapter
+> 9.10.12, SAI clocking in the Vybrid Reference Manual).
+> 
+> Fix this by define the parent clock of VF610_CLK_SAIx to be the bus
+> clock.
+> 
+> If the driver needs the audio clock (when used in master mode), a
+> fixed device tree is required which assign the audio clock properly
+> to VF610_CLK_SAIx_DIV.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+> Hi all,
+> 
+> Patch 1 and 2 are actual fixes and should be applied toghether. If
+> the clock tree changes are applied only, master mode won't work
+> anymore. With only the device tree changes applied, it probably
+> will still work but the VF610_CLK_SAIx_DIV will be enabled twice.
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/qcom/clk-rcg.h  |  1 +
- drivers/clk/qcom/clk-rcg2.c | 87 +++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 88 insertions(+)
+Though I'm not happy about that the new kernel will break old DTBs which
+is actually buggy, I do not see other way around to get it fixed.  So I
+have no objections.
 
-diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-index 4b1e94bdf29e..b904c335cda4 100644
---- a/drivers/clk/qcom/clk-rcg.h
-+++ b/drivers/clk/qcom/clk-rcg.h
-@@ -178,5 +178,6 @@ extern const struct clk_ops clk_edp_pixel_ops;
- extern const struct clk_ops clk_byte_ops;
- extern const struct clk_ops clk_byte2_ops;
- extern const struct clk_ops clk_pixel_ops;
-+extern const struct clk_ops clk_gfx3d_ops;
- 
- #endif
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index b544bb302f79..a071bba8018c 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -723,3 +723,90 @@ const struct clk_ops clk_pixel_ops = {
- 	.determine_rate = clk_pixel_determine_rate,
- };
- EXPORT_SYMBOL_GPL(clk_pixel_ops);
-+
-+static int clk_gfx3d_determine_rate(struct clk_hw *hw,
-+				    struct clk_rate_request *req)
-+{
-+	struct clk_rate_request parent_req = { };
-+	struct clk_hw *p2, *p8, *p9, *xo;
-+	unsigned long p9_rate;
-+	int ret;
-+
-+	xo = clk_hw_get_parent_by_index(hw, 0);
-+	if (req->rate == clk_hw_get_rate(xo)) {
-+		req->best_parent_hw = xo;
-+		return 0;
-+	}
-+
-+	p9 = clk_hw_get_parent_by_index(hw, 2);
-+	p2 = clk_hw_get_parent_by_index(hw, 3);
-+	p8 = clk_hw_get_parent_by_index(hw, 4);
-+
-+	/* PLL9 is a fixed rate PLL */
-+	p9_rate = clk_hw_get_rate(p9);
-+
-+	parent_req.rate = req->rate = min(req->rate, p9_rate);
-+	if (req->rate == p9_rate) {
-+		req->rate = req->best_parent_rate = p9_rate;
-+		req->best_parent_hw = p9;
-+		return 0;
-+	}
-+
-+	if (req->best_parent_hw == p9) {
-+		/* Are we going back to a previously used rate? */
-+		if (clk_hw_get_rate(p8) == req->rate)
-+			req->best_parent_hw = p8;
-+		else
-+			req->best_parent_hw = p2;
-+	} else if (req->best_parent_hw == p8) {
-+		req->best_parent_hw = p2;
-+	} else {
-+		req->best_parent_hw = p8;
-+	}
-+
-+	ret = __clk_determine_rate(req->best_parent_hw, &parent_req);
-+	if (ret)
-+		return ret;
-+
-+	req->rate = req->best_parent_rate = parent_req.rate;
-+
-+	return 0;
-+}
-+
-+static int clk_gfx3d_set_rate_and_parent(struct clk_hw *hw, unsigned long rate,
-+		unsigned long parent_rate, u8 index)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	u32 cfg;
-+	int ret;
-+
-+	/* Just mux it, we don't use the division or m/n hardware */
-+	cfg = rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
-+	ret = regmap_write(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, cfg);
-+	if (ret)
-+		return ret;
-+
-+	return update_config(rcg);
-+}
-+
-+static int clk_gfx3d_set_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long parent_rate)
-+{
-+	/*
-+	 * We should never get here; clk_gfx3d_determine_rate() should always
-+	 * make us use a different parent than what we're currently using, so
-+	 * clk_gfx3d_set_rate_and_parent() should always be called.
-+	 */
-+	return 0;
-+}
-+
-+const struct clk_ops clk_gfx3d_ops = {
-+	.is_enabled = clk_rcg2_is_enabled,
-+	.get_parent = clk_rcg2_get_parent,
-+	.set_parent = clk_rcg2_set_parent,
-+	.recalc_rate = clk_rcg2_recalc_rate,
-+	.set_rate = clk_gfx3d_set_rate,
-+	.set_rate_and_parent = clk_gfx3d_set_rate_and_parent,
-+	.determine_rate = clk_gfx3d_determine_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_gfx3d_ops);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> 
+> Since Patch 3 also uses the fixed clock layout, it should be
+> applied after the clock tree fix too...
+> 
+> Not sure through which tree these changes should go?
+
+Mike, Stephen,
+
+Can I have your ACK on patch #1 so that I can send it together with 
+#2 for v4.4-rc inclusion?
+
+Shawn
+
+> 
+> --
+> Stefan
+> 
+>  drivers/clk/imx/clk-vf610.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
+> index bff45ea..42a7a23 100644
+> --- a/drivers/clk/imx/clk-vf610.c
+> +++ b/drivers/clk/imx/clk-vf610.c
+> @@ -335,22 +335,22 @@ static void __init vf610_clocks_init(struct device_node *ccm_node)
+>  	clk[VF610_CLK_SAI0_SEL] = imx_clk_mux("sai0_sel", CCM_CSCMR1, 0, 2, sai_sels, 4);
+>  	clk[VF610_CLK_SAI0_EN] = imx_clk_gate("sai0_en", "sai0_sel", CCM_CSCDR1, 16);
+>  	clk[VF610_CLK_SAI0_DIV] = imx_clk_divider("sai0_div", "sai0_en", CCM_CSCDR1, 0, 4);
+> -	clk[VF610_CLK_SAI0] = imx_clk_gate2("sai0", "sai0_div", CCM_CCGR0, CCM_CCGRx_CGn(15));
+> +	clk[VF610_CLK_SAI0] = imx_clk_gate2("sai0", "ipg_bus", CCM_CCGR0, CCM_CCGRx_CGn(15));
+>  
+>  	clk[VF610_CLK_SAI1_SEL] = imx_clk_mux("sai1_sel", CCM_CSCMR1, 2, 2, sai_sels, 4);
+>  	clk[VF610_CLK_SAI1_EN] = imx_clk_gate("sai1_en", "sai1_sel", CCM_CSCDR1, 17);
+>  	clk[VF610_CLK_SAI1_DIV] = imx_clk_divider("sai1_div", "sai1_en", CCM_CSCDR1, 4, 4);
+> -	clk[VF610_CLK_SAI1] = imx_clk_gate2("sai1", "sai1_div", CCM_CCGR1, CCM_CCGRx_CGn(0));
+> +	clk[VF610_CLK_SAI1] = imx_clk_gate2("sai1", "ipg_bus", CCM_CCGR1, CCM_CCGRx_CGn(0));
+>  
+>  	clk[VF610_CLK_SAI2_SEL] = imx_clk_mux("sai2_sel", CCM_CSCMR1, 4, 2, sai_sels, 4);
+>  	clk[VF610_CLK_SAI2_EN] = imx_clk_gate("sai2_en", "sai2_sel", CCM_CSCDR1, 18);
+>  	clk[VF610_CLK_SAI2_DIV] = imx_clk_divider("sai2_div", "sai2_en", CCM_CSCDR1, 8, 4);
+> -	clk[VF610_CLK_SAI2] = imx_clk_gate2("sai2", "sai2_div", CCM_CCGR1, CCM_CCGRx_CGn(1));
+> +	clk[VF610_CLK_SAI2] = imx_clk_gate2("sai2", "ipg_bus", CCM_CCGR1, CCM_CCGRx_CGn(1));
+>  
+>  	clk[VF610_CLK_SAI3_SEL] = imx_clk_mux("sai3_sel", CCM_CSCMR1, 6, 2, sai_sels, 4);
+>  	clk[VF610_CLK_SAI3_EN] = imx_clk_gate("sai3_en", "sai3_sel", CCM_CSCDR1, 19);
+>  	clk[VF610_CLK_SAI3_DIV] = imx_clk_divider("sai3_div", "sai3_en", CCM_CSCDR1, 12, 4);
+> -	clk[VF610_CLK_SAI3] = imx_clk_gate2("sai3", "sai3_div", CCM_CCGR1, CCM_CCGRx_CGn(2));
+> +	clk[VF610_CLK_SAI3] = imx_clk_gate2("sai3", "ipg_bus", CCM_CCGR1, CCM_CCGRx_CGn(2));
+>  
+>  	clk[VF610_CLK_NFC_SEL] = imx_clk_mux("nfc_sel", CCM_CSCMR1, 12, 2, nfc_sels, 4);
+>  	clk[VF610_CLK_NFC_EN] = imx_clk_gate("nfc_en", "nfc_sel", CCM_CSCDR2, 9);
+> -- 
+> 2.6.1
+> 
