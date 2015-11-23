@@ -1,186 +1,180 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:34687 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752245AbbKPI5V (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 16 Nov 2015 03:57:21 -0500
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>, linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Julia Lawall <Julia.Lawall@lip6.fr>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v4 23/24] pwm: rockchip: add support for atomic update
-Date: Mon, 16 Nov 2015 09:56:46 +0100
-Message-Id: <1447664207-24370-24-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Return-Path: <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH v2 6/6] arm64: dts: berlin4ct: add pll and clock nodes
+To: Jisheng Zhang <jszhang@marvell.com>
+References: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
+ <1448008952-1787-7-git-send-email-jszhang@marvell.com>
+ <564F8B73.7070403@gmail.com> <20151123152158.483aa6b5@xhacker>
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+ ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+ catalin.marinas@arm.com, will.deacon@arm.com, mturquette@baylibre.com,
+ sboyd@codeaurora.org, antoine.tenart@free-electrons.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Message-ID: <5652CEB2.9030902@gmail.com>
+Date: Mon, 23 Nov 2015 09:30:42 +0100
+In-Reply-To: <20151123152158.483aa6b5@xhacker>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Implement the ->apply() function to add support for atomic update.
+On 23.11.2015 08:21, Jisheng Zhang wrote:
+> On Fri, 20 Nov 2015 22:06:59 +0100
+> Sebastian Hesselbarth wrote:
+>> On 20.11.2015 09:42, Jisheng Zhang wrote:
+>>> Add syspll, mempll, cpupll, gateclk and berlin-clk nodes.
+>>>
+>>> Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+>>> ---
+[...]
+>>> +		syspll: syspll {
+>>> +			compatible = "marvell,berlin-pll";
+>>> +			reg = <0xea0200 0x14>, <0xea0710 4>;
+>>> +			#clock-cells = <0>;
+>>> +			clocks = <&osc>;
+>>> +			bypass-shift = /bits/ 8 <0>;
+>>> +		};
+>>> +
+>>> +		gateclk: gateclk {
+>>> +			compatible = "marvell,berlin4ct-gateclk";
+>>> +			reg = <0xea0700 4>;
+>>> +			#clock-cells = <1>;
+>>> +		};
+>>> +
+>>> +		clk: clk {
+>>> +			compatible = "marvell,berlin4ct-clk";
+>>> +			reg = <0xea0720 0x144>;
+>>
+>> Looking at the reg ranges, I'd say that they are all clock related
+>> and pretty close to each other:
+>>
+>> gateclk: reg = <0xea0700 4>;
+>> bypass:  reg = <0xea0710 4>;
+>> clk:     reg = <0xea0720 0x144>;
+>
+> Although these ranges sit close, but we should represent HW structure as you
+> said.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/pwm/pwm-rockchip.c | 53 +++++++++++++++++++++++++---------------------
- 1 file changed, 29 insertions(+), 24 deletions(-)
+Then how do you argue that you have to share the gate clock register
+with every PLL? The answer is quite simple: You are not separating by
+HW either but existing SW API.
 
-diff --git a/drivers/pwm/pwm-rockchip.c b/drivers/pwm/pwm-rockchip.c
-index 6eab25c..48b814d 100644
---- a/drivers/pwm/pwm-rockchip.c
-+++ b/drivers/pwm/pwm-rockchip.c
-@@ -50,7 +50,8 @@ struct rockchip_pwm_data {
- 	const struct pwm_ops *ops;
- 
- 	void (*set_enable)(struct pwm_chip *chip,
--			   struct pwm_device *pwm, bool enable);
-+			   struct pwm_device *pwm, bool enable,
-+			   enum pwm_polarity polarity);
- 	void (*reset_state)(struct pwm_chip *chip, struct pwm_device *pwm);
- };
- 
-@@ -60,7 +61,8 @@ static inline struct rockchip_pwm_chip *to_rockchip_pwm_chip(struct pwm_chip *c)
- }
- 
- static void rockchip_pwm_set_enable_v1(struct pwm_chip *chip,
--				       struct pwm_device *pwm, bool enable)
-+				       struct pwm_device *pwm, bool enable,
-+				       enum pwm_polarity polarity)
- {
- 	struct rockchip_pwm_chip *pc = to_rockchip_pwm_chip(chip);
- 	u32 enable_conf = PWM_CTRL_OUTPUT_EN | PWM_CTRL_TIMER_EN;
-@@ -89,14 +91,15 @@ static void rockchip_pwm_reset_state_v1(struct pwm_chip *chip,
- }
- 
- static void rockchip_pwm_set_enable_v2(struct pwm_chip *chip,
--				       struct pwm_device *pwm, bool enable)
-+				       struct pwm_device *pwm, bool enable,
-+				       enum pwm_polarity polarity)
- {
- 	struct rockchip_pwm_chip *pc = to_rockchip_pwm_chip(chip);
- 	u32 enable_conf = PWM_OUTPUT_LEFT | PWM_LP_DISABLE | PWM_ENABLE |
- 			  PWM_CONTINUOUS;
- 	u32 val;
- 
--	if (pwm_get_polarity(pwm) == PWM_POLARITY_INVERSED)
-+	if (polarity == PWM_POLARITY_INVERSED)
- 		enable_conf |= PWM_DUTY_NEGATIVE | PWM_INACTIVE_POSITIVE;
- 	else
- 		enable_conf |= PWM_DUTY_POSITIVE | PWM_INACTIVE_NEGATIVE;
-@@ -165,7 +168,6 @@ static int rockchip_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 	struct rockchip_pwm_chip *pc = to_rockchip_pwm_chip(chip);
- 	unsigned long period, duty;
- 	u64 clk_rate, div;
--	int ret;
- 
- 	clk_rate = clk_get_rate(pc->clk);
- 
-@@ -182,15 +184,8 @@ static int rockchip_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 	do_div(div, pc->data->prescaler * NSEC_PER_SEC);
- 	duty = div;
- 
--	ret = clk_enable(pc->clk);
--	if (ret)
--		return ret;
--
- 	writel(period, pc->base + pc->data->regs.period);
- 	writel(duty, pc->base + pc->data->regs.duty);
--	writel(0, pc->base + pc->data->regs.cntr);
--
--	clk_disable(pc->clk);
- 
- 	return 0;
- }
-@@ -208,43 +203,53 @@ static int rockchip_pwm_set_polarity(struct pwm_chip *chip,
- 	return 0;
- }
- 
--static int rockchip_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
-+static int rockchip_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
-+			      const struct pwm_state *state)
- {
- 	struct rockchip_pwm_chip *pc = to_rockchip_pwm_chip(chip);
-+	bool enabled = pwm_is_enabled(pwm);
- 	int ret;
- 
- 	ret = clk_enable(pc->clk);
- 	if (ret)
- 		return ret;
- 
--	pc->data->set_enable(chip, pwm, true);
-+	if (state->polarity != pwm_get_polarity(pwm) && enabled) {
-+		pc->data->set_enable(chip, pwm, false, state->polarity);
-+		enabled = false;
-+	}
- 
--	return 0;
--}
-+	ret = rockchip_pwm_config(chip, pwm, state->duty_cycle, state->period);
-+	if (ret) {
-+		if (enabled != pwm_is_enabled(pwm))
-+			pc->data->set_enable(chip, pwm, !enabled,
-+					     state->polarity);
- 
--static void rockchip_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
--{
--	struct rockchip_pwm_chip *pc = to_rockchip_pwm_chip(chip);
-+		goto out;
-+	}
- 
--	pc->data->set_enable(chip, pwm, false);
-+	if (state->enabled != enabled)
-+		pc->data->set_enable(chip, pwm, state->enabled,
-+				     state->polarity);
- 
-+out:
- 	clk_disable(pc->clk);
-+
-+	return ret;
- }
- 
- static const struct pwm_ops rockchip_pwm_ops_v1 = {
- 	.reset_state = rockchip_pwm_reset_state,
- 	.config = rockchip_pwm_config,
--	.enable = rockchip_pwm_enable,
--	.disable = rockchip_pwm_disable,
-+	.apply = rockchip_pwm_apply,
- 	.owner = THIS_MODULE,
- };
- 
- static const struct pwm_ops rockchip_pwm_ops_v2 = {
- 	.reset_state = rockchip_pwm_reset_state,
- 	.config = rockchip_pwm_config,
-+	.apply = rockchip_pwm_apply,
- 	.set_polarity = rockchip_pwm_set_polarity,
--	.enable = rockchip_pwm_enable,
--	.disable = rockchip_pwm_disable,
- 	.owner = THIS_MODULE,
- };
- 
--- 
-2.1.4
+If you would really want to just describe the HW, then you'd have to
+have a single node for _all_ clocks that get controlled by 0xea0700/0x4,
+feed some 32+ clocks into the node, and out again. Obviously, this
+isn't what we want, right?
 
+So, the idea of berlin2 sysctrl nodes (and similar other SoCs) is: Some
+SoCs just dump some functions into a bunch of registers with no
+particular order. We'd never find a good representation for that in DT,
+so we don't bother to try but let the driver implementation deal with
+the mess. Using "simple-mfd" is a nice solution to scattered registers
+please have a look at it and come up with a cleaner separation for bg4
+clock.
+
+> First of all, let me describe the clks/plls in BG4CT. BG4CT contains:
+>
+> two kinds of PLL: normal PLL and AVPLL. These PLLs are put with their users
+> together. For example: mempll pll registers <0xf7940034, 0x14> is put together
+> with mem controller registers. AVPLL control registers are put with AV devices.
+
+Why didn't you choose to have a memory-controller node that provides
+mempll clock then? I am open to having multiple nodes providing clocks
+but having a node for every clock in any subsystem is something I'll
+not even think about.
+
+> You can also check mempll, cpupll and syspll ranges:
+>
+> cpupll: <0x922000 0x14>
+>
+> mempll: <0x940034 0x14>
+>
+> syspll: <0xea0200 0x14>
+>
+>
+> We have three normal PLLS: cpupll, mempll and syspll. All these three PLLs use
+> 25MHZ osc as clocksource. These plls can be bypassed. when syspll is bypassed
+> the 25MHZ osc is directly output to syspllclk. When mempll/cpupll is bypassed,
+> its corresponding fastrefclk is directly output to ddrphyclk/cpuclk:
+>
+>
+>         ---25MHZ osc----------|\
+>             ________            | |-- syspllclk
+>         ---| SYSPLL |---------|/
+>
+>
+>
+>         ---cpufastrefclk------|\
+>             ________            | |-- cpuclk
+>         ---| CPUPLL |---------|/
+>
+>
+>         ---memfastrefclk------|\
+>             ________            | |-- ddrphyclk
+>         ---| MEMPLL |---------|/
+>
+> NOTE: the fastrefclk is the so called normal clk below.
+>
+>
+>
+> two kinds of clk: normal clk and gate clk. The normal clk supports changing
+> divider, selecting clock source, disabling/enabling etc. The gate clk only
+> supports disabling/enabling. normal clks use syspllclk as clocksource, while
+> gate clks use perifsysclk as clocksource.
+>
+>
+> So what's the representing HW structure in fact? Here is my proposal:
+> 1. have mempll, cpupll and syspll node in dts
+
+No.
+
+> 2. one gateclk node in dts for gateclks
+
+No.
+
+> 3. one normalclk node in dts for normal clks
+
+No.
+
+> 4. one ccf clock-mux for cpuclk, ddrphyclk and syspllclk.
+
+No.
+
+> what do you think?
+
+I think that the current separation is not a good one. I am open for
+suggestions but I am not accepting single PLL/clock nodes.
+
+>  From another side, let's have a look at driver/clk/mvebu. As can be seen,
+> different clks register are close each other, for example, gateclk and coreclk
+> in arch/arm/boot/dts/armada-xp.dtsi.
+>
+> And drivers/clk/sunxi, arch/arm/boot/dts/sun7i-a20.dtsi, the pll4, pll12, gt_clk
+> and ahb*, apb* etc...
+>
+> why these SoCs don't merge clocks/gates/plls to a single clock complex node?
+> I think that's because they are representing real HW structure.
+
+These SoC (at least mvebu) didn't merge them into a single clock
+complex node because nobody had a better idea or an impression of
+the consequences. Looking back with the idea of syscon/simple-mfd
+we probably would have chosen to separate differently.
+
+>> So, please just follow the OF/driver structure we already
+>> have for Berlin2.
+
+To repeat: "please just follow the OF/driver structure we already
+have for Berlin2"
+
+Sebastian
+
+>>> +			#clock-cells = <1>;
+>>> +			clocks = <&syspll>;
+>>> +		};
+>>> +
+>>>   		soc_pinctrl: pin-controller@ea8000 {
+>>>   			compatible = "marvell,berlin4ct-soc-pinctrl";
+>>>   			reg = <0xea8000 0x14>;
+>>>
+>>
+>
