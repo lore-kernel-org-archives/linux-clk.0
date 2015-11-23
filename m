@@ -1,57 +1,69 @@
-Return-Path: <repk@triplefau.lt>
-Date: Thu, 5 Nov 2015 19:59:07 +0100
-From: Remi Pommarel <repk@triplefau.lt>
-To: Eric Anholt <eric@anholt.net>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+Return-Path: <shawnguo@kernel.org>
+Date: Mon, 23 Nov 2015 13:56:25 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: bcm2835: Add PWM clock support
-Message-ID: <20151105185907.GK13534@cruxbox>
-References: <1446678502-16243-1-git-send-email-repk@triplefau.lt>
- <1446678502-16243-3-git-send-email-repk@triplefau.lt>
- <87pozp2nr1.fsf@eliezer.anholt.net>
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] imx/clk-pllv1: fix wrong do_div() usage
+Message-ID: <20151123055625.GI13744@tiger>
+References: <alpine.LFD.2.20.1511031941300.630@knanqh.ubzr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <87pozp2nr1.fsf@eliezer.anholt.net>
+In-Reply-To: <alpine.LFD.2.20.1511031941300.630@knanqh.ubzr>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Nov 04, 2015 at 06:17:38PM -0800, Eric Anholt wrote:
-> Remi Pommarel <repk@triplefau.lt> writes:
+Added Stephen.
+
+On Tue, Nov 03, 2015 at 07:46:23PM -0500, Nicolas Pitre wrote:
+> do_div() is meant to be used with an unsigned dividend.
 > 
-> > Register the pwm clock for bcm2835.
-> > This patch also adds the ability to set a clock default rate.
+> Signed-off-by: Nicolas Pitre <nico@linaro.org>
+
+Acked-by: Shawn Guo <shawnguo@kernel.org>
+
+Mike, Stephen,
+
+Can you please apply it for v4.4-rc?  Or I will queue it for v4.5-rc1.
+
+Shawn
+
 > 
-> I don't think we should be setting a default clock rate.  That should be
-> up to the thing that uses the clock.  If we need a standard rate set on
-> all Raspberry Pis, other than what is set at boot, then we could put it
-> in the bcm2835-pwm dt block (I think the "Assigned clock parents and
-> rates" part of clock-bindings.txt gives a way to do so).
+> diff --git a/drivers/clk/imx/clk-pllv1.c b/drivers/clk/imx/clk-pllv1.c
+> index 8564e4342c..82fe3662b5 100644
+> --- a/drivers/clk/imx/clk-pllv1.c
+> +++ b/drivers/clk/imx/clk-pllv1.c
+> @@ -52,7 +52,7 @@ static unsigned long clk_pllv1_recalc_rate(struct clk_hw *hw,
+>  		unsigned long parent_rate)
+>  {
+>  	struct clk_pllv1 *pll = to_clk_pllv1(hw);
+> -	long long ll;
+> +	unsigned long long ull;
+>  	int mfn_abs;
+>  	unsigned int mfi, mfn, mfd, pd;
+>  	u32 reg;
+> @@ -94,16 +94,16 @@ static unsigned long clk_pllv1_recalc_rate(struct clk_hw *hw,
+>  	rate = parent_rate * 2;
+>  	rate /= pd + 1;
+>  
+> -	ll = (unsigned long long)rate * mfn_abs;
+> +	ull = (unsigned long long)rate * mfn_abs;
+>  
+> -	do_div(ll, mfd + 1);
+> +	do_div(ull, mfd + 1);
+>  
+>  	if (mfn_is_negative(pll, mfn))
+> -		ll = -ll;
+> +		ull = (rate * mfi) - ull;
+> +	else
+> +		ull = (rate * mfi) + ull;
+>  
+> -	ll = (rate * mfi) + ll;
+> -
+> -	return ll;
+> +	return ull;
+>  }
+>  
+>  static struct clk_ops clk_pllv1_ops = {
 > 
-
-Oh I didn't know about assigned-clocks-{rates,parent}, it sure is a
-better solution, thanks.
-
-> > Signed-off-by: Remi Pommarel <repk@triplefau.lt>
-> > ---
-> >  arch/arm/boot/dts/bcm2835.dtsi      |  8 ++++++++
-> >  drivers/clk/bcm/clk-bcm2835.c       | 28 +++++++++++++++++++++++++++-
-> >  include/dt-bindings/clock/bcm2835.h |  3 ++-
-> >  3 files changed, 37 insertions(+), 2 deletions(-)
 > 
-> Submitting DT changes is super awkward.  You'd need to put the bcm2835.h
-> and driver change in one patch with this subject.  The clk maintainers
-> would pull that patch.  You'd then have a second patch that covers just
-> the .dtsi change, which I would pull once I had a stable branch to put
-> it onto that had the bcm2835.h change.
-> 
-
-Ok will do, sorry about this.
-
-[...]
-
-Thanks.
-
--- 
-Remi
