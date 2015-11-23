@@ -1,92 +1,56 @@
-Return-Path: <jon.nettleton@gmail.com>
+Return-Path: <rjui@broadcom.com>
+From: Ray Jui <rjui@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>, Simran Rai <ssimran@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>
+Subject: [PATCH v2 1/4] Documentation: dt-bindings: Add DT bindings for Cygnus audio clock
+Date: Mon, 23 Nov 2015 09:50:24 -0800
+Message-ID: <1448301027-27061-2-git-send-email-rjui@broadcom.com>
+In-Reply-To: <1448301027-27061-1-git-send-email-rjui@broadcom.com>
+References: <1448301027-27061-1-git-send-email-rjui@broadcom.com>
 MIME-Version: 1.0
-In-Reply-To: <CAH-u=83K7EPQ57cP=GQ6duH=bEwYxoC=YU+urLsg9kCo9eOQwA@mail.gmail.com>
-References: <CAH-u=82M1yCmPjBg5qeiC8JiHjM8+WsP+utX_VPKfJwJsu0QFg@mail.gmail.com>
-	<CALHpu366MPbxJinVL2QFM11gMHx-T=M9QXNoznOTh++oHGGmrA@mail.gmail.com>
-	<CAH-u=81hMAF=r6rUKF+iuta3nC6n+4EDDz7Rn2-oGYbkbN0Jyg@mail.gmail.com>
-	<CALHpu34iKGTE=tENJTFOu13LxSozRjU9bwmGxnigUXgTDsXAQw@mail.gmail.com>
-	<CAH-u=83K7EPQ57cP=GQ6duH=bEwYxoC=YU+urLsg9kCo9eOQwA@mail.gmail.com>
-Date: Thu, 5 Nov 2015 07:46:38 +0100
-Message-ID: <CALHpu35hgmw0YrmfBj2uOLbSu05fmGcqgsosLt=XOxCpkVGjDw@mail.gmail.com>
-Subject: Re: i.MX6: Increasing VPU frequency
-From: Jon Nettleton <jon.nettleton@gmail.com>
-To: Jean-Michel Hautbois <jean-michel.hautbois@veo-labs.com>
-Cc: Fabio Estevam <fabio.estevam@freescale.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Michael Turquette <mturquette@baylibre.com>, Sascha Hauer <kernel@pengutronix.de>,
-	linux-clk@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, sboyd@codeaurora.org,
-	Shawn Guo <shawnguo@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Return-Path: rjui@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Nov 5, 2015 at 7:43 AM, Jean-Michel Hautbois
-<jean-michel.hautbois@veo-labs.com> wrote:
->
-> Le 5 nov. 2015 05:23, "Jon Nettleton" <jon.nettleton@gmail.com> a =C3=A9c=
-rit :
->>
->> On Wed, Nov 4, 2015 at 8:33 PM, Jean-Michel Hautbois
->> <jean-michel.hautbois@veo-labs.com> wrote:
->> > 2015-11-04 18:04 GMT+01:00 Jon Nettleton <jon.nettleton@gmail.com>:
->> >> On Wed, Nov 4, 2015 at 5:52 PM, Jean-Michel Hautbois
->> >> <jean-michel.hautbois@veo-labs.com> wrote:
->> >>> Hi !
->> >>>
->> >>> I can see in FSL kernel that VPU is configurable to 352M (it default=
-s
->> >>> at 264MHz in mainline I think).
->> >>> In the TRM, it is even specified at 352MHz as a default frequency,
->> >>> with a maximum of 540MHz.
->> >>>
->> >>> Would it be possible to allow this clock rating modification if, for
->> >>> instance, we select a performance governor in cpufreq, or if a coda
->> >>> encoder is started with 1080p for instance ?
->> >>> If so, then how is it doable properly ?
->> >>
->> >> For some reason the FSL kernel configures the VPU to run at 352Mhz in
->> >> a very odd way that requires limiting the min cpu-frequency to 792Mhz=
-.
->> >> It also requires clocking down a bunch of devices on pll2_pfd2_396m t=
-o
->> >> 352Mhz.
->> >>
->> >> The simple solution to this is to instead parent the VPU to
->> >> pll2_pfd0_352m which is unused.  I have found by default it is stable
->> >> decoding but unstable encoding at 352Mhz, most likely due to the
->> >> voltage changes needed that limiting the min cpu-freq to 792Mhz
->> >> provides.  However everything seems to work quite reliably clocking
->> >> that pfd to 327Mhz, which still gives a boost of almost 24%
->> >>
->> >> In my testing the performance gain in then going from 327 to 352 is
->> >> minimal.  Generally I think you hit AXI bus limitations rather than
->> >> VPU performance.
->> >
->> > Interesting.
->> > So you propose to add something like the following in
->> > drivers/clk/imx/clk-imx6q.cdrivers/clk/imx/clk-imx6q.c :
->> > imx_clk_set_rate(clk[IMX6QDL_CLK_PLL2_PFD0_352M], 327000000);
->> > imx_clk_set_parent(clk[IMX6QDL_CLK_VPU_AXI_SEL],
->> > clk[IMX6QDL_CLK_PLL2_PFD0_352M]);
->> >
->> > This should end up with a fastest VPU (in fact ~25% boost is good).
->> > Is it the correct way to do it ?
->> > Should it be done in coda instead ? And only when needed ?
->>
->> That is how I have done it.  I was going to implement dvfs for the vpu
->> but found that this change really added minimal power and thermal
->> overhead.  Without looking it up I believe I only saw a 10-20mA rise
->> in power usage and virtually no thermal differences.
->
-> OK so it could even be integrated mainline... Should it be driven by DT
-> maybe?
-> Is it OK to have VPU at 327MHz and CPU at 396MHz?
->
+From: Simran Rai <ssimran@broadcom.com>
 
-This can certainly be changed per device via device-tree.  It does run
-fine with the cpu at 396MHz, that limitation was previously imposed
-due to the clock parent that was being used when the VPU was clocked
-to 352MHz.  There have been hints in commits that higher cpu core
-voltage is needed, but I have not found any instability so don't
-believe this is the case.  Obviously the more people that we can have
-test this change the better.
+This patch adds audio clock device tree binding documentation to an
+existing Cygnus clock DT bindings document.
+
+Signed-off-by: Simran Rai <ssimran@broadcom.com>
+Reviewed-by: Ray Jui <rjui@broadcom.com>
+Reviewed-by: Lori Hikichi <lhikichi@broadcom.com>
+Reviewed-by: Scott Branden <sbranden@broadcom.com>
+---
+ Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+index ede65a5..20e3c00 100644
+--- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+@@ -92,6 +92,7 @@ PLL and leaf clock compatible strings for Cygnus are:
+     "brcm,cygnus-lcpll0"
+     "brcm,cygnus-mipipll"
+     "brcm,cygnus-asiu-clk"
++    "brcm,cygnus-audiopll"
+ 
+ The following table defines the set of PLL/clock index and ID for Cygnus.
+ These clock IDs are defined in:
+@@ -131,6 +132,11 @@ These clock IDs are defined in:
+     ch4_unused mipipll          5       BCM_CYGNUS_MIPIPLL_CH4_UNUSED
+     ch5_unused mipipll          6       BCM_CYGNUS_MIPIPLL_CH5_UNUSED
+ 
++    audiopll   crystal          0       BCM_CYGNUS_AUDIOPLL
++    ch0_audio  audiopll         1       BCM_CYGNUS_AUDIOPLL_CH0
++    ch1_audio  audiopll         2       BCM_CYGNUS_AUDIOPLL_CH1
++    ch2_audio  audiopll         3       BCM_CYGNUS_AUDIOPLL_CH2
++
+ Northstar and Northstar Plus
+ ------
+ PLL and leaf clock compatible strings for Northstar and Northstar Plus are:
+-- 
+1.9.1
