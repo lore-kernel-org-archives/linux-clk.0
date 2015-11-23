@@ -1,107 +1,236 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Julia Lawall <Julia.Lawall@lip6.fr>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v4 24/24] regulator: pwm: properly initialize the ->state field
-Date: Mon, 16 Nov 2015 09:56:47 +0100
-Message-Id: <1447664207-24370-25-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <jszhang@marvell.com>
+Date: Mon, 23 Nov 2015 16:54:44 +0800
+From: Jisheng Zhang <jszhang@marvell.com>
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+CC: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <antoine.tenart@free-electrons.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 6/6] arm64: dts: berlin4ct: add pll and clock nodes
+Message-ID: <20151123165444.740b457c@xhacker>
+In-Reply-To: <5652CEB2.9030902@gmail.com>
+References: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
+	<1448008952-1787-7-git-send-email-jszhang@marvell.com>
+	<564F8B73.7070403@gmail.com>	<20151123152158.483aa6b5@xhacker>
+	<5652CEB2.9030902@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
 List-ID: <linux-clk.vger.kernel.org>
 
-The ->state field is currently initialized to 0, thus referencing the
-voltage selector at index 0, which might not reflect the current voltage
-value.
-If possible, retrieve the current voltage selector from the PWM state, else
-return -EINVAL.
+On Mon, 23 Nov 2015 09:30:42 +0100
+Sebastian Hesselbarth wrote:
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
-Acked-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/pwm-regulator.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+> On 23.11.2015 08:21, Jisheng Zhang wrote:
+> > On Fri, 20 Nov 2015 22:06:59 +0100
+> > Sebastian Hesselbarth wrote:  
+> >> On 20.11.2015 09:42, Jisheng Zhang wrote:  
+> >>> Add syspll, mempll, cpupll, gateclk and berlin-clk nodes.
+> >>>
+> >>> Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+> >>> ---  
+> [...]
+> >>> +		syspll: syspll {
+> >>> +			compatible = "marvell,berlin-pll";
+> >>> +			reg = <0xea0200 0x14>, <0xea0710 4>;
+> >>> +			#clock-cells = <0>;
+> >>> +			clocks = <&osc>;
+> >>> +			bypass-shift = /bits/ 8 <0>;
+> >>> +		};
+> >>> +
+> >>> +		gateclk: gateclk {
+> >>> +			compatible = "marvell,berlin4ct-gateclk";
+> >>> +			reg = <0xea0700 4>;
+> >>> +			#clock-cells = <1>;
+> >>> +		};
+> >>> +
+> >>> +		clk: clk {
+> >>> +			compatible = "marvell,berlin4ct-clk";
+> >>> +			reg = <0xea0720 0x144>;  
+> >>
+> >> Looking at the reg ranges, I'd say that they are all clock related
+> >> and pretty close to each other:
+> >>
+> >> gateclk: reg = <0xea0700 4>;
+> >> bypass:  reg = <0xea0710 4>;
+> >> clk:     reg = <0xea0720 0x144>;  
+> >
+> > Although these ranges sit close, but we should represent HW structure as you
+> > said.  
+> 
+> Then how do you argue that you have to share the gate clock register
+> with every PLL? The answer is quite simple: You are not separating by
+> HW either but existing SW API.
 
-diff --git a/drivers/regulator/pwm-regulator.c b/drivers/regulator/pwm-regulator.c
-index 9ffdbd6..449e3b3 100644
---- a/drivers/regulator/pwm-regulator.c
-+++ b/drivers/regulator/pwm-regulator.c
-@@ -41,10 +41,35 @@ struct pwm_voltages {
- /**
-  * Voltage table call-backs
-  */
-+static void pwm_regulator_init_state(struct regulator_dev *rdev)
-+{
-+	struct pwm_regulator_data *drvdata = rdev_get_drvdata(rdev);
-+	struct pwm_state pwm_state;
-+	unsigned int dutycycle;
-+	int i;
-+
-+	pwm_get_state(drvdata->pwm, &pwm_state);
-+
-+	if (!pwm_state.period)
-+		return;
-+
-+	dutycycle = (pwm_state.duty_cycle * 100) / pwm_state.period;
-+
-+	for (i = 0; i < rdev->desc->n_voltages; i++) {
-+		if (dutycycle == drvdata->duty_cycle_table[i].dutycycle) {
-+			drvdata->state = i;
-+			return;
-+		}
-+	}
-+}
-+
- static int pwm_regulator_get_voltage_sel(struct regulator_dev *rdev)
- {
- 	struct pwm_regulator_data *drvdata = rdev_get_drvdata(rdev);
- 
-+	if (drvdata->state < 0)
-+		pwm_regulator_init_state(rdev);
-+
- 	return drvdata->state;
- }
- 
-@@ -211,6 +236,7 @@ static int pwm_regulator_init_table(struct platform_device *pdev,
- 		return ret;
- 	}
- 
-+	drvdata->state			= -EINVAL;
- 	drvdata->duty_cycle_table	= duty_cycle_table;
- 	pwm_regulator_desc.ops		= &pwm_regulator_voltage_table_ops;
- 	pwm_regulator_desc.n_voltages	= length / sizeof(*duty_cycle_table);
--- 
-2.1.4
+No, PLLs don't share register any more. You can find what all clock nodes will
+look like in:
+
+http://lists.infradead.org/pipermail/linux-arm-kernel/2015-November/387322.html
+
+> 
+> If you would really want to just describe the HW, then you'd have to
+> have a single node for _all_ clocks that get controlled by 0xea0700/0x4,
+> feed some 32+ clocks into the node, and out again. Obviously, this
+> isn't what we want, right?
+
+I represented the HW by "kind", for example, gateclks, common-clks, pllclk.
+And let common PLLs follow this rule as well:
+
+one node for all common plls
+
+reg <0x922000 0x14>, <0x940034 0x14>, <0xea0200 0x14>
+
+> 
+> So, the idea of berlin2 sysctrl nodes (and similar other SoCs) is: Some
+> SoCs just dump some functions into a bunch of registers with no
+> particular order. We'd never find a good representation for that in DT,
+> so we don't bother to try but let the driver implementation deal with
+> the mess. Using "simple-mfd" is a nice solution to scattered registers
+> please have a look at it and come up with a cleaner separation for bg4
+> clock.
+> 
+> > First of all, let me describe the clks/plls in BG4CT. BG4CT contains:
+> >
+> > two kinds of PLL: normal PLL and AVPLL. These PLLs are put with their users
+> > together. For example: mempll pll registers <0xf7940034, 0x14> is put together
+> > with mem controller registers. AVPLL control registers are put with AV devices.  
+> 
+> Why didn't you choose to have a memory-controller node that provides
+> mempll clock then? I am open to having multiple nodes providing clocks
+> but having a node for every clock in any subsystem is something I'll
+> not even think about.
+
+OK. As you said, "SoCs just dump some functions into a bunch of registers with
+no particular order", BG4CT is now cleaner, all common-clks are put together,
+gate-clks are put together, pllclks are put together, only the common PLLs
+are dumped here and there. So how about representing the HW by "kind", one
+node for common plls, one node for gateclks, one node for common clks and 
+one node for pllclks?
+
+                pll: pll {
+                        compatible = "marvell,berlin4ct-pll";
+                        reg = <0x922000 0x14>, <0x940034 0x14>, <0xea0200 0x14>
+                        #clock-cells = <0>;
+                        clocks = <&osc>;
+                };
+
+		pllclk: pllclk {
+                        compatible = "marvell,berlin4ct-pllclk";
+                        reg = <0xea0710 4>
+                        #clock-cells = <1>;
+		};
+
+                gateclk: gateclk {
+                        compatible = "marvell,berlin4ct-gateclk";
+                        reg = <0xea0700 4>;
+                        #clock-cells = <1>;
+                };
+
+                clk: clk {
+                        compatible = "marvell,berlin4ct-clk";
+                        reg = <0xea0720 0x144>;
+                        #clock-cells = <1>;
+                        clocks = <&pllclk SYSPLLCLK>;
+                };
+
+thanks
+
+> 
+> > You can also check mempll, cpupll and syspll ranges:
+> >
+> > cpupll: <0x922000 0x14>
+> >
+> > mempll: <0x940034 0x14>
+> >
+> > syspll: <0xea0200 0x14>
+> >
+> >
+> > We have three normal PLLS: cpupll, mempll and syspll. All these three PLLs use
+> > 25MHZ osc as clocksource. These plls can be bypassed. when syspll is bypassed
+> > the 25MHZ osc is directly output to syspllclk. When mempll/cpupll is bypassed,
+> > its corresponding fastrefclk is directly output to ddrphyclk/cpuclk:
+> >
+> >
+> >         ---25MHZ osc----------|\
+> >             ________            | |-- syspllclk
+> >         ---| SYSPLL |---------|/
+> >
+> >
+> >
+> >         ---cpufastrefclk------|\
+> >             ________            | |-- cpuclk
+> >         ---| CPUPLL |---------|/
+> >
+> >
+> >         ---memfastrefclk------|\
+> >             ________            | |-- ddrphyclk
+> >         ---| MEMPLL |---------|/
+> >
+> > NOTE: the fastrefclk is the so called normal clk below.
+> >
+> >
+> >
+> > two kinds of clk: normal clk and gate clk. The normal clk supports changing
+> > divider, selecting clock source, disabling/enabling etc. The gate clk only
+> > supports disabling/enabling. normal clks use syspllclk as clocksource, while
+> > gate clks use perifsysclk as clocksource.
+> >
+> >
+> > So what's the representing HW structure in fact? Here is my proposal:
+> > 1. have mempll, cpupll and syspll node in dts  
+> 
+> No.
+> 
+> > 2. one gateclk node in dts for gateclks  
+> 
+> No.
+> 
+> > 3. one normalclk node in dts for normal clks  
+> 
+> No.
+> 
+> > 4. one ccf clock-mux for cpuclk, ddrphyclk and syspllclk.  
+> 
+> No.
+> 
+> > what do you think?  
+> 
+> I think that the current separation is not a good one. I am open for
+> suggestions but I am not accepting single PLL/clock nodes.
+> 
+> >  From another side, let's have a look at driver/clk/mvebu. As can be seen,
+> > different clks register are close each other, for example, gateclk and coreclk
+> > in arch/arm/boot/dts/armada-xp.dtsi.
+> >
+> > And drivers/clk/sunxi, arch/arm/boot/dts/sun7i-a20.dtsi, the pll4, pll12, gt_clk
+> > and ahb*, apb* etc...
+> >
+> > why these SoCs don't merge clocks/gates/plls to a single clock complex node?
+> > I think that's because they are representing real HW structure.  
+> 
+> These SoC (at least mvebu) didn't merge them into a single clock
+> complex node because nobody had a better idea or an impression of
+> the consequences. Looking back with the idea of syscon/simple-mfd
+> we probably would have chosen to separate differently.
+> 
+> >> So, please just follow the OF/driver structure we already
+> >> have for Berlin2.  
+> 
+> To repeat: "please just follow the OF/driver structure we already
+> have for Berlin2"
+> 
+> Sebastian
+> 
+> >>> +			#clock-cells = <1>;
+> >>> +			clocks = <&syspll>;
+> >>> +		};
+> >>> +
+> >>>   		soc_pinctrl: pin-controller@ea8000 {
+> >>>   			compatible = "marvell,berlin4ct-soc-pinctrl";
+> >>>   			reg = <0xea8000 0x14>;
+> >>>  
+> >>  
+> >  
+> 
