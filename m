@@ -1,145 +1,93 @@
-Return-Path: <emil.l.velikov@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.133]:53915 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751869AbbKWJU3 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 23 Nov 2015 04:20:29 -0500
+Message-ID: <5652DA55.7090508@rock-chips.com>
+Date: Mon, 23 Nov 2015 17:20:21 +0800
+From: hl <hl@rock-chips.com>
 MIME-Version: 1.0
-In-Reply-To: <564EC575.90109@rock-chips.com>
-References: <1447904131-29328-1-git-send-email-zyw@rock-chips.com>
-	<CACvgo53YOMpbz1TdVmRBPPz4dv=X+8FoEo0ZcfN5DwbDYi2ZzQ@mail.gmail.com>
-	<564EC575.90109@rock-chips.com>
-Date: Fri, 20 Nov 2015 12:19:54 +0000
-Message-ID: <CACvgo52SDcRtkNuNSF6dsw_TXV5wrMmW4_ci_4uX63CJrcBg+w@mail.gmail.com>
-Subject: Re: [PATCH v3 00/12] Add mipi dsi support for rk3288
-From: Emil Velikov <emil.l.velikov@gmail.com>
-To: Chris Zhong <zyw@rock-chips.com>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	linux-rockchip <linux-rockchip@lists.infradead.org>, Mark Yao <mark.yao@rock-chips.com>,
-	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Kever Yang <kever.yang@rock-chips.com>, ML dri-devel <dri-devel@lists.freedesktop.org>,
-	"Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	Vincent Palatin <vpalatin@chromium.org>, Jeff Chen <cym@rock-chips.com>,
-	Ajay Kumar <ajaykumar.rs@samsung.com>, Andrew Bresticker <abrestic@chromium.org>,
-	Russell King <rmk+kernel@arm.linux.org.uk>, Thierry Reding <treding@nvidia.com>,
-	devicetree@vger.kernel.org, Alexandru M Stan <amstan@chromium.org>,
-	Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Rob Herring <robh+dt@kernel.org>, Roger Chen <roger.chen@rock-chips.com>,
-	Russell King <linux@arm.linux.org.uk>, Sonny Rao <sonnyrao@chromium.org>,
-	LAKML <linux-arm-kernel@lists.infradead.org>, Huang Lin <hl@rock-chips.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Doug Anderson <dianders@chromium.org>,
-	Kumar Gala <galak@codeaurora.org>, Andy Yan <andy.yan@rock-chips.com>,
-	"David S. Miller" <davem@davemloft.net>
-Content-Type: text/plain; charset=UTF-8
+To: Heiko Stuebner <heiko@sntech.de>
+CC: dianders@chromium.org, mturquette@baylibre.com,
+	myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+	linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+	dbasehore@chromium.org, linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: rockchip: dmc: support rk3399 dmc clock driver
+References: <1447928471-14448-1-git-send-email-hl@rock-chips.com> <42589302.5BMrDbIv8M@phil> <564E794B.8070002@rock-chips.com> <1589931.xBgSB4kSK8@phil>
+In-Reply-To: <1589931.xBgSB4kSK8@phil>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 20 November 2015 at 07:02, Chris Zhong <zyw@rock-chips.com> wrote:
-> Hi Emil
+Hi Heiko,
+
+On 22/11/15 02:30, Heiko Stuebner wrote:
+> Hi Lin,
 >
-> On 11/19/2015 10:41 PM, Emil Velikov wrote:
->>
->> On 19 November 2015 at 03:35, Chris Zhong <zyw@rock-chips.com> wrote:
+> Am Freitag, 20. November 2015, 09:37:15 schrieb hl:
+>> On 20/11/15 05:47, Heiko Stuebner wrote:
+>>> Hi Lin,
 >>>
->>> The rk3288 MIPI DSI is a Synopsys DesignWare MIPI DSI host controller
->>> IP. This series adds support for a Synopsys DesignWare MIPI DSI host
->>> controller DRM bridge driver and a rockchip MIPI DSI specific DRM
->>> driver.
+>>> Am Donnerstag, 19. November 2015, 18:21:10 schrieb Lin Huang:
+>>>> support rk3399 dmc clock driver. Note, ddr set rate function will
+>>>> use dcf controller which run in ATF, it need to fishish it when rk3399
+>>>> arm trust firmware ready.
+>>> this unfinalized state is slightly unfortunate and I think this code will
+>>> need to wait until CRU and DDRC specs are available.
 >>>
->>> This series also includes a DRM panel driver for BOE TV080WUM-NL0 panel.
->>> This panel only use the MIPI DSI video mode.
+>>> Because this is clearly part of the CRU (labeled CRU_CLKSEL6_CON etc)
+>>> so shouldn't be a separate driver at all and also what your driver currently
+>>> only does can still simply be described in the regular scheme as part of
+>>> a full clock driver like
 >>>
->>> The MIPI DSI feature is tested on rk3288 evb board, backport them to
->>> chrome os kernel v3.14, and it can display normally.
+>>> PNAME(mux_ddrc_p) = { "pll_dpll", "pll_gpll", "pll_alpll", "pll_abpll" };
+>>> COMPOSITE_NOGATE(0, "ddrc", mux_ddrc_p, 0,
+>>> 					RK3399_CLKSEL_CON(6), 4, 2, MFLAGS, 0, 3,
+>>> 					DFLAGS | CLK_DIVIDER_POWER_OF_TWO),
 >>>
->>> This patchset is base on the patchset from Ying.liu@freescale.com.
->>> <http://www.spinics.net/lists/dri-devel/msg77181.html>
+>>> So the code needs to actually demonstrate why a separate clock type is
+>>> really necessary.
 >>>
->>>
->>> Changes in v3:
->>> move the dw_mipi_dsi.txt to
->>> Documentation/devicetree/bindings/display/bridge
->>> move dw_mipi_dsi_rockchip.txt to bindings/display/rockchip/
->>> move boe,tv080wum-nl0.txt to bindings/display/panel/
->>>
->>> Changes in v2:
->>> add the mipi clk id in a single patch
->>> As Thierry.Reding comment, add a documentation for this panel.
->>>
->>> Chris Zhong (10):
->>>    clk: rockchip: add id for mipidsi sclk on rk3288
->>>    clk: rockchip: add mipidsi clocks on rk3288
->>>    drm/rockchip: return a true clock rate to adjusted_mode
->>>    drm/bridge: Add Synopsys DesignWare MIPI DSI host controller driver
->>
->> Did you actually rewrite the patch from Liu Ying ?
+>>> I do understand that we will probably need a special way to talk to this
+>>> dcf controller but seeing how this interaction will work is really a
+>>> prequisite to finding a correct solution.
+>>       if we can use common clock driver, i can put the dfi controller as
+>> a  independent driver
+>>       into devfreq,  this is the best way. But how do we separate the ddr
+>> clk_set_rate() ,
+>>       so we can manipulate dcf controller(actually, we use SMC handle dcf
+>> controller in arm trust firmware ),
+>>       i check clock driver code, it seem there is not way to do that for now.
+> the core problem I have right now is, that I don't understand how the
+> interaction with the dfi controller works at all :-) .
 >
-> I modify the dw_mipi_dsi.c based on the patch from Liu Ying.
-If you base your work on top of (i.e. you rework) someone else's patch
-you should retain this authorship and signed-off-by line. This of
-course is not limited to the above patch but a general rule, afaik.
-
->>
->> Out of curiosity what was the obstacle of this work getting merged ?
+> One thing that might work, is that your dfi-driver takes the ddrc-clock
+> from the clock controller and then registers a clock notifier to get
+> notified before and after the clock-rate changes. But that depends as
+> stated above on how the dfi-controller needs to be handled.
 >
-> There are different version dw controller, and it is too hard to merge them,
-> since most registers are different.
-Have you discussed this limitation with Liu ? Does your work handle
-both versions of the controller ? If so your commit message should say
-something about that. Here are some good sources on the whats and whys
-wrt writing good commit messages [1] [2]
-
-[1] http://who-t.blogspot.co.uk/2009/12/on-commit-messages.html
-[2] http://chris.beams.io/posts/git-commit/
-
->>
->>
->>>    drm: rockchip: Support Synopsys DesignWare MIPI DSI host controller
->>>    Documentation: dt-bindings: Add bindings for rk3288 DW MIPI DSI driver
->>>    ARM: dts: rockchip: add rk3288 mipi_dsi nodes
->>>    drm/panel: simple: Add support for BOE TV080WUM-NL0
->>>    drm/panel: simple: Add boe,tv080wum-nl0 simple panel device tree
->>>      binding
->>
->> As the DT people will tell you - there is no BOE vendor in
->> bindings/vendor-prefixes.txt.
+> For example the current armclk-handling uses a clock notifier around the
+> actual rate change ... so you could use that as inspiration.
+     Thank you for your inspiration. I think i can handle ddrc clk like 
+the armclk.
+     About the dfi, it will monitor ddr utilization, according this 
+result to do
+     ddr frequency scaling. I think i can implement a dfi drvier, and 
+register it to devfreq,
+     then call the dmc_set_rate fucntion in the dfi drvier, meanwhile i 
+will implement a ddrc clk driver
+     like the armclk, implement set rate funciton, and call the 
+dcf(implement in ATF) in this function.
 >
-> Yes, I have post a verdor patch in v2 series,
-> <https://patchwork.kernel.org/patch/7530791/>
-> Maybe I should add it back to series with
 >
-> Acked-by: Rob Herring<robh@kernel.org>
+> Heiko
 >
-If a patch has been reviewed/acked that's great. Add the tag, but
-please do not drop patches until they are merged. In the latter case
-you can mention that your series depends on branch X from repo Y.
-
->>
->>>    ARM: dts: rockchip: add support mipi panel tv080wum-nl0 for rk3288-evb
->>>
->>> Liu Ying (2):
->>>    drm/dsi: Add a helper to get bits per pixel of MIPI DSI pixel format
->>>    Documentation: dt-bindings: Add bindings for Synopsys DW MIPI DSI DRM
->>>      bridge driver
->>>
->> >From the above 12 patches only ~6 reached this mailing list is that
->> intentional ? Previously I've seen people CC dri-devel for their
->> panel/bridge DT patches.
 >
-> I use the patman to post the series, forgot to add you and Thierry to the
-> to-list.
-> I will fix in next version series. Thanks for your reply.
 >
-No need to add me bth. Thierry on the other hand should be Cc'd on the
-patches where he's the maintainer.
+>
 
-As the To/Cc list is already quite excessive - I'd suggest following
-the approach used by veterans in kernel development.
+-- 
+Lin Huang
 
-I'm not a veteran kernel dev, but this is what I've noticed over the years:
- - Subsystem foo - mailing-list, maintainer(s), and optionally the top
-1-2 developers
- - Other subsystems - mailing-list and optionally the maintainer(s).
 
-Thus in the case of the panel driver you'll get - dri-devel, Thierry
-and optionally(?) devicetree
-For the DT binding for the panel driver - devicetree, Rob, dri-devel, Thierry.
-
-...I think you get the idea :-)
-
-Regards,
-Emil
