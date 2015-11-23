@@ -1,125 +1,49 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Julia Lawall <Julia.Lawall@lip6.fr>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v4 04/24] hwmon: pwm-fan: use pwm_get_xxx() helpers where appropriate
-Date: Mon, 16 Nov 2015 09:56:27 +0100
-Message-Id: <1447664207-24370-5-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <tyler.baker@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <1448032264-29622-1-git-send-email-jonathanh@nvidia.com>
+References: <1448032264-29622-1-git-send-email-jonathanh@nvidia.com>
+Date: Mon, 23 Nov 2015 15:18:59 -0800
+Message-ID: <CANMBJr7vYb+kuUBzsC8i4b=b6DRVsbqnf5OrVtj6kVS2RMNgfQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: tegra: Fix bypassing of PLLs
+From: Tyler Baker <tyler.baker@linaro.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rhyland Klein <rklein@nvidia.com>,
+	"Kevin's boot bot" <khilman@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Use pwm_get_xxx() helpers instead of directly accessing the pwm->xxx field.
-Doing that will ease adaptation of the PWM framework to support atomic
-update.
+Hi Jon,
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
-Patch generated with the following coccinelle script:
+On 20 November 2015 at 07:11, Jon Hunter <jonathanh@nvidia.com> wrote:
+> The _clk_disable_pll() function will attempt to place a PLL into bypass
+> if the TEGRA_PLL_BYPASS is specified for the PLL and then disable the PLL
+> by clearing the enable bit. To place the PLL into bypass, the bypass bit
+> needs to be set and not cleared. Fix this by setting the bypass bit and
+> not clearing it.
+>
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 
---->8---
-virtual patch
+The kernelci.org bot recently detected a jetson-tk1 boot failure[1][2]
+in the tegra tree. This boot failure has only been observed when
+booting with a multi_v7_defconfig kernel variant. The bot bisected[3]
+this boot failure to this commit, and I confirmed reverting it on top
+of the tegra for-next branch resolves the issue. The ramdisk[4] used
+for booting is loaded with the modules from the build. It appears to
+me that as the modules are being loaded in userspace by eudev the
+jetson-tk1 locks up. I've sifted through the console logs a bit, and
+found this splat to be most interesting[5].  Can you confirm this
+issue on your end?
 
-@@
-struct pwm_device *p;
-expression e;
-@@
-(
--(p)->polarity = e;
-+pwm_set_polarity((p), e);
-|
--(p)->polarity
-+pwm_get_polarity((p))
-|
--(p)->period = e;
-+pwm_set_period((p), e);
-|
--(p)->period
-+pwm_get_period((p))
-|
--(p)->duty_cycle = e;
-+pwm_set_duty_cycle((p), e);
-|
--(p)->duty_cycle
-+pwm_get_duty_cycle((p))
-)
---->8---
----
- drivers/hwmon/pwm-fan.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+Cheers,
 
-diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
-index 3e23003..105b964 100644
---- a/drivers/hwmon/pwm-fan.c
-+++ b/drivers/hwmon/pwm-fan.c
-@@ -47,8 +47,8 @@ static int  __set_pwm(struct pwm_fan_ctx *ctx, unsigned long pwm)
- 	if (ctx->pwm_value == pwm)
- 		goto exit_set_pwm_err;
- 
--	duty = DIV_ROUND_UP(pwm * (ctx->pwm->period - 1), MAX_PWM);
--	ret = pwm_config(ctx->pwm, duty, ctx->pwm->period);
-+	duty = DIV_ROUND_UP(pwm * (pwm_get_period((ctx->pwm)) - 1), MAX_PWM);
-+	ret = pwm_config(ctx->pwm, duty, pwm_get_period((ctx->pwm)));
- 	if (ret)
- 		goto exit_set_pwm_err;
- 
-@@ -234,10 +234,10 @@ static int pwm_fan_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, ctx);
- 
- 	/* Set duty cycle to maximum allowed */
--	duty_cycle = ctx->pwm->period - 1;
-+	duty_cycle = pwm_get_period((ctx->pwm)) - 1;
- 	ctx->pwm_value = MAX_PWM;
- 
--	ret = pwm_config(ctx->pwm, duty_cycle, ctx->pwm->period);
-+	ret = pwm_config(ctx->pwm, duty_cycle, pwm_get_period((ctx->pwm)));
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to configure PWM\n");
- 		return ret;
-@@ -309,8 +309,9 @@ static int pwm_fan_resume(struct device *dev)
- 	if (ctx->pwm_value == 0)
- 		return 0;
- 
--	duty = DIV_ROUND_UP(ctx->pwm_value * (ctx->pwm->period - 1), MAX_PWM);
--	ret = pwm_config(ctx->pwm, duty, ctx->pwm->period);
-+	duty = DIV_ROUND_UP(ctx->pwm_value * (pwm_get_period((ctx->pwm)) - 1),
-+			    MAX_PWM);
-+	ret = pwm_config(ctx->pwm, duty, pwm_get_period((ctx->pwm)));
- 	if (ret)
- 		return ret;
- 	return pwm_enable(ctx->pwm);
--- 
-2.1.4
+Tyler
+
+[1] http://kernelci.org/soc/tegra/job/tegra/kernel/v4.4-rc1-60-gb924f95da320/
+[2] http://kernelci.org/soc/tegra/job/tegra/
+[3] http://hastebin.com/sekozibilo.lua
+[4] http://storage.kernelci.org/images/rootfs/buildroot/armel/base/rootfs.cpio.gz
+[5] http://hastebin.com/jomigahiro.coffee
