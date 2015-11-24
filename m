@@ -1,67 +1,144 @@
-Return-Path: <vz@mleia.com>
-From: Vladimir Zapolskiy <vz@mleia.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: Russell King <linux@arm.linux.org.uk>,
-	Roland Stigge <stigge@antcom.de>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 07/11] arm: dts: lpc32xx: add USB clock controller
-Date: Fri, 20 Nov 2015 03:05:07 +0200
-Message-Id: <1447981511-29653-8-git-send-email-vz@mleia.com>
-In-Reply-To: <1447981511-29653-1-git-send-email-vz@mleia.com>
-References: <1447981511-29653-1-git-send-email-vz@mleia.com>
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 4/5] ARM: dts: sun9i: Add A80 PRCM clocks and reset control nodes
+Date: Tue, 24 Nov 2015 17:32:15 +0800
+Message-Id: <1448357536-26613-5-git-send-email-wens@csie.org>
+In-Reply-To: <1448357536-26613-1-git-send-email-wens@csie.org>
+References: <1448357536-26613-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The change adds device node of LPC32xx USB clock controller and adds
-clock properties to USB OHCI, USB device and I2C controller to USB phy
-device nodes.
+This adds the supported PRCM clocks and reset controls to the A80 dtsi.
+The DAUDIO module clocks are not supported yet.
 
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+Also update clock and reset phandles for r_uart.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- arch/arm/boot/dts/lpc32xx.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm/boot/dts/sun9i-a80.dtsi | 79 +++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 78 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/lpc32xx.dtsi b/arch/arm/boot/dts/lpc32xx.dtsi
-index 792468e..68bf011 100644
---- a/arch/arm/boot/dts/lpc32xx.dtsi
-+++ b/arch/arm/boot/dts/lpc32xx.dtsi
-@@ -92,6 +92,7 @@
- 				compatible = "nxp,ohci-nxp", "usb-ohci";
- 				reg = <0x0 0x300>;
- 				interrupts = <0x3b 0>;
-+				clocks = <&usbclk LPC32XX_USB_CLK_HOST>;
- 				status = "disabled";
- 			};
- 
-@@ -99,6 +100,7 @@
- 				compatible = "nxp,lpc3220-udc";
- 				reg = <0x0 0x300>;
- 				interrupts = <0x3d 0>, <0x3e 0>, <0x3c 0>, <0x3a 0>;
-+				clocks = <&usbclk LPC32XX_USB_CLK_DEVICE>;
- 				status = "disabled";
- 			};
- 
-@@ -106,10 +108,17 @@
- 				compatible = "nxp,pnx-i2c";
- 				reg = <0x300 0x100>;
- 				interrupts = <0x3f 0>;
-+				clocks = <&usbclk LPC32XX_USB_CLK_I2C>;
- 				#address-cells = <1>;
- 				#size-cells = <0>;
- 				pnx,timeout = <0x64>;
- 			};
-+
-+			usbclk: clock-controller@F00 {
-+				compatible = "nxp,lpc3220-usb-clk";
-+				reg = <0xF00 0x100>;
-+				#clock-cells = <1>;
-+			};
+diff --git a/arch/arm/boot/dts/sun9i-a80.dtsi b/arch/arm/boot/dts/sun9i-a80.dtsi
+index 1118bf5cc4fb..a4ce348c0831 100644
+--- a/arch/arm/boot/dts/sun9i-a80.dtsi
++++ b/arch/arm/boot/dts/sun9i-a80.dtsi
+@@ -164,6 +164,14 @@
+ 					     "usb_phy2", "usb_hsic_12M";
  		};
  
- 		clcd: clcd@31040000 {
++		pll3: clk@06000008 {
++			/* placeholder until implemented */
++			#clock-cells = <0>;
++			compatible = "fixed-clock";
++			clock-rate = <0>;
++			clock-output-names = "pll3";
++		};
++
+ 		pll4: clk@0600000c {
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun9i-a80-pll4-clk";
+@@ -350,6 +358,68 @@
+ 					"apb1_uart2", "apb1_uart3",
+ 					"apb1_uart4", "apb1_uart5";
+ 		};
++
++		cpus_clk: clk@08001410 {
++			compatible = "allwinner,sun9i-a80-cpus-clk";
++			reg = <0x08001410 0x4>;
++			#clock-cells = <0>;
++			clocks = <&osc32k>, <&osc24M>, <&pll4>, <&pll3>;
++			clock-output-names = "cpus";
++		};
++
++		ahbs: ahbs_clk {
++			compatible = "fixed-factor-clock";
++			#clock-cells = <0>;
++			clock-div = <1>;
++			clock-mult = <1>;
++			clocks = <&cpus_clk>;
++			clock-output-names = "ahbs";
++		};
++
++		apbs: clk@0800141c {
++			compatible = "allwinner,sun8i-a23-apb0-clk";
++			reg = <0x0800141c 0x4>;
++			#clock-cells = <0>;
++			clocks = <&ahbs>;
++			clock-output-names = "apbs";
++		};
++
++		apbs_gates: clk@08001428 {
++			compatible = "allwinner,sun9i-a80-apbs-gates-clk";
++			reg = <0x08001428 0x4>;
++			#clock-cells = <1>;
++			clocks = <&apbs>;
++			clock-indices = <0>, <1>,
++					<2>, <3>,
++					<4>, <5>,
++					<6>, <7>,
++					<12>, <13>,
++					<16>, <17>,
++					<18>, <20>;
++			clock-output-names = "apbs_pio", "apbs_ir",
++					"apbs_timer", "apbs_rsb",
++					"apbs_uart", "apbs_1wire",
++					"apbs_i2c0", "apbs_i2c1",
++					"apbs_ps2_0", "apbs_ps2_1",
++					"apbs_dma", "apbs_i2s0",
++					"apbs_i2s1", "apbs_twd";
++		};
++
++		r_1wire_clk: clk@08001450 {
++			reg = <0x08001450 0x4>;
++			#clock-cells = <0>;
++			compatible = "allwinner,sun4i-a10-mod0-clk";
++			clocks = <&osc32k>, <&osc24M>;
++			clock-output-names = "r_1wire";
++		};
++
++		r_ir_clk: clk@08001454 {
++			reg = <0x08001454 0x4>;
++			#clock-cells = <0>;
++			compatible = "allwinner,sun4i-a10-mod0-clk";
++			clocks = <&osc32k>, <&osc24M>;
++			clock-output-names = "r_ir";
++		};
+ 	};
+ 
+ 	soc {
+@@ -764,13 +834,20 @@
+ 			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
++		apbs_rst: reset@080014b0 {
++			reg = <0x080014b0 0x4>;
++			compatible = "allwinner,sun6i-a31-clock-reset";
++			#reset-cells = <1>;
++		};
++
+ 		r_uart: serial@08002800 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x08002800 0x400>;
+ 			interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&osc24M>;
++			clocks = <&apbs_gates 4>;
++			resets = <&apbs_rst 4>;
+ 			status = "disabled";
+ 		};
+ 	};
 -- 
-2.1.4
+2.6.2
