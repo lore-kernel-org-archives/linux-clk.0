@@ -1,25 +1,56 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Wed, 25 Nov 2015 11:51:03 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Bai Ping <b51503@freescale.com>
-Cc: kernel@pengutronix.de, mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH Resend] clk: imx: add 'is_prepared' clk_ops callback for
- pllv3 clk
-Message-ID: <20151125035103.GF11999@tiger>
-References: <1448381213-24349-1-git-send-email-b51503@freescale.com>
+Return-Path: <Ping.Bai@freescale.com>
+From: Bai Ping <b51503@freescale.com>
+To: <shawnguo@kernel.org>, <kernel@pengutronix.de>
+CC: <l.stach@pengutronix.de>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+Subject: [PATCH 1/3] clk: imx: Add a virtual arm clk on i.mx7d
+Date: Tue, 24 Nov 2015 18:25:14 +0800
+Message-ID: <1448360716-1741-1-git-send-email-b51503@freescale.com>
+Return-Path: b51503@freescale.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1448381213-24349-1-git-send-email-b51503@freescale.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Nov 25, 2015 at 12:06:53AM +0800, Bai Ping wrote:
-> Add 'is_prepared' callback function for pllv3 type clk to make sure when
-> the system is bootup, the unused clk is in a known state to match the
-> prepare count info.
-> 
-> Signed-off-by: Bai Ping <b51503@freescale.com>
-> Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+Add a virtual arm clk to abstract the actual steps
+when changing the ARM core frequency.So we can using
+the 'cpufreq-dt' driver on i.MX7D/Solo.
 
-Applied, thanks.
+Signed-off-by: Bai Ping <b51503@freescale.com>
+---
+ drivers/clk/imx/clk-imx7d.c             | 6 ++++++
+ include/dt-bindings/clock/imx7d-clock.h | 3 ++-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 448ef32..581b428 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -833,6 +833,12 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 
+ 	clks[IMX7D_GPT_3M_CLK] = imx_clk_fixed_factor("gpt_3m", "osc", 1, 8);
+ 
++	clks[IMX7D_CLK_ARM] = imx_clk_cpu("arm", "arm_a7_root_clk",
++					 clks[IMX7D_ARM_A7_ROOT_CLK],
++					 clks[IMX7D_ARM_A7_ROOT_SRC],
++					 clks[IMX7D_PLL_ARM_MAIN_CLK],
++					 clks[IMX7D_PLL_SYS_MAIN_CLK]);
++
+ 	for (i = 0; i < ARRAY_SIZE(clks); i++)
+ 		if (IS_ERR(clks[i]))
+ 			pr_err("i.MX7D clk %d: register failed with %ld\n",
+diff --git a/include/dt-bindings/clock/imx7d-clock.h b/include/dt-bindings/clock/imx7d-clock.h
+index a4a7a9c..edca8985c 100644
+--- a/include/dt-bindings/clock/imx7d-clock.h
++++ b/include/dt-bindings/clock/imx7d-clock.h
+@@ -447,5 +447,6 @@
+ #define IMX7D_SEMA4_HS_ROOT_CLK		434
+ #define IMX7D_PLL_DRAM_TEST_DIV		435
+ #define IMX7D_ADC_ROOT_CLK		436
+-#define IMX7D_CLK_END			437
++#define IMX7D_CLK_ARM			437
++#define IMX7D_CLK_END			438
+ #endif /* __DT_BINDINGS_CLOCK_IMX7D_H */
+-- 
+1.9.1
