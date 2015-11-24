@@ -1,39 +1,30 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 20 Nov 2015 11:17:53 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:48879 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751568AbbKXCtk (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 23 Nov 2015 21:49:40 -0500
+Date: Tue, 24 Nov 2015 11:49:37 +0900
+From: Simon Horman <horms@verge.net.au>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Jiri Kosina <trivial@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] [trivial] clk: Spelling s/derefing/dereferencing/
-Message-ID: <20151120191752.GZ32672@codeaurora.org>
-References: <1446148500-20480-1-git-send-email-geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-sh@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/2] drivers: sh: clk: Cleanup clock API
+Message-ID: <20151124024936.GG21853@verge.net.au>
+References: <1447957927-32738-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1446148500-20480-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1447957927-32738-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/29, Geert Uytterhoeven wrote:
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-
-Applied to clk-next....
-
->  drivers/clk/clk.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Nov 19, 2015 at 07:32:05PM +0100, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
 > 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index a5202df30bb27598..77835e408fe67049 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1981,7 +1981,7 @@ bool clk_is_match(const struct clk *p, const struct clk *q)
->  	if (p == q)
->  		return true;
->  
-> -	/* true if clk->core pointers match. Avoid derefing garbage */
-> +	/* true if clk->core pointers match. Avoid dereferencing garbage */
+> This patch series cleans up the clock API on legacy SH, to make it more
+> similar with the Common Clock Framework.  This will avoid different
+> behavior in drivers shared between legacy and CCF-based platforms (e.g.
+> SCIF).
+> 
+> Thanks for applying!
 
-derefing isn't a word? :)
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks, done.
