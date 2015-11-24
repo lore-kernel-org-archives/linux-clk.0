@@ -1,70 +1,67 @@
-Return-Path: <andy.shevchenko@gmail.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 24 Nov 2015 09:45:31 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Josef Gajdusek <atx@atx.name>
+Cc: linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	gpatchesrdh@mveas.com, mturquette@linaro.org, hdegoede@redhat.com,
+	sboyd@codeaurora.org, mturquette@baylibre.com, emilio@elopez.com.ar,
+	linux@arm.linux.org.uk, edubezval@gmail.com, rui.zhang@intel.com,
+	wens@csie.org, galak@codeaurora.org, ijc+devicetree@hellion.org.uk,
+	mark.rutland@arm.com, pawel.moll@arm.com, robh+dt@kernel.org
+Subject: Re: [PATCH v2 5/5] ARM: dts: sun8i: Add THS node to the H3 .dtsi
+Message-ID: <20151124084531.GK32142@lukather>
+References: <cover.1448263428.git.atx@atx.name>
+ <0fff612e26bf9cda9027a4175e16d25a0c2cc62c.1448263428.git.atx@atx.name>
 MIME-Version: 1.0
-In-Reply-To: <877flsknmk.wl%kuninori.morimoto.gx@renesas.com>
-References: <874mhmuyg8.wl%kuninori.morimoto.gx@renesas.com>
-	<CAHp75VcKnJr2zaFky9_G-qetdiuB8fS=r8r7hQTbYPUwEZ7n4g@mail.gmail.com>
-	<877flsknmk.wl%kuninori.morimoto.gx@renesas.com>
-Date: Mon, 9 Nov 2015 11:21:46 +0200
-Message-ID: <CAHp75VdYL_fjvcG3Ss=yk=E1i5JKox9-sTaFzKjG8O1Osez5tQ@mail.gmail.com>
-Subject: Re: [PATCH v5] clk: add CS2000 Fractional-N driver
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Simon <horms@verge.net.au>,
-	Michael Turquette <mturquette@baylibre.com>, Magnus <magnus.damm@gmail.com>,
-	Linux-SH <linux-sh@vger.kernel.org>, Linux-Kernel <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="1QzJaSEX5hKRjM1z"
+In-Reply-To: <0fff612e26bf9cda9027a4175e16d25a0c2cc62c.1448263428.git.atx@atx.name>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Nov 9, 2015 at 2:49 AM, Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
 
->> > +static int cs2000_wait_pll_lock(struct cs2000_priv *priv)
->> > +{
->> > +       struct device *dev =3D priv_to_dev(priv);
->> > +       s32 val;
->> > +       unsigned int i;
->> > +
->> > +       for (i =3D 0; i < 256; i++) {
->> > +               val =3D cs2000_read(priv, DEVICE_CTRL);
->> > +               if (val < 0)
->> > +                       return val;
->> > +               if (!(val & PLL_UNLOCK))
->> > +                       return 0;
->> > +               udelay(1);
->> > +       }
->>
->> unsigned int i =3D 256;
->>
->> do {
->> val =3D read();
->> =E2=80=A6
->> while ((val & PLL_UNLOCK) && --i);
->>
->> if (!i) {
->>  =E2=80=A6
->>  return -EIO;
->>
->> Actually -ETIMEDOUT ?
->>
->> }
->
-> What is the motivation of above ?
-> It needs "i" anyway ? it needs to check (val < 0) anyway ?
-> what is the difference between do {} while <-> for(xxx)
+--1QzJaSEX5hKRjM1z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Just a style.
-Still the question about error code.
+On Mon, Nov 23, 2015 at 09:02:52AM +0100, Josef Gajdusek wrote:
+> +		ths: ths@01c25000 {
+> +			#thermal-sensor-cells =3D <0>;
+> +			compatible =3D "allwinner,sun8i-h3-ths";
+> +			reg =3D <0x01c25000 0x88>;
 
->> > +       of_property_read_string(np, "clock-output-names", &name);
->>
->> What about device property API?
->
-> Sorry, which API ?
-> Many other clk-xxx.c are using this style ?
+The datasheet says the size is 0x400, any particular reason to have a
 
-Never mind then.
+Thanks,
+Maxime
 
 --=20
-With Best Regards,
-Andy Shevchenko
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--1QzJaSEX5hKRjM1z
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWVCOrAAoJEBx+YmzsjxAgHn8P/RNoAmuUKvT34eXQ5cFmz8cd
+LS1DDrfvGkdHC9aOL92B8TSnyetBOS68tI3eLkW2sgagi1qbj0o1snjf73P8nFCc
+eTGSYT6J4ewmaPuPfnEOYidGHYpk1rfoUfvyDr6WtbKZvdiZV718LFsF0m+wPJTG
+Qi8WiYIkfdwHRfnxiuaCeGJ1dbKF2pXtP3aGc3EkiBP7hFfaoXcl4KFyc0+qUvTw
+1aWxBkV8EawfdK4I5C3OnCB/8bPZb8bsmlMhPydca23SnYBT4wYcT+oRrlOpdvmj
+FuXqVSBw1agDZ7t2XaxW0rvJdB0HqAUx9yZNJqA+3AlCSQXQ+NfUSZi1mkd7z1R4
+X6yIDCI82WdoJcOtrkIgd+emATYZVjvrmNU7CH+O0YFYUKG4TWRJqk+FSmu89C4i
+ZXjoLruE4sOmGZDyUM/PAcKnBpTdWnQd2IvHyar5KUsKy6GB5xm+UrWLN4jJUMW6
+e/B4dgEYkvUunRorQ5JuXHDur79CJieHQ85cOZ8zf/JZ8b4JJRtXyJORCSmZ7chy
+57DADYWMi8+X48cYtKfT80S/Be6KOIcNvmDWsVUobclwy9PElifJj+UBnDOmqK47
+qHB+21HHqkD5dvaZS0ragyeN4XZqqz055KjA1SswI6oZ855Zr2I83UXFOkLOQodQ
+9EuPNWhW5r4/a0VyjRpi
+=f4uw
+-----END PGP SIGNATURE-----
+
+--1QzJaSEX5hKRjM1z--
