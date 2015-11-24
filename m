@@ -1,59 +1,113 @@
-Return-Path: <yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-In-Reply-To: <1448873164-22415-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1448873164-22415-1-git-send-email-yamada.masahiro@socionext.com>
-Date: Mon, 30 Nov 2015 17:48:55 +0900
-Message-ID: <CAK7LNASwK_B7L7wpgTBEdoOOeFrHFD603q_Wfap-v+C3FWpFWg@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: let of_clk_get_parent_name() fail for invalid clock-indices
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 1/5] clk: sunxi: Add CLK_OF_DECLARE support for sun8i-a23-apb0-clk driver
+Date: Tue, 24 Nov 2015 17:32:12 +0800
+Message-Id: <1448357536-26613-2-git-send-email-wens@csie.org>
+In-Reply-To: <1448357536-26613-1-git-send-email-wens@csie.org>
+References: <1448357536-26613-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-2015-11-30 17:46 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> Currently, of_clk_get_parent_name() returns a wrong parent clock name
-> when "clock-indices" property exists and the target index is not
-> found in the property.  In this case, NULL should be returned.
->
-> For example,
->
->         oscillator {
->                 compatible = "myclocktype";
->                 #clock-cells = <1>;
->                 clock-indices = <1>, <3>;
->                 clock-output-names = "clka", "clkb";
->         };
->
->         consumer {
->                 compatible = "myclockconsumer";
->                 clocks = <&oscillator 0>, <&oscillator 1>;
->         };
->
-> Currently, of_clk_get_parent_name(consumer_np, 0) returns "clka"
-> (and of_clk_get_parent_name(consumer_np, 1) also returns "clka",
-> this is correct).   Because the "clock-indices" in the clock parent
-> does not contain <0>, of_clk_get_parent_name(consumer_np, 0) should
-> return NULL.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+The APBS clock on sun9i is the same as the APB0 clock on sun8i. With
+sun9i we are supporting the PRCM clocks by using CLK_OF_DECLARE,
+instead of through a PRCM mfd device and subdevices for each clock
+and reset control. As such we need a CLK_OF_DECLARE version of
+the sun8i-a23-apb0-clk driver.
 
+Also, build it for all Allwinner/sunxi platforms, and not just for
+configurations with MFD_SUN6I_PRCM enabled.
 
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi/Makefile         |  4 ++--
+ drivers/clk/sunxi/clk-sun8i-apb0.c | 43 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 45 insertions(+), 2 deletions(-)
 
-I've sent v2 to linux-gpio@vger.kernel.org by mistake.
-
-My intention was to send it linux-clk@vger.kernel.org.
-
-
-Sorry, Linus Walleij.
-
-
-
-
+diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+index cb4c299214ce..121333ce34ea 100644
+--- a/drivers/clk/sunxi/Makefile
++++ b/drivers/clk/sunxi/Makefile
+@@ -10,11 +10,11 @@ obj-y += clk-a10-pll2.o
+ obj-y += clk-a20-gmac.o
+ obj-y += clk-mod0.o
+ obj-y += clk-simple-gates.o
++obj-y += clk-sun8i-apb0.o
+ obj-y += clk-sun8i-mbus.o
+ obj-y += clk-sun9i-core.o
+ obj-y += clk-sun9i-mmc.o
+ obj-y += clk-usb.o
+ 
+ obj-$(CONFIG_MFD_SUN6I_PRCM) += \
+-	clk-sun6i-ar100.o clk-sun6i-apb0.o clk-sun6i-apb0-gates.o \
+-	clk-sun8i-apb0.o
++	clk-sun6i-ar100.o clk-sun6i-apb0.o clk-sun6i-apb0-gates.o
+diff --git a/drivers/clk/sunxi/clk-sun8i-apb0.c b/drivers/clk/sunxi/clk-sun8i-apb0.c
+index 7ae5d2c2cde1..11b2f2fde245 100644
+--- a/drivers/clk/sunxi/clk-sun8i-apb0.c
++++ b/drivers/clk/sunxi/clk-sun8i-apb0.c
+@@ -17,8 +17,51 @@
+ #include <linux/clk-provider.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
++#include <linux/of_address.h>
+ #include <linux/platform_device.h>
+ 
++static void sun8i_a23_apb0_setup(struct device_node *node)
++{
++	const char *clk_name = node->name;
++	const char *clk_parent;
++	void __iomem *reg;
++	struct resource res;
++	struct clk *clk;
++	int ret;
++
++	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
++	if (IS_ERR(reg))
++		return;
++
++	clk_parent = of_clk_get_parent_name(node, 0);
++	if (!clk_parent)
++		goto err_unmap;
++
++	of_property_read_string(node, "clock-output-names", &clk_name);
++
++	/* The A23 APB0 clock is a standard 2 bit wide divider clock */
++	clk = clk_register_divider(NULL, clk_name, clk_parent, 0, reg,
++				   0, 2, CLK_DIVIDER_POWER_OF_TWO, NULL);
++	if (IS_ERR(clk))
++		goto err_unmap;
++
++	ret = of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	if (ret)
++		goto err_unregister;
++
++	return;
++
++err_unregister:
++	clk_unregister_divider(clk);
++
++err_unmap:
++	iounmap(reg);
++	of_address_to_resource(node, 0, &res);
++	release_mem_region(res.start, resource_size(&res));
++}
++CLK_OF_DECLARE(sun8i_a23_apb0, "allwinner,sun8i-a23-apb0-clk",
++	       sun8i_a23_apb0_setup);
++
+ static int sun8i_a23_apb0_clk_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
 -- 
-Best Regards
-Masahiro Yamada
+2.6.2
