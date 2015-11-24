@@ -1,70 +1,96 @@
-Return-Path: <l.stach@pengutronix.de>
-Message-ID: <1448448803.3689.51.camel@pengutronix.de>
-Subject: Re: [PATCH 1/3] clk: imx: Add a virtual arm clk on i.mx7d
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Bai Ping <b51503@freescale.com>
-Cc: shawnguo@kernel.org, kernel@pengutronix.de, robh+dt@kernel.org,
-	pawel.moll@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Date: Wed, 25 Nov 2015 11:53:23 +0100
-In-Reply-To: <1448360716-1741-1-git-send-email-b51503@freescale.com>
-References: <1448360716-1741-1-git-send-email-b51503@freescale.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+In-Reply-To: <CAK7LNATR3Y0T5XEGA4WQJksTO7qoCEjR+TKC0YmvVUZhLdiPSg@mail.gmail.com>
+References: <1448004981-11133-1-git-send-email-yamada.masahiro@socionext.com>
+	<1448004981-11133-3-git-send-email-yamada.masahiro@socionext.com>
+	<20151121003702.GC28998@codeaurora.org>
+	<CAK7LNATR3Y0T5XEGA4WQJksTO7qoCEjR+TKC0YmvVUZhLdiPSg@mail.gmail.com>
+Date: Tue, 24 Nov 2015 13:25:08 +0900
+Message-ID: <CAK7LNATzraLEavLGHR0c1-0J1-CzvCsfgW1URitAFOnej7+-Ug@mail.gmail.com>
+Subject: Re: [PATCH 3/3] clk: split of_clk_get_parent_name() into two functions
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, den 24.11.2015, 18:25 +0800 schrieb Bai Ping:
-> Add a virtual arm clk to abstract the actual steps
-> when changing the ARM core frequency.So we can using
-> the 'cpufreq-dt' driver on i.MX7D/Solo.
-> 
-> Signed-off-by: Bai Ping <b51503@freescale.com>
+Hi Stephen,
 
-Now this is pretty cool, in how much code is actually reused here.
 
-For the whole series:
-Acked-by: Lucas Stach <l.stach@pengutronix.de>
+2015-11-22 14:44 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> Hi Stephen,
+>
+>
+> 2015-11-21 9:37 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+>> On 11/20, Masahiro Yamada wrote:
+>>> Currently, there is no function to get the clock name of the given
+>>> node.  Create a new helper function, of_clk_get_name().  This is
+>>> useful to get the clock name where "clock-indices" property is used.
+>>>
+>>>   of_clk_get_name(): get the clock name in the given node
+>>>   of_clk_get_parent_name(): get the name of the parent clock
+>>>
+>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>> ---
+>>>
+>>> I want to use of_clk_get_name() for my clk drivers for my SoCs,
+>>> which I will submit later.
+>>>
+>>> I found this helper function is useful.
+>>
+>> I don't see how this is useful. Is the new driver so generic it
+>> doesn't know what clocks it's outputting? We've been trying to
+>> move people away from using clock-output-names, so most likely
+>> this sort of information should be conveyed from DT via the
+>> compatible string and a table in the driver that matches up the
+>> compatible string with the list of clock names.
+>
+>
+> What I implemented in my driver was:
+>
+> [1] Use the clock names built in the driver, if "clock-output-names"
+>     is missing in the DT.
+>
+> [2] If "clock-output-names" is specified, the driver overrides
+>     the clock names, respecting the "clock-output-names".
+>
+>
+> The following is a snippet from my driver code.
+>
+>
+>     /*
+>      * update the clock name with the one provided by
+>      * clock-output-names property, if exists
+>      */
+>     new_name = of_clk_get_name(np, index);
+>     if (new_name)
+>             init_data[i].name = new_name;
+>     else
+>             pr_info("DT does not specify output name for %s[%d]\n",
+>                     np->name, index);
+>
+>
+> I read the Documentation/devicetree/bindings/clock-bindings.txt
+> before I stared my driver development.
+>
+> I did not know we are deprecating the "clock-output-names".
+> (Should it be mentioned in the clock-bindings.txt?)
 
-BTW: Your mailers time is still wrong. It's now off by a whole day
-(-24h) instead of just some hours, making your mails look like they were
-sent yesterday.
 
-> ---
->  drivers/clk/imx/clk-imx7d.c             | 6 ++++++
->  include/dt-bindings/clock/imx7d-clock.h | 3 ++-
->  2 files changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-> index 448ef32..581b428 100644
-> --- a/drivers/clk/imx/clk-imx7d.c
-> +++ b/drivers/clk/imx/clk-imx7d.c
-> @@ -833,6 +833,12 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
->  
->  	clks[IMX7D_GPT_3M_CLK] = imx_clk_fixed_factor("gpt_3m", "osc", 1, 8);
->  
-> +	clks[IMX7D_CLK_ARM] = imx_clk_cpu("arm", "arm_a7_root_clk",
-> +					 clks[IMX7D_ARM_A7_ROOT_CLK],
-> +					 clks[IMX7D_ARM_A7_ROOT_SRC],
-> +					 clks[IMX7D_PLL_ARM_MAIN_CLK],
-> +					 clks[IMX7D_PLL_SYS_MAIN_CLK]);
-> +
->  	for (i = 0; i < ARRAY_SIZE(clks); i++)
->  		if (IS_ERR(clks[i]))
->  			pr_err("i.MX7D clk %d: register failed with %ld\n",
-> diff --git a/include/dt-bindings/clock/imx7d-clock.h b/include/dt-bindings/clock/imx7d-clock.h
-> index a4a7a9c..edca8985c 100644
-> --- a/include/dt-bindings/clock/imx7d-clock.h
-> +++ b/include/dt-bindings/clock/imx7d-clock.h
-> @@ -447,5 +447,6 @@
->  #define IMX7D_SEMA4_HS_ROOT_CLK		434
->  #define IMX7D_PLL_DRAM_TEST_DIV		435
->  #define IMX7D_ADC_ROOT_CLK		436
-> -#define IMX7D_CLK_END			437
-> +#define IMX7D_CLK_ARM			437
-> +#define IMX7D_CLK_END			438
->  #endif /* __DT_BINDINGS_CLOCK_IMX7D_H */
+
+
+Please let me clarify the driver implementation guideline.
+
+[1] Do not add "clock-output-names" in new device trees.
+[2] New clock drivers should not rely on "clock-output-names" at all.
+
+
+Is this correct?
+
+
+
 
 -- 
-Pengutronix e.K.             | Lucas Stach                 |
-Industrial Linux Solutions   | http://www.pengutronix.de/  |
+Best Regards
+Masahiro Yamada
