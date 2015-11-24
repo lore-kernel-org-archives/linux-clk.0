@@ -1,48 +1,81 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Wed, 25 Nov 2015 13:21:22 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Michael Trimarchi <michael@amarulasolutions.com>
-Cc: kernel@pengutronix.de, mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] clk: imx: clk-imx6q: Let OSC to be routed to
- anaclk2/2b
-Message-ID: <20151125052122.GA22914@tiger>
-References: <1446991642-3088-1-git-send-email-michael@amarulasolutions.com>
- <20151115101938.GA9808@panicking>
- <20151115103800.GB9808@panicking>
+Return-Path: <Ping.Bai@freescale.com>
+From: Bai Ping <b51503@freescale.com>
+To: <shawnguo@kernel.org>, <kernel@pengutronix.de>
+CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH Resend] clk: imx: add 'is_prepared' clk_ops callback for pllv3 clk
+Date: Wed, 25 Nov 2015 00:06:53 +0800
+Message-ID: <1448381213-24349-1-git-send-email-b51503@freescale.com>
+Return-Path: b51503@freescale.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20151115103800.GB9808@panicking>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Nov 15, 2015 at 11:38:04AM +0100, Michael Trimarchi wrote:
-> OSC can be used as USB hub source clock. An example we can route to
-> CLK2_P imx6 pin.
-> 
-> This show a usage example:
-> 
-> [...]
-> 	usb_hub: usb-hub {
-> 		compatible = "smsc,usb3503a";
-> 		clocks = <&clks IMX6QDL_CLK_LVDS2_GATE>;
-> 		clock-names = "refclk";
-> 	};
-> };
-> 
-> [...]
-> &clks {
->         assigned-clocks = <&clks IMX6QDL_CLK_LVDS2_SEL>;
->         assigned-clock-parents = <&clks IMX6QDL_CLK_OSC>;
-> };
-> 
-> /sys/kernel/debug/clk/clk_summary
-> 
-> osc                                 5            5    24000000          0 0
-> [...]
->     lvds2_sel                       1            1    24000000          0 0
->        lvds2_gate                   1            1    24000000          0 0
-> [...]
-> 
-> Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+Add 'is_prepared' callback function for pllv3 type clk to make sure when
+the system is bootup, the unused clk is in a known state to match the
+prepare count info.
 
-Applied, thanks.
+Signed-off-by: Bai Ping <b51503@freescale.com>
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+---
+-resend, add clk maintainers.
+
+ drivers/clk/imx/clk-pllv3.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+index 6addf8f..c05c43d 100644
+--- a/drivers/clk/imx/clk-pllv3.c
++++ b/drivers/clk/imx/clk-pllv3.c
+@@ -97,6 +97,16 @@ static void clk_pllv3_unprepare(struct clk_hw *hw)
+ 	writel_relaxed(val, pll->base);
+ }
+ 
++static int clk_pllv3_is_prepared(struct clk_hw *hw)
++{
++	struct clk_pllv3 *pll = to_clk_pllv3(hw);
++
++	if (readl_relaxed(pll->base) & BM_PLL_LOCK)
++		return 1;
++
++	return 0;
++}
++
+ static unsigned long clk_pllv3_recalc_rate(struct clk_hw *hw,
+ 					   unsigned long parent_rate)
+ {
+@@ -139,6 +149,7 @@ static int clk_pllv3_set_rate(struct clk_hw *hw, unsigned long rate,
+ static const struct clk_ops clk_pllv3_ops = {
+ 	.prepare	= clk_pllv3_prepare,
+ 	.unprepare	= clk_pllv3_unprepare,
++	.is_prepared	= clk_pllv3_is_prepared,
+ 	.recalc_rate	= clk_pllv3_recalc_rate,
+ 	.round_rate	= clk_pllv3_round_rate,
+ 	.set_rate	= clk_pllv3_set_rate,
+@@ -193,6 +204,7 @@ static int clk_pllv3_sys_set_rate(struct clk_hw *hw, unsigned long rate,
+ static const struct clk_ops clk_pllv3_sys_ops = {
+ 	.prepare	= clk_pllv3_prepare,
+ 	.unprepare	= clk_pllv3_unprepare,
++	.is_prepared	= clk_pllv3_is_prepared,
+ 	.recalc_rate	= clk_pllv3_sys_recalc_rate,
+ 	.round_rate	= clk_pllv3_sys_round_rate,
+ 	.set_rate	= clk_pllv3_sys_set_rate,
+@@ -265,6 +277,7 @@ static int clk_pllv3_av_set_rate(struct clk_hw *hw, unsigned long rate,
+ static const struct clk_ops clk_pllv3_av_ops = {
+ 	.prepare	= clk_pllv3_prepare,
+ 	.unprepare	= clk_pllv3_unprepare,
++	.is_prepared	= clk_pllv3_is_prepared,
+ 	.recalc_rate	= clk_pllv3_av_recalc_rate,
+ 	.round_rate	= clk_pllv3_av_round_rate,
+ 	.set_rate	= clk_pllv3_av_set_rate,
+@@ -279,6 +292,7 @@ static unsigned long clk_pllv3_enet_recalc_rate(struct clk_hw *hw,
+ static const struct clk_ops clk_pllv3_enet_ops = {
+ 	.prepare	= clk_pllv3_prepare,
+ 	.unprepare	= clk_pllv3_unprepare,
++	.is_prepared	= clk_pllv3_is_prepared,
+ 	.recalc_rate	= clk_pllv3_enet_recalc_rate,
+ };
+ 
+-- 
+1.9.1
