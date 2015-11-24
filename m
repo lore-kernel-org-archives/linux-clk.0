@@ -1,45 +1,69 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Punit Agrawal <punit.agrawal@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Jon Medhurst <tixy@linaro.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Liviu Dudau <Liviu.Dudau@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, arm@kernel.org
-Subject: Re: [PATCH] scpi: hide get_scpi_ops in module from built-in code
-Date: Thu, 19 Nov 2015 16:23:31 +0100
-Message-ID: <3802372.zWzDBWFCTp@wuerfel>
-In-Reply-To: <9hhoaespm8p.fsf@e105922-lin.cambridge.arm.com>
-References: <4740279.aWlP1tqJLa@wuerfel> <9hhoaespm8p.fsf@e105922-lin.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 5/5] ARM: dts: sun9i: Add TODO comments for the main and low power clocks
+Date: Tue, 24 Nov 2015 17:32:16 +0800
+Message-Id: <1448357536-26613-6-git-send-email-wens@csie.org>
+In-Reply-To: <1448357536-26613-1-git-send-email-wens@csie.org>
+References: <1448357536-26613-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tuesday 17 November 2015 17:30:14 Punit Agrawal wrote:
-> Arnd Bergmann <arnd@arndb.de> writes:
-> 
-> > The scpi_clock driver can be built-in when CONFIG_COMPILE_TEST
-> > is set even when ARM_SCPI_PROTOCOL is a loadable module, and
-> > that results in a link error:
-> >
-> > drivers/built-in.o: In function `scpi_clocks_probe':
-> > (.text+0x14453c): undefined reference to `get_scpi_ops'
-> >
-> > Using #if IS_REACHABLE() around the get_scpi_ops() declaration
-> > makes it build successfully in this case for compile-testing,
-> > but the effect is the same as when ARM_SCPI_PROTOCOL is
-> > disabled, as the code will not be used.
-> >
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> Makes sense. Thanks, Arnd!
-> 
->        Acked-by: Punit Agrawal <punit.agrawal@arm.com>
-> 
+The main (24MHz) clock on the A80 is configurable via the PRCM address
+space. The low power/speed (32kHz) clock is from an external chip, the
+AC100.
 
-I've added it to arm-soc fixes now.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/boot/dts/sun9i-a80.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-	Arnd
+diff --git a/arch/arm/boot/dts/sun9i-a80.dtsi b/arch/arm/boot/dts/sun9i-a80.dtsi
+index a4ce348c0831..eb69a62f6bc4 100644
+--- a/arch/arm/boot/dts/sun9i-a80.dtsi
++++ b/arch/arm/boot/dts/sun9i-a80.dtsi
+@@ -128,6 +128,17 @@
+ 		 */
+ 		ranges = <0 0 0 0x20000000>;
+ 
++		/*
++		 * This clock is actually configurable from the PRCM address
++		 * space. The external 24M oscillator can be turned off, and
++		 * the clock switched to an internal 16M RC oscillator. Under
++		 * normal operation there's no reason to do this, and the
++		 * default is to use the external good one, so just model this
++		 * as a fixed clock. Also it is not entirely clear if the
++		 * osc24M mux in the PRCM affects the entire clock tree, which
++		 * would also throw all the PLL clock rates off, or just the
++		 * downstream clocks in the PRCM.
++		 */
+ 		osc24M: osc24M_clk {
+ 			#clock-cells = <0>;
+ 			compatible = "fixed-clock";
+@@ -135,6 +146,13 @@
+ 			clock-output-names = "osc24M";
+ 		};
+ 
++		/*
++		 * The 32k clock is from an external source, normally the
++		 * AC100 codec/RTC chip. This clock is by default enabled
++		 * and clocked at 32768 Hz, from the oscillator connected
++		 * to the AC100. It is configurable, but no such driver or
++		 * bindings exist yet.
++		 */
+ 		osc32k: osc32k_clk {
+ 			#clock-cells = <0>;
+ 			compatible = "fixed-clock";
+-- 
+2.6.2
