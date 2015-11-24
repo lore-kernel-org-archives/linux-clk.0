@@ -1,65 +1,51 @@
-Return-Path: <vz@mleia.com>
-From: Vladimir Zapolskiy <vz@mleia.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: Russell King <linux@arm.linux.org.uk>,
-	Roland Stigge <stigge@antcom.de>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 11/11] arm: dts: lpc32xx: remove clock frequency property from UART device nodes
-Date: Fri, 20 Nov 2015 03:05:11 +0200
-Message-Id: <1447981511-29653-12-git-send-email-vz@mleia.com>
-In-Reply-To: <1447981511-29653-1-git-send-email-vz@mleia.com>
-References: <1447981511-29653-1-git-send-email-vz@mleia.com>
+Return-Path: <Ping.Bai@freescale.com>
+From: Bai Ping <b51503@freescale.com>
+To: <shawnguo@kernel.org>, <kernel@pengutronix.de>
+CC: <l.stach@pengutronix.de>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+Subject: [PATCH 3/3] ARM: imx: enable cpufreq device on i.mx7d
+Date: Tue, 24 Nov 2015 18:25:16 +0800
+Message-ID: <1448360716-1741-3-git-send-email-b51503@freescale.com>
+In-Reply-To: <1448360716-1741-1-git-send-email-b51503@freescale.com>
+References: <1448360716-1741-1-git-send-email-b51503@freescale.com>
+Return-Path: b51503@freescale.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-If clock-frequency property is given, then it substitutes calculation
-of supplying clock frequency from parent clock, this may break UART,
-if parent clock is given and managed by common clock framework.
+Add a cpufreq-dt device on i.MX7D, using the
+generic cpufreq-dt for CPU frequency scaling.
 
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+Signed-off-by: Bai Ping <b51503@freescale.com>
 ---
- arch/arm/boot/dts/lpc32xx.dtsi | 4 ----
- 1 file changed, 4 deletions(-)
+ arch/arm/mach-imx/mach-imx7d.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/boot/dts/lpc32xx.dtsi b/arch/arm/boot/dts/lpc32xx.dtsi
-index 68bf011..f396343 100644
---- a/arch/arm/boot/dts/lpc32xx.dtsi
-+++ b/arch/arm/boot/dts/lpc32xx.dtsi
-@@ -209,7 +209,6 @@
- 				compatible = "nxp,lpc3220-uart";
- 				reg = <0x40090000 0x1000>;
- 				interrupts = <9 0>;
--				clock-frequency = <13000000>;
- 				reg-shift = <2>;
- 				clocks = <&clk LPC32XX_CLK_UART5>;
- 				status = "disabled";
-@@ -219,7 +218,6 @@
- 				compatible = "nxp,lpc3220-uart";
- 				reg = <0x40080000 0x1000>;
- 				interrupts = <7 0>;
--				clock-frequency = <13000000>;
- 				reg-shift = <2>;
- 				clocks = <&clk LPC32XX_CLK_UART3>;
- 				status = "disabled";
-@@ -229,7 +227,6 @@
- 				compatible = "nxp,lpc3220-uart";
- 				reg = <0x40088000 0x1000>;
- 				interrupts = <8 0>;
--				clock-frequency = <13000000>;
- 				reg-shift = <2>;
- 				clocks = <&clk LPC32XX_CLK_UART4>;
- 				status = "disabled";
-@@ -239,7 +236,6 @@
- 				compatible = "nxp,lpc3220-uart";
- 				reg = <0x40098000 0x1000>;
- 				interrupts = <10 0>;
--				clock-frequency = <13000000>;
- 				reg-shift = <2>;
- 				clocks = <&clk LPC32XX_CLK_UART6>;
- 				status = "disabled";
+diff --git a/arch/arm/mach-imx/mach-imx7d.c b/arch/arm/mach-imx/mach-imx7d.c
+index b450f52..5a27f20 100644
+--- a/arch/arm/mach-imx/mach-imx7d.c
++++ b/arch/arm/mach-imx/mach-imx7d.c
+@@ -105,6 +105,11 @@ static void __init imx7d_init_irq(void)
+ 	irqchip_init();
+ }
+ 
++static void __init imx7d_init_late(void)
++{
++	platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
++}
++
+ static const char *const imx7d_dt_compat[] __initconst = {
+ 	"fsl,imx7d",
+ 	NULL,
+@@ -112,6 +117,7 @@ static const char *const imx7d_dt_compat[] __initconst = {
+ 
+ DT_MACHINE_START(IMX7D, "Freescale i.MX7 Dual (Device Tree)")
+ 	.init_irq	= imx7d_init_irq,
++	.init_late	= imx7d_init_late,
+ 	.init_machine	= imx7d_init_machine,
+ 	.dt_compat	= imx7d_dt_compat,
+ MACHINE_END
 -- 
-2.1.4
+1.9.1
