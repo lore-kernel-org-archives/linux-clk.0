@@ -1,87 +1,53 @@
-Return-Path: <luis.henriques@canonical.com>
-From: Luis Henriques <luis.henriques@canonical.com>
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-kernel@lists.codethink.co.uk,
-	Tero Kristo <t-kristo@ti.com>,
-	Luis Henriques <luis.henriques@canonical.com>,
-	kernel-team@lists.ubuntu.com
-Subject: [3.16.y-ckt stable] Patch "clk: ti: fix dual-registration of uart4_ick" has been added to staging queue
-Date: Thu, 12 Nov 2015 16:45:25 +0000
-Message-Id: <1447346725-29637-1-git-send-email-luis.henriques@canonical.com>
+Return-Path: <t-kristo@ti.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        <linux-clk@vger.kernel.org>
+CC: "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "tony@atomide.com" <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [GIT PULL] clk: ti: fixes for 4.4-rc
+Message-ID: <5654301D.8070007@ti.com>
+Date: Tue, 24 Nov 2015 11:38:37 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-This is a note to let you know that I have just added a patch titled
+Hi Michael, Stephen,
 
-    clk: ti: fix dual-registration of uart4_ick
+Here are some TI clock driver fixes for 4.4-rc.
 
-to the linux-3.16.y-queue branch of the 3.16.y-ckt extended stable tree 
-which can be found at:
+-Tero
 
-    http://kernel.ubuntu.com/git/ubuntu/linux.git/log/?h=linux-3.16.y-queue
+================================================================
 
-This patch is scheduled to be released in version 3.16.7-ckt20.
+The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
 
-If you, or anyone else, feels it should not be added to this tree, please 
-reply to this email.
+   Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
 
-For more information about the 3.16.y-ckt tree, see
-https://wiki.ubuntu.com/Kernel/Dev/ExtendedStable
+are available in the git repository at:
 
-Thanks.
--Luis
+   https://github.com/t-kristo/linux-pm.git for-4.4-rc/ti-clk-fixes
 
-------
+for you to fetch changes up to 167af5ef2cdba14ff14a13c91e5532ed479083d8:
 
->From 30b9c68b905ec04f247510518022db8faec47292 Mon Sep 17 00:00:00 2001
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Date: Tue, 29 Sep 2015 15:01:08 +0100
-Subject: clk: ti: fix dual-registration of uart4_ick
+   clk: ti: drop locking code from mux/divider drivers (2015-11-24 
+11:30:27 +0200)
 
-commit 19e79687de22f23bcfb5e79cce3daba20af228d1 upstream.
+----------------------------------------------------------------
+Grygorii Strashko (1):
+       clk: ti: drop locking code from mux/divider drivers
 
-On the OMAP AM3517 platform the uart4_ick gets registered
-twice, causing any power management to /dev/ttyO3 to fail
-when trying to wake the device up.
+Neil Armstrong (1):
+       clk: ti816x: Add missing dmtimer clkdev entries
 
-This solves the following oops:
+Nicolas Pitre (2):
+       clk: ti: clkt_dpll: fix wrong do_div() usage
+       clk: ti: fapll: fix wrong do_div() usage
 
-[] Unhandled fault: external abort on non-linefetch (0x1028) at 0xfa09e008
-[] PC is at serial_omap_pm+0x48/0x15c
-[] LR is at _raw_spin_unlock_irqrestore+0x30/0x5c
-
-Fixes: aafd900cab87 ("CLK: TI: add omap3 clock init file")
-Cc: mturquette@baylibre.com
-Cc: sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-omap@vger.kernel.org
-Cc: linux-kernel@lists.codethink.co.uk
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Luis Henriques <luis.henriques@canonical.com>
----
- drivers/clk/ti/clk-3xxx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/ti/clk-3xxx.c b/drivers/clk/ti/clk-3xxx.c
-index 0d1750a8aea4..088930c3ee4b 100644
---- a/drivers/clk/ti/clk-3xxx.c
-+++ b/drivers/clk/ti/clk-3xxx.c
-@@ -170,7 +170,6 @@ static struct ti_dt_clk omap3xxx_clks[] = {
- 	DT_CLK(NULL, "gpio2_ick", "gpio2_ick"),
- 	DT_CLK(NULL, "wdt3_ick", "wdt3_ick"),
- 	DT_CLK(NULL, "uart3_ick", "uart3_ick"),
--	DT_CLK(NULL, "uart4_ick", "uart4_ick"),
- 	DT_CLK(NULL, "gpt9_ick", "gpt9_ick"),
- 	DT_CLK(NULL, "gpt8_ick", "gpt8_ick"),
- 	DT_CLK(NULL, "gpt7_ick", "gpt7_ick"),
-@@ -313,6 +312,7 @@ static struct ti_dt_clk am35xx_clks[] = {
- static struct ti_dt_clk omap36xx_clks[] = {
- 	DT_CLK(NULL, "omap_192m_alwon_fck", "omap_192m_alwon_fck"),
- 	DT_CLK(NULL, "uart4_fck", "uart4_fck"),
-+	DT_CLK(NULL, "uart4_ick", "uart4_ick"),
- 	{ .node_name = NULL },
- };
+  drivers/clk/ti/clk-816x.c  |    2 ++
+  drivers/clk/ti/clkt_dpll.c |    4 ++--
+  drivers/clk/ti/divider.c   |   16 +++-------------
+  drivers/clk/ti/fapll.c     |    4 ++--
+  drivers/clk/ti/mux.c       |   15 +++------------
+  5 files changed, 12 insertions(+), 29 deletions(-)
