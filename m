@@ -1,48 +1,55 @@
 Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: Fix bypassing of PLLs
+To: Tyler Baker <tyler.baker@linaro.org>
+References: <1448032264-29622-1-git-send-email-jonathanh@nvidia.com>
+ <CANMBJr7vYb+kuUBzsC8i4b=b6DRVsbqnf5OrVtj6kVS2RMNgfQ@mail.gmail.com>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
+	<gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Rhyland Klein <rklein@nvidia.com>, Kevin's
+ boot bot <khilman@kernel.org>
 From: Jon Hunter <jonathanh@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>
-CC: linux-clk@vger.kernel.org ,
-	linux-tegra@vger.kernel.org ,
-	linux-kernel@vger.kernel.org ,
-	Rhyland Klein <rklein@nvidia.com>,
-	Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] clk: tegra: Fix bypassing of PLLs
-Date: Fri, 20 Nov 2015 15:11:04 +0000
-Message-ID: <1448032264-29622-1-git-send-email-jonathanh@nvidia.com>
+Message-ID: <56543A13.4040300@nvidia.com>
+Date: Tue, 24 Nov 2015 10:21:07 +0000
 MIME-Version: 1.0
+In-Reply-To: <CANMBJr7vYb+kuUBzsC8i4b=b6DRVsbqnf5OrVtj6kVS2RMNgfQ@mail.gmail.com>
 Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The _clk_disable_pll() function will attempt to place a PLL into bypass
-if the TEGRA_PLL_BYPASS is specified for the PLL and then disable the PLL
-by clearing the enable bit. To place the PLL into bypass, the bypass bit
-needs to be set and not cleared. Fix this by setting the bypass bit and
-not clearing it.
+Hi Tyler,
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 23/11/15 23:18, Tyler Baker wrote:
+> Hi Jon,
+> 
+> On 20 November 2015 at 07:11, Jon Hunter <jonathanh@nvidia.com> wrote:
+>> The _clk_disable_pll() function will attempt to place a PLL into bypass
+>> if the TEGRA_PLL_BYPASS is specified for the PLL and then disable the PLL
+>> by clearing the enable bit. To place the PLL into bypass, the bypass bit
+>> needs to be set and not cleared. Fix this by setting the bypass bit and
+>> not clearing it.
+>>
+>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> 
+> The kernelci.org bot recently detected a jetson-tk1 boot failure[1][2]
+> in the tegra tree. This boot failure has only been observed when
+> booting with a multi_v7_defconfig kernel variant. The bot bisected[3]
+> this boot failure to this commit, and I confirmed reverting it on top
+> of the tegra for-next branch resolves the issue. The ramdisk[4] used
+> for booting is loaded with the modules from the build. It appears to
+> me that as the modules are being loaded in userspace by eudev the
+> jetson-tk1 locks up. I've sifted through the console logs a bit, and
+> found this splat to be most interesting[5].  Can you confirm this
+> issue on your end?
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index d6d4ecb88e94..e5aa9c87df4c 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -312,7 +312,7 @@ static void _clk_pll_disable(struct clk_hw *hw)
- 
- 	val = pll_readl_base(pll);
- 	if (pll->params->flags & TEGRA_PLL_BYPASS)
--		val &= ~PLL_BASE_BYPASS;
-+		val |= PLL_BASE_BYPASS;
- 	val &= ~PLL_BASE_ENABLE;
- 	pll_writel_base(val, pll);
- 
--- 
-2.1.4
+Thanks for the report. I have booted the latest next on the jetson-tk1
+with the multi_v7_defconfig but I did not see this. However, the test
+infrastructure is not loading those modules. I need to look at adding this.
+
+I will see if I can reproduce this today and let you know what I find.
+
+Cheers
+Jon
