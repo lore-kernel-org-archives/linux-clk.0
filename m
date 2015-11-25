@@ -1,56 +1,51 @@
-Return-Path: <rjui@broadcom.com>
-From: Ray Jui <rjui@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<bcm-kernel-feedback-list@broadcom.com>, Simran Rai <ssimran@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>
-Subject: [PATCH 1/3] Documentation: dt-bindings: Add DT bindings for Cygnus audio clock
-Date: Wed, 18 Nov 2015 10:08:07 -0800
-Message-ID: <1447870089-2382-2-git-send-email-rjui@broadcom.com>
-In-Reply-To: <1447870089-2382-1-git-send-email-rjui@broadcom.com>
-References: <1447870089-2382-1-git-send-email-rjui@broadcom.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rjui@broadcom.com
+Return-Path: <clabbe.montjoie@gmail.com>
+Return-Path: <clabbe.montjoie@gmail.com>
+From: LABBE Corentin <clabbe.montjoie@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: LABBE Corentin <clabbe.montjoie@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] clk: palmas: fix a possible NULL dereference
+Date: Wed, 25 Nov 2015 13:52:02 +0100
+Message-Id: <1448455923-28670-2-git-send-email-clabbe.montjoie@gmail.com>
+In-Reply-To: <1448455923-28670-1-git-send-email-clabbe.montjoie@gmail.com>
+References: <1448455923-28670-1-git-send-email-clabbe.montjoie@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Simran Rai <ssimran@broadcom.com>
+of_match_device could return NULL, and so cause a NULL pointer
+dereference later.
+Even if the probability of this case is very low, fixing it made
+static analyzers happy.
 
-This patch adds audio clock device tree binding documentation to an
-existing Cygnus clock DT bindings document.
+Solving this with of_device_get_match_data made also code simplier.
 
-Signed-off-by: Simran Rai <ssimran@broadcom.com>
-Reviewed-by: Ray Jui <rjui@broadcom.com>
-Reviewed-by: Lori Hikichi <lhikichi@broadcom.com>
-Reviewed-by: Scott Branden <sbranden@broadcom.com>
+Reported-by: coverity (CID 1324137)
+Signed-off-by: LABBE Corentin <clabbe.montjoie@gmail.com>
 ---
- Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/clk/clk-palmas.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-index ede65a5..20e3c00 100644
---- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-@@ -92,6 +92,7 @@ PLL and leaf clock compatible strings for Cygnus are:
-     "brcm,cygnus-lcpll0"
-     "brcm,cygnus-mipipll"
-     "brcm,cygnus-asiu-clk"
-+    "brcm,cygnus-audiopll"
+diff --git a/drivers/clk/clk-palmas.c b/drivers/clk/clk-palmas.c
+index c55e774..9c0b8e6 100644
+--- a/drivers/clk/clk-palmas.c
++++ b/drivers/clk/clk-palmas.c
+@@ -241,13 +241,13 @@ static int palmas_clks_probe(struct platform_device *pdev)
+ 	struct palmas *palmas = dev_get_drvdata(pdev->dev.parent);
+ 	struct device_node *node = pdev->dev.of_node;
+ 	const struct palmas_clks_of_match_data *match_data;
+-	const struct of_device_id *match;
+ 	struct palmas_clock_info *cinfo;
+ 	struct clk *clk;
+ 	int ret;
  
- The following table defines the set of PLL/clock index and ID for Cygnus.
- These clock IDs are defined in:
-@@ -131,6 +132,11 @@ These clock IDs are defined in:
-     ch4_unused mipipll          5       BCM_CYGNUS_MIPIPLL_CH4_UNUSED
-     ch5_unused mipipll          6       BCM_CYGNUS_MIPIPLL_CH5_UNUSED
+-	match = of_match_device(palmas_clks_of_match, &pdev->dev);
+-	match_data = match->data;
++	match_data = of_device_get_match_data(&pdev->dev);
++	if (!match_data)
++		return 1;
  
-+    audiopll   crystal          0       BCM_CYGNUS_AUDIOPLL
-+    ch0_audio  audiopll         1       BCM_CYGNUS_AUDIOPLL_CH0
-+    ch1_audio  audiopll         2       BCM_CYGNUS_AUDIOPLL_CH1
-+    ch2_audio  audiopll         3       BCM_CYGNUS_AUDIOPLL_CH2
-+
- Northstar and Northstar Plus
- ------
- PLL and leaf clock compatible strings for Northstar and Northstar Plus are:
+ 	cinfo = devm_kzalloc(&pdev->dev, sizeof(*cinfo), GFP_KERNEL);
+ 	if (!cinfo)
 -- 
-1.9.1
+2.4.10
