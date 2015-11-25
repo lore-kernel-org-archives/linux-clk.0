@@ -1,73 +1,88 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from conssluserg002.nifty.com ([202.248.44.40]:63910 "EHLO
-	conssluserg002-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751285AbbKKDQq (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 10 Nov 2015 22:16:46 -0500
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Wed, 25 Nov 2015 16:11:00 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Tyler Baker <tyler.baker@linaro.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Rhyland Klein <rklein@nvidia.com>,
+	Kevin's boot bot <khilman@kernel.org>
+Subject: Re: [PATCH] clk: tegra: Fix bypassing of PLLs
+Message-ID: <20151125151100.GA31492@ulmo.nvidia.com>
+References: <1448032264-29622-1-git-send-email-jonathanh@nvidia.com>
+ <CANMBJr7vYb+kuUBzsC8i4b=b6DRVsbqnf5OrVtj6kVS2RMNgfQ@mail.gmail.com>
 MIME-Version: 1.0
-Date: Wed, 11 Nov 2015 12:16:27 +0900
-Message-ID: <CAK7LNASM+tJpd-kBHGHe7TXWm4i-UEfbq7T3dn99p2fKFwtxAA@mail.gmail.com>
-Subject: How to implement common clk in multi function controller?
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="J/dobhs11T7y2rNN"
+In-Reply-To: <CANMBJr7vYb+kuUBzsC8i4b=b6DRVsbqnf5OrVtj6kVS2RMNgfQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi.
 
-I am implementing clk and reset drivers for my SoCs.
-(drivers/clk/uniphier/* and drivers/reset/uniphier/*)
+--J/dobhs11T7y2rNN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Nov 23, 2015 at 03:18:59PM -0800, Tyler Baker wrote:
+> Hi Jon,
+>=20
+> On 20 November 2015 at 07:11, Jon Hunter <jonathanh@nvidia.com> wrote:
+> > The _clk_disable_pll() function will attempt to place a PLL into bypass
+> > if the TEGRA_PLL_BYPASS is specified for the PLL and then disable the P=
+LL
+> > by clearing the enable bit. To place the PLL into bypass, the bypass bit
+> > needs to be set and not cleared. Fix this by setting the bypass bit and
+> > not clearing it.
+> >
+> > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>=20
+> The kernelci.org bot recently detected a jetson-tk1 boot failure[1][2]
+> in the tegra tree. This boot failure has only been observed when
+> booting with a multi_v7_defconfig kernel variant. The bot bisected[3]
+> this boot failure to this commit, and I confirmed reverting it on top
+> of the tegra for-next branch resolves the issue. The ramdisk[4] used
+> for booting is loaded with the modules from the build. It appears to
+> me that as the modules are being loaded in userspace by eudev the
+> jetson-tk1 locks up. I've sifted through the console logs a bit, and
+> found this splat to be most interesting[5].  Can you confirm this
+> issue on your end?
 
-In my SoCs, one hardware block contains various
-registers for both clock and reset controlling.
-(so, it is like a MFD system controller device).
-I think it is a common case.
+Just to close the loop on this: we've discussed this on IRC and came to
+the conclusion that not using the bypass mode is safer (switching into
+and out of bypass can glitch). I've dropped this patch for now and Jon
+will be looking into a second revision of the patch which, in addition
+to fixing bypass (the fix is legit, it just happens to break because of
+the glitch, most likely), will also remove the BYPASS flag setting so
+that bypass will not be used.
 
+Thierry
 
-I am guessing my device tree would be like follows:
-(one syscon device contains clk and rst devices under it)
+--J/dobhs11T7y2rNN
+Content-Type: application/pgp-signature; name="signature.asc"
 
-syscon {
-     compatible = "socionext,uniphier-syscon",
-                 "syscon", "simple-mfd";
-     reg = <...   ...>;
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-     clk_ctrl {
-            .compatible = "socionext,uniphier-clkctrl";
-            #clock-cells = <1>;
-     };
+iQIcBAABCAAGBQJWVc+EAAoJEN0jrNd/PrOhkWUP/AmnuVSCyL5xK0fb5lqCYVAb
+/iG/OpI1hGBhzHQFvFTSP/7cL/fmkWfJ5Huq/PYlVviO8NCx7E0S1MbhYGV+asbq
+XJ5zDSf1f3cYVN58wqtx7MqPT+bxAbTxr4kbqvgHzSK8XVXIRgS7E7qu6YZHylbj
+TPSKrny40KeYRCg4f6lZHO0LrekC5dq2lzbL7gleWt3cs7FYdKH9m75Ph38ajbgW
+SpXFhqETrvoym4zaNdOMdHDwa8HFDDMtxaTLWSVwbTYguhDRWrDwiR19RRZwjhn/
+K0HlEGD+2sf6Ve8UN1EK+M52GKwPLeeFF5n+vsOWTtGA7gw29mIFXDyi8W/8tmXy
+ULwD7S/rn4wizHqwfEPzTmiAPBlUf38hIL5b2QXlkLxfbrYnasFkcpOSJQ5kGZOy
+Do0nlHB+NdtvDoYkWMw1c9c5bEt4XyOX/5QLhWW7WecD+kpUv5OhoDsDR+f/aHZU
+/ppFDVkxXoZePGREGx8rJtktBX6oU/x4ABipjdpFhITPJOGLLnI3rXhRgoxFnq6Y
+o2+Hx0vxVAh9AidZZEohd3lPqV3ubqhL2wk4dyXCnN0UbUmkR0/3rGkT9peHOooN
+ylD7RMLQcCX68LojOW7MHqIqjT/9bum1JJkXv4V/E8KNRpo/NqX4FaTXIbz6tB2L
+aYtVCuaujLi7cA56gsjL
+=iJcY
+-----END PGP SIGNATURE-----
 
-     rst_ctrl {
-             .compatible = "socionext,uniphier-rstctrl";
-             #reset-cells = <1>;
-     };
-};
-
-
-
-One problem I noticed was,
-we are supposed to use regmap for register access
-if we use syscon.
-
-OTOH, common clk APIs such as clk-gate, clk-divider
-expect simple register access via writel()/readl().
-
-Is it a good idea to expand such APIs to regmap?
-
-
-Of course, I could my own uniphier/clk-gate.c
-to use regmap as other SoCs do.
-
-But, I think regmap is general demand, so
-I am wondering if it could be supported in common parts.
-
-Or, any other good solution exists?
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+--J/dobhs11T7y2rNN--
