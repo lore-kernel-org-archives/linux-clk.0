@@ -1,70 +1,67 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-sh@vger.kernel.org,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.10]:61618 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750919AbbKYV0h (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 25 Nov 2015 16:26:37 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Eric Miao <eric.y.miao@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v6 1/5] clk: shmobile: Rework CONFIG_ARCH_SHMOBILE_MULTI
-Date: Thu, 12 Nov 2015 16:54:42 +0100
-Message-Id: <1447343686-2038-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1447343686-2038-1-git-send-email-geert+renesas@glider.be>
-References: <1447343686-2038-1-git-send-email-geert+renesas@glider.be>
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Chao Xie <chao.xie@marvell.com>,
+	Mike Turquette <mturquette@linaro.org>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/7] clk: mmp: stop using platform headers
+Date: Wed, 25 Nov 2015 22:26:01 +0100
+Message-ID: <3508030.Q62gfHvXvx@wuerfel>
+In-Reply-To: <20151125192114.GB11298@codeaurora.org>
+References: <1448465875-435039-1-git-send-email-arnd@arndb.de> <1448465875-435039-2-git-send-email-arnd@arndb.de> <20151125192114.GB11298@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Wednesday 25 November 2015 11:21:14 Stephen Boyd wrote:
+> On 11/25, Arnd Bergmann wrote:
+> > diff --git a/drivers/clk/mmp/clk-mmp2.c b/drivers/clk/mmp/clk-mmp2.c
+> > index 09d2832fbd78..38931dbd1eff 100644
+> > --- a/drivers/clk/mmp/clk-mmp2.c
+> > +++ b/drivers/clk/mmp/clk-mmp2.c
+> > @@ -9,6 +9,7 @@
+> >   * warranty of any kind, whether express or implied.
+> >   */
+> >  
+> > +#include <linux/clk.h>
+> 
+> Why are we adding this include? I don't see any clk consumer API
+> usage being added.
 
-Shmobile is all multiplatform these days, so get rid of the reference to
-CONFIG_ARCH_SHMOBILE_MULTI in drivers/clk/shmobile/.
+Without these #includes, I get a build error:
 
-Also instead of always enabling DIV6 and MSTP adjust the Makefile
-to enable DIV6 and MSTP depending on if they are included in the
-SoC or not.
+drivers/clk/mmp/clk-mmp2.c: In function 'mmp2_clk_init':
+drivers/clk/mmp/clk-mmp2.c:192:2: error: implicit declaration of function 'clk_set_rate' [-Werror=implicit-function-declaration]
+  clk_set_rate(clk, 14745600);
+  ^
+drivers/clk/mmp/clk-mmp2.c:251:2: error: implicit declaration of function 'clk_set_parent' [-Werror=implicit-function-declaration]
+  clk_set_parent(clk, vctcxo);
+  ^
+drivers/clk/mmp/clk-pxa168.c: In function 'pxa168_clk_init':
+drivers/clk/mmp/clk-pxa168.c:161:2: error: implicit declaration of function 'clk_set_rate' [-Werror=implicit-function-declaration]
+  clk_set_rate(uart_pll, 14745600);
+  ^
+drivers/clk/mmp/clk-pxa168.c:204:2: error: implicit declaration of function 'clk_set_parent' [-Werror=implicit-function-declaration]
+  clk_set_parent(clk, uart_pll);
+  ^
+drivers/clk/mmp/clk-pxa910.c: In function 'pxa910_clk_init':
+drivers/clk/mmp/clk-pxa910.c:166:2: error: implicit declaration of function 'clk_set_rate' [-Werror=implicit-function-declaration]
+  clk_set_rate(uart_pll, 14745600);
+  ^
+drivers/clk/mmp/clk-pxa910.c:209:2: error: implicit declaration of function 'clk_set_parent' [-Werror=implicit-function-declaration]
+  clk_set_parent(clk, uart_pll);
+  ^
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v6:
-  - No changes,
+Is there anything I need to change here?
 
-v5:
-  - Integrated in this series as a contextual dependency.
----
- drivers/clk/shmobile/Makefile | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/clk/shmobile/Makefile b/drivers/clk/shmobile/Makefile
-index 97c71c885e4f38c5..1eb947db6f5926a0 100644
---- a/drivers/clk/shmobile/Makefile
-+++ b/drivers/clk/shmobile/Makefile
-@@ -1,13 +1,11 @@
- obj-$(CONFIG_ARCH_EMEV2)		+= clk-emev2.o
--obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o
--obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o
--obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o
--obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
--obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
--obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o
--obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o
--obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o
--obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o
--obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o
--obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-div6.o
--obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-mstp.o
-+obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o clk-mstp.o
-+obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o clk-mstp.o
-+obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o clk-mstp.o
-+obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-mstp.o clk-div6.o
-+obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-mstp.o clk-div6.o
--- 
-1.9.1
+	Arnd
