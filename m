@@ -1,102 +1,70 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
- Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>,
- Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
- Kevin Hilman <khilman@linaro.org>, devicetree@vger.kernel.org,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 2/2] arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into
- ARCH_EXYNOS
-Date: Fri, 20 Nov 2015 09:12:41 +0900
-Message-id: <1447978361-18010-3-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1447978361-18010-1-git-send-email-k.kozlowski@samsung.com>
-References: <1447978361-18010-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <l.stach@pengutronix.de>
+Message-ID: <1448448803.3689.51.camel@pengutronix.de>
+Subject: Re: [PATCH 1/3] clk: imx: Add a virtual arm clk on i.mx7d
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Bai Ping <b51503@freescale.com>
+Cc: shawnguo@kernel.org, kernel@pengutronix.de, robh+dt@kernel.org,
+	pawel.moll@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Date: Wed, 25 Nov 2015 11:53:23 +0100
+In-Reply-To: <1448360716-1741-1-git-send-email-b51503@freescale.com>
+References: <1448360716-1741-1-git-send-email-b51503@freescale.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-The ARMv8 Exynos family SoCs in Linux kernel are currently:
- - Exynos5433 (controlled by ARCH_EXYNOS),
- - Exynos7 (controlled by ARCH_EXYNOS7).
+Am Dienstag, den 24.11.2015, 18:25 +0800 schrieb Bai Ping:
+> Add a virtual arm clk to abstract the actual steps
+> when changing the ARM core frequency.So we can using
+> the 'cpufreq-dt' driver on i.MX7D/Solo.
+> 
+> Signed-off-by: Bai Ping <b51503@freescale.com>
 
-It duplicates Kconfig symbols unnecessarily, so consolidate them into
-one ARCH_EXYNOS. Future SoCs could fall also under the ARCH_EXYNOS
-symbol.
+Now this is pretty cool, in how much code is actually reused here.
 
-The commit should not bring any visible functional change.
+For the whole series:
+Acked-by: Lucas Stach <l.stach@pengutronix.de>
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
-Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
+BTW: Your mailers time is still wrong. It's now off by a whole day
+(-24h) instead of just some hours, making your mails look like they were
+sent yesterday.
 
----
+> ---
+>  drivers/clk/imx/clk-imx7d.c             | 6 ++++++
+>  include/dt-bindings/clock/imx7d-clock.h | 3 ++-
+>  2 files changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+> index 448ef32..581b428 100644
+> --- a/drivers/clk/imx/clk-imx7d.c
+> +++ b/drivers/clk/imx/clk-imx7d.c
+> @@ -833,6 +833,12 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+>  
+>  	clks[IMX7D_GPT_3M_CLK] = imx_clk_fixed_factor("gpt_3m", "osc", 1, 8);
+>  
+> +	clks[IMX7D_CLK_ARM] = imx_clk_cpu("arm", "arm_a7_root_clk",
+> +					 clks[IMX7D_ARM_A7_ROOT_CLK],
+> +					 clks[IMX7D_ARM_A7_ROOT_SRC],
+> +					 clks[IMX7D_PLL_ARM_MAIN_CLK],
+> +					 clks[IMX7D_PLL_SYS_MAIN_CLK]);
+> +
+>  	for (i = 0; i < ARRAY_SIZE(clks); i++)
+>  		if (IS_ERR(clks[i]))
+>  			pr_err("i.MX7D clk %d: register failed with %ld\n",
+> diff --git a/include/dt-bindings/clock/imx7d-clock.h b/include/dt-bindings/clock/imx7d-clock.h
+> index a4a7a9c..edca8985c 100644
+> --- a/include/dt-bindings/clock/imx7d-clock.h
+> +++ b/include/dt-bindings/clock/imx7d-clock.h
+> @@ -447,5 +447,6 @@
+>  #define IMX7D_SEMA4_HS_ROOT_CLK		434
+>  #define IMX7D_PLL_DRAM_TEST_DIV		435
+>  #define IMX7D_ADC_ROOT_CLK		436
+> -#define IMX7D_CLK_END			437
+> +#define IMX7D_CLK_ARM			437
+> +#define IMX7D_CLK_END			438
+>  #endif /* __DT_BINDINGS_CLOCK_IMX7D_H */
 
-Changes since v1:
-1. Minor cleanups after Tomasz's comments.
-2. Added tags: Chanwoo's, Pankaj's, Alim's and Tomasz's.
----
- arch/arm64/Kconfig.platforms        | 11 ++---------
- arch/arm64/boot/dts/exynos/Makefile |  2 +-
- arch/arm64/configs/defconfig        |  2 +-
- 3 files changed, 4 insertions(+), 11 deletions(-)
-
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 4043c35962cc..64f1116640bc 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -13,21 +13,14 @@ config ARCH_BERLIN
- 	  This enables support for Marvell Berlin SoC Family
- 
- config ARCH_EXYNOS
--	bool
--	help
--	  This enables support for Samsung Exynos SoC family
--
--config ARCH_EXYNOS7
--	bool "ARMv8 based Samsung Exynos7"
--	select ARCH_EXYNOS
-+	bool "ARMv8 based Samsung Exynos SoC family"
- 	select COMMON_CLK_SAMSUNG
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
- 	select HAVE_S3C_RTC if RTC_CLASS
- 	select PINCTRL
- 	select PINCTRL_EXYNOS
--
- 	help
--	  This enables support for Samsung Exynos7 SoC family
-+	  This enables support for ARMv8 based Samsung Exynos SoC family.
- 
- config ARCH_LAYERSCAPE
- 	bool "ARMv8 based Freescale Layerscape SoC family"
-diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-index 20310e5b6d6f..50c9b9383cfa 100644
---- a/arch/arm64/boot/dts/exynos/Makefile
-+++ b/arch/arm64/boot/dts/exynos/Makefile
-@@ -1,4 +1,4 @@
--dtb-$(CONFIG_ARCH_EXYNOS7) += exynos7-espresso.dtb
-+dtb-$(CONFIG_ARCH_EXYNOS) += exynos7-espresso.dtb
- 
- always		:= $(dtb-y)
- subdir-y	:= $(dts-dirs)
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index bdd7aa358d2a..a396fa7c69a5 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -33,7 +33,7 @@ CONFIG_MODULE_UNLOAD=y
- # CONFIG_IOSCHED_DEADLINE is not set
- CONFIG_ARCH_BCM_IPROC=y
- CONFIG_ARCH_BERLIN=y
--CONFIG_ARCH_EXYNOS7=y
-+CONFIG_ARCH_EXYNOS=y
- CONFIG_ARCH_LAYERSCAPE=y
- CONFIG_ARCH_HISI=y
- CONFIG_ARCH_MEDIATEK=y
 -- 
-1.9.1
+Pengutronix e.K.             | Lucas Stach                 |
+Industrial Linux Solutions   | http://www.pengutronix.de/  |
