@@ -1,60 +1,117 @@
-Return-Path: <carlo.caione@gmail.com>
-Return-Path: <carlo.caione@gmail.com>
-Sender: Carlo Caione <carlo.caione@gmail.com>
-From: Carlo Caione <carlo@caione.org>
-To: robh+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux@arm.linux.org.uk,
-	linux-meson@googlegroups.com,
-	drake@endlessm.com,
-	jerry.cao@amlogic.com,
-	victor.wan@amlogic.com,
-	pawel.moll@arm.com,
-	arnd@arndb.de
-Cc: Carlo Caione <carlo@endlessm.com>
-Subject: [PATCH 0/7] Add basic SMP support for Amlogic Meson8b
-Date: Tue, 17 Nov 2015 15:56:35 +0100
-Message-Id: <1447772202-12418-1-git-send-email-carlo@caione.org>
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Eric Miao <eric.y.miao@gmail.com>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 0/7] ARM: mmp multiplatform support
+Date: Wed, 25 Nov 2015 16:37:48 +0100
+Message-Id: <1448465875-435039-1-git-send-email-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Carlo Caione <carlo@endlessm.com>
+I've posted this before, this is basically unchanged from the last time
+earlier this year, and I'd like to put this into the next/multiplatform
+branch of arm-soc for a 4.5 merge. Let me know if you have any concerns
+or objections.
 
-This patchset adds SMP support for Amlogic Meson8b SoCs.
+Arnd Bergmann (7):
+  clk: mmp: stop using platform headers
+  ARM: make xscale iwmmxt code multiplatform aware
+  ARM: mohawk: allow building with MMU disabled
+  ARM: mmp: remove remaining legacy pxa-dma support
+  ARM: mmp: make plat-pxa build standalone
+  ARM: mmp: make all header files local
+  ARM: mmp: move into ARCH_MULTIPLATFORM
 
-Patch 1 fix some paramater for L2 cache needed for SMP.
-Patches 2-4 add a small reset controller used to reset the CPU cores at boot.
-Patches 5-7 deal with the SMP code itself.
-
-Carlo Caione (7):
-  ARM: DTS: meson8b: Extend L2 cache controller node
-  Documentation: bindings: Define CPU reset controller
-  clk: meson8b: Add reset controller for CPU cores
-  ARM: DTS: meson8b: Enable reset controller
-  Documentation: bindings: Add SMP related documentation
-  ARM: meson8b: Add SMP bringup code
-  ARM: DTS: meson8b: Add SMP related nodes
-
- .../devicetree/bindings/arm/amlogic/pmu.txt        |  16 ++
- .../devicetree/bindings/arm/amlogic/smp-sram.txt   |  32 +++
- .../arm/cpu-enable-method/amlogic,meson8b-smp      |  53 +++++
- .../bindings/clock/amlogic,meson8b-clkc.txt        |   6 +-
- arch/arm/boot/dts/meson8b.dtsi                     |  32 +++
- arch/arm/mach-meson/Kconfig                        |   1 +
- arch/arm/mach-meson/Makefile                       |   1 +
- arch/arm/mach-meson/platsmp.c                      | 228 +++++++++++++++++++++
- drivers/clk/meson/clk-cpu.c                        |  60 +++++-
- drivers/clk/meson/clkc.c                           |   5 +-
- drivers/clk/meson/clkc.h                           |   6 +-
- drivers/clk/meson/meson8b-clkc.c                   |   4 +-
- include/dt-bindings/clock/meson8b-clkc.h           |   5 +
- 13 files changed, 441 insertions(+), 8 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/amlogic/pmu.txt
- create mode 100644 Documentation/devicetree/bindings/arm/amlogic/smp-sram.txt
- create mode 100644 Documentation/devicetree/bindings/arm/cpu-enable-method/amlogic,meson8b-smp
- create mode 100644 arch/arm/mach-meson/platsmp.c
+ arch/arm/Kconfig                                   | 16 --------
+ arch/arm/include/asm/cputype.h                     | 22 +++++++++--
+ arch/arm/kernel/xscale-cp0.c                       |  7 ++++
+ arch/arm/mach-mmp/Kconfig                          | 36 +++++++++++++----
+ arch/arm/mach-mmp/Makefile                         |  1 +
+ arch/arm/mach-mmp/{include/mach => }/addr-map.h    |  2 -
+ arch/arm/mach-mmp/aspenite.c                       |  8 ++--
+ arch/arm/mach-mmp/avengers_lite.c                  |  8 ++--
+ arch/arm/mach-mmp/brownstone.c                     |  8 ++--
+ arch/arm/mach-mmp/clock-mmp2.c                     |  6 ++-
+ arch/arm/mach-mmp/clock-pxa168.c                   |  6 ++-
+ arch/arm/mach-mmp/clock-pxa910.c                   |  6 ++-
+ arch/arm/mach-mmp/clock.c                          |  2 +-
+ arch/arm/mach-mmp/clock.h                          |  2 -
+ arch/arm/mach-mmp/common.c                         |  4 +-
+ arch/arm/mach-mmp/common.h                         |  3 --
+ arch/arm/mach-mmp/{include/mach => }/cputype.h     |  0
+ arch/arm/mach-mmp/devices.c                        |  8 ++--
+ arch/arm/mach-mmp/{include/mach => }/devices.h     |  0
+ arch/arm/mach-mmp/flint.c                          |  8 ++--
+ arch/arm/mach-mmp/gplugd.c                         |  6 +--
+ arch/arm/mach-mmp/include/mach/dma.h               | 13 -------
+ arch/arm/mach-mmp/include/mach/hardware.h          |  4 --
+ arch/arm/mach-mmp/include/mach/regs-smc.h          | 37 ------------------
+ arch/arm/mach-mmp/include/mach/uncompress.h        | 45 ----------------------
+ arch/arm/mach-mmp/{include/mach => }/irqs.h        |  0
+ arch/arm/mach-mmp/jasper.c                         |  8 ++--
+ arch/arm/mach-mmp/{include/mach => }/mfp-mmp2.h    |  2 +-
+ arch/arm/mach-mmp/{include/mach => }/mfp-pxa168.h  |  2 +-
+ arch/arm/mach-mmp/{include/mach => }/mfp-pxa910.h  |  2 +-
+ arch/arm/mach-mmp/{include/mach => }/mfp.h         |  0
+ arch/arm/mach-mmp/mmp2.c                           | 23 +++++------
+ arch/arm/mach-mmp/{include/mach => }/mmp2.h        |  3 +-
+ arch/arm/mach-mmp/pm-mmp2.c                        | 12 +++---
+ arch/arm/mach-mmp/{include/mach => }/pm-mmp2.h     |  2 +-
+ arch/arm/mach-mmp/pm-pxa910.c                      | 12 +++---
+ arch/arm/mach-mmp/{include/mach => }/pm-pxa910.h   |  0
+ arch/arm/mach-mmp/pxa168.c                         | 29 +++++++-------
+ arch/arm/mach-mmp/{include/mach => }/pxa168.h      |  5 ++-
+ arch/arm/mach-mmp/pxa910.c                         | 24 ++++++------
+ arch/arm/mach-mmp/{include/mach => }/pxa910.h      |  3 +-
+ arch/arm/mach-mmp/{include/mach => }/regs-apbc.h   |  4 +-
+ arch/arm/mach-mmp/{include/mach => }/regs-apmu.h   |  4 +-
+ arch/arm/mach-mmp/{include/mach => }/regs-icu.h    |  4 +-
+ arch/arm/mach-mmp/{include/mach => }/regs-timers.h |  4 +-
+ arch/arm/mach-mmp/{include/mach => }/regs-usb.h    |  0
+ arch/arm/mach-mmp/tavorevb.c                       |  8 ++--
+ arch/arm/mach-mmp/teton_bga.c                      | 10 ++---
+ arch/arm/mach-mmp/{include/mach => }/teton_bga.h   |  2 -
+ arch/arm/mach-mmp/time.c                           | 11 +++---
+ arch/arm/mach-mmp/ttc_dkb.c                        | 10 ++---
+ arch/arm/mm/idmap.c                                |  2 +-
+ arch/arm/mm/mmu.c                                  |  2 +-
+ arch/arm/mm/proc-mohawk.S                          |  2 +
+ arch/arm/plat-pxa/Makefile                         |  3 +-
+ arch/arm/plat-pxa/ssp.c                            |  1 -
+ drivers/clk/mmp/clk-mmp2.c                         | 12 +++---
+ drivers/clk/mmp/clk-pxa168.c                       | 12 +++---
+ drivers/clk/mmp/clk-pxa910.c                       | 14 +++----
+ include/linux/clk/mmp.h                            | 17 ++++++++
+ 60 files changed, 225 insertions(+), 282 deletions(-)
+ rename arch/arm/mach-mmp/{include/mach => }/addr-map.h (96%)
+ rename arch/arm/mach-mmp/{include/mach => }/cputype.h (100%)
+ rename arch/arm/mach-mmp/{include/mach => }/devices.h (100%)
+ delete mode 100644 arch/arm/mach-mmp/include/mach/dma.h
+ delete mode 100644 arch/arm/mach-mmp/include/mach/hardware.h
+ delete mode 100644 arch/arm/mach-mmp/include/mach/regs-smc.h
+ delete mode 100644 arch/arm/mach-mmp/include/mach/uncompress.h
+ rename arch/arm/mach-mmp/{include/mach => }/irqs.h (100%)
+ rename arch/arm/mach-mmp/{include/mach => }/mfp-mmp2.h (99%)
+ rename arch/arm/mach-mmp/{include/mach => }/mfp-pxa168.h (99%)
+ rename arch/arm/mach-mmp/{include/mach => }/mfp-pxa910.h (99%)
+ rename arch/arm/mach-mmp/{include/mach => }/mfp.h (100%)
+ rename arch/arm/mach-mmp/{include/mach => }/mmp2.h (99%)
+ rename arch/arm/mach-mmp/{include/mach => }/pm-mmp2.h (98%)
+ rename arch/arm/mach-mmp/{include/mach => }/pm-pxa910.h (100%)
+ rename arch/arm/mach-mmp/{include/mach => }/pxa168.h (98%)
+ rename arch/arm/mach-mmp/{include/mach => }/pxa910.h (98%)
+ rename arch/arm/mach-mmp/{include/mach => }/regs-apbc.h (88%)
+ rename arch/arm/mach-mmp/{include/mach => }/regs-apmu.h (91%)
+ rename arch/arm/mach-mmp/{include/mach => }/regs-icu.h (96%)
+ rename arch/arm/mach-mmp/{include/mach => }/regs-timers.h (93%)
+ rename arch/arm/mach-mmp/{include/mach => }/regs-usb.h (100%)
+ rename arch/arm/mach-mmp/{include/mach => }/teton_bga.h (92%)
+ create mode 100644 include/linux/clk/mmp.h
 
 -- 
-2.5.0
+2.1.0.rc2
