@@ -1,56 +1,58 @@
-Return-Path: <Ping.Bai@freescale.com>
-From: Bai Ping <b51503@freescale.com>
-To: <shawnguo@kernel.org>, <kernel@pengutronix.de>
-CC: <l.stach@pengutronix.de>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-Subject: [PATCH 1/3] clk: imx: Add a virtual arm clk on i.mx7d
-Date: Tue, 24 Nov 2015 18:25:14 +0800
-Message-ID: <1448360716-1741-1-git-send-email-b51503@freescale.com>
-Return-Path: b51503@freescale.com
+Return-Path: <tyler.baker@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20151125151100.GA31492@ulmo.nvidia.com>
+References: <1448032264-29622-1-git-send-email-jonathanh@nvidia.com>
+	<CANMBJr7vYb+kuUBzsC8i4b=b6DRVsbqnf5OrVtj6kVS2RMNgfQ@mail.gmail.com>
+	<20151125151100.GA31492@ulmo.nvidia.com>
+Date: Wed, 25 Nov 2015 07:52:13 -0800
+Message-ID: <CANMBJr598C1nd7awHdDx_j1uVNbnnAju1sgCvdmg1p6VO-FupQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: tegra: Fix bypassing of PLLs
+From: Tyler Baker <tyler.baker@linaro.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rhyland Klein <rklein@nvidia.com>,
+	"Kevin's boot bot" <khilman@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a virtual arm clk to abstract the actual steps
-when changing the ARM core frequency.So we can using
-the 'cpufreq-dt' driver on i.MX7D/Solo.
+On 25 November 2015 at 07:11, Thierry Reding <thierry.reding@gmail.com> wrote:
+> On Mon, Nov 23, 2015 at 03:18:59PM -0800, Tyler Baker wrote:
+>> Hi Jon,
+>>
+>> On 20 November 2015 at 07:11, Jon Hunter <jonathanh@nvidia.com> wrote:
+>> > The _clk_disable_pll() function will attempt to place a PLL into bypass
+>> > if the TEGRA_PLL_BYPASS is specified for the PLL and then disable the PLL
+>> > by clearing the enable bit. To place the PLL into bypass, the bypass bit
+>> > needs to be set and not cleared. Fix this by setting the bypass bit and
+>> > not clearing it.
+>> >
+>> > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>>
+>> The kernelci.org bot recently detected a jetson-tk1 boot failure[1][2]
+>> in the tegra tree. This boot failure has only been observed when
+>> booting with a multi_v7_defconfig kernel variant. The bot bisected[3]
+>> this boot failure to this commit, and I confirmed reverting it on top
+>> of the tegra for-next branch resolves the issue. The ramdisk[4] used
+>> for booting is loaded with the modules from the build. It appears to
+>> me that as the modules are being loaded in userspace by eudev the
+>> jetson-tk1 locks up. I've sifted through the console logs a bit, and
+>> found this splat to be most interesting[5].  Can you confirm this
+>> issue on your end?
+>
+> Just to close the loop on this: we've discussed this on IRC and came to
+> the conclusion that not using the bypass mode is safer (switching into
+> and out of bypass can glitch). I've dropped this patch for now and Jon
+> will be looking into a second revision of the patch which, in addition
+> to fixing bypass (the fix is legit, it just happens to break because of
+> the glitch, most likely), will also remove the BYPASS flag setting so
+> that bypass will not be used.
 
-Signed-off-by: Bai Ping <b51503@freescale.com>
----
- drivers/clk/imx/clk-imx7d.c             | 6 ++++++
- include/dt-bindings/clock/imx7d-clock.h | 3 ++-
- 2 files changed, 8 insertions(+), 1 deletion(-)
+Thanks for the update, I appreciate you guys looking into this issue.
+Please CC me on any fixes, I can re-test and give my tested-by.
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 448ef32..581b428 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -833,6 +833,12 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 
- 	clks[IMX7D_GPT_3M_CLK] = imx_clk_fixed_factor("gpt_3m", "osc", 1, 8);
- 
-+	clks[IMX7D_CLK_ARM] = imx_clk_cpu("arm", "arm_a7_root_clk",
-+					 clks[IMX7D_ARM_A7_ROOT_CLK],
-+					 clks[IMX7D_ARM_A7_ROOT_SRC],
-+					 clks[IMX7D_PLL_ARM_MAIN_CLK],
-+					 clks[IMX7D_PLL_SYS_MAIN_CLK]);
-+
- 	for (i = 0; i < ARRAY_SIZE(clks); i++)
- 		if (IS_ERR(clks[i]))
- 			pr_err("i.MX7D clk %d: register failed with %ld\n",
-diff --git a/include/dt-bindings/clock/imx7d-clock.h b/include/dt-bindings/clock/imx7d-clock.h
-index a4a7a9c..edca8985c 100644
---- a/include/dt-bindings/clock/imx7d-clock.h
-+++ b/include/dt-bindings/clock/imx7d-clock.h
-@@ -447,5 +447,6 @@
- #define IMX7D_SEMA4_HS_ROOT_CLK		434
- #define IMX7D_PLL_DRAM_TEST_DIV		435
- #define IMX7D_ADC_ROOT_CLK		436
--#define IMX7D_CLK_END			437
-+#define IMX7D_CLK_ARM			437
-+#define IMX7D_CLK_END			438
- #endif /* __DT_BINDINGS_CLOCK_IMX7D_H */
--- 
-1.9.1
+Cheers,
+
+Tyler
