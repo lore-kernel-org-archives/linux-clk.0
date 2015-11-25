@@ -1,67 +1,67 @@
-Return-Path: <jon.nettleton@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 25 Nov 2015 11:21:14 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Eric Miao <eric.y.miao@gmail.com>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Mike Turquette <mturquette@linaro.org>,
+	Chao Xie <chao.xie@marvell.com>
+Subject: Re: [PATCH 1/7] clk: mmp: stop using platform headers
+Message-ID: <20151125192114.GB11298@codeaurora.org>
+References: <1448465875-435039-1-git-send-email-arnd@arndb.de>
+ <1448465875-435039-2-git-send-email-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <CAH-u=81hMAF=r6rUKF+iuta3nC6n+4EDDz7Rn2-oGYbkbN0Jyg@mail.gmail.com>
-References: <CAH-u=82M1yCmPjBg5qeiC8JiHjM8+WsP+utX_VPKfJwJsu0QFg@mail.gmail.com>
-	<CALHpu366MPbxJinVL2QFM11gMHx-T=M9QXNoznOTh++oHGGmrA@mail.gmail.com>
-	<CAH-u=81hMAF=r6rUKF+iuta3nC6n+4EDDz7Rn2-oGYbkbN0Jyg@mail.gmail.com>
-Date: Thu, 5 Nov 2015 05:23:47 +0100
-Message-ID: <CALHpu34iKGTE=tENJTFOu13LxSozRjU9bwmGxnigUXgTDsXAQw@mail.gmail.com>
-Subject: Re: i.MX6: Increasing VPU frequency
-From: Jon Nettleton <jon.nettleton@gmail.com>
-To: Jean-Michel Hautbois <jean-michel.hautbois@veo-labs.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, sboyd@codeaurora.org,
-	Michael Turquette <mturquette@baylibre.com>, Sascha Hauer <kernel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@freescale.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1448465875-435039-2-git-send-email-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Nov 4, 2015 at 8:33 PM, Jean-Michel Hautbois
-<jean-michel.hautbois@veo-labs.com> wrote:
-> 2015-11-04 18:04 GMT+01:00 Jon Nettleton <jon.nettleton@gmail.com>:
->> On Wed, Nov 4, 2015 at 5:52 PM, Jean-Michel Hautbois
->> <jean-michel.hautbois@veo-labs.com> wrote:
->>> Hi !
->>>
->>> I can see in FSL kernel that VPU is configurable to 352M (it defaults
->>> at 264MHz in mainline I think).
->>> In the TRM, it is even specified at 352MHz as a default frequency,
->>> with a maximum of 540MHz.
->>>
->>> Would it be possible to allow this clock rating modification if, for
->>> instance, we select a performance governor in cpufreq, or if a coda
->>> encoder is started with 1080p for instance ?
->>> If so, then how is it doable properly ?
->>
->> For some reason the FSL kernel configures the VPU to run at 352Mhz in
->> a very odd way that requires limiting the min cpu-frequency to 792Mhz.
->> It also requires clocking down a bunch of devices on pll2_pfd2_396m to
->> 352Mhz.
->>
->> The simple solution to this is to instead parent the VPU to
->> pll2_pfd0_352m which is unused.  I have found by default it is stable
->> decoding but unstable encoding at 352Mhz, most likely due to the
->> voltage changes needed that limiting the min cpu-freq to 792Mhz
->> provides.  However everything seems to work quite reliably clocking
->> that pfd to 327Mhz, which still gives a boost of almost 24%
->>
->> In my testing the performance gain in then going from 327 to 352 is
->> minimal.  Generally I think you hit AXI bus limitations rather than
->> VPU performance.
->
-> Interesting.
-> So you propose to add something like the following in
-> drivers/clk/imx/clk-imx6q.cdrivers/clk/imx/clk-imx6q.c :
-> imx_clk_set_rate(clk[IMX6QDL_CLK_PLL2_PFD0_352M], 327000000);
-> imx_clk_set_parent(clk[IMX6QDL_CLK_VPU_AXI_SEL],
-> clk[IMX6QDL_CLK_PLL2_PFD0_352M]);
->
-> This should end up with a fastest VPU (in fact ~25% boost is good).
-> Is it the correct way to do it ?
-> Should it be done in coda instead ? And only when needed ?
+On 11/25, Arnd Bergmann wrote:
+> diff --git a/drivers/clk/mmp/clk-mmp2.c b/drivers/clk/mmp/clk-mmp2.c
+> index 09d2832fbd78..38931dbd1eff 100644
+> --- a/drivers/clk/mmp/clk-mmp2.c
+> +++ b/drivers/clk/mmp/clk-mmp2.c
+> @@ -9,6 +9,7 @@
+>   * warranty of any kind, whether express or implied.
+>   */
+>  
+> +#include <linux/clk.h>
 
-That is how I have done it.  I was going to implement dvfs for the vpu
-but found that this change really added minimal power and thermal
-overhead.  Without looking it up I believe I only saw a 10-20mA rise
-in power usage and virtually no thermal differences.
+Why are we adding this include? I don't see any clk consumer API
+usage being added.
+
+>  #include <linux/module.h>
+>  #include <linux/kernel.h>
+>  #include <linux/spinlock.h>
+> diff --git a/drivers/clk/mmp/clk-pxa168.c b/drivers/clk/mmp/clk-pxa168.c
+> index 93e967c0f972..0dd83fb950c9 100644
+> --- a/drivers/clk/mmp/clk-pxa168.c
+> +++ b/drivers/clk/mmp/clk-pxa168.c
+> @@ -9,6 +9,7 @@
+>   * warranty of any kind, whether express or implied.
+>   */
+>  
+> +#include <linux/clk.h>
+
+Ditto.
+
+> diff --git a/drivers/clk/mmp/clk-pxa910.c b/drivers/clk/mmp/clk-pxa910.c
+> index 993abcdb32cc..e1d2ce22cdf1 100644
+> --- a/drivers/clk/mmp/clk-pxa910.c
+> +++ b/drivers/clk/mmp/clk-pxa910.c
+> @@ -9,6 +9,7 @@
+>   * warranty of any kind, whether express or implied.
+>   */
+>  
+> +#include <linux/clk.h>
+
+Ditto.
+
+>  #include <linux/module.h>
+>  #include <linux/kernel.h>
+>  #include <linux/spinlock.h>
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
