@@ -1,56 +1,45 @@
-Return-Path: <vz@mleia.com>
-Message-ID: <564F5FDC.2070001@mleia.com>
-Date: Fri, 20 Nov 2015 20:01:00 +0200
-From: Vladimir Zapolskiy <vz@mleia.com>
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+Message-ID: <5654FD46.30907@gmail.com>
+Date: Tue, 24 Nov 2015 16:13:58 -0800
+From: Florian Fainelli <f.fainelli@gmail.com>
 MIME-Version: 1.0
-To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-CC: Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+To: Ray Jui <rjui@broadcom.com>,
  Michael Turquette <mturquette@baylibre.com>,
- Roland Stigge <stigge@antcom.de>, devicetree@vger.kernel.org,
- Russell King <linux@arm.linux.org.uk>,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH 01/11] dt-bindings: clock: add description of LPC32xx
- clock controller
-References: <1447981511-29653-1-git-send-email-vz@mleia.com> <1447981511-29653-2-git-send-email-vz@mleia.com> <3740707.LksPCoyRXC@wuerfel>
-In-Reply-To: <3740707.LksPCoyRXC@wuerfel>
-Content-Type: text/plain; charset=windows-1252
+ Stephen Boyd <sboyd@codeaurora.org>
+CC: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bcm-kernel-feedback-list@broadcom.com, Simran Rai <ssimran@broadcom.com>
+Subject: Re: [PATCH v2 0/4] Add Cygnus audio clock support
+References: <1448301027-27061-1-git-send-email-rjui@broadcom.com>
+In-Reply-To: <1448301027-27061-1-git-send-email-rjui@broadcom.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Arnd,
-
-On 20.11.2015 15:58, Arnd Bergmann wrote:
-> On Friday 20 November 2015 03:05:01 Vladimir Zapolskiy wrote:
->> NXP LPC32xx SoC has a clocking and power control unit (CPC) as a part
->> of system control block (SCB). CPC is supplied by two external
->> oscillators and it manages core and most of peripheral
->> clocks, the change adds description of DT bindings for clock
->> controller found on LPC32xx SoC series.
->>
->> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
->> ---
->>  .../devicetree/bindings/clock/nxp,lpc3220-clk.txt  | 30 ++++++++++++++++++++++
->>  1 file changed, 30 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
->>
->> diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
->> new file mode 100644
->> index 0000000..20cbca3
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
->> @@ -0,0 +1,30 @@
->> +NXP LPC32xx Clock Controller
->> +
->> +Required properties:
->> +- compatible: should be "nxp,lpc3220-clk"
+On 23/11/15 09:50, Ray Jui wrote:
+> This patch series adds support for the Cygnus audio clock based on existing
+> iProc clock support
 > 
-> Please use a specific model number without 'xx' wildcards. If you have
-> multiple chips that are mutually compatible, pick one as the base number
-> and then list the others as more specific instances, like
+> This patch series is developed based on v4.4-rc1 with full tree available
+> on GITHUB:
+> repo: https://github.com/Broadcom/cygnus-linux.git
+> branch: cygnus-audio-clk-v2
 > 
-> 	compatible = "nxp,lpc3250-clk", "nxp,lpc3220-clk";
+> Changes from v1:
+>  - Remove function prototype of a non-exist function 'iproc_audiopll_clk_setup'
+>  - Remove __init macros from all functions prototypes in iproc-clk.h
+> 
+> Ray Jui (1):
+>   clk: iproc: Remove __init from header
+> 
+> Simran Rai (3):
+>   Documentation: dt-bindings: Add DT bindings for Cygnus audio clock
+>   clk: iproc: Add support for Cygnus audio clocks
+>   ARM: dts: enable audio clock support for Cygnus
 
-Do you ask me to change a title? You may see that compatible property
-does not contain any wildcards?
+Stephen, Mike, do these clock changes look sensible to you? If so, could
+you also put the drivers/clk/ changes in a branch that I could merge as
+part of including the DTS changes?
 
---
-Vladimir
+Thanks!
+-- 
+Florian
