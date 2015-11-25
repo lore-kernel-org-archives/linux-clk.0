@@ -1,54 +1,72 @@
-Return-Path: <rklein@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: Fix bypassing of PLLs
-To: Jon Hunter <jonathanh@nvidia.com>, Peter De Schrijver
-	<pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-References: <1448032264-29622-1-git-send-email-jonathanh@nvidia.com>
-CC: <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-From: Rhyland Klein <rklein@nvidia.com>
-Message-ID: <564F4DC1.4090604@nvidia.com>
-Date: Fri, 20 Nov 2015 11:43:45 -0500
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.135]:58594 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751985AbbKYWE0 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 25 Nov 2015 17:04:26 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Eric Miao <eric.y.miao@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Chao Xie <chao.xie@marvell.com>,
+	Mike Turquette <mturquette@linaro.org>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: mmp: add linux/clk.h includes
+Date: Wed, 25 Nov 2015 23:03:49 +0100
+Message-ID: <5338608.iS8N3pHg9B@wuerfel>
 MIME-Version: 1.0
-In-Reply-To: <1448032264-29622-1-git-send-email-jonathanh@nvidia.com>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: rklein@nvidia.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/20/2015 10:11 AM, Jon Hunter wrote:
-> The _clk_disable_pll() function will attempt to place a PLL into bypass
-> if the TEGRA_PLL_BYPASS is specified for the PLL and then disable the PLL
-> by clearing the enable bit. To place the PLL into bypass, the bypass bit
-> needs to be set and not cleared. Fix this by setting the bypass bit and
-> not clearing it.
-> 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-pll.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-> index d6d4ecb88e94..e5aa9c87df4c 100644
-> --- a/drivers/clk/tegra/clk-pll.c
-> +++ b/drivers/clk/tegra/clk-pll.c
-> @@ -312,7 +312,7 @@ static void _clk_pll_disable(struct clk_hw *hw)
->  
->  	val = pll_readl_base(pll);
->  	if (pll->params->flags & TEGRA_PLL_BYPASS)
-> -		val &= ~PLL_BASE_BYPASS;
-> +		val |= PLL_BASE_BYPASS;
->  	val &= ~PLL_BASE_ENABLE;
->  	pll_writel_base(val, pll);
->  
-> 
+The common clk implementation for MMP broke without anyone noticing
+when we stopped including linux/clk.h from the clk-provider header.
 
+This did not show up in the defconfig builds because those use the
+legacy MMP clk drivers, and it did not show up in my randconfig tests
+either because I was testing with my mmp multiplatform series
+applied, which at some point gained the fixup.
 
-Good catch.
+This fixes the three broken files.
 
-Acked-by: Rhyland Klein <rklein@nvidia.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 61ae76563ec3 ("clk: Remove clk.h from clk-provider.h")
 
+diff --git a/drivers/clk/mmp/clk-mmp2.c b/drivers/clk/mmp/clk-mmp2.c
+index 09d2832fbd78..71fd29348f28 100644
+--- a/drivers/clk/mmp/clk-mmp2.c
++++ b/drivers/clk/mmp/clk-mmp2.c
+@@ -9,6 +9,7 @@
+  * warranty of any kind, whether express or implied.
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+ #include <linux/spinlock.h>
+diff --git a/drivers/clk/mmp/clk-pxa168.c b/drivers/clk/mmp/clk-pxa168.c
+index 93e967c0f972..75244915df05 100644
+--- a/drivers/clk/mmp/clk-pxa168.c
++++ b/drivers/clk/mmp/clk-pxa168.c
+@@ -9,6 +9,7 @@
+  * warranty of any kind, whether express or implied.
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+ #include <linux/spinlock.h>
+diff --git a/drivers/clk/mmp/clk-pxa910.c b/drivers/clk/mmp/clk-pxa910.c
+index 993abcdb32cc..37ba04ba1368 100644
+--- a/drivers/clk/mmp/clk-pxa910.c
++++ b/drivers/clk/mmp/clk-pxa910.c
+@@ -9,6 +9,7 @@
+  * warranty of any kind, whether express or implied.
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+ #include <linux/spinlock.h>
 
--- 
-nvpublic
