@@ -1,38 +1,40 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-Date: Mon, 2 Nov 2015 22:05:18 +0900
-Message-ID: <CAK7LNARGbHqn9D3fDtN9xzwzFoYCur2qJUnnyRA4Q52D9XUVVA@mail.gmail.com>
-Subject: ML for reset controller sub-system?
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Eric Miao <eric.y.miao@gmail.com>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 5/7] ARM: mmp: make plat-pxa build standalone
+Date: Wed, 25 Nov 2015 16:37:53 +0100
+Message-Id: <1448465875-435039-6-git-send-email-arnd@arndb.de>
+In-Reply-To: <1448465875-435039-1-git-send-email-arnd@arndb.de>
+References: <1448465875-435039-1-git-send-email-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Philipp,
+The ssp.c driver in plat-pxa is the only remaining file including a
+mach/*.h header from mmp. It actually doesn't need mach/hardware.h at
+all, so we can remove the #include.
 
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm/plat-pxa/ssp.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-I searched for the reset controller entry in MAINTAINERS.
-
-
-RESET CONTROLLER FRAMEWORK
-M:      Philipp Zabel <p.zabel@pengutronix.de>
-S:      Maintained
-F:      drivers/reset/
-F:      Documentation/devicetree/bindings/reset/
-F:      include/dt-bindings/reset/
-F:      include/linux/reset.h
-F:      include/linux/reset-controller.h
-
-
-Nothing is mentioned which mailing list
-reset controller patches should be sent to.
-
-Please advise me.
-
-
-
+diff --git a/arch/arm/plat-pxa/ssp.c b/arch/arm/plat-pxa/ssp.c
+index daa1a65f2eb7..ba13f793fbce 100644
+--- a/arch/arm/plat-pxa/ssp.c
++++ b/arch/arm/plat-pxa/ssp.c
+@@ -34,7 +34,6 @@
+ #include <linux/of_device.h>
+ 
+ #include <asm/irq.h>
+-#include <mach/hardware.h>
+ 
+ static DEFINE_MUTEX(ssp_lock);
+ static LIST_HEAD(ssp_list);
 -- 
-Best Regards
-Masahiro Yamada
+2.1.0.rc2
