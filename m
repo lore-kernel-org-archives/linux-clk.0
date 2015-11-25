@@ -1,81 +1,42 @@
-Return-Path: <carlo.caione@gmail.com>
-Return-Path: <carlo.caione@gmail.com>
-Sender: Carlo Caione <carlo.caione@gmail.com>
-From: Carlo Caione <carlo@caione.org>
-To: robh+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux@arm.linux.org.uk,
-	linux-meson@googlegroups.com,
-	drake@endlessm.com,
-	jerry.cao@amlogic.com,
-	victor.wan@amlogic.com,
-	pawel.moll@arm.com,
-	arnd@arndb.de
-Cc: Carlo Caione <carlo@endlessm.com>
-Subject: [PATCH 7/7] ARM: DTS: meson8b: Add SMP related nodes
-Date: Tue, 17 Nov 2015 15:56:42 +0100
-Message-Id: <1447772202-12418-8-git-send-email-carlo@caione.org>
-In-Reply-To: <1447772202-12418-1-git-send-email-carlo@caione.org>
-References: <1447772202-12418-1-git-send-email-carlo@caione.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 25 Nov 2015 14:07:28 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Eric Miao <eric.y.miao@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Chao Xie <chao.xie@marvell.com>,
+	Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: mmp: add linux/clk.h includes
+Message-ID: <20151125220728.GG11298@codeaurora.org>
+References: <5338608.iS8N3pHg9B@wuerfel>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <5338608.iS8N3pHg9B@wuerfel>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Carlo Caione <carlo@endlessm.com>
+On 11/25, Arnd Bergmann wrote:
+> The common clk implementation for MMP broke without anyone noticing
+> when we stopped including linux/clk.h from the clk-provider header.
+> 
+> This did not show up in the defconfig builds because those use the
+> legacy MMP clk drivers, and it did not show up in my randconfig tests
+> either because I was testing with my mmp multiplatform series
+> applied, which at some point gained the fixup.
+> 
+> This fixes the three broken files.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes: 61ae76563ec3 ("clk: Remove clk.h from clk-provider.h")
+> 
+> diff --git a/drivers/clk/mmp/clk-mmp2.c b/drivers/clk/mmp/clk-mmp2.c
+> index 09d2832fbd78..71fd29348f28 100644
+> --- a/drivers/clk/mmp/clk-mmp2.c
 
-Add nodes for: SCU, PMU and SRAM. Set also the enable-method for SMP
-bringup.
+Applied to clk-fixes
 
-Signed-off-by: Carlo Caione <carlo@endlessm.com>
----
- arch/arm/boot/dts/meson8b.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
-
-diff --git a/arch/arm/boot/dts/meson8b.dtsi b/arch/arm/boot/dts/meson8b.dtsi
-index 977d55f..0477a81 100644
---- a/arch/arm/boot/dts/meson8b.dtsi
-+++ b/arch/arm/boot/dts/meson8b.dtsi
-@@ -51,9 +51,20 @@
- / {
- 	interrupt-parent = <&gic>;
- 
-+	scu@c4300000 {
-+		compatible = "arm,cortex-a5-scu";
-+		reg = <0xc4300000 0x100>;
-+	};
-+
-+	pmu@c81000e4 {
-+		compatible = "amlogic,meson8b-pmu", "syscon";
-+		reg = <0xc81000e0 0x18>;
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "amlogic,meson8b-smp";
- 
- 		cpu@200 {
- 			device_type = "cpu";
-@@ -88,6 +99,19 @@
- 		};
- 	};
- 
-+	sram: sram@d9000000 {
-+		compatible = "mmio-sram";
-+		reg = <0xd9000000 0x20000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0xd9000000 0x20000>;
-+
-+		smp-sram@1ff80 {
-+			compatible = "amlogic,meson8b-smp-sram";
-+			reg = <0x1ff80 0x8>;
-+		};
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
 -- 
-2.5.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
