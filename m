@@ -1,67 +1,67 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([217.72.192.75]:55378 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751710AbbKYV6J (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 25 Nov 2015 16:58:09 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Eric Miao <eric.y.miao@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Chao Xie <chao.xie@marvell.com>,
-	Mike Turquette <mturquette@linaro.org>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/7] clk: mmp: stop using platform headers
-Date: Wed, 25 Nov 2015 22:57:33 +0100
-Message-ID: <3842139.m8b6S96gUd@wuerfel>
-In-Reply-To: <20151125213222.GF11298@codeaurora.org>
-References: <1448465875-435039-1-git-send-email-arnd@arndb.de> <3508030.Q62gfHvXvx@wuerfel> <20151125213222.GF11298@codeaurora.org>
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: Fix bypassing of PLLs
+To: Tyler Baker <tyler.baker@linaro.org>, Thierry Reding
+	<thierry.reding@gmail.com>
+References: <1448032264-29622-1-git-send-email-jonathanh@nvidia.com>
+ <CANMBJr7vYb+kuUBzsC8i4b=b6DRVsbqnf5OrVtj6kVS2RMNgfQ@mail.gmail.com>
+ <20151125151100.GA31492@ulmo.nvidia.com>
+ <CANMBJr598C1nd7awHdDx_j1uVNbnnAju1sgCvdmg1p6VO-FupQ@mail.gmail.com>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Rhyland Klein <rklein@nvidia.com>, "Kevin's
+ boot bot" <khilman@kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <5655F489.6080808@nvidia.com>
+Date: Wed, 25 Nov 2015 17:48:57 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <CANMBJr598C1nd7awHdDx_j1uVNbnnAju1sgCvdmg1p6VO-FupQ@mail.gmail.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wednesday 25 November 2015 13:32:22 Stephen Boyd wrote:
-> On 11/25, Arnd Bergmann wrote:
-> > On Wednesday 25 November 2015 11:21:14 Stephen Boyd wrote:
-> > > On 11/25, Arnd Bergmann wrote:
-> > > > diff --git a/drivers/clk/mmp/clk-mmp2.c b/drivers/clk/mmp/clk-mmp2.c
-> > > > index 09d2832fbd78..38931dbd1eff 100644
-> > > > --- a/drivers/clk/mmp/clk-mmp2.c
-> > > > +++ b/drivers/clk/mmp/clk-mmp2.c
-> > > > @@ -9,6 +9,7 @@
-> > > >   * warranty of any kind, whether express or implied.
-> > > >   */
-> > > >  
-> > > > +#include <linux/clk.h>
-> > > 
-> > > Why are we adding this include? I don't see any clk consumer API
-> > > usage being added.
-> > 
-> > drivers/clk/mmp/clk-pxa910.c: In function 'pxa910_clk_init':
-> > drivers/clk/mmp/clk-pxa910.c:166:2: error: implicit declaration of function 'clk_set_rate' [-Werror=implicit-function-declaration]
-> >   clk_set_rate(uart_pll, 14745600);
-> >   ^
-> > drivers/clk/mmp/clk-pxa910.c:209:2: error: implicit declaration of function 'clk_set_parent' [-Werror=implicit-function-declaration]
-> >   clk_set_parent(clk, uart_pll);
-> >   ^
-> > 
-> > Is there anything I need to change here?
-> > 
+
+On 25/11/15 15:52, Tyler Baker wrote:
+> On 25 November 2015 at 07:11, Thierry Reding <thierry.reding@gmail.com> wrote:
+>> On Mon, Nov 23, 2015 at 03:18:59PM -0800, Tyler Baker wrote:
+>>> Hi Jon,
+>>>
+>>> On 20 November 2015 at 07:11, Jon Hunter <jonathanh@nvidia.com> wrote:
+>>>> The _clk_disable_pll() function will attempt to place a PLL into bypass
+>>>> if the TEGRA_PLL_BYPASS is specified for the PLL and then disable the PLL
+>>>> by clearing the enable bit. To place the PLL into bypass, the bypass bit
+>>>> needs to be set and not cleared. Fix this by setting the bypass bit and
+>>>> not clearing it.
+>>>>
+>>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>>>
+>>> The kernelci.org bot recently detected a jetson-tk1 boot failure[1][2]
+>>> in the tegra tree. This boot failure has only been observed when
+>>> booting with a multi_v7_defconfig kernel variant. The bot bisected[3]
+>>> this boot failure to this commit, and I confirmed reverting it on top
+>>> of the tegra for-next branch resolves the issue. The ramdisk[4] used
+>>> for booting is loaded with the modules from the build. It appears to
+>>> me that as the modules are being loaded in userspace by eudev the
+>>> jetson-tk1 locks up. I've sifted through the console logs a bit, and
+>>> found this splat to be most interesting[5].  Can you confirm this
+>>> issue on your end?
+>>
+>> Just to close the loop on this: we've discussed this on IRC and came to
+>> the conclusion that not using the bypass mode is safer (switching into
+>> and out of bypass can glitch). I've dropped this patch for now and Jon
+>> will be looking into a second revision of the patch which, in addition
+>> to fixing bypass (the fix is legit, it just happens to break because of
+>> the glitch, most likely), will also remove the BYPASS flag setting so
+>> that bypass will not be used.
 > 
-> Hmph. I seems this broke when we removed the clk.h include from
-> clk-provider.h, but nobody has noticed for months. Can you make a
-> different commit to add the header? Otherwise we're sneaking in
-> that include to get this file to compile again.
+> Thanks for the update, I appreciate you guys looking into this issue.
+> Please CC me on any fixes, I can re-test and give my tested-by.
 
-Ok, I hadn't noticed at all that it was broken in mainline already,
-as the three mmp defconfigs do not use drivers/clk/ at all but instead
-rely on arch/arm/mach-mmp/clock*.c instead, which has a separate
-implementation.
+No problem. On 2nd thoughts I am wondering if there is any value in
+bypassing the PLL when disabling it. I will look into this and see what
+I find out.
 
-With the move to multiplatform, the choice goes away and we use the
-common clock implementation unconditionally.
-
-	Arnd
+Cheers
+Jon
