@@ -1,180 +1,78 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Julia Lawall <Julia.Lawall@lip6.fr>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v4 22/24] pwm: rockchip: add initial state retrieval
-Date: Mon, 16 Nov 2015 09:56:45 +0100
-Message-Id: <1447664207-24370-23-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 25 Nov 2015 11:27:09 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Eric Miao <eric.y.miao@gmail.com>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH 7/7] ARM: mmp: move into ARCH_MULTIPLATFORM
+Message-ID: <20151125192709.GC11298@codeaurora.org>
+References: <1448465875-435039-1-git-send-email-arnd@arndb.de>
+ <1448465875-435039-8-git-send-email-arnd@arndb.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1448465875-435039-8-git-send-email-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Implement the ->reset_state() function to expose initial state.
+On 11/25, Arnd Bergmann wrote:
+> diff --git a/arch/arm/mach-mmp/Kconfig b/arch/arm/mach-mmp/Kconfig
+> index fdbfadf00c84..4773fe1d8b3f 100644
+> --- a/arch/arm/mach-mmp/Kconfig
+> +++ b/arch/arm/mach-mmp/Kconfig
+> @@ -1,9 +1,24 @@
+> +menuconfig ARCH_MMP
+> +	bool "Marvell PXA168/910/MMP2"
+> +	depends on ARCH_MULTI_V5 || ARCH_MULTI_V7
+> +	select ARCH_REQUIRE_GPIOLIB
+> +	select GENERIC_ALLOCATOR
+> +	select GENERIC_CLOCKEVENTS
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/pwm/pwm-rockchip.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+ARCH_MULTIPLATFORM already selects this.
 
-diff --git a/drivers/pwm/pwm-rockchip.c b/drivers/pwm/pwm-rockchip.c
-index 7d9cc90..6eab25c 100644
---- a/drivers/pwm/pwm-rockchip.c
-+++ b/drivers/pwm/pwm-rockchip.c
-@@ -51,6 +51,7 @@ struct rockchip_pwm_data {
- 
- 	void (*set_enable)(struct pwm_chip *chip,
- 			   struct pwm_device *pwm, bool enable);
-+	void (*reset_state)(struct pwm_chip *chip, struct pwm_device *pwm);
- };
- 
- static inline struct rockchip_pwm_chip *to_rockchip_pwm_chip(struct pwm_chip *c)
-@@ -75,6 +76,18 @@ static void rockchip_pwm_set_enable_v1(struct pwm_chip *chip,
- 	writel_relaxed(val, pc->base + pc->data->regs.ctrl);
- }
- 
-+static void rockchip_pwm_reset_state_v1(struct pwm_chip *chip,
-+					struct pwm_device *pwm)
-+{
-+	struct rockchip_pwm_chip *pc = to_rockchip_pwm_chip(chip);
-+	u32 enable_conf = PWM_CTRL_OUTPUT_EN | PWM_CTRL_TIMER_EN;
-+	u32 val;
-+
-+	val = readl(pc->base + pc->data->regs.ctrl);
-+	if ((val & enable_conf) == enable_conf)
-+		pwm->state.enabled = true;
-+}
-+
- static void rockchip_pwm_set_enable_v2(struct pwm_chip *chip,
- 				       struct pwm_device *pwm, bool enable)
- {
-@@ -98,6 +111,54 @@ static void rockchip_pwm_set_enable_v2(struct pwm_chip *chip,
- 	writel_relaxed(val, pc->base + pc->data->regs.ctrl);
- }
- 
-+static void rockchip_pwm_reset_state_v2(struct pwm_chip *chip,
-+					struct pwm_device *pwm)
-+{
-+	struct rockchip_pwm_chip *pc = to_rockchip_pwm_chip(chip);
-+	u32 enable_conf = PWM_OUTPUT_LEFT | PWM_LP_DISABLE | PWM_ENABLE |
-+			  PWM_CONTINUOUS;
-+	u32 val;
-+
-+	val = readl(pc->base + pc->data->regs.ctrl);
-+	if ((val & enable_conf) != enable_conf)
-+		return;
-+
-+	pwm->state.enabled = true;
-+
-+	if (!(val & PWM_DUTY_POSITIVE))
-+		pwm->state.polarity = PWM_POLARITY_INVERSED;
-+}
-+
-+static void rockchip_pwm_reset_state(struct pwm_chip *chip,
-+				     struct pwm_device *pwm)
-+{
-+	struct rockchip_pwm_chip *pc = to_rockchip_pwm_chip(chip);
-+	unsigned long clk_rate;
-+	u64 tmp;
-+	int ret;
-+
-+	ret = clk_enable(pc->clk);
-+	if (ret)
-+		return;
-+
-+	clk_rate = clk_get_rate(pc->clk);
-+
-+	tmp = readl(pc->base + pc->data->regs.period);
-+	tmp *= pc->data->prescaler * NSEC_PER_SEC;
-+	do_div(tmp, clk_rate);
-+	pwm->state.period = tmp;
-+
-+	tmp = readl(pc->base + pc->data->regs.duty);
-+	tmp *= pc->data->prescaler * NSEC_PER_SEC;
-+	do_div(tmp, clk_rate);
-+	pwm->state.duty_cycle = tmp;
-+
-+	pc->data->reset_state(chip, chip->pwms);
-+
-+	if (!pwm_is_enabled(pwm))
-+		clk_disable(pc->clk);
-+}
-+
- static int rockchip_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 			       int duty_ns, int period_ns)
- {
-@@ -171,6 +232,7 @@ static void rockchip_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
- }
- 
- static const struct pwm_ops rockchip_pwm_ops_v1 = {
-+	.reset_state = rockchip_pwm_reset_state,
- 	.config = rockchip_pwm_config,
- 	.enable = rockchip_pwm_enable,
- 	.disable = rockchip_pwm_disable,
-@@ -178,6 +240,7 @@ static const struct pwm_ops rockchip_pwm_ops_v1 = {
- };
- 
- static const struct pwm_ops rockchip_pwm_ops_v2 = {
-+	.reset_state = rockchip_pwm_reset_state,
- 	.config = rockchip_pwm_config,
- 	.set_polarity = rockchip_pwm_set_polarity,
- 	.enable = rockchip_pwm_enable,
-@@ -195,6 +258,7 @@ static const struct rockchip_pwm_data pwm_data_v1 = {
- 	.prescaler = 2,
- 	.ops = &rockchip_pwm_ops_v1,
- 	.set_enable = rockchip_pwm_set_enable_v1,
-+	.reset_state = rockchip_pwm_reset_state_v1,
- };
- 
- static const struct rockchip_pwm_data pwm_data_v2 = {
-@@ -207,6 +271,7 @@ static const struct rockchip_pwm_data pwm_data_v2 = {
- 	.prescaler = 1,
- 	.ops = &rockchip_pwm_ops_v2,
- 	.set_enable = rockchip_pwm_set_enable_v2,
-+	.reset_state = rockchip_pwm_reset_state_v2,
- };
- 
- static const struct rockchip_pwm_data pwm_data_vop = {
-@@ -219,6 +284,7 @@ static const struct rockchip_pwm_data pwm_data_vop = {
- 	.prescaler = 1,
- 	.ops = &rockchip_pwm_ops_v2,
- 	.set_enable = rockchip_pwm_set_enable_v2,
-+	.reset_state = rockchip_pwm_reset_state_v2,
- };
- 
- static const struct of_device_id rockchip_pwm_dt_ids[] = {
+> +	select GPIO_PXA
+> +	select PINCTRL
+> +	select PLAT_PXA
+> +	help
+> +	  Support for Marvell's PXA168/PXA910(MMP) and MMP2 processor line.
+> diff --git a/arch/arm/mach-mmp/include/mach/uncompress.h b/arch/arm/mach-mmp/include/mach/uncompress.h
+> deleted file mode 100644
+> index 8890fa8fa771..000000000000
+> --- a/arch/arm/mach-mmp/include/mach/uncompress.h
+> +++ /dev/null
+> @@ -1,45 +0,0 @@
+> -/*
+> - * arch/arm/mach-mmp/include/mach/uncompress.h
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 as
+> - * published by the Free Software Foundation.
+> - */
+> -
+> -#include <linux/serial_reg.h>
+> -#include <mach/addr-map.h>
+> -#include <asm/mach-types.h>
+> -
+> -#define UART1_BASE	(APB_PHYS_BASE + 0x36000)
+> -#define UART2_BASE	(APB_PHYS_BASE + 0x17000)
+> -#define UART3_BASE	(APB_PHYS_BASE + 0x18000)
+> -
+> -volatile unsigned long *UART;
+
+Doesn't this file need to be ported over to
+arch/arm/include/debug/?
+
+> -
+> -static inline void putc(char c)
+> -{
+> -	/* UART enabled? */
+> -	if (!(UART[UART_IER] & UART_IER_UUE))
+> -		return;
+> -
+> -	while (!(UART[UART_LSR] & UART_LSR_THRE))
+> -		barrier();
+> -
+
 -- 
-2.1.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
