@@ -1,26 +1,157 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 30 Nov 2015 12:58:14 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH] imx/clk-pllv2: fix wrong do_div() usage
-Message-ID: <20151130205814.GQ11298@codeaurora.org>
-References: <alpine.LFD.2.20.1511031958530.630@knanqh.ubzr>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 25 Nov 2015 15:18:22 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 1/5] clk: sunxi: Add CLK_OF_DECLARE support for
+ sun8i-a23-apb0-clk driver
+Message-ID: <20151125141822.GM32142@lukather>
+References: <1448357536-26613-1-git-send-email-wens@csie.org>
+ <1448357536-26613-2-git-send-email-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <alpine.LFD.2.20.1511031958530.630@knanqh.ubzr>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="anmYPbAsEPjx7802"
+In-Reply-To: <1448357536-26613-2-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/03, Nicolas Pitre wrote:
-> do_div() is meant to be used with an unsigned dividend.
-> 
-> Signed-off-by: Nicolas Pitre <nico@linaro.org>
-> 
 
-Applied to clk-fixes
+--anmYPbAsEPjx7802
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On Tue, Nov 24, 2015 at 05:32:12PM +0800, Chen-Yu Tsai wrote:
+> The APBS clock on sun9i is the same as the APB0 clock on sun8i. With
+> sun9i we are supporting the PRCM clocks by using CLK_OF_DECLARE,
+> instead of through a PRCM mfd device and subdevices for each clock
+> and reset control. As such we need a CLK_OF_DECLARE version of
+> the sun8i-a23-apb0-clk driver.
+>=20
+> Also, build it for all Allwinner/sunxi platforms, and not just for
+> configurations with MFD_SUN6I_PRCM enabled.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  drivers/clk/sunxi/Makefile         |  4 ++--
+>  drivers/clk/sunxi/clk-sun8i-apb0.c | 43 ++++++++++++++++++++++++++++++++=
+++++++
+>  2 files changed, 45 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+> index cb4c299214ce..121333ce34ea 100644
+> --- a/drivers/clk/sunxi/Makefile
+> +++ b/drivers/clk/sunxi/Makefile
+> @@ -10,11 +10,11 @@ obj-y +=3D clk-a10-pll2.o
+>  obj-y +=3D clk-a20-gmac.o
+>  obj-y +=3D clk-mod0.o
+>  obj-y +=3D clk-simple-gates.o
+> +obj-y +=3D clk-sun8i-apb0.o
+>  obj-y +=3D clk-sun8i-mbus.o
+>  obj-y +=3D clk-sun9i-core.o
+>  obj-y +=3D clk-sun9i-mmc.o
+>  obj-y +=3D clk-usb.o
+> =20
+>  obj-$(CONFIG_MFD_SUN6I_PRCM) +=3D \
+> -	clk-sun6i-ar100.o clk-sun6i-apb0.o clk-sun6i-apb0-gates.o \
+> -	clk-sun8i-apb0.o
+> +	clk-sun6i-ar100.o clk-sun6i-apb0.o clk-sun6i-apb0-gates.o
+
+I'd really prefer not to build a driver that is used only on a few
+SoCs if the support for these SoCs are not even enabled.
+
+> diff --git a/drivers/clk/sunxi/clk-sun8i-apb0.c b/drivers/clk/sunxi/clk-s=
+un8i-apb0.c
+> index 7ae5d2c2cde1..11b2f2fde245 100644
+> --- a/drivers/clk/sunxi/clk-sun8i-apb0.c
+> +++ b/drivers/clk/sunxi/clk-sun8i-apb0.c
+> @@ -17,8 +17,51 @@
+>  #include <linux/clk-provider.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+> +#include <linux/of_address.h>
+>  #include <linux/platform_device.h>
+> =20
+> +static void sun8i_a23_apb0_setup(struct device_node *node)
+> +{
+> +	const char *clk_name =3D node->name;
+> +	const char *clk_parent;
+> +	void __iomem *reg;
+> +	struct resource res;
+> +	struct clk *clk;
+> +	int ret;
+> +
+> +	reg =3D of_io_request_and_map(node, 0, of_node_full_name(node));
+> +	if (IS_ERR(reg))
+> +		return;
+> +
+> +	clk_parent =3D of_clk_get_parent_name(node, 0);
+> +	if (!clk_parent)
+> +		goto err_unmap;
+> +
+> +	of_property_read_string(node, "clock-output-names", &clk_name);
+> +
+> +	/* The A23 APB0 clock is a standard 2 bit wide divider clock */
+> +	clk =3D clk_register_divider(NULL, clk_name, clk_parent, 0, reg,
+> +				   0, 2, CLK_DIVIDER_POWER_OF_TWO, NULL);
+> +	if (IS_ERR(clk))
+> +		goto err_unmap;
+> +
+> +	ret =3D of_clk_add_provider(node, of_clk_src_simple_get, clk);
+> +	if (ret)
+> +		goto err_unregister;
+> +
+> +	return;
+> +
+> +err_unregister:
+> +	clk_unregister_divider(clk);
+> +
+> +err_unmap:
+> +	iounmap(reg);
+> +	of_address_to_resource(node, 0, &res);
+> +	release_mem_region(res.start, resource_size(&res));
+> +}
+> +CLK_OF_DECLARE(sun8i_a23_apb0, "allwinner,sun8i-a23-apb0-clk",
+> +	       sun8i_a23_apb0_setup);
+
+So, beside the memory request / mapping, everything else is
+duplicated? Can't you just create a common function and call it from
+both?
+
+Thanks,
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--anmYPbAsEPjx7802
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWVcMuAAoJEBx+YmzsjxAgKaYP/iihm9DHT50xf2FmvS7iKDtw
+YFxU9k+4c6egiNrrhyyyzG6gX2zmPtA+Dayd+VBovKjL65HgmwJH1pVRdaskh5VN
+A/EF19js+Bt7g6gETiEwgUr6mkZY8M63EBZEGieVXexwZvv/B+l+KKtLBm18Xdt/
+67NVObxo9oxA4sJfZPwc5zGi3ETbx6sJKyPFBpfL5G3ri/sOvye21Fx7+4y9TRQL
+Uww98Vfjtv2r2SBUafDLkJv40iKfdj2OMAGDBwiuoEeyjp2L2vNr2qdfPBsXxDZt
+tXk0kH7hZ4AlrNxLvJu8zNUpzDA5jaKYAgt/6enEERofScKSX8Mdv10o5i2jo9bG
+oiZ2IeBr/c8hKTYWloCdzNGepVGL+vKfLLZi/MSlY7JU4kbfQLQnlTK2HcMM6Dkx
+DSukeegHYKDv/yjoQJClrTMGpMeBi5V/mskWR5Y66Kfm7p52iTfQcoeM/RufpnDg
+nY2t97+71KA3lFgLM21JkfQ3zRqPv5CwfT6Gb4vSW6Uous/I4hPmcCmkVOqtY2FB
+3eSovqx9d2k1QCM/r/ra8jWU5vvJsCpW4fMV21QXkoJ3kXq1XH2UtuAzgh2iS7iF
+TDLX8YsCP8vxbMmj1P7XDaObw6lXNziLJSwVvky+IA+PtjDn7LHr6H51w+8tACfo
+wya3izr48J4A/TqcJYll
+=fBzF
+-----END PGP SIGNATURE-----
+
+--anmYPbAsEPjx7802--
