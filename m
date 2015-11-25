@@ -1,40 +1,28 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 20 Nov 2015 10:41:08 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jacob Siverskog <jacob@teenage.engineering>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Belisko Marek <marek.belisko@gmail.com>,
-	Jens Rudberg <jens@teenage.engineering>
-Subject: Re: [PATCH v3 1/1] clk: si5351: Add PLL soft reset
-Message-ID: <20151120184108.GS32672@codeaurora.org>
-References: <564F5E8F.80709@gmail.com>
- <1448042593-23670-1-git-send-email-jacob@teenage.engineering>
- <1448042593-23670-2-git-send-email-jacob@teenage.engineering>
+Return-Path: <shawnguo@kernel.org>
+Date: Wed, 25 Nov 2015 11:49:57 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Markus Pargmann <mpa@pengutronix.de>
+Cc: Sascha Hauer <kernel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 resend] clk: imx25: Remove osc clock from driver
+Message-ID: <20151125034957.GE11999@tiger>
+References: <1448363878-14551-1-git-send-email-mpa@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1448042593-23670-2-git-send-email-jacob@teenage.engineering>
+In-Reply-To: <1448363878-14551-1-git-send-email-mpa@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/20, Jacob Siverskog wrote:
-> This is according to figure 12 ("I2C Programming Procedure") in
-> "Si5351A/B/C Data Sheet"
-> (https://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351-B.pdf).
+On Tue, Nov 24, 2015 at 12:17:58PM +0100, Markus Pargmann wrote:
+> The 'osc' clock is already initialized by the fixed clock defined in
+> imx25.dtsi. The imx25 clock driver tries to add this clock for a second
+> time and fails with -EEXIST:
+> 	i.MX clk 1: register failed with -17
 > 
-> Without the PLL soft reset, we were unable to get three outputs
-> working at the same time.
+> As the clock is already properly setup in DT with a different driver, we
+> can completely remove the handling in the imx25 clock driver.
 > 
-> According to Silicon Labs support, performing PLL soft reset will only
-> be noticeable if the PLL parameters have been changed.
-> 
-> Signed-off-by: Jacob Siverskog <jacob@teenage.engineering>
-> Signed-off-by: Jens Rudberg <jens@teenage.engineering>
-> Acked-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> ---
+> Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
+> Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 
-Applied to clk-next
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Applied, thanks.
