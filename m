@@ -1,73 +1,66 @@
-Return-Path: <carlo.caione@gmail.com>
-Return-Path: <carlo.caione@gmail.com>
-Sender: Carlo Caione <carlo.caione@gmail.com>
-From: Carlo Caione <carlo@caione.org>
-To: robh+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux@arm.linux.org.uk,
-	linux-meson@googlegroups.com,
-	drake@endlessm.com,
-	jerry.cao@amlogic.com,
-	victor.wan@amlogic.com,
-	pawel.moll@arm.com,
-	arnd@arndb.de
-Cc: Carlo Caione <carlo@endlessm.com>
-Subject: [PATCH 2/7] Documentation: bindings: Define CPU reset controller
-Date: Tue, 17 Nov 2015 15:56:37 +0100
-Message-Id: <1447772202-12418-3-git-send-email-carlo@caione.org>
-In-Reply-To: <1447772202-12418-1-git-send-email-carlo@caione.org>
-References: <1447772202-12418-1-git-send-email-carlo@caione.org>
+	linux-arm-msm@vger.kernel.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH 6/6] clk: qcom: mmcc8974: Use gdscs .parent and remove genpd calls
+Date: Thu, 26 Nov 2015 11:24:57 +0530
+Message-Id: <1448517297-32419-7-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1448517297-32419-1-git-send-email-rnayak@codeaurora.org>
+References: <1448517297-32419-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Carlo Caione <carlo@endlessm.com>
+With gdsc driver capable of handling hierarchical power domains,
+specify oxili_gdsc as parent of oxilicx_gdsc.
 
-The clock controller on Amlogic Meson8b SoCs has been extended with a
-reset controller used to reset the CPU cores. It is used during SMP
-bringup.
+Remove all direct calls to genpd from the mmcc clock driver. The
+adding and removing of subdomains is now handled from within
+the gdsc driver.
 
-With this patch we extend the clock controller documentation.
-
-Signed-off-by: Carlo Caione <carlo@endlessm.com>
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 ---
- Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/clk/qcom/mmcc-msm8974.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-index 2b7b3fa..feeb4de 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-+++ b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-@@ -1,7 +1,8 @@
- * Amlogic Meson8b Clock and Reset Unit
+diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
+index 9d790bc..12cea42 100644
+--- a/drivers/clk/qcom/mmcc-msm8974.c
++++ b/drivers/clk/qcom/mmcc-msm8974.c
+@@ -2400,6 +2400,7 @@ static struct gdsc oxilicx_gdsc = {
+ 	.pd = {
+ 		.name = "oxilicx",
+ 	},
++	.parent = &oxili_gdsc.pd,
+ 	.pwrsts = PWRSTS_OFF_ON,
+ };
  
- The Amlogic Meson8b clock controller generates and supplies clock to various
--controllers within the SoC.
-+controllers within the SoC and also implements a reset controller for the CPU
-+cores.
+@@ -2624,22 +2625,11 @@ static int mmcc_msm8974_probe(struct platform_device *pdev)
+ 	clk_pll_configure_sr_hpm_lp(&mmpll1, regmap, &mmpll1_config, true);
+ 	clk_pll_configure_sr_hpm_lp(&mmpll3, regmap, &mmpll3_config, false);
  
- Required Properties:
+-	ret = qcom_cc_really_probe(pdev, &mmcc_msm8974_desc, regmap);
+-	if (ret)
+-		return ret;
+-
+-	return pm_genpd_add_subdomain(&oxili_gdsc.pd, &oxilicx_gdsc.pd);
+-}
+-
+-static int mmcc_msm8974_remove(struct platform_device *pdev)
+-{
+-	pm_genpd_remove_subdomain(&oxili_gdsc.pd, &oxilicx_gdsc.pd);
+-	return 0;
++	return qcom_cc_really_probe(pdev, &mmcc_msm8974_desc, regmap);
+ }
  
-@@ -13,16 +14,19 @@ Required Properties:
- 	   mapped region.
- 
- - #clock-cells: should be 1.
-+- #reset-cells: should be 1.
- 
- Each clock is assigned an identifier and client nodes can use this identifier
- to specify the clock which they consume. All available clocks are defined as
- preprocessor macros in the dt-bindings/clock/meson8b-clkc.h header and can be
- used in device tree sources.
-+Similar identifiers exist for the CPU core reset lines.
- 
- Example: Clock controller node:
- 
- 	clkc: clock-controller@c1104000 {
- 		#clock-cells = <1>;
-+		#reset-cells = <1>;
- 		compatible = "amlogic,meson8b-clkc";
- 		reg = <0xc1108000 0x4>, <0xc1104000 0x460>;
- 	};
+ static struct platform_driver mmcc_msm8974_driver = {
+ 	.probe		= mmcc_msm8974_probe,
+-	.remove		= mmcc_msm8974_remove,
+ 	.driver		= {
+ 		.name	= "mmcc-msm8974",
+ 		.of_match_table = mmcc_msm8974_match_table,
 -- 
-2.5.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
