@@ -1,58 +1,55 @@
-Return-Path: <rjui@broadcom.com>
-From: Ray Jui <rjui@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<bcm-kernel-feedback-list@broadcom.com>, Simran Rai <ssimran@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>
-Subject: [PATCH v2 3/4] clk: iproc: Remove __init from header
-Date: Mon, 23 Nov 2015 09:50:26 -0800
-Message-ID: <1448301027-27061-4-git-send-email-rjui@broadcom.com>
-In-Reply-To: <1448301027-27061-1-git-send-email-rjui@broadcom.com>
-References: <1448301027-27061-1-git-send-email-rjui@broadcom.com>
+Return-Path: <Ping.Bai@freescale.com>
+From: Bai Ping <b51503@freescale.com>
+To: <shawnguo@kernel.org>, <kernel@pengutronix.de>
+CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH] clk: imx: Replace clk error check with imx_check_clocks()
+Date: Thu, 26 Nov 2015 10:18:43 +0800
+Message-ID: <1448504323-17737-1-git-send-email-b51503@freescale.com>
+Return-Path: b51503@freescale.com
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: rjui@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Remove __init macro from all function prototypes in clk-iproc.h
+As we already have a 'imx_check_clocks' to do the clock error
+check, so cleanup the error check code.
 
-Signed-off-by: Ray Jui <rjui@broadcom.com>
+Signed-off-by: Bai Ping <b51503@freescale.com>
 ---
- drivers/clk/bcm/clk-iproc.h | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ drivers/clk/imx/clk-imx6ul.c | 4 +---
+ drivers/clk/imx/clk-imx7d.c  | 5 +----
+ 2 files changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/bcm/clk-iproc.h b/drivers/clk/bcm/clk-iproc.h
-index febae11..2148b4e 100644
---- a/drivers/clk/bcm/clk-iproc.h
-+++ b/drivers/clk/bcm/clk-iproc.h
-@@ -204,16 +204,16 @@ struct iproc_asiu_div {
- 	unsigned int low_width;
- };
+diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+index 01718d0..08692d7 100644
+--- a/drivers/clk/imx/clk-imx6ul.c
++++ b/drivers/clk/imx/clk-imx6ul.c
+@@ -399,9 +399,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	/* mask handshake of mmdc */
+ 	writel_relaxed(BM_CCM_CCDR_MMDC_CH0_MASK, base + CCDR);
  
--void __init iproc_armpll_setup(struct device_node *node);
--void __init iproc_pll_clk_setup(struct device_node *node,
--				const struct iproc_pll_ctrl *pll_ctrl,
--				const struct iproc_pll_vco_param *vco,
--				unsigned int num_vco_entries,
--				const struct iproc_clk_ctrl *clk_ctrl,
--				unsigned int num_clks);
--void __init iproc_asiu_setup(struct device_node *node,
--			     const struct iproc_asiu_div *div,
--			     const struct iproc_asiu_gate *gate,
--			     unsigned int num_clks);
-+void iproc_armpll_setup(struct device_node *node);
-+void iproc_pll_clk_setup(struct device_node *node,
-+			 const struct iproc_pll_ctrl *pll_ctrl,
-+			 const struct iproc_pll_vco_param *vco,
-+			 unsigned int num_vco_entries,
-+			 const struct iproc_clk_ctrl *clk_ctrl,
-+			 unsigned int num_clks);
-+void iproc_asiu_setup(struct device_node *node,
-+		      const struct iproc_asiu_div *div,
-+		      const struct iproc_asiu_gate *gate,
-+		      unsigned int num_clks);
+-	for (i = 0; i < ARRAY_SIZE(clks); i++)
+-		if (IS_ERR(clks[i]))
+-			pr_err("i.MX6UL clk %d: register failed with %ld\n", i, PTR_ERR(clks[i]));
++	imx_check_clocks(clks, ARRAY_SIZE(clks));
  
- #endif /* _CLK_IPROC_H */
+ 	clk_data.clks = clks;
+ 	clk_data.clk_num = ARRAY_SIZE(clks);
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 581b428..fbb6a8c 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -839,10 +839,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 					 clks[IMX7D_PLL_ARM_MAIN_CLK],
+ 					 clks[IMX7D_PLL_SYS_MAIN_CLK]);
+ 
+-	for (i = 0; i < ARRAY_SIZE(clks); i++)
+-		if (IS_ERR(clks[i]))
+-			pr_err("i.MX7D clk %d: register failed with %ld\n",
+-					i, PTR_ERR(clks[i]));
++	imx_check_clocks(clks, ARRAY_SIZE(clks));
+ 
+ 	clk_data.clks = clks;
+ 	clk_data.clk_num = ARRAY_SIZE(clks);
 -- 
 1.9.1
