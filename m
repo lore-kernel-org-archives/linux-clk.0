@@ -1,292 +1,141 @@
-Return-Path: <carlo.caione@gmail.com>
-Return-Path: <carlo.caione@gmail.com>
-Sender: Carlo Caione <carlo.caione@gmail.com>
-From: Carlo Caione <carlo@caione.org>
-To: robh+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux@arm.linux.org.uk,
-	linux-meson@googlegroups.com,
-	drake@endlessm.com,
-	jerry.cao@amlogic.com,
-	victor.wan@amlogic.com,
-	pawel.moll@arm.com,
-	arnd@arndb.de
-Cc: Carlo Caione <carlo@endlessm.com>
-Subject: [PATCH 6/7] ARM: meson8b: Add SMP bringup code
-Date: Tue, 17 Nov 2015 15:56:41 +0100
-Message-Id: <1447772202-12418-7-git-send-email-carlo@caione.org>
-In-Reply-To: <1447772202-12418-1-git-send-email-carlo@caione.org>
-References: <1447772202-12418-1-git-send-email-carlo@caione.org>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <1448528281-11882-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1448528281-11882-1-git-send-email-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 26 Nov 2015 17:19:23 +0800
+Message-ID: <CAGb2v64S88vbPKoRL9LEJwrBMzaScP22HAVeYO81o=v3yRvdyg@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: sunxi: Refactor A31 PLL6 so that it can be reused
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Jens Kuske <jenskuske@gmail.com>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>, Hans de Goede <hdegoede@redhat.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Carlo Caione <carlo@endlessm.com>
+Hi,
 
-This adds the necessary SMP-operations and startup code to use the
-additional cores on the Amlogic Meson8b SoCs.
+On Thu, Nov 26, 2015 at 4:58 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Remove the fixed dividers from the PLL6 driver to be able to have a
+> reusable driver that can be used across several SoCs that share the same
+> controller, but don't have the same set of dividers for this clock, and to
+> also be reused multiple times in the same SoC, since we're droping the
+> clock name.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+> Hi Jens,
+>
+> Here is an alternative (untested) patch to deal with the PLL6 issue you're
+> experiencing with the H3.
+>
+> It doesn't rely on parsing clock-output-names that turns out to be pretty
+> fragile.
+>
+> Let me know what you think,
+> Maxime
+>
+> Changes from v1:
+>   - Make the pll6 clock the /2 output, and add a multiplier for the
+>     non-divided output
+>
+>  arch/arm/boot/dts/sun6i-a31.dtsi     | 36 ++++++++++++++++++------------------
+>  arch/arm/boot/dts/sun8i-a23-a33.dtsi | 25 +++++++++++++++++--------
+>  arch/arm/boot/dts/sun8i-a23.dtsi     |  2 +-
+>  arch/arm/boot/dts/sun8i-a33.dtsi     |  4 ++--
+>  drivers/clk/sunxi/clk-sunxi.c        | 24 +++++++-----------------
+>  5 files changed, 45 insertions(+), 46 deletions(-)
+>
+> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+> index 9c79af0c03b2..d6cb1e467bd5 100644
+> --- a/drivers/clk/sunxi/clk-sunxi.c
+> +++ b/drivers/clk/sunxi/clk-sunxi.c
+> @@ -456,9 +456,9 @@ static void sun4i_get_pll5_factors(u32 *freq, u32 parent_rate,
+>  }
+>
+>  /**
+> - * sun6i_a31_get_pll6_factors() - calculates n, k factors for A31 PLL6x2
+> - * PLL6x2 rate is calculated as follows
+> - * rate = parent_rate * (n + 1) * (k + 1)
+> + * sun6i_a31_get_pll6_factors() - calculates n, k factors for A31 PLL6
+> + * PLL6 rate is calculated as follows
+> + * rate = parent_rate * (n + 1) * (k + 1) / 2
+>   * parent_rate is always 24Mhz
+>   */
+>
+> @@ -467,9 +467,9 @@ static void sun6i_a31_get_pll6_factors(u32 *freq, u32 parent_rate,
+>  {
+>         u8 div;
+>
+> -       /* Normalize value to a parent_rate multiple (24M) */
+> -       div = *freq / parent_rate;
+> -       *freq = parent_rate * div;
+> +       /* Normalize value to a parent_rate multiple (24M / 2) */
+> +       div = *freq / (parent_rate / 2);
+> +       *freq = (parent_rate / 2) * div;
 
-Signed-off-by: Carlo Caione <carlo@endlessm.com>
----
- arch/arm/mach-meson/Kconfig   |   1 +
- arch/arm/mach-meson/Makefile  |   1 +
- arch/arm/mach-meson/platsmp.c | 228 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 230 insertions(+)
- create mode 100644 arch/arm/mach-meson/platsmp.c
+This doesn't work with clk_factors_recalc_rate(). You'd get the wrong
+clock rate read back. What you're doing here is no different than the
+first incarnation of sun6i PLL6 driver in 92ef67c53ad9 ("clk: sunxi:
+Add support for PLL6 on the A31"). The kernel readout of the clock
+rate was wrong by a factor of 2.
 
-diff --git a/arch/arm/mach-meson/Kconfig b/arch/arm/mach-meson/Kconfig
-index 5d56f86..e171744 100644
---- a/arch/arm/mach-meson/Kconfig
-+++ b/arch/arm/mach-meson/Kconfig
-@@ -6,6 +6,7 @@ menuconfig ARCH_MESON
- 	select CACHE_L2X0
- 	select PINCTRL
- 	select PINCTRL_MESON
-+	select HAVE_ARM_SCU if SMP
- 
- if ARCH_MESON
- 
-diff --git a/arch/arm/mach-meson/Makefile b/arch/arm/mach-meson/Makefile
-index 9d7380e..bc26c85 100644
---- a/arch/arm/mach-meson/Makefile
-+++ b/arch/arm/mach-meson/Makefile
-@@ -1 +1,2 @@
- obj-$(CONFIG_ARCH_MESON) += meson.o
-+obj-$(CONFIG_SMP) += platsmp.o
-diff --git a/arch/arm/mach-meson/platsmp.c b/arch/arm/mach-meson/platsmp.c
-new file mode 100644
-index 0000000..37c9102
---- /dev/null
-+++ b/arch/arm/mach-meson/platsmp.c
-@@ -0,0 +1,228 @@
-+/*
-+ * Copyright (C) 2015 Carlo Caione <carlo@endlessm.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/init.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/regmap.h>
-+#include <linux/reset.h>
-+#include <linux/smp.h>
-+#include <linux/mfd/syscon.h>
-+#include <asm/smp_scu.h>
-+#include <asm/smp_plat.h>
-+
-+#define MESON_CPU_CTRL_REG			(0x00)
-+#define MESON_CPU_CTRL_ADDR_REG(c)		(0x04 + ((c - 1) << 2))
-+
-+#define MESON_CPU_AO_RTI_PWR_A9_CNTL0		(0x00)
-+#define MESON_CPU_AO_RTI_PWR_A9_CNTL1		(0x04)
-+#define MESON_CPU_AO_RTI_PWR_A9_MEM_PD0		(0x14)
-+
-+#define MESON_CPU_PWR_A9_CNTL0_M(c)		(0x03 << ((c * 2) + 16))
-+#define MESON_CPU_PWR_A9_CNTL1_M(c)		(0x03 << ((c + 1) << 1))
-+#define MESON_CPU_PWR_A9_MEM_PD0_M(c)		(0x0f << (32 - (c * 4)))
-+#define MESON_CPU_PWR_A9_CNTL1_ST(c)		(0x01 << (c + 16))
-+
-+static void __iomem *sram_base;
-+static void __iomem *scu_base;
-+static struct regmap *pmu;
-+
-+static void __init meson8b_smp_prepare_cpus(unsigned int max_cpus)
-+{
-+	static struct device_node *node;
-+
-+	/* SMP SRAM */
-+	node = of_find_compatible_node(NULL, NULL, "amlogic,meson8b-smp-sram");
-+	if (!node) {
-+		pr_err("Missing SRAM node\n");
-+		return;
-+	}
-+
-+	sram_base = of_iomap(node, 0);
-+	if (!sram_base) {
-+		pr_err("Couldn't map SRAM registers\n");
-+		return;
-+	}
-+
-+	/* PMU */
-+	pmu = syscon_regmap_lookup_by_compatible("amlogic,meson8b-pmu");
-+	if (IS_ERR(pmu)) {
-+		pr_err("Couldn't map PMU registors\n");
-+		return;
-+	}
-+
-+	/* SCU */
-+	node = of_find_compatible_node(NULL, NULL, "arm,cortex-a5-scu");
-+	if (!node) {
-+		pr_err("Missing SCU node\n");
-+		return;
-+	}
-+
-+	scu_base = of_iomap(node, 0);
-+	if (!scu_base) {
-+		pr_err("Couln't map SCU registers\n");
-+		return;
-+	}
-+
-+	scu_enable(scu_base);
-+}
-+
-+static struct reset_control *meson_get_core_reset(int cpu)
-+{
-+	struct device_node *np;
-+
-+	np = of_get_cpu_node(cpu, 0);
-+
-+	return of_reset_control_get(np, NULL);
-+}
-+
-+static int meson8b_set_cpu_power_ctrl(unsigned int cpu, bool is_power_on)
-+{
-+	struct reset_control *rstc = meson_get_core_reset(cpu);
-+	int ret;
-+	u32 val;
-+
-+	if (is_power_on) {
-+
-+		/* CPU power UP */
-+		ret = regmap_update_bits(pmu, MESON_CPU_AO_RTI_PWR_A9_CNTL0,
-+					 MESON_CPU_PWR_A9_CNTL0_M(cpu), 0);
-+		if (ret < 0) {
-+			pr_err("Couldn't power up the CPU\n");
-+			return ret;
-+		}
-+
-+		udelay(5);
-+
-+		/* Reset enable */
-+		reset_control_assert(rstc);
-+
-+		/* Memory power UP */
-+		ret = regmap_update_bits(pmu, MESON_CPU_AO_RTI_PWR_A9_MEM_PD0,
-+					 MESON_CPU_PWR_A9_MEM_PD0_M(cpu), 0);
-+		if (ret < 0) {
-+			pr_err("Couldn't power up the memory\n");
-+			return ret;
-+		}
-+
-+		/* Wake up CPU */
-+		ret = regmap_update_bits(pmu, MESON_CPU_AO_RTI_PWR_A9_CNTL1,
-+					 MESON_CPU_PWR_A9_CNTL1_M(cpu), 0);
-+		if (ret < 0) {
-+			pr_err("Couldn't wake up the CPU\n");
-+			return ret;
-+		}
-+
-+		udelay(10);
-+
-+		val = 0;
-+		while (!(val & MESON_CPU_PWR_A9_CNTL1_ST(cpu))) {
-+			ret = regmap_read(pmu, MESON_CPU_AO_RTI_PWR_A9_CNTL1, &val);
-+			if (ret < 0) {
-+				pr_err("CPU wake up failed\n");
-+				return ret;
-+			}
-+		}
-+
-+		/* Isolation disable */
-+		ret = regmap_update_bits(pmu, MESON_CPU_AO_RTI_PWR_A9_CNTL0,
-+					 BIT(cpu), 0);
-+		if (ret < 0) {
-+			pr_err("Error when disabling isolation\n");
-+			return ret;
-+		}
-+
-+		/* Reset disable */
-+		reset_control_deassert(rstc);
-+
-+	} else {
-+
-+		/* CPU power DOWN */
-+		ret = regmap_update_bits(pmu, MESON_CPU_AO_RTI_PWR_A9_CNTL0,
-+					 MESON_CPU_PWR_A9_CNTL0_M(cpu), 0x3);
-+		if (ret < 0) {
-+			pr_err("Couldn't power down the CPU\n");
-+			return ret;
-+		}
-+
-+		/* Isolation enable */
-+		ret = regmap_update_bits(pmu, MESON_CPU_AO_RTI_PWR_A9_CNTL0,
-+					 BIT(cpu), 0x3);
-+		if (ret < 0) {
-+			pr_err("Error when enabling isolation\n");
-+			return ret;
-+		}
-+
-+		udelay(10);
-+
-+		/* Sleep status */
-+		ret = regmap_update_bits(pmu, MESON_CPU_AO_RTI_PWR_A9_CNTL1,
-+					 MESON_CPU_PWR_A9_CNTL1_M(cpu), 0x3);
-+		if (ret < 0) {
-+			pr_err("Couldn't change sleep status\n");
-+			return ret;
-+		}
-+
-+		/* Memory power DOWN */
-+		ret = regmap_update_bits(pmu, MESON_CPU_AO_RTI_PWR_A9_MEM_PD0,
-+					 MESON_CPU_PWR_A9_MEM_PD0_M(cpu), 0xf);
-+		if (ret < 0) {
-+			pr_err("Couldn't power down the memory\n");
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int meson8b_smp_boot_secondary(unsigned int cpu, struct task_struct *idle)
-+{
-+	unsigned long timeout;
-+	int ret;
-+	u32 reg;
-+
-+	ret = meson8b_set_cpu_power_ctrl(cpu, 1);
-+	if (ret < 0)
-+		return ret;
-+
-+	timeout = jiffies + (10 * HZ);
-+	while (readl(sram_base + MESON_CPU_CTRL_ADDR_REG(cpu)))
-+		if (!time_before(jiffies, timeout))
-+			return -EPERM;
-+
-+	udelay(100);
-+	writel(virt_to_phys(secondary_startup), sram_base + MESON_CPU_CTRL_ADDR_REG(cpu));
-+
-+	reg = readl(sram_base + MESON_CPU_CTRL_REG);
-+	reg |= (BIT(cpu) | BIT(0));
-+	writel(reg, sram_base + MESON_CPU_CTRL_REG);
-+
-+	return 0;
-+}
-+
-+static void meson8b_smp_secondary_init(unsigned int cpu)
-+{
-+	scu_power_mode(scu_base, SCU_PM_NORMAL);
-+}
-+
-+static struct smp_operations meson8b_smp_ops __initdata = {
-+	.smp_prepare_cpus	= meson8b_smp_prepare_cpus,
-+	.smp_boot_secondary	= meson8b_smp_boot_secondary,
-+	.smp_secondary_init	= meson8b_smp_secondary_init,
-+};
-+
-+CPU_METHOD_OF_DECLARE(meson8b_smp, "amlogic,meson8b-smp", &meson8b_smp_ops);
--- 
-2.5.0
+I mentioned some while back that it may make sense to have a custom
+.recalc_rate callback for some factor clocks with non-standard
+formulas.
+
+For this particular case you could just add a .post_div field
+to factors_clk, and deal with it there.
+
+Regards
+ChenYu
+
+>
+>         /* we were called to round the frequency, we can now return */
+>         if (n == NULL)
+> @@ -718,7 +718,6 @@ static const struct factors_data sun6i_a31_pll6_data __initconst = {
+>         .enable = 31,
+>         .table = &sun6i_a31_pll6_config,
+>         .getter = sun6i_a31_get_pll6_factors,
+> -       .name = "pll6x2",
+>  };
+>
+>  static const struct factors_data sun5i_a13_ahb_data __initconst = {
+> @@ -951,15 +950,6 @@ static const struct divs_data pll6_divs_data __initconst = {
+>         }
+>  };
+>
+> -static const struct divs_data sun6i_a31_pll6_divs_data __initconst = {
+> -       .factors = &sun6i_a31_pll6_data,
+> -       .ndivs = 2,
+> -       .div = {
+> -               { .fixed = 2 }, /* normal output */
+> -               { .self = 1 }, /* base factor clock, 2x */
+> -       }
+> -};
+> -
+>  /**
+>   * sunxi_divs_clk_setup() - Setup function for leaf divisors on clocks
+>   *
+> @@ -1101,6 +1091,7 @@ free_clkdata:
+>  static const struct of_device_id clk_factors_match[] __initconst = {
+>         {.compatible = "allwinner,sun4i-a10-pll1-clk", .data = &sun4i_pll1_data,},
+>         {.compatible = "allwinner,sun6i-a31-pll1-clk", .data = &sun6i_a31_pll1_data,},
+> +       {.compatible = "allwinner,sun6i-a31-pll6-clk", .data = &sun6i_a31_pll6_data,},
+>         {.compatible = "allwinner,sun8i-a23-pll1-clk", .data = &sun8i_a23_pll1_data,},
+>         {.compatible = "allwinner,sun7i-a20-pll4-clk", .data = &sun7i_a20_pll4_data,},
+>         {.compatible = "allwinner,sun5i-a13-ahb-clk", .data = &sun5i_a13_ahb_data,},
+> @@ -1122,7 +1113,6 @@ static const struct of_device_id clk_div_match[] __initconst = {
+>  static const struct of_device_id clk_divs_match[] __initconst = {
+>         {.compatible = "allwinner,sun4i-a10-pll5-clk", .data = &pll5_divs_data,},
+>         {.compatible = "allwinner,sun4i-a10-pll6-clk", .data = &pll6_divs_data,},
+> -       {.compatible = "allwinner,sun6i-a31-pll6-clk", .data = &sun6i_a31_pll6_divs_data,},
+>         {}
+>  };
+>
+> --
+> 2.6.3
+>
