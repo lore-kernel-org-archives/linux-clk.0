@@ -1,127 +1,333 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Mon, 16 Nov 2015 19:06:46 +0100
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Joachim  Eastwood <manabian@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
- Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Mark Brown
- <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Kamil Debski
- <k.debski@samsung.com>, lm-sensors@lm-sensors.org, Jean Delvare
- <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov
- <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Bryan Wu
- <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski
- <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Maxime Ripard
- <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
- linux-sunxi@googlegroups.com, Thomas Petazzoni
- <thomas.petazzoni@free-electrons.com>, Heiko Stuebner <heiko@sntech.de>,
- linux-rockchip@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, Lee
- Jones <lee.jones@linaro.org>, linux-fbdev@vger.kernel.org, Jean-Christophe
- Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen
- <tomi.valkeinen@ti.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Alexandre
- Belloni <alexandre.belloni@free-electrons.com>, Julia Lawall
- <Julia.Lawall@lip6.fr>, "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "Ariel D'Alessandro"
- <ariel@vanguardiasur.com.ar>
-Subject: Re: [PATCH v4 02/24] pwm: use pwm_get_xxx() helpers where
- appropriate
-Message-ID: <20151116190646.1d5ba16e@bbrezillon>
-In-Reply-To: <CAGhQ9VwEuwazF5Kdw=9R60EovVoiwen6fXiVjL+=EddXPYVGAg@mail.gmail.com>
-References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1447664207-24370-3-git-send-email-boris.brezillon@free-electrons.com>
-	<CAGhQ9VwEuwazF5Kdw=9R60EovVoiwen6fXiVjL+=EddXPYVGAg@mail.gmail.com>
+Return-Path: <rmk+mturquette=baylibre.com@arm.linux.org.uk>
+From: Russell King <rmk+kernel@arm.linux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>,Jason Cooper <jason@lakedaemon.net>
+Cc: devicetree@vger.kernel.org,linux-arm-kernel@lists.infradead.org,linux-clk@vger.kernel.org,Michael Turquette <mturquette@baylibre.com>,Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH 2/3] clk: add Dove PLL divider support for GPU, VMeta and AXI
+ clocks
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <E1a24wo-0004j2-Vd@rmk-PC.arm.linux.org.uk>
+Sender: Russell King <rmk@arm.linux.org.uk>
+Date: Thu, 26 Nov 2015 22:23:26 +0000
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Joachim,
+Add support for the Dove PLL dividers, which are used to generate the
+clocks for the AXI bus, as well as the GPU and VMeta peripherals.
 
-On Mon, 16 Nov 2015 18:46:44 +0100
-Joachim  Eastwood <manabian@gmail.com> wrote:
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+---
+ drivers/clk/mvebu/Makefile       |   2 +-
+ drivers/clk/mvebu/dove-divider.c | 262 +++++++++++++++++++++++++++++++++++++++
+ drivers/clk/mvebu/dove.c         |   6 +
+ 3 files changed, 269 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/mvebu/dove-divider.c
 
-> Hi Boris
-> 
-> (Adding Ariel for pwm-lpc18xx-sct)
-> 
-> On 16 November 2015 at 09:56, Boris Brezillon
-> <boris.brezillon@free-electrons.com> wrote:
-> > Use pwm_get_xxx() helpers instead of directly accessing the pwm->xxx field.
-> > Doing that will ease adaptation of the PWM framework to support atomic
-> > update.
-> >
-> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> > ---
-> > Patch generated with the following coccinelle script:
-> >
-> > --->8---
-> > virtual patch
-> >
-> > @@
-> > struct pwm_device *p;
-> > expression e;
-> > @@
-> > (
-> > -(p)->polarity = e;
-> > +pwm_set_polarity((p), e);
-> > |
-> > -(p)->polarity
-> > +pwm_get_polarity((p))
-> > |
-> > -(p)->period = e;
-> > +pwm_set_period((p), e);
-> > |
-> > -(p)->period
-> > +pwm_get_period((p))
-> > |
-> > -(p)->duty_cycle = e;
-> > +pwm_set_duty_cycle((p), e);
-> > |
-> > -(p)->duty_cycle
-> > +pwm_get_duty_cycle((p))
-> > )
-> > --->8---
-> > ---
-> >  drivers/pwm/pwm-crc.c         | 2 +-
-> >  drivers/pwm/pwm-lpc18xx-sct.c | 2 +-
-> >  2 files changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/pwm/pwm-crc.c b/drivers/pwm/pwm-crc.c
-> > index 7101c70..2f88543 100644
-> > --- a/drivers/pwm/pwm-crc.c
-> > +++ b/drivers/pwm/pwm-crc.c
-> > @@ -75,7 +75,7 @@ static int crc_pwm_config(struct pwm_chip *c, struct pwm_device *pwm,
-> >                 return -EINVAL;
-> >         }
-> >
-> > -       if (pwm->period != period_ns) {
-> > +       if (pwm_get_period((pwm)) != period_ns) {
-> >                 int clk_div;
-> >
-> >                 /* changing the clk divisor, need to disable fisrt */
-> > diff --git a/drivers/pwm/pwm-lpc18xx-sct.c b/drivers/pwm/pwm-lpc18xx-sct.c
-> > index 9163085..091fa13 100644
-> > --- a/drivers/pwm/pwm-lpc18xx-sct.c
-> > +++ b/drivers/pwm/pwm-lpc18xx-sct.c
-> > @@ -249,7 +249,7 @@ static int lpc18xx_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
-> >                            LPC18XX_PWM_EVSTATEMSK(lpc18xx_data->duty_event),
-> >                            LPC18XX_PWM_EVSTATEMSK_ALL);
-> >
-> > -       if (pwm->polarity == PWM_POLARITY_NORMAL) {
-> > +       if (pwm_get_polarity((pwm)) == PWM_POLARITY_NORMAL) {
-> 
-> What is the deal with the double parentheses?
-> 
-> Think I saw that in some of the other patches as well.
-
-It comes from a typo in my coccinelle script. I already fixed it and
-regenerated the faulty patches, so please ignore this aspect while
-reviewing (this will be addressed in the next version).
-
-Thanks,
-
-Boris
-
+diff --git a/drivers/clk/mvebu/Makefile b/drivers/clk/mvebu/Makefile
+index 645ac7ea3565..8866115486f7 100644
+--- a/drivers/clk/mvebu/Makefile
++++ b/drivers/clk/mvebu/Makefile
+@@ -7,6 +7,6 @@ obj-$(CONFIG_ARMADA_375_CLK)	+= armada-375.o
+ obj-$(CONFIG_ARMADA_38X_CLK)	+= armada-38x.o
+ obj-$(CONFIG_ARMADA_39X_CLK)	+= armada-39x.o
+ obj-$(CONFIG_ARMADA_XP_CLK)	+= armada-xp.o
+-obj-$(CONFIG_DOVE_CLK)		+= dove.o
++obj-$(CONFIG_DOVE_CLK)		+= dove.o dove-divider.o
+ obj-$(CONFIG_KIRKWOOD_CLK)	+= kirkwood.o
+ obj-$(CONFIG_ORION_CLK)		+= orion.o
+diff --git a/drivers/clk/mvebu/dove-divider.c b/drivers/clk/mvebu/dove-divider.c
+new file mode 100644
+index 000000000000..0478184d7a28
+--- /dev/null
++++ b/drivers/clk/mvebu/dove-divider.c
+@@ -0,0 +1,262 @@
++/*
++ * Marvell Dove PMU Core PLL divider driver
++ *
++ * Cleaned up by substantially rewriting, and converted to DT by
++ * Russell King.  Origin is not known.
++ */
++#include <linux/clk-provider.h>
++#include <linux/delay.h>
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++
++#include "dove-divider.h"
++
++struct dove_clk {
++	const char *name;
++	struct clk_hw hw;
++	void __iomem *base;
++	spinlock_t *lock;
++	u8 div_bit_start;
++	u8 div_bit_end;
++	u8 div_bit_load;
++	u8 div_bit_size;
++	u32 *divider_table;
++};
++
++enum {
++	DIV_CTRL0 = 0,
++	DIV_CTRL1 = 4,
++	DIV_CTRL1_N_RESET_MASK = BIT(10),
++};
++
++#define to_dove_clk(hw) container_of(hw, struct dove_clk, hw)
++
++static void dove_load_divider(void __iomem *base, u32 val, u32 mask, u32 load)
++{
++	u32 v;
++
++	v = readl_relaxed(base + DIV_CTRL1) | DIV_CTRL1_N_RESET_MASK;
++	writel_relaxed(v, base + DIV_CTRL1);
++
++	v = (readl_relaxed(base + DIV_CTRL0) & ~(mask | load)) | val;
++	writel_relaxed(v, base + DIV_CTRL0);
++	writel_relaxed(v | load, base + DIV_CTRL0);
++	ndelay(250);
++	writel_relaxed(v, base + DIV_CTRL0);
++}
++
++static unsigned int dove_get_divider(struct dove_clk *dc)
++{
++	unsigned int divider;
++	u32 val;
++
++	val = readl_relaxed(dc->base + DIV_CTRL0);
++	val >>= dc->div_bit_start;
++
++	divider = val & ~(~0 << dc->div_bit_size);
++
++	if (dc->divider_table)
++		divider = dc->divider_table[divider];
++
++	return divider;
++}
++
++static int dove_calc_divider(const struct dove_clk *dc, unsigned long rate,
++			     unsigned long parent_rate, bool set)
++{
++	unsigned int divider, max;
++
++	divider = DIV_ROUND_CLOSEST(parent_rate, rate);
++
++	if (dc->divider_table) {
++		unsigned int i;
++
++		for (i = 0; dc->divider_table[i]; i++)
++			if (divider == dc->divider_table[i]) {
++				divider = i;
++				break;
++			}
++
++		if (dc->divider_table[i])
++			return -EINVAL;
++	} else {
++		max = 1 << dc->div_bit_size;
++
++		if (set && (divider == 0 || divider >= max))
++			return -EINVAL;
++		if (divider >= max)
++			divider = max - 1;
++		else if (divider == 0)
++			divider = 1;
++	}
++
++	return divider;
++}
++
++static unsigned long dove_recalc_rate(struct clk_hw *hw, unsigned long parent)
++{
++	struct dove_clk *dc = to_dove_clk(hw);
++	unsigned int divider = dove_get_divider(dc);
++	unsigned long rate = DIV_ROUND_CLOSEST(parent, divider);
++
++	pr_debug("%s(): %s divider=%u parent=%lu rate=%lu\n",
++		 __func__, dc->name, divider, parent, rate);
++
++	return rate;
++}
++
++static long dove_round_rate(struct clk_hw *hw, unsigned long rate,
++			    unsigned long *parent)
++{
++	struct dove_clk *dc = to_dove_clk(hw);
++	unsigned long parent_rate = *parent;
++	int divider;
++
++	divider = dove_calc_divider(dc, rate, parent_rate, false);
++	if (divider < 0)
++		return divider;
++
++	rate = DIV_ROUND_CLOSEST(parent_rate, divider);
++
++	pr_debug("%s(): %s divider=%u parent=%lu rate=%lu\n",
++		 __func__, dc->name, divider, parent_rate, rate);
++
++	return rate;
++}
++
++static int dove_set_clock(struct clk_hw *hw, unsigned long rate,
++			  unsigned long parent_rate)
++{
++	struct dove_clk *dc = to_dove_clk(hw);
++	u32 mask, load, div;
++	int divider;
++
++	divider = dove_calc_divider(dc, rate, parent_rate, true);
++	if (divider < 0)
++		return divider;
++
++	pr_debug("%s(): %s divider=%u parent=%lu rate=%lu\n",
++		 __func__, dc->name, divider, parent_rate, rate);
++
++	div = (u32)divider << dc->div_bit_start;
++	mask = ~(~0 << dc->div_bit_size) << dc->div_bit_start;
++	load = BIT(dc->div_bit_load);
++
++	spin_lock(dc->lock);
++	dove_load_divider(dc->base, div, mask, load);
++	spin_unlock(dc->lock);
++
++	return 0;
++}
++
++static const struct clk_ops dove_divider_ops = {
++	.set_rate	= dove_set_clock,
++	.round_rate	= dove_round_rate,
++	.recalc_rate	= dove_recalc_rate,
++};
++
++static struct clk *clk_register_dove_divider(struct device *dev,
++	struct dove_clk *dc, const char **parent_names, size_t num_parents,
++	void __iomem *base)
++{
++	char name[32];
++	struct clk_init_data init = {
++		.name = name,
++		.ops = &dove_divider_ops,
++		.parent_names = parent_names,
++		.num_parents = num_parents,
++	};
++
++	strlcpy(name, dc->name, sizeof(name));
++
++	dc->hw.init = &init;
++	dc->base = base;
++	dc->div_bit_size = dc->div_bit_end - dc->div_bit_start + 1;
++
++	return clk_register(dev, &dc->hw);
++}
++
++static DEFINE_SPINLOCK(dove_divider_lock);
++
++static u32 axi_divider[] = {-1, 2, 1, 3, 4, 6, 5, 7, 8, 10, 9, 0};
++
++static struct dove_clk dove_hw_clocks[4] = {
++	{
++		.name = "axi",
++		.lock = &dove_divider_lock,
++		.div_bit_start = 1,
++		.div_bit_end = 6,
++		.div_bit_load = 7,
++		.divider_table = axi_divider,
++	}, {
++		.name = "gpu",
++		.lock = &dove_divider_lock,
++		.div_bit_start = 8,
++		.div_bit_end = 13,
++		.div_bit_load = 14,
++	}, {
++		.name = "vmeta",
++		.lock = &dove_divider_lock,
++		.div_bit_start = 15,
++		.div_bit_end = 20,
++		.div_bit_load = 21,
++	}, {
++		.name = "lcd",
++		.lock = &dove_divider_lock,
++		.div_bit_start = 22,
++		.div_bit_end = 27,
++		.div_bit_load = 28,
++	},
++};
++
++static const char *core_pll[] = {
++	"core-pll",
++};
++
++static int dove_divider_init(struct device *dev, void __iomem *base,
++	struct clk **clks)
++{
++	struct clk *clk;
++	int i;
++
++	/*
++	 * Create the core PLL clock.  We treat this as a fixed rate
++	 * clock as we don't know any better, and documentation is sparse.
++	 */
++	clk = clk_register_fixed_rate(dev, core_pll[0], NULL, CLK_IS_ROOT,
++				      2000000000UL);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	for (i = 0; i < ARRAY_SIZE(dove_hw_clocks); i++)
++		clks[i] = clk_register_dove_divider(dev, &dove_hw_clocks[i],
++						    core_pll,
++						    ARRAY_SIZE(core_pll), base);
++
++	return 0;
++}
++
++static struct clk *dove_divider_clocks[4];
++
++static struct clk_onecell_data dove_divider_data = {
++	.clks = dove_divider_clocks,
++	.clk_num = ARRAY_SIZE(dove_divider_clocks),
++};
++
++void __init dove_divider_clk_init(struct device_node *np)
++{
++	void *base;
++
++	base = of_iomap(np, 0);
++	if (WARN_ON(!base))
++		return;
++
++	if (WARN_ON(dove_divider_init(NULL, base, dove_divider_clocks))) {
++		iounmap(base);
++		return;
++	}
++
++	of_clk_add_provider(np, of_clk_src_onecell_get, &dove_divider_data);
++}
+diff --git a/drivers/clk/mvebu/dove.c b/drivers/clk/mvebu/dove.c
+index b8c2424ac926..59fad9546c84 100644
+--- a/drivers/clk/mvebu/dove.c
++++ b/drivers/clk/mvebu/dove.c
+@@ -17,6 +17,7 @@
+ #include <linux/io.h>
+ #include <linux/of.h>
+ #include "common.h"
++#include "dove-divider.h"
+ 
+ /*
+  * Core Clocks
+@@ -184,9 +185,14 @@ static void __init dove_clk_init(struct device_node *np)
+ {
+ 	struct device_node *cgnp =
+ 		of_find_compatible_node(NULL, NULL, "marvell,dove-gating-clock");
++	struct device_node *ddnp =
++		of_find_compatible_node(NULL, NULL, "marvell,dove-divider-clock");
+ 
+ 	mvebu_coreclk_setup(np, &dove_coreclks);
+ 
++	if (ddnp)
++		dove_divider_clk_init(ddnp);
++
+ 	if (cgnp)
+ 		mvebu_clk_gating_setup(cgnp, dove_gating_desc);
+ }
 -- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+2.1.0
