@@ -1,263 +1,140 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Eric Miao <eric.y.miao@gmail.com>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 7/7] ARM: mmp: move into ARCH_MULTIPLATFORM
-Date: Wed, 25 Nov 2015 16:37:55 +0100
-Message-Id: <1448465875-435039-8-git-send-email-arnd@arndb.de>
-In-Reply-To: <1448465875-435039-1-git-send-email-arnd@arndb.de>
-References: <1448465875-435039-1-git-send-email-arnd@arndb.de>
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH 2/6] clk: qcom: gdsc: Add support for gdscs with gds hw controller
+Date: Thu, 26 Nov 2015 11:24:53 +0530
+Message-Id: <1448517297-32419-3-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1448517297-32419-1-git-send-email-rnayak@codeaurora.org>
+References: <1448517297-32419-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-With all dependencies taken care of, this enables building
-the Marvell mmp platform as part of ARCH_MULTIPLATFORM, along
-with other ARMv5 and ARMv7 platforms.
+Some gdsc power domains can have a gds_hw_controller block inside
+to help ensure all slave devices within the power domain are idle
+before the gdsc is actually switched off.
+This is mainly useful in power domains which host a MMU, in which
+case its necessary to make sure there are no outstanding MMU operations
+or pending bus transactions before the power domain is turned off.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+In gdscs with gds_hw_controller block, its necessary to check the
+gds_hw_ctrl status bits instead of the ones in gdscr, to determine
+the state of the powerdomain.
+
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 ---
- arch/arm/Kconfig                            | 16 ----------
- arch/arm/mach-mmp/Kconfig                   | 36 ++++++++++++++++++-----
- arch/arm/mach-mmp/Makefile                  |  1 +
- arch/arm/mach-mmp/include/mach/uncompress.h | 45 -----------------------------
- arch/arm/plat-pxa/Makefile                  |  1 +
- 5 files changed, 30 insertions(+), 69 deletions(-)
- delete mode 100644 arch/arm/mach-mmp/include/mach/uncompress.h
+ drivers/clk/qcom/gdsc.c | 38 ++++++++++++++++++++++----------------
+ drivers/clk/qcom/gdsc.h |  2 ++
+ 2 files changed, 24 insertions(+), 16 deletions(-)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 1bceaec85900..bf9ab47fa14b 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -527,22 +527,6 @@ config ARCH_ORION5X
- 	  Orion-1 (5181), Orion-VoIP (5181L), Orion-NAS (5182),
- 	  Orion-2 (5281), Orion-1-90 (6183).
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index a164c38..fb2e43c 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -42,12 +42,12 @@
  
--config ARCH_MMP
--	bool "Marvell PXA168/910/MMP2"
--	depends on MMU
--	select ARCH_REQUIRE_GPIOLIB
--	select CLKDEV_LOOKUP
--	select GENERIC_ALLOCATOR
--	select GENERIC_CLOCKEVENTS
--	select GPIO_PXA
--	select IRQ_DOMAIN
--	select MULTI_IRQ_HANDLER
--	select PINCTRL
--	select PLAT_PXA
--	select SPARSE_IRQ
--	help
--	  Support for Marvell's PXA168/PXA910(MMP) and MMP2 processor line.
--
- config ARCH_KS8695
- 	bool "Micrel/Kendin KS8695"
- 	select ARCH_REQUIRE_GPIOLIB
-diff --git a/arch/arm/mach-mmp/Kconfig b/arch/arm/mach-mmp/Kconfig
-index fdbfadf00c84..4773fe1d8b3f 100644
---- a/arch/arm/mach-mmp/Kconfig
-+++ b/arch/arm/mach-mmp/Kconfig
-@@ -1,9 +1,24 @@
-+menuconfig ARCH_MMP
-+	bool "Marvell PXA168/910/MMP2"
-+	depends on ARCH_MULTI_V5 || ARCH_MULTI_V7
-+	select ARCH_REQUIRE_GPIOLIB
-+	select GENERIC_ALLOCATOR
-+	select GENERIC_CLOCKEVENTS
-+	select GPIO_PXA
-+	select PINCTRL
-+	select PLAT_PXA
-+	help
-+	  Support for Marvell's PXA168/PXA910(MMP) and MMP2 processor line.
+ #define domain_to_gdsc(domain) container_of(domain, struct gdsc, pd)
+ 
+-static int gdsc_is_enabled(struct gdsc *sc)
++static int gdsc_is_enabled(struct gdsc *sc, unsigned int reg)
+ {
+ 	u32 val;
+ 	int ret;
+ 
+-	ret = regmap_read(sc->regmap, sc->gdscr, &val);
++	ret = regmap_read(sc->regmap, reg, &val);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -58,30 +58,34 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+ {
+ 	int ret;
+ 	u32 val = en ? 0 : SW_COLLAPSE_MASK;
+-	u32 check = en ? PWR_ON_MASK : 0;
+ 	unsigned long timeout;
++	unsigned int status_reg = sc->gdscr;
+ 
+ 	ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
+ 	if (ret)
+ 		return ret;
+ 
+ 	timeout = jiffies + usecs_to_jiffies(TIMEOUT_US);
+-	do {
+-		ret = regmap_read(sc->regmap, sc->gdscr, &val);
+-		if (ret)
+-			return ret;
+ 
+-		if ((val & PWR_ON_MASK) == check)
++	if (sc->gds_hw_ctrl) {
++		status_reg = sc->gds_hw_ctrl;
++	/*
++	 * The gds hw controller asserts/de-asserts the status bit soon
++	 * after it receives a power on/off request from a master.
++	 * The controller then takes around 8 xo cycles to start its internal
++	 * state machine and update the status bit. During this time, the
++	 * status bit does not reflect the true status of the core.
++	 * Add a delay of 1 us between writing to the SW_COLLAPSE bit and
++	 * polling the status bit
++	 */
++		udelay(1);
++	}
 +
- if ARCH_MMP
++	do {
++		if (gdsc_is_enabled(sc, status_reg) == en)
+ 			return 0;
+ 	} while (time_before(jiffies, timeout));
  
--menu "Marvell PXA168/910/MMP2 Implmentations"
-+menu "Marvell PXA168/910/MMP2 Implementations"
-+
-+if ATAGS
- 
- config MACH_ASPENITE
- 	bool "Marvell's PXA168 Aspenite Development Board"
-+	depends on ARCH_MULTI_V5
- 	select CPU_PXA168
- 	help
- 	  Say 'Y' here if you want to support the Marvell PXA168-based
-@@ -11,6 +26,7 @@ config MACH_ASPENITE
- 
- config MACH_ZYLONITE2
- 	bool "Marvell's PXA168 Zylonite2 Development Board"
-+	depends on ARCH_MULTI_V5
- 	select CPU_PXA168
- 	help
- 	  Say 'Y' here if you want to support the Marvell PXA168-based
-@@ -18,6 +34,7 @@ config MACH_ZYLONITE2
- 
- config MACH_AVENGERS_LITE
- 	bool "Marvell's PXA168 Avengers Lite Development Board"
-+	depends on ARCH_MULTI_V5
- 	select CPU_PXA168
- 	help
- 	  Say 'Y' here if you want to support the Marvell PXA168-based
-@@ -25,6 +42,7 @@ config MACH_AVENGERS_LITE
- 
- config MACH_TAVOREVB
- 	bool "Marvell's PXA910 TavorEVB Development Board"
-+	depends on ARCH_MULTI_V5
- 	select CPU_PXA910
- 	help
- 	  Say 'Y' here if you want to support the Marvell PXA910-based
-@@ -32,6 +50,7 @@ config MACH_TAVOREVB
- 
- config MACH_TTC_DKB
- 	bool "Marvell's PXA910 TavorEVB Development Board"
-+	depends on ARCH_MULTI_V5
- 	select CPU_PXA910
- 	help
- 	  Say 'Y' here if you want to support the Marvell PXA910-based
-@@ -39,7 +58,7 @@ config MACH_TTC_DKB
- 
- config MACH_BROWNSTONE
- 	bool "Marvell's Brownstone Development Platform"
--	depends on !CPU_MOHAWK
-+	depends on ARCH_MULTI_V7
- 	select CPU_MMP2
- 	help
- 	  Say 'Y' here if you want to support the Marvell MMP2-based
-@@ -50,7 +69,7 @@ config MACH_BROWNSTONE
- 
- config MACH_FLINT
- 	bool "Marvell's Flint Development Platform"
--	depends on !CPU_MOHAWK
-+	depends on ARCH_MULTI_V7
- 	select CPU_MMP2
- 	help
- 	  Say 'Y' here if you want to support the Marvell MMP2-based
-@@ -61,7 +80,7 @@ config MACH_FLINT
- 
- config MACH_MARVELL_JASPER
- 	bool "Marvell's Jasper Development Platform"
--	depends on !CPU_MOHAWK
-+	depends on ARCH_MULTI_V7
- 	select CPU_MMP2
- 	help
- 	  Say 'Y' here if you want to support the Marvell MMP2-base
-@@ -72,6 +91,7 @@ config MACH_MARVELL_JASPER
- 
- config MACH_TETON_BGA
- 	bool "Marvell's PXA168 Teton BGA Development Board"
-+	depends on ARCH_MULTI_V5
- 	select CPU_PXA168
- 	help
- 	  Say 'Y' here if you want to support the Marvell PXA168-based
-@@ -79,14 +99,16 @@ config MACH_TETON_BGA
- 
- config MACH_GPLUGD
- 	bool "Marvell's PXA168 GuruPlug Display (gplugD) Board"
-+	depends on ARCH_MULTI_V5
- 	select CPU_PXA168
- 	help
- 	  Say 'Y' here if you want to support the Marvell PXA168-based
- 	  GuruPlug Display (gplugD) Board
-+endif
- 
- config MACH_MMP_DT
- 	bool "Support MMP (ARMv5) platforms from device tree"
--	select USE_OF
-+	depends on ARCH_MULTI_V5
- 	select PINCTRL
- 	select PINCTRL_SINGLE
- 	select COMMON_CLK
-@@ -99,11 +121,9 @@ config MACH_MMP_DT
- 
- config MACH_MMP2_DT
- 	bool "Support MMP2 (ARMv7) platforms from device tree"
--	depends on !CPU_MOHAWK
--	select USE_OF
-+	depends on ARCH_MULTI_V7
- 	select PINCTRL
- 	select PINCTRL_SINGLE
--	select COMMON_CLK
- 	select ARCH_HAS_RESET_CONTROLLER
- 	select CPU_PJ4
- 	help
-diff --git a/arch/arm/mach-mmp/Makefile b/arch/arm/mach-mmp/Makefile
-index 98f0f6388e44..7677ad5414e9 100644
---- a/arch/arm/mach-mmp/Makefile
-+++ b/arch/arm/mach-mmp/Makefile
-@@ -1,6 +1,7 @@
- #
- # Makefile for Marvell's PXA168 processors line
- #
-+ccflags-$(CONFIG_ARCH_MULTIPLATFORM) := -I$(srctree)/arch/arm/plat-pxa/include
- 
- obj-y				+= common.o devices.o time.o
- 
-diff --git a/arch/arm/mach-mmp/include/mach/uncompress.h b/arch/arm/mach-mmp/include/mach/uncompress.h
-deleted file mode 100644
-index 8890fa8fa771..000000000000
---- a/arch/arm/mach-mmp/include/mach/uncompress.h
-+++ /dev/null
-@@ -1,45 +0,0 @@
--/*
-- * arch/arm/mach-mmp/include/mach/uncompress.h
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- */
+-	ret = regmap_read(sc->regmap, sc->gdscr, &val);
+-	if (ret)
+-		return ret;
 -
--#include <linux/serial_reg.h>
--#include <mach/addr-map.h>
--#include <asm/mach-types.h>
+-	if ((val & PWR_ON_MASK) == check)
+-		return 0;
 -
--#define UART1_BASE	(APB_PHYS_BASE + 0x36000)
--#define UART2_BASE	(APB_PHYS_BASE + 0x17000)
--#define UART3_BASE	(APB_PHYS_BASE + 0x18000)
--
--volatile unsigned long *UART;
--
--static inline void putc(char c)
--{
--	/* UART enabled? */
--	if (!(UART[UART_IER] & UART_IER_UUE))
--		return;
--
--	while (!(UART[UART_LSR] & UART_LSR_THRE))
--		barrier();
--
--	UART[UART_TX] = c;
--}
--
--/*
-- * This does not append a newline
-- */
--static inline void flush(void)
--{
--}
--
--static inline void arch_decomp_setup(void)
--{
--	/* default to UART2 */
--	UART = (unsigned long *)UART2_BASE;
--
--	if (machine_is_avengers_lite())
--		UART = (unsigned long *)UART3_BASE;
--}
-diff --git a/arch/arm/plat-pxa/Makefile b/arch/arm/plat-pxa/Makefile
-index e507aebbef52..557b134db772 100644
---- a/arch/arm/plat-pxa/Makefile
-+++ b/arch/arm/plat-pxa/Makefile
-@@ -1,6 +1,7 @@
- #
- # Makefile for code common across different PXA processor families
- #
-+ccflags-$(CONFIG_ARCH_MMP) := -I$(srctree)/$(src)/include
+ 	return -ETIMEDOUT;
+ }
  
- obj-$(CONFIG_ARCH_PXA)		:= dma.o
+@@ -165,6 +169,7 @@ static int gdsc_init(struct gdsc *sc)
+ {
+ 	u32 mask, val;
+ 	int on, ret;
++	unsigned int reg;
  
+ 	/*
+ 	 * Disable HW trigger: collapse/restore occur based on registers writes.
+@@ -185,7 +190,8 @@ static int gdsc_init(struct gdsc *sc)
+ 			return ret;
+ 	}
+ 
+-	on = gdsc_is_enabled(sc);
++	reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
++	on = gdsc_is_enabled(sc, reg);
+ 	if (on < 0)
+ 		return on;
+ 
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index 4e9dfc1..66a43be 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -32,6 +32,7 @@ struct reset_controller_dev;
+  * @pd: generic power domain
+  * @regmap: regmap for MMIO accesses
+  * @gdscr: gsdc control register
++ * @gds_hw_ctrl: gds_hw_ctrl register
+  * @cxcs: offsets of branch registers to toggle mem/periph bits in
+  * @cxc_count: number of @cxcs
+  * @pwrsts: Possible powerdomain power states
+@@ -44,6 +45,7 @@ struct gdsc {
+ 	struct generic_pm_domain	*parent;
+ 	struct regmap			*regmap;
+ 	unsigned int			gdscr;
++	unsigned int			gds_hw_ctrl;
+ 	unsigned int			*cxcs;
+ 	unsigned int			cxc_count;
+ 	const u8			pwrsts;
 -- 
-2.1.0.rc2
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
