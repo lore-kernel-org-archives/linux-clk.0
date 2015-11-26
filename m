@@ -1,97 +1,144 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:36094 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756895AbbKSEgs (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 18 Nov 2015 23:36:48 -0500
-Subject: Re: [PATCH 2/2] arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into
- ARCH_EXYNOS
-To: Tomasz Figa <tomasz.figa@gmail.com>
-References: <1447637775-9887-1-git-send-email-k.kozlowski@samsung.com>
- <1447637775-9887-3-git-send-email-k.kozlowski@samsung.com>
- <CA+Ln22FP60Zc4cQmztNTy+2ZbhE1T7pgPXBMb9T=YZcYPo0EdA@mail.gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-samsung-soc@vger.kernel.org"
-	<linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Kevin Hilman <khilman@linaro.org>,
-	Pankaj Dubey <pankaj.dubey@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <564D51DB.1040904@samsung.com>
-Date: Thu, 19 Nov 2015 13:36:43 +0900
-MIME-version: 1.0
-In-reply-to: <CA+Ln22FP60Zc4cQmztNTy+2ZbhE1T7pgPXBMb9T=YZcYPo0EdA@mail.gmail.com>
-Content-type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH 5/6] clk: qcom: gdsc: Do not check for disabled status on votable gdscs
+Date: Thu, 26 Nov 2015 11:24:56 +0530
+Message-Id: <1448517297-32419-6-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1448517297-32419-1-git-send-email-rnayak@codeaurora.org>
+References: <1448517297-32419-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 19.11.2015 13:23, Tomasz Figa wrote:
-> Hi Krzysztof,
-> 
-> 2015-11-16 10:36 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
->> The ARMv8 Exynos family SoCs in Linux kernel are currently:
->>  - Exynos5433 (controlled by ARCH_EXYNOS),
->>  - Exynos7 (controlled by ARCH_EXYNOS7).
->>
->> It duplicates Kconfig symbols unnecessarily, so consolidate them into
->> one ARCH_EXYNOS. Future SoCs could fall also under the ARCH_EXYNOS
->> symbol.
->>
->> The commit should not bring any visible functional change.
-> 
-> I think this basically matches the general recommendation for ARM64,
-> so excluding the single nitpick inline and assuming that, after this
-> patch, grep ARCH_EXYNOS7 gives no results:
-> 
-> Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
-> 
->>
->> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->> ---
->>  arch/arm64/Kconfig.platforms        | 11 ++---------
->>  arch/arm64/boot/dts/exynos/Makefile |  2 +-
->>  arch/arm64/configs/defconfig        |  2 +-
->>  3 files changed, 4 insertions(+), 11 deletions(-)
->>
->> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
->> index 4043c35962cc..afa19baca94e 100644
->> --- a/arch/arm64/Kconfig.platforms
->> +++ b/arch/arm64/Kconfig.platforms
->> @@ -13,21 +13,14 @@ config ARCH_BERLIN
->>           This enables support for Marvell Berlin SoC Family
->>
->>  config ARCH_EXYNOS
->> -       bool
->> -       help
->> -         This enables support for Samsung Exynos SoC family
->> -
->> -config ARCH_EXYNOS7
->> -       bool "ARMv8 based Samsung Exynos7"
->> -       select ARCH_EXYNOS
->> +       bool "ARMv8 based Samsung Exynos SoC family"
->>         select COMMON_CLK_SAMSUNG
->>         select HAVE_S3C2410_WATCHDOG if WATCHDOG
->>         select HAVE_S3C_RTC if RTC_CLASS
->>         select PINCTRL
->>         select PINCTRL_EXYNOS
->> -
->>         help
->> -         This enables support for Samsung Exynos7 SoC family
->> +         This enables support for Samsung Exynos ARMv8 SoC family
-> 
-> nit: Sounds a little bit strange. Maybe "This enables support for
-> ARMv8 based Samsung Exynos SoC family"?
+Some gdscs might be controlled via voting registers and might not
+really disable when the kernel intends to disable them (due to other
+votes keeping them enabled)
+Mark these gdscs with a flag for we do not check/wait on a disable
+status for these gdscs within the kernel disable callback.
 
-Sure, sounds better.
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-msm8996.c  |  4 ++++
+ drivers/clk/qcom/gdsc.c         |  4 ++++
+ drivers/clk/qcom/gdsc.h         | 15 ++++++++-------
+ drivers/clk/qcom/mmcc-msm8996.c |  3 +++
+ 4 files changed, 19 insertions(+), 7 deletions(-)
 
-Thanks for feedback!
-
-BR,
-Krzysztof
-
+diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+index c5bce5f..bb8c61f 100644
+--- a/drivers/clk/qcom/gcc-msm8996.c
++++ b/drivers/clk/qcom/gcc-msm8996.c
+@@ -3067,6 +3067,7 @@ static struct gdsc aggre0_noc_gdsc = {
+ 		.name = "aggre0_noc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
+ 
+ static struct gdsc hlos1_vote_aggre0_noc_gdsc = {
+@@ -3075,6 +3076,7 @@ static struct gdsc hlos1_vote_aggre0_noc_gdsc = {
+ 		.name = "hlos1_vote_aggre0_noc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
+ 
+ static struct gdsc hlos1_vote_lpass_adsp_gdsc = {
+@@ -3083,6 +3085,7 @@ static struct gdsc hlos1_vote_lpass_adsp_gdsc = {
+ 		.name = "hlos1_vote_lpass_adsp",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
+ 
+ static struct gdsc hlos1_vote_lpass_core_gdsc = {
+@@ -3091,6 +3094,7 @@ static struct gdsc hlos1_vote_lpass_core_gdsc = {
+ 		.name = "hlos1_vote_lpass_core",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
+ 
+ static struct gdsc usb30_gdsc = {
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index fb2e43c..984537f 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -65,6 +65,10 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+ 	if (ret)
+ 		return ret;
+ 
++	/* If disabling votable gdscs, don't poll on status */
++	if ((sc->flags & VOTABLE) && !en)
++		return 0;
++
+ 	timeout = jiffies + usecs_to_jiffies(TIMEOUT_US);
+ 
+ 	if (sc->gds_hw_ctrl) {
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index 66a43be..91cbb09 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -20,13 +20,6 @@
+ struct regmap;
+ struct reset_controller_dev;
+ 
+-/* Powerdomain allowable state bitfields */
+-#define PWRSTS_OFF		BIT(0)
+-#define PWRSTS_RET		BIT(1)
+-#define PWRSTS_ON		BIT(2)
+-#define PWRSTS_OFF_ON		(PWRSTS_OFF | PWRSTS_ON)
+-#define PWRSTS_RET_ON		(PWRSTS_RET | PWRSTS_ON)
+-
+ /**
+  * struct gdsc - Globally Distributed Switch Controller
+  * @pd: generic power domain
+@@ -49,6 +42,14 @@ struct gdsc {
+ 	unsigned int			*cxcs;
+ 	unsigned int			cxc_count;
+ 	const u8			pwrsts;
++/* Powerdomain allowable state bitfields */
++#define PWRSTS_OFF		BIT(0)
++#define PWRSTS_RET		BIT(1)
++#define PWRSTS_ON		BIT(2)
++#define PWRSTS_OFF_ON		(PWRSTS_OFF | PWRSTS_ON)
++#define PWRSTS_RET_ON		(PWRSTS_RET | PWRSTS_ON)
++	const u8			flags;
++#define VOTABLE		BIT(0)
+ 	struct reset_controller_dev	*rcdev;
+ 	unsigned int			*resets;
+ 	unsigned int			reset_count;
+diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
+index 236acf5..a0a7338 100644
+--- a/drivers/clk/qcom/mmcc-msm8996.c
++++ b/drivers/clk/qcom/mmcc-msm8996.c
+@@ -2925,6 +2925,7 @@ struct gdsc mmagic_video_gdsc = {
+ 		.name = "mmagic_video",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
+ 
+ struct gdsc mmagic_mdss_gdsc = {
+@@ -2934,6 +2935,7 @@ struct gdsc mmagic_mdss_gdsc = {
+ 		.name = "mmagic_mdss",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
+ 
+ struct gdsc mmagic_camss_gdsc = {
+@@ -2943,6 +2945,7 @@ struct gdsc mmagic_camss_gdsc = {
+ 		.name = "mmagic_camss",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
+ 
+ struct gdsc venus_gdsc = {
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
