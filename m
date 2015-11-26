@@ -1,93 +1,56 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Julia Lawall <Julia.Lawall@lip6.fr>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v4 10/24] backlight: pwm: use pwm_get/set_default_xxx() helpers where appropriate
-Date: Mon, 16 Nov 2015 09:56:33 +0100
-Message-Id: <1447664207-24370-11-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+	linux-arm-msm@vger.kernel.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH 0/6] Add support for MSM8996 GDSCs
+Date: Thu, 26 Nov 2015 11:24:51 +0530
+Message-Id: <1448517297-32419-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-pwm_set/get_default_xxx() helpers have been introduced to differentiate
-the default PWM states (those retrieved through DT, PWM lookup table or
-statically assigned by the driver) and the current ones.
-Make use of those helpers where appropriate.
+This series adds support for GDSCs' which are part of gcc and mmcc
+in QCOM msm8996 SoC. Series applies on top of the patches[1] which
+adds support for MSM8996 clocks.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Acked-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/video/backlight/lm3630a_bl.c | 4 ++--
- drivers/video/backlight/pwm_bl.c     | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+There are many more cases of gdscs within gdscs (hierarchical power
+domains) in msm8996 (msm8974 has one such instance which is supported
+upstream) and hence the series adds support within gdsc driver to
+handle this.
 
-diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
-index 35fe482..449ebc3 100644
---- a/drivers/video/backlight/lm3630a_bl.c
-+++ b/drivers/video/backlight/lm3630a_bl.c
-@@ -162,7 +162,7 @@ static int lm3630a_intr_config(struct lm3630a_chip *pchip)
- 
- static void lm3630a_pwm_ctrl(struct lm3630a_chip *pchip, int br, int br_max)
- {
--	unsigned int period = pwm_get_period(pchip->pwmd);
-+	unsigned int period = pwm_get_default_period(pchip->pwmd);
- 	unsigned int duty = br * period / br_max;
- 
- 	pwm_config(pchip->pwmd, duty, period);
-@@ -425,7 +425,7 @@ static int lm3630a_probe(struct i2c_client *client,
- 			return PTR_ERR(pchip->pwmd);
- 		}
- 	}
--	pchip->pwmd->period = pdata->pwm_period;
-+	pwm_set_default_period(pchip->pwmd, pdata->pwm_period);
- 
- 	/* interrupt enable  : irq 0 is not allowed */
- 	pchip->irq = client->irq;
-diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-index ae3c6b6..54d5a03 100644
---- a/drivers/video/backlight/pwm_bl.c
-+++ b/drivers/video/backlight/pwm_bl.c
-@@ -293,7 +293,7 @@ static int pwm_backlight_probe(struct platform_device *pdev)
- 	 * set the period from platform data if it has not already been set
- 	 * via the PWM lookup table.
- 	 */
--	pb->period = pwm_get_period(pb->pwm);
-+	pb->period = pwm_get_default_period(pb->pwm);
- 	if (!pb->period && (data->pwm_period_ns > 0)) {
- 		pb->period = data->pwm_period_ns;
- 		pwm_set_period(pb->pwm, data->pwm_period_ns);
+Also msm8996 has gdscs with gds hw controllers within, for ensuring
+slave device idleness before gdscs are powered off, hence the series
+also adds support for gdscs with gds hw controllers.
+
+ToDo: Series does not yet add support for gpu gdscs which are part
+of mmcc.
+
+Tested on apq8096 dragonboards to make sure all modelled gdscs can
+be turned on/off successfully.
+
+[1] https://lkml.org/lkml/2015/11/17/949 
+
+Rajendra Nayak (6):
+  clk: qcom: gdsc: Add support for hierarchical power domains
+  clk: qcom: gdsc: Add support for gdscs with gds hw controller
+  clk: qcom: gdsc: Add GDSCs in msm8996 GCC
+  clk: qcom: gdsc: Add mmcc gdscs for msm8996 family
+  clk: qcom: gdsc: Do not check for disabled status on votable gdscs
+  clk: qcom: mmcc8974: Use gdscs .parent and remove genpd calls
+
+ arch/arm64/boot/dts/qcom/msm8996.dtsi         |   2 +
+ drivers/clk/qcom/common.c                     |  14 ++-
+ drivers/clk/qcom/gcc-msm8996.c                |  92 +++++++++++++++
+ drivers/clk/qcom/gdsc.c                       |  69 ++++++++---
+ drivers/clk/qcom/gdsc.h                       |  34 ++++--
+ drivers/clk/qcom/mmcc-msm8974.c               |  14 +--
+ drivers/clk/qcom/mmcc-msm8996.c               | 157 ++++++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-msm8996.h  |  11 ++
+ include/dt-bindings/clock/qcom,mmcc-msm8996.h |  17 +++
+ 9 files changed, 363 insertions(+), 47 deletions(-)
+
 -- 
-2.1.4
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
