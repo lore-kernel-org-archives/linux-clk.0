@@ -1,57 +1,127 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <1446214865-3972-6-git-send-email-maxime.ripard@free-electrons.com>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
- <1446214865-3972-6-git-send-email-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 9 Nov 2015 12:18:43 +0800
-Message-ID: <CAGb2v66B7X5xQGMq_MzAHGz4OLsnDQStVHcQaMGO+HYY43kjBQ@mail.gmail.com>
-Subject: Re: [PATCH 05/19] clk: sunxi: add DRAM gates
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>, Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <zywang33@gmail.com>
+Return-Path: <zywang33@gmail.com>
+From: Chris Zhong <zyw@rock-chips.com>
+To: heiko@sntech.de,
+	linux-rockchip@lists.infradead.org,
+	mark.yao@rock-chips.com,
+	treding@nvidia.com
+Cc: Chris Zhong <zyw@rock-chips.com>,
+	Liu Ying <Ying.Liu@freescale.com>,
+	Takashi Iwai <tiwai@suse.de>,
+	Kumar Gala <galak@codeaurora.org>,
+	dri-devel@lists.freedesktop.org,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Rob Herring <robh+dt@kernel.org>,
+	David Airlie <airlied@linux.ie>,
+	Jeff Chen <cym@rock-chips.com>,
+	linux-clk@vger.kernel.org,
+	Alexandru M Stan <amstan@chromium.org>,
+	Sonny Rao <sonnyrao@chromium.org>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Huang Lin <hl@rock-chips.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vincent Palatin <vpalatin@chromium.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Ajay Kumar <ajaykumar.rs@samsung.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Liu Ying <Ying.liu@freescale.com>,
+	Doug Anderson <dianders@chromium.org>,
+	linux-kernel@vger.kernel.org,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Roger Chen <roger.chen@rock-chips.com>
+Subject: [PATCH v5 0/11] Add mipi dsi support for rk3288
+Date: Thu, 26 Nov 2015 15:50:14 +0800
+Message-Id: <1448524225-5489-1-git-send-email-zyw@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Oct 30, 2015 at 10:20 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The Allwinner SoCs have a gate controller to gate the access to the DRAM
-> clock to the some devices that need to access the DRAM directly (mostly
-> display / image related IPs).
->
-> Use a simple gates driver to support it.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+The rk3288 MIPI DSI is a Synopsys DesignWare MIPI DSI host controller
+IP. This series adds support for a Synopsys DesignWare MIPI DSI host
+controller DRM bridge driver and a rockchip MIPI DSI specific DRM
+driver.
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+This series also includes a DRM panel driver for BOE TV080WUM-NL0 panel.
+This panel only use the MIPI DSI video mode.
 
-> ---
->  drivers/clk/sunxi/clk-simple-gates.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/clk-simple-gates.c
-> index 0214c6548afd..5666c767fa14 100644
-> --- a/drivers/clk/sunxi/clk-simple-gates.c
-> +++ b/drivers/clk/sunxi/clk-simple-gates.c
-> @@ -112,6 +112,8 @@ CLK_OF_DECLARE(sun5i_a13_apb0, "allwinner,sun5i-a13-apb0-gates-clk",
->                sunxi_simple_gates_init);
->  CLK_OF_DECLARE(sun5i_a13_apb1, "allwinner,sun5i-a13-apb1-gates-clk",
->                sunxi_simple_gates_init);
-> +CLK_OF_DECLARE(sun5i_a13_dram, "allwinner,sun5i-a13-dram-gates-clk",
-> +              sunxi_simple_gates_init);
->  CLK_OF_DECLARE(sun6i_a31_ahb1, "allwinner,sun6i-a31-ahb1-gates-clk",
->                sunxi_simple_gates_init);
->  CLK_OF_DECLARE(sun6i_a31_apb1, "allwinner,sun6i-a31-apb1-gates-clk",
-> --
-> 2.6.2
->
+The MIPI DSI feature is tested on rk3288 evb board, backport them to
+chrome os kernel v3.14, and it can display normally.
+
+This patchset is base on the patchset from Ying.liu@freescale.com.
+<http://www.spinics.net/lists/dri-devel/msg77181.html>
+
+Changes in v5:
+- change the mipidsi clk to SCLK_MIPIDSI_24M
+- modify the mipidsi clk name to SCLK_MIPIDSI_24M
+Adviced by Thierry
+- use hyphens instead of underscore
+- use encoder in drm_bridge
+- reformatting the dptdin table
+- use readx_poll_timeout to check register
+- use msleep to wait
+- add a comment to explain how to program phy
+- change the program code to symbolic names
+- check this for validity of find_panel and clk_prepare_enable
+- eliminate the configuration clock
+- some optimization for coding style
+- modify the clk name to SCLK_MIPIDSI_24M
+- add a blank line befor lcd_en
+
+Changes in v4:
+- use clk_round_rate to check the clock rate in vop_crtc_mode_fixup
+- remove the cfg clk
+- remove gpr property from example, since it is noused now.
+- add the description about ports
+- eliminate some warnning
+
+Changes in v3:
+- move the dw_mipi_dsi.txt to Documentation/devicetree/bindings/display/bridge
+- move dw_mipi_dsi_rockchip.txt to bindings/display/rockchip/
+
+Changes in v2:
+- add the mipi clk id in a single patch
+
+Chris Zhong (9):
+  clk: rockchip: add id for mipidsi sclk on rk3288
+  clk: rockchip: add mipidsi clocks on rk3288
+  drm/rockchip: return a true clock rate to adjusted_mode
+  drm: bridge: allow some funcs to be optional
+  drm/bridge: Add Synopsys DesignWare MIPI DSI host controller driver
+  drm: rockchip: Support Synopsys DesignWare MIPI DSI host controller
+  Documentation: dt-bindings: Add bindings for rk3288 DW MIPI DSI driver
+  ARM: dts: rockchip: add rk3288 mipi_dsi nodes
+  ARM: dts: rockchip: add support mipi panel tv080wum-nl0 for rk3288-evb
+
+Liu Ying (2):
+  drm/dsi: Add a helper to get bits per pixel of MIPI DSI pixel format
+  Documentation: dt-bindings: Add bindings for DW MIPI DSI
+
+ .../bindings/display/bridge/dw_mipi_dsi.txt        |   74 ++
+ .../display/rockchip/dw_mipi_dsi_rockchip.txt      |   56 +
+ arch/arm/boot/dts/rk3288-evb.dtsi                  |   20 +-
+ arch/arm/boot/dts/rk3288.dtsi                      |   39 +
+ drivers/clk/rockchip/clk-rk3288.c                  |    2 +-
+ drivers/gpu/drm/bridge/Kconfig                     |   10 +
+ drivers/gpu/drm/bridge/Makefile                    |    1 +
+ drivers/gpu/drm/bridge/dw-mipi-dsi.c               | 1084 ++++++++++++++++++++
+ drivers/gpu/drm/drm_bridge.c                       |    6 +-
+ drivers/gpu/drm/rockchip/Kconfig                   |   10 +
+ drivers/gpu/drm/rockchip/Makefile                  |    1 +
+ drivers/gpu/drm/rockchip/dw_mipi_dsi_rockchip.c    |  249 +++++
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c        |    8 +
+ include/drm/bridge/dw_mipi_dsi.h                   |   28 +
+ include/drm/drm_mipi_dsi.h                         |   14 +
+ include/dt-bindings/clock/rk3288-cru.h             |    1 +
+ 16 files changed, 1599 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/dw_mipi_dsi.txt
+ create mode 100644 Documentation/devicetree/bindings/display/rockchip/dw_mipi_dsi_rockchip.txt
+ create mode 100644 drivers/gpu/drm/bridge/dw-mipi-dsi.c
+ create mode 100644 drivers/gpu/drm/rockchip/dw_mipi_dsi_rockchip.c
+ create mode 100644 include/drm/bridge/dw_mipi_dsi.h
+
+-- 
+2.6.3
