@@ -1,51 +1,76 @@
-Return-Path: <mkarthi3@visteon.com>
-From: "Mutharaju, Prasanna (P.)" <mkarthi3@visteon.com>
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski
-	<k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org"
-	<linux-samsung-soc@vger.kernel.org>
-Subject: [PATCH v3] clk: s3c2410: removed unneeded variable in
- s3c24xx_clkout_set_parent
-Date: Mon, 30 Nov 2015 07:52:22 +0000
-Message-ID: <20151130075219.GA27737@jci-VirtualBox>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: Fix bypassing of PLLs
+To: Tyler Baker <tyler.baker@linaro.org>, Thierry Reding
+	<thierry.reding@gmail.com>
+References: <1448032264-29622-1-git-send-email-jonathanh@nvidia.com>
+ <CANMBJr7vYb+kuUBzsC8i4b=b6DRVsbqnf5OrVtj6kVS2RMNgfQ@mail.gmail.com>
+ <20151125151100.GA31492@ulmo.nvidia.com>
+ <CANMBJr598C1nd7awHdDx_j1uVNbnnAju1sgCvdmg1p6VO-FupQ@mail.gmail.com>
+ <5655F489.6080808@nvidia.com>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Rhyland Klein <rklein@nvidia.com>, "Kevin's
+ boot bot" <khilman@kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <5656D75C.9030203@nvidia.com>
+Date: Thu, 26 Nov 2015 09:56:44 +0000
 MIME-Version: 1.0
+In-Reply-To: <5655F489.6080808@nvidia.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Prasanna Karthik <mkarthi3@visteon.com>
 
-Remove unneeded variable used to store return value.
----
-v3: Modified subject and changelog comments
----
+On 25/11/15 17:48, Jon Hunter wrote:
+> 
+> On 25/11/15 15:52, Tyler Baker wrote:
+>> On 25 November 2015 at 07:11, Thierry Reding <thierry.reding@gmail.com> wrote:
+>>> On Mon, Nov 23, 2015 at 03:18:59PM -0800, Tyler Baker wrote:
+>>>> Hi Jon,
+>>>>
+>>>> On 20 November 2015 at 07:11, Jon Hunter <jonathanh@nvidia.com> wrote:
+>>>>> The _clk_disable_pll() function will attempt to place a PLL into bypass
+>>>>> if the TEGRA_PLL_BYPASS is specified for the PLL and then disable the PLL
+>>>>> by clearing the enable bit. To place the PLL into bypass, the bypass bit
+>>>>> needs to be set and not cleared. Fix this by setting the bypass bit and
+>>>>> not clearing it.
+>>>>>
+>>>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>>>>
+>>>> The kernelci.org bot recently detected a jetson-tk1 boot failure[1][2]
+>>>> in the tegra tree. This boot failure has only been observed when
+>>>> booting with a multi_v7_defconfig kernel variant. The bot bisected[3]
+>>>> this boot failure to this commit, and I confirmed reverting it on top
+>>>> of the tegra for-next branch resolves the issue. The ramdisk[4] used
+>>>> for booting is loaded with the modules from the build. It appears to
+>>>> me that as the modules are being loaded in userspace by eudev the
+>>>> jetson-tk1 locks up. I've sifted through the console logs a bit, and
+>>>> found this splat to be most interesting[5].  Can you confirm this
+>>>> issue on your end?
+>>>
+>>> Just to close the loop on this: we've discussed this on IRC and came to
+>>> the conclusion that not using the bypass mode is safer (switching into
+>>> and out of bypass can glitch). I've dropped this patch for now and Jon
+>>> will be looking into a second revision of the patch which, in addition
+>>> to fixing bypass (the fix is legit, it just happens to break because of
+>>> the glitch, most likely), will also remove the BYPASS flag setting so
+>>> that bypass will not be used.
+>>
+>> Thanks for the update, I appreciate you guys looking into this issue.
+>> Please CC me on any fixes, I can re-test and give my tested-by.
+> 
+> No problem. On 2nd thoughts I am wondering if there is any value in
+> bypassing the PLL when disabling it. I will look into this and see what
+> I find out.
 
-Signed-off-by: Prasanna Karthik <mkarthi3@visteon.com>
----
- drivers/clk/samsung/clk-s3c2410-dclk.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+So I got some feedback saying that setting the bypass bit is not
+glitch-less for most PLLs and so we should avoid setting this. It may
+look a bit odd from reviewing the code, but it is clear to me know. So
+we should just drop this change. However, if you like we could add a
+comment to document why we are doing this.
 
-diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/c=
-lk-s3c2410-dclk.c
-index e9eb935..ec6fb14 100644
---- a/drivers/clk/samsung/clk-s3c2410-dclk.c
-+++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
-@@ -77,12 +77,11 @@ static u8 s3c24xx_clkout_get_parent(struct clk_hw *hw)
- static int s3c24xx_clkout_set_parent(struct clk_hw *hw, u8 index)
- {
- 	struct s3c24xx_clkout *clkout =3D to_s3c24xx_clkout(hw);
--	int ret =3D 0;
-=20
- 	s3c2410_modify_misccr((clkout->mask << clkout->shift),
- 			      (index << clkout->shift));
-=20
--	return ret;
-+	return 0;
- }
-=20
- static const struct clk_ops s3c24xx_clkout_ops =3D {
---=20
-1.9.1
+Cheers
+Jon
