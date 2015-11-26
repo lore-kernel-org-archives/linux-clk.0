@@ -1,117 +1,70 @@
-Return-Path: <zywang33@gmail.com>
-Return-Path: <zywang33@gmail.com>
-From: Chris Zhong <zyw@rock-chips.com>
-To: dianders@chromium.org,
-	heiko@sntech.de
-Cc: Chris Zhong <zyw@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4] clk: rockchip: switch PLLs to slow mode before reboot for rk3288
-Date: Fri, 27 Nov 2015 10:09:30 +0800
-Message-Id: <1448590170-23776-1-git-send-email-zyw@rock-chips.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from pandora.arm.linux.org.uk ([78.32.30.218]:60812 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752823AbbKZWXg (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 26 Nov 2015 17:23:36 -0500
+From: Russell King <rmk+kernel@arm.linux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Jason Cooper <jason@lakedaemon.net>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Subject: [PATCH 1/3] dt-bindings: add Marvell core PLL and clock divider PMU
+ documentation
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <E1a24wj-0004iw-Rf@rmk-PC.arm.linux.org.uk>
+Date: Thu, 26 Nov 2015 22:23:21 +0000
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-We've been seeing some crashes at reboot test on rk3288-based systems,
-which boards have not reset pin connected to NPOR, they reboot by
-setting 0xfdb9 to RK3288_GLB_SRST_FST register. If the APLL works in
-a high frequency mode, some IPs might hang during soft reset.
-It appears that we can fix the problem by switching to slow mode before
-reboot, just like what we did before suspend.
+Add documentation for the Marvell clock divider driver, which is used
+to source clocks for the AXI bus, video decoder, GPU and LCD blocks.
 
-Signed-off-by: Chris Zhong <zyw@rock-chips.com>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 ---
+ .../bindings/clock/dove-divider-clock.txt          | 28 ++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/dove-divider-clock.txt
 
-Changes in v4:
-- get rid of the CONFIG_PM_SLEEP conditionals completely
-
-Changes in v3:
-- remove include reboot.h
-
-Changes in v2:
-- replace restart_handlers with the shutdown callback of syscore
-
- drivers/clk/rockchip/clk-rk3288.c | 32 ++++++++++++++------------------
- 1 file changed, 14 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index 9040878..97d314d 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -783,10 +783,10 @@ static const char *const rk3288_critical_clocks[] __initconst = {
- 	"pclk_pd_pmu",
- };
- 
--#ifdef CONFIG_PM_SLEEP
- static void __iomem *rk3288_cru_base;
- 
--/* Some CRU registers will be reset in maskrom when the system
-+/*
-+ * Some CRU registers will be reset in maskrom when the system
-  * wakes up from fastboot.
-  * So save them before suspend, restore them after resume.
-  */
-@@ -840,33 +840,28 @@ static void rk3288_clk_resume(void)
- 	}
- }
- 
-+static void rk3288_clk_shutdown(void)
-+{
-+	writel_relaxed(0xf3030000, rk3288_cru_base + RK3288_MODE_CON);
-+}
+diff --git a/Documentation/devicetree/bindings/clock/dove-divider-clock.txt b/Documentation/devicetree/bindings/clock/dove-divider-clock.txt
+new file mode 100644
+index 000000000000..0c602de279e5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/dove-divider-clock.txt
+@@ -0,0 +1,28 @@
++PLl divider based Dove clocks
 +
- static struct syscore_ops rk3288_clk_syscore_ops = {
- 	.suspend = rk3288_clk_suspend,
- 	.resume = rk3288_clk_resume,
-+	.shutdown = rk3288_clk_shutdown,
- };
- 
--static void rk3288_clk_sleep_init(void __iomem *reg_base)
--{
--	rk3288_cru_base = reg_base;
--	register_syscore_ops(&rk3288_clk_syscore_ops);
--}
--
--#else /* CONFIG_PM_SLEEP */
--static void rk3288_clk_sleep_init(void __iomem *reg_base) {}
--#endif
--
- static void __init rk3288_clk_init(struct device_node *np)
- {
--	void __iomem *reg_base;
- 	struct clk *clk;
- 
--	reg_base = of_iomap(np, 0);
--	if (!reg_base) {
-+	rk3288_cru_base = of_iomap(np, 0);
-+	if (!rk3288_cru_base) {
- 		pr_err("%s: could not map cru region\n", __func__);
- 		return;
- 	}
- 
--	rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
-+	rockchip_clk_init(np, rk3288_cru_base, CLK_NR_CLKS);
- 
- 	/* xin12m is created by an cru-internal divider */
- 	clk = clk_register_fixed_factor(NULL, "xin12m", "xin24m", 0, 1, 2);
-@@ -907,10 +902,11 @@ static void __init rk3288_clk_init(struct device_node *np)
- 			&rk3288_cpuclk_data, rk3288_cpuclk_rates,
- 			ARRAY_SIZE(rk3288_cpuclk_rates));
- 
--	rockchip_register_softrst(np, 12, reg_base + RK3288_SOFTRST_CON(0),
-+	rockchip_register_softrst(np, 12,
-+				  rk3288_cru_base + RK3288_SOFTRST_CON(0),
- 				  ROCKCHIP_SOFTRST_HIWORD_MASK);
- 
- 	rockchip_register_restart_notifier(RK3288_GLB_SRST_FST);
--	rk3288_clk_sleep_init(reg_base);
-+	register_syscore_ops(&rk3288_clk_syscore_ops);
- }
- CLK_OF_DECLARE(rk3288_cru, "rockchip,rk3288-cru", rk3288_clk_init);
++Marvell Dove has a 2GHz PLL, which feeds into a set of dividers to provide
++high speed clocks for a number of peripherals.  These dividers are part of
++the PMU, and thus this node should be a child of the PMU node.
++
++The following clocks are provided:
++
++ID	Clock
++-------------
++0	AXI bus clock
++1	GPU clock
++2	VMeta clock
++3	LCD clock
++
++Required properties:
++- compatible : shall be "marvell,dove-divider-clock"
++- reg : shall be the register address of the Core PLL and Clock Divider
++   Control 0 register.  This will cover that register, as well as the
++   Core PLL and Clock Divider Control 1 register.  Thus, it will have
++   a size of 8.
++- #clock-cells : from common clock binding; shall be set to 1
++
++divider_clk: core-clock@0064 {
++	compatible = "marvell,dove-divider-clock";
++	reg = <0x0064 0x8>;
++	#clock-cells = <1>;
++};
 -- 
-2.6.3
+2.1.0
+
