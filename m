@@ -1,119 +1,52 @@
-Return-Path: <rnayak@codeaurora.org>
-Message-ID: <565D0F11.90504@codeaurora.org>
-Date: Tue, 01 Dec 2015 08:38:01 +0530
-From: Rajendra Nayak <rnayak@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from pandora.arm.linux.org.uk ([78.32.30.218]:60825 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752823AbbKZWX4 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 26 Nov 2015 17:23:56 -0500
+From: Russell King <rmk+kernel@arm.linux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Jason Cooper <jason@lakedaemon.net>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Subject: [PATCH 3/3] ARM: dts: dove: add Dove divider clocks
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: mturquette@baylibre.com, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 2/6] clk: qcom: gdsc: Add support for gdscs with gds hw
- controller
-References: <1448517297-32419-1-git-send-email-rnayak@codeaurora.org> <1448517297-32419-3-git-send-email-rnayak@codeaurora.org> <20151201022238.GG17532@codeaurora.org>
-In-Reply-To: <20151201022238.GG17532@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <E1a24wu-0004jh-3M@rmk-PC.arm.linux.org.uk>
+Date: Thu, 26 Nov 2015 22:23:32 +0000
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Add the Dove divider clocks to the Dove dtsi file.
 
-On 12/01/2015 07:52 AM, Stephen Boyd wrote:
-> On 11/26, Rajendra Nayak wrote:
->> @@ -58,30 +58,34 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
->>  {
->>  	int ret;
->>  	u32 val = en ? 0 : SW_COLLAPSE_MASK;
->> -	u32 check = en ? PWR_ON_MASK : 0;
->>  	unsigned long timeout;
->> +	unsigned int status_reg = sc->gdscr;
->>  
->>  	ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
->>  	if (ret)
->>  		return ret;
->>  
->>  	timeout = jiffies + usecs_to_jiffies(TIMEOUT_US);
->> -	do {
->> -		ret = regmap_read(sc->regmap, sc->gdscr, &val);
->> -		if (ret)
->> -			return ret;
->>  
->> -		if ((val & PWR_ON_MASK) == check)
->> +	if (sc->gds_hw_ctrl) {
->> +		status_reg = sc->gds_hw_ctrl;
->> +	/*
->> +	 * The gds hw controller asserts/de-asserts the status bit soon
->> +	 * after it receives a power on/off request from a master.
->> +	 * The controller then takes around 8 xo cycles to start its internal
->> +	 * state machine and update the status bit. During this time, the
->> +	 * status bit does not reflect the true status of the core.
->> +	 * Add a delay of 1 us between writing to the SW_COLLAPSE bit and
->> +	 * polling the status bit
->> +	 */
-> 
-> Please indent this correctly to the udelay indent level.
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+---
+ arch/arm/boot/dts/dove.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-will do.
-
-> 
->> +		udelay(1);
->> +	}
->> +
->> +	do {
->> +		if (gdsc_is_enabled(sc, status_reg) == en)
->>  			return 0;
->>  	} while (time_before(jiffies, timeout));
->>  
->> -	ret = regmap_read(sc->regmap, sc->gdscr, &val);
->> -	if (ret)
->> -		return ret;
->> -
->> -	if ((val & PWR_ON_MASK) == check)
->> -		return 0;
->> -
-> 
-> This opens a bug where we timeout and then the status bit changes
-> after the timeout. One more check is good and should stay. We
-> could also change this to ktime instead of jiffies. That would be
-> a good improvement.
-
-If the status bit does change after timeout maybe the timeout isn't
-really enough and needs to be increased?
-
-> 
->>  	return -ETIMEDOUT;
->>  }
->>  
->> @@ -165,6 +169,7 @@ static int gdsc_init(struct gdsc *sc)
->>  {
->>  	u32 mask, val;
->>  	int on, ret;
->> +	unsigned int reg;
->>  
->>  	/*
->>  	 * Disable HW trigger: collapse/restore occur based on registers writes.
->> @@ -185,7 +190,8 @@ static int gdsc_init(struct gdsc *sc)
->>  			return ret;
->>  	}
->>  
->> -	on = gdsc_is_enabled(sc);
->> +	reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
->> +	on = gdsc_is_enabled(sc, reg);
-> 
-> If the gdsc is voteable, then we need to make sure that the vote
-> is from us when we boot up. Otherwise the kernel may think that
-> the gdsc is enabled, but it gets turned off by some other master
-> later on. I don't know if this causes some sort of problem for
-> the power domain framework, but we can't rely on the status bit
-> unless we're sure that we've actually set the register to enable
-> it. In the normal enable/disable path we'll always know we set
-> the register, so this really only matters once when we boot up.
-
-right, thanks for catching this. However if we vote for a votable
-GDSC just because its ON at boot (due to someone else having voted)
-we won't ever remove the vote keeping it always enabled.
-
-I think a safe way would be to consider all votable gdscs for which
-*we* haven't voted explicitly to be disabled at boot?
-
-> 
-
+diff --git a/arch/arm/boot/dts/dove.dtsi b/arch/arm/boot/dts/dove.dtsi
+index 179121630ad7..ea36a262d056 100644
+--- a/arch/arm/boot/dts/dove.dtsi
++++ b/arch/arm/boot/dts/dove.dtsi
+@@ -459,6 +459,12 @@
+ 					#clock-cells = <1>;
+ 				};
+ 
++				divider_clk: core-clock@0064 {
++					compatible = "marvell,dove-divider-clock";
++					reg = <0x0064 0x8>;
++					#clock-cells = <1>;
++				};
++
+ 				pinctrl: pin-ctrl@0200 {
+ 					compatible = "marvell,dove-pinctrl";
+ 					reg = <0x0200 0x14>,
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+2.1.0
+
