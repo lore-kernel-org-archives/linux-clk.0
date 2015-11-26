@@ -1,51 +1,40 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-Message-ID: <564F6ABC.5020006@gmail.com>
-Date: Fri, 20 Nov 2015 10:47:24 -0800
-From: Florian Fainelli <f.fainelli@gmail.com>
+Return-Path: <sudeepholla.maillist@gmail.com>
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>,
- Florian Fainelli <f.fainelli@gmail.com>
-CC: linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
- devicetree@vger.kernel.org, jonmason@broadcom.com,
- mturquette@baylibre.com, linux@arm.linux.org.uk, sbranden@broadcom.com,
- rjui@broadcom.com
-Subject: Re: [PATCH v4 0/3] clk: Broadcom BCM63138 support
-References: <1446168199-5959-1-git-send-email-f.fainelli@gmail.com> <564E70A4.8060001@gmail.com> <564E712C.50309@gmail.com> <20151120184612.GT32672@codeaurora.org>
-In-Reply-To: <20151120184612.GT32672@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+Sender: sudeepholla.maillist@gmail.com
+In-Reply-To: <5628AA99.1000000@arm.com>
+References: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
+	<1445460100-26727-6-git-send-email-Julia.Lawall@lip6.fr>
+	<5628AA99.1000000@arm.com>
+Date: Thu, 26 Nov 2015 17:29:27 +0000
+Message-ID: <CAPKp9uZH71gzAhhbuk-tGOxrQ3jXS1Ot4NpTW7Jx5nhrwi7bfg@mail.gmail.com>
+Subject: Re: [PATCH 5/5] clk: scpi: add missing of_node_put
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Julia Lawall <Julia.Lawall@lip6.fr>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, kernel-janitors@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	open list <linux-kernel@vger.kernel.org>,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>,
+	Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 20/11/15 10:46, Stephen Boyd wrote:
-> On 11/19, Florian Fainelli wrote:
->> On 19/11/15 17:00, Florian Fainelli wrote:
->>> On 29/10/15 18:23, Florian Fainelli wrote:
->>>> This patch series adds support for the Broadcom BCM63138 DSL SoCs
->>>> clocking framework.
->>>>
->>>> Since the HW is identical to the one found in Broadcom iProc SoCs, but the
->>>> integration is different (obviously), there is still a new compatible string
->>>> introduced just in case we happen to find issues in the future.
->>>>
->>>> Stephen, could you stage the two patches in a clk-bcm63xx branch that I could
->>>> later utilize while doing the arm-soc DT pull request?
->>>
->>> Stephen, can you queue the first two patches in a topic branch for me to
->>> merge as part of the commit adding the DTS changes?
->>
->> Well, now that I look back at the changes, you can actually merge the
->> two patches in clk-next, and the DTS changes can come in before or
->> after, it does not really matter, this would not cause breakage or
->> anything. Sorry for the noise.
-> 
-> Really? I thought if the clk patches aren't there then the dts
-> change would cause some clocks to be orphaned. If that's ok with
-> you it's ok with me.
+Hi Mike/Stephen,
 
-Woah, I guess I was not thinking very clearly yesterday, yes, we need to
-bundle these changes together, so if you are still okay with the topic
-branch for me to include as a merge commit, that's fine with me as well.
+On Thu, Oct 22, 2015 at 10:21 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>
+>
+> Thanks for the fix.
+>
+> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+>
+> PS: Since this driver is queued via arm-soc, it needs to go via them or
+> wait for v4.4-rc1 and then queue via clk tree.
+>
 
-/me needs to think twice before typing.
--- 
-Florian
+Now that the driver is in mainline, can you take this fix via clk tree for
+you next -rc fixes ?
+
+Regards,
+Sudeep
