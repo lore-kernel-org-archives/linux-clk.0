@@ -1,126 +1,52 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Chris Zhong <zyw@rock-chips.com>
-Cc: dianders@chromium.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3] clk: rockchip: switch PLLs to slow mode before reboot for rk3288
-Date: Thu, 26 Nov 2015 13:38:25 +0100
-Message-ID: <24978828.KbpsHhykTc@diego>
-In-Reply-To: <1447225799-23996-1-git-send-email-zyw@rock-chips.com>
-References: <1447225799-23996-1-git-send-email-zyw@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <zywang33@gmail.com>
+Return-Path: <zywang33@gmail.com>
+From: Chris Zhong <zyw@rock-chips.com>
+To: heiko@sntech.de,
+	linux-rockchip@lists.infradead.org,
+	mark.yao@rock-chips.com,
+	treding@nvidia.com
+Cc: Chris Zhong <zyw@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 02/11] clk: rockchip: add mipidsi clocks on rk3288
+Date: Thu, 26 Nov 2015 15:50:16 +0800
+Message-Id: <1448524225-5489-3-git-send-email-zyw@rock-chips.com>
+In-Reply-To: <1448524225-5489-1-git-send-email-zyw@rock-chips.com>
+References: <1448524225-5489-1-git-send-email-zyw@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chris,
+sclk_mipidsi_24m is the gating of mipi dsi phy.
 
-Am Mittwoch, 11. November 2015, 15:09:59 schrieb Chris Zhong:
-> We've been seeing some crashes at reboot test on rk3288-based systems,
-> which boards have not reset pin connected to NPOR, they reboot by
-> setting 0xfdb9 to RK3288_GLB_SRST_FST register. If the APLL works in
-> a high frequency mode, some IPs might hang during soft reset.
-> It appears that we can fix the problem by switching to slow mode before
-> reboot, just like what we did before suspend.
-> 
-> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> 
-> ---
-> 
-> Changes in v3:
-> remove include reboot.h
-> 
-> Changes in v2:
-> replace restart_handlers with the shutdown callback of syscore
-> 
->  drivers/clk/rockchip/clk-rk3288.c | 35 ++++++++++++++++++-----------------
->  1 file changed, 18 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/clk/rockchip/clk-rk3288.c
-> b/drivers/clk/rockchip/clk-rk3288.c index 9040878..3002d7d 100644
-> --- a/drivers/clk/rockchip/clk-rk3288.c
-> +++ b/drivers/clk/rockchip/clk-rk3288.c
-> @@ -783,9 +783,9 @@ static const char *const rk3288_critical_clocks[]
-> __initconst = { "pclk_pd_pmu",
->  };
-> 
-> -#ifdef CONFIG_PM_SLEEP
->  static void __iomem *rk3288_cru_base;
-> 
-> +#ifdef CONFIG_PM_SLEEP
->  /* Some CRU registers will be reset in maskrom when the system
->   * wakes up from fastboot.
->   * So save them before suspend, restore them after resume.
-> @@ -839,34 +839,32 @@ static void rk3288_clk_resume(void)
->  			       rk3288_cru_base + reg_id);
->  	}
->  }
-> +#endif
-> 
-> -static struct syscore_ops rk3288_clk_syscore_ops = {
-> -	.suspend = rk3288_clk_suspend,
-> -	.resume = rk3288_clk_resume,
-> -};
-> -
-> -static void rk3288_clk_sleep_init(void __iomem *reg_base)
-> +static void rk3288_clk_shutdown(void)
->  {
-> -	rk3288_cru_base = reg_base;
-> -	register_syscore_ops(&rk3288_clk_syscore_ops);
-> +	writel_relaxed(0xf3030000, rk3288_cru_base + RK3288_MODE_CON);
->  }
-> 
-> -#else /* CONFIG_PM_SLEEP */
-> -static void rk3288_clk_sleep_init(void __iomem *reg_base) {}
-> +static struct syscore_ops rk3288_clk_syscore_ops = {
-> +#ifdef CONFIG_PM_SLEEP
+Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-I think we can get rid of these CONFIG_PM_SLEEP conditionals completely.
-It protected against registering the syscore_ops if sleep is disabled, as we 
-were only using these. But now the sleep-related functions will simply not be 
-called, but it doesn't hurt to register the syscore_ops with them included.
+---
 
-And it makes the code look cleaner I think :-)
+Changes in v5:
+- modify the mipidsi clk name to SCLK_MIPIDSI_24M
 
+Changes in v4: None
+Changes in v3: None
+Changes in v2: None
 
-Heiko
+ drivers/clk/rockchip/clk-rk3288.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +	.suspend = rk3288_clk_suspend,
-> +	.resume = rk3288_clk_resume,
->  #endif
-> +	.shutdown = rk3288_clk_shutdown,
-> +};
-> 
->  static void __init rk3288_clk_init(struct device_node *np)
->  {
-> -	void __iomem *reg_base;
->  	struct clk *clk;
-> 
-> -	reg_base = of_iomap(np, 0);
-> -	if (!reg_base) {
-> +	rk3288_cru_base = of_iomap(np, 0);
-> +	if (!rk3288_cru_base) {
->  		pr_err("%s: could not map cru region\n", __func__);
->  		return;
->  	}
-> 
-> -	rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
-> +	rockchip_clk_init(np, rk3288_cru_base, CLK_NR_CLKS);
-> 
->  	/* xin12m is created by an cru-internal divider */
->  	clk = clk_register_fixed_factor(NULL, "xin12m", "xin24m", 0, 1, 2);
-> @@ -907,10 +905,13 @@ static void __init rk3288_clk_init(struct device_node
-> *np) &rk3288_cpuclk_data, rk3288_cpuclk_rates,
->  			ARRAY_SIZE(rk3288_cpuclk_rates));
-> 
-> -	rockchip_register_softrst(np, 12, reg_base + RK3288_SOFTRST_CON(0),
-> +	rockchip_register_softrst(np, 12,
-> +				  rk3288_cru_base + RK3288_SOFTRST_CON(0),
->  				  ROCKCHIP_SOFTRST_HIWORD_MASK);
-> 
->  	rockchip_register_restart_notifier(RK3288_GLB_SRST_FST);
-> -	rk3288_clk_sleep_init(reg_base);
-> +
-> +	register_syscore_ops(&rk3288_clk_syscore_ops);
-> +;
->  }
->  CLK_OF_DECLARE(rk3288_cru, "rockchip,rk3288-cru", rk3288_clk_init);
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 9040878..bee96e7 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -709,7 +709,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+ 	GATE(SCLK_LCDC_PWM1, "sclk_lcdc_pwm1", "xin24m", 0, RK3288_CLKGATE_CON(13), 11, GFLAGS),
+ 	GATE(SCLK_PVTM_CORE, "sclk_pvtm_core", "xin24m", 0, RK3288_CLKGATE_CON(5), 9, GFLAGS),
+ 	GATE(SCLK_PVTM_GPU, "sclk_pvtm_gpu", "xin24m", 0, RK3288_CLKGATE_CON(5), 10, GFLAGS),
+-	GATE(0, "sclk_mipidsi_24m", "xin24m", 0, RK3288_CLKGATE_CON(5), 15, GFLAGS),
++	GATE(SCLK_MIPIDSI_24M, "sclk_mipidsi_24m", "xin24m", 0, RK3288_CLKGATE_CON(5), 15, GFLAGS),
+ 
+ 	/* sclk_gpu gates */
+ 	GATE(ACLK_GPU, "aclk_gpu", "sclk_gpu", 0, RK3288_CLKGATE_CON(18), 0, GFLAGS),
+-- 
+2.6.3
