@@ -1,76 +1,117 @@
-Return-Path: <festevam@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <564DD51A.8040100@dev.rtsoft.ru>
-References: <564DD51A.8040100@dev.rtsoft.ru>
-Date: Sat, 21 Nov 2015 17:23:27 -0200
-Message-ID: <CAOMZO5DOwy1oDbNsEDmQ+a4EcCo7QOv0ZYsJ93gj=4oNUNqANA@mail.gmail.com>
-Subject: Re: imx6dl clock setup incorrectness
-From: Fabio Estevam <festevam@gmail.com>
-To: Nikita Yushchenko <nyushchenko@dev.rtsoft.ru>
-Cc: "meta-freescale@yoctoproject.org" <meta-freescale@yoctoproject.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>, Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <zywang33@gmail.com>
+Return-Path: <zywang33@gmail.com>
+From: Chris Zhong <zyw@rock-chips.com>
+To: dianders@chromium.org,
+	heiko@sntech.de
+Cc: Chris Zhong <zyw@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Gennady Kuznetsov <kuznetsovg@dev.rtsoft.ru>
-Content-Type: text/plain; charset=UTF-8
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4] clk: rockchip: switch PLLs to slow mode before reboot for rk3288
+Date: Fri, 27 Nov 2015 10:09:30 +0800
+Message-Id: <1448590170-23776-1-git-send-email-zyw@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Nov 19, 2015 at 11:56 AM, Nikita Yushchenko
-<nyushchenko@dev.rtsoft.ru> wrote:
-> Hi
->
-> While working with board with imx6s cpu, with kernel based on linux-imx
-> imx_3.14.28_1.0.0_ga branch, I noticed this message in boot log:
->
->> failed to set parent of clk gpu2d_core_sel to pll2_pfd1_594m
->
->
-> I looked into it and found that:
->
-> - CCM_CBCMR register layout is different between imx6q/imx6d and
-> imc6dl/imx6s (at least manuals state that)
->
-> - clock setup in clk-imx6q.c (that is used both got imx6q/imx6d and
-> imx6dl/imx6s) creates gpu2d_core_sel clock object as described in imx6q
-> manual (i.e. using bits 18:19 of CCM_CBCMR register)
->
-> - however per imx6dl manual, these bits contain different field
-> (mlb_sys_sel) on imx6dl/imx6s, and gpu2d_core sel is in bits 8:9
->
-> - imx6q has different clock selector, gpu3d_shader_clk_sel, in bits 8:9,
-> and existing code unconditionally creates gpu3d_shader_clk_sel clock object
->
-> - per manual, gpu3d_shader_clk_sel does not exist on imx6qdl/imx6s
->
-> - however gpu driver (which also is common between imx6q/imx6d and
-> imc6dl/imx6s) does use gpu3d_shader_clk which is child of
-> gpu3d_shader_clk_sel. Which means that it is not possible to simply
-> change clock object creation code to match manuals.
->
->
-> I'm looking for advice how to fix this situation properly.
->
->
-> Btw situation is the same in mainline kernel - clock setup code in
-> mainline is moved to drivers/clk/imx/ but still has the same incorrectness.
+We've been seeing some crashes at reboot test on rk3288-based systems,
+which boards have not reset pin connected to NPOR, they reboot by
+setting 0xfdb9 to RK3288_GLB_SRST_FST register. If the APLL works in
+a high frequency mode, some IPs might hang during soft reset.
+It appears that we can fix the problem by switching to slow mode before
+reboot, just like what we did before suspend.
 
-Isn't this handled by the following commit?
+Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-commit 2e603ad98460fd0efab71e618d49a2ffc9aef67b
-Author: Dirk Behme <dirk.behme@de.bosch.com>
-Date:   Fri May 3 11:08:45 2013 +0200
+---
 
-    ARM: i.MX6: clk: add i.MX6 DualLite differences
+Changes in v4:
+- get rid of the CONFIG_PM_SLEEP conditionals completely
 
-    The CCM_CBCMR register (address 0x02C4018) has different meaning
-    between the i.MX6 Quad/Dual and the i.MX6 Solo/DualLite.
+Changes in v3:
+- remove include reboot.h
 
-    Compared to the i.MX6 Quad/Dual, the CCM_CBCMR register in the
-    i.MX6 Solo/DualLite doesn't have a gpu3d_shader configuration and
-    moves the gpu2_core configuration at that place.
+Changes in v2:
+- replace restart_handlers with the shutdown callback of syscore
 
-    Handle these i.MX6 Quad/Dual vs. i.MX6 Solo/DualLite clock differences
-    by using cpu_is_mx6dl().
+ drivers/clk/rockchip/clk-rk3288.c | 32 ++++++++++++++------------------
+ 1 file changed, 14 insertions(+), 18 deletions(-)
 
-    Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
-    Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 9040878..97d314d 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -783,10 +783,10 @@ static const char *const rk3288_critical_clocks[] __initconst = {
+ 	"pclk_pd_pmu",
+ };
+ 
+-#ifdef CONFIG_PM_SLEEP
+ static void __iomem *rk3288_cru_base;
+ 
+-/* Some CRU registers will be reset in maskrom when the system
++/*
++ * Some CRU registers will be reset in maskrom when the system
+  * wakes up from fastboot.
+  * So save them before suspend, restore them after resume.
+  */
+@@ -840,33 +840,28 @@ static void rk3288_clk_resume(void)
+ 	}
+ }
+ 
++static void rk3288_clk_shutdown(void)
++{
++	writel_relaxed(0xf3030000, rk3288_cru_base + RK3288_MODE_CON);
++}
++
+ static struct syscore_ops rk3288_clk_syscore_ops = {
+ 	.suspend = rk3288_clk_suspend,
+ 	.resume = rk3288_clk_resume,
++	.shutdown = rk3288_clk_shutdown,
+ };
+ 
+-static void rk3288_clk_sleep_init(void __iomem *reg_base)
+-{
+-	rk3288_cru_base = reg_base;
+-	register_syscore_ops(&rk3288_clk_syscore_ops);
+-}
+-
+-#else /* CONFIG_PM_SLEEP */
+-static void rk3288_clk_sleep_init(void __iomem *reg_base) {}
+-#endif
+-
+ static void __init rk3288_clk_init(struct device_node *np)
+ {
+-	void __iomem *reg_base;
+ 	struct clk *clk;
+ 
+-	reg_base = of_iomap(np, 0);
+-	if (!reg_base) {
++	rk3288_cru_base = of_iomap(np, 0);
++	if (!rk3288_cru_base) {
+ 		pr_err("%s: could not map cru region\n", __func__);
+ 		return;
+ 	}
+ 
+-	rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
++	rockchip_clk_init(np, rk3288_cru_base, CLK_NR_CLKS);
+ 
+ 	/* xin12m is created by an cru-internal divider */
+ 	clk = clk_register_fixed_factor(NULL, "xin12m", "xin24m", 0, 1, 2);
+@@ -907,10 +902,11 @@ static void __init rk3288_clk_init(struct device_node *np)
+ 			&rk3288_cpuclk_data, rk3288_cpuclk_rates,
+ 			ARRAY_SIZE(rk3288_cpuclk_rates));
+ 
+-	rockchip_register_softrst(np, 12, reg_base + RK3288_SOFTRST_CON(0),
++	rockchip_register_softrst(np, 12,
++				  rk3288_cru_base + RK3288_SOFTRST_CON(0),
+ 				  ROCKCHIP_SOFTRST_HIWORD_MASK);
+ 
+ 	rockchip_register_restart_notifier(RK3288_GLB_SRST_FST);
+-	rk3288_clk_sleep_init(reg_base);
++	register_syscore_ops(&rk3288_clk_syscore_ops);
+ }
+ CLK_OF_DECLARE(rk3288_cru, "rockchip,rk3288-cru", rk3288_clk_init);
+-- 
+2.6.3
