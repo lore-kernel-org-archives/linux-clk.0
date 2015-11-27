@@ -1,115 +1,43 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.135]:38612 "EHLO
-	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751715AbbKDMSr (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 4 Nov 2015 07:18:47 -0500
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	devicetree@vger.kernel.org,
-	Yingjoe Chen <yingjoe.chen@mediatek.com>,
+Return-Path: <andrew@lunn.ch>
+Date: Fri, 27 Nov 2015 21:10:08 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: Gregory Clement <gregory.clement@free-electrons.com>,
+	Jason Cooper <jason@lakedaemon.net>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Kumar Gala <galak@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Paul Walmsley <paul@pwsan.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v6 0/8] Build and support rk3036 SoC platform
-Date: Wed,  4 Nov 2015 20:18:15 +0800
-Message-Id: <1446639503-11763-1-git-send-email-zhengxing@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+	Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH 2/3] clk: add Dove PLL divider support for GPU, VMeta and
+ AXI clocks
+Message-ID: <20151127201008.GD14645@lunn.ch>
+References: <E1a24wo-0004j2-Vd@rmk-PC.arm.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <E1a24wo-0004j2-Vd@rmk-PC.arm.linux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Russell
 
-Hi,
-  We need to support rk3036 soc platform via upstream, there are
-some primary parts for the initial release of minimum system: dts,
-clk-pll, smp, and clock tree for rk3036, and additional, we can use
-these startup and run to init processs.
+> +static int dove_calc_divider(const struct dove_clk *dc, unsigned long rate,
+> +			     unsigned long parent_rate, bool set)
+> +{
+> +	unsigned int divider, max;
+> +
+> +	divider = DIV_ROUND_CLOSEST(parent_rate, rate);
+> +
+> +	if (dc->divider_table) {
+> +		unsigned int i;
+> +
+> +		for (i = 0; dc->divider_table[i]; i++)
+> +			if (divider == dc->divider_table[i]) {
+> +				divider = i;
+> +				break;
+> +			}
+> +
+> +		if (dc->divider_table[i])
+> +			return -EINVAL;
 
-Thanks.
+Is this condition correct? If we have reached the 0 at the end of the
+table, -EINVAL makes sense. But that would need a !
 
-Changed in v6:
-- add hardware timer in dtsi and some the aliases of basic modules
-
-Changed in v5:
-- don't use clk_ APIs in the pll init-callback
-
-Changed in v4:
-- add some basic IP modules on rk3036.dtsi
-- optimized supporting smp codes
-
-Changed in v3:
-- optimized some codes based on v2
-- removed the patch "initial set time for rtc-hym8563" (useless)
-- removed the patch "pinctrl" (approved)
-
-Changed in v2:
-- based on v1, add clock controller documentation
-- enable timer5 startup
-- add smp for cpu1
-- initial set time for rtc-hym8563
-
-Changes in v1:
-- add dts, pinctrl and clock tree for rk3036 soc platform
-
-The patchset (8):
-8) rockchip: make sure timer5 is enabled on rk3036 platforms
-7) ARM: dts: enable smp for rk3036
-6) ARM: rockchip: add support smp for rk3036
-5) ARM: dts: rockchip: add core rk3036 dts
-4) clk: rockchip: add clock controller for rk3036
-3) clk: rockchip: add new pll-type for rk3036 and similar socs
-2) clk: rockchip: add dt-binding header for rk3036
-1) dt-bindings: add documentation of rk3036 clock controller
-
-
-Changes in v6:
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-Heiko Stuebner (1):
-  ARM: rockchip: add support smp for rk3036
-
-Xing Zheng (7):
-  dt-bindings: add documentation of rk3036 clock controller
-  clk: rockchip: add dt-binding header for rk3036
-  clk: rockchip: add new pll-type for rk3036 and similar socs
-  clk: rockchip: add clock controller for rk3036
-  ARM: dts: rockchip: add core rk3036 dts
-  ARM: dts: enable smp for rk3036
-  rockchip: make sure timer5 is enabled on rk3036 platforms
-
- Documentation/devicetree/bindings/arm/cpus.txt     |    1 +
- .../bindings/clock/rockchip,rk3036-cru.txt         |   56 ++
- arch/arm/boot/dts/Makefile                         |    1 +
- arch/arm/boot/dts/rk3036-evb.dts                   |   64 +++
- arch/arm/boot/dts/rk3036.dtsi                      |  552 ++++++++++++++++++++
- arch/arm/mach-rockchip/platsmp.c                   |   45 +-
- arch/arm/mach-rockchip/rockchip.c                  |   44 +-
- drivers/clk/rockchip/Makefile                      |    1 +
- drivers/clk/rockchip/clk-pll.c                     |  249 ++++++++-
- drivers/clk/rockchip/clk-rk3036.c                  |  478 +++++++++++++++++
- drivers/clk/rockchip/clk.h                         |   32 +-
- include/dt-bindings/clock/rk3036-cru.h             |  193 +++++++
- 12 files changed, 1685 insertions(+), 31 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3036-cru.txt
- create mode 100644 arch/arm/boot/dts/rk3036-evb.dts
- create mode 100644 arch/arm/boot/dts/rk3036.dtsi
- create mode 100644 drivers/clk/rockchip/clk-rk3036.c
- create mode 100644 include/dt-bindings/clock/rk3036-cru.h
-
--- 
-1.7.9.5
-
-
+       Andrew
