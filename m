@@ -1,54 +1,58 @@
-Return-Path: <dmitry.torokhov@gmail.com>
-Return-Path: <dmitry.torokhov@gmail.com>
-Date: Tue, 17 Nov 2015 09:32:26 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Julia Lawall <Julia.Lawall@lip6.fr>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 05/24] misc: max77693-haptic: use pwm_get_xxx()
- helpers where appropriate
-Message-ID: <20151117173226.GA29423@dtor-ws>
-References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
- <1447664207-24370-6-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <bjorn@kryo.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1447664207-24370-6-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <20151124005919.GN19156@codeaurora.org>
+References: <1447941480-27487-1-git-send-email-georgi.djakov@linaro.org>
+	<1447941480-27487-5-git-send-email-georgi.djakov@linaro.org>
+	<20151121003953.GD28998@codeaurora.org>
+	<20151122021820.GK30882@usrtlx11787.corpusers.net>
+	<20151124005919.GN19156@codeaurora.org>
+Date: Fri, 27 Nov 2015 08:24:30 -0800
+Message-ID: <CAJAp7OjM-No4Ji6eeFjvNHfmPgu6FZi8FTPRayv=-0DOsB4Aww@mail.gmail.com>
+Subject: Re: [PATCH v4 4/5] clk: qcom: Add RPM clock controller driver
+From: Bjorn Andersson <bjorn@kryo.se>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>,
+	Georgi Djakov <georgi.djakov@linaro.org>, "agross@codeaurora.org" <agross@codeaurora.org>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Nov 16, 2015 at 09:56:28AM +0100, Boris Brezillon wrote:
-> Use pwm_get_xxx() helpers instead of directly accessing the pwm->xxx field.
-> Doing that will ease adaptation of the PWM framework to support atomic
-> update.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+On Mon, Nov 23, 2015 at 4:59 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 11/21, Bjorn Andersson wrote:
+>> On Fri 20 Nov 16:39 PST 2015, Stephen Boyd wrote:
+[..]
+>> Do you foresee that there will be an implementation of the generic rpmcc
+>> or is it just a way to "standardize" the dt binding?
+>>
+>
+> I don't see any problem with implementing the RPM clock
+> controller as one file or two files (one for platform bus based
+> RPM modules and one for SMD bus RPM modules). The compatible can
+> be the same for both struct driver instances, while the bus will
+> pick the right driver. I suspect we'll need SoC specific
+> compatibles though to export the right set of clocks, so having
+> the generic compatible is mostly to find these rpm clock
+> controllers so that we know to skip registering the XO clock from
+> the GCC driver and not some generic implementation of the driver.
+>
 
-Could you please tag input-related bits with "Input: driver - ... "
-instead of "misc: ... "?
+Ahh, now I get it. So the generic rpmcc to be able to check if we have
+a rpmcc instance and then the specific for the actual implementation.
 
-Thanks!
+I'm +1 on that.
 
--- 
-Dmitry
+> There's probably a subset of the clocks that's always the same
+> between devices, so if we had to we could match the generic
+> compatible and provide limited functionality.
+>
+
+After looking at a couple of platforms I don't think it's worth the
+effort of having a common list of rpm clocks. My suggestion is that we
+just continue with the suggested approach (having platform specific
+rpmcc defines and tables)
+
+Regards,
+Bjorn
