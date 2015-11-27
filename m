@@ -1,68 +1,49 @@
-Return-Path: <vz@mleia.com>
-From: Vladimir Zapolskiy <vz@mleia.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: Russell King <linux@arm.linux.org.uk>,
-	Roland Stigge <stigge@antcom.de>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 01/11] dt-bindings: clock: add description of LPC32xx clock controller
-Date: Fri, 20 Nov 2015 03:05:01 +0200
-Message-Id: <1447981511-29653-2-git-send-email-vz@mleia.com>
-In-Reply-To: <1447981511-29653-1-git-send-email-vz@mleia.com>
-References: <1447981511-29653-1-git-send-email-vz@mleia.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from vps0.lunn.ch ([178.209.37.122]:43209 "EHLO vps0.lunn.ch"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752010AbbK0Tx6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Fri, 27 Nov 2015 14:53:58 -0500
+Date: Fri, 27 Nov 2015 20:53:51 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: Gregory Clement <gregory.clement@free-electrons.com>,
+	Jason Cooper <jason@lakedaemon.net>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Subject: Re: [PATCH 1/3] dt-bindings: add Marvell core PLL and clock divider
+ PMU documentation
+Message-ID: <20151127195351.GC14645@lunn.ch>
+References: <E1a24wj-0004iw-Rf@rmk-PC.arm.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <E1a24wj-0004iw-Rf@rmk-PC.arm.linux.org.uk>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-NXP LPC32xx SoC has a clocking and power control unit (CPC) as a part
-of system control block (SCB). CPC is supplied by two external
-oscillators and it manages core and most of peripheral
-clocks, the change adds description of DT bindings for clock
-controller found on LPC32xx SoC series.
+On Thu, Nov 26, 2015 at 10:23:21PM +0000, Russell King wrote:
+> Add documentation for the Marvell clock divider driver, which is used
+> to source clocks for the AXI bus, video decoder, GPU and LCD blocks.
+> 
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> ---
+>  .../bindings/clock/dove-divider-clock.txt          | 28 ++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/dove-divider-clock.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/dove-divider-clock.txt b/Documentation/devicetree/bindings/clock/dove-divider-clock.txt
+> new file mode 100644
+> index 000000000000..0c602de279e5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/dove-divider-clock.txt
+> @@ -0,0 +1,28 @@
+> +PLl divider based Dove clocks
 
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
----
- .../devicetree/bindings/clock/nxp,lpc3220-clk.txt  | 30 ++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
+Nit pick. It would be nice if the second L of PLL was also a capital.
 
-diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
-new file mode 100644
-index 0000000..20cbca3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
-@@ -0,0 +1,30 @@
-+NXP LPC32xx Clock Controller
-+
-+Required properties:
-+- compatible: should be "nxp,lpc3220-clk"
-+- reg:  should contain clock controller registers location and length
-+- #clock-cells: must be 1, the cell holds id of a clock provided by the
-+  clock controller
-+- clocks: phandles of external oscillators, the list must contain one
-+  32768 Hz oscillator and may have one optional high frequency oscillator
-+- clock-names: list of external oscillator clock names, must contain
-+  "xtal_32k" and may have optional "xtal"
-+
-+Examples:
-+
-+	/* System Control Block */
-+	scb {
-+		compatible = "simple-bus";
-+		ranges = <0x0 0x040004000 0x00001000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		clk: clock-controller@0 {
-+			compatible = "nxp,lpc3220-clk";
-+			reg = <0x00 0x114>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&xtal_32k>, <&xtal>;
-+			clock-names = "xtal_32k", "xtal";
-+		};
-+	};
--- 
-2.1.4
+Acked-by: Andrew Lunn <andrew@lunn.ch>
+
+	  Andrew
