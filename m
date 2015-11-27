@@ -1,47 +1,93 @@
-Return-Path: <mkarthi3@visteon.com>
-From: "Mutharaju, Prasanna (P.)" <mkarthi3@visteon.com>
-To: =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>
-CC: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki
-	<s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, "Michael
- Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3] clk: s3c2410: removed unneeded variable in
- s3c24xx_clkout_set_parent
-Date: Mon, 30 Nov 2015 09:55:27 +0000
-Message-ID: <20151130095403.GA28879@jci-VirtualBox>
-References: <20151130075219.GA27737@jci-VirtualBox>
- <20151130081543.GI10431@pengutronix.de>
-In-Reply-To: <20151130081543.GI10431@pengutronix.de>
-Content-Type: text/plain; charset="iso-8859-1"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from pandora.arm.linux.org.uk ([78.32.30.218]:35716 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754450AbbK0Uju (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 27 Nov 2015 15:39:50 -0500
+Date: Fri, 27 Nov 2015 20:39:32 +0000
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: Rob Herring <robh@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Jason Cooper <jason@lakedaemon.net>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Subject: Re: [PATCH 1/3] dt-bindings: add Marvell core PLL and clock divider
+ PMU documentation
+Message-ID: <20151127203932.GP8644@n2100.arm.linux.org.uk>
+References: <E1a24wj-0004iw-Rf@rmk-PC.arm.linux.org.uk>
+ <20151127202114.GA613@rob-hp-laptop>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20151127202114.GA613@rob-hp-laptop>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Nov 30, 2015 at 09:15:43AM +0100, Uwe Kleine-K=F6nig wrote:
-> On Mon, Nov 30, 2015 at 07:52:22AM +0000, Mutharaju, Prasanna (P.) wrote:
-> > From: Prasanna Karthik <mkarthi3@visteon.com>
-> >=20
-> > Remove unneeded variable used to store return value.
+On Fri, Nov 27, 2015 at 02:21:14PM -0600, Rob Herring wrote:
+> On Thu, Nov 26, 2015 at 10:23:21PM +0000, Russell King wrote:
+> > Add documentation for the Marvell clock divider driver, which is used
+> > to source clocks for the AXI bus, video decoder, GPU and LCD blocks.
+> > 
+> > Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 > > ---
-> > v3: Modified subject and changelog comments
-> > ---
-> >=20
-> > Signed-off-by: Prasanna Karthik <mkarthi3@visteon.com>
->=20
-> Everything after the first triple-dash doesn't make it into the git
-> history, so you are expected to write the S-o-b line above the list of
-> things changed since a previous submission.
+> >  .../bindings/clock/dove-divider-clock.txt          | 28 ++++++++++++++++++++++
+> >  1 file changed, 28 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/dove-divider-clock.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/dove-divider-clock.txt b/Documentation/devicetree/bindings/clock/dove-divider-clock.txt
+> > new file mode 100644
+> > index 000000000000..0c602de279e5
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/dove-divider-clock.txt
+> > @@ -0,0 +1,28 @@
+> > +PLl divider based Dove clocks
+> > +
+> > +Marvell Dove has a 2GHz PLL, which feeds into a set of dividers to provide
+> > +high speed clocks for a number of peripherals.  These dividers are part of
+> > +the PMU, and thus this node should be a child of the PMU node.
+> 
+> It seems a bit strange to just be documenting these clocks. What about 
+> the rest of the SOC clocks?
 
-Thanks, I resent the patch again with S-o-b before changelog.=20
->=20
-> Other than that the patch looks fine.
->=20
-> Uwe
->=20
-> --=20
-> Pengutronix e.K.                           | Uwe Kleine-K=F6nig          =
-  |
-> Industrial Linux Solutions                 | http://www.pengutronix.de/  =
-|=
+This is all that this pair of registers provide.
+
+The SoC has other clocks handled by other DT nodes - for Dove, we now
+have:
+
+        gate_clk: clock-gating-ctrl@0038 {
+                compatible = "marvell,dove-gating-clock";
+                reg = <0x0038 0x4>;
+                clocks = <&core_clk 0>;
+                #clock-cells = <1>;
+        };
+        divider_clk: core-clock@0064 {
+                compatible = "marvell,dove-divider-clock";
+                reg = <0x0064 0x8>;
+                #clock-cells = <1>;
+        };
+        core_clk: core-clocks@0214 {
+                compatible = "marvell,dove-core-clock";
+                reg = <0x0214 0x4>;
+                #clock-cells = <1>;
+        };
+
+and all three of these are part of the PMU register block.  I'm not sure
+why the mvebu maintainers decided to minutely describe the PMU like this,
+but unfortunately that's the structure we have.
+
+What's more silly is that the "dove-core-clock" appears to disagree in
+terminology with the manual - there's a "Core PLL" which supplies the
+dividers in the "divider_clk" block, and is entirely separate from the
+CPU PLL which "core_clk" is describing.
+
+IMHO, it would've been cleaner to have these components registered
+separately from a central PMU driver (as I'm doing with the power
+domains, resets and IRQs that are part of the PMU), but my view is
+limited to Dove and not the other mvebu clocks, so there may be a good
+reason for it.
+
+-- 
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
