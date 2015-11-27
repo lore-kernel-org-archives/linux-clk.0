@@ -1,113 +1,77 @@
-Return-Path: <zywang33@gmail.com>
-Return-Path: <zywang33@gmail.com>
-From: Chris Zhong <zyw@rock-chips.com>
-To: heiko@sntech.de,
-	linux-rockchip@lists.infradead.org,
-	Mark Yao <mark.yao@rock-chips.com>
-Cc: Chris Zhong <zyw@rock-chips.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Kumar Gala <galak@codeaurora.org>,
-	dri-devel@lists.freedesktop.org,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Rob Herring <robh+dt@kernel.org>,
-	David Airlie <airlied@linux.ie>,
-	Jeff Chen <cym@rock-chips.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	linux-clk@vger.kernel.org,
-	Alexandru M Stan <amstan@chromium.org>,
-	Sonny Rao <sonnyrao@chromium.org>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Huang Lin <hl@rock-chips.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Vincent Palatin <vpalatin@chromium.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Ajay Kumar <ajaykumar.rs@samsung.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Russell King <rmk+kernel@arm.linux.org.uk>,
-	Liu Ying <Ying.liu@freescale.com>,
-	Andrew Bresticker <abrestic@chromium.org>,
-	Doug Anderson <dianders@chromium.org>,
-	linux-kernel@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Andy Yan <andy.yan@rock-chips.com>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:54091 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752117AbbK0UVS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Fri, 27 Nov 2015 15:21:18 -0500
+Date: Fri, 27 Nov 2015 14:21:14 -0600
+From: Rob Herring <robh@kernel.org>
+To: Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Jason Cooper <jason@lakedaemon.net>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Roger Chen <roger.chen@rock-chips.com>
-Subject: [PATCH v3 00/12] Add mipi dsi support for rk3288
-Date: Thu, 19 Nov 2015 11:35:18 +0800
-Message-Id: <1447904131-29328-1-git-send-email-zyw@rock-chips.com>
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Subject: Re: [PATCH 1/3] dt-bindings: add Marvell core PLL and clock divider
+ PMU documentation
+Message-ID: <20151127202114.GA613@rob-hp-laptop>
+References: <E1a24wj-0004iw-Rf@rmk-PC.arm.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <E1a24wj-0004iw-Rf@rmk-PC.arm.linux.org.uk>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The rk3288 MIPI DSI is a Synopsys DesignWare MIPI DSI host controller
-IP. This series adds support for a Synopsys DesignWare MIPI DSI host
-controller DRM bridge driver and a rockchip MIPI DSI specific DRM
-driver.
+On Thu, Nov 26, 2015 at 10:23:21PM +0000, Russell King wrote:
+> Add documentation for the Marvell clock divider driver, which is used
+> to source clocks for the AXI bus, video decoder, GPU and LCD blocks.
+> 
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> ---
+>  .../bindings/clock/dove-divider-clock.txt          | 28 ++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/dove-divider-clock.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/dove-divider-clock.txt b/Documentation/devicetree/bindings/clock/dove-divider-clock.txt
+> new file mode 100644
+> index 000000000000..0c602de279e5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/dove-divider-clock.txt
+> @@ -0,0 +1,28 @@
+> +PLl divider based Dove clocks
+> +
+> +Marvell Dove has a 2GHz PLL, which feeds into a set of dividers to provide
+> +high speed clocks for a number of peripherals.  These dividers are part of
+> +the PMU, and thus this node should be a child of the PMU node.
 
-This series also includes a DRM panel driver for BOE TV080WUM-NL0 panel.
-This panel only use the MIPI DSI video mode.
+It seems a bit strange to just be documenting these clocks. What about 
+the rest of the SOC clocks?
 
-The MIPI DSI feature is tested on rk3288 evb board, backport them to
-chrome os kernel v3.14, and it can display normally.
-
-This patchset is base on the patchset from Ying.liu@freescale.com.
-<http://www.spinics.net/lists/dri-devel/msg77181.html>
-
-
-Changes in v3:
-move the dw_mipi_dsi.txt to Documentation/devicetree/bindings/display/bridge
-move dw_mipi_dsi_rockchip.txt to bindings/display/rockchip/
-move boe,tv080wum-nl0.txt to bindings/display/panel/
-
-Changes in v2:
-add the mipi clk id in a single patch
-As Thierry.Reding comment, add a documentation for this panel.
-
-Chris Zhong (10):
-  clk: rockchip: add id for mipidsi sclk on rk3288
-  clk: rockchip: add mipidsi clocks on rk3288
-  drm/rockchip: return a true clock rate to adjusted_mode
-  drm/bridge: Add Synopsys DesignWare MIPI DSI host controller driver
-  drm: rockchip: Support Synopsys DesignWare MIPI DSI host controller
-  Documentation: dt-bindings: Add bindings for rk3288 DW MIPI DSI driver
-  ARM: dts: rockchip: add rk3288 mipi_dsi nodes
-  drm/panel: simple: Add support for BOE TV080WUM-NL0
-  drm/panel: simple: Add boe,tv080wum-nl0 simple panel device tree
-    binding
-  ARM: dts: rockchip: add support mipi panel tv080wum-nl0 for rk3288-evb
-
-Liu Ying (2):
-  drm/dsi: Add a helper to get bits per pixel of MIPI DSI pixel format
-  Documentation: dt-bindings: Add bindings for Synopsys DW MIPI DSI DRM
-    bridge driver
-
- .../bindings/display/bridge/dw_mipi_dsi.txt        |   76 ++
- .../bindings/display/panel/boe,tv080wum-nl0.txt    |    7 +
- .../display/rockchip/dw_mipi_dsi_rockchip.txt      |   56 ++
- arch/arm/boot/dts/rk3288-evb.dtsi                  |   20 +-
- arch/arm/boot/dts/rk3288.dtsi                      |   39 +
- drivers/clk/rockchip/clk-rk3288.c                  |    2 +-
- drivers/gpu/drm/bridge/Kconfig                     |   11 +
- drivers/gpu/drm/bridge/Makefile                    |    1 +
- drivers/gpu/drm/bridge/dw_mipi_dsi.c               | 1055 ++++++++++++++++++++
- drivers/gpu/drm/panel/panel-simple.c               |   33 +
- drivers/gpu/drm/rockchip/Kconfig                   |   10 +
- drivers/gpu/drm/rockchip/Makefile                  |    1 +
- drivers/gpu/drm/rockchip/dw_mipi_dsi_rockchip.c    |  249 +++++
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c        |    9 +
- include/drm/bridge/dw_mipi_dsi.h                   |   27 +
- include/drm/drm_mipi_dsi.h                         |   14 +
- include/dt-bindings/clock/rk3288-cru.h             |    1 +
- 17 files changed, 1609 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/dw_mipi_dsi.txt
- create mode 100644 Documentation/devicetree/bindings/display/panel/boe,tv080wum-nl0.txt
- create mode 100644 Documentation/devicetree/bindings/display/rockchip/dw_mipi_dsi_rockchip.txt
- create mode 100644 drivers/gpu/drm/bridge/dw_mipi_dsi.c
- create mode 100644 drivers/gpu/drm/rockchip/dw_mipi_dsi_rockchip.c
- create mode 100644 include/drm/bridge/dw_mipi_dsi.h
-
--- 
-2.6.3
+> +
+> +The following clocks are provided:
+> +
+> +ID	Clock
+> +-------------
+> +0	AXI bus clock
+> +1	GPU clock
+> +2	VMeta clock
+> +3	LCD clock
+> +
+> +Required properties:
+> +- compatible : shall be "marvell,dove-divider-clock"
+> +- reg : shall be the register address of the Core PLL and Clock Divider
+> +   Control 0 register.  This will cover that register, as well as the
+> +   Core PLL and Clock Divider Control 1 register.  Thus, it will have
+> +   a size of 8.
+> +- #clock-cells : from common clock binding; shall be set to 1
+> +
+> +divider_clk: core-clock@0064 {
+> +	compatible = "marvell,dove-divider-clock";
+> +	reg = <0x0064 0x8>;
+> +	#clock-cells = <1>;
+> +};
+> -- 
+> 2.1.0
+> 
