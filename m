@@ -1,58 +1,111 @@
-Return-Path: <tyler.baker@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <1447108254-19864-1-git-send-email-sboyd@codeaurora.org>
-References: <1447108254-19864-1-git-send-email-sboyd@codeaurora.org>
-Date: Fri, 20 Nov 2015 12:18:06 -0800
-Message-ID: <CANMBJr7BugBZH189O51bfWc1v9jipp6onkZSMijD3Gv_idf7Pg@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: Specify LE device endianness
-From: Tyler Baker <tyler.baker@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, Simon Arlott <simon@fire.lp0.eu>,
-	Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:37336 "EHLO
+	mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751031AbbK1JgB (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sat, 28 Nov 2015 04:36:01 -0500
+Subject: Re: [PATCH 1/3] dt-bindings: add Marvell core PLL and clock divider
+ PMU documentation
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>,
+	Rob Herring <robh@kernel.org>
+References: <E1a24wj-0004iw-Rf@rmk-PC.arm.linux.org.uk>
+ <20151127202114.GA613@rob-hp-laptop>
+ <20151127203932.GP8644@n2100.arm.linux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Jason Cooper <jason@lakedaemon.net>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Message-ID: <5659757B.7060904@gmail.com>
+Date: Sat, 28 Nov 2015 10:35:55 +0100
+In-Reply-To: <20151127203932.GP8644@n2100.arm.linux.org.uk>
+Content-Type: text/plain; charset=windows-1252
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 9 November 2015 at 14:30, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> All these clock controllers are little endian devices, but so far
-> we've been relying on the regmap mmio bus handling this for us
-> without explicitly stating that fact. After commit 4a98da2164cf
-> (regmap-mmio: Use native endianness for read/write, 2015-10-29),
-> the regmap mmio bus will read/write with the __raw_*() IO
-> accessors, instead of using the readl/writel() APIs that do
-> proper byte swapping for little endian devices.
->
-> So if we're running on a big endian processor and haven't
-> specified the endianness explicitly in the regmap config or in
-> DT, we're going to switch from doing little endian byte swapping
-> to big endian accesses without byte swapping, leading to some
-> confusing results. On my apq8074 dragonboard, this causes the
-> device to fail to boot as we access the clock controller with
-> big endian IO accesses even though the device is little endian.
->
-> Specify the endianness explicitly so that the regmap core
-> properly byte swaps the accesses for us.
->
-> Reported-by: Kevin Hilman <khilman@linaro.org>
-> Cc: Simon Arlott <simon@fire.lp0.eu>
-> Cc: Mark Brown <broonie@kernel.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+On 27.11.2015 21:39, Russell King - ARM Linux wrote:
+> On Fri, Nov 27, 2015 at 02:21:14PM -0600, Rob Herring wrote:
+>> On Thu, Nov 26, 2015 at 10:23:21PM +0000, Russell King wrote:
+>>> Add documentation for the Marvell clock divider driver, which is used
+>>> to source clocks for the AXI bus, video decoder, GPU and LCD blocks.
+>>>
+>>> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+>>> ---
+>>>  .../bindings/clock/dove-divider-clock.txt          | 28 ++++++++++++++++++++++
+>>>  1 file changed, 28 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/clock/dove-divider-clock.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/dove-divider-clock.txt b/Documentation/devicetree/bindings/clock/dove-divider-clock.txt
+>>> new file mode 100644
+>>> index 000000000000..0c602de279e5
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/clock/dove-divider-clock.txt
+>>> @@ -0,0 +1,28 @@
+>>> +PLl divider based Dove clocks
+>>> +
+>>> +Marvell Dove has a 2GHz PLL, which feeds into a set of dividers to provide
+>>> +high speed clocks for a number of peripherals.  These dividers are part of
+>>> +the PMU, and thus this node should be a child of the PMU node.
+>>
+>> It seems a bit strange to just be documenting these clocks. What about 
+>> the rest of the SOC clocks?
+> 
+> This is all that this pair of registers provide.
+> 
+> The SoC has other clocks handled by other DT nodes - for Dove, we now
+> have:
+> 
+>         gate_clk: clock-gating-ctrl@0038 {
+>                 compatible = "marvell,dove-gating-clock";
+>                 reg = <0x0038 0x4>;
+>                 clocks = <&core_clk 0>;
+>                 #clock-cells = <1>;
+>         };
+>         divider_clk: core-clock@0064 {
+>                 compatible = "marvell,dove-divider-clock";
+>                 reg = <0x0064 0x8>;
+>                 #clock-cells = <1>;
+>         };
+>         core_clk: core-clocks@0214 {
+>                 compatible = "marvell,dove-core-clock";
+>                 reg = <0x0214 0x4>;
+>                 #clock-cells = <1>;
+>         };
+> 
+> and all three of these are part of the PMU register block.  I'm not sure
+> why the mvebu maintainers decided to minutely describe the PMU like this,
+> but unfortunately that's the structure we have.
+> 
+> What's more silly is that the "dove-core-clock" appears to disagree in
+> terminology with the manual - there's a "Core PLL" which supplies the
+> dividers in the "divider_clk" block, and is entirely separate from the
+> CPU PLL which "core_clk" is describing.
+> 
+> IMHO, it would've been cleaner to have these components registered
+> separately from a central PMU driver (as I'm doing with the power
+> domains, resets and IRQs that are part of the PMU), but my view is
+> limited to Dove and not the other mvebu clocks, so there may be a good
+> reason for it.
+> 
 
-Tested-by: Tyler Baker <tyler.baker@linaro.org>
+Rob, Russell,
 
-The kernelci.org bot also reported boot failures[1] for the
-apq8016-sbc in next-20151120 with CONFIG_CPU_BIG_ENDIAN=y enabled.
-I've bisected the failure down to the same offending remap-mmio patch
-listed above. I've confirmed this patch applied on top of
-next-20151120 fixes the boot issue for the apq8016-sbc as well.
+the main reason why dove clocks are the way they are is that back
+when we thought of the bindings for mvebu SoC clocks, CCF and DT was
+in its very beginning. Looking back, some decisions shouldn't have
+been made that way. Also, we tried to describe Dove and the other SoCs
+similarily, but Dove is always a little odd.
 
-Any updates or comments on this patch? I'd like to see this fix in
-linux-next, as it has been broken for over a week and could be masking
-new issues.
+>From todays point of view, I certainly agree with Russell that all
+PMU related stuff is best kept in a single PMU node.
 
-Cheers,
+Thanks for providing the patches, I appreciate the extra work of
+separating those from your working trees.
 
-Tyler
+Acked-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-[1] http://kernelci.org/boot/all/job/next/kernel/next-20151120/
+Sebastian
+
