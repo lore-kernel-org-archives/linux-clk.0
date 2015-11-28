@@ -1,180 +1,71 @@
-Return-Path: <jszhang@marvell.com>
-From: Jisheng Zhang <jszhang@marvell.com>
-To: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <sebastian.hesselbarth@gmail.com>, <antoine.tenart@free-electrons.com>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        Jisheng
- Zhang <jszhang@marvell.com>
-Subject: [PATCH v2 1/6] clk: berlin: add common pll driver
-Date: Fri, 20 Nov 2015 16:42:27 +0800
-Message-ID: <1448008952-1787-2-git-send-email-jszhang@marvell.com>
-In-Reply-To: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
-References: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga03-in.huawei.com ([119.145.14.66]:31460 "EHLO
+	szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750732AbbK1HXJ (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sat, 28 Nov 2015 02:23:09 -0500
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@linaro.org>, <sboyd@codeaurora.org>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linuxarm@huawei.com>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<ml.yang@hisilicon.com>, Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH 0/5] arm, hisi: enable Hi3519 soc
+Date: Sat, 28 Nov 2015 15:01:16 +0800
+Message-ID: <1448694076-31141-1-git-send-email-xuejiancheng@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add pll driver for Marvell SoCs newer than BG2, BG2CD, BG2Q.
+Hello,
 
-Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
----
- drivers/clk/berlin/Makefile |   1 +
- drivers/clk/berlin/pll.c    | 133 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 134 insertions(+)
- create mode 100644 drivers/clk/berlin/pll.c
+Hi3519 soc is mainly used for ip camera and sport DV solutions. This patchset adds initial support
+for Hi3519 soc. It includes clock driver, arch configuration, device tree and debug uart configuration.
+It has been tested on hi3519 reference board.
 
-diff --git a/drivers/clk/berlin/Makefile b/drivers/clk/berlin/Makefile
-index 2a36ab7..eee42b0 100644
---- a/drivers/clk/berlin/Makefile
-+++ b/drivers/clk/berlin/Makefile
-@@ -1,4 +1,5 @@
- obj-y += berlin2-avpll.o berlin2-pll.o berlin2-div.o
-+obj-y += pll.o
- obj-$(CONFIG_MACH_BERLIN_BG2)	+= bg2.o
- obj-$(CONFIG_MACH_BERLIN_BG2CD)	+= bg2.o
- obj-$(CONFIG_MACH_BERLIN_BG2Q)	+= bg2q.o
-diff --git a/drivers/clk/berlin/pll.c b/drivers/clk/berlin/pll.c
-new file mode 100644
-index 0000000..435445e
---- /dev/null
-+++ b/drivers/clk/berlin/pll.c
-@@ -0,0 +1,133 @@
-+/*
-+ * Copyright (c) 2015 Marvell Technology Group Ltd.
-+ *
-+ * Author: Jisheng Zhang <jszhang@marvell.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License along with
-+ * this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/slab.h>
-+
-+#define PLL_CTRL0	0x0
-+#define PLL_CTRL1	0x4
-+#define PLL_CTRL2	0x8
-+#define PLL_CTRL3	0xC
-+#define PLL_CTRL4	0x10
-+#define PLL_STATUS	0x14
-+
-+#define PLL_SOURCE_MAX	2
-+
-+struct berlin_pll {
-+	struct clk_hw	hw;
-+	void __iomem	*ctrl;
-+	void __iomem	*bypass;
-+	u8		bypass_shift;
-+};
-+
-+#define to_berlin_pll(hw)       container_of(hw, struct berlin_pll, hw)
-+
-+static unsigned long berlin_pll_recalc_rate(struct clk_hw *hw,
-+					    unsigned long parent_rate)
-+{
-+	u32 val, fbdiv, rfdiv, vcodivsel, bypass;
-+	struct berlin_pll *pll = to_berlin_pll(hw);
-+
-+	bypass = readl_relaxed(pll->bypass);
-+	if (bypass & (1 << pll->bypass_shift))
-+		return parent_rate;
-+
-+	val = readl_relaxed(pll->ctrl + PLL_CTRL0);
-+	fbdiv = (val >> 12) & 0x1FF;
-+	rfdiv = (val >> 3) & 0x1FF;
-+	val = readl_relaxed(pll->ctrl + PLL_CTRL1);
-+	vcodivsel = (val >> 9) & 0x7;
-+	return parent_rate * fbdiv * 4 / rfdiv /
-+		(1 << vcodivsel);
-+}
-+
-+static u8 berlin_pll_get_parent(struct clk_hw *hw)
-+{
-+	struct berlin_pll *pll = to_berlin_pll(hw);
-+	u32 bypass = readl_relaxed(pll->bypass);
-+
-+	return !!(bypass & (1 << pll->bypass_shift));
-+}
-+
-+static const struct clk_ops berlin_pll_ops = {
-+	.recalc_rate	= berlin_pll_recalc_rate,
-+	.get_parent	= berlin_pll_get_parent,
-+};
-+
-+static void __init berlin_pll_setup(struct device_node *np)
-+{
-+	struct clk_init_data init;
-+	struct berlin_pll *pll;
-+	const char *parent_names[PLL_SOURCE_MAX];
-+	struct clk *clk;
-+	int ret, num_parents;
-+	u8 bypass_shift;
-+
-+	num_parents = of_clk_get_parent_count(np);
-+	if (num_parents <= 0 || num_parents > PLL_SOURCE_MAX)
-+		return;
-+
-+	ret = of_property_read_u8(np, "bypass-shift", &bypass_shift);
-+	if (ret)
-+		return;
-+
-+	of_clk_parent_fill(np, parent_names, num_parents);
-+
-+	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return;
-+
-+	pll->ctrl = of_iomap(np, 0);
-+	if (WARN_ON(!pll->ctrl))
-+		goto err_iomap_ctrl;
-+
-+	pll->bypass = of_iomap(np, 1);
-+	if (WARN_ON(!pll->bypass))
-+		goto err_iomap_bypass;
-+
-+	init.name = np->name;
-+	init.flags = 0;
-+	init.ops = &berlin_pll_ops;
-+	init.parent_names = parent_names;
-+	init.num_parents = num_parents;
-+
-+	pll->hw.init = &init;
-+	pll->bypass_shift = bypass_shift;
-+
-+	clk = clk_register(NULL, &pll->hw);
-+	if (WARN_ON(IS_ERR(clk)))
-+		goto err_clk_register;
-+
-+	ret = of_clk_add_provider(np, of_clk_src_simple_get, clk);
-+	if (WARN_ON(ret))
-+		goto err_clk_add;
-+	return;
-+
-+err_clk_add:
-+	clk_unregister(clk);
-+err_clk_register:
-+	iounmap(pll->bypass);
-+err_iomap_bypass:
-+	iounmap(pll->ctrl);
-+err_iomap_ctrl:
-+	kfree(pll);
-+}
-+CLK_OF_DECLARE(berlin_pll, "marvell,berlin-pll", berlin_pll_setup);
+Spi-nor flash driver and other peripheral drivers will be submitted later.
+
+Any comments will be appreciated!
+
+Thanks!
+
+Jiancheng Xue (5):
+  clk: hi3519: add CRG driver for hisilicon hi3519 soc
+  ARM: hisi: enable Hi3519 soc
+  ARM: dts: add dts files for hi3519-demb board
+  ARM: config: enable ARCH_HI3519
+  ARM: debug: add Hi3519 debug uart
+
+ .../devicetree/bindings/clock/hi3519-clock.txt     |  46 +++++++
+ arch/arm/Kconfig.debug                             |  10 ++
+ arch/arm/boot/dts/Makefile                         |   2 +
+ arch/arm/boot/dts/hi3519-demb.dts                  |  55 ++++++++
+ arch/arm/boot/dts/hi3519.dtsi                      | 129 ++++++++++++++++++
+ arch/arm/configs/hisi_defconfig                    |   1 +
+ arch/arm/mach-hisi/Kconfig                         |   9 ++
+ arch/arm/mach-hisi/hisilicon.c                     |   9 ++
+ drivers/clk/hisilicon/Makefile                     |   1 +
+ drivers/clk/hisilicon/clk-hi3519.c                 | 130 ++++++++++++++++++
+ drivers/clk/hisilicon/reset.c                      | 149 +++++++++++++++++++++
+ drivers/clk/hisilicon/reset.h                      |  25 ++++
+ include/dt-bindings/clock/hi3519-clock.h           |  78 +++++++++++
+ 13 files changed, 644 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/hi3519-clock.txt
+ create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
+ create mode 100644 arch/arm/boot/dts/hi3519.dtsi
+ create mode 100644 drivers/clk/hisilicon/clk-hi3519.c
+ create mode 100644 drivers/clk/hisilicon/reset.c
+ create mode 100644 drivers/clk/hisilicon/reset.h
+ create mode 100644 include/dt-bindings/clock/hi3519-clock.h
+
 -- 
-2.6.2
+1.9.1
+
