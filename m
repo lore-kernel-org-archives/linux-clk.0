@@ -1,128 +1,126 @@
-Return-Path: <yamada.masahiro@socionext.com>
+Return-Path: <vz@mleia.com>
+Message-ID: <565AF6DC.40100@mleia.com>
+Date: Sun, 29 Nov 2015 15:00:12 +0200
+From: Vladimir Zapolskiy <vz@mleia.com>
 MIME-Version: 1.0
-In-Reply-To: <20151120174509.GQ32672@codeaurora.org>
-References: <1448004981-11133-1-git-send-email-yamada.masahiro@socionext.com>
-	<1448004981-11133-2-git-send-email-yamada.masahiro@socionext.com>
-	<20151120174509.GQ32672@codeaurora.org>
-Date: Sun, 22 Nov 2015 15:03:38 +0900
-Message-ID: <CAK7LNASQGBn32N4=CM+notaVv1ZLotaydRhe-GiOF6nLhbmABA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] clk: let of_clk_get_parent_name() fail for invalid clock-indices
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ben Dooks <ben.dooks@codethink.co.uk>
-Content-Type: text/plain; charset=UTF-8
+To: Arnd Bergmann <arnd@arndb.de>
+CC: linux-arm-kernel@lists.infradead.org,
+ Rob Herring <robh+dt@kernel.org>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Roland Stigge <stigge@antcom.de>, devicetree@vger.kernel.org,
+ Russell King <linux@arm.linux.org.uk>,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH 09/11] clk: lpc32xx: add common clock framework driver
+References: <1447981511-29653-1-git-send-email-vz@mleia.com> <3762298.NKYXldtldq@wuerfel> <564F6172.3090509@mleia.com> <4933690.HhBPeGYMb3@wuerfel>
+In-Reply-To: <4933690.HhBPeGYMb3@wuerfel>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Hi Arnd,
 
-
-2015-11-21 2:45 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
-> On 11/20, Masahiro Yamada wrote:
->> Currently, of_clk_get_parent_name() returns a wrong parent clock name
->> when "clock-indices" property exists and the given index is not found
->> in the property.  In this case, NULL should be returned.
+On 20.11.2015 22:20, Arnd Bergmann wrote:
+> On Friday 20 November 2015 20:07:46 Vladimir Zapolskiy wrote:
+>> On 20.11.2015 16:04, Arnd Bergmann wrote:
+>>> On Friday 20 November 2015 03:05:09 Vladimir Zapolskiy wrote:
+>>>> +
+>>>> +struct clk_proto_t {
+>>>> +       const char *name;
+>>>> +       const u8 parents[LPC32XX_CLK_PARENTS_MAX];
+>>>> +       u8 num_parents;
+>>>> +       unsigned long flags;
+>>>> +};
+>>>> +
+>>>> +#define CLK_PREFIX(LITERAL)            LPC32XX_CLK_ ## LITERAL
+>>>> +#define NUMARGS(...)   (sizeof((int[]){__VA_ARGS__})/sizeof(int))
+>>>> +
+>>>> +#define LPC32XX_CLK_DEFINE(_idx, _name, _flags, ...)           \
+>>>> +       [CLK_PREFIX(_idx)] = {                                  \
+>>>> +               .name = #_name,                                 \
+>>>> +               .flags = _flags,                                \
+>>>> +               .parents = { __VA_ARGS__ },                     \
+>>>> +               .num_parents = NUMARGS(__VA_ARGS__),            \
+>>>> +        }
+>>>> +
+>>>
+>>> Try to not outsmart yourself with the macros. It's better to avoid
+>>> string concatenation so it's possible to grep for uses of some
+>>> constant.
+>>>
+>>> I would probably not use a macro at all here and just open-code the
+>>> entire table. If you ensure that '0' is not a valid parent, then
+>>> you can leave out the .num_parents field and just look for the
+>>> zero-termination.
 >>
->> For example,
+>> Macros are here for simplicity, code size reduction and to avoid some
+>> stupid mistakes like different number of .parents and .num_parents.
 >>
->>         oscillator {
->>                 compatible = "myclocktype";
->>                 #clock-cells = <1>;
->>                 clock-indices = <1>, <3>;
->>                 clock-output-names = "clka", "clkb";
->>         };
->>
->> Currently, of_clk_get_parent_name(np, 0) returns "clka", but should
->> return NULL because "clock-indices" does not contain <0>.
->
-> What is np pointing at? Something like:
->
->         consumer {
->                 clocks = <&oscillator 0>;
->         };
->
-> Which would be invalid DT because oscillator doesn't have an
-> output for index 0?
+>> I believe macro unwrapping in this code will add another 1000 LoC and
+>> will result in quite unreadable and less maintainable code.
+> 
+> I mean specifically the macro above:
+> 
+> static const struct clk_proto_t clk_proto[LPC32XX_CLK_CCF_MAX] __initconst = {
+> +       LPC32XX_CLK_DEFINE(XTAL, xtal, 0x0),
+> +       LPC32XX_CLK_DEFINE(XTAL_32K, xtal_32k, 0x0),
+> +
+> +       LPC32XX_CLK_DEFINE(RTC, rtc, 0x0, LPC32XX_CLK_XTAL_32K),
+> +       LPC32XX_CLK_DEFINE(OSC, osc, CLK_IGNORE_UNUSED, LPC32XX_CLK_XTAL),
+> +       LPC32XX_CLK_DEFINE(SYS, sys, CLK_IGNORE_UNUSED,
+> +               LPC32XX_CLK_OSC, LPC32XX_CLK_PLL397X),
+> +       LPC32XX_CLK_DEFINE(PLL397X, pll_397x, CLK_IGNORE_UNUSED,
+> +               LPC32XX_CLK_RTC),
+> 
+> can become
+> 
+> static const struct clk_proto_t clk_proto[] __initconst = {
+> 	[LPC32XX_CLK_XTAL]	= { "xtal" },
+> 	[LPC32XX_CLK_XTAL_32K]	= { "xtal_32k" },
+> 	[LPC32XX_CLK_RTC]	= { "rtc",
+> 			.parents = { LPC32XX_CLK_XTAL_32K, 0 } },
+
+this one and all below are two lines instead of one.
+
+Also .num_parents is not set at compilation stage, this will require
+running over parents arrays for every registered clock on boot, it might
+noticeably slow down the booting process on a 200MHz core.
+
+The clocks in the beginning have not so many parents, at the opposite
+extreme the situation is worse:
+
+	LPC32XX_CLK_DEFINE(TEST1, test1, 0x0,
+		LPC32XX_CLK_PERIPH, LPC32XX_CLK_RTC, LPC32XX_CLK_OSC),
+	LPC32XX_CLK_DEFINE(TEST2, test2, 0x0,
+		LPC32XX_CLK_HCLK, LPC32XX_CLK_PERIPH, LPC32XX_CLK_USB,
+		LPC32XX_CLK_OSC, LPC32XX_CLK_PLL397X),
+
+vs.
+
+	[LPC32XX_CLK_TEST1]	= { "test1",
+		.parents = { LPC32XX_CLK_PERIPH, LPC32XX_CLK_RTC,
+			     LPC32XX_CLK_OSC, 0 } },
+	[LPC32XX_CLK_TEST1]	= { "test2",
+		.parents = { LPC32XX_CLK_HCLK, LPC32XX_CLK_PERIPH,
+			     LPC32XX_CLK_USB, LPC32XX_CLK_OSC,
+			     LPC32XX_CLK_PLL397X, 0 } },
 
 
-You are right.  My example was confusing.
+> 	[LPC32XX_CLK_OSC]	= { "osc", CLK_IGNORE_UNUSED,
+> 			.parents = { LPC32XX_CLK_XTAL, 0 } },
+> 	[LPC32XX_CLK_SYS]	= { "sys", CLK_IGNORE_UNUSED,
+> 			.parents = { LPC32XX_CLK_OSC, LPC32XX_CLK_PLL397X, 0) },
+> 	[LPC32XX_CLK_PLL397X]	= { "pll_397x", CLK_IGNORE_UNUSED,
+> 			.parents = { LPC32XX_CLK_RTC, 0 },
+> 
+> Not harder to read at all, not really longer, but easier to grep for.
+> 
 
+If it is not principal, I would prefer to keep the original notation,
+but convert stringified values to plane strings, all in all the table is
+fixed and it is not supposed to be updated anymore.
 
+But in general I got your idea, I can implement it in v2, if you ask.
 
-         oscillator: oscillator {
-                 compatible = "myclocktype";
-                 #clock-cells = <1>;
-                 clock-indices = <1>, <3>;
-                 clock-output-names = "clka", "clkb";
-         };
-
-         consumer {
-                 compatible = "myclockconsumer";
-                 clocks = <&oscillator 0>;
-         };
-
-Currently, of_clk_get_parent_name(consumer_np, 0) returns "clks", but
-should return NULL;
-
-I will rephrase the git-log in v2.
-
-
-
-
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> @@ -3068,17 +3065,20 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
->>               return NULL;
->>
->>       index = clkspec.args_count ? clkspec.args[0] : 0;
->> -     count = 0;
->>
->>       /* if there is an indices property, use it to transfer the index
->>        * specified into an array offset for the clock-output-names property.
->>        */
->> -     of_property_for_each_u32(clkspec.np, "clock-indices", prop, vp, pv) {
->> -             if (index == pv) {
->> -                     index = count;
->> -                     break;
->> -             }
->> -             count++;
->> +     list = of_get_property(clkspec.np, "clock-indices", &len);
->> +     if (list) {
->> +             len /= sizeof(*list);
->> +             for (i = 0; i < len; i++)
->> +                     if (index == be32_to_cpup(list++)) {
->> +                             index = i;
->> +                             break;
->> +                     }
->> +             if (i == len)
->> +                     return NULL;
->>       }
->
-> Why can't we leave everything in place and check count == len at
-> the end? i.e.
->
->         of_property_for_each_u32(clkspec.np, "clock-indices", prop, vp, pv) {
->                 if (index == pv) {
->                         index = count;
->                         break;
->                 }
->                 count++;
->         }
->
->         if (count == of_property_count_u32_elems(clkspec.np, "clock-indices"))
->                 return NULL
->
-
-
-Of course we can, although we have to mention "clock-indices" twice.
-
-A good thing for of_get_property() is that we can get both the value
-and the length
-at the same time.
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+--
+With best wishes,
+Vladimir
