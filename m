@@ -1,81 +1,60 @@
-Return-Path: <Ping.Bai@freescale.com>
-From: Bai Ping <b51503@freescale.com>
-To: <shawnguo@kernel.org>, <kernel@pengutronix.de>
-CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH Resend] clk: imx: add 'is_prepared' clk_ops callback for pllv3 clk
-Date: Wed, 25 Nov 2015 00:06:53 +0800
-Message-ID: <1448381213-24349-1-git-send-email-b51503@freescale.com>
-Return-Path: b51503@freescale.com
+Return-Path: <repk@triplefau.lt>
+Date: Sun, 29 Nov 2015 23:25:49 +0100
+From: Remi Pommarel <repk@triplefau.lt>
+To: Stefan Wahren <info@lategoodbye.de>
+Cc: Eric Anholt <eric@anholt.net>, Lee Jones <lee@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bart Tanghe <bart.tanghe@thomasmore.be>
+Subject: Re: [PATCH v2 0/3] Add PWM clock support for bcm2835
+Message-ID: <20151129222549.GI491@cruxbox>
+References: <1447251765-16297-1-git-send-email-repk@triplefau.lt>
+ <565A13F7.3020905@lategoodbye.de>
+ <20151129003121.GH491@cruxbox>
+ <565B6CA0.2070702@lategoodbye.de>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <565B6CA0.2070702@lategoodbye.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add 'is_prepared' callback function for pllv3 type clk to make sure when
-the system is bootup, the unused clk is in a known state to match the
-prepare count info.
+On Sun, Nov 29, 2015 at 10:22:40PM +0100, Stefan Wahren wrote:
+> Hi Remi,
+> 
+> Am 29.11.2015 um 01:31 schrieb Remi Pommarel:
+> >Hi Stefan,
+> >
+> >On Sat, Nov 28, 2015 at 09:52:07PM +0100, Stefan Wahren wrote:
+> >>i applied the series including the devicetree modification, but it
+> >>doesn't work for me.
+> >>
+> >>First of all i get an ugly division by zero warning from the pwm
+> >>driver. The pwm driver still assume a fixed clock and doesn't handle
+> >>the error cases of clk_get_rate(). I attached a patch at the end.
+> >
+> >Yes the devicetree patch from patchset version one does not work with
+> >this version.
+> 
+> thanks. I successfully tested the pwm with the led pwm driver.
+> 
 
-Signed-off-by: Bai Ping <b51503@freescale.com>
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
----
--resend, add clk maintainers.
+Good news, thank you.
 
- drivers/clk/imx/clk-pllv3.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+> >I haven't sent the modified devicetree because Eric said
+> >it is better to send it in a separate patchset. If you want to test it I
+> >attached the working devicetree patch at the end.
+> 
+> I don't think that he said that. He wanted you to send the
+> devicetree changes as a separate patch. So it should be okay if it's
+> part of the same patchset.
+> 
 
-diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-index 6addf8f..c05c43d 100644
---- a/drivers/clk/imx/clk-pllv3.c
-+++ b/drivers/clk/imx/clk-pllv3.c
-@@ -97,6 +97,16 @@ static void clk_pllv3_unprepare(struct clk_hw *hw)
- 	writel_relaxed(val, pll->base);
- }
- 
-+static int clk_pllv3_is_prepared(struct clk_hw *hw)
-+{
-+	struct clk_pllv3 *pll = to_clk_pllv3(hw);
-+
-+	if (readl_relaxed(pll->base) & BM_PLL_LOCK)
-+		return 1;
-+
-+	return 0;
-+}
-+
- static unsigned long clk_pllv3_recalc_rate(struct clk_hw *hw,
- 					   unsigned long parent_rate)
- {
-@@ -139,6 +149,7 @@ static int clk_pllv3_set_rate(struct clk_hw *hw, unsigned long rate,
- static const struct clk_ops clk_pllv3_ops = {
- 	.prepare	= clk_pllv3_prepare,
- 	.unprepare	= clk_pllv3_unprepare,
-+	.is_prepared	= clk_pllv3_is_prepared,
- 	.recalc_rate	= clk_pllv3_recalc_rate,
- 	.round_rate	= clk_pllv3_round_rate,
- 	.set_rate	= clk_pllv3_set_rate,
-@@ -193,6 +204,7 @@ static int clk_pllv3_sys_set_rate(struct clk_hw *hw, unsigned long rate,
- static const struct clk_ops clk_pllv3_sys_ops = {
- 	.prepare	= clk_pllv3_prepare,
- 	.unprepare	= clk_pllv3_unprepare,
-+	.is_prepared	= clk_pllv3_is_prepared,
- 	.recalc_rate	= clk_pllv3_sys_recalc_rate,
- 	.round_rate	= clk_pllv3_sys_round_rate,
- 	.set_rate	= clk_pllv3_sys_set_rate,
-@@ -265,6 +277,7 @@ static int clk_pllv3_av_set_rate(struct clk_hw *hw, unsigned long rate,
- static const struct clk_ops clk_pllv3_av_ops = {
- 	.prepare	= clk_pllv3_prepare,
- 	.unprepare	= clk_pllv3_unprepare,
-+	.is_prepared	= clk_pllv3_is_prepared,
- 	.recalc_rate	= clk_pllv3_av_recalc_rate,
- 	.round_rate	= clk_pllv3_av_round_rate,
- 	.set_rate	= clk_pllv3_av_set_rate,
-@@ -279,6 +292,7 @@ static unsigned long clk_pllv3_enet_recalc_rate(struct clk_hw *hw,
- static const struct clk_ops clk_pllv3_enet_ops = {
- 	.prepare	= clk_pllv3_prepare,
- 	.unprepare	= clk_pllv3_unprepare,
-+	.is_prepared	= clk_pllv3_is_prepared,
- 	.recalc_rate	= clk_pllv3_enet_recalc_rate,
- };
- 
+I could have misunderstood him, sorry about that. I will send a
+devicetree separated patch with the next version if Eric agrees with the
+GENMASK logic used in my first patch.
+
+Best Regards,
+
 -- 
-1.9.1
+Remi
