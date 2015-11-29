@@ -1,67 +1,71 @@
-Return-Path: <michael@amarulasolutions.com>
-Return-Path: <michael@amarulasolutions.com>
-Date: Sun, 15 Nov 2015 11:38:04 +0100
-From: Michael Trimarchi <michael@amarulasolutions.com>
-To: shawnguo@kernel.org
-Cc: kernel@pengutronix.de, mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V2] clk: imx: clk-imx6q: Let OSC to be routed to anaclk2/2b
-Message-ID: <20151115103800.GB9808@panicking>
-References: <1446991642-3088-1-git-send-email-michael@amarulasolutions.com>
- <20151115101938.GA9808@panicking>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20151115101938.GA9808@panicking>
+Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH v4 5/5] ARM: dts: sun9i: Add TODO comments for the main and low power clocks
+Date: Sun, 29 Nov 2015 11:03:10 +0800
+Message-Id: <1448766190-11345-6-git-send-email-wens@csie.org>
+In-Reply-To: <1448766190-11345-1-git-send-email-wens@csie.org>
+References: <1448766190-11345-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-OSC can be used as USB hub source clock. An example we can route to
-CLK2_P imx6 pin.
+The main (24MHz) clock on the A80 is configurable via the PRCM address
+space. The low power/speed (32kHz) clock is from an external chip, the
+AC100.
 
-This show a usage example:
-
-[...]
-	usb_hub: usb-hub {
-		compatible = "smsc,usb3503a";
-		clocks = <&clks IMX6QDL_CLK_LVDS2_GATE>;
-		clock-names = "refclk";
-	};
-};
-
-[...]
-&clks {
-        assigned-clocks = <&clks IMX6QDL_CLK_LVDS2_SEL>;
-        assigned-clock-parents = <&clks IMX6QDL_CLK_OSC>;
-};
-
-/sys/kernel/debug/clk/clk_summary
-
-osc                                 5            5    24000000          0 0
-[...]
-    lvds2_sel                       1            1    24000000          0 0
-       lvds2_gate                   1            1    24000000          0 0
-[...]
-
-Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
-Changes in v2:
-	- rework the commit message to give a better description
+ arch/arm/boot/dts/sun9i-a80.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
- drivers/clk/imx/clk-imx6q.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index b2c1c04..8fe0015 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -70,7 +70,8 @@ static const char *cko_sels[] = { "cko1", "cko2", };
- static const char *lvds_sels[] = {
- 	"dummy", "dummy", "dummy", "dummy", "dummy", "dummy",
- 	"pll4_audio", "pll5_video", "pll8_mlb", "enet_ref",
--	"pcie_ref_125m", "sata_ref_100m",
-+	"pcie_ref_125m", "sata_ref_100m",  "usbphy1", "usbphy2",
-+	"dummy", "dummy", "dummy", "dummy", "osc",
- };
- static const char *pll_bypass_src_sels[] = { "osc", "lvds1_in", "lvds2_in", "dummy", };
- static const char *pll1_bypass_sels[] = { "pll1", "pll1_bypass_src", };
+diff --git a/arch/arm/boot/dts/sun9i-a80.dtsi b/arch/arm/boot/dts/sun9i-a80.dtsi
+index a4ce348c0831..eb69a62f6bc4 100644
+--- a/arch/arm/boot/dts/sun9i-a80.dtsi
++++ b/arch/arm/boot/dts/sun9i-a80.dtsi
+@@ -128,6 +128,17 @@
+ 		 */
+ 		ranges = <0 0 0 0x20000000>;
+ 
++		/*
++		 * This clock is actually configurable from the PRCM address
++		 * space. The external 24M oscillator can be turned off, and
++		 * the clock switched to an internal 16M RC oscillator. Under
++		 * normal operation there's no reason to do this, and the
++		 * default is to use the external good one, so just model this
++		 * as a fixed clock. Also it is not entirely clear if the
++		 * osc24M mux in the PRCM affects the entire clock tree, which
++		 * would also throw all the PLL clock rates off, or just the
++		 * downstream clocks in the PRCM.
++		 */
+ 		osc24M: osc24M_clk {
+ 			#clock-cells = <0>;
+ 			compatible = "fixed-clock";
+@@ -135,6 +146,13 @@
+ 			clock-output-names = "osc24M";
+ 		};
+ 
++		/*
++		 * The 32k clock is from an external source, normally the
++		 * AC100 codec/RTC chip. This clock is by default enabled
++		 * and clocked at 32768 Hz, from the oscillator connected
++		 * to the AC100. It is configurable, but no such driver or
++		 * bindings exist yet.
++		 */
+ 		osc32k: osc32k_clk {
+ 			#clock-cells = <0>;
+ 			compatible = "fixed-clock";
 -- 
-2.6.3
+2.6.2
