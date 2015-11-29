@@ -1,56 +1,108 @@
-Return-Path: <rjui@broadcom.com>
-From: Ray Jui <rjui@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<bcm-kernel-feedback-list@broadcom.com>, Simran Rai <ssimran@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>
-Subject: [PATCH v2 1/4] Documentation: dt-bindings: Add DT bindings for Cygnus audio clock
-Date: Mon, 23 Nov 2015 09:50:24 -0800
-Message-ID: <1448301027-27061-2-git-send-email-rjui@broadcom.com>
-In-Reply-To: <1448301027-27061-1-git-send-email-rjui@broadcom.com>
-References: <1448301027-27061-1-git-send-email-rjui@broadcom.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rjui@broadcom.com
+Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH v4 0/5] ARM: sun9i: Add Allwinner A80 PRCM clock/reset support
+Date: Sun, 29 Nov 2015 11:03:05 +0800
+Message-Id: <1448766190-11345-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Simran Rai <ssimran@broadcom.com>
+Hi everyone,
 
-This patch adds audio clock device tree binding documentation to an
-existing Cygnus clock DT bindings document.
+(resent with mailing lists CC-ed)
 
-Signed-off-by: Simran Rai <ssimran@broadcom.com>
-Reviewed-by: Ray Jui <rjui@broadcom.com>
-Reviewed-by: Lori Hikichi <lhikichi@broadcom.com>
-Reviewed-by: Scott Branden <sbranden@broadcom.com>
----
- Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt | 6 ++++++
- 1 file changed, 6 insertions(+)
+This is v4 of the Allwinner A80 PRCM support series. Since v4, the
+series moved away from the mfd approach, and just lists the various
+controls directly under the "clocks" and "soc" nodes.
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-index ede65a5..20e3c00 100644
---- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-@@ -92,6 +92,7 @@ PLL and leaf clock compatible strings for Cygnus are:
-     "brcm,cygnus-lcpll0"
-     "brcm,cygnus-mipipll"
-     "brcm,cygnus-asiu-clk"
-+    "brcm,cygnus-audiopll"
- 
- The following table defines the set of PLL/clock index and ID for Cygnus.
- These clock IDs are defined in:
-@@ -131,6 +132,11 @@ These clock IDs are defined in:
-     ch4_unused mipipll          5       BCM_CYGNUS_MIPIPLL_CH4_UNUSED
-     ch5_unused mipipll          6       BCM_CYGNUS_MIPIPLL_CH5_UNUSED
- 
-+    audiopll   crystal          0       BCM_CYGNUS_AUDIOPLL
-+    ch0_audio  audiopll         1       BCM_CYGNUS_AUDIOPLL_CH0
-+    ch1_audio  audiopll         2       BCM_CYGNUS_AUDIOPLL_CH1
-+    ch2_audio  audiopll         3       BCM_CYGNUS_AUDIOPLL_CH2
-+
- Northstar and Northstar Plus
- ------
- PLL and leaf clock compatible strings for Northstar and Northstar Plus are:
+Changes since v3:
+
+    - Only build new clock drivers for CONFIG_MACH_SUN9I
+
+    - Refactor sun8i-a23-apb0-clk driver to share common clock
+      registering code
+
+Changes since v2:
+
+    - Move away from mfd approach and directly list the clock and
+      reset controls as first class devices.
+
+    - Use the new clk-simple-gates driver for the apbs clock gates.
+
+    - Update clk code to use struct clk_request.
+
+    - Add 1wire clk node.
+
+    - Use GENMASK and always use shifted bitmasks in cpus clk driver.
+
+Changes since v1:
+
+    - Added missing clock gates based on updated documents
+
+    - Added new cpus clock driver based on updated documents
+
+    - Added pll3 clock placeholder
+
+    - Added comments about 24M & 32k oscillators
+
+The series adds support for the Power Reset and Clock Management
+module on Allwinner's A80 SoC. The PRCM manages clocks and resets
+for the "special" block of peripherals, or the R/RTC block in
+earlier SoCs, as well as power domain and resets for various parts
+of the SoC, such as the 2 processor clusters, the GPU and others.
+
+The special peripherals include a standby processor core, a timer
+block, a watchdog, pin controller, 1 wire interface, PS/2 interface,
+a UART, the RSB controller, a DMA controller, a consumer IR receiver
+block, 2 I2C controllers, and 2 I2S controllers. We do not have
+documents for all the peripherals. Support will be added where
+possible.
+
+Patch 1 adds CLK_OF_DECLARE support for sun8i-a23-apb0-clk driver.
+This driver was used with the mfd approach for the A23/A33 PRCM. As
+such it is a platform device driver.
+
+Patch 2 adds a new compatible string for the apbs gates to the
+clk-simple-gates driver.
+
+Patch 3 adds a new driver for the cpus clock.
+
+Patch 4 adds the various supported clock and reset control device nodes
+to the A80 dtsi.
+
+Patch 5 adds some TODO comments regarding the 2 system oscillators.
+
+Regards
+ChenYu
+
+Chen-Yu Tsai (5):
+  clk: sunxi: Add CLK_OF_DECLARE support for sun8i-a23-apb0-clk driver
+  clk: sunxi: Add sun9i A80 apbs gates support
+  clk: sunxi: Add sun9i A80 cpus (cpu special) clock support
+  ARM: dts: sun9i: Add A80 PRCM clocks and reset control nodes
+  ARM: dts: sun9i: Add TODO comments for the main and low power clocks
+
+ Documentation/devicetree/bindings/clock/sunxi.txt |   2 +
+ arch/arm/boot/dts/sun9i-a80.dtsi                  |  97 ++++++++-
+ drivers/clk/sunxi/Makefile                        |   6 +-
+ drivers/clk/sunxi/clk-simple-gates.c              |   2 +
+ drivers/clk/sunxi/clk-sun8i-apb0.c                |  71 +++++--
+ drivers/clk/sunxi/clk-sun9i-cpus.c                | 240 ++++++++++++++++++++++
+ 6 files changed, 403 insertions(+), 15 deletions(-)
+ create mode 100644 drivers/clk/sunxi/clk-sun9i-cpus.c
+
 -- 
-1.9.1
+2.6.2
