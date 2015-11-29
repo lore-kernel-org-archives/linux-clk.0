@@ -1,6 +1,7 @@
 Return-Path: <wens@mirror2.csie.ntu.edu.tw>
 From: Chen-Yu Tsai <wens@csie.org>
 To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Emilio Lopez <emilio@elopez.com.ar>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
 	Rob Herring <robh+dt@kernel.org>,
@@ -8,16 +9,17 @@ To: Maxime Ripard <maxime.ripard@free-electrons.com>,
 	Mark Rutland <mark.rutland@arm.com>,
 	Ian Campbell <ijc+devicetree@hellion.org.uk>,
 	Kumar Gala <galak@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
+Cc: linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 3/5] clk: sunxi: Add sun9i A80 cpus (cpu special) clock support
-Date: Tue, 24 Nov 2015 17:32:14 +0800
-Message-Id: <1448357536-26613-4-git-send-email-wens@csie.org>
-In-Reply-To: <1448357536-26613-1-git-send-email-wens@csie.org>
-References: <1448357536-26613-1-git-send-email-wens@csie.org>
+	devicetree@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH v4 3/5] clk: sunxi: Add sun9i A80 cpus (cpu special) clock support
+Date: Sun, 29 Nov 2015 11:03:08 +0800
+Message-Id: <1448766190-11345-4-git-send-email-wens@csie.org>
+In-Reply-To: <1448766190-11345-1-git-send-email-wens@csie.org>
+References: <1448766190-11345-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
 The "cpus" clock is the clock for the embedded processor in the A80.
@@ -28,13 +30,6 @@ driver for these types of clocks, which also includes the AHB clock
 driver on sun[5678]i.
 
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
-
-Hi Maxime,
-
-I'll do the factors clock refactoring mentioned during the discussion
-around v2 later on.
-
 ---
  Documentation/devicetree/bindings/clock/sunxi.txt |   1 +
  drivers/clk/sunxi/Makefile                        |   1 +
@@ -55,17 +50,17 @@ index b6859ed6913f..153ac72869e8 100644
  	"allwinner,sun6i-a31-ahb1-gates-clk" - for the AHB1 gates on A31
  	"allwinner,sun8i-a23-ahb1-gates-clk" - for the AHB1 gates on A23
 diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-index 121333ce34ea..07d914c3f6d1 100644
+index c55d5cd1c0e5..f7d439fa9980 100644
 --- a/drivers/clk/sunxi/Makefile
 +++ b/drivers/clk/sunxi/Makefile
-@@ -13,6 +13,7 @@ obj-y += clk-simple-gates.o
- obj-y += clk-sun8i-apb0.o
- obj-y += clk-sun8i-mbus.o
- obj-y += clk-sun9i-core.o
-+obj-y += clk-sun9i-cpus.o
- obj-y += clk-sun9i-mmc.o
+@@ -16,6 +16,7 @@ obj-y += clk-sun9i-mmc.o
  obj-y += clk-usb.o
  
+ obj-$(CONFIG_MACH_SUN9I) += clk-sun8i-apb0.o
++obj-$(CONFIG_MACH_SUN9I) += clk-sun9i-cpus.o
+ 
+ obj-$(CONFIG_MFD_SUN6I_PRCM) += \
+ 	clk-sun6i-ar100.o clk-sun6i-apb0.o clk-sun6i-apb0-gates.o
 diff --git a/drivers/clk/sunxi/clk-sun9i-cpus.c b/drivers/clk/sunxi/clk-sun9i-cpus.c
 new file mode 100644
 index 000000000000..7626d2194b96
