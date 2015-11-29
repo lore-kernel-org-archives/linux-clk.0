@@ -1,74 +1,146 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 6 Nov 2015 16:35:10 -0800
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Jonathan Liu <net147@gmail.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Wynter Woods <wynter@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [linux-sunxi] [PATCH 11/19] drm: sun4i: Add composite output
-Message-ID: <20151107003510.GR6114@lukather>
-References: <1446214865-3972-1-git-send-email-maxime.ripard@free-electrons.com>
- <1446214865-3972-12-git-send-email-maxime.ripard@free-electrons.com>
- <CANwerB0tva90mj7Anits0gfecQuLcDZ-BEctc0VNAY+Oq0dLbA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="dUQzTuC3g77BtMOt"
-In-Reply-To: <CANwerB0tva90mj7Anits0gfecQuLcDZ-BEctc0VNAY+Oq0dLbA@mail.gmail.com>
+	Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH v4 4/5] ARM: dts: sun9i: Add A80 PRCM clocks and reset control nodes
+Date: Sun, 29 Nov 2015 11:03:09 +0800
+Message-Id: <1448766190-11345-5-git-send-email-wens@csie.org>
+In-Reply-To: <1448766190-11345-1-git-send-email-wens@csie.org>
+References: <1448766190-11345-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+This adds the supported PRCM clocks and reset controls to the A80 dtsi.
+The DAUDIO module clocks are not supported yet.
 
---dUQzTuC3g77BtMOt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Also update clock and reset phandles for r_uart.
 
-On Mon, Nov 02, 2015 at 01:53:20PM +1100, Jonathan Liu wrote:
-> > +       ret =3D sun4i_tv_init(drm);
-> > +       if (ret) {
-> > +               dev_err(drm->dev, "Couldn't create our RGB output\n");
->=20
-> RGB should be composite. Seems like a copy-paste error.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/boot/dts/sun9i-a80.dtsi | 79 +++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 78 insertions(+), 1 deletion(-)
 
-Good catch. Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---dUQzTuC3g77BtMOt
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWPUc+AAoJEBx+YmzsjxAg2ngP/RPn1VMn5f5NHBCyQ04J/CU9
-ZDQ2BQ7cYDZT0JTk6VdkbMmJbiwkTB8+z7YZeEZhi4gorHwk+NGLrYSZyvIHcZlC
-PjAsh93S7F77jFkmm//fkRcZ7NpWH6oivgtV3gR3/ueGdobfQfPg5vhVbRru6gWc
-INxnvanFIMOJtHjjzRLsedZp5N/5JrJOAcEc1v66Nated1Ms0KtP+rS0aM8Q4yJ5
-SOaIVo9Cb5BPlKMjPLoYcvkf0lNkqzRxPbFnyyx9XjbFr4ZO5W0ydgkrvmYxDjHS
-PT1UjPbBEuB3hzhSfD3kKMEqepdW7/na+SGJk/Z3cz9Ew6I1VyrPv0Z6tscrCLYC
-MZ8vEeLNHi1Ia40yQ9TV9ZhwZKs+k2vYJ1u6F1TxT5H36xVeXP48wO3qUOG70Gq5
-UZoltj4dCjcpvrJFJSRGWI/Lr7ulHys7/gVXud0uz6ObEGuAFgLdeFt5ixbAYoYi
-ZX1FeuWGSH7jXCAbF7BQE+cYO7sLkmA5N12mGhp95+0RZnN81S2b2PP7HVycOpcr
-3JCoOchQZTLWNNw4VM05hyI60IGzp1VrTy5MckDAokVRPaNwSD4itVocX7bwKczZ
-KkDJ5E6xqhei9RXSzo+BVIIdG2Ab/TYpqenzfhXuHVOo0Fw0AU+NY5Sal2a4vRRg
-1ly7qmUCs984Ql8H6Otj
-=Sf+z
------END PGP SIGNATURE-----
-
---dUQzTuC3g77BtMOt--
+diff --git a/arch/arm/boot/dts/sun9i-a80.dtsi b/arch/arm/boot/dts/sun9i-a80.dtsi
+index 1118bf5cc4fb..a4ce348c0831 100644
+--- a/arch/arm/boot/dts/sun9i-a80.dtsi
++++ b/arch/arm/boot/dts/sun9i-a80.dtsi
+@@ -164,6 +164,14 @@
+ 					     "usb_phy2", "usb_hsic_12M";
+ 		};
+ 
++		pll3: clk@06000008 {
++			/* placeholder until implemented */
++			#clock-cells = <0>;
++			compatible = "fixed-clock";
++			clock-rate = <0>;
++			clock-output-names = "pll3";
++		};
++
+ 		pll4: clk@0600000c {
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun9i-a80-pll4-clk";
+@@ -350,6 +358,68 @@
+ 					"apb1_uart2", "apb1_uart3",
+ 					"apb1_uart4", "apb1_uart5";
+ 		};
++
++		cpus_clk: clk@08001410 {
++			compatible = "allwinner,sun9i-a80-cpus-clk";
++			reg = <0x08001410 0x4>;
++			#clock-cells = <0>;
++			clocks = <&osc32k>, <&osc24M>, <&pll4>, <&pll3>;
++			clock-output-names = "cpus";
++		};
++
++		ahbs: ahbs_clk {
++			compatible = "fixed-factor-clock";
++			#clock-cells = <0>;
++			clock-div = <1>;
++			clock-mult = <1>;
++			clocks = <&cpus_clk>;
++			clock-output-names = "ahbs";
++		};
++
++		apbs: clk@0800141c {
++			compatible = "allwinner,sun8i-a23-apb0-clk";
++			reg = <0x0800141c 0x4>;
++			#clock-cells = <0>;
++			clocks = <&ahbs>;
++			clock-output-names = "apbs";
++		};
++
++		apbs_gates: clk@08001428 {
++			compatible = "allwinner,sun9i-a80-apbs-gates-clk";
++			reg = <0x08001428 0x4>;
++			#clock-cells = <1>;
++			clocks = <&apbs>;
++			clock-indices = <0>, <1>,
++					<2>, <3>,
++					<4>, <5>,
++					<6>, <7>,
++					<12>, <13>,
++					<16>, <17>,
++					<18>, <20>;
++			clock-output-names = "apbs_pio", "apbs_ir",
++					"apbs_timer", "apbs_rsb",
++					"apbs_uart", "apbs_1wire",
++					"apbs_i2c0", "apbs_i2c1",
++					"apbs_ps2_0", "apbs_ps2_1",
++					"apbs_dma", "apbs_i2s0",
++					"apbs_i2s1", "apbs_twd";
++		};
++
++		r_1wire_clk: clk@08001450 {
++			reg = <0x08001450 0x4>;
++			#clock-cells = <0>;
++			compatible = "allwinner,sun4i-a10-mod0-clk";
++			clocks = <&osc32k>, <&osc24M>;
++			clock-output-names = "r_1wire";
++		};
++
++		r_ir_clk: clk@08001454 {
++			reg = <0x08001454 0x4>;
++			#clock-cells = <0>;
++			compatible = "allwinner,sun4i-a10-mod0-clk";
++			clocks = <&osc32k>, <&osc24M>;
++			clock-output-names = "r_ir";
++		};
+ 	};
+ 
+ 	soc {
+@@ -764,13 +834,20 @@
+ 			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
++		apbs_rst: reset@080014b0 {
++			reg = <0x080014b0 0x4>;
++			compatible = "allwinner,sun6i-a31-clock-reset";
++			#reset-cells = <1>;
++		};
++
+ 		r_uart: serial@08002800 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x08002800 0x400>;
+ 			interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&osc24M>;
++			clocks = <&apbs_gates 4>;
++			resets = <&apbs_rst 4>;
+ 			status = "disabled";
+ 		};
+ 	};
+-- 
+2.6.2
