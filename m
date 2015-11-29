@@ -1,25 +1,152 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Chris Zhong <zyw@rock-chips.com>
-Cc: linux-rockchip@lists.infradead.org, mark.yao@rock-chips.com, treding@nvidia.com, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 02/11] clk: rockchip: add mipidsi clocks on rk3288
-Date: Thu, 26 Nov 2015 14:58:47 +0100
-Message-ID: <1887650.g9M52OYF2h@diego>
-In-Reply-To: <1448524225-5489-3-git-send-email-zyw@rock-chips.com>
-References: <1448524225-5489-1-git-send-email-zyw@rock-chips.com> <1448524225-5489-3-git-send-email-zyw@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH v4 1/5] clk: sunxi: Add CLK_OF_DECLARE support for sun8i-a23-apb0-clk driver
+Date: Sun, 29 Nov 2015 11:03:06 +0800
+Message-Id: <1448766190-11345-2-git-send-email-wens@csie.org>
+In-Reply-To: <1448766190-11345-1-git-send-email-wens@csie.org>
+References: <1448766190-11345-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chris,
+The APBS clock on sun9i is the same as the APB0 clock on sun8i. With
+sun9i we are supporting the PRCM clocks by using CLK_OF_DECLARE,
+instead of through a PRCM mfd device and subdevices for each clock
+and reset control. As such we need a CLK_OF_DECLARE version of
+the sun8i-a23-apb0-clk driver.
 
-Am Donnerstag, 26. November 2015, 15:50:16 schrieb Chris Zhong:
-> sclk_mipidsi_24m is the gating of mipi dsi phy.
-> 
-> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
-> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Also, build it for sun9i/A80, and not just for configurations with
+MFD_SUN6I_PRCM enabled.
 
-applied this to my clock branch for 4.5
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi/Makefile         |  5 +--
+ drivers/clk/sunxi/clk-sun8i-apb0.c | 71 +++++++++++++++++++++++++++++++-------
+ 2 files changed, 62 insertions(+), 14 deletions(-)
 
-
-Heiko
+diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+index cb4c299214ce..c55d5cd1c0e5 100644
+--- a/drivers/clk/sunxi/Makefile
++++ b/drivers/clk/sunxi/Makefile
+@@ -15,6 +15,7 @@ obj-y += clk-sun9i-core.o
+ obj-y += clk-sun9i-mmc.o
+ obj-y += clk-usb.o
+ 
++obj-$(CONFIG_MACH_SUN9I) += clk-sun8i-apb0.o
++
+ obj-$(CONFIG_MFD_SUN6I_PRCM) += \
+-	clk-sun6i-ar100.o clk-sun6i-apb0.o clk-sun6i-apb0-gates.o \
+-	clk-sun8i-apb0.o
++	clk-sun6i-ar100.o clk-sun6i-apb0.o clk-sun6i-apb0-gates.o
+diff --git a/drivers/clk/sunxi/clk-sun8i-apb0.c b/drivers/clk/sunxi/clk-sun8i-apb0.c
+index 7ae5d2c2cde1..c1e2ac8f4b0d 100644
+--- a/drivers/clk/sunxi/clk-sun8i-apb0.c
++++ b/drivers/clk/sunxi/clk-sun8i-apb0.c
+@@ -17,13 +17,68 @@
+ #include <linux/clk-provider.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
++#include <linux/of_address.h>
+ #include <linux/platform_device.h>
+ 
++static struct clk *sun8i_a23_apb0_register(struct device_node *node,
++					   void __iomem *reg)
++{
++	const char *clk_name = node->name;
++	const char *clk_parent;
++	struct clk *clk;
++	int ret;
++
++	clk_parent = of_clk_get_parent_name(node, 0);
++	if (!clk_parent)
++		return ERR_PTR(-EINVAL);
++
++	of_property_read_string(node, "clock-output-names", &clk_name);
++
++	/* The A23 APB0 clock is a standard 2 bit wide divider clock */
++	clk = clk_register_divider(NULL, clk_name, clk_parent, 0, reg,
++				   0, 2, CLK_DIVIDER_POWER_OF_TWO, NULL);
++	if (IS_ERR(clk))
++		return clk;
++
++	ret = of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	if (ret)
++		goto err_unregister;
++
++	return clk;
++
++err_unregister:
++	clk_unregister_divider(clk);
++
++	return ERR_PTR(ret);
++}
++
++static void sun8i_a23_apb0_setup(struct device_node *node)
++{
++	void __iomem *reg;
++	struct resource res;
++	struct clk *clk;
++
++	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
++	if (IS_ERR(reg))
++		return;
++
++	clk = sun8i_a23_apb0_register(node, reg);
++	if (IS_ERR(clk))
++		goto err_unmap;
++
++	return;
++
++err_unmap:
++	iounmap(reg);
++	of_address_to_resource(node, 0, &res);
++	release_mem_region(res.start, resource_size(&res));
++}
++CLK_OF_DECLARE(sun8i_a23_apb0, "allwinner,sun8i-a23-apb0-clk",
++	       sun8i_a23_apb0_setup);
++
+ static int sun8i_a23_apb0_clk_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+-	const char *clk_name = np->name;
+-	const char *clk_parent;
+ 	struct resource *r;
+ 	void __iomem *reg;
+ 	struct clk *clk;
+@@ -33,19 +88,11 @@ static int sun8i_a23_apb0_clk_probe(struct platform_device *pdev)
+ 	if (IS_ERR(reg))
+ 		return PTR_ERR(reg);
+ 
+-	clk_parent = of_clk_get_parent_name(np, 0);
+-	if (!clk_parent)
+-		return -EINVAL;
+-
+-	of_property_read_string(np, "clock-output-names", &clk_name);
+-
+-	/* The A23 APB0 clock is a standard 2 bit wide divider clock */
+-	clk = clk_register_divider(&pdev->dev, clk_name, clk_parent, 0, reg,
+-				   0, 2, CLK_DIVIDER_POWER_OF_TWO, NULL);
++	clk = sun8i_a23_apb0_register(np, reg);
+ 	if (IS_ERR(clk))
+ 		return PTR_ERR(clk);
+ 
+-	return of_clk_add_provider(np, of_clk_src_simple_get, clk);
++	return 0;
+ }
+ 
+ static const struct of_device_id sun8i_a23_apb0_clk_dt_ids[] = {
+-- 
+2.6.2
