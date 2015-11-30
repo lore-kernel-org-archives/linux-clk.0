@@ -1,46 +1,44 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 20 Nov 2015 10:59:32 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	Pankaj Dev <pankaj.dev@st.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel@stlinux.com, Maxime Coquelin <maxime.coquelin@st.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@gmail.com>,
-	Patrice Chotard <patrice.chotard@st.com>
-Subject: Re: [PATCH] clk: st: avoid uninitialized variable use
-Message-ID: <20151120185932.GW32672@codeaurora.org>
-References: <3719029.IbREgssWiU@wuerfel>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <3719029.IbREgssWiU@wuerfel>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 04/16] clk: remove unnecessary !core->parents conditional
+Date: Mon, 30 Nov 2015 16:34:41 +0900
+Message-Id: <1448868893-4575-5-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1448868893-4575-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1448868893-4575-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/12, Arnd Bergmann wrote:
-> quadfs_pll_fs660c32_round_rate prints a few structure members
-> that are never initialized, and also doesn't print the only one
-> it cares about. We get a gcc warning about the ones that
-> are printed:
-> 
-> clk/st/clkgen-fsyn.c:560:93: warning: 'params.sdiv' may be used uninitialized in this function
-> clk/st/clkgen-fsyn.c:560:93: warning: 'params.mdiv' may be used uninitialized in this function
-> clk/st/clkgen-fsyn.c:560:93: warning: 'params.pe' may be used uninitialized in this function
-> clk/st/clkgen-fsyn.c:560:93: warning: 'params.nsdiv' may be used uninitialized in this function
-> 
-> This changes the code to no longer print uninitialized data, and
-> for good measure it also prints the ndiv member that is being
-> set.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Fixes: 5f7aa9071e93 ("clk: st: Support for QUADFS inside ClockGenB/C/D/E/F")
-> 
-> diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
-> index 576cd0354d48..ccb324d97160 100644
-> --- a/drivers/clk/st/clkgen-fsyn.c
+This if-block has been here since the introduction of the common
+clock framework.  Now no clock drivers are statically initialized.
+core->parent is always NULL at this point.  Drop the redundant
+check and the confusing comment.
 
-Applied to clk-next
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
+ drivers/clk/clk.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 36373d3..66c6f34 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2348,11 +2348,8 @@ static int __clk_core_init(struct clk_core *core)
+ 	 * in to clk_init during early boot; thus any access to core->parents[]
+ 	 * must always check for a NULL pointer and try to populate it if
+ 	 * necessary.
+-	 *
+-	 * If core->parents is not NULL we skip this entire block.  This allows
+-	 * for clock drivers to statically initialize core->parents.
+ 	 */
+-	if (core->num_parents > 1 && !core->parents) {
++	if (core->num_parents > 1) {
+ 		core->parents = kcalloc(core->num_parents, sizeof(struct clk *),
+ 					GFP_KERNEL);
+ 		/*
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
