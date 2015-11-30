@@ -1,30 +1,54 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:48879 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751568AbbKXCtk (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 23 Nov 2015 21:49:40 -0500
-Date: Tue, 24 Nov 2015 11:49:37 +0900
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-sh@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 0/2] drivers: sh: clk: Cleanup clock API
-Message-ID: <20151124024936.GG21853@verge.net.au>
-References: <1447957927-32738-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1447957927-32738-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 03/16] clk: rename __clk_init() into __clk_core_init()
+Date: Mon, 30 Nov 2015 16:34:40 +0900
+Message-Id: <1448868893-4575-4-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1448868893-4575-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1448868893-4575-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Nov 19, 2015 at 07:32:05PM +0100, Geert Uytterhoeven wrote:
-> 	Hi Simon, Magnus,
-> 
-> This patch series cleans up the clock API on legacy SH, to make it more
-> similar with the Common Clock Framework.  This will avoid different
-> behavior in drivers shared between legacy and CCF-based platforms (e.g.
-> SCIF).
-> 
-> Thanks for applying!
+Now this function takes clk_core as its argument.  __clk_core_init()
+would be more suitable for the name of this function.
 
-Thanks, done.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ drivers/clk/clk.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 8c8ba91..36373d3 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2285,13 +2285,13 @@ static inline void clk_debug_unregister(struct clk_core *core)
+ #endif
+ 
+ /**
+- * __clk_init - initialize the data structures in a struct clk_core
++ * __clk_core_init - initialize the data structures in a struct clk_core
+  * @core:	clk_core being initialized
+  *
+  * Initializes the lists in struct clk_core, queries the hardware for the
+  * parent and rate and sets them both.
+  */
+-static int __clk_init(struct clk_core *core)
++static int __clk_core_init(struct clk_core *core)
+ {
+ 	int i, ret = 0;
+ 	struct clk_core *orphan;
+@@ -2571,7 +2571,7 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+ 		goto fail_parent_names_copy;
+ 	}
+ 
+-	ret = __clk_init(core);
++	ret = __clk_core_init(core);
+ 	if (!ret)
+ 		return hw->clk;
+ 
+-- 
+1.9.1
