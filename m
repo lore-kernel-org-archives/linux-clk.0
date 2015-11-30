@@ -1,42 +1,94 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 25 Nov 2015 14:07:28 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Eric Miao <eric.y.miao@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Chao Xie <chao.xie@marvell.com>,
-	Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: mmp: add linux/clk.h includes
-Message-ID: <20151125220728.GG11298@codeaurora.org>
-References: <5338608.iS8N3pHg9B@wuerfel>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5338608.iS8N3pHg9B@wuerfel>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] clk: let of_clk_get_parent_name() fail for invalid clock-indices
+Date: Mon, 30 Nov 2015 17:46:04 +0900
+Message-Id: <1448873164-22415-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/25, Arnd Bergmann wrote:
-> The common clk implementation for MMP broke without anyone noticing
-> when we stopped including linux/clk.h from the clk-provider header.
-> 
-> This did not show up in the defconfig builds because those use the
-> legacy MMP clk drivers, and it did not show up in my randconfig tests
-> either because I was testing with my mmp multiplatform series
-> applied, which at some point gained the fixup.
-> 
-> This fixes the three broken files.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Fixes: 61ae76563ec3 ("clk: Remove clk.h from clk-provider.h")
-> 
-> diff --git a/drivers/clk/mmp/clk-mmp2.c b/drivers/clk/mmp/clk-mmp2.c
-> index 09d2832fbd78..71fd29348f28 100644
-> --- a/drivers/clk/mmp/clk-mmp2.c
+Currently, of_clk_get_parent_name() returns a wrong parent clock name
+when "clock-indices" property exists and the target index is not
+found in the property.  In this case, NULL should be returned.
 
-Applied to clk-fixes
+For example,
 
+        oscillator {
+                compatible = "myclocktype";
+                #clock-cells = <1>;
+                clock-indices = <1>, <3>;
+                clock-output-names = "clka", "clkb";
+        };
+
+        consumer {
+                compatible = "myclockconsumer";
+                clocks = <&oscillator 0>, <&oscillator 1>;
+        };
+
+Currently, of_clk_get_parent_name(consumer_np, 0) returns "clka"
+(and of_clk_get_parent_name(consumer_np, 1) also returns "clka",
+this is correct).   Because the "clock-indices" in the clock parent
+does not contain <0>, of_clk_get_parent_name(consumer_np, 0) should
+return NULL.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+Changes in v2:
+  - Rephrase the git-log
+
+ drivers/clk/clk.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 20d8e07..8698074 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3054,12 +3054,9 @@ EXPORT_SYMBOL_GPL(of_clk_get_parent_count);
+ const char *of_clk_get_parent_name(struct device_node *np, int index)
+ {
+ 	struct of_phandle_args clkspec;
+-	struct property *prop;
+ 	const char *clk_name;
+-	const __be32 *vp;
+-	u32 pv;
+-	int rc;
+-	int count;
++	const __be32 *list;
++	int rc, len, i;
+ 	struct clk *clk;
+ 
+ 	rc = of_parse_phandle_with_args(np, "clocks", "#clock-cells", index,
+@@ -3068,17 +3065,20 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
+ 		return NULL;
+ 
+ 	index = clkspec.args_count ? clkspec.args[0] : 0;
+-	count = 0;
+ 
+ 	/* if there is an indices property, use it to transfer the index
+ 	 * specified into an array offset for the clock-output-names property.
+ 	 */
+-	of_property_for_each_u32(clkspec.np, "clock-indices", prop, vp, pv) {
+-		if (index == pv) {
+-			index = count;
+-			break;
+-		}
+-		count++;
++	list = of_get_property(clkspec.np, "clock-indices", &len);
++	if (list) {
++		len /= sizeof(*list);
++		for (i = 0; i < len; i++)
++			if (index == be32_to_cpup(list++)) {
++				index = i;
++				break;
++			}
++		if (i == len)
++			return NULL;
+ 	}
+ 
+ 	if (of_property_read_string_index(clkspec.np, "clock-output-names",
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
