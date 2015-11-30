@@ -1,89 +1,65 @@
-Return-Path: <zywang33@gmail.com>
-Return-Path: <zywang33@gmail.com>
-From: Chris Zhong <zyw@rock-chips.com>
-To: dianders@chromium.org
-Cc: Chris Zhong <zyw@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] clk: rockchip: switch PLLs to slow mode before reboot for rk3288
-Date: Tue, 10 Nov 2015 17:35:31 +0800
-Message-Id: <1447148131-30041-1-git-send-email-zyw@rock-chips.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Sender: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
+Subject: Re: [PATCH v3] clk: s3c2410: removed unneeded variable in
+ s3c24xx_clkout_set_parent
+To: "Mutharaju, Prasanna (P.)" <mkarthi3@visteon.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+References: <20151130095109.GA28767@jci-VirtualBox>
+Cc: k.kozlowski.k@gmail.com, Kukjin Kim <kgene@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-ID: <565C1D25.602@samsung.com>
+Date: Mon, 30 Nov 2015 18:55:49 +0900
+MIME-Version: 1.0
+In-Reply-To: <20151130095109.GA28767@jci-VirtualBox>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-We've been seeing some crashes at reboot test on rk3288-based systems,
-which boards have not reset pin connected to NPOR, they reboot by
-setting 0xfdb9 to RK3288_GLB_SRST_FST register. If the APLL works in
-a high frequency mode, some IPs might hang during soft reset.
-It appears that we can fix the problem by switching to slow mode before
-reboot, just like what we did before suspend.
+W dniu 30.11.2015 o 18:52, Mutharaju, Prasanna (P.) pisze:
+> Remove unneeded variable used to store return value.
+> 
+> Signed-off-by: Prasanna Karthik <mkarthi3@visteon.com>
 
-Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+Previous issues fixed, thanks! But now you changed the From field and it
+does not match exactly the Signed-off-by (email matches but name does
+not). Please fix this - signed-off-by should be the same as "From" (in
+previous versions it was ok...).
 
----
+Best regards,
+Krzysztof
 
- drivers/clk/rockchip/clk-rk3288.c | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
-
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index 9040878..524662c 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -16,6 +16,7 @@
- #include <linux/clk-provider.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/reboot.h>
- #include <linux/syscore_ops.h>
- #include <dt-bindings/clock/rk3288-cru.h>
- #include "clk.h"
-@@ -855,6 +856,34 @@ static void rk3288_clk_sleep_init(void __iomem *reg_base)
- static void rk3288_clk_sleep_init(void __iomem *reg_base) {}
- #endif
- 
-+void __iomem *mode_con_reg;
-+static int rk3288_restart_notify(struct notifier_block *this,
-+				   unsigned long mode, void *cmd)
-+{
-+	writel(0xf3030000, mode_con_reg);
-+	return NOTIFY_DONE;
-+}
-+
-+static struct notifier_block rk3288_restart_handler = {
-+	.notifier_call = rk3288_restart_notify,
-+	/* Switch PLLs other than DPLL (for SDRAM) to slow mode before reboot
-+	 * to avoid crashes in reset, so this priority must bigger than the one
-+	 * in rockchip_restart_handler.
-+	 */
-+	.priority = 129,
-+};
-+
-+void __init rk3288_register_restart_notifier(void __iomem *reg)
-+{
-+	int ret;
-+
-+	mode_con_reg = reg;
-+	ret = register_restart_handler(&rk3288_restart_handler);
-+	if (ret)
-+		pr_err("%s: cannot register restart handler, %d\n",
-+		       __func__, ret);
-+}
-+
- static void __init rk3288_clk_init(struct device_node *np)
- {
- 	void __iomem *reg_base;
-@@ -910,6 +939,8 @@ static void __init rk3288_clk_init(struct device_node *np)
- 	rockchip_register_softrst(np, 12, reg_base + RK3288_SOFTRST_CON(0),
- 				  ROCKCHIP_SOFTRST_HIWORD_MASK);
- 
-+	rk3288_register_restart_notifier(reg_base + RK3288_MODE_CON);
-+
- 	rockchip_register_restart_notifier(RK3288_GLB_SRST_FST);
- 	rk3288_clk_sleep_init(reg_base);
- }
--- 
-2.6.3
+> 
+> ---
+> v3: Modified subject and changelog comments
+> ---
+> ---
+>  drivers/clk/samsung/clk-s3c2410-dclk.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
+> index e9eb935..ec6fb14 100644
+> --- a/drivers/clk/samsung/clk-s3c2410-dclk.c
+> +++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
+> @@ -77,12 +77,11 @@ static u8 s3c24xx_clkout_get_parent(struct clk_hw *hw)
+>  static int s3c24xx_clkout_set_parent(struct clk_hw *hw, u8 index)
+>  {
+>  	struct s3c24xx_clkout *clkout = to_s3c24xx_clkout(hw);
+> -	int ret = 0;
+>  
+>  	s3c2410_modify_misccr((clkout->mask << clkout->shift),
+>  			      (index << clkout->shift));
+>  
+> -	return ret;
+> +	return 0;
+>  }
+>  
+>  static const struct clk_ops s3c24xx_clkout_ops = {
+> 
