@@ -1,63 +1,69 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 05/16] clk: change sizeof(struct clk *) to sizeof(*core->parents)
-Date: Mon, 30 Nov 2015 16:34:42 +0900
-Message-Id: <1448868893-4575-6-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1448868893-4575-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1448868893-4575-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <mkarthi3@visteon.com>
+From: "Mutharaju, Prasanna (P.)" <mkarthi3@visteon.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+CC: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org"
+	<linux-samsung-soc@vger.kernel.org>
+Subject: Re: [PATCH v2] clk: s3c2410: removed unneeded variable in
+ s3c24xx_clkout_set_parent
+Date: Mon, 30 Nov 2015 08:05:18 +0000
+Message-ID: <20151130080514.GA27761@jci-VirtualBox>
+References: <20151130072852.GA25202@jci-VirtualBox>
+ <565BFB57.2000701@samsung.com>
+In-Reply-To: <565BFB57.2000701@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Now, the clock parent is not "struct clk *", but "struct clk_core *".
-Of course, the size of a pointer is always same, but strictly speaking,
-sizeof(struct clk *) should be sizeof(struct clk_core *) here.
+On Mon, Nov 30, 2015 at 04:31:35PM +0900, Krzysztof Kozlowski wrote:
+> On 30.11.2015 16:28, Mutharaju, Prasanna (P.) wrote:
+> > From: Prasanna Karthik <mkarthi3@visteon.com>
+> >=20
+> > Remove unneeded variable used to store return value.
+> > V2: Modified subject =20
+>=20
+> Changelog (v2) should go after '---' separator so it won't get included
+> in the commit message.
+>=20
 
-This mismatch happened when we split the structure into struct clk
-and struct clk_core.  For the potential possibility of future renaming,
-sizeof(*core->parents) would be better.
+Done in v3.=20
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+> Now I see that you Signed-off-by is okay - same email address... I got
+> confused by the difference in name.
 
- drivers/clk/clk.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Yeah, my gitconfig and outlook account differ little.=20
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 66c6f34..0f80c69 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1069,7 +1069,7 @@ static int clk_fetch_parent_index(struct clk_core *core,
- 
- 	if (!core->parents) {
- 		core->parents = kcalloc(core->num_parents,
--					sizeof(struct clk *), GFP_KERNEL);
-+					sizeof(*core->parents), GFP_KERNEL);
- 		if (!core->parents)
- 			return -ENOMEM;
- 	}
-@@ -1702,7 +1702,7 @@ static struct clk_core *__clk_init_parent(struct clk_core *core)
- 
- 	if (!core->parents)
- 		core->parents =
--			kcalloc(core->num_parents, sizeof(struct clk *),
-+			kcalloc(core->num_parents, sizeof(*core->parents),
- 					GFP_KERNEL);
- 
- 	ret = clk_core_get_parent_by_index(core, index);
-@@ -2350,8 +2350,8 @@ static int __clk_core_init(struct clk_core *core)
- 	 * necessary.
- 	 */
- 	if (core->num_parents > 1) {
--		core->parents = kcalloc(core->num_parents, sizeof(struct clk *),
--					GFP_KERNEL);
-+		core->parents = kcalloc(core->num_parents,
-+					sizeof(*core->parents), GFP_KERNEL);
- 		/*
- 		 * clk_core_lookup returns NULL for parents that have not been
- 		 * clk_init'd; thus any access to clk->parents[] must check
--- 
-1.9.1
+> Best regards,
+> Krzysztof
+> >=20
+> > Signed-off-by: Prasanna Karthik <mkarthi3@visteon.com>
+> > ---
+> >  drivers/clk/samsung/clk-s3c2410-dclk.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> >=20
+> > diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsu=
+ng/clk-s3c2410-dclk.c
+> > index e9eb935..ec6fb14 100644
+> > --- a/drivers/clk/samsung/clk-s3c2410-dclk.c
+> > +++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
+> > @@ -77,12 +77,11 @@ static u8 s3c24xx_clkout_get_parent(struct clk_hw *=
+hw)
+> >  static int s3c24xx_clkout_set_parent(struct clk_hw *hw, u8 index)
+> >  {
+> >  	struct s3c24xx_clkout *clkout =3D to_s3c24xx_clkout(hw);
+> > -	int ret =3D 0;
+> > =20
+> >  	s3c2410_modify_misccr((clkout->mask << clkout->shift),
+> >  			      (index << clkout->shift));
+> > =20
+> > -	return ret;
+> > +	return 0;
+> >  }
+> > =20
+> >  static const struct clk_ops s3c24xx_clkout_ops =3D {
+> >=20
+> =
