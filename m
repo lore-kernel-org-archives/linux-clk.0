@@ -1,178 +1,47 @@
-Return-Path: <plaes@plaes.org>
-Message-ID: <1448274489.27496.1.camel@plaes.org>
-Subject: Re: [linux-sunxi] [PATCH v2 2/5] clk: sunxi: Add driver for the H3
- THS clock
-From: Priit Laes <plaes@plaes.org>
-To: atx@atx.name, linux-sunxi@googlegroups.com
-Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, gpatchesrdh@mveas.com, mturquette@linaro.org,
-	hdegoede@redhat.com, sboyd@codeaurora.org, mturquette@baylibre.com,
-	emilio@elopez.com.ar, linux@arm.linux.org.uk, edubezval@gmail.com,
-	rui.zhang@intel.com, wens@csie.org, maxime.ripard@free-electrons.com,
-	galak@codeaurora.org, ijc+devicetree@hellion.org.uk, mark.rutland@arm.com,
-	pawel.moll@arm.com, robh+dt@kernel.org
-Date: Mon, 23 Nov 2015 12:28:09 +0200
-In-Reply-To: <077fddc9c8d41d4cf55b1dd1c7180c4adee0fce4.1448263428.git.atx@atx.name>
-References: <cover.1448263428.git.atx@atx.name>
-	 <077fddc9c8d41d4cf55b1dd1c7180c4adee0fce4.1448263428.git.atx@atx.name>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <mkarthi3@visteon.com>
+From: "Mutharaju, Prasanna (P.)" <mkarthi3@visteon.com>
+To: =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+CC: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3] clk: s3c2410: removed unneeded variable in
+ s3c24xx_clkout_set_parent
+Date: Mon, 30 Nov 2015 09:55:27 +0000
+Message-ID: <20151130095403.GA28879@jci-VirtualBox>
+References: <20151130075219.GA27737@jci-VirtualBox>
+ <20151130081543.GI10431@pengutronix.de>
+In-Reply-To: <20151130081543.GI10431@pengutronix.de>
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2015-11-23 at 09:02 +0100, Josef Gajdusek wrote:
-> This patch adds a driver for the THS clock which is present on the
-> Allwinner H3.
-> 
-> Signed-off-by: Josef Gajdusek <atx@atx.name>
-> ---
->  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
->  drivers/clk/sunxi/Makefile                        |  1 +
->  drivers/clk/sunxi/clk-h3-ths.c                    | 98
-> +++++++++++++++++++++++
->  3 files changed, 100 insertions(+)
->  create mode 100644 drivers/clk/sunxi/clk-h3-ths.c
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt
-> b/Documentation/devicetree/bindings/clock/sunxi.txt
-> index 23e7bce..6d63b35 100644
-> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
-> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-> @@ -73,6 +73,7 @@ Required properties:
->  	"allwinner,sun8i-h3-usb-clk" - for usb gates + resets on H3
->  	"allwinner,sun9i-a80-usb-mod-clk" - for usb gates + resets
-> on A80
->  	"allwinner,sun9i-a80-usb-phy-clk" - for usb phy gates +
-> resets on A80
-> +	"allwinner,sun8i-h3-ths-clk" - for THS on H3
->  
->  Required properties for all clocks:
->  - reg : shall be the control register address for the clock.
-> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-> index f520af6..1bf8e1c 100644
-> --- a/drivers/clk/sunxi/Makefile
-> +++ b/drivers/clk/sunxi/Makefile
-> @@ -8,6 +8,7 @@ obj-y += clk-a10-hosc.o
->  obj-y += clk-a10-mod1.o
->  obj-y += clk-a10-pll2.o
->  obj-y += clk-a20-gmac.o
-> +obj-y += clk-h3-ths.o
->  obj-y += clk-mod0.o
->  obj-y += clk-simple-gates.o
->  obj-y += clk-sun8i-bus-gates.o
-> diff --git a/drivers/clk/sunxi/clk-h3-ths.c b/drivers/clk/sunxi/clk-
-> h3-ths.c
-> new file mode 100644
-> index 0000000..663afc0
-> --- /dev/null
-> +++ b/drivers/clk/sunxi/clk-h3-ths.c
-> @@ -0,0 +1,98 @@
-> +/*
-> + * Sunxi THS clock driver
+On Mon, Nov 30, 2015 at 09:15:43AM +0100, Uwe Kleine-K=F6nig wrote:
+> On Mon, Nov 30, 2015 at 07:52:22AM +0000, Mutharaju, Prasanna (P.) wrote:
+> > From: Prasanna Karthik <mkarthi3@visteon.com>
+> >=20
+> > Remove unneeded variable used to store return value.
+> > ---
+> > v3: Modified subject and changelog comments
+> > ---
+> >=20
+> > Signed-off-by: Prasanna Karthik <mkarthi3@visteon.com>
+>=20
+> Everything after the first triple-dash doesn't make it into the git
+> history, so you are expected to write the S-o-b line above the list of
+> things changed since a previous submission.
 
-This should be "Allwinner H3 THS clock driver"
-
-> + *
-> + * Copyright (C) 2015 Josef Gajdusek
-> + *
-> + * This software is licensed under the terms of the GNU General
-> Public
-> + * License version 2, as published by the Free Software Foundation,
-> and
-> + * may be copied, distributed, and modified under those terms.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-> + * GNU General Public License for more details.
-> + *
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/of_address.h>
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
-> +
-> +#define SUN8I_H3_THS_CLK_ENABLE				31
-> +#define SUN8I_H3_THS_CLK_DIVIDER_SHIFT		0
-> +#define SUN8I_H3_THS_CLK_DIVIDER_WIDTH		2
-> +
-> +static DEFINE_SPINLOCK(sun8i_h3_ths_clk_lock);
-> +
-> +static const struct clk_div_table sun8i_h3_ths_clk_table[]
-> __initconst = {
-> +	{ .val = 0, .div = 1 },
-> +	{ .val = 1, .div = 2 },
-> +	{ .val = 2, .div = 4 },
-> +	{ .val = 3, .div = 6 },
-> +	{ } /* sentinel */
-> +};
-> +
-> +static void __init sun8i_h3_ths_clk_setup(struct device_node *node)
-> +{
-> +	struct clk *clk;
-> +	struct clk_gate *gate;
-> +	struct clk_divider *div;
-> +	const char *parent;
-> +	const char *clk_name = node->name;
-> +	void __iomem *reg;
-> +	int err;
-> +
-> +	reg = of_io_request_and_map(node, 0,
-> of_node_full_name(node));
-> +
-> +	if (IS_ERR(reg))
-> +		return;
-> +
-> +	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-> +	if (!gate)
-> +		goto err_unmap;
-> +
-> +	div = kzalloc(sizeof(*gate), GFP_KERNEL);
-> +	if (!div)
-> +		goto err_gate_free;
-> +
-> +	of_property_read_string(node, "clock-output-names",
-> &clk_name);
-> +	parent = of_clk_get_parent_name(node, 0);
-> +
-> +	gate->reg = reg;
-> +	gate->bit_idx = SUN8I_H3_THS_CLK_ENABLE;
-> +	gate->lock = &sun8i_h3_ths_clk_lock;
-> +
-> +	div->reg = reg;
-> +	div->shift = SUN8I_H3_THS_CLK_DIVIDER_SHIFT;
-> +	div->width = SUN8I_H3_THS_CLK_DIVIDER_WIDTH;
-> +	div->table = sun8i_h3_ths_clk_table;
-> +	div->lock = &sun8i_h3_ths_clk_lock;
-> +
-> +	clk = clk_register_composite(NULL, clk_name, &parent, 1,
-> +				     NULL, NULL,
-> +				     &div->hw, &clk_divider_ops,
-> +				     &gate->hw, &clk_gate_ops,
-> +				     CLK_SET_RATE_PARENT);
-> +
-> +	if (IS_ERR(clk))
-> +		goto err_div_free;
-> +
-> +	err = of_clk_add_provider(node, of_clk_src_simple_get, clk);
-> +	if (err)
-> +		goto err_unregister_clk;
-> +
-> +	return;
-> +
-> +err_unregister_clk:
-> +	clk_unregister(clk);
-> +err_gate_free:
-> +	kfree(gate);
-> +err_div_free:
-> +	kfree(div);
-> +err_unmap:
-> +	iounmap(reg);
-> +}
-> +
-> +CLK_OF_DECLARE(sun8i_h3_ths_clk, "allwinner,sun8i-h3-ths-clk",
-> +	       sun8i_h3_ths_clk_setup);
-> -- 
-> 2.4.10
-> 
+Thanks, I resent the patch again with S-o-b before changelog.=20
+>=20
+> Other than that the patch looks fine.
+>=20
+> Uwe
+>=20
+> --=20
+> Pengutronix e.K.                           | Uwe Kleine-K=F6nig          =
+  |
+> Industrial Linux Solutions                 | http://www.pengutronix.de/  =
+|=
