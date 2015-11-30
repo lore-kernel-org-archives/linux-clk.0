@@ -1,80 +1,64 @@
-Return-Path: <wens@csie.org>
+Return-Path: <robh@kernel.org>
+Date: Mon, 30 Nov 2015 11:14:06 -0600
+From: Rob Herring <robh@kernel.org>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v4 2/5] clk: sunxi: Add sun9i A80 apbs gates support
+Message-ID: <20151130171406.GA10111@rob-hp-laptop>
+References: <1448766190-11345-1-git-send-email-wens@csie.org>
+ <1448766190-11345-3-git-send-email-wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <20151124063808.GB32142@lukather>
-References: <cover.1448263428.git.atx@atx.name> <b897b1c8741c8a871163b84d01b480f99329536d.1448263428.git.atx@atx.name>
- <20151123124356.GW32142@lukather> <CAGb2v65qfaTdQqXHD=-FHz1M1sHCTro97QETZUH=vA2BbRS+7A@mail.gmail.com>
- <20151124063808.GB32142@lukather>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 24 Nov 2015 14:42:26 +0800
-Message-ID: <CAGb2v67aS+2vM8CLB=4ynFOvb14t+kiWjJvAa60U2nq22S8ZEw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] ARM: dts: sun8i: Add SID node
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Josef Gajdusek <atx@atx.name>,
-	linux-sunxi <linux-sunxi@googlegroups.com>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-pm@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>, gpatchesrdh@mveas.com,
-	Mike Turquette <mturquette@linaro.org>, Hans De Goede <hdegoede@redhat.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
-	Emilio Lopez <emilio@elopez.com.ar>, Russell King - ARM Linux <linux@arm.linux.org.uk>,
-	Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>,
-	Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1448766190-11345-3-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Nov 24, 2015 at 2:38 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> On Tue, Nov 24, 2015 at 11:13:13AM +0800, Chen-Yu Tsai wrote:
->> Hi,
->>
->> On Mon, Nov 23, 2015 at 8:43 PM, Maxime Ripard
->> <maxime.ripard@free-electrons.com> wrote:
->> > Hi,
->> >
->> > On Mon, Nov 23, 2015 at 09:02:48AM +0100, Josef Gajdusek wrote:
->> >> Add a node describing the Security ID memory to the
->> >> Allwinner H3 .dtsi file.
->> >>
->> >> Signed-off-by: Josef Gajdusek <atx@atx.name>
->> >> ---
->> >>  arch/arm/boot/dts/sun8i-h3.dtsi | 7 +++++++
->> >>  1 file changed, 7 insertions(+)
->> >>
->> >> diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
->> >> index 0faa38a..58de718 100644
->> >> --- a/arch/arm/boot/dts/sun8i-h3.dtsi
->> >> +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
->> >> @@ -359,6 +359,13 @@
->> >>                       #size-cells = <0>;
->> >>               };
->> >>
->> >> +             sid: eeprom@01c14000 {
->> >> +                     compatible = "allwinner,sun4i-a10-sid";
->> >> +                     reg = <0x01c14000 0x400>;
->> >
->> > The datasheet says it's 256 bytes wide, while the size here is of 1kB,
->> > is it intentional?
->>
->> My H3 datasheet (v1.1) says its 1 kB wide.
->
-> Is it? in the Security ID section, it is said to be 2kb == 256B wide.
+On Sun, Nov 29, 2015 at 11:03:07AM +0800, Chen-Yu Tsai wrote:
+> This patch adds support for the PRCM apbs clock gates found on the
+> Allwinner A80 SoC.
+> 
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-Right. I was looking at the memory map. Maybe it's sparsely mapped?
-I guess we'll know soon.
+Acked-by: Rob Herring <robh@kernel.org>
 
-ChenYu
-
->> It'd be nice if Allwinner actually listed the "usable" E-fuse
->> offsets and widths, instead of having us dig through the SDK code.
->
-> Yep.
->
-> Thanks!
-> Maxime
->
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux, Kernel and Android engineering
-> http://free-electrons.com
+> ---
+>  Documentation/devicetree/bindings/clock/sunxi.txt | 1 +
+>  drivers/clk/sunxi/clk-simple-gates.c              | 2 ++
+>  2 files changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
+> index a94bb56a0e9e..b6859ed6913f 100644
+> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
+> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+> @@ -55,6 +55,7 @@ Required properties:
+>  	"allwinner,sun9i-a80-apb1-gates-clk" - for the APB1 gates on A80
+>  	"allwinner,sun6i-a31-apb2-gates-clk" - for the APB2 gates on A31
+>  	"allwinner,sun8i-a23-apb2-gates-clk" - for the APB2 gates on A23
+> +	"allwinner,sun9i-a80-apbs-gates-clk" - for the APBS gates on A80
+>  	"allwinner,sun5i-a13-mbus-clk" - for the MBUS clock on A13
+>  	"allwinner,sun4i-a10-mmc-clk" - for the MMC clock
+>  	"allwinner,sun9i-a80-mmc-clk" - for mmc module clocks on A80
+> diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/clk-simple-gates.c
+> index 0214c6548afd..c8acc0612c15 100644
+> --- a/drivers/clk/sunxi/clk-simple-gates.c
+> +++ b/drivers/clk/sunxi/clk-simple-gates.c
+> @@ -140,6 +140,8 @@ CLK_OF_DECLARE(sun9i_a80_apb0, "allwinner,sun9i-a80-apb0-gates-clk",
+>  	       sunxi_simple_gates_init);
+>  CLK_OF_DECLARE(sun9i_a80_apb1, "allwinner,sun9i-a80-apb1-gates-clk",
+>  	       sunxi_simple_gates_init);
+> +CLK_OF_DECLARE(sun9i_a80_apbs, "allwinner,sun9i-a80-apbs-gates-clk",
+> +	       sunxi_simple_gates_init);
+>  
+>  static const int sun4i_a10_ahb_critical_clocks[] __initconst = {
+>  	14,	/* ahb_sdram */
+> -- 
+> 2.6.2
+> 
