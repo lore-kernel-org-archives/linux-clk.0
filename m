@@ -1,46 +1,55 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 20 Nov 2015 13:14:52 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, Simon Arlott <simon@fire.lp0.eu>,
-	Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] clk: qcom: Specify LE device endianness
-Message-ID: <20151120211452.GB9555@codeaurora.org>
-References: <1447108254-19864-1-git-send-email-sboyd@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1447108254-19864-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 15/16] clk: simplify clk_fetch_parent_index() function
+Date: Mon, 30 Nov 2015 16:34:52 +0900
+Message-Id: <1448868893-4575-16-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1448868893-4575-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1448868893-4575-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/09, Stephen Boyd wrote:
-> All these clock controllers are little endian devices, but so far
-> we've been relying on the regmap mmio bus handling this for us
-> without explicitly stating that fact. After commit 4a98da2164cf
-> (regmap-mmio: Use native endianness for read/write, 2015-10-29),
-> the regmap mmio bus will read/write with the __raw_*() IO
-> accessors, instead of using the readl/writel() APIs that do
-> proper byte swapping for little endian devices.
-> 
-> So if we're running on a big endian processor and haven't
-> specified the endianness explicitly in the regmap config or in
-> DT, we're going to switch from doing little endian byte swapping
-> to big endian accesses without byte swapping, leading to some
-> confusing results. On my apq8074 dragonboard, this causes the
-> device to fail to boot as we access the clock controller with
-> big endian IO accesses even though the device is little endian.
-> 
-> Specify the endianness explicitly so that the regmap core
-> properly byte swaps the accesses for us.
-> 
-> Reported-by: Kevin Hilman <khilman@linaro.org>
-> Cc: Simon Arlott <simon@fire.lp0.eu>
-> Cc: Mark Brown <broonie@kernel.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
+The clk_core_get_parent_by_index can be used as a helper function
+to simplify the implementation of clk_fetch_parent_index().
 
-Applied to clk-next
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
+ drivers/clk/clk.c | 18 ++----------------
+ 1 file changed, 2 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 50b9b3d..8a6a33b 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1069,23 +1069,9 @@ static int clk_fetch_parent_index(struct clk_core *core,
+ 	if (parent)
+ 		return -EINVAL;
+ 
+-	/*
+-	 * find index of new parent clock using cached parent ptrs,
+-	 * or if not yet cached, use string name comparison and cache
+-	 * them now to avoid future calls to clk_core_lookup.
+-	 */
+-	for (i = 0; i < core->num_parents; i++) {
+-		if (core->parents[i] == parent)
+-			return i;
+-
+-		if (core->parents[i])
+-			continue;
+-
+-		if (!strcmp(core->parent_names[i], parent->name)) {
+-			core->parents[i] = clk_core_lookup(parent->name);
++	for (i = 0; i < core->num_parents; i++)
++		if (clk_core_get_parent_by_index(core, i) == parent)
+ 			return i;
+-		}
+-	}
+ 
+ 	return -EINVAL;
+ }
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
