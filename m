@@ -1,57 +1,68 @@
-Return-Path: <vz@mleia.com>
-Message-ID: <564F6172.3090509@mleia.com>
-Date: Fri, 20 Nov 2015 20:07:46 +0200
-From: Vladimir Zapolskiy <vz@mleia.com>
-MIME-Version: 1.0
-To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-CC: Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Roland Stigge <stigge@antcom.de>, devicetree@vger.kernel.org,
- Russell King <linux@arm.linux.org.uk>,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH 09/11] clk: lpc32xx: add common clock framework driver
-References: <1447981511-29653-1-git-send-email-vz@mleia.com> <1447981511-29653-10-git-send-email-vz@mleia.com> <3762298.NKYXldtldq@wuerfel>
-In-Reply-To: <3762298.NKYXldtldq@wuerfel>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 02/16] clk: change the argument of __clk_init() into pointer to clk_core
+Date: Mon, 30 Nov 2015 16:34:39 +0900
+Message-Id: <1448868893-4575-3-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1448868893-4575-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1448868893-4575-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 20.11.2015 16:04, Arnd Bergmann wrote:
-> On Friday 20 November 2015 03:05:09 Vladimir Zapolskiy wrote:
->> +
->> +struct clk_proto_t {
->> +       const char *name;
->> +       const u8 parents[LPC32XX_CLK_PARENTS_MAX];
->> +       u8 num_parents;
->> +       unsigned long flags;
->> +};
->> +
->> +#define CLK_PREFIX(LITERAL)            LPC32XX_CLK_ ## LITERAL
->> +#define NUMARGS(...)   (sizeof((int[]){__VA_ARGS__})/sizeof(int))
->> +
->> +#define LPC32XX_CLK_DEFINE(_idx, _name, _flags, ...)           \
->> +       [CLK_PREFIX(_idx)] = {                                  \
->> +               .name = #_name,                                 \
->> +               .flags = _flags,                                \
->> +               .parents = { __VA_ARGS__ },                     \
->> +               .num_parents = NUMARGS(__VA_ARGS__),            \
->> +        }
->> +
-> 
-> Try to not outsmart yourself with the macros. It's better to avoid
-> string concatenation so it's possible to grep for uses of some
-> constant.
-> 
-> I would probably not use a macro at all here and just open-code the
-> entire table. If you ensure that '0' is not a valid parent, then
-> you can leave out the .num_parents field and just look for the
-> zero-termination.
+The argument clk_user is used only for the clk_user->core.  The rest
+of this function only takes care of clk_core.
 
-Macros are here for simplicity, code size reduction and to avoid some
-stupid mistakes like different number of .parents and .num_parents.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-I believe macro unwrapping in this code will add another 1000 LoC and
-will result in quite unreadable and less maintainable code.
+ drivers/clk/clk.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
---
-Best wishes,
-Vladimir
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 65530e9..8c8ba91 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2285,25 +2285,22 @@ static inline void clk_debug_unregister(struct clk_core *core)
+ #endif
+ 
+ /**
+- * __clk_init - initialize the data structures in a struct clk
+- * @clk:	clk being initialized
++ * __clk_init - initialize the data structures in a struct clk_core
++ * @core:	clk_core being initialized
+  *
+  * Initializes the lists in struct clk_core, queries the hardware for the
+  * parent and rate and sets them both.
+  */
+-static int __clk_init(struct clk *clk_user)
++static int __clk_init(struct clk_core *core)
+ {
+ 	int i, ret = 0;
+ 	struct clk_core *orphan;
+ 	struct hlist_node *tmp2;
+-	struct clk_core *core;
+ 	unsigned long rate;
+ 
+-	if (!clk_user)
++	if (!core)
+ 		return -EINVAL;
+ 
+-	core = clk_user->core;
+-
+ 	clk_prepare_lock();
+ 
+ 	/* check to see if a clock with this name is already registered */
+@@ -2574,7 +2571,7 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+ 		goto fail_parent_names_copy;
+ 	}
+ 
+-	ret = __clk_init(hw->clk);
++	ret = __clk_init(core);
+ 	if (!ret)
+ 		return hw->clk;
+ 
+-- 
+1.9.1
