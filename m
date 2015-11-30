@@ -1,83 +1,101 @@
-Return-Path: <emil.l.velikov@gmail.com>
+Return-Path: <simon@fire.lp0.eu>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kevin Cernekee <cernekee@gmail.com>,
+ Florian Fainelli <f.fainelli@gmail.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+From: Simon Arlott <simon@fire.lp0.eu>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-clk@vger.kernel.org, linux-mips@linux-mips.org,
+ Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ Kumar Gala <galak@codeaurora.org>
+Subject: [PATCH 1/2] clk: Add brcm,bcm63xx-gate-clk device tree binding
+Message-ID: <565CB727.7030209@simon.arlott.org.uk>
+Date: Mon, 30 Nov 2015 20:52:55 +0000
 MIME-Version: 1.0
-In-Reply-To: <1447904131-29328-1-git-send-email-zyw@rock-chips.com>
-References: <1447904131-29328-1-git-send-email-zyw@rock-chips.com>
-Date: Thu, 19 Nov 2015 14:41:41 +0000
-Message-ID: <CACvgo53YOMpbz1TdVmRBPPz4dv=X+8FoEo0ZcfN5DwbDYi2ZzQ@mail.gmail.com>
-Subject: Re: [PATCH v3 00/12] Add mipi dsi support for rk3288
-From: Emil Velikov <emil.l.velikov@gmail.com>
-To: Chris Zhong <zyw@rock-chips.com>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	linux-rockchip <linux-rockchip@lists.infradead.org>, Mark Yao <mark.yao@rock-chips.com>,
-	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Kever Yang <kever.yang@rock-chips.com>, ML dri-devel <dri-devel@lists.freedesktop.org>,
-	"Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	Vincent Palatin <vpalatin@chromium.org>, Jeff Chen <cym@rock-chips.com>,
-	Ajay Kumar <ajaykumar.rs@samsung.com>, Andrew Bresticker <abrestic@chromium.org>,
-	Russell King <rmk+kernel@arm.linux.org.uk>, Thierry Reding <treding@nvidia.com>,
-	devicetree@vger.kernel.org, Alexandru M Stan <amstan@chromium.org>,
-	Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Rob Herring <robh+dt@kernel.org>, Roger Chen <roger.chen@rock-chips.com>,
-	Russell King <linux@arm.linux.org.uk>, Sonny Rao <sonnyrao@chromium.org>,
-	LAKML <linux-arm-kernel@lists.infradead.org>, Huang Lin <hl@rock-chips.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Doug Anderson <dianders@chromium.org>,
-	Kumar Gala <galak@codeaurora.org>, Andy Yan <andy.yan@rock-chips.com>,
-	"David S. Miller" <davem@davemloft.net>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 19 November 2015 at 03:35, Chris Zhong <zyw@rock-chips.com> wrote:
-> The rk3288 MIPI DSI is a Synopsys DesignWare MIPI DSI host controller
-> IP. This series adds support for a Synopsys DesignWare MIPI DSI host
-> controller DRM bridge driver and a rockchip MIPI DSI specific DRM
-> driver.
->
-> This series also includes a DRM panel driver for BOE TV080WUM-NL0 panel.
-> This panel only use the MIPI DSI video mode.
->
-> The MIPI DSI feature is tested on rk3288 evb board, backport them to
-> chrome os kernel v3.14, and it can display normally.
->
-> This patchset is base on the patchset from Ying.liu@freescale.com.
-> <http://www.spinics.net/lists/dri-devel/msg77181.html>
->
->
-> Changes in v3:
-> move the dw_mipi_dsi.txt to Documentation/devicetree/bindings/display/bridge
-> move dw_mipi_dsi_rockchip.txt to bindings/display/rockchip/
-> move boe,tv080wum-nl0.txt to bindings/display/panel/
->
-> Changes in v2:
-> add the mipi clk id in a single patch
-> As Thierry.Reding comment, add a documentation for this panel.
->
-> Chris Zhong (10):
->   clk: rockchip: add id for mipidsi sclk on rk3288
->   clk: rockchip: add mipidsi clocks on rk3288
->   drm/rockchip: return a true clock rate to adjusted_mode
->   drm/bridge: Add Synopsys DesignWare MIPI DSI host controller driver
-Did you actually rewrite the patch from Liu Ying ?
-Out of curiosity what was the obstacle of this work getting merged ?
+Add device tree binding for the BCM63xx's gated clocks.
 
->   drm: rockchip: Support Synopsys DesignWare MIPI DSI host controller
->   Documentation: dt-bindings: Add bindings for rk3288 DW MIPI DSI driver
->   ARM: dts: rockchip: add rk3288 mipi_dsi nodes
->   drm/panel: simple: Add support for BOE TV080WUM-NL0
->   drm/panel: simple: Add boe,tv080wum-nl0 simple panel device tree
->     binding
-As the DT people will tell you - there is no BOE vendor in
-bindings/vendor-prefixes.txt.
+The BCM63xx contains clocks gated with a register. Clocks are indexed
+by bits in the register and are active high. Clock gate bits are
+interleaved with other status bits and configurable clocks in the same
+register.
 
->   ARM: dts: rockchip: add support mipi panel tv080wum-nl0 for rk3288-evb
->
-> Liu Ying (2):
->   drm/dsi: Add a helper to get bits per pixel of MIPI DSI pixel format
->   Documentation: dt-bindings: Add bindings for Synopsys DW MIPI DSI DRM
->     bridge driver
->
->From the above 12 patches only ~6 reached this mailing list is that
-intentional ? Previously I've seen people CC dri-devel for their
-panel/bridge DT patches.
+Signed-off-by: Simon Arlott <simon@fire.lp0.eu>
+---
+ .../bindings/clock/brcm,bcm63xx-gate-clk.txt       | 58 ++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm63xx-gate-clk.txt
 
-Regards,
-Emil
+diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm63xx-gate-clk.txt b/Documentation/devicetree/bindings/clock/brcm,bcm63xx-gate-clk.txt
+new file mode 100644
+index 0000000..3f4ead1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/brcm,bcm63xx-gate-clk.txt
+@@ -0,0 +1,58 @@
++Broadcom BCM63xx clocks
++
++This binding uses the common clock binding:
++	Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++The BCM63xx contains clocks gated with a register. Clocks are indexed
++by bits in the register and are active high. Clock gate bits are
++interleaved with other status bits and configurable clocks in the same
++register.
++
++Required properties:
++- compatible:	Should be "brcm,bcm<soc>-gate-clk", "brcm,bcm63xx-gate-clk"
++- #clock-cells:	Should be <1>.
++- regmap:	The register map phandle
++- offset:	Offset in the register map for the reboot register (in bytes)
++- clocks:	The external oscillator clock phandle
++
++Example:
++
++periph_clk: periph_clk {
++	compatible = "brcm,bcm63168-gate-clk", "brcm,bcm63xx-gate-clk";
++	regmap = <&periph_cntl>;
++	offset = <0x4>;
++
++	#clock-cells = <1>;
++	clock-indices =
++		<1>,          <2>,        <3>,       <4>,     <5>,
++		<6>,          <7>,        <8>,       <9>,     <10>,
++		<11>,         <12>,       <13>,      <14>,    <15>,
++		<16>,         <17>,       <18>,      <19>,    <20>,
++		<27>,         <31>;
++	clock-output-names =
++		"vdsl_qproc", "vdsl_afe", "vdsl",    "mips",  "wlan_ocp",
++		"dect",       "fap0",     "fap1",    "sar",   "robosw",
++		"pcm",        "usbd",     "usbh",    "ipsec", "spi",
++		"hsspi",      "pcie",     "phymips", "gmac",  "nand",
++		"tbus",       "robosw250";
++};
++
++timer_clk: timer_clk {
++	compatible = "brcm,bcm63168-gate-clk", "brcm,bcm63xx-gate-clk";
++	regmap = <&timer_cntl>;
++	offset = <0x4>;
++
++	#clock-cells = <1>;
++	clock-indices = <17>, <18>;
++	clock-output-names = "uto_extin", "usb_ref";
++};
++
++ehci0: usb@10002500 {
++	compatible = "brcm,bcm63168-ehci", "brcm,bcm63xx-ehci", "generic-ehci";
++	reg = <0x10002500 0x100>;
++	big-endian;
++	interrupt-parent = <&periph_intc>;
++	interrupts = <10>;
++	clocks = <&periph_clk 13>, <&timer_clk 18>;
++	phys = <&usbh>;
++};
+-- 
+2.1.4
+
+-- 
+Simon Arlott
