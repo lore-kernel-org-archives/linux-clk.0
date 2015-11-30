@@ -1,36 +1,82 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 20 Nov 2015 09:15:27 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: Fix bypassing of PLLs
-Message-ID: <20151120171527.GL32672@codeaurora.org>
-References: <1448032264-29622-1-git-send-email-jonathanh@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1448032264-29622-1-git-send-email-jonathanh@nvidia.com>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 11/16] clk: simplify __clk_init_parent()
+Date: Mon, 30 Nov 2015 16:34:48 +0900
+Message-Id: <1448868893-4575-12-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1448868893-4575-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1448868893-4575-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/20, Jon Hunter wrote:
-> The _clk_disable_pll() function will attempt to place a PLL into bypass
-> if the TEGRA_PLL_BYPASS is specified for the PLL and then disable the PLL
-> by clearing the enable bit. To place the PLL into bypass, the bypass bit
-> needs to be set and not cleared. Fix this by setting the bypass bit and
-> not clearing it.
-> 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
+The translation from the index into clk_core is done by
+clk_core_get_parent_by_index().  The if-block for num_parents == 1
+case is duplicating the code in the clk_core_get_parent_by_index().
 
-Fixes tag? It looks like this has been wrong from the beginning
-of time.
+Drop the "if (num_parents == 1)" from the special case.  Instead,
+set the index to zero if .get_parent() is missing.
 
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ drivers/clk/clk.c | 38 ++++----------------------------------
+ 1 file changed, 4 insertions(+), 34 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 486f6d4..ef6fedb 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1651,44 +1651,14 @@ struct clk *clk_get_parent(struct clk *clk)
+ }
+ EXPORT_SYMBOL_GPL(clk_get_parent);
+ 
+-/*
+- * .get_parent is mandatory for clocks with multiple possible parents.  It is
+- * optional for single-parent clocks.  Always call .get_parent if it is
+- * available and WARN if it is missing for multi-parent clocks.
+- *
+- * For single-parent clocks without .get_parent, first check to see if the
+- * .parents array exists, and if so use it to avoid an expensive tree
+- * traversal.  If .parents does not exist then walk the tree.
+- */
+ static struct clk_core *__clk_init_parent(struct clk_core *core)
+ {
+-	struct clk_core *ret = NULL;
+-	u8 index;
+-
+-	/* handle the trivial cases */
++	u8 index = 0;
+ 
+-	if (!core->num_parents)
+-		goto out;
+-
+-	if (core->num_parents == 1) {
+-		if (IS_ERR_OR_NULL(core->parent))
+-			core->parent = clk_core_lookup(core->parent_names[0]);
+-		ret = core->parent;
+-		goto out;
+-	}
++	if (core->ops->get_parent)
++		index = core->ops->get_parent(core->hw);
+ 
+-	/*
+-	 * Do our best to cache parent clocks in core->parents.  This prevents
+-	 * unnecessary and expensive lookups.  We don't set core->parent here;
+-	 * that is done by the calling function.
+-	 */
+-
+-	index = core->ops->get_parent(core->hw);
+-
+-	ret = clk_core_get_parent_by_index(core, index);
+-
+-out:
+-	return ret;
++	return clk_core_get_parent_by_index(core, index);
+ }
+ 
+ static void clk_core_reparent(struct clk_core *core,
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
