@@ -1,90 +1,59 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 20 Nov 2015 09:45:09 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [PATCH 2/3] clk: let of_clk_get_parent_name() fail for invalid
- clock-indices
-Message-ID: <20151120174509.GQ32672@codeaurora.org>
-References: <1448004981-11133-1-git-send-email-yamada.masahiro@socionext.com>
- <1448004981-11133-2-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1448004981-11133-2-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1448873164-22415-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1448873164-22415-1-git-send-email-yamada.masahiro@socionext.com>
+Date: Mon, 30 Nov 2015 17:48:55 +0900
+Message-ID: <CAK7LNASwK_B7L7wpgTBEdoOOeFrHFD603q_Wfap-v+C3FWpFWg@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: let of_clk_get_parent_name() fail for invalid clock-indices
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/20, Masahiro Yamada wrote:
+2015-11-30 17:46 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
 > Currently, of_clk_get_parent_name() returns a wrong parent clock name
-> when "clock-indices" property exists and the given index is not found
-> in the property.  In this case, NULL should be returned.
-> 
+> when "clock-indices" property exists and the target index is not
+> found in the property.  In this case, NULL should be returned.
+>
 > For example,
-> 
+>
 >         oscillator {
 >                 compatible = "myclocktype";
 >                 #clock-cells = <1>;
 >                 clock-indices = <1>, <3>;
 >                 clock-output-names = "clka", "clkb";
 >         };
-> 
-> Currently, of_clk_get_parent_name(np, 0) returns "clka", but should
-> return NULL because "clock-indices" does not contain <0>.
-
-What is np pointing at? Something like:
-
-	consumer {
-		clocks = <&oscillator 0>;
-	};
-
-Which would be invalid DT because oscillator doesn't have an
-output for index 0?
-
-> 
+>
+>         consumer {
+>                 compatible = "myclockconsumer";
+>                 clocks = <&oscillator 0>, <&oscillator 1>;
+>         };
+>
+> Currently, of_clk_get_parent_name(consumer_np, 0) returns "clka"
+> (and of_clk_get_parent_name(consumer_np, 1) also returns "clka",
+> this is correct).   Because the "clock-indices" in the clock parent
+> does not contain <0>, of_clk_get_parent_name(consumer_np, 0) should
+> return NULL.
+>
 > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> @@ -3068,17 +3065,20 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
->  		return NULL;
->  
->  	index = clkspec.args_count ? clkspec.args[0] : 0;
-> -	count = 0;
->  
->  	/* if there is an indices property, use it to transfer the index
->  	 * specified into an array offset for the clock-output-names property.
->  	 */
-> -	of_property_for_each_u32(clkspec.np, "clock-indices", prop, vp, pv) {
-> -		if (index == pv) {
-> -			index = count;
-> -			break;
-> -		}
-> -		count++;
-> +	list = of_get_property(clkspec.np, "clock-indices", &len);
-> +	if (list) {
-> +		len /= sizeof(*list);
-> +		for (i = 0; i < len; i++)
-> +			if (index == be32_to_cpup(list++)) {
-> +				index = i;
-> +				break;
-> +			}
-> +		if (i == len)
-> +			return NULL;
->  	}
 
-Why can't we leave everything in place and check count == len at
-the end? i.e.
 
-	of_property_for_each_u32(clkspec.np, "clock-indices", prop, vp, pv) {
-		if (index == pv) {
-			index = count;
-			break;
-		}
-		count++;
-	}
 
-	if (count == of_property_count_u32_elems(clkspec.np, "clock-indices"))
-		return NULL
+I've sent v2 to linux-gpio@vger.kernel.org by mistake.
 
-?
-	
+My intention was to send it linux-clk@vger.kernel.org.
+
+
+Sorry, Linus Walleij.
+
+
+
+
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best Regards
+Masahiro Yamada
