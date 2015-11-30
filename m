@@ -1,44 +1,49 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 04/16] clk: remove unnecessary !core->parents conditional
-Date: Mon, 30 Nov 2015 16:34:41 +0900
-Message-Id: <1448868893-4575-5-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1448868893-4575-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1448868893-4575-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <mkarthi3@visteon.com>
+From: "Mutharaju, Prasanna (P.)" <mkarthi3@visteon.com>
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski
+	<k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org"
+	<linux-samsung-soc@vger.kernel.org>
+Subject: [PATCH v2] clk: s3c2410: removed unneeded variable in
+ s3c24xx_clkout_set_parent
+Date: Mon, 30 Nov 2015 07:28:58 +0000
+Message-ID: <20151130072852.GA25202@jci-VirtualBox>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-This if-block has been here since the introduction of the common
-clock framework.  Now no clock drivers are statically initialized.
-core->parent is always NULL at this point.  Drop the redundant
-check and the confusing comment.
+From: Prasanna Karthik <mkarthi3@visteon.com>
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Remove unneeded variable used to store return value.
+V2: Modified subject =20
+
+Signed-off-by: Prasanna Karthik <mkarthi3@visteon.com>
 ---
+ drivers/clk/samsung/clk-s3c2410-dclk.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
- drivers/clk/clk.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 36373d3..66c6f34 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2348,11 +2348,8 @@ static int __clk_core_init(struct clk_core *core)
- 	 * in to clk_init during early boot; thus any access to core->parents[]
- 	 * must always check for a NULL pointer and try to populate it if
- 	 * necessary.
--	 *
--	 * If core->parents is not NULL we skip this entire block.  This allows
--	 * for clock drivers to statically initialize core->parents.
- 	 */
--	if (core->num_parents > 1 && !core->parents) {
-+	if (core->num_parents > 1) {
- 		core->parents = kcalloc(core->num_parents, sizeof(struct clk *),
- 					GFP_KERNEL);
- 		/*
--- 
+diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/c=
+lk-s3c2410-dclk.c
+index e9eb935..ec6fb14 100644
+--- a/drivers/clk/samsung/clk-s3c2410-dclk.c
++++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
+@@ -77,12 +77,11 @@ static u8 s3c24xx_clkout_get_parent(struct clk_hw *hw)
+ static int s3c24xx_clkout_set_parent(struct clk_hw *hw, u8 index)
+ {
+ 	struct s3c24xx_clkout *clkout =3D to_s3c24xx_clkout(hw);
+-	int ret =3D 0;
+=20
+ 	s3c2410_modify_misccr((clkout->mask << clkout->shift),
+ 			      (index << clkout->shift));
+=20
+-	return ret;
++	return 0;
+ }
+=20
+ static const struct clk_ops s3c24xx_clkout_ops =3D {
+--=20
 1.9.1
