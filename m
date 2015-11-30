@@ -1,35 +1,41 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 30 Nov 2015 11:32:16 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi: pll2: Fix clock running too fast
-Message-ID: <20151130193216.GI11298@codeaurora.org>
-References: <1448897699-20475-1-git-send-email-maxime.ripard@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1448897699-20475-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: fix a typo in comment block of clk_notifier_register()
+Date: Mon, 30 Nov 2015 16:40:51 +0900
+Message-Id: <1448869251-6219-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/30, Maxime Ripard wrote:
-> @@ -191,25 +186,17 @@ err_unmap:
->  	iounmap(reg);
->  }
->  
-> -static struct sun4i_pll2_data sun4i_a10_pll2_data = {
-> -	.pre_div_flags	= CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO,
-> -};
-> -
->  static void __init sun4i_a10_pll2_setup(struct device_node *node)
->  {
-> -	sun4i_pll2_setup(node, &sun4i_a10_pll2_data);
-> +	sun4i_pll2_setup(node, &sun4i_a10_pll2_data, 0);
+The word "cases" is doubled.  Keep decent forms for the following
+lines.
 
-And it doesn't compile, because we just deleted the data that
-this is taking an address of. Hmph.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
+ drivers/clk/clk.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index efb0dfd..6d9cd05 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2806,10 +2806,9 @@ void __clk_put(struct clk *clk)
+  * re-enter into the clk framework by calling any top-level clk APIs;
+  * this will cause a nested prepare_lock mutex.
+  *
+- * In all notification cases cases (pre, post and abort rate change) the
+- * original clock rate is passed to the callback via struct
+- * clk_notifier_data.old_rate and the new frequency is passed via struct
+- * clk_notifier_data.new_rate.
++ * In all notification cases (pre, post and abort rate change) the original
++ * clock rate is passed to the callback via struct clk_notifier_data.old_rate
++ * and the new frequency is passed via struct clk_notifier_data.new_rate.
+  *
+  * clk_notifier_register() must be called from non-atomic context.
+  * Returns -EINVAL if called with null arguments, -ENOMEM upon
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
