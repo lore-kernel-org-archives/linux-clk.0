@@ -1,55 +1,45 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 15/16] clk: simplify clk_fetch_parent_index() function
-Date: Mon, 30 Nov 2015 16:34:52 +0900
-Message-Id: <1448868893-4575-16-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1448868893-4575-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1448868893-4575-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 30 Nov 2015 12:55:03 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Stefan Agner <stefan@agner.ch>
+Cc: shawnguo@kernel.org, kernel@pengutronix.de, mturquette@baylibre.com,
+	galak@codeaurora.org, ijc+devicetree@hellion.org.uk,
+	mark.rutland@arm.com, pawel.moll@arm.com, robh+dt@kernel.org,
+	Li.Xiubo@freescale.com, zidan.wang@freescale.com,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] ARM: imx: clk-vf610: fix SAI clock tree
+Message-ID: <20151130205503.GO11298@codeaurora.org>
+References: <1445141122-14183-1-git-send-email-stefan@agner.ch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1445141122-14183-1-git-send-email-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-The clk_core_get_parent_by_index can be used as a helper function
-to simplify the implementation of clk_fetch_parent_index().
+On 10/17, Stefan Agner wrote:
+> The Synchronous Audio Interface (SAI) instances are clocked by
+> independent clocks: The bus clock and the audio clock (as shown in
+> Figure 51-1 in the Vybrid Reference Manual). The clock gates in
+> CCGR0/CCGR1 for SAI0 through SAI3 are bus clock gates, as access
+> tests to the registers with/without gating those clocks have shown.
+> The audio clock is gated by the SAIx_EN gates in CCM_CSCDR1,
+> followed by a clock divider (SAIx_DIV). Currently, the parent of
+> the bus clock gates has been assigned to SAIx_DIV, which is not
+> involved in the bus clock path for the SAI instances (see chapter
+> 9.10.12, SAI clocking in the Vybrid Reference Manual).
+> 
+> Fix this by define the parent clock of VF610_CLK_SAIx to be the bus
+> clock.
+> 
+> If the driver needs the audio clock (when used in master mode), a
+> fixed device tree is required which assign the audio clock properly
+> to VF610_CLK_SAIx_DIV.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
- drivers/clk/clk.c | 18 ++----------------
- 1 file changed, 2 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 50b9b3d..8a6a33b 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1069,23 +1069,9 @@ static int clk_fetch_parent_index(struct clk_core *core,
- 	if (parent)
- 		return -EINVAL;
- 
--	/*
--	 * find index of new parent clock using cached parent ptrs,
--	 * or if not yet cached, use string name comparison and cache
--	 * them now to avoid future calls to clk_core_lookup.
--	 */
--	for (i = 0; i < core->num_parents; i++) {
--		if (core->parents[i] == parent)
--			return i;
--
--		if (core->parents[i])
--			continue;
--
--		if (!strcmp(core->parent_names[i], parent->name)) {
--			core->parents[i] = clk_core_lookup(parent->name);
-+	for (i = 0; i < core->num_parents; i++)
-+		if (clk_core_get_parent_by_index(core, i) == parent)
- 			return i;
--		}
--	}
- 
- 	return -EINVAL;
- }
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
