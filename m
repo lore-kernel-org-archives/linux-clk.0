@@ -1,44 +1,57 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 30 Nov 2015 12:34:37 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-	"tony@atomide.com" <tony@atomide.com>,
-	Paul Walmsley <paul@pwsan.com>
-Subject: Re: [GIT PULL] clk: ti: fixes for 4.4-rc
-Message-ID: <20151130203437.GN11298@codeaurora.org>
-References: <5654301D.8070007@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5654301D.8070007@ti.com>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 09/16] clk: replace pr_warn() with pr_err() for fatal cases
+Date: Mon, 30 Nov 2015 16:34:46 +0900
+Message-Id: <1448868893-4575-10-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1448868893-4575-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1448868893-4575-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/24, Tero Kristo wrote:
-> Hi Michael, Stephen,
-> 
-> Here are some TI clock driver fixes for 4.4-rc.
-> 
-> -Tero
-> 
-> ================================================================
-> 
-> The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
-> 
->   Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
-> 
-> are available in the git repository at:
-> 
->   https://github.com/t-kristo/linux-pm.git for-4.4-rc/ti-clk-fixes
-> 
-> for you to fetch changes up to 167af5ef2cdba14ff14a13c91e5532ed479083d8:
-> 
->   clk: ti: drop locking code from mux/divider drivers (2015-11-24
-> 11:30:27 +0200)
-> 
+These three cases let clk_register() fail.  They should be considered
+as error messages.
 
-Thanks. Pulled into clk-fixes.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
+ drivers/clk/clk.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 43fb329..cd96442 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2302,22 +2302,22 @@ static int __clk_core_init(struct clk_core *core)
+ 	if (core->ops->set_rate &&
+ 	    !((core->ops->round_rate || core->ops->determine_rate) &&
+ 	      core->ops->recalc_rate)) {
+-		pr_warning("%s: %s must implement .round_rate or .determine_rate in addition to .recalc_rate\n",
+-				__func__, core->name);
++		pr_err("%s: %s must implement .round_rate or .determine_rate in addition to .recalc_rate\n",
++		       __func__, core->name);
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
+ 
+ 	if (core->ops->set_parent && !core->ops->get_parent) {
+-		pr_warning("%s: %s must implement .get_parent & .set_parent\n",
+-				__func__, core->name);
++		pr_err("%s: %s must implement .get_parent & .set_parent\n",
++		       __func__, core->name);
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
+ 
+ 	if (core->ops->set_rate_and_parent &&
+ 			!(core->ops->set_parent && core->ops->set_rate)) {
+-		pr_warn("%s: %s must implement .set_parent & .set_rate\n",
++		pr_err("%s: %s must implement .set_parent & .set_rate\n",
+ 				__func__, core->name);
+ 		ret = -EINVAL;
+ 		goto out;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
