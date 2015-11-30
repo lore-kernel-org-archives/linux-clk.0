@@ -1,73 +1,75 @@
-Return-Path: <kamal@canonical.com>
-From: Kamal Mostafa <kamal@canonical.com>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	kernel-team@lists.ubuntu.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-kernel@lists.codethink.co.uk,
-	Ben Dooks <ben.dooks@codethink.co.uk>,
-	Tero Kristo <t-kristo@ti.com>,
-	Kamal Mostafa <kamal@canonical.com>
-Subject: [PATCH 3.19.y-ckt 049/155] clk: ti: fix dual-registration of uart4_ick
-Date: Thu, 12 Nov 2015 15:16:43 -0800
-Message-Id: <1447370309-357-50-git-send-email-kamal@canonical.com>
-In-Reply-To: <1447370309-357-1-git-send-email-kamal@canonical.com>
-References: <1447370309-357-1-git-send-email-kamal@canonical.com>
+Return-Path: <yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+In-Reply-To: <20151124005324.GM19156@codeaurora.org>
+References: <1448004981-11133-1-git-send-email-yamada.masahiro@socionext.com>
+	<1448004981-11133-2-git-send-email-yamada.masahiro@socionext.com>
+	<20151120174509.GQ32672@codeaurora.org>
+	<CAK7LNASQGBn32N4=CM+notaVv1ZLotaydRhe-GiOF6nLhbmABA@mail.gmail.com>
+	<20151124005324.GM19156@codeaurora.org>
+Date: Mon, 30 Nov 2015 17:34:24 +0900
+Message-ID: <CAK7LNASVzPndasdNE+EX1pB_VmDp_OjBYv2D1FKqL8JbCFkCuA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: let of_clk_get_parent_name() fail for invalid clock-indices
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ben Dooks <ben.dooks@codethink.co.uk>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-3.19.8-ckt10 -stable review patch.  If anyone has any objections, please let me know.
+Hi Stephen,
 
-------------------
 
-From: Ben Dooks <ben.dooks@codethink.co.uk>
 
-commit 19e79687de22f23bcfb5e79cce3daba20af228d1 upstream.
+>>
+>> Of course we can, although we have to mention "clock-indices" twice.
+>>
+>> A good thing for of_get_property() is that we can get both the value
+>> and the length
+>> at the same time.
+>>
+>
+> Ok. Well if we don't want to count them again, perhaps a goto
+> jump over an unconditional return NULL would be better?
+>
+>         of_property_for_each_u32(clkspec.np, "clock-indices", prop, vp, pv) {
+>                 if (index == pv) {
+>                         index = count;
+>                         goto found;
+>                 }
+>                 count++;
+>         }
+>
+>         return NULL;
+> found:
+>
+> Or since the macro for of_property_for_each_u32() tests the vp
+> poitner for NULL, we can check that pointer too...
+>
+>         of_property_for_each_u32(clkspec.np, "clock-indices", prop, vp, pv) {
+>                 if (index == pv) {
+>                         index = count;
+>                         break;
+>                 }
+>                 count++;
+>         }
+>
+>         /* We didn't find anything */
+>         if (!vp)
+>                 return NULL;
+>
+> I guess I prefer the latter approach here.
+>
 
-On the OMAP AM3517 platform the uart4_ick gets registered
-twice, causing any power management to /dev/ttyO3 to fail
-when trying to wake the device up.
+No.
 
-This solves the following oops:
+Neither of your two suggestions works because they are false positive.
 
-[] Unhandled fault: external abort on non-linefetch (0x1028) at 0xfa09e008
-[] PC is at serial_omap_pm+0x48/0x15c
-[] LR is at _raw_spin_unlock_irqrestore+0x30/0x5c
+With your way, if "clock-indices" does not exist, of_clk_get_parent_name()
+would return NULL;  in this case it should just parse "clock-output-names",
+assuming that the clock names are simply indexed from zero.
 
-Fixes: aafd900cab87 ("CLK: TI: add omap3 clock init file")
-Cc: mturquette@baylibre.com
-Cc: sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-omap@vger.kernel.org
-Cc: linux-kernel@lists.codethink.co.uk
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Kamal Mostafa <kamal@canonical.com>
----
- drivers/clk/ti/clk-3xxx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/ti/clk-3xxx.c b/drivers/clk/ti/clk-3xxx.c
-index 0d1750a..088930c 100644
---- a/drivers/clk/ti/clk-3xxx.c
-+++ b/drivers/clk/ti/clk-3xxx.c
-@@ -170,7 +170,6 @@ static struct ti_dt_clk omap3xxx_clks[] = {
- 	DT_CLK(NULL, "gpio2_ick", "gpio2_ick"),
- 	DT_CLK(NULL, "wdt3_ick", "wdt3_ick"),
- 	DT_CLK(NULL, "uart3_ick", "uart3_ick"),
--	DT_CLK(NULL, "uart4_ick", "uart4_ick"),
- 	DT_CLK(NULL, "gpt9_ick", "gpt9_ick"),
- 	DT_CLK(NULL, "gpt8_ick", "gpt8_ick"),
- 	DT_CLK(NULL, "gpt7_ick", "gpt7_ick"),
-@@ -313,6 +312,7 @@ static struct ti_dt_clk am35xx_clks[] = {
- static struct ti_dt_clk omap36xx_clks[] = {
- 	DT_CLK(NULL, "omap_192m_alwon_fck", "omap_192m_alwon_fck"),
- 	DT_CLK(NULL, "uart4_fck", "uart4_fck"),
-+	DT_CLK(NULL, "uart4_ick", "uart4_ick"),
- 	{ .node_name = NULL },
- };
- 
 -- 
-1.9.1
+Best Regards
+Masahiro Yamada
