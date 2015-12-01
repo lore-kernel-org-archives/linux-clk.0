@@ -1,32 +1,66 @@
-Return-Path: <andy.gross@linaro.org>
-Return-Path: <andy.gross@linaro.org>
-Date: Wed, 16 Dec 2015 17:30:15 -0600
-From: Andy Gross <andy.gross@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [v2,3/5] clk: qcom: Add MSM8996 Global Clock Control (GCC) driver
-Message-ID: <20151216233015.GC5951@Agamemnon.attlocal.net>
-References: <1448933502-11944-4-git-send-email-sboyd@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1448933502-11944-4-git-send-email-sboyd@codeaurora.org>
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v2 6/6] clk: qcom: mmcc8974: Use gdscs .parent and remove genpd calls
+Date: Tue,  1 Dec 2015 21:42:16 +0530
+Message-Id: <1448986336-16846-7-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1448986336-16846-1-git-send-email-rnayak@codeaurora.org>
+References: <1448986336-16846-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Nov 30, 2015 at 05:31:40PM -0800, Stephen Boyd wrote:
-> Add support for the global clock controller found on MSM8996
-> based devices. This should allow most non-multimedia device
-> drivers to probe and control their clocks.
-> 
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> 
-> ---
+With gdsc driver capable of handling hierarchical power domains,
+specify oxili_gdsc as parent of oxilicx_gdsc.
 
-I saw that this complete set of patches was pulled into clk-next.  Would it be
-possible for you to host an immutable branch so that I can get the DTS pulled in
-properly with all the dependencies?
+Remove all direct calls to genpd from the mmcc clock driver. The
+adding and removing of subdomains is now handled from within
+the gdsc driver.
 
-Thanks,
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+---
+ drivers/clk/qcom/mmcc-msm8974.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
-Andy
+diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
+index bbe28ed..6b2e4e8 100644
+--- a/drivers/clk/qcom/mmcc-msm8974.c
++++ b/drivers/clk/qcom/mmcc-msm8974.c
+@@ -2400,6 +2400,7 @@ static struct gdsc oxilicx_gdsc = {
+ 	.pd = {
+ 		.name = "oxilicx",
+ 	},
++	.parent = &oxili_gdsc.pd,
+ 	.pwrsts = PWRSTS_OFF_ON,
+ };
+ 
+@@ -2625,22 +2626,11 @@ static int mmcc_msm8974_probe(struct platform_device *pdev)
+ 	clk_pll_configure_sr_hpm_lp(&mmpll1, regmap, &mmpll1_config, true);
+ 	clk_pll_configure_sr_hpm_lp(&mmpll3, regmap, &mmpll3_config, false);
+ 
+-	ret = qcom_cc_really_probe(pdev, &mmcc_msm8974_desc, regmap);
+-	if (ret)
+-		return ret;
+-
+-	return pm_genpd_add_subdomain(&oxili_gdsc.pd, &oxilicx_gdsc.pd);
+-}
+-
+-static int mmcc_msm8974_remove(struct platform_device *pdev)
+-{
+-	pm_genpd_remove_subdomain(&oxili_gdsc.pd, &oxilicx_gdsc.pd);
+-	return 0;
++	return qcom_cc_really_probe(pdev, &mmcc_msm8974_desc, regmap);
+ }
+ 
+ static struct platform_driver mmcc_msm8974_driver = {
+ 	.probe		= mmcc_msm8974_probe,
+-	.remove		= mmcc_msm8974_remove,
+ 	.driver		= {
+ 		.name	= "mmcc-msm8974",
+ 		.of_match_table = mmcc_msm8974_match_table,
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
