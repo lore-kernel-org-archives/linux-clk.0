@@ -1,84 +1,183 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mtd@lists.infradead.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 11/16] clk: simplify __clk_init_parent()
-Date: Mon, 28 Dec 2015 19:10:24 +0900
-Message-Id: <1451297429-21689-12-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v2 4/6] clk: qcom: gdsc: Add GDSCs in msm8996 GCC
+Date: Tue,  1 Dec 2015 21:42:14 +0530
+Message-Id: <1448986336-16846-5-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1448986336-16846-1-git-send-email-rnayak@codeaurora.org>
+References: <1448986336-16846-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The translation from the index into clk_core is done by
-clk_core_get_parent_by_index().  The if-block for num_parents == 1
-case is duplicating the code in the clk_core_get_parent_by_index().
+Add all data for the GDSCs which are part of msm8996 GCC block
 
-Drop the "if (num_parents == 1)" from the special case.  Instead,
-set the index to zero if .get_parent() is missing.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 ---
+ arch/arm64/boot/dts/qcom/msm8996.dtsi        |  1 +
+ drivers/clk/qcom/gcc-msm8996.c               | 92 ++++++++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-msm8996.h | 11 ++++
+ 3 files changed, 104 insertions(+)
 
-Changes in v2: None
-
- drivers/clk/clk.c | 38 ++++----------------------------------
- 1 file changed, 4 insertions(+), 34 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 4ad0a36..03b87d8 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1651,44 +1651,14 @@ struct clk *clk_get_parent(struct clk *clk)
- }
- EXPORT_SYMBOL_GPL(clk_get_parent);
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 2c2736d..31e7bd9 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -147,6 +147,7 @@
+ 			compatible = "qcom,gcc-msm8996";
+ 			#clock-cells = <1>;
+ 			#reset-cells = <1>;
++			#power-domain-cells = <1>;
+ 			reg = <0x300000 0x90000>;
+ 		};
  
--/*
-- * .get_parent is mandatory for clocks with multiple possible parents.  It is
-- * optional for single-parent clocks.  Always call .get_parent if it is
-- * available and WARN if it is missing for multi-parent clocks.
-- *
-- * For single-parent clocks without .get_parent, first check to see if the
-- * .parents array exists, and if so use it to avoid an expensive tree
-- * traversal.  If .parents does not exist then walk the tree.
-- */
- static struct clk_core *__clk_init_parent(struct clk_core *core)
- {
--	struct clk_core *ret = NULL;
--	u8 index;
--
--	/* handle the trivial cases */
-+	u8 index = 0;
+diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+index 16d7c32..bb8c61f 100644
+--- a/drivers/clk/qcom/gcc-msm8996.c
++++ b/drivers/clk/qcom/gcc-msm8996.c
+@@ -30,6 +30,7 @@
+ #include "clk-rcg.h"
+ #include "clk-branch.h"
+ #include "reset.h"
++#include "gdsc.h"
  
--	if (!core->num_parents)
--		goto out;
--
--	if (core->num_parents == 1) {
--		if (IS_ERR_OR_NULL(core->parent))
--			core->parent = clk_core_lookup(core->parent_names[0]);
--		ret = core->parent;
--		goto out;
--	}
-+	if (core->ops->get_parent)
-+		index = core->ops->get_parent(core->hw);
+ #define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
  
--	/*
--	 * Do our best to cache parent clocks in core->parents.  This prevents
--	 * unnecessary and expensive lookups.  We don't set core->parent here;
--	 * that is done by the calling function.
--	 */
--
--	index = core->ops->get_parent(core->hw);
--
--	ret = clk_core_get_parent_by_index(core, index);
--
--out:
--	return ret;
-+	return clk_core_get_parent_by_index(core, index);
- }
+@@ -3059,6 +3060,83 @@ static struct clk_hw *gcc_msm8996_hws[] = {
+ 	&ufs_ice_core_postdiv_clk_src.hw,
+ };
  
- static void clk_core_reparent(struct clk_core *core,
++static struct gdsc aggre0_noc_gdsc = {
++	.gdscr = 0x81004,
++	.gds_hw_ctrl = 0x81028,
++	.pd = {
++		.name = "aggre0_noc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
++};
++
++static struct gdsc hlos1_vote_aggre0_noc_gdsc = {
++	.gdscr = 0x7d024,
++	.pd = {
++		.name = "hlos1_vote_aggre0_noc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
++};
++
++static struct gdsc hlos1_vote_lpass_adsp_gdsc = {
++	.gdscr = 0x7d034,
++	.pd = {
++		.name = "hlos1_vote_lpass_adsp",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
++};
++
++static struct gdsc hlos1_vote_lpass_core_gdsc = {
++	.gdscr = 0x7d038,
++	.pd = {
++		.name = "hlos1_vote_lpass_core",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
++};
++
++static struct gdsc usb30_gdsc = {
++	.gdscr = 0xf004,
++	.pd = {
++		.name = "usb30",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++};
++
++static struct gdsc pcie0_gdsc = {
++	.gdscr = 0x6b004,
++	.pd = {
++		.name = "pcie0",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++};
++
++static struct gdsc pcie1_gdsc = {
++	.gdscr = 0x6d004,
++	.pd = {
++		.name = "pcie1",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++};
++
++static struct gdsc pcie2_gdsc = {
++	.gdscr = 0x6e004,
++	.pd = {
++		.name = "pcie2",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++};
++
++static struct gdsc ufs_gdsc = {
++	.gdscr = 0x75004,
++	.pd = {
++		.name = "ufs",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++};
++
+ static struct clk_regmap *gcc_msm8996_clocks[] = {
+ 	[GPLL0_EARLY] = &gpll0_early.clkr,
+ 	[GPLL0] = &gpll0.clkr,
+@@ -3245,6 +3323,18 @@ static struct clk_regmap *gcc_msm8996_clocks[] = {
+ 	[GCC_RX1_USB2_CLKREF_CLK] = &gcc_rx1_usb2_clkref_clk.clkr,
+ };
+ 
++static struct gdsc *gcc_msm8996_gdscs[] = {
++	[AGGRE0_NOC_GDSC] = &aggre0_noc_gdsc,
++	[HLOS1_VOTE_AGGRE0_NOC_GDSC] = &hlos1_vote_aggre0_noc_gdsc,
++	[HLOS1_VOTE_LPASS_ADSP_GDSC] = &hlos1_vote_lpass_adsp_gdsc,
++	[HLOS1_VOTE_LPASS_CORE_GDSC] = &hlos1_vote_lpass_core_gdsc,
++	[USB30_GDSC] = &usb30_gdsc,
++	[PCIE0_GDSC] = &pcie0_gdsc,
++	[PCIE1_GDSC] = &pcie1_gdsc,
++	[PCIE2_GDSC] = &pcie2_gdsc,
++	[UFS_GDSC] = &ufs_gdsc,
++};
++
+ static const struct qcom_reset_map gcc_msm8996_resets[] = {
+ 	[GCC_SYSTEM_NOC_BCR] = { 0x4000 },
+ 	[GCC_CONFIG_NOC_BCR] = { 0x5000 },
+@@ -3363,6 +3453,8 @@ static const struct qcom_cc_desc gcc_msm8996_desc = {
+ 	.num_clks = ARRAY_SIZE(gcc_msm8996_clocks),
+ 	.resets = gcc_msm8996_resets,
+ 	.num_resets = ARRAY_SIZE(gcc_msm8996_resets),
++	.gdscs = gcc_msm8996_gdscs,
++	.num_gdscs = ARRAY_SIZE(gcc_msm8996_gdscs),
+ };
+ 
+ static const struct of_device_id gcc_msm8996_match_table[] = {
+diff --git a/include/dt-bindings/clock/qcom,gcc-msm8996.h b/include/dt-bindings/clock/qcom,gcc-msm8996.h
+index 888e75c..6f814db 100644
+--- a/include/dt-bindings/clock/qcom,gcc-msm8996.h
++++ b/include/dt-bindings/clock/qcom,gcc-msm8996.h
+@@ -336,4 +336,15 @@
+ #define GCC_MSS_Q6_BCR						99
+ #define GCC_QREFS_VBG_CAL_BCR					100
+ 
++/* Indexes for GDSCs */
++#define AGGRE0_NOC_GDSC			0
++#define HLOS1_VOTE_AGGRE0_NOC_GDSC	1
++#define HLOS1_VOTE_LPASS_ADSP_GDSC	2
++#define HLOS1_VOTE_LPASS_CORE_GDSC	3
++#define USB30_GDSC			4
++#define PCIE0_GDSC			5
++#define PCIE1_GDSC			6
++#define PCIE2_GDSC			7
++#define UFS_GDSC			8
++
+ #endif
 -- 
-1.9.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
