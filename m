@@ -1,59 +1,46 @@
-Return-Path: <linux+mturquette=baylibre.com@arm.linux.org.uk>
-Date: Fri, 11 Dec 2015 13:52:37 +0000
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-To: Tony Lindgren <tony@atomide.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Tero Kristo <t-kristo@ti.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Matthijs van Duin <matthijsvanduin@gmail.com>,
-	Delio Brignoli <dbrignoli@audioscience.com>,
-	Philipp Rosenberger <ilu@linutronix.de>,
-	Brian Hutchinson <b.hutchman@gmail.com>, linux-omap@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] clk: ti: Add support for dm814x ADPLL
-Message-ID: <20151211135237.GG30871@n2100.arm.linux.org.uk>
-References: <1449800792-5551-1-git-send-email-tony@atomide.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, Xing Zheng <zhengxing@rock-chips.com>
+Subject: [PATCH] clk: rockchip: fix rk3368 cpuclk divider offsets
+Date: Tue, 01 Dec 2015 22:31:56 +0100
+Message-ID: <6481456.ejZyd6DyuY@diego>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1449800792-5551-1-git-send-email-tony@atomide.com>
-Sender: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Dec 10, 2015 at 06:26:32PM -0800, Tony Lindgren wrote:
-> +	/* Released with kfree() by clkdev_drop() */
-> +	cl = kzalloc(sizeof(*cl), GFP_KERNEL);
-> +	if (!cl)
-> +		return -ENOMEM;
-> +
-> +	/* Use clkdev_add, clk_register_clkdev limits length to MAX_CON_ID */
-> +	cl->con_id = name;
-> +	cl->clk = clock;
-> +	cl->clk_hw = __clk_get_hw(clock);
-> +	clkdev_add(cl);
-> +	d->clocks[index].cl = cl;
+Due to a copy-paste error the the rk3368 cpuclk settings were acessing
+rk3288-specific register offsets. This never caused problems till now,
+as cpu frequency scaling in't used currently at all.
 
-NAK.  I've no idea why you're open-coding the clkdev internals (which
-seems to have been a historical habbit in OMAP code.)  Please stop
-doing this.
+Reported-by: Xing Zheng <zhengxing@rock-chips.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+Posted for reference, as described above this doesn't cause any breakage,
+so can probably simply wait for 4.5
 
-You are provided with clkdev_alloc() which will allocate the structure
-and initialise it for you, and clkdev_add() which will add the allocated
-and initialised struct to the list of lookups.  Everything you're doing
-above can be done with clkdev_alloc() + clkdev_add() which have been
-there for a _very_ long time.  They're even documented (thanks for
-providing me with more proof that documentation is nothing but a waste
-of time. :))
+ drivers/clk/rockchip/clk-rk3368.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Even better is clkdev_create() which eliminates the two step clkdev_alloc()
-and clkdev_add() process.
-
-So, the whole of the above can be reduced down to:
-
-	cl = clkdev_create(clock, name, NULL);
-	if (!cl)
-		return -ENOMEM;
-
+diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
+index 7e6b783..2ae9c57 100644
+--- a/drivers/clk/rockchip/clk-rk3368.c
++++ b/drivers/clk/rockchip/clk-rk3368.c
+@@ -184,13 +184,13 @@ static const struct rockchip_cpuclk_reg_data rk3368_cpuclkl_data = {
+ 
+ #define RK3368_CLKSEL0(_offs, _aclkm)					\
+ 	{								\
+-		.reg = RK3288_CLKSEL_CON(0 + _offs),			\
++		.reg = RK3368_CLKSEL_CON(0 + _offs),			\
+ 		.val = HIWORD_UPDATE(_aclkm, RK3368_DIV_ACLKM_MASK,	\
+ 				RK3368_DIV_ACLKM_SHIFT),		\
+ 	}
+ #define RK3368_CLKSEL1(_offs, _atclk, _pdbg)				\
+ 	{								\
+-		.reg = RK3288_CLKSEL_CON(1 + _offs),			\
++		.reg = RK3368_CLKSEL_CON(1 + _offs),			\
+ 		.val = HIWORD_UPDATE(_atclk, RK3368_DIV_ATCLK_MASK,	\
+ 				RK3368_DIV_ATCLK_SHIFT) |		\
+ 		       HIWORD_UPDATE(_pdbg, RK3368_DIV_PCLK_DBG_MASK,	\
 -- 
-RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+2.6.1
