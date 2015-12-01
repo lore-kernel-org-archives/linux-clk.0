@@ -1,167 +1,104 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Sangbeom Kim <sbkim73@samsung.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>,
- Mark Brown <broonie@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Subject: [PATCH v2 3/3] dt-bindings: regulator/mfd: Reorganize S2MPA01 bindings
-Date: Mon, 28 Dec 2015 10:15:14 +0900
-Message-id: <1451265314-4232-4-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1451265314-4232-1-git-send-email-k.kozlowski@samsung.com>
-References: <1451265314-4232-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v2 3/6] clk: qcom: gdsc: Add support for votable gdscs
+Date: Tue,  1 Dec 2015 21:42:13 +0530
+Message-Id: <1448986336-16846-4-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1448986336-16846-1-git-send-email-rnayak@codeaurora.org>
+References: <1448986336-16846-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The mfd/s2mpa01.txt duplicates some of the information about bindings
-with old mfd/s2mps11.txt. Now common part exists entirely in
-mfd/samsung,sec-core.txt so:
- - add company prefix to file name (regulator/samsung,s2mpa01.txt),
- - remove duplicated information,
- - reorganize the contents to match style of
-   regulator/samsung,s2mps11.txt.
+Some gdscs might be controlled via voting registers and might not
+really disable when the kernel intends to disable them (due to other
+votes keeping them enabled)
+Mark these gdscs with a flag for we do not check/wait on a disable
+status for these gdscs within the kernel disable callback.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Acked-by: Mark Brown <broonie@kernel.org>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
+Also at boot, if these GDSCs are found to be ON, we make sure we
+vote for them before we inform the genpd framework about their
+status. If genpd gets no users, it then disables (removes the vote)
+them as part of genpd_poweroff_unused()
 
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 ---
+ drivers/clk/qcom/gdsc.c | 18 ++++++++++++++++++
+ drivers/clk/qcom/gdsc.h | 15 ++++++++-------
+ 2 files changed, 26 insertions(+), 7 deletions(-)
 
-Changes since v1:
-1. Added accumulated acks.
-2. Use -M20% so renames will be more visible (formatting is changed so
-   default -M50% does not consider it as renames).
----
- .../devicetree/bindings/mfd/samsung,sec-core.txt   |  4 +-
- .../s2mpa01.txt => regulator/samsung,s2mpa01.txt}  | 69 +++++++++-------------
- 2 files changed, 32 insertions(+), 41 deletions(-)
- rename Documentation/devicetree/bindings/{mfd/s2mpa01.txt => regulator/samsung,s2mpa01.txt} (37%)
-
-diff --git a/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt b/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
-index 4aeb95c82304..cdd079bfc287 100644
---- a/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
-+++ b/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
-@@ -4,7 +4,7 @@ Binding for Samsung S2M and S5M family multi-function device
- This is a part of device tree bindings for S2M and S5M family multi-function
- devices.
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index 9f530b7..f12d7b2 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -66,6 +66,17 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+ 	if (ret)
+ 		return ret;
  
--The Samsung S2MPS11/13/14/15, S2MPU02 and S5M8767 is a family
-+The Samsung S2MPA01, S2MPS11/13/14/15, S2MPU02 and S5M8767 is a family
- of multi-function devices which include voltage and current regulators, RTC,
- charger controller, clock outputs and other sub-blocks. It is interfaced
- to the host controller using an I2C interface. Each sub-block is usually
-@@ -13,6 +13,7 @@ addressed by the host system using different I2C slave addresses.
- 
- This document describes bindings for main device node. Optional sub-blocks
- must be a sub-nodes to it. Bindings for them can be found in:
-+ - bindings/regulator/samsung,s2mpa01.txt
-  - bindings/regulator/samsung,s2mps11.txt
-  - bindings/regulator/samsung,s5m8767.txt
-  - bindings/clock/samsung,s2mps11.txt
-@@ -20,6 +21,7 @@ must be a sub-nodes to it. Bindings for them can be found in:
- 
- Required properties:
-  - compatible: Should be one of the following
-+	- "samsung,s2mpa01-pmic",
- 	- "samsung,s2mps11-pmic",
- 	- "samsung,s2mps13-pmic",
- 	- "samsung,s2mps14-pmic",
-diff --git a/Documentation/devicetree/bindings/mfd/s2mpa01.txt b/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.txt
-similarity index 37%
-rename from Documentation/devicetree/bindings/mfd/s2mpa01.txt
-rename to Documentation/devicetree/bindings/regulator/samsung,s2mpa01.txt
-index c13d3d8c3947..bae3c7f838cf 100644
---- a/Documentation/devicetree/bindings/mfd/s2mpa01.txt
-+++ b/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.txt
-@@ -1,54 +1,43 @@
-+Binding for Samsung S2MPA01 regulator block
-+===========================================
- 
--* Samsung S2MPA01 Voltage and Current Regulator
-+This is a part of device tree bindings for S2M family multi-function devices.
-+More information can be found in bindings/mfd/sec-core.txt file.
- 
--The Samsung S2MPA01 is a multi-function device which includes high
--efficiency buck converters including Dual-Phase buck converter, various LDOs,
--and an RTC. It is interfaced to the host controller using an I2C interface.
--Each sub-block is addressed by the host system using different I2C slave
--addresses.
-+The S2MPA01 device provide buck and LDO regulators.
- 
--Required properties:
--- compatible: Should be "samsung,s2mpa01-pmic".
--- reg: Specifies the I2C slave address of the PMIC block. It should be 0x66.
-+To register these with regulator framework instantiate under main device node
-+a sub-node named "regulators" with more sub-nodes for each regulator using the
-+common regulator binding documented in:
-+ - Documentation/devicetree/bindings/regulator/regulator.txt
- 
--Optional properties:
--- interrupt-parent: Specifies the phandle of the interrupt controller to which
--  the interrupts from s2mpa01 are delivered to.
--- interrupts: An interrupt specifier for the sole interrupt generated by the
--  device.
--
--Optional nodes:
--- regulators: The regulators of s2mpa01 that have to be instantiated should be
--  included in a sub-node named 'regulators'. Regulator nodes and constraints
--  included in this sub-node use the standard regulator bindings which are
--  documented elsewhere.
--
--Properties for BUCK regulator nodes:
--- regulator-ramp-delay: ramp delay in uV/us. May be 6250, 12500
--  (default), 25000, or 50000. May be 0 for disabling the ramp delay on
--  BUCK{1,2,3,4}.
--
-- In the absence of the regulator-ramp-delay property, the default ramp
-- delay will be used.
--
--  NOTE: Some BUCKs share the ramp rate setting i.e. same ramp value will be set
--  for a particular group of BUCKs. So provide same regulator-ramp-delay=<value>.
--
--  The following BUCKs share ramp settings:
--  * 1 and 6
--  * 2 and 4
--  * 8, 9, and 10
--
--The following are the names of the regulators that the s2mpa01 PMIC block
--supports. Note: The 'n' in LDOn and BUCKn represents the LDO or BUCK number
--as per the datasheet of s2mpa01.
- 
-+Names of regulators supported by S2MPA01 device:
- 	- LDOn
- 		  - valid values for n are 1 to 26
- 		  - Example: LDO1, LD02, LDO26
- 	- BUCKn
- 		  - valid values for n are 1 to 10.
- 		  - Example: BUCK1, BUCK2, BUCK9
-+Note: The 'n' in LDOn and BUCKn represents the LDO or BUCK number
-+as per the datasheet of device.
++	/* If disabling votable gdscs, don't poll on status */
++	if ((sc->flags & VOTABLE) && !en) {
++		/*
++		 * Add a short delay here to ensure that an enable
++		 * right after it was disabled does not put it in an
++		 * unknown state
++		 */
++		udelay(TIMEOUT_US);
++		return 0;
++	}
 +
-+
-+Optional properties of buck regulator nodes under "regulators" sub-node:
-+ - regulator-ramp-delay: ramp delay in uV/us. May be 6250, 12500
-+   (default), 25000, or 50000. May be 0 for disabling the ramp delay on
-+   BUCK{1,2,3,4}.
-+
-+   In the absence of the regulator-ramp-delay property, the default ramp
-+   delay will be used.
-+
-+   Note: Some bucks share the ramp rate setting i.e. same ramp value
-+   will be set for a particular group of bucks so provide the same
-+   regulator-ramp-delay value for them.
-+   Groups sharing ramp rate:
-+    - buck{1,6},
-+    - buck{2,4},
-+    - buck{8,9,10}.
+ 	if (sc->gds_hw_ctrl) {
+ 		status_reg = sc->gds_hw_ctrl;
+ 		/*
+@@ -199,6 +210,13 @@ static int gdsc_init(struct gdsc *sc)
+ 	if (on < 0)
+ 		return on;
  
- Example:
++	/*
++	 * Votable GDSCs can be ON due to Vote from other masters.
++	 * If a Votable GDSC is ON, make sure we have a Vote.
++	 */
++	if ((sc->flags & VOTABLE) && on)
++		gdsc_enable(&sc->pd);
++
+ 	if (on || (sc->pwrsts & PWRSTS_RET))
+ 		gdsc_force_mem_on(sc);
+ 	else
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index 66a43be..3bf497c 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -20,13 +20,6 @@
+ struct regmap;
+ struct reset_controller_dev;
  
+-/* Powerdomain allowable state bitfields */
+-#define PWRSTS_OFF		BIT(0)
+-#define PWRSTS_RET		BIT(1)
+-#define PWRSTS_ON		BIT(2)
+-#define PWRSTS_OFF_ON		(PWRSTS_OFF | PWRSTS_ON)
+-#define PWRSTS_RET_ON		(PWRSTS_RET | PWRSTS_ON)
+-
+ /**
+  * struct gdsc - Globally Distributed Switch Controller
+  * @pd: generic power domain
+@@ -49,6 +42,14 @@ struct gdsc {
+ 	unsigned int			*cxcs;
+ 	unsigned int			cxc_count;
+ 	const u8			pwrsts;
++/* Powerdomain allowable state bitfields */
++#define PWRSTS_OFF		BIT(0)
++#define PWRSTS_RET		BIT(1)
++#define PWRSTS_ON		BIT(2)
++#define PWRSTS_OFF_ON		(PWRSTS_OFF | PWRSTS_ON)
++#define PWRSTS_RET_ON		(PWRSTS_RET | PWRSTS_ON)
++	const u8			flags;
++#define VOTABLE		BIT(0)
+ 	struct reset_controller_dev	*rcdev;
+ 	unsigned int			*resets;
+ 	unsigned int			reset_count;
 -- 
-1.9.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
