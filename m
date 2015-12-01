@@ -1,53 +1,61 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v2 07/16] clk: simplify clk_core_get_parent_by_index()
-Date: Mon, 28 Dec 2015 19:23:01 +0900
-Message-Id: <1451298191-30815-8-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <caesar.upstream@gmail.com>
+Return-Path: <caesar.upstream@gmail.com>
+From: Caesar Wang <wxt@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	linux-arm-kernel@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Caesar Wang <wxt@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Olof Johansson <olof@lixom.net>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	linux-kernel@vger.kernel.org,
+	Kumar Gala <galak@codeaurora.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Rob Herring <robh+dt@kernel.org>,
+	Roger Chen <roger.chen@rock-chips.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Yunzhi Li <lyz@rock-chips.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Romain Perier <romain.perier@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 0/3] Add the rk3368 evb board with the act8846 pmic
+Date: Tue,  1 Dec 2015 17:13:23 +0800
+Message-Id: <1448961206-23769-1-git-send-email-wxt@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Drop the "if (!core->parents)" case and refactor the function a bit
-because core->parents is always allocated.  (Strictly speaking, it is
-ZERO_SIZE_PTR if core->num_parents == 0, but such a case is omitted
-by the if-conditional above.)
+This series pacthes try to add the evb dts for rk3368 SoCs,
+This's similar with the rj3288 evb board.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+On the moment, pwm/backlight/usb/thermal/emmc stuff can work for this
+board, I add the base version for the future firstly.
 
-Changes in v2: None
+PATCH [1/3]: Force rk3368 PWM clock (and its parents) On
+That's similar HACK way to work.
 
- drivers/clk/clk.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+PATCH [2/3]: Add the RK3368 EVB board for with the act8846 pmic for dtsi
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index b5be02a..ca7849a 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -350,13 +350,12 @@ static struct clk_core *clk_core_get_parent_by_index(struct clk_core *core,
- {
- 	if (!core || index >= core->num_parents)
- 		return NULL;
--	else if (!core->parents)
--		return clk_core_lookup(core->parent_names[index]);
--	else if (!core->parents[index])
--		return core->parents[index] =
--			clk_core_lookup(core->parent_names[index]);
--	else
--		return core->parents[index];
-+
-+	if (!core->parents[index])
-+		core->parents[index] =
-+				clk_core_lookup(core->parent_names[index]);
-+
-+	return core->parents[index];
- }
- 
- struct clk_hw *
+PATCH [3/3]: Add the PWM node info for rk3368 core.
+
+
+
+Caesar Wang (3):
+  clk: rockchip: Force rk3368 PWM clock (and its parents) on
+  arm64: dts: rockchip: add rk3368 evaluation board
+  arm64: dts: rockchip: add the pwm node info for RK3368 SoCs
+
+ arch/arm64/boot/dts/rockchip/Makefile              |   2 +-
+ .../arm64/boot/dts/rockchip/rk3368-evb-act8846.dts | 173 +++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3368-evb.dtsi       | 286 +++++++++++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3368.dtsi           |  60 +++++
+ drivers/clk/rockchip/clk-rk3368.c                  |   9 +
+ 5 files changed, 529 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3368-evb-act8846.dts
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3368-evb.dtsi
+
 -- 
 1.9.1
