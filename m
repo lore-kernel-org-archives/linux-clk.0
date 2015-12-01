@@ -1,59 +1,26 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 30 Nov 2015 16:36:26 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Bai Ping <b51503@freescale.com>
+Cc: shawnguo@kernel.org, kernel@pengutronix.de, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: imx: Replace clk error check with imx_check_clocks()
+Message-ID: <20151201003626.GB17532@codeaurora.org>
+References: <1448504323-17737-1-git-send-email-b51503@freescale.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <878ub2h8tg.wl-ysato@users.sourceforge.jp>
-References: <1435570978-1734-1-git-send-email-geert+renesas@glider.be>
-	<878ub2h8tg.wl-ysato@users.sourceforge.jp>
-Date: Fri, 20 Nov 2015 13:57:43 +0100
-Message-ID: <CAMuHMdUYXu4=fpX3vD3qHDMfSGfjQn1tcK_6EGcBFkUG2J4zUg@mail.gmail.com>
-Subject: Re: [PATCH] clk: h8300: Remove "sh73a0-" part from compatible value
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, uclinux-h8-devel@lists.sourceforge.jp,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1448504323-17737-1-git-send-email-b51503@freescale.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sato-san,
+On 11/26, Bai Ping wrote:
+> As we already have a 'imx_check_clocks' to do the clock error
+> check, so cleanup the error check code.
+> 
+> Signed-off-by: Bai Ping <b51503@freescale.com>
+> ---
 
-On Mon, Jun 29, 2015 at 4:45 PM, Yoshinori Sato
-<ysato@users.sourceforge.jp> wrote:
-> On Mon, 29 Jun 2015 18:42:58 +0900,
-> Geert Uytterhoeven wrote:
->> Drop the bogus "sh73a0-" part (accidentally copied from shmobile?) from
->> the compatible value.
->
-> Ouch.
-> Applied. Thanks.
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-This seems to have been lost?
-
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->>  Documentation/devicetree/bindings/clock/renesas,h8300-div-clock.txt | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/renesas,h8300-div-clock.txt b/Documentation/devicetree/bindings/clock/renesas,h8300-div-clock.txt
->> index 36c2b528245cd48f..399e0da22348b19e 100644
->> --- a/Documentation/devicetree/bindings/clock/renesas,h8300-div-clock.txt
->> +++ b/Documentation/devicetree/bindings/clock/renesas,h8300-div-clock.txt
->> @@ -2,7 +2,7 @@
->>
->>  Required Properties:
->>
->> -  - compatible: Must be "renesas,sh73a0-h8300-div-clock"
->> +  - compatible: Must be "renesas,h8300-div-clock"
->>
->>    - clocks: Reference to the parent clocks ("extal1" and "extal2")
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
