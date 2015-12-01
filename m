@@ -1,131 +1,106 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Julia Lawall <Julia.Lawall@lip6.fr>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v4 16/24] pwm: move the enabled/disabled info to pwm_state struct
-Date: Mon, 16 Nov 2015 09:56:39 +0100
-Message-Id: <1447664207-24370-17-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <rnayak@codeaurora.org>
+Message-ID: <565D0DE5.50700@codeaurora.org>
+Date: Tue, 01 Dec 2015 08:33:01 +0530
+From: Rajendra Nayak <rnayak@codeaurora.org>
+MIME-Version: 1.0
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: mturquette@baylibre.com, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 5/6] clk: qcom: gdsc: Do not check for disabled status
+ on votable gdscs
+References: <1448517297-32419-1-git-send-email-rnayak@codeaurora.org> <1448517297-32419-6-git-send-email-rnayak@codeaurora.org> <20151201015323.GF17532@codeaurora.org>
+In-Reply-To: <20151201015323.GF17532@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Prepare the transition to PWM atomic update by moving the enabled/disabled
-state into the pwm_state struct. This way we can easily update the whole
-PWM state by copying the new state in the ->state field.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/pwm/core.c  | 17 +++++++++++++----
- include/linux/pwm.h |  7 ++++---
- 2 files changed, 17 insertions(+), 7 deletions(-)
+On 12/01/2015 07:23 AM, Stephen Boyd wrote:
+> On 11/26, Rajendra Nayak wrote:
+>> Some gdscs might be controlled via voting registers and might not
+>> really disable when the kernel intends to disable them (due to other
+>> votes keeping them enabled)
+>> Mark these gdscs with a flag for we do not check/wait on a disable
+>> status for these gdscs within the kernel disable callback.
+>>
+>> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+>> ---
+>>  drivers/clk/qcom/gcc-msm8996.c  |  4 ++++
+>>  drivers/clk/qcom/gdsc.c         |  4 ++++
+>>  drivers/clk/qcom/gdsc.h         | 15 ++++++++-------
+>>  drivers/clk/qcom/mmcc-msm8996.c |  3 +++
+>>  4 files changed, 19 insertions(+), 7 deletions(-)
+> 
+> We should have this patch before adding the gdscs that use it.
+> Prevents any bisect hole.
 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index f1c6769..6bbda6c 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -508,10 +508,10 @@ int pwm_enable(struct pwm_device *pwm)
- 
- 	mutex_lock(&pwm->lock);
- 
--	if (!test_and_set_bit(PWMF_ENABLED, &pwm->flags)) {
-+	if (!pwm_is_enabled(pwm)) {
- 		err = pwm->chip->ops->enable(pwm->chip, pwm);
--		if (err)
--			clear_bit(PWMF_ENABLED, &pwm->flags);
-+		if (!err)
-+			pwm->state.enabled = true;
- 	}
- 
- 	mutex_unlock(&pwm->lock);
-@@ -526,8 +526,17 @@ EXPORT_SYMBOL_GPL(pwm_enable);
-  */
- void pwm_disable(struct pwm_device *pwm)
- {
--	if (pwm && test_and_clear_bit(PWMF_ENABLED, &pwm->flags))
-+	if (!pwm)
-+		return;
-+
-+	mutex_lock(&pwm->lock);
-+
-+	if (pwm_is_enabled(pwm)) {
- 		pwm->chip->ops->disable(pwm->chip, pwm);
-+		pwm->state.enabled = false;
-+	}
-+
-+	mutex_unlock(&pwm->lock);
- }
- EXPORT_SYMBOL_GPL(pwm_disable);
- 
-diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index af42299..398c58c 100644
---- a/include/linux/pwm.h
-+++ b/include/linux/pwm.h
-@@ -76,8 +76,7 @@ enum pwm_polarity {
- 
- enum {
- 	PWMF_REQUESTED = 1 << 0,
--	PWMF_ENABLED = 1 << 1,
--	PWMF_EXPORTED = 1 << 2,
-+	PWMF_EXPORTED = 1 << 1,
- };
- 
- /*
-@@ -85,11 +84,13 @@ enum {
-  * @period: PWM period (in nanoseconds)
-  * @duty_cycle: PWM duty cycle (in nanoseconds)
-  * @polarity: PWM polarity
-+ * @enabled: PWM enabled status
-  */
- struct pwm_state {
- 	unsigned int period;
- 	unsigned int duty_cycle;
- 	enum pwm_polarity polarity;
-+	bool enabled;
- };
- 
- /**
-@@ -117,7 +118,7 @@ struct pwm_device {
- 
- static inline bool pwm_is_enabled(const struct pwm_device *pwm)
- {
--	return test_bit(PWMF_ENABLED, &pwm->flags);
-+	return pwm->state.enabled;
- }
- 
- static inline void pwm_set_period(struct pwm_device *pwm, unsigned int period)
+yes, will rearrange to move this up in the series.
+
+> 
+>>  static struct gdsc usb30_gdsc = {
+>> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+>> index fb2e43c..984537f 100644
+>> --- a/drivers/clk/qcom/gdsc.c
+>> +++ b/drivers/clk/qcom/gdsc.c
+>> @@ -65,6 +65,10 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+>>  	if (ret)
+>>  		return ret;
+>>  
+>> +	/* If disabling votable gdscs, don't poll on status */
+>> +	if ((sc->flags & VOTABLE) && !en)
+>> +		return 0;
+>> +
+> 
+> There's an explicit delay of 100uS on the disable path for
+> votable gdscs in the downstream code. I don't see that here.
+
+right, I just left it out as I did not see any issues testing
+without it, when I did enable/disable the votable gdscs in
+a tight loop. But maybe my testing was limited to only apss
+voting for these so I can put it back in.
+
+> 
+>>  	timeout = jiffies + usecs_to_jiffies(TIMEOUT_US);
+>>  
+>>  	if (sc->gds_hw_ctrl) {
+>> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+>> index 66a43be..91cbb09 100644
+>> --- a/drivers/clk/qcom/gdsc.h
+>> +++ b/drivers/clk/qcom/gdsc.h
+>> @@ -20,13 +20,6 @@
+>>  struct regmap;
+>>  struct reset_controller_dev;
+>>  
+>> -/* Powerdomain allowable state bitfields */
+>> -#define PWRSTS_OFF		BIT(0)
+>> -#define PWRSTS_RET		BIT(1)
+>> -#define PWRSTS_ON		BIT(2)
+>> -#define PWRSTS_OFF_ON		(PWRSTS_OFF | PWRSTS_ON)
+>> -#define PWRSTS_RET_ON		(PWRSTS_RET | PWRSTS_ON)
+>> -
+>>  /**
+>>   * struct gdsc - Globally Distributed Switch Controller
+>>   * @pd: generic power domain
+>> @@ -49,6 +42,14 @@ struct gdsc {
+>>  	unsigned int			*cxcs;
+>>  	unsigned int			cxc_count;
+>>  	const u8			pwrsts;
+>> +/* Powerdomain allowable state bitfields */
+>> +#define PWRSTS_OFF		BIT(0)
+>> +#define PWRSTS_RET		BIT(1)
+>> +#define PWRSTS_ON		BIT(2)
+>> +#define PWRSTS_OFF_ON		(PWRSTS_OFF | PWRSTS_ON)
+>> +#define PWRSTS_RET_ON		(PWRSTS_RET | PWRSTS_ON)
+> 
+> Yes! We should have done this already. I guess I'm ok combining
+> it with this patch.
+> 
+>> +	const u8			flags;
+>> +#define VOTABLE		BIT(0)
+>>  	struct reset_controller_dev	*rcdev;
+>>  	unsigned int			*resets;
+>>  	unsigned int			reset_count;
+> 
+
 -- 
-2.1.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
