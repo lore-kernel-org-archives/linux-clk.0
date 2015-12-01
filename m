@@ -1,34 +1,29 @@
-Return-Path: <dan.carpenter@oracle.com>
-Date: Sat, 12 Dec 2015 15:43:46 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-        Jens Kuske <jenskuske@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [patch] clk: sunxi: signedness bug in sun8i_h3_bus_gates_init()
-Message-ID: <20151212124346.GC21408@mwanda>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Chris Zhong <zyw@rock-chips.com>
+Cc: dianders@chromium.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] clk: rockchip: switch PLLs to slow mode before reboot for rk3288
+Date: Tue, 01 Dec 2015 19:25:24 +0100
+Message-ID: <1477792.D13Osl928x@diego>
+In-Reply-To: <1448590170-23776-1-git-send-email-zyw@rock-chips.com>
+References: <1448590170-23776-1-git-send-email-zyw@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-"index" needs to be signed for the error handling to work.
+Am Freitag, 27. November 2015, 10:09:30 schrieb Chris Zhong:
+> We've been seeing some crashes at reboot test on rk3288-based systems,
+> which boards have not reset pin connected to NPOR, they reboot by
+> setting 0xfdb9 to RK3288_GLB_SRST_FST register. If the APLL works in
+> a high frequency mode, some IPs might hang during soft reset.
+> It appears that we can fix the problem by switching to slow mode before
+> reboot, just like what we did before suspend.
+> 
+> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-Fixes: ab6e23a4e388 ('clk: sunxi: Add H3 clocks support')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+applied to my clock branch for 4.5
 
-diff --git a/drivers/clk/sunxi/clk-sun8i-bus-gates.c b/drivers/clk/sunxi/clk-sun8i-bus-gates.c
-index 7ab60c5..b8c7753 100644
---- a/drivers/clk/sunxi/clk-sun8i-bus-gates.c
-+++ b/drivers/clk/sunxi/clk-sun8i-bus-gates.c
-@@ -40,7 +40,7 @@ static void __init sun8i_h3_bus_gates_init(struct device_node *node)
- 	const __be32 *p;
- 	int number, i;
- 	u8 clk_bit;
--	u32 index;
-+	int index;
- 
- 	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
- 	if (IS_ERR(reg))
+
+Thanks
+Heiko
