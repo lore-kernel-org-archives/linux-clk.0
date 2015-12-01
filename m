@@ -1,69 +1,102 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 30 Nov 2015 18:22:38 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 2/6] clk: qcom: gdsc: Add support for gdscs with gds hw
+ controller
+Message-ID: <20151201022238.GG17532@codeaurora.org>
+References: <1448517297-32419-1-git-send-email-rnayak@codeaurora.org>
+ <1448517297-32419-3-git-send-email-rnayak@codeaurora.org>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20151118203433.GE32672@codeaurora.org>
-References: <1378010420-20031-1-git-send-email-stefan.kristiansson@saunalahti.fi>
-	<CAMuHMdXhxuawY-V+35YoeZWZ3jZ-Vj_MzuRDGBfDD9i9iy=oGA@mail.gmail.com>
-	<20151118203433.GE32672@codeaurora.org>
-Date: Wed, 18 Nov 2015 22:43:31 +0100
-Message-ID: <CAMuHMdX3ZYx2UTspQxHdcmVPEvz-hPQm4NhnwLC-y6qA4ciFyw@mail.gmail.com>
-Subject: Re: [PATCH] clk: add generic driver for fixed rate clock
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Pantelis Antoniou <pantelis.antoniou@konsulko.com>, linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1448517297-32419-3-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+On 11/26, Rajendra Nayak wrote:
+> @@ -58,30 +58,34 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+>  {
+>  	int ret;
+>  	u32 val = en ? 0 : SW_COLLAPSE_MASK;
+> -	u32 check = en ? PWR_ON_MASK : 0;
+>  	unsigned long timeout;
+> +	unsigned int status_reg = sc->gdscr;
+>  
+>  	ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
+>  	if (ret)
+>  		return ret;
+>  
+>  	timeout = jiffies + usecs_to_jiffies(TIMEOUT_US);
+> -	do {
+> -		ret = regmap_read(sc->regmap, sc->gdscr, &val);
+> -		if (ret)
+> -			return ret;
+>  
+> -		if ((val & PWR_ON_MASK) == check)
+> +	if (sc->gds_hw_ctrl) {
+> +		status_reg = sc->gds_hw_ctrl;
+> +	/*
+> +	 * The gds hw controller asserts/de-asserts the status bit soon
+> +	 * after it receives a power on/off request from a master.
+> +	 * The controller then takes around 8 xo cycles to start its internal
+> +	 * state machine and update the status bit. During this time, the
+> +	 * status bit does not reflect the true status of the core.
+> +	 * Add a delay of 1 us between writing to the SW_COLLAPSE bit and
+> +	 * polling the status bit
+> +	 */
 
-On Wed, Nov 18, 2015 at 9:34 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 11/17, Geert Uytterhoeven wrote:
->> (quoting the full driver, as it predates linux-clk)
->>
->> On Sun, Sep 1, 2013 at 6:40 AM, Stefan Kristiansson
->> <stefan.kristiansson@saunalahti.fi> wrote:
->> > This adds a simple driver with the only purpose to initialise
->> > the fixed rate clock.
->> > This is useful for systems that do not wish to use seperate init
->> > code for the fixed rate clock init, but rather only rely on a
->> > device tree description of it.
->> >
->> > Signed-off-by: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
->>
->> Thanks, this is still very useful!
->>
->> I stumbled across this old patch while trying to instantiate a fixed rate
->> clock from a DT overlay.
->> Without this, the clock is never instantiated, as drivers/clk/clk-fixed-rate.c
->> uses CLK_OF_DECLARE() :-( With your driver, it works as expected
->> (after fixing the modpost complaint, cfr. below).
->>
->> However, I think that instead of creating a new driver, you should just add
->> the meat of clk-generic-fixed.c to clk-fixed-rate.c.
->
-> Hm... what happens when of_clk_init() runs and instantiates the
-> clock, and then of_platform_populate() runs and creates the clock
-> again? The platform device probe fails because the framework
-> checks to make sure two clocks don't have the same name? I guess
-> that's going to work, but it doesn't make me feel good.
+Please indent this correctly to the udelay indent level.
 
-My DTS does have other clocks that are compatible with "fixed-clock"
-and I didn't notice any ill behavior. Perhaps the driver core knows the
-node has already been bound to something, and thus no longer tries
-to bind it to a platform driver?
+> +		udelay(1);
+> +	}
+> +
+> +	do {
+> +		if (gdsc_is_enabled(sc, status_reg) == en)
+>  			return 0;
+>  	} while (time_before(jiffies, timeout));
+>  
+> -	ret = regmap_read(sc->regmap, sc->gdscr, &val);
+> -	if (ret)
+> -		return ret;
+> -
+> -	if ((val & PWR_ON_MASK) == check)
+> -		return 0;
+> -
 
-I'll double-check that later...
+This opens a bug where we timeout and then the status bit changes
+after the timeout. One more check is good and should stay. We
+could also change this to ktime instead of jiffies. That would be
+a good improvement.
 
-Gr{oetje,eeting}s,
+>  	return -ETIMEDOUT;
+>  }
+>  
+> @@ -165,6 +169,7 @@ static int gdsc_init(struct gdsc *sc)
+>  {
+>  	u32 mask, val;
+>  	int on, ret;
+> +	unsigned int reg;
+>  
+>  	/*
+>  	 * Disable HW trigger: collapse/restore occur based on registers writes.
+> @@ -185,7 +190,8 @@ static int gdsc_init(struct gdsc *sc)
+>  			return ret;
+>  	}
+>  
+> -	on = gdsc_is_enabled(sc);
+> +	reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
+> +	on = gdsc_is_enabled(sc, reg);
 
-                        Geert
+If the gdsc is voteable, then we need to make sure that the vote
+is from us when we boot up. Otherwise the kernel may think that
+the gdsc is enabled, but it gets turned off by some other master
+later on. I don't know if this causes some sort of problem for
+the power domain framework, but we can't rely on the status bit
+unless we're sure that we've actually set the register to enable
+it. In the normal enable/disable path we'll always know we set
+the register, so this really only matters once when we boot up.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
