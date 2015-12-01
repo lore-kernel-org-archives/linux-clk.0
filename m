@@ -1,77 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:54091 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752117AbbK0UVS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Fri, 27 Nov 2015 15:21:18 -0500
-Date: Fri, 27 Nov 2015 14:21:14 -0600
-From: Rob Herring <robh@kernel.org>
-To: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Jason Cooper <jason@lakedaemon.net>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>
-Subject: Re: [PATCH 1/3] dt-bindings: add Marvell core PLL and clock divider
- PMU documentation
-Message-ID: <20151127202114.GA613@rob-hp-laptop>
-References: <E1a24wj-0004iw-Rf@rmk-PC.arm.linux.org.uk>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 30 Nov 2015 16:29:40 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, kernel-janitors@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>,
+	Jason Cooper <jason@lakedaemon.net>
+Subject: Re: [PATCH 5/5] clk: scpi: add missing of_node_put
+Message-ID: <20151201002939.GE21446@codeaurora.org>
+References: <1445460100-26727-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1445460100-26727-6-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <E1a24wj-0004iw-Rf@rmk-PC.arm.linux.org.uk>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1445460100-26727-6-git-send-email-Julia.Lawall@lip6.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Nov 26, 2015 at 10:23:21PM +0000, Russell King wrote:
-> Add documentation for the Marvell clock divider driver, which is used
-> to source clocks for the AXI bus, video decoder, GPU and LCD blocks.
+On 10/21, Julia Lawall wrote:
+> for_each_available_child_of_node performs an of_node_get on each iteration,
+> so a break out of the loop requires an of_node_put.
 > 
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> The semantic patch that fixes this problem is as follows
+> (http://coccinelle.lip6.fr):
+> 
+> // <smpl>
+> @@
+> expression root,e;
+> local idexpression child;
+> @@
+> 
+>  for_each_available_child_of_node(root, child) {
+>    ... when != of_node_put(child)
+>        when != e = child
+> (
+>    return child;
+> |
+> +  of_node_put(child);
+> ?  return ...;
+> )
+>    ...
+>  }
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
 > ---
->  .../bindings/clock/dove-divider-clock.txt          | 28 ++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/dove-divider-clock.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/dove-divider-clock.txt b/Documentation/devicetree/bindings/clock/dove-divider-clock.txt
-> new file mode 100644
-> index 000000000000..0c602de279e5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/dove-divider-clock.txt
-> @@ -0,0 +1,28 @@
-> +PLl divider based Dove clocks
-> +
-> +Marvell Dove has a 2GHz PLL, which feeds into a set of dividers to provide
-> +high speed clocks for a number of peripherals.  These dividers are part of
-> +the PMU, and thus this node should be a child of the PMU node.
 
-It seems a bit strange to just be documenting these clocks. What about 
-the rest of the SOC clocks?
+Applied to clk-fixes
 
-> +
-> +The following clocks are provided:
-> +
-> +ID	Clock
-> +-------------
-> +0	AXI bus clock
-> +1	GPU clock
-> +2	VMeta clock
-> +3	LCD clock
-> +
-> +Required properties:
-> +- compatible : shall be "marvell,dove-divider-clock"
-> +- reg : shall be the register address of the Core PLL and Clock Divider
-> +   Control 0 register.  This will cover that register, as well as the
-> +   Core PLL and Clock Divider Control 1 register.  Thus, it will have
-> +   a size of 8.
-> +- #clock-cells : from common clock binding; shall be set to 1
-> +
-> +divider_clk: core-clock@0064 {
-> +	compatible = "marvell,dove-divider-clock";
-> +	reg = <0x0064 0x8>;
-> +	#clock-cells = <1>;
-> +};
-> -- 
-> 2.1.0
-> 
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
