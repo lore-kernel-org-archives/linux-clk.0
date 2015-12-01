@@ -1,112 +1,138 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	linux-pwm@vger.kernel.org
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kamil Debski <k.debski@samsung.com>,
-	lm-sensors@lm-sensors.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	Bryan Wu <cooloney@gmail.com>,
-	Richard Purdie <rpurdie@rpsys.net>,
-	Jacek Anaszewski <j.anaszewski@samsung.com>,
-	linux-leds@vger.kernel.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com,
-	Joachim Eastwood <manabian@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	linux-fbdev@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Julia Lawall <Julia.Lawall@lip6.fr>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v4 02/24] pwm: use pwm_get_xxx() helpers where appropriate
-Date: Mon, 16 Nov 2015 09:56:25 +0100
-Message-Id: <1447664207-24370-3-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org
+Subject: [PATCH v2 4/5] clk: qcom: Add gfx3d ping-pong PLL frequency switching
+Date: Mon, 30 Nov 2015 17:31:41 -0800
+Message-Id: <1448933502-11944-5-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1448933502-11944-1-git-send-email-sboyd@codeaurora.org>
+References: <1448933502-11944-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Use pwm_get_xxx() helpers instead of directly accessing the pwm->xxx field.
-Doing that will ease adaptation of the PWM framework to support atomic
-update.
+The GPU clocks on msm8996 have three dedicated PLLs, MMPLL2,
+MMPLL8, and MMPLL9. We leave MMPLL9 at the maximum speed (624
+MHz), and we use MMPLL2 and MMPLL8 for the other frequencies. To
+make switching frequencies faster, we ping-pong between MMPLL2
+and MMPLL8 when we're switching between frequencies that aren't
+the maximum. Implement custom rcg clk ops for this type of
+frequency switching.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
-Patch generated with the following coccinelle script:
+ drivers/clk/qcom/clk-rcg.h  |  1 +
+ drivers/clk/qcom/clk-rcg2.c | 87 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 88 insertions(+)
 
---->8---
-virtual patch
-
-@@
-struct pwm_device *p;
-expression e;
-@@
-(
--(p)->polarity = e;
-+pwm_set_polarity((p), e);
-|
--(p)->polarity
-+pwm_get_polarity((p))
-|
--(p)->period = e;
-+pwm_set_period((p), e);
-|
--(p)->period
-+pwm_get_period((p))
-|
--(p)->duty_cycle = e;
-+pwm_set_duty_cycle((p), e);
-|
--(p)->duty_cycle
-+pwm_get_duty_cycle((p))
-)
---->8---
----
- drivers/pwm/pwm-crc.c         | 2 +-
- drivers/pwm/pwm-lpc18xx-sct.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pwm/pwm-crc.c b/drivers/pwm/pwm-crc.c
-index 7101c70..2f88543 100644
---- a/drivers/pwm/pwm-crc.c
-+++ b/drivers/pwm/pwm-crc.c
-@@ -75,7 +75,7 @@ static int crc_pwm_config(struct pwm_chip *c, struct pwm_device *pwm,
- 		return -EINVAL;
- 	}
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index 4b1e94bdf29e..b904c335cda4 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -178,5 +178,6 @@ extern const struct clk_ops clk_edp_pixel_ops;
+ extern const struct clk_ops clk_byte_ops;
+ extern const struct clk_ops clk_byte2_ops;
+ extern const struct clk_ops clk_pixel_ops;
++extern const struct clk_ops clk_gfx3d_ops;
  
--	if (pwm->period != period_ns) {
-+	if (pwm_get_period((pwm)) != period_ns) {
- 		int clk_div;
- 
- 		/* changing the clk divisor, need to disable fisrt */
-diff --git a/drivers/pwm/pwm-lpc18xx-sct.c b/drivers/pwm/pwm-lpc18xx-sct.c
-index 9163085..091fa13 100644
---- a/drivers/pwm/pwm-lpc18xx-sct.c
-+++ b/drivers/pwm/pwm-lpc18xx-sct.c
-@@ -249,7 +249,7 @@ static int lpc18xx_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
- 			   LPC18XX_PWM_EVSTATEMSK(lpc18xx_data->duty_event),
- 			   LPC18XX_PWM_EVSTATEMSK_ALL);
- 
--	if (pwm->polarity == PWM_POLARITY_NORMAL) {
-+	if (pwm_get_polarity((pwm)) == PWM_POLARITY_NORMAL) {
- 		set_event = lpc18xx_pwm->period_event;
- 		clear_event = lpc18xx_data->duty_event;
- 		res_action = LPC18XX_PWM_RES_SET;
+ #endif
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index b544bb302f79..a071bba8018c 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -723,3 +723,90 @@ const struct clk_ops clk_pixel_ops = {
+ 	.determine_rate = clk_pixel_determine_rate,
+ };
+ EXPORT_SYMBOL_GPL(clk_pixel_ops);
++
++static int clk_gfx3d_determine_rate(struct clk_hw *hw,
++				    struct clk_rate_request *req)
++{
++	struct clk_rate_request parent_req = { };
++	struct clk_hw *p2, *p8, *p9, *xo;
++	unsigned long p9_rate;
++	int ret;
++
++	xo = clk_hw_get_parent_by_index(hw, 0);
++	if (req->rate == clk_hw_get_rate(xo)) {
++		req->best_parent_hw = xo;
++		return 0;
++	}
++
++	p9 = clk_hw_get_parent_by_index(hw, 2);
++	p2 = clk_hw_get_parent_by_index(hw, 3);
++	p8 = clk_hw_get_parent_by_index(hw, 4);
++
++	/* PLL9 is a fixed rate PLL */
++	p9_rate = clk_hw_get_rate(p9);
++
++	parent_req.rate = req->rate = min(req->rate, p9_rate);
++	if (req->rate == p9_rate) {
++		req->rate = req->best_parent_rate = p9_rate;
++		req->best_parent_hw = p9;
++		return 0;
++	}
++
++	if (req->best_parent_hw == p9) {
++		/* Are we going back to a previously used rate? */
++		if (clk_hw_get_rate(p8) == req->rate)
++			req->best_parent_hw = p8;
++		else
++			req->best_parent_hw = p2;
++	} else if (req->best_parent_hw == p8) {
++		req->best_parent_hw = p2;
++	} else {
++		req->best_parent_hw = p8;
++	}
++
++	ret = __clk_determine_rate(req->best_parent_hw, &parent_req);
++	if (ret)
++		return ret;
++
++	req->rate = req->best_parent_rate = parent_req.rate;
++
++	return 0;
++}
++
++static int clk_gfx3d_set_rate_and_parent(struct clk_hw *hw, unsigned long rate,
++		unsigned long parent_rate, u8 index)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	u32 cfg;
++	int ret;
++
++	/* Just mux it, we don't use the division or m/n hardware */
++	cfg = rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
++	ret = regmap_write(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, cfg);
++	if (ret)
++		return ret;
++
++	return update_config(rcg);
++}
++
++static int clk_gfx3d_set_rate(struct clk_hw *hw, unsigned long rate,
++			      unsigned long parent_rate)
++{
++	/*
++	 * We should never get here; clk_gfx3d_determine_rate() should always
++	 * make us use a different parent than what we're currently using, so
++	 * clk_gfx3d_set_rate_and_parent() should always be called.
++	 */
++	return 0;
++}
++
++const struct clk_ops clk_gfx3d_ops = {
++	.is_enabled = clk_rcg2_is_enabled,
++	.get_parent = clk_rcg2_get_parent,
++	.set_parent = clk_rcg2_set_parent,
++	.recalc_rate = clk_rcg2_recalc_rate,
++	.set_rate = clk_gfx3d_set_rate,
++	.set_rate_and_parent = clk_gfx3d_set_rate_and_parent,
++	.determine_rate = clk_gfx3d_determine_rate,
++};
++EXPORT_SYMBOL_GPL(clk_gfx3d_ops);
 -- 
-2.1.4
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
