@@ -1,112 +1,71 @@
-Return-Path: <simon@fire.lp0.eu>
-From: Simon Arlott <simon@fire.lp0.eu>
-Subject: [PATCH linux-next (v2) 1/2] clk: Add brcm,bcm6345-gate-clk device
- tree binding
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kevin Cernekee <cernekee@gmail.com>,
- Florian Fainelli <f.fainelli@gmail.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-clk@vger.kernel.org, linux-mips@linux-mips.org,
- Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Kumar Gala <galak@codeaurora.org>, Jonas Gorski <jogo@openwrt.org>
-Message-ID: <5669F361.60405@simon.arlott.org.uk>
-Date: Thu, 10 Dec 2015 21:49:21 +0000
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 1 Dec 2015 12:16:15 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v4 2/5] clk: sunxi: Add sun9i A80 apbs gates support
+Message-ID: <20151201111615.GG29263@lukather>
+References: <1448766190-11345-1-git-send-email-wens@csie.org>
+ <1448766190-11345-3-git-send-email-wens@csie.org>
+ <20151130171406.GA10111@rob-hp-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="5UGlQXeG3ziZS81+"
+In-Reply-To: <20151130171406.GA10111@rob-hp-laptop>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree binding for the BCM6345's gated clocks.
 
-The BCM6345 contains clocks gated with a register. Clocks are indexed
-by bits in the register and are active high. Most MIPS-based BCM63xx
-SoCs have a clock gating set of registers, but some have clock gate bits
-interleaved with other status bits and configurable clocks in the same
-register.
+--5UGlQXeG3ziZS81+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Simon Arlott <simon@fire.lp0.eu>
----
-v2: Added clock-indices, clock-output-names (from clock-bindings.txt),
-    these are required properties.
+On Mon, Nov 30, 2015 at 11:14:06AM -0600, Rob Herring wrote:
+> On Sun, Nov 29, 2015 at 11:03:07AM +0800, Chen-Yu Tsai wrote:
+> > This patch adds support for the PRCM apbs clock gates found on the
+> > Allwinner A80 SoC.
+> >=20
+> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>=20
+> Acked-by: Rob Herring <robh@kernel.org>
 
-v1: Renamed from BCM63xx to BCM6345.
+Applied, thanks!
 
- .../bindings/clock/brcm,bcm6345-gate-clk.txt       | 62 ++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm6345-gate-clk.txt
+Maxime
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm6345-gate-clk.txt b/Documentation/devicetree/bindings/clock/brcm,bcm6345-gate-clk.txt
-new file mode 100644
-index 0000000..a6e264c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/brcm,bcm6345-gate-clk.txt
-@@ -0,0 +1,62 @@
-+Broadcom BCM6345 clocks
-+
-+This binding uses the common clock binding:
-+	Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+The BCM6345 contains clocks gated with a register. Clocks are indexed
-+by bits in the register and are active high. Most MIPS-based BCM63xx
-+SoCs have a clock gating set of registers, but some have clock gate bits
-+interleaved with other status bits and configurable clocks in the same
-+register.
-+
-+Required properties:
-+- compatible:         Should be "brcm,bcm<soc>-gate-clk", "brcm,bcm6345-gate-clk"
-+- #clock-cells:       Should be <1>.
-+- regmap:             The register map phandle
-+- offset:             Offset in the register map for the clock register (in bytes)
-+- clocks:             The external oscillator clock phandle
-+- clock-indices:      The bits in the register used for gated clocks.
-+- clock-output-names: Should be a list of strings of clock output signal
-+                      names indexed by the clock indices.
-+
-+Example:
-+
-+periph_clk: periph_clk {
-+	compatible = "brcm,bcm63168-gate-clk", "brcm,bcm6345-gate-clk";
-+	regmap = <&periph_cntl>;
-+	offset = <0x4>;
-+
-+	#clock-cells = <1>;
-+	clock-indices =
-+		<1>,          <2>,        <3>,       <4>,     <5>,
-+		<6>,          <7>,        <8>,       <9>,     <10>,
-+		<11>,         <12>,       <13>,      <14>,    <15>,
-+		<16>,         <17>,       <18>,      <19>,    <20>,
-+		<27>,         <31>;
-+	clock-output-names =
-+		"vdsl_qproc", "vdsl_afe", "vdsl",    "mips",  "wlan_ocp",
-+		"dect",       "fap0",     "fap1",    "sar",   "robosw",
-+		"pcm",        "usbd",     "usbh",    "ipsec", "spi",
-+		"hsspi",      "pcie",     "phymips", "gmac",  "nand",
-+		"tbus",       "robosw250";
-+};
-+
-+timer_clk: timer_clk {
-+	compatible = "brcm,bcm63168-gate-clk", "brcm,bcm6345-gate-clk";
-+	regmap = <&timer_cntl>;
-+	offset = <0x4>;
-+
-+	#clock-cells = <1>;
-+	clock-indices = <17>, <18>;
-+	clock-output-names = "uto_extin", "usb_ref";
-+};
-+
-+ehci0: usb@10002500 {
-+	compatible = "brcm,bcm63168-ehci", "brcm,bcm6345-ehci", "generic-ehci";
-+	reg = <0x10002500 0x100>;
-+	big-endian;
-+	interrupt-parent = <&periph_intc>;
-+	interrupts = <10>;
-+	clocks = <&periph_clk 13>, <&timer_clk 18>;
-+	phys = <&usbh>;
-+};
--- 
-2.1.4
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
--- 
-Simon Arlott
+--5UGlQXeG3ziZS81+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWXYF/AAoJEBx+YmzsjxAgWTEP/1QvPIZ6+s40Qulc5wTViddO
+Ie+ahB9iUTEBEVkYGxruDoi9PGw4wt/k/pcCX2QF83sLMAvPSYBGUq5PktahgNHC
+a1gLfUw2g7RDYl0Kwxayr/u//nMDTh7SoSen1w5gL3Xek0DDo/3V/K1h0aCcS/Kh
+jsD5L7PyCW8txCZpu7rQ63eFMOA2/w4u7AGY5NH8+liG1QuC4TazCp0pN+IDIfWA
+vIMZ8IAazYh+lZHkycMFqDtVIDd579OL7UYQZ+bo0PYtcVCjf+m2N4Jqdg5IuR86
+zI04cH8UY9BxQXJd0gilGQ3dp0NYJ+oH8T1zATtNHXHLRb0EWIrm/Gue1CiRZdaN
+VGMMYyWHMBLtH7HzzgFXWWtW5RpCa2GH700gcJ3MCuoxKISNLHDITPUYx6OZWNzb
+lh/C7Xp6v3XsTh6O98e8hdpAbiReHCqWR7n7GVBNAw7OvRj7v4EgWpcRW1HbVvO0
+qch1vAWD+GmPNtPEvFy1Dbf0UHlJvUUlnfnMVgka9OkeHf8ruDclOnFlMpjb++hr
+Jk8wIPjTSL7oLGUNlxXzrDwBgYLEJ/Vkf5KsITIYSCTcCWjT/BlbRUMhqLNBiFuZ
+aY8m6n7xkmzHtPTv4RBt1a5QEpLyJXEZIlyJpxlkl9FGiGY38v/ir1zpdCgb2IJs
+DTGzKeneX+nH3SkUa4s9
+=c5uC
+-----END PGP SIGNATURE-----
+
+--5UGlQXeG3ziZS81+--
