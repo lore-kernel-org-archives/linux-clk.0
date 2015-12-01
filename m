@@ -1,109 +1,201 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-Subject: Re: [PATCH v2 1/9] clk: hi3519: add dt-binding document and header
- file
-To: Arnd Bergmann <arnd@arndb.de>, <robh+dt@kernel.org>
-References: <1449110364-23464-1-git-send-email-xuejiancheng@huawei.com>
- <21651844.ONg7WdRZpk@wuerfel> <56653CBF.30801@huawei.com>
- <2735980.8lIUhgbJzL@wuerfel>
-CC: <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <xuwei5@hisilicon.com>, <haojian.zhuang@linaro.org>,
-        <zhangfei.gao@linaro.org>, <bintian.wang@huawei.com>,
-        <yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
-        <suwenping@hisilicon.com>, <ml.yang@hisilicon.com>,
-        <gaofei@hisilicon.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-From: xuejiancheng <xuejiancheng@huawei.com>
-Message-ID: <5666A6B5.6020101@huawei.com>
-Date: Tue, 8 Dec 2015 17:45:25 +0800
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 1 Dec 2015 11:04:16 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v4 1/5] clk: sunxi: Add CLK_OF_DECLARE support for
+ sun8i-a23-apb0-clk driver
+Message-ID: <20151201100416.GF29263@lukather>
+References: <1448766190-11345-1-git-send-email-wens@csie.org>
+ <1448766190-11345-2-git-send-email-wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <2735980.8lIUhgbJzL@wuerfel>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Zs/RYxT/hKAHzkfQ"
+In-Reply-To: <1448766190-11345-2-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
 
+--Zs/RYxT/hKAHzkfQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2015/12/7 17:36, Arnd Bergmann wrote:
-> On Monday 07 December 2015 16:01:03 xuejiancheng wrote:
->> On 2015/12/4 18:56, Arnd Bergmann wrote:
->>> On Friday 04 December 2015 11:21:28 xuejiancheng wrote:
->>>> Hi Arnd,
->>>>
->>>> On 2015/12/3 17:44, Arnd Bergmann wrote:
->>>>> On Thursday 03 December 2015 10:39:24 Jiancheng Xue wrote:
->>>>>> +#ifndef __DTS_HI3519_CLOCK_H
->>>>>> +#define __DTS_HI3519_CLOCK_H
->>>>>
->>>>> Please try to avoid adding headers like this if you can at all.
->>>>>
->>>>> I might ask you to merge the header file in one merge window
->>>>> otherwise and submit the platform code one kernel later, as they
->>>>> tendn to cause us needless dependencies otherwise.
->>>>>
->>>>
->>>> Sorry. In v1, Rob suggested putting binding doc and header files in
->>>> a separate patch. The clock driver indeed depends on the header.
->>>>
->>>> I will put the header and the clock driver in a patch, and keep the
->>>> binding doc in another patch.
->>>
->>> Having split patches is better, I was really commenting on the fact
->>> that ideally you would not have a header file at all. If we merge
->>> the header through arm-soc, then you won't be able to merge the
->>> clk driver easily, and if you merge the header through the clk
->>> maintainer, I'm can't take your dts files.
->>
->> Thank you for your comments. Because the clocks in the crg module have
->> different types and random layouts. If this header file is removed,
->> the clock driver and the dts files will get very complicated.
->>
->> Could you help me acknowledge it if I put the header file and clock driver
->> in a patch?
->>
->> Could you give me some suggestions If I want to keep this header file?
-> 
-> If this is another clock controller that has a random register layout,
-> then adding the header file is the least problematic solution indeed.
+Hi,
 
-Is it OK if I put the header file and the clock driver in a patch?
+On Sun, Nov 29, 2015 at 11:03:06AM +0800, Chen-Yu Tsai wrote:
+> The APBS clock on sun9i is the same as the APB0 clock on sun8i. With
+> sun9i we are supporting the PRCM clocks by using CLK_OF_DECLARE,
+> instead of through a PRCM mfd device and subdevices for each clock
+> and reset control. As such we need a CLK_OF_DECLARE version of
+> the sun8i-a23-apb0-clk driver.
+>=20
+> Also, build it for sun9i/A80, and not just for configurations with
+> MFD_SUN6I_PRCM enabled.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  drivers/clk/sunxi/Makefile         |  5 +--
+>  drivers/clk/sunxi/clk-sun8i-apb0.c | 71 +++++++++++++++++++++++++++++++-=
+------
+>  2 files changed, 62 insertions(+), 14 deletions(-)
+>=20
+> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+> index cb4c299214ce..c55d5cd1c0e5 100644
+> --- a/drivers/clk/sunxi/Makefile
+> +++ b/drivers/clk/sunxi/Makefile
+> @@ -15,6 +15,7 @@ obj-y +=3D clk-sun9i-core.o
+>  obj-y +=3D clk-sun9i-mmc.o
+>  obj-y +=3D clk-usb.o
+> =20
+> +obj-$(CONFIG_MACH_SUN9I) +=3D clk-sun8i-apb0.o
+> +
 
-If it's not OK, could you tell me how should I separate the patches?
+So sun8i doesn't use it?
 
-Thank you.
+>  obj-$(CONFIG_MFD_SUN6I_PRCM) +=3D \
+> -	clk-sun6i-ar100.o clk-sun6i-apb0.o clk-sun6i-apb0-gates.o \
+> -	clk-sun8i-apb0.o
+> +	clk-sun6i-ar100.o clk-sun6i-apb0.o clk-sun6i-apb0-gates.o
+> diff --git a/drivers/clk/sunxi/clk-sun8i-apb0.c b/drivers/clk/sunxi/clk-s=
+un8i-apb0.c
+> index 7ae5d2c2cde1..c1e2ac8f4b0d 100644
+> --- a/drivers/clk/sunxi/clk-sun8i-apb0.c
+> +++ b/drivers/clk/sunxi/clk-sun8i-apb0.c
+> @@ -17,13 +17,68 @@
+>  #include <linux/clk-provider.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+> +#include <linux/of_address.h>
+>  #include <linux/platform_device.h>
+> =20
+> +static struct clk *sun8i_a23_apb0_register(struct device_node *node,
+> +					   void __iomem *reg)
+> +{
+> +	const char *clk_name =3D node->name;
+> +	const char *clk_parent;
+> +	struct clk *clk;
+> +	int ret;
+> +
+> +	clk_parent =3D of_clk_get_parent_name(node, 0);
+> +	if (!clk_parent)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	of_property_read_string(node, "clock-output-names", &clk_name);
+> +
+> +	/* The A23 APB0 clock is a standard 2 bit wide divider clock */
+> +	clk =3D clk_register_divider(NULL, clk_name, clk_parent, 0, reg,
+> +				   0, 2, CLK_DIVIDER_POWER_OF_TWO, NULL);
+> +	if (IS_ERR(clk))
+> +		return clk;
+> +
+> +	ret =3D of_clk_add_provider(node, of_clk_src_simple_get, clk);
+> +	if (ret)
+> +		goto err_unregister;
+> +
+> +	return clk;
+> +
+> +err_unregister:
+> +	clk_unregister_divider(clk);
+> +
+> +	return ERR_PTR(ret);
+> +}
+> +
+> +static void sun8i_a23_apb0_setup(struct device_node *node)
+> +{
+> +	void __iomem *reg;
+> +	struct resource res;
+> +	struct clk *clk;
+> +
+> +	reg =3D of_io_request_and_map(node, 0, of_node_full_name(node));
+> +	if (IS_ERR(reg))
+> +		return;
+> +
+> +	clk =3D sun8i_a23_apb0_register(node, reg);
+> +	if (IS_ERR(clk))
+> +		goto err_unmap;
+> +
+> +	return;
+> +
+> +err_unmap:
+> +	iounmap(reg);
+> +	of_address_to_resource(node, 0, &res);
+> +	release_mem_region(res.start, resource_size(&res));
+> +}
+> +CLK_OF_DECLARE(sun8i_a23_apb0, "allwinner,sun8i-a23-apb0-clk",
+> +	       sun8i_a23_apb0_setup);
+> +
+>  static int sun8i_a23_apb0_clk_probe(struct platform_device *pdev)
+>  {
+>  	struct device_node *np =3D pdev->dev.of_node;
+> -	const char *clk_name =3D np->name;
+> -	const char *clk_parent;
+>  	struct resource *r;
+>  	void __iomem *reg;
+>  	struct clk *clk;
+> @@ -33,19 +88,11 @@ static int sun8i_a23_apb0_clk_probe(struct platform_d=
+evice *pdev)
+>  	if (IS_ERR(reg))
+>  		return PTR_ERR(reg);
+> =20
+> -	clk_parent =3D of_clk_get_parent_name(np, 0);
+> -	if (!clk_parent)
+> -		return -EINVAL;
+> -
+> -	of_property_read_string(np, "clock-output-names", &clk_name);
+> -
+> -	/* The A23 APB0 clock is a standard 2 bit wide divider clock */
+> -	clk =3D clk_register_divider(&pdev->dev, clk_name, clk_parent, 0, reg,
+> -				   0, 2, CLK_DIVIDER_POWER_OF_TWO, NULL);
+> +	clk =3D sun8i_a23_apb0_register(np, reg);
+>  	if (IS_ERR(clk))
+>  		return PTR_ERR(clk);
+> =20
+> -	return of_clk_add_provider(np, of_clk_src_simple_get, clk);
+> +	return 0;
+>  }
 
-> 
->>>>> Where do those numbers come from? They are not consecutive, so it sounds
->>>>> like they are directly from the data sheet and won't be needed in the driver.
->>>>> If that's true, just use the numbers directly, as you do for everything
->>>>> else.
->>>>
->>>> The numbers are defined by myself, not directly from the data sheet. Some numbers
->>>> are reserved for device nodes which will be added later. So they are not consecutive now.
->>>
->>> I don't understand. How do you decide which numbers to reserve? If the
->>> numbers are completely arbitrary and you have no idea what other clocks
->>> there are, you can simply have consecutive numbers here and do the driver
->>> accordingly.
->>
->> The clocks are divided into several groups according to their types. The clocks in
->> a group are expected to have consecutive numbers. So some numbers are reserved for
->> every group in this file, just like in some existing headers. Other clocks will be
->> added when other peripherals drivers are submitted. They will use the reserve numbers
->> and be inserted into existing groups.
->>
->> Of course it is not required to reserve numbers for later added clocks.
-> 
-> Are you able to enumerate all the clocks then? If all clocks that are
-> supported by this clock controllers have names in the data sheet, I
-> would prefer to just list them all now rather than only enter the ones
-> we already need, to avoid having future merge conflicts.
-> 
-> Then we just need to add code to support those clocks when we need them,
-> but that can be done in parallel to adding the DT nodes and the driver,
-> rather than strongly serializing the patch flow on the header file patches.
-> 
-> 	Arnd
-> 
-> .
-> 
+Won't this probe twice now? First the CLK_OF_DECLARE will register a
+clock, and then the device model will call probe a second time.
+
+I guess then request_mem_region will catch it, but then you return an
+error code, which is probably an error success, since the clock is
+registered :)
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--Zs/RYxT/hKAHzkfQ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWXXCgAAoJEBx+YmzsjxAgnf4P/0GUaUECBA9nSZJsJqeDShuy
+xJEp6phiR8M8q+cOPPifn5T+wPLxr9ObCoDKFJsJmvu/8Ag6NC3xyUQZSjQ3sFAr
+c8tVOD9syX5yBGMZRqVPUIb7hm1InfQ1p6BQ98e9XkkQNmgManKAvdBylUTJ5wXv
+HUXJ3cE+r5w5GQDgFak9INcglHwy2spNcoSy5wd7/mlyjTaTHx8bLWsVg4XgdxuV
+4yr9pSzMa2+UYibDAKMEAf+nelLrazgyYSP4OjZtpGcymU+ekdE+c36AZauRW5d7
+xsla2dQAZHkvX3rkopIz09/ez9MPIKM130Zadv2iOHDlbKjoMfIY9v7frH+RIqxu
+Q5AjBAVLs5M72O67vlqI+lNqBHC6SNQ+c0P2gpynnQiN21ZfD7KCUqj9v77eUay5
+AaXnfCQRUo3zi37n38WbZq18bYK/HZX1rwCi1kyGZjNkS4ypqWcagUSt9MuN3I7a
+ZCBGcAH9FEbbogN9v35MXTm8bNu8XQLrHW5TegQyS8OW/t/uwzQ9OQ3yvI8F2BRj
+rcp/C5hbceOuLoaZT8q+lAlH+fRfXKVfKS3QfWRWAIwSCVeewlMmPS3iByD57ibd
+vEJIDl87Ltw2khIitxrlftwG6VyDQ+dYO0WSWncJAdc4FfRB3KGu2KKJR+SvLol1
+by+zCGnKgWZb4C6gm+c5
+=jGyx
+-----END PGP SIGNATURE-----
+
+--Zs/RYxT/hKAHzkfQ--
