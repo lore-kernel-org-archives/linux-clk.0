@@ -1,85 +1,35 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] clk: let of_clk_get_parent_name() fail for invalid clock-indices
-Date: Fri, 20 Nov 2015 16:36:20 +0900
-Message-Id: <1448004981-11133-2-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1448004981-11133-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1448004981-11133-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 30 Nov 2015 18:31:43 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] Add support for MSM8996 clock controllers
+Message-ID: <20151201023143.GH17532@codeaurora.org>
+References: <1448933502-11944-1-git-send-email-sboyd@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1448933502-11944-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently, of_clk_get_parent_name() returns a wrong parent clock name
-when "clock-indices" property exists and the given index is not found
-in the property.  In this case, NULL should be returned.
+On 11/30, Stephen Boyd wrote:
+> These patches add support for the global and multimedia clock controllers
+> found on MSM8996 devices. The first patch allows us to implement a
+> "power of two" divider of different widths with a table based divider.
+> The second patch adds support for Alpha PLLs and the 3rd and 5th patches
+> add support for the two clock controllers. The fourth patch is
+> a new type of clock ops for the graphics clock that does some custom
+> ping-pong between different PLLs when switching graphics frequencies.
+> 
+> Changes from v1:
+>  * Added some missing clocks in gcc and mmcc drivers
+>  * Updated PLL settings in mmcc
+> 
+> 
 
-For example,
+I've pushed this to clk-msm8996 and merged it into clk-next.
 
-        oscillator {
-                compatible = "myclocktype";
-                #clock-cells = <1>;
-                clock-indices = <1>, <3>;
-                clock-output-names = "clka", "clkb";
-        };
-
-Currently, of_clk_get_parent_name(np, 0) returns "clka", but should
-return NULL because "clock-indices" does not contain <0>.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- drivers/clk/clk.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 20d8e07..8698074 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3054,12 +3054,9 @@ EXPORT_SYMBOL_GPL(of_clk_get_parent_count);
- const char *of_clk_get_parent_name(struct device_node *np, int index)
- {
- 	struct of_phandle_args clkspec;
--	struct property *prop;
- 	const char *clk_name;
--	const __be32 *vp;
--	u32 pv;
--	int rc;
--	int count;
-+	const __be32 *list;
-+	int rc, len, i;
- 	struct clk *clk;
- 
- 	rc = of_parse_phandle_with_args(np, "clocks", "#clock-cells", index,
-@@ -3068,17 +3065,20 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
- 		return NULL;
- 
- 	index = clkspec.args_count ? clkspec.args[0] : 0;
--	count = 0;
- 
- 	/* if there is an indices property, use it to transfer the index
- 	 * specified into an array offset for the clock-output-names property.
- 	 */
--	of_property_for_each_u32(clkspec.np, "clock-indices", prop, vp, pv) {
--		if (index == pv) {
--			index = count;
--			break;
--		}
--		count++;
-+	list = of_get_property(clkspec.np, "clock-indices", &len);
-+	if (list) {
-+		len /= sizeof(*list);
-+		for (i = 0; i < len; i++)
-+			if (index == be32_to_cpup(list++)) {
-+				index = i;
-+				break;
-+			}
-+		if (i == len)
-+			return NULL;
- 	}
- 
- 	if (of_property_read_string_index(clkspec.np, "clock-output-names",
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
