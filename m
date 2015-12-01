@@ -1,65 +1,95 @@
-Return-Path: <k.kozlowski.k@gmail.com>
-Return-Path: <k.kozlowski.k@gmail.com>
-Sender: =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
-Subject: Re: [PATCH v3] clk: s3c2410: removed unneeded variable in
- s3c24xx_clkout_set_parent
-To: "Mutharaju, Prasanna (P.)" <mkarthi3@visteon.com>,
- =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-References: <20151130095109.GA28767@jci-VirtualBox>
-Cc: k.kozlowski.k@gmail.com, Kukjin Kim <kgene@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-ID: <565C1D25.602@samsung.com>
-Date: Mon, 30 Nov 2015 18:55:49 +0900
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 30 Nov 2015 17:53:23 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 5/6] clk: qcom: gdsc: Do not check for disabled status on
+ votable gdscs
+Message-ID: <20151201015323.GF17532@codeaurora.org>
+References: <1448517297-32419-1-git-send-email-rnayak@codeaurora.org>
+ <1448517297-32419-6-git-send-email-rnayak@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20151130095109.GA28767@jci-VirtualBox>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1448517297-32419-6-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-W dniu 30.11.2015 o 18:52, Mutharaju, Prasanna (P.) pisze:
-> Remove unneeded variable used to store return value.
+On 11/26, Rajendra Nayak wrote:
+> Some gdscs might be controlled via voting registers and might not
+> really disable when the kernel intends to disable them (due to other
+> votes keeping them enabled)
+> Mark these gdscs with a flag for we do not check/wait on a disable
+> status for these gdscs within the kernel disable callback.
 > 
-> Signed-off-by: Prasanna Karthik <mkarthi3@visteon.com>
-
-Previous issues fixed, thanks! But now you changed the From field and it
-does not match exactly the Signed-off-by (email matches but name does
-not). Please fix this - signed-off-by should be the same as "From" (in
-previous versions it was ok...).
-
-Best regards,
-Krzysztof
-
-> 
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 > ---
-> v3: Modified subject and changelog comments
-> ---
-> ---
->  drivers/clk/samsung/clk-s3c2410-dclk.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
-> index e9eb935..ec6fb14 100644
-> --- a/drivers/clk/samsung/clk-s3c2410-dclk.c
-> +++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
-> @@ -77,12 +77,11 @@ static u8 s3c24xx_clkout_get_parent(struct clk_hw *hw)
->  static int s3c24xx_clkout_set_parent(struct clk_hw *hw, u8 index)
->  {
->  	struct s3c24xx_clkout *clkout = to_s3c24xx_clkout(hw);
-> -	int ret = 0;
+>  drivers/clk/qcom/gcc-msm8996.c  |  4 ++++
+>  drivers/clk/qcom/gdsc.c         |  4 ++++
+>  drivers/clk/qcom/gdsc.h         | 15 ++++++++-------
+>  drivers/clk/qcom/mmcc-msm8996.c |  3 +++
+>  4 files changed, 19 insertions(+), 7 deletions(-)
+
+We should have this patch before adding the gdscs that use it.
+Prevents any bisect hole.
+
+>  static struct gdsc usb30_gdsc = {
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index fb2e43c..984537f 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -65,6 +65,10 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+>  	if (ret)
+>  		return ret;
 >  
->  	s3c2410_modify_misccr((clkout->mask << clkout->shift),
->  			      (index << clkout->shift));
+> +	/* If disabling votable gdscs, don't poll on status */
+> +	if ((sc->flags & VOTABLE) && !en)
+> +		return 0;
+> +
+
+There's an explicit delay of 100uS on the disable path for
+votable gdscs in the downstream code. I don't see that here.
+
+>  	timeout = jiffies + usecs_to_jiffies(TIMEOUT_US);
 >  
-> -	return ret;
-> +	return 0;
->  }
+>  	if (sc->gds_hw_ctrl) {
+> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+> index 66a43be..91cbb09 100644
+> --- a/drivers/clk/qcom/gdsc.h
+> +++ b/drivers/clk/qcom/gdsc.h
+> @@ -20,13 +20,6 @@
+>  struct regmap;
+>  struct reset_controller_dev;
 >  
->  static const struct clk_ops s3c24xx_clkout_ops = {
-> 
+> -/* Powerdomain allowable state bitfields */
+> -#define PWRSTS_OFF		BIT(0)
+> -#define PWRSTS_RET		BIT(1)
+> -#define PWRSTS_ON		BIT(2)
+> -#define PWRSTS_OFF_ON		(PWRSTS_OFF | PWRSTS_ON)
+> -#define PWRSTS_RET_ON		(PWRSTS_RET | PWRSTS_ON)
+> -
+>  /**
+>   * struct gdsc - Globally Distributed Switch Controller
+>   * @pd: generic power domain
+> @@ -49,6 +42,14 @@ struct gdsc {
+>  	unsigned int			*cxcs;
+>  	unsigned int			cxc_count;
+>  	const u8			pwrsts;
+> +/* Powerdomain allowable state bitfields */
+> +#define PWRSTS_OFF		BIT(0)
+> +#define PWRSTS_RET		BIT(1)
+> +#define PWRSTS_ON		BIT(2)
+> +#define PWRSTS_OFF_ON		(PWRSTS_OFF | PWRSTS_ON)
+> +#define PWRSTS_RET_ON		(PWRSTS_RET | PWRSTS_ON)
+
+Yes! We should have done this already. I guess I'm ok combining
+it with this patch.
+
+> +	const u8			flags;
+> +#define VOTABLE		BIT(0)
+>  	struct reset_controller_dev	*rcdev;
+>  	unsigned int			*resets;
+>  	unsigned int			reset_count;
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
