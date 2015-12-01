@@ -1,121 +1,82 @@
-Return-Path: <ben@smart-cactus.org>
-From: Ben Gamari <ben@smart-cactus.org>
-To: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org,
+Return-Path: <pi-cheng.chen@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <CAGS+omCkYTPyjMk6QaoxGAL4QVU8VcpWyFqWhST+iP2EFRcRYg@mail.gmail.com>
+References: <1442230072-31593-1-git-send-email-pi-cheng.chen@linaro.org>
+	<CAGS+omCkYTPyjMk6QaoxGAL4QVU8VcpWyFqWhST+iP2EFRcRYg@mail.gmail.com>
+Date: Tue, 1 Dec 2015 23:09:49 +0800
+Message-ID: <CALx668XVnhhLJWs7RBxvaX=SU=S9=wFVT9HMDP2edqiH4Jio4A@mail.gmail.com>
+Subject: Re: [PATCH v6] clk: mediatek: Export CPU mux clocks for CPU frequency control
+From: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
+To: Daniel Kurtz <djkurtz@chromium.org>, Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, James Liao <jamesjj.liao@mediatek.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>,
 	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	b.zolnierkie@samsung.com,
-	Ben Gamari <ben@smart-cactus.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 07/12] ARM: dts: Exynos5422: fix OPP tables
-Date: Wed,  2 Dec 2015 22:19:22 +0100
-Message-Id: <1449091167-20758-8-git-send-email-ben@smart-cactus.org>
-In-Reply-To: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
-References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
+	"moderated list:ARM/Mediatek SoC..." <linux-mediatek@lists.infradead.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Linaro Kernel Mailman List <linaro-kernel@lists.linaro.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The Exynos 5422 is identical to the 5800 except for the fact that it
-boots from the A7 cores. Consequently, the core numbering is different:
-cores 0-3 are A7s whereas 4-7 are A15s.
+On Mon, Nov 30, 2015 at 11:48 AM, Daniel Kurtz <djkurtz@chromium.org> wrote:
+> Hi Pi-Cheng and Michael,
+>
+> On Mon, Sep 14, 2015 at 7:27 PM, Pi-Cheng Chen <pi-cheng.chen@linaro.org> wrote:
+>> From: "pi-cheng.chen" <pi-cheng.chen@linaro.org>
+>>
+>> This patch adds CPU mux clocks which are used by Mediatek cpufreq driver
+>> for intermediate clock source switching.
+>
+> It looks like this patch was never picked up.
+> It is required for MT8173 cpufreq.
+>
+> What is the plan to get this one merged?
 
-We can reuse the device tree of the 5800 for the 5422 but we must take
-care to override the OPP tables and CPU clocks.  These are otherwise
-inherited from the exynos5800 devicetree, which has the CPU clusters
-reversed compared to the 5422. This results in the A15 cores only
-reaching 1.4GHz, the maximum rate of the KFC clock.
+Hi Dan,
+Mike is working on a new CCF feature called "coordinated clock rate changes"
+which would help to migrate mt8173-cpufreq driver to generic cpufreq-dt
+driver, and I am working with him to port MT8173 clock driver on the new
+feature. So I think that's why this patch was not picked since it will
+be migrated to new implementation once the new feature's ready.
 
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Signed-off-by: Ben Gamari <ben@smart-cactus.org>
----
- arch/arm/boot/dts/exynos5422-cpus.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+@Mike:
+Are you plannig to post those patches on the mailing list ?
+Or is it fine for you to take this first and then I will refine it for
+the new feature later?
 
-diff --git a/arch/arm/boot/dts/exynos5422-cpus.dtsi b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-index b7f60c8..9a5131d 100644
---- a/arch/arm/boot/dts/exynos5422-cpus.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-@@ -20,8 +20,10 @@
- 	device_type = "cpu";
- 	compatible = "arm,cortex-a7";
- 	reg = <0x100>;
-+	clocks = <&clock CLK_KFC_CLK>;
- 	clock-frequency = <1000000000>;
- 	cci-control-port = <&cci_control0>;
-+	operating-points-v2 = <&cpu1_opp_table>;
- };
- 
- &cpu1 {
-@@ -30,6 +32,7 @@
- 	reg = <0x101>;
- 	clock-frequency = <1000000000>;
- 	cci-control-port = <&cci_control0>;
-+	operating-points-v2 = <&cpu1_opp_table>;
- };
- 
- &cpu2 {
-@@ -38,6 +41,7 @@
- 	reg = <0x102>;
- 	clock-frequency = <1000000000>;
- 	cci-control-port = <&cci_control0>;
-+	operating-points-v2 = <&cpu1_opp_table>;
- };
- 
- &cpu3 {
-@@ -46,14 +50,17 @@
- 	reg = <0x103>;
- 	clock-frequency = <1000000000>;
- 	cci-control-port = <&cci_control0>;
-+	operating-points-v2 = <&cpu1_opp_table>;
- };
- 
- &cpu4 {
- 	device_type = "cpu";
- 	compatible = "arm,cortex-a15";
- 	reg = <0x0>;
-+	clocks = <&clock CLK_ARM_CLK>;
- 	clock-frequency = <1800000000>;
- 	cci-control-port = <&cci_control1>;
-+	operating-points-v2 = <&cpu0_opp_table>;
- };
- 
- &cpu5 {
-@@ -62,6 +69,7 @@
- 	reg = <0x1>;
- 	clock-frequency = <1800000000>;
- 	cci-control-port = <&cci_control1>;
-+	operating-points-v2 = <&cpu0_opp_table>;
- };
- 
- &cpu6 {
-@@ -70,6 +78,7 @@
- 	reg = <0x2>;
- 	clock-frequency = <1800000000>;
- 	cci-control-port = <&cci_control1>;
-+	operating-points-v2 = <&cpu0_opp_table>;
- };
- 
- &cpu7 {
-@@ -78,4 +87,5 @@
- 	reg = <0x3>;
- 	clock-frequency = <1800000000>;
- 	cci-control-port = <&cci_control1>;
-+	operating-points-v2 = <&cpu0_opp_table>;
- };
--- 
-2.6.2
+Best Regards,
+Pi-Cheng
+
+>
+> -Dan
+>
+>>
+>> Signed-off-by: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
+>> ---
+>> Changes in v6:
+>> - Relace __clk_get_num_parents with clk_hw_get_num_parents to reflect
+>>   API change
+>>
+>> Changes in v5:
+>> - Replace __initdata with __initconst to fix compiling error
+>>
+>> Changes in v4:
+>> - Fix some minor issues for v3
+>> - Rebase to the patch that adds 13mhz clock for MT8173[1]
+>>
+>> Changes in v3:
+>> - Rebase to 4.2-rc1
+>> - Fix some issues of v2
+>>
+>> Changes in v2:
+>> - Remove use of .determine_rate callback
+>> ---
+>>  drivers/clk/mediatek/Makefile          |   2 +-
+>>  drivers/clk/mediatek/clk-cpumux.c      | 127 +++++++++++++++++++++++++++++++++
+>>  drivers/clk/mediatek/clk-cpumux.h      |  22 ++++++
+>>  drivers/clk/mediatek/clk-mt8173.c      |  23 ++++++
+>>  include/dt-bindings/clock/mt8173-clk.h |   4 +-
+>>  5 files changed, 176 insertions(+), 2 deletions(-)
+>>  create mode 100644 drivers/clk/mediatek/clk-cpumux.c
+>>  create mode 100644 drivers/clk/mediatek/clk-cpumux.h
+>
+> [snip]
