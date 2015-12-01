@@ -1,97 +1,154 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Thu, 10 Dec 2015 18:06:52 +0100
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>, Jean-Christophe
- Plagniol-Villard <plagnioj@jcrosoft.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 00/13] ARM: at91: PMC driver rework
-Message-ID: <20151210180652.40eb8bc4@bbrezillon>
-In-Reply-To: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 1 Dec 2015 00:40:48 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-gpio@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] clk: let of_clk_get_parent_name() fail for invalid
+ clock-indices
+Message-ID: <20151201084048.GC26865@codeaurora.org>
+References: <1448873164-22415-1-git-send-email-yamada.masahiro@socionext.com>
+ <20151201005802.GE17532@codeaurora.org>
+ <CAK7LNAT5Q+MVj8KvT_WMwtAFhFN5Q6yXk6vY9oNpoBtEBs-C6Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAK7LNAT5Q+MVj8KvT_WMwtAFhFN5Q6yXk6vY9oNpoBtEBs-C6Q@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri,  4 Dec 2015 18:03:35 +0100
-Alexandre Belloni <alexandre.belloni@free-electrons.com> wrote:
-
-> Hi,
+On 12/01, Masahiro Yamada wrote:
+> 2015-12-01 9:58 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+> > Here's the proposed alternative, if you agree I will merge it
+> > with the above commit text and attribution to you.
+> >
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index a66efc9d8bfc..f54583a9835a 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -3079,6 +3079,9 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
+> >                 }
+> >                 count++;
+> >         }
+> > +       /* We went off the end of 'clock-indices' without finding it */
+> > +       if (!vp && count)
+> > +               return NULL;
+> >
+> >         if (of_property_read_string_index(clkspec.np, "clock-output-names",
+> >                                           index,
+> >
 > 
-> This patch set is a cleanup that properly separate drivers needing to access the
-> PMC (PM and USB) from the clock driver by exposing the PMC as a syscon.
-> 
-> This also allows to implement a fix for preempt-rt. Currently, at91 platform are
-> crashing when using preempt-rt because the irq handler are transformed in
-> threaded irq handler but at the time the pmc registers its clocks, it is not
-> possible to creat threads, leading to a NULL pointer dereference in the kernel.
-> 
-> The new infrastructure uses polling until it is late enough to register threaded
-> irqs.
-> 
-> Note that there is an ugly global spinlock for the peripheral and generated
-> clocks. More infrastructure is needed in syscon to get rid of that one. We will
-> be working on that.
-
-To the whole series,
-
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-
-> 
-> Changes in v3:
->  - rebased on v4.4-rc1 and so included the sama5d2 and the generated clocks
->  - fixed comments from Wenyou
-> 
-> Alexandre Belloni (10):
->   clk: at91: clk-main: factorize irq handling
->   clk: at91: make IRQ optional and register them later
->   clk: at91: pmc: merge at91_pmc_init in atmel_pmc_probe
->   clk: at91: pmc: move pmc structures to C file
->   ARM: at91: pm: simply call at91_pm_init
->   ARM: at91: pm: find and remap the pmc
->   ARM: at91: pm: move idle functions to pm.c
->   ARM: at91: remove useless includes and function prototypes
->   usb: gadget: atmel: access the PMC using regmap
->   clk: at91: pmc: drop at91_pmc_base
-> 
-> Boris Brezillon (3):
->   clk: at91: make use of syscon to share PMC registers in several
->     drivers
->   clk: at91: make use of syscon/regmap internally
->   clk: at91: only disable available IRQs
-> 
->  arch/arm/mach-at91/Kconfig              |   1 +
->  arch/arm/mach-at91/at91rm9200.c         |   2 -
->  arch/arm/mach-at91/at91sam9.c           |   2 -
->  arch/arm/mach-at91/generic.h            |  13 +-
->  arch/arm/mach-at91/pm.c                 |  70 +++++-
->  arch/arm/mach-at91/sama5.c              |   2 +-
->  drivers/clk/at91/clk-generated.c        |  95 ++++---
->  drivers/clk/at91/clk-h32mx.c            |  32 ++-
->  drivers/clk/at91/clk-main.c             | 430 ++++++++++++++++++--------------
->  drivers/clk/at91/clk-master.c           | 134 ++++++----
->  drivers/clk/at91/clk-peripheral.c       | 135 +++++-----
->  drivers/clk/at91/clk-pll.c              | 190 +++++++++-----
->  drivers/clk/at91/clk-plldiv.c           |  42 ++--
->  drivers/clk/at91/clk-programmable.c     |  92 ++++---
->  drivers/clk/at91/clk-slow.c             |  27 +-
->  drivers/clk/at91/clk-smd.c              |  54 ++--
->  drivers/clk/at91/clk-system.c           | 129 +++++++---
->  drivers/clk/at91/clk-usb.c              | 121 +++++----
->  drivers/clk/at91/clk-utmi.c             | 116 ++++++---
->  drivers/clk/at91/pmc.c                  | 314 +++++------------------
->  drivers/clk/at91/pmc.h                  |  96 +------
->  drivers/usb/gadget/udc/atmel_usba_udc.c |  20 +-
->  drivers/usb/gadget/udc/atmel_usba_udc.h |   2 +
->  include/linux/clk/at91_pmc.h            |  12 -
->  24 files changed, 1111 insertions(+), 1020 deletions(-)
+> No, again.
+> The existence of "clock-indices" should be checked
+> in order to omit the zero-length "clock-indices".
 > 
 
+Ah I missed that one. All these corner cases for broken DTs. Too
+bad we don't have that DT validator.
 
+> 
+> OK, let me guess the next alternative from you.
+> 
+> 
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -3079,6 +3079,9 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
+> >                 }
+> >                 count++;
+> >         }
+> > +       /* We went off the end of 'clock-indices' without finding it */
+> > +       if (prop && !vp)
+> > +               return NULL;
+> >
+> >         if (of_property_read_string_index(clkspec.np, "clock-output-names",
+> >                                           index,
+> >
 
+Cool, we can go faster now.
+
+> 
+> This works, but clumsy things are:
+> 
+> [1] If the "clock-indices" is missing, we can know it
+>      before looping around the of_property_for_each_u32().
+>      Checking the "prop" after the loop seems odd.
+
+The of_property_for_each_u32 macro will do pretty much the same
+work that you've done in your patch. So we're not going to go
+around the loop at all in this case, we're just going to get the
+property like you've done, and then of_prop_next_u32() is going
+to return NULL and we'll never enter the loop.
+
+Checking the property again is sort of odd, but we do similar
+sorts of checks at the end of loops in other places in the
+kernel, so it isn't out of the ordinary.
+
+> 
+> [2] "prop" and "vp" seem to be temporary storage that we should not
+>      know what they exactly are, like the auxiliary pointer in
+> list_for_each_safe().
+
+True. In those cases, we check for list emptiness before
+iterating over it with the list helper macros. So it sounds like
+we should do that here as well.
+
+> 
+> 
+> Why do you insist on of_property_for_each_u32()?
+> It no longer fits in here.
+> 
+
+Sure. The other problem is be32_to_cpup() usage. I'd rather that
+we use the style of looping that of_property_for_each_u32 does.
+It doesn't make any assumptions about how the data is in memory.
+Instead we call the iterator function and it gets the next value.
+
+So here's another try, that open codes the macro so we can add
+our count inside and check for a boolean property without
+duplication.
+
+----8<----
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index a66efc9d8bfc..a2112cdab191 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3059,6 +3059,7 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
+ 	u32 pv;
+ 	int rc;
+ 	int count;
++	int len;
+ 	struct clk *clk;
+ 
+ 	rc = of_parse_phandle_with_args(np, "clocks", "#clock-cells", index,
+@@ -3067,18 +3068,24 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
+ 		return NULL;
+ 
+ 	index = clkspec.args_count ? clkspec.args[0] : 0;
+-	count = 0;
++	len = 0;
+ 
+-	/* if there is an indices property, use it to transfer the index
++	/*
++	 * if there is an indices property, use it to transfer the index
+ 	 * specified into an array offset for the clock-output-names property.
+ 	 */
+-	of_property_for_each_u32(clkspec.np, "clock-indices", prop, vp, pv) {
++	prop = of_find_property(clkspec.np, "clock-indices", &len);
++	for (vp = of_prop_next_u32(prop, NULL, &pv), count = 0;
++	     vp;
++	     vp = of_prop_next_u32(prop, vp, &pv), count++) {
+ 		if (index == pv) {
+ 			index = count;
+ 			break;
+ 		}
+-		count++;
+ 	}
++	/* We went off the end of 'clock-indices' without finding it */
++	if (prop && count == len / sizeof(u32))
++		return NULL;
+ 
+ 	if (of_property_read_string_index(clkspec.np, "clock-output-names",
+ 					  index,
 -- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
