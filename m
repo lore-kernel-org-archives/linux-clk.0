@@ -1,45 +1,53 @@
-Return-Path: <hofrat@osadl.org>
-From: Nicholas Mc Guire <hofrat@osadl.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>
-Subject: [PATCH] clk: unchecked return of kmalloc_array
-Date: Mon, 14 Dec 2015 14:16:55 +0100
-Message-Id: <1450099015-23148-1-git-send-email-hofrat@osadl.org>
+Return-Path: <sudipm.mukherjee@gmail.com>
+Return-Path: <sudipm.mukherjee@gmail.com>
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH] clk: qcom: common: check for failure
+Date: Tue,  1 Dec 2015 14:36:10 +0530
+Message-Id: <1448960770-10815-1-git-send-email-sudipm.mukherjee@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-kmalloc_array return is unchecked - given how parent_names is being treated
-in case of allocation error it probably is ok to treat clock->parents the
-same way and simply return.
+We were not checking the return from devm_add_action() which can fail.
 
-problem was located with coccinelle
-
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
 ---
+ drivers/clk/qcom/common.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-patch was compile tested for shmobile_defconfig
-(implies CONFIG_ARCH_SHMOBILE_MULTI=y)
-
-patch is against linux-next (localversion-next -next-20151214)
-
- drivers/clk/shmobile/clk-div6.c |    2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clk/shmobile/clk-div6.c b/drivers/clk/shmobile/clk-div6.c
-index b4c8d67..e6b7533 100644
---- a/drivers/clk/shmobile/clk-div6.c
-+++ b/drivers/clk/shmobile/clk-div6.c
-@@ -196,6 +196,8 @@ static void __init cpg_div6_clock_init(struct device_node *np)
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index c112eba..3541a9a 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -213,7 +213,10 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+ 	if (ret)
+ 		return ret;
  
- 	clock->parents = kmalloc_array(num_parents, sizeof(*clock->parents),
- 		GFP_KERNEL);
-+	if (!clock->parents)
-+		return;
- 	parent_names = kmalloc_array(num_parents, sizeof(*parent_names),
- 				GFP_KERNEL);
- 	if (!parent_names)
+-	devm_add_action(dev, qcom_cc_del_clk_provider, pdev->dev.of_node);
++	ret = devm_add_action(dev, qcom_cc_del_clk_provider,
++			      pdev->dev.of_node);
++	if (ret)
++		return ret;
+ 
+ 	reset = &cc->reset;
+ 	reset->rcdev.of_node = dev->of_node;
+@@ -236,8 +239,12 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+ 			return ret;
+ 	}
+ 
+-	devm_add_action(dev, qcom_cc_gdsc_unregister, dev);
+-
++	ret = devm_add_action(dev, qcom_cc_gdsc_unregister, dev);
++	if (ret) {
++		if (desc->gdscs && desc->num_gdscs)
++			gdsc_unregister(dev);
++		return ret;
++	}
+ 
+ 	return 0;
+ }
 -- 
-1.7.10.4
+1.9.1
