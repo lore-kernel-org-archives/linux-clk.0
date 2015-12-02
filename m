@@ -1,46 +1,73 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, Xing Zheng <zhengxing@rock-chips.com>
-Subject: [PATCH] clk: rockchip: fix rk3368 cpuclk divider offsets
-Date: Tue, 01 Dec 2015 22:31:56 +0100
-Message-ID: <6481456.ejZyd6DyuY@diego>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <carlo.caione@gmail.com>
+Return-Path: <carlo.caione@gmail.com>
+Sender: Carlo Caione <carlo.caione@gmail.com>
+From: Carlo Caione <carlo@caione.org>
+To: robh+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux@arm.linux.org.uk,
+	linux-meson@googlegroups.com,
+	drake@endlessm.com,
+	jerry.cao@amlogic.com,
+	victor.wan@amlogic.com,
+	pawel.moll@arm.com,
+	arnd@arndb.de
+Cc: Carlo Caione <carlo@endlessm.com>
+Subject: [PATCH v2 2/7] dt-bindings: Amlogic: Document the CPU reset controller for Meson8b
+Date: Wed,  2 Dec 2015 18:22:28 +0100
+Message-Id: <1449076953-5058-3-git-send-email-carlo@caione.org>
+In-Reply-To: <1449076953-5058-1-git-send-email-carlo@caione.org>
+References: <1449076953-5058-1-git-send-email-carlo@caione.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Due to a copy-paste error the the rk3368 cpuclk settings were acessing
-rk3288-specific register offsets. This never caused problems till now,
-as cpu frequency scaling in't used currently at all.
+From: Carlo Caione <carlo@endlessm.com>
 
-Reported-by: Xing Zheng <zhengxing@rock-chips.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+The clock controller on Amlogic Meson8b SoCs has been extended with a
+reset controller used to reset the CPU cores. It is used during SMP
+bringup.
+
+With this patch we extend the clock controller documentation.
+
+Signed-off-by: Carlo Caione <carlo@endlessm.com>
 ---
-Posted for reference, as described above this doesn't cause any breakage,
-so can probably simply wait for 4.5
+ Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
- drivers/clk/rockchip/clk-rk3368.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
-index 7e6b783..2ae9c57 100644
---- a/drivers/clk/rockchip/clk-rk3368.c
-+++ b/drivers/clk/rockchip/clk-rk3368.c
-@@ -184,13 +184,13 @@ static const struct rockchip_cpuclk_reg_data rk3368_cpuclkl_data = {
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+index 2b7b3fa..feeb4de 100644
+--- a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
++++ b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+@@ -1,7 +1,8 @@
+ * Amlogic Meson8b Clock and Reset Unit
  
- #define RK3368_CLKSEL0(_offs, _aclkm)					\
- 	{								\
--		.reg = RK3288_CLKSEL_CON(0 + _offs),			\
-+		.reg = RK3368_CLKSEL_CON(0 + _offs),			\
- 		.val = HIWORD_UPDATE(_aclkm, RK3368_DIV_ACLKM_MASK,	\
- 				RK3368_DIV_ACLKM_SHIFT),		\
- 	}
- #define RK3368_CLKSEL1(_offs, _atclk, _pdbg)				\
- 	{								\
--		.reg = RK3288_CLKSEL_CON(1 + _offs),			\
-+		.reg = RK3368_CLKSEL_CON(1 + _offs),			\
- 		.val = HIWORD_UPDATE(_atclk, RK3368_DIV_ATCLK_MASK,	\
- 				RK3368_DIV_ATCLK_SHIFT) |		\
- 		       HIWORD_UPDATE(_pdbg, RK3368_DIV_PCLK_DBG_MASK,	\
+ The Amlogic Meson8b clock controller generates and supplies clock to various
+-controllers within the SoC.
++controllers within the SoC and also implements a reset controller for the CPU
++cores.
+ 
+ Required Properties:
+ 
+@@ -13,16 +14,19 @@ Required Properties:
+ 	   mapped region.
+ 
+ - #clock-cells: should be 1.
++- #reset-cells: should be 1.
+ 
+ Each clock is assigned an identifier and client nodes can use this identifier
+ to specify the clock which they consume. All available clocks are defined as
+ preprocessor macros in the dt-bindings/clock/meson8b-clkc.h header and can be
+ used in device tree sources.
++Similar identifiers exist for the CPU core reset lines.
+ 
+ Example: Clock controller node:
+ 
+ 	clkc: clock-controller@c1104000 {
+ 		#clock-cells = <1>;
++		#reset-cells = <1>;
+ 		compatible = "amlogic,meson8b-clkc";
+ 		reg = <0xc1108000 0x4>, <0xc1104000 0x460>;
+ 	};
 -- 
-2.6.1
+2.5.0
