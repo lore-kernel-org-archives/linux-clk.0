@@ -1,73 +1,67 @@
-Return-Path: <carlo.caione@gmail.com>
-Return-Path: <carlo.caione@gmail.com>
-Sender: Carlo Caione <carlo.caione@gmail.com>
-From: Carlo Caione <carlo@caione.org>
-To: robh+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux@arm.linux.org.uk,
-	linux-meson@googlegroups.com,
-	drake@endlessm.com,
-	jerry.cao@amlogic.com,
-	victor.wan@amlogic.com,
-	pawel.moll@arm.com,
-	arnd@arndb.de
-Cc: Carlo Caione <carlo@endlessm.com>
-Subject: [PATCH v2 2/7] dt-bindings: Amlogic: Document the CPU reset controller for Meson8b
-Date: Wed,  2 Dec 2015 18:22:28 +0100
-Message-Id: <1449076953-5058-3-git-send-email-carlo@caione.org>
-In-Reply-To: <1449076953-5058-1-git-send-email-carlo@caione.org>
-References: <1449076953-5058-1-git-send-email-carlo@caione.org>
+Return-Path: <linux-kernel-dev@beckhoff.com>
+From: <linux-kernel-dev@beckhoff.com>
+To: <shawnguo@kernel.org>, <kernel@pengutronix.de>
+CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, =?UTF-8?q?Patrick=20Br=C3=BCnn?=
+	<p.bruenn@beckhoff.com>
+Subject: [PATCH v2] clk: imx5: ipu_di_sel clocks can set parent rates
+Date: Wed, 2 Dec 2015 10:16:37 +0100
+Message-ID: <1449047797-4300-1-git-send-email-linux-kernel-dev@beckhoff.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-Path: linux-kernel-dev@beckhoff.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Carlo Caione <carlo@endlessm.com>
+From: Patrick Br=C3=BCnn <p.bruenn@beckhoff.com>
 
-The clock controller on Amlogic Meson8b SoCs has been extended with a
-reset controller used to reset the CPU cores. It is used during SMP
-bringup.
+To obtain exact pixel clocks, allow the DI clock selectors to influence
+the PLLs that they are derived from.
 
-With this patch we extend the clock controller documentation.
+Commit 4591b13289b5 ("ARM: i.MX6: ipu_di_sel clocks can set parent
+rates") did this for i.MX6.
+Port it to enable high display resolutions on i.MX53 based platforms
+such as CX9020 Embedded PC, too.
 
-Signed-off-by: Carlo Caione <carlo@endlessm.com>
+Signed-off-by: Patrick Br=C3=BCnn <p.bruenn@beckhoff.com>
 ---
- Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+v2: add clk maintainers to CC and fix commit message format
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-index 2b7b3fa..feeb4de 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-+++ b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-@@ -1,7 +1,8 @@
- * Amlogic Meson8b Clock and Reset Unit
- 
- The Amlogic Meson8b clock controller generates and supplies clock to various
--controllers within the SoC.
-+controllers within the SoC and also implements a reset controller for the CPU
-+cores.
- 
- Required Properties:
- 
-@@ -13,16 +14,19 @@ Required Properties:
- 	   mapped region.
- 
- - #clock-cells: should be 1.
-+- #reset-cells: should be 1.
- 
- Each clock is assigned an identifier and client nodes can use this identifier
- to specify the clock which they consume. All available clocks are defined as
- preprocessor macros in the dt-bindings/clock/meson8b-clkc.h header and can be
- used in device tree sources.
-+Similar identifiers exist for the CPU core reset lines.
- 
- Example: Clock controller node:
- 
- 	clkc: clock-controller@c1104000 {
- 		#clock-cells = <1>;
-+		#reset-cells = <1>;
- 		compatible = "amlogic,meson8b-clkc";
- 		reg = <0xc1108000 0x4>, <0xc1104000 0x460>;
- 	};
--- 
-2.5.0
+ drivers/clk/imx/clk-imx51-imx53.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-imx51-imx53.c b/drivers/clk/imx/clk-imx51-=
+imx53.c
+index c677034..29d4c44 100644
+--- a/drivers/clk/imx/clk-imx51-imx53.c
++++ b/drivers/clk/imx/clk-imx51-imx53.c
+@@ -519,10 +519,10 @@ static void __init mx53_clocks_init(struct device_nod=
+e *np)
+ 						mx53_ldb_di0_sel, ARRAY_SIZE(mx53_ldb_di0_sel), CLK_SET_RATE_PARENT)=
+;
+ 	clk[IMX5_CLK_LDB_DI0_GATE]	=3D imx_clk_gate2("ldb_di0_gate", "ldb_di0_div=
+", MXC_CCM_CCGR6, 28);
+ 	clk[IMX5_CLK_LDB_DI1_GATE]	=3D imx_clk_gate2("ldb_di1_gate", "ldb_di1_div=
+", MXC_CCM_CCGR6, 30);
+-	clk[IMX5_CLK_IPU_DI0_SEL]	=3D imx_clk_mux("ipu_di0_sel", MXC_CCM_CSCMR2, =
+26, 3,
+-						mx53_ipu_di0_sel, ARRAY_SIZE(mx53_ipu_di0_sel));
+-	clk[IMX5_CLK_IPU_DI1_SEL]	=3D imx_clk_mux("ipu_di1_sel", MXC_CCM_CSCMR2, =
+29, 3,
+-						mx53_ipu_di1_sel, ARRAY_SIZE(mx53_ipu_di1_sel));
++	clk[IMX5_CLK_IPU_DI0_SEL]	=3D imx_clk_mux_flags("ipu_di0_sel", MXC_CCM_CS=
+CMR2, 26, 3,
++						mx53_ipu_di0_sel, ARRAY_SIZE(mx53_ipu_di0_sel), CLK_SET_RATE_PARENT)=
+;
++	clk[IMX5_CLK_IPU_DI1_SEL]	=3D imx_clk_mux_flags("ipu_di1_sel", MXC_CCM_CS=
+CMR2, 29, 3,
++						mx53_ipu_di1_sel, ARRAY_SIZE(mx53_ipu_di1_sel), CLK_SET_RATE_PARENT)=
+;
+ 	clk[IMX5_CLK_TVE_EXT_SEL]	=3D imx_clk_mux_flags("tve_ext_sel", MXC_CCM_CS=
+CMR1, 6, 1,
+ 						mx53_tve_ext_sel, ARRAY_SIZE(mx53_tve_ext_sel), CLK_SET_RATE_PARENT)=
+;
+ 	clk[IMX5_CLK_TVE_GATE]		=3D imx_clk_gate2("tve_gate", "tve_pred", MXC_CCM=
+_CCGR2, 30);
+--=20
+1.9.1
