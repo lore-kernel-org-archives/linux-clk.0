@@ -1,68 +1,81 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: xuejiancheng <xuejiancheng@huawei.com>
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, mturquette@baylibre.com, sboyd@codeaurora.org, xuwei5@hisilicon.com, haojian.zhuang@linaro.org, zhangfei.gao@linaro.org, bintian.wang@huawei.com, yanhaifeng@hisilicon.com, yanghongwei@hisilicon.com, suwenping@hisilicon.com, ml.yang@hisilicon.com, gaofei@hisilicon.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 1/9] clk: hi3519: add dt-binding document and header file
-Date: Tue, 08 Dec 2015 11:23:34 +0100
-Message-ID: <1566981.5YV44UJUCQ@wuerfel>
-In-Reply-To: <5666A6B5.6020101@huawei.com>
-References: <1449110364-23464-1-git-send-email-xuejiancheng@huawei.com> <2735980.8lIUhgbJzL@wuerfel> <5666A6B5.6020101@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <carlo.caione@gmail.com>
+Return-Path: <carlo.caione@gmail.com>
+Sender: Carlo Caione <carlo.caione@gmail.com>
+From: Carlo Caione <carlo@caione.org>
+To: robh+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux@arm.linux.org.uk,
+	linux-meson@googlegroups.com,
+	drake@endlessm.com,
+	jerry.cao@amlogic.com,
+	victor.wan@amlogic.com,
+	pawel.moll@arm.com,
+	arnd@arndb.de
+Cc: Carlo Caione <carlo@endlessm.com>
+Subject: [PATCH v2 7/7] ARM: DTS: Amlogic: Add SMP related nodes for Meson8b
+Date: Wed,  2 Dec 2015 18:22:33 +0100
+Message-Id: <1449076953-5058-8-git-send-email-carlo@caione.org>
+In-Reply-To: <1449076953-5058-1-git-send-email-carlo@caione.org>
+References: <1449076953-5058-1-git-send-email-carlo@caione.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tuesday 08 December 2015 17:45:25 xuejiancheng wrote:
-> On 2015/12/7 17:36, Arnd Bergmann wrote:
-> > On Monday 07 December 2015 16:01:03 xuejiancheng wrote:
-> >> On 2015/12/4 18:56, Arnd Bergmann wrote:
-> >>> On Friday 04 December 2015 11:21:28 xuejiancheng wrote:
-> >>>> Hi Arnd,
-> >>>>
-> >>>> On 2015/12/3 17:44, Arnd Bergmann wrote:
-> >>>>> On Thursday 03 December 2015 10:39:24 Jiancheng Xue wrote:
-> >>>>>> +#ifndef __DTS_HI3519_CLOCK_H
-> >>>>>> +#define __DTS_HI3519_CLOCK_H
-> >>>>>
-> >>>>> Please try to avoid adding headers like this if you can at all.
-> >>>>>
-> >>>>> I might ask you to merge the header file in one merge window
-> >>>>> otherwise and submit the platform code one kernel later, as they
-> >>>>> tendn to cause us needless dependencies otherwise.
-> >>>>>
-> >>>>
-> >>>> Sorry. In v1, Rob suggested putting binding doc and header files in
-> >>>> a separate patch. The clock driver indeed depends on the header.
-> >>>>
-> >>>> I will put the header and the clock driver in a patch, and keep the
-> >>>> binding doc in another patch.
-> >>>
-> >>> Having split patches is better, I was really commenting on the fact
-> >>> that ideally you would not have a header file at all. If we merge
-> >>> the header through arm-soc, then you won't be able to merge the
-> >>> clk driver easily, and if you merge the header through the clk
-> >>> maintainer, I'm can't take your dts files.
-> >>
-> >> Thank you for your comments. Because the clocks in the crg module have
-> >> different types and random layouts. If this header file is removed,
-> >> the clock driver and the dts files will get very complicated.
-> >>
-> >> Could you help me acknowledge it if I put the header file and clock driver
-> >> in a patch?
-> >>
-> >> Could you give me some suggestions If I want to keep this header file?
-> > 
-> > If this is another clock controller that has a random register layout,
-> > then adding the header file is the least problematic solution indeed.
-> 
-> Is it OK if I put the header file and the clock driver in a patch?
-> 
-> If it's not OK, could you tell me how should I separate the patches?
+From: Carlo Caione <carlo@endlessm.com>
 
-It's ok to do it like this, but then I can't easily merge any DT changes
-based on the header file into the arm-soc tree in the same merge window.
-Staging out the .dts files by one merge window is the easiest solution
-here, otherwise you need to set up a shared branch with the headers
-changes and base both the clk driver and the dts branch on top of that
-and cannot rebase those patches.
+Add nodes for: SCU, PMU and SRAM. Set also the enable-method for SMP
+bringup.
 
-	Arnd
+Signed-off-by: Carlo Caione <carlo@endlessm.com>
+---
+ arch/arm/boot/dts/meson8b.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/arch/arm/boot/dts/meson8b.dtsi b/arch/arm/boot/dts/meson8b.dtsi
+index 51b32ed..27e1b2f 100644
+--- a/arch/arm/boot/dts/meson8b.dtsi
++++ b/arch/arm/boot/dts/meson8b.dtsi
+@@ -51,9 +51,20 @@
+ / {
+ 	interrupt-parent = <&gic>;
+ 
++	scu@c4300000 {
++		compatible = "arm,cortex-a5-scu";
++		reg = <0xc4300000 0x100>;
++	};
++
++	pmu@c81000e4 {
++		compatible = "amlogic,meson8b-pmu", "syscon";
++		reg = <0xc81000e0 0x18>;
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++		enable-method = "amlogic,meson8b-smp";
+ 
+ 		cpu@200 {
+ 			device_type = "cpu";
+@@ -88,6 +99,19 @@
+ 		};
+ 	};
+ 
++	sram: sram@d9000000 {
++		compatible = "mmio-sram";
++		reg = <0xd9000000 0x20000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0xd9000000 0x20000>;
++
++		smp-sram@1ff80 {
++			compatible = "amlogic,meson8b-smp-sram";
++			reg = <0x1ff80 0x8>;
++		};
++	};
++
+ 	soc {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+-- 
+2.5.0
