@@ -1,185 +1,84 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v4 1/3] clk: qcom: Add A53 PLL support
-Date: Mon, 14 Dec 2015 15:58:01 +0200
-Message-Id: <1450101483-23509-2-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1450101483-23509-1-git-send-email-georgi.djakov@linaro.org>
-References: <1450101483-23509-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <f.fainelli@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <565CB780.3010206@simon.arlott.org.uk>
+References: <565CB727.7030209@simon.arlott.org.uk> <565CB780.3010206@simon.arlott.org.uk>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Date: Wed, 2 Dec 2015 10:08:39 -0800
+Message-ID: <CAGVrzcauQMk7wurw3CVG8Sh5NN1dEDLjjguuUeBxTMcozjJVCQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: bcm63xx: Add BCM63xx gated clock support
+To: Simon Arlott <simon@fire.lp0.eu>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Cernekee <cernekee@gmail.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	Linux-MIPS <linux-mips@linux-mips.org>, Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the PLL, which generates the higher range of CPU
-frequencies on MSM8916 platforms.
+2015-11-30 12:54 GMT-08:00 Simon Arlott <simon@fire.lp0.eu>:
+> The BCM63xx contains clocks gated with a register. Clocks are indexed
+> by bits in the register and are active high. Clock gate bits are
+> interleaved with other status bits and configurable clocks in the same
+> register.
+>
+> Enabled by default for BMIPS_GENERIC.
+>
+> Signed-off-by: Simon Arlott <simon@fire.lp0.eu>
+> ---
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- .../devicetree/bindings/clock/qcom,a53-pll.txt     |   18 ++++
- drivers/clk/qcom/Kconfig                           |    9 ++
- drivers/clk/qcom/Makefile                          |    1 +
- drivers/clk/qcom/a53-pll.c                         |  100 ++++++++++++++++++++
- 4 files changed, 128 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53-pll.txt
- create mode 100644 drivers/clk/qcom/a53-pll.c
+[snip]
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,a53-pll.txt b/Documentation/devicetree/bindings/clock/qcom,a53-pll.txt
-new file mode 100644
-index 000000000000..5cf0af1eecf9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,a53-pll.txt
-@@ -0,0 +1,18 @@
-+A53 PLL Binding
-+---------------
-+The A53 PLL is the main CPU PLL used for frequencies above 1GHz.
-+
-+Required properties :
-+- compatible : Shall contain only one of the following:
-+
-+		"qcom,a53-pll"
-+
-+- reg : shall contain base register location and length
-+
-+Example:
-+
-+	a53pll: a53pll@0b016000 {
-+		compatible = "qcom,a53-pll";
-+		reg = <0x0b016000 0x40>;
-+	};
-+
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index b552eceec2be..d06cf687be4f 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -123,3 +123,12 @@ config MSM_MMCC_8996
- 	  Support for the multimedia clock controller on msm8996 devices.
- 	  Say Y if you want to support multimedia devices such as display,
- 	  graphics, video encode/decode, camera, etc.
-+
-+config QCOM_A53PLL
-+	bool "A53 PLL"
-+	depends on COMMON_CLK_QCOM
-+	help
-+	  Support for the A53 PLL on some Qualcomm devices. It provides
-+	  support for CPU frequencies above 1GHz.
-+	  Say Y if you want to support CPU frequency scaling on devices
-+	  such as MSM8916.
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index dc4280b85db1..c7c26eeab67c 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -25,3 +25,4 @@ obj-$(CONFIG_MSM_GCC_8996) += gcc-msm8996.o
- obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
- obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
- obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
-+obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
-diff --git a/drivers/clk/qcom/a53-pll.c b/drivers/clk/qcom/a53-pll.c
-new file mode 100644
-index 000000000000..01176240f728
---- /dev/null
-+++ b/drivers/clk/qcom/a53-pll.c
-@@ -0,0 +1,100 @@
-+/*
-+ * Copyright (c) 2015, Linaro Limited
-+ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include "clk-pll.h"
-+#include "clk-regmap.h"
-+
-+static struct pll_freq_tbl a53pll_freq[] = {
-+	{  998400000, 52, 0x0, 0x1, 0 },
-+	{ 1094400000, 57, 0x0, 0x1, 0 },
-+	{ 1152000000, 62, 0x0, 0x1, 0 },
-+	{ 1209600000, 65, 0x0, 0x1, 0 },
-+	{ 1401600000, 73, 0x0, 0x1, 0 },
-+};
-+
-+static const struct regmap_config a53pll_regmap_config = {
-+	.reg_bits		= 32,
-+	.reg_stride		= 4,
-+	.val_bits		= 32,
-+	.max_register		= 0x40,
-+	.fast_io		= true,
-+	.val_format_endian	= REGMAP_ENDIAN_LITTLE,
-+};
-+
-+static const struct of_device_id qcom_a53pll_match_table[] = {
-+	{ .compatible = "qcom,a53-pll" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, qcom_a53pll_match_table);
-+
-+static int qcom_a53pll_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct clk_pll *pll;
-+	struct resource *res;
-+	void __iomem *base;
-+	struct clk *clk;
-+	struct regmap *regmap;
-+	struct clk_init_data init;
-+
-+	pll = devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	regmap = devm_regmap_init_mmio(dev, base, &a53pll_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	pll->l_reg = 0x04,
-+	pll->m_reg = 0x08,
-+	pll->n_reg = 0x0c,
-+	pll->config_reg = 0x14,
-+	pll->mode_reg = 0x00,
-+	pll->status_reg = 0x1c,
-+	pll->status_bit = 16,
-+	pll->freq_tbl = a53pll_freq,
-+
-+	init.name = "a53pll",
-+	init.parent_names = (const char *[]){ "xo" },
-+	init.num_parents = 1,
-+	init.ops = &clk_pll_sr2_ops,
-+	pll->clkr.hw.init = &init;
-+
-+	clk = devm_clk_register_regmap(dev, &pll->clkr);
-+
-+	return PTR_ERR_OR_ZERO(clk);
-+}
-+
-+static struct platform_driver qcom_a53pll_driver = {
-+	.probe = qcom_a53pll_probe,
-+	.driver = {
-+		.name = "qcom-a53pll",
-+		.of_match_table = qcom_a53pll_match_table,
-+	},
-+};
-+
-+module_platform_driver(qcom_a53pll_driver);
-+MODULE_DESCRIPTION("Qualcomm A53 PLL Driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:qcom-a53pll");
+> +
+> +config CLK_BCM63XX
+> +       bool "Broadcom BCM63xx clock support"
+> +       depends on BMIPS_GENERIC
+> +       depends on COMMON_CLK
+> +       default y
+
+default BMIPS_GENERIC?
+
+> +       help
+> +         Enable clock framework support for Broadcom 63xx SoCs
+> diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+> index 3fc9506..4f5f8ce 100644
+> --- a/drivers/clk/bcm/Makefile
+> +++ b/drivers/clk/bcm/Makefile
+> @@ -8,3 +8,4 @@ obj-$(CONFIG_COMMON_CLK_IPROC)  += clk-ns2.o
+>  obj-$(CONFIG_ARCH_BCM_CYGNUS)  += clk-cygnus.o
+>  obj-$(CONFIG_ARCH_BCM_NSP)     += clk-nsp.o
+>  obj-$(CONFIG_ARCH_BCM_5301X)   += clk-nsp.o
+> +obj-$(CONFIG_CLK_BCM63XX)      += clk-bcm63xx.o
+> diff --git a/drivers/clk/bcm/clk-bcm63xx.c b/drivers/clk/bcm/clk-bcm63xx.c
+> new file mode 100644
+> index 0000000..0e8cc06
+> --- /dev/null
+> +++ b/drivers/clk/bcm/clk-bcm63xx.c
+
+There is a pending clk-bcm63xx.c implementation, covering BCM63138 in
+Stephen Boyd's clk/next tree, which you would want to base your
+patches on, it is not a huge deal to resolve the conflict, and there
+will be separate entry points and functions based on the compatible
+string anyway...
+
+> @@ -0,0 +1,187 @@
+> +/*
+> + * Copyright 2015 Simon Arlott
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * Based on clk-gate.c:
+> + * Copyright (C) 2010-2011 Canonical Ltd <jeremy.kerr@canonical.com>
+> + * Copyright (C) 2011-2012 Mike Turquette, Linaro Ltd <mturquette@linaro.org>
+> + */
+
+I am not really anything very specific to 63xx chips in there, in
+fact, this looks like a fairly generic clk-gate driver using regmap to
+get its masks and offsets, would it make sense to create
+clk-gate-regmap.c which exposes the bulk of what you are doing and you
+could match using a specific compatible string?
+--
+Florian
