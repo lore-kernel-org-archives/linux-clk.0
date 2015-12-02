@@ -1,136 +1,54 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <ben@smart-cactus.org>
+From: Ben Gamari <ben@smart-cactus.org>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Andrew Bresticker <abrestic@chromium.org>,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 3/9] clk: tegra210: Fix naming of MISC registers
-Date: Thu, 10 Dec 2015 17:08:22 -0500
-Message-ID: <1449785308-19546-4-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1449785308-19546-1-git-send-email-rklein@nvidia.com>
-References: <1449785308-19546-1-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+	b.zolnierkie@samsung.com,
+	Ben Gamari <ben@smart-cactus.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH 12/12] cpufreq: arm-big-little: warn on invalid regulator
+Date: Wed,  2 Dec 2015 22:19:27 +0100
+Message-Id: <1449091167-20758-13-git-send-email-ben@smart-cactus.org>
+In-Reply-To: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
+References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some register for PLLM and PLLMB were named MISC0 but according to the
-TRM, they have different names. Sync up the names to make it easier to
-understand which register they are really referring to.
-
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Ben Gamari <ben@smart-cactus.org>
 ---
- drivers/clk/tegra/clk-tegra210.c | 36 ++++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+ drivers/cpufreq/arm_big_little.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index f45c9adf7fb2..2a7faa357130 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -59,7 +59,7 @@
- #define PLLC3_MISC3 0x50c
- 
- #define PLLM_BASE 0x90
--#define PLLM_MISC0 0x9c
-+#define PLLM_MISC2 0x9c
- #define PLLM_MISC1 0x98
- #define PLLP_BASE 0xa0
- #define PLLP_MISC0 0xac
-@@ -99,7 +99,7 @@
- #define PLLC4_MISC0 0x5a8
- #define PLLC4_OUT 0x5e4
- #define PLLMB_BASE 0x5e8
--#define PLLMB_MISC0 0x5ec
-+#define PLLMB_MISC1 0x5ec
- #define PLLA1_BASE 0x6a4
- #define PLLA1_MISC0 0x6a8
- #define PLLA1_MISC1 0x6ac
-@@ -367,12 +367,12 @@ static const char *mux_pllmcp_clkm[] = {
- /* PLLMB */
- #define PLLMB_BASE_LOCK			(1 << 27)
- 
--#define PLLMB_MISC0_LOCK_OVERRIDE	(1 << 18)
--#define PLLMB_MISC0_IDDQ		(1 << 17)
--#define PLLMB_MISC0_LOCK_ENABLE		(1 << 16)
-+#define PLLMB_MISC1_LOCK_OVERRIDE	(1 << 18)
-+#define PLLMB_MISC1_IDDQ		(1 << 17)
-+#define PLLMB_MISC1_LOCK_ENABLE		(1 << 16)
- 
--#define PLLMB_MISC0_DEFAULT_VALUE	0x00030000
--#define PLLMB_MISC0_WRITE_MASK		0x0007ffff
-+#define PLLMB_MISC1_DEFAULT_VALUE	0x00030000
-+#define PLLMB_MISC1_WRITE_MASK		0x0007ffff
- 
- /* PLLP */
- #define PLLP_BASE_OVERRIDE		(1 << 28)
-@@ -914,15 +914,15 @@ void tegra210_pllmb_set_defaults(struct tegra_clk_pll *pllmb)
- 		 * PLL is ON: check if defaults already set, then set those
- 		 * that can be updated in flight.
- 		 */
--		val = PLLMB_MISC0_DEFAULT_VALUE & (~PLLMB_MISC0_IDDQ);
--		mask = PLLMB_MISC0_LOCK_ENABLE | PLLMB_MISC0_LOCK_OVERRIDE;
-+		val = PLLMB_MISC1_DEFAULT_VALUE & (~PLLMB_MISC1_IDDQ);
-+		mask = PLLMB_MISC1_LOCK_ENABLE | PLLMB_MISC1_LOCK_OVERRIDE;
- 		_pll_misc_chk_default(clk_base, pllmb->params, 0, val,
--				~mask & PLLMB_MISC0_WRITE_MASK);
-+				~mask & PLLMB_MISC1_WRITE_MASK);
- 
- 		/* Enable lock detect */
- 		val = readl_relaxed(clk_base + pllmb->params->ext_misc_reg[0]);
- 		val &= ~mask;
--		val |= PLLMB_MISC0_DEFAULT_VALUE & mask;
-+		val |= PLLMB_MISC1_DEFAULT_VALUE & mask;
- 		writel_relaxed(val, clk_base + pllmb->params->ext_misc_reg[0]);
- 		udelay(1);
- 
-@@ -930,7 +930,7 @@ void tegra210_pllmb_set_defaults(struct tegra_clk_pll *pllmb)
+diff --git a/drivers/cpufreq/arm_big_little.c b/drivers/cpufreq/arm_big_little.c
+index 2d5761c..5d30c26 100644
+--- a/drivers/cpufreq/arm_big_little.c
++++ b/drivers/cpufreq/arm_big_little.c
+@@ -158,6 +158,9 @@ bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate_kHz)
+ 		volt_old = regulator_get_voltage(reg[cluster]);
+ 		pr_debug("%s: cpu %d, cluster: %d, Found OPP: %ld kHz, %ld uV\n",
+ 			__func__, cpu, cluster, opp_freq / 1000, volt);
++	} else {
++		pr_err("%s: cpu %d, cluster: %d, Have no regulator\n",
++					 __func__, cpu, cluster);
  	}
  
- 	/* set IDDQ, enable lock detect */
--	writel_relaxed(PLLMB_MISC0_DEFAULT_VALUE,
-+	writel_relaxed(PLLMB_MISC1_DEFAULT_VALUE,
- 			clk_base + pllmb->params->ext_misc_reg[0]);
- 	udelay(1);
- }
-@@ -1557,14 +1557,14 @@ static struct tegra_clk_pll_params pll_m_params = {
- 	.vco_min = 800000000,
- 	.vco_max = 1866000000,
- 	.base_reg = PLLM_BASE,
--	.misc_reg = PLLM_MISC0,
-+	.misc_reg = PLLM_MISC2,
- 	.lock_mask = PLL_BASE_LOCK,
- 	.lock_enable_bit_idx = PLLM_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
--	.iddq_reg = PLLM_MISC0,
-+	.iddq_reg = PLLM_MISC2,
- 	.iddq_bit_idx = PLLM_IDDQ_BIT,
- 	.max_p = PLL_QLIN_PDIV_MAX,
--	.ext_misc_reg[0] = PLLM_MISC0,
-+	.ext_misc_reg[0] = PLLM_MISC2,
- 	.ext_misc_reg[0] = PLLM_MISC1,
- 	.round_p_to_pdiv = pll_qlin_p_to_pdiv,
- 	.pdiv_tohw = pll_qlin_pdiv_to_hw,
-@@ -1584,13 +1584,13 @@ static struct tegra_clk_pll_params pll_mb_params = {
- 	.vco_min = 800000000,
- 	.vco_max = 1866000000,
- 	.base_reg = PLLMB_BASE,
--	.misc_reg = PLLMB_MISC0,
-+	.misc_reg = PLLMB_MISC1,
- 	.lock_mask = PLL_BASE_LOCK,
- 	.lock_delay = 300,
--	.iddq_reg = PLLMB_MISC0,
-+	.iddq_reg = PLLMB_MISC1,
- 	.iddq_bit_idx = PLLMB_IDDQ_BIT,
- 	.max_p = PLL_QLIN_PDIV_MAX,
--	.ext_misc_reg[0] = PLLMB_MISC0,
-+	.ext_misc_reg[0] = PLLMB_MISC1,
- 	.round_p_to_pdiv = pll_qlin_p_to_pdiv,
- 	.pdiv_tohw = pll_qlin_pdiv_to_hw,
- 	.div_nmp = &pllm_nmp,
+ 	pr_debug("%s: cpu %d, cluster: %d, %u MHz, %ld mV --> %u MHz, %ld mV\n",
 -- 
-1.9.1
+2.6.2
