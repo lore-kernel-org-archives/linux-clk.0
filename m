@@ -1,57 +1,55 @@
-Return-Path: <wens@mirror2.csie.ntu.edu.tw>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 0/6] ARM: sunxi: Add support for A10/A20 Video Engine clocks
-Date: Sat,  5 Dec 2015 17:00:03 +0800
-Message-Id: <1449306009-2627-1-git-send-email-wens@csie.org>
+Return-Path: <ckeepax@opensource.wolfsonmicro.com>
+Date: Wed, 2 Dec 2015 12:58:55 +0000
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-i2c@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux@arm.linux.org.uk>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>, <broonie@kernel.org>, <wsa@the-dreams.de>
+Subject: Re: Handling clocks on external busses
+Message-ID: <20151202125855.GB6058@localhost.localdomain>
+References: <20151124173718.GK18889@ck-lbox>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20151124173718.GK18889@ck-lbox>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
+On Tue, Nov 24, 2015 at 05:37:18PM +0000, Charles Keepax wrote:
+> Hi,
+> 
+> When a clock driver is controlling a clock that is controlled
+> over I2C / SPI, we need to perform a write on that bus to enable
+> the clock. However, such busses often have their own clocks that
+> must be enabled. Since all clock prepares are controlled under
+> one large mutex this easily causes deadlock. The device is
+> waiting for the I2C / SPI write to complete and the I2C / SPI
+> driver is waiting for the clock prepare lock to be released so it
+> can enable its own clock.
+> 
+> I have had a bit of a search and it seems the only really advice
+> kicking about is that all I2C / SPI drivers should leave the
+> clock prepared all the time. Is that intended to be the long term
+> solution, should I treat not leaving the clock prepared as a bug?
+> 
+> Thanks,
+> Charles
 
-This series adds support for the clocks used by the Video Engine (VPU /
-video codec hardware) on the Allwinner A10/A20. The series purposely
-excludes sun5i (A10s/A13/R8) to avoid any conflicts with Maxime's KMS
-driver series, but adding it should be easy. VE clocks for the newer
-generation of SoCs are the same, except the reset control is moved to
-the common bus reset controls. These can be supported later on.
+Adding a few more people for visibility.
 
-The series is meant to get platform stuff out of the way so people who
-want to work on a proper driver for the VPU can do so.
+So after a bit more digging it seems this has been mitigated slightly
+as a lot of SPI driver have been updated to execute transfers in
+thread rather than from a worker thread and it seems the clock
+framework lets you re-enter the locked sections if called from the
+same thread.
 
-The patches are pretty self-explanatory.
+I am looking at moving some (in mainline) clocking code into an actual
+clocking driver (for a SPI/I2C audio CODEC) but I am rather nervous
+about this causing problems for customers with random deadlocks.
 
-Regards
-ChenYu
+I guess the naive solution looks like individual locks per clock, but
+from what I have been able to google it looks like there are some
+challenges with that approach, does anyone have any links to previous
+discussions on that? And any suggestions on how I might approach
+this?
 
-Chen-Yu Tsai (6):
-  clk: sunxi: Add DRAM gates support for sun4i-a10
-  clk: sunxi: Add VE (Video Engine) module clock driver for sun[457]i
-  ARM: dts: sun4i: Add DRAM gates
-  ARM: dts: sun4i: Add VE (Video Engine) module clock node
-  ARM: dts: sun7i: Add DRAM gates
-  ARM: dts: sun7i: Add VE (Video Engine) module clock node
-
- Documentation/devicetree/bindings/clock/sunxi.txt |   5 +
- arch/arm/boot/dts/sun4i-a10.dtsi                  |  45 +++++-
- arch/arm/boot/dts/sun7i-a20.dtsi                  |  41 +++++-
- drivers/clk/sunxi/Makefile                        |   1 +
- drivers/clk/sunxi/clk-a10-ve.c                    | 171 ++++++++++++++++++++++
- drivers/clk/sunxi/clk-simple-gates.c              |  12 ++
- 6 files changed, 268 insertions(+), 7 deletions(-)
- create mode 100644 drivers/clk/sunxi/clk-a10-ve.c
-
--- 
-2.6.2
+Thanks,
+Charles
