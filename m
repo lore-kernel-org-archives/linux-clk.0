@@ -1,50 +1,50 @@
-Return-Path: <Ping.Bai@freescale.com>
-Subject: Re: [PATCH 1/3] ARM: dts: imx: Add basic dts support for imx6qp
-To: Fabio Estevam <festevam@gmail.com>
-References: <1449830722-26607-1-git-send-email-b51503@freescale.com>
- <CAOMZO5C8mTotbpOmKkxKOXmBWc-N_zm7xn-fU5gFUgAFCiyokw@mail.gmail.com>
-CC: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll
-	<pawel.moll@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@codeaurora.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
-	<linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-From: Bai Ping <b51503@freescale.com>
-Message-ID: <566ABA48.6060508@freescale.com>
-Date: Fri, 11 Dec 2015 19:58:00 +0800
-MIME-Version: 1.0
-In-Reply-To: <CAOMZO5C8mTotbpOmKkxKOXmBWc-N_zm7xn-fU5gFUgAFCiyokw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Return-Path: b51503@freescale.com
+Return-Path: <carlo.caione@gmail.com>
+Return-Path: <carlo.caione@gmail.com>
+Sender: Carlo Caione <carlo.caione@gmail.com>
+From: Carlo Caione <carlo@caione.org>
+To: robh+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux@arm.linux.org.uk,
+	linux-meson@googlegroups.com,
+	drake@endlessm.com,
+	jerry.cao@amlogic.com,
+	victor.wan@amlogic.com,
+	pawel.moll@arm.com,
+	arnd@arndb.de
+Cc: Carlo Caione <carlo@endlessm.com>
+Subject: [PATCH v2 1/7] ARM: DTS: Amlogic: Extend L2 cache controller node for Meson8b
+Date: Wed,  2 Dec 2015 18:22:27 +0100
+Message-Id: <1449076953-5058-2-git-send-email-carlo@caione.org>
+In-Reply-To: <1449076953-5058-1-git-send-email-carlo@caione.org>
+References: <1449076953-5058-1-git-send-email-carlo@caione.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Carlo Caione <carlo@endlessm.com>
 
+This patch extends the L2 cache controller node for Amlogic Meson8b
+SoCs with some missing parameters.
 
-On 2015/12/11 19:37, Fabio Estevam wrote:
-> On Fri, Dec 11, 2015 at 8:45 AM, Bai Ping <b51503@freescale.com> wrote:
->> The i.MX6Qual Plus processor is an high performance SOC of i.MX6 family.
->> It has enhanced graphics performance and increased overall memory bandwidth
->> compared to i.MX6Q. Most of the design are same as i.MX6Qual/Dual, so code
->> for i.MX6Qual can be resued by this chip. The revision number is identied as
->> i.MX6Q Rev2.0, but actually it is a new chip, as we did many change to the
->> overall architecture.
->>
->> This patch adds basic dts file for the new i.MX6Qual Plus processor.
->>
->> Signed-off-by: Bai Ping <b51503@freescale.com>
->> ---
->>   arch/arm/boot/dts/Makefile                |   2 +
->>   arch/arm/boot/dts/imx6q.dtsi              |   2 +-
->>   arch/arm/boot/dts/imx6qdl-sabresd.dtsi    |   1 +
->>   arch/arm/boot/dts/imx6qp-sabreauto.dts    |  67 +++++++++++++
->>   arch/arm/boot/dts/imx6qp-sabresd.dts      |  59 +++++++++++
->>   arch/arm/boot/dts/imx6qp.dtsi             | 157 ++++++++++++++++++++++++++++++
->>   include/dt-bindings/clock/imx6qdl-clock.h |  16 ++-
-> Better split this in three patches:
->
-> - Add imx6qp SoC support
-> - Add imx6qdl-sabresd support
-> - Add imx6qp-sabreauto support
-ok, I will spit this in Patch V2. thanks for you review.
+Signed-off-by: Carlo Caione <carlo@endlessm.com>
+---
+ arch/arm/boot/dts/meson8b.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Jacky Bai
+diff --git a/arch/arm/boot/dts/meson8b.dtsi b/arch/arm/boot/dts/meson8b.dtsi
+index ee352bf..b1990dc 100644
+--- a/arch/arm/boot/dts/meson8b.dtsi
++++ b/arch/arm/boot/dts/meson8b.dtsi
+@@ -93,6 +93,9 @@
+ 		L2: l2-cache-controller@c4200000 {
+ 			compatible = "arm,pl310-cache";
+ 			reg = <0xc4200000 0x1000>;
++			arm,data-latency = <3 3 3>;
++			arm,tag-latency = <2 2 2>;
++			arm,filter-ranges = <0x100000 0xc0000000>;
+ 			cache-unified;
+ 			cache-level = <2>;
+ 		};
+-- 
+2.5.0
