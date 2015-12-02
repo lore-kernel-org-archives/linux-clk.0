@@ -1,46 +1,24 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mtd@lists.infradead.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 04/16] clk: remove unnecessary !core->parents conditional
-Date: Mon, 28 Dec 2015 19:10:17 +0900
-Message-Id: <1451297429-21689-5-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <shawnguo@kernel.org>
+Date: Wed, 2 Dec 2015 13:40:19 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Bai Ping <b51503@freescale.com>
+Cc: kernel@pengutronix.de, l.stach@pengutronix.de, robh+dt@kernel.org,
+	pawel.moll@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/3] clk: imx: Add a virtual arm clk on i.mx7d
+Message-ID: <20151202054019.GF692@tiger>
+References: <1448360716-1741-1-git-send-email-b51503@freescale.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1448360716-1741-1-git-send-email-b51503@freescale.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This if-block has been here since the introduction of the common
-clock framework.  Now no clock drivers are statically initialized.
-core->parent is always NULL at this point.  Drop the redundant
-check and the confusing comment.
+On Tue, Nov 24, 2015 at 06:25:14PM +0800, Bai Ping wrote:
+> Add a virtual arm clk to abstract the actual steps
+> when changing the ARM core frequency.So we can using
+> the 'cpufreq-dt' driver on i.MX7D/Solo.
+> 
+> Signed-off-by: Bai Ping <b51503@freescale.com>
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
-Changes in v2: None
-
- drivers/clk/clk.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 41179f3..30c0bbc 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2348,11 +2348,8 @@ static int __clk_core_init(struct clk_core *core)
- 	 * in to clk_init during early boot; thus any access to core->parents[]
- 	 * must always check for a NULL pointer and try to populate it if
- 	 * necessary.
--	 *
--	 * If core->parents is not NULL we skip this entire block.  This allows
--	 * for clock drivers to statically initialize core->parents.
- 	 */
--	if (core->num_parents > 1 && !core->parents) {
-+	if (core->num_parents > 1) {
- 		core->parents = kcalloc(core->num_parents, sizeof(struct clk *),
- 					GFP_KERNEL);
- 		/*
--- 
-1.9.1
+Applied all, thanks.
