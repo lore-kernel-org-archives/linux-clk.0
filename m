@@ -1,98 +1,45 @@
-Return-Path: <mturquette@baylibre.com>
-Date: Tue, 22 Dec 2015 12:56:04 -0800
-From: Michael Turquette <mturquette@baylibre.com>
-To: Tony Lindgren <tony@atomide.com>
-Cc: Tero Kristo <t-kristo@ti.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Brian Hutchinson <b.hutchman@gmail.com>,
-	Delio Brignoli <dbrignoli@audioscience.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Matthijs van Duin <matthijsvanduin@gmail.com>,
-	Philipp Rosenberger <ilu@linutronix.de>,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH v4] clk: ti: Add support for dm814x ADPLL
-Message-ID: <20151222205604.GA14912@quark.deferred.io>
-References: <1450798030-23680-1-git-send-email-tony@atomide.com>
- <5679B2D6.4050102@ti.com>
- <20151222203224.GG2793@atomide.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20151222203224.GG2793@atomide.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular2.263xmail.com ([211.157.152.3]:51186 "EHLO
+	regular2.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932150AbbLBNYs (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 2 Dec 2015 08:24:48 -0500
+From: "jianqun.xu" <jay.xu@rock-chips.com>
+To: heiko@sntech.de
+Cc: huangtao@rock-chips.com, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Jianqun xu <jay.xu@rock-chips.com>
+Subject: [PATCH] clk: rockchip: rk3368: protect aclk_bus and aclk_peri clocks
+Date: Wed,  2 Dec 2015 21:22:31 +0800
+Message-Id: <1449062551-2498-1-git-send-email-jay.xu@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/22, Tony Lindgren wrote:
-> * Tero Kristo <t-kristo@ti.com> [151222 12:28]:
-> > On 12/22/2015 05:27 PM, Tony Lindgren wrote:
-> > >On dm814x we have 13 ADPLLs with 3 to 4 outputs on each. The
-> > >ADPLLs have several dividers and muxes controlled by a shared
-> > >control register for each PLL.
-> > >
-> > >Note that for the clocks to work as device drivers for booting on
-> > >dm814x, this patch depends on "ARM: OMAP2+: Change core_initcall
-> > >levels to postcore_initcall".
-> > >
-> > >Also note that this patch does not implement clk_set_rate for the
-> > >PLL, that will be posted later on when available.
-> > >
-> > >Cc: Michael Turquette <mturquette@baylibre.com>
-> > >Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > >Cc: Tero Kristo <t-kristo@ti.com>
-> > >Signed-off-by: Tony Lindgren <tony@atomide.com>
-> > >---
-> > >
-> > >If no more comments, Tero can you please apply into an immutable
-> > >branch against v4.4-rc1 that I can merge in too?
-> > >
-> > >Changes since v3:
-> > >
-> > >- We want to create the clkdev entry for all clocks, not just outputs
-> > >- ti_adpll_wait_lock loops did not do the right thing
-> > >- We want to use CLK_GET_RATE_NOCACHE in ti_adpll_init_dco
-> > 
-> > I have just one comment below still, once that is addressed:
-> > 
-> > Conditionally-acked-by: Tero Kristo <t-kristo@ti.com>
-> > 
-> > Stephen / Michael, can you pick this up for next merge? I don't have
-> > anything else coming for the window this time, and I am probably going to be
-> > on vacation just nicely to not be able to push anything anyway.
-> 
-> Also, I managed to remove the dependency to the dts changes. So there's
-> no longer any need to set up an immutable branch for this patch.
+From: Jianqun xu <jay.xu@rock-chips.com>
 
-Can you split the binding description into a separate patch and send it
-to the dt mailing list? Feel free to add my Ack to it.
+Add aclk_bus and aclk_peri to the list of rk3368 critical clocks,
+which are the base clocks that supply for all peripherals, never
+to be disabled automatically.
 
-Stephen and I are trying to not take that stuff anymore.
+Signed-off-by: Jianqun xu <jay.xu@rock-chips.com>
+---
+ drivers/clk/rockchip/clk-rk3368.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Regards,
-Mike
+diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
+index 7e6b783..cd9d4aa 100644
+--- a/drivers/clk/rockchip/clk-rk3368.c
++++ b/drivers/clk/rockchip/clk-rk3368.c
+@@ -819,6 +819,8 @@ static struct rockchip_clk_branch rk3368_clk_branches[] __initdata = {
+ };
+ 
+ static const char *const rk3368_critical_clocks[] __initconst = {
++	"aclk_bus",
++	"aclk_peri",
+ 	"pclk_pd_pmu",
+ };
+ 
+-- 
+1.9.1
 
-> 
-> > <snip>
-> > 
-> > >+
-> > >+/* Warn if clkout or clkoutx2 try to set unavailable parent */
-> > >+static int ti_adpll_clkout_set_parent(struct clk_hw *hw, u8 index)
-> > >+{
-> > >+	struct ti_adpll_clkout_data *co = to_clkout(hw);
-> > >+	struct ti_adpll_data *d = co->adpll;
-> > >+
-> > >+	if (ti_adpll_clock_is_bypass(d) != index)
-> > >+		return -EAGAIN;
-> > >+
-> > 
-> > I think this part is still somewhat weird. You are not doing anything useful
-> > in this function, so do you need to implement it at all? Just returning
-> > -EINVAL always might work also. EAGAIN is wrong return value anyway as it
-> > can pretty much never succeed.
-> 
-> OK thanks sounds good to me, I'll check it this after lunch.
-> 
-> Also noticed the do_div should be div64_u64 so v5 coming later
-> today.
-> 
-> Regards,
-> 
-> Tony
+
