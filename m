@@ -1,73 +1,177 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-Return-Path: <srinivas.kandagatla@linaro.org>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: linux-arm-msm@vger.kernel.org,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <ben@smart-cactus.org>
+From: Ben Gamari <ben@smart-cactus.org>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	georgi.djakov@linaro.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH] clk:gcc-msm8916: add missing mss_q6_bimc_axi clock
-Date: Sat, 12 Dec 2015 15:39:09 +0000
-Message-Id: <1449934749-26223-1-git-send-email-srinivas.kandagatla@linaro.org>
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	b.zolnierkie@samsung.com,
+	Doug Anderson <dianders@chromium.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Andreas Faerber <afaerber@suse.de>,
+	Sachin Kamat <sachin.kamat@linaro.org>,
+	Ben Gamari <ben@smart-cactus.org>
+Subject: [PATCH 09/12] ARM: dts: Exynos5420/5800: add cluster regulator supply properties
+Date: Wed,  2 Dec 2015 22:19:24 +0100
+Message-Id: <1449091167-20758-10-git-send-email-ben@smart-cactus.org>
+In-Reply-To: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
+References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This clock is required for loading the qdsp firmware.
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Add cluster regulator supply properties as a preparation to adding
+generic arm_big_little_dt cpufreq driver support for Exynos5420 and
+Exynos5800 based boards.
+
+Changes by Ben Gamari:
+- Add regulators to odroidxu4
+
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Doug Anderson <dianders@chromium.org>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Andreas Faerber <afaerber@suse.de>
+Cc: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Ben Gamari <ben@smart-cactus.org>
 ---
- drivers/clk/qcom/gcc-msm8916.c               | 18 ++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-msm8916.h |  1 +
- 2 files changed, 19 insertions(+)
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts |  9 +++++++++
+ arch/arm/boot/dts/exynos5420-peach-pit.dts    |  8 ++++++++
+ arch/arm/boot/dts/exynos5420-smdk5420.dts     |  8 ++++++++
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts    |  8 ++++++++
+ arch/arm/boot/dts/exynos5422-odroidxu4.dts    | 10 ++++++++++
+ arch/arm/boot/dts/exynos5800-peach-pi.dts     |  8 ++++++++
+ 6 files changed, 51 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index e3bf09d..1ec5a27 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -2590,6 +2590,23 @@ static struct clk_branch gcc_mss_cfg_ahb_clk = {
- 	},
+diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+index 4ecef69..a044da7 100644
+--- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
++++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+@@ -52,6 +52,15 @@
+ 	};
  };
  
-+static struct clk_branch gcc_mss_q6_bimc_axi_clk = {
-+	.halt_reg = 0x49004,
-+	.clkr = {
-+		.enable_reg = 0x49004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_mss_q6_bimc_axi_clk",
-+			.parent_names = (const char *[]){
-+				"pcnoc_bfdcd_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
++&cpu0 {
++  cpu-cluster.0-supply = <&buck2_reg>;
 +};
 +
- static struct clk_branch gcc_oxili_ahb_clk = {
- 	.halt_reg = 0x59028,
- 	.clkr = {
-@@ -3227,6 +3244,7 @@ static struct clk_regmap *gcc_msm8916_clocks[] = {
- 	[GCC_ULTAUDIO_LPAIF_SEC_I2S_CLK] = &gcc_ultaudio_lpaif_sec_i2s_clk.clkr,
- 	[GCC_ULTAUDIO_LPAIF_AUX_I2S_CLK] = &gcc_ultaudio_lpaif_aux_i2s_clk.clkr,
- 	[GCC_CODEC_DIGCODEC_CLK] = &gcc_codec_digcodec_clk.clkr,
-+	[GCC_MSS_Q6_BIMC_AXI_CLK] = &gcc_mss_q6_bimc_axi_clk.clkr,
++&cpu4 {
++  cpu-cluster.1-supply = <&buck6_reg>;
++};
++
++
+ &usbdrd_dwc3_1 {
+ 	dr_mode = "host";
+ };
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+index 72ba6f0..eea0aa6 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -676,6 +676,14 @@
+ 	};
  };
  
- static struct gdsc *gcc_msm8916_gdscs[] = {
-diff --git a/include/dt-bindings/clock/qcom,gcc-msm8916.h b/include/dt-bindings/clock/qcom,gcc-msm8916.h
-index 257e2fb..28a27a4 100644
---- a/include/dt-bindings/clock/qcom,gcc-msm8916.h
-+++ b/include/dt-bindings/clock/qcom,gcc-msm8916.h
-@@ -174,6 +174,7 @@
- #define GCC_ULTAUDIO_LPAIF_SEC_I2S_CLK		157
- #define GCC_ULTAUDIO_LPAIF_AUX_I2S_CLK		158
- #define GCC_CODEC_DIGCODEC_CLK			159
-+#define GCC_MSS_Q6_BIMC_AXI_CLK			160
++&cpu0 {
++  cpu-cluster.0-supply = <&buck2_reg>;
++};
++
++&cpu4 {
++  cpu-cluster.1-supply = <&buck6_reg>;
++};
++
+ &i2c_2 {
+ 	status = "okay";
+ 	samsung,i2c-sda-delay = <100>;
+diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+index ac35aef..d44a280 100644
+--- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
++++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+@@ -423,3 +423,11 @@
+ &usbdrd_phy1 {
+ 	vbus-supply = <&usb301_vbus_reg>;
+ };
++
++&cpu0 {
++  cpu-cluster.0-supply = <&buck2_reg>;
++};
++
++&cpu4 {
++  cpu-cluster.1-supply = <&buck6_reg>;
++};
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+index 0c0bbdb..d6650a1 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -53,6 +53,14 @@
+ 	};
+ };
  
- /* Indexes for GDSCs */
- #define BIMC_GDSC				0
++&cpu0 {
++  cpu-cluster.0-supply = <&buck2_reg>;
++};
++
++&cpu4 {
++  cpu-cluster.1-supply = <&buck6_reg>;
++};
++
+ &i2c_0 {
+ 	status = "okay";
+ 
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu4.dts b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
+index 2faf886..9f88c34 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu4.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
+@@ -32,6 +32,16 @@
+ 	};
+ };
+ 
++&cpu0 {
++	cpu-cluster.0-supply = <&buck2_reg>;
++	cpu-cluster.1-supply = <&buck6_reg>;
++};
++
++&cpu4 {
++	cpu-cluster.0-supply = <&buck2_reg>;
++	cpu-cluster.1-supply = <&buck6_reg>;
++};
++
+ &pwm {
+ 	/*
+ 	 * PWM 0 -- fan
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index 49a4f43..a06587b 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -638,6 +638,14 @@
+ 	};
+ };
+ 
++&cpu0 {
++  cpu-cluster.0-supply = <&buck2_reg>;
++};
++
++&cpu4 {
++  cpu-cluster.1-supply = <&buck6_reg>;
++};
++
+ &i2c_2 {
+ 	status = "okay";
+ 	samsung,i2c-sda-delay = <100>;
 -- 
-1.9.1
+2.6.2
