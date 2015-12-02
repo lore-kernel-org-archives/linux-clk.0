@@ -1,35 +1,67 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Caesar Wang <wxt@rock-chips.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, Douglas Anderson <dianders@chromium.org>, devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Stephen Boyd <sboyd@codeaurora.org>, Olof Johansson <olof@lixom.net>, Catalin Marinas <catalin.marinas@arm.com>, linux-kernel@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Roger Chen <roger.chen@rock-chips.com>, Pawel Moll <pawel.moll@arm.com>, Yunzhi Li <lyz@rock-chips.com>, Will Deacon <will.deacon@arm.com>, Romain Perier <romain.perier@gmail.com>, Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 0/3] Add the rk3368 evb board with the act8846 pmic
-Date: Wed, 02 Dec 2015 00:50:29 +0100
-Message-ID: <5501370.GQCpicsLkL@diego>
-In-Reply-To: <1448961206-23769-1-git-send-email-wxt@rock-chips.com>
-References: <1448961206-23769-1-git-send-email-wxt@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <carlo.caione@gmail.com>
+Return-Path: <carlo.caione@gmail.com>
+Sender: Carlo Caione <carlo.caione@gmail.com>
+From: Carlo Caione <carlo@caione.org>
+To: robh+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux@arm.linux.org.uk,
+	linux-meson@googlegroups.com,
+	drake@endlessm.com,
+	jerry.cao@amlogic.com,
+	victor.wan@amlogic.com,
+	pawel.moll@arm.com,
+	arnd@arndb.de
+Cc: Carlo Caione <carlo@endlessm.com>
+Subject: [PATCH v2 0/7] Add basic SMP support for Amlogic Meson8b
+Date: Wed,  2 Dec 2015 18:22:26 +0100
+Message-Id: <1449076953-5058-1-git-send-email-carlo@caione.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Caesar,
+From: Carlo Caione <carlo@endlessm.com>
 
-Am Dienstag, 1. Dezember 2015, 17:13:23 schrieb Caesar Wang:
-> This series pacthes try to add the evb dts for rk3368 SoCs,
-> This's similar with the rj3288 evb board.
-> 
-> On the moment, pwm/backlight/usb/thermal/emmc stuff can work for this
-> board, I add the base version for the future firstly.
-applied all 3 to relevant branches for 4.5, with some small changes:
+This patchset adds SMP support for Amlogic Meson8b SoCs.
 
-> PATCH [1/3]: Force rk3368 PWM clock (and its parents) On
-> That's similar HACK way to work.
-shortened the comment in the code a bit
+Patch 1 fix some paramater for L2 cache needed for SMP.
+Patches 2-4 add a small reset controller used to reset the CPU cores at boot.
+Patches 5-7 deal with the SMP code itself.
 
-> PATCH [2/3]: Add the RK3368 EVB board for with the act8846 pmic for dtsi
-Moved some minor stuff around a bit (ordering, etc)
+Changelog:
 
-> PATCH [3/3]: Add the PWM node info for rk3368 core.
-this now comes before the addition of the evb files
+V2:
+    - Add forgotten textofs-$(CONFIG_ARCH_MESON)
+    - Checking for of_reset_control_get() failure
+    - Use more specific subjects
 
+Carlo Caione (7):
+  ARM: DTS: Amlogic: Extend L2 cache controller node for Meson8b
+  dt-bindings: Amlogic: Document the CPU reset controller for Meson8b
+  clk: Amlogic: Add reset controller for CPU cores for Meson8b
+  ARM: DTS: Amlogic: Enable reset controller for Meson8b
+  dt-bindings: Amlogic: Add SMP related documentation
+  ARM: Amlogic: Add SMP bringup code for Meson8b
+  ARM: DTS: Amlogic: Add SMP related nodes for Meson8b
 
-Heiko
+ .../devicetree/bindings/arm/amlogic/pmu.txt        |  16 ++
+ .../devicetree/bindings/arm/amlogic/smp-sram.txt   |  32 +++
+ Documentation/devicetree/bindings/arm/cpus.txt     |   1 +
+ .../bindings/clock/amlogic,meson8b-clkc.txt        |   6 +-
+ arch/arm/Makefile                                  |   1 +
+ arch/arm/boot/dts/meson8b.dtsi                     |  32 +++
+ arch/arm/mach-meson/Kconfig                        |   1 +
+ arch/arm/mach-meson/Makefile                       |   1 +
+ arch/arm/mach-meson/platsmp.c                      | 234 +++++++++++++++++++++
+ drivers/clk/meson/clk-cpu.c                        |  60 +++++-
+ drivers/clk/meson/clkc.c                           |   5 +-
+ drivers/clk/meson/clkc.h                           |   6 +-
+ drivers/clk/meson/meson8b-clkc.c                   |   4 +-
+ include/dt-bindings/clock/meson8b-clkc.h           |   5 +
+ 14 files changed, 396 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/amlogic/pmu.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/amlogic/smp-sram.txt
+ create mode 100644 arch/arm/mach-meson/platsmp.c
+
+-- 
+2.5.0
