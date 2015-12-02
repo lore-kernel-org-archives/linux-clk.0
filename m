@@ -1,56 +1,68 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mtd@lists.infradead.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 03/16] clk: rename __clk_init() into __clk_core_init()
-Date: Mon, 28 Dec 2015 19:10:16 +0900
-Message-Id: <1451297429-21689-4-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <ben@smart-cactus.org>
+From: Ben Gamari <ben@smart-cactus.org>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	b.zolnierkie@samsung.com,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Ben Gamari <ben@smart-cactus.org>
+Subject: [PATCH 08/12] ARM: Exynos: use generic cpufreq driver for Exynos5800
+Date: Wed,  2 Dec 2015 22:19:23 +0100
+Message-Id: <1449091167-20758-9-git-send-email-ben@smart-cactus.org>
+In-Reply-To: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
+References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Now this function takes clk_core as its argument.  __clk_core_init()
-would be more suitable for the name of this function.
+From: Thomas Abraham <thomas.ab@samsung.com>
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+The new CPU clock type allows the use of generic arm_big_little_dt
+cpufreq driver for Exynos5800.
+
+Changes by Bartlomiej:
+- split Exynos5800 support from the original patch
+- disable cpufreq if big.LITTLE switcher support is enabled
+
+Changes by Ben Gamari:
+- rebase
+
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Ben Gamari <ben@smart-cactus.org>
 ---
+ arch/arm/mach-exynos/exynos.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Changes in v2: None
-
- drivers/clk/clk.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 623838f..41179f3 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2285,13 +2285,13 @@ static inline void clk_debug_unregister(struct clk_core *core)
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index 818e6a0..9289412 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -236,6 +236,7 @@ static const struct of_device_id exynos_cpufreq_matches[] = {
+ 	 */
+ #ifndef CONFIG_BL_SWITCHER
+ 	{ .compatible = "samsung,exynos5420", .data = "arm-bL-cpufreq-dt" },
++	{ .compatible = "samsung,exynos5800", .data = "arm-bL-cpufreq-dt" },
  #endif
- 
- /**
-- * __clk_init - initialize the data structures in a struct clk_core
-+ * __clk_core_init - initialize the data structures in a struct clk_core
-  * @core:	clk_core being initialized
-  *
-  * Initializes the lists in struct clk_core, queries the hardware for the
-  * parent and rate and sets them both.
-  */
--static int __clk_init(struct clk_core *core)
-+static int __clk_core_init(struct clk_core *core)
- {
- 	int i, ret = 0;
- 	struct clk_core *orphan;
-@@ -2571,7 +2571,7 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
- 		goto fail_parent_names_copy;
- 	}
- 
--	ret = __clk_init(core);
-+	ret = __clk_core_init(core);
- 	if (!ret)
- 		return hw->clk;
- 
+ 	{ /* sentinel */ }
+ };
 -- 
-1.9.1
+2.6.2
