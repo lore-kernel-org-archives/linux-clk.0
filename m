@@ -1,72 +1,129 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Jiancheng Xue <xuejiancheng@huawei.com>
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	xuwei5@hisilicon.com, haojian.zhuang@linaro.org,
-	zhangfei.gao@linaro.org, bintian.wang@huawei.com,
-	yanhaifeng@hisilicon.com, yanghongwei@hisilicon.com,
-	suwenping@hisilicon.com, ml.yang@hisilicon.com,
-	gaofei@hisilicon.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 1/9] clk: hi3519: add dt-binding document and header file
-Date: Thu, 03 Dec 2015 10:44:27 +0100
-Message-ID: <1615805.jmP28L2rmX@wuerfel>
-In-Reply-To: <1449110364-23464-1-git-send-email-xuejiancheng@huawei.com>
-References: <1449110364-23464-1-git-send-email-xuejiancheng@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <ben@smart-cactus.org>
+From: Ben Gamari <ben@smart-cactus.org>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	b.zolnierkie@samsung.com,
+	Ben Gamari <ben@smart-cactus.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH 11/12] cpufreq: arm-big-little: clarify frequency units
+Date: Wed,  2 Dec 2015 22:19:26 +0100
+Message-Id: <1449091167-20758-12-git-send-email-ben@smart-cactus.org>
+In-Reply-To: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
+References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thursday 03 December 2015 10:39:24 Jiancheng Xue wrote:
-> +#ifndef __DTS_HI3519_CLOCK_H
-> +#define __DTS_HI3519_CLOCK_H
+The frequency units are very confusing in this area as OPPs use Hz
+whereas cpufreq uses kHz. Be explicit about this in variable naming.
 
-Please try to avoid adding headers like this if you can at all.
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Ben Gamari <ben@smart-cactus.org>
+---
+ drivers/cpufreq/arm_big_little.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-I might ask you to merge the header file in one merge window
-otherwise and submit the platform code one kernel later, as they
-tendn to cause us needless dependencies otherwise.
-
-
-> +/* fixed rate */
-> +#define HI3519_FIXED_400M              1
-> +#define HI3519_FIXED_200M              2
-> +#define HI3519_FIXED_125M              3
-> +#define HI3519_FIXED_150M              4
-> +#define HI3519_FIXED_75M               5
-> +#define HI3519_FIXED_300M              6
-> +#define HI3519_FIXED_50M               7
-> +#define HI3519_FIXED_24M               8
-> +#define HI3519_FIXED_3M                        9
-> +
-> +/* mux clocks */
-> +#define HI3519_FMC_MUX                 32
-> +#define HI3519_I2C_MUX                 33
-> +#define HI3519_UART_MUX                        34
-> +#define HI3519_SYSAXI_MUX              35
-> +
-> +/*fixed factor clocks*/
-> +#define HI3519_SYSAPB_CLK              64
-> +
-> +/* gate clocks */
-> +#define HI3519_FMC_CLK                 129
-> +#define HI3519_UART0_CLK               153
-> +#define HI3519_UART1_CLK               154
-> +#define HI3519_UART2_CLK               155
-> +#define HI3519_UART3_CLK               156
-> +#define HI3519_UART4_CLK               157
-
-Where do those numbers come from? They are not consecutive, so it sounds
-like they are directly from the data sheet and won't be needed in the driver.
-If that's true, just use the numbers directly, as you do for everything
-else.
-
-> +#define HI3519_NR_CLKS                 256
-> +#define HI3519_NR_RSTS                 256
-> 
-These seem to not be needed at all.
-
-	Arnd
+diff --git a/drivers/cpufreq/arm_big_little.c b/drivers/cpufreq/arm_big_little.c
+index 855599b..2d5761c 100644
+--- a/drivers/cpufreq/arm_big_little.c
++++ b/drivers/cpufreq/arm_big_little.c
+@@ -130,14 +130,14 @@ static unsigned int bL_cpufreq_get_rate(unsigned int cpu)
+ }
+ 
+ static int
+-bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate)
++bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate_kHz)
+ {
+ 	unsigned long volt = 0, volt_old = 0;
+ 	long freq_Hz;
+ 	u32 old_rate;
+ 	int ret;
+ 
+-	freq_Hz = new_rate * 1000;
++	freq_Hz = new_rate_kHz * 1000;
+ 	old_rate = clk_get_rate(clk[cluster]) / 1000;
+ 
+ 	if (!IS_ERR(reg[cluster])) {
+@@ -163,10 +163,10 @@ bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate)
+ 	pr_debug("%s: cpu %d, cluster: %d, %u MHz, %ld mV --> %u MHz, %ld mV\n",
+ 		__func__, cpu, cluster,
+ 		old_rate / 1000, (volt_old > 0) ? volt_old / 1000 : -1,
+-		new_rate / 1000, volt ? volt / 1000 : -1);
++		new_rate_kHz / 1000, volt ? volt / 1000 : -1);
+ 
+ 	/* scaling up? scale voltage before frequency */
+-	if (!IS_ERR(reg[cluster]) && new_rate > old_rate) {
++	if (!IS_ERR(reg[cluster]) && new_rate_kHz > old_rate) {
+ 		ret = regulator_set_voltage_tol(reg[cluster], volt, 0);
+ 		if (ret) {
+ 			pr_err("%s: cpu: %d, cluster: %d, failed to scale voltage up: %d\n",
+@@ -175,7 +175,7 @@ bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate)
+ 		}
+ 	}
+ 
+-	ret = clk_set_rate(clk[cluster], new_rate * 1000);
++	ret = clk_set_rate(clk[cluster], new_rate_kHz * 1000);
+ 	if (WARN_ON(ret)) {
+ 		pr_err("%s: clk_set_rate failed: %d, cluster: %d\n",
+ 			__func__, cluster, ret);
+@@ -185,7 +185,7 @@ bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate)
+ 	}
+ 
+ 	/* scaling down? scale voltage after frequency */
+-	if (!IS_ERR(reg[cluster]) && new_rate < old_rate) {
++	if (!IS_ERR(reg[cluster]) && new_rate_kHz < old_rate) {
+ 		ret = regulator_set_voltage_tol(reg[cluster], volt, 0);
+ 		if (ret) {
+ 			pr_err("%s: cpu: %d, cluster: %d, failed to scale voltage down: %d\n",
+@@ -199,7 +199,7 @@ bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate)
+ }
+ 
+ static unsigned int
+-bL_cpufreq_set_rate(u32 cpu, u32 old_cluster, u32 new_cluster, u32 rate)
++bL_cpufreq_set_rate(u32 cpu, u32 old_cluster, u32 new_cluster, u32 rate_kHz)
+ {
+ 	u32 new_rate, prev_rate;
+ 	int ret;
+@@ -209,13 +209,13 @@ bL_cpufreq_set_rate(u32 cpu, u32 old_cluster, u32 new_cluster, u32 rate)
+ 
+ 	if (bLs) {
+ 		prev_rate = per_cpu(cpu_last_req_freq, cpu);
+-		per_cpu(cpu_last_req_freq, cpu) = rate;
++		per_cpu(cpu_last_req_freq, cpu) = rate_kHz;
+ 		per_cpu(physical_cluster, cpu) = new_cluster;
+ 
+ 		new_rate = find_cluster_maxfreq(new_cluster);
+ 		new_rate = ACTUAL_FREQ(new_cluster, new_rate);
+ 	} else {
+-		new_rate = rate;
++		new_rate = rate_kHz;
+ 	}
+ 
+ 	pr_debug("%s: cpu: %d, old cluster: %d, new cluster: %d, freq: %d\n",
+@@ -236,7 +236,7 @@ bL_cpufreq_set_rate(u32 cpu, u32 old_cluster, u32 new_cluster, u32 rate)
+ 	} else if (ret && bLs) {
+ 		per_cpu(cpu_last_req_freq, cpu) = prev_rate;
+ 		per_cpu(physical_cluster, cpu) = old_cluster;
+-	} 
++	}
+ 
+ 	mutex_unlock(&cluster_lock[new_cluster]);
+ 
+-- 
+2.6.2
