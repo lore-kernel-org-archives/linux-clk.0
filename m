@@ -1,358 +1,117 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from pandora.arm.linux.org.uk ([78.32.30.218]:33961 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932347AbbLHKiO (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 8 Dec 2015 05:38:14 -0500
-From: Russell King <rmk+kernel@arm.linux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Jason Cooper <jason@lakedaemon.net>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH v3 2/3] clk: add Dove PLL divider support for GPU, VMeta and
- AXI clocks
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <E1a6Fen-0004dq-69@rmk-PC.arm.linux.org.uk>
-Date: Tue, 08 Dec 2015 10:38:05 +0000
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <carlo.caione@gmail.com>
+Return-Path: <carlo.caione@gmail.com>
+Sender: Carlo Caione <carlo.caione@gmail.com>
+From: Carlo Caione <carlo@caione.org>
+To: robh+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux@arm.linux.org.uk,
+	linux-meson@googlegroups.com,
+	drake@endlessm.com,
+	jerry.cao@amlogic.com,
+	victor.wan@amlogic.com,
+	pawel.moll@arm.com,
+	arnd@arndb.de
+Cc: Carlo Caione <carlo@endlessm.com>
+Subject: [PATCH v2 5/7] dt-bindings: Amlogic: Add SMP related documentation
+Date: Wed,  2 Dec 2015 18:22:31 +0100
+Message-Id: <1449076953-5058-6-git-send-email-carlo@caione.org>
+In-Reply-To: <1449076953-5058-1-git-send-email-carlo@caione.org>
+References: <1449076953-5058-1-git-send-email-carlo@caione.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the Dove PLL dividers, which are used to generate the
-clocks for the AXI bus, as well as the GPU and VMeta peripherals.
+From: Carlo Caione <carlo@endlessm.com>
 
-Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+With this patch we add documentation for:
+
+* power-management-unit: the PMU is used to bring up the cores during
+  SMP operations
+* sram: among other things the sram is used to store the first code
+  executed by the core when it is powered up
+* cpu-enable-method: the CPU enable method used by Amlogic Meson8b SoCs
+
+Signed-off-by: Carlo Caione <carlo@endlessm.com>
 ---
-v2 was missing dove-divider.h
+ .../devicetree/bindings/arm/amlogic/pmu.txt        | 16 +++++++++++
+ .../devicetree/bindings/arm/amlogic/smp-sram.txt   | 32 ++++++++++++++++++++++
+ Documentation/devicetree/bindings/arm/cpus.txt     |  1 +
+ 3 files changed, 49 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/amlogic/pmu.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/amlogic/smp-sram.txt
 
- drivers/clk/mvebu/Makefile       |   2 +-
- drivers/clk/mvebu/dove-divider.c | 262 +++++++++++++++++++++++++++++++++++++++
- drivers/clk/mvebu/dove-divider.h |   6 +
- drivers/clk/mvebu/dove.c         |   6 +
- 4 files changed, 275 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/mvebu/dove-divider.c
- create mode 100644 drivers/clk/mvebu/dove-divider.h
-
-diff --git a/drivers/clk/mvebu/Makefile b/drivers/clk/mvebu/Makefile
-index 645ac7ea3565..8866115486f7 100644
---- a/drivers/clk/mvebu/Makefile
-+++ b/drivers/clk/mvebu/Makefile
-@@ -7,6 +7,6 @@ obj-$(CONFIG_ARMADA_375_CLK)	+= armada-375.o
- obj-$(CONFIG_ARMADA_38X_CLK)	+= armada-38x.o
- obj-$(CONFIG_ARMADA_39X_CLK)	+= armada-39x.o
- obj-$(CONFIG_ARMADA_XP_CLK)	+= armada-xp.o
--obj-$(CONFIG_DOVE_CLK)		+= dove.o
-+obj-$(CONFIG_DOVE_CLK)		+= dove.o dove-divider.o
- obj-$(CONFIG_KIRKWOOD_CLK)	+= kirkwood.o
- obj-$(CONFIG_ORION_CLK)		+= orion.o
-diff --git a/drivers/clk/mvebu/dove-divider.c b/drivers/clk/mvebu/dove-divider.c
+diff --git a/Documentation/devicetree/bindings/arm/amlogic/pmu.txt b/Documentation/devicetree/bindings/arm/amlogic/pmu.txt
 new file mode 100644
-index 000000000000..d5c5bfa35a5a
+index 0000000..7b9b2da
 --- /dev/null
-+++ b/drivers/clk/mvebu/dove-divider.c
-@@ -0,0 +1,262 @@
-+/*
-+ * Marvell Dove PMU Core PLL divider driver
-+ *
-+ * Cleaned up by substantially rewriting, and converted to DT by
-+ * Russell King.  Origin is not known.
-+ */
-+#include <linux/clk-provider.h>
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
++++ b/Documentation/devicetree/bindings/arm/amlogic/pmu.txt
+@@ -0,0 +1,16 @@
++Amlogic power-management-unit:
++-------------------------------
 +
-+#include "dove-divider.h"
++The pmu is used to turn off and on different power domains of the SoCs
++This includes the power to the CPU cores.
 +
-+struct dove_clk {
-+	const char *name;
-+	struct clk_hw hw;
-+	void __iomem *base;
-+	spinlock_t *lock;
-+	u8 div_bit_start;
-+	u8 div_bit_end;
-+	u8 div_bit_load;
-+	u8 div_bit_size;
-+	u32 *divider_table;
-+};
++Required node properties:
++- compatible value : = "amlogic,meson8b-pmu";
++- reg : physical base address and the size of the registers window
 +
-+enum {
-+	DIV_CTRL0 = 0,
-+	DIV_CTRL1 = 4,
-+	DIV_CTRL1_N_RESET_MASK = BIT(10),
-+};
++Example:
 +
-+#define to_dove_clk(hw) container_of(hw, struct dove_clk, hw)
++	pmu@c81000e4 {
++		compatible = "amlogic,meson8b-pmu", "syscon";
++		reg = <0xc81000e0 0x18>;
++	};
+diff --git a/Documentation/devicetree/bindings/arm/amlogic/smp-sram.txt b/Documentation/devicetree/bindings/arm/amlogic/smp-sram.txt
+new file mode 100644
+index 0000000..455ca20
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/amlogic/smp-sram.txt
+@@ -0,0 +1,32 @@
++Amlogic SRAM for smp bringup:
++------------------------------
 +
-+static void dove_load_divider(void __iomem *base, u32 val, u32 mask, u32 load)
-+{
-+	u32 v;
++Amlogic's smp-capable SoCs use part of the sram for the bringup of the cores.
++Once the core gets powered up it executes the code that is residing at a
++specific location.
 +
-+	v = readl_relaxed(base + DIV_CTRL1) | DIV_CTRL1_N_RESET_MASK;
-+	writel_relaxed(v, base + DIV_CTRL1);
++Therefore a reserved section sub-node has to be added to the mmio-sram
++declaration.
 +
-+	v = (readl_relaxed(base + DIV_CTRL0) & ~(mask | load)) | val;
-+	writel_relaxed(v, base + DIV_CTRL0);
-+	writel_relaxed(v | load, base + DIV_CTRL0);
-+	ndelay(250);
-+	writel_relaxed(v, base + DIV_CTRL0);
-+}
++Required sub-node properties:
++- compatible : should be "amlogic,meson8b-smp-sram"
 +
-+static unsigned int dove_get_divider(struct dove_clk *dc)
-+{
-+	unsigned int divider;
-+	u32 val;
++The rest of the properties should follow the generic mmio-sram discription
++found in ../../misc/sram.txt
 +
-+	val = readl_relaxed(dc->base + DIV_CTRL0);
-+	val >>= dc->div_bit_start;
++Example:
 +
-+	divider = val & ~(~0 << dc->div_bit_size);
++	sram: sram@d9000000 {
++		compatible = "mmio-sram";
++		reg = <0xd9000000 0x20000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0xd9000000 0x20000>;
 +
-+	if (dc->divider_table)
-+		divider = dc->divider_table[divider];
-+
-+	return divider;
-+}
-+
-+static int dove_calc_divider(const struct dove_clk *dc, unsigned long rate,
-+			     unsigned long parent_rate, bool set)
-+{
-+	unsigned int divider, max;
-+
-+	divider = DIV_ROUND_CLOSEST(parent_rate, rate);
-+
-+	if (dc->divider_table) {
-+		unsigned int i;
-+
-+		for (i = 0; dc->divider_table[i]; i++)
-+			if (divider == dc->divider_table[i]) {
-+				divider = i;
-+				break;
-+			}
-+
-+		if (!dc->divider_table[i])
-+			return -EINVAL;
-+	} else {
-+		max = 1 << dc->div_bit_size;
-+
-+		if (set && (divider == 0 || divider >= max))
-+			return -EINVAL;
-+		if (divider >= max)
-+			divider = max - 1;
-+		else if (divider == 0)
-+			divider = 1;
-+	}
-+
-+	return divider;
-+}
-+
-+static unsigned long dove_recalc_rate(struct clk_hw *hw, unsigned long parent)
-+{
-+	struct dove_clk *dc = to_dove_clk(hw);
-+	unsigned int divider = dove_get_divider(dc);
-+	unsigned long rate = DIV_ROUND_CLOSEST(parent, divider);
-+
-+	pr_debug("%s(): %s divider=%u parent=%lu rate=%lu\n",
-+		 __func__, dc->name, divider, parent, rate);
-+
-+	return rate;
-+}
-+
-+static long dove_round_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long *parent)
-+{
-+	struct dove_clk *dc = to_dove_clk(hw);
-+	unsigned long parent_rate = *parent;
-+	int divider;
-+
-+	divider = dove_calc_divider(dc, rate, parent_rate, false);
-+	if (divider < 0)
-+		return divider;
-+
-+	rate = DIV_ROUND_CLOSEST(parent_rate, divider);
-+
-+	pr_debug("%s(): %s divider=%u parent=%lu rate=%lu\n",
-+		 __func__, dc->name, divider, parent_rate, rate);
-+
-+	return rate;
-+}
-+
-+static int dove_set_clock(struct clk_hw *hw, unsigned long rate,
-+			  unsigned long parent_rate)
-+{
-+	struct dove_clk *dc = to_dove_clk(hw);
-+	u32 mask, load, div;
-+	int divider;
-+
-+	divider = dove_calc_divider(dc, rate, parent_rate, true);
-+	if (divider < 0)
-+		return divider;
-+
-+	pr_debug("%s(): %s divider=%u parent=%lu rate=%lu\n",
-+		 __func__, dc->name, divider, parent_rate, rate);
-+
-+	div = (u32)divider << dc->div_bit_start;
-+	mask = ~(~0 << dc->div_bit_size) << dc->div_bit_start;
-+	load = BIT(dc->div_bit_load);
-+
-+	spin_lock(dc->lock);
-+	dove_load_divider(dc->base, div, mask, load);
-+	spin_unlock(dc->lock);
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops dove_divider_ops = {
-+	.set_rate	= dove_set_clock,
-+	.round_rate	= dove_round_rate,
-+	.recalc_rate	= dove_recalc_rate,
-+};
-+
-+static struct clk *clk_register_dove_divider(struct device *dev,
-+	struct dove_clk *dc, const char **parent_names, size_t num_parents,
-+	void __iomem *base)
-+{
-+	char name[32];
-+	struct clk_init_data init = {
-+		.name = name,
-+		.ops = &dove_divider_ops,
-+		.parent_names = parent_names,
-+		.num_parents = num_parents,
++		smp-sram@1ff80 {
++			compatible = "amlogic,meson8b-smp-sram";
++			reg = <0x1ff80 0x8>;
++		};
 +	};
 +
-+	strlcpy(name, dc->name, sizeof(name));
 +
-+	dc->hw.init = &init;
-+	dc->base = base;
-+	dc->div_bit_size = dc->div_bit_end - dc->div_bit_start + 1;
-+
-+	return clk_register(dev, &dc->hw);
-+}
-+
-+static DEFINE_SPINLOCK(dove_divider_lock);
-+
-+static u32 axi_divider[] = {-1, 2, 1, 3, 4, 6, 5, 7, 8, 10, 9, 0};
-+
-+static struct dove_clk dove_hw_clocks[4] = {
-+	{
-+		.name = "axi",
-+		.lock = &dove_divider_lock,
-+		.div_bit_start = 1,
-+		.div_bit_end = 6,
-+		.div_bit_load = 7,
-+		.divider_table = axi_divider,
-+	}, {
-+		.name = "gpu",
-+		.lock = &dove_divider_lock,
-+		.div_bit_start = 8,
-+		.div_bit_end = 13,
-+		.div_bit_load = 14,
-+	}, {
-+		.name = "vmeta",
-+		.lock = &dove_divider_lock,
-+		.div_bit_start = 15,
-+		.div_bit_end = 20,
-+		.div_bit_load = 21,
-+	}, {
-+		.name = "lcd",
-+		.lock = &dove_divider_lock,
-+		.div_bit_start = 22,
-+		.div_bit_end = 27,
-+		.div_bit_load = 28,
-+	},
-+};
-+
-+static const char *core_pll[] = {
-+	"core-pll",
-+};
-+
-+static int dove_divider_init(struct device *dev, void __iomem *base,
-+	struct clk **clks)
-+{
-+	struct clk *clk;
-+	int i;
-+
-+	/*
-+	 * Create the core PLL clock.  We treat this as a fixed rate
-+	 * clock as we don't know any better, and documentation is sparse.
-+	 */
-+	clk = clk_register_fixed_rate(dev, core_pll[0], NULL, CLK_IS_ROOT,
-+				      2000000000UL);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	for (i = 0; i < ARRAY_SIZE(dove_hw_clocks); i++)
-+		clks[i] = clk_register_dove_divider(dev, &dove_hw_clocks[i],
-+						    core_pll,
-+						    ARRAY_SIZE(core_pll), base);
-+
-+	return 0;
-+}
-+
-+static struct clk *dove_divider_clocks[4];
-+
-+static struct clk_onecell_data dove_divider_data = {
-+	.clks = dove_divider_clocks,
-+	.clk_num = ARRAY_SIZE(dove_divider_clocks),
-+};
-+
-+void __init dove_divider_clk_init(struct device_node *np)
-+{
-+	void *base;
-+
-+	base = of_iomap(np, 0);
-+	if (WARN_ON(!base))
-+		return;
-+
-+	if (WARN_ON(dove_divider_init(NULL, base, dove_divider_clocks))) {
-+		iounmap(base);
-+		return;
-+	}
-+
-+	of_clk_add_provider(np, of_clk_src_onecell_get, &dove_divider_data);
-+}
-diff --git a/drivers/clk/mvebu/dove-divider.h b/drivers/clk/mvebu/dove-divider.h
-new file mode 100644
-index 000000000000..4f2f718deb8e
---- /dev/null
-+++ b/drivers/clk/mvebu/dove-divider.h
-@@ -0,0 +1,6 @@
-+#ifndef DOVE_DIVIDER_H
-+#define DOVE_DIVIDER_H
-+
-+void __init dove_divider_clk_init(struct device_node *np);
-+
-+#endif
-diff --git a/drivers/clk/mvebu/dove.c b/drivers/clk/mvebu/dove.c
-index b8c2424ac926..59fad9546c84 100644
---- a/drivers/clk/mvebu/dove.c
-+++ b/drivers/clk/mvebu/dove.c
-@@ -17,6 +17,7 @@
- #include <linux/io.h>
- #include <linux/of.h>
- #include "common.h"
-+#include "dove-divider.h"
- 
- /*
-  * Core Clocks
-@@ -184,9 +185,14 @@ static void __init dove_clk_init(struct device_node *np)
- {
- 	struct device_node *cgnp =
- 		of_find_compatible_node(NULL, NULL, "marvell,dove-gating-clock");
-+	struct device_node *ddnp =
-+		of_find_compatible_node(NULL, NULL, "marvell,dove-divider-clock");
- 
- 	mvebu_coreclk_setup(np, &dove_coreclks);
- 
-+	if (ddnp)
-+		dove_divider_clk_init(ddnp);
-+
- 	if (cgnp)
- 		mvebu_clk_gating_setup(cgnp, dove_gating_desc);
- }
+diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
+index 3a07a87..22381b4 100644
+--- a/Documentation/devicetree/bindings/arm/cpus.txt
++++ b/Documentation/devicetree/bindings/arm/cpus.txt
+@@ -189,6 +189,7 @@ nodes to be present and contain the properties described below.
+ 			  can be one of:
+ 			    "allwinner,sun6i-a31"
+ 			    "allwinner,sun8i-a23"
++			    "amlogic,meson8b-smp"
+ 			    "arm,psci"
+ 			    "brcm,brahma-b15"
+ 			    "marvell,armada-375-smp"
 -- 
-2.1.0
-
+2.5.0
