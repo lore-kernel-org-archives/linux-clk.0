@@ -1,54 +1,209 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v2 01/16] clk: remove unused first argument of __clk_init()
-Date: Mon, 28 Dec 2015 19:22:55 +0900
-Message-Id: <1451298191-30815-2-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <ben@smart-cactus.org>
+From: Ben Gamari <ben@smart-cactus.org>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	b.zolnierkie@samsung.com,
+	Doug Anderson <dianders@chromium.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Andreas Faerber <afaerber@suse.de>,
+	Sachin Kamat <sachin.kamat@linaro.org>,
+	Ben Gamari <ben@smart-cactus.org>
+Subject: [PATCH 06/12] ARM: dts: Exynos5800: fix CPU OPP
+Date: Wed,  2 Dec 2015 22:19:21 +0100
+Message-Id: <1449091167-20758-7-git-send-email-ben@smart-cactus.org>
+In-Reply-To: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
+References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The "struct device *dev" is not used at all in this function.
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Fix CPU operating points for Exynos5800 (it uses different
+voltages than Exynos5420 and supports additional frequencies).
+However don't use 2000MHz & 1900MHz OPPs (for A15 cores) and
+1400MHz OPP (for A7 cores) until there is a separate DTS for
+ODROID-XU3 Lite board (which doesn't support these higher
+OPPs).
+
+Based on Hardkernel's kernel for ODROID-XU3 board.
+
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Doug Anderson <dianders@chromium.org>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Andreas Faerber <afaerber@suse.de>
+Cc: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Ben Gamari <ben@smart-cactus.org>
 ---
+ arch/arm/boot/dts/exynos5800.dtsi | 136 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 136 insertions(+)
 
-Changes in v2: None
-
- drivers/clk/clk.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 3fba5ac..897e5ae 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2286,13 +2286,12 @@ static inline void clk_debug_unregister(struct clk_core *core)
+diff --git a/arch/arm/boot/dts/exynos5800.dtsi b/arch/arm/boot/dts/exynos5800.dtsi
+index c0bb356..43d42f4 100644
+--- a/arch/arm/boot/dts/exynos5800.dtsi
++++ b/arch/arm/boot/dts/exynos5800.dtsi
+@@ -17,8 +17,144 @@
  
- /**
-  * __clk_init - initialize the data structures in a struct clk
-- * @dev:	device initializing this clk, placeholder for now
-  * @clk:	clk being initialized
-  *
-  * Initializes the lists in struct clk_core, queries the hardware for the
-  * parent and rate and sets them both.
-  */
--static int __clk_init(struct device *dev, struct clk *clk_user)
-+static int __clk_init(struct clk *clk_user)
- {
- 	int i, ret = 0;
- 	struct clk_core *orphan;
-@@ -2575,7 +2574,7 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
- 		goto fail_parent_names_copy;
- 	}
+ / {
+ 	compatible = "samsung,exynos5800", "samsung,exynos5";
++
++	cpu0_opp_table: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
++		opp00 {
++			opp-hz = /bits/ 64 <1800000000>;
++			opp-microvolt = <1250000>;
++		};
++		opp01 {
++			opp-hz = /bits/ 64 <1700000000>;
++			opp-microvolt = <1250000>;
++		};
++		opp02 {
++			opp-hz = /bits/ 64 <1600000000>;
++			opp-microvolt = <1250000>;
++		};
++		opp03 {
++			opp-hz = /bits/ 64 <1500000000>;
++			opp-microvolt = <1100000>;
++		};
++		opp04 {
++			opp-hz = /bits/ 64 <1400000000>;
++			opp-microvolt = <1100000>;
++		};
++		opp05 {
++			opp-hz = /bits/ 64 <1300000000>;
++			opp-microvolt = <1100000>;
++		};
++		opp06 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <1000000>;
++		};
++		opp07 {
++			opp-hz = /bits/ 64 <1100000000>;
++			opp-microvolt = <1000000>;
++		};
++		opp08 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <1000000>;
++		};
++		opp09 {
++			opp-hz = /bits/ 64 <900000000>;
++			opp-microvolt = <1000000>;
++		};
++		opp10 {
++			opp-hz = /bits/ 64 <800000000>;
++			opp-microvolt = <900000>;
++		};
++		opp11 {
++			opp-hz = /bits/ 64 <700000000>;
++			opp-microvolt = <900000>;
++		};
++		opp12 {
++			opp-hz = /bits/ 64 <600000000>;
++			opp-microvolt = <900000>;
++		};
++		opp13 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <900000>;
++		};
++		opp14 {
++			opp-hz = /bits/ 64 <400000000>;
++			opp-microvolt = <900000>;
++		};
++		opp15 {
++			opp-hz = /bits/ 64 <300000000>;
++			opp-microvolt = <900000>;
++		};
++		opp16 {
++			opp-hz = /bits/ 64 <200000000>;
++			opp-microvolt = <900000>;
++		};
++	};
++
++	cpu1_opp_table: opp_table1 {
++		compatible = "operating-points-v2";
++		opp-shared;
++		opp00 {
++			opp-hz = /bits/ 64 <1300000000>;
++			opp-microvolt = <1250000>;
++		};
++		opp01 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <1250000>;
++		};
++		opp02 {
++			opp-hz = /bits/ 64 <1100000000>;
++			opp-microvolt = <1250000>;
++		};
++		opp03 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <1100000>;
++		};
++		opp04 {
++			opp-hz = /bits/ 64 <900000000>;
++			opp-microvolt = <1100000>;
++		};
++		opp05 {
++			opp-hz = /bits/ 64 <800000000>;
++			opp-microvolt = <1100000>;
++		};
++		opp06 {
++			opp-hz = /bits/ 64 <700000000>;
++			opp-microvolt = <1000000>;
++		};
++		opp07 {
++			opp-hz = /bits/ 64 <600000000>;
++			opp-microvolt = <1000000>;
++		};
++		opp08 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <1000000>;
++		};
++		opp09 {
++			opp-hz = /bits/ 64 <400000000>;
++			opp-microvolt = <1000000>;
++		};
++		opp10 {
++			opp-hz = /bits/ 64 <300000000>;
++			opp-microvolt = <900000>;
++		};
++		opp11 {
++			opp-hz = /bits/ 64 <200000000>;
++			opp-microvolt = <900000>;
++		};
++	};
+ };
  
--	ret = __clk_init(dev, hw->clk);
-+	ret = __clk_init(hw->clk);
- 	if (!ret)
- 		return hw->clk;
- 
++&cpu0 { operating-points-v2 = <&cpu0_opp_table>; };
++&cpu1 { operating-points-v2 = <&cpu0_opp_table>; };
++&cpu2 { operating-points-v2 = <&cpu0_opp_table>; };
++&cpu3 { operating-points-v2 = <&cpu0_opp_table>; };
++
++&cpu4 { operating-points-v2 = <&cpu1_opp_table>; };
++&cpu5 { operating-points-v2 = <&cpu1_opp_table>; };
++&cpu6 { operating-points-v2 = <&cpu1_opp_table>; };
++&cpu7 { operating-points-v2 = <&cpu1_opp_table>; };
++
+ &clock {
+ 	compatible = "samsung,exynos5800-clock";
+ };
 -- 
-1.9.1
+2.6.2
