@@ -1,33 +1,57 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Shunqian Zheng <zhengsq@rock-chips.com>
-Cc: gregkh@linuxfoundation.org, srinivas.kandagatla@linaro.org, maxime.ripard@free-electrons.com, caesar.wang@rock-chips.com, mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, dianders@chromium.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, xjq@rock-chips.com
-Subject: Re: [PATCH v2 0/5] Add eFuse driver of Rockchip SoC
-Date: Sat, 12 Dec 2015 20:21:55 +0100
-Message-ID: <25029139.jfQHqpcHTE@diego>
-In-Reply-To: <1439288024-13359-1-git-send-email-zhengsq@rock-chips.com>
-References: <1439288024-13359-1-git-send-email-zhengsq@rock-chips.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:57684 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755302AbbLBNaY (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 2 Dec 2015 08:30:24 -0500
+Date: Wed, 2 Dec 2015 13:30:10 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux@arm.linux.org.uk,
+	mturquette@baylibre.com, sboyd@codeaurora.org, wsa@the-dreams.de
+Message-ID: <20151202133010.GJ1929@sirena.org.uk>
+References: <20151124173718.GK18889@ck-lbox>
+ <20151202125855.GB6058@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="r7YfqnGwAF7PgTLe"
+In-Reply-To: <20151202125855.GB6058@localhost.localdomain>
+Subject: Re: Handling clocks on external busses
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 11. August 2015, 18:13:39 schrieb Shunqian Zheng:
-> From: ZhengShunQian <zhengsq@rock-chips.com>
-> 
-> Base on nvmem framework, this series patches
-> implement the eFuse driver of Rockchip SoC.
-> The data from eFuse contains CPU leakage, chip code and version etc.
-> 
-> The flow of reading data from eFuse is quite simple,
-> configure the CTRL register, write data address to CTRL
-> register, then data is available in DOUT register.
 
-I've now applied both the clock-ids addition as well as the dts node for 4.5
-after seeing that the nvmem driver did actually make it into the kernel.
+--r7YfqnGwAF7PgTLe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I've taken the liberty to
-- split the clock-id patch (into header addition and clock-tree reference)
-- already add the efuse_1024 clock id, if someone wants to use that later
+On Wed, Dec 02, 2015 at 12:58:55PM +0000, Charles Keepax wrote:
 
+> So after a bit more digging it seems this has been mitigated slightly
+> as a lot of SPI driver have been updated to execute transfers in
+> thread rather than from a worker thread and it seems the clock
+> framework lets you re-enter the locked sections if called from the
+> same thread.
 
-Heiko
+No, this isn't something the drivers support (it's a framework feature)
+and it isn't something that we're guaranteed to do, if the bus is busy
+we defer to the thread and it's possible the drivers might do something
+multi-threaded themselves.  It might work a lot of the time but it's
+never going to be guaranteed to work.
+
+--r7YfqnGwAF7PgTLe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWXvJhAAoJECTWi3JdVIfQA+AH/Rj5XoHAusUguUDYc4NViJGW
+evlxnShud6Y4PKjbRvsJMb2sjO9REmwxXjKMSMrR3fBaGRDlCUWybrK5bu4YXW1U
+RkoykLwpbwEqqQ6RSGN9bvh9xuaQoRKTNHJfyFcVw8puFFHooo9c5RHN+UnaeavR
+o1rSdWyah01z2SS8hnKMKvs6FclOnpku02STFVZxRaH9vtiBPkBLS1uGMX/54yE1
+c3yhW3PGcllG4ieJlcfcJHH4QB0sVKvxbQ+DVxzy0/J6LxrEjhPbOpyjq4DvdrCQ
+hPQqCSmQS89dLW1aaqLT7TI1b2p11CxukcOy99ZFHt0lhlAi6BeM+TRyP+iYT5o=
+=1wIb
+-----END PGP SIGNATURE-----
+
+--r7YfqnGwAF7PgTLe--
