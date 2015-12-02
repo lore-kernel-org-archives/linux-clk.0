@@ -1,78 +1,43 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <tony@atomide.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv2] clk: ti: omap5+: dpll: implement errata i810
-Date: Wed, 16 Dec 2015 11:02:10 +0200
-Message-ID: <1450256530-10251-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <ben@smart-cactus.org>
+From: Ben Gamari <ben@smart-cactus.org>
+To: Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	b.zolnierkie@samsung.com
+Subject: [PATCH v5 0/12] cpufreq: Add support for Exynos 5800, 5420, and 5422
+Date: Wed,  2 Dec 2015 22:19:15 +0100
+Message-Id: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Errata i810 states that DPLL controller can get stuck while transitioning
-to a power saving state, while its M/N ratio is being re-programmed.
 
-As a workaround, before re-programming the M/N ratio, SW has to ensure
-the DPLL cannot start an idle state transition. SW can disable DPLL
-idling by setting the DPLL AUTO_DPLL_MODE=0 or keeping a clock request
-active by setting a dependent clock domain in SW_WKUP.
+This patch series adds cpufreq support for the Exynos 5800, 5420, and 5422
+SOCs. In particular, it adds support for operating-points-v2 bindings to the
+arm-big-little cpufreq driver and updates the above-mentioned SOCs' devicetrees
+to take advantage of this support. There are also a couple of patches improving
+the clarify of the arm-big-little implementation. It is built on a set posted
+by Bartlomiej Zolnierkiewicz in April 2015.
 
-This errata is known to impact OMAP5 and DRA7 chips, but lets enable it
-unconditionally to avoid any potential problems with earlier generation
-SoCs also.
+The most signficant change from the original series is porting to the
+operating-points-v2 devicetree bindings. The series has been tested by me on
+and Odroid XU4 and by Javier Martinez Canillas on a Peach Pit.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
-v2: made the fix to be applied unconditionally on all OMAP3+ SoCs
+Cheers,
 
- drivers/clk/ti/dpll3xxx.c |   20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
-index f4dec00..cb26eb8 100644
---- a/drivers/clk/ti/dpll3xxx.c
-+++ b/drivers/clk/ti/dpll3xxx.c
-@@ -305,7 +305,7 @@ static void _lookup_sddiv(struct clk_hw_omap *clk, u8 *sd_div, u16 m, u8 n)
- static int omap3_noncore_dpll_program(struct clk_hw_omap *clk, u16 freqsel)
- {
- 	struct dpll_data *dd = clk->dpll_data;
--	u8 dco, sd_div;
-+	u8 dco, sd_div, ai = 0;
- 	u32 v;
- 
- 	/* 3430 ES2 TRM: 4.7.6.9 DPLL Programming Sequence */
-@@ -350,6 +350,21 @@ static int omap3_noncore_dpll_program(struct clk_hw_omap *clk, u16 freqsel)
- 		v |= sd_div << __ffs(dd->sddiv_mask);
- 	}
- 
-+	/*
-+	 * Errata i810 - DPLL controller can get stuck while transitioning
-+	 * to a power saving state. Software must ensure the DPLL can not
-+	 * transition to a low power state while changing M/N values.
-+	 * Easiest way to accomplish this is to prevent DPLL autoidle
-+	 * before doing the M/N re-program.
-+	 */
-+	ai = omap3_dpll_autoidle_read(clk);
-+	if (ai) {
-+		omap3_dpll_deny_idle(clk);
-+
-+		/* OCP barrier */
-+		omap3_dpll_autoidle_read(clk);
-+	}
-+
- 	ti_clk_ll_ops->clk_writel(v, dd->mult_div1_reg);
- 
- 	/* Set 4X multiplier and low-power mode */
-@@ -379,6 +394,9 @@ static int omap3_noncore_dpll_program(struct clk_hw_omap *clk, u16 freqsel)
- 
- 	_omap3_noncore_dpll_lock(clk);
- 
-+	if (ai)
-+		omap3_dpll_allow_idle(clk);
-+
- 	return 0;
- }
- 
--- 
-1.7.9.5
+- Ben
