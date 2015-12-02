@@ -1,50 +1,21 @@
-Return-Path: <carlo.caione@gmail.com>
-Return-Path: <carlo.caione@gmail.com>
-Sender: Carlo Caione <carlo.caione@gmail.com>
-From: Carlo Caione <carlo@caione.org>
-To: robh+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux@arm.linux.org.uk,
-	linux-meson@googlegroups.com,
-	drake@endlessm.com,
-	jerry.cao@amlogic.com,
-	victor.wan@amlogic.com,
-	pawel.moll@arm.com,
-	arnd@arndb.de
-Cc: Carlo Caione <carlo@endlessm.com>
-Subject: [PATCH v2 1/7] ARM: DTS: Amlogic: Extend L2 cache controller node for Meson8b
-Date: Wed,  2 Dec 2015 18:22:27 +0100
-Message-Id: <1449076953-5058-2-git-send-email-carlo@caione.org>
-In-Reply-To: <1449076953-5058-1-git-send-email-carlo@caione.org>
-References: <1449076953-5058-1-git-send-email-carlo@caione.org>
+Return-Path: <shawnguo@kernel.org>
+Date: Wed, 2 Dec 2015 14:11:33 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Bai Ping <b51503@freescale.com>
+Cc: kernel@pengutronix.de, mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: imx: Replace clk error check with imx_check_clocks()
+Message-ID: <20151202061133.GH692@tiger>
+References: <1448504323-17737-1-git-send-email-b51503@freescale.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1448504323-17737-1-git-send-email-b51503@freescale.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Carlo Caione <carlo@endlessm.com>
+On Thu, Nov 26, 2015 at 10:18:43AM +0800, Bai Ping wrote:
+> As we already have a 'imx_check_clocks' to do the clock error
+> check, so cleanup the error check code.
+> 
+> Signed-off-by: Bai Ping <b51503@freescale.com>
 
-This patch extends the L2 cache controller node for Amlogic Meson8b
-SoCs with some missing parameters.
-
-Signed-off-by: Carlo Caione <carlo@endlessm.com>
----
- arch/arm/boot/dts/meson8b.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm/boot/dts/meson8b.dtsi b/arch/arm/boot/dts/meson8b.dtsi
-index ee352bf..b1990dc 100644
---- a/arch/arm/boot/dts/meson8b.dtsi
-+++ b/arch/arm/boot/dts/meson8b.dtsi
-@@ -93,6 +93,9 @@
- 		L2: l2-cache-controller@c4200000 {
- 			compatible = "arm,pl310-cache";
- 			reg = <0xc4200000 0x1000>;
-+			arm,data-latency = <3 3 3>;
-+			arm,tag-latency = <2 2 2>;
-+			arm,filter-ranges = <0x100000 0xc0000000>;
- 			cache-unified;
- 			cache-level = <2>;
- 		};
--- 
-2.5.0
+Applied, thanks.
