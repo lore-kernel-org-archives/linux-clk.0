@@ -1,54 +1,56 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [RFC 2/9] ARM: OMAP2+: hwmod: initialize main clocks directly from DT
-Date: Fri, 18 Dec 2015 15:58:54 +0200
-Message-ID: <1450447141-29936-3-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
-References: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <tony@atomide.com>
+From: Tony Lindgren <tony@atomide.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Brian Hutchinson <b.hutchman@gmail.com>,
+	Delio Brignoli <dbrignoli@audioscience.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Matthijs van Duin <matthijsvanduin@gmail.com>,
+	Philipp Rosenberger <ilu@linutronix.de>
+Subject: [PATCH 0/2] Clock driver for dm814x ADPLL
+Date: Wed,  2 Dec 2015 17:35:02 -0800
+Message-Id: <1449106504-7645-1-git-send-email-tony@atomide.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This avoids the need to add clock aliases under drivers/clk/ti/clk-xyz.c
-files.
+Hi all,
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- arch/arm/mach-omap2/omap_hwmod.c |   19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+Here's a clock driver for the ADPLL on dm814x. It's still in read-only
+mode for the PLL, but is already usable with the gates and dividers
+and allows us to add devices like MMC and USB.
 
-diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
-index 48495ad..5fa8965 100644
---- a/arch/arm/mach-omap2/omap_hwmod.c
-+++ b/arch/arm/mach-omap2/omap_hwmod.c
-@@ -786,11 +786,20 @@ static int _init_main_clk(struct omap_hwmod *oh)
- 	if (!oh->main_clk)
- 		return 0;
- 
--	oh->_clk = clk_get(NULL, oh->main_clk);
--	if (IS_ERR(oh->_clk)) {
--		pr_warn("omap_hwmod: %s: cannot clk_get main_clk %s\n",
--			oh->name, oh->main_clk);
--		return -EINVAL;
-+	if (of_have_populated_dt()) {
-+		struct of_phandle_args clkspec;
-+
-+		clkspec.np = of_find_node_by_name(NULL, oh->main_clk);
-+		oh->_clk = of_clk_get_from_provider(&clkspec);
-+	}
-+
-+	if (!oh->_clk) {
-+		oh->_clk = clk_get(NULL, oh->main_clk);
-+		if (IS_ERR(oh->_clk)) {
-+			pr_warn("omap_hwmod: %s: cannot clk_get main_clk %s\n",
-+				oh->name, oh->main_clk);
-+			return -EINVAL;
-+		}
- 	}
- 	/*
- 	 * HACK: This needs a re-visit once clk_prepare() is implemented
+To test this please apply the patches from below on v4.4-rc3:
+
+http://marc.info/?l=linux-omap&m=144901336001085&w=2
+
+And also make sure you have the initcall level change patch that
+is needed for having omap clock drivers regular Linux device
+drivers:
+
+http://marc.info/?l=linux-omap&m=144890081111207&w=2
+
+
+Regards,
+
+Tony
+
+Tony Lindgren (2):
+  clk: ti: Add support for dm814x ADPLL
+  ARM: dts: Add clocks for dm814x ADPLL
+
+ .../devicetree/bindings/clock/ti/adpll.txt         |   42 +
+ arch/arm/boot/dts/dm814x-clocks.dtsi               |  256 ++++-
+ drivers/clk/Kconfig                                |    1 +
+ drivers/clk/ti/Kconfig                             |    6 +
+ drivers/clk/ti/Makefile                            |    2 +
+ drivers/clk/ti/adpll.c                             | 1027 ++++++++++++++++++++
+ drivers/clk/ti/clk-814x.c                          |   53 +
+ 7 files changed, 1356 insertions(+), 31 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/adpll.txt
+ create mode 100644 drivers/clk/ti/Kconfig
+ create mode 100644 drivers/clk/ti/adpll.c
+
 -- 
-1.7.9.5
+2.6.2
