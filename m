@@ -1,209 +1,124 @@
 Return-Path: <ben@smart-cactus.org>
 From: Ben Gamari <ben@smart-cactus.org>
-To: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	b.zolnierkie@samsung.com,
-	Doug Anderson <dianders@chromium.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Andreas Faerber <afaerber@suse.de>,
-	Sachin Kamat <sachin.kamat@linaro.org>,
-	Ben Gamari <ben@smart-cactus.org>
-Subject: [PATCH 06/12] ARM: dts: Exynos5800: fix CPU OPP
-Date: Wed,  2 Dec 2015 22:19:21 +0100
-Message-Id: <1449091167-20758-7-git-send-email-ben@smart-cactus.org>
-In-Reply-To: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
-References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
+To: "Jon Medhurst \(Tixy\)" <tixy@linaro.org>
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-pm@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@dowhile0.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 11/12] cpufreq: arm-big-little: clarify frequency units
+In-Reply-To: <1449152534.2817.26.camel@linaro.org>
+References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org> <1449091167-20758-12-git-send-email-ben@smart-cactus.org> <1449152534.2817.26.camel@linaro.org>
+Date: Thu, 03 Dec 2015 15:37:44 +0100
+Message-ID: <87egf338ef.fsf@smart-cactus.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha1; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Fix CPU operating points for Exynos5800 (it uses different
-voltages than Exynos5420 and supports additional frequencies).
-However don't use 2000MHz & 1900MHz OPPs (for A15 cores) and
-1400MHz OPP (for A7 cores) until there is a separate DTS for
-ODROID-XU3 Lite board (which doesn't support these higher
-OPPs).
+"Jon Medhurst (Tixy)" <tixy@linaro.org> writes:
 
-Based on Hardkernel's kernel for ODROID-XU3 board.
+> On Wed, 2015-12-02 at 22:19 +0100, Ben Gamari wrote:
+>> The frequency units are very confusing in this area as OPPs use Hz
+>> whereas cpufreq uses kHz. Be explicit about this in variable naming.
+>>=20
+>> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+>> Signed-off-by: Ben Gamari <ben@smart-cactus.org>
+>> ---
+>>  drivers/cpufreq/arm_big_little.c | 20 ++++++++++----------
+>>  1 file changed, 10 insertions(+), 10 deletions(-)
+>>=20
+>> diff --git a/drivers/cpufreq/arm_big_little.c b/drivers/cpufreq/arm_big_=
+little.c
+>> index 855599b..2d5761c 100644
+>> --- a/drivers/cpufreq/arm_big_little.c
+>> +++ b/drivers/cpufreq/arm_big_little.c
+>> @@ -130,14 +130,14 @@ static unsigned int bL_cpufreq_get_rate(unsigned i=
+nt cpu)
+>>  }
+>>=20=20
+>>  static int
+>> -bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate)
+>> +bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate_kHz)
+>>  {
+>>  	unsigned long volt =3D 0, volt_old =3D 0;
+>>  	long freq_Hz;
+>>  	u32 old_rate;
+>
+> IMO variable renaming doesn't seem necessary, if cpufreq uses kHz then
+> in a cpufreq driver adding 'kHz' to variable seems redundant, especially
+> if Hz values like freq_Hz above are named especially to signal their
+> different units.
+>=20
+Correct; it isn't strictly necessary but it would have saved me half an
+hour of poking around trying work out the intent of this code.
 
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Andreas Faerber <afaerber@suse.de>
-Cc: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Ben Gamari <ben@smart-cactus.org>
----
- arch/arm/boot/dts/exynos5800.dtsi | 136 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 136 insertions(+)
+> However, if renaming is going to happen it should at
+> least be consistent within the same function i.e. also rename the old
+> old_rate variable above.
+>
+That's a reasonable objection. I'd be happy to do that.
 
-diff --git a/arch/arm/boot/dts/exynos5800.dtsi b/arch/arm/boot/dts/exynos5800.dtsi
-index c0bb356..43d42f4 100644
---- a/arch/arm/boot/dts/exynos5800.dtsi
-+++ b/arch/arm/boot/dts/exynos5800.dtsi
-@@ -17,8 +17,144 @@
- 
- / {
- 	compatible = "samsung,exynos5800", "samsung,exynos5";
-+
-+	cpu0_opp_table: opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+		opp00 {
-+			opp-hz = /bits/ 64 <1800000000>;
-+			opp-microvolt = <1250000>;
-+		};
-+		opp01 {
-+			opp-hz = /bits/ 64 <1700000000>;
-+			opp-microvolt = <1250000>;
-+		};
-+		opp02 {
-+			opp-hz = /bits/ 64 <1600000000>;
-+			opp-microvolt = <1250000>;
-+		};
-+		opp03 {
-+			opp-hz = /bits/ 64 <1500000000>;
-+			opp-microvolt = <1100000>;
-+		};
-+		opp04 {
-+			opp-hz = /bits/ 64 <1400000000>;
-+			opp-microvolt = <1100000>;
-+		};
-+		opp05 {
-+			opp-hz = /bits/ 64 <1300000000>;
-+			opp-microvolt = <1100000>;
-+		};
-+		opp06 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <1000000>;
-+		};
-+		opp07 {
-+			opp-hz = /bits/ 64 <1100000000>;
-+			opp-microvolt = <1000000>;
-+		};
-+		opp08 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = <1000000>;
-+		};
-+		opp09 {
-+			opp-hz = /bits/ 64 <900000000>;
-+			opp-microvolt = <1000000>;
-+		};
-+		opp10 {
-+			opp-hz = /bits/ 64 <800000000>;
-+			opp-microvolt = <900000>;
-+		};
-+		opp11 {
-+			opp-hz = /bits/ 64 <700000000>;
-+			opp-microvolt = <900000>;
-+		};
-+		opp12 {
-+			opp-hz = /bits/ 64 <600000000>;
-+			opp-microvolt = <900000>;
-+		};
-+		opp13 {
-+			opp-hz = /bits/ 64 <500000000>;
-+			opp-microvolt = <900000>;
-+		};
-+		opp14 {
-+			opp-hz = /bits/ 64 <400000000>;
-+			opp-microvolt = <900000>;
-+		};
-+		opp15 {
-+			opp-hz = /bits/ 64 <300000000>;
-+			opp-microvolt = <900000>;
-+		};
-+		opp16 {
-+			opp-hz = /bits/ 64 <200000000>;
-+			opp-microvolt = <900000>;
-+		};
-+	};
-+
-+	cpu1_opp_table: opp_table1 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+		opp00 {
-+			opp-hz = /bits/ 64 <1300000000>;
-+			opp-microvolt = <1250000>;
-+		};
-+		opp01 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <1250000>;
-+		};
-+		opp02 {
-+			opp-hz = /bits/ 64 <1100000000>;
-+			opp-microvolt = <1250000>;
-+		};
-+		opp03 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = <1100000>;
-+		};
-+		opp04 {
-+			opp-hz = /bits/ 64 <900000000>;
-+			opp-microvolt = <1100000>;
-+		};
-+		opp05 {
-+			opp-hz = /bits/ 64 <800000000>;
-+			opp-microvolt = <1100000>;
-+		};
-+		opp06 {
-+			opp-hz = /bits/ 64 <700000000>;
-+			opp-microvolt = <1000000>;
-+		};
-+		opp07 {
-+			opp-hz = /bits/ 64 <600000000>;
-+			opp-microvolt = <1000000>;
-+		};
-+		opp08 {
-+			opp-hz = /bits/ 64 <500000000>;
-+			opp-microvolt = <1000000>;
-+		};
-+		opp09 {
-+			opp-hz = /bits/ 64 <400000000>;
-+			opp-microvolt = <1000000>;
-+		};
-+		opp10 {
-+			opp-hz = /bits/ 64 <300000000>;
-+			opp-microvolt = <900000>;
-+		};
-+		opp11 {
-+			opp-hz = /bits/ 64 <200000000>;
-+			opp-microvolt = <900000>;
-+		};
-+	};
- };
- 
-+&cpu0 { operating-points-v2 = <&cpu0_opp_table>; };
-+&cpu1 { operating-points-v2 = <&cpu0_opp_table>; };
-+&cpu2 { operating-points-v2 = <&cpu0_opp_table>; };
-+&cpu3 { operating-points-v2 = <&cpu0_opp_table>; };
-+
-+&cpu4 { operating-points-v2 = <&cpu1_opp_table>; };
-+&cpu5 { operating-points-v2 = <&cpu1_opp_table>; };
-+&cpu6 { operating-points-v2 = <&cpu1_opp_table>; };
-+&cpu7 { operating-points-v2 = <&cpu1_opp_table>; };
-+
- &clock {
- 	compatible = "samsung,exynos5800-clock";
- };
--- 
-2.6.2
+snip
+>>  static unsigned int
+>> -bL_cpufreq_set_rate(u32 cpu, u32 old_cluster, u32 new_cluster, u32 rate)
+>> +bL_cpufreq_set_rate(u32 cpu, u32 old_cluster, u32 new_cluster, u32 rate=
+_kHz)
+>>  {
+>>  	u32 new_rate, prev_rate;
+>
+> Ditto. Rename these too to add '_kHz' ?
+>
+Sure.
+>>  	int ret;
+>> @@ -209,13 +209,13 @@ bL_cpufreq_set_rate(u32 cpu, u32 old_cluster, u32 =
+new_cluster, u32 rate)
+>>=20=20
+>>  	if (bLs) {
+>>  		prev_rate =3D per_cpu(cpu_last_req_freq, cpu);
+>> -		per_cpu(cpu_last_req_freq, cpu) =3D rate;
+>> +		per_cpu(cpu_last_req_freq, cpu) =3D rate_kHz;
+>>  		per_cpu(physical_cluster, cpu) =3D new_cluster;
+>>=20=20
+>>  		new_rate =3D find_cluster_maxfreq(new_cluster);
+>>  		new_rate =3D ACTUAL_FREQ(new_cluster, new_rate);
+>>  	} else {
+>> -		new_rate =3D rate;
+>> +		new_rate =3D rate_kHz;
+>>  	}
+>>=20=20
+>>  	pr_debug("%s: cpu: %d, old cluster: %d, new cluster: %d, freq: %d\n",
+>> @@ -236,7 +236,7 @@ bL_cpufreq_set_rate(u32 cpu, u32 old_cluster, u32 ne=
+w_cluster, u32 rate)
+>>  	} else if (ret && bLs) {
+>>  		per_cpu(cpu_last_req_freq, cpu) =3D prev_rate;
+>>  		per_cpu(physical_cluster, cpu) =3D old_cluster;
+>> -	}=20
+>> +	}
+>
+> There's a spurious whitespace change here. I know the space you deleted
+> shouldn't have been there, but doing tidyups like that generally isn't
+> done in patches that don't otherwise affect the code in question.
+>
+Alright, I can drop that change.
+
+Cheers,
+
+=2D Ben
+
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQEcBAEBAgAGBQJWYFO4AAoJEHPt6ejPuu8B5HAH/3FCuuc08BH7teIjr4oLQoJw
++PODZWjN2fq7LQ+BnZjuLTwjB5G3fuoVI1Hp9NatGSBHVH5SUDuRBfLA3KlLQ6ud
+D+L/Y8eNpdrJdZclDIXgxr1FatwWvBGOjrrQ5vu8Rbe+2fP7Hev9Lh8VM5RbxI/w
+bFUnEx3dNHXYFnfKsIyJpgizwUKd2haBza0IOQQCOZhSANeoQ7+9OKDznJPeSTTH
+ttsKS2MwZAEGWJpiHBwKkq9N4jm6bNqpDUGW/vou0L2UDdcJOQ+VV3RsmX2bEo3H
+3/PHM2o9W/Lpn6RdOdD1HxJJUvpTr7akhgbi4KI5HD1b6G+8keO1DCJEJrguNJ8=
+=98IP
+-----END PGP SIGNATURE-----
+--=-=-=--
