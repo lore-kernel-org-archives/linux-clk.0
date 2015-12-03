@@ -1,44 +1,81 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Bresticker <abrestic@chromium.org>,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 1/9] clk: tegra: Fix divider on VI_I2C
-Date: Thu, 10 Dec 2015 17:08:20 -0500
-Message-ID: <1449785308-19546-2-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1449785308-19546-1-git-send-email-rklein@nvidia.com>
-References: <1449785308-19546-1-git-send-email-rklein@nvidia.com>
+Return-Path: <sudipm.mukherjee@gmail.com>
+Return-Path: <sudipm.mukherjee@gmail.com>
+Date: Thu, 3 Dec 2015 14:12:34 +0530
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: common: check for failure
+Message-ID: <20151203084234.GA5724@sudip-pc>
+References: <1448960770-10815-1-git-send-email-sudipm.mukherjee@gmail.com>
+ <20151203073917.GE14699@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20151203073917.GE14699@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-VI-I2C has 16 bits available for its divider. Switch the divider
-width to 16 instead of 8 so correct rates can be set.
+On Wed, Dec 02, 2015 at 11:39:17PM -0800, Stephen Boyd wrote:
+> On 12/01, Sudip Mukherjee wrote:
+> > We were not checking the return from devm_add_action() which can fail.
+> > 
+> > Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
+> > ---
+> >  drivers/clk/qcom/common.c | 13 ++++++++++---
+> >  1 file changed, 10 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> > index c112eba..3541a9a 100644
+> > --- a/drivers/clk/qcom/common.c
+> > +++ b/drivers/clk/qcom/common.c
+> > @@ -213,7 +213,10 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+> >  	if (ret)
+> >  		return ret;
+> >  
+> > -	devm_add_action(dev, qcom_cc_del_clk_provider, pdev->dev.of_node);
+> > +	ret = devm_add_action(dev, qcom_cc_del_clk_provider,
+> > +			      pdev->dev.of_node);
+> > +	if (ret)
+> > +		return ret;
+> 
+> So now we don't remove the clk provider on allocation failure?
+> Confused.
+> 
+> >  
+> >  	reset = &cc->reset;
+> >  	reset->rcdev.of_node = dev->of_node;
+> > @@ -236,8 +239,12 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+> >  			return ret;
+> >  	}
+> >  
+> > -	devm_add_action(dev, qcom_cc_gdsc_unregister, dev);
+> > -
+> > +	ret = devm_add_action(dev, qcom_cc_gdsc_unregister, dev);
+> > +	if (ret) {
+> > +		if (desc->gdscs && desc->num_gdscs)
+> > +			gdsc_unregister(dev);
+> > +		return ret;
+> > +	}
+> >  
+> >  	return 0;
+> >  }
+> 
+> You seem to have missed the reset devm action. Why?
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk-tegra-periph.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I have messed up pretty bad in this patch. :(
+> 
+> Also, I wonder if we could have devm_add_action() or some other
+> new devm_add_action() wrapper that tried to add the action, and
+> if it failed it ran the action right there and returned the
+> -ENOMEM? So then we can just have:
+> 
+> 	ret = devm_add_action_or_do_it(dev, qcom_cc_gdsc_unregister, dev)
+> 	if (ret)
+> 		return ret;
+> 
+> and we're assured that on the failure path we'll have already
+> called qcom_cc_gdsc_unregister.
 
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index 6ad381a888a6..105405ca85ab 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -782,7 +782,7 @@ static struct tegra_periph_init_data periph_clks[] = {
- 	NODIV("sor1", mux_clkm_sor1_brick_sor1_src, CLK_SOURCE_SOR1, 15, MASK(1), 183, 0, tegra_clk_sor1, &sor1_lock),
- 	MUX8("sdmmc_legacy", mux_pllp_out3_clkm_pllp_pllc4, CLK_SOURCE_SDMMC_LEGACY, 193, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_sdmmc_legacy),
- 	MUX8("qspi", mux_pllp_pllc_pllc_out1_pllc4_out2_pllc4_out1_clkm_pllc4_out0, CLK_SOURCE_QSPI, 211, TEGRA_PERIPH_ON_APB, tegra_clk_qspi),
--	MUX("vii2c", mux_pllp_pllc_clkm, CLK_SOURCE_VI_I2C, 208, TEGRA_PERIPH_ON_APB, tegra_clk_vi_i2c),
-+	I2C("vii2c", mux_pllp_pllc_clkm, CLK_SOURCE_VI_I2C, 208, tegra_clk_vi_i2c),
- 	MUX("mipibif", mux_pllp_clkm, CLK_SOURCE_MIPIBIF, 173, TEGRA_PERIPH_ON_APB, tegra_clk_mipibif),
- 	MUX("uartape", mux_pllp_pllc_clkm, CLK_SOURCE_UARTAPE, 212, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_uartape),
- 	MUX8("tsecb", mux_pllp_pllc2_c_c3_clkm, CLK_SOURCE_TSECB, 206, 0, tegra_clk_tsecb),
--- 
-1.9.1
+I am on it, will send you a patch for this.
+
+regards
+sudip
