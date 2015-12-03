@@ -1,110 +1,43 @@
-Return-Path: <ben@smart-cactus.org>
-From: Ben Gamari <ben@smart-cactus.org>
-To: Viresh Kumar <viresh.kumar@linaro.org>, Sudeep Holla <Sudeep.Holla@arm.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: Re: [PATCH v5 0/12] cpufreq: Add support for Exynos 5800, 5420, and 5422
-In-Reply-To: <20151203060527.GH4302@ubuntu>
-References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org> <20151203060527.GH4302@ubuntu>
-Date: Thu, 03 Dec 2015 11:26:31 +0100
-Message-ID: <877fkv4ylk.fsf@smart-cactus.org>
+Return-Path: <tony@atomide.com>
+Date: Thu, 3 Dec 2015 08:07:13 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Brian Hutchinson <b.hutchman@gmail.com>,
+	Delio Brignoli <dbrignoli@audioscience.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Matthijs van Duin <matthijsvanduin@gmail.com>,
+	Philipp Rosenberger <ilu@linutronix.de>,
+	Tero Kristo <t-kristo@ti.com>
+Subject: Re: [PATCH 1/2] clk: ti: Add support for dm814x ADPLL
+Message-ID: <20151203160712.GM23396@atomide.com>
+References: <1449106504-7645-1-git-send-email-tony@atomide.com>
+ <1449106504-7645-2-git-send-email-tony@atomide.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1449106504-7645-2-git-send-email-tony@atomide.com>
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+* Tony Lindgren <tony@atomide.com> [151202 17:36]:
+> On dm814x we have 13 ADPLLs with 3 to 4 outputs on each. The
+> ADPLLs have several dividers and muxes controlled by a shared
+> control register for each PLL.
+> 
+> Note that for the clocks to work as device drivers for booting on
+> dm814x, this patch depends on "ARM: OMAP2+: Change core_initcall
+> levels to postcore_initcall".
+> 
+> Also note that this patch does not implement clk_set_rate,
+> that will be posted later on when available.
 
-Viresh Kumar <viresh.kumar@linaro.org> writes:
+Mike & Stephen, after review, can we have this patch alone in an
+immutable branch against v4.4-rc1 that I can merge in too?
 
-> Hi Ben,
+Also, the dts changes I need to queue separately FYI to avoid merge
+conflicts.
 
-Hi Viresh,
+Regards,
 
-> On 02-12-15, 22:19, Ben Gamari wrote:
->>=20
->> This patch series adds cpufreq support for the Exynos 5800, 5420, and 54=
-22
->> SOCs. In particular, it adds support for operating-points-v2 bindings to=
- the
->> arm-big-little cpufreq driver and updates the above-mentioned SOCs' devi=
-cetrees
->> to take advantage of this support. There are also a couple of patches im=
-proving
->> the clarify of the arm-big-little implementation. It is built on a set p=
-osted
->> by Bartlomiej Zolnierkiewicz in April 2015.
->>=20
->> The most signficant change from the original series is porting to the
->> operating-points-v2 devicetree bindings. The series has been tested by m=
-e on
->> and Odroid XU4 and by Javier Martinez Canillas on a Peach Pit.
->
-> Thanks for working with opp-v2 bindings, really appreciate it.
-
-My pleasure.
-
-> But, before I start reviewing this series, I have few comments.
-> - We weren't able to use cpufreq-dt driver for big LITTLE platforms
->   earlier, as it never had multi cluster support and we wanted
->   clock-sharing information via DT.
-
-Fair enough.
-
-> - That is all fixed now.
-
-I did not see any mention of this in the cpufreq-dt driver binding
-documentation, otherwise I would have tried going this route.
-
-Do you have any references? I'd be happy to examine what would be
-necessary to go this route although, being an independent contributor,
-it may take time.
-
-> - I want Samsung's big LITTLE platforms to use cpufreq-dt and drop
->   arm_big_little driver completely.
-
-That sounds like a great direction going forward. However, I would still
-kindly request that you consider this series.
-
-The existence of future plans of course does not change the fact that
-users have real hardware today; hardware that they have spent money on
-and would like to use. Cpufreq support has already been deferred once
-for similar reasons of interface churn which essentially forestalled
-working functionality from entering the kernel by eight months; I'd
-really like to avoid having this happen again.
-
-> - The only case for which it (arm_big_little) driver might be useful
->   is the IKS solution. Which I don't believe you are going to use in
->   future :)
-
-Indeed.
-
-> My plan for the arm-big-little driver:
-> - Migrate all platforms to use cpufreq-dt instead for non-IKS
->   solution
-> - Make arm-big-little driver arm-big-little-iks only driver.
-
-Sounds reasonable to me. However, I'd just like to reiterate that this
-line of work can be pursued independently from the upstreaming of this
-series.
-
-Thanks for your time,
-
-=2D Ben
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQEcBAEBAgAGBQJWYBjXAAoJEHPt6ejPuu8BMwgH/2wRShAxTQm02bJ0bnfi6LQc
-zcE5H6jhAr5GLneojfiPHyZmLcO9eD1l7G0BXQIYIEYN+b+dDYb4hDowl8F5Xa7f
-KofQxesWjBEFc4ENKlkpnYKlm9Ou+eOAlY0hcibCcT+LdG8qvGsuC3lIfxqfiz0d
-EwL70kGiJVctguapKuqY58/O8P7YF48ayew0KfmhBpGCbeQpeTSW6eIcLfGbYwGf
-QSTA9Vl42Ft6PffHxNq07zxUhBnlHStTyM+bIKJ7s6MzY0MRloG3eUQNT39yetKI
-CAcJHnbU+LI5OVzFiczmq915dLUwiwOgZBsyzVLlgB5wv6cTsHUi6k2CIzu6NmE=
-=YVtd
------END PGP SIGNATURE-----
---=-=-=--
+Tony
