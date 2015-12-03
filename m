@@ -1,31 +1,86 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Wed, 2 Dec 2015 21:03:02 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: linux-kernel-dev@beckhoff.com
-Cc: kernel@pengutronix.de,
-	Patrick =?iso-8859-1?Q?Br=FCnn?= <p.bruenn@beckhoff.com>,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] clk: imx5: ipu_di_sel clocks can set parent rates
-Message-ID: <20151202130302.GV692@tiger>
-References: <1449047797-4300-1-git-send-email-linux-kernel-dev@beckhoff.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1449047797-4300-1-git-send-email-linux-kernel-dev@beckhoff.com>
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org,
+	agross@codeaurora.org
+Cc: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	bjorn.andersson@sonymobile.com,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v5 0/6] Add initial support for RPM clocks
+Date: Thu,  3 Dec 2015 16:02:50 +0200
+Message-Id: <1449151376-25930-1-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Dec 02, 2015 at 10:16:37AM +0100, linux-kernel-dev@beckhoff.com wrote:
-> From: Patrick Brünn <p.bruenn@beckhoff.com>
-> 
-> To obtain exact pixel clocks, allow the DI clock selectors to influence
-> the PLLs that they are derived from.
-> 
-> Commit 4591b13289b5 ("ARM: i.MX6: ipu_di_sel clocks can set parent
-> rates") did this for i.MX6.
-> Port it to enable high display resolutions on i.MX53 based platforms
-> such as CX9020 Embedded PC, too.
-> 
-> Signed-off-by: Patrick Brünn <p.bruenn@beckhoff.com>
+This patchset adds initial support for the clocks controlled by
+the RPM (Resource Power Manager) processor on Qualcomm platforms.
 
-Applied, thanks.
+The RPM is a dedicated hardware engine for managing the shared
+SoC resources in order to keep the lowest power profile. It
+communicates with other hardware subsystems via shared memory
+and accepts clock requests, aggregates the requests and turns
+the clocks on/off or scales them on demand.
+
+Until now the RPM clock controller was not supported and a hard-
+coded fixed-rate clocks were registered in the drivers. Now we
+are moving the on-board clocks to the DT (where they actually
+belong). If the RPM clock controller is enabled we insert it
+right after the DT clocks making it a parent of some GCC clocks.
+
+The DT patches should go through the soc/qcom tree. This also
+depends on smem, smd and rpm drivers.
+
+Changes since v4 (https://lkml.org/lkml/2015/11/19/309)
+* Re-organize code into two separate drivers:
+  - clk-smd-rpm for RPM over SMD based clocks like msm8916
+  - clk-rpm for RPM based clocks like apq8064
+* Drop the patches that are already merged.
+* Added the extra compatible string to docs and example.
+
+Changes since v3 (https://lkml.org/lkml/2015/10/20/613)
+* Drop some of the patches as now we handle both scenarios -
+  RPMCC enabled or disabled.
+* Addressed more comments from Stephen. Thanks again!
+
+Changes since v2 (https://lkml.org/lkml/2015/8/3/513)
+* Addressed various comments from Stephen. Thanks!
+* Added sleep sets support.
+* Added a mutex in the RPM driver.
+* Support both scenarios - RPMCC enabled or disabled.
+* Make RPMCC more generic in order to support other SMD RPM
+  based platforms.
+
+Changes since v1 (https://lkml.org/lkml/2015/7/9/257):
+* Changed the driver name to clk-smd-rpm, also build it only
+  when it is needed - suggested by Srini and Bjorn.
+* More detailed binding example.
+* Minor changes.
+
+
+Georgi Djakov (6):
+  clk: qcom: Add support for SMD-RPM Clocks
+  arm64: dts: qcom: msm8916: Add fixed rate on-board oscillators
+  arm64: dts: qcom: msm8916: Add RPMCC DT node
+  clk: qcom: Add support for RPM Clocks
+  arm: dts: qcom: apq8064: Add fixed rate on-board oscillators
+  arm: dts: qcom: apq8064: Add RPMCC DT node
+
+ .../devicetree/bindings/clock/qcom,rpmcc.txt       |   37 ++
+ arch/arm/boot/dts/qcom-apq8064.dtsi                |   25 ++
+ arch/arm64/boot/dts/qcom/msm8916.dtsi              |   20 +
+ drivers/clk/qcom/Kconfig                           |   19 +
+ drivers/clk/qcom/Makefile                          |    2 +
+ drivers/clk/qcom/clk-rpm.c                         |  290 +++++++++++++
+ drivers/clk/qcom/clk-rpm.h                         |   71 ++++
+ drivers/clk/qcom/clk-smd-rpm.c                     |  433 ++++++++++++++++++++
+ drivers/clk/qcom/clk-smd-rpm.h                     |  142 +++++++
+ include/dt-bindings/clock/qcom,rpmcc.h             |   45 ++
+ 10 files changed, 1084 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+ create mode 100644 drivers/clk/qcom/clk-rpm.c
+ create mode 100644 drivers/clk/qcom/clk-rpm.h
+ create mode 100644 drivers/clk/qcom/clk-smd-rpm.c
+ create mode 100644 drivers/clk/qcom/clk-smd-rpm.h
+ create mode 100644 include/dt-bindings/clock/qcom,rpmcc.h
