@@ -1,62 +1,87 @@
-Return-Path: <robh@kernel.org>
-Date: Fri, 11 Dec 2015 09:21:06 -0600
-From: Rob Herring <robh@kernel.org>
-To: Jiancheng Xue <xuejiancheng@huawei.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, pawel.moll@arm.com,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, linux@arm.linux.org.uk, khilman@linaro.org,
-	arnd@arndb.de, olof@lixom.net, xuwei5@hisilicon.com,
-	haojian.zhuang@linaro.org, zhangfei.gao@linaro.org,
-	bintian.wang@huawei.com, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, yanhaifeng@hisilicon.com,
-	yanghongwei@hisilicon.com, suwenping@hisilicon.com,
-	ml.yang@hisilicon.com, gaofei@hisilicon.com,
-	zhangzhenxing@hisilicon.com, xuejiancheng@hisilicon.com
-Subject: Re: [PATCH v3 3/7] ARM: hisi: add dt_machine definition for Hi3519
-Message-ID: <20151211152106.GB21272@rob-hp-laptop>
-References: <1449819921-18464-1-git-send-email-xuejiancheng@huawei.com>
- <1449819921-18464-4-git-send-email-xuejiancheng@huawei.com>
+Return-Path: <ben@smart-cactus.org>
+From: Ben Gamari <ben@smart-cactus.org>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Sudeep Holla <Sudeep.Holla@arm.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+Subject: Re: [PATCH v5 0/12] cpufreq: Add support for Exynos 5800, 5420, and 5422
+In-Reply-To: <20151203103703.GC2097@ubuntu>
+References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org> <20151203060527.GH4302@ubuntu> <877fkv4ylk.fsf@smart-cactus.org> <20151203103703.GC2097@ubuntu>
+Date: Thu, 03 Dec 2015 12:21:33 +0100
+Message-ID: <87y4db3hhe.fsf@smart-cactus.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1449819921-18464-4-git-send-email-xuejiancheng@huawei.com>
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha1; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Dec 11, 2015 at 03:45:17PM +0800, Jiancheng Xue wrote:
-> add dt_machine definition for hi3519.
-> 
-> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
-> ---
->  arch/arm/mach-hisi/hisilicon.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/arch/arm/mach-hisi/hisilicon.c b/arch/arm/mach-hisi/hisilicon.c
-> index 8cc6215..010d8a2 100644
-> --- a/arch/arm/mach-hisi/hisilicon.c
-> +++ b/arch/arm/mach-hisi/hisilicon.c
-> @@ -81,3 +81,12 @@ static const char *const hip01_compat[] __initconst = {
->  DT_MACHINE_START(HIP01, "Hisilicon HIP01 (Flattened Device Tree)")
->  	.dt_compat      = hip01_compat,
->  MACHINE_END
-> +
-> +static const char *const hi3519_compat[] __initconst = {
-> +	"hisilicon,hi3519",
-> +	NULL,
-> +};
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-You should just have 1 mach desc with multiple compatible strings to 
-match against, not 1 mach desc per compatible string.
+Viresh Kumar <viresh.kumar@linaro.org> writes:
 
-Rob
+> On 03-12-15, 11:26, Ben Gamari wrote:
+>> Viresh Kumar <viresh.kumar@linaro.org> writes:
+>> > But, before I start reviewing this series, I have few comments.
+>> > - We weren't able to use cpufreq-dt driver for big LITTLE platforms
+>> >   earlier, as it never had multi cluster support and we wanted
+>> >   clock-sharing information via DT.
+>>=20
+>> Fair enough.
+>>=20
+>> > - That is all fixed now.
+>>=20
+>> I did not see any mention of this in the cpufreq-dt driver binding
+>> documentation, otherwise I would have tried going this route.
+>>=20
+>> Do you have any references? I'd be happy to examine what would be
+>> necessary to go this route although, being an independent contributor,
+>> it may take time.
+>
+> You wouldn't find in cpufreq-dt documentation as its not specific to
+> that. I have seen you DT patches now, and you have created the OPP
+> tables mostly correctly. Just create the cpufreq-platform device for
+> cpufreq-dt instead of arm-big-little one. And it should just work.
+>
+Do you mean something along these lines? [1]
 
-> +
-> +DT_MACHINE_START(HI3519_DT, "Hisilicon Hi3519")
-> +	.dt_compat	= hi3519_compat,
-> +MACHINE_END
-> -- 
-> 1.9.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> Sounds reasonable to me. However, I'd just like to reiterate that this
+>> line of work can be pursued independently from the upstreaming of this
+>> series.
+>
+> I think this is the right time to upstream the right solution. Just
+> try it once, if you face lots of difficulties or issues, then we can
+> ofcourse see..
+>
+Sure. I didn't realize things were so close to being functional. Thanks
+for the hint. I'll give it a shot next time my XU4 is free.
+
+> NOTE: Check how OPP nodes are required to be created now in
+> linux-next. They should be named like opp@<freq-hz>. Something I
+> noticed in your DTs.
+>
+I've fixed this in the branch.
+
+Thanks again.
+
+Cheers,
+
+=2D Ben
+
+
+[1] https://github.com/bgamari/linux/commit/285778aaff464d4dcf152f3e9e0df3d=
+8c6909576
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQEcBAEBAgAGBQJWYCW9AAoJEHPt6ejPuu8BPhoH/2+2XCkVE9oKeowoiQyN2Bf6
+43IVULYS/gO6MNJ4k3ix42D0Tz2690ty85XOP7U7Zih400ddkjV68r0w9Wo8BzCi
+9oCxJc59JnmCYLOgFfGH7mJmwW2KCcBdUDAXwmURQyXQ7R7BZY8iOzl0ukhJMw/B
+UzAXLCMclSiZgRc8DND2NncgLKuUbBS7nl7JnImeNhlNlC+YGlLBkRSTdewYHlXE
+nc8lK+1EsiOnmkoEheVld3TDU81++IPij9p0CmE/gbS2RadpbL/c39PzMokipI50
+7uaZGrNXnu2J1IhvUujsROPU+5MJk6jOZenUEbDSJOW9JaQqSykld3pZ/9K5IRY=
+=ZFig
+-----END PGP SIGNATURE-----
+--=-=-=--
