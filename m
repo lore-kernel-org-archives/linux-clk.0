@@ -1,92 +1,141 @@
-Return-Path: <tony@atomide.com>
-Date: Fri, 11 Dec 2015 08:03:54 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Brian Hutchinson <b.hutchman@gmail.com>,
-	Delio Brignoli <dbrignoli@audioscience.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Matthijs van Duin <matthijsvanduin@gmail.com>,
-	Philipp Rosenberger <ilu@linutronix.de>
-Subject: Re: [PATCH v2] clk: ti: Add support for dm814x ADPLL
-Message-ID: <20151211160353.GL23396@atomide.com>
-References: <1449800792-5551-1-git-send-email-tony@atomide.com>
- <566A7F52.4020801@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <566A7F52.4020801@ti.com>
+Return-Path: <tixy@linaro.org>
+Message-ID: <1449152534.2817.26.camel@linaro.org>
+Subject: Re: [PATCH 11/12] cpufreq: arm-big-little: clarify frequency units
+From: "Jon Medhurst (Tixy)" <tixy@linaro.org>
+To: Ben Gamari <ben@smart-cactus.org>
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki
+ <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
+ Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh
+ Kumar <viresh.kumar@linaro.org>,  Krzysztof Kozlowski
+ <k.kozlowski@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Kevin
+ Hilman <khilman@linaro.org>,  Heiko Stuebner <heiko@sntech.de>, Tobias
+ Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>,
+ Javier Martinez Canillas <javier@osg.samsung.com>,
+ linux-pm@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+ linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
+ b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, Javier
+ Martinez Canillas <javier@dowhile0.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Date: Thu, 03 Dec 2015 14:22:14 +0000
+In-Reply-To: <1449091167-20758-12-git-send-email-ben@smart-cactus.org>
+References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
+	 <1449091167-20758-12-git-send-email-ben@smart-cactus.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [151210 23:45]:
-> On 12/11/2015 04:26 AM, Tony Lindgren wrote:
+On Wed, 2015-12-02 at 22:19 +0100, Ben Gamari wrote:
+> The frequency units are very confusing in this area as OPPs use Hz
+> whereas cpufreq uses kHz. Be explicit about this in variable naming.
 > 
-> Looks mostly good to me, added some minor comments inline below. Sorry again
-> for latencies in my replies.
-
-No problme, thanks for looking.
-
-> >+static bool ti_adpll_clock_is_bypass(struct ti_adpll_data *d)
-> >+{
-> >+	unsigned long flags;
-> >+	u32 v;
-> >+
-> >+	spin_lock_irqsave(&d->lock, flags);
-> >+	v = readl_relaxed(d->status);
-> >+	spin_unlock_irqrestore(&d->lock, flags);
+> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+> Signed-off-by: Ben Gamari <ben@smart-cactus.org>
+> ---
+>  drivers/cpufreq/arm_big_little.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
 > 
-> What do you need the lock for in here?
+> diff --git a/drivers/cpufreq/arm_big_little.c b/drivers/cpufreq/arm_big_little.c
+> index 855599b..2d5761c 100644
+> --- a/drivers/cpufreq/arm_big_little.c
+> +++ b/drivers/cpufreq/arm_big_little.c
+> @@ -130,14 +130,14 @@ static unsigned int bL_cpufreq_get_rate(unsigned int cpu)
+>  }
+>  
+>  static int
+> -bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate)
+> +bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate_kHz)
+>  {
+>  	unsigned long volt = 0, volt_old = 0;
+>  	long freq_Hz;
+>  	u32 old_rate;
 
-Yeah seems pointless, will remove.
+IMO variable renaming doesn't seem necessary, if cpufreq uses kHz then
+in a cpufreq driver adding 'kHz' to variable seems redundant, especially
+if Hz values like freq_Hz above are named especially to signal their
+different units. However, if renaming is going to happen it should at
+least be consistent within the same function i.e. also rename the old
+old_rate variable above.
 
-> >+static int ti_adpll_clkout_set_parent(struct clk_hw *hw, u8 index)
-> >+{
-> >+	struct ti_adpll_clkout_data *co = to_clkout(hw);
-> >+	struct ti_adpll_data *d = co->adpll;
-> >+
-> >+	return ti_adpll_clock_is_bypass(d) == index;
+>  	int ret;
+>  
+> -	freq_Hz = new_rate * 1000;
+> +	freq_Hz = new_rate_kHz * 1000;
+>  	old_rate = clk_get_rate(clk[cluster]) / 1000;
+>  
+>  	if (!IS_ERR(reg[cluster])) {
+> @@ -163,10 +163,10 @@ bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate)
+>  	pr_debug("%s: cpu %d, cluster: %d, %u MHz, %ld mV --> %u MHz, %ld mV\n",
+>  		__func__, cpu, cluster,
+>  		old_rate / 1000, (volt_old > 0) ? volt_old / 1000 : -1,
+> -		new_rate / 1000, volt ? volt / 1000 : -1);
+> +		new_rate_kHz / 1000, volt ? volt / 1000 : -1);
+>  
+>  	/* scaling up? scale voltage before frequency */
+> -	if (!IS_ERR(reg[cluster]) && new_rate > old_rate) {
+> +	if (!IS_ERR(reg[cluster]) && new_rate_kHz > old_rate) {
+>  		ret = regulator_set_voltage_tol(reg[cluster], volt, 0);
+>  		if (ret) {
+>  			pr_err("%s: cpu: %d, cluster: %d, failed to scale voltage up: %d\n",
+> @@ -175,7 +175,7 @@ bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate)
+>  		}
+>  	}
+>  
+> -	ret = clk_set_rate(clk[cluster], new_rate * 1000);
+> +	ret = clk_set_rate(clk[cluster], new_rate_kHz * 1000);
+>  	if (WARN_ON(ret)) {
+>  		pr_err("%s: clk_set_rate failed: %d, cluster: %d\n",
+>  			__func__, cluster, ret);
+> @@ -185,7 +185,7 @@ bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate)
+>  	}
+>  
+>  	/* scaling down? scale voltage after frequency */
+> -	if (!IS_ERR(reg[cluster]) && new_rate < old_rate) {
+> +	if (!IS_ERR(reg[cluster]) && new_rate_kHz < old_rate) {
+>  		ret = regulator_set_voltage_tol(reg[cluster], volt, 0);
+>  		if (ret) {
+>  			pr_err("%s: cpu: %d, cluster: %d, failed to scale voltage down: %d\n",
+> @@ -199,7 +199,7 @@ bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate)
+>  }
+>  
+>  static unsigned int
+> -bL_cpufreq_set_rate(u32 cpu, u32 old_cluster, u32 new_cluster, u32 rate)
+> +bL_cpufreq_set_rate(u32 cpu, u32 old_cluster, u32 new_cluster, u32 rate_kHz)
+>  {
+>  	u32 new_rate, prev_rate;
 
-Hmm yeah that seems broken. I need to check what all really goes
-to bypass mode with ulowclken signal.
+Ditto. Rename these too to add '_kHz' ?
 
-> What is the point of this? It doesn't seem to set anything.
+>  	int ret;
+> @@ -209,13 +209,13 @@ bL_cpufreq_set_rate(u32 cpu, u32 old_cluster, u32 new_cluster, u32 rate)
+>  
+>  	if (bLs) {
+>  		prev_rate = per_cpu(cpu_last_req_freq, cpu);
+> -		per_cpu(cpu_last_req_freq, cpu) = rate;
+> +		per_cpu(cpu_last_req_freq, cpu) = rate_kHz;
+>  		per_cpu(physical_cluster, cpu) = new_cluster;
+>  
+>  		new_rate = find_cluster_maxfreq(new_cluster);
+>  		new_rate = ACTUAL_FREQ(new_cluster, new_rate);
+>  	} else {
+> -		new_rate = rate;
+> +		new_rate = rate_kHz;
+>  	}
+>  
+>  	pr_debug("%s: cpu: %d, old cluster: %d, new cluster: %d, freq: %d\n",
+> @@ -236,7 +236,7 @@ bL_cpufreq_set_rate(u32 cpu, u32 old_cluster, u32 new_cluster, u32 rate)
+>  	} else if (ret && bLs) {
+>  		per_cpu(cpu_last_req_freq, cpu) = prev_rate;
+>  		per_cpu(physical_cluster, cpu) = old_cluster;
+> -	} 
+> +	}
 
-> >+	/* Internal mux, sources sources from DCO and clkinphf */
-> 
-> Double "sources" in comment?
-> 
-> >+	/* Output clkout clkout, sources M2 or ulow */
-> 
-> Double "clkout" in comment?
+There's a spurious whitespace change here. I know the space you deleted
+shouldn't have been there, but doing tidyups like that generally isn't
+done in patches that don't otherwise affect the code in question.
 
-Oops will fix.
+>  
+>  	mutex_unlock(&cluster_lock[new_cluster]);
+>  
 
-> >+	d->pwrctrl = d->base + register_offset + ADPLL_PWRCTRL_OFFSET;
-> >+	d->clkctrl = d->base + register_offset + ADPLL_CLKCTRL_OFFSET;
-> >+	d->tenable = d->base + register_offset + ADPLL_TENABLE_OFFSET;
-> >+	d->tenablediv = d->base + register_offset + ADPLL_TENABLEDIV_OFFSET;
-> >+	d->m2ndiv = d->base + register_offset + ADPLL_M2NDIV_OFFSET;
-> >+	d->mn2div = d->base + register_offset + ADPLL_MN2DIV_OFFSET;
-> >+	d->fracdiv = d->base + register_offset + ADPLL_FRACDIV_OFFSET;
-> >+	d->bwctrl = d->base + register_offset + ADPLL_BWCTRL_OFFSET;
-> >+	d->status = d->base + register_offset + ADPLL_STATUS_OFFSET;
-> >+	d->m3div = d->base + register_offset + ADPLL_M3DIV_OFFSET;
-> >+	d->rampctrl = d->base + register_offset + ADPLL_RAMPCTRL_OFFSET;
-> 
-> Do you need the individual pointers to each of these registers within the
-> struct? Seems the offsets are pretty static so could just use d->base +
-> offset + MAGIC calculation where used.
-> 
-> Most of these registers are not used for anything either at the moment it
-> seems.
-
-Well I guess I was initially thinking that we can set up separate instances
-for the children and don't need locking for the registers.. But all of them
-really share the clkctl register so that did not work out.
-
-Yeah I can change these to use offsets no problem.
-
-Regards,
-
-Tony
+-- 
+Tixy
