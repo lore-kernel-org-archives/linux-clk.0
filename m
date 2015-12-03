@@ -1,35 +1,42 @@
-Return-Path: <tony@atomide.com>
-Date: Fri, 18 Dec 2015 07:16:50 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC 1/9] ARM: OMAP2+: omap_device: create clock alias purely
- from DT data
-Message-ID: <20151218151650.GI23396@atomide.com>
-References: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
- <1450447141-29936-2-git-send-email-t-kristo@ti.com>
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Thu, 3 Dec 2015 16:55:13 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ben Gamari <ben@smart-cactus.org>
+Cc: Sudeep Holla <Sudeep.Holla@arm.com>,
+	Thomas Abraham <thomas.ab@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Lukasz Majewski <l.majewski@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kevin Hilman <khilman@linaro.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Anand Moon <linux.amoon@gmail.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+Subject: Re: [PATCH v5 0/12] cpufreq: Add support for Exynos 5800, 5420, and
+ 5422
+Message-ID: <20151203112513.GA16262@ubuntu>
+References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
+ <20151203060527.GH4302@ubuntu>
+ <877fkv4ylk.fsf@smart-cactus.org>
+ <20151203103703.GC2097@ubuntu>
+ <87y4db3hhe.fsf@smart-cactus.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1450447141-29936-2-git-send-email-t-kristo@ti.com>
+In-Reply-To: <87y4db3hhe.fsf@smart-cactus.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [151218 05:57]:
-> This avoids the need to add most of the clock aliases under
-> drivers/clk/ti/clk-xyz.c files.
+On 03-12-15, 12:21, Ben Gamari wrote:
+> Do you mean something along these lines? [1]
 
-Yup is badly needed. Right now we have strange hidden dependencies
-in multiple subsystems to enable a single device driver:
+Yeah.
 
-1. Add a clock alias for a device
-2. Add hwmod entries for a device
-3. Add dts entries for a device
-4. Add a device driver
-
-We really should only need steps 3 and 4 to do that, hopefully
-this takes out #1 on the list above.
-
-Regards,
-
-Tony
+-- 
+viresh
