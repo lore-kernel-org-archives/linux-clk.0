@@ -1,29 +1,59 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v3] clk: s3c2410: removed unneeded variable in
- s3c24xx_clkout_set_parent
-To: "Mutharaju, Prasanna (P.)" <mkarthi3@visteon.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-References: <20151130100720.GA29096@jci-VirtualBox>
-Cc: Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <5671A777.7090308@samsung.com>
-Date: Wed, 16 Dec 2015 19:03:35 +0100
-MIME-version: 1.0
-In-reply-to: <20151130100720.GA29096@jci-VirtualBox>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org,
+	agross@codeaurora.org
+Cc: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	bjorn.andersson@sonymobile.com,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v5 5/6] arm: dts: qcom: apq8064: Add fixed rate on-board oscillators
+Date: Thu,  3 Dec 2015 16:02:55 +0200
+Message-Id: <1449151376-25930-6-git-send-email-georgi.djakov@linaro.org>
+In-Reply-To: <1449151376-25930-1-git-send-email-georgi.djakov@linaro.org>
+References: <1449151376-25930-1-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 30/11/15 11:08, Mutharaju, Prasanna (P.) wrote:
-> From: Prasanna Karthik <mkarthi3@visteon.com>
-> 
-> Remove unneeded variable used to store return value.
-> 
-> Signed-off-by: Prasanna Karthik <mkarthi3@visteon.com>
+Currently the rates of the xo and sleep clocks are hard-coded in the
+GCC driver, but this is a board layout description that actually should
+be in the DT. Moving them into DT also allows us to insert the RPM
+controlled clocks between the DT and GCC clocks.
 
-Patch applied, thanks.
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+ arch/arm/boot/dts/qcom-apq8064.dtsi |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/arch/arm/boot/dts/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom-apq8064.dtsi
+index 276fef28fc1e..eb929f2693b2 100644
+--- a/arch/arm/boot/dts/qcom-apq8064.dtsi
++++ b/arch/arm/boot/dts/qcom-apq8064.dtsi
+@@ -81,6 +81,26 @@
+ 		interrupts = <1 10 0x304>;
+ 	};
+ 
++	clocks {
++		cxo_board {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <19200000>;
++		};
++
++		pxo_board {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <27000000>;
++		};
++
++		sleep_clk {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++		};
++	};
++
+ 	soc: soc {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
