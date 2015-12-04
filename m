@@ -1,46 +1,53 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mtd@lists.infradead.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 16/16] clk: slightly optimize clk_core_set_parent()
-Date: Mon, 28 Dec 2015 19:10:29 +0900
-Message-Id: <1451297429-21689-17-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <broonie@sirena.org.uk>
+Date: Fri, 4 Dec 2015 12:07:07 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>,
+	Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, linux-clk@vger.kernel.org
+Message-ID: <20151204120707.GY26072@sirena.org.uk>
+References: <1449191405-3344-1-git-send-email-k.kozlowski@samsung.com>
+ <1449191405-3344-3-git-send-email-k.kozlowski@samsung.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="LGr9gtkSK9ARF7Ax"
+In-Reply-To: <1449191405-3344-3-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [PATCH 2/3] dt-bindings: regulator/mfd: Reorganize S5M8767
+ bindings
 List-ID: <linux-clk.vger.kernel.org>
 
-If clk_fetch_parent_index() fails, p_rate is unused.  Move the
-assignment after the error checking.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+--LGr9gtkSK9ARF7Ax
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Changes in v2: None
+On Fri, Dec 04, 2015 at 10:10:04AM +0900, Krzysztof Kozlowski wrote:
+> The regulator/s5m8767-regulator.txt duplicates some of the information
+> about bindings with old mfd/s2mps11.txt. Now common part exists entirely
+> in mfd/samsung,sec-core.txt so:
 
- drivers/clk/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Mark Brown <broonie@kernel.org>
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 5b9aec0..e81301b 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1730,13 +1730,13 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
- 	/* try finding the new parent index */
- 	if (parent) {
- 		p_index = clk_fetch_parent_index(core, parent);
--		p_rate = parent->rate;
- 		if (p_index < 0) {
- 			pr_debug("%s: clk %s can not be parent of clk %s\n",
- 					__func__, parent->name, core->name);
- 			ret = p_index;
- 			goto out;
- 		}
-+		p_rate = parent->rate;
- 	}
- 
- 	/* propagate PRE_RATE_CHANGE notifications */
--- 
-1.9.1
+--LGr9gtkSK9ARF7Ax
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWYYHqAAoJECTWi3JdVIfQ1fYH/A5IVBc/KWx1Ic1JeeMYTXtE
+YsBgbCHo5OAXtzLFItwlD6a+Upi+oisOEglQ8aGSmKwEEUjmjIeBaHsNuMwx13c/
+IimlHBHoMNEA5tN9ORiRvgL23qPvRBD9UMnxtLJ21R2WQvhrJkakkGZ600RppEju
+/pZw4RQCQ9yvekHnGT8kxGa5hMfkjO5PwJJ0yRyitYWViSJTYvcD7eTNgSKTKiBH
+2szrtZiRIpRPrXSDmNCINYT1RqNUz1uG4S3kxsHJVUvbdLLAP3T/G1BAqlsemR5d
+qX0Vuzg8+DdaeRPk9MRaAz1NhY09hoUjmxD3R4ZZDil2vYLLbpsXej3r2Bd13lM=
+=nBOU
+-----END PGP SIGNATURE-----
+
+--LGr9gtkSK9ARF7Ax--
