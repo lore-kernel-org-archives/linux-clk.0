@@ -1,90 +1,118 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v3 06/13] clk: at91: pmc: merge at91_pmc_init in atmel_pmc_probe
-Date: Fri,  4 Dec 2015 18:03:41 +0100
-Message-Id: <1449248628-3486-7-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <robh@kernel.org>
+Date: Fri, 4 Dec 2015 08:52:09 -0600
+From: Rob Herring <robh@kernel.org>
+To: Carlo Caione <carlo@caione.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux@arm.linux.org.uk, linux-meson@googlegroups.com,
+	drake@endlessm.com, jerry.cao@amlogic.com, victor.wan@amlogic.com,
+	pawel.moll@arm.com, arnd@arndb.de,
+	Carlo Caione <carlo@endlessm.com>
+Subject: Re: [PATCH v2 5/7] dt-bindings: Amlogic: Add SMP related
+ documentation
+Message-ID: <20151204145209.GA18876@rob-hp-laptop>
+References: <1449076953-5058-1-git-send-email-carlo@caione.org>
+ <1449076953-5058-6-git-send-email-carlo@caione.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1449076953-5058-6-git-send-email-carlo@caione.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-at91_pmc_init() doesn't do much anymore, merge it in atmel_pmc_probe().
+On Wed, Dec 02, 2015 at 06:22:31PM +0100, Carlo Caione wrote:
+> From: Carlo Caione <carlo@endlessm.com>
+> 
+> With this patch we add documentation for:
+> 
+> * power-management-unit: the PMU is used to bring up the cores during
+>   SMP operations
+> * sram: among other things the sram is used to store the first code
+>   executed by the core when it is powered up
+> * cpu-enable-method: the CPU enable method used by Amlogic Meson8b SoCs
+> 
+> Signed-off-by: Carlo Caione <carlo@endlessm.com>
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
----
- drivers/clk/at91/pmc.c | 31 ++++++-------------------------
- 1 file changed, 6 insertions(+), 25 deletions(-)
+Acked-by: Rob Herring <robh@kernel.org>
 
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 2f8b9503176f..55ed00fc9310 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -231,29 +231,6 @@ static const struct at91_pmc_caps sama5d3_caps = {
- 			  AT91_PMC_CFDEV,
- };
- 
--static struct at91_pmc *__init at91_pmc_init(struct device_node *np,
--					     struct regmap *regmap,
--					     void __iomem *regbase, int virq,
--					     const struct at91_pmc_caps *caps)
--{
--	struct at91_pmc *pmc;
--
--	if (!regbase || !virq ||  !caps)
--		return NULL;
--
--	at91_pmc_base = regbase;
--
--	pmc = kzalloc(sizeof(*pmc), GFP_KERNEL);
--	if (!pmc)
--		return NULL;
--
--	pmc->regmap = regmap;
--	pmc->virq = virq;
--	pmc->caps = caps;
--
--	return pmc;
--}
--
- static const struct of_device_id atmel_pmc_dt_ids[] = {
- 	{ .compatible = "atmel,at91rm9200-pmc", .data = &at91rm9200_caps },
- 	{ .compatible = "atmel,at91sam9260-pmc", .data = &at91sam9260_caps },
-@@ -271,11 +248,12 @@ static int __init atmel_pmc_probe(struct platform_device *pdev)
- 	const struct at91_pmc_caps *caps;
- 	struct device_node *np = pdev->dev.of_node;
- 	struct at91_pmc *pmc;
--	void __iomem *regbase = of_iomap(np, 0);
- 	struct regmap *regmap;
- 	int virq;
- 	int ret = 0;
- 
-+	at91_pmc_base = of_iomap(np, 0);
-+
- 	regmap = syscon_node_to_regmap(np);
- 	if (IS_ERR(regmap))
- 		panic("Could not retrieve syscon regmap");
-@@ -287,10 +265,13 @@ static int __init atmel_pmc_probe(struct platform_device *pdev)
- 	of_id = of_match_device(atmel_pmc_dt_ids, &pdev->dev);
- 	caps = of_id->data;
- 
--	pmc = at91_pmc_init(np, regmap, regbase, virq, caps);
-+	pmc = kzalloc(sizeof(*pmc), GFP_KERNEL);
- 	if (!pmc)
- 		return 0;
- 
-+	pmc->regmap = regmap;
-+	pmc->virq = virq;
-+	pmc->caps = caps;
- 	pmc->irqdomain = irq_domain_add_linear(pdev->dev.of_node, 32,
- 					       &pmc_irq_ops, pmc);
- 	if (!pmc->irqdomain)
--- 
-2.5.0
+> ---
+>  .../devicetree/bindings/arm/amlogic/pmu.txt        | 16 +++++++++++
+>  .../devicetree/bindings/arm/amlogic/smp-sram.txt   | 32 ++++++++++++++++++++++
+>  Documentation/devicetree/bindings/arm/cpus.txt     |  1 +
+>  3 files changed, 49 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/amlogic/pmu.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/amlogic/smp-sram.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/amlogic/pmu.txt b/Documentation/devicetree/bindings/arm/amlogic/pmu.txt
+> new file mode 100644
+> index 0000000..7b9b2da
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/amlogic/pmu.txt
+> @@ -0,0 +1,16 @@
+> +Amlogic power-management-unit:
+> +-------------------------------
+> +
+> +The pmu is used to turn off and on different power domains of the SoCs
+> +This includes the power to the CPU cores.
+> +
+> +Required node properties:
+> +- compatible value : = "amlogic,meson8b-pmu";
+> +- reg : physical base address and the size of the registers window
+> +
+> +Example:
+> +
+> +	pmu@c81000e4 {
+> +		compatible = "amlogic,meson8b-pmu", "syscon";
+> +		reg = <0xc81000e0 0x18>;
+> +	};
+> diff --git a/Documentation/devicetree/bindings/arm/amlogic/smp-sram.txt b/Documentation/devicetree/bindings/arm/amlogic/smp-sram.txt
+> new file mode 100644
+> index 0000000..455ca20
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/amlogic/smp-sram.txt
+> @@ -0,0 +1,32 @@
+> +Amlogic SRAM for smp bringup:
+> +------------------------------
+> +
+> +Amlogic's smp-capable SoCs use part of the sram for the bringup of the cores.
+> +Once the core gets powered up it executes the code that is residing at a
+> +specific location.
+> +
+> +Therefore a reserved section sub-node has to be added to the mmio-sram
+> +declaration.
+> +
+> +Required sub-node properties:
+> +- compatible : should be "amlogic,meson8b-smp-sram"
+> +
+> +The rest of the properties should follow the generic mmio-sram discription
+> +found in ../../misc/sram.txt
+> +
+> +Example:
+> +
+> +	sram: sram@d9000000 {
+> +		compatible = "mmio-sram";
+> +		reg = <0xd9000000 0x20000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0 0xd9000000 0x20000>;
+> +
+> +		smp-sram@1ff80 {
+> +			compatible = "amlogic,meson8b-smp-sram";
+> +			reg = <0x1ff80 0x8>;
+> +		};
+> +	};
+> +
+> +
+> diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
+> index 3a07a87..22381b4 100644
+> --- a/Documentation/devicetree/bindings/arm/cpus.txt
+> +++ b/Documentation/devicetree/bindings/arm/cpus.txt
+> @@ -189,6 +189,7 @@ nodes to be present and contain the properties described below.
+>  			  can be one of:
+>  			    "allwinner,sun6i-a31"
+>  			    "allwinner,sun8i-a23"
+> +			    "amlogic,meson8b-smp"
+>  			    "arm,psci"
+>  			    "brcm,brahma-b15"
+>  			    "marvell,armada-375-smp"
+> -- 
+> 2.5.0
+> 
