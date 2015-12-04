@@ -1,53 +1,74 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Fri, 4 Dec 2015 12:07:07 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>,
-	Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, linux-clk@vger.kernel.org
-Message-ID: <20151204120707.GY26072@sirena.org.uk>
-References: <1449191405-3344-1-git-send-email-k.kozlowski@samsung.com>
- <1449191405-3344-3-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <robh@kernel.org>
+Date: Fri, 4 Dec 2015 08:49:35 -0600
+From: Rob Herring <robh@kernel.org>
+To: Carlo Caione <carlo@caione.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux@arm.linux.org.uk, linux-meson@googlegroups.com,
+	drake@endlessm.com, jerry.cao@amlogic.com, victor.wan@amlogic.com,
+	pawel.moll@arm.com, arnd@arndb.de,
+	Carlo Caione <carlo@endlessm.com>
+Subject: Re: [PATCH v2 2/7] dt-bindings: Amlogic: Document the CPU reset
+ controller for Meson8b
+Message-ID: <20151204144935.GA17537@rob-hp-laptop>
+References: <1449076953-5058-1-git-send-email-carlo@caione.org>
+ <1449076953-5058-3-git-send-email-carlo@caione.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="LGr9gtkSK9ARF7Ax"
-In-Reply-To: <1449191405-3344-3-git-send-email-k.kozlowski@samsung.com>
-Subject: Re: [PATCH 2/3] dt-bindings: regulator/mfd: Reorganize S5M8767
- bindings
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1449076953-5058-3-git-send-email-carlo@caione.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+On Wed, Dec 02, 2015 at 06:22:28PM +0100, Carlo Caione wrote:
+> From: Carlo Caione <carlo@endlessm.com>
+> 
+> The clock controller on Amlogic Meson8b SoCs has been extended with a
+> reset controller used to reset the CPU cores. It is used during SMP
+> bringup.
+> 
+> With this patch we extend the clock controller documentation.
+> 
+> Signed-off-by: Carlo Caione <carlo@endlessm.com>
 
---LGr9gtkSK9ARF7Ax
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Acked-by: Rob Herring <robh@kernel.org>
 
-On Fri, Dec 04, 2015 at 10:10:04AM +0900, Krzysztof Kozlowski wrote:
-> The regulator/s5m8767-regulator.txt duplicates some of the information
-> about bindings with old mfd/s2mps11.txt. Now common part exists entirely
-> in mfd/samsung,sec-core.txt so:
-
-Acked-by: Mark Brown <broonie@kernel.org>
-
---LGr9gtkSK9ARF7Ax
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWYYHqAAoJECTWi3JdVIfQ1fYH/A5IVBc/KWx1Ic1JeeMYTXtE
-YsBgbCHo5OAXtzLFItwlD6a+Upi+oisOEglQ8aGSmKwEEUjmjIeBaHsNuMwx13c/
-IimlHBHoMNEA5tN9ORiRvgL23qPvRBD9UMnxtLJ21R2WQvhrJkakkGZ600RppEju
-/pZw4RQCQ9yvekHnGT8kxGa5hMfkjO5PwJJ0yRyitYWViSJTYvcD7eTNgSKTKiBH
-2szrtZiRIpRPrXSDmNCINYT1RqNUz1uG4S3kxsHJVUvbdLLAP3T/G1BAqlsemR5d
-qX0Vuzg8+DdaeRPk9MRaAz1NhY09hoUjmxD3R4ZZDil2vYLLbpsXej3r2Bd13lM=
-=nBOU
------END PGP SIGNATURE-----
-
---LGr9gtkSK9ARF7Ax--
+> ---
+>  Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+> index 2b7b3fa..feeb4de 100644
+> --- a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+> @@ -1,7 +1,8 @@
+>  * Amlogic Meson8b Clock and Reset Unit
+>  
+>  The Amlogic Meson8b clock controller generates and supplies clock to various
+> -controllers within the SoC.
+> +controllers within the SoC and also implements a reset controller for the CPU
+> +cores.
+>  
+>  Required Properties:
+>  
+> @@ -13,16 +14,19 @@ Required Properties:
+>  	   mapped region.
+>  
+>  - #clock-cells: should be 1.
+> +- #reset-cells: should be 1.
+>  
+>  Each clock is assigned an identifier and client nodes can use this identifier
+>  to specify the clock which they consume. All available clocks are defined as
+>  preprocessor macros in the dt-bindings/clock/meson8b-clkc.h header and can be
+>  used in device tree sources.
+> +Similar identifiers exist for the CPU core reset lines.
+>  
+>  Example: Clock controller node:
+>  
+>  	clkc: clock-controller@c1104000 {
+>  		#clock-cells = <1>;
+> +		#reset-cells = <1>;
+>  		compatible = "amlogic,meson8b-clkc";
+>  		reg = <0xc1108000 0x4>, <0xc1104000 0x460>;
+>  	};
+> -- 
+> 2.5.0
+> 
