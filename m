@@ -1,53 +1,52 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
-	<zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [PATCH v3 3/7] ARM: hisi: add dt_machine definition for Hi3519
-Date: Fri, 11 Dec 2015 15:45:17 +0800
-Message-ID: <1449819921-18464-4-git-send-email-xuejiancheng@huawei.com>
-In-Reply-To: <1449819921-18464-1-git-send-email-xuejiancheng@huawei.com>
-References: <1449819921-18464-1-git-send-email-xuejiancheng@huawei.com>
+Return-Path: <jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>
+CC: Rhyland Klein <rklein@nvidia.com>,
+	linux-clk@vger.kernel.org ,
+	linux-tegra@vger.kernel.org ,
+	linux-kernel@vger.kernel.org ,
+	Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 1/3] clk: tegra: Fix sparse warning for pll_m
+Date: Fri, 4 Dec 2015 17:04:23 +0000
+Message-ID: <1449248665-22343-1-git-send-email-jonathanh@nvidia.com>
 MIME-Version: 1.0
+Return-Path: jonathanh@nvidia.com
 Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-add dt_machine definition for hi3519.
+Sparse generates the following warning for the pll_m params structure:
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+drivers/clk/tegra/clk-tegra210.c:1569:10: warning: Initializer entry
+ defined twice
+drivers/clk/tegra/clk-tegra210.c:1570:10:   also defined here
+
+Fix this by correcting the index for the MISC1 register.
+
+Fixes: b31eba5ff3f7 ("clk: tegra: Add support for Tegra210 clocks")
+
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- arch/arm/mach-hisi/hisilicon.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/clk/tegra/clk-tegra210.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-hisi/hisilicon.c b/arch/arm/mach-hisi/hisilicon.c
-index 8cc6215..010d8a2 100644
---- a/arch/arm/mach-hisi/hisilicon.c
-+++ b/arch/arm/mach-hisi/hisilicon.c
-@@ -81,3 +81,12 @@ static const char *const hip01_compat[] __initconst = {
- DT_MACHINE_START(HIP01, "Hisilicon HIP01 (Flattened Device Tree)")
- 	.dt_compat      = hip01_compat,
- MACHINE_END
-+
-+static const char *const hi3519_compat[] __initconst = {
-+	"hisilicon,hi3519",
-+	NULL,
-+};
-+
-+DT_MACHINE_START(HI3519_DT, "Hisilicon Hi3519")
-+	.dt_compat	= hi3519_compat,
-+MACHINE_END
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 58514c44ea83..3bd831c2b9db 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -1567,7 +1567,7 @@ static struct tegra_clk_pll_params pll_m_params = {
+ 	.iddq_bit_idx = PLLM_IDDQ_BIT,
+ 	.max_p = PLL_QLIN_PDIV_MAX,
+ 	.ext_misc_reg[0] = PLLM_MISC0,
+-	.ext_misc_reg[0] = PLLM_MISC1,
++	.ext_misc_reg[1] = PLLM_MISC1,
+ 	.round_p_to_pdiv = pll_qlin_p_to_pdiv,
+ 	.pdiv_tohw = pll_qlin_pdiv_to_hw,
+ 	.div_nmp = &pllm_nmp,
 -- 
-1.9.1
-
+2.1.4
