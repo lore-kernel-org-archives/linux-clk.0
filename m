@@ -1,70 +1,99 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga01-in.huawei.com ([58.251.152.64]:14678 "EHLO
+	szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751726AbbLDD0R (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 3 Dec 2015 22:26:17 -0500
+Subject: Re: [PATCH v2 1/9] clk: hi3519: add dt-binding document and header
+ file
+To: Arnd Bergmann <arnd@arndb.de>
+References: <1449110364-23464-1-git-send-email-xuejiancheng@huawei.com>
+ <1615805.jmP28L2rmX@wuerfel>
+CC: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<xuwei5@hisilicon.com>, <haojian.zhuang@linaro.org>,
+	<zhangfei.gao@linaro.org>, <bintian.wang@huawei.com>,
+	<yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
+	<suwenping@hisilicon.com>, <ml.yang@hisilicon.com>,
+	<gaofei@hisilicon.com>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+From: xuejiancheng <xuejiancheng@huawei.com>
+Message-ID: <566106B8.7080205@huawei.com>
+Date: Fri, 4 Dec 2015 11:21:28 +0800
 MIME-Version: 1.0
-To: Tero Kristo <t-kristo@ti.com>, linux-omap@vger.kernel.org,
- linux-clk@vger.kernel.org, tony@atomide.com, sboyd@codeaurora.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1450447141-29936-7-git-send-email-t-kristo@ti.com>
-Cc: linux-arm-kernel@lists.infradead.org
-References: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
- <1450447141-29936-7-git-send-email-t-kristo@ti.com>
-Message-ID: <20160101054815.21738.79820@quark.deferred.io>
-Subject: Re: [RFC 6/9] clk: ti: add support for omap4 module clocks
-Date: Thu, 31 Dec 2015 21:48:15 -0800
+In-Reply-To: <1615805.jmP28L2rmX@wuerfel>
+Content-Type: text/plain; charset="windows-1252"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Tero,
+Hi Arnd,
 
-Quoting Tero Kristo (2015-12-18 05:58:58)
-> Previously, hwmod core has been used for controlling the hwmod level
-> clocks. This has certain drawbacks, like being unable to share the
-> clocks for multiple users, missing usecounting and generally being
-> totally incompatible with common clock framework.
-> =
+On 2015/12/3 17:44, Arnd Bergmann wrote:
+> On Thursday 03 December 2015 10:39:24 Jiancheng Xue wrote:
+>> +#ifndef __DTS_HI3519_CLOCK_H
+>> +#define __DTS_HI3519_CLOCK_H
+> 
+> Please try to avoid adding headers like this if you can at all.
+> 
+> I might ask you to merge the header file in one merge window
+> otherwise and submit the platform code one kernel later, as they
+> tendn to cause us needless dependencies otherwise.
+> 
 
-> Add support for new clock type under the TI clock driver, which will
-> be used to convert all the existing hwmdo clocks to. This helps to
-> get rid of the clock related hwmod data from kernel and instead
-> parsing this from DT.
+Sorry. In v1, Rob suggested putting binding doc and header files in
+a separate patch. The clock driver indeed depends on the header.
 
-I'm really happy to see this series. Looks pretty good to me.
+I will put the header and the clock driver in a patch, and keep the
+binding doc in another patch.
 
-> +static int _omap4_hwmod_clk_enable(struct clk_hw *hw)
-> +{
-> +       struct clk_hw_omap *clk =3D to_clk_hw_omap(hw);
-> +       u32 val;
-> +       int timeout =3D 0;
-> +       int ret;
-> +
-> +       if (!clk->enable_bit)
-> +               return 0;
-> +
-> +       if (clk->clkdm) {
-> +               ret =3D ti_clk_ll_ops->clkdm_clk_enable(clk->clkdm, hw->c=
-lk);
-> +               if (ret) {
-> +                       WARN(1,
-> +                            "%s: could not enable %s's clockdomain %s: %=
-d\n",
-> +                            __func__, clk_hw_get_name(hw),
-> +                            clk->clkdm_name, ret);
-> +                       return ret;
-> +               }
-> +       }
-> +
-> +       val =3D ti_clk_ll_ops->clk_readl(clk->enable_reg);
-> +
-> +       val &=3D ~OMAP4_MODULEMODE_MASK;
-> +       val |=3D clk->enable_bit;
-> +
-> +       ti_clk_ll_ops->clk_writel(val, clk->enable_reg);
-> +
-> +       /* Wait until module is enabled */
-> +       while (!_omap4_is_ready(val)) {
-> +               udelay(1);
+> 
+>> +/* fixed rate */
+>> +#define HI3519_FIXED_400M              1
+>> +#define HI3519_FIXED_200M              2
+>> +#define HI3519_FIXED_125M              3
+>> +#define HI3519_FIXED_150M              4
+>> +#define HI3519_FIXED_75M               5
+>> +#define HI3519_FIXED_300M              6
+>> +#define HI3519_FIXED_50M               7
+>> +#define HI3519_FIXED_24M               8
+>> +#define HI3519_FIXED_3M                        9
+>> +
+>> +/* mux clocks */
+>> +#define HI3519_FMC_MUX                 32
+>> +#define HI3519_I2C_MUX                 33
+>> +#define HI3519_UART_MUX                        34
+>> +#define HI3519_SYSAXI_MUX              35
+>> +
+>> +/*fixed factor clocks*/
+>> +#define HI3519_SYSAPB_CLK              64
+>> +
+>> +/* gate clocks */
+>> +#define HI3519_FMC_CLK                 129
+>> +#define HI3519_UART0_CLK               153
+>> +#define HI3519_UART1_CLK               154
+>> +#define HI3519_UART2_CLK               155
+>> +#define HI3519_UART3_CLK               156
+>> +#define HI3519_UART4_CLK               157
+> 
+> Where do those numbers come from? They are not consecutive, so it sounds
+> like they are directly from the data sheet and won't be needed in the driver.
+> If that's true, just use the numbers directly, as you do for everything
+> else.
 
-This should really be a .prepare callback if you plan to keep the delays
-in there.
+The numbers are defined by myself, not directly from the data sheet. Some numbers
+are reserved for device nodes which will be added later. So they are not consecutive now.
 
-Regards,
-Mike
+> 
+>> +#define HI3519_NR_CLKS                 256
+>> +#define HI3519_NR_RSTS                 256
+>>
+> These seem to not be needed at all.
+
+These are used in drivers/clk/hisilicon/clk-hi3519.c.
+
+> 
+> 	Arnd
+> 
+> .
+> 
+
