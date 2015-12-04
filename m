@@ -1,59 +1,93 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-kernel@vger.kernel.org,
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v2 0/6] Add support for MSM8996 GDSCs
-Date: Tue,  1 Dec 2015 21:42:10 +0530
-Message-Id: <1448986336-16846-1-git-send-email-rnayak@codeaurora.org>
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH v3 12/13] usb: gadget: atmel: access the PMC using regmap
+Date: Fri,  4 Dec 2015 18:03:47 +0100
+Message-Id: <1449248628-3486-13-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Changes since v1:
-* For votable gdscs which are 'on' at boot, put an explicit vote
-* Added a delay post disable for votable gdscs
-* Added back the status check after timeout
-* rearranged some patch ordering to avoid bisect issues
+Use regmap to access the PMC to avoid using at91_pmc_read and
+at91_pmc_write.
 
-This series adds support for GDSCs' which are part of gcc and mmcc
-in QCOM msm8996 SoC. Series applies on top of clk-next
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Acked-by: Felipe Balbi <balbi@ti.com>
+---
+ drivers/usb/gadget/udc/atmel_usba_udc.c | 20 ++++++++++----------
+ drivers/usb/gadget/udc/atmel_usba_udc.h |  2 ++
+ 2 files changed, 12 insertions(+), 10 deletions(-)
 
-There are many more cases of gdscs within gdscs (hierarchical power
-domains) in msm8996 (msm8974 has one such instance which is supported
-upstream) and hence the series adds support within gdsc driver to
-handle this.
-
-Also msm8996 has gdscs with gds hw controllers within, for ensuring
-slave device idleness before gdscs are powered off, hence the series
-also adds support for gdscs with gds hw controllers.
-
-ToDo: Series does not yet add support for gpu gdscs which are part
-of mmcc
-
-Tested on apq8096 dragonboards to make sure all modelled gdscs can
-be turned on/off successfully
-
-Rajendra Nayak (6):
-  clk: qcom: gdsc: Add support for hierarchical power domains
-  clk: qcom: gdsc: Add support for gdscs with gds hw controller
-  clk: qcom: gdsc: Add support for votable gdscs
-  clk: qcom: gdsc: Add GDSCs in msm8996 GCC
-  clk: qcom: gdsc: Add mmcc gdscs for msm8996 family
-  clk: qcom: mmcc8974: Use gdscs .parent and remove genpd calls
-
- arch/arm64/boot/dts/qcom/msm8996.dtsi         |   2 +
- drivers/clk/qcom/common.c                     |  14 ++-
- drivers/clk/qcom/gcc-msm8996.c                |  92 +++++++++++++++
- drivers/clk/qcom/gdsc.c                       |  89 +++++++++++----
- drivers/clk/qcom/gdsc.h                       |  34 ++++--
- drivers/clk/qcom/mmcc-msm8974.c               |  14 +--
- drivers/clk/qcom/mmcc-msm8996.c               | 157 ++++++++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-msm8996.h  |  11 ++
- include/dt-bindings/clock/qcom,mmcc-msm8996.h |  17 +++
- 9 files changed, 382 insertions(+), 48 deletions(-)
-
+diff --git a/drivers/usb/gadget/udc/atmel_usba_udc.c b/drivers/usb/gadget/udc/atmel_usba_udc.c
+index f0f2b066ac08..eb82239dafac 100644
+--- a/drivers/usb/gadget/udc/atmel_usba_udc.c
++++ b/drivers/usb/gadget/udc/atmel_usba_udc.c
+@@ -17,7 +17,9 @@
+ #include <linux/device.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/list.h>
++#include <linux/mfd/syscon.h>
+ #include <linux/platform_device.h>
++#include <linux/regmap.h>
+ #include <linux/usb/ch9.h>
+ #include <linux/usb/gadget.h>
+ #include <linux/usb/atmel_usba_udc.h>
+@@ -1888,20 +1890,15 @@ static int atmel_usba_stop(struct usb_gadget *gadget)
+ #ifdef CONFIG_OF
+ static void at91sam9rl_toggle_bias(struct usba_udc *udc, int is_on)
+ {
+-	unsigned int uckr = at91_pmc_read(AT91_CKGR_UCKR);
+-
+-	if (is_on)
+-		at91_pmc_write(AT91_CKGR_UCKR, uckr | AT91_PMC_BIASEN);
+-	else
+-		at91_pmc_write(AT91_CKGR_UCKR, uckr & ~(AT91_PMC_BIASEN));
++	regmap_update_bits(udc->pmc, AT91_CKGR_UCKR, AT91_PMC_BIASEN,
++			   is_on ? AT91_PMC_BIASEN : 0);
+ }
+ 
+ static void at91sam9g45_pulse_bias(struct usba_udc *udc)
+ {
+-	unsigned int uckr = at91_pmc_read(AT91_CKGR_UCKR);
+-
+-	at91_pmc_write(AT91_CKGR_UCKR, uckr & ~(AT91_PMC_BIASEN));
+-	at91_pmc_write(AT91_CKGR_UCKR, uckr | AT91_PMC_BIASEN);
++	regmap_update_bits(udc->pmc, AT91_CKGR_UCKR, AT91_PMC_BIASEN, 0);
++	regmap_update_bits(udc->pmc, AT91_CKGR_UCKR, AT91_PMC_BIASEN,
++			   AT91_PMC_BIASEN);
+ }
+ 
+ static const struct usba_udc_errata at91sam9rl_errata = {
+@@ -1938,6 +1935,9 @@ static struct usba_ep * atmel_udc_of_init(struct platform_device *pdev,
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	udc->errata = match->data;
++	udc->pmc = syscon_regmap_lookup_by_compatible("atmel,at91sam9g45-pmc");
++	if (udc->errata && IS_ERR(udc->pmc))
++		return ERR_CAST(udc->pmc);
+ 
+ 	udc->num_ep = 0;
+ 
+diff --git a/drivers/usb/gadget/udc/atmel_usba_udc.h b/drivers/usb/gadget/udc/atmel_usba_udc.h
+index ea448a344767..3e1c9d589dfa 100644
+--- a/drivers/usb/gadget/udc/atmel_usba_udc.h
++++ b/drivers/usb/gadget/udc/atmel_usba_udc.h
+@@ -354,6 +354,8 @@ struct usba_udc {
+ 	struct dentry *debugfs_root;
+ 	struct dentry *debugfs_regs;
+ #endif
++
++	struct regmap *pmc;
+ };
+ 
+ static inline struct usba_ep *to_usba_ep(struct usb_ep *ep)
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.5.0
