@@ -1,94 +1,63 @@
-Return-Path: <mturquette@baylibre.com>
-Date: Thu, 17 Dec 2015 01:06:28 -0800
-From: Michael Turquette <mturquette@baylibre.com>
-To: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-Cc: Daniel Kurtz <djkurtz@chromium.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	James Liao <jamesjj.liao@mediatek.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-clk@vger.kernel.org,
-	"moderated list:ARM/Mediatek SoC..." <linux-mediatek@lists.infradead.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Linaro Kernel Mailman List <linaro-kernel@lists.linaro.org>
-Subject: Re: [PATCH v6] clk: mediatek: Export CPU mux clocks for CPU
- frequency control
-Message-ID: <20151217090628.GA317@quark.deferred.io>
-References: <1442230072-31593-1-git-send-email-pi-cheng.chen@linaro.org>
- <CAGS+omCkYTPyjMk6QaoxGAL4QVU8VcpWyFqWhST+iP2EFRcRYg@mail.gmail.com>
- <CALx668XVnhhLJWs7RBxvaX=SU=S9=wFVT9HMDP2edqiH4Jio4A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CALx668XVnhhLJWs7RBxvaX=SU=S9=wFVT9HMDP2edqiH4Jio4A@mail.gmail.com>
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Sangbeom Kim <sbkim73@samsung.com>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>,
+ Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Subject: [PATCH 0/3] dt-bindings: regulator/clock/mfd: Reorganize S2M/S5M
+ bindings
+Date: Fri, 04 Dec 2015 10:10:02 +0900
+Message-id: <1449191405-3344-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/01, Pi-Cheng Chen wrote:
-> On Mon, Nov 30, 2015 at 11:48 AM, Daniel Kurtz <djkurtz@chromium.org> wrote:
-> > Hi Pi-Cheng and Michael,
-> >
-> > On Mon, Sep 14, 2015 at 7:27 PM, Pi-Cheng Chen <pi-cheng.chen@linaro.org> wrote:
-> >> From: "pi-cheng.chen" <pi-cheng.chen@linaro.org>
-> >>
-> >> This patch adds CPU mux clocks which are used by Mediatek cpufreq driver
-> >> for intermediate clock source switching.
-> >
-> > It looks like this patch was never picked up.
-> > It is required for MT8173 cpufreq.
-> >
-> > What is the plan to get this one merged?
-> 
-> Hi Dan,
-> Mike is working on a new CCF feature called "coordinated clock rate changes"
-> which would help to migrate mt8173-cpufreq driver to generic cpufreq-dt
-> driver, and I am working with him to port MT8173 clock driver on the new
-> feature. So I think that's why this patch was not picked since it will
-> be migrated to new implementation once the new feature's ready.
-> 
-> @Mike:
-> Are you plannig to post those patches on the mailing list ?
-> Or is it fine for you to take this first and then I will refine it for
-> the new feature later?
+Hi,
 
-I plan to post those patches next week.
 
-Thanks,
-Mike
+The patchset tries to bring some order to the chaotic bindings for family
+of Samsung PMIC devices: S2MPS/S2MPA/S5M.
 
-> 
-> Best Regards,
-> Pi-Cheng
-> 
-> >
-> > -Dan
-> >
-> >>
-> >> Signed-off-by: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-> >> ---
-> >> Changes in v6:
-> >> - Relace __clk_get_num_parents with clk_hw_get_num_parents to reflect
-> >>   API change
-> >>
-> >> Changes in v5:
-> >> - Replace __initdata with __initconst to fix compiling error
-> >>
-> >> Changes in v4:
-> >> - Fix some minor issues for v3
-> >> - Rebase to the patch that adds 13mhz clock for MT8173[1]
-> >>
-> >> Changes in v3:
-> >> - Rebase to 4.2-rc1
-> >> - Fix some issues of v2
-> >>
-> >> Changes in v2:
-> >> - Remove use of .determine_rate callback
-> >> ---
-> >>  drivers/clk/mediatek/Makefile          |   2 +-
-> >>  drivers/clk/mediatek/clk-cpumux.c      | 127 +++++++++++++++++++++++++++++++++
-> >>  drivers/clk/mediatek/clk-cpumux.h      |  22 ++++++
-> >>  drivers/clk/mediatek/clk-mt8173.c      |  23 ++++++
-> >>  include/dt-bindings/clock/mt8173-clk.h |   4 +-
-> >>  5 files changed, 176 insertions(+), 2 deletions(-)
-> >>  create mode 100644 drivers/clk/mediatek/clk-cpumux.c
-> >>  create mode 100644 drivers/clk/mediatek/clk-cpumux.h
-> >
-> > [snip]
+Beside of renaming and removal of common parts I also tried to make
+a consistent style used in the files. The bindings itself were not
+modified.
+
+The patchset should be probably pulled at once (later patches depend on
+previous). With respective acks maybe through MFD tree?
+
+
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (3):
+  dt-bindings: regulator/clock/mfd: Reorganize S2MPS-family bindings
+  dt-bindings: regulator/mfd: Reorganize S5M8767 bindings
+  dt-bindings: regulator/mfd: Reorganize S2MPA01 bindings
+
+ .../devicetree/bindings/clock/samsung,s2mps11.txt  |  49 +++++++
+ Documentation/devicetree/bindings/mfd/s2mpa01.txt  |  90 ------------
+ Documentation/devicetree/bindings/mfd/s2mps11.txt  | 153 -------------------
+ .../devicetree/bindings/mfd/samsung,sec-core.txt   |  88 +++++++++++
+ .../bindings/regulator/s5m8767-regulator.txt       | 163 ---------------------
+ .../bindings/regulator/samsung,s2mpa01.txt         |  79 ++++++++++
+ .../bindings/regulator/samsung,s2mps11.txt         | 102 +++++++++++++
+ .../bindings/regulator/samsung,s5m8767.txt         | 145 ++++++++++++++++++
+ MAINTAINERS                                        |   6 +-
+ 9 files changed, 467 insertions(+), 408 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,s2mps11.txt
+ delete mode 100644 Documentation/devicetree/bindings/mfd/s2mpa01.txt
+ delete mode 100644 Documentation/devicetree/bindings/mfd/s2mps11.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
+ delete mode 100644 Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s2mpa01.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s2mps11.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt
+
+-- 
+1.9.1
