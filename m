@@ -1,56 +1,69 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Bresticker <abrestic@chromium.org>,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 6/9] clk: tegra210: fix pllx dyn step calculation
-Date: Thu, 10 Dec 2015 17:08:25 -0500
-Message-ID: <1449785308-19546-7-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1449785308-19546-1-git-send-email-rklein@nvidia.com>
-References: <1449785308-19546-1-git-send-email-rklein@nvidia.com>
+Return-Path: <robh@kernel.org>
+Date: Fri, 4 Dec 2015 08:30:37 -0600
+From: Rob Herring <robh@kernel.org>
+To: Simon Arlott <simon@fire.lp0.eu>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Cernekee <cernekee@gmail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org, linux-mips@linux-mips.org,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Subject: Re: [PATCH 1/2] clk: Add brcm,bcm63xx-gate-clk device tree binding
+Message-ID: <20151204143037.GA3667@rob-hp-laptop>
+References: <565CB727.7030209@simon.arlott.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <565CB727.7030209@simon.arlott.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-The logic for calculating the input rate used when figuring out
-the proper dynamic steps for pllx was incorrect. It is supposed to
-be calculated using parent_rate / m but it was just using the parent
-rate directly, therefore using the wrong step values.
+On Mon, Nov 30, 2015 at 08:52:55PM +0000, Simon Arlott wrote:
+> Add device tree binding for the BCM63xx's gated clocks.
+> 
+> The BCM63xx contains clocks gated with a register. Clocks are indexed
+> by bits in the register and are active high. Clock gate bits are
+> interleaved with other status bits and configurable clocks in the same
+> register.
+> 
+> Signed-off-by: Simon Arlott <simon@fire.lp0.eu>
+> ---
+>  .../bindings/clock/brcm,bcm63xx-gate-clk.txt       | 58 ++++++++++++++++++++++
+>  1 file changed, 58 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm63xx-gate-clk.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm63xx-gate-clk.txt b/Documentation/devicetree/bindings/clock/brcm,bcm63xx-gate-clk.txt
+> new file mode 100644
+> index 0000000..3f4ead1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/brcm,bcm63xx-gate-clk.txt
+> @@ -0,0 +1,58 @@
+> +Broadcom BCM63xx clocks
+> +
+> +This binding uses the common clock binding:
+> +	Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +
+> +The BCM63xx contains clocks gated with a register. Clocks are indexed
+> +by bits in the register and are active high. Clock gate bits are
+> +interleaved with other status bits and configurable clocks in the same
+> +register.
+> +
+> +Required properties:
+> +- compatible:	Should be "brcm,bcm<soc>-gate-clk", "brcm,bcm63xx-gate-clk"
+> +- #clock-cells:	Should be <1>.
+> +- regmap:	The register map phandle
+> +- offset:	Offset in the register map for the reboot register (in bytes)
+> +- clocks:	The external oscillator clock phandle
+> +
+> +Example:
+> +
+> +periph_clk: periph_clk {
+> +	compatible = "brcm,bcm63168-gate-clk", "brcm,bcm63xx-gate-clk";
+> +	regmap = <&periph_cntl>;
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk-tegra210.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+What else is in periph_cntrl? Could this all just be part of that node?
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 2a7faa357130..5d8fac7052f2 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -780,13 +780,13 @@ static void pllx_get_dyn_steps(struct clk_hw *hw, u32 *step_a, u32 *step_b)
- {
- 	unsigned long input_rate;
- 
--	if (!IS_ERR_OR_NULL(hw->clk)) {
-+	/* cf rate */
-+	if (!IS_ERR_OR_NULL(hw->clk))
- 		input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
--		/* cf rate */
--		input_rate /= tegra_pll_get_fixed_mdiv(hw, input_rate);
--	} else {
-+	else
- 		input_rate = 38400000;
--	}
-+
-+	input_rate /= tegra_pll_get_fixed_mdiv(hw, input_rate);
- 
- 	switch (input_rate) {
- 	case 12000000:
--- 
-1.9.1
+Rob
