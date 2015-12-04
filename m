@@ -1,124 +1,90 @@
-Return-Path: <ben@smart-cactus.org>
-From: Ben Gamari <ben@smart-cactus.org>
-To: "Jon Medhurst \(Tixy\)" <tixy@linaro.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-pm@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier@dowhile0.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 11/12] cpufreq: arm-big-little: clarify frequency units
-In-Reply-To: <1449152534.2817.26.camel@linaro.org>
-References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org> <1449091167-20758-12-git-send-email-ben@smart-cactus.org> <1449152534.2817.26.camel@linaro.org>
-Date: Thu, 03 Dec 2015 15:37:44 +0100
-Message-ID: <87egf338ef.fsf@smart-cactus.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha1; protocol="application/pgp-signature"
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH v3 06/13] clk: at91: pmc: merge at91_pmc_init in atmel_pmc_probe
+Date: Fri,  4 Dec 2015 18:03:41 +0100
+Message-Id: <1449248628-3486-7-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+at91_pmc_init() doesn't do much anymore, merge it in atmel_pmc_probe().
 
-"Jon Medhurst (Tixy)" <tixy@linaro.org> writes:
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+---
+ drivers/clk/at91/pmc.c | 31 ++++++-------------------------
+ 1 file changed, 6 insertions(+), 25 deletions(-)
 
-> On Wed, 2015-12-02 at 22:19 +0100, Ben Gamari wrote:
->> The frequency units are very confusing in this area as OPPs use Hz
->> whereas cpufreq uses kHz. Be explicit about this in variable naming.
->>=20
->> Cc: Javier Martinez Canillas <javier@osg.samsung.com>
->> Signed-off-by: Ben Gamari <ben@smart-cactus.org>
->> ---
->>  drivers/cpufreq/arm_big_little.c | 20 ++++++++++----------
->>  1 file changed, 10 insertions(+), 10 deletions(-)
->>=20
->> diff --git a/drivers/cpufreq/arm_big_little.c b/drivers/cpufreq/arm_big_=
-little.c
->> index 855599b..2d5761c 100644
->> --- a/drivers/cpufreq/arm_big_little.c
->> +++ b/drivers/cpufreq/arm_big_little.c
->> @@ -130,14 +130,14 @@ static unsigned int bL_cpufreq_get_rate(unsigned i=
-nt cpu)
->>  }
->>=20=20
->>  static int
->> -bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate)
->> +bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate_kHz)
->>  {
->>  	unsigned long volt =3D 0, volt_old =3D 0;
->>  	long freq_Hz;
->>  	u32 old_rate;
->
-> IMO variable renaming doesn't seem necessary, if cpufreq uses kHz then
-> in a cpufreq driver adding 'kHz' to variable seems redundant, especially
-> if Hz values like freq_Hz above are named especially to signal their
-> different units.
->=20
-Correct; it isn't strictly necessary but it would have saved me half an
-hour of poking around trying work out the intent of this code.
-
-> However, if renaming is going to happen it should at
-> least be consistent within the same function i.e. also rename the old
-> old_rate variable above.
->
-That's a reasonable objection. I'd be happy to do that.
-
-snip
->>  static unsigned int
->> -bL_cpufreq_set_rate(u32 cpu, u32 old_cluster, u32 new_cluster, u32 rate)
->> +bL_cpufreq_set_rate(u32 cpu, u32 old_cluster, u32 new_cluster, u32 rate=
-_kHz)
->>  {
->>  	u32 new_rate, prev_rate;
->
-> Ditto. Rename these too to add '_kHz' ?
->
-Sure.
->>  	int ret;
->> @@ -209,13 +209,13 @@ bL_cpufreq_set_rate(u32 cpu, u32 old_cluster, u32 =
-new_cluster, u32 rate)
->>=20=20
->>  	if (bLs) {
->>  		prev_rate =3D per_cpu(cpu_last_req_freq, cpu);
->> -		per_cpu(cpu_last_req_freq, cpu) =3D rate;
->> +		per_cpu(cpu_last_req_freq, cpu) =3D rate_kHz;
->>  		per_cpu(physical_cluster, cpu) =3D new_cluster;
->>=20=20
->>  		new_rate =3D find_cluster_maxfreq(new_cluster);
->>  		new_rate =3D ACTUAL_FREQ(new_cluster, new_rate);
->>  	} else {
->> -		new_rate =3D rate;
->> +		new_rate =3D rate_kHz;
->>  	}
->>=20=20
->>  	pr_debug("%s: cpu: %d, old cluster: %d, new cluster: %d, freq: %d\n",
->> @@ -236,7 +236,7 @@ bL_cpufreq_set_rate(u32 cpu, u32 old_cluster, u32 ne=
-w_cluster, u32 rate)
->>  	} else if (ret && bLs) {
->>  		per_cpu(cpu_last_req_freq, cpu) =3D prev_rate;
->>  		per_cpu(physical_cluster, cpu) =3D old_cluster;
->> -	}=20
->> +	}
->
-> There's a spurious whitespace change here. I know the space you deleted
-> shouldn't have been there, but doing tidyups like that generally isn't
-> done in patches that don't otherwise affect the code in question.
->
-Alright, I can drop that change.
-
-Cheers,
-
-=2D Ben
-
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQEcBAEBAgAGBQJWYFO4AAoJEHPt6ejPuu8B5HAH/3FCuuc08BH7teIjr4oLQoJw
-+PODZWjN2fq7LQ+BnZjuLTwjB5G3fuoVI1Hp9NatGSBHVH5SUDuRBfLA3KlLQ6ud
-D+L/Y8eNpdrJdZclDIXgxr1FatwWvBGOjrrQ5vu8Rbe+2fP7Hev9Lh8VM5RbxI/w
-bFUnEx3dNHXYFnfKsIyJpgizwUKd2haBza0IOQQCOZhSANeoQ7+9OKDznJPeSTTH
-ttsKS2MwZAEGWJpiHBwKkq9N4jm6bNqpDUGW/vou0L2UDdcJOQ+VV3RsmX2bEo3H
-3/PHM2o9W/Lpn6RdOdD1HxJJUvpTr7akhgbi4KI5HD1b6G+8keO1DCJEJrguNJ8=
-=98IP
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+index 2f8b9503176f..55ed00fc9310 100644
+--- a/drivers/clk/at91/pmc.c
++++ b/drivers/clk/at91/pmc.c
+@@ -231,29 +231,6 @@ static const struct at91_pmc_caps sama5d3_caps = {
+ 			  AT91_PMC_CFDEV,
+ };
+ 
+-static struct at91_pmc *__init at91_pmc_init(struct device_node *np,
+-					     struct regmap *regmap,
+-					     void __iomem *regbase, int virq,
+-					     const struct at91_pmc_caps *caps)
+-{
+-	struct at91_pmc *pmc;
+-
+-	if (!regbase || !virq ||  !caps)
+-		return NULL;
+-
+-	at91_pmc_base = regbase;
+-
+-	pmc = kzalloc(sizeof(*pmc), GFP_KERNEL);
+-	if (!pmc)
+-		return NULL;
+-
+-	pmc->regmap = regmap;
+-	pmc->virq = virq;
+-	pmc->caps = caps;
+-
+-	return pmc;
+-}
+-
+ static const struct of_device_id atmel_pmc_dt_ids[] = {
+ 	{ .compatible = "atmel,at91rm9200-pmc", .data = &at91rm9200_caps },
+ 	{ .compatible = "atmel,at91sam9260-pmc", .data = &at91sam9260_caps },
+@@ -271,11 +248,12 @@ static int __init atmel_pmc_probe(struct platform_device *pdev)
+ 	const struct at91_pmc_caps *caps;
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct at91_pmc *pmc;
+-	void __iomem *regbase = of_iomap(np, 0);
+ 	struct regmap *regmap;
+ 	int virq;
+ 	int ret = 0;
+ 
++	at91_pmc_base = of_iomap(np, 0);
++
+ 	regmap = syscon_node_to_regmap(np);
+ 	if (IS_ERR(regmap))
+ 		panic("Could not retrieve syscon regmap");
+@@ -287,10 +265,13 @@ static int __init atmel_pmc_probe(struct platform_device *pdev)
+ 	of_id = of_match_device(atmel_pmc_dt_ids, &pdev->dev);
+ 	caps = of_id->data;
+ 
+-	pmc = at91_pmc_init(np, regmap, regbase, virq, caps);
++	pmc = kzalloc(sizeof(*pmc), GFP_KERNEL);
+ 	if (!pmc)
+ 		return 0;
+ 
++	pmc->regmap = regmap;
++	pmc->virq = virq;
++	pmc->caps = caps;
+ 	pmc->irqdomain = irq_domain_add_linear(pdev->dev.of_node, 32,
+ 					       &pmc_irq_ops, pmc);
+ 	if (!pmc->irqdomain)
+-- 
+2.5.0
