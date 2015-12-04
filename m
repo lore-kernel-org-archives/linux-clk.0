@@ -1,49 +1,42 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-CC: Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
-	<srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH 0/5] Add clock support for Mediatek MT2701 
-Date: Wed, 30 Dec 2015 14:27:40 +0800
-Message-ID: <1451456865-44139-1-git-send-email-jamesjj.liao@mediatek.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jamesjj.liao@mediatek.com
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1447343686-2038-1-git-send-email-geert+renesas@glider.be>
+References: <1447343686-2038-1-git-send-email-geert+renesas@glider.be>
+Date: Fri, 4 Dec 2015 10:04:26 +0100
+Message-ID: <CAMuHMdUrsRqLMM70NG3JC-pwk5d1h=b5aBDNCKmUTK61KwGXWQ@mail.gmail.com>
+Subject: Re: [PATCH v6 0/5] clk: shmobile: Add new CPG/MSSR driver
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux-sh list <linux-sh@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset is based on 4.4-rc7, add clock and reset controller support
-for Mediatek MT2701.
+On Thu, Nov 12, 2015 at 4:54 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> This series adds a new driver for the Renesas CPG (Clock Pulse
+> Generator) and MSSR (Module Standby and Software Reset) blocks for R-Car
+> H3 (r8a7795).  This is supposed to be more in-line with current CCF best
+> practices, and allows expansion to cover the module reset functionality
+> in the future. This drivers follows the DT bindings in
+> Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt, which have
+> been accepted in clk/clk-next.
+> Support for other SoCs may be added later.
 
-This patchset also refined makefile and Kconfig to support configurable
-multiple SoC clock support.
+Ping?
 
-James Liao (1):
-  clk: mediatek: Refine the makefile to support multiple clock drivers
+Thanks!
 
-Shunli Wang (4):
-  clk: mediatek: Add dt-bindings for MT2701 clocks
-  clk: mediatek: Add MT2701 clock support
-  reset: mediatek: mt2701 reset controller dt-binding file
-  reset: mediatek: mt2701 reset driver
+Gr{oetje,eeting}s,
 
- drivers/clk/Kconfig                                |    1 +
- drivers/clk/mediatek/Kconfig                       |   31 +
- drivers/clk/mediatek/Makefile                      |    7 +-
- drivers/clk/mediatek/clk-gate.c                    |   56 +
- drivers/clk/mediatek/clk-gate.h                    |    2 +
- drivers/clk/mediatek/clk-mt2701.c                  | 1215 ++++++++++++++++++++
- drivers/clk/mediatek/clk-mtk.c                     |   25 +
- drivers/clk/mediatek/clk-mtk.h                     |   35 +-
- include/dt-bindings/clock/mt2701-clk.h             |  481 ++++++++
- .../dt-bindings/reset-controller/mt2701-resets.h   |   74 ++
- 10 files changed, 1921 insertions(+), 6 deletions(-)
- create mode 100644 drivers/clk/mediatek/Kconfig
- create mode 100644 drivers/clk/mediatek/clk-mt2701.c
- create mode 100644 include/dt-bindings/clock/mt2701-clk.h
- create mode 100644 include/dt-bindings/reset-controller/mt2701-resets.h
+                        Geert
 
 --
-1.9.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
