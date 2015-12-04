@@ -1,59 +1,106 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	agross@codeaurora.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	bjorn.andersson@sonymobile.com,
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v5 5/6] arm: dts: qcom: apq8064: Add fixed rate on-board oscillators
-Date: Thu,  3 Dec 2015 16:02:55 +0200
-Message-Id: <1449151376-25930-6-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1449151376-25930-1-git-send-email-georgi.djakov@linaro.org>
-References: <1449151376-25930-1-git-send-email-georgi.djakov@linaro.org>
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH v3 09/13] ARM: at91: pm: find and remap the pmc
+Date: Fri,  4 Dec 2015 18:03:44 +0100
+Message-Id: <1449248628-3486-10-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently the rates of the xo and sleep clocks are hard-coded in the
-GCC driver, but this is a board layout description that actually should
-be in the DT. Moving them into DT also allows us to insert the RPM
-controlled clocks between the DT and GCC clocks.
+To avoid relying on at91_pmc_read(), find the pmc node and remap it
+locally.
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 ---
- arch/arm/boot/dts/qcom-apq8064.dtsi |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/arm/mach-at91/pm.c | 33 +++++++++++++++++++++++++++------
+ 1 file changed, 27 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom-apq8064.dtsi
-index 276fef28fc1e..eb929f2693b2 100644
---- a/arch/arm/boot/dts/qcom-apq8064.dtsi
-+++ b/arch/arm/boot/dts/qcom-apq8064.dtsi
-@@ -81,6 +81,26 @@
- 		interrupts = <1 10 0x304>;
- 	};
+diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
+index 5c2b60c5a2a1..38e93174031d 100644
+--- a/arch/arm/mach-at91/pm.c
++++ b/arch/arm/mach-at91/pm.c
+@@ -35,6 +35,8 @@
+ #include "generic.h"
+ #include "pm.h"
  
-+	clocks {
-+		cxo_board {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <19200000>;
-+		};
++void __iomem *pmc;
 +
-+		pxo_board {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <27000000>;
-+		};
+ /*
+  * FIXME: this is needed to communicate between the pinctrl driver and
+  * the PM implementation in the machine. Possibly part of the PM
+@@ -85,7 +87,7 @@ static int at91_pm_verify_clocks(void)
+ 	unsigned long scsr;
+ 	int i;
+ 
+-	scsr = at91_pmc_read(AT91_PMC_SCSR);
++	scsr = readl(pmc + AT91_PMC_SCSR);
+ 
+ 	/* USB must not be using PLLB */
+ 	if ((scsr & at91_pm_data.uhp_udp_mask) != 0) {
+@@ -99,8 +101,7 @@ static int at91_pm_verify_clocks(void)
+ 
+ 		if ((scsr & (AT91_PMC_PCK0 << i)) == 0)
+ 			continue;
+-
+-		css = at91_pmc_read(AT91_PMC_PCKR(i)) & AT91_PMC_CSS;
++		css = readl(pmc + AT91_PMC_PCKR(i)) & AT91_PMC_CSS;
+ 		if (css != AT91_PMC_CSS_SLOW) {
+ 			pr_err("AT91: PM - Suspend-to-RAM with PCK%d src %d\n", i, css);
+ 			return 0;
+@@ -143,8 +144,8 @@ static void at91_pm_suspend(suspend_state_t state)
+ 	flush_cache_all();
+ 	outer_disable();
+ 
+-	at91_suspend_sram_fn(at91_pmc_base, at91_ramc_base[0],
+-				at91_ramc_base[1], pm_data);
++	at91_suspend_sram_fn(pmc, at91_ramc_base[0],
++			     at91_ramc_base[1], pm_data);
+ 
+ 	outer_resume();
+ }
+@@ -394,13 +395,33 @@ static void __init at91_pm_sram_init(void)
+ 			&at91_pm_suspend_in_sram, at91_pm_suspend_in_sram_sz);
+ }
+ 
++static const struct of_device_id atmel_pmc_ids[] = {
++	{ .compatible = "atmel,at91rm9200-pmc"  },
++	{ .compatible = "atmel,at91sam9260-pmc" },
++	{ .compatible = "atmel,at91sam9g45-pmc" },
++	{ .compatible = "atmel,at91sam9n12-pmc" },
++	{ .compatible = "atmel,at91sam9x5-pmc" },
++	{ .compatible = "atmel,sama5d3-pmc" },
++	{ .compatible = "atmel,sama5d2-pmc" },
++	{ /* sentinel */ },
++};
 +
-+		sleep_clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <32768>;
-+		};
-+	};
+ static void __init at91_pm_init(void)
+ {
+-	at91_pm_sram_init();
++	struct device_node *pmc_np;
+ 
+ 	if (at91_cpuidle_device.dev.platform_data)
+ 		platform_device_register(&at91_cpuidle_device);
+ 
++	pmc_np = of_find_matching_node(NULL, atmel_pmc_ids);
++	pmc = of_iomap(pmc_np, 0);
++	if (!pmc) {
++		pr_info("AT91: PM not supported, PMC not found\n");
++		return;
++	}
 +
- 	soc: soc {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
++	at91_pm_sram_init();
++
+ 	if (at91_suspend_sram_fn)
+ 		suspend_set_ops(&at91_pm_ops);
+ 	else
+-- 
+2.5.0
