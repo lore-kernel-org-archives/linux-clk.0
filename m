@@ -1,93 +1,214 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+Return-Path: <jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v3 12/13] usb: gadget: atmel: access the PMC using regmap
-Date: Fri,  4 Dec 2015 18:03:47 +0100
-Message-Id: <1449248628-3486-13-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>
+CC: Rhyland Klein <rklein@nvidia.com>,
+	linux-clk@vger.kernel.org ,
+	linux-tegra@vger.kernel.org ,
+	linux-kernel@vger.kernel.org ,
+	Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 2/3] clk: tegra210: Fix sparse warnings for functions not declared as static
+Date: Fri, 4 Dec 2015 17:04:24 +0000
+Message-ID: <1449248665-22343-2-git-send-email-jonathanh@nvidia.com>
+In-Reply-To: <1449248665-22343-1-git-send-email-jonathanh@nvidia.com>
+References: <1449248665-22343-1-git-send-email-jonathanh@nvidia.com>
+MIME-Version: 1.0
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Use regmap to access the PMC to avoid using at91_pmc_read and
-at91_pmc_write.
+Sparse reports the following warnings for functions in clk-tegra210.c
+that should be declared as static:
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Acked-by: Felipe Balbi <balbi@ti.com>
+drivers/clk/tegra/clk-tegra210.c:460:6: warning: symbol
+ 'tegra210_pllcx_set_defaults' was not declared. Should it be static?
+drivers/clk/tegra/clk-tegra210.c:485:6: warning: symbol
+ '_pllc_set_defaults' was not declared. Should it be static?
+drivers/clk/tegra/clk-tegra210.c:490:6: warning: symbol
+ '_pllc2_set_defaults' was not declared. Should it be static?
+drivers/clk/tegra/clk-tegra210.c:495:6: warning: symbol
+ '_pllc3_set_defaults' was not declared. Should it be static?
+drivers/clk/tegra/clk-tegra210.c:500:6: warning: symbol
+ '_plla1_set_defaults' was not declared. Should it be static?
+drivers/clk/tegra/clk-tegra210.c:510:6: warning: symbol
+ 'tegra210_plla_set_defaults' was not declared. Should it be static?
+drivers/clk/tegra/clk-tegra210.c:562:6: warning: symbol
+ 'tegra210_plld_set_defaults' was not declared. Should it be static?
+drivers/clk/tegra/clk-tegra210.c:701:6: warning: symbol
+ 'tegra210_plld2_set_defaults' was not declared. Should it be static?
+drivers/clk/tegra/clk-tegra210.c:709:6: warning: symbol
+ 'tegra210_plldp_set_defaults' was not declared. Should it be static?
+drivers/clk/tegra/clk-tegra210.c:722:6: warning: symbol
+ 'tegra210_pllc4_set_defaults' was not declared. Should it be static?
+drivers/clk/tegra/clk-tegra210.c:731:6: warning: symbol
+ 'tegra210_pllre_set_defaults' was not declared. Should it be static?
+drivers/clk/tegra/clk-tegra210.c:844:6: warning: symbol
+ 'tegra210_pllx_set_defaults' was not declared. Should it be static?
+drivers/clk/tegra/clk-tegra210.c:904:6: warning: symbol
+ 'tegra210_pllmb_set_defaults' was not declared. Should it be static?
+drivers/clk/tegra/clk-tegra210.c:963:6: warning: symbol
+ 'tegra210_pllp_set_defaults' was not declared. Should it be static?
+drivers/clk/tegra/clk-tegra210.c:1025:6: warning: symbol
+ 'tegra210_pllu_set_defaults' was not declared. Should it be static?
+drivers/clk/tegra/clk-tegra210.c:1215:15: warning: symbol
+ 'tegra210_clk_adjust_vco_min' was not declared. Should it be static?
+
+Fix this by declaring the above as static.
+
+Fixes: b31eba5ff3f7 ("clk: tegra: Add support for Tegra210 clocks")
+
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/usb/gadget/udc/atmel_usba_udc.c | 20 ++++++++++----------
- drivers/usb/gadget/udc/atmel_usba_udc.h |  2 ++
- 2 files changed, 12 insertions(+), 10 deletions(-)
+ drivers/clk/tegra/clk-tegra210.c | 36 +++++++++++++++++++-----------------
+ 1 file changed, 19 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/usb/gadget/udc/atmel_usba_udc.c b/drivers/usb/gadget/udc/atmel_usba_udc.c
-index f0f2b066ac08..eb82239dafac 100644
---- a/drivers/usb/gadget/udc/atmel_usba_udc.c
-+++ b/drivers/usb/gadget/udc/atmel_usba_udc.c
-@@ -17,7 +17,9 @@
- #include <linux/device.h>
- #include <linux/dma-mapping.h>
- #include <linux/list.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/platform_device.h>
-+#include <linux/regmap.h>
- #include <linux/usb/ch9.h>
- #include <linux/usb/gadget.h>
- #include <linux/usb/atmel_usba_udc.h>
-@@ -1888,20 +1890,15 @@ static int atmel_usba_stop(struct usb_gadget *gadget)
- #ifdef CONFIG_OF
- static void at91sam9rl_toggle_bias(struct usba_udc *udc, int is_on)
- {
--	unsigned int uckr = at91_pmc_read(AT91_CKGR_UCKR);
--
--	if (is_on)
--		at91_pmc_write(AT91_CKGR_UCKR, uckr | AT91_PMC_BIASEN);
--	else
--		at91_pmc_write(AT91_CKGR_UCKR, uckr & ~(AT91_PMC_BIASEN));
-+	regmap_update_bits(udc->pmc, AT91_CKGR_UCKR, AT91_PMC_BIASEN,
-+			   is_on ? AT91_PMC_BIASEN : 0);
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 3bd831c2b9db..842901693455 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -457,7 +457,8 @@ static void pllcx_check_defaults(struct tegra_clk_pll_params *params)
+ 			PLLCX_MISC3_WRITE_MASK);
  }
  
- static void at91sam9g45_pulse_bias(struct usba_udc *udc)
+-void tegra210_pllcx_set_defaults(const char *name, struct tegra_clk_pll *pllcx)
++static void tegra210_pllcx_set_defaults(const char *name,
++					struct tegra_clk_pll *pllcx)
  {
--	unsigned int uckr = at91_pmc_read(AT91_CKGR_UCKR);
--
--	at91_pmc_write(AT91_CKGR_UCKR, uckr & ~(AT91_PMC_BIASEN));
--	at91_pmc_write(AT91_CKGR_UCKR, uckr | AT91_PMC_BIASEN);
-+	regmap_update_bits(udc->pmc, AT91_CKGR_UCKR, AT91_PMC_BIASEN, 0);
-+	regmap_update_bits(udc->pmc, AT91_CKGR_UCKR, AT91_PMC_BIASEN,
-+			   AT91_PMC_BIASEN);
+ 	pllcx->params->defaults_set = true;
+ 
+@@ -482,22 +483,22 @@ void tegra210_pllcx_set_defaults(const char *name, struct tegra_clk_pll *pllcx)
+ 	udelay(1);
  }
  
- static const struct usba_udc_errata at91sam9rl_errata = {
-@@ -1938,6 +1935,9 @@ static struct usba_ep * atmel_udc_of_init(struct platform_device *pdev,
- 		return ERR_PTR(-EINVAL);
+-void _pllc_set_defaults(struct tegra_clk_pll *pllcx)
++static void _pllc_set_defaults(struct tegra_clk_pll *pllcx)
+ {
+ 	tegra210_pllcx_set_defaults("PLL_C", pllcx);
+ }
  
- 	udc->errata = match->data;
-+	udc->pmc = syscon_regmap_lookup_by_compatible("atmel,at91sam9g45-pmc");
-+	if (udc->errata && IS_ERR(udc->pmc))
-+		return ERR_CAST(udc->pmc);
+-void _pllc2_set_defaults(struct tegra_clk_pll *pllcx)
++static void _pllc2_set_defaults(struct tegra_clk_pll *pllcx)
+ {
+ 	tegra210_pllcx_set_defaults("PLL_C2", pllcx);
+ }
  
- 	udc->num_ep = 0;
+-void _pllc3_set_defaults(struct tegra_clk_pll *pllcx)
++static void _pllc3_set_defaults(struct tegra_clk_pll *pllcx)
+ {
+ 	tegra210_pllcx_set_defaults("PLL_C3", pllcx);
+ }
  
-diff --git a/drivers/usb/gadget/udc/atmel_usba_udc.h b/drivers/usb/gadget/udc/atmel_usba_udc.h
-index ea448a344767..3e1c9d589dfa 100644
---- a/drivers/usb/gadget/udc/atmel_usba_udc.h
-+++ b/drivers/usb/gadget/udc/atmel_usba_udc.h
-@@ -354,6 +354,8 @@ struct usba_udc {
- 	struct dentry *debugfs_root;
- 	struct dentry *debugfs_regs;
- #endif
-+
-+	struct regmap *pmc;
- };
+-void _plla1_set_defaults(struct tegra_clk_pll *pllcx)
++static void _plla1_set_defaults(struct tegra_clk_pll *pllcx)
+ {
+ 	tegra210_pllcx_set_defaults("PLL_A1", pllcx);
+ }
+@@ -507,7 +508,7 @@ void _plla1_set_defaults(struct tegra_clk_pll *pllcx)
+  * PLL with dynamic ramp and fractional SDM. Dynamic ramp is not used.
+  * Fractional SDM is allowed to provide exact audio rates.
+  */
+-void tegra210_plla_set_defaults(struct tegra_clk_pll *plla)
++static void tegra210_plla_set_defaults(struct tegra_clk_pll *plla)
+ {
+ 	u32 mask;
+ 	u32 val = readl_relaxed(clk_base + plla->params->base_reg);
+@@ -559,7 +560,7 @@ void tegra210_plla_set_defaults(struct tegra_clk_pll *plla)
+  * PLLD
+  * PLL with fractional SDM.
+  */
+-void tegra210_plld_set_defaults(struct tegra_clk_pll *plld)
++static void tegra210_plld_set_defaults(struct tegra_clk_pll *plld)
+ {
+ 	u32 val;
+ 	u32 mask = 0xffff;
+@@ -698,7 +699,7 @@ static void plldss_defaults(const char *pll_name, struct tegra_clk_pll *plldss,
+ 	udelay(1);
+ }
  
- static inline struct usba_ep *to_usba_ep(struct usb_ep *ep)
+-void tegra210_plld2_set_defaults(struct tegra_clk_pll *plld2)
++static void tegra210_plld2_set_defaults(struct tegra_clk_pll *plld2)
+ {
+ 	plldss_defaults("PLL_D2", plld2, PLLD2_MISC0_DEFAULT_VALUE,
+ 			PLLD2_MISC1_CFG_DEFAULT_VALUE,
+@@ -706,7 +707,7 @@ void tegra210_plld2_set_defaults(struct tegra_clk_pll *plld2)
+ 			PLLD2_MISC3_CTRL2_DEFAULT_VALUE);
+ }
+ 
+-void tegra210_plldp_set_defaults(struct tegra_clk_pll *plldp)
++static void tegra210_plldp_set_defaults(struct tegra_clk_pll *plldp)
+ {
+ 	plldss_defaults("PLL_DP", plldp, PLLDP_MISC0_DEFAULT_VALUE,
+ 			PLLDP_MISC1_CFG_DEFAULT_VALUE,
+@@ -719,7 +720,7 @@ void tegra210_plldp_set_defaults(struct tegra_clk_pll *plldp)
+  * Base and misc0 layout is the same as PLLD2/PLLDP, but no SDM/SSC support.
+  * VCO is exposed to the clock tree via fixed 1/3 and 1/5 dividers.
+  */
+-void tegra210_pllc4_set_defaults(struct tegra_clk_pll *pllc4)
++static void tegra210_pllc4_set_defaults(struct tegra_clk_pll *pllc4)
+ {
+ 	plldss_defaults("PLL_C4", pllc4, PLLC4_MISC0_DEFAULT_VALUE, 0, 0, 0);
+ }
+@@ -728,7 +729,7 @@ void tegra210_pllc4_set_defaults(struct tegra_clk_pll *pllc4)
+  * PLLRE
+  * VCO is exposed to the clock tree directly along with post-divider output
+  */
+-void tegra210_pllre_set_defaults(struct tegra_clk_pll *pllre)
++static void tegra210_pllre_set_defaults(struct tegra_clk_pll *pllre)
+ {
+ 	u32 mask;
+ 	u32 val = readl_relaxed(clk_base + pllre->params->base_reg);
+@@ -841,7 +842,7 @@ static void pllx_check_defaults(struct tegra_clk_pll *pll)
+ 			PLLX_MISC5_WRITE_MASK);
+ }
+ 
+-void tegra210_pllx_set_defaults(struct tegra_clk_pll *pllx)
++static void tegra210_pllx_set_defaults(struct tegra_clk_pll *pllx)
+ {
+ 	u32 val;
+ 	u32 step_a, step_b;
+@@ -901,7 +902,7 @@ void tegra210_pllx_set_defaults(struct tegra_clk_pll *pllx)
+ }
+ 
+ /* PLLMB */
+-void tegra210_pllmb_set_defaults(struct tegra_clk_pll *pllmb)
++static void tegra210_pllmb_set_defaults(struct tegra_clk_pll *pllmb)
+ {
+ 	u32 mask, val = readl_relaxed(clk_base + pllmb->params->base_reg);
+ 
+@@ -960,7 +961,7 @@ static void pllp_check_defaults(struct tegra_clk_pll *pll, bool enabled)
+ 			~mask & PLLP_MISC1_WRITE_MASK);
+ }
+ 
+-void tegra210_pllp_set_defaults(struct tegra_clk_pll *pllp)
++static void tegra210_pllp_set_defaults(struct tegra_clk_pll *pllp)
+ {
+ 	u32 mask;
+ 	u32 val = readl_relaxed(clk_base + pllp->params->base_reg);
+@@ -1022,7 +1023,7 @@ static void pllu_check_defaults(struct tegra_clk_pll *pll, bool hw_control)
+ 			~mask & PLLU_MISC1_WRITE_MASK);
+ }
+ 
+-void tegra210_pllu_set_defaults(struct tegra_clk_pll *pllu)
++static void tegra210_pllu_set_defaults(struct tegra_clk_pll *pllu)
+ {
+ 	u32 val = readl_relaxed(clk_base + pllu->params->base_reg);
+ 
+@@ -1212,8 +1213,9 @@ static void tegra210_clk_pll_set_gain(struct tegra_clk_pll_freq_table *cfg)
+ 	cfg->m *= PLL_SDM_COEFF;
+ }
+ 
+-unsigned long tegra210_clk_adjust_vco_min(struct tegra_clk_pll_params *params,
+-					  unsigned long parent_rate)
++static unsigned long
++tegra210_clk_adjust_vco_min(struct tegra_clk_pll_params *params,
++			    unsigned long parent_rate)
+ {
+ 	unsigned long vco_min = params->vco_min;
+ 
 -- 
-2.5.0
+2.1.4
