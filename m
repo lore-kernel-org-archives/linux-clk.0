@@ -1,61 +1,108 @@
-Return-Path: <tony@atomide.com>
-Date: Fri, 11 Dec 2015 08:43:59 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Tero Kristo <t-kristo@ti.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Matthijs van Duin <matthijsvanduin@gmail.com>,
-	Delio Brignoli <dbrignoli@audioscience.com>,
-	Philipp Rosenberger <ilu@linutronix.de>,
-	Brian Hutchinson <b.hutchman@gmail.com>, linux-omap@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] clk: ti: Add support for dm814x ADPLL
-Message-ID: <20151211164358.GM23396@atomide.com>
-References: <1449800792-5551-1-git-send-email-tony@atomide.com>
- <20151211135237.GG30871@n2100.arm.linux.org.uk>
- <20151211154854.GK23396@atomide.com>
- <20151211161450.GH30871@n2100.arm.linux.org.uk>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.134]:58354 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751071AbbLDK5T (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 4 Dec 2015 05:57:19 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: xuejiancheng <xuejiancheng@huawei.com>
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	xuwei5@hisilicon.com, haojian.zhuang@linaro.org,
+	zhangfei.gao@linaro.org, bintian.wang@huawei.com,
+	yanhaifeng@hisilicon.com, yanghongwei@hisilicon.com,
+	suwenping@hisilicon.com, ml.yang@hisilicon.com,
+	gaofei@hisilicon.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 1/9] clk: hi3519: add dt-binding document and header file
+Date: Fri, 04 Dec 2015 11:56:52 +0100
+Message-ID: <21651844.ONg7WdRZpk@wuerfel>
+In-Reply-To: <566106B8.7080205@huawei.com>
+References: <1449110364-23464-1-git-send-email-xuejiancheng@huawei.com> <1615805.jmP28L2rmX@wuerfel> <566106B8.7080205@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20151211161450.GH30871@n2100.arm.linux.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-* Russell King - ARM Linux <linux@arm.linux.org.uk> [151211 08:16]:
-> On Fri, Dec 11, 2015 at 07:48:54AM -0800, Tony Lindgren wrote:
-> > There's a problem with MAX_CON_ID 16 hardcoded allocated name length.
+On Friday 04 December 2015 11:21:28 xuejiancheng wrote:
+> Hi Arnd,
 > 
-> Absolutely right...
-
-Well adding the warning there allows people to at least see what's going
-on.
-
-> > In this case I have 13 instances of plls with 3 - 4 outputs each and I'd
-> > like to use "481c5040.adpll.clkout" style naming starting with the instance
-> > address. Also "adpll5.clkdcoldo" style naming would work,
+> On 2015/12/3 17:44, Arnd Bergmann wrote:
+> > On Thursday 03 December 2015 10:39:24 Jiancheng Xue wrote:
+> >> +#ifndef __DTS_HI3519_CLOCK_H
+> >> +#define __DTS_HI3519_CLOCK_H
+> > 
+> > Please try to avoid adding headers like this if you can at all.
+> > 
+> > I might ask you to merge the header file in one merge window
+> > otherwise and submit the platform code one kernel later, as they
+> > tendn to cause us needless dependencies otherwise.
+> > 
 > 
-> Because it's a connection ID, not a clock _name_.  I see that we're still
-> making all the same mistakes with clocks that were made years ago, and
-> which lead down the path of amazingly complex drivers having conditional
-> clock names and the like.
+> Sorry. In v1, Rob suggested putting binding doc and header files in
+> a separate patch. The clock driver indeed depends on the header.
+> 
+> I will put the header and the clock driver in a patch, and keep the
+> binding doc in another patch.
 
-Yeah we certainly want to get out of the conditional name business.
+Having split patches is better, I was really commenting on the fact
+that ideally you would not have a header file at all. If we merge
+the header through arm-soc, then you won't be able to merge the
+clk driver easily, and if you merge the header through the clk
+maintainer, I'm can't take your dts files.
 
-> Is there a reason why you can't split this into separate device and input
-> names, and use clk_get_sys() rather than passing NULL as the device to
-> clk_get().  This is exactly why we've ended up with clk_get_sys(), to
-> cater for the cases where there is no struct device to associate with the
-> connection ID: the idea behind clk_get_sys() is that you pass the device
-> name explicitly, along with the connection ID.
+> >> +/* fixed rate */
+> >> +#define HI3519_FIXED_400M              1
+> >> +#define HI3519_FIXED_200M              2
+> >> +#define HI3519_FIXED_125M              3
+> >> +#define HI3519_FIXED_150M              4
+> >> +#define HI3519_FIXED_75M               5
+> >> +#define HI3519_FIXED_300M              6
+> >> +#define HI3519_FIXED_50M               7
+> >> +#define HI3519_FIXED_24M               8
+> >> +#define HI3519_FIXED_3M                        9
+> >> +
+> >> +/* mux clocks */
+> >> +#define HI3519_FMC_MUX                 32
+> >> +#define HI3519_I2C_MUX                 33
+> >> +#define HI3519_UART_MUX                        34
+> >> +#define HI3519_SYSAXI_MUX              35
+> >> +
+> >> +/*fixed factor clocks*/
+> >> +#define HI3519_SYSAPB_CLK              64
+> >> +
+> >> +/* gate clocks */
+> >> +#define HI3519_FMC_CLK                 129
+> >> +#define HI3519_UART0_CLK               153
+> >> +#define HI3519_UART1_CLK               154
+> >> +#define HI3519_UART2_CLK               155
+> >> +#define HI3519_UART3_CLK               156
+> >> +#define HI3519_UART4_CLK               157
+> > 
+> > Where do those numbers come from? They are not consecutive, so it sounds
+> > like they are directly from the data sheet and won't be needed in the driver.
+> > If that's true, just use the numbers directly, as you do for everything
+> > else.
+> 
+> The numbers are defined by myself, not directly from the data sheet. Some numbers
+> are reserved for device nodes which will be added later. So they are not consecutive now.
 
-For most code yes, there's still a pile of shared legacy code relying on
-the clock connection ID only.
+I don't understand. How do you decide which numbers to reserve? If the
+numbers are completely arbitrary and you have no idea what other clocks
+there are, you can simply have consecutive numbers here and do the driver
+accordingly.
 
-So what do you envision people using for the connection ID in cases like
-this? It needs to be unique, should relate to the documentation and fit
-MAX_CON_ID. Something like "pll5.clkdcoldo" will still overflow for pll13
-unless also the dot is left out :)
+If the numbers actually have a real meaning, then you either don't need them
+at all, or you could just put all numbers in there that you would eventually need.
 
-Regards,
+> >> +#define HI3519_NR_CLKS                 256
+> >> +#define HI3519_NR_RSTS                 256
+> >>
+> > These seem to not be needed at all.
+> 
+> These are used in drivers/clk/hisilicon/clk-hi3519.c.
 
-Tony
+Then move them there. Anything that is not needed by *both* the driver and 
+the dts files doesn't belong in here.
+
+	Arnd
