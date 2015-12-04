@@ -1,183 +1,54 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v2 4/6] clk: qcom: gdsc: Add GDSCs in msm8996 GCC
-Date: Tue,  1 Dec 2015 21:42:14 +0530
-Message-Id: <1448986336-16846-5-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1448986336-16846-1-git-send-email-rnayak@codeaurora.org>
-References: <1448986336-16846-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <broonie@sirena.org.uk>
+Date: Fri, 4 Dec 2015 12:06:28 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>,
+	Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, linux-clk@vger.kernel.org
+Message-ID: <20151204120628.GX26072@sirena.org.uk>
+References: <1449191405-3344-1-git-send-email-k.kozlowski@samsung.com>
+ <1449191405-3344-2-git-send-email-k.kozlowski@samsung.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="/Kwy1es1GwkEJhNg"
+In-Reply-To: <1449191405-3344-2-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/3] dt-bindings: regulator/clock/mfd: Reorganize
+ S2MPS-family bindings
 List-ID: <linux-clk.vger.kernel.org>
 
-Add all data for the GDSCs which are part of msm8996 GCC block
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/msm8996.dtsi        |  1 +
- drivers/clk/qcom/gcc-msm8996.c               | 92 ++++++++++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-msm8996.h | 11 ++++
- 3 files changed, 104 insertions(+)
+--/Kwy1es1GwkEJhNg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 2c2736d..31e7bd9 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -147,6 +147,7 @@
- 			compatible = "qcom,gcc-msm8996";
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
- 			reg = <0x300000 0x90000>;
- 		};
- 
-diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-index 16d7c32..bb8c61f 100644
---- a/drivers/clk/qcom/gcc-msm8996.c
-+++ b/drivers/clk/qcom/gcc-msm8996.c
-@@ -30,6 +30,7 @@
- #include "clk-rcg.h"
- #include "clk-branch.h"
- #include "reset.h"
-+#include "gdsc.h"
- 
- #define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
- 
-@@ -3059,6 +3060,83 @@ static struct clk_hw *gcc_msm8996_hws[] = {
- 	&ufs_ice_core_postdiv_clk_src.hw,
- };
- 
-+static struct gdsc aggre0_noc_gdsc = {
-+	.gdscr = 0x81004,
-+	.gds_hw_ctrl = 0x81028,
-+	.pd = {
-+		.name = "aggre0_noc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = VOTABLE,
-+};
-+
-+static struct gdsc hlos1_vote_aggre0_noc_gdsc = {
-+	.gdscr = 0x7d024,
-+	.pd = {
-+		.name = "hlos1_vote_aggre0_noc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = VOTABLE,
-+};
-+
-+static struct gdsc hlos1_vote_lpass_adsp_gdsc = {
-+	.gdscr = 0x7d034,
-+	.pd = {
-+		.name = "hlos1_vote_lpass_adsp",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = VOTABLE,
-+};
-+
-+static struct gdsc hlos1_vote_lpass_core_gdsc = {
-+	.gdscr = 0x7d038,
-+	.pd = {
-+		.name = "hlos1_vote_lpass_core",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = VOTABLE,
-+};
-+
-+static struct gdsc usb30_gdsc = {
-+	.gdscr = 0xf004,
-+	.pd = {
-+		.name = "usb30",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct gdsc pcie0_gdsc = {
-+	.gdscr = 0x6b004,
-+	.pd = {
-+		.name = "pcie0",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct gdsc pcie1_gdsc = {
-+	.gdscr = 0x6d004,
-+	.pd = {
-+		.name = "pcie1",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct gdsc pcie2_gdsc = {
-+	.gdscr = 0x6e004,
-+	.pd = {
-+		.name = "pcie2",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct gdsc ufs_gdsc = {
-+	.gdscr = 0x75004,
-+	.pd = {
-+		.name = "ufs",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
- static struct clk_regmap *gcc_msm8996_clocks[] = {
- 	[GPLL0_EARLY] = &gpll0_early.clkr,
- 	[GPLL0] = &gpll0.clkr,
-@@ -3245,6 +3323,18 @@ static struct clk_regmap *gcc_msm8996_clocks[] = {
- 	[GCC_RX1_USB2_CLKREF_CLK] = &gcc_rx1_usb2_clkref_clk.clkr,
- };
- 
-+static struct gdsc *gcc_msm8996_gdscs[] = {
-+	[AGGRE0_NOC_GDSC] = &aggre0_noc_gdsc,
-+	[HLOS1_VOTE_AGGRE0_NOC_GDSC] = &hlos1_vote_aggre0_noc_gdsc,
-+	[HLOS1_VOTE_LPASS_ADSP_GDSC] = &hlos1_vote_lpass_adsp_gdsc,
-+	[HLOS1_VOTE_LPASS_CORE_GDSC] = &hlos1_vote_lpass_core_gdsc,
-+	[USB30_GDSC] = &usb30_gdsc,
-+	[PCIE0_GDSC] = &pcie0_gdsc,
-+	[PCIE1_GDSC] = &pcie1_gdsc,
-+	[PCIE2_GDSC] = &pcie2_gdsc,
-+	[UFS_GDSC] = &ufs_gdsc,
-+};
-+
- static const struct qcom_reset_map gcc_msm8996_resets[] = {
- 	[GCC_SYSTEM_NOC_BCR] = { 0x4000 },
- 	[GCC_CONFIG_NOC_BCR] = { 0x5000 },
-@@ -3363,6 +3453,8 @@ static const struct qcom_cc_desc gcc_msm8996_desc = {
- 	.num_clks = ARRAY_SIZE(gcc_msm8996_clocks),
- 	.resets = gcc_msm8996_resets,
- 	.num_resets = ARRAY_SIZE(gcc_msm8996_resets),
-+	.gdscs = gcc_msm8996_gdscs,
-+	.num_gdscs = ARRAY_SIZE(gcc_msm8996_gdscs),
- };
- 
- static const struct of_device_id gcc_msm8996_match_table[] = {
-diff --git a/include/dt-bindings/clock/qcom,gcc-msm8996.h b/include/dt-bindings/clock/qcom,gcc-msm8996.h
-index 888e75c..6f814db 100644
---- a/include/dt-bindings/clock/qcom,gcc-msm8996.h
-+++ b/include/dt-bindings/clock/qcom,gcc-msm8996.h
-@@ -336,4 +336,15 @@
- #define GCC_MSS_Q6_BCR						99
- #define GCC_QREFS_VBG_CAL_BCR					100
- 
-+/* Indexes for GDSCs */
-+#define AGGRE0_NOC_GDSC			0
-+#define HLOS1_VOTE_AGGRE0_NOC_GDSC	1
-+#define HLOS1_VOTE_LPASS_ADSP_GDSC	2
-+#define HLOS1_VOTE_LPASS_CORE_GDSC	3
-+#define USB30_GDSC			4
-+#define PCIE0_GDSC			5
-+#define PCIE1_GDSC			6
-+#define PCIE2_GDSC			7
-+#define UFS_GDSC			8
-+
- #endif
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+On Fri, Dec 04, 2015 at 10:10:03AM +0900, Krzysztof Kozlowski wrote:
+> Bindings for Samsung S2M and S5M family PMICs are in mess. They are
+> spread over different files and subdirectories in a non-consistent way.
+> The devices and respective drivers for them share a lot in common so
+> everything could be organized in a more readable way.
+
+Acked-by: Mark Brown <broonie@kernel.org>
+
+--/Kwy1es1GwkEJhNg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWYYHDAAoJECTWi3JdVIfQ4CoH/A/nCU65TYVWgjUZDnKobol1
+uNeSvBXaNfvP10fonQZGxozdEkSKjR4enT+Y69C7ykR54/0ZidliOZNjPPno+Q43
+le3/VIVI5mEIkOJ+o8pB/wLzFH8PpGycyhFK5g6h1r1B08N1bD/74l46JdivJaKj
+qNhuZO5g5Gbn5N9JGq88cOtHu8oJcZjCcZuiHy5gGirtdYPVCJHgHPkB7smJmMFH
+QIbcSX2n3tW00N+OXYW2dCxmwcLth+LkTR4ZM21kNKX+LFatKDeUQVFXyxLp1ot6
+aSOdCHL5MZUY941xjrDzlkmCssqkwQNAeu7XqBy2GRTfMRv4AOHbKcuQqHFbDEY=
+=yyl8
+-----END PGP SIGNATURE-----
+
+--/Kwy1es1GwkEJhNg--
