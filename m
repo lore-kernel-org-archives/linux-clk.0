@@ -1,70 +1,109 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v2 02/16] clk: change the argument of __clk_init() into pointer to clk_core
-Date: Mon, 28 Dec 2015 19:22:56 +0900
-Message-Id: <1451298191-30815-3-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 3/6] ARM: dts: sun4i: Add DRAM gates
+Date: Sat,  5 Dec 2015 17:00:06 +0800
+Message-Id: <1449306009-2627-4-git-send-email-wens@csie.org>
+In-Reply-To: <1449306009-2627-1-git-send-email-wens@csie.org>
+References: <1449306009-2627-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The argument clk_user is used only for the clk_user->core.  The rest
-of this function only takes care of clk_core.
+The DRAM gates controls direct memory access for some peripherals.
+These peripherals include the display pipeline, so add the required
+gates to the simplefb nodes as well.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
+ arch/arm/boot/dts/sun4i-a10.dtsi | 36 ++++++++++++++++++++++++++++++++----
+ 1 file changed, 32 insertions(+), 4 deletions(-)
 
-Changes in v2: None
-
- drivers/clk/clk.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 897e5ae..623838f 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2285,25 +2285,22 @@ static inline void clk_debug_unregister(struct clk_core *core)
- #endif
+diff --git a/arch/arm/boot/dts/sun4i-a10.dtsi b/arch/arm/boot/dts/sun4i-a10.dtsi
+index aa90f319309b..849d0242ece8 100644
+--- a/arch/arm/boot/dts/sun4i-a10.dtsi
++++ b/arch/arm/boot/dts/sun4i-a10.dtsi
+@@ -66,7 +66,7 @@
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_be0-lcd0-hdmi";
+ 			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 43>,
+-				 <&ahb_gates 44>;
++				 <&ahb_gates 44>, <&dram_gates 26>;
+ 			status = "disabled";
+ 		};
  
- /**
-- * __clk_init - initialize the data structures in a struct clk
-- * @clk:	clk being initialized
-+ * __clk_init - initialize the data structures in a struct clk_core
-+ * @core:	clk_core being initialized
-  *
-  * Initializes the lists in struct clk_core, queries the hardware for the
-  * parent and rate and sets them both.
-  */
--static int __clk_init(struct clk *clk_user)
-+static int __clk_init(struct clk_core *core)
- {
- 	int i, ret = 0;
- 	struct clk_core *orphan;
- 	struct hlist_node *tmp2;
--	struct clk_core *core;
- 	unsigned long rate;
+@@ -75,7 +75,8 @@
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_fe0-de_be0-lcd0-hdmi";
+ 			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 43>,
+-				 <&ahb_gates 44>, <&ahb_gates 46>;
++				 <&ahb_gates 44>, <&ahb_gates 46>,
++				 <&dram_gates 25>, <&dram_gates 26>;
+ 			status = "disabled";
+ 		};
  
--	if (!clk_user)
-+	if (!core)
- 		return -EINVAL;
+@@ -84,7 +85,8 @@
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_fe0-de_be0-lcd0";
+ 			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 44>,
+-				 <&ahb_gates 46>;
++				 <&ahb_gates 46>, <&dram_gates 25>,
++				 <&dram_gates 26>;
+ 			status = "disabled";
+ 		};
  
--	core = clk_user->core;
--
- 	clk_prepare_lock();
+@@ -93,7 +95,8 @@
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_fe0-de_be0-lcd0-tve0";
+ 			clocks = <&pll5 1>, <&ahb_gates 34>, <&ahb_gates 36>,
+-				 <&ahb_gates 44>, <&ahb_gates 46>;
++				 <&ahb_gates 44>, <&ahb_gates 46>,
++				 <&dram_gates 25>, <&dram_gates 26>;
+ 			status = "disabled";
+ 		};
+ 	};
+@@ -492,6 +495,31 @@
+ 			clock-output-names = "spi3";
+ 		};
  
- 	/* check to see if a clock with this name is already registered */
-@@ -2574,7 +2571,7 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
- 		goto fail_parent_names_copy;
- 	}
- 
--	ret = __clk_init(hw->clk);
-+	ret = __clk_init(core);
- 	if (!ret)
- 		return hw->clk;
- 
++		dram_gates: clk@01c20100 {
++			#clock-cells = <1>;
++			compatible = "allwinner,sun4i-a10-dram-gates-clk";
++			reg = <0x01c20100 0x4>;
++			clocks = <&pll5 0>;
++			clock-indices = <0>,
++					<1>, <2>,
++					<3>,
++					<4>,
++					<5>, <6>,
++					<15>,
++					<24>, <25>,
++					<26>, <27>,
++					<28>, <29>;
++			clock-output-names = "dram_ve",
++					     "dram_csi0", "dram_csi1",
++					     "dram_ts",
++					     "dram_tvd",
++					     "dram_tve0", "dram_tve1",
++					     "dram_output",
++					     "dram_de_fe1", "dram_de_fe0",
++					     "dram_de_be0", "dram_de_be1",
++					     "dram_de_mp", "dram_ace";
++		};
++
+ 		codec_clk: clk@01c20140 {
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun4i-a10-codec-clk";
 -- 
-1.9.1
+2.6.2
