@@ -1,62 +1,98 @@
-Return-Path: <f.fainelli@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <565CB727.7030209@simon.arlott.org.uk>
-References: <565CB727.7030209@simon.arlott.org.uk>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Wed, 2 Dec 2015 10:12:56 -0800
-Message-ID: <CAGVrzcYsjN+5Mvhasx7gqcqdzjJuzTekWwAWfMqjNrF9c7m9Ug@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: Add brcm,bcm63xx-gate-clk device tree binding
-To: Simon Arlott <simon@fire.lp0.eu>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Cernekee <cernekee@gmail.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	Linux-MIPS <linux-mips@linux-mips.org>, Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 5/6] ARM: dts: sun7i: Add DRAM gates
+Date: Sat,  5 Dec 2015 17:00:08 +0800
+Message-Id: <1449306009-2627-6-git-send-email-wens@csie.org>
+In-Reply-To: <1449306009-2627-1-git-send-email-wens@csie.org>
+References: <1449306009-2627-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-2015-11-30 12:52 GMT-08:00 Simon Arlott <simon@fire.lp0.eu>:
-> Add device tree binding for the BCM63xx's gated clocks.
->
-> The BCM63xx contains clocks gated with a register. Clocks are indexed
-> by bits in the register and are active high. Clock gate bits are
-> interleaved with other status bits and configurable clocks in the same
-> register.
->
-> Signed-off-by: Simon Arlott <simon@fire.lp0.eu>
-> ---
->  .../bindings/clock/brcm,bcm63xx-gate-clk.txt       | 58 ++++++++++++++++++++++
->  1 file changed, 58 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm63xx-gate-clk.txt
->
-> diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm63xx-gate-clk.txt b/Documentation/devicetree/bindings/clock/brcm,bcm63xx-gate-clk.txt
-> new file mode 100644
-> index 0000000..3f4ead1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/brcm,bcm63xx-gate-clk.txt
-> @@ -0,0 +1,58 @@
-> +Broadcom BCM63xx clocks
-> +
-> +This binding uses the common clock binding:
-> +       Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +
-> +The BCM63xx contains clocks gated with a register. Clocks are indexed
-> +by bits in the register and are active high. Clock gate bits are
-> +interleaved with other status bits and configurable clocks in the same
-> +register.
+The DRAM gates controls direct memory access for some peripherals.
+These peripherals include the display pipeline, so add the required
+gates to the simplefb nodes as well.
 
-Most MIPS-based BCM63xx SoCs have clock gating set of registers, these
-SoCs are pretty much all of them except 63381 (maybe newer ones too),
-this one uses the PMB interface, like 63138 to control resets and
-clocks fed to peripherals.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/boot/dts/sun7i-a20.dtsi | 32 +++++++++++++++++++++++++++++---
+ 1 file changed, 29 insertions(+), 3 deletions(-)
 
-> +
-> +Required properties:
-> +- compatible:  Should be "brcm,bcm<soc>-gate-clk", "brcm,bcm63xx-gate-clk"
-
-I think we would want to start with the lowest common denominator
-here, which is either 6345 or 6348.
---
-Florian
+diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
+index e02eb720c4fc..21169c0a6627 100644
+--- a/arch/arm/boot/dts/sun7i-a20.dtsi
++++ b/arch/arm/boot/dts/sun7i-a20.dtsi
+@@ -68,7 +68,7 @@
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_be0-lcd0-hdmi";
+ 			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 43>,
+-				 <&ahb_gates 44>;
++				 <&ahb_gates 44>, <&dram_gates 26>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -76,7 +76,8 @@
+ 			compatible = "allwinner,simple-framebuffer",
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_be0-lcd0";
+-			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 44>;
++			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 44>,
++				 <&dram_gates 26>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -85,7 +86,7 @@
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_be0-lcd0-tve0";
+ 			clocks = <&pll5 1>, <&ahb_gates 34>, <&ahb_gates 36>,
+-				 <&ahb_gates 44>;
++				 <&ahb_gates 44>, <&dram_gates 26>;
+ 			status = "disabled";
+ 		};
+ 	};
+@@ -501,6 +502,31 @@
+ 			clock-output-names = "spi3";
+ 		};
+ 
++		dram_gates: clk@01c20100 {
++			#clock-cells = <1>;
++			compatible = "allwinner,sun4i-a10-dram-gates-clk";
++			reg = <0x01c20100 0x4>;
++			clocks = <&pll5 0>;
++			clock-indices = <0>,
++					<1>, <2>,
++					<3>,
++					<4>,
++					<5>, <6>,
++					<15>,
++					<24>, <25>,
++					<26>, <27>,
++					<28>, <29>;
++			clock-output-names = "dram_ve",
++					     "dram_csi0", "dram_csi1",
++					     "dram_ts",
++					     "dram_tvd",
++					     "dram_tve0", "dram_tve1",
++					     "dram_output",
++					     "dram_de_fe1", "dram_de_fe0",
++					     "dram_de_be0", "dram_de_be1",
++					     "dram_de_mp", "dram_ace";
++		};
++
+ 		codec_clk: clk@01c20140 {
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun4i-a10-codec-clk";
+-- 
+2.6.2
