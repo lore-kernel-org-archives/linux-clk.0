@@ -1,54 +1,57 @@
-Return-Path: <rklein@nvidia.com>
-Subject: Re: [PATCH 1/3] clk: tegra: Fix sparse warning for pll_m
-To: Jon Hunter <jonathanh@nvidia.com>, Peter De Schrijver
-	<pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-References: <1449248665-22343-1-git-send-email-jonathanh@nvidia.com>
-CC: <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-From: Rhyland Klein <rklein@nvidia.com>
-Message-ID: <5665AAB5.2020507@nvidia.com>
-Date: Mon, 7 Dec 2015 10:50:13 -0500
-MIME-Version: 1.0
-In-Reply-To: <1449248665-22343-1-git-send-email-jonathanh@nvidia.com>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: rklein@nvidia.com
+Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 0/6] ARM: sunxi: Add support for A10/A20 Video Engine clocks
+Date: Sat,  5 Dec 2015 17:00:03 +0800
+Message-Id: <1449306009-2627-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/4/2015 12:04 PM, Jon Hunter wrote:
-> Sparse generates the following warning for the pll_m params structure:
-> 
-> drivers/clk/tegra/clk-tegra210.c:1569:10: warning: Initializer entry
->  defined twice
-> drivers/clk/tegra/clk-tegra210.c:1570:10:   also defined here
-> 
-> Fix this by correcting the index for the MISC1 register.
-> 
-> Fixes: b31eba5ff3f7 ("clk: tegra: Add support for Tegra210 clocks")
-> 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> index 58514c44ea83..3bd831c2b9db 100644
-> --- a/drivers/clk/tegra/clk-tegra210.c
-> +++ b/drivers/clk/tegra/clk-tegra210.c
-> @@ -1567,7 +1567,7 @@ static struct tegra_clk_pll_params pll_m_params = {
->  	.iddq_bit_idx = PLLM_IDDQ_BIT,
->  	.max_p = PLL_QLIN_PDIV_MAX,
->  	.ext_misc_reg[0] = PLLM_MISC0,
-> -	.ext_misc_reg[0] = PLLM_MISC1,
-> +	.ext_misc_reg[1] = PLLM_MISC1,
->  	.round_p_to_pdiv = pll_qlin_p_to_pdiv,
->  	.pdiv_tohw = pll_qlin_pdiv_to_hw,
->  	.div_nmp = &pllm_nmp,
-> 
+Hi everyone,
 
-Acked-by: Rhyland Klein <rklein@nvidia.com>
+This series adds support for the clocks used by the Video Engine (VPU /
+video codec hardware) on the Allwinner A10/A20. The series purposely
+excludes sun5i (A10s/A13/R8) to avoid any conflicts with Maxime's KMS
+driver series, but adding it should be easy. VE clocks for the newer
+generation of SoCs are the same, except the reset control is moved to
+the common bus reset controls. These can be supported later on.
+
+The series is meant to get platform stuff out of the way so people who
+want to work on a proper driver for the VPU can do so.
+
+The patches are pretty self-explanatory.
+
+Regards
+ChenYu
+
+Chen-Yu Tsai (6):
+  clk: sunxi: Add DRAM gates support for sun4i-a10
+  clk: sunxi: Add VE (Video Engine) module clock driver for sun[457]i
+  ARM: dts: sun4i: Add DRAM gates
+  ARM: dts: sun4i: Add VE (Video Engine) module clock node
+  ARM: dts: sun7i: Add DRAM gates
+  ARM: dts: sun7i: Add VE (Video Engine) module clock node
+
+ Documentation/devicetree/bindings/clock/sunxi.txt |   5 +
+ arch/arm/boot/dts/sun4i-a10.dtsi                  |  45 +++++-
+ arch/arm/boot/dts/sun7i-a20.dtsi                  |  41 +++++-
+ drivers/clk/sunxi/Makefile                        |   1 +
+ drivers/clk/sunxi/clk-a10-ve.c                    | 171 ++++++++++++++++++++++
+ drivers/clk/sunxi/clk-simple-gates.c              |  12 ++
+ 6 files changed, 268 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/clk/sunxi/clk-a10-ve.c
 
 -- 
-nvpublic
+2.6.2
