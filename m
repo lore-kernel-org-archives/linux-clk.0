@@ -1,110 +1,99 @@
-Return-Path: <caesar.upstream@gmail.com>
-Return-Path: <caesar.upstream@gmail.com>
-From: Caesar Wang <wxt@rock-chips.com>
-To: heiko@sntech.de,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: leozwang@google.com,
-	keescook@google.com,
-	leecam@google.com,
-	devicetree@vger.kernel.org,
+Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
 	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Caesar Wang <wxt@rock-chips.com>,
-	Xing Zheng <zhengxing@rock-chips.com>
-Subject: [PATCH 1/5] clk: rockchip: rk3036: include downstream muxes into fractional dividers
-Date: Wed, 16 Dec 2015 16:27:17 +0800
-Message-Id: <1450254441-3243-2-git-send-email-wxt@rock-chips.com>
-In-Reply-To: <1450254441-3243-1-git-send-email-wxt@rock-chips.com>
-References: <1450254441-3243-1-git-send-email-wxt@rock-chips.com>
+	linux-sunxi@googlegroups.com
+Subject: [PATCH resend 5/6] ARM: dts: sun7i: Add DRAM gates
+Date: Sat,  5 Dec 2015 21:16:46 +0800
+Message-Id: <1449321407-4531-6-git-send-email-wens@csie.org>
+In-Reply-To: <1449321407-4531-1-git-send-email-wens@csie.org>
+References: <1449321407-4531-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Use the newly introduced possibility to combine the fractional dividers
-with their downstream muxes for all fractional dividers on currently
-supported RK3036 SoCs.
+The DRAM gates controls direct memory access for some peripherals.
+These peripherals include the display pipeline, so add the required
+gates to the simplefb nodes as well.
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
+ arch/arm/boot/dts/sun7i-a20.dtsi | 32 +++++++++++++++++++++++++++++---
+ 1 file changed, 29 insertions(+), 3 deletions(-)
 
- drivers/clk/rockchip/clk-rk3036.c | 35 ++++++++++++++++++-----------------
- 1 file changed, 18 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
-index 75553af..dc01a2a 100644
---- a/drivers/clk/rockchip/clk-rk3036.c
-+++ b/drivers/clk/rockchip/clk-rk3036.c
-@@ -227,21 +227,21 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
- 	COMPOSITE_NOMUX(0, "uart2_src", "uart_pll_clk", 0,
- 			RK2928_CLKSEL_CON(13), 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(1), 8, GFLAGS),
--	COMPOSITE_FRAC(0, "uart0_frac", "uart0_src", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX(0, "uart0_frac", "uart0_src", CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(17), 0,
--			RK2928_CLKGATE_CON(1), 9, GFLAGS),
--	COMPOSITE_FRAC(0, "uart1_frac", "uart1_src", CLK_SET_RATE_PARENT,
--			RK2928_CLKSEL_CON(18), 0,
--			RK2928_CLKGATE_CON(1), 11, GFLAGS),
--	COMPOSITE_FRAC(0, "uart2_frac", "uart2_src", CLK_SET_RATE_PARENT,
--			RK2928_CLKSEL_CON(19), 0,
--			RK2928_CLKGATE_CON(1), 13, GFLAGS),
-+			RK2928_CLKGATE_CON(1), 9, GFLAGS,
- 	MUX(SCLK_UART0, "sclk_uart0", mux_uart0_p, CLK_SET_RATE_PARENT,
--			RK2928_CLKSEL_CON(13), 8, 2, MFLAGS),
-+			RK2928_CLKSEL_CON(13), 8, 2, MFLAGS)),
-+	COMPOSITE_FRACMUX(0, "uart1_frac", "uart1_src", CLK_SET_RATE_PARENT,
-+			RK2928_CLKSEL_CON(18), 0,
-+			RK2928_CLKGATE_CON(1), 11, GFLAGS,
- 	MUX(SCLK_UART1, "sclk_uart1", mux_uart1_p, CLK_SET_RATE_PARENT,
--			RK2928_CLKSEL_CON(14), 8, 2, MFLAGS),
-+			RK2928_CLKSEL_CON(14), 8, 2, MFLAGS)),
-+	COMPOSITE_FRACMUX(0, "uart2_frac", "uart2_src", CLK_SET_RATE_PARENT,
-+			RK2928_CLKSEL_CON(19), 0,
-+			RK2928_CLKGATE_CON(1), 13, GFLAGS,
- 	MUX(SCLK_UART2, "sclk_uart2", mux_uart2_p, CLK_SET_RATE_PARENT,
--			RK2928_CLKSEL_CON(15), 8, 2, MFLAGS),
-+			RK2928_CLKSEL_CON(15), 8, 2, MFLAGS)),
+diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
+index e02eb720c4fc..21169c0a6627 100644
+--- a/arch/arm/boot/dts/sun7i-a20.dtsi
++++ b/arch/arm/boot/dts/sun7i-a20.dtsi
+@@ -68,7 +68,7 @@
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_be0-lcd0-hdmi";
+ 			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 43>,
+-				 <&ahb_gates 44>;
++				 <&ahb_gates 44>, <&dram_gates 26>;
+ 			status = "disabled";
+ 		};
  
- 	COMPOSITE(0, "aclk_vcodec", mux_pll_src_3plls_p, 0,
- 			RK2928_CLKSEL_CON(32), 14, 2, MFLAGS, 8, 5, DFLAGS,
-@@ -289,11 +289,11 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
- 	COMPOSITE(0, "i2s_src", mux_pll_src_3plls_p, 0,
- 			RK2928_CLKSEL_CON(3), 14, 2, MFLAGS, 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(0), 9, GFLAGS),
--	COMPOSITE_FRAC(0, "i2s_frac", "i2s_src", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX(0, "i2s_frac", "i2s_src", CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(7), 0,
--			RK2928_CLKGATE_CON(0), 10, GFLAGS),
-+			RK2928_CLKGATE_CON(0), 10, GFLAGS,
- 	MUX(0, "i2s_pre", mux_i2s_pre_p, CLK_SET_RATE_PARENT,
--			RK2928_CLKSEL_CON(3), 8, 2, MFLAGS),
-+			RK2928_CLKSEL_CON(3), 8, 2, MFLAGS)),
- 	COMPOSITE_NODIV(SCLK_I2S_OUT, "i2s_clkout", mux_i2s_clkout_p, 0,
- 			RK2928_CLKSEL_CON(3), 12, 1, MFLAGS,
- 			RK2928_CLKGATE_CON(0), 13, GFLAGS),
-@@ -303,11 +303,11 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
- 	COMPOSITE(0, "spdif_src", mux_pll_src_3plls_p, 0,
- 			RK2928_CLKSEL_CON(5), 10, 2, MFLAGS, 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(2), 10, GFLAGS),
--	COMPOSITE_FRAC(0, "spdif_frac", "spdif_src", 0,
-+	COMPOSITE_FRACMUX(0, "spdif_frac", "spdif_src", 0,
- 			RK2928_CLKSEL_CON(9), 0,
--			RK2928_CLKGATE_CON(2), 12, GFLAGS),
-+			RK2928_CLKGATE_CON(2), 12, GFLAGS,
- 	MUX(SCLK_SPDIF, "sclk_spdif", mux_spdif_p, 0,
--			RK2928_CLKSEL_CON(5), 8, 2, MFLAGS),
-+			RK2928_CLKSEL_CON(5), 8, 2, MFLAGS)),
+@@ -76,7 +76,8 @@
+ 			compatible = "allwinner,simple-framebuffer",
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_be0-lcd0";
+-			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 44>;
++			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 44>,
++				 <&dram_gates 26>;
+ 			status = "disabled";
+ 		};
  
- 	GATE(SCLK_OTGPHY0, "sclk_otgphy0", "xin12m", CLK_IGNORE_UNUSED,
- 			RK2928_CLKGATE_CON(1), 5, GFLAGS),
-@@ -414,6 +414,7 @@ static const char *const rk3036_critical_clocks[] __initconst = {
- 	"aclk_peri",
- 	"hclk_peri",
- 	"pclk_peri",
-+	"uart_pll_clk",
- };
+@@ -85,7 +86,7 @@
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_be0-lcd0-tve0";
+ 			clocks = <&pll5 1>, <&ahb_gates 34>, <&ahb_gates 36>,
+-				 <&ahb_gates 44>;
++				 <&ahb_gates 44>, <&dram_gates 26>;
+ 			status = "disabled";
+ 		};
+ 	};
+@@ -501,6 +502,31 @@
+ 			clock-output-names = "spi3";
+ 		};
  
- static void __init rk3036_clk_init(struct device_node *np)
++		dram_gates: clk@01c20100 {
++			#clock-cells = <1>;
++			compatible = "allwinner,sun4i-a10-dram-gates-clk";
++			reg = <0x01c20100 0x4>;
++			clocks = <&pll5 0>;
++			clock-indices = <0>,
++					<1>, <2>,
++					<3>,
++					<4>,
++					<5>, <6>,
++					<15>,
++					<24>, <25>,
++					<26>, <27>,
++					<28>, <29>;
++			clock-output-names = "dram_ve",
++					     "dram_csi0", "dram_csi1",
++					     "dram_ts",
++					     "dram_tvd",
++					     "dram_tve0", "dram_tve1",
++					     "dram_output",
++					     "dram_de_fe1", "dram_de_fe0",
++					     "dram_de_be0", "dram_de_be1",
++					     "dram_de_mp", "dram_ace";
++		};
++
+ 		codec_clk: clk@01c20140 {
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun4i-a10-codec-clk";
 -- 
-1.9.1
+2.6.2
