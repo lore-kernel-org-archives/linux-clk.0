@@ -1,42 +1,53 @@
-Return-Path: <festevam@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <1449830722-26607-1-git-send-email-b51503@freescale.com>
-References: <1449830722-26607-1-git-send-email-b51503@freescale.com>
-Date: Fri, 11 Dec 2015 09:37:37 -0200
-Message-ID: <CAOMZO5C8mTotbpOmKkxKOXmBWc-N_zm7xn-fU5gFUgAFCiyokw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] ARM: dts: imx: Add basic dts support for imx6qp
-From: Fabio Estevam <festevam@gmail.com>
-To: Bai Ping <b51503@freescale.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 6/6] ARM: dts: sun7i: Add VE (Video Engine) module clock node
+Date: Sat,  5 Dec 2015 17:00:09 +0800
+Message-Id: <1449306009-2627-7-git-send-email-wens@csie.org>
+In-Reply-To: <1449306009-2627-1-git-send-email-wens@csie.org>
+References: <1449306009-2627-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Dec 11, 2015 at 8:45 AM, Bai Ping <b51503@freescale.com> wrote:
-> The i.MX6Qual Plus processor is an high performance SOC of i.MX6 family.
-> It has enhanced graphics performance and increased overall memory bandwidth
-> compared to i.MX6Q. Most of the design are same as i.MX6Qual/Dual, so code
-> for i.MX6Qual can be resued by this chip. The revision number is identied as
-> i.MX6Q Rev2.0, but actually it is a new chip, as we did many change to the
-> overall architecture.
->
-> This patch adds basic dts file for the new i.MX6Qual Plus processor.
->
-> Signed-off-by: Bai Ping <b51503@freescale.com>
-> ---
->  arch/arm/boot/dts/Makefile                |   2 +
->  arch/arm/boot/dts/imx6q.dtsi              |   2 +-
->  arch/arm/boot/dts/imx6qdl-sabresd.dtsi    |   1 +
->  arch/arm/boot/dts/imx6qp-sabreauto.dts    |  67 +++++++++++++
->  arch/arm/boot/dts/imx6qp-sabresd.dts      |  59 +++++++++++
->  arch/arm/boot/dts/imx6qp.dtsi             | 157 ++++++++++++++++++++++++++++++
->  include/dt-bindings/clock/imx6qdl-clock.h |  16 ++-
+The video engine has its own module clock, which also includes a
+reset control for it.
 
-Better split this in three patches:
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/boot/dts/sun7i-a20.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-- Add imx6qp SoC support
-- Add imx6qdl-sabresd support
-- Add imx6qp-sabreauto support
+diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
+index 21169c0a6627..0940a788f824 100644
+--- a/arch/arm/boot/dts/sun7i-a20.dtsi
++++ b/arch/arm/boot/dts/sun7i-a20.dtsi
+@@ -527,6 +527,15 @@
+ 					     "dram_de_mp", "dram_ace";
+ 		};
+ 
++		ve_clk: clk@01c2013c {
++			#clock-cells = <0>;
++			#reset-cells = <0>;
++			compatible = "allwinner,sun4i-a10-ve-clk";
++			reg = <0x01c2013c 0x4>;
++			clocks = <&pll4>;
++			clock-output-names = "ve";
++		};
++
+ 		codec_clk: clk@01c20140 {
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun4i-a10-codec-clk";
+-- 
+2.6.2
