@@ -1,101 +1,54 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
 	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Andrew Bresticker <abrestic@chromium.org>,
-	Mark Kuo <mkuo@nvidia.com>,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 8/9] clk: tegra: pll: Fix PLLE SS config
-Date: Thu, 10 Dec 2015 17:08:27 -0500
-Message-ID: <1449785308-19546-9-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1449785308-19546-1-git-send-email-rklein@nvidia.com>
-References: <1449785308-19546-1-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+	linux-sunxi@googlegroups.com
+Subject: [PATCH resend 6/6] ARM: dts: sun7i: Add VE (Video Engine) module clock node
+Date: Sat,  5 Dec 2015 21:16:47 +0800
+Message-Id: <1449321407-4531-7-git-send-email-wens@csie.org>
+In-Reply-To: <1449321407-4531-1-git-send-email-wens@csie.org>
+References: <1449321407-4531-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mark Kuo <mkuo@nvidia.com>
+The video engine has its own module clock, which also includes a
+reset control for it.
 
-Fix PLLE spread spectrum configuration so it aligns with downstream
-kernel.
-
-Signed-off-by: Mark Kuo <mkuo@nvidia.com>
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/tegra/clk-pll.c | 22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+ arch/arm/boot/dts/sun7i-a20.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index d9c3109b75bd..6ac3f843e7ca 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -86,15 +86,21 @@
- #define PLLE_SS_DISABLE (PLLE_SS_CNTL_BYPASS_SS | PLLE_SS_CNTL_INTERP_RESET |\
- 				PLLE_SS_CNTL_SSC_BYP)
- #define PLLE_SS_MAX_MASK 0x1ff
--#define PLLE_SS_MAX_VAL 0x25
-+#define PLLE_SS_MAX_VAL_TEGRA114 0x25
-+#define PLLE_SS_MAX_VAL_TEGRA210 0x21
- #define PLLE_SS_INC_MASK (0xff << 16)
- #define PLLE_SS_INC_VAL (0x1 << 16)
- #define PLLE_SS_INCINTRV_MASK (0x3f << 24)
--#define PLLE_SS_INCINTRV_VAL (0x20 << 24)
-+#define PLLE_SS_INCINTRV_VAL_TEGRA114 (0x20 << 24)
-+#define PLLE_SS_INCINTRV_VAL_TEGRA210 (0x23 << 24)
- #define PLLE_SS_COEFFICIENTS_MASK \
- 	(PLLE_SS_MAX_MASK | PLLE_SS_INC_MASK | PLLE_SS_INCINTRV_MASK)
--#define PLLE_SS_COEFFICIENTS_VAL \
--	(PLLE_SS_MAX_VAL | PLLE_SS_INC_VAL | PLLE_SS_INCINTRV_VAL)
-+#define PLLE_SS_COEFFICIENTS_VAL_TEGRA114 \
-+	(PLLE_SS_MAX_VAL_TEGRA114 | PLLE_SS_INC_VAL |\
-+	 PLLE_SS_INCINTRV_VAL_TEGRA114)
-+#define PLLE_SS_COEFFICIENTS_VAL_TEGRA210 \
-+	(PLLE_SS_MAX_VAL_TEGRA210 | PLLE_SS_INC_VAL |\
-+	 PLLE_SS_INCINTRV_VAL_TEGRA210)
+diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
+index 21169c0a6627..0940a788f824 100644
+--- a/arch/arm/boot/dts/sun7i-a20.dtsi
++++ b/arch/arm/boot/dts/sun7i-a20.dtsi
+@@ -527,6 +527,15 @@
+ 					     "dram_de_mp", "dram_ace";
+ 		};
  
- #define PLLE_AUX_PLLP_SEL	BIT(2)
- #define PLLE_AUX_USE_LOCKDET	BIT(3)
-@@ -1401,7 +1407,7 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
- 	val |= PLLE_MISC_IDDQ_SW_CTRL;
- 	val &= ~PLLE_MISC_IDDQ_SW_VALUE;
- 	val |= PLLE_MISC_PLLE_PTS;
--	val |= PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK;
-+	val &= ~(PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK);
- 	pll_writel_misc(val, pll);
- 	udelay(5);
- 
-@@ -1428,7 +1434,7 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
- 	val = pll_readl(PLLE_SS_CTRL, pll);
- 	val &= ~(PLLE_SS_CNTL_CENTER | PLLE_SS_CNTL_INVERT);
- 	val &= ~PLLE_SS_COEFFICIENTS_MASK;
--	val |= PLLE_SS_COEFFICIENTS_VAL;
-+	val |= PLLE_SS_COEFFICIENTS_VAL_TEGRA114;
- 	pll_writel(val, PLLE_SS_CTRL, pll);
- 	val &= ~(PLLE_SS_CNTL_SSC_BYP | PLLE_SS_CNTL_BYPASS_SS);
- 	pll_writel(val, PLLE_SS_CTRL, pll);
-@@ -2035,7 +2041,7 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	val |= PLLE_MISC_IDDQ_SW_CTRL;
- 	val &= ~PLLE_MISC_IDDQ_SW_VALUE;
- 	val |= PLLE_MISC_PLLE_PTS;
--	val |= PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK;
-+	val &= ~(PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK);
- 	pll_writel_misc(val, pll);
- 	udelay(5);
- 
-@@ -2065,7 +2071,7 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	val = pll_readl(PLLE_SS_CTRL, pll);
- 	val &= ~(PLLE_SS_CNTL_CENTER | PLLE_SS_CNTL_INVERT);
- 	val &= ~PLLE_SS_COEFFICIENTS_MASK;
--	val |= PLLE_SS_COEFFICIENTS_VAL;
-+	val |= PLLE_SS_COEFFICIENTS_VAL_TEGRA210;
- 	pll_writel(val, PLLE_SS_CTRL, pll);
- 	val &= ~(PLLE_SS_CNTL_SSC_BYP | PLLE_SS_CNTL_BYPASS_SS);
- 	pll_writel(val, PLLE_SS_CTRL, pll);
++		ve_clk: clk@01c2013c {
++			#clock-cells = <0>;
++			#reset-cells = <0>;
++			compatible = "allwinner,sun4i-a10-ve-clk";
++			reg = <0x01c2013c 0x4>;
++			clocks = <&pll4>;
++			clock-output-names = "ve";
++		};
++
+ 		codec_clk: clk@01c20140 {
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun4i-a10-codec-clk";
 -- 
-1.9.1
+2.6.2
