@@ -1,68 +1,73 @@
-Return-Path: <ben@smart-cactus.org>
-From: Ben Gamari <ben@smart-cactus.org>
-To: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Emilio Lopez <emilio@elopez.com.ar>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
 	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	b.zolnierkie@samsung.com,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Ben Gamari <ben@smart-cactus.org>
-Subject: [PATCH 08/12] ARM: Exynos: use generic cpufreq driver for Exynos5800
-Date: Wed,  2 Dec 2015 22:19:23 +0100
-Message-Id: <1449091167-20758-9-git-send-email-ben@smart-cactus.org>
-In-Reply-To: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
-References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
+	linux-sunxi@googlegroups.com
+Subject: [PATCH resend 1/6] clk: sunxi: Add DRAM gates support for sun4i-a10
+Date: Sat,  5 Dec 2015 21:16:42 +0800
+Message-Id: <1449321407-4531-2-git-send-email-wens@csie.org>
+In-Reply-To: <1449321407-4531-1-git-send-email-wens@csie.org>
+References: <1449321407-4531-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Thomas Abraham <thomas.ab@samsung.com>
+The A10/A20 share the same set of DRAM clock gates, which controls
+direct memory access for some peripherals.
 
-The new CPU clock type allows the use of generic arm_big_little_dt
-cpufreq driver for Exynos5800.
+On the A10, bit 15 controls the system's DRAM clock output (possibly
+to the DRAM chips), which we need to keep on.
 
-Changes by Bartlomiej:
-- split Exynos5800 support from the original patch
-- disable cpufreq if big.LITTLE switcher support is enabled
+On the A20 this has been moved to the DRAM controller, becoming a no-op.
+However it is still listed in the user manual, so add it anyway.
 
-Changes by Ben Gamari:
-- rebase
-
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Ben Gamari <ben@smart-cactus.org>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- arch/arm/mach-exynos/exynos.c | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+ drivers/clk/sunxi/clk-simple-gates.c              | 12 ++++++++++++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 818e6a0..9289412 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -236,6 +236,7 @@ static const struct of_device_id exynos_cpufreq_matches[] = {
- 	 */
- #ifndef CONFIG_BL_SWITCHER
- 	{ .compatible = "samsung,exynos5420", .data = "arm-bL-cpufreq-dt" },
-+	{ .compatible = "samsung,exynos5800", .data = "arm-bL-cpufreq-dt" },
- #endif
- 	{ /* sentinel */ }
- };
+diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
+index 153ac72869e8..ef0b452806b1 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+@@ -57,6 +57,7 @@ Required properties:
+ 	"allwinner,sun6i-a31-apb2-gates-clk" - for the APB2 gates on A31
+ 	"allwinner,sun8i-a23-apb2-gates-clk" - for the APB2 gates on A23
+ 	"allwinner,sun9i-a80-apbs-gates-clk" - for the APBS gates on A80
++	"allwinner,sun4i-a10-dram-gates-clk" - for the DRAM gates on A10
+ 	"allwinner,sun5i-a13-mbus-clk" - for the MBUS clock on A13
+ 	"allwinner,sun4i-a10-mmc-clk" - for the MMC clock
+ 	"allwinner,sun9i-a80-mmc-clk" - for mmc module clocks on A80
+diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/clk-simple-gates.c
+index c8acc0612c15..f4da52b5ca0e 100644
+--- a/drivers/clk/sunxi/clk-simple-gates.c
++++ b/drivers/clk/sunxi/clk-simple-gates.c
+@@ -160,3 +160,15 @@ CLK_OF_DECLARE(sun5i_a13_ahb, "allwinner,sun5i-a13-ahb-gates-clk",
+ 	       sun4i_a10_ahb_init);
+ CLK_OF_DECLARE(sun7i_a20_ahb, "allwinner,sun7i-a20-ahb-gates-clk",
+ 	       sun4i_a10_ahb_init);
++
++static const int sun4i_a10_dram_critical_clocks[] __initconst = {
++	15,	/* dram_output */
++};
++
++static void __init sun4i_a10_dram_init(struct device_node *node)
++{
++	sunxi_simple_gates_setup(node, sun4i_a10_dram_critical_clocks,
++				 ARRAY_SIZE(sun4i_a10_dram_critical_clocks));
++}
++CLK_OF_DECLARE(sun4i_a10_dram, "allwinner,sun4i-a10-dram-gates-clk",
++	       sun4i_a10_dram_init);
 -- 
 2.6.2
