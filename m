@@ -1,65 +1,60 @@
 Return-Path: <yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+In-Reply-To: <1446713979-32693-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1446713979-32693-1-git-send-email-yamada.masahiro@socionext.com>
+Date: Sat, 5 Dec 2015 14:15:06 +0900
+Message-ID: <CAK7LNAQK6CrcmBOKQ9EKjH+S-jxP-dS9Zt_u4E=8MaudJn7EoQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: fix codying style of if ... else blocks
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mtd@lists.infradead.org
+To: linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
 Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 05/16] clk: change sizeof(struct clk *) to sizeof(*core->parents)
-Date: Mon, 28 Dec 2015 19:10:18 +0900
-Message-Id: <1451297429-21689-6-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Now, the clock parent is not "struct clk *", but "struct clk_core *".
-Of course, the size of a pointer is always same, but strictly speaking,
-sizeof(struct clk *) should be sizeof(struct clk_core *) here.
+Hi Stephen,
 
-This mismatch happened when we split the structure into struct clk
-and struct clk_core.  For the potential possibility of future renaming,
-sizeof(*core->parents) would be better.
+No value for this patch, or just you missed this?
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
 
-Changes in v2: None
+2015-11-05 17:59 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> This code is unreadable due to the blank line between if and else
+> blocks.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+>
+>  drivers/clk/clk-mux.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
+> index 7129c86..5ed03c8 100644
+> --- a/drivers/clk/clk-mux.c
+> +++ b/drivers/clk/clk-mux.c
+> @@ -71,10 +71,9 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
+>         u32 val;
+>         unsigned long flags = 0;
+>
+> -       if (mux->table)
+> +       if (mux->table) {
+>                 index = mux->table[index];
+> -
+> -       else {
+> +       } else {
+>                 if (mux->flags & CLK_MUX_INDEX_BIT)
+>                         index = 1 << index;
+>
+> --
+> 1.9.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
- drivers/clk/clk.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 30c0bbc..98745c3 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1069,7 +1069,7 @@ static int clk_fetch_parent_index(struct clk_core *core,
- 
- 	if (!core->parents) {
- 		core->parents = kcalloc(core->num_parents,
--					sizeof(struct clk *), GFP_KERNEL);
-+					sizeof(*core->parents), GFP_KERNEL);
- 		if (!core->parents)
- 			return -ENOMEM;
- 	}
-@@ -1702,7 +1702,7 @@ static struct clk_core *__clk_init_parent(struct clk_core *core)
- 
- 	if (!core->parents)
- 		core->parents =
--			kcalloc(core->num_parents, sizeof(struct clk *),
-+			kcalloc(core->num_parents, sizeof(*core->parents),
- 					GFP_KERNEL);
- 
- 	ret = clk_core_get_parent_by_index(core, index);
-@@ -2350,8 +2350,8 @@ static int __clk_core_init(struct clk_core *core)
- 	 * necessary.
- 	 */
- 	if (core->num_parents > 1) {
--		core->parents = kcalloc(core->num_parents, sizeof(struct clk *),
--					GFP_KERNEL);
-+		core->parents = kcalloc(core->num_parents,
-+					sizeof(*core->parents), GFP_KERNEL);
- 		/*
- 		 * clk_core_lookup returns NULL for parents that have not been
- 		 * clk_init'd; thus any access to clk->parents[] must check
+
 -- 
-1.9.1
+Best Regards
+Masahiro Yamada
