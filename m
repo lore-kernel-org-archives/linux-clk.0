@@ -1,112 +1,60 @@
-Return-Path: <Ping.Bai@freescale.com>
-From: Bai Ping <b51503@freescale.com>
-To: <shawnguo@kernel.org>, <kernel@pengutronix.de>
-CC: <pawel.moll@arm.com>, <robh+dt@kernel.org>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v2 3/5] ARM: dts: imx: Add basic dts support for imx6qp-sabreauto
-Date: Tue, 15 Dec 2015 14:07:51 +0800
-Message-ID: <1450159673-27314-4-git-send-email-b51503@freescale.com>
-In-Reply-To: <1450159673-27314-1-git-send-email-b51503@freescale.com>
-References: <1450159673-27314-1-git-send-email-b51503@freescale.com>
-Return-Path: b51503@freescale.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH resend 0/6] ARM: sunxi: Add support for A10/A20 Video Engine clocks
+Date: Sat,  5 Dec 2015 21:16:41 +0800
+Message-Id: <1449321407-4531-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds basic dts file for imx6qp-sabreauto board.
+Hi everyone,
 
-Signed-off-by: Bai Ping <b51503@freescale.com>
----
- arch/arm/boot/dts/Makefile             |  1 +
- arch/arm/boot/dts/imx6qp-sabreauto.dts | 67 ++++++++++++++++++++++++++++++++++
- 2 files changed, 68 insertions(+)
- create mode 100644 arch/arm/boot/dts/imx6qp-sabreauto.dts
+(Series resent with linux-arm-kernel list added.)
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index dfba765..7996a51 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -329,6 +329,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
- 	imx6q-phytec-pbab01.dtb \
- 	imx6q-rex-pro.dtb \
- 	imx6q-sabreauto.dtb \
-+	imx6qp-sabreauto.dtb \
- 	imx6q-sabrelite.dtb \
- 	imx6q-sabresd.dtb \
- 	imx6q-sbc6x.dtb \
-diff --git a/arch/arm/boot/dts/imx6qp-sabreauto.dts b/arch/arm/boot/dts/imx6qp-sabreauto.dts
-new file mode 100644
-index 0000000..b24aae6
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6qp-sabreauto.dts
-@@ -0,0 +1,67 @@
-+/*
-+ * Copyright (C) 2015 Freescale Semiconductor, Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include "imx6q-sabreauto.dts"
-+#include "imx6qp.dtsi"
-+
-+/ {
-+	model = "Freescale i.MX6 Quad Plus SABRE Automotive Board";
-+	compatible = "fsl,imx6qp-sabreauto", "fsl,imx6qp";
-+};
-+
-+
-+&fec {
-+	pinctrl-assert-gpios = <&max7322 0 GPIO_ACTIVE_HIGH>;
-+};
-+
-+&i2c2 {
-+	max7322: gpio@68 {
-+		compatible = "maxim,max7322";
-+		reg = <0x68>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+};
-+
-+&iomuxc {
-+	imx6qdl-sabreauto {
-+		pinctrl_enet: enetgrp {
-+			fsl,pins = <
-+				MX6QDL_PAD_KEY_COL1__ENET_MDIO          0x1b0b0
-+				MX6QDL_PAD_KEY_COL2__ENET_MDC           0x1b0b0
-+				MX6QDL_PAD_RGMII_TXC__RGMII_TXC         0x1b018
-+				MX6QDL_PAD_RGMII_TD0__RGMII_TD0         0x1b018
-+				MX6QDL_PAD_RGMII_TD1__RGMII_TD1         0x1b018
-+				MX6QDL_PAD_RGMII_TD2__RGMII_TD2         0x1b018
-+				MX6QDL_PAD_RGMII_TD3__RGMII_TD3         0x1b018
-+				MX6QDL_PAD_RGMII_TX_CTL__RGMII_TX_CTL   0x1b018
-+				MX6QDL_PAD_RGMII_RXC__RGMII_RXC         0x1b018
-+				MX6QDL_PAD_RGMII_RD0__RGMII_RD0         0x1b018
-+				MX6QDL_PAD_RGMII_RD1__RGMII_RD1         0x1b018
-+				MX6QDL_PAD_RGMII_RD2__RGMII_RD2         0x1b018
-+				MX6QDL_PAD_RGMII_RD3__RGMII_RD3         0x1b018
-+				MX6QDL_PAD_RGMII_RX_CTL__RGMII_RX_CTL   0x1b018
-+				MX6QDL_PAD_GPIO_16__ENET_REF_CLK        0x4001b0a8
-+				MX6QDL_PAD_GPIO_6__ENET_IRQ		0x000b1
-+			>;
-+		};
-+	};
-+};
-+
-+&pcie {
-+	reset-gpio = <&max7310_c 5 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
-+
-+&sata {
-+	status = "okay";
-+};
-+
-+&vgen3_reg {
-+	regulator-always-on;
-+};
+This series adds support for the clocks used by the Video Engine (VPU /
+video codec hardware) on the Allwinner A10/A20. The series purposely
+excludes sun5i (A10s/A13/R8) to avoid any conflicts with Maxime's KMS
+driver series, but adding it should be easy. VE clocks for the newer
+generation of SoCs are the same, except the reset control is moved to
+the common bus reset controls. These can be supported later on.
+
+The series is meant to get platform stuff out of the way so people who
+want to work on a proper driver for the VPU can do so.
+
+The patches are pretty self-explanatory.
+
+Regards
+ChenYu
+
+Chen-Yu Tsai (6):
+  clk: sunxi: Add DRAM gates support for sun4i-a10
+  clk: sunxi: Add VE (Video Engine) module clock driver for sun[457]i
+  ARM: dts: sun4i: Add DRAM gates
+  ARM: dts: sun4i: Add VE (Video Engine) module clock node
+  ARM: dts: sun7i: Add DRAM gates
+  ARM: dts: sun7i: Add VE (Video Engine) module clock node
+
+ Documentation/devicetree/bindings/clock/sunxi.txt |   5 +
+ arch/arm/boot/dts/sun4i-a10.dtsi                  |  45 +++++-
+ arch/arm/boot/dts/sun7i-a20.dtsi                  |  41 +++++-
+ drivers/clk/sunxi/Makefile                        |   1 +
+ drivers/clk/sunxi/clk-a10-ve.c                    | 171 ++++++++++++++++++++++
+ drivers/clk/sunxi/clk-simple-gates.c              |  12 ++
+ 6 files changed, 268 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/clk/sunxi/clk-a10-ve.c
+
 -- 
-1.9.1
+2.6.2
