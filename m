@@ -1,111 +1,251 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL v2] rockchip clock changes for 4.5
-Date: Mon, 21 Dec 2015 02:15:57 +0100
-Message-ID: <2321556.9PKkgq9foB@diego>
-In-Reply-To: <3167734.Jiqp72JFJP@diego>
-References: <3167734.Jiqp72JFJP@diego>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH resend 2/6] clk: sunxi: Add VE (Video Engine) module clock driver for sun[457]i
+Date: Sat,  5 Dec 2015 21:16:43 +0800
+Message-Id: <1449321407-4531-3-git-send-email-wens@csie.org>
+In-Reply-To: <1449321407-4531-1-git-send-email-wens@csie.org>
+References: <1449321407-4531-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike, Stephen,
+The video engine has its own special module clock, consisting of a clock
+gate, configurable dividers, and a reset control.
 
-the original pull request seems to have fallen through the cracks, probably
-due to christmas/travels. So this new v2 _supersedes the original one
-and includes changes that happened during the last 3 weeks.
+On later (sun[68]i) families, the reset control is moved out of this
+piece of hardware and grouped with reset controls of other peripherals.
 
-So please pull
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ Documentation/devicetree/bindings/clock/sunxi.txt |   4 +
+ drivers/clk/sunxi/Makefile                        |   1 +
+ drivers/clk/sunxi/clk-a10-ve.c                    | 171 ++++++++++++++++++++++
+ 3 files changed, 176 insertions(+)
+ create mode 100644 drivers/clk/sunxi/clk-a10-ve.c
 
-Thanks
-Heiko
-
-
-The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
-
-  Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.5-rockchip-clk1_1
-
-for you to fetch changes up to dfff24bde7fb8d57482e907d5dfb0be3a9e28119:
-
-  clk: rockchip: only enter pll slow-mode directly before reboots on rk3288 (2015-12-21 02:01:19 +0100)
-
-----------------------------------------------------------------
-Rockchip clock changes for 4.5 containing
-- a new pll-type used on rk3036 and other Cortex-A7 socs
-- new clock-trees for rk3036 and rk3228
-- switch rk3288 plls to slow mode on reboot
-- a bunch of new clock ids
-- some more critical clocks
-- wrong register offsets for the rk3368 cpuclks
-- allowing more than 2 parents for the cpuclk
-
-----------------------------------------------------------------
-Caesar Wang (1):
-      clk: rockchip: Force rk3368 PWM clock (and its parents) on
-
-Chris Zhong (3):
-      clk: rockchip: add id for mipidsi sclk on rk3288
-      clk: rockchip: add mipidsi clock on rk3288
-      clk: rockchip: switch PLLs to slow mode before reboot for rk3288
-
-Heiko Stuebner (5):
-      Merge branch 'v4.5-clk/clkids' into v4.5-clk/next
-      Merge branch 'v4.5-clk/clkids' into v4.5-clk/next
-      clk: rockchip: fix rk3368 cpuclk divider offsets
-      Merge branch 'v4.5-clk/clkids' into v4.5-clk/next
-      clk: rockchip: only enter pll slow-mode directly before reboots on rk3288
-
-Jeffy Chen (4):
-      clk: rockchip: allow more than 2 parents for cpuclk
-      clk: rockchip: add dt-binding header for rk3228
-      dt-bindings: add documentation of rk3228 clock controller
-      clk: rockchip: add clock controller for rk3228
-
-Jianqun xu (1):
-      clk: rockchip: protect rk3368 aclk_bus and aclk_peri clocks
-
-Xing Zheng (4):
-      clk: rockchip: add dt-binding header for rk3036
-      dt-bindings: add documentation of rk3036 clock controller
-      clk: rockchip: add new pll-type for rk3036 and similar socs
-      clk: rockchip: add clock controller for rk3036
-
-Yakir Yang (1):
-      clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for aclk_vio
-
-Zain Wang (2):
-      clk: rockchip: add an id for rk3288 crypto clk
-      clk: rockchip: set the id for crypto clk
-
-ZhengShunQian (2):
-      clk: rockchip: Add the clock ids of rk3288 eFuses
-      clk: rockchip: use rk3288-efuse clock ids
-
- .../bindings/clock/rockchip,rk3036-cru.txt         |  56 ++
- .../bindings/clock/rockchip,rk3228-cru.txt         |  58 ++
- drivers/clk/rockchip/Makefile                      |   2 +
- drivers/clk/rockchip/clk-cpu.c                     |   4 +-
- drivers/clk/rockchip/clk-pll.c                     | 258 +++++++-
- drivers/clk/rockchip/clk-rk3036.c                  | 478 +++++++++++++++
- drivers/clk/rockchip/clk-rk3188.c                  |   2 +-
- drivers/clk/rockchip/clk-rk3228.c                  | 678 +++++++++++++++++++++
- drivers/clk/rockchip/clk-rk3288.c                  |  42 +-
- drivers/clk/rockchip/clk-rk3368.c                  |  13 +-
- drivers/clk/rockchip/clk.c                         |   7 +-
- drivers/clk/rockchip/clk.h                         |  43 +-
- include/dt-bindings/clock/rk3036-cru.h             | 193 ++++++
- include/dt-bindings/clock/rk3228-cru.h             | 220 +++++++
- include/dt-bindings/clock/rk3288-cru.h             |   4 +
- 15 files changed, 2025 insertions(+), 33 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3036-cru.txt
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3228-cru.txt
- create mode 100644 drivers/clk/rockchip/clk-rk3036.c
- create mode 100644 drivers/clk/rockchip/clk-rk3228.c
- create mode 100644 include/dt-bindings/clock/rk3036-cru.h
- create mode 100644 include/dt-bindings/clock/rk3228-cru.h
+diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
+index ef0b452806b1..14496056319f 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+@@ -74,6 +74,7 @@ Required properties:
+ 	"allwinner,sun8i-h3-usb-clk" - for usb gates + resets on H3
+ 	"allwinner,sun9i-a80-usb-mod-clk" - for usb gates + resets on A80
+ 	"allwinner,sun9i-a80-usb-phy-clk" - for usb phy gates + resets on A80
++	"allwinner,sun4i-a10-ve-clk" - for the Video Engine clock
+ 
+ Required properties for all clocks:
+ - reg : shall be the control register address for the clock.
+@@ -93,6 +94,9 @@ Required properties for all clocks:
+ And "allwinner,*-usb-clk" clocks also require:
+ - reset-cells : shall be set to 1
+ 
++The "allwinner,sun4i-a10-ve-clk" clock also requires:
++- reset-cells : shall be set to 0
++
+ The "allwinner,sun9i-a80-mmc-config-clk" clock also requires:
+ - #reset-cells : shall be set to 1
+ - resets : shall be the reset control phandle for the mmc block.
+diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+index 103efab05ca8..78db91ad5af6 100644
+--- a/drivers/clk/sunxi/Makefile
++++ b/drivers/clk/sunxi/Makefile
+@@ -7,6 +7,7 @@ obj-y += clk-a10-codec.o
+ obj-y += clk-a10-hosc.o
+ obj-y += clk-a10-mod1.o
+ obj-y += clk-a10-pll2.o
++obj-y += clk-a10-ve.o
+ obj-y += clk-a20-gmac.o
+ obj-y += clk-mod0.o
+ obj-y += clk-simple-gates.o
+diff --git a/drivers/clk/sunxi/clk-a10-ve.c b/drivers/clk/sunxi/clk-a10-ve.c
+new file mode 100644
+index 000000000000..de0fdb656150
+--- /dev/null
++++ b/drivers/clk/sunxi/clk-a10-ve.c
+@@ -0,0 +1,171 @@
++/*
++ * Copyright 2015 Chen-Yu Tsai
++ *
++ * Chen-Yu Tsai <wens@csie.org>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/reset-controller.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++
++static DEFINE_SPINLOCK(ve_lock);
++
++#define SUN4I_VE_ENABLE		31
++#define SUN4I_VE_DIVIDER_SHIFT	16
++#define SUN4I_VE_DIVIDER_WIDTH	3
++#define SUN4I_VE_RESET		0
++
++/**
++ * sunxi_ve_reset... - reset bit in ve clk registers handling
++ */
++
++struct ve_reset_data {
++	void __iomem			*reg;
++	spinlock_t			*lock;
++	struct reset_controller_dev	rcdev;
++};
++
++static int sunxi_ve_reset_assert(struct reset_controller_dev *rcdev,
++				 unsigned long id)
++{
++	struct ve_reset_data *data = container_of(rcdev,
++						  struct ve_reset_data,
++						  rcdev);
++	unsigned long flags;
++	u32 reg;
++
++	spin_lock_irqsave(data->lock, flags);
++
++	reg = readl(data->reg);
++	writel(reg & ~BIT(SUN4I_VE_RESET), data->reg);
++
++	spin_unlock_irqrestore(data->lock, flags);
++
++	return 0;
++}
++
++static int sunxi_ve_reset_deassert(struct reset_controller_dev *rcdev,
++				   unsigned long id)
++{
++	struct ve_reset_data *data = container_of(rcdev,
++						  struct ve_reset_data,
++						  rcdev);
++	unsigned long flags;
++	u32 reg;
++
++	spin_lock_irqsave(data->lock, flags);
++
++	reg = readl(data->reg);
++	writel(reg | BIT(SUN4I_VE_RESET), data->reg);
++
++	spin_unlock_irqrestore(data->lock, flags);
++
++	return 0;
++}
++
++static int sunxi_ve_of_xlate(struct reset_controller_dev *rcdev,
++			     const struct of_phandle_args *reset_spec)
++{
++    if (WARN_ON(reset_spec->args_count != 0))
++	return -EINVAL;
++
++    return 0;
++}
++
++static struct reset_control_ops sunxi_ve_reset_ops = {
++	.assert		= sunxi_ve_reset_assert,
++	.deassert	= sunxi_ve_reset_deassert,
++};
++
++static void __init sun4i_ve_clk_setup(struct device_node *node)
++{
++	struct clk *clk;
++	struct clk_divider *div;
++	struct clk_gate *gate;
++	struct ve_reset_data *reset_data;
++	const char *parent;
++	const char *clk_name = node->name;
++	void __iomem *reg;
++	int err;
++
++	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
++	if (IS_ERR(reg))
++		return;
++
++	div = kzalloc(sizeof(*div), GFP_KERNEL);
++	if (!div)
++		goto err_unmap;
++
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		goto err_free_div;
++
++	of_property_read_string(node, "clock-output-names", &clk_name);
++	parent = of_clk_get_parent_name(node, 0);
++
++	gate->reg = reg;
++	gate->bit_idx = SUN4I_VE_ENABLE;
++	gate->lock = &ve_lock;
++
++	div->reg = reg;
++	div->shift = SUN4I_VE_DIVIDER_SHIFT;
++	div->width = SUN4I_VE_DIVIDER_WIDTH;
++	div->lock = &ve_lock;
++
++	clk = clk_register_composite(NULL, clk_name, &parent, 1,
++				     NULL, NULL,
++				     &div->hw, &clk_divider_ops,
++				     &gate->hw, &clk_gate_ops,
++				     CLK_SET_RATE_PARENT);
++	if (IS_ERR(clk))
++		goto err_free_gate;
++
++	err = of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	if (err)
++		goto err_unregister_clk;
++
++	reset_data = kzalloc(sizeof(*reset_data), GFP_KERNEL);
++	if (!reset_data)
++		goto err_del_provider;
++
++	reset_data->reg = reg;
++	reset_data->lock = &ve_lock;
++	reset_data->rcdev.nr_resets = 1;
++	reset_data->rcdev.ops = &sunxi_ve_reset_ops;
++	reset_data->rcdev.of_node = node;
++	reset_data->rcdev.of_xlate = sunxi_ve_of_xlate;
++	reset_data->rcdev.of_reset_n_cells = 0;
++	err = reset_controller_register(&reset_data->rcdev);
++	if (err)
++		goto err_free_reset;
++
++	return;
++
++err_free_reset:
++	kfree(reset_data);
++err_del_provider:
++	of_clk_del_provider(node);
++err_unregister_clk:
++	clk_unregister(clk);
++err_free_gate:
++	kfree(gate);
++err_free_div:
++	kfree(div);
++err_unmap:
++	iounmap(reg);
++}
++CLK_OF_DECLARE(sun4i_ve, "allwinner,sun4i-a10-ve-clk",
++	       sun4i_ve_clk_setup);
+-- 
+2.6.2
