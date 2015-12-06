@@ -1,260 +1,57 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	sjoerd.simons@collabora.co.uk,
-	wxt@rock-chips.com,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH v2 2/5] clk: rockchip: handle mux dependency of fractional dividers
-Date: Tue, 22 Dec 2015 22:27:59 +0100
-Message-Id: <1450819682-4932-3-git-send-email-heiko@sntech.de>
-In-Reply-To: <1450819682-4932-1-git-send-email-heiko@sntech.de>
-References: <1450819682-4932-1-git-send-email-heiko@sntech.de>
+Return-Path: <repk@triplefau.lt>
+From: Remi Pommarel <repk@triplefau.lt>
+To: Stephen Warren <swarren@wwwdotorg.org>,
+	Eric Anholt <eric@anholt.net>,
+	Lee Jones <lee@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: linux-rpi-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Remi Pommarel <repk@triplefau.lt>
+Subject: [PATCH v3 0/4] Add PWM clock support for bcm2835
+Date: Sun,  6 Dec 2015 17:22:45 +0100
+Message-Id: <1449418969-5565-1-git-send-email-repk@triplefau.lt>
 List-ID: <linux-clk.vger.kernel.org>
 
-The fractional dividers of Rockchip SoCs contain an "auto-gating-feature"
-that requires the downstream mux to actually point to the fractional
-divider and the fractional divider gate to be enabled, for it to really
-accept changes to the divider ratio.
+Hi,
 
-The downstream muxes themselfs are not generic enough to include them
-directly into the fractional divider, as they have varying sources of
-parent clocks including not only clocks related to the fractional
-dividers but other clocks as well.
+This patchset adds support for pwm clock. At boot, this clock does not have a
+default parent nor a default rate set. Thus we should be able to change its
+parent to get this clock working. The current clock implementation is using a
+mux to select the parent, but these clocks need to add a password (0x5a) in
+higher register bits when changing parent. So a generic mux cannot be used
+here.
 
-To solve this, allow our clock branches to specify direct child clock-
-branches in the new child property, let the fractional divider register
-its downstream mux through this and add a clock notifier that temporarily
-switches the mux setting when it notices rate changes to the fractional
-divider.
+The two first patches fix the clock parent selection, while the last ones are
+actually adding the pwm clock registration.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Tested-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Reviewed-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
----
- drivers/clk/rockchip/clk.c | 137 ++++++++++++++++++++++++++++++++++++++++-----
- drivers/clk/rockchip/clk.h |  19 +++++++
- 2 files changed, 142 insertions(+), 14 deletions(-)
+Changes since v1:
+	- determine_rate now based its parent selection upon divided rate
+	  instead of the parent one
+	- bcm2835_clock_choose_div has been modified to produce an avarage rate
+	  lower or equal to the requested one
+	- devicetree modifications have removed to be send in another patch
 
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index 443d6f0..d9a0b5d 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -102,22 +102,82 @@ static struct clk *rockchip_clk_register_branch(const char *name,
- 	return clk;
- }
- 
-+struct rockchip_clk_frac {
-+	struct notifier_block			clk_nb;
-+	struct clk_fractional_divider		div;
-+	struct clk_gate				gate;
-+
-+	struct clk_mux				mux;
-+	const struct clk_ops			*mux_ops;
-+	int					mux_frac_idx;
-+
-+	bool					rate_change_remuxed;
-+	int					rate_change_idx;
-+};
-+
-+#define to_rockchip_clk_frac_nb(nb) \
-+			container_of(nb, struct rockchip_clk_frac, clk_nb)
-+
-+static int rockchip_clk_frac_notifier_cb(struct notifier_block *nb,
-+					 unsigned long event, void *data)
-+{
-+	struct clk_notifier_data *ndata = data;
-+	struct rockchip_clk_frac *frac = to_rockchip_clk_frac_nb(nb);
-+	struct clk_mux *frac_mux = &frac->mux;
-+	int ret = 0;
-+
-+	pr_debug("%s: event %lu, old_rate %lu, new_rate: %lu\n",
-+		 __func__, event, ndata->old_rate, ndata->new_rate);
-+	if (event == PRE_RATE_CHANGE) {
-+		frac->rate_change_idx = frac->mux_ops->get_parent(&frac_mux->hw);
-+		if (frac->rate_change_idx != frac->mux_frac_idx) {
-+			frac->mux_ops->set_parent(&frac_mux->hw, frac->mux_frac_idx);
-+			frac->rate_change_remuxed = 1;
-+		}
-+	} else if (event == POST_RATE_CHANGE) {
-+		/*
-+		 * The POST_RATE_CHANGE notifier runs directly after the
-+		 * divider clock is set in clk_change_rate, so we'll have
-+		 * remuxed back to the original parent before clk_change_rate
-+		 * reaches the mux itself.
-+		 */
-+		if (frac->rate_change_remuxed) {
-+			frac->mux_ops->set_parent(&frac_mux->hw, frac->rate_change_idx);
-+			frac->rate_change_remuxed = 0;
-+		}
-+	}
-+
-+	return notifier_from_errno(ret);
-+}
-+
- static struct clk *rockchip_clk_register_frac_branch(const char *name,
- 		const char *const *parent_names, u8 num_parents,
- 		void __iomem *base, int muxdiv_offset, u8 div_flags,
- 		int gate_offset, u8 gate_shift, u8 gate_flags,
--		unsigned long flags, spinlock_t *lock)
-+		unsigned long flags, struct rockchip_clk_branch *child,
-+		spinlock_t *lock)
- {
-+	struct rockchip_clk_frac *frac;
- 	struct clk *clk;
- 	struct clk_gate *gate = NULL;
- 	struct clk_fractional_divider *div = NULL;
- 	const struct clk_ops *div_ops = NULL, *gate_ops = NULL;
- 
--	if (gate_offset >= 0) {
--		gate = kzalloc(sizeof(*gate), GFP_KERNEL);
--		if (!gate)
--			return ERR_PTR(-ENOMEM);
-+	if (muxdiv_offset < 0)
-+		return ERR_PTR(-EINVAL);
- 
-+	if (child && child->branch_type != branch_mux) {
-+		pr_err("%s: fractional child clock for %s can only be a mux\n",
-+		       __func__, name);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	frac = kzalloc(sizeof(*frac), GFP_KERNEL);
-+	if (!frac)
-+		return ERR_PTR(-ENOMEM);
-+
-+	if (gate_offset >= 0) {
-+		gate = &frac->gate;
- 		gate->flags = gate_flags;
- 		gate->reg = base + gate_offset;
- 		gate->bit_idx = gate_shift;
-@@ -125,13 +185,7 @@ static struct clk *rockchip_clk_register_frac_branch(const char *name,
- 		gate_ops = &clk_gate_ops;
- 	}
- 
--	if (muxdiv_offset < 0)
--		return ERR_PTR(-EINVAL);
--
--	div = kzalloc(sizeof(*div), GFP_KERNEL);
--	if (!div)
--		return ERR_PTR(-ENOMEM);
--
-+	div = &frac->div;
- 	div->flags = div_flags;
- 	div->reg = base + muxdiv_offset;
- 	div->mshift = 16;
-@@ -147,7 +201,61 @@ static struct clk *rockchip_clk_register_frac_branch(const char *name,
- 				     NULL, NULL,
- 				     &div->hw, div_ops,
- 				     gate ? &gate->hw : NULL, gate_ops,
--				     flags);
-+				     flags | CLK_SET_RATE_UNGATE);
-+	if (IS_ERR(clk)) {
-+		kfree(frac);
-+		return clk;
-+	}
-+
-+	if (child) {
-+		struct clk_mux *frac_mux = &frac->mux;
-+		struct clk_init_data init;
-+		struct clk *mux_clk;
-+		int i, ret;
-+
-+		frac->mux_frac_idx = -1;
-+		for (i = 0; i < child->num_parents; i++) {
-+			if (!strcmp(name, child->parent_names[i])) {
-+				pr_debug("%s: found fractional parent in mux at pos %d\n",
-+					 __func__, i);
-+				frac->mux_frac_idx = i;
-+				break;
-+			}
-+		}
-+
-+		frac->mux_ops = &clk_mux_ops;
-+		frac->clk_nb.notifier_call = rockchip_clk_frac_notifier_cb;
-+
-+		frac_mux->reg = base + child->muxdiv_offset;
-+		frac_mux->shift = child->mux_shift;
-+		frac_mux->mask = BIT(child->mux_width) - 1;
-+		frac_mux->flags = child->mux_flags;
-+		frac_mux->lock = lock;
-+		frac_mux->hw.init = &init;
-+
-+		init.name = child->name;
-+		init.flags = child->flags | CLK_SET_RATE_PARENT;
-+		init.ops = frac->mux_ops;
-+		init.parent_names = child->parent_names;
-+		init.num_parents = child->num_parents;
-+
-+		mux_clk = clk_register(NULL, &frac_mux->hw);
-+		if (IS_ERR(mux_clk))
-+			return clk;
-+
-+		rockchip_clk_add_lookup(mux_clk, child->id);
-+
-+		/* notifier on the fraction divider to catch rate changes */
-+		if (frac->mux_frac_idx >= 0) {
-+			ret = clk_notifier_register(clk, &frac->clk_nb);
-+			if (ret)
-+				pr_err("%s: failed to register clock notifier for %s\n",
-+						__func__, name);
-+		} else {
-+			pr_warn("%s: could not find %s as parent of %s, rate changes may not work\n",
-+				__func__, name, child->name);
-+		}
-+	}
- 
- 	return clk;
- }
-@@ -251,7 +359,8 @@ void __init rockchip_clk_register_branches(
- 				list->parent_names, list->num_parents,
- 				reg_base, list->muxdiv_offset, list->div_flags,
- 				list->gate_offset, list->gate_shift,
--				list->gate_flags, flags, &clk_lock);
-+				list->gate_flags, flags, list->child,
-+				&clk_lock);
- 			break;
- 		case branch_gate:
- 			flags |= CLK_SET_RATE_PARENT;
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index 809ef81..3f71ee5 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -274,6 +274,7 @@ struct rockchip_clk_branch {
- 	int				gate_offset;
- 	u8				gate_shift;
- 	u8				gate_flags;
-+	struct rockchip_clk_branch	*child;
- };
- 
- #define COMPOSITE(_id, cname, pnames, f, mo, ms, mw, mf, ds, dw,\
-@@ -408,6 +409,24 @@ struct rockchip_clk_branch {
- 		.gate_flags	= gf,				\
- 	}
- 
-+#define COMPOSITE_FRACMUX(_id, cname, pname, f, mo, df, go, gs, gf, ch) \
-+	{							\
-+		.id		= _id,				\
-+		.branch_type	= branch_fraction_divider,	\
-+		.name		= cname,			\
-+		.parent_names	= (const char *[]){ pname },	\
-+		.num_parents	= 1,				\
-+		.flags		= f,				\
-+		.muxdiv_offset	= mo,				\
-+		.div_shift	= 16,				\
-+		.div_width	= 16,				\
-+		.div_flags	= df,				\
-+		.gate_offset	= go,				\
-+		.gate_shift	= gs,				\
-+		.gate_flags	= gf,				\
-+		.child		= &(struct rockchip_clk_branch)ch, \
-+	}
-+
- #define MUX(_id, cname, pnames, f, o, s, w, mf)			\
- 	{							\
- 		.id		= _id,				\
+Changes since v2:
+	- Remove useless variable and include
+	- Make bcm2835_clock_choose_div() divisor round up ability optional
+	- Set rate in bcm2835_determine_rate()
+	- Add device tree modification in a separate patch
+
+
+Remi Pommarel (4):
+  clk: bcm2835: add a round up ability to the clock divisor
+  clk: bcm2835: Support for clock parent selection
+  clk: bcm2835: Add PWM clock support
+  clk: bcm2835: Add PWM clock support to the device tree
+
+ arch/arm/boot/dts/bcm2835-rpi.dtsi  |   4 +
+ arch/arm/boot/dts/bcm2835.dtsi      |   9 +++
+ drivers/clk/bcm/clk-bcm2835.c       | 155 +++++++++++++++++++++++-------------
+ include/dt-bindings/clock/bcm2835.h |   3 +-
+ 4 files changed, 116 insertions(+), 55 deletions(-)
+
 -- 
-2.6.4
+2.0.1
