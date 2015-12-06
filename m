@@ -1,360 +1,203 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+Return-Path: <repk@triplefau.lt>
+From: Remi Pommarel <repk@triplefau.lt>
+To: Stephen Warren <swarren@wwwdotorg.org>,
+	Eric Anholt <eric@anholt.net>,
+	Lee Jones <lee@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh+dt@kernel.org>
+Cc: linux-rpi-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v3 03/13] clk: at91: clk-main: factorize irq handling
-Date: Fri,  4 Dec 2015 18:03:38 +0100
-Message-Id: <1449248628-3486-4-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
+	linux-kernel@vger.kernel.org,
+	Remi Pommarel <repk@triplefau.lt>
+Subject: [PATCH v3 2/4] clk: bcm2835: Support for clock parent selection
+Date: Sun,  6 Dec 2015 17:22:47 +0100
+Message-Id: <1449418969-5565-3-git-send-email-repk@triplefau.lt>
+In-Reply-To: <1449418969-5565-1-git-send-email-repk@triplefau.lt>
+References: <1449418969-5565-1-git-send-email-repk@triplefau.lt>
 List-ID: <linux-clk.vger.kernel.org>
 
-The three different irq handlers are doing the same thing, factorize their
-code in a generic irq handler.
+Some bcm2835 clocks used by hardware (like "PWM" or "H264") can have multiple
+parent clocks. These clocks divide the rate of a parent which can be selected by
+setting the proper bits in the clock control register.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Previously all these parents where handled by a mux clock. But a mux clock
+cannot be used because updating clock control register to select parent needs a
+password to be xor'd with the parent index.
+
+This patch get rid of mux clock and make these clocks handle their own parent,
+allowing them to select the one to use.
+
+Signed-off-by: Remi Pommarel <repk@triplefau.lt>
 ---
- drivers/clk/at91/clk-main.c | 144 +++++++++++++++++++-------------------------
- 1 file changed, 63 insertions(+), 81 deletions(-)
+ drivers/clk/bcm/clk-bcm2835.c | 122 ++++++++++++++++++++++++++----------------
+ 1 file changed, 77 insertions(+), 45 deletions(-)
 
-diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
-index c1f119748bdc..5841eb958f83 100644
---- a/drivers/clk/at91/clk-main.c
-+++ b/drivers/clk/at91/clk-main.c
-@@ -34,25 +34,28 @@
- 
- #define MOR_KEY_MASK		(0xff << 16)
- 
--struct clk_main_osc {
-+struct clk_main {
- 	struct clk_hw hw;
- 	struct regmap *regmap;
- 	unsigned int irq;
- 	wait_queue_head_t wait;
- };
- 
--#define to_clk_main_osc(hw) container_of(hw, struct clk_main_osc, hw)
-+#define to_clk_main(hw) container_of(hw, struct clk_main, hw)
-+
-+struct clk_main_osc {
-+	struct clk_main base;
-+};
-+
-+#define to_clk_main_osc(hw) container_of(hw, struct clk_main_osc, base.hw)
- 
- struct clk_main_rc_osc {
--	struct clk_hw hw;
--	struct regmap *regmap;
--	unsigned int irq;
--	wait_queue_head_t wait;
-+	struct clk_main base;
- 	unsigned long frequency;
- 	unsigned long accuracy;
- };
- 
--#define to_clk_main_rc_osc(hw) container_of(hw, struct clk_main_rc_osc, hw)
-+#define to_clk_main_rc_osc(hw) container_of(hw, struct clk_main_rc_osc, base.hw)
- 
- struct clk_rm9200_main {
- 	struct clk_hw hw;
-@@ -62,21 +65,20 @@ struct clk_rm9200_main {
- #define to_clk_rm9200_main(hw) container_of(hw, struct clk_rm9200_main, hw)
- 
- struct clk_sam9x5_main {
--	struct clk_hw hw;
--	struct regmap *regmap;
--	unsigned int irq;
--	wait_queue_head_t wait;
-+	struct clk_main base;
- 	u8 parent;
- };
- 
--#define to_clk_sam9x5_main(hw) container_of(hw, struct clk_sam9x5_main, hw)
-+#define to_clk_sam9x5_main(hw) container_of(hw, struct clk_sam9x5_main, base.hw)
- 
--static irqreturn_t clk_main_osc_irq_handler(int irq, void *dev_id)
-+/* Generic structure */
-+
-+static irqreturn_t clk_main_irq_handler(int irq, void *dev_id)
- {
--	struct clk_main_osc *osc = dev_id;
-+	struct clk_main *clkmain = dev_id;
- 
--	wake_up(&osc->wait);
--	disable_irq_nosync(osc->irq);
-+	wake_up(&clkmain->wait);
-+	disable_irq_nosync(clkmain->irq);
- 
- 	return IRQ_HANDLED;
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 9e881ee..6e4dd6f 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1199,16 +1199,6 @@ static long bcm2835_clock_rate_from_divisor(struct bcm2835_clock *clock,
+ 	return temp;
  }
-@@ -93,7 +95,7 @@ static inline bool clk_main_osc_ready(struct regmap *regmap)
- static int clk_main_osc_prepare(struct clk_hw *hw)
- {
- 	struct clk_main_osc *osc = to_clk_main_osc(hw);
--	struct regmap *regmap = osc->regmap;
-+	struct regmap *regmap = osc->base.regmap;
- 	u32 tmp;
  
- 	regmap_read(regmap, AT91_CKGR_MOR, &tmp);
-@@ -108,8 +110,8 @@ static int clk_main_osc_prepare(struct clk_hw *hw)
+-static long bcm2835_clock_round_rate(struct clk_hw *hw,
+-				     unsigned long rate,
+-				     unsigned long *parent_rate)
+-{
+-	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
+-	u32 div = bcm2835_clock_choose_div(hw, rate, *parent_rate, false);
+-
+-	return bcm2835_clock_rate_from_divisor(clock, *parent_rate, div);
+-}
+-
+ static unsigned long bcm2835_clock_get_rate(struct clk_hw *hw,
+ 					    unsigned long parent_rate)
+ {
+@@ -1280,13 +1270,75 @@ static int bcm2835_clock_set_rate(struct clk_hw *hw,
+ 	return 0;
+ }
+ 
++static int bcm2835_clock_determine_rate(struct clk_hw *hw,
++		struct clk_rate_request *req)
++{
++	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
++	struct clk_hw *parent, *best_parent = NULL;
++	unsigned long rate, best_rate = 0;
++	unsigned long prate, best_prate = 0;
++	size_t i;
++	u32 div;
++
++	/*
++	 * Select parent clock that results in the closest but lower rate
++	 */
++	for (i = 0; i < clk_hw_get_num_parents(hw); ++i) {
++		parent = clk_hw_get_parent_by_index(hw, i);
++		if (!parent)
++			continue;
++		prate = clk_hw_get_rate(parent);
++		div = bcm2835_clock_choose_div(hw, req->rate, prate, true);
++		rate = bcm2835_clock_rate_from_divisor(clock, prate, div);
++		if (rate > best_rate && rate <= req->rate) {
++			best_parent = parent;
++			best_prate = prate;
++			best_rate = rate;
++		}
++	}
++
++	if (!best_parent)
++		return -EINVAL;
++
++	req->best_parent_hw = best_parent;
++	req->best_parent_rate = best_prate;
++
++	req->rate = best_rate;
++
++	return 0;
++}
++
++static int bcm2835_clock_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
++	struct bcm2835_cprman *cprman = clock->cprman;
++	const struct bcm2835_clock_data *data = clock->data;
++	u8 src = (index << CM_SRC_SHIFT) & CM_SRC_MASK;
++
++	cprman_write(cprman, data->ctl_reg, src);
++	return 0;
++}
++
++static u8 bcm2835_clock_get_parent(struct clk_hw *hw)
++{
++	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
++	struct bcm2835_cprman *cprman = clock->cprman;
++	const struct bcm2835_clock_data *data = clock->data;
++	u32 src = cprman_read(cprman, data->ctl_reg);
++
++	return (src & CM_SRC_MASK) >> CM_SRC_SHIFT;
++}
++
++
+ static const struct clk_ops bcm2835_clock_clk_ops = {
+ 	.is_prepared = bcm2835_clock_is_on,
+ 	.prepare = bcm2835_clock_on,
+ 	.unprepare = bcm2835_clock_off,
+ 	.recalc_rate = bcm2835_clock_get_rate,
+ 	.set_rate = bcm2835_clock_set_rate,
+-	.round_rate = bcm2835_clock_round_rate,
++	.determine_rate = bcm2835_clock_determine_rate,
++	.set_parent = bcm2835_clock_set_parent,
++	.get_parent = bcm2835_clock_get_parent,
+ };
+ 
+ static int bcm2835_vpu_clock_is_on(struct clk_hw *hw)
+@@ -1302,7 +1354,9 @@ static const struct clk_ops bcm2835_vpu_clock_clk_ops = {
+ 	.is_prepared = bcm2835_vpu_clock_is_on,
+ 	.recalc_rate = bcm2835_clock_get_rate,
+ 	.set_rate = bcm2835_clock_set_rate,
+-	.round_rate = bcm2835_clock_round_rate,
++	.determine_rate = bcm2835_clock_determine_rate,
++	.set_parent = bcm2835_clock_set_parent,
++	.get_parent = bcm2835_clock_get_parent,
+ };
+ 
+ static struct clk *bcm2835_register_pll(struct bcm2835_cprman *cprman,
+@@ -1396,45 +1450,23 @@ static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
+ {
+ 	struct bcm2835_clock *clock;
+ 	struct clk_init_data init;
+-	const char *parent;
++	const char *parents[1 << CM_SRC_BITS];
++	size_t i;
+ 
+ 	/*
+-	 * Most of the clock generators have a mux field, so we
+-	 * instantiate a generic mux as our parent to handle it.
++	 * Replace our "xosc" references with the oscillator's
++	 * actual name.
+ 	 */
+-	if (data->num_mux_parents) {
+-		const char *parents[1 << CM_SRC_BITS];
+-		int i;
+-
+-		parent = devm_kasprintf(cprman->dev, GFP_KERNEL,
+-					"mux_%s", data->name);
+-		if (!parent)
+-			return NULL;
+-
+-		/*
+-		 * Replace our "xosc" references with the oscillator's
+-		 * actual name.
+-		 */
+-		for (i = 0; i < data->num_mux_parents; i++) {
+-			if (strcmp(data->parents[i], "xosc") == 0)
+-				parents[i] = cprman->osc_name;
+-			else
+-				parents[i] = data->parents[i];
+-		}
+-
+-		clk_register_mux(cprman->dev, parent,
+-				 parents, data->num_mux_parents,
+-				 CLK_SET_RATE_PARENT,
+-				 cprman->regs + data->ctl_reg,
+-				 CM_SRC_SHIFT, CM_SRC_BITS,
+-				 0, &cprman->regs_lock);
+-	} else {
+-		parent = data->parents[0];
++	for (i = 0; i < data->num_mux_parents; i++) {
++		if (strcmp(data->parents[i], "xosc") == 0)
++			parents[i] = cprman->osc_name;
++		else
++			parents[i] = data->parents[i];
  	}
  
- 	while (!clk_main_osc_ready(regmap)) {
--		enable_irq(osc->irq);
--		wait_event(osc->wait,
-+		enable_irq(osc->base.irq);
-+		wait_event(osc->base.wait,
- 			   clk_main_osc_ready(regmap));
- 	}
- 
-@@ -119,7 +121,7 @@ static int clk_main_osc_prepare(struct clk_hw *hw)
- static void clk_main_osc_unprepare(struct clk_hw *hw)
- {
- 	struct clk_main_osc *osc = to_clk_main_osc(hw);
--	struct regmap *regmap = osc->regmap;
-+	struct regmap *regmap = osc->base.regmap;
- 	u32 tmp;
- 
- 	regmap_read(regmap, AT91_CKGR_MOR, &tmp);
-@@ -136,7 +138,7 @@ static void clk_main_osc_unprepare(struct clk_hw *hw)
- static int clk_main_osc_is_prepared(struct clk_hw *hw)
- {
- 	struct clk_main_osc *osc = to_clk_main_osc(hw);
--	struct regmap *regmap = osc->regmap;
-+	struct regmap *regmap = osc->base.regmap;
- 	u32 tmp, status;
- 
- 	regmap_read(regmap, AT91_CKGR_MOR, &tmp);
-@@ -179,14 +181,14 @@ at91_clk_register_main_osc(struct regmap *regmap,
- 	init.num_parents = 1;
+ 	memset(&init, 0, sizeof(init));
+-	init.parent_names = &parent;
+-	init.num_parents = 1;
++	init.parent_names = parents;
++	init.num_parents = data->num_mux_parents;
+ 	init.name = data->name;
  	init.flags = CLK_IGNORE_UNUSED;
  
--	osc->hw.init = &init;
--	osc->regmap = regmap;
--	osc->irq = irq;
-+	osc->base.hw.init = &init;
-+	osc->base.regmap = regmap;
-+	osc->base.irq = irq;
- 
--	init_waitqueue_head(&osc->wait);
--	irq_set_status_flags(osc->irq, IRQ_NOAUTOEN);
--	ret = request_irq(osc->irq, clk_main_osc_irq_handler,
--			  IRQF_TRIGGER_HIGH, name, osc);
-+	init_waitqueue_head(&osc->base.wait);
-+	irq_set_status_flags(irq, IRQ_NOAUTOEN);
-+	ret = request_irq(irq, clk_main_irq_handler,
-+			  IRQF_TRIGGER_HIGH, name, &osc->base);
- 	if (ret) {
- 		kfree(osc);
- 		return ERR_PTR(ret);
-@@ -198,7 +200,7 @@ at91_clk_register_main_osc(struct regmap *regmap,
- 				   AT91_PMC_MOSCEN,
- 				   AT91_PMC_OSCBYPASS | AT91_PMC_KEY);
- 
--	clk = clk_register(NULL, &osc->hw);
-+	clk = clk_register(NULL, &osc->base.hw);
- 	if (IS_ERR(clk)) {
- 		free_irq(irq, osc);
- 		kfree(osc);
-@@ -237,16 +239,6 @@ static void __init of_at91rm9200_clk_main_osc_setup(struct device_node *np)
- CLK_OF_DECLARE(at91rm9200_clk_main_osc, "atmel,at91rm9200-clk-main-osc",
- 	       of_at91rm9200_clk_main_osc_setup);
- 
--static irqreturn_t clk_main_rc_osc_irq_handler(int irq, void *dev_id)
--{
--	struct clk_main_rc_osc *osc = dev_id;
--
--	wake_up(&osc->wait);
--	disable_irq_nosync(osc->irq);
--
--	return IRQ_HANDLED;
--}
--
- static bool clk_main_rc_osc_ready(struct regmap *regmap)
- {
- 	unsigned int status;
-@@ -259,7 +251,7 @@ static bool clk_main_rc_osc_ready(struct regmap *regmap)
- static int clk_main_rc_osc_prepare(struct clk_hw *hw)
- {
- 	struct clk_main_rc_osc *osc = to_clk_main_rc_osc(hw);
--	struct regmap *regmap = osc->regmap;
-+	struct regmap *regmap = osc->base.regmap;
- 	unsigned int mor;
- 
- 	regmap_read(regmap, AT91_CKGR_MOR, &mor);
-@@ -270,8 +262,8 @@ static int clk_main_rc_osc_prepare(struct clk_hw *hw)
- 				   AT91_PMC_MOSCRCEN | AT91_PMC_KEY);
- 
- 	while (!clk_main_rc_osc_ready(regmap)) {
--		enable_irq(osc->irq);
--		wait_event(osc->wait,
-+		enable_irq(osc->base.irq);
-+		wait_event(osc->base.wait,
- 			   clk_main_rc_osc_ready(regmap));
- 	}
- 
-@@ -281,7 +273,7 @@ static int clk_main_rc_osc_prepare(struct clk_hw *hw)
- static void clk_main_rc_osc_unprepare(struct clk_hw *hw)
- {
- 	struct clk_main_rc_osc *osc = to_clk_main_rc_osc(hw);
--	struct regmap *regmap = osc->regmap;
-+	struct regmap *regmap = osc->base.regmap;
- 	unsigned int mor;
- 
- 	regmap_read(regmap, AT91_CKGR_MOR, &mor);
-@@ -296,7 +288,7 @@ static void clk_main_rc_osc_unprepare(struct clk_hw *hw)
- static int clk_main_rc_osc_is_prepared(struct clk_hw *hw)
- {
- 	struct clk_main_rc_osc *osc = to_clk_main_rc_osc(hw);
--	struct regmap *regmap = osc->regmap;
-+	struct regmap *regmap = osc->base.regmap;
- 	unsigned int mor, status;
- 
- 	regmap_read(regmap, AT91_CKGR_MOR, &mor);
-@@ -353,20 +345,20 @@ at91_clk_register_main_rc_osc(struct regmap *regmap,
- 	init.num_parents = 0;
- 	init.flags = CLK_IS_ROOT | CLK_IGNORE_UNUSED;
- 
--	osc->hw.init = &init;
--	osc->regmap = regmap;
--	osc->irq = irq;
-+	osc->base.hw.init = &init;
-+	osc->base.regmap = regmap;
-+	osc->base.irq = irq;
- 	osc->frequency = frequency;
- 	osc->accuracy = accuracy;
- 
--	init_waitqueue_head(&osc->wait);
--	irq_set_status_flags(osc->irq, IRQ_NOAUTOEN);
--	ret = request_irq(osc->irq, clk_main_rc_osc_irq_handler,
--			  IRQF_TRIGGER_HIGH, name, osc);
-+	init_waitqueue_head(&osc->base.wait);
-+	irq_set_status_flags(irq, IRQ_NOAUTOEN);
-+	ret = request_irq(irq, clk_main_irq_handler,
-+			  IRQF_TRIGGER_HIGH, name, &osc->base);
- 	if (ret)
- 		return ERR_PTR(ret);
- 
--	clk = clk_register(NULL, &osc->hw);
-+	clk = clk_register(NULL, &osc->base.hw);
- 	if (IS_ERR(clk)) {
- 		free_irq(irq, osc);
- 		kfree(osc);
-@@ -529,16 +521,6 @@ static void __init of_at91rm9200_clk_main_setup(struct device_node *np)
- CLK_OF_DECLARE(at91rm9200_clk_main, "atmel,at91rm9200-clk-main",
- 	       of_at91rm9200_clk_main_setup);
- 
--static irqreturn_t clk_sam9x5_main_irq_handler(int irq, void *dev_id)
--{
--	struct clk_sam9x5_main *clkmain = dev_id;
--
--	wake_up(&clkmain->wait);
--	disable_irq_nosync(clkmain->irq);
--
--	return IRQ_HANDLED;
--}
--
- static inline bool clk_sam9x5_main_ready(struct regmap *regmap)
- {
- 	unsigned int status;
-@@ -551,11 +533,11 @@ static inline bool clk_sam9x5_main_ready(struct regmap *regmap)
- static int clk_sam9x5_main_prepare(struct clk_hw *hw)
- {
- 	struct clk_sam9x5_main *clkmain = to_clk_sam9x5_main(hw);
--	struct regmap *regmap = clkmain->regmap;
-+	struct regmap *regmap = clkmain->base.regmap;
- 
- 	while (!clk_sam9x5_main_ready(regmap)) {
--		enable_irq(clkmain->irq);
--		wait_event(clkmain->wait,
-+		enable_irq(clkmain->base.irq);
-+		wait_event(clkmain->base.wait,
- 			   clk_sam9x5_main_ready(regmap));
- 	}
- 
-@@ -566,7 +548,7 @@ static int clk_sam9x5_main_is_prepared(struct clk_hw *hw)
- {
- 	struct clk_sam9x5_main *clkmain = to_clk_sam9x5_main(hw);
- 
--	return clk_sam9x5_main_ready(clkmain->regmap);
-+	return clk_sam9x5_main_ready(clkmain->base.regmap);
- }
- 
- static unsigned long clk_sam9x5_main_recalc_rate(struct clk_hw *hw,
-@@ -574,13 +556,13 @@ static unsigned long clk_sam9x5_main_recalc_rate(struct clk_hw *hw,
- {
- 	struct clk_sam9x5_main *clkmain = to_clk_sam9x5_main(hw);
- 
--	return clk_main_recalc_rate(clkmain->regmap, parent_rate);
-+	return clk_main_recalc_rate(clkmain->base.regmap, parent_rate);
- }
- 
- static int clk_sam9x5_main_set_parent(struct clk_hw *hw, u8 index)
- {
- 	struct clk_sam9x5_main *clkmain = to_clk_sam9x5_main(hw);
--	struct regmap *regmap = clkmain->regmap;
-+	struct regmap *regmap = clkmain->base.regmap;
- 	unsigned int tmp;
- 
- 	if (index > 1)
-@@ -595,8 +577,8 @@ static int clk_sam9x5_main_set_parent(struct clk_hw *hw, u8 index)
- 		regmap_write(regmap, AT91_CKGR_MOR, tmp & ~AT91_PMC_MOSCSEL);
- 
- 	while (!clk_sam9x5_main_ready(regmap)) {
--		enable_irq(clkmain->irq);
--		wait_event(clkmain->wait,
-+		enable_irq(clkmain->base.irq);
-+		wait_event(clkmain->base.wait,
- 			   clk_sam9x5_main_ready(regmap));
- 	}
- 
-@@ -608,7 +590,7 @@ static u8 clk_sam9x5_main_get_parent(struct clk_hw *hw)
- 	struct clk_sam9x5_main *clkmain = to_clk_sam9x5_main(hw);
- 	unsigned int status;
- 
--	regmap_read(clkmain->regmap, AT91_CKGR_MOR, &status);
-+	regmap_read(clkmain->base.regmap, AT91_CKGR_MOR, &status);
- 
- 	return status & AT91_PMC_MOSCEN ? 1 : 0;
- }
-@@ -650,21 +632,21 @@ at91_clk_register_sam9x5_main(struct regmap *regmap,
- 	init.num_parents = num_parents;
- 	init.flags = CLK_SET_PARENT_GATE;
- 
--	clkmain->hw.init = &init;
--	clkmain->regmap = regmap;
--	clkmain->irq = irq;
--	regmap_read(clkmain->regmap, AT91_CKGR_MOR, &status);
-+	clkmain->base.hw.init = &init;
-+	clkmain->base.regmap = regmap;
-+	clkmain->base.irq = irq;
-+	regmap_read(clkmain->base.regmap, AT91_CKGR_MOR, &status);
- 	clkmain->parent = status & AT91_PMC_MOSCEN ? 1 : 0;
--	init_waitqueue_head(&clkmain->wait);
--	irq_set_status_flags(clkmain->irq, IRQ_NOAUTOEN);
--	ret = request_irq(clkmain->irq, clk_sam9x5_main_irq_handler,
--			  IRQF_TRIGGER_HIGH, name, clkmain);
-+	init_waitqueue_head(&clkmain->base.wait);
-+	irq_set_status_flags(irq, IRQ_NOAUTOEN);
-+	ret = request_irq(irq, clk_main_irq_handler,
-+			  IRQF_TRIGGER_HIGH, name, &clkmain->base);
- 	if (ret)
- 		return ERR_PTR(ret);
- 
--	clk = clk_register(NULL, &clkmain->hw);
-+	clk = clk_register(NULL, &clkmain->base.hw);
- 	if (IS_ERR(clk)) {
--		free_irq(clkmain->irq, clkmain);
-+		free_irq(irq, clkmain);
- 		kfree(clkmain);
- 	}
- 
 -- 
-2.5.0
+2.0.1
