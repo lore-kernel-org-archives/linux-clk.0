@@ -1,29 +1,87 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Chris Zhong <zyw@rock-chips.com>
-Cc: dianders@chromium.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] clk: rockchip: switch PLLs to slow mode before reboot for rk3288
-Date: Tue, 01 Dec 2015 19:25:24 +0100
-Message-ID: <1477792.D13Osl928x@diego>
-In-Reply-To: <1448590170-23776-1-git-send-email-zyw@rock-chips.com>
-References: <1448590170-23776-1-git-send-email-zyw@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <vz@mleia.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+To: Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: Russell King <linux@arm.linux.org.uk>,
+	Roland Stigge <stigge@antcom.de>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 0/5] clk: lpc32xx: add clock support for NXP LPC32xx
+Date: Sun,  6 Dec 2015 12:45:52 +0200
+Message-Id: <1449398757-16834-1-git-send-email-vz@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Freitag, 27. November 2015, 10:09:30 schrieb Chris Zhong:
-> We've been seeing some crashes at reboot test on rk3288-based systems,
-> which boards have not reset pin connected to NPOR, they reboot by
-> setting 0xfdb9 to RK3288_GLB_SRST_FST register. If the APLL works in
-> a high frequency mode, some IPs might hang during soft reset.
-> It appears that we can fix the problem by switching to slow mode before
-> reboot, just like what we did before suspend.
-> 
-> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+This changeset adds common clock framework driver for NXP LPC32xx
+boards.
 
-applied to my clock branch for 4.5
+The change can be applied without any dependencies, LPC32xx device tree
+and mach changes will be done, when this changeset is accepted.
 
+The v1 version of CCF driver can be found here:
+  http://www.spinics.net/lists/arm-kernel/msg461632.html
 
-Thanks
-Heiko
+The RFC version of CCF driver 9/11 can be found here:
+  http://www.spinics.net/lists/devicetree/msg100583.html
+
+Changes from v1 to v2:
+* removed dependency on the recent LPC32xx device tree changes,
+  also removed LPC32xx device tree and mach changes, which depend
+  on this series,
+* use lowercase hex numbers in a DT binding example,
+* incremented by 1 all clock values, possibly clock "0" may have a
+  special meaning in future,
+* removed explicit COMMON_CLK selection for NXP LPC18xx,
+* LPC32XX_CLK_DEFINE() does not stringify clock names,
+* fixed a minor bug in clk_pll_set_rate().
+
+Changes from RFC to v1:
+* added definitions of a missed IRDA clock,
+* renamed compatible property from lpc32xx-scb to lpc32xx-clk
+* switched to regmap interface instead of mmio, this is required to
+  secure access to registers shared between pinmux, dma and clock
+  driver, unfortunately this change has to pull some code snippets
+  from common gate, divider and mux helpers rebased on regmap API,
+* split clock definitions from the driver to be able to update
+  dts files separately from CCF driver.
+
+The driver is written from scratch, here are main functional
+differences with the legacy driver arch/arm/mach-lpc32xx/clock.c:
+* serialized access to SCB registers,
+* reworked routines to select PLL parameters,
+* now the clock driver has detailed description of all clocks,
+  the original driver misses several clock entries and most of fine
+  grained clock controls, here every mux and divider are accounted,
+* now clocks and clock hierarchies can be described in board DT file,
+* sophisticated management of USB clocks, for example now USB device
+  controller needs only one clock instead of USB PLL, USB OTG and USB
+  device clocks,
+* other benefits from a driver powered by CCF.
+
+Patch 5/5 may produce false positives from checkpatch.pl, the fix
+to checkpatch is found in Andrew's tree
+
+Vladimir Zapolskiy (5):
+  dt-bindings: clock: add description of LPC32xx clock controller
+  dt-bindings: clock: add description of LPC32xx USB clock controller
+  dt-bindings: clock: add NXP LPC32xx clock list for consumers
+  clk: lpc18xx: add NXP specific COMMON_CLK_NXP configuration symbol
+  clk: lpc32xx: add common clock framework driver
+
+ .../devicetree/bindings/clock/nxp,lpc3220-clk.txt  |   30 +
+ .../bindings/clock/nxp,lpc3220-usb-clk.txt         |   22 +
+ drivers/clk/Kconfig                                |    6 +
+ drivers/clk/Makefile                               |    2 +-
+ drivers/clk/nxp/Makefile                           |    1 +
+ drivers/clk/nxp/clk-lpc32xx.c                      | 1569 ++++++++++++++++++++
+ include/dt-bindings/clock/lpc32xx-clock.h          |   56 +
+ 7 files changed, 1685 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt
+ create mode 100644 drivers/clk/nxp/clk-lpc32xx.c
+ create mode 100644 include/dt-bindings/clock/lpc32xx-clock.h
+
+-- 
+2.1.4
