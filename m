@@ -1,50 +1,71 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	agross@codeaurora.org
-Cc: mturquette@baylibre.com,
+Return-Path: <vz@mleia.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+To: Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: Russell King <linux@arm.linux.org.uk>,
+	Roland Stigge <stigge@antcom.de>,
 	linux-clk@vger.kernel.org,
-	bjorn.andersson@sonymobile.com,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v5 3/6] arm64: dts: qcom: msm8916: Add RPMCC DT node
-Date: Thu,  3 Dec 2015 16:02:53 +0200
-Message-Id: <1449151376-25930-4-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1449151376-25930-1-git-send-email-georgi.djakov@linaro.org>
-References: <1449151376-25930-1-git-send-email-georgi.djakov@linaro.org>
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 1/5] dt-bindings: clock: add description of LPC32xx clock controller
+Date: Sun,  6 Dec 2015 12:45:53 +0200
+Message-Id: <1449398757-16834-2-git-send-email-vz@mleia.com>
+In-Reply-To: <1449398757-16834-1-git-send-email-vz@mleia.com>
+References: <1449398757-16834-1-git-send-email-vz@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the RPM Clock Controller DT node and include the necessary header
-file for clocks.
+NXP LPC32xx SoC has a clocking and power control unit (CPC) as a part
+of system control block (SCB). CPC is supplied by two external
+oscillators and it manages core and most of peripheral
+clocks, the change adds description of DT bindings for clock
+controller found on LPC32xx SoC series.
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
 ---
- arch/arm64/boot/dts/qcom/msm8916.dtsi |    6 ++++++
- 1 file changed, 6 insertions(+)
+Changes from v1 to v2:
+- none
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index d577127cc81e..1cb88b3ce498 100644
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -15,6 +15,7 @@
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/qcom,gcc-msm8916.h>
- #include <dt-bindings/reset/qcom,gcc-msm8916.h>
-+#include <dt-bindings/clock/qcom,rpmcc.h>
- 
- / {
- 	model = "Qualcomm Technologies, Inc. MSM8916";
-@@ -168,6 +169,11 @@
- 				rpm_requests {
- 					compatible = "qcom,rpm-msm8916";
- 					qcom,smd-channels = "rpm_requests";
+ .../devicetree/bindings/clock/nxp,lpc3220-clk.txt  | 30 ++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
+new file mode 100644
+index 0000000..20cbca3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
+@@ -0,0 +1,30 @@
++NXP LPC32xx Clock Controller
 +
-+					rpmcc: qcom,rpmcc {
-+						compatible = "qcom,rpmcc-msm8916", "qcom,rpmcc";
-+						#clock-cells = <1>;
-+					};
- 				};
- 			};
- 		};
++Required properties:
++- compatible: should be "nxp,lpc3220-clk"
++- reg:  should contain clock controller registers location and length
++- #clock-cells: must be 1, the cell holds id of a clock provided by the
++  clock controller
++- clocks: phandles of external oscillators, the list must contain one
++  32768 Hz oscillator and may have one optional high frequency oscillator
++- clock-names: list of external oscillator clock names, must contain
++  "xtal_32k" and may have optional "xtal"
++
++Examples:
++
++	/* System Control Block */
++	scb {
++		compatible = "simple-bus";
++		ranges = <0x0 0x040004000 0x00001000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++
++		clk: clock-controller@0 {
++			compatible = "nxp,lpc3220-clk";
++			reg = <0x00 0x114>;
++			#clock-cells = <1>;
++
++			clocks = <&xtal_32k>, <&xtal>;
++			clock-names = "xtal_32k", "xtal";
++		};
++	};
+-- 
+2.1.4
