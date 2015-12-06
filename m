@@ -1,150 +1,59 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.130]:57628 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752854AbbL2B7J (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 28 Dec 2015 20:59:09 -0500
-Subject: Re: [RESEND PATCH v1 4/4] clk: rockchip: rk3036: fix and add node id
- for emac clock
-To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
-	Xing Zheng <zhengxing@rock-chips.com>
-References: <1451293433-32392-1-git-send-email-zhengxing@rock-chips.com>
- <1451293433-32392-5-git-send-email-zhengxing@rock-chips.com>
- <11997168.T384RkEsFx@diego>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-	Pawel Moll <pawel.moll@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+Return-Path: <repk@triplefau.lt>
+From: Remi Pommarel <repk@triplefau.lt>
+To: Stephen Warren <swarren@wwwdotorg.org>,
+	Eric Anholt <eric@anholt.net>,
+	Lee Jones <lee@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Kumar Gala <galak@codeaurora.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	Rob Herring <robh+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, keescook@google.com,
-	linux-clk@vger.kernel.org, leozwang@google.com
-From: Yakir Yang <ykk@rock-chips.com>
-Message-ID: <5681E8E4.2010303@rock-chips.com>
-Date: Tue, 29 Dec 2015 09:59:00 +0800
-MIME-Version: 1.0
-In-Reply-To: <11997168.T384RkEsFx@diego>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+	Rob Herring <robh+dt@kernel.org>
+Cc: linux-rpi-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Remi Pommarel <repk@triplefau.lt>
+Subject: [PATCH v3 4/4] clk: bcm2835: Add PWM clock support to the device tree
+Date: Sun,  6 Dec 2015 17:22:49 +0100
+Message-Id: <1449418969-5565-5-git-send-email-repk@triplefau.lt>
+In-Reply-To: <1449418969-5565-1-git-send-email-repk@triplefau.lt>
+References: <1449418969-5565-1-git-send-email-repk@triplefau.lt>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Heiko,
+Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+---
+ arch/arm/boot/dts/bcm2835-rpi.dtsi | 4 ++++
+ arch/arm/boot/dts/bcm2835.dtsi     | 9 +++++++++
+ 2 files changed, 13 insertions(+)
 
-On 12/28/2015 08:41 PM, Heiko Stübner wrote:
-> Hi,
->
-> Am Montag, 28. Dezember 2015, 17:03:53 schrieb Xing Zheng:
->> Due to referred old version TRM, there is incorrect emac clock node,
->> we should fix it. The SEL_21_9 is the parent of SEL_21_4.
->>
->> In the emac driver, we need to refer HCLK_MAC, and  because There are
->> only 3PLLs (APLL/GPLL/DPLL) on the rk3036, most clock are under the
->> GPLL, and it is unable to provide the accurate rate for mac_ref which
->> need to 50MHz probability, we should let it under the APLL and are
->> able to set the freq which integer multiples of 50MHz, so we add these
->> emac node for reference.
-> I don't really follow here. While I do understand that the emac needs 50MHz, I
-> don't think using the APLL as source is helpful.
->
-> The APLL is the main clocksource for the cpu-cores, including frequency
-> scaling, and while it currently only lists 816MHz as sole frequency, you're
-> pretty much guaranteed to not get your correct multiple of 50MHz from there
-> either. And limiting the cpu to just do 600MHz to get the mac working sounds
-> pretty bad ;-) .
->
->
-> In the rk3036 cru-node the gpll gets set to 594MHz. Is there a special reason
-> why it needs to be 594MHz and cannot be a round 600MHz? Because that would
-> also provide your 50MHz-multiple nicely.
-
-Yes, this magic 594MHz would help to support the standard HDMI 
-resolutions, here are the math:
-
-1920x1080-60Hz DCLK = 148.5MHz = 594MHz / 4
-1280x720-60Hz DCLK = 74.25MHz = 594MHz / 8
-720x480-60Hz DCLK = 27MHz = 594MHz / 22
-
-Thanks,
-- Yakir
-
->> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
->> ---
->>
->>   drivers/clk/rockchip/clk-rk3036.c      |   11 ++++++-----
->>   include/dt-bindings/clock/rk3036-cru.h |    2 ++
->>   2 files changed, 8 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/clk/rockchip/clk-rk3036.c
->> b/drivers/clk/rockchip/clk-rk3036.c index 7420cbe..7863c4d 100644
->> --- a/drivers/clk/rockchip/clk-rk3036.c
->> +++ b/drivers/clk/rockchip/clk-rk3036.c
->> @@ -328,13 +328,14 @@ static struct rockchip_clk_branch
->> rk3036_clk_branches[] __initdata = { RK2928_CLKSEL_CON(16), 0, 2, MFLAGS,
->> 2, 5, DFLAGS,
->>   			RK2928_CLKGATE_CON(10), 5, GFLAGS),
->>
->> -	COMPOSITE_NOGATE(0, "mac_pll_src", mux_pll_src_3plls_p, 0,
->> -			RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 4, 5, DFLAGS),
->> +	MUX(SCLK_MACPLL, "mac_pll_pre", mux_pll_src_3plls_p, 0,
->> +			RK2928_CLKSEL_CON(21), 0, 2, MFLAGS),
->> +	DIV(0, "mac_pll_src", "mac_pll_pre", 0,
->> +			RK2928_CLKSEL_CON(21), 9, 5, DFLAGS),
->>   	MUX(SCLK_MACREF, "mac_clk_ref", mux_mac_p, CLK_SET_RATE_PARENT,
->>   			RK2928_CLKSEL_CON(21), 3, 1, MFLAGS),
->> -
->>   	COMPOSITE_NOMUX(SCLK_MAC, "mac_clk", "mac_clk_ref", 0,
->> -			RK2928_CLKSEL_CON(21), 9, 5, DFLAGS,
->> +			RK2928_CLKSEL_CON(21), 4, 5, DFLAGS,
->>   			RK2928_CLKGATE_CON(2), 6, GFLAGS),
->>
->>   	MUX(SCLK_HDMI, "dclk_hdmi", mux_dclk_p, 0,
->> @@ -389,7 +390,7 @@ static struct rockchip_clk_branch rk3036_clk_branches[]
->> __initdata = { GATE(HCLK_OTG1, "hclk_otg1", "hclk_peri", CLK_IGNORE_UNUSED,
->> RK2928_CLKGATE_CON(7), 3, GFLAGS), GATE(HCLK_I2S, "hclk_i2s", "hclk_peri",
->> 0, RK2928_CLKGATE_CON(7), 2, GFLAGS), GATE(0, "hclk_sfc", "hclk_peri",
->> CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 14, GFLAGS), -	GATE(0,
->> "hclk_mac", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 15,
->> GFLAGS), +	GATE(HCLK_MAC, "hclk_mac", "hclk_peri", 0,
->> RK2928_CLKGATE_CON(3), 5, GFLAGS),
->>
->>   	/* pclk_peri gates */
->>   	GATE(0, "pclk_peri_matrix", "pclk_peri", CLK_IGNORE_UNUSED,
->> RK2928_CLKGATE_CON(4), 1, GFLAGS), diff --git
->> a/include/dt-bindings/clock/rk3036-cru.h
->> b/include/dt-bindings/clock/rk3036-cru.h index ebc7a7b..de44109 100644
->> --- a/include/dt-bindings/clock/rk3036-cru.h
->> +++ b/include/dt-bindings/clock/rk3036-cru.h
->> @@ -54,6 +54,7 @@
->>   #define SCLK_PVTM_VIDEO		125
->>   #define SCLK_MAC		151
->>   #define SCLK_MACREF		152
->> +#define SCLK_MACPLL		153
->>   #define SCLK_SFC		160
->>
->>   /* aclk gates */
->> @@ -92,6 +93,7 @@
-> please separate the hclk addition into two separate patches:
-> patch1: add the clock-id to the dt-binding header
-> patch2: use the clock in the clock-driver
->
->>   #define HCLK_SDMMC		456
->>   #define HCLK_SDIO		457
->>   #define HCLK_EMMC		459
->> +#define HCLK_MAC		460
->>   #define HCLK_I2S		462
->>   #define HCLK_LCDC		465
->>   #define HCLK_ROM		467
->
-> Thanks
-> Heiko
->
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
->
->
->
-
-
+diff --git a/arch/arm/boot/dts/bcm2835-rpi.dtsi b/arch/arm/boot/dts/bcm2835-rpi.dtsi
+index 3572f03..55801e0 100644
+--- a/arch/arm/boot/dts/bcm2835-rpi.dtsi
++++ b/arch/arm/boot/dts/bcm2835-rpi.dtsi
+@@ -60,3 +60,7 @@
+ 	status = "okay";
+ 	bus-width = <4>;
+ };
++
++&pwm {
++	status = "okay";
++};
+diff --git a/arch/arm/boot/dts/bcm2835.dtsi b/arch/arm/boot/dts/bcm2835.dtsi
+index aef64de..641f7f4 100644
+--- a/arch/arm/boot/dts/bcm2835.dtsi
++++ b/arch/arm/boot/dts/bcm2835.dtsi
+@@ -149,6 +149,15 @@
+ 			status = "disabled";
+ 		};
+ 
++		pwm: pwm@7e20c000 {
++			compatible = "brcm,bcm2835-pwm";
++			reg = <0x7e20c000 0x28>;
++			clocks = <&clocks BCM2835_CLOCK_PWM>;
++			assigned-clocks = <&clocks BCM2835_CLOCK_PWM>;
++			assigned-clock-rates = <10000000>;
++			status = "disabled";
++		};
++
+ 		sdhci: sdhci@7e300000 {
+ 			compatible = "brcm,bcm2835-sdhci";
+ 			reg = <0x7e300000 0x100>;
+-- 
+2.0.1
