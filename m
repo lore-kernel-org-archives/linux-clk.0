@@ -1,107 +1,256 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-Subject: Re: [PATCH v2 1/9] clk: hi3519: add dt-binding document and header
- file
-To: Arnd Bergmann <arnd@arndb.de>
-References: <1449110364-23464-1-git-send-email-xuejiancheng@huawei.com>
- <21651844.ONg7WdRZpk@wuerfel> <56653CBF.30801@huawei.com>
- <2735980.8lIUhgbJzL@wuerfel>
-CC: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <xuwei5@hisilicon.com>, <haojian.zhuang@linaro.org>,
-        <zhangfei.gao@linaro.org>, <bintian.wang@huawei.com>,
-        <yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
-        <suwenping@hisilicon.com>, <ml.yang@hisilicon.com>,
-        <gaofei@hisilicon.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-From: xuejiancheng <xuejiancheng@huawei.com>
-Message-ID: <56663474.7040701@huawei.com>
-Date: Tue, 8 Dec 2015 09:37:56 +0800
+Return-Path: <robh@kernel.org>
+Date: Mon, 7 Dec 2015 08:15:57 -0600
+From: Rob Herring <robh@kernel.org>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 2/6] clk: sunxi: Add VE (Video Engine) module clock
+ driver for sun[457]i
+Message-ID: <20151207141557.GA22881@rob-hp-laptop>
+References: <1449306009-2627-1-git-send-email-wens@csie.org>
+ <1449306009-2627-3-git-send-email-wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <2735980.8lIUhgbJzL@wuerfel>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1449306009-2627-3-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+On Sat, Dec 05, 2015 at 05:00:05PM +0800, Chen-Yu Tsai wrote:
+> The video engine has its own special module clock, consisting of a clock
+> gate, configurable dividers, and a reset control.
+> 
+> On later (sun[68]i) families, the reset control is moved out of this
+> piece of hardware and grouped with reset controls of other peripherals.
+> 
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
+Acked-by: Rob Herring <robh@kernel.org>
 
-On 2015/12/7 17:36, Arnd Bergmann wrote:
-> On Monday 07 December 2015 16:01:03 xuejiancheng wrote:
->> On 2015/12/4 18:56, Arnd Bergmann wrote:
->>> On Friday 04 December 2015 11:21:28 xuejiancheng wrote:
->>>> Hi Arnd,
->>>>
->>>> On 2015/12/3 17:44, Arnd Bergmann wrote:
->>>>> On Thursday 03 December 2015 10:39:24 Jiancheng Xue wrote:
->>>>>> +#ifndef __DTS_HI3519_CLOCK_H
->>>>>> +#define __DTS_HI3519_CLOCK_H
->>>>>
->>>>> Please try to avoid adding headers like this if you can at all.
->>>>>
->>>>> I might ask you to merge the header file in one merge window
->>>>> otherwise and submit the platform code one kernel later, as they
->>>>> tendn to cause us needless dependencies otherwise.
->>>>>
->>>>
->>>> Sorry. In v1, Rob suggested putting binding doc and header files in
->>>> a separate patch. The clock driver indeed depends on the header.
->>>>
->>>> I will put the header and the clock driver in a patch, and keep the
->>>> binding doc in another patch.
->>>
->>> Having split patches is better, I was really commenting on the fact
->>> that ideally you would not have a header file at all. If we merge
->>> the header through arm-soc, then you won't be able to merge the
->>> clk driver easily, and if you merge the header through the clk
->>> maintainer, I'm can't take your dts files.
->>
->> Thank you for your comments. Because the clocks in the crg module have
->> different types and random layouts. If this header file is removed,
->> the clock driver and the dts files will get very complicated.
->>
->> Could you help me acknowledge it if I put the header file and clock driver
->> in a patch?
->>
->> Could you give me some suggestions If I want to keep this header file?
+> ---
+>  Documentation/devicetree/bindings/clock/sunxi.txt |   4 +
+>  drivers/clk/sunxi/Makefile                        |   1 +
+>  drivers/clk/sunxi/clk-a10-ve.c                    | 171 ++++++++++++++++++++++
+>  3 files changed, 176 insertions(+)
+>  create mode 100644 drivers/clk/sunxi/clk-a10-ve.c
 > 
-> If this is another clock controller that has a random register layout,
-> then adding the header file is the least problematic solution indeed.
-> 
->>>>> Where do those numbers come from? They are not consecutive, so it sounds
->>>>> like they are directly from the data sheet and won't be needed in the driver.
->>>>> If that's true, just use the numbers directly, as you do for everything
->>>>> else.
->>>>
->>>> The numbers are defined by myself, not directly from the data sheet. Some numbers
->>>> are reserved for device nodes which will be added later. So they are not consecutive now.
->>>
->>> I don't understand. How do you decide which numbers to reserve? If the
->>> numbers are completely arbitrary and you have no idea what other clocks
->>> there are, you can simply have consecutive numbers here and do the driver
->>> accordingly.
->>
->> The clocks are divided into several groups according to their types. The clocks in
->> a group are expected to have consecutive numbers. So some numbers are reserved for
->> every group in this file, just like in some existing headers. Other clocks will be
->> added when other peripherals drivers are submitted. They will use the reserve numbers
->> and be inserted into existing groups.
->>
->> Of course it is not required to reserve numbers for later added clocks.
-> 
-> Are you able to enumerate all the clocks then? If all clocks that are
-> supported by this clock controllers have names in the data sheet, I
-> would prefer to just list them all now rather than only enter the ones
-> we already need, to avoid having future merge conflicts.
-> 
-> Then we just need to add code to support those clocks when we need them,
-> but that can be done in parallel to adding the DT nodes and the driver,
-> rather than strongly serializing the patch flow on the header file patches.
-
-OK. I'll enumerate all the clocks in the data sheet in next version patch.
-
-Thank you.
-
-> 
-> 	Arnd
-> 
-> .
+> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
+> index ef0b452806b1..14496056319f 100644
+> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
+> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+> @@ -74,6 +74,7 @@ Required properties:
+>  	"allwinner,sun8i-h3-usb-clk" - for usb gates + resets on H3
+>  	"allwinner,sun9i-a80-usb-mod-clk" - for usb gates + resets on A80
+>  	"allwinner,sun9i-a80-usb-phy-clk" - for usb phy gates + resets on A80
+> +	"allwinner,sun4i-a10-ve-clk" - for the Video Engine clock
+>  
+>  Required properties for all clocks:
+>  - reg : shall be the control register address for the clock.
+> @@ -93,6 +94,9 @@ Required properties for all clocks:
+>  And "allwinner,*-usb-clk" clocks also require:
+>  - reset-cells : shall be set to 1
+>  
+> +The "allwinner,sun4i-a10-ve-clk" clock also requires:
+> +- reset-cells : shall be set to 0
+> +
+>  The "allwinner,sun9i-a80-mmc-config-clk" clock also requires:
+>  - #reset-cells : shall be set to 1
+>  - resets : shall be the reset control phandle for the mmc block.
+> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+> index 103efab05ca8..78db91ad5af6 100644
+> --- a/drivers/clk/sunxi/Makefile
+> +++ b/drivers/clk/sunxi/Makefile
+> @@ -7,6 +7,7 @@ obj-y += clk-a10-codec.o
+>  obj-y += clk-a10-hosc.o
+>  obj-y += clk-a10-mod1.o
+>  obj-y += clk-a10-pll2.o
+> +obj-y += clk-a10-ve.o
+>  obj-y += clk-a20-gmac.o
+>  obj-y += clk-mod0.o
+>  obj-y += clk-simple-gates.o
+> diff --git a/drivers/clk/sunxi/clk-a10-ve.c b/drivers/clk/sunxi/clk-a10-ve.c
+> new file mode 100644
+> index 000000000000..de0fdb656150
+> --- /dev/null
+> +++ b/drivers/clk/sunxi/clk-a10-ve.c
+> @@ -0,0 +1,171 @@
+> +/*
+> + * Copyright 2015 Chen-Yu Tsai
+> + *
+> + * Chen-Yu Tsai <wens@csie.org>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/reset-controller.h>
+> +#include <linux/slab.h>
+> +#include <linux/spinlock.h>
+> +
+> +static DEFINE_SPINLOCK(ve_lock);
+> +
+> +#define SUN4I_VE_ENABLE		31
+> +#define SUN4I_VE_DIVIDER_SHIFT	16
+> +#define SUN4I_VE_DIVIDER_WIDTH	3
+> +#define SUN4I_VE_RESET		0
+> +
+> +/**
+> + * sunxi_ve_reset... - reset bit in ve clk registers handling
+> + */
+> +
+> +struct ve_reset_data {
+> +	void __iomem			*reg;
+> +	spinlock_t			*lock;
+> +	struct reset_controller_dev	rcdev;
+> +};
+> +
+> +static int sunxi_ve_reset_assert(struct reset_controller_dev *rcdev,
+> +				 unsigned long id)
+> +{
+> +	struct ve_reset_data *data = container_of(rcdev,
+> +						  struct ve_reset_data,
+> +						  rcdev);
+> +	unsigned long flags;
+> +	u32 reg;
+> +
+> +	spin_lock_irqsave(data->lock, flags);
+> +
+> +	reg = readl(data->reg);
+> +	writel(reg & ~BIT(SUN4I_VE_RESET), data->reg);
+> +
+> +	spin_unlock_irqrestore(data->lock, flags);
+> +
+> +	return 0;
+> +}
+> +
+> +static int sunxi_ve_reset_deassert(struct reset_controller_dev *rcdev,
+> +				   unsigned long id)
+> +{
+> +	struct ve_reset_data *data = container_of(rcdev,
+> +						  struct ve_reset_data,
+> +						  rcdev);
+> +	unsigned long flags;
+> +	u32 reg;
+> +
+> +	spin_lock_irqsave(data->lock, flags);
+> +
+> +	reg = readl(data->reg);
+> +	writel(reg | BIT(SUN4I_VE_RESET), data->reg);
+> +
+> +	spin_unlock_irqrestore(data->lock, flags);
+> +
+> +	return 0;
+> +}
+> +
+> +static int sunxi_ve_of_xlate(struct reset_controller_dev *rcdev,
+> +			     const struct of_phandle_args *reset_spec)
+> +{
+> +    if (WARN_ON(reset_spec->args_count != 0))
+> +	return -EINVAL;
+> +
+> +    return 0;
+> +}
+> +
+> +static struct reset_control_ops sunxi_ve_reset_ops = {
+> +	.assert		= sunxi_ve_reset_assert,
+> +	.deassert	= sunxi_ve_reset_deassert,
+> +};
+> +
+> +static void __init sun4i_ve_clk_setup(struct device_node *node)
+> +{
+> +	struct clk *clk;
+> +	struct clk_divider *div;
+> +	struct clk_gate *gate;
+> +	struct ve_reset_data *reset_data;
+> +	const char *parent;
+> +	const char *clk_name = node->name;
+> +	void __iomem *reg;
+> +	int err;
+> +
+> +	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
+> +	if (IS_ERR(reg))
+> +		return;
+> +
+> +	div = kzalloc(sizeof(*div), GFP_KERNEL);
+> +	if (!div)
+> +		goto err_unmap;
+> +
+> +	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+> +	if (!gate)
+> +		goto err_free_div;
+> +
+> +	of_property_read_string(node, "clock-output-names", &clk_name);
+> +	parent = of_clk_get_parent_name(node, 0);
+> +
+> +	gate->reg = reg;
+> +	gate->bit_idx = SUN4I_VE_ENABLE;
+> +	gate->lock = &ve_lock;
+> +
+> +	div->reg = reg;
+> +	div->shift = SUN4I_VE_DIVIDER_SHIFT;
+> +	div->width = SUN4I_VE_DIVIDER_WIDTH;
+> +	div->lock = &ve_lock;
+> +
+> +	clk = clk_register_composite(NULL, clk_name, &parent, 1,
+> +				     NULL, NULL,
+> +				     &div->hw, &clk_divider_ops,
+> +				     &gate->hw, &clk_gate_ops,
+> +				     CLK_SET_RATE_PARENT);
+> +	if (IS_ERR(clk))
+> +		goto err_free_gate;
+> +
+> +	err = of_clk_add_provider(node, of_clk_src_simple_get, clk);
+> +	if (err)
+> +		goto err_unregister_clk;
+> +
+> +	reset_data = kzalloc(sizeof(*reset_data), GFP_KERNEL);
+> +	if (!reset_data)
+> +		goto err_del_provider;
+> +
+> +	reset_data->reg = reg;
+> +	reset_data->lock = &ve_lock;
+> +	reset_data->rcdev.nr_resets = 1;
+> +	reset_data->rcdev.ops = &sunxi_ve_reset_ops;
+> +	reset_data->rcdev.of_node = node;
+> +	reset_data->rcdev.of_xlate = sunxi_ve_of_xlate;
+> +	reset_data->rcdev.of_reset_n_cells = 0;
+> +	err = reset_controller_register(&reset_data->rcdev);
+> +	if (err)
+> +		goto err_free_reset;
+> +
+> +	return;
+> +
+> +err_free_reset:
+> +	kfree(reset_data);
+> +err_del_provider:
+> +	of_clk_del_provider(node);
+> +err_unregister_clk:
+> +	clk_unregister(clk);
+> +err_free_gate:
+> +	kfree(gate);
+> +err_free_div:
+> +	kfree(div);
+> +err_unmap:
+> +	iounmap(reg);
+> +}
+> +CLK_OF_DECLARE(sun4i_ve, "allwinner,sun4i-a10-ve-clk",
+> +	       sun4i_ve_clk_setup);
+> -- 
+> 2.6.2
 > 
