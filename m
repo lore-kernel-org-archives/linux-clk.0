@@ -1,45 +1,52 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.133]:54516 "EHLO
-	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754416AbbLWJHC (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 23 Dec 2015 04:07:02 -0500
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: keescook@google.com, leozwang@google.com,
-	linux-rockchip@lists.infradead.org,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] clk: rockchip: rk3036: rename emac ext source clock
-Date: Wed, 23 Dec 2015 17:05:54 +0800
-Message-Id: <1450861555-11213-1-git-send-email-zhengxing@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <ben@smart-cactus.org>
+From: Ben Gamari <ben@smart-cactus.org>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Sudeep Holla <Sudeep.Holla@arm.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+Subject: Re: [PATCH v5 0/12] cpufreq: Add support for Exynos 5800, 5420, and 5422
+In-Reply-To: <20151203103703.GC2097@ubuntu>
+References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org> <20151203060527.GH4302@ubuntu> <877fkv4ylk.fsf@smart-cactus.org> <20151203103703.GC2097@ubuntu>
+Date: Mon, 07 Dec 2015 22:19:05 +0100
+Message-ID: <87mvtm9cty.fsf@smart-cactus.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha1; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-There is only support rmii in the RK3036, so we should use the correct
-ext clock name.
+--=-=-=
+Content-Type: text/plain
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
----
+Viresh Kumar <viresh.kumar@linaro.org> writes:
 
- drivers/clk/rockchip/clk-rk3036.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On 03-12-15, 11:26, Ben Gamari wrote:
+>> Sounds reasonable to me. However, I'd just like to reiterate that this
+>> line of work can be pursued independently from the upstreaming of this
+>> series.
+>
+> I think this is the right time to upstream the right solution. Just
+> try it once, if you face lots of difficulties or issues, then we can
+> ofcourse see..
+>
+It looks like Bartlomiej has picked up this set. Regardless, while
+tracking down various devicetree issues I noticed that the cpu-supply
+and cpu%d-supply bindings appear to be completely undocumented. It
+seem as though this ought to be fixed.
 
-diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
-index 7333b053..1016836 100644
---- a/drivers/clk/rockchip/clk-rk3036.c
-+++ b/drivers/clk/rockchip/clk-rk3036.c
-@@ -133,7 +133,7 @@ PNAME(mux_spdif_p)	= { "spdif_src", "spdif_frac", "xin12m" };
- PNAME(mux_uart0_p)	= { "uart0_src", "uart0_frac", "xin24m" };
- PNAME(mux_uart1_p)	= { "uart1_src", "uart1_frac", "xin24m" };
- PNAME(mux_uart2_p)	= { "uart2_src", "uart2_frac", "xin24m" };
--PNAME(mux_mac_p)	= { "mac_pll_src", "ext_gmac" };
-+PNAME(mux_mac_p)	= { "mac_pll_src", "rmii_clkin" };
- PNAME(mux_dclk_p)	= { "dclk_lcdc", "dclk_cru" };
- 
- static struct rockchip_pll_clock rk3036_pll_clks[] __initdata = {
--- 
-1.7.9.5
+Cheers,
 
+- Ben
 
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQEcBAEBAgAGBQJWZffJAAoJEHPt6ejPuu8B55wIAKhCh+3B6L0jnOwpTB01ThWf
+1x+S2hVSklTT8Fsr/kqvmYtl0rQzuEiZYU5/KcZBGA2Mys5bpLQz+kY84jQ94lvh
+J7QSoZ1kieWFtKE41MZ+TfqJ1k2/xKZ9TIllkl2yNq89zEbIjF+ePgO2j5l+jH81
+s1RK0IbHbmlLhcnqRVUmSBuB+nsvHPVCHWOQvpfIsWQdQmqpYhIPoAZe9UdbjPTC
+qF58N5EPrhTty/1dxQOlXm1LhxGunmSvtsfUGbXAOyuS5PQDph0RDDSCOR5OZmKg
+QW0b8r7Qgz0P3XAOsP4sCT+tk2H6rrWz4BUw5yNPFLcHO+0crZWzZSTvW/2lP0s=
+=on3T
+-----END PGP SIGNATURE-----
+--=-=-=--
