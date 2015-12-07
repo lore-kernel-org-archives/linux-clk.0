@@ -1,93 +1,69 @@
-Return-Path: <anholt@eliezer.anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	devicetree@vger.kernel.org,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH v2 1/3] clk: bcm2835: Add bindings for the auxiliary peripheral clock gates.
-Date: Tue, 15 Dec 2015 15:35:57 -0800
-Message-Id: <1450222559-22461-1-git-send-email-eric@anholt.net>
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+Subject: Re: [PATCH v5 1/6] clk: qcom: Add support for SMD-RPM Clocks
+To: sboyd@codeaurora.org, agross@codeaurora.org
+References: <1449151376-25930-1-git-send-email-georgi.djakov@linaro.org>
+ <1449151376-25930-2-git-send-email-georgi.djakov@linaro.org>
+Cc: Georgi Djakov <georgi.djakov@linaro.org>, mturquette@baylibre.com,
+ linux-clk@vger.kernel.org, bjorn.andersson@sonymobile.com,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Message-ID: <56656288.8090207@linaro.org>
+Date: Mon, 7 Dec 2015 12:42:16 +0200
+MIME-Version: 1.0
+In-Reply-To: <1449151376-25930-2-git-send-email-georgi.djakov@linaro.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-These will be used for enabling UART1, SPI1, and SPI2.
+On 3.12.15 г. 16:02, Georgi Djakov wrote:
+> This adds initial support for clocks controlled by the Resource
+> Power Manager (RPM) processor on some Qualcomm SoCs, which use
+> the qcom_smd_rpm driver to communicate with RPM.
+> Such platforms are msm8916, apq8084 and msm8974.
+> 
+> The RPM is a dedicated hardware engine for managing the shared
+> SoC resources in order to keep the lowest power profile. It
+> communicates with other hardware subsystems via shared memory
+> and accepts clock requests, aggregates the requests and turns
+> the clocks on/off or scales them on demand.
+> 
+> This driver is based on the codeaurora.org driver:
+> https://www.codeaurora.org/cgit/quic/la/kernel/msm-3.10/tree/drivers/clk/qcom/clock-rpm.c
+> 
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> ---
+[..]
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -2,6 +2,9 @@ config QCOM_GDSC
+>  	bool
+>  	select PM_GENERIC_DOMAINS if PM
+>  
+> +config QCOM_RPMCC
+> +	bool
+> +
+>  config COMMON_CLK_QCOM
+>  	tristate "Support for Qualcomm's clock controllers"
+>  	depends on OF
+> @@ -9,6 +12,14 @@ config COMMON_CLK_QCOM
+>  	select REGMAP_MMIO
+>  	select RESET_CONTROLLER
+>  
+> +config QCOM_CLK_SMD_RPM
+> +	tristate "RPM over SMD based Clock Controller"
+> +	depends on COMMON_CLK_QCOM
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
+This should be:
+	depends on COMMON_CLK_QCOM && QCOM_SMD_RPM
 
-v2: Make the binding cover both the IRQ and clock enable registers.
+And also for patch 3/6 it should be && MFD_QCOM_RPM
+Will resend.
 
- .../bindings/clock/brcm,bcm2835-aux-clock.txt      | 31 ++++++++++++++++++++++
- include/dt-bindings/clock/bcm2835-aux.h            | 17 ++++++++++++
- 2 files changed, 48 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm2835-aux-clock.txt
- create mode 100644 include/dt-bindings/clock/bcm2835-aux.h
-
-diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm2835-aux-clock.txt b/Documentation/devicetree/bindings/clock/brcm,bcm2835-aux-clock.txt
-new file mode 100644
-index 0000000..7a837d2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/brcm,bcm2835-aux-clock.txt
-@@ -0,0 +1,31 @@
-+Broadcom BCM2835 auxiliary peripheral support
-+
-+This binding uses the common clock binding:
-+    Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+The auxiliary peripherals (UART, SPI1, and SPI2) have a small register
-+area controlling clock gating to the peripherals, and providing an IRQ
-+status register.
-+
-+Required properties:
-+- compatible:	Should be "brcm,bcm2835-aux"
-+- #clock-cells:	Should be <1>. The permitted clock-specifier values can be
-+		  found in include/dt-bindings/clock/bcm2835-aux.h
-+- reg:		Specifies base physical address and size of the registers
-+- clocks:	The parent clock phandle
-+
-+Example:
-+
-+	clocks: cprman@7e101000 {
-+		compatible = "brcm,bcm2835-cprman";
-+		#clock-cells = <1>;
-+		reg = <0x7e101000 0x2000>;
-+		clocks = <&clk_osc>;
-+	};
-+
-+	aux: aux@0x7e215004 {
-+		compatible = "brcm,bcm2835-aux";
-+		#clock-cells = <1>;
-+		reg = <0x7e215000 0x8>;
-+		clocks = <&clocks BCM2835_CLOCK_VPU>;
-+	};
-diff --git a/include/dt-bindings/clock/bcm2835-aux.h b/include/dt-bindings/clock/bcm2835-aux.h
-new file mode 100644
-index 0000000..d91156e
---- /dev/null
-+++ b/include/dt-bindings/clock/bcm2835-aux.h
-@@ -0,0 +1,17 @@
-+/*
-+ * Copyright (C) 2015 Broadcom Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation version 2.
-+ *
-+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-+ * kind, whether express or implied; without even the implied warranty
-+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#define BCM2835_AUX_CLOCK_UART		0
-+#define BCM2835_AUX_CLOCK_SPI1		1
-+#define BCM2835_AUX_CLOCK_SPI2		2
-+#define BCM2835_AUX_CLOCK_COUNT		3
--- 
-2.6.2
+> +	select QCOM_RPMCC
+> +	help
+> +	  Support for the clocks exposed by the Resource Power Manager
+> +	  processor on devices like apq8016, apq8084 and msm8974.
+> +
+>  config APQ_GCC_8084
+>  	tristate "APQ8084 Global Clock Controller"
+>  	select QCOM_GDSC
