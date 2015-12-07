@@ -1,58 +1,78 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	sjoerd.simons@collabora.co.uk,
-	wxt@rock-chips.com,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH v2 0/5] clk: rockchip: fix handling of fractional dividers
-Date: Tue, 22 Dec 2015 22:27:57 +0100
-Message-Id: <1450819682-4932-1-git-send-email-heiko@sntech.de>
+Return-Path: <robh@kernel.org>
+Date: Mon, 7 Dec 2015 08:39:15 -0600
+From: Rob Herring <robh@kernel.org>
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Russell King <linux@arm.linux.org.uk>,
+	Roland Stigge <stigge@antcom.de>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/5] dt-bindings: clock: add description of LPC32xx
+ clock controller
+Message-ID: <20151207143915.GA887@rob-hp-laptop>
+References: <1449398757-16834-1-git-send-email-vz@mleia.com>
+ <1449398757-16834-2-git-send-email-vz@mleia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1449398757-16834-2-git-send-email-vz@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Essentially unchanged from the first iteration from back in august, just
-including additional patches depending on that and fixing fractional
-dividers on the rk3036 and spdif parent settings.
+On Sun, Dec 06, 2015 at 12:45:53PM +0200, Vladimir Zapolskiy wrote:
+> NXP LPC32xx SoC has a clocking and power control unit (CPC) as a part
+> of system control block (SCB). CPC is supplied by two external
+> oscillators and it manages core and most of peripheral
+> clocks, the change adds description of DT bindings for clock
+> controller found on LPC32xx SoC series.
+> 
+> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
 
-In v1, Stephen seemed essentially ok with it but Mike put forward his wish
-to use his planned approach for connected clocks for handling this.
+Acked-by: Rob Herring <robh@kernel.org>
 
-While that in itself will be very interesting also for handling Rockchip's
-armclk generically, we're now in the situation that everything related
-to audio output relies on working fractional dividers to produce the
-needed clock frequencies, making audio-output essentially non-working on
-all Rockchip socs in mainline at the moment.
-
-So I'm somewhat hoping for some sort of intermediate solution here :-)
-
-
-changes in v2:
-- rebase original 3 patches onto 4.4
-- add the 2 new patches from other series, that need that change
-
-Heiko Stuebner (3):
-  clk: add flag for clocks that need to be enabled on rate changes
-  clk: rockchip: handle mux dependency of fractional dividers
-  clk: rockchip: include downstream muxes into fractional dividers
-
-Sjoerd Simons (1):
-  clk: rockchip: Allow the RK3288 SPDIF clocks to change their parent
-
-Xing Zheng (1):
-  clk: rockchip: rk3036: include downstream muxes into fractional
-    dividers
-
- drivers/clk/clk.c                 |  18 +++++
- drivers/clk/rockchip/clk-rk3036.c |  34 +++++-----
- drivers/clk/rockchip/clk-rk3188.c |  80 +++++++++++-----------
- drivers/clk/rockchip/clk-rk3288.c |  70 +++++++++----------
- drivers/clk/rockchip/clk.c        | 137 ++++++++++++++++++++++++++++++++++----
- drivers/clk/rockchip/clk.h        |  19 ++++++
- include/linux/clk-provider.h      |   1 +
- 7 files changed, 254 insertions(+), 105 deletions(-)
-
--- 
-2.6.4
+> ---
+> Changes from v1 to v2:
+> - none
+> 
+>  .../devicetree/bindings/clock/nxp,lpc3220-clk.txt  | 30 ++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
+> new file mode 100644
+> index 0000000..20cbca3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
+> @@ -0,0 +1,30 @@
+> +NXP LPC32xx Clock Controller
+> +
+> +Required properties:
+> +- compatible: should be "nxp,lpc3220-clk"
+> +- reg:  should contain clock controller registers location and length
+> +- #clock-cells: must be 1, the cell holds id of a clock provided by the
+> +  clock controller
+> +- clocks: phandles of external oscillators, the list must contain one
+> +  32768 Hz oscillator and may have one optional high frequency oscillator
+> +- clock-names: list of external oscillator clock names, must contain
+> +  "xtal_32k" and may have optional "xtal"
+> +
+> +Examples:
+> +
+> +	/* System Control Block */
+> +	scb {
+> +		compatible = "simple-bus";
+> +		ranges = <0x0 0x040004000 0x00001000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +
+> +		clk: clock-controller@0 {
+> +			compatible = "nxp,lpc3220-clk";
+> +			reg = <0x00 0x114>;
+> +			#clock-cells = <1>;
+> +
+> +			clocks = <&xtal_32k>, <&xtal>;
+> +			clock-names = "xtal_32k", "xtal";
+> +		};
+> +	};
+> -- 
+> 2.1.4
+> 
