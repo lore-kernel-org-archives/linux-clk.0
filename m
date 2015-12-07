@@ -1,77 +1,83 @@
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>, linux-clk@vger.kernel.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 4/5] clk: shmobile: Add new CPG/MSSR driver core
-Date: Sat, 05 Dec 2015 05:08:25 +0200
-Message-ID: <1816814.hXph9CLyDv@avalon>
-In-Reply-To: <1447343686-2038-5-git-send-email-geert+renesas@glider.be>
-References: <1447343686-2038-1-git-send-email-geert+renesas@glider.be> <1447343686-2038-5-git-send-email-geert+renesas@glider.be>
+Return-Path: <robh@kernel.org>
+Date: Mon, 7 Dec 2015 08:15:08 -0600
+From: Rob Herring <robh@kernel.org>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 1/6] clk: sunxi: Add DRAM gates support for sun4i-a10
+Message-ID: <20151207141508.GA21137@rob-hp-laptop>
+References: <1449306009-2627-1-git-send-email-wens@csie.org>
+ <1449306009-2627-2-git-send-email-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1449306009-2627-2-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
-
-Thank you for the patch.
-
-On Thursday 12 November 2015 16:54:45 Geert Uytterhoeven wrote:
-> Add the common core for the new Renesas Clock Pulse Generator / Module
-> Standby and Software Reset driver.
+On Sat, Dec 05, 2015 at 05:00:04PM +0800, Chen-Yu Tsai wrote:
+> The A10/A20 share the same set of DRAM clock gates, which controls
+> direct memory access for some peripherals.
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> On the A10, bit 15 controls the system's DRAM clock output (possibly
+> to the DRAM chips), which we need to keep on.
+> 
+> On the A20 this has been moved to the DRAM controller, becoming a no-op.
+> However it is still listed in the user manual, so add it anyway.
+> 
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+
+Acked-by: Rob Herring <robh@kernel.org>
+
+Perhaps someone should go and add all the compatible strings you need 
+here. You don't have to have a user in the kernel. These oneline binding 
+changes are getting old...
+
+Rob
+
 > ---
-> v6:
->   - No changes,
+>  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+>  drivers/clk/sunxi/clk-simple-gates.c              | 12 ++++++++++++
+>  2 files changed, 13 insertions(+)
 > 
-> v5:
->   - Convert from CLK_OF_DECLARE() to a real platform_driver, initialized
->     using platform_driver_probe() from subsys_initcall().
->     Note that arch_initcall() would be OK for arm32, but not for arm64:
->       - arm32 calls of_platform_populate() from arch_initcall(),
->       - arm64 calls of_platform_populate() from arch_initcall_sync().
->   - Implement handling of core clocks that are suitable for power
->     management (not needed for R-Car, but useful for SH-Mobile AG5 and
->     R-Mobile APE6),
->   - Add cpg_mssr_info.init(), as initialization is now done from the
->     core driver,
->   - Move conversion from Module Clock numbers to IDs from run time (C
->     code) to compile time (CPP macros for filling in tables),
->   - Unify some code to handle CLK_TYPE_IN and CLK_TYPE_FF,
->   - Rename from clk-cpg-mssr to renesas-cpg-mssr,
->   - Add include guards to clk-cpg-mssr.h,
->   - Improve struct documentation,
->   - Clean up debugging code,
->   - Drop RFC state,
+> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
+> index 153ac72869e8..ef0b452806b1 100644
+> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
+> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+> @@ -57,6 +57,7 @@ Required properties:
+>  	"allwinner,sun6i-a31-apb2-gates-clk" - for the APB2 gates on A31
+>  	"allwinner,sun8i-a23-apb2-gates-clk" - for the APB2 gates on A23
+>  	"allwinner,sun9i-a80-apbs-gates-clk" - for the APBS gates on A80
+> +	"allwinner,sun4i-a10-dram-gates-clk" - for the DRAM gates on A10
+>  	"allwinner,sun5i-a13-mbus-clk" - for the MBUS clock on A13
+>  	"allwinner,sun4i-a10-mmc-clk" - for the MMC clock
+>  	"allwinner,sun9i-a80-mmc-clk" - for mmc module clocks on A80
+> diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/clk-simple-gates.c
+> index c8acc0612c15..f4da52b5ca0e 100644
+> --- a/drivers/clk/sunxi/clk-simple-gates.c
+> +++ b/drivers/clk/sunxi/clk-simple-gates.c
+> @@ -160,3 +160,15 @@ CLK_OF_DECLARE(sun5i_a13_ahb, "allwinner,sun5i-a13-ahb-gates-clk",
+>  	       sun4i_a10_ahb_init);
+>  CLK_OF_DECLARE(sun7i_a20_ahb, "allwinner,sun7i-a20-ahb-gates-clk",
+>  	       sun4i_a10_ahb_init);
+> +
+> +static const int sun4i_a10_dram_critical_clocks[] __initconst = {
+> +	15,	/* dram_output */
+> +};
+> +
+> +static void __init sun4i_a10_dram_init(struct device_node *node)
+> +{
+> +	sunxi_simple_gates_setup(node, sun4i_a10_dram_critical_clocks,
+> +				 ARRAY_SIZE(sun4i_a10_dram_critical_clocks));
+> +}
+> +CLK_OF_DECLARE(sun4i_a10_dram, "allwinner,sun4i-a10-dram-gates-clk",
+> +	       sun4i_a10_dram_init);
+> -- 
+> 2.6.2
 > 
-> v4:
->   - New.
-> ---
->  drivers/clk/shmobile/renesas-cpg-mssr.c | 587 +++++++++++++++++++++++++++++
->  drivers/clk/shmobile/renesas-cpg-mssr.h | 131 +++++++
->  2 files changed, 718 insertions(+)
->  create mode 100644 drivers/clk/shmobile/renesas-cpg-mssr.c
->  create mode 100644 drivers/clk/shmobile/renesas-cpg-mssr.h
-> 
-> diff --git a/drivers/clk/shmobile/renesas-cpg-mssr.c
-> b/drivers/clk/shmobile/renesas-cpg-mssr.c new file mode 100644
-> index 0000000000000000..e4382ba4e1e31aca
-> --- /dev/null
-> +++ b/drivers/clk/shmobile/renesas-cpg-mssr.c
-
-[snip]
-
-> +static inline int cpg_mssr_add_clk_domain(struct device *dev,
-> +					  const unsigned int *core_pm_clks,
-> +					  unsigned int num_core_pm_clks) {}
-
-The function is missing a return statement.
-
-> +#endif /* !CONFIG_PM_GENERIC_DOMAINS_OF */
-
-[snip]
-
--- 
-Regards,
-
-Laurent Pinchart
