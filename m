@@ -1,73 +1,140 @@
-Return-Path: <wens@mirror2.csie.ntu.edu.tw>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH resend 1/6] clk: sunxi: Add DRAM gates support for sun4i-a10
-Date: Sat,  5 Dec 2015 21:16:42 +0800
-Message-Id: <1449321407-4531-2-git-send-email-wens@csie.org>
-In-Reply-To: <1449321407-4531-1-git-send-email-wens@csie.org>
-References: <1449321407-4531-1-git-send-email-wens@csie.org>
+Return-Path: <scottwood@freescale.com>
+Message-ID: <1449521078.15946.91.camel@freescale.com>
+Subject: Re: [PATCH v3 4/5] clk: Add consumer APIs for discovering possible
+ parent clocks
+From: Scott Wood <scottwood@freescale.com>
+To: Russell King <linux@arm.linux.org.uk>
+CC: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
+	<mturquette@baylibre.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "Viresh
+ Kumar" <viresh.kumar@linaro.org>, <linux-clk@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+	<linux-arm-kernel@lists.infradead.org>, Tang Yuantian
+	<Yuantian.Tang@freescale.com>
+Date: Mon, 7 Dec 2015 14:44:38 -0600
+In-Reply-To: <1444939412.5185.267.camel@freescale.com>
+References: <1442723397-26329-1-git-send-email-scottwood@freescale.com>
+	 <1442723397-26329-5-git-send-email-scottwood@freescale.com>
+	 <1444939412.5185.267.camel@freescale.com>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Return-Path: scottwood@freescale.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The A10/A20 share the same set of DRAM clock gates, which controls
-direct memory access for some peripherals.
+On Thu, 2015-10-15 at 15:03 -0500, Scott Wood wrote:
+> On Sat, 2015-09-19 at 23:29 -0500, Scott Wood wrote:
+> > Commit fc4a05d4b0eb ("clk: Remove unused provider APIs") removed
+> > __clk_get_num_parents() and clk_hw_get_parent_by_index(), leaving only
+> > true provider API versions that operate on struct clk_hw.
+> > 
+> > qoriq-cpufreq needs these functions in order to determine the options
+> > it has for calling clk_set_parent() and thus populate the cpufreq
+> > table, so revive them as legitimate consumer APIs.
+> > 
+> > Signed-off-by: Scott Wood <scottwood@freescale.com>
+> > ---
+> > v3: new patch
+> > 
+> >  drivers/clk/clk.c   | 19 +++++++++++++++++++
+> >  include/linux/clk.h | 31 +++++++++++++++++++++++++++++++
+> >  2 files changed, 50 insertions(+)
+> 
+> Russell, could you ACK this if there are no objections?
+> 
+> Thanks,
+> Scott
 
-On the A10, bit 15 controls the system's DRAM clock output (possibly
-to the DRAM chips), which we need to keep on.
+ping?
 
-On the A20 this has been moved to the DRAM controller, becoming a no-op.
-However it is still listed in the user manual, so add it anyway.
+-Scott
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
- drivers/clk/sunxi/clk-simple-gates.c              | 12 ++++++++++++
- 2 files changed, 13 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-index 153ac72869e8..ef0b452806b1 100644
---- a/Documentation/devicetree/bindings/clock/sunxi.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-@@ -57,6 +57,7 @@ Required properties:
- 	"allwinner,sun6i-a31-apb2-gates-clk" - for the APB2 gates on A31
- 	"allwinner,sun8i-a23-apb2-gates-clk" - for the APB2 gates on A23
- 	"allwinner,sun9i-a80-apbs-gates-clk" - for the APBS gates on A80
-+	"allwinner,sun4i-a10-dram-gates-clk" - for the DRAM gates on A10
- 	"allwinner,sun5i-a13-mbus-clk" - for the MBUS clock on A13
- 	"allwinner,sun4i-a10-mmc-clk" - for the MMC clock
- 	"allwinner,sun9i-a80-mmc-clk" - for mmc module clocks on A80
-diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/clk-simple-gates.c
-index c8acc0612c15..f4da52b5ca0e 100644
---- a/drivers/clk/sunxi/clk-simple-gates.c
-+++ b/drivers/clk/sunxi/clk-simple-gates.c
-@@ -160,3 +160,15 @@ CLK_OF_DECLARE(sun5i_a13_ahb, "allwinner,sun5i-a13-ahb-gates-clk",
- 	       sun4i_a10_ahb_init);
- CLK_OF_DECLARE(sun7i_a20_ahb, "allwinner,sun7i-a20-ahb-gates-clk",
- 	       sun4i_a10_ahb_init);
-+
-+static const int sun4i_a10_dram_critical_clocks[] __initconst = {
-+	15,	/* dram_output */
-+};
-+
-+static void __init sun4i_a10_dram_init(struct device_node *node)
-+{
-+	sunxi_simple_gates_setup(node, sun4i_a10_dram_critical_clocks,
-+				 ARRAY_SIZE(sun4i_a10_dram_critical_clocks));
-+}
-+CLK_OF_DECLARE(sun4i_a10_dram, "allwinner,sun4i-a10-dram-gates-clk",
-+	       sun4i_a10_dram_init);
--- 
-2.6.2
+> 
+> > 
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index 43e2c3a..9436356 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -290,6 +290,12 @@ struct clk_hw *__clk_get_hw(struct clk *clk)
+> >  }
+> >  EXPORT_SYMBOL_GPL(__clk_get_hw);
+> >  
+> > +unsigned int clk_get_num_parents(struct clk *clk)
+> > +{
+> > +     return !clk ? 0 : clk->core->num_parents;
+> > +}
+> > +EXPORT_SYMBOL_GPL(clk_get_num_parents);
+> > +
+> >  unsigned int clk_hw_get_num_parents(const struct clk_hw *hw)
+> >  {
+> >       return hw->core->num_parents;
+> > @@ -359,6 +365,19 @@ static struct clk_core 
+> > *clk_core_get_parent_by_index(struct clk_core *core,
+> >               return core->parents[index];
+> >  }
+> >  
+> > +struct clk *clk_get_parent_by_index(struct clk *clk, unsigned int index)
+> > +{
+> > +     struct clk_core *parent;
+> > +
+> > +     if (!clk)
+> > +             return NULL;
+> > +
+> > +     parent = clk_core_get_parent_by_index(clk->core, index);
+> > +
+> > +     return !parent ? NULL : parent->hw->clk;
+> > +}
+> > +EXPORT_SYMBOL_GPL(clk_get_parent_by_index);
+> > +
+> >  struct clk_hw *
+> >  clk_hw_get_parent_by_index(const struct clk_hw *hw, unsigned int index)
+> >  {
+> > diff --git a/include/linux/clk.h b/include/linux/clk.h
+> > index 0df4a51..937de0e 100644
+> > --- a/include/linux/clk.h
+> > +++ b/include/linux/clk.h
+> > @@ -392,6 +392,26 @@ int clk_set_parent(struct clk *clk, struct clk 
+> > *parent);
+> >  struct clk *clk_get_parent(struct clk *clk);
+> >  
+> >  /**
+> > + * clk_get_parent_by_index - get a possible parent clock by index
+> > + * @clk: clock source
+> > + * @index: index into the array of possible parents of this clock
+> > + *
+> > + * Returns struct clk corresponding to the requested possible
+> > + * parent clock source, or NULL.
+> > + */
+> > +struct clk *clk_get_parent_by_index(struct clk *clk,
+> > +                                 unsigned int index);
+> > +
+> > +/**
+> > + * clk_get_num_parents - get number of possible parents
+> > + * @clk: clock source
+> > + *
+> > + * Returns the number of possible parents of this clock,
+> > + * which can then be enumerated using clk_get_parent_by_index().
+> > + */
+> > +unsigned int clk_get_num_parents(struct clk *clk);
+> > +
+> > +/**
+> >   * clk_get_sys - get a clock based upon the device name
+> >   * @dev_id: device name
+> >   * @con_id: connection ID
+> > @@ -461,6 +481,17 @@ static inline struct clk *clk_get_parent(struct clk 
+> > *clk)
+> >       return NULL;
+> >  }
+> >  
+> > +struct clk *clk_get_parent_by_index(struct clk *clk,
+> > +                                 unsigned int index)
+> > +{
+> > +     return NULL;
+> > +}
+> > +
+> > +unsigned int clk_get_num_parents(struct clk *clk)
+> > +{
+> > +     return 0;
+> > +}
+> > +
+> >  #endif
+> >  
+> >  /* clk_prepare_enable helps cases using clk_enable in non-atomic context.
