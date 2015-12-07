@@ -1,60 +1,43 @@
-Return-Path: <robh@kernel.org>
-Date: Fri, 4 Dec 2015 08:53:44 -0600
-From: Rob Herring <robh@kernel.org>
-To: Carlo Caione <carlo@caione.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux@arm.linux.org.uk, linux-meson@googlegroups.com,
-	drake@endlessm.com, jerry.cao@amlogic.com, victor.wan@amlogic.com,
-	pawel.moll@arm.com, arnd@arndb.de,
-	Carlo Caione <carlo@endlessm.com>
-Subject: Re: [PATCH v2 7/7] ARM: DTS: Amlogic: Add SMP related nodes for
- Meson8b
-Message-ID: <20151204145344.GB18876@rob-hp-laptop>
-References: <1449076953-5058-1-git-send-email-carlo@caione.org>
- <1449076953-5058-8-git-send-email-carlo@caione.org>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Andrew Lunn <andrew@lunn.ch>,  Jason Cooper <jason@lakedaemon.net>,  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org, Russell King <rmk+kernel@arm.linux.org.uk>
+Subject: Re: [PATCH v2 2/3] clk: add Dove PLL divider support for GPU, VMeta and AXI clocks
+References: <E1a5ijI-0007pk-0I@rmk-PC.arm.linux.org.uk>
+Date: Mon, 07 Dec 2015 18:43:55 +0100
+In-Reply-To: <E1a5ijI-0007pk-0I@rmk-PC.arm.linux.org.uk> (Russell King's
+	message of "Sun, 06 Dec 2015 23:28:32 +0000")
+Message-ID: <87d1uib1d0.fsf@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1449076953-5058-8-git-send-email-carlo@caione.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Dec 02, 2015 at 06:22:33PM +0100, Carlo Caione wrote:
-> From: Carlo Caione <carlo@endlessm.com>
-> 
-> Add nodes for: SCU, PMU and SRAM. Set also the enable-method for SMP
-> bringup.
-> 
-> Signed-off-by: Carlo Caione <carlo@endlessm.com>
+Hi Mike and Stephen,
+=20
+ On lun., d=C3=A9c. 07 2015, Russell King <rmk+kernel@arm.linux.org.uk> wro=
+te:
+
+> Add support for the Dove PLL dividers, which are used to generate the
+> clocks for the AXI bus, as well as the GPU and VMeta peripherals.
+>
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 > ---
->  arch/arm/boot/dts/meson8b.dtsi | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/meson8b.dtsi b/arch/arm/boot/dts/meson8b.dtsi
-> index 51b32ed..27e1b2f 100644
-> --- a/arch/arm/boot/dts/meson8b.dtsi
-> +++ b/arch/arm/boot/dts/meson8b.dtsi
-> @@ -51,9 +51,20 @@
->  / {
->  	interrupt-parent = <&gic>;
->  
-> +	scu@c4300000 {
-> +		compatible = "arm,cortex-a5-scu";
-> +		reg = <0xc4300000 0x100>;
-> +	};
-> +
-> +	pmu@c81000e4 {
-> +		compatible = "amlogic,meson8b-pmu", "syscon";
-> +		reg = <0xc81000e0 0x18>;
-> +	};
+>  drivers/clk/mvebu/Makefile       |   2 +-
+>  drivers/clk/mvebu/dove-divider.c | 262 +++++++++++++++++++++++++++++++++=
+++++++
+>  drivers/clk/mvebu/dove.c         |   6 +
+>  3 files changed, 269 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clk/mvebu/dove-divider.c
 
-These should be under a bus node.
+Do you plan to apply this patch directly or do you expect a pull request
+from mvebu for it (of course once you will have give your Acked-by)?
 
-> +
->  	cpus {
->  		#address-cells = <1>;
->  		#size-cells = <0>;
-> +		enable-method = "amlogic,meson8b-smp";
+Thanks,
 
-This property is supposed to be per cpu.
+Gregory
 
-Rob
+--=20
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
