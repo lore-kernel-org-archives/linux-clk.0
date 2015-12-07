@@ -1,59 +1,55 @@
-Return-Path: <scottwood@freescale.com>
-Message-ID: <1450135979.15946.406.camel@freescale.com>
-Subject: Re: [PATCH V3 5/6] clk: qoriq: Add ls1043a support.
-From: Scott Wood <scottwood@freescale.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Zhiqiang Hou <B48286@freescale.com>,
-	<linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
-	<will.deacon@arm.com>, <linux-i2c@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <mark.rutland@arm.com>,
-	<Mingkai.Hu@freescale.com>, <Shaohui.Xie@freescale.com>,
-	<bhupesh.sharma@freescale.com>, <leoli@freescale.com>, <wsa@the-dreams.de>,
-	<wim@iguana.be>, <corbet@lwn.net>, <mturquette@baylibre.com>,
-	<Wenbin.Song@freescale.com>, Russell King <linux@arm.linux.org.uk>
-Date: Mon, 14 Dec 2015 17:32:59 -0600
-In-Reply-To: <20151015195456.GT4558@codeaurora.org>
-References: <1444822498-16477-1-git-send-email-B48286@freescale.com>
-	 <1444822498-16477-6-git-send-email-B48286@freescale.com>
-	 <20151014183113.GE26883@codeaurora.org>
-	 <1444870621.5185.223.camel@freescale.com>
-	 <20151015195456.GT4558@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <rklein@nvidia.com>
+Subject: Re: [PATCH 3/3] clk: tegra-super: Fix sparse warnings for functions
+ not declared as static
+To: Jon Hunter <jonathanh@nvidia.com>, Peter De Schrijver
+	<pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+References: <1449248665-22343-1-git-send-email-jonathanh@nvidia.com>
+ <1449248665-22343-3-git-send-email-jonathanh@nvidia.com>
+ <5665AB15.80602@nvidia.com>
+CC: <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+From: Rhyland Klein <rklein@nvidia.com>
+Message-ID: <5665C715.7030608@nvidia.com>
+Date: Mon, 7 Dec 2015 12:51:17 -0500
 MIME-Version: 1.0
-Return-Path: scottwood@freescale.com
+In-Reply-To: <5665AB15.80602@nvidia.com>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2015-10-15 at 12:54 -0700, Stephen Boyd wrote:
-> On 10/14, Scott Wood wrote:
-> > On Wed, 2015-10-14 at 11:31 -0700, Stephen Boyd wrote:
-> > > On 10/14, Zhiqiang Hou wrote:
-> > > > From: Hou Zhiqiang <B48286@freescale.com>
-> > > > 
-> > > > Signed-off-by: Hou Zhiqiang <B48286@freescale.com>
-> > > > ---
-> > > 
-> > > Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-> > > 
-> > 
-> > Could you ack my clock patchset that this depends on (if there are no 
-> > 
-> > objections)?  Mike Turquette acked the RFC version a while back, but it's 
-> > 
-> > changed a bit since then (including the new clk_get_num_parents() and 
-> > 
-> > clk_get_parent_by_index() -- I CCed Russell King on that but got no 
-> > 
-> > response), and got no response when I asked whether the ack was still good
-> > 
-> > for v3.
-> > 
-> > 
+On 12/7/2015 10:51 AM, Rhyland Klein wrote:
+> On 12/4/2015 12:04 PM, Jon Hunter wrote:
+>> Sparse reports the following warnings for structures and functions that
+>> should be declared static:
+>>
+>> drivers/clk/tegra/clk-tegra-super-gen4.c:70:35: warning: symbol
+>>  'tegra_super_gen_info_gen4' was not declared. Should it be static?
+>> drivers/clk/tegra/clk-tegra-super-gen4.c:96:35: warning: symbol
+>>  'tegra_super_gen_info_gen5' was not declared. Should it be static?
+>> drivers/clk/tegra/clk-tegra-super-gen4.c:174:13: warning: symbol
+>>  'tegra_super_clk_init' was not declared. Should it be static?
+>>
+>> Fix this by making the above static.
+>>
+>> Fixes: 88467d220119 ("clk: tegra: Add Super Gen5 Logic")
+>>
+>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>> ---
+>>  drivers/clk/tegra/clk-tegra-super-gen4.c | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
+> ...
 > 
-> Done. The consumer APIs look ok too, but I'd like to see if
-> Russell has any comments.
+> Acked-by: Rhyland Klein <rklein@nvidia.com>
+> 
 
-I've pinged Russell several times and gotten no response -- how should we
-proceed?
+Actually, Don't you need to change the function declarations in
+drivers/clk/tegra/clk.h for tegra_super_clk_gen[4|5]_init otherwise you
+will get mismatches with one being declared static and the other not?
 
--Scott
+-rhyland
+
+-- 
+nvpublic
