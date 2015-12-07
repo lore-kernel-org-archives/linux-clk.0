@@ -1,450 +1,412 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v6 2/2] clk: qcom: Add support for RPM Clocks
-Date: Tue, 15 Dec 2015 14:30:02 +0200
-Message-Id: <1450182602-6996-3-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1450182602-6996-1-git-send-email-georgi.djakov@linaro.org>
-References: <1450182602-6996-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Mon, 7 Dec 2015 09:37:47 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: regulator/mfd: Reorganize S5M8767
+ bindings
+Message-ID: <20151207093747.GD3384@x1>
+References: <1449191405-3344-1-git-send-email-k.kozlowski@samsung.com>
+ <1449191405-3344-3-git-send-email-k.kozlowski@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1449191405-3344-3-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds initial support for clocks controlled by the Resource
-Power Manager (RPM) processor on some Qualcomm SoCs, which use
-the qcom_rpm driver to communicate with RPM.
-Such platforms are apq8064 and msm8960.
+On Fri, 04 Dec 2015, Krzysztof Kozlowski wrote:
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- .../devicetree/bindings/clock/qcom,rpmcc.txt       |    1 +
- drivers/clk/qcom/Kconfig                           |   13 +
- drivers/clk/qcom/Makefile                          |    1 +
- drivers/clk/qcom/clk-rpm.c                         |  290 ++++++++++++++++++++
- drivers/clk/qcom/clk-rpm.h                         |   71 +++++
- 5 files changed, 376 insertions(+)
- create mode 100644 drivers/clk/qcom/clk-rpm.c
- create mode 100644 drivers/clk/qcom/clk-rpm.h
+> The regulator/s5m8767-regulator.txt duplicates some of the information
+> about bindings with old mfd/s2mps11.txt. Now common part exists entirely
+> in mfd/samsung,sec-core.txt so:
+>  - add company prefix to file name (regulator/samsung,s5m8767.txt),
+>  - remove duplicated information,
+>  - reorganize the contents to match style of
+>    regulator/samsung,s2mps11.txt.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  .../devicetree/bindings/mfd/samsung,sec-core.txt   |   4 +-
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-index 91be034ea75b..7f7ce1f042fd 100644
---- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-@@ -11,6 +11,7 @@ Required properties :
-                compatible "qcom,rpmcc" should be also included.
- 
- 			"qcom,rpmcc-msm8916", "qcom,rpmcc"
-+			"qcom,rpmcc-apq8064", "qcom,rpmcc"
- 
- - #clock-cells : shall contain 1
- 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 5963d36f0c45..748123893958 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -25,6 +25,19 @@ config QCOM_CLK_SMD_RPM
- 	  Say Y if you want to support the clocks exposed by the RPM on
- 	  platforms such as apq8016, apq8084, msm8974 etc.
- 
-+config QCOM_CLK_RPM
-+	tristate "RPM based Clock Controller"
-+	depends on COMMON_CLK_QCOM && MFD_QCOM_RPM
-+	select QCOM_RPMCC
-+	help
-+	  The RPM (Resource Power Manager) is a dedicated hardware engine for
-+	  managing the shared SoC resources in order to keep the lowest power
-+	  profile. It communicates with other hardware subsystems via shared
-+	  memory and accepts clock requests, aggregates the requests and turns
-+	  the clocks on/off or scales them on demand.
-+	  Say Y if you want to support the clocks exposed by the RPM on
-+	  platforms such as apq8064, msm8660, msm8960 etc.
-+
- config APQ_GCC_8084
- 	tristate "APQ8084 Global Clock Controller"
- 	select QCOM_GDSC
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 5f4673b7b03a..25bf2f81d58a 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -26,3 +26,4 @@ obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
- obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
- obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
- obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
-+obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
-diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
-new file mode 100644
-index 000000000000..7b0e85eefe70
---- /dev/null
-+++ b/drivers/clk/qcom/clk-rpm.c
-@@ -0,0 +1,290 @@
-+/*
-+ * Copyright (c) 2015, Linaro Limited
-+ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/export.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/mfd/qcom_rpm.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+
-+#include "clk-rpm.h"
-+#include <dt-bindings/mfd/qcom-rpm.h>
-+
-+#define to_clk_rpm(_hw) container_of(_hw, struct clk_rpm, hw)
-+
-+static DEFINE_MUTEX(rpm_clk_lock);
-+
-+static int clk_rpm_set_rate_active(struct clk_rpm *r, unsigned long rate)
-+{
-+	u32 value = DIV_ROUND_UP(rate, 1000); /* to kHz */
-+
-+	return qcom_rpm_write(r->rpm, QCOM_RPM_ACTIVE_STATE,
-+			      r->rpm_clk_id, &value, 1);
-+}
-+
-+static int clk_rpm_prepare(struct clk_hw *hw)
-+{
-+	struct clk_rpm *r = to_clk_rpm(hw);
-+	unsigned long rate = r->rate;
-+	int ret = 0;
-+
-+	mutex_lock(&rpm_clk_lock);
-+
-+	if (!rate)
-+		goto out;
-+
-+	if (r->branch)
-+		rate = !!rate;
-+
-+	ret = clk_rpm_set_rate_active(r, rate);
-+
-+	if (ret)
-+		goto out;
-+
-+out:
-+	if (!ret)
-+		r->enabled = true;
-+
-+	mutex_unlock(&rpm_clk_lock);
-+
-+	return ret;
-+}
-+
-+static void clk_rpm_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_rpm *r = to_clk_rpm(hw);
-+	int ret;
-+
-+	mutex_lock(&rpm_clk_lock);
-+
-+	if (!r->rate)
-+		goto out;
-+
-+	ret = clk_rpm_set_rate_active(r, r->rate);
-+	if (ret)
-+		goto out;
-+
-+	r->enabled = false;
-+
-+out:
-+	mutex_unlock(&rpm_clk_lock);
-+}
-+
-+static int clk_rpm_set_rate(struct clk_hw *hw,
-+			    unsigned long rate, unsigned long parent_rate)
-+{
-+	struct clk_rpm *r = to_clk_rpm(hw);
-+	int ret = 0;
-+
-+	mutex_lock(&rpm_clk_lock);
-+
-+	if (r->enabled)
-+		ret = clk_rpm_set_rate_active(r, rate);
-+
-+	if (!ret)
-+		r->rate = rate;
-+
-+	mutex_unlock(&rpm_clk_lock);
-+
-+	return ret;
-+}
-+
-+static long clk_rpm_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *parent_rate)
-+{
-+	/*
-+	 * RPM handles rate rounding and we don't have a way to
-+	 * know what the rate will be, so just return whatever
-+	 * rate is requested.
-+	 */
-+	return rate;
-+}
-+
-+static unsigned long clk_rpm_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct clk_rpm *r = to_clk_rpm(hw);
-+
-+	/*
-+	 * RPM handles rate rounding and we don't have a way to
-+	 * know what the rate will be, so just return whatever
-+	 * rate was set.
-+	 */
-+	return r->rate;
-+}
-+
-+const struct clk_ops clk_rpm_ops = {
-+	.prepare	= clk_rpm_prepare,
-+	.unprepare	= clk_rpm_unprepare,
-+	.set_rate	= clk_rpm_set_rate,
-+	.round_rate	= clk_rpm_round_rate,
-+	.recalc_rate	= clk_rpm_recalc_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_rpm_ops);
-+
-+const struct clk_ops clk_rpm_branch_ops = {
-+	.prepare	= clk_rpm_prepare,
-+	.unprepare	= clk_rpm_unprepare,
-+	.round_rate	= clk_rpm_round_rate,
-+	.recalc_rate	= clk_rpm_recalc_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_rpm_branch_ops);
-+
-+struct rpm_cc {
-+	struct qcom_rpm *rpm;
-+	struct clk_onecell_data data;
-+	struct clk *clks[];
-+};
-+
-+struct rpm_clk_desc {
-+	struct clk_rpm **clks;
-+	size_t num_clks;
-+};
-+
-+/* apq8064 */
-+DEFINE_CLK_RPM_PXO_BRANCH(apq8064, pxo, QCOM_RPM_PXO_CLK, 27000000);
-+DEFINE_CLK_RPM_CXO_BRANCH(apq8064, cxo, QCOM_RPM_CXO_CLK, 19200000);
-+DEFINE_CLK_RPM(apq8064, afab_clk, QCOM_RPM_APPS_FABRIC_CLK);
-+DEFINE_CLK_RPM(apq8064, cfpb_clk, QCOM_RPM_CFPB_CLK);
-+DEFINE_CLK_RPM(apq8064, daytona_clk, QCOM_RPM_DAYTONA_FABRIC_CLK);
-+DEFINE_CLK_RPM(apq8064, ebi1_clk, QCOM_RPM_EBI1_CLK);
-+DEFINE_CLK_RPM(apq8064, mmfab_clk, QCOM_RPM_MM_FABRIC_CLK);
-+DEFINE_CLK_RPM(apq8064, mmfpb_clk, QCOM_RPM_MMFPB_CLK);
-+DEFINE_CLK_RPM(apq8064, sfab_clk, QCOM_RPM_SYS_FABRIC_CLK);
-+DEFINE_CLK_RPM(apq8064, sfpb_clk, QCOM_RPM_SFPB_CLK);
-+DEFINE_CLK_RPM(apq8064, qdss_clk, QCOM_RPM_QDSS_CLK);
-+
-+static struct clk_rpm *apq8064_clks[] = {
-+	[QCOM_RPM_PXO_CLK] = &apq8064_pxo,
-+	[QCOM_RPM_CXO_CLK] = &apq8064_cxo,
-+	[QCOM_RPM_APPS_FABRIC_CLK] = &apq8064_afab_clk,
-+	[QCOM_RPM_CFPB_CLK] = &apq8064_cfpb_clk,
-+	[QCOM_RPM_DAYTONA_FABRIC_CLK] = &apq8064_daytona_clk,
-+	[QCOM_RPM_EBI1_CLK] = &apq8064_ebi1_clk,
-+	[QCOM_RPM_MM_FABRIC_CLK] = &apq8064_mmfab_clk,
-+	[QCOM_RPM_MMFPB_CLK] = &apq8064_mmfpb_clk,
-+	[QCOM_RPM_SYS_FABRIC_CLK] = &apq8064_sfab_clk,
-+	[QCOM_RPM_SFPB_CLK] = &apq8064_sfpb_clk,
-+	[QCOM_RPM_QDSS_CLK] = &apq8064_qdss_clk,
-+};
-+
-+static const struct rpm_clk_desc rpm_clk_apq8064 = {
-+	.clks = apq8064_clks,
-+	.num_clks = ARRAY_SIZE(apq8064_clks),
-+};
-+
-+static const struct of_device_id rpm_clk_match_table[] = {
-+	{ .compatible = "qcom,rpmcc-apq8064", .data = &rpm_clk_apq8064},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, rpm_clk_match_table);
-+
-+static int rpm_clk_probe(struct platform_device *pdev)
-+{
-+	struct clk **clks;
-+	struct clk *clk;
-+	struct rpm_cc *rcc;
-+	struct clk_onecell_data *data;
-+	int ret;
-+	size_t num_clks, i;
-+	struct qcom_rpm *rpm;
-+	struct clk_rpm **rpm_clks;
-+	const struct rpm_clk_desc *desc;
-+
-+	rpm = dev_get_drvdata(pdev->dev.parent);
-+	if (!rpm) {
-+		dev_err(&pdev->dev, "Unable to retrieve handle to RPM\n");
-+		return -ENODEV;
-+	}
-+
-+	desc = of_device_get_match_data(&pdev->dev);
-+	if (!desc)
-+		return -EINVAL;
-+
-+	rpm_clks = desc->clks;
-+	num_clks = desc->num_clks;
-+
-+	rcc = devm_kzalloc(&pdev->dev, sizeof(*rcc) + sizeof(*clks) * num_clks,
-+			   GFP_KERNEL);
-+	if (!rcc)
-+		return -ENOMEM;
-+
-+	clks = rcc->clks;
-+	data = &rcc->data;
-+	data->clks = clks;
-+	data->clk_num = num_clks;
-+
-+	for (i = 0; i < num_clks; i++) {
-+		if (!rpm_clks[i]) {
-+			clks[i] = ERR_PTR(-ENOENT);
-+			continue;
-+		}
-+
-+		rpm_clks[i]->rpm = rpm;
-+		clk = devm_clk_register(&pdev->dev, &rpm_clks[i]->hw);
-+		if (IS_ERR(clk)) {
-+			ret = PTR_ERR(clk);
-+			goto err;
-+		}
-+
-+		clks[i] = clk;
-+	}
-+
-+	ret = of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get,
-+				  data);
-+	if (ret)
-+		goto err;
-+
-+	return 0;
-+err:
-+	dev_err(&pdev->dev, "Error registering RPM Clock driver (%d)\n", ret);
-+	return ret;
-+}
-+
-+static int rpm_clk_remove(struct platform_device *pdev)
-+{
-+	of_clk_del_provider(pdev->dev.of_node);
-+	return 0;
-+}
-+
-+static struct platform_driver rpm_clk_driver = {
-+	.driver = {
-+		.name = "qcom-clk-rpm",
-+		.of_match_table = rpm_clk_match_table,
-+	},
-+	.probe = rpm_clk_probe,
-+	.remove = rpm_clk_remove,
-+};
-+
-+static int __init rpm_clk_init(void)
-+{
-+	return platform_driver_register(&rpm_clk_driver);
-+}
-+core_initcall(rpm_clk_init);
-+
-+static void __exit rpm_clk_exit(void)
-+{
-+	platform_driver_unregister(&rpm_clk_driver);
-+}
-+module_exit(rpm_clk_exit);
-+
-+MODULE_DESCRIPTION("Qualcomm RPM Clock Controller Driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:qcom-clk-rpm");
-diff --git a/drivers/clk/qcom/clk-rpm.h b/drivers/clk/qcom/clk-rpm.h
-new file mode 100644
-index 000000000000..c0ac30f806b5
---- /dev/null
-+++ b/drivers/clk/qcom/clk-rpm.h
-@@ -0,0 +1,71 @@
-+/*
-+ * Copyright (c) 2015, Linaro Limited
-+ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef __QCOM_CLK_RPM_H__
-+#define __QCOM_CLK_RPM_H__
-+
-+#include <linux/clk-provider.h>
-+
-+struct qcom_rpm;
-+
-+struct clk_rpm {
-+	const int rpm_clk_id;
-+	unsigned long rate;
-+	bool enabled;
-+	bool branch;
-+	struct clk_hw hw;
-+	struct qcom_rpm *rpm;
-+};
-+
-+extern const struct clk_ops clk_rpm_ops;
-+extern const struct clk_ops clk_rpm_branch_ops;
-+
-+#define DEFINE_CLK_RPM(_platform, _name, r_id)				     \
-+	static struct clk_rpm _platform##_##_name = {			     \
-+		.rpm_clk_id = (r_id),					     \
-+		.rate = INT_MAX,					     \
-+		.hw.init = &(struct clk_init_data){			     \
-+			.name = #_name,					     \
-+			.parent_names = (const char *[]){ "pxo_board" },     \
-+			.num_parents = 1,				     \
-+			.ops = &clk_rpm_ops,				     \
-+		},							     \
-+	}
-+
-+#define DEFINE_CLK_RPM_PXO_BRANCH(_platform, _name, r_id, r)		     \
-+	static struct clk_rpm _platform##_##_name = {			     \
-+		.rpm_clk_id = (r_id),					     \
-+		.branch = true,						     \
-+		.rate = (r),						     \
-+		.hw.init = &(struct clk_init_data){			     \
-+			.name = #_name,					     \
-+			.parent_names = (const char *[]){ "pxo_board" },     \
-+			.num_parents = 1,				     \
-+			.ops = &clk_rpm_branch_ops,			     \
-+		},							     \
-+	}
-+
-+#define DEFINE_CLK_RPM_CXO_BRANCH(_platform, _name, r_id, r)		     \
-+	static struct clk_rpm _platform##_##_name = {			     \
-+		.rpm_clk_id = (r_id),					     \
-+		.branch = true,						     \
-+		.rate = (r),						     \
-+		.hw.init = &(struct clk_init_data){			     \
-+			.name = #_name,					     \
-+			.parent_names = (const char *[]){ "cxo_board" },     \
-+			.num_parents = 1,				     \
-+			.ops = &clk_rpm_branch_ops,			     \
-+		},							     \
-+	}
-+#endif
+Acked-by: Lee Jones <lee.jones@linaro.org>
+
+>  .../bindings/regulator/s5m8767-regulator.txt       | 163 ---------------------
+>  .../bindings/regulator/samsung,s5m8767.txt         | 145 ++++++++++++++++++
+>  MAINTAINERS                                        |   2 +-
+>  4 files changed, 149 insertions(+), 165 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
+>  create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt b/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
+> index ef0166d0f643..4aeb95c82304 100644
+> --- a/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
+> +++ b/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
+> @@ -14,6 +14,7 @@ addressed by the host system using different I2C slave addresses.
+>  This document describes bindings for main device node. Optional sub-blocks
+>  must be a sub-nodes to it. Bindings for them can be found in:
+>   - bindings/regulator/samsung,s2mps11.txt
+> + - bindings/regulator/samsung,s5m8767.txt
+>   - bindings/clock/samsung,s2mps11.txt
+>  
+>  
+> @@ -23,7 +24,8 @@ Required properties:
+>  	- "samsung,s2mps13-pmic",
+>  	- "samsung,s2mps14-pmic",
+>  	- "samsung,s2mps15-pmic",
+> -	- "samsung,s2mpu02-pmic".
+> +	- "samsung,s2mpu02-pmic",
+> +	- "samsung,s5m8767-pmic".
+>   - reg: Specifies the I2C slave address of the pmic block. It should be 0x66.
+>  
+>  Optional properties:
+> diff --git a/Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt b/Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
+> deleted file mode 100644
+> index 20191315e444..000000000000
+> --- a/Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
+> +++ /dev/null
+> @@ -1,163 +0,0 @@
+> -* Samsung S5M8767 Voltage and Current Regulator
+> -
+> -The Samsung S5M8767 is a multi-function device which includes voltage and
+> -current regulators, rtc, charger controller and other sub-blocks. It is
+> -interfaced to the host controller using a i2c interface. Each sub-block is
+> -addressed by the host system using different i2c slave address. This document
+> -describes the bindings for 'pmic' sub-block of s5m8767.
+> -
+> -Required properties:
+> -- compatible: Should be "samsung,s5m8767-pmic".
+> -- reg: Specifies the i2c slave address of the pmic block. It should be 0x66.
+> -
+> -- s5m8767,pmic-buck2-dvs-voltage: A set of 8 voltage values in micro-volt (uV)
+> -  units for buck2 when changing voltage using gpio dvs. Refer to [1] below
+> -  for additional information.
+> -
+> -- s5m8767,pmic-buck3-dvs-voltage: A set of 8 voltage values in micro-volt (uV)
+> -  units for buck3 when changing voltage using gpio dvs. Refer to [1] below
+> -  for additional information.
+> -
+> -- s5m8767,pmic-buck4-dvs-voltage: A set of 8 voltage values in micro-volt (uV)
+> -  units for buck4 when changing voltage using gpio dvs. Refer to [1] below
+> -  for additional information.
+> -
+> -- s5m8767,pmic-buck-ds-gpios: GPIO specifiers for three host gpio's used
+> -  for selecting GPIO DVS lines. It is one-to-one mapped to dvs gpio lines.
+> -
+> -[1] If none of the 's5m8767,pmic-buck[2/3/4]-uses-gpio-dvs' optional
+> -    property is specified, the 's5m8767,pmic-buck[2/3/4]-dvs-voltage'
+> -    property should specify atleast one voltage level (which would be a
+> -    safe operating voltage).
+> -
+> -    If either of the 's5m8767,pmic-buck[2/3/4]-uses-gpio-dvs' optional
+> -    property is specified, then all the eight voltage values for the
+> -    's5m8767,pmic-buck[2/3/4]-dvs-voltage' should be specified.
+> -
+> -Optional properties:
+> -- interrupt-parent: Specifies the phandle of the interrupt controller to which
+> -  the interrupts from s5m8767 are delivered to.
+> -- interrupts: Interrupt specifiers for two interrupt sources.
+> -  - First interrupt specifier is for 'irq1' interrupt.
+> -  - Second interrupt specifier is for 'alert' interrupt.
+> -- s5m8767,pmic-buck2-uses-gpio-dvs: 'buck2' can be controlled by gpio dvs.
+> -- s5m8767,pmic-buck3-uses-gpio-dvs: 'buck3' can be controlled by gpio dvs.
+> -- s5m8767,pmic-buck4-uses-gpio-dvs: 'buck4' can be controlled by gpio dvs.
+> -
+> -Additional properties required if either of the optional properties are used:
+> -
+> -- s5m8767,pmic-buck234-default-dvs-idx: Default voltage setting selected from
+> -  the possible 8 options selectable by the dvs gpios. The value of this
+> -  property should be between 0 and 7. If not specified or if out of range, the
+> -  default value of this property is set to 0.
+> -
+> -- s5m8767,pmic-buck-dvs-gpios: GPIO specifiers for three host gpio's used
+> -  for dvs. The format of the gpio specifier depends in the gpio controller.
+> -
+> -Regulators: The regulators of s5m8767 that have to be instantiated should be
+> -included in a sub-node named 'regulators'. Regulator nodes included in this
+> -sub-node should be of the format as listed below.
+> -
+> -	regulator_name {
+> -		ldo1_reg: LDO1 {
+> -			regulator-name = "VDD_ALIVE_1.0V";
+> -			regulator-min-microvolt = <1100000>;
+> -			regulator-max-microvolt = <1100000>;
+> -			regulator-always-on;
+> -			regulator-boot-on;
+> -			op_mode = <1>; /* Normal Mode */
+> -		};
+> -	};
+> -The above regulator entries are defined in regulator bindings documentation
+> -except these properties:
+> -	- op_mode: describes the different operating modes of the LDO's with
+> -		power mode change in SOC. The different possible values are,
+> -		0 - always off mode
+> -		1 - on in normal mode
+> -		2 - low power mode
+> -		3 - suspend mode
+> -	- s5m8767,pmic-ext-control-gpios: (optional) GPIO specifier for one
+> -		GPIO controlling this regulator (enable/disable); This is
+> -		valid only for buck9.
+> -
+> -The following are the names of the regulators that the s5m8767 pmic block
+> -supports. Note: The 'n' in LDOn and BUCKn represents the LDO or BUCK number
+> -as per the datasheet of s5m8767.
+> -
+> -	- LDOn
+> -		  - valid values for n are 1 to 28
+> -		  - Example: LDO1, LDO2, LDO28
+> -	- BUCKn
+> -		  - valid values for n are 1 to 9.
+> -		  - Example: BUCK1, BUCK2, BUCK9
+> -
+> -The bindings inside the regulator nodes use the standard regulator bindings
+> -which are documented elsewhere.
+> -
+> -Example:
+> -
+> -	s5m8767_pmic@66 {
+> -		compatible = "samsung,s5m8767-pmic";
+> -		reg = <0x66>;
+> -
+> -		s5m8767,pmic-buck2-uses-gpio-dvs;
+> -		s5m8767,pmic-buck3-uses-gpio-dvs;
+> -		s5m8767,pmic-buck4-uses-gpio-dvs;
+> -
+> -		s5m8767,pmic-buck-default-dvs-idx = <0>;
+> -
+> -		s5m8767,pmic-buck-dvs-gpios = <&gpx0 0 0>, /* DVS1 */
+> -						 <&gpx0 1 0>, /* DVS2 */
+> -						 <&gpx0 2 0>; /* DVS3 */
+> -
+> -		s5m8767,pmic-buck-ds-gpios = <&gpx2 3 0>, /* SET1 */
+> -						<&gpx2 4 0>, /* SET2 */
+> -						<&gpx2 5 0>; /* SET3 */
+> -
+> -		s5m8767,pmic-buck2-dvs-voltage = <1350000>, <1300000>,
+> -						 <1250000>, <1200000>,
+> -						 <1150000>, <1100000>,
+> -						 <1000000>, <950000>;
+> -
+> -		s5m8767,pmic-buck3-dvs-voltage = <1100000>, <1100000>,
+> -						 <1100000>, <1100000>,
+> -						 <1000000>, <1000000>,
+> -						 <1000000>, <1000000>;
+> -
+> -		s5m8767,pmic-buck4-dvs-voltage = <1200000>, <1200000>,
+> -						 <1200000>, <1200000>,
+> -						 <1200000>, <1200000>,
+> -						 <1200000>, <1200000>;
+> -
+> -		regulators {
+> -			ldo1_reg: LDO1 {
+> -				regulator-name = "VDD_ABB_3.3V";
+> -				regulator-min-microvolt = <3300000>;
+> -				regulator-max-microvolt = <3300000>;
+> -				op_mode = <1>; /* Normal Mode */
+> -			};
+> -
+> -			ldo2_reg: LDO2 {
+> -				regulator-name = "VDD_ALIVE_1.1V";
+> -				regulator-min-microvolt = <1100000>;
+> -				regulator-max-microvolt = <1100000>;
+> -				regulator-always-on;
+> -			};
+> -
+> -			buck1_reg: BUCK1 {
+> -				regulator-name = "VDD_MIF_1.2V";
+> -				regulator-min-microvolt = <950000>;
+> -				regulator-max-microvolt = <1350000>;
+> -				regulator-always-on;
+> -				regulator-boot-on;
+> -			};
+> -
+> -			vemmc_reg: BUCK9 {
+> -				regulator-name = "VMEM_VDD_2.8V";
+> -				regulator-min-microvolt = <2800000>;
+> -				regulator-max-microvolt = <2800000>;
+> -				op_mode = <3>; /* Standby Mode */
+> -				s5m8767,pmic-ext-control-gpios = <&gpk0 2 0>;
+> -			};
+> -		};
+> -	};
+> diff --git a/Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt b/Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt
+> new file mode 100644
+> index 000000000000..093edda0c8df
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt
+> @@ -0,0 +1,145 @@
+> +Binding for Samsung S5M8767 regulator block
+> +===========================================
+> +
+> +This is a part of device tree bindings for S5M family multi-function devices.
+> +More information can be found in bindings/mfd/sec-core.txt file.
+> +
+> +The S5M8767 device provide buck and LDO regulators.
+> +
+> +To register these with regulator framework instantiate under main device node
+> +a sub-node named "regulators" with more sub-nodes for each regulator using the
+> +common regulator binding documented in:
+> + - Documentation/devicetree/bindings/regulator/regulator.txt
+> +
+> +
+> +Required properties of the main device node (the parent!):
+> + - s5m8767,pmic-buck2-dvs-voltage: A set of 8 voltage values in micro-volt (uV)
+> +   units for buck2 when changing voltage using gpio dvs. Refer to [1] below
+> +   for additional information.
+> +
+> + - s5m8767,pmic-buck3-dvs-voltage: A set of 8 voltage values in micro-volt (uV)
+> +   units for buck3 when changing voltage using gpio dvs. Refer to [1] below
+> +   for additional information.
+> +
+> + - s5m8767,pmic-buck4-dvs-voltage: A set of 8 voltage values in micro-volt (uV)
+> +   units for buck4 when changing voltage using gpio dvs. Refer to [1] below
+> +   for additional information.
+> +
+> + - s5m8767,pmic-buck-ds-gpios: GPIO specifiers for three host gpio's used
+> +   for selecting GPIO DVS lines. It is one-to-one mapped to dvs gpio lines.
+> +
+> + [1] If none of the 's5m8767,pmic-buck[2/3/4]-uses-gpio-dvs' optional
+> +     property is specified, the 's5m8767,pmic-buck[2/3/4]-dvs-voltage'
+> +     property should specify atleast one voltage level (which would be a
+> +     safe operating voltage).
+> +
+> +     If either of the 's5m8767,pmic-buck[2/3/4]-uses-gpio-dvs' optional
+> +     property is specified, then all the eight voltage values for the
+> +     's5m8767,pmic-buck[2/3/4]-dvs-voltage' should be specified.
+> +
+> +Optional properties of the main device node (the parent!):
+> + - s5m8767,pmic-buck2-uses-gpio-dvs: 'buck2' can be controlled by gpio dvs.
+> + - s5m8767,pmic-buck3-uses-gpio-dvs: 'buck3' can be controlled by gpio dvs.
+> + - s5m8767,pmic-buck4-uses-gpio-dvs: 'buck4' can be controlled by gpio dvs.
+> +
+> +Additional properties required if either of the optional properties are used:
+> +
+> + - s5m8767,pmic-buck234-default-dvs-idx: Default voltage setting selected from
+> +   the possible 8 options selectable by the dvs gpios. The value of this
+> +   property should be between 0 and 7. If not specified or if out of range, the
+> +   default value of this property is set to 0.
+> +
+> + - s5m8767,pmic-buck-dvs-gpios: GPIO specifiers for three host gpio's used
+> +   for dvs. The format of the gpio specifier depends in the gpio controller.
+> +
+> +
+> +Names of regulators supported by S5M8767 device:
+> +	- LDOn
+> +		  - valid values for n are 1 to 28
+> +		  - Example: LDO1, LDO2, LDO28
+> +	- BUCKn
+> +		  - valid values for n are 1 to 9.
+> +		  - Example: BUCK1, BUCK2, BUCK9
+> +Note: The 'n' in LDOn and BUCKn represents the LDO or BUCK number
+> +as per the datasheet of device.
+> +
+> +
+> +Optional properties of the nodes under "regulators" sub-node:
+> + - op_mode: describes the different operating modes of the LDO's with
+> +            power mode change in SOC. The different possible values are,
+> +             0 - always off mode
+> +             1 - on in normal mode
+> +             2 - low power mode
+> +             3 - suspend mode
+> + - s5m8767,pmic-ext-control-gpios: (optional) GPIO specifier for one
+> +                                   GPIO controlling this regulator
+> +                                   (enable/disable); This is valid only
+> +                                   for buck9.
+> +
+> +Example:
+> +
+> +	s5m8767_pmic@66 {
+> +		compatible = "samsung,s5m8767-pmic";
+> +		reg = <0x66>;
+> +
+> +		s5m8767,pmic-buck2-uses-gpio-dvs;
+> +		s5m8767,pmic-buck3-uses-gpio-dvs;
+> +		s5m8767,pmic-buck4-uses-gpio-dvs;
+> +
+> +		s5m8767,pmic-buck-default-dvs-idx = <0>;
+> +
+> +		s5m8767,pmic-buck-dvs-gpios = <&gpx0 0 0>, /* DVS1 */
+> +						 <&gpx0 1 0>, /* DVS2 */
+> +						 <&gpx0 2 0>; /* DVS3 */
+> +
+> +		s5m8767,pmic-buck-ds-gpios = <&gpx2 3 0>, /* SET1 */
+> +						<&gpx2 4 0>, /* SET2 */
+> +						<&gpx2 5 0>; /* SET3 */
+> +
+> +		s5m8767,pmic-buck2-dvs-voltage = <1350000>, <1300000>,
+> +						 <1250000>, <1200000>,
+> +						 <1150000>, <1100000>,
+> +						 <1000000>, <950000>;
+> +
+> +		s5m8767,pmic-buck3-dvs-voltage = <1100000>, <1100000>,
+> +						 <1100000>, <1100000>,
+> +						 <1000000>, <1000000>,
+> +						 <1000000>, <1000000>;
+> +
+> +		s5m8767,pmic-buck4-dvs-voltage = <1200000>, <1200000>,
+> +						 <1200000>, <1200000>,
+> +						 <1200000>, <1200000>,
+> +						 <1200000>, <1200000>;
+> +
+> +		regulators {
+> +			ldo1_reg: LDO1 {
+> +				regulator-name = "VDD_ABB_3.3V";
+> +				regulator-min-microvolt = <3300000>;
+> +				regulator-max-microvolt = <3300000>;
+> +				op_mode = <1>; /* Normal Mode */
+> +			};
+> +
+> +			ldo2_reg: LDO2 {
+> +				regulator-name = "VDD_ALIVE_1.1V";
+> +				regulator-min-microvolt = <1100000>;
+> +				regulator-max-microvolt = <1100000>;
+> +				regulator-always-on;
+> +			};
+> +
+> +			buck1_reg: BUCK1 {
+> +				regulator-name = "VDD_MIF_1.2V";
+> +				regulator-min-microvolt = <950000>;
+> +				regulator-max-microvolt = <1350000>;
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +			};
+> +
+> +			vemmc_reg: BUCK9 {
+> +				regulator-name = "VMEM_VDD_2.8V";
+> +				regulator-min-microvolt = <2800000>;
+> +				regulator-max-microvolt = <2800000>;
+> +				op_mode = <3>; /* Standby Mode */
+> +				s5m8767,pmic-ext-control-gpios = <&gpk0 2 0>;
+> +			};
+> +		};
+> +	};
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 137284e37250..7e1db5746ee4 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -9233,9 +9233,9 @@ F:	drivers/regulator/s5m*.c
+>  F:	drivers/clk/clk-s2mps11.c
+>  F:	drivers/rtc/rtc-s5m.c
+>  F:	include/linux/mfd/samsung/
+> -F:	Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
+>  F:	Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
+>  F:	Documentation/devicetree/bindings/regulator/samsung,s2m*.txt
+> +F:	Documentation/devicetree/bindings/regulator/samsung,s5m*.txt
+>  F:	Documentation/devicetree/bindings/clock/samsung,s2mps11.txt
+>  
+>  SAMSUNG S5P/EXYNOS4 SOC SERIES CAMERA SUBSYSTEM DRIVERS
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
