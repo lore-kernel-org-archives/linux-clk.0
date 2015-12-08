@@ -1,65 +1,67 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:36052 "EHLO
-	mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932770AbbLON1n (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 15 Dec 2015 08:27:43 -0500
-Received: by mail-wm0-f44.google.com with SMTP id n186so164928407wmn.1
-        for <linux-clk@vger.kernel.org>; Tue, 15 Dec 2015 05:27:42 -0800 (PST)
-Message-ID: <5670154B.4020607@linaro.org>
-Date: Tue, 15 Dec 2015 13:27:39 +0000
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 8 Dec 2015 11:06:43 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH resend 6/6] ARM: dts: sun7i: Add VE (Video Engine) module
+ clock node
+Message-ID: <20151208100643.GR27957@lukather>
+References: <1449321407-4531-1-git-send-email-wens@csie.org>
+ <1449321407-4531-7-git-send-email-wens@csie.org>
 MIME-Version: 1.0
-To: Georgi Djakov <georgi.djakov@linaro.org>, sboyd@codeaurora.org
-CC: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH] clk:gcc-msm8916: add missing mss_q6_bimc_axi clock
-References: <1449934749-26223-1-git-send-email-srinivas.kandagatla@linaro.org> <56701278.90306@linaro.org>
-In-Reply-To: <56701278.90306@linaro.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Q8a9NmTVi5AMeZ2v"
+In-Reply-To: <1449321407-4531-7-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
 
+--Q8a9NmTVi5AMeZ2v
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 15/12/15 13:15, Georgi Djakov wrote:
-> Hi Srini,
-> Thanks for the patch.
->
-> On 12/12/2015 05:39 PM, Srinivas Kandagatla wrote:
->> This clock is required for loading the qdsp firmware.
->>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->> ---
->>   drivers/clk/qcom/gcc-msm8916.c               | 18 ++++++++++++++++++
->>   include/dt-bindings/clock/qcom,gcc-msm8916.h |  1 +
->>   2 files changed, 19 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
->> index e3bf09d..1ec5a27 100644
->> --- a/drivers/clk/qcom/gcc-msm8916.c
->> +++ b/drivers/clk/qcom/gcc-msm8916.c
->> @@ -2590,6 +2590,23 @@ static struct clk_branch gcc_mss_cfg_ahb_clk = {
->>   	},
->>   };
->>
->> +static struct clk_branch gcc_mss_q6_bimc_axi_clk = {
->> +	.halt_reg = 0x49004,
->> +	.clkr = {
->> +		.enable_reg = 0x49004,
->> +		.enable_mask = BIT(0),
->> +		.hw.init = &(struct clk_init_data){
->> +			.name = "gcc_mss_q6_bimc_axi_clk",
->> +			.parent_names = (const char *[]){
->> +				"pcnoc_bfdcd_clk_src",
->
-> Looks like the parent should be bimc_ddr_clk_src.
-> Otherwise looks fine to me.
+On Sat, Dec 05, 2015 at 09:16:47PM +0800, Chen-Yu Tsai wrote:
+> The video engine has its own module clock, which also includes a
+> reset control for it.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-Thanks for review, I will fix it and send v2.
+Applied, thanks!
+Maxime
 
---srini
->
-> BR,
-> Georgi
->
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--Q8a9NmTVi5AMeZ2v
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWZquzAAoJEBx+YmzsjxAgbHoP/3y0cF9yMttI7bLE7y4OCcSF
+rIaxfFNvcnIbTaiWmqrHBEHzGQbYp7IGW6y53UFuK0bY2BnEevCCuK27gJek0gHS
++Sm6bSmyjddZxWLBLl8Ty51m9zQsRmd/9BvSrBRULsW42GScDHmRpiPMpOvV1Jhl
+88l1tKutYh6Gq1hoLK+X8HIpNa7v3mHR+NUIDLsry/u9UHUal/DDYr7REU4coFME
+WG/8zNc6dEtNhvrs2JgJDFB+LrJ8fda7j2zu1Qd8fEqpC573WZ0fwbjpabdzXQKq
+vrc0MLECyRL9kMGxUkr6gZTQeeDy/Wu8zH7yjoVS0lRh7AEtl00WCCBh3n0IqUis
+cd085fdSl7Wy6zw3J9Nt5wBZcX4qFHOBwISHfttF67/XR3M2Sam8ezu2OP/M/Mgm
++Mpgw9v0rTTkHqcS/mgNZulCQpfrQ2QuNweeqMDRqYjtE5/yb+pOAJOnzG/jLBlz
+dTGQbVns2amM1c5Dp48H7hlksJXVs6zfNUm9Vsm2a3lNlEhVCiiEjW1kPvv8E/im
+CNsRh50FBnYGqtIZLo/A899ye3iHcIQzOt23qSY7Ej2VTfMDsL7lpHtgkan2cwgm
+rRbwfcPbp5q36uHvBVjciaYuQPdRLcjj4lCP9Oi4IjRiOv1nI7jWgkHyOtRq+vtG
+V6Tc42n8yZarcb2n5/kh
+=bkLR
+-----END PGP SIGNATURE-----
+
+--Q8a9NmTVi5AMeZ2v--
