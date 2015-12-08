@@ -1,77 +1,73 @@
-Return-Path: <simon@fire.lp0.eu>
-Message-ID: <74d29bf38adc88b27811a70ed409e9182ddeb5b5@8b5064a13e22126c1b9329f0dc35b8915774b7c3.invalid>
-In-Reply-To: <20151204143037.GA3667@rob-hp-laptop>
-References: <565CB727.7030209@simon.arlott.org.uk>
-    <20151204143037.GA3667@rob-hp-laptop>
-Date: Fri, 4 Dec 2015 21:04:25 -0000
-Subject: Re: [PATCH 1/2] clk: Add brcm,bcm63xx-gate-clk device tree binding
-From: "Simon Arlott" <simon@fire.lp0.eu>
-To: "Rob Herring" <robh@kernel.org>
-Cc: "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>,
- "Kevin Cernekee" <cernekee@gmail.com>,
- "Florian Fainelli" <f.fainelli@gmail.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
- linux-clk@vger.kernel.org,
- linux-mips@linux-mips.org,
- "Pawel Moll" <pawel.moll@arm.com>,
- "Mark Rutland" <mark.rutland@arm.com>,
- "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
- "Kumar Gala" <galak@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from pandora.arm.linux.org.uk ([78.32.30.218]:33955 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932347AbbLHKiI (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 8 Dec 2015 05:38:08 -0500
+From: Russell King <rmk+kernel@arm.linux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Jason Cooper <jason@lakedaemon.net>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org
+Subject: [PATCH v3 1/3] dt-bindings: add Marvell core PLL and clock divider
+ PMU documentation
 MIME-Version: 1.0
-Content-Type: text/plain;charset=utf-8
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <E1a6Fei-0004de-1W@rmk-PC.arm.linux.org.uk>
+Date: Tue, 08 Dec 2015 10:38:00 +0000
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, December 4, 2015 14:30, Rob Herring wrote:
-> On Mon, Nov 30, 2015 at 08:52:55PM +0000, Simon Arlott wrote:
->> +periph_clk: periph_clk {
->> +	compatible = "brcm,bcm63168-gate-clk", "brcm,bcm63xx-gate-clk";
->> +	regmap = <&periph_cntl>;
->
-> What else is in periph_cntrl? Could this all just be part of that node?
+Add documentation for the Marvell clock divider driver, which is used
+to source clocks for the AXI bus, video decoder, GPU and LCD blocks.
 
-     uint32        RevID;             /* (00) word 0 */
-     uint32        blkEnables;        /* (04) word 1 */ <-- gated clocks
-     uint32        pll_control;       /* (08) word 2 */ <-- system reset controller bit
-     uint32        deviceTimeoutEn;   /* (0c) word 3 */ <-- unknown
-     uint32        softResetB;        /* (10) word 4 */ <-- device reset controller bits
-    uint32        diagControl;        /* (14) word 5 */ <-- unknown
-    uint32        ExtIrqCfg;          /* (18) word 6*/ <-- external interrupt controller
-    uint32        unused1;            /* (1c) word 7 */ <-- (external interrupt controller?)
-         IrqControl_t     IrqControl[3];    /* (20) (40) (60) */ <-- normal interrupt controller
+Acked-by: Andrew Lunn <andrew@lunn.ch>
+Acked-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+---
+ .../bindings/clock/dove-divider-clock.txt          | 28 ++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/dove-divider-clock.txt
 
-So it has these clocks, two types of reset controller, and the interrupt
-controllers, but I've left the interrupt controllers registers out of the
-syscon device.
-
-For the registers in the "timer" peripheral at the end of the timer/watchdog
-registers:
-    uint32        EnSwPLL; <-- unknown
-    uint32        ClkRstCtl;
-#define POR_RESET_STATUS            (1 << 31) <-- unknown
-#define HW_RESET_STATUS             (1 << 30) <-- unknown
-#define SW_RESET_STATUS             (1 << 29) <-- unknown
-#define USB_REF_CLKEN               (1 << 18) <-- gated clock
-#define UTO_EXTIN_CLKEN             (1 << 17) <-- gated clock
-#define UTO_CLK50_SEL               (1 << 16) <-- looks like a clock frequency selection bit
-#define FAP2_PLL_CLKEN              (1 << 15) <-- gated clock
-#define FAP2_PLL_FREQ_SHIFT         12        <-- bits for controlling the frequency
-#define FAP1_PLL_CLKEN              (1 << 11) <-- gated clock
-#define FAP1_PLL_FREQ_SHIFT         8         <-- bits for controlling the frequency
-#define WAKEON_DSL                  (1 << 7)  <-- wake on network bit
-#define WAKEON_EPHY                 (1 << 6)  <-- wake on network bit
-#define DSL_ENERGY_DETECT_ENABLE    (1 << 4)  <-- energy saving control for network
-#define GPHY_1_ENERGY_DETECT_ENABLE (1 << 3)  <-- energy saving control for network
-#define EPHY_3_ENERGY_DETECT_ENABLE (1 << 2)  <-- energy saving control for network
-#define EPHY_2_ENERGY_DETECT_ENABLE (1 << 1)  <-- energy saving control for network
-#define EPHY_1_ENERGY_DETECT_ENABLE (1 << 0)  <-- energy saving control for network
-
-I need the usb_ref clock for USB, and I want to be able to disable
-uto_extin, fap1 and fap2 as they're unused by anything in the device tree.
-
-The full list of registers is here:
-https://github.com/lp0/bcm963xx_4.12L.06B_consumer/blob/master/shared/opensource/include/bcm963xx/63268_map_part.h
-
+diff --git a/Documentation/devicetree/bindings/clock/dove-divider-clock.txt b/Documentation/devicetree/bindings/clock/dove-divider-clock.txt
+new file mode 100644
+index 000000000000..e3eb0f657c5e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/dove-divider-clock.txt
+@@ -0,0 +1,28 @@
++PLL divider based Dove clocks
++
++Marvell Dove has a 2GHz PLL, which feeds into a set of dividers to provide
++high speed clocks for a number of peripherals.  These dividers are part of
++the PMU, and thus this node should be a child of the PMU node.
++
++The following clocks are provided:
++
++ID	Clock
++-------------
++0	AXI bus clock
++1	GPU clock
++2	VMeta clock
++3	LCD clock
++
++Required properties:
++- compatible : shall be "marvell,dove-divider-clock"
++- reg : shall be the register address of the Core PLL and Clock Divider
++   Control 0 register.  This will cover that register, as well as the
++   Core PLL and Clock Divider Control 1 register.  Thus, it will have
++   a size of 8.
++- #clock-cells : from common clock binding; shall be set to 1
++
++divider_clk: core-clock@0064 {
++	compatible = "marvell,dove-divider-clock";
++	reg = <0x0064 0x8>;
++	#clock-cells = <1>;
++};
 -- 
-Simon Arlott
+2.1.0
+
