@@ -1,261 +1,358 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v4 3/3] clk: qcom: Add A53 clock driver
-Date: Mon, 14 Dec 2015 15:58:03 +0200
-Message-Id: <1450101483-23509-4-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1450101483-23509-1-git-send-email-georgi.djakov@linaro.org>
-References: <1450101483-23509-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from pandora.arm.linux.org.uk ([78.32.30.218]:33961 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932347AbbLHKiO (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 8 Dec 2015 05:38:14 -0500
+From: Russell King <rmk+kernel@arm.linux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Jason Cooper <jason@lakedaemon.net>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH v3 2/3] clk: add Dove PLL divider support for GPU, VMeta and
+ AXI clocks
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <E1a6Fen-0004dq-69@rmk-PC.arm.linux.org.uk>
+Date: Tue, 08 Dec 2015 10:38:05 +0000
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a driver for the A53 Clock Controller. It is a hardware block that
-implements a combined mux and half integer divider functionality. It can
-choose between a fixed-rate clock or the dedicated A53 PLL. The source
-and the divider can be set both at the same time.
+Add support for the Dove PLL dividers, which are used to generate the
+clocks for the AXI bus, as well as the GPU and VMeta peripherals.
 
-This is required for enabling CPU frequency scaling on platforms like
-MSM8916.
-
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 ---
- .../devicetree/bindings/clock/qcom,a53cc.txt       |   23 +++
- drivers/clk/qcom/Kconfig                           |    8 +
- drivers/clk/qcom/Makefile                          |    1 +
- drivers/clk/qcom/a53cc.c                           |  166 ++++++++++++++++++++
- 4 files changed, 198 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53cc.txt
- create mode 100644 drivers/clk/qcom/a53cc.c
+v2 was missing dove-divider.h
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,a53cc.txt b/Documentation/devicetree/bindings/clock/qcom,a53cc.txt
+ drivers/clk/mvebu/Makefile       |   2 +-
+ drivers/clk/mvebu/dove-divider.c | 262 +++++++++++++++++++++++++++++++++++++++
+ drivers/clk/mvebu/dove-divider.h |   6 +
+ drivers/clk/mvebu/dove.c         |   6 +
+ 4 files changed, 275 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/mvebu/dove-divider.c
+ create mode 100644 drivers/clk/mvebu/dove-divider.h
+
+diff --git a/drivers/clk/mvebu/Makefile b/drivers/clk/mvebu/Makefile
+index 645ac7ea3565..8866115486f7 100644
+--- a/drivers/clk/mvebu/Makefile
++++ b/drivers/clk/mvebu/Makefile
+@@ -7,6 +7,6 @@ obj-$(CONFIG_ARMADA_375_CLK)	+= armada-375.o
+ obj-$(CONFIG_ARMADA_38X_CLK)	+= armada-38x.o
+ obj-$(CONFIG_ARMADA_39X_CLK)	+= armada-39x.o
+ obj-$(CONFIG_ARMADA_XP_CLK)	+= armada-xp.o
+-obj-$(CONFIG_DOVE_CLK)		+= dove.o
++obj-$(CONFIG_DOVE_CLK)		+= dove.o dove-divider.o
+ obj-$(CONFIG_KIRKWOOD_CLK)	+= kirkwood.o
+ obj-$(CONFIG_ORION_CLK)		+= orion.o
+diff --git a/drivers/clk/mvebu/dove-divider.c b/drivers/clk/mvebu/dove-divider.c
 new file mode 100644
-index 000000000000..3a1e8e6675ab
+index 000000000000..d5c5bfa35a5a
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,a53cc.txt
-@@ -0,0 +1,23 @@
-+Qualcomm A53 CPU Clock Controller Binding
-+------------------------------------------------
-+The A53 CPU Clock Controller is hardware, which provides a combined
-+mux and divider functionality for the CPU clocks. It can choose between
-+a fixed rate clock and the dedicated A53 PLL.
-+
-+Required properties :
-+- compatible : shall contain:
-+
-+			"qcom,a53cc"
-+
-+- reg : shall contain base register location and length
-+	of the APCS region
-+- #clock-cells : shall contain 1
-+
-+Example:
-+
-+	apcs: syscon@b011000 {
-+		compatible = "qcom,a53cc", "syscon";
-+		reg = <0x0b011000 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index d06cf687be4f..27a1622ca891 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -132,3 +132,11 @@ config QCOM_A53PLL
- 	  support for CPU frequencies above 1GHz.
- 	  Say Y if you want to support CPU frequency scaling on devices
- 	  such as MSM8916.
-+
-+config QCOM_A53CC
-+	bool "A53 Clock Controller"
-+	depends on COMMON_CLK_QCOM && QCOM_A53PLL
-+	help
-+	  Support for the A53 clock controller on some Qualcomm devices.
-+	  Say Y if you want to support CPU frequency scaling on devices
-+	  such as MSM8916.
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index bc7637516a6e..9a67697b9540 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -26,4 +26,5 @@ obj-$(CONFIG_MSM_GCC_8996) += gcc-msm8996.o
- obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
- obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
- obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
-+obj-$(CONFIG_QCOM_A53CC) += a53cc.o
- obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
-diff --git a/drivers/clk/qcom/a53cc.c b/drivers/clk/qcom/a53cc.c
-new file mode 100644
-index 000000000000..8958464ee7fb
---- /dev/null
-+++ b/drivers/clk/qcom/a53cc.c
-@@ -0,0 +1,166 @@
++++ b/drivers/clk/mvebu/dove-divider.c
+@@ -0,0 +1,262 @@
 +/*
-+ * Copyright (c) 2015, Linaro Limited
-+ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
++ * Marvell Dove PMU Core PLL divider driver
 + *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
++ * Cleaned up by substantially rewriting, and converted to DT by
++ * Russell King.  Origin is not known.
 + */
-+
-+#include <linux/clk.h>
 +#include <linux/clk-provider.h>
-+#include <linux/cpu.h>
++#include <linux/delay.h>
++#include <linux/io.h>
 +#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
 +
-+#include "clk-regmap.h"
-+#include "clk-regmap-mux-div.h"
++#include "dove-divider.h"
++
++struct dove_clk {
++	const char *name;
++	struct clk_hw hw;
++	void __iomem *base;
++	spinlock_t *lock;
++	u8 div_bit_start;
++	u8 div_bit_end;
++	u8 div_bit_load;
++	u8 div_bit_size;
++	u32 *divider_table;
++};
 +
 +enum {
-+	P_GPLL0,
-+	P_A53PLL,
++	DIV_CTRL0 = 0,
++	DIV_CTRL1 = 4,
++	DIV_CTRL1_N_RESET_MASK = BIT(10),
 +};
 +
-+static const struct parent_map gpll0_a53cc_map[] = {
-+	{ P_GPLL0, 4 },
-+	{ P_A53PLL, 5 },
-+};
++#define to_dove_clk(hw) container_of(hw, struct dove_clk, hw)
 +
-+static const char * const gpll0_a53cc[] = {
-+	"gpll0_vote",
-+	"a53pll",
-+};
-+
-+static const struct regmap_config a53cc_regmap_config = {
-+	.reg_bits		= 32,
-+	.reg_stride		= 4,
-+	.val_bits		= 32,
-+	.max_register		= 0x1000,
-+	.fast_io		= true,
-+	.val_format_endian	= REGMAP_ENDIAN_LITTLE,
-+};
-+
-+static const struct of_device_id qcom_a53cc_match_table[] = {
-+	{ .compatible = "qcom,a53cc" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, qcom_a53cc_match_table);
-+
-+/*
-+ * We use the notifier function for switching to a temporary safe configuration
-+ * (mux and divider), while the a53 pll is reconfigured.
-+ */
-+static int a53cc_notifier_cb(struct notifier_block *nb, unsigned long event,
-+			     void *data)
++static void dove_load_divider(void __iomem *base, u32 val, u32 mask, u32 load)
 +{
-+	int ret = 0;
-+	struct clk_regmap_mux_div *md = container_of(nb,
-+						     struct clk_regmap_mux_div,
-+						     clk_nb);
++	u32 v;
 +
-+	if (event == PRE_RATE_CHANGE)
-+		ret = __mux_div_set_src_div(md, md->safe_src, md->safe_div);
++	v = readl_relaxed(base + DIV_CTRL1) | DIV_CTRL1_N_RESET_MASK;
++	writel_relaxed(v, base + DIV_CTRL1);
 +
-+	return notifier_from_errno(ret);
++	v = (readl_relaxed(base + DIV_CTRL0) & ~(mask | load)) | val;
++	writel_relaxed(v, base + DIV_CTRL0);
++	writel_relaxed(v | load, base + DIV_CTRL0);
++	ndelay(250);
++	writel_relaxed(v, base + DIV_CTRL0);
 +}
 +
-+static int qcom_a53cc_probe(struct platform_device *pdev)
++static unsigned int dove_get_divider(struct dove_clk *dc)
 +{
-+	struct device *dev = &pdev->dev;
-+	struct clk_regmap_mux_div *a53cc;
-+	struct resource *res;
-+	void __iomem *base;
-+	struct clk *clk, *pclk;
-+	struct regmap *regmap;
-+	struct clk_init_data init;
-+	int ret;
++	unsigned int divider;
++	u32 val;
 +
-+	a53cc = devm_kzalloc(dev, sizeof(*a53cc), GFP_KERNEL);
-+	if (!a53cc)
-+		return -ENOMEM;
++	val = readl_relaxed(dc->base + DIV_CTRL0);
++	val >>= dc->div_bit_start;
 +
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
++	divider = val & ~(~0 << dc->div_bit_size);
 +
-+	a53cc->reg_offset = 0x50,
-+	a53cc->hid_width = 5,
-+	a53cc->hid_shift = 0,
-+	a53cc->src_width = 3,
-+	a53cc->src_shift = 8,
-+	a53cc->safe_src = 4,
-+	a53cc->safe_div = 3,
-+	a53cc->parent_map = gpll0_a53cc_map,
++	if (dc->divider_table)
++		divider = dc->divider_table[divider];
 +
-+	init.name = "a53mux",
-+	init.parent_names = gpll0_a53cc,
-+	init.num_parents = 2,
-+	init.ops = &clk_regmap_mux_div_ops,
-+	init.flags = CLK_SET_RATE_PARENT;
-+	a53cc->clkr.hw.init = &init;
++	return divider;
++}
 +
-+	pclk = __clk_lookup(gpll0_a53cc[1]);
-+	if (!pclk)
-+		return -EPROBE_DEFER;
++static int dove_calc_divider(const struct dove_clk *dc, unsigned long rate,
++			     unsigned long parent_rate, bool set)
++{
++	unsigned int divider, max;
 +
-+	ret = clk_prepare_enable(pclk);
-+	if (ret) {
-+		dev_err(dev, "failed to enable %s: %d\n", gpll0_a53cc[1], ret);
-+		return ret;
++	divider = DIV_ROUND_CLOSEST(parent_rate, rate);
++
++	if (dc->divider_table) {
++		unsigned int i;
++
++		for (i = 0; dc->divider_table[i]; i++)
++			if (divider == dc->divider_table[i]) {
++				divider = i;
++				break;
++			}
++
++		if (!dc->divider_table[i])
++			return -EINVAL;
++	} else {
++		max = 1 << dc->div_bit_size;
++
++		if (set && (divider == 0 || divider >= max))
++			return -EINVAL;
++		if (divider >= max)
++			divider = max - 1;
++		else if (divider == 0)
++			divider = 1;
 +	}
 +
-+	a53cc->clk_nb.notifier_call = a53cc_notifier_cb;
-+	ret = clk_notifier_register(pclk, &a53cc->clk_nb);
-+	if (ret) {
-+		dev_err(dev, "failed to register clock notifier: %d\n", ret);
-+		return ret;
-+	}
++	return divider;
++}
 +
-+	regmap = devm_regmap_init_mmio(dev, base, &a53cc_regmap_config);
-+	if (IS_ERR(regmap)) {
-+		ret = PTR_ERR(regmap);
-+		dev_err(dev, "failed to init regmap mmio: %d\n", ret);
-+		goto err;
-+	}
++static unsigned long dove_recalc_rate(struct clk_hw *hw, unsigned long parent)
++{
++	struct dove_clk *dc = to_dove_clk(hw);
++	unsigned int divider = dove_get_divider(dc);
++	unsigned long rate = DIV_ROUND_CLOSEST(parent, divider);
 +
-+	a53cc->clkr.regmap = regmap;
++	pr_debug("%s(): %s divider=%u parent=%lu rate=%lu\n",
++		 __func__, dc->name, divider, parent, rate);
 +
-+	clk = devm_clk_register_regmap(dev, &a53cc->clkr);
-+	if (IS_ERR(clk)) {
-+		ret = PTR_ERR(clk);
-+		dev_err(dev, "failed to register regmap clock: %d\n", ret);
-+		goto err;
-+	}
++	return rate;
++}
 +
-+	ret = of_clk_add_provider(dev->of_node, of_clk_src_simple_get, clk);
-+	if (ret) {
-+		dev_err(dev, "failed to add clock provider: %d\n", ret);
-+		goto err;
-+	}
++static long dove_round_rate(struct clk_hw *hw, unsigned long rate,
++			    unsigned long *parent)
++{
++	struct dove_clk *dc = to_dove_clk(hw);
++	unsigned long parent_rate = *parent;
++	int divider;
++
++	divider = dove_calc_divider(dc, rate, parent_rate, false);
++	if (divider < 0)
++		return divider;
++
++	rate = DIV_ROUND_CLOSEST(parent_rate, divider);
++
++	pr_debug("%s(): %s divider=%u parent=%lu rate=%lu\n",
++		 __func__, dc->name, divider, parent_rate, rate);
++
++	return rate;
++}
++
++static int dove_set_clock(struct clk_hw *hw, unsigned long rate,
++			  unsigned long parent_rate)
++{
++	struct dove_clk *dc = to_dove_clk(hw);
++	u32 mask, load, div;
++	int divider;
++
++	divider = dove_calc_divider(dc, rate, parent_rate, true);
++	if (divider < 0)
++		return divider;
++
++	pr_debug("%s(): %s divider=%u parent=%lu rate=%lu\n",
++		 __func__, dc->name, divider, parent_rate, rate);
++
++	div = (u32)divider << dc->div_bit_start;
++	mask = ~(~0 << dc->div_bit_size) << dc->div_bit_start;
++	load = BIT(dc->div_bit_load);
++
++	spin_lock(dc->lock);
++	dove_load_divider(dc->base, div, mask, load);
++	spin_unlock(dc->lock);
 +
 +	return 0;
-+err:
-+	clk_notifier_unregister(pclk, &a53cc->clk_nb);
-+	return ret;
 +}
 +
-+static struct platform_driver qcom_a53cc_driver = {
-+	.probe = qcom_a53cc_probe,
-+	.driver = {
-+		.name = "qcom-a53cc",
-+		.of_match_table = qcom_a53cc_match_table,
++static const struct clk_ops dove_divider_ops = {
++	.set_rate	= dove_set_clock,
++	.round_rate	= dove_round_rate,
++	.recalc_rate	= dove_recalc_rate,
++};
++
++static struct clk *clk_register_dove_divider(struct device *dev,
++	struct dove_clk *dc, const char **parent_names, size_t num_parents,
++	void __iomem *base)
++{
++	char name[32];
++	struct clk_init_data init = {
++		.name = name,
++		.ops = &dove_divider_ops,
++		.parent_names = parent_names,
++		.num_parents = num_parents,
++	};
++
++	strlcpy(name, dc->name, sizeof(name));
++
++	dc->hw.init = &init;
++	dc->base = base;
++	dc->div_bit_size = dc->div_bit_end - dc->div_bit_start + 1;
++
++	return clk_register(dev, &dc->hw);
++}
++
++static DEFINE_SPINLOCK(dove_divider_lock);
++
++static u32 axi_divider[] = {-1, 2, 1, 3, 4, 6, 5, 7, 8, 10, 9, 0};
++
++static struct dove_clk dove_hw_clocks[4] = {
++	{
++		.name = "axi",
++		.lock = &dove_divider_lock,
++		.div_bit_start = 1,
++		.div_bit_end = 6,
++		.div_bit_load = 7,
++		.divider_table = axi_divider,
++	}, {
++		.name = "gpu",
++		.lock = &dove_divider_lock,
++		.div_bit_start = 8,
++		.div_bit_end = 13,
++		.div_bit_load = 14,
++	}, {
++		.name = "vmeta",
++		.lock = &dove_divider_lock,
++		.div_bit_start = 15,
++		.div_bit_end = 20,
++		.div_bit_load = 21,
++	}, {
++		.name = "lcd",
++		.lock = &dove_divider_lock,
++		.div_bit_start = 22,
++		.div_bit_end = 27,
++		.div_bit_load = 28,
 +	},
 +};
 +
-+module_platform_driver(qcom_a53cc_driver);
-+MODULE_DESCRIPTION("Qualcomm A53 Clock Controller Driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:qcom-a53cc");
++static const char *core_pll[] = {
++	"core-pll",
++};
++
++static int dove_divider_init(struct device *dev, void __iomem *base,
++	struct clk **clks)
++{
++	struct clk *clk;
++	int i;
++
++	/*
++	 * Create the core PLL clock.  We treat this as a fixed rate
++	 * clock as we don't know any better, and documentation is sparse.
++	 */
++	clk = clk_register_fixed_rate(dev, core_pll[0], NULL, CLK_IS_ROOT,
++				      2000000000UL);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	for (i = 0; i < ARRAY_SIZE(dove_hw_clocks); i++)
++		clks[i] = clk_register_dove_divider(dev, &dove_hw_clocks[i],
++						    core_pll,
++						    ARRAY_SIZE(core_pll), base);
++
++	return 0;
++}
++
++static struct clk *dove_divider_clocks[4];
++
++static struct clk_onecell_data dove_divider_data = {
++	.clks = dove_divider_clocks,
++	.clk_num = ARRAY_SIZE(dove_divider_clocks),
++};
++
++void __init dove_divider_clk_init(struct device_node *np)
++{
++	void *base;
++
++	base = of_iomap(np, 0);
++	if (WARN_ON(!base))
++		return;
++
++	if (WARN_ON(dove_divider_init(NULL, base, dove_divider_clocks))) {
++		iounmap(base);
++		return;
++	}
++
++	of_clk_add_provider(np, of_clk_src_onecell_get, &dove_divider_data);
++}
+diff --git a/drivers/clk/mvebu/dove-divider.h b/drivers/clk/mvebu/dove-divider.h
+new file mode 100644
+index 000000000000..4f2f718deb8e
+--- /dev/null
++++ b/drivers/clk/mvebu/dove-divider.h
+@@ -0,0 +1,6 @@
++#ifndef DOVE_DIVIDER_H
++#define DOVE_DIVIDER_H
++
++void __init dove_divider_clk_init(struct device_node *np);
++
++#endif
+diff --git a/drivers/clk/mvebu/dove.c b/drivers/clk/mvebu/dove.c
+index b8c2424ac926..59fad9546c84 100644
+--- a/drivers/clk/mvebu/dove.c
++++ b/drivers/clk/mvebu/dove.c
+@@ -17,6 +17,7 @@
+ #include <linux/io.h>
+ #include <linux/of.h>
+ #include "common.h"
++#include "dove-divider.h"
+ 
+ /*
+  * Core Clocks
+@@ -184,9 +185,14 @@ static void __init dove_clk_init(struct device_node *np)
+ {
+ 	struct device_node *cgnp =
+ 		of_find_compatible_node(NULL, NULL, "marvell,dove-gating-clock");
++	struct device_node *ddnp =
++		of_find_compatible_node(NULL, NULL, "marvell,dove-divider-clock");
+ 
+ 	mvebu_coreclk_setup(np, &dove_coreclks);
+ 
++	if (ddnp)
++		dove_divider_clk_init(ddnp);
++
+ 	if (cgnp)
+ 		mvebu_clk_gating_setup(cgnp, dove_gating_desc);
+ }
+-- 
+2.1.0
+
