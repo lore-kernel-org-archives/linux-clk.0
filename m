@@ -1,95 +1,107 @@
-Return-Path: <vz@mleia.com>
-From: Vladimir Zapolskiy <vz@mleia.com>
-To: Rob Herring <robh@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: Russell King <linux@arm.linux.org.uk>,
-	Roland Stigge <stigge@antcom.de>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 3/5] dt-bindings: clock: add NXP LPC32xx clock list for consumers
-Date: Sun,  6 Dec 2015 12:45:55 +0200
-Message-Id: <1449398757-16834-4-git-send-email-vz@mleia.com>
-In-Reply-To: <1449398757-16834-1-git-send-email-vz@mleia.com>
-References: <1449398757-16834-1-git-send-email-vz@mleia.com>
+Return-Path: <xuejiancheng@hisilicon.com>
+Subject: Re: [PATCH v2 1/9] clk: hi3519: add dt-binding document and header
+ file
+To: Arnd Bergmann <arnd@arndb.de>
+References: <1449110364-23464-1-git-send-email-xuejiancheng@huawei.com>
+ <21651844.ONg7WdRZpk@wuerfel> <56653CBF.30801@huawei.com>
+ <2735980.8lIUhgbJzL@wuerfel>
+CC: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <xuwei5@hisilicon.com>, <haojian.zhuang@linaro.org>,
+        <zhangfei.gao@linaro.org>, <bintian.wang@huawei.com>,
+        <yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
+        <suwenping@hisilicon.com>, <ml.yang@hisilicon.com>,
+        <gaofei@hisilicon.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+From: xuejiancheng <xuejiancheng@huawei.com>
+Message-ID: <56663474.7040701@huawei.com>
+Date: Tue, 8 Dec 2015 09:37:56 +0800
+MIME-Version: 1.0
+In-Reply-To: <2735980.8lIUhgbJzL@wuerfel>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-The change adds a list of NXP LPC32xx clocks, which can be requested
-by clock consumers.
 
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
----
-Changes from v1 to v2:
-- incremented by 1 all clock values, possibly clock "0" may have a
-  special meaning in future
 
- include/dt-bindings/clock/lpc32xx-clock.h | 56 +++++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
- create mode 100644 include/dt-bindings/clock/lpc32xx-clock.h
+On 2015/12/7 17:36, Arnd Bergmann wrote:
+> On Monday 07 December 2015 16:01:03 xuejiancheng wrote:
+>> On 2015/12/4 18:56, Arnd Bergmann wrote:
+>>> On Friday 04 December 2015 11:21:28 xuejiancheng wrote:
+>>>> Hi Arnd,
+>>>>
+>>>> On 2015/12/3 17:44, Arnd Bergmann wrote:
+>>>>> On Thursday 03 December 2015 10:39:24 Jiancheng Xue wrote:
+>>>>>> +#ifndef __DTS_HI3519_CLOCK_H
+>>>>>> +#define __DTS_HI3519_CLOCK_H
+>>>>>
+>>>>> Please try to avoid adding headers like this if you can at all.
+>>>>>
+>>>>> I might ask you to merge the header file in one merge window
+>>>>> otherwise and submit the platform code one kernel later, as they
+>>>>> tendn to cause us needless dependencies otherwise.
+>>>>>
+>>>>
+>>>> Sorry. In v1, Rob suggested putting binding doc and header files in
+>>>> a separate patch. The clock driver indeed depends on the header.
+>>>>
+>>>> I will put the header and the clock driver in a patch, and keep the
+>>>> binding doc in another patch.
+>>>
+>>> Having split patches is better, I was really commenting on the fact
+>>> that ideally you would not have a header file at all. If we merge
+>>> the header through arm-soc, then you won't be able to merge the
+>>> clk driver easily, and if you merge the header through the clk
+>>> maintainer, I'm can't take your dts files.
+>>
+>> Thank you for your comments. Because the clocks in the crg module have
+>> different types and random layouts. If this header file is removed,
+>> the clock driver and the dts files will get very complicated.
+>>
+>> Could you help me acknowledge it if I put the header file and clock driver
+>> in a patch?
+>>
+>> Could you give me some suggestions If I want to keep this header file?
+> 
+> If this is another clock controller that has a random register layout,
+> then adding the header file is the least problematic solution indeed.
+> 
+>>>>> Where do those numbers come from? They are not consecutive, so it sounds
+>>>>> like they are directly from the data sheet and won't be needed in the driver.
+>>>>> If that's true, just use the numbers directly, as you do for everything
+>>>>> else.
+>>>>
+>>>> The numbers are defined by myself, not directly from the data sheet. Some numbers
+>>>> are reserved for device nodes which will be added later. So they are not consecutive now.
+>>>
+>>> I don't understand. How do you decide which numbers to reserve? If the
+>>> numbers are completely arbitrary and you have no idea what other clocks
+>>> there are, you can simply have consecutive numbers here and do the driver
+>>> accordingly.
+>>
+>> The clocks are divided into several groups according to their types. The clocks in
+>> a group are expected to have consecutive numbers. So some numbers are reserved for
+>> every group in this file, just like in some existing headers. Other clocks will be
+>> added when other peripherals drivers are submitted. They will use the reserve numbers
+>> and be inserted into existing groups.
+>>
+>> Of course it is not required to reserve numbers for later added clocks.
+> 
+> Are you able to enumerate all the clocks then? If all clocks that are
+> supported by this clock controllers have names in the data sheet, I
+> would prefer to just list them all now rather than only enter the ones
+> we already need, to avoid having future merge conflicts.
+> 
+> Then we just need to add code to support those clocks when we need them,
+> but that can be done in parallel to adding the DT nodes and the driver,
+> rather than strongly serializing the patch flow on the header file patches.
 
-diff --git a/include/dt-bindings/clock/lpc32xx-clock.h b/include/dt-bindings/clock/lpc32xx-clock.h
-new file mode 100644
-index 0000000..bcb1c9a
---- /dev/null
-+++ b/include/dt-bindings/clock/lpc32xx-clock.h
-@@ -0,0 +1,56 @@
-+/*
-+ * Copyright (c) 2015 Vladimir Zapolskiy <vz@mleia.com>
-+ *
-+ * This code is released using a dual license strategy: BSD/GPL
-+ * You can choose the licence that better fits your requirements.
-+ *
-+ * Released under the terms of 3-clause BSD License
-+ * Released under the terms of GNU General Public License Version 2.0
-+ *
-+ */
-+
-+#ifndef __DT_BINDINGS_LPC32XX_CLOCK_H
-+#define __DT_BINDINGS_LPC32XX_CLOCK_H
-+
-+/* LPC32XX System Control Block clocks */
-+#define LPC32XX_CLK_RTC		1
-+#define LPC32XX_CLK_DMA		2
-+#define LPC32XX_CLK_MLC		3
-+#define LPC32XX_CLK_SLC		4
-+#define LPC32XX_CLK_LCD		5
-+#define LPC32XX_CLK_MAC		6
-+#define LPC32XX_CLK_SD		7
-+#define LPC32XX_CLK_DDRAM	8
-+#define LPC32XX_CLK_SSP0	9
-+#define LPC32XX_CLK_SSP1	10
-+#define LPC32XX_CLK_UART3	11
-+#define LPC32XX_CLK_UART4	12
-+#define LPC32XX_CLK_UART5	13
-+#define LPC32XX_CLK_UART6	14
-+#define LPC32XX_CLK_IRDA	15
-+#define LPC32XX_CLK_I2C1	16
-+#define LPC32XX_CLK_I2C2	17
-+#define LPC32XX_CLK_TIMER0	18
-+#define LPC32XX_CLK_TIMER1	19
-+#define LPC32XX_CLK_TIMER2	20
-+#define LPC32XX_CLK_TIMER3	21
-+#define LPC32XX_CLK_TIMER4	22
-+#define LPC32XX_CLK_TIMER5	23
-+#define LPC32XX_CLK_WDOG	24
-+#define LPC32XX_CLK_I2S0	25
-+#define LPC32XX_CLK_I2S1	26
-+#define LPC32XX_CLK_SPI1	27
-+#define LPC32XX_CLK_SPI2	28
-+#define LPC32XX_CLK_MCPWM	29
-+#define LPC32XX_CLK_HSTIMER	30
-+#define LPC32XX_CLK_KEY		31
-+#define LPC32XX_CLK_PWM1	32
-+#define LPC32XX_CLK_PWM2	33
-+#define LPC32XX_CLK_ADC		34
-+
-+/* LPC32XX USB clocks */
-+#define LPC32XX_USB_CLK_I2C	1
-+#define LPC32XX_USB_CLK_DEVICE	2
-+#define LPC32XX_USB_CLK_HOST	3
-+
-+#endif /* __DT_BINDINGS_LPC32XX_CLOCK_H */
--- 
-2.1.4
+OK. I'll enumerate all the clocks in the data sheet in next version patch.
+
+Thank you.
+
+> 
+> 	Arnd
+> 
+> .
+> 
