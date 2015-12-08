@@ -1,99 +1,109 @@
-Return-Path: <wens@mirror2.csie.ntu.edu.tw>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH resend 5/6] ARM: dts: sun7i: Add DRAM gates
-Date: Sat,  5 Dec 2015 21:16:46 +0800
-Message-Id: <1449321407-4531-6-git-send-email-wens@csie.org>
-In-Reply-To: <1449321407-4531-1-git-send-email-wens@csie.org>
-References: <1449321407-4531-1-git-send-email-wens@csie.org>
+Return-Path: <xuejiancheng@hisilicon.com>
+Subject: Re: [PATCH v2 1/9] clk: hi3519: add dt-binding document and header
+ file
+To: Arnd Bergmann <arnd@arndb.de>, <robh+dt@kernel.org>
+References: <1449110364-23464-1-git-send-email-xuejiancheng@huawei.com>
+ <21651844.ONg7WdRZpk@wuerfel> <56653CBF.30801@huawei.com>
+ <2735980.8lIUhgbJzL@wuerfel>
+CC: <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <xuwei5@hisilicon.com>, <haojian.zhuang@linaro.org>,
+        <zhangfei.gao@linaro.org>, <bintian.wang@huawei.com>,
+        <yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
+        <suwenping@hisilicon.com>, <ml.yang@hisilicon.com>,
+        <gaofei@hisilicon.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+From: xuejiancheng <xuejiancheng@huawei.com>
+Message-ID: <5666A6B5.6020101@huawei.com>
+Date: Tue, 8 Dec 2015 17:45:25 +0800
+MIME-Version: 1.0
+In-Reply-To: <2735980.8lIUhgbJzL@wuerfel>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-The DRAM gates controls direct memory access for some peripherals.
-These peripherals include the display pipeline, so add the required
-gates to the simplefb nodes as well.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- arch/arm/boot/dts/sun7i-a20.dtsi | 32 +++++++++++++++++++++++++++++---
- 1 file changed, 29 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index e02eb720c4fc..21169c0a6627 100644
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -68,7 +68,7 @@
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "de_be0-lcd0-hdmi";
- 			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 43>,
--				 <&ahb_gates 44>;
-+				 <&ahb_gates 44>, <&dram_gates 26>;
- 			status = "disabled";
- 		};
- 
-@@ -76,7 +76,8 @@
- 			compatible = "allwinner,simple-framebuffer",
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "de_be0-lcd0";
--			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 44>;
-+			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 44>,
-+				 <&dram_gates 26>;
- 			status = "disabled";
- 		};
- 
-@@ -85,7 +86,7 @@
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "de_be0-lcd0-tve0";
- 			clocks = <&pll5 1>, <&ahb_gates 34>, <&ahb_gates 36>,
--				 <&ahb_gates 44>;
-+				 <&ahb_gates 44>, <&dram_gates 26>;
- 			status = "disabled";
- 		};
- 	};
-@@ -501,6 +502,31 @@
- 			clock-output-names = "spi3";
- 		};
- 
-+		dram_gates: clk@01c20100 {
-+			#clock-cells = <1>;
-+			compatible = "allwinner,sun4i-a10-dram-gates-clk";
-+			reg = <0x01c20100 0x4>;
-+			clocks = <&pll5 0>;
-+			clock-indices = <0>,
-+					<1>, <2>,
-+					<3>,
-+					<4>,
-+					<5>, <6>,
-+					<15>,
-+					<24>, <25>,
-+					<26>, <27>,
-+					<28>, <29>;
-+			clock-output-names = "dram_ve",
-+					     "dram_csi0", "dram_csi1",
-+					     "dram_ts",
-+					     "dram_tvd",
-+					     "dram_tve0", "dram_tve1",
-+					     "dram_output",
-+					     "dram_de_fe1", "dram_de_fe0",
-+					     "dram_de_be0", "dram_de_be1",
-+					     "dram_de_mp", "dram_ace";
-+		};
-+
- 		codec_clk: clk@01c20140 {
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-codec-clk";
--- 
-2.6.2
+On 2015/12/7 17:36, Arnd Bergmann wrote:
+> On Monday 07 December 2015 16:01:03 xuejiancheng wrote:
+>> On 2015/12/4 18:56, Arnd Bergmann wrote:
+>>> On Friday 04 December 2015 11:21:28 xuejiancheng wrote:
+>>>> Hi Arnd,
+>>>>
+>>>> On 2015/12/3 17:44, Arnd Bergmann wrote:
+>>>>> On Thursday 03 December 2015 10:39:24 Jiancheng Xue wrote:
+>>>>>> +#ifndef __DTS_HI3519_CLOCK_H
+>>>>>> +#define __DTS_HI3519_CLOCK_H
+>>>>>
+>>>>> Please try to avoid adding headers like this if you can at all.
+>>>>>
+>>>>> I might ask you to merge the header file in one merge window
+>>>>> otherwise and submit the platform code one kernel later, as they
+>>>>> tendn to cause us needless dependencies otherwise.
+>>>>>
+>>>>
+>>>> Sorry. In v1, Rob suggested putting binding doc and header files in
+>>>> a separate patch. The clock driver indeed depends on the header.
+>>>>
+>>>> I will put the header and the clock driver in a patch, and keep the
+>>>> binding doc in another patch.
+>>>
+>>> Having split patches is better, I was really commenting on the fact
+>>> that ideally you would not have a header file at all. If we merge
+>>> the header through arm-soc, then you won't be able to merge the
+>>> clk driver easily, and if you merge the header through the clk
+>>> maintainer, I'm can't take your dts files.
+>>
+>> Thank you for your comments. Because the clocks in the crg module have
+>> different types and random layouts. If this header file is removed,
+>> the clock driver and the dts files will get very complicated.
+>>
+>> Could you help me acknowledge it if I put the header file and clock driver
+>> in a patch?
+>>
+>> Could you give me some suggestions If I want to keep this header file?
+> 
+> If this is another clock controller that has a random register layout,
+> then adding the header file is the least problematic solution indeed.
+
+Is it OK if I put the header file and the clock driver in a patch?
+
+If it's not OK, could you tell me how should I separate the patches?
+
+Thank you.
+
+> 
+>>>>> Where do those numbers come from? They are not consecutive, so it sounds
+>>>>> like they are directly from the data sheet and won't be needed in the driver.
+>>>>> If that's true, just use the numbers directly, as you do for everything
+>>>>> else.
+>>>>
+>>>> The numbers are defined by myself, not directly from the data sheet. Some numbers
+>>>> are reserved for device nodes which will be added later. So they are not consecutive now.
+>>>
+>>> I don't understand. How do you decide which numbers to reserve? If the
+>>> numbers are completely arbitrary and you have no idea what other clocks
+>>> there are, you can simply have consecutive numbers here and do the driver
+>>> accordingly.
+>>
+>> The clocks are divided into several groups according to their types. The clocks in
+>> a group are expected to have consecutive numbers. So some numbers are reserved for
+>> every group in this file, just like in some existing headers. Other clocks will be
+>> added when other peripherals drivers are submitted. They will use the reserve numbers
+>> and be inserted into existing groups.
+>>
+>> Of course it is not required to reserve numbers for later added clocks.
+> 
+> Are you able to enumerate all the clocks then? If all clocks that are
+> supported by this clock controllers have names in the data sheet, I
+> would prefer to just list them all now rather than only enter the ones
+> we already need, to avoid having future merge conflicts.
+> 
+> Then we just need to add code to support those clocks when we need them,
+> but that can be done in parallel to adding the DT nodes and the driver,
+> rather than strongly serializing the patch flow on the header file patches.
+> 
+> 	Arnd
+> 
+> .
+> 
