@@ -1,100 +1,79 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	sjoerd.simons@collabora.co.uk,
-	wxt@rock-chips.com,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH v2 4/5] clk: rockchip: rk3036: include downstream muxes into fractional dividers
-Date: Tue, 22 Dec 2015 22:28:01 +0100
-Message-Id: <1450819682-4932-5-git-send-email-heiko@sntech.de>
-In-Reply-To: <1450819682-4932-1-git-send-email-heiko@sntech.de>
-References: <1450819682-4932-1-git-send-email-heiko@sntech.de>
+Return-Path: <simon@fire.lp0.eu>
+Message-ID: <5efe63830cae4e3e5d1b3be5c489da0bfee8dfff@8b5064a13e22126c1b9329f0dc35b8915774b7c3.invalid>
+In-Reply-To: 
+ <74d29bf38adc88b27811a70ed409e9182ddeb5b5@8b5064a13e22126c1b9329f0dc35b8915774b7c3.invalid>
+References: <565CB727.7030209@simon.arlott.org.uk>
+    <20151204143037.GA3667@rob-hp-laptop>
+    <74d29bf38adc88b27811a70ed409e9182ddeb5b5@8b5064a13e22126c1b9329f0dc35b8915774b7c3.invalid>
+Date: Tue, 8 Dec 2015 12:24:10 -0000
+Subject: Re: [PATCH 1/2] clk: Add brcm,bcm63xx-gate-clk device tree binding
+From: "Simon Arlott" <simon@fire.lp0.eu>
+To: "Rob Herring" <robh@kernel.org>
+Cc: "Michael Turquette" <mturquette@baylibre.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Kevin Cernekee" <cernekee@gmail.com>,
+ "Florian Fainelli" <f.fainelli@gmail.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ linux-clk@vger.kernel.org,
+ linux-mips@linux-mips.org,
+ "Pawel Moll" <pawel.moll@arm.com>,
+ "Mark Rutland" <mark.rutland@arm.com>,
+ "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
+ "Kumar Gala" <galak@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain;charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Xing Zheng <zhengxing@rock-chips.com>
+On Fri, December 4, 2015 21:04, Simon Arlott wrote:
+> On Fri, December 4, 2015 14:30, Rob Herring wrote:
+>> On Mon, Nov 30, 2015 at 08:52:55PM +0000, Simon Arlott wrote:
+>>> +periph_clk: periph_clk {
+>>> +	compatible = "brcm,bcm63168-gate-clk", "brcm,bcm63xx-gate-clk";
+>>> +	regmap = <&periph_cntl>;
+>>
+>> What else is in periph_cntrl? Could this all just be part of that node?
+>
+>      uint32        RevID;             /* (00) word 0 */
+>      uint32        blkEnables;        /* (04) word 1 */ <-- gated clocks
+>      uint32        pll_control;       /* (08) word 2 */ <-- system reset controller bit
+>      uint32        deviceTimeoutEn;   /* (0c) word 3 */ <-- unknown
+>      uint32        softResetB;        /* (10) word 4 */ <-- device reset controller bits
+>     uint32        diagControl;        /* (14) word 5 */ <-- unknown
+>     uint32        ExtIrqCfg;          /* (18) word 6*/ <-- external interrupt controller
+>     uint32        unused1;            /* (1c) word 7 */ <-- (external interrupt controller?)
+>          IrqControl_t     IrqControl[3];    /* (20) (40) (60) */ <-- normal interrupt controller
 
-Use the newly introduced possibility to combine the fractional dividers
-with their downstream muxes for all fractional dividers on currently
-supported RK3036 SoCs.
+On the BCM6368 [1], blkEnables also conatains a power domain bit:
+     uint32        blkEnables;        /* (04) word 1 */
+#define USBH_IDDQ_EN     (1 << 19)
+#define IPSEC_CLK_EN     (1 << 18)
+#define NAND_CLK_EN      (1 << 17)
+#define DISABLE_GLESS    (1 << 16)
+#define USBH_CLK_EN      (1 << 15)
+#define PCM_CLK_EN       (1 << 14)
+#define UTOPIA_CLK_EN    (1 << 13)
+#define ROBOSW_CLK_EN    (1 << 12)
+#define SAR_CLK_EN       (1 << 11)
+#define USBD_CLK_EN      (1 << 10)
+#define SPI_CLK_EN       (1 << 9)
+#define SWPKT_SAR_CLK_EN (1 << 8)
+#define SWPKT_USB_CLK_EN (1 << 7)
+#define PHYMIPS_CLK_EN   (1 << 6)
+#define VDSL_CLK_EN      (1 << 5)
+#define VDSL_BONDING_EN  (1 << 4)
+#define VDSL_AFE_EN      (1 << 3)
+#define VDSL_QPROC_EN    (1 << 2)
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-Signed-off-by: Caesar Wang <wxt@rock-chips.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/clk/rockchip/clk-rk3036.c | 34 +++++++++++++++++-----------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+In order to be able to map these to devices for the BCM63xx SoCs I'm going
+to define the power controller binding with "power-domain-indices" and
+"power-domain-names" to mirror the clock binding. The separate clk and
+generic_pm_domain devices will then handle set/clear of the relevant bits
+using the regmap.
 
-diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
-index 7333b053..fb35263 100644
---- a/drivers/clk/rockchip/clk-rk3036.c
-+++ b/drivers/clk/rockchip/clk-rk3036.c
-@@ -227,21 +227,21 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
- 	COMPOSITE_NOMUX(0, "uart2_src", "uart_pll_clk", 0,
- 			RK2928_CLKSEL_CON(13), 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(1), 8, GFLAGS),
--	COMPOSITE_FRAC(0, "uart0_frac", "uart0_src", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX(0, "uart0_frac", "uart0_src", CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(17), 0,
--			RK2928_CLKGATE_CON(1), 9, GFLAGS),
--	COMPOSITE_FRAC(0, "uart1_frac", "uart1_src", CLK_SET_RATE_PARENT,
--			RK2928_CLKSEL_CON(18), 0,
--			RK2928_CLKGATE_CON(1), 11, GFLAGS),
--	COMPOSITE_FRAC(0, "uart2_frac", "uart2_src", CLK_SET_RATE_PARENT,
--			RK2928_CLKSEL_CON(19), 0,
--			RK2928_CLKGATE_CON(1), 13, GFLAGS),
-+			RK2928_CLKGATE_CON(1), 9, GFLAGS,
- 	MUX(SCLK_UART0, "sclk_uart0", mux_uart0_p, CLK_SET_RATE_PARENT,
--			RK2928_CLKSEL_CON(13), 8, 2, MFLAGS),
-+			RK2928_CLKSEL_CON(13), 8, 2, MFLAGS)),
-+	COMPOSITE_FRACMUX(0, "uart1_frac", "uart1_src", CLK_SET_RATE_PARENT,
-+			RK2928_CLKSEL_CON(18), 0,
-+			RK2928_CLKGATE_CON(1), 11, GFLAGS,
- 	MUX(SCLK_UART1, "sclk_uart1", mux_uart1_p, CLK_SET_RATE_PARENT,
--			RK2928_CLKSEL_CON(14), 8, 2, MFLAGS),
-+			RK2928_CLKSEL_CON(14), 8, 2, MFLAGS)),
-+	COMPOSITE_FRACMUX(0, "uart2_frac", "uart2_src", CLK_SET_RATE_PARENT,
-+			RK2928_CLKSEL_CON(19), 0,
-+			RK2928_CLKGATE_CON(1), 13, GFLAGS,
- 	MUX(SCLK_UART2, "sclk_uart2", mux_uart2_p, CLK_SET_RATE_PARENT,
--			RK2928_CLKSEL_CON(15), 8, 2, MFLAGS),
-+			RK2928_CLKSEL_CON(15), 8, 2, MFLAGS)),
- 
- 	COMPOSITE(0, "aclk_vcodec", mux_pll_src_3plls_p, 0,
- 			RK2928_CLKSEL_CON(32), 14, 2, MFLAGS, 8, 5, DFLAGS,
-@@ -289,11 +289,11 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
- 	COMPOSITE(0, "i2s_src", mux_pll_src_3plls_p, 0,
- 			RK2928_CLKSEL_CON(3), 14, 2, MFLAGS, 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(0), 9, GFLAGS),
--	COMPOSITE_FRAC(0, "i2s_frac", "i2s_src", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX(0, "i2s_frac", "i2s_src", CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(7), 0,
--			RK2928_CLKGATE_CON(0), 10, GFLAGS),
-+			RK2928_CLKGATE_CON(0), 10, GFLAGS,
- 	MUX(0, "i2s_pre", mux_i2s_pre_p, CLK_SET_RATE_PARENT,
--			RK2928_CLKSEL_CON(3), 8, 2, MFLAGS),
-+			RK2928_CLKSEL_CON(3), 8, 2, MFLAGS)),
- 	COMPOSITE_NODIV(SCLK_I2S_OUT, "i2s_clkout", mux_i2s_clkout_p, 0,
- 			RK2928_CLKSEL_CON(3), 12, 1, MFLAGS,
- 			RK2928_CLKGATE_CON(0), 13, GFLAGS),
-@@ -303,11 +303,11 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
- 	COMPOSITE(0, "spdif_src", mux_pll_src_3plls_p, 0,
- 			RK2928_CLKSEL_CON(5), 10, 2, MFLAGS, 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(2), 10, GFLAGS),
--	COMPOSITE_FRAC(0, "spdif_frac", "spdif_src", 0,
-+	COMPOSITE_FRACMUX(0, "spdif_frac", "spdif_src", 0,
- 			RK2928_CLKSEL_CON(9), 0,
--			RK2928_CLKGATE_CON(2), 12, GFLAGS),
-+			RK2928_CLKGATE_CON(2), 12, GFLAGS,
- 	MUX(SCLK_SPDIF, "sclk_spdif", mux_spdif_p, 0,
--			RK2928_CLKSEL_CON(5), 8, 2, MFLAGS),
-+			RK2928_CLKSEL_CON(5), 8, 2, MFLAGS)),
- 
- 	GATE(SCLK_OTGPHY0, "sclk_otgphy0", "xin12m", CLK_IGNORE_UNUSED,
- 			RK2928_CLKGATE_CON(1), 5, GFLAGS),
+
+[1]
+https://code.google.com/p/gfiber-gflt100/source/browse/shared/opensource/include/bcm963xx/6368_map_part.h?r=b292e8c271addbda62104bece90e3c8018714194
+
 -- 
-2.6.4
+Simon Arlott
