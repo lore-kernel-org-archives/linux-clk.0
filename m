@@ -1,100 +1,67 @@
-Return-Path: <rklein@nvidia.com>
-Subject: Re: [PATCH 1/2] clk: tegra: Fix warning caused by pll_u failing to
- lock
-To: Jon Hunter <jonathanh@nvidia.com>, Peter De Schrijver
-	<pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-References: <1450702592-7755-1-git-send-email-jonathanh@nvidia.com>
-CC: <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-From: Rhyland Klein <rklein@nvidia.com>
-Message-ID: <56782AE7.2010409@nvidia.com>
-Date: Mon, 21 Dec 2015 11:37:59 -0500
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 8 Dec 2015 11:06:55 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH resend 4/6] ARM: dts: sun4i: Add VE (Video Engine) module
+ clock node
+Message-ID: <20151208100655.GS27957@lukather>
+References: <1449321407-4531-1-git-send-email-wens@csie.org>
+ <1449321407-4531-5-git-send-email-wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <1450702592-7755-1-git-send-email-jonathanh@nvidia.com>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: rklein@nvidia.com
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="YvpO9wCO44Ze8QQC"
+In-Reply-To: <1449321407-4531-5-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/21/2015 7:56 AM, Jon Hunter wrote:
-> If the pll_u is not configured by the bootloader, then on kernel boot the
-> following warning is seen:
-> 
->  clk_pll_wait_for_lock: Timed out waiting for pll pll_u_vco lock
->  tegra_init_from_table: Failed to enable pll_u_out1
->  ------------[ cut here ]------------
->  WARNING: at drivers/clk/tegra/clk.c:269
->  Modules linked in:
-> 
->  CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.4.0-rc4-next-20151214+ #1
->  Hardware name: NVIDIA Tegra210 P2371 reference board (E.1) (DT)
->  task: ffffffc0bc0a0000 ti: ffffffc0bc0a8000 task.ti: ffffffc0bc0a8000
->  PC is at tegra_init_from_table+0x140/0x164
->  LR is at tegra_init_from_table+0x140/0x164
->  pc : [<ffffffc0008fee78>] lr : [<ffffffc0008fee78>] pstate: 80000045
->  sp : ffffffc0bc0abd50
->  x29: ffffffc0bc0abd50 x28: ffffffc00090b8a8
->  x27: ffffffc000a06000 x26: ffffffc0bc019780
->  x25: ffffffc00086a708 x24: ffffffc00086a790
->  x23: ffffffc0006d7188 x22: ffffffc0bc010000
->  x21: 000000000000016e x20: ffffffc0bc00d100
->  x19: ffffffc000944178 x18: 0000000000000007
->  x17: 000000000000000e x16: 0000000000000001
->  x15: 0000000000000007 x14: 000000000000000e
->  x13: 0000000000000013 x12: 000000000000001a
->  x11: 000000000000004d x10: 0000000000000750
->  x9 : ffffffc0bc0a8000 x8 : ffffffc0bc0a07b0
->  x7 : 0000000000000001 x6 : 0000000002d5f0f8
->  x5 : 0000000000000000 x4 : 0000000000000000
->  x3 : 0000000000000002 x2 : ffffffc000996724
->  x1 : 0000000000000000 x0 : 0000000000000032
-> 
->  ---[ end trace cbd20ae519e92ced ]---
->  Call trace:
->  [<ffffffc0008fee78>] tegra_init_from_table+0x140/0x164
->  [<ffffffc000900ac8>] tegra210_clock_apply_init_table+0x20/0x28
->  [<ffffffc0008fec40>] tegra_clocks_apply_init_table+0x18/0x24
->  [<ffffffc00008291c>] do_one_initcall+0x90/0x194
->  [<ffffffc0008cfab0>] kernel_init_freeable+0x148/0x1e8
->  [<ffffffc000636bb0>] kernel_init+0x10/0xdc
->  [<ffffffc000085cd0>] ret_from_fork+0x10/0x40
->  clk_pll_wait_for_lock: Timed out waiting for pll pll_u_vco lock
->  tegra_init_from_table: Failed to enable pll_u_out2
->  ------------[ cut here ]------------
-> 
-> pll_u can be either controlled by software or hardware and this is
-> selected via the OVERRIDE bit in the pll_u base register. In the function
-> tegra210_pll_init(), the OVERRIDE bit for pll_u is cleared, which selects
-> hardware control of the pll. However, at the same time the pll_u clocks
-> are populated in the init_table for tegra210 and so software will try to
-> configure the pll_u if it is not already configured and hence, the above
-> warning is seen when the pll fails to lock. Remove the pll_u clocks from
-> the init_table so that software does not try to configure this pll on
-> boot.
-> 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> index 849be30b52bf..791215747863 100644
-> --- a/drivers/clk/tegra/clk-tegra210.c
-> +++ b/drivers/clk/tegra/clk-tegra210.c
-> @@ -2739,8 +2739,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
->  	{ TEGRA210_CLK_DFLL_REF, TEGRA210_CLK_PLL_P, 51000000, 1 },
->  	{ TEGRA210_CLK_SBC4, TEGRA210_CLK_PLL_P, 12000000, 1 },
->  	{ TEGRA210_CLK_PLL_RE_VCO, TEGRA210_CLK_CLK_MAX, 672000000, 1 },
-> -	{ TEGRA210_CLK_PLL_U_OUT1, TEGRA210_CLK_CLK_MAX, 48000000, 1 },
-> -	{ TEGRA210_CLK_PLL_U_OUT2, TEGRA210_CLK_CLK_MAX, 60000000, 1 },
->  	{ TEGRA210_CLK_XUSB_GATE, TEGRA210_CLK_CLK_MAX, 0, 1 },
->  	{ TEGRA210_CLK_XUSB_SS_SRC, TEGRA210_CLK_PLL_U_480M, 120000000, 0 },
->  	{ TEGRA210_CLK_XUSB_FS_SRC, TEGRA210_CLK_PLL_U_48M, 48000000, 0 },
-> 
 
-Acked-by: Rhyland Klein <rklein@nvidia.com>
+--YvpO9wCO44Ze8QQC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-nvpublic
+On Sat, Dec 05, 2015 at 09:16:45PM +0800, Chen-Yu Tsai wrote:
+> The video engine has its own module clock, which also includes a
+> reset control for it.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+
+Applied, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--YvpO9wCO44Ze8QQC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIbBAEBAgAGBQJWZqu/AAoJEBx+YmzsjxAg4uIP9ibn2fW2pf3hD1S89A3TtMk9
++yQliUb0TAXCAheMRVvVrtvZK/AN5tn8U9Qe3mQesnqivlmPOjff1/zZqC23kzso
+JdPHcXhWgyWuJmzRGbnX9XLiLZD+FfhscxINsDTmqdyY1u18SIVfAaOt5AdYDV7F
+ijqTSeG9SarjtRjrQYG4ScX0965drlypsiTnr3n1gEaHNp9K5sMZ7KBmGVTdz4/h
+THDDE2yqoj4HRUf6yKwRbY2OAbxINCOdgSwXfqVtIprB1knAr85R9xtaqwFABqMU
+zbYvoXgtT1M1cCb/RFIK3WclZW1225iuRd8FKYrmrVAoTATM75BYdGn+FiwTbiqH
+9p5rR5LfINERptWtEFL7vsPbdXPHeEs8DWJJDB+OQfpm1CVcvSjwfeDHdsZfZ4AT
+L0hAQNuJ2T4JHS4HdmzHX8FZEf8RFRmL3lpxotJb1tch58jcvnw8iOIWJEMX2ra2
+LQojH4pgN12hQ5flFF/9gzx7fvUactAkDZq5i6vv4Hit4YOEBWPjbCpED/TA75pn
+OyOGFTGwtHmdY6sLyN35edhbBE8+bUfoMFNd0IJ2OD2zouMVMNez9nwj3fRfKnUj
+yINPtzGwqEYVnJnvuvGVLVi4YAOkJQSgDm8DMMqu2bSNZtfLMqv5iOXAlNHer770
+PyCUQ5IwOJDcz9hBrSY=
+=1ww4
+-----END PGP SIGNATURE-----
+
+--YvpO9wCO44Ze8QQC--
