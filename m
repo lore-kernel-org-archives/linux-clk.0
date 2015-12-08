@@ -1,58 +1,68 @@
-Return-Path: <bjorn@kryo.se>
-Return-Path: <bjorn@kryo.se>
-Date: Sun, 27 Dec 2015 18:08:09 -0800
-From: Bjorn Andersson <bjorn@kryo.se>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: sboyd@codeaurora.org, agross@codeaurora.org, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, bjorn.andersson@sonymobile.com,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v5 1/6] clk: qcom: Add support for SMD-RPM Clocks
-Message-ID: <20151228020809.GB16437@tuxbot>
-References: <1449151376-25930-1-git-send-email-georgi.djakov@linaro.org>
- <1449151376-25930-2-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: xuejiancheng <xuejiancheng@huawei.com>
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, mturquette@baylibre.com, sboyd@codeaurora.org, xuwei5@hisilicon.com, haojian.zhuang@linaro.org, zhangfei.gao@linaro.org, bintian.wang@huawei.com, yanhaifeng@hisilicon.com, yanghongwei@hisilicon.com, suwenping@hisilicon.com, ml.yang@hisilicon.com, gaofei@hisilicon.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 1/9] clk: hi3519: add dt-binding document and header file
+Date: Tue, 08 Dec 2015 11:23:34 +0100
+Message-ID: <1566981.5YV44UJUCQ@wuerfel>
+In-Reply-To: <5666A6B5.6020101@huawei.com>
+References: <1449110364-23464-1-git-send-email-xuejiancheng@huawei.com> <2735980.8lIUhgbJzL@wuerfel> <5666A6B5.6020101@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1449151376-25930-2-git-send-email-georgi.djakov@linaro.org>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu 03 Dec 06:02 PST 2015, Georgi Djakov wrote:
-
-> This adds initial support for clocks controlled by the Resource
-> Power Manager (RPM) processor on some Qualcomm SoCs, which use
-> the qcom_smd_rpm driver to communicate with RPM.
-> Such platforms are msm8916, apq8084 and msm8974.
+On Tuesday 08 December 2015 17:45:25 xuejiancheng wrote:
+> On 2015/12/7 17:36, Arnd Bergmann wrote:
+> > On Monday 07 December 2015 16:01:03 xuejiancheng wrote:
+> >> On 2015/12/4 18:56, Arnd Bergmann wrote:
+> >>> On Friday 04 December 2015 11:21:28 xuejiancheng wrote:
+> >>>> Hi Arnd,
+> >>>>
+> >>>> On 2015/12/3 17:44, Arnd Bergmann wrote:
+> >>>>> On Thursday 03 December 2015 10:39:24 Jiancheng Xue wrote:
+> >>>>>> +#ifndef __DTS_HI3519_CLOCK_H
+> >>>>>> +#define __DTS_HI3519_CLOCK_H
+> >>>>>
+> >>>>> Please try to avoid adding headers like this if you can at all.
+> >>>>>
+> >>>>> I might ask you to merge the header file in one merge window
+> >>>>> otherwise and submit the platform code one kernel later, as they
+> >>>>> tendn to cause us needless dependencies otherwise.
+> >>>>>
+> >>>>
+> >>>> Sorry. In v1, Rob suggested putting binding doc and header files in
+> >>>> a separate patch. The clock driver indeed depends on the header.
+> >>>>
+> >>>> I will put the header and the clock driver in a patch, and keep the
+> >>>> binding doc in another patch.
+> >>>
+> >>> Having split patches is better, I was really commenting on the fact
+> >>> that ideally you would not have a header file at all. If we merge
+> >>> the header through arm-soc, then you won't be able to merge the
+> >>> clk driver easily, and if you merge the header through the clk
+> >>> maintainer, I'm can't take your dts files.
+> >>
+> >> Thank you for your comments. Because the clocks in the crg module have
+> >> different types and random layouts. If this header file is removed,
+> >> the clock driver and the dts files will get very complicated.
+> >>
+> >> Could you help me acknowledge it if I put the header file and clock driver
+> >> in a patch?
+> >>
+> >> Could you give me some suggestions If I want to keep this header file?
+> > 
+> > If this is another clock controller that has a random register layout,
+> > then adding the header file is the least problematic solution indeed.
 > 
-> The RPM is a dedicated hardware engine for managing the shared
-> SoC resources in order to keep the lowest power profile. It
-> communicates with other hardware subsystems via shared memory
-> and accepts clock requests, aggregates the requests and turns
-> the clocks on/off or scales them on demand.
+> Is it OK if I put the header file and the clock driver in a patch?
 > 
-> This driver is based on the codeaurora.org driver:
-> https://www.codeaurora.org/cgit/quic/la/kernel/msm-3.10/tree/drivers/clk/qcom/clock-rpm.c
-> 
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> If it's not OK, could you tell me how should I separate the patches?
 
-Hi Georgi,
+It's ok to do it like this, but then I can't easily merge any DT changes
+based on the header file into the arm-soc tree in the same merge window.
+Staging out the .dts files by one merge window is the easiest solution
+here, otherwise you need to set up a shared branch with the headers
+changes and base both the clk driver and the dts branch on top of that
+and cannot rebase those patches.
 
-I added the 8974 clocks to this to make the WNCSS core happy (need
-CXO_A2 for XO calibration), but I have a few issues:
-
-*) msm_serial acquires a handle to GCC_BLSP1_UART2_APPS_CLK which is
-parented by "xo"; the clock framework returns a clock, as the gcc driver
-is probed, but as the rpmcc driver isn't probed clk_get_rate() returns
-0.
-
-Do you have any patches in your tree to fix the ordering or making the
-clk_get() implement probe deferral in this case?
-
-*) If I let the code call clk_smd_rpm_enable_scaling() my eMMC becomes
-very unstable, with a rather high occurrence of timeouts during boot
-(like 80% of boots fail to mount my rootfs).
-
-
-Part of these (unrelated to your code) issues I think this looks good,
-and hacking around these two issues allows me to get CXO_A2 ticking :)
-
-Regards,
-Bjorn
+	Arnd
