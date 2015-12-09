@@ -1,71 +1,78 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:50397 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S932228AbbLGRk1 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 7 Dec 2015 12:40:27 -0500
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] ARM: dts: dove: add Dove divider clocks
-References: <E1a5ijN-0007pq-3t@rmk-PC.arm.linux.org.uk>
-Date: Mon, 07 Dec 2015 18:40:15 +0100
-In-Reply-To: <E1a5ijN-0007pq-3t@rmk-PC.arm.linux.org.uk> (Russell King's
-	message of "Sun, 06 Dec 2015 23:28:37 +0000")
-Message-ID: <87k2oqb1j4.fsf@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 9 Dec 2015 12:39:32 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	mturquette@baylibre.com
+Subject: [GIT PULL] clk: fixes for 4.4
+Message-ID: <20151209203932.GA22188@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Russell,
- 
- On lun., déc. 07 2015, Russell King <rmk+kernel@arm.linux.org.uk> wrote:
+The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
 
-> Add the Dove divider clocks to the Dove dtsi file.
->
-> Acked-by: Andrew Lunn <andrew@lunn.ch>
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+  Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
 
-Applied on mvebu/dt
+are available in the git repository at:
 
-Thanks,
+  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-Gregory
+for you to fetch changes up to 59f0ec231f397001801264063db3b6dcc3eef590:
 
-> ---
->  arch/arm/boot/dts/dove.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/dove.dtsi b/arch/arm/boot/dts/dove.dtsi
-> index 179121630ad7..ea36a262d056 100644
-> --- a/arch/arm/boot/dts/dove.dtsi
-> +++ b/arch/arm/boot/dts/dove.dtsi
-> @@ -459,6 +459,12 @@
->  					#clock-cells = <1>;
->  				};
->  
-> +				divider_clk: core-clock@0064 {
-> +					compatible = "marvell,dove-divider-clock";
-> +					reg = <0x0064 0x8>;
-> +					#clock-cells = <1>;
-> +				};
-> +
->  				pinctrl: pin-ctrl@0200 {
->  					compatible = "marvell,dove-pinctrl";
->  					reg = <0x0200 0x14>,
-> -- 
-> 2.1.0
->
+  clk: sunxi: pll2: Fix clock running too fast (2015-12-02 23:27:47 -0800)
 
+----------------------------------------------------------------
+One small build fix, a couple do_div() fixes, and a fix for the gpio basic
+clock type are the major changes here. There's also a couple fixes for
+the TI, sunxi, and scpi clock drivers.
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      clk: mmp: add linux/clk.h includes
+
+Grygorii Strashko (1):
+      clk: ti: drop locking code from mux/divider drivers
+
+Julia Lawall (1):
+      clk: scpi: add missing of_node_put
+
+Jyri Sarha (1):
+      clk: gpio: Get parent clk names in of_gpio_clk_setup()
+
+Maxime Ripard (1):
+      clk: sunxi: pll2: Fix clock running too fast
+
+Neil Armstrong (1):
+      clk: ti816x: Add missing dmtimer clkdev entries
+
+Nicolas Pitre (4):
+      clk: ti: clkt_dpll: fix wrong do_div() usage
+      clk: ti: fapll: fix wrong do_div() usage
+      imx/clk-pllv1: fix wrong do_div() usage
+      imx/clk-pllv2: fix wrong do_div() usage
+
+Stephen Boyd (1):
+      Merge branch 'for-4.4-rc/ti-clk-fixes' of https://github.com/t-kristo/linux-pm into clk-fixes
+
+Sudip Mukherjee (1):
+      clk: qoriq: fix memory leak
+
+ drivers/clk/clk-gpio.c           | 33 +++++++++++++++++----------------
+ drivers/clk/clk-qoriq.c          |  4 +++-
+ drivers/clk/clk-scpi.c           |  1 +
+ drivers/clk/imx/clk-pllv1.c      | 14 +++++++-------
+ drivers/clk/imx/clk-pllv2.c      |  9 +++++----
+ drivers/clk/mmp/clk-mmp2.c       |  1 +
+ drivers/clk/mmp/clk-pxa168.c     |  1 +
+ drivers/clk/mmp/clk-pxa910.c     |  1 +
+ drivers/clk/sunxi/clk-a10-pll2.c | 23 +++++------------------
+ drivers/clk/ti/clk-816x.c        |  2 ++
+ drivers/clk/ti/clkt_dpll.c       |  4 ++--
+ drivers/clk/ti/divider.c         | 16 +++-------------
+ drivers/clk/ti/fapll.c           |  4 ++--
+ drivers/clk/ti/mux.c             | 15 +++------------
+ 14 files changed, 53 insertions(+), 75 deletions(-)
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
