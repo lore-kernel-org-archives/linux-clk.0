@@ -1,90 +1,68 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga03-in.huawei.com ([119.145.14.66]:7871 "EHLO
-	szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751568AbbLKIE6 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 11 Dec 2015 03:04:58 -0500
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
-	<zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [PATCH v3 0/7] ARM: hisi: Add initial support including clock driver for Hi3519 soc.
-Date: Fri, 11 Dec 2015 15:45:14 +0800
-Message-ID: <1449819921-18464-1-git-send-email-xuejiancheng@huawei.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 9 Dec 2015 10:17:44 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v5] clk: sunxi: Add CLK_OF_DECLARE support for
+ sun8i-a23-apb0-clk driver
+Message-ID: <20151209091744.GW27957@lukather>
+References: <1449126330-21595-1-git-send-email-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="9+ohdFDUqiMJzwPo"
+In-Reply-To: <1449126330-21595-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
 
-Hi3519 soc is mainly used for ip camera and sport DV solutions. This patchset adds initial support
-for Hi3519 soc. It includes clock driver, arch configuration, debug uart configuration and device tree.
-It has been tested on hi3519 reference board.
+--9+ohdFDUqiMJzwPo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Spi-nor flash driver and other peripheral drivers will be submitted later.
+On Thu, Dec 03, 2015 at 03:05:30PM +0800, Chen-Yu Tsai wrote:
+> The APBS clock on sun9i is the same as the APB0 clock on sun8i. With
+> sun9i we are supporting the PRCM clocks by using CLK_OF_DECLARE,
+> instead of through a PRCM mfd device and subdevices for each clock
+> and reset control. As such we need a CLK_OF_DECLARE version of
+> the sun8i-a23-apb0-clk driver.
+>=20
+> Also, build it for sun9i/A80, and not just for configurations with
+> MFD_SUN6I_PRCM enabled.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-Any comments will be appreciated!
+Applied, thanks!
+Maxime
 
-Thanks!
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
-Change Log
-----------
-v3:
--Rebase to v4.4-rc4
--Adjust according to Arnd's comments
--Remove ARCH_HI3519, using ARCH_HISI directly
+--9+ohdFDUqiMJzwPo
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-v2:
--Rebase to v4.4-rc3
--Put dt-binding doc and header file in a separate patch.
--Delete unused clocks definitions.
--Adjust the ARCH_xxx order in Kconfig file
--Rename ARCH_HI3xxx to ARCH_36xx
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Jiancheng Xue (7):
-  clk: hisilicon: add CRG driver for hi3519 soc
-  clk: hisilicon: add dt-binding document for Hi3519 CRG
-  ARM: hisi: add dt_machine definition for Hi3519
-  ARM: config: hisi: enable CONFIG_RESET_CONTROLLER
-  ARM: debug: add hi3519 debug uart
-  mfd: dt-bindings: add device tree bindings for Hi3519 sysctrl
-  ARM: dts: add dts files for Hi3519
+iQIcBAEBAgAGBQJWZ/G4AAoJEBx+YmzsjxAgznoQAKd3m6or10ovne3wo9WH3RdX
+ZR4A8bAITnlxq/YW1/l8IOPvWaeAieQIWiLVZ9QiKAFCogCiVklzuSKawcVJ0OrP
+UE4vSqvHJ9xsu/JDREtEuJPuSy1pf7E2rswylsKoQJHEvZzjt6Jg2G6NeTqJkbRd
+RDQrnqxNUk+v+86JyiDqPEw3Zkxvvphv45z/sHHoVhld6FCt2pgREP/K6lpEi3XZ
+BiXpxENmUoa24TVkR2UhnJUx87BRtVOjHWWWClRYoN0lYgQpggdl2nyAcJXo/Ta8
+WuYziNpoMDgsKPl69mvoXeW3J2cHmNvPQNojUoGd4v52Jp0S+VZ3cjOefP2cikF1
+QSr84SEW3NJKmh/8BDNlFsf8ZIXMDmwi7h4F+h0FzOsHc/Xv1ZnygzI0qfsMBFcq
+XBq+4cJcuAOa5DEQY7hSxXbAmB2uR0yGWb3teRSrAGeTKZDr/IR4acGEonIx+JdI
+zTCdStYoOAIHAOEO6UOYsgsw1CAZsUJPSUbQmlUyROWeynCiZ8pozYXEMCt3b+wW
+lYORUAlEyZ10udGU8UcbTcUIddvcXoYuqurBOp4NiEkD9kt407+miyaheeKrNJin
+b2XZUdLlItKeYJstI43UnxqRt5aQDxE84lIbhWfG5FZxwRa6dmI1j30Ie8HditVM
+pLqqaVmKEuIfxNwD8E8n
+=9N6G
+-----END PGP SIGNATURE-----
 
- .../devicetree/bindings/clock/hi3519-crg.txt       |  46 +++++++
- Documentation/devicetree/bindings/mfd/hi3519.txt   |  14 ++
- arch/arm/Kconfig.debug                             |  10 ++
- arch/arm/boot/dts/Makefile                         |   2 +
- arch/arm/boot/dts/hi3519-demb.dts                  |  42 ++++++
- arch/arm/boot/dts/hi3519.dtsi                      | 142 ++++++++++++++++++++
- arch/arm/configs/hisi_defconfig                    |   1 +
- arch/arm/mach-hisi/hisilicon.c                     |   9 ++
- drivers/clk/hisilicon/Kconfig                      |   7 +
- drivers/clk/hisilicon/Makefile                     |   2 +
- drivers/clk/hisilicon/clk-hi3519.c                 |  95 +++++++++++++
- drivers/clk/hisilicon/reset.c                      | 149 +++++++++++++++++++++
- drivers/clk/hisilicon/reset.h                      |  32 +++++
- include/dt-bindings/clock/hi3519-clock.h           |  43 ++++++
- 14 files changed, 594 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
- create mode 100644 Documentation/devicetree/bindings/mfd/hi3519.txt
- create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
- create mode 100644 arch/arm/boot/dts/hi3519.dtsi
- create mode 100644 drivers/clk/hisilicon/clk-hi3519.c
- create mode 100644 drivers/clk/hisilicon/reset.c
- create mode 100644 drivers/clk/hisilicon/reset.h
- create mode 100644 include/dt-bindings/clock/hi3519-clock.h
-
--- 
-1.9.1
-
+--9+ohdFDUqiMJzwPo--
