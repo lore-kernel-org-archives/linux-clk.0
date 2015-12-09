@@ -1,52 +1,23 @@
-Return-Path: <caesar.upstream@gmail.com>
-Return-Path: <caesar.upstream@gmail.com>
-From: Caesar Wang <wxt@rock-chips.com>
-To: heiko@sntech.de,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: leozwang@google.com,
-	keescook@google.com,
-	leecam@google.com,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Yakir Yang <ykk@rock-chips.com>,
-	Caesar Wang <wxt@rock-chips.com>
-Subject: [PATCH 2/5] clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for aclk_vio
-Date: Wed, 16 Dec 2015 16:27:18 +0800
-Message-Id: <1450254441-3243-3-git-send-email-wxt@rock-chips.com>
-In-Reply-To: <1450254441-3243-1-git-send-email-wxt@rock-chips.com>
-References: <1450254441-3243-1-git-send-email-wxt@rock-chips.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Jeffy Chen <jeffy.chen@rock-chips.com>
+Cc: linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v1 5/8] clk: rockchip: allow more than 2 parents for cpuclk
+Date: Wed, 09 Dec 2015 22:35:01 +0100
+Message-ID: <23012912.PzBkfOmh31@phil>
+In-Reply-To: <1449651853-1667-6-git-send-email-jeffy.chen@rock-chips.com>
+References: <1449651853-1667-1-git-send-email-jeffy.chen@rock-chips.com> <1449651853-1667-6-git-send-email-jeffy.chen@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Yakir Yang <ykk@rock-chips.com>
+Am Mittwoch, 9. Dezember 2015, 17:04:10 schrieb Jeffy Chen:
+> RK3228's armclk has 3 parents, so allow cpuclk to have
+> more than 2 parents.
+> 
+> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
 
-ACLK_VIO is the noc bus clock for display module, display cann't
-read data from ddr without this clock enabled.
+applied to my clk branch for 4.5
 
-Due to it shouldn't belong to any driver, but we need it enabled,
-so just mark it as the CLK_IGNORE_UNUSED flag.
-
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-Signed-off-by: Caesar Wang <wxt@rock-chips.com>
----
-
- drivers/clk/rockchip/clk-rk3036.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
-index dc01a2a..b2cb5af 100644
---- a/drivers/clk/rockchip/clk-rk3036.c
-+++ b/drivers/clk/rockchip/clk-rk3036.c
-@@ -358,7 +358,7 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
- 	GATE(PCLK_HDMI, "pclk_hdmi", "pclk_cpu", 0, RK2928_CLKGATE_CON(3), 8, GFLAGS),
- 
- 	/* aclk_vio gates */
--	GATE(ACLK_VIO, "aclk_vio", "aclk_disp1_pre", 0, RK2928_CLKGATE_CON(6), 13, GFLAGS),
-+	GATE(ACLK_VIO, "aclk_vio", "aclk_disp1_pre", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(6), 13, GFLAGS),
- 	GATE(ACLK_LCDC, "aclk_lcdc", "aclk_disp1_pre", 0, RK2928_CLKGATE_CON(9), 6, GFLAGS),
- 
- 	GATE(HCLK_VIO_BUS, "hclk_vio_bus", "hclk_disp_pre", 0, RK2928_CLKGATE_CON(6), 12, GFLAGS),
--- 
-1.9.1
+Thanks
+Heiko
