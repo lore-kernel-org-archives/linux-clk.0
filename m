@@ -1,53 +1,51 @@
-MIME-Version: 1.0
-In-Reply-To: <20151216233015.GC5951@Agamemnon.attlocal.net>
-References: <1448933502-11944-4-git-send-email-sboyd@codeaurora.org>
-	<20151216233015.GC5951@Agamemnon.attlocal.net>
-Date: Wed, 23 Dec 2015 16:17:34 -0800
-Message-ID: <CAEG3pNCCFLxfqby0noMJ-VbNo5BWjq9Wt864tH6gUPMVyCLdLA@mail.gmail.com>
-Subject: Re: [v2,3/5] clk: qcom: Add MSM8996 Global Clock Control (GCC) driver
-From: Michael Turquette <mturquette@baylibre.com>
-To: Andy Gross <andy.gross@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>, linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular2.263xmail.com ([211.157.152.4]:37300 "EHLO
+	regular2.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753516AbbLIJEm (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 9 Dec 2015 04:04:42 -0500
+Received: from regular1.263xmail.com (unknown [192.168.165.182])
+	by regular2.263xmail.com (Postfix) with ESMTP id F3B4E18EBF6
+	for <linux-clk@vger.kernel.org>; Wed,  9 Dec 2015 17:04:38 +0800 (CST)
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
+To: heiko@sntech.de, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Subject: [PATCH v1 5/8] clk: rockchip: allow more than 2 parents for cpuclk
+Date: Wed,  9 Dec 2015 17:04:10 +0800
+Message-Id: <1449651853-1667-6-git-send-email-jeffy.chen@rock-chips.com>
+In-Reply-To: <1449651853-1667-1-git-send-email-jeffy.chen@rock-chips.com>
+References: <1449651853-1667-1-git-send-email-jeffy.chen@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Andy,
+RK3228's armclk has 3 parents, so allow cpuclk to have
+more than 2 parents.
 
-On Wed, Dec 16, 2015 at 3:30 PM, Andy Gross <andy.gross@linaro.org> wrote:
-> On Mon, Nov 30, 2015 at 05:31:40PM -0800, Stephen Boyd wrote:
->> Add support for the global clock controller found on MSM8996
->> based devices. This should allow most non-multimedia device
->> drivers to probe and control their clocks.
->>
->> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
->>
->> ---
->
-> I saw that this complete set of patches was pulled into clk-next.  Would it be
-> possible for you to host an immutable branch so that I can get the DTS pulled in
-> properly with all the dependencies?
+Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+---
 
-We already have this in our git tree (as part of our normal topic
-branch process):
+ drivers/clk/rockchip/clk-cpu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-msm8996
-
-I'll be sure not to blow it up.
-
-Regards,
-Mike
-
->
-> Thanks,
->
-> Andy
-
-
-
+diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
+index 330870a..d07374f 100644
+--- a/drivers/clk/rockchip/clk-cpu.c
++++ b/drivers/clk/rockchip/clk-cpu.c
+@@ -242,8 +242,8 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
+ 	struct clk *clk, *cclk;
+ 	int ret;
+ 
+-	if (num_parents != 2) {
+-		pr_err("%s: needs two parent clocks\n", __func__);
++	if (num_parents < 2) {
++		pr_err("%s: needs at least two parent clocks\n", __func__);
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
 -- 
-Michael Turquette
-CEO
-BayLibre - At the Heart of Embedded Linux
-http://baylibre.com/
+2.1.4
+
+
