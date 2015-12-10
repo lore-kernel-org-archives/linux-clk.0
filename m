@@ -1,63 +1,42 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 1/2] clk: samsung: exynos5422: add missing parent GSCL
- block clocks
-To: Mike Turquette <mturquette@baylibre.com>
-References: <1449582415-30164-1-git-send-email-m.szyprowski@samsung.com>
- <5667B2F3.9040807@samsung.com> <5667FEF3.4080703@samsung.com>
- <56682E44.6020303@samsung.com> <56719E2C.2030103@samsung.com>
- <567208C4.4090806@samsung.com> <20151222184412.GD6596@quark.deferred.io>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, k.kozlowski.k@gmail.com,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
- linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <5679A6D5.5010604@samsung.com>
-Date: Tue, 22 Dec 2015 20:39:01 +0100
-MIME-version: 1.0
-In-reply-to: <20151222184412.GD6596@quark.deferred.io>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>
+CC: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Bresticker <abrestic@chromium.org>,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 9/9] clk: tegra210: Initialize PLL_D2 to a sane rate
+Date: Thu, 10 Dec 2015 17:08:28 -0500
+Message-ID: <1449785308-19546-10-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1449785308-19546-1-git-send-email-rklein@nvidia.com>
+References: <1449785308-19546-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Mike,
+Initialize PLL_D2 to a sane rate at the start of the day.
 
-On 22/12/15 19:44, Mike Turquette wrote:
-> This is superseded by the pull request found in Message-ID:
-> <5671A456.9030203@samsung.com>, correct?
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-The two pull requests are based on same branch, first 2 commits are
-tagged with for-4.5-clk-exynos5420 tag and the whole branch is tagged
-as clk-samsung-4.5. I assumed it's fine to use just the below tag for
-arm-soc.
-
->>> > > The following changes since commit 9f9499ae8e6415cefc4fe0a96ad0e27864353c89:
->>> > > 
->>> > >   Linux 4.4-rc5 (2015-12-13 17:42:58 -0800)
->>> > > 
->>> > > are available in the git repository at:
->>> > > 
->>> > >   git://linuxtv.org/snawrocki/samsung.git tags/for-4.5-clk-exynos5420
->>> > > 
->>> > > for you to fetch changes up to bee4f87f01dc30fcf9e05eb55b833f89fd9bb4f4:
->>> > > 
->>> > >   clk: samsung: exynos5420: add cpu clock configuration data and instantiate cpu clock (2015-12-16 16:35:26 +0100)
->>> > > 
->>> > > ----------------------------------------------------------------
->>> > > Samsung exynos5420 SoC clk subsystem support updates:
->>> > > instantiation of the cpu clocks and addition of the GSCL
->>> > > IP parent clocks to the list of available consumer clocks.
->>> > > 
->>> > > ----------------------------------------------------------------
->>> > > Marek Szyprowski (1):
->>> > >       clk: samsung: exynos542x: add missing parent GSCL block clocks
->>> > > 
->>> > > Thomas Abraham (1):
->>> > >       clk: samsung: exynos5420: add cpu clock configuration data and instantiate cpu clock
->>> > > 
->>> > >  drivers/clk/samsung/clk-exynos5420.c   |   66 +++++++++++++++++++++++++++++---
->>> > >  include/dt-bindings/clock/exynos5420.h |    4 ++
->>> > >  2 files changed, 64 insertions(+), 6 deletions(-)
-
---
-Regards,
-Sylwester
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 5d8fac7052f2..cc560a1f6efb 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2749,6 +2749,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA210_CLK_PLL_DP, TEGRA210_CLK_CLK_MAX, 270000000, 0 },
+ 	{ TEGRA210_CLK_SOC_THERM, TEGRA210_CLK_PLL_P, 51000000, 0 },
+ 	{ TEGRA210_CLK_CCLK_G, TEGRA210_CLK_CLK_MAX, 0, 1 },
++	{ TEGRA210_CLK_PLL_D2, TEGRA210_CLK_CLK_MAX, 594000000, 0 },
+ 	/* This MUST be the last entry. */
+ 	{ TEGRA210_CLK_CLK_MAX, TEGRA210_CLK_CLK_MAX, 0, 0 },
+ };
+-- 
+1.9.1
