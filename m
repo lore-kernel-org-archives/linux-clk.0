@@ -1,78 +1,56 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>
+CC: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Bresticker <abrestic@chromium.org>,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 6/9] clk: tegra210: fix pllx dyn step calculation
+Date: Thu, 10 Dec 2015 17:08:25 -0500
+Message-ID: <1449785308-19546-7-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1449785308-19546-1-git-send-email-rklein@nvidia.com>
+References: <1449785308-19546-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-To: James Liao <jamesjj.liao@mediatek.com>,
- "Matthias Brugger" <matthias.bgg@gmail.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1451456865-44139-6-git-send-email-jamesjj.liao@mediatek.com>
-Cc: "Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
- srv_heupstream@mediatek.com, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
- Shunli Wang" <shunli.wang@mediatek.com>, p.zabel@pengutronix.de
-References: <1451456865-44139-1-git-send-email-jamesjj.liao@mediatek.com>
- <1451456865-44139-6-git-send-email-jamesjj.liao@mediatek.com>
-Message-ID: <20151230235122.19557.8409@quark.deferred.io>
-Subject: Re: [PATCH 5/5] reset: mediatek: mt2701 reset driver
-Date: Wed, 30 Dec 2015 15:51:22 -0800
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi James,
+The logic for calculating the input rate used when figuring out
+the proper dynamic steps for pllx was incorrect. It is supposed to
+be calculated using parent_rate / m but it was just using the parent
+rate directly, therefore using the wrong step values.
 
-Quoting James Liao (2015-12-29 22:27:45)
-> From: Shunli Wang <shunli.wang@mediatek.com>
-> =
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-> In infrasys and perifsys, there are many reset
-> control bits for kinds of modules. These bits are
-> used as actual reset controllers to be registered
-> into kernel's generic reset controller framework.
-> =
-
-> Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-
-I'm repeating myself here: please Cc Philipp for reset patches (even if
-the code lands in drivers/clk). Also, where is the DT binding
-description for the mediatek,mt2701-infracfg compatible string?
-
-Regards,
-Mike
-
-> ---
->  drivers/clk/mediatek/clk-mt2701.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> =
-
-> diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk=
--mt2701.c
-> index 2acc8c3..802ab5c 100644
-> --- a/drivers/clk/mediatek/clk-mt2701.c
-> +++ b/drivers/clk/mediatek/clk-mt2701.c
-> @@ -666,6 +666,8 @@ static void __init mtk_infrasys_init(struct device_no=
-de *node)
->         if (r)
->                 pr_err("%s(): could not register clock provider: %d\n",
->                         __func__, r);
-> +
-> +       mtk_register_reset_controller(node, 2, 0x30);
->  }
->  CLK_OF_DECLARE(mtk_infrasys, "mediatek,mt2701-infracfg", mtk_infrasys_in=
-it);
->  =
-
-> @@ -783,6 +785,8 @@ static void __init mtk_pericfg_init(struct device_nod=
-e *node)
->         if (r)
->                 pr_err("%s(): could not register clock provider: %d\n",
->                         __func__, r);
-> +
-> +       mtk_register_reset_controller(node, 2, 0x0);
->  }
->  CLK_OF_DECLARE(mtk_pericfg, "mediatek,mt2701-pericfg", mtk_pericfg_init);
->  =
-
-> -- =
-
-> 1.9.1
->=20
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 2a7faa357130..5d8fac7052f2 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -780,13 +780,13 @@ static void pllx_get_dyn_steps(struct clk_hw *hw, u32 *step_a, u32 *step_b)
+ {
+ 	unsigned long input_rate;
+ 
+-	if (!IS_ERR_OR_NULL(hw->clk)) {
++	/* cf rate */
++	if (!IS_ERR_OR_NULL(hw->clk))
+ 		input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+-		/* cf rate */
+-		input_rate /= tegra_pll_get_fixed_mdiv(hw, input_rate);
+-	} else {
++	else
+ 		input_rate = 38400000;
+-	}
++
++	input_rate /= tegra_pll_get_fixed_mdiv(hw, input_rate);
+ 
+ 	switch (input_rate) {
+ 	case 12000000:
+-- 
+1.9.1
