@@ -1,51 +1,94 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Wed, 2 Dec 2015 13:24:29 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Stefan Agner <stefan@agner.ch>
-Cc: kernel@pengutronix.de, mturquette@baylibre.com, sboyd@codeaurora.org,
-	mark.rutland@arm.com, devicetree@vger.kernel.org,
-	zidan.wang@freescale.com, pawel.moll@arm.com,
-	ijc+devicetree@hellion.org.uk, Li.Xiubo@freescale.com,
-	linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-	galak@codeaurora.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/3] ARM: imx: clk-vf610: fix SAI clock tree
-Message-ID: <20151202052429.GE692@tiger>
-References: <1445141122-14183-1-git-send-email-stefan@agner.ch>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>
+CC: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Bresticker <abrestic@chromium.org>,
+	Mark Kuo <mkuo@nvidia.com>,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 7/9] clk: tegra: pll: Do not disable PLLE when under HW control
+Date: Thu, 10 Dec 2015 17:08:26 -0500
+Message-ID: <1449785308-19546-8-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1449785308-19546-1-git-send-email-rklein@nvidia.com>
+References: <1449785308-19546-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1445141122-14183-1-git-send-email-stefan@agner.ch>
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Oct 17, 2015 at 09:05:20PM -0700, Stefan Agner wrote:
-> The Synchronous Audio Interface (SAI) instances are clocked by
-> independent clocks: The bus clock and the audio clock (as shown in
-> Figure 51-1 in the Vybrid Reference Manual). The clock gates in
-> CCGR0/CCGR1 for SAI0 through SAI3 are bus clock gates, as access
-> tests to the registers with/without gating those clocks have shown.
-> The audio clock is gated by the SAIx_EN gates in CCM_CSCDR1,
-> followed by a clock divider (SAIx_DIV). Currently, the parent of
-> the bus clock gates has been assigned to SAIx_DIV, which is not
-> involved in the bus clock path for the SAI instances (see chapter
-> 9.10.12, SAI clocking in the Vybrid Reference Manual).
-> 
-> Fix this by define the parent clock of VF610_CLK_SAIx to be the bus
-> clock.
-> 
-> If the driver needs the audio clock (when used in master mode), a
-> fixed device tree is required which assign the audio clock properly
-> to VF610_CLK_SAIx_DIV.
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
-> Hi all,
-> 
-> Patch 1 and 2 are actual fixes and should be applied toghether. If
-> the clock tree changes are applied only, master mode won't work
-> anymore. With only the device tree changes applied, it probably
-> will still work but the VF610_CLK_SAIx_DIV will be enabled twice.
-> 
-> Since Patch 3 also uses the fixed clock layout, it should be
-> applied after the clock tree fix too...
+From: Mark Kuo <mkuo@nvidia.com>
 
-Applied all 3, thanks.
+SW should not disable PLLE if PLLE is already put under HW control.
+
+Signed-off-by: Mark Kuo <mkuo@nvidia.com>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c | 22 +++++++++++++++-------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 65156486889a..d9c3109b75bd 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -2012,7 +2012,7 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+ 	struct tegra_clk_pll_freq_table sel;
+ 	u32 val;
+-	int ret;
++	int ret = 0;
+ 	unsigned long flags = 0;
+ 	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+ 
+@@ -2022,16 +2022,14 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
+ 	if (pll->lock)
+ 		spin_lock_irqsave(pll->lock, flags);
+ 
++	val = pll_readl(pll->params->aux_reg, pll);
++	if (val & PLLE_AUX_SEQ_ENABLE)
++		goto out;
++
+ 	val = pll_readl_base(pll);
+ 	val &= ~BIT(30); /* Disable lock override */
+ 	pll_writel_base(val, pll);
+ 
+-	val = pll_readl(pll->params->aux_reg, pll);
+-	val |= PLLE_AUX_ENABLE_SWCTL;
+-	val &= ~PLLE_AUX_SEQ_ENABLE;
+-	pll_writel(val, pll->params->aux_reg, pll);
+-	udelay(1);
+-
+ 	val = pll_readl_misc(pll);
+ 	val |= PLLE_MISC_LOCK_ENABLE;
+ 	val |= PLLE_MISC_IDDQ_SW_CTRL;
+@@ -2104,15 +2102,25 @@ static void clk_plle_tegra210_disable(struct clk_hw *hw)
+ 	if (pll->lock)
+ 		spin_lock_irqsave(pll->lock, flags);
+ 
++	/* If PLLE HW sequencer is enabled, SW should not disable PLLE */
++	val = pll_readl(pll->params->aux_reg, pll);
++	if (val & PLLE_AUX_SEQ_ENABLE)
++		goto out;
++
+ 	val = pll_readl_base(pll);
+ 	val &= ~PLLE_BASE_ENABLE;
+ 	pll_writel_base(val, pll);
+ 
++	val = pll_readl(pll->params->aux_reg, pll);
++	val |= PLLE_AUX_ENABLE_SWCTL | PLLE_AUX_SS_SWCTL;
++	pll_writel(val, pll->params->aux_reg, pll);
++
+ 	val = pll_readl_misc(pll);
+ 	val |= PLLE_MISC_IDDQ_SW_CTRL | PLLE_MISC_IDDQ_SW_VALUE;
+ 	pll_writel_misc(val, pll);
+ 	udelay(1);
+ 
++out:
+ 	if (pll->lock)
+ 		spin_unlock_irqrestore(pll->lock, flags);
+ }
+-- 
+1.9.1
