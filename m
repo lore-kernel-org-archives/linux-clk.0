@@ -1,63 +1,68 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>
+CC: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Bresticker <abrestic@chromium.org>,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 5/9] clk: tegra: pll: Fix potential sleeping-while-atomic
+Date: Thu, 10 Dec 2015 17:08:24 -0500
+Message-ID: <1449785308-19546-6-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1449785308-19546-1-git-send-email-rklein@nvidia.com>
+References: <1449785308-19546-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-To: Brian Norris <computersforpeace@gmail.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1450290511-14442-1-git-send-email-computersforpeace@gmail.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Brian Norris" <computersforpeace@gmail.com>, "Jyri Sarha" <jsarha@ti.com>,
- "Sergej Sawazki" <ce3a@gmx.de>
-References: <1450290511-14442-1-git-send-email-computersforpeace@gmail.com>
-Message-ID: <20160101055632.21738.88763@quark.deferred.io>
-Subject: Re: [PATCH] clk: gpio: fix memory leak in of_gpio_clk_setup()
-Date: Thu, 31 Dec 2015 21:56:32 -0800
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Brian Norris (2015-12-16 10:28:31)
-> Reported by Coverity.
-> =
+From: Andrew Bresticker <abrestic@chromium.org>
 
-> Fixes: f66541ba02d5 ("clk: gpio: Get parent clk names in of_gpio_clk_setu=
-p()")
-> Signed-off-by: Brian Norris <computersforpeace@gmail.com>
-> Cc: Jyri Sarha <jsarha@ti.com>
-> Cc: Sergej Sawazki <ce3a@gmx.de>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
+Since the ->enable() callback is called with a spinlock held, we cannot
+call potentially blocking functions such as clk_get_rate() or
+clk_get_parent(), so use the unlocked versions instead.
 
-Thanks for the fix. I already applied this one:
+Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+[rklein: Adapted from ChromeOS patch, removing pllu_enable cleanup as
+it isn't present upstream]
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-http://lkml.kernel.org/r/<1450852439-366-1-git-send-email-sudipm.mukherjee@=
-gmail.com>
-
-Regards,
-Mike
-
-> ---
->  drivers/clk/clk-gpio.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> =
-
-> diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
-> index 335322dc403f..c1baa89cbf91 100644
-> --- a/drivers/clk/clk-gpio.c
-> +++ b/drivers/clk/clk-gpio.c
-> @@ -294,8 +294,10 @@ static void __init of_gpio_clk_setup(struct device_n=
-ode *node,
->         num_parents =3D of_clk_get_parent_count(node);
->  =
-
->         parent_names =3D kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
-> -       if (!parent_names)
-> +       if (!parent_names) {
-> +               kfree(data);
->                 return;
-> +       }
->  =
-
->         for (i =3D 0; i < num_parents; i++)
->                 parent_names[i] =3D of_clk_get_parent_name(node, i);
-> -- =
-
-> 2.6.0.rc2.230.g3dd15c0
->=20
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index a534bfab30b3..65156486889a 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -880,7 +880,7 @@ static int clk_plle_training(struct tegra_clk_pll *pll)
+ static int clk_plle_enable(struct clk_hw *hw)
+ {
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+-	unsigned long input_rate = clk_get_rate(clk_get_parent(hw->clk));
++	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+ 	struct tegra_clk_pll_freq_table sel;
+ 	u32 val;
+ 	int err;
+@@ -1378,7 +1378,7 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
+ 	u32 val;
+ 	int ret;
+ 	unsigned long flags = 0;
+-	unsigned long input_rate = clk_get_rate(clk_get_parent(hw->clk));
++	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+ 
+ 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
+ 		return -EINVAL;
+@@ -2014,7 +2014,7 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
+ 	u32 val;
+ 	int ret;
+ 	unsigned long flags = 0;
+-	unsigned long input_rate = clk_get_rate(clk_get_parent(hw->clk));
++	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+ 
+ 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
+ 		return -EINVAL;
+-- 
+1.9.1
