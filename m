@@ -1,39 +1,58 @@
-Return-Path: <sudipm.mukherjee@gmail.com>
-Return-Path: <sudipm.mukherjee@gmail.com>
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Return-Path: <tony@atomide.com>
+Date: Thu, 10 Dec 2015 10:04:00 -0800
+From: Tony Lindgren <tony@atomide.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH] clk: gpio: fix memory leak
-Date: Wed, 23 Dec 2015 12:03:59 +0530
-Message-Id: <1450852439-366-1-git-send-email-sudipm.mukherjee@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Brian Hutchinson <b.hutchman@gmail.com>,
+	Delio Brignoli <dbrignoli@audioscience.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Matthijs van Duin <matthijsvanduin@gmail.com>,
+	Philipp Rosenberger <ilu@linutronix.de>,
+	Tero Kristo <t-kristo@ti.com>
+Subject: Re: [PATCH 1/2] clk: ti: Add support for dm814x ADPLL
+Message-ID: <20151210180400.GG23396@atomide.com>
+References: <1449106504-7645-1-git-send-email-tony@atomide.com>
+ <1449106504-7645-2-git-send-email-tony@atomide.com>
+ <20151203160712.GM23396@atomide.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20151203160712.GM23396@atomide.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-If we fail to allocate parent_name then we are returning but we missed
-freeing data which has already been allocated.
+Hi,
 
-Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
----
- drivers/clk/clk-gpio.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+* Tony Lindgren <tony@atomide.com> [151203 08:08]:
+> * Tony Lindgren <tony@atomide.com> [151202 17:36]:
+> > On dm814x we have 13 ADPLLs with 3 to 4 outputs on each. The
+> > ADPLLs have several dividers and muxes controlled by a shared
+> > control register for each PLL.
+> > 
+> > Note that for the clocks to work as device drivers for booting on
+> > dm814x, this patch depends on "ARM: OMAP2+: Change core_initcall
+> > levels to postcore_initcall".
+> > 
+> > Also note that this patch does not implement clk_set_rate,
+> > that will be posted later on when available.
+> 
+> Mike & Stephen, after review, can we have this patch alone in an
+> immutable branch against v4.4-rc1 that I can merge in too?
 
-diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
-index 335322d..c1baa89 100644
---- a/drivers/clk/clk-gpio.c
-+++ b/drivers/clk/clk-gpio.c
-@@ -294,8 +294,10 @@ static void __init of_gpio_clk_setup(struct device_node *node,
- 	num_parents = of_clk_get_parent_count(node);
- 
- 	parent_names = kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
--	if (!parent_names)
-+	if (!parent_names) {
-+		kfree(data);
- 		return;
-+	}
- 
- 	for (i = 0; i < num_parents; i++)
- 		parent_names[i] = of_clk_get_parent_name(node, i);
--- 
-1.9.1
+Matthijs wanted to rename adpllj naming to adpll_lj and remove remaining
+fapll references, so I'll do that today and repost this series.
+
+Tero, do you have any comments on this one? After repost, do you want
+to take this into your clock branch and send a pull request to
+Mike & Stephen along with other omap clock changes?
+
+> Also, the dts changes I need to queue separately FYI to avoid merge
+> conflicts.
+
+I'd still like to have just this clock driver patch alone in an
+immutable branch that I can merge in too. Otherwise we'll get oopses
+during booting when devices are being added.
+
+Regards,
+
+Tony
