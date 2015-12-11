@@ -1,63 +1,120 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from conssluserg003.nifty.com ([202.248.44.41]:56449 "EHLO
-	conssluserg003-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752204AbbL1KZV (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 28 Dec 2015 05:25:21 -0500
-Received: from mail-yk0-f180.google.com (mail-yk0-f180.google.com [209.85.160.180]) (authenticated)
-	by conssluserg003-v.nifty.com with ESMTP id tBSAOuUJ012990
-	for <linux-clk@vger.kernel.org>; Mon, 28 Dec 2015 19:24:57 +0900
-Received: by mail-yk0-f180.google.com with SMTP id x67so98389015ykd.2
-        for <linux-clk@vger.kernel.org>; Mon, 28 Dec 2015 02:24:57 -0800 (PST)
+Return-Path: <robh@kernel.org>
+Date: Thu, 10 Dec 2015 21:48:59 -0600
+From: Rob Herring <robh@kernel.org>
+To: Simon Arlott <simon@fire.lp0.eu>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Cernekee <cernekee@gmail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org, linux-mips@linux-mips.org,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, Jonas Gorski <jogo@openwrt.org>
+Subject: Re: [PATCH linux-next (v2) 1/2] clk: Add brcm,bcm6345-gate-clk
+ device tree binding
+Message-ID: <20151211034859.GA7982@rob-hp-laptop>
+References: <5669F361.60405@simon.arlott.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
-Date: Mon, 28 Dec 2015 19:24:56 +0900
-Message-ID: <CAK7LNATqLUZwzPSnPoh5m6Tkor+kV_Fo0G8a-Qafbucj4X0_tg@mail.gmail.com>
-Subject: Re: [PATCH v2 00/16] clk: a collection of various clean-ups and improvements
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mtd@lists.infradead.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <5669F361.60405@simon.arlott.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-I sent this series to linux-mtd by mistake.
+On Thu, Dec 10, 2015 at 09:49:21PM +0000, Simon Arlott wrote:
+> Add device tree binding for the BCM6345's gated clocks.
+> 
+> The BCM6345 contains clocks gated with a register. Clocks are indexed
+> by bits in the register and are active high. Most MIPS-based BCM63xx
+> SoCs have a clock gating set of registers, but some have clock gate bits
+> interleaved with other status bits and configurable clocks in the same
+> register.
+> 
+> Signed-off-by: Simon Arlott <simon@fire.lp0.eu>
 
-This should have been sent to linux-clk, of course.
+Acked-by: Rob Herring <robh@kernel.org>
 
-Sorry for noise.
-
-
-2015-12-28 19:10 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> Many refactoring, with detection of circular parent looping.
->
->
-> Changes in v2:
->   - Fix a bug.  Return -EINVAL when parent _is_ NULL.
->
-> Masahiro Yamada (16):
->   clk: remove unused first argument of __clk_init()
->   clk: change the argument of __clk_init() into pointer to clk_core
->   clk: rename __clk_init() into __clk_core_init()
->   clk: remove unnecessary !core->parents conditional
->   clk: change sizeof(struct clk *) to sizeof(*core->parents)
->   clk: move core->parents allocation to clk_register()
->   clk: simplify clk_core_get_parent_by_index()
->   clk: drop the initial core->parents look-ups from __clk_core_init()
->   clk: replace pr_warn() with pr_err() for fatal cases
->   clk: move checking .git_parent to __clk_core_init()
->   clk: simplify __clk_init_parent()
->   clk: avoid circular clock topology
->   clk: walk the orphan clock list more simply
->   clk: make sure parent is not NULL in clk_fetch_parent_index()
->   clk: simplify clk_fetch_parent_index() function
->   clk: slightly optimize clk_core_set_parent()
-
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+> ---
+> v2: Added clock-indices, clock-output-names (from clock-bindings.txt),
+>     these are required properties.
+> 
+> v1: Renamed from BCM63xx to BCM6345.
+> 
+>  .../bindings/clock/brcm,bcm6345-gate-clk.txt       | 62 ++++++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm6345-gate-clk.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm6345-gate-clk.txt b/Documentation/devicetree/bindings/clock/brcm,bcm6345-gate-clk.txt
+> new file mode 100644
+> index 0000000..a6e264c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/brcm,bcm6345-gate-clk.txt
+> @@ -0,0 +1,62 @@
+> +Broadcom BCM6345 clocks
+> +
+> +This binding uses the common clock binding:
+> +	Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +
+> +The BCM6345 contains clocks gated with a register. Clocks are indexed
+> +by bits in the register and are active high. Most MIPS-based BCM63xx
+> +SoCs have a clock gating set of registers, but some have clock gate bits
+> +interleaved with other status bits and configurable clocks in the same
+> +register.
+> +
+> +Required properties:
+> +- compatible:         Should be "brcm,bcm<soc>-gate-clk", "brcm,bcm6345-gate-clk"
+> +- #clock-cells:       Should be <1>.
+> +- regmap:             The register map phandle
+> +- offset:             Offset in the register map for the clock register (in bytes)
+> +- clocks:             The external oscillator clock phandle
+> +- clock-indices:      The bits in the register used for gated clocks.
+> +- clock-output-names: Should be a list of strings of clock output signal
+> +                      names indexed by the clock indices.
+> +
+> +Example:
+> +
+> +periph_clk: periph_clk {
+> +	compatible = "brcm,bcm63168-gate-clk", "brcm,bcm6345-gate-clk";
+> +	regmap = <&periph_cntl>;
+> +	offset = <0x4>;
+> +
+> +	#clock-cells = <1>;
+> +	clock-indices =
+> +		<1>,          <2>,        <3>,       <4>,     <5>,
+> +		<6>,          <7>,        <8>,       <9>,     <10>,
+> +		<11>,         <12>,       <13>,      <14>,    <15>,
+> +		<16>,         <17>,       <18>,      <19>,    <20>,
+> +		<27>,         <31>;
+> +	clock-output-names =
+> +		"vdsl_qproc", "vdsl_afe", "vdsl",    "mips",  "wlan_ocp",
+> +		"dect",       "fap0",     "fap1",    "sar",   "robosw",
+> +		"pcm",        "usbd",     "usbh",    "ipsec", "spi",
+> +		"hsspi",      "pcie",     "phymips", "gmac",  "nand",
+> +		"tbus",       "robosw250";
+> +};
+> +
+> +timer_clk: timer_clk {
+> +	compatible = "brcm,bcm63168-gate-clk", "brcm,bcm6345-gate-clk";
+> +	regmap = <&timer_cntl>;
+> +	offset = <0x4>;
+> +
+> +	#clock-cells = <1>;
+> +	clock-indices = <17>, <18>;
+> +	clock-output-names = "uto_extin", "usb_ref";
+> +};
+> +
+> +ehci0: usb@10002500 {
+> +	compatible = "brcm,bcm63168-ehci", "brcm,bcm6345-ehci", "generic-ehci";
+> +	reg = <0x10002500 0x100>;
+> +	big-endian;
+> +	interrupt-parent = <&periph_intc>;
+> +	interrupts = <10>;
+> +	clocks = <&periph_clk 13>, <&timer_clk 18>;
+> +	phys = <&usbh>;
+> +};
+> -- 
+> 2.1.4
+> 
+> -- 
+> Simon Arlott
