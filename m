@@ -1,77 +1,28 @@
-Return-Path: <tony@atomide.com>
-Date: Tue, 22 Dec 2015 14:18:48 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Tero Kristo <t-kristo@ti.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Brian Hutchinson <b.hutchman@gmail.com>,
-	Delio Brignoli <dbrignoli@audioscience.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Matthijs van Duin <matthijsvanduin@gmail.com>,
-	Philipp Rosenberger <ilu@linutronix.de>,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH v4] clk: ti: Add support for dm814x ADPLL
-Message-ID: <20151222221847.GH2793@atomide.com>
-References: <1450798030-23680-1-git-send-email-tony@atomide.com>
- <5679B2D6.4050102@ti.com>
- <20151222203224.GG2793@atomide.com>
- <20151222205604.GA14912@quark.deferred.io>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Jeffy Chen <jeffy.chen@rock-chips.com>
+Cc: linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] rockchip: add clock controller for rk3228
+Date: Fri, 11 Dec 2015 12:16:04 +0100
+Message-ID: <1800919.94izzyKx0I@diego>
+In-Reply-To: <1449797452-19389-3-git-send-email-jeffy.chen@rock-chips.com>
+References: <1449797452-19389-1-git-send-email-jeffy.chen@rock-chips.com> <1449797452-19389-3-git-send-email-jeffy.chen@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20151222205604.GA14912@quark.deferred.io>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-* Michael Turquette <mturquette@baylibre.com> [151222 12:56]:
-> On 12/22, Tony Lindgren wrote:
-> > * Tero Kristo <t-kristo@ti.com> [151222 12:28]:
-> > > On 12/22/2015 05:27 PM, Tony Lindgren wrote:
-> > > >On dm814x we have 13 ADPLLs with 3 to 4 outputs on each. The
-> > > >ADPLLs have several dividers and muxes controlled by a shared
-> > > >control register for each PLL.
-> > > >
-> > > >Note that for the clocks to work as device drivers for booting on
-> > > >dm814x, this patch depends on "ARM: OMAP2+: Change core_initcall
-> > > >levels to postcore_initcall".
-> > > >
-> > > >Also note that this patch does not implement clk_set_rate for the
-> > > >PLL, that will be posted later on when available.
-> > > >
-> > > >Cc: Michael Turquette <mturquette@baylibre.com>
-> > > >Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > > >Cc: Tero Kristo <t-kristo@ti.com>
-> > > >Signed-off-by: Tony Lindgren <tony@atomide.com>
-> > > >---
-> > > >
-> > > >If no more comments, Tero can you please apply into an immutable
-> > > >branch against v4.4-rc1 that I can merge in too?
-> > > >
-> > > >Changes since v3:
-> > > >
-> > > >- We want to create the clkdev entry for all clocks, not just outputs
-> > > >- ti_adpll_wait_lock loops did not do the right thing
-> > > >- We want to use CLK_GET_RATE_NOCACHE in ti_adpll_init_dco
-> > > 
-> > > I have just one comment below still, once that is addressed:
-> > > 
-> > > Conditionally-acked-by: Tero Kristo <t-kristo@ti.com>
-> > > 
-> > > Stephen / Michael, can you pick this up for next merge? I don't have
-> > > anything else coming for the window this time, and I am probably going to be
-> > > on vacation just nicely to not be able to push anything anyway.
-> > 
-> > Also, I managed to remove the dependency to the dts changes. So there's
-> > no longer any need to set up an immutable branch for this patch.
+Hi Jeffy,
+
+Am Freitag, 11. Dezember 2015, 09:30:50 schrieb Jeffy Chen:
+> Add the clock tree definition for the new rk3228 SoC.
 > 
-> Can you split the binding description into a separate patch and send it
-> to the dt mailing list? Feel free to add my Ack to it.
+> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
 
-OK will do thanks.
+applied to my clk branch for 4.5 [0], with minimal cosmetic adjustments
+to two gates and shortening of the copyright lines.
 
-> Stephen and I are trying to not take that stuff anymore.
 
-Sure, no problem.
+Heiko
 
-Regards,
 
-Tony
+[0] https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.git/commit/?h=v4.5-clk/next&id=6e41904e7147eafbe847c9cf55725c1ee61e4997
