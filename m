@@ -1,154 +1,59 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 1 Dec 2015 00:40:48 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-gpio@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] clk: let of_clk_get_parent_name() fail for invalid
- clock-indices
-Message-ID: <20151201084048.GC26865@codeaurora.org>
-References: <1448873164-22415-1-git-send-email-yamada.masahiro@socionext.com>
- <20151201005802.GE17532@codeaurora.org>
- <CAK7LNAT5Q+MVj8KvT_WMwtAFhFN5Q6yXk6vY9oNpoBtEBs-C6Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAK7LNAT5Q+MVj8KvT_WMwtAFhFN5Q6yXk6vY9oNpoBtEBs-C6Q@mail.gmail.com>
+Return-Path: <jeffy.chen@rock-chips.com>
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
+To: heiko@sntech.de,
+	linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-gpio@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Kumar Gala <galak@codeaurora.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 0/4] Add support for rk3228 Soc platform
+Date: Fri, 11 Dec 2015 09:30:48 +0800
+Message-Id: <1449797452-19389-1-git-send-email-jeffy.chen@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/01, Masahiro Yamada wrote:
-> 2015-12-01 9:58 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
-> > Here's the proposed alternative, if you agree I will merge it
-> > with the above commit text and attribution to you.
-> >
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index a66efc9d8bfc..f54583a9835a 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -3079,6 +3079,9 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
-> >                 }
-> >                 count++;
-> >         }
-> > +       /* We went off the end of 'clock-indices' without finding it */
-> > +       if (!vp && count)
-> > +               return NULL;
-> >
-> >         if (of_property_read_string_index(clkspec.np, "clock-output-names",
-> >                                           index,
-> >
-> 
-> No, again.
-> The existence of "clock-indices" should be checked
-> in order to omit the zero-length "clock-indices".
-> 
+This serial of patches add dts/pinctrl/clock-tree/doc for rk3228
+platform, with these patches, my evb board could boot into initramfs.
 
-Ah I missed that one. All these corner cases for broken DTs. Too
-bad we don't have that DT validator.
+Changes in v2:
+Fix some clock tree errors.
+Fix some coding styles.
 
-> 
-> OK, let me guess the next alternative from you.
-> 
-> 
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -3079,6 +3079,9 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
-> >                 }
-> >                 count++;
-> >         }
-> > +       /* We went off the end of 'clock-indices' without finding it */
-> > +       if (prop && !vp)
-> > +               return NULL;
-> >
-> >         if (of_property_read_string_index(clkspec.np, "clock-output-names",
-> >                                           index,
-> >
+Separate board and core properties.
+Remove phy clocks.
+Order nodes by register address.
+Add vgic registers and interrupt.
 
-Cool, we can go faster now.
+Move board properties into board dts.
 
-> 
-> This works, but clumsy things are:
-> 
-> [1] If the "clock-indices" is missing, we can know it
->      before looping around the of_property_for_each_u32().
->      Checking the "prop" after the loop seems odd.
+Jeffy Chen (4):
+  pinctrl: rockchip: add support for the rk3228
+  rockchip: add clock controller for rk3228
+  ARM: dts: rockchip: add core rk3228 dtsi
+  ARM: dts: rockchip: add rk3228-evb board
 
-The of_property_for_each_u32 macro will do pretty much the same
-work that you've done in your patch. So we're not going to go
-around the loop at all in this case, we're just going to get the
-property like you've done, and then of_prop_next_u32() is going
-to return NULL and we'll never enter the loop.
+ .../bindings/pinctrl/rockchip,pinctrl.txt          |   3 +-
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/rk3228-evb.dts                   |  66 ++
+ arch/arm/boot/dts/rk3228.dtsi                      | 442 +++++++++++++
+ drivers/clk/rockchip/Makefile                      |   1 +
+ drivers/clk/rockchip/clk-rk3228.c                  | 681 +++++++++++++++++++++
+ drivers/clk/rockchip/clk.h                         |  11 +-
+ drivers/pinctrl/pinctrl-rockchip.c                 |  53 ++
+ 8 files changed, 1256 insertions(+), 2 deletions(-)
+ create mode 100644 arch/arm/boot/dts/rk3228-evb.dts
+ create mode 100644 arch/arm/boot/dts/rk3228.dtsi
+ create mode 100644 drivers/clk/rockchip/clk-rk3228.c
 
-Checking the property again is sort of odd, but we do similar
-sorts of checks at the end of loops in other places in the
-kernel, so it isn't out of the ordinary.
-
-> 
-> [2] "prop" and "vp" seem to be temporary storage that we should not
->      know what they exactly are, like the auxiliary pointer in
-> list_for_each_safe().
-
-True. In those cases, we check for list emptiness before
-iterating over it with the list helper macros. So it sounds like
-we should do that here as well.
-
-> 
-> 
-> Why do you insist on of_property_for_each_u32()?
-> It no longer fits in here.
-> 
-
-Sure. The other problem is be32_to_cpup() usage. I'd rather that
-we use the style of looping that of_property_for_each_u32 does.
-It doesn't make any assumptions about how the data is in memory.
-Instead we call the iterator function and it gets the next value.
-
-So here's another try, that open codes the macro so we can add
-our count inside and check for a boolean property without
-duplication.
-
-----8<----
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index a66efc9d8bfc..a2112cdab191 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3059,6 +3059,7 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
- 	u32 pv;
- 	int rc;
- 	int count;
-+	int len;
- 	struct clk *clk;
- 
- 	rc = of_parse_phandle_with_args(np, "clocks", "#clock-cells", index,
-@@ -3067,18 +3068,24 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
- 		return NULL;
- 
- 	index = clkspec.args_count ? clkspec.args[0] : 0;
--	count = 0;
-+	len = 0;
- 
--	/* if there is an indices property, use it to transfer the index
-+	/*
-+	 * if there is an indices property, use it to transfer the index
- 	 * specified into an array offset for the clock-output-names property.
- 	 */
--	of_property_for_each_u32(clkspec.np, "clock-indices", prop, vp, pv) {
-+	prop = of_find_property(clkspec.np, "clock-indices", &len);
-+	for (vp = of_prop_next_u32(prop, NULL, &pv), count = 0;
-+	     vp;
-+	     vp = of_prop_next_u32(prop, vp, &pv), count++) {
- 		if (index == pv) {
- 			index = count;
- 			break;
- 		}
--		count++;
- 	}
-+	/* We went off the end of 'clock-indices' without finding it */
-+	if (prop && count == len / sizeof(u32))
-+		return NULL;
- 
- 	if (of_property_read_string_index(clkspec.np, "clock-output-names",
- 					  index,
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.4
