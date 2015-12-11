@@ -1,43 +1,50 @@
-Return-Path: <tony@atomide.com>
-Date: Thu, 3 Dec 2015 08:07:13 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Brian Hutchinson <b.hutchman@gmail.com>,
-	Delio Brignoli <dbrignoli@audioscience.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Matthijs van Duin <matthijsvanduin@gmail.com>,
-	Philipp Rosenberger <ilu@linutronix.de>,
-	Tero Kristo <t-kristo@ti.com>
-Subject: Re: [PATCH 1/2] clk: ti: Add support for dm814x ADPLL
-Message-ID: <20151203160712.GM23396@atomide.com>
-References: <1449106504-7645-1-git-send-email-tony@atomide.com>
- <1449106504-7645-2-git-send-email-tony@atomide.com>
+Return-Path: <Ping.Bai@freescale.com>
+Subject: Re: [PATCH 1/3] ARM: dts: imx: Add basic dts support for imx6qp
+To: Fabio Estevam <festevam@gmail.com>
+References: <1449830722-26607-1-git-send-email-b51503@freescale.com>
+ <CAOMZO5C8mTotbpOmKkxKOXmBWc-N_zm7xn-fU5gFUgAFCiyokw@mail.gmail.com>
+CC: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll
+	<pawel.moll@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@codeaurora.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
+	<linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+From: Bai Ping <b51503@freescale.com>
+Message-ID: <566ABA48.6060508@freescale.com>
+Date: Fri, 11 Dec 2015 19:58:00 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1449106504-7645-2-git-send-email-tony@atomide.com>
+In-Reply-To: <CAOMZO5C8mTotbpOmKkxKOXmBWc-N_zm7xn-fU5gFUgAFCiyokw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: b51503@freescale.com
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tony Lindgren <tony@atomide.com> [151202 17:36]:
-> On dm814x we have 13 ADPLLs with 3 to 4 outputs on each. The
-> ADPLLs have several dividers and muxes controlled by a shared
-> control register for each PLL.
-> 
-> Note that for the clocks to work as device drivers for booting on
-> dm814x, this patch depends on "ARM: OMAP2+: Change core_initcall
-> levels to postcore_initcall".
-> 
-> Also note that this patch does not implement clk_set_rate,
-> that will be posted later on when available.
 
-Mike & Stephen, after review, can we have this patch alone in an
-immutable branch against v4.4-rc1 that I can merge in too?
 
-Also, the dts changes I need to queue separately FYI to avoid merge
-conflicts.
+On 2015/12/11 19:37, Fabio Estevam wrote:
+> On Fri, Dec 11, 2015 at 8:45 AM, Bai Ping <b51503@freescale.com> wrote:
+>> The i.MX6Qual Plus processor is an high performance SOC of i.MX6 family.
+>> It has enhanced graphics performance and increased overall memory bandwidth
+>> compared to i.MX6Q. Most of the design are same as i.MX6Qual/Dual, so code
+>> for i.MX6Qual can be resued by this chip. The revision number is identied as
+>> i.MX6Q Rev2.0, but actually it is a new chip, as we did many change to the
+>> overall architecture.
+>>
+>> This patch adds basic dts file for the new i.MX6Qual Plus processor.
+>>
+>> Signed-off-by: Bai Ping <b51503@freescale.com>
+>> ---
+>>   arch/arm/boot/dts/Makefile                |   2 +
+>>   arch/arm/boot/dts/imx6q.dtsi              |   2 +-
+>>   arch/arm/boot/dts/imx6qdl-sabresd.dtsi    |   1 +
+>>   arch/arm/boot/dts/imx6qp-sabreauto.dts    |  67 +++++++++++++
+>>   arch/arm/boot/dts/imx6qp-sabresd.dts      |  59 +++++++++++
+>>   arch/arm/boot/dts/imx6qp.dtsi             | 157 ++++++++++++++++++++++++++++++
+>>   include/dt-bindings/clock/imx6qdl-clock.h |  16 ++-
+> Better split this in three patches:
+>
+> - Add imx6qp SoC support
+> - Add imx6qdl-sabresd support
+> - Add imx6qp-sabreauto support
+ok, I will spit this in Patch V2. thanks for you review.
 
-Regards,
-
-Tony
+Jacky Bai
