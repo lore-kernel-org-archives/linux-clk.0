@@ -1,79 +1,92 @@
-Return-Path: <carlo.caione@gmail.com>
-Return-Path: <carlo.caione@gmail.com>
-Sender: Carlo Caione <carlo.caione@gmail.com>
-From: Carlo Caione <carlo@caione.org>
-To: robh+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux@arm.linux.org.uk,
-	linux-meson@googlegroups.com,
-	drake@endlessm.com,
-	jerry.cao@amlogic.com,
-	victor.wan@amlogic.com,
-	pawel.moll@arm.com,
-	arnd@arndb.de
-Cc: Carlo Caione <carlo@endlessm.com>
-Subject: [PATCH v2 4/7] ARM: DTS: Amlogic: Enable reset controller for Meson8b
-Date: Wed,  2 Dec 2015 18:22:30 +0100
-Message-Id: <1449076953-5058-5-git-send-email-carlo@caione.org>
-In-Reply-To: <1449076953-5058-1-git-send-email-carlo@caione.org>
-References: <1449076953-5058-1-git-send-email-carlo@caione.org>
+Return-Path: <tony@atomide.com>
+Date: Fri, 11 Dec 2015 08:03:54 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Brian Hutchinson <b.hutchman@gmail.com>,
+	Delio Brignoli <dbrignoli@audioscience.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Matthijs van Duin <matthijsvanduin@gmail.com>,
+	Philipp Rosenberger <ilu@linutronix.de>
+Subject: Re: [PATCH v2] clk: ti: Add support for dm814x ADPLL
+Message-ID: <20151211160353.GL23396@atomide.com>
+References: <1449800792-5551-1-git-send-email-tony@atomide.com>
+ <566A7F52.4020801@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <566A7F52.4020801@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Carlo Caione <carlo@endlessm.com>
+* Tero Kristo <t-kristo@ti.com> [151210 23:45]:
+> On 12/11/2015 04:26 AM, Tony Lindgren wrote:
+> 
+> Looks mostly good to me, added some minor comments inline below. Sorry again
+> for latencies in my replies.
 
-Extend the CPU nodes to use the reset controller.
+No problme, thanks for looking.
 
-Signed-off-by: Carlo Caione <carlo@endlessm.com>
----
- arch/arm/boot/dts/meson8b.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+> >+static bool ti_adpll_clock_is_bypass(struct ti_adpll_data *d)
+> >+{
+> >+	unsigned long flags;
+> >+	u32 v;
+> >+
+> >+	spin_lock_irqsave(&d->lock, flags);
+> >+	v = readl_relaxed(d->status);
+> >+	spin_unlock_irqrestore(&d->lock, flags);
+> 
+> What do you need the lock for in here?
 
-diff --git a/arch/arm/boot/dts/meson8b.dtsi b/arch/arm/boot/dts/meson8b.dtsi
-index b1990dc..51b32ed 100644
---- a/arch/arm/boot/dts/meson8b.dtsi
-+++ b/arch/arm/boot/dts/meson8b.dtsi
-@@ -60,6 +60,7 @@
- 			compatible = "arm,cortex-a5";
- 			next-level-cache = <&L2>;
- 			reg = <0x200>;
-+			resets = <&clkc RST_CORE0>;
- 		};
- 
- 		cpu@201 {
-@@ -67,6 +68,7 @@
- 			compatible = "arm,cortex-a5";
- 			next-level-cache = <&L2>;
- 			reg = <0x201>;
-+			resets = <&clkc RST_CORE1>;
- 		};
- 
- 		cpu@202 {
-@@ -74,6 +76,7 @@
- 			compatible = "arm,cortex-a5";
- 			next-level-cache = <&L2>;
- 			reg = <0x202>;
-+			resets = <&clkc RST_CORE2>;
- 		};
- 
- 		cpu@203 {
-@@ -81,6 +84,7 @@
- 			compatible = "arm,cortex-a5";
- 			next-level-cache = <&L2>;
- 			reg = <0x203>;
-+			resets = <&clkc RST_CORE3>;
- 		};
- 	};
- 
-@@ -147,6 +151,7 @@
- 		};
- 
- 		clkc: clock-controller@c1104000 {
-+			#reset-cells = <1>;
- 			#clock-cells = <1>;
- 			compatible = "amlogic,meson8b-clkc";
- 			reg = <0xc1108000 0x4>, <0xc1104000 0x460>;
--- 
-2.5.0
+Yeah seems pointless, will remove.
+
+> >+static int ti_adpll_clkout_set_parent(struct clk_hw *hw, u8 index)
+> >+{
+> >+	struct ti_adpll_clkout_data *co = to_clkout(hw);
+> >+	struct ti_adpll_data *d = co->adpll;
+> >+
+> >+	return ti_adpll_clock_is_bypass(d) == index;
+
+Hmm yeah that seems broken. I need to check what all really goes
+to bypass mode with ulowclken signal.
+
+> What is the point of this? It doesn't seem to set anything.
+
+> >+	/* Internal mux, sources sources from DCO and clkinphf */
+> 
+> Double "sources" in comment?
+> 
+> >+	/* Output clkout clkout, sources M2 or ulow */
+> 
+> Double "clkout" in comment?
+
+Oops will fix.
+
+> >+	d->pwrctrl = d->base + register_offset + ADPLL_PWRCTRL_OFFSET;
+> >+	d->clkctrl = d->base + register_offset + ADPLL_CLKCTRL_OFFSET;
+> >+	d->tenable = d->base + register_offset + ADPLL_TENABLE_OFFSET;
+> >+	d->tenablediv = d->base + register_offset + ADPLL_TENABLEDIV_OFFSET;
+> >+	d->m2ndiv = d->base + register_offset + ADPLL_M2NDIV_OFFSET;
+> >+	d->mn2div = d->base + register_offset + ADPLL_MN2DIV_OFFSET;
+> >+	d->fracdiv = d->base + register_offset + ADPLL_FRACDIV_OFFSET;
+> >+	d->bwctrl = d->base + register_offset + ADPLL_BWCTRL_OFFSET;
+> >+	d->status = d->base + register_offset + ADPLL_STATUS_OFFSET;
+> >+	d->m3div = d->base + register_offset + ADPLL_M3DIV_OFFSET;
+> >+	d->rampctrl = d->base + register_offset + ADPLL_RAMPCTRL_OFFSET;
+> 
+> Do you need the individual pointers to each of these registers within the
+> struct? Seems the offsets are pretty static so could just use d->base +
+> offset + MAGIC calculation where used.
+> 
+> Most of these registers are not used for anything either at the moment it
+> seems.
+
+Well I guess I was initially thinking that we can set up separate instances
+for the children and don't need locking for the registers.. But all of them
+really share the clkctl register so that did not work out.
+
+Yeah I can change these to use offsets no problem.
+
+Regards,
+
+Tony
