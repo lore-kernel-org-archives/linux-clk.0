@@ -1,117 +1,48 @@
-Return-Path: <carlo.caione@gmail.com>
-Return-Path: <carlo.caione@gmail.com>
-Sender: Carlo Caione <carlo.caione@gmail.com>
-From: Carlo Caione <carlo@caione.org>
-To: robh+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux@arm.linux.org.uk,
-	linux-meson@googlegroups.com,
-	drake@endlessm.com,
-	jerry.cao@amlogic.com,
-	victor.wan@amlogic.com,
-	pawel.moll@arm.com,
-	arnd@arndb.de
-Cc: Carlo Caione <carlo@endlessm.com>
-Subject: [PATCH v2 5/7] dt-bindings: Amlogic: Add SMP related documentation
-Date: Wed,  2 Dec 2015 18:22:31 +0100
-Message-Id: <1449076953-5058-6-git-send-email-carlo@caione.org>
-In-Reply-To: <1449076953-5058-1-git-send-email-carlo@caione.org>
-References: <1449076953-5058-1-git-send-email-carlo@caione.org>
+Return-Path: <linux+mturquette=baylibre.com@arm.linux.org.uk>
+Date: Fri, 11 Dec 2015 16:14:50 +0000
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Tero Kristo <t-kristo@ti.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Matthijs van Duin <matthijsvanduin@gmail.com>,
+	Delio Brignoli <dbrignoli@audioscience.com>,
+	Philipp Rosenberger <ilu@linutronix.de>,
+	Brian Hutchinson <b.hutchman@gmail.com>, linux-omap@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] clk: ti: Add support for dm814x ADPLL
+Message-ID: <20151211161450.GH30871@n2100.arm.linux.org.uk>
+References: <1449800792-5551-1-git-send-email-tony@atomide.com>
+ <20151211135237.GG30871@n2100.arm.linux.org.uk>
+ <20151211154854.GK23396@atomide.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20151211154854.GK23396@atomide.com>
+Sender: Russell King - ARM Linux <linux@arm.linux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Carlo Caione <carlo@endlessm.com>
+On Fri, Dec 11, 2015 at 07:48:54AM -0800, Tony Lindgren wrote:
+> There's a problem with MAX_CON_ID 16 hardcoded allocated name length.
 
-With this patch we add documentation for:
+Absolutely right...
 
-* power-management-unit: the PMU is used to bring up the cores during
-  SMP operations
-* sram: among other things the sram is used to store the first code
-  executed by the core when it is powered up
-* cpu-enable-method: the CPU enable method used by Amlogic Meson8b SoCs
+> In this case I have 13 instances of plls with 3 - 4 outputs each and I'd
+> like to use "481c5040.adpll.clkout" style naming starting with the instance
+> address. Also "adpll5.clkdcoldo" style naming would work,
 
-Signed-off-by: Carlo Caione <carlo@endlessm.com>
----
- .../devicetree/bindings/arm/amlogic/pmu.txt        | 16 +++++++++++
- .../devicetree/bindings/arm/amlogic/smp-sram.txt   | 32 ++++++++++++++++++++++
- Documentation/devicetree/bindings/arm/cpus.txt     |  1 +
- 3 files changed, 49 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/amlogic/pmu.txt
- create mode 100644 Documentation/devicetree/bindings/arm/amlogic/smp-sram.txt
+Because it's a connection ID, not a clock _name_.  I see that we're still
+making all the same mistakes with clocks that were made years ago, and
+which lead down the path of amazingly complex drivers having conditional
+clock names and the like.
 
-diff --git a/Documentation/devicetree/bindings/arm/amlogic/pmu.txt b/Documentation/devicetree/bindings/arm/amlogic/pmu.txt
-new file mode 100644
-index 0000000..7b9b2da
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/amlogic/pmu.txt
-@@ -0,0 +1,16 @@
-+Amlogic power-management-unit:
-+-------------------------------
-+
-+The pmu is used to turn off and on different power domains of the SoCs
-+This includes the power to the CPU cores.
-+
-+Required node properties:
-+- compatible value : = "amlogic,meson8b-pmu";
-+- reg : physical base address and the size of the registers window
-+
-+Example:
-+
-+	pmu@c81000e4 {
-+		compatible = "amlogic,meson8b-pmu", "syscon";
-+		reg = <0xc81000e0 0x18>;
-+	};
-diff --git a/Documentation/devicetree/bindings/arm/amlogic/smp-sram.txt b/Documentation/devicetree/bindings/arm/amlogic/smp-sram.txt
-new file mode 100644
-index 0000000..455ca20
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/amlogic/smp-sram.txt
-@@ -0,0 +1,32 @@
-+Amlogic SRAM for smp bringup:
-+------------------------------
-+
-+Amlogic's smp-capable SoCs use part of the sram for the bringup of the cores.
-+Once the core gets powered up it executes the code that is residing at a
-+specific location.
-+
-+Therefore a reserved section sub-node has to be added to the mmio-sram
-+declaration.
-+
-+Required sub-node properties:
-+- compatible : should be "amlogic,meson8b-smp-sram"
-+
-+The rest of the properties should follow the generic mmio-sram discription
-+found in ../../misc/sram.txt
-+
-+Example:
-+
-+	sram: sram@d9000000 {
-+		compatible = "mmio-sram";
-+		reg = <0xd9000000 0x20000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0xd9000000 0x20000>;
-+
-+		smp-sram@1ff80 {
-+			compatible = "amlogic,meson8b-smp-sram";
-+			reg = <0x1ff80 0x8>;
-+		};
-+	};
-+
-+
-diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
-index 3a07a87..22381b4 100644
---- a/Documentation/devicetree/bindings/arm/cpus.txt
-+++ b/Documentation/devicetree/bindings/arm/cpus.txt
-@@ -189,6 +189,7 @@ nodes to be present and contain the properties described below.
- 			  can be one of:
- 			    "allwinner,sun6i-a31"
- 			    "allwinner,sun8i-a23"
-+			    "amlogic,meson8b-smp"
- 			    "arm,psci"
- 			    "brcm,brahma-b15"
- 			    "marvell,armada-375-smp"
+Is there a reason why you can't split this into separate device and input
+names, and use clk_get_sys() rather than passing NULL as the device to
+clk_get().  This is exactly why we've ended up with clk_get_sys(), to
+cater for the cases where there is no struct device to associate with the
+connection ID: the idea behind clk_get_sys() is that you pass the device
+name explicitly, along with the connection ID.
+
 -- 
-2.5.0
+RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
