@@ -1,46 +1,61 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v2 16/16] clk: slightly optimize clk_core_set_parent()
-Date: Mon, 28 Dec 2015 19:23:10 +0900
-Message-Id: <1451298191-30815-17-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga01-in.huawei.com ([58.251.152.64]:12628 "EHLO
+	szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753157AbbLKIFf (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 11 Dec 2015 03:05:35 -0500
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
+	<zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v3 6/7] mfd: dt-bindings: add device tree bindings for Hi3519 sysctrl
+Date: Fri, 11 Dec 2015 15:45:20 +0800
+Message-ID: <1449819921-18464-7-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1449819921-18464-1-git-send-email-xuejiancheng@huawei.com>
+References: <1449819921-18464-1-git-send-email-xuejiancheng@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-If clk_fetch_parent_index() fails, p_rate is unused.  Move the
-assignment after the error checking.
+Add device tree bindings for Hi3519 system controller.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
 ---
+ Documentation/devicetree/bindings/mfd/hi3519.txt | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/hi3519.txt
 
-Changes in v2: None
-
- drivers/clk/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 5b9aec0..e81301b 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1730,13 +1730,13 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
- 	/* try finding the new parent index */
- 	if (parent) {
- 		p_index = clk_fetch_parent_index(core, parent);
--		p_rate = parent->rate;
- 		if (p_index < 0) {
- 			pr_debug("%s: clk %s can not be parent of clk %s\n",
- 					__func__, parent->name, core->name);
- 			ret = p_index;
- 			goto out;
- 		}
-+		p_rate = parent->rate;
- 	}
- 
- 	/* propagate PRE_RATE_CHANGE notifications */
+diff --git a/Documentation/devicetree/bindings/mfd/hi3519.txt b/Documentation/devicetree/bindings/mfd/hi3519.txt
+new file mode 100644
+index 0000000..4b1c294
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/hi3519.txt
+@@ -0,0 +1,14 @@
++* Hisilicon Hi3519 System Controller Block
++
++This bindings use the following binding:
++Dcumentation/devicetree/bindings/clock/clock-bindings.txt
++
++Required properties:
++- compatible: "hislicon,hi3519-sysctrl".
++- reg: the register region of this block
++
++Examples:
++sysctrl: system-controller@12010000 {
++	compatible = "hisilicon,hi3519-sysctrl", "syscon";
++	reg = <0x12010000 0x1000>;
++};
 -- 
 1.9.1
+
