@@ -1,79 +1,100 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL] rockchip clock changes for 4.5
-Date: Fri, 04 Dec 2015 23:43:41 +0100
-Message-ID: <3167734.Jiqp72JFJP@diego>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+ <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+ <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+ <linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+ <olof@lixom.net>, <xuwei5@hisilicon.com>, <haojian.zhuang@linaro.org>,
+ <zhangfei.gao@linaro.org>, <bintian.wang@huawei.com>
+Subject: [PATCH v3 2/7] clk: hisilicon: add dt-binding document for Hi3519 CRG
+Date: Fri, 11 Dec 2015 15:45:16 +0800
+Message-ID: <1449819921-18464-3-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1449819921-18464-1-git-send-email-xuejiancheng@huawei.com>
+References: <1449819921-18464-1-git-send-email-xuejiancheng@huawei.com>
 MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: suwenping@hisilicon.com, devicetree@vger.kernel.org,
+ yanhaifeng@hisilicon.com, linux-kernel@vger.kernel.org,
+ xuejiancheng@hisilicon.com, gaofei@hisilicon.com,
+ Jiancheng Xue <xuejiancheng@huawei.com>, ml.yang@hisilicon.com,
+ yanghongwei@hisilicon.com, zhangzhenxing@hisilicon.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike, Stephen,
+add dt-binding document for Hi3519 CRG block
 
-as discusses previously, here is round 1 of rockchip clock changes for 4.5.
-This already includes the clock-id branch shared with the armsoc-
-specific changes.
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+---
+ .../devicetree/bindings/clock/hi3519-crg.txt       | 46 ++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
 
-Thanks
-Heiko
+diff --git a/Documentation/devicetree/bindings/clock/hi3519-crg.txt b/Documentation/devicetree/bindings/clock/hi3519-crg.txt
+new file mode 100644
+index 0000000..e0d30a4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/hi3519-crg.txt
+@@ -0,0 +1,46 @@
++* Hisilicon Hi3519 Clock and Reset Generator(CRG)
++
++The Hi3519 CRG module provides clock and reset signals to various
++controllers within the SoC.
++
++This binding uses the following bindings:
++    Documentation/devicetree/bindings/clock/clock-bindings.txt
++    Documentation/devicetree/bindings/reset/reset.txt
++
++Required Properties:
++
++- compatible: should be one of the following.
++  - "hisilicon,hi3519-crg" - controller compatible with Hi3519 SoC.
++
++- reg: physical base address of the controller and length of memory mapped
++  region.
++
++- #clock-cells: should be 1.
++
++Each clock is assigned an identifier and client nodes use this identifier
++to specify the clock which they consume.
++
++All these identifier could be found in <dt-bindings/clock/hi3519-clock.h>.
++
++- #reset-cells: should be 2.
++
++A reset signal can be controlled by writing a bit register in the CRG module.
++The reset specifier consists of two cells. The first cell represents the
++register offset relative to the base address. The second cell represents the
++bit index in the register.
++
++Example: CRG nodes
++CRG: clock-reset-controller {
++	compatible = "hisilicon,hi3519-crg";
++        reg = <0x12010000 0x10000>;
++        #clock-cells = <1>;
++        #reset-cells = <2>;
++};
++
++Example: consumer nodes
++i2c0: i2c@0x12110000 {
++	compatible = "hisilicon,hi3519-i2c";
++        reg = <0x12110000 0x1000>;
++        clocks = <&CRG HI3519_I2C0_RST>;*/
++        resets = <&CRG 0xE4 0>;
++};
+-- 
+1.9.1
 
 
-The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
-
-  Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.5-rockchip-clk1
-
-for you to fetch changes up to 8ad0df33c62d706f925a5910701255759a68c2e5:
-
-  clk: rockchip: fix rk3368 cpuclk divider offsets (2015-12-03 16:20:02 +0100)
-
-----------------------------------------------------------------
-First round of Rockchip clock changes for 4.5 .
-- one new clock-tree for the rk3036 including a new pll type
-- switch rk3288 plls to slow mode on reboot
-- a bunch of new clock ids
-- some more critical clocks
-
-----------------------------------------------------------------
-Caesar Wang (1):
-      clk: rockchip: Force rk3368 PWM clock (and its parents) on
-
-Chris Zhong (3):
-      clk: rockchip: add id for mipidsi sclk on rk3288
-      clk: rockchip: add mipidsi clock on rk3288
-      clk: rockchip: switch PLLs to slow mode before reboot for rk3288
-
-Heiko Stuebner (3):
-      Merge branch 'v4.5-clk/clkids' into v4.5-clk/next
-      Merge branch 'v4.5-clk/clkids' into v4.5-clk/next
-      clk: rockchip: fix rk3368 cpuclk divider offsets
-
-Jianqun xu (1):
-      clk: rockchip: protect rk3368 aclk_bus and aclk_peri clocks
-
-Xing Zheng (4):
-      clk: rockchip: add dt-binding header for rk3036
-      dt-bindings: add documentation of rk3036 clock controller
-      clk: rockchip: add new pll-type for rk3036 and similar socs
-      clk: rockchip: add clock controller for rk3036
-
-Zain Wang (2):
-      clk: rockchip: add an id for rk3288 crypto clk
-      clk: rockchip: set the id for crypto clk
-
- .../bindings/clock/rockchip,rk3036-cru.txt         |  56 +++
- drivers/clk/rockchip/Makefile                      |   1 +
- drivers/clk/rockchip/clk-pll.c                     | 258 ++++++++++-
- drivers/clk/rockchip/clk-rk3036.c                  | 478 +++++++++++++++++++++
- drivers/clk/rockchip/clk-rk3288.c                  |  36 +-
- drivers/clk/rockchip/clk-rk3368.c                  |  11 +-
- drivers/clk/rockchip/clk.h                         |  32 +-
- include/dt-bindings/clock/rk3036-cru.h             | 193 +++++++++
- include/dt-bindings/clock/rk3288-cru.h             |   2 +
- 9 files changed, 1043 insertions(+), 24 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3036-cru.txt
- create mode 100644 drivers/clk/rockchip/clk-rk3036.c
- create mode 100644 include/dt-bindings/clock/rk3036-cru.h
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
