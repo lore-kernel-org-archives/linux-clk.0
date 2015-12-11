@@ -1,59 +1,53 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:56183 "EHLO
-	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750902AbbLCRh5 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 3 Dec 2015 12:37:57 -0500
-Subject: Re: [PATCH v2 0/4] Add Cygnus audio clock support
-To: Florian Fainelli <f.fainelli@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-References: <1448301027-27061-1-git-send-email-rjui@broadcom.com>
- <5654FD46.30907@gmail.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<bcm-kernel-feedback-list@broadcom.com>,
-	Simran Rai <ssimran@broadcom.com>
-From: Ray Jui <rjui@broadcom.com>
-Message-ID: <56607DF3.4080601@broadcom.com>
-Date: Thu, 3 Dec 2015 09:37:55 -0800
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
+	<zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v3 3/7] ARM: hisi: add dt_machine definition for Hi3519
+Date: Fri, 11 Dec 2015 15:45:17 +0800
+Message-ID: <1449819921-18464-4-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1449819921-18464-1-git-send-email-xuejiancheng@huawei.com>
+References: <1449819921-18464-1-git-send-email-xuejiancheng@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <5654FD46.30907@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen/Mike,
+add dt_machine definition for hi3519.
 
-Do these clock changes look okay to you?
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+---
+ arch/arm/mach-hisi/hisilicon.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Thanks,
+diff --git a/arch/arm/mach-hisi/hisilicon.c b/arch/arm/mach-hisi/hisilicon.c
+index 8cc6215..010d8a2 100644
+--- a/arch/arm/mach-hisi/hisilicon.c
++++ b/arch/arm/mach-hisi/hisilicon.c
+@@ -81,3 +81,12 @@ static const char *const hip01_compat[] __initconst = {
+ DT_MACHINE_START(HIP01, "Hisilicon HIP01 (Flattened Device Tree)")
+ 	.dt_compat      = hip01_compat,
+ MACHINE_END
++
++static const char *const hi3519_compat[] __initconst = {
++	"hisilicon,hi3519",
++	NULL,
++};
++
++DT_MACHINE_START(HI3519_DT, "Hisilicon Hi3519")
++	.dt_compat	= hi3519_compat,
++MACHINE_END
+-- 
+1.9.1
 
-Ray
-
-On 11/24/2015 4:13 PM, Florian Fainelli wrote:
-> On 23/11/15 09:50, Ray Jui wrote:
->> This patch series adds support for the Cygnus audio clock based on existing
->> iProc clock support
->>
->> This patch series is developed based on v4.4-rc1 with full tree available
->> on GITHUB:
->> repo: https://github.com/Broadcom/cygnus-linux.git
->> branch: cygnus-audio-clk-v2
->>
->> Changes from v1:
->>   - Remove function prototype of a non-exist function 'iproc_audiopll_clk_setup'
->>   - Remove __init macros from all functions prototypes in iproc-clk.h
->>
->> Ray Jui (1):
->>    clk: iproc: Remove __init from header
->>
->> Simran Rai (3):
->>    Documentation: dt-bindings: Add DT bindings for Cygnus audio clock
->>    clk: iproc: Add support for Cygnus audio clocks
->>    ARM: dts: enable audio clock support for Cygnus
->
-> Stephen, Mike, do these clock changes look sensible to you? If so, could
-> you also put the drivers/clk/ changes in a branch that I could merge as
-> part of including the DTS changes?
->
-> Thanks!
->
