@@ -1,40 +1,30 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <Ping.Bai@freescale.com>
+Subject: Re: [PATCH 1/3] ARM: dts: imx: Add basic dts support for imx6qp
+To: Sascha Hauer <s.hauer@pengutronix.de>
+References: <1449830722-26607-1-git-send-email-b51503@freescale.com>
+ <20151211105143.GB11966@pengutronix.de>
+CC: <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <pawel.moll@arm.com>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+From: Bai Ping <b51503@freescale.com>
+Message-ID: <566AB9CC.4060103@freescale.com>
+Date: Fri, 11 Dec 2015 19:55:56 +0800
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1816814.hXph9CLyDv@avalon>
-References: <1447343686-2038-1-git-send-email-geert+renesas@glider.be>
-	<1447343686-2038-5-git-send-email-geert+renesas@glider.be>
-	<1816814.hXph9CLyDv@avalon>
-Date: Tue, 8 Dec 2015 10:38:13 +0100
-Message-ID: <CAMuHMdVY_Vm5V0m_wznHbC6oy+=fov6h=cYg-BVJqTvR=LS=6Q@mail.gmail.com>
-Subject: Re: [PATCH v6 4/5] clk: shmobile: Add new CPG/MSSR driver core
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Magnus Damm <damm+renesas@opensource.se>,
-	Simon Horman <horms+renesas@verge.net.au>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux-sh list <linux-sh@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20151211105143.GB11966@pengutronix.de>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: b51503@freescale.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Dec 5, 2015 at 4:08 AM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->> +static inline int cpg_mssr_add_clk_domain(struct device *dev,
->> +                                       const unsigned int *core_pm_clks,
->> +                                       unsigned int num_core_pm_clks) {}
+
+
+On 2015/12/11 18:51, Sascha Hauer wrote:
+> On Fri, Dec 11, 2015 at 06:45:20PM +0800, Bai Ping wrote:
+>> The i.MX6Qual Plus processor is an high performance SOC of i.MX6 family.
+> Qual is German for pain. Is that what you mean?
+sorry for my bad. it is a typo. it should be i.MX6Quad, not Qual?
+
+Jacky Bai
 >
-> The function is missing a return statement.
-
-Thank you, will include for v7 and/or final pull request.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Sascha
+>
