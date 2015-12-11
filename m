@@ -1,77 +1,42 @@
-Return-Path: <mturquette@baylibre.com>
-Date: Tue, 22 Dec 2015 10:22:57 -0800
-From: Michael Turquette <mturquette@baylibre.com>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
-Subject: Re: [GIT PULL] i.MX clock updates for 4.5
-Message-ID: <20151222182257.GB6596@quark.deferred.io>
-References: <20151222134842.GF26290@tiger>
+Return-Path: <festevam@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <20151222134842.GF26290@tiger>
+In-Reply-To: <1449830722-26607-1-git-send-email-b51503@freescale.com>
+References: <1449830722-26607-1-git-send-email-b51503@freescale.com>
+Date: Fri, 11 Dec 2015 09:37:37 -0200
+Message-ID: <CAOMZO5C8mTotbpOmKkxKOXmBWc-N_zm7xn-fU5gFUgAFCiyokw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ARM: dts: imx: Add basic dts support for imx6qp
+From: Fabio Estevam <festevam@gmail.com>
+To: Bai Ping <b51503@freescale.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Shawn,
+On Fri, Dec 11, 2015 at 8:45 AM, Bai Ping <b51503@freescale.com> wrote:
+> The i.MX6Qual Plus processor is an high performance SOC of i.MX6 family.
+> It has enhanced graphics performance and increased overall memory bandwidth
+> compared to i.MX6Q. Most of the design are same as i.MX6Qual/Dual, so code
+> for i.MX6Qual can be resued by this chip. The revision number is identied as
+> i.MX6Q Rev2.0, but actually it is a new chip, as we did many change to the
+> overall architecture.
+>
+> This patch adds basic dts file for the new i.MX6Qual Plus processor.
+>
+> Signed-off-by: Bai Ping <b51503@freescale.com>
+> ---
+>  arch/arm/boot/dts/Makefile                |   2 +
+>  arch/arm/boot/dts/imx6q.dtsi              |   2 +-
+>  arch/arm/boot/dts/imx6qdl-sabresd.dtsi    |   1 +
+>  arch/arm/boot/dts/imx6qp-sabreauto.dts    |  67 +++++++++++++
+>  arch/arm/boot/dts/imx6qp-sabresd.dts      |  59 +++++++++++
+>  arch/arm/boot/dts/imx6qp.dtsi             | 157 ++++++++++++++++++++++++++++++
+>  include/dt-bindings/clock/imx6qdl-clock.h |  16 ++-
 
-On 12/22, Shawn Guo wrote:
-> Hi Mike, Stephen,
-> 
-> Here is the i.MX clock updates I queued for 4.5.  Please pull and keep
-> it stable, as it's been merged into imx/dt branch to resolve some
-> dependency.  Thanks.
+Better split this in three patches:
 
-Pulled.
-
-Thanks,
-Mike
-
-> 
-> Shawn
-> 
-> The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
-> 
->   Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-v4.5
-> 
-> for you to fetch changes up to c20737a2a7b8666648be3f4b386749339958dace:
-> 
->   clk: imx5: ipu_di_sel clocks can set parent rates (2015-12-02 21:02:33 +0800)
-> 
-> ----------------------------------------------------------------
-> The i.MX clock updates for 4.5:
-> - Add is_prepared function callback for pllv3 clock driver
-> - Use imx_check_clocks() on imx6ul and imx7d clock drivers to save
->   some code
-> - Add a core clock for imx7d to support generic cpufreq driver
-> - Support imx6q clock routing with OSC to anaclk2/2b
-> - To support more precise pixel clocks on imx5, allow ipu_di_sel clock
->   selectors to influence the PLLs that they are derived from
-> - A cleanup on imx25 OSC clock
-> 
-> ----------------------------------------------------------------
-> Bai Ping (3):
->       clk: imx: add 'is_prepared' clk_ops callback for pllv3 clk
->       clk: imx: Add a virtual arm clk on i.mx7d
->       clk: imx: Replace clk error check with imx_check_clocks()
-> 
-> Markus Pargmann (1):
->       clk: imx25: Remove osc clock from driver
-> 
-> Michael Trimarchi (1):
->       clk: imx: clk-imx6q: Let OSC to be routed to anaclk2/2b
-> 
-> Patrick Brünn (1):
->       clk: imx5: ipu_di_sel clocks can set parent rates
-> 
->  drivers/clk/imx/clk-imx25.c             | 18 ++----------------
->  drivers/clk/imx/clk-imx51-imx53.c       |  8 ++++----
->  drivers/clk/imx/clk-imx6q.c             |  3 ++-
->  drivers/clk/imx/clk-imx6ul.c            |  4 +---
->  drivers/clk/imx/clk-imx7d.c             | 11 +++++++----
->  drivers/clk/imx/clk-pllv3.c             | 14 ++++++++++++++
->  include/dt-bindings/clock/imx7d-clock.h |  3 ++-
->  7 files changed, 32 insertions(+), 29 deletions(-)
+- Add imx6qp SoC support
+- Add imx6qdl-sabresd support
+- Add imx6qp-sabreauto support
