@@ -1,106 +1,46 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v3 09/13] ARM: at91: pm: find and remap the pmc
-Date: Fri,  4 Dec 2015 18:03:44 +0100
-Message-Id: <1449248628-3486-10-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH] clk: ti: omap5+: dpll: implement errata i810
+To: Tony Lindgren <tony@atomide.com>
+References: <1448894605-30097-1-git-send-email-t-kristo@ti.com>
+ <20151203164817.GT23396@atomide.com>
+CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <paul@pwsan.com>,
+        <linux-arm-kernel@lists.infradead.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <566A8CB7.4050701@ti.com>
+Date: Fri, 11 Dec 2015 10:43:35 +0200
+MIME-Version: 1.0
+In-Reply-To: <20151203164817.GT23396@atomide.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-To avoid relying on at91_pmc_read(), find the pmc node and remap it
-locally.
+On 12/03/2015 06:48 PM, Tony Lindgren wrote:
+> * Tero Kristo <t-kristo@ti.com> [151130 06:44]:
+>> +	/*
+>> +	 * Errata i810 - DPLL controller can get stuck while transitioning
+>> +	 * to a power saving state. Software must ensure the DPLL can not
+>> +	 * transition to a low power state while changing M/N values.
+>> +	 * Easiest way to accomplish this is to prevent DPLL autoidle
+>> +	 * before doing the M/N re-program.
+>> +	 */
+>> +	errata_i810 = ti_clk_get_features()->flags & TI_CLK_ERRATA_I810;
+>> +
+>> +	if (errata_i810) {
+>> +		ai = omap3_dpll_autoidle_read(clk);
+>> +		if (ai) {
+>> +			omap3_dpll_deny_idle(clk);
+>> +
+>> +			/* OCP barrier */
+>> +			omap3_dpll_autoidle_read(clk);
+>> +		}
+>> +	}
+>
+> Should we just do this unconditionally? It seems like disabling the
+> autoidle always before reprogramming is a good idea.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
----
- arch/arm/mach-at91/pm.c | 33 +++++++++++++++++++++++++++------
- 1 file changed, 27 insertions(+), 6 deletions(-)
+Well, that is a few extra register accesses, but given the DPLL 
+re-programming is a slow operation it probably does not matter. Let me 
+spin a new version of this patch, it will avoid the need for the errata 
+flag also.
 
-diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
-index 5c2b60c5a2a1..38e93174031d 100644
---- a/arch/arm/mach-at91/pm.c
-+++ b/arch/arm/mach-at91/pm.c
-@@ -35,6 +35,8 @@
- #include "generic.h"
- #include "pm.h"
- 
-+void __iomem *pmc;
-+
- /*
-  * FIXME: this is needed to communicate between the pinctrl driver and
-  * the PM implementation in the machine. Possibly part of the PM
-@@ -85,7 +87,7 @@ static int at91_pm_verify_clocks(void)
- 	unsigned long scsr;
- 	int i;
- 
--	scsr = at91_pmc_read(AT91_PMC_SCSR);
-+	scsr = readl(pmc + AT91_PMC_SCSR);
- 
- 	/* USB must not be using PLLB */
- 	if ((scsr & at91_pm_data.uhp_udp_mask) != 0) {
-@@ -99,8 +101,7 @@ static int at91_pm_verify_clocks(void)
- 
- 		if ((scsr & (AT91_PMC_PCK0 << i)) == 0)
- 			continue;
--
--		css = at91_pmc_read(AT91_PMC_PCKR(i)) & AT91_PMC_CSS;
-+		css = readl(pmc + AT91_PMC_PCKR(i)) & AT91_PMC_CSS;
- 		if (css != AT91_PMC_CSS_SLOW) {
- 			pr_err("AT91: PM - Suspend-to-RAM with PCK%d src %d\n", i, css);
- 			return 0;
-@@ -143,8 +144,8 @@ static void at91_pm_suspend(suspend_state_t state)
- 	flush_cache_all();
- 	outer_disable();
- 
--	at91_suspend_sram_fn(at91_pmc_base, at91_ramc_base[0],
--				at91_ramc_base[1], pm_data);
-+	at91_suspend_sram_fn(pmc, at91_ramc_base[0],
-+			     at91_ramc_base[1], pm_data);
- 
- 	outer_resume();
- }
-@@ -394,13 +395,33 @@ static void __init at91_pm_sram_init(void)
- 			&at91_pm_suspend_in_sram, at91_pm_suspend_in_sram_sz);
- }
- 
-+static const struct of_device_id atmel_pmc_ids[] = {
-+	{ .compatible = "atmel,at91rm9200-pmc"  },
-+	{ .compatible = "atmel,at91sam9260-pmc" },
-+	{ .compatible = "atmel,at91sam9g45-pmc" },
-+	{ .compatible = "atmel,at91sam9n12-pmc" },
-+	{ .compatible = "atmel,at91sam9x5-pmc" },
-+	{ .compatible = "atmel,sama5d3-pmc" },
-+	{ .compatible = "atmel,sama5d2-pmc" },
-+	{ /* sentinel */ },
-+};
-+
- static void __init at91_pm_init(void)
- {
--	at91_pm_sram_init();
-+	struct device_node *pmc_np;
- 
- 	if (at91_cpuidle_device.dev.platform_data)
- 		platform_device_register(&at91_cpuidle_device);
- 
-+	pmc_np = of_find_matching_node(NULL, atmel_pmc_ids);
-+	pmc = of_iomap(pmc_np, 0);
-+	if (!pmc) {
-+		pr_info("AT91: PM not supported, PMC not found\n");
-+		return;
-+	}
-+
-+	at91_pm_sram_init();
-+
- 	if (at91_suspend_sram_fn)
- 		suspend_set_ops(&at91_pm_ops);
- 	else
--- 
-2.5.0
+-Tero
