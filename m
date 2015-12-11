@@ -1,254 +1,114 @@
-Return-Path: <ben@smart-cactus.org>
-From: Ben Gamari <ben@smart-cactus.org>
-To: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	b.zolnierkie@samsung.com,
-	Doug Anderson <dianders@chromium.org>,
-	Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
-	Andreas Faerber <afaerber@suse.de>,
-	Sachin Kamat <sachin.kamat@linaro.org>,
-	Ben Gamari <ben@smart-cactus.org>
-Subject: [PATCH 03/12] ARM: dts: Exynos5420: add CPU OPP and regulator supply property
-Date: Wed,  2 Dec 2015 22:19:18 +0100
-Message-Id: <1449091167-20758-4-git-send-email-ben@smart-cactus.org>
-In-Reply-To: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
-References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
+Return-Path: <tony@atomide.com>
+Date: Fri, 11 Dec 2015 07:48:54 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Tero Kristo <t-kristo@ti.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Matthijs van Duin <matthijsvanduin@gmail.com>,
+	Delio Brignoli <dbrignoli@audioscience.com>,
+	Philipp Rosenberger <ilu@linutronix.de>,
+	Brian Hutchinson <b.hutchman@gmail.com>, linux-omap@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] clk: ti: Add support for dm814x ADPLL
+Message-ID: <20151211154854.GK23396@atomide.com>
+References: <1449800792-5551-1-git-send-email-tony@atomide.com>
+ <20151211135237.GG30871@n2100.arm.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20151211135237.GG30871@n2100.arm.linux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Thomas Abraham <thomas.ab@samsung.com>
+* Russell King - ARM Linux <linux@arm.linux.org.uk> [151211 05:53]:
+> On Thu, Dec 10, 2015 at 06:26:32PM -0800, Tony Lindgren wrote:
+> > +	/* Released with kfree() by clkdev_drop() */
+> > +	cl = kzalloc(sizeof(*cl), GFP_KERNEL);
+> > +	if (!cl)
+> > +		return -ENOMEM;
+> > +
+> > +	/* Use clkdev_add, clk_register_clkdev limits length to MAX_CON_ID */
+> > +	cl->con_id = name;
+> > +	cl->clk = clock;
+> > +	cl->clk_hw = __clk_get_hw(clock);
+> > +	clkdev_add(cl);
+> > +	d->clocks[index].cl = cl;
+> 
+> NAK.  I've no idea why you're open-coding the clkdev internals (which
+> seems to have been a historical habbit in OMAP code.)  Please stop
+> doing this.
+>
+> You are provided with clkdev_alloc() which will allocate the structure
+> and initialise it for you, and clkdev_add() which will add the allocated
+> and initialised struct to the list of lookups.  Everything you're doing
+> above can be done with clkdev_alloc() + clkdev_add() which have been
+> there for a _very_ long time.  They're even documented (thanks for
+> providing me with more proof that documentation is nothing but a waste
+> of time. :))
 
-For Exynos5420 platforms, add CPU operating points and CPU
-regulator supply properties for migrating from Exynos specific
-cpufreq driver to using generic cpufreq driver.
+I tried, but I was seeing mysterious silent failures for some clocks.
 
-Changes by Bartlomiej:
-- split Exynos5420 support from the original patch
+> Even better is clkdev_create() which eliminates the two step clkdev_alloc()
+> and clkdev_add() process.
+> 
+> So, the whole of the above can be reduced down to:
+> 
+> 	cl = clkdev_create(clock, name, NULL);
+> 	if (!cl)
+> 		return -ENOMEM;
+> 
 
-Changes by Ben Gamari:
-- Port to operating-points-v2
+There's a problem with MAX_CON_ID 16 hardcoded allocated name length.
 
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Andreas Faerber <afaerber@suse.de>
-Cc: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Ben Gamari <ben@smart-cactus.org>
----
- arch/arm/boot/dts/exynos5420.dtsi | 122 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 122 insertions(+)
+In this case I have 13 instances of plls with 3 - 4 outputs each and I'd
+like to use "481c5040.adpll.clkout" style naming starting with the instance
+address. Also "adpll5.clkdcoldo" style naming would work,
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 1b3d6c7..262a7d8 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -50,6 +50,116 @@
- 		usbdrdphy1 = &usbdrd_phy1;
- 	};
+Below is a patch we should probably apply as a band aid to produce a proper
+warning.
+
+Naturally we don't want to allocate longer names for all the clocks.. And
+we already do have some const names coming from device tree we could use.
+
+What if we optionally allow passing a name to clkdev and add some flag
+that tells clkdev code not to attempt to free it? Or do you have better
+ideas in mind to fix the issue?
+
+Regards,
+
+Tony
+
+8< ----------------
+From: Tony Lindgren <tony@atomide.com>
+Date: Fri, 11 Dec 2015 07:28:36 -0800
+Subject: [PATCH] clkdev: Make silent failures of clk_get() produce a proper
+ warning
+
+Otherwise we can see mysterious failures with some clocks where
+the name is longer than MAX_CON_ID 16. This can easily happen with
+clock names coming from device tree for example in the form of
+"481c5040.adpll.clkout" or "adpll1.clkdcoldo".
+
+Let's make things a bit easier to debug by adding a warning for
+the clock name. Note that we don't want to error out here as the
+string matching still probably does the right thing for most
+clocks.
+
+Also note that we should also remove the hardcoded name allocation
+in clkdev by adding functions that allow passing a name to clkdev
+optionally.
+
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -256,6 +256,10 @@ vclkdev_alloc(struct clk_hw *hw, const char *con_id, const char *dev_fmt,
+ {
+ 	struct clk_lookup_alloc *cla;
  
-+	cpu0_opp_table: opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+		opp00 {
-+			opp-hz = /bits/ 64 <1800000000>;
-+			opp-microvolt = <1250000>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp01 {
-+			opp-hz = /bits/ 64 <1700000000>;
-+			opp-microvolt = <1212500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp02 {
-+			opp-hz = /bits/ 64 <1600000000>;
-+			opp-microvolt = <1175000>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp03 {
-+			opp-hz = /bits/ 64 <1500000000>;
-+			opp-microvolt = <1137500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp04 {
-+			opp-hz = /bits/ 64 <1400000000>;
-+			opp-microvolt = <1112500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp05 {
-+			opp-hz = /bits/ 64 <1300000000>;
-+			opp-microvolt = <1062500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp06 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <1037500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp07 {
-+			opp-hz = /bits/ 64 <1100000000>;
-+			opp-microvolt = <1012500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp08 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = < 987500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp09 {
-+			opp-hz = /bits/ 64 <900000000>;
-+			opp-microvolt = < 962500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp10 {
-+			opp-hz = /bits/ 64 <800000000>;
-+			opp-microvolt = < 937500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp11 {
-+			opp-hz = /bits/ 64 <700000000>;
-+			opp-microvolt = < 912500>;
-+			clock-latency-ns = <140000>;
-+		};
-+	};
++	if (strlen(con_id) > MAX_CON_ID)
++		pr_warn("%s length of %s > %i, clock lookup can fail\n",
++			__func__, con_id, MAX_CON_ID);
 +
-+	cpu1_opp_table: opp_table1 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+		opp00 {
-+			opp-hz = /bits/ 64 <1300000000>;
-+			opp-microvolt = <1275000>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp01 {
-+			opp-hz = /bits/ 64 <1140000000>;
-+			opp-microvolt = <1212500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp02 {
-+			opp-hz = /bits/ 64 <1100000000>;
-+			opp-microvolt = <1162500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp03 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = <1112500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp04 {
-+			opp-hz = /bits/ 64 <900000000>;
-+			opp-microvolt = <1062500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp05 {
-+			opp-hz = /bits/ 64 <800000000>;
-+			opp-microvolt = <1025000>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp06 {
-+			opp-hz = /bits/ 64 <700000000>;
-+			opp-microvolt = <975000>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp07 {
-+			opp-hz = /bits/ 64 <600000000>;
-+			opp-microvolt = <937500>;
-+			clock-latency-ns = <140000>;
-+		};
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -58,8 +168,11 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0x0>;
-+			clocks = <&clock CLK_ARM_CLK>;
-+			clock-names = "cpu-cluster.0";
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
-+			operating-points-v2 = <&cpu0_opp_table>;
- 		};
- 
- 		cpu1: cpu@1 {
-@@ -68,6 +181,7 @@
- 			reg = <0x1>;
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
-+			operating-points-v2 = <&cpu0_opp_table>;
- 		};
- 
- 		cpu2: cpu@2 {
-@@ -76,6 +190,7 @@
- 			reg = <0x2>;
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
-+			operating-points-v2 = <&cpu0_opp_table>;
- 		};
- 
- 		cpu3: cpu@3 {
-@@ -84,14 +199,18 @@
- 			reg = <0x3>;
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
-+			operating-points-v2 = <&cpu0_opp_table>;
- 		};
- 
- 		cpu4: cpu@100 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a7";
- 			reg = <0x100>;
-+			clocks = <&clock CLK_KFC_CLK>;
-+			clock-names = "cpu-cluster.1";
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
-+			operating-points-v2 = <&cpu1_opp_table>;
- 		};
- 
- 		cpu5: cpu@101 {
-@@ -100,6 +219,7 @@
- 			reg = <0x101>;
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
-+			operating-points-v2 = <&cpu1_opp_table>;
- 		};
- 
- 		cpu6: cpu@102 {
-@@ -108,6 +228,7 @@
- 			reg = <0x102>;
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
-+			operating-points-v2 = <&cpu1_opp_table>;
- 		};
- 
- 		cpu7: cpu@103 {
-@@ -116,6 +237,7 @@
- 			reg = <0x103>;
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
-+			operating-points-v2 = <&cpu1_opp_table>;
- 		};
- 	};
- 
--- 
-2.6.2
+ 	cla = __clkdev_alloc(sizeof(*cla));
+ 	if (!cla)
+ 		return NULL;
