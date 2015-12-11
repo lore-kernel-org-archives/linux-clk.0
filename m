@@ -1,162 +1,90 @@
-Return-Path: <wens@mirror2.csie.ntu.edu.tw>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v5] clk: sunxi: Add CLK_OF_DECLARE support for sun8i-a23-apb0-clk driver
-Date: Thu,  3 Dec 2015 15:05:30 +0800
-Message-Id: <1449126330-21595-1-git-send-email-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga03-in.huawei.com ([119.145.14.66]:7871 "EHLO
+	szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751568AbbLKIE6 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 11 Dec 2015 03:04:58 -0500
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
+	<zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v3 0/7] ARM: hisi: Add initial support including clock driver for Hi3519 soc.
+Date: Fri, 11 Dec 2015 15:45:14 +0800
+Message-ID: <1449819921-18464-1-git-send-email-xuejiancheng@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The APBS clock on sun9i is the same as the APB0 clock on sun8i. With
-sun9i we are supporting the PRCM clocks by using CLK_OF_DECLARE,
-instead of through a PRCM mfd device and subdevices for each clock
-and reset control. As such we need a CLK_OF_DECLARE version of
-the sun8i-a23-apb0-clk driver.
+Hello,
 
-Also, build it for sun9i/A80, and not just for configurations with
-MFD_SUN6I_PRCM enabled.
+Hi3519 soc is mainly used for ip camera and sport DV solutions. This patchset adds initial support
+for Hi3519 soc. It includes clock driver, arch configuration, debug uart configuration and device tree.
+It has been tested on hi3519 reference board.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
+Spi-nor flash driver and other peripheral drivers will be submitted later.
 
-Changes since v4:
+Any comments will be appreciated!
 
-  - Keep building clk-sun8i-apb0 for SUN6I_MFD_PRCM.
+Thanks!
 
-  - Add an error message and comment for when of_io_request_and_map()
-    fails. of_io_request_and_map() merges a bunch of errors into -EINVAL,
-    so this might not be the best approach. But I think having an error
-    message when we know something is wrong (-EBUSY, -ENOMEM) is better.
+Change Log
+----------
+v3:
+-Rebase to v4.4-rc4
+-Adjust according to Arnd's comments
+-Remove ARCH_HI3519, using ARCH_HISI directly
 
----
- drivers/clk/sunxi/Makefile         |  1 +
- drivers/clk/sunxi/clk-sun8i-apb0.c | 80 ++++++++++++++++++++++++++++++++------
- 2 files changed, 69 insertions(+), 12 deletions(-)
+v2:
+-Rebase to v4.4-rc3
+-Put dt-binding doc and header file in a separate patch.
+-Delete unused clocks definitions.
+-Adjust the ARCH_xxx order in Kconfig file
+-Rename ARCH_HI3xxx to ARCH_36xx
 
-diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-index 103efab05ca8..ccf21ba3b6b0 100644
---- a/drivers/clk/sunxi/Makefile
-+++ b/drivers/clk/sunxi/Makefile
-@@ -15,6 +15,7 @@ obj-y += clk-sun9i-core.o
- obj-y += clk-sun9i-mmc.o
- obj-y += clk-usb.o
- 
-+obj-$(CONFIG_MACH_SUN9I) += clk-sun8i-apb0.o
- obj-$(CONFIG_MACH_SUN9I) += clk-sun9i-cpus.o
- 
- obj-$(CONFIG_MFD_SUN6I_PRCM) += \
-diff --git a/drivers/clk/sunxi/clk-sun8i-apb0.c b/drivers/clk/sunxi/clk-sun8i-apb0.c
-index 7ae5d2c2cde1..7ba61103a6f5 100644
---- a/drivers/clk/sunxi/clk-sun8i-apb0.c
-+++ b/drivers/clk/sunxi/clk-sun8i-apb0.c
-@@ -17,13 +17,77 @@
- #include <linux/clk-provider.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
- #include <linux/platform_device.h>
- 
-+static struct clk *sun8i_a23_apb0_register(struct device_node *node,
-+					   void __iomem *reg)
-+{
-+	const char *clk_name = node->name;
-+	const char *clk_parent;
-+	struct clk *clk;
-+	int ret;
-+
-+	clk_parent = of_clk_get_parent_name(node, 0);
-+	if (!clk_parent)
-+		return ERR_PTR(-EINVAL);
-+
-+	of_property_read_string(node, "clock-output-names", &clk_name);
-+
-+	/* The A23 APB0 clock is a standard 2 bit wide divider clock */
-+	clk = clk_register_divider(NULL, clk_name, clk_parent, 0, reg,
-+				   0, 2, CLK_DIVIDER_POWER_OF_TWO, NULL);
-+	if (IS_ERR(clk))
-+		return clk;
-+
-+	ret = of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	if (ret)
-+		goto err_unregister;
-+
-+	return clk;
-+
-+err_unregister:
-+	clk_unregister_divider(clk);
-+
-+	return ERR_PTR(ret);
-+}
-+
-+static void sun8i_a23_apb0_setup(struct device_node *node)
-+{
-+	void __iomem *reg;
-+	struct resource res;
-+	struct clk *clk;
-+
-+	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-+	if (IS_ERR(reg)) {
-+		/*
-+		 * This happens with clk nodes instantiated through mfd,
-+		 * as those do not have their resources assigned in the
-+		 * device tree. Do not print an error in this case.
-+		 */
-+		if (PTR_ERR(reg) != -EINVAL)
-+			pr_err("Could not get registers for a23-apb0-clk\n");
-+
-+		return;
-+	}
-+
-+	clk = sun8i_a23_apb0_register(node, reg);
-+	if (IS_ERR(clk))
-+		goto err_unmap;
-+
-+	return;
-+
-+err_unmap:
-+	iounmap(reg);
-+	of_address_to_resource(node, 0, &res);
-+	release_mem_region(res.start, resource_size(&res));
-+}
-+CLK_OF_DECLARE(sun8i_a23_apb0, "allwinner,sun8i-a23-apb0-clk",
-+	       sun8i_a23_apb0_setup);
-+
- static int sun8i_a23_apb0_clk_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
--	const char *clk_name = np->name;
--	const char *clk_parent;
- 	struct resource *r;
- 	void __iomem *reg;
- 	struct clk *clk;
-@@ -33,19 +97,11 @@ static int sun8i_a23_apb0_clk_probe(struct platform_device *pdev)
- 	if (IS_ERR(reg))
- 		return PTR_ERR(reg);
- 
--	clk_parent = of_clk_get_parent_name(np, 0);
--	if (!clk_parent)
--		return -EINVAL;
--
--	of_property_read_string(np, "clock-output-names", &clk_name);
--
--	/* The A23 APB0 clock is a standard 2 bit wide divider clock */
--	clk = clk_register_divider(&pdev->dev, clk_name, clk_parent, 0, reg,
--				   0, 2, CLK_DIVIDER_POWER_OF_TWO, NULL);
-+	clk = sun8i_a23_apb0_register(np, reg);
- 	if (IS_ERR(clk))
- 		return PTR_ERR(clk);
- 
--	return of_clk_add_provider(np, of_clk_src_simple_get, clk);
-+	return 0;
- }
- 
- static const struct of_device_id sun8i_a23_apb0_clk_dt_ids[] = {
+Jiancheng Xue (7):
+  clk: hisilicon: add CRG driver for hi3519 soc
+  clk: hisilicon: add dt-binding document for Hi3519 CRG
+  ARM: hisi: add dt_machine definition for Hi3519
+  ARM: config: hisi: enable CONFIG_RESET_CONTROLLER
+  ARM: debug: add hi3519 debug uart
+  mfd: dt-bindings: add device tree bindings for Hi3519 sysctrl
+  ARM: dts: add dts files for Hi3519
+
+ .../devicetree/bindings/clock/hi3519-crg.txt       |  46 +++++++
+ Documentation/devicetree/bindings/mfd/hi3519.txt   |  14 ++
+ arch/arm/Kconfig.debug                             |  10 ++
+ arch/arm/boot/dts/Makefile                         |   2 +
+ arch/arm/boot/dts/hi3519-demb.dts                  |  42 ++++++
+ arch/arm/boot/dts/hi3519.dtsi                      | 142 ++++++++++++++++++++
+ arch/arm/configs/hisi_defconfig                    |   1 +
+ arch/arm/mach-hisi/hisilicon.c                     |   9 ++
+ drivers/clk/hisilicon/Kconfig                      |   7 +
+ drivers/clk/hisilicon/Makefile                     |   2 +
+ drivers/clk/hisilicon/clk-hi3519.c                 |  95 +++++++++++++
+ drivers/clk/hisilicon/reset.c                      | 149 +++++++++++++++++++++
+ drivers/clk/hisilicon/reset.h                      |  32 +++++
+ include/dt-bindings/clock/hi3519-clock.h           |  43 ++++++
+ 14 files changed, 594 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/hi3519.txt
+ create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
+ create mode 100644 arch/arm/boot/dts/hi3519.dtsi
+ create mode 100644 drivers/clk/hisilicon/clk-hi3519.c
+ create mode 100644 drivers/clk/hisilicon/reset.c
+ create mode 100644 drivers/clk/hisilicon/reset.h
+ create mode 100644 include/dt-bindings/clock/hi3519-clock.h
+
 -- 
-2.6.2
+1.9.1
+
