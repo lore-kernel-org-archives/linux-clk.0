@@ -1,91 +1,411 @@
-Return-Path: <robh@kernel.org>
+Return-Path: <Ping.Bai@freescale.com>
+From: Bai Ping <b51503@freescale.com>
+To: <shawnguo@kernel.org>, <kernel@pengutronix.de>
+CC: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH 1/3] ARM: dts: imx: Add basic dts support for imx6qp
+Date: Fri, 11 Dec 2015 18:45:20 +0800
+Message-ID: <1449830722-26607-1-git-send-email-b51503@freescale.com>
+Return-Path: b51503@freescale.com
 MIME-Version: 1.0
-In-Reply-To: <20151228223935.25842.28675@quark.deferred.io>
-References: <1450222559-22461-1-git-send-email-eric@anholt.net>
- <20151219041935.GS14936@rob-hp-laptop> <CAEG3pNCOO1F8+nwOQGSjUKxYCGbWW_Ripc6xUwDyg6ay66uL7w@mail.gmail.com>
- <87wps3qulw.fsf@eliezer.anholt.net> <20151228223935.25842.28675@quark.deferred.io>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 29 Dec 2015 16:15:09 -0600
-Message-ID: <CAL_JsqLu7=66jEuaezesEuoPsBBhRAT0UQcLVNOLVwkEvQacRA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] clk: bcm2835: Add bindings for the auxiliary
- peripheral clock gates.
-To: Michael Turquette <mturquette@baylibre.com>, Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>
-Cc: Eric Anholt <eric@anholt.net>, linux-clk <linux-clk@vger.kernel.org>,
-	"Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>, linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>, linux-rpi-kernel@lists.infradead.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-+Arnd and Olof
+The i.MX6Qual Plus processor is an high performance SOC of i.MX6 family.
+It has enhanced graphics performance and increased overall memory bandwidth
+compared to i.MX6Q. Most of the design are same as i.MX6Qual/Dual, so code
+for i.MX6Qual can be resued by this chip. The revision number is identied as
+i.MX6Q Rev2.0, but actually it is a new chip, as we did many change to the
+overall architecture.
 
-On Mon, Dec 28, 2015 at 4:39 PM, Michael Turquette
-<mturquette@baylibre.com> wrote:
-> Quoting Eric Anholt (2015-12-24 15:45:15)
->> Michael Turquette <mturquette@baylibre.com> writes:
->>
->> > On Fri, Dec 18, 2015 at 8:19 PM, Rob Herring <robh@kernel.org> wrote:
->> >> On Tue, Dec 15, 2015 at 03:35:57PM -0800, Eric Anholt wrote:
->> >>> These will be used for enabling UART1, SPI1, and SPI2.
->> >>>
->> >>> Signed-off-by: Eric Anholt <eric@anholt.net>
->> >>> ---
->> >>>
->> >>> v2: Make the binding cover both the IRQ and clock enable registers.
->> >>>
->> >>>  .../bindings/clock/brcm,bcm2835-aux-clock.txt      | 31 ++++++++++++++++++++++
->> >>>  include/dt-bindings/clock/bcm2835-aux.h            | 17 ++++++++++++
->> >>>  2 files changed, 48 insertions(+)
->> >>>  create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm2835-aux-clock.txt
->> >>>  create mode 100644 include/dt-bindings/clock/bcm2835-aux.h
->> >>
->> >> Acked-by: Rob Herring <robh@kernel.org>
->> >
->> > Applied to clk-next.
->> >
->> > Next time if you put the header into the clk driver patch then we can
->> > send the binding description through the DT tree and take the header
->> > and C file through the clk tree in one patch.
->>
->> I would *love* to do that, but I've previously been told that having the
->> bindings patch reference a header file not present as of the bindings
->> patch is not acceptable and made to change it.
->
-> Ugh, that is annoying. I would think that having code compile properly
-> would trump the desire to have all of the documentation merged as one
-> patch.
+This patch adds basic dts file for the new i.MX6Qual Plus processor.
 
-What about compiling the dts?
+Signed-off-by: Bai Ping <b51503@freescale.com>
+---
+ arch/arm/boot/dts/Makefile                |   2 +
+ arch/arm/boot/dts/imx6q.dtsi              |   2 +-
+ arch/arm/boot/dts/imx6qdl-sabresd.dtsi    |   1 +
+ arch/arm/boot/dts/imx6qp-sabreauto.dts    |  67 +++++++++++++
+ arch/arm/boot/dts/imx6qp-sabresd.dts      |  59 +++++++++++
+ arch/arm/boot/dts/imx6qp.dtsi             | 157 ++++++++++++++++++++++++++++++
+ include/dt-bindings/clock/imx6qdl-clock.h |  16 ++-
+ 7 files changed, 302 insertions(+), 2 deletions(-)
+ create mode 100644 arch/arm/boot/dts/imx6qp-sabreauto.dts
+ create mode 100644 arch/arm/boot/dts/imx6qp-sabresd.dts
+ create mode 100644 arch/arm/boot/dts/imx6qp.dtsi
 
-> On the other hand, I've been asked to not take binding descriptions
-> through the clk tree. That is a policy that I'm happy to comply with,
-> but it is at odds with the recommendation for the header and the binding
-> description to be merged together.
-
-By who? Any bindings in a series I always expect the subsystem
-maintainers to take the whole series. That doesn't solve the problem
-though as there is still a dependency between a subsystem tree and
-arm-soc typically.
-
-> DT folks, what is the right way to do this? An immutable, shared branch
-> just for a single header file solves the problem, but also feels very
-> cumbersome for such a trivial issue.
-
-Arnd and Olof have been complaining about this problem which is worse
-when it is a binding, driver and dts.
-
-I'm open to maintaining a branch for this purpose if that helps. That
-or staggering merging of bindings and drivers/dts are the only ideas
-I've come up with.
-
-> How about allowing binding descriptions to be merged without the header
-> file, so long as it is merged through another tree?
-
-I think that is wrong if we have the goal to separate bindings from
-the kernel and the bindings should stand on their own. However, if it
-greatly simplifies things, i'd be okay with that.
-
-Rob
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 0fe130e..ab8efbd 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -302,6 +302,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
+ 	imx6dl-sabreauto.dtb \
+ 	imx6dl-sabrelite.dtb \
+ 	imx6dl-sabresd.dtb \
++	imx6qp-sabresd.dtb \
+ 	imx6dl-tx6dl-comtft.dtb \
+ 	imx6dl-tx6u-801x.dtb \
+ 	imx6dl-tx6u-811x.dtb \
+@@ -328,6 +329,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
+ 	imx6q-phytec-pbab01.dtb \
+ 	imx6q-rex-pro.dtb \
+ 	imx6q-sabreauto.dtb \
++	imx6qp-sabreauto.dtb \
+ 	imx6q-sabrelite.dtb \
+ 	imx6q-sabresd.dtb \
+ 	imx6q-sbc6x.dtb \
+diff --git a/arch/arm/boot/dts/imx6q.dtsi b/arch/arm/boot/dts/imx6q.dtsi
+index 399103b..c4efd9a 100644
+--- a/arch/arm/boot/dts/imx6q.dtsi
++++ b/arch/arm/boot/dts/imx6q.dtsi
+@@ -21,7 +21,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		cpu@0 {
++		cpu0: cpu@0 {
+ 			compatible = "arm,cortex-a9";
+ 			device_type = "cpu";
+ 			reg = <0>;
+diff --git a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
+index a6d445c..f65f57b 100644
+--- a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
+@@ -238,6 +238,7 @@
+ 				regulator-max-microvolt = <3300000>;
+ 				regulator-boot-on;
+ 				regulator-always-on;
++				regulator-ramp-delay = <6250>;
+ 			};
+ 
+ 			sw3a_reg: sw3a {
+diff --git a/arch/arm/boot/dts/imx6qp-sabreauto.dts b/arch/arm/boot/dts/imx6qp-sabreauto.dts
+new file mode 100644
+index 0000000..b24aae6
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6qp-sabreauto.dts
+@@ -0,0 +1,67 @@
++/*
++ * Copyright (C) 2015 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "imx6q-sabreauto.dts"
++#include "imx6qp.dtsi"
++
++/ {
++	model = "Freescale i.MX6 Quad Plus SABRE Automotive Board";
++	compatible = "fsl,imx6qp-sabreauto", "fsl,imx6qp";
++};
++
++
++&fec {
++	pinctrl-assert-gpios = <&max7322 0 GPIO_ACTIVE_HIGH>;
++};
++
++&i2c2 {
++	max7322: gpio@68 {
++		compatible = "maxim,max7322";
++		reg = <0x68>;
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++};
++
++&iomuxc {
++	imx6qdl-sabreauto {
++		pinctrl_enet: enetgrp {
++			fsl,pins = <
++				MX6QDL_PAD_KEY_COL1__ENET_MDIO          0x1b0b0
++				MX6QDL_PAD_KEY_COL2__ENET_MDC           0x1b0b0
++				MX6QDL_PAD_RGMII_TXC__RGMII_TXC         0x1b018
++				MX6QDL_PAD_RGMII_TD0__RGMII_TD0         0x1b018
++				MX6QDL_PAD_RGMII_TD1__RGMII_TD1         0x1b018
++				MX6QDL_PAD_RGMII_TD2__RGMII_TD2         0x1b018
++				MX6QDL_PAD_RGMII_TD3__RGMII_TD3         0x1b018
++				MX6QDL_PAD_RGMII_TX_CTL__RGMII_TX_CTL   0x1b018
++				MX6QDL_PAD_RGMII_RXC__RGMII_RXC         0x1b018
++				MX6QDL_PAD_RGMII_RD0__RGMII_RD0         0x1b018
++				MX6QDL_PAD_RGMII_RD1__RGMII_RD1         0x1b018
++				MX6QDL_PAD_RGMII_RD2__RGMII_RD2         0x1b018
++				MX6QDL_PAD_RGMII_RD3__RGMII_RD3         0x1b018
++				MX6QDL_PAD_RGMII_RX_CTL__RGMII_RX_CTL   0x1b018
++				MX6QDL_PAD_GPIO_16__ENET_REF_CLK        0x4001b0a8
++				MX6QDL_PAD_GPIO_6__ENET_IRQ		0x000b1
++			>;
++		};
++	};
++};
++
++&pcie {
++	reset-gpio = <&max7310_c 5 GPIO_ACTIVE_LOW>;
++	status = "okay";
++};
++
++&sata {
++	status = "okay";
++};
++
++&vgen3_reg {
++	regulator-always-on;
++};
+diff --git a/arch/arm/boot/dts/imx6qp-sabresd.dts b/arch/arm/boot/dts/imx6qp-sabresd.dts
+new file mode 100644
+index 0000000..c3ab2b6
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6qp-sabresd.dts
+@@ -0,0 +1,59 @@
++/*
++ * Copyright (C) 2015 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "imx6q-sabresd.dts"
++#include "imx6qp.dtsi"
++
++/ {
++	model = "Freescale i.MX6 Quad Plus SABRE Smart Device Board";
++	compatible = "fsl,imx6qp-sabresd", "fsl,imx6qp";
++};
++
++&cpu0 {
++	arm-supply = <&sw2_reg>;
++};
++
++&iomuxc {
++	imx6qdl-sabresd {
++		pinctrl_usdhc2: usdhc2grp {
++			fsl,pins = <
++				MX6QDL_PAD_SD2_CMD__SD2_CMD		0x17059
++				MX6QDL_PAD_SD2_CLK__SD2_CLK		0x10071
++				MX6QDL_PAD_SD2_DAT0__SD2_DATA0		0x17059
++				MX6QDL_PAD_SD2_DAT1__SD2_DATA1		0x17059
++				MX6QDL_PAD_SD2_DAT2__SD2_DATA2		0x17059
++				MX6QDL_PAD_SD2_DAT3__SD2_DATA3		0x17059
++				MX6QDL_PAD_NANDF_D4__SD2_DATA4		0x17059
++				MX6QDL_PAD_NANDF_D5__SD2_DATA5		0x17059
++				MX6QDL_PAD_NANDF_D6__SD2_DATA6		0x17059
++				MX6QDL_PAD_NANDF_D7__SD2_DATA7		0x17059
++			>;
++		};
++
++		pinctrl_usdhc3: usdhc3grp {
++			fsl,pins = <
++				MX6QDL_PAD_SD3_CMD__SD3_CMD		0x17059
++				MX6QDL_PAD_SD3_CLK__SD3_CLK		0x10071
++				MX6QDL_PAD_SD3_DAT0__SD3_DATA0		0x17059
++				MX6QDL_PAD_SD3_DAT1__SD3_DATA1		0x17059
++				MX6QDL_PAD_SD3_DAT2__SD3_DATA2		0x17059
++				MX6QDL_PAD_SD3_DAT3__SD3_DATA3		0x17059
++				MX6QDL_PAD_SD3_DAT4__SD3_DATA4		0x17059
++				MX6QDL_PAD_SD3_DAT5__SD3_DATA5		0x17059
++				MX6QDL_PAD_SD3_DAT6__SD3_DATA6		0x17059
++				MX6QDL_PAD_SD3_DAT7__SD3_DATA7		0x17059
++			>;
++		};
++	};
++};
++
++&pcie {
++	power-on-gpio = <&gpio3 19 0>;
++	reset-gpio = <&gpio7 12 0>;
++	status = "okay";
++};
+diff --git a/arch/arm/boot/dts/imx6qp.dtsi b/arch/arm/boot/dts/imx6qp.dtsi
+new file mode 100644
+index 0000000..e43751f
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6qp.dtsi
+@@ -0,0 +1,157 @@
++/*
++ * Copyright 2015 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++/ {
++	aliases {
++		pre0 = &pre1;
++		pre1 = &pre2;
++		pre2 = &pre3;
++		pre3 = &pre4;
++		prg0 = &prg1;
++		prg1 = &prg2;
++	};
++
++	soc {
++		ocram_2: sram@00940000 {
++			compatible = "mmio-sram";
++			reg = <0x00940000 0x20000>;
++			clocks = <&clks IMX6QDL_CLK_OCRAM>;
++		};
++
++		ocram_3: sram@00960000 {
++			compatible = "mmio-sram";
++			reg = <0x00960000 0x20000>;
++			clocks = <&clks IMX6QDL_CLK_OCRAM>;
++		};
++
++		pcie: pcie@0x01000000 {
++			compatible = "fsl,imx6qp-pcie", "snps,dw-pcie";
++			reg = <0x01ffc000 0x4000>, <0x01f00000 0x80000>;
++			reg-names = "dbi", "config";
++			#address-cells = <3>;
++			#size-cells = <2>;
++			device_type = "pci";
++			ranges = <0x81000000 0 0          0x01f80000 0 0x00010000 /* downstream I/O */
++				  0x82000000 0 0x01000000 0x01000000 0 0x00f00000>; /* non-prefetchable memory */
++			num-lanes = <1>;
++			interrupts = <0 120 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "msi";
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 0x7>;
++			interrupt-map = <0 0 0 1 &intc 0 123 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 2 &intc 0 122 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 3 &intc 0 121 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 4 &intc 0 120 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&clks IMX6QDL_CLK_PCIE_REF_125M>,
++				 <&clks IMX6QDL_CLK_SATA_REF_100M>,
++				 <&clks IMX6QDL_CLK_LVDS1_GATE>, <&clks IMX6QDL_CLK_PCIE_AXI>;
++			clock-names = "pcie_phy", "ref_100m", "pcie_bus", "pcie";
++			status = "disabled";
++		};
++
++		aips-bus@02100000 { /* AIPS2 */
++			pre1: pre@021c8000 {
++				compatible = "fsl,imx6q-pre";
++				reg = <0x021c8000 0x1000>;
++				clocks = <&clks IMX6QDL_CLK_PRE0>;
++				interrupts = <0 90 IRQ_TYPE_EDGE_RISING>;
++				ocram = <&ocram_2>;
++				status = "disabled";
++			};
++
++			pre2: pre@021c9000 {
++				compatible = "fsl,imx6q-pre";
++				reg = <0x021c9000 0x1000>;
++				clocks = <&clks IMX6QDL_CLK_PRE1>;
++				interrupts = <0 97 IRQ_TYPE_EDGE_RISING>;
++				ocram = <&ocram_2>;
++				status = "disabled";
++			};
++
++			pre3: pre@021ca000 {
++				compatible = "fsl,imx6q-pre";
++				reg = <0x021ca000 0x1000>;
++				clocks = <&clks IMX6QDL_CLK_PRE2>;
++				interrupts = <0 98 IRQ_TYPE_EDGE_RISING>;
++				ocram = <&ocram_3>;
++				status = "disabled";
++			};
++
++			pre4: pre@021cb000 {
++				compatible = "fsl,imx6q-pre";
++				reg = <0x021cb000 0x1000>;
++				clocks = <&clks IMX6QDL_CLK_PRE3>;
++				interrupts = <0 99 IRQ_TYPE_EDGE_RISING>;
++				ocram = <&ocram_3>;
++				status = "disabled";
++			};
++
++			prg1: prg@021cc000 {
++				compatible = "fsl,imx6q-prg";
++				reg = <0x021cc000 0x1000>;
++				clocks = <&clks IMX6QDL_CLK_PRG0_AXI>,
++					 <&clks IMX6QDL_CLK_PRG0_APB>;
++				clock-names = "axi", "apb";
++				gpr = <&gpr>;
++				status = "disabled";
++			};
++
++			prg2: prg@021cd000 {
++				compatible = "fsl,imx6q-prg";
++				reg = <0x021cd000 0x1000>;
++				clocks = <&clks IMX6QDL_CLK_PRG1_AXI>,
++					 <&clks IMX6QDL_CLK_PRG1_APB>;
++				clock-names = "axi", "apb";
++				gpr = <&gpr>;
++				status = "disabled";
++			};
++		};
++
++		ipu1: ipu@02400000 {
++			compatible = "fsl,imx6qp-ipu", "fsl,imx6q-ipu";
++			clocks = <&clks IMX6QDL_CLK_IPU1>,
++				 <&clks IMX6QDL_CLK_IPU1_DI0>, <&clks IMX6QDL_CLK_IPU1_DI1>,
++				 <&clks IMX6QDL_CLK_IPU1_DI0_SEL>, <&clks IMX6QDL_CLK_IPU1_DI1_SEL>,
++				 <&clks IMX6QDL_CLK_LDB_DI0_PODF>, <&clks IMX6QDL_CLK_LDB_DI1_PODF>,
++				 <&clks IMX6QDL_CLK_PRG0_APB>;
++			clock-names = "bus",
++				      "di0", "di1",
++				      "di0_sel", "di1_sel",
++				      "ldb_di0", "ldb_di1", "prg";
++		};
++
++		ipu2: ipu@02800000 {
++			compatible = "fsl,imx6qp-ipu", "fsl,imx6q-ipu";
++			clocks = <&clks IMX6QDL_CLK_IPU2>,
++				 <&clks IMX6QDL_CLK_IPU2_DI0>, <&clks IMX6QDL_CLK_IPU2_DI1>,
++				 <&clks IMX6QDL_CLK_IPU2_DI0_SEL>, <&clks IMX6QDL_CLK_IPU2_DI1_SEL>,
++				 <&clks IMX6QDL_CLK_LDB_DI0_PODF>, <&clks IMX6QDL_CLK_LDB_DI1_PODF>,
++				 <&clks IMX6QDL_CLK_PRG1_APB>;
++			clock-names = "bus",
++				      "di0", "di1",
++				      "di0_sel", "di1_sel",
++				      "ldb_di0", "ldb_di1", "prg";
++		};
++
++		sata: sata@02200000 {
++			compatible = "fsl,imx6qp-ahci";
++			reg = <0x02200000 0x4000>;
++			interrupts = <0 39 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&clks IMX6QDL_CLK_SATA>,
++				 <&clks IMX6QDL_CLK_SATA_REF_100M>,
++				 <&clks IMX6QDL_CLK_AHB>;
++			clock-names = "sata", "sata_ref", "ahb";
++			status = "disabled";
++		};
++	};
++};
++
++&ldb {
++	compatible = "fsl,imx6qp-ldb", "fsl,imx6q-ldb", "fsl,imx53-ldb";
++};
+diff --git a/include/dt-bindings/clock/imx6qdl-clock.h b/include/dt-bindings/clock/imx6qdl-clock.h
+index 77985cc..2905033 100644
+--- a/include/dt-bindings/clock/imx6qdl-clock.h
++++ b/include/dt-bindings/clock/imx6qdl-clock.h
+@@ -255,6 +255,20 @@
+ #define IMX6QDL_CLK_CAAM_ACLK			242
+ #define IMX6QDL_CLK_CAAM_IPG			243
+ #define IMX6QDL_CLK_SPDIF_GCLK			244
+-#define IMX6QDL_CLK_END				245
++#define IMX6QDL_CLK_UART_SEL			245
++#define IMX6QDL_CLK_IPG_PER_SEL			246
++#define IMX6QDL_CLK_ECSPI_SEL			247
++#define IMX6QDL_CLK_CAN_SEL			248
++#define IMX6QDL_CLK_MMDC_CH1_AXI_CG		249
++#define IMX6QDL_CLK_PRE0			250
++#define IMX6QDL_CLK_PRE1			251
++#define IMX6QDL_CLK_PRE2			252
++#define IMX6QDL_CLK_PRE3			253
++#define IMX6QDL_CLK_PRG0_AXI			254
++#define IMX6QDL_CLK_PRG1_AXI			255
++#define IMX6QDL_CLK_PRG0_APB			256
++#define IMX6QDL_CLK_PRG1_APB			257
++#define IMX6QDL_CLK_PRE_AXI			258
++#define IMX6QDL_CLK_END				259
+ 
+ #endif /* __DT_BINDINGS_CLOCK_IMX6QDL_H */
+-- 
+1.9.1
