@@ -1,83 +1,50 @@
-Return-Path: <robh@kernel.org>
-Date: Mon, 7 Dec 2015 08:15:08 -0600
-From: Rob Herring <robh@kernel.org>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 1/6] clk: sunxi: Add DRAM gates support for sun4i-a10
-Message-ID: <20151207141508.GA21137@rob-hp-laptop>
-References: <1449306009-2627-1-git-send-email-wens@csie.org>
- <1449306009-2627-2-git-send-email-wens@csie.org>
+Return-Path: <tony@atomide.com>
+Date: Fri, 11 Dec 2015 08:55:49 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org, mturquette@baylibre.com, paul@pwsan.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: ti: omap5+: dpll: implement errata i810
+Message-ID: <20151211165549.GN23396@atomide.com>
+References: <1448894605-30097-1-git-send-email-t-kristo@ti.com>
+ <20151203164817.GT23396@atomide.com>
+ <566A8CB7.4050701@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1449306009-2627-2-git-send-email-wens@csie.org>
+In-Reply-To: <566A8CB7.4050701@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Dec 05, 2015 at 05:00:04PM +0800, Chen-Yu Tsai wrote:
-> The A10/A20 share the same set of DRAM clock gates, which controls
-> direct memory access for some peripherals.
+* Tero Kristo <t-kristo@ti.com> [151211 00:42]:
+> On 12/03/2015 06:48 PM, Tony Lindgren wrote:
+> >* Tero Kristo <t-kristo@ti.com> [151130 06:44]:
+> >>+	/*
+> >>+	 * Errata i810 - DPLL controller can get stuck while transitioning
+> >>+	 * to a power saving state. Software must ensure the DPLL can not
+> >>+	 * transition to a low power state while changing M/N values.
+> >>+	 * Easiest way to accomplish this is to prevent DPLL autoidle
+> >>+	 * before doing the M/N re-program.
+> >>+	 */
+> >>+	errata_i810 = ti_clk_get_features()->flags & TI_CLK_ERRATA_I810;
+> >>+
+> >>+	if (errata_i810) {
+> >>+		ai = omap3_dpll_autoidle_read(clk);
+> >>+		if (ai) {
+> >>+			omap3_dpll_deny_idle(clk);
+> >>+
+> >>+			/* OCP barrier */
+> >>+			omap3_dpll_autoidle_read(clk);
+> >>+		}
+> >>+	}
+> >
+> >Should we just do this unconditionally? It seems like disabling the
+> >autoidle always before reprogramming is a good idea.
 > 
-> On the A10, bit 15 controls the system's DRAM clock output (possibly
-> to the DRAM chips), which we need to keep on.
-> 
-> On the A20 this has been moved to the DRAM controller, becoming a no-op.
-> However it is still listed in the user manual, so add it anyway.
-> 
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> Well, that is a few extra register accesses, but given the DPLL
+> re-programming is a slow operation it probably does not matter. Let me spin
+> a new version of this patch, it will avoid the need for the errata flag
+> also.
 
-Acked-by: Rob Herring <robh@kernel.org>
+OK thanks,
 
-Perhaps someone should go and add all the compatible strings you need 
-here. You don't have to have a user in the kernel. These oneline binding 
-changes are getting old...
-
-Rob
-
-> ---
->  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
->  drivers/clk/sunxi/clk-simple-gates.c              | 12 ++++++++++++
->  2 files changed, 13 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-> index 153ac72869e8..ef0b452806b1 100644
-> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
-> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-> @@ -57,6 +57,7 @@ Required properties:
->  	"allwinner,sun6i-a31-apb2-gates-clk" - for the APB2 gates on A31
->  	"allwinner,sun8i-a23-apb2-gates-clk" - for the APB2 gates on A23
->  	"allwinner,sun9i-a80-apbs-gates-clk" - for the APBS gates on A80
-> +	"allwinner,sun4i-a10-dram-gates-clk" - for the DRAM gates on A10
->  	"allwinner,sun5i-a13-mbus-clk" - for the MBUS clock on A13
->  	"allwinner,sun4i-a10-mmc-clk" - for the MMC clock
->  	"allwinner,sun9i-a80-mmc-clk" - for mmc module clocks on A80
-> diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/clk-simple-gates.c
-> index c8acc0612c15..f4da52b5ca0e 100644
-> --- a/drivers/clk/sunxi/clk-simple-gates.c
-> +++ b/drivers/clk/sunxi/clk-simple-gates.c
-> @@ -160,3 +160,15 @@ CLK_OF_DECLARE(sun5i_a13_ahb, "allwinner,sun5i-a13-ahb-gates-clk",
->  	       sun4i_a10_ahb_init);
->  CLK_OF_DECLARE(sun7i_a20_ahb, "allwinner,sun7i-a20-ahb-gates-clk",
->  	       sun4i_a10_ahb_init);
-> +
-> +static const int sun4i_a10_dram_critical_clocks[] __initconst = {
-> +	15,	/* dram_output */
-> +};
-> +
-> +static void __init sun4i_a10_dram_init(struct device_node *node)
-> +{
-> +	sunxi_simple_gates_setup(node, sun4i_a10_dram_critical_clocks,
-> +				 ARRAY_SIZE(sun4i_a10_dram_critical_clocks));
-> +}
-> +CLK_OF_DECLARE(sun4i_a10_dram, "allwinner,sun4i-a10-dram-gates-clk",
-> +	       sun4i_a10_dram_init);
-> -- 
-> 2.6.2
-> 
+Tony
