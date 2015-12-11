@@ -1,47 +1,75 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga01-in.huawei.com ([58.251.152.64]:10047 "EHLO
+	szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751299AbbLKIB5 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 11 Dec 2015 03:01:57 -0500
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
+	<zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v3 5/7] ARM: debug: add hi3519 debug uart
+Date: Fri, 11 Dec 2015 15:45:19 +0800
+Message-ID: <1449819921-18464-6-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1449819921-18464-1-git-send-email-xuejiancheng@huawei.com>
+References: <1449819921-18464-1-git-send-email-xuejiancheng@huawei.com>
 MIME-Version: 1.0
-To: James Liao <jamesjj.liao@mediatek.com>,
- "Matthias Brugger" <matthias.bgg@gmail.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1451456865-44139-4-git-send-email-jamesjj.liao@mediatek.com>
-Cc: "Sascha Hauer" <kernel@pengutronix.de>, "Daniel Kurtz" <djkurtz@chromium.org>,
- srv_heupstream@mediatek.com, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
- "Shunli Wang" <shunli.wang@mediatek.com>,
- "James Liao" <jamesjj.liao@mediatek.com>
-References: <1451456865-44139-1-git-send-email-jamesjj.liao@mediatek.com>
- <1451456865-44139-4-git-send-email-jamesjj.liao@mediatek.com>
-Message-ID: <20151230233406.19557.35006@quark.deferred.io>
-Subject: Re: [PATCH 3/5] clk: mediatek: Add MT2701 clock support
-Date: Wed, 30 Dec 2015 15:34:06 -0800
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi James,
+add hi3519 debug uart.
 
-Quoting James Liao (2015-12-29 22:27:43)
-> +CLK_OF_DECLARE(mtk_topckgen, "mediatek,mt2701-topckgen", mtk_topckgen_in=
-it);
-> +CLK_OF_DECLARE(mtk_infrasys, "mediatek,mt2701-infracfg", mtk_infrasys_in=
-it);
-> +CLK_OF_DECLARE(mtk_pericfg, "mediatek,mt2701-pericfg", mtk_pericfg_init);
-> +CLK_OF_DECLARE(mtk_mmsys, "mediatek,mt2701-mmsys", mtk_mmsys_init);
-> +CLK_OF_DECLARE(mtk_imgsys, "mediatek,mt2701-imgsys", mtk_imgsys_init);
-> +CLK_OF_DECLARE(mtk_vdecsys, "mediatek,mt2701-vdecsys", mtk_vdecsys_init);
-> +CLK_OF_DECLARE(mtk_hifsys, "mediatek,mt2701-hifsys", mtk_hifsys_init);
-> +CLK_OF_DECLARE(mtk_ethsys, "mediatek,mt2701-ethsys", mtk_ethsys_init);
-> +CLK_OF_DECLARE(mtk_bdpsys, "mediatek,mt2701-bdpsys", mtk_bdpsys_init);
-> +CLK_OF_DECLARE(mtk_apmixedsys, "mediatek,mt2701-apmixedsys",
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+---
+ arch/arm/Kconfig.debug | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-None of these compatible strings are documented with a binding
-description in this patch series. In fact looking through
-Documentation/devicetree/bindings/clock/ on the latest linux-next tag I
-see that the only existing binding is mt8173-cpu-dvfs.txt.
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index 259c0ca..29af057 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -270,6 +270,14 @@ choice
+ 		  Say Y here if you want the debug print routines to direct
+ 		  their output to the 8250 at PCI COM1.
+ 
++	config DEBUG_HI3519_UART
++		bool "Hisilicon Hi3519 Debug UART"
++		depends on ARCH_HISI
++		select DEBUG_UART_PL01X
++		help
++		  Say Y here if you want kernel low-level debugging support
++		  on HI3519 UART.
++
+ 	config DEBUG_HI3620_UART
+ 		bool "Hisilicon HI3620 Debug UART"
+ 		depends on ARCH_HI3xxx
+@@ -1449,6 +1457,7 @@ config DEBUG_UART_PHYS
+ 	default 0xf7fc9000 if DEBUG_BERLIN_UART
+ 	default 0xf8b00000 if DEBUG_HIX5HD2_UART
+ 	default 0xf991e000 if DEBUG_QCOM_UARTDM
++	default 0x12100000 if DEBUG_HI3519_UART
+ 	default 0xfcb00000 if DEBUG_HI3620_UART
+ 	default 0xfd883000 if DEBUG_ALPINE_UART0
+ 	default 0xfe800000 if ARCH_IOP32X
+@@ -1529,6 +1538,7 @@ config DEBUG_UART_VIRT
+ 	default 0xfe230000 if DEBUG_PICOXCELL_UART
+ 	default 0xfe300000 if DEBUG_BCM_KONA_UART
+ 	default 0xfe800000 if ARCH_IOP32X
++	default 0xfef00000 if DEBUG_HI3519_UART
+ 	default 0xfeb00000 if DEBUG_HI3620_UART || DEBUG_HIX5HD2_UART
+ 	default 0xfeb24000 if DEBUG_RK3X_UART0
+ 	default 0xfeb26000 if DEBUG_RK3X_UART1
+-- 
+1.9.1
 
-Am I looking in the wrong place or do we have a case of missing binding
-descriptions?
-
-Thanks,
-Mike
