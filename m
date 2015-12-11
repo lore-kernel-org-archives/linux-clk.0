@@ -1,138 +1,62 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mtd@lists.infradead.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 06/16] clk: move core->parents allocation to clk_register()
-Date: Mon, 28 Dec 2015 19:10:19 +0900
-Message-Id: <1451297429-21689-7-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <robh@kernel.org>
+Date: Fri, 11 Dec 2015 09:21:06 -0600
+From: Rob Herring <robh@kernel.org>
+To: Jiancheng Xue <xuejiancheng@huawei.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, linux@arm.linux.org.uk, khilman@linaro.org,
+	arnd@arndb.de, olof@lixom.net, xuwei5@hisilicon.com,
+	haojian.zhuang@linaro.org, zhangfei.gao@linaro.org,
+	bintian.wang@huawei.com, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, yanhaifeng@hisilicon.com,
+	yanghongwei@hisilicon.com, suwenping@hisilicon.com,
+	ml.yang@hisilicon.com, gaofei@hisilicon.com,
+	zhangzhenxing@hisilicon.com, xuejiancheng@hisilicon.com
+Subject: Re: [PATCH v3 3/7] ARM: hisi: add dt_machine definition for Hi3519
+Message-ID: <20151211152106.GB21272@rob-hp-laptop>
+References: <1449819921-18464-1-git-send-email-xuejiancheng@huawei.com>
+ <1449819921-18464-4-git-send-email-xuejiancheng@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1449819921-18464-4-git-send-email-xuejiancheng@huawei.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently, __clk_core_init() allows failure of the kcalloc() for the
-core->parents.  So, clk_fetch_parent_index() and __clk_init_parent()
-also try to allocate core->parents in case it has not been allocated
-yet.  Scattering memory allocation here and there makes things
-complicated.
+On Fri, Dec 11, 2015 at 03:45:17PM +0800, Jiancheng Xue wrote:
+> add dt_machine definition for hi3519.
+> 
+> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+> ---
+>  arch/arm/mach-hisi/hisilicon.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/arch/arm/mach-hisi/hisilicon.c b/arch/arm/mach-hisi/hisilicon.c
+> index 8cc6215..010d8a2 100644
+> --- a/arch/arm/mach-hisi/hisilicon.c
+> +++ b/arch/arm/mach-hisi/hisilicon.c
+> @@ -81,3 +81,12 @@ static const char *const hip01_compat[] __initconst = {
+>  DT_MACHINE_START(HIP01, "Hisilicon HIP01 (Flattened Device Tree)")
+>  	.dt_compat      = hip01_compat,
+>  MACHINE_END
+> +
+> +static const char *const hi3519_compat[] __initconst = {
+> +	"hisilicon,hi3519",
+> +	NULL,
+> +};
 
-Like other clk_core members, allocate core->parents in clk_register()
-and let it fail in case of memory shortage.  If we cannot allocate
-such a small piece of memory, the system is already insane.  There is
-no point to postpone the memory allocation.
+You should just have 1 mach desc with multiple compatible strings to 
+match against, not 1 mach desc per compatible string.
 
-Also, allocate core->parents regardless of core->num_parents.  We want
-it even if core->num_parents == 1 because clk_fetch_parent_index()
-might be called against the clk_core with a single parent.
+Rob
 
-If core->num_parents == 0, core->parents is set to ZERO_SIZE_PTR. It
-is harmless because no access happens to core->parents in such a case.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
-Changes in v2: None
-
- drivers/clk/clk.c | 51 +++++++++++++++++++--------------------------------
- 1 file changed, 19 insertions(+), 32 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 98745c3..b5be02a 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1067,13 +1067,6 @@ static int clk_fetch_parent_index(struct clk_core *core,
- {
- 	int i;
- 
--	if (!core->parents) {
--		core->parents = kcalloc(core->num_parents,
--					sizeof(*core->parents), GFP_KERNEL);
--		if (!core->parents)
--			return -ENOMEM;
--	}
--
- 	/*
- 	 * find index of new parent clock using cached parent ptrs,
- 	 * or if not yet cached, use string name comparison and cache
-@@ -1700,11 +1693,6 @@ static struct clk_core *__clk_init_parent(struct clk_core *core)
- 
- 	index = core->ops->get_parent(core->hw);
- 
--	if (!core->parents)
--		core->parents =
--			kcalloc(core->num_parents, sizeof(*core->parents),
--					GFP_KERNEL);
--
- 	ret = clk_core_get_parent_by_index(core, index);
- 
- out:
-@@ -2343,26 +2331,15 @@ static int __clk_core_init(struct clk_core *core)
- 				__func__, core->name);
- 
- 	/*
--	 * Allocate an array of struct clk *'s to avoid unnecessary string
--	 * look-ups of clk's possible parents.  This can fail for clocks passed
--	 * in to clk_init during early boot; thus any access to core->parents[]
--	 * must always check for a NULL pointer and try to populate it if
--	 * necessary.
-+	 * clk_core_lookup returns NULL for parents that have not been
-+	 * clk_init'd; thus any access to clk->parents[] must check
-+	 * for a NULL pointer.  We can always perform lazy lookups for
-+	 * missing parents later on.
- 	 */
--	if (core->num_parents > 1) {
--		core->parents = kcalloc(core->num_parents,
--					sizeof(*core->parents), GFP_KERNEL);
--		/*
--		 * clk_core_lookup returns NULL for parents that have not been
--		 * clk_init'd; thus any access to clk->parents[] must check
--		 * for a NULL pointer.  We can always perform lazy lookups for
--		 * missing parents later on.
--		 */
--		if (core->parents)
--			for (i = 0; i < core->num_parents; i++)
--				core->parents[i] =
--					clk_core_lookup(core->parent_names[i]);
--	}
-+	if (core->parents)
-+		for (i = 0; i < core->num_parents; i++)
-+			core->parents[i] =
-+				clk_core_lookup(core->parent_names[i]);
- 
- 	core->parent = __clk_init_parent(core);
- 
-@@ -2560,12 +2537,20 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
- 		}
- 	}
- 
-+	/* avoid unnecessary string look-ups of clk_core's possible parents. */
-+	core->parents = kcalloc(core->num_parents, sizeof(*core->parents),
-+				GFP_KERNEL);
-+	if (!core->parents) {
-+		ret = -ENOMEM;
-+		goto fail_parents;
-+	};
-+
- 	INIT_HLIST_HEAD(&core->clks);
- 
- 	hw->clk = __clk_create_clk(hw, NULL, NULL);
- 	if (IS_ERR(hw->clk)) {
- 		ret = PTR_ERR(hw->clk);
--		goto fail_parent_names_copy;
-+		goto fail_parents;
- 	}
- 
- 	ret = __clk_core_init(core);
-@@ -2575,6 +2560,8 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
- 	__clk_free_clk(hw->clk);
- 	hw->clk = NULL;
- 
-+fail_parents:
-+	kfree(core->parents);
- fail_parent_names_copy:
- 	while (--i >= 0)
- 		kfree_const(core->parent_names[i]);
--- 
-1.9.1
+> +
+> +DT_MACHINE_START(HI3519_DT, "Hisilicon Hi3519")
+> +	.dt_compat	= hi3519_compat,
+> +MACHINE_END
+> -- 
+> 1.9.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
