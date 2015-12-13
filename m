@@ -1,67 +1,61 @@
-Return-Path: <mturquette@baylibre.com>
-Date: Wed, 23 Dec 2015 16:11:38 -0800
-From: Michael Turquette <mturquette@baylibre.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: sboyd@codeaurora.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, sjoerd.simons@collabora.co.uk,
-	wxt@rock-chips.com
-Subject: Re: [PATCH v2 0/5] clk: rockchip: fix handling of fractional dividers
-Message-ID: <20151224001138.GA5927@quark.deferred.io>
-References: <1450819682-4932-1-git-send-email-heiko@sntech.de>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Sun, 13 Dec 2015 22:08:09 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Jens Kuske <jenskuske@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [patch] clk: sunxi: signedness bug in sun8i_h3_bus_gates_init()
+Message-ID: <20151213210809.GD19456@lukather>
+References: <20151212124346.GC21408@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1450819682-4932-1-git-send-email-heiko@sntech.de>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="n/aVsWSeQ4JHkrmm"
+In-Reply-To: <20151212124346.GC21408@mwanda>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/22, Heiko Stuebner wrote:
-> Essentially unchanged from the first iteration from back in august, just
-> including additional patches depending on that and fixing fractional
-> dividers on the rk3036 and spdif parent settings.
-> 
-> In v1, Stephen seemed essentially ok with it but Mike put forward his wish
-> to use his planned approach for connected clocks for handling this.
-> 
-> While that in itself will be very interesting also for handling Rockchip's
-> armclk generically, we're now in the situation that everything related
-> to audio output relies on working fractional dividers to produce the
-> needed clock frequencies, making audio-output essentially non-working on
-> all Rockchip socs in mainline at the moment.
-> 
-> So I'm somewhat hoping for some sort of intermediate solution here :-)
 
-Intermediate solution applied.
+--n/aVsWSeQ4JHkrmm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Regards,
-Mike
+On Sat, Dec 12, 2015 at 03:43:46PM +0300, Dan Carpenter wrote:
+> "index" needs to be signed for the error handling to work.
+>=20
+> Fixes: ab6e23a4e388 ('clk: sunxi: Add H3 clocks support')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> 
-> 
-> changes in v2:
-> - rebase original 3 patches onto 4.4
-> - add the 2 new patches from other series, that need that change
-> 
-> Heiko Stuebner (3):
->   clk: add flag for clocks that need to be enabled on rate changes
->   clk: rockchip: handle mux dependency of fractional dividers
->   clk: rockchip: include downstream muxes into fractional dividers
-> 
-> Sjoerd Simons (1):
->   clk: rockchip: Allow the RK3288 SPDIF clocks to change their parent
-> 
-> Xing Zheng (1):
->   clk: rockchip: rk3036: include downstream muxes into fractional
->     dividers
-> 
->  drivers/clk/clk.c                 |  18 +++++
->  drivers/clk/rockchip/clk-rk3036.c |  34 +++++-----
->  drivers/clk/rockchip/clk-rk3188.c |  80 +++++++++++-----------
->  drivers/clk/rockchip/clk-rk3288.c |  70 +++++++++----------
->  drivers/clk/rockchip/clk.c        | 137 ++++++++++++++++++++++++++++++++++----
->  drivers/clk/rockchip/clk.h        |  19 ++++++
->  include/linux/clk-provider.h      |   1 +
->  7 files changed, 254 insertions(+), 105 deletions(-)
-> 
-> -- 
-> 2.6.4
-> 
+Applied, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--n/aVsWSeQ4JHkrmm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWbd45AAoJEBx+YmzsjxAgaA4QAII0Y5/Rd8ZQUqcoF2TutjlX
+YGSEI8U2ZvaRN4Yi9SMA657aHFiHPEBJDY1FYcta63ITJKjanpAynVgnL/CzlRiy
+lHxLOxcm2sAhUmtlVBWxTUfz/9ReV0FsVgYGHOdtaY+uqkqhnobYzHO/8lhCB45T
+NrVEpLblbiAzqG67gBVvdIFd/eB8RnFpF7F8AKjW/ZKliANrEyayoa/netpNkjE3
+Im7hQBZ8r5hr2bXmjpzCU8lYF5BWrwdh9yH52d97Q0KUTo5g4ItoW3IjTsgmrrqv
+EDq0kOyD/8xbutTVbShuhrA9WDUB0lopu9Lcrqrgk9395LSn1O4haJi2a1dBKS47
+l4UTYuNAiKKEO1akgFd/BToZV5G9rQJVA3oC7fXC34b6fxn2BRsTr5rrE+KyX0Yn
+o5o6HG9vZtOQaB0uX3/b44ondedJG80ErQ+pDNQg1pBYfBPUEFhlVeVdS46mrGuv
+qw2XhY0C3CkxTqWNo7kTOchslk8CtbLwJjCFQPeh+mDNHHC1OnuHQ+PZ6hhvJmw8
+6UhiErNUmUXKiKAOjfISj7I6cHjXQ9U55yPA+ZVkHNbaXSl9BOfuriav9/jGe3uW
+SGp86gWyvFGG2eR417JKscblKpzNYWtJlb4Bpv7w2kx1aMIc2dAbt4VU9pDFFUZY
+IS8xWSjjSpX/8dnD3uFx
+=AMZQ
+-----END PGP SIGNATURE-----
+
+--n/aVsWSeQ4JHkrmm--
