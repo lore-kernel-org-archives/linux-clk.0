@@ -1,55 +1,82 @@
 Return-Path: <a.hajda@samsung.com>
-From: Andrzej Hajda <a.hajda@samsung.com>
-To: =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>
-Cc: Andrzej Hajda <a.hajda@samsung.com>,
+Subject: Re: [PATCH v2 14/38] clk: vt8500: fix sign of possible PLL values
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <20151001225628.GU19319@codeaurora.org>
+ <1443761393-29366-1-git-send-email-a.hajda@samsung.com>
+Cc: linux-kernel@vger.kernel.org,
  Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
  Marek Szyprowski <m.szyprowski@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: sunxi: fix handling return value of
- of_property_match_string
-Date: Mon, 14 Dec 2015 11:06:00 +0100
-Message-id: <1450087564-28441-3-git-send-email-a.hajda@samsung.com>
-In-reply-to: <1450087564-28441-1-git-send-email-a.hajda@samsung.com>
-References: <1450087564-28441-1-git-send-email-a.hajda@samsung.com>
+ Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Message-id: <566E9A4F.1030203@samsung.com>
+Date: Mon, 14 Dec 2015 11:30:39 +0100
+MIME-version: 1.0
+In-reply-to: <1443761393-29366-1-git-send-email-a.hajda@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-The function can return negative values, so its result should
-be assigned to signed variable.
+Hi,
 
-The problem has been detected using proposed semantic patch
-scripts/coccinelle/tests/assign_signed_to_unsigned.cocci [1].
+Ping.
 
-[1]: http://permalink.gmane.org/gmane.linux.kernel/2046107
+Regards
+Andrzej
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/clk/sunxi/clk-sun8i-bus-gates.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+On 10/02/2015 06:49 AM, Andrzej Hajda wrote:
 
-diff --git a/drivers/clk/sunxi/clk-sun8i-bus-gates.c b/drivers/clk/sunxi/clk-sun8i-bus-gates.c
-index 7ab60c5..ecadd97 100644
---- a/drivers/clk/sunxi/clk-sun8i-bus-gates.c
-+++ b/drivers/clk/sunxi/clk-sun8i-bus-gates.c
-@@ -47,12 +47,12 @@ static void __init sun8i_h3_bus_gates_init(struct device_node *node)
- 		return;
- 
- 	for (i = 0; i < ARRAY_SIZE(names); i++) {
--		index = of_property_match_string(node, "clock-names",
--						 names[i]);
--		if (index < 0)
-+		int idx = of_property_match_string(node, "clock-names",
-+						   names[i]);
-+		if (idx < 0)
- 			return;
- 
--		parents[i] = of_clk_get_parent_name(node, index);
-+		parents[i] = of_clk_get_parent_name(node, idx);
- 	}
- 
- 	clk_data = kmalloc(sizeof(struct clk_onecell_data), GFP_KERNEL);
--- 
-1.9.1
+> With unsigned values underflow in loops can occur resulting in
+> theoretically infinite loops.
+>
+> The problem has been detected using proposed semantic patch
+> scripts/coccinelle/tests/unsigned_lesser_than_zero.cocci [1].
+>
+> [1]: http://permalink.gmane.org/gmane.linux.kernel/2038576
+>
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+> Hi Stephen,
+>
+> This is modified version according to your request, ie only problematic
+> variables have changed type.
+> I still think that 1st version is better, but of course it is up to you.
+>
+> Regards
+> Andrzej
+>
+>  drivers/clk/clk-vt8500.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/clk/clk-vt8500.c b/drivers/clk/clk-vt8500.c
+> index 37e9288..98c4492 100644
+> --- a/drivers/clk/clk-vt8500.c
+> +++ b/drivers/clk/clk-vt8500.c
+> @@ -384,7 +384,8 @@ static void vt8500_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+>  static void wm8650_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+>  				u32 *multiplier, u32 *divisor1, u32 *divisor2)
+>  {
+> -	u32 mul, div1, div2;
+> +	u32 mul, div1;
+> +	int div2;
+>  	u32 best_mul, best_div1, best_div2;
+>  	unsigned long tclk, rate_err, best_err;
+>  
+> @@ -452,7 +453,8 @@ static u32 wm8750_get_filter(u32 parent_rate, u32 divisor1)
+>  static void wm8750_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+>  				u32 *filter, u32 *multiplier, u32 *divisor1, u32 *divisor2)
+>  {
+> -	u32 mul, div1, div2;
+> +	u32 mul;
+> +	int div1, div2;
+>  	u32 best_mul, best_div1, best_div2;
+>  	unsigned long tclk, rate_err, best_err;
+>  
+> @@ -496,7 +498,8 @@ static void wm8750_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+>  static void wm8850_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+>  				u32 *multiplier, u32 *divisor1, u32 *divisor2)
+>  {
+> -	u32 mul, div1, div2;
+> +	u32 mul;
+> +	int div1, div2;
+>  	u32 best_mul, best_div1, best_div2;
+>  	unsigned long tclk, rate_err, best_err;
+>  
