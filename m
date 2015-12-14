@@ -1,64 +1,55 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3] clk: let of_clk_get_parent_name() fail for invalid clock-indices
-Date: Thu,  3 Dec 2015 11:20:35 +0900
-Message-Id: <1449109235-27214-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <hofrat@osadl.at>
+Date: Mon, 14 Dec 2015 13:57:29 +0000
+From: Nicholas Mc Guire <der.herr@hofr.at>
+To: Nicholas Mc Guire <hofrat@osadl.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: unchecked return of kmalloc_array
+Message-ID: <20151214135729.GA22301@osadl.at>
+References: <1450099015-23148-1-git-send-email-hofrat@osadl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1450099015-23148-1-git-send-email-hofrat@osadl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently, of_clk_get_parent_name() returns a wrong parent clock name
-when "clock-indices" property exists and the target index is not
-found in the property.  In this case, NULL should be returned.
+On Mon, Dec 14, 2015 at 02:16:55PM +0100, Nicholas Mc Guire wrote:
+> kmalloc_array return is unchecked - given how parent_names is being treated
+> in case of allocation error it probably is ok to treat clock->parents the
+> same way and simply return.
+> 
+> problem was located with coccinelle
+> 
+> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> ---
+> 
+> patch was compile tested for shmobile_defconfig
+> (implies CONFIG_ARCH_SHMOBILE_MULTI=y)
+> 
+> patch is against linux-next (localversion-next -next-20151214)
+> 
+>  drivers/clk/shmobile/clk-div6.c |    2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/shmobile/clk-div6.c b/drivers/clk/shmobile/clk-div6.c
+> index b4c8d67..e6b7533 100644
+> --- a/drivers/clk/shmobile/clk-div6.c
+> +++ b/drivers/clk/shmobile/clk-div6.c
+> @@ -196,6 +196,8 @@ static void __init cpg_div6_clock_init(struct device_node *np)
+>  
+>  	clock->parents = kmalloc_array(num_parents, sizeof(*clock->parents),
+>  		GFP_KERNEL);
+> +	if (!clock->parents)
+> +		return;
+>  	parent_names = kmalloc_array(num_parents, sizeof(*parent_names),
+>
 
-For example,
+giving the callchain of kmalloc_array a look I guess there should be
+some memset for parent_names and clock->parents - or is there a reason why
+no memset would be needed here ?
 
-        oscillator {
-                compatible = "myclocktype";
-                #clock-cells = <1>;
-                clock-indices = <1>, <3>;
-                clock-output-names = "clka", "clkb";
-        };
-
-        consumer {
-                compatible = "myclockconsumer";
-                clocks = <&oscillator 0>, <&oscillator 1>;
-        };
-
-Currently, of_clk_get_parent_name(consumer_np, 0) returns "clka"
-(and of_clk_get_parent_name(consumer_np, 1) also returns "clka",
-this is correct).   Because the "clock-indices" in the clock parent
-does not contain <0>, of_clk_get_parent_name(consumer_np, 0) should
-return NULL.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
-Changes in v3:
-  - Choose the least invasive way
-
-Changes in v2:
-  - Rephrase the git-log
-
- drivers/clk/clk.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 88a723b..1d95033 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3079,6 +3079,9 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
- 		}
- 		count++;
- 	}
-+	/* We went off the end of 'clock-indices' without finding it */
-+	if (prop && !vp)
-+		return NULL;
- 
- 	if (of_property_read_string_index(clkspec.np, "clock-output-names",
- 					  index,
--- 
-1.9.1
+thx!
+hofrat
