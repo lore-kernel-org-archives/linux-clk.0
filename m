@@ -1,84 +1,45 @@
-Return-Path: <repk@triplefau.lt>
-From: Remi Pommarel <repk@triplefau.lt>
-To: Stephen Warren <swarren@wwwdotorg.org>,
-	Eric Anholt <eric@anholt.net>,
-	Lee Jones <lee@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: linux-rpi-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Remi Pommarel <repk@triplefau.lt>
-Subject: [PATCH v3 1/4] clk: bcm2835: add a round up ability to the clock divisor
-Date: Sun,  6 Dec 2015 17:22:46 +0100
-Message-Id: <1449418969-5565-2-git-send-email-repk@triplefau.lt>
-In-Reply-To: <1449418969-5565-1-git-send-email-repk@triplefau.lt>
-References: <1449418969-5565-1-git-send-email-repk@triplefau.lt>
+Return-Path: <hofrat@osadl.org>
+From: Nicholas Mc Guire <hofrat@osadl.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>
+Subject: [PATCH] clk: unchecked return of kmalloc_array
+Date: Mon, 14 Dec 2015 14:16:55 +0100
+Message-Id: <1450099015-23148-1-git-send-email-hofrat@osadl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Make bcm2835_clock_choose_div to optionally round up the chosen MASH divisor
-so that the resulting average rate will not be higher than the requested one.
+kmalloc_array return is unchecked - given how parent_names is being treated
+in case of allocation error it probably is ok to treat clock->parents the
+same way and simply return.
 
-Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+problem was located with coccinelle
+
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
 ---
- drivers/clk/bcm/clk-bcm2835.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 39bf582..9e881ee 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1148,22 +1148,24 @@ static int bcm2835_clock_is_on(struct clk_hw *hw)
+patch was compile tested for shmobile_defconfig
+(implies CONFIG_ARCH_SHMOBILE_MULTI=y)
+
+patch is against linux-next (localversion-next -next-20151214)
+
+ drivers/clk/shmobile/clk-div6.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/shmobile/clk-div6.c b/drivers/clk/shmobile/clk-div6.c
+index b4c8d67..e6b7533 100644
+--- a/drivers/clk/shmobile/clk-div6.c
++++ b/drivers/clk/shmobile/clk-div6.c
+@@ -196,6 +196,8 @@ static void __init cpg_div6_clock_init(struct device_node *np)
  
- static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
- 				    unsigned long rate,
--				    unsigned long parent_rate)
-+				    unsigned long parent_rate,
-+				    bool round_up)
- {
- 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
- 	const struct bcm2835_clock_data *data = clock->data;
--	u32 unused_frac_mask = GENMASK(CM_DIV_FRAC_BITS - data->frac_bits, 0);
-+	u32 unused_frac_mask =
-+		GENMASK(CM_DIV_FRAC_BITS - data->frac_bits, 0) >> 1;
- 	u64 temp = (u64)parent_rate << CM_DIV_FRAC_BITS;
-+	u64 rem;
- 	u32 div;
- 
--	do_div(temp, rate);
-+	rem = do_div(temp, rate);
- 	div = temp;
- 
--	/* Round and mask off the unused bits */
--	if (unused_frac_mask != 0) {
--		div += unused_frac_mask >> 1;
--		div &= ~unused_frac_mask;
--	}
-+	/* Round up and mask off the unused bits */
-+	if (round_up && ((div & unused_frac_mask) != 0 || rem != 0))
-+		div += unused_frac_mask + 1;
-+	div &= ~unused_frac_mask;
- 
- 	/* Clamp to the limits. */
- 	div = max(div, unused_frac_mask + 1);
-@@ -1202,7 +1204,7 @@ static long bcm2835_clock_round_rate(struct clk_hw *hw,
- 				     unsigned long *parent_rate)
- {
- 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
--	u32 div = bcm2835_clock_choose_div(hw, rate, *parent_rate);
-+	u32 div = bcm2835_clock_choose_div(hw, rate, *parent_rate, false);
- 
- 	return bcm2835_clock_rate_from_divisor(clock, *parent_rate, div);
- }
-@@ -1271,7 +1273,7 @@ static int bcm2835_clock_set_rate(struct clk_hw *hw,
- 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
- 	struct bcm2835_cprman *cprman = clock->cprman;
- 	const struct bcm2835_clock_data *data = clock->data;
--	u32 div = bcm2835_clock_choose_div(hw, rate, parent_rate);
-+	u32 div = bcm2835_clock_choose_div(hw, rate, parent_rate, false);
- 
- 	cprman_write(cprman, data->div_reg, div);
- 
+ 	clock->parents = kmalloc_array(num_parents, sizeof(*clock->parents),
+ 		GFP_KERNEL);
++	if (!clock->parents)
++		return;
+ 	parent_names = kmalloc_array(num_parents, sizeof(*parent_names),
+ 				GFP_KERNEL);
+ 	if (!parent_names)
 -- 
-2.0.1
+1.7.10.4
