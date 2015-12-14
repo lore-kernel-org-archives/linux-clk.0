@@ -1,166 +1,58 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mtd@lists.infradead.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2] clk: uniphier: add clock drivers for UniPhier SoCs
-Date: Mon, 28 Dec 2015 19:20:03 +0900
-Message-Id: <1451298003-28841-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org
+Cc: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v4 2/3] clk: qcom: Add regmap mux-div clocks support
+Date: Mon, 14 Dec 2015 15:58:02 +0200
+Message-Id: <1450101483-23509-3-git-send-email-georgi.djakov@linaro.org>
+In-Reply-To: <1450101483-23509-1-git-send-email-georgi.djakov@linaro.org>
+References: <1450101483-23509-1-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is the initial commit for the UniPhier clock drivers, including
-support for PH1-sLD3, PH1-LD4, PH1-Pro4, PH1-sLD8, PH1-Pro5, and
-ProXstream2/PH1-LD6b.
+Add support for hardware that can switch both parent clocks and divider
+at the same time. This avoids generating intermediate frequencies from
+either the old parent clock and new divider or new parent clock and
+old divider combinations.
 
-To improve the code maintainability, the driver consists of common
-functions (clk-uniphier-core.c) and clock data arrays needed to
-support each SoC.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 ---
+ drivers/clk/qcom/Makefile             |    1 +
+ drivers/clk/qcom/clk-regmap-mux-div.c |  256 +++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/clk-regmap-mux-div.h |   58 ++++++++
+ 3 files changed, 315 insertions(+)
+ create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.c
+ create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.h
 
-Changes in v2:
-  - split emmc_hw_reset
-  - make SD clock rate-controllable
-  - add CLK_SET_RATE_PARENT flag to mux, gate, fixed-factor clocks
-
- MAINTAINERS                              |   1 +
- drivers/clk/Kconfig                      |   1 +
- drivers/clk/Makefile                     |   1 +
- drivers/clk/uniphier/Kconfig             |  35 ++++
- drivers/clk/uniphier/Makefile            |  10 +
- drivers/clk/uniphier/clk-ph1-ld4.c       | 117 ++++++++++++
- drivers/clk/uniphier/clk-ph1-pro4.c      | 117 ++++++++++++
- drivers/clk/uniphier/clk-ph1-pro5.c      | 107 +++++++++++
- drivers/clk/uniphier/clk-ph1-sld3.c      | 117 ++++++++++++
- drivers/clk/uniphier/clk-ph1-sld8.c      | 107 +++++++++++
- drivers/clk/uniphier/clk-proxstream2.c   |  88 +++++++++
- drivers/clk/uniphier/clk-uniphier-core.c | 151 +++++++++++++++
- drivers/clk/uniphier/clk-uniphier-mio.c  | 315 +++++++++++++++++++++++++++++++
- drivers/clk/uniphier/clk-uniphier-peri.c | 175 +++++++++++++++++
- drivers/clk/uniphier/clk-uniphier.h      |  68 +++++++
- 15 files changed, 1410 insertions(+)
- create mode 100644 drivers/clk/uniphier/Kconfig
- create mode 100644 drivers/clk/uniphier/Makefile
- create mode 100644 drivers/clk/uniphier/clk-ph1-ld4.c
- create mode 100644 drivers/clk/uniphier/clk-ph1-pro4.c
- create mode 100644 drivers/clk/uniphier/clk-ph1-pro5.c
- create mode 100644 drivers/clk/uniphier/clk-ph1-sld3.c
- create mode 100644 drivers/clk/uniphier/clk-ph1-sld8.c
- create mode 100644 drivers/clk/uniphier/clk-proxstream2.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-core.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-mio.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier-peri.c
- create mode 100644 drivers/clk/uniphier/clk-uniphier.h
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fc08493..6c10e9b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1644,6 +1644,7 @@ F:	arch/arm/mach-uniphier/
- F:	arch/arm/mm/cache-uniphier.c
- F:	arch/arm64/boot/dts/socionext/
- F:	drivers/bus/uniphier-system-bus.c
-+F:	drivers/clk/uniphier/
- F:	drivers/i2c/busses/i2c-uniphier*
- F:	drivers/pinctrl/uniphier/
- F:	drivers/tty/serial/8250/8250_uniphier.c
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index c3e3a02..7580323 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -191,6 +191,7 @@ config COMMON_CLK_CDCE706
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
- source "drivers/clk/qcom/Kconfig"
-+source "drivers/clk/uniphier/Kconfig"
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index c7c26eeab67c..bc7637516a6e 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -9,6 +9,7 @@ clk-qcom-y += clk-rcg2.o
+ clk-qcom-y += clk-branch.o
+ clk-qcom-y += clk-regmap-divider.o
+ clk-qcom-y += clk-regmap-mux.o
++clk-qcom-y += clk-regmap-mux-div.o
+ clk-qcom-y += reset.o
+ clk-qcom-$(CONFIG_QCOM_GDSC) += gdsc.o
  
- endmenu
- 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 820714c..ab9d1bd 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -76,6 +76,7 @@ obj-$(CONFIG_ARCH_STI)			+= st/
- obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
- obj-$(CONFIG_ARCH_TEGRA)		+= tegra/
- obj-$(CONFIG_ARCH_OMAP2PLUS)		+= ti/
-+obj-$(CONFIG_CLK_UNIPHIER)		+= uniphier/
- obj-$(CONFIG_ARCH_U8500)		+= ux500/
- obj-$(CONFIG_COMMON_CLK_VERSATILE)	+= versatile/
- obj-$(CONFIG_X86)			+= x86/
-diff --git a/drivers/clk/uniphier/Kconfig b/drivers/clk/uniphier/Kconfig
+diff --git a/drivers/clk/qcom/clk-regmap-mux-div.c b/drivers/clk/qcom/clk-regmap-mux-div.c
 new file mode 100644
-index 0000000..7606f27
+index 000000000000..88be6c0a3489
 --- /dev/null
-+++ b/drivers/clk/uniphier/Kconfig
-@@ -0,0 +1,35 @@
-+menuconfig CLK_UNIPHIER
-+	bool "Clock drivers for UniPhier SoCs"
-+	depends on ARCH_UNIPHIER
-+	depends on OF
-+	default y
-+	help
-+	  Supports clock drivers for UniPhier SoCs.
-+
-+if CLK_UNIPHIER
-+
-+config CLK_UNIPHIER_PH1_SLD3
-+	bool "Clock driver for UniPhier PH1-sLD3 SoC"
-+	default y
-+
-+config CLK_UNIPHIER_PH1_LD4
-+	bool "Clock driver for UniPhier PH1-LD4 SoC"
-+	default y
-+
-+config CLK_UNIPHIER_PH1_PRO4
-+	bool "Clock driver for UniPhier PH1-Pro4 SoC"
-+	default y
-+
-+config CLK_UNIPHIER_PH1_SLD8
-+	bool "Clock driver for UniPhier PH1-sLD8 SoC"
-+	default y
-+
-+config CLK_UNIPHIER_PH1_PRO5
-+	bool "Clock driver for UniPhier PH1-Pro5 SoC"
-+	default y
-+
-+config CLK_UNIPHIER_PROXSTREAM2
-+	bool "Clock driver for UniPhier ProXstream2/PH1-LD6b SoC"
-+	default y
-+
-+endif
-diff --git a/drivers/clk/uniphier/Makefile b/drivers/clk/uniphier/Makefile
-new file mode 100644
-index 0000000..3be1a17
---- /dev/null
-+++ b/drivers/clk/uniphier/Makefile
-@@ -0,0 +1,10 @@
-+obj-y += clk-uniphier-core.o
-+obj-y += clk-uniphier-peri.o
-+obj-y += clk-uniphier-mio.o
-+
-+obj-$(CONFIG_CLK_UNIPHIER_PH1_SLD3)	+= clk-ph1-sld3.o
-+obj-$(CONFIG_CLK_UNIPHIER_PH1_LD4)	+= clk-ph1-ld4.o
-+obj-$(CONFIG_CLK_UNIPHIER_PH1_PRO4)	+= clk-ph1-pro4.o
-+obj-$(CONFIG_CLK_UNIPHIER_PH1_SLD8)	+= clk-ph1-sld8.o
-+obj-$(CONFIG_CLK_UNIPHIER_PH1_PRO5)	+= clk-ph1-pro5.o
-+obj-$(CONFIG_CLK_UNIPHIER_PROXSTREAM2)	+= clk-proxstream2.o
-diff --git a/drivers/clk/uniphier/clk-ph1-ld4.c b/drivers/clk/uniphier/clk-ph1-ld4.c
-new file mode 100644
-index 0000000..48d342f
---- /dev/null
-+++ b/drivers/clk/uniphier/clk-ph1-ld4.c
-@@ -0,0 +1,117 @@
++++ b/drivers/clk/qcom/clk-regmap-mux-div.c
+@@ -0,0 +1,256 @@
 +/*
-+ * Copyright (C) 2015 Masahiro Yamada <yamada.masahiro@socionext.com>
++ * Copyright (c) 2015, Linaro Limited
++ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
 + *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
 + *
 + * This program is distributed in the hope that it will be useful,
 + * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -168,1407 +60,309 @@ index 0000000..48d342f
 + * GNU General Public License for more details.
 + */
 +
-+#include <linux/clk-provider.h>
++#include <linux/bitops.h>
++#include <linux/delay.h>
++#include <linux/export.h>
++#include <linux/kernel.h>
++#include <linux/regmap.h>
 +
-+#include "clk-uniphier.h"
++#include "clk-regmap-mux-div.h"
 +
-+static struct uniphier_clk_init_data ph1_ld4_clk_idata[] __initdata = {
-+	{
-+		.name = "spll",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = -1,
-+		.data.factor = {
-+			.parent_name = UNIPHIER_CLK_EXT "ref",
-+			.mult = 65,
-+			.div = 1,
-+		},
-+	},
-+	{
-+		.name = "upll",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = -1,
-+		.data.factor = {
-+			.parent_name = UNIPHIER_CLK_EXT "ref",
-+			.mult = 288000,
-+			.div = 24576,
-+		},
-+	},
-+	{
-+		.name = "a2pll",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = -1,
-+		.data.factor = {
-+			.parent_name = UNIPHIER_CLK_EXT "ref",
-+			.mult = 24,
-+			.div = 1,
-+		},
-+	},
-+	{
-+		.name = "uart",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 3,
-+		.data.factor = {
-+			.parent_name = "a2pll",
-+			.mult = 1,
-+			.div = 16,
-+		},
-+	},
-+	{
-+		.name = "i2c",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 4,
-+		.data.factor = {
-+			.parent_name = "spll",
-+			.mult = 1,
-+			.div = 16,
-+		},
-+	},
-+	{
-+		.name = "arm-scu",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 7,
-+		.data.factor = {
-+			.parent_name = "spll",
-+			.mult = 1,
-+			.div = 32,
-+		},
-+	},
-+	{
-+		.name = "stdmac-clken",
-+		.type = UNIPHIER_CLK_TYPE_GATE,
-+		.output_index = -1,
-+		.data.gate = {
-+			.parent_name = NULL,
-+			.reg = 0x2104,
-+			.bit_idx = 10,
-+		},
-+	},
-+	{
-+		.name = "stdmac",
-+		.type = UNIPHIER_CLK_TYPE_GATE,
-+		.output_index = 10,
-+		.data.gate = {
-+			.parent_name = "stdmac-clken",
-+			.reg = 0x2000,
-+			.bit_idx = 10,
-+		},
-+	},
-+	{
-+		.name = "ehci",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 18,
-+		.data.factor = {
-+			.parent_name = "upll",
-+			.mult = 1,
-+			.div = 12,
-+		},
-+	},
-+	{ /* sentinel */ }
-+};
++#define CMD_RCGR			0x0
++#define CMD_RCGR_UPDATE			BIT(0)
++#define CMD_RCGR_DIRTY_CFG		BIT(4)
++#define CMD_RCGR_ROOT_OFF		BIT(31)
++#define CFG_RCGR			0x4
 +
-+static void __init ph1_ld4_clk_init(struct device_node *np)
++#define to_clk_regmap_mux_div(_hw) \
++	container_of(to_clk_regmap(_hw), struct clk_regmap_mux_div, clkr)
++
++int __mux_div_set_src_div(struct clk_regmap_mux_div *md, u32 src, u32 div)
 +{
-+	uniphier_clk_init(np, ph1_ld4_clk_idata);
-+}
-+CLK_OF_DECLARE(ph1_ld4_clk, "socionext,ph1-ld4-sysctrl", ph1_ld4_clk_init);
-diff --git a/drivers/clk/uniphier/clk-ph1-pro4.c b/drivers/clk/uniphier/clk-ph1-pro4.c
-new file mode 100644
-index 0000000..052813a
---- /dev/null
-+++ b/drivers/clk/uniphier/clk-ph1-pro4.c
-@@ -0,0 +1,117 @@
-+/*
-+ * Copyright (C) 2015 Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
++	int ret, count;
++	u32 val, mask;
++	const char *name = clk_hw_get_name(&md->clkr.hw);
 +
-+#include <linux/clk-provider.h>
++	val = (div << md->hid_shift) | (src << md->src_shift);
++	mask = ((BIT(md->hid_width) - 1) << md->hid_shift) |
++	       ((BIT(md->src_width) - 1) << md->src_shift);
 +
-+#include "clk-uniphier.h"
++	ret = regmap_update_bits(md->clkr.regmap, CFG_RCGR + md->reg_offset,
++				 mask, val);
++	if (ret)
++		return ret;
 +
-+static struct uniphier_clk_init_data ph1_pro4_clk_idata[] __initdata = {
-+	{
-+		.name = "spll",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = -1,
-+		.data.factor = {
-+			.parent_name = UNIPHIER_CLK_EXT "ref",
-+			.mult = 64,
-+			.div = 1,
-+		},
-+	},
-+	{
-+		.name = "upll",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = -1,
-+		.data.factor = {
-+			.parent_name = UNIPHIER_CLK_EXT "ref",
-+			.mult = 288,
-+			.div = 25,
-+		},
-+	},
-+	{
-+		.name = "a2pll",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = -1,
-+		.data.factor = {
-+			.parent_name = "upll",
-+			.mult = 256,
-+			.div = 125,
-+		},
-+	},
-+	{
-+		.name = "uart",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 3,
-+		.data.factor = {
-+			.parent_name = "a2pll",
-+			.mult = 1,
-+			.div = 8,
-+		},
-+	},
-+	{
-+		.name = "fi2c",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 4,
-+		.data.factor = {
-+			.parent_name = "spll",
-+			.mult = 1,
-+			.div = 32,
-+		},
-+	},
-+	{
-+		.name = "arm-scu",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 7,
-+		.data.factor = {
-+			.parent_name = "spll",
-+			.mult = 1,
-+			.div = 32,
-+		},
-+	},
-+	{
-+		.name = "stdmac-clken",
-+		.type = UNIPHIER_CLK_TYPE_GATE,
-+		.output_index = -1,
-+		.data.gate = {
-+			.parent_name = UNIPHIER_CLK_EXT "ref",
-+			.reg = 0x2104,
-+			.bit_idx = 10,
-+		},
-+	},
-+	{
-+		.name = "stdmac",
-+		.type = UNIPHIER_CLK_TYPE_GATE,
-+		.output_index = 10,
-+		.data.gate = {
-+			.parent_name = "stdmac-clken",
-+			.reg = 0x2000,
-+			.bit_idx = 10,
-+		},
-+	},
-+	{
-+		.name = "ehci",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 18,
-+		.data.factor = {
-+			.parent_name = "upll",
-+			.mult = 1,
-+			.div = 12,
-+		},
-+	},
-+	{ /* sentinel */ }
-+};
++	ret = regmap_update_bits(md->clkr.regmap, CMD_RCGR + md->reg_offset,
++				 CMD_RCGR_UPDATE, CMD_RCGR_UPDATE);
++	if (ret)
++		return ret;
 +
-+static void __init ph1_pro4_clk_init(struct device_node *np)
-+{
-+	uniphier_clk_init(np, ph1_pro4_clk_idata);
-+}
-+CLK_OF_DECLARE(ph1_pro4_clk, "socionext,ph1-pro4-sysctrl", ph1_pro4_clk_init);
-diff --git a/drivers/clk/uniphier/clk-ph1-pro5.c b/drivers/clk/uniphier/clk-ph1-pro5.c
-new file mode 100644
-index 0000000..9f782d9
---- /dev/null
-+++ b/drivers/clk/uniphier/clk-ph1-pro5.c
-@@ -0,0 +1,107 @@
-+/*
-+ * Copyright (C) 2015 Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+
-+#include "clk-uniphier.h"
-+
-+static struct uniphier_clk_init_data ph1_pro5_clk_idata[] __initdata = {
-+	{
-+		.name = "spll",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = -1,
-+		.data.factor = {
-+			.parent_name = UNIPHIER_CLK_EXT "ref",
-+			.mult = 120,
-+			.div = 1,
-+		},
-+	},
-+	{
-+		.name = "dapll1",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = -1,
-+		.data.factor = {
-+			.parent_name = UNIPHIER_CLK_EXT "ref",
-+			.mult = 128,
-+			.div = 125,
-+		},
-+	},
-+	{
-+		.name = "dapll2",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = -1,
-+		.data.factor = {
-+			.parent_name = "upll",
-+			.mult = 144,
-+			.div = 5,
-+		},
-+	},
-+	{
-+		.name = "uart",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 3,
-+		.data.factor = {
-+			.parent_name = "dapll2",
-+			.mult = 1,
-+			.div = 8,
-+		},
-+	},
-+	{
-+		.name = "fi2c",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 4,
-+		.data.factor = {
-+			.parent_name = "spll",
-+			.mult = 1,
-+			.div = 48,
-+		},
-+	},
-+	{
-+		.name = "arm-scu",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 7,
-+		.data.factor = {
-+			.parent_name = "spll",
-+			.mult = 1,
-+			.div = 48,
-+		},
-+	},
-+	{
-+		.name = "stdmac-clken",
-+		.type = UNIPHIER_CLK_TYPE_GATE,
-+		.output_index = -1,
-+		.data.gate = {
-+			.parent_name = NULL,
-+			.reg = 0x2104,
-+			.bit_idx = 10,
-+		},
-+	},
-+	{
-+		.name = "stdmac",
-+		.type = UNIPHIER_CLK_TYPE_GATE,
-+		.output_index = 10,
-+		.data.gate = {
-+			.parent_name = "stdmac-clken",
-+			.reg = 0x2000,
-+			.bit_idx = 10,
-+		},
-+	},
-+	{ /* sentinel */ }
-+};
-+
-+static void __init ph1_pro5_clk_init(struct device_node *np)
-+{
-+	uniphier_clk_init(np, ph1_pro5_clk_idata);
-+}
-+CLK_OF_DECLARE(ph1_pro5_clk, "socionext,ph1-pro5-sysctrl", ph1_pro5_clk_init);
-diff --git a/drivers/clk/uniphier/clk-ph1-sld3.c b/drivers/clk/uniphier/clk-ph1-sld3.c
-new file mode 100644
-index 0000000..7249a81
---- /dev/null
-+++ b/drivers/clk/uniphier/clk-ph1-sld3.c
-@@ -0,0 +1,117 @@
-+/*
-+ * Copyright (C) 2015 Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+
-+#include "clk-uniphier.h"
-+
-+static struct uniphier_clk_init_data ph1_sld3_clk_idata[] __initdata = {
-+	{
-+		.name = "spll",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = -1,
-+		.data.factor = {
-+			.parent_name = UNIPHIER_CLK_EXT "ref",
-+			.mult = 65,
-+			.div = 1,
-+		},
-+	},
-+	{
-+		.name = "upll",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = -1,
-+		.data.factor = {
-+			.parent_name = UNIPHIER_CLK_EXT "ref",
-+			.mult = 288000,
-+			.div = 24576,
-+		},
-+	},
-+	{
-+		.name = "a2pll",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = -1,
-+		.data.factor = {
-+			.parent_name = UNIPHIER_CLK_EXT "ref",
-+			.mult = 24,
-+			.div = 1,
-+		},
-+	},
-+	{
-+		.name = "uart",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 3,
-+		.data.factor = {
-+			.parent_name = "a2pll",
-+			.mult = 1,
-+			.div = 16,
-+		},
-+	},
-+	{
-+		.name = "i2c",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 4,
-+		.data.factor = {
-+			.parent_name = "spll",
-+			.mult = 1,
-+			.div = 16,
-+		},
-+	},
-+	{
-+		.name = "arm-scu",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 7,
-+		.data.factor = {
-+			.parent_name = "spll",
-+			.mult = 1,
-+			.div = 32,
-+		},
-+	},
-+	{
-+		.name = "stdmac-clken",
-+		.type = UNIPHIER_CLK_TYPE_GATE,
-+		.output_index = -1,
-+		.data.gate = {
-+			.parent_name = UNIPHIER_CLK_EXT "ref",
-+			.reg = 0x2104,
-+			.bit_idx = 10,
-+		},
-+	},
-+	{
-+		.name = "stdmac",
-+		.type = UNIPHIER_CLK_TYPE_GATE,
-+		.output_index = 10,
-+		.data.gate = {
-+			.parent_name = "stdmac-clken",
-+			.reg = 0x2000,
-+			.bit_idx = 10,
-+		},
-+	},
-+	{
-+		.name = "ehci",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 18,
-+		.data.factor = {
-+			.parent_name = "upll",
-+			.mult = 1,
-+			.div = 12,
-+		},
-+	},
-+	{ /* sentinel */ }
-+};
-+
-+static void __init ph1_sld3_clk_init(struct device_node *np)
-+{
-+	uniphier_clk_init(np, ph1_sld3_clk_idata);
-+}
-+CLK_OF_DECLARE(ph1_sld3_clk, "socionext,ph1-sld3-sysctrl", ph1_sld3_clk_init);
-diff --git a/drivers/clk/uniphier/clk-ph1-sld8.c b/drivers/clk/uniphier/clk-ph1-sld8.c
-new file mode 100644
-index 0000000..bfebd38
---- /dev/null
-+++ b/drivers/clk/uniphier/clk-ph1-sld8.c
-@@ -0,0 +1,107 @@
-+/*
-+ * Copyright (C) 2015 Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+
-+#include "clk-uniphier.h"
-+
-+static struct uniphier_clk_init_data ph1_sld8_clk_idata[] __initdata = {
-+	{
-+		.name = "spll",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = -1,
-+		.data.factor = {
-+			.parent_name = UNIPHIER_CLK_EXT "ref",
-+			.mult = 64,
-+			.div = 1,
-+		},
-+	},
-+	{
-+		.name = "upll",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = -1,
-+		.data.factor = {
-+			.parent_name = UNIPHIER_CLK_EXT "ref",
-+			.mult = 288,
-+			.div = 25,
-+		},
-+	},
-+	{
-+		.name = "uart",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 3,
-+		.data.factor = {
-+			.parent_name = "spll",
-+			.mult = 1,
-+			.div = 20,
-+		},
-+	},
-+	{
-+		.name = "i2c",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 4,
-+		.data.factor = {
-+			.parent_name = "spll",
-+			.mult = 1,
-+			.div = 16,
-+		},
-+	},
-+	{
-+		.name = "arm-scu",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 7,
-+		.data.factor = {
-+			.parent_name = "spll",
-+			.mult = 1,
-+			.div = 32,
-+		},
-+	},
-+	{
-+		.name = "stdmac-clken",
-+		.type = UNIPHIER_CLK_TYPE_GATE,
-+		.output_index = -1,
-+		.data.gate = {
-+			.parent_name = NULL,
-+			.reg = 0x2104,
-+			.bit_idx = 10,
-+		},
-+	},
-+	{
-+		.name = "stdmac",
-+		.type = UNIPHIER_CLK_TYPE_GATE,
-+		.output_index = 10,
-+		.data.gate = {
-+			.parent_name = "stdmac-clken",
-+			.reg = 0x2000,
-+			.bit_idx = 10,
-+		},
-+	},
-+	{
-+		.name = "ehci",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 18,
-+		.data.factor = {
-+			.parent_name = "upll",
-+			.mult = 1,
-+			.div = 12,
-+		},
-+	},
-+	{ /* sentinel */ }
-+};
-+
-+static void __init ph1_sld8_clk_init(struct device_node *np)
-+{
-+	uniphier_clk_init(np, ph1_sld8_clk_idata);
-+}
-+CLK_OF_DECLARE(ph1_sld8_clk, "socionext,ph1-sld8-sysctrl", ph1_sld8_clk_init);
-diff --git a/drivers/clk/uniphier/clk-proxstream2.c b/drivers/clk/uniphier/clk-proxstream2.c
-new file mode 100644
-index 0000000..b3ffedc
---- /dev/null
-+++ b/drivers/clk/uniphier/clk-proxstream2.c
-@@ -0,0 +1,88 @@
-+/*
-+ * Copyright (C) 2015 Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+
-+#include "clk-uniphier.h"
-+
-+static struct uniphier_clk_init_data proxstream2_clk_idata[] __initdata = {
-+	{
-+		.name = "spll",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = -1,
-+		.data.factor = {
-+			.parent_name = UNIPHIER_CLK_EXT "ref",
-+			.mult = 96,
-+			.div = 1,
-+		},
-+	},
-+	{
-+		.name = "uart",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 3,
-+		.data.factor = {
-+			.parent_name = "spll",
-+			.mult = 1,
-+			.div = 27,
-+		},
-+	},
-+	{
-+		.name = "fi2c",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 4,
-+		.data.factor = {
-+			.parent_name = "spll",
-+			.mult = 1,
-+			.div = 48,
-+		},
-+	},
-+	{
-+		.name = "arm-scu",
-+		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+		.output_index = 7,
-+		.data.factor = {
-+			.parent_name = "spll",
-+			.mult = 1,
-+			.div = 48,
-+		},
-+	},
-+	{
-+		.name = "stdmac-clken",
-+		.type = UNIPHIER_CLK_TYPE_GATE,
-+		.output_index = -1,
-+		.data.gate = {
-+			.parent_name = NULL,
-+			.reg = 0x2104,
-+			.bit_idx = 10,
-+		},
-+	},
-+	{
-+		.name = "stdmac",
-+		.type = UNIPHIER_CLK_TYPE_GATE,
-+		.output_index = 10,
-+		.data.gate = {
-+			.parent_name = "stdmac-clken",
-+			.reg = 0x2000,
-+			.bit_idx = 10,
-+		},
-+	},
-+	{ /* sentinel */ }
-+};
-+
-+static void __init proxstream2_clk_init(struct device_node *np)
-+{
-+	uniphier_clk_init(np, proxstream2_clk_idata);
-+}
-+CLK_OF_DECLARE(proxstream2_clk, "socionext,proxstream2-sysctrl",
-+	       proxstream2_clk_init);
-diff --git a/drivers/clk/uniphier/clk-uniphier-core.c b/drivers/clk/uniphier/clk-uniphier-core.c
-new file mode 100644
-index 0000000..8680101
---- /dev/null
-+++ b/drivers/clk/uniphier/clk-uniphier-core.c
-@@ -0,0 +1,151 @@
-+/*
-+ * Copyright (C) 2015 Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#define pr_fmt(fmt)		"uniphier-clk: " fmt
-+
-+#include <linux/clk-provider.h>
-+#include <linux/log2.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/slab.h>
-+
-+#include "clk-uniphier.h"
-+
-+static void __init uniphier_clk_update_parent_name(struct device_node *np,
-+						   const char **parent_name)
-+{
-+	const char *new_name;
-+	int index;
-+
-+	if (!parent_name || !*parent_name)
-+		return;
-+
-+	if (strncmp(*parent_name, UNIPHIER_CLK_EXT, strlen(UNIPHIER_CLK_EXT)))
-+		return;
-+
-+	index = of_property_match_string(np, "clock-names",
-+				*parent_name + strlen(UNIPHIER_CLK_EXT));
-+	new_name = of_clk_get_parent_name(np, index);
-+	if (new_name)
-+		*parent_name = new_name;
-+}
-+
-+static struct clk * __init uniphier_clk_register(struct device_node *np,
-+						 void __iomem *regbase,
-+					  struct uniphier_clk_init_data *idata)
-+{
-+	int i;
-+
-+	switch (idata->type) {
-+	case UNIPHIER_CLK_TYPE_FIXED_FACTOR:
-+		uniphier_clk_update_parent_name(np,
-+					&idata->data.factor.parent_name);
-+		return clk_register_fixed_factor(NULL, idata->name,
-+						 idata->data.factor.parent_name,
-+						 CLK_SET_RATE_PARENT,
-+						 idata->data.factor.mult,
-+						 idata->data.factor.div);
-+	case UNIPHIER_CLK_TYPE_FIXED_RATE:
-+		return clk_register_fixed_rate(NULL, idata->name, NULL,
-+					       CLK_IS_ROOT,
-+					       idata->data.rate.fixed_rate);
-+	case UNIPHIER_CLK_TYPE_GATE:
-+		uniphier_clk_update_parent_name(np,
-+						&idata->data.gate.parent_name);
-+		return clk_register_gate(NULL, idata->name,
-+					 idata->data.gate.parent_name,
-+					 idata->data.gate.parent_name ?
-+					 CLK_SET_RATE_PARENT : CLK_IS_ROOT,
-+					 regbase + idata->data.gate.reg,
-+					 idata->data.gate.bit_idx, 0, NULL);
-+	case UNIPHIER_CLK_TYPE_MUX:
-+		for (i = 0; i < idata->data.mux.num_parents; i++)
-+			uniphier_clk_update_parent_name(np,
-+					&idata->data.mux.parent_names[i]);
-+		return clk_register_mux(NULL, idata->name,
-+					idata->data.mux.parent_names,
-+					idata->data.mux.num_parents,
-+					CLK_SET_RATE_PARENT,
-+					regbase + idata->data.mux.reg,
-+					idata->data.mux.shift,
-+					ilog2(idata->data.mux.num_parents),
-+					0, NULL);
-+	default:
-+		WARN(1, "unsupported clock type\n");
-+		return ERR_PTR(-EINVAL);
++	/* Wait for update to take effect */
++	for (count = 500; count > 0; count--) {
++		ret = regmap_read(md->clkr.regmap, CMD_RCGR + md->reg_offset,
++				  &val);
++		if (ret)
++			return ret;
++		if (!(val & CMD_RCGR_UPDATE))
++			return 0;
++		udelay(1);
 +	}
++
++	pr_err("%s: RCG did not update its configuration", name);
++	return -EBUSY;
++}
++EXPORT_SYMBOL_GPL(__mux_div_set_src_div);
++
++static void __mux_div_get_src_div(struct clk_regmap_mux_div *md, u32 *src,
++				  u32 *div)
++{
++	u32 val, __div, __src;
++	const char *name = clk_hw_get_name(&md->clkr.hw);
++
++	regmap_read(md->clkr.regmap, CMD_RCGR + md->reg_offset, &val);
++
++	if (val & CMD_RCGR_DIRTY_CFG) {
++		pr_err("%s: RCG configuration is pending\n", name);
++		return;
++	}
++
++	regmap_read(md->clkr.regmap, CFG_RCGR + md->reg_offset, &val);
++	__src = (val >> md->src_shift);
++	__src &= BIT(md->src_width) - 1;
++	*src = __src;
++
++	__div = (val >> md->hid_shift);
++	__div &= BIT(md->hid_width) - 1;
++	*div = __div;
 +}
 +
-+int __init uniphier_clk_init(struct device_node *np,
-+			     struct uniphier_clk_init_data *idata)
++static int mux_div_enable(struct clk_hw *hw)
 +{
-+	struct clk_onecell_data *clk_data;
-+	struct uniphier_clk_init_data *p;
-+	void __iomem *regbase;
-+	int max_index = 0;
++	struct clk_regmap_mux_div *md = to_clk_regmap_mux_div(hw);
++
++	return __mux_div_set_src_div(md, md->src, md->div);
++}
++
++static inline bool is_better_rate(unsigned long req, unsigned long best,
++				  unsigned long new)
++{
++	return (req <= new && new < best) || (best < req && best < new);
++}
++
++static int mux_div_determine_rate(struct clk_hw *hw,
++				  struct clk_rate_request *req)
++{
++	struct clk_regmap_mux_div *md = to_clk_regmap_mux_div(hw);
++	unsigned int i, div, max_div;
++	unsigned long actual_rate, best_rate = 0;
++	unsigned long req_rate = req->rate;
++
++	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
++		struct clk_hw *parent = clk_hw_get_parent_by_index(hw, i);
++		unsigned long parent_rate = clk_hw_get_rate(parent);
++
++		max_div = BIT(md->hid_width) - 1;
++		for (div = 1; div < max_div; div++) {
++			parent_rate = mult_frac(req_rate, div, 2);
++			parent_rate = clk_hw_round_rate(parent, parent_rate);
++			actual_rate = mult_frac(parent_rate, 2, div);
++
++			if (is_better_rate(req_rate, best_rate, actual_rate)) {
++				best_rate = actual_rate;
++				req->rate = best_rate;
++				req->best_parent_rate = parent_rate;
++				req->best_parent_hw = parent;
++			}
++
++			if (actual_rate < req_rate || best_rate <= req_rate)
++				break;
++		}
++	}
++
++	if (!best_rate)
++		return -EINVAL;
++
++	return 0;
++}
++
++static int __mux_div_set_rate_and_parent(struct clk_hw *hw, unsigned long rate,
++					 unsigned long prate, u32 src)
++{
++	struct clk_regmap_mux_div *md = to_clk_regmap_mux_div(hw);
 +	int ret;
++	u32 div, max_div, best_src = 0, best_div = 0;
++	unsigned int i;
++	unsigned long actual_rate, best_rate = 0;
 +
-+	regbase = of_iomap(np, 0);
-+	if (!regbase)
-+		return -ENOMEM;
++	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
++		struct clk_hw *parent = clk_hw_get_parent_by_index(hw, i);
++		unsigned long parent_rate = clk_hw_get_rate(parent);
 +
-+	for (p = idata; p->name; p++)
-+		max_index = max(max_index, p->output_index);
++		max_div = BIT(md->hid_width) - 1;
++		for (div = 1; div < max_div; div++) {
++			parent_rate = mult_frac(rate, div, 2);
++			parent_rate = clk_hw_round_rate(parent, parent_rate);
++			actual_rate = mult_frac(parent_rate, 2, div);
 +
-+	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
++			if (is_better_rate(rate, best_rate, actual_rate)) {
++				best_rate = actual_rate;
++				best_src = md->parent_map[i].cfg;
++				best_div = div - 1;
++			}
 +
-+	clk_data->clk_num = max_index + 1;
-+	clk_data->clks = kcalloc(clk_data->clk_num, sizeof(struct clk *),
-+				 GFP_KERNEL);
-+	if (!clk_data->clks) {
-+		ret = -ENOMEM;
-+		goto free_clk_data;
++			if (actual_rate < rate || best_rate <= rate)
++				break;
++		}
 +	}
 +
-+	for (p = idata; p->name; p++) {
-+		pr_debug("register %s (%s[%d])\n", p->name, np->name,
-+			 p->output_index);
-+		p->clk = uniphier_clk_register(np, regbase, p);
-+		if (IS_ERR(p->clk)) {
-+			pr_err("failed to register %s\n", p->name);
-+			ret = PTR_ERR(p->clk);
-+			goto unregister;
++	ret = __mux_div_set_src_div(md, best_src, best_div);
++	if (!ret) {
++		md->div = best_div;
++		md->src = best_src;
++	}
++
++	return ret;
++}
++
++static u8 mux_div_get_parent(struct clk_hw *hw)
++{
++	struct clk_regmap_mux_div *md = to_clk_regmap_mux_div(hw);
++	const char *name = clk_hw_get_name(hw);
++	u32 i, div, src = 0;
++
++	__mux_div_get_src_div(md, &src, &div);
++
++	for (i = 0; i < clk_hw_get_num_parents(hw); i++)
++		if (src == md->parent_map[i].cfg)
++			return i;
++
++	pr_err("%s: Can't find parent with src %d\n", name, src);
++	return 0;
++}
++
++static int mux_div_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct clk_regmap_mux_div *md = to_clk_regmap_mux_div(hw);
++
++	return __mux_div_set_src_div(md, md->parent_map[index].cfg, md->div);
++}
++
++static int mux_div_set_rate(struct clk_hw *hw,
++			    unsigned long rate, unsigned long prate)
++{
++	struct clk_regmap_mux_div *md = to_clk_regmap_mux_div(hw);
++
++	return __mux_div_set_rate_and_parent(hw, rate, prate, md->src);
++}
++
++static int mux_div_set_rate_and_parent(struct clk_hw *hw,  unsigned long rate,
++				       unsigned long prate, u8 index)
++{
++	struct clk_regmap_mux_div *md = to_clk_regmap_mux_div(hw);
++
++	return __mux_div_set_rate_and_parent(hw, rate, prate,
++					     md->parent_map[index].cfg);
++}
++
++static unsigned long mux_div_recalc_rate(struct clk_hw *hw, unsigned long prate)
++{
++	struct clk_regmap_mux_div *md = to_clk_regmap_mux_div(hw);
++	u32 div, src;
++	int i, num_parents = clk_hw_get_num_parents(hw);
++	const char *name = clk_hw_get_name(hw);
++
++	__mux_div_get_src_div(md, &src, &div);
++	for (i = 0; i < num_parents; i++)
++		if (src == md->parent_map[i].cfg) {
++			struct clk_hw *p = clk_hw_get_parent_by_index(hw, i);
++			unsigned long parent_rate = clk_hw_get_rate(p);
++
++			return mult_frac(parent_rate, 2, div + 1);
 +		}
 +
-+		if (p->output_index >= 0)
-+			clk_data->clks[p->output_index] = p->clk;
-+	}
-+
-+	ret = of_clk_add_provider(np, of_clk_src_onecell_get, clk_data);
-+	if (ret)
-+		goto unregister;
-+
-+	return ret;
-+unregister:
-+	for (p--; p >= idata; p--) {
-+		pr_debug("unregister %s (%s[%d])\n", p->name, np->name,
-+			 p->output_index);
-+		clk_unregister(p->clk);
-+		p->clk = NULL;
-+	}
-+	kfree(clk_data->clks);
-+free_clk_data:
-+	kfree(clk_data);
-+
-+	pr_err("%s: init failed with error %d\n", np->full_name, ret);
-+
-+	return ret;
++	pr_err("%s: Can't find parent %d\n", name, src);
++	return 0;
 +}
-diff --git a/drivers/clk/uniphier/clk-uniphier-mio.c b/drivers/clk/uniphier/clk-uniphier-mio.c
++
++static void mux_div_disable(struct clk_hw *hw)
++{
++	struct clk_regmap_mux_div *md = to_clk_regmap_mux_div(hw);
++
++	__mux_div_set_src_div(md, md->safe_src, md->safe_div);
++}
++
++const struct clk_ops clk_regmap_mux_div_ops = {
++	.enable = mux_div_enable,
++	.disable = mux_div_disable,
++	.get_parent = mux_div_get_parent,
++	.set_parent = mux_div_set_parent,
++	.set_rate = mux_div_set_rate,
++	.set_rate_and_parent = mux_div_set_rate_and_parent,
++	.determine_rate = mux_div_determine_rate,
++	.recalc_rate = mux_div_recalc_rate,
++};
++EXPORT_SYMBOL_GPL(clk_regmap_mux_div_ops);
+diff --git a/drivers/clk/qcom/clk-regmap-mux-div.h b/drivers/clk/qcom/clk-regmap-mux-div.h
 new file mode 100644
-index 0000000..ad6491b
+index 000000000000..6d7ed44ae464
 --- /dev/null
-+++ b/drivers/clk/uniphier/clk-uniphier-mio.c
-@@ -0,0 +1,315 @@
++++ b/drivers/clk/qcom/clk-regmap-mux-div.h
+@@ -0,0 +1,58 @@
 +/*
-+ * Copyright (C) 2015 Masahiro Yamada <yamada.masahiro@socionext.com>
++ * Copyright (c) 2015, Linaro Limited
++ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
 + *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
 + *
 + * This program is distributed in the hope that it will be useful,
 + * but WITHOUT ANY WARRANTY; without even the implied warranty of
 + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 + * GNU General Public License for more details.
 + */
++
++#ifndef __QCOM_CLK_REGMAP_MUX_DIV_H__
++#define __QCOM_CLK_REGMAP_MUX_DIV_H__
 +
 +#include <linux/clk-provider.h>
++#include "clk-rcg.h"
++#include "clk-regmap.h"
 +
-+#include "clk-uniphier.h"
-+
-+#define UNIPHIER_MIO_CLK_SD_FIXED					\
-+	{								\
-+		.name = "sd-44m",					\
-+		.type = UNIPHIER_CLK_TYPE_FIXED_RATE,			\
-+		.output_index = -1,					\
-+		.data.rate = {						\
-+			.fixed_rate = 44444444,				\
-+		},							\
-+	},								\
-+	{								\
-+		.name = "sd-33m",					\
-+		.type = UNIPHIER_CLK_TYPE_FIXED_RATE,			\
-+		.output_index = -1,					\
-+		.data.rate = {						\
-+			.fixed_rate = 33333333,				\
-+		},							\
-+	},								\
-+	{								\
-+		.name = "sd-50m",					\
-+		.type = UNIPHIER_CLK_TYPE_FIXED_RATE,			\
-+		.output_index = -1,					\
-+		.data.rate = {						\
-+			.fixed_rate = 50000000,				\
-+		},							\
-+	},								\
-+	{								\
-+		.name = "sd-67m",					\
-+		.type = UNIPHIER_CLK_TYPE_FIXED_RATE,			\
-+		.output_index = -1,					\
-+		.data.rate = {						\
-+			.fixed_rate = 66666666,				\
-+		},							\
-+	},								\
-+	{								\
-+		.name = "sd-100m",					\
-+		.type = UNIPHIER_CLK_TYPE_FIXED_RATE,			\
-+		.output_index = -1,					\
-+		.data.rate = {						\
-+			.fixed_rate = 100000000,			\
-+		},							\
-+	},								\
-+	{								\
-+		.name = "sd-40m",					\
-+		.type = UNIPHIER_CLK_TYPE_FIXED_RATE,			\
-+		.output_index = -1,					\
-+		.data.rate = {						\
-+			.fixed_rate = 40000000,				\
-+		},							\
-+	},								\
-+	{								\
-+		.name = "sd-25m",					\
-+		.type = UNIPHIER_CLK_TYPE_FIXED_RATE,			\
-+		.output_index = -1,					\
-+		.data.rate = {						\
-+			.fixed_rate = 25000000,				\
-+		},							\
-+	},								\
-+	{								\
-+		.name = "sd-22m",					\
-+		.type = UNIPHIER_CLK_TYPE_FIXED_RATE,			\
-+		.output_index = -1,					\
-+		.data.rate = {						\
-+			.fixed_rate = 22222222,				\
-+		},							\
-+	}
-+
-+
-+#define UNIPHIER_MIO_CLK_SD(ch, index)					\
-+	{								\
-+		.name = "sd" #ch "-clksel0",				\
-+		.type = UNIPHIER_CLK_TYPE_MUX,				\
-+		.output_index = -1,					\
-+		.data.mux = {						\
-+			.parent_names = {				\
-+				"sd-44m",				\
-+				"sd-33m",				\
-+				"sd-50m",				\
-+				"sd-67m",				\
-+			},						\
-+			.num_parents = 4,				\
-+			.reg = 0x30 + 0x200 * ch,			\
-+			.shift = 16,					\
-+		},							\
-+	},								\
-+	{								\
-+		.name = "sd" #ch "-clksel1",				\
-+		.type = UNIPHIER_CLK_TYPE_MUX,				\
-+		.output_index = -1,					\
-+		.data.mux = {						\
-+			.parent_names = {				\
-+				"sd-100m",				\
-+				"sd-40m",				\
-+				"sd-25m",				\
-+				"sd-22m",				\
-+			},						\
-+			.num_parents = 4,				\
-+			.reg = 0x30 + 0x200 * ch,			\
-+			.shift = 8,					\
-+		},							\
-+	},								\
-+	{								\
-+		.name = "sd" #ch "-clkmode",				\
-+		.type = UNIPHIER_CLK_TYPE_MUX,				\
-+		.output_index = -1,					\
-+		.data.mux = {						\
-+			.parent_names = {				\
-+				"sd" #ch "-clksel0",			\
-+				"sd" #ch "-clksel1",			\
-+			},						\
-+			.num_parents = 2,				\
-+			.reg = 0x30 + 0x200 * ch,			\
-+			.shift = 12,					\
-+		},							\
-+	},								\
-+	{								\
-+		.name = "sd" #ch "-clken",				\
-+		.type = UNIPHIER_CLK_TYPE_GATE,				\
-+		.output_index = -1,					\
-+		.data.gate = {						\
-+			.parent_name = "sd" #ch "-clkmode",		\
-+			.reg = 0x20 + 0x200 * ch,			\
-+			.bit_idx = 8,					\
-+		},							\
-+	},								\
-+	{								\
-+		.name = "sd" #ch "-bridge-reset",			\
-+		.type = UNIPHIER_CLK_TYPE_GATE,				\
-+		.output_index = -1,					\
-+		.data.gate = {						\
-+			.parent_name = "sd" #ch "-clken",		\
-+			.reg = 0x110 + 0x200 * ch,			\
-+			.bit_idx = 26,					\
-+		},							\
-+	},								\
-+	{								\
-+		.name = "sd" #ch,					\
-+		.type = UNIPHIER_CLK_TYPE_GATE,				\
-+		.output_index = (index),				\
-+		.data.gate = {						\
-+			.parent_name = "sd" #ch "-bridge-reset",	\
-+			.reg = 0x110 + 0x200 * ch,			\
-+			.bit_idx = 0,					\
-+		},							\
-+	}
-+
-+#define UNIPHIER_MIO_CLK_SD_HW_RESET(ch, index)				\
-+	{								\
-+		.name = "sd" #ch "-hw-reset",				\
-+		.type = UNIPHIER_CLK_TYPE_GATE,				\
-+		.output_index = (index),				\
-+		.data.gate = {						\
-+			.parent_name = NULL,				\
-+			.reg = 0x80 + 0x200 * ch,			\
-+			.bit_idx = 0,					\
-+		},							\
-+	}
-+
-+#define UNIPHIER_MIO_CLK_EHCI(ch, index)				\
-+	{								\
-+		.name = "ehci" #ch "-phy-clken",			\
-+		.type = UNIPHIER_CLK_TYPE_GATE,				\
-+		.output_index = -1,					\
-+		.data.gate = {						\
-+			.parent_name = UNIPHIER_CLK_EXT "ehci",		\
-+			.reg = 0x20 + 0x200 * ch,			\
-+			.bit_idx = 29,					\
-+		},							\
-+	},								\
-+	{								\
-+		.name = "ehci" #ch "-link-clken",			\
-+		.type = UNIPHIER_CLK_TYPE_GATE,				\
-+		.output_index = -1,					\
-+		.data.gate = {						\
-+			.parent_name = "ehci" #ch "-phy-clken",		\
-+			.reg = 0x20 + 0x200 * ch,			\
-+			.bit_idx = 28,					\
-+		},							\
-+	},								\
-+	{								\
-+		.name = "ehci" #ch "-bridge-reset",			\
-+		.type = UNIPHIER_CLK_TYPE_GATE,				\
-+		.output_index = -1,					\
-+		.data.gate = {						\
-+			.parent_name = "ehci" #ch "-link-clken",	\
-+			.reg = 0x110 + 0x200 * ch,			\
-+			.bit_idx = 24,					\
-+		},							\
-+	},								\
-+	{								\
-+		.name = "ehci" #ch,					\
-+		.type = UNIPHIER_CLK_TYPE_GATE,				\
-+		.output_index = (index),				\
-+		.data.gate = {						\
-+			.parent_name = "ehci" #ch "-bridge-reset",	\
-+			.reg = 0x114 + 0x200 * ch,			\
-+			.bit_idx = 0,					\
-+		},							\
-+	}
-+
-+#define UNIPHIER_MIO_CLK_DMAC(index)					\
-+	{								\
-+		.name = "miodmac-clken",				\
-+		.type = UNIPHIER_CLK_TYPE_GATE,				\
-+		.output_index = -1,					\
-+		.data.gate = {						\
-+			.parent_name = UNIPHIER_CLK_EXT "stdmac",	\
-+			.reg = 0x20,					\
-+			.bit_idx = 25,					\
-+		},							\
-+	},								\
-+	{								\
-+		.name = "miodmac",					\
-+		.type = UNIPHIER_CLK_TYPE_GATE,				\
-+		.output_index = (index),				\
-+		.data.gate = {						\
-+			.parent_name = "miodmac-clken",			\
-+			.reg = 0x110,					\
-+			.bit_idx = 17,					\
-+		},							\
-+	}
-+
-+static struct uniphier_clk_init_data ph1_sld3_mio_clk_idata[] __initdata = {
-+	UNIPHIER_MIO_CLK_SD_FIXED,
-+	UNIPHIER_MIO_CLK_SD(0, 0),
-+	UNIPHIER_MIO_CLK_SD(1, 1),
-+	UNIPHIER_MIO_CLK_SD_HW_RESET(0, 3),
-+	UNIPHIER_MIO_CLK_EHCI(0, 4),
-+	UNIPHIER_MIO_CLK_EHCI(1, 5),
-+	UNIPHIER_MIO_CLK_EHCI(2, 6),
-+	UNIPHIER_MIO_CLK_EHCI(3, 7),
-+	UNIPHIER_MIO_CLK_DMAC(8),
-+	{ /* sentinel */ }
-+};
-+
-+static struct uniphier_clk_init_data ph1_ld4_mio_clk_idata[] __initdata = {
-+	UNIPHIER_MIO_CLK_SD_FIXED,
-+	UNIPHIER_MIO_CLK_SD(0, 0),
-+	UNIPHIER_MIO_CLK_SD(1, 1),
-+	UNIPHIER_MIO_CLK_SD_HW_RESET(1, 3),
-+	UNIPHIER_MIO_CLK_EHCI(0, 4),
-+	UNIPHIER_MIO_CLK_EHCI(1, 5),
-+	UNIPHIER_MIO_CLK_EHCI(2, 6),
-+	UNIPHIER_MIO_CLK_DMAC(8),
-+	{ /* sentinel */ }
-+};
-+
-+static struct uniphier_clk_init_data ph1_pro4_mio_clk_idata[] __initdata = {
-+	UNIPHIER_MIO_CLK_SD_FIXED,
-+	UNIPHIER_MIO_CLK_SD(0, 0),
-+	UNIPHIER_MIO_CLK_SD(1, 1),
-+	UNIPHIER_MIO_CLK_SD(2, 2),
-+	UNIPHIER_MIO_CLK_SD_HW_RESET(1, 3),
-+	UNIPHIER_MIO_CLK_EHCI(0, 4),
-+	UNIPHIER_MIO_CLK_EHCI(1, 5),
-+	UNIPHIER_MIO_CLK_DMAC(8),
-+	{ /* sentinel */ }
-+};
-+
-+static struct uniphier_clk_init_data ph1_pro5_mio_clk_idata[] __initdata = {
-+	UNIPHIER_MIO_CLK_SD_FIXED,
-+	UNIPHIER_MIO_CLK_SD(0, 0),
-+	UNIPHIER_MIO_CLK_SD(1, 1),
-+	UNIPHIER_MIO_CLK_SD_HW_RESET(1, 3),
-+	{ /* sentinel */ }
-+};
-+
-+static void __init ph1_sld3_mio_clk_init(struct device_node *np)
-+{
-+	uniphier_clk_init(np, ph1_sld3_mio_clk_idata);
-+}
-+CLK_OF_DECLARE(ph1_sld3_mio_clk, "socionext,ph1-sld3-mioctrl",
-+	       ph1_sld3_mio_clk_init);
-+
-+static void __init ph1_ld4_mio_clk_init(struct device_node *np)
-+{
-+	uniphier_clk_init(np, ph1_ld4_mio_clk_idata);
-+}
-+CLK_OF_DECLARE(ph1_ld4_mio_clk, "socionext,ph1-ld4-mioctrl",
-+	       ph1_ld4_mio_clk_init);
-+CLK_OF_DECLARE(ph1_sld8_mio_clk, "socionext,ph1-sld8-mioctrl",
-+	       ph1_ld4_mio_clk_init);
-+
-+static void __init ph1_pro4_mio_clk_init(struct device_node *np)
-+{
-+	uniphier_clk_init(np, ph1_pro4_mio_clk_idata);
-+}
-+CLK_OF_DECLARE(ph1_pro4_mio_clk, "socionext,ph1-pro4-mioctrl",
-+	       ph1_pro4_mio_clk_init);
-+
-+static void __init ph1_pro5_mio_clk_init(struct device_node *np)
-+{
-+	uniphier_clk_init(np, ph1_pro5_mio_clk_idata);
-+}
-+CLK_OF_DECLARE(ph1_pro5_mio_clk, "socionext,ph1-pro5-mioctrl",
-+	       ph1_pro5_mio_clk_init);
-+CLK_OF_DECLARE(proxstream2_mio_clk, "socionext,proxstream2-mioctrl",
-+	       ph1_pro5_mio_clk_init);
-diff --git a/drivers/clk/uniphier/clk-uniphier-peri.c b/drivers/clk/uniphier/clk-uniphier-peri.c
-new file mode 100644
-index 0000000..adaae8e
---- /dev/null
-+++ b/drivers/clk/uniphier/clk-uniphier-peri.c
-@@ -0,0 +1,175 @@
-+/*
-+ * Copyright (C) 2015 Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
++/**
++ * struct mux_div_clk - combined mux/divider clock
++ * @reg_offset: offset of the mux/divider register
++ * @hid_width:	number of bits in half integer divider
++ * @hid_shift:	lowest bit of hid value field
++ * @src_width:	number of bits in source select
++ * @src_shift:	lowest bit of source select field
++ * @div:	the divider raw configuration value
++ * @src:	the mux index which will be used if the clock is enabled
++ * @safe_src:	the safe source mux value we switch to, while the main PLL is
++ *		reconfigured
++ * @safe_div:	the safe divider value that we set, while the main PLL is
++ *		reconfigured
++ * @parent_map:	pointer to parent_map struct
++ * @clkr:	handle between common and hardware-specific interfaces
++ * @clk_nb:	clock notifier registered for clock rate changes of the A53 PLL
 + */
 +
-+#include <linux/clk-provider.h>
-+
-+#include "clk-uniphier.h"
-+
-+#define UNIPHIER_PERI_CLK_UART(ch, index)			\
-+	{							\
-+		.name = "uart" #ch "-clken",			\
-+		.type = UNIPHIER_CLK_TYPE_GATE,			\
-+		.output_index = -1,				\
-+		.data.gate = {					\
-+			.parent_name = UNIPHIER_CLK_EXT "uart",	\
-+			.reg = 0x24,				\
-+			.bit_idx = 19 + ch,			\
-+		},						\
-+	},							\
-+	{							\
-+		.name = "uart" #ch,				\
-+		.type = UNIPHIER_CLK_TYPE_GATE,			\
-+		.output_index = (index),			\
-+		.data.gate = {					\
-+			.parent_name = "uart" #ch "-clken",	\
-+			.reg = 0x114,				\
-+			.bit_idx = 19 + ch,			\
-+		},						\
-+	}
-+
-+#define UNIPHIER_PERI_CLK_I2C_COMMON				\
-+	{							\
-+		.name = "i2c-clken",				\
-+		.type = UNIPHIER_CLK_TYPE_GATE,			\
-+		.output_index = -1,				\
-+		.data.gate = {					\
-+			.parent_name = UNIPHIER_CLK_EXT "i2c",	\
-+			.reg = 0x20,				\
-+			.bit_idx = 1,				\
-+		},						\
-+	},							\
-+	{							\
-+		.name = "i2c-reset",				\
-+		.type = UNIPHIER_CLK_TYPE_GATE,			\
-+		.output_index = -1,				\
-+		.data.gate = {					\
-+			.parent_name = "i2c-clken",		\
-+			.reg = 0x110,				\
-+			.bit_idx = 1,				\
-+		},						\
-+	}
-+
-+
-+#define UNIPHIER_PERI_CLK_I2C(ch, index)			\
-+	{							\
-+		.name = "i2c" #ch "-clken",			\
-+		.type = UNIPHIER_CLK_TYPE_GATE,			\
-+		.output_index = -1,				\
-+		.data.gate = {					\
-+			.parent_name = "i2c-reset",		\
-+			.reg = 0x24,				\
-+			.bit_idx = 5 + ch,			\
-+		},						\
-+	},							\
-+	{							\
-+		.name = "i2c" #ch,				\
-+		.type = UNIPHIER_CLK_TYPE_GATE,			\
-+		.output_index = (index),			\
-+		.data.gate = {					\
-+			.parent_name = "i2c" #ch "-clken",	\
-+			.reg = 0x114,				\
-+			.bit_idx = 5 + ch,			\
-+		},						\
-+	}
-+
-+#define UNIPHIER_PERI_CLK_FI2C(ch, index)			\
-+	{							\
-+		.name = "fi2c" #ch "-clken",			\
-+		.type = UNIPHIER_CLK_TYPE_GATE,			\
-+		.output_index = -1,				\
-+		.data.gate = {					\
-+			.parent_name = UNIPHIER_CLK_EXT "fi2c",	\
-+			.reg = 0x24,				\
-+			.bit_idx = 24 + ch,			\
-+		},						\
-+	},							\
-+	{							\
-+		.name = "fi2c" #ch,				\
-+		.type = UNIPHIER_CLK_TYPE_GATE,			\
-+		.output_index = index,				\
-+		.data.gate = {					\
-+			.parent_name = "fi2c" #ch "-clken",	\
-+			.reg = 0x114,				\
-+			.bit_idx = 24 + ch,			\
-+		},						\
-+	}
-+
-+static struct uniphier_clk_init_data ph1_ld4_peri_clk_idata[] __initdata = {
-+	UNIPHIER_PERI_CLK_UART(0, 0),
-+	UNIPHIER_PERI_CLK_UART(1, 1),
-+	UNIPHIER_PERI_CLK_UART(2, 2),
-+	UNIPHIER_PERI_CLK_UART(3, 3),
-+	UNIPHIER_PERI_CLK_I2C_COMMON,
-+	UNIPHIER_PERI_CLK_I2C(0, 4),
-+	UNIPHIER_PERI_CLK_I2C(1, 5),
-+	UNIPHIER_PERI_CLK_I2C(2, 6),
-+	UNIPHIER_PERI_CLK_I2C(3, 7),
-+	UNIPHIER_PERI_CLK_I2C(4, 8),
-+	{ /* sentinel */ }
++struct clk_regmap_mux_div {
++	u32				reg_offset;
++	u32				hid_width;
++	u32				hid_shift;
++	u32				src_width;
++	u32				src_shift;
++	u32				div;
++	u32				src;
++	u32				safe_src;
++	u32				safe_div;
++	const struct parent_map		*parent_map;
++	struct clk_regmap		clkr;
++	struct notifier_block		clk_nb;
 +};
 +
-+static struct uniphier_clk_init_data ph1_pro4_peri_clk_idata[] __initdata = {
-+	UNIPHIER_PERI_CLK_UART(0, 0),
-+	UNIPHIER_PERI_CLK_UART(1, 1),
-+	UNIPHIER_PERI_CLK_UART(2, 2),
-+	UNIPHIER_PERI_CLK_UART(3, 3),
-+	UNIPHIER_PERI_CLK_FI2C(0, 4),
-+	UNIPHIER_PERI_CLK_FI2C(1, 5),
-+	UNIPHIER_PERI_CLK_FI2C(2, 6),
-+	UNIPHIER_PERI_CLK_FI2C(3, 7),
-+	/* no I2C ch4 */
-+	UNIPHIER_PERI_CLK_FI2C(5, 9),
-+	UNIPHIER_PERI_CLK_FI2C(6, 10),
-+	{ /* sentinel */ }
-+};
++extern const struct clk_ops clk_regmap_mux_div_ops;
++int __mux_div_set_src_div(struct clk_regmap_mux_div *md, u32 src, u32 div);
 +
-+static struct uniphier_clk_init_data ph1_pro5_peri_clk_idata[] __initdata = {
-+	UNIPHIER_PERI_CLK_UART(0, 0),
-+	UNIPHIER_PERI_CLK_UART(1, 1),
-+	UNIPHIER_PERI_CLK_UART(2, 2),
-+	UNIPHIER_PERI_CLK_UART(3, 3),
-+	UNIPHIER_PERI_CLK_FI2C(0, 4),
-+	UNIPHIER_PERI_CLK_FI2C(1, 5),
-+	UNIPHIER_PERI_CLK_FI2C(2, 6),
-+	UNIPHIER_PERI_CLK_FI2C(3, 7),
-+	UNIPHIER_PERI_CLK_FI2C(4, 8),
-+	UNIPHIER_PERI_CLK_FI2C(5, 9),
-+	UNIPHIER_PERI_CLK_FI2C(6, 10),
-+	{ /* sentinel */ }
-+};
-+
-+static void __init ph1_ld4_peri_clk_init(struct device_node *np)
-+{
-+	uniphier_clk_init(np, ph1_ld4_peri_clk_idata);
-+}
-+CLK_OF_DECLARE(ph1_ld4_peri_clk, "socionext,ph1-ld4-perictrl",
-+	       ph1_ld4_peri_clk_init);
-+CLK_OF_DECLARE(ph1_sld8_peri_clk, "socionext,ph1-sld8-perictrl",
-+	       ph1_ld4_peri_clk_init);
-+
-+static void __init ph1_pro4_peri_clk_init(struct device_node *np)
-+{
-+	uniphier_clk_init(np, ph1_pro4_peri_clk_idata);
-+}
-+CLK_OF_DECLARE(ph1_pro4_peri_clk, "socionext,ph1-pro4-perictrl",
-+	       ph1_pro4_peri_clk_init);
-+
-+static void __init ph1_pro5_peri_clk_init(struct device_node *np)
-+{
-+	uniphier_clk_init(np, ph1_pro5_peri_clk_idata);
-+}
-+CLK_OF_DECLARE(ph1_pro5_peri_clk, "socionext,ph1-pro5-perictrl",
-+	       ph1_pro5_peri_clk_init);
-+CLK_OF_DECLARE(proxstream2_peri_clk, "socionext,proxstream2-perictrl",
-+	       ph1_pro5_peri_clk_init);
-diff --git a/drivers/clk/uniphier/clk-uniphier.h b/drivers/clk/uniphier/clk-uniphier.h
-new file mode 100644
-index 0000000..05277b6
---- /dev/null
-+++ b/drivers/clk/uniphier/clk-uniphier.h
-@@ -0,0 +1,68 @@
-+/*
-+ * Copyright (C) 2015 Masahiro Yamada <yamada.masahiro@socionext.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef __CLK_UNIPHIER_H__
-+#define __CLK_UNIPHIER_H__
-+
-+#include <linux/kernel.h>
-+
-+#define UNIPHIER_CLK_EXT	"[EXT]"
-+
-+enum uniphier_clk_type {
-+	UNIPHIER_CLK_TYPE_FIXED_FACTOR,
-+	UNIPHIER_CLK_TYPE_FIXED_RATE,
-+	UNIPHIER_CLK_TYPE_GATE,
-+	UNIPHIER_CLK_TYPE_MUX,
-+};
-+
-+struct uniphier_clk_fixed_factor_data {
-+	const char *parent_name;
-+	unsigned int mult;
-+	unsigned int div;
-+};
-+
-+struct uniphier_clk_fixed_rate_data {
-+	unsigned long fixed_rate;
-+};
-+
-+struct uniphier_clk_gate_data {
-+	const char *parent_name;
-+	unsigned int reg;
-+	u8 bit_idx;
-+};
-+
-+struct uniphier_clk_mux_data {
-+	const char *parent_names[4];
-+	u8 num_parents;
-+	unsigned int reg;
-+	u8 shift;
-+};
-+
-+struct uniphier_clk_init_data {
-+	const char *name;
-+	enum uniphier_clk_type type;
-+	int output_index;
-+	union {
-+		struct uniphier_clk_fixed_factor_data factor;
-+		struct uniphier_clk_fixed_rate_data rate;
-+		struct uniphier_clk_gate_data gate;
-+		struct uniphier_clk_mux_data mux;
-+	} data;
-+	struct clk *clk;
-+};
-+
-+int uniphier_clk_init(struct device_node *np,
-+		      struct uniphier_clk_init_data *idata);
-+
-+#endif /* __CLK_UNIPHIER_H__ */
--- 
-1.9.1
++#endif
