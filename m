@@ -1,319 +1,294 @@
-Return-Path: <tony@atomide.com>
-From: Tony Lindgren <tony@atomide.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Brian Hutchinson <b.hutchman@gmail.com>,
-	Delio Brignoli <dbrignoli@audioscience.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Matthijs van Duin <matthijsvanduin@gmail.com>,
-	Philipp Rosenberger <ilu@linutronix.de>,
-	Tero Kristo <t-kristo@ti.com>
-Subject: [PATCH 2/2] ARM: dts: Add clocks for dm814x ADPLL
-Date: Wed,  2 Dec 2015 17:35:04 -0800
-Message-Id: <1449106504-7645-3-git-send-email-tony@atomide.com>
-In-Reply-To: <1449106504-7645-1-git-send-email-tony@atomide.com>
-References: <1449106504-7645-1-git-send-email-tony@atomide.com>
+Return-Path: <xuejiancheng@hisilicon.com>
+Subject: Re: [PATCH v3 7/7] ARM: dts: add dts files for Hi3519
+To: Rob Herring <robh@kernel.org>
+References: <1449819921-18464-1-git-send-email-xuejiancheng@huawei.com>
+ <1449819921-18464-8-git-send-email-xuejiancheng@huawei.com>
+ <20151211162847.GC21272@rob-hp-laptop>
+CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <pawel.moll@arm.com>,
+        <mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
+        <galak@codeaurora.org>, <linux@arm.linux.org.uk>, <khilman@linaro.org>,
+        <arnd@arndb.de>, <olof@lixom.net>, <xuwei5@hisilicon.com>,
+        <haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+        <bintian.wang@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+        <yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+        <ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
+        <zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>
+From: xuejiancheng <xuejiancheng@huawei.com>
+Message-ID: <566E6301.6090701@huawei.com>
+Date: Mon, 14 Dec 2015 14:34:41 +0800
+MIME-Version: 1.0
+In-Reply-To: <20151211162847.GC21272@rob-hp-laptop>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-These use the standard clock bindings and now we can make some
-of the fixed clocks into real clocks.
+Hi Rob,
 
-Cc: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- arch/arm/boot/dts/dm814x-clocks.dtsi | 256 ++++++++++++++++++++++++++++++-----
- 1 file changed, 225 insertions(+), 31 deletions(-)
+On 2015/12/12 0:28, Rob Herring wrote:
+> On Fri, Dec 11, 2015 at 03:45:21PM +0800, Jiancheng Xue wrote:
+>> add dts files for Hi3519
+>>
+>> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+>> ---
+>>  arch/arm/boot/dts/Makefile        |   2 +
+>>  arch/arm/boot/dts/hi3519-demb.dts |  42 +++++++++++
+>>  arch/arm/boot/dts/hi3519.dtsi     | 142 ++++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 186 insertions(+)
+>>  create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
+>>  create mode 100644 arch/arm/boot/dts/hi3519.dtsi
+>>
+>> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+>> index 30bbc37..1ff3ed9 100644
+>> --- a/arch/arm/boot/dts/Makefile
+>> +++ b/arch/arm/boot/dts/Makefile
+>> @@ -135,6 +135,8 @@ dtb-$(CONFIG_ARCH_EXYNOS5) += \
+>>  	exynos5800-peach-pi.dtb
+>>  dtb-$(CONFIG_ARCH_HI3xxx) += \
+>>  	hi3620-hi4511.dtb
+>> +dtb-$(CONFIG_ARCH_HISI) += \
+>> +	hi3519-demb.dtb
+>>  dtb-$(CONFIG_ARCH_HIX5HD2) += \
+>>  	hisi-x5hd2-dkb.dtb
+>>  dtb-$(CONFIG_ARCH_HIGHBANK) += \
+>> diff --git a/arch/arm/boot/dts/hi3519-demb.dts b/arch/arm/boot/dts/hi3519-demb.dts
+>> new file mode 100644
+>> index 0000000..6991ab6
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/hi3519-demb.dts
+>> @@ -0,0 +1,42 @@
+>> +/*
+>> + * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
+>> + *
+>> + * This program is free software; you can redistribute  it and/or modify it
+>> + * under  the terms of  the GNU General  Public License as published by the
+>> + * Free Software Foundation;  either version 2 of the  License, or (at your
+>> + * option) any later version.
+>> + *
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+>> + * GNU General Public License for more details.
+>> + *
+>> + * You should have received a copy of the GNU General Public License
+>> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+>> + *
+>> + */
+>> +
+>> +/dts-v1/;
+>> +#include "hi3519.dtsi"
+>> +
+>> +/ {
+>> +	model = "HiSilicon HI3519 DEMO Board";
+>> +	compatible = "hisilicon,hi3519";
+>> +
+>> +	aliases {
+>> +		serial0 = &uart0;
+>> +	};
+>> +
+>> +	memory {
+>> +		device_type = "memory";
+>> +		reg = <0x80000000 0x40000000>;
+>> +	};
+>> +};
+>> +
+>> +&uart0 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&dual_timer0 {
+>> +	status = "okay";
+>> +};
+>> diff --git a/arch/arm/boot/dts/hi3519.dtsi b/arch/arm/boot/dts/hi3519.dtsi
+>> new file mode 100644
+>> index 0000000..50b736e
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/hi3519.dtsi
+>> @@ -0,0 +1,142 @@
+>> +/*
+>> + * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
+>> + *
+>> + * This program is free software; you can redistribute  it and/or modify it
+>> + * under  the terms of  the GNU General  Public License as published by the
+>> + * Free Software Foundation;  either version 2 of the  License, or (at your
+>> + * option) any later version.
+>> + *
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+>> + * GNU General Public License for more details.
+>> + *
+>> + * You should have received a copy of the GNU General Public License
+>> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+>> + *
+>> + */
+>> +
+>> +#include "skeleton.dtsi"
+> 
+> Don't include skeleton.dtsi. We've decided it was a bad idea.
 
-diff --git a/arch/arm/boot/dts/dm814x-clocks.dtsi b/arch/arm/boot/dts/dm814x-clocks.dtsi
-index 2600158..84fbfb1 100644
---- a/arch/arm/boot/dts/dm814x-clocks.dtsi
-+++ b/arch/arm/boot/dts/dm814x-clocks.dtsi
-@@ -4,6 +4,170 @@
-  * published by the Free Software Foundation.
-  */
- 
-+&pllss {
-+	/*
-+	 * See TRM "2.6.10 Connected outputso DPLLS" and
-+	 * "2.6.11 Connected Outputs of DPLLJ". Only clkout is
-+	 * connected except for hdmi and usb.
-+	 */
-+	adpll_mpu_ck: adpll@40 {
-+		#clock-cells = <1>;
-+		compatible = "ti,dm814-adpll-s-clock";
-+		reg = <0x40 0x40>;
-+		clocks = <&devosc_ck &devosc_ck &devosc_ck>;
-+		clock-names = "clkinp", "clkinpulow", "clkinphif";
-+		clock-indices = <0>, <1>, <2>, <3>;
-+		clock-output-names = "481c5040.adpll.dcoclkldo",
-+				     "481c5040.adpll.clkout",
-+				     "481c5040.adpll.clkoutx2",
-+				     "481c5040.adpll.clkouthif";
-+	};
-+
-+	adpll_dsp_ck: adpll@80 {
-+		#clock-cells = <1>;
-+		compatible = "ti,dm814-adpll-j-clock";
-+		reg = <0x80 0x30>;
-+		clocks = <&devosc_ck &devosc_ck>;
-+		clock-names = "clkinp", "clkinpulow";
-+		clock-indices = <0>, <1>, <2>;
-+		clock-output-names = "481c5080.adpll.clkdcoldo",
-+				     "481c5080.adpll.clkout",
-+				     "481c5080.adpll.clkoutldo";
-+	};
-+
-+	adpll_sgx_ck: adpll@b0 {
-+		#clock-cells = <1>;
-+		compatible = "ti,dm814-adpll-j-clock";
-+		reg = <0xb0 0x30>;
-+		clocks = <&devosc_ck &devosc_ck>;
-+		clock-names = "clkinp", "clkinpulow";
-+		clock-indices = <0>, <1>, <2>;
-+		clock-output-names = "481c50b0.adpll.clkdcoldo",
-+				     "481c50b0.adpll.clkout",
-+				     "481c50b0.adpll.clkoutldo";
-+	};
-+
-+	adpll_hdvic_ck: adpll@e0 {
-+		#clock-cells = <1>;
-+		compatible = "ti,dm814-adpll-j-clock";
-+		reg = <0xe0 0x30>;
-+		clocks = <&devosc_ck &devosc_ck>;
-+		clock-names = "clkinp", "clkinpulow";
-+		clock-indices = <0>, <1>, <2>;
-+		clock-output-names = "481c50e0.adpll.clkdcoldo",
-+				     "481c50e0.adpll.clkout",
-+				     "481c50e0.adpll.clkoutldo";
-+	};
-+
-+	adpll_l3_ck: adpll@110 {
-+		#clock-cells = <1>;
-+		compatible = "ti,dm814-adpll-j-clock";
-+		reg = <0x110 0x30>;
-+		clocks = <&devosc_ck &devosc_ck>;
-+		clock-names = "clkinp", "clkinpulow";
-+		clock-indices = <0>, <1>, <2>;
-+		clock-output-names = "481c5110.adpll.clkdcoldo",
-+				     "481c5110.adpll.clkout",
-+				     "481c5110.adpll.clkoutldo";
-+	};
-+
-+	adpll_isp_ck: adpll@140 {
-+		#clock-cells = <1>;
-+		compatible = "ti,dm814-adpll-j-clock";
-+		reg = <0x140 0x30>;
-+		clocks = <&devosc_ck &devosc_ck>;
-+		clock-names = "clkinp", "clkinpulow";
-+		clock-indices = <0>, <1>, <2>;
-+		clock-output-names = "481c5140.adpll.clkdcoldo",
-+				     "481c5140.adpll.clkout",
-+				     "481c5140.adpll.clkoutldo";
-+	};
-+
-+	adpll_dss_ck: adpll@170 {
-+		#clock-cells = <1>;
-+		compatible = "ti,dm814-adpll-j-clock";
-+		reg = <0x170 0x30>;
-+		clocks = <&devosc_ck &devosc_ck>;
-+		clock-names = "clkinp", "clkinpulow";
-+		clock-indices = <0>, <1>, <2>;
-+		clock-output-names = "481c5170.adpll.clkdcoldo",
-+				     "481c5170.adpll.clkout",
-+				     "481c5170.adpll.clkoutldo";
-+	};
-+
-+	adpll_video0_ck: adpll@1a0 {
-+		#clock-cells = <1>;
-+		compatible = "ti,dm814-adpll-j-clock";
-+		reg = <0x1a0 0x30>;
-+		clocks = <&devosc_ck &devosc_ck>;
-+		clock-names = "clkinp", "clkinpulow";
-+		clock-indices = <0>, <1>, <2>;
-+		clock-output-names = "481c51a0.adpll.clkdcoldo",
-+				     "481c51a0.adpll.clkout",
-+				     "481c51a0.adpll.clkoutldo";
-+	};
-+
-+	adpll_video1_ck: adpll@1d0 {
-+		#clock-cells = <1>;
-+		compatible = "ti,dm814-adpll-j-clock";
-+		reg = <0x1d0 0x30>;
-+		clocks = <&devosc_ck &devosc_ck>;
-+		clock-names = "clkinp", "clkinpulow";
-+		clock-indices = <0>, <1>, <2>;
-+		clock-output-names = "481c51d0.adpll.clkdcoldo",
-+				     "481c51d0.adpll.clkout",
-+				     "481c51d0.adpll.clkoutldo";
-+	};
-+
-+	adpll_hdmi_ck: adpll@200 {
-+		#clock-cells = <1>;
-+		compatible = "ti,dm814-adpll-j-clock";
-+		reg = <0x200 0x30>;
-+		clocks = <&devosc_ck &devosc_ck>;
-+		clock-names = "clkinp", "clkinpulow";
-+		clock-indices = <0>, <1>, <2>;
-+		clock-output-names = "481c5200.adpll.clkdcoldo",
-+				     "481c5200.adpll.clkout",
-+				     "481c5200.adpll.clkoutldo";
-+	};
-+
-+	adpll_audio_ck: adpll@230 {
-+		#clock-cells = <1>;
-+		compatible = "ti,dm814-adpll-j-clock";
-+		reg = <0x230 0x30>;
-+		clocks = <&devosc_ck &devosc_ck>;
-+		clock-names = "clkinp", "clkinpulow";
-+		clock-indices = <0>, <1>, <2>;
-+		clock-output-names = "481c5230.adpll.clkdcoldo",
-+				     "481c5230.adpll.clkout",
-+				     "481c5230.adpll.clkoutldo";
-+	};
-+
-+	adpll_usb_ck: adpll@260 {
-+		#clock-cells = <1>;
-+		compatible = "ti,dm814-adpll-j-clock";
-+		reg = <0x260 0x30>;
-+		clocks = <&devosc_ck &devosc_ck>;
-+		clock-names = "clkinp", "clkinpulow";
-+		clock-indices = <0>, <1>, <2>;
-+		clock-output-names = "481c5260.adpll.clkdcoldo",
-+				     "481c5260.adpll.clkout",
-+				     "481c5260.adpll.clkoutldo";
-+	};
-+
-+	adpll_ddr_ck: adpll@290 {
-+		#clock-cells = <1>;
-+		compatible = "ti,dm814-adpll-j-clock";
-+		reg = <0x290 0x30>;
-+		clocks = <&devosc_ck &devosc_ck>;
-+		clock-names = "clkinp", "clkinpulow";
-+		clock-indices = <0>, <1>, <2>;
-+		clock-output-names = "481c5290.adpll.clkdcoldo",
-+				     "481c5290.adpll.clkout",
-+				     "481c5290.adpll.clkoutldo";
-+	};
-+};
-+
- &pllss_clocks {
- 	timer1_fck: timer1_fck {
- 		#clock-cells = <0>;
-@@ -23,6 +187,24 @@
- 		reg = <0x2e0>;
- 	};
- 
-+	/* CPTS_RFT_CLK in RMII_REFCLK_SRC, usually sourced from auiod */
-+	cpsw_cpts_rft_clk: cpsw_cpts_rft_clk {
-+		#clock-cells = <0>;
-+		compatible = "ti,mux-clock";
-+		clocks = <&adpll_video0_ck 1
-+			  &adpll_video1_ck 1
-+			  &adpll_audio_ck 1>;
-+		ti,bit-shift = <1>;
-+		reg = <0x2e8>;
-+	};
-+
-+	/* REVISIT: Set up with a proper mux using RMII_REFCLK_SRC */
-+	cpsw_125mhz_gclk: cpsw_125mhz_gclk {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <125000000>;
-+	};
-+
- 	sysclk18_ck: sysclk18_ck {
- 		#clock-cells = <0>;
- 		compatible = "ti,mux-clock";
-@@ -79,37 +261,6 @@
- 		compatible = "fixed-clock";
- 		clock-frequency = <1000000000>;
- 	};
--
--	sysclk4_ck: sysclk4_ck {
--		#clock-cells = <0>;
--		compatible = "fixed-clock";
--		clock-frequency = <222000000>;
--	};
--
--	sysclk6_ck: sysclk6_ck {
--		#clock-cells = <0>;
--		compatible = "fixed-clock";
--		clock-frequency = <100000000>;
--	};
--
--	sysclk10_ck: sysclk10_ck {
--		#clock-cells = <0>;
--		compatible = "fixed-clock";
--		clock-frequency = <48000000>;
--	};
--
--        cpsw_125mhz_gclk: cpsw_125mhz_gclk {
--		#clock-cells = <0>;
--		compatible = "fixed-clock";
--		clock-frequency = <125000000>;
--	};
--
--	cpsw_cpts_rft_clk: cpsw_cpts_rft_clk {
--		#clock-cells = <0>;
--		compatible = "fixed-clock";
--		clock-frequency = <250000000>;
--	};
--
- };
- 
- &prcm_clocks {
-@@ -138,6 +289,49 @@
- 		clock-div = <78125>;
- 	};
- 
-+	/* L4_HS 220 MHz*/
-+	sysclk4_ck: sysclk4_ck {
-+		#clock-cells = <0>;
-+		compatible = "ti,fixed-factor-clock";
-+		clocks = <&adpll_l3_ck 1>;
-+		ti,clock-mult = <1>;
-+		ti,clock-div = <1>;
-+	};
-+
-+	/* L4_FWCFG */
-+	sysclk5_ck: sysclk5_ck {
-+		#clock-cells = <0>;
-+		compatible = "ti,fixed-factor-clock";
-+		clocks = <&adpll_l3_ck 1>;
-+		ti,clock-mult = <1>;
-+		ti,clock-div = <2>;
-+	};
-+
-+	/* L4_LS 110 MHz */
-+	sysclk6_ck: sysclk6_ck {
-+		#clock-cells = <0>;
-+		compatible = "ti,fixed-factor-clock";
-+		clocks = <&adpll_l3_ck 1>;
-+		ti,clock-mult = <1>;
-+		ti,clock-div = <2>;
-+	};
-+
-+	sysclk8_ck: sysclk8_ck {
-+		#clock-cells = <0>;
-+		compatible = "ti,fixed-factor-clock";
-+		clocks = <&adpll_usb_ck 1>;
-+		ti,clock-mult = <1>;
-+		ti,clock-div = <1>;
-+	};
-+
-+	sysclk10_ck: sysclk10_ck {
-+		compatible = "ti,divider-clock";
-+		reg = <0x324>;
-+		ti,max-div = <7>;
-+		#clock-cells = <0>;
-+		clocks = <&adpll_usb_ck 1>;
-+	};
-+
- 	aud_clkin0_ck: aud_clkin0_ck {
- 		#clock-cells = <0>;
- 		compatible = "fixed-clock";
--- 
-2.6.2
+OK.
+
+> 
+>> +#include <dt-bindings/clock/hi3519-clock.h>
+>> +/ {
+>> +	cpus {
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +
+>> +		cpu@0 {
+> 
+> Single core system? Add the other cpu nodes if not. Adding them doesn't 
+> have to be in sync with SMP kernel support.
+
+Hi3519 includes an A7 core and an A17 core. But it will run in AMP mode.
+The A17 core is reserved for customers for special use. We can treat the
+system as a single core system here.
+
+> 
+>> +			device_type = "cpu";
+>> +			compatible = "arm,cortex-a7";
+>> +			reg = <0>;
+>> +		};
+>> +	};
+>> +
+>> +	gic: interrupt-controller@10300000 {
+>> +		compatible = "arm,cortex-a7-gic";
+>> +		#interrupt-cells = <3>;
+>> +		interrupt-controller;
+>> +		reg = <0x10301000 0x1000>, <0x10302000 0x1000>;
+>> +	};
+>> +
+>> +	soc {
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>> +		compatible = "simple-bus";
+>> +		interrupt-parent = <&gic>;
+>> +		ranges;
+> 
+> Looks like everything is in 0x12xxxxxx range, so you should add actual 
+> translation here if that's the case.
+
+Other device nodes will be added later which are not in 0x12xxxxxx range.
+
+> 
+>> +
+>> +		amba {
+> 
+> Is this actually a separate bus in the physical design of the chip?
+> 
+>> +			#address-cells = <1>;
+>> +			#size-cells = <1>;
+>> +			compatible = "arm,amba-bus";
+> 
+> Just simple-bus. "arm,amba-bus" is not any type of bus, nor is it 
+> documented.
+
+OK. I will modify this. Thank you!
+
+> 
+>> +			ranges;
+>> +
+>> +			uart0: serial@12100000 {
+>> +				compatible = "arm,pl011", "arm,primecell";
+>> +				reg = <0x12100000 0x1000>;
+>> +				interrupts = <0 4 4>;
+>> +				clocks = <&crg HI3519_UART0_CLK>;
+>> +				clock-names = "apb_pclk";
+>> +				status = "disable";
+>> +			};
+>> +
+>> +			uart1: serial@12101000 {
+>> +				compatible = "arm,pl011", "arm,primecell";
+>> +				reg = <0x12101000 0x1000>;
+>> +				interrupts = <0 5 4>;
+>> +				clocks = <&crg HI3519_UART1_CLK>;
+>> +				clock-names = "apb_pclk";
+>> +				status = "disable";
+>> +			};
+>> +
+>> +			uart2: serial@12102000 {
+>> +				compatible = "arm,pl011", "arm,primecell";
+>> +				reg = <0x12102000 0x1000>;
+>> +				interrupts = <0 6 4>;
+>> +				clocks = <&crg HI3519_UART2_CLK>;
+>> +				clock-names = "apb_pclk";
+>> +				status = "disable";
+>> +			};
+>> +
+>> +			uart3: serial@12103000 {
+>> +				compatible = "arm,pl011", "arm,primecell";
+>> +				reg = <0x12103000 0x1000>;
+>> +				interrupts = <0 7 4>;
+>> +				clocks = <&crg HI3519_UART3_CLK>;
+>> +				clock-names = "apb_pclk";
+>> +				status = "disable";
+>> +			};
+>> +
+>> +			uart4: serial@12104000 {
+>> +				compatible = "arm,pl011", "arm,primecell";
+>> +				reg = <0x12104000 0x1000>;
+>> +				interrupts = <0 8 4>;
+>> +				clocks = <&crg HI3519_UART4_CLK>;
+>> +				clock-names = "apb_pclk";
+>> +				status = "disable";
+>> +			};
+>> +
+>> +			dual_timer0: timer@12000000 {
+>> +				compatible = "arm,sp804", "arm,primecell";
+>> +				interrupts = <0 64 4>, <0 65 4>;
+>> +				reg = <0x12000000 0x1000>;
+>> +				clocks = <&crg HI3519_FIXED_3M>;
+>> +				status = "disable";
+>> +			};
+>> +
+>> +			dual_timer1: timer@12001000 {
+>> +				compatible = "arm,sp804", "arm,primecell";
+>> +				interrupts = <0 66 4>, <0 67 4>;
+>> +				reg = <0x12001000 0x1000>;
+>> +				clocks = <&crg HI3519_FIXED_3M>;
+>> +				status = "disable";
+>> +			};
+>> +
+>> +			dual_timer2: timer@12002000 {
+>> +				compatible = "arm,sp804", "arm,primecell";
+>> +				interrupts = <0 68 4>, <0 69 4>;
+>> +				reg = <0x12002000 0x1000>;
+>> +				clocks = <&crg HI3519_FIXED_3M>;
+>> +				status = "disable";
+>> +			};
+>> +		};
+>> +
+>> +		sysctrl: system-controller@12020000 {
+>> +			compatible = "hisilicon,hi3519-sysctrl", "syscon";
+>> +			reg = <0x12020000 0x1000>;
+>> +		};
+>> +
+>> +		reboot {
+>> +			compatible = "syscon-reboot";
+>> +			regmap = <&sysctrl>;
+>> +			offset = <0x4>;
+>> +			mask = <0xdeadbeef>;
+>> +		};
+>> +
+>> +		crg: clock-reset-controller@12010000 {
+>> +			compatible = "hisilicon,hi3519-crg";
+>> +			#clock-cells = <1>;
+>> +			#reset-cells = <2>;
+>> +			reg = <0x12010000 0x10000>;
+>> +		};
+>> +	};
+>> +};
+>> -- 
+>> 1.9.1
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> .
+> 
+Many Thanks.
+
+Jiancheng.
