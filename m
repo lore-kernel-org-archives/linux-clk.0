@@ -1,60 +1,79 @@
-Return-Path: <s.nawrocki@samsung.com>
-To: Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
- linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [GIT PULL] clk/samsung updates for v4.5
-Message-id: <5671A456.9030203@samsung.com>
-Date: Wed, 16 Dec 2015 18:50:14 +0100
-MIME-version: 1.0
-Content-type: text/plain; charset=utf-8
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org
+Cc: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v6 0/2] Add initial support for RPM clocks
+Date: Tue, 15 Dec 2015 14:30:00 +0200
+Message-Id: <1450182602-6996-1-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+This patchset adds initial support for the clocks controlled by
+the RPM (Resource Power Manager) processor on Qualcomm platforms.
 
-The following changes since commit 9f9499ae8e6415cefc4fe0a96ad0e27864353c89:
+The RPM is a dedicated hardware engine for managing the shared
+SoC resources in order to keep the lowest power profile. It
+communicates with other hardware subsystems via shared memory
+and accepts clock requests, aggregates the requests and turns
+the clocks on/off or scales them on demand.
 
-  Linux 4.4-rc5 (2015-12-13 17:42:58 -0800)
+Until now the RPM clock controller was not supported and a hard-
+coded fixed-rate clocks were registered in the drivers. Now we
+are moving the on-board clocks to the DT (where they actually
+belong). If the RPM clock controller is enabled we insert it
+right after the DT clocks making it a parent of some GCC clocks.
 
-are available in the git repository at:
+Changes since v5 (https://lkml.org/lkml/2015/12/3/376)
+* Drop all DT patches as they are already picked.
+* Fix dependencies in Kconfig.
+* Minor changes.
 
-  git://linuxtv.org/snawrocki/samsung.git tags/clk-samsung-4.5
+Changes since v4 (https://lkml.org/lkml/2015/11/19/309)
+* Re-organize code into two separate drivers:
+  - clk-smd-rpm for RPM over SMD based clocks like msm8916
+  - clk-rpm for RPM based clocks like apq8064
+* Drop the patches that are already merged.
+* Added the extra compatible string to docs and example.
 
-for you to fetch changes up to c5e949c1c24d67ae2813afdf02408a9b0c6fe55c:
+Changes since v3 (https://lkml.org/lkml/2015/10/20/613)
+* Drop some of the patches as now we handle both scenarios -
+  RPMCC enabled or disabled.
+* Addressed more comments from Stephen. Thanks again!
 
-  clk: s3c2410: removed unneeded variable in s3c24xx_clkout_set_parent (2015-12-16 16:36:04 +0100)
+Changes since v2 (https://lkml.org/lkml/2015/8/3/513)
+* Addressed various comments from Stephen. Thanks!
+* Added sleep sets support.
+* Added a mutex in the RPM driver.
+* Support both scenarios - RPMCC enabled or disabled.
+* Make RPMCC more generic in order to support other SMD RPM
+  based platforms.
 
-----------------------------------------------------------------
-drivers/clk/samsung updates (mostly bug fixes):
- - instantiation of the cpu clocks and addition of the GSCL
-   IP parent clocks to the list of available consumer clocks
-   for exynos542x SoCs;
- - MFC IP parent clock fix for exynos542x;
- - fix of locking bug in samsung/clk-cpu.c which caused
-   system crashes with cpufreq enabled;
- - minor cleanup for s3c2410.
+Changes since v1 (https://lkml.org/lkml/2015/7/9/257):
+* Changed the driver name to clk-smd-rpm, also build it only
+  when it is needed - suggested by Srini and Bjorn.
+* More detailed binding example.
+* Minor changes.
 
-----------------------------------------------------------------
-Bartlomiej Zolnierkiewicz (1):
-      clk: samsung: exynos542x/5800: fix cpu clock configuration data
+Georgi Djakov (2):
+  clk: qcom: Add support for SMD-RPM Clocks
+  clk: qcom: Add support for RPM Clocks
 
-Marek Szyprowski (3):
-      clk: samsung: exynos542x: add missing parent GSCL block clocks
-      clk: samsung: exynos542x: fix MFC clock hierarchy parent
-      clk: exynos: use irqsave version of spin_lock to avoid deadlock with irqs
-
-Prasanna Karthik (1):
-      clk: s3c2410: removed unneeded variable in s3c24xx_clkout_set_parent
-
-Thomas Abraham (1):
-      clk: samsung: exynos5420: add cpu clock configuration data and instantiate cpu clock
-
- drivers/clk/samsung/clk-cpu.c          |   10 ++--
- drivers/clk/samsung/clk-exynos5420.c   |   98 +++++++++++++++++++++++++++++---
- drivers/clk/samsung/clk-s3c2410-dclk.c |    3 +-
- include/dt-bindings/clock/exynos5420.h |    4 ++
- 4 files changed, 102 insertions(+), 13 deletions(-)
-
--- 
-Thanks,
-Sylwester
+ .../devicetree/bindings/clock/qcom,rpmcc.txt       |   37 ++
+ drivers/clk/qcom/Kconfig                           |   29 ++
+ drivers/clk/qcom/Makefile                          |    2 +
+ drivers/clk/qcom/clk-rpm.c                         |  290 +++++++++++++
+ drivers/clk/qcom/clk-rpm.h                         |   71 ++++
+ drivers/clk/qcom/clk-smd-rpm.c                     |  433 ++++++++++++++++++++
+ drivers/clk/qcom/clk-smd-rpm.h                     |  142 +++++++
+ include/dt-bindings/clock/qcom,rpmcc.h             |   45 ++
+ 8 files changed, 1049 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+ create mode 100644 drivers/clk/qcom/clk-rpm.c
+ create mode 100644 drivers/clk/qcom/clk-rpm.h
+ create mode 100644 drivers/clk/qcom/clk-smd-rpm.c
+ create mode 100644 drivers/clk/qcom/clk-smd-rpm.h
+ create mode 100644 include/dt-bindings/clock/qcom,rpmcc.h
