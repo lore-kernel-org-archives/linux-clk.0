@@ -1,45 +1,72 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Bresticker <abrestic@chromium.org>,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 0/9] Tegra CLK Fixes
-Date: Thu, 10 Dec 2015 17:08:19 -0500
-Message-ID: <1449785308-19546-1-git-send-email-rklein@nvidia.com>
+Return-Path: <Ping.Bai@freescale.com>
+From: Bai Ping <b51503@freescale.com>
+To: <shawnguo@kernel.org>, <kernel@pengutronix.de>
+CC: <pawel.moll@arm.com>, <robh+dt@kernel.org>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v2 5/5] ARM: imx: Add msl code support for imx6qp
+Date: Tue, 15 Dec 2015 14:07:53 +0800
+Message-ID: <1450159673-27314-6-git-send-email-b51503@freescale.com>
+In-Reply-To: <1450159673-27314-1-git-send-email-b51503@freescale.com>
+References: <1450159673-27314-1-git-send-email-b51503@freescale.com>
+Return-Path: b51503@freescale.com
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch set fixes some issues found with the Tegra CLK drivers
-in testing. There are also a few patches which clean up the code
-and fix some naming issues.
+The i.MX6QP is a different SOC, but internally we treate
+it as i.MX6Q Rev_2.0 to maximum the code reusability. The chip
+silicon number we read from the ANADIG_DIGPROG is 0x630100. This
+patch add code to identify it as i.MX6QP Rev_1.0 when print out the
+silicon version.
 
-Andrew Bresticker (1):
-  clk: tegra: pll: Fix potential sleeping-while-atomic
+Signed-off-by: Bai Ping <b51503@freescale.com>
+---
+ arch/arm/mach-imx/anatop.c     | 5 ++++-
+ arch/arm/mach-imx/mach-imx6q.c | 8 ++++++--
+ 2 files changed, 10 insertions(+), 3 deletions(-)
 
-Mark Kuo (2):
-  clk: tegra: pll: Do not disable PLLE when under HW control
-  clk: tegra: pll: Fix PLLE SS config
-
-Rhyland Klein (6):
-  clk: tegra: Fix divider on VI_I2C
-  clk: tegra210: Remove improper flags for lock_enable
-  clk: tegra210: Fix naming of MISC registers
-  clk: tegra: Fix the misnaming of nvenc from msenc
-  clk: tegra210: fix pllx dyn step calculation
-  clk: tegra210: Initialize PLL_D2 to a sane rate
-
- drivers/clk/tegra/clk-pll.c          | 50 +++++++++++++--------
- drivers/clk/tegra/clk-tegra-periph.c |  4 +-
- drivers/clk/tegra/clk-tegra210.c     | 87 +++++++++++++++---------------------
- 3 files changed, 71 insertions(+), 70 deletions(-)
-
+diff --git a/arch/arm/mach-imx/anatop.c b/arch/arm/mach-imx/anatop.c
+index 231bb25..9622763 100644
+--- a/arch/arm/mach-imx/anatop.c
++++ b/arch/arm/mach-imx/anatop.c
+@@ -129,7 +129,10 @@ void __init imx_init_revision_from_anatop(void)
+ 
+ 	switch (digprog & 0xff) {
+ 	case 0:
+-		revision = IMX_CHIP_REVISION_1_0;
++		if (digprog >> 8 & 0x01)
++			revision = IMX_CHIP_REVISION_2_0;
++		else
++			revision = IMX_CHIP_REVISION_1_0;
+ 		break;
+ 	case 1:
+ 		revision = IMX_CHIP_REVISION_1_1;
+diff --git a/arch/arm/mach-imx/mach-imx6q.c b/arch/arm/mach-imx/mach-imx6q.c
+index 3878494b..cb27d56 100644
+--- a/arch/arm/mach-imx/mach-imx6q.c
++++ b/arch/arm/mach-imx/mach-imx6q.c
+@@ -266,8 +266,11 @@ static void __init imx6q_init_machine(void)
+ {
+ 	struct device *parent;
+ 
+-	imx_print_silicon_rev(cpu_is_imx6dl() ? "i.MX6DL" : "i.MX6Q",
+-			      imx_get_soc_revision());
++	if (cpu_is_imx6q() && imx_get_soc_revision() == IMX_CHIP_REVISION_2_0)
++		imx_print_silicon_rev("i.MX6QP", IMX_CHIP_REVISION_1_0);
++	else
++		imx_print_silicon_rev(cpu_is_imx6dl() ? "i.MX6DL" : "i.MX6Q",
++				imx_get_soc_revision());
+ 
+ 	parent = imx_soc_device_init();
+ 	if (parent == NULL)
+@@ -399,6 +402,7 @@ static void __init imx6q_init_irq(void)
+ static const char * const imx6q_dt_compat[] __initconst = {
+ 	"fsl,imx6dl",
+ 	"fsl,imx6q",
++	"fsl,imx6qp",
+ 	NULL,
+ };
+ 
 -- 
 1.9.1
