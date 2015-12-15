@@ -1,82 +1,112 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Rob Herring <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Olof Johansson <olof@lixom.net>, Eric Anholt <eric@anholt.net>, linux-clk <linux-clk@vger.kernel.org>, "Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>, linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>, linux-rpi-kernel@lists.infradead.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2 1/3] clk: bcm2835: Add bindings for the auxiliary peripheral clock gates.
-Date: Wed, 30 Dec 2015 10:29:02 +0100
-Message-ID: <1477432.fTm0GUZ57A@wuerfel>
-In-Reply-To: <CAL_JsqLu7=66jEuaezesEuoPsBBhRAT0UQcLVNOLVwkEvQacRA@mail.gmail.com>
-References: <1450222559-22461-1-git-send-email-eric@anholt.net> <20151228223935.25842.28675@quark.deferred.io> <CAL_JsqLu7=66jEuaezesEuoPsBBhRAT0UQcLVNOLVwkEvQacRA@mail.gmail.com>
+Return-Path: <Ping.Bai@freescale.com>
+From: Bai Ping <b51503@freescale.com>
+To: <shawnguo@kernel.org>, <kernel@pengutronix.de>
+CC: <pawel.moll@arm.com>, <robh+dt@kernel.org>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v2 3/5] ARM: dts: imx: Add basic dts support for imx6qp-sabreauto
+Date: Tue, 15 Dec 2015 14:07:51 +0800
+Message-ID: <1450159673-27314-4-git-send-email-b51503@freescale.com>
+In-Reply-To: <1450159673-27314-1-git-send-email-b51503@freescale.com>
+References: <1450159673-27314-1-git-send-email-b51503@freescale.com>
+Return-Path: b51503@freescale.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tuesday 29 December 2015 16:15:09 Rob Herring wrote:
-> On Mon, Dec 28, 2015 at 4:39 PM, Michael Turquette
-> <mturquette@baylibre.com> wrote:
-> > Quoting Eric Anholt (2015-12-24 15:45:15)
-> >> Michael Turquette <mturquette@baylibre.com> writes:
-> >> I would *love* to do that, but I've previously been told that having the
-> >> bindings patch reference a header file not present as of the bindings
-> >> patch is not acceptable and made to change it.
-> >
-> > Ugh, that is annoying. I would think that having code compile properly
-> > would trump the desire to have all of the documentation merged as one
-> > patch.
-> 
-> What about compiling the dts?
-> 
-> > On the other hand, I've been asked to not take binding descriptions
-> > through the clk tree. That is a policy that I'm happy to comply with,
-> > but it is at odds with the recommendation for the header and the binding
-> > description to be merged together.
-> 
-> By who? Any bindings in a series I always expect the subsystem
-> maintainers to take the whole series. That doesn't solve the problem
-> though as there is still a dependency between a subsystem tree and
-> arm-soc typically.
+This patch adds basic dts file for imx6qp-sabreauto board.
 
-I don't care too much which tree the binding description goes through either,
-as long as it is kept in sync.
+Signed-off-by: Bai Ping <b51503@freescale.com>
+---
+ arch/arm/boot/dts/Makefile             |  1 +
+ arch/arm/boot/dts/imx6qp-sabreauto.dts | 67 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 68 insertions(+)
+ create mode 100644 arch/arm/boot/dts/imx6qp-sabreauto.dts
 
-> > DT folks, what is the right way to do this? An immutable, shared branch
-> > just for a single header file solves the problem, but also feels very
-> > cumbersome for such a trivial issue.
-> 
-> Arnd and Olof have been complaining about this problem which is worse
-> when it is a binding, driver and dts.
-> 
-> I'm open to maintaining a branch for this purpose if that helps. That
-> or staggering merging of bindings and drivers/dts are the only ideas
-> I've come up with.
-
-
-> > How about allowing binding descriptions to be merged without the header
-> > file, so long as it is merged through another tree?
-> 
-> I think that is wrong if we have the goal to separate bindings from
-> the kernel and the bindings should stand on their own. However, if it
-> greatly simplifies things, i'd be okay with that.
-
-The header file is really the main issue we need to worry about. My preferred
-way of doing this would be to give it an extra merge window: add the binding
-document and the header file in one merge window, and then add the dts files
-and the driver one release later. I've seen a lot of header files added for
-no good reason at all, and at least that way we can get people to think about
-the dependency more.
-
-It's also ok to merge the header file and binding with either the dts file
-changes or the driver and then do the other part the following release.
-
-In the past, we've worked around the issue by merging the driver through
-arm-soc, or by merging the dts changes through a driver tree, with the
-appropriate Acks in each case. Both of those approaches work of course,
-but the former always feels awkward to me as we are not using the right
-maintainer path, and the latter approach tends to cause merge conflicts,
-especially when multiple headers for different subsystems get added or
-the dts files are added at the same time.
-
-Having a shared branch for the header file is another way to do it, and
-we can do that in some cases, but I'd prefer not to make it the default.
-
-	Arnd
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index dfba765..7996a51 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -329,6 +329,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
+ 	imx6q-phytec-pbab01.dtb \
+ 	imx6q-rex-pro.dtb \
+ 	imx6q-sabreauto.dtb \
++	imx6qp-sabreauto.dtb \
+ 	imx6q-sabrelite.dtb \
+ 	imx6q-sabresd.dtb \
+ 	imx6q-sbc6x.dtb \
+diff --git a/arch/arm/boot/dts/imx6qp-sabreauto.dts b/arch/arm/boot/dts/imx6qp-sabreauto.dts
+new file mode 100644
+index 0000000..b24aae6
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6qp-sabreauto.dts
+@@ -0,0 +1,67 @@
++/*
++ * Copyright (C) 2015 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "imx6q-sabreauto.dts"
++#include "imx6qp.dtsi"
++
++/ {
++	model = "Freescale i.MX6 Quad Plus SABRE Automotive Board";
++	compatible = "fsl,imx6qp-sabreauto", "fsl,imx6qp";
++};
++
++
++&fec {
++	pinctrl-assert-gpios = <&max7322 0 GPIO_ACTIVE_HIGH>;
++};
++
++&i2c2 {
++	max7322: gpio@68 {
++		compatible = "maxim,max7322";
++		reg = <0x68>;
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++};
++
++&iomuxc {
++	imx6qdl-sabreauto {
++		pinctrl_enet: enetgrp {
++			fsl,pins = <
++				MX6QDL_PAD_KEY_COL1__ENET_MDIO          0x1b0b0
++				MX6QDL_PAD_KEY_COL2__ENET_MDC           0x1b0b0
++				MX6QDL_PAD_RGMII_TXC__RGMII_TXC         0x1b018
++				MX6QDL_PAD_RGMII_TD0__RGMII_TD0         0x1b018
++				MX6QDL_PAD_RGMII_TD1__RGMII_TD1         0x1b018
++				MX6QDL_PAD_RGMII_TD2__RGMII_TD2         0x1b018
++				MX6QDL_PAD_RGMII_TD3__RGMII_TD3         0x1b018
++				MX6QDL_PAD_RGMII_TX_CTL__RGMII_TX_CTL   0x1b018
++				MX6QDL_PAD_RGMII_RXC__RGMII_RXC         0x1b018
++				MX6QDL_PAD_RGMII_RD0__RGMII_RD0         0x1b018
++				MX6QDL_PAD_RGMII_RD1__RGMII_RD1         0x1b018
++				MX6QDL_PAD_RGMII_RD2__RGMII_RD2         0x1b018
++				MX6QDL_PAD_RGMII_RD3__RGMII_RD3         0x1b018
++				MX6QDL_PAD_RGMII_RX_CTL__RGMII_RX_CTL   0x1b018
++				MX6QDL_PAD_GPIO_16__ENET_REF_CLK        0x4001b0a8
++				MX6QDL_PAD_GPIO_6__ENET_IRQ		0x000b1
++			>;
++		};
++	};
++};
++
++&pcie {
++	reset-gpio = <&max7310_c 5 GPIO_ACTIVE_LOW>;
++	status = "okay";
++};
++
++&sata {
++	status = "okay";
++};
++
++&vgen3_reg {
++	regulator-always-on;
++};
+-- 
+1.9.1
