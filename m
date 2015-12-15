@@ -1,425 +1,237 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [RFC 6/9] clk: ti: add support for omap4 module clocks
-Date: Fri, 18 Dec 2015 15:58:58 +0200
-Message-ID: <1450447141-29936-7-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
-References: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
+Return-Path: <Ping.Bai@freescale.com>
+From: Bai Ping <b51503@freescale.com>
+To: <shawnguo@kernel.org>, <kernel@pengutronix.de>
+CC: <pawel.moll@arm.com>, <robh+dt@kernel.org>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v2 1/5] ARM: dts: imx: Add basic dts support for imx6qp SOC
+Date: Tue, 15 Dec 2015 14:07:49 +0800
+Message-ID: <1450159673-27314-2-git-send-email-b51503@freescale.com>
+In-Reply-To: <1450159673-27314-1-git-send-email-b51503@freescale.com>
+References: <1450159673-27314-1-git-send-email-b51503@freescale.com>
+Return-Path: b51503@freescale.com
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Previously, hwmod core has been used for controlling the hwmod level
-clocks. This has certain drawbacks, like being unable to share the
-clocks for multiple users, missing usecounting and generally being
-totally incompatible with common clock framework.
+The i.MX6Quad Plus processor is an high performance SOC of i.MX6 family.
+It has enhanced graphics performance and increased overall memory bandwidth
+compared to i.MX6Q. Most of the design are same as i.MX6Quad/Dual, so code
+for i.MX6Quad can be resued by this chip. The revision number is identied as
+i.MX6Q Rev2.0, but actually it is a new chip, as we did many change to the
+overall architecture.
 
-Add support for new clock type under the TI clock driver, which will
-be used to convert all the existing hwmdo clocks to. This helps to
-get rid of the clock related hwmod data from kernel and instead
-parsing this from DT.
+This patch adds basic dtsi file support for the new i.MX6Quad Plus processor.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Bai Ping <b51503@freescale.com>
 ---
- drivers/clk/ti/Makefile   |    3 +-
- drivers/clk/ti/clkt_mod.c |  351 +++++++++++++++++++++++++++++++++++++++++++++
- include/linux/clk/ti.h    |    2 +
- 3 files changed, 355 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/ti/clkt_mod.c
+ arch/arm/boot/dts/imx6q.dtsi              |   2 +-
+ arch/arm/boot/dts/imx6qp.dtsi             | 157 ++++++++++++++++++++++++++++++
+ include/dt-bindings/clock/imx6qdl-clock.h |  16 ++-
+ 3 files changed, 173 insertions(+), 2 deletions(-)
+ create mode 100644 arch/arm/boot/dts/imx6qp.dtsi
 
-diff --git a/drivers/clk/ti/Makefile b/drivers/clk/ti/Makefile
-index d4ac960..d1b9d41 100644
---- a/drivers/clk/ti/Makefile
-+++ b/drivers/clk/ti/Makefile
-@@ -1,7 +1,8 @@
- obj-y					+= clk.o autoidle.o clockdomain.o
- clk-common				= dpll.o composite.o divider.o gate.o \
- 					  fixed-factor.o mux.o apll.o \
--					  clkt_dpll.o clkt_iclk.o clkt_dflt.o
-+					  clkt_dpll.o clkt_iclk.o clkt_dflt.o \
-+					  clkt_mod.o
- obj-$(CONFIG_SOC_AM33XX)		+= $(clk-common) clk-33xx.o dpll3xxx.o
- obj-$(CONFIG_SOC_TI81XX)		+= $(clk-common) fapll.o clk-814x.o clk-816x.o
- obj-$(CONFIG_ARCH_OMAP2)		+= $(clk-common) interface.o clk-2xxx.o
-diff --git a/drivers/clk/ti/clkt_mod.c b/drivers/clk/ti/clkt_mod.c
+diff --git a/arch/arm/boot/dts/imx6q.dtsi b/arch/arm/boot/dts/imx6q.dtsi
+index a266a56..e26d0fd 100644
+--- a/arch/arm/boot/dts/imx6q.dtsi
++++ b/arch/arm/boot/dts/imx6q.dtsi
+@@ -22,7 +22,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		cpu@0 {
++		cpu0: cpu@0 {
+ 			compatible = "arm,cortex-a9";
+ 			device_type = "cpu";
+ 			reg = <0>;
+diff --git a/arch/arm/boot/dts/imx6qp.dtsi b/arch/arm/boot/dts/imx6qp.dtsi
 new file mode 100644
-index 0000000..186d5f7
+index 0000000..e43751f
 --- /dev/null
-+++ b/drivers/clk/ti/clkt_mod.c
-@@ -0,0 +1,351 @@
++++ b/arch/arm/boot/dts/imx6qp.dtsi
+@@ -0,0 +1,157 @@
 +/*
-+ * OMAP hardware module clock support
-+ *
-+ * Copyright (C) 2015 Texas Instruments, Inc.
-+ *
-+ * Tero Kristo <t-kristo@ti.com>
++ * Copyright 2015 Freescale Semiconductor, Inc.
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
 + *
-+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-+ * kind, whether express or implied; without even the implied warranty
-+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
 + */
 +
-+#include <linux/clk-provider.h>
-+#include <linux/slab.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/clk/ti.h>
-+#include <linux/delay.h>
-+#include "clock.h"
++/ {
++	aliases {
++		pre0 = &pre1;
++		pre1 = &pre2;
++		pre2 = &pre3;
++		pre3 = &pre4;
++		prg0 = &prg1;
++		prg1 = &prg2;
++	};
 +
-+#undef pr_fmt
-+#define pr_fmt(fmt) "%s: " fmt, __func__
++	soc {
++		ocram_2: sram@00940000 {
++			compatible = "mmio-sram";
++			reg = <0x00940000 0x20000>;
++			clocks = <&clks IMX6QDL_CLK_OCRAM>;
++		};
 +
-+#define OMAP4_MODULEMODE_MASK		0x3
++		ocram_3: sram@00960000 {
++			compatible = "mmio-sram";
++			reg = <0x00960000 0x20000>;
++			clocks = <&clks IMX6QDL_CLK_OCRAM>;
++		};
 +
-+#define MODULEMODE_HWCTRL		0x1
-+#define MODULEMODE_SWCTRL		0x2
++		pcie: pcie@0x01000000 {
++			compatible = "fsl,imx6qp-pcie", "snps,dw-pcie";
++			reg = <0x01ffc000 0x4000>, <0x01f00000 0x80000>;
++			reg-names = "dbi", "config";
++			#address-cells = <3>;
++			#size-cells = <2>;
++			device_type = "pci";
++			ranges = <0x81000000 0 0          0x01f80000 0 0x00010000 /* downstream I/O */
++				  0x82000000 0 0x01000000 0x01000000 0 0x00f00000>; /* non-prefetchable memory */
++			num-lanes = <1>;
++			interrupts = <0 120 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "msi";
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 0x7>;
++			interrupt-map = <0 0 0 1 &intc 0 123 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 2 &intc 0 122 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 3 &intc 0 121 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 4 &intc 0 120 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&clks IMX6QDL_CLK_PCIE_REF_125M>,
++				 <&clks IMX6QDL_CLK_SATA_REF_100M>,
++				 <&clks IMX6QDL_CLK_LVDS1_GATE>, <&clks IMX6QDL_CLK_PCIE_AXI>;
++			clock-names = "pcie_phy", "ref_100m", "pcie_bus", "pcie";
++			status = "disabled";
++		};
 +
-+#define OMAP4_IDLEST_MASK		(0x3 << 16)
-+#define OMAP4_IDLEST_SHIFT		16
++		aips-bus@02100000 { /* AIPS2 */
++			pre1: pre@021c8000 {
++				compatible = "fsl,imx6q-pre";
++				reg = <0x021c8000 0x1000>;
++				clocks = <&clks IMX6QDL_CLK_PRE0>;
++				interrupts = <0 90 IRQ_TYPE_EDGE_RISING>;
++				ocram = <&ocram_2>;
++				status = "disabled";
++			};
 +
-+#define CLKCTRL_IDLEST_FUNCTIONAL	0x0
-+#define CLKCTRL_IDLEST_INTERFACE_IDLE	0x2
-+#define CLKCTRL_IDLEST_DISABLED		0x3
++			pre2: pre@021c9000 {
++				compatible = "fsl,imx6q-pre";
++				reg = <0x021c9000 0x1000>;
++				clocks = <&clks IMX6QDL_CLK_PRE1>;
++				interrupts = <0 97 IRQ_TYPE_EDGE_RISING>;
++				ocram = <&ocram_2>;
++				status = "disabled";
++			};
 +
-+#define OMAP4_MAX_MODULE_READY_TIME	2000
-+#define OMAP4_MAX_MODULE_DISABLE_TIME	5000
++			pre3: pre@021ca000 {
++				compatible = "fsl,imx6q-pre";
++				reg = <0x021ca000 0x1000>;
++				clocks = <&clks IMX6QDL_CLK_PRE2>;
++				interrupts = <0 98 IRQ_TYPE_EDGE_RISING>;
++				ocram = <&ocram_3>;
++				status = "disabled";
++			};
 +
-+static u32 _omap4_idlest(u32 val)
-+{
-+	val &= OMAP4_IDLEST_MASK;
-+	val >>= OMAP4_IDLEST_SHIFT;
++			pre4: pre@021cb000 {
++				compatible = "fsl,imx6q-pre";
++				reg = <0x021cb000 0x1000>;
++				clocks = <&clks IMX6QDL_CLK_PRE3>;
++				interrupts = <0 99 IRQ_TYPE_EDGE_RISING>;
++				ocram = <&ocram_3>;
++				status = "disabled";
++			};
 +
-+	return val;
-+}
++			prg1: prg@021cc000 {
++				compatible = "fsl,imx6q-prg";
++				reg = <0x021cc000 0x1000>;
++				clocks = <&clks IMX6QDL_CLK_PRG0_AXI>,
++					 <&clks IMX6QDL_CLK_PRG0_APB>;
++				clock-names = "axi", "apb";
++				gpr = <&gpr>;
++				status = "disabled";
++			};
 +
-+static bool _omap4_is_idle(u32 val)
-+{
-+	val = _omap4_idlest(val);
++			prg2: prg@021cd000 {
++				compatible = "fsl,imx6q-prg";
++				reg = <0x021cd000 0x1000>;
++				clocks = <&clks IMX6QDL_CLK_PRG1_AXI>,
++					 <&clks IMX6QDL_CLK_PRG1_APB>;
++				clock-names = "axi", "apb";
++				gpr = <&gpr>;
++				status = "disabled";
++			};
++		};
 +
-+	return val == CLKCTRL_IDLEST_DISABLED;
-+}
++		ipu1: ipu@02400000 {
++			compatible = "fsl,imx6qp-ipu", "fsl,imx6q-ipu";
++			clocks = <&clks IMX6QDL_CLK_IPU1>,
++				 <&clks IMX6QDL_CLK_IPU1_DI0>, <&clks IMX6QDL_CLK_IPU1_DI1>,
++				 <&clks IMX6QDL_CLK_IPU1_DI0_SEL>, <&clks IMX6QDL_CLK_IPU1_DI1_SEL>,
++				 <&clks IMX6QDL_CLK_LDB_DI0_PODF>, <&clks IMX6QDL_CLK_LDB_DI1_PODF>,
++				 <&clks IMX6QDL_CLK_PRG0_APB>;
++			clock-names = "bus",
++				      "di0", "di1",
++				      "di0_sel", "di1_sel",
++				      "ldb_di0", "ldb_di1", "prg";
++		};
 +
-+static bool _omap4_is_ready(u32 val)
-+{
-+	val = _omap4_idlest(val);
++		ipu2: ipu@02800000 {
++			compatible = "fsl,imx6qp-ipu", "fsl,imx6q-ipu";
++			clocks = <&clks IMX6QDL_CLK_IPU2>,
++				 <&clks IMX6QDL_CLK_IPU2_DI0>, <&clks IMX6QDL_CLK_IPU2_DI1>,
++				 <&clks IMX6QDL_CLK_IPU2_DI0_SEL>, <&clks IMX6QDL_CLK_IPU2_DI1_SEL>,
++				 <&clks IMX6QDL_CLK_LDB_DI0_PODF>, <&clks IMX6QDL_CLK_LDB_DI1_PODF>,
++				 <&clks IMX6QDL_CLK_PRG1_APB>;
++			clock-names = "bus",
++				      "di0", "di1",
++				      "di0_sel", "di1_sel",
++				      "ldb_di0", "ldb_di1", "prg";
++		};
 +
-+	return val == CLKCTRL_IDLEST_FUNCTIONAL ||
-+	       val == CLKCTRL_IDLEST_INTERFACE_IDLE;
-+}
-+
-+static int _omap4_hwmod_clk_enable(struct clk_hw *hw)
-+{
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	u32 val;
-+	int timeout = 0;
-+	int ret;
-+
-+	if (!clk->enable_bit)
-+		return 0;
-+
-+	if (clk->clkdm) {
-+		ret = ti_clk_ll_ops->clkdm_clk_enable(clk->clkdm, hw->clk);
-+		if (ret) {
-+			WARN(1,
-+			     "%s: could not enable %s's clockdomain %s: %d\n",
-+			     __func__, clk_hw_get_name(hw),
-+			     clk->clkdm_name, ret);
-+			return ret;
-+		}
-+	}
-+
-+	val = ti_clk_ll_ops->clk_readl(clk->enable_reg);
-+
-+	val &= ~OMAP4_MODULEMODE_MASK;
-+	val |= clk->enable_bit;
-+
-+	ti_clk_ll_ops->clk_writel(val, clk->enable_reg);
-+
-+	/* Wait until module is enabled */
-+	while (!_omap4_is_ready(val)) {
-+		udelay(1);
-+		timeout++;
-+		if (timeout > OMAP4_MAX_MODULE_READY_TIME) {
-+			pr_err("%s: failed to enable\n", clk_hw_get_name(hw));
-+			return -EBUSY;
-+		}
-+		val = ti_clk_ll_ops->clk_readl(clk->enable_reg);
-+	}
-+
-+	return 0;
-+}
-+
-+static void _omap4_hwmod_clk_disable(struct clk_hw *hw)
-+{
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	u32 val;
-+	int timeout = 0;
-+
-+	if (!clk->enable_bit)
-+		return;
-+
-+	val = ti_clk_ll_ops->clk_readl(clk->enable_reg);
-+
-+	val &= ~OMAP4_MODULEMODE_MASK;
-+
-+	ti_clk_ll_ops->clk_writel(val, clk->enable_reg);
-+
-+	/* Wait until module is disabled */
-+	while (!_omap4_is_idle(val)) {
-+		udelay(1);
-+		timeout++;
-+		if (timeout > OMAP4_MAX_MODULE_DISABLE_TIME) {
-+			pr_err("%s: failed to disable\n", clk_hw_get_name(hw));
-+			break;
-+		}
-+		val = ti_clk_ll_ops->clk_readl(clk->enable_reg);
-+	}
-+
-+	if (clk->clkdm)
-+		ti_clk_ll_ops->clkdm_clk_disable(clk->clkdm, hw->clk);
-+}
-+
-+static int _omap4_hwmod_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	u32 val;
-+
-+	val = ti_clk_ll_ops->clk_readl(clk->enable_reg);
-+
-+	if (val & clk->enable_bit)
-+		return 1;
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops omap4_module_clk_ops = {
-+	.enable		= _omap4_hwmod_clk_enable,
-+	.disable	= _omap4_hwmod_clk_disable,
-+	.is_enabled	= _omap4_hwmod_clk_is_enabled,
++		sata: sata@02200000 {
++			compatible = "fsl,imx6qp-ahci";
++			reg = <0x02200000 0x4000>;
++			interrupts = <0 39 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&clks IMX6QDL_CLK_SATA>,
++				 <&clks IMX6QDL_CLK_SATA_REF_100M>,
++				 <&clks IMX6QDL_CLK_AHB>;
++			clock-names = "sata", "sata_ref", "ahb";
++			status = "disabled";
++		};
++	};
 +};
 +
-+static void __init _of_ti_hwmod_clk_setup(struct device_node *node,
-+					  u8 modulemode)
-+{
-+	const char *parent_name;
-+	void __iomem *reg;
-+	u8 enable_bit;
-+	struct clk_hw_omap *clk_hw;
-+	struct clk_init_data init = { NULL };
-+	struct clk *clk;
-+
-+	reg = ti_clk_get_reg_addr(node, 0);
-+	if (IS_ERR(reg))
-+		return;
-+
-+	parent_name = of_clk_get_parent_name(node, 0);
-+	if (!parent_name) {
-+		pr_err("%s must have 1 parent\n", node->name);
-+		return;
-+	}
-+
-+	enable_bit = modulemode;
-+
-+	clk_hw = kzalloc(sizeof(*clk_hw), GFP_KERNEL);
-+
-+	clk_hw->enable_reg = reg;
-+	clk_hw->enable_bit = enable_bit;
-+
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+	init.flags = 0;
-+
-+	init.ops = &omap4_module_clk_ops;
-+	clk_hw->hw.init = &init;
-+	init.name = node->name;
-+
-+	clk = clk_register(NULL, &clk_hw->hw);
-+
-+	if (!IS_ERR(clk))
-+		of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+}
-+
-+static void __init of_ti_omap4_hwmod_clk_setup(struct device_node *node)
-+{
-+	_of_ti_hwmod_clk_setup(node, 0);
-+}
-+CLK_OF_DECLARE(ti_omap4_hwmod_clk, "ti,omap4-mod-clock",
-+	       of_ti_omap4_hwmod_clk_setup);
-+
-+static void __init of_ti_omap4_hwmod_hw_clk_setup(struct device_node *node)
-+{
-+	_of_ti_hwmod_clk_setup(node, MODULEMODE_HWCTRL);
-+}
-+CLK_OF_DECLARE(ti_omap4_hwmod_hw_clk, "ti,omap4-hw-mod-clock",
-+	       of_ti_omap4_hwmod_hw_clk_setup);
-+
-+static void __init of_ti_omap4_hwmod_sw_clk_setup(struct device_node *node)
-+{
-+	_of_ti_hwmod_clk_setup(node, MODULEMODE_SWCTRL);
-+}
-+
-+CLK_OF_DECLARE(ti_omap4_hwmod_sw_clk, "ti,omap4-sw-mod-clock",
-+	       of_ti_omap4_hwmod_sw_clk_setup);
-+
-+static u8 _omap4_mux_mod_get_parent(struct clk_hw *hw)
-+{
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	struct clk_hw *mux_hw = clk->mux;
-+
-+	__clk_hw_set_clk(mux_hw, hw);
-+
-+	return ti_clk_mux_get_parent(mux_hw);
-+}
-+
-+static int _omap4_mux_mod_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	struct clk_hw *mux_hw = clk->mux;
-+
-+	__clk_hw_set_clk(mux_hw, hw);
-+
-+	return ti_clk_mux_set_parent(mux_hw, index);
-+}
-+
-+static int _omap4_mux_mod_determine_rate(struct clk_hw *hw,
-+					 struct clk_rate_request *req)
-+{
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	struct clk_hw *mux_hw = clk->mux;
-+
-+	__clk_hw_set_clk(mux_hw, hw);
-+
-+	return __clk_mux_determine_rate(mux_hw, req);
-+}
-+
-+static const struct clk_ops omap4_mux_module_clk_ops = {
-+	.enable		= _omap4_hwmod_clk_enable,
-+	.disable	= _omap4_hwmod_clk_disable,
-+	.is_enabled	= _omap4_hwmod_clk_is_enabled,
-+	.get_parent	= _omap4_mux_mod_get_parent,
-+	.set_parent	= _omap4_mux_mod_set_parent,
-+	.determine_rate	= _omap4_mux_mod_determine_rate,
++&ldb {
++	compatible = "fsl,imx6qp-ldb", "fsl,imx6q-ldb", "fsl,imx53-ldb";
 +};
-+
-+static void __init _of_ti_omap4_hwmod_mux_clk_setup(struct device_node *node,
-+						    u8 modulemode)
-+{
-+	struct clk_hw_omap *gate;
-+	struct clk_mux *mux;
-+	int num_parents;
-+	const char **parent_names = NULL;
-+	u32 val;
-+	void __iomem *reg;
-+	struct clk *clk;
-+	struct clk_init_data init = { NULL };
-+
-+	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-+	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+
-+	if (!mux || !gate)
-+		goto err;
-+
-+	gate->mux = &mux->hw;
-+
-+	if (!of_property_read_u32(node, "ti,bit-shift", &val))
-+		mux->shift = val;
-+
-+	if (of_property_read_bool(node, "ti,index-starts-at-one"))
-+		mux->flags |= CLK_MUX_INDEX_ONE;
-+
-+	num_parents = of_clk_get_parent_count(node);
-+
-+	if (num_parents < 2) {
-+		pr_err("%s: must have parents\n", node->name);
-+		goto err;
-+	}
-+
-+	parent_names = kzalloc((sizeof(char *) * num_parents), GFP_KERNEL);
-+	if (!parent_names)
-+		goto err;
-+
-+	of_clk_parent_fill(node, parent_names, num_parents);
-+
-+	reg = ti_clk_get_reg_addr(node, 0);
-+
-+	if (IS_ERR(reg))
-+		goto err;
-+
-+	mux->reg = reg;
-+
-+	gate->enable_bit = modulemode;
-+	gate->enable_reg = reg;
-+
-+	init.parent_names = parent_names;
-+	init.num_parents = num_parents;
-+	init.flags = 0;
-+
-+	init.ops = &omap4_mux_module_clk_ops;
-+	gate->hw.init = &init;
-+	init.name = node->name;
-+
-+	clk = clk_register(NULL, &gate->hw);
-+
-+	if (!IS_ERR(clk)) {
-+		of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+		goto cleanup;
-+	}
-+err:
-+	kfree(gate);
-+	kfree(mux);
-+
-+cleanup:
-+	kfree(parent_names);
-+}
-+
-+static void __init of_ti_omap4_hwmod_mux_clk_setup(struct device_node *node)
-+{
-+	_of_ti_omap4_hwmod_mux_clk_setup(node, 0);
-+}
-+CLK_OF_DECLARE(ti_omap4_mux_hwmod_clk, "ti,omap4-mux-mod-clock",
-+	       of_ti_omap4_hwmod_mux_clk_setup);
-+
-+static void __init of_ti_omap4_hwmod_sw_mux_clk_setup(struct device_node *node)
-+{
-+	_of_ti_omap4_hwmod_mux_clk_setup(node, MODULEMODE_SWCTRL);
-+}
-+CLK_OF_DECLARE(ti_omap4_mux_hwmod_sw_clk, "ti,omap4-sw-mux-mod-clock",
-+	       of_ti_omap4_hwmod_sw_mux_clk_setup);
-+
-+static void __init of_ti_omap4_hwmod_hw_mux_clk_setup(struct device_node *node)
-+{
-+	_of_ti_omap4_hwmod_mux_clk_setup(node, MODULEMODE_HWCTRL);
-+}
-+CLK_OF_DECLARE(ti_omap4_mux_hwmod_hw_clk, "ti,omap4-hw-mux-mod-clock",
-+	       of_ti_omap4_hwmod_hw_mux_clk_setup);
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index ec5613a..5371dac 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -127,6 +127,7 @@ struct clk_hw_omap_ops {
-  * @enable_bit: bitshift to write to enable/disable the clock (see @enable_reg)
-  * @flags: see "struct clk.flags possibilities" above
-  * @clksel_reg: for clksel clks, register va containing src/divisor select
-+ * @mux: for module clocks, pointer to the optional mux component
-  * @dpll_data: for DPLLs, pointer to struct dpll_data for this clock
-  * @clkdm_name: clockdomain name that this clock is contained in
-  * @clkdm: pointer to struct clockdomain, resolved from @clkdm_name at runtime
-@@ -141,6 +142,7 @@ struct clk_hw_omap {
- 	u8			enable_bit;
- 	u8			flags;
- 	void __iomem		*clksel_reg;
-+	struct clk_hw		*mux;
- 	struct dpll_data	*dpll_data;
- 	const char		*clkdm_name;
- 	struct clockdomain	*clkdm;
+diff --git a/include/dt-bindings/clock/imx6qdl-clock.h b/include/dt-bindings/clock/imx6qdl-clock.h
+index 77985cc..2905033 100644
+--- a/include/dt-bindings/clock/imx6qdl-clock.h
++++ b/include/dt-bindings/clock/imx6qdl-clock.h
+@@ -255,6 +255,20 @@
+ #define IMX6QDL_CLK_CAAM_ACLK			242
+ #define IMX6QDL_CLK_CAAM_IPG			243
+ #define IMX6QDL_CLK_SPDIF_GCLK			244
+-#define IMX6QDL_CLK_END				245
++#define IMX6QDL_CLK_UART_SEL			245
++#define IMX6QDL_CLK_IPG_PER_SEL			246
++#define IMX6QDL_CLK_ECSPI_SEL			247
++#define IMX6QDL_CLK_CAN_SEL			248
++#define IMX6QDL_CLK_MMDC_CH1_AXI_CG		249
++#define IMX6QDL_CLK_PRE0			250
++#define IMX6QDL_CLK_PRE1			251
++#define IMX6QDL_CLK_PRE2			252
++#define IMX6QDL_CLK_PRE3			253
++#define IMX6QDL_CLK_PRG0_AXI			254
++#define IMX6QDL_CLK_PRG1_AXI			255
++#define IMX6QDL_CLK_PRG0_APB			256
++#define IMX6QDL_CLK_PRG1_APB			257
++#define IMX6QDL_CLK_PRE_AXI			258
++#define IMX6QDL_CLK_END				259
+ 
+ #endif /* __DT_BINDINGS_CLOCK_IMX6QDL_H */
 -- 
-1.7.9.5
+1.9.1
