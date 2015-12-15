@@ -1,49 +1,50 @@
-Return-Path: <jonathanh@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>
-CC: Rhyland Klein <rklein@nvidia.com>,
-	linux-clk@vger.kernel.org ,
-	linux-tegra@vger.kernel.org ,
-	linux-kernel@vger.kernel.org ,
-	Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 2/2] clk: tegra: Use definition for pll_u override bit
-Date: Mon, 21 Dec 2015 12:56:32 +0000
-Message-ID: <1450702592-7755-2-git-send-email-jonathanh@nvidia.com>
-In-Reply-To: <1450702592-7755-1-git-send-email-jonathanh@nvidia.com>
-References: <1450702592-7755-1-git-send-email-jonathanh@nvidia.com>
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+Subject: Re: [PATCH] clk:gcc-msm8916: add missing mss_q6_bimc_axi clock
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, sboyd@codeaurora.org
+References: <1449934749-26223-1-git-send-email-srinivas.kandagatla@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+Message-ID: <56701278.90306@linaro.org>
+Date: Tue, 15 Dec 2015 15:15:36 +0200
 MIME-Version: 1.0
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain
+In-Reply-To: <1449934749-26223-1-git-send-email-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-The definition, PLLU_BASE_OVERRIDE, for the pll_u OVERRIDE bit is defined
-but not used and when the OVERRIDE bit is cleared in tegra210_pll_init()
-the code directly uses the bit number. Therefore, use the definition,
-PLLU_BASE_OVERRIDE when clearing the OVERRIDE bit.
+Hi Srini,
+Thanks for the patch.
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- drivers/clk/tegra/clk-tegra210.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 12/12/2015 05:39 PM, Srinivas Kandagatla wrote:
+> This clock is required for loading the qdsp firmware.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>  drivers/clk/qcom/gcc-msm8916.c               | 18 ++++++++++++++++++
+>  include/dt-bindings/clock/qcom,gcc-msm8916.h |  1 +
+>  2 files changed, 19 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
+> index e3bf09d..1ec5a27 100644
+> --- a/drivers/clk/qcom/gcc-msm8916.c
+> +++ b/drivers/clk/qcom/gcc-msm8916.c
+> @@ -2590,6 +2590,23 @@ static struct clk_branch gcc_mss_cfg_ahb_clk = {
+>  	},
+>  };
+>  
+> +static struct clk_branch gcc_mss_q6_bimc_axi_clk = {
+> +	.halt_reg = 0x49004,
+> +	.clkr = {
+> +		.enable_reg = 0x49004,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "gcc_mss_q6_bimc_axi_clk",
+> +			.parent_names = (const char *[]){
+> +				"pcnoc_bfdcd_clk_src",
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 791215747863..6f043c5e2394 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2520,7 +2520,7 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
- 
- 	/* PLLU_VCO */
- 	val = readl(clk_base + pll_u_vco_params.base_reg);
--	val &= ~BIT(24); /* disable PLLU_OVERRIDE */
-+	val &= ~PLLU_BASE_OVERRIDE; /* disable PLLU_OVERRIDE */
- 	writel(val, clk_base + pll_u_vco_params.base_reg);
- 
- 	clk = tegra_clk_register_pllre("pll_u_vco", "pll_ref", clk_base, pmc,
--- 
-2.1.4
+Looks like the parent should be bimc_ddr_clk_src.
+Otherwise looks fine to me.
+
+BR,
+Georgi
