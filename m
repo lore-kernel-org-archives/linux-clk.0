@@ -1,140 +1,450 @@
-Return-Path: <scottwood@freescale.com>
-Message-ID: <1449521078.15946.91.camel@freescale.com>
-Subject: Re: [PATCH v3 4/5] clk: Add consumer APIs for discovering possible
- parent clocks
-From: Scott Wood <scottwood@freescale.com>
-To: Russell King <linux@arm.linux.org.uk>
-CC: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
-	<mturquette@baylibre.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "Viresh
- Kumar" <viresh.kumar@linaro.org>, <linux-clk@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-arm-kernel@lists.infradead.org>, Tang Yuantian
-	<Yuantian.Tang@freescale.com>
-Date: Mon, 7 Dec 2015 14:44:38 -0600
-In-Reply-To: <1444939412.5185.267.camel@freescale.com>
-References: <1442723397-26329-1-git-send-email-scottwood@freescale.com>
-	 <1442723397-26329-5-git-send-email-scottwood@freescale.com>
-	 <1444939412.5185.267.camel@freescale.com>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Return-Path: scottwood@freescale.com
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org
+Cc: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v6 2/2] clk: qcom: Add support for RPM Clocks
+Date: Tue, 15 Dec 2015 14:30:02 +0200
+Message-Id: <1450182602-6996-3-git-send-email-georgi.djakov@linaro.org>
+In-Reply-To: <1450182602-6996-1-git-send-email-georgi.djakov@linaro.org>
+References: <1450182602-6996-1-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2015-10-15 at 15:03 -0500, Scott Wood wrote:
-> On Sat, 2015-09-19 at 23:29 -0500, Scott Wood wrote:
-> > Commit fc4a05d4b0eb ("clk: Remove unused provider APIs") removed
-> > __clk_get_num_parents() and clk_hw_get_parent_by_index(), leaving only
-> > true provider API versions that operate on struct clk_hw.
-> > 
-> > qoriq-cpufreq needs these functions in order to determine the options
-> > it has for calling clk_set_parent() and thus populate the cpufreq
-> > table, so revive them as legitimate consumer APIs.
-> > 
-> > Signed-off-by: Scott Wood <scottwood@freescale.com>
-> > ---
-> > v3: new patch
-> > 
-> >  drivers/clk/clk.c   | 19 +++++++++++++++++++
-> >  include/linux/clk.h | 31 +++++++++++++++++++++++++++++++
-> >  2 files changed, 50 insertions(+)
-> 
-> Russell, could you ACK this if there are no objections?
-> 
-> Thanks,
-> Scott
+This adds initial support for clocks controlled by the Resource
+Power Manager (RPM) processor on some Qualcomm SoCs, which use
+the qcom_rpm driver to communicate with RPM.
+Such platforms are apq8064 and msm8960.
 
-ping?
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+ .../devicetree/bindings/clock/qcom,rpmcc.txt       |    1 +
+ drivers/clk/qcom/Kconfig                           |   13 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/clk-rpm.c                         |  290 ++++++++++++++++++++
+ drivers/clk/qcom/clk-rpm.h                         |   71 +++++
+ 5 files changed, 376 insertions(+)
+ create mode 100644 drivers/clk/qcom/clk-rpm.c
+ create mode 100644 drivers/clk/qcom/clk-rpm.h
 
--Scott
-
-> 
-> > 
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index 43e2c3a..9436356 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -290,6 +290,12 @@ struct clk_hw *__clk_get_hw(struct clk *clk)
-> >  }
-> >  EXPORT_SYMBOL_GPL(__clk_get_hw);
-> >  
-> > +unsigned int clk_get_num_parents(struct clk *clk)
-> > +{
-> > +     return !clk ? 0 : clk->core->num_parents;
-> > +}
-> > +EXPORT_SYMBOL_GPL(clk_get_num_parents);
-> > +
-> >  unsigned int clk_hw_get_num_parents(const struct clk_hw *hw)
-> >  {
-> >       return hw->core->num_parents;
-> > @@ -359,6 +365,19 @@ static struct clk_core 
-> > *clk_core_get_parent_by_index(struct clk_core *core,
-> >               return core->parents[index];
-> >  }
-> >  
-> > +struct clk *clk_get_parent_by_index(struct clk *clk, unsigned int index)
-> > +{
-> > +     struct clk_core *parent;
-> > +
-> > +     if (!clk)
-> > +             return NULL;
-> > +
-> > +     parent = clk_core_get_parent_by_index(clk->core, index);
-> > +
-> > +     return !parent ? NULL : parent->hw->clk;
-> > +}
-> > +EXPORT_SYMBOL_GPL(clk_get_parent_by_index);
-> > +
-> >  struct clk_hw *
-> >  clk_hw_get_parent_by_index(const struct clk_hw *hw, unsigned int index)
-> >  {
-> > diff --git a/include/linux/clk.h b/include/linux/clk.h
-> > index 0df4a51..937de0e 100644
-> > --- a/include/linux/clk.h
-> > +++ b/include/linux/clk.h
-> > @@ -392,6 +392,26 @@ int clk_set_parent(struct clk *clk, struct clk 
-> > *parent);
-> >  struct clk *clk_get_parent(struct clk *clk);
-> >  
-> >  /**
-> > + * clk_get_parent_by_index - get a possible parent clock by index
-> > + * @clk: clock source
-> > + * @index: index into the array of possible parents of this clock
-> > + *
-> > + * Returns struct clk corresponding to the requested possible
-> > + * parent clock source, or NULL.
-> > + */
-> > +struct clk *clk_get_parent_by_index(struct clk *clk,
-> > +                                 unsigned int index);
-> > +
-> > +/**
-> > + * clk_get_num_parents - get number of possible parents
-> > + * @clk: clock source
-> > + *
-> > + * Returns the number of possible parents of this clock,
-> > + * which can then be enumerated using clk_get_parent_by_index().
-> > + */
-> > +unsigned int clk_get_num_parents(struct clk *clk);
-> > +
-> > +/**
-> >   * clk_get_sys - get a clock based upon the device name
-> >   * @dev_id: device name
-> >   * @con_id: connection ID
-> > @@ -461,6 +481,17 @@ static inline struct clk *clk_get_parent(struct clk 
-> > *clk)
-> >       return NULL;
-> >  }
-> >  
-> > +struct clk *clk_get_parent_by_index(struct clk *clk,
-> > +                                 unsigned int index)
-> > +{
-> > +     return NULL;
-> > +}
-> > +
-> > +unsigned int clk_get_num_parents(struct clk *clk)
-> > +{
-> > +     return 0;
-> > +}
-> > +
-> >  #endif
-> >  
-> >  /* clk_prepare_enable helps cases using clk_enable in non-atomic context.
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+index 91be034ea75b..7f7ce1f042fd 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+@@ -11,6 +11,7 @@ Required properties :
+                compatible "qcom,rpmcc" should be also included.
+ 
+ 			"qcom,rpmcc-msm8916", "qcom,rpmcc"
++			"qcom,rpmcc-apq8064", "qcom,rpmcc"
+ 
+ - #clock-cells : shall contain 1
+ 
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 5963d36f0c45..748123893958 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -25,6 +25,19 @@ config QCOM_CLK_SMD_RPM
+ 	  Say Y if you want to support the clocks exposed by the RPM on
+ 	  platforms such as apq8016, apq8084, msm8974 etc.
+ 
++config QCOM_CLK_RPM
++	tristate "RPM based Clock Controller"
++	depends on COMMON_CLK_QCOM && MFD_QCOM_RPM
++	select QCOM_RPMCC
++	help
++	  The RPM (Resource Power Manager) is a dedicated hardware engine for
++	  managing the shared SoC resources in order to keep the lowest power
++	  profile. It communicates with other hardware subsystems via shared
++	  memory and accepts clock requests, aggregates the requests and turns
++	  the clocks on/off or scales them on demand.
++	  Say Y if you want to support the clocks exposed by the RPM on
++	  platforms such as apq8064, msm8660, msm8960 etc.
++
+ config APQ_GCC_8084
+ 	tristate "APQ8084 Global Clock Controller"
+ 	select QCOM_GDSC
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 5f4673b7b03a..25bf2f81d58a 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -26,3 +26,4 @@ obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
+ obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
+ obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
+ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
++obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
+diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
+new file mode 100644
+index 000000000000..7b0e85eefe70
+--- /dev/null
++++ b/drivers/clk/qcom/clk-rpm.c
+@@ -0,0 +1,290 @@
++/*
++ * Copyright (c) 2015, Linaro Limited
++ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/export.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/mfd/qcom_rpm.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++
++#include "clk-rpm.h"
++#include <dt-bindings/mfd/qcom-rpm.h>
++
++#define to_clk_rpm(_hw) container_of(_hw, struct clk_rpm, hw)
++
++static DEFINE_MUTEX(rpm_clk_lock);
++
++static int clk_rpm_set_rate_active(struct clk_rpm *r, unsigned long rate)
++{
++	u32 value = DIV_ROUND_UP(rate, 1000); /* to kHz */
++
++	return qcom_rpm_write(r->rpm, QCOM_RPM_ACTIVE_STATE,
++			      r->rpm_clk_id, &value, 1);
++}
++
++static int clk_rpm_prepare(struct clk_hw *hw)
++{
++	struct clk_rpm *r = to_clk_rpm(hw);
++	unsigned long rate = r->rate;
++	int ret = 0;
++
++	mutex_lock(&rpm_clk_lock);
++
++	if (!rate)
++		goto out;
++
++	if (r->branch)
++		rate = !!rate;
++
++	ret = clk_rpm_set_rate_active(r, rate);
++
++	if (ret)
++		goto out;
++
++out:
++	if (!ret)
++		r->enabled = true;
++
++	mutex_unlock(&rpm_clk_lock);
++
++	return ret;
++}
++
++static void clk_rpm_unprepare(struct clk_hw *hw)
++{
++	struct clk_rpm *r = to_clk_rpm(hw);
++	int ret;
++
++	mutex_lock(&rpm_clk_lock);
++
++	if (!r->rate)
++		goto out;
++
++	ret = clk_rpm_set_rate_active(r, r->rate);
++	if (ret)
++		goto out;
++
++	r->enabled = false;
++
++out:
++	mutex_unlock(&rpm_clk_lock);
++}
++
++static int clk_rpm_set_rate(struct clk_hw *hw,
++			    unsigned long rate, unsigned long parent_rate)
++{
++	struct clk_rpm *r = to_clk_rpm(hw);
++	int ret = 0;
++
++	mutex_lock(&rpm_clk_lock);
++
++	if (r->enabled)
++		ret = clk_rpm_set_rate_active(r, rate);
++
++	if (!ret)
++		r->rate = rate;
++
++	mutex_unlock(&rpm_clk_lock);
++
++	return ret;
++}
++
++static long clk_rpm_round_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *parent_rate)
++{
++	/*
++	 * RPM handles rate rounding and we don't have a way to
++	 * know what the rate will be, so just return whatever
++	 * rate is requested.
++	 */
++	return rate;
++}
++
++static unsigned long clk_rpm_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate)
++{
++	struct clk_rpm *r = to_clk_rpm(hw);
++
++	/*
++	 * RPM handles rate rounding and we don't have a way to
++	 * know what the rate will be, so just return whatever
++	 * rate was set.
++	 */
++	return r->rate;
++}
++
++const struct clk_ops clk_rpm_ops = {
++	.prepare	= clk_rpm_prepare,
++	.unprepare	= clk_rpm_unprepare,
++	.set_rate	= clk_rpm_set_rate,
++	.round_rate	= clk_rpm_round_rate,
++	.recalc_rate	= clk_rpm_recalc_rate,
++};
++EXPORT_SYMBOL_GPL(clk_rpm_ops);
++
++const struct clk_ops clk_rpm_branch_ops = {
++	.prepare	= clk_rpm_prepare,
++	.unprepare	= clk_rpm_unprepare,
++	.round_rate	= clk_rpm_round_rate,
++	.recalc_rate	= clk_rpm_recalc_rate,
++};
++EXPORT_SYMBOL_GPL(clk_rpm_branch_ops);
++
++struct rpm_cc {
++	struct qcom_rpm *rpm;
++	struct clk_onecell_data data;
++	struct clk *clks[];
++};
++
++struct rpm_clk_desc {
++	struct clk_rpm **clks;
++	size_t num_clks;
++};
++
++/* apq8064 */
++DEFINE_CLK_RPM_PXO_BRANCH(apq8064, pxo, QCOM_RPM_PXO_CLK, 27000000);
++DEFINE_CLK_RPM_CXO_BRANCH(apq8064, cxo, QCOM_RPM_CXO_CLK, 19200000);
++DEFINE_CLK_RPM(apq8064, afab_clk, QCOM_RPM_APPS_FABRIC_CLK);
++DEFINE_CLK_RPM(apq8064, cfpb_clk, QCOM_RPM_CFPB_CLK);
++DEFINE_CLK_RPM(apq8064, daytona_clk, QCOM_RPM_DAYTONA_FABRIC_CLK);
++DEFINE_CLK_RPM(apq8064, ebi1_clk, QCOM_RPM_EBI1_CLK);
++DEFINE_CLK_RPM(apq8064, mmfab_clk, QCOM_RPM_MM_FABRIC_CLK);
++DEFINE_CLK_RPM(apq8064, mmfpb_clk, QCOM_RPM_MMFPB_CLK);
++DEFINE_CLK_RPM(apq8064, sfab_clk, QCOM_RPM_SYS_FABRIC_CLK);
++DEFINE_CLK_RPM(apq8064, sfpb_clk, QCOM_RPM_SFPB_CLK);
++DEFINE_CLK_RPM(apq8064, qdss_clk, QCOM_RPM_QDSS_CLK);
++
++static struct clk_rpm *apq8064_clks[] = {
++	[QCOM_RPM_PXO_CLK] = &apq8064_pxo,
++	[QCOM_RPM_CXO_CLK] = &apq8064_cxo,
++	[QCOM_RPM_APPS_FABRIC_CLK] = &apq8064_afab_clk,
++	[QCOM_RPM_CFPB_CLK] = &apq8064_cfpb_clk,
++	[QCOM_RPM_DAYTONA_FABRIC_CLK] = &apq8064_daytona_clk,
++	[QCOM_RPM_EBI1_CLK] = &apq8064_ebi1_clk,
++	[QCOM_RPM_MM_FABRIC_CLK] = &apq8064_mmfab_clk,
++	[QCOM_RPM_MMFPB_CLK] = &apq8064_mmfpb_clk,
++	[QCOM_RPM_SYS_FABRIC_CLK] = &apq8064_sfab_clk,
++	[QCOM_RPM_SFPB_CLK] = &apq8064_sfpb_clk,
++	[QCOM_RPM_QDSS_CLK] = &apq8064_qdss_clk,
++};
++
++static const struct rpm_clk_desc rpm_clk_apq8064 = {
++	.clks = apq8064_clks,
++	.num_clks = ARRAY_SIZE(apq8064_clks),
++};
++
++static const struct of_device_id rpm_clk_match_table[] = {
++	{ .compatible = "qcom,rpmcc-apq8064", .data = &rpm_clk_apq8064},
++	{ }
++};
++MODULE_DEVICE_TABLE(of, rpm_clk_match_table);
++
++static int rpm_clk_probe(struct platform_device *pdev)
++{
++	struct clk **clks;
++	struct clk *clk;
++	struct rpm_cc *rcc;
++	struct clk_onecell_data *data;
++	int ret;
++	size_t num_clks, i;
++	struct qcom_rpm *rpm;
++	struct clk_rpm **rpm_clks;
++	const struct rpm_clk_desc *desc;
++
++	rpm = dev_get_drvdata(pdev->dev.parent);
++	if (!rpm) {
++		dev_err(&pdev->dev, "Unable to retrieve handle to RPM\n");
++		return -ENODEV;
++	}
++
++	desc = of_device_get_match_data(&pdev->dev);
++	if (!desc)
++		return -EINVAL;
++
++	rpm_clks = desc->clks;
++	num_clks = desc->num_clks;
++
++	rcc = devm_kzalloc(&pdev->dev, sizeof(*rcc) + sizeof(*clks) * num_clks,
++			   GFP_KERNEL);
++	if (!rcc)
++		return -ENOMEM;
++
++	clks = rcc->clks;
++	data = &rcc->data;
++	data->clks = clks;
++	data->clk_num = num_clks;
++
++	for (i = 0; i < num_clks; i++) {
++		if (!rpm_clks[i]) {
++			clks[i] = ERR_PTR(-ENOENT);
++			continue;
++		}
++
++		rpm_clks[i]->rpm = rpm;
++		clk = devm_clk_register(&pdev->dev, &rpm_clks[i]->hw);
++		if (IS_ERR(clk)) {
++			ret = PTR_ERR(clk);
++			goto err;
++		}
++
++		clks[i] = clk;
++	}
++
++	ret = of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get,
++				  data);
++	if (ret)
++		goto err;
++
++	return 0;
++err:
++	dev_err(&pdev->dev, "Error registering RPM Clock driver (%d)\n", ret);
++	return ret;
++}
++
++static int rpm_clk_remove(struct platform_device *pdev)
++{
++	of_clk_del_provider(pdev->dev.of_node);
++	return 0;
++}
++
++static struct platform_driver rpm_clk_driver = {
++	.driver = {
++		.name = "qcom-clk-rpm",
++		.of_match_table = rpm_clk_match_table,
++	},
++	.probe = rpm_clk_probe,
++	.remove = rpm_clk_remove,
++};
++
++static int __init rpm_clk_init(void)
++{
++	return platform_driver_register(&rpm_clk_driver);
++}
++core_initcall(rpm_clk_init);
++
++static void __exit rpm_clk_exit(void)
++{
++	platform_driver_unregister(&rpm_clk_driver);
++}
++module_exit(rpm_clk_exit);
++
++MODULE_DESCRIPTION("Qualcomm RPM Clock Controller Driver");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:qcom-clk-rpm");
+diff --git a/drivers/clk/qcom/clk-rpm.h b/drivers/clk/qcom/clk-rpm.h
+new file mode 100644
+index 000000000000..c0ac30f806b5
+--- /dev/null
++++ b/drivers/clk/qcom/clk-rpm.h
+@@ -0,0 +1,71 @@
++/*
++ * Copyright (c) 2015, Linaro Limited
++ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef __QCOM_CLK_RPM_H__
++#define __QCOM_CLK_RPM_H__
++
++#include <linux/clk-provider.h>
++
++struct qcom_rpm;
++
++struct clk_rpm {
++	const int rpm_clk_id;
++	unsigned long rate;
++	bool enabled;
++	bool branch;
++	struct clk_hw hw;
++	struct qcom_rpm *rpm;
++};
++
++extern const struct clk_ops clk_rpm_ops;
++extern const struct clk_ops clk_rpm_branch_ops;
++
++#define DEFINE_CLK_RPM(_platform, _name, r_id)				     \
++	static struct clk_rpm _platform##_##_name = {			     \
++		.rpm_clk_id = (r_id),					     \
++		.rate = INT_MAX,					     \
++		.hw.init = &(struct clk_init_data){			     \
++			.name = #_name,					     \
++			.parent_names = (const char *[]){ "pxo_board" },     \
++			.num_parents = 1,				     \
++			.ops = &clk_rpm_ops,				     \
++		},							     \
++	}
++
++#define DEFINE_CLK_RPM_PXO_BRANCH(_platform, _name, r_id, r)		     \
++	static struct clk_rpm _platform##_##_name = {			     \
++		.rpm_clk_id = (r_id),					     \
++		.branch = true,						     \
++		.rate = (r),						     \
++		.hw.init = &(struct clk_init_data){			     \
++			.name = #_name,					     \
++			.parent_names = (const char *[]){ "pxo_board" },     \
++			.num_parents = 1,				     \
++			.ops = &clk_rpm_branch_ops,			     \
++		},							     \
++	}
++
++#define DEFINE_CLK_RPM_CXO_BRANCH(_platform, _name, r_id, r)		     \
++	static struct clk_rpm _platform##_##_name = {			     \
++		.rpm_clk_id = (r_id),					     \
++		.branch = true,						     \
++		.rate = (r),						     \
++		.hw.init = &(struct clk_init_data){			     \
++			.name = #_name,					     \
++			.parent_names = (const char *[]){ "cxo_board" },     \
++			.num_parents = 1,				     \
++			.ops = &clk_rpm_branch_ops,			     \
++		},							     \
++	}
++#endif
