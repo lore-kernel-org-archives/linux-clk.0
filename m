@@ -1,54 +1,30 @@
-Return-Path: <ben@smart-cactus.org>
-From: Ben Gamari <ben@smart-cactus.org>
-To: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	b.zolnierkie@samsung.com,
-	Ben Gamari <ben@smart-cactus.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 12/12] cpufreq: arm-big-little: warn on invalid regulator
-Date: Wed,  2 Dec 2015 22:19:27 +0100
-Message-Id: <1449091167-20758-13-git-send-email-ben@smart-cactus.org>
-In-Reply-To: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
-References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Caesar Wang <wxt@rock-chips.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, leozwang@google.com, keescook@google.com, leecam@google.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Yakir Yang <ykk@rock-chips.com>
+Subject: Re: [PATCH 2/5] clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for aclk_vio
+Date: Wed, 16 Dec 2015 22:24:50 +0100
+Message-ID: <1859046.avFUcYTcgb@diego>
+In-Reply-To: <1450254441-3243-3-git-send-email-wxt@rock-chips.com>
+References: <1450254441-3243-1-git-send-email-wxt@rock-chips.com> <1450254441-3243-3-git-send-email-wxt@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Signed-off-by: Ben Gamari <ben@smart-cactus.org>
----
- drivers/cpufreq/arm_big_little.c | 3 +++
- 1 file changed, 3 insertions(+)
+Am Mittwoch, 16. Dezember 2015, 16:27:18 schrieb Caesar Wang:
+> From: Yakir Yang <ykk@rock-chips.com>
+> 
+> ACLK_VIO is the noc bus clock for display module, display cann't
+> read data from ddr without this clock enabled.
+> 
+> Due to it shouldn't belong to any driver, but we need it enabled,
+> so just mark it as the CLK_IGNORE_UNUSED flag.
+> 
+> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+> Signed-off-by: Caesar Wang <wxt@rock-chips.com>
 
-diff --git a/drivers/cpufreq/arm_big_little.c b/drivers/cpufreq/arm_big_little.c
-index 2d5761c..5d30c26 100644
---- a/drivers/cpufreq/arm_big_little.c
-+++ b/drivers/cpufreq/arm_big_little.c
-@@ -158,6 +158,9 @@ bL_cpufreq_set_rate_cluster(u32 cpu, u32 cluster, u32 new_rate_kHz)
- 		volt_old = regulator_get_voltage(reg[cluster]);
- 		pr_debug("%s: cpu %d, cluster: %d, Found OPP: %ld kHz, %ld uV\n",
- 			__func__, cpu, cluster, opp_freq / 1000, volt);
-+	} else {
-+		pr_err("%s: cpu %d, cluster: %d, Have no regulator\n",
-+					 __func__, cpu, cluster);
- 	}
- 
- 	pr_debug("%s: cpu %d, cluster: %d, %u MHz, %ld mV --> %u MHz, %ld mV\n",
--- 
-2.6.2
+applied to my clk-branch for 4.5
+
+
+Thanks
+Heiko
