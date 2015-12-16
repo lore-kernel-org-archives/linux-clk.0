@@ -1,44 +1,32 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 1/2] clk: samsung: exynos5422: add missing parent GSCL
- block clocks
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-References: <1449582415-30164-1-git-send-email-m.szyprowski@samsung.com>
- <5667B2F3.9040807@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@baylibre.com>,
- Kukjin Kim <kgene@kernel.org>, linux-clk@vger.kernel.org,
- Stephen Boyd <sboyd@codeaurora.org>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <5667FEF3.4080703@samsung.com>
-Date: Wed, 09 Dec 2015 11:14:11 +0100
-MIME-version: 1.0
-In-reply-to: <5667B2F3.9040807@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <andy.gross@linaro.org>
+Return-Path: <andy.gross@linaro.org>
+Date: Wed, 16 Dec 2015 17:30:15 -0600
+From: Andy Gross <andy.gross@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [v2,3/5] clk: qcom: Add MSM8996 Global Clock Control (GCC) driver
+Message-ID: <20151216233015.GC5951@Agamemnon.attlocal.net>
+References: <1448933502-11944-4-git-send-email-sboyd@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1448933502-11944-4-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Adding Stephen and linux-clk at Cc.
+On Mon, Nov 30, 2015 at 05:31:40PM -0800, Stephen Boyd wrote:
+> Add support for the global clock controller found on MSM8996
+> based devices. This should allow most non-multimedia device
+> drivers to probe and control their clocks.
+> 
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> 
+> ---
 
-On 09/12/15 05:49, Krzysztof Kozlowski wrote:
-> On 08.12.2015 22:46, Marek Szyprowski wrote:
->> > This patch adds clocks, which are required for preserving parent clock
->> > configuration on GSCL power domain on/off.
->> > 
->> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> > ---
->> >  drivers/clk/samsung/clk-exynos5420.c   | 8 ++++----
->> >  include/dt-bindings/clock/exynos5420.h | 2 ++
->> >  2 files changed, 6 insertions(+), 4 deletions(-)
->
-> I suppose that, with ack from clock folks, this can go through samsung-soc?
+I saw that this complete set of patches was pulled into clk-next.  Would it be
+possible for you to host an immutable branch so that I can get the DTS pulled in
+properly with all the dependencies?
 
-I guess it makes more sense that making a stable branch with just
-this patch to be pulled into arm-soc and clk tree. I'm fine with
-applying this patch through arm-soc, but I think we also need
-Mike's or Stephen ack for this.
-
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-
--- 
 Thanks,
-Sylwester
+
+Andy
