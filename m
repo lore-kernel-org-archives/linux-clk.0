@@ -1,64 +1,59 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Sangbeom Kim <sbkim73@samsung.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>,
- Mark Brown <broonie@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Subject: [PATCH v2 0/3] dt-bindings: regulator/clock/mfd: Reorganize S2M/S5M
- bindings
-Date: Mon, 28 Dec 2015 10:15:11 +0900
-Message-id: <1451265314-4232-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <stefan.wahren@i2se.com>
+Subject: Re: [PATCH v2 3/3] ARM: bcm2835: Add the auxiliary clocks to the
+ device tree.
+To: Eric Anholt <eric@anholt.net>, linux-clk@vger.kernel.org
+References: <1450222559-22461-1-git-send-email-eric@anholt.net>
+ <1450222559-22461-3-git-send-email-eric@anholt.net>
+Cc: devicetree@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+ Stephen Warren <swarren@wwwdotorg.org>,
+ Mike Turquette <mturquette@baylibre.com>, Lee Jones <lee@kernel.org>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+From: Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <56713E74.3040907@i2se.com>
+Date: Wed, 16 Dec 2015 11:35:32 +0100
+MIME-Version: 1.0
+In-Reply-To: <1450222559-22461-3-git-send-email-eric@anholt.net>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Hi Eric,
 
+Am 16.12.2015 um 00:35 schrieb Eric Anholt:
+> These will be used for enabling UART1, SPI1, and SPI2.
+>
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> ---
+>
+> v2: Make the binding cover both the IRQ and clock enable registers.
+>
+>  arch/arm/boot/dts/bcm2835.dtsi | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/bcm2835.dtsi b/arch/arm/boot/dts/bcm2835.dtsi
+> index aef64de..a27d40b 100644
+> --- a/arch/arm/boot/dts/bcm2835.dtsi
+> +++ b/arch/arm/boot/dts/bcm2835.dtsi
+> @@ -73,6 +73,13 @@
+>  			clocks = <&clk_osc>;
+>  		};
+>  
+> +		aux: aux@0x7e215000 {
+> +			compatible = "brcm,bcm2835-aux";
+> +			#clock-cells = <1>;
+> +			reg = <0x7e215000 0x8>;
+> +			clocks = <&clocks BCM2835_CLOCK_VPU>;
+> +		};
+> +
 
-I got all acks for the patches. Please kindly pick up. Maybe Rob or Lee?
+just a nit. Since the nodes should be ordered by address this should
+better go between|||i2c0 and sdhci.
 
+Thanks
 
-The patchset tries to bring some order to the chaotic bindings for family
-of Samsung PMIC devices: S2MPS/S2MPA/S5M.
+Stefan
 
-Beside of renaming and removal of common parts I also tried to make
-a consistent style used in the files. The bindings itself were not
-modified.
-
-Rebased on next-20151223.
-
-
-Changes since v1:
-1. Added accumulated acks.
-2. Use -M20% so renames will be more visible (formatting is changed so
-   default -M50% does not consider it as renames).
-
-
-Best regards,
-Krzysztof
-
-Krzysztof Kozlowski (3):
-  dt-bindings: regulator/clock/mfd: Reorganize S2MPS-family bindings
-  dt-bindings: regulator/mfd: Reorganize S5M8767 bindings
-  dt-bindings: regulator/mfd: Reorganize S2MPA01 bindings
-
- .../devicetree/bindings/clock/samsung,s2mps11.txt  |  49 +++++++
- .../devicetree/bindings/mfd/samsung,sec-core.txt   |  88 ++++++++++++
- .../s2mpa01.txt => regulator/samsung,s2mpa01.txt}  |  69 ++++------
- .../s2mps11.txt => regulator/samsung,s2mps11.txt}  | 135 ++++++------------
- .../{s5m8767-regulator.txt => samsung,s5m8767.txt} | 152 +++++++++------------
- MAINTAINERS                                        |   6 +-
- 6 files changed, 279 insertions(+), 220 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/samsung,s2mps11.txt
- create mode 100644 Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
- rename Documentation/devicetree/bindings/{mfd/s2mpa01.txt => regulator/samsung,s2mpa01.txt} (37%)
- rename Documentation/devicetree/bindings/{mfd/s2mps11.txt => regulator/samsung,s2mps11.txt} (25%)
- rename Documentation/devicetree/bindings/regulator/{s5m8767-regulator.txt => samsung,s5m8767.txt} (34%)
-
--- 
-1.9.1
+|
+>  		rng@7e104000 {
+>  			compatible = "brcm,bcm2835-rng";
+>  			reg = <0x7e104000 0x10>;
