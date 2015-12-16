@@ -1,47 +1,56 @@
-Return-Path: <info@lategoodbye.de>
-Subject: Re: [PATCH v3 4/4] clk: bcm2835: Add PWM clock support to the device
- tree
-To: Remi Pommarel <repk@triplefau.lt>
-References: <1449418969-5565-1-git-send-email-repk@triplefau.lt>
- <1449418969-5565-5-git-send-email-repk@triplefau.lt>
- <5664A5A9.4030204@lategoodbye.de> <20151207181752.GA453@cruxbox>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Eric Anholt <eric@anholt.net>,
- Lee Jones <lee@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-From: Stefan Wahren <info@lategoodbye.de>
-Message-ID: <5665D30F.2060809@lategoodbye.de>
-Date: Mon, 7 Dec 2015 19:42:23 +0100
-MIME-Version: 1.0
-In-Reply-To: <20151207181752.GA453@cruxbox>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <computersforpeace@gmail.com>
+Return-Path: <computersforpeace@gmail.com>
+From: Brian Norris <computersforpeace@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	<linux-kernel@vger.kernel.org>,
+	Brian Norris <computersforpeace@gmail.com>,
+	Jyri Sarha <jsarha@ti.com>,
+	Sergej Sawazki <ce3a@gmx.de>
+Subject: [PATCH] clk: gpio: handle error codes for of_clk_get_parent_count()
+Date: Wed, 16 Dec 2015 10:35:03 -0800
+Message-Id: <1450290903-24470-1-git-send-email-computersforpeace@gmail.com>
+In-Reply-To: <1450290511-14442-1-git-send-email-computersforpeace@gmail.com>
+References: <1450290511-14442-1-git-send-email-computersforpeace@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Remi,
+We might make bad memory allocations if we get (e.g.) -ENOSYS from
+of_clk_get_parent_count().
 
-Am 07.12.2015 um 19:17 schrieb Remi Pommarel:
-> Hi Stefan,
->
-> On Sun, Dec 06, 2015 at 10:16:25PM +0100, Stefan Wahren wrote:
->> Hi Remi,
->>
->> please send this patch to devicetree@vger.kernel.org.
->
-> Ok, just to be sure I understand the process here. I should resend a new
-> version of the whole patchset including the devicetree mailing list as
-> recipent. Then the first 3 patches will eventually get pushed by a clock
-> subsystem maintainer. And finally this last patch will be pushed by a
-> devicetree maintainer.
->
-> Am I right here ?
+Noticed by Coverity.
 
-sorry for the confusion. I mean that you send a copy to 
-devicetree@vger.kernel.org so subscribers have a chance to review.
+Fixes: f66541ba02d5 ("clk: gpio: Get parent clk names in of_gpio_clk_setup()")
+Signed-off-by: Brian Norris <computersforpeace@gmail.com>
+Cc: Jyri Sarha <jsarha@ti.com>
+Cc: Sergej Sawazki <ce3a@gmx.de>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+---
+Sorry, I noticed Coverity was complaining about 1 more.
 
-I'm not sure but according to your subject you suggest that this dts 
-patch should go through clock subsystem which isn't optimal. This should 
-be better applied by Stephen or Eric.
+ drivers/clk/clk-gpio.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Best regards
-Stefan
+diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+index c1baa89cbf91..1767b9e3ca93 100644
+--- a/drivers/clk/clk-gpio.c
++++ b/drivers/clk/clk-gpio.c
+@@ -287,12 +287,14 @@ static void __init of_gpio_clk_setup(struct device_node *node,
+ 	const char **parent_names;
+ 	int i, num_parents;
+ 
++	num_parents = of_clk_get_parent_count(node);
++	if (num_parents < 0)
++		return;
++
+ 	data = kzalloc(sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+ 		return;
+ 
+-	num_parents = of_clk_get_parent_count(node);
+-
+ 	parent_names = kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
+ 	if (!parent_names) {
+ 		kfree(data);
+-- 
+2.6.0.rc2.230.g3dd15c0
