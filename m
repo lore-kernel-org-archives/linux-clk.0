@@ -1,51 +1,88 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-Message-ID: <1451555942.10610.18.camel@mtksdaap41>
-Subject: Re: [PATCH 3/5] clk: mediatek: Add MT2701 clock support
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Michael Turquette <mturquette@baylibre.com>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, <devicetree@vger.kernel.org>,
-	<srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, Shunli Wang <shunli.wang@mediatek.com>,
-	Sascha Hauer <kernel@pengutronix.de>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Date: Thu, 31 Dec 2015 17:59:02 +0800
-In-Reply-To: <20151230233406.19557.35006@quark.deferred.io>
-References: <1451456865-44139-1-git-send-email-jamesjj.liao@mediatek.com>
-	 <1451456865-44139-4-git-send-email-jamesjj.liao@mediatek.com>
-	 <20151230233406.19557.35006@quark.deferred.io>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Return-Path: jamesjj.liao@mediatek.com
+Return-Path: <caesar.upstream@gmail.com>
+Return-Path: <caesar.upstream@gmail.com>
+From: Caesar Wang <wxt@rock-chips.com>
+To: heiko@sntech.de,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: leozwang@google.com,
+	keescook@google.com,
+	leecam@google.com,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Caesar Wang <wxt@rock-chips.com>
+Subject: [PATCH 0/5] Kylin-board is based on RK3036 SOCs, add the initiation
+Date: Wed, 16 Dec 2015 16:27:16 +0800
+Message-Id: <1450254441-3243-1-git-send-email-wxt@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike
-On Wed, 2015-12-30 at 15:34 -0800, Michael Turquette wrote:
-> Quoting James Liao (2015-12-29 22:27:43)
-> > +CLK_OF_DECLARE(mtk_topckgen, "mediatek,mt2701-topckgen", mtk_topckgen_init);
-> > +CLK_OF_DECLARE(mtk_infrasys, "mediatek,mt2701-infracfg", mtk_infrasys_init);
-> > +CLK_OF_DECLARE(mtk_pericfg, "mediatek,mt2701-pericfg", mtk_pericfg_init);
-> > +CLK_OF_DECLARE(mtk_mmsys, "mediatek,mt2701-mmsys", mtk_mmsys_init);
-> > +CLK_OF_DECLARE(mtk_imgsys, "mediatek,mt2701-imgsys", mtk_imgsys_init);
-> > +CLK_OF_DECLARE(mtk_vdecsys, "mediatek,mt2701-vdecsys", mtk_vdecsys_init);
-> > +CLK_OF_DECLARE(mtk_hifsys, "mediatek,mt2701-hifsys", mtk_hifsys_init);
-> > +CLK_OF_DECLARE(mtk_ethsys, "mediatek,mt2701-ethsys", mtk_ethsys_init);
-> > +CLK_OF_DECLARE(mtk_bdpsys, "mediatek,mt2701-bdpsys", mtk_bdpsys_init);
-> > +CLK_OF_DECLARE(mtk_apmixedsys, "mediatek,mt2701-apmixedsys",
-> 
-> None of these compatible strings are documented with a binding
-> description in this patch series. In fact looking through
-> Documentation/devicetree/bindings/clock/ on the latest linux-next tag I
-> see that the only existing binding is mt8173-cpu-dvfs.txt.
-> 
-> Am I looking in the wrong place or do we have a case of missing binding
-> descriptions?
+version for working.
 
-The binding documents are located in
-Documentation/devicetree/bindings/arm/mediatek/ . And I missed to add
-mt2701 compatible strings into it. I'll add them in next patchset.
+This series pacthes have the following decriptions:
+
+PATCH[1/5]:
+clk: rockchip: rk3036: include downstream muxes into fractional dividers
+
+This patch is depend on Heiko's series pacthes.
+
+a8a1de6 clk: rockchip: include downstream muxes into fractional dividers
+(https://patchwork.kernel.org/patch/7053071/)
+ab40856 clk: rockchip: handle mux dependency of fractional dividers
+(https://patchwork.kernel.org/patch/7053051/)
+c4c5582 clk: add flag for clocks that need to be enabled on rate changes
+(https://patchwork.kernel.org/patch/7053041/)
+---
+
+PATCH[2/5]:
+0a68e13 clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for aclk_vio
+The aclk_vio is marked as the ignore_unused since it's the noc clock.
+let will fix the display issue.
+---
+
+PATCH[3/5]:
+183a5eb ARM: dts: rockchip: update the core dts for rk3036
+Update the rk3036 core dtsi, add the hdmi, lcdc, sdmmc, sdio .... node info
+for rk3036, in general the function is verified by the UARL[0].
+
+UARL[0]:https://github.com/rockchip-linux/kernel/ -b develop-v4.1
+---
+
+PATCH[4/5]:
+962e1ad ARM: dts: rockchip: add the kylin board for rk3036
+Add the rk3036-kylin dts for Kylin-board.
+---
+
+PATCH[5/5]:
+d96f13a ARM: config: Add the rk3036 configure for kylin board
+Add the defconfig for Kylin-board to better to know about that.
+
+Note: I don't plan to upstream for this patch. :)
+---
+
+The game is just beginning ....
 
 
-Best regards,
 
-James
+Caesar Wang (4):
+  clk: rockchip: rk3036: include downstream muxes into fractional
+    dividers
+  ARM: dts: rockchip: update the core dts for rk3036
+  ARM: dts: rockchip: add the kylin board for rk3036
+  ARM: config: Add the rk3036 configure for kylin board
+
+Yakir Yang (1):
+  clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for aclk_vio
+
+ Documentation/devicetree/bindings/arm/rockchip.txt |   4 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/rk3036-kylin.dts                 | 302 +++++++++++++++++++++
+ arch/arm/boot/dts/rk3036.dtsi                      | 225 ++++++++++++++-
+ arch/arm/configs/rk3036_kylin_defconfig            | 230 ++++++++++++++++
+ drivers/clk/rockchip/clk-rk3036.c                  |  37 +--
+ 6 files changed, 777 insertions(+), 22 deletions(-)
+ create mode 100644 arch/arm/boot/dts/rk3036-kylin.dts
+ create mode 100644 arch/arm/configs/rk3036_kylin_defconfig
+
+-- 
+1.9.1
