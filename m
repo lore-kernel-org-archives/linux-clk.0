@@ -1,53 +1,67 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	agross@codeaurora.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	bjorn.andersson@sonymobile.com,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v5 2/6] arm64: dts: qcom: msm8916: Add fixed rate on-board oscillators
-Date: Thu,  3 Dec 2015 16:02:52 +0200
-Message-Id: <1449151376-25930-3-git-send-email-georgi.djakov@linaro.org>
-In-Reply-To: <1449151376-25930-1-git-send-email-georgi.djakov@linaro.org>
-References: <1449151376-25930-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <repk@triplefau.lt>
+Date: Wed, 16 Dec 2015 08:57:26 +0100
+From: Remi Pommarel <repk@triplefau.lt>
+To: Eric Anholt <eric@anholt.net>
+Cc: Stefan Wahren <info@lategoodbye.de>,
+	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 4/4] clk: bcm2835: Add PWM clock support to the device
+ tree
+Message-ID: <20151216075725.GF453@cruxbox>
+References: <1449418969-5565-1-git-send-email-repk@triplefau.lt>
+ <1449418969-5565-5-git-send-email-repk@triplefau.lt>
+ <5664A5A9.4030204@lategoodbye.de>
+ <20151207181752.GA453@cruxbox>
+ <5665D30F.2060809@lategoodbye.de>
+ <87wpspeg38.fsf@eliezer.anholt.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <87wpspeg38.fsf@eliezer.anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently the rates of the xo and sleep clocks are hard-coded in the
-GCC driver, but this is a board layout description that actually should
-be in the DT. Moving them into DT also allows us to insert the RPM
-controlled clocks between the DT and GCC clocks.
+On Mon, Dec 07, 2015 at 08:09:47PM -0800, Eric Anholt wrote:
+> Stefan Wahren <info@lategoodbye.de> writes:
+> 
+> > Hi Remi,
+> >
+> > Am 07.12.2015 um 19:17 schrieb Remi Pommarel:
+> >> Hi Stefan,
+> >>
+> >> On Sun, Dec 06, 2015 at 10:16:25PM +0100, Stefan Wahren wrote:
+> >>> Hi Remi,
+> >>>
+> >>> please send this patch to devicetree@vger.kernel.org.
+> >>
+> >> Ok, just to be sure I understand the process here. I should resend a new
+> >> version of the whole patchset including the devicetree mailing list as
+> >> recipent. Then the first 3 patches will eventually get pushed by a clock
+> >> subsystem maintainer. And finally this last patch will be pushed by a
+> >> devicetree maintainer.
+> >>
+> >> Am I right here ?
+> >
+> > sorry for the confusion. I mean that you send a copy to 
+> > devicetree@vger.kernel.org so subscribers have a chance to review.
+> >
+> > I'm not sure but according to your subject you suggest that this dts 
+> > patch should go through clock subsystem which isn't optimal. This should 
+> > be better applied by Stephen or Eric.
+> 
+> It would be applied by me, but that's for me to worry about, not the
+> patch submitter.  The subject prefix would be "ARM: bcm2835: ", but
+> that's trivial for me to fix when applying, not the kind of thing worth
+> asking for a respin for.
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- arch/arm64/boot/dts/qcom/msm8916.dtsi |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Thanks for review.
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index 80cf15087d01..d577127cc81e 100644
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -95,6 +95,20 @@
- 			     <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
- 	};
- 
-+	clocks {
-+		xo_board: xo_board {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <19200000>;
-+		};
-+
-+		sleep_clk: sleep_clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <32768>;
-+		};
-+	};
-+
- 	soc: soc {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
+I'll submit dt patch to devicetree@vger.kernel.org for review. Is it better
+to submit the whole patchset (patch 1 to 4) to provide some context for the
+device tree patch or just this patch alone ?
+
+Best Regards,
+
+-- 
+Remi
