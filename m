@@ -1,87 +1,94 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga01-in.huawei.com ([58.251.152.64]:44684 "EHLO
-	szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751407AbbLCCmw (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 2 Dec 2015 21:42:52 -0500
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>, <vinod.koul@intel.com>
-CC: <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<dmaengine@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [PATCH v2 0/9] ARM: hisi: enable hi3519 soc
-Date: Thu, 3 Dec 2015 10:29:14 +0800
-Message-ID: <1449109754-23309-1-git-send-email-xuejiancheng@huawei.com>
+Return-Path: <mturquette@baylibre.com>
+Date: Thu, 17 Dec 2015 01:06:28 -0800
+From: Michael Turquette <mturquette@baylibre.com>
+To: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
+Cc: Daniel Kurtz <djkurtz@chromium.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	James Liao <jamesjj.liao@mediatek.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	linux-clk@vger.kernel.org,
+	"moderated list:ARM/Mediatek SoC..." <linux-mediatek@lists.infradead.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Linaro Kernel Mailman List <linaro-kernel@lists.linaro.org>
+Subject: Re: [PATCH v6] clk: mediatek: Export CPU mux clocks for CPU
+ frequency control
+Message-ID: <20151217090628.GA317@quark.deferred.io>
+References: <1442230072-31593-1-git-send-email-pi-cheng.chen@linaro.org>
+ <CAGS+omCkYTPyjMk6QaoxGAL4QVU8VcpWyFqWhST+iP2EFRcRYg@mail.gmail.com>
+ <CALx668XVnhhLJWs7RBxvaX=SU=S9=wFVT9HMDP2edqiH4Jio4A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CALx668XVnhhLJWs7RBxvaX=SU=S9=wFVT9HMDP2edqiH4Jio4A@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+On 12/01, Pi-Cheng Chen wrote:
+> On Mon, Nov 30, 2015 at 11:48 AM, Daniel Kurtz <djkurtz@chromium.org> wrote:
+> > Hi Pi-Cheng and Michael,
+> >
+> > On Mon, Sep 14, 2015 at 7:27 PM, Pi-Cheng Chen <pi-cheng.chen@linaro.org> wrote:
+> >> From: "pi-cheng.chen" <pi-cheng.chen@linaro.org>
+> >>
+> >> This patch adds CPU mux clocks which are used by Mediatek cpufreq driver
+> >> for intermediate clock source switching.
+> >
+> > It looks like this patch was never picked up.
+> > It is required for MT8173 cpufreq.
+> >
+> > What is the plan to get this one merged?
+> 
+> Hi Dan,
+> Mike is working on a new CCF feature called "coordinated clock rate changes"
+> which would help to migrate mt8173-cpufreq driver to generic cpufreq-dt
+> driver, and I am working with him to port MT8173 clock driver on the new
+> feature. So I think that's why this patch was not picked since it will
+> be migrated to new implementation once the new feature's ready.
+> 
+> @Mike:
+> Are you plannig to post those patches on the mailing list ?
+> Or is it fine for you to take this first and then I will refine it for
+> the new feature later?
 
-Hi3519 soc is mainly used for ip camera and sport DV solutions. This patchset adds initial support
-for Hi3519 soc. It includes clock driver, arch configuration, device tree and debug uart configuration.
-It has been tested on hi3519 reference board.
+I plan to post those patches next week.
 
-Spi-nor flash driver and other peripheral drivers will be submitted later.
+Thanks,
+Mike
 
-Any comments will be appreciated!
-
-Thanks!
-
-Change Log
-----------
-v2:
--Rebase to v4.4-rc3
--Put dt-binding doc and header file in a separate patch.
--Delete unused clocks definitions.
--Adjust the ARCH_xxx order in Kconfig file
--Rename ARCH_HI3xxx to ARCH_36xx
-
-Jiancheng Xue (9):
-  clk: hi3519: add dt-binding document and header file
-  clk: hi3519: add CRG driver for hisilicon hi3519 soc
-  ARM: hisi: enable Hi3519 soc
-  ARM: dts: add dts files for hi3519-demb board
-  ARM: config: enable ARCH_HI3519
-  ARM: debug: add Hi3519 debug uart
-  ARM: hisi: rename ARCH_HI3xxx to ARCH_HI36xx
-  clk: hisilicon: rename ARCH_HI3xxx to ARCH_HI36xx
-  dmaengine: Kconfig: rename ARCH_HI3xxx to ARCH_HI36xx
-
- .../devicetree/bindings/clock/hi3519-crg.txt       |  46 +++++++
- arch/arm/Kconfig.debug                             |  14 +-
- arch/arm/boot/dts/Makefile                         |   4 +-
- arch/arm/boot/dts/hi3519-demb.dts                  |  55 ++++++++
- arch/arm/boot/dts/hi3519.dtsi                      | 129 ++++++++++++++++++
- arch/arm/configs/hisi_defconfig                    |   3 +-
- arch/arm/configs/multi_v7_defconfig                |   2 +-
- arch/arm/mach-hisi/Kconfig                         |  11 +-
- arch/arm/mach-hisi/hisilicon.c                     |   9 ++
- drivers/clk/hisilicon/Makefile                     |   3 +-
- drivers/clk/hisilicon/clk-hi3519.c                 | 100 ++++++++++++++
- drivers/clk/hisilicon/reset.c                      | 149 +++++++++++++++++++++
- drivers/clk/hisilicon/reset.h                      |  25 ++++
- drivers/dma/Kconfig                                |   2 +-
- include/dt-bindings/clock/hi3519-clock.h           |  51 +++++++
- 15 files changed, 595 insertions(+), 8 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
- create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
- create mode 100644 arch/arm/boot/dts/hi3519.dtsi
- create mode 100644 drivers/clk/hisilicon/clk-hi3519.c
- create mode 100644 drivers/clk/hisilicon/reset.c
- create mode 100644 drivers/clk/hisilicon/reset.h
- create mode 100644 include/dt-bindings/clock/hi3519-clock.h
-
--- 
-1.9.1
-
+> 
+> Best Regards,
+> Pi-Cheng
+> 
+> >
+> > -Dan
+> >
+> >>
+> >> Signed-off-by: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
+> >> ---
+> >> Changes in v6:
+> >> - Relace __clk_get_num_parents with clk_hw_get_num_parents to reflect
+> >>   API change
+> >>
+> >> Changes in v5:
+> >> - Replace __initdata with __initconst to fix compiling error
+> >>
+> >> Changes in v4:
+> >> - Fix some minor issues for v3
+> >> - Rebase to the patch that adds 13mhz clock for MT8173[1]
+> >>
+> >> Changes in v3:
+> >> - Rebase to 4.2-rc1
+> >> - Fix some issues of v2
+> >>
+> >> Changes in v2:
+> >> - Remove use of .determine_rate callback
+> >> ---
+> >>  drivers/clk/mediatek/Makefile          |   2 +-
+> >>  drivers/clk/mediatek/clk-cpumux.c      | 127 +++++++++++++++++++++++++++++++++
+> >>  drivers/clk/mediatek/clk-cpumux.h      |  22 ++++++
+> >>  drivers/clk/mediatek/clk-mt8173.c      |  23 ++++++
+> >>  include/dt-bindings/clock/mt8173-clk.h |   4 +-
+> >>  5 files changed, 176 insertions(+), 2 deletions(-)
+> >>  create mode 100644 drivers/clk/mediatek/clk-cpumux.c
+> >>  create mode 100644 drivers/clk/mediatek/clk-cpumux.h
+> >
+> > [snip]
