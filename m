@@ -1,90 +1,57 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [RFC 5/9] dt-bindings: clk: ti: Document module clock type
-Date: Fri, 18 Dec 2015 15:58:57 +0200
-Message-ID: <1450447141-29936-6-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
-References: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
+Return-Path: <rklein@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: Fix clock sources for tegra210 EMC
+To: Jon Hunter <jonathanh@nvidia.com>, Peter De Schrijver
+	<pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+References: <1450446328-6414-1-git-send-email-jonathanh@nvidia.com>
+CC: <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+From: Rhyland Klein <rklein@nvidia.com>
+Message-ID: <567438FA.2030405@nvidia.com>
+Date: Fri, 18 Dec 2015 11:48:58 -0500
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1450446328-6414-1-git-send-email-jonathanh@nvidia.com>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Document the new TI module clock type, which is intended to replace the
-internal clock control handling within omap_hwmod. Module clock is
-effectively a gate clock controlling both interface and functional
-clocks for a single hardware IP block.
+On 12/18/2015 8:45 AM, Jon Hunter wrote:
+> The EMC clock sources for tegra210 currently incorrectly include pll_c2
+> and pll_c3. However, both of these should have been pll_mb as shown in
+> the TRM. If tegra210 happens to be configured such that the pll_mb is the
+> default clock for the EMC, as configured by the bootloader, then this will
+> cause a system hang on boot. This is because the kernel will disable the
+> pll_mb when disabling unused clock as it appears to be unused when it is
+> not.
+> 
+> Also add the additional pll_p clock source for the EMC.
+> 
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra210.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> index 58514c44ea83..849be30b52bf 100644
+> --- a/drivers/clk/tegra/clk-tegra210.c
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+> @@ -243,7 +243,8 @@ static unsigned long tegra210_input_freq[] = {
+>  };
+>  
+>  static const char *mux_pllmcp_clkm[] = {
+> -	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud", "pll_c2", "pll_c3",
+> +	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud", "pll_mb", "pll_mb",
+> +	"pll_p",
+>  };
+>  #define mux_pllmcp_clkm_idx NULL
+>  
+> 
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- .../devicetree/bindings/clock/ti/module.txt        |   57 ++++++++++++++++++++
- 1 file changed, 57 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/ti/module.txt
+Acked-by: Rhyland Klein <rklein@nvidia.com>
 
-diff --git a/Documentation/devicetree/bindings/clock/ti/module.txt b/Documentation/devicetree/bindings/clock/ti/module.txt
-new file mode 100644
-index 0000000..a5f70f2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti/module.txt
-@@ -0,0 +1,57 @@
-+Binding for Texas Instruments module clock.
-+
-+Binding status: Unstable - ABI compatibility may be broken in the future
-+
-+This binding uses the common clock binding[1]. This clock is
-+quite much similar to the basic gate-clock [2], however, internally
-+it controls an OMAP module clock, which effectively handles
-+both interface and functional clocks for a single module. In some
-+cases, support for mux clock [3] is composited to the same clock node,
-+currently only needed for proper support of timer module clocks.
-+
-+[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-+[2] Documentation/devicetree/bindings/clock/ti/gate.txt
-+[3] Documentation/devicetree/bindings/clock/ti/mux.txt
-+
-+Required properties:
-+- compatible : shall be one of:
-+  "ti,omap4-mod-clock" - basic module clock, no gating supported
-+  "ti,omap4-hw-mod-clock" - module clock with hardware gating support
-+  "ti,omap4-sw-mod-clock" - module clock with software forced gating support
-+  "ti,omap4-mux-mod-clock" - composite clock with mux and module clocks, no
-+			     gating supported
-+  "ti,omap4-hw-mux-mod-clock" - composite clock with mux and module clocks,
-+				with hardware gating
-+  "ti,omap4-sw-mux-mod-clock" - composite clock with mux and module clocks,
-+				with software forced gating
-+
-+- #clock-cells : from common clock binding; shall be set to 0
-+- clocks : link to phandle of parent clock(s)
-+- reg : offset for register controlling adjustable gate and optional mux
-+
-+Optional properties:
-+- ti,bit-shift : bit shift for programming the clock mux, only needed for
-+		 the nodes of the mux variant
-+
-+Examples:
-+	timer6_mod_ck: timer6_mod_ck {
-+		#clock-cells = <0>;
-+		compatible = "ti,omap4-sw-mux-mod-clock";
-+		reg = <0x0570>;
-+		clocks = <&syc_clk_div_ck>, <&sys_32k_ck>;
-+		ti,bit-shift = <24>;
-+	};
-+
-+	i2c1_mod_ck: i2c1_mod_ck {
-+		#clock-cells = <0>;
-+		compatible = "ti,omap4-sw-mod-clock";
-+		reg = <0x14a0>;
-+		clocks = <&func_96m_fclk>;
-+	};
-+
-+	hsi_mod_ck: hsi_mod_ck {
-+		#clock-cells = <0>;
-+		compatible = "ti,omap4-hw-mod-clock";
-+		reg = <0x1338>;
-+		clocks = <&hsi_fck>;
-+	};
+-rhyland
+
 -- 
-1.7.9.5
+nvpublic
