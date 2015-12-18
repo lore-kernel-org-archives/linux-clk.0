@@ -1,354 +1,163 @@
-Return-Path: <Harvey.Hunt@imgtec.com>
-From: Harvey Hunt <harvey.hunt@imgtec.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<paul.burton@imgtec.com>
-CC: <ralf@linux-mips.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Harvey Hunt <harvey.hunt@imgtec.com>
-Subject: [PATCH] clk: ingenic: Allow divider value to be right shifted
-Date: Thu, 24 Dec 2015 10:45:38 +0000
-Message-ID: <1450953938-21180-1-git-send-email-harvey.hunt@imgtec.com>
+Return-Path: <heiko.stuebner@collabora.com>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko.stuebner@collabora.com>
+To: linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org
+Cc: dianders@chromium.org, mturquette@baylibre.com, sboyd@codeaurora.org, Chris Zhong <zyw@rock-chips.com>
+Subject: [PATCH] clk: rockchip: only enter pll slow-mode directly before reboots on rk3288
+Date: Fri, 18 Dec 2015 19:33:50 +0100
+Message-ID: <1705995.CL2pqRBHZb@diego>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-The JZ4780's MSC clock divider registers multiply the clock divider
-by 2. This means that MSC devices run at half their expected speed.
-Shift the clock divider for the affected registers to solve this.
+As commit 1d33929e2a2b ("clk: rockchip: switch PLLs to slow mode before
+reboot for rk3288") states, switching the PLLs to slow-mode is only
+necessary when rebooting using the soft-reset done through the CRU.
 
-Signed-off-by: Harvey Hunt <harvey.hunt@imgtec.com>
+The dwc2 controllers used create really big number of interrupts in
+special constellations involving usb-hubs and their number is so high,
+it can even overwhelm the interrupt handler if the cpu-speed os to low.
+
+Right now the PLLs are put into slow-mode in a shutdown syscore_ops
+callback which means it happens on all reboots (not only the soft-reset
+ones) and even on poweroff actions.
+
+This can result in the system not powering off and getting stuck instead,
+so we should move the slow-mode change nearer to the actual reboot action.
+
+For this we introduce the possiblity to also set a callback that gets
+called from the restart-handler directly prior to restarting the system
+and move the shutdown-callback to this new option.
+
+With this the slow-mode switch is done only on the necessary reboots
+and also has a smaller possibility of causing artifacts.
+
+Fixes: 1d33929e2a2b ("clk: rockchip: switch PLLs to slow mode before reboot for rk3288")
+Signed-off-by: Heiko Stuebner <heiko.stuebner@collabora.com>
 ---
- drivers/clk/ingenic/cgu.c        | 11 ++++++++++-
- drivers/clk/ingenic/cgu.h        |  6 +++++-
- drivers/clk/ingenic/jz4740-cgu.c | 24 ++++++++++++------------
- drivers/clk/ingenic/jz4780-cgu.c | 38 +++++++++++++++++++-------------------
- 4 files changed, 46 insertions(+), 33 deletions(-)
+ drivers/clk/rockchip/clk-rk3036.c | 2 +-
+ drivers/clk/rockchip/clk-rk3188.c | 2 +-
+ drivers/clk/rockchip/clk-rk3228.c | 2 +-
+ drivers/clk/rockchip/clk-rk3288.c | 4 ++--
+ drivers/clk/rockchip/clk-rk3368.c | 2 +-
+ drivers/clk/rockchip/clk.c        | 7 ++++++-
+ drivers/clk/rockchip/clk.h        | 2 +-
+ 7 files changed, 13 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
-index 7cfb7b2..8333bd0 100644
---- a/drivers/clk/ingenic/cgu.c
-+++ b/drivers/clk/ingenic/cgu.c
-@@ -325,6 +325,7 @@ ingenic_clk_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- 		div = (div_reg >> clk_info->div.shift) &
- 		      GENMASK(clk_info->div.bits - 1, 0);
- 		div += 1;
-+		div <<= clk_info->div.div;
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
+index 75553af..1651f7d 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -473,6 +473,6 @@ static void __init rk3036_clk_init(struct device_node *np)
+ 	rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0),
+ 				  ROCKCHIP_SOFTRST_HIWORD_MASK);
  
- 		rate /= div;
- 	}
-@@ -345,6 +346,14 @@ ingenic_clk_calc_div(const struct ingenic_cgu_clk_info *clk_info,
- 	div = min_t(unsigned, div, 1 << clk_info->div.bits);
- 	div = max_t(unsigned, div, 1);
+-	rockchip_register_restart_notifier(RK2928_GLB_SRST_FST);
++	rockchip_register_restart_notifier(RK2928_GLB_SRST_FST, NULL);
+ }
+ CLK_OF_DECLARE(rk3036_cru, "rockchip,rk3036-cru", rk3036_clk_init);
+diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
+index 7836a97..3521f6f 100644
+--- a/drivers/clk/rockchip/clk-rk3188.c
++++ b/drivers/clk/rockchip/clk-rk3188.c
+@@ -745,7 +745,7 @@ static void __init rk3188_common_clk_init(struct device_node *np)
+ 	rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0),
+ 				  ROCKCHIP_SOFTRST_HIWORD_MASK);
  
-+	/*
-+	 * If the divider value itself must be divided before being written to
-+	 * the divider register, we must ensure we don't have any bits set that
-+	 * would be lost as a result of doing so.
-+	 */
-+	div >>= clk_info->div.div;
-+	div <<= clk_info->div.div;
-+
- 	return div;
+-	rockchip_register_restart_notifier(RK2928_GLB_SRST_FST);
++	rockchip_register_restart_notifier(RK2928_GLB_SRST_FST, NULL);
  }
  
-@@ -395,7 +404,7 @@ ingenic_clk_set_rate(struct clk_hw *hw, unsigned long req_rate,
- 		/* update the divide */
- 		mask = GENMASK(clk_info->div.bits - 1, 0);
- 		reg &= ~(mask << clk_info->div.shift);
--		reg |= (div - 1) << clk_info->div.shift;
-+		reg |= ((div >> clk_info->div.div) - 1) << clk_info->div.shift;
+ static void __init rk3066a_clk_init(struct device_node *np)
+diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
+index 87a7e59..981a502 100644
+--- a/drivers/clk/rockchip/clk-rk3228.c
++++ b/drivers/clk/rockchip/clk-rk3228.c
+@@ -673,6 +673,6 @@ static void __init rk3228_clk_init(struct device_node *np)
+ 	rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0),
+ 				  ROCKCHIP_SOFTRST_HIWORD_MASK);
  
- 		/* clear the stop bit */
- 		if (clk_info->div.stop_bit != -1)
-diff --git a/drivers/clk/ingenic/cgu.h b/drivers/clk/ingenic/cgu.h
-index 99347e2..bdeac6c 100644
---- a/drivers/clk/ingenic/cgu.h
-+++ b/drivers/clk/ingenic/cgu.h
-@@ -76,8 +76,11 @@ struct ingenic_cgu_mux_info {
- /**
-  * struct ingenic_cgu_div_info - information about a divider
-  * @reg: offset of the divider control register within the CGU
-- * @shift: number of bits to shift the divide value by (ie. the index of
-+ * @shift: number of bits to left shift the divide value by (ie. the index of
-  *         the lowest bit of the divide value within its control register)
-+ * @div: number of bits to right shift the divide value by (i.e. if the
-+ *	 effective divider value is the value written to the register
-+ *	 multiplied by some constant)
-  * @bits: the size of the divide value in bits
-  * @ce_bit: the index of the change enable bit within reg, or -1 if there
-  *          isn't one
-@@ -87,6 +90,7 @@ struct ingenic_cgu_mux_info {
- struct ingenic_cgu_div_info {
- 	unsigned reg;
- 	u8 shift;
-+	u8 div;
- 	u8 bits;
- 	s8 ce_bit;
- 	s8 busy_bit;
-diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
-index 305a26c2..8d0ebad 100644
---- a/drivers/clk/ingenic/jz4740-cgu.c
-+++ b/drivers/clk/ingenic/jz4740-cgu.c
-@@ -90,51 +90,51 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
- 	[JZ4740_CLK_PLL_HALF] = {
- 		"pll half", CGU_CLK_DIV,
- 		.parents = { JZ4740_CLK_PLL, -1, -1, -1 },
--		.div = { CGU_REG_CPCCR, 21, 1, -1, -1, -1 },
-+		.div = { CGU_REG_CPCCR, 21, 0, 1, -1, -1, -1 },
- 	},
+-	rockchip_register_restart_notifier(RK3228_GLB_SRST_FST);
++	rockchip_register_restart_notifier(RK3228_GLB_SRST_FST, NULL);
+ }
+ CLK_OF_DECLARE(rk3228_cru, "rockchip,rk3228-cru", rk3228_clk_init);
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 3ecaa9d..2a6eca0 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -848,7 +848,6 @@ static void rk3288_clk_shutdown(void)
+ static struct syscore_ops rk3288_clk_syscore_ops = {
+ 	.suspend = rk3288_clk_suspend,
+ 	.resume = rk3288_clk_resume,
+-	.shutdown = rk3288_clk_shutdown,
+ };
  
- 	[JZ4740_CLK_CCLK] = {
- 		"cclk", CGU_CLK_DIV,
- 		.parents = { JZ4740_CLK_PLL, -1, -1, -1 },
--		.div = { CGU_REG_CPCCR, 0, 4, 22, -1, -1 },
-+		.div = { CGU_REG_CPCCR, 0, 0, 4, 22, -1, -1 },
- 	},
+ static void __init rk3288_clk_init(struct device_node *np)
+@@ -900,7 +899,8 @@ static void __init rk3288_clk_init(struct device_node *np)
+ 				  rk3288_cru_base + RK3288_SOFTRST_CON(0),
+ 				  ROCKCHIP_SOFTRST_HIWORD_MASK);
  
- 	[JZ4740_CLK_HCLK] = {
- 		"hclk", CGU_CLK_DIV,
- 		.parents = { JZ4740_CLK_PLL, -1, -1, -1 },
--		.div = { CGU_REG_CPCCR, 4, 4, 22, -1, -1 },
-+		.div = { CGU_REG_CPCCR, 4, 0, 4, 22, -1, -1 },
- 	},
+-	rockchip_register_restart_notifier(RK3288_GLB_SRST_FST);
++	rockchip_register_restart_notifier(RK3288_GLB_SRST_FST,
++					   rk3288_clk_shutdown);
+ 	register_syscore_ops(&rk3288_clk_syscore_ops);
+ }
+ CLK_OF_DECLARE(rk3288_cru, "rockchip,rk3288-cru", rk3288_clk_init);
+diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
+index 1faf160..be0ede5 100644
+--- a/drivers/clk/rockchip/clk-rk3368.c
++++ b/drivers/clk/rockchip/clk-rk3368.c
+@@ -889,6 +889,6 @@ static void __init rk3368_clk_init(struct device_node *np)
+ 	rockchip_register_softrst(np, 15, reg_base + RK3368_SOFTRST_CON(0),
+ 				  ROCKCHIP_SOFTRST_HIWORD_MASK);
  
- 	[JZ4740_CLK_PCLK] = {
- 		"pclk", CGU_CLK_DIV,
- 		.parents = { JZ4740_CLK_PLL, -1, -1, -1 },
--		.div = { CGU_REG_CPCCR, 8, 4, 22, -1, -1 },
-+		.div = { CGU_REG_CPCCR, 8, 0, 4, 22, -1, -1 },
- 	},
+-	rockchip_register_restart_notifier(RK3368_GLB_SRST_FST);
++	rockchip_register_restart_notifier(RK3368_GLB_SRST_FST, NULL);
+ }
+ CLK_OF_DECLARE(rk3368_cru, "rockchip,rk3368-cru", rk3368_clk_init);
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index be6c7fd..443d6f0 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -341,9 +341,13 @@ void __init rockchip_clk_protect_critical(const char *const clocks[],
+ }
  
- 	[JZ4740_CLK_MCLK] = {
- 		"mclk", CGU_CLK_DIV,
- 		.parents = { JZ4740_CLK_PLL, -1, -1, -1 },
--		.div = { CGU_REG_CPCCR, 12, 4, 22, -1, -1 },
-+		.div = { CGU_REG_CPCCR, 12, 0, 4, 22, -1, -1 },
- 	},
+ static unsigned int reg_restart;
++static void (*cb_restart)(void);
+ static int rockchip_restart_notify(struct notifier_block *this,
+ 				   unsigned long mode, void *cmd)
+ {
++	if (cb_restart)
++		cb_restart();
++
+ 	writel(0xfdb9, reg_base + reg_restart);
+ 	return NOTIFY_DONE;
+ }
+@@ -353,11 +357,12 @@ static struct notifier_block rockchip_restart_handler = {
+ 	.priority = 128,
+ };
  
- 	[JZ4740_CLK_LCD] = {
- 		"lcd", CGU_CLK_DIV | CGU_CLK_GATE,
- 		.parents = { JZ4740_CLK_PLL_HALF, -1, -1, -1 },
--		.div = { CGU_REG_CPCCR, 16, 5, 22, -1, -1 },
-+		.div = { CGU_REG_CPCCR, 16, 0, 5, 22, -1, -1 },
- 		.gate = { CGU_REG_CLKGR, 10 },
- 	},
+-void __init rockchip_register_restart_notifier(unsigned int reg)
++void __init rockchip_register_restart_notifier(unsigned int reg, void (*cb)(void))
+ {
+ 	int ret;
  
- 	[JZ4740_CLK_LCD_PCLK] = {
- 		"lcd_pclk", CGU_CLK_DIV,
- 		.parents = { JZ4740_CLK_PLL_HALF, -1, -1, -1 },
--		.div = { CGU_REG_LPCDR, 0, 11, -1, -1, -1 },
-+		.div = { CGU_REG_LPCDR, 0, 0, 11, -1, -1, -1 },
- 	},
+ 	reg_restart = reg;
++	cb_restart = cb;
+ 	ret = register_restart_handler(&rockchip_restart_handler);
+ 	if (ret)
+ 		pr_err("%s: cannot register restart handler, %d\n",
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 01bc372..809ef81 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -503,7 +503,7 @@ void rockchip_clk_register_armclk(unsigned int lookup_id, const char *name,
+ 			const struct rockchip_cpuclk_rate_table *rates,
+ 			int nrates);
+ void rockchip_clk_protect_critical(const char *const clocks[], int nclocks);
+-void rockchip_register_restart_notifier(unsigned int reg);
++void rockchip_register_restart_notifier(unsigned int reg, void (*cb)(void));
  
- 	[JZ4740_CLK_I2S] = {
- 		"i2s", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
- 		.parents = { JZ4740_CLK_EXT, JZ4740_CLK_PLL_HALF, -1, -1 },
- 		.mux = { CGU_REG_CPCCR, 31, 1 },
--		.div = { CGU_REG_I2SCDR, 0, 8, -1, -1, -1 },
-+		.div = { CGU_REG_I2SCDR, 0, 0, 8, -1, -1, -1 },
- 		.gate = { CGU_REG_CLKGR, 6 },
- 	},
- 
-@@ -142,21 +142,21 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
- 		"spi", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
- 		.parents = { JZ4740_CLK_EXT, JZ4740_CLK_PLL, -1, -1 },
- 		.mux = { CGU_REG_SSICDR, 31, 1 },
--		.div = { CGU_REG_SSICDR, 0, 4, -1, -1, -1 },
-+		.div = { CGU_REG_SSICDR, 0, 0, 4, -1, -1, -1 },
- 		.gate = { CGU_REG_CLKGR, 4 },
- 	},
- 
- 	[JZ4740_CLK_MMC] = {
- 		"mmc", CGU_CLK_DIV | CGU_CLK_GATE,
- 		.parents = { JZ4740_CLK_PLL_HALF, -1, -1, -1 },
--		.div = { CGU_REG_MSCCDR, 0, 5, -1, -1, -1 },
-+		.div = { CGU_REG_MSCCDR, 0, 0, 5, -1, -1, -1 },
- 		.gate = { CGU_REG_CLKGR, 7 },
- 	},
- 
- 	[JZ4740_CLK_UHC] = {
- 		"uhc", CGU_CLK_DIV | CGU_CLK_GATE,
- 		.parents = { JZ4740_CLK_PLL_HALF, -1, -1, -1 },
--		.div = { CGU_REG_UHCCDR, 0, 4, -1, -1, -1 },
-+		.div = { CGU_REG_UHCCDR, 0, 0, 4, -1, -1, -1 },
- 		.gate = { CGU_REG_CLKGR, 14 },
- 	},
- 
-@@ -164,7 +164,7 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
- 		"udc", CGU_CLK_MUX | CGU_CLK_DIV,
- 		.parents = { JZ4740_CLK_EXT, JZ4740_CLK_PLL_HALF, -1, -1 },
- 		.mux = { CGU_REG_CPCCR, 29, 1 },
--		.div = { CGU_REG_CPCCR, 23, 6, -1, -1, -1 },
-+		.div = { CGU_REG_CPCCR, 23, 0, 6, -1, -1, -1 },
- 		.gate = { CGU_REG_SCR, 6 },
- 	},
- 
-diff --git a/drivers/clk/ingenic/jz4780-cgu.c b/drivers/clk/ingenic/jz4780-cgu.c
-index 431f962..da9ac32 100644
---- a/drivers/clk/ingenic/jz4780-cgu.c
-+++ b/drivers/clk/ingenic/jz4780-cgu.c
-@@ -296,13 +296,13 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
- 	[JZ4780_CLK_CPU] = {
- 		"cpu", CGU_CLK_DIV,
- 		.parents = { JZ4780_CLK_CPUMUX, -1, -1, -1 },
--		.div = { CGU_REG_CLOCKCONTROL, 0, 4, 22, -1, -1 },
-+		.div = { CGU_REG_CLOCKCONTROL, 0, 0, 4, 22, -1, -1 },
- 	},
- 
- 	[JZ4780_CLK_L2CACHE] = {
- 		"l2cache", CGU_CLK_DIV,
- 		.parents = { JZ4780_CLK_CPUMUX, -1, -1, -1 },
--		.div = { CGU_REG_CLOCKCONTROL, 4, 4, -1, -1, -1 },
-+		.div = { CGU_REG_CLOCKCONTROL, 4, 0, 4, -1, -1, -1 },
- 	},
- 
- 	[JZ4780_CLK_AHB0] = {
-@@ -310,7 +310,7 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
- 		.parents = { -1, JZ4780_CLK_SCLKA, JZ4780_CLK_MPLL,
- 			     JZ4780_CLK_EPLL },
- 		.mux = { CGU_REG_CLOCKCONTROL, 26, 2 },
--		.div = { CGU_REG_CLOCKCONTROL, 8, 4, 21, -1, -1 },
-+		.div = { CGU_REG_CLOCKCONTROL, 8, 0, 4, 21, -1, -1 },
- 	},
- 
- 	[JZ4780_CLK_AHB2PMUX] = {
-@@ -323,20 +323,20 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
- 	[JZ4780_CLK_AHB2] = {
- 		"ahb2", CGU_CLK_DIV,
- 		.parents = { JZ4780_CLK_AHB2PMUX, -1, -1, -1 },
--		.div = { CGU_REG_CLOCKCONTROL, 12, 4, 20, -1, -1 },
-+		.div = { CGU_REG_CLOCKCONTROL, 12, 0, 4, 20, -1, -1 },
- 	},
- 
- 	[JZ4780_CLK_PCLK] = {
- 		"pclk", CGU_CLK_DIV,
- 		.parents = { JZ4780_CLK_AHB2PMUX, -1, -1, -1 },
--		.div = { CGU_REG_CLOCKCONTROL, 16, 4, 20, -1, -1 },
-+		.div = { CGU_REG_CLOCKCONTROL, 16, 0, 4, 20, -1, -1 },
- 	},
- 
- 	[JZ4780_CLK_DDR] = {
- 		"ddr", CGU_CLK_MUX | CGU_CLK_DIV,
- 		.parents = { -1, JZ4780_CLK_SCLKA, JZ4780_CLK_MPLL, -1 },
- 		.mux = { CGU_REG_DDRCDR, 30, 2 },
--		.div = { CGU_REG_DDRCDR, 0, 4, 29, 28, 27 },
-+		.div = { CGU_REG_DDRCDR, 0, 0, 4, 29, 28, 27 },
- 	},
- 
- 	[JZ4780_CLK_VPU] = {
-@@ -344,7 +344,7 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
- 		.parents = { JZ4780_CLK_SCLKA, JZ4780_CLK_MPLL,
- 			     JZ4780_CLK_EPLL, -1 },
- 		.mux = { CGU_REG_VPUCDR, 30, 2 },
--		.div = { CGU_REG_VPUCDR, 0, 4, 29, 28, 27 },
-+		.div = { CGU_REG_VPUCDR, 0, 0, 4, 29, 28, 27 },
- 		.gate = { CGU_REG_CLKGR1, 2 },
- 	},
- 
-@@ -352,7 +352,7 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
- 		"i2s_pll", CGU_CLK_MUX | CGU_CLK_DIV,
- 		.parents = { JZ4780_CLK_SCLKA, JZ4780_CLK_EPLL, -1, -1 },
- 		.mux = { CGU_REG_I2SCDR, 30, 1 },
--		.div = { CGU_REG_I2SCDR, 0, 8, 29, 28, 27 },
-+		.div = { CGU_REG_I2SCDR, 0, 0, 8, 29, 28, 27 },
- 	},
- 
- 	[JZ4780_CLK_I2S] = {
-@@ -366,7 +366,7 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
- 		.parents = { JZ4780_CLK_SCLKA, JZ4780_CLK_MPLL,
- 			     JZ4780_CLK_VPLL, -1 },
- 		.mux = { CGU_REG_LP0CDR, 30, 2 },
--		.div = { CGU_REG_LP0CDR, 0, 8, 28, 27, 26 },
-+		.div = { CGU_REG_LP0CDR, 0, 0, 8, 28, 27, 26 },
- 	},
- 
- 	[JZ4780_CLK_LCD1PIXCLK] = {
-@@ -374,7 +374,7 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
- 		.parents = { JZ4780_CLK_SCLKA, JZ4780_CLK_MPLL,
- 			     JZ4780_CLK_VPLL, -1 },
- 		.mux = { CGU_REG_LP1CDR, 30, 2 },
--		.div = { CGU_REG_LP1CDR, 0, 8, 28, 27, 26 },
-+		.div = { CGU_REG_LP1CDR, 0, 0, 8, 28, 27, 26 },
- 	},
- 
- 	[JZ4780_CLK_MSCMUX] = {
-@@ -386,21 +386,21 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
- 	[JZ4780_CLK_MSC0] = {
- 		"msc0", CGU_CLK_DIV | CGU_CLK_GATE,
- 		.parents = { JZ4780_CLK_MSCMUX, -1, -1, -1 },
--		.div = { CGU_REG_MSC0CDR, 0, 8, 29, 28, 27 },
-+		.div = { CGU_REG_MSC0CDR, 0, 1, 8, 29, 28, 27 },
- 		.gate = { CGU_REG_CLKGR0, 3 },
- 	},
- 
- 	[JZ4780_CLK_MSC1] = {
- 		"msc1", CGU_CLK_DIV | CGU_CLK_GATE,
- 		.parents = { JZ4780_CLK_MSCMUX, -1, -1, -1 },
--		.div = { CGU_REG_MSC1CDR, 0, 8, 29, 28, 27 },
-+		.div = { CGU_REG_MSC1CDR, 0, 1, 8, 29, 28, 27 },
- 		.gate = { CGU_REG_CLKGR0, 11 },
- 	},
- 
- 	[JZ4780_CLK_MSC2] = {
- 		"msc2", CGU_CLK_DIV | CGU_CLK_GATE,
- 		.parents = { JZ4780_CLK_MSCMUX, -1, -1, -1 },
--		.div = { CGU_REG_MSC2CDR, 0, 8, 29, 28, 27 },
-+		.div = { CGU_REG_MSC2CDR, 0, 1, 8, 29, 28, 27 },
- 		.gate = { CGU_REG_CLKGR0, 12 },
- 	},
- 
-@@ -409,7 +409,7 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
- 		.parents = { JZ4780_CLK_SCLKA, JZ4780_CLK_MPLL,
- 			     JZ4780_CLK_EPLL, JZ4780_CLK_OTGPHY },
- 		.mux = { CGU_REG_UHCCDR, 30, 2 },
--		.div = { CGU_REG_UHCCDR, 0, 8, 29, 28, 27 },
-+		.div = { CGU_REG_UHCCDR, 0, 0, 8, 29, 28, 27 },
- 		.gate = { CGU_REG_CLKGR0, 24 },
- 	},
- 
-@@ -417,7 +417,7 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
- 		"ssi_pll", CGU_CLK_MUX | CGU_CLK_DIV,
- 		.parents = { JZ4780_CLK_SCLKA, JZ4780_CLK_MPLL, -1, -1 },
- 		.mux = { CGU_REG_SSICDR, 30, 1 },
--		.div = { CGU_REG_SSICDR, 0, 8, 29, 28, 27 },
-+		.div = { CGU_REG_SSICDR, 0, 0, 8, 29, 28, 27 },
- 	},
- 
- 	[JZ4780_CLK_SSI] = {
-@@ -430,7 +430,7 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
- 		"cim_mclk", CGU_CLK_MUX | CGU_CLK_DIV,
- 		.parents = { JZ4780_CLK_SCLKA, JZ4780_CLK_MPLL, -1, -1 },
- 		.mux = { CGU_REG_CIMCDR, 31, 1 },
--		.div = { CGU_REG_CIMCDR, 0, 8, 30, 29, 28 },
-+		.div = { CGU_REG_CIMCDR, 0, 0, 8, 30, 29, 28 },
- 	},
- 
- 	[JZ4780_CLK_PCMPLL] = {
-@@ -438,7 +438,7 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
- 		.parents = { JZ4780_CLK_SCLKA, JZ4780_CLK_MPLL,
- 			     JZ4780_CLK_EPLL, JZ4780_CLK_VPLL },
- 		.mux = { CGU_REG_PCMCDR, 29, 2 },
--		.div = { CGU_REG_PCMCDR, 0, 8, 28, 27, 26 },
-+		.div = { CGU_REG_PCMCDR, 0, 0, 8, 28, 27, 26 },
- 	},
- 
- 	[JZ4780_CLK_PCM] = {
-@@ -453,7 +453,7 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
- 		.parents = { -1, JZ4780_CLK_SCLKA, JZ4780_CLK_MPLL,
- 			     JZ4780_CLK_EPLL },
- 		.mux = { CGU_REG_GPUCDR, 30, 2 },
--		.div = { CGU_REG_GPUCDR, 0, 4, 29, 28, 27 },
-+		.div = { CGU_REG_GPUCDR, 0, 0, 4, 29, 28, 27 },
- 		.gate = { CGU_REG_CLKGR1, 4 },
- 	},
- 
-@@ -471,7 +471,7 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
- 		.parents = { -1, JZ4780_CLK_SCLKA, JZ4780_CLK_MPLL,
- 			     JZ4780_CLK_EPLL },
- 		.mux = { CGU_REG_BCHCDR, 30, 2 },
--		.div = { CGU_REG_BCHCDR, 0, 4, 29, 28, 27 },
-+		.div = { CGU_REG_BCHCDR, 0, 0, 4, 29, 28, 27 },
- 		.gate = { CGU_REG_CLKGR0, 1 },
- 	},
+ #define ROCKCHIP_SOFTRST_HIWORD_MASK	BIT(0)
  
 -- 
-2.6.4
+2.6.2
