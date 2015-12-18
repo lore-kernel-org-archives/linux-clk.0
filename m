@@ -1,78 +1,61 @@
-Return-Path: <robh@kernel.org>
-Date: Mon, 7 Dec 2015 08:39:15 -0600
-From: Rob Herring <robh@kernel.org>
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Russell King <linux@arm.linux.org.uk>,
-	Roland Stigge <stigge@antcom.de>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/5] dt-bindings: clock: add description of LPC32xx
- clock controller
-Message-ID: <20151207143915.GA887@rob-hp-laptop>
-References: <1449398757-16834-1-git-send-email-vz@mleia.com>
- <1449398757-16834-2-git-send-email-vz@mleia.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [RFC 4/9] clk: ti: mux: export mux clock APIs locally
+Date: Fri, 18 Dec 2015 15:58:56 +0200
+Message-ID: <1450447141-29936-5-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
+References: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1449398757-16834-2-git-send-email-vz@mleia.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Dec 06, 2015 at 12:45:53PM +0200, Vladimir Zapolskiy wrote:
-> NXP LPC32xx SoC has a clocking and power control unit (CPC) as a part
-> of system control block (SCB). CPC is supplied by two external
-> oscillators and it manages core and most of peripheral
-> clocks, the change adds description of DT bindings for clock
-> controller found on LPC32xx SoC series.
-> 
-> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+get_parent and set_parent are going to be required by the support of
+module clocks, so export these locally.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clock.h |    3 +++
+ drivers/clk/ti/mux.c   |    4 ++--
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-> ---
-> Changes from v1 to v2:
-> - none
-> 
->  .../devicetree/bindings/clock/nxp,lpc3220-clk.txt  | 30 ++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
-> new file mode 100644
-> index 0000000..20cbca3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
-> @@ -0,0 +1,30 @@
-> +NXP LPC32xx Clock Controller
-> +
-> +Required properties:
-> +- compatible: should be "nxp,lpc3220-clk"
-> +- reg:  should contain clock controller registers location and length
-> +- #clock-cells: must be 1, the cell holds id of a clock provided by the
-> +  clock controller
-> +- clocks: phandles of external oscillators, the list must contain one
-> +  32768 Hz oscillator and may have one optional high frequency oscillator
-> +- clock-names: list of external oscillator clock names, must contain
-> +  "xtal_32k" and may have optional "xtal"
-> +
-> +Examples:
-> +
-> +	/* System Control Block */
-> +	scb {
-> +		compatible = "simple-bus";
-> +		ranges = <0x0 0x040004000 0x00001000>;
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +
-> +		clk: clock-controller@0 {
-> +			compatible = "nxp,lpc3220-clk";
-> +			reg = <0x00 0x114>;
-> +			#clock-cells = <1>;
-> +
-> +			clocks = <&xtal_32k>, <&xtal>;
-> +			clock-names = "xtal_32k", "xtal";
-> +		};
-> +	};
-> -- 
-> 2.1.4
-> 
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index 90f3f47..7eca8a1 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -224,6 +224,9 @@ extern const struct clk_hw_omap_ops clkhwops_am35xx_ipss_wait;
+ extern const struct clk_ops ti_clk_divider_ops;
+ extern const struct clk_ops ti_clk_mux_ops;
+ 
++u8 ti_clk_mux_get_parent(struct clk_hw *hw);
++int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index);
++
+ int omap2_clkops_enable_clkdm(struct clk_hw *hw);
+ void omap2_clkops_disable_clkdm(struct clk_hw *hw);
+ 
+diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
+index 69f08a1..d723dad 100644
+--- a/drivers/clk/ti/mux.c
++++ b/drivers/clk/ti/mux.c
+@@ -28,7 +28,7 @@
+ 
+ #define to_clk_mux(_hw) container_of(_hw, struct clk_mux, hw)
+ 
+-static u8 ti_clk_mux_get_parent(struct clk_hw *hw)
++u8 ti_clk_mux_get_parent(struct clk_hw *hw)
+ {
+ 	struct clk_mux *mux = to_clk_mux(hw);
+ 	int num_parents = clk_hw_get_num_parents(hw);
+@@ -65,7 +65,7 @@ static u8 ti_clk_mux_get_parent(struct clk_hw *hw)
+ 	return val;
+ }
+ 
+-static int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index)
++int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ {
+ 	struct clk_mux *mux = to_clk_mux(hw);
+ 	u32 val;
+-- 
+1.7.9.5
