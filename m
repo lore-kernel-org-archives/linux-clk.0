@@ -1,72 +1,53 @@
-Return-Path: <rklein@nvidia.com>
-Subject: Re: [PATCH 2/3] clk: tegra210: Fix sparse warnings for functions not
- declared as static
-To: Jon Hunter <jonathanh@nvidia.com>, Peter De Schrijver
-	<pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-References: <1449248665-22343-1-git-send-email-jonathanh@nvidia.com>
- <1449248665-22343-2-git-send-email-jonathanh@nvidia.com>
-CC: <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-From: Rhyland Klein <rklein@nvidia.com>
-Message-ID: <5665AB03.3000304@nvidia.com>
-Date: Mon, 7 Dec 2015 10:51:31 -0500
+Return-Path: <jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>
+CC: Rhyland Klein <rklein@nvidia.com>,
+	linux-clk@vger.kernel.org ,
+	linux-tegra@vger.kernel.org ,
+	linux-kernel@vger.kernel.org ,
+	Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] clk: tegra: Fix clock sources for tegra210 EMC
+Date: Fri, 18 Dec 2015 13:45:28 +0000
+Message-ID: <1450446328-6414-1-git-send-email-jonathanh@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <1449248665-22343-2-git-send-email-jonathanh@nvidia.com>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: rklein@nvidia.com
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/4/2015 12:04 PM, Jon Hunter wrote:
-> Sparse reports the following warnings for functions in clk-tegra210.c
-> that should be declared as static:
-> 
-> drivers/clk/tegra/clk-tegra210.c:460:6: warning: symbol
->  'tegra210_pllcx_set_defaults' was not declared. Should it be static?
-> drivers/clk/tegra/clk-tegra210.c:485:6: warning: symbol
->  '_pllc_set_defaults' was not declared. Should it be static?
-> drivers/clk/tegra/clk-tegra210.c:490:6: warning: symbol
->  '_pllc2_set_defaults' was not declared. Should it be static?
-> drivers/clk/tegra/clk-tegra210.c:495:6: warning: symbol
->  '_pllc3_set_defaults' was not declared. Should it be static?
-> drivers/clk/tegra/clk-tegra210.c:500:6: warning: symbol
->  '_plla1_set_defaults' was not declared. Should it be static?
-> drivers/clk/tegra/clk-tegra210.c:510:6: warning: symbol
->  'tegra210_plla_set_defaults' was not declared. Should it be static?
-> drivers/clk/tegra/clk-tegra210.c:562:6: warning: symbol
->  'tegra210_plld_set_defaults' was not declared. Should it be static?
-> drivers/clk/tegra/clk-tegra210.c:701:6: warning: symbol
->  'tegra210_plld2_set_defaults' was not declared. Should it be static?
-> drivers/clk/tegra/clk-tegra210.c:709:6: warning: symbol
->  'tegra210_plldp_set_defaults' was not declared. Should it be static?
-> drivers/clk/tegra/clk-tegra210.c:722:6: warning: symbol
->  'tegra210_pllc4_set_defaults' was not declared. Should it be static?
-> drivers/clk/tegra/clk-tegra210.c:731:6: warning: symbol
->  'tegra210_pllre_set_defaults' was not declared. Should it be static?
-> drivers/clk/tegra/clk-tegra210.c:844:6: warning: symbol
->  'tegra210_pllx_set_defaults' was not declared. Should it be static?
-> drivers/clk/tegra/clk-tegra210.c:904:6: warning: symbol
->  'tegra210_pllmb_set_defaults' was not declared. Should it be static?
-> drivers/clk/tegra/clk-tegra210.c:963:6: warning: symbol
->  'tegra210_pllp_set_defaults' was not declared. Should it be static?
-> drivers/clk/tegra/clk-tegra210.c:1025:6: warning: symbol
->  'tegra210_pllu_set_defaults' was not declared. Should it be static?
-> drivers/clk/tegra/clk-tegra210.c:1215:15: warning: symbol
->  'tegra210_clk_adjust_vco_min' was not declared. Should it be static?
-> 
-> Fix this by declaring the above as static.
-> 
-> Fixes: b31eba5ff3f7 ("clk: tegra: Add support for Tegra210 clocks")
-> 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 36 +++++++++++++++++++-----------------
->  1 file changed, 19 insertions(+), 17 deletions(-)
-...
+The EMC clock sources for tegra210 currently incorrectly include pll_c2
+and pll_c3. However, both of these should have been pll_mb as shown in
+the TRM. If tegra210 happens to be configured such that the pll_mb is the
+default clock for the EMC, as configured by the bootloader, then this will
+cause a system hang on boot. This is because the kernel will disable the
+pll_mb when disabling unused clock as it appears to be unused when it is
+not.
 
-Acked-by: Rhyland Klein <rklein@nvidia.com>
+Also add the additional pll_p clock source for the EMC.
 
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 58514c44ea83..849be30b52bf 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -243,7 +243,8 @@ static unsigned long tegra210_input_freq[] = {
+ };
+ 
+ static const char *mux_pllmcp_clkm[] = {
+-	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud", "pll_c2", "pll_c3",
++	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud", "pll_mb", "pll_mb",
++	"pll_p",
+ };
+ #define mux_pllmcp_clkm_idx NULL
+ 
 -- 
-nvpublic
+2.1.4
