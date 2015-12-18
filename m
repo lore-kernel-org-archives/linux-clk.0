@@ -1,62 +1,41 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mtd@lists.infradead.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 13/16] clk: walk the orphan clock list more simply
-Date: Mon, 28 Dec 2015 19:10:26 +0900
-Message-Id: <1451297429-21689-14-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <tony@atomide.com>
+Date: Fri, 18 Dec 2015 07:11:56 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC 8/9] ARM: OMAP4: hwmod_data: use module clocks from DT
+Message-ID: <20151218151156.GH23396@atomide.com>
+References: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
+ <1450447141-29936-9-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1450447141-29936-9-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This loop can be much simpler.  If a new parent is available for
-orphan clocks, __clk_init_parent(orphan) can detect it.
+* Tero Kristo <t-kristo@ti.com> [151218 05:57]:
+> Replace the usage of prcm->clkstctrl with main_clk:s provided via DT.
+> This is done in preparation to get rid of hwmod data from kernel.
+...
+> --- a/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
+> +++ b/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
+> @@ -334,10 +329,9 @@ static struct omap_hwmod omap44xx_counter_32k_hwmod = {
+>  	.class		= &omap44xx_counter_hwmod_class,
+>  	.clkdm_name	= "l4_wkup_clkdm",
+>  	.flags		= HWMOD_SWSUP_SIDLE,
+> -	.main_clk	= "sys_32k_ck",
+> +	.main_clk	= "counter_32k_mod_ck",
+>  	.prcm = {
+>  		.omap4 = {
+> -			.clkctrl_offs = OMAP4_CM_WKUP_SYNCTIMER_CLKCTRL_OFFSET,
+>  			.context_offs = OMAP4_RM_WKUP_SYNCTIMER_CONTEXT_OFFSET,
+>  		},
+>  	},
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Care to describe why the main_clk now needs to be modified or
+added? Can that too come from dts now?
 
-Changes in v2: None
+Regards,
 
- drivers/clk/clk.c | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index a4f66fe..efd093a 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2402,24 +2402,15 @@ static int __clk_core_init(struct clk_core *core)
- 	core->rate = core->req_rate = rate;
- 
- 	/*
--	 * walk the list of orphan clocks and reparent any that are children of
--	 * this clock
-+	 * walk the list of orphan clocks and reparent any that newly finds a
-+	 * parent.
- 	 */
- 	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
--		if (orphan->num_parents && orphan->ops->get_parent) {
--			i = orphan->ops->get_parent(orphan->hw);
--			if (i >= 0 && i < orphan->num_parents &&
--			    !strcmp(core->name, orphan->parent_names[i]))
--				clk_core_reparent(orphan, core);
--			continue;
--		}
-+		struct clk_core *parent = __clk_init_parent(orphan);
- 
--		for (i = 0; i < orphan->num_parents; i++)
--			if (!strcmp(core->name, orphan->parent_names[i])) {
--				clk_core_reparent(orphan, core);
--				break;
--			}
--	 }
-+		if (parent)
-+			clk_core_reparent(orphan, parent);
-+	}
- 
- 	/*
- 	 * optional platform-specific magic
--- 
-1.9.1
+Tony
