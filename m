@@ -1,75 +1,58 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga02-in.huawei.com ([119.145.14.65]:6021 "EHLO
-	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754064AbbL3B4e (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 29 Dec 2015 20:56:34 -0500
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
-	<zhangzhenxing@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [PATCH v4 4/6] ARM: debug: add hi3519 debug uart
-Date: Wed, 30 Dec 2015 09:43:50 +0800
-Message-ID: <1451439832-13927-5-git-send-email-xuejiancheng@huawei.com>
-In-Reply-To: <1451439832-13927-1-git-send-email-xuejiancheng@huawei.com>
-References: <1451439832-13927-1-git-send-email-xuejiancheng@huawei.com>
+Return-Path: <dianders@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Sender: dianders@google.com
+In-Reply-To: <1705995.CL2pqRBHZb@diego>
+References: <1705995.CL2pqRBHZb@diego>
+Date: Fri, 18 Dec 2015 14:40:21 -0800
+Message-ID: <CAD=FV=XRS3-euKmOzaUd_bL+W=f-FD2tB2gZBsQxBioLBEs23w@mail.gmail.com>
+Subject: Re: [PATCH] clk: rockchip: only enter pll slow-mode directly before
+ reboots on rk3288
+From: Doug Anderson <dianders@chromium.org>
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko.stuebner@collabora.com>
+Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chris Zhong <zyw@rock-chips.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-add hi3519 debug uart.
+Heiko,
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
----
- arch/arm/Kconfig.debug | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+On Fri, Dec 18, 2015 at 10:33 AM, Heiko St=C3=BCbner
+<heiko.stuebner@collabora.com> wrote:
+> As commit 1d33929e2a2b ("clk: rockchip: switch PLLs to slow mode before
+> reboot for rk3288") states, switching the PLLs to slow-mode is only
+> necessary when rebooting using the soft-reset done through the CRU.
+>
+> The dwc2 controllers used create really big number of interrupts in
+> special constellations involving usb-hubs and their number is so high,
+> it can even overwhelm the interrupt handler if the cpu-speed os to low.
+>
+> Right now the PLLs are put into slow-mode in a shutdown syscore_ops
+> callback which means it happens on all reboots (not only the soft-reset
+> ones) and even on poweroff actions.
+>
+> This can result in the system not powering off and getting stuck instead,
+> so we should move the slow-mode change nearer to the actual reboot action=
+.
+>
+> For this we introduce the possiblity to also set a callback that gets
+> called from the restart-handler directly prior to restarting the system
+> and move the shutdown-callback to this new option.
+>
+> With this the slow-mode switch is done only on the necessary reboots
+> and also has a smaller possibility of causing artifacts.
+>
+> Fixes: 1d33929e2a2b ("clk: rockchip: switch PLLs to slow mode before rebo=
+ot for rk3288")
+> Signed-off-by: Heiko Stuebner <heiko.stuebner@collabora.com>
+> ---
+>  drivers/clk/rockchip/clk-rk3036.c | 2 +-
+>  drivers/clk/rockchip/clk-rk3188.c | 2 +-
+>  drivers/clk/rockchip/clk-rk3228.c | 2 +-
+>  drivers/clk/rockchip/clk-rk3288.c | 4 ++--
+>  drivers/clk/rockchip/clk-rk3368.c | 2 +-
+>  drivers/clk/rockchip/clk.c        | 7 ++++++-
+>  drivers/clk/rockchip/clk.h        | 2 +-
+>  7 files changed, 13 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index 259c0ca..29af057 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -270,6 +270,14 @@ choice
- 		  Say Y here if you want the debug print routines to direct
- 		  their output to the 8250 at PCI COM1.
- 
-+	config DEBUG_HI3519_UART
-+		bool "Hisilicon Hi3519 Debug UART"
-+		depends on ARCH_HISI
-+		select DEBUG_UART_PL01X
-+		help
-+		  Say Y here if you want kernel low-level debugging support
-+		  on HI3519 UART.
-+
- 	config DEBUG_HI3620_UART
- 		bool "Hisilicon HI3620 Debug UART"
- 		depends on ARCH_HI3xxx
-@@ -1449,6 +1457,7 @@ config DEBUG_UART_PHYS
- 	default 0xf7fc9000 if DEBUG_BERLIN_UART
- 	default 0xf8b00000 if DEBUG_HIX5HD2_UART
- 	default 0xf991e000 if DEBUG_QCOM_UARTDM
-+	default 0x12100000 if DEBUG_HI3519_UART
- 	default 0xfcb00000 if DEBUG_HI3620_UART
- 	default 0xfd883000 if DEBUG_ALPINE_UART0
- 	default 0xfe800000 if ARCH_IOP32X
-@@ -1529,6 +1538,7 @@ config DEBUG_UART_VIRT
- 	default 0xfe230000 if DEBUG_PICOXCELL_UART
- 	default 0xfe300000 if DEBUG_BCM_KONA_UART
- 	default 0xfe800000 if ARCH_IOP32X
-+	default 0xfef00000 if DEBUG_HI3519_UART
- 	default 0xfeb00000 if DEBUG_HI3620_UART || DEBUG_HIX5HD2_UART
- 	default 0xfeb24000 if DEBUG_RK3X_UART0
- 	default 0xfeb26000 if DEBUG_RK3X_UART1
--- 
-1.9.1
-
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
