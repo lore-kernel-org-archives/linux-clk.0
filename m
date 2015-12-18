@@ -1,87 +1,57 @@
-Return-Path: <tony@atomide.com>
-Date: Tue, 22 Dec 2015 12:32:25 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Brian Hutchinson <b.hutchman@gmail.com>,
-	Delio Brignoli <dbrignoli@audioscience.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Matthijs van Duin <matthijsvanduin@gmail.com>,
-	Philipp Rosenberger <ilu@linutronix.de>,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH v4] clk: ti: Add support for dm814x ADPLL
-Message-ID: <20151222203224.GG2793@atomide.com>
-References: <1450798030-23680-1-git-send-email-tony@atomide.com>
- <5679B2D6.4050102@ti.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [RFC 9/9] clk: ti: omap4: update clock aliases to reflect new module clocks
+Date: Fri, 18 Dec 2015 15:59:01 +0200
+Message-ID: <1450447141-29936-10-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
+References: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5679B2D6.4050102@ti.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [151222 12:28]:
-> On 12/22/2015 05:27 PM, Tony Lindgren wrote:
-> >On dm814x we have 13 ADPLLs with 3 to 4 outputs on each. The
-> >ADPLLs have several dividers and muxes controlled by a shared
-> >control register for each PLL.
-> >
-> >Note that for the clocks to work as device drivers for booting on
-> >dm814x, this patch depends on "ARM: OMAP2+: Change core_initcall
-> >levels to postcore_initcall".
-> >
-> >Also note that this patch does not implement clk_set_rate for the
-> >PLL, that will be posted later on when available.
-> >
-> >Cc: Michael Turquette <mturquette@baylibre.com>
-> >Cc: Stephen Boyd <sboyd@codeaurora.org>
-> >Cc: Tero Kristo <t-kristo@ti.com>
-> >Signed-off-by: Tony Lindgren <tony@atomide.com>
-> >---
-> >
-> >If no more comments, Tero can you please apply into an immutable
-> >branch against v4.4-rc1 that I can merge in too?
-> >
-> >Changes since v3:
-> >
-> >- We want to create the clkdev entry for all clocks, not just outputs
-> >- ti_adpll_wait_lock loops did not do the right thing
-> >- We want to use CLK_GET_RATE_NOCACHE in ti_adpll_init_dco
-> 
-> I have just one comment below still, once that is addressed:
-> 
-> Conditionally-acked-by: Tero Kristo <t-kristo@ti.com>
-> 
-> Stephen / Michael, can you pick this up for next merge? I don't have
-> anything else coming for the window this time, and I am probably going to be
-> on vacation just nicely to not be able to push anything anyway.
+The clock data in DT has been updated, and the clock aliases must be
+updated to match.
 
-Also, I managed to remove the dependency to the dts changes. So there's
-no longer any need to set up an immutable branch for this patch.
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clk-44xx.c |   22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-> <snip>
-> 
-> >+
-> >+/* Warn if clkout or clkoutx2 try to set unavailable parent */
-> >+static int ti_adpll_clkout_set_parent(struct clk_hw *hw, u8 index)
-> >+{
-> >+	struct ti_adpll_clkout_data *co = to_clkout(hw);
-> >+	struct ti_adpll_data *d = co->adpll;
-> >+
-> >+	if (ti_adpll_clock_is_bypass(d) != index)
-> >+		return -EAGAIN;
-> >+
-> 
-> I think this part is still somewhat weird. You are not doing anything useful
-> in this function, so do you need to implement it at all? Just returning
-> -EINVAL always might work also. EAGAIN is wrong return value anyway as it
-> can pretty much never succeed.
-
-OK thanks sounds good to me, I'll check it this after lunch.
-
-Also noticed the do_div should be div64_u64 so v5 coming later
-today.
-
-Regards,
-
-Tony
+diff --git a/drivers/clk/ti/clk-44xx.c b/drivers/clk/ti/clk-44xx.c
+index 7a8b51b..81cd26e 100644
+--- a/drivers/clk/ti/clk-44xx.c
++++ b/drivers/clk/ti/clk-44xx.c
+@@ -164,17 +164,17 @@ static struct ti_dt_clk omap44xx_clks[] = {
+ 	DT_CLK(NULL, "smartreflex_core_fck", "smartreflex_core_fck"),
+ 	DT_CLK(NULL, "smartreflex_iva_fck", "smartreflex_iva_fck"),
+ 	DT_CLK(NULL, "smartreflex_mpu_fck", "smartreflex_mpu_fck"),
+-	DT_CLK(NULL, "dmt1_clk_mux", "dmt1_clk_mux"),
+-	DT_CLK(NULL, "cm2_dm10_mux", "cm2_dm10_mux"),
+-	DT_CLK(NULL, "cm2_dm11_mux", "cm2_dm11_mux"),
+-	DT_CLK(NULL, "cm2_dm2_mux", "cm2_dm2_mux"),
+-	DT_CLK(NULL, "cm2_dm3_mux", "cm2_dm3_mux"),
+-	DT_CLK(NULL, "cm2_dm4_mux", "cm2_dm4_mux"),
+-	DT_CLK(NULL, "timer5_sync_mux", "timer5_sync_mux"),
+-	DT_CLK(NULL, "timer6_sync_mux", "timer6_sync_mux"),
+-	DT_CLK(NULL, "timer7_sync_mux", "timer7_sync_mux"),
+-	DT_CLK(NULL, "timer8_sync_mux", "timer8_sync_mux"),
+-	DT_CLK(NULL, "cm2_dm9_mux", "cm2_dm9_mux"),
++	DT_CLK(NULL, "timer1_mod_ck", "timer1_mod_ck"),
++	DT_CLK(NULL, "timer10_mod_ck", "timer10_mod_ck"),
++	DT_CLK(NULL, "timer11_mod_ck", "timer11_mod_ck"),
++	DT_CLK(NULL, "timer2_mod_ck", "timer2_mod_ck"),
++	DT_CLK(NULL, "timer3_mod_ck", "timer3_mod_ck"),
++	DT_CLK(NULL, "timer4_mod_ck", "timer4_mod_ck"),
++	DT_CLK(NULL, "timer5_mod_ck", "timer5_mod_ck"),
++	DT_CLK(NULL, "timer6_mod_ck", "timer6_mod_ck"),
++	DT_CLK(NULL, "timer7_mod_ck", "timer7_mod_ck"),
++	DT_CLK(NULL, "timer8_mod_ck", "timer8_mod_ck"),
++	DT_CLK(NULL, "timer9_mod_ck", "timer9_mod_ck"),
+ 	DT_CLK(NULL, "usb_host_fs_fck", "usb_host_fs_fck"),
+ 	DT_CLK("usbhs_omap", "fs_fck", "usb_host_fs_fck"),
+ 	DT_CLK(NULL, "utmi_p1_gfclk", "utmi_p1_gfclk"),
+-- 
+1.7.9.5
