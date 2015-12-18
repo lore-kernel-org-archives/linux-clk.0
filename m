@@ -1,23 +1,35 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Jeffy Chen <jeffy.chen@rock-chips.com>
-Cc: linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v1 5/8] clk: rockchip: allow more than 2 parents for cpuclk
-Date: Wed, 09 Dec 2015 22:35:01 +0100
-Message-ID: <23012912.PzBkfOmh31@phil>
-In-Reply-To: <1449651853-1667-6-git-send-email-jeffy.chen@rock-chips.com>
-References: <1449651853-1667-1-git-send-email-jeffy.chen@rock-chips.com> <1449651853-1667-6-git-send-email-jeffy.chen@rock-chips.com>
+Return-Path: <tony@atomide.com>
+Date: Fri, 18 Dec 2015 07:16:50 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC 1/9] ARM: OMAP2+: omap_device: create clock alias purely
+ from DT data
+Message-ID: <20151218151650.GI23396@atomide.com>
+References: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
+ <1450447141-29936-2-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1450447141-29936-2-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Mittwoch, 9. Dezember 2015, 17:04:10 schrieb Jeffy Chen:
-> RK3228's armclk has 3 parents, so allow cpuclk to have
-> more than 2 parents.
-> 
-> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+* Tero Kristo <t-kristo@ti.com> [151218 05:57]:
+> This avoids the need to add most of the clock aliases under
+> drivers/clk/ti/clk-xyz.c files.
 
-applied to my clk branch for 4.5
+Yup is badly needed. Right now we have strange hidden dependencies
+in multiple subsystems to enable a single device driver:
 
-Thanks
-Heiko
+1. Add a clock alias for a device
+2. Add hwmod entries for a device
+3. Add dts entries for a device
+4. Add a device driver
+
+We really should only need steps 3 and 4 to do that, hopefully
+this takes out #1 on the list above.
+
+Regards,
+
+Tony
