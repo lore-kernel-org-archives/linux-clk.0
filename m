@@ -1,57 +1,66 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v2 10/16] clk: move checking .git_parent to __clk_core_init()
-Date: Mon, 28 Dec 2015 19:23:04 +0900
-Message-Id: <1451298191-30815-11-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <tony@atomide.com>
+Date: Fri, 18 Dec 2015 07:06:33 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC 7/9] ARM: dts: omap4: add hwmod module clocks
+Message-ID: <20151218150633.GG23396@atomide.com>
+References: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
+ <1450447141-29936-8-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1450447141-29936-8-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The .git_parent is mandatory for multi-parent clocks.  Move the check
-to __clk_core_init(), like other callback checkings.
+* Tero Kristo <t-kristo@ti.com> [151218 05:57]:
+> +	mmu_dsp_mod_ck: mmu_dsp_mod_ck {
+> +		#clock-cells = <0>;
+> +		compatible = "ti,omap4-hw-mod-clock";
+> +		reg = <0x0420>;
+> +		clocks = <&dpll_iva_m4x2_ck>;
+> +	};
+> +
+> +	dsp_mod_ck: dsp_mod_ck {
+> +		#clock-cells = <0>;
+> +		compatible = "ti,omap4-hw-mod-clock";
+> +		reg = <0x0420>;
+> +		clocks = <&dpll_iva_m4x2_ck>;
+> +	};
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+In general we should get rid of the overlapping reg entries
+for clocks. That's a separate patch series for sure.. But I
+think it can be done simply with something like this probably
+for all of them (totally untested):
 
-Changes in v2: None
+	mux_div_gate_ck: clk@420 {
+		#clock-cells = <1>;
+		compatible = "ti,mux-divider-gate";
+		clock-indices = <0>, <1>;
+		clock-output-names = "mux", "div", "gate";
+		reg = <0x420 0x4>;
+		foo_mux_ck: clock@0 {
+			reg = <0>;
+			compatible = "ti,mux-clock";
+		};
+		foo_div_ck: clock@8 {
+			reg = <8>;
+			compatible = "ti,divider-clock";
+			ti,max-div = <31>;
+		};
+		foo_gate_ck: clock@16 {
+			reg = <16>;
+			compatible = "ti,gate-clock";
+			clocks = <&mux_source_ck>;
+		};
+	};
 
- drivers/clk/clk.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+Then the output can be referenced with the standard clock binding
+index. For example to use the mux clock:
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index e6e10f5..4ad0a36 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1677,13 +1677,6 @@ static struct clk_core *__clk_init_parent(struct clk_core *core)
- 		goto out;
- 	}
- 
--	if (!core->ops->get_parent) {
--		WARN(!core->ops->get_parent,
--			"%s: multi-parent clocks must implement .get_parent\n",
--			__func__);
--		goto out;
--	}
--
- 	/*
- 	 * Do our best to cache parent clocks in core->parents.  This prevents
- 	 * unnecessary and expensive lookups.  We don't set core->parent here;
-@@ -2315,6 +2308,11 @@ static int __clk_core_init(struct clk_core *core)
- 		goto out;
- 	}
- 
-+	if (core->num_parents > 1 && !core->ops->get_parent) {
-+		pr_err("%s: %s must implement .get_parent as it has multi parents\n",
-+		       __func__, core->name);
-+	}
-+
- 	if (core->ops->set_rate_and_parent &&
- 			!(core->ops->set_parent && core->ops->set_rate)) {
- 		pr_err("%s: %s must implement .set_parent & .set_rate\n",
--- 
-1.9.1
+clocks = <&mux_div_gate_ck 0>;
+
+Regards,
+
+Tony
