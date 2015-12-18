@@ -1,62 +1,65 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v2 13/16] clk: walk the orphan clock list more simply
-Date: Mon, 28 Dec 2015 19:23:07 +0900
-Message-Id: <1451298191-30815-14-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <rjui@broadcom.com>
+Subject: Re: [PATCH v2 0/4] Add Cygnus audio clock support
+To: Florian Fainelli <f.fainelli@gmail.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+References: <1448301027-27061-1-git-send-email-rjui@broadcom.com>
+ <5654FD46.30907@gmail.com> <56607DF3.4080601@broadcom.com>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>, Simran Rai <ssimran@broadcom.com>
+From: Ray Jui <rjui@broadcom.com>
+Message-ID: <56744DF7.1040800@broadcom.com>
+Date: Fri, 18 Dec 2015 10:18:31 -0800
+MIME-Version: 1.0
+In-Reply-To: <56607DF3.4080601@broadcom.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: rjui@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This loop can be much simpler.  If a new parent is available for
-orphan clocks, __clk_init_parent(orphan) can detect it.
+Hi Stephen/Michael,
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+If these clock changes look fine to you, can they be merged for v4.5?
 
-Changes in v2: None
+Thanks,
 
- drivers/clk/clk.c | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
+Ray
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index a4f66fe..efd093a 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2402,24 +2402,15 @@ static int __clk_core_init(struct clk_core *core)
- 	core->rate = core->req_rate = rate;
- 
- 	/*
--	 * walk the list of orphan clocks and reparent any that are children of
--	 * this clock
-+	 * walk the list of orphan clocks and reparent any that newly finds a
-+	 * parent.
- 	 */
- 	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
--		if (orphan->num_parents && orphan->ops->get_parent) {
--			i = orphan->ops->get_parent(orphan->hw);
--			if (i >= 0 && i < orphan->num_parents &&
--			    !strcmp(core->name, orphan->parent_names[i]))
--				clk_core_reparent(orphan, core);
--			continue;
--		}
-+		struct clk_core *parent = __clk_init_parent(orphan);
- 
--		for (i = 0; i < orphan->num_parents; i++)
--			if (!strcmp(core->name, orphan->parent_names[i])) {
--				clk_core_reparent(orphan, core);
--				break;
--			}
--	 }
-+		if (parent)
-+			clk_core_reparent(orphan, parent);
-+	}
- 
- 	/*
- 	 * optional platform-specific magic
--- 
-1.9.1
+On 12/3/2015 9:37 AM, Ray Jui wrote:
+> Hi Stephen/Mike,
+>
+> Do these clock changes look okay to you?
+>
+> Thanks,
+>
+> Ray
+>
+> On 11/24/2015 4:13 PM, Florian Fainelli wrote:
+>> On 23/11/15 09:50, Ray Jui wrote:
+>>> This patch series adds support for the Cygnus audio clock based on
+>>> existing
+>>> iProc clock support
+>>>
+>>> This patch series is developed based on v4.4-rc1 with full tree
+>>> available
+>>> on GITHUB:
+>>> repo: https://github.com/Broadcom/cygnus-linux.git
+>>> branch: cygnus-audio-clk-v2
+>>>
+>>> Changes from v1:
+>>>   - Remove function prototype of a non-exist function
+>>> 'iproc_audiopll_clk_setup'
+>>>   - Remove __init macros from all functions prototypes in iproc-clk.h
+>>>
+>>> Ray Jui (1):
+>>>    clk: iproc: Remove __init from header
+>>>
+>>> Simran Rai (3):
+>>>    Documentation: dt-bindings: Add DT bindings for Cygnus audio clock
+>>>    clk: iproc: Add support for Cygnus audio clocks
+>>>    ARM: dts: enable audio clock support for Cygnus
+>>
+>> Stephen, Mike, do these clock changes look sensible to you? If so, could
+>> you also put the drivers/clk/ changes in a branch that I could merge as
+>> part of including the DTS changes?
+>>
+>> Thanks!
+>>
