@@ -1,50 +1,50 @@
-Return-Path: <tony@atomide.com>
-Date: Fri, 11 Dec 2015 08:55:49 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com, paul@pwsan.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: ti: omap5+: dpll: implement errata i810
-Message-ID: <20151211165549.GN23396@atomide.com>
-References: <1448894605-30097-1-git-send-email-t-kristo@ti.com>
- <20151203164817.GT23396@atomide.com>
- <566A8CB7.4050701@ti.com>
+Return-Path: <rklein@nvidia.com>
+Subject: Re: [PATCH 2/2] clk: tegra: Use definition for pll_u override bit
+To: Jon Hunter <jonathanh@nvidia.com>, Peter De Schrijver
+	<pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+References: <1450702592-7755-1-git-send-email-jonathanh@nvidia.com>
+ <1450702592-7755-2-git-send-email-jonathanh@nvidia.com>
+CC: <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+From: Rhyland Klein <rklein@nvidia.com>
+Message-ID: <56782AFD.80004@nvidia.com>
+Date: Mon, 21 Dec 2015 11:38:21 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <566A8CB7.4050701@ti.com>
+In-Reply-To: <1450702592-7755-2-git-send-email-jonathanh@nvidia.com>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [151211 00:42]:
-> On 12/03/2015 06:48 PM, Tony Lindgren wrote:
-> >* Tero Kristo <t-kristo@ti.com> [151130 06:44]:
-> >>+	/*
-> >>+	 * Errata i810 - DPLL controller can get stuck while transitioning
-> >>+	 * to a power saving state. Software must ensure the DPLL can not
-> >>+	 * transition to a low power state while changing M/N values.
-> >>+	 * Easiest way to accomplish this is to prevent DPLL autoidle
-> >>+	 * before doing the M/N re-program.
-> >>+	 */
-> >>+	errata_i810 = ti_clk_get_features()->flags & TI_CLK_ERRATA_I810;
-> >>+
-> >>+	if (errata_i810) {
-> >>+		ai = omap3_dpll_autoidle_read(clk);
-> >>+		if (ai) {
-> >>+			omap3_dpll_deny_idle(clk);
-> >>+
-> >>+			/* OCP barrier */
-> >>+			omap3_dpll_autoidle_read(clk);
-> >>+		}
-> >>+	}
-> >
-> >Should we just do this unconditionally? It seems like disabling the
-> >autoidle always before reprogramming is a good idea.
+On 12/21/2015 7:56 AM, Jon Hunter wrote:
+> The definition, PLLU_BASE_OVERRIDE, for the pll_u OVERRIDE bit is defined
+> but not used and when the OVERRIDE bit is cleared in tegra210_pll_init()
+> the code directly uses the bit number. Therefore, use the definition,
+> PLLU_BASE_OVERRIDE when clearing the OVERRIDE bit.
 > 
-> Well, that is a few extra register accesses, but given the DPLL
-> re-programming is a slow operation it probably does not matter. Let me spin
-> a new version of this patch, it will avoid the need for the errata flag
-> also.
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra210.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> index 791215747863..6f043c5e2394 100644
+> --- a/drivers/clk/tegra/clk-tegra210.c
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+> @@ -2520,7 +2520,7 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
+>  
+>  	/* PLLU_VCO */
+>  	val = readl(clk_base + pll_u_vco_params.base_reg);
+> -	val &= ~BIT(24); /* disable PLLU_OVERRIDE */
+> +	val &= ~PLLU_BASE_OVERRIDE; /* disable PLLU_OVERRIDE */
+>  	writel(val, clk_base + pll_u_vco_params.base_reg);
+>  
+>  	clk = tegra_clk_register_pllre("pll_u_vco", "pll_ref", clk_base, pmc,
+> 
 
-OK thanks,
+Acked-by: Rhyland Klein <rklein@nvidia.com>
 
-Tony
+-- 
+nvpublic
