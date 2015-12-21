@@ -1,94 +1,95 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Bresticker <abrestic@chromium.org>,
-	Mark Kuo <mkuo@nvidia.com>,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 7/9] clk: tegra: pll: Do not disable PLLE when under HW control
-Date: Thu, 10 Dec 2015 17:08:26 -0500
-Message-ID: <1449785308-19546-8-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1449785308-19546-1-git-send-email-rklein@nvidia.com>
-References: <1449785308-19546-1-git-send-email-rklein@nvidia.com>
+Return-Path: <tony@atomide.com>
+Date: Mon, 21 Dec 2015 15:55:12 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Brian Hutchinson <b.hutchman@gmail.com>,
+	Delio Brignoli <dbrignoli@audioscience.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Matthijs van Duin <matthijsvanduin@gmail.com>,
+	Philipp Rosenberger <ilu@linutronix.de>,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH v3] clk: ti: Add support for dm814x ADPLL
+Message-ID: <20151221235512.GE2793@atomide.com>
+References: <1450213344-31369-1-git-send-email-tony@atomide.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1450213344-31369-1-git-send-email-tony@atomide.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mark Kuo <mkuo@nvidia.com>
+* Tony Lindgren <tony@atomide.com> [151215 13:02]:
+> On dm814x we have 13 ADPLLs with 3 to 4 outputs on each. The
+> ADPLLs have several dividers and muxes controlled by a shared
+> control register for each PLL.
+> 
+> Note that for the clocks to work as device drivers for booting on
+> dm814x, this patch depends on "ARM: OMAP2+: Change core_initcall
+> levels to postcore_initcall".
+> 
+> Also note that this patch does not implement clk_set_rate for the
+> PLL, that will be posted later on when available.
+> 
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Tero Kristo <t-kristo@ti.com>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> ---
+> Changes from v2 to v3 are listed below, hopefully I addressed everybody's
+> comments,please check and let me know if I missed something.
 
-SW should not disable PLLE if PLLE is already put under HW control.
+Everybody OK with this version as no more comments?
 
-Signed-off-by: Mark Kuo <mkuo@nvidia.com>
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+I found a few issues that are worth merging while testing:
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 65156486889a..d9c3109b75bd 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -2012,7 +2012,7 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
- 	struct tegra_clk_pll_freq_table sel;
- 	u32 val;
--	int ret;
-+	int ret = 0;
- 	unsigned long flags = 0;
- 	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+- We want to create the clkdev entry for all clocks, not just outputs
+- ti_adpll_wait_lock loops did not do the right thing
+- We want to use CLK_GET_RATE_NOCACHE in ti_adpll_init_dco
+
+Diff against v3 below for reference, will also send out v4 separately.
+
+Regards,
+
+Tony
+
+8< ---------------------
+--- a/drivers/clk/ti/adpll.c
++++ b/drivers/clk/ti/adpll.c
+@@ -228,9 +228,6 @@ static int ti_adpll_setup_clock(struct ti_adpll_data *d, struct clk *clock,
+ 	d->clocks[index].clk = clock;
+ 	d->clocks[index].unregister = unregister;
  
-@@ -2022,16 +2022,14 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
- 
-+	val = pll_readl(pll->params->aux_reg, pll);
-+	if (val & PLLE_AUX_SEQ_ENABLE)
-+		goto out;
-+
- 	val = pll_readl_base(pll);
- 	val &= ~BIT(30); /* Disable lock override */
- 	pll_writel_base(val, pll);
- 
--	val = pll_readl(pll->params->aux_reg, pll);
--	val |= PLLE_AUX_ENABLE_SWCTL;
--	val &= ~PLLE_AUX_SEQ_ENABLE;
--	pll_writel(val, pll->params->aux_reg, pll);
--	udelay(1);
+-	if (output_index < 0)
+-		return 0;
 -
- 	val = pll_readl_misc(pll);
- 	val |= PLLE_MISC_LOCK_ENABLE;
- 	val |= PLLE_MISC_IDDQ_SW_CTRL;
-@@ -2104,15 +2102,25 @@ static void clk_plle_tegra210_disable(struct clk_hw *hw)
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
+ 	/* Separate con_id in format "pll040dcoclkldo" to fit MAX_CON_ID */
+ 	postfix = strrchr(name, '.');
+ 	if (strlen(postfix) > 1) {
+@@ -246,6 +243,9 @@ static int ti_adpll_setup_clock(struct ti_adpll_data *d, struct clk *clock,
+ 		dev_warn(d->dev, "no con_id for clock %s\n", name);
+ 	}
  
-+	/* If PLLE HW sequencer is enabled, SW should not disable PLLE */
-+	val = pll_readl(pll->params->aux_reg, pll);
-+	if (val & PLLE_AUX_SEQ_ENABLE)
-+		goto out;
++	if (output_index < 0)
++		return 0;
 +
- 	val = pll_readl_base(pll);
- 	val &= ~PLLE_BASE_ENABLE;
- 	pll_writel_base(val, pll);
+ 	d->outputs.clks[output_index] = clock;
+ 	d->outputs.clk_num++;
  
-+	val = pll_readl(pll->params->aux_reg, pll);
-+	val |= PLLE_AUX_ENABLE_SWCTL | PLLE_AUX_SS_SWCTL;
-+	pll_writel(val, pll->params->aux_reg, pll);
-+
- 	val = pll_readl_misc(pll);
- 	val |= PLLE_MISC_IDDQ_SW_CTRL | PLLE_MISC_IDDQ_SW_VALUE;
- 	pll_writel_misc(val, pll);
- 	udelay(1);
+@@ -418,7 +418,7 @@ static int ti_adpll_wait_lock(struct ti_adpll_data *d)
+ 		if (ti_adpll_is_locked(d))
+ 			return 0;
+ 		usleep_range(200, 300);
+-	} while (retries-- <= 0);
++	} while (retries--);
  
-+out:
- 	if (pll->lock)
- 		spin_unlock_irqrestore(pll->lock, flags);
- }
--- 
-1.9.1
+ 	dev_err(d->dev, "pll failed to lock\n");
+ 	return -ETIMEDOUT;
+@@ -527,6 +527,7 @@ static int ti_adpll_init_dco(struct ti_adpll_data *d)
+ 	init.parent_names = d->parent_names;
+ 	init.num_parents = d->c->nr_max_inputs;
+ 	init.ops = &ti_adpll_ops;
++	init.flags = CLK_GET_RATE_NOCACHE;
+ 	d->dco.hw.init = &init;
+ 
+ 	if (d->c->is_type_s)
