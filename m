@@ -1,35 +1,49 @@
-Return-Path: <robh@kernel.org>
-Date: Thu, 31 Dec 2015 16:30:51 -0600
-From: Rob Herring <robh@kernel.org>
-To: Jiancheng Xue <xuejiancheng@huawei.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, pawel.moll@arm.com,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, linux@arm.linux.org.uk, khilman@linaro.org,
-	arnd@arndb.de, olof@lixom.net, xuwei5@hisilicon.com,
-	haojian.zhuang@linaro.org, zhangfei.gao@linaro.org,
-	bintian.wang@huawei.com, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, yanhaifeng@hisilicon.com,
-	yanghongwei@hisilicon.com, suwenping@hisilicon.com,
-	ml.yang@hisilicon.com, gaofei@hisilicon.com,
-	zhangzhenxing@hisilicon.com
-Subject: Re: [PATCH v4 5/6] mfd: dt-bindings: add device tree bindings for
- Hi3519 sysctrl
-Message-ID: <20151231223051.GA3144@rob-hp-laptop>
-References: <1451439832-13927-1-git-send-email-xuejiancheng@huawei.com>
- <1451439832-13927-6-git-send-email-xuejiancheng@huawei.com>
+Return-Path: <jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>
+CC: Rhyland Klein <rklein@nvidia.com>,
+	linux-clk@vger.kernel.org ,
+	linux-tegra@vger.kernel.org ,
+	linux-kernel@vger.kernel.org ,
+	Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 2/2] clk: tegra: Use definition for pll_u override bit
+Date: Mon, 21 Dec 2015 12:56:32 +0000
+Message-ID: <1450702592-7755-2-git-send-email-jonathanh@nvidia.com>
+In-Reply-To: <1450702592-7755-1-git-send-email-jonathanh@nvidia.com>
+References: <1450702592-7755-1-git-send-email-jonathanh@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1451439832-13927-6-git-send-email-xuejiancheng@huawei.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Dec 30, 2015 at 09:43:51AM +0800, Jiancheng Xue wrote:
-> Add device tree bindings for Hi3519 system controller.
-> 
-> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
-> ---
->  Documentation/devicetree/bindings/mfd/hi3519.txt | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/hi3519.txt
+The definition, PLLU_BASE_OVERRIDE, for the pll_u OVERRIDE bit is defined
+but not used and when the OVERRIDE bit is cleared in tegra210_pll_init()
+the code directly uses the bit number. Therefore, use the definition,
+PLLU_BASE_OVERRIDE when clearing the OVERRIDE bit.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 791215747863..6f043c5e2394 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2520,7 +2520,7 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
+ 
+ 	/* PLLU_VCO */
+ 	val = readl(clk_base + pll_u_vco_params.base_reg);
+-	val &= ~BIT(24); /* disable PLLU_OVERRIDE */
++	val &= ~PLLU_BASE_OVERRIDE; /* disable PLLU_OVERRIDE */
+ 	writel(val, clk_base + pll_u_vco_params.base_reg);
+ 
+ 	clk = tegra_clk_register_pllre("pll_u_vco", "pll_ref", clk_base, pmc,
+-- 
+2.1.4
