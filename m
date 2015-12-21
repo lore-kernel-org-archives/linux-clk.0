@@ -1,61 +1,111 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Sun, 13 Dec 2015 22:08:09 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	Jens Kuske <jenskuske@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [patch] clk: sunxi: signedness bug in sun8i_h3_bus_gates_init()
-Message-ID: <20151213210809.GD19456@lukather>
-References: <20151212124346.GC21408@mwanda>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [GIT PULL v2] rockchip clock changes for 4.5
+Date: Mon, 21 Dec 2015 02:15:57 +0100
+Message-ID: <2321556.9PKkgq9foB@diego>
+In-Reply-To: <3167734.Jiqp72JFJP@diego>
+References: <3167734.Jiqp72JFJP@diego>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="n/aVsWSeQ4JHkrmm"
-In-Reply-To: <20151212124346.GC21408@mwanda>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Mike, Stephen,
 
---n/aVsWSeQ4JHkrmm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+the original pull request seems to have fallen through the cracks, probably
+due to christmas/travels. So this new v2 _supersedes the original one
+and includes changes that happened during the last 3 weeks.
 
-On Sat, Dec 12, 2015 at 03:43:46PM +0300, Dan Carpenter wrote:
-> "index" needs to be signed for the error handling to work.
->=20
-> Fixes: ab6e23a4e388 ('clk: sunxi: Add H3 clocks support')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+So please pull
 
-Applied, thanks!
-Maxime
+Thanks
+Heiko
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
 
---n/aVsWSeQ4JHkrmm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+  Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
 
-iQIcBAEBAgAGBQJWbd45AAoJEBx+YmzsjxAgaA4QAII0Y5/Rd8ZQUqcoF2TutjlX
-YGSEI8U2ZvaRN4Yi9SMA657aHFiHPEBJDY1FYcta63ITJKjanpAynVgnL/CzlRiy
-lHxLOxcm2sAhUmtlVBWxTUfz/9ReV0FsVgYGHOdtaY+uqkqhnobYzHO/8lhCB45T
-NrVEpLblbiAzqG67gBVvdIFd/eB8RnFpF7F8AKjW/ZKliANrEyayoa/netpNkjE3
-Im7hQBZ8r5hr2bXmjpzCU8lYF5BWrwdh9yH52d97Q0KUTo5g4ItoW3IjTsgmrrqv
-EDq0kOyD/8xbutTVbShuhrA9WDUB0lopu9Lcrqrgk9395LSn1O4haJi2a1dBKS47
-l4UTYuNAiKKEO1akgFd/BToZV5G9rQJVA3oC7fXC34b6fxn2BRsTr5rrE+KyX0Yn
-o5o6HG9vZtOQaB0uX3/b44ondedJG80ErQ+pDNQg1pBYfBPUEFhlVeVdS46mrGuv
-qw2XhY0C3CkxTqWNo7kTOchslk8CtbLwJjCFQPeh+mDNHHC1OnuHQ+PZ6hhvJmw8
-6UhiErNUmUXKiKAOjfISj7I6cHjXQ9U55yPA+ZVkHNbaXSl9BOfuriav9/jGe3uW
-SGp86gWyvFGG2eR417JKscblKpzNYWtJlb4Bpv7w2kx1aMIc2dAbt4VU9pDFFUZY
-IS8xWSjjSpX/8dnD3uFx
-=AMZQ
------END PGP SIGNATURE-----
+are available in the git repository at:
 
---n/aVsWSeQ4JHkrmm--
+  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.5-rockchip-clk1_1
+
+for you to fetch changes up to dfff24bde7fb8d57482e907d5dfb0be3a9e28119:
+
+  clk: rockchip: only enter pll slow-mode directly before reboots on rk3288 (2015-12-21 02:01:19 +0100)
+
+----------------------------------------------------------------
+Rockchip clock changes for 4.5 containing
+- a new pll-type used on rk3036 and other Cortex-A7 socs
+- new clock-trees for rk3036 and rk3228
+- switch rk3288 plls to slow mode on reboot
+- a bunch of new clock ids
+- some more critical clocks
+- wrong register offsets for the rk3368 cpuclks
+- allowing more than 2 parents for the cpuclk
+
+----------------------------------------------------------------
+Caesar Wang (1):
+      clk: rockchip: Force rk3368 PWM clock (and its parents) on
+
+Chris Zhong (3):
+      clk: rockchip: add id for mipidsi sclk on rk3288
+      clk: rockchip: add mipidsi clock on rk3288
+      clk: rockchip: switch PLLs to slow mode before reboot for rk3288
+
+Heiko Stuebner (5):
+      Merge branch 'v4.5-clk/clkids' into v4.5-clk/next
+      Merge branch 'v4.5-clk/clkids' into v4.5-clk/next
+      clk: rockchip: fix rk3368 cpuclk divider offsets
+      Merge branch 'v4.5-clk/clkids' into v4.5-clk/next
+      clk: rockchip: only enter pll slow-mode directly before reboots on rk3288
+
+Jeffy Chen (4):
+      clk: rockchip: allow more than 2 parents for cpuclk
+      clk: rockchip: add dt-binding header for rk3228
+      dt-bindings: add documentation of rk3228 clock controller
+      clk: rockchip: add clock controller for rk3228
+
+Jianqun xu (1):
+      clk: rockchip: protect rk3368 aclk_bus and aclk_peri clocks
+
+Xing Zheng (4):
+      clk: rockchip: add dt-binding header for rk3036
+      dt-bindings: add documentation of rk3036 clock controller
+      clk: rockchip: add new pll-type for rk3036 and similar socs
+      clk: rockchip: add clock controller for rk3036
+
+Yakir Yang (1):
+      clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for aclk_vio
+
+Zain Wang (2):
+      clk: rockchip: add an id for rk3288 crypto clk
+      clk: rockchip: set the id for crypto clk
+
+ZhengShunQian (2):
+      clk: rockchip: Add the clock ids of rk3288 eFuses
+      clk: rockchip: use rk3288-efuse clock ids
+
+ .../bindings/clock/rockchip,rk3036-cru.txt         |  56 ++
+ .../bindings/clock/rockchip,rk3228-cru.txt         |  58 ++
+ drivers/clk/rockchip/Makefile                      |   2 +
+ drivers/clk/rockchip/clk-cpu.c                     |   4 +-
+ drivers/clk/rockchip/clk-pll.c                     | 258 +++++++-
+ drivers/clk/rockchip/clk-rk3036.c                  | 478 +++++++++++++++
+ drivers/clk/rockchip/clk-rk3188.c                  |   2 +-
+ drivers/clk/rockchip/clk-rk3228.c                  | 678 +++++++++++++++++++++
+ drivers/clk/rockchip/clk-rk3288.c                  |  42 +-
+ drivers/clk/rockchip/clk-rk3368.c                  |  13 +-
+ drivers/clk/rockchip/clk.c                         |   7 +-
+ drivers/clk/rockchip/clk.h                         |  43 +-
+ include/dt-bindings/clock/rk3036-cru.h             | 193 ++++++
+ include/dt-bindings/clock/rk3228-cru.h             | 220 +++++++
+ include/dt-bindings/clock/rk3288-cru.h             |   4 +
+ 15 files changed, 2025 insertions(+), 33 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3036-cru.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3228-cru.txt
+ create mode 100644 drivers/clk/rockchip/clk-rk3036.c
+ create mode 100644 drivers/clk/rockchip/clk-rk3228.c
+ create mode 100644 include/dt-bindings/clock/rk3036-cru.h
+ create mode 100644 include/dt-bindings/clock/rk3228-cru.h
