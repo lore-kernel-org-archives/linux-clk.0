@@ -1,73 +1,97 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from pandora.arm.linux.org.uk ([78.32.30.218]:33955 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932347AbbLHKiI (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 8 Dec 2015 05:38:08 -0500
-From: Russell King <rmk+kernel@arm.linux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Jason Cooper <jason@lakedaemon.net>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org
-Subject: [PATCH v3 1/3] dt-bindings: add Marvell core PLL and clock divider
- PMU documentation
+Return-Path: <jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>
+CC: Rhyland Klein <rklein@nvidia.com>,
+	linux-clk@vger.kernel.org ,
+	linux-tegra@vger.kernel.org ,
+	linux-kernel@vger.kernel.org ,
+	Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 1/2] clk: tegra: Fix warning caused by pll_u failing to lock
+Date: Mon, 21 Dec 2015 12:56:31 +0000
+Message-ID: <1450702592-7755-1-git-send-email-jonathanh@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <E1a6Fei-0004de-1W@rmk-PC.arm.linux.org.uk>
-Date: Tue, 08 Dec 2015 10:38:00 +0000
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add documentation for the Marvell clock divider driver, which is used
-to source clocks for the AXI bus, video decoder, GPU and LCD blocks.
+If the pll_u is not configured by the bootloader, then on kernel boot the
+following warning is seen:
 
-Acked-by: Andrew Lunn <andrew@lunn.ch>
-Acked-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+ clk_pll_wait_for_lock: Timed out waiting for pll pll_u_vco lock
+ tegra_init_from_table: Failed to enable pll_u_out1
+ ------------[ cut here ]------------
+ WARNING: at drivers/clk/tegra/clk.c:269
+ Modules linked in:
+
+ CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.4.0-rc4-next-20151214+ #1
+ Hardware name: NVIDIA Tegra210 P2371 reference board (E.1) (DT)
+ task: ffffffc0bc0a0000 ti: ffffffc0bc0a8000 task.ti: ffffffc0bc0a8000
+ PC is at tegra_init_from_table+0x140/0x164
+ LR is at tegra_init_from_table+0x140/0x164
+ pc : [<ffffffc0008fee78>] lr : [<ffffffc0008fee78>] pstate: 80000045
+ sp : ffffffc0bc0abd50
+ x29: ffffffc0bc0abd50 x28: ffffffc00090b8a8
+ x27: ffffffc000a06000 x26: ffffffc0bc019780
+ x25: ffffffc00086a708 x24: ffffffc00086a790
+ x23: ffffffc0006d7188 x22: ffffffc0bc010000
+ x21: 000000000000016e x20: ffffffc0bc00d100
+ x19: ffffffc000944178 x18: 0000000000000007
+ x17: 000000000000000e x16: 0000000000000001
+ x15: 0000000000000007 x14: 000000000000000e
+ x13: 0000000000000013 x12: 000000000000001a
+ x11: 000000000000004d x10: 0000000000000750
+ x9 : ffffffc0bc0a8000 x8 : ffffffc0bc0a07b0
+ x7 : 0000000000000001 x6 : 0000000002d5f0f8
+ x5 : 0000000000000000 x4 : 0000000000000000
+ x3 : 0000000000000002 x2 : ffffffc000996724
+ x1 : 0000000000000000 x0 : 0000000000000032
+
+ ---[ end trace cbd20ae519e92ced ]---
+ Call trace:
+ [<ffffffc0008fee78>] tegra_init_from_table+0x140/0x164
+ [<ffffffc000900ac8>] tegra210_clock_apply_init_table+0x20/0x28
+ [<ffffffc0008fec40>] tegra_clocks_apply_init_table+0x18/0x24
+ [<ffffffc00008291c>] do_one_initcall+0x90/0x194
+ [<ffffffc0008cfab0>] kernel_init_freeable+0x148/0x1e8
+ [<ffffffc000636bb0>] kernel_init+0x10/0xdc
+ [<ffffffc000085cd0>] ret_from_fork+0x10/0x40
+ clk_pll_wait_for_lock: Timed out waiting for pll pll_u_vco lock
+ tegra_init_from_table: Failed to enable pll_u_out2
+ ------------[ cut here ]------------
+
+pll_u can be either controlled by software or hardware and this is
+selected via the OVERRIDE bit in the pll_u base register. In the function
+tegra210_pll_init(), the OVERRIDE bit for pll_u is cleared, which selects
+hardware control of the pll. However, at the same time the pll_u clocks
+are populated in the init_table for tegra210 and so software will try to
+configure the pll_u if it is not already configured and hence, the above
+warning is seen when the pll fails to lock. Remove the pll_u clocks from
+the init_table so that software does not try to configure this pll on
+boot.
+
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- .../bindings/clock/dove-divider-clock.txt          | 28 ++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/dove-divider-clock.txt
+ drivers/clk/tegra/clk-tegra210.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/dove-divider-clock.txt b/Documentation/devicetree/bindings/clock/dove-divider-clock.txt
-new file mode 100644
-index 000000000000..e3eb0f657c5e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/dove-divider-clock.txt
-@@ -0,0 +1,28 @@
-+PLL divider based Dove clocks
-+
-+Marvell Dove has a 2GHz PLL, which feeds into a set of dividers to provide
-+high speed clocks for a number of peripherals.  These dividers are part of
-+the PMU, and thus this node should be a child of the PMU node.
-+
-+The following clocks are provided:
-+
-+ID	Clock
-+-------------
-+0	AXI bus clock
-+1	GPU clock
-+2	VMeta clock
-+3	LCD clock
-+
-+Required properties:
-+- compatible : shall be "marvell,dove-divider-clock"
-+- reg : shall be the register address of the Core PLL and Clock Divider
-+   Control 0 register.  This will cover that register, as well as the
-+   Core PLL and Clock Divider Control 1 register.  Thus, it will have
-+   a size of 8.
-+- #clock-cells : from common clock binding; shall be set to 1
-+
-+divider_clk: core-clock@0064 {
-+	compatible = "marvell,dove-divider-clock";
-+	reg = <0x0064 0x8>;
-+	#clock-cells = <1>;
-+};
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 849be30b52bf..791215747863 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2739,8 +2739,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA210_CLK_DFLL_REF, TEGRA210_CLK_PLL_P, 51000000, 1 },
+ 	{ TEGRA210_CLK_SBC4, TEGRA210_CLK_PLL_P, 12000000, 1 },
+ 	{ TEGRA210_CLK_PLL_RE_VCO, TEGRA210_CLK_CLK_MAX, 672000000, 1 },
+-	{ TEGRA210_CLK_PLL_U_OUT1, TEGRA210_CLK_CLK_MAX, 48000000, 1 },
+-	{ TEGRA210_CLK_PLL_U_OUT2, TEGRA210_CLK_CLK_MAX, 60000000, 1 },
+ 	{ TEGRA210_CLK_XUSB_GATE, TEGRA210_CLK_CLK_MAX, 0, 1 },
+ 	{ TEGRA210_CLK_XUSB_SS_SRC, TEGRA210_CLK_PLL_U_480M, 120000000, 0 },
+ 	{ TEGRA210_CLK_XUSB_FS_SRC, TEGRA210_CLK_PLL_U_48M, 48000000, 0 },
 -- 
-2.1.0
-
+2.1.4
