@@ -1,94 +1,85 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga02-in.huawei.com ([119.145.14.65]:6028 "EHLO
-	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753985AbbL3B4d (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 29 Dec 2015 20:56:33 -0500
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
-	<zhangzhenxing@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [PATCH v4 0/6] ARM: hisi: Add initial support including clock driver for Hi3519 soc.
-Date: Wed, 30 Dec 2015 09:43:46 +0800
-Message-ID: <1451439832-13927-1-git-send-email-xuejiancheng@huawei.com>
+Received: from www.augenpunkt.de ([213.239.207.9]:44265 "EHLO
+	www.augenpunkt.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751145AbbLUMnT (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 21 Dec 2015 07:43:19 -0500
+Subject: Re: [PATCH 4/4] ARM: bcm2835: Switch to using the new clock driver
+ support.
+To: Martin Sperl <kernel@martin.sperl.org>,
+	Eric Anholt <eric@anholt.net>, linux-clk@vger.kernel.org
+References: <1441562263-19888-1-git-send-email-eric@anholt.net>
+ <1441562263-19888-5-git-send-email-eric@anholt.net>
+ <5677E7BF.3020404@martin.sperl.org>
+Cc: devicetree@vger.kernel.org, Mike Turquette <mturquette@linaro.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org
+From: Stefan Wahren <info@lategoodbye.de>
+Message-ID: <5677F3C8.5000600@lategoodbye.de>
+Date: Mon, 21 Dec 2015 13:42:48 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <5677E7BF.3020404@martin.sperl.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Hi Martin,
 
-Hi3519 soc is mainly used for ip camera and sport DV solutions. This patchset adds initial support
-for Hi3519 soc. It includes clock driver, arch configuration, debug uart configuration and device tree.
-It has been tested on hi3519 reference board.
+Am 21.12.2015 um 12:51 schrieb Martin Sperl:
+> On 06.09.2015 19:57, Eric Anholt wrote:
+>> +        clocks: cprman@7e101000 {
+>> +            compatible = "brcm,bcm2835-cprman";
+>> +            #clock-cells = <1>;
+>> +            reg = <0x7e101000 0x2000>;
+>> +
+>> +            /* CPRMAN derives everything from the platform's
+>> +             * oscillator.
+>> +             */
+>> +            clocks = <&clk_osc>;
+>> +        };
+>> +
+>>
+> This actually breaks i2s because of an overlap in registers:
+> [   12.734352] bcm2835-i2s 20203000.i2s: can't request region for
+> resource [mem 0x20101098-0x2010109f]
+> [   12.826571] bcm2835-i2s: probe of 20203000.i2s failed with error -16
+>
+> here the corresponding section for i2s in /arch/arm/boot/dts/bcm2835.dtsi:
+>                  i2s: i2s@7e203000 {
+>                          compatible = "brcm,bcm2835-i2s";
+>                          reg = <0x7e203000 0x20>,
+>                                <0x7e101098 0x02>;
+>
+>                          dmas = <&dma 2>,
+>                                 <&dma 3>;
+>                          dma-names = "tx", "rx";
+>                          status = "disabled";
+>                  };
 
-Spi-nor flash driver and other peripheral drivers will be submitted later.
+unfortunately i don't have a i2s interface, but thanks for the remark.
 
-Any comments will be appreciated!
+It looks like the i2s driver programm the clock by itself instead of 
+using the clock framework. So the second register entry should be 
+removed from the i2s node.
 
-Thanks!
+>
+> Note that actually the PCM/I2S reg-range should be (off by 4):
+>      reg = <0x7e203000 0x24>;
+> (see also: https://github.com/raspberrypi/linux/pull/1079)
 
-Change Log
-----------
-v4:
--Rebase to v4.4-rc7
--Divide patches according to Rob's comments
--Add spi nodes in hi3519-demb.dts
+Any chance that Robert (patch author) can send a proper patch to 
+linux-rpi-kernel for the of by 4 issue?
 
-v3:
--Rebase to v4.4-rc4
--Adjust according to Arnd's comments
--Remove ARCH_HI3519, using ARCH_HISI directly
+Regards
+Stefan
 
-v2:
--Rebase to v4.4-rc3
--Put dt-binding doc and header file in a separate patch.
--Delete unused clocks definitions.
--Adjust the ARCH_xxx order in Kconfig file
--Rename ARCH_HI3xxx to ARCH_36xx
-
-Jiancheng Xue (6):
-  clk: hisilicon: add CRG driver for hi3519 soc
-  ARM: hisi: add compatible string for Hi3519 soc
-  ARM: config: hisi: enable CONFIG_RESET_CONTROLLER
-  ARM: debug: add hi3519 debug uart
-  mfd: dt-bindings: add device tree bindings for Hi3519 sysctrl
-  ARM: dts: add dts files for Hi3519
-
- .../devicetree/bindings/clock/hi3519-crg.txt       |  46 ++++++
- Documentation/devicetree/bindings/mfd/hi3519.txt   |  14 ++
- arch/arm/Kconfig.debug                             |  10 ++
- arch/arm/boot/dts/Makefile                         |   2 +
- arch/arm/boot/dts/hi3519-demb.dts                  |  42 +++++
- arch/arm/boot/dts/hi3519.dtsi                      | 175 +++++++++++++++++++++
- arch/arm/configs/hisi_defconfig                    |   1 +
- arch/arm/mach-hisi/hisilicon.c                     |  23 +--
- drivers/clk/hisilicon/Kconfig                      |   7 +
- drivers/clk/hisilicon/Makefile                     |   2 +
- drivers/clk/hisilicon/clk-hi3519.c                 | 103 ++++++++++++
- drivers/clk/hisilicon/reset.c                      | 149 ++++++++++++++++++
- drivers/clk/hisilicon/reset.h                      |  32 ++++
- include/dt-bindings/clock/hi3519-clock.h           |  43 +++++
- 14 files changed, 630 insertions(+), 19 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
- create mode 100644 Documentation/devicetree/bindings/mfd/hi3519.txt
- create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
- create mode 100644 arch/arm/boot/dts/hi3519.dtsi
- create mode 100644 drivers/clk/hisilicon/clk-hi3519.c
- create mode 100644 drivers/clk/hisilicon/reset.c
- create mode 100644 drivers/clk/hisilicon/reset.h
- create mode 100644 include/dt-bindings/clock/hi3519-clock.h
-
--- 
-1.9.1
+>
+> Ciao,
+>              Martin
+>
+> _______________________________________________
+> linux-rpi-kernel mailing list
+> linux-rpi-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rpi-kernel
+>
 
