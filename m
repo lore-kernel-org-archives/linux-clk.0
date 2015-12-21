@@ -1,163 +1,136 @@
-Return-Path: <ben@smart-cactus.org>
-From: Ben Gamari <ben@smart-cactus.org>
-To: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	b.zolnierkie@samsung.com,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from 212-186-180-163.dynamic.surfer.at ([212.186.180.163]:40107 "EHLO
+	cgate.sperl.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750965AbbLUPRG convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 21 Dec 2015 10:17:06 -0500
+Content-Type: text/plain; charset=windows-1252
+Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2104\))
+Subject: Re: [PATCH 4/4] ARM: bcm2835: Switch to using the new clock driver support.
+From: Martin Sperl <kernel@martin.sperl.org>
+In-Reply-To: <5677F3C8.5000600@lategoodbye.de>
+Date: Mon, 21 Dec 2015 16:17:02 +0100
+Cc: linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
 	Mike Turquette <mturquette@linaro.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Ben Gamari <ben@smart-cactus.org>
-Subject: [PATCH 02/12] clk: samsung: exynos5420: add cpu clock configuration data and instantiate cpu clock
-Date: Wed,  2 Dec 2015 22:19:17 +0100
-Message-Id: <1449091167-20758-3-git-send-email-ben@smart-cactus.org>
-In-Reply-To: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
-References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>
+Message-Id: <03BE10FE-D743-4CD3-8825-112D0F6B2D43@martin.sperl.org>
+References: <1441562263-19888-1-git-send-email-eric@anholt.net> <1441562263-19888-5-git-send-email-eric@anholt.net> <5677E7BF.3020404@martin.sperl.org> <5677F3C8.5000600@lategoodbye.de>
+To: Stefan Wahren <info@lategoodbye.de>, Eric Anholt <eric@anholt.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Thomas Abraham <thomas.ab@samsung.com>
 
-With the addition of the new Samsung specific cpu-clock type, the
-arm clock can be represented as a cpu-clock type. Add the CPU clock
-configuration data and instantiate the CPU clock type for Exynos5420.
+> On 21.12.2015, at 13:42, Stefan Wahren <info@lategoodbye.de> wrote:
+> 
+> Hi Martin,
+> 
+>> here the corresponding section for i2s in /arch/arm/boot/dts/bcm2835.dtsi:
+>>                 i2s: i2s@7e203000 {
+>>                         compatible = "brcm,bcm2835-i2s";
+>>                         reg = <0x7e203000 0x20>,
+>>                               <0x7e101098 0x02>;
+>> 
+>>                         dmas = <&dma 2>,
+>>                                <&dma 3>;
+>>                         dma-names = "tx", "rx";
+>>                         status = "disabled";
+>>                 };
+> 
+> unfortunately i don't have a i2s interface, but thanks for the remark.
+I received one just today...
+> 
+> It looks like the i2s driver programm the clock by itself instead of using the clock framework. So the second register entry should be removed from the i2s node.
 
-Changes by Bartlomiej:
-- split Exynos5420 support from the original patches
-- moved E5420_[EGL,KFC]_DIV0() macros to clk-exynos5420.c
+I started looking and found that drivers/clk/bcm/clk-bcm2835.c
+does not include the PWM clock either.
 
-Changes by Ben Gamari:
-- Rebased
+Anyway - looking at: sound/soc/bcm/bcm2835-i2s.c
+it seems that right now this driver makes use of
+a different parent-clock depending of the requested clock
 
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Mike Turquette <mturquette@linaro.org>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>
-Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Ben Gamari <ben@smart-cactus.org>
----
- drivers/clk/samsung/clk-exynos5420.c   | 58 ++++++++++++++++++++++++++++++++--
- include/dt-bindings/clock/exynos5420.h |  2 ++
- 2 files changed, 58 insertions(+), 2 deletions(-)
+I guess Eric needs to look into this portion to put it into the generic clock_code…
+It is way more complicated than just using a fixed clock...
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 389af3c..2288052 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -18,6 +18,7 @@
- #include <linux/syscore_ops.h>
+>> 
+>> Note that actually the PCM/I2S reg-range should be (off by 4):
+>>     reg = <0x7e203000 0x24>;
+>> (see also: https://github.com/raspberrypi/linux/pull/1079)
+> 
+> Any chance that Robert (patch author) can send a proper patch to linux-rpi-kernel for the of by 4 issue?
+as we need to remove the second register-set anyway we need to make
+modifications in the same location anyway.
+
+Looks probably something like this for the device-tree:
+diff --git a/arch/arm/boot/dts/bcm2835.dtsi b/arch/arm/boot/dts/bcm2835.dtsi
+index aef64de..288d678 100644
+--- a/arch/arm/boot/dts/bcm2835.dtsi
++++ b/arch/arm/boot/dts/bcm2835.dtsi
+@@ -120,8 +120,9 @@
  
- #include "clk.h"
-+#include "clk-cpu.h"
+ 		i2s: i2s@7e203000 {
+ 			compatible = "brcm,bcm2835-i2s";
+-			reg = <0x7e203000 0x20>,
+-			      <0x7e101098 0x02>;
++			reg = <0x7e203000 0x24>;
++			clocks = <&clocks BCM2835_CLOCK_PWM>,
++				 <&clocks BCM2835_CLOCK_VPU>;
  
- #define APLL_LOCK		0x0
- #define APLL_CON0		0x100
-@@ -616,9 +617,11 @@ static struct samsung_mux_clock exynos5x_mux_clks[] __initdata = {
- 	MUX(0, "mout_mspll_kfc", mout_mspll_cpu_p, SRC_TOP7, 8, 2),
- 	MUX(0, "mout_mspll_cpu", mout_mspll_cpu_p, SRC_TOP7, 12, 2),
+ 			dmas = <&dma 2>,
+ 			       <&dma 3>;
+diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm
+index d323efa..61f1d20 100644
+--- a/include/dt-bindings/clock/bcm2835.h
++++ b/include/dt-bindings/clock/bcm2835.h
+@@ -43,5 +43,6 @@
+ #define BCM2835_CLOCK_TSENS		27
+ #define BCM2835_CLOCK_EMMC		28
+ #define BCM2835_CLOCK_PERI_IMAGE	29
++#define BCM2835_CLOCK_PWM		30
  
--	MUX(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1),
-+	MUX_F(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
-+	      CLK_SET_RATE_PARENT, 0),
- 	MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
--	MUX(0, "mout_kpll", mout_kpll_p, SRC_KFC, 0, 1),
-+	MUX_F(0, "mout_kpll", mout_kpll_p, SRC_KFC, 0, 1,
-+	      CLK_SET_RATE_PARENT, 0),
- 	MUX(0, "mout_kfc", mout_kfc_p, SRC_KFC, 16, 1),
- 
- 	MUX(0, "mout_aclk200", mout_group1_p, SRC_TOP0, 8, 2),
-@@ -1246,6 +1249,50 @@ static struct samsung_pll_clock exynos5x_plls[nr_plls] __initdata = {
- 		KPLL_CON0, NULL),
+-#define BCM2835_CLOCK_COUNT		30
++#define BCM2835_CLOCK_COUNT		31
+
+And obviously more changes to the clock driver itself to support it:
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -807,6 +807,17 @@ static const struct bcm2835_clock_data bcm2835_clock_emmc_d
+ 	.frac_bits = 8,
  };
  
-+#define E5420_EGL_DIV0(apll, pclk_dbg, atb, cpud)			\
-+		((((apll) << 24) | ((pclk_dbg) << 20) | ((atb) << 16) |	\
-+		 ((cpud) << 4)))
-+
-+static const struct exynos_cpuclk_cfg_data exynos5420_eglclk_d[] __initconst = {
-+	{ 1800000, E5420_EGL_DIV0(3, 7, 7, 4), },
-+	{ 1700000, E5420_EGL_DIV0(3, 7, 7, 3), },
-+	{ 1600000, E5420_EGL_DIV0(3, 7, 7, 3), },
-+	{ 1500000, E5420_EGL_DIV0(3, 7, 7, 3), },
-+	{ 1400000, E5420_EGL_DIV0(3, 7, 7, 3), },
-+	{ 1300000, E5420_EGL_DIV0(3, 7, 7, 2), },
-+	{ 1200000, E5420_EGL_DIV0(3, 7, 7, 2), },
-+	{ 1100000, E5420_EGL_DIV0(3, 7, 7, 2), },
-+	{ 1000000, E5420_EGL_DIV0(3, 6, 6, 2), },
-+	{  900000, E5420_EGL_DIV0(3, 6, 6, 2), },
-+	{  800000, E5420_EGL_DIV0(3, 5, 5, 2), },
-+	{  700000, E5420_EGL_DIV0(3, 5, 5, 2), },
-+	{  600000, E5420_EGL_DIV0(3, 4, 4, 2), },
-+	{  500000, E5420_EGL_DIV0(3, 3, 3, 2), },
-+	{  400000, E5420_EGL_DIV0(3, 3, 3, 2), },
-+	{  300000, E5420_EGL_DIV0(3, 3, 3, 2), },
-+	{  200000, E5420_EGL_DIV0(3, 3, 3, 2), },
-+	{  0 },
++/* PWM/I2S clock */
++static const struct bcm2835_clock_data bcm2835_clock_pwm_data = {
++	.name = "pwm",
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
++	.parents = bcm2835_clock_per_parents,
++	.ctl_reg = CM_PWMCTL,
++	.div_reg = CM_PWMDIV,
++	.int_bits = 4,
++	.frac_bits = 8,
 +};
 +
-+#define E5420_KFC_DIV(kpll, pclk, aclk)					\
-+		((((kpll) << 24) | ((pclk) << 20) | ((aclk) << 4)))
-+
-+static const struct exynos_cpuclk_cfg_data exynos5420_kfcclk_d[] __initconst = {
-+	{ 1300000, E5420_KFC_DIV(3, 5, 2), },
-+	{ 1200000, E5420_KFC_DIV(3, 5, 2), },
-+	{ 1100000, E5420_KFC_DIV(3, 5, 2), },
-+	{ 1000000, E5420_KFC_DIV(3, 5, 2), },
-+	{  900000, E5420_KFC_DIV(3, 5, 2), },
-+	{  800000, E5420_KFC_DIV(3, 5, 2), },
-+	{  700000, E5420_KFC_DIV(3, 4, 2), },
-+	{  600000, E5420_KFC_DIV(3, 4, 2), },
-+	{  500000, E5420_KFC_DIV(3, 4, 2), },
-+	{  400000, E5420_KFC_DIV(3, 3, 2), },
-+	{  300000, E5420_KFC_DIV(3, 3, 2), },
-+	{  200000, E5420_KFC_DIV(3, 3, 2), },
-+	{  0 },
-+};
-+
- static const struct of_device_id ext_clk_match[] __initconst = {
- 	{ .compatible = "samsung,exynos5420-oscclk", .data = (void *)0, },
- 	{ },
-@@ -1310,6 +1357,13 @@ static void __init exynos5x_clk_init(struct device_node *np,
- 				ARRAY_SIZE(exynos5800_gate_clks));
- 	}
+ struct bcm2835_pll {
+ 	struct clk_hw hw;
+ 	struct bcm2835_cprman *cprman;
+@@ -1537,6 +1548,8 @@ static int bcm2835_clk_probe(struct platform_device *pdev)
+ 		bcm2835_register_clock(cprman, &bcm2835_clock_hsm_data);
+ 	clks[BCM2835_CLOCK_EMMC] =
+ 		bcm2835_register_clock(cprman, &bcm2835_clock_emmc_data);
++	clks[BCM2835_CLOCK_PWM] =
++		bcm2835_register_clock(cprman, &bcm2835_clock_pwm_data);
  
-+	exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
-+		mout_cpu_p[0], mout_cpu_p[1], 0x200,
-+		exynos5420_eglclk_d, ARRAY_SIZE(exynos5420_eglclk_d), 0);
-+	exynos_register_cpu_clock(ctx, CLK_KFC_CLK, "kfcclk",
-+		mout_kfc_p[0], mout_kfc_p[1], 0x28200,
-+		exynos5420_kfcclk_d, ARRAY_SIZE(exynos5420_kfcclk_d), 0);
-+
- 	exynos5420_clk_sleep_init();
+ 	/*
+ 	 * CM_PERIICTL (and CM_PERIACTL, CM_SYSCTL and CM_VPUCTL if
  
- 	samsung_clk_of_add_provider(np, ctx);
-diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
-index 99da0d1..dde9664 100644
---- a/include/dt-bindings/clock/exynos5420.h
-+++ b/include/dt-bindings/clock/exynos5420.h
-@@ -25,6 +25,8 @@
- #define CLK_FOUT_MPLL		10
- #define CLK_FOUT_BPLL		11
- #define CLK_FOUT_KPLL		12
-+#define CLK_ARM_CLK		13
-+#define CLK_KFC_CLK		14
  
- /* gate for special clocks (sclk) */
- #define CLK_SCLK_UART0		128
--- 
-2.6.2
+
+And obviously many more changes to sound/soc/bcm/bcm2835-i2s.c
+to remove the clock code and use the clock framework instead.
+
+The biggest thing is the selection of the clock to use - the current code
+either uses the OSC or PLLD.
+
+@Eric: ist there some means to do that?
+
+Thanks,
+	Martin
