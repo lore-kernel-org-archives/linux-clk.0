@@ -1,54 +1,60 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Fri, 4 Dec 2015 12:06:28 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>,
-	Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from 212-186-180-163.dynamic.surfer.at ([212.186.180.163]:40066 "EHLO
+	cgate.sperl.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752004AbbLULvc (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 21 Dec 2015 06:51:32 -0500
+Subject: Re: [PATCH 4/4] ARM: bcm2835: Switch to using the new clock driver
+ support.
+To: Eric Anholt <eric@anholt.net>, linux-clk@vger.kernel.org
+References: <1441562263-19888-1-git-send-email-eric@anholt.net>
+ <1441562263-19888-5-git-send-email-eric@anholt.net>
+Cc: devicetree@vger.kernel.org, Mike Turquette <mturquette@linaro.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, linux-clk@vger.kernel.org
-Message-ID: <20151204120628.GX26072@sirena.org.uk>
-References: <1449191405-3344-1-git-send-email-k.kozlowski@samsung.com>
- <1449191405-3344-2-git-send-email-k.kozlowski@samsung.com>
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+From: Martin Sperl <kernel@martin.sperl.org>
+Message-ID: <5677E7BF.3020404@martin.sperl.org>
+Date: Mon, 21 Dec 2015 12:51:27 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="/Kwy1es1GwkEJhNg"
-In-Reply-To: <1449191405-3344-2-git-send-email-k.kozlowski@samsung.com>
-Subject: Re: [PATCH 1/3] dt-bindings: regulator/clock/mfd: Reorganize
- S2MPS-family bindings
+In-Reply-To: <1441562263-19888-5-git-send-email-eric@anholt.net>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On 06.09.2015 19:57, Eric Anholt wrote:
+>   
+> +		clocks: cprman@7e101000 {
+> +			compatible = "brcm,bcm2835-cprman";
+> +			#clock-cells = <1>;
+> +			reg = <0x7e101000 0x2000>;
+> +
+> +			/* CPRMAN derives everything from the platform's
+> +			 * oscillator.
+> +			 */
+> +			clocks = <&clk_osc>;
+> +		};
+> +
+>
+This actually breaks i2s because of an overlap in registers:
+[   12.734352] bcm2835-i2s 20203000.i2s: can't request region for 
+resource [mem 0x20101098-0x2010109f]
+[   12.826571] bcm2835-i2s: probe of 20203000.i2s failed with error -16
 
---/Kwy1es1GwkEJhNg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+here the corresponding section for i2s in /arch/arm/boot/dts/bcm2835.dtsi:
+                 i2s: i2s@7e203000 {
+                         compatible = "brcm,bcm2835-i2s";
+                         reg = <0x7e203000 0x20>,
+                               <0x7e101098 0x02>;
 
-On Fri, Dec 04, 2015 at 10:10:03AM +0900, Krzysztof Kozlowski wrote:
-> Bindings for Samsung S2M and S5M family PMICs are in mess. They are
-> spread over different files and subdirectories in a non-consistent way.
-> The devices and respective drivers for them share a lot in common so
-> everything could be organized in a more readable way.
+                         dmas = <&dma 2>,
+                                <&dma 3>;
+                         dma-names = "tx", "rx";
+                         status = "disabled";
+                 };
 
-Acked-by: Mark Brown <broonie@kernel.org>
+Note that actually the PCM/I2S reg-range should be (off by 4):
+     reg = <0x7e203000 0x24>;
+(see also: https://github.com/raspberrypi/linux/pull/1079)
 
---/Kwy1es1GwkEJhNg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWYYHDAAoJECTWi3JdVIfQ4CoH/A/nCU65TYVWgjUZDnKobol1
-uNeSvBXaNfvP10fonQZGxozdEkSKjR4enT+Y69C7ykR54/0ZidliOZNjPPno+Q43
-le3/VIVI5mEIkOJ+o8pB/wLzFH8PpGycyhFK5g6h1r1B08N1bD/74l46JdivJaKj
-qNhuZO5g5Gbn5N9JGq88cOtHu8oJcZjCcZuiHy5gGirtdYPVCJHgHPkB7smJmMFH
-QIbcSX2n3tW00N+OXYW2dCxmwcLth+LkTR4ZM21kNKX+LFatKDeUQVFXyxLp1ot6
-aSOdCHL5MZUY941xjrDzlkmCssqkwQNAeu7XqBy2GRTfMRv4AOHbKcuQqHFbDEY=
-=yyl8
------END PGP SIGNATURE-----
-
---/Kwy1es1GwkEJhNg--
+Ciao,
+             Martin
