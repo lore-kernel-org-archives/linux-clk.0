@@ -1,113 +1,50 @@
-Return-Path: <lho@apm.com>
-Return-Path: <lho@apm.com>
-From: Loc Ho <lho@apm.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	patches@apm.com,
-	Loc Ho <lho@apm.com>
-Subject: [PATCH] clk: xgene: Add SoC and PMD PLL clocks with v2 hardware
-Date: Wed, 16 Dec 2015 18:37:35 -0700
-Message-Id: <1450316255-9372-1-git-send-email-lho@apm.com>
+Return-Path: <heiko.stuebner@collabora.com>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko.stuebner@collabora.com>
+To: linux-rockchip@lists.infradead.org
+Cc: linux-clk@vger.kernel.org, dianders@chromium.org, mturquette@baylibre.com, sboyd@codeaurora.org, Chris Zhong <zyw@rock-chips.com>
+Subject: Re: [PATCH] clk: rockchip: only enter pll slow-mode directly before reboots on rk3288
+Date: Mon, 21 Dec 2015 02:06:10 +0100
+Message-ID: <2178082.zdAf6brHOY@diego>
+In-Reply-To: <1705995.CL2pqRBHZb@diego>
+References: <1705995.CL2pqRBHZb@diego>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add X-Gene SoC and PMD PLL clocks support for v2 hardware.
-X-Gene SoC v2 and above use an slightly different SoC
-and PMD PLL hardware logic.
+Am Freitag, 18. Dezember 2015, 19:33:50 schrieb Heiko St=FCbner:
+> As commit 1d33929e2a2b ("clk: rockchip: switch PLLs to slow mode befo=
+re
+> reboot for rk3288") states, switching the PLLs to slow-mode is only
+> necessary when rebooting using the soft-reset done through the CRU.
+>=20
+> The dwc2 controllers used create really big number of interrupts in
+> special constellations involving usb-hubs and their number is so high=
+,
+> it can even overwhelm the interrupt handler if the cpu-speed os to lo=
+w.
+>=20
+> Right now the PLLs are put into slow-mode in a shutdown syscore_ops
+> callback which means it happens on all reboots (not only the soft-res=
+et
+> ones) and even on poweroff actions.
+>=20
+> This can result in the system not powering off and getting stuck inst=
+ead,
+> so we should move the slow-mode change nearer to the actual reboot ac=
+tion.
+>=20
+> For this we introduce the possiblity to also set a callback that gets=
 
-Signed-off-by: Loc Ho <lho@apm.com>
----
- drivers/clk/clk-xgene.c |   57 ++++++++++++++++++++++++++++++++--------------
- 1 files changed, 39 insertions(+), 18 deletions(-)
+> called from the restart-handler directly prior to restarting the syst=
+em
+> and move the shutdown-callback to this new option.
+>=20
+> With this the slow-mode switch is done only on the necessary reboots
+> and also has a smaller possibility of causing artifacts.
+>=20
+> Fixes: 1d33929e2a2b ("clk: rockchip: switch PLLs to slow mode before =
+reboot
+> for rk3288") Signed-off-by: Heiko Stuebner <heiko.stuebner@collabora.=
+com>
 
-diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
-index 8131ccf..0f446d3 100644
---- a/drivers/clk/clk-xgene.c
-+++ b/drivers/clk/clk-xgene.c
-@@ -27,9 +27,12 @@
- #include <linux/clkdev.h>
- #include <linux/clk-provider.h>
- #include <linux/of_address.h>
-+#include <asm/cputype.h>
- 
- /* Register SCU_PCPPLL bit fields */
--#define N_DIV_RD(src)			(((src) & 0x000001ff))
-+#define N_DIV_RD(src)			((src) & 0x000001ff)
-+#define SC_N_DIV_RD(src)		((src) & 0x0000007f)
-+#define SC_OUTDIV2(src)			(((src) & 0x00000100) >> 8)
- 
- /* Register SCU_SOCPLL bit fields */
- #define CLKR_RD(src)			(((src) & 0x07000000)>>24)
-@@ -41,6 +44,14 @@
- 
- static DEFINE_SPINLOCK(clk_lock);
- 
-+static int xgene_clk_version(void)
-+{
-+	#define MIDR_EL1_VARIANT_MASK	0x00f00000
-+	u32 val = read_cpuid_id();
-+
-+	return (val & MIDR_EL1_VARIANT_MASK) == 0 ? 1 : 2;
-+}
-+
- static inline u32 xgene_clk_read(void __iomem *csr)
- {
- 	return readl_relaxed(csr);
-@@ -92,27 +103,37 @@ static unsigned long xgene_clk_pll_recalc_rate(struct clk_hw *hw,
- 
- 	pll = xgene_clk_read(pllclk->reg + pllclk->pll_offset);
- 
--	if (pllclk->type == PLL_TYPE_PCP) {
--		/*
--		 * PLL VCO = Reference clock * NF
--		 * PCP PLL = PLL_VCO / 2
--		 */
--		nout = 2;
--		fvco = parent_rate * (N_DIV_RD(pll) + 4);
-+	if (xgene_clk_version() <= 1) {
-+		if (pllclk->type == PLL_TYPE_PCP) {
-+			/*
-+			* PLL VCO = Reference clock * NF
-+			* PCP PLL = PLL_VCO / 2
-+			*/
-+			nout = 2;
-+			fvco = parent_rate * (N_DIV_RD(pll) + 4);
-+		} else {
-+			/*
-+			* Fref = Reference Clock / NREF;
-+			* Fvco = Fref * NFB;
-+			* Fout = Fvco / NOUT;
-+			*/
-+			nref = CLKR_RD(pll) + 1;
-+			nout = CLKOD_RD(pll) + 1;
-+			nfb = CLKF_RD(pll);
-+			fref = parent_rate / nref;
-+			fvco = fref * nfb;
-+		}
- 	} else {
- 		/*
--		 * Fref = Reference Clock / NREF;
--		 * Fvco = Fref * NFB;
--		 * Fout = Fvco / NOUT;
-+		 * fvco = Reference clock * FBDIVC
-+		 * PLL freq = fvco / NOUT
- 		 */
--		nref = CLKR_RD(pll) + 1;
--		nout = CLKOD_RD(pll) + 1;
--		nfb = CLKF_RD(pll);
--		fref = parent_rate / nref;
--		fvco = fref * nfb;
-+		nout = SC_OUTDIV2(pll) ? 2 : 3;
-+		fvco = parent_rate * SC_N_DIV_RD(pll);
- 	}
--	pr_debug("%s pll recalc rate %ld parent %ld\n", clk_hw_get_name(hw),
--		fvco / nout, parent_rate);
-+	pr_debug("%s pll recalc rate %ld parent %ld version %d\n",
-+		 clk_hw_get_name(hw), fvco / nout, parent_rate,
-+		 xgene_clk_version());
- 
- 	return fvco / nout;
- }
--- 
-1.7.1
+applied to my clk branch for 4.5
