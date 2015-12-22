@@ -1,153 +1,87 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v2 2/6] clk: qcom: gdsc: Add support for gdscs with gds hw controller
-Date: Tue,  1 Dec 2015 21:42:12 +0530
-Message-Id: <1448986336-16846-3-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1448986336-16846-1-git-send-email-rnayak@codeaurora.org>
-References: <1448986336-16846-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH v4] clk: ti: Add support for dm814x ADPLL
+To: Tony Lindgren <tony@atomide.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+References: <1450798030-23680-1-git-send-email-tony@atomide.com>
+CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Brian Hutchinson
+	<b.hutchman@gmail.com>,
+        Delio Brignoli <dbrignoli@audioscience.com>,
+        Neil
+ Armstrong <narmstrong@baylibre.com>,
+        Matthijs van Duin
+	<matthijsvanduin@gmail.com>,
+        Philipp Rosenberger <ilu@linutronix.de>,
+        Russell
+ King - ARM Linux <linux@arm.linux.org.uk>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <5679B2D6.4050102@ti.com>
+Date: Tue, 22 Dec 2015 22:30:14 +0200
+MIME-Version: 1.0
+In-Reply-To: <1450798030-23680-1-git-send-email-tony@atomide.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Some gdsc power domains can have a gds_hw_controller block inside
-to help ensure all slave devices within the power domain are idle
-before the gdsc is actually switched off.
-This is mainly useful in power domains which host a MMU, in which
-case its necessary to make sure there are no outstanding MMU operations
-or pending bus transactions before the power domain is turned off.
+On 12/22/2015 05:27 PM, Tony Lindgren wrote:
+> On dm814x we have 13 ADPLLs with 3 to 4 outputs on each. The
+> ADPLLs have several dividers and muxes controlled by a shared
+> control register for each PLL.
+>
+> Note that for the clocks to work as device drivers for booting on
+> dm814x, this patch depends on "ARM: OMAP2+: Change core_initcall
+> levels to postcore_initcall".
+>
+> Also note that this patch does not implement clk_set_rate for the
+> PLL, that will be posted later on when available.
+>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Tero Kristo <t-kristo@ti.com>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> ---
+>
+> If no more comments, Tero can you please apply into an immutable
+> branch against v4.4-rc1 that I can merge in too?
+>
+> Changes since v3:
+>
+> - We want to create the clkdev entry for all clocks, not just outputs
+> - ti_adpll_wait_lock loops did not do the right thing
+> - We want to use CLK_GET_RATE_NOCACHE in ti_adpll_init_dco
 
-In gdscs with gds_hw_controller block, its necessary to check the
-gds_hw_ctrl status bits instead of the ones in gdscr, to determine
-the state of the powerdomain.
+I have just one comment below still, once that is addressed:
 
-While at it, also move away from using jiffies and use ktime APIs
-instead for busy looping on status bits.
+Conditionally-acked-by: Tero Kristo <t-kristo@ti.com>
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- drivers/clk/qcom/gdsc.c | 44 +++++++++++++++++++++++++++-----------------
- drivers/clk/qcom/gdsc.h |  2 ++
- 2 files changed, 29 insertions(+), 17 deletions(-)
+Stephen / Michael, can you pick this up for next merge? I don't have 
+anything else coming for the window this time, and I am probably going 
+to be on vacation just nicely to not be able to push anything anyway.
 
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index bfab75b..9f530b7 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -16,6 +16,7 @@
- #include <linux/err.h>
- #include <linux/jiffies.h>
- #include <linux/kernel.h>
-+#include <linux/ktime.h>
- #include <linux/pm_domain.h>
- #include <linux/regmap.h>
- #include <linux/reset-controller.h>
-@@ -42,12 +43,12 @@
- 
- #define domain_to_gdsc(domain) container_of(domain, struct gdsc, pd)
- 
--static int gdsc_is_enabled(struct gdsc *sc)
-+static int gdsc_is_enabled(struct gdsc *sc, unsigned int reg)
- {
- 	u32 val;
- 	int ret;
- 
--	ret = regmap_read(sc->regmap, sc->gdscr, &val);
-+	ret = regmap_read(sc->regmap, reg, &val);
- 	if (ret)
- 		return ret;
- 
-@@ -58,28 +59,35 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
- {
- 	int ret;
- 	u32 val = en ? 0 : SW_COLLAPSE_MASK;
--	u32 check = en ? PWR_ON_MASK : 0;
--	unsigned long timeout;
-+	ktime_t start;
-+	unsigned int status_reg = sc->gdscr;
- 
- 	ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
- 	if (ret)
- 		return ret;
- 
--	timeout = jiffies + usecs_to_jiffies(TIMEOUT_US);
--	do {
--		ret = regmap_read(sc->regmap, sc->gdscr, &val);
--		if (ret)
--			return ret;
-+	if (sc->gds_hw_ctrl) {
-+		status_reg = sc->gds_hw_ctrl;
-+		/*
-+		 * The gds hw controller asserts/de-asserts the status bit soon
-+		 * after it receives a power on/off request from a master.
-+		 * The controller then takes around 8 xo cycles to start its
-+		 * internal state machine and update the status bit. During
-+		 * this time, the status bit does not reflect the true status
-+		 * of the core.
-+		 * Add a delay of 1 us between writing to the SW_COLLAPSE bit
-+		 * and polling the status bit.
-+		 */
-+		udelay(1);
-+	}
- 
--		if ((val & PWR_ON_MASK) == check)
-+	start = ktime_get();
-+	do {
-+		if (gdsc_is_enabled(sc, status_reg) == en)
- 			return 0;
--	} while (time_before(jiffies, timeout));
--
--	ret = regmap_read(sc->regmap, sc->gdscr, &val);
--	if (ret)
--		return ret;
-+	} while (ktime_us_delta(ktime_get(), start) < TIMEOUT_US);
- 
--	if ((val & PWR_ON_MASK) == check)
-+	if (gdsc_is_enabled(sc, status_reg) == en)
- 		return 0;
- 
- 	return -ETIMEDOUT;
-@@ -165,6 +173,7 @@ static int gdsc_init(struct gdsc *sc)
- {
- 	u32 mask, val;
- 	int on, ret;
-+	unsigned int reg;
- 
- 	/*
- 	 * Disable HW trigger: collapse/restore occur based on registers writes.
-@@ -185,7 +194,8 @@ static int gdsc_init(struct gdsc *sc)
- 			return ret;
- 	}
- 
--	on = gdsc_is_enabled(sc);
-+	reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
-+	on = gdsc_is_enabled(sc, reg);
- 	if (on < 0)
- 		return on;
- 
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index 4e9dfc1..66a43be 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -32,6 +32,7 @@ struct reset_controller_dev;
-  * @pd: generic power domain
-  * @regmap: regmap for MMIO accesses
-  * @gdscr: gsdc control register
-+ * @gds_hw_ctrl: gds_hw_ctrl register
-  * @cxcs: offsets of branch registers to toggle mem/periph bits in
-  * @cxc_count: number of @cxcs
-  * @pwrsts: Possible powerdomain power states
-@@ -44,6 +45,7 @@ struct gdsc {
- 	struct generic_pm_domain	*parent;
- 	struct regmap			*regmap;
- 	unsigned int			gdscr;
-+	unsigned int			gds_hw_ctrl;
- 	unsigned int			*cxcs;
- 	unsigned int			cxc_count;
- 	const u8			pwrsts;
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+<snip>
+
+> +
+> +/* Warn if clkout or clkoutx2 try to set unavailable parent */
+> +static int ti_adpll_clkout_set_parent(struct clk_hw *hw, u8 index)
+> +{
+> +	struct ti_adpll_clkout_data *co = to_clkout(hw);
+> +	struct ti_adpll_data *d = co->adpll;
+> +
+> +	if (ti_adpll_clock_is_bypass(d) != index)
+> +		return -EAGAIN;
+> +
+
+I think this part is still somewhat weird. You are not doing anything 
+useful in this function, so do you need to implement it at all? Just 
+returning -EINVAL always might work also. EAGAIN is wrong return value 
+anyway as it can pretty much never succeed.
+
+-Tero
+
+> +	return 0;
+> +}
+> +
+
+<snip>
