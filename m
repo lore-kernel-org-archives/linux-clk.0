@@ -1,163 +1,81 @@
-Return-Path: <heiko.stuebner@collabora.com>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko.stuebner@collabora.com>
-To: linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org
-Cc: dianders@chromium.org, mturquette@baylibre.com, sboyd@codeaurora.org, Chris Zhong <zyw@rock-chips.com>
-Subject: [PATCH] clk: rockchip: only enter pll slow-mode directly before reboots on rk3288
-Date: Fri, 18 Dec 2015 19:33:50 +0100
-Message-ID: <1705995.CL2pqRBHZb@diego>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	sjoerd.simons@collabora.co.uk,
+	wxt@rock-chips.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v2 1/5] clk: add flag for clocks that need to be enabled on rate changes
+Date: Tue, 22 Dec 2015 22:27:58 +0100
+Message-Id: <1450819682-4932-2-git-send-email-heiko@sntech.de>
+In-Reply-To: <1450819682-4932-1-git-send-email-heiko@sntech.de>
+References: <1450819682-4932-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-As commit 1d33929e2a2b ("clk: rockchip: switch PLLs to slow mode before
-reboot for rk3288") states, switching the PLLs to slow-mode is only
-necessary when rebooting using the soft-reset done through the CRU.
+Some clocks need to be enabled to accept rate changes. This patch adds a
+new flag CLK_SET_RATE_UNGATE that lets clk_change_rate enable the clock
+before trying to change the rate and disable it again afterwards.
+This of course doesn't effect clocks that are already running at that
+point, as their refcount will only temporarily increase.
 
-The dwc2 controllers used create really big number of interrupts in
-special constellations involving usb-hubs and their number is so high,
-it can even overwhelm the interrupt handler if the cpu-speed os to low.
-
-Right now the PLLs are put into slow-mode in a shutdown syscore_ops
-callback which means it happens on all reboots (not only the soft-reset
-ones) and even on poweroff actions.
-
-This can result in the system not powering off and getting stuck instead,
-so we should move the slow-mode change nearer to the actual reboot action.
-
-For this we introduce the possiblity to also set a callback that gets
-called from the restart-handler directly prior to restarting the system
-and move the shutdown-callback to this new option.
-
-With this the slow-mode switch is done only on the necessary reboots
-and also has a smaller possibility of causing artifacts.
-
-Fixes: 1d33929e2a2b ("clk: rockchip: switch PLLs to slow mode before reboot for rk3288")
-Signed-off-by: Heiko Stuebner <heiko.stuebner@collabora.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Tested-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Reviewed-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 ---
- drivers/clk/rockchip/clk-rk3036.c | 2 +-
- drivers/clk/rockchip/clk-rk3188.c | 2 +-
- drivers/clk/rockchip/clk-rk3228.c | 2 +-
- drivers/clk/rockchip/clk-rk3288.c | 4 ++--
- drivers/clk/rockchip/clk-rk3368.c | 2 +-
- drivers/clk/rockchip/clk.c        | 7 ++++++-
- drivers/clk/rockchip/clk.h        | 2 +-
- 7 files changed, 13 insertions(+), 8 deletions(-)
+ drivers/clk/clk.c            | 18 ++++++++++++++++++
+ include/linux/clk-provider.h |  1 +
+ 2 files changed, 19 insertions(+)
 
-diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
-index 75553af..1651f7d 100644
---- a/drivers/clk/rockchip/clk-rk3036.c
-+++ b/drivers/clk/rockchip/clk-rk3036.c
-@@ -473,6 +473,6 @@ static void __init rk3036_clk_init(struct device_node *np)
- 	rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0),
- 				  ROCKCHIP_SOFTRST_HIWORD_MASK);
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index f13c3f4..bd64a94 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1443,6 +1443,15 @@ static void clk_change_rate(struct clk_core *core)
+ 	else if (core->parent)
+ 		best_parent_rate = core->parent->rate;
  
--	rockchip_register_restart_notifier(RK2928_GLB_SRST_FST);
-+	rockchip_register_restart_notifier(RK2928_GLB_SRST_FST, NULL);
- }
- CLK_OF_DECLARE(rk3036_cru, "rockchip,rk3036-cru", rk3036_clk_init);
-diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-index 7836a97..3521f6f 100644
---- a/drivers/clk/rockchip/clk-rk3188.c
-+++ b/drivers/clk/rockchip/clk-rk3188.c
-@@ -745,7 +745,7 @@ static void __init rk3188_common_clk_init(struct device_node *np)
- 	rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0),
- 				  ROCKCHIP_SOFTRST_HIWORD_MASK);
- 
--	rockchip_register_restart_notifier(RK2928_GLB_SRST_FST);
-+	rockchip_register_restart_notifier(RK2928_GLB_SRST_FST, NULL);
- }
- 
- static void __init rk3066a_clk_init(struct device_node *np)
-diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
-index 87a7e59..981a502 100644
---- a/drivers/clk/rockchip/clk-rk3228.c
-+++ b/drivers/clk/rockchip/clk-rk3228.c
-@@ -673,6 +673,6 @@ static void __init rk3228_clk_init(struct device_node *np)
- 	rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0),
- 				  ROCKCHIP_SOFTRST_HIWORD_MASK);
- 
--	rockchip_register_restart_notifier(RK3228_GLB_SRST_FST);
-+	rockchip_register_restart_notifier(RK3228_GLB_SRST_FST, NULL);
- }
- CLK_OF_DECLARE(rk3228_cru, "rockchip,rk3228-cru", rk3228_clk_init);
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index 3ecaa9d..2a6eca0 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -848,7 +848,6 @@ static void rk3288_clk_shutdown(void)
- static struct syscore_ops rk3288_clk_syscore_ops = {
- 	.suspend = rk3288_clk_suspend,
- 	.resume = rk3288_clk_resume,
--	.shutdown = rk3288_clk_shutdown,
- };
- 
- static void __init rk3288_clk_init(struct device_node *np)
-@@ -900,7 +899,8 @@ static void __init rk3288_clk_init(struct device_node *np)
- 				  rk3288_cru_base + RK3288_SOFTRST_CON(0),
- 				  ROCKCHIP_SOFTRST_HIWORD_MASK);
- 
--	rockchip_register_restart_notifier(RK3288_GLB_SRST_FST);
-+	rockchip_register_restart_notifier(RK3288_GLB_SRST_FST,
-+					   rk3288_clk_shutdown);
- 	register_syscore_ops(&rk3288_clk_syscore_ops);
- }
- CLK_OF_DECLARE(rk3288_cru, "rockchip,rk3288-cru", rk3288_clk_init);
-diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
-index 1faf160..be0ede5 100644
---- a/drivers/clk/rockchip/clk-rk3368.c
-+++ b/drivers/clk/rockchip/clk-rk3368.c
-@@ -889,6 +889,6 @@ static void __init rk3368_clk_init(struct device_node *np)
- 	rockchip_register_softrst(np, 15, reg_base + RK3368_SOFTRST_CON(0),
- 				  ROCKCHIP_SOFTRST_HIWORD_MASK);
- 
--	rockchip_register_restart_notifier(RK3368_GLB_SRST_FST);
-+	rockchip_register_restart_notifier(RK3368_GLB_SRST_FST, NULL);
- }
- CLK_OF_DECLARE(rk3368_cru, "rockchip,rk3368-cru", rk3368_clk_init);
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index be6c7fd..443d6f0 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -341,9 +341,13 @@ void __init rockchip_clk_protect_critical(const char *const clocks[],
- }
- 
- static unsigned int reg_restart;
-+static void (*cb_restart)(void);
- static int rockchip_restart_notify(struct notifier_block *this,
- 				   unsigned long mode, void *cmd)
- {
-+	if (cb_restart)
-+		cb_restart();
++	if (core->flags & CLK_SET_RATE_UNGATE) {
++		unsigned long flags;
 +
- 	writel(0xfdb9, reg_base + reg_restart);
- 	return NOTIFY_DONE;
- }
-@@ -353,11 +357,12 @@ static struct notifier_block rockchip_restart_handler = {
- 	.priority = 128,
- };
++		clk_core_prepare(core);
++		flags = clk_enable_lock();
++		clk_core_enable(core);
++		clk_enable_unlock(flags);
++	}
++
+ 	if (core->new_parent && core->new_parent != core->parent) {
+ 		old_parent = __clk_set_parent_before(core, core->new_parent);
+ 		trace_clk_set_parent(core, core->new_parent);
+@@ -1469,6 +1478,15 @@ static void clk_change_rate(struct clk_core *core)
  
--void __init rockchip_register_restart_notifier(unsigned int reg)
-+void __init rockchip_register_restart_notifier(unsigned int reg, void (*cb)(void))
- {
- 	int ret;
+ 	core->rate = clk_recalc(core, best_parent_rate);
  
- 	reg_restart = reg;
-+	cb_restart = cb;
- 	ret = register_restart_handler(&rockchip_restart_handler);
- 	if (ret)
- 		pr_err("%s: cannot register restart handler, %d\n",
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index 01bc372..809ef81 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -503,7 +503,7 @@ void rockchip_clk_register_armclk(unsigned int lookup_id, const char *name,
- 			const struct rockchip_cpuclk_rate_table *rates,
- 			int nrates);
- void rockchip_clk_protect_critical(const char *const clocks[], int nclocks);
--void rockchip_register_restart_notifier(unsigned int reg);
-+void rockchip_register_restart_notifier(unsigned int reg, void (*cb)(void));
++	if (core->flags & CLK_SET_RATE_UNGATE) {
++		unsigned long flags;
++
++		flags = clk_enable_lock();
++		clk_core_disable(core);
++		clk_enable_unlock(flags);
++		clk_core_unprepare(core);
++	}
++
+ 	if (core->notifier_count && old_rate != core->rate)
+ 		__clk_notify(core, POST_RATE_CHANGE, old_rate, core->rate);
  
- #define ROCKCHIP_SOFTRST_HIWORD_MASK	BIT(0)
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index c56988a..a971ce4 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -31,6 +31,7 @@
+ #define CLK_SET_RATE_NO_REPARENT BIT(7) /* don't re-parent on rate change */
+ #define CLK_GET_ACCURACY_NOCACHE BIT(8) /* do not use the cached clk accuracy */
+ #define CLK_RECALC_NEW_RATES	BIT(9) /* recalc rates after notifications */
++#define CLK_SET_RATE_UNGATE	BIT(10) /* clock needs to run to set rate */
  
+ struct clk;
+ struct clk_hw;
 -- 
-2.6.2
+2.6.4
