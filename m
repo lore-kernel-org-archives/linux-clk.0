@@ -1,57 +1,58 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:57684 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755302AbbLBNaY (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 2 Dec 2015 08:30:24 -0500
-Date: Wed, 2 Dec 2015 13:30:10 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux@arm.linux.org.uk,
-	mturquette@baylibre.com, sboyd@codeaurora.org, wsa@the-dreams.de
-Message-ID: <20151202133010.GJ1929@sirena.org.uk>
-References: <20151124173718.GK18889@ck-lbox>
- <20151202125855.GB6058@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="r7YfqnGwAF7PgTLe"
-In-Reply-To: <20151202125855.GB6058@localhost.localdomain>
-Subject: Re: Handling clocks on external busses
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	sjoerd.simons@collabora.co.uk,
+	wxt@rock-chips.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v2 0/5] clk: rockchip: fix handling of fractional dividers
+Date: Tue, 22 Dec 2015 22:27:57 +0100
+Message-Id: <1450819682-4932-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
+Essentially unchanged from the first iteration from back in august, just
+including additional patches depending on that and fixing fractional
+dividers on the rk3036 and spdif parent settings.
 
---r7YfqnGwAF7PgTLe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In v1, Stephen seemed essentially ok with it but Mike put forward his wish
+to use his planned approach for connected clocks for handling this.
 
-On Wed, Dec 02, 2015 at 12:58:55PM +0000, Charles Keepax wrote:
+While that in itself will be very interesting also for handling Rockchip's
+armclk generically, we're now in the situation that everything related
+to audio output relies on working fractional dividers to produce the
+needed clock frequencies, making audio-output essentially non-working on
+all Rockchip socs in mainline at the moment.
 
-> So after a bit more digging it seems this has been mitigated slightly
-> as a lot of SPI driver have been updated to execute transfers in
-> thread rather than from a worker thread and it seems the clock
-> framework lets you re-enter the locked sections if called from the
-> same thread.
+So I'm somewhat hoping for some sort of intermediate solution here :-)
 
-No, this isn't something the drivers support (it's a framework feature)
-and it isn't something that we're guaranteed to do, if the bus is busy
-we defer to the thread and it's possible the drivers might do something
-multi-threaded themselves.  It might work a lot of the time but it's
-never going to be guaranteed to work.
 
---r7YfqnGwAF7PgTLe
-Content-Type: application/pgp-signature; name="signature.asc"
+changes in v2:
+- rebase original 3 patches onto 4.4
+- add the 2 new patches from other series, that need that change
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Heiko Stuebner (3):
+  clk: add flag for clocks that need to be enabled on rate changes
+  clk: rockchip: handle mux dependency of fractional dividers
+  clk: rockchip: include downstream muxes into fractional dividers
 
-iQEcBAEBCAAGBQJWXvJhAAoJECTWi3JdVIfQA+AH/Rj5XoHAusUguUDYc4NViJGW
-evlxnShud6Y4PKjbRvsJMb2sjO9REmwxXjKMSMrR3fBaGRDlCUWybrK5bu4YXW1U
-RkoykLwpbwEqqQ6RSGN9bvh9xuaQoRKTNHJfyFcVw8puFFHooo9c5RHN+UnaeavR
-o1rSdWyah01z2SS8hnKMKvs6FclOnpku02STFVZxRaH9vtiBPkBLS1uGMX/54yE1
-c3yhW3PGcllG4ieJlcfcJHH4QB0sVKvxbQ+DVxzy0/J6LxrEjhPbOpyjq4DvdrCQ
-hPQqCSmQS89dLW1aaqLT7TI1b2p11CxukcOy99ZFHt0lhlAi6BeM+TRyP+iYT5o=
-=1wIb
------END PGP SIGNATURE-----
+Sjoerd Simons (1):
+  clk: rockchip: Allow the RK3288 SPDIF clocks to change their parent
 
---r7YfqnGwAF7PgTLe--
+Xing Zheng (1):
+  clk: rockchip: rk3036: include downstream muxes into fractional
+    dividers
+
+ drivers/clk/clk.c                 |  18 +++++
+ drivers/clk/rockchip/clk-rk3036.c |  34 +++++-----
+ drivers/clk/rockchip/clk-rk3188.c |  80 +++++++++++-----------
+ drivers/clk/rockchip/clk-rk3288.c |  70 +++++++++----------
+ drivers/clk/rockchip/clk.c        | 137 ++++++++++++++++++++++++++++++++++----
+ drivers/clk/rockchip/clk.h        |  19 ++++++
+ include/linux/clk-provider.h      |   1 +
+ 7 files changed, 254 insertions(+), 105 deletions(-)
+
+-- 
+2.6.4
