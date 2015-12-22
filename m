@@ -1,88 +1,63 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Simon Arlott <simon@fire.lp0.eu>, "Stephen Boyd" <sboyd@codeaurora.org>,
- "Kevin Cernekee" <cernekee@gmail.com>,
- "Florian Fainelli" <f.fainelli@gmail.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <5669F361.60405@simon.arlott.org.uk>
-Cc: "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
- linux-clk@vger.kernel.org, linux-mips@linux-mips.org,
- "Rob Herring" <robh+dt@kernel.org>, "Pawel Moll" <pawel.moll@arm.com>,
- "Mark Rutland" <mark.rutland@arm.com>,
- "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
- "Kumar Gala" <galak@codeaurora.org>, "Jonas Gorski" <jogo@openwrt.org>
-References: <5669F361.60405@simon.arlott.org.uk>
-Message-ID: <20160101071619.7140.40854@quark.deferred.io>
-Subject: Re: [PATCH linux-next (v2) 1/2] clk: Add brcm,
- bcm6345-gate-clk device tree binding
-Date: Thu, 31 Dec 2015 23:16:19 -0800
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 1/2] clk: samsung: exynos5422: add missing parent GSCL
+ block clocks
+To: Mike Turquette <mturquette@baylibre.com>
+References: <1449582415-30164-1-git-send-email-m.szyprowski@samsung.com>
+ <5667B2F3.9040807@samsung.com> <5667FEF3.4080703@samsung.com>
+ <56682E44.6020303@samsung.com> <56719E2C.2030103@samsung.com>
+ <567208C4.4090806@samsung.com> <20151222184412.GD6596@quark.deferred.io>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, k.kozlowski.k@gmail.com,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
+ linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <5679A6D5.5010604@samsung.com>
+Date: Tue, 22 Dec 2015 20:39:01 +0100
+MIME-version: 1.0
+In-reply-to: <20151222184412.GD6596@quark.deferred.io>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Simon,
+Mike,
 
-Quoting Simon Arlott (2015-12-10 13:49:21)
-> +periph_clk: periph_clk {
-> +       compatible =3D "brcm,bcm63168-gate-clk", "brcm,bcm6345-gate-clk";
-> +       regmap =3D <&periph_cntl>;
-> +       offset =3D <0x4>;
-> +
-> +       #clock-cells =3D <1>;
-> +       clock-indices =3D
-> +               <1>,          <2>,        <3>,       <4>,     <5>,
-> +               <6>,          <7>,        <8>,       <9>,     <10>,
-> +               <11>,         <12>,       <13>,      <14>,    <15>,
-> +               <16>,         <17>,       <18>,      <19>,    <20>,
-> +               <27>,         <31>;
-> +       clock-output-names =3D
-> +               "vdsl_qproc", "vdsl_afe", "vdsl",    "mips",  "wlan_ocp",
-> +               "dect",       "fap0",     "fap1",    "sar",   "robosw",
-> +               "pcm",        "usbd",     "usbh",    "ipsec", "spi",
-> +               "hsspi",      "pcie",     "phymips", "gmac",  "nand",
-> +               "tbus",       "robosw250";
+On 22/12/15 19:44, Mike Turquette wrote:
+> This is superseded by the pull request found in Message-ID:
+> <5671A456.9030203@samsung.com>, correct?
 
-Why is clock-output-names required? Because you don't have any clock
-data in your driver? Or is there another reason?
+The two pull requests are based on same branch, first 2 commits are
+tagged with for-4.5-clk-exynos5420 tag and the whole branch is tagged
+as clk-samsung-4.5. I assumed it's fine to use just the below tag for
+arm-soc.
 
-FYI, I'm not a fan of clock-output-names, and prefer for the clk
-consumer devices to specify the clock-names property.
+>>> > > The following changes since commit 9f9499ae8e6415cefc4fe0a96ad0e27864353c89:
+>>> > > 
+>>> > >   Linux 4.4-rc5 (2015-12-13 17:42:58 -0800)
+>>> > > 
+>>> > > are available in the git repository at:
+>>> > > 
+>>> > >   git://linuxtv.org/snawrocki/samsung.git tags/for-4.5-clk-exynos5420
+>>> > > 
+>>> > > for you to fetch changes up to bee4f87f01dc30fcf9e05eb55b833f89fd9bb4f4:
+>>> > > 
+>>> > >   clk: samsung: exynos5420: add cpu clock configuration data and instantiate cpu clock (2015-12-16 16:35:26 +0100)
+>>> > > 
+>>> > > ----------------------------------------------------------------
+>>> > > Samsung exynos5420 SoC clk subsystem support updates:
+>>> > > instantiation of the cpu clocks and addition of the GSCL
+>>> > > IP parent clocks to the list of available consumer clocks.
+>>> > > 
+>>> > > ----------------------------------------------------------------
+>>> > > Marek Szyprowski (1):
+>>> > >       clk: samsung: exynos542x: add missing parent GSCL block clocks
+>>> > > 
+>>> > > Thomas Abraham (1):
+>>> > >       clk: samsung: exynos5420: add cpu clock configuration data and instantiate cpu clock
+>>> > > 
+>>> > >  drivers/clk/samsung/clk-exynos5420.c   |   66 +++++++++++++++++++++++++++++---
+>>> > >  include/dt-bindings/clock/exynos5420.h |    4 ++
+>>> > >  2 files changed, 64 insertions(+), 6 deletions(-)
 
-Another question, is it correct that this binding requires a DT node for
-every register that contains clock control bits? If so, I'm skeptical of
-that approach. What if you have a clock controller IP block on a future
-soc that has several registers worth of clock controls?
-
+--
 Regards,
-Mike
-
-> +};
-> +
-> +timer_clk: timer_clk {
-> +       compatible =3D "brcm,bcm63168-gate-clk", "brcm,bcm6345-gate-clk";
-> +       regmap =3D <&timer_cntl>;
-> +       offset =3D <0x4>;
-> +
-> +       #clock-cells =3D <1>;
-> +       clock-indices =3D <17>, <18>;
-> +       clock-output-names =3D "uto_extin", "usb_ref";
-> +};
-> +
-> +ehci0: usb@10002500 {
-> +       compatible =3D "brcm,bcm63168-ehci", "brcm,bcm6345-ehci", "generi=
-c-ehci";
-> +       reg =3D <0x10002500 0x100>;
-> +       big-endian;
-> +       interrupt-parent =3D <&periph_intc>;
-> +       interrupts =3D <10>;
-> +       clocks =3D <&periph_clk 13>, <&timer_clk 18>;
-> +       phys =3D <&usbh>;
-> +};
-> -- =
-
-> 2.1.4
-> =
-
-> -- =
-
-> Simon Arlott
+Sylwester
