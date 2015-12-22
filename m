@@ -1,52 +1,98 @@
-Return-Path: <ben@smart-cactus.org>
-From: Ben Gamari <ben@smart-cactus.org>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Sudeep Holla <Sudeep.Holla@arm.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: Re: [PATCH v5 0/12] cpufreq: Add support for Exynos 5800, 5420, and 5422
-In-Reply-To: <20151203103703.GC2097@ubuntu>
-References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org> <20151203060527.GH4302@ubuntu> <877fkv4ylk.fsf@smart-cactus.org> <20151203103703.GC2097@ubuntu>
-Date: Mon, 07 Dec 2015 22:19:05 +0100
-Message-ID: <87mvtm9cty.fsf@smart-cactus.org>
+Return-Path: <mturquette@baylibre.com>
+Date: Tue, 22 Dec 2015 12:56:04 -0800
+From: Michael Turquette <mturquette@baylibre.com>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Tero Kristo <t-kristo@ti.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Brian Hutchinson <b.hutchman@gmail.com>,
+	Delio Brignoli <dbrignoli@audioscience.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Matthijs van Duin <matthijsvanduin@gmail.com>,
+	Philipp Rosenberger <ilu@linutronix.de>,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH v4] clk: ti: Add support for dm814x ADPLL
+Message-ID: <20151222205604.GA14912@quark.deferred.io>
+References: <1450798030-23680-1-git-send-email-tony@atomide.com>
+ <5679B2D6.4050102@ti.com>
+ <20151222203224.GG2793@atomide.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20151222203224.GG2793@atomide.com>
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
+On 12/22, Tony Lindgren wrote:
+> * Tero Kristo <t-kristo@ti.com> [151222 12:28]:
+> > On 12/22/2015 05:27 PM, Tony Lindgren wrote:
+> > >On dm814x we have 13 ADPLLs with 3 to 4 outputs on each. The
+> > >ADPLLs have several dividers and muxes controlled by a shared
+> > >control register for each PLL.
+> > >
+> > >Note that for the clocks to work as device drivers for booting on
+> > >dm814x, this patch depends on "ARM: OMAP2+: Change core_initcall
+> > >levels to postcore_initcall".
+> > >
+> > >Also note that this patch does not implement clk_set_rate for the
+> > >PLL, that will be posted later on when available.
+> > >
+> > >Cc: Michael Turquette <mturquette@baylibre.com>
+> > >Cc: Stephen Boyd <sboyd@codeaurora.org>
+> > >Cc: Tero Kristo <t-kristo@ti.com>
+> > >Signed-off-by: Tony Lindgren <tony@atomide.com>
+> > >---
+> > >
+> > >If no more comments, Tero can you please apply into an immutable
+> > >branch against v4.4-rc1 that I can merge in too?
+> > >
+> > >Changes since v3:
+> > >
+> > >- We want to create the clkdev entry for all clocks, not just outputs
+> > >- ti_adpll_wait_lock loops did not do the right thing
+> > >- We want to use CLK_GET_RATE_NOCACHE in ti_adpll_init_dco
+> > 
+> > I have just one comment below still, once that is addressed:
+> > 
+> > Conditionally-acked-by: Tero Kristo <t-kristo@ti.com>
+> > 
+> > Stephen / Michael, can you pick this up for next merge? I don't have
+> > anything else coming for the window this time, and I am probably going to be
+> > on vacation just nicely to not be able to push anything anyway.
+> 
+> Also, I managed to remove the dependency to the dts changes. So there's
+> no longer any need to set up an immutable branch for this patch.
 
-Viresh Kumar <viresh.kumar@linaro.org> writes:
+Can you split the binding description into a separate patch and send it
+to the dt mailing list? Feel free to add my Ack to it.
 
-> On 03-12-15, 11:26, Ben Gamari wrote:
->> Sounds reasonable to me. However, I'd just like to reiterate that this
->> line of work can be pursued independently from the upstreaming of this
->> series.
->
-> I think this is the right time to upstream the right solution. Just
-> try it once, if you face lots of difficulties or issues, then we can
-> ofcourse see..
->
-It looks like Bartlomiej has picked up this set. Regardless, while
-tracking down various devicetree issues I noticed that the cpu-supply
-and cpu%d-supply bindings appear to be completely undocumented. It
-seem as though this ought to be fixed.
+Stephen and I are trying to not take that stuff anymore.
 
-Cheers,
+Regards,
+Mike
 
-- Ben
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQEcBAEBAgAGBQJWZffJAAoJEHPt6ejPuu8B55wIAKhCh+3B6L0jnOwpTB01ThWf
-1x+S2hVSklTT8Fsr/kqvmYtl0rQzuEiZYU5/KcZBGA2Mys5bpLQz+kY84jQ94lvh
-J7QSoZ1kieWFtKE41MZ+TfqJ1k2/xKZ9TIllkl2yNq89zEbIjF+ePgO2j5l+jH81
-s1RK0IbHbmlLhcnqRVUmSBuB+nsvHPVCHWOQvpfIsWQdQmqpYhIPoAZe9UdbjPTC
-qF58N5EPrhTty/1dxQOlXm1LhxGunmSvtsfUGbXAOyuS5PQDph0RDDSCOR5OZmKg
-QW0b8r7Qgz0P3XAOsP4sCT+tk2H6rrWz4BUw5yNPFLcHO+0crZWzZSTvW/2lP0s=
-=on3T
------END PGP SIGNATURE-----
---=-=-=--
+> 
+> > <snip>
+> > 
+> > >+
+> > >+/* Warn if clkout or clkoutx2 try to set unavailable parent */
+> > >+static int ti_adpll_clkout_set_parent(struct clk_hw *hw, u8 index)
+> > >+{
+> > >+	struct ti_adpll_clkout_data *co = to_clkout(hw);
+> > >+	struct ti_adpll_data *d = co->adpll;
+> > >+
+> > >+	if (ti_adpll_clock_is_bypass(d) != index)
+> > >+		return -EAGAIN;
+> > >+
+> > 
+> > I think this part is still somewhat weird. You are not doing anything useful
+> > in this function, so do you need to implement it at all? Just returning
+> > -EINVAL always might work also. EAGAIN is wrong return value anyway as it
+> > can pretty much never succeed.
+> 
+> OK thanks sounds good to me, I'll check it this after lunch.
+> 
+> Also noticed the do_div should be div64_u64 so v5 coming later
+> today.
+> 
+> Regards,
+> 
+> Tony
