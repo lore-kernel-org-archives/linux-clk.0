@@ -1,113 +1,260 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-CC: Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
-	<srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>, Shunli
- Wang <shunli.wang@mediatek.com>
-Subject: [PATCH 4/5] reset: mediatek: mt2701 reset controller dt-binding file
-Date: Wed, 30 Dec 2015 14:27:44 +0800
-Message-ID: <1451456865-44139-5-git-send-email-jamesjj.liao@mediatek.com>
-In-Reply-To: <1451456865-44139-1-git-send-email-jamesjj.liao@mediatek.com>
-References: <1451456865-44139-1-git-send-email-jamesjj.liao@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jamesjj.liao@mediatek.com
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	sjoerd.simons@collabora.co.uk,
+	wxt@rock-chips.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v2 2/5] clk: rockchip: handle mux dependency of fractional dividers
+Date: Tue, 22 Dec 2015 22:27:59 +0100
+Message-Id: <1450819682-4932-3-git-send-email-heiko@sntech.de>
+In-Reply-To: <1450819682-4932-1-git-send-email-heiko@sntech.de>
+References: <1450819682-4932-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shunli Wang <shunli.wang@mediatek.com>
+The fractional dividers of Rockchip SoCs contain an "auto-gating-feature"
+that requires the downstream mux to actually point to the fractional
+divider and the fractional divider gate to be enabled, for it to really
+accept changes to the divider ratio.
 
-Dt-binding file about reset controller is used to provide
-kinds of definition, which is referenced by dts file and
-IC-specified reset controller driver code.
+The downstream muxes themselfs are not generic enough to include them
+directly into the fractional divider, as they have varying sources of
+parent clocks including not only clocks related to the fractional
+dividers but other clocks as well.
 
-Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+To solve this, allow our clock branches to specify direct child clock-
+branches in the new child property, let the fractional divider register
+its downstream mux through this and add a clock notifier that temporarily
+switches the mux setting when it notices rate changes to the fractional
+divider.
+
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Tested-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Reviewed-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 ---
- .../dt-bindings/reset-controller/mt2701-resets.h   | 74 ++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
- create mode 100644 include/dt-bindings/reset-controller/mt2701-resets.h
+ drivers/clk/rockchip/clk.c | 137 ++++++++++++++++++++++++++++++++++++++++-----
+ drivers/clk/rockchip/clk.h |  19 +++++++
+ 2 files changed, 142 insertions(+), 14 deletions(-)
 
-diff --git a/include/dt-bindings/reset-controller/mt2701-resets.h b/include/dt-bindings/reset-controller/mt2701-resets.h
-new file mode 100644
-index 0000000..00efeb0
---- /dev/null
-+++ b/include/dt-bindings/reset-controller/mt2701-resets.h
-@@ -0,0 +1,74 @@
-+/*
-+ * Copyright (c) 2015 MediaTek, Shunli Wang <shunli.wang@mediatek.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index 443d6f0..d9a0b5d 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -102,22 +102,82 @@ static struct clk *rockchip_clk_register_branch(const char *name,
+ 	return clk;
+ }
+ 
++struct rockchip_clk_frac {
++	struct notifier_block			clk_nb;
++	struct clk_fractional_divider		div;
++	struct clk_gate				gate;
 +
-+#ifndef _DT_BINDINGS_RESET_CONTROLLER_MT2701
-+#define _DT_BINDINGS_RESET_CONTROLLER_MT2701
++	struct clk_mux				mux;
++	const struct clk_ops			*mux_ops;
++	int					mux_frac_idx;
 +
-+/* INFRACFG resets */
-+#define MT2701_INFRA_EMI_REG_RST		0
-+#define MT2701_INFRA_DRAMC0_A0_RST		1
-+#define MT2701_INFRA_FHCTL_RST			2
-+#define MT2701_INFRA_APCIRQ_EINT_RST		3
-+#define MT2701_INFRA_APXGPT_RST			4
-+#define MT2701_INFRA_SCPSYS_RST			5
-+#define MT2701_INFRA_KP_RST			6
-+#define MT2701_INFRA_PMIC_WRAP_RST		7
-+#define MT2701_INFRA_MIPI_RST			8
-+#define MT2701_INFRA_IRRX_RST			9
-+#define MT2701_INFRA_CEC_RST			10
-+#define MT2701_INFRA_EMI_RST			32
-+#define MT2701_INFRA_DRAMC0_RST			34
-+#define MT2701_INFRA_TRNG_RST			37
-+#define MT2701_INFRA_SYSIRQ_RST			38
++	bool					rate_change_remuxed;
++	int					rate_change_idx;
++};
 +
-+/*  PERICFG resets */
-+#define MT2701_PERI_UART0_SW_RST		0
-+#define MT2701_PERI_UART1_SW_RST		1
-+#define MT2701_PERI_UART2_SW_RST		2
-+#define MT2701_PERI_UART3_SW_RST		3
-+#define MT2701_PERI_GCPU_SW_RST			5
-+#define MT2701_PERI_BTIF_SW_RST			6
-+#define MT2701_PERI_PWM_SW_RST			8
-+#define MT2701_PERI_AUXADC_SW_RST		10
-+#define MT2701_PERI_DMA_SW_RST			11
-+#define MT2701_PERI_NFI_SW_RST			14
-+#define MT2701_PERI_NLI_SW_RST			15
-+#define MT2701_PERI_THERM_SW_RST		16
-+#define MT2701_PERI_MSDC2_SW_RST		17
-+#define MT2701_PERI_MSDC0_SW_RST		19
-+#define MT2701_PERI_MSDC1_SW_RST		20
-+#define MT2701_PERI_I2C0_SW_RST			22
-+#define MT2701_PERI_I2C1_SW_RST			23
-+#define MT2701_PERI_I2C2_SW_RST			24
-+#define MT2701_PERI_I2C3_SW_RST			25
-+#define MT2701_PERI_USB_SW_RST			28
-+#define MT2701_PERI_ETH_SW_RST			29
-+#define MT2701_PERI_SPI0_SW_RST			33
++#define to_rockchip_clk_frac_nb(nb) \
++			container_of(nb, struct rockchip_clk_frac, clk_nb)
 +
-+/* TOPRGU resets */
-+#define MT2701_TOPRGU_INFRA_RST			0
-+#define MT2701_TOPRGU_MM_RST			1
-+#define MT2701_TOPRGU_MFG_RST			2
-+#define MT2701_TOPRGU_ETHDMA_RST		3
-+#define MT2701_TOPRGU_VDEC_RST			4
-+#define MT2701_TOPRGU_VENC_IMG_RST		5
-+#define MT2701_TOPRGU_DDRPHY_RST		6
-+#define MT2701_TOPRGU_MD_RST			7
-+#define MT2701_TOPRGU_INFRA_AO_RST		8
-+#define MT2701_TOPRGU_CONN_RST			9
-+#define MT2701_TOPRGU_APMIXED_RST		10
-+#define MT2701_TOPRGU_HIFSYS_RST		11
-+#define MT2701_TOPRGU_CONN_MCU_RST		12
-+#define MT2701_TOPRGU_BDP_DISP_RST		13
++static int rockchip_clk_frac_notifier_cb(struct notifier_block *nb,
++					 unsigned long event, void *data)
++{
++	struct clk_notifier_data *ndata = data;
++	struct rockchip_clk_frac *frac = to_rockchip_clk_frac_nb(nb);
++	struct clk_mux *frac_mux = &frac->mux;
++	int ret = 0;
 +
-+#endif  /* _DT_BINDINGS_RESET_CONTROLLER_MT2701 */
++	pr_debug("%s: event %lu, old_rate %lu, new_rate: %lu\n",
++		 __func__, event, ndata->old_rate, ndata->new_rate);
++	if (event == PRE_RATE_CHANGE) {
++		frac->rate_change_idx = frac->mux_ops->get_parent(&frac_mux->hw);
++		if (frac->rate_change_idx != frac->mux_frac_idx) {
++			frac->mux_ops->set_parent(&frac_mux->hw, frac->mux_frac_idx);
++			frac->rate_change_remuxed = 1;
++		}
++	} else if (event == POST_RATE_CHANGE) {
++		/*
++		 * The POST_RATE_CHANGE notifier runs directly after the
++		 * divider clock is set in clk_change_rate, so we'll have
++		 * remuxed back to the original parent before clk_change_rate
++		 * reaches the mux itself.
++		 */
++		if (frac->rate_change_remuxed) {
++			frac->mux_ops->set_parent(&frac_mux->hw, frac->rate_change_idx);
++			frac->rate_change_remuxed = 0;
++		}
++	}
++
++	return notifier_from_errno(ret);
++}
++
+ static struct clk *rockchip_clk_register_frac_branch(const char *name,
+ 		const char *const *parent_names, u8 num_parents,
+ 		void __iomem *base, int muxdiv_offset, u8 div_flags,
+ 		int gate_offset, u8 gate_shift, u8 gate_flags,
+-		unsigned long flags, spinlock_t *lock)
++		unsigned long flags, struct rockchip_clk_branch *child,
++		spinlock_t *lock)
+ {
++	struct rockchip_clk_frac *frac;
+ 	struct clk *clk;
+ 	struct clk_gate *gate = NULL;
+ 	struct clk_fractional_divider *div = NULL;
+ 	const struct clk_ops *div_ops = NULL, *gate_ops = NULL;
+ 
+-	if (gate_offset >= 0) {
+-		gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+-		if (!gate)
+-			return ERR_PTR(-ENOMEM);
++	if (muxdiv_offset < 0)
++		return ERR_PTR(-EINVAL);
+ 
++	if (child && child->branch_type != branch_mux) {
++		pr_err("%s: fractional child clock for %s can only be a mux\n",
++		       __func__, name);
++		return ERR_PTR(-EINVAL);
++	}
++
++	frac = kzalloc(sizeof(*frac), GFP_KERNEL);
++	if (!frac)
++		return ERR_PTR(-ENOMEM);
++
++	if (gate_offset >= 0) {
++		gate = &frac->gate;
+ 		gate->flags = gate_flags;
+ 		gate->reg = base + gate_offset;
+ 		gate->bit_idx = gate_shift;
+@@ -125,13 +185,7 @@ static struct clk *rockchip_clk_register_frac_branch(const char *name,
+ 		gate_ops = &clk_gate_ops;
+ 	}
+ 
+-	if (muxdiv_offset < 0)
+-		return ERR_PTR(-EINVAL);
+-
+-	div = kzalloc(sizeof(*div), GFP_KERNEL);
+-	if (!div)
+-		return ERR_PTR(-ENOMEM);
+-
++	div = &frac->div;
+ 	div->flags = div_flags;
+ 	div->reg = base + muxdiv_offset;
+ 	div->mshift = 16;
+@@ -147,7 +201,61 @@ static struct clk *rockchip_clk_register_frac_branch(const char *name,
+ 				     NULL, NULL,
+ 				     &div->hw, div_ops,
+ 				     gate ? &gate->hw : NULL, gate_ops,
+-				     flags);
++				     flags | CLK_SET_RATE_UNGATE);
++	if (IS_ERR(clk)) {
++		kfree(frac);
++		return clk;
++	}
++
++	if (child) {
++		struct clk_mux *frac_mux = &frac->mux;
++		struct clk_init_data init;
++		struct clk *mux_clk;
++		int i, ret;
++
++		frac->mux_frac_idx = -1;
++		for (i = 0; i < child->num_parents; i++) {
++			if (!strcmp(name, child->parent_names[i])) {
++				pr_debug("%s: found fractional parent in mux at pos %d\n",
++					 __func__, i);
++				frac->mux_frac_idx = i;
++				break;
++			}
++		}
++
++		frac->mux_ops = &clk_mux_ops;
++		frac->clk_nb.notifier_call = rockchip_clk_frac_notifier_cb;
++
++		frac_mux->reg = base + child->muxdiv_offset;
++		frac_mux->shift = child->mux_shift;
++		frac_mux->mask = BIT(child->mux_width) - 1;
++		frac_mux->flags = child->mux_flags;
++		frac_mux->lock = lock;
++		frac_mux->hw.init = &init;
++
++		init.name = child->name;
++		init.flags = child->flags | CLK_SET_RATE_PARENT;
++		init.ops = frac->mux_ops;
++		init.parent_names = child->parent_names;
++		init.num_parents = child->num_parents;
++
++		mux_clk = clk_register(NULL, &frac_mux->hw);
++		if (IS_ERR(mux_clk))
++			return clk;
++
++		rockchip_clk_add_lookup(mux_clk, child->id);
++
++		/* notifier on the fraction divider to catch rate changes */
++		if (frac->mux_frac_idx >= 0) {
++			ret = clk_notifier_register(clk, &frac->clk_nb);
++			if (ret)
++				pr_err("%s: failed to register clock notifier for %s\n",
++						__func__, name);
++		} else {
++			pr_warn("%s: could not find %s as parent of %s, rate changes may not work\n",
++				__func__, name, child->name);
++		}
++	}
+ 
+ 	return clk;
+ }
+@@ -251,7 +359,8 @@ void __init rockchip_clk_register_branches(
+ 				list->parent_names, list->num_parents,
+ 				reg_base, list->muxdiv_offset, list->div_flags,
+ 				list->gate_offset, list->gate_shift,
+-				list->gate_flags, flags, &clk_lock);
++				list->gate_flags, flags, list->child,
++				&clk_lock);
+ 			break;
+ 		case branch_gate:
+ 			flags |= CLK_SET_RATE_PARENT;
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 809ef81..3f71ee5 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -274,6 +274,7 @@ struct rockchip_clk_branch {
+ 	int				gate_offset;
+ 	u8				gate_shift;
+ 	u8				gate_flags;
++	struct rockchip_clk_branch	*child;
+ };
+ 
+ #define COMPOSITE(_id, cname, pnames, f, mo, ms, mw, mf, ds, dw,\
+@@ -408,6 +409,24 @@ struct rockchip_clk_branch {
+ 		.gate_flags	= gf,				\
+ 	}
+ 
++#define COMPOSITE_FRACMUX(_id, cname, pname, f, mo, df, go, gs, gf, ch) \
++	{							\
++		.id		= _id,				\
++		.branch_type	= branch_fraction_divider,	\
++		.name		= cname,			\
++		.parent_names	= (const char *[]){ pname },	\
++		.num_parents	= 1,				\
++		.flags		= f,				\
++		.muxdiv_offset	= mo,				\
++		.div_shift	= 16,				\
++		.div_width	= 16,				\
++		.div_flags	= df,				\
++		.gate_offset	= go,				\
++		.gate_shift	= gs,				\
++		.gate_flags	= gf,				\
++		.child		= &(struct rockchip_clk_branch)ch, \
++	}
++
+ #define MUX(_id, cname, pnames, f, o, s, w, mf)			\
+ 	{							\
+ 		.id		= _id,				\
 -- 
-1.9.1
+2.6.4
