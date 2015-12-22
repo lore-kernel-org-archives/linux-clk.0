@@ -1,53 +1,76 @@
-Return-Path: <jonathanh@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>
-CC: Rhyland Klein <rklein@nvidia.com>,
-	linux-clk@vger.kernel.org ,
-	linux-tegra@vger.kernel.org ,
-	linux-kernel@vger.kernel.org ,
-	Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] clk: tegra: Fix clock sources for tegra210 EMC
-Date: Fri, 18 Dec 2015 13:45:28 +0000
-Message-ID: <1450446328-6414-1-git-send-email-jonathanh@nvidia.com>
+Return-Path: <mturquette@baylibre.com>
+Date: Tue, 22 Dec 2015 10:38:16 -0800
+From: Mike Turquette <mturquette@baylibre.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Subject: Re: [GIT PULL] clk/samsung updates for v4.5
+Message-ID: <20151222183816.GC6596@quark.deferred.io>
+References: <5671A456.9030203@samsung.com>
 MIME-Version: 1.0
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <5671A456.9030203@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The EMC clock sources for tegra210 currently incorrectly include pll_c2
-and pll_c3. However, both of these should have been pll_mb as shown in
-the TRM. If tegra210 happens to be configured such that the pll_mb is the
-default clock for the EMC, as configured by the bootloader, then this will
-cause a system hang on boot. This is because the kernel will disable the
-pll_mb when disabling unused clock as it appears to be unused when it is
-not.
+Sylwester,
 
-Also add the additional pll_p clock source for the EMC.
+On 12/16, Sylwester Nawrocki wrote:
+> 
+> The following changes since commit 9f9499ae8e6415cefc4fe0a96ad0e27864353c89:
+> 
+>   Linux 4.4-rc5 (2015-12-13 17:42:58 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://linuxtv.org/snawrocki/samsung.git tags/clk-samsung-4.5
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- drivers/clk/tegra/clk-tegra210.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Pulled.
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 58514c44ea83..849be30b52bf 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -243,7 +243,8 @@ static unsigned long tegra210_input_freq[] = {
- };
- 
- static const char *mux_pllmcp_clkm[] = {
--	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud", "pll_c2", "pll_c3",
-+	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud", "pll_mb", "pll_mb",
-+	"pll_p",
- };
- #define mux_pllmcp_clkm_idx NULL
- 
--- 
-2.1.4
+Was it necessary to base on -rc5? That required me to update my tree
+from -rc1.
+
+This is not difficult, but it is a bit annoying when it is not strictly
+necessary just to take one PR.
+
+Regards,
+Mike
+
+> 
+> for you to fetch changes up to c5e949c1c24d67ae2813afdf02408a9b0c6fe55c:
+> 
+>   clk: s3c2410: removed unneeded variable in s3c24xx_clkout_set_parent (2015-12-16 16:36:04 +0100)
+> 
+> ----------------------------------------------------------------
+> drivers/clk/samsung updates (mostly bug fixes):
+>  - instantiation of the cpu clocks and addition of the GSCL
+>    IP parent clocks to the list of available consumer clocks
+>    for exynos542x SoCs;
+>  - MFC IP parent clock fix for exynos542x;
+>  - fix of locking bug in samsung/clk-cpu.c which caused
+>    system crashes with cpufreq enabled;
+>  - minor cleanup for s3c2410.
+> 
+> ----------------------------------------------------------------
+> Bartlomiej Zolnierkiewicz (1):
+>       clk: samsung: exynos542x/5800: fix cpu clock configuration data
+> 
+> Marek Szyprowski (3):
+>       clk: samsung: exynos542x: add missing parent GSCL block clocks
+>       clk: samsung: exynos542x: fix MFC clock hierarchy parent
+>       clk: exynos: use irqsave version of spin_lock to avoid deadlock with irqs
+> 
+> Prasanna Karthik (1):
+>       clk: s3c2410: removed unneeded variable in s3c24xx_clkout_set_parent
+> 
+> Thomas Abraham (1):
+>       clk: samsung: exynos5420: add cpu clock configuration data and instantiate cpu clock
+> 
+>  drivers/clk/samsung/clk-cpu.c          |   10 ++--
+>  drivers/clk/samsung/clk-exynos5420.c   |   98 +++++++++++++++++++++++++++++---
+>  drivers/clk/samsung/clk-s3c2410-dclk.c |    3 +-
+>  include/dt-bindings/clock/exynos5420.h |    4 ++
+>  4 files changed, 102 insertions(+), 13 deletions(-)
+> 
+> -- 
+> Thanks,
+> Sylwester
