@@ -1,48 +1,77 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 2 Dec 2015 22:35:04 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] clk: let of_clk_get_parent_name() fail for invalid
- clock-indices
-Message-ID: <20151203063504.GA14699@codeaurora.org>
-References: <1449109235-27214-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <tony@atomide.com>
+Date: Tue, 22 Dec 2015 14:18:48 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Tero Kristo <t-kristo@ti.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Brian Hutchinson <b.hutchman@gmail.com>,
+	Delio Brignoli <dbrignoli@audioscience.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Matthijs van Duin <matthijsvanduin@gmail.com>,
+	Philipp Rosenberger <ilu@linutronix.de>,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH v4] clk: ti: Add support for dm814x ADPLL
+Message-ID: <20151222221847.GH2793@atomide.com>
+References: <1450798030-23680-1-git-send-email-tony@atomide.com>
+ <5679B2D6.4050102@ti.com>
+ <20151222203224.GG2793@atomide.com>
+ <20151222205604.GA14912@quark.deferred.io>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1449109235-27214-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <20151222205604.GA14912@quark.deferred.io>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/03, Masahiro Yamada wrote:
-> Currently, of_clk_get_parent_name() returns a wrong parent clock name
-> when "clock-indices" property exists and the target index is not
-> found in the property.  In this case, NULL should be returned.
+* Michael Turquette <mturquette@baylibre.com> [151222 12:56]:
+> On 12/22, Tony Lindgren wrote:
+> > * Tero Kristo <t-kristo@ti.com> [151222 12:28]:
+> > > On 12/22/2015 05:27 PM, Tony Lindgren wrote:
+> > > >On dm814x we have 13 ADPLLs with 3 to 4 outputs on each. The
+> > > >ADPLLs have several dividers and muxes controlled by a shared
+> > > >control register for each PLL.
+> > > >
+> > > >Note that for the clocks to work as device drivers for booting on
+> > > >dm814x, this patch depends on "ARM: OMAP2+: Change core_initcall
+> > > >levels to postcore_initcall".
+> > > >
+> > > >Also note that this patch does not implement clk_set_rate for the
+> > > >PLL, that will be posted later on when available.
+> > > >
+> > > >Cc: Michael Turquette <mturquette@baylibre.com>
+> > > >Cc: Stephen Boyd <sboyd@codeaurora.org>
+> > > >Cc: Tero Kristo <t-kristo@ti.com>
+> > > >Signed-off-by: Tony Lindgren <tony@atomide.com>
+> > > >---
+> > > >
+> > > >If no more comments, Tero can you please apply into an immutable
+> > > >branch against v4.4-rc1 that I can merge in too?
+> > > >
+> > > >Changes since v3:
+> > > >
+> > > >- We want to create the clkdev entry for all clocks, not just outputs
+> > > >- ti_adpll_wait_lock loops did not do the right thing
+> > > >- We want to use CLK_GET_RATE_NOCACHE in ti_adpll_init_dco
+> > > 
+> > > I have just one comment below still, once that is addressed:
+> > > 
+> > > Conditionally-acked-by: Tero Kristo <t-kristo@ti.com>
+> > > 
+> > > Stephen / Michael, can you pick this up for next merge? I don't have
+> > > anything else coming for the window this time, and I am probably going to be
+> > > on vacation just nicely to not be able to push anything anyway.
+> > 
+> > Also, I managed to remove the dependency to the dts changes. So there's
+> > no longer any need to set up an immutable branch for this patch.
 > 
-> For example,
-> 
->         oscillator {
->                 compatible = "myclocktype";
->                 #clock-cells = <1>;
->                 clock-indices = <1>, <3>;
->                 clock-output-names = "clka", "clkb";
->         };
-> 
->         consumer {
->                 compatible = "myclockconsumer";
->                 clocks = <&oscillator 0>, <&oscillator 1>;
->         };
-> 
-> Currently, of_clk_get_parent_name(consumer_np, 0) returns "clka"
-> (and of_clk_get_parent_name(consumer_np, 1) also returns "clka",
-> this is correct).   Because the "clock-indices" in the clock parent
-> does not contain <0>, of_clk_get_parent_name(consumer_np, 0) should
-> return NULL.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+> Can you split the binding description into a separate patch and send it
+> to the dt mailing list? Feel free to add my Ack to it.
 
-Applied to clk-next
+OK will do thanks.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> Stephen and I are trying to not take that stuff anymore.
+
+Sure, no problem.
+
+Regards,
+
+Tony
