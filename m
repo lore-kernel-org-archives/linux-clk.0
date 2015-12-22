@@ -1,92 +1,100 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-Subject: Re: [PATCH 1/5] clk: mediatek: Refine the makefile to support
- multiple clock drivers
-To: James Liao <jamesjj.liao@mediatek.com>,
- Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-References: <1451456865-44139-1-git-send-email-jamesjj.liao@mediatek.com>
- <1451456865-44139-2-git-send-email-jamesjj.liao@mediatek.com>
-Cc: Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz
- <djkurtz@chromium.org>, srv_heupstream@mediatek.com,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-clk@vger.kernel.org, Shunli Wang <shunli.wang@mediatek.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <5684E467.8070203@gmail.com>
-Date: Thu, 31 Dec 2015 09:16:39 +0100
-MIME-Version: 1.0
-In-Reply-To: <1451456865-44139-2-git-send-email-jamesjj.liao@mediatek.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	sjoerd.simons@collabora.co.uk,
+	wxt@rock-chips.com,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v2 4/5] clk: rockchip: rk3036: include downstream muxes into fractional dividers
+Date: Tue, 22 Dec 2015 22:28:01 +0100
+Message-Id: <1450819682-4932-5-git-send-email-heiko@sntech.de>
+In-Reply-To: <1450819682-4932-1-git-send-email-heiko@sntech.de>
+References: <1450819682-4932-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Xing Zheng <zhengxing@rock-chips.com>
 
+Use the newly introduced possibility to combine the fractional dividers
+with their downstream muxes for all fractional dividers on currently
+supported RK3036 SoCs.
 
-On 30/12/15 07:27, James Liao wrote:
-> Add a Kconfig to define clock configuration for each SoC, and
-> modify the Makefile to build drivers that only selected in config.
->
-> Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> ---
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/clk/rockchip/clk-rk3036.c | 34 +++++++++++++++++-----------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
 
-Looks good to me.
-
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-
->   drivers/clk/Kconfig           |  1 +
->   drivers/clk/mediatek/Kconfig  | 23 +++++++++++++++++++++++
->   drivers/clk/mediatek/Makefile |  6 +++---
->   3 files changed, 27 insertions(+), 3 deletions(-)
->   create mode 100644 drivers/clk/mediatek/Kconfig
->
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index c3e3a02..b7a37dc 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -198,3 +198,4 @@ source "drivers/clk/mvebu/Kconfig"
->
->   source "drivers/clk/samsung/Kconfig"
->   source "drivers/clk/tegra/Kconfig"
-> +source "drivers/clk/mediatek/Kconfig"
-> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-> new file mode 100644
-> index 0000000..dc224e6
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/Kconfig
-> @@ -0,0 +1,23 @@
-> +#
-> +# MediaTek SoC drivers
-> +#
-> +config COMMON_CLK_MEDIATEK
-> +	bool
-> +	---help---
-> +	  Mediatek SoCs' clock support.
-> +
-> +config COMMON_CLK_MT8135
-> +	bool "Clock driver for Mediatek MT8135"
-> +	depends on COMMON_CLK
-> +	select COMMON_CLK_MEDIATEK
-> +	default ARCH_MEDIATEK
-> +	---help---
-> +	  This driver supports Mediatek MT8135 clocks.
-> +
-> +config COMMON_CLK_MT8173
-> +	bool "Clock driver for Mediatek MT8173"
-> +	depends on COMMON_CLK
-> +	select COMMON_CLK_MEDIATEK
-> +	default ARCH_MEDIATEK
-> +	---help---
-> +	  This driver supports Mediatek MT8173 clocks.
-> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-> index 95fdfac..32e7222 100644
-> --- a/drivers/clk/mediatek/Makefile
-> +++ b/drivers/clk/mediatek/Makefile
-> @@ -1,4 +1,4 @@
-> -obj-y += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
-> +obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
->   obj-$(CONFIG_RESET_CONTROLLER) += reset.o
-> -obj-y += clk-mt8135.o
-> -obj-y += clk-mt8173.o
-> +obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135.o
-> +obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173.o
->
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
+index 7333b053..fb35263 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -227,21 +227,21 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
+ 	COMPOSITE_NOMUX(0, "uart2_src", "uart_pll_clk", 0,
+ 			RK2928_CLKSEL_CON(13), 0, 7, DFLAGS,
+ 			RK2928_CLKGATE_CON(1), 8, GFLAGS),
+-	COMPOSITE_FRAC(0, "uart0_frac", "uart0_src", CLK_SET_RATE_PARENT,
++	COMPOSITE_FRACMUX(0, "uart0_frac", "uart0_src", CLK_SET_RATE_PARENT,
+ 			RK2928_CLKSEL_CON(17), 0,
+-			RK2928_CLKGATE_CON(1), 9, GFLAGS),
+-	COMPOSITE_FRAC(0, "uart1_frac", "uart1_src", CLK_SET_RATE_PARENT,
+-			RK2928_CLKSEL_CON(18), 0,
+-			RK2928_CLKGATE_CON(1), 11, GFLAGS),
+-	COMPOSITE_FRAC(0, "uart2_frac", "uart2_src", CLK_SET_RATE_PARENT,
+-			RK2928_CLKSEL_CON(19), 0,
+-			RK2928_CLKGATE_CON(1), 13, GFLAGS),
++			RK2928_CLKGATE_CON(1), 9, GFLAGS,
+ 	MUX(SCLK_UART0, "sclk_uart0", mux_uart0_p, CLK_SET_RATE_PARENT,
+-			RK2928_CLKSEL_CON(13), 8, 2, MFLAGS),
++			RK2928_CLKSEL_CON(13), 8, 2, MFLAGS)),
++	COMPOSITE_FRACMUX(0, "uart1_frac", "uart1_src", CLK_SET_RATE_PARENT,
++			RK2928_CLKSEL_CON(18), 0,
++			RK2928_CLKGATE_CON(1), 11, GFLAGS,
+ 	MUX(SCLK_UART1, "sclk_uart1", mux_uart1_p, CLK_SET_RATE_PARENT,
+-			RK2928_CLKSEL_CON(14), 8, 2, MFLAGS),
++			RK2928_CLKSEL_CON(14), 8, 2, MFLAGS)),
++	COMPOSITE_FRACMUX(0, "uart2_frac", "uart2_src", CLK_SET_RATE_PARENT,
++			RK2928_CLKSEL_CON(19), 0,
++			RK2928_CLKGATE_CON(1), 13, GFLAGS,
+ 	MUX(SCLK_UART2, "sclk_uart2", mux_uart2_p, CLK_SET_RATE_PARENT,
+-			RK2928_CLKSEL_CON(15), 8, 2, MFLAGS),
++			RK2928_CLKSEL_CON(15), 8, 2, MFLAGS)),
+ 
+ 	COMPOSITE(0, "aclk_vcodec", mux_pll_src_3plls_p, 0,
+ 			RK2928_CLKSEL_CON(32), 14, 2, MFLAGS, 8, 5, DFLAGS,
+@@ -289,11 +289,11 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
+ 	COMPOSITE(0, "i2s_src", mux_pll_src_3plls_p, 0,
+ 			RK2928_CLKSEL_CON(3), 14, 2, MFLAGS, 0, 7, DFLAGS,
+ 			RK2928_CLKGATE_CON(0), 9, GFLAGS),
+-	COMPOSITE_FRAC(0, "i2s_frac", "i2s_src", CLK_SET_RATE_PARENT,
++	COMPOSITE_FRACMUX(0, "i2s_frac", "i2s_src", CLK_SET_RATE_PARENT,
+ 			RK2928_CLKSEL_CON(7), 0,
+-			RK2928_CLKGATE_CON(0), 10, GFLAGS),
++			RK2928_CLKGATE_CON(0), 10, GFLAGS,
+ 	MUX(0, "i2s_pre", mux_i2s_pre_p, CLK_SET_RATE_PARENT,
+-			RK2928_CLKSEL_CON(3), 8, 2, MFLAGS),
++			RK2928_CLKSEL_CON(3), 8, 2, MFLAGS)),
+ 	COMPOSITE_NODIV(SCLK_I2S_OUT, "i2s_clkout", mux_i2s_clkout_p, 0,
+ 			RK2928_CLKSEL_CON(3), 12, 1, MFLAGS,
+ 			RK2928_CLKGATE_CON(0), 13, GFLAGS),
+@@ -303,11 +303,11 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
+ 	COMPOSITE(0, "spdif_src", mux_pll_src_3plls_p, 0,
+ 			RK2928_CLKSEL_CON(5), 10, 2, MFLAGS, 0, 7, DFLAGS,
+ 			RK2928_CLKGATE_CON(2), 10, GFLAGS),
+-	COMPOSITE_FRAC(0, "spdif_frac", "spdif_src", 0,
++	COMPOSITE_FRACMUX(0, "spdif_frac", "spdif_src", 0,
+ 			RK2928_CLKSEL_CON(9), 0,
+-			RK2928_CLKGATE_CON(2), 12, GFLAGS),
++			RK2928_CLKGATE_CON(2), 12, GFLAGS,
+ 	MUX(SCLK_SPDIF, "sclk_spdif", mux_spdif_p, 0,
+-			RK2928_CLKSEL_CON(5), 8, 2, MFLAGS),
++			RK2928_CLKSEL_CON(5), 8, 2, MFLAGS)),
+ 
+ 	GATE(SCLK_OTGPHY0, "sclk_otgphy0", "xin12m", CLK_IGNORE_UNUSED,
+ 			RK2928_CLKGATE_CON(1), 5, GFLAGS),
+-- 
+2.6.4
