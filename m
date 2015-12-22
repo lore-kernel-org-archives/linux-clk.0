@@ -1,45 +1,87 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v2 14/16] clk: make sure parent is not NULL in clk_fetch_parent_index()
-Date: Mon, 28 Dec 2015 19:23:08 +0900
-Message-Id: <1451298191-30815-15-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <tony@atomide.com>
+Date: Tue, 22 Dec 2015 12:32:25 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Brian Hutchinson <b.hutchman@gmail.com>,
+	Delio Brignoli <dbrignoli@audioscience.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Matthijs van Duin <matthijsvanduin@gmail.com>,
+	Philipp Rosenberger <ilu@linutronix.de>,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH v4] clk: ti: Add support for dm814x ADPLL
+Message-ID: <20151222203224.GG2793@atomide.com>
+References: <1450798030-23680-1-git-send-email-tony@atomide.com>
+ <5679B2D6.4050102@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <5679B2D6.4050102@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-If parent is given with NULL, clk_fetch_parent_index() could return
-a positive index value.
+* Tero Kristo <t-kristo@ti.com> [151222 12:28]:
+> On 12/22/2015 05:27 PM, Tony Lindgren wrote:
+> >On dm814x we have 13 ADPLLs with 3 to 4 outputs on each. The
+> >ADPLLs have several dividers and muxes controlled by a shared
+> >control register for each PLL.
+> >
+> >Note that for the clocks to work as device drivers for booting on
+> >dm814x, this patch depends on "ARM: OMAP2+: Change core_initcall
+> >levels to postcore_initcall".
+> >
+> >Also note that this patch does not implement clk_set_rate for the
+> >PLL, that will be posted later on when available.
+> >
+> >Cc: Michael Turquette <mturquette@baylibre.com>
+> >Cc: Stephen Boyd <sboyd@codeaurora.org>
+> >Cc: Tero Kristo <t-kristo@ti.com>
+> >Signed-off-by: Tony Lindgren <tony@atomide.com>
+> >---
+> >
+> >If no more comments, Tero can you please apply into an immutable
+> >branch against v4.4-rc1 that I can merge in too?
+> >
+> >Changes since v3:
+> >
+> >- We want to create the clkdev entry for all clocks, not just outputs
+> >- ti_adpll_wait_lock loops did not do the right thing
+> >- We want to use CLK_GET_RATE_NOCACHE in ti_adpll_init_dco
+> 
+> I have just one comment below still, once that is addressed:
+> 
+> Conditionally-acked-by: Tero Kristo <t-kristo@ti.com>
+> 
+> Stephen / Michael, can you pick this up for next merge? I don't have
+> anything else coming for the window this time, and I am probably going to be
+> on vacation just nicely to not be able to push anything anyway.
 
-Currently, parent is checked by the callers of this function, but
-it would be safer to do it in this function.
+Also, I managed to remove the dependency to the dts changes. So there's
+no longer any need to set up an immutable branch for this patch.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+> <snip>
+> 
+> >+
+> >+/* Warn if clkout or clkoutx2 try to set unavailable parent */
+> >+static int ti_adpll_clkout_set_parent(struct clk_hw *hw, u8 index)
+> >+{
+> >+	struct ti_adpll_clkout_data *co = to_clkout(hw);
+> >+	struct ti_adpll_data *d = co->adpll;
+> >+
+> >+	if (ti_adpll_clock_is_bypass(d) != index)
+> >+		return -EAGAIN;
+> >+
+> 
+> I think this part is still somewhat weird. You are not doing anything useful
+> in this function, so do you need to implement it at all? Just returning
+> -EINVAL always might work also. EAGAIN is wrong return value anyway as it
+> can pretty much never succeed.
 
-Changes in v2:
-  - Fix a bug.  Return -EINVAL when parent _is_ NULL.
+OK thanks sounds good to me, I'll check it this after lunch.
 
- drivers/clk/clk.c | 3 +++
- 1 file changed, 3 insertions(+)
+Also noticed the do_div should be div64_u64 so v5 coming later
+today.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index efd093a..151cbe8 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1066,6 +1066,9 @@ static int clk_fetch_parent_index(struct clk_core *core,
- {
- 	int i;
- 
-+	if (!parent)
-+		return -EINVAL;
-+
- 	/*
- 	 * find index of new parent clock using cached parent ptrs,
- 	 * or if not yet cached, use string name comparison and cache
--- 
-1.9.1
+Regards,
+
+Tony
