@@ -1,55 +1,75 @@
-Return-Path: <ckeepax@opensource.wolfsonmicro.com>
-Date: Wed, 2 Dec 2015 12:58:55 +0000
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-i2c@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux@arm.linux.org.uk>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <broonie@kernel.org>, <wsa@the-dreams.de>
-Subject: Re: Handling clocks on external busses
-Message-ID: <20151202125855.GB6058@localhost.localdomain>
-References: <20151124173718.GK18889@ck-lbox>
+Return-Path: <mturquette@baylibre.com>
+Date: Tue, 22 Dec 2015 12:45:47 -0800
+From: Mike Turquette <mturquette@baylibre.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, k.kozlowski.k@gmail.com,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
+	linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH 1/2] clk: samsung: exynos5422: add missing parent GSCL
+ block clocks
+Message-ID: <20151222204547.GB9177@quark.deferred.io>
+References: <1449582415-30164-1-git-send-email-m.szyprowski@samsung.com>
+ <5667B2F3.9040807@samsung.com>
+ <5667FEF3.4080703@samsung.com>
+ <56682E44.6020303@samsung.com>
+ <56719E2C.2030103@samsung.com>
+ <567208C4.4090806@samsung.com>
+ <20151222184412.GD6596@quark.deferred.io>
+ <5679A6D5.5010604@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20151124173718.GK18889@ck-lbox>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <5679A6D5.5010604@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Nov 24, 2015 at 05:37:18PM +0000, Charles Keepax wrote:
-> Hi,
+On 12/22, Sylwester Nawrocki wrote:
+> Mike,
 > 
-> When a clock driver is controlling a clock that is controlled
-> over I2C / SPI, we need to perform a write on that bus to enable
-> the clock. However, such busses often have their own clocks that
-> must be enabled. Since all clock prepares are controlled under
-> one large mutex this easily causes deadlock. The device is
-> waiting for the I2C / SPI write to complete and the I2C / SPI
-> driver is waiting for the clock prepare lock to be released so it
-> can enable its own clock.
+> On 22/12/15 19:44, Mike Turquette wrote:
+> > This is superseded by the pull request found in Message-ID:
+> > <5671A456.9030203@samsung.com>, correct?
 > 
-> I have had a bit of a search and it seems the only really advice
-> kicking about is that all I2C / SPI drivers should leave the
-> clock prepared all the time. Is that intended to be the long term
-> solution, should I treat not leaving the clock prepared as a bug?
-> 
-> Thanks,
-> Charles
+> The two pull requests are based on same branch, first 2 commits are
+> tagged with for-4.5-clk-exynos5420 tag and the whole branch is tagged
+> as clk-samsung-4.5. I assumed it's fine to use just the below tag for
+> arm-soc.
 
-Adding a few more people for visibility.
-
-So after a bit more digging it seems this has been mitigated slightly
-as a lot of SPI driver have been updated to execute transfers in
-thread rather than from a worker thread and it seems the clock
-framework lets you re-enter the locked sections if called from the
-same thread.
-
-I am looking at moving some (in mainline) clocking code into an actual
-clocking driver (for a SPI/I2C audio CODEC) but I am rather nervous
-about this causing problems for customers with random deadlocks.
-
-I guess the naive solution looks like individual locks per clock, but
-from what I have been able to google it looks like there are some
-challenges with that approach, does anyone have any links to previous
-discussions on that? And any suggestions on how I might approach
-this?
+OK, I'll interpret that as a "yes".
 
 Thanks,
-Charles
+Mike
+
+> 
+> >>> > > The following changes since commit 9f9499ae8e6415cefc4fe0a96ad0e27864353c89:
+> >>> > > 
+> >>> > >   Linux 4.4-rc5 (2015-12-13 17:42:58 -0800)
+> >>> > > 
+> >>> > > are available in the git repository at:
+> >>> > > 
+> >>> > >   git://linuxtv.org/snawrocki/samsung.git tags/for-4.5-clk-exynos5420
+> >>> > > 
+> >>> > > for you to fetch changes up to bee4f87f01dc30fcf9e05eb55b833f89fd9bb4f4:
+> >>> > > 
+> >>> > >   clk: samsung: exynos5420: add cpu clock configuration data and instantiate cpu clock (2015-12-16 16:35:26 +0100)
+> >>> > > 
+> >>> > > ----------------------------------------------------------------
+> >>> > > Samsung exynos5420 SoC clk subsystem support updates:
+> >>> > > instantiation of the cpu clocks and addition of the GSCL
+> >>> > > IP parent clocks to the list of available consumer clocks.
+> >>> > > 
+> >>> > > ----------------------------------------------------------------
+> >>> > > Marek Szyprowski (1):
+> >>> > >       clk: samsung: exynos542x: add missing parent GSCL block clocks
+> >>> > > 
+> >>> > > Thomas Abraham (1):
+> >>> > >       clk: samsung: exynos5420: add cpu clock configuration data and instantiate cpu clock
+> >>> > > 
+> >>> > >  drivers/clk/samsung/clk-exynos5420.c   |   66 +++++++++++++++++++++++++++++---
+> >>> > >  include/dt-bindings/clock/exynos5420.h |    4 ++
+> >>> > >  2 files changed, 64 insertions(+), 6 deletions(-)
+> 
+> --
+> Regards,
+> Sylwester
+> 
