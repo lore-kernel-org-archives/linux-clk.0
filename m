@@ -1,46 +1,157 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v2 04/16] clk: remove unnecessary !core->parents conditional
-Date: Mon, 28 Dec 2015 19:22:58 +0900
-Message-Id: <1451298191-30815-5-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+In-Reply-To: <1450222559-22461-2-git-send-email-eric@anholt.net>
+References: <1450222559-22461-1-git-send-email-eric@anholt.net>
+	<1450222559-22461-2-git-send-email-eric@anholt.net>
+Date: Wed, 23 Dec 2015 12:46:35 -0800
+Message-ID: <CAEG3pND5V2=DAq-AsKYemUvS58u3uzGca3by2F=by+cTpRZ0=Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] clk: bcm2835: Add a driver for the auxiliary
+ peripheral clock gates.
+From: Michael Turquette <mturquette@baylibre.com>
+To: Eric Anholt <eric@anholt.net>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	"Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>, linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>, linux-rpi-kernel@lists.infradead.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This if-block has been here since the introduction of the common
-clock framework.  Now no clock drivers are statically initialized.
-core->parent is always NULL at this point.  Drop the redundant
-check and the confusing comment.
+On Tue, Dec 15, 2015 at 3:35 PM, Eric Anholt <eric@anholt.net> wrote:
+> There are a pair of SPI masters and a mini UART that were last minute
+> additions.  As a result, they didn't get integrated in the same way as
+> the other gates off of the VPU clock in CPRMAN.
+>
+> Signed-off-by: Eric Anholt <eric@anholt.net>
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Applied to clk-next.
 
-Changes in v2: None
+Regards,
+Mike
 
- drivers/clk/clk.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+> ---
+>
+> v2: Make the binding cover both the IRQ and clock enable registers.
+>     Use devm_ allocation, ioremap, and and clock get functions.  Don't
+>     return the error from of_clk_add_provider(), since that would
+>     leave the clocks registered, but their registers unmapped.  Trim
+>     includes.
+>
+>  drivers/clk/bcm/Makefile          |  1 +
+>  drivers/clk/bcm/clk-bcm2835-aux.c | 85 +++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 86 insertions(+)
+>  create mode 100644 drivers/clk/bcm/clk-bcm2835-aux.c
+>
+> diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+> index 3fc9506..183484c 100644
+> --- a/drivers/clk/bcm/Makefile
+> +++ b/drivers/clk/bcm/Makefile
+> @@ -4,6 +4,7 @@ obj-$(CONFIG_CLK_BCM_KONA)      += clk-bcm281xx.o
+>  obj-$(CONFIG_CLK_BCM_KONA)     += clk-bcm21664.o
+>  obj-$(CONFIG_COMMON_CLK_IPROC) += clk-iproc-armpll.o clk-iproc-pll.o clk-iproc-asiu.o
+>  obj-$(CONFIG_ARCH_BCM2835)     += clk-bcm2835.o
+> +obj-$(CONFIG_ARCH_BCM2835)     += clk-bcm2835-aux.o
+>  obj-$(CONFIG_COMMON_CLK_IPROC) += clk-ns2.o
+>  obj-$(CONFIG_ARCH_BCM_CYGNUS)  += clk-cygnus.o
+>  obj-$(CONFIG_ARCH_BCM_NSP)     += clk-nsp.o
+> diff --git a/drivers/clk/bcm/clk-bcm2835-aux.c b/drivers/clk/bcm/clk-bcm2835-aux.c
+> new file mode 100644
+> index 0000000..e4f89e2
+> --- /dev/null
+> +++ b/drivers/clk/bcm/clk-bcm2835-aux.c
+> @@ -0,0 +1,85 @@
+> +/*
+> + * Copyright (C) 2015 Broadcom
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/clk/bcm2835.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <dt-bindings/clock/bcm2835-aux.h>
+> +
+> +#define BCM2835_AUXIRQ         0x00
+> +#define BCM2835_AUXENB         0x04
+> +
+> +static int bcm2835_aux_clk_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev = &pdev->dev;
+> +       struct clk_onecell_data *onecell;
+> +       const char *parent;
+> +       struct clk *parent_clk;
+> +       struct resource *res;
+> +       void __iomem *reg, *gate;
+> +
+> +       parent_clk = devm_clk_get(dev, NULL);
+> +       if (IS_ERR(parent_clk))
+> +               return PTR_ERR(parent_clk);
+> +       parent = __clk_get_name(parent_clk);
+> +
+> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       reg = devm_ioremap_resource(dev, res);
+> +       if (!reg)
+> +               return -ENODEV;
+> +
+> +       onecell = devm_kmalloc(dev, sizeof(*onecell), GFP_KERNEL);
+> +       if (!onecell)
+> +               return -ENOMEM;
+> +       onecell->clk_num = BCM2835_AUX_CLOCK_COUNT;
+> +       onecell->clks = devm_kcalloc(dev, BCM2835_AUX_CLOCK_COUNT,
+> +                                    sizeof(*onecell->clks), GFP_KERNEL);
+> +       if (!onecell->clks)
+> +               return -ENOMEM;
+> +
+> +       gate = reg + BCM2835_AUXENB;
+> +       onecell->clks[BCM2835_AUX_CLOCK_UART] =
+> +               clk_register_gate(dev, "aux_uart", parent, 0, gate, 0, 0, NULL);
+> +
+> +       onecell->clks[BCM2835_AUX_CLOCK_SPI1] =
+> +               clk_register_gate(dev, "aux_spi1", parent, 0, gate, 1, 0, NULL);
+> +
+> +       onecell->clks[BCM2835_AUX_CLOCK_SPI2] =
+> +               clk_register_gate(dev, "aux_spi2", parent, 0, gate, 2, 0, NULL);
+> +
+> +       of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get, onecell);
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct of_device_id bcm2835_aux_clk_of_match[] = {
+> +       { .compatible = "brcm,bcm2835-aux", },
+> +       {},
+> +};
+> +MODULE_DEVICE_TABLE(of, bcm2835_aux_clk_of_match);
+> +
+> +static struct platform_driver bcm2835_aux_clk_driver = {
+> +       .driver = {
+> +               .name = "bcm2835-aux-clk",
+> +               .of_match_table = bcm2835_aux_clk_of_match,
+> +       },
+> +       .probe          = bcm2835_aux_clk_probe,
+> +};
+> +builtin_platform_driver(bcm2835_aux_clk_driver);
+> +
+> +MODULE_AUTHOR("Eric Anholt <eric@anholt.net>");
+> +MODULE_DESCRIPTION("BCM2835 auxiliary peripheral clock driver");
+> +MODULE_LICENSE("GPL v2");
+> --
+> 2.6.2
+>
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 41179f3..30c0bbc 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2348,11 +2348,8 @@ static int __clk_core_init(struct clk_core *core)
- 	 * in to clk_init during early boot; thus any access to core->parents[]
- 	 * must always check for a NULL pointer and try to populate it if
- 	 * necessary.
--	 *
--	 * If core->parents is not NULL we skip this entire block.  This allows
--	 * for clock drivers to statically initialize core->parents.
- 	 */
--	if (core->num_parents > 1 && !core->parents) {
-+	if (core->num_parents > 1) {
- 		core->parents = kcalloc(core->num_parents, sizeof(struct clk *),
- 					GFP_KERNEL);
- 		/*
+
+
 -- 
-1.9.1
+Michael Turquette
+CEO
+BayLibre - At the Heart of Embedded Linux
+http://baylibre.com/
