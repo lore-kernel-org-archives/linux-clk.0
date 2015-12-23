@@ -1,67 +1,39 @@
-Return-Path: <carlo.caione@gmail.com>
-Return-Path: <carlo.caione@gmail.com>
-Sender: Carlo Caione <carlo.caione@gmail.com>
-From: Carlo Caione <carlo@caione.org>
-To: robh+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
+Return-Path: <sudipm.mukherjee@gmail.com>
+Return-Path: <sudipm.mukherjee@gmail.com>
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux@arm.linux.org.uk,
-	linux-meson@googlegroups.com,
-	drake@endlessm.com,
-	jerry.cao@amlogic.com,
-	victor.wan@amlogic.com,
-	pawel.moll@arm.com,
-	arnd@arndb.de
-Cc: Carlo Caione <carlo@endlessm.com>
-Subject: [PATCH v2 0/7] Add basic SMP support for Amlogic Meson8b
-Date: Wed,  2 Dec 2015 18:22:26 +0100
-Message-Id: <1449076953-5058-1-git-send-email-carlo@caione.org>
+	Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH] clk: gpio: fix memory leak
+Date: Wed, 23 Dec 2015 12:03:59 +0530
+Message-Id: <1450852439-366-1-git-send-email-sudipm.mukherjee@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Carlo Caione <carlo@endlessm.com>
+If we fail to allocate parent_name then we are returning but we missed
+freeing data which has already been allocated.
 
-This patchset adds SMP support for Amlogic Meson8b SoCs.
+Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
+---
+ drivers/clk/clk-gpio.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Patch 1 fix some paramater for L2 cache needed for SMP.
-Patches 2-4 add a small reset controller used to reset the CPU cores at boot.
-Patches 5-7 deal with the SMP code itself.
-
-Changelog:
-
-V2:
-    - Add forgotten textofs-$(CONFIG_ARCH_MESON)
-    - Checking for of_reset_control_get() failure
-    - Use more specific subjects
-
-Carlo Caione (7):
-  ARM: DTS: Amlogic: Extend L2 cache controller node for Meson8b
-  dt-bindings: Amlogic: Document the CPU reset controller for Meson8b
-  clk: Amlogic: Add reset controller for CPU cores for Meson8b
-  ARM: DTS: Amlogic: Enable reset controller for Meson8b
-  dt-bindings: Amlogic: Add SMP related documentation
-  ARM: Amlogic: Add SMP bringup code for Meson8b
-  ARM: DTS: Amlogic: Add SMP related nodes for Meson8b
-
- .../devicetree/bindings/arm/amlogic/pmu.txt        |  16 ++
- .../devicetree/bindings/arm/amlogic/smp-sram.txt   |  32 +++
- Documentation/devicetree/bindings/arm/cpus.txt     |   1 +
- .../bindings/clock/amlogic,meson8b-clkc.txt        |   6 +-
- arch/arm/Makefile                                  |   1 +
- arch/arm/boot/dts/meson8b.dtsi                     |  32 +++
- arch/arm/mach-meson/Kconfig                        |   1 +
- arch/arm/mach-meson/Makefile                       |   1 +
- arch/arm/mach-meson/platsmp.c                      | 234 +++++++++++++++++++++
- drivers/clk/meson/clk-cpu.c                        |  60 +++++-
- drivers/clk/meson/clkc.c                           |   5 +-
- drivers/clk/meson/clkc.h                           |   6 +-
- drivers/clk/meson/meson8b-clkc.c                   |   4 +-
- include/dt-bindings/clock/meson8b-clkc.h           |   5 +
- 14 files changed, 396 insertions(+), 8 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/amlogic/pmu.txt
- create mode 100644 Documentation/devicetree/bindings/arm/amlogic/smp-sram.txt
- create mode 100644 arch/arm/mach-meson/platsmp.c
-
+diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+index 335322d..c1baa89 100644
+--- a/drivers/clk/clk-gpio.c
++++ b/drivers/clk/clk-gpio.c
+@@ -294,8 +294,10 @@ static void __init of_gpio_clk_setup(struct device_node *node,
+ 	num_parents = of_clk_get_parent_count(node);
+ 
+ 	parent_names = kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
+-	if (!parent_names)
++	if (!parent_names) {
++		kfree(data);
+ 		return;
++	}
+ 
+ 	for (i = 0; i < num_parents; i++)
+ 		parent_names[i] = of_clk_get_parent_name(node, i);
 -- 
-2.5.0
+1.9.1
