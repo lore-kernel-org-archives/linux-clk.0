@@ -1,81 +1,45 @@
-Return-Path: <mturquette@baylibre.com>
-Date: Thu, 24 Dec 2015 21:06:08 -0800
-From: Michael Turquette <mturquette@baylibre.com>
-To: Remi Pommarel <repk@triplefau.lt>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Eric Anholt <eric@anholt.net>,
-	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] Add PWM clock support for bcm2835
-Message-ID: <20151225050608.GB29521@quark.deferred.io>
-References: <1449418969-5565-1-git-send-email-repk@triplefau.lt>
- <20151223185704.GJ453@cruxbox>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20151223185704.GJ453@cruxbox>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.133]:54516 "EHLO
+	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754416AbbLWJHC (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 23 Dec 2015 04:07:02 -0500
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: keescook@google.com, leozwang@google.com,
+	linux-rockchip@lists.infradead.org,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] clk: rockchip: rk3036: rename emac ext source clock
+Date: Wed, 23 Dec 2015 17:05:54 +0800
+Message-Id: <1450861555-11213-1-git-send-email-zhengxing@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/23, Remi Pommarel wrote:
-> On Sun, Dec 06, 2015 at 05:22:45PM +0100, Remi Pommarel wrote:
-> > Hi,
-> > 
-> > This patchset adds support for pwm clock. At boot, this clock does not have a
-> > default parent nor a default rate set. Thus we should be able to change its
-> > parent to get this clock working. The current clock implementation is using a
-> > mux to select the parent, but these clocks need to add a password (0x5a) in
-> > higher register bits when changing parent. So a generic mux cannot be used
-> > here.
-> > 
-> > The two first patches fix the clock parent selection, while the last ones are
-> > actually adding the pwm clock registration.
-> > 
-> > Changes since v1:
-> > 	- determine_rate now based its parent selection upon divided rate
-> > 	  instead of the parent one
-> > 	- bcm2835_clock_choose_div has been modified to produce an avarage rate
-> > 	  lower or equal to the requested one
-> > 	- devicetree modifications have removed to be send in another patch
-> > 
-> > Changes since v2:
-> > 	- Remove useless variable and include
-> > 	- Make bcm2835_clock_choose_div() divisor round up ability optional
-> > 	- Set rate in bcm2835_determine_rate()
-> > 	- Add device tree modification in a separate patch
-> > 
-> > 
-> > Remi Pommarel (4):
-> >   clk: bcm2835: add a round up ability to the clock divisor
-> >   clk: bcm2835: Support for clock parent selection
-> >   clk: bcm2835: Add PWM clock support
-> >   clk: bcm2835: Add PWM clock support to the device tree
-> > 
-> >  arch/arm/boot/dts/bcm2835-rpi.dtsi  |   4 +
-> >  arch/arm/boot/dts/bcm2835.dtsi      |   9 +++
-> >  drivers/clk/bcm/clk-bcm2835.c       | 155 +++++++++++++++++++++++-------------
-> >  include/dt-bindings/clock/bcm2835.h |   3 +-
-> >  4 files changed, 116 insertions(+), 55 deletions(-)
-> > 
-> 
-> Gently ping.
-> 
-> Patches 0 to 3 are reviewed by Eric, and can eventually be pushed on clk
-> tree.
+There is only support rmii in the RK3036, so we should use the correct
+ext clock name.
 
-Patches 1-3 applied to clk-next towards 4.5.
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
-> 
-> Patch 4 has been sent on devicetree mailinglist for review
-> (http://www.spinics.net/lists/devicetree/msg108070.html), waiting for
-> previous patches to be pushed.
+ drivers/clk/rockchip/clk-rk3036.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Sounds good.
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
+index 7333b053..1016836 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -133,7 +133,7 @@ PNAME(mux_spdif_p)	= { "spdif_src", "spdif_frac", "xin12m" };
+ PNAME(mux_uart0_p)	= { "uart0_src", "uart0_frac", "xin24m" };
+ PNAME(mux_uart1_p)	= { "uart1_src", "uart1_frac", "xin24m" };
+ PNAME(mux_uart2_p)	= { "uart2_src", "uart2_frac", "xin24m" };
+-PNAME(mux_mac_p)	= { "mac_pll_src", "ext_gmac" };
++PNAME(mux_mac_p)	= { "mac_pll_src", "rmii_clkin" };
+ PNAME(mux_dclk_p)	= { "dclk_lcdc", "dclk_cru" };
+ 
+ static struct rockchip_pll_clock rk3036_pll_clks[] __initdata = {
+-- 
+1.7.9.5
 
-Regards,
-Mike
 
-> 
-> Thanks
-> 
-> -- 
-> Remi
