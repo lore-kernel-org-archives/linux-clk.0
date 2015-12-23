@@ -1,47 +1,72 @@
-Return-Path: <sudeep.holla@arm.com>
-Subject: Re: [PATCH v5 0/12] cpufreq: Add support for Exynos 5800, 5420, and
- 5422
-To: Viresh Kumar <viresh.kumar@linaro.org>
-References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
- <20151203060527.GH4302@ubuntu>
-Cc: Ben Gamari <ben@smart-cactus.org>, Sudeep Holla <sudeep.holla@arm.com>,
- Thomas Abraham <thomas.ab@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski
- <l.majewski@samsung.com>, Heiko Stuebner <heiko@sntech.de>,
- Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>,
- Javier Martinez Canillas <javier@dowhile0.org>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Anand Moon <linux.amoon@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- b.zolnierkie@samsung.com
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <566021E2.6070000@arm.com>
-Date: Thu, 3 Dec 2015 11:05:06 +0000
-MIME-Version: 1.0
-In-Reply-To: <20151203060527.GH4302@ubuntu>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <sudipm.mukherjee@gmail.com>
+Return-Path: <sudipm.mukherjee@gmail.com>
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-clk@vger.kernel.org,
+	Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH v2 2/2] clk: qcom: common: check for failure
+Date: Wed, 23 Dec 2015 17:57:20 +0530
+Message-Id: <1450873640-12489-2-git-send-email-sudipm.mukherjee@gmail.com>
+In-Reply-To: <1450873640-12489-1-git-send-email-sudipm.mukherjee@gmail.com>
+References: <1450873640-12489-1-git-send-email-sudipm.mukherjee@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+We were not checking the return from devm_add_action() which can fail.
+Start using the helper and devm_add_action_or_reset() and return
+directly as we know that the cleanup has been done by this helper.
 
+Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
+---
 
-On 03/12/15 06:05, Viresh Kumar wrote:
+v2: added the helper in patch 1/2 and used that helper here.
 
-[...]
->
-> @Sudeep: What would it take you to use cpufreq-dt for ARM's platforms
-> ?
->
+ drivers/clk/qcom/common.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
-The main difference is that we get the OPPs from the firmware rather
-than DT. We may just need to abstract that part and we should be able to
-use it. I will have a look at it and get back to you will more details.
-It has been a while since I looked at cpufreq-dt.
-
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index c112eba..65809f1 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -213,7 +213,11 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+ 	if (ret)
+ 		return ret;
+ 
+-	devm_add_action(dev, qcom_cc_del_clk_provider, pdev->dev.of_node);
++	ret = devm_add_action_or_reset(dev, qcom_cc_del_clk_provider,
++				       pdev->dev.of_node);
++
++	if (ret)
++		return ret;
+ 
+ 	reset = &cc->reset;
+ 	reset->rcdev.of_node = dev->of_node;
+@@ -227,7 +231,11 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+ 	if (ret)
+ 		return ret;
+ 
+-	devm_add_action(dev, qcom_cc_reset_unregister, &reset->rcdev);
++	ret = devm_add_action_or_reset(dev, qcom_cc_reset_unregister,
++				       &reset->rcdev);
++
++	if (ret)
++		return ret;
+ 
+ 	if (desc->gdscs && desc->num_gdscs) {
+ 		ret = gdsc_register(dev, desc->gdscs, desc->num_gdscs,
+@@ -236,10 +244,7 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+ 			return ret;
+ 	}
+ 
+-	devm_add_action(dev, qcom_cc_gdsc_unregister, dev);
+-
+-
+-	return 0;
++	return devm_add_action_or_reset(dev, qcom_cc_gdsc_unregister, dev);
+ }
+ EXPORT_SYMBOL_GPL(qcom_cc_really_probe);
+ 
 -- 
-Regards,
-Sudeep
+1.9.1
