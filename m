@@ -1,88 +1,49 @@
-Return-Path: <caesar.upstream@gmail.com>
-Return-Path: <caesar.upstream@gmail.com>
-From: Caesar Wang <wxt@rock-chips.com>
-To: heiko@sntech.de,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: leozwang@google.com,
-	keescook@google.com,
-	leecam@google.com,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Caesar Wang <wxt@rock-chips.com>
-Subject: [PATCH 0/5] Kylin-board is based on RK3036 SOCs, add the initiation
-Date: Wed, 16 Dec 2015 16:27:16 +0800
-Message-Id: <1450254441-3243-1-git-send-email-wxt@rock-chips.com>
+MIME-Version: 1.0
+In-Reply-To: <20151219041935.GS14936@rob-hp-laptop>
+References: <1450222559-22461-1-git-send-email-eric@anholt.net>
+	<20151219041935.GS14936@rob-hp-laptop>
+Date: Wed, 23 Dec 2015 12:46:08 -0800
+Message-ID: <CAEG3pNCOO1F8+nwOQGSjUKxYCGbWW_Ripc6xUwDyg6ay66uL7w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] clk: bcm2835: Add bindings for the auxiliary
+ peripheral clock gates.
+From: Michael Turquette <mturquette@baylibre.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Eric Anholt <eric@anholt.net>, linux-clk <linux-clk@vger.kernel.org>,
+	"Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>, linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>, linux-rpi-kernel@lists.infradead.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-version for working.
+On Fri, Dec 18, 2015 at 8:19 PM, Rob Herring <robh@kernel.org> wrote:
+> On Tue, Dec 15, 2015 at 03:35:57PM -0800, Eric Anholt wrote:
+>> These will be used for enabling UART1, SPI1, and SPI2.
+>>
+>> Signed-off-by: Eric Anholt <eric@anholt.net>
+>> ---
+>>
+>> v2: Make the binding cover both the IRQ and clock enable registers.
+>>
+>>  .../bindings/clock/brcm,bcm2835-aux-clock.txt      | 31 ++++++++++++++++++++++
+>>  include/dt-bindings/clock/bcm2835-aux.h            | 17 ++++++++++++
+>>  2 files changed, 48 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm2835-aux-clock.txt
+>>  create mode 100644 include/dt-bindings/clock/bcm2835-aux.h
+>
+> Acked-by: Rob Herring <robh@kernel.org>
 
-This series pacthes have the following decriptions:
+Applied to clk-next.
 
-PATCH[1/5]:
-clk: rockchip: rk3036: include downstream muxes into fractional dividers
+Next time if you put the header into the clk driver patch then we can
+send the binding description through the DT tree and take the header
+and C file through the clk tree in one patch.
 
-This patch is depend on Heiko's series pacthes.
-
-a8a1de6 clk: rockchip: include downstream muxes into fractional dividers
-(https://patchwork.kernel.org/patch/7053071/)
-ab40856 clk: rockchip: handle mux dependency of fractional dividers
-(https://patchwork.kernel.org/patch/7053051/)
-c4c5582 clk: add flag for clocks that need to be enabled on rate changes
-(https://patchwork.kernel.org/patch/7053041/)
----
-
-PATCH[2/5]:
-0a68e13 clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for aclk_vio
-The aclk_vio is marked as the ignore_unused since it's the noc clock.
-let will fix the display issue.
----
-
-PATCH[3/5]:
-183a5eb ARM: dts: rockchip: update the core dts for rk3036
-Update the rk3036 core dtsi, add the hdmi, lcdc, sdmmc, sdio .... node info
-for rk3036, in general the function is verified by the UARL[0].
-
-UARL[0]:https://github.com/rockchip-linux/kernel/ -b develop-v4.1
----
-
-PATCH[4/5]:
-962e1ad ARM: dts: rockchip: add the kylin board for rk3036
-Add the rk3036-kylin dts for Kylin-board.
----
-
-PATCH[5/5]:
-d96f13a ARM: config: Add the rk3036 configure for kylin board
-Add the defconfig for Kylin-board to better to know about that.
-
-Note: I don't plan to upstream for this patch. :)
----
-
-The game is just beginning ....
-
-
-
-Caesar Wang (4):
-  clk: rockchip: rk3036: include downstream muxes into fractional
-    dividers
-  ARM: dts: rockchip: update the core dts for rk3036
-  ARM: dts: rockchip: add the kylin board for rk3036
-  ARM: config: Add the rk3036 configure for kylin board
-
-Yakir Yang (1):
-  clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for aclk_vio
-
- Documentation/devicetree/bindings/arm/rockchip.txt |   4 +
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/rk3036-kylin.dts                 | 302 +++++++++++++++++++++
- arch/arm/boot/dts/rk3036.dtsi                      | 225 ++++++++++++++-
- arch/arm/configs/rk3036_kylin_defconfig            | 230 ++++++++++++++++
- drivers/clk/rockchip/clk-rk3036.c                  |  37 +--
- 6 files changed, 777 insertions(+), 22 deletions(-)
- create mode 100644 arch/arm/boot/dts/rk3036-kylin.dts
- create mode 100644 arch/arm/configs/rk3036_kylin_defconfig
+Regards,
+Mike
 
 -- 
-1.9.1
+Michael Turquette
+CEO
+BayLibre - At the Heart of Embedded Linux
+http://baylibre.com/
