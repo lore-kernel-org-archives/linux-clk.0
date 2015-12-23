@@ -1,64 +1,96 @@
-Return-Path: <robh@kernel.org>
-Date: Fri, 11 Dec 2015 10:37:05 -0600
-From: Rob Herring <robh@kernel.org>
-To: Jiancheng Xue <xuejiancheng@huawei.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, pawel.moll@arm.com,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, linux@arm.linux.org.uk, khilman@linaro.org,
-	arnd@arndb.de, olof@lixom.net, xuwei5@hisilicon.com,
-	haojian.zhuang@linaro.org, zhangfei.gao@linaro.org,
-	bintian.wang@huawei.com, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, yanhaifeng@hisilicon.com,
-	yanghongwei@hisilicon.com, suwenping@hisilicon.com,
-	ml.yang@hisilicon.com, gaofei@hisilicon.com,
-	zhangzhenxing@hisilicon.com, xuejiancheng@hisilicon.com
-Subject: Re: [PATCH v3 6/7] mfd: dt-bindings: add device tree bindings for
- Hi3519 sysctrl
-Message-ID: <20151211163705.GA6298@rob-hp-laptop>
-References: <1449819921-18464-1-git-send-email-xuejiancheng@huawei.com>
- <1449819921-18464-7-git-send-email-xuejiancheng@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1449819921-18464-7-git-send-email-xuejiancheng@huawei.com>
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: keescook@google.com,
+	leozwang@google.com,
+	linux-rockchip@lists.infradead.org,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH 2/2] clk: rockchip: rk3036: fix and add node id for emac clock
+Date: Wed, 23 Dec 2015 17:05:55 +0800
+Message-Id: <1450861555-11213-2-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1450861555-11213-1-git-send-email-zhengxing@rock-chips.com>
+References: <1450861555-11213-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Dec 11, 2015 at 03:45:20PM +0800, Jiancheng Xue wrote:
-> Add device tree bindings for Hi3519 system controller.
-> 
-> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+Due to referred old version TRM, there is incorrect emac clock node,
+we should fix it. The SEL_21_9 is the parent of SEL_21_4.
 
-Acked-by: Rob Herring <robh@kernel.org>
+In the emac driver, we need to refer HCLK_MAC, and because There are
+only 3PLLs (APLL/GPLL/DPLL) on the rk3036, most clock are under the
+GPLL, and it is unable to provide the accurate rate for mac_ref which
+need to 50MHz probability, we should let it under the APLL and are
+able to set the freq which integer multiples of 50MHz, so we add these
+emac node for reference.
 
-> ---
->  Documentation/devicetree/bindings/mfd/hi3519.txt | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/hi3519.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/hi3519.txt b/Documentation/devicetree/bindings/mfd/hi3519.txt
-> new file mode 100644
-> index 0000000..4b1c294
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/hi3519.txt
-> @@ -0,0 +1,14 @@
-> +* Hisilicon Hi3519 System Controller Block
-> +
-> +This bindings use the following binding:
-> +Dcumentation/devicetree/bindings/clock/clock-bindings.txt
-> +
-> +Required properties:
-> +- compatible: "hislicon,hi3519-sysctrl".
-> +- reg: the register region of this block
-> +
-> +Examples:
-> +sysctrl: system-controller@12010000 {
-> +	compatible = "hisilicon,hi3519-sysctrl", "syscon";
-> +	reg = <0x12010000 0x1000>;
-> +};
-> -- 
-> 1.9.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
+
+ drivers/clk/rockchip/clk-rk3036.c      |   11 ++++++-----
+ include/dt-bindings/clock/rk3036-cru.h |    2 ++
+ 2 files changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
+index 1016836..92426b0 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -328,13 +328,14 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
+ 			RK2928_CLKSEL_CON(16), 0, 2, MFLAGS, 2, 5, DFLAGS,
+ 			RK2928_CLKGATE_CON(10), 5, GFLAGS),
+ 
+-	COMPOSITE_NOGATE(0, "mac_pll_src", mux_pll_src_3plls_p, 0,
+-			RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 4, 5, DFLAGS),
++	MUX(SCLK_MACPLL, "mac_pll_pre", mux_pll_src_3plls_p, 0,
++			RK2928_CLKSEL_CON(21), 0, 2, MFLAGS),
++	DIV(0, "mac_pll_src", "mac_pll_pre", 0,
++			RK2928_CLKSEL_CON(21), 9, 5, DFLAGS),
+ 	MUX(SCLK_MACREF, "mac_clk_ref", mux_mac_p, CLK_SET_RATE_PARENT,
+ 			RK2928_CLKSEL_CON(21), 3, 1, MFLAGS),
+-
+ 	COMPOSITE_NOMUX(SCLK_MAC, "mac_clk", "mac_clk_ref", 0,
+-			RK2928_CLKSEL_CON(21), 9, 5, DFLAGS,
++			RK2928_CLKSEL_CON(21), 4, 5, DFLAGS,
+ 			RK2928_CLKGATE_CON(2), 6, GFLAGS),
+ 
+ 	MUX(SCLK_HDMI, "dclk_hdmi", mux_dclk_p, 0,
+@@ -389,7 +390,7 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
+ 	GATE(HCLK_OTG1, "hclk_otg1", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(7), 3, GFLAGS),
+ 	GATE(HCLK_I2S, "hclk_i2s", "hclk_peri", 0, RK2928_CLKGATE_CON(7), 2, GFLAGS),
+ 	GATE(0, "hclk_sfc", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 14, GFLAGS),
+-	GATE(0, "hclk_mac", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 15, GFLAGS),
++	GATE(HCLK_MAC, "hclk_mac", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 15, GFLAGS),
+ 
+ 	/* pclk_peri gates */
+ 	GATE(0, "pclk_peri_matrix", "pclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(4), 1, GFLAGS),
+diff --git a/include/dt-bindings/clock/rk3036-cru.h b/include/dt-bindings/clock/rk3036-cru.h
+index ebc7a7b..de44109 100644
+--- a/include/dt-bindings/clock/rk3036-cru.h
++++ b/include/dt-bindings/clock/rk3036-cru.h
+@@ -54,6 +54,7 @@
+ #define SCLK_PVTM_VIDEO		125
+ #define SCLK_MAC		151
+ #define SCLK_MACREF		152
++#define SCLK_MACPLL		153
+ #define SCLK_SFC		160
+ 
+ /* aclk gates */
+@@ -92,6 +93,7 @@
+ #define HCLK_SDMMC		456
+ #define HCLK_SDIO		457
+ #define HCLK_EMMC		459
++#define HCLK_MAC		460
+ #define HCLK_I2S		462
+ #define HCLK_LCDC		465
+ #define HCLK_ROM		467
+-- 
+1.7.9.5
