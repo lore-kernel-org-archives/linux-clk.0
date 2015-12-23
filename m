@@ -1,82 +1,51 @@
-Return-Path: <pi-cheng.chen@linaro.org>
+Return-Path: <mturquette@baylibre.com>
+Date: Tue, 22 Dec 2015 16:37:25 -0800
+From: Michael Turquette <mturquette@baylibre.com>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
+	linux-omap@vger.kernel.org, sboyd@codeaurora.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2] clk: ti: omap5+: dpll: implement errata i810
+Message-ID: <20151223003725.GB14912@quark.deferred.io>
+References: <1450256530-10251-1-git-send-email-t-kristo@ti.com>
+ <20151216171650.GS23396@atomide.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGS+omCkYTPyjMk6QaoxGAL4QVU8VcpWyFqWhST+iP2EFRcRYg@mail.gmail.com>
-References: <1442230072-31593-1-git-send-email-pi-cheng.chen@linaro.org>
-	<CAGS+omCkYTPyjMk6QaoxGAL4QVU8VcpWyFqWhST+iP2EFRcRYg@mail.gmail.com>
-Date: Tue, 1 Dec 2015 23:09:49 +0800
-Message-ID: <CALx668XVnhhLJWs7RBxvaX=SU=S9=wFVT9HMDP2edqiH4Jio4A@mail.gmail.com>
-Subject: Re: [PATCH v6] clk: mediatek: Export CPU mux clocks for CPU frequency control
-From: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
-To: Daniel Kurtz <djkurtz@chromium.org>, Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, James Liao <jamesjj.liao@mediatek.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-clk@vger.kernel.org,
-	"moderated list:ARM/Mediatek SoC..." <linux-mediatek@lists.infradead.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Linaro Kernel Mailman List <linaro-kernel@lists.linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20151216171650.GS23396@atomide.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Nov 30, 2015 at 11:48 AM, Daniel Kurtz <djkurtz@chromium.org> wrote:
-> Hi Pi-Cheng and Michael,
->
-> On Mon, Sep 14, 2015 at 7:27 PM, Pi-Cheng Chen <pi-cheng.chen@linaro.org> wrote:
->> From: "pi-cheng.chen" <pi-cheng.chen@linaro.org>
->>
->> This patch adds CPU mux clocks which are used by Mediatek cpufreq driver
->> for intermediate clock source switching.
->
-> It looks like this patch was never picked up.
-> It is required for MT8173 cpufreq.
->
-> What is the plan to get this one merged?
+Hi Tero,
 
-Hi Dan,
-Mike is working on a new CCF feature called "coordinated clock rate changes"
-which would help to migrate mt8173-cpufreq driver to generic cpufreq-dt
-driver, and I am working with him to port MT8173 clock driver on the new
-feature. So I think that's why this patch was not picked since it will
-be migrated to new implementation once the new feature's ready.
+On 12/16, Tony Lindgren wrote:
+> * Tero Kristo <t-kristo@ti.com> [151216 01:00]:
+> > Errata i810 states that DPLL controller can get stuck while transitioning
+> > to a power saving state, while its M/N ratio is being re-programmed.
+> > 
+> > As a workaround, before re-programming the M/N ratio, SW has to ensure
+> > the DPLL cannot start an idle state transition. SW can disable DPLL
+> > idling by setting the DPLL AUTO_DPLL_MODE=0 or keeping a clock request
+> > active by setting a dependent clock domain in SW_WKUP.
+> > 
+> > This errata is known to impact OMAP5 and DRA7 chips, but lets enable it
+> > unconditionally to avoid any potential problems with earlier generation
+> > SoCs also.
+> > 
+> > Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> > ---
+> > v2: made the fix to be applied unconditionally on all OMAP3+ SoCs
+> 
+> Thanks looks good to me now:
+> 
+> Acked-by: Tony Lindgren <tony@atomide.com>
 
-@Mike:
-Are you plannig to post those patches on the mailing list ?
-Or is it fine for you to take this first and then I will refine it for
-the new feature later?
+Patch looks good to me too.
 
-Best Regards,
-Pi-Cheng
+Stephen and I were discussing clk pull requests, more specifically how
+to vet the contents of them. So we came up with the idea to add our acks
+to patches that we take into our tree, but that we expect to get batched
+up into a pull request. To that end:
 
->
-> -Dan
->
->>
->> Signed-off-by: Pi-Cheng Chen <pi-cheng.chen@linaro.org>
->> ---
->> Changes in v6:
->> - Relace __clk_get_num_parents with clk_hw_get_num_parents to reflect
->>   API change
->>
->> Changes in v5:
->> - Replace __initdata with __initconst to fix compiling error
->>
->> Changes in v4:
->> - Fix some minor issues for v3
->> - Rebase to the patch that adds 13mhz clock for MT8173[1]
->>
->> Changes in v3:
->> - Rebase to 4.2-rc1
->> - Fix some issues of v2
->>
->> Changes in v2:
->> - Remove use of .determine_rate callback
->> ---
->>  drivers/clk/mediatek/Makefile          |   2 +-
->>  drivers/clk/mediatek/clk-cpumux.c      | 127 +++++++++++++++++++++++++++++++++
->>  drivers/clk/mediatek/clk-cpumux.h      |  22 ++++++
->>  drivers/clk/mediatek/clk-mt8173.c      |  23 ++++++
->>  include/dt-bindings/clock/mt8173-clk.h |   4 +-
->>  5 files changed, 176 insertions(+), 2 deletions(-)
->>  create mode 100644 drivers/clk/mediatek/clk-cpumux.c
->>  create mode 100644 drivers/clk/mediatek/clk-cpumux.h
->
-> [snip]
+Acked-by: Michael Turquette <mturquette@baylibre.com>
+
+Regards,
+Mike
