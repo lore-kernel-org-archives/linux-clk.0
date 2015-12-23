@@ -1,95 +1,70 @@
+Return-Path: <repk@triplefau.lt>
+Date: Wed, 23 Dec 2015 19:57:04 +0100
+From: Remi Pommarel <repk@triplefau.lt>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Eric Anholt <eric@anholt.net>,
+	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] Add PWM clock support for bcm2835
+Message-ID: <20151223185704.GJ453@cruxbox>
+References: <1449418969-5565-1-git-send-email-repk@triplefau.lt>
 MIME-Version: 1.0
-In-Reply-To: <20151217210220.GA25086@lukather>
-References: <20151217210220.GA25086@lukather>
-Date: Wed, 23 Dec 2015 23:34:01 -0800
-Message-ID: <CAEG3pNBGfV+gdLyckdcvsYynzDuT2XsmV-PEe4LjeKC+NrMVQg@mail.gmail.com>
-Subject: Re: [GIT PULL] Allwinner clocks changes for 4.5
-From: Michael Turquette <mturquette@baylibre.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	"Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>, linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>, Chen-Yu Tsai <wens@csie.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1449418969-5565-1-git-send-email-repk@triplefau.lt>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Dec 17, 2015 at 1:02 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Hi Mike, Stephen,
->
-> Please pull the following changes for the 4.5 merge window.
+On Sun, Dec 06, 2015 at 05:22:45PM +0100, Remi Pommarel wrote:
+> Hi,
+> 
+> This patchset adds support for pwm clock. At boot, this clock does not have a
+> default parent nor a default rate set. Thus we should be able to change its
+> parent to get this clock working. The current clock implementation is using a
+> mux to select the parent, but these clocks need to add a password (0x5a) in
+> higher register bits when changing parent. So a generic mux cannot be used
+> here.
+> 
+> The two first patches fix the clock parent selection, while the last ones are
+> actually adding the pwm clock registration.
+> 
+> Changes since v1:
+> 	- determine_rate now based its parent selection upon divided rate
+> 	  instead of the parent one
+> 	- bcm2835_clock_choose_div has been modified to produce an avarage rate
+> 	  lower or equal to the requested one
+> 	- devicetree modifications have removed to be send in another patch
+> 
+> Changes since v2:
+> 	- Remove useless variable and include
+> 	- Make bcm2835_clock_choose_div() divisor round up ability optional
+> 	- Set rate in bcm2835_determine_rate()
+> 	- Add device tree modification in a separate patch
+> 
+> 
+> Remi Pommarel (4):
+>   clk: bcm2835: add a round up ability to the clock divisor
+>   clk: bcm2835: Support for clock parent selection
+>   clk: bcm2835: Add PWM clock support
+>   clk: bcm2835: Add PWM clock support to the device tree
+> 
+>  arch/arm/boot/dts/bcm2835-rpi.dtsi  |   4 +
+>  arch/arm/boot/dts/bcm2835.dtsi      |   9 +++
+>  drivers/clk/bcm/clk-bcm2835.c       | 155 +++++++++++++++++++++++-------------
+>  include/dt-bindings/clock/bcm2835.h |   3 +-
+>  4 files changed, 116 insertions(+), 55 deletions(-)
+> 
 
-Pulled.
+Gently ping.
 
-Thanks,
-Mike
+Patches 0 to 3 are reviewed by Eric, and can eventually be pushed on clk
+tree.
 
->
-> Thanks!
-> Maxime
->
-> The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
->
->   Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
->
-> are available in the git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git tags/sunxi-clocks-for-4.5
->
-> for you to fetch changes up to fee3103ac3c0aeab52b337903f5af3cd3b3c02d8:
->
->   clk: sunxi: fix handling return value of of_property_match_string (2015-12-14 13:54:11 +0100)
->
-> ----------------------------------------------------------------
-> Allwinner clocks changes for 4.5
->
-> Clock patches for the Allwinner SoCs:
->   - H3 clocks
->   - A10/A20 Video Engine clocks
->   - DRAM gates
->   - A80 special CPU clock
->
-> ----------------------------------------------------------------
-> Andrzej Hajda (1):
->       clk: sunxi: fix handling return value of of_property_match_string
->
-> Chen-Yu Tsai (5):
->       clk: sunxi: Add sun9i A80 apbs gates support
->       clk: sunxi: Add sun9i A80 cpus (cpu special) clock support
->       clk: sunxi: Add DRAM gates support for sun4i-a10
->       clk: sunxi: Add VE (Video Engine) module clock driver for sun[457]i
->       clk: sunxi: Add CLK_OF_DECLARE support for sun8i-a23-apb0-clk driver
->
-> Dan Carpenter (1):
->       clk: sunxi: signedness bug in sun8i_h3_bus_gates_init()
->
-> Jens Kuske (1):
->       clk: sunxi: Add H3 clocks support
->
-> Reinder de Haan (1):
->       clk: sunxi: Add support for the H3 usb phy clocks
->
->  Documentation/devicetree/bindings/clock/sunxi.txt |  10 +
->  drivers/clk/sunxi/Makefile                        |   5 +
->  drivers/clk/sunxi/clk-a10-ve.c                    | 171 +++++++++++++++
->  drivers/clk/sunxi/clk-simple-gates.c              |  14 ++
->  drivers/clk/sunxi/clk-sun8i-apb0.c                |  80 ++++++--
->  drivers/clk/sunxi/clk-sun8i-bus-gates.c           | 112 ++++++++++
->  drivers/clk/sunxi/clk-sun9i-cpus.c                | 240 ++++++++++++++++++++++
->  drivers/clk/sunxi/clk-sunxi.c                     |   6 +
->  drivers/clk/sunxi/clk-usb.c                       |  12 ++
->  9 files changed, 638 insertions(+), 12 deletions(-)
->  create mode 100644 drivers/clk/sunxi/clk-a10-ve.c
->  create mode 100644 drivers/clk/sunxi/clk-sun8i-bus-gates.c
->  create mode 100644 drivers/clk/sunxi/clk-sun9i-cpus.c
->
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux, Kernel and Android engineering
-> http://free-electrons.com
+Patch 4 has been sent on devicetree mailinglist for review
+(http://www.spinics.net/lists/devicetree/msg108070.html), waiting for
+previous patches to be pushed.
 
-
+Thanks
 
 -- 
-Michael Turquette
-CEO
-BayLibre - At the Heart of Embedded Linux
-http://baylibre.com/
+Remi
