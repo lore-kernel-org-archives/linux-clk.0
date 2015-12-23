@@ -1,98 +1,44 @@
-Return-Path: <wens@mirror2.csie.ntu.edu.tw>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Emilio Lopez <emilio@elopez.com.ar>,
+Return-Path: <csotoalonso@gmail.com>
+Return-Path: <csotoalonso@gmail.com>
+Sender: Carlos Soto <tito.albi@gmail.com>
+From: Carlos Soto <csotoalonso@gmail.com>
+To: Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 5/6] ARM: dts: sun7i: Add DRAM gates
-Date: Sat,  5 Dec 2015 17:00:08 +0800
-Message-Id: <1449306009-2627-6-git-send-email-wens@csie.org>
-In-Reply-To: <1449306009-2627-1-git-send-email-wens@csie.org>
-References: <1449306009-2627-1-git-send-email-wens@csie.org>
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Carlos Soto <csotoalonso@gmail.com>
+Subject: [PATCH 1/1] imx25: Fix LCD pixelclock configuration
+Date: Wed, 23 Dec 2015 21:30:10 +0100
+Message-Id: <1450902610-27224-1-git-send-email-csotoalonso@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The DRAM gates controls direct memory access for some peripherals.
-These peripherals include the display pipeline, so add the required
-gates to the simplefb nodes as well.
+Set LCDC base clock (per_7) parent clock to UPLL clock.
+This is needed to allow finer resolution in pixelclock
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Carlos Soto <csotoalonso@gmail.com>
 ---
- arch/arm/boot/dts/sun7i-a20.dtsi | 32 +++++++++++++++++++++++++++++---
- 1 file changed, 29 insertions(+), 3 deletions(-)
+ drivers/clk/imx/clk-imx25.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index e02eb720c4fc..21169c0a6627 100644
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -68,7 +68,7 @@
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "de_be0-lcd0-hdmi";
- 			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 43>,
--				 <&ahb_gates 44>;
-+				 <&ahb_gates 44>, <&dram_gates 26>;
- 			status = "disabled";
- 		};
+diff --git a/drivers/clk/imx/clk-imx25.c b/drivers/clk/imx/clk-imx25.c
+index c4c141c..656340e 100644
+--- a/drivers/clk/imx/clk-imx25.c
++++ b/drivers/clk/imx/clk-imx25.c
+@@ -238,6 +238,12 @@ static int __init __mx25_clocks_init(unsigned long osc_rate,
+ 	clk_set_parent(clk[per5_sel], clk[ahb]);
  
-@@ -76,7 +76,8 @@
- 			compatible = "allwinner,simple-framebuffer",
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "de_be0-lcd0";
--			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 44>;
-+			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 44>,
-+				 <&dram_gates 26>;
- 			status = "disabled";
- 		};
- 
-@@ -85,7 +86,7 @@
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "de_be0-lcd0-tve0";
- 			clocks = <&pll5 1>, <&ahb_gates 34>, <&ahb_gates 36>,
--				 <&ahb_gates 44>;
-+				 <&ahb_gates 44>, <&dram_gates 26>;
- 			status = "disabled";
- 		};
- 	};
-@@ -501,6 +502,31 @@
- 			clock-output-names = "spi3";
- 		};
- 
-+		dram_gates: clk@01c20100 {
-+			#clock-cells = <1>;
-+			compatible = "allwinner,sun4i-a10-dram-gates-clk";
-+			reg = <0x01c20100 0x4>;
-+			clocks = <&pll5 0>;
-+			clock-indices = <0>,
-+					<1>, <2>,
-+					<3>,
-+					<4>,
-+					<5>, <6>,
-+					<15>,
-+					<24>, <25>,
-+					<26>, <27>,
-+					<28>, <29>;
-+			clock-output-names = "dram_ve",
-+					     "dram_csi0", "dram_csi1",
-+					     "dram_ts",
-+					     "dram_tvd",
-+					     "dram_tve0", "dram_tve1",
-+					     "dram_output",
-+					     "dram_de_fe1", "dram_de_fe0",
-+					     "dram_de_be0", "dram_de_be1",
-+					     "dram_de_mp", "dram_ace";
-+		};
+ 	/*
++	 * set LCDC base clock (per 7) to highest possible frequency (UPLL)
++	 * to get best resolution for pixel clock
++	 */
++	clk_set_parent(clk[per7_sel], clk[upll]);
 +
- 		codec_clk: clk@01c20140 {
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-codec-clk";
++	/*
+ 	 * Let's initially set up CLKO parent as ipg, since this configuration
+ 	 * is used on some imx25 board designs to clock the audio codec.
+ 	 */
 -- 
-2.6.2
+1.7.10.4
