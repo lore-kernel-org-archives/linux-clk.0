@@ -1,269 +1,67 @@
-Return-Path: <caesar.upstream@gmail.com>
-Return-Path: <caesar.upstream@gmail.com>
-From: Caesar Wang <wxt@rock-chips.com>
-To: heiko@sntech.de,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: leozwang@google.com,
-	keescook@google.com,
-	leecam@google.com,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Caesar Wang <wxt@rock-chips.com>
-Subject: [PATCH 5/5] ARM: config: Add the rk3036 configure for kylin board
-Date: Wed, 16 Dec 2015 16:27:21 +0800
-Message-Id: <1450254441-3243-6-git-send-email-wxt@rock-chips.com>
-In-Reply-To: <1450254441-3243-1-git-send-email-wxt@rock-chips.com>
-References: <1450254441-3243-1-git-send-email-wxt@rock-chips.com>
+Return-Path: <anholt@eliezer.anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>, "Stephen Boyd \<sboyd\@codeaurora.org\>\, Emilio Lopez \<emilio\@elopez.com.ar\>\, Hans de Goede \<hdegoede\@redhat.com\>\, linux-clk \<linux-clk\@vger.kernel.org\>\, linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>, linux-rpi-kernel@lists.infradead.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] clk: bcm2835: Add bindings for the auxiliary peripheral clock gates.
+In-Reply-To: <CAEG3pNCOO1F8+nwOQGSjUKxYCGbWW_Ripc6xUwDyg6ay66uL7w@mail.gmail.com>
+References: <1450222559-22461-1-git-send-email-eric@anholt.net> <20151219041935.GS14936@rob-hp-laptop> <CAEG3pNCOO1F8+nwOQGSjUKxYCGbWW_Ripc6xUwDyg6ay66uL7w@mail.gmail.com>
+Date: Thu, 24 Dec 2015 15:45:15 -0800
+Message-ID: <87wps3qulw.fsf@eliezer.anholt.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add RK3036-specific configuration for Kylin board.
+--=-=-=
+Content-Type: text/plain
 
-Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+Michael Turquette <mturquette@baylibre.com> writes:
 
----
+> On Fri, Dec 18, 2015 at 8:19 PM, Rob Herring <robh@kernel.org> wrote:
+>> On Tue, Dec 15, 2015 at 03:35:57PM -0800, Eric Anholt wrote:
+>>> These will be used for enabling UART1, SPI1, and SPI2.
+>>>
+>>> Signed-off-by: Eric Anholt <eric@anholt.net>
+>>> ---
+>>>
+>>> v2: Make the binding cover both the IRQ and clock enable registers.
+>>>
+>>>  .../bindings/clock/brcm,bcm2835-aux-clock.txt      | 31 ++++++++++++++++++++++
+>>>  include/dt-bindings/clock/bcm2835-aux.h            | 17 ++++++++++++
+>>>  2 files changed, 48 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm2835-aux-clock.txt
+>>>  create mode 100644 include/dt-bindings/clock/bcm2835-aux.h
+>>
+>> Acked-by: Rob Herring <robh@kernel.org>
+>
+> Applied to clk-next.
+>
+> Next time if you put the header into the clk driver patch then we can
+> send the binding description through the DT tree and take the header
+> and C file through the clk tree in one patch.
 
- arch/arm/configs/rk3036_kylin_defconfig | 230 ++++++++++++++++++++++++++++++++
- 1 file changed, 230 insertions(+)
- create mode 100644 arch/arm/configs/rk3036_kylin_defconfig
+I would *love* to do that, but I've previously been told that having the
+bindings patch reference a header file not present as of the bindings
+patch is not acceptable and made to change it.
 
-diff --git a/arch/arm/configs/rk3036_kylin_defconfig b/arch/arm/configs/rk3036_kylin_defconfig
-new file mode 100644
-index 0000000..692c393
---- /dev/null
-+++ b/arch/arm/configs/rk3036_kylin_defconfig
-@@ -0,0 +1,230 @@
-+CONFIG_CROSS_COMPILE="arm-linux-gnueabi-"
-+# CONFIG_LOCALVERSION_AUTO is not set
-+CONFIG_DEFAULT_HOSTNAME="radxarock"
-+CONFIG_SYSVIPC=y
-+# CONFIG_USELIB is not set
-+CONFIG_AUDIT=y
-+CONFIG_IRQ_DOMAIN_DEBUG=y
-+CONFIG_BLK_DEV_INITRD=y
-+CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-+CONFIG_PERF_EVENTS=y
-+# CONFIG_COMPAT_BRK is not set
-+CONFIG_SLAB=y
-+CONFIG_JUMP_LABEL=y
-+CONFIG_MODULES=y
-+CONFIG_MODULE_FORCE_LOAD=y
-+CONFIG_MODULE_UNLOAD=y
-+CONFIG_PARTITION_ADVANCED=y
-+# CONFIG_IOSCHED_CFQ is not set
-+CONFIG_ARCH_ROCKCHIP=y
-+CONFIG_PL310_ERRATA_588369=y
-+CONFIG_PL310_ERRATA_727915=y
-+CONFIG_ARM_ERRATA_720789=y
-+CONFIG_ARM_ERRATA_754322=y
-+CONFIG_SMP=y
-+CONFIG_NR_CPUS=2
-+CONFIG_PREEMPT_VOLUNTARY=y
-+CONFIG_AEABI=y
-+CONFIG_HIGHMEM=y
-+# CONFIG_COMPACTION is not set
-+CONFIG_DEFAULT_MMAP_MIN_ADDR=65536
-+CONFIG_CLEANCACHE=y
-+CONFIG_FRONTSWAP=y
-+CONFIG_ZBOOT_ROM_TEXT=0x0
-+CONFIG_ARM_APPENDED_DTB=y
-+CONFIG_ARM_ATAG_DTB_COMPAT=y
-+CONFIG_ARM_ATAG_DTB_COMPAT_CMDLINE_EXTEND=y
-+CONFIG_CPU_FREQ=y
-+CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE=y
-+CONFIG_CPU_FREQ_GOV_POWERSAVE=y
-+CONFIG_CPUFREQ_DT=y
-+CONFIG_CPU_IDLE=y
-+CONFIG_VFP=y
-+CONFIG_NEON=y
-+# CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
-+CONFIG_PM_WAKELOCKS=y
-+CONFIG_PM_DEBUG=y
-+CONFIG_NET=y
-+CONFIG_PACKET=y
-+CONFIG_UNIX=y
-+CONFIG_INET=y
-+# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
-+# CONFIG_INET_XFRM_MODE_TUNNEL is not set
-+# CONFIG_INET_XFRM_MODE_BEET is not set
-+# CONFIG_INET_LRO is not set
-+# CONFIG_INET_DIAG is not set
-+# CONFIG_IPV6 is not set
-+CONFIG_CFG80211_WEXT=y
-+CONFIG_RFKILL=y
-+CONFIG_DEVTMPFS=y
-+CONFIG_DEVTMPFS_MOUNT=y
-+# CONFIG_FIRMWARE_IN_KERNEL is not set
-+CONFIG_BLK_DEV_LOOP=y
-+CONFIG_BLK_DEV_RAM=y
-+CONFIG_BLK_DEV_RAM_COUNT=1
-+CONFIG_BLK_DEV_RAM_SIZE=16384
-+CONFIG_SRAM=y
-+CONFIG_SCSI=y
-+# CONFIG_SCSI_PROC_FS is not set
-+CONFIG_BLK_DEV_SD=y
-+# CONFIG_SCSI_LOWLEVEL is not set
-+CONFIG_NETDEVICES=y
-+# CONFIG_NET_CADENCE is not set
-+# CONFIG_NET_VENDOR_BROADCOM is not set
-+# CONFIG_NET_VENDOR_CIRRUS is not set
-+# CONFIG_NET_VENDOR_FARADAY is not set
-+# CONFIG_NET_VENDOR_INTEL is not set
-+# CONFIG_NET_VENDOR_MARVELL is not set
-+# CONFIG_NET_VENDOR_MICREL is not set
-+# CONFIG_NET_VENDOR_NATSEMI is not set
-+# CONFIG_NET_VENDOR_SAMSUNG is not set
-+# CONFIG_NET_VENDOR_SEEQ is not set
-+# CONFIG_NET_VENDOR_SMSC is not set
-+CONFIG_STMMAC_ETH=y
-+# CONFIG_NET_VENDOR_VIA is not set
-+# CONFIG_NET_VENDOR_WIZNET is not set
-+CONFIG_SMSC_PHY=y
-+# CONFIG_INPUT_MOUSEDEV_PSAUX is not set
-+CONFIG_INPUT_MOUSEDEV_SCREEN_X=800
-+CONFIG_INPUT_MOUSEDEV_SCREEN_Y=600
-+CONFIG_INPUT_EVDEV=y
-+# CONFIG_KEYBOARD_ATKBD is not set
-+CONFIG_KEYBOARD_GPIO=y
-+CONFIG_KEYBOARD_GPIO_POLLED=y
-+# CONFIG_INPUT_MOUSE is not set
-+CONFIG_INPUT_TOUCHSCREEN=y
-+CONFIG_INPUT_MISC=y
-+# CONFIG_SERIO is not set
-+# CONFIG_LEGACY_PTYS is not set
-+# CONFIG_DEVKMEM is not set
-+CONFIG_SERIAL_8250=y
-+CONFIG_SERIAL_8250_CONSOLE=y
-+CONFIG_SERIAL_8250_DW=y
-+# CONFIG_HW_RANDOM is not set
-+CONFIG_I2C_CHARDEV=y
-+CONFIG_I2C_GPIO=y
-+CONFIG_I2C_RK3X=y
-+CONFIG_GPIO_DWAPB=y
-+CONFIG_POWER_SUPPLY=y
-+CONFIG_POWER_RESET=y
-+CONFIG_SENSORS_IIO_HWMON=y
-+CONFIG_THERMAL=y
-+CONFIG_CPU_THERMAL=y
-+CONFIG_WATCHDOG=y
-+CONFIG_SOFT_WATCHDOG=y
-+CONFIG_MFD_RK808=y
-+CONFIG_MFD_TPS65910=y
-+CONFIG_REGULATOR_DEBUG=y
-+CONFIG_REGULATOR_FIXED_VOLTAGE=y
-+CONFIG_REGULATOR_ACT8865=y
-+CONFIG_REGULATOR_FAN53555=y
-+CONFIG_REGULATOR_RK808=y
-+CONFIG_DRM=y
-+CONFIG_DRM_ROCKCHIP=y
-+CONFIG_ROCKCHIP_DW_HDMI=y
-+CONFIG_ROCKCHIP_INNO_HDMI=y
-+CONFIG_DRM_PANEL_SIMPLE=y
-+CONFIG_FB_MODE_HELPERS=y
-+CONFIG_BACKLIGHT_LCD_SUPPORT=y
-+CONFIG_LCD_CLASS_DEVICE=y
-+CONFIG_BACKLIGHT_CLASS_DEVICE=y
-+# CONFIG_BACKLIGHT_GENERIC is not set
-+CONFIG_BACKLIGHT_PWM=y
-+CONFIG_SOUND=y
-+CONFIG_SND=y
-+CONFIG_SND_SOC=y
-+CONFIG_SND_SOC_ROCKCHIP=y
-+CONFIG_SND_SOC_ROCKCHIP_I2S=y
-+CONFIG_SND_SIMPLE_CARD=y
-+CONFIG_USB=y
-+CONFIG_USB_ANNOUNCE_NEW_DEVICES=y
-+CONFIG_USB_OTG=y
-+CONFIG_USB_MON=y
-+CONFIG_USB_STORAGE=y
-+CONFIG_USB_DWC2=y
-+CONFIG_USB_DWC2_PLATFORM=y
-+CONFIG_NOP_USB_XCEIV=y
-+CONFIG_USB_ULPI=y
-+CONFIG_USB_GADGET=y
-+CONFIG_USB_G_ANDROID=y
-+CONFIG_MMC=y
-+CONFIG_MMC_BLOCK_MINORS=32
-+CONFIG_MMC_DW=y
-+CONFIG_MMC_DW_ROCKCHIP=y
-+CONFIG_NEW_LEDS=y
-+CONFIG_LEDS_CLASS=y
-+CONFIG_LEDS_GPIO=y
-+CONFIG_LEDS_TRIGGERS=y
-+CONFIG_LEDS_TRIGGER_TIMER=y
-+CONFIG_LEDS_TRIGGER_ONESHOT=y
-+CONFIG_LEDS_TRIGGER_HEARTBEAT=y
-+CONFIG_LEDS_TRIGGER_DEFAULT_ON=y
-+CONFIG_RTC_CLASS=y
-+CONFIG_RTC_DRV_HYM8563=y
-+CONFIG_RTC_DRV_RK808=y
-+CONFIG_DMADEVICES=y
-+CONFIG_DMADEVICES_DEBUG=y
-+CONFIG_DMADEVICES_VDEBUG=y
-+CONFIG_PL330_DMA=y
-+CONFIG_ASYNC_TX_DMA=y
-+CONFIG_STAGING=y
-+CONFIG_R8188EU=y
-+CONFIG_R8723AU=y
-+CONFIG_ASHMEM=y
-+CONFIG_ANDROID_TIMED_GPIO=y
-+CONFIG_ANDROID_LOW_MEMORY_KILLER=y
-+CONFIG_SYNC=y
-+CONFIG_SW_SYNC=y
-+CONFIG_SW_SYNC_USER=y
-+CONFIG_ION=y
-+CONFIG_ION_DUMMY=y
-+CONFIG_COMMON_CLK_RK808=y
-+CONFIG_ROCKCHIP_IOMMU=y
-+CONFIG_IIO=y
-+CONFIG_ROCKCHIP_SARADC=y
-+CONFIG_INV_MPU6050_IIO=y
-+CONFIG_AK8975=y
-+CONFIG_PWM=y
-+CONFIG_PWM_ROCKCHIP=y
-+CONFIG_PHY_ROCKCHIP_USB=y
-+CONFIG_ANDROID=y
-+CONFIG_ANDROID_BINDER_IPC=y
-+CONFIG_EXT2_FS=y
-+CONFIG_EXT3_FS=y
-+# CONFIG_EXT3_FS_XATTR is not set
-+CONFIG_EXT4_FS=y
-+CONFIG_EXT4_FS_SECURITY=y
-+# CONFIG_DNOTIFY is not set
-+CONFIG_MSDOS_FS=y
-+CONFIG_VFAT_FS=y
-+CONFIG_TMPFS=y
-+# CONFIG_NETWORK_FILESYSTEMS is not set
-+CONFIG_NLS_CODEPAGE_437=y
-+CONFIG_NLS_CODEPAGE_850=y
-+CONFIG_NLS_CODEPAGE_852=y
-+CONFIG_NLS_ASCII=y
-+CONFIG_NLS_ISO8859_1=y
-+CONFIG_NLS_ISO8859_15=y
-+CONFIG_NLS_UTF8=y
-+CONFIG_PRINTK_TIME=y
-+CONFIG_DYNAMIC_DEBUG=y
-+CONFIG_DEBUG_INFO=y
-+# CONFIG_ENABLE_WARN_DEPRECATED is not set
-+# CONFIG_ENABLE_MUST_CHECK is not set
-+CONFIG_FRAME_WARN=2048
-+CONFIG_DEBUG_FS=y
-+CONFIG_DEBUG_KERNEL=y
-+# CONFIG_SCHED_DEBUG is not set
-+CONFIG_TIMER_STATS=y
-+CONFIG_KGDB=y
-+CONFIG_DEBUG_LL=y
-+CONFIG_DEBUG_RK29_UART2=y
-+CONFIG_DEBUG_UART_8250_WORD=y
-+CONFIG_EARLY_PRINTK=y
-+CONFIG_SECURITY=y
-+CONFIG_SECURITY_NETWORK=y
-+CONFIG_SECURITY_SELINUX=y
-+CONFIG_SECURITY_SELINUX_DISABLE=y
-+# CONFIG_SECURITY_SELINUX_AVC_STATS is not set
-+CONFIG_CRYPTO_ANSI_CPRNG=y
-+# CONFIG_CRYPTO_HW is not set
--- 
-1.9.1
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJWfIOLAAoJELXWKTbR/J7o5u4QALF1EWBUM5xA8yxZT8/8VrDN
+sw6ErdSebzvjj4YTNYw89PSm2rnnZGiJL/g92AnrWbqAkRCguYUb5v9PNUvQyLyd
+GoeMyggfqMRuLMcmfXiP7yWgLxzn2JnwbqUBGf+kHUGcH35j1NMEdniicRznbBnM
+GQfdZJ+oQLv0DRfu2cdbwatjWFlC5ISDbgl3GM2GvdKArvOxzB6qqs0JjQViLxZ/
+vcDROwMa3Pw/4oymo8+b6G+MIPWHHQkCxEd10VZrTRL/TW9Beri+GVpAoHC+oaaA
+yZ/j+492R+Rpf9l/eLkF7tBlUhG8nbXyjtTAQf22087F6gkoynEjlosKGT8OFvDN
+utL79Zl0P58ZLCg7RctMWTmGRUju2Z812a91zhAKyVI0uj1zigrnvSkAAJjnvKXR
+V5F4aYlT+rKZcFrAHkaEx5L9SSz9wX/p45dqTJ5dgMZ/M+jd9e4eMMk1tnd9w3Qb
+qEuQn4xpeDYivqXOy2doWB0B+vXmUuHzkIUw40l90apYR4sAXDqhAYXbhzN7Mfo2
+Npa0V5fhWIu1F9YIrBhjNnrMbrALSEq1LxT2leR6pWMIQO7D3RQittxSR1kJTxRg
+GIzBF/qaKI66dPpCVWDeKlklidj/IvlcRxf3TxKeaD8oCfOcNh5sUUzkbcdJYk9p
+ALnErDrCJ4lsLmqElzYl
+=Gv3p
+-----END PGP SIGNATURE-----
+--=-=-=--
