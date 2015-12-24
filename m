@@ -1,55 +1,95 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v4 0/3] Add support for Qualcomm A53 CPU clock
-Date: Mon, 14 Dec 2015 15:58:00 +0200
-Message-Id: <1450101483-23509-1-git-send-email-georgi.djakov@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <20151217210220.GA25086@lukather>
+References: <20151217210220.GA25086@lukather>
+Date: Wed, 23 Dec 2015 23:34:01 -0800
+Message-ID: <CAEG3pNBGfV+gdLyckdcvsYynzDuT2XsmV-PEe4LjeKC+NrMVQg@mail.gmail.com>
+Subject: Re: [GIT PULL] Allwinner clocks changes for 4.5
+From: Michael Turquette <mturquette@baylibre.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	"Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>, linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>, Chen-Yu Tsai <wens@csie.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+On Thu, Dec 17, 2015 at 1:02 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Hi Mike, Stephen,
+>
+> Please pull the following changes for the 4.5 merge window.
 
-This patchset adds support for the A53 CPU clock and allows scaling
-of the CPU frequency on msm8916 based platforms.
+Pulled.
 
-Changes since v3 (https://lkml.org/lkml/2015/8/12/585)
- * Split driver into two parts - and separate A53 PLL and
-   A53 clock controller drivers.
- * Drop the safe switch hook patch. Add a clock notifier in
-   the clock provider to handle switching via safe mux and
-   divider configuration.
+Thanks,
+Mike
 
-Changes since v2 (https://lkml.org/lkml/2015/7/24/526)
- * Drop gpll0_vote patch.
- * Switch to the new clk_hw_* APIs.
- * Rebase to the current clk-next.
+>
+> Thanks!
+> Maxime
+>
+> The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
+>
+>   Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
+>
+> are available in the git repository at:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git tags/sunxi-clocks-for-4.5
+>
+> for you to fetch changes up to fee3103ac3c0aeab52b337903f5af3cd3b3c02d8:
+>
+>   clk: sunxi: fix handling return value of of_property_match_string (2015-12-14 13:54:11 +0100)
+>
+> ----------------------------------------------------------------
+> Allwinner clocks changes for 4.5
+>
+> Clock patches for the Allwinner SoCs:
+>   - H3 clocks
+>   - A10/A20 Video Engine clocks
+>   - DRAM gates
+>   - A80 special CPU clock
+>
+> ----------------------------------------------------------------
+> Andrzej Hajda (1):
+>       clk: sunxi: fix handling return value of of_property_match_string
+>
+> Chen-Yu Tsai (5):
+>       clk: sunxi: Add sun9i A80 apbs gates support
+>       clk: sunxi: Add sun9i A80 cpus (cpu special) clock support
+>       clk: sunxi: Add DRAM gates support for sun4i-a10
+>       clk: sunxi: Add VE (Video Engine) module clock driver for sun[457]i
+>       clk: sunxi: Add CLK_OF_DECLARE support for sun8i-a23-apb0-clk driver
+>
+> Dan Carpenter (1):
+>       clk: sunxi: signedness bug in sun8i_h3_bus_gates_init()
+>
+> Jens Kuske (1):
+>       clk: sunxi: Add H3 clocks support
+>
+> Reinder de Haan (1):
+>       clk: sunxi: Add support for the H3 usb phy clocks
+>
+>  Documentation/devicetree/bindings/clock/sunxi.txt |  10 +
+>  drivers/clk/sunxi/Makefile                        |   5 +
+>  drivers/clk/sunxi/clk-a10-ve.c                    | 171 +++++++++++++++
+>  drivers/clk/sunxi/clk-simple-gates.c              |  14 ++
+>  drivers/clk/sunxi/clk-sun8i-apb0.c                |  80 ++++++--
+>  drivers/clk/sunxi/clk-sun8i-bus-gates.c           | 112 ++++++++++
+>  drivers/clk/sunxi/clk-sun9i-cpus.c                | 240 ++++++++++++++++++++++
+>  drivers/clk/sunxi/clk-sunxi.c                     |   6 +
+>  drivers/clk/sunxi/clk-usb.c                       |  12 ++
+>  9 files changed, 638 insertions(+), 12 deletions(-)
+>  create mode 100644 drivers/clk/sunxi/clk-a10-ve.c
+>  create mode 100644 drivers/clk/sunxi/clk-sun8i-bus-gates.c
+>  create mode 100644 drivers/clk/sunxi/clk-sun9i-cpus.c
+>
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
 
-Changes since v1 (https://lkml.org/lkml/2015/6/12/193)
- * Drop SR2 PLL patch, as it is already applied.
- * Add gpll0_vote rate propagation patch.
- * Update/rebase patches to the current clk-next.
 
-Georgi Djakov (3):
-  clk: qcom: Add A53 PLL support
-  clk: qcom: Add regmap mux-div clocks support
-  clk: qcom: Add A53 clock driver
 
- .../devicetree/bindings/clock/qcom,a53-pll.txt     |   18 ++
- .../devicetree/bindings/clock/qcom,a53cc.txt       |   23 ++
- drivers/clk/qcom/Kconfig                           |   17 ++
- drivers/clk/qcom/Makefile                          |    3 +
- drivers/clk/qcom/a53-pll.c                         |  100 ++++++++
- drivers/clk/qcom/a53cc.c                           |  166 +++++++++++++
- drivers/clk/qcom/clk-regmap-mux-div.c              |  256 ++++++++++++++++++++
- drivers/clk/qcom/clk-regmap-mux-div.h              |   58 +++++
- 8 files changed, 641 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53-pll.txt
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53cc.txt
- create mode 100644 drivers/clk/qcom/a53-pll.c
- create mode 100644 drivers/clk/qcom/a53cc.c
- create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.c
- create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.h
+-- 
+Michael Turquette
+CEO
+BayLibre - At the Heart of Embedded Linux
+http://baylibre.com/
