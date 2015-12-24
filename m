@@ -1,132 +1,354 @@
-Return-Path: <mturquette@baylibre.com>
-Date: Thu, 24 Dec 2015 12:37:19 -0800
-From: Michael Turquette <mturquette@baylibre.com>
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Russell King <linux@arm.linux.org.uk>,
-	Roland Stigge <stigge@antcom.de>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 0/5] clk: lpc32xx: add clock support for NXP LPC32xx
-Message-ID: <20151224203719.GA29521@quark.deferred.io>
-References: <1449398757-16834-1-git-send-email-vz@mleia.com>
- <56785436.4000505@mleia.com>
+Return-Path: <Harvey.Hunt@imgtec.com>
+From: Harvey Hunt <harvey.hunt@imgtec.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<paul.burton@imgtec.com>
+CC: <ralf@linux-mips.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Harvey Hunt <harvey.hunt@imgtec.com>
+Subject: [PATCH] clk: ingenic: Allow divider value to be right shifted
+Date: Thu, 24 Dec 2015 10:45:38 +0000
+Message-ID: <1450953938-21180-1-git-send-email-harvey.hunt@imgtec.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <56785436.4000505@mleia.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/21, Vladimir Zapolskiy wrote:
-> Hi Stephen, Michael,
-> 
-> On 06.12.2015 12:45, Vladimir Zapolskiy wrote:
-> > This changeset adds common clock framework driver for NXP LPC32xx
-> > boards.
-> > 
-> > The change can be applied without any dependencies, LPC32xx device tree
-> > and mach changes will be done, when this changeset is accepted.
-> > 
-> > The v1 version of CCF driver can be found here:
-> >   http://www.spinics.net/lists/arm-kernel/msg461632.html
-> > 
-> > The RFC version of CCF driver 9/11 can be found here:
-> >   http://www.spinics.net/lists/devicetree/msg100583.html
-> > 
-> > Changes from v1 to v2:
-> > * removed dependency on the recent LPC32xx device tree changes,
-> >   also removed LPC32xx device tree and mach changes, which depend
-> >   on this series,
-> > * use lowercase hex numbers in a DT binding example,
-> > * incremented by 1 all clock values, possibly clock "0" may have a
-> >   special meaning in future,
-> > * removed explicit COMMON_CLK selection for NXP LPC18xx,
-> > * LPC32XX_CLK_DEFINE() does not stringify clock names,
-> > * fixed a minor bug in clk_pll_set_rate().
-> > 
-> > Changes from RFC to v1:
-> > * added definitions of a missed IRDA clock,
-> > * renamed compatible property from lpc32xx-scb to lpc32xx-clk
-> > * switched to regmap interface instead of mmio, this is required to
-> >   secure access to registers shared between pinmux, dma and clock
-> >   driver, unfortunately this change has to pull some code snippets
-> >   from common gate, divider and mux helpers rebased on regmap API,
-> > * split clock definitions from the driver to be able to update
-> >   dts files separately from CCF driver.
-> > 
-> > The driver is written from scratch, here are main functional
-> > differences with the legacy driver arch/arm/mach-lpc32xx/clock.c:
-> > * serialized access to SCB registers,
-> > * reworked routines to select PLL parameters,
-> > * now the clock driver has detailed description of all clocks,
-> >   the original driver misses several clock entries and most of fine
-> >   grained clock controls, here every mux and divider are accounted,
-> > * now clocks and clock hierarchies can be described in board DT file,
-> > * sophisticated management of USB clocks, for example now USB device
-> >   controller needs only one clock instead of USB PLL, USB OTG and USB
-> >   device clocks,
-> > * other benefits from a driver powered by CCF.
-> > 
-> > Patch 5/5 may produce false positives from checkpatch.pl, the fix
-> > to checkpatch is found in Andrew's tree
-> > 
-> > Vladimir Zapolskiy (5):
-> >   dt-bindings: clock: add description of LPC32xx clock controller
-> >   dt-bindings: clock: add description of LPC32xx USB clock controller
-> >   dt-bindings: clock: add NXP LPC32xx clock list for consumers
-> >   clk: lpc18xx: add NXP specific COMMON_CLK_NXP configuration symbol
-> >   clk: lpc32xx: add common clock framework driver
-> > 
-> >  .../devicetree/bindings/clock/nxp,lpc3220-clk.txt  |   30 +
-> >  .../bindings/clock/nxp,lpc3220-usb-clk.txt         |   22 +
-> >  drivers/clk/Kconfig                                |    6 +
-> >  drivers/clk/Makefile                               |    2 +-
-> >  drivers/clk/nxp/Makefile                           |    1 +
-> >  drivers/clk/nxp/clk-lpc32xx.c                      | 1569 ++++++++++++++++++++
-> >  include/dt-bindings/clock/lpc32xx-clock.h          |   56 +
-> >  7 files changed, 1685 insertions(+), 1 deletion(-)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
-> >  create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt
-> >  create mode 100644 drivers/clk/nxp/clk-lpc32xx.c
-> >  create mode 100644 include/dt-bindings/clock/lpc32xx-clock.h
-> > 
-> 
-> this is a gentle ping, the first version of the driver was published
-> in October, the only functional change is switching from iomap to regmap
-> API to access the registers.
-> 
-> A couple of words about the change to mitigate your impression of
-> apparently imperfect code.
-> 
-> The NXP LPC32xx platform is unmaintained and broken for about one
-> and a half years, so I presume you won't get an ack from Roland, who
-> is an official maintainer. Adding a CCF driver will be a huge progress,
-> since it allows in +1 kernel release to fix the platform -- there is
-> a critical problem in legacy IRQ handling based on hardware IRQs,
-> irqchip driver change is ready as well, but CCF should go first,
-> because it allows to remove a legacy clocksource/clockevent driver
-> arch/arm/mach-lpc32xx/timer.c. That driver depends on legacy broken
-> irqchip (hardware IRQs are used, irqchip with virtual IRQs will break
-> the driver), it has a proper replacement drivers/clocksource/time-lpc32xx.c,
-> but to use the new driver common clock support is needed. The CCF
-> driver will let me remove tons of other legacy stuff as well, and this
-> should be a step towards inclusion of the platform to multiarch builds.
-> 
-> If you find impossible to include this CCF driver to v4.5, please add
-> the first 4 of 5 changes, dt bindings include file is needed to
-> update DTS files independently on CCF driver inclusion status.
+The JZ4780's MSC clock divider registers multiply the clock divider
+by 2. This means that MSC devices run at half their expected speed.
+Shift the clock divider for the affected registers to solve this.
 
-Thanks for the helpful background information.
+Signed-off-by: Harvey Hunt <harvey.hunt@imgtec.com>
+---
+ drivers/clk/ingenic/cgu.c        | 11 ++++++++++-
+ drivers/clk/ingenic/cgu.h        |  6 +++++-
+ drivers/clk/ingenic/jz4740-cgu.c | 24 ++++++++++++------------
+ drivers/clk/ingenic/jz4780-cgu.c | 38 +++++++++++++++++++-------------------
+ 4 files changed, 46 insertions(+), 33 deletions(-)
 
-Applied to clk-next towards 4.5.
-
-Regards,
-Mike
-
-> 
-> Thank you in advance.
-> 
-> Merry Christmas, Happy Holidays!
-> 
-> --
-> With best wishes,
-> Vladimir
+diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
+index 7cfb7b2..8333bd0 100644
+--- a/drivers/clk/ingenic/cgu.c
++++ b/drivers/clk/ingenic/cgu.c
+@@ -325,6 +325,7 @@ ingenic_clk_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ 		div = (div_reg >> clk_info->div.shift) &
+ 		      GENMASK(clk_info->div.bits - 1, 0);
+ 		div += 1;
++		div <<= clk_info->div.div;
+ 
+ 		rate /= div;
+ 	}
+@@ -345,6 +346,14 @@ ingenic_clk_calc_div(const struct ingenic_cgu_clk_info *clk_info,
+ 	div = min_t(unsigned, div, 1 << clk_info->div.bits);
+ 	div = max_t(unsigned, div, 1);
+ 
++	/*
++	 * If the divider value itself must be divided before being written to
++	 * the divider register, we must ensure we don't have any bits set that
++	 * would be lost as a result of doing so.
++	 */
++	div >>= clk_info->div.div;
++	div <<= clk_info->div.div;
++
+ 	return div;
+ }
+ 
+@@ -395,7 +404,7 @@ ingenic_clk_set_rate(struct clk_hw *hw, unsigned long req_rate,
+ 		/* update the divide */
+ 		mask = GENMASK(clk_info->div.bits - 1, 0);
+ 		reg &= ~(mask << clk_info->div.shift);
+-		reg |= (div - 1) << clk_info->div.shift;
++		reg |= ((div >> clk_info->div.div) - 1) << clk_info->div.shift;
+ 
+ 		/* clear the stop bit */
+ 		if (clk_info->div.stop_bit != -1)
+diff --git a/drivers/clk/ingenic/cgu.h b/drivers/clk/ingenic/cgu.h
+index 99347e2..bdeac6c 100644
+--- a/drivers/clk/ingenic/cgu.h
++++ b/drivers/clk/ingenic/cgu.h
+@@ -76,8 +76,11 @@ struct ingenic_cgu_mux_info {
+ /**
+  * struct ingenic_cgu_div_info - information about a divider
+  * @reg: offset of the divider control register within the CGU
+- * @shift: number of bits to shift the divide value by (ie. the index of
++ * @shift: number of bits to left shift the divide value by (ie. the index of
+  *         the lowest bit of the divide value within its control register)
++ * @div: number of bits to right shift the divide value by (i.e. if the
++ *	 effective divider value is the value written to the register
++ *	 multiplied by some constant)
+  * @bits: the size of the divide value in bits
+  * @ce_bit: the index of the change enable bit within reg, or -1 if there
+  *          isn't one
+@@ -87,6 +90,7 @@ struct ingenic_cgu_mux_info {
+ struct ingenic_cgu_div_info {
+ 	unsigned reg;
+ 	u8 shift;
++	u8 div;
+ 	u8 bits;
+ 	s8 ce_bit;
+ 	s8 busy_bit;
+diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
+index 305a26c2..8d0ebad 100644
+--- a/drivers/clk/ingenic/jz4740-cgu.c
++++ b/drivers/clk/ingenic/jz4740-cgu.c
+@@ -90,51 +90,51 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
+ 	[JZ4740_CLK_PLL_HALF] = {
+ 		"pll half", CGU_CLK_DIV,
+ 		.parents = { JZ4740_CLK_PLL, -1, -1, -1 },
+-		.div = { CGU_REG_CPCCR, 21, 1, -1, -1, -1 },
++		.div = { CGU_REG_CPCCR, 21, 0, 1, -1, -1, -1 },
+ 	},
+ 
+ 	[JZ4740_CLK_CCLK] = {
+ 		"cclk", CGU_CLK_DIV,
+ 		.parents = { JZ4740_CLK_PLL, -1, -1, -1 },
+-		.div = { CGU_REG_CPCCR, 0, 4, 22, -1, -1 },
++		.div = { CGU_REG_CPCCR, 0, 0, 4, 22, -1, -1 },
+ 	},
+ 
+ 	[JZ4740_CLK_HCLK] = {
+ 		"hclk", CGU_CLK_DIV,
+ 		.parents = { JZ4740_CLK_PLL, -1, -1, -1 },
+-		.div = { CGU_REG_CPCCR, 4, 4, 22, -1, -1 },
++		.div = { CGU_REG_CPCCR, 4, 0, 4, 22, -1, -1 },
+ 	},
+ 
+ 	[JZ4740_CLK_PCLK] = {
+ 		"pclk", CGU_CLK_DIV,
+ 		.parents = { JZ4740_CLK_PLL, -1, -1, -1 },
+-		.div = { CGU_REG_CPCCR, 8, 4, 22, -1, -1 },
++		.div = { CGU_REG_CPCCR, 8, 0, 4, 22, -1, -1 },
+ 	},
+ 
+ 	[JZ4740_CLK_MCLK] = {
+ 		"mclk", CGU_CLK_DIV,
+ 		.parents = { JZ4740_CLK_PLL, -1, -1, -1 },
+-		.div = { CGU_REG_CPCCR, 12, 4, 22, -1, -1 },
++		.div = { CGU_REG_CPCCR, 12, 0, 4, 22, -1, -1 },
+ 	},
+ 
+ 	[JZ4740_CLK_LCD] = {
+ 		"lcd", CGU_CLK_DIV | CGU_CLK_GATE,
+ 		.parents = { JZ4740_CLK_PLL_HALF, -1, -1, -1 },
+-		.div = { CGU_REG_CPCCR, 16, 5, 22, -1, -1 },
++		.div = { CGU_REG_CPCCR, 16, 0, 5, 22, -1, -1 },
+ 		.gate = { CGU_REG_CLKGR, 10 },
+ 	},
+ 
+ 	[JZ4740_CLK_LCD_PCLK] = {
+ 		"lcd_pclk", CGU_CLK_DIV,
+ 		.parents = { JZ4740_CLK_PLL_HALF, -1, -1, -1 },
+-		.div = { CGU_REG_LPCDR, 0, 11, -1, -1, -1 },
++		.div = { CGU_REG_LPCDR, 0, 0, 11, -1, -1, -1 },
+ 	},
+ 
+ 	[JZ4740_CLK_I2S] = {
+ 		"i2s", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
+ 		.parents = { JZ4740_CLK_EXT, JZ4740_CLK_PLL_HALF, -1, -1 },
+ 		.mux = { CGU_REG_CPCCR, 31, 1 },
+-		.div = { CGU_REG_I2SCDR, 0, 8, -1, -1, -1 },
++		.div = { CGU_REG_I2SCDR, 0, 0, 8, -1, -1, -1 },
+ 		.gate = { CGU_REG_CLKGR, 6 },
+ 	},
+ 
+@@ -142,21 +142,21 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
+ 		"spi", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
+ 		.parents = { JZ4740_CLK_EXT, JZ4740_CLK_PLL, -1, -1 },
+ 		.mux = { CGU_REG_SSICDR, 31, 1 },
+-		.div = { CGU_REG_SSICDR, 0, 4, -1, -1, -1 },
++		.div = { CGU_REG_SSICDR, 0, 0, 4, -1, -1, -1 },
+ 		.gate = { CGU_REG_CLKGR, 4 },
+ 	},
+ 
+ 	[JZ4740_CLK_MMC] = {
+ 		"mmc", CGU_CLK_DIV | CGU_CLK_GATE,
+ 		.parents = { JZ4740_CLK_PLL_HALF, -1, -1, -1 },
+-		.div = { CGU_REG_MSCCDR, 0, 5, -1, -1, -1 },
++		.div = { CGU_REG_MSCCDR, 0, 0, 5, -1, -1, -1 },
+ 		.gate = { CGU_REG_CLKGR, 7 },
+ 	},
+ 
+ 	[JZ4740_CLK_UHC] = {
+ 		"uhc", CGU_CLK_DIV | CGU_CLK_GATE,
+ 		.parents = { JZ4740_CLK_PLL_HALF, -1, -1, -1 },
+-		.div = { CGU_REG_UHCCDR, 0, 4, -1, -1, -1 },
++		.div = { CGU_REG_UHCCDR, 0, 0, 4, -1, -1, -1 },
+ 		.gate = { CGU_REG_CLKGR, 14 },
+ 	},
+ 
+@@ -164,7 +164,7 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
+ 		"udc", CGU_CLK_MUX | CGU_CLK_DIV,
+ 		.parents = { JZ4740_CLK_EXT, JZ4740_CLK_PLL_HALF, -1, -1 },
+ 		.mux = { CGU_REG_CPCCR, 29, 1 },
+-		.div = { CGU_REG_CPCCR, 23, 6, -1, -1, -1 },
++		.div = { CGU_REG_CPCCR, 23, 0, 6, -1, -1, -1 },
+ 		.gate = { CGU_REG_SCR, 6 },
+ 	},
+ 
+diff --git a/drivers/clk/ingenic/jz4780-cgu.c b/drivers/clk/ingenic/jz4780-cgu.c
+index 431f962..da9ac32 100644
+--- a/drivers/clk/ingenic/jz4780-cgu.c
++++ b/drivers/clk/ingenic/jz4780-cgu.c
+@@ -296,13 +296,13 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
+ 	[JZ4780_CLK_CPU] = {
+ 		"cpu", CGU_CLK_DIV,
+ 		.parents = { JZ4780_CLK_CPUMUX, -1, -1, -1 },
+-		.div = { CGU_REG_CLOCKCONTROL, 0, 4, 22, -1, -1 },
++		.div = { CGU_REG_CLOCKCONTROL, 0, 0, 4, 22, -1, -1 },
+ 	},
+ 
+ 	[JZ4780_CLK_L2CACHE] = {
+ 		"l2cache", CGU_CLK_DIV,
+ 		.parents = { JZ4780_CLK_CPUMUX, -1, -1, -1 },
+-		.div = { CGU_REG_CLOCKCONTROL, 4, 4, -1, -1, -1 },
++		.div = { CGU_REG_CLOCKCONTROL, 4, 0, 4, -1, -1, -1 },
+ 	},
+ 
+ 	[JZ4780_CLK_AHB0] = {
+@@ -310,7 +310,7 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
+ 		.parents = { -1, JZ4780_CLK_SCLKA, JZ4780_CLK_MPLL,
+ 			     JZ4780_CLK_EPLL },
+ 		.mux = { CGU_REG_CLOCKCONTROL, 26, 2 },
+-		.div = { CGU_REG_CLOCKCONTROL, 8, 4, 21, -1, -1 },
++		.div = { CGU_REG_CLOCKCONTROL, 8, 0, 4, 21, -1, -1 },
+ 	},
+ 
+ 	[JZ4780_CLK_AHB2PMUX] = {
+@@ -323,20 +323,20 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
+ 	[JZ4780_CLK_AHB2] = {
+ 		"ahb2", CGU_CLK_DIV,
+ 		.parents = { JZ4780_CLK_AHB2PMUX, -1, -1, -1 },
+-		.div = { CGU_REG_CLOCKCONTROL, 12, 4, 20, -1, -1 },
++		.div = { CGU_REG_CLOCKCONTROL, 12, 0, 4, 20, -1, -1 },
+ 	},
+ 
+ 	[JZ4780_CLK_PCLK] = {
+ 		"pclk", CGU_CLK_DIV,
+ 		.parents = { JZ4780_CLK_AHB2PMUX, -1, -1, -1 },
+-		.div = { CGU_REG_CLOCKCONTROL, 16, 4, 20, -1, -1 },
++		.div = { CGU_REG_CLOCKCONTROL, 16, 0, 4, 20, -1, -1 },
+ 	},
+ 
+ 	[JZ4780_CLK_DDR] = {
+ 		"ddr", CGU_CLK_MUX | CGU_CLK_DIV,
+ 		.parents = { -1, JZ4780_CLK_SCLKA, JZ4780_CLK_MPLL, -1 },
+ 		.mux = { CGU_REG_DDRCDR, 30, 2 },
+-		.div = { CGU_REG_DDRCDR, 0, 4, 29, 28, 27 },
++		.div = { CGU_REG_DDRCDR, 0, 0, 4, 29, 28, 27 },
+ 	},
+ 
+ 	[JZ4780_CLK_VPU] = {
+@@ -344,7 +344,7 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
+ 		.parents = { JZ4780_CLK_SCLKA, JZ4780_CLK_MPLL,
+ 			     JZ4780_CLK_EPLL, -1 },
+ 		.mux = { CGU_REG_VPUCDR, 30, 2 },
+-		.div = { CGU_REG_VPUCDR, 0, 4, 29, 28, 27 },
++		.div = { CGU_REG_VPUCDR, 0, 0, 4, 29, 28, 27 },
+ 		.gate = { CGU_REG_CLKGR1, 2 },
+ 	},
+ 
+@@ -352,7 +352,7 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
+ 		"i2s_pll", CGU_CLK_MUX | CGU_CLK_DIV,
+ 		.parents = { JZ4780_CLK_SCLKA, JZ4780_CLK_EPLL, -1, -1 },
+ 		.mux = { CGU_REG_I2SCDR, 30, 1 },
+-		.div = { CGU_REG_I2SCDR, 0, 8, 29, 28, 27 },
++		.div = { CGU_REG_I2SCDR, 0, 0, 8, 29, 28, 27 },
+ 	},
+ 
+ 	[JZ4780_CLK_I2S] = {
+@@ -366,7 +366,7 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
+ 		.parents = { JZ4780_CLK_SCLKA, JZ4780_CLK_MPLL,
+ 			     JZ4780_CLK_VPLL, -1 },
+ 		.mux = { CGU_REG_LP0CDR, 30, 2 },
+-		.div = { CGU_REG_LP0CDR, 0, 8, 28, 27, 26 },
++		.div = { CGU_REG_LP0CDR, 0, 0, 8, 28, 27, 26 },
+ 	},
+ 
+ 	[JZ4780_CLK_LCD1PIXCLK] = {
+@@ -374,7 +374,7 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
+ 		.parents = { JZ4780_CLK_SCLKA, JZ4780_CLK_MPLL,
+ 			     JZ4780_CLK_VPLL, -1 },
+ 		.mux = { CGU_REG_LP1CDR, 30, 2 },
+-		.div = { CGU_REG_LP1CDR, 0, 8, 28, 27, 26 },
++		.div = { CGU_REG_LP1CDR, 0, 0, 8, 28, 27, 26 },
+ 	},
+ 
+ 	[JZ4780_CLK_MSCMUX] = {
+@@ -386,21 +386,21 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
+ 	[JZ4780_CLK_MSC0] = {
+ 		"msc0", CGU_CLK_DIV | CGU_CLK_GATE,
+ 		.parents = { JZ4780_CLK_MSCMUX, -1, -1, -1 },
+-		.div = { CGU_REG_MSC0CDR, 0, 8, 29, 28, 27 },
++		.div = { CGU_REG_MSC0CDR, 0, 1, 8, 29, 28, 27 },
+ 		.gate = { CGU_REG_CLKGR0, 3 },
+ 	},
+ 
+ 	[JZ4780_CLK_MSC1] = {
+ 		"msc1", CGU_CLK_DIV | CGU_CLK_GATE,
+ 		.parents = { JZ4780_CLK_MSCMUX, -1, -1, -1 },
+-		.div = { CGU_REG_MSC1CDR, 0, 8, 29, 28, 27 },
++		.div = { CGU_REG_MSC1CDR, 0, 1, 8, 29, 28, 27 },
+ 		.gate = { CGU_REG_CLKGR0, 11 },
+ 	},
+ 
+ 	[JZ4780_CLK_MSC2] = {
+ 		"msc2", CGU_CLK_DIV | CGU_CLK_GATE,
+ 		.parents = { JZ4780_CLK_MSCMUX, -1, -1, -1 },
+-		.div = { CGU_REG_MSC2CDR, 0, 8, 29, 28, 27 },
++		.div = { CGU_REG_MSC2CDR, 0, 1, 8, 29, 28, 27 },
+ 		.gate = { CGU_REG_CLKGR0, 12 },
+ 	},
+ 
+@@ -409,7 +409,7 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
+ 		.parents = { JZ4780_CLK_SCLKA, JZ4780_CLK_MPLL,
+ 			     JZ4780_CLK_EPLL, JZ4780_CLK_OTGPHY },
+ 		.mux = { CGU_REG_UHCCDR, 30, 2 },
+-		.div = { CGU_REG_UHCCDR, 0, 8, 29, 28, 27 },
++		.div = { CGU_REG_UHCCDR, 0, 0, 8, 29, 28, 27 },
+ 		.gate = { CGU_REG_CLKGR0, 24 },
+ 	},
+ 
+@@ -417,7 +417,7 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
+ 		"ssi_pll", CGU_CLK_MUX | CGU_CLK_DIV,
+ 		.parents = { JZ4780_CLK_SCLKA, JZ4780_CLK_MPLL, -1, -1 },
+ 		.mux = { CGU_REG_SSICDR, 30, 1 },
+-		.div = { CGU_REG_SSICDR, 0, 8, 29, 28, 27 },
++		.div = { CGU_REG_SSICDR, 0, 0, 8, 29, 28, 27 },
+ 	},
+ 
+ 	[JZ4780_CLK_SSI] = {
+@@ -430,7 +430,7 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
+ 		"cim_mclk", CGU_CLK_MUX | CGU_CLK_DIV,
+ 		.parents = { JZ4780_CLK_SCLKA, JZ4780_CLK_MPLL, -1, -1 },
+ 		.mux = { CGU_REG_CIMCDR, 31, 1 },
+-		.div = { CGU_REG_CIMCDR, 0, 8, 30, 29, 28 },
++		.div = { CGU_REG_CIMCDR, 0, 0, 8, 30, 29, 28 },
+ 	},
+ 
+ 	[JZ4780_CLK_PCMPLL] = {
+@@ -438,7 +438,7 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
+ 		.parents = { JZ4780_CLK_SCLKA, JZ4780_CLK_MPLL,
+ 			     JZ4780_CLK_EPLL, JZ4780_CLK_VPLL },
+ 		.mux = { CGU_REG_PCMCDR, 29, 2 },
+-		.div = { CGU_REG_PCMCDR, 0, 8, 28, 27, 26 },
++		.div = { CGU_REG_PCMCDR, 0, 0, 8, 28, 27, 26 },
+ 	},
+ 
+ 	[JZ4780_CLK_PCM] = {
+@@ -453,7 +453,7 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
+ 		.parents = { -1, JZ4780_CLK_SCLKA, JZ4780_CLK_MPLL,
+ 			     JZ4780_CLK_EPLL },
+ 		.mux = { CGU_REG_GPUCDR, 30, 2 },
+-		.div = { CGU_REG_GPUCDR, 0, 4, 29, 28, 27 },
++		.div = { CGU_REG_GPUCDR, 0, 0, 4, 29, 28, 27 },
+ 		.gate = { CGU_REG_CLKGR1, 4 },
+ 	},
+ 
+@@ -471,7 +471,7 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
+ 		.parents = { -1, JZ4780_CLK_SCLKA, JZ4780_CLK_MPLL,
+ 			     JZ4780_CLK_EPLL },
+ 		.mux = { CGU_REG_BCHCDR, 30, 2 },
+-		.div = { CGU_REG_BCHCDR, 0, 4, 29, 28, 27 },
++		.div = { CGU_REG_BCHCDR, 0, 0, 4, 29, 28, 27 },
+ 		.gate = { CGU_REG_CLKGR0, 1 },
+ 	},
+ 
+-- 
+2.6.4
