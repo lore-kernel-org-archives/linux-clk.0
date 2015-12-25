@@ -1,67 +1,81 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 8 Dec 2015 11:06:43 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Emilio Lopez <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH resend 6/6] ARM: dts: sun7i: Add VE (Video Engine) module
- clock node
-Message-ID: <20151208100643.GR27957@lukather>
-References: <1449321407-4531-1-git-send-email-wens@csie.org>
- <1449321407-4531-7-git-send-email-wens@csie.org>
+Return-Path: <mturquette@baylibre.com>
+Date: Thu, 24 Dec 2015 21:06:08 -0800
+From: Michael Turquette <mturquette@baylibre.com>
+To: Remi Pommarel <repk@triplefau.lt>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Eric Anholt <eric@anholt.net>,
+	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] Add PWM clock support for bcm2835
+Message-ID: <20151225050608.GB29521@quark.deferred.io>
+References: <1449418969-5565-1-git-send-email-repk@triplefau.lt>
+ <20151223185704.GJ453@cruxbox>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Q8a9NmTVi5AMeZ2v"
-In-Reply-To: <1449321407-4531-7-git-send-email-wens@csie.org>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20151223185704.GJ453@cruxbox>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 12/23, Remi Pommarel wrote:
+> On Sun, Dec 06, 2015 at 05:22:45PM +0100, Remi Pommarel wrote:
+> > Hi,
+> > 
+> > This patchset adds support for pwm clock. At boot, this clock does not have a
+> > default parent nor a default rate set. Thus we should be able to change its
+> > parent to get this clock working. The current clock implementation is using a
+> > mux to select the parent, but these clocks need to add a password (0x5a) in
+> > higher register bits when changing parent. So a generic mux cannot be used
+> > here.
+> > 
+> > The two first patches fix the clock parent selection, while the last ones are
+> > actually adding the pwm clock registration.
+> > 
+> > Changes since v1:
+> > 	- determine_rate now based its parent selection upon divided rate
+> > 	  instead of the parent one
+> > 	- bcm2835_clock_choose_div has been modified to produce an avarage rate
+> > 	  lower or equal to the requested one
+> > 	- devicetree modifications have removed to be send in another patch
+> > 
+> > Changes since v2:
+> > 	- Remove useless variable and include
+> > 	- Make bcm2835_clock_choose_div() divisor round up ability optional
+> > 	- Set rate in bcm2835_determine_rate()
+> > 	- Add device tree modification in a separate patch
+> > 
+> > 
+> > Remi Pommarel (4):
+> >   clk: bcm2835: add a round up ability to the clock divisor
+> >   clk: bcm2835: Support for clock parent selection
+> >   clk: bcm2835: Add PWM clock support
+> >   clk: bcm2835: Add PWM clock support to the device tree
+> > 
+> >  arch/arm/boot/dts/bcm2835-rpi.dtsi  |   4 +
+> >  arch/arm/boot/dts/bcm2835.dtsi      |   9 +++
+> >  drivers/clk/bcm/clk-bcm2835.c       | 155 +++++++++++++++++++++++-------------
+> >  include/dt-bindings/clock/bcm2835.h |   3 +-
+> >  4 files changed, 116 insertions(+), 55 deletions(-)
+> > 
+> 
+> Gently ping.
+> 
+> Patches 0 to 3 are reviewed by Eric, and can eventually be pushed on clk
+> tree.
 
---Q8a9NmTVi5AMeZ2v
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Patches 1-3 applied to clk-next towards 4.5.
 
-On Sat, Dec 05, 2015 at 09:16:47PM +0800, Chen-Yu Tsai wrote:
-> The video engine has its own module clock, which also includes a
-> reset control for it.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> 
+> Patch 4 has been sent on devicetree mailinglist for review
+> (http://www.spinics.net/lists/devicetree/msg108070.html), waiting for
+> previous patches to be pushed.
 
-Applied, thanks!
-Maxime
+Sounds good.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Regards,
+Mike
 
---Q8a9NmTVi5AMeZ2v
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWZquzAAoJEBx+YmzsjxAgbHoP/3y0cF9yMttI7bLE7y4OCcSF
-rIaxfFNvcnIbTaiWmqrHBEHzGQbYp7IGW6y53UFuK0bY2BnEevCCuK27gJek0gHS
-+Sm6bSmyjddZxWLBLl8Ty51m9zQsRmd/9BvSrBRULsW42GScDHmRpiPMpOvV1Jhl
-88l1tKutYh6Gq1hoLK+X8HIpNa7v3mHR+NUIDLsry/u9UHUal/DDYr7REU4coFME
-WG/8zNc6dEtNhvrs2JgJDFB+LrJ8fda7j2zu1Qd8fEqpC573WZ0fwbjpabdzXQKq
-vrc0MLECyRL9kMGxUkr6gZTQeeDy/Wu8zH7yjoVS0lRh7AEtl00WCCBh3n0IqUis
-cd085fdSl7Wy6zw3J9Nt5wBZcX4qFHOBwISHfttF67/XR3M2Sam8ezu2OP/M/Mgm
-+Mpgw9v0rTTkHqcS/mgNZulCQpfrQ2QuNweeqMDRqYjtE5/yb+pOAJOnzG/jLBlz
-dTGQbVns2amM1c5Dp48H7hlksJXVs6zfNUm9Vsm2a3lNlEhVCiiEjW1kPvv8E/im
-CNsRh50FBnYGqtIZLo/A899ye3iHcIQzOt23qSY7Ej2VTfMDsL7lpHtgkan2cwgm
-rRbwfcPbp5q36uHvBVjciaYuQPdRLcjj4lCP9Oi4IjRiOv1nI7jWgkHyOtRq+vtG
-V6Tc42n8yZarcb2n5/kh
-=bkLR
------END PGP SIGNATURE-----
-
---Q8a9NmTVi5AMeZ2v--
+> 
+> Thanks
+> 
+> -- 
+> Remi
