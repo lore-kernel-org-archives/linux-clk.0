@@ -1,66 +1,42 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-kernel@vger.kernel.org,
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: keescook@google.com,
+	leozwang@google.com,
+	linux-rockchip@lists.infradead.org,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	Kumar Gala <galak@codeaurora.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
 	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v2 6/6] clk: qcom: mmcc8974: Use gdscs .parent and remove genpd calls
-Date: Tue,  1 Dec 2015 21:42:16 +0530
-Message-Id: <1448986336-16846-7-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1448986336-16846-1-git-send-email-rnayak@codeaurora.org>
-References: <1448986336-16846-1-git-send-email-rnayak@codeaurora.org>
+	linux-arm-kernel@lists.infradead.org
+Subject: [RESEND PATCH v1 0/4] fix some clock configuration for the RK3036 platform
+Date: Mon, 28 Dec 2015 17:03:49 +0800
+Message-Id: <1451293433-32392-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-With gdsc driver capable of handling hierarchical power domains,
-specify oxili_gdsc as parent of oxilicx_gdsc.
 
-Remove all direct calls to genpd from the mmcc clock driver. The
-adding and removing of subdomains is now handled from within
-the gdsc driver.
+Hi:
+  In the development work, we found that some of the previous incorrect
+clock configuration on the RK3036 platform, we should fix them.
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- drivers/clk/qcom/mmcc-msm8974.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
-index bbe28ed..6b2e4e8 100644
---- a/drivers/clk/qcom/mmcc-msm8974.c
-+++ b/drivers/clk/qcom/mmcc-msm8974.c
-@@ -2400,6 +2400,7 @@ static struct gdsc oxilicx_gdsc = {
- 	.pd = {
- 		.name = "oxilicx",
- 	},
-+	.parent = &oxili_gdsc.pd,
- 	.pwrsts = PWRSTS_OFF_ON,
- };
- 
-@@ -2625,22 +2626,11 @@ static int mmcc_msm8974_probe(struct platform_device *pdev)
- 	clk_pll_configure_sr_hpm_lp(&mmpll1, regmap, &mmpll1_config, true);
- 	clk_pll_configure_sr_hpm_lp(&mmpll3, regmap, &mmpll3_config, false);
- 
--	ret = qcom_cc_really_probe(pdev, &mmcc_msm8974_desc, regmap);
--	if (ret)
--		return ret;
--
--	return pm_genpd_add_subdomain(&oxili_gdsc.pd, &oxilicx_gdsc.pd);
--}
--
--static int mmcc_msm8974_remove(struct platform_device *pdev)
--{
--	pm_genpd_remove_subdomain(&oxili_gdsc.pd, &oxilicx_gdsc.pd);
--	return 0;
-+	return qcom_cc_really_probe(pdev, &mmcc_msm8974_desc, regmap);
- }
- 
- static struct platform_driver mmcc_msm8974_driver = {
- 	.probe		= mmcc_msm8974_probe,
--	.remove		= mmcc_msm8974_remove,
- 	.driver		= {
- 		.name	= "mmcc-msm8974",
- 		.of_match_table = mmcc_msm8974_match_table,
+
+Xing Zheng (4):
+  clk: rockchip: rk3036: fix the FLAGs for clock mux
+  clk: rockchip: rk3036: fix uarts clock error
+  clk: rockchip: rk3036: rename emac ext source clock
+  clk: rockchip: rk3036: fix and add node id for emac clock
+
+ drivers/clk/rockchip/clk-rk3036.c      |   33 ++++++++++++++++----------------
+ include/dt-bindings/clock/rk3036-cru.h |    2 ++
+ 2 files changed, 19 insertions(+), 16 deletions(-)
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+1.7.9.5
