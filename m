@@ -1,77 +1,41 @@
-Return-Path: <ben@smart-cactus.org>
-From: Ben Gamari <ben@smart-cactus.org>
-To: Thomas Abraham <thomas.ab@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kukjin Kim <kgene.kim@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
-	Lukasz Majewski <l.majewski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kevin Hilman <khilman@linaro.org>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Anand Moon <linux.amoon@gmail.com>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	b.zolnierkie@samsung.com,
-	Mike Turquette <mturquette@linaro.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Ben Gamari <ben@smart-cactus.org>
-Subject: [PATCH 04/12] ARM: Exynos: use generic cpufreq driver for Exynos5420
-Date: Wed,  2 Dec 2015 22:19:19 +0100
-Message-Id: <1449091167-20758-5-git-send-email-ben@smart-cactus.org>
-In-Reply-To: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
-References: <1449091167-20758-1-git-send-email-ben@smart-cactus.org>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-mtd@lists.infradead.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 00/16] clk: a collection of various clean-ups and improvements
+Date: Mon, 28 Dec 2015 19:10:13 +0900
+Message-Id: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Thomas Abraham <thomas.ab@samsung.com>
+Many refactoring, with detection of circular parent looping.
 
-The new CPU clock type allows the use of generic arm_big_little_dt
-cpufreq driver for Exynos5420.
 
-Changes by Bartlomiej:
-- split Exynos5420 support from the original patch
-- disable cpufreq if big.LITTLE switcher support is enabled
+Changes in v2:
+  - Fix a bug.  Return -EINVAL when parent _is_ NULL.
 
-Changes by Ben Gamari:
-- rebase
+Masahiro Yamada (16):
+  clk: remove unused first argument of __clk_init()
+  clk: change the argument of __clk_init() into pointer to clk_core
+  clk: rename __clk_init() into __clk_core_init()
+  clk: remove unnecessary !core->parents conditional
+  clk: change sizeof(struct clk *) to sizeof(*core->parents)
+  clk: move core->parents allocation to clk_register()
+  clk: simplify clk_core_get_parent_by_index()
+  clk: drop the initial core->parents look-ups from __clk_core_init()
+  clk: replace pr_warn() with pr_err() for fatal cases
+  clk: move checking .git_parent to __clk_core_init()
+  clk: simplify __clk_init_parent()
+  clk: avoid circular clock topology
+  clk: walk the orphan clock list more simply
+  clk: make sure parent is not NULL in clk_fetch_parent_index()
+  clk: simplify clk_fetch_parent_index() function
+  clk: slightly optimize clk_core_set_parent()
 
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Mike Turquette <mturquette@linaro.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com> (Mon. 15:01)
-Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Ben Gamari <ben@smart-cactus.org>
----
- arch/arm/mach-exynos/exynos.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/clk/clk.c | 214 ++++++++++++++++++++++--------------------------------
+ 1 file changed, 85 insertions(+), 129 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 1c47aee..818e6a0 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -230,6 +230,13 @@ static const struct of_device_id exynos_cpufreq_matches[] = {
- 	{ .compatible = "samsung,exynos4212", .data = "cpufreq-dt" },
- 	{ .compatible = "samsung,exynos4412", .data = "cpufreq-dt" },
- 	{ .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
-+	/*
-+	 * FIXME: When big.LITTLE switcher is enabled system lockups during
-+	 * ondemand governor stress testing (observed on ODROID-XU3 board).
-+	 */
-+#ifndef CONFIG_BL_SWITCHER
-+	{ .compatible = "samsung,exynos5420", .data = "arm-bL-cpufreq-dt" },
-+#endif
- 	{ /* sentinel */ }
- };
- 
 -- 
-2.6.2
+1.9.1
