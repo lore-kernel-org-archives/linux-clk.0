@@ -1,45 +1,70 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular2.263xmail.com ([211.157.152.3]:51186 "EHLO
-	regular2.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932150AbbLBNYs (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 2 Dec 2015 08:24:48 -0500
-From: "jianqun.xu" <jay.xu@rock-chips.com>
-To: heiko@sntech.de
-Cc: huangtao@rock-chips.com, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Jianqun xu <jay.xu@rock-chips.com>
-Subject: [PATCH] clk: rockchip: rk3368: protect aclk_bus and aclk_peri clocks
-Date: Wed,  2 Dec 2015 21:22:31 +0800
-Message-Id: <1449062551-2498-1-git-send-email-jay.xu@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH v2 02/16] clk: change the argument of __clk_init() into pointer to clk_core
+Date: Mon, 28 Dec 2015 19:22:56 +0900
+Message-Id: <1451298191-30815-3-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jianqun xu <jay.xu@rock-chips.com>
+The argument clk_user is used only for the clk_user->core.  The rest
+of this function only takes care of clk_core.
 
-Add aclk_bus and aclk_peri to the list of rk3368 critical clocks,
-which are the base clocks that supply for all peripherals, never
-to be disabled automatically.
-
-Signed-off-by: Jianqun xu <jay.xu@rock-chips.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- drivers/clk/rockchip/clk-rk3368.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
-index 7e6b783..cd9d4aa 100644
---- a/drivers/clk/rockchip/clk-rk3368.c
-+++ b/drivers/clk/rockchip/clk-rk3368.c
-@@ -819,6 +819,8 @@ static struct rockchip_clk_branch rk3368_clk_branches[] __initdata = {
- };
+Changes in v2: None
+
+ drivers/clk/clk.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 897e5ae..623838f 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2285,25 +2285,22 @@ static inline void clk_debug_unregister(struct clk_core *core)
+ #endif
  
- static const char *const rk3368_critical_clocks[] __initconst = {
-+	"aclk_bus",
-+	"aclk_peri",
- 	"pclk_pd_pmu",
- };
+ /**
+- * __clk_init - initialize the data structures in a struct clk
+- * @clk:	clk being initialized
++ * __clk_init - initialize the data structures in a struct clk_core
++ * @core:	clk_core being initialized
+  *
+  * Initializes the lists in struct clk_core, queries the hardware for the
+  * parent and rate and sets them both.
+  */
+-static int __clk_init(struct clk *clk_user)
++static int __clk_init(struct clk_core *core)
+ {
+ 	int i, ret = 0;
+ 	struct clk_core *orphan;
+ 	struct hlist_node *tmp2;
+-	struct clk_core *core;
+ 	unsigned long rate;
+ 
+-	if (!clk_user)
++	if (!core)
+ 		return -EINVAL;
+ 
+-	core = clk_user->core;
+-
+ 	clk_prepare_lock();
+ 
+ 	/* check to see if a clock with this name is already registered */
+@@ -2574,7 +2571,7 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+ 		goto fail_parent_names_copy;
+ 	}
+ 
+-	ret = __clk_init(hw->clk);
++	ret = __clk_init(core);
+ 	if (!ret)
+ 		return hw->clk;
  
 -- 
 1.9.1
-
-
