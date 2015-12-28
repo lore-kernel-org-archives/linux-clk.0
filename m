@@ -1,101 +1,64 @@
-Return-Path: <robh@kernel.org>
-Date: Fri, 11 Dec 2015 09:19:09 -0600
-From: Rob Herring <robh@kernel.org>
-To: Jiancheng Xue <xuejiancheng@huawei.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, pawel.moll@arm.com,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, linux@arm.linux.org.uk, khilman@linaro.org,
-	arnd@arndb.de, olof@lixom.net, xuwei5@hisilicon.com,
-	haojian.zhuang@linaro.org, zhangfei.gao@linaro.org,
-	bintian.wang@huawei.com, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, yanhaifeng@hisilicon.com,
-	yanghongwei@hisilicon.com, suwenping@hisilicon.com,
-	ml.yang@hisilicon.com, gaofei@hisilicon.com,
-	zhangzhenxing@hisilicon.com, xuejiancheng@hisilicon.com
-Subject: Re: [PATCH v3 2/7] clk: hisilicon: add dt-binding document for
- Hi3519 CRG
-Message-ID: <20151211151909.GA21272@rob-hp-laptop>
-References: <1449819921-18464-1-git-send-email-xuejiancheng@huawei.com>
- <1449819921-18464-3-git-send-email-xuejiancheng@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1449819921-18464-3-git-send-email-xuejiancheng@huawei.com>
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Sangbeom Kim <sbkim73@samsung.com>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>,
+ Mark Brown <broonie@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Subject: [PATCH v2 0/3] dt-bindings: regulator/clock/mfd: Reorganize S2M/S5M
+ bindings
+Date: Mon, 28 Dec 2015 10:15:11 +0900
+Message-id: <1451265314-4232-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Dec 11, 2015 at 03:45:16PM +0800, Jiancheng Xue wrote:
-> add dt-binding document for Hi3519 CRG block
-> 
-> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
-> ---
->  .../devicetree/bindings/clock/hi3519-crg.txt       | 46 ++++++++++++++++++++++
->  1 file changed, 46 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/hi3519-crg.txt b/Documentation/devicetree/bindings/clock/hi3519-crg.txt
-> new file mode 100644
-> index 0000000..e0d30a4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/hi3519-crg.txt
-> @@ -0,0 +1,46 @@
-> +* Hisilicon Hi3519 Clock and Reset Generator(CRG)
-> +
-> +The Hi3519 CRG module provides clock and reset signals to various
-> +controllers within the SoC.
-> +
-> +This binding uses the following bindings:
-> +    Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +    Documentation/devicetree/bindings/reset/reset.txt
-> +
-> +Required Properties:
-> +
-> +- compatible: should be one of the following.
-> +  - "hisilicon,hi3519-crg" - controller compatible with Hi3519 SoC.
-> +
-> +- reg: physical base address of the controller and length of memory mapped
-> +  region.
-> +
-> +- #clock-cells: should be 1.
-> +
-> +Each clock is assigned an identifier and client nodes use this identifier
-> +to specify the clock which they consume.
-> +
-> +All these identifier could be found in <dt-bindings/clock/hi3519-clock.h>.
+Hi,
 
-This header should be part of this patch.
 
-> +
-> +- #reset-cells: should be 2.
-> +
-> +A reset signal can be controlled by writing a bit register in the CRG module.
-> +The reset specifier consists of two cells. The first cell represents the
-> +register offset relative to the base address. The second cell represents the
-> +bit index in the register.
-> +
-> +Example: CRG nodes
-> +CRG: clock-reset-controller {
+I got all acks for the patches. Please kindly pick up. Maybe Rob or Lee?
 
-clock-reset-controller@12010000
 
-> +	compatible = "hisilicon,hi3519-crg";
-> +        reg = <0x12010000 0x10000>;
-> +        #clock-cells = <1>;
-> +        #reset-cells = <2>;
-> +};
-> +
-> +Example: consumer nodes
-> +i2c0: i2c@0x12110000 {
+The patchset tries to bring some order to the chaotic bindings for family
+of Samsung PMIC devices: S2MPS/S2MPA/S5M.
 
-Drop '0x'
+Beside of renaming and removal of common parts I also tried to make
+a consistent style used in the files. The bindings itself were not
+modified.
 
-> +	compatible = "hisilicon,hi3519-i2c";
-> +        reg = <0x12110000 0x1000>;
-> +        clocks = <&CRG HI3519_I2C0_RST>;*/
-> +        resets = <&CRG 0xE4 0>;
+Rebased on next-20151223.
 
-lowercase hex please
 
-> +};
-> -- 
-> 1.9.1
-> 
+Changes since v1:
+1. Added accumulated acks.
+2. Use -M20% so renames will be more visible (formatting is changed so
+   default -M50% does not consider it as renames).
+
+
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (3):
+  dt-bindings: regulator/clock/mfd: Reorganize S2MPS-family bindings
+  dt-bindings: regulator/mfd: Reorganize S5M8767 bindings
+  dt-bindings: regulator/mfd: Reorganize S2MPA01 bindings
+
+ .../devicetree/bindings/clock/samsung,s2mps11.txt  |  49 +++++++
+ .../devicetree/bindings/mfd/samsung,sec-core.txt   |  88 ++++++++++++
+ .../s2mpa01.txt => regulator/samsung,s2mpa01.txt}  |  69 ++++------
+ .../s2mps11.txt => regulator/samsung,s2mps11.txt}  | 135 ++++++------------
+ .../{s5m8767-regulator.txt => samsung,s5m8767.txt} | 152 +++++++++------------
+ MAINTAINERS                                        |   6 +-
+ 6 files changed, 279 insertions(+), 220 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,s2mps11.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
+ rename Documentation/devicetree/bindings/{mfd/s2mpa01.txt => regulator/samsung,s2mpa01.txt} (37%)
+ rename Documentation/devicetree/bindings/{mfd/s2mps11.txt => regulator/samsung,s2mps11.txt} (25%)
+ rename Documentation/devicetree/bindings/regulator/{s5m8767-regulator.txt => samsung,s5m8767.txt} (34%)
+
+-- 
+1.9.1
