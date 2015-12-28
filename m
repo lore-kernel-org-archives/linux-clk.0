@@ -1,56 +1,59 @@
 Return-Path: <yamada.masahiro@socionext.com>
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
+To: linux-mtd@lists.infradead.org
 Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v2 03/16] clk: rename __clk_init() into __clk_core_init()
-Date: Mon, 28 Dec 2015 19:22:57 +0900
-Message-Id: <1451298191-30815-4-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH v2 09/16] clk: replace pr_warn() with pr_err() for fatal cases
+Date: Mon, 28 Dec 2015 19:10:22 +0900
+Message-Id: <1451297429-21689-10-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Now this function takes clk_core as its argument.  __clk_core_init()
-would be more suitable for the name of this function.
+These three cases let clk_register() fail.  They should be considered
+as error messages.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
 Changes in v2: None
 
- drivers/clk/clk.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/clk.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 623838f..41179f3 100644
+index 3215b2b..e6e10f5 100644
 --- a/drivers/clk/clk.c
 +++ b/drivers/clk/clk.c
-@@ -2285,13 +2285,13 @@ static inline void clk_debug_unregister(struct clk_core *core)
- #endif
- 
- /**
-- * __clk_init - initialize the data structures in a struct clk_core
-+ * __clk_core_init - initialize the data structures in a struct clk_core
-  * @core:	clk_core being initialized
-  *
-  * Initializes the lists in struct clk_core, queries the hardware for the
-  * parent and rate and sets them both.
-  */
--static int __clk_init(struct clk_core *core)
-+static int __clk_core_init(struct clk_core *core)
- {
- 	int i, ret = 0;
- 	struct clk_core *orphan;
-@@ -2571,7 +2571,7 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
- 		goto fail_parent_names_copy;
+@@ -2302,22 +2302,22 @@ static int __clk_core_init(struct clk_core *core)
+ 	if (core->ops->set_rate &&
+ 	    !((core->ops->round_rate || core->ops->determine_rate) &&
+ 	      core->ops->recalc_rate)) {
+-		pr_warning("%s: %s must implement .round_rate or .determine_rate in addition to .recalc_rate\n",
+-				__func__, core->name);
++		pr_err("%s: %s must implement .round_rate or .determine_rate in addition to .recalc_rate\n",
++		       __func__, core->name);
+ 		ret = -EINVAL;
+ 		goto out;
  	}
  
--	ret = __clk_init(core);
-+	ret = __clk_core_init(core);
- 	if (!ret)
- 		return hw->clk;
+ 	if (core->ops->set_parent && !core->ops->get_parent) {
+-		pr_warning("%s: %s must implement .get_parent & .set_parent\n",
+-				__func__, core->name);
++		pr_err("%s: %s must implement .get_parent & .set_parent\n",
++		       __func__, core->name);
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
  
+ 	if (core->ops->set_rate_and_parent &&
+ 			!(core->ops->set_parent && core->ops->set_rate)) {
+-		pr_warn("%s: %s must implement .set_parent & .set_rate\n",
++		pr_err("%s: %s must implement .set_parent & .set_rate\n",
+ 				__func__, core->name);
+ 		ret = -EINVAL;
+ 		goto out;
 -- 
 1.9.1
