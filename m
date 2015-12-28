@@ -1,81 +1,84 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
+Return-Path: <mweseloh42@gmail.com>
+Return-Path: <mweseloh42@gmail.com>
+From: Marcus Weseloh <mweseloh42@gmail.com>
+To: linux-sunxi@googlegroups.com
+Cc: Marcus Weseloh <mweseloh42@gmail.com>,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	sjoerd.simons@collabora.co.uk,
-	wxt@rock-chips.com,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH v2 1/5] clk: add flag for clocks that need to be enabled on rate changes
-Date: Tue, 22 Dec 2015 22:27:58 +0100
-Message-Id: <1450819682-4932-2-git-send-email-heiko@sntech.de>
-In-Reply-To: <1450819682-4932-1-git-send-email-heiko@sntech.de>
-References: <1450819682-4932-1-git-send-email-heiko@sntech.de>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: sunxi: Fix mod0 clock calculation to return stable results and check divisor size limits
+Date: Mon, 28 Dec 2015 18:31:32 +0100
+Message-Id: <1451323892-13060-1-git-send-email-mweseloh42@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some clocks need to be enabled to accept rate changes. This patch adds a
-new flag CLK_SET_RATE_UNGATE that lets clk_change_rate enable the clock
-before trying to change the rate and disable it again afterwards.
-This of course doesn't effect clocks that are already running at that
-point, as their refcount will only temporarily increase.
+This patch fixes some problems in the mod0 clock calculation. It has
+the potential to break stuff, as the issues explained below had the
+effect that clk_set_rate would always return successfully, sometimes
+setting a frequency that is higher than the requested value. Code that
+"accidentally worked" because of this might fail after applying
+this patch.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Tested-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Reviewed-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+The problems in detail:
+
+1. If a very low frequency is requested from a high parent clock, the
+divisors "div" and "calcm" might be > 255. This patch changes the type
+of both variables to unsigned int, because the silent cast to u8 will
+result in invalid frequencies and register values.
+
+2. The width of the "m" divisor in the clock control registers is only
+4 bit, but that limitation is not checked when calculating the divisor
+and the resulting frequency. This patch adds a check that m never
+exceeds the field width.
+
+3. During a call to clk_set_rate, the sun4i_a10_get_mod0_factors
+function is called multiple times: first to find the best parent and
+frequency, then again to calculate the p and m divisors, passing the
+frequencies returned by the previous call(s). In certain cases
+those chained calls do not result in the best frequency choice.
+
+An example:
+parent_rate = 24Mhz, freq = 1.4Mhz results in p=1, m=9, freq=1333333,3333
+(which gets rounded down to 1333333).
+Calling the function again with parent_rate = 24Mhz and freq = 1333333
+results in p=1, m=10, freq=1200000.
+
+Rounding up the returned frequency removes this problem.
+
+Signed-off-by: Marcus Weseloh <mweseloh42@gmail.com>
 ---
- drivers/clk/clk.c            | 18 ++++++++++++++++++
- include/linux/clk-provider.h |  1 +
- 2 files changed, 19 insertions(+)
+ drivers/clk/sunxi/clk-mod0.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index f13c3f4..bd64a94 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1443,6 +1443,15 @@ static void clk_change_rate(struct clk_core *core)
- 	else if (core->parent)
- 		best_parent_rate = core->parent->rate;
+diff --git a/drivers/clk/sunxi/clk-mod0.c b/drivers/clk/sunxi/clk-mod0.c
+index d167e1e..d03f099 100644
+--- a/drivers/clk/sunxi/clk-mod0.c
++++ b/drivers/clk/sunxi/clk-mod0.c
+@@ -31,7 +31,8 @@
+ static void sun4i_a10_get_mod0_factors(u32 *freq, u32 parent_rate,
+ 				       u8 *n, u8 *k, u8 *m, u8 *p)
+ {
+-	u8 div, calcm, calcp;
++	unsigned int div, calcm;
++	u8 calcp;
  
-+	if (core->flags & CLK_SET_RATE_UNGATE) {
-+		unsigned long flags;
-+
-+		clk_core_prepare(core);
-+		flags = clk_enable_lock();
-+		clk_core_enable(core);
-+		clk_enable_unlock(flags);
-+	}
-+
- 	if (core->new_parent && core->new_parent != core->parent) {
- 		old_parent = __clk_set_parent_before(core, core->new_parent);
- 		trace_clk_set_parent(core, core->new_parent);
-@@ -1469,6 +1478,15 @@ static void clk_change_rate(struct clk_core *core)
+ 	/* These clocks can only divide, so we will never be able to achieve
+ 	 * frequencies higher than the parent frequency */
+@@ -50,8 +51,10 @@ static void sun4i_a10_get_mod0_factors(u32 *freq, u32 parent_rate,
+ 		calcp = 3;
  
- 	core->rate = clk_recalc(core, best_parent_rate);
+ 	calcm = DIV_ROUND_UP(div, 1 << calcp);
++	if (calcm > 16)
++		calcm = 16;
  
-+	if (core->flags & CLK_SET_RATE_UNGATE) {
-+		unsigned long flags;
-+
-+		flags = clk_enable_lock();
-+		clk_core_disable(core);
-+		clk_enable_unlock(flags);
-+		clk_core_unprepare(core);
-+	}
-+
- 	if (core->notifier_count && old_rate != core->rate)
- 		__clk_notify(core, POST_RATE_CHANGE, old_rate, core->rate);
+-	*freq = (parent_rate >> calcp) / calcm;
++	*freq = DIV_ROUND_UP(parent_rate >> calcp, calcm);
  
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index c56988a..a971ce4 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -31,6 +31,7 @@
- #define CLK_SET_RATE_NO_REPARENT BIT(7) /* don't re-parent on rate change */
- #define CLK_GET_ACCURACY_NOCACHE BIT(8) /* do not use the cached clk accuracy */
- #define CLK_RECALC_NEW_RATES	BIT(9) /* recalc rates after notifications */
-+#define CLK_SET_RATE_UNGATE	BIT(10) /* clock needs to run to set rate */
- 
- struct clk;
- struct clk_hw;
+ 	/* we were called to round the frequency, we can now return */
+ 	if (n == NULL)
 -- 
-2.6.4
+1.9.1
