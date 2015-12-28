@@ -1,63 +1,56 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Sangbeom Kim <sbkim73@samsung.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>,
- Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>
-Cc: linux-clk@vger.kernel.org
-Subject: [PATCH 0/3] dt-bindings: regulator/clock/mfd: Reorganize S2M/S5M
- bindings
-Date: Fri, 04 Dec 2015 10:10:02 +0900
-Message-id: <1449191405-3344-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH v2 03/16] clk: rename __clk_init() into __clk_core_init()
+Date: Mon, 28 Dec 2015 19:22:57 +0900
+Message-Id: <1451298191-30815-4-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Now this function takes clk_core as its argument.  __clk_core_init()
+would be more suitable for the name of this function.
 
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-The patchset tries to bring some order to the chaotic bindings for family
-of Samsung PMIC devices: S2MPS/S2MPA/S5M.
+Changes in v2: None
 
-Beside of renaming and removal of common parts I also tried to make
-a consistent style used in the files. The bindings itself were not
-modified.
+ drivers/clk/clk.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-The patchset should be probably pulled at once (later patches depend on
-previous). With respective acks maybe through MFD tree?
-
-
-Best regards,
-Krzysztof
-
-Krzysztof Kozlowski (3):
-  dt-bindings: regulator/clock/mfd: Reorganize S2MPS-family bindings
-  dt-bindings: regulator/mfd: Reorganize S5M8767 bindings
-  dt-bindings: regulator/mfd: Reorganize S2MPA01 bindings
-
- .../devicetree/bindings/clock/samsung,s2mps11.txt  |  49 +++++++
- Documentation/devicetree/bindings/mfd/s2mpa01.txt  |  90 ------------
- Documentation/devicetree/bindings/mfd/s2mps11.txt  | 153 -------------------
- .../devicetree/bindings/mfd/samsung,sec-core.txt   |  88 +++++++++++
- .../bindings/regulator/s5m8767-regulator.txt       | 163 ---------------------
- .../bindings/regulator/samsung,s2mpa01.txt         |  79 ++++++++++
- .../bindings/regulator/samsung,s2mps11.txt         | 102 +++++++++++++
- .../bindings/regulator/samsung,s5m8767.txt         | 145 ++++++++++++++++++
- MAINTAINERS                                        |   6 +-
- 9 files changed, 467 insertions(+), 408 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/samsung,s2mps11.txt
- delete mode 100644 Documentation/devicetree/bindings/mfd/s2mpa01.txt
- delete mode 100644 Documentation/devicetree/bindings/mfd/s2mps11.txt
- create mode 100644 Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
- delete mode 100644 Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
- create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s2mpa01.txt
- create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s2mps11.txt
- create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 623838f..41179f3 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2285,13 +2285,13 @@ static inline void clk_debug_unregister(struct clk_core *core)
+ #endif
+ 
+ /**
+- * __clk_init - initialize the data structures in a struct clk_core
++ * __clk_core_init - initialize the data structures in a struct clk_core
+  * @core:	clk_core being initialized
+  *
+  * Initializes the lists in struct clk_core, queries the hardware for the
+  * parent and rate and sets them both.
+  */
+-static int __clk_init(struct clk_core *core)
++static int __clk_core_init(struct clk_core *core)
+ {
+ 	int i, ret = 0;
+ 	struct clk_core *orphan;
+@@ -2571,7 +2571,7 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+ 		goto fail_parent_names_copy;
+ 	}
+ 
+-	ret = __clk_init(core);
++	ret = __clk_core_init(core);
+ 	if (!ret)
+ 		return hw->clk;
+ 
 -- 
 1.9.1
