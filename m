@@ -1,59 +1,56 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Fri, 4 Dec 2015 12:11:53 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>,
-	Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, linux-clk@vger.kernel.org
-Message-ID: <20151204121153.GZ26072@sirena.org.uk>
-References: <1449191405-3344-1-git-send-email-k.kozlowski@samsung.com>
- <1449191405-3344-4-git-send-email-k.kozlowski@samsung.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="tpXmNJJzF/fVXUEg"
-In-Reply-To: <1449191405-3344-4-git-send-email-k.kozlowski@samsung.com>
-Subject: Re: [PATCH 3/3] dt-bindings: regulator/mfd: Reorganize S2MPA01
- bindings
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-mtd@lists.infradead.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 03/16] clk: rename __clk_init() into __clk_core_init()
+Date: Mon, 28 Dec 2015 19:10:16 +0900
+Message-Id: <1451297429-21689-4-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Now this function takes clk_core as its argument.  __clk_core_init()
+would be more suitable for the name of this function.
 
---tpXmNJJzF/fVXUEg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-On Fri, Dec 04, 2015 at 10:10:05AM +0900, Krzysztof Kozlowski wrote:
-> The mfd/s2mpa01.txt duplicates some of the information about bindings
-> with old mfd/s2mps11.txt. Now common part exists entirely in
-> mfd/samsung,sec-core.txt so:
+Changes in v2: None
 
-Acked-by: Mark Brown <broonie@kernel.org>
+ drivers/clk/clk.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
->  - add company prefix to file name (regulator/samsung,s2mpa01.txt),
-
-I'm not 100% convinced about these prefixes BTW, the duplication isn't
-usually an issue within a subsystem.  They don't do any harm either
-though.
-
---tpXmNJJzF/fVXUEg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWYYMJAAoJECTWi3JdVIfQ3r8H/AyPs8jtf+628DyPNyCBZOZZ
-83KlYFo/jeNYNrZibcg1Zl61/3CpobBB9t9osYhvrVwj/oo4xYDDXR2FjLDB7Q9r
-Olx8bMi5UKgmUeC2LzTEZzEQ3GB3L/kC/IEnpJ3UUgGXXWSxt7NjHX6LhgyVsVG2
-sGqUc7MxISBWK5SvEMkXJC+L4C+2na2NqHzWGG921djWkiWw19gjldjCssC1mq2z
-wUeup2TcKCNPzwl5xek3lLtum45EkWDJJCcxw+NJAit3enhNR2BHv6btRcCY3+lq
-dVXQExMovGtP2BYnCRlg5wimbnhCUGfLD/P1bNNF7vCTW0L2zMeFOUcC5npAddI=
-=PGvF
------END PGP SIGNATURE-----
-
---tpXmNJJzF/fVXUEg--
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 623838f..41179f3 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2285,13 +2285,13 @@ static inline void clk_debug_unregister(struct clk_core *core)
+ #endif
+ 
+ /**
+- * __clk_init - initialize the data structures in a struct clk_core
++ * __clk_core_init - initialize the data structures in a struct clk_core
+  * @core:	clk_core being initialized
+  *
+  * Initializes the lists in struct clk_core, queries the hardware for the
+  * parent and rate and sets them both.
+  */
+-static int __clk_init(struct clk_core *core)
++static int __clk_core_init(struct clk_core *core)
+ {
+ 	int i, ret = 0;
+ 	struct clk_core *orphan;
+@@ -2571,7 +2571,7 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+ 		goto fail_parent_names_copy;
+ 	}
+ 
+-	ret = __clk_init(core);
++	ret = __clk_core_init(core);
+ 	if (!ret)
+ 		return hw->clk;
+ 
+-- 
+1.9.1
