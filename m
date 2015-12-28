@@ -1,138 +1,84 @@
-Return-Path: <jszhang@marvell.com>
-From: Jisheng Zhang <jszhang@marvell.com>
-To: <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <sebastian.hesselbarth@gmail.com>, <antoine.tenart@free-electrons.com>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        Jisheng
- Zhang <jszhang@marvell.com>
-Subject: [PATCH v2 5/6] dt-bindings: add binding for marvell berlin4ct SoC
-Date: Fri, 20 Nov 2015 16:42:31 +0800
-Message-ID: <1448008952-1787-6-git-send-email-jszhang@marvell.com>
-In-Reply-To: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
-References: <1448008952-1787-1-git-send-email-jszhang@marvell.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-mtd@lists.infradead.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 11/16] clk: simplify __clk_init_parent()
+Date: Mon, 28 Dec 2015 19:10:24 +0900
+Message-Id: <1451297429-21689-12-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds a dt-binding include for Marvell berlin4ct clock IDs.
+The translation from the index into clk_core is done by
+clk_core_get_parent_by_index().  The if-block for num_parents == 1
+case is duplicating the code in the clk_core_get_parent_by_index().
 
-Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+Drop the "if (num_parents == 1)" from the special case.  Instead,
+set the index to zero if .get_parent() is missing.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- .../bindings/clock/marvell,berlin4ct.txt           | 38 +++++++++++++++
- include/dt-bindings/clock/berlin4ct.h              | 56 ++++++++++++++++++++++
- 2 files changed, 94 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/marvell,berlin4ct.txt
- create mode 100644 include/dt-bindings/clock/berlin4ct.h
 
-diff --git a/Documentation/devicetree/bindings/clock/marvell,berlin4ct.txt b/Documentation/devicetree/bindings/clock/marvell,berlin4ct.txt
-new file mode 100644
-index 0000000..a489473
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/marvell,berlin4ct.txt
-@@ -0,0 +1,38 @@
-+* Marvell berlin4ct Clock Controllers
-+
-+This binding uses the common clock binding[1].
-+
-+[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+The berlin4ct clock subsystem generates and supplies clock to various
-+controllers within the berlin4ct SoC. The berlin4ct contains 3 clock controller
-+blocks: pll, gateclk, berlin-clk.
-+
-+Required Properties:
-+
-+- compatible: should be one of the following.
-+  - "marvell,berlin-pll" - pll compatible
-+  - "marvell,berlin4ct-clk" - berlin clk compatible
-+  - "marvell,berlin4ct-gateclk" - gateclk compatible
-+- reg: physical base address of the clock controller and length of memory mapped
-+  region. For pll, the second reg defines the bypass register base address and
-+  length of memory mapped region.
-+- #clock-cells: for pll should 0, for gateclk and berlin clk should be 1.
-+- #bypass-shift: the bypass bit in bypass register.
-+
-+Example:
-+
-+syspll: syspll {
-+	compatible = "marvell,berlin-pll";
-+	reg = <0xea0200 0x14>, <0xea0710 4>;
-+	#clock-cells = <0>;
-+	clocks = <&osc>;
-+	bypass-shift = /bits/ 8 <0>;
-+};
-+
-+clk: clk {
-+	compatible = "marvell,berlin4ct-clk";
-+	reg = <0xea0720 0x144>;
-+	#clock-cells = <1>;
-+	clocks = <&syspll>;
-+};
-diff --git a/include/dt-bindings/clock/berlin4ct.h b/include/dt-bindings/clock/berlin4ct.h
-new file mode 100644
-index 0000000..abd5873
---- /dev/null
-+++ b/include/dt-bindings/clock/berlin4ct.h
-@@ -0,0 +1,56 @@
-+/*
-+ * Berlin BG4CT clock tree IDs
-+ */
-+
-+/* GATE CLK */
-+#define GATECLK_TSPSYS		0
-+#define GATECLK_USB0CORE	1
-+#define GATECLK_ZSPSYS		2
-+#define GATECLK_SDIOSYS		3
-+#define GATECLK_ETHCORE		4
-+#define GATECLK_PCIE0SYS	5
-+#define GATECLK_SATA0CORE	6
-+#define GATECLK_NFCSYS		7
-+#define GATECLK_EMMCSYS		8
-+#define GATECLK_IHB0SYS		9
-+
-+/* BERLIN CLK */
-+#define CLK_CPUFASTREF		0
-+#define CLK_MEMFASTREF		1
-+#define CLK_CFG			2
-+#define CLK_PERIFSYS		3
-+#define CLK_HB			4
-+#define CLK_ATB			5
-+#define CLK_DECODER		6
-+#define CLK_DECODERM3		7
-+#define CLK_DECODERPCUBE	8
-+#define CLK_ENCODER		9
-+#define CLK_OVPCORE		10
-+#define CLK_GFX2DCORE		11
-+#define CLK_GFX3DCORE		12
-+#define CLK_GFX3DSH		13
-+#define CLK_GFX3DSYS		14
-+#define CLK_GFX2DSYS		15
-+#define CLK_AVIOSYS		16
-+#define CLK_VPPSYS		17
-+#define CLK_EDDC		18
-+#define CLK_AVIOBIU		19
-+#define CLK_ZSP			20
-+#define CLK_TSP			21
-+#define CLK_TSPREF		22
-+#define CLK_NDS			23
-+#define CLK_NOCS		24
-+#define CLK_APBCORE		25
-+#define CLK_EMMC		26
-+#define CLK_SD0			27
-+#define CLK_SD1			28
-+#define CLK_DLLMSTREF		29
-+#define CLK_GETHRGMII		30
-+#define CLK_GETHRGMIISYS	31
-+#define CLK_USIM0		32
-+#define CLK_PCIETEST		33
-+#define CLK_USB2TEST		34
-+#define CLK_USB3TEST		35
-+#define CLK_USB3CORE		36
-+#define CLK_NFCECC		37
-+#define CLK_BCM			38
+Changes in v2: None
+
+ drivers/clk/clk.c | 38 ++++----------------------------------
+ 1 file changed, 4 insertions(+), 34 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 4ad0a36..03b87d8 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1651,44 +1651,14 @@ struct clk *clk_get_parent(struct clk *clk)
+ }
+ EXPORT_SYMBOL_GPL(clk_get_parent);
+ 
+-/*
+- * .get_parent is mandatory for clocks with multiple possible parents.  It is
+- * optional for single-parent clocks.  Always call .get_parent if it is
+- * available and WARN if it is missing for multi-parent clocks.
+- *
+- * For single-parent clocks without .get_parent, first check to see if the
+- * .parents array exists, and if so use it to avoid an expensive tree
+- * traversal.  If .parents does not exist then walk the tree.
+- */
+ static struct clk_core *__clk_init_parent(struct clk_core *core)
+ {
+-	struct clk_core *ret = NULL;
+-	u8 index;
+-
+-	/* handle the trivial cases */
++	u8 index = 0;
+ 
+-	if (!core->num_parents)
+-		goto out;
+-
+-	if (core->num_parents == 1) {
+-		if (IS_ERR_OR_NULL(core->parent))
+-			core->parent = clk_core_lookup(core->parent_names[0]);
+-		ret = core->parent;
+-		goto out;
+-	}
++	if (core->ops->get_parent)
++		index = core->ops->get_parent(core->hw);
+ 
+-	/*
+-	 * Do our best to cache parent clocks in core->parents.  This prevents
+-	 * unnecessary and expensive lookups.  We don't set core->parent here;
+-	 * that is done by the calling function.
+-	 */
+-
+-	index = core->ops->get_parent(core->hw);
+-
+-	ret = clk_core_get_parent_by_index(core, index);
+-
+-out:
+-	return ret;
++	return clk_core_get_parent_by_index(core, index);
+ }
+ 
+ static void clk_core_reparent(struct clk_core *core,
 -- 
-2.6.2
+1.9.1
