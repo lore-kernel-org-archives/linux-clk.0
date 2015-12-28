@@ -1,83 +1,96 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-CC: Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
-	<srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>, James Liao
-	<jamesjj.liao@mediatek.com>, Shunli Wang <shunli.wang@mediatek.com>
-Subject: [PATCH 1/5] clk: mediatek: Refine the makefile to support multiple clock drivers
-Date: Wed, 30 Dec 2015 14:27:41 +0800
-Message-ID: <1451456865-44139-2-git-send-email-jamesjj.liao@mediatek.com>
-In-Reply-To: <1451456865-44139-1-git-send-email-jamesjj.liao@mediatek.com>
-References: <1451456865-44139-1-git-send-email-jamesjj.liao@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jamesjj.liao@mediatek.com
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: keescook@google.com,
+	leozwang@google.com,
+	linux-rockchip@lists.infradead.org,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [RESEND PATCH v1 4/4] clk: rockchip: rk3036: fix and add node id for emac clock
+Date: Mon, 28 Dec 2015 17:03:53 +0800
+Message-Id: <1451293433-32392-5-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1451293433-32392-1-git-send-email-zhengxing@rock-chips.com>
+References: <1451293433-32392-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a Kconfig to define clock configuration for each SoC, and
-modify the Makefile to build drivers that only selected in config.
+Due to referred old version TRM, there is incorrect emac clock node,
+we should fix it. The SEL_21_9 is the parent of SEL_21_4.
 
-Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+In the emac driver, we need to refer HCLK_MAC, and  because There are
+only 3PLLs (APLL/GPLL/DPLL) on the rk3036, most clock are under the
+GPLL, and it is unable to provide the accurate rate for mac_ref which
+need to 50MHz probability, we should let it under the APLL and are
+able to set the freq which integer multiples of 50MHz, so we add these
+emac node for reference.
+
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 ---
- drivers/clk/Kconfig           |  1 +
- drivers/clk/mediatek/Kconfig  | 23 +++++++++++++++++++++++
- drivers/clk/mediatek/Makefile |  6 +++---
- 3 files changed, 27 insertions(+), 3 deletions(-)
- create mode 100644 drivers/clk/mediatek/Kconfig
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index c3e3a02..b7a37dc 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -198,3 +198,4 @@ source "drivers/clk/mvebu/Kconfig"
+ drivers/clk/rockchip/clk-rk3036.c      |   11 ++++++-----
+ include/dt-bindings/clock/rk3036-cru.h |    2 ++
+ 2 files changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
+index 7420cbe..7863c4d 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -328,13 +328,14 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
+ 			RK2928_CLKSEL_CON(16), 0, 2, MFLAGS, 2, 5, DFLAGS,
+ 			RK2928_CLKGATE_CON(10), 5, GFLAGS),
  
- source "drivers/clk/samsung/Kconfig"
- source "drivers/clk/tegra/Kconfig"
-+source "drivers/clk/mediatek/Kconfig"
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-new file mode 100644
-index 0000000..dc224e6
---- /dev/null
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -0,0 +1,23 @@
-+#
-+# MediaTek SoC drivers
-+#
-+config COMMON_CLK_MEDIATEK
-+	bool
-+	---help---
-+	  Mediatek SoCs' clock support.
-+
-+config COMMON_CLK_MT8135
-+	bool "Clock driver for Mediatek MT8135"
-+	depends on COMMON_CLK
-+	select COMMON_CLK_MEDIATEK
-+	default ARCH_MEDIATEK
-+	---help---
-+	  This driver supports Mediatek MT8135 clocks.
-+
-+config COMMON_CLK_MT8173
-+	bool "Clock driver for Mediatek MT8173"
-+	depends on COMMON_CLK
-+	select COMMON_CLK_MEDIATEK
-+	default ARCH_MEDIATEK
-+	---help---
-+	  This driver supports Mediatek MT8173 clocks.
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 95fdfac..32e7222 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -1,4 +1,4 @@
--obj-y += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
-+obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
- obj-$(CONFIG_RESET_CONTROLLER) += reset.o
--obj-y += clk-mt8135.o
--obj-y += clk-mt8173.o
-+obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135.o
-+obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173.o
+-	COMPOSITE_NOGATE(0, "mac_pll_src", mux_pll_src_3plls_p, 0,
+-			RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 4, 5, DFLAGS),
++	MUX(SCLK_MACPLL, "mac_pll_pre", mux_pll_src_3plls_p, 0,
++			RK2928_CLKSEL_CON(21), 0, 2, MFLAGS),
++	DIV(0, "mac_pll_src", "mac_pll_pre", 0,
++			RK2928_CLKSEL_CON(21), 9, 5, DFLAGS),
+ 	MUX(SCLK_MACREF, "mac_clk_ref", mux_mac_p, CLK_SET_RATE_PARENT,
+ 			RK2928_CLKSEL_CON(21), 3, 1, MFLAGS),
+-
+ 	COMPOSITE_NOMUX(SCLK_MAC, "mac_clk", "mac_clk_ref", 0,
+-			RK2928_CLKSEL_CON(21), 9, 5, DFLAGS,
++			RK2928_CLKSEL_CON(21), 4, 5, DFLAGS,
+ 			RK2928_CLKGATE_CON(2), 6, GFLAGS),
+ 
+ 	MUX(SCLK_HDMI, "dclk_hdmi", mux_dclk_p, 0,
+@@ -389,7 +390,7 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
+ 	GATE(HCLK_OTG1, "hclk_otg1", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(7), 3, GFLAGS),
+ 	GATE(HCLK_I2S, "hclk_i2s", "hclk_peri", 0, RK2928_CLKGATE_CON(7), 2, GFLAGS),
+ 	GATE(0, "hclk_sfc", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 14, GFLAGS),
+-	GATE(0, "hclk_mac", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 15, GFLAGS),
++	GATE(HCLK_MAC, "hclk_mac", "hclk_peri", 0, RK2928_CLKGATE_CON(3), 5, GFLAGS),
+ 
+ 	/* pclk_peri gates */
+ 	GATE(0, "pclk_peri_matrix", "pclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(4), 1, GFLAGS),
+diff --git a/include/dt-bindings/clock/rk3036-cru.h b/include/dt-bindings/clock/rk3036-cru.h
+index ebc7a7b..de44109 100644
+--- a/include/dt-bindings/clock/rk3036-cru.h
++++ b/include/dt-bindings/clock/rk3036-cru.h
+@@ -54,6 +54,7 @@
+ #define SCLK_PVTM_VIDEO		125
+ #define SCLK_MAC		151
+ #define SCLK_MACREF		152
++#define SCLK_MACPLL		153
+ #define SCLK_SFC		160
+ 
+ /* aclk gates */
+@@ -92,6 +93,7 @@
+ #define HCLK_SDMMC		456
+ #define HCLK_SDIO		457
+ #define HCLK_EMMC		459
++#define HCLK_MAC		460
+ #define HCLK_I2S		462
+ #define HCLK_LCDC		465
+ #define HCLK_ROM		467
 -- 
-1.9.1
+1.7.9.5
