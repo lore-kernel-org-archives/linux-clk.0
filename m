@@ -1,67 +1,71 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Tue, 22 Dec 2015 21:48:42 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, kernel@pengutronix.de,
-	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL] i.MX clock updates for 4.5
-Message-ID: <20151222134842.GF26290@tiger>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: keescook@google.com,
+	leozwang@google.com,
+	linux-rockchip@lists.infradead.org,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH v1 1/4] clk: rockchip: rk3036: fix the FLAGs for clock mux
+Date: Mon, 28 Dec 2015 17:03:50 +0800
+Message-Id: <1451293433-32392-2-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1451293433-32392-1-git-send-email-zhengxing@rock-chips.com>
+References: <1451293433-32392-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike, Stephen,
+The DFLAGS are used for the clock dividers, the CLKSEL_CON flags
+of COMPOSITE_NODIV type should be MFLAGS.
 
-Here is the i.MX clock updates I queued for 4.5.  Please pull and keep
-it stable, as it's been merged into imx/dt branch to resolve some
-dependency.  Thanks.
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
-Shawn
+ drivers/clk/rockchip/clk-rk3036.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
-
-  Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-v4.5
-
-for you to fetch changes up to c20737a2a7b8666648be3f4b386749339958dace:
-
-  clk: imx5: ipu_di_sel clocks can set parent rates (2015-12-02 21:02:33 +0800)
-
-----------------------------------------------------------------
-The i.MX clock updates for 4.5:
-- Add is_prepared function callback for pllv3 clock driver
-- Use imx_check_clocks() on imx6ul and imx7d clock drivers to save
-  some code
-- Add a core clock for imx7d to support generic cpufreq driver
-- Support imx6q clock routing with OSC to anaclk2/2b
-- To support more precise pixel clocks on imx5, allow ipu_di_sel clock
-  selectors to influence the PLLs that they are derived from
-- A cleanup on imx25 OSC clock
-
-----------------------------------------------------------------
-Bai Ping (3):
-      clk: imx: add 'is_prepared' clk_ops callback for pllv3 clk
-      clk: imx: Add a virtual arm clk on i.mx7d
-      clk: imx: Replace clk error check with imx_check_clocks()
-
-Markus Pargmann (1):
-      clk: imx25: Remove osc clock from driver
-
-Michael Trimarchi (1):
-      clk: imx: clk-imx6q: Let OSC to be routed to anaclk2/2b
-
-Patrick Brünn (1):
-      clk: imx5: ipu_di_sel clocks can set parent rates
-
- drivers/clk/imx/clk-imx25.c             | 18 ++----------------
- drivers/clk/imx/clk-imx51-imx53.c       |  8 ++++----
- drivers/clk/imx/clk-imx6q.c             |  3 ++-
- drivers/clk/imx/clk-imx6ul.c            |  4 +---
- drivers/clk/imx/clk-imx7d.c             | 11 +++++++----
- drivers/clk/imx/clk-pllv3.c             | 14 ++++++++++++++
- include/dt-bindings/clock/imx7d-clock.h |  3 ++-
- 7 files changed, 32 insertions(+), 29 deletions(-)
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
+index 7333b053..d4ea7b6 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -204,16 +204,16 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
+ 			RK2928_CLKGATE_CON(2), 2, GFLAGS),
+ 
+ 	COMPOSITE_NODIV(SCLK_TIMER0, "sclk_timer0", mux_timer_p, CLK_IGNORE_UNUSED,
+-			RK2928_CLKSEL_CON(2), 4, 1, DFLAGS,
++			RK2928_CLKSEL_CON(2), 4, 1, MFLAGS,
+ 			RK2928_CLKGATE_CON(1), 0, GFLAGS),
+ 	COMPOSITE_NODIV(SCLK_TIMER1, "sclk_timer1", mux_timer_p, CLK_IGNORE_UNUSED,
+-			RK2928_CLKSEL_CON(2), 5, 1, DFLAGS,
++			RK2928_CLKSEL_CON(2), 5, 1, MFLAGS,
+ 			RK2928_CLKGATE_CON(1), 1, GFLAGS),
+ 	COMPOSITE_NODIV(SCLK_TIMER2, "sclk_timer2", mux_timer_p, CLK_IGNORE_UNUSED,
+-			RK2928_CLKSEL_CON(2), 6, 1, DFLAGS,
++			RK2928_CLKSEL_CON(2), 6, 1, MFLAGS,
+ 			RK2928_CLKGATE_CON(2), 4, GFLAGS),
+ 	COMPOSITE_NODIV(SCLK_TIMER3, "sclk_timer3", mux_timer_p, CLK_IGNORE_UNUSED,
+-			RK2928_CLKSEL_CON(2), 7, 1, DFLAGS,
++			RK2928_CLKSEL_CON(2), 7, 1, MFLAGS,
+ 			RK2928_CLKGATE_CON(2), 5, GFLAGS),
+ 
+ 	MUX(0, "uart_pll_clk", mux_pll_src_apll_dpll_gpll_usb480m_p, 0,
+@@ -262,13 +262,13 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
+ 			RK2928_CLKGATE_CON(3), 2, GFLAGS),
+ 
+ 	COMPOSITE_NODIV(0, "sclk_sdmmc_src", mux_mmc_src_p, 0,
+-			RK2928_CLKSEL_CON(12), 8, 2, DFLAGS,
++			RK2928_CLKSEL_CON(12), 8, 2, MFLAGS,
+ 			RK2928_CLKGATE_CON(2), 11, GFLAGS),
+ 	DIV(SCLK_SDMMC, "sclk_sdmmc", "sclk_sdmmc_src", 0,
+ 			RK2928_CLKSEL_CON(11), 0, 7, DFLAGS),
+ 
+ 	COMPOSITE_NODIV(0, "sclk_sdio_src", mux_mmc_src_p, 0,
+-			RK2928_CLKSEL_CON(12), 10, 2, DFLAGS,
++			RK2928_CLKSEL_CON(12), 10, 2, MFLAGS,
+ 			RK2928_CLKGATE_CON(2), 13, GFLAGS),
+ 	DIV(SCLK_SDIO, "sclk_sdio", "sclk_sdio_src", 0,
+ 			RK2928_CLKSEL_CON(11), 8, 7, DFLAGS),
+-- 
+1.7.9.5
