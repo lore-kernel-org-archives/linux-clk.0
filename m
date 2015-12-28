@@ -5,80 +5,58 @@ Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Michael Turquette <mturquette@baylibre.com>,
         linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v2 11/16] clk: simplify __clk_init_parent()
-Date: Mon, 28 Dec 2015 19:23:05 +0900
-Message-Id: <1451298191-30815-12-git-send-email-yamada.masahiro@socionext.com>
+Subject: [RESEND PATCH v2 13/16] clk: walk the orphan clock list more simply
+Date: Mon, 28 Dec 2015 19:23:07 +0900
+Message-Id: <1451298191-30815-14-git-send-email-yamada.masahiro@socionext.com>
 In-Reply-To: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The translation from the index into clk_core is done by
-clk_core_get_parent_by_index().  The if-block for num_parents == 1
-case is duplicating the code in the clk_core_get_parent_by_index().
-
-Drop the "if (num_parents == 1)" from the special case.  Instead,
-set the index to zero if .get_parent() is missing.
+This loop can be much simpler.  If a new parent is available for
+orphan clocks, __clk_init_parent(orphan) can detect it.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
 Changes in v2: None
 
- drivers/clk/clk.c | 38 ++++----------------------------------
- 1 file changed, 4 insertions(+), 34 deletions(-)
+ drivers/clk/clk.c | 21 ++++++---------------
+ 1 file changed, 6 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 4ad0a36..03b87d8 100644
+index a4f66fe..efd093a 100644
 --- a/drivers/clk/clk.c
 +++ b/drivers/clk/clk.c
-@@ -1651,44 +1651,14 @@ struct clk *clk_get_parent(struct clk *clk)
- }
- EXPORT_SYMBOL_GPL(clk_get_parent);
+@@ -2402,24 +2402,15 @@ static int __clk_core_init(struct clk_core *core)
+ 	core->rate = core->req_rate = rate;
  
--/*
-- * .get_parent is mandatory for clocks with multiple possible parents.  It is
-- * optional for single-parent clocks.  Always call .get_parent if it is
-- * available and WARN if it is missing for multi-parent clocks.
-- *
-- * For single-parent clocks without .get_parent, first check to see if the
-- * .parents array exists, and if so use it to avoid an expensive tree
-- * traversal.  If .parents does not exist then walk the tree.
-- */
- static struct clk_core *__clk_init_parent(struct clk_core *core)
- {
--	struct clk_core *ret = NULL;
--	u8 index;
--
--	/* handle the trivial cases */
-+	u8 index = 0;
+ 	/*
+-	 * walk the list of orphan clocks and reparent any that are children of
+-	 * this clock
++	 * walk the list of orphan clocks and reparent any that newly finds a
++	 * parent.
+ 	 */
+ 	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
+-		if (orphan->num_parents && orphan->ops->get_parent) {
+-			i = orphan->ops->get_parent(orphan->hw);
+-			if (i >= 0 && i < orphan->num_parents &&
+-			    !strcmp(core->name, orphan->parent_names[i]))
+-				clk_core_reparent(orphan, core);
+-			continue;
+-		}
++		struct clk_core *parent = __clk_init_parent(orphan);
  
--	if (!core->num_parents)
--		goto out;
--
--	if (core->num_parents == 1) {
--		if (IS_ERR_OR_NULL(core->parent))
--			core->parent = clk_core_lookup(core->parent_names[0]);
--		ret = core->parent;
--		goto out;
--	}
-+	if (core->ops->get_parent)
-+		index = core->ops->get_parent(core->hw);
+-		for (i = 0; i < orphan->num_parents; i++)
+-			if (!strcmp(core->name, orphan->parent_names[i])) {
+-				clk_core_reparent(orphan, core);
+-				break;
+-			}
+-	 }
++		if (parent)
++			clk_core_reparent(orphan, parent);
++	}
  
--	/*
--	 * Do our best to cache parent clocks in core->parents.  This prevents
--	 * unnecessary and expensive lookups.  We don't set core->parent here;
--	 * that is done by the calling function.
--	 */
--
--	index = core->ops->get_parent(core->hw);
--
--	ret = clk_core_get_parent_by_index(core, index);
--
--out:
--	return ret;
-+	return clk_core_get_parent_by_index(core, index);
- }
- 
- static void clk_core_reparent(struct clk_core *core,
+ 	/*
+ 	 * optional platform-specific magic
 -- 
 1.9.1
