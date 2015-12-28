@@ -1,69 +1,77 @@
-Return-Path: <robh@kernel.org>
-Date: Fri, 4 Dec 2015 08:30:37 -0600
-From: Rob Herring <robh@kernel.org>
-To: Simon Arlott <simon@fire.lp0.eu>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Cernekee <cernekee@gmail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org, linux-mips@linux-mips.org,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>
-Subject: Re: [PATCH 1/2] clk: Add brcm,bcm63xx-gate-clk device tree binding
-Message-ID: <20151204143037.GA3667@rob-hp-laptop>
-References: <565CB727.7030209@simon.arlott.org.uk>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <565CB727.7030209@simon.arlott.org.uk>
+To: Eric Anholt <eric@anholt.net>, "Rob Herring" <robh@kernel.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <87wps3qulw.fsf@eliezer.anholt.net>
+Cc: "linux-clk" <linux-clk@vger.kernel.org>, "Stephen Boyd <sboyd@codeaurora.org>,
+ Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede <hdegoede@redhat.com>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>,
+ linux-rpi-kernel@lists.infradead.org,
+ "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ "Stephen Warren" <swarren@wwwdotorg.org>, "Lee Jones" <lee@kernel.org>,
+ "Florian Fainelli" <f.fainelli@gmail.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>, devicetree@vger.kernel.org
+References: <1450222559-22461-1-git-send-email-eric@anholt.net>
+ <20151219041935.GS14936@rob-hp-laptop>
+ <CAEG3pNCOO1F8+nwOQGSjUKxYCGbWW_Ripc6xUwDyg6ay66uL7w@mail.gmail.com>
+ <87wps3qulw.fsf@eliezer.anholt.net>
+Message-ID: <20151228223935.25842.28675@quark.deferred.io>
+Subject: Re: [PATCH v2 1/3] clk: bcm2835: Add bindings for the auxiliary peripheral
+ clock gates.
+Date: Mon, 28 Dec 2015 14:39:35 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Nov 30, 2015 at 08:52:55PM +0000, Simon Arlott wrote:
-> Add device tree binding for the BCM63xx's gated clocks.
-> 
-> The BCM63xx contains clocks gated with a register. Clocks are indexed
-> by bits in the register and are active high. Clock gate bits are
-> interleaved with other status bits and configurable clocks in the same
-> register.
-> 
-> Signed-off-by: Simon Arlott <simon@fire.lp0.eu>
-> ---
->  .../bindings/clock/brcm,bcm63xx-gate-clk.txt       | 58 ++++++++++++++++++++++
->  1 file changed, 58 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm63xx-gate-clk.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm63xx-gate-clk.txt b/Documentation/devicetree/bindings/clock/brcm,bcm63xx-gate-clk.txt
-> new file mode 100644
-> index 0000000..3f4ead1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/brcm,bcm63xx-gate-clk.txt
-> @@ -0,0 +1,58 @@
-> +Broadcom BCM63xx clocks
-> +
-> +This binding uses the common clock binding:
-> +	Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +
-> +The BCM63xx contains clocks gated with a register. Clocks are indexed
-> +by bits in the register and are active high. Clock gate bits are
-> +interleaved with other status bits and configurable clocks in the same
-> +register.
-> +
-> +Required properties:
-> +- compatible:	Should be "brcm,bcm<soc>-gate-clk", "brcm,bcm63xx-gate-clk"
-> +- #clock-cells:	Should be <1>.
-> +- regmap:	The register map phandle
-> +- offset:	Offset in the register map for the reboot register (in bytes)
-> +- clocks:	The external oscillator clock phandle
-> +
-> +Example:
-> +
-> +periph_clk: periph_clk {
-> +	compatible = "brcm,bcm63168-gate-clk", "brcm,bcm63xx-gate-clk";
-> +	regmap = <&periph_cntl>;
+Quoting Eric Anholt (2015-12-24 15:45:15)
+> Michael Turquette <mturquette@baylibre.com> writes:
+> =
 
-What else is in periph_cntrl? Could this all just be part of that node?
+> > On Fri, Dec 18, 2015 at 8:19 PM, Rob Herring <robh@kernel.org> wrote:
+> >> On Tue, Dec 15, 2015 at 03:35:57PM -0800, Eric Anholt wrote:
+> >>> These will be used for enabling UART1, SPI1, and SPI2.
+> >>>
+> >>> Signed-off-by: Eric Anholt <eric@anholt.net>
+> >>> ---
+> >>>
+> >>> v2: Make the binding cover both the IRQ and clock enable registers.
+> >>>
+> >>>  .../bindings/clock/brcm,bcm2835-aux-clock.txt      | 31 ++++++++++++=
+++++++++++
+> >>>  include/dt-bindings/clock/bcm2835-aux.h            | 17 ++++++++++++
+> >>>  2 files changed, 48 insertions(+)
+> >>>  create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm2=
+835-aux-clock.txt
+> >>>  create mode 100644 include/dt-bindings/clock/bcm2835-aux.h
+> >>
+> >> Acked-by: Rob Herring <robh@kernel.org>
+> >
+> > Applied to clk-next.
+> >
+> > Next time if you put the header into the clk driver patch then we can
+> > send the binding description through the DT tree and take the header
+> > and C file through the clk tree in one patch.
+> =
 
-Rob
+> I would *love* to do that, but I've previously been told that having the
+> bindings patch reference a header file not present as of the bindings
+> patch is not acceptable and made to change it.
+
+Ugh, that is annoying. I would think that having code compile properly
+would trump the desire to have all of the documentation merged as one
+patch.
+
+On the other hand, I've been asked to not take binding descriptions
+through the clk tree. That is a policy that I'm happy to comply with,
+but it is at odds with the recommendation for the header and the binding
+description to be merged together.
+
+DT folks, what is the right way to do this? An immutable, shared branch
+just for a single header file solves the problem, but also feels very
+cumbersome for such a trivial issue.
+
+How about allowing binding descriptions to be merged without the header
+file, so long as it is merged through another tree?
+
+Regards,
+Mike
