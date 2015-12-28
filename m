@@ -1,75 +1,54 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v3 07/13] clk: at91: pmc: move pmc structures to C file
-Date: Fri,  4 Dec 2015 18:03:42 +0100
-Message-Id: <1449248628-3486-8-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-mtd@lists.infradead.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 01/16] clk: remove unused first argument of __clk_init()
+Date: Mon, 28 Dec 2015 19:10:14 +0900
+Message-Id: <1451297429-21689-2-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-pmc.c is now the only user of struct at91_pmc*, move their definition in
-the C file.
+The "struct device *dev" is not used at all in this function.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- drivers/clk/at91/pmc.c | 12 ++++++++++++
- drivers/clk/at91/pmc.h | 12 ------------
- 2 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 55ed00fc9310..cfbfea6d641f 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -29,6 +29,18 @@
+Changes in v2: None
+
+ drivers/clk/clk.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 3fba5ac..897e5ae 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2286,13 +2286,12 @@ static inline void clk_debug_unregister(struct clk_core *core)
  
- #include "pmc.h"
+ /**
+  * __clk_init - initialize the data structures in a struct clk
+- * @dev:	device initializing this clk, placeholder for now
+  * @clk:	clk being initialized
+  *
+  * Initializes the lists in struct clk_core, queries the hardware for the
+  * parent and rate and sets them both.
+  */
+-static int __clk_init(struct device *dev, struct clk *clk_user)
++static int __clk_init(struct clk *clk_user)
+ {
+ 	int i, ret = 0;
+ 	struct clk_core *orphan;
+@@ -2575,7 +2574,7 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+ 		goto fail_parent_names_copy;
+ 	}
  
-+struct at91_pmc_caps {
-+	u32 available_irqs;
-+};
-+
-+struct at91_pmc {
-+	struct regmap *regmap;
-+	int virq;
-+	const struct at91_pmc_caps *caps;
-+	struct irq_domain *irqdomain;
-+	u32 imr;
-+};
-+
- void __iomem *at91_pmc_base;
- EXPORT_SYMBOL_GPL(at91_pmc_base);
- 
-diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index 3b96c53c194c..550a461c7201 100644
---- a/drivers/clk/at91/pmc.h
-+++ b/drivers/clk/at91/pmc.h
-@@ -24,18 +24,6 @@ struct clk_range {
- 
- #define CLK_RANGE(MIN, MAX) {.min = MIN, .max = MAX,}
- 
--struct at91_pmc_caps {
--	u32 available_irqs;
--};
--
--struct at91_pmc {
--	struct regmap *regmap;
--	int virq;
--	const struct at91_pmc_caps *caps;
--	struct irq_domain *irqdomain;
--	u32 imr;
--};
--
- int of_at91_get_clk_range(struct device_node *np, const char *propname,
- 			  struct clk_range *range);
+-	ret = __clk_init(dev, hw->clk);
++	ret = __clk_init(hw->clk);
+ 	if (!ret)
+ 		return hw->clk;
  
 -- 
-2.5.0
+1.9.1
