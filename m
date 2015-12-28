@@ -1,56 +1,100 @@
-Return-Path: <tony@atomide.com>
-From: Tony Lindgren <tony@atomide.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Brian Hutchinson <b.hutchman@gmail.com>,
-	Delio Brignoli <dbrignoli@audioscience.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Matthijs van Duin <matthijsvanduin@gmail.com>,
-	Philipp Rosenberger <ilu@linutronix.de>
-Subject: [PATCH 0/2] Clock driver for dm814x ADPLL
-Date: Wed,  2 Dec 2015 17:35:02 -0800
-Message-Id: <1449106504-7645-1-git-send-email-tony@atomide.com>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH v2 12/16] clk: avoid circular clock topology
+Date: Mon, 28 Dec 2015 19:23:06 +0900
+Message-Id: <1451298191-30815-13-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi all,
+Currently, clk_register() never checks a circular parent looping,
+but clock providers could register such an insane clock topology.
+For example, "clk_a" could have "clk_b" as a parent, and vice versa.
+In this case, clk_core_reparent() creates a circular parent list
+and __clk_recalc_accuracies() calls itself recursively forever.
 
-Here's a clock driver for the ADPLL on dm814x. It's still in read-only
-mode for the PLL, but is already usable with the gates and dividers
-and allows us to add devices like MMC and USB.
+The core infrastructure should be kind enough to bail out, showing
+an appropriate error message in such a case.  This helps to easily
+find a bug in clock providers.  (uh, I made such a silly mistake
+when I was implementing my clock providers first.  I was upset
+because the kernel did not respond, without any error message.)
 
-To test this please apply the patches from below on v4.4-rc3:
+This commit adds a new helper function, __clk_is_ancestor().  It
+returns true if the second argument is a possible ancestor of the
+first one.  If a clock core is a possible ancestor of itself, it
+would make a loop when it were registered.  That should be detected
+as an error.
 
-http://marc.info/?l=linux-omap&m=144901336001085&w=2
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-And also make sure you have the initcall level change patch that
-is needed for having omap clock drivers regular Linux device
-drivers:
+Changes in v2: None
 
-http://marc.info/?l=linux-omap&m=144890081111207&w=2
+ drivers/clk/clk.c | 40 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-
-Regards,
-
-Tony
-
-Tony Lindgren (2):
-  clk: ti: Add support for dm814x ADPLL
-  ARM: dts: Add clocks for dm814x ADPLL
-
- .../devicetree/bindings/clock/ti/adpll.txt         |   42 +
- arch/arm/boot/dts/dm814x-clocks.dtsi               |  256 ++++-
- drivers/clk/Kconfig                                |    1 +
- drivers/clk/ti/Kconfig                             |    6 +
- drivers/clk/ti/Makefile                            |    2 +
- drivers/clk/ti/adpll.c                             | 1027 ++++++++++++++++++++
- drivers/clk/ti/clk-814x.c                          |   53 +
- 7 files changed, 1356 insertions(+), 31 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/ti/adpll.txt
- create mode 100644 drivers/clk/ti/Kconfig
- create mode 100644 drivers/clk/ti/adpll.c
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 03b87d8..a4f66fe 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2235,6 +2235,38 @@ static inline void clk_debug_unregister(struct clk_core *core)
+ #endif
+ 
+ /**
++ * __clk_is_ancestor - check if a clk_core is a possible ancestor of another
++ * @core: clock core
++ * @ancestor: ancestor clock core
++ *
++ * Returns true if there is a possibility that @ancestor can be an ancestor
++ * of @core, false otherwise.
++ *
++ * This function can be used against @core or @ancestor that has not been
++ * registered yet.
++ */
++static bool __clk_is_ancestor(struct clk_core *core, struct clk_core *ancestor)
++{
++	struct clk_core *parent;
++	int i;
++
++	for (i = 0; i < core->num_parents; i++) {
++		parent = clk_core_get_parent_by_index(core, i);
++		/*
++		 * If ancestor has not been added to clk_{root,orphan}_list
++		 * yet, clk_core_lookup() cannot find it.  If parent is NULL,
++		 * compare the name strings, too.
++		 */
++		if ((parent && (parent == ancestor ||
++				__clk_is_ancestor(parent, ancestor))) ||
++		    (!parent && !strcmp(core->parent_names[i], ancestor->name)))
++			return true;
++	}
++
++	return false;
++}
++
++/**
+  * __clk_core_init - initialize the data structures in a struct clk_core
+  * @core:	clk_core being initialized
+  *
+@@ -2297,6 +2329,14 @@ static int __clk_core_init(struct clk_core *core)
+ 				"%s: invalid NULL in %s's .parent_names\n",
+ 				__func__, core->name);
+ 
++	/* If core is an ancestor of itself, it would make a loop. */
++	if (__clk_is_ancestor(core, core)) {
++		pr_err("%s: %s would create circular parent\n", __func__,
++		       core->name);
++		ret = -EINVAL;
++		goto out;
++	}
++
+ 	core->parent = __clk_init_parent(core);
+ 
+ 	/*
 -- 
-2.6.2
+1.9.1
