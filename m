@@ -1,70 +1,54 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	linux-clk@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] clk: shmobile: Updates for v4.5
-Date: Wed,  9 Dec 2015 10:13:10 +0100
-Message-Id: <1449652390-10349-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.138]:49802 "EHLO
+	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751184AbbL1JEO (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 28 Dec 2015 04:04:14 -0500
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: keescook@google.com, leozwang@google.com,
+	linux-rockchip@lists.infradead.org,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH v1 2/4] clk: rockchip: rk3036: fix uarts clock error
+Date: Mon, 28 Dec 2015 17:03:51 +0800
+Message-Id: <1451293433-32392-3-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1451293433-32392-1-git-send-email-zhengxing@rock-chips.com>
+References: <1451293433-32392-1-git-send-email-zhengxing@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen,
+Due to a copy-paste error the uart1 and uart2 clock div set
+incorrect, we should to fix it.
 
-The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
-  Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
+ drivers/clk/rockchip/clk-rk3036.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-are available in the git repository at:
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
+index d4ea7b6..47fe35b 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -222,11 +222,11 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
+ 			RK2928_CLKSEL_CON(13), 0, 7, DFLAGS,
+ 			RK2928_CLKGATE_CON(1), 8, GFLAGS),
+ 	COMPOSITE_NOMUX(0, "uart1_src", "uart_pll_clk", 0,
+-			RK2928_CLKSEL_CON(13), 0, 7, DFLAGS,
+-			RK2928_CLKGATE_CON(1), 8, GFLAGS),
++			RK2928_CLKSEL_CON(14), 0, 7, DFLAGS,
++			RK2928_CLKGATE_CON(1), 10, GFLAGS),
+ 	COMPOSITE_NOMUX(0, "uart2_src", "uart_pll_clk", 0,
+-			RK2928_CLKSEL_CON(13), 0, 7, DFLAGS,
+-			RK2928_CLKGATE_CON(1), 8, GFLAGS),
++			RK2928_CLKSEL_CON(15), 0, 7, DFLAGS,
++			RK2928_CLKGATE_CON(1), 12, GFLAGS),
+ 	COMPOSITE_FRAC(0, "uart0_frac", "uart0_src", CLK_SET_RATE_PARENT,
+ 			RK2928_CLKSEL_CON(17), 0,
+ 			RK2928_CLKGATE_CON(1), 9, GFLAGS),
+-- 
+1.7.9.5
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git clk-shmobile-for-v4.5
 
-for you to fetch changes up to c5dae0df298120e0a331d749d77fd472c253b5b3:
-
-  clk: shmobile: r8a7795: Add new CPG/MSSR driver (2015-12-08 14:33:06 +0100)
-
-Summary:
-  - Make clock-output-names optional for single-output clocks,
-  - New Renesas CPG/MSSR driver for r8a7795,
-  - Cleanups to prepare for the above.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Geert Uytterhoeven (4):
-      clk: shmobile: div6: Make clock-output-names optional
-      clk: shmobile: div6: Extract cpg_div6_register()
-      clk: shmobile: Add new CPG/MSSR driver core
-      clk: shmobile: r8a7795: Add new CPG/MSSR driver
-
-Magnus Damm (1):
-      clk: shmobile: Rework CONFIG_ARCH_SHMOBILE_MULTI
-
- .../bindings/clock/renesas,cpg-div6-clocks.txt     |   4 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/shmobile/Makefile                      |  24 +-
- drivers/clk/shmobile/clk-div6.c                    | 137 +++--
- drivers/clk/shmobile/clk-div6.h                    |   7 +
- drivers/clk/shmobile/r8a7795-cpg-mssr.c            | 382 +++++++++++++
- drivers/clk/shmobile/renesas-cpg-mssr.c            | 596 +++++++++++++++++++++
- drivers/clk/shmobile/renesas-cpg-mssr.h            | 132 +++++
- 8 files changed, 1220 insertions(+), 63 deletions(-)
- create mode 100644 drivers/clk/shmobile/clk-div6.h
- create mode 100644 drivers/clk/shmobile/r8a7795-cpg-mssr.c
- create mode 100644 drivers/clk/shmobile/renesas-cpg-mssr.c
- create mode 100644 drivers/clk/shmobile/renesas-cpg-mssr.h
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
