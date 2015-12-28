@@ -1,50 +1,45 @@
-Return-Path: <anholt@eliezer.anholt.net>
-From: Eric Anholt <eric@anholt.net>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	devicetree@vger.kernel.org,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH v2 3/3] ARM: bcm2835: Add the auxiliary clocks to the device tree.
-Date: Tue, 15 Dec 2015 15:35:59 -0800
-Message-Id: <1450222559-22461-3-git-send-email-eric@anholt.net>
-In-Reply-To: <1450222559-22461-1-git-send-email-eric@anholt.net>
-References: <1450222559-22461-1-git-send-email-eric@anholt.net>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH v2 14/16] clk: make sure parent is not NULL in clk_fetch_parent_index()
+Date: Mon, 28 Dec 2015 19:23:08 +0900
+Message-Id: <1451298191-30815-15-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-These will be used for enabling UART1, SPI1, and SPI2.
+If parent is given with NULL, clk_fetch_parent_index() could return
+a positive index value.
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
+Currently, parent is checked by the callers of this function, but
+it would be safer to do it in this function.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
-v2: Make the binding cover both the IRQ and clock enable registers.
+Changes in v2:
+  - Fix a bug.  Return -EINVAL when parent _is_ NULL.
 
- arch/arm/boot/dts/bcm2835.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/clk/clk.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/boot/dts/bcm2835.dtsi b/arch/arm/boot/dts/bcm2835.dtsi
-index aef64de..a27d40b 100644
---- a/arch/arm/boot/dts/bcm2835.dtsi
-+++ b/arch/arm/boot/dts/bcm2835.dtsi
-@@ -73,6 +73,13 @@
- 			clocks = <&clk_osc>;
- 		};
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index efd093a..151cbe8 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1066,6 +1066,9 @@ static int clk_fetch_parent_index(struct clk_core *core,
+ {
+ 	int i;
  
-+		aux: aux@0x7e215000 {
-+			compatible = "brcm,bcm2835-aux";
-+			#clock-cells = <1>;
-+			reg = <0x7e215000 0x8>;
-+			clocks = <&clocks BCM2835_CLOCK_VPU>;
-+		};
++	if (!parent)
++		return -EINVAL;
 +
- 		rng@7e104000 {
- 			compatible = "brcm,bcm2835-rng";
- 			reg = <0x7e104000 0x10>;
+ 	/*
+ 	 * find index of new parent clock using cached parent ptrs,
+ 	 * or if not yet cached, use string name comparison and cache
 -- 
-2.6.2
+1.9.1
