@@ -1,57 +1,59 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v3 08/13] ARM: at91: pm: simply call at91_pm_init
-Date: Fri,  4 Dec 2015 18:03:43 +0100
-Message-Id: <1449248628-3486-9-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH v2 09/16] clk: replace pr_warn() with pr_err() for fatal cases
+Date: Mon, 28 Dec 2015 19:23:03 +0900
+Message-Id: <1451298191-30815-10-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-at91_pm_init() doesn't return a value, as is the case for its callers,
-simply call it instead of returning its non-existent return value.
+These three cases let clk_register() fail.  They should be considered
+as error messages.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- arch/arm/mach-at91/pm.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
-index 80e277cfcc8b..5c2b60c5a2a1 100644
---- a/arch/arm/mach-at91/pm.c
-+++ b/arch/arm/mach-at91/pm.c
-@@ -427,7 +427,7 @@ void __init at91sam9260_pm_init(void)
- 	at91_dt_ramc();
- 	at91_pm_data.memctrl = AT91_MEMCTRL_SDRAMC;
- 	at91_pm_data.uhp_udp_mask = AT91SAM926x_PMC_UHP | AT91SAM926x_PMC_UDP;
--	return at91_pm_init();
-+	at91_pm_init();
- }
+Changes in v2: None
+
+ drivers/clk/clk.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 3215b2b..e6e10f5 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2302,22 +2302,22 @@ static int __clk_core_init(struct clk_core *core)
+ 	if (core->ops->set_rate &&
+ 	    !((core->ops->round_rate || core->ops->determine_rate) &&
+ 	      core->ops->recalc_rate)) {
+-		pr_warning("%s: %s must implement .round_rate or .determine_rate in addition to .recalc_rate\n",
+-				__func__, core->name);
++		pr_err("%s: %s must implement .round_rate or .determine_rate in addition to .recalc_rate\n",
++		       __func__, core->name);
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
  
- void __init at91sam9g45_pm_init(void)
-@@ -435,7 +435,7 @@ void __init at91sam9g45_pm_init(void)
- 	at91_dt_ramc();
- 	at91_pm_data.uhp_udp_mask = AT91SAM926x_PMC_UHP;
- 	at91_pm_data.memctrl = AT91_MEMCTRL_DDRSDR;
--	return at91_pm_init();
-+	at91_pm_init();
- }
+ 	if (core->ops->set_parent && !core->ops->get_parent) {
+-		pr_warning("%s: %s must implement .get_parent & .set_parent\n",
+-				__func__, core->name);
++		pr_err("%s: %s must implement .get_parent & .set_parent\n",
++		       __func__, core->name);
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
  
- void __init at91sam9x5_pm_init(void)
-@@ -443,5 +443,5 @@ void __init at91sam9x5_pm_init(void)
- 	at91_dt_ramc();
- 	at91_pm_data.uhp_udp_mask = AT91SAM926x_PMC_UHP | AT91SAM926x_PMC_UDP;
- 	at91_pm_data.memctrl = AT91_MEMCTRL_DDRSDR;
--	return at91_pm_init();
-+	at91_pm_init();
- }
+ 	if (core->ops->set_rate_and_parent &&
+ 			!(core->ops->set_parent && core->ops->set_rate)) {
+-		pr_warn("%s: %s must implement .set_parent & .set_rate\n",
++		pr_err("%s: %s must implement .set_parent & .set_rate\n",
+ 				__func__, core->name);
+ 		ret = -EINVAL;
+ 		goto out;
 -- 
-2.5.0
+1.9.1
