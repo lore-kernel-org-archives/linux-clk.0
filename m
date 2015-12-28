@@ -1,109 +1,57 @@
-Return-Path: <wens@mirror2.csie.ntu.edu.tw>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 3/6] ARM: dts: sun4i: Add DRAM gates
-Date: Sat,  5 Dec 2015 17:00:06 +0800
-Message-Id: <1449306009-2627-4-git-send-email-wens@csie.org>
-In-Reply-To: <1449306009-2627-1-git-send-email-wens@csie.org>
-References: <1449306009-2627-1-git-send-email-wens@csie.org>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-mtd@lists.infradead.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 10/16] clk: move checking .git_parent to __clk_core_init()
+Date: Mon, 28 Dec 2015 19:10:23 +0900
+Message-Id: <1451297429-21689-11-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The DRAM gates controls direct memory access for some peripherals.
-These peripherals include the display pipeline, so add the required
-gates to the simplefb nodes as well.
+The .git_parent is mandatory for multi-parent clocks.  Move the check
+to __clk_core_init(), like other callback checkings.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- arch/arm/boot/dts/sun4i-a10.dtsi | 36 ++++++++++++++++++++++++++++++++----
- 1 file changed, 32 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun4i-a10.dtsi b/arch/arm/boot/dts/sun4i-a10.dtsi
-index aa90f319309b..849d0242ece8 100644
---- a/arch/arm/boot/dts/sun4i-a10.dtsi
-+++ b/arch/arm/boot/dts/sun4i-a10.dtsi
-@@ -66,7 +66,7 @@
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "de_be0-lcd0-hdmi";
- 			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 43>,
--				 <&ahb_gates 44>;
-+				 <&ahb_gates 44>, <&dram_gates 26>;
- 			status = "disabled";
- 		};
+Changes in v2: None
+
+ drivers/clk/clk.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index e6e10f5..4ad0a36 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1677,13 +1677,6 @@ static struct clk_core *__clk_init_parent(struct clk_core *core)
+ 		goto out;
+ 	}
  
-@@ -75,7 +75,8 @@
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "de_fe0-de_be0-lcd0-hdmi";
- 			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 43>,
--				 <&ahb_gates 44>, <&ahb_gates 46>;
-+				 <&ahb_gates 44>, <&ahb_gates 46>,
-+				 <&dram_gates 25>, <&dram_gates 26>;
- 			status = "disabled";
- 		};
+-	if (!core->ops->get_parent) {
+-		WARN(!core->ops->get_parent,
+-			"%s: multi-parent clocks must implement .get_parent\n",
+-			__func__);
+-		goto out;
+-	}
+-
+ 	/*
+ 	 * Do our best to cache parent clocks in core->parents.  This prevents
+ 	 * unnecessary and expensive lookups.  We don't set core->parent here;
+@@ -2315,6 +2308,11 @@ static int __clk_core_init(struct clk_core *core)
+ 		goto out;
+ 	}
  
-@@ -84,7 +85,8 @@
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "de_fe0-de_be0-lcd0";
- 			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 44>,
--				 <&ahb_gates 46>;
-+				 <&ahb_gates 46>, <&dram_gates 25>,
-+				 <&dram_gates 26>;
- 			status = "disabled";
- 		};
- 
-@@ -93,7 +95,8 @@
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "de_fe0-de_be0-lcd0-tve0";
- 			clocks = <&pll5 1>, <&ahb_gates 34>, <&ahb_gates 36>,
--				 <&ahb_gates 44>, <&ahb_gates 46>;
-+				 <&ahb_gates 44>, <&ahb_gates 46>,
-+				 <&dram_gates 25>, <&dram_gates 26>;
- 			status = "disabled";
- 		};
- 	};
-@@ -492,6 +495,31 @@
- 			clock-output-names = "spi3";
- 		};
- 
-+		dram_gates: clk@01c20100 {
-+			#clock-cells = <1>;
-+			compatible = "allwinner,sun4i-a10-dram-gates-clk";
-+			reg = <0x01c20100 0x4>;
-+			clocks = <&pll5 0>;
-+			clock-indices = <0>,
-+					<1>, <2>,
-+					<3>,
-+					<4>,
-+					<5>, <6>,
-+					<15>,
-+					<24>, <25>,
-+					<26>, <27>,
-+					<28>, <29>;
-+			clock-output-names = "dram_ve",
-+					     "dram_csi0", "dram_csi1",
-+					     "dram_ts",
-+					     "dram_tvd",
-+					     "dram_tve0", "dram_tve1",
-+					     "dram_output",
-+					     "dram_de_fe1", "dram_de_fe0",
-+					     "dram_de_be0", "dram_de_be1",
-+					     "dram_de_mp", "dram_ace";
-+		};
++	if (core->num_parents > 1 && !core->ops->get_parent) {
++		pr_err("%s: %s must implement .get_parent as it has multi parents\n",
++		       __func__, core->name);
++	}
 +
- 		codec_clk: clk@01c20140 {
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-codec-clk";
+ 	if (core->ops->set_rate_and_parent &&
+ 			!(core->ops->set_parent && core->ops->set_rate)) {
+ 		pr_err("%s: %s must implement .set_parent & .set_rate\n",
 -- 
-2.6.2
+1.9.1
