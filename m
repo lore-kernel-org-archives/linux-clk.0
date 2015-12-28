@@ -1,70 +1,57 @@
-Return-Path: <robh@kernel.org>
-Date: Mon, 7 Dec 2015 08:39:58 -0600
-From: Rob Herring <robh@kernel.org>
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Russell King <linux@arm.linux.org.uk>,
-	Roland Stigge <stigge@antcom.de>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/5] dt-bindings: clock: add description of LPC32xx
- USB clock controller
-Message-ID: <20151207143958.GA6143@rob-hp-laptop>
-References: <1449398757-16834-1-git-send-email-vz@mleia.com>
- <1449398757-16834-3-git-send-email-vz@mleia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1449398757-16834-3-git-send-email-vz@mleia.com>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH v2 10/16] clk: move checking .git_parent to __clk_core_init()
+Date: Mon, 28 Dec 2015 19:23:04 +0900
+Message-Id: <1451298191-30815-11-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Dec 06, 2015 at 12:45:54PM +0200, Vladimir Zapolskiy wrote:
-> NXP LPC32xx USB controller has a subdevice, which controls USB AHB
-> slave, USB OTG, USB OHCI, USB device and I2C controller to USB phy
-> clocks, this change adds description of the clock controller, for more
-> details reference LPC32xx User's Manual, namely USB control, OTG clock
-> control and OTG clock status registers.
-> 
-> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
-> ---
-> Changes from v1 to v2:
-> - use lowercase hex numbers in a DT binding example
+The .git_parent is mandatory for multi-parent clocks.  Move the check
+to __clk_core_init(), like other callback checkings.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-> 
->  .../bindings/clock/nxp,lpc3220-usb-clk.txt         | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt b/Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt
-> new file mode 100644
-> index 0000000..0aa2494
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt
-> @@ -0,0 +1,22 @@
-> +NXP LPC32xx USB Clock Controller
-> +
-> +Required properties:
-> +- compatible: should be "nxp,lpc3220-usb-clk"
-> +- reg:  should contain clock controller registers location and length
-> +- #clock-cells: must be 1, the cell holds id of a clock provided by the
-> +  USB clock controller
-> +
-> +Examples:
-> +
-> +	usb {
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		compatible = "simple-bus";
-> +		ranges = <0x0 0x31020000 0x00001000>;
-> +
-> +		usbclk: clock-controller@f00 {
-> +			compatible = "nxp,lpc3220-usb-clk";
-> +			reg = <0xf00 0x100>;
-> +			#clock-cells = <1>;
-> +		};
-> +	};
-> -- 
-> 2.1.4
-> 
+Changes in v2: None
+
+ drivers/clk/clk.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index e6e10f5..4ad0a36 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1677,13 +1677,6 @@ static struct clk_core *__clk_init_parent(struct clk_core *core)
+ 		goto out;
+ 	}
+ 
+-	if (!core->ops->get_parent) {
+-		WARN(!core->ops->get_parent,
+-			"%s: multi-parent clocks must implement .get_parent\n",
+-			__func__);
+-		goto out;
+-	}
+-
+ 	/*
+ 	 * Do our best to cache parent clocks in core->parents.  This prevents
+ 	 * unnecessary and expensive lookups.  We don't set core->parent here;
+@@ -2315,6 +2308,11 @@ static int __clk_core_init(struct clk_core *core)
+ 		goto out;
+ 	}
+ 
++	if (core->num_parents > 1 && !core->ops->get_parent) {
++		pr_err("%s: %s must implement .get_parent as it has multi parents\n",
++		       __func__, core->name);
++	}
++
+ 	if (core->ops->set_rate_and_parent &&
+ 			!(core->ops->set_parent && core->ops->set_rate)) {
+ 		pr_err("%s: %s must implement .set_parent & .set_rate\n",
+-- 
+1.9.1
