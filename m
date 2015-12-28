@@ -1,74 +1,65 @@
-Return-Path: <robh@kernel.org>
-Date: Fri, 4 Dec 2015 08:49:35 -0600
-From: Rob Herring <robh@kernel.org>
-To: Carlo Caione <carlo@caione.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux@arm.linux.org.uk, linux-meson@googlegroups.com,
-	drake@endlessm.com, jerry.cao@amlogic.com, victor.wan@amlogic.com,
-	pawel.moll@arm.com, arnd@arndb.de,
-	Carlo Caione <carlo@endlessm.com>
-Subject: Re: [PATCH v2 2/7] dt-bindings: Amlogic: Document the CPU reset
- controller for Meson8b
-Message-ID: <20151204144935.GA17537@rob-hp-laptop>
-References: <1449076953-5058-1-git-send-email-carlo@caione.org>
- <1449076953-5058-3-git-send-email-carlo@caione.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1449076953-5058-3-git-send-email-carlo@caione.org>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-mtd@lists.infradead.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 05/16] clk: change sizeof(struct clk *) to sizeof(*core->parents)
+Date: Mon, 28 Dec 2015 19:10:18 +0900
+Message-Id: <1451297429-21689-6-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Dec 02, 2015 at 06:22:28PM +0100, Carlo Caione wrote:
-> From: Carlo Caione <carlo@endlessm.com>
-> 
-> The clock controller on Amlogic Meson8b SoCs has been extended with a
-> reset controller used to reset the CPU cores. It is used during SMP
-> bringup.
-> 
-> With this patch we extend the clock controller documentation.
-> 
-> Signed-off-by: Carlo Caione <carlo@endlessm.com>
+Now, the clock parent is not "struct clk *", but "struct clk_core *".
+Of course, the size of a pointer is always same, but strictly speaking,
+sizeof(struct clk *) should be sizeof(struct clk_core *) here.
 
-Acked-by: Rob Herring <robh@kernel.org>
+This mismatch happened when we split the structure into struct clk
+and struct clk_core.  For the potential possibility of future renaming,
+sizeof(*core->parents) would be better.
 
-> ---
->  Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-> index 2b7b3fa..feeb4de 100644
-> --- a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-> @@ -1,7 +1,8 @@
->  * Amlogic Meson8b Clock and Reset Unit
->  
->  The Amlogic Meson8b clock controller generates and supplies clock to various
-> -controllers within the SoC.
-> +controllers within the SoC and also implements a reset controller for the CPU
-> +cores.
->  
->  Required Properties:
->  
-> @@ -13,16 +14,19 @@ Required Properties:
->  	   mapped region.
->  
->  - #clock-cells: should be 1.
-> +- #reset-cells: should be 1.
->  
->  Each clock is assigned an identifier and client nodes can use this identifier
->  to specify the clock which they consume. All available clocks are defined as
->  preprocessor macros in the dt-bindings/clock/meson8b-clkc.h header and can be
->  used in device tree sources.
-> +Similar identifiers exist for the CPU core reset lines.
->  
->  Example: Clock controller node:
->  
->  	clkc: clock-controller@c1104000 {
->  		#clock-cells = <1>;
-> +		#reset-cells = <1>;
->  		compatible = "amlogic,meson8b-clkc";
->  		reg = <0xc1108000 0x4>, <0xc1104000 0x460>;
->  	};
-> -- 
-> 2.5.0
-> 
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+Changes in v2: None
+
+ drivers/clk/clk.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 30c0bbc..98745c3 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1069,7 +1069,7 @@ static int clk_fetch_parent_index(struct clk_core *core,
+ 
+ 	if (!core->parents) {
+ 		core->parents = kcalloc(core->num_parents,
+-					sizeof(struct clk *), GFP_KERNEL);
++					sizeof(*core->parents), GFP_KERNEL);
+ 		if (!core->parents)
+ 			return -ENOMEM;
+ 	}
+@@ -1702,7 +1702,7 @@ static struct clk_core *__clk_init_parent(struct clk_core *core)
+ 
+ 	if (!core->parents)
+ 		core->parents =
+-			kcalloc(core->num_parents, sizeof(struct clk *),
++			kcalloc(core->num_parents, sizeof(*core->parents),
+ 					GFP_KERNEL);
+ 
+ 	ret = clk_core_get_parent_by_index(core, index);
+@@ -2350,8 +2350,8 @@ static int __clk_core_init(struct clk_core *core)
+ 	 * necessary.
+ 	 */
+ 	if (core->num_parents > 1) {
+-		core->parents = kcalloc(core->num_parents, sizeof(struct clk *),
+-					GFP_KERNEL);
++		core->parents = kcalloc(core->num_parents,
++					sizeof(*core->parents), GFP_KERNEL);
+ 		/*
+ 		 * clk_core_lookup returns NULL for parents that have not been
+ 		 * clk_init'd; thus any access to clk->parents[] must check
+-- 
+1.9.1
