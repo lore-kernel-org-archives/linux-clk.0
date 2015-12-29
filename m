@@ -1,67 +1,91 @@
-Return-Path: <linux-kernel-dev@beckhoff.com>
-From: <linux-kernel-dev@beckhoff.com>
-To: <shawnguo@kernel.org>, <kernel@pengutronix.de>
-CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, =?UTF-8?q?Patrick=20Br=C3=BCnn?=
-	<p.bruenn@beckhoff.com>
-Subject: [PATCH v2] clk: imx5: ipu_di_sel clocks can set parent rates
-Date: Wed, 2 Dec 2015 10:16:37 +0100
-Message-ID: <1449047797-4300-1-git-send-email-linux-kernel-dev@beckhoff.com>
+Return-Path: <robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-Path: linux-kernel-dev@beckhoff.com
+In-Reply-To: <20151228223935.25842.28675@quark.deferred.io>
+References: <1450222559-22461-1-git-send-email-eric@anholt.net>
+ <20151219041935.GS14936@rob-hp-laptop> <CAEG3pNCOO1F8+nwOQGSjUKxYCGbWW_Ripc6xUwDyg6ay66uL7w@mail.gmail.com>
+ <87wps3qulw.fsf@eliezer.anholt.net> <20151228223935.25842.28675@quark.deferred.io>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 29 Dec 2015 16:15:09 -0600
+Message-ID: <CAL_JsqLu7=66jEuaezesEuoPsBBhRAT0UQcLVNOLVwkEvQacRA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] clk: bcm2835: Add bindings for the auxiliary
+ peripheral clock gates.
+To: Michael Turquette <mturquette@baylibre.com>, Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>
+Cc: Eric Anholt <eric@anholt.net>, linux-clk <linux-clk@vger.kernel.org>,
+	"Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>, linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>, linux-rpi-kernel@lists.infradead.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Patrick Br=C3=BCnn <p.bruenn@beckhoff.com>
++Arnd and Olof
 
-To obtain exact pixel clocks, allow the DI clock selectors to influence
-the PLLs that they are derived from.
+On Mon, Dec 28, 2015 at 4:39 PM, Michael Turquette
+<mturquette@baylibre.com> wrote:
+> Quoting Eric Anholt (2015-12-24 15:45:15)
+>> Michael Turquette <mturquette@baylibre.com> writes:
+>>
+>> > On Fri, Dec 18, 2015 at 8:19 PM, Rob Herring <robh@kernel.org> wrote:
+>> >> On Tue, Dec 15, 2015 at 03:35:57PM -0800, Eric Anholt wrote:
+>> >>> These will be used for enabling UART1, SPI1, and SPI2.
+>> >>>
+>> >>> Signed-off-by: Eric Anholt <eric@anholt.net>
+>> >>> ---
+>> >>>
+>> >>> v2: Make the binding cover both the IRQ and clock enable registers.
+>> >>>
+>> >>>  .../bindings/clock/brcm,bcm2835-aux-clock.txt      | 31 ++++++++++++++++++++++
+>> >>>  include/dt-bindings/clock/bcm2835-aux.h            | 17 ++++++++++++
+>> >>>  2 files changed, 48 insertions(+)
+>> >>>  create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm2835-aux-clock.txt
+>> >>>  create mode 100644 include/dt-bindings/clock/bcm2835-aux.h
+>> >>
+>> >> Acked-by: Rob Herring <robh@kernel.org>
+>> >
+>> > Applied to clk-next.
+>> >
+>> > Next time if you put the header into the clk driver patch then we can
+>> > send the binding description through the DT tree and take the header
+>> > and C file through the clk tree in one patch.
+>>
+>> I would *love* to do that, but I've previously been told that having the
+>> bindings patch reference a header file not present as of the bindings
+>> patch is not acceptable and made to change it.
+>
+> Ugh, that is annoying. I would think that having code compile properly
+> would trump the desire to have all of the documentation merged as one
+> patch.
 
-Commit 4591b13289b5 ("ARM: i.MX6: ipu_di_sel clocks can set parent
-rates") did this for i.MX6.
-Port it to enable high display resolutions on i.MX53 based platforms
-such as CX9020 Embedded PC, too.
+What about compiling the dts?
 
-Signed-off-by: Patrick Br=C3=BCnn <p.bruenn@beckhoff.com>
----
-v2: add clk maintainers to CC and fix commit message format
+> On the other hand, I've been asked to not take binding descriptions
+> through the clk tree. That is a policy that I'm happy to comply with,
+> but it is at odds with the recommendation for the header and the binding
+> description to be merged together.
 
- drivers/clk/imx/clk-imx51-imx53.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+By who? Any bindings in a series I always expect the subsystem
+maintainers to take the whole series. That doesn't solve the problem
+though as there is still a dependency between a subsystem tree and
+arm-soc typically.
 
-diff --git a/drivers/clk/imx/clk-imx51-imx53.c b/drivers/clk/imx/clk-imx51-=
-imx53.c
-index c677034..29d4c44 100644
---- a/drivers/clk/imx/clk-imx51-imx53.c
-+++ b/drivers/clk/imx/clk-imx51-imx53.c
-@@ -519,10 +519,10 @@ static void __init mx53_clocks_init(struct device_nod=
-e *np)
- 						mx53_ldb_di0_sel, ARRAY_SIZE(mx53_ldb_di0_sel), CLK_SET_RATE_PARENT)=
-;
- 	clk[IMX5_CLK_LDB_DI0_GATE]	=3D imx_clk_gate2("ldb_di0_gate", "ldb_di0_div=
-", MXC_CCM_CCGR6, 28);
- 	clk[IMX5_CLK_LDB_DI1_GATE]	=3D imx_clk_gate2("ldb_di1_gate", "ldb_di1_div=
-", MXC_CCM_CCGR6, 30);
--	clk[IMX5_CLK_IPU_DI0_SEL]	=3D imx_clk_mux("ipu_di0_sel", MXC_CCM_CSCMR2, =
-26, 3,
--						mx53_ipu_di0_sel, ARRAY_SIZE(mx53_ipu_di0_sel));
--	clk[IMX5_CLK_IPU_DI1_SEL]	=3D imx_clk_mux("ipu_di1_sel", MXC_CCM_CSCMR2, =
-29, 3,
--						mx53_ipu_di1_sel, ARRAY_SIZE(mx53_ipu_di1_sel));
-+	clk[IMX5_CLK_IPU_DI0_SEL]	=3D imx_clk_mux_flags("ipu_di0_sel", MXC_CCM_CS=
-CMR2, 26, 3,
-+						mx53_ipu_di0_sel, ARRAY_SIZE(mx53_ipu_di0_sel), CLK_SET_RATE_PARENT)=
-;
-+	clk[IMX5_CLK_IPU_DI1_SEL]	=3D imx_clk_mux_flags("ipu_di1_sel", MXC_CCM_CS=
-CMR2, 29, 3,
-+						mx53_ipu_di1_sel, ARRAY_SIZE(mx53_ipu_di1_sel), CLK_SET_RATE_PARENT)=
-;
- 	clk[IMX5_CLK_TVE_EXT_SEL]	=3D imx_clk_mux_flags("tve_ext_sel", MXC_CCM_CS=
-CMR1, 6, 1,
- 						mx53_tve_ext_sel, ARRAY_SIZE(mx53_tve_ext_sel), CLK_SET_RATE_PARENT)=
-;
- 	clk[IMX5_CLK_TVE_GATE]		=3D imx_clk_gate2("tve_gate", "tve_pred", MXC_CCM=
-_CCGR2, 30);
---=20
-1.9.1
+> DT folks, what is the right way to do this? An immutable, shared branch
+> just for a single header file solves the problem, but also feels very
+> cumbersome for such a trivial issue.
+
+Arnd and Olof have been complaining about this problem which is worse
+when it is a binding, driver and dts.
+
+I'm open to maintaining a branch for this purpose if that helps. That
+or staggering merging of bindings and drivers/dts are the only ideas
+I've come up with.
+
+> How about allowing binding descriptions to be merged without the header
+> file, so long as it is merged through another tree?
+
+I think that is wrong if we have the goal to separate bindings from
+the kernel and the bindings should stand on their own. However, if it
+greatly simplifies things, i'd be okay with that.
+
+Rob
