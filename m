@@ -1,86 +1,82 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org,
-	agross@codeaurora.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	bjorn.andersson@sonymobile.com,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v5 0/6] Add initial support for RPM clocks
-Date: Thu,  3 Dec 2015 16:02:50 +0200
-Message-Id: <1449151376-25930-1-git-send-email-georgi.djakov@linaro.org>
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Rob Herring <robh@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Olof Johansson <olof@lixom.net>, Eric Anholt <eric@anholt.net>, linux-clk <linux-clk@vger.kernel.org>, "Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>, linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>, linux-rpi-kernel@lists.infradead.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2 1/3] clk: bcm2835: Add bindings for the auxiliary peripheral clock gates.
+Date: Wed, 30 Dec 2015 10:29:02 +0100
+Message-ID: <1477432.fTm0GUZ57A@wuerfel>
+In-Reply-To: <CAL_JsqLu7=66jEuaezesEuoPsBBhRAT0UQcLVNOLVwkEvQacRA@mail.gmail.com>
+References: <1450222559-22461-1-git-send-email-eric@anholt.net> <20151228223935.25842.28675@quark.deferred.io> <CAL_JsqLu7=66jEuaezesEuoPsBBhRAT0UQcLVNOLVwkEvQacRA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset adds initial support for the clocks controlled by
-the RPM (Resource Power Manager) processor on Qualcomm platforms.
+On Tuesday 29 December 2015 16:15:09 Rob Herring wrote:
+> On Mon, Dec 28, 2015 at 4:39 PM, Michael Turquette
+> <mturquette@baylibre.com> wrote:
+> > Quoting Eric Anholt (2015-12-24 15:45:15)
+> >> Michael Turquette <mturquette@baylibre.com> writes:
+> >> I would *love* to do that, but I've previously been told that having the
+> >> bindings patch reference a header file not present as of the bindings
+> >> patch is not acceptable and made to change it.
+> >
+> > Ugh, that is annoying. I would think that having code compile properly
+> > would trump the desire to have all of the documentation merged as one
+> > patch.
+> 
+> What about compiling the dts?
+> 
+> > On the other hand, I've been asked to not take binding descriptions
+> > through the clk tree. That is a policy that I'm happy to comply with,
+> > but it is at odds with the recommendation for the header and the binding
+> > description to be merged together.
+> 
+> By who? Any bindings in a series I always expect the subsystem
+> maintainers to take the whole series. That doesn't solve the problem
+> though as there is still a dependency between a subsystem tree and
+> arm-soc typically.
 
-The RPM is a dedicated hardware engine for managing the shared
-SoC resources in order to keep the lowest power profile. It
-communicates with other hardware subsystems via shared memory
-and accepts clock requests, aggregates the requests and turns
-the clocks on/off or scales them on demand.
+I don't care too much which tree the binding description goes through either,
+as long as it is kept in sync.
 
-Until now the RPM clock controller was not supported and a hard-
-coded fixed-rate clocks were registered in the drivers. Now we
-are moving the on-board clocks to the DT (where they actually
-belong). If the RPM clock controller is enabled we insert it
-right after the DT clocks making it a parent of some GCC clocks.
-
-The DT patches should go through the soc/qcom tree. This also
-depends on smem, smd and rpm drivers.
-
-Changes since v4 (https://lkml.org/lkml/2015/11/19/309)
-* Re-organize code into two separate drivers:
-  - clk-smd-rpm for RPM over SMD based clocks like msm8916
-  - clk-rpm for RPM based clocks like apq8064
-* Drop the patches that are already merged.
-* Added the extra compatible string to docs and example.
-
-Changes since v3 (https://lkml.org/lkml/2015/10/20/613)
-* Drop some of the patches as now we handle both scenarios -
-  RPMCC enabled or disabled.
-* Addressed more comments from Stephen. Thanks again!
-
-Changes since v2 (https://lkml.org/lkml/2015/8/3/513)
-* Addressed various comments from Stephen. Thanks!
-* Added sleep sets support.
-* Added a mutex in the RPM driver.
-* Support both scenarios - RPMCC enabled or disabled.
-* Make RPMCC more generic in order to support other SMD RPM
-  based platforms.
-
-Changes since v1 (https://lkml.org/lkml/2015/7/9/257):
-* Changed the driver name to clk-smd-rpm, also build it only
-  when it is needed - suggested by Srini and Bjorn.
-* More detailed binding example.
-* Minor changes.
+> > DT folks, what is the right way to do this? An immutable, shared branch
+> > just for a single header file solves the problem, but also feels very
+> > cumbersome for such a trivial issue.
+> 
+> Arnd and Olof have been complaining about this problem which is worse
+> when it is a binding, driver and dts.
+> 
+> I'm open to maintaining a branch for this purpose if that helps. That
+> or staggering merging of bindings and drivers/dts are the only ideas
+> I've come up with.
 
 
-Georgi Djakov (6):
-  clk: qcom: Add support for SMD-RPM Clocks
-  arm64: dts: qcom: msm8916: Add fixed rate on-board oscillators
-  arm64: dts: qcom: msm8916: Add RPMCC DT node
-  clk: qcom: Add support for RPM Clocks
-  arm: dts: qcom: apq8064: Add fixed rate on-board oscillators
-  arm: dts: qcom: apq8064: Add RPMCC DT node
+> > How about allowing binding descriptions to be merged without the header
+> > file, so long as it is merged through another tree?
+> 
+> I think that is wrong if we have the goal to separate bindings from
+> the kernel and the bindings should stand on their own. However, if it
+> greatly simplifies things, i'd be okay with that.
 
- .../devicetree/bindings/clock/qcom,rpmcc.txt       |   37 ++
- arch/arm/boot/dts/qcom-apq8064.dtsi                |   25 ++
- arch/arm64/boot/dts/qcom/msm8916.dtsi              |   20 +
- drivers/clk/qcom/Kconfig                           |   19 +
- drivers/clk/qcom/Makefile                          |    2 +
- drivers/clk/qcom/clk-rpm.c                         |  290 +++++++++++++
- drivers/clk/qcom/clk-rpm.h                         |   71 ++++
- drivers/clk/qcom/clk-smd-rpm.c                     |  433 ++++++++++++++++++++
- drivers/clk/qcom/clk-smd-rpm.h                     |  142 +++++++
- include/dt-bindings/clock/qcom,rpmcc.h             |   45 ++
- 10 files changed, 1084 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
- create mode 100644 drivers/clk/qcom/clk-rpm.c
- create mode 100644 drivers/clk/qcom/clk-rpm.h
- create mode 100644 drivers/clk/qcom/clk-smd-rpm.c
- create mode 100644 drivers/clk/qcom/clk-smd-rpm.h
- create mode 100644 include/dt-bindings/clock/qcom,rpmcc.h
+The header file is really the main issue we need to worry about. My preferred
+way of doing this would be to give it an extra merge window: add the binding
+document and the header file in one merge window, and then add the dts files
+and the driver one release later. I've seen a lot of header files added for
+no good reason at all, and at least that way we can get people to think about
+the dependency more.
+
+It's also ok to merge the header file and binding with either the dts file
+changes or the driver and then do the other part the following release.
+
+In the past, we've worked around the issue by merging the driver through
+arm-soc, or by merging the dts changes through a driver tree, with the
+appropriate Acks in each case. Both of those approaches work of course,
+but the former always feels awkward to me as we are not using the right
+maintainer path, and the latter approach tends to cause merge conflicts,
+especially when multiple headers for different subsystems get added or
+the dts files are added at the same time.
+
+Having a shared branch for the header file is another way to do it, and
+we can do that in some cases, but I'd prefer not to make it the default.
+
+	Arnd
