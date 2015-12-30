@@ -1,95 +1,83 @@
-Return-Path: <tony@atomide.com>
-Date: Mon, 21 Dec 2015 15:55:12 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Brian Hutchinson <b.hutchman@gmail.com>,
-	Delio Brignoli <dbrignoli@audioscience.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Matthijs van Duin <matthijsvanduin@gmail.com>,
-	Philipp Rosenberger <ilu@linutronix.de>,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH v3] clk: ti: Add support for dm814x ADPLL
-Message-ID: <20151221235512.GE2793@atomide.com>
-References: <1450213344-31369-1-git-send-email-tony@atomide.com>
+Return-Path: <jamesjj.liao@mediatek.com>
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+CC: Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
+	<srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>, James Liao
+	<jamesjj.liao@mediatek.com>, Shunli Wang <shunli.wang@mediatek.com>
+Subject: [PATCH 1/5] clk: mediatek: Refine the makefile to support multiple clock drivers
+Date: Wed, 30 Dec 2015 14:27:41 +0800
+Message-ID: <1451456865-44139-2-git-send-email-jamesjj.liao@mediatek.com>
+In-Reply-To: <1451456865-44139-1-git-send-email-jamesjj.liao@mediatek.com>
+References: <1451456865-44139-1-git-send-email-jamesjj.liao@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1450213344-31369-1-git-send-email-tony@atomide.com>
+Content-Type: text/plain
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tony Lindgren <tony@atomide.com> [151215 13:02]:
-> On dm814x we have 13 ADPLLs with 3 to 4 outputs on each. The
-> ADPLLs have several dividers and muxes controlled by a shared
-> control register for each PLL.
-> 
-> Note that for the clocks to work as device drivers for booting on
-> dm814x, this patch depends on "ARM: OMAP2+: Change core_initcall
-> levels to postcore_initcall".
-> 
-> Also note that this patch does not implement clk_set_rate for the
-> PLL, that will be posted later on when available.
-> 
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Tero Kristo <t-kristo@ti.com>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> ---
-> Changes from v2 to v3 are listed below, hopefully I addressed everybody's
-> comments,please check and let me know if I missed something.
+Add a Kconfig to define clock configuration for each SoC, and
+modify the Makefile to build drivers that only selected in config.
 
-Everybody OK with this version as no more comments?
+Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+---
+ drivers/clk/Kconfig           |  1 +
+ drivers/clk/mediatek/Kconfig  | 23 +++++++++++++++++++++++
+ drivers/clk/mediatek/Makefile |  6 +++---
+ 3 files changed, 27 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/clk/mediatek/Kconfig
 
-I found a few issues that are worth merging while testing:
-
-- We want to create the clkdev entry for all clocks, not just outputs
-- ti_adpll_wait_lock loops did not do the right thing
-- We want to use CLK_GET_RATE_NOCACHE in ti_adpll_init_dco
-
-Diff against v3 below for reference, will also send out v4 separately.
-
-Regards,
-
-Tony
-
-8< ---------------------
---- a/drivers/clk/ti/adpll.c
-+++ b/drivers/clk/ti/adpll.c
-@@ -228,9 +228,6 @@ static int ti_adpll_setup_clock(struct ti_adpll_data *d, struct clk *clock,
- 	d->clocks[index].clk = clock;
- 	d->clocks[index].unregister = unregister;
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index c3e3a02..b7a37dc 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -198,3 +198,4 @@ source "drivers/clk/mvebu/Kconfig"
  
--	if (output_index < 0)
--		return 0;
--
- 	/* Separate con_id in format "pll040dcoclkldo" to fit MAX_CON_ID */
- 	postfix = strrchr(name, '.');
- 	if (strlen(postfix) > 1) {
-@@ -246,6 +243,9 @@ static int ti_adpll_setup_clock(struct ti_adpll_data *d, struct clk *clock,
- 		dev_warn(d->dev, "no con_id for clock %s\n", name);
- 	}
- 
-+	if (output_index < 0)
-+		return 0;
+ source "drivers/clk/samsung/Kconfig"
+ source "drivers/clk/tegra/Kconfig"
++source "drivers/clk/mediatek/Kconfig"
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+new file mode 100644
+index 0000000..dc224e6
+--- /dev/null
++++ b/drivers/clk/mediatek/Kconfig
+@@ -0,0 +1,23 @@
++#
++# MediaTek SoC drivers
++#
++config COMMON_CLK_MEDIATEK
++	bool
++	---help---
++	  Mediatek SoCs' clock support.
 +
- 	d->outputs.clks[output_index] = clock;
- 	d->outputs.clk_num++;
- 
-@@ -418,7 +418,7 @@ static int ti_adpll_wait_lock(struct ti_adpll_data *d)
- 		if (ti_adpll_is_locked(d))
- 			return 0;
- 		usleep_range(200, 300);
--	} while (retries-- <= 0);
-+	} while (retries--);
- 
- 	dev_err(d->dev, "pll failed to lock\n");
- 	return -ETIMEDOUT;
-@@ -527,6 +527,7 @@ static int ti_adpll_init_dco(struct ti_adpll_data *d)
- 	init.parent_names = d->parent_names;
- 	init.num_parents = d->c->nr_max_inputs;
- 	init.ops = &ti_adpll_ops;
-+	init.flags = CLK_GET_RATE_NOCACHE;
- 	d->dco.hw.init = &init;
- 
- 	if (d->c->is_type_s)
++config COMMON_CLK_MT8135
++	bool "Clock driver for Mediatek MT8135"
++	depends on COMMON_CLK
++	select COMMON_CLK_MEDIATEK
++	default ARCH_MEDIATEK
++	---help---
++	  This driver supports Mediatek MT8135 clocks.
++
++config COMMON_CLK_MT8173
++	bool "Clock driver for Mediatek MT8173"
++	depends on COMMON_CLK
++	select COMMON_CLK_MEDIATEK
++	default ARCH_MEDIATEK
++	---help---
++	  This driver supports Mediatek MT8173 clocks.
+diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+index 95fdfac..32e7222 100644
+--- a/drivers/clk/mediatek/Makefile
++++ b/drivers/clk/mediatek/Makefile
+@@ -1,4 +1,4 @@
+-obj-y += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
++obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
+ obj-$(CONFIG_RESET_CONTROLLER) += reset.o
+-obj-y += clk-mt8135.o
+-obj-y += clk-mt8173.o
++obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135.o
++obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173.o
+-- 
+1.9.1
