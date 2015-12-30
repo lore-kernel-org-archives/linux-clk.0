@@ -1,30 +1,55 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Caesar Wang <wxt@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, leozwang@google.com, keescook@google.com, leecam@google.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Yakir Yang <ykk@rock-chips.com>
-Subject: Re: [PATCH 2/5] clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for aclk_vio
-Date: Wed, 16 Dec 2015 22:24:50 +0100
-Message-ID: <1859046.avFUcYTcgb@diego>
-In-Reply-To: <1450254441-3243-3-git-send-email-wxt@rock-chips.com>
-References: <1450254441-3243-1-git-send-email-wxt@rock-chips.com> <1450254441-3243-3-git-send-email-wxt@rock-chips.com>
+Return-Path: <jamesjj.liao@mediatek.com>
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+CC: Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
+	<srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>, Shunli
+ Wang <shunli.wang@mediatek.com>
+Subject: [PATCH 5/5] reset: mediatek: mt2701 reset driver
+Date: Wed, 30 Dec 2015 14:27:45 +0800
+Message-ID: <1451456865-44139-6-git-send-email-jamesjj.liao@mediatek.com>
+In-Reply-To: <1451456865-44139-1-git-send-email-jamesjj.liao@mediatek.com>
+References: <1451456865-44139-1-git-send-email-jamesjj.liao@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Mittwoch, 16. Dezember 2015, 16:27:18 schrieb Caesar Wang:
-> From: Yakir Yang <ykk@rock-chips.com>
-> 
-> ACLK_VIO is the noc bus clock for display module, display cann't
-> read data from ddr without this clock enabled.
-> 
-> Due to it shouldn't belong to any driver, but we need it enabled,
-> so just mark it as the CLK_IGNORE_UNUSED flag.
-> 
-> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-> Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+From: Shunli Wang <shunli.wang@mediatek.com>
 
-applied to my clk-branch for 4.5
+In infrasys and perifsys, there are many reset
+control bits for kinds of modules. These bits are
+used as actual reset controllers to be registered
+into kernel's generic reset controller framework.
 
+Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+---
+ drivers/clk/mediatek/clk-mt2701.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Thanks
-Heiko
+diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
+index 2acc8c3..802ab5c 100644
+--- a/drivers/clk/mediatek/clk-mt2701.c
++++ b/drivers/clk/mediatek/clk-mt2701.c
+@@ -666,6 +666,8 @@ static void __init mtk_infrasys_init(struct device_node *node)
+ 	if (r)
+ 		pr_err("%s(): could not register clock provider: %d\n",
+ 			__func__, r);
++
++	mtk_register_reset_controller(node, 2, 0x30);
+ }
+ CLK_OF_DECLARE(mtk_infrasys, "mediatek,mt2701-infracfg", mtk_infrasys_init);
+ 
+@@ -783,6 +785,8 @@ static void __init mtk_pericfg_init(struct device_node *node)
+ 	if (r)
+ 		pr_err("%s(): could not register clock provider: %d\n",
+ 			__func__, r);
++
++	mtk_register_reset_controller(node, 2, 0x0);
+ }
+ CLK_OF_DECLARE(mtk_pericfg, "mediatek,mt2701-pericfg", mtk_pericfg_init);
+ 
+-- 
+1.9.1
