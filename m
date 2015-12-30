@@ -1,35 +1,49 @@
-Return-Path: <tony@atomide.com>
-Date: Wed, 16 Dec 2015 09:16:50 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv2] clk: ti: omap5+: dpll: implement errata i810
-Message-ID: <20151216171650.GS23396@atomide.com>
-References: <1450256530-10251-1-git-send-email-t-kristo@ti.com>
+Return-Path: <jamesjj.liao@mediatek.com>
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+CC: Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
+	<srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH 0/5] Add clock support for Mediatek MT2701 
+Date: Wed, 30 Dec 2015 14:27:40 +0800
+Message-ID: <1451456865-44139-1-git-send-email-jamesjj.liao@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1450256530-10251-1-git-send-email-t-kristo@ti.com>
+Content-Type: text/plain
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [151216 01:00]:
-> Errata i810 states that DPLL controller can get stuck while transitioning
-> to a power saving state, while its M/N ratio is being re-programmed.
-> 
-> As a workaround, before re-programming the M/N ratio, SW has to ensure
-> the DPLL cannot start an idle state transition. SW can disable DPLL
-> idling by setting the DPLL AUTO_DPLL_MODE=0 or keeping a clock request
-> active by setting a dependent clock domain in SW_WKUP.
-> 
-> This errata is known to impact OMAP5 and DRA7 chips, but lets enable it
-> unconditionally to avoid any potential problems with earlier generation
-> SoCs also.
-> 
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> ---
-> v2: made the fix to be applied unconditionally on all OMAP3+ SoCs
+This patchset is based on 4.4-rc7, add clock and reset controller support
+for Mediatek MT2701.
 
-Thanks looks good to me now:
+This patchset also refined makefile and Kconfig to support configurable
+multiple SoC clock support.
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+James Liao (1):
+  clk: mediatek: Refine the makefile to support multiple clock drivers
+
+Shunli Wang (4):
+  clk: mediatek: Add dt-bindings for MT2701 clocks
+  clk: mediatek: Add MT2701 clock support
+  reset: mediatek: mt2701 reset controller dt-binding file
+  reset: mediatek: mt2701 reset driver
+
+ drivers/clk/Kconfig                                |    1 +
+ drivers/clk/mediatek/Kconfig                       |   31 +
+ drivers/clk/mediatek/Makefile                      |    7 +-
+ drivers/clk/mediatek/clk-gate.c                    |   56 +
+ drivers/clk/mediatek/clk-gate.h                    |    2 +
+ drivers/clk/mediatek/clk-mt2701.c                  | 1215 ++++++++++++++++++++
+ drivers/clk/mediatek/clk-mtk.c                     |   25 +
+ drivers/clk/mediatek/clk-mtk.h                     |   35 +-
+ include/dt-bindings/clock/mt2701-clk.h             |  481 ++++++++
+ .../dt-bindings/reset-controller/mt2701-resets.h   |   74 ++
+ 10 files changed, 1921 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/clk/mediatek/Kconfig
+ create mode 100644 drivers/clk/mediatek/clk-mt2701.c
+ create mode 100644 include/dt-bindings/clock/mt2701-clk.h
+ create mode 100644 include/dt-bindings/reset-controller/mt2701-resets.h
+
+--
+1.9.1
