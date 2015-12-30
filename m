@@ -1,294 +1,67 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-Subject: Re: [PATCH v3 7/7] ARM: dts: add dts files for Hi3519
-To: Rob Herring <robh@kernel.org>
-References: <1449819921-18464-1-git-send-email-xuejiancheng@huawei.com>
- <1449819921-18464-8-git-send-email-xuejiancheng@huawei.com>
- <20151211162847.GC21272@rob-hp-laptop>
-CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <pawel.moll@arm.com>,
-        <mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
-        <galak@codeaurora.org>, <linux@arm.linux.org.uk>, <khilman@linaro.org>,
-        <arnd@arndb.de>, <olof@lixom.net>, <xuwei5@hisilicon.com>,
-        <haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-        <bintian.wang@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-        <yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-        <ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
-        <zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>
-From: xuejiancheng <xuejiancheng@huawei.com>
-Message-ID: <566E6301.6090701@huawei.com>
-Date: Mon, 14 Dec 2015 14:34:41 +0800
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20151211162847.GC21272@rob-hp-laptop>
-Content-Type: text/plain; charset="windows-1252"
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+ "Thierry Reding" <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1447664207-24370-15-git-send-email-boris.brezillon@free-electrons.com>
+Cc: "Stephen Boyd" <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ "Mark Brown" <broonie@kernel.org>, "Liam Girdwood" <lgirdwood@gmail.com>,
+ "Kamil Debski" <k.debski@samsung.com>, lm-sensors@lm-sensors.org,
+ "Jean Delvare" <jdelvare@suse.com>, "Guenter Roeck" <linux@roeck-us.net>,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org,
+ "Bryan Wu" <cooloney@gmail.com>, "Richard Purdie" <rpurdie@rpsys.net>,
+ "Jacek Anaszewski" <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org,
+ "Maxime Ripard" <maxime.ripard@free-electrons.com>,
+ "Chen-Yu Tsai" <wens@csie.org>, linux-sunxi@googlegroups.com,
+ "Joachim Eastwood" <manabian@gmail.com>,
+ "Thomas Petazzoni" <thomas.petazzoni@free-electrons.com>,
+ "Heiko Stuebner" <heiko@sntech.de>, linux-rockchip@lists.infradead.org,
+ "Jingoo Han" <jingoohan1@gmail.com>, "Lee Jones" <lee.jones@linaro.org>,
+ linux-fbdev@vger.kernel.org,
+ "Jean-Christophe Plagniol-Villard" <plagnioj@jcrosoft.com>,
+ "Tomi Valkeinen" <tomi.valkeinen@ti.com>,
+ "Robert Jarzmik" <robert.jarzmik@free.fr>,
+ "Alexandre Belloni" <alexandre.belloni@free-electrons.com>,
+ "Julia Lawall" <Julia.Lawall@lip6.fr>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ "Boris Brezillon" <boris.brezillon@free-electrons.com>
+References: <1447664207-24370-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1447664207-24370-15-git-send-email-boris.brezillon@free-electrons.com>
+Message-ID: <20151230210511.19557.73321@quark.deferred.io>
+Subject: Re: [PATCH v4 14/24] clk: pwm: use pwm_get/set_default_xxx() helpers where
+ appropriate
+Date: Wed, 30 Dec 2015 13:05:11 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
+Hi Boris,
 
-On 2015/12/12 0:28, Rob Herring wrote:
-> On Fri, Dec 11, 2015 at 03:45:21PM +0800, Jiancheng Xue wrote:
->> add dts files for Hi3519
->>
->> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
->> ---
->>  arch/arm/boot/dts/Makefile        |   2 +
->>  arch/arm/boot/dts/hi3519-demb.dts |  42 +++++++++++
->>  arch/arm/boot/dts/hi3519.dtsi     | 142 ++++++++++++++++++++++++++++++++++++++
->>  3 files changed, 186 insertions(+)
->>  create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
->>  create mode 100644 arch/arm/boot/dts/hi3519.dtsi
->>
->> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
->> index 30bbc37..1ff3ed9 100644
->> --- a/arch/arm/boot/dts/Makefile
->> +++ b/arch/arm/boot/dts/Makefile
->> @@ -135,6 +135,8 @@ dtb-$(CONFIG_ARCH_EXYNOS5) += \
->>  	exynos5800-peach-pi.dtb
->>  dtb-$(CONFIG_ARCH_HI3xxx) += \
->>  	hi3620-hi4511.dtb
->> +dtb-$(CONFIG_ARCH_HISI) += \
->> +	hi3519-demb.dtb
->>  dtb-$(CONFIG_ARCH_HIX5HD2) += \
->>  	hisi-x5hd2-dkb.dtb
->>  dtb-$(CONFIG_ARCH_HIGHBANK) += \
->> diff --git a/arch/arm/boot/dts/hi3519-demb.dts b/arch/arm/boot/dts/hi3519-demb.dts
->> new file mode 100644
->> index 0000000..6991ab6
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/hi3519-demb.dts
->> @@ -0,0 +1,42 @@
->> +/*
->> + * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
->> + *
->> + * This program is free software; you can redistribute  it and/or modify it
->> + * under  the terms of  the GNU General  Public License as published by the
->> + * Free Software Foundation;  either version 2 of the  License, or (at your
->> + * option) any later version.
->> + *
->> + * This program is distributed in the hope that it will be useful,
->> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
->> + * GNU General Public License for more details.
->> + *
->> + * You should have received a copy of the GNU General Public License
->> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
->> + *
->> + */
->> +
->> +/dts-v1/;
->> +#include "hi3519.dtsi"
->> +
->> +/ {
->> +	model = "HiSilicon HI3519 DEMO Board";
->> +	compatible = "hisilicon,hi3519";
->> +
->> +	aliases {
->> +		serial0 = &uart0;
->> +	};
->> +
->> +	memory {
->> +		device_type = "memory";
->> +		reg = <0x80000000 0x40000000>;
->> +	};
->> +};
->> +
->> +&uart0 {
->> +	status = "okay";
->> +};
->> +
->> +&dual_timer0 {
->> +	status = "okay";
->> +};
->> diff --git a/arch/arm/boot/dts/hi3519.dtsi b/arch/arm/boot/dts/hi3519.dtsi
->> new file mode 100644
->> index 0000000..50b736e
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/hi3519.dtsi
->> @@ -0,0 +1,142 @@
->> +/*
->> + * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
->> + *
->> + * This program is free software; you can redistribute  it and/or modify it
->> + * under  the terms of  the GNU General  Public License as published by the
->> + * Free Software Foundation;  either version 2 of the  License, or (at your
->> + * option) any later version.
->> + *
->> + * This program is distributed in the hope that it will be useful,
->> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
->> + * GNU General Public License for more details.
->> + *
->> + * You should have received a copy of the GNU General Public License
->> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
->> + *
->> + */
->> +
->> +#include "skeleton.dtsi"
-> 
-> Don't include skeleton.dtsi. We've decided it was a bad idea.
+Quoting Boris Brezillon (2015-11-16 00:56:37)
+> pwm_set/get_default_xxx() helpers have been introduced to differentiate
+> the default PWM states (those retrieved through DT, PWM lookup table or
+> statically assigned by the driver) and the current ones.
+> Make use of those helpers where appropriate.
+> =
 
-OK.
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> ---
+>  drivers/clk/clk-pwm.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> =
 
-> 
->> +#include <dt-bindings/clock/hi3519-clock.h>
->> +/ {
->> +	cpus {
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +
->> +		cpu@0 {
-> 
-> Single core system? Add the other cpu nodes if not. Adding them doesn't 
-> have to be in sync with SMP kernel support.
+> diff --git a/drivers/clk/clk-pwm.c b/drivers/clk/clk-pwm.c
+> index b6306a2..642a49a 100644
+> --- a/drivers/clk/clk-pwm.c
+> +++ b/drivers/clk/clk-pwm.c
+> @@ -71,23 +71,23 @@ static int clk_pwm_probe(struct platform_device *pdev)
+>         if (IS_ERR(pwm))
+>                 return PTR_ERR(pwm);
+>  =
 
-Hi3519 includes an A7 core and an A17 core. But it will run in AMP mode.
-The A17 core is reserved for customers for special use. We can treat the
-system as a single core system here.
+> -       if (!pwm_get_period((pwm))) {
+> +       if (!pwm_get_default_period((pwm))) {
 
-> 
->> +			device_type = "cpu";
->> +			compatible = "arm,cortex-a7";
->> +			reg = <0>;
->> +		};
->> +	};
->> +
->> +	gic: interrupt-controller@10300000 {
->> +		compatible = "arm,cortex-a7-gic";
->> +		#interrupt-cells = <3>;
->> +		interrupt-controller;
->> +		reg = <0x10301000 0x1000>, <0x10302000 0x1000>;
->> +	};
->> +
->> +	soc {
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		compatible = "simple-bus";
->> +		interrupt-parent = <&gic>;
->> +		ranges;
-> 
-> Looks like everything is in 0x12xxxxxx range, so you should add actual 
-> translation here if that's the case.
+The change itself looks fine, but the semantic patch added extra parens.
+Can you remove them? After doing so feel free to add:
 
-Other device nodes will be added later which are not in 0x12xxxxxx range.
-
-> 
->> +
->> +		amba {
-> 
-> Is this actually a separate bus in the physical design of the chip?
-> 
->> +			#address-cells = <1>;
->> +			#size-cells = <1>;
->> +			compatible = "arm,amba-bus";
-> 
-> Just simple-bus. "arm,amba-bus" is not any type of bus, nor is it 
-> documented.
-
-OK. I will modify this. Thank you!
-
-> 
->> +			ranges;
->> +
->> +			uart0: serial@12100000 {
->> +				compatible = "arm,pl011", "arm,primecell";
->> +				reg = <0x12100000 0x1000>;
->> +				interrupts = <0 4 4>;
->> +				clocks = <&crg HI3519_UART0_CLK>;
->> +				clock-names = "apb_pclk";
->> +				status = "disable";
->> +			};
->> +
->> +			uart1: serial@12101000 {
->> +				compatible = "arm,pl011", "arm,primecell";
->> +				reg = <0x12101000 0x1000>;
->> +				interrupts = <0 5 4>;
->> +				clocks = <&crg HI3519_UART1_CLK>;
->> +				clock-names = "apb_pclk";
->> +				status = "disable";
->> +			};
->> +
->> +			uart2: serial@12102000 {
->> +				compatible = "arm,pl011", "arm,primecell";
->> +				reg = <0x12102000 0x1000>;
->> +				interrupts = <0 6 4>;
->> +				clocks = <&crg HI3519_UART2_CLK>;
->> +				clock-names = "apb_pclk";
->> +				status = "disable";
->> +			};
->> +
->> +			uart3: serial@12103000 {
->> +				compatible = "arm,pl011", "arm,primecell";
->> +				reg = <0x12103000 0x1000>;
->> +				interrupts = <0 7 4>;
->> +				clocks = <&crg HI3519_UART3_CLK>;
->> +				clock-names = "apb_pclk";
->> +				status = "disable";
->> +			};
->> +
->> +			uart4: serial@12104000 {
->> +				compatible = "arm,pl011", "arm,primecell";
->> +				reg = <0x12104000 0x1000>;
->> +				interrupts = <0 8 4>;
->> +				clocks = <&crg HI3519_UART4_CLK>;
->> +				clock-names = "apb_pclk";
->> +				status = "disable";
->> +			};
->> +
->> +			dual_timer0: timer@12000000 {
->> +				compatible = "arm,sp804", "arm,primecell";
->> +				interrupts = <0 64 4>, <0 65 4>;
->> +				reg = <0x12000000 0x1000>;
->> +				clocks = <&crg HI3519_FIXED_3M>;
->> +				status = "disable";
->> +			};
->> +
->> +			dual_timer1: timer@12001000 {
->> +				compatible = "arm,sp804", "arm,primecell";
->> +				interrupts = <0 66 4>, <0 67 4>;
->> +				reg = <0x12001000 0x1000>;
->> +				clocks = <&crg HI3519_FIXED_3M>;
->> +				status = "disable";
->> +			};
->> +
->> +			dual_timer2: timer@12002000 {
->> +				compatible = "arm,sp804", "arm,primecell";
->> +				interrupts = <0 68 4>, <0 69 4>;
->> +				reg = <0x12002000 0x1000>;
->> +				clocks = <&crg HI3519_FIXED_3M>;
->> +				status = "disable";
->> +			};
->> +		};
->> +
->> +		sysctrl: system-controller@12020000 {
->> +			compatible = "hisilicon,hi3519-sysctrl", "syscon";
->> +			reg = <0x12020000 0x1000>;
->> +		};
->> +
->> +		reboot {
->> +			compatible = "syscon-reboot";
->> +			regmap = <&sysctrl>;
->> +			offset = <0x4>;
->> +			mask = <0xdeadbeef>;
->> +		};
->> +
->> +		crg: clock-reset-controller@12010000 {
->> +			compatible = "hisilicon,hi3519-crg";
->> +			#clock-cells = <1>;
->> +			#reset-cells = <2>;
->> +			reg = <0x12010000 0x10000>;
->> +		};
->> +	};
->> +};
->> -- 
->> 1.9.1
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe devicetree" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> .
-> 
-Many Thanks.
-
-Jiancheng.
+Acked-by: Michael Turquette <mturquette@baylibre.com>
