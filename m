@@ -1,104 +1,75 @@
-Return-Path: <mturquette@baylibre.com>
-Date: Tue, 22 Dec 2015 10:44:12 -0800
-From: Mike Turquette <mturquette@baylibre.com>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, k.kozlowski.k@gmail.com,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>,
-	linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH 1/2] clk: samsung: exynos5422: add missing parent GSCL
- block clocks
-Message-ID: <20151222184412.GD6596@quark.deferred.io>
-References: <1449582415-30164-1-git-send-email-m.szyprowski@samsung.com>
- <5667B2F3.9040807@samsung.com>
- <5667FEF3.4080703@samsung.com>
- <56682E44.6020303@samsung.com>
- <56719E2C.2030103@samsung.com>
- <567208C4.4090806@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga02-in.huawei.com ([119.145.14.65]:6021 "EHLO
+	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754064AbbL3B4e (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 29 Dec 2015 20:56:34 -0500
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
+	<zhangzhenxing@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v4 4/6] ARM: debug: add hi3519 debug uart
+Date: Wed, 30 Dec 2015 09:43:50 +0800
+Message-ID: <1451439832-13927-5-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1451439832-13927-1-git-send-email-xuejiancheng@huawei.com>
+References: <1451439832-13927-1-git-send-email-xuejiancheng@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <567208C4.4090806@samsung.com>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/17, Krzysztof Kozlowski wrote:
-> On 17.12.2015 02:23, Sylwester Nawrocki wrote:
-> > Krzysztof,
-> > 
-> > On 09/12/15 14:36, Krzysztof Kozlowski wrote:
-> >> W dniu 09.12.2015 o 19:14, Sylwester Nawrocki pisze:
-> >>>> Adding Stephen and linux-clk at Cc.
-> >>>>
-> >>>> On 09/12/15 05:49, Krzysztof Kozlowski wrote:
-> >>>>>> On 08.12.2015 22:46, Marek Szyprowski wrote:
-> >>>>>>>>>> This patch adds clocks, which are required for preserving parent clock
-> >>>>>>>>>> configuration on GSCL power domain on/off.
-> >>>>>>>>>>
-> >>>>>>>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> >>>>>>>>>> ---
-> >>>>>>>>>>  drivers/clk/samsung/clk-exynos5420.c   | 8 ++++----
-> >>>>>>>>>>  include/dt-bindings/clock/exynos5420.h | 2 ++
-> >>>>>>>>>>  2 files changed, 6 insertions(+), 4 deletions(-)
-> >>>>>>
-> >>>>>> I suppose that, with ack from clock folks, this can go through samsung-soc?
-> >>>>
-> >>>> I guess it makes more sense that making a stable branch with just
-> >>>> this patch to be pulled into arm-soc and clk tree. I'm fine with
-> >>>> applying this patch through arm-soc, but I think we also need
-> >>>> Mike's or Stephen ack for this.
-> >>>>
-> >>>> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> >>
-> >> I am fine with the branch approach (actually in such cases I make them
-> >> anyway just in case).
-> >>
-> >> As you suggested I'll wait for Mike's or Stepen's acks.
-> > 
-> > I've put the $subject patch and the other exynos5420 patch which 
-> > was a dependency for dts patches (both touching include/dt-bindings/
-> > clock/exynos5420.h) onto a stable branch. Below are details if 
-> > you need to pull.
+add hi3519 debug uart.
 
-This is superseded by the pull request found in Message-ID:
-<5671A456.9030203@samsung.com>, correct?
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+---
+ arch/arm/Kconfig.debug | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Thanks,
-Mike
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index 259c0ca..29af057 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -270,6 +270,14 @@ choice
+ 		  Say Y here if you want the debug print routines to direct
+ 		  their output to the 8250 at PCI COM1.
+ 
++	config DEBUG_HI3519_UART
++		bool "Hisilicon Hi3519 Debug UART"
++		depends on ARCH_HISI
++		select DEBUG_UART_PL01X
++		help
++		  Say Y here if you want kernel low-level debugging support
++		  on HI3519 UART.
++
+ 	config DEBUG_HI3620_UART
+ 		bool "Hisilicon HI3620 Debug UART"
+ 		depends on ARCH_HI3xxx
+@@ -1449,6 +1457,7 @@ config DEBUG_UART_PHYS
+ 	default 0xf7fc9000 if DEBUG_BERLIN_UART
+ 	default 0xf8b00000 if DEBUG_HIX5HD2_UART
+ 	default 0xf991e000 if DEBUG_QCOM_UARTDM
++	default 0x12100000 if DEBUG_HI3519_UART
+ 	default 0xfcb00000 if DEBUG_HI3620_UART
+ 	default 0xfd883000 if DEBUG_ALPINE_UART0
+ 	default 0xfe800000 if ARCH_IOP32X
+@@ -1529,6 +1538,7 @@ config DEBUG_UART_VIRT
+ 	default 0xfe230000 if DEBUG_PICOXCELL_UART
+ 	default 0xfe300000 if DEBUG_BCM_KONA_UART
+ 	default 0xfe800000 if ARCH_IOP32X
++	default 0xfef00000 if DEBUG_HI3519_UART
+ 	default 0xfeb00000 if DEBUG_HI3620_UART || DEBUG_HIX5HD2_UART
+ 	default 0xfeb24000 if DEBUG_RK3X_UART0
+ 	default 0xfeb26000 if DEBUG_RK3X_UART1
+-- 
+1.9.1
 
-> 
-> Great! Thanks Sylwester.
-> BR,
-> Krzysztof
-> 
-> 
-> > 
-> > 
-> > The following changes since commit 9f9499ae8e6415cefc4fe0a96ad0e27864353c89:
-> > 
-> >   Linux 4.4-rc5 (2015-12-13 17:42:58 -0800)
-> > 
-> > are available in the git repository at:
-> > 
-> >   git://linuxtv.org/snawrocki/samsung.git tags/for-4.5-clk-exynos5420
-> > 
-> > for you to fetch changes up to bee4f87f01dc30fcf9e05eb55b833f89fd9bb4f4:
-> > 
-> >   clk: samsung: exynos5420: add cpu clock configuration data and instantiate cpu clock (2015-12-16 16:35:26 +0100)
-> > 
-> > ----------------------------------------------------------------
-> > Samsung exynos5420 SoC clk subsystem support updates:
-> > instantiation of the cpu clocks and addition of the GSCL
-> > IP parent clocks to the list of available consumer clocks.
-> > 
-> > ----------------------------------------------------------------
-> > Marek Szyprowski (1):
-> >       clk: samsung: exynos542x: add missing parent GSCL block clocks
-> > 
-> > Thomas Abraham (1):
-> >       clk: samsung: exynos5420: add cpu clock configuration data and instantiate cpu clock
-> > 
-> >  drivers/clk/samsung/clk-exynos5420.c   |   66 +++++++++++++++++++++++++++++---
-> >  include/dt-bindings/clock/exynos5420.h |    4 ++
-> >  2 files changed, 64 insertions(+), 6 deletions(-)
-> > 
-> 
