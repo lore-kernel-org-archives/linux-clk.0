@@ -1,69 +1,57 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-Subject: Re: [PATCH v5 1/6] clk: qcom: Add support for SMD-RPM Clocks
-To: sboyd@codeaurora.org, agross@codeaurora.org
-References: <1449151376-25930-1-git-send-email-georgi.djakov@linaro.org>
- <1449151376-25930-2-git-send-email-georgi.djakov@linaro.org>
-Cc: Georgi Djakov <georgi.djakov@linaro.org>, mturquette@baylibre.com,
- linux-clk@vger.kernel.org, bjorn.andersson@sonymobile.com,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Message-ID: <56656288.8090207@linaro.org>
-Date: Mon, 7 Dec 2015 12:42:16 +0200
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
+	<zhangzhenxing@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v4 5/6] mfd: dt-bindings: add device tree bindings for Hi3519 sysctrl
+Date: Wed, 30 Dec 2015 09:43:51 +0800
+Message-ID: <1451439832-13927-6-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1451439832-13927-1-git-send-email-xuejiancheng@huawei.com>
+References: <1451439832-13927-1-git-send-email-xuejiancheng@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <1449151376-25930-2-git-send-email-georgi.djakov@linaro.org>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 3.12.15 г. 16:02, Georgi Djakov wrote:
-> This adds initial support for clocks controlled by the Resource
-> Power Manager (RPM) processor on some Qualcomm SoCs, which use
-> the qcom_smd_rpm driver to communicate with RPM.
-> Such platforms are msm8916, apq8084 and msm8974.
-> 
-> The RPM is a dedicated hardware engine for managing the shared
-> SoC resources in order to keep the lowest power profile. It
-> communicates with other hardware subsystems via shared memory
-> and accepts clock requests, aggregates the requests and turns
-> the clocks on/off or scales them on demand.
-> 
-> This driver is based on the codeaurora.org driver:
-> https://www.codeaurora.org/cgit/quic/la/kernel/msm-3.10/tree/drivers/clk/qcom/clock-rpm.c
-> 
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> ---
-[..]
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -2,6 +2,9 @@ config QCOM_GDSC
->  	bool
->  	select PM_GENERIC_DOMAINS if PM
->  
-> +config QCOM_RPMCC
-> +	bool
-> +
->  config COMMON_CLK_QCOM
->  	tristate "Support for Qualcomm's clock controllers"
->  	depends on OF
-> @@ -9,6 +12,14 @@ config COMMON_CLK_QCOM
->  	select REGMAP_MMIO
->  	select RESET_CONTROLLER
->  
-> +config QCOM_CLK_SMD_RPM
-> +	tristate "RPM over SMD based Clock Controller"
-> +	depends on COMMON_CLK_QCOM
+Add device tree bindings for Hi3519 system controller.
 
-This should be:
-	depends on COMMON_CLK_QCOM && QCOM_SMD_RPM
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+---
+ Documentation/devicetree/bindings/mfd/hi3519.txt | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/hi3519.txt
 
-And also for patch 3/6 it should be && MFD_QCOM_RPM
-Will resend.
+diff --git a/Documentation/devicetree/bindings/mfd/hi3519.txt b/Documentation/devicetree/bindings/mfd/hi3519.txt
+new file mode 100644
+index 0000000..2536edc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/hi3519.txt
+@@ -0,0 +1,14 @@
++* Hisilicon Hi3519 System Controller Block
++
++This bindings use the following binding:
++Dcumentation/devicetree/bindings/clock/clock-bindings.txt
++
++Required properties:
++- compatible: "hisilicon,hi3519-sysctrl".
++- reg: the register region of this block
++
++Examples:
++sysctrl: system-controller@12010000 {
++	compatible = "hisilicon,hi3519-sysctrl", "syscon";
++	reg = <0x12010000 0x1000>;
++};
+-- 
+1.9.1
 
-> +	select QCOM_RPMCC
-> +	help
-> +	  Support for the clocks exposed by the Resource Power Manager
-> +	  processor on devices like apq8016, apq8084 and msm8974.
-> +
->  config APQ_GCC_8084
->  	tristate "APQ8084 Global Clock Controller"
->  	select QCOM_GDSC
