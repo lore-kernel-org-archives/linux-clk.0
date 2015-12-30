@@ -1,49 +1,75 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 3/3] dt-bindings: regulator/mfd: Reorganize S2MPA01 bindings
-To: Rob Herring <robh@kernel.org>
-References: <1449191405-3344-1-git-send-email-k.kozlowski@samsung.com>
- <1449191405-3344-4-git-send-email-k.kozlowski@samsung.com>
- <20151204155509.GA27455@rob-hp-laptop>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Pawel Moll <pawel.moll@arm.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>,
- Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <5664DB53.6030801@samsung.com>
-Date: Mon, 07 Dec 2015 10:05:23 +0900
-MIME-version: 1.0
-In-reply-to: <20151204155509.GA27455@rob-hp-laptop>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
+	<zhangzhenxing@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v4 2/6] ARM: hisi: add compatible string for Hi3519 soc
+Date: Wed, 30 Dec 2015 09:43:48 +0800
+Message-ID: <1451439832-13927-3-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1451439832-13927-1-git-send-email-xuejiancheng@huawei.com>
+References: <1451439832-13927-1-git-send-email-xuejiancheng@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05.12.2015 00:55, Rob Herring wrote:
-> On Fri, Dec 04, 2015 at 10:10:05AM +0900, Krzysztof Kozlowski wrote:
->> The mfd/s2mpa01.txt duplicates some of the information about bindings
->> with old mfd/s2mps11.txt. Now common part exists entirely in
->> mfd/samsung,sec-core.txt so:
->>  - add company prefix to file name (regulator/samsung,s2mpa01.txt),
->>  - remove duplicated information,
->>  - reorganize the contents to match style of
->>    regulator/samsung,s2mps11.txt.
->>
->> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
-> Next time, use git format-patch -M option.
-> 
-> Acked-by: Rob Herring <robh@kernel.org>
-> 
+add compatible string for Hi3519 soc.
 
-It is already used but I also changed the style and formatting to the
-similarity dropped below default level of 50%. I could of course first
-rename and then change formatting/contents but that would be a little
-bit too much for this simple patchset, don't you think?
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+---
+ arch/arm/mach-hisi/hisilicon.c | 23 ++++-------------------
+ 1 file changed, 4 insertions(+), 19 deletions(-)
 
-Anyway thanks for acks!
+diff --git a/arch/arm/mach-hisi/hisilicon.c b/arch/arm/mach-hisi/hisilicon.c
+index 8cc6215..00dae89 100644
+--- a/arch/arm/mach-hisi/hisilicon.c
++++ b/arch/arm/mach-hisi/hisilicon.c
+@@ -54,30 +54,15 @@ DT_MACHINE_START(HI3620, "Hisilicon Hi3620 (Flattened Device Tree)")
+ 	.dt_compat	= hi3xxx_compat,
+ MACHINE_END
+ 
+-static const char *const hix5hd2_compat[] __initconst = {
++static const char *const hisilicon_compat[] __initconst = {
+ 	"hisilicon,hix5hd2",
+-	NULL,
+-};
+-
+-DT_MACHINE_START(HIX5HD2_DT, "Hisilicon HIX5HD2 (Flattened Device Tree)")
+-	.dt_compat	= hix5hd2_compat,
+-MACHINE_END
+-
+-static const char *const hip04_compat[] __initconst = {
+ 	"hisilicon,hip04-d01",
+-	NULL,
+-};
+-
+-DT_MACHINE_START(HIP04, "Hisilicon HiP04 (Flattened Device Tree)")
+-	.dt_compat	= hip04_compat,
+-MACHINE_END
+-
+-static const char *const hip01_compat[] __initconst = {
+ 	"hisilicon,hip01",
+ 	"hisilicon,hip01-ca9x2",
++	"hisilicon,hi3519",
+ 	NULL,
+ };
+ 
+-DT_MACHINE_START(HIP01, "Hisilicon HIP01 (Flattened Device Tree)")
+-	.dt_compat      = hip01_compat,
++DT_MACHINE_START(HISILICON_DT, "HiSilicon Soc")
++	.dt_compat	= hisilicon_compat,
+ MACHINE_END
+-- 
+1.9.1
 
-Best regards,
-Krzysztof
