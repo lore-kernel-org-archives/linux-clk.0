@@ -1,483 +1,522 @@
-Return-Path: <robh@kernel.org>
-Date: Fri, 4 Dec 2015 09:13:32 -0600
-From: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>,
-	Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: regulator/clock/mfd: Reorganize
- S2MPS-family bindings
-Message-ID: <20151204151332.GA31138@rob-hp-laptop>
-References: <1449191405-3344-1-git-send-email-k.kozlowski@samsung.com>
- <1449191405-3344-2-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1449191405-3344-2-git-send-email-k.kozlowski@samsung.com>
+To: Jiancheng Xue <xuejiancheng@huawei.com>, sboyd@codeaurora.org,
+ robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+ ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk,
+ khilman@linaro.org, arnd@arndb.de, olof@lixom.net, xuwei5@hisilicon.com,
+ haojian.zhuang@linaro.org, zhangfei.gao@linaro.org, bintian.wang@huawei.com
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1451439832-13927-2-git-send-email-xuejiancheng@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ yanhaifeng@hisilicon.com, yanghongwei@hisilicon.com, suwenping@hisilicon.com,
+ ml.yang@hisilicon.com, gaofei@hisilicon.com, zhangzhenxing@hisilicon.com,
+ "Jiancheng Xue" <xuejiancheng@huawei.com>, p.zabel@pengutronix.de
+References: <1451439832-13927-1-git-send-email-xuejiancheng@huawei.com>
+ <1451439832-13927-2-git-send-email-xuejiancheng@huawei.com>
+Message-ID: <20151231002323.19557.50218@quark.deferred.io>
+Subject: Re: [PATCH v4 1/6] clk: hisilicon: add CRG driver for hi3519 soc
+Date: Wed, 30 Dec 2015 16:23:23 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Dec 04, 2015 at 10:10:03AM +0900, Krzysztof Kozlowski wrote:
-> Bindings for Samsung S2M and S5M family PMICs are in mess. They are
-> spread over different files and subdirectories in a non-consistent way.
-> The devices and respective drivers for them share a lot in common so
-> everything could be organized in a more readable way.
-> 
-> Reorganize the S2MPS11/13/14/15 Device Tree bindings to match the
-> drivers for this family of devices:
->  - move mfd/s2mps11.txt to mfd/samsung,sec-core.txt for the main MFD
->    driver (common for entire family),
->  - split clock block to clock/samsung,s2mps11.txt,
->  - split regulator block to regulator/samsung,s2mps11.txt.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Hello Jiancheng Xue,
 
-Acked-by: Rob Herring <robh@kernel.org>
+Quoting Jiancheng Xue (2015-12-29 17:43:47)
+> The CRG(Clock and Reset Generator) block provides clock
+> and reset signals for other modules in hi3519 soc.
+> =
 
+> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
 > ---
->  .../devicetree/bindings/clock/samsung,s2mps11.txt  |  49 +++++++
->  Documentation/devicetree/bindings/mfd/s2mps11.txt  | 153 ---------------------
->  .../devicetree/bindings/mfd/samsung,sec-core.txt   |  84 +++++++++++
->  .../bindings/regulator/samsung,s2mps11.txt         | 102 ++++++++++++++
->  MAINTAINERS                                        |   4 +-
->  5 files changed, 238 insertions(+), 154 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/samsung,s2mps11.txt
->  delete mode 100644 Documentation/devicetree/bindings/mfd/s2mps11.txt
->  create mode 100644 Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
->  create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s2mps11.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/samsung,s2mps11.txt b/Documentation/devicetree/bindings/clock/samsung,s2mps11.txt
+>  .../devicetree/bindings/clock/hi3519-crg.txt       |  46 +++++++
+>  drivers/clk/hisilicon/Kconfig                      |   7 +
+>  drivers/clk/hisilicon/Makefile                     |   2 +
+>  drivers/clk/hisilicon/clk-hi3519.c                 | 103 ++++++++++++++
+>  drivers/clk/hisilicon/reset.c                      | 149 +++++++++++++++=
+++++++
+>  drivers/clk/hisilicon/reset.h                      |  32 +++++
+>  include/dt-bindings/clock/hi3519-clock.h           |  43 ++++++
+>  7 files changed, 382 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
+>  create mode 100644 drivers/clk/hisilicon/clk-hi3519.c
+>  create mode 100644 drivers/clk/hisilicon/reset.c
+>  create mode 100644 drivers/clk/hisilicon/reset.h
+>  create mode 100644 include/dt-bindings/clock/hi3519-clock.h
+
+Please keep Philipp Zabel Cc'd for reset-related patches. I've added
+him to Cc.
+
+> =
+
+> diff --git a/Documentation/devicetree/bindings/clock/hi3519-crg.txt b/Doc=
+umentation/devicetree/bindings/clock/hi3519-crg.txt
 > new file mode 100644
-> index 000000000000..2726c1d58a79
+> index 0000000..2d23950
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/samsung,s2mps11.txt
-> @@ -0,0 +1,49 @@
-> +Binding for Samsung S2M and S5M family clock generator block
-> +============================================================
+> +++ b/Documentation/devicetree/bindings/clock/hi3519-crg.txt
+> @@ -0,0 +1,46 @@
+> +* Hisilicon Hi3519 Clock and Reset Generator(CRG)
 > +
-> +This is a part of device tree bindings for S2M and S5M family multi-function
-> +devices.
-> +More information can be found in bindings/mfd/sec-core.txt file.
+> +The Hi3519 CRG module provides clock and reset signals to various
+> +controllers within the SoC.
 > +
-> +The S2MPS11/13/15 and S5M8767 provide three(AP/CP/BT) buffered 32.768 kHz
-> +outputs. The S2MPS14 provides two (AP/BT) buffered 32.768 KHz outputs.
+> +This binding uses the following bindings:
+> +    Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +    Documentation/devicetree/bindings/reset/reset.txt
 > +
-> +To register these as clocks with common clock framework instantiate under
-> +main device node a sub-node named "clocks".
+> +Required Properties:
 > +
-> +It uses the common clock binding documented in:
-> + - Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +- compatible: should be one of the following.
+> +  - "hisilicon,hi3519-crg" - controller compatible with Hi3519 SoC.
 > +
+> +- reg: physical base address of the controller and length of memory mapp=
+ed
+> +  region.
 > +
-> +Required properties of the "clocks" sub-node:
-> + - #clock-cells: should be 1.
-> + - compatible: Should be one of: "samsung,s2mps11-clk", "samsung,s2mps13-clk",
-> +               "samsung,s2mps14-clk", "samsung,s5m8767-clk"
-> +   The S2MPS15 uses the same compatible as S2MPS13, as both provides similar
-> +   clocks.
-> +
+> +- #clock-cells: should be 1.
 > +
 > +Each clock is assigned an identifier and client nodes use this identifier
 > +to specify the clock which they consume.
-> +    Clock               ID           Devices
-> +    ----------------------------------------------------------
-> +    32KhzAP		0            S2MPS11/13/14/15, S5M8767
-> +    32KhzCP		1            S2MPS11/13/15, S5M8767
-> +    32KhzBT		2            S2MPS11/13/14/15, S5M8767
 > +
-> +Include dt-bindings/clock/samsung,s2mps11.h file to use preprocessor defines
-> +in device tree sources.
+> +All these identifier could be found in <dt-bindings/clock/hi3519-clock.h=
+>.
 > +
+> +- #reset-cells: should be 2.
 > +
-> +Example:
+> +A reset signal can be controlled by writing a bit register in the CRG mo=
+dule.
+> +The reset specifier consists of two cells. The first cell represents the
+> +register offset relative to the base address. The second cell represents=
+ the
+> +bit index in the register.
 > +
-> +	s2mps11_pmic@66 {
-> +		compatible = "samsung,s2mps11-pmic";
-> +		reg = <0x66>;
+> +Example: CRG nodes
+> +CRG: clock-reset-controller@12010000 {
+> +       compatible =3D "hisilicon,hi3519-crg";
+> +        reg =3D <0x12010000 0x10000>;
+> +        #clock-cells =3D <1>;
+> +        #reset-cells =3D <2>;
+> +};
 > +
-> +		s2m_osc: clocks {
-> +			compatible = "samsung,s2mps11-clk";
-> +			#clock-cells = <1>;
-> +			clock-output-names = "xx", "yy", "zz";
-> +		};
-> +	};
-> diff --git a/Documentation/devicetree/bindings/mfd/s2mps11.txt b/Documentation/devicetree/bindings/mfd/s2mps11.txt
-> deleted file mode 100644
-> index 09b94c97faac..000000000000
-> --- a/Documentation/devicetree/bindings/mfd/s2mps11.txt
-> +++ /dev/null
-> @@ -1,153 +0,0 @@
-> -
-> -* Samsung S2MPS11/13/14/15 and S2MPU02 Voltage and Current Regulator
-> -
-> -The Samsung S2MPS11 is a multi-function device which includes voltage and
-> -current regulators, RTC, charger controller and other sub-blocks. It is
-> -interfaced to the host controller using an I2C interface. Each sub-block is
-> -addressed by the host system using different I2C slave addresses.
-> -
-> -Required properties:
-> -- compatible: Should be one of the following
-> -	- "samsung,s2mps11-pmic"
-> -	- "samsung,s2mps13-pmic"
-> -	- "samsung,s2mps14-pmic"
-> -	- "samsung,s2mps15-pmic"
-> -	- "samsung,s2mpu02-pmic".
-> -- reg: Specifies the I2C slave address of the pmic block. It should be 0x66.
-> -
-> -Optional properties:
-> -- interrupt-parent: Specifies the phandle of the interrupt controller to which
-> -  the interrupts from s2mps11 are delivered to.
-> -- interrupts: Interrupt specifiers for interrupt sources.
-> -- samsung,s2mps11-wrstbi-ground: Indicates that WRSTBI pin of PMIC is pulled
-> -  down. When the system is suspended it will always go down thus triggerring
-> -  unwanted buck warm reset (setting buck voltages to default values).
-> -- samsung,s2mps11-acokb-ground: Indicates that ACOKB pin of S2MPS11 PMIC is
-> -  connected to the ground so the PMIC must manually set PWRHOLD bit in CTRL1
-> -  register to turn off the power. Usually the ACOKB is pulled up to VBATT so
-> -  when PWRHOLD pin goes low, the rising ACOKB will trigger power off.
-> -
-> -Optional nodes:
-> -- clocks: s2mps11, s2mps13, s2mps15 and s5m8767 provide three(AP/CP/BT) buffered 32.768
-> -  KHz outputs, so to register these as clocks with common clock framework
-> -  instantiate a sub-node named "clocks". It uses the common clock binding
-> -  documented in :
-> -  [Documentation/devicetree/bindings/clock/clock-bindings.txt]
-> -  The s2mps14 provides two (AP/BT) buffered 32.768 KHz outputs.
-> -  - #clock-cells: should be 1.
-> -
-> -  - The following is the list of clocks generated by the controller. Each clock
-> -    is assigned an identifier and client nodes use this identifier to specify
-> -    the clock which they consume.
-> -    Clock               ID           Devices
-> -    ----------------------------------------------------------
-> -    32KhzAP		0            S2MPS11, S2MPS13, S2MPS14, S2MPS15, S5M8767
-> -    32KhzCP		1            S2MPS11, S2MPS13, S2MPS15, S5M8767
-> -    32KhzBT		2            S2MPS11, S2MPS13, S2MPS14, S2MPS15, S5M8767
-> -
-> -  - compatible: Should be one of: "samsung,s2mps11-clk", "samsung,s2mps13-clk",
-> -		"samsung,s2mps14-clk", "samsung,s5m8767-clk"
-> -    The s2msp15 uses the same compatible as s2mps13, as both provides similar clocks.
-> -
-> -- regulators: The regulators of s2mps11 that have to be instantiated should be
-> -included in a sub-node named 'regulators'. Regulator nodes included in this
-> -sub-node should be of the format as listed below.
-> -
-> -	regulator_name {
-> -		[standard regulator constraints....];
-> -	};
-> -
-> - regulator-ramp-delay for BUCKs = [6250/12500/25000(default)/50000] uV/us
-> -
-> - BUCK[2/3/4/6] supports disabling ramp delay on hardware, so explicitly
-> - regulator-ramp-delay = <0> can be used for them to disable ramp delay.
-> - In the absence of the regulator-ramp-delay property, the default ramp
-> - delay will be used.
-> -
-> -NOTE: Some BUCKs share the ramp rate setting i.e. same ramp value will be set
-> -for a particular group of BUCKs. So provide same regulator-ramp-delay<value>.
-> -Grouping of BUCKs sharing ramp rate setting is as follow : BUCK[1, 6],
-> -BUCK[3, 4], and BUCK[7, 8, 10]
-> -
-> -On S2MPS14 the LDO10, LDO11 and LDO12 can be configured to external control
-> -over GPIO. To turn this feature on this property must be added to the regulator
-> -sub-node:
-> -	- samsung,ext-control-gpios: GPIO specifier for one GPIO
-> -		controlling this regulator (enable/disable);
-> -Example:
-> -	LDO12 {
-> -		regulator-name = "V_EMMC_2.8V";
-> -		regulator-min-microvolt = <2800000>;
-> -		regulator-max-microvolt = <2800000>;
-> -		samsung,ext-control-gpios = <&gpk0 2 0>;
-> -	};
-> -
-> -
-> -The regulator constraints inside the regulator nodes use the standard regulator
-> -bindings which are documented elsewhere.
-> -
-> -The following are the names of the regulators that the s2mps11 pmic block
-> -supports. Note: The 'n' in LDOn and BUCKn represents the LDO or BUCK number
-> -as per the datasheet of s2mps11.
-> -
-> -	- LDOn
-> -		  - valid values for n are:
-> -			- S2MPS11: 1 to 38
-> -			- S2MPS13: 1 to 40
-> -			- S2MPS14: 1 to 25
-> -			- S2MPS15: 1 to 27
-> -			- S2MPU02: 1 to 28
-> -		  - Example: LDO1, LDO2, LDO28
-> -	- BUCKn
-> -		  - valid values for n are:
-> -			- S2MPS11: 1 to 10
-> -			- S2MPS13: 1 to 10
-> -			- S2MPS14: 1 to 5
-> -			- S2MPS15: 1 to 10
-> -			- S2MPU02: 1 to 7
-> -		  - Example: BUCK1, BUCK2, BUCK9
-> -
-> -Example:
-> -
-> -	s2mps11_pmic@66 {
-> -		compatible = "samsung,s2mps11-pmic";
-> -		reg = <0x66>;
-> -
-> -		s2m_osc: clocks {
-> -			compatible = "samsung,s2mps11-clk";
-> -			#clock-cells = <1>;
-> -			clock-output-names = "xx", "yy", "zz";
-> -		};
-> -
-> -		regulators {
-> -			ldo1_reg: LDO1 {
-> -				regulator-name = "VDD_ABB_3.3V";
-> -				regulator-min-microvolt = <3300000>;
-> -				regulator-max-microvolt = <3300000>;
-> -			};
-> -
-> -			ldo2_reg: LDO2 {
-> -				regulator-name = "VDD_ALIVE_1.1V";
-> -				regulator-min-microvolt = <1100000>;
-> -				regulator-max-microvolt = <1100000>;
-> -				regulator-always-on;
-> -			};
-> -
-> -			buck1_reg: BUCK1 {
-> -				regulator-name = "vdd_mif";
-> -				regulator-min-microvolt = <950000>;
-> -				regulator-max-microvolt = <1350000>;
-> -				regulator-always-on;
-> -				regulator-boot-on;
-> -			};
-> -
-> -			buck2_reg: BUCK2 {
-> -				regulator-name = "vdd_arm";
-> -				regulator-min-microvolt = <950000>;
-> -				regulator-max-microvolt = <1350000>;
-> -				regulator-always-on;
-> -				regulator-boot-on;
-> -				regulator-ramp-delay = <50000>;
-> -			};
-> -		};
-> -	};
-> diff --git a/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt b/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
+> +Example: consumer nodes
+> +i2c0: i2c@12110000 {
+> +       compatible =3D "hisilicon,hi3519-i2c";
+> +        reg =3D <0x12110000 0x1000>;
+> +        clocks =3D <&CRG HI3519_I2C0_RST>;*/
+> +        resets =3D <&CRG 0xe4 0>;
+> +};
+> diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
+> index e434854..b6baebf 100644
+> --- a/drivers/clk/hisilicon/Kconfig
+> +++ b/drivers/clk/hisilicon/Kconfig
+> @@ -1,3 +1,10 @@
+> +config COMMON_CLK_HI3519
+> +       tristate "Clock Driver for Hi3519"
+> +       depends on ARCH_HISI
+> +       default y
+> +       help
+> +         Build the clock driver for hi3519.
+> +
+>  config COMMON_CLK_HI6220
+>         bool "Hi6220 Clock Driver"
+>         depends on ARCH_HISI || COMPILE_TEST
+> diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makef=
+ile
+> index 74dba31..3f57b09 100644
+> --- a/drivers/clk/hisilicon/Makefile
+> +++ b/drivers/clk/hisilicon/Makefile
+> @@ -4,8 +4,10 @@
+>  =
+
+>  obj-y  +=3D clk.o clkgate-separated.o clkdivider-hi6220.o
+>  =
+
+> +obj-$(CONFIG_RESET_CONTROLLER) +=3D reset.o
+>  obj-$(CONFIG_ARCH_HI3xxx)      +=3D clk-hi3620.o
+>  obj-$(CONFIG_ARCH_HIP04)       +=3D clk-hip04.o
+>  obj-$(CONFIG_ARCH_HIX5HD2)     +=3D clk-hix5hd2.o
+>  obj-$(CONFIG_COMMON_CLK_HI6220)        +=3D clk-hi6220.o
+>  obj-$(CONFIG_STUB_CLK_HI6220)  +=3D clk-hi6220-stub.o
+> +obj-$(CONFIG_COMMON_CLK_HI3519)        +=3D clk-hi3519.o
+> diff --git a/drivers/clk/hisilicon/clk-hi3519.c b/drivers/clk/hisilicon/c=
+lk-hi3519.c
 > new file mode 100644
-> index 000000000000..ef0166d0f643
+> index 0000000..e220234
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
-> @@ -0,0 +1,84 @@
-> +Binding for Samsung S2M and S5M family multi-function device
-> +============================================================
+> +++ b/drivers/clk/hisilicon/clk-hi3519.c
+> @@ -0,0 +1,103 @@
+> +/*
+> + * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program. If not, see <http://www.gnu.org/licenses/>.
+> + */
 > +
-> +This is a part of device tree bindings for S2M and S5M family multi-function
-> +devices.
+> +#include <linux/of_address.h>
+> +#include <dt-bindings/clock/hi3519-clock.h>
+> +#include <linux/slab.h>
+> +#include <linux/delay.h>
+> +#include "clk.h"
+> +#include "reset.h"
 > +
-> +The Samsung S2MPS11/13/14/15, S2MPU02 and S5M8767 is a family
-> +of multi-function devices which include voltage and current regulators, RTC,
-> +charger controller, clock outputs and other sub-blocks. It is interfaced
-> +to the host controller using an I2C interface. Each sub-block is usually
-> +addressed by the host system using different I2C slave addresses.
+> +#define HI3519_FIXED_24M       (HI3519_EXT_CLKS + 1)
+> +#define HI3519_FIXED_50M       (HI3519_EXT_CLKS + 2)
+> +#define HI3519_FIXED_75M       (HI3519_EXT_CLKS + 3)
+> +#define HI3519_FIXED_125M      (HI3519_EXT_CLKS + 4)
+> +#define HI3519_FIXED_150M      (HI3519_EXT_CLKS + 5)
+> +#define HI3519_FIXED_200M      (HI3519_EXT_CLKS + 6)
+> +#define HI3519_FIXED_250M      (HI3519_EXT_CLKS + 7)
+> +#define HI3519_FIXED_300M      (HI3519_EXT_CLKS + 8)
+> +#define HI3519_FIXED_400M      (HI3519_EXT_CLKS + 9)
+> +#define HI3519_FMC_MUX         (HI3519_EXT_CLKS + 10)
 > +
+> +#define HI3519_NR_CLKS 128
+> +#define HI3519_NR_RSTS 128
 > +
-> +This document describes bindings for main device node. Optional sub-blocks
-> +must be a sub-nodes to it. Bindings for them can be found in:
-> + - bindings/regulator/samsung,s2mps11.txt
-> + - bindings/clock/samsung,s2mps11.txt
+> +static struct hisi_fixed_rate_clock hi3519_fixed_rate_clks[] __initdata =
+=3D {
+> +       { HI3519_FIXED_3M, "3m", NULL, CLK_IS_ROOT, 3000000, },
+> +       { HI3519_FIXED_24M, "24m", NULL, CLK_IS_ROOT, 24000000, },
+> +       { HI3519_FIXED_50M, "50m", NULL, CLK_IS_ROOT, 50000000, },
+> +       { HI3519_FIXED_75M, "75m", NULL, CLK_IS_ROOT, 75000000, },
+> +       { HI3519_FIXED_125M, "125m", NULL, CLK_IS_ROOT, 125000000, },
+> +       { HI3519_FIXED_150M, "150m", NULL, CLK_IS_ROOT, 150000000, },
+> +       { HI3519_FIXED_200M, "200m", NULL, CLK_IS_ROOT, 200000000, },
+> +       { HI3519_FIXED_250M, "250m", NULL, CLK_IS_ROOT, 250000000, },
+> +       { HI3519_FIXED_300M, "300m", NULL, CLK_IS_ROOT, 300000000, },
+> +       { HI3519_FIXED_400M, "400m", NULL, CLK_IS_ROOT, 400000000, },
+> +};
 > +
+> +static const char *fmc_mux_p[] __initconst =3D {
+> +               "24m", "75m", "125m", "150m", "200m", "250m", "300m", "40=
+0m", };
+> +static u32 fmc_mux_table[] =3D {0, 1, 2, 3, 4, 5, 6, 7};
 > +
-> +Required properties:
-> + - compatible: Should be one of the following
-> +	- "samsung,s2mps11-pmic",
-> +	- "samsung,s2mps13-pmic",
-> +	- "samsung,s2mps14-pmic",
-> +	- "samsung,s2mps15-pmic",
-> +	- "samsung,s2mpu02-pmic".
-> + - reg: Specifies the I2C slave address of the pmic block. It should be 0x66.
+> +static struct hisi_mux_clock hi3519_mux_clks[] __initdata =3D {
+> +       { HI3519_FMC_MUX, "fmc_mux", fmc_mux_p, ARRAY_SIZE(fmc_mux_p),
+> +               CLK_SET_RATE_PARENT, 0xc0, 2, 3, 0, fmc_mux_table, },
+> +};
 > +
-> +Optional properties:
-> + - interrupt-parent: Specifies the phandle of the interrupt controller to which
-> +   the interrupts from s2mps11 are delivered to.
-> + - interrupts: Interrupt specifiers for interrupt sources.
-> + - samsung,s2mps11-wrstbi-ground: Indicates that WRSTBI pin of PMIC is pulled
-> +   down. When the system is suspended it will always go down thus triggerring
-> +   unwanted buck warm reset (setting buck voltages to default values).
-> + - samsung,s2mps11-acokb-ground: Indicates that ACOKB pin of S2MPS11 PMIC is
-> +   connected to the ground so the PMIC must manually set PWRHOLD bit in CTRL1
-> +   register to turn off the power. Usually the ACOKB is pulled up to VBATT so
-> +   when PWRHOLD pin goes low, the rising ACOKB will trigger power off.
+> +static struct hisi_gate_clock hi3519_gate_clks[] __initdata =3D {
+> +       /* fmc */
+> +       { HI3519_FMC_CLK, "clk_fmc", "fmc_mux",
+> +               CLK_SET_RATE_PARENT, 0xc0, 1, 0, },
+> +       /* uart */
+> +       { HI3519_UART0_CLK, "clk_uart0", "24m",
+> +               CLK_SET_RATE_PARENT, 0xe4, 20, 0, },
+> +       { HI3519_UART1_CLK, "clk_uart1", "24m",
+> +               CLK_SET_RATE_PARENT, 0xe4, 21, 0, },
+> +       { HI3519_UART2_CLK, "clk_uart2", "24m",
+> +               CLK_SET_RATE_PARENT, 0xe4, 22, 0, },
+> +       { HI3519_UART3_CLK, "clk_uart3", "24m",
+> +               CLK_SET_RATE_PARENT, 0xe4, 23, 0, },
+> +       { HI3519_UART4_CLK, "clk_uart4", "24m",
+> +               CLK_SET_RATE_PARENT, 0xe4, 24, 0, },
+> +       { HI3519_SPI0_CLK, "clk_spi0", "50m",
+> +               CLK_SET_RATE_PARENT, 0xe4, 16, 0, },
+> +       { HI3519_SPI1_CLK, "clk_spi1", "50m",
+> +               CLK_SET_RATE_PARENT, 0xe4, 17, 0, },
+> +       { HI3519_SPI2_CLK, "clk_spi2", "50m",
+> +               CLK_SET_RATE_PARENT, 0xe4, 18, 0, },
+> +};
 > +
-> +Example:
+> +static void __init hi3519_clk_init(struct device_node *np)
+> +{
+> +       struct hisi_clock_data *clk_data;
 > +
-> +	s2mps11_pmic@66 {
-> +		compatible = "samsung,s2mps11-pmic";
-> +		reg = <0x66>;
+> +       clk_data =3D hisi_clk_init(np, HI3519_NR_CLKS);
+> +       if (!clk_data)
+> +               return;
 > +
-> +		s2m_osc: clocks {
-> +			compatible = "samsung,s2mps11-clk";
-> +			#clock-cells = <1>;
-> +			clock-output-names = "xx", "yy", "zz";
-> +		};
+> +       hisi_reset_init(np, HI3519_NR_RSTS);
 > +
-> +		regulators {
-> +			ldo1_reg: LDO1 {
-> +				regulator-name = "VDD_ABB_3.3V";
-> +				regulator-min-microvolt = <3300000>;
-> +				regulator-max-microvolt = <3300000>;
-> +			};
+> +       hisi_clk_register_fixed_rate(hi3519_fixed_rate_clks,
+> +                                    ARRAY_SIZE(hi3519_fixed_rate_clks),
+> +                                    clk_data);
+> +       hisi_clk_register_mux(hi3519_mux_clks, ARRAY_SIZE(hi3519_mux_clks=
+),
+> +                                       clk_data);
+> +       hisi_clk_register_gate(hi3519_gate_clks,
+> +                       ARRAY_SIZE(hi3519_gate_clks), clk_data);
+> +}
 > +
-> +			ldo2_reg: LDO2 {
-> +				regulator-name = "VDD_ALIVE_1.1V";
-> +				regulator-min-microvolt = <1100000>;
-> +				regulator-max-microvolt = <1100000>;
-> +				regulator-always-on;
-> +			};
-> +
-> +			buck1_reg: BUCK1 {
-> +				regulator-name = "vdd_mif";
-> +				regulator-min-microvolt = <950000>;
-> +				regulator-max-microvolt = <1350000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +			};
-> +
-> +			buck2_reg: BUCK2 {
-> +				regulator-name = "vdd_arm";
-> +				regulator-min-microvolt = <950000>;
-> +				regulator-max-microvolt = <1350000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-ramp-delay = <50000>;
-> +			};
-> +		};
-> +	};
-> diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2mps11.txt b/Documentation/devicetree/bindings/regulator/samsung,s2mps11.txt
+> +CLK_OF_DECLARE(hi3519_clk, "hisilicon,hi3519-crg", hi3519_clk_init);
+
+Is CLK_OF_DECLARE required here? Why do you need to register these
+clocks so early?
+
+Can this be a real platform driver instead? See,
+
+grep platform_driver drivers/clk/qcom/*.c
+
+Regards,
+Mike
+
+> diff --git a/drivers/clk/hisilicon/reset.c b/drivers/clk/hisilicon/reset.c
 > new file mode 100644
-> index 000000000000..27a48bf1b185
+> index 0000000..cf5c32a
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/regulator/samsung,s2mps11.txt
-> @@ -0,0 +1,102 @@
-> +Binding for Samsung S2M family regulator block
-> +==============================================
+> +++ b/drivers/clk/hisilicon/reset.c
+> @@ -0,0 +1,149 @@
+> +/*
+> + * Hisilicon Reset Controller driver
+> + *
+> + * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program. If not, see <http://www.gnu.org/licenses/>.
+> + */
 > +
-> +This is a part of device tree bindings for S2M family multi-function devices.
-> +More information can be found in bindings/mfd/sec-core.txt file.
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reset-controller.h>
+> +#include <linux/slab.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/types.h>
 > +
-> +The S2MPS11/13/14/15 and S2MPU02 devices provide buck and LDO regulators.
+> +#define        HISI_RESET_BIT_SHIFT    0
+> +#define        HISI_RESET_BIT_WIDTH    16
+> +#define        HISI_RESET_OFFSET_SHIFT 16
+> +#define        HISI_RESET_OFFSET_WIDTH 16
 > +
-> +To register these with regulator framework instantiate under main device node
-> +a sub-node named "regulators" with more sub-nodes for each regulator using the
-> +common regulator binding documented in:
-> + - Documentation/devicetree/bindings/regulator/regulator.txt
-> +
-> +
-> +Names of regulators supported by different devices:
-> +	- LDOn
-> +		  - valid values for n are:
-> +			- S2MPS11: 1 to 38
-> +			- S2MPS13: 1 to 40
-> +			- S2MPS14: 1 to 25
-> +			- S2MPS15: 1 to 27
-> +			- S2MPU02: 1 to 28
-> +		  - Example: LDO1, LDO2, LDO28
-> +	- BUCKn
-> +		  - valid values for n are:
-> +			- S2MPS11: 1 to 10
-> +			- S2MPS13: 1 to 10
-> +			- S2MPS14: 1 to 5
-> +			- S2MPS15: 1 to 10
-> +			- S2MPU02: 1 to 7
-> +		  - Example: BUCK1, BUCK2, BUCK9
-> +Note: The 'n' in LDOn and BUCKn represents the LDO or BUCK number
-> +as per the datasheet of device.
-> +
-> +
-> +Optional properties of the nodes under "regulators" sub-node:
-> + - regulator-ramp-delay: ramp delay in uV/us. May be 6250, 12500,
-> +   25000 (default) or 50000.
-> +
-> +   Additionally S2MPS11 supports disabling ramp delay for BUCK{2,3,4,6}
-> +   by setting it to <0>.
-> +
-> +   Note: On S2MPS11 some bucks share the ramp rate setting i.e. same ramp value
-> +   will be set for a particular group of bucks so provide the same
-> +   regulator-ramp-delay value for them.
-> +   Groups sharing ramp rate:
-> +    - buck{1,6},
-> +    - buck{3,4},
-> +    - buck{7,8,10}.
-> +
-> + - samsung,ext-control-gpios: On S2MPS14 the LDO10, LDO11 and LDO12 can be
-> +   configured to external control over GPIO. To turn this feature on this
-> +   property must be added to the regulator sub-node:
-> +    - samsung,ext-control-gpios: GPIO specifier for one GPIO
-> +                                 controlling this regulator (enable/disable)
-> +  Example:
-> +	LDO12 {
-> +		regulator-name = "V_EMMC_2.8V";
-> +		regulator-min-microvolt = <2800000>;
-> +		regulator-max-microvolt = <2800000>;
-> +		samsung,ext-control-gpios = <&gpk0 2 0>;
-> +	};
+> +struct hisi_reset_controller {
+> +       spinlock_t      lock;
+> +       void __iomem    *membase;
+> +       struct reset_controller_dev     rcdev;
+> +};
 > +
 > +
-> +Example:
+> +#define to_hisi_reset_controller(rcdev)  \
+> +       container_of(rcdev, struct hisi_reset_controller, rcdev)
 > +
-> +	s2mps11_pmic@66 {
-> +		compatible = "samsung,s2mps11-pmic";
-> +		reg = <0x66>;
+> +/*31                        16                         0
+> + * |---reset_spec->args[0]---|---reset_spec->args[1]---|
+> + * |-------reg_offset--------|--------reg_bit----------|
+> + */
+> +static int hisi_reset_of_xlate(struct reset_controller_dev *rcdev,
+> +                       const struct of_phandle_args *reset_spec)
+> +{
+> +       unsigned int offset, bit, id;
+> +       const __be32 *addr;
+> +       u64 size;
 > +
-> +		regulators {
-> +			ldo1_reg: LDO1 {
-> +				regulator-name = "VDD_ABB_3.3V";
-> +				regulator-min-microvolt = <3300000>;
-> +				regulator-max-microvolt = <3300000>;
-> +			};
+> +       if (WARN_ON(reset_spec->args_count !=3D rcdev->of_reset_n_cells))
+> +               return -EINVAL;
 > +
-> +			ldo2_reg: LDO2 {
-> +				regulator-name = "VDD_ALIVE_1.1V";
-> +				regulator-min-microvolt = <1100000>;
-> +				regulator-max-microvolt = <1100000>;
-> +				regulator-always-on;
-> +			};
+> +       addr =3D of_get_address(rcdev->of_node, 0, &size, NULL);
+> +       if (!addr)
+> +               return -EINVAL;
 > +
-> +			buck1_reg: BUCK1 {
-> +				regulator-name = "vdd_mif";
-> +				regulator-min-microvolt = <950000>;
-> +				regulator-max-microvolt = <1350000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +			};
+> +       if (reset_spec->args[1] >=3D 32
+> +               || reset_spec->args[0] + reset_spec->args[1] / 8 > size)
+> +               return -EINVAL;
 > +
-> +			buck2_reg: BUCK2 {
-> +				regulator-name = "vdd_arm";
-> +				regulator-min-microvolt = <950000>;
-> +				regulator-max-microvolt = <1350000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-ramp-delay = <50000>;
-> +			};
-> +		};
-> +	};
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index f3de00113ae8..137284e37250 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -9234,7 +9234,9 @@ F:	drivers/clk/clk-s2mps11.c
->  F:	drivers/rtc/rtc-s5m.c
->  F:	include/linux/mfd/samsung/
->  F:	Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
-> -F:	Documentation/devicetree/bindings/mfd/s2mp*.txt
-> +F:	Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
-> +F:	Documentation/devicetree/bindings/regulator/samsung,s2m*.txt
-> +F:	Documentation/devicetree/bindings/clock/samsung,s2mps11.txt
->  
->  SAMSUNG S5P/EXYNOS4 SOC SERIES CAMERA SUBSYSTEM DRIVERS
->  M:	Kyungmin Park <kyungmin.park@samsung.com>
-> -- 
+> +       offset =3D reset_spec->args[0] & (BIT(HISI_RESET_OFFSET_WIDTH) - =
+1);
+> +       bit =3D (reset_spec->args[1] & (BIT(HISI_RESET_BIT_WIDTH) - 1));
+> +       id =3D offset << HISI_RESET_OFFSET_SHIFT | bit;
+> +
+> +       return id;
+> +}
+> +
+> +static int hisi_reset_assert(struct reset_controller_dev *rcdev,
+> +                             unsigned long id)
+> +{
+> +       struct hisi_reset_controller *rstc =3D to_hisi_reset_controller(r=
+cdev);
+> +       unsigned int offset, bit;
+> +       unsigned long flags;
+> +       u32 reg;
+> +
+> +       offset =3D id >> HISI_RESET_OFFSET_SHIFT;
+> +       offset &=3D (BIT(HISI_RESET_OFFSET_WIDTH) - 1);
+> +       bit =3D id & (BIT(HISI_RESET_BIT_WIDTH) - 1);
+> +
+> +       spin_lock_irqsave(&rstc->lock, flags);
+> +
+> +       reg =3D readl(rstc->membase + offset);
+> +       writel(reg | BIT(bit), rstc->membase + offset);
+> +
+> +       spin_unlock_irqrestore(&rstc->lock, flags);
+> +
+> +       return 0;
+> +}
+> +
+> +static int hisi_reset_deassert(struct reset_controller_dev *rcdev,
+> +                               unsigned long id)
+> +{
+> +       struct hisi_reset_controller *rstc =3D to_hisi_reset_controller(r=
+cdev);
+> +       unsigned int offset, bit;
+> +       unsigned long flags;
+> +       u32 reg;
+> +
+> +       offset =3D id >> HISI_RESET_OFFSET_SHIFT;
+> +       offset &=3D (BIT(HISI_RESET_OFFSET_WIDTH) - 1);
+> +       bit =3D id & (BIT(HISI_RESET_BIT_WIDTH) - 1);
+> +
+> +       spin_lock_irqsave(&rstc->lock, flags);
+> +
+> +       reg =3D readl(rstc->membase + offset);
+> +       writel(reg & ~BIT(bit), rstc->membase + offset);
+> +
+> +       spin_unlock_irqrestore(&rstc->lock, flags);
+> +
+> +       return 0;
+> +}
+> +
+> +static struct reset_control_ops hisi_reset_ops =3D {
+> +       .assert         =3D hisi_reset_assert,
+> +       .deassert       =3D hisi_reset_deassert,
+> +};
+> +
+> +int __init hisi_reset_init(struct device_node *np,
+> +                                            int nr_rsts)
+> +{
+> +       struct hisi_reset_controller *rstc;
+> +
+> +       rstc =3D kzalloc(sizeof(*rstc), GFP_KERNEL);
+> +       if (!rstc)
+> +               return -ENOMEM;
+> +
+> +       rstc->membase =3D of_iomap(np, 0);
+> +       if (!rstc->membase)
+> +               return -EINVAL;
+> +
+> +       spin_lock_init(&rstc->lock);
+> +
+> +       rstc->rcdev.owner =3D THIS_MODULE;
+> +       rstc->rcdev.nr_resets =3D nr_rsts;
+> +       rstc->rcdev.ops =3D &hisi_reset_ops;
+> +       rstc->rcdev.of_node =3D np;
+> +       rstc->rcdev.of_reset_n_cells =3D 2;
+> +       rstc->rcdev.of_xlate =3D hisi_reset_of_xlate;
+> +
+> +       return reset_controller_register(&rstc->rcdev);
+> +}
+> +
+> diff --git a/drivers/clk/hisilicon/reset.h b/drivers/clk/hisilicon/reset.h
+> new file mode 100644
+> index 0000000..b04796f
+> --- /dev/null
+> +++ b/drivers/clk/hisilicon/reset.h
+> @@ -0,0 +1,32 @@
+> +/*
+> + * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program. If not, see <http://www.gnu.org/licenses/>.
+> + */
+> +
+> +#ifndef        __HISI_RESET_H
+> +#define        __HISI_RESET_H
+> +
+> +#include <linux/of.h>
+> +
+> +#ifdef CONFIG_RESET_CONTROLLER
+> +int __init hisi_reset_init(struct device_node *np, int nr_rsts);
+> +#else
+> +static inline int __init hisi_reset_init(struct device_node *np, int nr_=
+rsts)
+> +{
+> +       return 0;
+> +}
+> +#endif
+> +
+> +#endif /* __HISI_RESET_H */
+> diff --git a/include/dt-bindings/clock/hi3519-clock.h b/include/dt-bindin=
+gs/clock/hi3519-clock.h
+> new file mode 100644
+> index 0000000..1e4a3c1
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/hi3519-clock.h
+> @@ -0,0 +1,43 @@
+> +/*
+> + * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program. If not, see <http://www.gnu.org/licenses/>.
+> + */
+> +
+> +#ifndef __DTS_HI3519_CLOCK_H
+> +#define __DTS_HI3519_CLOCK_H
+> +
+> +#define HI3519_FIXED_3M                        1
+> +#define HI3519_FMC_CLK                 2
+> +#define HI3519_USB2_BUS_CLK            3
+> +#define HI3519_USB2_PORT_CLK           4
+> +#define HI3519_USB3_CLK                        5
+> +#define HI3519_ETH_PHY_CLK             6
+> +#define HI3519_ETH_MAC_CLK             7
+> +#define HI3519_ETH_MACIF_CLK           8
+> +#define HI3519_PWM_CLK                 9
+> +#define HI3519_DMA_CLK                 10
+> +#define HI3519_SPI0_CLK                        11
+> +#define HI3519_SPI1_CLK                        12
+> +#define HI3519_SPI2_CLK                        13
+> +#define HI3519_IR_CLK                  14
+> +#define HI3519_UART0_CLK               15
+> +#define HI3519_UART1_CLK               16
+> +#define HI3519_UART2_CLK               17
+> +#define HI3519_UART3_CLK               18
+> +#define HI3519_UART4_CLK               19
+> +
+> +#define HI3519_EXT_CLKS                        19
+> +
+> +#endif /* __DTS_HI3519_CLOCK_H */
+> -- =
+
 > 1.9.1
-> 
+> =
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
