@@ -1,73 +1,177 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Mon, 7 Dec 2015 09:58:56 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Emilio Lopez <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH resend 1/6] clk: sunxi: Add DRAM gates support for
- sun4i-a10
-Message-ID: <20151207085856.GA27957@lukather>
-References: <1449321407-4531-1-git-send-email-wens@csie.org>
- <1449321407-4531-2-git-send-email-wens@csie.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="nFreZHaLTZJo0R7j"
-In-Reply-To: <1449321407-4531-2-git-send-email-wens@csie.org>
+To: Arnd Bergmann <arnd@arndb.de>, "Rob Herring" <robh@kernel.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1477432.fTm0GUZ57A@wuerfel>
+Cc: "Olof Johansson" <olof@lixom.net>, "Eric Anholt" <eric@anholt.net>,
+ "linux-clk" <linux-clk@vger.kernel.org>,
+ "Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>,
+ Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>,
+ linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>,
+ linux-rpi-kernel@lists.infradead.org,
+ "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ "Stephen Warren" <swarren@wwwdotorg.org>, "Lee Jones" <lee@kernel.org>,
+ "Florian Fainelli" <f.fainelli@gmail.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <1450222559-22461-1-git-send-email-eric@anholt.net>
+ <20151228223935.25842.28675@quark.deferred.io>
+ <CAL_JsqLu7=66jEuaezesEuoPsBBhRAT0UQcLVNOLVwkEvQacRA@mail.gmail.com>
+ <1477432.fTm0GUZ57A@wuerfel>
+Message-ID: <20151231001859.19557.99512@quark.deferred.io>
+Subject: Re: [PATCH v2 1/3] clk: bcm2835: Add bindings for the auxiliary peripheral
+ clock gates.
+Date: Wed, 30 Dec 2015 16:18:59 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Arnd,
 
---nFreZHaLTZJo0R7j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Quoting Arnd Bergmann (2015-12-30 01:29:02)
+> On Tuesday 29 December 2015 16:15:09 Rob Herring wrote:
+> > On Mon, Dec 28, 2015 at 4:39 PM, Michael Turquette
+> > <mturquette@baylibre.com> wrote:
+> > > Quoting Eric Anholt (2015-12-24 15:45:15)
+> > >> Michael Turquette <mturquette@baylibre.com> writes:
+> > >> I would *love* to do that, but I've previously been told that having=
+ the
+> > >> bindings patch reference a header file not present as of the bindings
+> > >> patch is not acceptable and made to change it.
+> > >
+> > > Ugh, that is annoying. I would think that having code compile properly
+> > > would trump the desire to have all of the documentation merged as one
+> > > patch.
+> > =
 
-On Sat, Dec 05, 2015 at 09:16:42PM +0800, Chen-Yu Tsai wrote:
-> The A10/A20 share the same set of DRAM clock gates, which controls
-> direct memory access for some peripherals.
->=20
-> On the A10, bit 15 controls the system's DRAM clock output (possibly
-> to the DRAM chips), which we need to keep on.
->=20
-> On the A20 this has been moved to the DRAM controller, becoming a no-op.
-> However it is still listed in the user manual, so add it anyway.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> > What about compiling the dts?
 
-Applied, thanks!
-Maxime
+Oops, good point Rob.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+> > =
 
---nFreZHaLTZJo0R7j
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> > > On the other hand, I've been asked to not take binding descriptions
+> > > through the clk tree. That is a policy that I'm happy to comply with,
+> > > but it is at odds with the recommendation for the header and the bind=
+ing
+> > > description to be merged together.
+> > =
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+> > By who? Any bindings in a series I always expect the subsystem
+> > maintainers to take the whole series. That doesn't solve the problem
+> > though as there is still a dependency between a subsystem tree and
+> > arm-soc typically.
+> =
 
-iQIcBAEBAgAGBQJWZUpQAAoJEBx+YmzsjxAgn40P/jfbEewuOA/2wCFxM6oBCvjD
-ieJw1Hi+1rQnXpsHgEqe8DN+rkkhC3JtN3NlX5dnJEQGrdLihQajBBA35yf54ncC
-DIZZt4wC34J53a5WgFNB/caDKuy754TUGHuai0UloRNIw4u+ttbOtoxi6L3ckIws
-maVjgtv5OkMYltb36LUNMxYmOb0GYq1k6MNIqwa4EAZd7cnN2MlNxO4NJ53UHxGe
-sGWSDW65tHYZLjmHoTGDX7doX03BFCpYfnA5DOC9rh8W7iunf8vd1YLDPhV03DKm
-e4ZbAASF0xzew+Ai1mQTRED90E/c8N+WlOwWY0IoluDTIKUUK/WD9EE893lT1M4A
-V8hXvANdUdRYUZSTbr57tlJKBxCau32gFIBA2Y6z6GH7EgwHnCOX5nQTtNsDGnP8
-hikgbGS6/vUIkHEXCMTY6wtFmvosTME/ujtpd8kRIhLHpkHnkgJGnEZ4a9luSIWL
-41U+btvnpWxl7nvswqtl7AYNGzRH9PTwd7bvPihG8dF3fcTGegwr1O6YDTbBpzT7
-lpe/P+TD3pJjVncb4o1yCqUgeCijEyfwkw4Mioldo7VICuwFgEajLbgJyQl8EnDy
-ryRfT6/mKNu0KF9wFlB+CO7cGSJoEoA//BOJ1NYaUHxd79s8ulARY9MR23qN+HPa
-PCCoFfg/c1R+BrVyxorm
-=MmlA
------END PGP SIGNATURE-----
+> I don't care too much which tree the binding description goes through eit=
+her,
+> as long as it is kept in sync.
 
---nFreZHaLTZJo0R7j--
+OK, I'm happy to merge the whole enchilada.
+
+> =
+
+> > > DT folks, what is the right way to do this? An immutable, shared bran=
+ch
+> > > just for a single header file solves the problem, but also feels very
+> > > cumbersome for such a trivial issue.
+> > =
+
+> > Arnd and Olof have been complaining about this problem which is worse
+> > when it is a binding, driver and dts.
+> > =
+
+> > I'm open to maintaining a branch for this purpose if that helps. That
+> > or staggering merging of bindings and drivers/dts are the only ideas
+> > I've come up with.
+> =
+
+> =
+
+> > > How about allowing binding descriptions to be merged without the head=
+er
+> > > file, so long as it is merged through another tree?
+> > =
+
+> > I think that is wrong if we have the goal to separate bindings from
+> > the kernel and the bindings should stand on their own. However, if it
+> > greatly simplifies things, i'd be okay with that.
+> =
+
+> The header file is really the main issue we need to worry about. My prefe=
+rred
+> way of doing this would be to give it an extra merge window: add the bind=
+ing
+> document and the header file in one merge window, and then add the dts fi=
+les
+> and the driver one release later.
+
+I'd prefer not to stagger, as it just adds unnecessary delay to getting
+things upstream. And the code being merged first (the binding doc +
+header) is fairly useless on its own.
+
+> I've seen a lot of header files added for
+> no good reason at all, and at least that way we can get people to think a=
+bout
+> the dependency more.
+
+Do you mean you prefer to declare the magic numbers in the binding
+description directly instead of using a header and relying on the C code
+to stay in sync?
+
+Or do you mean that there is no reason to declare the constants/magic
+numbers in a shared way at all?
+
+> =
+
+> It's also ok to merge the header file and binding with either the dts file
+> changes or the driver and then do the other part the following release.
+> =
+
+> In the past, we've worked around the issue by merging the driver through
+> arm-soc, or by merging the dts changes through a driver tree, with the
+> appropriate Acks in each case. Both of those approaches work of course,
+> but the former always feels awkward to me as we are not using the right
+> maintainer path, and the latter approach tends to cause merge conflicts,
+> especially when multiple headers for different subsystems get added or
+> the dts files are added at the same time.
+> =
+
+> Having a shared branch for the header file is another way to do it, and
+> we can do that in some cases, but I'd prefer not to make it the default.
+
+Well, I'm thinking that an immutable branch isn't such a bad idea given
+that both you and Rob are OK with subsystems merging headers and binding
+descriptions.
+
+A while back Stephen Boyd and I started to use topic branches for every
+driver, all based on -rc1 and merging those into clk-next. This makes it
+trivial for us to push a shareable branch with minimal dependencies.
+
+So at least for the clk tree, how do you feel about us merging driver +
+header + binding description and then sharing our topic branch as-needed
+with arm-soc? We could even push our topic branches by default to cut
+down on coordinating over email back-and-forth.
+
+As an example, patch #1 from the Hi3519 series[0] includes the clk
+driver, binding description and a shared header. Any objection to me
+taking that patch as-is, based on -rc1, and pushing out that topic
+branch as clk-hi3519 to the clk git tree with the expectation that
+you'll just merge that if you need to?
+
+You can let me know if you've pulled it in, and then I won't rebase
+without consulting with the arm-soc folks first.
+
+Does this workflow agreement Solve All the Problems?
+
+(Note that the patch I referenced is still under review so the branch
+name I mentioned above doesn't exist yet. It is just an example)
+
+[0] http://lkml.kernel.org/r/<1451439832-13927-2-git-send-email-xuejianchen=
+g@huawei.com>
+
+Regards,
+Mike
+
+> =
+
+>         Arnd
