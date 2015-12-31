@@ -1,61 +1,61 @@
-Return-Path: <anholt@eliezer.anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Remi Pommarel <repk@triplefau.lt>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Remi Pommarel <repk@triplefau.lt>
-Subject: Re: [PATCH v3 2/4] clk: bcm2835: Support for clock parent selection
-In-Reply-To: <1449418969-5565-3-git-send-email-repk@triplefau.lt>
-References: <1449418969-5565-1-git-send-email-repk@triplefau.lt> <1449418969-5565-3-git-send-email-repk@triplefau.lt>
-Date: Mon, 07 Dec 2015 17:32:04 -0800
-Message-ID: <876109d8tn.fsf@eliezer.anholt.net>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1450952058-15888-1-git-send-email-geert+renesas@glider.be>
+Cc: "Ulrich Hecht" <ulrich.hecht+renesas@gmail.com>, linux-clk@vger.kernel.org,
+ linux-sh@vger.kernel.org, "Geert Uytterhoeven" <geert+renesas@glider.be>
+References: <1450952058-15888-1-git-send-email-geert+renesas@glider.be>
+Message-ID: <20151231231814.12563.63897@quark.deferred.io>
+Subject: Re: [PATCH] clk: shmobile: r8a7795: Add SATA0 clock
+Date: Thu, 31 Dec 2015 15:18:14 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
+Quoting Geert Uytterhoeven (2015-12-24 02:14:18)
+> From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> =
 
-Remi Pommarel <repk@triplefau.lt> writes:
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Hi Mike, Stephen,
+> =
 
-> Some bcm2835 clocks used by hardware (like "PWM" or "H264") can have multiple
-> parent clocks. These clocks divide the rate of a parent which can be selected by
-> setting the proper bits in the clock control register.
->
-> Previously all these parents where handled by a mux clock. But a mux clock
-> cannot be used because updating clock control register to select parent needs a
-> password to be xor'd with the parent index.
->
-> This patch get rid of mux clock and make these clocks handle their own parent,
-> allowing them to select the one to use.
+> This is the sole missing piece to make SATA work on r8a7795 in v4.5.
+> All other pieces (bindings, driver, pinctrl, dts) are already queued for
+> v4.5.
+> =
 
-I see, you use the new flag now in this patch.  I take back the comment
-on the previous patch.
+> Thanks for applying!
 
-Patches 1-3 are:
+Applied to clk-next towards 4.5.
 
-Reviewed-by: Eric Anholt <eric@anholt.net>
+Regards,
+Mike
 
-and I think they're ready to go in the clock tree, even while the DT for
-setting up the bcm2835-pwm driver is being reviewed on the DT list.
+> =
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+>  drivers/clk/shmobile/r8a7795-cpg-mssr.c | 1 +
+>  1 file changed, 1 insertion(+)
+> =
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+> diff --git a/drivers/clk/shmobile/r8a7795-cpg-mssr.c b/drivers/clk/shmobi=
+le/r8a7795-cpg-mssr.c
+> index 57c413635d1af135..13e994772dfd0cf2 100644
+> --- a/drivers/clk/shmobile/r8a7795-cpg-mssr.c
+> +++ b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
+> @@ -150,6 +150,7 @@ static const struct mssr_mod_clk r8a7795_mod_clks[] _=
+_initconst =3D {
+>         DEF_MOD("hdmi1",                 728,   R8A7795_CLK_HDMI),
+>         DEF_MOD("hdmi0",                 729,   R8A7795_CLK_HDMI),
+>         DEF_MOD("etheravb",              812,   R8A7795_CLK_S3D2),
+> +       DEF_MOD("sata0",                 815,   R8A7795_CLK_S3D2),
+>         DEF_MOD("gpio7",                 905,   R8A7795_CLK_CP),
+>         DEF_MOD("gpio6",                 906,   R8A7795_CLK_CP),
+>         DEF_MOD("gpio5",                 907,   R8A7795_CLK_CP),
+> -- =
 
-iQIcBAEBCgAGBQJWZjMVAAoJELXWKTbR/J7os6kP/iRj62obZL4cYhW5sYW+h/Wg
-R2fJlnlurA6FmgO1qUskPl9L3Kcsz3lmrH/JPjbnMgEMJTmap2KkZsNZ9mToAAWX
-0Q7GJ802H0OAhWXEzlu00XNEQAWwGW29LqsUaJcW0ezGsPLJH9Mpv6tMWzmGsOw8
-/hB4CDtUXrQjLBaGMgfTP4T43AdUgprASQBec7ZA5uSlQEx6oQKqMn/z5qnLk1b5
-VDOCZK3CAFsZ5ltS8CHReTAGwo6T5/GrVAyPBVYdmUNQ6B/3BzBF0A43fJ1QAtbi
-/u52ca3kS/RJVJynuYu2kbwk2iZ6xmQmESnPCuEVNBnVpgFTx3tn98zsjt93Cxb4
-k2YXyykrPGuQt6qDISjih2KIGDgy5GZ3bsTN7sJMrzYkNZ0veIXB3hOBbhikp7pN
-K60x0BHuPOFUeHyLfRoXJWIjtzSe8fy5AFOb/HYXlVMsnQJu0Yj6cabb2H16LDRY
-JenUdAbeiMYij4yEfNDkVRYmza5J8psRPxIYUV+qx233xYpvGL98oIdz/hFhtziT
-0V9q/geQYCA7Y2eyFZVQx4oMby+tzvP+EtOaH601S8jjwZme/yhdtMUBJXPD3Ch5
-kPsiu1fS2qPkEhGQCJPu/Ib5PyDpsAPO5OL56BG/qe1vxYL3SoVMBdD+4xEVGydG
-IBl+RPf03tI2MdWwengP
-=HcT0
------END PGP SIGNATURE-----
---=-=-=--
+> 1.9.1
+>=20
