@@ -1,52 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from pandora.arm.linux.org.uk ([78.32.30.218]:58129 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754865AbbLFX2s (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 6 Dec 2015 18:28:48 -0500
-From: Russell King <rmk+kernel@arm.linux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Jason Cooper <jason@lakedaemon.net>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org
-Subject: [PATCH v2 3/3] ARM: dts: dove: add Dove divider clocks
+Return-Path: <jamesjj.liao@mediatek.com>
+Message-ID: <1451555942.10610.18.camel@mtksdaap41>
+Subject: Re: [PATCH 3/5] clk: mediatek: Add MT2701 clock support
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Michael Turquette <mturquette@baylibre.com>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, <devicetree@vger.kernel.org>,
+	<srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, Shunli Wang <shunli.wang@mediatek.com>,
+	Sascha Hauer <kernel@pengutronix.de>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Date: Thu, 31 Dec 2015 17:59:02 +0800
+In-Reply-To: <20151230233406.19557.35006@quark.deferred.io>
+References: <1451456865-44139-1-git-send-email-jamesjj.liao@mediatek.com>
+	 <1451456865-44139-4-git-send-email-jamesjj.liao@mediatek.com>
+	 <20151230233406.19557.35006@quark.deferred.io>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <E1a5ijN-0007pq-3t@rmk-PC.arm.linux.org.uk>
-Date: Sun, 06 Dec 2015 23:28:37 +0000
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the Dove divider clocks to the Dove dtsi file.
+Hi Mike
+On Wed, 2015-12-30 at 15:34 -0800, Michael Turquette wrote:
+> Quoting James Liao (2015-12-29 22:27:43)
+> > +CLK_OF_DECLARE(mtk_topckgen, "mediatek,mt2701-topckgen", mtk_topckgen_init);
+> > +CLK_OF_DECLARE(mtk_infrasys, "mediatek,mt2701-infracfg", mtk_infrasys_init);
+> > +CLK_OF_DECLARE(mtk_pericfg, "mediatek,mt2701-pericfg", mtk_pericfg_init);
+> > +CLK_OF_DECLARE(mtk_mmsys, "mediatek,mt2701-mmsys", mtk_mmsys_init);
+> > +CLK_OF_DECLARE(mtk_imgsys, "mediatek,mt2701-imgsys", mtk_imgsys_init);
+> > +CLK_OF_DECLARE(mtk_vdecsys, "mediatek,mt2701-vdecsys", mtk_vdecsys_init);
+> > +CLK_OF_DECLARE(mtk_hifsys, "mediatek,mt2701-hifsys", mtk_hifsys_init);
+> > +CLK_OF_DECLARE(mtk_ethsys, "mediatek,mt2701-ethsys", mtk_ethsys_init);
+> > +CLK_OF_DECLARE(mtk_bdpsys, "mediatek,mt2701-bdpsys", mtk_bdpsys_init);
+> > +CLK_OF_DECLARE(mtk_apmixedsys, "mediatek,mt2701-apmixedsys",
+> 
+> None of these compatible strings are documented with a binding
+> description in this patch series. In fact looking through
+> Documentation/devicetree/bindings/clock/ on the latest linux-next tag I
+> see that the only existing binding is mt8173-cpu-dvfs.txt.
+> 
+> Am I looking in the wrong place or do we have a case of missing binding
+> descriptions?
 
-Acked-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
----
- arch/arm/boot/dts/dove.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+The binding documents are located in
+Documentation/devicetree/bindings/arm/mediatek/ . And I missed to add
+mt2701 compatible strings into it. I'll add them in next patchset.
 
-diff --git a/arch/arm/boot/dts/dove.dtsi b/arch/arm/boot/dts/dove.dtsi
-index 179121630ad7..ea36a262d056 100644
---- a/arch/arm/boot/dts/dove.dtsi
-+++ b/arch/arm/boot/dts/dove.dtsi
-@@ -459,6 +459,12 @@
- 					#clock-cells = <1>;
- 				};
- 
-+				divider_clk: core-clock@0064 {
-+					compatible = "marvell,dove-divider-clock";
-+					reg = <0x0064 0x8>;
-+					#clock-cells = <1>;
-+				};
-+
- 				pinctrl: pin-ctrl@0200 {
- 					compatible = "marvell,dove-pinctrl";
- 					reg = <0x0200 0x14>,
--- 
-2.1.0
 
+Best regards,
+
+James
