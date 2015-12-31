@@ -1,43 +1,52 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: Andrew Lunn <andrew@lunn.ch>,  Jason Cooper <jason@lakedaemon.net>,  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org, Russell King <rmk+kernel@arm.linux.org.uk>
-Subject: Re: [PATCH v2 2/3] clk: add Dove PLL divider support for GPU, VMeta and AXI clocks
-References: <E1a5ijI-0007pk-0I@rmk-PC.arm.linux.org.uk>
-Date: Mon, 07 Dec 2015 18:43:55 +0100
-In-Reply-To: <E1a5ijI-0007pk-0I@rmk-PC.arm.linux.org.uk> (Russell King's
-	message of "Sun, 06 Dec 2015 23:28:32 +0000")
-Message-ID: <87d1uib1d0.fsf@free-electrons.com>
+Return-Path: <jamesjj.liao@mediatek.com>
+Message-ID: <1451556167.10610.20.camel@mtksdaap41>
+Subject: Re: [PATCH 4/5] reset: mediatek: mt2701 reset controller dt-binding
+ file
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Michael Turquette <mturquette@baylibre.com>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, "Sascha Hauer <kernel@pengutronix.de>, Daniel	Kurtz
+ <djkurtz@chromium.org>,   srv_heupstream@mediatek.com,
+	devicetree@vger.kernel.org,   linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,   linux-mediatek@lists.infradead.org,
+	linux-clk@vger.kernel.org,   Shunli Wang" <shunli.wang@mediatek.com>,
+	<p.zabel@pengutronix.de>
+Date: Thu, 31 Dec 2015 18:02:47 +0800
+In-Reply-To: <20151230234917.19557.59026@quark.deferred.io>
+References: <1451456865-44139-1-git-send-email-jamesjj.liao@mediatek.com>
+	 <1451456865-44139-5-git-send-email-jamesjj.liao@mediatek.com>
+	 <20151230234917.19557.59026@quark.deferred.io>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike and Stephen,
-=20
- On lun., d=C3=A9c. 07 2015, Russell King <rmk+kernel@arm.linux.org.uk> wro=
-te:
+Hi Mike,
 
-> Add support for the Dove PLL dividers, which are used to generate the
-> clocks for the AXI bus, as well as the GPU and VMeta peripherals.
->
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> ---
->  drivers/clk/mvebu/Makefile       |   2 +-
->  drivers/clk/mvebu/dove-divider.c | 262 +++++++++++++++++++++++++++++++++=
-++++++
->  drivers/clk/mvebu/dove.c         |   6 +
->  3 files changed, 269 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/clk/mvebu/dove-divider.c
+On Wed, 2015-12-30 at 15:49 -0800, Michael Turquette wrote:
+> Hi James & Shunli Wang,
+> 
+> Quoting James Liao (2015-12-29 22:27:44)
+> > From: Shunli Wang <shunli.wang@mediatek.com>
+> > 
+> > Dt-binding file about reset controller is used to provide
+> > kinds of definition, which is referenced by dts file and
+> > IC-specified reset controller driver code.
+> > 
+> > Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+> 
+> I've Cc'd Philipp Zabel. I know the patch is trivial but it's best to
+> keep the correct maintainers Cc'd.
+> 
+> Also it looks like this header is missing a corresponding binding
+> description? Unless you're using some kind of common reset compatible
+> string?
 
-Do you plan to apply this patch directly or do you expect a pull request
-from mvebu for it (of course once you will have give your Acked-by)?
+Thanks for your suggestion. I'll add binding description into
+Documentation/devicetree/bindings/arm/mediatek/ in next version of
+patchset.
 
-Thanks,
 
-Gregory
+Best regards,
 
---=20
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+James
