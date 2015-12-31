@@ -1,381 +1,874 @@
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <566FF124.1030501@ti.com>
-References: <1447968149-10979-1-git-send-email-heiko@sntech.de>
-	<1447968149-10979-6-git-send-email-heiko@sntech.de>
-	<566FF124.1030501@ti.com>
-Date: Mon, 21 Dec 2015 12:00:35 -0800
-Message-ID: <CAEG3pNA3s+KhVArsoNTqq4VnB5TgFtS3n_D-hjFhPdrC8AL=HA@mail.gmail.com>
-Subject: Re: [PATCH v3 5/8] phy: rockchip-usb: expose the phy-internal PLLs
+To: Masahiro Yamada <yamada.masahiro@socionext.com>,  linux-clk@vger.kernel.org
 From: Michael Turquette <mturquette@baylibre.com>
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Stephen Boyd <sboyd@codeaurora.org>,
-	"Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>, linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Doug Anderson <dianders@chromium.org>,
-	Romain Perier <romain.perier@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Lin Huang <hl@rock-chips.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1451298058-28910-1-git-send-email-yamada.masahiro@socionext.com>
+Cc: "Masahiro Yamada" <yamada.masahiro@socionext.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <1451298058-28910-1-git-send-email-yamada.masahiro@socionext.com>
+Message-ID: <20151231013511.21505.59601@quark.deferred.io>
+Subject: Re: [PATCH v2,RESEND] clk: uniphier: add clock drivers for UniPhier SoCs
+Date: Wed, 30 Dec 2015 17:35:11 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-Kishon & Heiko,
+Hello Yamada-san,
 
-On Tue, Dec 15, 2015 at 2:53 AM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
-> Hi Mike,
->
-> On Friday 20 November 2015 02:52 AM, Heiko Stuebner wrote:
->> The USB phys on Rockchip SoCs contain their own internal PLLs to create
->> the 480MHz needed. Additionally this PLL output is also fed back into the
->> core clock-controller as possible source for clocks like the GPU or others.
->>
->> Until now this was modelled incorrectly with a "virtual" factor clock in
->> the clock controller. The one big caveat is that if we turn off the usb phy
->> via the siddq signal, all analog components get turned off, including the
->> PLLs. It is therefore possible that a source clock gets disabled without
->> the clock driver ever knowing, possibly making the system hang.
->>
->> Therefore register the phy-plls as real clocks that the clock driver can
->> then reference again normally, making the clock hirarchy finally reflect
->> the actual hardware.
->>
->> The phy-ops get converted to simply turning that new clock on and off
->> which in turn controls the siddq signal of the phy.
->>
->> Through this the driver gains handling for platform-specific data, to
->> handle the phy->clock name association.
->
-> Are you okay with this patch/ Can you give your Acked-by?
+Quoting Masahiro Yamada (2015-12-28 02:20:58)
+> diff --git a/drivers/clk/uniphier/Kconfig b/drivers/clk/uniphier/Kconfig
+> new file mode 100644
+> index 0000000..7606f27
+> --- /dev/null
+> +++ b/drivers/clk/uniphier/Kconfig
+> @@ -0,0 +1,35 @@
+> +menuconfig CLK_UNIPHIER
+> +       bool "Clock drivers for UniPhier SoCs"
+> +       depends on ARCH_UNIPHIER
 
-Acked-by: Michael Turquette <mturquette@baylibre.com>
+Might want to make the above line:
 
->
-> Thanks
-> Kishon
->
->>
->> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
->> Reviewed-by: Douglas Anderson <dianders@chromium.org>
->> ---
->>  .../devicetree/bindings/phy/rockchip-usb-phy.txt   |   1 +
->>  drivers/phy/phy-rockchip-usb.c                     | 188 ++++++++++++++++++---
->>  2 files changed, 162 insertions(+), 27 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/phy/rockchip-usb-phy.txt b/Documentation/devicetree/bindings/phy/rockchip-usb-phy.txt
->> index 9b37242..68498d5 100644
->> --- a/Documentation/devicetree/bindings/phy/rockchip-usb-phy.txt
->> +++ b/Documentation/devicetree/bindings/phy/rockchip-usb-phy.txt
->> @@ -24,6 +24,7 @@ required properties:
->>  Optional Properties:
->>  - clocks : phandle + clock specifier for the phy clocks
->>  - clock-names: string, clock name, must be "phyclk"
->> +- #clock-cells: for users of the phy-pll, should be 0
->>
->>  Example:
->>
->> diff --git a/drivers/phy/phy-rockchip-usb.c b/drivers/phy/phy-rockchip-usb.c
->> index 16cd533..33a80eb 100644
->> --- a/drivers/phy/phy-rockchip-usb.c
->> +++ b/drivers/phy/phy-rockchip-usb.c
->> @@ -15,12 +15,14 @@
->>   */
->>
->>  #include <linux/clk.h>
->> +#include <linux/clk-provider.h>
->>  #include <linux/io.h>
->>  #include <linux/kernel.h>
->>  #include <linux/module.h>
->>  #include <linux/mutex.h>
->>  #include <linux/of.h>
->>  #include <linux/of_address.h>
->> +#include <linux/of_platform.h>
->>  #include <linux/phy/phy.h>
->>  #include <linux/platform_device.h>
->>  #include <linux/regulator/consumer.h>
->> @@ -36,15 +38,28 @@
->>  #define SIDDQ_ON             BIT(13)
->>  #define SIDDQ_OFF            (0 << 13)
->>
->> +struct rockchip_usb_phys {
->> +     int reg;
->> +     const char *pll_name;
->> +};
->> +
->> +struct rockchip_usb_phy_pdata {
->> +     struct rockchip_usb_phys *phys;
->> +};
->> +
->>  struct rockchip_usb_phy_base {
->>       struct device *dev;
->>       struct regmap *reg_base;
->> +     const struct rockchip_usb_phy_pdata *pdata;
->>  };
->>
->>  struct rockchip_usb_phy {
->>       struct rockchip_usb_phy_base *base;
->> +     struct device_node *np;
->>       unsigned int    reg_offset;
->>       struct clk      *clk;
->> +     struct clk      *clk480m;
->> +     struct clk_hw   clk480m_hw;
->>       struct phy      *phy;
->>  };
->>
->> @@ -55,17 +70,59 @@ static int rockchip_usb_phy_power(struct rockchip_usb_phy *phy,
->>                           SIDDQ_WRITE_ENA | (siddq ? SIDDQ_ON : SIDDQ_OFF));
->>  }
->>
->> -static int rockchip_usb_phy_power_off(struct phy *_phy)
->> +static unsigned long rockchip_usb_phy480m_recalc_rate(struct clk_hw *hw,
->> +                                             unsigned long parent_rate)
->>  {
->> -     struct rockchip_usb_phy *phy = phy_get_drvdata(_phy);
->> -     int ret = 0;
->> +     return 480000000;
->> +}
->> +
->> +static void rockchip_usb_phy480m_disable(struct clk_hw *hw)
->> +{
->> +     struct rockchip_usb_phy *phy = container_of(hw,
->> +                                                 struct rockchip_usb_phy,
->> +                                                 clk480m_hw);
->>
->>       /* Power down usb phy analog blocks by set siddq 1 */
->> -     ret = rockchip_usb_phy_power(phy, 1);
->> -     if (ret)
->> +     rockchip_usb_phy_power(phy, 1);
->> +}
->> +
->> +static int rockchip_usb_phy480m_enable(struct clk_hw *hw)
->> +{
->> +     struct rockchip_usb_phy *phy = container_of(hw,
->> +                                                 struct rockchip_usb_phy,
->> +                                                 clk480m_hw);
->> +
->> +     /* Power up usb phy analog blocks by set siddq 0 */
->> +     return rockchip_usb_phy_power(phy, 0);
->> +}
->> +
->> +static int rockchip_usb_phy480m_is_enabled(struct clk_hw *hw)
->> +{
->> +     struct rockchip_usb_phy *phy = container_of(hw,
->> +                                                 struct rockchip_usb_phy,
->> +                                                 clk480m_hw);
->> +     int ret;
->> +     u32 val;
->> +
->> +     ret = regmap_read(phy->base->reg_base, phy->reg_offset, &val);
->> +     if (ret < 0)
->>               return ret;
->>
->> -     clk_disable_unprepare(phy->clk);
->> +     return (val & SIDDQ_ON) ? 0 : 1;
->> +}
->> +
->> +static const struct clk_ops rockchip_usb_phy480m_ops = {
->> +     .enable = rockchip_usb_phy480m_enable,
->> +     .disable = rockchip_usb_phy480m_disable,
->> +     .is_enabled = rockchip_usb_phy480m_is_enabled,
->> +     .recalc_rate = rockchip_usb_phy480m_recalc_rate,
->> +};
->> +
->> +static int rockchip_usb_phy_power_off(struct phy *_phy)
->> +{
->> +     struct rockchip_usb_phy *phy = phy_get_drvdata(_phy);
->> +
->> +     clk_disable_unprepare(phy->clk480m);
->>
->>       return 0;
->>  }
->> @@ -73,20 +130,8 @@ static int rockchip_usb_phy_power_off(struct phy *_phy)
->>  static int rockchip_usb_phy_power_on(struct phy *_phy)
->>  {
->>       struct rockchip_usb_phy *phy = phy_get_drvdata(_phy);
->> -     int ret = 0;
->>
->> -     ret = clk_prepare_enable(phy->clk);
->> -     if (ret)
->> -             return ret;
->> -
->> -     /* Power up usb phy analog blocks by set siddq 0 */
->> -     ret = rockchip_usb_phy_power(phy, 0);
->> -     if (ret) {
->> -             clk_disable_unprepare(phy->clk);
->> -             return ret;
->> -     }
->> -
->> -     return 0;
->> +     return clk_prepare_enable(phy->clk480m);
->>  }
->>
->>  static const struct phy_ops ops = {
->> @@ -99,6 +144,9 @@ static void rockchip_usb_phy_action(void *data)
->>  {
->>       struct rockchip_usb_phy *rk_phy = data;
->>
->> +     of_clk_del_provider(rk_phy->np);
->> +     clk_unregister(rk_phy->clk480m);
->> +
->>       if (rk_phy->clk)
->>               clk_put(rk_phy->clk);
->>  }
->> @@ -108,13 +156,16 @@ static int rockchip_usb_phy_init(struct rockchip_usb_phy_base *base,
->>  {
->>       struct rockchip_usb_phy *rk_phy;
->>       unsigned int reg_offset;
->> -     int err;
->> +     const char *clk_name;
->> +     struct clk_init_data init;
->> +     int err, i;
->>
->>       rk_phy = devm_kzalloc(base->dev, sizeof(*rk_phy), GFP_KERNEL);
->>       if (!rk_phy)
->>               return -ENOMEM;
->>
->>       rk_phy->base = base;
->> +     rk_phy->np = child;
->>
->>       if (of_property_read_u32(child, "reg", &reg_offset)) {
->>               dev_err(base->dev, "missing reg property in node %s\n",
->> @@ -124,14 +175,54 @@ static int rockchip_usb_phy_init(struct rockchip_usb_phy_base *base,
->>
->>       rk_phy->reg_offset = reg_offset;
->>
->> -     err = devm_add_action(base->dev, rockchip_usb_phy_action, rk_phy);
->> -     if (err)
->> -             return err;
->> -
->>       rk_phy->clk = of_clk_get_by_name(child, "phyclk");
->>       if (IS_ERR(rk_phy->clk))
->>               rk_phy->clk = NULL;
->>
->> +     i = 0;
->> +     init.name = NULL;
->> +     while (base->pdata->phys[i].reg) {
->> +             if (base->pdata->phys[i].reg == reg_offset) {
->> +                     init.name = base->pdata->phys[i].pll_name;
->> +                     break;
->> +             }
->> +             i++;
->> +     }
->> +
->> +     if (!init.name) {
->> +             dev_err(base->dev, "phy data not found\n");
->> +             return -EINVAL;
->> +     }
->> +
->> +     if (rk_phy->clk) {
->> +             clk_name = __clk_get_name(rk_phy->clk);
->> +             init.flags = 0;
->> +             init.parent_names = &clk_name;
->> +             init.num_parents = 1;
->> +     } else {
->> +             init.flags = CLK_IS_ROOT;
->> +             init.parent_names = NULL;
->> +             init.num_parents = 0;
->> +     }
->> +
->> +     init.ops = &rockchip_usb_phy480m_ops;
->> +     rk_phy->clk480m_hw.init = &init;
->> +
->> +     rk_phy->clk480m = clk_register(base->dev, &rk_phy->clk480m_hw);
->> +     if (IS_ERR(rk_phy->clk480m)) {
->> +             err = PTR_ERR(rk_phy->clk480m);
->> +             goto err_clk;
->> +     }
->> +
->> +     err = of_clk_add_provider(child, of_clk_src_simple_get,
->> +                               rk_phy->clk480m);
->> +     if (err < 0)
->> +             goto err_clk_prov;
->> +
->> +     err = devm_add_action(base->dev, rockchip_usb_phy_action, rk_phy);
->> +     if (err)
->> +             goto err_devm_action;
->> +
->>       rk_phy->phy = devm_phy_create(base->dev, child, &ops);
->>       if (IS_ERR(rk_phy->phy)) {
->>               dev_err(base->dev, "failed to create PHY\n");
->> @@ -141,13 +232,48 @@ static int rockchip_usb_phy_init(struct rockchip_usb_phy_base *base,
->>
->>       /* only power up usb phy when it use, so disable it when init*/
->>       return rockchip_usb_phy_power(rk_phy, 1);
->> +
->> +err_devm_action:
->> +     of_clk_del_provider(child);
->> +err_clk_prov:
->> +     clk_unregister(rk_phy->clk480m);
->> +err_clk:
->> +     if (rk_phy->clk)
->> +             clk_put(rk_phy->clk);
->> +     return err;
->>  }
->>
->> +static const struct rockchip_usb_phy_pdata rk3066a_pdata = {
->> +     .phys = (struct rockchip_usb_phys[]){
->> +             { .reg = 0x17c, .pll_name = "sclk_otgphy0_480m" },
->> +             { .reg = 0x188, .pll_name = "sclk_otgphy1_480m" },
->> +             { /* sentinel */ }
->> +     },
->> +};
->> +
->> +static const struct rockchip_usb_phy_pdata rk3188_pdata = {
->> +     .phys = (struct rockchip_usb_phys[]){
->> +             { .reg = 0x10c, .pll_name = "sclk_otgphy0_480m" },
->> +             { .reg = 0x11c, .pll_name = "sclk_otgphy1_480m" },
->> +             { /* sentinel */ }
->> +     },
->> +};
->> +
->> +static const struct rockchip_usb_phy_pdata rk3288_pdata = {
->> +     .phys = (struct rockchip_usb_phys[]){
->> +             { .reg = 0x320, .pll_name = "sclk_otgphy0_480m" },
->> +             { .reg = 0x334, .pll_name = "sclk_otgphy1_480m" },
->> +             { .reg = 0x348, .pll_name = "sclk_otgphy2_480m" },
->> +             { /* sentinel */ }
->> +     },
->> +};
->> +
->>  static int rockchip_usb_phy_probe(struct platform_device *pdev)
->>  {
->>       struct device *dev = &pdev->dev;
->>       struct rockchip_usb_phy_base *phy_base;
->>       struct phy_provider *phy_provider;
->> +     const struct of_device_id *match;
->>       struct device_node *child;
->>       int err;
->>
->> @@ -155,6 +281,14 @@ static int rockchip_usb_phy_probe(struct platform_device *pdev)
->>       if (!phy_base)
->>               return -ENOMEM;
->>
->> +     match = of_match_device(dev->driver->of_match_table, dev);
->> +     if (!match || !match->data) {
->> +             dev_err(dev, "missing phy data\n");
->> +             return -EINVAL;
->> +     }
->> +
->> +     phy_base->pdata = match->data;
->> +
->>       phy_base->dev = dev;
->>       phy_base->reg_base = syscon_regmap_lookup_by_phandle(dev->of_node,
->>                                                            "rockchip,grf");
->> @@ -176,9 +310,9 @@ static int rockchip_usb_phy_probe(struct platform_device *pdev)
->>  }
->>
->>  static const struct of_device_id rockchip_usb_phy_dt_ids[] = {
->> -     { .compatible = "rockchip,rk3066a-usb-phy" },
->> -     { .compatible = "rockchip,rk3188-usb-phy" },
->> -     { .compatible = "rockchip,rk3288-usb-phy" },
->> +     { .compatible = "rockchip,rk3066a-usb-phy", .data = &rk3066a_pdata },
->> +     { .compatible = "rockchip,rk3188-usb-phy", .data = &rk3188_pdata },
->> +     { .compatible = "rockchip,rk3288-usb-phy", .data = &rk3288_pdata },
->>       {}
->>  };
->>
->>
+	depends on ARCH_UNIPHIER || COMPILE_TEST
 
+> +       depends on OF
+> +       default y
+> +       help
+> +         Supports clock drivers for UniPhier SoCs.
 
+Why menuconfig? Can we make this a non-visible config option selected by
+the UniPhier platform?
 
--- 
-Michael Turquette
-CEO
-BayLibre - At the Heart of Embedded Linux
-http://baylibre.com/
+> +
+> +if CLK_UNIPHIER
+
+Please drop the if statement here and have the below options 'depends'
+on CLK_UNIPHIER.
+
+> +
+> +config CLK_UNIPHIER_PH1_SLD3
+> +       bool "Clock driver for UniPhier PH1-sLD3 SoC"
+> +       default y
+
+Can you make these drivers into loadable modules? If so you might
+consider tristate.
+
+> +
+> +config CLK_UNIPHIER_PH1_LD4
+> +       bool "Clock driver for UniPhier PH1-LD4 SoC"
+> +       default y
+> +
+> +config CLK_UNIPHIER_PH1_PRO4
+> +       bool "Clock driver for UniPhier PH1-Pro4 SoC"
+> +       default y
+> +
+> +config CLK_UNIPHIER_PH1_SLD8
+> +       bool "Clock driver for UniPhier PH1-sLD8 SoC"
+> +       default y
+> +
+> +config CLK_UNIPHIER_PH1_PRO5
+> +       bool "Clock driver for UniPhier PH1-Pro5 SoC"
+> +       default y
+> +
+> +config CLK_UNIPHIER_PROXSTREAM2
+> +       bool "Clock driver for UniPhier ProXstream2/PH1-LD6b SoC"
+> +       default y
+> +
+> +endif
+> diff --git a/drivers/clk/uniphier/Makefile b/drivers/clk/uniphier/Makefile
+> new file mode 100644
+> index 0000000..3be1a17
+> --- /dev/null
+> +++ b/drivers/clk/uniphier/Makefile
+> @@ -0,0 +1,10 @@
+> +obj-y +=3D clk-uniphier-core.o
+> +obj-y +=3D clk-uniphier-peri.o
+> +obj-y +=3D clk-uniphier-mio.o
+> +
+> +obj-$(CONFIG_CLK_UNIPHIER_PH1_SLD3)    +=3D clk-ph1-sld3.o
+> +obj-$(CONFIG_CLK_UNIPHIER_PH1_LD4)     +=3D clk-ph1-ld4.o
+> +obj-$(CONFIG_CLK_UNIPHIER_PH1_PRO4)    +=3D clk-ph1-pro4.o
+> +obj-$(CONFIG_CLK_UNIPHIER_PH1_SLD8)    +=3D clk-ph1-sld8.o
+> +obj-$(CONFIG_CLK_UNIPHIER_PH1_PRO5)    +=3D clk-ph1-pro5.o
+> +obj-$(CONFIG_CLK_UNIPHIER_PROXSTREAM2) +=3D clk-proxstream2.o
+> diff --git a/drivers/clk/uniphier/clk-ph1-ld4.c b/drivers/clk/uniphier/cl=
+k-ph1-ld4.c
+> new file mode 100644
+> index 0000000..48d342f
+> --- /dev/null
+> +++ b/drivers/clk/uniphier/clk-ph1-ld4.c
+> @@ -0,0 +1,117 @@
+> +/*
+> + * Copyright (C) 2015 Masahiro Yamada <yamada.masahiro@socionext.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +
+> +#include "clk-uniphier.h"
+> +
+> +static struct uniphier_clk_init_data ph1_ld4_clk_idata[] __initdata =3D {
+> +       {
+> +               .name =3D "spll",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D -1,
+> +               .data.factor =3D {
+> +                       .parent_name =3D UNIPHIER_CLK_EXT "ref",
+> +                       .mult =3D 65,
+> +                       .div =3D 1,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "upll",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D -1,
+> +               .data.factor =3D {
+> +                       .parent_name =3D UNIPHIER_CLK_EXT "ref",
+> +                       .mult =3D 288000,
+> +                       .div =3D 24576,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "a2pll",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D -1,
+> +               .data.factor =3D {
+> +                       .parent_name =3D UNIPHIER_CLK_EXT "ref",
+> +                       .mult =3D 24,
+> +                       .div =3D 1,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "uart",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D 3,
+> +               .data.factor =3D {
+> +                       .parent_name =3D "a2pll",
+> +                       .mult =3D 1,
+> +                       .div =3D 16,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "i2c",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D 4,
+> +               .data.factor =3D {
+> +                       .parent_name =3D "spll",
+> +                       .mult =3D 1,
+> +                       .div =3D 16,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "arm-scu",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D 7,
+> +               .data.factor =3D {
+> +                       .parent_name =3D "spll",
+> +                       .mult =3D 1,
+> +                       .div =3D 32,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "stdmac-clken",
+> +               .type =3D UNIPHIER_CLK_TYPE_GATE,
+> +               .output_index =3D -1,
+> +               .data.gate =3D {
+> +                       .parent_name =3D NULL,
+> +                       .reg =3D 0x2104,
+> +                       .bit_idx =3D 10,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "stdmac",
+> +               .type =3D UNIPHIER_CLK_TYPE_GATE,
+> +               .output_index =3D 10,
+> +               .data.gate =3D {
+> +                       .parent_name =3D "stdmac-clken",
+> +                       .reg =3D 0x2000,
+> +                       .bit_idx =3D 10,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "ehci",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D 18,
+> +               .data.factor =3D {
+> +                       .parent_name =3D "upll",
+> +                       .mult =3D 1,
+> +                       .div =3D 12,
+> +               },
+> +       },
+> +       { /* sentinel */ }
+> +};
+> +
+> +static void __init ph1_ld4_clk_init(struct device_node *np)
+> +{
+> +       uniphier_clk_init(np, ph1_ld4_clk_idata);
+> +}
+> +CLK_OF_DECLARE(ph1_ld4_clk, "socionext,ph1-ld4-sysctrl", ph1_ld4_clk_ini=
+t);
+
+Can you avoid using CLK_OF_DECLARE and instead make this into a
+platform_driver? For examples please see drivers/clk/qcom*.c
+
+> diff --git a/drivers/clk/uniphier/clk-ph1-pro4.c b/drivers/clk/uniphier/c=
+lk-ph1-pro4.c
+> new file mode 100644
+> index 0000000..052813a
+> --- /dev/null
+> +++ b/drivers/clk/uniphier/clk-ph1-pro4.c
+> @@ -0,0 +1,117 @@
+> +/*
+> + * Copyright (C) 2015 Masahiro Yamada <yamada.masahiro@socionext.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +
+> +#include "clk-uniphier.h"
+> +
+> +static struct uniphier_clk_init_data ph1_pro4_clk_idata[] __initdata =3D=
+ {
+> +       {
+> +               .name =3D "spll",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D -1,
+> +               .data.factor =3D {
+> +                       .parent_name =3D UNIPHIER_CLK_EXT "ref",
+> +                       .mult =3D 64,
+> +                       .div =3D 1,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "upll",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D -1,
+> +               .data.factor =3D {
+> +                       .parent_name =3D UNIPHIER_CLK_EXT "ref",
+> +                       .mult =3D 288,
+> +                       .div =3D 25,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "a2pll",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D -1,
+> +               .data.factor =3D {
+> +                       .parent_name =3D "upll",
+> +                       .mult =3D 256,
+> +                       .div =3D 125,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "uart",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D 3,
+> +               .data.factor =3D {
+> +                       .parent_name =3D "a2pll",
+> +                       .mult =3D 1,
+> +                       .div =3D 8,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "fi2c",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D 4,
+> +               .data.factor =3D {
+> +                       .parent_name =3D "spll",
+> +                       .mult =3D 1,
+> +                       .div =3D 32,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "arm-scu",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D 7,
+> +               .data.factor =3D {
+> +                       .parent_name =3D "spll",
+> +                       .mult =3D 1,
+> +                       .div =3D 32,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "stdmac-clken",
+> +               .type =3D UNIPHIER_CLK_TYPE_GATE,
+> +               .output_index =3D -1,
+> +               .data.gate =3D {
+> +                       .parent_name =3D UNIPHIER_CLK_EXT "ref",
+> +                       .reg =3D 0x2104,
+> +                       .bit_idx =3D 10,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "stdmac",
+> +               .type =3D UNIPHIER_CLK_TYPE_GATE,
+> +               .output_index =3D 10,
+> +               .data.gate =3D {
+> +                       .parent_name =3D "stdmac-clken",
+> +                       .reg =3D 0x2000,
+> +                       .bit_idx =3D 10,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "ehci",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D 18,
+> +               .data.factor =3D {
+> +                       .parent_name =3D "upll",
+> +                       .mult =3D 1,
+> +                       .div =3D 12,
+> +               },
+> +       },
+> +       { /* sentinel */ }
+> +};
+> +
+> +static void __init ph1_pro4_clk_init(struct device_node *np)
+> +{
+> +       uniphier_clk_init(np, ph1_pro4_clk_idata);
+> +}
+> +CLK_OF_DECLARE(ph1_pro4_clk, "socionext,ph1-pro4-sysctrl", ph1_pro4_clk_=
+init);
+
+Ditto.
+
+> diff --git a/drivers/clk/uniphier/clk-ph1-pro5.c b/drivers/clk/uniphier/c=
+lk-ph1-pro5.c
+> new file mode 100644
+> index 0000000..9f782d9
+> --- /dev/null
+> +++ b/drivers/clk/uniphier/clk-ph1-pro5.c
+> @@ -0,0 +1,107 @@
+> +/*
+> + * Copyright (C) 2015 Masahiro Yamada <yamada.masahiro@socionext.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +
+> +#include "clk-uniphier.h"
+> +
+> +static struct uniphier_clk_init_data ph1_pro5_clk_idata[] __initdata =3D=
+ {
+> +       {
+> +               .name =3D "spll",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D -1,
+> +               .data.factor =3D {
+> +                       .parent_name =3D UNIPHIER_CLK_EXT "ref",
+> +                       .mult =3D 120,
+> +                       .div =3D 1,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "dapll1",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D -1,
+> +               .data.factor =3D {
+> +                       .parent_name =3D UNIPHIER_CLK_EXT "ref",
+> +                       .mult =3D 128,
+> +                       .div =3D 125,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "dapll2",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D -1,
+> +               .data.factor =3D {
+> +                       .parent_name =3D "upll",
+> +                       .mult =3D 144,
+> +                       .div =3D 5,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "uart",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D 3,
+> +               .data.factor =3D {
+> +                       .parent_name =3D "dapll2",
+> +                       .mult =3D 1,
+> +                       .div =3D 8,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "fi2c",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D 4,
+> +               .data.factor =3D {
+> +                       .parent_name =3D "spll",
+> +                       .mult =3D 1,
+> +                       .div =3D 48,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "arm-scu",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D 7,
+> +               .data.factor =3D {
+> +                       .parent_name =3D "spll",
+> +                       .mult =3D 1,
+> +                       .div =3D 48,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "stdmac-clken",
+> +               .type =3D UNIPHIER_CLK_TYPE_GATE,
+> +               .output_index =3D -1,
+> +               .data.gate =3D {
+> +                       .parent_name =3D NULL,
+> +                       .reg =3D 0x2104,
+> +                       .bit_idx =3D 10,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "stdmac",
+> +               .type =3D UNIPHIER_CLK_TYPE_GATE,
+> +               .output_index =3D 10,
+> +               .data.gate =3D {
+> +                       .parent_name =3D "stdmac-clken",
+> +                       .reg =3D 0x2000,
+> +                       .bit_idx =3D 10,
+> +               },
+> +       },
+> +       { /* sentinel */ }
+> +};
+> +
+> +static void __init ph1_pro5_clk_init(struct device_node *np)
+> +{
+> +       uniphier_clk_init(np, ph1_pro5_clk_idata);
+> +}
+> +CLK_OF_DECLARE(ph1_pro5_clk, "socionext,ph1-pro5-sysctrl", ph1_pro5_clk_=
+init);
+
+Ditto.
+
+> diff --git a/drivers/clk/uniphier/clk-ph1-sld3.c b/drivers/clk/uniphier/c=
+lk-ph1-sld3.c
+> new file mode 100644
+> index 0000000..7249a81
+> --- /dev/null
+> +++ b/drivers/clk/uniphier/clk-ph1-sld3.c
+> @@ -0,0 +1,117 @@
+> +/*
+> + * Copyright (C) 2015 Masahiro Yamada <yamada.masahiro@socionext.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +
+> +#include "clk-uniphier.h"
+> +
+> +static struct uniphier_clk_init_data ph1_sld3_clk_idata[] __initdata =3D=
+ {
+> +       {
+> +               .name =3D "spll",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D -1,
+> +               .data.factor =3D {
+> +                       .parent_name =3D UNIPHIER_CLK_EXT "ref",
+> +                       .mult =3D 65,
+> +                       .div =3D 1,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "upll",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D -1,
+> +               .data.factor =3D {
+> +                       .parent_name =3D UNIPHIER_CLK_EXT "ref",
+> +                       .mult =3D 288000,
+> +                       .div =3D 24576,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "a2pll",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D -1,
+> +               .data.factor =3D {
+> +                       .parent_name =3D UNIPHIER_CLK_EXT "ref",
+> +                       .mult =3D 24,
+> +                       .div =3D 1,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "uart",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D 3,
+> +               .data.factor =3D {
+> +                       .parent_name =3D "a2pll",
+> +                       .mult =3D 1,
+> +                       .div =3D 16,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "i2c",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D 4,
+> +               .data.factor =3D {
+> +                       .parent_name =3D "spll",
+> +                       .mult =3D 1,
+> +                       .div =3D 16,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "arm-scu",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D 7,
+> +               .data.factor =3D {
+> +                       .parent_name =3D "spll",
+> +                       .mult =3D 1,
+> +                       .div =3D 32,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "stdmac-clken",
+> +               .type =3D UNIPHIER_CLK_TYPE_GATE,
+> +               .output_index =3D -1,
+> +               .data.gate =3D {
+> +                       .parent_name =3D UNIPHIER_CLK_EXT "ref",
+> +                       .reg =3D 0x2104,
+> +                       .bit_idx =3D 10,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "stdmac",
+> +               .type =3D UNIPHIER_CLK_TYPE_GATE,
+> +               .output_index =3D 10,
+> +               .data.gate =3D {
+> +                       .parent_name =3D "stdmac-clken",
+> +                       .reg =3D 0x2000,
+> +                       .bit_idx =3D 10,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "ehci",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D 18,
+> +               .data.factor =3D {
+> +                       .parent_name =3D "upll",
+> +                       .mult =3D 1,
+> +                       .div =3D 12,
+> +               },
+> +       },
+> +       { /* sentinel */ }
+> +};
+> +
+> +static void __init ph1_sld3_clk_init(struct device_node *np)
+> +{
+> +       uniphier_clk_init(np, ph1_sld3_clk_idata);
+> +}
+> +CLK_OF_DECLARE(ph1_sld3_clk, "socionext,ph1-sld3-sysctrl", ph1_sld3_clk_=
+init);
+
+Ditto.
+
+> diff --git a/drivers/clk/uniphier/clk-ph1-sld8.c b/drivers/clk/uniphier/c=
+lk-ph1-sld8.c
+> new file mode 100644
+> index 0000000..bfebd38
+> --- /dev/null
+> +++ b/drivers/clk/uniphier/clk-ph1-sld8.c
+> @@ -0,0 +1,107 @@
+> +/*
+> + * Copyright (C) 2015 Masahiro Yamada <yamada.masahiro@socionext.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +
+> +#include "clk-uniphier.h"
+> +
+> +static struct uniphier_clk_init_data ph1_sld8_clk_idata[] __initdata =3D=
+ {
+> +       {
+> +               .name =3D "spll",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D -1,
+> +               .data.factor =3D {
+> +                       .parent_name =3D UNIPHIER_CLK_EXT "ref",
+> +                       .mult =3D 64,
+> +                       .div =3D 1,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "upll",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D -1,
+> +               .data.factor =3D {
+> +                       .parent_name =3D UNIPHIER_CLK_EXT "ref",
+> +                       .mult =3D 288,
+> +                       .div =3D 25,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "uart",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D 3,
+> +               .data.factor =3D {
+> +                       .parent_name =3D "spll",
+> +                       .mult =3D 1,
+> +                       .div =3D 20,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "i2c",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D 4,
+> +               .data.factor =3D {
+> +                       .parent_name =3D "spll",
+> +                       .mult =3D 1,
+> +                       .div =3D 16,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "arm-scu",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D 7,
+> +               .data.factor =3D {
+> +                       .parent_name =3D "spll",
+> +                       .mult =3D 1,
+> +                       .div =3D 32,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "stdmac-clken",
+> +               .type =3D UNIPHIER_CLK_TYPE_GATE,
+> +               .output_index =3D -1,
+> +               .data.gate =3D {
+> +                       .parent_name =3D NULL,
+> +                       .reg =3D 0x2104,
+> +                       .bit_idx =3D 10,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "stdmac",
+> +               .type =3D UNIPHIER_CLK_TYPE_GATE,
+> +               .output_index =3D 10,
+> +               .data.gate =3D {
+> +                       .parent_name =3D "stdmac-clken",
+> +                       .reg =3D 0x2000,
+> +                       .bit_idx =3D 10,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "ehci",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D 18,
+> +               .data.factor =3D {
+> +                       .parent_name =3D "upll",
+> +                       .mult =3D 1,
+> +                       .div =3D 12,
+> +               },
+> +       },
+> +       { /* sentinel */ }
+> +};
+> +
+> +static void __init ph1_sld8_clk_init(struct device_node *np)
+> +{
+> +       uniphier_clk_init(np, ph1_sld8_clk_idata);
+> +}
+> +CLK_OF_DECLARE(ph1_sld8_clk, "socionext,ph1-sld8-sysctrl", ph1_sld8_clk_=
+init);
+
+Ditto.
+
+> diff --git a/drivers/clk/uniphier/clk-proxstream2.c b/drivers/clk/uniphie=
+r/clk-proxstream2.c
+> new file mode 100644
+> index 0000000..b3ffedc
+> --- /dev/null
+> +++ b/drivers/clk/uniphier/clk-proxstream2.c
+> @@ -0,0 +1,88 @@
+> +/*
+> + * Copyright (C) 2015 Masahiro Yamada <yamada.masahiro@socionext.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +
+> +#include "clk-uniphier.h"
+> +
+> +static struct uniphier_clk_init_data proxstream2_clk_idata[] __initdata =
+=3D {
+> +       {
+> +               .name =3D "spll",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D -1,
+> +               .data.factor =3D {
+> +                       .parent_name =3D UNIPHIER_CLK_EXT "ref",
+> +                       .mult =3D 96,
+> +                       .div =3D 1,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "uart",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D 3,
+> +               .data.factor =3D {
+> +                       .parent_name =3D "spll",
+> +                       .mult =3D 1,
+> +                       .div =3D 27,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "fi2c",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D 4,
+> +               .data.factor =3D {
+> +                       .parent_name =3D "spll",
+> +                       .mult =3D 1,
+> +                       .div =3D 48,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "arm-scu",
+> +               .type =3D UNIPHIER_CLK_TYPE_FIXED_FACTOR,
+> +               .output_index =3D 7,
+> +               .data.factor =3D {
+> +                       .parent_name =3D "spll",
+> +                       .mult =3D 1,
+> +                       .div =3D 48,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "stdmac-clken",
+> +               .type =3D UNIPHIER_CLK_TYPE_GATE,
+> +               .output_index =3D -1,
+> +               .data.gate =3D {
+> +                       .parent_name =3D NULL,
+> +                       .reg =3D 0x2104,
+> +                       .bit_idx =3D 10,
+> +               },
+> +       },
+> +       {
+> +               .name =3D "stdmac",
+> +               .type =3D UNIPHIER_CLK_TYPE_GATE,
+> +               .output_index =3D 10,
+> +               .data.gate =3D {
+> +                       .parent_name =3D "stdmac-clken",
+> +                       .reg =3D 0x2000,
+> +                       .bit_idx =3D 10,
+> +               },
+> +       },
+> +       { /* sentinel */ }
+> +};
+> +
+> +static void __init proxstream2_clk_init(struct device_node *np)
+> +{
+> +       uniphier_clk_init(np, proxstream2_clk_idata);
+> +}
+> +CLK_OF_DECLARE(proxstream2_clk, "socionext,proxstream2-sysctrl",
+> +              proxstream2_clk_init);
+
+Ditto.
+
+> diff --git a/drivers/clk/uniphier/clk-uniphier-core.c b/drivers/clk/uniph=
+ier/clk-uniphier-core.c
+> new file mode 100644
+> index 0000000..8680101
+> --- /dev/null
+> +++ b/drivers/clk/uniphier/clk-uniphier-core.c
+> @@ -0,0 +1,151 @@
+> +/*
+> + * Copyright (C) 2015 Masahiro Yamada <yamada.masahiro@socionext.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#define pr_fmt(fmt)            "uniphier-clk: " fmt
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/log2.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/slab.h>
+> +
+> +#include "clk-uniphier.h"
+> +
+> +static void __init uniphier_clk_update_parent_name(struct device_node *n=
+p,
+> +                                                  const char **parent_na=
+me)
+> +{
+> +       const char *new_name;
+> +       int index;
+> +
+> +       if (!parent_name || !*parent_name)
+> +               return;
+> +
+> +       if (strncmp(*parent_name, UNIPHIER_CLK_EXT, strlen(UNIPHIER_CLK_E=
+XT)))
+> +               return;
+> +
+> +       index =3D of_property_match_string(np, "clock-names",
+> +                               *parent_name + strlen(UNIPHIER_CLK_EXT));
+> +       new_name =3D of_clk_get_parent_name(np, index);
+> +       if (new_name)
+> +               *parent_name =3D new_name;
+
+Where can I find the DT binding description and DTS for this clock
+controller? I'm confused why the parent name function is necessary and
+I'd like to see the data.
+
+Regards,
+Mike
