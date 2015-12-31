@@ -1,87 +1,92 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH v4] clk: ti: Add support for dm814x ADPLL
-To: Tony Lindgren <tony@atomide.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-References: <1450798030-23680-1-git-send-email-tony@atomide.com>
-CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Brian Hutchinson
-	<b.hutchman@gmail.com>,
-        Delio Brignoli <dbrignoli@audioscience.com>,
-        Neil
- Armstrong <narmstrong@baylibre.com>,
-        Matthijs van Duin
-	<matthijsvanduin@gmail.com>,
-        Philipp Rosenberger <ilu@linutronix.de>,
-        Russell
- King - ARM Linux <linux@arm.linux.org.uk>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <5679B2D6.4050102@ti.com>
-Date: Tue, 22 Dec 2015 22:30:14 +0200
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+Subject: Re: [PATCH 1/5] clk: mediatek: Refine the makefile to support
+ multiple clock drivers
+To: James Liao <jamesjj.liao@mediatek.com>,
+ Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+References: <1451456865-44139-1-git-send-email-jamesjj.liao@mediatek.com>
+ <1451456865-44139-2-git-send-email-jamesjj.liao@mediatek.com>
+Cc: Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz
+ <djkurtz@chromium.org>, srv_heupstream@mediatek.com,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-clk@vger.kernel.org, Shunli Wang <shunli.wang@mediatek.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <5684E467.8070203@gmail.com>
+Date: Thu, 31 Dec 2015 09:16:39 +0100
 MIME-Version: 1.0
-In-Reply-To: <1450798030-23680-1-git-send-email-tony@atomide.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <1451456865-44139-2-git-send-email-jamesjj.liao@mediatek.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/22/2015 05:27 PM, Tony Lindgren wrote:
-> On dm814x we have 13 ADPLLs with 3 to 4 outputs on each. The
-> ADPLLs have several dividers and muxes controlled by a shared
-> control register for each PLL.
+
+
+On 30/12/15 07:27, James Liao wrote:
+> Add a Kconfig to define clock configuration for each SoC, and
+> modify the Makefile to build drivers that only selected in config.
 >
-> Note that for the clocks to work as device drivers for booting on
-> dm814x, this patch depends on "ARM: OMAP2+: Change core_initcall
-> levels to postcore_initcall".
->
-> Also note that this patch does not implement clk_set_rate for the
-> PLL, that will be posted later on when available.
->
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Tero Kristo <t-kristo@ti.com>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
 > ---
+
+Looks good to me.
+
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+
+>   drivers/clk/Kconfig           |  1 +
+>   drivers/clk/mediatek/Kconfig  | 23 +++++++++++++++++++++++
+>   drivers/clk/mediatek/Makefile |  6 +++---
+>   3 files changed, 27 insertions(+), 3 deletions(-)
+>   create mode 100644 drivers/clk/mediatek/Kconfig
 >
-> If no more comments, Tero can you please apply into an immutable
-> branch against v4.4-rc1 that I can merge in too?
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index c3e3a02..b7a37dc 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -198,3 +198,4 @@ source "drivers/clk/mvebu/Kconfig"
 >
-> Changes since v3:
+>   source "drivers/clk/samsung/Kconfig"
+>   source "drivers/clk/tegra/Kconfig"
+> +source "drivers/clk/mediatek/Kconfig"
+> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+> new file mode 100644
+> index 0000000..dc224e6
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/Kconfig
+> @@ -0,0 +1,23 @@
+> +#
+> +# MediaTek SoC drivers
+> +#
+> +config COMMON_CLK_MEDIATEK
+> +	bool
+> +	---help---
+> +	  Mediatek SoCs' clock support.
+> +
+> +config COMMON_CLK_MT8135
+> +	bool "Clock driver for Mediatek MT8135"
+> +	depends on COMMON_CLK
+> +	select COMMON_CLK_MEDIATEK
+> +	default ARCH_MEDIATEK
+> +	---help---
+> +	  This driver supports Mediatek MT8135 clocks.
+> +
+> +config COMMON_CLK_MT8173
+> +	bool "Clock driver for Mediatek MT8173"
+> +	depends on COMMON_CLK
+> +	select COMMON_CLK_MEDIATEK
+> +	default ARCH_MEDIATEK
+> +	---help---
+> +	  This driver supports Mediatek MT8173 clocks.
+> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+> index 95fdfac..32e7222 100644
+> --- a/drivers/clk/mediatek/Makefile
+> +++ b/drivers/clk/mediatek/Makefile
+> @@ -1,4 +1,4 @@
+> -obj-y += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
+> +obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
+>   obj-$(CONFIG_RESET_CONTROLLER) += reset.o
+> -obj-y += clk-mt8135.o
+> -obj-y += clk-mt8173.o
+> +obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135.o
+> +obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173.o
 >
-> - We want to create the clkdev entry for all clocks, not just outputs
-> - ti_adpll_wait_lock loops did not do the right thing
-> - We want to use CLK_GET_RATE_NOCACHE in ti_adpll_init_dco
-
-I have just one comment below still, once that is addressed:
-
-Conditionally-acked-by: Tero Kristo <t-kristo@ti.com>
-
-Stephen / Michael, can you pick this up for next merge? I don't have 
-anything else coming for the window this time, and I am probably going 
-to be on vacation just nicely to not be able to push anything anyway.
-
-<snip>
-
-> +
-> +/* Warn if clkout or clkoutx2 try to set unavailable parent */
-> +static int ti_adpll_clkout_set_parent(struct clk_hw *hw, u8 index)
-> +{
-> +	struct ti_adpll_clkout_data *co = to_clkout(hw);
-> +	struct ti_adpll_data *d = co->adpll;
-> +
-> +	if (ti_adpll_clock_is_bypass(d) != index)
-> +		return -EAGAIN;
-> +
-
-I think this part is still somewhat weird. You are not doing anything 
-useful in this function, so do you need to implement it at all? Just 
-returning -EINVAL always might work also. EAGAIN is wrong return value 
-anyway as it can pretty much never succeed.
-
--Tero
-
-> +	return 0;
-> +}
-> +
-
-<snip>
