@@ -1,67 +1,197 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Wed, 13 Jan 2016 18:10:20 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Rhyland Klein <rklein@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: tegra: Use definition for pll_u override bit
-Message-ID: <20160113171020.GQ2588@ulmo>
-References: <1450702592-7755-1-git-send-email-jonathanh@nvidia.com>
- <1450702592-7755-2-git-send-email-jonathanh@nvidia.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="pwWdILMQNxDD/Cps"
-In-Reply-To: <1450702592-7755-2-git-send-email-jonathanh@nvidia.com>
+To: Simon Arlott <simon@fire.lp0.eu>, "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Kevin Cernekee" <cernekee@gmail.com>,
+ "Florian Fainelli" <f.fainelli@gmail.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <5669F3C3.3090207@simon.arlott.org.uk>
+Cc: "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ linux-clk@vger.kernel.org, linux-mips@linux-mips.org,
+ "Rob Herring" <robh+dt@kernel.org>, "Pawel Moll" <pawel.moll@arm.com>,
+ "Mark Rutland" <mark.rutland@arm.com>,
+ "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
+ "Kumar Gala" <galak@codeaurora.org>, "Jonas Gorski" <jogo@openwrt.org>
+References: <5669F361.60405@simon.arlott.org.uk> <5669F3C3.3090207@simon.arlott.org.uk>
+Message-ID: <20160101234031.7140.66812@quark.deferred.io>
+Subject: Re: [PATCH linux-next (v2) 2/2] clk: bcm6345: Add BCM6345 gated clock support
+Date: Fri, 01 Jan 2016 15:40:31 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Simon,
 
---pwWdILMQNxDD/Cps
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Quoting Simon Arlott (2015-12-10 13:50:59)
+> +#define to_clk_bcm6345(_hw) container_of(_hw, struct clk_bcm6345, hw)
+> +
+> +static int clk_bcm6345_enable(struct clk_hw *hw)
+> +{
+> +       struct clk_bcm6345 *gate =3D to_clk_bcm6345(hw);
+> +
+> +       return regmap_write_bits(gate->map, gate->offset,
+> +                                       gate->mask, gate->mask);
 
-On Mon, Dec 21, 2015 at 12:56:32PM +0000, Jon Hunter wrote:
-> The definition, PLLU_BASE_OVERRIDE, for the pll_u OVERRIDE bit is defined
-> but not used and when the OVERRIDE bit is cleared in tegra210_pll_init()
-> the code directly uses the bit number. Therefore, use the definition,
-> PLLU_BASE_OVERRIDE when clearing the OVERRIDE bit.
->=20
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Does your regmap hold a spinlock or mutex? If a mutex then this should
+be a .prepare callback instead of .enable. If it's a spinlock then
+nothing to see here, move along.
 
-Applied with the now redundant comment removed.
+> +}
+> +
+> +static void clk_bcm6345_disable(struct clk_hw *hw)
+> +{
+> +       struct clk_bcm6345 *gate =3D to_clk_bcm6345(hw);
+> +
+> +       regmap_write_bits(gate->map, gate->offset,
+> +                                       gate->mask, 0);
+> +}
+> +
+> +static int clk_bcm6345_is_enabled(struct clk_hw *hw)
+> +{
+> +       struct clk_bcm6345 *gate =3D to_clk_bcm6345(hw);
+> +       unsigned int val;
+> +       int ret;
+> +
+> +       ret =3D regmap_read(gate->map, gate->offset, &val);
+> +       if (ret)
+> +               return ret;
+> +
+> +       val &=3D gate->mask;
+> +
+> +       return val ? 1 : 0;
+> +}
+> +
+> +const struct clk_ops clk_bcm6345_ops =3D {
+> +       .enable =3D clk_bcm6345_enable,
+> +       .disable =3D clk_bcm6345_disable,
+> +       .is_enabled =3D clk_bcm6345_is_enabled,
+> +};
+> +
+> +static struct clk * __init of_bcm6345_clk_register(const char *parent_na=
+me,
+> +       const char *clk_name, struct regmap *map, u32 offset, u32 mask)
+> +{
+> +       struct clk_bcm6345 *gate;
+> +       struct clk_init_data init;
+> +       struct clk *ret;
+> +
+> +       gate =3D kzalloc(sizeof(*gate), GFP_KERNEL);
+> +       if (!gate)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       init.name =3D clk_name;
+> +       init.ops =3D &clk_bcm6345_ops;
+> +       init.flags =3D CLK_IS_BASIC;
 
-Thanks,
-Thierry
+Why is CLK_IS_BASIC set?
 
---pwWdILMQNxDD/Cps
-Content-Type: application/pgp-signature; name="signature.asc"
+> +       init.parent_names =3D (parent_name ? &parent_name : NULL);
+> +       init.num_parents =3D (parent_name ? 1 : 0);
+> +       gate->hw.init =3D &init;
+> +       gate->map =3D map;
+> +       gate->offset =3D offset;
+> +       gate->mask =3D mask;
+> +
+> +       ret =3D clk_register(NULL, &gate->hw);
+> +       if (IS_ERR(ret))
+> +               kfree(gate);
+> +
+> +       return ret;
+> +}
+> +
+> +static void __init of_bcm6345_clk_setup(struct device_node *node)
+> +{
+> +       struct clk_onecell_data *clk_data;
+> +       const char *parent_name =3D NULL;
+> +       struct regmap *map;
+> +       u32 offset;
+> +       unsigned int clocks =3D 0;
+> +       int i;
+> +
+> +       clk_data =3D kzalloc(sizeof(*clk_data), GFP_KERNEL);
+> +       if (!clk_data)
+> +               return;
+> +
+> +       clk_data->clk_num =3D 32;
+> +       clk_data->clks =3D kmalloc_array(clk_data->clk_num,
+> +               sizeof(*clk_data->clks), GFP_KERNEL);
+> +
+> +       for (i =3D 0; i < clk_data->clk_num; i++)
+> +               clk_data->clks[i] =3D ERR_PTR(-ENODEV);
+> +
+> +       if (of_clk_get_parent_count(node) > 0)
+> +               parent_name =3D of_clk_get_parent_name(node, 0);
+> +
+> +       map =3D syscon_regmap_lookup_by_phandle(node, "regmap");
+> +       if (IS_ERR(map)) {
+> +               pr_err("%s: regmap lookup error %ld\n",
+> +                       node->full_name, PTR_ERR(map));
+> +               goto out;
+> +       }
+> +
+> +       if (of_property_read_u32(node, "offset", &offset)) {
+> +               pr_err("%s: offset not specified\n", node->full_name);
+> +               goto out;
+> +       }
+> +
+> +       /* clks[] is sparse, indexed by bit, maximum clocks checked using=
+ i */
+> +       for (i =3D 0; i < clk_data->clk_num; i++) {
+> +               u32 bit;
+> +               const char *clk_name;
+> +
+> +               if (of_property_read_u32_index(node, "clock-indices",
+> +                               i, &bit))
+> +                       goto out;
+> +
+> +               if (of_property_read_string_index(node, "clock-output-nam=
+es",
+> +                               i, &clk_name))
+> +                       goto out;
+> +
+> +               if (bit >=3D clk_data->clk_num) {
+> +                       pr_err("%s: clock bit %u out of range\n",
+> +                               node->full_name, bit);
+> +                       continue;
+> +               }
+> +
+> +               if (!IS_ERR(clk_data->clks[bit])) {
+> +                       pr_err("%s: clock bit %u already exists\n",
+> +                               node->full_name, bit);
+> +                       continue;
+> +               }
+> +
+> +               clk_data->clks[bit] =3D of_bcm6345_clk_register(parent_na=
+me,
+> +                                       clk_name, map, offset, BIT(bit));
+> +               if (!IS_ERR(clk_data->clks[bit]))
+> +                       clocks++;
+> +       }
+> +
+> +out:
+> +       if (clocks) {
+> +               of_clk_add_provider(node, of_clk_src_onecell_get, clk_dat=
+a);
+> +               pr_info("%s: registered %u clocks\n", node->name, clocks);
+> +       } else {
+> +               kfree(clk_data->clks);
+> +               kfree(clk_data);
+> +       }
+> +}
+> +
+> +CLK_OF_DECLARE(bcm6345_clk, "brcm,bcm6345-gate-clk", of_bcm6345_clk_setu=
+p);
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Please do not use CLK_OF_DECLARE unless there is a good reason. Ideally
+this should be a platform_driver.
 
-iQIcBAABCAAGBQJWloT7AAoJEN0jrNd/PrOh9mEP/A3pwCEICN+5oUq69jGkXd12
-D4NEJoMCysg6gDpJnrSOeapvsyw1WUJT2hlaW47PxJIa/f36pKvgnrbuJIQSKnKE
-/Em59mf8Zlxe4wanIhMGGhea2gohNXKnaSFkkGuRJLltzoe9xRPdg1qh0maPQV5/
-XPK9IoIqz5EKwSu2hZgotBmNZ9K5S1/AzD/LhTiO1uv6XLQaCmTjdxiaqYlF21Is
-JynUuInQtWd2jFGZBbIbe8jJz1UEyE1hweFFQQahmV6RXMKGJHHUHD0Q+qf8qS84
-cPPMw5l6zgIjy2M+OQskMPmI/mKYfFovVak5pedQHwPGuHMkDYSEjTURp5WjLI0L
-LNHerSvZnqjzM4M4TILiyZDLvrjkj0oXQd7+U1ym1NkK47NrILWEaJd/8QJxoFcu
-Fb5R6RVtvWbXd8QvjYaihpG5l4lUmpeULLCbCtTiHECB/Rf+Lcdhhnx9RFJOfvvX
-QN9E00ovUzy+HIRmD+WGfF1sj4y/5xJy7ygidoI7m5W3XyGZNwJXAL53hfDr3feh
-oM8dcNxFK9ZQz7Qz7EE5CF7paXx0wwrqa2m3aGniODqpGiVjOKQMxDzaVDmmSRyZ
-ZHyxLwu/ixtmQ5KEPFl2aYtqf1UC8PlF5y4Je513/p8+W0TRpz57bN9fxDoklFm/
-PAesiS2VC3EH4ne5IXqw
-=juXP
------END PGP SIGNATURE-----
+Regards,
+Mike
 
---pwWdILMQNxDD/Cps--
+> -- =
+
+> 2.1.4
+> =
+
+> -- =
+
+> Simon Arlott
