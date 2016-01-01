@@ -1,67 +1,55 @@
-Return-Path: <anholt@eliezer.anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>, "Stephen Boyd \<sboyd\@codeaurora.org\>\, Emilio Lopez \<emilio\@elopez.com.ar\>\, Hans de Goede \<hdegoede\@redhat.com\>\, linux-clk \<linux-clk\@vger.kernel.org\>\, linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>, linux-rpi-kernel@lists.infradead.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] clk: bcm2835: Add bindings for the auxiliary peripheral clock gates.
-In-Reply-To: <CAEG3pNCOO1F8+nwOQGSjUKxYCGbWW_Ripc6xUwDyg6ay66uL7w@mail.gmail.com>
-References: <1450222559-22461-1-git-send-email-eric@anholt.net> <20151219041935.GS14936@rob-hp-laptop> <CAEG3pNCOO1F8+nwOQGSjUKxYCGbWW_Ripc6xUwDyg6ay66uL7w@mail.gmail.com>
-Date: Thu, 24 Dec 2015 15:45:15 -0800
-Message-ID: <87wps3qulw.fsf@eliezer.anholt.net>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1450852439-366-1-git-send-email-sudipm.mukherjee@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ "Sudip Mukherjee" <sudipm.mukherjee@gmail.com>
+References: <1450852439-366-1-git-send-email-sudipm.mukherjee@gmail.com>
+Message-ID: <20160101053228.21738.40065@quark.deferred.io>
+Subject: Re: [PATCH] clk: gpio: fix memory leak
+Date: Thu, 31 Dec 2015 21:32:28 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
+Quoting Sudip Mukherjee (2015-12-22 22:33:59)
+> If we fail to allocate parent_name then we are returning but we missed
+> freeing data which has already been allocated.
+> =
 
-Michael Turquette <mturquette@baylibre.com> writes:
+> Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
 
-> On Fri, Dec 18, 2015 at 8:19 PM, Rob Herring <robh@kernel.org> wrote:
->> On Tue, Dec 15, 2015 at 03:35:57PM -0800, Eric Anholt wrote:
->>> These will be used for enabling UART1, SPI1, and SPI2.
->>>
->>> Signed-off-by: Eric Anholt <eric@anholt.net>
->>> ---
->>>
->>> v2: Make the binding cover both the IRQ and clock enable registers.
->>>
->>>  .../bindings/clock/brcm,bcm2835-aux-clock.txt      | 31 ++++++++++++++++++++++
->>>  include/dt-bindings/clock/bcm2835-aux.h            | 17 ++++++++++++
->>>  2 files changed, 48 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm2835-aux-clock.txt
->>>  create mode 100644 include/dt-bindings/clock/bcm2835-aux.h
->>
->> Acked-by: Rob Herring <robh@kernel.org>
->
-> Applied to clk-next.
->
-> Next time if you put the header into the clk driver patch then we can
-> send the binding description through the DT tree and take the header
-> and C file through the clk tree in one patch.
+Applied.
 
-I would *love* to do that, but I've previously been told that having the
-bindings patch reference a header file not present as of the bindings
-patch is not acceptable and made to change it.
+Thanks,
+Mike
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+> ---
+>  drivers/clk/clk-gpio.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> =
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+> diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+> index 335322d..c1baa89 100644
+> --- a/drivers/clk/clk-gpio.c
+> +++ b/drivers/clk/clk-gpio.c
+> @@ -294,8 +294,10 @@ static void __init of_gpio_clk_setup(struct device_n=
+ode *node,
+>         num_parents =3D of_clk_get_parent_count(node);
+>  =
 
-iQIcBAEBCgAGBQJWfIOLAAoJELXWKTbR/J7o5u4QALF1EWBUM5xA8yxZT8/8VrDN
-sw6ErdSebzvjj4YTNYw89PSm2rnnZGiJL/g92AnrWbqAkRCguYUb5v9PNUvQyLyd
-GoeMyggfqMRuLMcmfXiP7yWgLxzn2JnwbqUBGf+kHUGcH35j1NMEdniicRznbBnM
-GQfdZJ+oQLv0DRfu2cdbwatjWFlC5ISDbgl3GM2GvdKArvOxzB6qqs0JjQViLxZ/
-vcDROwMa3Pw/4oymo8+b6G+MIPWHHQkCxEd10VZrTRL/TW9Beri+GVpAoHC+oaaA
-yZ/j+492R+Rpf9l/eLkF7tBlUhG8nbXyjtTAQf22087F6gkoynEjlosKGT8OFvDN
-utL79Zl0P58ZLCg7RctMWTmGRUju2Z812a91zhAKyVI0uj1zigrnvSkAAJjnvKXR
-V5F4aYlT+rKZcFrAHkaEx5L9SSz9wX/p45dqTJ5dgMZ/M+jd9e4eMMk1tnd9w3Qb
-qEuQn4xpeDYivqXOy2doWB0B+vXmUuHzkIUw40l90apYR4sAXDqhAYXbhzN7Mfo2
-Npa0V5fhWIu1F9YIrBhjNnrMbrALSEq1LxT2leR6pWMIQO7D3RQittxSR1kJTxRg
-GIzBF/qaKI66dPpCVWDeKlklidj/IvlcRxf3TxKeaD8oCfOcNh5sUUzkbcdJYk9p
-ALnErDrCJ4lsLmqElzYl
-=Gv3p
------END PGP SIGNATURE-----
---=-=-=--
+>         parent_names =3D kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
+> -       if (!parent_names)
+> +       if (!parent_names) {
+> +               kfree(data);
+>                 return;
+> +       }
+>  =
+
+>         for (i =3D 0; i < num_parents; i++)
+>                 parent_names[i] =3D of_clk_get_parent_name(node, i);
+> -- =
+
+> 1.9.1
+>=20
