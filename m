@@ -1,52 +1,70 @@
-Return-Path: <jonathanh@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>
-CC: Rhyland Klein <rklein@nvidia.com>,
-	linux-clk@vger.kernel.org ,
-	linux-tegra@vger.kernel.org ,
-	linux-kernel@vger.kernel.org ,
-	Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 1/3] clk: tegra: Fix sparse warning for pll_m
-Date: Fri, 4 Dec 2015 17:04:23 +0000
-Message-ID: <1449248665-22343-1-git-send-email-jonathanh@nvidia.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain
+To: Tero Kristo <t-kristo@ti.com>, linux-omap@vger.kernel.org,
+ linux-clk@vger.kernel.org, tony@atomide.com, sboyd@codeaurora.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1450447141-29936-7-git-send-email-t-kristo@ti.com>
+Cc: linux-arm-kernel@lists.infradead.org
+References: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
+ <1450447141-29936-7-git-send-email-t-kristo@ti.com>
+Message-ID: <20160101054815.21738.79820@quark.deferred.io>
+Subject: Re: [RFC 6/9] clk: ti: add support for omap4 module clocks
+Date: Thu, 31 Dec 2015 21:48:15 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-Sparse generates the following warning for the pll_m params structure:
+Hi Tero,
 
-drivers/clk/tegra/clk-tegra210.c:1569:10: warning: Initializer entry
- defined twice
-drivers/clk/tegra/clk-tegra210.c:1570:10:   also defined here
+Quoting Tero Kristo (2015-12-18 05:58:58)
+> Previously, hwmod core has been used for controlling the hwmod level
+> clocks. This has certain drawbacks, like being unable to share the
+> clocks for multiple users, missing usecounting and generally being
+> totally incompatible with common clock framework.
+> =
 
-Fix this by correcting the index for the MISC1 register.
+> Add support for new clock type under the TI clock driver, which will
+> be used to convert all the existing hwmdo clocks to. This helps to
+> get rid of the clock related hwmod data from kernel and instead
+> parsing this from DT.
 
-Fixes: b31eba5ff3f7 ("clk: tegra: Add support for Tegra210 clocks")
+I'm really happy to see this series. Looks pretty good to me.
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- drivers/clk/tegra/clk-tegra210.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +static int _omap4_hwmod_clk_enable(struct clk_hw *hw)
+> +{
+> +       struct clk_hw_omap *clk =3D to_clk_hw_omap(hw);
+> +       u32 val;
+> +       int timeout =3D 0;
+> +       int ret;
+> +
+> +       if (!clk->enable_bit)
+> +               return 0;
+> +
+> +       if (clk->clkdm) {
+> +               ret =3D ti_clk_ll_ops->clkdm_clk_enable(clk->clkdm, hw->c=
+lk);
+> +               if (ret) {
+> +                       WARN(1,
+> +                            "%s: could not enable %s's clockdomain %s: %=
+d\n",
+> +                            __func__, clk_hw_get_name(hw),
+> +                            clk->clkdm_name, ret);
+> +                       return ret;
+> +               }
+> +       }
+> +
+> +       val =3D ti_clk_ll_ops->clk_readl(clk->enable_reg);
+> +
+> +       val &=3D ~OMAP4_MODULEMODE_MASK;
+> +       val |=3D clk->enable_bit;
+> +
+> +       ti_clk_ll_ops->clk_writel(val, clk->enable_reg);
+> +
+> +       /* Wait until module is enabled */
+> +       while (!_omap4_is_ready(val)) {
+> +               udelay(1);
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 58514c44ea83..3bd831c2b9db 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -1567,7 +1567,7 @@ static struct tegra_clk_pll_params pll_m_params = {
- 	.iddq_bit_idx = PLLM_IDDQ_BIT,
- 	.max_p = PLL_QLIN_PDIV_MAX,
- 	.ext_misc_reg[0] = PLLM_MISC0,
--	.ext_misc_reg[0] = PLLM_MISC1,
-+	.ext_misc_reg[1] = PLLM_MISC1,
- 	.round_p_to_pdiv = pll_qlin_p_to_pdiv,
- 	.pdiv_tohw = pll_qlin_pdiv_to_hw,
- 	.div_nmp = &pllm_nmp,
--- 
-2.1.4
+This should really be a .prepare callback if you plan to keep the delays
+in there.
+
+Regards,
+Mike
