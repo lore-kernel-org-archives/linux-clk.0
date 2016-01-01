@@ -1,52 +1,63 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-Message-ID: <1451556167.10610.20.camel@mtksdaap41>
-Subject: Re: [PATCH 4/5] reset: mediatek: mt2701 reset controller dt-binding
- file
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Michael Turquette <mturquette@baylibre.com>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, "Sascha Hauer <kernel@pengutronix.de>, Daniel	Kurtz
- <djkurtz@chromium.org>,   srv_heupstream@mediatek.com,
-	devicetree@vger.kernel.org,   linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,   linux-mediatek@lists.infradead.org,
-	linux-clk@vger.kernel.org,   Shunli Wang" <shunli.wang@mediatek.com>,
-	<p.zabel@pengutronix.de>
-Date: Thu, 31 Dec 2015 18:02:47 +0800
-In-Reply-To: <20151230234917.19557.59026@quark.deferred.io>
-References: <1451456865-44139-1-git-send-email-jamesjj.liao@mediatek.com>
-	 <1451456865-44139-5-git-send-email-jamesjj.liao@mediatek.com>
-	 <20151230234917.19557.59026@quark.deferred.io>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Return-Path: jamesjj.liao@mediatek.com
+To: Brian Norris <computersforpeace@gmail.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1450290511-14442-1-git-send-email-computersforpeace@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Brian Norris" <computersforpeace@gmail.com>, "Jyri Sarha" <jsarha@ti.com>,
+ "Sergej Sawazki" <ce3a@gmx.de>
+References: <1450290511-14442-1-git-send-email-computersforpeace@gmail.com>
+Message-ID: <20160101055632.21738.88763@quark.deferred.io>
+Subject: Re: [PATCH] clk: gpio: fix memory leak in of_gpio_clk_setup()
+Date: Thu, 31 Dec 2015 21:56:32 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
+Quoting Brian Norris (2015-12-16 10:28:31)
+> Reported by Coverity.
+> =
 
-On Wed, 2015-12-30 at 15:49 -0800, Michael Turquette wrote:
-> Hi James & Shunli Wang,
-> 
-> Quoting James Liao (2015-12-29 22:27:44)
-> > From: Shunli Wang <shunli.wang@mediatek.com>
-> > 
-> > Dt-binding file about reset controller is used to provide
-> > kinds of definition, which is referenced by dts file and
-> > IC-specified reset controller driver code.
-> > 
-> > Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-> 
-> I've Cc'd Philipp Zabel. I know the patch is trivial but it's best to
-> keep the correct maintainers Cc'd.
-> 
-> Also it looks like this header is missing a corresponding binding
-> description? Unless you're using some kind of common reset compatible
-> string?
+> Fixes: f66541ba02d5 ("clk: gpio: Get parent clk names in of_gpio_clk_setu=
+p()")
+> Signed-off-by: Brian Norris <computersforpeace@gmail.com>
+> Cc: Jyri Sarha <jsarha@ti.com>
+> Cc: Sergej Sawazki <ce3a@gmx.de>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
 
-Thanks for your suggestion. I'll add binding description into
-Documentation/devicetree/bindings/arm/mediatek/ in next version of
-patchset.
+Thanks for the fix. I already applied this one:
 
+http://lkml.kernel.org/r/<1450852439-366-1-git-send-email-sudipm.mukherjee@=
+gmail.com>
 
-Best regards,
+Regards,
+Mike
 
-James
+> ---
+>  drivers/clk/clk-gpio.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> =
+
+> diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+> index 335322dc403f..c1baa89cbf91 100644
+> --- a/drivers/clk/clk-gpio.c
+> +++ b/drivers/clk/clk-gpio.c
+> @@ -294,8 +294,10 @@ static void __init of_gpio_clk_setup(struct device_n=
+ode *node,
+>         num_parents =3D of_clk_get_parent_count(node);
+>  =
+
+>         parent_names =3D kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
+> -       if (!parent_names)
+> +       if (!parent_names) {
+> +               kfree(data);
+>                 return;
+> +       }
+>  =
+
+>         for (i =3D 0; i < num_parents; i++)
+>                 parent_names[i] =3D of_clk_get_parent_name(node, i);
+> -- =
+
+> 2.6.0.rc2.230.g3dd15c0
+>=20
