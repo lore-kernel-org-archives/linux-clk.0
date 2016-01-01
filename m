@@ -1,99 +1,54 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:1290 "EHLO
-	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932964AbcAHShe (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2016 13:37:34 -0500
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>,
-	Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mark Kuo <mkuo@nvidia.com>, Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 7/9] clk: tegra: pll: Do not disable PLLE when under HW control
-Date: Fri, 8 Jan 2016 13:37:09 -0500
-Message-ID: <1452278231-9546-8-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1452278231-9546-1-git-send-email-rklein@nvidia.com>
-References: <1452278231-9546-1-git-send-email-rklein@nvidia.com>
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Subject: Re: [PATCH] [BUG] clk: rockchip: don't mark clock names as initconst
+Date: Fri, 01 Jan 2016 22:50:43 +0100
+Message-ID: <6692523.e5K11FUKe0@wuerfel>
+In-Reply-To: <1799610.nrn5HMCSxL@diego>
+References: <2791943.MBZ53mI7Gp@wuerfel> <1799610.nrn5HMCSxL@diego>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mark Kuo <mkuo@nvidia.com>
+On Friday 01 January 2016 18:06:30 Heiko St=FCbner wrote:
+>=20
+> "[PATCH] clk: rockchip: fix section mismatches with new child-clocks"=
+ [0]
+>=20
+> should be in Mike's + Stephen's inbox since last week as well, which =
+moves the=20
+> offending new elements into separate entities, which can have __initd=
+ata=20
+> attributes again.
+>=20
+>=20
+> Heiko
+>=20
+> [0] http://www.spinics.net/lists/arm-kernel/msg471295.html
 
-SW should not disable PLLE if PLLE is already put under HW control.
+The patch looks good, but for some reason, the next-20151223 kernel had=
+ no
+problem and next-20151231 was broken, the top commits in drivers/clk/ro=
+ckchips
+are:
 
-Signed-off-by: Mark Kuo <mkuo@nvidia.com>
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+commit a915e30dd26ea5f3cc2e2c044aba38ee5973d3fa
+Merge: ce6dd266d535 b0158bb27c7b
+Author: Michael Turquette <mturquette@baylibre.com>
+Date:   Wed Dec 23 13:08:56 2015 -0800
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 65156486889a..d9c3109b75bd 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -2012,7 +2012,7 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
- 	struct tegra_clk_pll_freq_table sel;
- 	u32 val;
--	int ret;
-+	int ret = 0;
- 	unsigned long flags = 0;
- 	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
- 
-@@ -2022,16 +2022,14 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
- 
-+	val = pll_readl(pll->params->aux_reg, pll);
-+	if (val & PLLE_AUX_SEQ_ENABLE)
-+		goto out;
-+
- 	val = pll_readl_base(pll);
- 	val &= ~BIT(30); /* Disable lock override */
- 	pll_writel_base(val, pll);
- 
--	val = pll_readl(pll->params->aux_reg, pll);
--	val |= PLLE_AUX_ENABLE_SWCTL;
--	val &= ~PLLE_AUX_SEQ_ENABLE;
--	pll_writel(val, pll->params->aux_reg, pll);
--	udelay(1);
--
- 	val = pll_readl_misc(pll);
- 	val |= PLLE_MISC_LOCK_ENABLE;
- 	val |= PLLE_MISC_IDDQ_SW_CTRL;
-@@ -2104,15 +2102,25 @@ static void clk_plle_tegra210_disable(struct clk_hw *hw)
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
- 
-+	/* If PLLE HW sequencer is enabled, SW should not disable PLLE */
-+	val = pll_readl(pll->params->aux_reg, pll);
-+	if (val & PLLE_AUX_SEQ_ENABLE)
-+		goto out;
-+
- 	val = pll_readl_base(pll);
- 	val &= ~PLLE_BASE_ENABLE;
- 	pll_writel_base(val, pll);
- 
-+	val = pll_readl(pll->params->aux_reg, pll);
-+	val |= PLLE_AUX_ENABLE_SWCTL | PLLE_AUX_SS_SWCTL;
-+	pll_writel(val, pll->params->aux_reg, pll);
-+
- 	val = pll_readl_misc(pll);
- 	val |= PLLE_MISC_IDDQ_SW_CTRL | PLLE_MISC_IDDQ_SW_VALUE;
- 	pll_writel_misc(val, pll);
- 	udelay(1);
- 
-+out:
- 	if (pll->lock)
- 		spin_unlock_irqrestore(pll->lock, flags);
- }
--- 
-1.9.1
+    Merge branch 'clk-rockchip' into clk-next
 
+commit b0158bb27c7b6e9843f541c17b24dbd964b76db6
+Author: Xing Zheng <zhengxing@rock-chips.com>
+Date:   Tue Dec 22 22:28:01 2015 +0100
+
+    clk: rockchip: rk3036: include downstream muxes into fractional div=
+iders
+   =20
+    Use the newly introduced possibility to combine the fractional divi=
+ders
+
+
+=09Arnd
