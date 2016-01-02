@@ -1,34 +1,82 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Kevin Hilman <khilman@kernel.org>
-Subject: Re: [RESEND v2 1/2] clk: samsung: Don't build ARMv8 clock drivers on ARMv7
-Date: Mon, 25 Jan 2016 09:59:51 +0100
-Message-ID: <4282078.QlIpNj3Oa6@wuerfel>
-In-Reply-To: <1453683021-6998-2-git-send-email-k.kozlowski@samsung.com>
-References: <1453683021-6998-1-git-send-email-k.kozlowski@samsung.com> <1453683021-6998-2-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <rmk+mturquette=baylibre.com@arm.linux.org.uk>
+From: Russell King <rmk+kernel@arm.linux.org.uk>
+To: Michael Turquette <mturquette@baylibre.com>,Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: fix clk-gpio.c with optional clock= DT property
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <E1aFJ0A-00086Z-0I@rmk-PC.arm.linux.org.uk>
+Sender: Russell King <rmk@arm.linux.org.uk>
+Date: Sat, 02 Jan 2016 10:01:34 +0000
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday 25 January 2016 09:50:20 Krzysztof Kozlowski wrote:
-> 
-> +# ARM64 SoCs (e.g. Exynos5433, Exynos7):
-> +config EXYNOS_ARM64_COMMON_CLK
-> +       def_bool ARCH_EXYNOS
-> +       depends on ARM64 || COMPILE_TEST
-> +       select COMMON_CLK_SAMSUNG
-> 
+When the clock DT property is not given, of_clk_get_parent_count()
+returns -ENOENT, which then tries to allocate -2 x 4 bytes of memory,
+which of course fails, causing the whole driver to fail to create
+the clock.
 
-So you always enable it on ARM64 when ARCH_EXYNOS is enabled, but
-enable it silently on ARM32 when COMPILE_TEST is set?
+This causes the SolidRun platforms to fail probing the SDHCI1 interface
+which is connected to the WiFi.
 
-That sounds wrong. How about
+Fix this by detecting errno codes, skipping the allocation, and fixing
+of_clk_gpio_gate_delayed_register_get() to handle a NULL parent_names
+array.
 
-config EXYNOS_ARM64_COMMON_CLK
-	bool "EXYNOS 64-bit clock support" if COMPILE_TEST
-	default ARM64 && ARCH_EXYNOS
-	depends on (ARM64 && ARCH_EXYNOS) || COMPILE_TEST
-	select COMMON_CLK_SAMSUNG
+Fixes: 80eeb1f0f757 ("clk: add gpio controlled clock multiplexer")
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+---
+This goes all the way back to 80eeb1f0f757 ("clk: add gpio controlled
+clock multiplexer") introduced in June in v4.3-rc2 - which raises the
+question why _development_ work in clk is being merged outside of the
+merge window.
 
-	Arnd
+A rewrite of this patch will be necessary to apply to v4.3 kernels.
+
+This applies on top of v4.4-rc6.
+
+ drivers/clk/clk-gpio.c | 23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+index 335322dc403f..05cca9298f44 100644
+--- a/drivers/clk/clk-gpio.c
++++ b/drivers/clk/clk-gpio.c
+@@ -264,8 +264,8 @@ static struct clk *of_clk_gpio_gate_delayed_register_get(const char *name,
+ 		const char * const *parent_names, u8 num_parents,
+ 		unsigned gpio, bool active_low)
+ {
+-	return clk_register_gpio_gate(NULL, name, parent_names[0],
+-			gpio, active_low, 0);
++	return clk_register_gpio_gate(NULL, name, parent_names ?
++			parent_names[0] : NULL, gpio, active_low, 0);
+ }
+ 
+ static struct clk *of_clk_gpio_mux_delayed_register_get(const char *name,
+@@ -292,13 +292,18 @@ static void __init of_gpio_clk_setup(struct device_node *node,
+ 		return;
+ 
+ 	num_parents = of_clk_get_parent_count(node);
+-
+-	parent_names = kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
+-	if (!parent_names)
+-		return;
+-
+-	for (i = 0; i < num_parents; i++)
+-		parent_names[i] = of_clk_get_parent_name(node, i);
++	if (num_parents > 0) {
++		parent_names = kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
++		if (!parent_names) {
++			kfree(data);
++			return;
++		}
++
++		for (i = 0; i < num_parents; i++)
++			parent_names[i] = of_clk_get_parent_name(node, i);
++	} else {
++		parent_names = NULL;
++	}
+ 
+ 	data->num_parents = num_parents;
+ 	data->parent_names = parent_names;
+-- 
+2.1.0
