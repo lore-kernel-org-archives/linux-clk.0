@@ -1,94 +1,90 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 27 Jan 2016 23:56:21 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Wynter Woods <wynter@nextthing.co>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH v2 03/26] clk: Add regmap support
-Message-ID: <20160128075621.GF12841@codeaurora.org>
-References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
- <1452785109-6172-4-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <anholt@eliezer.anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Michael Turquette <mturquette@baylibre.com>, Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>
+Cc: Olof Johansson <olof@lixom.net>, linux-clk <linux-clk@vger.kernel.org>, "Stephen Boyd \<sboyd\@codeaurora.org\>\, Emilio Lopez \<emilio\@elopez.com.ar\>\, Hans de Goede \<hdegoede\@redhat.com\>\, linux-clk \<linux-clk\@vger.kernel.org\>\, linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>, linux-rpi-kernel@lists.infradead.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, "devicetree\@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2 1/3] clk: bcm2835: Add bindings for the auxiliary peripheral clock gates.
+In-Reply-To: <20151231001859.19557.99512@quark.deferred.io>
+References: <1450222559-22461-1-git-send-email-eric@anholt.net> <20151228223935.25842.28675@quark.deferred.io> <CAL_JsqLu7=66jEuaezesEuoPsBBhRAT0UQcLVNOLVwkEvQacRA@mail.gmail.com> <1477432.fTm0GUZ57A@wuerfel> <20151231001859.19557.99512@quark.deferred.io>
+Date: Sat, 02 Jan 2016 10:14:37 -0800
+Message-ID: <87h9ivonle.fsf@eliezer.anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1452785109-6172-4-git-send-email-maxime.ripard@free-electrons.com>
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/14, Maxime Ripard wrote:
-> From: Matthias Brugger <matthias.bgg@gmail.com>
-> 
-> Some devices like SoCs from Mediatek need to use the clock
-> through a regmap interface.
-> This patch adds regmap support for the simple multiplexer clock,
-> the divider clock and the clock gate code.
-> 
-> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Nak.
+Michael Turquette <mturquette@baylibre.com> writes:
 
-The whole anonymous union thing and clk-io.c file is not
-appealing at all. I'd prefer we remove clk_readl/writel, not add
-to it. Plus we're bloating the basic clock types and adding a
-bunch of parallel registration APIs to assign a regmap pointer.
-Really, let's stop adding stuff to the basic clock types, it's
-getting out of hand.
+> Hi Arnd,
+>
+> Quoting Arnd Bergmann (2015-12-30 01:29:02)
+>> It's also ok to merge the header file and binding with either the dts fi=
+le
+>> changes or the driver and then do the other part the following release.
+>>=20
+>> In the past, we've worked around the issue by merging the driver through
+>> arm-soc, or by merging the dts changes through a driver tree, with the
+>> appropriate Acks in each case. Both of those approaches work of course,
+>> but the former always feels awkward to me as we are not using the right
+>> maintainer path, and the latter approach tends to cause merge conflicts,
+>> especially when multiple headers for different subsystems get added or
+>> the dts files are added at the same time.
+>>=20
+>> Having a shared branch for the header file is another way to do it, and
+>> we can do that in some cases, but I'd prefer not to make it the default.
+>
+> Well, I'm thinking that an immutable branch isn't such a bad idea given
+> that both you and Rob are OK with subsystems merging headers and binding
+> descriptions.
+>
+> A while back Stephen Boyd and I started to use topic branches for every
+> driver, all based on -rc1 and merging those into clk-next. This makes it
+> trivial for us to push a shareable branch with minimal dependencies.
+>
+> So at least for the clk tree, how do you feel about us merging driver +
+> header + binding description and then sharing our topic branch as-needed
+> with arm-soc? We could even push our topic branches by default to cut
+> down on coordinating over email back-and-forth.
+>
+> As an example, patch #1 from the Hi3519 series[0] includes the clk
+> driver, binding description and a shared header. Any objection to me
+> taking that patch as-is, based on -rc1, and pushing out that topic
+> branch as clk-hi3519 to the clk git tree with the expectation that
+> you'll just merge that if you need to?
+>
+> You can let me know if you've pulled it in, and then I won't rebase
+> without consulting with the arm-soc folks first.
+>
+> Does this workflow agreement Solve All the Problems?
+>
+> (Note that the patch I referenced is still under review so the branch
+> name I mentioned above doesn't exist yet. It is just an example)
 
-To move forward on making regmap clks generic for everyone, let's
-make sure that regmap clk code is a library that any driver can
-use. No OF_CLK_DECLARE should exist because it doesn't make any
-sense. No clk_register_regmap_{div,mux,gate}() functions, just a
-clk_register_regmap() function to assign the regmap pointer from
-the device. Drivers that want to use the code should need to
-select a Kconfig symbol, so that we don't compile in support for
-regmap clocks unless we really need them.
+For what it's worth, this is a nice workflow for me as a driver
+developer.  I have a couple of .dts patches that ended up waiting this
+cycle because I didn't have the shareable branches necessary.
 
-If we had a clk_regmap structure with a regmap pointer and a
-clk_hw inside it I think that's all we would need. Once we had
-that, we could let driver writers wrap that in their own
-structures for dividers, muxes, gates, etc. and then have them
-call library functions from their clk_ops that takes a regmap (or
-clk_regmap struct), and offset to do the get_div/set_div,
-get_parent/set_parent, enable/disable stuff.
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The policy part can be shared with the basic clock types, because
-we've already started libifying them. For example, we can ask the
-divider code what the hardware value should be for a particular
-divider type and it will tell us without writing any registers.
-I had a patch for libifying muxes, not sure where it went. The
-point being to leave the I/O part to the regmap code without
-putting it behind another layer of indirection buried inside the
-basic types. Make things flat and easy to follow.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-I haven't thought through making new structs to hold the data for
-offsets, masks, etc. but I guess we would want those so that we
-could assign functions directly to clk_ops and not require any
-boiler plate clk_ops implementations in drivers. There are a few
-approaches here: different regmap structs for different basic
-types, one mega struct that combines all the needs of the basic
-types, or some private void pointer inside struct clk_regmap that
-points to different basic type structs. Let's see how that goes.
-
-Maybe we can lift drivers/clk/qcom/clk-regmap.c up into the
-drivers/clk/ directory too. In the qcom design I put the
-enable/disable bits (gate functionality) directly into the
-clk_regmap structure. That may need some more thought if it was
-the right idea to force enable/disable on every regmap clock
-though. If we remove that and introduce a clk_regmap_gate things
-should turn out alright.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+iQIcBAEBCgAGBQJWiBONAAoJELXWKTbR/J7oDt8QAJ11Gjl+2QcSAWbRS7d8DNpY
+lrYpxvy93o67BwWs+8BmyQLxXBV8y1VtbbbeXSl2NmdlzWdB+IM7wl6XEnODXjwf
+gz+W0FpyLzEMdZhud16T0j0fTMJynAmQUQMDacjFFcXXtgCOk1vocqkbwcLQBLO/
+qS2Z6LaiNZkgRShXWUJyMwJ3agGyMH+FNrS+9gvK6ikWFBuo5RSweqLQZUU5IX3y
+xJ+uNfZ+wfCGr1ksPF+dpRQ4u9MVaZM8HhCfI5JD7mWuq6fMFV4yfYQjiHoS2H6+
+r8v9cfHufdQPGa3kuF+WxEiIFCR1m07GfI5YxT78vwT6V5J2ZbIsJJ7SbjR2dHrP
+0WybQp3aB6eEGkSdoyXDePD8IhB9JPRddOzSa17Epx7oghosXF+I7up0o98jBY+2
+BCHydOdQCIi56G+aQE/0QPkce93od5/euNO3YyyR20x4JB0YpG82GpxwXhqBJQi0
+N0g9Fbk4LEYcLV3q66cfL+YvUsfz8D59co76Tuw/kxm9idcf/nb4NaWAkWRvLiQa
+z2l6TqSvlZnxgHKkhehRm0kinXfHrXKSn51VogQRc7Tat/EgrOYLTnqcy3jVZAPf
+KFYValscqdOavqrZAXgSXaRcurvfp+kL75NIpN+yvOfEdiLi27q0CfTW/Gna1gzM
+iEZVN58/ttabOfzmquuf
+=VcSv
+-----END PGP SIGNATURE-----
+--=-=-=--
