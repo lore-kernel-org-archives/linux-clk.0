@@ -1,270 +1,192 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Thu, 28 Jan 2016 15:42:56 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Bai Ping <b51503@freescale.com>
-Cc: kernel@pengutronix.de, pawel.moll@arm.com, robh+dt@kernel.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] ARM: dts: imx: Add basic dts support for imx6qp
- SOC
-Message-ID: <20160128074256.GL9070@tiger>
-References: <1450159673-27314-1-git-send-email-b51503@freescale.com>
- <1450159673-27314-2-git-send-email-b51503@freescale.com>
+Return-Path: <yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1450159673-27314-2-git-send-email-b51503@freescale.com>
+In-Reply-To: <20151231013511.21505.59601@quark.deferred.io>
+References: <1451298058-28910-1-git-send-email-yamada.masahiro@socionext.com>
+	<20151231013511.21505.59601@quark.deferred.io>
+Date: Sat, 2 Jan 2016 10:26:05 +0900
+Message-ID: <CAK7LNARHuogHfsSyXVkkoakOq61xfhYJOa08cC7tvvn1kdPRoQ@mail.gmail.com>
+Subject: Re: [PATCH v2,RESEND] clk: uniphier: add clock drivers for UniPhier SoCs
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Dec 15, 2015 at 02:07:49PM +0800, Bai Ping wrote:
-> The i.MX6Quad Plus processor is an high performance SOC of i.MX6 family.
-> It has enhanced graphics performance and increased overall memory bandwidth
-> compared to i.MX6Q. Most of the design are same as i.MX6Quad/Dual, so code
-> for i.MX6Quad can be resued by this chip. The revision number is identied as
-> i.MX6Q Rev2.0, but actually it is a new chip, as we did many change to the
-> overall architecture.
-> 
-> This patch adds basic dtsi file support for the new i.MX6Quad Plus processor.
-> 
-> Signed-off-by: Bai Ping <b51503@freescale.com>
-> ---
->  arch/arm/boot/dts/imx6q.dtsi              |   2 +-
->  arch/arm/boot/dts/imx6qp.dtsi             | 157 ++++++++++++++++++++++++++++++
->  include/dt-bindings/clock/imx6qdl-clock.h |  16 ++-
->  3 files changed, 173 insertions(+), 2 deletions(-)
->  create mode 100644 arch/arm/boot/dts/imx6qp.dtsi
-> 
-> diff --git a/arch/arm/boot/dts/imx6q.dtsi b/arch/arm/boot/dts/imx6q.dtsi
-> index a266a56..e26d0fd 100644
-> --- a/arch/arm/boot/dts/imx6q.dtsi
-> +++ b/arch/arm/boot/dts/imx6q.dtsi
-> @@ -22,7 +22,7 @@
->  		#address-cells = <1>;
->  		#size-cells = <0>;
->  
-> -		cpu@0 {
-> +		cpu0: cpu@0 {
->  			compatible = "arm,cortex-a9";
->  			device_type = "cpu";
->  			reg = <0>;
-> diff --git a/arch/arm/boot/dts/imx6qp.dtsi b/arch/arm/boot/dts/imx6qp.dtsi
-> new file mode 100644
-> index 0000000..e43751f
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/imx6qp.dtsi
-> @@ -0,0 +1,157 @@
-> +/*
-> + * Copyright 2015 Freescale Semiconductor, Inc.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
+Hi Michael,
 
-For new dts files, we suggest to use GPL/X11 dual license to consider
-non-Linux users.  You can grep "dual-licensed" in arch/arm/boot/dts to
-find a plenty of examples.
 
-> + *
-> + */
-> +
+2015-12-31 10:35 GMT+09:00 Michael Turquette <mturquette@baylibre.com>:
+> Hello Yamada-san,
+>
+> Quoting Masahiro Yamada (2015-12-28 02:20:58)
+>> diff --git a/drivers/clk/uniphier/Kconfig b/drivers/clk/uniphier/Kconfig
+>> new file mode 100644
+>> index 0000000..7606f27
+>> --- /dev/null
+>> +++ b/drivers/clk/uniphier/Kconfig
+>> @@ -0,0 +1,35 @@
+>> +menuconfig CLK_UNIPHIER
+>> +       bool "Clock drivers for UniPhier SoCs"
+>> +       depends on ARCH_UNIPHIER
+>
+> Might want to make the above line:
+>
+>         depends on ARCH_UNIPHIER || COMPILE_TEST
+>
+>> +       depends on OF
+>> +       default y
+>> +       help
+>> +         Supports clock drivers for UniPhier SoCs.
+>
+> Why menuconfig? Can we make this a non-visible config option selected by
+> the UniPhier platform?
 
-Do you not need to include "imx6qdl.dtsi" here?
+Yes, I can do that if you like.
 
-> +/ {
-> +	aliases {
-> +		pre0 = &pre1;
-> +		pre1 = &pre2;
-> +		pre2 = &pre3;
-> +		pre3 = &pre4;
-> +		prg0 = &prg1;
-> +		prg1 = &prg2;
-> +	};
-> +
-> +	soc {
-> +		ocram_2: sram@00940000 {
+Do you prefer to making it flat, like all clocks are shown in the
+"Common Clock Framework" menu?
 
-The label can just be ocram2.
+Or, is it better to categorize SoC clocks with "menu" for each SoC family?
 
-> +			compatible = "mmio-sram";
-> +			reg = <0x00940000 0x20000>;
-> +			clocks = <&clks IMX6QDL_CLK_OCRAM>;
-> +		};
-> +
-> +		ocram_3: sram@00960000 {
 
-ocram3
 
-> +			compatible = "mmio-sram";
-> +			reg = <0x00960000 0x20000>;
-> +			clocks = <&clks IMX6QDL_CLK_OCRAM>;
-> +		};
-> +
-> +		pcie: pcie@0x01000000 {
-> +			compatible = "fsl,imx6qp-pcie", "snps,dw-pcie";
-> +			reg = <0x01ffc000 0x4000>, <0x01f00000 0x80000>;
-> +			reg-names = "dbi", "config";
-> +			#address-cells = <3>;
-> +			#size-cells = <2>;
-> +			device_type = "pci";
-> +			ranges = <0x81000000 0 0          0x01f80000 0 0x00010000 /* downstream I/O */
-> +				  0x82000000 0 0x01000000 0x01000000 0 0x00f00000>; /* non-prefetchable memory */
-> +			num-lanes = <1>;
-> +			interrupts = <0 120 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "msi";
-> +			#interrupt-cells = <1>;
-> +			interrupt-map-mask = <0 0 0 0x7>;
-> +			interrupt-map = <0 0 0 1 &intc 0 123 IRQ_TYPE_LEVEL_HIGH>,
-> +					<0 0 0 2 &intc 0 122 IRQ_TYPE_LEVEL_HIGH>,
-> +					<0 0 0 3 &intc 0 121 IRQ_TYPE_LEVEL_HIGH>,
-> +					<0 0 0 4 &intc 0 120 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clks IMX6QDL_CLK_PCIE_REF_125M>,
-> +				 <&clks IMX6QDL_CLK_SATA_REF_100M>,
-> +				 <&clks IMX6QDL_CLK_LVDS1_GATE>, <&clks IMX6QDL_CLK_PCIE_AXI>;
-> +			clock-names = "pcie_phy", "ref_100m", "pcie_bus", "pcie";
-> +			status = "disabled";
-> +		};
-> +
-> +		aips-bus@02100000 { /* AIPS2 */
-> +			pre1: pre@021c8000 {
-> +				compatible = "fsl,imx6q-pre";
+>> +
+>> +if CLK_UNIPHIER
+>
+> Please drop the if statement here and have the below options 'depends'
+> on CLK_UNIPHIER.
 
-Is there already a device tree binding and driver for this block in
-upstream kernel?  I do not accepted any unestablished device.
+Why is it bad?
 
-> +				reg = <0x021c8000 0x1000>;
-> +				clocks = <&clks IMX6QDL_CLK_PRE0>;
-> +				interrupts = <0 90 IRQ_TYPE_EDGE_RISING>;
-> +				ocram = <&ocram_2>;
-> +				status = "disabled";
-> +			};
-> +
-> +			pre2: pre@021c9000 {
-> +				compatible = "fsl,imx6q-pre";
-> +				reg = <0x021c9000 0x1000>;
-> +				clocks = <&clks IMX6QDL_CLK_PRE1>;
-> +				interrupts = <0 97 IRQ_TYPE_EDGE_RISING>;
-> +				ocram = <&ocram_2>;
-> +				status = "disabled";
-> +			};
-> +
-> +			pre3: pre@021ca000 {
-> +				compatible = "fsl,imx6q-pre";
-> +				reg = <0x021ca000 0x1000>;
-> +				clocks = <&clks IMX6QDL_CLK_PRE2>;
-> +				interrupts = <0 98 IRQ_TYPE_EDGE_RISING>;
-> +				ocram = <&ocram_3>;
-> +				status = "disabled";
-> +			};
-> +
-> +			pre4: pre@021cb000 {
-> +				compatible = "fsl,imx6q-pre";
-> +				reg = <0x021cb000 0x1000>;
-> +				clocks = <&clks IMX6QDL_CLK_PRE3>;
-> +				interrupts = <0 99 IRQ_TYPE_EDGE_RISING>;
-> +				ocram = <&ocram_3>;
-> +				status = "disabled";
-> +			};
-> +
-> +			prg1: prg@021cc000 {
-> +				compatible = "fsl,imx6q-prg";
+I think surrounding all the options with "if CLK_UNIPHIER" ... "endif"
+is easier than adding "depends on CLK_UNIPHIER" to each of them.
 
-Ditto
 
-> +				reg = <0x021cc000 0x1000>;
-> +				clocks = <&clks IMX6QDL_CLK_PRG0_AXI>,
-> +					 <&clks IMX6QDL_CLK_PRG0_APB>;
-> +				clock-names = "axi", "apb";
-> +				gpr = <&gpr>;
-> +				status = "disabled";
-> +			};
-> +
-> +			prg2: prg@021cd000 {
-> +				compatible = "fsl,imx6q-prg";
-> +				reg = <0x021cd000 0x1000>;
-> +				clocks = <&clks IMX6QDL_CLK_PRG1_AXI>,
-> +					 <&clks IMX6QDL_CLK_PRG1_APB>;
-> +				clock-names = "axi", "apb";
-> +				gpr = <&gpr>;
-> +				status = "disabled";
-> +			};
-> +		};
-> +
-> +		ipu1: ipu@02400000 {
-> +			compatible = "fsl,imx6qp-ipu", "fsl,imx6q-ipu";
-> +			clocks = <&clks IMX6QDL_CLK_IPU1>,
-> +				 <&clks IMX6QDL_CLK_IPU1_DI0>, <&clks IMX6QDL_CLK_IPU1_DI1>,
-> +				 <&clks IMX6QDL_CLK_IPU1_DI0_SEL>, <&clks IMX6QDL_CLK_IPU1_DI1_SEL>,
-> +				 <&clks IMX6QDL_CLK_LDB_DI0_PODF>, <&clks IMX6QDL_CLK_LDB_DI1_PODF>,
-> +				 <&clks IMX6QDL_CLK_PRG0_APB>;
-> +			clock-names = "bus",
-> +				      "di0", "di1",
-> +				      "di0_sel", "di1_sel",
-> +				      "ldb_di0", "ldb_di1", "prg";
-> +		};
-> +
-> +		ipu2: ipu@02800000 {
-> +			compatible = "fsl,imx6qp-ipu", "fsl,imx6q-ipu";
-> +			clocks = <&clks IMX6QDL_CLK_IPU2>,
-> +				 <&clks IMX6QDL_CLK_IPU2_DI0>, <&clks IMX6QDL_CLK_IPU2_DI1>,
-> +				 <&clks IMX6QDL_CLK_IPU2_DI0_SEL>, <&clks IMX6QDL_CLK_IPU2_DI1_SEL>,
-> +				 <&clks IMX6QDL_CLK_LDB_DI0_PODF>, <&clks IMX6QDL_CLK_LDB_DI1_PODF>,
-> +				 <&clks IMX6QDL_CLK_PRG1_APB>;
-> +			clock-names = "bus",
-> +				      "di0", "di1",
-> +				      "di0_sel", "di1_sel",
-> +				      "ldb_di0", "ldb_di1", "prg";
-> +		};
-> +
-> +		sata: sata@02200000 {
-> +			compatible = "fsl,imx6qp-ahci";
-> +			reg = <0x02200000 0x4000>;
-> +			interrupts = <0 39 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clks IMX6QDL_CLK_SATA>,
-> +				 <&clks IMX6QDL_CLK_SATA_REF_100M>,
-> +				 <&clks IMX6QDL_CLK_AHB>;
-> +			clock-names = "sata", "sata_ref", "ahb";
-> +			status = "disabled";
-> +		};
-> +	};
-> +};
-> +
-> +&ldb {
-> +	compatible = "fsl,imx6qp-ldb", "fsl,imx6q-ldb", "fsl,imx53-ldb";
-> +};
-> diff --git a/include/dt-bindings/clock/imx6qdl-clock.h b/include/dt-bindings/clock/imx6qdl-clock.h
-> index 77985cc..2905033 100644
-> --- a/include/dt-bindings/clock/imx6qdl-clock.h
-> +++ b/include/dt-bindings/clock/imx6qdl-clock.h
 
-This file should be updated in the patch that updates clock driver.
-Only after these new clocks get supported by clock driver, you can use
-them in device tree.
+>> +
+>> +config CLK_UNIPHIER_PH1_SLD3
+>> +       bool "Clock driver for UniPhier PH1-sLD3 SoC"
+>> +       default y
+>
+> Can you make these drivers into loadable modules? If so you might
+> consider tristate.
 
-Shawn
+For some, I can.
+For some, I can't (because they must provide an input clock for the timer.)
 
-> @@ -255,6 +255,20 @@
->  #define IMX6QDL_CLK_CAAM_ACLK			242
->  #define IMX6QDL_CLK_CAAM_IPG			243
->  #define IMX6QDL_CLK_SPDIF_GCLK			244
-> -#define IMX6QDL_CLK_END				245
-> +#define IMX6QDL_CLK_UART_SEL			245
-> +#define IMX6QDL_CLK_IPG_PER_SEL			246
-> +#define IMX6QDL_CLK_ECSPI_SEL			247
-> +#define IMX6QDL_CLK_CAN_SEL			248
-> +#define IMX6QDL_CLK_MMDC_CH1_AXI_CG		249
-> +#define IMX6QDL_CLK_PRE0			250
-> +#define IMX6QDL_CLK_PRE1			251
-> +#define IMX6QDL_CLK_PRE2			252
-> +#define IMX6QDL_CLK_PRE3			253
-> +#define IMX6QDL_CLK_PRG0_AXI			254
-> +#define IMX6QDL_CLK_PRG1_AXI			255
-> +#define IMX6QDL_CLK_PRG0_APB			256
-> +#define IMX6QDL_CLK_PRG1_APB			257
-> +#define IMX6QDL_CLK_PRE_AXI			258
-> +#define IMX6QDL_CLK_END				259
->  
->  #endif /* __DT_BINDINGS_CLOCK_IMX6QDL_H */
-> -- 
-> 1.9.1
-> 
-> 
+
+>> +
+>> +static void __init ph1_ld4_clk_init(struct device_node *np)
+>> +{
+>> +       uniphier_clk_init(np, ph1_ld4_clk_idata);
+>> +}
+>> +CLK_OF_DECLARE(ph1_ld4_clk, "socionext,ph1-ld4-sysctrl", ph1_ld4_clk_init);
+>
+> Can you avoid using CLK_OF_DECLARE and instead make this into a
+> platform_driver? For examples please see drivers/clk/qcom*.c
+
+
+For clk-uniphier-peri.c and clk-uniphier-mio.c, yes.
+They provide clocks for peripheral devices like USB, MMC, etc., so I
+can delay them.
+
+
+For clk-ph1-*.c, I am afraid I can't.
+They provide an input clock for the timer (ARM global timer).
+I think they should be initialized very early.
+
+
+Is platform_driver better than CLK_OF_DECLARE() where it is possible?
+
+I just chose CLK_OF_DECLARE() for consistency
+and it seems the majority.
+
+
+
+>> +
+>> +static void __init uniphier_clk_update_parent_name(struct device_node *np,
+>> +                                                  const char **parent_name)
+>> +{
+>> +       const char *new_name;
+>> +       int index;
+>> +
+>> +       if (!parent_name || !*parent_name)
+>> +               return;
+>> +
+>> +       if (strncmp(*parent_name, UNIPHIER_CLK_EXT, strlen(UNIPHIER_CLK_EXT)))
+>> +               return;
+>> +
+>> +       index = of_property_match_string(np, "clock-names",
+>> +                               *parent_name + strlen(UNIPHIER_CLK_EXT));
+>> +       new_name = of_clk_get_parent_name(np, index);
+>> +       if (new_name)
+>> +               *parent_name = new_name;
+>
+> Where can I find the DT binding description and DTS for this clock
+> controller? I'm confused why the parent name function is necessary and
+> I'd like to see the data.
+
+
+clk_register() needs the name strings of parent clocks,
+not pointers to parent clocks.
+(It looks a bit odd to me, although it allows us to register clocks in
+any order.
+In stead, we have to think about orphan-walking.)
+So, we need to exactly know the names of parent clocks.
+
+Let's assume the clock system that consists of some hardware blocks.
+
+
+  root_clk: root_clk {
+        compatible = "foo-clk";
+        reg = <0x10000000 0x1000>;
+        #clock-cells = <1>;
+  };
+
+  bar_clk {
+        compatible = "bar-clk";
+        reg = <0x20000000 0x1000>;
+        #clock-cells = <1>;
+        clock-names = "input"
+        clocks = <&root_clk 0>;
+   };
+
+  baz_clk {
+        compatible = "baz-clk";
+        reg = <0x30000000 0x1000>;
+        #clock-cells = <1>;
+        clock-names = "input"
+        clocks = <&root_clk 1>;
+   };
+
+
+
+The "bar_clk" is a clock provider for other peripherals,
+and also a consumer of "root_clk".
+
+The "bar_clk" wants to know the name of index 0 of root_clk
+because it is needed when calling clk_register().
+
+
+Let's say the names of clocks provided root_clk are, "for-bar123", "for-baz456".
+
+The "bar_clk" needs the string "for-bar123", but it does not know.
+(Likewise, the "baz_clk" needs the string "for-baz456", but it does not know.)
+
+Of course, I can hard-code "for-bar123" in the driver of "bar_clk",
+but I think it is annoying to keep the name synced between the
+provider and the consumer.
+
+So, I implemented uniphier_clk_update_parent_name()
+to convert the clock-names into the parent clock name.
+In this case, this function takes "input" and converts it into "for-bar123".
+
+
+Is there any good idea to solve this problem?
+
+
+-- 
+Best Regards
+Masahiro Yamada
