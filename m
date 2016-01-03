@@ -1,153 +1,146 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 14/14] ARM: dts: sun8i: Add A83T based Sinovoip Bpi-M3 Board
-Date: Sun, 31 Jan 2016 09:21:06 +0800
-Message-Id: <1454203266-4450-15-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Russell King <rmk+kernel@arm.linux.org.uk>,
+ "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <E1aFJ0A-00086Z-0I@rmk-PC.arm.linux.org.uk>
+Cc: linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org
+References: <E1aFJ0A-00086Z-0I@rmk-PC.arm.linux.org.uk>
+Message-ID: <20160103064749.15239.59588@quark.deferred.io>
+Subject: Re: [PATCH] clk: fix clk-gpio.c with optional clock= DT property
+Date: Sat, 02 Jan 2016 22:47:49 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds support for Sinovoip BPI-M3 A83T based board.
+Hi Russell,
 
-It has 2G LPDDR3, UART, ethernet, USB, HDMI, USB Sata, MIPI DSI,
-mic, AP6212 Wifi, etc on it.
-It is paired with AXP813 PMIC which is almost same as AXP818.
+Quoting Russell King (2016-01-02 02:01:34)
+> When the clock DT property is not given, of_clk_get_parent_count()
+> returns -ENOENT, which then tries to allocate -2 x 4 bytes of memory,
+> which of course fails, causing the whole driver to fail to create
+> the clock.
+> =
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
----
- arch/arm/boot/dts/Makefile                       |  1 +
- arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts | 88 ++++++++++++++++++++++++
- 2 files changed, 89 insertions(+)
- create mode 100644 arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts
+> This causes the SolidRun platforms to fail probing the SDHCI1 interface
+> which is connected to the WiFi.
+> =
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 58e461a..c0dd016 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -694,6 +694,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
- 	sun8i-a33-sinlinx-sina33.dtb \
- 	sun8i-a83t-allwinner-h8homlet-v2.dtb \
- 	sun8i-a83t-cubietruck-plus.dtb \
-+	sun8i-a83t-sinovoip-bpi-m3.dtb \
- 	sun8i-h3-orangepi-plus.dtb
- dtb-$(CONFIG_MACH_SUN9I) += \
- 	sun9i-a80-optimus.dtb \
-diff --git a/arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts b/arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts
-new file mode 100644
-index 0000000..fecc7dc
---- /dev/null
-+++ b/arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts
-@@ -0,0 +1,88 @@
-+/*
-+ * Copyright 2015 Vishnu Patekar
-+ * Vishnu Patekar <vishnupatekar0510@gmail.com>
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This file is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This file is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
-+ */
+> Fix this by detecting errno codes, skipping the allocation, and fixing
+> of_clk_gpio_gate_delayed_register_get() to handle a NULL parent_names
+> array.
+
+Thanks for the fix. Applied to clk-next manually.
+
+> =
+
+> Fixes: 80eeb1f0f757 ("clk: add gpio controlled clock multiplexer")
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> ---
+> This goes all the way back to 80eeb1f0f757 ("clk: add gpio controlled
+> clock multiplexer") introduced in June in v4.3-rc2 - which raises the
+> question why _development_ work in clk is being merged outside of the
+> merge window.
+
+That patch was merged into the clk tree in June 2015, based on 4.2-rc1.
+
+v4.2 was release on Sunday, August 30, 2015. My pull request to Linus
+containing this patch was sent on Monday, August 31, 2015. Thread
+archived here:
+
+http://lkml.kernel.org/r/<20150831192125.11508.92473@quantum>
+
+Looks like it was merged in 4.3-rc1 as well:
+
+$ git log v4.3-rc1..clk-for-linus-4.3
+$
+
+> =
+
+> A rewrite of this patch will be necessary to apply to v4.3 kernels.
+> =
+
+> This applies on top of v4.4-rc6.
+
+Alternatively we can send f66541ba02d5 "clk: gpio: Get parent clk names
+in of_gpio_clk_setup()" along with your fix.
+
+Below is the modified version of your patch.
+
+Regards,
+Mike
+
+
+
+commit 60f7e5a537f367d3be7cff2bce13c91c10bdf451
+Author: Russell King <rmk+kernel@arm.linux.org.uk>
+Date:   Sat Jan 2 10:01:34 2016 +0000
+
+    clk: fix clk-gpio.c with optional clock=3D DT property
+    =
+
+    When the clock DT property is not given, of_clk_get_parent_count()
+    returns -ENOENT, which then tries to allocate -2 x 4 bytes of memory,
+    which of course fails, causing the whole driver to fail to create
+    the clock.
+    =
+
+    This causes the SolidRun platforms to fail probing the SDHCI1 interface
+    which is connected to the WiFi.
+    =
+
+    Fix this by detecting errno codes, skipping the allocation, and fixing
+    of_clk_gpio_gate_delayed_register_get() to handle a NULL parent_names
+    array.
+    =
+
+    Fixes: 80eeb1f0f757 ("clk: add gpio controlled clock multiplexer")
+    Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+    Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+
+diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+index 1767b9e..19fed65 100644
+--- a/drivers/clk/clk-gpio.c
++++ b/drivers/clk/clk-gpio.c
+@@ -264,8 +264,8 @@ static struct clk *of_clk_gpio_gate_delayed_register_ge=
+t(const char *name,
+ 		const char * const *parent_names, u8 num_parents,
+ 		unsigned gpio, bool active_low)
+ {
+-	return clk_register_gpio_gate(NULL, name, parent_names[0],
+-			gpio, active_low, 0);
++	return clk_register_gpio_gate(NULL, name, parent_names ?
++			parent_names[0] : NULL, gpio, active_low, 0);
+ }
+ =
+
+ static struct clk *of_clk_gpio_mux_delayed_register_get(const char *name,
+@@ -295,15 +295,19 @@ static void __init of_gpio_clk_setup(struct device_no=
+de *node,
+ 	if (!data)
+ 		return;
+ =
+
+-	parent_names =3D kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
+-	if (!parent_names) {
+-		kfree(data);
+-		return;
++	if (num_parents) {
++		parent_names =3D kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
++		if (!parent_names) {
++			kfree(data);
++			return;
++		}
 +
-+/dts-v1/;
-+#include "sun8i-a83t.dtsi"
-+#include "sunxi-common-regulators.dtsi"
-+
-+/ {
-+	model = "Sinovoip BananaPi M3 v1.2";
-+	compatible = "sinovoip,bpi-m3", "allwinner,sun8i-a83t";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
-+
-+&pio {
-+	mmc0_cd_pin_bpi_m3: mmc0_cd_pin@0 {
-+		allwinner,pins = "PF6";
-+		allwinner,function = "gpio_in";
-+		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-+		allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
-+	};
-+};
-+
-+&mmc0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin_bpi_m3>;
-+	vmmc-supply = <&reg_vcc3v0>;
-+	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
-+	bus-width = <4>;
-+	cd-inverted;
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_pins_b>;
-+	status = "okay";
-+};
-+
-+&r_rsb {
-+	status = "okay";
-+};
--- 
-1.9.1
++		for (i =3D 0; i < num_parents; i++)
++			parent_names[i] =3D of_clk_get_parent_name(node, i);
++	} else {
++		parent_names =3D NULL;
+ 	}
+ =
+
+-	for (i =3D 0; i < num_parents; i++)
+-		parent_names[i] =3D of_clk_get_parent_name(node, i);
+-
+ 	data->num_parents =3D num_parents;
+ 	data->parent_names =3D parent_names;
+ 	data->node =3D node;
