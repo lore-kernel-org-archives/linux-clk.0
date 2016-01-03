@@ -1,62 +1,44 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Remi Pommarel <repk@triplefau.lt>,
-	devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <festevam@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20160103105319.GB5779@n2100.arm.linux.org.uk>
+References: <E1aFJ0A-00086Z-0I@rmk-PC.arm.linux.org.uk>
+	<20160103064749.15239.59588@quark.deferred.io>
+	<20160103105319.GB5779@n2100.arm.linux.org.uk>
+Date: Sun, 3 Jan 2016 21:35:44 -0200
+Message-ID: <CAOMZO5C1zSWtLh-mE5pxZxDYEg3LEJNxnbkBOX69gGByy8=FDQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: fix clk-gpio.c with optional clock= DT property
+From: Fabio Estevam <festevam@gmail.com>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
 	linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Matthias Reichl <hias@horus.com>,
-	lFlorian Meier <florian.meier@koalo.de>
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 4/5] ARM: bcm2835: I2S: use new register-range and clock framework
-Date: Sat,  9 Jan 2016 09:25:56 +0000
-Message-Id: <1452331558-2520-5-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org>
-References: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org>
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+On Sun, Jan 3, 2016 at 8:53 AM, Russell King - ARM Linux
+<linux@arm.linux.org.uk> wrote:
 
-Since the move to the new clock framework with
-commit 94cb7f76caa0b337 ("Switch to using the new clock driver support")
-the bcm2835-i2s driver was no longer working.
+>> That patch was merged into the clk tree in June 2015, based on 4.2-rc1.
+>
+> Interesting... I guess git describe is buggy then:
+>
+> $ git describe --contains 80eeb1f0f757
 
-This patch fixes the address ranges:
-* remove the PCM clock register range that is owned by the clockmanager
-* fix the length, which did not include the last register of this device
+'git tag --contains' shows the correct response.
 
-It also adds the required pcm-clock with the corresponding default
-clock and rate.
-
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- arch/arm/boot/dts/bcm2835.dtsi |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm/boot/dts/bcm2835.dtsi b/arch/arm/boot/dts/bcm2835.dtsi
-index aef64de..83d9787 100644
---- a/arch/arm/boot/dts/bcm2835.dtsi
-+++ b/arch/arm/boot/dts/bcm2835.dtsi
-@@ -120,9 +120,8 @@
- 
- 		i2s: i2s@7e203000 {
- 			compatible = "brcm,bcm2835-i2s";
--			reg = <0x7e203000 0x20>,
--			      <0x7e101098 0x02>;
--
-+			reg = <0x7e203000 0x24>;
-+			clocks = <&clocks BCM2835_CLOCK_PCM>;
- 			dmas = <&dma 2>,
- 			       <&dma 3>;
- 			dma-names = "tx", "rx";
--- 
-1.7.10.4
+$ git tag --contains 80eeb1f0f757
+v4.3
+v4.3-rc1
+v4.3-rc2
+v4.3-rc3
+v4.3-rc4
+v4.3-rc5
+v4.3-rc6
+v4.3-rc7
+v4.4-rc1
+v4.4-rc2
+v4.4-rc3
+v4.4-rc4
+v4.4-rc5
+v4.4-rc6
+v4.4-rc7
