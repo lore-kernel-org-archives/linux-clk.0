@@ -1,85 +1,109 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-Subject: Re: [PATCH v5 5/6] mfd: dt-bindings: add device tree bindings for
- Hi3519 sysctrl
-To: Lee Jones <lee.jones@linaro.org>
-References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
- <1452219400-32478-6-git-send-email-xuejiancheng@huawei.com>
- <20160111054846.GD3331@x1> <56935EA8.4060801@huawei.com>
- <20160111085555.GE14104@x1>
-CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <p.zabel@pengutronix.de>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
-        <mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
-        <galak@codeaurora.org>, <linux@arm.linux.org.uk>, <khilman@linaro.org>,
-        <arnd@arndb.de>, <olof@lixom.net>, <xuwei5@hisilicon.com>,
-        <haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-        <bintian.wang@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-        <yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-        <ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
-        <zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>
-From: xuejiancheng <xuejiancheng@huawei.com>
-Message-ID: <5694584D.7040301@huawei.com>
-Date: Tue, 12 Jan 2016 09:35:09 +0800
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [RFC 6/9] clk: ti: add support for omap4 module clocks
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
+ <1450447141-29936-7-git-send-email-t-kristo@ti.com>
+ <20160101054815.21738.79820@quark.deferred.io> <568A20E5.6040005@ti.com>
+ <CAMuHMdUZMUSYC1XHydVQHRibWtHw2=T-7nXe=5Pf4UCcb=mKTQ@mail.gmail.com>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        "linux-omap@vger.kernel.org"
+	<linux-omap@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Tony
+ Lindgren <tony@atomide.com>, Stephen Boyd <sboyd@codeaurora.org>,
+        "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <568A735D.2060309@ti.com>
+Date: Mon, 4 Jan 2016 15:27:57 +0200
 MIME-Version: 1.0
-In-Reply-To: <20160111085555.GE14104@x1>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <CAMuHMdUZMUSYC1XHydVQHRibWtHw2=T-7nXe=5Pf4UCcb=mKTQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 2016/1/11 16:55, Lee Jones wrote:
-> On Mon, 11 Jan 2016, xuejiancheng wrote:
->> On 2016/1/11 13:48, Lee Jones wrote:
->>> On Fri, 08 Jan 2016, Jiancheng Xue wrote:
+On 01/04/2016 12:21 PM, Geert Uytterhoeven wrote:
+> Hi Tero,
+>
+> On Mon, Jan 4, 2016 at 8:36 AM, Tero Kristo <t-kristo@ti.com> wrote:
+>> On 01/01/2016 07:48 AM, Michael Turquette wrote:
+>>> Quoting Tero Kristo (2015-12-18 05:58:58)
+>>>> +static int _omap4_hwmod_clk_enable(struct clk_hw *hw)
+>>>> +{
+>>>> +       struct clk_hw_omap *clk = to_clk_hw_omap(hw);
+>>>> +       u32 val;
+>>>> +       int timeout = 0;
+>>>> +       int ret;
+>>>> +
+>>>> +       if (!clk->enable_bit)
+>>>> +               return 0;
+>>>> +
+>>>> +       if (clk->clkdm) {
+>>>> +               ret = ti_clk_ll_ops->clkdm_clk_enable(clk->clkdm,
+>>>> hw->clk);
+>>>> +               if (ret) {
+>>>> +                       WARN(1,
+>>>> +                            "%s: could not enable %s's clockdomain %s:
+>>>> %d\n",
+>>>> +                            __func__, clk_hw_get_name(hw),
+>>>> +                            clk->clkdm_name, ret);
+>>>> +                       return ret;
+>>>> +               }
+>>>> +       }
+>>>> +
+>>>> +       val = ti_clk_ll_ops->clk_readl(clk->enable_reg);
+>>>> +
+>>>> +       val &= ~OMAP4_MODULEMODE_MASK;
+>>>> +       val |= clk->enable_bit;
+>>>> +
+>>>> +       ti_clk_ll_ops->clk_writel(val, clk->enable_reg);
+>>>> +
+>>>> +       /* Wait until module is enabled */
+>>>> +       while (!_omap4_is_ready(val)) {
+>>>> +               udelay(1);
 >>>
->>>> Add device tree bindings for Hi3519 system controller.
->>>>
->>>> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
->>>> ---
->>>>  Documentation/devicetree/bindings/mfd/hi3519.txt | 14 ++++++++++++++
->>>>  1 file changed, 14 insertions(+)
->>>>  create mode 100644 Documentation/devicetree/bindings/mfd/hi3519.txt
->>>
->>> I have this patch, but none of the others in the set, thus I am
->>> lacking context.
->>>
->> I can forward other patches in the set to you. Thank you.
+>>> This should really be a .prepare callback if you plan to keep the delays
+>>> in there.
 >>
->>>> diff --git a/Documentation/devicetree/bindings/mfd/hi3519.txt b/Documentation/devicetree/bindings/mfd/hi3519.txt
->>>> new file mode 100644
->>>> index 0000000..115c5be
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/mfd/hi3519.txt
->>>> @@ -0,0 +1,14 @@
->>>> +* Hisilicon Hi3519 System Controller Block
->>>> +
->>>> +This bindings use the following binding:
->>>> +Documentation/devicetree/bindings/mfd/syscon.txt
->>>> +
->>>> +Required properties:
->>>> +- compatible: "hisilicon,hi3519-sysctrl".
->>>> +- reg: the register region of this block
->>>> +
->>>> +Examples:
->>>> +sysctrl: system-controller@12010000 {
->>>> +	compatible = "hisilicon,hi3519-sysctrl", "syscon";
->>>> +	reg = <0x12010000 0x1000>;
->>>> +};
->>>
->>> There is no requirement (nor want) for binding documents where the
->>> given device is simply using highly generic bindings.  This just
->>> amounts to churn.
->>>
->> This block is specific for Hi3519 SOC, and may has its own driver.
-> 
-> Does it have its own driver currently?
-> 
-Not yet.
-Arnd Bergmann and Rob Herring all suggested adding a specific compatible string
-with the SOC name. This binding is just used for describing the compatible string now.
-When more functions on hi3519 SOC are added later, the specific driver will be also
-needed.
+>> If this is changed to a .prepare, then all OMAP power management is
+>> effectively ruined as all clocks are going to be enabled all the time. hwmod
+>> core doesn't support .prepare/.enable at the moment that well, and changing
+>> that is going to be a big burden (educated guess, haven't checked this
+>> yet)... The call chain that comes here is:
+>>
+>> device driver -> pm_runtime -> hwmod_core -> hwmod_clk_enable / disable.
+>>
+>> The delay within this function should usually be pretty short, just to wait
+>> that the module comes up from idle.
+>
+> Does it take multiple µs? Perhaps even one µs is much longer than needed?
+>
+>> I recall the discussions regarding the udelays within clk_enable/disable
+>> calls, but what is the preferred approach then? Typically clk_enable/disable
+>> just becomes a NOP if it is not allowed to wait for hardware to complete
+>> transitioning before exiting the function.
+>
+> FWIW, there are small loops with just a cpu_relax() in various clock drivers
+> under drivers/clk/shmobile/.
 
->> So I think it's better to keep this binding.
-> 
+Just did a quick profiling round, and the clk_enable/disable delay loops 
+take anything from 0...1500ns, most typically consuming some 400-600ns. 
+So, based on this, dropping the udelay and adding cpu_relax instead 
+looks like a good change. I just verified that changing the udelay to 
+cpu_relax works fine also, I just need to change the bail-out period to 
+be something sane.
+
+-Tero
+
+
+
+>
+> Gr{oetje,eeting}s,
+>
+>                          Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                  -- Linus Torvalds
+>
