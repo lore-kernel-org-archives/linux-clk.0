@@ -1,76 +1,60 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-Subject: Re: [PATCH v5 5/6] mfd: dt-bindings: add device tree bindings for
- Hi3519 sysctrl
-To: Lee Jones <lee.jones@linaro.org>
-References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
- <1452219400-32478-6-git-send-email-xuejiancheng@huawei.com>
- <20160111054846.GD3331@x1>
-CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <p.zabel@pengutronix.de>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
-        <mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
-        <galak@codeaurora.org>, <linux@arm.linux.org.uk>, <khilman@linaro.org>,
-        <arnd@arndb.de>, <olof@lixom.net>, <xuwei5@hisilicon.com>,
-        <haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-        <bintian.wang@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-        <yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-        <ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
-        <zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>
-From: xuejiancheng <xuejiancheng@huawei.com>
-Message-ID: <56935EA8.4060801@huawei.com>
-Date: Mon, 11 Jan 2016 15:50:00 +0800
-MIME-Version: 1.0
-In-Reply-To: <20160111054846.GD3331@x1>
+Return-Path: <mturquette@baylibre.com>
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Masahiro Yamada <yamada.masahiro@socionext.com>,  linux-clk@vger.kernel.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
+Cc: "Masahiro Yamada" <yamada.masahiro@socionext.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org
+References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
+Message-ID: <20160104235707.15239.82214@quark.deferred.io>
+Subject: Re: [RESEND PATCH v2 00/16] clk: a collection of various clean-ups and
+ improvements
+Date: Mon, 04 Jan 2016 15:57:07 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Lee Jones,
+Quoting Masahiro Yamada (2015-12-28 02:22:54)
+> Many refactoring, with detection of circular parent looping.
 
-    Thanks for your comments.
+Thanks for the set of fixes. I'm looking over them now and will apply
+after 4.5-rc1 drops if there are no issues.
 
-On 2016/1/11 13:48, Lee Jones wrote:
-> On Fri, 08 Jan 2016, Jiancheng Xue wrote:
-> 
->> Add device tree bindings for Hi3519 system controller.
->>
->> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
->> ---
->>  Documentation/devicetree/bindings/mfd/hi3519.txt | 14 ++++++++++++++
->>  1 file changed, 14 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/mfd/hi3519.txt
-> 
-> I have this patch, but none of the others in the set, thus I am
-> lacking context.
-> 
-I can forward other patches in the set to you. Thank you.
+Regards,
+Mike
 
->> diff --git a/Documentation/devicetree/bindings/mfd/hi3519.txt b/Documentation/devicetree/bindings/mfd/hi3519.txt
->> new file mode 100644
->> index 0000000..115c5be
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mfd/hi3519.txt
->> @@ -0,0 +1,14 @@
->> +* Hisilicon Hi3519 System Controller Block
->> +
->> +This bindings use the following binding:
->> +Documentation/devicetree/bindings/mfd/syscon.txt
->> +
->> +Required properties:
->> +- compatible: "hisilicon,hi3519-sysctrl".
->> +- reg: the register region of this block
->> +
->> +Examples:
->> +sysctrl: system-controller@12010000 {
->> +	compatible = "hisilicon,hi3519-sysctrl", "syscon";
->> +	reg = <0x12010000 0x1000>;
->> +};
-> 
-> There is no requirement (nor want) for binding documents where the
-> given device is simply using highly generic bindings.  This just
-> amounts to churn.
-> 
-This block is specific for Hi3519 SOC, and may has its own driver.
-So I think it's better to keep this binding.
+> =
 
-Jiancheng
+> =
+
+> Changes in v2:
+>   - Fix a bug.  Return -EINVAL when parent _is_ NULL.
+> =
+
+> Masahiro Yamada (16):
+>   clk: remove unused first argument of __clk_init()
+>   clk: change the argument of __clk_init() into pointer to clk_core
+>   clk: rename __clk_init() into __clk_core_init()
+>   clk: remove unnecessary !core->parents conditional
+>   clk: change sizeof(struct clk *) to sizeof(*core->parents)
+>   clk: move core->parents allocation to clk_register()
+>   clk: simplify clk_core_get_parent_by_index()
+>   clk: drop the initial core->parents look-ups from __clk_core_init()
+>   clk: replace pr_warn() with pr_err() for fatal cases
+>   clk: move checking .git_parent to __clk_core_init()
+>   clk: simplify __clk_init_parent()
+>   clk: avoid circular clock topology
+>   clk: walk the orphan clock list more simply
+>   clk: make sure parent is not NULL in clk_fetch_parent_index()
+>   clk: simplify clk_fetch_parent_index() function
+>   clk: slightly optimize clk_core_set_parent()
+> =
+
+>  drivers/clk/clk.c | 214 ++++++++++++++++++++++--------------------------=
+------
+>  1 file changed, 85 insertions(+), 129 deletions(-)
+> =
+
+> -- =
+
+> 1.9.1
+>=20
