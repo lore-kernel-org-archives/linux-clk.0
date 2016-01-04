@@ -1,80 +1,42 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 13/14] ARM: dts: sun8i: enable mmc for H8Homlet Board.
-Date: Sun, 31 Jan 2016 09:21:05 +0800
-Message-Id: <1454203266-4450-14-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <linux+mturquette=baylibre.com@arm.linux.org.uk>
+Date: Mon, 4 Jan 2016 14:42:22 +0000
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [RFC 6/9] clk: ti: add support for omap4 module clocks
+Message-ID: <20160104144221.GA5783@n2100.arm.linux.org.uk>
+References: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
+ <1450447141-29936-7-git-send-email-t-kristo@ti.com>
+ <20160101054815.21738.79820@quark.deferred.io>
+ <568A20E5.6040005@ti.com>
+ <CAMuHMdUZMUSYC1XHydVQHRibWtHw2=T-7nXe=5Pf4UCcb=mKTQ@mail.gmail.com>
+ <568A735D.2060309@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <568A735D.2060309@ti.com>
+Sender: Russell King - ARM Linux <linux@arm.linux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-This enables mmc0.
+On Mon, Jan 04, 2016 at 03:27:57PM +0200, Tero Kristo wrote:
+> On 01/04/2016 12:21 PM, Geert Uytterhoeven wrote:
+> >FWIW, there are small loops with just a cpu_relax() in various clock drivers
+> >under drivers/clk/shmobile/.
+> 
+> Just did a quick profiling round, and the clk_enable/disable delay loops
+> take anything from 0...1500ns, most typically consuming some 400-600ns. So,
+> based on this, dropping the udelay and adding cpu_relax instead looks like a
+> good change. I just verified that changing the udelay to cpu_relax works
+> fine also, I just need to change the bail-out period to be something sane.
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Tested-by: LABBE Corentin <clabbe.montjoie@gmail.com>
----
- .../boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts    | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+Was that profiling done with lockdep/lock debugging enabled or disabled?
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts b/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
-index 342e1d3..6c1f598 100644
---- a/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
-+++ b/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
-@@ -43,6 +43,7 @@
- 
- /dts-v1/;
- #include "sun8i-a83t.dtsi"
-+#include "sunxi-common-regulators.dtsi"
- 
- / {
- 	model = "Allwinner A83T H8Homlet Proto Dev Board v2.0";
-@@ -57,6 +58,25 @@
- 	};
- };
- 
-+&pio {
-+	mmc0_cd_pin_h8homlet: mmc0_cd_pin@0 {
-+		allwinner,pins = "PF6";
-+		allwinner,function = "gpio_in";
-+		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-+		allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
-+	};
-+};
-+
-+&mmc0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin_h8homlet>;
-+	vmmc-supply = <&reg_vcc3v0>;
-+	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
-+	bus-width = <4>;
-+	cd-inverted;
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_b>;
 -- 
-1.9.1
+RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
