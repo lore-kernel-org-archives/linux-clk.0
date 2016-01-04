@@ -1,50 +1,90 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 29 Jan 2016 17:29:23 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	James Hogan <james.hogan@imgtec.com>,
-	Zhang Qing <zhangqing@rock-chips.com>,
-	Joachim Eastwood <manabian@gmail.com>
-Subject: Re: [PATCH v3] clk-divider: make sure read-only dividers do not
- write to their register
-Message-ID: <20160130012923.GF4848@codeaurora.org>
-References: <4666170.lmsMJxAogk@phil>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [RFC 6/9] clk: ti: add support for omap4 module clocks
+To: Michael Turquette <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <tony@atomide.com>,
+        <sboyd@codeaurora.org>
+References: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
+ <1450447141-29936-7-git-send-email-t-kristo@ti.com>
+ <20160101054815.21738.79820@quark.deferred.io>
+CC: <linux-arm-kernel@lists.infradead.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <568A20E5.6040005@ti.com>
+Date: Mon, 4 Jan 2016 09:36:05 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <4666170.lmsMJxAogk@phil>
+In-Reply-To: <20160101054815.21738.79820@quark.deferred.io>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/21, Heiko Stuebner wrote:
-> Commit e6d5e7d90be9 ("clk-divider: Fix READ_ONLY when divider > 1") removed
-> the special ops struct for read-only clocks and instead opted to handle
-> them inside the regular ops.
-> 
-> On the rk3368 this results in breakage as aclkm now gets set a value.
-> While it is the same divider value, the A53 core still doesn't like it,
-> which can result in the cpu ending up in a hang.
-> The reason being that "ACLKENMasserts one clock cycle before the rising
-> edge of ACLKM" and the clock should only be touched when STANDBYWFIL2
-> is asserted.
-> 
-> To fix this, reintroduce the read-only ops but do include the round_rate
-> callback. That way no writes that may be unsafe are done to the divider
-> register in any case.
-> 
-> The Rockchip use of the clk_divider_ops is adapted to this split again,
-> as is the nxp, lpc18xx-ccu driver that was included since the original
-> commit. On lpc18xx-ccu the divider seems to always be read-only
-> so only uses the new ops now.
-> 
-> Fixes: e6d5e7d90be9 ("clk-divider: Fix READ_ONLY when divider > 1")
-> Reported-by: Zhang Qing <zhangqing@rock-chips.com>
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
+On 01/01/2016 07:48 AM, Michael Turquette wrote:
+> Hi Tero,
+>
+> Quoting Tero Kristo (2015-12-18 05:58:58)
+>> Previously, hwmod core has been used for controlling the hwmod level
+>> clocks. This has certain drawbacks, like being unable to share the
+>> clocks for multiple users, missing usecounting and generally being
+>> totally incompatible with common clock framework.
+>>
+>> Add support for new clock type under the TI clock driver, which will
+>> be used to convert all the existing hwmdo clocks to. This helps to
+>> get rid of the clock related hwmod data from kernel and instead
+>> parsing this from DT.
+>
+> I'm really happy to see this series. Looks pretty good to me.
+>
+>> +static int _omap4_hwmod_clk_enable(struct clk_hw *hw)
+>> +{
+>> +       struct clk_hw_omap *clk = to_clk_hw_omap(hw);
+>> +       u32 val;
+>> +       int timeout = 0;
+>> +       int ret;
+>> +
+>> +       if (!clk->enable_bit)
+>> +               return 0;
+>> +
+>> +       if (clk->clkdm) {
+>> +               ret = ti_clk_ll_ops->clkdm_clk_enable(clk->clkdm, hw->clk);
+>> +               if (ret) {
+>> +                       WARN(1,
+>> +                            "%s: could not enable %s's clockdomain %s: %d\n",
+>> +                            __func__, clk_hw_get_name(hw),
+>> +                            clk->clkdm_name, ret);
+>> +                       return ret;
+>> +               }
+>> +       }
+>> +
+>> +       val = ti_clk_ll_ops->clk_readl(clk->enable_reg);
+>> +
+>> +       val &= ~OMAP4_MODULEMODE_MASK;
+>> +       val |= clk->enable_bit;
+>> +
+>> +       ti_clk_ll_ops->clk_writel(val, clk->enable_reg);
+>> +
+>> +       /* Wait until module is enabled */
+>> +       while (!_omap4_is_ready(val)) {
+>> +               udelay(1);
+>
+> This should really be a .prepare callback if you plan to keep the delays
+> in there.
 
-Applied to clk-next
+If this is changed to a .prepare, then all OMAP power management is 
+effectively ruined as all clocks are going to be enabled all the time. 
+hwmod core doesn't support .prepare/.enable at the moment that well, and 
+changing that is going to be a big burden (educated guess, haven't 
+checked this yet)... The call chain that comes here is:
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+device driver -> pm_runtime -> hwmod_core -> hwmod_clk_enable / disable.
+
+The delay within this function should usually be pretty short, just to 
+wait that the module comes up from idle.
+
+I recall the discussions regarding the udelays within clk_enable/disable 
+calls, but what is the preferred approach then? Typically 
+clk_enable/disable just becomes a NOP if it is not allowed to wait for 
+hardware to complete transitioning before exiting the function.
+
+-Tero
+
+>
+> Regards,
+> Mike
+>
