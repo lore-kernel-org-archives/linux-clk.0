@@ -1,62 +1,64 @@
-Return-Path: <lho@apm.com>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [RFC 6/9] clk: ti: add support for omap4 module clocks
+To: Tony Lindgren <tony@atomide.com>,
+        Russell King - ARM Linux
+	<linux@arm.linux.org.uk>
+References: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
+ <1450447141-29936-7-git-send-email-t-kristo@ti.com>
+ <20160101054815.21738.79820@quark.deferred.io> <568A20E5.6040005@ti.com>
+ <CAMuHMdUZMUSYC1XHydVQHRibWtHw2=T-7nXe=5Pf4UCcb=mKTQ@mail.gmail.com>
+ <568A735D.2060309@ti.com> <20160104144221.GA5783@n2100.arm.linux.org.uk>
+ <20160104162853.GA12777@atomide.com>
+CC: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        linux-clk
+	<linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <568AC4D8.2060509@ti.com>
+Date: Mon, 4 Jan 2016 21:15:36 +0200
 MIME-Version: 1.0
-In-Reply-To: <20160129205820.GU12841@codeaurora.org>
-References: <1453256863-15092-1-git-send-email-lho@apm.com>
-	<1453256863-15092-3-git-send-email-lho@apm.com>
-	<20160129205820.GU12841@codeaurora.org>
-Date: Fri, 29 Jan 2016 13:44:21 -0800
-Message-ID: <CAPw-ZT=mxyGUzvhWBZ8TA32THiQPNoKFwrU4X9J1y2MwzTm-zA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] clk: xgene: Add SoC and PMD PLL clocks with v2 hardware
-From: Loc Ho <lho@apm.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
-	"patches@apm.com" <patches@apm.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20160104162853.GA12777@atomide.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen & All,
-
-On Fri, Jan 29, 2016 at 12:58 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 01/19, Loc Ho wrote:
->> Add X-Gene SoC and PMD PLL clocks support for v2 hardware.
->> X-Gene SoC v2 and above use an slightly different SoC
->> and PMD PLL hardware logic.
+On 01/04/2016 06:37 PM, Tony Lindgren wrote:
+> * Russell King - ARM Linux <linux@arm.linux.org.uk> [160104 06:43]:
+>> On Mon, Jan 04, 2016 at 03:27:57PM +0200, Tero Kristo wrote:
+>>> On 01/04/2016 12:21 PM, Geert Uytterhoeven wrote:
+>>>> FWIW, there are small loops with just a cpu_relax() in various clock drivers
+>>>> under drivers/clk/shmobile/.
+>>>
+>>> Just did a quick profiling round, and the clk_enable/disable delay loops
+>>> take anything from 0...1500ns, most typically consuming some 400-600ns. So,
+>>> based on this, dropping the udelay and adding cpu_relax instead looks like a
+>>> good change. I just verified that changing the udelay to cpu_relax works
+>>> fine also, I just need to change the bail-out period to be something sane.
 >>
->> Signed-off-by: Loc Ho <lho@apm.com>
->> ---
->
-> It's not from this patch, but I notice that we have a return
-> inside a void function in this file...
->
-> ---8<---
-> From: Stephen Boyd <sboyd@codeaurora.org>
-> Subject: [PATCH] clk: xgene: Remove return from void function
->
-> This function doesn't return anything because it's void. Drop the
-> return statement.
->
-> Cc: Loc Ho <lho@apm.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->  drivers/clk/clk-xgene.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
-> index 266d573b9134..bd7156baa08b 100644
-> --- a/drivers/clk/clk-xgene.c
-> +++ b/drivers/clk/clk-xgene.c
-> @@ -50,7 +50,7 @@ static inline u32 xgene_clk_read(void __iomem *csr)
->
->  static inline void xgene_clk_write(u32 data, void __iomem *csr)
->  {
-> -       return writel_relaxed(data, csr);
-> +       writel_relaxed(data, csr);
->  }
->
->  /* PLL Clock */
+>> Was that profiling done with lockdep/lock debugging enabled or disabled?
 
-Thanks for spotting this. Was my original patch for v2 X-Gene HW
-pulled in an specify GIT tree? I don't see it in the clk GIT master.
+omap2plus_defconfig, so lockdep was enabled. The profiling was done 
+around the while {} block though, which should not have any locks within 
+it (except for the SCM clocks, which may explain some of the higher 
+latency numbers seen.)
 
--Loc
+> And also the thing to check from the hw folks is what all do these clkctrl
+> bits really control. If they group together the OCP clock and an extra
+> functional clock for some devices the delays could be larger.
+
+Does it matter really? The latencies are only imposed to the device in 
+question, and lets face it, the same latencies are there already with 
+the hwmod implementation. This series moves the implementation under 
+clock driver with as less modifications as possible to avoid any problems.
+
+> In general, I think we need to get rid of pm_runtime_irq_safe usage to
+> allow clocks to sleep properly. The other option is to allow toggling
+> pm_runtime_irq_safe but that probably gets super messy.
+
+That is something not to be done with this set though.
+
+-Tero
