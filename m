@@ -1,99 +1,102 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:22350 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753010AbcAQXpm (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 17 Jan 2016 18:45:42 -0500
-MIME-version: 1.0
-Content-type: text/plain; charset=utf-8
-Subject: Re: [PATCH v2 09/10] dt-bindings: video: exynos5433-decon: add
- bindings for DECON-TV
-To: Inki Dae <inki.dae@samsung.com>,
-	Andrzej Hajda <a.hajda@samsung.com>
-References: <CAJKOXPfXrEwu1egSnLxwYofu_scskkPRKOjOCskObPFn9yVcJw@mail.gmail.com>
- <1445860796-23045-1-git-send-email-a.hajda@samsung.com>
- <56977A3B.8020104@samsung.com> <56977D42.2050904@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Hyungwon Hwang <human.hwang@samsung.com>,
-	Rob Herring <robh+dt@kernel.org>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <569C279D.1020705@samsung.com>
-Date: Mon, 18 Jan 2016 08:45:33 +0900
-In-reply-to: <56977D42.2050904@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <568A20E5.6040005@ti.com>
+References: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
+	<1450447141-29936-7-git-send-email-t-kristo@ti.com>
+	<20160101054815.21738.79820@quark.deferred.io>
+	<568A20E5.6040005@ti.com>
+Date: Mon, 4 Jan 2016 11:21:04 +0100
+Message-ID: <CAMuHMdUZMUSYC1XHydVQHRibWtHw2=T-7nXe=5Pf4UCcb=mKTQ@mail.gmail.com>
+Subject: Re: [RFC 6/9] clk: ti: add support for omap4 module clocks
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Tony Lindgren <tony@atomide.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 14.01.2016 19:49, Inki Dae wrote:
-> + Rob Herring
-> 
-> 2016년 01월 14일 19:36에 Andrzej Hajda 이(가) 쓴 글:
->> Hi Inki,
->>
->> It seems this patch and 04/10 did not get picked up yet.
->> Could you merge it?
-> 
-> Yes, I can. However, 04/10 is required for acked-by from dt or SoC maintainer.
-> Krzysztof and Rob, could you give me acked-by?
-> 
-> Thanks,
-> Inki Dae
+Hi Tero,
 
-My ack is really not required, because this is a binding for a specific
-driver from video subsystem. It does not fall into the arm/mach-exynos
-nor the dts/*exynos*.
-
-Anyway I reviewed the patch on 28th of October and Rob acked it on 13th
-of November.
-
-Best regards,
-Krzysztof
-
-
+On Mon, Jan 4, 2016 at 8:36 AM, Tero Kristo <t-kristo@ti.com> wrote:
+> On 01/01/2016 07:48 AM, Michael Turquette wrote:
+>> Quoting Tero Kristo (2015-12-18 05:58:58)
+>>> +static int _omap4_hwmod_clk_enable(struct clk_hw *hw)
+>>> +{
+>>> +       struct clk_hw_omap *clk =3D to_clk_hw_omap(hw);
+>>> +       u32 val;
+>>> +       int timeout =3D 0;
+>>> +       int ret;
+>>> +
+>>> +       if (!clk->enable_bit)
+>>> +               return 0;
+>>> +
+>>> +       if (clk->clkdm) {
+>>> +               ret =3D ti_clk_ll_ops->clkdm_clk_enable(clk->clkdm,
+>>> hw->clk);
+>>> +               if (ret) {
+>>> +                       WARN(1,
+>>> +                            "%s: could not enable %s's clockdomain %s:
+>>> %d\n",
+>>> +                            __func__, clk_hw_get_name(hw),
+>>> +                            clk->clkdm_name, ret);
+>>> +                       return ret;
+>>> +               }
+>>> +       }
+>>> +
+>>> +       val =3D ti_clk_ll_ops->clk_readl(clk->enable_reg);
+>>> +
+>>> +       val &=3D ~OMAP4_MODULEMODE_MASK;
+>>> +       val |=3D clk->enable_bit;
+>>> +
+>>> +       ti_clk_ll_ops->clk_writel(val, clk->enable_reg);
+>>> +
+>>> +       /* Wait until module is enabled */
+>>> +       while (!_omap4_is_ready(val)) {
+>>> +               udelay(1);
 >>
->> Regards
->> Andrzej
->>
->> On 10/26/2015 12:59 PM, Andrzej Hajda wrote:
->>> DECON-TV(Display and Enhancement Controller for TV) is a variation
->>> of DECON IP. Its main purpose is to produce video stream for HDMI IP.
->>>
->>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->>> ---
->>> Hi Krzysztof,
->>>
->>> I have decided to skip cleanup part as it would require more work,
->>> not related to this patchset.
->>>
->>> Regards
->>> Andrzej
->>>
->>>  Documentation/devicetree/bindings/video/exynos5433-decon.txt | 3 ++-
->>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/video/exynos5433-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
->>> index 3dff78b..c9fd7b3 100644
->>> --- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
->>> +++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
->>> @@ -5,7 +5,8 @@ Exynos series of SoCs which transfers the image data from a video memory
->>>  buffer to an external LCD interface.
->>>  
->>>  Required properties:
->>> -- compatible: value should be "samsung,exynos5433-decon";
->>> +- compatible: value should be one of:
->>> +	"samsung,exynos5433-decon", "samsung,exynos5433-decon-tv";
->>>  - reg: physical base address and length of the DECON registers set.
->>>  - interrupts: should contain a list of all DECON IP block interrupts in the
->>>  	      order: VSYNC, LCD_SYSTEM. The interrupt specifier format
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->>
-> 
+>> This should really be a .prepare callback if you plan to keep the delays
+>> in there.
+>
+> If this is changed to a .prepare, then all OMAP power management is
+> effectively ruined as all clocks are going to be enabled all the time. hw=
+mod
+> core doesn't support .prepare/.enable at the moment that well, and changi=
+ng
+> that is going to be a big burden (educated guess, haven't checked this
+> yet)... The call chain that comes here is:
+>
+> device driver -> pm_runtime -> hwmod_core -> hwmod_clk_enable / disable.
+>
+> The delay within this function should usually be pretty short, just to wa=
+it
+> that the module comes up from idle.
 
+Does it take multiple =C2=B5s? Perhaps even one =C2=B5s is much longer than=
+ needed?
+
+> I recall the discussions regarding the udelays within clk_enable/disable
+> calls, but what is the preferred approach then? Typically clk_enable/disa=
+ble
+> just becomes a NOP if it is not allowed to wait for hardware to complete
+> transitioning before exiting the function.
+
+FWIW, there are small loops with just a cpu_relax() in various clock driver=
+s
+under drivers/clk/shmobile/.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
