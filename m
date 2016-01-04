@@ -1,46 +1,50 @@
-Return-Path: <robh@kernel.org>
-Date: Sat, 9 Jan 2016 16:45:23 -0600
-From: Rob Herring <robh@kernel.org>
-To: kernel@martin.sperl.org
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Russell King <linux@arm.linux.org.uk>,
+Return-Path: <tony@atomide.com>
+Date: Mon, 4 Jan 2016 08:37:41 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Tero Kristo <t-kristo@ti.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Remi Pommarel <repk@triplefau.lt>, devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Matthias Reichl <hias@horus.com>,
-	lFlorian Meier <florian.meier@koalo.de>
-Subject: Re: [PATCH 5/5] dt-bindings: bsm2835: fix bindings documentation to
- use new clock framework
-Message-ID: <20160109224523.GA17329@rob-hp-laptop>
-References: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org>
- <1452331558-2520-6-git-send-email-kernel@martin.sperl.org>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [RFC 6/9] clk: ti: add support for omap4 module clocks
+Message-ID: <20160104162853.GA12777@atomide.com>
+References: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
+ <1450447141-29936-7-git-send-email-t-kristo@ti.com>
+ <20160101054815.21738.79820@quark.deferred.io>
+ <568A20E5.6040005@ti.com>
+ <CAMuHMdUZMUSYC1XHydVQHRibWtHw2=T-7nXe=5Pf4UCcb=mKTQ@mail.gmail.com>
+ <568A735D.2060309@ti.com>
+ <20160104144221.GA5783@n2100.arm.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1452331558-2520-6-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <20160104144221.GA5783@n2100.arm.linux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Jan 09, 2016 at 09:25:57AM +0000, kernel@martin.sperl.org wrote:
-> From: Martin Sperl <kernel@martin.sperl.org>
+* Russell King - ARM Linux <linux@arm.linux.org.uk> [160104 06:43]:
+> On Mon, Jan 04, 2016 at 03:27:57PM +0200, Tero Kristo wrote:
+> > On 01/04/2016 12:21 PM, Geert Uytterhoeven wrote:
+> > >FWIW, there are small loops with just a cpu_relax() in various clock drivers
+> > >under drivers/clk/shmobile/.
+> > 
+> > Just did a quick profiling round, and the clk_enable/disable delay loops
+> > take anything from 0...1500ns, most typically consuming some 400-600ns. So,
+> > based on this, dropping the udelay and adding cpu_relax instead looks like a
+> > good change. I just verified that changing the udelay to cpu_relax works
+> > fine also, I just need to change the bail-out period to be something sane.
 > 
-> The bcm2835-i2s driver has been updated to use the new clock framework
-> for the bcm2835 SOC.
+> Was that profiling done with lockdep/lock debugging enabled or disabled?
 
-You are breaking compatibility with the driver change. New kernels will 
-not work with old dtbs as you have found. What should be done is fix the 
-driver to work with the old and new dtb.
- 
-> This patch documents the required changes to the bindings.
-> 
-> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
-> ---
->  Documentation/devicetree/bindings/sound/brcm,bcm2835-i2s.txt |    7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
+And also the thing to check from the hw folks is what all do these clkctrl
+bits really control. If they group together the OCP clock and an extra
+functional clock for some devices the delays could be larger.
 
-But I leave it to platform maintainers to decide if breaking 
-compatibility is okay, so:
+In general, I think we need to get rid of pm_runtime_irq_safe usage to
+allow clocks to sleep properly. The other option is to allow toggling
+pm_runtime_irq_safe but that probably gets super messy.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Regards,
+
+Tony
