@@ -1,72 +1,61 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
-	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
-	<xuejiancheng@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [PATCH v6 4/6] ARM: debug: add hi3519 debug uart
-Date: Tue, 19 Jan 2016 10:38:29 +0800
-Message-ID: <1453171111-21921-5-git-send-email-xuejiancheng@huawei.com>
-In-Reply-To: <1453171111-21921-1-git-send-email-xuejiancheng@huawei.com>
-References: <1453171111-21921-1-git-send-email-xuejiancheng@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <p.zabel@pengutronix.de>
+Message-ID: <1451988742.3391.22.camel@pengutronix.de>
+Subject: Re: [PATCH v4 5/6] mfd: dt-bindings: add device tree bindings for
+ Hi3519 sysctrl
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Jiancheng Xue <xuejiancheng@huawei.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+ pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+ galak@codeaurora.org, linux@arm.linux.org.uk, khilman@linaro.org,
+ arnd@arndb.de,  olof@lixom.net, xuwei5@hisilicon.com,
+ haojian.zhuang@linaro.org,  zhangfei.gao@linaro.org,
+ bintian.wang@huawei.com, suwenping@hisilicon.com,
+ devicetree@vger.kernel.org, yanhaifeng@hisilicon.com,
+ linux-kernel@vger.kernel.org, gaofei@hisilicon.com, ml.yang@hisilicon.com,
+ yanghongwei@hisilicon.com, zhangzhenxing@hisilicon.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Date: Tue, 05 Jan 2016 11:12:22 +0100
+In-Reply-To: <1451439832-13927-6-git-send-email-xuejiancheng@huawei.com>
+References: <1451439832-13927-1-git-send-email-xuejiancheng@huawei.com>
+	 <1451439832-13927-6-git-send-email-xuejiancheng@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-add hi3519 debug uart.
+Am Mittwoch, den 30.12.2015, 09:43 +0800 schrieb Jiancheng Xue:
+> Add device tree bindings for Hi3519 system controller.
+> 
+> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+> ---
+>  Documentation/devicetree/bindings/mfd/hi3519.txt | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/hi3519.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/hi3519.txt b/Documentation/devicetree/bindings/mfd/hi3519.txt
+> new file mode 100644
+> index 0000000..2536edc
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/hi3519.txt
+> @@ -0,0 +1,14 @@
+> +* Hisilicon Hi3519 System Controller Block
+> +
+> +This bindings use the following binding:
+> +Dcumentation/devicetree/bindings/clock/clock-bindings.txt
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
----
- arch/arm/Kconfig.debug | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Typo: "Documentation"
+- but I don't see the clock bindings being used here at all.
+Maybe just drop this sentence?
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index 259c0ca..6d23073 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -270,6 +270,14 @@ choice
- 		  Say Y here if you want the debug print routines to direct
- 		  their output to the 8250 at PCI COM1.
- 
-+	config DEBUG_HI3519_UART
-+		bool "Hisilicon Hi3519 Debug UART"
-+		depends on ARCH_HISI
-+		select DEBUG_UART_PL01X
-+		help
-+		  Say Y here if you want kernel low-level debugging support
-+		  on HI3519 UART.
-+
- 	config DEBUG_HI3620_UART
- 		bool "Hisilicon HI3620 Debug UART"
- 		depends on ARCH_HI3xxx
-@@ -1392,6 +1400,7 @@ config DEBUG_UART_PHYS
- 	default 0x11002000 if DEBUG_MT8127_UART0
- 	default 0x11006000 if DEBUG_MT6589_UART0
- 	default 0x11009000 if DEBUG_MT8135_UART3
-+	default 0x12100000 if DEBUG_HI3519_UART
- 	default 0x16000000 if ARCH_INTEGRATOR
- 	default 0x18000300 if DEBUG_BCM_5301X
- 	default 0x18010000 if DEBUG_SIRFATLAS7_UART0
-@@ -1553,6 +1562,7 @@ config DEBUG_UART_VIRT
- 	default 0xfee20000 if DEBUG_NSPIRE_CLASSIC_UART || DEBUG_NSPIRE_CX_UART
- 	default 0xfee82340 if ARCH_IOP13XX
- 	default 0xfef00000 if ARCH_IXP4XX && !CPU_BIG_ENDIAN
-+	default 0xfef00000 if DEBUG_HI3519_UART
- 	default 0xfef00003 if ARCH_IXP4XX && CPU_BIG_ENDIAN
- 	default 0xfef36000 if DEBUG_HIGHBANK_UART
- 	default 0xfefb0000 if DEBUG_OMAP1UART1 || DEBUG_OMAP7XXUART1
--- 
-1.9.1
+> +
+> +Required properties:
+> +- compatible: "hisilicon,hi3519-sysctrl".
+> +- reg: the register region of this block
+> +
+> +Examples:
+> +sysctrl: system-controller@12010000 {
+> +	compatible = "hisilicon,hi3519-sysctrl", "syscon";
+> +	reg = <0x12010000 0x1000>;
+> +};
+
+regards
+Philipp
