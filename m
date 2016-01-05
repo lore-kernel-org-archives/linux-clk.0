@@ -1,113 +1,84 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Wynter Woods <wynter@nextthing.co>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 21/26] drm: sun4i: tv: Add NTSC output standard
-Date: Thu, 14 Jan 2016 16:25:04 +0100
-Message-Id: <1452785109-6172-22-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <jamesjj.liao@mediatek.com>
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+CC: Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, <srv_heupstream@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, James Liao <jamesjj.liao@mediatek.com>, Shunli
+ Wang <shunli.wang@mediatek.com>
+Subject: [PATCH v2 1/6] clk: mediatek: Refine the makefile to support multiple clock drivers
+Date: Tue, 5 Jan 2016 14:30:17 +0800
+Message-ID: <1451975422-31174-2-git-send-email-jamesjj.liao@mediatek.com>
+In-Reply-To: <1451975422-31174-1-git-send-email-jamesjj.liao@mediatek.com>
+References: <1451975422-31174-1-git-send-email-jamesjj.liao@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the settings to support the NTSC standard.
+Add a Kconfig to define clock configuration for each SoC, and
+modify the Makefile to build drivers that only selected in config.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_tv.c | 45 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+ drivers/clk/Kconfig           |  1 +
+ drivers/clk/mediatek/Kconfig  | 23 +++++++++++++++++++++++
+ drivers/clk/mediatek/Makefile |  6 +++---
+ 3 files changed, 27 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/clk/mediatek/Kconfig
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tv.c b/drivers/gpu/drm/sun4i/sun4i_tv.c
-index 4f369de2a1fc..46331087b0e9 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tv.c
-@@ -176,24 +176,69 @@ struct sun4i_tv {
- 	struct sun4i_drv	*drv;
- };
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index c3e3a02..b7a37dc 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -198,3 +198,4 @@ source "drivers/clk/mvebu/Kconfig"
  
-+struct video_levels ntsc_video_levels = {
-+	.black = 282,	.blank = 240,
-+};
+ source "drivers/clk/samsung/Kconfig"
+ source "drivers/clk/tegra/Kconfig"
++source "drivers/clk/mediatek/Kconfig"
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+new file mode 100644
+index 0000000..dc224e6
+--- /dev/null
++++ b/drivers/clk/mediatek/Kconfig
+@@ -0,0 +1,23 @@
++#
++# MediaTek SoC drivers
++#
++config COMMON_CLK_MEDIATEK
++	bool
++	---help---
++	  Mediatek SoCs' clock support.
 +
- struct video_levels pal_video_levels = {
- 	.black = 252,	.blank = 252,
- };
- 
-+struct burst_levels ntsc_burst_levels = {
-+	.cb = 79,	.cr = 0,
-+};
++config COMMON_CLK_MT8135
++	bool "Clock driver for Mediatek MT8135"
++	depends on COMMON_CLK
++	select COMMON_CLK_MEDIATEK
++	default ARCH_MEDIATEK
++	---help---
++	  This driver supports Mediatek MT8135 clocks.
 +
- struct burst_levels pal_burst_levels = {
- 	.cb = 40,	.cr = 40,
- };
- 
-+struct color_gains ntsc_color_gains = {
-+	.cb = 160,	.cr = 160,
-+};
-+
- struct color_gains pal_color_gains = {
- 	.cb = 224,	.cr = 224,
- };
- 
-+struct resync_parameters ntsc_resync_parameters = {
-+	.field = false,	.line = 14,	.pixel = 12,
-+};
-+
- struct resync_parameters pal_resync_parameters = {
- 	.field = true,	.line = 13,	.pixel = 12,
- };
- 
- struct tv_mode tv_modes[] = {
- 	{
-+		.name		= "NTSC",
-+		.mode		= SUN4I_TVE_CFG0_RES_480i,
-+		.chroma_freq	= 0x21f07c1f,
-+		.yc_en		= true,
-+		.dac3_en	= true,
-+		.dac_bit25_en	= true,
-+
-+		.back_porch	= 118,
-+		.front_porch	= 32,
-+		.line_number	= 525,
-+
-+		.hdisplay	= 720,
-+		.hfront_porch	= 18,
-+		.hsync_len	= 2,
-+		.hback_porch	= 118,
-+
-+		.vdisplay	= 480,
-+		.vfront_porch	= 26,
-+		.vsync_len	= 2,
-+		.vback_porch	= 17,
-+
-+		.vblank_level	= 240,
-+
-+		.color_gains	= &ntsc_color_gains,
-+		.burst_levels	= &ntsc_burst_levels,
-+		.video_levels	= &ntsc_video_levels,
-+		.resync_params	= &ntsc_resync_parameters,
-+	},
-+	{
- 		.name		= "PAL",
- 		.mode		= SUN4I_TVE_CFG0_RES_576i,
- 		.chroma_freq	= 0x2a098acb,
++config COMMON_CLK_MT8173
++	bool "Clock driver for Mediatek MT8173"
++	depends on COMMON_CLK
++	select COMMON_CLK_MEDIATEK
++	default ARCH_MEDIATEK
++	---help---
++	  This driver supports Mediatek MT8173 clocks.
+diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+index 95fdfac..32e7222 100644
+--- a/drivers/clk/mediatek/Makefile
++++ b/drivers/clk/mediatek/Makefile
+@@ -1,4 +1,4 @@
+-obj-y += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
++obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
+ obj-$(CONFIG_RESET_CONTROLLER) += reset.o
+-obj-y += clk-mt8135.o
+-obj-y += clk-mt8173.o
++obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135.o
++obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173.o
 -- 
-2.6.4
+1.9.1
