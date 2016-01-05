@@ -1,53 +1,95 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Thu, 28 Jan 2016 14:32:13 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Carlos Soto <csotoalonso@gmail.com>
-Cc: Sascha Hauer <kernel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] imx25: Fix LCD pixelclock configuration
-Message-ID: <20160128063213.GJ9070@tiger>
-References: <1450902610-27224-1-git-send-email-csotoalonso@gmail.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1450902610-27224-1-git-send-email-csotoalonso@gmail.com>
+To: Tero Kristo <t-kristo@ti.com>, "Tony Lindgren" <tony@atomide.com>,
+ "Russell King - ARM Linux" <linux@arm.linux.org.uk>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <568AC4D8.2060509@ti.com>
+Cc: "Geert Uytterhoeven" <geert@linux-m68k.org>,
+ "Stephen Boyd" <sboyd@codeaurora.org>,
+ "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+ "linux-clk" <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+References: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
+ <1450447141-29936-7-git-send-email-t-kristo@ti.com>
+ <20160101054815.21738.79820@quark.deferred.io> <568A20E5.6040005@ti.com>
+ <CAMuHMdUZMUSYC1XHydVQHRibWtHw2=T-7nXe=5Pf4UCcb=mKTQ@mail.gmail.com>
+ <568A735D.2060309@ti.com> <20160104144221.GA5783@n2100.arm.linux.org.uk>
+ <20160104162853.GA12777@atomide.com> <568AC4D8.2060509@ti.com>
+Message-ID: <20160105012300.15239.77012@quark.deferred.io>
+Subject: Re: [RFC 6/9] clk: ti: add support for omap4 module clocks
+Date: Mon, 04 Jan 2016 17:23:00 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Dec 23, 2015 at 09:30:10PM +0100, Carlos Soto wrote:
-> Set LCDC base clock (per_7) parent clock to UPLL clock.
-> This is needed to allow finer resolution in pixelclock
-> 
-> Signed-off-by: Carlos Soto <csotoalonso@gmail.com>
-> ---
->  drivers/clk/imx/clk-imx25.c |    6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/clk/imx/clk-imx25.c b/drivers/clk/imx/clk-imx25.c
-> index c4c141c..656340e 100644
-> --- a/drivers/clk/imx/clk-imx25.c
-> +++ b/drivers/clk/imx/clk-imx25.c
-> @@ -238,6 +238,12 @@ static int __init __mx25_clocks_init(unsigned long osc_rate,
->  	clk_set_parent(clk[per5_sel], clk[ahb]);
->  
->  	/*
-> +	 * set LCDC base clock (per 7) to highest possible frequency (UPLL)
-> +	 * to get best resolution for pixel clock
-> +	 */
-> +	clk_set_parent(clk[per7_sel], clk[upll]);
+Quoting Tero Kristo (2016-01-04 11:15:36)
+> On 01/04/2016 06:37 PM, Tony Lindgren wrote:
+> > * Russell King - ARM Linux <linux@arm.linux.org.uk> [160104 06:43]:
+> >> On Mon, Jan 04, 2016 at 03:27:57PM +0200, Tero Kristo wrote:
+> >>> On 01/04/2016 12:21 PM, Geert Uytterhoeven wrote:
+> >>>> FWIW, there are small loops with just a cpu_relax() in various clock=
+ drivers
+> >>>> under drivers/clk/shmobile/.
+> >>>
+> >>> Just did a quick profiling round, and the clk_enable/disable delay lo=
+ops
+> >>> take anything from 0...1500ns, most typically consuming some 400-600n=
+s. So,
+> >>> based on this, dropping the udelay and adding cpu_relax instead looks=
+ like a
+> >>> good change. I just verified that changing the udelay to cpu_relax wo=
+rks
+> >>> fine also, I just need to change the bail-out period to be something =
+sane.
+> >>
+> >> Was that profiling done with lockdep/lock debugging enabled or disable=
+d?
+> =
 
-This can be done in device tree via assigned-clock-parents without the
-need of touching kernel.
+> omap2plus_defconfig, so lockdep was enabled. The profiling was done =
 
-Shawn
+> around the while {} block though, which should not have any locks within =
 
-> +
-> +	/*
->  	 * Let's initially set up CLKO parent as ipg, since this configuration
->  	 * is used on some imx25 board designs to clock the audio codec.
->  	 */
-> -- 
-> 1.7.10.4
-> 
-> 
+> it (except for the SCM clocks, which may explain some of the higher =
+
+> latency numbers seen.)
+> =
+
+> > And also the thing to check from the hw folks is what all do these clkc=
+trl
+> > bits really control. If they group together the OCP clock and an extra
+> > functional clock for some devices the delays could be larger.
+> =
+
+> Does it matter really? The latencies are only imposed to the device in =
+
+> question, and lets face it, the same latencies are there already with =
+
+> the hwmod implementation. This series moves the implementation under =
+
+> clock driver with as less modifications as possible to avoid any problems.
+
+So long as we can all convince ourselves that the flaw is not a flaw
+then I'm OK with it. No bugs were ever introduced that way ;-)
+
+But in fairness, we've had these delays in the .enable callbacks for a
+while, so this patch does not introduce the regression. Furthermore it
+does clean up some code that needs more work, and I don't want to delay
+that.
+
+I won't NACK the patch due to the delays, but it would be nice to
+revisit it some day.
+
+Regards,
+Mike
+
+> =
+
+> > In general, I think we need to get rid of pm_runtime_irq_safe usage to
+> > allow clocks to sleep properly. The other option is to allow toggling
+> > pm_runtime_irq_safe but that probably gets super messy.
+> =
+
+> That is something not to be done with this set though.
+> =
+
+> -Tero
