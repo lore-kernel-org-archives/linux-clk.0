@@ -1,102 +1,110 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga02-in.huawei.com ([119.145.14.65]:18691 "EHLO
-	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756882AbcASC5e (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jan 2016 21:57:34 -0500
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
-	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
-	<xuejiancheng@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [PATCH v6 0/6] ARM: hisi: Add initial support including clock driver for Hi3519 soc. 
-Date: Tue, 19 Jan 2016 10:38:25 +0800
-Message-ID: <1453171111-21921-1-git-send-email-xuejiancheng@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <p.zabel@pengutronix.de>
+Message-ID: <1451986201.3391.3.camel@pengutronix.de>
+Subject: Re: [PATCH v2 4/6] clk: mediatek: Add MT2701 clock support
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: James Liao <jamesjj.liao@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	 <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	devicetree@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>,
+	srv_heupstream@mediatek.com, linux-kernel@vger.kernel.org, Daniel Kurtz
+	 <djkurtz@chromium.org>, linux-mediatek@lists.infradead.org, Shunli Wang
+	 <shunli.wang@mediatek.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Date: Tue, 05 Jan 2016 10:30:01 +0100
+In-Reply-To: <1451975422-31174-5-git-send-email-jamesjj.liao@mediatek.com>
+References: <1451975422-31174-1-git-send-email-jamesjj.liao@mediatek.com>
+	 <1451975422-31174-5-git-send-email-jamesjj.liao@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Hi James,
 
-Hi3519 soc is mainly used for ip camera and sport DV solutions. This patchset adds initial support
-for Hi3519 soc. It includes clock driver, arch configuration, debug uart configuration and device tree.
-It has been tested on hi3519 reference board.
+Am Dienstag, den 05.01.2016, 14:30 +0800 schrieb James Liao:
+> From: Shunli Wang <shunli.wang@mediatek.com>
+> 
+> Add MT2701 clock support, include topckgen, apmixedsys,
+> infracfg, pericfg and subsystem clocks.
+> 
+> Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> ---
+>  drivers/clk/mediatek/Kconfig      |    8 +
+>  drivers/clk/mediatek/Makefile     |    1 +
+>  drivers/clk/mediatek/clk-gate.c   |   56 ++
+>  drivers/clk/mediatek/clk-gate.h   |    2 +
+>  drivers/clk/mediatek/clk-mt2701.c | 1210 +++++++++++++++++++++++++++++++++++++
+>  drivers/clk/mediatek/clk-mtk.c    |   25 +
+>  drivers/clk/mediatek/clk-mtk.h    |   35 +-
+>  7 files changed, 1334 insertions(+), 3 deletions(-)
+>  create mode 100644 drivers/clk/mediatek/clk-mt2701.c
+> 
+> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+> index dc224e6..6c7cdc0 100644
+> --- a/drivers/clk/mediatek/Kconfig
+> +++ b/drivers/clk/mediatek/Kconfig
+> @@ -6,6 +6,14 @@ config COMMON_CLK_MEDIATEK
+>  	---help---
+>  	  Mediatek SoCs' clock support.
+>  
+> +config COMMON_CLK_MT2701
+> +	bool "Clock driver for Mediatek MT2701 and MT7623"
+> +	depends on COMMON_CLK
+> +	select COMMON_CLK_MEDIATEK
+> +	default ARCH_MEDIATEK
+> +	---help---
+> +	  This driver supports Mediatek MT2701 and MT7623 clocks.
+> +
+>  config COMMON_CLK_MT8135
+>  	bool "Clock driver for Mediatek MT8135"
+>  	depends on COMMON_CLK
+> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+> index 32e7222..5b2b91b 100644
+> --- a/drivers/clk/mediatek/Makefile
+> +++ b/drivers/clk/mediatek/Makefile
+> @@ -1,4 +1,5 @@
+>  obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
+>  obj-$(CONFIG_RESET_CONTROLLER) += reset.o
+> +obj-$(CONFIG_COMMON_CLK_MT2701) += clk-mt2701.o
+>  obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135.o
+>  obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173.o
+> diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
+> index 576bdb7..38badb4 100644
+> --- a/drivers/clk/mediatek/clk-gate.c
+> +++ b/drivers/clk/mediatek/clk-gate.c
+> @@ -61,6 +61,26 @@ static void mtk_cg_clr_bit(struct clk_hw *hw)
+>  	regmap_write(cg->regmap, cg->clr_ofs, BIT(cg->bit));
+>  }
+>  
+> +static void mtk_cg_set_bit_no_setclr(struct clk_hw *hw)
+> +{
+> +	struct mtk_clk_gate *cg = to_clk_gate(hw);
+> +	u32 val;
+> +
+> +	regmap_read(cg->regmap, cg->sta_ofs, &val);
+> +	val |= BIT(cg->bit);
+> +	regmap_write(cg->regmap, cg->sta_ofs, val);
 
-Any comments will be appreciated!
+You can use regmap_update_bits here:
 
-Thanks!
+	u32 bit = BIT(cg->bit);
+	regmap_update_bits(cg->regmap, cg->sta_ofs, bit, bit);
 
-Change Log
-----------
-v6:
--Change clock driver to a real platform driver
+> +}
+> +
+> +static void mtk_cg_clr_bit_no_setclr(struct clk_hw *hw)
+> +{
+> +	struct mtk_clk_gate *cg = to_clk_gate(hw);
+> +	u32 val;
+> +
+> +	regmap_read(cg->regmap, cg->sta_ofs, &val);
+> +	val &= ~(BIT(cg->bit));
+> +	regmap_write(cg->regmap, cg->sta_ofs, val);
 
-v5:
--Adjust clock and reset controller driver code
+and here:
 
-v4:
--Rebase to v4.4-rc7
--Divide patches according to Rob's comments
--Add spi nodes in hi3519-demb.dts
+	u32 bit = BIT(cg->bit);
+	regmap_update_bits(cg->regmap, cg->sta_ofs, bit, 0);
 
-v3:
--Rebase to v4.4-rc4
--Adjust according to Arnd's comments
--Remove ARCH_HI3519, using ARCH_HISI directly
-
-v2:
--Rebase to v4.4-rc3
--Put dt-binding doc and header file in a separate patch.
--Delete unused clocks definitions.
--Adjust the ARCH_xxx order in Kconfig file
--Rename ARCH_HI3xxx to ARCH_36xx
-
-Jiancheng Xue (6):
-  clk: hisilicon: add CRG driver for hi3519 soc
-  ARM: hisi: add compatible string for Hi3519 soc
-  ARM: config: hisi: enable CONFIG_RESET_CONTROLLER
-  ARM: debug: add hi3519 debug uart
-  ARM: dt-bindings: add device tree bindings for Hi3519 sysctrl
-  ARM: dts: add dts files for Hi3519
-
- .../bindings/arm/hisilicon/hi3519-sysctrl.txt      |  14 ++
- .../devicetree/bindings/clock/hi3519-crg.txt       |  46 +++++
- arch/arm/Kconfig.debug                             |  10 ++
- arch/arm/boot/dts/Makefile                         |   2 +
- arch/arm/boot/dts/hi3519-demb.dts                  |  42 +++++
- arch/arm/boot/dts/hi3519.dtsi                      | 187 +++++++++++++++++++++
- arch/arm/configs/hisi_defconfig                    |   1 +
- arch/arm/mach-hisi/hisilicon.c                     |  23 +--
- drivers/clk/hisilicon/Kconfig                      |   7 +
- drivers/clk/hisilicon/Makefile                     |   2 +
- drivers/clk/hisilicon/clk-hi3519.c                 | 132 +++++++++++++++
- drivers/clk/hisilicon/clk.c                        |  23 ++-
- drivers/clk/hisilicon/clk.h                        |  14 +-
- drivers/clk/hisilicon/reset.c                      | 130 ++++++++++++++
- drivers/clk/hisilicon/reset.h                      |  32 ++++
- include/dt-bindings/clock/hi3519-clock.h           |  40 +++++
- 16 files changed, 671 insertions(+), 34 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
- create mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
- create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
- create mode 100644 arch/arm/boot/dts/hi3519.dtsi
- create mode 100644 drivers/clk/hisilicon/clk-hi3519.c
- create mode 100644 drivers/clk/hisilicon/reset.c
- create mode 100644 drivers/clk/hisilicon/reset.h
- create mode 100644 include/dt-bindings/clock/hi3519-clock.h
-
--- 
-1.9.1
-
+best regards
+Philipp
