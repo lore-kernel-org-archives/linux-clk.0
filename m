@@ -1,51 +1,50 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Wynter Woods <wynter@nextthing.co>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 24/26] devicetree: Add olimex vendor prefix
-Date: Thu, 14 Jan 2016 16:25:07 +0100
-Message-Id: <1452785109-6172-25-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <jamesjj.liao@mediatek.com>
+Message-ID: <1451988013.19662.2.camel@mtksdaap41>
+Subject: Re: [PATCH v2 5/6] reset: mediatek: mt2701 reset controller
+ dt-binding file
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	<devicetree@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+	<srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>, Daniel Kurtz
+	<djkurtz@chromium.org>, <linux-mediatek@lists.infradead.org>, Shunli Wang
+	<shunli.wang@mediatek.com>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Date: Tue, 5 Jan 2016 18:00:13 +0800
+In-Reply-To: <1451986291.3391.5.camel@pengutronix.de>
+References: <1451975422-31174-1-git-send-email-jamesjj.liao@mediatek.com>
+	 <1451975422-31174-6-git-send-email-jamesjj.liao@mediatek.com>
+	 <1451986291.3391.5.camel@pengutronix.de>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Olimex is an open source hardware boards vendors based in Bulgaria.
+Hi Philipp,
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
- 1 file changed, 1 insertion(+)
+On Tue, 2016-01-05 at 10:31 +0100, Philipp Zabel wrote:
+> Am Dienstag, den 05.01.2016, 14:30 +0800 schrieb James Liao:
+> > From: Shunli Wang <shunli.wang@mediatek.com>
+> > 
+> > Dt-binding file about reset controller is used to provide
+> > kinds of definition, which is referenced by dts file and
+> > IC-specified reset controller driver code.
+> > 
+> > Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+> > ---
+> >  .../dt-bindings/reset-controller/mt2701-resets.h   | 74 ++++++++++++++++++++++
+> >  1 file changed, 74 insertions(+)
+> >  create mode 100644 include/dt-bindings/reset-controller/mt2701-resets.h
+> > 
+> > diff --git a/include/dt-bindings/reset-controller/mt2701-resets.h b/include/dt-bindings/reset-controller/mt2701-resets.h
+> 
+> No new files in include/dt-bindings/reset-controller, please.
+> This should go into include/dt-bindings/reset.
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 55df1d444e9f..de4eb72b3adc 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -161,6 +161,7 @@ nuvoton	Nuvoton Technology Corporation
- nvidia	NVIDIA
- nxp	NXP Semiconductors
- okaya	Okaya Electric America, Inc.
-+olimex	Olimex
- onnn	ON Semiconductor Corp.
- opencores	OpenCores.org
- option	Option NV
--- 
-2.6.4
+OK, I'll move it to include/dt-bindings/reset/.
+
+
+Best regards,
+
+James
