@@ -1,54 +1,79 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga02-in.huawei.com ([119.145.14.65]:14248 "EHLO
-	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756936AbcASCvP (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jan 2016 21:51:15 -0500
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
-	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
-	<xuejiancheng@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [PATCH v6 3/6] ARM: config: hisi: enable CONFIG_RESET_CONTROLLER
-Date: Tue, 19 Jan 2016 10:38:28 +0800
-Message-ID: <1453171111-21921-4-git-send-email-xuejiancheng@huawei.com>
-In-Reply-To: <1453171111-21921-1-git-send-email-xuejiancheng@huawei.com>
-References: <1453171111-21921-1-git-send-email-xuejiancheng@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <a.hajda@samsung.com>
+Subject: Re: [PATCH v2 14/38] clk: vt8500: fix sign of possible PLL values
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <20151001225628.GU19319@codeaurora.org>
+ <1443761393-29366-1-git-send-email-a.hajda@samsung.com>
+Cc: linux-kernel@vger.kernel.org,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Message-id: <568BD20E.5060902@samsung.com>
+Date: Tue, 05 Jan 2016 15:24:14 +0100
+MIME-version: 1.0
+In-reply-to: <1443761393-29366-1-git-send-email-a.hajda@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-enable CONFIG_RESET_CONTROLLER in hisi_defconfig
+Ping
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
----
- arch/arm/configs/hisi_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Regards
+Andrzej
 
-diff --git a/arch/arm/configs/hisi_defconfig b/arch/arm/configs/hisi_defconfig
-index b2e340b..ba62c07 100644
---- a/arch/arm/configs/hisi_defconfig
-+++ b/arch/arm/configs/hisi_defconfig
-@@ -75,6 +75,7 @@ CONFIG_DMADEVICES=y
- CONFIG_DW_DMAC=y
- CONFIG_PL330_DMA=y
- CONFIG_PWM=y
-+CONFIG_RESET_CONTROLLER=y
- CONFIG_PHY_HIX5HD2_SATA=y
- CONFIG_EXT4_FS=y
- CONFIG_TMPFS=y
--- 
-1.9.1
-
+On 10/02/2015 06:49 AM, Andrzej Hajda wrote:
+> With unsigned values underflow in loops can occur resulting in
+> theoretically infinite loops.
+>
+> The problem has been detected using proposed semantic patch
+> scripts/coccinelle/tests/unsigned_lesser_than_zero.cocci [1].
+>
+> [1]: http://permalink.gmane.org/gmane.linux.kernel/2038576
+>
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+> Hi Stephen,
+>
+> This is modified version according to your request, ie only problematic
+> variables have changed type.
+> I still think that 1st version is better, but of course it is up to you.
+>
+> Regards
+> Andrzej
+>
+>  drivers/clk/clk-vt8500.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/clk/clk-vt8500.c b/drivers/clk/clk-vt8500.c
+> index 37e9288..98c4492 100644
+> --- a/drivers/clk/clk-vt8500.c
+> +++ b/drivers/clk/clk-vt8500.c
+> @@ -384,7 +384,8 @@ static void vt8500_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+>  static void wm8650_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+>  				u32 *multiplier, u32 *divisor1, u32 *divisor2)
+>  {
+> -	u32 mul, div1, div2;
+> +	u32 mul, div1;
+> +	int div2;
+>  	u32 best_mul, best_div1, best_div2;
+>  	unsigned long tclk, rate_err, best_err;
+>  
+> @@ -452,7 +453,8 @@ static u32 wm8750_get_filter(u32 parent_rate, u32 divisor1)
+>  static void wm8750_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+>  				u32 *filter, u32 *multiplier, u32 *divisor1, u32 *divisor2)
+>  {
+> -	u32 mul, div1, div2;
+> +	u32 mul;
+> +	int div1, div2;
+>  	u32 best_mul, best_div1, best_div2;
+>  	unsigned long tclk, rate_err, best_err;
+>  
+> @@ -496,7 +498,8 @@ static void wm8750_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+>  static void wm8850_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+>  				u32 *multiplier, u32 *divisor1, u32 *divisor2)
+>  {
+> -	u32 mul, div1, div2;
+> +	u32 mul;
+> +	int div1, div2;
+>  	u32 best_mul, best_div1, best_div2;
+>  	unsigned long tclk, rate_err, best_err;
+>  
