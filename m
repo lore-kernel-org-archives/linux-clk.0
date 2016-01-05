@@ -1,253 +1,113 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:2255 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755975AbcAHShZ (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2016 13:37:25 -0500
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>,
-	Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 2/9] clk: tegra210: Remove improper flags for lock_enable
-Date: Fri, 8 Jan 2016 13:37:04 -0500
-Message-ID: <1452278231-9546-3-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1452278231-9546-1-git-send-email-rklein@nvidia.com>
-References: <1452278231-9546-1-git-send-email-rklein@nvidia.com>
+Return-Path: <jamesjj.liao@mediatek.com>
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+CC: Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, <srv_heupstream@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, Shunli Wang <shunli.wang@mediatek.com>
+Subject: [PATCH v2 5/6] reset: mediatek: mt2701 reset controller dt-binding file
+Date: Tue, 5 Jan 2016 14:30:21 +0800
+Message-ID: <1451975422-31174-6-git-send-email-jamesjj.liao@mediatek.com>
+In-Reply-To: <1451975422-31174-1-git-send-email-jamesjj.liao@mediatek.com>
+References: <1451975422-31174-1-git-send-email-jamesjj.liao@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Most PLL's don't actually have LOCK_ENABLE bits. However, most PLL's
-also had that flag set, which meant that the clk code was trying to
-enable locks, and inadvertantly flipping bits in other fields.
+From: Shunli Wang <shunli.wang@mediatek.com>
 
-For PLLM, ensure the correct register is used for the misc_register.
-PLL_MISC0 contains the EN_LCKDET bit which should be used for enabling
-the lock, and PLLM_MISC1 shouldn't be used at all.
+Dt-binding file about reset controller is used to provide
+kinds of definition, which is referenced by dts file and
+IC-specified reset controller driver code.
 
-Lastly, remove some of the settings which would point to the EN_LCKDET
-bits for some PLLs. There is no need to enable the locks, and that is
-done as part of the set_defaults logic already.
-
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
 ---
- drivers/clk/tegra/clk-tegra210.c | 42 ++++++++++++++--------------------------
- 1 file changed, 14 insertions(+), 28 deletions(-)
+ .../dt-bindings/reset-controller/mt2701-resets.h   | 74 ++++++++++++++++++++++
+ 1 file changed, 74 insertions(+)
+ create mode 100644 include/dt-bindings/reset-controller/mt2701-resets.h
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 58514c44ea83..f45c9adf7fb2 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -1386,7 +1386,7 @@ static struct tegra_clk_pll_params pll_c_params = {
- 	.mdiv_default = 3,
- 	.div_nmp = &pllc_nmp,
- 	.freq_table = pll_cx_freq_table,
--	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
-+	.flags = TEGRA_PLL_USE_LOCK,
- 	.set_defaults = _pllc_set_defaults,
- 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
- };
-@@ -1425,7 +1425,7 @@ static struct tegra_clk_pll_params pll_c2_params = {
- 	.ext_misc_reg[2] = PLLC2_MISC2,
- 	.ext_misc_reg[3] = PLLC2_MISC3,
- 	.freq_table = pll_cx_freq_table,
--	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
-+	.flags = TEGRA_PLL_USE_LOCK,
- 	.set_defaults = _pllc2_set_defaults,
- 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
- };
-@@ -1455,7 +1455,7 @@ static struct tegra_clk_pll_params pll_c3_params = {
- 	.ext_misc_reg[2] = PLLC3_MISC2,
- 	.ext_misc_reg[3] = PLLC3_MISC3,
- 	.freq_table = pll_cx_freq_table,
--	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
-+	.flags = TEGRA_PLL_USE_LOCK,
- 	.set_defaults = _pllc3_set_defaults,
- 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
- };
-@@ -1505,7 +1505,6 @@ static struct tegra_clk_pll_params pll_c4_vco_params = {
- 	.base_reg = PLLC4_BASE,
- 	.misc_reg = PLLC4_MISC0,
- 	.lock_mask = PLL_BASE_LOCK,
--	.lock_enable_bit_idx = PLLSS_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.max_p = PLL_QLIN_PDIV_MAX,
- 	.ext_misc_reg[0] = PLLC4_MISC0,
-@@ -1517,8 +1516,7 @@ static struct tegra_clk_pll_params pll_c4_vco_params = {
- 	.div_nmp = &pllss_nmp,
- 	.freq_table = pll_c4_vco_freq_table,
- 	.set_defaults = tegra210_pllc4_set_defaults,
--	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE |
--		 TEGRA_PLL_VCO_OUT,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_VCO_OUT,
- 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
- };
- 
-@@ -1559,7 +1557,7 @@ static struct tegra_clk_pll_params pll_m_params = {
- 	.vco_min = 800000000,
- 	.vco_max = 1866000000,
- 	.base_reg = PLLM_BASE,
--	.misc_reg = PLLM_MISC1,
-+	.misc_reg = PLLM_MISC0,
- 	.lock_mask = PLL_BASE_LOCK,
- 	.lock_enable_bit_idx = PLLM_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
-@@ -1588,7 +1586,6 @@ static struct tegra_clk_pll_params pll_mb_params = {
- 	.base_reg = PLLMB_BASE,
- 	.misc_reg = PLLMB_MISC0,
- 	.lock_mask = PLL_BASE_LOCK,
--	.lock_enable_bit_idx = PLLMB_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.iddq_reg = PLLMB_MISC0,
- 	.iddq_bit_idx = PLLMB_IDDQ_BIT,
-@@ -1598,7 +1595,7 @@ static struct tegra_clk_pll_params pll_mb_params = {
- 	.pdiv_tohw = pll_qlin_pdiv_to_hw,
- 	.div_nmp = &pllm_nmp,
- 	.freq_table = pll_m_freq_table,
--	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
-+	.flags = TEGRA_PLL_USE_LOCK,
- 	.set_defaults = tegra210_pllmb_set_defaults,
- 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
- };
-@@ -1671,7 +1668,6 @@ static struct tegra_clk_pll_params pll_re_vco_params = {
- 	.base_reg = PLLRE_BASE,
- 	.misc_reg = PLLRE_MISC0,
- 	.lock_mask = PLLRE_MISC_LOCK,
--	.lock_enable_bit_idx = PLLRE_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.max_p = PLL_QLIN_PDIV_MAX,
- 	.ext_misc_reg[0] = PLLRE_MISC0,
-@@ -1681,8 +1677,7 @@ static struct tegra_clk_pll_params pll_re_vco_params = {
- 	.pdiv_tohw = pll_qlin_pdiv_to_hw,
- 	.div_nmp = &pllre_nmp,
- 	.freq_table = pll_re_vco_freq_table,
--	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_LOCK_MISC |
--		 TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLL_VCO_OUT,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_LOCK_MISC | TEGRA_PLL_VCO_OUT,
- 	.set_defaults = tegra210_pllre_set_defaults,
- 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
- };
-@@ -1712,7 +1707,6 @@ static struct tegra_clk_pll_params pll_p_params = {
- 	.base_reg = PLLP_BASE,
- 	.misc_reg = PLLP_MISC0,
- 	.lock_mask = PLL_BASE_LOCK,
--	.lock_enable_bit_idx = PLLP_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.iddq_reg = PLLP_MISC0,
- 	.iddq_bit_idx = PLLXP_IDDQ_BIT,
-@@ -1721,8 +1715,7 @@ static struct tegra_clk_pll_params pll_p_params = {
- 	.div_nmp = &pllp_nmp,
- 	.freq_table = pll_p_freq_table,
- 	.fixed_rate = 408000000,
--	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_USE_LOCK |
--		 TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLL_VCO_OUT,
-+	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_USE_LOCK | TEGRA_PLL_VCO_OUT,
- 	.set_defaults = tegra210_pllp_set_defaults,
- 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
- };
-@@ -1750,7 +1743,7 @@ static struct tegra_clk_pll_params pll_a1_params = {
- 	.ext_misc_reg[2] = PLLA1_MISC2,
- 	.ext_misc_reg[3] = PLLA1_MISC3,
- 	.freq_table = pll_cx_freq_table,
--	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
-+	.flags = TEGRA_PLL_USE_LOCK,
- 	.set_defaults = _plla1_set_defaults,
- 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
- };
-@@ -1787,7 +1780,6 @@ static struct tegra_clk_pll_params pll_a_params = {
- 	.base_reg = PLLA_BASE,
- 	.misc_reg = PLLA_MISC0,
- 	.lock_mask = PLL_BASE_LOCK,
--	.lock_enable_bit_idx = PLLA_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.round_p_to_pdiv = pll_qlin_p_to_pdiv,
- 	.pdiv_tohw = pll_qlin_pdiv_to_hw,
-@@ -1802,8 +1794,7 @@ static struct tegra_clk_pll_params pll_a_params = {
- 	.ext_misc_reg[1] = PLLA_MISC1,
- 	.ext_misc_reg[2] = PLLA_MISC2,
- 	.freq_table = pll_a_freq_table,
--	.flags = TEGRA_PLL_USE_LOCK | TEGRA_MDIV_NEW |
--		 TEGRA_PLL_HAS_LOCK_ENABLE,
-+	.flags = TEGRA_PLL_USE_LOCK | TEGRA_MDIV_NEW,
- 	.set_defaults = tegra210_plla_set_defaults,
- 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
- 	.set_gain = tegra210_clk_pll_set_gain,
-@@ -1836,7 +1827,6 @@ static struct tegra_clk_pll_params pll_d_params = {
- 	.base_reg = PLLD_BASE,
- 	.misc_reg = PLLD_MISC0,
- 	.lock_mask = PLL_BASE_LOCK,
--	.lock_enable_bit_idx = PLLD_MISC_LOCK_ENABLE,
- 	.lock_delay = 1000,
- 	.iddq_reg = PLLD_MISC0,
- 	.iddq_bit_idx = PLLD_IDDQ_BIT,
-@@ -1850,7 +1840,7 @@ static struct tegra_clk_pll_params pll_d_params = {
- 	.ext_misc_reg[0] = PLLD_MISC0,
- 	.ext_misc_reg[1] = PLLD_MISC1,
- 	.freq_table = pll_d_freq_table,
--	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
-+	.flags = TEGRA_PLL_USE_LOCK,
- 	.mdiv_default = 1,
- 	.set_defaults = tegra210_plld_set_defaults,
- 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
-@@ -1876,7 +1866,6 @@ static struct tegra_clk_pll_params pll_d2_params = {
- 	.base_reg = PLLD2_BASE,
- 	.misc_reg = PLLD2_MISC0,
- 	.lock_mask = PLL_BASE_LOCK,
--	.lock_enable_bit_idx = PLLSS_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.iddq_reg = PLLD2_BASE,
- 	.iddq_bit_idx = PLLSS_IDDQ_BIT,
-@@ -1897,7 +1886,7 @@ static struct tegra_clk_pll_params pll_d2_params = {
- 	.mdiv_default = 1,
- 	.freq_table = tegra210_pll_d2_freq_table,
- 	.set_defaults = tegra210_plld2_set_defaults,
--	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
-+	.flags = TEGRA_PLL_USE_LOCK,
- 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
- 	.set_gain = tegra210_clk_pll_set_gain,
- 	.adjust_vco = tegra210_clk_adjust_vco_min,
-@@ -1920,7 +1909,6 @@ static struct tegra_clk_pll_params pll_dp_params = {
- 	.base_reg = PLLDP_BASE,
- 	.misc_reg = PLLDP_MISC,
- 	.lock_mask = PLL_BASE_LOCK,
--	.lock_enable_bit_idx = PLLSS_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.iddq_reg = PLLDP_BASE,
- 	.iddq_bit_idx = PLLSS_IDDQ_BIT,
-@@ -1941,7 +1929,7 @@ static struct tegra_clk_pll_params pll_dp_params = {
- 	.mdiv_default = 1,
- 	.freq_table = pll_dp_freq_table,
- 	.set_defaults = tegra210_plldp_set_defaults,
--	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
-+	.flags = TEGRA_PLL_USE_LOCK,
- 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
- 	.set_gain = tegra210_clk_pll_set_gain,
- 	.adjust_vco = tegra210_clk_adjust_vco_min,
-@@ -1973,7 +1961,6 @@ static struct tegra_clk_pll_params pll_u_vco_params = {
- 	.base_reg = PLLU_BASE,
- 	.misc_reg = PLLU_MISC0,
- 	.lock_mask = PLL_BASE_LOCK,
--	.lock_enable_bit_idx = PLLU_MISC_LOCK_ENABLE,
- 	.lock_delay = 1000,
- 	.iddq_reg = PLLU_MISC0,
- 	.iddq_bit_idx = PLLU_IDDQ_BIT,
-@@ -1983,8 +1970,7 @@ static struct tegra_clk_pll_params pll_u_vco_params = {
- 	.pdiv_tohw = pll_qlin_pdiv_to_hw,
- 	.div_nmp = &pllu_nmp,
- 	.freq_table = pll_u_freq_table,
--	.flags = TEGRA_PLLU | TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE |
--		 TEGRA_PLL_VCO_OUT,
-+	.flags = TEGRA_PLLU | TEGRA_PLL_USE_LOCK | TEGRA_PLL_VCO_OUT,
- 	.set_defaults = tegra210_pllu_set_defaults,
- 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
- };
+diff --git a/include/dt-bindings/reset-controller/mt2701-resets.h b/include/dt-bindings/reset-controller/mt2701-resets.h
+new file mode 100644
+index 0000000..00efeb0
+--- /dev/null
++++ b/include/dt-bindings/reset-controller/mt2701-resets.h
+@@ -0,0 +1,74 @@
++/*
++ * Copyright (c) 2015 MediaTek, Shunli Wang <shunli.wang@mediatek.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _DT_BINDINGS_RESET_CONTROLLER_MT2701
++#define _DT_BINDINGS_RESET_CONTROLLER_MT2701
++
++/* INFRACFG resets */
++#define MT2701_INFRA_EMI_REG_RST		0
++#define MT2701_INFRA_DRAMC0_A0_RST		1
++#define MT2701_INFRA_FHCTL_RST			2
++#define MT2701_INFRA_APCIRQ_EINT_RST		3
++#define MT2701_INFRA_APXGPT_RST			4
++#define MT2701_INFRA_SCPSYS_RST			5
++#define MT2701_INFRA_KP_RST			6
++#define MT2701_INFRA_PMIC_WRAP_RST		7
++#define MT2701_INFRA_MIPI_RST			8
++#define MT2701_INFRA_IRRX_RST			9
++#define MT2701_INFRA_CEC_RST			10
++#define MT2701_INFRA_EMI_RST			32
++#define MT2701_INFRA_DRAMC0_RST			34
++#define MT2701_INFRA_TRNG_RST			37
++#define MT2701_INFRA_SYSIRQ_RST			38
++
++/*  PERICFG resets */
++#define MT2701_PERI_UART0_SW_RST		0
++#define MT2701_PERI_UART1_SW_RST		1
++#define MT2701_PERI_UART2_SW_RST		2
++#define MT2701_PERI_UART3_SW_RST		3
++#define MT2701_PERI_GCPU_SW_RST			5
++#define MT2701_PERI_BTIF_SW_RST			6
++#define MT2701_PERI_PWM_SW_RST			8
++#define MT2701_PERI_AUXADC_SW_RST		10
++#define MT2701_PERI_DMA_SW_RST			11
++#define MT2701_PERI_NFI_SW_RST			14
++#define MT2701_PERI_NLI_SW_RST			15
++#define MT2701_PERI_THERM_SW_RST		16
++#define MT2701_PERI_MSDC2_SW_RST		17
++#define MT2701_PERI_MSDC0_SW_RST		19
++#define MT2701_PERI_MSDC1_SW_RST		20
++#define MT2701_PERI_I2C0_SW_RST			22
++#define MT2701_PERI_I2C1_SW_RST			23
++#define MT2701_PERI_I2C2_SW_RST			24
++#define MT2701_PERI_I2C3_SW_RST			25
++#define MT2701_PERI_USB_SW_RST			28
++#define MT2701_PERI_ETH_SW_RST			29
++#define MT2701_PERI_SPI0_SW_RST			33
++
++/* TOPRGU resets */
++#define MT2701_TOPRGU_INFRA_RST			0
++#define MT2701_TOPRGU_MM_RST			1
++#define MT2701_TOPRGU_MFG_RST			2
++#define MT2701_TOPRGU_ETHDMA_RST		3
++#define MT2701_TOPRGU_VDEC_RST			4
++#define MT2701_TOPRGU_VENC_IMG_RST		5
++#define MT2701_TOPRGU_DDRPHY_RST		6
++#define MT2701_TOPRGU_MD_RST			7
++#define MT2701_TOPRGU_INFRA_AO_RST		8
++#define MT2701_TOPRGU_CONN_RST			9
++#define MT2701_TOPRGU_APMIXED_RST		10
++#define MT2701_TOPRGU_HIFSYS_RST		11
++#define MT2701_TOPRGU_CONN_MCU_RST		12
++#define MT2701_TOPRGU_BDP_DISP_RST		13
++
++#endif  /* _DT_BINDINGS_RESET_CONTROLLER_MT2701 */
 -- 
 1.9.1
-
