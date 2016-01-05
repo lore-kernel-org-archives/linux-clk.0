@@ -1,73 +1,135 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 11/14] ARM: dts: sun8i-a83t: Add R_PIO controller node to the dtsi
-Date: Sun, 31 Jan 2016 09:21:03 +0800
-Message-Id: <1454203266-4450-12-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Tero Kristo <t-kristo@ti.com>, linux-omap@vger.kernel.org,
+ linux-clk@vger.kernel.org, tony@atomide.com, sboyd@codeaurora.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <568A20E5.6040005@ti.com>
+Cc: linux-arm-kernel@lists.infradead.org
+References: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
+ <1450447141-29936-7-git-send-email-t-kristo@ti.com>
+ <20160101054815.21738.79820@quark.deferred.io> <568A20E5.6040005@ti.com>
+Message-ID: <20160105012954.15239.57130@quark.deferred.io>
+Subject: Re: [RFC 6/9] clk: ti: add support for omap4 module clocks
+Date: Mon, 04 Jan 2016 17:29:54 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have a driver for the R_PIO controller,
-add the corresponding device node to the dtsi.
+Quoting Tero Kristo (2016-01-03 23:36:05)
+> On 01/01/2016 07:48 AM, Michael Turquette wrote:
+> > Hi Tero,
+> >
+> > Quoting Tero Kristo (2015-12-18 05:58:58)
+> >> Previously, hwmod core has been used for controlling the hwmod level
+> >> clocks. This has certain drawbacks, like being unable to share the
+> >> clocks for multiple users, missing usecounting and generally being
+> >> totally incompatible with common clock framework.
+> >>
+> >> Add support for new clock type under the TI clock driver, which will
+> >> be used to convert all the existing hwmdo clocks to. This helps to
+> >> get rid of the clock related hwmod data from kernel and instead
+> >> parsing this from DT.
+> >
+> > I'm really happy to see this series. Looks pretty good to me.
+> >
+> >> +static int _omap4_hwmod_clk_enable(struct clk_hw *hw)
+> >> +{
+> >> +       struct clk_hw_omap *clk =3D to_clk_hw_omap(hw);
+> >> +       u32 val;
+> >> +       int timeout =3D 0;
+> >> +       int ret;
+> >> +
+> >> +       if (!clk->enable_bit)
+> >> +               return 0;
+> >> +
+> >> +       if (clk->clkdm) {
+> >> +               ret =3D ti_clk_ll_ops->clkdm_clk_enable(clk->clkdm, hw=
+->clk);
+> >> +               if (ret) {
+> >> +                       WARN(1,
+> >> +                            "%s: could not enable %s's clockdomain %s=
+: %d\n",
+> >> +                            __func__, clk_hw_get_name(hw),
+> >> +                            clk->clkdm_name, ret);
+> >> +                       return ret;
+> >> +               }
+> >> +       }
+> >> +
+> >> +       val =3D ti_clk_ll_ops->clk_readl(clk->enable_reg);
+> >> +
+> >> +       val &=3D ~OMAP4_MODULEMODE_MASK;
+> >> +       val |=3D clk->enable_bit;
+> >> +
+> >> +       ti_clk_ll_ops->clk_writel(val, clk->enable_reg);
+> >> +
+> >> +       /* Wait until module is enabled */
+> >> +       while (!_omap4_is_ready(val)) {
+> >> +               udelay(1);
+> >
+> > This should really be a .prepare callback if you plan to keep the delays
+> > in there.
+> =
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+> If this is changed to a .prepare, then all OMAP power management is =
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 5ea20ff..11be9e1 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -478,5 +478,26 @@
- 			compatible = "allwinner,sun6i-a31-clock-reset";
- 			#reset-cells = <1>;
- 		};
-+
-+		r_pio: pinctrl@01f02c00 {
-+			compatible = "allwinner,sun8i-a83t-r-pinctrl";
-+			reg = <0x01f02c00 0x400>;
-+			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&apb0_gates 0>;
-+			resets = <&apb0_reset 0>;
-+			gpio-controller;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			#gpio-cells = <3>;
-+
-+			r_rsb_pins: r_rsb {
-+				allwinner,pins = "PL0", "PL1";
-+				allwinner,function = "s_rsb";
-+				allwinner,drive = <SUN4I_PINCTRL_20_MA>;
-+				allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
-+			};
-+		};
- 	};
- };
--- 
-1.9.1
+> effectively ruined as all clocks are going to be enabled all the time. =
+
+
+Let's not ruin system PM.
+
+> hwmod core doesn't support .prepare/.enable at the moment that well, and =
+
+> changing that is going to be a big burden (educated guess, haven't =
+
+> checked this yet)... The call chain that comes here is:
+> =
+
+> device driver -> pm_runtime -> hwmod_core -> hwmod_clk_enable / disable.
+
+Right, and for calls to pm_runtime_get/put from process context it
+should result in a call to clk_prepare_enable/clk_disable_unprepare. I
+guess that change is hugely invasive from your statements above?
+
+> =
+
+> The delay within this function should usually be pretty short, just to =
+
+> wait that the module comes up from idle.
+> =
+
+> I recall the discussions regarding the udelays within clk_enable/disable =
+
+> calls, but what is the preferred approach then?
+
+There are many cases where a clk only provides .{un}prepare ops and does
+NOT provide any .{en,dis}able ops.
+
+> Typically =
+
+> clk_enable/disable just becomes a NOP
+
+Yes, it becomes a NOP (though it is critical that drivers with knowledge
+of this do not try to skip the step of calling clk_enable).
+
+> if it is not allowed to wait for =
+
+> hardware to complete transitioning before exiting the function.
+
+The clk.h api clearly states that clk_prepare must be called and
+complete before calling clk_enable. So if a clk only provides a .prepare
+with delays but no .enable, and a consumer driver complies with that api
+rule then we're guaranteed to have a toggling line when clk_enable
+returns.
+
+Regards,
+Mike
+
+> =
+
+> -Tero
+> =
+
+> >
+> > Regards,
+> > Mike
+> >
+>=20
