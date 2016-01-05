@@ -1,82 +1,44 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Rob Herring <robh+dt@kernel.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Remi Pommarel <repk@triplefau.lt>,
-	devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [RFC 6/9] clk: bcm2835: allow to define a minimum fractional divider in DT
-Date: Tue, 19 Jan 2016 14:51:37 +0000
-Message-Id: <1453215100-2382-7-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1453215100-2382-1-git-send-email-kernel@martin.sperl.org>
-References: <1453215100-2382-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <ckeepax@opensource.wolfsonmicro.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+To: <mturquette@baylibre.com>, <cw00.choi@samsung.com>, <lee.jones@linaro.org>
+CC: <sboyd@codeaurora.org>, <myungjoo.ham@samsung.com>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.wolfsonmicro.com>
+Subject: [PATCH 1/4] extcon: arizona: Remove enable/disable of 32k clock
+Date: Tue, 5 Jan 2016 15:41:39 +0000
+Message-ID: <1452008502-3749-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+The 32k clock is unconditionally enabled by the MFD core so there is no
+need to control it from the extcon device, so this patch removes the
+control of the 32k clock.
 
-Allow to define a minimum fractional divider to use
-in the devicetree.
-
-This is primarily used to reduce clock-jitter introduced
-by the fractional/MASH divider.
-
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 ---
- drivers/clk/bcm/clk-bcm2835.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/extcon/extcon-arizona.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index e5313ba..7048ca5 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -711,6 +711,8 @@ struct bcm2835_clock_data {
- 	u32 int_bits;
- 	/* Number of fractional bits in the divider */
- 	u32 frac_bits;
-+	/* the minimum divider to allow when fractional */
-+	u32 min_frac_div;
- 	/* the mash value to use - see CM_MASH */
- 	enum bcm2835_clock_mash_type mash;
- 	bool mash_forced;
-@@ -1709,13 +1711,21 @@ static int bcm2835_clock_determine_closest_rate(struct clk_hw *hw,
- 						struct bcm2835_rates *rates,
- 						size_t rate_cnt)
- {
-+	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
-+	const struct bcm2835_clock_data *data = clock->data;
- 	struct bcm2835_rates *best = NULL;
- 	size_t i;
- 
- 	/* find best matching */
- 	for (i = 0; i < rate_cnt; i++) {
-+		/* do not look at anything above the requested rate */
- 		if (rates[i].rate > req->rate)
- 			continue;
-+		/* if we have a divider that is not "safe", then ignore */
-+		if (divmash_get_divf(rates[i].dmash) &&
-+		    (rates[i].div < data->min_frac_div))
-+			continue;
-+		/* if we are the first */
- 		if (!best) {
- 			best = &rates[i];
- 			continue;
-@@ -2094,6 +2104,10 @@ static const struct bcm2835_clock_data *bcm2835_register_clock_of(
- 			break;
- 		}
+diff --git a/drivers/extcon/extcon-arizona.c b/drivers/extcon/extcon-arizona.c
+index e4890dd..52d041f 100644
+--- a/drivers/extcon/extcon-arizona.c
++++ b/drivers/extcon/extcon-arizona.c
+@@ -1571,7 +1571,6 @@ static int arizona_extcon_probe(struct platform_device *pdev)
+ 		goto err_micdet;
  	}
-+	/* add support for min fractional divider */
-+	err = of_property_read_u32(nc, "brcm,min-fract-div", &value);
-+	if (!err)
-+		data->min_frac_div = value << CM_DIV_FRAC_BITS;
  
- 	/* and return the result */
- 	return data;
+-	arizona_clk32k_enable(arizona);
+ 	regmap_update_bits(arizona->regmap, ARIZONA_JACK_DETECT_DEBOUNCE,
+ 			   ARIZONA_JD1_DB, ARIZONA_JD1_DB);
+ 	regmap_update_bits(arizona->regmap, ARIZONA_JACK_DETECT_ANALOGUE,
+@@ -1642,7 +1641,6 @@ static int arizona_extcon_remove(struct platform_device *pdev)
+ 	cancel_delayed_work_sync(&info->hpdet_work);
+ 	regmap_update_bits(arizona->regmap, ARIZONA_JACK_DETECT_ANALOGUE,
+ 			   ARIZONA_JD1_ENA, 0);
+-	arizona_clk32k_disable(arizona);
+ 
+ 	return 0;
+ }
 -- 
-1.7.10.4
+2.1.4
