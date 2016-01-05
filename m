@@ -1,50 +1,79 @@
-Return-Path: <tony@atomide.com>
-Date: Mon, 4 Jan 2016 08:37:41 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Tero Kristo <t-kristo@ti.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RFC 6/9] clk: ti: add support for omap4 module clocks
-Message-ID: <20160104162853.GA12777@atomide.com>
-References: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
- <1450447141-29936-7-git-send-email-t-kristo@ti.com>
- <20160101054815.21738.79820@quark.deferred.io>
- <568A20E5.6040005@ti.com>
- <CAMuHMdUZMUSYC1XHydVQHRibWtHw2=T-7nXe=5Pf4UCcb=mKTQ@mail.gmail.com>
- <568A735D.2060309@ti.com>
- <20160104144221.GA5783@n2100.arm.linux.org.uk>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga03-in.huawei.com ([119.145.14.66]:19273 "EHLO
+	szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752055AbcAEMXw (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jan 2016 07:23:52 -0500
+Subject: Re: [PATCH v4 5/6] mfd: dt-bindings: add device tree bindings for
+ Hi3519 sysctrl
+To: Philipp Zabel <p.zabel@pengutronix.de>
+References: <1451439832-13927-1-git-send-email-xuejiancheng@huawei.com>
+ <1451439832-13927-6-git-send-email-xuejiancheng@huawei.com>
+ <1451988742.3391.22.camel@pengutronix.de>
+CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>, <suwenping@hisilicon.com>,
+	<devicetree@vger.kernel.org>, <yanhaifeng@hisilicon.com>,
+	<linux-kernel@vger.kernel.org>, <gaofei@hisilicon.com>,
+	<ml.yang@hisilicon.com>, <yanghongwei@hisilicon.com>,
+	<zhangzhenxing@hisilicon.com>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+From: xuejiancheng <xuejiancheng@huawei.com>
+Message-ID: <568BB4B6.20507@huawei.com>
+Date: Tue, 5 Jan 2016 20:19:02 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160104144221.GA5783@n2100.arm.linux.org.uk>
+In-Reply-To: <1451988742.3391.22.camel@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-* Russell King - ARM Linux <linux@arm.linux.org.uk> [160104 06:43]:
-> On Mon, Jan 04, 2016 at 03:27:57PM +0200, Tero Kristo wrote:
-> > On 01/04/2016 12:21 PM, Geert Uytterhoeven wrote:
-> > >FWIW, there are small loops with just a cpu_relax() in various clock drivers
-> > >under drivers/clk/shmobile/.
-> > 
-> > Just did a quick profiling round, and the clk_enable/disable delay loops
-> > take anything from 0...1500ns, most typically consuming some 400-600ns. So,
-> > based on this, dropping the udelay and adding cpu_relax instead looks like a
-> > good change. I just verified that changing the udelay to cpu_relax works
-> > fine also, I just need to change the bail-out period to be something sane.
+
+On 2016/1/5 18:12, Philipp Zabel wrote:
+> Am Mittwoch, den 30.12.2015, 09:43 +0800 schrieb Jiancheng Xue:
+>> Add device tree bindings for Hi3519 system controller.
+>>
+>> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+>> ---
+>>  Documentation/devicetree/bindings/mfd/hi3519.txt | 14 ++++++++++++++
+>>  1 file changed, 14 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/mfd/hi3519.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/mfd/hi3519.txt b/Documentation/devicetree/bindings/mfd/hi3519.txt
+>> new file mode 100644
+>> index 0000000..2536edc
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/hi3519.txt
+>> @@ -0,0 +1,14 @@
+>> +* Hisilicon Hi3519 System Controller Block
+>> +
+>> +This bindings use the following binding:
+>> +Dcumentation/devicetree/bindings/clock/clock-bindings.txt
 > 
-> Was that profiling done with lockdep/lock debugging enabled or disabled?
+> Typo: "Documentation"
+> - but I don't see the clock bindings being used here at all.
+> Maybe just drop this sentence?
+> 
 
-And also the thing to check from the hw folks is what all do these clkctrl
-bits really control. If they group together the OCP clock and an extra
-functional clock for some devices the delays could be larger.
+Sorry about this mistake. Thank you very much.
 
-In general, I think we need to get rid of pm_runtime_irq_safe usage to
-allow clocks to sleep properly. The other option is to allow toggling
-pm_runtime_irq_safe but that probably gets super messy.
+>> +
+>> +Required properties:
+>> +- compatible: "hisilicon,hi3519-sysctrl".
+>> +- reg: the register region of this block
+>> +
+>> +Examples:
+>> +sysctrl: system-controller@12010000 {
+>> +	compatible = "hisilicon,hi3519-sysctrl", "syscon";
+>> +	reg = <0x12010000 0x1000>;
+>> +};
+> 
+> regards
+> Philipp
+> 
+> 
+> .
+> 
 
-Regards,
-
-Tony
