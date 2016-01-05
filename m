@@ -1,72 +1,41 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.13]:57463 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751568AbcALWwT convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jan 2016 17:52:19 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: xuejiancheng <xuejiancheng@huawei.com>
-Cc: Lee Jones <lee.jones@linaro.org>, mturquette@baylibre.com,
-	sboyd@codeaurora.org, p.zabel@pengutronix.de, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	linux@arm.linux.org.uk, khilman@linaro.org, olof@lixom.net,
-	xuwei5@hisilicon.com, haojian.zhuang@linaro.org,
-	zhangfei.gao@linaro.org, bintian.wang@huawei.com,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	yanhaifeng@hisilicon.com, yanghongwei@hisilicon.com,
-	suwenping@hisilicon.com, ml.yang@hisilicon.com,
-	gaofei@hisilicon.com, zhangzhenxing@hisilicon.com,
-	xuejiancheng@hisilicon.com
-Subject: Re: [PATCH v5 5/6] mfd: dt-bindings: add device tree bindings for Hi3519 sysctrl
-Date: Tue, 12 Jan 2016 23:51:21 +0100
-Message-ID: <5675031.hi9rRCqFXs@wuerfel>
-In-Reply-To: <5694C725.6010502@huawei.com>
-References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com> <20160112083946.GN19803@x1> <5694C725.6010502@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <p.zabel@pengutronix.de>
+Message-ID: <1451986291.3391.5.camel@pengutronix.de>
+Subject: Re: [PATCH v2 5/6] reset: mediatek: mt2701 reset controller
+ dt-binding file
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: James Liao <jamesjj.liao@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	 <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	devicetree@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>,
+	srv_heupstream@mediatek.com, linux-kernel@vger.kernel.org, Daniel Kurtz
+	 <djkurtz@chromium.org>, linux-mediatek@lists.infradead.org, Shunli Wang
+	 <shunli.wang@mediatek.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Date: Tue, 05 Jan 2016 10:31:31 +0100
+In-Reply-To: <1451975422-31174-6-git-send-email-jamesjj.liao@mediatek.com>
+References: <1451975422-31174-1-git-send-email-jamesjj.liao@mediatek.com>
+	 <1451975422-31174-6-git-send-email-jamesjj.liao@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tuesday 12 January 2016 17:28:05 xuejiancheng wrote:
-> >>>>>
-> >>>> Not yet.
-> >>>> Arnd Bergmann and Rob Herring all suggested adding a specific compatible string
-> >>>> with the SOC name. This binding is just used for describing the compatible string now.
-> >>>> When more functions on hi3519 SOC are added later, the specific driver will be also
-> >>>> needed.
-> >>>
-> >>> Save this binding until it has more functionality.  We here "I'll add
-> >>> to this later" all too often.
-> >>>
-> >>
-> >> In the hi3519.dtsi file, there is a system-controller device node described like below:
-> >> sysctrl: system-controller@12010000 {
-> >>      compatible = "hisilicon,hi3519-sysctrl", "syscon";
-> >>      reg = <0x12010000 0x1000>;
-> >> };
-> >> Do you mean that I should remove "hisilicon,hi3519-sysctrl" and just use "syscon" as the
-> >> compatible string?　
-> > 
-> > Where is this compatible string _used_?
-> > 
-> >> If I want to add "hisilicon,hi3519-sysctrl" for hi3519. where should I put this binding?
-> >> Could you give some suggestions?  Thank you very much!
-> > 
-> > If you're not using the compatible i.e. the device doesn't have its
-> > own driver yet, then there is no need to supply the binding at all, is
-> > there?
-> > 
+Am Dienstag, den 05.01.2016, 14:30 +0800 schrieb James Liao:
+> From: Shunli Wang <shunli.wang@mediatek.com>
 > 
-> OK. Thank you.
+> Dt-binding file about reset controller is used to provide
+> kinds of definition, which is referenced by dts file and
+> IC-specified reset controller driver code.
 > 
+> Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+> ---
+>  .../dt-bindings/reset-controller/mt2701-resets.h   | 74 ++++++++++++++++++++++
+>  1 file changed, 74 insertions(+)
+>  create mode 100644 include/dt-bindings/reset-controller/mt2701-resets.h
+> 
+> diff --git a/include/dt-bindings/reset-controller/mt2701-resets.h b/include/dt-bindings/reset-controller/mt2701-resets.h
 
-Sorry for stepping in late here. I still think that every syscon device should
-come with a specific compatible string, so we have the option of creating a
-driver later on, and I'd like to see a binding document that lists those strings
-(which I believe exists here).
+No new files in include/dt-bindings/reset-controller, please.
+This should go into include/dt-bindings/reset.
 
-It's really hard to add compatible strings later on, anything else we can
-work around by keying off that string and adding a workaround in the kernel.
-
-	Arnd
+regards
+Philipp
