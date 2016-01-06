@@ -1,60 +1,61 @@
-Return-Path: <wens@mirror2.csie.ntu.edu.tw>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH resend 0/6] ARM: sunxi: Add support for A10/A20 Video Engine clocks
-Date: Sat,  5 Dec 2015 21:16:41 +0800
-Message-Id: <1449321407-4531-1-git-send-email-wens@csie.org>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] clk: add clk_unregister_fixed_factor()
+Date: Wed,  6 Jan 2016 13:25:09 +0900
+Message-Id: <1452054310-12935-2-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1452054310-12935-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1452054310-12935-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
+Allow to unregister fixed factor clock.
 
-(Series resent with linux-arm-kernel list added.)
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-This series adds support for the clocks used by the Video Engine (VPU /
-video codec hardware) on the Allwinner A10/A20. The series purposely
-excludes sun5i (A10s/A13/R8) to avoid any conflicts with Maxime's KMS
-driver series, but adding it should be easy. VE clocks for the newer
-generation of SoCs are the same, except the reset control is moved to
-the common bus reset controls. These can be supported later on.
+ drivers/clk/clk-fixed-factor.c | 13 +++++++++++++
+ include/linux/clk-provider.h   |  1 +
+ 2 files changed, 14 insertions(+)
 
-The series is meant to get platform stuff out of the way so people who
-want to work on a proper driver for the VPU can do so.
-
-The patches are pretty self-explanatory.
-
-Regards
-ChenYu
-
-Chen-Yu Tsai (6):
-  clk: sunxi: Add DRAM gates support for sun4i-a10
-  clk: sunxi: Add VE (Video Engine) module clock driver for sun[457]i
-  ARM: dts: sun4i: Add DRAM gates
-  ARM: dts: sun4i: Add VE (Video Engine) module clock node
-  ARM: dts: sun7i: Add DRAM gates
-  ARM: dts: sun7i: Add VE (Video Engine) module clock node
-
- Documentation/devicetree/bindings/clock/sunxi.txt |   5 +
- arch/arm/boot/dts/sun4i-a10.dtsi                  |  45 +++++-
- arch/arm/boot/dts/sun7i-a20.dtsi                  |  41 +++++-
- drivers/clk/sunxi/Makefile                        |   1 +
- drivers/clk/sunxi/clk-a10-ve.c                    | 171 ++++++++++++++++++++++
- drivers/clk/sunxi/clk-simple-gates.c              |  12 ++
- 6 files changed, 268 insertions(+), 7 deletions(-)
- create mode 100644 drivers/clk/sunxi/clk-a10-ve.c
-
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index 83de57a..f9c80e3 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -102,6 +102,19 @@ struct clk *clk_register_fixed_factor(struct device *dev, const char *name,
+ }
+ EXPORT_SYMBOL_GPL(clk_register_fixed_factor);
+ 
++void clk_unregister_fixed_factor(struct clk *clk)
++{
++	struct clk_hw *hw;
++
++	hw = __clk_get_hw(clk);
++	if (!hw)
++		return;
++
++	clk_unregister(clk);
++	kfree(to_clk_fixed_factor(hw));
++}
++EXPORT_SYMBOL_GPL(clk_unregister_fixed_factor);
++
+ #ifdef CONFIG_OF
+ /**
+  * of_fixed_factor_clk_setup() - Setup function for simple fixed factor clock
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index e7bd710..39edfd7 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -486,6 +486,7 @@ extern const struct clk_ops clk_fixed_factor_ops;
+ struct clk *clk_register_fixed_factor(struct device *dev, const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		unsigned int mult, unsigned int div);
++void clk_unregister_fixed_factor(struct clk *clk);
+ 
+ /**
+  * struct clk_fractional_divider - adjustable fractional divider clock
 -- 
-2.6.2
+1.9.1
