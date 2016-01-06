@@ -1,103 +1,62 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 14 Jan 2016 18:04:21 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 09/13] ARM: at91: pm: find and remap the pmc
-Message-ID: <20160115020421.GK22188@codeaurora.org>
-References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
- <1449248628-3486-10-git-send-email-alexandre.belloni@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1449248628-3486-10-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] clk: add clk_unregister_fixed_rate()
+Date: Wed,  6 Jan 2016 13:25:10 +0900
+Message-Id: <1452054310-12935-3-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1452054310-12935-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1452054310-12935-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/04, Alexandre Belloni wrote:
-> diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
-> index 5c2b60c5a2a1..38e93174031d 100644
-> --- a/arch/arm/mach-at91/pm.c
-> +++ b/arch/arm/mach-at91/pm.c
-> @@ -35,6 +35,8 @@
->  #include "generic.h"
->  #include "pm.h"
->  
-> +void __iomem *pmc;
+Allow to unregister fixed rate clock.
 
-static?
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-> +
->  /*
->   * FIXME: this is needed to communicate between the pinctrl driver and
->   * the PM implementation in the machine. Possibly part of the PM
-> @@ -85,7 +87,7 @@ static int at91_pm_verify_clocks(void)
->  	unsigned long scsr;
->  	int i;
->  
-> -	scsr = at91_pmc_read(AT91_PMC_SCSR);
-> +	scsr = readl(pmc + AT91_PMC_SCSR);
->  
->  	/* USB must not be using PLLB */
->  	if ((scsr & at91_pm_data.uhp_udp_mask) != 0) {
-> @@ -99,8 +101,7 @@ static int at91_pm_verify_clocks(void)
->  
->  		if ((scsr & (AT91_PMC_PCK0 << i)) == 0)
->  			continue;
-> -
-> -		css = at91_pmc_read(AT91_PMC_PCKR(i)) & AT91_PMC_CSS;
-> +		css = readl(pmc + AT91_PMC_PCKR(i)) & AT91_PMC_CSS;
->  		if (css != AT91_PMC_CSS_SLOW) {
->  			pr_err("AT91: PM - Suspend-to-RAM with PCK%d src %d\n", i, css);
->  			return 0;
-> @@ -143,8 +144,8 @@ static void at91_pm_suspend(suspend_state_t state)
->  	flush_cache_all();
->  	outer_disable();
->  
-> -	at91_suspend_sram_fn(at91_pmc_base, at91_ramc_base[0],
-> -				at91_ramc_base[1], pm_data);
-> +	at91_suspend_sram_fn(pmc, at91_ramc_base[0],
-> +			     at91_ramc_base[1], pm_data);
->  
->  	outer_resume();
->  }
-> @@ -394,13 +395,33 @@ static void __init at91_pm_sram_init(void)
->  			&at91_pm_suspend_in_sram, at91_pm_suspend_in_sram_sz);
->  }
->  
-> +static const struct of_device_id atmel_pmc_ids[] = {
+ drivers/clk/clk-fixed-rate.c | 13 +++++++++++++
+ include/linux/clk-provider.h |  2 +-
+ 2 files changed, 14 insertions(+), 1 deletion(-)
 
-__initconst?
-
-> +	{ .compatible = "atmel,at91rm9200-pmc"  },
-> +	{ .compatible = "atmel,at91sam9260-pmc" },
-> +	{ .compatible = "atmel,at91sam9g45-pmc" },
-> +	{ .compatible = "atmel,at91sam9n12-pmc" },
-> +	{ .compatible = "atmel,at91sam9x5-pmc" },
-> +	{ .compatible = "atmel,sama5d3-pmc" },
-> +	{ .compatible = "atmel,sama5d2-pmc" },
-> +	{ /* sentinel */ },
-> +};
-> +
->  static void __init at91_pm_init(void)
->  {
-> -	at91_pm_sram_init();
-> +	struct device_node *pmc_np;
->  
->  	if (at91_cpuidle_device.dev.platform_data)
->  		platform_device_register(&at91_cpuidle_device);
->  
-> +	pmc_np = of_find_matching_node(NULL, atmel_pmc_ids);
-> +	pmc = of_iomap(pmc_np, 0);
-> +	if (!pmc) {
-> +		pr_info("AT91: PM not supported, PMC not found\n");
-
-pr_err?
-
-
+diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
+index f85ec8d..a69a6db 100644
+--- a/drivers/clk/clk-fixed-rate.c
++++ b/drivers/clk/clk-fixed-rate.c
+@@ -106,6 +106,19 @@ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
+ }
+ EXPORT_SYMBOL_GPL(clk_register_fixed_rate);
+ 
++void clk_unregister_fixed_rate(struct clk *clk)
++{
++	struct clk_hw *hw;
++
++	hw = __clk_get_hw(clk);
++	if (!hw)
++		return;
++
++	clk_unregister(clk);
++	kfree(to_clk_fixed_rate(hw));
++}
++EXPORT_SYMBOL_GPL(clk_unregister_fixed_rate);
++
+ #ifdef CONFIG_OF
+ /**
+  * of_fixed_clk_setup() - Setup function for simple fixed rate clock
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 39edfd7..b6c6bfb 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -282,7 +282,7 @@ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
+ struct clk *clk_register_fixed_rate_with_accuracy(struct device *dev,
+ 		const char *name, const char *parent_name, unsigned long flags,
+ 		unsigned long fixed_rate, unsigned long fixed_accuracy);
+-
++void clk_unregister_fixed_rate(struct clk *clk);
+ void of_fixed_clk_setup(struct device_node *np);
+ 
+ /**
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
