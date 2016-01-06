@@ -1,73 +1,134 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-Message-ID: <1452656355.2657.12.camel@mtksdaap41>
-Subject: Re: [PATCH v2 2/6] dt-bindings: ARM: Mediatek: Document bindings
- for MT2701
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Rob Herring <robh@kernel.org>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Sascha
- Hauer" <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
-	"Philipp Zabel" <p.zabel@pengutronix.de>, <srv_heupstream@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>
-Date: Wed, 13 Jan 2016 11:39:15 +0800
-In-Reply-To: <20160106150800.GA941@rob-hp-laptop>
-References: <1451975422-31174-1-git-send-email-jamesjj.liao@mediatek.com>
-	 <1451975422-31174-3-git-send-email-jamesjj.liao@mediatek.com>
-	 <20160106150800.GA941@rob-hp-laptop>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 5 Jan 2016 17:45:04 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: mturquette@baylibre.com, cw00.choi@samsung.com, lee.jones@linaro.org,
+	myungjoo.ham@samsung.com, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	patches@opensource.wolfsonmicro.com
+Subject: Re: [PATCH 2/4] clk: arizona: Add clock driver for the Arizona
+ devices
+Message-ID: <20160106014504.GE22188@codeaurora.org>
+References: <1452008502-3749-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <1452008502-3749-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 MIME-Version: 1.0
-Return-Path: jamesjj.liao@mediatek.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1452008502-3749-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
-
-On Wed, 2016-01-06 at 09:08 -0600, Rob Herring wrote:
-> On Tue, Jan 05, 2016 at 02:30:18PM +0800, James Liao wrote:
-> > This patch adds the binding documentation for apmixedsys, bdpsys,
-> > ethsys, hifsys, imgsys, infracfg, mmsys, pericfg, topckgen and
-> > vdecsys for Mediatek MT2701.
-> > 
-> > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+On 01/05, Charles Keepax wrote:
+> Add an initial clock driver for the Arizona series audio CODECs.
+> Currently this driver only provides support for parsing the two input
+> clocks (mclk1, mclk2) and providing the internally consumed 32k clock.
 > 
-> [...]
-> 
-> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
-> > new file mode 100644
-> > index 0000000..4137196
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
-> > @@ -0,0 +1,22 @@
-> > +Mediatek bdpsys controller
-> > +============================
-> > +
-> > +The Mediatek bdpsys controller provides various clocks to the system.
-> > +
-> > +Required Properties:
-> > +
-> > +- compatible: Should be:
-> > +	- "mediatek,mt2701-bdpsys", "syscon"
-> 
-> If this block and others only provide clocks, then why do you need 
-> syscon here? If it is more that clocks, then the description is wrong.
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 
-Sorry for late reply.
+Can this go through clk-tree without the other three patches and
+nothing breaks?
 
-In bdpsys and other similar subsystems, clock controlling and other
-feature controlling share the same register space. That means we may
-have multiple DT nodes with the same reg (register address) property.
-But it's not a good idea because we may have racing issue when multiple
-drivers share the same register space. With syscon, drivers that need
-share the same register base with bdpsys can safely control registers
-through regmap APIs.
+> diff --git a/drivers/clk/clk-arizona.c b/drivers/clk/clk-arizona.c
+> new file mode 100644
+> index 0000000..1ab69ee
+> --- /dev/null
+> +++ b/drivers/clk/clk-arizona.c
+> @@ -0,0 +1,192 @@
+> +
+> +static int arizona_32k_enable(struct clk_hw *hw)
+> +{
+> +	struct arizona_clk *clkdata = clk32k_to_arizona_clk(hw);
+> +	struct arizona *arizona = clkdata->arizona;
+> +	int ret;
+> +
+> +	switch (arizona->pdata.clk32k_src) {
+> +	case ARIZONA_32KZ_MCLK1:
+> +		ret = pm_runtime_get_sync(arizona->dev);
+> +		if (ret != 0)
 
-These subsystem nodes described in arm/mediatek/ are clock controllers,
-some of them may be the reset controller at the same time. Other
-subsystem features will have their own DT nodes and share the same
-register space by referring to these clock controllers.
+typically we write this as
+
+	if (ret)
 
 
-Best regards,
+> +			goto out;
+> +		break;
+> +	}
+> +
+> +	ret = regmap_update_bits_async(arizona->regmap, ARIZONA_CLOCK_32K_1,
+> +				       ARIZONA_CLK_32K_ENA,
+> +				       ARIZONA_CLK_32K_ENA);
+> +
+> +out:
+> +	return ret;
+> +}
+> +
+> +static int arizona_clk_of_get_pdata(struct arizona *arizona)
+> +{
+> +	const char * const pins[] = { "mclk1", "mclk2" };
+> +	struct clk *mclk;
+> +	int i;
+> +
+> +	if (!of_property_read_bool(arizona->dev->of_node, "clocks"))
+> +		return 0;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(pins); ++i) {
+> +		mclk = of_clk_get_by_name(arizona->dev->of_node, pins[i]);
+> +		if (IS_ERR(mclk))
+> +			return PTR_ERR(mclk);
+> +
+> +		if (clk_get_rate(mclk) == CLK32K_RATE) {
+> +			arizona->pdata.clk32k_src = ARIZONA_32KZ_MCLK1 + i;
+> +			arizona->pdata.clk32k_parent = __clk_get_name(mclk);
+> +		}
+> +
+> +		clk_put(mclk);
 
-James
+Is this configuring some mux for the 32kHz source? Perhaps this
+can be done with assigned clock parents and a set_parent clk_op
+instead of with of_clk_get_by_name() in a loop over the possible
+parents?
+
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int arizona_clk_probe(struct platform_device *pdev)
+> +{
+[..]
+> +
+> +	if (arizona->pdata.clk32k_parent) {
+> +		clk32k_init.num_parents = 1;
+> +		clk32k_init.parent_names = &arizona->pdata.clk32k_parent;
+> +	} else {
+> +		clk32k_init.flags |= CLK_IS_ROOT;
+> +	}
+> +
+> +	clkdata->clk32k_hw.init = &clk32k_init;
+> +	clkdata->clk32k = devm_clk_register(&pdev->dev, &clkdata->clk32k_hw);
+> +	if (IS_ERR(clkdata->clk32k)) {
+> +		ret = PTR_ERR(clkdata->clk32k);
+> +		dev_err(arizona->dev, "Failed to register 32k clock: %d\n",
+> +			ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = clk_register_clkdev(clkdata->clk32k, "arizona-32k",
+> +				  dev_name(arizona->dev));
+
+Any reason we register with clkdev but don't register an of clk
+provider?
+
+> +	if (ret) {
+> +		dev_err(arizona->dev, "Failed to register 32k clock dev: %d\n",
+> +			ret);
+> +		return ret;
+> +	}
+> +
+> +	platform_set_drvdata(pdev, clkdata);
+> +
+> +	return 0;
+> +}
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
