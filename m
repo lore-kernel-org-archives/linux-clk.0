@@ -1,93 +1,48 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lb0-f172.google.com ([209.85.217.172]:35899 "EHLO
-	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755177AbcAWURs (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sat, 23 Jan 2016 15:17:48 -0500
-From: Antony Pavlov <antonynpavlov@gmail.com>
-To: linux-mips@linux-mips.org
-Cc: Antony Pavlov <antonynpavlov@gmail.com>,
-	Alban Bedel <albeu@free.fr>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [RFC v3 04/14] MIPS: dts: qca: ar9132: make extosc-related description shorter
-Date: Sat, 23 Jan 2016 23:17:21 +0300
-Message-Id: <1453580251-2341-5-git-send-email-antonynpavlov@gmail.com>
-In-Reply-To: <1453580251-2341-1-git-send-email-antonynpavlov@gmail.com>
-References: <1453580251-2341-1-git-send-email-antonynpavlov@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <ckeepax@opensource.wolfsonmicro.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+To: <mturquette@baylibre.com>, <cw00.choi@samsung.com>, <lee.jones@linaro.org>
+CC: <sboyd@codeaurora.org>, <myungjoo.ham@samsung.com>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.wolfsonmicro.com>
+Subject: [PATCH v2 4/4] mfd: arizona: Add device tree binding documentation for new clock driver
+Date: Wed, 6 Jan 2016 12:34:32 +0000
+Message-ID: <1452083672-3994-4-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+In-Reply-To: <1452083672-3994-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+References: <1452083672-3994-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Antony Pavlov <antonynpavlov@gmail.com>
-Cc: Alban Bedel <albeu@free.fr>
-Cc: linux-mips@linux-mips.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
+Specify the device tree binding for the input clocks to Arizona devices.
+
+Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 ---
- arch/mips/boot/dts/qca/ar9132.dtsi               |  9 ++++++++-
- arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts | 14 ++++----------
- 2 files changed, 12 insertions(+), 11 deletions(-)
 
-diff --git a/arch/mips/boot/dts/qca/ar9132.dtsi b/arch/mips/boot/dts/qca/ar9132.dtsi
-index 4a537ea..cd1602f 100644
---- a/arch/mips/boot/dts/qca/ar9132.dtsi
-+++ b/arch/mips/boot/dts/qca/ar9132.dtsi
-@@ -28,6 +28,13 @@
- 					<&ddr_ctrl 0>, <&ddr_ctrl 1>;
- 	};
+No changes since v1.
+
+Thanks,
+Charles
+
+ Documentation/devicetree/bindings/mfd/arizona.txt | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/mfd/arizona.txt b/Documentation/devicetree/bindings/mfd/arizona.txt
+index 18be0cb..39f76f8 100644
+--- a/Documentation/devicetree/bindings/mfd/arizona.txt
++++ b/Documentation/devicetree/bindings/mfd/arizona.txt
+@@ -45,6 +45,13 @@ Optional properties:
  
-+	extosc: oscillator {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
+   - wlf,reset : GPIO specifier for the GPIO controlling /RESET
+ 
++  - clocks: Should reference the clocks supplied on MCLK1 and MCLK2
++  - clock-names: Should contains two strings:
++      "mclk1" for the clock supplied on MCLK1, recommended to be a high
++      quality audio reference clock
++      "mclk2" for the clock supplied on MCLK2, recommended to be an always on
++      32k clock
 +
-+		/* The board must provide the extosc clock frequency */
-+	};
-+
- 	ahb {
- 		compatible = "simple-bus";
- 		ranges;
-@@ -89,8 +96,8 @@
- 						"qca,ar9130-pll";
- 				reg = <0x18050000 0x20>;
- 
-+				clocks = <&extosc>;
- 				clock-names = "ref";
--				/* The board must provides the ref clock */
- 
- 				#clock-cells = <1>;
- 				clock-output-names = "cpu", "ddr", "ahb";
-diff --git a/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts b/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
-index 003015a..53057ca 100644
---- a/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
-+++ b/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
-@@ -18,21 +18,11 @@
- 		reg = <0x0 0x2000000>;
- 	};
- 
--	extosc: oscillator {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <40000000>;
--	};
--
- 	ahb {
- 		apb {
- 			uart@18020000 {
- 				status = "okay";
- 			};
--
--			pll-controller@18050000 {
--				clocks = <&extosc>;
--			};
- 		};
- 
- 		spi@1f000000 {
-@@ -110,3 +100,7 @@
- 		};
- 	};
- };
-+
-+&extosc {
-+	clock-frequency = <40000000>;
-+};
+   - wlf,gpio-defaults : A list of GPIO configuration register values. Defines
+     for the appropriate values can found in <dt-bindings/mfd/arizona.txt>. If
+     absent, no configuration of these registers is performed. If any entry has
 -- 
-2.6.2
-
+2.1.4
