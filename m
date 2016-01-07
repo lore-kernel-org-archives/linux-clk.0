@@ -1,86 +1,31 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Wed, 13 Jan 2016 15:05:16 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>,
-	Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/9 REPOST] Tegra CLK Fixes
-Message-ID: <20160113140516.GD15782@ulmo>
-References: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Caesar Wang <wxt@rock-chips.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-rockchip@lists.infradead.org, leecam@google.com, leozwang@google.com, keescook@google.com, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 04/12] clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for sclk_i2s_out
+Date: Thu, 07 Jan 2016 11:05:06 +0100
+Message-ID: <290434099.8XFZ9qmNRz@phil>
+In-Reply-To: <1452155155-16232-5-git-send-email-wxt@rock-chips.com>
+References: <1452155155-16232-1-git-send-email-wxt@rock-chips.com> <1452155155-16232-5-git-send-email-wxt@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="pQhZXvAqiZgbeUkD"
-In-Reply-To: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Caesar,
 
---pQhZXvAqiZgbeUkD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Am Donnerstag, 7. Januar 2016, 16:25:47 schrieb Caesar Wang:
+> SCLk_I2S_OUT is the noc bus clock for i2s module, this clock is used by
+> extra codecs.
+> 
+> Due to it shouldn't belong to any driver, but we need it enabled,
+> so just mark it as the CLK_IGNORE_UNUSED flag.
 
-On Fri, Jan 08, 2016 at 01:45:05PM -0500, Rhyland Klein wrote:
-> This patch set fixes some issues found with the Tegra CLK drivers
-> in testing. There are also a few patches which clean up the code
-> and fix some naming issues.
->=20
-> Resending with correct email address for Mike Turquette.
->=20
-> Andrew Bresticker (1):
->   clk: tegra: pll: Fix potential sleeping-while-atomic
->=20
-> Mark Kuo (2):
->   clk: tegra: pll: Do not disable PLLE when under HW control
->   clk: tegra: pll: Fix PLLE SS config
->=20
-> Rhyland Klein (6):
->   clk: tegra: Fix divider on VI_I2C
->   clk: tegra210: Remove improper flags for lock_enable
->   clk: tegra210: Fix naming of MISC registers
->   clk: tegra: Fix the misnaming of nvenc from msenc
->   clk: tegra210: fix pllx dyn step calculation
->   clk: tegra210: Initialize PLL_D2 to a sane rate
->=20
->  drivers/clk/tegra/clk-pll.c          | 50 +++++++++++++--------
->  drivers/clk/tegra/clk-tegra-periph.c |  4 +-
->  drivers/clk/tegra/clk-tegra210.c     | 87 +++++++++++++++---------------=
-------
->  3 files changed, 71 insertions(+), 70 deletions(-)
+What makes you think it shouldn't belong to any driver?
 
-Rhyland,
+In most schematics I have, i2s_clkout is going to some clock-input of the 
+audio codec - probably the MCLK input on your rt5616. And while the new 
+rt5616 driver does not seem to do clock handling, it should just handle the 
+clock using the normal APIs.
 
-This looks like a very nice round of fixups for the clock driver. I've
-replied to a couple of individual patches where I thought things could
-be improved a little, but they're mostly minor things.
 
-Thierry
-
---pQhZXvAqiZgbeUkD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJWllmcAAoJEN0jrNd/PrOh/YAP/2k6jUcN+5Of8iCkEfPEfQ57
-8A6KY8J1pXX5ch+BvBAlgLGi63NXeqxDU6mCWQeYPpfcZSH8LYh28IY0XHs+h3cf
-hRPk1rkvY1XjJqbP7UhQvFUJqTc7oX8rs5O1OWhfXHCAbAtE5YuaYQtWL8ifZEU/
-YIiL+rf2HrU3W/Qq1hS3b34mGTCNi/rBRx46FnpTw0LsOZhcNeYr0CtYbXnxdLLl
-lAd4R69FFx7K9gv5Qv9VLdJCyTGhQYNGpg9kWv2xyU2P6Qs+pcK0allBKOz/b5qh
-sMJk4g13Zg15SJcXfAQRaFC8dvJKFFrkEQlh/LY55Wdx9jgygkjBffRQ1z7srXPw
-XIL928JL0FRBuowUBr5CL/6haCMWl//vTpPNpXSLmy4Av1N85vjjMvjnbG6xiFHD
-//dTg8ZE3lgHNZvPRFfC5AitILo54iOrHssB1VV1gVipRDOmXTmEfYl4kNBOx0vV
-sb4IgXjl8UAU5UVcWtT1TNNSnNfS4xUBlckHpQSzuEKm+AzVDSvESLl4Sq7nXWJg
-IS7wwnCUSEcfKcWb6KcOhidlrxVBirRvjYDcIrvVFRrqzc+MrIVycW6xz31/+2xs
-sq9/fmn+cKTV1rIPHU8xZiv1LPMALbJWOyRQzIwe6JK73dyGlY0zpiJFh7KC7YmG
-5hEC76Dmap2hTFKG8dkB
-=JL/M
------END PGP SIGNATURE-----
-
---pQhZXvAqiZgbeUkD--
+Heiko
