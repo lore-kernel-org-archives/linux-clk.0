@@ -1,58 +1,75 @@
-Return-Path: <rjui@broadcom.com>
-From: Ray Jui <rjui@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<bcm-kernel-feedback-list@broadcom.com>, Simran Rai <ssimran@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>
-Subject: [PATCH RESEND v2 3/4] clk: iproc: Remove __init from header
-Date: Tue, 26 Jan 2016 17:18:40 -0800
-Message-ID: <1453857521-8804-4-git-send-email-rjui@broadcom.com>
-In-Reply-To: <1453857521-8804-1-git-send-email-rjui@broadcom.com>
-References: <1453857521-8804-1-git-send-email-rjui@broadcom.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rjui@broadcom.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.132]:42071 "EHLO
+	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752988AbcAGMR5 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jan 2016 07:17:57 -0500
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: keescook@google.com, leozwang@google.com,
+	linux-rockchip@lists.infradead.org,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/5] clk: rockchip: rk3036: fix the FLAGs for clock mux
+Date: Thu,  7 Jan 2016 20:17:33 +0800
+Message-Id: <1452169057-24467-2-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1452169057-24467-1-git-send-email-zhengxing@rock-chips.com>
+References: <1452169057-24467-1-git-send-email-zhengxing@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Remove __init macro from all function prototypes in clk-iproc.h
+The DFLAGS are used for the clock dividers, the CLKSEL_CON flags
+of COMPOSITE_NODIV type should be MFLAGS.
 
-Signed-off-by: Ray Jui <rjui@broadcom.com>
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 ---
- drivers/clk/bcm/clk-iproc.h | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clk/bcm/clk-iproc.h b/drivers/clk/bcm/clk-iproc.h
-index febae11..2148b4e 100644
---- a/drivers/clk/bcm/clk-iproc.h
-+++ b/drivers/clk/bcm/clk-iproc.h
-@@ -204,16 +204,16 @@ struct iproc_asiu_div {
- 	unsigned int low_width;
- };
+ drivers/clk/rockchip/clk-rk3036.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
+index ebce980..7e3b41c 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -224,16 +224,16 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
+ 			RK2928_CLKGATE_CON(2), 2, GFLAGS),
  
--void __init iproc_armpll_setup(struct device_node *node);
--void __init iproc_pll_clk_setup(struct device_node *node,
--				const struct iproc_pll_ctrl *pll_ctrl,
--				const struct iproc_pll_vco_param *vco,
--				unsigned int num_vco_entries,
--				const struct iproc_clk_ctrl *clk_ctrl,
--				unsigned int num_clks);
--void __init iproc_asiu_setup(struct device_node *node,
--			     const struct iproc_asiu_div *div,
--			     const struct iproc_asiu_gate *gate,
--			     unsigned int num_clks);
-+void iproc_armpll_setup(struct device_node *node);
-+void iproc_pll_clk_setup(struct device_node *node,
-+			 const struct iproc_pll_ctrl *pll_ctrl,
-+			 const struct iproc_pll_vco_param *vco,
-+			 unsigned int num_vco_entries,
-+			 const struct iproc_clk_ctrl *clk_ctrl,
-+			 unsigned int num_clks);
-+void iproc_asiu_setup(struct device_node *node,
-+		      const struct iproc_asiu_div *div,
-+		      const struct iproc_asiu_gate *gate,
-+		      unsigned int num_clks);
+ 	COMPOSITE_NODIV(SCLK_TIMER0, "sclk_timer0", mux_timer_p, CLK_IGNORE_UNUSED,
+-			RK2928_CLKSEL_CON(2), 4, 1, DFLAGS,
++			RK2928_CLKSEL_CON(2), 4, 1, MFLAGS,
+ 			RK2928_CLKGATE_CON(1), 0, GFLAGS),
+ 	COMPOSITE_NODIV(SCLK_TIMER1, "sclk_timer1", mux_timer_p, CLK_IGNORE_UNUSED,
+-			RK2928_CLKSEL_CON(2), 5, 1, DFLAGS,
++			RK2928_CLKSEL_CON(2), 5, 1, MFLAGS,
+ 			RK2928_CLKGATE_CON(1), 1, GFLAGS),
+ 	COMPOSITE_NODIV(SCLK_TIMER2, "sclk_timer2", mux_timer_p, CLK_IGNORE_UNUSED,
+-			RK2928_CLKSEL_CON(2), 6, 1, DFLAGS,
++			RK2928_CLKSEL_CON(2), 6, 1, MFLAGS,
+ 			RK2928_CLKGATE_CON(2), 4, GFLAGS),
+ 	COMPOSITE_NODIV(SCLK_TIMER3, "sclk_timer3", mux_timer_p, CLK_IGNORE_UNUSED,
+-			RK2928_CLKSEL_CON(2), 7, 1, DFLAGS,
++			RK2928_CLKSEL_CON(2), 7, 1, MFLAGS,
+ 			RK2928_CLKGATE_CON(2), 5, GFLAGS),
  
- #endif /* _CLK_IPROC_H */
+ 	MUX(0, "uart_pll_clk", mux_pll_src_apll_dpll_gpll_usb480m_p, 0,
+@@ -279,13 +279,13 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
+ 			RK2928_CLKGATE_CON(3), 2, GFLAGS),
+ 
+ 	COMPOSITE_NODIV(0, "sclk_sdmmc_src", mux_mmc_src_p, 0,
+-			RK2928_CLKSEL_CON(12), 8, 2, DFLAGS,
++			RK2928_CLKSEL_CON(12), 8, 2, MFLAGS,
+ 			RK2928_CLKGATE_CON(2), 11, GFLAGS),
+ 	DIV(SCLK_SDMMC, "sclk_sdmmc", "sclk_sdmmc_src", 0,
+ 			RK2928_CLKSEL_CON(11), 0, 7, DFLAGS),
+ 
+ 	COMPOSITE_NODIV(0, "sclk_sdio_src", mux_mmc_src_p, 0,
+-			RK2928_CLKSEL_CON(12), 10, 2, DFLAGS,
++			RK2928_CLKSEL_CON(12), 10, 2, MFLAGS,
+ 			RK2928_CLKGATE_CON(2), 13, GFLAGS),
+ 	DIV(SCLK_SDIO, "sclk_sdio", "sclk_sdio_src", 0,
+ 			RK2928_CLKSEL_CON(11), 8, 7, DFLAGS),
 -- 
-1.9.1
+1.7.9.5
+
+
