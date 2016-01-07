@@ -1,86 +1,53 @@
-Return-Path: <sha@pengutronix.de>
-Date: Fri, 8 Jan 2016 10:15:10 +0100
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: James Liao <jamesjj.liao@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, srv_heupstream@mediatek.com,
-	linux-kernel@vger.kernel.org, Daniel Kurtz <djkurtz@chromium.org>,
-	linux-mediatek@lists.infradead.org,
-	Sascha Hauer <kernel@pengutronix.de>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: mediatek: Allow changing PLL rate when it is off
-Message-ID: <20160108091510.GC13058@pengutronix.de>
-References: <1452240997-35316-1-git-send-email-jamesjj.liao@mediatek.com>
+Return-Path: <sboyd@codeaurora.org>
+Subject: Re: [PATCH v2 3/5] clk: qcom: Add MSM8996 Global Clock Control (GCC)
+ driver
+To: Rajendra Nayak <rnayak@codeaurora.org>,
+ Mike Turquette <mturquette@baylibre.com>
+References: <1448933502-11944-1-git-send-email-sboyd@codeaurora.org>
+ <1448933502-11944-4-git-send-email-sboyd@codeaurora.org>
+ <568DF4C4.2080504@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+From: Stephen Boyd <sboyd@codeaurora.org>
+Message-ID: <568EFAF5.50507@codeaurora.org>
+Date: Thu, 7 Jan 2016 15:55:33 -0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1452240997-35316-1-git-send-email-jamesjj.liao@mediatek.com>
+In-Reply-To: <568DF4C4.2080504@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi James,
+On 01/06/16 21:16, Rajendra Nayak wrote:
+> Stephen,
+>
+> On 12/01/2015 07:01 AM, Stephen Boyd wrote:
+>> Add support for the global clock controller found on MSM8996
+>> based devices. This should allow most non-multimedia device
+>> drivers to probe and control their clocks.
+> On my 8096 board I see the following orphan clocks,
+>
+> /sys/kernel/debug/clk # cat clk_orphan_summary
+>    clock                         enable_cnt  prepare_cnt        rate   accuracy   phase
+> ---------------------------------------------------------------------------------------                                                                                                                        -
+>  gcc_ufs_rx_symbol_1_clk                  0            0           0          0 0
+>  gcc_ufs_rx_symbol_0_clk                  0            0           0          0 0
+>  gcc_ufs_tx_symbol_0_clk                  0            0           0          0 0
+>  gcc_pcie_2_pipe_clk                      0            0           0          0 0
+>  gcc_pcie_1_pipe_clk                      0            0           0          0 0
+>  gcc_pcie_0_pipe_clk                      0            0           0          0 0
+>  gcc_usb3_phy_pipe_clk                    0            0           0          0 0
+>
+> I was looking at some ufs clocks which lead me to this. something that needs to be fixed?
+>
 
-On Fri, Jan 08, 2016 at 04:16:37PM +0800, James Liao wrote:
-> Some modules may need to change its clock rate before turn on it.
-> So changing PLL's rate when it is off should be allowed.
-> This patch removes PLL enabled check before set rate, so that
-> PLLs can set new frequency even if they are off.
-
-This sounds like the software refused to change the rate on disabled
-PLLs, but this is not the case.
-
-> 
-> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> ---
->  drivers/clk/mediatek/clk-pll.c | 9 ++-------
->  1 file changed, 2 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-> index 966cab1..8e31fae 100644
-> --- a/drivers/clk/mediatek/clk-pll.c
-> +++ b/drivers/clk/mediatek/clk-pll.c
-> @@ -91,9 +91,6 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
->  		int postdiv)
->  {
->  	u32 con1, val;
-> -	int pll_en;
-> -
-> -	pll_en = readl(pll->base_addr + REG_CON0) & CON0_BASE_EN;
->  
->  	/* set postdiv */
->  	val = readl(pll->pd_addr);
-> @@ -114,15 +111,13 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
->  
->  	con1 = readl(pll->base_addr + REG_CON1);
->  
-> -	if (pll_en)
-> -		con1 |= CON0_PCW_CHG;
-> +	con1 |= CON0_PCW_CHG;
-
-This bit is described as "Feedback divide ratio update". To me this
-sounds like we have to inform the hardware that the PLL registers have
-been updated. The current code only sets this bit when the PLL is
-enabled which sounds sane to me.
-
->  
->  	writel(con1, pll->base_addr + REG_CON1);
->  	if (pll->tuner_addr)
->  		writel(con1 + 1, pll->tuner_addr);
->  
-> -	if (pll_en)
-> -		udelay(20);
-> +	udelay(20);
-
-We seem to have to wait here until the PLL is really running at the new
-frequency. Normally we don't have to do this when the PLL is disabled.
-
-I'm sure this patch solves a real problem, from looking at it it's just
-not clear to me what the problem is. Could you clarify this a bit?
-
-Sascha
-
+Hmm yes. This was a "TODO" because the data says there are parents for
+these clocks, but they don't seem to exist in the global clock
+controller. Perhaps they come from the phys? If my suspicion is right,
+then those phy drivers need to register the source clocks and give them
+some rate so that these clocks here aren't orphans. In the downstream
+code they mark these clocks as root clocks, which doesn't seem right,
+but I suppose that also works given that we don't seem to care about
+rates, just on/off. It just feels hacky, so I left them as orphans for now.
 
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
