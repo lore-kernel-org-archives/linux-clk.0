@@ -1,224 +1,62 @@
-Return-Path: <ckeepax@opensource.wolfsonmicro.com>
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-To: <mturquette@baylibre.com>, <cw00.choi@samsung.com>, <lee.jones@linaro.org>
-CC: <sboyd@codeaurora.org>, <myungjoo.ham@samsung.com>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.wolfsonmicro.com>
-Subject: [PATCH v3 3/4] mfd: arizona: Switch to using clock driver for 32k clock
-Date: Fri, 8 Jan 2016 11:29:41 +0000
-Message-ID: <1452252582-20834-3-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-In-Reply-To: <1452252582-20834-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-References: <1452252582-20834-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.131]:46369 "EHLO
+	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752254AbcAGM0g (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jan 2016 07:26:36 -0500
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	zhengxing@rock-chips.com, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, keescook@google.com,
+	leozwang@google.com
+Subject: [PATCH v2 5/5] clk: rockchip: rk3036: add HCLK_MAC id for emac
+Date: Thu,  7 Jan 2016 20:26:18 +0800
+Message-Id: <1452169578-24565-1-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1452169057-24467-1-git-send-email-zhengxing@rock-chips.com>
+References: <1452169057-24467-1-git-send-email-zhengxing@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Now we have a clock driver that can control the 32k clock use this
-rather than directly controlling the 32k clock from the MFD device.
+We need to add HCLK_MAC id explicitly because that it is referred
+by hclk in the emac driver.
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 ---
 
-No changes since v2.
+ drivers/clk/rockchip/clk-rk3036.c      |    2 +-
+ include/dt-bindings/clock/rk3036-cru.h |    1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-Thanks,
-Charles
-
- drivers/mfd/arizona-core.c       | 104 +++++++++------------------------------
- include/linux/mfd/arizona/core.h |   7 +--
- 2 files changed, 25 insertions(+), 86 deletions(-)
-
-diff --git a/drivers/mfd/arizona-core.c b/drivers/mfd/arizona-core.c
-index d474732..5a55dd6 100644
---- a/drivers/mfd/arizona-core.c
-+++ b/drivers/mfd/arizona-core.c
-@@ -36,63 +36,6 @@ static const char * const wm5102_core_supplies[] = {
- 	"DBVDD1",
- };
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
+index bc7fbac..15cd29a 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -404,7 +404,7 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
+ 	GATE(HCLK_OTG1, "hclk_otg1", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(7), 3, GFLAGS),
+ 	GATE(HCLK_I2S, "hclk_i2s", "hclk_peri", 0, RK2928_CLKGATE_CON(7), 2, GFLAGS),
+ 	GATE(0, "hclk_sfc", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 14, GFLAGS),
+-	GATE(0, "hclk_mac", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 15, GFLAGS),
++	GATE(HCLK_MAC, "hclk_mac", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 15, GFLAGS),
  
--int arizona_clk32k_enable(struct arizona *arizona)
--{
--	int ret = 0;
--
--	mutex_lock(&arizona->clk_lock);
--
--	arizona->clk32k_ref++;
--
--	if (arizona->clk32k_ref == 1) {
--		switch (arizona->pdata.clk32k_src) {
--		case ARIZONA_32KZ_MCLK1:
--			ret = pm_runtime_get_sync(arizona->dev);
--			if (ret != 0)
--				goto out;
--			break;
--		}
--
--		ret = regmap_update_bits(arizona->regmap, ARIZONA_CLOCK_32K_1,
--					 ARIZONA_CLK_32K_ENA,
--					 ARIZONA_CLK_32K_ENA);
--	}
--
--out:
--	if (ret != 0)
--		arizona->clk32k_ref--;
--
--	mutex_unlock(&arizona->clk_lock);
--
--	return ret;
--}
--EXPORT_SYMBOL_GPL(arizona_clk32k_enable);
--
--int arizona_clk32k_disable(struct arizona *arizona)
--{
--	mutex_lock(&arizona->clk_lock);
--
--	BUG_ON(arizona->clk32k_ref <= 0);
--
--	arizona->clk32k_ref--;
--
--	if (arizona->clk32k_ref == 0) {
--		regmap_update_bits(arizona->regmap, ARIZONA_CLOCK_32K_1,
--				   ARIZONA_CLK_32K_ENA, 0);
--
--		switch (arizona->pdata.clk32k_src) {
--		case ARIZONA_32KZ_MCLK1:
--			pm_runtime_put_sync(arizona->dev);
--			break;
--		}
--	}
--
--	mutex_unlock(&arizona->clk_lock);
--
--	return 0;
--}
--EXPORT_SYMBOL_GPL(arizona_clk32k_disable);
--
- static irqreturn_t arizona_clkgen_err(int irq, void *data)
- {
- 	struct arizona *arizona = data;
-@@ -874,6 +817,7 @@ static inline int arizona_of_get_core_pdata(struct arizona *arizona)
- 
- static const struct mfd_cell early_devs[] = {
- 	{ .name = "arizona-ldo1" },
-+	{ .name = "arizona-clk" },
- };
- 
- static const char * const wm5102_supplies[] = {
-@@ -970,7 +914,6 @@ int arizona_dev_init(struct arizona *arizona)
- 	int n_subdevs, ret, i;
- 
- 	dev_set_drvdata(arizona->dev, arizona);
--	mutex_init(&arizona->clk_lock);
- 
- 	if (dev_get_platdata(arizona->dev))
- 		memcpy(&arizona->pdata, dev_get_platdata(arizona->dev),
-@@ -1261,28 +1204,6 @@ int arizona_dev_init(struct arizona *arizona)
- 	}
- 
- 	/* Chip default */
--	if (!arizona->pdata.clk32k_src)
--		arizona->pdata.clk32k_src = ARIZONA_32KZ_MCLK2;
--
--	switch (arizona->pdata.clk32k_src) {
--	case ARIZONA_32KZ_MCLK1:
--	case ARIZONA_32KZ_MCLK2:
--		regmap_update_bits(arizona->regmap, ARIZONA_CLOCK_32K_1,
--				   ARIZONA_CLK_32K_SRC_MASK,
--				   arizona->pdata.clk32k_src - 1);
--		arizona_clk32k_enable(arizona);
--		break;
--	case ARIZONA_32KZ_NONE:
--		regmap_update_bits(arizona->regmap, ARIZONA_CLOCK_32K_1,
--				   ARIZONA_CLK_32K_SRC_MASK, 2);
--		break;
--	default:
--		dev_err(arizona->dev, "Invalid 32kHz clock source: %d\n",
--			arizona->pdata.clk32k_src);
--		ret = -EINVAL;
--		goto err_reset;
--	}
--
- 	for (i = 0; i < ARIZONA_MAX_MICBIAS; i++) {
- 		if (!arizona->pdata.micbias[i].mV &&
- 		    !arizona->pdata.micbias[i].bypass)
-@@ -1387,10 +1308,25 @@ int arizona_dev_init(struct arizona *arizona)
- 	pm_runtime_set_active(arizona->dev);
- 	pm_runtime_enable(arizona->dev);
- 
-+	arizona->clk32k = devm_clk_get(arizona->dev, "arizona-32k");
-+	if (IS_ERR(arizona->clk32k)) {
-+		ret = PTR_ERR(arizona->clk32k);
-+		if (ret == -ENOENT)
-+			ret = -EPROBE_DEFER;
-+		dev_err(arizona->dev, "Failed to get 32k clock: %d\n", ret);
-+		goto err_pm;
-+	}
-+
-+	ret = clk_prepare_enable(arizona->clk32k);
-+	if (ret < 0) {
-+		dev_err(arizona->dev, "Failed to enable 32k clock: %d\n", ret);
-+		goto err_pm;
-+	}
-+
- 	/* Set up for interrupts */
- 	ret = arizona_irq_init(arizona);
- 	if (ret != 0)
--		goto err_reset;
-+		goto err_clock;
- 
- 	pm_runtime_set_autosuspend_delay(arizona->dev, 100);
- 	pm_runtime_use_autosuspend(arizona->dev);
-@@ -1414,6 +1350,10 @@ int arizona_dev_init(struct arizona *arizona)
- 
- err_irq:
- 	arizona_irq_exit(arizona);
-+err_clock:
-+	clk_disable_unprepare(arizona->clk32k);
-+err_pm:
-+	pm_runtime_disable(arizona->dev);
- err_reset:
- 	arizona_enable_reset(arizona);
- 	regulator_disable(arizona->dcvdd);
-@@ -1430,6 +1370,8 @@ EXPORT_SYMBOL_GPL(arizona_dev_init);
- 
- int arizona_dev_exit(struct arizona *arizona)
- {
-+	clk_disable_unprepare(arizona->clk32k);
-+
- 	pm_runtime_disable(arizona->dev);
- 
- 	regulator_disable(arizona->dcvdd);
-diff --git a/include/linux/mfd/arizona/core.h b/include/linux/mfd/arizona/core.h
-index 79e607e..b9a1da4 100644
---- a/include/linux/mfd/arizona/core.h
-+++ b/include/linux/mfd/arizona/core.h
-@@ -13,6 +13,7 @@
- #ifndef _WM_ARIZONA_CORE_H
- #define _WM_ARIZONA_CORE_H
- 
-+#include <linux/clk.h>
- #include <linux/interrupt.h>
- #include <linux/regmap.h>
- #include <linux/regulator/consumer.h>
-@@ -133,8 +134,7 @@ struct arizona {
- 	bool hpdet_clamp;
- 	unsigned int hp_ena;
- 
--	struct mutex clk_lock;
--	int clk32k_ref;
-+	struct clk *clk32k;
- 
- 	bool ctrlif_error;
- 
-@@ -148,9 +148,6 @@ struct arizona {
- 	struct mutex dac_comp_lock;
- };
- 
--int arizona_clk32k_enable(struct arizona *arizona);
--int arizona_clk32k_disable(struct arizona *arizona);
--
- int arizona_request_irq(struct arizona *arizona, int irq, char *name,
- 			irq_handler_t handler, void *data);
- void arizona_free_irq(struct arizona *arizona, int irq, void *data);
+ 	/* pclk_peri gates */
+ 	GATE(0, "pclk_peri_matrix", "pclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(4), 1, GFLAGS),
+diff --git a/include/dt-bindings/clock/rk3036-cru.h b/include/dt-bindings/clock/rk3036-cru.h
+index ebc7a7b..3396591 100644
+--- a/include/dt-bindings/clock/rk3036-cru.h
++++ b/include/dt-bindings/clock/rk3036-cru.h
+@@ -92,6 +92,7 @@
+ #define HCLK_SDMMC		456
+ #define HCLK_SDIO		457
+ #define HCLK_EMMC		459
++#define HCLK_MAC		460
+ #define HCLK_I2S		462
+ #define HCLK_LCDC		465
+ #define HCLK_ROM		467
 -- 
-2.1.4
+1.7.9.5
+
+
