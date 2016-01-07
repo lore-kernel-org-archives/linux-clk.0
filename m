@@ -1,69 +1,161 @@
 Return-Path: <vz@mleia.com>
-Message-ID: <568F0684.6060701@mleia.com>
-Date: Fri, 08 Jan 2016 02:44:52 +0200
+Message-ID: <568E6BE3.9000909@mleia.com>
+Date: Thu, 07 Jan 2016 15:45:07 +0200
 From: Vladimir Zapolskiy <vz@mleia.com>
 MIME-Version: 1.0
-To: Masahiro Yamada <yamada.masahiro@socionext.com>,
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+CC: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
  linux-clk@vger.kernel.org
-CC: Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v2 01/16] clk: remove unused first argument of
- __clk_init()
-References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com> <1451298191-30815-2-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1451298191-30815-2-git-send-email-yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset=windows-1252
+Subject: Re: [PATCH 3/3] clk: remove redundant clock parents lookup table
+ allocations
+References: <1452136568-478-1-git-send-email-vz@mleia.com>	<1452136568-478-4-git-send-email-vz@mleia.com>	<CAK7LNASpWdpmK4xKkOV1cbKxFckKV7bZHA=fNVDYhR2e4VZzYA@mail.gmail.com>	<568E419E.4080404@mleia.com> <CAK7LNATiHJa8XwigMj6dWFauUC9TV-_Ypw-i_agn5hCD_6Yb4g@mail.gmail.com>
+In-Reply-To: <CAK7LNATiHJa8XwigMj6dWFauUC9TV-_Ypw-i_agn5hCD_6Yb4g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Hi Masahiro,
 
-the whole series looks very good, also I haven't found any regressions
-(tested on imx6q and lpc32xx).
+On 07.01.2016 13:33, Masahiro Yamada wrote:
+> Hi Vladimir,
+> 
+> 2016-01-07 19:44 GMT+09:00 Vladimir Zapolskiy <vz@mleia.com>:
+>> Hi Masahiro,
+>>
+>> On 07.01.2016 11:00, Masahiro Yamada wrote:
+>>> Hi Vladimir,
+>>>
+>>>
+>>> 2016-01-07 12:16 GMT+09:00 Vladimir Zapolskiy <vz@mleia.com>:
+>>>> Since clock parents lookup table for clocks with multiple parent
+>>>> clocks is always allocated during clock registration, remove similar
+>>>> allocations from __clk_init_parent() and clk_fetch_parent_index().
+>>>>
+>>>> The change also corrects a pointer type of a single lookup table
+>>>> entry on calculation of the lookup table size.
+>>>>
+>>>> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+>>>> ---
+>>>>  drivers/clk/clk.c | 20 +++-----------------
+>>>>  1 file changed, 3 insertions(+), 17 deletions(-)
+>>>>
+>>>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+>>>> index 2fb0dae..f8872f9 100644
+>>>> --- a/drivers/clk/clk.c
+>>>> +++ b/drivers/clk/clk.c
+>>>> @@ -1067,13 +1067,6 @@ static int clk_fetch_parent_index(struct clk_core *core,
+>>>>  {
+>>>>         int i;
+>>>>
+>>>> -       if (!core->parents) {
+>>>> -               core->parents = kcalloc(core->num_parents,
+>>>> -                                       sizeof(struct clk *), GFP_KERNEL);
+>>>> -               if (!core->parents)
+>>>> -                       return -ENOMEM;
+>>>> -       }
+>>>> -
+>>>>         /*
+>>>>          * find index of new parent clock using cached parent ptrs,
+>>>>          * or if not yet cached, use string name comparison and cache
+>>>> @@ -1711,18 +1704,11 @@ static struct clk_core *__clk_init_parent(struct clk_core *core)
+>>>>         }
+>>>>
+>>>>         /*
+>>>> -        * Do our best to cache parent clocks in core->parents.  This prevents
+>>>> -        * unnecessary and expensive lookups.  We don't set core->parent here;
+>>>> -        * that is done by the calling function.
+>>>> +        * We don't set core->parent here; that is done by the calling function.
+>>>>          */
+>>>>
+>>>>         index = core->ops->get_parent(core->hw);
+>>>>
+>>>> -       if (!core->parents)
+>>>> -               core->parents =
+>>>> -                       kcalloc(core->num_parents, sizeof(struct clk *),
+>>>> -                                       GFP_KERNEL);
+>>>> -
+>>>>         ret = clk_core_get_parent_by_index(core, index);
+>>>>
+>>>>  out:
+>>>> @@ -2374,8 +2360,8 @@ static int __clk_init(struct device *dev, struct clk *clk_user)
+>>>>          * look-ups of clk's possible parents.
+>>>>          */
+>>>>         if (core->num_parents > 1) {
+>>>> -               core->parents = kcalloc(core->num_parents, sizeof(struct clk *),
+>>>> -                                       GFP_KERNEL);
+>>>> +               core->parents = kcalloc(core->num_parents,
+>>>> +                                       sizeof(struct clk_core *), GFP_KERNEL);
+>>>>                 if (!core->parents) {
+>>>>                         ret = -ENOMEM;
+>>>>                         goto out;
+>>>
+>>>
+>>> You are doing the similar thing as mine.
+>>>
+>>> See
+>>> https://patchwork.kernel.org/patch/7925571/
+>>
+>> Ok, I was not aware of your work, unfortunately.
+>>
+>>>
+>>> This series gives a big conflict with my clean-up series,
+>>> which Michael said he would apply after v4.5-rc1.
+>>>
+>>> See
+>>> http://www.serverphorums.com/read.php?12,1376630
+>>>
+>>>
+>>
+>> No problem, of course your work goes first.
+>>
+>> Obviously I have to review your changes more carefully, but do you
+>> have something similar to my 1/3? If no, then it is a regression.
+> 
+> 
+> No.
+> 
+> I solved the problem in a different way.
+> https://patchwork.kernel.org/patch/7925571/
+> 
+> In my way, core->parents is always allocated.
 
-Please feel free to add
+what's about the case of root clocks, when (core->num_parents == 0) ?
 
-Reviewed-by: Vladimir Zapolskiy <vz@mleia.com>
+Yours unconditional
 
-On 28.12.2015 12:22, Masahiro Yamada wrote:
-> The "struct device *dev" is not used at all in this function.
+@@ -2560,12 +2537,20 @@  struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+ 		}
+ 	}
+ 
++	/* avoid unnecessary string look-ups of clk_core's possible parents. */
++	core->parents = kcalloc(core->num_parents, sizeof(*core->parents),
++				GFP_KERNEL);
++	if (!core->parents) {
++		ret = -ENOMEM;
++		goto fail_parents;
++	};
++
+
+looks suspicious, but I have to test and review the background changes as well,
+most probably I'm missing something.
+
+> 1/3 is not needed.
+
+Actually 1/3 solves a bit different kind of problem, but again I have to
+review/test your series.
+
+Shortly you may test it beforehand by a fuzz testing -- see the details
+in 1/3 commit message, you may insert a known in advance wrong
+
+  ret = clk_set_parent(clk, parent);
+
+and get the result.
+
+> If I am wrong, please point out.
 > 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
 > 
-> Changes in v2: None
-> 
->  drivers/clk/clk.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 3fba5ac..897e5ae 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2286,13 +2286,12 @@ static inline void clk_debug_unregister(struct clk_core *core)
->  
->  /**
->   * __clk_init - initialize the data structures in a struct clk
-> - * @dev:	device initializing this clk, placeholder for now
->   * @clk:	clk being initialized
->   *
->   * Initializes the lists in struct clk_core, queries the hardware for the
->   * parent and rate and sets them both.
->   */
-> -static int __clk_init(struct device *dev, struct clk *clk_user)
-> +static int __clk_init(struct clk *clk_user)
->  {
->  	int i, ret = 0;
->  	struct clk_core *orphan;
-> @@ -2575,7 +2574,7 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
->  		goto fail_parent_names_copy;
->  	}
->  
-> -	ret = __clk_init(dev, hw->clk);
-> +	ret = __clk_init(hw->clk);
->  	if (!ret)
->  		return hw->clk;
->  
-> 
+
+I'll test and review your series today later on or tomorrow more carefully.
 
 --
 With best wishes,
