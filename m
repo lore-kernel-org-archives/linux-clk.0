@@ -1,81 +1,74 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Mon, 25 Jan 2016 14:26:09 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: xuejiancheng <xuejiancheng@huawei.com>, mturquette@baylibre.com,
-	sboyd@codeaurora.org, p.zabel@pengutronix.de, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	linux@arm.linux.org.uk, khilman@linaro.org, olof@lixom.net,
-	xuwei5@hisilicon.com, haojian.zhuang@linaro.org,
-	zhangfei.gao@linaro.org, bintian.wang@huawei.com,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	yanhaifeng@hisilicon.com, yanghongwei@hisilicon.com,
-	suwenping@hisilicon.com, ml.yang@hisilicon.com,
-	gaofei@hisilicon.com, zhangzhenxing@hisilicon.com,
-	xuejiancheng@hisilicon.com
-Subject: Re: [PATCH v5 5/6] mfd: dt-bindings: add device tree bindings for
- Hi3519 sysctrl
-Message-ID: <20160125142609.GR3368@x1>
-References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
- <20160112083946.GN19803@x1>
- <5694C725.6010502@huawei.com>
- <5675031.hi9rRCqFXs@wuerfel>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <5675031.hi9rRCqFXs@wuerfel>
+Return-Path: <caesar.upstream@gmail.com>
+Return-Path: <caesar.upstream@gmail.com>
+From: Caesar Wang <wxt@rock-chips.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	heiko@sntech.de
+Cc: linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	wxt@rock-chips.com,
+	Jianqun xu <jay.xu@rock-chips.com>
+Subject: [PATCH] clk: rockchip: fix some clock gates for rk3368
+Date: Thu,  7 Jan 2016 17:18:07 +0800
+Message-Id: <1452158287-18742-1-git-send-email-wxt@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 12 Jan 2016, Arnd Bergmann wrote:
+From: Jianqun xu <jay.xu@rock-chips.com>
 
-> On Tuesday 12 January 2016 17:28:05 xuejiancheng wrote:
-> > >>>>>
-> > >>>> Not yet.
-> > >>>> Arnd Bergmann and Rob Herring all suggested adding a specific compatible string
-> > >>>> with the SOC name. This binding is just used for describing the compatible string now.
-> > >>>> When more functions on hi3519 SOC are added later, the specific driver will be also
-> > >>>> needed.
-> > >>>
-> > >>> Save this binding until it has more functionality.  We here "I'll add
-> > >>> to this later" all too often.
-> > >>>
-> > >>
-> > >> In the hi3519.dtsi file, there is a system-controller device node described like below:
-> > >> sysctrl: system-controller@12010000 {
-> > >>      compatible = "hisilicon,hi3519-sysctrl", "syscon";
-> > >>      reg = <0x12010000 0x1000>;
-> > >> };
-> > >> Do you mean that I should remove "hisilicon,hi3519-sysctrl" and just use "syscon" as the
-> > >> compatible string?　
-> > > 
-> > > Where is this compatible string _used_?
-> > > 
-> > >> If I want to add "hisilicon,hi3519-sysctrl" for hi3519. where should I put this binding?
-> > >> Could you give some suggestions?  Thank you very much!
-> > > 
-> > > If you're not using the compatible i.e. the device doesn't have its
-> > > own driver yet, then there is no need to supply the binding at all, is
-> > > there?
-> > > 
-> > 
-> > OK. Thank you.
-> > 
-> 
-> Sorry for stepping in late here. I still think that every syscon device should
-> come with a specific compatible string, so we have the option of creating a
-> driver later on, and I'd like to see a binding document that lists those strings
-> (which I believe exists here).
-> 
-> It's really hard to add compatible strings later on, anything else we can
-> work around by keying off that string and adding a workaround in the kernel.
+Reference to the Rockchip RK3368 TRM v1.1, some clock
+gates need to be updated.
 
-Why is it more difficult (or any different) to add a compatible string
-later (when it is used) over now (when it is not used)?
+Signed-off-by: Jianqun xu <jay.xu@rock-chips.com>
+Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+---
 
+ drivers/clk/rockchip/clk-rk3368.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
+index be0ede5..21f3ea9 100644
+--- a/drivers/clk/rockchip/clk-rk3368.c
++++ b/drivers/clk/rockchip/clk-rk3368.c
+@@ -780,13 +780,13 @@ static struct rockchip_clk_branch rk3368_clk_branches[] __initdata = {
+ 	GATE(PCLK_TSADC, "pclk_tsadc", "pclk_peri", 0, RK3368_CLKGATE_CON(20), 0, GFLAGS),
+ 
+ 	/* pclk_pd_alive gates */
+-	GATE(PCLK_TIMER1, "pclk_timer1", "pclk_pd_alive", 0, RK3368_CLKGATE_CON(14), 8, GFLAGS),
+-	GATE(PCLK_TIMER0, "pclk_timer0", "pclk_pd_alive", 0, RK3368_CLKGATE_CON(14), 7, GFLAGS),
+-	GATE(0, "pclk_alive_niu", "pclk_pd_alive", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(14), 12, GFLAGS),
+-	GATE(PCLK_GRF, "pclk_grf", "pclk_pd_alive", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(14), 11, GFLAGS),
+-	GATE(PCLK_GPIO3, "pclk_gpio3", "pclk_pd_alive", 0, RK3368_CLKGATE_CON(14), 3, GFLAGS),
+-	GATE(PCLK_GPIO2, "pclk_gpio2", "pclk_pd_alive", 0, RK3368_CLKGATE_CON(14), 2, GFLAGS),
+-	GATE(PCLK_GPIO1, "pclk_gpio1", "pclk_pd_alive", 0, RK3368_CLKGATE_CON(14), 1, GFLAGS),
++	GATE(PCLK_TIMER1, "pclk_timer1", "pclk_pd_alive", 0, RK3368_CLKGATE_CON(22), 13, GFLAGS),
++	GATE(PCLK_TIMER0, "pclk_timer0", "pclk_pd_alive", 0, RK3368_CLKGATE_CON(22), 12, GFLAGS),
++	GATE(0, "pclk_alive_niu", "pclk_pd_alive", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(22), 9, GFLAGS),
++	GATE(PCLK_GRF, "pclk_grf", "pclk_pd_alive", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(22), 8, GFLAGS),
++	GATE(PCLK_GPIO3, "pclk_gpio3", "pclk_pd_alive", 0, RK3368_CLKGATE_CON(22), 3, GFLAGS),
++	GATE(PCLK_GPIO2, "pclk_gpio2", "pclk_pd_alive", 0, RK3368_CLKGATE_CON(22), 2, GFLAGS),
++	GATE(PCLK_GPIO1, "pclk_gpio1", "pclk_pd_alive", 0, RK3368_CLKGATE_CON(22), 1, GFLAGS),
+ 
+ 	/*
+ 	 * pclk_vio gates
+@@ -796,12 +796,12 @@ static struct rockchip_clk_branch rk3368_clk_branches[] __initdata = {
+ 	GATE(0, "pclk_dphytx", "hclk_vio", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(14), 8, GFLAGS),
+ 
+ 	/* pclk_pd_pmu gates */
+-	GATE(PCLK_PMUGRF, "pclk_pmugrf", "pclk_pd_pmu", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(17), 0, GFLAGS),
+-	GATE(PCLK_GPIO0, "pclk_gpio0", "pclk_pd_pmu", 0, RK3368_CLKGATE_CON(17), 4, GFLAGS),
+-	GATE(PCLK_SGRF, "pclk_sgrf", "pclk_pd_pmu", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(17), 3, GFLAGS),
+-	GATE(0, "pclk_pmu_noc", "pclk_pd_pmu", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(17), 2, GFLAGS),
+-	GATE(0, "pclk_intmem1", "pclk_pd_pmu", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(17), 1, GFLAGS),
+-	GATE(PCLK_PMU, "pclk_pmu", "pclk_pd_pmu", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(17), 2, GFLAGS),
++	GATE(PCLK_PMUGRF, "pclk_pmugrf", "pclk_pd_pmu", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(23), 5, GFLAGS),
++	GATE(PCLK_GPIO0, "pclk_gpio0", "pclk_pd_pmu", 0, RK3368_CLKGATE_CON(23), 4, GFLAGS),
++	GATE(PCLK_SGRF, "pclk_sgrf", "pclk_pd_pmu", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(23), 3, GFLAGS),
++	GATE(0, "pclk_pmu_noc", "pclk_pd_pmu", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(23), 2, GFLAGS),
++	GATE(0, "pclk_intmem1", "pclk_pd_pmu", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(23), 1, GFLAGS),
++	GATE(PCLK_PMU, "pclk_pmu", "pclk_pd_pmu", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(23), 0, GFLAGS),
+ 
+ 	/* timer gates */
+ 	GATE(0, "sclk_timer15", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 11, GFLAGS),
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+1.9.1
