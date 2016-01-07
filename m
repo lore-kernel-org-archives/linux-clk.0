@@ -1,49 +1,50 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Michael Turquette <mturquette@baylibre.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Subject: [PATCH] [BUG] clk: rockchip: don't mark clock names as initconst
-Date: Fri, 01 Jan 2016 14:42:52 +0100
-Message-ID: <2791943.MBZ53mI7Gp@wuerfel>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: keescook@google.com,
+	leozwang@google.com,
+	linux-rockchip@lists.infradead.org,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 3/5] clk: rockchip: rk3036: fix the div offset for emac clock
+Date: Thu,  7 Jan 2016 20:17:35 +0800
+Message-Id: <1452169057-24467-4-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1452169057-24467-1-git-send-email-zhengxing@rock-chips.com>
+References: <1452169057-24467-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The latest changes to the rockchip clk implementation cause
-tons of warnings and/or errors (depending on the configuration):
+Due to reference to old version TRM, there are incorrect emac clock node.
+The SEL_21_9 is used for the parent div, the SEL_21_4 is used for the
+child div.
 
-WARNING: vmlinux.o(.data+0x125394): Section mismatch in reference from the variable __compound_literal.125 to the (unknown reference) .init.rodata:(unknown)
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
-The reason is a compount literal in a macro that refers to an
-object in the .init.rodata section:
+ drivers/clk/rockchip/clk-rk3036.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- #define COMPOSITE_FRACMUX(_id, cname, pname, f, mo, df, go, gs, gf, ch) \
-        {                                                       \
-		...
-                .child          = &(struct rockchip_clk_branch)ch, \
-        }
-
-'ch' here is placed in .data, and I could find no way to override that
-using an attribute or pragma because there is no identifier associated
-with it.
-
-This patch avoids the warning by placing the names in .rodata rather than
-.init.rodata. However, it is not an ideal solution because we really
-want all those data structures to be discarded along with the initdata.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Fixes: 8ca1ca8f6039 ("clk: rockchip: handle mux dependency of fractional dividers")
-
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index 3f71ee5d1bc9..5cadf5e3fb16 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -244,7 +244,7 @@ struct clk *rockchip_clk_register_inverter(const char *name,
- 				void __iomem *reg, int shift, int flags,
- 				spinlock_t *lock);
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
+index 04b5249..1f00fab 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -344,12 +344,12 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
+ 			RK2928_CLKGATE_CON(10), 5, GFLAGS),
  
--#define PNAME(x) static const char *const x[] __initconst
-+#define PNAME(x) static const char *const x[]
+ 	COMPOSITE_NOGATE(0, "mac_pll_src", mux_pll_src_3plls_p, 0,
+-			RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 4, 5, DFLAGS),
++			RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 9, 5, DFLAGS),
+ 	MUX(SCLK_MACREF, "mac_clk_ref", mux_mac_p, CLK_SET_RATE_PARENT,
+ 			RK2928_CLKSEL_CON(21), 3, 1, MFLAGS),
  
- enum rockchip_clk_branch_type {
- 	branch_composite,
+ 	COMPOSITE_NOMUX(SCLK_MAC, "mac_clk", "mac_clk_ref", 0,
+-			RK2928_CLKSEL_CON(21), 9, 5, DFLAGS,
++			RK2928_CLKSEL_CON(21), 4, 5, DFLAGS,
+ 			RK2928_CLKGATE_CON(2), 6, GFLAGS),
+ 
+ 	MUX(SCLK_HDMI, "dclk_hdmi", mux_dclk_p, 0,
+-- 
+1.7.9.5
