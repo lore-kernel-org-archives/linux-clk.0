@@ -1,56 +1,51 @@
-Return-Path: <rjui@broadcom.com>
-From: Ray Jui <rjui@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<bcm-kernel-feedback-list@broadcom.com>, Simran Rai <ssimran@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>
-Subject: [PATCH RESEND v2 1/4] Documentation: dt-bindings: Add DT bindings for Cygnus audio clock
-Date: Tue, 26 Jan 2016 17:18:38 -0800
-Message-ID: <1453857521-8804-2-git-send-email-rjui@broadcom.com>
-In-Reply-To: <1453857521-8804-1-git-send-email-rjui@broadcom.com>
-References: <1453857521-8804-1-git-send-email-rjui@broadcom.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rjui@broadcom.com
+Return-Path: <caesar.upstream@gmail.com>
+Return-Path: <caesar.upstream@gmail.com>
+From: Caesar Wang <wxt@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-rockchip@lists.infradead.org,
+	leecam@google.com,
+	leozwang@google.com,
+	keescook@google.com,
+	Caesar Wang <wxt@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 04/12] clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for sclk_i2s_out
+Date: Thu,  7 Jan 2016 16:25:47 +0800
+Message-Id: <1452155155-16232-5-git-send-email-wxt@rock-chips.com>
+In-Reply-To: <1452155155-16232-1-git-send-email-wxt@rock-chips.com>
+References: <1452155155-16232-1-git-send-email-wxt@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Simran Rai <ssimran@broadcom.com>
+SCLk_I2S_OUT is the noc bus clock for i2s module, this clock is used by
+extra codecs.
 
-This patch adds audio clock device tree binding documentation to an
-existing Cygnus clock DT bindings document.
+Due to it shouldn't belong to any driver, but we need it enabled,
+so just mark it as the CLK_IGNORE_UNUSED flag.
 
-Signed-off-by: Simran Rai <ssimran@broadcom.com>
-Reviewed-by: Ray Jui <rjui@broadcom.com>
-Reviewed-by: Lori Hikichi <lhikichi@broadcom.com>
-Reviewed-by: Scott Branden <sbranden@broadcom.com>
+Signed-off-by: Caesar Wang <wxt@rock-chips.com>
 ---
- Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt | 6 ++++++
- 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-index 0b35e71..6f66e9a 100644
---- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-@@ -92,6 +92,7 @@ PLL and leaf clock compatible strings for Cygnus are:
-     "brcm,cygnus-lcpll0"
-     "brcm,cygnus-mipipll"
-     "brcm,cygnus-asiu-clk"
-+    "brcm,cygnus-audiopll"
- 
- The following table defines the set of PLL/clock index and ID for Cygnus.
- These clock IDs are defined in:
-@@ -131,6 +132,11 @@ These clock IDs are defined in:
-     ch4_unused mipipll          5       BCM_CYGNUS_MIPIPLL_CH4_UNUSED
-     ch5_unused mipipll          6       BCM_CYGNUS_MIPIPLL_CH5_UNUSED
- 
-+    audiopll   crystal          0       BCM_CYGNUS_AUDIOPLL
-+    ch0_audio  audiopll         1       BCM_CYGNUS_AUDIOPLL_CH0
-+    ch1_audio  audiopll         2       BCM_CYGNUS_AUDIOPLL_CH1
-+    ch2_audio  audiopll         3       BCM_CYGNUS_AUDIOPLL_CH2
-+
- Northstar and Northstar Plus
- ------
- PLL and leaf clock compatible strings for Northstar and Northstar Plus are:
+Changes in v2: None
+
+ drivers/clk/rockchip/clk-rk3036.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
+index 34c78f4..c33ed3c 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -310,7 +310,7 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
+ 			RK2928_CLKSEL_CON(7), 0,
+ 			RK2928_CLKGATE_CON(0), 10, GFLAGS,
+ 			&rk3036_i2s_fracmux),
+-	COMPOSITE_NODIV(SCLK_I2S_OUT, "i2s_clkout", mux_i2s_clkout_p, 0,
++	COMPOSITE_NODIV(SCLK_I2S_OUT, "i2s_clkout", mux_i2s_clkout_p, CLK_IGNORE_UNUSED,
+ 			RK2928_CLKSEL_CON(3), 12, 1, MFLAGS,
+ 			RK2928_CLKGATE_CON(0), 13, GFLAGS),
+ 	GATE(SCLK_I2S, "sclk_i2s", "i2s_pre", CLK_SET_RATE_PARENT,
 -- 
 1.9.1
