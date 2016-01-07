@@ -1,83 +1,54 @@
-Return-Path: <robh+dt@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <5698A650.5010600@huawei.com>
-References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
- <1452219400-32478-2-git-send-email-xuejiancheng@huawei.com>
- <20160112221211.GB22188@codeaurora.org> <5695BE65.3070409@huawei.com>
- <20160113185707.1168.85601@quark.deferred.io> <56979F9F.5080201@huawei.com> <5698A650.5010600@huawei.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Tue, 19 Jan 2016 12:20:46 -0600
-Message-ID: <CAL_JsqJPcPgS=cKNqv9j5Ch3ZHbUmci1LRedBWV1gV=5kCz68Q@mail.gmail.com>
-Subject: Re: [PATCH v5 1/6] clk: hisilicon: add CRG driver for hi3519 soc
-To: xuejiancheng <xuejiancheng@huawei.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>,
-	Kevin Hilman <khilman@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-	Wei Xu <xuwei5@hisilicon.com>, Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>, Bintian Wang <bintian.wang@huawei.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, yanhaifeng@hisilicon.com,
-	yanghongwei@hisilicon.com, suwenping@hisilicon.com, ml.yang@hisilicon.com,
-	gaofei@hisilicon.com, zhangzhenxing@hisilicon.com, xuejiancheng@hisilicon.com
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <vz@mleia.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Joachim Eastwood <manabian@gmail.com>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH] clk: remove duplicated COMMON_CLK_NXP record from clk/Kconfig
+Date: Thu,  7 Jan 2016 05:07:07 +0200
+Message-Id: <1452136027-32076-1-git-send-email-vz@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jan 15, 2016 at 1:57 AM, xuejiancheng <xuejiancheng@huawei.com> wrote:
->
-> On 2016/1/14 21:16, xuejiancheng wrote:
->> Hi Mike,
->>
->> On 2016/1/14 2:57, Michael Turquette wrote:
->>> Quoting xuejiancheng (2016-01-12 19:03:01)
->>>> Hi Stephen,
->>>>    Thank you very much for your reply.
->>>>
->>>> On 2016/1/13 6:12, Stephen Boyd wrote:
->>>>> On 01/08, Jiancheng Xue wrote:
->>>>>> diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
->>>>>> index e434854..b6baebf 100644
->>>>>> --- a/drivers/clk/hisilicon/Kconfig
->>>>>> +++ b/drivers/clk/hisilicon/Kconfig
->>>>>> @@ -1,3 +1,10 @@
->>>>>> +config COMMON_CLK_HI3519
->>>>>> +    tristate "Clock Driver for Hi3519"
->>>>>
->>>>> It looks like this has to be bool. Otherwise it needs to be a
->>>>> platform driver and the hisilicon APIs need to be exported and
->>>>> lose their __init markings.
->>>>>
->>>> Yes,it's a problem. I will fix it in next version. Thank you.
->>>
->>> The best solution would be to make this clock driver a real platform
->>> driver.
->>>
->> Now the work clock of the clocksource timer-sp804 is provided by this driver. So
->> it need to be registered early by CLK_OF_DECLARE. If the timer clock is treated
->> as a fixed-clock provider, this driver can be implemented as a platform driver.
->> Then the crg device must be registered before other clock consumer devices.Accordingly
->> the crg device node must be written above all other clock consumer devices node in dts files.
->> I think it is also a dependence.
->>
->> Can you help me understand why it is better to make this driver a platform driver?
->> Thank you very much!
->>
-> arch_initcall(customize_machine)
-> -->of_platform_populate
->    -->of_platform_bus_create
->      -->of_amba_device_create
->         -->amba_device_add
->            -->amba_get_enable_pclk
-> The call sequence above shows that the clock of the amba device must be registered before
-> amba_device_add. The clock of "arm,pl011" uart is registered in the probe function of the
-> platform driver "hi3519-crg". So the platform device "hi3519-crg" must be created before
-> the amba device "arm,pl011" uart.
+Presumably the second COMMON_CLK_NXP config option in
+drivers/clk/Kconfig appeared after a merge conflict resolution, remove
+the wrong record of two.
 
-It is a problem, but Tomeu had a fix to support deferred probes here.
-That was part of the on-demand probing series, but maybe it needs to
-be applied separately if we are moving clock drivers to platform
-drivers.
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+---
+Hi Mike, Stephen,
 
-Rob
+I've found this issue in clk-next while working on something else,
+please consider to include this change to clk-next, no objections if
+it is squashed with f7c82a60ba2 ("clk: lpc32xx: add common clock
+framework driver").
+
+In fact it is a revert of 8a896310a7e ("clk: lpc18xx: add NXP specific
+COMMON_CLK_NXP configuration symbol"), but this preparatory change is
+good as is.
+
+The original change doesn't have this kind of a problem (see
+http://www.spinics.net/lists/devicetree/msg105709.html), so I
+believe it is caused by a merge conflict, probably after done
+alphabetical sorting.
+
+ drivers/clk/Kconfig | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 41f6c7f..eca8e01 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -187,11 +187,6 @@ config COMMON_CLK_PWM
+ 	  Adapter driver so that any PWM output can be (mis)used as clock signal
+ 	  at 50% duty cycle.
+ 
+-config COMMON_CLK_NXP
+-	def_bool COMMON_CLK && ARCH_LPC18XX
+-	---help---
+-	  Support for clock providers on NXP platforms.
+-
+ config COMMON_CLK_PXA
+ 	def_bool COMMON_CLK && ARCH_PXA
+ 	---help---
+-- 
+2.1.4
