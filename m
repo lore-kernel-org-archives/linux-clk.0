@@ -1,87 +1,136 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Emilio =?ISO-8859-1?Q?L=F3pez?= <emilio.lopez@collabora.co.uk>, mturquette@baylibre.com, sboyd@codeaurora.org, wens@csie.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] clk: sunxi: delay protected clocks until arch initcall
-Date: Wed, 27 Jan 2016 22:07:15 +0100
-Message-ID: <1991025.ABeYDSZEGp@diego>
-In-Reply-To: <20160127203816.GU4317@lukather>
-References: <1453385439-10154-1-git-send-email-emilio.lopez@collabora.co.uk> <7334994.mKnQpNNMP2@diego> <20160127203816.GU4317@lukather>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from conssluserg004.nifty.com ([202.248.44.42]:29920 "EHLO
+	conssluserg004-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752018AbcAGLd4 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jan 2016 06:33:56 -0500
+Received: from mail-yk0-f177.google.com (mail-yk0-f177.google.com [209.85.160.177]) (authenticated)
+	by conssluserg004-v.nifty.com with ESMTP id u07BXpR9031458
+	for <linux-clk@vger.kernel.org>; Thu, 7 Jan 2016 20:33:52 +0900
+Received: by mail-yk0-f177.google.com with SMTP id v14so243111124ykd.3
+        for <linux-clk@vger.kernel.org>; Thu, 07 Jan 2016 03:33:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart15017865.eCjWoE86d1"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+In-Reply-To: <568E419E.4080404@mleia.com>
+References: <1452136568-478-1-git-send-email-vz@mleia.com>
+	<1452136568-478-4-git-send-email-vz@mleia.com>
+	<CAK7LNASpWdpmK4xKkOV1cbKxFckKV7bZHA=fNVDYhR2e4VZzYA@mail.gmail.com>
+	<568E419E.4080404@mleia.com>
+Date: Thu, 7 Jan 2016 20:33:51 +0900
+Message-ID: <CAK7LNATiHJa8XwigMj6dWFauUC9TV-_Ypw-i_agn5hCD_6Yb4g@mail.gmail.com>
+Subject: Re: [PATCH 3/3] clk: remove redundant clock parents lookup table allocations
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
---nextPart15017865.eCjWoE86d1
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Hi Vladimir,
 
-Am Mittwoch, 27. Januar 2016, 21:38:16 schrieb Maxime Ripard:
-> Hi,
->=20
-> On Wed, Jan 27, 2016 at 05:14:17PM +0100, Heiko St=FCbner wrote:
-> > Hi,
-> >=20
-> > Am Mittwoch, 27. Januar 2016, 16:37:22 schrieb Maxime Ripard:
-> > > I thought the patches were simply dropped and the
-> > > rockchip people just took another approach.
-> >=20
-> > nope still on track ... especially as it was Stephen's believe that=
+2016-01-07 19:44 GMT+09:00 Vladimir Zapolskiy <vz@mleia.com>:
+> Hi Masahiro,
+>
+> On 07.01.2016 11:00, Masahiro Yamada wrote:
+>> Hi Vladimir,
+>>
+>>
+>> 2016-01-07 12:16 GMT+09:00 Vladimir Zapolskiy <vz@mleia.com>:
+>>> Since clock parents lookup table for clocks with multiple parent
+>>> clocks is always allocated during clock registration, remove similar
+>>> allocations from __clk_init_parent() and clk_fetch_parent_index().
+>>>
+>>> The change also corrects a pointer type of a single lookup table
+>>> entry on calculation of the lookup table size.
+>>>
+>>> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+>>> ---
+>>>  drivers/clk/clk.c | 20 +++-----------------
+>>>  1 file changed, 3 insertions(+), 17 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+>>> index 2fb0dae..f8872f9 100644
+>>> --- a/drivers/clk/clk.c
+>>> +++ b/drivers/clk/clk.c
+>>> @@ -1067,13 +1067,6 @@ static int clk_fetch_parent_index(struct clk_core *core,
+>>>  {
+>>>         int i;
+>>>
+>>> -       if (!core->parents) {
+>>> -               core->parents = kcalloc(core->num_parents,
+>>> -                                       sizeof(struct clk *), GFP_KERNEL);
+>>> -               if (!core->parents)
+>>> -                       return -ENOMEM;
+>>> -       }
+>>> -
+>>>         /*
+>>>          * find index of new parent clock using cached parent ptrs,
+>>>          * or if not yet cached, use string name comparison and cache
+>>> @@ -1711,18 +1704,11 @@ static struct clk_core *__clk_init_parent(struct clk_core *core)
+>>>         }
+>>>
+>>>         /*
+>>> -        * Do our best to cache parent clocks in core->parents.  This prevents
+>>> -        * unnecessary and expensive lookups.  We don't set core->parent here;
+>>> -        * that is done by the calling function.
+>>> +        * We don't set core->parent here; that is done by the calling function.
+>>>          */
+>>>
+>>>         index = core->ops->get_parent(core->hw);
+>>>
+>>> -       if (!core->parents)
+>>> -               core->parents =
+>>> -                       kcalloc(core->num_parents, sizeof(struct clk *),
+>>> -                                       GFP_KERNEL);
+>>> -
+>>>         ret = clk_core_get_parent_by_index(core, index);
+>>>
+>>>  out:
+>>> @@ -2374,8 +2360,8 @@ static int __clk_init(struct device *dev, struct clk *clk_user)
+>>>          * look-ups of clk's possible parents.
+>>>          */
+>>>         if (core->num_parents > 1) {
+>>> -               core->parents = kcalloc(core->num_parents, sizeof(struct clk *),
+>>> -                                       GFP_KERNEL);
+>>> +               core->parents = kcalloc(core->num_parents,
+>>> +                                       sizeof(struct clk_core *), GFP_KERNEL);
+>>>                 if (!core->parents) {
+>>>                         ret = -ENOMEM;
+>>>                         goto out;
+>>
+>>
+>> You are doing the similar thing as mine.
+>>
+>> See
+>> https://patchwork.kernel.org/patch/7925571/
+>
+> Ok, I was not aware of your work, unfortunately.
+>
+>>
+>> This series gives a big conflict with my clean-up series,
+>> which Michael said he would apply after v4.5-rc1.
+>>
+>> See
+>> http://www.serverphorums.com/read.php?12,1376630
+>>
+>>
+>
+> No problem, of course your work goes first.
+>
+> Obviously I have to review your changes more carefully, but do you
+> have something similar to my 1/3? If no, then it is a regression.
 
-> > orphans
-> > shouldn't even be usable to general clock users :-).
-> >=20
-> > I just remember that the proposed general solution was based on Mik=
-e's
-> > upcoming generic critical clock handling (the handoff thingy), whic=
-h would
-> > move critical clock handling out of architecture-specific code, so =
-I've
-> > been prodding Mike mainly.
-> >=20
-> > Another option might be to allow clock-controllers to handle orphan=
-s and
-> > only deny orphan usage to outside clock users, maybe expanding on w=
-hat I
-> > did with the clock-conf part in patch2.
->=20
-> I'm not sure that would solve anything in our case. All our clocks
-> drivers are different ones, so I'm not sure how we could handle that.=
+
+No.
+
+I solved the problem in a different way.
+https://patchwork.kernel.org/patch/7925571/
+
+In my way, core->parents is always allocated.
+1/3 is not needed.
+
+If I am wrong, please point out.
 
 
-the core issue is, that a clk_get on an orphan is going to return EPROB=
-E_DEFER=20
-after the second patch, which is also true for sunxi critical clocks.
-
-The clock-conf has the same issue in the case where you know on the boa=
-rd-
-level that a clock will stay orphaned indefinitly and want to reparent =
-it away=20
-to some sane parent.
-
-That's why I added of_clk_get_from_provider_with_orphans() (limited to =
-use in=20
-the ccf) in the second patch to allow orphans to be reparented via assi=
-gned-
-clocks foo. In theory one could argue that clock controller generally k=
-now=20
-what they're doing and add something like clk_get_with_orphans() or wha=
-tever=20
-that might be called then.
---nextPart15017865.eCjWoE86d1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAABCAAGBQJWqTGDAAoJEPOmecmc0R2BeF8H/2LasuZIhSYeaIDxDyaCGyhy
-/CXsgqYLtx0llZaXuz9+HNTlE1Ip6Z18IRyyikcKs+7Jvi5mK17olZWgYLVRBYWC
-YxmCQ4/FUP1jSOGGTk1Un1Hi+ZD13H7x88v9gz0HFC6tJzLqQpg4uGQIhAv7QI6u
-RVIp6MjGbgMCpSxxjmgvPXh7flShLxN55keYsU8vUDhUkJeu6C1grdDtYoVJ9W6y
-s+ETkcUplB9qO3TpVFZ3UwA7ycWf4BAnXZ/hH2giLiCQJIZ97C9A4hZHwGgX+vB4
-+gBzYlY6jVqGxX82XV7ue45ourabu42IkTQOpQg3nPl4SCuS+rWHjfw8qaQGV9o=
-=lPpm
------END PGP SIGNATURE-----
-
---nextPart15017865.eCjWoE86d1--
+-- 
+Best Regards
+Masahiro Yamada
