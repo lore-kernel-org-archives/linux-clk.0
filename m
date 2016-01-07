@@ -1,65 +1,110 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH] clk: ti: omap3+: dpll: use non-locking version of
- clk_get_rate
-To: Tony Lindgren <tony@atomide.com>
-References: <1453981067-8618-1-git-send-email-t-kristo@ti.com>
- <56A9FED1.3090903@ti.com> <20160128172215.GD19432@atomide.com>
-CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <linux-arm-kernel@lists.infradead.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <56AA6261.7030503@ti.com>
-Date: Thu, 28 Jan 2016 20:48:01 +0200
+Return-Path: <vz@mleia.com>
+Message-ID: <568E419E.4080404@mleia.com>
+Date: Thu, 07 Jan 2016 12:44:46 +0200
+From: Vladimir Zapolskiy <vz@mleia.com>
 MIME-Version: 1.0
-In-Reply-To: <20160128172215.GD19432@atomide.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+CC: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH 3/3] clk: remove redundant clock parents lookup table
+ allocations
+References: <1452136568-478-1-git-send-email-vz@mleia.com>	<1452136568-478-4-git-send-email-vz@mleia.com> <CAK7LNASpWdpmK4xKkOV1cbKxFckKV7bZHA=fNVDYhR2e4VZzYA@mail.gmail.com>
+In-Reply-To: <CAK7LNASpWdpmK4xKkOV1cbKxFckKV7bZHA=fNVDYhR2e4VZzYA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/28/2016 07:22 PM, Tony Lindgren wrote:
-> * Tero Kristo <t-kristo@ti.com> [160128 03:44]:
->> On 01/28/2016 01:37 PM, Tero Kristo wrote:
->>> As the code in this file is being executed within irq context in some
->>> cases, we must avoid the clk_get_rate which uses mutex internally.
->>> Switch the code to use clk_hw_get_rate instead which is non-locking.
->>>
->>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Hi Masahiro,
+
+On 07.01.2016 11:00, Masahiro Yamada wrote:
+> Hi Vladimir,
+> 
+> 
+> 2016-01-07 12:16 GMT+09:00 Vladimir Zapolskiy <vz@mleia.com>:
+>> Since clock parents lookup table for clocks with multiple parent
+>> clocks is always allocated during clock registration, remove similar
+>> allocations from __clk_init_parent() and clk_fetch_parent_index().
 >>
->> Ooops, sorry. Sent wrong version (read: old) of this patch, please ignore
->> this one. Will re-send the correct version in a bit.
->
-> I think this is still needed as a fix for -rc cycle with cc: stable
-> as otherwise we have omap4 and 5 hang if PM runtime is enabled before
-> a suspend/resume cycle?
-
-Look at the other patch I sent, it should accomplish the same thing, and 
-more.
-
-https://www.spinics.net/lists/linux-clk/msg06094.html
-
--Tero
-
->
-> Regards,
->
-> Tony
->
->
->>>   drivers/clk/ti/dpll3xxx.c |    3 ++-
->>>   1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
->>> index f4dec00..7ed24bc 100644
->>> --- a/drivers/clk/ti/dpll3xxx.c
->>> +++ b/drivers/clk/ti/dpll3xxx.c
->>> @@ -437,7 +437,8 @@ int omap3_noncore_dpll_enable(struct clk_hw *hw)
->>>
->>>   	parent = clk_hw_get_parent(hw);
->>>
->>> -	if (clk_hw_get_rate(hw) == clk_get_rate(dd->clk_bypass)) {
->>> +	if (clk_hw_get_rate(hw) ==
->>> +	    clk_hw_get_rate(__clk_get_hw(dd->clk_bypass))) {
->>>   		WARN_ON(parent != __clk_get_hw(dd->clk_bypass));
->>>   		r = _omap3_noncore_dpll_bypass(clk);
->>>   	} else {
->>>
+>> The change also corrects a pointer type of a single lookup table
+>> entry on calculation of the lookup table size.
 >>
+>> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+>> ---
+>>  drivers/clk/clk.c | 20 +++-----------------
+>>  1 file changed, 3 insertions(+), 17 deletions(-)
+>>
+>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+>> index 2fb0dae..f8872f9 100644
+>> --- a/drivers/clk/clk.c
+>> +++ b/drivers/clk/clk.c
+>> @@ -1067,13 +1067,6 @@ static int clk_fetch_parent_index(struct clk_core *core,
+>>  {
+>>         int i;
+>>
+>> -       if (!core->parents) {
+>> -               core->parents = kcalloc(core->num_parents,
+>> -                                       sizeof(struct clk *), GFP_KERNEL);
+>> -               if (!core->parents)
+>> -                       return -ENOMEM;
+>> -       }
+>> -
+>>         /*
+>>          * find index of new parent clock using cached parent ptrs,
+>>          * or if not yet cached, use string name comparison and cache
+>> @@ -1711,18 +1704,11 @@ static struct clk_core *__clk_init_parent(struct clk_core *core)
+>>         }
+>>
+>>         /*
+>> -        * Do our best to cache parent clocks in core->parents.  This prevents
+>> -        * unnecessary and expensive lookups.  We don't set core->parent here;
+>> -        * that is done by the calling function.
+>> +        * We don't set core->parent here; that is done by the calling function.
+>>          */
+>>
+>>         index = core->ops->get_parent(core->hw);
+>>
+>> -       if (!core->parents)
+>> -               core->parents =
+>> -                       kcalloc(core->num_parents, sizeof(struct clk *),
+>> -                                       GFP_KERNEL);
+>> -
+>>         ret = clk_core_get_parent_by_index(core, index);
+>>
+>>  out:
+>> @@ -2374,8 +2360,8 @@ static int __clk_init(struct device *dev, struct clk *clk_user)
+>>          * look-ups of clk's possible parents.
+>>          */
+>>         if (core->num_parents > 1) {
+>> -               core->parents = kcalloc(core->num_parents, sizeof(struct clk *),
+>> -                                       GFP_KERNEL);
+>> +               core->parents = kcalloc(core->num_parents,
+>> +                                       sizeof(struct clk_core *), GFP_KERNEL);
+>>                 if (!core->parents) {
+>>                         ret = -ENOMEM;
+>>                         goto out;
+> 
+> 
+> You are doing the similar thing as mine.
+> 
+> See
+> https://patchwork.kernel.org/patch/7925571/
+
+Ok, I was not aware of your work, unfortunately.
+
+> 
+> This series gives a big conflict with my clean-up series,
+> which Michael said he would apply after v4.5-rc1.
+> 
+> See
+> http://www.serverphorums.com/read.php?12,1376630
+> 
+> 
+
+No problem, of course your work goes first.
+
+Obviously I have to review your changes more carefully, but do you
+have something similar to my 1/3? If no, then it is a regression.
+
+---
+With best wishes,
+Vladimir
