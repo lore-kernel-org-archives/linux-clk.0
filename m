@@ -1,72 +1,87 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Wynter Woods <wynter@nextthing.co>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 23/26] ARM: sun5i: chip: Enable the TV Encoder
-Date: Thu, 14 Jan 2016 16:25:06 +0100
-Message-Id: <1452785109-6172-24-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <vz@mleia.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Subject: [PATCH 2/3] clk: simplify array allocation of clock parents for lookup
+Date: Thu,  7 Jan 2016 05:16:07 +0200
+Message-Id: <1452136568-478-3-git-send-email-vz@mleia.com>
+In-Reply-To: <1452136568-478-1-git-send-email-vz@mleia.com>
+References: <1452136568-478-1-git-send-email-vz@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The CHIP has a composite output available muxed with the microphone in the
-micro-jack plug.
+The change intends to centralize allocation of clock's clk_core
+parents array on clock registration, originally is done from multiple
+places:
+* __clk_init()
+* __clk_init_parent()
+* clk_fetch_parent_index()
 
-Enable the composite output in its DTS.
+The original approach historically was needed, but at the moment
+all assumptions supporting it are wrong:
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+1) GFP_KERNEL heap is available at the time of a clock registration,
+   for example it is used to dynamically allocate struct clk_core,
+   clock name and clock parent names, if allocation fails, return
+   -ENOMEM as usual instead of repeating attempts to allocate the
+   array in future,
+
+2) due to the layering scheme clk_core parents can not be defined
+   statically by the drivers, instead the drivers provide string
+   arrays of clock parent names and clock parents for a lookup array
+   are always obtained from that data.
+
+To ensure that there is no need to check for allocated status of the
+parent lookup table and/or allocate the table from other places within
+the common clock framework, don't register a clock, if there is no
+enough memory.
+
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
 ---
- arch/arm/boot/dts/sun5i-r8-chip.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/clk/clk.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun5i-r8-chip.dts b/arch/arm/boot/dts/sun5i-r8-chip.dts
-index c976c7618118..c26c095b42c6 100644
---- a/arch/arm/boot/dts/sun5i-r8-chip.dts
-+++ b/arch/arm/boot/dts/sun5i-r8-chip.dts
-@@ -84,6 +84,10 @@
- 	};
- };
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 129ac0a..2fb0dae 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2371,27 +2371,25 @@ static int __clk_init(struct device *dev, struct clk *clk_user)
  
-+&be0 {
-+	status = "okay";
-+};
+ 	/*
+ 	 * Allocate an array of struct clk *'s to avoid unnecessary string
+-	 * look-ups of clk's possible parents.  This can fail for clocks passed
+-	 * in to clk_init during early boot; thus any access to core->parents[]
+-	 * must always check for a NULL pointer and try to populate it if
+-	 * necessary.
+-	 *
+-	 * If core->parents is not NULL we skip this entire block.  This allows
+-	 * for clock drivers to statically initialize core->parents.
++	 * look-ups of clk's possible parents.
+ 	 */
+-	if (core->num_parents > 1 && !core->parents) {
++	if (core->num_parents > 1) {
+ 		core->parents = kcalloc(core->num_parents, sizeof(struct clk *),
+ 					GFP_KERNEL);
++		if (!core->parents) {
++			ret = -ENOMEM;
++			goto out;
++		}
 +
- &codec {
- 	status = "okay";
- };
-@@ -230,6 +234,14 @@
- 	status = "okay";
- };
+ 		/*
+ 		 * clk_core_lookup returns NULL for parents that have not been
+ 		 * clk_init'd; thus any access to clk->parents[] must check
+ 		 * for a NULL pointer.  We can always perform lazy lookups for
+ 		 * missing parents later on.
+ 		 */
+-		if (core->parents)
+-			for (i = 0; i < core->num_parents; i++)
+-				core->parents[i] =
+-					clk_core_lookup(core->parent_names[i]);
++		for (i = 0; i < core->num_parents; i++)
++			core->parents[i] =
++				clk_core_lookup(core->parent_names[i]);
+ 	}
  
-+&tcon0 {
-+	status = "okay";
-+};
-+
-+&tve0 {
-+	status = "okay";
-+};
-+
- &uart1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart1_pins_b>;
+ 	core->parent = __clk_init_parent(core);
 -- 
-2.6.4
+2.1.4
