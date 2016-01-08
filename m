@@ -1,98 +1,57 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Remi Pommarel <repk@triplefau.lt>,
-	devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Matthias Reichl <hias@horus.com>,
-	lFlorian Meier <florian.meier@koalo.de>
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 2/5] clk: bcm2835: enable management of PCM clock
-Date: Sat,  9 Jan 2016 09:25:54 +0000
-Message-Id: <1452331558-2520-3-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org>
-References: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 6/9] clk: tegra210: fix pllx dyn step calculation
+Date: Fri, 8 Jan 2016 13:37:08 -0500
+Message-ID: <1452278231-9546-7-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1452278231-9546-1-git-send-email-rklein@nvidia.com>
+References: <1452278231-9546-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+The logic for calculating the input rate used when figuring out
+the proper dynamic steps for pllx was incorrect. It is supposed to
+be calculated using parent_rate / m but it was just using the parent
+rate directly, therefore using the wrong step values.
 
-Enable the PCM clock in the SOC, which is used by the
-bcm2835-i2s driver.
-
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- drivers/clk/bcm/clk-bcm2835.c       |   15 +++++++++++++++
- include/dt-bindings/clock/bcm2835.h |    3 ++-
- 2 files changed, 17 insertions(+), 1 deletion(-)
+ drivers/clk/tegra/clk-tegra210.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 015e687..5d45457 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -88,6 +88,8 @@
- #define CM_HSMDIV		0x08c
- #define CM_OTPCTL		0x090
- #define CM_OTPDIV		0x094
-+#define CM_PCMCTL		0x098
-+#define CM_PCMDIV		0x09c
- #define CM_PWMCTL		0x0a0
- #define CM_PWMDIV		0x0a4
- #define CM_SMICTL		0x0b0
-@@ -817,6 +819,16 @@ static const struct bcm2835_clock_data bcm2835_clock_pwm_data = {
- 	.frac_bits = 12,
- };
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 2a7faa357130..5d8fac7052f2 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -780,13 +780,13 @@ static void pllx_get_dyn_steps(struct clk_hw *hw, u32 *step_a, u32 *step_b)
+ {
+ 	unsigned long input_rate;
  
-+static const struct bcm2835_clock_data bcm2835_clock_pcm_data = {
-+	.name = "pcm",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_PCMCTL,
-+	.div_reg = CM_PCMDIV,
-+	.int_bits = 12,
-+	.frac_bits = 12,
-+};
+-	if (!IS_ERR_OR_NULL(hw->clk)) {
++	/* cf rate */
++	if (!IS_ERR_OR_NULL(hw->clk))
+ 		input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+-		/* cf rate */
+-		input_rate /= tegra_pll_get_fixed_mdiv(hw, input_rate);
+-	} else {
++	else
+ 		input_rate = 38400000;
+-	}
 +
- struct bcm2835_pll {
- 	struct clk_hw hw;
- 	struct bcm2835_cprman *cprman;
-@@ -1515,6 +1527,7 @@ static int bcm2835_clk_probe(struct platform_device *pdev)
- 	cprman->regs = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(cprman->regs))
- 		return PTR_ERR(cprman->regs);
-+	pr_info("CLK: %pK %zx\n", cprman->regs, res->start);
++	input_rate /= tegra_pll_get_fixed_mdiv(hw, input_rate);
  
- 	cprman->osc_name = of_clk_get_parent_name(dev->of_node, 0);
- 	if (!cprman->osc_name)
-@@ -1581,6 +1594,8 @@ static int bcm2835_clk_probe(struct platform_device *pdev)
- 		bcm2835_register_clock(cprman, &bcm2835_clock_hsm_data);
- 	clks[BCM2835_CLOCK_EMMC] =
- 		bcm2835_register_clock(cprman, &bcm2835_clock_emmc_data);
-+	clks[BCM2835_CLOCK_PCM] =
-+		bcm2835_register_clock(cprman, &bcm2835_clock_pcm_data);
- 
- 	/*
- 	 * CM_PERIICTL (and CM_PERIACTL, CM_SYSCTL and CM_VPUCTL if
-diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
-index 61f1d20..0ec850e 100644
---- a/include/dt-bindings/clock/bcm2835.h
-+++ b/include/dt-bindings/clock/bcm2835.h
-@@ -44,5 +44,6 @@
- #define BCM2835_CLOCK_EMMC		28
- #define BCM2835_CLOCK_PERI_IMAGE	29
- #define BCM2835_CLOCK_PWM		30
-+#define BCM2835_CLOCK_PCM		31
- 
--#define BCM2835_CLOCK_COUNT		31
-+#define BCM2835_CLOCK_COUNT		32
+ 	switch (input_rate) {
+ 	case 12000000:
 -- 
-1.7.10.4
+1.9.1
