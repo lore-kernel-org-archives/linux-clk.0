@@ -1,202 +1,99 @@
-Return-Path: <antonynpavlov@gmail.com>
-Return-Path: <antonynpavlov@gmail.com>
-Date: Sun, 31 Jan 2016 23:41:55 +0300
-From: Antony Pavlov <antonynpavlov@gmail.com>
-To: Alban <albeu@free.fr>
-Cc: linux-mips@linux-mips.org, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [RFC v3 01/14] WIP: clk: add Atheros AR724X/AR913X/AR933X SoCs
- clock driver
-Message-Id: <20160131234155.eee918745880878963c044aa@gmail.com>
-In-Reply-To: <20160125232156.35c0ce3f@tock>
-References: <1453580251-2341-1-git-send-email-antonynpavlov@gmail.com>
-	<1453580251-2341-2-git-send-email-antonynpavlov@gmail.com>
-	<20160125232156.35c0ce3f@tock>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
+	<zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v5 0/6] ARM: hisi: Add initial support including clock driver for Hi3519 soc.
+Date: Fri, 8 Jan 2016 10:16:34 +0800
+Message-ID: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 25 Jan 2016 23:21:56 +0100
-Alban <albeu@free.fr> wrote:
+Hello,
 
-> On Sat, 23 Jan 2016 23:17:18 +0300
-> Antony Pavlov <antonynpavlov@gmail.com> wrote:
->=20
-> > TODO: get pll registers base address from devicetree node
-> >=20
-> > Signed-off-by: Antony Pavlov <antonynpavlov@gmail.com>
-> > Cc: Alban Bedel <albeu@free.fr>
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > Cc: Rob Herring <robh+dt@kernel.org>
-> > Cc: linux-clk@vger.kernel.org
-> > Cc: linux-mips@linux-mips.org
-> > Cc: devicetree@vger.kernel.org
-> > ---
-> >  drivers/clk/Makefile                  |   1 +
-> >  drivers/clk/clk-ath79.c               | 193 ++++++++++++++++++++++++++=
-++++++++
-> >  include/dt-bindings/clock/ath79-clk.h |  22 ++++
-> >  3 files changed, 216 insertions(+)
-> >=20
-> > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> > index 820714c..5101763 100644
-> > --- a/drivers/clk/Makefile
-> > +++ b/drivers/clk/Makefile
-> > @@ -18,6 +18,7 @@ endif
-> >  # hardware specific clock types
-> >  # please keep this section sorted lexicographically by file/directory =
-path name
-> >  obj-$(CONFIG_MACH_ASM9260)		+=3D clk-asm9260.o
-> > +obj-$(CONFIG_ATH79)			+=3D clk-ath79.o
-> >  obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+=3D clk-axi-clkgen.o
-> >  obj-$(CONFIG_ARCH_AXXIA)		+=3D clk-axm5516.o
-> >  obj-$(CONFIG_COMMON_CLK_CDCE706)	+=3D clk-cdce706.o
-> > diff --git a/drivers/clk/clk-ath79.c b/drivers/clk/clk-ath79.c
-> > new file mode 100644
-> > index 0000000..75338a7
-> > --- /dev/null
-> > +++ b/drivers/clk/clk-ath79.c
-> > @@ -0,0 +1,193 @@
-> > +/*
-> > + * Clock driver for Atheros AR724X/AR913X/AR933X SoCs
-> > + *
-> > + * Copyright (C) 2010-2011 Jaiganesh Narayanan <jnarayanan@atheros.com>
-> > + * Copyright (C) 2011 Gabor Juhos <juhosg@openwrt.org>
-> > + * Copyright (C) 2015 Alban Bedel <albeu@free.fr>
-> > + * Copyright (C) 2016 Antony Pavlov <antonynpavlov@gmail.com>
-> > + *
-> > + * Parts of this file are based on Atheros' 2.6.15/2.6.31 BSP
-> > + *
-> > + * This program is free software; you can redistribute it and/or
-> > + * modify it under the terms of the GNU General Public License as
-> > + * published by the Free Software Foundation; either version 2 of
-> > + * the License, or (at your option) any later version.
-> > + *
-> > + * This program is distributed in the hope that it will be useful,
-> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > + * GNU General Public License for more details.
-> > + */
-> > +
-> > +#include <linux/clk.h>
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/clkdev.h>
-> > +#include <linux/of.h>
-> > +#include <linux/of_address.h>
-> > +#include "clk.h"
-> > +
-> > +#include <dt-bindings/clock/ath79-clk.h>
-> > +
-> > +#include "asm/mach-ath79/ar71xx_regs.h"
-> > +#include "asm/mach-ath79/ath79.h"
-> > +
-> > +#define MHZ (1000 * 1000)
-> > +
-> > +#define AR724X_BASE_FREQ	(40 * MHZ)
-> > +
-> > +static struct clk *ath79_clks[ATH79_CLK_END];
-> > +
-> > +static struct clk_onecell_data clk_data =3D {
-> > +	.clks =3D ath79_clks,
-> > +	.clk_num =3D ARRAY_SIZE(ath79_clks),
-> > +};
-> > +
-> > +static struct clk *__init ath79_add_sys_clkdev(
-> > +	const char *id, unsigned long rate)
-> > +{
-> > +	struct clk *clk;
-> > +	int err;
-> > +
-> > +	clk =3D clk_register_fixed_rate(NULL, id, NULL, CLK_IS_ROOT, rate);
-> > +	if (!clk)
-> > +		panic("failed to allocate %s clock structure", id);
-> > +
-> > +	err =3D clk_register_clkdev(clk, id, NULL);
-> > +	if (err)
-> > +		panic("unable to register %s clock device", id);
-> > +
-> > +	return clk;
-> > +}
-> >
-> > +static void __init ar724x_clk_init(struct device_node *np)
-> > +{
-> > +	struct clk *ref_clk;
-> > +	unsigned long of_ref_rate;
-> > +	unsigned long ref_rate;
-> > +	unsigned long cpu_rate;
-> > +	unsigned long ddr_rate;
-> > +	unsigned long ahb_rate;
-> > +	u32 pll;
-> > +	u32 freq;
-> > +	u32 div;
-> > +
-> > +	ref_clk =3D of_clk_get(np, 0);
-> > +	if (IS_ERR(ref_clk)) {
-> > +		pr_err("%s: of_clk_get failed\n", np->full_name);
-> > +		return;
-> > +	}
->=20
-> It would be better to have this function take the ref clock as
-> argument, to allow using it for both OF and legacy platforms.
+Hi3519 soc is mainly used for ip camera and sport DV solutions. This patchset adds initial support
+for Hi3519 soc. It includes clock driver, arch configuration, debug uart configuration and device tree.
+It has been tested on hi3519 reference board.
 
-I'll try to use this idea in v5 patch version.
+Any comments will be appreciated!
 
-> > +	of_ref_rate =3D clk_get_rate(ref_clk);
-> > +
-> > +	ref_rate =3D AR724X_BASE_FREQ;
-> > +
-> > +	if (of_ref_rate !=3D ref_rate) {
-> > +		pr_err("ref_rate !=3D of_ref_rate\n");
-> > +		ref_rate =3D of_ref_rate;
-> > +	}
->=20
-> I don't think that this test is really useful.
+Thanks!
 
-Yes, I can make this check optional.
+Change Log
+----------
+v5:
+-Adjust clock and reset controller driver code
 
-> > +	pll =3D ath79_pll_rr(AR724X_PLL_REG_CPU_CONFIG);
-> > +
-> > +	div =3D ((pll >> AR724X_PLL_FB_SHIFT) & AR724X_PLL_FB_MASK);
-> > +	freq =3D div * ref_rate;
-> > +
-> > +	div =3D ((pll >> AR724X_PLL_REF_DIV_SHIFT) & AR724X_PLL_REF_DIV_MASK)=
- * 2;
-> > +	freq /=3D div;
-> > +
-> > +	cpu_rate =3D freq;
-> > +
-> > +	div =3D ((pll >> AR724X_DDR_DIV_SHIFT) & AR724X_DDR_DIV_MASK) + 1;
-> > +	ddr_rate =3D freq / div;
-> > +
-> > +	div =3D (((pll >> AR724X_AHB_DIV_SHIFT) & AR724X_AHB_DIV_MASK) + 1) *=
- 2;
-> > +	ahb_rate =3D cpu_rate / div;
->=20
-> For a new driver it would make sense to use clk_register_divider() and
-> similar generic building blocks.
->=20
-> > +	ath79_clks[ATH79_CLK_REF] =3D ath79_add_sys_clkdev("ref", ref_rate);
-> > +	ath79_clks[ATH79_CLK_CPU] =3D ath79_add_sys_clkdev("cpu", cpu_rate);
-> > +	ath79_clks[ATH79_CLK_DDR] =3D ath79_add_sys_clkdev("ddr", ddr_rate);
-> > +	ath79_clks[ATH79_CLK_AHB] =3D ath79_add_sys_clkdev("ahb", ahb_rate);
-> > +	ath79_clks[ATH79_CLK_WDT] =3D ath79_add_sys_clkdev("wdt", ahb_rate);
-> > +	ath79_clks[ATH79_CLK_UART] =3D ath79_add_sys_clkdev("uart", ahb_rate);
->=20
-> You shouldn't add ref, wdt and uart, they are not needed and make the
-> driver incompatible with the current DT bindings.
+v4:
+-Rebase to v4.4-rc7
+-Divide patches according to Rob's comments
+-Add spi nodes in hi3519-demb.dts
 
-Please describe the situation then this incompatibility does matter.
+v3:
+-Rebase to v4.4-rc4
+-Adjust according to Arnd's comments
+-Remove ARCH_HI3519, using ARCH_HISI directly
 
-Current ath79 dt support is very preliminary and the only dt user
-is 5-years old TP-Link WR1043ND so it's near impossible to break somethink.
+v2:
+-Rebase to v4.4-rc3
+-Put dt-binding doc and header file in a separate patch.
+-Delete unused clocks definitions.
+-Adjust the ARCH_xxx order in Kconfig file
+-Rename ARCH_HI3xxx to ARCH_36xx
 
-Anyway current ath79 dt binding is somewhat broken (see __your__ message 'R=
-e: [RFC 1/4] WIP: MIPS: ath79: make ar933x clks more devicetree-friendly' f=
-rom 'Thu, 21 Jan 2016 12:03:20 +0100').
+Jiancheng Xue (6):
+  clk: hisilicon: add CRG driver for hi3519 soc
+  ARM: hisi: add compatible string for Hi3519 soc
+  ARM: config: hisi: enable CONFIG_RESET_CONTROLLER
+  ARM: debug: add hi3519 debug uart
+  mfd: dt-bindings: add device tree bindings for Hi3519 sysctrl
+  ARM: dts: add dts files for Hi3519
 
+Jiancheng Xue (6):
+  clk: hisilicon: add CRG driver for hi3519 soc
+  ARM: hisi: add compatible string for Hi3519 soc
+  ARM: config: hisi: enable CONFIG_RESET_CONTROLLER
+  ARM: debug: add hi3519 debug uart
+  mfd: dt-bindings: add device tree bindings for Hi3519 sysctrl
+  ARM: dts: add dts files for Hi3519
 
---=A0
-Best regards,
-=A0 Antony Pavlov
+ .../devicetree/bindings/clock/hi3519-crg.txt       |  46 ++++++
+ Documentation/devicetree/bindings/mfd/hi3519.txt   |  14 ++
+ arch/arm/Kconfig.debug                             |  10 ++
+ arch/arm/boot/dts/Makefile                         |   2 +
+ arch/arm/boot/dts/hi3519-demb.dts                  |  42 +++++
+ arch/arm/boot/dts/hi3519.dtsi                      | 175 +++++++++++++++++++++
+ arch/arm/configs/hisi_defconfig                    |   1 +
+ arch/arm/mach-hisi/hisilicon.c                     |  23 +--
+ drivers/clk/hisilicon/Kconfig                      |   7 +
+ drivers/clk/hisilicon/Makefile                     |   2 +
+ drivers/clk/hisilicon/clk-hi3519.c                 | 105 +++++++++++++
+ drivers/clk/hisilicon/reset.c                      | 129 +++++++++++++++
+ drivers/clk/hisilicon/reset.h                      |  32 ++++
+ include/dt-bindings/clock/hi3519-clock.h           |  43 +++++
+ 14 files changed, 612 insertions(+), 19 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/hi3519.txt
+ create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
+ create mode 100644 arch/arm/boot/dts/hi3519.dtsi
+ create mode 100644 drivers/clk/hisilicon/clk-hi3519.c
+ create mode 100644 drivers/clk/hisilicon/reset.c
+ create mode 100644 drivers/clk/hisilicon/reset.h
+ create mode 100644 include/dt-bindings/clock/hi3519-clock.h
+
+-- 
+1.9.1
