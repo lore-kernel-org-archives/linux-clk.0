@@ -1,55 +1,60 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH v4 1/3] clk: samsung: Enable COMPILE_TEST for Samsung
- clocks
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Kukjin Kim <kgene@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will.deacon@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1453941324-15742-1-git-send-email-k.kozlowski@samsung.com>
- <1453941324-15742-2-git-send-email-k.kozlowski@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
- Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <56AA6829.8050900@osg.samsung.com>
-Date: Thu, 28 Jan 2016 16:12:41 -0300
+Return-Path: <jamesjj.liao@mediatek.com>
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+CC: Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
+	<srv_heupstream@mediatek.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, James Liao <jamesjj.liao@mediatek.com>
+Subject: [PATCH] clk: mediatek: Allow changing PLL rate when it is off
+Date: Fri, 8 Jan 2016 16:16:37 +0800
+Message-ID: <1452240997-35316-1-git-send-email-jamesjj.liao@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <1453941324-15742-2-git-send-email-k.kozlowski@samsung.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+Some modules may need to change its clock rate before turn on it.
+So changing PLL's rate when it is off should be allowed.
+This patch removes PLL enabled check before set rate, so that
+PLLs can set new frequency even if they are off.
 
-On 01/27/2016 09:35 PM, Krzysztof Kozlowski wrote:
-> Enable the COMPILE_TEST to get build coverage of some of Samsung clock
-> controller drivers. Still some of them will be built only if
-> appropriate SoC is chosen (like SOC_EXYNOS4415 or ARCH_S3C64XX).
->
-> Anyway in case of COMPILE_TEST the Samsung clocks would show up in main
-> drivers section because they are not inside the "Common Clock Framework"
-> menu item. Move them under the "Common Clock Framework".
->
-> This changes the logic of selecting Samsung clocks from specific
-> architectures. Now the COMMON_CLK should be selected before selecting
-> specific clock (like S3C2410_COMMON_CLK or COMMON_CLK_SAMSUNG).
->
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+---
+ drivers/clk/mediatek/clk-pll.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-I have also verified that more samsung clocks drivers are built for
-allyesconfig (where COMPILE_TEST is enabled) when make M=drivers/clk
-
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
+diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
+index 966cab1..8e31fae 100644
+--- a/drivers/clk/mediatek/clk-pll.c
++++ b/drivers/clk/mediatek/clk-pll.c
+@@ -91,9 +91,6 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
+ 		int postdiv)
+ {
+ 	u32 con1, val;
+-	int pll_en;
+-
+-	pll_en = readl(pll->base_addr + REG_CON0) & CON0_BASE_EN;
+ 
+ 	/* set postdiv */
+ 	val = readl(pll->pd_addr);
+@@ -114,15 +111,13 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
+ 
+ 	con1 = readl(pll->base_addr + REG_CON1);
+ 
+-	if (pll_en)
+-		con1 |= CON0_PCW_CHG;
++	con1 |= CON0_PCW_CHG;
+ 
+ 	writel(con1, pll->base_addr + REG_CON1);
+ 	if (pll->tuner_addr)
+ 		writel(con1 + 1, pll->tuner_addr);
+ 
+-	if (pll_en)
+-		udelay(20);
++	udelay(20);
+ }
+ 
+ /*
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+1.9.1
