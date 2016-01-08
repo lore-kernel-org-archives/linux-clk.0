@@ -1,56 +1,61 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.131]:55710 "EHLO
-	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932404AbcAZDe6 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jan 2016 22:34:58 -0500
-From: Shawn Lin <shawn.lin@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	Jeffy Chen <jeffy.chen@rock-chips.com>
-Subject: [PATCH] clk: rockchip: fix wrong mmc phase shift for rk3228
-Date: Tue, 26 Jan 2016 11:30:18 +0800
-Message-Id: <1453779018-30666-1-git-send-email-shawn.lin@rock-chips.com>
+Received: from pandora.arm.linux.org.uk ([78.32.30.218]:49108 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755234AbcAHPIw (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2016 10:08:52 -0500
+Date: Fri, 8 Jan 2016 15:08:28 +0000
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: Jiancheng Xue <xuejiancheng@huawei.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
+	p.zabel@pengutronix.de, robh+dt@kernel.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, khilman@linaro.org, arnd@arndb.de,
+	olof@lixom.net, xuwei5@hisilicon.com, haojian.zhuang@linaro.org,
+	zhangfei.gao@linaro.org, bintian.wang@huawei.com,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	yanhaifeng@hisilicon.com, yanghongwei@hisilicon.com,
+	suwenping@hisilicon.com, ml.yang@hisilicon.com,
+	gaofei@hisilicon.com, zhangzhenxing@hisilicon.com,
+	xuejiancheng@hisilicon.com
+Subject: Re: [PATCH v5 4/6] ARM: debug: add hi3519 debug uart
+Message-ID: <20160108150828.GM19062@n2100.arm.linux.org.uk>
+References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
+ <1452219400-32478-5-git-send-email-xuejiancheng@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1452219400-32478-5-git-send-email-xuejiancheng@huawei.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-mmc sample shift is 0 for rk3228 refer to user manaul.
-So it's broken if we enable mmc tuning for rk3228.
+On Fri, Jan 08, 2016 at 10:16:38AM +0800, Jiancheng Xue wrote:
+> @@ -1449,6 +1457,7 @@ config DEBUG_UART_PHYS
+>  	default 0xf7fc9000 if DEBUG_BERLIN_UART
+>  	default 0xf8b00000 if DEBUG_HIX5HD2_UART
+>  	default 0xf991e000 if DEBUG_QCOM_UARTDM
+> +	default 0x12100000 if DEBUG_HI3519_UART
+>  	default 0xfcb00000 if DEBUG_HI3620_UART
+>  	default 0xfd883000 if DEBUG_ALPINE_UART0
+>  	default 0xfe800000 if ARCH_IOP32X
 
-Fixes: 307a2e9ac ("clk: rockchip: add clock controller for rk3228")
-Cc: Xing Zheng <zhengxing@rock-chips.com>
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
----
+Please insert at the appropriate location - examination of the list
+of defaults will show that it's sorted numerically, please keep this
+sorted numerically.
 
- drivers/clk/rockchip/clk-rk3228.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> @@ -1529,6 +1538,7 @@ config DEBUG_UART_VIRT
+>  	default 0xfe230000 if DEBUG_PICOXCELL_UART
+>  	default 0xfe300000 if DEBUG_BCM_KONA_UART
+>  	default 0xfe800000 if ARCH_IOP32X
+> +	default 0xfef00000 if DEBUG_HI3519_UART
+>  	default 0xfeb00000 if DEBUG_HI3620_UART || DEBUG_HIX5HD2_UART
+>  	default 0xfeb24000 if DEBUG_RK3X_UART0
+>  	default 0xfeb26000 if DEBUG_RK3X_UART1
 
-diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
-index 981a502..97f49aa 100644
---- a/drivers/clk/rockchip/clk-rk3228.c
-+++ b/drivers/clk/rockchip/clk-rk3228.c
-@@ -605,13 +605,13 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
- 
- 	/* PD_MMC */
- 	MMC(SCLK_SDMMC_DRV,    "sdmmc_drv",    "sclk_sdmmc", RK3228_SDMMC_CON0, 1),
--	MMC(SCLK_SDMMC_SAMPLE, "sdmmc_sample", "sclk_sdmmc", RK3228_SDMMC_CON1, 1),
-+	MMC(SCLK_SDMMC_SAMPLE, "sdmmc_sample", "sclk_sdmmc", RK3228_SDMMC_CON1, 0),
- 
- 	MMC(SCLK_SDIO_DRV,     "sdio_drv",     "sclk_sdio",  RK3228_SDIO_CON0,  1),
--	MMC(SCLK_SDIO_SAMPLE,  "sdio_sample",  "sclk_sdio",  RK3228_SDIO_CON1,  1),
-+	MMC(SCLK_SDIO_SAMPLE,  "sdio_sample",  "sclk_sdio",  RK3228_SDIO_CON1,  0),
- 
- 	MMC(SCLK_EMMC_DRV,     "emmc_drv",     "sclk_emmc",  RK3228_EMMC_CON0,  1),
--	MMC(SCLK_EMMC_SAMPLE,  "emmc_sample",  "sclk_emmc",  RK3228_EMMC_CON1,  1),
-+	MMC(SCLK_EMMC_SAMPLE,  "emmc_sample",  "sclk_emmc",  RK3228_EMMC_CON1,  0),
- };
- 
- static const char *const rk3228_critical_clocks[] __initconst = {
+Same for here.
+
+Thanks.
+
 -- 
-2.3.7
-
-
+RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
