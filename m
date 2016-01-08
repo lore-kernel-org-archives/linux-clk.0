@@ -1,66 +1,41 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 12/14] ARM: dts: sun8i-a83t: Add RSB nodes to dtsi
-Date: Sun, 31 Jan 2016 09:21:04 +0800
-Message-Id: <1454203266-4450-13-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: linux-rockchip@lists.infradead.org
+Cc: keescook@google.com, leozwang@google.com, heiko@sntech.de,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	devicetree@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org, Kumar Gala <galak@codeaurora.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [RESEND RFC PATCH 0/2] Add 100MHz integer multiples of cpu freq table for the RK3036
+Date: Fri,  8 Jan 2016 19:31:36 +0800
+Message-Id: <1452252698-16765-1-git-send-email-zhengxing@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds support for RSB
-A83T RSB is compatible with A23 rsb.
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Hi,
+  We need the cpu changing freqs capability, and considering that emac
+ref which is need 50MHz might is under the APLL, meanwhile, we don't
+need too many freqs because it may spend more time to find the correct
+freq.
+  Therefore, we should add 100MHz integer multiples cpu freqs for
+emac.
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 11be9e1..8c67c85 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -499,5 +499,19 @@
- 				allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
- 			};
- 		};
-+
-+		r_rsb: i2c@01f03400 {
-+			compatible = "allwinner,sun8i-a23-rsb";
-+			reg = <0x01f03400 0x400>;
-+			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&apb0_gates 3>;
-+			clock-frequency = <3000000>;
-+			resets = <&apb0_reset 3>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&r_rsb_pins>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
- 	};
- };
+
+Xing Zheng (2):
+  clk: rockchip: rk3036: Add to 100MHz integer multiples of cpu freq
+    table
+  ARM: dts: rockchip: Update the cpu freqs table
+
+ arch/arm/boot/dts/rk3036.dtsi     |   13 ++++++++++++-
+ drivers/clk/rockchip/clk-rk3036.c |   27 ++++++++++++++++++++++++---
+ 2 files changed, 36 insertions(+), 4 deletions(-)
+
 -- 
-1.9.1
+1.7.9.5
