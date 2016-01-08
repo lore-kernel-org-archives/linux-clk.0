@@ -1,32 +1,53 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 28 Jan 2016 00:30:33 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 12/13] clk: at91: pmc: remove useless capacities
- handling
-Message-ID: <20160128083033.GH12841@codeaurora.org>
-References: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
- <1453911072-23608-13-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga01-in.huawei.com ([58.251.152.64]:32130 "EHLO
+	szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753800AbcAHCc5 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jan 2016 21:32:57 -0500
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
+	<zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v5 3/6] ARM: config: hisi: enable CONFIG_RESET_CONTROLLER
+Date: Fri, 8 Jan 2016 10:16:37 +0800
+Message-ID: <1452219400-32478-4-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
+References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1453911072-23608-13-git-send-email-alexandre.belloni@free-electrons.com>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/27, Alexandre Belloni wrote:
-> Capacities only handles interrupts and they are not use anymore. Remove the
-> whole initialisation.
-> 
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> ---
+enable CONFIG_RESET_CONTROLLER in hisi_defconfig
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+---
+ arch/arm/configs/hisi_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/arch/arm/configs/hisi_defconfig b/arch/arm/configs/hisi_defconfig
+index b2e340b..ba62c07 100644
+--- a/arch/arm/configs/hisi_defconfig
++++ b/arch/arm/configs/hisi_defconfig
+@@ -75,6 +75,7 @@ CONFIG_DMADEVICES=y
+ CONFIG_DW_DMAC=y
+ CONFIG_PL330_DMA=y
+ CONFIG_PWM=y
++CONFIG_RESET_CONTROLLER=y
+ CONFIG_PHY_HIX5HD2_SATA=y
+ CONFIG_EXT4_FS=y
+ CONFIG_TMPFS=y
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
+
