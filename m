@@ -1,111 +1,137 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 00/14] Add A83T clk, r_pio, mmc rsb support
-Date: Sun, 31 Jan 2016 09:20:52 +0800
-Message-Id: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 3/9] clk: tegra210: Fix naming of MISC registers
+Date: Fri, 8 Jan 2016 13:37:05 -0500
+Message-ID: <1452278231-9546-4-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1452278231-9546-1-git-send-email-rklein@nvidia.com>
+References: <1452278231-9546-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
-This series adds further support for A83T, mainly adds clock support.
-Also adds R_PIO, PRCM related clocks, mmc, rsb support.
+Some register for PLLM and PLLMB were named MISC0 but according to the
+TRM, they have different names. Sync up the names to make it easier to
+understand which register they are really referring to.
 
-A83T difference in short:
-R_PIO is slightly different from A23 r_pio. AHB1 has different parents as
-compared to a31-ahb1, APB1 has different dividers.Bus gates are similar to H3,
-apb0 gates are different.mmc and rsb are compatible with earlier sunxi socs.
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 36 ++++++++++++++++++------------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
 
-Patch 1: adds support for r_pio pin controller.
-
-patch 2: adds PRCM apb0 clock gates, it controls prcm related clocks.
-
-patch 3: adds bus gates which are similar to h3, it's not clearly known which
-clocks belongs to which parent.
-
-patch 4: adds ahb1 clock support, 0b1x is pll6 parent otherwise it's same as a31
-ahb1.
-
-patch 5: adds apb1 clock support, apb1 has different dividers compared to a10 
-apb0 clock.
-
-patch 6: this patch is form wens, a83t has 16M internal oscillator, to get 
-aproximately 32k clock, it's divided by 512.
-
-patch 7: adds basics clocks nodes to dtsi, pll6, ahb1, ahb2, apb1, apb2,
-bus gates, and resets.
-
-patch 8-9: adds mmc and it's clock nodes.
-
-patch 10: adds A83T PRCM related clocks, clock resets.
-
-patch 11: adds r_pio pin controller nodes to dtsi
-
-patch 12: adds RSB nodes to dtsi
-
-patch 13: enables mmc0 support for h8homlet board, tested by LABBE Corentin.
-
-patch 14: This patch adds support for Sinovoip BPI-M3 A83T based board, it has 
-2GB LPDDR3, u-boot support is added recently for this board.
-
-
-Regards,
-Vishnu
-
-Chen-Yu Tsai (1):
-  ARM: dts: sun8i-a83t: Correct low speed oscillator clocks
-
-Vishnu Patekar (13):
-  pinctrl: sunxi: Add A83T R_PIO controller support
-  clk: sunxi: Add apb0 gates for A83T
-  clk: sunxi: add bus gates for A83T
-  clk: sunxi: add ahb1 clock for A83T
-  clk: sunxi: Add APB1 clock for A83T
-  ARM: dts: sun8i-a83t: Add basic clocks and resets
-  ARM: dts: sun8i-a83t: add mmc clock nodes
-  ARM: dts: sun8i-a83t: Add mmc controller nodes
-  ARM: dts: sun8i-a83t: Add PRCM related clocks and resets
-  ARM: dts: sun8i-a83t: Add R_PIO controller node to the dtsi
-  ARM: dts: sun8i-a83t: Add RSB nodes to dtsi
-  ARM: dts: sun8i: enable mmc for H8Homlet Board.
-  ARM: dts: sun8i: Add A83T based Sinovoip Bpi-M3 Board
-
- Documentation/devicetree/bindings/clock/sunxi.txt  |   4 +
- .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
- arch/arm/boot/dts/Makefile                         |   1 +
- .../boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts  |  20 ++
- ...omlet-v2.dts => sun8i-a83t-sinovoip-bpi-m3.dts} |  28 +-
- arch/arm/boot/dts/sun8i-a83t.dtsi                  | 314 ++++++++++++++++++++-
- drivers/clk/sunxi/clk-simple-gates.c               |   2 +
- drivers/clk/sunxi/clk-sun8i-bus-gates.c            |   2 +
- drivers/clk/sunxi/clk-sunxi.c                      |  92 ++++++
- drivers/pinctrl/sunxi/Kconfig                      |   5 +
- drivers/pinctrl/sunxi/Makefile                     |   1 +
- drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c       | 119 ++++++++
- 12 files changed, 582 insertions(+), 7 deletions(-)
- copy arch/arm/boot/dts/{sun8i-a83t-allwinner-h8homlet-v2.dts => sun8i-a83t-sinovoip-bpi-m3.dts} (79%)
- create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c
-
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index f45c9adf7fb2..2a7faa357130 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -59,7 +59,7 @@
+ #define PLLC3_MISC3 0x50c
+ 
+ #define PLLM_BASE 0x90
+-#define PLLM_MISC0 0x9c
++#define PLLM_MISC2 0x9c
+ #define PLLM_MISC1 0x98
+ #define PLLP_BASE 0xa0
+ #define PLLP_MISC0 0xac
+@@ -99,7 +99,7 @@
+ #define PLLC4_MISC0 0x5a8
+ #define PLLC4_OUT 0x5e4
+ #define PLLMB_BASE 0x5e8
+-#define PLLMB_MISC0 0x5ec
++#define PLLMB_MISC1 0x5ec
+ #define PLLA1_BASE 0x6a4
+ #define PLLA1_MISC0 0x6a8
+ #define PLLA1_MISC1 0x6ac
+@@ -367,12 +367,12 @@ static const char *mux_pllmcp_clkm[] = {
+ /* PLLMB */
+ #define PLLMB_BASE_LOCK			(1 << 27)
+ 
+-#define PLLMB_MISC0_LOCK_OVERRIDE	(1 << 18)
+-#define PLLMB_MISC0_IDDQ		(1 << 17)
+-#define PLLMB_MISC0_LOCK_ENABLE		(1 << 16)
++#define PLLMB_MISC1_LOCK_OVERRIDE	(1 << 18)
++#define PLLMB_MISC1_IDDQ		(1 << 17)
++#define PLLMB_MISC1_LOCK_ENABLE		(1 << 16)
+ 
+-#define PLLMB_MISC0_DEFAULT_VALUE	0x00030000
+-#define PLLMB_MISC0_WRITE_MASK		0x0007ffff
++#define PLLMB_MISC1_DEFAULT_VALUE	0x00030000
++#define PLLMB_MISC1_WRITE_MASK		0x0007ffff
+ 
+ /* PLLP */
+ #define PLLP_BASE_OVERRIDE		(1 << 28)
+@@ -914,15 +914,15 @@ void tegra210_pllmb_set_defaults(struct tegra_clk_pll *pllmb)
+ 		 * PLL is ON: check if defaults already set, then set those
+ 		 * that can be updated in flight.
+ 		 */
+-		val = PLLMB_MISC0_DEFAULT_VALUE & (~PLLMB_MISC0_IDDQ);
+-		mask = PLLMB_MISC0_LOCK_ENABLE | PLLMB_MISC0_LOCK_OVERRIDE;
++		val = PLLMB_MISC1_DEFAULT_VALUE & (~PLLMB_MISC1_IDDQ);
++		mask = PLLMB_MISC1_LOCK_ENABLE | PLLMB_MISC1_LOCK_OVERRIDE;
+ 		_pll_misc_chk_default(clk_base, pllmb->params, 0, val,
+-				~mask & PLLMB_MISC0_WRITE_MASK);
++				~mask & PLLMB_MISC1_WRITE_MASK);
+ 
+ 		/* Enable lock detect */
+ 		val = readl_relaxed(clk_base + pllmb->params->ext_misc_reg[0]);
+ 		val &= ~mask;
+-		val |= PLLMB_MISC0_DEFAULT_VALUE & mask;
++		val |= PLLMB_MISC1_DEFAULT_VALUE & mask;
+ 		writel_relaxed(val, clk_base + pllmb->params->ext_misc_reg[0]);
+ 		udelay(1);
+ 
+@@ -930,7 +930,7 @@ void tegra210_pllmb_set_defaults(struct tegra_clk_pll *pllmb)
+ 	}
+ 
+ 	/* set IDDQ, enable lock detect */
+-	writel_relaxed(PLLMB_MISC0_DEFAULT_VALUE,
++	writel_relaxed(PLLMB_MISC1_DEFAULT_VALUE,
+ 			clk_base + pllmb->params->ext_misc_reg[0]);
+ 	udelay(1);
+ }
+@@ -1557,14 +1557,14 @@ static struct tegra_clk_pll_params pll_m_params = {
+ 	.vco_min = 800000000,
+ 	.vco_max = 1866000000,
+ 	.base_reg = PLLM_BASE,
+-	.misc_reg = PLLM_MISC0,
++	.misc_reg = PLLM_MISC2,
+ 	.lock_mask = PLL_BASE_LOCK,
+ 	.lock_enable_bit_idx = PLLM_MISC_LOCK_ENABLE,
+ 	.lock_delay = 300,
+-	.iddq_reg = PLLM_MISC0,
++	.iddq_reg = PLLM_MISC2,
+ 	.iddq_bit_idx = PLLM_IDDQ_BIT,
+ 	.max_p = PLL_QLIN_PDIV_MAX,
+-	.ext_misc_reg[0] = PLLM_MISC0,
++	.ext_misc_reg[0] = PLLM_MISC2,
+ 	.ext_misc_reg[0] = PLLM_MISC1,
+ 	.round_p_to_pdiv = pll_qlin_p_to_pdiv,
+ 	.pdiv_tohw = pll_qlin_pdiv_to_hw,
+@@ -1584,13 +1584,13 @@ static struct tegra_clk_pll_params pll_mb_params = {
+ 	.vco_min = 800000000,
+ 	.vco_max = 1866000000,
+ 	.base_reg = PLLMB_BASE,
+-	.misc_reg = PLLMB_MISC0,
++	.misc_reg = PLLMB_MISC1,
+ 	.lock_mask = PLL_BASE_LOCK,
+ 	.lock_delay = 300,
+-	.iddq_reg = PLLMB_MISC0,
++	.iddq_reg = PLLMB_MISC1,
+ 	.iddq_bit_idx = PLLMB_IDDQ_BIT,
+ 	.max_p = PLL_QLIN_PDIV_MAX,
+-	.ext_misc_reg[0] = PLLMB_MISC0,
++	.ext_misc_reg[0] = PLLMB_MISC1,
+ 	.round_p_to_pdiv = pll_qlin_p_to_pdiv,
+ 	.pdiv_tohw = pll_qlin_pdiv_to_hw,
+ 	.div_nmp = &pllm_nmp,
 -- 
 1.9.1
