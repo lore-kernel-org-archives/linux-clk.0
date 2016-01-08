@@ -1,85 +1,48 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, John Crispin
-	<blogic@openwrt.org>
-CC: Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, <srv_heupstream@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, James Liao <jamesjj.liao@mediatek.com>, Shunli
- Wang <shunli.wang@mediatek.com>
-Subject: [PATCH v3 1/6] clk: mediatek: Refine the makefile to support multiple clock drivers
-Date: Tue, 12 Jan 2016 16:31:05 +0800
-Message-ID: <1452587470-61506-2-git-send-email-jamesjj.liao@mediatek.com>
-In-Reply-To: <1452587470-61506-1-git-send-email-jamesjj.liao@mediatek.com>
-References: <1452587470-61506-1-git-send-email-jamesjj.liao@mediatek.com>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 1/9] clk: tegra: Fix divider on VI_I2C
+Date: Fri, 8 Jan 2016 13:45:06 -0500
+Message-ID: <1452278714-10751-2-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
+References: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: jamesjj.liao@mediatek.com
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a Kconfig to define clock configuration for each SoC, and
-modify the Makefile to build drivers that only selected in config.
+VI-I2C has 16 bits available for its divider. Switch the divider
+width to 16 instead of 8 so correct rates can be set.
 
-Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- drivers/clk/Kconfig           |  1 +
- drivers/clk/mediatek/Kconfig  | 23 +++++++++++++++++++++++
- drivers/clk/mediatek/Makefile |  6 +++---
- 3 files changed, 27 insertions(+), 3 deletions(-)
- create mode 100644 drivers/clk/mediatek/Kconfig
+ drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index c3e3a02..b7a37dc 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -198,3 +198,4 @@ source "drivers/clk/mvebu/Kconfig"
- 
- source "drivers/clk/samsung/Kconfig"
- source "drivers/clk/tegra/Kconfig"
-+source "drivers/clk/mediatek/Kconfig"
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-new file mode 100644
-index 0000000..dc224e6
---- /dev/null
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -0,0 +1,23 @@
-+#
-+# MediaTek SoC drivers
-+#
-+config COMMON_CLK_MEDIATEK
-+	bool
-+	---help---
-+	  Mediatek SoCs' clock support.
-+
-+config COMMON_CLK_MT8135
-+	bool "Clock driver for Mediatek MT8135"
-+	depends on COMMON_CLK
-+	select COMMON_CLK_MEDIATEK
-+	default ARCH_MEDIATEK
-+	---help---
-+	  This driver supports Mediatek MT8135 clocks.
-+
-+config COMMON_CLK_MT8173
-+	bool "Clock driver for Mediatek MT8173"
-+	depends on COMMON_CLK
-+	select COMMON_CLK_MEDIATEK
-+	default ARCH_MEDIATEK
-+	---help---
-+	  This driver supports Mediatek MT8173 clocks.
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 95fdfac..32e7222 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -1,4 +1,4 @@
--obj-y += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
-+obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
- obj-$(CONFIG_RESET_CONTROLLER) += reset.o
--obj-y += clk-mt8135.o
--obj-y += clk-mt8173.o
-+obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135.o
-+obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173.o
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 6ad381a888a6..105405ca85ab 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -782,7 +782,7 @@ static struct tegra_periph_init_data periph_clks[] = {
+ 	NODIV("sor1", mux_clkm_sor1_brick_sor1_src, CLK_SOURCE_SOR1, 15, MASK(1), 183, 0, tegra_clk_sor1, &sor1_lock),
+ 	MUX8("sdmmc_legacy", mux_pllp_out3_clkm_pllp_pllc4, CLK_SOURCE_SDMMC_LEGACY, 193, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_sdmmc_legacy),
+ 	MUX8("qspi", mux_pllp_pllc_pllc_out1_pllc4_out2_pllc4_out1_clkm_pllc4_out0, CLK_SOURCE_QSPI, 211, TEGRA_PERIPH_ON_APB, tegra_clk_qspi),
+-	MUX("vii2c", mux_pllp_pllc_clkm, CLK_SOURCE_VI_I2C, 208, TEGRA_PERIPH_ON_APB, tegra_clk_vi_i2c),
++	I2C("vii2c", mux_pllp_pllc_clkm, CLK_SOURCE_VI_I2C, 208, tegra_clk_vi_i2c),
+ 	MUX("mipibif", mux_pllp_clkm, CLK_SOURCE_MIPIBIF, 173, TEGRA_PERIPH_ON_APB, tegra_clk_mipibif),
+ 	MUX("uartape", mux_pllp_pllc_clkm, CLK_SOURCE_UARTAPE, 212, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_uartape),
+ 	MUX8("tsecb", mux_pllp_pllc2_c_c3_clkm, CLK_SOURCE_TSECB, 206, 0, tegra_clk_tsecb),
 -- 
 1.9.1
