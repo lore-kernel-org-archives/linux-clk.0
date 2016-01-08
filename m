@@ -1,68 +1,45 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Remi Pommarel <repk@triplefau.lt>,
-	devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Matthias Reichl <hias@horus.com>,
-	lFlorian Meier <florian.meier@koalo.de>
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 5/5] dt-bindings: bsm2835: fix bindings documentation to use new clock framework
-Date: Sat,  9 Jan 2016 09:25:57 +0000
-Message-Id: <1452331558-2520-6-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org>
-References: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 1/9] clk: tegra: Fix divider on VI_I2C
+Date: Fri, 8 Jan 2016 13:37:03 -0500
+Message-ID: <1452278231-9546-2-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1452278231-9546-1-git-send-email-rklein@nvidia.com>
+References: <1452278231-9546-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+VI-I2C has 16 bits available for its divider. Switch the divider
+width to 16 instead of 8 so correct rates can be set.
 
-The bcm2835-i2s driver has been updated to use the new clock framework
-for the bcm2835 SOC.
-
-This patch documents the required changes to the bindings.
-
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- Documentation/devicetree/bindings/sound/brcm,bcm2835-i2s.txt |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/brcm,bcm2835-i2s.txt b/Documentation/devicetree/bindings/sound/brcm,bcm2835-i2s.txt
-index 65783de..b331f26 100644
---- a/Documentation/devicetree/bindings/sound/brcm,bcm2835-i2s.txt
-+++ b/Documentation/devicetree/bindings/sound/brcm,bcm2835-i2s.txt
-@@ -4,11 +4,10 @@ Required properties:
- - compatible: "brcm,bcm2835-i2s"
- - reg: A list of base address and size entries:
- 	* The first entry should cover the PCM registers
--	* The second entry should cover the PCM clock registers
-+- clocks: the (PCM) clock to use
- - dmas: List of DMA controller phandle and DMA request line ordered pairs.
- - dma-names: Identifier string for each DMA request line in the dmas property.
-   These strings correspond 1:1 with the ordered pairs in dmas.
--
-   One of the DMA channels will be responsible for transmission (should be
-   named "tx") and one for reception (should be named "rx").
- 
-@@ -16,8 +15,8 @@ Example:
- 
- bcm2835_i2s: i2s@7e203000 {
- 	compatible = "brcm,bcm2835-i2s";
--	reg = <0x7e203000 0x20>,
--	      <0x7e101098 0x02>;
-+	reg = <0x7e203000 0x24>;
-+	clocks = <&clocks BCM2835_CLOCK_PCM>;
- 
- 	dmas = <&dma 2>,
- 	       <&dma 3>;
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 6ad381a888a6..105405ca85ab 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -782,7 +782,7 @@ static struct tegra_periph_init_data periph_clks[] = {
+ 	NODIV("sor1", mux_clkm_sor1_brick_sor1_src, CLK_SOURCE_SOR1, 15, MASK(1), 183, 0, tegra_clk_sor1, &sor1_lock),
+ 	MUX8("sdmmc_legacy", mux_pllp_out3_clkm_pllp_pllc4, CLK_SOURCE_SDMMC_LEGACY, 193, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_sdmmc_legacy),
+ 	MUX8("qspi", mux_pllp_pllc_pllc_out1_pllc4_out2_pllc4_out1_clkm_pllc4_out0, CLK_SOURCE_QSPI, 211, TEGRA_PERIPH_ON_APB, tegra_clk_qspi),
+-	MUX("vii2c", mux_pllp_pllc_clkm, CLK_SOURCE_VI_I2C, 208, TEGRA_PERIPH_ON_APB, tegra_clk_vi_i2c),
++	I2C("vii2c", mux_pllp_pllc_clkm, CLK_SOURCE_VI_I2C, 208, tegra_clk_vi_i2c),
+ 	MUX("mipibif", mux_pllp_clkm, CLK_SOURCE_MIPIBIF, 173, TEGRA_PERIPH_ON_APB, tegra_clk_mipibif),
+ 	MUX("uartape", mux_pllp_pllc_clkm, CLK_SOURCE_UARTAPE, 212, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_uartape),
+ 	MUX8("tsecb", mux_pllp_pllc2_c_c3_clkm, CLK_SOURCE_TSECB, 206, 0, tegra_clk_tsecb),
 -- 
-1.7.10.4
+1.9.1
