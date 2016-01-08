@@ -1,49 +1,52 @@
-Return-Path: <dunlapg@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:4781 "EHLO
+	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756193AbcAHSh2 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2016 13:37:28 -0500
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 4/9] clk: tegra: Fix the misnaming of nvenc from msenc
+Date: Fri, 8 Jan 2016 13:37:06 -0500
+Message-ID: <1452278231-9546-5-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1452278231-9546-1-git-send-email-rklein@nvidia.com>
+References: <1452278231-9546-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Sender: dunlapg@gmail.com
-In-Reply-To: <1452921760-21294-1-git-send-email-van.freenix@gmail.com>
-References: <1452921760-21294-1-git-send-email-van.freenix@gmail.com>
-Date: Mon, 18 Jan 2016 11:22:44 +0000
-Message-ID: <CAFLBxZa9W6At5M_fFy17u__C_AGHRAdYHebOzymnb1su715jzA@mail.gmail.com>
-Subject: Re: [Xen-devel] [RFC/WIP] xen: clk: introudce pvclk for device passthrough
-From: George Dunlap <George.Dunlap@eu.citrix.com>
-To: Peng Fan <van.freenix@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	xen-devel <xen-devel@lists.xenproject.org>, Ian Campbell <ian.campbell@citrix.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Julien Grall <julien.grall@citrix.com>, David Vrabel <david.vrabel@citrix.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Jan 16, 2016 at 5:22 AM, Peng Fan <van.freenix@gmail.com> wrote:
-> This patch was just a initial patch, not sure whether this way
-> is ok from you side for handlding clk when doing platform device
-> passhthrough. Any comments are appreciated, and your comments may
-> give me a better direction.
+When adding the nvenc clock, it was partially named msenc in
+the code. Since the msenc clk isn't present in T210 where the nvenc
+clk is, its misleading to see it present. Therefore, properly
+rename it.
 
-Hey Peng,
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Just speaking from the perspective of a Xen dev who's not an ARM dev:
-a few more words on the relationship between pvclk and
-device-passthrough would be helpful to set the context.  It sounds
-like:
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 105405ca85ab..1860df1862dd 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -773,7 +773,7 @@ static struct tegra_periph_init_data periph_clks[] = {
+ 	XUSB("xusb_dev_src", mux_clkm_pllp_pllc_pllre, CLK_SOURCE_XUSB_DEV_SRC, 95, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_xusb_dev_src),
+ 	XUSB("xusb_dev_src", mux_clkm_pllp_pllre, CLK_SOURCE_XUSB_DEV_SRC, 95, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_xusb_dev_src_8),
+ 	MUX8("dbgapb", mux_pllp_clkm_2, CLK_SOURCE_DBGAPB, 185, TEGRA_PERIPH_NO_RESET, tegra_clk_dbgapb),
+-	MUX8("msenc", mux_pllc2_c_c3_pllp_plla1_clkm, CLK_SOURCE_NVENC, 219, 0, tegra_clk_nvenc),
++	MUX8("nvenc", mux_pllc2_c_c3_pllp_plla1_clkm, CLK_SOURCE_NVENC, 219, 0, tegra_clk_nvenc),
+ 	MUX8("nvdec", mux_pllc2_c_c3_pllp_plla1_clkm, CLK_SOURCE_NVDEC, 194, 0, tegra_clk_nvdec),
+ 	MUX8("nvjpg", mux_pllc2_c_c3_pllp_plla1_clkm, CLK_SOURCE_NVJPG, 195, 0, tegra_clk_nvjpg),
+ 	MUX8("ape", mux_plla_pllc4_out0_pllc_pllc4_out1_pllp_pllc4_out2_clkm, CLK_SOURCE_APE, 198, TEGRA_PERIPH_ON_APB, tegra_clk_ape),
+-- 
+1.9.1
 
-* On ARM, passing through a device requires a clocksource (at least
-for many devices)
-
-* dom0 has the hardware clocksource, but at the moment domUs don't
-have a suitable clocksource
-
-* This patch implements pvclk front/backend suitable for such devices
-
-Is that right?  In which case something like the following would be helpful:
-
-"This patch introduces pvclk, a paravirtualized clock source suitable
-for devices to use when passing through to domUs on ARM systems."
-
-(Obviously change it as necessary to make it accurate.)
-
-Thanks,
- -George
