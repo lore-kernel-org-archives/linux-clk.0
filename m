@@ -1,108 +1,49 @@
-Return-Path: <andi.shyti@samsung.com>
-From: Andi Shyti <andi.shyti@samsung.com>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Sangbeom Kim <sbkim73@samsung.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>,
- Andi Shyti <andi@etezian.org>, Yadwinder Singh Brar <yadi.brar01@gmail.com>,
- Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [PATCH v3 4/4] clk: s2mps11: remove redundant code
-Date: Wed, 20 Jan 2016 19:14:24 +0900
-Message-id: <1453284864-8082-5-git-send-email-andi.shyti@samsung.com>
-In-reply-to: <1453284864-8082-1-git-send-email-andi.shyti@samsung.com>
-References: <1453284864-8082-1-git-send-email-andi.shyti@samsung.com>
+Return-Path: <ckeepax@opensource.wolfsonmicro.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+To: <mturquette@baylibre.com>, <cw00.choi@samsung.com>, <lee.jones@linaro.org>
+CC: <sboyd@codeaurora.org>, <myungjoo.ham@samsung.com>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.wolfsonmicro.com>
+Subject: [PATCH v3 4/4] mfd: arizona: Add device tree binding documentation for new clock driver
+Date: Fri, 8 Jan 2016 11:29:42 +0000
+Message-ID: <1452252582-20834-4-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+In-Reply-To: <1452252582-20834-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+References: <1452252582-20834-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The definition of s2mps11_name is meant to resolve the name of a
-given clock. Remove it because the clocks have the same name we
-can get it directly from the s2mps11_clks_init structure.
+Specify the device tree binding for the input clocks to Arizona devices.
 
-While in the probe function the s2mps11_clks is used only to
-iterate through the s2mps11_clks. The naming itself brings
-confusion and the readability does not improve much.
-
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/clk/clk-s2mps11.c | 36 ++++++++++++++++--------------------
- 1 file changed, 16 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index fac0e20..371150a 100644
---- a/drivers/clk/clk-s2mps11.c
-+++ b/drivers/clk/clk-s2mps11.c
-@@ -28,8 +28,6 @@
- #include <linux/mfd/samsung/s5m8767.h>
- #include <linux/mfd/samsung/core.h>
+No changes since v2.
+
+Thanks,
+Charles
+
+ Documentation/devicetree/bindings/mfd/arizona.txt | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/mfd/arizona.txt b/Documentation/devicetree/bindings/mfd/arizona.txt
+index 18be0cb..39f76f8 100644
+--- a/Documentation/devicetree/bindings/mfd/arizona.txt
++++ b/Documentation/devicetree/bindings/mfd/arizona.txt
+@@ -45,6 +45,13 @@ Optional properties:
  
--#define s2mps11_name(a) (a->hw.init->name)
--
- enum {
- 	S2MPS11_CLK_AP = 0,
- 	S2MPS11_CLK_CP,
-@@ -141,19 +139,17 @@ static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev,
- static int s2mps11_clk_probe(struct platform_device *pdev)
- {
- 	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
--	struct s2mps11_clk *s2mps11_clks, *s2mps11_clk;
-+	struct s2mps11_clk *s2mps11_clks;
- 	struct clk_onecell_data *clk_data;
- 	unsigned int s2mps11_reg;
- 	int i, ret = 0;
- 	enum sec_device_type hwid = platform_get_device_id(pdev)->driver_data;
+   - wlf,reset : GPIO specifier for the GPIO controlling /RESET
  
- 	s2mps11_clks = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
--				sizeof(*s2mps11_clk), GFP_KERNEL);
-+				sizeof(*s2mps11_clks), GFP_KERNEL);
- 	if (!s2mps11_clks)
- 		return -ENOMEM;
- 
--	s2mps11_clk = s2mps11_clks;
--
- 	clk_data = devm_kzalloc(&pdev->dev, sizeof(*clk_data), GFP_KERNEL);
- 	if (!clk_data)
- 		return -ENOMEM;
-@@ -186,26 +182,26 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 	if (IS_ERR(s2mps11_clks->clk_np))
- 		return PTR_ERR(s2mps11_clks->clk_np);
- 
--	for (i = 0; i < S2MPS11_CLKS_NUM; i++, s2mps11_clk++) {
-+	for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
- 		if (i == S2MPS11_CLK_CP && hwid == S2MPS14X)
- 			continue; /* Skip clocks not present in some devices */
--		s2mps11_clk->iodev = iodev;
--		s2mps11_clk->hw.init = &s2mps11_clks_init[i];
--		s2mps11_clk->mask = 1 << i;
--		s2mps11_clk->reg = s2mps11_reg;
--
--		s2mps11_clk->clk = devm_clk_register(&pdev->dev,
--							&s2mps11_clk->hw);
--		if (IS_ERR(s2mps11_clk->clk)) {
-+		s2mps11_clks[i].iodev = iodev;
-+		s2mps11_clks[i].hw.init = &s2mps11_clks_init[i];
-+		s2mps11_clks[i].mask = 1 << i;
-+		s2mps11_clks[i].reg = s2mps11_reg;
++  - clocks: Should reference the clocks supplied on MCLK1 and MCLK2
++  - clock-names: Should contains two strings:
++      "mclk1" for the clock supplied on MCLK1, recommended to be a high
++      quality audio reference clock
++      "mclk2" for the clock supplied on MCLK2, recommended to be an always on
++      32k clock
 +
-+		s2mps11_clks[i].clk = devm_clk_register(&pdev->dev,
-+							&s2mps11_clks[i].hw);
-+		if (IS_ERR(s2mps11_clks[i].clk)) {
- 			dev_err(&pdev->dev, "Fail to register : %s\n",
--						s2mps11_name(s2mps11_clk));
--			ret = PTR_ERR(s2mps11_clk->clk);
-+						s2mps11_clks_init[i].name);
-+			ret = PTR_ERR(s2mps11_clks[i].clk);
- 			goto err_reg;
- 		}
- 
--		s2mps11_clk->lookup = clkdev_create(s2mps11_clk->clk,
--					s2mps11_name(s2mps11_clk), NULL);
--		if (!s2mps11_clk->lookup) {
-+		s2mps11_clks[i].lookup = clkdev_create(s2mps11_clks[i].clk,
-+					s2mps11_clks_init[i].name, NULL);
-+		if (!s2mps11_clks[i].lookup) {
- 			ret = -ENOMEM;
- 			goto err_reg;
- 		}
+   - wlf,gpio-defaults : A list of GPIO configuration register values. Defines
+     for the appropriate values can found in <dt-bindings/mfd/arizona.txt>. If
+     absent, no configuration of these registers is performed. If any entry has
 -- 
-2.7.0.rc3
+2.1.4
