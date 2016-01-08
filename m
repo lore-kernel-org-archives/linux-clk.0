@@ -1,80 +1,42 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:36510 "EHLO
-	mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932748AbcBAAKy (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 31 Jan 2016 19:10:54 -0500
-From: Antony Pavlov <antonynpavlov@gmail.com>
-To: linux-mips@linux-mips.org
-Cc: Antony Pavlov <antonynpavlov@gmail.com>,
-	Alban Bedel <albeu@free.fr>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [RFC v4 04/15] MIPS: dts: qca: ar9132: use dt-bindings/clock/ath79-clk.h macros
-Date: Mon,  1 Feb 2016 03:10:29 +0300
-Message-Id: <1454285440-18916-5-git-send-email-antonynpavlov@gmail.com>
-In-Reply-To: <1454285440-18916-1-git-send-email-antonynpavlov@gmail.com>
-References: <1454285440-18916-1-git-send-email-antonynpavlov@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <robh@kernel.org>
+Date: Fri, 8 Jan 2016 15:04:57 -0600
+From: Rob Herring <robh@kernel.org>
+To: Jiancheng Xue <xuejiancheng@huawei.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, p.zabel@pengutronix.de,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	linux@arm.linux.org.uk, khilman@linaro.org, arnd@arndb.de,
+	olof@lixom.net, xuwei5@hisilicon.com, haojian.zhuang@linaro.org,
+	zhangfei.gao@linaro.org, bintian.wang@huawei.com,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	yanhaifeng@hisilicon.com, yanghongwei@hisilicon.com,
+	suwenping@hisilicon.com, ml.yang@hisilicon.com,
+	gaofei@hisilicon.com, zhangzhenxing@hisilicon.com,
+	xuejiancheng@hisilicon.com
+Subject: Re: [PATCH v5 5/6] mfd: dt-bindings: add device tree bindings for
+ Hi3519 sysctrl
+Message-ID: <20160108210457.GA24079@rob-hp-laptop>
+References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
+ <1452219400-32478-6-git-send-email-xuejiancheng@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1452219400-32478-6-git-send-email-xuejiancheng@huawei.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The old ar9132 clk implementation (see arch/mips/ath79/clock.c)
-have had only 3 devicetree clks (cpu, ddr, ahb). Two additional
-clocks (wdt and uart) have realized as aliases for ahb clock.
-In the old ar9132 clk implementation the wdt and uart clocks
-were inaccessible via devicetree so index "2" used for reference
-to ahb clock instead, e.g.
+On Fri, Jan 08, 2016 at 10:16:39AM +0800, Jiancheng Xue wrote:
+> Add device tree bindings for Hi3519 system controller.
+> 
+> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+> ---
+>  Documentation/devicetree/bindings/mfd/hi3519.txt | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/hi3519.txt
 
-    clocks = <&pll 2>;
+This seems like it could be combined with other HiSi system controller 
+bindings if the compatible string is the only difference. But it is fine 
+like this:
 
-In the new ar9132 clk implementation (see drivers/clk/clk-ath79.c)
-the wdt and uart clks are accessible via devicetree
-so appropriate ATH79_CLK_WDT and ATH79_CLK_UART are used in ar9132.dtsi.
+Acked-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Antony Pavlov <antonynpavlov@gmail.com>
-Cc: Alban Bedel <albeu@free.fr>
-Cc: linux-mips@linux-mips.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
----
- arch/mips/boot/dts/qca/ar9132.dtsi | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/arch/mips/boot/dts/qca/ar9132.dtsi b/arch/mips/boot/dts/qca/ar9132.dtsi
-index 3ad4ba9..a1b4fa1 100644
---- a/arch/mips/boot/dts/qca/ar9132.dtsi
-+++ b/arch/mips/boot/dts/qca/ar9132.dtsi
-@@ -1,3 +1,5 @@
-+#include <dt-bindings/clock/ath79-clk.h>
-+
- / {
- 	compatible = "qca,ar9132";
- 
-@@ -57,7 +59,7 @@
- 				reg = <0x18020000 0x20>;
- 				interrupts = <3>;
- 
--				clocks = <&pll 2>;
-+				clocks = <&pll ATH79_CLK_UART>;
- 				clock-names = "uart";
- 
- 				reg-io-width = <4>;
-@@ -100,7 +102,7 @@
- 
- 				interrupts = <4>;
- 
--				clocks = <&pll 2>;
-+				clocks = <&pll ATH79_CLK_WDT>;
- 				clock-names = "wdt";
- 			};
- 
-@@ -144,7 +146,7 @@
- 			compatible = "qca,ar9132-spi", "qca,ar7100-spi";
- 			reg = <0x1f000000 0x10>;
- 
--			clocks = <&pll 2>;
-+			clocks = <&pll ATH79_CLK_AHB>;
- 			clock-names = "ahb";
- 
- 			status = "disabled";
--- 
-2.7.0
-
+Rob
