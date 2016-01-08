@@ -1,67 +1,96 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Sun, 10 Jan 2016 11:58:58 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Martin Sperl <kernel@martin.sperl.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Russell King <linux@arm.linux.org.uk>,
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: linux-rockchip@lists.infradead.org
+Cc: keescook@google.com,
+	leozwang@google.com,
+	heiko@sntech.de,
+	Xing Zheng <zhengxing@rock-chips.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Remi Pommarel <repk@triplefau.lt>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	linux-rpi-kernel@lists.infradead.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Matthias Reichl <hias@horus.com>,
-	lFlorian Meier <florian.meier@koalo.de>
-Message-ID: <20160110115858.GV6588@sirena.org.uk>
-References: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org>
- <1452331558-2520-3-git-send-email-kernel@martin.sperl.org>
- <4332640.jBKM55TPAo@wuerfel>
- <CAMuHMdWOt4aCzu8Ode0ZrQ-c80nqAhwD5dd17nhgVbLrRYT5og@mail.gmail.com>
- <4B891DE1-6340-4D3D-BEE3-F61D9A5D289B@martin.sperl.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="iFtobK8oO579scb0"
-In-Reply-To: <4B891DE1-6340-4D3D-BEE3-F61D9A5D289B@martin.sperl.org>
-Subject: Re: [PATCH 2/5] clk: bcm2835: enable management of PCM clock
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 1/2] clk: rockchip: rk3036: Add to 100MHz integer multiples of cpu freq table
+Date: Fri,  8 Jan 2016 19:25:09 +0800
+Message-Id: <1452252311-13908-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+We need the cpu changing freqs capability, and considering that emac ref
+which is need 50MHz might is under the APLL, meanwhile, we don't need
+too many freqs because it may spend more time to find the correct freq.
+Therefore, we should add 100MHz integer multiples cpu freqs for emac.
 
---iFtobK8oO579scb0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
-On Sun, Jan 10, 2016 at 11:55:48AM +0100, Martin Sperl wrote:
+ drivers/clk/rockchip/clk-rk3036.c |   27 ++++++++++++++++++++++++---
+ 1 file changed, 24 insertions(+), 3 deletions(-)
 
-> So if someone with a better idea how to keep those dt-binding includes
-> synchronized with the definitions used by the code step forward and
-> propose a better solution how to get that implemented?
-
-> I guess there will be a few more occurrences of clocks that are
-> currently not defined, which will need to get introduced in the future
-> PWM and PCM were just the last in this series.
-
-Presumably just making the code not rely on having a define for the
-number of clocks would deal with the problem (eg, using ARRAY_SIZE
-internally).
-
---iFtobK8oO579scb0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWkkeCAAoJECTWi3JdVIfQWOAH/2E/d7rl4agqhkmZevCjxAkS
-TaESt6F6YFn308HEuTvcBlqOP5YEvoCZ1rJ8wlkXC1LUdISEknBXaqY2XIHioe2P
-mF5Qj/p4REkgsaA404SyEE3nLsInnnANUuJfO3Wx2fsSCD3cDKxotS0nr2yGHlDx
-3VaQpZNN92tSnSsZzJtGFsRINtkQeJXbSTswaEYwQggJlqF5VaK1o0MjqQWHrl2Y
-fEvyWb57TFduXmtJLTkxgbt3H6bA52OyK5ffN0GtxfvJAHc/cGZmcgv2kq9krYsm
-Iy610rqi+NkDJQg/TeGM+VG8A+SWF25EbqoauEY95z7GtVEgtsg5+Zww56SBwT8=
-=Jt0m
------END PGP SIGNATURE-----
-
---iFtobK8oO579scb0--
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
+index bf9dd9b..f60273c 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -32,18 +32,22 @@ enum rk3036_plls {
+ static struct rockchip_pll_rate_table rk3036_pll_rates[] = {
+ 	/* _mhz, _refdiv, _fbdiv, _postdiv1, _postdiv2, _dsmpd, _frac */
+ 	RK3036_PLL_RATE(1608000000, 1, 67, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1600000000, 6, 400, 1, 1, 1, 0),
+ 	RK3036_PLL_RATE(1584000000, 1, 66, 1, 1, 1, 0),
+ 	RK3036_PLL_RATE(1560000000, 1, 65, 1, 1, 1, 0),
+ 	RK3036_PLL_RATE(1536000000, 1, 64, 1, 1, 1, 0),
+ 	RK3036_PLL_RATE(1512000000, 1, 63, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1500000000, 6, 375, 1, 1, 1, 0),
+ 	RK3036_PLL_RATE(1488000000, 1, 62, 1, 1, 1, 0),
+ 	RK3036_PLL_RATE(1464000000, 1, 61, 1, 1, 1, 0),
+ 	RK3036_PLL_RATE(1440000000, 1, 60, 1, 1, 1, 0),
+ 	RK3036_PLL_RATE(1416000000, 1, 59, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1400000000, 6, 350, 1, 1, 1, 0),
+ 	RK3036_PLL_RATE(1392000000, 1, 58, 1, 1, 1, 0),
+ 	RK3036_PLL_RATE(1368000000, 1, 57, 1, 1, 1, 0),
+ 	RK3036_PLL_RATE(1344000000, 1, 56, 1, 1, 1, 0),
+ 	RK3036_PLL_RATE(1320000000, 1, 55, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1300000000, 6, 325, 1, 1, 1, 0),
+ 	RK3036_PLL_RATE(1296000000, 1, 54, 1, 1, 1, 0),
+ 	RK3036_PLL_RATE(1272000000, 1, 53, 1, 1, 1, 0),
+ 	RK3036_PLL_RATE(1248000000, 1, 52, 1, 1, 1, 0),
+@@ -70,8 +74,12 @@ static struct rockchip_pll_rate_table rk3036_pll_rates[] = {
+ 	RK3036_PLL_RATE( 504000000, 1, 63, 3, 1, 1, 0),
+ 	RK3036_PLL_RATE( 500000000, 6, 250, 2, 1, 1, 0),
+ 	RK3036_PLL_RATE( 408000000, 1, 68, 2, 2, 1, 0),
++	RK3036_PLL_RATE( 400000000, 1, 100, 3, 2, 1, 0),
+ 	RK3036_PLL_RATE( 312000000, 1, 52, 2, 2, 1, 0),
++	RK3036_PLL_RATE( 300000000, 1, 50, 2, 2, 1, 0),
+ 	RK3036_PLL_RATE( 216000000, 1, 72, 4, 2, 1, 0),
++	RK3036_PLL_RATE( 200000000, 1, 50, 3, 2, 1, 0),
++	RK3036_PLL_RATE( 100000000, 6, 400, 4, 4, 1, 0),
+ 	RK3036_PLL_RATE(  96000000, 1, 64, 4, 4, 1, 0),
+ 	{ /* sentinel */ },
+ };
+@@ -104,9 +112,22 @@ static struct rockchip_pll_rate_table rk3036_pll_rates[] = {
+ 	}
+ 
+ static struct rockchip_cpuclk_rate_table rk3036_cpuclk_rates[] __initdata = {
+-	RK3036_CPUCLK_RATE(816000000, 4),
+-	RK3036_CPUCLK_RATE(600000000, 4),
+-	RK3036_CPUCLK_RATE(312000000, 4),
++	RK3036_CPUCLK_RATE(1600000000, 8),
++	RK3036_CPUCLK_RATE(1500000000, 7),
++	RK3036_CPUCLK_RATE(1400000000, 7),
++	RK3036_CPUCLK_RATE(1300000000, 6),
++	RK3036_CPUCLK_RATE(1200000000, 6),
++	RK3036_CPUCLK_RATE(1100000000, 5),
++	RK3036_CPUCLK_RATE(1000000000, 5),
++	RK3036_CPUCLK_RATE( 900000000, 4),
++	RK3036_CPUCLK_RATE( 800000000, 4),
++	RK3036_CPUCLK_RATE( 700000000, 3),
++	RK3036_CPUCLK_RATE( 600000000, 3),
++	RK3036_CPUCLK_RATE( 500000000, 3),
++	RK3036_CPUCLK_RATE( 400000000, 3),
++	RK3036_CPUCLK_RATE( 300000000, 2),
++	RK3036_CPUCLK_RATE( 200000000, 1),
++	RK3036_CPUCLK_RATE( 100000000, 1),
+ };
+ 
+ static const struct rockchip_cpuclk_reg_data rk3036_cpuclk_data = {
+-- 
+1.7.9.5
