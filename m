@@ -1,56 +1,48 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 29 Jan 2016 12:58:20 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Loc Ho <lho@apm.com>
-Cc: mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, patches@apm.com
-Subject: Re: [PATCH v2 2/3] clk: xgene: Add SoC and PMD PLL clocks with v2
- hardware
-Message-ID: <20160129205820.GU12841@codeaurora.org>
-References: <1453256863-15092-1-git-send-email-lho@apm.com>
- <1453256863-15092-3-git-send-email-lho@apm.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:2298 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932851AbcAHShh (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2016 13:37:37 -0500
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 9/9] clk: tegra210: Initialize PLL_D2 to a sane rate
+Date: Fri, 8 Jan 2016 13:37:11 -0500
+Message-ID: <1452278231-9546-10-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1452278231-9546-1-git-send-email-rklein@nvidia.com>
+References: <1452278231-9546-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1453256863-15092-3-git-send-email-lho@apm.com>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/19, Loc Ho wrote:
-> Add X-Gene SoC and PMD PLL clocks support for v2 hardware.
-> X-Gene SoC v2 and above use an slightly different SoC
-> and PMD PLL hardware logic.
-> 
-> Signed-off-by: Loc Ho <lho@apm.com>
-> ---
+Initialize PLL_D2 to a sane rate at the start of the day.
 
-It's not from this patch, but I notice that we have a return
-inside a void function in this file...
-
----8<---
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH] clk: xgene: Remove return from void function
-
-This function doesn't return anything because it's void. Drop the
-return statement.
-
-Cc: Loc Ho <lho@apm.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- drivers/clk/clk-xgene.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/tegra/clk-tegra210.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
-index 266d573b9134..bd7156baa08b 100644
---- a/drivers/clk/clk-xgene.c
-+++ b/drivers/clk/clk-xgene.c
-@@ -50,7 +50,7 @@ static inline u32 xgene_clk_read(void __iomem *csr)
- 
- static inline void xgene_clk_write(u32 data, void __iomem *csr)
- {
--	return writel_relaxed(data, csr);
-+	writel_relaxed(data, csr);
- }
- 
- /* PLL Clock */
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 5d8fac7052f2..cc560a1f6efb 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2749,6 +2749,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA210_CLK_PLL_DP, TEGRA210_CLK_CLK_MAX, 270000000, 0 },
+ 	{ TEGRA210_CLK_SOC_THERM, TEGRA210_CLK_PLL_P, 51000000, 0 },
+ 	{ TEGRA210_CLK_CCLK_G, TEGRA210_CLK_CLK_MAX, 0, 1 },
++	{ TEGRA210_CLK_PLL_D2, TEGRA210_CLK_CLK_MAX, 594000000, 0 },
+ 	/* This MUST be the last entry. */
+ 	{ TEGRA210_CLK_CLK_MAX, TEGRA210_CLK_CLK_MAX, 0, 0 },
+ };
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
+
