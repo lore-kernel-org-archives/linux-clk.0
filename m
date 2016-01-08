@@ -1,66 +1,50 @@
-Return-Path: <plaes@plaes.org>
-Message-ID: <1452953281.12419.2.camel@plaes.org>
-Subject: Re: [linux-sunxi] [PATCH v2 05/26] clk: sunxi: Add display and
- TCON0 clocks driver
-From: Priit Laes <plaes@plaes.org>
-To: maxime.ripard@free-electrons.com, Mike Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>, David
- Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com, Laurent
- Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>,
- Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>,
- Boris Brezillon <boris.brezillon@free-electrons.com>, Wynter Woods
- <wynter@nextthing.co>,  Thomas Petazzoni
- <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>
-Date: Sat, 16 Jan 2016 16:08:01 +0200
-In-Reply-To: <1452785109-6172-6-git-send-email-maxime.ripard@free-electrons.com>
-References: 
-	<1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
-	 <1452785109-6172-6-git-send-email-maxime.ripard@free-electrons.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <ckeepax@opensource.wolfsonmicro.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+To: <mturquette@baylibre.com>, <cw00.choi@samsung.com>, <lee.jones@linaro.org>
+CC: <sboyd@codeaurora.org>, <myungjoo.ham@samsung.com>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.wolfsonmicro.com>
+Subject: [PATCH v3 1/4] extcon: arizona: Remove enable/disable of 32k clock
+Date: Fri, 8 Jan 2016 11:29:39 +0000
+Message-ID: <1452252582-20834-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2016-01-14 at 16:24 +0100, Maxime Ripard wrote:
-> The A10 SoCs and its relatives has a special clock controller to drive the
-> display engines (both frontend and backend), that have a lot in common with
-> the clock to drive the first TCON channel.
-> 
-> Add a driver to support both.
+The 32k clock is unconditionally enabled by the MFD core so there is no
+need to control it from the extcon device, so this patch removes the
+control of the 32k clock.
 
-...
+Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+---
 
-> +static void __init sun4i_a10_display_init(struct device_node *node,
-> +					  struct sun4i_a10_display_clk_data *data)
-> +{
-> +	const char *parents[data->parents];
-> +	const char *clk_name = node->name;
-> +	struct reset_data *reset_data;
-> +	struct clk_divider *div = NULL;
-> +	struct clk_gate *gate;
-> +	struct clk_mux *mux;
-> +	void __iomem *reg;
-> +	struct clk *clk;
-> +	int i;
+No changes since v2.
 
-warning: unused variable 'i'
+Thanks,
+Charles
 
-> +
-> +	of_property_read_string(node, "clock-output-names", &clk_name);
-> +
-> +	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-> +	if (IS_ERR(reg)) {
-> +		pr_err("%s: Could not map the clock registers\n", clk_name);
-> +		return;
-> +	}
+ drivers/extcon/extcon-arizona.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-...
-
-Thanks for working on this feature ;)
-
-Päikest,
-Priit Laes
+diff --git a/drivers/extcon/extcon-arizona.c b/drivers/extcon/extcon-arizona.c
+index e4890dd..52d041f 100644
+--- a/drivers/extcon/extcon-arizona.c
++++ b/drivers/extcon/extcon-arizona.c
+@@ -1571,7 +1571,6 @@ static int arizona_extcon_probe(struct platform_device *pdev)
+ 		goto err_micdet;
+ 	}
+ 
+-	arizona_clk32k_enable(arizona);
+ 	regmap_update_bits(arizona->regmap, ARIZONA_JACK_DETECT_DEBOUNCE,
+ 			   ARIZONA_JD1_DB, ARIZONA_JD1_DB);
+ 	regmap_update_bits(arizona->regmap, ARIZONA_JACK_DETECT_ANALOGUE,
+@@ -1642,7 +1641,6 @@ static int arizona_extcon_remove(struct platform_device *pdev)
+ 	cancel_delayed_work_sync(&info->hpdet_work);
+ 	regmap_update_bits(arizona->regmap, ARIZONA_JACK_DETECT_ANALOGUE,
+ 			   ARIZONA_JD1_ENA, 0);
+-	arizona_clk32k_disable(arizona);
+ 
+ 	return 0;
+ }
+-- 
+2.1.4
