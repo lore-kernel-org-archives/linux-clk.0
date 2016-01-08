@@ -1,58 +1,224 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH 2/2] clk: tegra: Use definition for pll_u override bit
-To: Thierry Reding <thierry.reding@gmail.com>
-References: <1450702592-7755-1-git-send-email-jonathanh@nvidia.com>
- <1450702592-7755-2-git-send-email-jonathanh@nvidia.com>
- <20160113160833.GK2588@ulmo>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>, Rhyland Klein <rklein@nvidia.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <56967A9D.8000009@nvidia.com>
-Date: Wed, 13 Jan 2016 16:26:05 +0000
+Return-Path: <ckeepax@opensource.wolfsonmicro.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+To: <mturquette@baylibre.com>, <cw00.choi@samsung.com>, <lee.jones@linaro.org>
+CC: <sboyd@codeaurora.org>, <myungjoo.ham@samsung.com>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.wolfsonmicro.com>
+Subject: [PATCH v3 3/4] mfd: arizona: Switch to using clock driver for 32k clock
+Date: Fri, 8 Jan 2016 11:29:41 +0000
+Message-ID: <1452252582-20834-3-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+In-Reply-To: <1452252582-20834-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+References: <1452252582-20834-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 MIME-Version: 1.0
-In-Reply-To: <20160113160833.GK2588@ulmo>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+Now we have a clock driver that can control the 32k clock use this
+rather than directly controlling the 32k clock from the MFD device.
 
-On 13/01/16 16:08, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Mon, Dec 21, 2015 at 12:56:32PM +0000, Jon Hunter wrote:
->> The definition, PLLU_BASE_OVERRIDE, for the pll_u OVERRIDE bit is defined
->> but not used and when the OVERRIDE bit is cleared in tegra210_pll_init()
->> the code directly uses the bit number. Therefore, use the definition,
->> PLLU_BASE_OVERRIDE when clearing the OVERRIDE bit.
->>
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->> ---
->>  drivers/clk/tegra/clk-tegra210.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
->> index 791215747863..6f043c5e2394 100644
->> --- a/drivers/clk/tegra/clk-tegra210.c
->> +++ b/drivers/clk/tegra/clk-tegra210.c
->> @@ -2520,7 +2520,7 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
->>  
->>  	/* PLLU_VCO */
->>  	val = readl(clk_base + pll_u_vco_params.base_reg);
->> -	val &= ~BIT(24); /* disable PLLU_OVERRIDE */
->> +	val &= ~PLLU_BASE_OVERRIDE; /* disable PLLU_OVERRIDE */
->>  	writel(val, clk_base + pll_u_vco_params.base_reg);
->>  
->>  	clk = tegra_clk_register_pllre("pll_u_vco", "pll_ref", clk_base, pmc,
-> 
-> I think the comment is now redundant, given that the code says pretty
-> much the same thing. No need to respin for that, I can remove the
-> comment when I apply the patch. That is, unless anyone feels strongly
-> about keeping the comment.
+Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+---
 
-Fine with me. Thanks.
+No changes since v2.
 
-Jon
+Thanks,
+Charles
+
+ drivers/mfd/arizona-core.c       | 104 +++++++++------------------------------
+ include/linux/mfd/arizona/core.h |   7 +--
+ 2 files changed, 25 insertions(+), 86 deletions(-)
+
+diff --git a/drivers/mfd/arizona-core.c b/drivers/mfd/arizona-core.c
+index d474732..5a55dd6 100644
+--- a/drivers/mfd/arizona-core.c
++++ b/drivers/mfd/arizona-core.c
+@@ -36,63 +36,6 @@ static const char * const wm5102_core_supplies[] = {
+ 	"DBVDD1",
+ };
+ 
+-int arizona_clk32k_enable(struct arizona *arizona)
+-{
+-	int ret = 0;
+-
+-	mutex_lock(&arizona->clk_lock);
+-
+-	arizona->clk32k_ref++;
+-
+-	if (arizona->clk32k_ref == 1) {
+-		switch (arizona->pdata.clk32k_src) {
+-		case ARIZONA_32KZ_MCLK1:
+-			ret = pm_runtime_get_sync(arizona->dev);
+-			if (ret != 0)
+-				goto out;
+-			break;
+-		}
+-
+-		ret = regmap_update_bits(arizona->regmap, ARIZONA_CLOCK_32K_1,
+-					 ARIZONA_CLK_32K_ENA,
+-					 ARIZONA_CLK_32K_ENA);
+-	}
+-
+-out:
+-	if (ret != 0)
+-		arizona->clk32k_ref--;
+-
+-	mutex_unlock(&arizona->clk_lock);
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(arizona_clk32k_enable);
+-
+-int arizona_clk32k_disable(struct arizona *arizona)
+-{
+-	mutex_lock(&arizona->clk_lock);
+-
+-	BUG_ON(arizona->clk32k_ref <= 0);
+-
+-	arizona->clk32k_ref--;
+-
+-	if (arizona->clk32k_ref == 0) {
+-		regmap_update_bits(arizona->regmap, ARIZONA_CLOCK_32K_1,
+-				   ARIZONA_CLK_32K_ENA, 0);
+-
+-		switch (arizona->pdata.clk32k_src) {
+-		case ARIZONA_32KZ_MCLK1:
+-			pm_runtime_put_sync(arizona->dev);
+-			break;
+-		}
+-	}
+-
+-	mutex_unlock(&arizona->clk_lock);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(arizona_clk32k_disable);
+-
+ static irqreturn_t arizona_clkgen_err(int irq, void *data)
+ {
+ 	struct arizona *arizona = data;
+@@ -874,6 +817,7 @@ static inline int arizona_of_get_core_pdata(struct arizona *arizona)
+ 
+ static const struct mfd_cell early_devs[] = {
+ 	{ .name = "arizona-ldo1" },
++	{ .name = "arizona-clk" },
+ };
+ 
+ static const char * const wm5102_supplies[] = {
+@@ -970,7 +914,6 @@ int arizona_dev_init(struct arizona *arizona)
+ 	int n_subdevs, ret, i;
+ 
+ 	dev_set_drvdata(arizona->dev, arizona);
+-	mutex_init(&arizona->clk_lock);
+ 
+ 	if (dev_get_platdata(arizona->dev))
+ 		memcpy(&arizona->pdata, dev_get_platdata(arizona->dev),
+@@ -1261,28 +1204,6 @@ int arizona_dev_init(struct arizona *arizona)
+ 	}
+ 
+ 	/* Chip default */
+-	if (!arizona->pdata.clk32k_src)
+-		arizona->pdata.clk32k_src = ARIZONA_32KZ_MCLK2;
+-
+-	switch (arizona->pdata.clk32k_src) {
+-	case ARIZONA_32KZ_MCLK1:
+-	case ARIZONA_32KZ_MCLK2:
+-		regmap_update_bits(arizona->regmap, ARIZONA_CLOCK_32K_1,
+-				   ARIZONA_CLK_32K_SRC_MASK,
+-				   arizona->pdata.clk32k_src - 1);
+-		arizona_clk32k_enable(arizona);
+-		break;
+-	case ARIZONA_32KZ_NONE:
+-		regmap_update_bits(arizona->regmap, ARIZONA_CLOCK_32K_1,
+-				   ARIZONA_CLK_32K_SRC_MASK, 2);
+-		break;
+-	default:
+-		dev_err(arizona->dev, "Invalid 32kHz clock source: %d\n",
+-			arizona->pdata.clk32k_src);
+-		ret = -EINVAL;
+-		goto err_reset;
+-	}
+-
+ 	for (i = 0; i < ARIZONA_MAX_MICBIAS; i++) {
+ 		if (!arizona->pdata.micbias[i].mV &&
+ 		    !arizona->pdata.micbias[i].bypass)
+@@ -1387,10 +1308,25 @@ int arizona_dev_init(struct arizona *arizona)
+ 	pm_runtime_set_active(arizona->dev);
+ 	pm_runtime_enable(arizona->dev);
+ 
++	arizona->clk32k = devm_clk_get(arizona->dev, "arizona-32k");
++	if (IS_ERR(arizona->clk32k)) {
++		ret = PTR_ERR(arizona->clk32k);
++		if (ret == -ENOENT)
++			ret = -EPROBE_DEFER;
++		dev_err(arizona->dev, "Failed to get 32k clock: %d\n", ret);
++		goto err_pm;
++	}
++
++	ret = clk_prepare_enable(arizona->clk32k);
++	if (ret < 0) {
++		dev_err(arizona->dev, "Failed to enable 32k clock: %d\n", ret);
++		goto err_pm;
++	}
++
+ 	/* Set up for interrupts */
+ 	ret = arizona_irq_init(arizona);
+ 	if (ret != 0)
+-		goto err_reset;
++		goto err_clock;
+ 
+ 	pm_runtime_set_autosuspend_delay(arizona->dev, 100);
+ 	pm_runtime_use_autosuspend(arizona->dev);
+@@ -1414,6 +1350,10 @@ int arizona_dev_init(struct arizona *arizona)
+ 
+ err_irq:
+ 	arizona_irq_exit(arizona);
++err_clock:
++	clk_disable_unprepare(arizona->clk32k);
++err_pm:
++	pm_runtime_disable(arizona->dev);
+ err_reset:
+ 	arizona_enable_reset(arizona);
+ 	regulator_disable(arizona->dcvdd);
+@@ -1430,6 +1370,8 @@ EXPORT_SYMBOL_GPL(arizona_dev_init);
+ 
+ int arizona_dev_exit(struct arizona *arizona)
+ {
++	clk_disable_unprepare(arizona->clk32k);
++
+ 	pm_runtime_disable(arizona->dev);
+ 
+ 	regulator_disable(arizona->dcvdd);
+diff --git a/include/linux/mfd/arizona/core.h b/include/linux/mfd/arizona/core.h
+index 79e607e..b9a1da4 100644
+--- a/include/linux/mfd/arizona/core.h
++++ b/include/linux/mfd/arizona/core.h
+@@ -13,6 +13,7 @@
+ #ifndef _WM_ARIZONA_CORE_H
+ #define _WM_ARIZONA_CORE_H
+ 
++#include <linux/clk.h>
+ #include <linux/interrupt.h>
+ #include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
+@@ -133,8 +134,7 @@ struct arizona {
+ 	bool hpdet_clamp;
+ 	unsigned int hp_ena;
+ 
+-	struct mutex clk_lock;
+-	int clk32k_ref;
++	struct clk *clk32k;
+ 
+ 	bool ctrlif_error;
+ 
+@@ -148,9 +148,6 @@ struct arizona {
+ 	struct mutex dac_comp_lock;
+ };
+ 
+-int arizona_clk32k_enable(struct arizona *arizona);
+-int arizona_clk32k_disable(struct arizona *arizona);
+-
+ int arizona_request_irq(struct arizona *arizona, int irq, char *name,
+ 			irq_handler_t handler, void *data);
+ void arizona_free_irq(struct arizona *arizona, int irq, void *data);
+-- 
+2.1.4
