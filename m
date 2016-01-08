@@ -1,127 +1,124 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Tue, 12 Jan 2016 08:39:46 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: xuejiancheng <xuejiancheng@huawei.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, p.zabel@pengutronix.de,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	linux@arm.linux.org.uk, khilman@linaro.org, arnd@arndb.de,
-	olof@lixom.net, xuwei5@hisilicon.com, haojian.zhuang@linaro.org,
-	zhangfei.gao@linaro.org, bintian.wang@huawei.com,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	yanhaifeng@hisilicon.com, yanghongwei@hisilicon.com,
-	suwenping@hisilicon.com, ml.yang@hisilicon.com,
-	gaofei@hisilicon.com, zhangzhenxing@hisilicon.com,
-	xuejiancheng@hisilicon.com
-Subject: Re: [PATCH v5 5/6] mfd: dt-bindings: add device tree bindings for
- Hi3519 sysctrl
-Message-ID: <20160112083946.GN19803@x1>
-References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
- <1452219400-32478-6-git-send-email-xuejiancheng@huawei.com>
- <20160111054846.GD3331@x1>
- <56935EA8.4060801@huawei.com>
- <20160111085555.GE14104@x1>
- <5694584D.7040301@huawei.com>
- <20160112074107.GK19803@x1>
- <5694B68A.6040300@huawei.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mleia.com ([178.79.152.223]:52421 "EHLO mail.mleia.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753872AbcAHECS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Thu, 7 Jan 2016 23:02:18 -0500
+Message-ID: <568F34C7.6000905@mleia.com>
+Date: Fri, 08 Jan 2016 06:02:15 +0200
+From: Vladimir Zapolskiy <vz@mleia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <5694B68A.6040300@huawei.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+CC: linux-clk@vger.kernel.org
+Subject: Re: clk: lpc32xx: add common clock framework driver
+References: <20160105114452.GA31494@mwanda>
+In-Reply-To: <20160105114452.GA31494@mwanda>
+Content-Type: text/plain; charset=windows-1252
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 12 Jan 2016, xuejiancheng wrote:
+Hello Dan,
 
-> Hello Lee,
+On 05.01.2016 13:44, Dan Carpenter wrote:
+> Hello Vladimir Zapolskiy (and other clk devs as well),
 > 
-> On 2016/1/12 15:41, Lee Jones wrote:
-> > On Tue, 12 Jan 2016, xuejiancheng wrote:
-> > 
-> >>
-> >>
-> >> On 2016/1/11 16:55, Lee Jones wrote:
-> >>> On Mon, 11 Jan 2016, xuejiancheng wrote:
-> >>>> On 2016/1/11 13:48, Lee Jones wrote:
-> >>>>> On Fri, 08 Jan 2016, Jiancheng Xue wrote:
-> >>>>>
-> >>>>>> Add device tree bindings for Hi3519 system controller.
-> >>>>>>
-> >>>>>> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
-> >>>>>> ---
-> >>>>>>  Documentation/devicetree/bindings/mfd/hi3519.txt | 14 ++++++++++++++
-> >>>>>>  1 file changed, 14 insertions(+)
-> >>>>>>  create mode 100644 Documentation/devicetree/bindings/mfd/hi3519.txt
-> >>>>>
-> >>>>> I have this patch, but none of the others in the set, thus I am
-> >>>>> lacking context.
-> >>>>>
-> >>>> I can forward other patches in the set to you. Thank you.
-> >>>>
-> >>>>>> diff --git a/Documentation/devicetree/bindings/mfd/hi3519.txt b/Documentation/devicetree/bindings/mfd/hi3519.txt
-> >>>>>> new file mode 100644
-> >>>>>> index 0000000..115c5be
-> >>>>>> --- /dev/null
-> >>>>>> +++ b/Documentation/devicetree/bindings/mfd/hi3519.txt
-> >>>>>> @@ -0,0 +1,14 @@
-> >>>>>> +* Hisilicon Hi3519 System Controller Block
-> >>>>>> +
-> >>>>>> +This bindings use the following binding:
-> >>>>>> +Documentation/devicetree/bindings/mfd/syscon.txt
-> >>>>>> +
-> >>>>>> +Required properties:
-> >>>>>> +- compatible: "hisilicon,hi3519-sysctrl".
-> >>>>>> +- reg: the register region of this block
-> >>>>>> +
-> >>>>>> +Examples:
-> >>>>>> +sysctrl: system-controller@12010000 {
-> >>>>>> +	compatible = "hisilicon,hi3519-sysctrl", "syscon";
-> >>>>>> +	reg = <0x12010000 0x1000>;
-> >>>>>> +};
-> >>>>>
-> >>>>> There is no requirement (nor want) for binding documents where the
-> >>>>> given device is simply using highly generic bindings.  This just
-> >>>>> amounts to churn.
-> >>>>>
-> >>>> This block is specific for Hi3519 SOC, and may has its own driver.
-> >>>
-> >>> Does it have its own driver currently?
-> >>>
-> >> Not yet.
-> >> Arnd Bergmann and Rob Herring all suggested adding a specific compatible string
-> >> with the SOC name. This binding is just used for describing the compatible string now.
-> >> When more functions on hi3519 SOC are added later, the specific driver will be also
-> >> needed.
-> > 
-> > Save this binding until it has more functionality.  We here "I'll add
-> > to this later" all too often.
-> > 
+> The patch f7c82a60ba26: "clk: lpc32xx: add common clock framework
+> driver" from Dec 6, 2015, leads to the following static checker
+> warning:
 > 
-> In the hi3519.dtsi file, there is a system-controller device node described like below:
-> sysctrl: system-controller@12010000 {
-> 	compatible = "hisilicon,hi3519-sysctrl", "syscon";
-> 	reg = <0x12010000 0x1000>;
-> };
-> Do you mean that I should remove "hisilicon,hi3519-sysctrl" and just use "syscon" as the
-> compatible string?　
+> 	drivers/clk/nxp/clk-lpc32xx.c:1019 clk_mux_get_parent()
+> 	warn: signedness bug returning '(-22)'
 
-Where is this compatible string _used_?
+oops, I blindly missed it, which static checker do you use by the way?
 
-> If I want to add "hisilicon,hi3519-sysctrl" for hi3519. where should I put this binding?
-> Could you give some suggestions?  Thank you very much!
+GCC and sparse haven't produced this error, may be I have to upgrade
+them...
 
-If you're not using the compatible i.e. the device doesn't have its
-own driver yet, then there is no need to supply the binding at all, is
-there?
+> drivers/clk/nxp/clk-lpc32xx.c
+>   1003  static u8 clk_mux_get_parent(struct clk_hw *hw)
+>                ^^
+>   1004  {
+>   1005          struct lpc32xx_clk_mux *mux = to_lpc32xx_mux(hw);
+>   1006          u32 num_parents = clk_hw_get_num_parents(hw);
+>   1007          u32 val;
+>   1008  
+>   1009          regmap_read(clk_regmap, mux->reg, &val);
+>   1010          val >>= mux->shift;
+>   1011          val &= mux->mask;
+>   1012  
+>   1013          if (mux->table) {
+>   1014                  u32 i;
+>   1015  
+>   1016                  for (i = 0; i < num_parents; i++)
+>   1017                          if (mux->table[i] == val)
+>   1018                                  return i;
+>   1019                  return -EINVAL;
+>                         ^^^^^^^^^^^^^^
+>   1020          }
+>   1021  
+>   1022          if (val >= num_parents)
+>   1023                  return -EINVAL;
+>                         ^^^^^^^^^^^^^^
+> This obviously doesn't work since this is a u8 function.
 
-> >>>> So I think it's better to keep this binding.
-> >>>
-> >>
-> > 
-> 
+Definitely, thank you for reporting.
 
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+"Negative" values may be returned here only if the driver has
+another kind of error, namely if description of some mux clock parents
+does not correspond to the actual hardware. It may happen due to
+a typo in the code or a typo in the spec for example, but if
+there is no first class error, then the underlined returns are dead
+code. To my best knowledge there is no such problem in this
+particular driver code.
+
+However it is worth to mention that this piece of code is practically
+a regmap version of common clock framework clk-mux.c clk_mux_get_parent()
+function, which is commonly used and has the same problem spread over
+multiple drivers.
+
+Moreover talking about CCF this kind of a problem touches other
+hardware querying functions:
+* .is_prepared (clamped return value to bool in the framework code),
+* .is_enabled (clamped return value to bool in the framework code),
+* .recalc_rate (fallback to 0 seems to be a valid workaround),
+* .get_parent (discussed here),
+* .get_phase (this one looks okay).
+
+I've found other potentially faulty examples from this class, e.g.
+
+* clk_is_enabled_regmap() from qcom/clk-regmap.c -- clamped to bool,
+* omap2_init_dpll_parent() from ti/clkt_dpll.c,
+* mux_get_parent() from clk-qoriq.c -- fallback to index 0,
+* wm831x_clkout_get_parent() from clk-wm831x.c -- fallback to index 0,
+* kona_peri_clk_get_parent() from bcm/clk-kona.c -- fallback to index 0,
+* etc.
+
+> I looked at how this was called to see what we should return on error.
+> This is called from __clk_init().  It tests for negative error codes.
+
+Well, not exactly, but more or less. It is important to say that the
+function (and the second user of .get_parent() __clk_init_parent) will
+be significantly reworked in v4.6 (not in clk tree yet), I have started
+to work on the fix on basis of that future version of clk.c.
+
+> Ooops.  Also there is no static checker warning for that but I will
+> create one.  
+
+Sounds great, thank you in advance.
+
+> I'm not sure what to do here.  I bet the correct thing is
+> to convert all the get_parent() function to return int.
+
+I agree with you, I'm implementing this fix now, when it is ready
+I'll share the change with the CCF maintainers and the list for review.
+
+> Another option
+> might be to add documentation, but I feel like in the kernel int returns
+> are self documenting and that's the best option.
+
+Hopefully Mike and Stephen agree also, let see their comments.
+
+Thank you again for reporting.
+
+--
+With best wishes,
+Vladimir
