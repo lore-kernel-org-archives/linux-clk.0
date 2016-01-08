@@ -1,82 +1,73 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Thu, 28 Jan 2016 16:10:40 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Bai Ping <b51503@freescale.com>
-Cc: kernel@pengutronix.de, pawel.moll@arm.com, robh+dt@kernel.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] ARM: imx: Add msl code support for imx6qp
-Message-ID: <20160128081040.GO9070@tiger>
-References: <1450159673-27314-1-git-send-email-b51503@freescale.com>
- <1450159673-27314-6-git-send-email-b51503@freescale.com>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Bresticker <abrestic@chromium.org>,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 5/9] clk: tegra: pll: Fix potential sleeping-while-atomic
+Date: Fri, 8 Jan 2016 13:45:10 -0500
+Message-ID: <1452278714-10751-6-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
+References: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1450159673-27314-6-git-send-email-b51503@freescale.com>
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Dec 15, 2015 at 02:07:53PM +0800, Bai Ping wrote:
-> The i.MX6QP is a different SOC, but internally we treate
-> it as i.MX6Q Rev_2.0 to maximum the code reusability. The chip
-> silicon number we read from the ANADIG_DIGPROG is 0x630100. This
-> patch add code to identify it as i.MX6QP Rev_1.0 when print out the
-> silicon version.
-> 
-> Signed-off-by: Bai Ping <b51503@freescale.com>
-> ---
->  arch/arm/mach-imx/anatop.c     | 5 ++++-
->  arch/arm/mach-imx/mach-imx6q.c | 8 ++++++--
->  2 files changed, 10 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm/mach-imx/anatop.c b/arch/arm/mach-imx/anatop.c
-> index 231bb25..9622763 100644
-> --- a/arch/arm/mach-imx/anatop.c
-> +++ b/arch/arm/mach-imx/anatop.c
-> @@ -129,7 +129,10 @@ void __init imx_init_revision_from_anatop(void)
->  
->  	switch (digprog & 0xff) {
->  	case 0:
-> -		revision = IMX_CHIP_REVISION_1_0;
-> +		if (digprog >> 8 & 0x01)
-> +			revision = IMX_CHIP_REVISION_2_0;
-> +		else
-> +			revision = IMX_CHIP_REVISION_1_0;
+From: Andrew Bresticker <abrestic@chromium.org>
 
-Please at least add some comment here to help us remember that this is
-a trick we play for i.MX6QP.
+Since the ->enable() callback is called with a spinlock held, we cannot
+call potentially blocking functions such as clk_get_rate() or
+clk_get_parent(), so use the unlocked versions instead.
 
-Shawn
+Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+[rklein: Adapted from ChromeOS patch, removing pllu_enable cleanup as
+it isn't present upstream]
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
->  		break;
->  	case 1:
->  		revision = IMX_CHIP_REVISION_1_1;
-> diff --git a/arch/arm/mach-imx/mach-imx6q.c b/arch/arm/mach-imx/mach-imx6q.c
-> index 3878494b..cb27d56 100644
-> --- a/arch/arm/mach-imx/mach-imx6q.c
-> +++ b/arch/arm/mach-imx/mach-imx6q.c
-> @@ -266,8 +266,11 @@ static void __init imx6q_init_machine(void)
->  {
->  	struct device *parent;
->  
-> -	imx_print_silicon_rev(cpu_is_imx6dl() ? "i.MX6DL" : "i.MX6Q",
-> -			      imx_get_soc_revision());
-> +	if (cpu_is_imx6q() && imx_get_soc_revision() == IMX_CHIP_REVISION_2_0)
-> +		imx_print_silicon_rev("i.MX6QP", IMX_CHIP_REVISION_1_0);
-> +	else
-> +		imx_print_silicon_rev(cpu_is_imx6dl() ? "i.MX6DL" : "i.MX6Q",
-> +				imx_get_soc_revision());
->  
->  	parent = imx_soc_device_init();
->  	if (parent == NULL)
-> @@ -399,6 +402,7 @@ static void __init imx6q_init_irq(void)
->  static const char * const imx6q_dt_compat[] __initconst = {
->  	"fsl,imx6dl",
->  	"fsl,imx6q",
-> +	"fsl,imx6qp",
->  	NULL,
->  };
->  
-> -- 
-> 1.9.1
-> 
-> 
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index a534bfab30b3..65156486889a 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -880,7 +880,7 @@ static int clk_plle_training(struct tegra_clk_pll *pll)
+ static int clk_plle_enable(struct clk_hw *hw)
+ {
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+-	unsigned long input_rate = clk_get_rate(clk_get_parent(hw->clk));
++	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+ 	struct tegra_clk_pll_freq_table sel;
+ 	u32 val;
+ 	int err;
+@@ -1378,7 +1378,7 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
+ 	u32 val;
+ 	int ret;
+ 	unsigned long flags = 0;
+-	unsigned long input_rate = clk_get_rate(clk_get_parent(hw->clk));
++	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+ 
+ 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
+ 		return -EINVAL;
+@@ -2014,7 +2014,7 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
+ 	u32 val;
+ 	int ret;
+ 	unsigned long flags = 0;
+-	unsigned long input_rate = clk_get_rate(clk_get_parent(hw->clk));
++	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+ 
+ 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
+ 		return -EINVAL;
+-- 
+1.9.1
