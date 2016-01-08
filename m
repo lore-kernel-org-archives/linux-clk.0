@@ -1,36 +1,62 @@
-Return-Path: <>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga01-in.huawei.com ([58.251.152.64]:32134 "EHLO
+	szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753761AbcAHCc4 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jan 2016 21:32:56 -0500
+From: Jiancheng Xue <xuejiancheng@huawei.com>
 To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<linux-clk@vger.kernel.org>
-CC: <geert+renesas@glider.be>, <linux-renesas-soc@vger.kernel.org>, Yoshihiro
- Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] clk: shmobile: r8a7795: Add USB3.0 clocks
-Date: Fri, 22 Jan 2016 19:02:29 +0900
-Message-ID: <1453456949-9840-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
+	<zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v5 5/6] mfd: dt-bindings: add device tree bindings for Hi3519 sysctrl
+Date: Fri, 8 Jan 2016 10:16:39 +0800
+Message-ID: <1452219400-32478-6-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
+References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Add device tree bindings for Hi3519 system controller.
+
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
 ---
- This patch is based on the latest clk.git / clk-next branch.
- (commit id = 3da834e3e5a4a5d26882955298b55a9ed37a00bc)
+ Documentation/devicetree/bindings/mfd/hi3519.txt | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/hi3519.txt
 
- drivers/clk/shmobile/r8a7795-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clk/shmobile/r8a7795-cpg-mssr.c b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
-index 13e9947..fc260b3 100644
---- a/drivers/clk/shmobile/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
-@@ -122,6 +122,8 @@ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
- 	DEF_MOD("scif2",		 310,	R8A7795_CLK_S3D4),
- 	DEF_MOD("pcie1",		 318,	R8A7795_CLK_S3D1),
- 	DEF_MOD("pcie0",		 319,	R8A7795_CLK_S3D1),
-+	DEF_MOD("usb3-if1",		 327,	R8A7795_CLK_S3D1),
-+	DEF_MOD("usb3-if0",		 328,	R8A7795_CLK_S3D1),
- 	DEF_MOD("intc-ap",		 408,	R8A7795_CLK_S3D1),
- 	DEF_MOD("audmac0",		 502,	R8A7795_CLK_S3D4),
- 	DEF_MOD("audmac1",		 501,	R8A7795_CLK_S3D4),
+diff --git a/Documentation/devicetree/bindings/mfd/hi3519.txt b/Documentation/devicetree/bindings/mfd/hi3519.txt
+new file mode 100644
+index 0000000..115c5be
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/hi3519.txt
+@@ -0,0 +1,14 @@
++* Hisilicon Hi3519 System Controller Block
++
++This bindings use the following binding:
++Documentation/devicetree/bindings/mfd/syscon.txt
++
++Required properties:
++- compatible: "hisilicon,hi3519-sysctrl".
++- reg: the register region of this block
++
++Examples:
++sysctrl: system-controller@12010000 {
++	compatible = "hisilicon,hi3519-sysctrl", "syscon";
++	reg = <0x12010000 0x1000>;
++};
 -- 
 1.9.1
+
