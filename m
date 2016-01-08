@@ -1,58 +1,98 @@
-Return-Path: <yingjoe.chen@mediatek.com>
-Message-ID: <1453343300.28078.6.camel@mtksdaap41>
-Subject: Re: [PATCH v3 1/6] clk: mediatek: Refine the makefile to support
- multiple clock drivers
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-To: James Liao <jamesjj.liao@mediatek.com>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "John
- Crispin" <blogic@openwrt.org>, <devicetree@vger.kernel.org>, Sascha Hauer
-	<kernel@pengutronix.de>, <srv_heupstream@mediatek.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	"Shunli Wang" <shunli.wang@mediatek.com>, Philipp Zabel
-	<p.zabel@pengutronix.de>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Date: Thu, 21 Jan 2016 10:28:20 +0800
-In-Reply-To: <1452587470-61506-2-git-send-email-jamesjj.liao@mediatek.com>
-References: <1452587470-61506-1-git-send-email-jamesjj.liao@mediatek.com>
-	 <1452587470-61506-2-git-send-email-jamesjj.liao@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mark Kuo <mkuo@nvidia.com>,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 7/9] clk: tegra: pll: Do not disable PLLE when under HW control
+Date: Fri, 8 Jan 2016 13:45:12 -0500
+Message-ID: <1452278714-10751-8-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
+References: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Return-Path: yingjoe.chen@mediatek.com
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2016-01-12 at 16:31 +0800, James Liao wrote:
-> Add a Kconfig to define clock configuration for each SoC, and
-> modify the Makefile to build drivers that only selected in config.
-> 
-> Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> ---
->  drivers/clk/Kconfig           |  1 +
->  drivers/clk/mediatek/Kconfig  | 23 +++++++++++++++++++++++
->  drivers/clk/mediatek/Makefile |  6 +++---
->  3 files changed, 27 insertions(+), 3 deletions(-)
->  create mode 100644 drivers/clk/mediatek/Kconfig
-> 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index c3e3a02..b7a37dc 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -198,3 +198,4 @@ source "drivers/clk/mvebu/Kconfig"
->  
->  source "drivers/clk/samsung/Kconfig"
->  source "drivers/clk/tegra/Kconfig"
-> +source "drivers/clk/mediatek/Kconfig"
+From: Mark Kuo <mkuo@nvidia.com>
 
+SW should not disable PLLE if PLLE is already put under HW control.
 
-Hi James,
+Signed-off-by: Mark Kuo <mkuo@nvidia.com>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c | 22 +++++++++++++++-------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
 
-drivers/clk/mediatek/Kconfig add user selectable options, menuconfig
-will list them outside of "Common Clock Framework" sub-menu if you
-source the file here. Kconfig for samsung & tegra doesn't have any, so
-it is OK for them to stay here.
-
-Please move it inside the menu, also it seems the source lines are
-sorted now, so let's keep them sorted.
-
-Joe.C
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 65156486889a..d9c3109b75bd 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -2012,7 +2012,7 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+ 	struct tegra_clk_pll_freq_table sel;
+ 	u32 val;
+-	int ret;
++	int ret = 0;
+ 	unsigned long flags = 0;
+ 	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+ 
+@@ -2022,16 +2022,14 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
+ 	if (pll->lock)
+ 		spin_lock_irqsave(pll->lock, flags);
+ 
++	val = pll_readl(pll->params->aux_reg, pll);
++	if (val & PLLE_AUX_SEQ_ENABLE)
++		goto out;
++
+ 	val = pll_readl_base(pll);
+ 	val &= ~BIT(30); /* Disable lock override */
+ 	pll_writel_base(val, pll);
+ 
+-	val = pll_readl(pll->params->aux_reg, pll);
+-	val |= PLLE_AUX_ENABLE_SWCTL;
+-	val &= ~PLLE_AUX_SEQ_ENABLE;
+-	pll_writel(val, pll->params->aux_reg, pll);
+-	udelay(1);
+-
+ 	val = pll_readl_misc(pll);
+ 	val |= PLLE_MISC_LOCK_ENABLE;
+ 	val |= PLLE_MISC_IDDQ_SW_CTRL;
+@@ -2104,15 +2102,25 @@ static void clk_plle_tegra210_disable(struct clk_hw *hw)
+ 	if (pll->lock)
+ 		spin_lock_irqsave(pll->lock, flags);
+ 
++	/* If PLLE HW sequencer is enabled, SW should not disable PLLE */
++	val = pll_readl(pll->params->aux_reg, pll);
++	if (val & PLLE_AUX_SEQ_ENABLE)
++		goto out;
++
+ 	val = pll_readl_base(pll);
+ 	val &= ~PLLE_BASE_ENABLE;
+ 	pll_writel_base(val, pll);
+ 
++	val = pll_readl(pll->params->aux_reg, pll);
++	val |= PLLE_AUX_ENABLE_SWCTL | PLLE_AUX_SS_SWCTL;
++	pll_writel(val, pll->params->aux_reg, pll);
++
+ 	val = pll_readl_misc(pll);
+ 	val |= PLLE_MISC_IDDQ_SW_CTRL | PLLE_MISC_IDDQ_SW_VALUE;
+ 	pll_writel_misc(val, pll);
+ 	udelay(1);
+ 
++out:
+ 	if (pll->lock)
+ 		spin_unlock_irqrestore(pll->lock, flags);
+ }
+-- 
+1.9.1
