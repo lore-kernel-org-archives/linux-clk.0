@@ -1,93 +1,99 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:34733 "EHLO
-	mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932845AbcBAAKz (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 31 Jan 2016 19:10:55 -0500
-From: Antony Pavlov <antonynpavlov@gmail.com>
-To: linux-mips@linux-mips.org
-Cc: Antony Pavlov <antonynpavlov@gmail.com>,
-	Alban Bedel <albeu@free.fr>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [RFC v4 05/15] MIPS: dts: qca: ar9132: make extosc-related description shorter
-Date: Mon,  1 Feb 2016 03:10:30 +0300
-Message-Id: <1454285440-18916-6-git-send-email-antonynpavlov@gmail.com>
-In-Reply-To: <1454285440-18916-1-git-send-email-antonynpavlov@gmail.com>
-References: <1454285440-18916-1-git-send-email-antonynpavlov@gmail.com>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:1290 "EHLO
+	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932964AbcAHShe (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2016 13:37:34 -0500
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Mark Kuo <mkuo@nvidia.com>, Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 7/9] clk: tegra: pll: Do not disable PLLE when under HW control
+Date: Fri, 8 Jan 2016 13:37:09 -0500
+Message-ID: <1452278231-9546-8-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1452278231-9546-1-git-send-email-rklein@nvidia.com>
+References: <1452278231-9546-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Antony Pavlov <antonynpavlov@gmail.com>
-Cc: Alban Bedel <albeu@free.fr>
-Cc: linux-mips@linux-mips.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
----
- arch/mips/boot/dts/qca/ar9132.dtsi               |  9 ++++++++-
- arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts | 14 ++++----------
- 2 files changed, 12 insertions(+), 11 deletions(-)
+From: Mark Kuo <mkuo@nvidia.com>
 
-diff --git a/arch/mips/boot/dts/qca/ar9132.dtsi b/arch/mips/boot/dts/qca/ar9132.dtsi
-index a1b4fa1..e6baa1e 100644
---- a/arch/mips/boot/dts/qca/ar9132.dtsi
-+++ b/arch/mips/boot/dts/qca/ar9132.dtsi
-@@ -28,6 +28,13 @@
- 					<&ddr_ctrl 0>, <&ddr_ctrl 1>;
- 	};
+SW should not disable PLLE if PLLE is already put under HW control.
+
+Signed-off-by: Mark Kuo <mkuo@nvidia.com>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c | 22 +++++++++++++++-------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 65156486889a..d9c3109b75bd 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -2012,7 +2012,7 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+ 	struct tegra_clk_pll_freq_table sel;
+ 	u32 val;
+-	int ret;
++	int ret = 0;
+ 	unsigned long flags = 0;
+ 	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
  
-+	extosc: oscillator {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
+@@ -2022,16 +2022,14 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
+ 	if (pll->lock)
+ 		spin_lock_irqsave(pll->lock, flags);
+ 
++	val = pll_readl(pll->params->aux_reg, pll);
++	if (val & PLLE_AUX_SEQ_ENABLE)
++		goto out;
 +
-+		/* The board must provide the extosc clock frequency */
-+	};
-+
- 	ahb {
- 		compatible = "simple-bus";
- 		ranges;
-@@ -89,8 +96,8 @@
- 						"qca,ar9130-pll";
- 				reg = <0x18050000 0x20>;
+ 	val = pll_readl_base(pll);
+ 	val &= ~BIT(30); /* Disable lock override */
+ 	pll_writel_base(val, pll);
  
-+				clocks = <&extosc>;
- 				clock-names = "ref";
--				/* The board must provides the ref clock */
- 
- 				#clock-cells = <1>;
- 				clock-output-names = "cpu", "ddr", "ahb";
-diff --git a/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts b/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
-index e535ee3..9b4132f 100644
---- a/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
-+++ b/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
-@@ -18,21 +18,11 @@
- 		reg = <0x0 0x2000000>;
- 	};
- 
--	extosc: oscillator {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <40000000>;
--	};
+-	val = pll_readl(pll->params->aux_reg, pll);
+-	val |= PLLE_AUX_ENABLE_SWCTL;
+-	val &= ~PLLE_AUX_SEQ_ENABLE;
+-	pll_writel(val, pll->params->aux_reg, pll);
+-	udelay(1);
 -
- 	ahb {
- 		apb {
- 			uart@18020000 {
- 				status = "okay";
- 			};
--
--			pll-controller@18050000 {
--				clocks = <&extosc>;
--			};
- 		};
+ 	val = pll_readl_misc(pll);
+ 	val |= PLLE_MISC_LOCK_ENABLE;
+ 	val |= PLLE_MISC_IDDQ_SW_CTRL;
+@@ -2104,15 +2102,25 @@ static void clk_plle_tegra210_disable(struct clk_hw *hw)
+ 	if (pll->lock)
+ 		spin_lock_irqsave(pll->lock, flags);
  
- 		usb@1b000100 {
-@@ -118,3 +108,7 @@
- 		};
- 	};
- };
++	/* If PLLE HW sequencer is enabled, SW should not disable PLLE */
++	val = pll_readl(pll->params->aux_reg, pll);
++	if (val & PLLE_AUX_SEQ_ENABLE)
++		goto out;
 +
-+&extosc {
-+	clock-frequency = <40000000>;
-+};
+ 	val = pll_readl_base(pll);
+ 	val &= ~PLLE_BASE_ENABLE;
+ 	pll_writel_base(val, pll);
+ 
++	val = pll_readl(pll->params->aux_reg, pll);
++	val |= PLLE_AUX_ENABLE_SWCTL | PLLE_AUX_SS_SWCTL;
++	pll_writel(val, pll->params->aux_reg, pll);
++
+ 	val = pll_readl_misc(pll);
+ 	val |= PLLE_MISC_IDDQ_SW_CTRL | PLLE_MISC_IDDQ_SW_VALUE;
+ 	pll_writel_misc(val, pll);
+ 	udelay(1);
+ 
++out:
+ 	if (pll->lock)
+ 		spin_unlock_irqrestore(pll->lock, flags);
+ }
 -- 
-2.7.0
+1.9.1
 
