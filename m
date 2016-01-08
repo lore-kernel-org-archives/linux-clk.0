@@ -1,35 +1,51 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 29 Jan 2016 16:44:03 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-kernel@vger.kernel.org,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 14/38] clk: vt8500: fix sign of possible PLL values
-Message-ID: <20160130004403.GO12841@codeaurora.org>
-References: <20151001225628.GU19319@codeaurora.org>
- <1443761393-29366-1-git-send-email-a.hajda@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:4758 "EHLO
+	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756094AbcAHShW (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2016 13:37:22 -0500
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@linaro.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 0/9 REPOST] Tegra CLK Fixes
+Date: Fri, 8 Jan 2016 13:37:02 -0500
+Message-ID: <1452278231-9546-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1443761393-29366-1-git-send-email-a.hajda@samsung.com>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/02, Andrzej Hajda wrote:
-> With unsigned values underflow in loops can occur resulting in
-> theoretically infinite loops.
-> 
-> The problem has been detected using proposed semantic patch
-> scripts/coccinelle/tests/unsigned_lesser_than_zero.cocci [1].
-> 
-> [1]: http://permalink.gmane.org/gmane.linux.kernel/2038576
-> 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
+This patch set fixes some issues found with the Tegra CLK drivers
+in testing. There are also a few patches which clean up the code
+and fix some naming issues.
 
-Applied to clk-next
+Andrew Bresticker (1):
+  clk: tegra: pll: Fix potential sleeping-while-atomic
+
+Mark Kuo (2):
+  clk: tegra: pll: Do not disable PLLE when under HW control
+  clk: tegra: pll: Fix PLLE SS config
+
+Rhyland Klein (6):
+  clk: tegra: Fix divider on VI_I2C
+  clk: tegra210: Remove improper flags for lock_enable
+  clk: tegra210: Fix naming of MISC registers
+  clk: tegra: Fix the misnaming of nvenc from msenc
+  clk: tegra210: fix pllx dyn step calculation
+  clk: tegra210: Initialize PLL_D2 to a sane rate
+
+ drivers/clk/tegra/clk-pll.c          | 50 +++++++++++++--------
+ drivers/clk/tegra/clk-tegra-periph.c |  4 +-
+ drivers/clk/tegra/clk-tegra210.c     | 87 +++++++++++++++---------------------
+ 3 files changed, 71 insertions(+), 70 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
+
