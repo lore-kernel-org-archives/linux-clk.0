@@ -1,277 +1,45 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Wynter Woods <wynter@nextthing.co>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 17/26] drm: sun4i: Add DT bindings documentation
-Date: Thu, 14 Jan 2016 16:25:00 +0100
-Message-Id: <1452785109-6172-18-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from pandora.arm.linux.org.uk ([78.32.30.218]:49138 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750824AbcAHPLO (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2016 10:11:14 -0500
+Date: Fri, 8 Jan 2016 15:10:58 +0000
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: Jiancheng Xue <xuejiancheng@huawei.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
+	p.zabel@pengutronix.de, robh+dt@kernel.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, khilman@linaro.org, arnd@arndb.de,
+	olof@lixom.net, xuwei5@hisilicon.com, haojian.zhuang@linaro.org,
+	zhangfei.gao@linaro.org, bintian.wang@huawei.com,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	yanhaifeng@hisilicon.com, yanghongwei@hisilicon.com,
+	suwenping@hisilicon.com, ml.yang@hisilicon.com,
+	gaofei@hisilicon.com, zhangzhenxing@hisilicon.com,
+	xuejiancheng@hisilicon.com
+Subject: Re: [PATCH v5 6/6] ARM: dts: add dts files for Hi3519
+Message-ID: <20160108151058.GN19062@n2100.arm.linux.org.uk>
+References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
+ <1452219400-32478-7-git-send-email-xuejiancheng@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1452219400-32478-7-git-send-email-xuejiancheng@huawei.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The display pipeline of the Allwinner A10 is involving several loosely
-coupled components.
+On Fri, Jan 08, 2016 at 10:16:40AM +0800, Jiancheng Xue wrote:
+> +		uart0: serial@12100000 {
+> +			compatible = "arm,pl011", "arm,primecell";
+> +			reg = <0x12100000 0x1000>;
+> +			interrupts = <0 4 4>;
 
-Add a documentation for the bindings.
+Should the last digit there be IRQ_TYPE_LEVEL_HIGH (and same for the
+other interrupts= after this?)
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- .../bindings/display/sunxi/sun4i-drm.txt           | 228 +++++++++++++++++++++
- 1 file changed, 228 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+Thanks.
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-new file mode 100644
-index 000000000000..061bc87147a3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -0,0 +1,228 @@
-+Allwinner A10 Display Pipeline
-+==============================
-+
-+The Allwinner A10 Display pipeline is composed of several components
-+that are going to be documented below:
-+
-+TV Encoder
-+----------
-+
-+The TV Encoder supports the composite and VGA output. It is one end of
-+the pipeline.
-+
-+Required properties:
-+ - compatible: value should be "allwinner,sun4i-a10-tv-encoder".
-+ - reg: base address and size of memory-mapped region
-+ - clocks: the clocks driving the TV encoder
-+
-+- ports: A ports node with endpoint definitions as defined in
-+  Documentation/devicetree/bindings/media/video-interfaces.txt. The
-+  first port should be the input endpoint.
-+
-+TCON
-+----
-+
-+The TCON acts as a timing controller for RGB, LVDS and TV interfaces.
-+
-+Required properties:
-+ - compatible: value should be "allwinner,sun4i-a10-tcon".
-+ - reg: base address and size of memory-mapped region
-+ - interrupts: interrupt associated to this IP
-+ - clocks: phandles to the clocks feeding the TCON. Three are needed:
-+   - 'ahb': the interface clocks
-+   - 'tcon-ch0': The clock driving the TCON channel 0
-+   - 'tcon-ch1': The clock driving the TCON channel 1
-+
-+ - clock-names: the clock names mentioned above
-+ - clock-output-names: Name of the pixel clock created
-+
-+- ports: A ports node with endpoint definitions as defined in
-+  Documentation/devicetree/bindings/media/video-interfaces.txt. The
-+  first port should be the input endpoint, the second one the output
-+
-+Optional properties:
-+  - allwinner,panel: phandle to the panel used in our RGB interface
-+
-+
-+Display Engine Backend
-+----------------------
-+
-+The display engine backend exposes layers and sprites to the
-+system.
-+
-+Required properties:
-+  - compatible: value must be one of:
-+    * allwinner,sun5i-a13-display-backend
-+  - reg: base address and size of the memory-mapped region.
-+  - clocks: phandles to the clocks feeding the frontend and backend
-+    * ahb: the backend interface clock
-+    * mod: the backend module clock
-+    * ram: the backend DRAM clock
-+  - clock-names: the clock names mentioned above
-+  - resets: phandles to the reset controllers driving the backend
-+
-+- ports: A ports node with endpoint definitions as defined in
-+  Documentation/devicetree/bindings/media/video-interfaces.txt. The
-+  first port should be the input endpoints, the second one the output
-+
-+Display Engine Frontend
-+-----------------------
-+
-+The display engine frontend does formats conversion, scaling,
-+deinterlacing and color space conversion.
-+
-+Required properties:
-+  - compatible: value must be one of:
-+    * allwinner,sun5i-a13-display-frontend
-+  - reg: base address and size of the memory-mapped region.
-+  - interrupts: interrupt associated to this IP
-+  - clocks: phandles to the clocks feeding the frontend and backend
-+    * ahb: the backend interface clock
-+    * mod: the backend module clock
-+    * ram: the backend DRAM clock
-+  - clock-names: the clock names mentioned above
-+  - resets: phandles to the reset controllers driving the backend
-+
-+Display Engine Pipeline
-+-----------------------
-+
-+The display engine pipeline (and its entry point, since it can be
-+either directly the backend or the frontend) is represented as an
-+extra node.
-+
-+Required properties:
-+  - compatible: value must be one of:
-+    * allwinner,sun5i-a13-display-engine
-+  - allwinner,pipelines: list of phandle to the entry points of the
-+    pipelines (either to the frontend or backend)
-+
-+Example:
-+
-+panel: panel {
-+	compatible = "olimex,lcd-olinuxino-43-ts";
-+};
-+
-+tve0: tv-encoder@01c0a000 {
-+	compatible = "allwinner,sun4i-a10-tv-encoder";
-+	reg = <0x01c0a000 0x1000>;
-+	clocks = <&ahb_gates 34>;
-+
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		tve0_in_tcon0: endpoint@0 {
-+			reg = <0>;
-+			remote-endpoint = <&tcon0_out_tve0>;
-+		};
-+	};
-+};
-+
-+tcon0: lcd-controller@01c0c000 {
-+	compatible = "allwinner,sun4i-a10-tcon";
-+	reg = <0x01c0c000 0x1000>;
-+	interrupts = <44>;
-+	clocks = <&ahb_gates 36>,
-+		 <&tcon_ch0_clk>,
-+		 <&tcon_ch1_clk>;
-+	clock-names = "ahb",
-+		      "tcon-ch0",
-+		      "tcon-ch1";
-+	clock-output-names = "tcon-pixel-clock";
-+	allwinner,panel = <&panel>;
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		tcon0_in: port@0 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0>;
-+
-+			tcon0_in_be0: endpoint@0 {
-+				reg = <0>;
-+				remote-endpoint = <&be0_out_tcon0>;
-+			};
-+		};
-+
-+		tcon0_out: port@1 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <1>;
-+
-+			tcon0_out_tve0: endpoint@0 {
-+				reg = <0>;
-+				remote-endpoint = <&tve0_in_tcon0>;
-+			};
-+		};
-+	};
-+};
-+
-+fe0: display-frontend@01e00000 {
-+	compatible = "allwinner,sun5i-a13-display-frontend";
-+	reg = <0x01e00000 0x20000>;
-+	interrupts = <47>;
-+	clocks = <&ahb_gates 46>, <&de_fe_clk>,
-+		 <&dram_gates 25>;
-+	clock-names = "ahb", "mod",
-+		      "ram";
-+	resets = <&de_fe_clk>;
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		fe0_out: port@0 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0>;
-+
-+			fe0_out_be0: endpoint@0 {
-+				reg = <0>;
-+				remote-endpoint = <&be0_in_fe0>;
-+			};
-+		};
-+	};
-+};
-+
-+be0: display-backend@01e60000 {
-+	compatible = "allwinner,sun5i-a13-display-backend";
-+	reg = <0x01e60000 0x10000>;
-+	clocks = <&ahb_gates 44>, <&de_be_clk>,
-+		 <&dram_gates 26>;
-+	clock-names = "ahb", "mod",
-+		      "ram";
-+	resets = <&de_be_clk>;
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		be0_in: port@0 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0>;
-+
-+			be0_in_fe0: endpoint@0 {
-+				reg = <0>;
-+				remote-endpoint = <&fe0_out_be0>;
-+			};
-+		};
-+
-+		be0_out: port@1 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <1>;
-+
-+			be0_out_tcon0: endpoint@0 {
-+				reg = <0>;
-+				remote-endpoint = <&tcon0_in_be0>;
-+		};
-+	};
-+};
-+
-+display-engine {
-+	compatible = "allwinner,sun5i-a13-display-engine";
-+	pipelines = <&be0>;
-+};
 -- 
-2.6.4
+RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
