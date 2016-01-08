@@ -1,93 +1,280 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-Message-ID: <1452246533.31362.10.camel@mtksdaap41>
-Subject: Re: [PATCH] clk: mediatek: Allow changing PLL rate when it is off
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	<srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>, Daniel Kurtz
-	<djkurtz@chromium.org>, <linux-mediatek@lists.infradead.org>, Sascha Hauer
-	<kernel@pengutronix.de>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Date: Fri, 8 Jan 2016 17:48:53 +0800
-In-Reply-To: <20160108091510.GC13058@pengutronix.de>
-References: <1452240997-35316-1-git-send-email-jamesjj.liao@mediatek.com>
-	 <20160108091510.GC13058@pengutronix.de>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <xuejiancheng@hisilicon.com>
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <p.zabel@pengutronix.de>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
+        <mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
+        <galak@codeaurora.org>, <linux@arm.linux.org.uk>, <khilman@linaro.org>,
+        <arnd@arndb.de>, <olof@lixom.net>, <xuwei5@hisilicon.com>,
+        <haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+        <bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
+        <suwenping@hisilicon.com>, <ml.yang@hisilicon.com>,
+        <gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+        <xuejiancheng@hisilicon.com>, Jiancheng Xue
+	<xuejiancheng@huawei.com>
+Subject: [PATCH v5 6/6] ARM: dts: add dts files for Hi3519
+Date: Fri, 8 Jan 2016 10:16:40 +0800
+Message-ID: <1452219400-32478-7-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
+References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
 MIME-Version: 1.0
-Return-Path: jamesjj.liao@mediatek.com
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sascha,
+add dts files for Hi3519
 
-On Fri, 2016-01-08 at 10:15 +0100, Sascha Hauer wrote:
-> On Fri, Jan 08, 2016 at 04:16:37PM +0800, James Liao wrote:
-> > Some modules may need to change its clock rate before turn on it.
-> > So changing PLL's rate when it is off should be allowed.
-> > This patch removes PLL enabled check before set rate, so that
-> > PLLs can set new frequency even if they are off.
-> 
-> This sounds like the software refused to change the rate on disabled
-> PLLs, but this is not the case.
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+---
+ arch/arm/boot/dts/Makefile        |   2 +
+ arch/arm/boot/dts/hi3519-demb.dts |  42 +++++++++
+ arch/arm/boot/dts/hi3519.dtsi     | 175 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 219 insertions(+)
+ create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
+ create mode 100644 arch/arm/boot/dts/hi3519.dtsi
 
-In fact the major change of this patch is trigger (set) CON0_PCW_CHG no
-matter PLL is on or not.
-
-> > 
-> > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> > ---
-> >  drivers/clk/mediatek/clk-pll.c | 9 ++-------
-> >  1 file changed, 2 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-> > index 966cab1..8e31fae 100644
-> > --- a/drivers/clk/mediatek/clk-pll.c
-> > +++ b/drivers/clk/mediatek/clk-pll.c
-> > @@ -91,9 +91,6 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
-> >  		int postdiv)
-> >  {
-> >  	u32 con1, val;
-> > -	int pll_en;
-> > -
-> > -	pll_en = readl(pll->base_addr + REG_CON0) & CON0_BASE_EN;
-> >  
-> >  	/* set postdiv */
-> >  	val = readl(pll->pd_addr);
-> > @@ -114,15 +111,13 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
-> >  
-> >  	con1 = readl(pll->base_addr + REG_CON1);
-> >  
-> > -	if (pll_en)
-> > -		con1 |= CON0_PCW_CHG;
-> > +	con1 |= CON0_PCW_CHG;
-> 
-> This bit is described as "Feedback divide ratio update". To me this
-> sounds like we have to inform the hardware that the PLL registers have
-> been updated. The current code only sets this bit when the PLL is
-> enabled which sounds sane to me.
-> 
-> >  
-> >  	writel(con1, pll->base_addr + REG_CON1);
-> >  	if (pll->tuner_addr)
-> >  		writel(con1 + 1, pll->tuner_addr);
-> >  
-> > -	if (pll_en)
-> > -		udelay(20);
-> > +	udelay(20);
-> 
-> We seem to have to wait here until the PLL is really running at the new
-> frequency. Normally we don't have to do this when the PLL is disabled.
-> 
-> I'm sure this patch solves a real problem, from looking at it it's just
-> not clear to me what the problem is. Could you clarify this a bit?
-
-On MT8173 for example, ARMPLL's enable bit can be controlled by other
-HW. That means ARMPLL may be turned on even if we (CPU / SW) set
-ARMPLL's enable bit as 0. In this case, SW may want and can still change
-ARMPLL's rate by changing its pcw and postdiv settings. But without this
-patch, new pcw setting will not be applied because its enable bit is 0.
-
-
-Best regards,
-
-James
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 30bbc37..1ff3ed9 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -135,6 +135,8 @@ dtb-$(CONFIG_ARCH_EXYNOS5) += \
+ 	exynos5800-peach-pi.dtb
+ dtb-$(CONFIG_ARCH_HI3xxx) += \
+ 	hi3620-hi4511.dtb
++dtb-$(CONFIG_ARCH_HISI) += \
++	hi3519-demb.dtb
+ dtb-$(CONFIG_ARCH_HIX5HD2) += \
+ 	hisi-x5hd2-dkb.dtb
+ dtb-$(CONFIG_ARCH_HIGHBANK) += \
+diff --git a/arch/arm/boot/dts/hi3519-demb.dts b/arch/arm/boot/dts/hi3519-demb.dts
+new file mode 100644
+index 0000000..6991ab6
+--- /dev/null
++++ b/arch/arm/boot/dts/hi3519-demb.dts
+@@ -0,0 +1,42 @@
++/*
++ * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ */
++
++/dts-v1/;
++#include "hi3519.dtsi"
++
++/ {
++	model = "HiSilicon HI3519 DEMO Board";
++	compatible = "hisilicon,hi3519";
++
++	aliases {
++		serial0 = &uart0;
++	};
++
++	memory {
++		device_type = "memory";
++		reg = <0x80000000 0x40000000>;
++	};
++};
++
++&uart0 {
++	status = "okay";
++};
++
++&dual_timer0 {
++	status = "okay";
++};
+diff --git a/arch/arm/boot/dts/hi3519.dtsi b/arch/arm/boot/dts/hi3519.dtsi
+new file mode 100644
+index 0000000..95137c7
+--- /dev/null
++++ b/arch/arm/boot/dts/hi3519.dtsi
+@@ -0,0 +1,175 @@
++/*
++ * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ */
++
++#include <dt-bindings/clock/hi3519-clock.h>
++/ {
++	#address-cells = <1>;
++	#size-cells = <1>;
++	chosen { };
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <0>;
++		};
++	};
++
++	gic: interrupt-controller@10300000 {
++		compatible = "arm,cortex-a7-gic";
++		#interrupt-cells = <3>;
++		interrupt-controller;
++		reg = <0x10301000 0x1000>, <0x10302000 0x1000>;
++	};
++
++	soc {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "simple-bus";
++		interrupt-parent = <&gic>;
++		ranges;
++
++
++		uart0: serial@12100000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12100000 0x1000>;
++			interrupts = <0 4 4>;
++			clocks = <&crg HI3519_UART0_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		uart1: serial@12101000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12101000 0x1000>;
++			interrupts = <0 5 4>;
++			clocks = <&crg HI3519_UART1_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		uart2: serial@12102000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12102000 0x1000>;
++			interrupts = <0 6 4>;
++			clocks = <&crg HI3519_UART2_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		uart3: serial@12103000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12103000 0x1000>;
++			interrupts = <0 7 4>;
++			clocks = <&crg HI3519_UART3_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		uart4: serial@12104000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12104000 0x1000>;
++			interrupts = <0 8 4>;
++			clocks = <&crg HI3519_UART4_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		dual_timer0: timer@12000000 {
++			compatible = "arm,sp804", "arm,primecell";
++			interrupts = <0 64 4>, <0 65 4>;
++			reg = <0x12000000 0x1000>;
++			clocks = <&crg HI3519_FIXED_3M>;
++			status = "disable";
++		};
++
++		dual_timer1: timer@12001000 {
++			compatible = "arm,sp804", "arm,primecell";
++			interrupts = <0 66 4>, <0 67 4>;
++			reg = <0x12001000 0x1000>;
++			clocks = <&crg HI3519_FIXED_3M>;
++			status = "disable";
++		};
++
++		dual_timer2: timer@12002000 {
++			compatible = "arm,sp804", "arm,primecell";
++			interrupts = <0 68 4>, <0 69 4>;
++			reg = <0x12002000 0x1000>;
++			clocks = <&crg HI3519_FIXED_3M>;
++			status = "disable";
++		};
++
++		spi_bus0: spi@12120000 {
++			compatible = "arm,pl022", "arm,primecell";
++			reg = <0x12120000 0x1000>;
++			interrupts = <0 9 4>;
++			clocks = <&crg HI3519_SPI0_CLK>;
++			clock-names = "apb_pclk";
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disable";
++		};
++
++		spi_bus1: spi@12121000 {
++			compatible = "arm,pl022", "arm,primecell";
++			reg = <0x12121000 0x1000>;
++			interrupts = <0 10 4>;
++			clocks = <&crg HI3519_SPI1_CLK>;
++			clock-names = "apb_pclk";
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disable";
++		};
++
++		spi_bus2: spi@12122000 {
++			compatible = "arm,pl022", "arm,primecell";
++			reg = <0x12122000 0x1000>;
++			interrupts = <0 11 4>;
++			clocks = <&crg HI3519_SPI2_CLK>;
++			clock-names = "apb_pclk";
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disable";
++		};
++
++		sysctrl: system-controller@12020000 {
++			compatible = "hisilicon,hi3519-sysctrl", "syscon";
++			reg = <0x12020000 0x1000>;
++		};
++
++		reboot {
++			compatible = "syscon-reboot";
++			regmap = <&sysctrl>;
++			offset = <0x4>;
++			mask = <0xdeadbeef>;
++		};
++
++		crg: clock-reset-controller@12010000 {
++			compatible = "hisilicon,hi3519-crg";
++			#clock-cells = <1>;
++			#reset-cells = <2>;
++			reg = <0x12010000 0x10000>;
++		};
++	};
++};
+-- 
+1.9.1
