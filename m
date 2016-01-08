@@ -1,48 +1,105 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Zhang Qing <zhangqing@rock-chips.com>
-To: heiko@sntech.de,
-	zhengxing@rock-chips.com,
-	xf@rock-chips.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	huangtao@rock-chips.com,
-	zyw@rock-chips.com,
-	jay.xu@rock-chips.com,
-	linux-rockchip@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	zhangqing <zhangqing@rock-chips.com>
-Subject: [PATCH v1 3/3] clk: rockchip: rk3368: enable the CLK_SET_RATE_PARENT flag for i2s_2ch
-Date: Mon, 25 Jan 2016 08:56:02 -0800
-Message-Id: <1453740962-8556-4-git-send-email-zhangqing@rock-chips.com>
-In-Reply-To: <1453740962-8556-1-git-send-email-zhangqing@rock-chips.com>
-References: <1453740962-8556-1-git-send-email-zhangqing@rock-chips.com>
+	Mark Kuo <mkuo@nvidia.com>,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 8/9] clk: tegra: pll: Fix PLLE SS config
+Date: Fri, 8 Jan 2016 13:45:13 -0500
+Message-ID: <1452278714-10751-9-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
+References: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: zhangqing <zhangqing@rock-chips.com>
+From: Mark Kuo <mkuo@nvidia.com>
 
-I2S_2CH set freq need to select parent and calculate parent freq.
-so just mark it as the CLK_SET_RATE_PARENT flag.
+Fix PLLE spread spectrum configuration so it aligns with downstream
+kernel.
 
-Signed-off-by: zhangqing <zhangqing@rock-chips.com>
+Signed-off-by: Mark Kuo <mkuo@nvidia.com>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- drivers/clk/rockchip/clk-rk3368.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/tegra/clk-pll.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
-index 58ef08b..5ceb536 100644
---- a/drivers/clk/rockchip/clk-rk3368.c
-+++ b/drivers/clk/rockchip/clk-rk3368.c
-@@ -363,7 +363,8 @@ static struct rockchip_clk_branch rk3368_clk_branches[] __initdata = {
- 	COMPOSITE_FRAC(0, "i2s_2ch_frac", "i2s_2ch_src", CLK_SET_RATE_PARENT,
- 			RK3368_CLKSEL_CON(54), 0,
- 			RK3368_CLKGATE_CON(5), 14, GFLAGS),
--	COMPOSITE_NODIV(SCLK_I2S_2CH, "sclk_i2s_2ch", mux_i2s_2ch_p, 0,
-+	COMPOSITE_NODIV(SCLK_I2S_2CH, "sclk_i2s_2ch", mux_i2s_2ch_p,
-+			CLK_SET_RATE_PARENT,
- 			RK3368_CLKSEL_CON(53), 8, 2, MFLAGS,
- 			RK3368_CLKGATE_CON(5), 15, GFLAGS),
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index d9c3109b75bd..6ac3f843e7ca 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -86,15 +86,21 @@
+ #define PLLE_SS_DISABLE (PLLE_SS_CNTL_BYPASS_SS | PLLE_SS_CNTL_INTERP_RESET |\
+ 				PLLE_SS_CNTL_SSC_BYP)
+ #define PLLE_SS_MAX_MASK 0x1ff
+-#define PLLE_SS_MAX_VAL 0x25
++#define PLLE_SS_MAX_VAL_TEGRA114 0x25
++#define PLLE_SS_MAX_VAL_TEGRA210 0x21
+ #define PLLE_SS_INC_MASK (0xff << 16)
+ #define PLLE_SS_INC_VAL (0x1 << 16)
+ #define PLLE_SS_INCINTRV_MASK (0x3f << 24)
+-#define PLLE_SS_INCINTRV_VAL (0x20 << 24)
++#define PLLE_SS_INCINTRV_VAL_TEGRA114 (0x20 << 24)
++#define PLLE_SS_INCINTRV_VAL_TEGRA210 (0x23 << 24)
+ #define PLLE_SS_COEFFICIENTS_MASK \
+ 	(PLLE_SS_MAX_MASK | PLLE_SS_INC_MASK | PLLE_SS_INCINTRV_MASK)
+-#define PLLE_SS_COEFFICIENTS_VAL \
+-	(PLLE_SS_MAX_VAL | PLLE_SS_INC_VAL | PLLE_SS_INCINTRV_VAL)
++#define PLLE_SS_COEFFICIENTS_VAL_TEGRA114 \
++	(PLLE_SS_MAX_VAL_TEGRA114 | PLLE_SS_INC_VAL |\
++	 PLLE_SS_INCINTRV_VAL_TEGRA114)
++#define PLLE_SS_COEFFICIENTS_VAL_TEGRA210 \
++	(PLLE_SS_MAX_VAL_TEGRA210 | PLLE_SS_INC_VAL |\
++	 PLLE_SS_INCINTRV_VAL_TEGRA210)
  
+ #define PLLE_AUX_PLLP_SEL	BIT(2)
+ #define PLLE_AUX_USE_LOCKDET	BIT(3)
+@@ -1401,7 +1407,7 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
+ 	val |= PLLE_MISC_IDDQ_SW_CTRL;
+ 	val &= ~PLLE_MISC_IDDQ_SW_VALUE;
+ 	val |= PLLE_MISC_PLLE_PTS;
+-	val |= PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK;
++	val &= ~(PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK);
+ 	pll_writel_misc(val, pll);
+ 	udelay(5);
+ 
+@@ -1428,7 +1434,7 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
+ 	val = pll_readl(PLLE_SS_CTRL, pll);
+ 	val &= ~(PLLE_SS_CNTL_CENTER | PLLE_SS_CNTL_INVERT);
+ 	val &= ~PLLE_SS_COEFFICIENTS_MASK;
+-	val |= PLLE_SS_COEFFICIENTS_VAL;
++	val |= PLLE_SS_COEFFICIENTS_VAL_TEGRA114;
+ 	pll_writel(val, PLLE_SS_CTRL, pll);
+ 	val &= ~(PLLE_SS_CNTL_SSC_BYP | PLLE_SS_CNTL_BYPASS_SS);
+ 	pll_writel(val, PLLE_SS_CTRL, pll);
+@@ -2035,7 +2041,7 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
+ 	val |= PLLE_MISC_IDDQ_SW_CTRL;
+ 	val &= ~PLLE_MISC_IDDQ_SW_VALUE;
+ 	val |= PLLE_MISC_PLLE_PTS;
+-	val |= PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK;
++	val &= ~(PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK);
+ 	pll_writel_misc(val, pll);
+ 	udelay(5);
+ 
+@@ -2065,7 +2071,7 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
+ 	val = pll_readl(PLLE_SS_CTRL, pll);
+ 	val &= ~(PLLE_SS_CNTL_CENTER | PLLE_SS_CNTL_INVERT);
+ 	val &= ~PLLE_SS_COEFFICIENTS_MASK;
+-	val |= PLLE_SS_COEFFICIENTS_VAL;
++	val |= PLLE_SS_COEFFICIENTS_VAL_TEGRA210;
+ 	pll_writel(val, PLLE_SS_CTRL, pll);
+ 	val &= ~(PLLE_SS_CNTL_SSC_BYP | PLLE_SS_CNTL_BYPASS_SS);
+ 	pll_writel(val, PLLE_SS_CTRL, pll);
 -- 
 1.9.1
