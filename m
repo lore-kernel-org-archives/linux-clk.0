@@ -1,52 +1,86 @@
-Return-Path: <robh@kernel.org>
-Date: Wed, 6 Jan 2016 09:08:00 -0600
-From: Rob Herring <robh@kernel.org>
+Return-Path: <sha@pengutronix.de>
+Date: Fri, 8 Jan 2016 10:15:10 +0100
+From: Sascha Hauer <s.hauer@pengutronix.de>
 To: James Liao <jamesjj.liao@mediatek.com>
 Cc: Matthias Brugger <matthias.bgg@gmail.com>,
 	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, srv_heupstream@mediatek.com,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 2/6] dt-bindings: ARM: Mediatek: Document bindings for
- MT2701
-Message-ID: <20160106150800.GA941@rob-hp-laptop>
-References: <1451975422-31174-1-git-send-email-jamesjj.liao@mediatek.com>
- <1451975422-31174-3-git-send-email-jamesjj.liao@mediatek.com>
+	Stephen Boyd <sboyd@codeaurora.org>, srv_heupstream@mediatek.com,
+	linux-kernel@vger.kernel.org, Daniel Kurtz <djkurtz@chromium.org>,
+	linux-mediatek@lists.infradead.org,
+	Sascha Hauer <kernel@pengutronix.de>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: mediatek: Allow changing PLL rate when it is off
+Message-ID: <20160108091510.GC13058@pengutronix.de>
+References: <1452240997-35316-1-git-send-email-jamesjj.liao@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1451975422-31174-3-git-send-email-jamesjj.liao@mediatek.com>
+In-Reply-To: <1452240997-35316-1-git-send-email-jamesjj.liao@mediatek.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jan 05, 2016 at 02:30:18PM +0800, James Liao wrote:
-> This patch adds the binding documentation for apmixedsys, bdpsys,
-> ethsys, hifsys, imgsys, infracfg, mmsys, pericfg, topckgen and
-> vdecsys for Mediatek MT2701.
+Hi James,
+
+On Fri, Jan 08, 2016 at 04:16:37PM +0800, James Liao wrote:
+> Some modules may need to change its clock rate before turn on it.
+> So changing PLL's rate when it is off should be allowed.
+> This patch removes PLL enabled check before set rate, so that
+> PLLs can set new frequency even if they are off.
+
+This sounds like the software refused to change the rate on disabled
+PLLs, but this is not the case.
+
 > 
 > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> ---
+>  drivers/clk/mediatek/clk-pll.c | 9 ++-------
+>  1 file changed, 2 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
+> index 966cab1..8e31fae 100644
+> --- a/drivers/clk/mediatek/clk-pll.c
+> +++ b/drivers/clk/mediatek/clk-pll.c
+> @@ -91,9 +91,6 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
+>  		int postdiv)
+>  {
+>  	u32 con1, val;
+> -	int pll_en;
+> -
+> -	pll_en = readl(pll->base_addr + REG_CON0) & CON0_BASE_EN;
+>  
+>  	/* set postdiv */
+>  	val = readl(pll->pd_addr);
+> @@ -114,15 +111,13 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
+>  
+>  	con1 = readl(pll->base_addr + REG_CON1);
+>  
+> -	if (pll_en)
+> -		con1 |= CON0_PCW_CHG;
+> +	con1 |= CON0_PCW_CHG;
 
-[...]
+This bit is described as "Feedback divide ratio update". To me this
+sounds like we have to inform the hardware that the PLL registers have
+been updated. The current code only sets this bit when the PLL is
+enabled which sounds sane to me.
 
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
-> new file mode 100644
-> index 0000000..4137196
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
-> @@ -0,0 +1,22 @@
-> +Mediatek bdpsys controller
-> +============================
-> +
-> +The Mediatek bdpsys controller provides various clocks to the system.
-> +
-> +Required Properties:
-> +
-> +- compatible: Should be:
-> +	- "mediatek,mt2701-bdpsys", "syscon"
+>  
+>  	writel(con1, pll->base_addr + REG_CON1);
+>  	if (pll->tuner_addr)
+>  		writel(con1 + 1, pll->tuner_addr);
+>  
+> -	if (pll_en)
+> -		udelay(20);
+> +	udelay(20);
 
-If this block and others only provide clocks, then why do you need 
-syscon here? If it is more that clocks, then the description is wrong.
+We seem to have to wait here until the PLL is really running at the new
+frequency. Normally we don't have to do this when the PLL is disabled.
 
-Rob
+I'm sure this patch solves a real problem, from looking at it it's just
+not clear to me what the problem is. Could you clarify this a bit?
+
+Sascha
+
+
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
