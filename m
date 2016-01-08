@@ -1,126 +1,50 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: John Crispin <blogic@openwrt.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>, Shunli
- Wang <shunli.wang@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>
-Subject: [PATCH v5 5/6] reset: mediatek: Add MT2701 reset controller dt-binding file
-Date: Wed, 27 Jan 2016 15:21:03 +0800
-Message-ID: <1453879264-37915-6-git-send-email-jamesjj.liao@mediatek.com>
-In-Reply-To: <1453879264-37915-1-git-send-email-jamesjj.liao@mediatek.com>
-References: <1453879264-37915-1-git-send-email-jamesjj.liao@mediatek.com>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>,
+	Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 4/9] clk: tegra: Fix the misnaming of nvenc from msenc
+Date: Fri, 8 Jan 2016 13:45:09 -0500
+Message-ID: <1452278714-10751-5-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
+References: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: jamesjj.liao@mediatek.com
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shunli Wang <shunli.wang@mediatek.com>
+When adding the nvenc clock, it was partially named msenc in
+the code. Since the msenc clk isn't present in T210 where the nvenc
+clk is, its misleading to see it present. Therefore, properly
+rename it.
 
-Dt-binding file about reset controller is used to provide
-kinds of definition, which is referenced by dts file and
-IC-specified reset controller driver code.
-
-Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-Tested-by: John Crispin <blogic@openwrt.org>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- include/dt-bindings/reset/mt2701-resets.h | 83 +++++++++++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
- create mode 100644 include/dt-bindings/reset/mt2701-resets.h
+ drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/dt-bindings/reset/mt2701-resets.h b/include/dt-bindings/reset/mt2701-resets.h
-new file mode 100644
-index 0000000..aaf0305
---- /dev/null
-+++ b/include/dt-bindings/reset/mt2701-resets.h
-@@ -0,0 +1,83 @@
-+/*
-+ * Copyright (c) 2015 MediaTek, Shunli Wang <shunli.wang@mediatek.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _DT_BINDINGS_RESET_CONTROLLER_MT2701
-+#define _DT_BINDINGS_RESET_CONTROLLER_MT2701
-+
-+/* INFRACFG resets */
-+#define MT2701_INFRA_EMI_REG_RST		0
-+#define MT2701_INFRA_DRAMC0_A0_RST		1
-+#define MT2701_INFRA_FHCTL_RST			2
-+#define MT2701_INFRA_APCIRQ_EINT_RST		3
-+#define MT2701_INFRA_APXGPT_RST			4
-+#define MT2701_INFRA_SCPSYS_RST			5
-+#define MT2701_INFRA_KP_RST			6
-+#define MT2701_INFRA_PMIC_WRAP_RST		7
-+#define MT2701_INFRA_MIPI_RST			8
-+#define MT2701_INFRA_IRRX_RST			9
-+#define MT2701_INFRA_CEC_RST			10
-+#define MT2701_INFRA_EMI_RST			32
-+#define MT2701_INFRA_DRAMC0_RST			34
-+#define MT2701_INFRA_TRNG_RST			37
-+#define MT2701_INFRA_SYSIRQ_RST			38
-+
-+/*  PERICFG resets */
-+#define MT2701_PERI_UART0_SW_RST		0
-+#define MT2701_PERI_UART1_SW_RST		1
-+#define MT2701_PERI_UART2_SW_RST		2
-+#define MT2701_PERI_UART3_SW_RST		3
-+#define MT2701_PERI_GCPU_SW_RST			5
-+#define MT2701_PERI_BTIF_SW_RST			6
-+#define MT2701_PERI_PWM_SW_RST			8
-+#define MT2701_PERI_AUXADC_SW_RST		10
-+#define MT2701_PERI_DMA_SW_RST			11
-+#define MT2701_PERI_NFI_SW_RST			14
-+#define MT2701_PERI_NLI_SW_RST			15
-+#define MT2701_PERI_THERM_SW_RST		16
-+#define MT2701_PERI_MSDC2_SW_RST		17
-+#define MT2701_PERI_MSDC0_SW_RST		19
-+#define MT2701_PERI_MSDC1_SW_RST		20
-+#define MT2701_PERI_I2C0_SW_RST			22
-+#define MT2701_PERI_I2C1_SW_RST			23
-+#define MT2701_PERI_I2C2_SW_RST			24
-+#define MT2701_PERI_I2C3_SW_RST			25
-+#define MT2701_PERI_USB_SW_RST			28
-+#define MT2701_PERI_ETH_SW_RST			29
-+#define MT2701_PERI_SPI0_SW_RST			33
-+
-+/* TOPRGU resets */
-+#define MT2701_TOPRGU_INFRA_RST			0
-+#define MT2701_TOPRGU_MM_RST			1
-+#define MT2701_TOPRGU_MFG_RST			2
-+#define MT2701_TOPRGU_ETHDMA_RST		3
-+#define MT2701_TOPRGU_VDEC_RST			4
-+#define MT2701_TOPRGU_VENC_IMG_RST		5
-+#define MT2701_TOPRGU_DDRPHY_RST		6
-+#define MT2701_TOPRGU_MD_RST			7
-+#define MT2701_TOPRGU_INFRA_AO_RST		8
-+#define MT2701_TOPRGU_CONN_RST			9
-+#define MT2701_TOPRGU_APMIXED_RST		10
-+#define MT2701_TOPRGU_HIFSYS_RST		11
-+#define MT2701_TOPRGU_CONN_MCU_RST		12
-+#define MT2701_TOPRGU_BDP_DISP_RST		13
-+
-+/* HIFSYS resets */
-+#define MT2701_HIFSYS_UHOST0_RST		3
-+#define MT2701_HIFSYS_UHOST1_RST		4
-+#define MT2701_HIFSYS_UPHY0_RST			21
-+#define MT2701_HIFSYS_UPHY1_RST			22
-+#define MT2701_HIFSYS_PCIE0_RST			24
-+#define MT2701_HIFSYS_PCIE1_RST			25
-+#define MT2701_HIFSYS_PCIE2_RST			26
-+
-+#endif  /* _DT_BINDINGS_RESET_CONTROLLER_MT2701 */
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 105405ca85ab..1860df1862dd 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -773,7 +773,7 @@ static struct tegra_periph_init_data periph_clks[] = {
+ 	XUSB("xusb_dev_src", mux_clkm_pllp_pllc_pllre, CLK_SOURCE_XUSB_DEV_SRC, 95, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_xusb_dev_src),
+ 	XUSB("xusb_dev_src", mux_clkm_pllp_pllre, CLK_SOURCE_XUSB_DEV_SRC, 95, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_xusb_dev_src_8),
+ 	MUX8("dbgapb", mux_pllp_clkm_2, CLK_SOURCE_DBGAPB, 185, TEGRA_PERIPH_NO_RESET, tegra_clk_dbgapb),
+-	MUX8("msenc", mux_pllc2_c_c3_pllp_plla1_clkm, CLK_SOURCE_NVENC, 219, 0, tegra_clk_nvenc),
++	MUX8("nvenc", mux_pllc2_c_c3_pllp_plla1_clkm, CLK_SOURCE_NVENC, 219, 0, tegra_clk_nvenc),
+ 	MUX8("nvdec", mux_pllc2_c_c3_pllp_plla1_clkm, CLK_SOURCE_NVDEC, 194, 0, tegra_clk_nvdec),
+ 	MUX8("nvjpg", mux_pllc2_c_c3_pllp_plla1_clkm, CLK_SOURCE_NVJPG, 195, 0, tegra_clk_nvjpg),
+ 	MUX8("ape", mux_plla_pllc4_out0_pllc_pllc4_out1_pllp_pllc4_out2_clkm, CLK_SOURCE_APE, 198, TEGRA_PERIPH_ON_APB, tegra_clk_ape),
 -- 
 1.9.1
