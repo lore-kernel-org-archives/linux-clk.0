@@ -1,81 +1,68 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Remi Pommarel <repk@triplefau.lt>,
+	devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	Ralf Baechle <ralf@linux-mips.org>,
-	linux-mips@linux-mips.org
-Subject: [PATCH] clk: Get rid of HAVE_MACH_CLKDEV
-Date: Wed, 27 Jan 2016 14:17:00 -0800
-Message-Id: <1453933020-8577-1-git-send-email-sboyd@codeaurora.org>
+	alsa-devel@alsa-project.org,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Matthias Reichl <hias@horus.com>,
+	lFlorian Meier <florian.meier@koalo.de>
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH 5/5] dt-bindings: bsm2835: fix bindings documentation to use new clock framework
+Date: Sat,  9 Jan 2016 09:25:57 +0000
+Message-Id: <1452331558-2520-6-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org>
+References: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This config was used for the ARM port so that it could use a
-machine specific clkdev.h include, but those are all gone now.
-The MIPS architecture is the last user, and from what I can tell
-it doesn't actually use it anyway, so let's remove the config all
-together.
+From: Martin Sperl <kernel@martin.sperl.org>
 
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: <linux-mips@linux-mips.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+The bcm2835-i2s driver has been updated to use the new clock framework
+for the bcm2835 SOC.
+
+This patch documents the required changes to the bindings.
+
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 ---
+ Documentation/devicetree/bindings/sound/brcm,bcm2835-i2s.txt |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-I don't see a problem if this goes through the MIPS tree or the clk tree.
-Let me know and I can take it through clk.
-
- arch/mips/Kconfig       | 2 --
- arch/mips/pic32/Kconfig | 1 -
- drivers/clk/Kconfig     | 3 ---
- 3 files changed, 6 deletions(-)
-
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 56f57816613e..8e1be2889af3 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -328,7 +328,6 @@ config LANTIQ
- 	select ARCH_REQUIRE_GPIOLIB
- 	select SWAP_IO_SPACE
- 	select BOOT_RAW
--	select HAVE_MACH_CLKDEV
- 	select CLKDEV_LOOKUP
- 	select USE_OF
- 	select PINCTRL
-@@ -590,7 +589,6 @@ config RALINK
- 	select SYS_SUPPORTS_LITTLE_ENDIAN
- 	select SYS_SUPPORTS_MIPS16
- 	select SYS_HAS_EARLY_PRINTK
--	select HAVE_MACH_CLKDEV
- 	select CLKDEV_LOOKUP
- 	select ARCH_HAS_RESET_CONTROLLER
- 	select RESET_CONTROLLER
-diff --git a/arch/mips/pic32/Kconfig b/arch/mips/pic32/Kconfig
-index fde56a8b85ca..1985971b9890 100644
---- a/arch/mips/pic32/Kconfig
-+++ b/arch/mips/pic32/Kconfig
-@@ -15,7 +15,6 @@ config PIC32MZDA
- 	select SYS_SUPPORTS_32BIT_KERNEL
- 	select SYS_SUPPORTS_LITTLE_ENDIAN
- 	select ARCH_REQUIRE_GPIOLIB
--	select HAVE_MACH_CLKDEV
- 	select COMMON_CLK
- 	select CLKDEV_LOOKUP
- 	select LIBFDT
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index eca8e019e005..35cbde8449a0 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -6,9 +6,6 @@ config CLKDEV_LOOKUP
- config HAVE_CLK_PREPARE
- 	bool
- 
--config HAVE_MACH_CLKDEV
--	bool
+diff --git a/Documentation/devicetree/bindings/sound/brcm,bcm2835-i2s.txt b/Documentation/devicetree/bindings/sound/brcm,bcm2835-i2s.txt
+index 65783de..b331f26 100644
+--- a/Documentation/devicetree/bindings/sound/brcm,bcm2835-i2s.txt
++++ b/Documentation/devicetree/bindings/sound/brcm,bcm2835-i2s.txt
+@@ -4,11 +4,10 @@ Required properties:
+ - compatible: "brcm,bcm2835-i2s"
+ - reg: A list of base address and size entries:
+ 	* The first entry should cover the PCM registers
+-	* The second entry should cover the PCM clock registers
++- clocks: the (PCM) clock to use
+ - dmas: List of DMA controller phandle and DMA request line ordered pairs.
+ - dma-names: Identifier string for each DMA request line in the dmas property.
+   These strings correspond 1:1 with the ordered pairs in dmas.
 -
- config COMMON_CLK
- 	bool
- 	select HAVE_CLK_PREPARE
+   One of the DMA channels will be responsible for transmission (should be
+   named "tx") and one for reception (should be named "rx").
+ 
+@@ -16,8 +15,8 @@ Example:
+ 
+ bcm2835_i2s: i2s@7e203000 {
+ 	compatible = "brcm,bcm2835-i2s";
+-	reg = <0x7e203000 0x20>,
+-	      <0x7e101098 0x02>;
++	reg = <0x7e203000 0x24>;
++	clocks = <&clocks BCM2835_CLOCK_PCM>;
+ 
+ 	dmas = <&dma 2>,
+ 	       <&dma 3>;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.10.4
