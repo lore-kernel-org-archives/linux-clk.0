@@ -1,100 +1,445 @@
-Return-Path: <sha@pengutronix.de>
-Date: Fri, 8 Jan 2016 12:21:42 +0100
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: James Liao <jamesjj.liao@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, srv_heupstream@mediatek.com,
-	linux-kernel@vger.kernel.org, Daniel Kurtz <djkurtz@chromium.org>,
-	linux-mediatek@lists.infradead.org,
-	Sascha Hauer <kernel@pengutronix.de>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: mediatek: Allow changing PLL rate when it is off
-Message-ID: <20160108112142.GF13058@pengutronix.de>
-References: <1452240997-35316-1-git-send-email-jamesjj.liao@mediatek.com>
- <20160108091510.GC13058@pengutronix.de>
- <1452246533.31362.10.camel@mtksdaap41>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1452246533.31362.10.camel@mtksdaap41>
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Remi Pommarel <repk@triplefau.lt>,
+	devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Matthias Reichl <hias@horus.com>,
+	lFlorian Meier <florian.meier@koalo.de>
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH 3/5] ASoC: bcm2835: move to use the clock framework
+Date: Sat,  9 Jan 2016 09:25:55 +0000
+Message-Id: <1452331558-2520-4-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org>
+References: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jan 08, 2016 at 05:48:53PM +0800, James Liao wrote:
-> Hi Sascha,
-> 
-> On Fri, 2016-01-08 at 10:15 +0100, Sascha Hauer wrote:
-> > On Fri, Jan 08, 2016 at 04:16:37PM +0800, James Liao wrote:
-> > > Some modules may need to change its clock rate before turn on it.
-> > > So changing PLL's rate when it is off should be allowed.
-> > > This patch removes PLL enabled check before set rate, so that
-> > > PLLs can set new frequency even if they are off.
-> > 
-> > This sounds like the software refused to change the rate on disabled
-> > PLLs, but this is not the case.
-> 
-> In fact the major change of this patch is trigger (set) CON0_PCW_CHG no
-> matter PLL is on or not.
-> 
-> > > 
-> > > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> > > ---
-> > >  drivers/clk/mediatek/clk-pll.c | 9 ++-------
-> > >  1 file changed, 2 insertions(+), 7 deletions(-)
-> > > 
-> > > diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-> > > index 966cab1..8e31fae 100644
-> > > --- a/drivers/clk/mediatek/clk-pll.c
-> > > +++ b/drivers/clk/mediatek/clk-pll.c
-> > > @@ -91,9 +91,6 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
-> > >  		int postdiv)
-> > >  {
-> > >  	u32 con1, val;
-> > > -	int pll_en;
-> > > -
-> > > -	pll_en = readl(pll->base_addr + REG_CON0) & CON0_BASE_EN;
-> > >  
-> > >  	/* set postdiv */
-> > >  	val = readl(pll->pd_addr);
-> > > @@ -114,15 +111,13 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
-> > >  
-> > >  	con1 = readl(pll->base_addr + REG_CON1);
-> > >  
-> > > -	if (pll_en)
-> > > -		con1 |= CON0_PCW_CHG;
-> > > +	con1 |= CON0_PCW_CHG;
-> > 
-> > This bit is described as "Feedback divide ratio update". To me this
-> > sounds like we have to inform the hardware that the PLL registers have
-> > been updated. The current code only sets this bit when the PLL is
-> > enabled which sounds sane to me.
-> > 
-> > >  
-> > >  	writel(con1, pll->base_addr + REG_CON1);
-> > >  	if (pll->tuner_addr)
-> > >  		writel(con1 + 1, pll->tuner_addr);
-> > >  
-> > > -	if (pll_en)
-> > > -		udelay(20);
-> > > +	udelay(20);
-> > 
-> > We seem to have to wait here until the PLL is really running at the new
-> > frequency. Normally we don't have to do this when the PLL is disabled.
-> > 
-> > I'm sure this patch solves a real problem, from looking at it it's just
-> > not clear to me what the problem is. Could you clarify this a bit?
-> 
-> On MT8173 for example, ARMPLL's enable bit can be controlled by other
-> HW. That means ARMPLL may be turned on even if we (CPU / SW) set
-> ARMPLL's enable bit as 0. In this case, SW may want and can still change
-> ARMPLL's rate by changing its pcw and postdiv settings. But without this
-> patch, new pcw setting will not be applied because its enable bit is 0.
+From: Martin Sperl <kernel@martin.sperl.org>
 
-Ok, thanks for explaining. Could you add that to the commit message?
+Since the move to the new clock framework with
+commit 94cb7f76caa0b337 ("Switch to using the new clock driver support")
+this driver was no longer functional as it was manipulating the
+clock registers locally without going true the framework.
 
-Sascha
+This patch moves to use the new clock framework and also
+moves away from the hardcoded address offsets for DMA getting
+the dma-address directly from the device tree.
 
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ sound/soc/bcm/bcm2835-i2s.c |  281 ++++++++++---------------------------------
+ 1 file changed, 63 insertions(+), 218 deletions(-)
+
+diff --git a/sound/soc/bcm/bcm2835-i2s.c b/sound/soc/bcm/bcm2835-i2s.c
+index 3303d5f..794ada5 100644
+--- a/sound/soc/bcm/bcm2835-i2s.c
++++ b/sound/soc/bcm/bcm2835-i2s.c
+@@ -37,6 +37,7 @@
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
++#include <linux/of_address.h>
+ #include <linux/slab.h>
+ 
+ #include <sound/core.h>
+@@ -46,55 +47,6 @@
+ #include <sound/pcm_params.h>
+ #include <sound/soc.h>
+ 
+-/* Clock registers */
+-#define BCM2835_CLK_PCMCTL_REG  0x00
+-#define BCM2835_CLK_PCMDIV_REG  0x04
+-
+-/* Clock register settings */
+-#define BCM2835_CLK_PASSWD		(0x5a000000)
+-#define BCM2835_CLK_PASSWD_MASK	(0xff000000)
+-#define BCM2835_CLK_MASH(v)		((v) << 9)
+-#define BCM2835_CLK_FLIP		BIT(8)
+-#define BCM2835_CLK_BUSY		BIT(7)
+-#define BCM2835_CLK_KILL		BIT(5)
+-#define BCM2835_CLK_ENAB		BIT(4)
+-#define BCM2835_CLK_SRC(v)		(v)
+-
+-#define BCM2835_CLK_SHIFT		(12)
+-#define BCM2835_CLK_DIVI(v)		((v) << BCM2835_CLK_SHIFT)
+-#define BCM2835_CLK_DIVF(v)		(v)
+-#define BCM2835_CLK_DIVF_MASK		(0xFFF)
+-
+-enum {
+-	BCM2835_CLK_MASH_0 = 0,
+-	BCM2835_CLK_MASH_1,
+-	BCM2835_CLK_MASH_2,
+-	BCM2835_CLK_MASH_3,
+-};
+-
+-enum {
+-	BCM2835_CLK_SRC_GND = 0,
+-	BCM2835_CLK_SRC_OSC,
+-	BCM2835_CLK_SRC_DBG0,
+-	BCM2835_CLK_SRC_DBG1,
+-	BCM2835_CLK_SRC_PLLA,
+-	BCM2835_CLK_SRC_PLLC,
+-	BCM2835_CLK_SRC_PLLD,
+-	BCM2835_CLK_SRC_HDMI,
+-};
+-
+-/* Most clocks are not useable (freq = 0) */
+-static const unsigned int bcm2835_clk_freq[BCM2835_CLK_SRC_HDMI+1] = {
+-	[BCM2835_CLK_SRC_GND]		= 0,
+-	[BCM2835_CLK_SRC_OSC]		= 19200000,
+-	[BCM2835_CLK_SRC_DBG0]		= 0,
+-	[BCM2835_CLK_SRC_DBG1]		= 0,
+-	[BCM2835_CLK_SRC_PLLA]		= 0,
+-	[BCM2835_CLK_SRC_PLLC]		= 0,
+-	[BCM2835_CLK_SRC_PLLD]		= 500000000,
+-	[BCM2835_CLK_SRC_HDMI]		= 0,
+-};
+-
+ /* I2S registers */
+ #define BCM2835_I2S_CS_A_REG		0x00
+ #define BCM2835_I2S_FIFO_A_REG		0x04
+@@ -158,10 +110,6 @@ static const unsigned int bcm2835_clk_freq[BCM2835_CLK_SRC_HDMI+1] = {
+ #define BCM2835_I2S_INT_RXR		BIT(1)
+ #define BCM2835_I2S_INT_TXW		BIT(0)
+ 
+-/* I2S DMA interface */
+-/* FIXME: Needs IOMMU support */
+-#define BCM2835_VCMMU_SHIFT		(0x7E000000 - 0x20000000)
+-
+ /* General device struct */
+ struct bcm2835_i2s_dev {
+ 	struct device				*dev;
+@@ -169,21 +117,23 @@ struct bcm2835_i2s_dev {
+ 	unsigned int				fmt;
+ 	unsigned int				bclk_ratio;
+ 
+-	struct regmap *i2s_regmap;
+-	struct regmap *clk_regmap;
++	struct regmap				*i2s_regmap;
++	struct clk				*clk;
++	bool					clk_prepared;
+ };
+ 
+ static void bcm2835_i2s_start_clock(struct bcm2835_i2s_dev *dev)
+ {
+-	/* Start the clock if in master mode */
+ 	unsigned int master = dev->fmt & SND_SOC_DAIFMT_MASTER_MASK;
+ 
++	if (dev->clk_prepared)
++		return;
++
+ 	switch (master) {
+ 	case SND_SOC_DAIFMT_CBS_CFS:
+ 	case SND_SOC_DAIFMT_CBS_CFM:
+-		regmap_update_bits(dev->clk_regmap, BCM2835_CLK_PCMCTL_REG,
+-			BCM2835_CLK_PASSWD_MASK | BCM2835_CLK_ENAB,
+-			BCM2835_CLK_PASSWD | BCM2835_CLK_ENAB);
++		clk_prepare_enable(dev->clk);
++		dev->clk_prepared = true;
+ 		break;
+ 	default:
+ 		break;
+@@ -192,28 +142,9 @@ static void bcm2835_i2s_start_clock(struct bcm2835_i2s_dev *dev)
+ 
+ static void bcm2835_i2s_stop_clock(struct bcm2835_i2s_dev *dev)
+ {
+-	uint32_t clkreg;
+-	int timeout = 1000;
+-
+-	/* Stop clock */
+-	regmap_update_bits(dev->clk_regmap, BCM2835_CLK_PCMCTL_REG,
+-			BCM2835_CLK_PASSWD_MASK | BCM2835_CLK_ENAB,
+-			BCM2835_CLK_PASSWD);
+-
+-	/* Wait for the BUSY flag going down */
+-	while (--timeout) {
+-		regmap_read(dev->clk_regmap, BCM2835_CLK_PCMCTL_REG, &clkreg);
+-		if (!(clkreg & BCM2835_CLK_BUSY))
+-			break;
+-	}
+-
+-	if (!timeout) {
+-		/* KILL the clock */
+-		dev_err(dev->dev, "I2S clock didn't stop. Kill the clock!\n");
+-		regmap_update_bits(dev->clk_regmap, BCM2835_CLK_PCMCTL_REG,
+-			BCM2835_CLK_KILL | BCM2835_CLK_PASSWD_MASK,
+-			BCM2835_CLK_KILL | BCM2835_CLK_PASSWD);
+-	}
++	if (dev->clk_prepared)
++		clk_disable_unprepare(dev->clk);
++	dev->clk_prepared = false;
+ }
+ 
+ static void bcm2835_i2s_clear_fifos(struct bcm2835_i2s_dev *dev,
+@@ -223,8 +154,7 @@ static void bcm2835_i2s_clear_fifos(struct bcm2835_i2s_dev *dev,
+ 	uint32_t syncval;
+ 	uint32_t csreg;
+ 	uint32_t i2s_active_state;
+-	uint32_t clkreg;
+-	uint32_t clk_active_state;
++	bool clk_was_prepared;
+ 	uint32_t off;
+ 	uint32_t clr;
+ 
+@@ -238,15 +168,10 @@ static void bcm2835_i2s_clear_fifos(struct bcm2835_i2s_dev *dev,
+ 	regmap_read(dev->i2s_regmap, BCM2835_I2S_CS_A_REG, &csreg);
+ 	i2s_active_state = csreg & (BCM2835_I2S_RXON | BCM2835_I2S_TXON);
+ 
+-	regmap_read(dev->clk_regmap, BCM2835_CLK_PCMCTL_REG, &clkreg);
+-	clk_active_state = clkreg & BCM2835_CLK_ENAB;
+-
+ 	/* Start clock if not running */
+-	if (!clk_active_state) {
+-		regmap_update_bits(dev->clk_regmap, BCM2835_CLK_PCMCTL_REG,
+-			BCM2835_CLK_PASSWD_MASK | BCM2835_CLK_ENAB,
+-			BCM2835_CLK_PASSWD | BCM2835_CLK_ENAB);
+-	}
++	clk_was_prepared = dev->clk_prepared;
++	if (!clk_was_prepared)
++		bcm2835_i2s_start_clock(dev);
+ 
+ 	/* Stop I2S module */
+ 	regmap_update_bits(dev->i2s_regmap, BCM2835_I2S_CS_A_REG, off, 0);
+@@ -280,7 +205,7 @@ static void bcm2835_i2s_clear_fifos(struct bcm2835_i2s_dev *dev,
+ 		dev_err(dev->dev, "I2S SYNC error!\n");
+ 
+ 	/* Stop clock if it was not running before */
+-	if (!clk_active_state)
++	if (!clk_was_prepared)
+ 		bcm2835_i2s_stop_clock(dev);
+ 
+ 	/* Restore I2S state */
+@@ -309,19 +234,9 @@ static int bcm2835_i2s_hw_params(struct snd_pcm_substream *substream,
+ 				 struct snd_soc_dai *dai)
+ {
+ 	struct bcm2835_i2s_dev *dev = snd_soc_dai_get_drvdata(dai);
+-
+ 	unsigned int sampling_rate = params_rate(params);
+ 	unsigned int data_length, data_delay, bclk_ratio;
+ 	unsigned int ch1pos, ch2pos, mode, format;
+-	unsigned int mash = BCM2835_CLK_MASH_1;
+-	unsigned int divi, divf, target_frequency;
+-	int clk_src = -1;
+-	unsigned int master = dev->fmt & SND_SOC_DAIFMT_MASTER_MASK;
+-	bool bit_master =	(master == SND_SOC_DAIFMT_CBS_CFS
+-					|| master == SND_SOC_DAIFMT_CBS_CFM);
+-
+-	bool frame_master =	(master == SND_SOC_DAIFMT_CBS_CFS
+-					|| master == SND_SOC_DAIFMT_CBM_CFS);
+ 	uint32_t csreg;
+ 
+ 	/*
+@@ -356,69 +271,11 @@ static int bcm2835_i2s_hw_params(struct snd_pcm_substream *substream,
+ 	/* If bclk_ratio already set, use that one. */
+ 	if (dev->bclk_ratio)
+ 		bclk_ratio = dev->bclk_ratio;
++	else
++		bclk_ratio = 2 * data_length;
+ 
+-	/*
+-	 * Clock Settings
+-	 *
+-	 * The target frequency of the bit clock is
+-	 *	sampling rate * frame length
+-	 *
+-	 * Integer mode:
+-	 * Sampling rates that are multiples of 8000 kHz
+-	 * can be driven by the oscillator of 19.2 MHz
+-	 * with an integer divider as long as the frame length
+-	 * is an integer divider of 19200000/8000=2400 as set up above.
+-	 * This is no longer possible if the sampling rate
+-	 * is too high (e.g. 192 kHz), because the oscillator is too slow.
+-	 *
+-	 * MASH mode:
+-	 * For all other sampling rates, it is not possible to
+-	 * have an integer divider. Approximate the clock
+-	 * with the MASH module that induces a slight frequency
+-	 * variance. To minimize that it is best to have the fastest
+-	 * clock here. That is PLLD with 500 MHz.
+-	 */
+-	target_frequency = sampling_rate * bclk_ratio;
+-	clk_src = BCM2835_CLK_SRC_OSC;
+-	mash = BCM2835_CLK_MASH_0;
+-
+-	if (bcm2835_clk_freq[clk_src] % target_frequency == 0
+-			&& bit_master && frame_master) {
+-		divi = bcm2835_clk_freq[clk_src] / target_frequency;
+-		divf = 0;
+-	} else {
+-		uint64_t dividend;
+-
+-		if (!dev->bclk_ratio) {
+-			/*
+-			 * Overwrite bclk_ratio, because the
+-			 * above trick is not needed or can
+-			 * not be used.
+-			 */
+-			bclk_ratio = 2 * data_length;
+-		}
+-
+-		target_frequency = sampling_rate * bclk_ratio;
+-
+-		clk_src = BCM2835_CLK_SRC_PLLD;
+-		mash = BCM2835_CLK_MASH_1;
+-
+-		dividend = bcm2835_clk_freq[clk_src];
+-		dividend <<= BCM2835_CLK_SHIFT;
+-		do_div(dividend, target_frequency);
+-		divi = dividend >> BCM2835_CLK_SHIFT;
+-		divf = dividend & BCM2835_CLK_DIVF_MASK;
+-	}
+-
+-	/* Set clock divider */
+-	regmap_write(dev->clk_regmap, BCM2835_CLK_PCMDIV_REG, BCM2835_CLK_PASSWD
+-			| BCM2835_CLK_DIVI(divi)
+-			| BCM2835_CLK_DIVF(divf));
+-
+-	/* Setup clock, but don't start it yet */
+-	regmap_write(dev->clk_regmap, BCM2835_CLK_PCMCTL_REG, BCM2835_CLK_PASSWD
+-			| BCM2835_CLK_MASH(mash)
+-			| BCM2835_CLK_SRC(clk_src));
++	/* set target clock rate*/
++	clk_set_rate(dev->clk, sampling_rate * bclk_ratio);
+ 
+ 	/* Setup the frame format */
+ 	format = BCM2835_I2S_CHEN;
+@@ -692,7 +549,7 @@ static const struct snd_soc_dai_ops bcm2835_i2s_dai_ops = {
+ 	.trigger	= bcm2835_i2s_trigger,
+ 	.hw_params	= bcm2835_i2s_hw_params,
+ 	.set_fmt	= bcm2835_i2s_set_dai_fmt,
+-	.set_bclk_ratio	= bcm2835_i2s_set_dai_bclk_ratio
++	.set_bclk_ratio	= bcm2835_i2s_set_dai_bclk_ratio,
+ };
+ 
+ static int bcm2835_i2s_dai_probe(struct snd_soc_dai *dai)
+@@ -750,34 +607,14 @@ static bool bcm2835_i2s_precious_reg(struct device *dev, unsigned int reg)
+ 	};
+ }
+ 
+-static bool bcm2835_clk_volatile_reg(struct device *dev, unsigned int reg)
+-{
+-	switch (reg) {
+-	case BCM2835_CLK_PCMCTL_REG:
+-		return true;
+-	default:
+-		return false;
+-	};
+-}
+-
+-static const struct regmap_config bcm2835_regmap_config[] = {
+-	{
+-		.reg_bits = 32,
+-		.reg_stride = 4,
+-		.val_bits = 32,
+-		.max_register = BCM2835_I2S_GRAY_REG,
+-		.precious_reg = bcm2835_i2s_precious_reg,
+-		.volatile_reg = bcm2835_i2s_volatile_reg,
+-		.cache_type = REGCACHE_RBTREE,
+-	},
+-	{
+-		.reg_bits = 32,
+-		.reg_stride = 4,
+-		.val_bits = 32,
+-		.max_register = BCM2835_CLK_PCMDIV_REG,
+-		.volatile_reg = bcm2835_clk_volatile_reg,
+-		.cache_type = REGCACHE_RBTREE,
+-	},
++static const struct regmap_config bcm2835_regmap_config = {
++	.reg_bits = 32,
++	.reg_stride = 4,
++	.val_bits = 32,
++	.max_register = BCM2835_I2S_GRAY_REG,
++	.precious_reg = bcm2835_i2s_precious_reg,
++	.volatile_reg = bcm2835_i2s_volatile_reg,
++	.cache_type = REGCACHE_RBTREE,
+ };
+ 
+ static const struct snd_soc_component_driver bcm2835_i2s_component = {
+@@ -787,42 +624,50 @@ static const struct snd_soc_component_driver bcm2835_i2s_component = {
+ static int bcm2835_i2s_probe(struct platform_device *pdev)
+ {
+ 	struct bcm2835_i2s_dev *dev;
+-	int i;
+ 	int ret;
+-	struct regmap *regmap[2];
+-	struct resource *mem[2];
+-
+-	/* Request both ioareas */
+-	for (i = 0; i <= 1; i++) {
+-		void __iomem *base;
+-
+-		mem[i] = platform_get_resource(pdev, IORESOURCE_MEM, i);
+-		base = devm_ioremap_resource(&pdev->dev, mem[i]);
+-		if (IS_ERR(base))
+-			return PTR_ERR(base);
+-
+-		regmap[i] = devm_regmap_init_mmio(&pdev->dev, base,
+-					    &bcm2835_regmap_config[i]);
+-		if (IS_ERR(regmap[i]))
+-			return PTR_ERR(regmap[i]);
+-	}
++	struct resource *mem;
++	void __iomem *base;
++	const __be32 *addr;
++	dma_addr_t dma_base;
+ 
+ 	dev = devm_kzalloc(&pdev->dev, sizeof(*dev),
+ 			   GFP_KERNEL);
+ 	if (!dev)
+ 		return -ENOMEM;
+ 
+-	dev->i2s_regmap = regmap[0];
+-	dev->clk_regmap = regmap[1];
++	/* get the clock */
++	dev->clk_prepared = false;
++	dev->clk = devm_clk_get(&pdev->dev, NULL);
++	if (IS_ERR(dev->clk)) {
++		dev_err(&pdev->dev, "could not get clk: %ld\n",
++			PTR_ERR(dev->clk));
++		return PTR_ERR(dev->clk);
++	}
++
++	/* Request ioarea */
++	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	base = devm_ioremap_resource(&pdev->dev, mem);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	dev->i2s_regmap = devm_regmap_init_mmio(&pdev->dev, base,
++				&bcm2835_regmap_config);
++	if (IS_ERR(dev->i2s_regmap))
++		return PTR_ERR(dev->i2s_regmap);
++
++	/* Set the DMA address - we have to parse DT ourselves */
++	addr = of_get_address(pdev->dev.of_node, 0, NULL, NULL);
++	if (!addr) {
++		dev_err(&pdev->dev, "could not get DMA-register address\n");
++		return -EINVAL;
++	}
++	dma_base = be32_to_cpup(addr);
+ 
+-	/* Set the DMA address */
+ 	dev->dma_data[SNDRV_PCM_STREAM_PLAYBACK].addr =
+-		(dma_addr_t)mem[0]->start + BCM2835_I2S_FIFO_A_REG
+-					  + BCM2835_VCMMU_SHIFT;
++		dma_base + BCM2835_I2S_FIFO_A_REG;
+ 
+ 	dev->dma_data[SNDRV_PCM_STREAM_CAPTURE].addr =
+-		(dma_addr_t)mem[0]->start + BCM2835_I2S_FIFO_A_REG
+-					  + BCM2835_VCMMU_SHIFT;
++		dma_base + BCM2835_I2S_FIFO_A_REG;
+ 
+ 	/* Set the bus width */
+ 	dev->dma_data[SNDRV_PCM_STREAM_PLAYBACK].addr_width =
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+1.7.10.4
