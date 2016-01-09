@@ -1,73 +1,46 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <robh@kernel.org>
+Date: Sat, 9 Jan 2016 16:45:23 -0600
+From: Rob Herring <robh@kernel.org>
+To: kernel@martin.sperl.org
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Remi Pommarel <repk@triplefau.lt>, devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Matthias Reichl <hias@horus.com>,
+	lFlorian Meier <florian.meier@koalo.de>
+Subject: Re: [PATCH 5/5] dt-bindings: bsm2835: fix bindings documentation to
+ use new clock framework
+Message-ID: <20160109224523.GA17329@rob-hp-laptop>
+References: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org>
+ <1452331558-2520-6-git-send-email-kernel@martin.sperl.org>
 MIME-Version: 1.0
-To: Vladimir Zapolskiy <vz@mleia.com>, "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1452136027-32076-1-git-send-email-vz@mleia.com>
-Cc: "Joachim Eastwood" <manabian@gmail.com>,  linux-clk@vger.kernel.org
-References: <1452136027-32076-1-git-send-email-vz@mleia.com>
-Message-ID: <20160114021026.1942.82169@quark.deferred.io>
-Subject: Re: [PATCH] clk: remove duplicated COMMON_CLK_NXP record from clk/Kconfig
-Date: Wed, 13 Jan 2016 18:10:26 -0800
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1452331558-2520-6-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Vladimir Zapolskiy (2016-01-06 19:07:07)
-> Presumably the second COMMON_CLK_NXP config option in
-> drivers/clk/Kconfig appeared after a merge conflict resolution, remove
-> the wrong record of two.
-> =
+On Sat, Jan 09, 2016 at 09:25:57AM +0000, kernel@martin.sperl.org wrote:
+> From: Martin Sperl <kernel@martin.sperl.org>
+> 
+> The bcm2835-i2s driver has been updated to use the new clock framework
+> for the bcm2835 SOC.
 
-> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
-
-Applied.
-
-Regards,
-Mike
-
+You are breaking compatibility with the driver change. New kernels will 
+not work with old dtbs as you have found. What should be done is fix the 
+driver to work with the old and new dtb.
+ 
+> This patch documents the required changes to the bindings.
+> 
+> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 > ---
-> Hi Mike, Stephen,
-> =
+>  Documentation/devicetree/bindings/sound/brcm,bcm2835-i2s.txt |    7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
 
-> I've found this issue in clk-next while working on something else,
-> please consider to include this change to clk-next, no objections if
-> it is squashed with f7c82a60ba2 ("clk: lpc32xx: add common clock
-> framework driver").
-> =
+But I leave it to platform maintainers to decide if breaking 
+compatibility is okay, so:
 
-> In fact it is a revert of 8a896310a7e ("clk: lpc18xx: add NXP specific
-> COMMON_CLK_NXP configuration symbol"), but this preparatory change is
-> good as is.
-> =
-
-> The original change doesn't have this kind of a problem (see
-> http://www.spinics.net/lists/devicetree/msg105709.html), so I
-> believe it is caused by a merge conflict, probably after done
-> alphabetical sorting.
-> =
-
->  drivers/clk/Kconfig | 5 -----
->  1 file changed, 5 deletions(-)
-> =
-
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 41f6c7f..eca8e01 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -187,11 +187,6 @@ config COMMON_CLK_PWM
->           Adapter driver so that any PWM output can be (mis)used as clock=
- signal
->           at 50% duty cycle.
->  =
-
-> -config COMMON_CLK_NXP
-> -       def_bool COMMON_CLK && ARCH_LPC18XX
-> -       ---help---
-> -         Support for clock providers on NXP platforms.
-> -
->  config COMMON_CLK_PXA
->         def_bool COMMON_CLK && ARCH_PXA
->         ---help---
-> -- =
-
-> 2.1.4
->=20
+Acked-by: Rob Herring <robh@kernel.org>
