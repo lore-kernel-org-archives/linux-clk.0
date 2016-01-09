@@ -1,64 +1,46 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 25 Jan 2016 13:36:02 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [Patch V2 3/9] clk: tegra210: Fix naming of MISC registers
-Message-ID: <20160125123602.GF20452@ulmo.nvidia.com>
-References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
- <1452799478-14791-4-git-send-email-rklein@nvidia.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([217.72.192.74]:54846 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755517AbcAIU53 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sat, 9 Jan 2016 15:57:29 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: kernel@martin.sperl.org
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Remi Pommarel <repk@triplefau.lt>, devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Matthias Reichl <hias@horus.com>,
+	lFlorian Meier <florian.meier@koalo.de>
+Subject: Re: [PATCH 2/5] clk: bcm2835: enable management of PCM clock
+Date: Sat, 09 Jan 2016 21:56:39 +0100
+Message-ID: <4332640.jBKM55TPAo@wuerfel>
+In-Reply-To: <1452331558-2520-3-git-send-email-kernel@martin.sperl.org>
+References: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org> <1452331558-2520-3-git-send-email-kernel@martin.sperl.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="i3lJ51RuaGWuFYNw"
-In-Reply-To: <1452799478-14791-4-git-send-email-rklein@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Saturday 09 January 2016 09:25:54 kernel@martin.sperl.org wrote:
+> --- a/include/dt-bindings/clock/bcm2835.h
+> +++ b/include/dt-bindings/clock/bcm2835.h
+> @@ -44,5 +44,6 @@
+>  #define BCM2835_CLOCK_EMMC             28
+>  #define BCM2835_CLOCK_PERI_IMAGE       29
+>  #define BCM2835_CLOCK_PWM              30
+> +#define BCM2835_CLOCK_PCM              31
+>  
+> -#define BCM2835_CLOCK_COUNT            31
+> +#define BCM2835_CLOCK_COUNT            32
 
---i3lJ51RuaGWuFYNw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The last line contains an incompatible change, please don't do that.
+If you have to add another clock, do that after the BCM2835_CLOCK_COUNT
+definition to avoid changing dts files that use that number.
 
-On Thu, Jan 14, 2016 at 02:24:32PM -0500, Rhyland Klein wrote:
-> Some register for PLLM and PLLMB were named MISC0 but according to the
-> TRM, they have different names. Sync up the names to make it easier to
-> understand which register they are really referring to.
->=20
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 36 ++++++++++++++++++----------------=
---
->  1 file changed, 18 insertions(+), 18 deletions(-)
-
-Applied, thanks.
-
-Thierry
-
---i3lJ51RuaGWuFYNw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJWphayAAoJEN0jrNd/PrOh7ZEQAInNP4jVF/YD+SdPdGAE3z3t
-XTMd1tUv7jLQKyJh1VT4NPo0VScn2fQsR5H06HoMCmQEoW3kTwJMaVBptQlEnfmm
-tSBC6MPBZyoqDEo4OiAYHgmAsvSn2LbnHBUgJotRowxSMlPwZWlHEAN2MInywkOo
-q90D1eY8q4LZMx5py5z9N2Mo+fbThQX9KydpgDchjePvjaAtwX4a6kQSGK7RDVNU
-oZ1aTB2DtgvqUnlY3pLP6EHw132A9St+FzfY5N0f+pdPZwFP6hsnTtZtZq5TcnGG
-589+AmD8WSI+J3eIMh1HKLV3VhfeBjdPhZzSxtu94+UJU6qJRn1Z+ZKLjbafF94P
-huMe+7uEv79QzKy5beTNnu2mUWHhizQae7s3pkoZhHmfhQrGk38NA8mzjr97NAaY
-gCQ1OozbOtycLNYXH4CzLqBrbst1so3ImhlYWxu/G2KokdotcwSrJjJSOXZt6daX
-+FGDugBh3R9tt5vDuxlsF4RSq/oJd2/wPZFbzeQKBc7nIr4Yun4HvvxMrPU36kR3
-TUwuwjAbGCjylp+GKb7yCe7JL6nsny1/VsLynbHYPm+l73JXNqQ91TT+M8FEaA7o
-9zyGWpGTqOiaHPMg9TJdjvnT5gZTx6ujKM+QVgtU22hM7KwiQb71lTefzr7WO2Yd
-iQXCJ7OzJ/vsgkjn/FAv
-=iuLk
------END PGP SIGNATURE-----
-
---i3lJ51RuaGWuFYNw--
+	Arnd
