@@ -1,183 +1,295 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 26 Jan 2016 21:58:52 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Marcus Weseloh <mweseloh42@gmail.com>
-Cc: linux-sunxi <linux-sunxi@googlegroups.com>,
-	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	"Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi: Fix mod0 clock calculation to return stable
- results and check divisor size limits
-Message-ID: <20160126205852.GT7908@lukather>
-References: <1451323892-13060-1-git-send-email-mweseloh42@gmail.com>
- <20160113111809.GA9905@lukather>
- <CAGNoLaMan-qS0Xzz=442gmj_TYBS=Q0tYg=-sdZaYSBbF+5=wg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="DOQx4ubtbYINM/to"
-In-Reply-To: <CAGNoLaMan-qS0Xzz=442gmj_TYBS=Q0tYg=-sdZaYSBbF+5=wg@mail.gmail.com>
+Return-Path: <sjoerd.simons@collabora.co.uk>
+Message-ID: <1452343234.4120.3.camel@collabora.co.uk>
+Subject: Re: [RFC PATCH v3] clk: defer clk_gets on orphan clocks
+From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+To: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko.stuebner@collabora.com>,
+	mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Date: Sat, 09 Jan 2016 13:40:34 +0100
+In-Reply-To: <1483326.lTmfGmv5pO@diego>
+References: <1483326.lTmfGmv5pO@diego>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-
---DOQx4ubtbYINM/to
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Thu, Jan 14, 2016 at 11:40:15AM +0100, Marcus Weseloh wrote:
-> > On Mon, Dec 28, 2015 at 06:31:32PM +0100, Marcus Weseloh wrote:
-> >> This patch fixes some problems in the mod0 clock calculation. It has
-> >> the potential to break stuff, as the issues explained below had the
-> >> effect that clk_set_rate would always return successfully, sometimes
-> >> setting a frequency that is higher than the requested value.
-> >
-> > That's actually the expected behaviour of clk_set_rate.
-> >
-> > clk_set_rate is supposed to adjust the given clock rate to something
-> > that the clock drivers seems fit. It should only return an error in a
-> > case where you can't change the rate at all (because you didn't pass a
-> > valid struct clk pointer, because changing the rate would violate some
-> > clock flags, etc.). Otherwise, clk_set_rate should succeed.
-> >
-> > By returning an error code the clock is higher than the one passed,
-> > you violate that expectation, especially since that is relative to the
-> > clock you passed.
-> >
-> > It makes sense in your case to never exceed the given rate, it might
-> > not for a different clock in the tree, or even for a different
-> > instance of the same clock. For example, you could very well have
-> > another case in your system where you should not have rates set that
-> > are below the one given because that would prevent the consumer
-> > device to be usable.
-> >
-> > This is why the adjustment is left to the clock driver, and is not
-> > enforced by the framework itself, simply because the framework has no
-> > idea how you want to round your clock rate on that particular clock in
-> > your system.
+On Tue, 2015-11-24 at 13:42 +0100, Heiko St=C3=BCbner wrote:
+> Orphan clocks or children of orphan clocks don't have rate
+> information at
+> all and can produce strange results if they're allowed to be used and
+> the
+> parent becomes available later on.
 >=20
-> I understand now, thanks a lot for the good explanation! So my
-> thinking is wrong for the general case of the clock framework itself,
-> and that actually makes a lot of sense.
+> This change, based on one from Stephen Boyd, defers
+> __clk_create_clk()
+> calls on orphan clocks in all regular cases.
 >=20
-> But the clk_factors_determine_rate function in
-> drivers/clk/sunxi/clk-factors.c works on the assumption that the
-> returned rate must be less or equal to the requested rate. At least
-> that is what the code in that function tries to do. That the mod0
-> factor calculation doesn't check the m and div variables for overflow
-> undermines the intended behaviour, as it "lies" about the frequencies
-> that the hardware can support.
-
-Yeah, that's totally something that needs fixing.
-
-> And for very low frequencies below 80kHz, clk_set_rate does
-> currently return -EINVAL. There are even cases when it results in a
-> division by zero error, for example if you request a rate of 94kHz
-> from a 24Mhz parent (24000000 / 94000 =3D 255,32, rounded up to 256 =3D
-> 0 on the u8 variable).
-
-Yeah, the division by 0 is bad... However, can you even generate 80kHz
-frequencies using a module clock? The lowest I can see here is 180kHz
-(24M / 8 / 16).
-
-> Now I'm unsure what to do here... If the clock driver should only
-> return an error in real error cases and not when the requested
-> frequency isn't reachable, then clk_factors_determine_rate needs to
-> be changed as well?
-
-If it returns an error in such a case, yeah. Also, I think in such a
-case, we can simply round to the minimal frequency we can reach
-(without an error or a kernel panic, that would be ideal ;))
-
-> >> An example:
-> >> parent_rate =3D 24Mhz, freq =3D 1.4Mhz results in p=3D1, m=3D9, freq=
-=3D1333333,3333
-> >> (which gets rounded down to 1333333).
-> >> Calling the function again with parent_rate =3D 24Mhz and freq =3D 133=
-3333
-> >> results in p=3D1, m=3D10, freq=3D1200000.
-> >>
-> >> Rounding up the returned frequency removes this problem.
-> >>
-> >> Signed-off-by: Marcus Weseloh <mweseloh42@gmail.com>
-> >> ---
-> >>  drivers/clk/sunxi/clk-mod0.c | 7 +++++--
-> >>  1 file changed, 5 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/drivers/clk/sunxi/clk-mod0.c b/drivers/clk/sunxi/clk-mod0=
-=2Ec
-> >> index d167e1e..d03f099 100644
-> >> --- a/drivers/clk/sunxi/clk-mod0.c
-> >> +++ b/drivers/clk/sunxi/clk-mod0.c
-> >> @@ -31,7 +31,8 @@
-> >>  static void sun4i_a10_get_mod0_factors(u32 *freq, u32 parent_rate,
-> >>                                      u8 *n, u8 *k, u8 *m, u8 *p)
-> >>  {
-> >> -     u8 div, calcm, calcp;
-> >> +     unsigned int div, calcm;
-> >> +     u8 calcp;
-> >>
-> >>       /* These clocks can only divide, so we will never be able to ach=
-ieve
-> >>        * frequencies higher than the parent frequency */
-> >> @@ -50,8 +51,10 @@ static void sun4i_a10_get_mod0_factors(u32 *freq, u=
-32 parent_rate,
-> >>               calcp =3D 3;
-> >>
-> >>       calcm =3D DIV_ROUND_UP(div, 1 << calcp);
-> >> +     if (calcm > 16)
-> >> +             calcm =3D 16;
-> >>
-> >> -     *freq =3D (parent_rate >> calcp) / calcm;
-> >> +     *freq =3D DIV_ROUND_UP(parent_rate >> calcp, calcm);
-> >
-> > While the two above seems harmless, this one concerns me a bit. Did
-> > you test the various mod0 clock users and made sure that they were
-> > still working as they used to?
+> One special case that gets handled, is accessing such orphan clocks
+> when
+> handling assigned-clocks configurations. In the boot-defaults it may
+> be
+> the case that a clock is connected to an orphan parent which then
+> might
+> be needed to get reparented to an actually usable clock using
+> assigned-clock-parents. In this case even orphaned clocks should be
+> usable, but only for the set-parent case.
 >=20
-> No, I didn't do a thorough test, only booted the board with some mod0
-> users (mmc, spi, ss) and watched them request their frequencies
-> successfully. But this is an edge case, only affecting certain "weird"
-> frequencies. And the only effect is that the chosen frequency is not
-> the optimal one. So maybe I should drop it because it looks too
-> disruptive for too little gain?
+> The added of_clk_get_from_provider_with_orphans() is only available
+> to ccf internal parts to prevent abuse.
+>=20
+> Signed-off-by: Heiko Stuebner <heiko.stuebner@collabora.com>
 
-I'm guessing the other changes are fine. I'm a bit worried about this
-one, but we still have quite some time before the 4.6 release. We can
-always merge it, and deal with the fallout.
+Tested-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 
-Thanks!
-Maxime
+Just tested this on a rock 2 with the RTC as a module (which is the
+provider of the 32k clock on this board). This solves both unreliably
+probing of the wireless card and much more importantly the thermal
+sensors.
+
+Would be great to see this move out of the RFC stage at some point :)
+
+
+> ---
+> This of course will still break sunxi, hence the RFC state for now.
+> As there is work pending for critical/handed-off clocks, I'm hoping
+> this can move forward at some point :-) .
+>=20
+> I'd mainly like to get feedback if the assigned-clocks case looks ok
+> or should move somewhere else.
+>=20
+> changes in v3:
+> - add special handling for assigned-clock-parents to allow
+> reparenting
+> =C2=A0 of orphaned child-clocks.
+>=20
+> changes in v2 (Stephens version):
+> - find a better place for the deferral
+>=20
+> =C2=A0drivers/clk/clk-conf.c |=C2=A0=C2=A05 +++--
+> =C2=A0drivers/clk/clk.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0| 48 +++++++++=
++++++++++++++++++++++++++++++
+> ----------
+> =C2=A0drivers/clk/clk.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0| 10 +++++++--=
+-
+> =C2=A0drivers/clk/clkdev.c=C2=A0=C2=A0=C2=A0|=C2=A0=C2=A04 ++--
+> =C2=A04 files changed, 50 insertions(+), 17 deletions(-)
+>=20
+> diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
+> index 43a218f..60ebfd9 100644
+> --- a/drivers/clk/clk-conf.c
+> +++ b/drivers/clk/clk-conf.c
+> @@ -13,6 +13,7 @@
+> =C2=A0#include <linux/device.h>
+> =C2=A0#include <linux/of.h>
+> =C2=A0#include <linux/printk.h>
+> +#include "clk.h"
+> =C2=A0
+> =C2=A0static int __set_clk_parents(struct device_node *node, bool
+> clk_supplier)
+> =C2=A0{
+> @@ -38,7 +39,7 @@ static int __set_clk_parents(struct device_node
+> *node, bool clk_supplier)
+> =C2=A0		}
+> =C2=A0		if (clkspec.np =3D=3D node && !clk_supplier)
+> =C2=A0			return 0;
+> -		pclk =3D of_clk_get_from_provider(&clkspec);
+> +		pclk =3D
+> of_clk_get_from_provider_with_orphans(&clkspec);
+> =C2=A0		if (IS_ERR(pclk)) {
+> =C2=A0			pr_warn("clk: couldn't get parent clock %d
+> for %s\n",
+> =C2=A0				index, node->full_name);
+> @@ -53,7 +54,7 @@ static int __set_clk_parents(struct device_node
+> *node, bool clk_supplier)
+> =C2=A0			rc =3D 0;
+> =C2=A0			goto err;
+> =C2=A0		}
+> -		clk =3D of_clk_get_from_provider(&clkspec);
+> +		clk =3D
+> of_clk_get_from_provider_with_orphans(&clkspec);
+> =C2=A0		if (IS_ERR(clk)) {
+> =C2=A0			pr_warn("clk: couldn't get parent clock %d
+> for %s\n",
+> =C2=A0				index, node->full_name);
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index f13c3f4..46760cb 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2476,15 +2476,11 @@ out:
+> =C2=A0	return ret;
+> =C2=A0}
+> =C2=A0
+> -struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0const char *con_id)
+> +static struct clk *clk_hw_create_clk(struct clk_hw *hw, const char
+> *dev_id,
+> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0const char *con_id)
+> =C2=A0{
+> =C2=A0	struct clk *clk;
+> =C2=A0
+> -	/* This is to allow this function to be chained to others */
+> -	if (!hw || IS_ERR(hw))
+> -		return (struct clk *) hw;
+> -
+> =C2=A0	clk =3D kzalloc(sizeof(*clk), GFP_KERNEL);
+> =C2=A0	if (!clk)
+> =C2=A0		return ERR_PTR(-ENOMEM);
+> @@ -2501,6 +2497,19 @@ struct clk *__clk_create_clk(struct clk_hw
+> *hw, const char *dev_id,
+> =C2=A0	return clk;
+> =C2=A0}
+> =C2=A0
+> +struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0const char *con_id, bool with_orphans)
+> +{
+> +	/* This is to allow this function to be chained to others */
+> +	if (!hw || IS_ERR(hw))
+> +		return (struct clk *) hw;
+> +
+> +	if (hw->core->orphan && !with_orphans)
+> +		return ERR_PTR(-EPROBE_DEFER);
+> +
+> +	return clk_hw_create_clk(hw, dev_id, con_id);
+> +}
+> +
+> =C2=A0void __clk_free_clk(struct clk *clk)
+> =C2=A0{
+> =C2=A0	clk_prepare_lock();
+> @@ -2569,7 +2578,7 @@ struct clk *clk_register(struct device *dev,
+> struct clk_hw *hw)
+> =C2=A0
+> =C2=A0	INIT_HLIST_HEAD(&core->clks);
+> =C2=A0
+> -	hw->clk =3D __clk_create_clk(hw, NULL, NULL);
+> +	hw->clk =3D clk_hw_create_clk(hw, NULL, NULL);
+> =C2=A0	if (IS_ERR(hw->clk)) {
+> =C2=A0		ret =3D PTR_ERR(hw->clk);
+> =C2=A0		goto fail_parent_names_copy;
+> @@ -3002,7 +3011,8 @@ void of_clk_del_provider(struct device_node
+> *np)
+> =C2=A0EXPORT_SYMBOL_GPL(of_clk_del_provider);
+> =C2=A0
+> =C2=A0struct clk *__of_clk_get_from_provider(struct of_phandle_args
+> *clkspec,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0const char *dev_id, const
+> char *con_id)
+> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0const char *dev_id, const
+> char *con_id,
+> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0bool with_orphans)
+> =C2=A0{
+> =C2=A0	struct of_clk_provider *provider;
+> =C2=A0	struct clk *clk =3D ERR_PTR(-EPROBE_DEFER);
+> @@ -3017,7 +3027,7 @@ struct clk *__of_clk_get_from_provider(struct
+> of_phandle_args *clkspec,
+> =C2=A0			clk =3D provider->get(clkspec, provider-
+> >data);
+> =C2=A0		if (!IS_ERR(clk)) {
+> =C2=A0			clk =3D __clk_create_clk(__clk_get_hw(clk),
+> dev_id,
+> -					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0con_id);
+> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0con_id,
+> with_orphans);
+> =C2=A0
+> =C2=A0			if (!IS_ERR(clk) && !__clk_get(clk)) {
+> =C2=A0				__clk_free_clk(clk);
+> @@ -3042,7 +3052,25 @@ struct clk *__of_clk_get_from_provider(struct
+> of_phandle_args *clkspec,
+> =C2=A0 */
+> =C2=A0struct clk *of_clk_get_from_provider(struct of_phandle_args
+> *clkspec)
+> =C2=A0{
+> -	return __of_clk_get_from_provider(clkspec, NULL, __func__);
+> +	return __of_clk_get_from_provider(clkspec, NULL, __func__,
+> false);
+> +}
+> +
+> +/**
+> + * of_clk_get_from_provider_with_orphans() - Lookup clock from a
+> clock provider
+> + * @clkspec: pointer to a clock specifier data structure
+> + *
+> + * This function looks up a struct clk from the registered list of
+> clock
+> + * providers, an input is a clock specifier data structure as
+> returned
+> + * from the of_parse_phandle_with_args() function call.
+> + *
+> + * The difference to of_clk_get_from_provider() is that this
+> function will
+> + * also successfully lookup orphan-clocks, as it in some cases may
+> be
+> + * necessary to access such orphan-clocks as well.
+> + */
+> +struct clk *
+> +of_clk_get_from_provider_with_orphans(struct of_phandle_args
+> *clkspec)
+> +{
+> +	return __of_clk_get_from_provider(clkspec, NULL, __func__,
+> true);
+> =C2=A0}
+> =C2=A0
+> =C2=A0int of_clk_get_parent_count(struct device_node *np)
+> diff --git a/drivers/clk/clk.h b/drivers/clk/clk.h
+> index 00b35a1..5a70f09 100644
+> --- a/drivers/clk/clk.h
+> +++ b/drivers/clk/clk.h
+> @@ -13,17 +13,21 @@ struct clk_hw;
+> =C2=A0
+> =C2=A0#if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
+> =C2=A0struct clk *__of_clk_get_from_provider(struct of_phandle_args
+> *clkspec,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0const char *dev_id, const
+> char *con_id);
+> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0const char *dev_id, const
+> char *con_id,
+> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0bool with_orphans);
+> +struct clk *
+> +of_clk_get_from_provider_with_orphans(struct of_phandle_args
+> *clkspec);
+> =C2=A0#endif
+> =C2=A0
+> =C2=A0#ifdef CONFIG_COMMON_CLK
+> =C2=A0struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0const char *con_id);
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0const char *con_id, bool with_orphans);
+> =C2=A0void __clk_free_clk(struct clk *clk);
+> =C2=A0#else
+> =C2=A0/* All these casts to avoid ifdefs in clkdev... */
+> =C2=A0static inline struct clk *
+> -__clk_create_clk(struct clk_hw *hw, const char *dev_id, const char
+> *con_id)
+> +__clk_create_clk(struct clk_hw *hw, const char *dev_id, const char
+> *con_id,
+> +		=C2=A0bool with_orphans)
+> =C2=A0{
+> =C2=A0	return (struct clk *)hw;
+> =C2=A0}
+> diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+> index 779b6ff..eda20c2 100644
+> --- a/drivers/clk/clkdev.c
+> +++ b/drivers/clk/clkdev.c
+> @@ -43,7 +43,7 @@ static struct clk *__of_clk_get(struct device_node
+> *np, int index,
+> =C2=A0	if (rc)
+> =C2=A0		return ERR_PTR(rc);
+> =C2=A0
+> -	clk =3D __of_clk_get_from_provider(&clkspec, dev_id, con_id);
+> +	clk =3D __of_clk_get_from_provider(&clkspec, dev_id, con_id,
+> false);
+> =C2=A0	of_node_put(clkspec.np);
+> =C2=A0
+> =C2=A0	return clk;
+> @@ -177,7 +177,7 @@ struct clk *clk_get_sys(const char *dev_id, const
+> char *con_id)
+> =C2=A0	if (!cl)
+> =C2=A0		goto out;
+> =C2=A0
+> -	clk =3D __clk_create_clk(cl->clk_hw, dev_id, con_id);
+> +	clk =3D __clk_create_clk(cl->clk_hw, dev_id, con_id, false);
+> =C2=A0	if (IS_ERR(clk))
+> =C2=A0		goto out;
+> =C2=A0
 
 --=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---DOQx4ubtbYINM/to
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWp94MAAoJEBx+YmzsjxAgj3IQAIxjXhntmyiTDKsw6wGUNrV/
-nHxJBoA+ZUnyxguU1OsxV8idGafDM6oFCPY1DA4e7BsG8NQJOVH1A7rGR3TK+KUa
-Y17ql5esKehon5UMAWbhRAl0QYRuK/h13iqfDnMf9roQmdXJOX5wLuX+C3r4IIv3
-dpgO7uMQNU1KU1eamsEoHwa37ytVdM/DgGyrRH36EZZD+0a3F7H/aCdvoGceK48m
-XJYyrW6S3J4rzmRMQr4Iu27k35GvZGDeiV2SHPYcjC4IuM9gwSK6X8kroAU5ep04
-vKWfNhN/6pvUvFQ5PDS71lJsuv3v50wUg+997bFfxhDew2sbyOT4J0Hz/7WpwwEQ
-UZm31M54lLd9hvHik0Irdn7yPTpU2J0G7Pia1dnm3/wKW0e9s3pIgwn75qcP8KUq
-hCdfHqLQkT6Dt1EngHV6ilHPikbeKe9siLaxTy7g2YGVXvqIs7ESFVznWpmb4LuI
-vTm+F/URzLB/wLEh7p4jAvy9i3TBwc3qACQRdhaht7kiWcbrCzXdlbHvAK+/9JGq
-s2wa9yJxHdgP9U6PFLy3sTZhlDN2oD1TnBIf2IANmtp43CtI3tWqQBi78KsFoQIg
-ZHCzinCwKYt7lqD5F7Gc9S3rVBiiDq2FsmmM4Ve+DnPiRLr0AfCbxKE77grQrORN
-cK5ib6NWWRkub7LzGMa5
-=2e6P
------END PGP SIGNATURE-----
-
---DOQx4ubtbYINM/to--
+Sjoerd Simons
+Collabora Ltd.
