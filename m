@@ -1,63 +1,80 @@
-Return-Path: <LW@karo-electronics.de>
-From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
-To: Anson Huang <b20788@freescale.com>,
-	Bai Ping <b51503@freescale.com>,
-	Frank Li <Frank.Li@freescale.com>,
-	Fugang Duan <B38611@freescale.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	=?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCHv2 08/16] ARM: dts: imx6ul: add sdma support
-Date: Wed, 20 Jan 2016 11:09:01 +0100
-Message-Id: <1453284549-16363-9-git-send-email-LW@KARO-electronics.de>
-In-Reply-To: <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
-References: <1452619291-13625-1-git-send-email-LW@KARO-electronics.de>
- <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <kernel@martin.sperl.org>
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2104\))
+Subject: Re: [PATCH 2/5] clk: bcm2835: enable management of PCM clock
+From: Martin Sperl <kernel@martin.sperl.org>
+In-Reply-To: <CAMuHMdWOt4aCzu8Ode0ZrQ-c80nqAhwD5dd17nhgVbLrRYT5og@mail.gmail.com>
+Date: Sun, 10 Jan 2016 11:55:48 +0100
+Cc: Arnd Bergmann <arnd@arndb.de>,
+ Stephen Warren <swarren@wwwdotorg.org>,
+ Lee Jones <lee@kernel.org>,
+ Eric Anholt <eric@anholt.net>,
+ Russell King <linux@arm.linux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Remi Pommarel <repk@triplefau.lt>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ linux-rpi-kernel@lists.infradead.org,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+ Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>,
+ Matthias Reichl <hias@horus.com>,
+ lFlorian Meier <florian.meier@koalo.de>
+Message-Id: <4B891DE1-6340-4D3D-BEE3-F61D9A5D289B@martin.sperl.org>
+References: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org> <1452331558-2520-3-git-send-email-kernel@martin.sperl.org> <4332640.jBKM55TPAo@wuerfel> <CAMuHMdWOt4aCzu8Ode0ZrQ-c80nqAhwD5dd17nhgVbLrRYT5og@mail.gmail.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device node for the i.MX6UL SDMA unit.
 
-Signed-off-by: Lothar Waßmann <LW@KARO-electronics.de>
----
- arch/arm/boot/dts/imx6ul.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+> On 10.01.2016, at 10:30, Geert Uytterhoeven <geert@linux-m68k.org> =
+wrote:
+>=20
+> Hi Arnd,
+>=20
+> On Sat, Jan 9, 2016 at 9:56 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+>> On Saturday 09 January 2016 09:25:54 kernel@martin.sperl.org wrote:
+>>> --- a/include/dt-bindings/clock/bcm2835.h
+>>> +++ b/include/dt-bindings/clock/bcm2835.h
+>>> @@ -44,5 +44,6 @@
+>>> #define BCM2835_CLOCK_EMMC             28
+>>> #define BCM2835_CLOCK_PERI_IMAGE       29
+>>> #define BCM2835_CLOCK_PWM              30
+>>> +#define BCM2835_CLOCK_PCM              31
+>>>=20
+>>> -#define BCM2835_CLOCK_COUNT            31
+>>> +#define BCM2835_CLOCK_COUNT            32
+>>=20
+>> The last line contains an incompatible change, please don't do that.
+>> If you have to add another clock, do that after the =
+BCM2835_CLOCK_COUNT
+>> definition to avoid changing dts files that use that number.
+>=20
+> While I agree this changes dts files (in an unexpected way?), not =
+updating
+> BCM2835_CLOCK_COUNT makes it definition useless. Which teaches that
+> having such definitions in DT headers is not a good idea in the first =
+place...
+>=20
+> Hence it can better be replaced (it seems to be unused in dts files, =
+but you
+> can keep the definition to be 100% sure) by an ARRAY_SIZE() in the C =
+driver.
+> This requires changing the driver to e.g. initialize clks[] in
+> bcm2835_clk_probe() based on a table instead of explicit code.
 
-diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
-index 40ea5f0..9c719b2 100644
---- a/arch/arm/boot/dts/imx6ul.dtsi
-+++ b/arch/arm/boot/dts/imx6ul.dtsi
-@@ -548,6 +548,18 @@
- 				clock-names = "ipg", "per";
- 			};
- 
-+			sdma: sdma@020ec000 {
-+				compatible = "fsl,imx6ul-sdma", "fsl,imx6q-sdma",
-+					     "fsl,imx35-sdma";
-+				reg = <0x020ec000 0x4000>;
-+				interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6UL_CLK_SDMA>,
-+					 <&clks IMX6UL_CLK_SDMA>;
-+				clock-names = "ipg", "ahb";
-+				#dma-cells = <3>;
-+				fsl,sdma-ram-script-name = "imx/sdma/sdma-imx6q.bin";
-+			};
-+
- 			pwm5: pwm@020f0000 {
- 				compatible = "fsl,imx6ul-pwm", "fsl,imx27-pwm";
- 				reg = <0x020f0000 0x4000>;
--- 
-2.1.4
+That is a more general issue with the clock driver (and there
+have been already some discussions around this when implementing
+the PWM clock.
+
+So if someone with a better idea how to keep those dt-binding includes
+synchronized with the definitions used by the code step forward and
+propose a better solution how to get that implemented?
+
+I guess there will be a few more occurrences of clocks that are
+currently not defined, which will need to get introduced in the future
+PWM and PCM were just the last in this series.
+
+Thanks,
+	Martin=
