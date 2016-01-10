@@ -1,85 +1,95 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Wed, 13 Jan 2016 17:08:33 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Rhyland Klein <rklein@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: tegra: Use definition for pll_u override bit
-Message-ID: <20160113160833.GK2588@ulmo>
-References: <1450702592-7755-1-git-send-email-jonathanh@nvidia.com>
- <1450702592-7755-2-git-send-email-jonathanh@nvidia.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Ucgz5Oc/kKURWzXs"
-In-Reply-To: <1450702592-7755-2-git-send-email-jonathanh@nvidia.com>
+Return-Path: <kernel@martin.sperl.org>
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2104\))
+Subject: Re: [PATCH 5/5] dt-bindings: bsm2835: fix bindings documentation to use new clock framework
+From: Martin Sperl <kernel@martin.sperl.org>
+In-Reply-To: <20160109224523.GA17329@rob-hp-laptop>
+Date: Sun, 10 Jan 2016 12:05:52 +0100
+Cc: Stephen Warren <swarren@wwwdotorg.org>,
+ Lee Jones <lee@kernel.org>,
+ Eric Anholt <eric@anholt.net>,
+ Russell King <linux@arm.linux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Remi Pommarel <repk@triplefau.lt>,
+ devicetree@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org,
+ alsa-devel@alsa-project.org,
+ Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>,
+ Matthias Reichl <hias@horus.com>,
+ lFlorian Meier <florian.meier@koalo.de>
+Message-Id: <ED21A42A-EE91-495D-857E-04C533CD718C@martin.sperl.org>
+References: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org> <1452331558-2520-6-git-send-email-kernel@martin.sperl.org> <20160109224523.GA17329@rob-hp-laptop>
+To: Rob Herring <robh@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
 
---Ucgz5Oc/kKURWzXs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Dec 21, 2015 at 12:56:32PM +0000, Jon Hunter wrote:
-> The definition, PLLU_BASE_OVERRIDE, for the pll_u OVERRIDE bit is defined
-> but not used and when the OVERRIDE bit is cleared in tegra210_pll_init()
-> the code directly uses the bit number. Therefore, use the definition,
-> PLLU_BASE_OVERRIDE when clearing the OVERRIDE bit.
+> On 09.01.2016, at 23:45, Rob Herring <robh@kernel.org> wrote:
 >=20
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> On Sat, Jan 09, 2016 at 09:25:57AM +0000, kernel@martin.sperl.org =
+wrote:
+>> From: Martin Sperl <kernel@martin.sperl.org>
+>>=20
+>> The bcm2835-i2s driver has been updated to use the new clock =
+framework
+>> for the bcm2835 SOC.
 >=20
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-teg=
-ra210.c
-> index 791215747863..6f043c5e2394 100644
-> --- a/drivers/clk/tegra/clk-tegra210.c
-> +++ b/drivers/clk/tegra/clk-tegra210.c
-> @@ -2520,7 +2520,7 @@ static void __init tegra210_pll_init(void __iomem *=
-clk_base,
-> =20
->  	/* PLLU_VCO */
->  	val =3D readl(clk_base + pll_u_vco_params.base_reg);
-> -	val &=3D ~BIT(24); /* disable PLLU_OVERRIDE */
-> +	val &=3D ~PLLU_BASE_OVERRIDE; /* disable PLLU_OVERRIDE */
->  	writel(val, clk_base + pll_u_vco_params.base_reg);
-> =20
->  	clk =3D tegra_clk_register_pllre("pll_u_vco", "pll_ref", clk_base, pmc,
+> You are breaking compatibility with the driver change. New kernels =
+will=20
+> not work with old dtbs as you have found. What should be done is fix =
+the=20
+> driver to work with the old and new dtb.
 
-I think the comment is now redundant, given that the code says pretty
-much the same thing. No need to respin for that, I can remove the
-comment when I apply the patch. That is, unless anyone feels strongly
-about keeping the comment.
+Actually the driver/device-tree is already broken with commit =
+94cb7f76caa0
+("ARM: bcm2835: Switch to using the new clock driver support=E2=80=9D)
 
-Thierry
+Because there we already have the following conflicting definitions:
 
---Ucgz5Oc/kKURWzXs
-Content-Type: application/pgp-signature; name="signature.asc"
+clocks: cprman@7e101000 {
+	compatible =3D "brcm,bcm2835-cprman";
+	#clock-cells =3D <1>;
+	reg =3D <0x7e101000 0x2000>;
+	/* CPRMAN derives everything from the platform's
+	* oscillator.
+	*/
+	clocks =3D <&clk_osc>;
+};
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+i2s: i2s@7e203000 {
+	compatible =3D "brcm,bcm2835-i2s";
+	reg =3D <0x7e203000 0x20>,
+	      <0x7e101098 0x02>;
+	dmas =3D <&dma 2>,
+	       <&dma 3>;
+	dma-names =3D "tx", "rx";
+	status =3D "disabled";
+};
 
-iQIcBAABCAAGBQJWlnaBAAoJEN0jrNd/PrOhYy0P/0QT4i67rYJf6GoSzj8vTvlt
-HatbZar3oEa3iy35pmgWhEeWgYTy24hocOer+MXIU81ztpeHYGWBQFj96UuX7l17
-8xf9ieAUsWEK4C00zFuYIeFuWJD/h06V811VMMvN3I9+ps/2p6ENzKKvHaVxMp0r
-H/YjO+hotf6zl9uzYkclzXkDQaLLrIJizxRoatRbprUB61ZHMBOgVMgqj4EvKUFp
-/0bpV3EjBY1X4vwzhjoQ3DOrfm4dF7Y5Z/EbGgvqSUcpJb3L87TVIR91BXcORSs+
-xWVrY9/gpj64mfA+Ey2cxK4OOEXu5nj/j5J2R4S4LDwKx4EJPzsrQFE3ubwWr9+h
-5EGkkqkAzTDp5fhQC7hp1HMm2uQv/pTVoLXrmePlUuY/jGLf67OA5ST7Z0jAyFqA
-MZE2GztpAXiycbVHzyoAKdQpP5u5VUCiFRgfVdcRzAWpF9kcstQJl7B6y/CpsFX5
-FjxK3DoFCrUNJpywLPt9lXg6mhaFD61GWq6H4PLFHL9Owmnt92BbkpSVgRgUmPiM
-WL3opEZqIGCR+73ddNyMAbpO12mM+yizV8unihFcAyUiek8rt7Yf3257W9LtwCeW
-SnMACqg9bxv/TeWo6Moy/5Y4QQP+ytfOICvqMsVglS2fL5zP5pciaWzwLN0oIVCg
-IUggScjz/nx1ygfpVOnf
-=Adjp
------END PGP SIGNATURE-----
+The i2s driver fails to load because the second reg range
+overlaps with the range from clocks (which was introduced
+with the commit mentioned above.
 
---Ucgz5Oc/kKURWzXs--
+This patch only changes the driver to work again without
+this second reg address range and using the clocks property
+instead.
+
+>=20
+>> This patch documents the required changes to the bindings.
+>>=20
+>> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+>> ---
+>> Documentation/devicetree/bindings/sound/brcm,bcm2835-i2s.txt |    7 =
++++----
+>> 1 file changed, 3 insertions(+), 4 deletions(-)
+>=20
+> But I leave it to platform maintainers to decide if breaking=20
+> compatibility is okay, so:
+>=20
+> Acked-by: Rob Herring <robh@kernel.org>
+
+Thanks,
+	Martin=
