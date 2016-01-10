@@ -1,46 +1,67 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH] clk: ti: omap3+: dpll: use non-locking version of
- clk_get_rate
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-References: <1453981067-8618-1-git-send-email-t-kristo@ti.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <56A9FED1.3090903@ti.com>
-Date: Thu, 28 Jan 2016 13:43:13 +0200
+Return-Path: <broonie@sirena.org.uk>
+Date: Sun, 10 Jan 2016 11:58:58 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Martin Sperl <kernel@martin.sperl.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Remi Pommarel <repk@triplefau.lt>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	linux-rpi-kernel@lists.infradead.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Matthias Reichl <hias@horus.com>,
+	lFlorian Meier <florian.meier@koalo.de>
+Message-ID: <20160110115858.GV6588@sirena.org.uk>
+References: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org>
+ <1452331558-2520-3-git-send-email-kernel@martin.sperl.org>
+ <4332640.jBKM55TPAo@wuerfel>
+ <CAMuHMdWOt4aCzu8Ode0ZrQ-c80nqAhwD5dd17nhgVbLrRYT5og@mail.gmail.com>
+ <4B891DE1-6340-4D3D-BEE3-F61D9A5D289B@martin.sperl.org>
 MIME-Version: 1.0
-In-Reply-To: <1453981067-8618-1-git-send-email-t-kristo@ti.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="iFtobK8oO579scb0"
+In-Reply-To: <4B891DE1-6340-4D3D-BEE3-F61D9A5D289B@martin.sperl.org>
+Subject: Re: [PATCH 2/5] clk: bcm2835: enable management of PCM clock
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/28/2016 01:37 PM, Tero Kristo wrote:
-> As the code in this file is being executed within irq context in some
-> cases, we must avoid the clk_get_rate which uses mutex internally.
-> Switch the code to use clk_hw_get_rate instead which is non-locking.
->
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
 
-Ooops, sorry. Sent wrong version (read: old) of this patch, please 
-ignore this one. Will re-send the correct version in a bit.
+--iFtobK8oO579scb0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--Tero
+On Sun, Jan 10, 2016 at 11:55:48AM +0100, Martin Sperl wrote:
 
-> ---
->   drivers/clk/ti/dpll3xxx.c |    3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
-> index f4dec00..7ed24bc 100644
-> --- a/drivers/clk/ti/dpll3xxx.c
-> +++ b/drivers/clk/ti/dpll3xxx.c
-> @@ -437,7 +437,8 @@ int omap3_noncore_dpll_enable(struct clk_hw *hw)
->
->   	parent = clk_hw_get_parent(hw);
->
-> -	if (clk_hw_get_rate(hw) == clk_get_rate(dd->clk_bypass)) {
-> +	if (clk_hw_get_rate(hw) ==
-> +	    clk_hw_get_rate(__clk_get_hw(dd->clk_bypass))) {
->   		WARN_ON(parent != __clk_get_hw(dd->clk_bypass));
->   		r = _omap3_noncore_dpll_bypass(clk);
->   	} else {
->
+> So if someone with a better idea how to keep those dt-binding includes
+> synchronized with the definitions used by the code step forward and
+> propose a better solution how to get that implemented?
+
+> I guess there will be a few more occurrences of clocks that are
+> currently not defined, which will need to get introduced in the future
+> PWM and PCM were just the last in this series.
+
+Presumably just making the code not rely on having a define for the
+number of clocks would deal with the problem (eg, using ARRAY_SIZE
+internally).
+
+--iFtobK8oO579scb0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWkkeCAAoJECTWi3JdVIfQWOAH/2E/d7rl4agqhkmZevCjxAkS
+TaESt6F6YFn308HEuTvcBlqOP5YEvoCZ1rJ8wlkXC1LUdISEknBXaqY2XIHioe2P
+mF5Qj/p4REkgsaA404SyEE3nLsInnnANUuJfO3Wx2fsSCD3cDKxotS0nr2yGHlDx
+3VaQpZNN92tSnSsZzJtGFsRINtkQeJXbSTswaEYwQggJlqF5VaK1o0MjqQWHrl2Y
+fEvyWb57TFduXmtJLTkxgbt3H6bA52OyK5ffN0GtxfvJAHc/cGZmcgv2kq9krYsm
+Iy610rqi+NkDJQg/TeGM+VG8A+SWF25EbqoauEY95z7GtVEgtsg5+Zww56SBwT8=
+=Jt0m
+-----END PGP SIGNATURE-----
+
+--iFtobK8oO579scb0--
