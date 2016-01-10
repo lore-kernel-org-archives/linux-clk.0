@@ -1,80 +1,83 @@
 Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Remi Pommarel <repk@triplefau.lt>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH V2 3/4] clk: bcm2835: enable management of PCM clock
-Date: Mon, 11 Jan 2016 19:55:55 +0000
-Message-Id: <1452542157-2387-4-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1452542157-2387-1-git-send-email-kernel@martin.sperl.org>
-References: <1452542157-2387-1-git-send-email-kernel@martin.sperl.org>
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2104\))
+Subject: Re: [PATCH 2/5] clk: bcm2835: enable management of PCM clock
+From: Martin Sperl <kernel@martin.sperl.org>
+In-Reply-To: <20160110115858.GV6588@sirena.org.uk>
+Date: Sun, 10 Jan 2016 13:17:17 +0100
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Stephen Warren <swarren@wwwdotorg.org>,
+ Lee Jones <lee@kernel.org>,
+ Eric Anholt <eric@anholt.net>,
+ Russell King <linux@arm.linux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Remi Pommarel <repk@triplefau.lt>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ linux-rpi-kernel@lists.infradead.org,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+ Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>,
+ Matthias Reichl <hias@horus.com>,
+ lFlorian Meier <florian.meier@koalo.de>
+Message-Id: <39E8C95F-C7DC-46C3-B29A-93A865485942@martin.sperl.org>
+References: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org> <1452331558-2520-3-git-send-email-kernel@martin.sperl.org> <4332640.jBKM55TPAo@wuerfel> <CAMuHMdWOt4aCzu8Ode0ZrQ-c80nqAhwD5dd17nhgVbLrRYT5og@mail.gmail.com> <4B891DE1-6340-4D3D-BEE3-F61D9A5D289B@martin.sperl.org> <20160110115858.GV6588@sirena.org.uk>
+To: Mark Brown <broonie@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
 
-Enable the PCM clock in the SOC, which is used by the
-bcm2835-i2s driver.
+> On 10.01.2016, at 12:58, Mark Brown <broonie@kernel.org> wrote:
+>=20
+> On Sun, Jan 10, 2016 at 11:55:48AM +0100, Martin Sperl wrote:
+>=20
+>> So if someone with a better idea how to keep those dt-binding =
+includes
+>> synchronized with the definitions used by the code step forward and
+>> propose a better solution how to get that implemented?
+>=20
+>> I guess there will be a few more occurrences of clocks that are
+>> currently not defined, which will need to get introduced in the =
+future
+>> PWM and PCM were just the last in this series.
+>=20
+> Presumably just making the code not rely on having a define for the
+> number of clocks would deal with the problem (eg, using ARRAY_SIZE
+> internally).
+ARRAY_SIZE would work fine, but the code is:=20
 
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c       |   13 +++++++++++++
- include/dt-bindings/clock/bcm2835.h |    1 +
- 2 files changed, 14 insertions(+)
+#include <dt-bindings/clock/bcm2835.h>
+...
+struct bcm2835_cprman {
+	struct device *dev;
+	void __iomem *regs;
+	spinlock_t regs_lock;
+	const char *osc_name;
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 7c782d3..573b5b1 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -88,6 +88,8 @@
- #define CM_HSMDIV		0x08c
- #define CM_OTPCTL		0x090
- #define CM_OTPDIV		0x094
-+#define CM_PCMCTL		0x098
-+#define CM_PCMDIV		0x09c
- #define CM_PWMCTL		0x0a0
- #define CM_PWMDIV		0x0a4
- #define CM_SMICTL		0x0b0
-@@ -826,6 +828,16 @@ static const struct bcm2835_clock_data bcm2835_clock_pwm_data = {
- 	.frac_bits = 12,
- };
- 
-+static const struct bcm2835_clock_data bcm2835_clock_pcm_data = {
-+	.name = "pcm",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_PCMCTL,
-+	.div_reg = CM_PCMDIV,
-+	.int_bits = 12,
-+	.frac_bits = 12,
-+};
-+
- struct bcm2835_pll {
- 	struct clk_hw hw;
- 	struct bcm2835_cprman *cprman;
-@@ -1616,6 +1628,7 @@ static const struct bcm2835_register_clock bcm2835_register_clocks[] = {
- 	REGISTER_CLOCK(BCM2835_CLOCK_HSM, &bcm2835_clock_hsm_data),
- 	REGISTER_CLOCK(BCM2835_CLOCK_EMMC, &bcm2835_clock_emmc_data),
- 	REGISTER_CLOCK(BCM2835_CLOCK_PWM, &bcm2835_clock_pwm_data),
-+	REGISTER_CLOCK(BCM2835_CLOCK_PCM, &bcm2835_clock_pcm_data),
- };
- 
- void bcm2835_register_duplicate_index(
-diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
-index 87235ac..9a7b4a5 100644
---- a/include/dt-bindings/clock/bcm2835.h
-+++ b/include/dt-bindings/clock/bcm2835.h
-@@ -44,3 +44,4 @@
- #define BCM2835_CLOCK_EMMC		28
- #define BCM2835_CLOCK_PERI_IMAGE	29
- #define BCM2835_CLOCK_PWM		30
-+#define BCM2835_CLOCK_PCM		31
--- 
-1.7.10.4
+	struct clk_onecell_data onecell;
+	struct clk *clks[BCM2835_CLOCK_COUNT];
+};
+...
+static int bcm2835_clk_probe(struct platform_device *pdev)
+{
+...
+	clks[BCM2835_PLLA_CORE] =3D
+		bcm2835_register_pll_divider(cprman, =
+&bcm2835_plla_core_data);
+...
+        clks[BCM2835_CLOCK_PCM] =3D
+                bcm2835_register_clock(cprman, &bcm2835_clock_pcm_data);
+...
+}
+
+So the Array size is defined by the dt-bindings.
+
+What you propose is a major change to the clock framework, so I would
+hope that Eric (the original author of this clock-driver) would address
+it.
+
+Maybe someone has a better idea for a pattern to use to achieve=20
+the required while maintaining =E2=80=9Csynchronization=E2=80=9D between =
+defines
+inside the dt-binding and the driver.
