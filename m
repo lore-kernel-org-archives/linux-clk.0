@@ -1,59 +1,62 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Remi Pommarel <repk@triplefau.lt>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH V4 2/7] clk: bcm2835: clamp clock divider to highest integer only
-Date: Fri, 15 Jan 2016 14:21:01 +0000
-Message-Id: <1452867667-2447-3-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org>
-References: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Sun, 10 Jan 2016 17:56:44 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, Jens Kuske <jenskuske@gmail.com>
+Subject: Re: [PATCH] clk: sunxi: Drop clk.h include
+Message-ID: <20160110165644.GF9631@lukather>
+References: <1452302082-18580-1-git-send-email-sboyd@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="yH1ZJFh+qWm+VodA"
+In-Reply-To: <1452302082-18580-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
 
-The clock divider calculation right now clamps the
-divider to the highest possible fractional divider.
-So typically (BIT(div_int_bits) - 1) + 4095 / 4096.
+--yH1ZJFh+qWm+VodA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-As the fractional clock divider is alterating between
-(Fosc / div_int) and (Fosc / (div_int + 1))
-the divider will overflow for the (div_int + 1) case.
-As with the "underflow" case we have seen for (div < 2),
-we can assume that the same applies on the upper limit
-as well.
+Hi,
 
-So this patch will instead clamp to the divider to the
-max of (BIT(div_int_bits) - 1)
+On Fri, Jan 08, 2016 at 05:14:42PM -0800, Stephen Boyd wrote:
+> This file is a clock provider, not a clk consumer. Drop the clk.h
+> include.
+>=20
+> Cc: Jens Kuske <jenskuske@gmail.com>
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Applied, it will be part of my PR for 4.6. Thanks!
+Maxime
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 10e97b7..3d6490f 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1182,9 +1182,9 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
- 	/* divider must be >= 2 */
- 	div = max_t(u32, div, (2 << CM_DIV_FRAC_BITS));
- 
--	/* clamp to max divider allowed */
-+	/* clamp to max divider allowed - max is integer divider */
- 	div = min_t(u32, div, GENMASK(data->int_bits + CM_DIV_FRAC_BITS - 1,
--				      CM_DIV_FRAC_BITS - data->frac_bits));
-+				      CM_DIV_FRAC_BITS));
- 
- 	return div;
- }
--- 
-1.7.10.4
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--yH1ZJFh+qWm+VodA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWko1MAAoJEBx+YmzsjxAg4CYQAI67WG+GwmV//YnMApZBofXl
+8OG+BDZJxNX/athEfsnJMZyWhViyKedCXdU0xgyN4X6W0vFjMEvgySKx2NVpHnmk
+hAu6f1GJLv3vwat8JcbRvggGSjppo2oz+IAB+5QsDTneg1Rp8L6yEJ8OI0I8DUzj
+MatsD/YQlLy1i2Fo2LwJF2sA5TSbZymu2FCwvDcANZl9VASSrrU6imPw2P17hRBf
+kETX6ZFaE0kboIUwurJLRkHXDUWCoGGyAcAQW8FMsL0CyZf3UIXZoW9I0acj/BJo
+IxDiEAkhB7mcvqfj91gUX536q8pHDgY5QWvoTMn+OpHiyC6ozAKWdaM6xaPgnA84
+F8gosKGvxYMVyp8cS2yBGp0z+0abMO6S8bfK1XGnvKJI3nvjWn10whx1HUxY2bwd
+IWoFIYPSBLD2gYChjx0xePUjcxmobwYRR/aSgXil77JvlXJYdhfMf3p7Av6Vv9Lg
++z6nqFQUhWJkjtDEcs1nKz4Vo1B+0anescT46XWUx2X+qydH2BPc7JJwzwC8nQcg
+/ziZ/s91v3eX5Sz8RiUw7CG+Vs7cd1Vszy945ffjpJmWcaPgLUVzagcvux0ArYKG
+3XWakFWTfdSHey2A2NG+1eP89s3oIcu9+P0jip1fdu5N2izkso8oChb1nVecaYwA
+NuzguD05EidtdWpdjFvT
+=PCp0
+-----END PGP SIGNATURE-----
+
+--yH1ZJFh+qWm+VodA--
