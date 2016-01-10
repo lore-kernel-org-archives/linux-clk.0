@@ -1,70 +1,41 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Wed, 13 Jan 2016 18:20:40 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Rhyland Klein <rklein@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: tegra: Fix clock sources for tegra210 EMC
-Message-ID: <20160113172040.GS2588@ulmo>
-References: <1450446328-6414-1-git-send-email-jonathanh@nvidia.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="wxNrNKeE/ptr8Zbn"
-In-Reply-To: <1450446328-6414-1-git-send-email-jonathanh@nvidia.com>
+Return-Path: <martin@sperl.org>
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2104\))
+Subject: Re: [PATCH v3 1/4] clk: bcm2835: add a round up ability to the clock divisor
+From: Martin Sperl <martin@sperl.org>
+In-Reply-To: <1449418969-5565-2-git-send-email-repk@triplefau.lt>
+Date: Sun, 10 Jan 2016 17:27:38 +0100
+Cc: Stephen Warren <swarren@wwwdotorg.org>,
+ Eric Anholt <eric@anholt.net>,
+ Lee Jones <lee@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+Message-Id: <268944A6-84F0-41F5-B84F-C9C1E9012575@sperl.org>
+References: <1449418969-5565-1-git-send-email-repk@triplefau.lt> <1449418969-5565-2-git-send-email-repk@triplefau.lt>
+To: Remi Pommarel <repk@triplefau.lt>
 List-ID: <linux-clk.vger.kernel.org>
 
 
---wxNrNKeE/ptr8Zbn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Dec 18, 2015 at 01:45:28PM +0000, Jon Hunter wrote:
-> The EMC clock sources for tegra210 currently incorrectly include pll_c2
-> and pll_c3. However, both of these should have been pll_mb as shown in
-> the TRM. If tegra210 happens to be configured such that the pll_mb is the
-> default clock for the EMC, as configured by the bootloader, then this will
-> cause a system hang on boot. This is because the kernel will disable the
-> pll_mb when disabling unused clock as it appears to be unused when it is
-> not.
+> On 06.12.2015, at 17:22, Remi Pommarel <repk@triplefau.lt> wrote:
 >=20
-> Also add the additional pll_p clock source for the EMC.
+> Make bcm2835_clock_choose_div to optionally round up the chosen MASH =
+divisor
+> so that the resulting average rate will not be higher than the =
+requested one.
 >=20
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> Signed-off-by: Remi Pommarel <repk@triplefau.lt>
 
-Applied, thanks.
+Note that investigations have shown that the fractional Divider is not =
+used
+unless we have HW-MASH enabled.
 
-Thierry
+I got some basic support in a patch that I shall share as soon as I have =
+done
+some more testing=E2=80=A6
 
---wxNrNKeE/ptr8Zbn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJWlodoAAoJEN0jrNd/PrOhRTEQAI7d8Q0SGrrCsS+a9Y/ckKw4
-T8CtuSPbouM0Ts5W1cbtPen4Qu6CHSdQYqPbvD4lqG3n5DsbKvMNFk9GPtk/SS65
-NrkdX0sivhtcg6O4MFNEDRVWzVF02h3YDUe+5mQdkjW1Qe7uY3bdsLVNAL7SptCb
-07GQG5L+yYI9U33GZbSnT2FZZpYmjAjcOUqM+9Y/D+BNhlCNyBbih8uTsBlK/rIx
-XdCuN7fsPF8MIqYmDbF3mvjtrEnB8/YjX6v9SxJsKgXLzI+NCbVw3eNEuEaLDWG0
-ZapqhGZ5TtO0+ceRQdjLNifge9wlGZNui3tzZlC2U+rFDEzqPcSNMJxnc+S/aX8i
-HCYe1G6VWTbqmdGS+ML2fV3B7AQw/nz4Go0Ta+lEBUQP+EaxxgBlTIXJjsWzez7r
-JeCsIOp8iAVoLRs41moqb5DXQJ51SwA7gtgYRH4Nt64tKgma9vHlCVo95g6o7ImO
-Snr3BKp9zP/QobA8mvAm3PraVQcN3uL+vMPA1J1CCj//ZoS1zt7pBZUI1NixlfGR
-dCz59sZmh+C9CrdfBybF9vGUY9TWDW/o3XK8/w6PXe84PCt1TK5XeyBZtNp6bTzq
-fo7KWpQO5tBu4BZxRCajoC8yM4rBZTysUORtovvzEQbWpSLIMpR51eH2naz1vekb
-M4rZD/S9QhjCuagMeuTM
-=b8RB
------END PGP SIGNATURE-----
-
---wxNrNKeE/ptr8Zbn--
+Ciao,
+	Martin
