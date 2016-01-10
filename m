@@ -1,113 +1,118 @@
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com, Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>, Boris Brezillon <boris.brezillon@free-electrons.com>, Wynter Woods <wynter@nextthing.co>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v2 13/26] drm/fb_cma_helper: Remove implicit call to disable_unused_functions
-Date: Fri, 15 Jan 2016 01:13:05 +0200
-Message-ID: <2014724.QmjXVju9UW@avalon>
-In-Reply-To: <1452785109-6172-14-git-send-email-maxime.ripard@free-electrons.com>
-References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com> <1452785109-6172-14-git-send-email-maxime.ripard@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <kernel@martin.sperl.org>
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2104\))
+Subject: Re: [PATCH 2/5] clk: bcm2835: enable management of PCM clock
+From: Martin Sperl <kernel@martin.sperl.org>
+In-Reply-To: <CAMuHMdVG+ox4JJWAiNRVgTtV_Lz4Njhekp0=dOyY-G+=mxby3Q@mail.gmail.com>
+Date: Sun, 10 Jan 2016 20:07:32 +0100
+Cc: Mark Brown <broonie@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Stephen Warren <swarren@wwwdotorg.org>,
+ Lee Jones <lee@kernel.org>,
+ Eric Anholt <eric@anholt.net>,
+ Russell King <linux@arm.linux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Remi Pommarel <repk@triplefau.lt>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ linux-rpi-kernel@lists.infradead.org,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+ Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>,
+ Matthias Reichl <hias@horus.com>,
+ lFlorian Meier <florian.meier@koalo.de>
+Message-Id: <93C244A0-20B7-4E21-A183-E09F83CFE035@martin.sperl.org>
+References: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org> <1452331558-2520-3-git-send-email-kernel@martin.sperl.org> <4332640.jBKM55TPAo@wuerfel> <CAMuHMdWOt4aCzu8Ode0ZrQ-c80nqAhwD5dd17nhgVbLrRYT5og@mail.gmail.com> <4B891DE1-6340-4D3D-BEE3-F61D9A5D289B@martin.sperl.org> <20160110115858.GV6588@sirena.org.uk> <39E8C95F-C7DC-46C3-B29A-93A865485942@martin.sperl.org> <CAMuHMdXan4aM76aAx_wbnrib7wH5W7tkg60jgRkyQjGFmUEo=A@mail.gmail.com> <D415BD6A-6BE1-4B87-B0D4-D0AC6D39785A@martin.sperl.org> <CAMuHMdVG+ox4JJWAiNRVgTtV_Lz4Njhekp0=dOyY-G+=mxby3Q@mail.gmail.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Maxime,
 
-Thank you for the patch.
+> On 10.01.2016, at 19:56, Geert Uytterhoeven <geert@linux-m68k.org> =
+wrote:
+>=20
+> Hi Martin,
+>=20
+> On Sun, Jan 10, 2016 at 7:01 PM, Martin Sperl =
+<kernel@martin.sperl.org> wrote:
+>>> On 10.01.2016, at 14:02, Geert Uytterhoeven <geert@linux-m68k.org> =
+wrote:
+>>> I wrote:
+>>> | Hence it can better be replaced (it seems to be unused in dts =
+files, but you
+>>> | can keep the definition to be 100% sure) by an ARRAY_SIZE() in the =
+C driver.
+>>> | This requires changing the driver to e.g. initialize clks[] in
+>>> |bcm2835_clk_probe() based on a table instead of explicit code.
+>>>=20
+>>> If you fill in clks[] from a static table, you can take ARRAY_SIZE =
+of
+>>> the static table.
+>>=20
+>> You mean something like the below?
+>> (note: copy/paste from console issues - spaces instead of tabs)
+>=20
+> More or less.
+>=20
+>> };
+>>=20
+>> static inline void cprman_write(struct bcm2835_cprman *cprman, u32 =
+reg, u32 val
+>> @@ -496,6 +496,14 @@ static const struct bcm2835_pll_data =
+bcm2835_pllh_data =3D {
+>>        .max_fb_rate =3D BCM2835_MAX_FB_RATE,
+>> };
+>>=20
+>> +static const struct bcm2835_pll_data *bcm2835_plls[] =3D {
+>> +       [BCM2835_PLLA] =3D &bcm2835_plla_data,
+>> +       [BCM2835_PLLB] =3D &bcm2835_pllb_data,
+>> +       [BCM2835_PLLC] =3D &bcm2835_pllc_data,
+>> +       [BCM2835_PLLD] =3D &bcm2835_plld_data,
+>> +       [BCM2835_PLLH] =3D &bcm2835_pllh_data,
+>> +};
+>=20
+> This is a sparse array?
+Yes - for all.
 
-On Thursday 14 January 2016 16:24:56 Maxime Ripard wrote:
-> The drm_fbdev_cma_init function always calls the
-> drm_helper_disable_unused_functions. Since it's part of the usual probe
-> process, all the drivers using that helper will end up having their encoder
-> and CRTC disable functions called at probe if their device has not been
-> reported as enabled.
-> 
-> This could be fixed by reading out from the registers the current state of
-> the device if it is enabled, but even that will not handle the case where
-> the device is actually disabled.
-> 
-> Moreover, the drivers using the atomic modesetting expect that their enable
-> and disable callback to be called when the device is already enabled or
-> disabled (respectively).
-> 
-> We can however fix this issue by moving the call to
-> drm_helper_disable_unused_functions out of drm_fbdev_cma_init and make the
-> drivers needing it (all the drivers calling drm_fbdev_cma_init and not
-> using the atomic modesetting) explicitly call it.
+>=20
+>> struct bcm2835_pll {
+>>        struct clk_hw hw;
+>>        struct bcm2835_cprman *cprman;
+>> @@ -1560,8 +1600,13 @@ static int bcm2835_clk_probe(struct =
+platform_device *pdev)
+>>        struct clk **clks;
+>>        struct bcm2835_cprman *cprman;
+>>        struct resource *res;
+>> +       const int clks_cnt =3D max(ARRAY_SIZE(bcm2835_plls),
+>> +                                max(ARRAY_SIZE(bcm2835_pll_divs),
+>> +                                    ARRAY_SIZE(bcm2835_clks))) + 1;
+>> +       size_t alloc =3D sizeof(*cprman) + clks_cnt * sizeof(*clks);
+>> +       size_t i;
+>=20
+> If you combine all 3 arrays in a single non-sparse array, you could =
+get rid
+> of the dynamic allocation using the maximum of the 3 sizes, and can =
+just
+> use a single ARRAY_SIZE().
 
-I'd rather add it to all drivers that call drm_fbdev_cma_init(). All the 
-atomic ones must have special code to cope with it that could be rendered 
-useless by the removal of the drm_helper_disable_unused_functions() call. That 
-code should be removed too, and it would be easier to check drivers one by one 
-and fixing them individually (outside of this patch series, unless you insist 
-;-)) when removing the explicit drm_helper_disable_unused_functions() call. 
-Other than that the patch looks fine to me.
 
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/gpu/drm/drm_fb_cma_helper.c | 3 ---
->  drivers/gpu/drm/imx/imx-drm-core.c  | 1 +
->  drivers/gpu/drm/sti/sti_drv.c       | 1 +
->  drivers/gpu/drm/tilcdc/tilcdc_drv.c | 1 +
->  4 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_fb_cma_helper.c
-> b/drivers/gpu/drm/drm_fb_cma_helper.c index c19a62561183..daa98d881142
-> 100644
-> --- a/drivers/gpu/drm/drm_fb_cma_helper.c
-> +++ b/drivers/gpu/drm/drm_fb_cma_helper.c
-> @@ -348,9 +348,6 @@ struct drm_fbdev_cma *drm_fbdev_cma_init(struct
-> drm_device *dev,
-> 
->  	}
-> 
-> -	/* disable all the possible outputs/crtcs before entering KMS mode */
-> -	drm_helper_disable_unused_functions(dev);
-> -
->  	ret = drm_fb_helper_initial_config(helper, preferred_bpp);
->  	if (ret < 0) {
->  		dev_err(dev->dev, "Failed to set initial hw configuration.\n");
-> diff --git a/drivers/gpu/drm/imx/imx-drm-core.c
-> b/drivers/gpu/drm/imx/imx-drm-core.c index 7b990b4e96d2..e1db57791fc9
-> 100644
-> --- a/drivers/gpu/drm/imx/imx-drm-core.c
-> +++ b/drivers/gpu/drm/imx/imx-drm-core.c
-> @@ -312,6 +312,7 @@ static int imx_drm_driver_load(struct drm_device *drm,
-> unsigned long flags) dev_warn(drm->dev, "Invalid legacyfb_depth. 
-> Defaulting to 16bpp\n"); legacyfb_depth = 16;
->  	}
-> +	drm_helper_disable_unused_functions(drm);
->  	imxdrm->fbhelper = drm_fbdev_cma_init(drm, legacyfb_depth,
->  				drm->mode_config.num_crtc, MAX_CRTC);
->  	if (IS_ERR(imxdrm->fbhelper)) {
-> diff --git a/drivers/gpu/drm/sti/sti_drv.c b/drivers/gpu/drm/sti/sti_drv.c
-> index 1469987949d8..506b5626f3ed 100644
-> --- a/drivers/gpu/drm/sti/sti_drv.c
-> +++ b/drivers/gpu/drm/sti/sti_drv.c
-> @@ -160,6 +160,7 @@ static int sti_load(struct drm_device *dev, unsigned
-> long flags)
-> 
->  	drm_mode_config_reset(dev);
-> 
-> +	drm_helper_disable_unused_functions(dev);
->  	drm_fbdev_cma_init(dev, 32,
->  			   dev->mode_config.num_crtc,
->  			   dev->mode_config.num_connector);
-> diff --git a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-> b/drivers/gpu/drm/tilcdc/tilcdc_drv.c index 876cad58b1f9..24be31d69701
-> 100644
-> --- a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-> +++ b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-> @@ -294,6 +294,7 @@ static int tilcdc_load(struct drm_device *dev, unsigned
-> long flags) break;
->  	}
-> 
-> +	drm_helper_disable_unused_functions(dev);
->  	priv->fbdev = drm_fbdev_cma_init(dev, bpp,
->  			dev->mode_config.num_crtc,
->  			dev->mode_config.num_connector);
+The problem is that we need different initialization methods for pll, =
+pll-dividers
+and derived clocks, so we can not easily make them a common setting =
+unless we
+would use function and void pointers to work arround this, which would =
+make it
+less readable (and more code again just for the - repeated - =
+assignment).
 
--- 
-Regards,
+As far as I can tell from my testing the patched version works and the =
+kernel
+boots correctly.
 
-Laurent Pinchart
+I will respin the patchset tomorrow - it might take slightly longer, as =
+I
+found that the fractional clock divider is not working unless the MASH
+functionality is activated in the registers. This results in =
+=E2=80=9Cfrequency shifts=E2=80=9D
+for audio, which we want to avoid - this means we need another patch to
+enable this MASH feature.
