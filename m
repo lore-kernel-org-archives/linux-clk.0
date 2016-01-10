@@ -1,54 +1,62 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga03-in.huawei.com ([119.145.14.66]:25169 "EHLO
-	szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752179AbcA2HzO (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 29 Jan 2016 02:55:14 -0500
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
-	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
-	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [PATCH v8 3/6] ARM: config: hisi: enable CONFIG_RESET_CONTROLLER
-Date: Fri, 29 Jan 2016 15:42:09 +0800
-Message-ID: <1454053332-3218-4-git-send-email-xuejiancheng@huawei.com>
-In-Reply-To: <1454053332-3218-1-git-send-email-xuejiancheng@huawei.com>
-References: <1454053332-3218-1-git-send-email-xuejiancheng@huawei.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <4332640.jBKM55TPAo@wuerfel>
+References: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org>
+	<1452331558-2520-3-git-send-email-kernel@martin.sperl.org>
+	<4332640.jBKM55TPAo@wuerfel>
+Date: Sun, 10 Jan 2016 10:30:33 +0100
+Message-ID: <CAMuHMdWOt4aCzu8Ode0ZrQ-c80nqAhwD5dd17nhgVbLrRYT5og@mail.gmail.com>
+Subject: Re: [PATCH 2/5] clk: bcm2835: enable management of PCM clock
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Martin Sperl <kernel@martin.sperl.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>, Remi Pommarel <repk@triplefau.lt>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-rpi-kernel@lists.infradead.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	ALSA Development Mailing List <alsa-devel@alsa-project.org>, Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Matthias Reichl <hias@horus.com>,
+	lFlorian Meier <florian.meier@koalo.de>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-enable CONFIG_RESET_CONTROLLER in hisi_defconfig
+Hi Arnd,
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
----
- arch/arm/configs/hisi_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+On Sat, Jan 9, 2016 at 9:56 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Saturday 09 January 2016 09:25:54 kernel@martin.sperl.org wrote:
+>> --- a/include/dt-bindings/clock/bcm2835.h
+>> +++ b/include/dt-bindings/clock/bcm2835.h
+>> @@ -44,5 +44,6 @@
+>>  #define BCM2835_CLOCK_EMMC             28
+>>  #define BCM2835_CLOCK_PERI_IMAGE       29
+>>  #define BCM2835_CLOCK_PWM              30
+>> +#define BCM2835_CLOCK_PCM              31
+>>
+>> -#define BCM2835_CLOCK_COUNT            31
+>> +#define BCM2835_CLOCK_COUNT            32
+>
+> The last line contains an incompatible change, please don't do that.
+> If you have to add another clock, do that after the BCM2835_CLOCK_COUNT
+> definition to avoid changing dts files that use that number.
 
-diff --git a/arch/arm/configs/hisi_defconfig b/arch/arm/configs/hisi_defconfig
-index b2e340b..ba62c07 100644
---- a/arch/arm/configs/hisi_defconfig
-+++ b/arch/arm/configs/hisi_defconfig
-@@ -75,6 +75,7 @@ CONFIG_DMADEVICES=y
- CONFIG_DW_DMAC=y
- CONFIG_PL330_DMA=y
- CONFIG_PWM=y
-+CONFIG_RESET_CONTROLLER=y
- CONFIG_PHY_HIX5HD2_SATA=y
- CONFIG_EXT4_FS=y
- CONFIG_TMPFS=y
--- 
-1.9.1
+While I agree this changes dts files (in an unexpected way?), not updating
+BCM2835_CLOCK_COUNT makes it definition useless. Which teaches that
+having such definitions in DT headers is not a good idea in the first place...
 
+Hence it can better be replaced (it seems to be unused in dts files, but you
+can keep the definition to be 100% sure) by an ARRAY_SIZE() in the C driver.
+This requires changing the driver to e.g. initialize clks[] in
+bcm2835_clk_probe() based on a table instead of explicit code.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
