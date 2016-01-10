@@ -1,108 +1,109 @@
-Return-Path: <jenskuske@gmail.com>
-Return-Path: <jenskuske@gmail.com>
-Subject: Re: [PATCH v3 2/2] clk: sunxi: Refactor A31 PLL6 so that it can be
- reused
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>
-References: <1454008958-12655-1-git-send-email-maxime.ripard@free-electrons.com>
- <1454008958-12655-2-git-send-email-maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Vishnu Patekar <vishnupatekar0510@gmail.com>,
- Hans de Goede <hdegoede@redhat.com>, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, Jean-Francois Moine <moinejf@free.fr>
-From: Jens Kuske <jenskuske@gmail.com>
-Message-ID: <56AB38C6.2010909@gmail.com>
-Date: Fri, 29 Jan 2016 11:02:46 +0100
+Return-Path: <repk@triplefau.lt>
+Date: Sun, 10 Jan 2016 13:30:14 +0100
+From: Remi Pommarel <repk@triplefau.lt>
+To: Martin Sperl <kernel@martin.sperl.org>
+Cc: Mark Brown <broonie@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Russell King <linux@arm.linux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	linux-rpi-kernel@lists.infradead.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Matthias Reichl <hias@horus.com>,
+	lFlorian Meier <florian.meier@koalo.de>
+Subject: Re: [PATCH 2/5] clk: bcm2835: enable management of PCM clock
+Message-ID: <20160110123014.GA1764@cruxbox>
+References: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org>
+ <1452331558-2520-3-git-send-email-kernel@martin.sperl.org>
+ <4332640.jBKM55TPAo@wuerfel>
+ <CAMuHMdWOt4aCzu8Ode0ZrQ-c80nqAhwD5dd17nhgVbLrRYT5og@mail.gmail.com>
+ <4B891DE1-6340-4D3D-BEE3-F61D9A5D289B@martin.sperl.org>
+ <20160110115858.GV6588@sirena.org.uk>
+ <39E8C95F-C7DC-46C3-B29A-93A865485942@martin.sperl.org>
 MIME-Version: 1.0
-In-Reply-To: <1454008958-12655-2-git-send-email-maxime.ripard@free-electrons.com>
 Content-Type: text/plain; charset=utf-8
+In-Reply-To: <39E8C95F-C7DC-46C3-B29A-93A865485942@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-On 28/01/16 20:22, Maxime Ripard wrote:
-> Remove the fixed dividers from the PLL6 driver to be able to have a
-> reusable driver that can be used across several SoCs that share the same
-> controller, but don't have the same set of dividers for this clock, and to
-> also be reused multiple times in the same SoC, since we're droping the
-> clock name.
+On Sun, Jan 10, 2016 at 01:17:17PM +0100, Martin Sperl wrote:
+> > 
+> > Presumably just making the code not rely on having a define for the
+> > number of clocks would deal with the problem (eg, using ARRAY_SIZE
+> > internally).
+> ARRAY_SIZE would work fine, but the code is: 
 > 
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
-> Changes from v2
->   - Rebased and converted over to the new factors refactoring. Fixed the
->     retrieved rate
+> #include <dt-bindings/clock/bcm2835.h>
+> ...
+> struct bcm2835_cprman {
+> 	struct device *dev;
+> 	void __iomem *regs;
+> 	spinlock_t regs_lock;
+> 	const char *osc_name;
 > 
->  arch/arm/boot/dts/sun6i-a31.dtsi     | 36 ++++++++++++++++++------------------
->  arch/arm/boot/dts/sun8i-a23-a33.dtsi | 25 +++++++++++++++++--------
->  arch/arm/boot/dts/sun8i-a23.dtsi     |  2 +-
->  arch/arm/boot/dts/sun8i-a33.dtsi     |  4 ++--
->  arch/arm/boot/dts/sun8i-h3.dtsi      | 36 ++++++++++++++++++------------------
->  drivers/clk/sunxi/clk-sunxi.c        | 32 ++++++++++++++++----------------
->  6 files changed, 72 insertions(+), 63 deletions(-)
+> 	struct clk_onecell_data onecell;
+> 	struct clk *clks[BCM2835_CLOCK_COUNT];
+> };
+> ...
+> static int bcm2835_clk_probe(struct platform_device *pdev)
+> {
+> ...
+> 	clks[BCM2835_PLLA_CORE] =
+> 		bcm2835_register_pll_divider(cprman, &bcm2835_plla_core_data);
+> ...
+>         clks[BCM2835_CLOCK_PCM] =
+>                 bcm2835_register_clock(cprman, &bcm2835_clock_pcm_data);
+> ...
+> }
 > 
-[...]
-> diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
-> index 1524130e43c9..19aadf47027d 100644
-> --- a/arch/arm/boot/dts/sun8i-h3.dtsi
-> +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
-> @@ -121,27 +121,27 @@
->  		};
->  
->  		pll6: clk@01c20028 {
-> -			#clock-cells = <1>;
-> +			#clock-cells = <0>;
->  			compatible = "allwinner,sun6i-a31-pll6-clk";
->  			reg = <0x01c20028 0x4>;
->  			clocks = <&osc24M>;
-> -			clock-output-names = "pll6", "pll6x2";
-> +			clock-output-names = "pll6";
->  		};
->  
-> -		pll6d2: pll6d2_clk {
-> +		pll6x2: pll6x2_clk {
->  			#clock-cells = <0>;
->  			compatible = "fixed-factor-clock";
-> -			clock-div = <2>;
-> -			clock-mult = <1>;
-> -			clocks = <&pll6 0>;
-> -			clock-output-names = "pll6d2";
-> +			clock-div = <1>;
-> +			clock-mult = <2>;
-> +			clocks = <&pll6>;
-> +			clock-output-names = "pll6-2x";
->  		};
->  
-> -		/* dummy clock until pll6 can be reused */
-> -		pll8: pll8_clk {
-> +		pll8: clk@01c20044 {
->  			#clock-cells = <0>;
-> -			compatible = "fixed-clock";
-> -			clock-frequency = <1>;
-> +			compatible = "allwinner,sun6i-a31-pll6-clk";
-> +			reg = <0x01c20044 0x4>;
-> +			clocks = <&osc24M>;
->  			clock-output-names = "pll8";
->  		};
->  
-> @@ -165,7 +165,7 @@
->  			#clock-cells = <0>;
->  			compatible = "allwinner,sun6i-a31-ahb1-clk";
->  			reg = <0x01c20054 0x4>;
-> -			clocks = <&osc32k>, <&osc24M>, <&axi>, <&pll6 0>;
-> +			clocks = <&osc32k>, <&osc24M>, <&axi>, <&pll6>;
->  			clock-output-names = "ahb1";
->  		};
->  
-> @@ -173,7 +173,7 @@
->  			#clock-cells = <0>;
->  			compatible = "allwinner,sun8i-h3-ahb2-clk";
->  			reg = <0x01c2005c 0x4>;
-> -			clocks = <&ahb1>, <&pll6d2>;
-> +			clocks = <&ahb1>, <&pll6>;
+> So the Array size is defined by the dt-bindings.
+> 
+> What you propose is a major change to the clock framework, so I would
+> hope that Eric (the original author of this clock-driver) would address
+> it.
+> 
+> Maybe someone has a better idea for a pattern to use to achieve 
+> the required while maintaining “synchronization” between defines
+> inside the dt-binding and the driver.
+> 
 
-According to the datasheet AHB2 really has PLL6 / 2 as parent, not PLL6
-directly.
+Why not just get rid of BCM2835_CLOCK_COUNT and use an internal clock
+count ? Something like the patch attached at the end of the mail. This
+has the downside to be more careful when adding a new clock.
 
-Jens
+If it is not ok, I could try to modify the clk driver to use Mark's
+solution if you want.
+
+Regards,
+
+-- 
+Remi
+
+--------------------------------->8---------------------------------------
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 015e687..f558c5b 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -281,6 +281,8 @@
+ #define LOCK_TIMEOUT_NS                100000000
+ #define BCM2835_MAX_FB_RATE    1750000000u
+ 
++#define BCM2835_CLOCK_MAX BCM2835_CLOCK_PCM
++
+ struct bcm2835_cprman {
+        struct device *dev;
+        void __iomem *regs;
+@@ -288,7 +290,7 @@ struct bcm2835_cprman {
+        const char *osc_name;
+ 
+        struct clk_onecell_data onecell;
+-       struct clk *clks[BCM2835_CLOCK_COUNT];
++       struct clk *clks[BCM2835_CLOCK_MAX + 1];
+ };
+ 
+ static inline void cprman_write(struct bcm2835_cprman *cprman, u32 reg, u32 val)
