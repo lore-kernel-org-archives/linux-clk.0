@@ -1,197 +1,76 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <xuejiancheng@hisilicon.com>
+Subject: Re: [PATCH v5 5/6] mfd: dt-bindings: add device tree bindings for
+ Hi3519 sysctrl
+To: Lee Jones <lee.jones@linaro.org>
+References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
+ <1452219400-32478-6-git-send-email-xuejiancheng@huawei.com>
+ <20160111054846.GD3331@x1>
+CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <p.zabel@pengutronix.de>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
+        <mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
+        <galak@codeaurora.org>, <linux@arm.linux.org.uk>, <khilman@linaro.org>,
+        <arnd@arndb.de>, <olof@lixom.net>, <xuwei5@hisilicon.com>,
+        <haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+        <bintian.wang@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+        <yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+        <ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
+        <zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>
+From: xuejiancheng <xuejiancheng@huawei.com>
+Message-ID: <56935EA8.4060801@huawei.com>
+Date: Mon, 11 Jan 2016 15:50:00 +0800
 MIME-Version: 1.0
-To: Simon Arlott <simon@fire.lp0.eu>, "Stephen Boyd" <sboyd@codeaurora.org>,
- "Kevin Cernekee" <cernekee@gmail.com>,
- "Florian Fainelli" <f.fainelli@gmail.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <5669F3C3.3090207@simon.arlott.org.uk>
-Cc: "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
- linux-clk@vger.kernel.org, linux-mips@linux-mips.org,
- "Rob Herring" <robh+dt@kernel.org>, "Pawel Moll" <pawel.moll@arm.com>,
- "Mark Rutland" <mark.rutland@arm.com>,
- "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
- "Kumar Gala" <galak@codeaurora.org>, "Jonas Gorski" <jogo@openwrt.org>
-References: <5669F361.60405@simon.arlott.org.uk> <5669F3C3.3090207@simon.arlott.org.uk>
-Message-ID: <20160101234031.7140.66812@quark.deferred.io>
-Subject: Re: [PATCH linux-next (v2) 2/2] clk: bcm6345: Add BCM6345 gated clock support
-Date: Fri, 01 Jan 2016 15:40:31 -0800
+In-Reply-To: <20160111054846.GD3331@x1>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Simon,
+Hi Lee Jones,
 
-Quoting Simon Arlott (2015-12-10 13:50:59)
-> +#define to_clk_bcm6345(_hw) container_of(_hw, struct clk_bcm6345, hw)
-> +
-> +static int clk_bcm6345_enable(struct clk_hw *hw)
-> +{
-> +       struct clk_bcm6345 *gate =3D to_clk_bcm6345(hw);
-> +
-> +       return regmap_write_bits(gate->map, gate->offset,
-> +                                       gate->mask, gate->mask);
+    Thanks for your comments.
 
-Does your regmap hold a spinlock or mutex? If a mutex then this should
-be a .prepare callback instead of .enable. If it's a spinlock then
-nothing to see here, move along.
+On 2016/1/11 13:48, Lee Jones wrote:
+> On Fri, 08 Jan 2016, Jiancheng Xue wrote:
+> 
+>> Add device tree bindings for Hi3519 system controller.
+>>
+>> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+>> ---
+>>  Documentation/devicetree/bindings/mfd/hi3519.txt | 14 ++++++++++++++
+>>  1 file changed, 14 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/mfd/hi3519.txt
+> 
+> I have this patch, but none of the others in the set, thus I am
+> lacking context.
+> 
+I can forward other patches in the set to you. Thank you.
 
-> +}
-> +
-> +static void clk_bcm6345_disable(struct clk_hw *hw)
-> +{
-> +       struct clk_bcm6345 *gate =3D to_clk_bcm6345(hw);
-> +
-> +       regmap_write_bits(gate->map, gate->offset,
-> +                                       gate->mask, 0);
-> +}
-> +
-> +static int clk_bcm6345_is_enabled(struct clk_hw *hw)
-> +{
-> +       struct clk_bcm6345 *gate =3D to_clk_bcm6345(hw);
-> +       unsigned int val;
-> +       int ret;
-> +
-> +       ret =3D regmap_read(gate->map, gate->offset, &val);
-> +       if (ret)
-> +               return ret;
-> +
-> +       val &=3D gate->mask;
-> +
-> +       return val ? 1 : 0;
-> +}
-> +
-> +const struct clk_ops clk_bcm6345_ops =3D {
-> +       .enable =3D clk_bcm6345_enable,
-> +       .disable =3D clk_bcm6345_disable,
-> +       .is_enabled =3D clk_bcm6345_is_enabled,
-> +};
-> +
-> +static struct clk * __init of_bcm6345_clk_register(const char *parent_na=
-me,
-> +       const char *clk_name, struct regmap *map, u32 offset, u32 mask)
-> +{
-> +       struct clk_bcm6345 *gate;
-> +       struct clk_init_data init;
-> +       struct clk *ret;
-> +
-> +       gate =3D kzalloc(sizeof(*gate), GFP_KERNEL);
-> +       if (!gate)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       init.name =3D clk_name;
-> +       init.ops =3D &clk_bcm6345_ops;
-> +       init.flags =3D CLK_IS_BASIC;
+>> diff --git a/Documentation/devicetree/bindings/mfd/hi3519.txt b/Documentation/devicetree/bindings/mfd/hi3519.txt
+>> new file mode 100644
+>> index 0000000..115c5be
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/hi3519.txt
+>> @@ -0,0 +1,14 @@
+>> +* Hisilicon Hi3519 System Controller Block
+>> +
+>> +This bindings use the following binding:
+>> +Documentation/devicetree/bindings/mfd/syscon.txt
+>> +
+>> +Required properties:
+>> +- compatible: "hisilicon,hi3519-sysctrl".
+>> +- reg: the register region of this block
+>> +
+>> +Examples:
+>> +sysctrl: system-controller@12010000 {
+>> +	compatible = "hisilicon,hi3519-sysctrl", "syscon";
+>> +	reg = <0x12010000 0x1000>;
+>> +};
+> 
+> There is no requirement (nor want) for binding documents where the
+> given device is simply using highly generic bindings.  This just
+> amounts to churn.
+> 
+This block is specific for Hi3519 SOC, and may has its own driver.
+So I think it's better to keep this binding.
 
-Why is CLK_IS_BASIC set?
-
-> +       init.parent_names =3D (parent_name ? &parent_name : NULL);
-> +       init.num_parents =3D (parent_name ? 1 : 0);
-> +       gate->hw.init =3D &init;
-> +       gate->map =3D map;
-> +       gate->offset =3D offset;
-> +       gate->mask =3D mask;
-> +
-> +       ret =3D clk_register(NULL, &gate->hw);
-> +       if (IS_ERR(ret))
-> +               kfree(gate);
-> +
-> +       return ret;
-> +}
-> +
-> +static void __init of_bcm6345_clk_setup(struct device_node *node)
-> +{
-> +       struct clk_onecell_data *clk_data;
-> +       const char *parent_name =3D NULL;
-> +       struct regmap *map;
-> +       u32 offset;
-> +       unsigned int clocks =3D 0;
-> +       int i;
-> +
-> +       clk_data =3D kzalloc(sizeof(*clk_data), GFP_KERNEL);
-> +       if (!clk_data)
-> +               return;
-> +
-> +       clk_data->clk_num =3D 32;
-> +       clk_data->clks =3D kmalloc_array(clk_data->clk_num,
-> +               sizeof(*clk_data->clks), GFP_KERNEL);
-> +
-> +       for (i =3D 0; i < clk_data->clk_num; i++)
-> +               clk_data->clks[i] =3D ERR_PTR(-ENODEV);
-> +
-> +       if (of_clk_get_parent_count(node) > 0)
-> +               parent_name =3D of_clk_get_parent_name(node, 0);
-> +
-> +       map =3D syscon_regmap_lookup_by_phandle(node, "regmap");
-> +       if (IS_ERR(map)) {
-> +               pr_err("%s: regmap lookup error %ld\n",
-> +                       node->full_name, PTR_ERR(map));
-> +               goto out;
-> +       }
-> +
-> +       if (of_property_read_u32(node, "offset", &offset)) {
-> +               pr_err("%s: offset not specified\n", node->full_name);
-> +               goto out;
-> +       }
-> +
-> +       /* clks[] is sparse, indexed by bit, maximum clocks checked using=
- i */
-> +       for (i =3D 0; i < clk_data->clk_num; i++) {
-> +               u32 bit;
-> +               const char *clk_name;
-> +
-> +               if (of_property_read_u32_index(node, "clock-indices",
-> +                               i, &bit))
-> +                       goto out;
-> +
-> +               if (of_property_read_string_index(node, "clock-output-nam=
-es",
-> +                               i, &clk_name))
-> +                       goto out;
-> +
-> +               if (bit >=3D clk_data->clk_num) {
-> +                       pr_err("%s: clock bit %u out of range\n",
-> +                               node->full_name, bit);
-> +                       continue;
-> +               }
-> +
-> +               if (!IS_ERR(clk_data->clks[bit])) {
-> +                       pr_err("%s: clock bit %u already exists\n",
-> +                               node->full_name, bit);
-> +                       continue;
-> +               }
-> +
-> +               clk_data->clks[bit] =3D of_bcm6345_clk_register(parent_na=
-me,
-> +                                       clk_name, map, offset, BIT(bit));
-> +               if (!IS_ERR(clk_data->clks[bit]))
-> +                       clocks++;
-> +       }
-> +
-> +out:
-> +       if (clocks) {
-> +               of_clk_add_provider(node, of_clk_src_onecell_get, clk_dat=
-a);
-> +               pr_info("%s: registered %u clocks\n", node->name, clocks);
-> +       } else {
-> +               kfree(clk_data->clks);
-> +               kfree(clk_data);
-> +       }
-> +}
-> +
-> +CLK_OF_DECLARE(bcm6345_clk, "brcm,bcm6345-gate-clk", of_bcm6345_clk_setu=
-p);
-
-Please do not use CLK_OF_DECLARE unless there is a good reason. Ideally
-this should be a platform_driver.
-
-Regards,
-Mike
-
-> -- =
-
-> 2.1.4
-> =
-
-> -- =
-
-> Simon Arlott
+Jiancheng
