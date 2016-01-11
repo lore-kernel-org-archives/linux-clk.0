@@ -1,77 +1,48 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga03-in.huawei.com ([119.145.14.66]:8044 "EHLO
-	szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754808AbcAYDPZ (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 24 Jan 2016 22:15:25 -0500
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
-	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
-	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [PATCH v7 4/6] ARM: debug: add hi3519 debug uart
-Date: Mon, 25 Jan 2016 11:01:21 +0800
-Message-ID: <1453690883-31220-5-git-send-email-xuejiancheng@huawei.com>
-In-Reply-To: <1453690883-31220-1-git-send-email-xuejiancheng@huawei.com>
-References: <1453690883-31220-1-git-send-email-xuejiancheng@huawei.com>
+Return-Path: <xuejiancheng@hisilicon.com>
+Subject: Re: [PATCH v5 6/6] ARM: dts: add dts files for Hi3519
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
+ <1452219400-32478-7-git-send-email-xuejiancheng@huawei.com>
+ <20160108151058.GN19062@n2100.arm.linux.org.uk>
+CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <p.zabel@pengutronix.de>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
+        <mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
+        <galak@codeaurora.org>, <khilman@linaro.org>, <arnd@arndb.de>,
+        <olof@lixom.net>, <xuwei5@hisilicon.com>, <haojian.zhuang@linaro.org>,
+        <zhangfei.gao@linaro.org>, <bintian.wang@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
+        <suwenping@hisilicon.com>, <ml.yang@hisilicon.com>,
+        <gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+        <xuejiancheng@hisilicon.com>
+From: xuejiancheng <xuejiancheng@huawei.com>
+Message-ID: <56930E05.1050009@huawei.com>
+Date: Mon, 11 Jan 2016 10:05:57 +0800
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20160108151058.GN19062@n2100.arm.linux.org.uk>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-add hi3519 debug uart
+Hello Russell,
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
----
- arch/arm/Kconfig.debug | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+On 2016/1/8 23:10, Russell King - ARM Linux wrote:
+> On Fri, Jan 08, 2016 at 10:16:40AM +0800, Jiancheng Xue wrote:
+>> +		uart0: serial@12100000 {
+>> +			compatible = "arm,pl011", "arm,primecell";
+>> +			reg = <0x12100000 0x1000>;
+>> +			interrupts = <0 4 4>;
+> 
+> Should the last digit there be IRQ_TYPE_LEVEL_HIGH (and same for the
+> other interrupts= after this?)
+> 
+> Thanks.
+> 
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index c6b6175..b02a7c1 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -260,6 +260,14 @@ choice
- 		  Say Y here if you want kernel low-level debugging support
- 		  on Cortina Gemini based platforms.
- 
-+	config DEBUG_HI3519_UART
-+		bool "Hisilicon HI3519 Debug UART"
-+		depends on ARCH_HISI
-+		select DEBUG_UART_PL01X
-+		help
-+		  Say Y here if you want kernel low-level debugging support
-+		  on HI3519 UART.
-+
- 	config DEBUG_HI3620_UART
- 		bool "Hisilicon HI3620 Debug UART"
- 		depends on ARCH_HI3xxx
-@@ -1451,6 +1459,7 @@ config DEBUG_UART_PHYS
- 	default 0x11002000 if DEBUG_MT8127_UART0
- 	default 0x11006000 if DEBUG_MT6589_UART0
- 	default 0x11009000 if DEBUG_MT8135_UART3
-+	default 0x12100000 if DEBUG_HI3519_UART
- 	default 0x16000000 if DEBUG_INTEGRATOR
- 	default 0x18000300 if DEBUG_BCM_5301X
- 	default 0x18010000 if DEBUG_SIRFATLAS7_UART0
-@@ -1514,6 +1523,7 @@ config DEBUG_UART_PHYS
- 	default 0xfcb00000 if DEBUG_HI3620_UART
- 	default 0xfd883000 if DEBUG_ALPINE_UART0
- 	default 0xfe800000 if ARCH_IOP32X
-+	default 0xfef00000 if DEBUG_HI3519_UART
- 	default 0xff690000 if DEBUG_RK32_UART2
- 	default 0xffc02000 if DEBUG_SOCFPGA_UART0
- 	default 0xffc02100 if DEBUG_SOCFPGA_UART1
--- 
-1.9.1
+I'll include <dt-bindings/interrupt-controller/arm-gic.h> and use
+IRQ_TYPE_LEVEL_HIGH instead. The interrupts specifier will be wrote
+like this "interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;".
 
+Thank you.
+
+Jiancheng
