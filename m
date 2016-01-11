@@ -1,44 +1,59 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: keescook@google.com,
-	leozwang@google.com,
-	linux-rockchip@lists.infradead.org,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	Kumar Gala <galak@codeaurora.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 0/5] fix some clock configuration for the RK3036 platform
-Date: Thu,  7 Jan 2016 20:17:32 +0800
-Message-Id: <1452169057-24467-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <xuejiancheng@hisilicon.com>
+Subject: Re: [PATCH v5 4/6] ARM: debug: add hi3519 debug uart
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
+ <1452219400-32478-5-git-send-email-xuejiancheng@huawei.com>
+ <20160108150828.GM19062@n2100.arm.linux.org.uk>
+CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <p.zabel@pengutronix.de>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
+        <mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
+        <galak@codeaurora.org>, <khilman@linaro.org>, <arnd@arndb.de>,
+        <olof@lixom.net>, <xuwei5@hisilicon.com>, <haojian.zhuang@linaro.org>,
+        <zhangfei.gao@linaro.org>, <bintian.wang@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
+        <suwenping@hisilicon.com>, <ml.yang@hisilicon.com>,
+        <gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+        <xuejiancheng@hisilicon.com>
+From: xuejiancheng <xuejiancheng@huawei.com>
+Message-ID: <56931454.6090300@huawei.com>
+Date: Mon, 11 Jan 2016 10:32:52 +0800
+MIME-Version: 1.0
+In-Reply-To: <20160108150828.GM19062@n2100.arm.linux.org.uk>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
+Hello Russell,
 
-Hi:
-  In the development work, we found that some of the previous
-incorrect clock configuration on the RK3036 platform, we should
-fix them.
+On 2016/1/8 23:08, Russell King - ARM Linux wrote:
+> On Fri, Jan 08, 2016 at 10:16:38AM +0800, Jiancheng Xue wrote:
+>> @@ -1449,6 +1457,7 @@ config DEBUG_UART_PHYS
+>>  	default 0xf7fc9000 if DEBUG_BERLIN_UART
+>>  	default 0xf8b00000 if DEBUG_HIX5HD2_UART
+>>  	default 0xf991e000 if DEBUG_QCOM_UARTDM
+>> +	default 0x12100000 if DEBUG_HI3519_UART
+>>  	default 0xfcb00000 if DEBUG_HI3620_UART
+>>  	default 0xfd883000 if DEBUG_ALPINE_UART0
+>>  	default 0xfe800000 if ARCH_IOP32X
+> 
+> Please insert at the appropriate location - examination of the list
+> of defaults will show that it's sorted numerically, please keep this
+> sorted numerically.
+> 
 
+OK. Thank you!
 
-
-Xing Zheng (5):
-  clk: rockchip: rk3036: fix the FLAGs for clock mux
-  clk: rockchip: rk3036: fix uarts clock error
-  clk: rockchip: rk3036: fix the div offset for emac clock
-  clk: rockchip: rk3036: rename emac ext source clock
-  clk: rockchip: rk3036: add HCLK_MAC id for emac
-
- drivers/clk/rockchip/clk-rk3036.c      |   28 ++++++++++++++--------------
- include/dt-bindings/clock/rk3036-cru.h |    1 +
- 2 files changed, 15 insertions(+), 14 deletions(-)
-
--- 
-1.7.9.5
+>> @@ -1529,6 +1538,7 @@ config DEBUG_UART_VIRT
+>>  	default 0xfe230000 if DEBUG_PICOXCELL_UART
+>>  	default 0xfe300000 if DEBUG_BCM_KONA_UART
+>>  	default 0xfe800000 if ARCH_IOP32X
+>> +	default 0xfef00000 if DEBUG_HI3519_UART
+>>  	default 0xfeb00000 if DEBUG_HI3620_UART || DEBUG_HIX5HD2_UART
+>>  	default 0xfeb24000 if DEBUG_RK3X_UART0
+>>  	default 0xfeb26000 if DEBUG_RK3X_UART1
+> 
+> Same for here.
+> 
+> Thanks.
+> 
