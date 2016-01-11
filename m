@@ -1,90 +1,80 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [RFC 6/9] clk: ti: add support for omap4 module clocks
-To: Michael Turquette <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <tony@atomide.com>,
-        <sboyd@codeaurora.org>
-References: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
- <1450447141-29936-7-git-send-email-t-kristo@ti.com>
- <20160101054815.21738.79820@quark.deferred.io>
-CC: <linux-arm-kernel@lists.infradead.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <568A20E5.6040005@ti.com>
-Date: Mon, 4 Jan 2016 09:36:05 +0200
-MIME-Version: 1.0
-In-Reply-To: <20160101054815.21738.79820@quark.deferred.io>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Remi Pommarel <repk@triplefau.lt>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH V2 3/4] clk: bcm2835: enable management of PCM clock
+Date: Mon, 11 Jan 2016 19:55:55 +0000
+Message-Id: <1452542157-2387-4-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1452542157-2387-1-git-send-email-kernel@martin.sperl.org>
+References: <1452542157-2387-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/01/2016 07:48 AM, Michael Turquette wrote:
-> Hi Tero,
->
-> Quoting Tero Kristo (2015-12-18 05:58:58)
->> Previously, hwmod core has been used for controlling the hwmod level
->> clocks. This has certain drawbacks, like being unable to share the
->> clocks for multiple users, missing usecounting and generally being
->> totally incompatible with common clock framework.
->>
->> Add support for new clock type under the TI clock driver, which will
->> be used to convert all the existing hwmdo clocks to. This helps to
->> get rid of the clock related hwmod data from kernel and instead
->> parsing this from DT.
->
-> I'm really happy to see this series. Looks pretty good to me.
->
->> +static int _omap4_hwmod_clk_enable(struct clk_hw *hw)
->> +{
->> +       struct clk_hw_omap *clk = to_clk_hw_omap(hw);
->> +       u32 val;
->> +       int timeout = 0;
->> +       int ret;
->> +
->> +       if (!clk->enable_bit)
->> +               return 0;
->> +
->> +       if (clk->clkdm) {
->> +               ret = ti_clk_ll_ops->clkdm_clk_enable(clk->clkdm, hw->clk);
->> +               if (ret) {
->> +                       WARN(1,
->> +                            "%s: could not enable %s's clockdomain %s: %d\n",
->> +                            __func__, clk_hw_get_name(hw),
->> +                            clk->clkdm_name, ret);
->> +                       return ret;
->> +               }
->> +       }
->> +
->> +       val = ti_clk_ll_ops->clk_readl(clk->enable_reg);
->> +
->> +       val &= ~OMAP4_MODULEMODE_MASK;
->> +       val |= clk->enable_bit;
->> +
->> +       ti_clk_ll_ops->clk_writel(val, clk->enable_reg);
->> +
->> +       /* Wait until module is enabled */
->> +       while (!_omap4_is_ready(val)) {
->> +               udelay(1);
->
-> This should really be a .prepare callback if you plan to keep the delays
-> in there.
+From: Martin Sperl <kernel@martin.sperl.org>
 
-If this is changed to a .prepare, then all OMAP power management is 
-effectively ruined as all clocks are going to be enabled all the time. 
-hwmod core doesn't support .prepare/.enable at the moment that well, and 
-changing that is going to be a big burden (educated guess, haven't 
-checked this yet)... The call chain that comes here is:
+Enable the PCM clock in the SOC, which is used by the
+bcm2835-i2s driver.
 
-device driver -> pm_runtime -> hwmod_core -> hwmod_clk_enable / disable.
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c       |   13 +++++++++++++
+ include/dt-bindings/clock/bcm2835.h |    1 +
+ 2 files changed, 14 insertions(+)
 
-The delay within this function should usually be pretty short, just to 
-wait that the module comes up from idle.
-
-I recall the discussions regarding the udelays within clk_enable/disable 
-calls, but what is the preferred approach then? Typically 
-clk_enable/disable just becomes a NOP if it is not allowed to wait for 
-hardware to complete transitioning before exiting the function.
-
--Tero
-
->
-> Regards,
-> Mike
->
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 7c782d3..573b5b1 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -88,6 +88,8 @@
+ #define CM_HSMDIV		0x08c
+ #define CM_OTPCTL		0x090
+ #define CM_OTPDIV		0x094
++#define CM_PCMCTL		0x098
++#define CM_PCMDIV		0x09c
+ #define CM_PWMCTL		0x0a0
+ #define CM_PWMDIV		0x0a4
+ #define CM_SMICTL		0x0b0
+@@ -826,6 +828,16 @@ static const struct bcm2835_clock_data bcm2835_clock_pwm_data = {
+ 	.frac_bits = 12,
+ };
+ 
++static const struct bcm2835_clock_data bcm2835_clock_pcm_data = {
++	.name = "pcm",
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
++	.parents = bcm2835_clock_per_parents,
++	.ctl_reg = CM_PCMCTL,
++	.div_reg = CM_PCMDIV,
++	.int_bits = 12,
++	.frac_bits = 12,
++};
++
+ struct bcm2835_pll {
+ 	struct clk_hw hw;
+ 	struct bcm2835_cprman *cprman;
+@@ -1616,6 +1628,7 @@ static const struct bcm2835_register_clock bcm2835_register_clocks[] = {
+ 	REGISTER_CLOCK(BCM2835_CLOCK_HSM, &bcm2835_clock_hsm_data),
+ 	REGISTER_CLOCK(BCM2835_CLOCK_EMMC, &bcm2835_clock_emmc_data),
+ 	REGISTER_CLOCK(BCM2835_CLOCK_PWM, &bcm2835_clock_pwm_data),
++	REGISTER_CLOCK(BCM2835_CLOCK_PCM, &bcm2835_clock_pcm_data),
+ };
+ 
+ void bcm2835_register_duplicate_index(
+diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
+index 87235ac..9a7b4a5 100644
+--- a/include/dt-bindings/clock/bcm2835.h
++++ b/include/dt-bindings/clock/bcm2835.h
+@@ -44,3 +44,4 @@
+ #define BCM2835_CLOCK_EMMC		28
+ #define BCM2835_CLOCK_PERI_IMAGE	29
+ #define BCM2835_CLOCK_PWM		30
++#define BCM2835_CLOCK_PCM		31
+-- 
+1.7.10.4
