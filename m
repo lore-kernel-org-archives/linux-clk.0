@@ -1,70 +1,82 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 25 Jan 2016 13:40:04 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Bresticker <abrestic@chromium.org>
-Subject: Re: [Patch V2 5/9] clk: tegra: pll: Fix potential
- sleeping-while-atomic
-Message-ID: <20160125124004.GH20452@ulmo.nvidia.com>
-References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
- <1452799478-14791-6-git-send-email-rklein@nvidia.com>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Mon, 11 Jan 2016 08:55:55 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: xuejiancheng <xuejiancheng@huawei.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, p.zabel@pengutronix.de,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	linux@arm.linux.org.uk, khilman@linaro.org, arnd@arndb.de,
+	olof@lixom.net, xuwei5@hisilicon.com, haojian.zhuang@linaro.org,
+	zhangfei.gao@linaro.org, bintian.wang@huawei.com,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	yanhaifeng@hisilicon.com, yanghongwei@hisilicon.com,
+	suwenping@hisilicon.com, ml.yang@hisilicon.com,
+	gaofei@hisilicon.com, zhangzhenxing@hisilicon.com,
+	xuejiancheng@hisilicon.com
+Subject: Re: [PATCH v5 5/6] mfd: dt-bindings: add device tree bindings for
+ Hi3519 sysctrl
+Message-ID: <20160111085555.GE14104@x1>
+References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
+ <1452219400-32478-6-git-send-email-xuejiancheng@huawei.com>
+ <20160111054846.GD3331@x1>
+ <56935EA8.4060801@huawei.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="k+G3HLlWI7eRTl+h"
-In-Reply-To: <1452799478-14791-6-git-send-email-rklein@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <56935EA8.4060801@huawei.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On Mon, 11 Jan 2016, xuejiancheng wrote:
+> On 2016/1/11 13:48, Lee Jones wrote:
+> > On Fri, 08 Jan 2016, Jiancheng Xue wrote:
+> > 
+> >> Add device tree bindings for Hi3519 system controller.
+> >>
+> >> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+> >> ---
+> >>  Documentation/devicetree/bindings/mfd/hi3519.txt | 14 ++++++++++++++
+> >>  1 file changed, 14 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/mfd/hi3519.txt
+> > 
+> > I have this patch, but none of the others in the set, thus I am
+> > lacking context.
+> > 
+> I can forward other patches in the set to you. Thank you.
+> 
+> >> diff --git a/Documentation/devicetree/bindings/mfd/hi3519.txt b/Documentation/devicetree/bindings/mfd/hi3519.txt
+> >> new file mode 100644
+> >> index 0000000..115c5be
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/mfd/hi3519.txt
+> >> @@ -0,0 +1,14 @@
+> >> +* Hisilicon Hi3519 System Controller Block
+> >> +
+> >> +This bindings use the following binding:
+> >> +Documentation/devicetree/bindings/mfd/syscon.txt
+> >> +
+> >> +Required properties:
+> >> +- compatible: "hisilicon,hi3519-sysctrl".
+> >> +- reg: the register region of this block
+> >> +
+> >> +Examples:
+> >> +sysctrl: system-controller@12010000 {
+> >> +	compatible = "hisilicon,hi3519-sysctrl", "syscon";
+> >> +	reg = <0x12010000 0x1000>;
+> >> +};
+> > 
+> > There is no requirement (nor want) for binding documents where the
+> > given device is simply using highly generic bindings.  This just
+> > amounts to churn.
+> > 
+> This block is specific for Hi3519 SOC, and may has its own driver.
 
---k+G3HLlWI7eRTl+h
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Does it have its own driver currently?
 
-On Thu, Jan 14, 2016 at 02:24:34PM -0500, Rhyland Klein wrote:
-> From: Andrew Bresticker <abrestic@chromium.org>
->=20
-> Since the ->enable() callback is called with a spinlock held, we cannot
-> call potentially blocking functions such as clk_get_rate() or
-> clk_get_parent(), so use the unlocked versions instead.
->=20
-> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> [rklein: Adapted from ChromeOS patch, removing pllu_enable cleanup as
-> it isn't present upstream]
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-pll.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> So I think it's better to keep this binding.
 
-Applied, thanks.
-
-Thierry
-
---k+G3HLlWI7eRTl+h
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJWphekAAoJEN0jrNd/PrOhXlsQAJCkU+FneOsQzZZXHPqyVfC8
-WBtoO1Lsnc6AwmzGQbbjS54gku4TptEKrEbxz6h2AXilhmGZIEav9bu6J6hhBkpU
-2npLKPpfQGq1+D4B2uxX9Np/IsqCQtIkraHmawVjy3Zo4ww3tSw3RJg8VeBTK6wZ
-oGblDnXVPXD6oKQJx2hGg8soUTjHFuBR2HTYAWMOrPXDwjbw7P8bWthQo6fsK/e0
-8+8Rs2sXLAQ1VPAV0lw3whTs9w9QqAIn6ioxpIk4pl3U5jenFSm1DcFLNDFDm35o
-W3zwbax1Smt9ypA+4jbtBT3qmJDhMD8gejan9oZI9hWZvB2+SJZh4lEA7w/JS21A
-OES/0eZXAKU5BBKHmUStMdGc7IUsAYKRvIXCCcA2NY7HIjQeFzPdxsw2uX4iiaHX
-c7DwNCBqLxDMccRnlIM9KPNaKmwdVF1mvHo+14OKiYEXFPa3QoW8rbRa3O9azlts
-VYs8z74zbGYnbBxFhm6e66vslAMSLS2MJTrORWej5sFr5m8Mw+bJQrwQJuENayyo
-TmoZ97it1bZkFOtgr73fNPkYhmf0yAn2ROgN49xvMzmfxdG2dQYI97AALdgYrGhI
-2XK6/LQZLkcedj9j8A0/mYIuYT19w16Jo0W5ko4Axa3rwN2KR35dcf3aJ4Dm4o1e
-Q9KiCVHQvbrMBjb2Rd4/
-=IBtp
------END PGP SIGNATURE-----
-
---k+G3HLlWI7eRTl+h--
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
