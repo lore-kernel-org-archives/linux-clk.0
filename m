@@ -1,101 +1,57 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>,
-	Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mark Kuo <mkuo@nvidia.com>, Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 8/9] clk: tegra: pll: Fix PLLE SS config
-Date: Fri, 8 Jan 2016 13:37:10 -0500
-Message-ID: <1452278231-9546-9-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1452278231-9546-1-git-send-email-rklein@nvidia.com>
-References: <1452278231-9546-1-git-send-email-rklein@nvidia.com>
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Martin Sperl <kernel@martin.sperl.org>
+Cc: Mark Brown <broonie@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Remi Pommarel <repk@triplefau.lt>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-rpi-kernel@lists.infradead.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk <linux-clk@vger.kernel.org>, ALSA Development Mailing List <alsa-devel@alsa-project.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Matthias Reichl <hias@horus.com>, lFlorian Meier <florian.meier@koalo.de>
+Subject: Re: [PATCH 2/5] clk: bcm2835: enable management of PCM clock
+Date: Mon, 11 Jan 2016 14:38:03 +0100
+Message-ID: <4412078.STjb1rKkbV@wuerfel>
+In-Reply-To: <39E8C95F-C7DC-46C3-B29A-93A865485942@martin.sperl.org>
+References: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org> <20160110115858.GV6588@sirena.org.uk> <39E8C95F-C7DC-46C3-B29A-93A865485942@martin.sperl.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mark Kuo <mkuo@nvidia.com>
+On Sunday 10 January 2016 13:17:17 Martin Sperl wrote:
+>=20
+> What you propose is a major change to the clock framework, so I would=
 
-Fix PLLE spread spectrum configuration so it aligns with downstream
-kernel.
+> hope that Eric (the original author of this clock-driver) would addre=
+ss
+> it.
+>=20
+> Maybe someone has a better idea for a pattern to use to achieve=20
+> the required while maintaining =E2=80=9Csynchronization=E2=80=9D betw=
+een defines
+> inside the dt-binding and the driver.
 
-Signed-off-by: Mark Kuo <mkuo@nvidia.com>
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c | 22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+It's funny to look at the register list:
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index d9c3109b75bd..6ac3f843e7ca 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -86,15 +86,21 @@
- #define PLLE_SS_DISABLE (PLLE_SS_CNTL_BYPASS_SS | PLLE_SS_CNTL_INTERP_RESET |\
- 				PLLE_SS_CNTL_SSC_BYP)
- #define PLLE_SS_MAX_MASK 0x1ff
--#define PLLE_SS_MAX_VAL 0x25
-+#define PLLE_SS_MAX_VAL_TEGRA114 0x25
-+#define PLLE_SS_MAX_VAL_TEGRA210 0x21
- #define PLLE_SS_INC_MASK (0xff << 16)
- #define PLLE_SS_INC_VAL (0x1 << 16)
- #define PLLE_SS_INCINTRV_MASK (0x3f << 24)
--#define PLLE_SS_INCINTRV_VAL (0x20 << 24)
-+#define PLLE_SS_INCINTRV_VAL_TEGRA114 (0x20 << 24)
-+#define PLLE_SS_INCINTRV_VAL_TEGRA210 (0x23 << 24)
- #define PLLE_SS_COEFFICIENTS_MASK \
- 	(PLLE_SS_MAX_MASK | PLLE_SS_INC_MASK | PLLE_SS_INCINTRV_MASK)
--#define PLLE_SS_COEFFICIENTS_VAL \
--	(PLLE_SS_MAX_VAL | PLLE_SS_INC_VAL | PLLE_SS_INCINTRV_VAL)
-+#define PLLE_SS_COEFFICIENTS_VAL_TEGRA114 \
-+	(PLLE_SS_MAX_VAL_TEGRA114 | PLLE_SS_INC_VAL |\
-+	 PLLE_SS_INCINTRV_VAL_TEGRA114)
-+#define PLLE_SS_COEFFICIENTS_VAL_TEGRA210 \
-+	(PLLE_SS_MAX_VAL_TEGRA210 | PLLE_SS_INC_VAL |\
-+	 PLLE_SS_INCINTRV_VAL_TEGRA210)
- 
- #define PLLE_AUX_PLLP_SEL	BIT(2)
- #define PLLE_AUX_USE_LOCKDET	BIT(3)
-@@ -1401,7 +1407,7 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
- 	val |= PLLE_MISC_IDDQ_SW_CTRL;
- 	val &= ~PLLE_MISC_IDDQ_SW_VALUE;
- 	val |= PLLE_MISC_PLLE_PTS;
--	val |= PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK;
-+	val &= ~(PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK);
- 	pll_writel_misc(val, pll);
- 	udelay(5);
- 
-@@ -1428,7 +1434,7 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
- 	val = pll_readl(PLLE_SS_CTRL, pll);
- 	val &= ~(PLLE_SS_CNTL_CENTER | PLLE_SS_CNTL_INVERT);
- 	val &= ~PLLE_SS_COEFFICIENTS_MASK;
--	val |= PLLE_SS_COEFFICIENTS_VAL;
-+	val |= PLLE_SS_COEFFICIENTS_VAL_TEGRA114;
- 	pll_writel(val, PLLE_SS_CTRL, pll);
- 	val &= ~(PLLE_SS_CNTL_SSC_BYP | PLLE_SS_CNTL_BYPASS_SS);
- 	pll_writel(val, PLLE_SS_CTRL, pll);
-@@ -2035,7 +2041,7 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	val |= PLLE_MISC_IDDQ_SW_CTRL;
- 	val &= ~PLLE_MISC_IDDQ_SW_VALUE;
- 	val |= PLLE_MISC_PLLE_PTS;
--	val |= PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK;
-+	val &= ~(PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK);
- 	pll_writel_misc(val, pll);
- 	udelay(5);
- 
-@@ -2065,7 +2071,7 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	val = pll_readl(PLLE_SS_CTRL, pll);
- 	val &= ~(PLLE_SS_CNTL_CENTER | PLLE_SS_CNTL_INVERT);
- 	val &= ~PLLE_SS_COEFFICIENTS_MASK;
--	val |= PLLE_SS_COEFFICIENTS_VAL;
-+	val |= PLLE_SS_COEFFICIENTS_VAL_TEGRA210;
- 	pll_writel(val, PLLE_SS_CTRL, pll);
- 	val &= ~(PLLE_SS_CNTL_SSC_BYP | PLLE_SS_CNTL_BYPASS_SS);
- 	pll_writel(val, PLLE_SS_CTRL, pll);
--- 
-1.9.1
+#define CM_VPUCTL               0x008
+#define CM_VPUDIV               0x00c
+#define CM_SYSCTL               0x010
+#define CM_SYSDIV               0x014
+#define CM_PERIACTL             0x018
+#define CM_PERIADIV             0x01c
+#define CM_PERIICTL             0x020
+#define CM_PERIIDIV             0x024
+#define CM_H264CTL              0x028
+#define CM_H264DIV              0x02c
+
+This one seems completely regular, there is always a pair of CTL and DI=
+V
+registers, so I would have guessed that we could just take the index
+of that to completely avoid the need for the header file and just have
+a lookup table of each index.
+
+I can see two possible ways forward:
+
+a) deprecate the existing binding and write a new simpler driver to
+   replace it with one that does not need the header. We probably need
+   to keep both drivers around indefinitely though to deal with people
+   that have their own dtb files, so this is a bit awkward.
+
+b) look at all the holes in the table and define new numbers for them
+   now, then remove the count as the driver can simply hardcode the
+   maximum number as it knows it will never change.
+
+=09Arnd
