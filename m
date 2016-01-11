@@ -1,134 +1,49 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 5 Jan 2016 17:45:04 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: mturquette@baylibre.com, cw00.choi@samsung.com, lee.jones@linaro.org,
-	myungjoo.ham@samsung.com, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	patches@opensource.wolfsonmicro.com
-Subject: Re: [PATCH 2/4] clk: arizona: Add clock driver for the Arizona
- devices
-Message-ID: <20160106014504.GE22188@codeaurora.org>
-References: <1452008502-3749-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <1452008502-3749-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Return-Path: <ckeepax@opensource.wolfsonmicro.com>
+Date: Mon, 11 Jan 2016 11:03:14 +0000
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+To: Lee Jones <lee.jones@linaro.org>
+CC: <mturquette@baylibre.com>, <cw00.choi@samsung.com>, <sboyd@codeaurora.org>,
+        <myungjoo.ham@samsung.com>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v3 3/4] mfd: arizona: Switch to using clock driver for
+ 32k clock
+Message-ID: <20160111110314.GF1490@localhost.localdomain>
+References: <1452252582-20834-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <1452252582-20834-3-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <20160111102545.GX14104@x1>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1452008502-3749-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20160111102545.GX14104@x1>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/05, Charles Keepax wrote:
-> Add an initial clock driver for the Arizona series audio CODECs.
-> Currently this driver only provides support for parsing the two input
-> clocks (mclk1, mclk2) and providing the internally consumed 32k clock.
+On Mon, Jan 11, 2016 at 10:25:46AM +0000, Lee Jones wrote:
+> On Fri, 08 Jan 2016, Charles Keepax wrote:
 > 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> > Now we have a clock driver that can control the 32k clock use this
+> > rather than directly controlling the 32k clock from the MFD device.
+> > 
+> > Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> > ---
+> > 
+> > No changes since v2.
+> > 
+> > Thanks,
+> > Charles
+> > 
+> >  drivers/mfd/arizona-core.c       | 104 +++++++++------------------------------
+> >  include/linux/mfd/arizona/core.h |   7 +--
+> >  2 files changed, 25 insertions(+), 86 deletions(-)
+> 
+> I guess this needs to go in with the Clk changes, which are yet to be
+> reviewed, right?
+> 
+> For my own reference:
+>   Acked-by: Lee Jones <lee.jones@linaro.org>
+> 
+> [...]
 
-Can this go through clk-tree without the other three patches and
-nothing breaks?
+Yeah this needs to go in with the clock changes themselves.
 
-> diff --git a/drivers/clk/clk-arizona.c b/drivers/clk/clk-arizona.c
-> new file mode 100644
-> index 0000000..1ab69ee
-> --- /dev/null
-> +++ b/drivers/clk/clk-arizona.c
-> @@ -0,0 +1,192 @@
-> +
-> +static int arizona_32k_enable(struct clk_hw *hw)
-> +{
-> +	struct arizona_clk *clkdata = clk32k_to_arizona_clk(hw);
-> +	struct arizona *arizona = clkdata->arizona;
-> +	int ret;
-> +
-> +	switch (arizona->pdata.clk32k_src) {
-> +	case ARIZONA_32KZ_MCLK1:
-> +		ret = pm_runtime_get_sync(arizona->dev);
-> +		if (ret != 0)
-
-typically we write this as
-
-	if (ret)
-
-
-> +			goto out;
-> +		break;
-> +	}
-> +
-> +	ret = regmap_update_bits_async(arizona->regmap, ARIZONA_CLOCK_32K_1,
-> +				       ARIZONA_CLK_32K_ENA,
-> +				       ARIZONA_CLK_32K_ENA);
-> +
-> +out:
-> +	return ret;
-> +}
-> +
-> +static int arizona_clk_of_get_pdata(struct arizona *arizona)
-> +{
-> +	const char * const pins[] = { "mclk1", "mclk2" };
-> +	struct clk *mclk;
-> +	int i;
-> +
-> +	if (!of_property_read_bool(arizona->dev->of_node, "clocks"))
-> +		return 0;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(pins); ++i) {
-> +		mclk = of_clk_get_by_name(arizona->dev->of_node, pins[i]);
-> +		if (IS_ERR(mclk))
-> +			return PTR_ERR(mclk);
-> +
-> +		if (clk_get_rate(mclk) == CLK32K_RATE) {
-> +			arizona->pdata.clk32k_src = ARIZONA_32KZ_MCLK1 + i;
-> +			arizona->pdata.clk32k_parent = __clk_get_name(mclk);
-> +		}
-> +
-> +		clk_put(mclk);
-
-Is this configuring some mux for the 32kHz source? Perhaps this
-can be done with assigned clock parents and a set_parent clk_op
-instead of with of_clk_get_by_name() in a loop over the possible
-parents?
-
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int arizona_clk_probe(struct platform_device *pdev)
-> +{
-[..]
-> +
-> +	if (arizona->pdata.clk32k_parent) {
-> +		clk32k_init.num_parents = 1;
-> +		clk32k_init.parent_names = &arizona->pdata.clk32k_parent;
-> +	} else {
-> +		clk32k_init.flags |= CLK_IS_ROOT;
-> +	}
-> +
-> +	clkdata->clk32k_hw.init = &clk32k_init;
-> +	clkdata->clk32k = devm_clk_register(&pdev->dev, &clkdata->clk32k_hw);
-> +	if (IS_ERR(clkdata->clk32k)) {
-> +		ret = PTR_ERR(clkdata->clk32k);
-> +		dev_err(arizona->dev, "Failed to register 32k clock: %d\n",
-> +			ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = clk_register_clkdev(clkdata->clk32k, "arizona-32k",
-> +				  dev_name(arizona->dev));
-
-Any reason we register with clkdev but don't register an of clk
-provider?
-
-> +	if (ret) {
-> +		dev_err(arizona->dev, "Failed to register 32k clock dev: %d\n",
-> +			ret);
-> +		return ret;
-> +	}
-> +
-> +	platform_set_drvdata(pdev, clkdata);
-> +
-> +	return 0;
-> +}
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks,
+Charles
