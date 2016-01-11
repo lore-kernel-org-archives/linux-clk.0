@@ -1,142 +1,101 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Rob Herring <robh+dt@kernel.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Remi Pommarel <repk@triplefau.lt>,
-	devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [RFC 3/9] clk: bcm2835: add ability to control mash level via device-tree
-Date: Tue, 19 Jan 2016 14:51:34 +0000
-Message-Id: <1453215100-2382-4-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1453215100-2382-1-git-send-email-kernel@martin.sperl.org>
-References: <1453215100-2382-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <jamesjj.liao@mediatek.com>
+Message-ID: <1452476359.13825.1.camel@mtksdaap41>
+Subject: Re: [PATCH] clk: mediatek: Allow changing PLL rate when it is off
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	<srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>, Daniel Kurtz
+	<djkurtz@chromium.org>, <linux-mediatek@lists.infradead.org>, Sascha Hauer
+	<kernel@pengutronix.de>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Date: Mon, 11 Jan 2016 09:39:19 +0800
+In-Reply-To: <20160108112142.GF13058@pengutronix.de>
+References: <1452240997-35316-1-git-send-email-jamesjj.liao@mediatek.com>
+	 <20160108091510.GC13058@pengutronix.de>
+	 <1452246533.31362.10.camel@mtksdaap41>
+	 <20160108112142.GF13058@pengutronix.de>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+Hi Sascha,
 
-Control maximum mash levels that can get used via the device tree.
+On Fri, 2016-01-08 at 12:21 +0100, Sascha Hauer wrote:
+> On Fri, Jan 08, 2016 at 05:48:53PM +0800, James Liao wrote:
+> > On Fri, 2016-01-08 at 10:15 +0100, Sascha Hauer wrote:
+> > > On Fri, Jan 08, 2016 at 04:16:37PM +0800, James Liao wrote:
+> > > > Some modules may need to change its clock rate before turn on it.
+> > > > So changing PLL's rate when it is off should be allowed.
+> > > > This patch removes PLL enabled check before set rate, so that
+> > > > PLLs can set new frequency even if they are off.
+> > > 
+> > > This sounds like the software refused to change the rate on disabled
+> > > PLLs, but this is not the case.
+> > 
+> > In fact the major change of this patch is trigger (set) CON0_PCW_CHG no
+> > matter PLL is on or not.
+> > 
+> > > > 
+> > > > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> > > > ---
+> > > >  drivers/clk/mediatek/clk-pll.c | 9 ++-------
+> > > >  1 file changed, 2 insertions(+), 7 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
+> > > > index 966cab1..8e31fae 100644
+> > > > --- a/drivers/clk/mediatek/clk-pll.c
+> > > > +++ b/drivers/clk/mediatek/clk-pll.c
+> > > > @@ -91,9 +91,6 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
+> > > >  		int postdiv)
+> > > >  {
+> > > >  	u32 con1, val;
+> > > > -	int pll_en;
+> > > > -
+> > > > -	pll_en = readl(pll->base_addr + REG_CON0) & CON0_BASE_EN;
+> > > >  
+> > > >  	/* set postdiv */
+> > > >  	val = readl(pll->pd_addr);
+> > > > @@ -114,15 +111,13 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
+> > > >  
+> > > >  	con1 = readl(pll->base_addr + REG_CON1);
+> > > >  
+> > > > -	if (pll_en)
+> > > > -		con1 |= CON0_PCW_CHG;
+> > > > +	con1 |= CON0_PCW_CHG;
+> > > 
+> > > This bit is described as "Feedback divide ratio update". To me this
+> > > sounds like we have to inform the hardware that the PLL registers have
+> > > been updated. The current code only sets this bit when the PLL is
+> > > enabled which sounds sane to me.
+> > > 
+> > > >  
+> > > >  	writel(con1, pll->base_addr + REG_CON1);
+> > > >  	if (pll->tuner_addr)
+> > > >  		writel(con1 + 1, pll->tuner_addr);
+> > > >  
+> > > > -	if (pll_en)
+> > > > -		udelay(20);
+> > > > +	udelay(20);
+> > > 
+> > > We seem to have to wait here until the PLL is really running at the new
+> > > frequency. Normally we don't have to do this when the PLL is disabled.
+> > > 
+> > > I'm sure this patch solves a real problem, from looking at it it's just
+> > > not clear to me what the problem is. Could you clarify this a bit?
+> > 
+> > On MT8173 for example, ARMPLL's enable bit can be controlled by other
+> > HW. That means ARMPLL may be turned on even if we (CPU / SW) set
+> > ARMPLL's enable bit as 0. In this case, SW may want and can still change
+> > ARMPLL's rate by changing its pcw and postdiv settings. But without this
+> > patch, new pcw setting will not be applied because its enable bit is 0.
+> 
+> Ok, thanks for explaining. Could you add that to the commit message?
 
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c       |   39 +++++++++++++++++++++++++++--------
- include/dt-bindings/clock/bcm2835.h |    9 ++++++++
- 2 files changed, 39 insertions(+), 9 deletions(-)
+OK. I'll send a new patch with these comments.
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 8fccbd3..48c1ad0 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -303,10 +303,10 @@
- #define BCM2835_MASH_MAX_FREQ	25000000u
- 
- enum bcm2835_clock_mash_type {
--	MASH_NONE = 0,
--	MASH_FRAC = 1,
--	MASH_2ND_ORDER = 2,
--	MASH_3RD_ORDER = 3
-+	MASH_NONE = BCM2835_MASH_NONE,
-+	MASH_FRAC = BCM2835_MASH_FRAC,
-+	MASH_ORDER_2 = BCM2835_MASH_ORDER_2,
-+	MASH_ORDER_3 = BCM2835_MASH_ORDER_3
- };
- 
- /*
-@@ -713,6 +713,7 @@ struct bcm2835_clock_data {
- 	u32 frac_bits;
- 	/* the mash value to use - see CM_MASH */
- 	enum bcm2835_clock_mash_type mash;
-+	bool mash_forced;
- 
- 	bool is_vpu_clock;
- };
-@@ -1508,7 +1509,7 @@ static divmash bcm2835_clock_choose_div(struct clk_hw *hw,
- 
- 	/* select mash mode */
- 	if (data->frac_bits && divf)
--		mash = data->mash ? data->mash : MASH_FRAC;
-+		mash = data->mash_forced ? data->mash : MASH_FRAC;
- 
- 	/*
- 	 * handle possible limits for different mash levels with fall-tru
-@@ -1517,17 +1518,17 @@ static divmash bcm2835_clock_choose_div(struct clk_hw *hw,
- 	 *   http://elinux.org/BCM2835_datasheet_errata#p105_table
- 	 */
- 	switch (mash) {
--	case MASH_3RD_ORDER:
-+	case MASH_ORDER_3:
- 		if ((divi >= divi_min + 3) &&
- 		    (divi + 4 <= divi_max) &&
- 		    (parent_rate / (divi - 3) <= BCM2835_MASH_MAX_FREQ))
--			return divmash_calc(MASH_3RD_ORDER, div);
-+			return divmash_calc(MASH_ORDER_3, div);
- 		/* fall tru if not in bounds */
--	case MASH_2ND_ORDER:
-+	case MASH_ORDER_2:
- 		if ((divi >= divi_min + 1) &&
- 		    (divi + 2 <= divi_max) &&
- 		    (parent_rate / (divi - 1) <= BCM2835_MASH_MAX_FREQ))
--			return divmash_calc(MASH_2ND_ORDER, div);
-+			return divmash_calc(MASH_ORDER_2, div);
- 		/* fall tru if not in bounds */
- 	case MASH_FRAC:
- 		if ((divi >= divi_min) &&
-@@ -1993,6 +1994,8 @@ static const struct bcm2835_clock_data *bcm2835_register_clock_of(
- 	struct device *dev = cprman->dev;
- 	struct device_node *nc;
- 	struct bcm2835_clock_data *data;
-+	int err;
-+	u32 value;
- 
- 	/* find the corresponding dt-node */
- 	nc = bcm2835_find_dt_node(cprman, id);
-@@ -2008,6 +2011,24 @@ static const struct bcm2835_clock_data *bcm2835_register_clock_of(
- 	/* apply overrides */
- 	bcm2835_register_clock_of_parents(cprman, data, nc);
- 
-+	/* check for mash */
-+	err = of_property_read_u32(nc, "brcm,mash-max-order", &value);
-+	if (!err) {
-+		switch (value) {
-+		case MASH_NONE:
-+		case MASH_FRAC:
-+		case MASH_ORDER_2:
-+		case MASH_ORDER_3:
-+			data->mash = value;
-+			data->mash_forced = 1;
-+			break;
-+		default:
-+			dev_err(dev, "clock %s: undefined mash type: %d\n",
-+				data->name, value);
-+			break;
-+		}
-+	}
-+
- 	/* and return the result */
- 	return data;
- }
-diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
-index d29f181..eb73380 100644
---- a/include/dt-bindings/clock/bcm2835.h
-+++ b/include/dt-bindings/clock/bcm2835.h
-@@ -67,3 +67,12 @@
- #define BCM2835_CLOCK_TD0		51
- #define BCM2835_CLOCK_TD1		52
- #define BCM2835_CLOCK_TEC		53
-+
-+/* the mash divider options */
-+#define BCM2835_MASH_NONE		0
-+#define BCM2835_MASH_ORDER_1		1
-+#define BCM2835_MASH_ORDER_2		2
-+#define BCM2835_MASH_ORDER_3		3
-+
-+#define BCM2835_MASH_INTEGER		BCM2835_MASH_NONE
-+#define BCM2835_MASH_FRAC		BCM2835_MASH_ORDER_1
--- 
-1.7.10.4
+
+Best regards,
+
+James
