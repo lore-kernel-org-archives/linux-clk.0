@@ -1,82 +1,91 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>,
- Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject: [PATCH v3 2/3] clk: samsung: Don't build ARMv8 clock drivers on ARMv7
-Date: Tue, 26 Jan 2016 17:05:03 +0900
-Message-id: <1453795504-12302-3-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1453795504-12302-1-git-send-email-k.kozlowski@samsung.com>
-References: <1453795504-12302-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <festevam@gmail.com>
+Return-Path: <festevam@gmail.com>
+From: Fabio Estevam <festevam@gmail.com>
+To: mturquette@baylibre.com
+Cc: sboyd@codeaurora.org,
+	shawnguo@kernel.org,
+	kernel@pengutronix.de,
+	csotoalonso@gmail.com,
+	linux-clk@vger.kernel.org,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	<stable@vger.kernel.org>
+Subject: [PATCH] clk: clk-imx25: Force LCDC IPG clock to be disabled
+Date: Mon, 11 Jan 2016 15:01:56 -0200
+Message-Id: <1452531716-12149-1-git-send-email-festevam@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
-so it is built also on ARMv7. This does not bring any kind of benefit.
-There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
-multi_v7 for ARMv7).
+From: Fabio Estevam <fabio.estevam@nxp.com>
 
-Instead build clock drivers only for respective SoC's architecture.
+Currently when we boot the kernel on a mx25pdk the LCDC controller
+does not show the Linux logo on boot.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+This problem is well explained by Sascha Hauer:
 
+"Unfortunately this LCD controller does not have an enable bit. The
+controller starts directly when the clocks are enabled. If the clocks
+are enabled when the controller is not yet programmed with proper
+register values then it just goes into some undefined state. What I
+suspect is that the clocks already were enabled before driver probe,
+presumably by the bootloader, so the controller is already in undefined
+state when entering Linux. Now by dis/enabling the ipg clock you
+effectively reset the controller. Since you have programmed it with
+valid register values in the mean time it starts working after this
+reset."
+
+So let's guarantee that the clock driver disables LCDC IPG clock at
+the beggining, so that we don't need to rely on the state the
+bootloader left this clock.
+
+With this change the Linux logo can be seen on boot on a mx25pdk.
+
+Cc: <stable@vger.kernel.org>
+Suggested-by: Sascha Hauer <s.hauer@pengutronix.de>
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
 ---
+ drivers/clk/imx/clk-imx25.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-Changes since v2:
-1. Follow Arnd's advice making EXYNOS_ARM64_COMMON_CLK user-visible when
-   COMPILE_TEST is enabled.
-2. Dropped accumulated tags because the logic is now different.
-
-Changes since v1:
-1. Use one Kconfig symbol for clocks of all ARM64 SoCs (after
-   discussion): EXYNOS_ARM64_COMMON_CLK.
-2. Minor cleanups after Tomasz's comments.
-3. Added tags: Chanwoo's, Sylwester's, Alim's and Tomasz's (the tags
-   were given for v1 but assuming that change from 1. is not major
-   enough to require re-tagging).
----
- drivers/clk/samsung/Kconfig  | 5 +++++
- drivers/clk/samsung/Makefile | 4 ++--
- 2 files changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-index dd6093a33f84..5fd982d9f4d9 100644
---- a/drivers/clk/samsung/Kconfig
-+++ b/drivers/clk/samsung/Kconfig
-@@ -23,3 +23,8 @@ config S3C2443_COMMON_CLK
- 	bool "Samsung S3C2443 clock controller support" if COMPILE_TEST
- 	select COMMON_CLK_SAMSUNG
+diff --git a/drivers/clk/imx/clk-imx25.c b/drivers/clk/imx/clk-imx25.c
+index c4c141c..f8619bb 100644
+--- a/drivers/clk/imx/clk-imx25.c
++++ b/drivers/clk/imx/clk-imx25.c
+@@ -53,6 +53,8 @@
  
-+# ARM64 SoCs (e.g. Exynos5433, Exynos7):
-+config EXYNOS_ARM64_COMMON_CLK
-+	bool "Samsung Exynos ARMv8-family clock controller support" if COMPILE_TEST
-+	default ARM64 && COMMON_CLK_SAMSUNG
-+	depends on (ARM64 && COMMON_CLK_SAMSUNG) || COMPILE_TEST
-diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-index 5f6833ea355d..fc367d4b2902 100644
---- a/drivers/clk/samsung/Makefile
-+++ b/drivers/clk/samsung/Makefile
-@@ -10,11 +10,11 @@ obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
- obj-$(CONFIG_SOC_EXYNOS5260)	+= clk-exynos5260.o
- obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
- obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
--obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos5433.o
-+obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos5433.o
- obj-$(CONFIG_SOC_EXYNOS5440)	+= clk-exynos5440.o
- obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-audss.o
- obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-clkout.o
--obj-$(CONFIG_ARCH_EXYNOS7)	+= clk-exynos7.o
-+obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos7.o
- obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
- obj-$(CONFIG_S3C2410_COMMON_DCLK)+= clk-s3c2410-dclk.o
- obj-$(CONFIG_S3C2412_COMMON_CLK)+= clk-s3c2412.o
+ #define ccm(x)	(ccm_base + (x))
+ 
++#define LCDC_IPG	BIT(29)
++
+ static struct clk_onecell_data clk_data;
+ 
+ static const char *cpu_sel_clks[] = { "mpll", "mpll_cpu_3_4", };
+@@ -99,6 +101,7 @@ static struct clk ** const uart_clks[] __initconst = {
+ static int __init __mx25_clocks_init(unsigned long osc_rate,
+ 				     void __iomem *ccm_base)
+ {
++	unsigned int reg;
+ 	BUG_ON(!ccm_base);
+ 
+ 	clk[dummy] = imx_clk_fixed("dummy", 0);
+@@ -232,6 +235,20 @@ static int __init __mx25_clocks_init(unsigned long osc_rate,
+ 
+ 	imx_check_clocks(clk, ARRAY_SIZE(clk));
+ 
++	/*
++	 * The LCDC controller does not have an enable bit. The
++	 * controller starts directly when the clocks are enabled.
++	 * If the clocks are enabled when the controller is not yet
++	 * programmed with proper register values (enabled at the
++	 * bootloader, for example) then it just goes into some undefined
++	 * state.
++	 * To avoid this issue, let's directly access CGCR1 register
++	 * and disable the LCDC IPG clock.
++	 */
++	reg = readl(ccm_base + CCM_CGCR1);
++	reg &= ~LCDC_IPG;
++	writel(reg, ccm_base + CCM_CGCR1);
++
+ 	clk_prepare_enable(clk[emi_ahb]);
+ 
+ 	/* Clock source for gpt must be derived from AHB */
 -- 
 1.9.1
