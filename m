@@ -1,43 +1,65 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Zhang Qing <zhangqing@rock-chips.com>
-To: heiko@sntech.de, zhengxing@rock-chips.com, xf@rock-chips.com
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	huangtao@rock-chips.com, zyw@rock-chips.com, jay.xu@rock-chips.com,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	zhangqing <zhangqing@rock-chips.com>
-Subject: [PATCH v1 1/3] clk: rockchip: rk3368: fix edp_24m parent
-Date: Mon, 25 Jan 2016 08:56:00 -0800
-Message-Id: <1453740962-8556-2-git-send-email-zhangqing@rock-chips.com>
-In-Reply-To: <1453740962-8556-1-git-send-email-zhangqing@rock-chips.com>
-References: <1453740962-8556-1-git-send-email-zhangqing@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <vz@mleia.com>
+Message-ID: <5693930C.3050402@mleia.com>
+Date: Mon, 11 Jan 2016 13:33:32 +0200
+From: Vladimir Zapolskiy <vz@mleia.com>
+MIME-Version: 1.0
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+CC: Joachim Eastwood <manabian@gmail.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: remove duplicated COMMON_CLK_NXP record from clk/Kconfig
+References: <1452136027-32076-1-git-send-email-vz@mleia.com>
+In-Reply-To: <1452136027-32076-1-git-send-email-vz@mleia.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-From: zhangqing <zhangqing@rock-chips.com>
+Hi Mike, Stephen,
 
-The edp_24m parent select bit define is:
-1'b0:xin24m
-1'b1:1'b0(dummy)
-so adapt the parent sel bit to the currect one.
+On 07.01.2016 05:07, Vladimir Zapolskiy wrote:
+> Presumably the second COMMON_CLK_NXP config option in
+> drivers/clk/Kconfig appeared after a merge conflict resolution, remove
+> the wrong record of two.
+> 
+> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+> ---
+> Hi Mike, Stephen,
+> 
+> I've found this issue in clk-next while working on something else,
+> please consider to include this change to clk-next, no objections if
+> it is squashed with f7c82a60ba2 ("clk: lpc32xx: add common clock
+> framework driver").
+> 
+> In fact it is a revert of 8a896310a7e ("clk: lpc18xx: add NXP specific
+> COMMON_CLK_NXP configuration symbol"), but this preparatory change is
+> good as is.
+> 
+> The original change doesn't have this kind of a problem (see
+> http://www.spinics.net/lists/devicetree/msg105709.html), so I
+> believe it is caused by a merge conflict, probably after done
+> alphabetical sorting.
 
-Signed-off-by: zhangqing <zhangqing@rock-chips.com>
----
- drivers/clk/rockchip/clk-rk3368.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+please consider to include this change before sending a pull request
+this merge window.
 
-diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
-index be0ede5..4885e6b 100644
---- a/drivers/clk/rockchip/clk-rk3368.c
-+++ b/drivers/clk/rockchip/clk-rk3368.c
-@@ -121,7 +121,7 @@ PNAME(mux_i2s_2ch_p)		= { "i2s_2ch_src", "i2s_2ch_frac",
- 				    "dummy", "xin12m" };
- PNAME(mux_spdif_8ch_p)		= { "spdif_8ch_pre", "spdif_8ch_frac",
- 				    "ext_i2s", "xin12m" };
--PNAME(mux_edp_24m_p)		= { "dummy", "xin24m" };
-+PNAME(mux_edp_24m_p)		= { "xin24m", "dummy" };
- PNAME(mux_vip_out_p)		= { "vip_src", "xin24m" };
- PNAME(mux_usbphy480m_p)		= { "usbotg_out", "xin24m" };
- PNAME(mux_hsic_usbphy480m_p)	= { "usbotg_out", "dummy" };
--- 
-1.9.1
+With best wishes,
+Vladimir
+
+>  drivers/clk/Kconfig | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 41f6c7f..eca8e01 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -187,11 +187,6 @@ config COMMON_CLK_PWM
+>  	  Adapter driver so that any PWM output can be (mis)used as clock signal
+>  	  at 50% duty cycle.
+>  
+> -config COMMON_CLK_NXP
+> -	def_bool COMMON_CLK && ARCH_LPC18XX
+> -	---help---
+> -	  Support for clock providers on NXP platforms.
+> -
+>  config COMMON_CLK_PXA
+>  	def_bool COMMON_CLK && ARCH_PXA
+>  	---help---
+> 
