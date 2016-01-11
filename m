@@ -11,9 +11,9 @@ To: Michael Turquette <mturquette@baylibre.com>,
 	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org
 Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH V4 0/7] clk: bcm2835: add clocks and add MASH support
-Date: Fri, 15 Jan 2016 14:20:59 +0000
-Message-Id: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org>
+Subject: [PATCH V2 0/4] clk: bcm2835: add additinal clocks and add frac support
+Date: Mon, 11 Jan 2016 19:55:52 +0000
+Message-Id: <1452542157-2387-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
 From: Martin Sperl <kernel@martin.sperl.org>
@@ -31,43 +31,18 @@ but it does not enable the bit to enable support in the register.
 As a minimal extension we now can also define higher order MASH
 support when defining the clocks.
 
-There is also an issue when the clock divider is < 2 - in that
-case no clock-output is generate. The clamping code has been
-enhanced to handle this as well.
-
-Similarly there is also the clamping of the highest divider now
-limited to the highest possible integer divider instead of the
-highest possible fractional diviver.
-
 Finally we add all the 23 different HW clocks that have not been
 configured in the driver.
 
-Changelog:
-	V1 -> V2: split the asoc/sound patches from the clock patches
-	      	  enable frac/mash support
-	V2 -> V3: clamp clock divider to be >= 2
-		  clamp max clock divider to be integer (not fractional)
-		  added additional limit checks for divider selection
-		    allowing fallback to lower mash levels.
-		  use a newer probing mechanism based on a single array
-	V3 -> V4: fixed bad NULL pointer check in init
-	      	  fixed (mash) limit checks
-		  separated basic mash support from limits checks
-		  really tested with I2S device (unfortunately V3 was
-		  not well tested in this respect)
-
-Martin Sperl (7):
-  clk: bcm2835: the minimum clock divider is 2
-  clk: bcm2835: clamp clock divider to highest integer only
-  clk: bcm2835: remove use of BCM2835_CLOCK_COUNT in driver
+Martin Sperl (4):
+  clk: bcm2835: avoid the use of BCM2835_CLOCK_COUNT in clk-bcm2835
+  clk: bcm2835: enable fractional and mash support
   clk: bcm2835: enable management of PCM clock
   clk: bcm2835: add missing 22 HW-clocks.
-  clk: bcm2835: enable fractional and mash support
-  clk: bcm2835: apply limits on dividers to MASH mode.
 
- drivers/clk/bcm/clk-bcm2835.c       |  583 ++++++++++++++++++++++++++++++-----
+ drivers/clk/bcm/clk-bcm2835.c       |  527 +++++++++++++++++++++++++++++++----
  include/dt-bindings/clock/bcm2835.h |   25 +-
- 2 files changed, 521 insertions(+), 87 deletions(-)
+ 2 files changed, 489 insertions(+), 63 deletions(-)
 
 --
 1.7.10.4
