@@ -1,98 +1,125 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: kernel@martin.sperl.org, "Stephen Boyd" <sboyd@codeaurora.org>,
- "Stephen Warren" <swarren@wwwdotorg.org>, "Lee Jones" <lee@kernel.org>,
- "Eric Anholt" <eric@anholt.net>, "Remi Pommarel" <repk@triplefau.lt>,
- linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20160113200012.1168.74515@quark.deferred.io>
-Cc: "Martin Sperl" <kernel@martin.sperl.org>
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Remi Pommarel <repk@triplefau.lt>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH V2 2/4] clk: bcm2835: enable fractional and mash support
+Date: Mon, 11 Jan 2016 19:55:54 +0000
+Message-Id: <1452542157-2387-3-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1452542157-2387-1-git-send-email-kernel@martin.sperl.org>
 References: <1452542157-2387-1-git-send-email-kernel@martin.sperl.org>
- <1452542157-2387-2-git-send-email-kernel@martin.sperl.org>
- <20160113200012.1168.74515@quark.deferred.io>
-Message-ID: <20160114001358.1168.5768@quark.deferred.io>
-Subject: Re: [PATCH V2 1/4] clk: bcm2835: avoid the use of BCM2835_CLOCK_COUNT in
- clk-bcm2835
-Date: Wed, 13 Jan 2016 16:13:58 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Michael Turquette (2016-01-13 12:00:12)
-> Hi Martin,
-> =
+From: Martin Sperl <kernel@martin.sperl.org>
 
-> Quoting kernel@martin.sperl.org (2016-01-11 11:55:53)
-> >  static int bcm2835_clk_probe(struct platform_device *pdev)
-> >  {
-> >         struct device *dev =3D &pdev->dev;
-> >         struct clk **clks;
-> > +       size_t clk_cnt;
-> >         struct bcm2835_cprman *cprman;
-> >         struct resource *res;
-> > +       size_t i;
-> > +
-> > +       /* find the max clock index */
-> > +       clk_cnt =3D BCM2835_CLOCK_PERI_IMAGE; /* see below */
-> > +       for (i =3D 0; i < ARRAY_SIZE(bcm2835_register_clocks); i++)
-> > +               clk_cnt =3D max(clk_cnt, bcm2835_register_clocks[i].ind=
-ex);
-> > +       clk_cnt +=3D 1;
-> =
+The clk-bcm2835 driver right now does the correct calculation
+of the fractional clock divider, but it does not set the FRAC
+bit to enable the fractual clock divider in HW
 
-> I'm not sure how this solution is better than using CLOCK_COUNT. Some
-> other bindings use a max value, NR_CLKS or other sentinel.
-> =
+This patch enables FRAC for all clocks with frac_bits > 0
+but allows to define the selection of a higher-order MASH
+support instead of just FRAC.
 
-> Why did you not choose to set clk_cnt equal to BCM2835_CLOCK_PWM? Why
-> not initialize it to zero?
+Right now there are no limits imposed on maximum frequencies
+when using MASH/FRAC is enabled.
 
-OK, I just caught up on the asoc/bcm2835 thread.
+There is a documented limit of 25MHz for MASH, but it is not
+stated if this also applies to clock dividers that only support
+FRAC and not MASH.
 
-Really the best solution would be to have an array of all of the clks in
-the driver and just use ARRAY_SIZE on it.
+As for how higher order MASH works the following may give
+some insight: http://www.aholme.co.uk/Frac2/Mash.htm
 
-For your driver, could you make an array of clk_hw pointers and call
-devm_clk_register on all of them in a loop? This gets rid of the big
-pile of explicit calls in bcm2835_clk_probe.
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c |   50 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
-You can also get rid of stuff like bcm2835_plla_core_data by just
-stuffing that data into a single struct initialization. Here is a
-snippet for how the qcom clk drivers do it:
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 759202a..7c782d3 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -115,6 +115,13 @@
+ # define CM_GATE			BIT(CM_GATE_BIT)
+ # define CM_BUSY			BIT(7)
+ # define CM_BUSYD			BIT(8)
++# define CM_MASH_BITS			2
++# define CM_MASH_SHIFT			9
++# define CM_MASH_MASK			GENMASK(10, 9)
++# define CM_MASH(v)			((v << CM_MASH_SHIFT) & CM_MASH_MASK)
++# define CM_MASH_FRAC			CM_MASH(1)
++# define CM_MASH_2ND_ORDER		CM_MASH(2)
++# define CM_MASH_3RD_ORDER		CM_MASH(3)
+ # define CM_SRC_SHIFT			0
+ # define CM_SRC_BITS			4
+ # define CM_SRC_MASK			0xf
+@@ -632,6 +639,8 @@ struct bcm2835_clock_data {
+ 	u32 int_bits;
+ 	/* Number of fractional bits in the divider */
+ 	u32 frac_bits;
++	/* the mash value to use - see CM_MASH and CM_MASH_FRAC/ORDER */
++	u32 mash;
 
-static struct clk_pll gpll0 =3D {
-	.l_reg =3D 0x0004,
-	.m_reg =3D 0x0008,
-	.n_reg =3D 0x000c,
-	.config_reg =3D 0x0014,
-	.mode_reg =3D 0x0000,
-	.status_reg =3D 0x001c,
-	.status_bit =3D 17,
-	.clkr.hw.init =3D &(struct clk_init_data){
-		.name =3D "gpll0",
-		.parent_names =3D (const char *[]){ "xo" },
-		.num_parents =3D 1,
-		.ops =3D &clk_pll_ops,
-	},
-};
+ 	bool is_vpu_clock;
+ };
+@@ -1274,9 +1283,50 @@ static int bcm2835_clock_set_rate(struct clk_hw *hw,
+ 	struct bcm2835_cprman *cprman = clock->cprman;
+ 	const struct bcm2835_clock_data *data = clock->data;
+ 	u32 div = bcm2835_clock_choose_div(hw, rate, parent_rate, false);
++	u32 ctl, mash;
++	bool enabled;
 
-Then a single array of clks per driver references this:
++	spin_lock(&cprman->regs_lock);
++	/* check if divider is identical, then return */
++	if (div == cprman_read(cprman, data->div_reg))
++		goto unlock;
++
++	/* it is recommended to only set clock registers when disabled */
++	ctl = cprman_read(cprman, data->ctl_reg);
++	enabled = ctl & CM_ENABLE;
++	if (enabled) {
++		/* disable clock */
++		cprman_write(cprman, data->ctl_reg, ctl);
++
++		/* release lock while busy waiting */
++		spin_unlock(&cprman->regs_lock);
++		bcm2835_clock_wait_busy(clock);
++		spin_lock(&cprman->regs_lock);
++
++		/* read the register again */
++		ctl = cprman_read(cprman, data->ctl_reg);
++	}
++
++	/* set the divider */
+ 	cprman_write(cprman, data->div_reg, div);
 
-static struct clk_regmap *gcc_apq8084_clocks[] =3D {
-	[GPLL0] =3D &gpll0.clkr,
-	...
++	/* set frac/mash if necessarry */
++	mash = 0;
++	if ((data->frac_bits) && (div & GENMASK(CM_DIV_FRAC_BITS, 0)))
++		mash = (data->mash) ? data->mash : CM_MASH_FRAC;
++
++	/* set mash to the selected value */
++	ctl &= ~CM_MASH_MASK;
++	ctl |= mash & CM_MASH_MASK;
++	cprman_write(cprman, data->ctl_reg, ctl);
++
++	/* re-enable the clock */
++	if (enabled)
++		cprman_write(cprman, data->ctl_reg, ctl | CM_ENABLE);
++
++unlock:
++	spin_unlock(&cprman->regs_lock);
++
+ 	return 0;
+ }
 
-(in your case you won't reference struct clk_regmap, but struct clk_hw)
-
-The actual registration happens in your probe like so:
-
-static int bcm2835_clk_probe(struct platform_device *pdev)
-{
-	...
-	for (i =3D 0; i < num_clks; i++) {
-		clk =3D devm_clk_register(dev, array_of_clks[i].hw)
-	...
-}
-
-Regards,
-Mike
+--
+1.7.10.4
