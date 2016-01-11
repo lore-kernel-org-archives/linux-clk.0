@@ -1,62 +1,89 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: linux-rockchip@lists.infradead.org, keescook@google.com, leozwang@google.com, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: rockchip: rk3036: Add apll as the critical clock
-Date: Thu, 21 Jan 2016 10:21:50 +0100
-Message-ID: <7538210.fX6mmzZ75v@phil>
-In-Reply-To: <1453279037-23971-1-git-send-email-zhengxing@rock-chips.com>
-References: <1453279037-23971-1-git-send-email-zhengxing@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <kernel@martin.sperl.org>
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2104\))
+Subject: Re: [PATCH 2/5] clk: bcm2835: enable management of PCM clock
+From: Martin Sperl <kernel@martin.sperl.org>
+In-Reply-To: <4412078.STjb1rKkbV@wuerfel>
+Date: Mon, 11 Jan 2016 14:53:36 +0100
+Cc: Mark Brown <broonie@kernel.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ Stephen Warren <swarren@wwwdotorg.org>,
+ Lee Jones <lee@kernel.org>,
+ Eric Anholt <eric@anholt.net>,
+ Russell King <linux@arm.linux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Remi Pommarel <repk@triplefau.lt>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ linux-rpi-kernel@lists.infradead.org,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+ Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>,
+ Matthias Reichl <hias@horus.com>,
+ lFlorian Meier <florian.meier@koalo.de>
+Message-Id: <A156F37A-76CF-4ECF-8C85-162A71877EC5@martin.sperl.org>
+References: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org> <20160110115858.GV6588@sirena.org.uk> <39E8C95F-C7DC-46C3-B29A-93A865485942@martin.sperl.org> <4412078.STjb1rKkbV@wuerfel>
+To: Arnd Bergmann <arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Xing,
 
-Am Mittwoch, 20. Januar 2016, 16:37:17 schrieb Xing Zheng:
-> The apll may be closed if there are some child clock nodes below
-> it when the device startup. Therefore, the apll should be keep
-> critical.
-> 
-> The apll tree like this:
->     pll_apll
->        apll
->           armclk
->              pclk_dbg
->              aclk_core_pre
->           aclk_hvec
->           uart_pll_clk
->              uart2_src
->                 uart2_frac
->              uart1_src
->                 uart1_frac
->              uart0_src
->                 uart0_frac
+> On 11.01.2016, at 14:38, Arnd Bergmann <arnd@arndb.de> wrote:
+>=20
+> On Sunday 10 January 2016 13:17:17 Martin Sperl wrote:
+>>=20
+>> What you propose is a major change to the clock framework, so I would
+>> hope that Eric (the original author of this clock-driver) would =
+address
+>> it.
+>>=20
+>> Maybe someone has a better idea for a pattern to use to achieve=20
+>> the required while maintaining =E2=80=9Csynchronization=E2=80=9D =
+between defines
+>> inside the dt-binding and the driver.
+>=20
+> It's funny to look at the register list:
+>=20
+> #define CM_VPUCTL               0x008
+> #define CM_VPUDIV               0x00c
+> #define CM_SYSCTL               0x010
+> #define CM_SYSDIV               0x014
+> #define CM_PERIACTL             0x018
+> #define CM_PERIADIV             0x01c
+> #define CM_PERIICTL             0x020
+> #define CM_PERIIDIV             0x024
+> #define CM_H264CTL              0x028
+> #define CM_H264DIV              0x02c
+>=20
+> This one seems completely regular, there is always a pair of CTL and =
+DIV
+> registers, so I would have guessed that we could just take the index
+> of that to completely avoid the need for the header file and just have
+> a lookup table of each index.
+>=20
+> I can see two possible ways forward:
+>=20
+> a) deprecate the existing binding and write a new simpler driver to
+>   replace it with one that does not need the header. We probably need
+>   to keep both drivers around indefinitely though to deal with people
+>   that have their own dtb files, so this is a bit awkward.
+I was thinking about this as well, but am concerned about the =
+dt-changes.
 
-can you find out which of those clocks does cause your hang?
-Because things like the uart-clocks for example should be handled by their 
-driver already, at the time the clk_disable_unused runs(). So I'd really 
-like the critical clock to be the actually needed clock.
+Also initialization order may be an issue, so I have avoided that.
 
-Thanks
-Heiko
+> b) look at all the holes in the table and define new numbers for them
+>   now, then remove the count as the driver can simply hardcode the
+>   maximum number as it knows it will never change.
+There are clocks for most of them - See my patch I sent some time ago.
 
+Right now I have got a working version with the following patches:
+817176d clk: bcm2835: add missing clocks
+8f74701 clk: bcm2835: enable management of PCM clock
+62a7d94 clk: bcm2835: move to a different initialization scheme.
 
-> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-> ---
-> 
->  drivers/clk/rockchip/clk-rk3036.c |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/rockchip/clk-rk3036.c
-> b/drivers/clk/rockchip/clk-rk3036.c index ebce980..483913b 100644
-> --- a/drivers/clk/rockchip/clk-rk3036.c
-> +++ b/drivers/clk/rockchip/clk-rk3036.c
-> @@ -425,6 +425,7 @@ static struct rockchip_clk_branch
-> rk3036_clk_branches[] __initdata = { };
-> 
->  static const char *const rk3036_critical_clocks[] __initconst = {
-> +	"apll",
->  	"aclk_cpu",
->  	"aclk_peri",
->  	"hclk_peri",
+There is one more thing that I would like to do before submitting those
+as a patch-set: enable the fractual divider, because right now
+we calculate the fractual divider value correctly, but we do not set
+the flag to enable it, so we are actually running too fast most
+of the times...
