@@ -1,66 +1,78 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 20 Jan 2016 14:04:31 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+Return-Path: <LW@karo-electronics.de>
+From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
+To: Anson Huang <b20788@freescale.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Bai Ping <b51503@freescale.com>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Frank Li <Frank.Li@freescale.com>,
+	Fugang Duan <B38611@freescale.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Kumar Gala <galak@codeaurora.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 04/13] clk: at91: make IRQ optional and register them
- later
-Message-ID: <20160120220431.GB12841@codeaurora.org>
-References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
- <1449248628-3486-5-git-send-email-alexandre.belloni@free-electrons.com>
- <20160115020237.GJ22188@codeaurora.org>
- <20160115103901.1b987f53@bbrezillon>
- <20160116012612.GA20466@codeaurora.org>
- <20160116134558.716ef7d5@bbrezillon>
+	Nicolin Chen <nicoleotsuka@gmail.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Takashi Iwai <tiwai@suse.com>,
+	Timur Tabi <timur@tabi.org>,
+	Xiubo Li <Xiubo.Lee@gmail.com>,
+	alsa-devel@alsa-project.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	=?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
+Subject: [PATCH 2/2] clk: imx: add kpp clock for i.MX6UL
+Date: Tue, 12 Jan 2016 18:29:19 +0100
+Message-Id: <1452619759-14474-3-git-send-email-LW@KARO-electronics.de>
+In-Reply-To: <1452619759-14474-2-git-send-email-LW@KARO-electronics.de>
+References: <1452619759-14474-1-git-send-email-LW@KARO-electronics.de>
+ <1452619759-14474-2-git-send-email-LW@KARO-electronics.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160116134558.716ef7d5@bbrezillon>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/16, Boris Brezillon wrote:
-> Actually the PMC is not only exposing clocks. You have a bit in one of
-> its registers that is used by a USB driver to enable a BIAS, and
-> probably other things that are not directly related to clocks. Hence
-> the idea to declare the PMC as an MFD/syscon device (which is in turn
-> providing an IRQ chip).
-> 
-> Note that the irq problem we're talking about cannot be addressed by
-> simply moving everything into the ->probe() function of the platform
-> driver: we need the clock quite early in the boot process (it's
-> required for the initial clocksource device), in the other hand you
-> can't request threaded irqs when you're so early in the boot process,
-> and this becomes a problem when you apply the preempt-RT patch which
-> moves all standard irqs to threaded ones.
-> So the idea was to use polling instead of the irq event until we are
-> able to register threaded irqs, and then switch to an irq-able approach
-> once everything is in place (platform devices are probed after the
-> thread infrastructure has been setup, which is why we used this trick).
+Add the necessary clock to use the KPP interface on i.MX6UL.
 
-Just one more thought. If we had one platform driver for the
-entire PMC could we also have an OF_CLK_DECLARE for it as well?
-Then that OF_CLK_DECLARE could run early, register whatever
-clocks are essential for the clocksource to work, and defer the
-rest of the clock registration to when the device driver probes?
-We'd still need some sort of global list of clocks that we
-registered early, and this list might need to be per PMC if
-there's more than one PMC, but we'd have all the clk_hw pointers
-available when the platform driver probed. Oh and we'd need
-clk_get() to return PROBE_DEFER too so that consumer drivers
-could be deferred until the PMC driver probes.
+Signed-off-by: Lothar Waßmann <LW@KARO-electronics.de>
+---
+ drivers/clk/imx/clk-imx6ul.c             | 1 +
+ include/dt-bindings/clock/imx6ul-clock.h | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-I suppose this would be making more global variables, which isn't
-preferred, so let's worry about this clk_hw vs clk pointer
-problem later. We'll have to keep this driver in mind when we're
-converting over clk providers to registering clk_hw pointers with
-the of clk provider layer.
-
- Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-
+diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+index 3e31ec0..1ee28d3 100644
+--- a/drivers/clk/imx/clk-imx6ul.c
++++ b/drivers/clk/imx/clk-imx6ul.c
+@@ -365,6 +365,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	/* CCGR5 */
+ 	clks[IMX6UL_CLK_ROM]		= imx_clk_gate2("rom",		"ahb",		base + 0x7c,	0);
+ 	clks[IMX6UL_CLK_SDMA]		= imx_clk_gate2("sdma",		"ahb",		base + 0x7c,	6);
++	clks[IMX6UL_CLK_KPP]		= imx_clk_gate2("kpp",		"ipg",		base + 0x7c,	8);
+ 	clks[IMX6UL_CLK_WDOG2]		= imx_clk_gate2("wdog2",	"ipg",		base + 0x7c,	10);
+ 	clks[IMX6UL_CLK_SPBA]		= imx_clk_gate2("spba",		"ipg",		base + 0x7c,	12);
+ 	clks[IMX6UL_CLK_SPDIF]		= imx_clk_gate2_shared("spdif",		"spdif_podf",	base + 0x7c,	14, &share_count_audio);
+diff --git a/include/dt-bindings/clock/imx6ul-clock.h b/include/dt-bindings/clock/imx6ul-clock.h
+index 08ce4a7..fd8aee8 100644
+--- a/include/dt-bindings/clock/imx6ul-clock.h
++++ b/include/dt-bindings/clock/imx6ul-clock.h
+@@ -234,7 +234,8 @@
+ #define IMX6UL_CLK_CSI_SEL		221
+ #define IMX6UL_CLK_CSI_PODF		222
+ #define IMX6UL_CLK_PLL3_120M		223
++#define IMX6UL_CLK_KPP			224
+ 
+-#define IMX6UL_CLK_END			224
++#define IMX6UL_CLK_END			225
+ 
+ #endif /* __DT_BINDINGS_CLOCK_IMX6UL_H */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.4
