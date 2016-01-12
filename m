@@ -1,34 +1,85 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 14 Jan 2016 18:05:02 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 05/13] clk: at91: only disable available IRQs
-Message-ID: <20160115020502.GN22188@codeaurora.org>
-References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
- <1449248628-3486-6-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <xuejiancheng@hisilicon.com>
+Subject: Re: [PATCH v5 5/6] mfd: dt-bindings: add device tree bindings for
+ Hi3519 sysctrl
+To: Lee Jones <lee.jones@linaro.org>
+References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
+ <1452219400-32478-6-git-send-email-xuejiancheng@huawei.com>
+ <20160111054846.GD3331@x1> <56935EA8.4060801@huawei.com>
+ <20160111085555.GE14104@x1>
+CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <p.zabel@pengutronix.de>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
+        <mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
+        <galak@codeaurora.org>, <linux@arm.linux.org.uk>, <khilman@linaro.org>,
+        <arnd@arndb.de>, <olof@lixom.net>, <xuwei5@hisilicon.com>,
+        <haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+        <bintian.wang@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+        <yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+        <ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
+        <zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>
+From: xuejiancheng <xuejiancheng@huawei.com>
+Message-ID: <5694584D.7040301@huawei.com>
+Date: Tue, 12 Jan 2016 09:35:09 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1449248628-3486-6-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <20160111085555.GE14104@x1>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/04, Alexandre Belloni wrote:
-> From: Boris Brezillon <boris.brezillon@free-electrons.com>
-> 
-> Only disable available IRQs in case writing to a reserved bit has a harmful
-> effect.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> ---
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On 2016/1/11 16:55, Lee Jones wrote:
+> On Mon, 11 Jan 2016, xuejiancheng wrote:
+>> On 2016/1/11 13:48, Lee Jones wrote:
+>>> On Fri, 08 Jan 2016, Jiancheng Xue wrote:
+>>>
+>>>> Add device tree bindings for Hi3519 system controller.
+>>>>
+>>>> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+>>>> ---
+>>>>  Documentation/devicetree/bindings/mfd/hi3519.txt | 14 ++++++++++++++
+>>>>  1 file changed, 14 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/mfd/hi3519.txt
+>>>
+>>> I have this patch, but none of the others in the set, thus I am
+>>> lacking context.
+>>>
+>> I can forward other patches in the set to you. Thank you.
+>>
+>>>> diff --git a/Documentation/devicetree/bindings/mfd/hi3519.txt b/Documentation/devicetree/bindings/mfd/hi3519.txt
+>>>> new file mode 100644
+>>>> index 0000000..115c5be
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/mfd/hi3519.txt
+>>>> @@ -0,0 +1,14 @@
+>>>> +* Hisilicon Hi3519 System Controller Block
+>>>> +
+>>>> +This bindings use the following binding:
+>>>> +Documentation/devicetree/bindings/mfd/syscon.txt
+>>>> +
+>>>> +Required properties:
+>>>> +- compatible: "hisilicon,hi3519-sysctrl".
+>>>> +- reg: the register region of this block
+>>>> +
+>>>> +Examples:
+>>>> +sysctrl: system-controller@12010000 {
+>>>> +	compatible = "hisilicon,hi3519-sysctrl", "syscon";
+>>>> +	reg = <0x12010000 0x1000>;
+>>>> +};
+>>>
+>>> There is no requirement (nor want) for binding documents where the
+>>> given device is simply using highly generic bindings.  This just
+>>> amounts to churn.
+>>>
+>> This block is specific for Hi3519 SOC, and may has its own driver.
+> 
+> Does it have its own driver currently?
+> 
+Not yet.
+Arnd Bergmann and Rob Herring all suggested adding a specific compatible string
+with the SOC name. This binding is just used for describing the compatible string now.
+When more functions on hi3519 SOC are added later, the specific driver will be also
+needed.
+
+>> So I think it's better to keep this binding.
+> 
