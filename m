@@ -1,63 +1,85 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 27 Jan 2016 16:51:41 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH RFC 03/11] clk: sunxi: factors: Add clk cleanup in
- sunxi_factors_register() error path
-Message-ID: <20160127155141.GG4317@lukather>
-References: <1453727747-23307-1-git-send-email-wens@csie.org>
- <1453727747-23307-4-git-send-email-wens@csie.org>
+Return-Path: <jamesjj.liao@mediatek.com>
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, John Crispin
+	<blogic@openwrt.org>
+CC: Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, <srv_heupstream@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, James Liao <jamesjj.liao@mediatek.com>, Shunli
+ Wang <shunli.wang@mediatek.com>
+Subject: [PATCH v3 1/6] clk: mediatek: Refine the makefile to support multiple clock drivers
+Date: Tue, 12 Jan 2016 16:31:05 +0800
+Message-ID: <1452587470-61506-2-git-send-email-jamesjj.liao@mediatek.com>
+In-Reply-To: <1452587470-61506-1-git-send-email-jamesjj.liao@mediatek.com>
+References: <1452587470-61506-1-git-send-email-jamesjj.liao@mediatek.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Cgrdyab2wu3Akvjd"
-In-Reply-To: <1453727747-23307-4-git-send-email-wens@csie.org>
+Content-Type: text/plain
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
+Add a Kconfig to define clock configuration for each SoC, and
+modify the Makefile to build drivers that only selected in config.
 
---Cgrdyab2wu3Akvjd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+---
+ drivers/clk/Kconfig           |  1 +
+ drivers/clk/mediatek/Kconfig  | 23 +++++++++++++++++++++++
+ drivers/clk/mediatek/Makefile |  6 +++---
+ 3 files changed, 27 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/clk/mediatek/Kconfig
 
-On Mon, Jan 25, 2016 at 09:15:39PM +0800, Chen-Yu Tsai wrote:
-> sunxi_factors_register() does not check for failures or cleanup after
-> clk_register_composite() or other clk-related calls.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-
-Applied, thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---Cgrdyab2wu3Akvjd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWqOeNAAoJEBx+YmzsjxAgsRwP/RXkXYGOWAdM32Dqi3WoCy7R
-FFoZNakZRHWzf+iAQWdw2POJXNr3wKMjuGNUgALAKTGwrsIp0dQycZuYnJHnPDPB
-o+Ksao+g/5sHSNTwz4jF5CB5OIQLItjYGhK1hFOEtcslrA5jJgzGRjynPMnWNb/h
-0Vd7TPOI2JVR6XPMFycUiM3vIgLZwz2MMq/38+mGruQkARXNS5LuF2HutuPLKVD0
-/vJVbmW1okg4Ptpr1zZdgarQRAdPFYDI1GXNcr6ddZS3IxsXdCooRUIF357DJJQa
-2gNNoArwPOfswGcFkcjybtIPHbXU5LMmCmHbwW6cMO2C8dT/a/M/NIp0MdeLGhE5
-epcDFIyw3z12eNE9PDjJUYPmMdCObZWqgPZRSxUjGKBKIQyxrb8wICURDRJ8stn2
-YEZFnzm2cgfqJDX93FOMx07wgIiW0E8GUIskAsajpYfxJJ+cHJjWf+bTNm3YCs/1
-MHFySAB+qZvlyYLNfGC6dFE3ejYPrRN1nGLUfH4pixF1nwRUiMJeRC3L6xyjfKXX
-dgnouiU0hnCPNOk4MsGzfBVv50vOSsaD93L3UoglgNGPVdA42ooMxLq/elB/nMek
-CVvy6HUgL5LDMDJK2nkPKrDT5pEGEByrrC6PQA+ea1q+tNM9YMkXxlp75HdwyRNU
-Dw/oliDiInloG0LTUA9K
-=hWgv
------END PGP SIGNATURE-----
-
---Cgrdyab2wu3Akvjd--
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index c3e3a02..b7a37dc 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -198,3 +198,4 @@ source "drivers/clk/mvebu/Kconfig"
+ 
+ source "drivers/clk/samsung/Kconfig"
+ source "drivers/clk/tegra/Kconfig"
++source "drivers/clk/mediatek/Kconfig"
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+new file mode 100644
+index 0000000..dc224e6
+--- /dev/null
++++ b/drivers/clk/mediatek/Kconfig
+@@ -0,0 +1,23 @@
++#
++# MediaTek SoC drivers
++#
++config COMMON_CLK_MEDIATEK
++	bool
++	---help---
++	  Mediatek SoCs' clock support.
++
++config COMMON_CLK_MT8135
++	bool "Clock driver for Mediatek MT8135"
++	depends on COMMON_CLK
++	select COMMON_CLK_MEDIATEK
++	default ARCH_MEDIATEK
++	---help---
++	  This driver supports Mediatek MT8135 clocks.
++
++config COMMON_CLK_MT8173
++	bool "Clock driver for Mediatek MT8173"
++	depends on COMMON_CLK
++	select COMMON_CLK_MEDIATEK
++	default ARCH_MEDIATEK
++	---help---
++	  This driver supports Mediatek MT8173 clocks.
+diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+index 95fdfac..32e7222 100644
+--- a/drivers/clk/mediatek/Makefile
++++ b/drivers/clk/mediatek/Makefile
+@@ -1,4 +1,4 @@
+-obj-y += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
++obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
+ obj-$(CONFIG_RESET_CONTROLLER) += reset.o
+-obj-y += clk-mt8135.o
+-obj-y += clk-mt8173.o
++obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135.o
++obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173.o
+-- 
+1.9.1
