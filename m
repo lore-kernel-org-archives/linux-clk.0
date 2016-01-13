@@ -1,89 +1,95 @@
-Return-Path: <daniel@ffwll.ch>
-Return-Path: <daniel@ffwll.ch>
-Sender: Daniel Vetter <daniel.vetter@ffwll.ch>
-Date: Mon, 25 Jan 2016 08:29:38 +0100
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com, Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Wynter Woods <wynter@nextthing.co>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>
-Subject: Re: [PATCH v2 13/26] drm/fb_cma_helper: Remove implicit call to
- disable_unused_functions
-Message-ID: <20160125072938.GI11240@phenom.ffwll.local>
-References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
- <2014724.QmjXVju9UW@avalon>
- <20160115101730.GH19130@phenom.ffwll.local>
- <1484612.l42nGNbAu5@avalon>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1484612.l42nGNbAu5@avalon>
+To: kernel@martin.sperl.org, "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Stephen Warren" <swarren@wwwdotorg.org>, "Lee Jones" <lee@kernel.org>,
+ "Eric Anholt" <eric@anholt.net>, "Remi Pommarel" <repk@triplefau.lt>,
+ linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1452542157-2387-4-git-send-email-kernel@martin.sperl.org>
+Cc: "Martin Sperl" <kernel@martin.sperl.org>
+References: <1452542157-2387-1-git-send-email-kernel@martin.sperl.org>
+ <1452542157-2387-4-git-send-email-kernel@martin.sperl.org>
+Message-ID: <20160113201115.1168.91766@quark.deferred.io>
+Subject: Re: [PATCH V2 3/4] clk: bcm2835: enable management of PCM clock
+Date: Wed, 13 Jan 2016 12:11:15 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jan 25, 2016 at 12:19:27AM +0200, Laurent Pinchart wrote:
-> Hi Daniel,
-> 
-> On Friday 15 January 2016 11:17:30 Daniel Vetter wrote:
-> > On Fri, Jan 15, 2016 at 01:13:05AM +0200, Laurent Pinchart wrote:
-> > > On Thursday 14 January 2016 16:24:56 Maxime Ripard wrote:
-> > >> The drm_fbdev_cma_init function always calls the
-> > >> drm_helper_disable_unused_functions. Since it's part of the usual probe
-> > >> process, all the drivers using that helper will end up having their
-> > >> encoder and CRTC disable functions called at probe if their device has
-> > >> not been reported as enabled.
-> > >> 
-> > >> This could be fixed by reading out from the registers the current state
-> > >> of the device if it is enabled, but even that will not handle the case
-> > >> where the device is actually disabled.
-> > >> 
-> > >> Moreover, the drivers using the atomic modesetting expect that their
-> > >> enable and disable callback to be called when the device is already
-> > >> enabled or disabled (respectively).
-> > >> 
-> > >> We can however fix this issue by moving the call to
-> > >> drm_helper_disable_unused_functions out of drm_fbdev_cma_init and make
-> > >> the drivers needing it (all the drivers calling drm_fbdev_cma_init and
-> > >> not using the atomic modesetting) explicitly call it.
-> > > 
-> > > I'd rather add it to all drivers that call drm_fbdev_cma_init(). All the
-> > > atomic ones must have special code to cope with it that could be rendered
-> > > useless by the removal of the drm_helper_disable_unused_functions() call.
-> > > That code should be removed too, and it would be easier to check drivers
-> > > one by one and fixing them individually (outside of this patch series,
-> > > unless you insist ;-)) when removing the explicit
-> > > drm_helper_disable_unused_functions() call.
-> >
-> > I had the same thought, but figured there's really no good reason ever to
-> > do this. I suspect most of that disable_unused_function stuff we have all
-> > over is supreme cargo-cult anyway ;-)
-> 
-> I'm not sure you got my point. Yes, the drm_helper_disable_unused_functions() 
-> call should be removed from atomic drivers, but that will leave support code 
-> added for the sole reason of avoiding the crash in the drivers. That code will 
-> likely not be noticed and will stay there rotting. If we added 
-> drm_helper_disable_unused_functions() calls to all atomic drivers then driver 
-> authors will hopefully check carefully if there's any support code that can be 
-> removed when removing the function call. It would act as a kind of FIXME 
-> reminder.
+Quoting kernel@martin.sperl.org (2016-01-11 11:55:55)
+> From: Martin Sperl <kernel@martin.sperl.org>
+> =
 
-drm_helper_disable_unused_functions() already prefers the ->disable
-callbacks over dpms, like atomic helpers. I don't think there's any dead
-code due to this change. The problem was that driver/hw blew up since it
-was disabled when the hw was off already.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+> Enable the PCM clock in the SOC, which is used by the
+> bcm2835-i2s driver.
+> =
+
+> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+
+Looks OK to me.
+
+Regards,
+Mike
+
+> ---
+>  drivers/clk/bcm/clk-bcm2835.c       |   13 +++++++++++++
+>  include/dt-bindings/clock/bcm2835.h |    1 +
+>  2 files changed, 14 insertions(+)
+> =
+
+> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+> index 7c782d3..573b5b1 100644
+> --- a/drivers/clk/bcm/clk-bcm2835.c
+> +++ b/drivers/clk/bcm/clk-bcm2835.c
+> @@ -88,6 +88,8 @@
+>  #define CM_HSMDIV              0x08c
+>  #define CM_OTPCTL              0x090
+>  #define CM_OTPDIV              0x094
+> +#define CM_PCMCTL              0x098
+> +#define CM_PCMDIV              0x09c
+>  #define CM_PWMCTL              0x0a0
+>  #define CM_PWMDIV              0x0a4
+>  #define CM_SMICTL              0x0b0
+> @@ -826,6 +828,16 @@ static const struct bcm2835_clock_data bcm2835_clock=
+_pwm_data =3D {
+>         .frac_bits =3D 12,
+>  };
+>  =
+
+> +static const struct bcm2835_clock_data bcm2835_clock_pcm_data =3D {
+> +       .name =3D "pcm",
+> +       .num_mux_parents =3D ARRAY_SIZE(bcm2835_clock_per_parents),
+> +       .parents =3D bcm2835_clock_per_parents,
+> +       .ctl_reg =3D CM_PCMCTL,
+> +       .div_reg =3D CM_PCMDIV,
+> +       .int_bits =3D 12,
+> +       .frac_bits =3D 12,
+> +};
+> +
+>  struct bcm2835_pll {
+>         struct clk_hw hw;
+>         struct bcm2835_cprman *cprman;
+> @@ -1616,6 +1628,7 @@ static const struct bcm2835_register_clock bcm2835_=
+register_clocks[] =3D {
+>         REGISTER_CLOCK(BCM2835_CLOCK_HSM, &bcm2835_clock_hsm_data),
+>         REGISTER_CLOCK(BCM2835_CLOCK_EMMC, &bcm2835_clock_emmc_data),
+>         REGISTER_CLOCK(BCM2835_CLOCK_PWM, &bcm2835_clock_pwm_data),
+> +       REGISTER_CLOCK(BCM2835_CLOCK_PCM, &bcm2835_clock_pcm_data),
+>  };
+>  =
+
+>  void bcm2835_register_duplicate_index(
+> diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/cl=
+ock/bcm2835.h
+> index 87235ac..9a7b4a5 100644
+> --- a/include/dt-bindings/clock/bcm2835.h
+> +++ b/include/dt-bindings/clock/bcm2835.h
+> @@ -44,3 +44,4 @@
+>  #define BCM2835_CLOCK_EMMC             28
+>  #define BCM2835_CLOCK_PERI_IMAGE       29
+>  #define BCM2835_CLOCK_PWM              30
+> +#define BCM2835_CLOCK_PCM              31
+> -- =
+
+> 1.7.10.4
+>=20
