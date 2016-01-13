@@ -1,136 +1,101 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2 3/3] clk: s2mps11: remove redundant code
-To: Andi Shyti <andi.shyti@samsung.com>, linux-samsung-soc@vger.kernel.org
-References: <1453193552-4761-1-git-send-email-andi.shyti@samsung.com>
- <1453193552-4761-4-git-send-email-andi.shyti@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Andi Shyti <andi@etezian.org>,
- Yadwinder Singh Brar <yadi.brar01@gmail.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <569EC9E6.1020801@samsung.com>
-Date: Wed, 20 Jan 2016 08:42:30 +0900
-MIME-version: 1.0
-In-reply-to: <1453193552-4761-4-git-send-email-andi.shyti@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Wed, 13 Jan 2016 17:19:31 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: tegra: Use definition for pll_u override bit
+Message-ID: <20160113161931.GN2588@ulmo>
+References: <1450702592-7755-1-git-send-email-jonathanh@nvidia.com>
+ <1450702592-7755-2-git-send-email-jonathanh@nvidia.com>
+ <20160113160833.GK2588@ulmo>
+ <5696770D.2050007@nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="oIlomvtVtXAVxSKT"
+In-Reply-To: <5696770D.2050007@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 19.01.2016 17:52, Andi Shyti wrote:
-> This patch performs some code removal as it uses some variables
-> for temporary use. Three changes:
-> 
-> * In the probe function the s2mps11_clk pointer is used only to
-> iterate through the s2mps11_clks. The naming itself brings
-> confusion and the readability is not improved.
-> 
-> * the s2mps11_name() define resolves the name of the a given
-> device. As it is used only once, we can expand it where it's used
-> and remove the defininition.
-> 
-> * The **clk_table variable is declared as a static variable and
-> used to reference some allocated memory, it's then assigned to
-> the clk_data.clks. This cycle can be skipped and the declaration
-> avoided.
-> 
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> ---
->  drivers/clk/clk-s2mps11.c | 44 +++++++++++++++++++-------------------------
->  1 file changed, 19 insertions(+), 25 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-> index cae92fc..09344bb 100644
-> --- a/drivers/clk/clk-s2mps11.c
-> +++ b/drivers/clk/clk-s2mps11.c
-> @@ -28,9 +28,6 @@
->  #include <linux/mfd/samsung/s5m8767.h>
->  #include <linux/mfd/samsung/core.h>
->  
-> -#define s2mps11_name(a) (a->hw.init->name)
-> -
-> -static struct clk **clk_table;
->  static struct clk_onecell_data clk_data;
 
-We spoke about this. You don't need both of them. Remove them.
+--oIlomvtVtXAVxSKT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Krzysztof
+On Wed, Jan 13, 2016 at 11:10:53AM -0500, Rhyland Klein wrote:
+> On 1/13/2016 11:08 AM, Thierry Reding wrote:
+> > * PGP Signed by an unknown key
+> >=20
+> > On Mon, Dec 21, 2015 at 12:56:32PM +0000, Jon Hunter wrote:
+> >> The definition, PLLU_BASE_OVERRIDE, for the pll_u OVERRIDE bit is defi=
+ned
+> >> but not used and when the OVERRIDE bit is cleared in tegra210_pll_init=
+()
+> >> the code directly uses the bit number. Therefore, use the definition,
+> >> PLLU_BASE_OVERRIDE when clearing the OVERRIDE bit.
+> >>
+> >> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> >> ---
+> >>  drivers/clk/tegra/clk-tegra210.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-=
+tegra210.c
+> >> index 791215747863..6f043c5e2394 100644
+> >> --- a/drivers/clk/tegra/clk-tegra210.c
+> >> +++ b/drivers/clk/tegra/clk-tegra210.c
+> >> @@ -2520,7 +2520,7 @@ static void __init tegra210_pll_init(void __iome=
+m *clk_base,
+> >> =20
+> >>  	/* PLLU_VCO */
+> >>  	val =3D readl(clk_base + pll_u_vco_params.base_reg);
+> >> -	val &=3D ~BIT(24); /* disable PLLU_OVERRIDE */
+> >> +	val &=3D ~PLLU_BASE_OVERRIDE; /* disable PLLU_OVERRIDE */
+> >>  	writel(val, clk_base + pll_u_vco_params.base_reg);
+> >> =20
+> >>  	clk =3D tegra_clk_register_pllre("pll_u_vco", "pll_ref", clk_base, p=
+mc,
+> >=20
+> > I think the comment is now redundant, given that the code says pretty
+> > much the same thing. No need to respin for that, I can remove the
+> > comment when I apply the patch. That is, unless anyone feels strongly
+> > about keeping the comment.
+>=20
+> I agree its redundant. If I am going to post a new version to address
+> other concerns, I can just roll this in while doing so.
 
->  
->  enum {
-> @@ -139,21 +136,19 @@ static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev,
->  static int s2mps11_clk_probe(struct platform_device *pdev)
->  {
->  	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
-> -	struct s2mps11_clk *s2mps11_clks, *s2mps11_clk;
-> +	struct s2mps11_clk *s2mps11_clks;
->  	unsigned int s2mps11_reg;
->  	int i, ret = 0;
->  	enum sec_device_type hwid = platform_get_device_id(pdev)->driver_data;
->  
->  	s2mps11_clks = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
-> -				sizeof(*s2mps11_clk), GFP_KERNEL);
-> +				sizeof(*s2mps11_clks), GFP_KERNEL);
->  	if (!s2mps11_clks)
->  		return -ENOMEM;
->  
-> -	s2mps11_clk = s2mps11_clks;
-> -
-> -	clk_table = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
-> +	clk_data.clks = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
->  				sizeof(struct clk *), GFP_KERNEL);
-> -	if (!clk_table)
-> +	if (!clk_data.clks)
->  		return -ENOMEM;
->  
->  	switch (hwid) {
-> @@ -179,33 +174,32 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
->  	if (IS_ERR(s2mps11_clks->clk_np))
->  		return PTR_ERR(s2mps11_clks->clk_np);
->  
-> -	for (i = 0; i < S2MPS11_CLKS_NUM; i++, s2mps11_clk++) {
-> +	for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
->  		if (i == S2MPS11_CLK_CP && hwid == S2MPS14X)
->  			continue; /* Skip clocks not present in some devices */
-> -		s2mps11_clk->iodev = iodev;
-> -		s2mps11_clk->hw.init = &s2mps11_clks_init[i];
-> -		s2mps11_clk->mask = 1 << i;
-> -		s2mps11_clk->reg = s2mps11_reg;
-> -
-> -		s2mps11_clk->clk = devm_clk_register(&pdev->dev,
-> -							&s2mps11_clk->hw);
-> -		if (IS_ERR(s2mps11_clk->clk)) {
-> +		s2mps11_clks[i].iodev = iodev;
-> +		s2mps11_clks[i].hw.init = &s2mps11_clks_init[i];
-> +		s2mps11_clks[i].mask = 1 << i;
-> +		s2mps11_clks[i].reg = s2mps11_reg;
-> +
-> +		s2mps11_clks[i].clk = devm_clk_register(&pdev->dev,
-> +							&s2mps11_clks[i].hw);
-> +		if (IS_ERR(s2mps11_clks[i].clk)) {
->  			dev_err(&pdev->dev, "Fail to register : %s\n",
-> -						s2mps11_name(s2mps11_clk));
-> -			ret = PTR_ERR(s2mps11_clk->clk);
-> +						s2mps11_clks_init[i].name);
-> +			ret = PTR_ERR(s2mps11_clks[i].clk);
->  			goto err_reg;
->  		}
->  
-> -		s2mps11_clk->lookup = clkdev_create(s2mps11_clk->clk,
-> -					s2mps11_name(s2mps11_clk), NULL);
-> -		if (!s2mps11_clk->lookup) {
-> +		s2mps11_clks[i].lookup = clkdev_create(s2mps11_clks[i].clk,
-> +					s2mps11_clks_init[i].name, NULL);
-> +		if (!s2mps11_clks[i].lookup) {
->  			ret = -ENOMEM;
->  			goto err_reg;
->  		}
-> -		clk_table[i] = s2mps11_clks[i].clk;
-> +		clk_data.clks[i] = s2mps11_clks[i].clk;
->  	}
->  
-> -	clk_data.clks = clk_table;
->  	clk_data.clk_num = S2MPS11_CLKS_NUM;
->  	of_clk_add_provider(s2mps11_clks->clk_np, of_clk_src_onecell_get,
->  			&clk_data);
-> 
+This looks like a good fix, or cleanup, on its own. So no need for
+anyone to carry this forward, I can pick it up into a fixes branch
+for v4.5.
+
+Thierry
+
+--oIlomvtVtXAVxSKT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJWlnkTAAoJEN0jrNd/PrOhdPQP/3tbZ8WRhyt++lxPUQUFstPv
+5Bunw9r6uolZhuVJPeumghX1aHTs/ImNLOZD2LDNWdD+WqMB8ytkGVqmEA+o8oyG
+iqHybJIS4Hle/TYysTIuQ97GwCTeaYISnkQ3iQh5wDPZBh4dUrZMoUVG/7op1epQ
+NQikDrMiApsY3ihENRMmexGfIDMUSu2fmRY9FlBi5D12ApZ+md6KWVjouL/sL6xu
+INsegE2w/Yo3LnIIp7eBnTFlyrDRM5OiiC3pZDpvvW6g4r8SajN5gy+P3rsAqncV
+Pv1t2sz+kT/RwyxWc99DBDbsSENscJXpULXvVAPLKmXmCrK5qdS/oOF4oVwmCRyN
+jw991zoVuS0tNY8Z5Nx/jQ1bWoDcXyvTeWDpgnqxLoRLngzroN/g55Fk5HBU5bhz
+jAE2uVXWOmWp0cJVWwRn5OfjAvgkOgo4KYQP6qF3CQ7bI4NJfOV/QobSZWEwlOUv
+vUP7PAo98nN0/xUsDr0Kg/jCm0OVHyeR+lckaQCE8hXOKgby038RFLPo5FyUtAEu
+B8pzMSMQn4bwvvUEfcgGxbykREn90j+jRG0ewvU0jxTg4S1LMWcHe7kZQHQxYHLU
+wHRKxFMh6rPLtRBKGXFRH05Dx0Wd2hztPlFIX/wp7JKfLifX5l3OHGKRSQRshY9v
+T2y3VRZcIXxc+CW+0RSm
+=/bQw
+-----END PGP SIGNATURE-----
+
+--oIlomvtVtXAVxSKT--
