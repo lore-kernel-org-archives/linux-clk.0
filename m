@@ -1,82 +1,161 @@
-Return-Path: <tomeu@tomeuvizoso.net>
-Return-Path: <tomeu@tomeuvizoso.net>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 13 Jan 2016 12:18:09 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Marcus Weseloh <mweseloh42@gmail.com>
+Cc: linux-sunxi@googlegroups.com,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi: Fix mod0 clock calculation to return stable
+ results and check divisor size limits
+Message-ID: <20160113111809.GA9905@lukather>
+References: <1451323892-13060-1-git-send-email-mweseloh42@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=VB93wYigRJ8wa8YL6P+Q+-fRokPiCB-Fo1pC_zAdh2oA@mail.gmail.com>
-References: <1415087559-19444-1-git-send-email-kever.yang@rock-chips.com>
- <48806799.thBSifdUp8@diego> <54647142.4080800@rock-chips.com>
- <CAD=FV=Vzec3Qm-kc6zZ4VxSREoZbzVkWbzp-noHYdcEVrLYYSw@mail.gmail.com>
- <CAAObsKChYN5nmcm5OWnAzNRGDi_QGSoKvN+0FizhjeT-3mmeXQ@mail.gmail.com>
- <CAD=FV=Wgu=xQ9PcVqfzcedXVU3Rh-HKbBVxHuqgV9OZJEYhYvg@mail.gmail.com>
- <CAAObsKC1v--mZwkiG-c7P2Bwi2-_txbeqaW4Vd5h-noAVNbhjA@mail.gmail.com> <CAD=FV=VB93wYigRJ8wa8YL6P+Q+-fRokPiCB-Fo1pC_zAdh2oA@mail.gmail.com>
-From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Date: Fri, 22 Jan 2016 15:00:27 +0100
-Message-ID: <CAAObsKCMh3Bk_oNJdLbU2F9b7jrnFZOp2uFR_oPqUoJ3W1gfaQ@mail.gmail.com>
-Subject: Re: [PATCH 0/5] clk: rockchip: add full support for HDMI clock on rk3288
-To: Doug Anderson <dianders@chromium.org>
-Cc: Kever Yang <kever.yang@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	Sonny Rao <sonnyrao@chromium.org>, Addy Ke <addy.ke@rock-chips.com>,
-	Eddie Cai <cf@rock-chips.com>, ZhenFu Fang <fzf@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>,
-	=?UTF-8?B?5aea5pm65oOF?= <yzq@rock-chips.com>,
-	=?UTF-8?B?5oi05YWL6ZyWIChKYWNrKQ==?= <dkl@rock-chips.com>,
-	Tao Huang <huangtao@rock-chips.com>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="oyUTqETQ0mS9luUI"
+In-Reply-To: <1451323892-13060-1-git-send-email-mweseloh42@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 21 January 2016 at 21:11, Doug Anderson <dianders@chromium.org> wrote:
-> Hi,
->
-> On Thu, Jan 21, 2016 at 1:03 AM, Tomeu Vizoso <tomeu@tomeuvizoso.net> wrote:
->> So we have a mechanism for detecting a conflict in the clock
->> hierarchy, and a mechanism to solve it, but we are missing a way for
->> userspace to communicate policy regarding which clocks should be given
->> priority when solving such a conflict?
->
-> Hrmmm, I guess it could be userspace that makes the decision.  It does
-> seem a little odd to force it to userspace in all cases, though.  For
-> a particular laptop that is designed with a specific panel connected
-> up eDP it seems less than ideal to push this into userspace.  If the
-> kernel could just work in the expected sane way (or at least work that
-> way by default) it would be ideal.
 
-Ah, I was wrongly assuming that the kernel didn't have enough
-information to make an informed decision in this case, sorry.
+--oyUTqETQ0mS9luUI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Guess the per-user rate limits don't help here because the consumer
-with higher priority could work with frequencies other than the ideal.
+Hi Marcus,
 
-And we cannot have a consumer listening for PRE_RATE_CHANGE and
-aborting unwanted changes or rerouting the ancestors of the clocks of
-other consumers because that would be a massive violation of
-separation of concerns.
+Sorry for the reviewing delay.
 
-If we were to rearrange the clock topology from within the CCF, then
-consumers need to have a way to communicate to the core that they are
-more important than other consumers. clk_set_important(clk, true)
-could be enough in this case, but would be insufficient in more
-complex cases where more than two clocks could use the same PLL.
+On Mon, Dec 28, 2015 at 06:31:32PM +0100, Marcus Weseloh wrote:
+> This patch fixes some problems in the mod0 clock calculation. It has
+> the potential to break stuff, as the issues explained below had the
+> effect that clk_set_rate would always return successfully, sometimes
+> setting a frequency that is higher than the requested value.
 
-> If the kernel doesn't try to do anything sane by default then you're
-> creating a requirement for everyone's userspace to somehow figure this
-> out.  Do you expect there to be UI here, or that this would be
-> something that would be figured out by the Linux distribution?
-> Certainly exposing UI on something like a laptop with a builtin panel
-> wouldn't make any sense to me, but it might make sense if you had an
-> eval board with different display connectors on it.  If there's no UI,
-> would the Linux distribution need to somehow identify which board we
-> were on and then have a big lookup table about how to configure
-> things?
+That's actually the expected behaviour of clk_set_rate.
 
-If we don't actually need input from userspace for this use case, I
-wouldn't go this way right now, because it seems to me like it could
-be a really big timesink for little gain.
+clk_set_rate is supposed to adjust the given clock rate to something
+that the clock drivers seems fit. It should only return an error in a
+case where you can't change the rate at all (because you didn't pass a
+valid struct clk pointer, because changing the rate would violate some
+clock flags, etc.). Otherwise, clk_set_rate should succeed.
 
-Once someone comes with a situation in which feedback from userspace
-is really needed, that person can propose such an interface ;)
+By returning an error code the clock is higher than the one passed,
+you violate that expectation, especially since that is relative to the
+clock you passed.
 
-Regards,
+It makes sense in your case to never exceed the given rate, it might
+not for a different clock in the tree, or even for a different
+instance of the same clock. For example, you could very well have
+another case in your system where you should not have rates set that
+are below the one given because that would prevent the consumer
+device to be usable.
 
-Tomeu
+This is why the adjustment is left to the clock driver, and is not
+enforced by the framework itself, simply because the framework has no
+idea how you want to round your clock rate on that particular clock in
+your system.
+
+> Code that "accidentally worked" because of this might fail after
+> applying this patch.
+>=20
+> The problems in detail:
+>=20
+> 1. If a very low frequency is requested from a high parent clock, the
+> divisors "div" and "calcm" might be > 255. This patch changes the type
+> of both variables to unsigned int, because the silent cast to u8 will
+> result in invalid frequencies and register values.
+>=20
+> 2. The width of the "m" divisor in the clock control registers is only
+> 4 bit, but that limitation is not checked when calculating the divisor
+> and the resulting frequency. This patch adds a check that m never
+> exceeds the field width.
+>=20
+> 3. During a call to clk_set_rate, the sun4i_a10_get_mod0_factors
+> function is called multiple times: first to find the best parent and
+> frequency, then again to calculate the p and m divisors, passing the
+> frequencies returned by the previous call(s). In certain cases
+> those chained calls do not result in the best frequency choice.
+
+You know the drill by now :)
+
+You're fixing three different issues, please send three different
+patches.
+
+>=20
+> An example:
+> parent_rate =3D 24Mhz, freq =3D 1.4Mhz results in p=3D1, m=3D9, freq=3D13=
+33333,3333
+> (which gets rounded down to 1333333).
+> Calling the function again with parent_rate =3D 24Mhz and freq =3D 1333333
+> results in p=3D1, m=3D10, freq=3D1200000.
+>=20
+> Rounding up the returned frequency removes this problem.
+>=20
+> Signed-off-by: Marcus Weseloh <mweseloh42@gmail.com>
+> ---
+>  drivers/clk/sunxi/clk-mod0.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/clk/sunxi/clk-mod0.c b/drivers/clk/sunxi/clk-mod0.c
+> index d167e1e..d03f099 100644
+> --- a/drivers/clk/sunxi/clk-mod0.c
+> +++ b/drivers/clk/sunxi/clk-mod0.c
+> @@ -31,7 +31,8 @@
+>  static void sun4i_a10_get_mod0_factors(u32 *freq, u32 parent_rate,
+>  				       u8 *n, u8 *k, u8 *m, u8 *p)
+>  {
+> -	u8 div, calcm, calcp;
+> +	unsigned int div, calcm;
+> +	u8 calcp;
+> =20
+>  	/* These clocks can only divide, so we will never be able to achieve
+>  	 * frequencies higher than the parent frequency */
+> @@ -50,8 +51,10 @@ static void sun4i_a10_get_mod0_factors(u32 *freq, u32 =
+parent_rate,
+>  		calcp =3D 3;
+> =20
+>  	calcm =3D DIV_ROUND_UP(div, 1 << calcp);
+> +	if (calcm > 16)
+> +		calcm =3D 16;
+> =20
+> -	*freq =3D (parent_rate >> calcp) / calcm;
+> +	*freq =3D DIV_ROUND_UP(parent_rate >> calcp, calcm);
+
+While the two above seems harmless, this one concerns me a bit. Did
+you test the various mod0 clock users and made sure that they were
+still working as they used to?
+
+Thanks,
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--oyUTqETQ0mS9luUI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWljJxAAoJEBx+YmzsjxAgzZoQAJ20hCeO/eZuw6OpSadhkCNy
+SCPSix92WQue2sHGDdpM8ywYUce0afx++PQBAkMGgWxf3ZaE1XvY/QnBpA/fmmzj
+O7LIsvZH/gAFADGfpNG5OfFz6B9XY6mT7239zNQZOF/3/jK5uhf7ymLnYHh1vX0X
+TOS0jL4gVQJ8EFD79wWpJYFTeS7A/mwsJpybYEAQxIlCW4dcQUTjSXw+DAWbLJ01
+SUjdsP73sAa682zbarF3Mf0Z8AwxhZV0sJXxEIzrFkJ/jFit5vSo+/IqE1T1qKpK
+Oep6qQ528VNJ9BrXf0SYRaza1/s41A/+IuQl4US4LaqjTaeB/VoY1oT7zFIu93GR
+D1eVRXfSZO7Ycfq25Wq1MtRsvYL5ZFd2FSUCB0wBQUWUn/epUunQkJOqD4/14qca
+iu7fquglBj9UMdyNI6EyXnSLvAod1q7qzceU61NGxeEysqRJLLBwbqnSIGSkq8Zz
+k8BYyAlPjB8KM1gzXintF2RCA/ho1lP9rDeFX8/52ZtmGUJ37zh7LrBgZP6kLz0/
+NBeDDbXHE6YDUrNugrT1Ey0VKbUwYIv36KBpjwXHgoO5ICuAiqdmGs2y5QvZN7on
+6l0dBi3k5Q9igzAKOIYWSZTb2QSQCj1uUeAvPdZ8CZavmL0TGXU2ZyyuEaoFVhSm
+LceR2iErd1ACZ2UexyFk
+=Bcap
+-----END PGP SIGNATURE-----
+
+--oyUTqETQ0mS9luUI--
