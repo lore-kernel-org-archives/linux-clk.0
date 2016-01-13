@@ -1,31 +1,81 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 14 Jan 2016 18:08:23 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 03/13] clk: at91: clk-main: factorize irq handling
-Message-ID: <20160115020823.GQ22188@codeaurora.org>
-References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
- <1449248628-3486-4-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <xuejiancheng@hisilicon.com>
+Subject: Re: [PATCH v5 5/6] mfd: dt-bindings: add device tree bindings for
+ Hi3519 sysctrl
+To: Arnd Bergmann <arnd@arndb.de>
+References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
+ <20160112083946.GN19803@x1> <5694C725.6010502@huawei.com>
+ <5675031.hi9rRCqFXs@wuerfel>
+CC: Lee Jones <lee.jones@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>, <p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+        <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <linux@arm.linux.org.uk>, <khilman@linaro.org>, <olof@lixom.net>,
+        <xuwei5@hisilicon.com>, <haojian.zhuang@linaro.org>,
+        <zhangfei.gao@linaro.org>, <bintian.wang@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
+        <suwenping@hisilicon.com>, <ml.yang@hisilicon.com>,
+        <gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+        <xuejiancheng@hisilicon.com>
+From: xuejiancheng <xuejiancheng@huawei.com>
+Message-ID: <56961404.1000602@huawei.com>
+Date: Wed, 13 Jan 2016 17:08:20 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1449248628-3486-4-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <5675031.hi9rRCqFXs@wuerfel>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/04, Alexandre Belloni wrote:
-> The three different irq handlers are doing the same thing, factorize their
-> code in a generic irq handler.
+Hi Arnd,
+
+On 2016/1/13 6:51, Arnd Bergmann wrote:
+> On Tuesday 12 January 2016 17:28:05 xuejiancheng wrote:
+>>>>>>>
+>>>>>> Not yet.
+>>>>>> Arnd Bergmann and Rob Herring all suggested adding a specific compatible string
+>>>>>> with the SOC name. This binding is just used for describing the compatible string now.
+>>>>>> When more functions on hi3519 SOC are added later, the specific driver will be also
+>>>>>> needed.
+>>>>>
+>>>>> Save this binding until it has more functionality.  We here "I'll add
+>>>>> to this later" all too often.
+>>>>>
+>>>>
+>>>> In the hi3519.dtsi file, there is a system-controller device node described like below:
+>>>> sysctrl: system-controller@12010000 {
+>>>>      compatible = "hisilicon,hi3519-sysctrl", "syscon";
+>>>>      reg = <0x12010000 0x1000>;
+>>>> };
+>>>> Do you mean that I should remove "hisilicon,hi3519-sysctrl" and just use "syscon" as the
+>>>> compatible string?　
+>>>
+>>> Where is this compatible string _used_?
+>>>
+>>>> If I want to add "hisilicon,hi3519-sysctrl" for hi3519. where should I put this binding?
+>>>> Could you give some suggestions?  Thank you very much!
+>>>
+>>> If you're not using the compatible i.e. the device doesn't have its
+>>> own driver yet, then there is no need to supply the binding at all, is
+>>> there?
+>>>
+>>
+>> OK. Thank you.
+>>
 > 
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> ---
+> Sorry for stepping in late here. I still think that every syscon device should
+> come with a specific compatible string, so we have the option of creating a
+> driver later on, and I'd like to see a binding document that lists those strings
+> (which I believe exists here).
+> 
+> It's really hard to add compatible strings later on, anything else we can
+> work around by keying off that string and adding a workaround in the kernel.
+> 
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Is it OK if I put this binding document into the directory "Documentation/devicetree/bindings/arm/hisilicon"?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thank you.
+
+> 	Arnd
+> 
+> .
+> 
