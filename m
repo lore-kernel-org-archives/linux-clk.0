@@ -1,42 +1,51 @@
-Return-Path: <ckeepax@opensource.wolfsonmicro.com>
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-To: <mturquette@baylibre.com>, <cw00.choi@samsung.com>, <lee.jones@linaro.org>
-CC: <sboyd@codeaurora.org>, <myungjoo.ham@samsung.com>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.wolfsonmicro.com>
-Subject: [PATCH 4/4] mfd: arizona: Add device tree binding documentation for new clock driver
-Date: Tue, 5 Jan 2016 15:41:42 +0000
-Message-ID: <1452008502-3749-4-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-In-Reply-To: <1452008502-3749-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-References: <1452008502-3749-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+To: kernel@martin.sperl.org, "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Stephen Warren" <swarren@wwwdotorg.org>, "Lee Jones" <lee@kernel.org>,
+ "Eric Anholt" <eric@anholt.net>, "Remi Pommarel" <repk@triplefau.lt>,
+ linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1452542157-2387-3-git-send-email-kernel@martin.sperl.org>
+Cc: "Martin Sperl" <kernel@martin.sperl.org>
+References: <1452542157-2387-1-git-send-email-kernel@martin.sperl.org>
+ <1452542157-2387-3-git-send-email-kernel@martin.sperl.org>
+Message-ID: <20160113200755.1168.19225@quark.deferred.io>
+Subject: Re: [PATCH V2 2/4] clk: bcm2835: enable fractional and mash support
+Date: Wed, 13 Jan 2016 12:07:55 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-Specify the device tree binding for the input clocks to Arizona devices.
+Hi Martin,
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
----
- Documentation/devicetree/bindings/mfd/arizona.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
+Quoting kernel@martin.sperl.org (2016-01-11 11:55:54)
+> @@ -1274,9 +1283,50 @@ static int bcm2835_clock_set_rate(struct clk_hw *h=
+w,
+>         struct bcm2835_cprman *cprman =3D clock->cprman;
+>         const struct bcm2835_clock_data *data =3D clock->data;
+>         u32 div =3D bcm2835_clock_choose_div(hw, rate, parent_rate, false=
+);
+> +       u32 ctl, mash;
+> +       bool enabled;
+> =
 
-diff --git a/Documentation/devicetree/bindings/mfd/arizona.txt b/Documentation/devicetree/bindings/mfd/arizona.txt
-index 18be0cb..39f76f8 100644
---- a/Documentation/devicetree/bindings/mfd/arizona.txt
-+++ b/Documentation/devicetree/bindings/mfd/arizona.txt
-@@ -45,6 +45,13 @@ Optional properties:
- 
-   - wlf,reset : GPIO specifier for the GPIO controlling /RESET
- 
-+  - clocks: Should reference the clocks supplied on MCLK1 and MCLK2
-+  - clock-names: Should contains two strings:
-+      "mclk1" for the clock supplied on MCLK1, recommended to be a high
-+      quality audio reference clock
-+      "mclk2" for the clock supplied on MCLK2, recommended to be an always on
-+      32k clock
-+
-   - wlf,gpio-defaults : A list of GPIO configuration register values. Defines
-     for the appropriate values can found in <dt-bindings/mfd/arizona.txt>. If
-     absent, no configuration of these registers is performed. If any entry has
--- 
-2.1.4
+> +       spin_lock(&cprman->regs_lock);
+> +       /* check if divider is identical, then return */
+> +       if (div =3D=3D cprman_read(cprman, data->div_reg))
+> +               goto unlock;
+> +
+> +       /* it is recommended to only set clock registers when disabled */
+> +       ctl =3D cprman_read(cprman, data->ctl_reg);
+> +       enabled =3D ctl & CM_ENABLE;
+> +       if (enabled) {
+> +               /* disable clock */
+> +               cprman_write(cprman, data->ctl_reg, ctl);
+
+This seems unsafe to me. Any IP block consuming this signal will have
+its clock cut without warning!
+
+If you need to enforce this behavior we provide the CLK_SET_RATE_GATE
+flag to handle it at the framework level.
+
+Regards,
+Mike
