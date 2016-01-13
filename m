@@ -1,79 +1,75 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>,
- Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject: [PATCH v3 0/3] arm64/clk: EXYNOS: Consolidate Exynos7 symbol
-Date: Tue, 26 Jan 2016 17:05:01 +0900
-Message-id: <1453795504-12302-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <rklein@nvidia.com>
+Subject: Re: [PATCH 2/2] clk: tegra: Use definition for pll_u override bit
+To: Thierry Reding <thierry.reding@gmail.com>
+References: <1450702592-7755-1-git-send-email-jonathanh@nvidia.com>
+ <1450702592-7755-2-git-send-email-jonathanh@nvidia.com>
+ <20160113160833.GK2588@ulmo> <5696770D.2050007@nvidia.com>
+ <20160113161931.GN2588@ulmo>
+CC: Jon Hunter <jonathanh@nvidia.com>, Peter De Schrijver
+	<pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+From: Rhyland Klein <rklein@nvidia.com>
+Message-ID: <56967B18.9070209@nvidia.com>
+Date: Wed, 13 Jan 2016 11:28:08 -0500
+MIME-Version: 1.0
+In-Reply-To: <20160113161931.GN2588@ulmo>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 1/13/2016 11:19 AM, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Wed, Jan 13, 2016 at 11:10:53AM -0500, Rhyland Klein wrote:
+>> On 1/13/2016 11:08 AM, Thierry Reding wrote:
+>>>> Old Signed by an unknown key
+>>>
+>>> On Mon, Dec 21, 2015 at 12:56:32PM +0000, Jon Hunter wrote:
+>>>> The definition, PLLU_BASE_OVERRIDE, for the pll_u OVERRIDE bit is defined
+>>>> but not used and when the OVERRIDE bit is cleared in tegra210_pll_init()
+>>>> the code directly uses the bit number. Therefore, use the definition,
+>>>> PLLU_BASE_OVERRIDE when clearing the OVERRIDE bit.
+>>>>
+>>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>>>> ---
+>>>>  drivers/clk/tegra/clk-tegra210.c | 2 +-
+>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+>>>> index 791215747863..6f043c5e2394 100644
+>>>> --- a/drivers/clk/tegra/clk-tegra210.c
+>>>> +++ b/drivers/clk/tegra/clk-tegra210.c
+>>>> @@ -2520,7 +2520,7 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
+>>>>  
+>>>>  	/* PLLU_VCO */
+>>>>  	val = readl(clk_base + pll_u_vco_params.base_reg);
+>>>> -	val &= ~BIT(24); /* disable PLLU_OVERRIDE */
+>>>> +	val &= ~PLLU_BASE_OVERRIDE; /* disable PLLU_OVERRIDE */
+>>>>  	writel(val, clk_base + pll_u_vco_params.base_reg);
+>>>>  
+>>>>  	clk = tegra_clk_register_pllre("pll_u_vco", "pll_ref", clk_base, pmc,
+>>>
+>>> I think the comment is now redundant, given that the code says pretty
+>>> much the same thing. No need to respin for that, I can remove the
+>>> comment when I apply the patch. That is, unless anyone feels strongly
+>>> about keeping the comment.
+>>
+>> I agree its redundant. If I am going to post a new version to address
+>> other concerns, I can just roll this in while doing so.
+> 
+> This looks like a good fix, or cleanup, on its own. So no need for
+> anyone to carry this forward, I can pick it up into a fixes branch
+> for v4.5.
+> 
 
-Third attempt to remove ARCH_EXYNOS7 symbol.
+Sure thing.
 
-Patches cannot be cherry-picked. I was thinking about merging this
-through arm-soc tree after getting needed acks (clk, arm-soc?).
+Thanks,
+Rhyland
 
-
-Changes since v2:
-=================
-1. Follow Arnd's advice about not enabling silently the newly added
-   EXYNOS_ARM64_COMMON_CLK, when COMPILE_TEST is enabled. This was
-   also a trigger for some changes in placement of Samsung clocks
-   Kconfig entries...
-2. ... which lead to introducing patch 1.
-
-
-Logic:
-======
-Now the clock selection algorithm works like:
-1. For Exynos ARMv7 and ARMv8 the platforms select COMMON_CLK
-   and COMMON_CLK_SAMSUNG.
-2. As before: clock drivers for Exynos ARMv7 will be selected by
-   respective SOC/ARCH_EXYNOS_XXX symbol.
-3. For Exynos ARMv8 the clock drivers will be enabled by default
-   by EXYNOS_ARM64_COMMON_CLK symbol.
-
-Rationale:
-==========
-We don't need ARCH_EXYNOS7 symbol because all ARMv8 platforms should
-fall under generic ARCH_EXYNOS. In the same time there is no sense
-in building clocks for these ARMv8 SoCs on ARMv7 builds. In future
-this will also influence PMU [1] driver.
-
-
-Best regards,
-Krzysztof
-
-[1] https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg48090.html
-
-
-Krzysztof Kozlowski (3):
-  clk: samsung: Enable COMPILE_TEST for Samsung clocks
-  clk: samsung: Don't build ARMv8 clock drivers on ARMv7
-  arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS
-
- arch/arm/Kconfig                    |  1 +
- arch/arm/mach-exynos/Kconfig        |  1 +
- arch/arm/mach-s3c24xx/Kconfig       |  8 ++++++++
- arch/arm/mach-s5pv210/Kconfig       |  1 +
- arch/arm64/Kconfig.platforms        | 12 +++---------
- arch/arm64/boot/dts/exynos/Makefile |  2 +-
- arch/arm64/configs/defconfig        |  2 +-
- drivers/clk/Kconfig                 |  2 +-
- drivers/clk/samsung/Kconfig         | 14 +++++++++-----
- drivers/clk/samsung/Makefile        |  4 ++--
- 10 files changed, 28 insertions(+), 19 deletions(-)
 
 -- 
-1.9.1
+nvpublic
