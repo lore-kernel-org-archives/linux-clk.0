@@ -1,59 +1,60 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:36545 "EHLO
-	mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752550AbcA2H6I (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 29 Jan 2016 02:58:08 -0500
-From: Alexander Kochetkov <al.kochet@gmail.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Alexander Kochetkov <al.kochet@gmail.com>
-Subject: [PATCH v2] clk: rockchip: Allow sclk_i2s0 and i2s0_frac to change their parents rate on rk3188
-Date: Fri, 29 Jan 2016 10:58:02 +0300
-Message-Id: <1454054282-16303-1-git-send-email-al.kochet@gmail.com>
-In-Reply-To: <1453897469-2134-1-git-send-email-al.kochet@gmail.com>
-References: <1453897469-2134-1-git-send-email-al.kochet@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <rklein@nvidia.com>
+Subject: Re: [PATCH 9/9] clk: tegra210: Initialize PLL_D2 to a sane rate
+To: Thierry Reding <thierry.reding@gmail.com>
+References: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
+ <1452278714-10751-10-git-send-email-rklein@nvidia.com>
+ <20160113140309.GB15782@ulmo>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen
+ Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Bill Huang
+	<bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>, Benson Leung
+	<bleung@chromium.org>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From: Rhyland Klein <rklein@nvidia.com>
+Message-ID: <56967ADD.8090904@nvidia.com>
+Date: Wed, 13 Jan 2016 11:27:09 -0500
+MIME-Version: 1.0
+In-Reply-To: <20160113140309.GB15782@ulmo>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Allow sclk_i2s0 and i2s0_frac to change their parents rate as
-that the upstream dividers are purely there to feed sclk_i2s0
+On 1/13/2016 9:03 AM, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Fri, Jan 08, 2016 at 01:45:14PM -0500, Rhyland Klein wrote:
+>> Initialize PLL_D2 to a sane rate at the start of the day.
+>>
+>> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+>> ---
+>>  drivers/clk/tegra/clk-tegra210.c | 1 +
+>>  1 file changed, 1 insertion(+)
+> 
+> There are a lot of assumptions in this commit message. I'm asking myself
+> why does it need to be initialized to any rate at all? Isn't it up to
+> the user driver to set the PLL to whatever it knows to be a sane rate?
+> Why is 594 MHz a sane rate?
+> 
+> A good commit message should answer those questions.
+> 
 
-Tested on radxarock-lite.
+Thanks. This patch came about in response to some work with
+suspend/resume logic in the ChromeOS kernel. In the suspend/resume patch
+there, it reads all clk rates and caches them in suspend, then re-sets
+them on resume. We hadn't been using pll_d2 at all, and its rate (when
+read in suspend()) came back as 0. Then in resume, we would tr to set
+it, clk_set_rate(pll_d2, 0) and would generate a warning/error that 0
+wasn't a valid rate.
 
-Signed-off-by: Alexander Kochetkov <al.kochet@gmail.com>
+As for the specific rate I chose, I simply took one off the table of
+supported frequencies in the clk-tegra210 code, so that it was non-zero.
 
-Changes in v2:
-Rebased on top of 4.5-rc1 of branch[1]
+Since we don't support suspend/resume right now in the clk drivers, I
+don't think its urgent to merge this patch. I can drop in in the next
+rev if thats easier.
 
-[1] https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.git/log/?h=v4.6-clk/next
+-rhyland
 
----
- drivers/clk/rockchip/clk-rk3188.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-index cc1d09d..629c65d 100644
---- a/drivers/clk/rockchip/clk-rk3188.c
-+++ b/drivers/clk/rockchip/clk-rk3188.c
-@@ -666,7 +666,7 @@ PNAME(mux_hsicphy_p)		= { "sclk_otgphy0_480m", "sclk_otgphy1_480m",
- 				    "gpll", "cpll" };
- 
- static struct rockchip_clk_branch rk3188_i2s0_fracmux __initdata =
--	MUX(SCLK_I2S0, "sclk_i2s0", mux_sclk_i2s0_p, 0,
-+	MUX(SCLK_I2S0, "sclk_i2s0", mux_sclk_i2s0_p, CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(3), 8, 2, MFLAGS);
- 
- static struct rockchip_clk_branch rk3188_clk_branches[] __initdata = {
-@@ -722,7 +722,7 @@ static struct rockchip_clk_branch rk3188_clk_branches[] __initdata = {
- 	COMPOSITE_NOMUX(0, "i2s0_pre", "i2s_src", 0,
- 			RK2928_CLKSEL_CON(3), 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(0), 9, GFLAGS),
--	COMPOSITE_FRACMUX(0, "i2s0_frac", "i2s0_pre", 0,
-+	COMPOSITE_FRACMUX(0, "i2s0_frac", "i2s0_pre", CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(7), 0,
- 			RK2928_CLKGATE_CON(0), 10, GFLAGS,
- 			&rk3188_i2s0_fracmux),
 -- 
-1.7.9.5
-
+nvpublic
