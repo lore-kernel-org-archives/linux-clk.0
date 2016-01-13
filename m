@@ -1,208 +1,367 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: Yakir Yang <ykk@rock-chips.com>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Michael Turquette <mturquette@baylibre.com>, Kumar Gala <galak@codeaurora.org>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, keescook@google.com, linux-clk@vger.kernel.org, leozwang@google.com
-Subject: Re: [RESEND PATCH v1 4/4] clk: rockchip: rk3036: fix and add node id for emac clock
-Date: Fri, 01 Jan 2016 23:10:54 +0100
-Message-ID: <1562268.fb58QJ4jV7@diego>
-In-Reply-To: <5681F121.3070307@rock-chips.com>
-References: <1451293433-32392-1-git-send-email-zhengxing@rock-chips.com> <5681E8E4.2010303@rock-chips.com> <5681F121.3070307@rock-chips.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="nextPart1948952.CzreNMXDyD"
+To: kernel@martin.sperl.org, "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Stephen Warren" <swarren@wwwdotorg.org>, "Lee Jones" <lee@kernel.org>,
+ "Eric Anholt" <eric@anholt.net>, "Remi Pommarel" <repk@triplefau.lt>,
+ linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1452542157-2387-2-git-send-email-kernel@martin.sperl.org>
+Cc: "Martin Sperl" <kernel@martin.sperl.org>
+References: <1452542157-2387-1-git-send-email-kernel@martin.sperl.org>
+ <1452542157-2387-2-git-send-email-kernel@martin.sperl.org>
+Message-ID: <20160113200012.1168.74515@quark.deferred.io>
+Subject: Re: [PATCH V2 1/4] clk: bcm2835: avoid the use of BCM2835_CLOCK_COUNT in
+ clk-bcm2835
+Date: Wed, 13 Jan 2016 12:00:12 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-This is a multi-part message in MIME format.
+Hi Martin,
 
---nextPart1948952.CzreNMXDyD
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Quoting kernel@martin.sperl.org (2016-01-11 11:55:53)
+> From: Martin Sperl <kernel@martin.sperl.org>
+> =
 
-Hi Xing,
+> As the use of BCM2835_CLOCK_COUNT in
+> include/dt-bindings/clock/bcm2835.h is frowned upon as
+> it needs to get modified every time a new clock gets introduced
+> this patch changes the clk-bcm2835 driver to use a different
+> scheme for registration of clocks and pll, so that there
+> is no more need for BCM2835_CLOCK_COUNT to be defined.
+> =
 
-Am Dienstag, 29. Dezember 2015, 10:34:09 schrieb Xing Zheng:
-> On 2015=E5=B9=B412=E6=9C=8829=E6=97=A5 09:59, Yakir Yang wrote:
-> > On 12/28/2015 08:41 PM, Heiko St=C3=BCbner wrote:
-> >> Am Montag, 28. Dezember 2015, 17:03:53 schrieb Xing Zheng:
-> >>> Due to referred old version TRM, there is incorrect emac clock no=
-de,
-> >>> we should fix it. The SEL_21_9 is the parent of SEL_21_4.
-> >>>=20
-> >>> In the emac driver, we need to refer HCLK_MAC, and because There =
-are
-> >>> only 3PLLs (APLL/GPLL/DPLL) on the rk3036, most clock are under t=
-he
-> >>> GPLL, and it is unable to provide the accurate rate for mac_ref w=
-hich
-> >>> need to 50MHz probability, we should let it under the APLL and ar=
-e
-> >>> able to set the freq which integer multiples of 50MHz, so we add =
-these
-> >>> emac node for reference.
-> >>=20
-> >> I don't really follow here. While I do understand that the emac ne=
-eds
-> >> 50MHz, I
-> >> don't think using the APLL as source is helpful.
-> >>=20
-> >> The APLL is the main clocksource for the cpu-cores, including freq=
-uency
-> >> scaling, and while it currently only lists 816MHz as sole frequenc=
-y,
-> >> you're
-> >> pretty much guaranteed to not get your correct multiple of 50MHz f=
-rom
-> >> there
-> >> either. And limiting the cpu to just do 600MHz to get the mac work=
-ing
-> >> sounds
-> >> pretty bad ;-) .
-> >>=20
-> >>=20
-> >> In the rk3036 cru-node the gpll gets set to 594MHz. Is there a
-> >> special reason
-> >> why it needs to be 594MHz and cannot be a round 600MHz? Because th=
-at
-> >> would
-> >> also provide your 50MHz-multiple nicely.
-> >=20
-> > Yes, this magic 594MHz would help to support the standard HDMI
-> > resolutions, here are the math:
-> >=20
-> > 1920x1080-60Hz DCLK =3D 148.5MHz =3D 594MHz / 4
-> > 1280x720-60Hz DCLK =3D 74.25MHz =3D 594MHz / 8
-> > 720x480-60Hz DCLK =3D 27MHz =3D 594MHz / 22
-> >=20
-> > Thanks,
-> > - Yakir
->=20
-> Thanks Yakir.
->=20
-> Hi Heiko,
->  From the above, do you have better idea for the RK3036's emac withou=
-t
-> ext-oscillator?
+> The way the patch is designed also makes sure to allow control
+> the order in which the clocks are defined.
+> =
 
-During the last days I did play a bit with the clock framework. As I do=
-n't=20
-have a Kylin (or any rk3036) board, I did build a test-case with pclk_c=
-pu on=20
-the rk3188 (which can be affected by the armclk if not reparented to th=
-e=20
-gpll), which got sucessfully adapted to get back to (or near) the origi=
-nally=20
-requested frequency.
+> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+> ---
+>  drivers/clk/bcm/clk-bcm2835.c       |  208 +++++++++++++++++++++++++----=
+------
+>  include/dt-bindings/clock/bcm2835.h |    2 -
+>  2 files changed, 147 insertions(+), 63 deletions(-)
+> =
 
-So ideally you could roll back your mux/div split here and try the atta=
-ched=20
-diff. In theory it should help :-) .
-As can be seen by the FIXMEs, not fully finished, but I'd like to deter=
-mine if=20
-it fixes the issue at least.
+> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+> index 015e687..759202a 100644
+> --- a/drivers/clk/bcm/clk-bcm2835.c
+> +++ b/drivers/clk/bcm/clk-bcm2835.c
+> @@ -288,7 +288,7 @@ struct bcm2835_cprman {
+>         const char *osc_name;
+> =
 
+>         struct clk_onecell_data onecell;
+> -       struct clk *clks[BCM2835_CLOCK_COUNT];
+> +       struct clk *clks[];
+>  };
+> =
 
-Heiko
+>  static inline void cprman_write(struct bcm2835_cprman *cprman, u32 reg, =
+u32 val)
+> @@ -1498,14 +1498,146 @@ static struct clk *bcm2835_register_clock(struct=
+ bcm2835_cprman *cprman,
+>         return devm_clk_register(cprman->dev, &clock->hw);
+>  }
+> =
 
---nextPart1948952.CzreNMXDyD
-Content-Disposition: attachment; filename="clk-keep-req-rate.diff"
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/x-patch; charset="UTF-8"; name="clk-keep-req-rate.diff"
+> +enum bcm2835_clk_register {
+> +       bcm2835_clk_register_pll,
+> +       bcm2835_clk_register_pll_div,
+> +       bcm2835_clk_register_clock,
+> +};
+> +
+> +/*the list of clocks and plls to register */
+> +enum bcm2835_register_clock_type {
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 7bbb0fd..83a7234 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1423,6 +1423,9 @@ static struct clk_core *clk_propagate_rate_change(struct clk_core *core,
- 	return fail_clk;
- }
- 
-+static int clk_core_set_rate_nolock(struct clk_core *core,
-+				    unsigned long req_rate);
-+
- /*
-  * walk down a subtree and set the new rates notifying the rate
-  * change on the way
-@@ -1438,6 +1441,7 @@ static void clk_change_rate(struct clk_core *core)
- 
- 	old_rate = core->rate;
- 
-+printk("%s: %s requested %lu, new %lu\n", __func__, core->name, core->req_rate, core->new_rate);
- 	if (core->new_parent)
- 		best_parent_rate = core->new_parent->rate;
- 	else if (core->parent)
-@@ -1507,6 +1511,12 @@ static void clk_change_rate(struct clk_core *core)
- 	/* handle the new child who might not be in core->children yet */
- 	if (core->new_child)
- 		clk_change_rate(core->new_child);
-+
-+	/* FIXME: add flag to limit to specific clocks? */
-+	if (core->req_rate && core->new_rate != old_rate) {
-+		printk("\t\ttrying to adapt %s\n", core->name);
-+		clk_core_set_rate_nolock(core, core->req_rate);
-+	}
- }
- 
- static int clk_core_set_rate_nolock(struct clk_core *core,
-@@ -1520,8 +1530,10 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- 		return 0;
- 
- 	/* bail early if nothing to do */
--	if (rate == clk_core_get_rate_nolock(core))
-+	if (rate == clk_core_get_rate_nolock(core)) {
-+		core->req_rate = req_rate;
- 		return 0;
-+	}
- 
- 	if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
- 		return -EBUSY;
-@@ -1612,9 +1624,14 @@ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
- 	clk_prepare_lock();
- 
- 	if (min != clk->min_rate || max != clk->max_rate) {
-+		unsigned long rate = clk->core->req_rate;
-+
-+		if (!rate)
-+			rate = clk->core->rate;
-+
- 		clk->min_rate = min;
- 		clk->max_rate = max;
--		ret = clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
-+		ret = clk_core_set_rate_nolock(clk->core, rate);
- 	}
- 
- 	clk_prepare_unlock();
-@@ -2451,7 +2468,7 @@ static int __clk_init(struct device *dev, struct clk *clk_user)
- 		rate = core->parent->rate;
- 	else
- 		rate = 0;
--	core->rate = core->req_rate = rate;
-+	core->rate = rate;
- 
- 	/*
- 	 * walk the list of orphan clocks and reparent any that are children of
-@@ -2798,6 +2815,7 @@ int __clk_get(struct clk *clk)
- 
- void __clk_put(struct clk *clk)
+Nitpick: s/clock/clk/
+
+It helps with grepping later on. Typically "clock" is used for OF/DT
+stuff and clk is used for Linux-specific stuff. This isn't a rule, but
+seems to be the de facto standard.
+
+> +       CLK_TYPE_UNSET,
+> +       CLK_TYPE_PLL,
+> +       CLK_TYPE_PLL_DIV,
+> +       CLK_TYPE_CLOCK,
+> +};
+> +
+> +struct bcm2835_register_clock {
+
+Nitpick: how about bcm2835_clk_desc ?
+
+> +       size_t index;
+> +       enum bcm2835_register_clock_type clock_type;
+> +       const void *data;
+> +};
+> +
+> +#define _REGISTER(i, t, d) { .index =3D i, .clock_type =3D t, .data =3D =
+d }
+> +
+> +#define REGISTER_PLL(i, d)     _REGISTER(i, CLK_TYPE_PLL, d)
+> +#define REGISTER_PLL_DIV(i, d) _REGISTER(i, CLK_TYPE_PLL_DIV, d)
+> +#define REGISTER_CLOCK(i, d)   _REGISTER(i, CLK_TYPE_CLOCK, d)
+> +
+> +/*
+> + * note that this array is processed first to last,
+> + * so that we can define inititalization order.
+> + * with the order right now: pll, pll_div and then clock
+> + * this allows to retain the existing id- mapping in the device tree.
+> + * ths also means we have to have some more explicit coding
+> + * and can not use sparse arrays or similar.
+> + */
+> +static const struct bcm2835_register_clock bcm2835_register_clocks[] =3D=
  {
-+	unsigned long rate;
- 	struct module *owner;
- 
- 	if (!clk || WARN_ON_ONCE(IS_ERR(clk)))
-@@ -2806,9 +2824,13 @@ void __clk_put(struct clk *clk)
- 	clk_prepare_lock();
- 
- 	hlist_del(&clk->clks_node);
--	if (clk->min_rate > clk->core->req_rate ||
--	    clk->max_rate < clk->core->req_rate)
--		clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
-+
-+	rate = clk->core->req_rate;
-+	if (!rate)
-+		rate = clk->core->rate;
-+
-+	if (clk->min_rate > rate || clk->max_rate < rate)
-+		clk_core_set_rate_nolock(clk->core, rate);
- 
- 	owner = clk->core->owner;
- 	kref_put(&clk->core->ref, __clk_release);
+> +       /* the PLL clocks */
+> +       REGISTER_PLL(BCM2835_PLLA, &bcm2835_plla_data),
+> +       REGISTER_PLL(BCM2835_PLLB, &bcm2835_pllb_data),
+> +       REGISTER_PLL(BCM2835_PLLC, &bcm2835_pllc_data),
+> +       REGISTER_PLL(BCM2835_PLLD, &bcm2835_plld_data),
+> +       REGISTER_PLL(BCM2835_PLLH, &bcm2835_pllh_data),
+> +       /* the PLL dividers */
+> +       REGISTER_PLL_DIV(BCM2835_PLLA_CORE, &bcm2835_plla_core_data),
+> +       REGISTER_PLL_DIV(BCM2835_PLLA_PER, &bcm2835_plla_per_data),
+> +       REGISTER_PLL_DIV(BCM2835_PLLC_CORE0, &bcm2835_pllc_core0_data),
+> +       REGISTER_PLL_DIV(BCM2835_PLLC_CORE1, &bcm2835_pllc_core1_data),
+> +       REGISTER_PLL_DIV(BCM2835_PLLC_CORE2, &bcm2835_pllc_core2_data),
+> +       REGISTER_PLL_DIV(BCM2835_PLLC_PER, &bcm2835_pllc_per_data),
+> +       REGISTER_PLL_DIV(BCM2835_PLLD_CORE, &bcm2835_plld_core_data),
+> +       REGISTER_PLL_DIV(BCM2835_PLLD_PER, &bcm2835_plld_per_data),
+> +       REGISTER_PLL_DIV(BCM2835_PLLH_RCAL, &bcm2835_pllh_rcal_data),
+> +       REGISTER_PLL_DIV(BCM2835_PLLH_AUX, &bcm2835_pllh_aux_data),
+> +       REGISTER_PLL_DIV(BCM2835_PLLH_PIX, &bcm2835_pllh_pix_data),
+> +       /* the clocks */
+> +       REGISTER_CLOCK(BCM2835_CLOCK_TIMER, &bcm2835_clock_timer_data),
+> +       REGISTER_CLOCK(BCM2835_CLOCK_OTP, &bcm2835_clock_otp_data),
+> +       REGISTER_CLOCK(BCM2835_CLOCK_TSENS, &bcm2835_clock_tsens_data),
+> +       REGISTER_CLOCK(BCM2835_CLOCK_VPU, &bcm2835_clock_vpu_data),
+> +       REGISTER_CLOCK(BCM2835_CLOCK_V3D, &bcm2835_clock_v3d_data),
+> +       REGISTER_CLOCK(BCM2835_CLOCK_ISP, &bcm2835_clock_isp_data),
+> +       REGISTER_CLOCK(BCM2835_CLOCK_H264, &bcm2835_clock_h264_data),
+> +       REGISTER_CLOCK(BCM2835_CLOCK_V3D, &bcm2835_clock_v3d_data),
+> +       REGISTER_CLOCK(BCM2835_CLOCK_SDRAM, &bcm2835_clock_sdram_data),
+> +       REGISTER_CLOCK(BCM2835_CLOCK_UART, &bcm2835_clock_uart_data),
+> +       REGISTER_CLOCK(BCM2835_CLOCK_VEC, &bcm2835_clock_vec_data),
+> +       REGISTER_CLOCK(BCM2835_CLOCK_HSM, &bcm2835_clock_hsm_data),
+> +       REGISTER_CLOCK(BCM2835_CLOCK_EMMC, &bcm2835_clock_emmc_data),
+> +       REGISTER_CLOCK(BCM2835_CLOCK_PWM, &bcm2835_clock_pwm_data),
+> +};
+> +
+> +void bcm2835_register_duplicate_index(
+> +       struct device *dev, const struct bcm2835_register_clock *reg,
+> +       struct clk *clk)
+> +{
+> +       const char *name, *type;
+> +
+> +       switch (reg->clock_type) {
+> +       case CLK_TYPE_PLL:
+> +               name =3D ((struct bcm2835_pll_data *)reg->data)->name;
+> +               type =3D "pll";
+> +               break;
+> +       case CLK_TYPE_PLL_DIV:
+> +               name =3D ((struct bcm2835_pll_divider_data *)reg->data)->=
+name;
+> +               type =3D "pll divider";
+> +               break;
+> +       case CLK_TYPE_CLOCK:
+> +               name =3D ((struct bcm2835_clock_data *)reg->data)->name;
+> +               type =3D "clock";
+> +               break;
+> +       default:
+> +               dev_err(dev, "Unsupported clock type %d for index %d\n",
+> +                       reg->clock_type, reg->index);
+> +               return;
+> +       }
+> +
+> +       dev_err(dev,
+> +               "Could not register %s \"%s\" because index %i already de=
+fined as clock: %pC\n",
+> +               type, name, reg->index, clk);
+> +}
+> +
+> +struct clk *bcm2835_register_pllclock(
+> +       struct device *dev, struct bcm2835_cprman *cprman,
+> +       const struct bcm2835_register_clock *reg)
+> +{
+> +       switch (reg->clock_type) {
+> +       case CLK_TYPE_PLL:
+> +               return bcm2835_register_pll(
+> +                       cprman, reg->data);
+> +       case CLK_TYPE_PLL_DIV:
+> +               return bcm2835_register_pll_divider(
+> +                       cprman, reg->data);
+> +       case CLK_TYPE_CLOCK:
+> +               return bcm2835_register_clock(
+> +                       cprman, reg->data);
+> +       default:
+> +               dev_err(dev, "Unsupported clock type %d for index %d\n",
+> +                       reg->clock_type, reg->index);
+> +       }
+> +
+> +       return NULL;
+> +}
+> +
+>  static int bcm2835_clk_probe(struct platform_device *pdev)
+>  {
+>         struct device *dev =3D &pdev->dev;
+>         struct clk **clks;
+> +       size_t clk_cnt;
+>         struct bcm2835_cprman *cprman;
+>         struct resource *res;
+> +       size_t i;
+> +
+> +       /* find the max clock index */
+> +       clk_cnt =3D BCM2835_CLOCK_PERI_IMAGE; /* see below */
+> +       for (i =3D 0; i < ARRAY_SIZE(bcm2835_register_clocks); i++)
+> +               clk_cnt =3D max(clk_cnt, bcm2835_register_clocks[i].index=
+);
+> +       clk_cnt +=3D 1;
 
---nextPart1948952.CzreNMXDyD--
+I'm not sure how this solution is better than using CLOCK_COUNT. Some
+other bindings use a max value, NR_CLKS or other sentinel.
+
+Why did you not choose to set clk_cnt equal to BCM2835_CLOCK_PWM? Why
+not initialize it to zero?
+
+> =
+
+> -       cprman =3D devm_kzalloc(dev, sizeof(*cprman), GFP_KERNEL);
+> +       cprman =3D devm_kzalloc(dev,
+> +                             sizeof(*cprman) + clk_cnt * sizeof(*clks),
+> +                             GFP_KERNEL);
+>         if (!cprman)
+>                 return -ENOMEM;
+> =
+
+> @@ -1522,65 +1654,22 @@ static int bcm2835_clk_probe(struct platform_devi=
+ce *pdev)
+> =
+
+>         platform_set_drvdata(pdev, cprman);
+> =
+
+> -       cprman->onecell.clk_num =3D BCM2835_CLOCK_COUNT;
+> +       cprman->onecell.clk_num =3D clk_cnt;
+>         cprman->onecell.clks =3D cprman->clks;
+>         clks =3D cprman->clks;
+> =
+
+> -       clks[BCM2835_PLLA] =3D bcm2835_register_pll(cprman, &bcm2835_plla=
+_data);
+> -       clks[BCM2835_PLLB] =3D bcm2835_register_pll(cprman, &bcm2835_pllb=
+_data);
+> -       clks[BCM2835_PLLC] =3D bcm2835_register_pll(cprman, &bcm2835_pllc=
+_data);
+> -       clks[BCM2835_PLLD] =3D bcm2835_register_pll(cprman, &bcm2835_plld=
+_data);
+> -       clks[BCM2835_PLLH] =3D bcm2835_register_pll(cprman, &bcm2835_pllh=
+_data);
+> -
+> -       clks[BCM2835_PLLA_CORE] =3D
+> -               bcm2835_register_pll_divider(cprman, &bcm2835_plla_core_d=
+ata);
+> -       clks[BCM2835_PLLA_PER] =3D
+> -               bcm2835_register_pll_divider(cprman, &bcm2835_plla_per_da=
+ta);
+> -       clks[BCM2835_PLLC_CORE0] =3D
+> -               bcm2835_register_pll_divider(cprman, &bcm2835_pllc_core0_=
+data);
+> -       clks[BCM2835_PLLC_CORE1] =3D
+> -               bcm2835_register_pll_divider(cprman, &bcm2835_pllc_core1_=
+data);
+> -       clks[BCM2835_PLLC_CORE2] =3D
+> -               bcm2835_register_pll_divider(cprman, &bcm2835_pllc_core2_=
+data);
+> -       clks[BCM2835_PLLC_PER] =3D
+> -               bcm2835_register_pll_divider(cprman, &bcm2835_pllc_per_da=
+ta);
+> -       clks[BCM2835_PLLD_CORE] =3D
+> -               bcm2835_register_pll_divider(cprman, &bcm2835_plld_core_d=
+ata);
+> -       clks[BCM2835_PLLD_PER] =3D
+> -               bcm2835_register_pll_divider(cprman, &bcm2835_plld_per_da=
+ta);
+> -       clks[BCM2835_PLLH_RCAL] =3D
+> -               bcm2835_register_pll_divider(cprman, &bcm2835_pllh_rcal_d=
+ata);
+> -       clks[BCM2835_PLLH_AUX] =3D
+> -               bcm2835_register_pll_divider(cprman, &bcm2835_pllh_aux_da=
+ta);
+> -       clks[BCM2835_PLLH_PIX] =3D
+> -               bcm2835_register_pll_divider(cprman, &bcm2835_pllh_pix_da=
+ta);
+> -
+> -       clks[BCM2835_CLOCK_TIMER] =3D
+> -               bcm2835_register_clock(cprman, &bcm2835_clock_timer_data);
+> -       clks[BCM2835_CLOCK_OTP] =3D
+> -               bcm2835_register_clock(cprman, &bcm2835_clock_otp_data);
+> -       clks[BCM2835_CLOCK_TSENS] =3D
+> -               bcm2835_register_clock(cprman, &bcm2835_clock_tsens_data);
+> -       clks[BCM2835_CLOCK_VPU] =3D
+> -               bcm2835_register_clock(cprman, &bcm2835_clock_vpu_data);
+> -       clks[BCM2835_CLOCK_V3D] =3D
+> -               bcm2835_register_clock(cprman, &bcm2835_clock_v3d_data);
+> -       clks[BCM2835_CLOCK_ISP] =3D
+> -               bcm2835_register_clock(cprman, &bcm2835_clock_isp_data);
+> -       clks[BCM2835_CLOCK_H264] =3D
+> -               bcm2835_register_clock(cprman, &bcm2835_clock_h264_data);
+> -       clks[BCM2835_CLOCK_V3D] =3D
+> -               bcm2835_register_clock(cprman, &bcm2835_clock_v3d_data);
+> -       clks[BCM2835_CLOCK_SDRAM] =3D
+> -               bcm2835_register_clock(cprman, &bcm2835_clock_sdram_data);
+> -       clks[BCM2835_CLOCK_UART] =3D
+> -               bcm2835_register_clock(cprman, &bcm2835_clock_uart_data);
+> -       clks[BCM2835_CLOCK_VEC] =3D
+> -               bcm2835_register_clock(cprman, &bcm2835_clock_vec_data);
+> -       clks[BCM2835_CLOCK_HSM] =3D
+> -               bcm2835_register_clock(cprman, &bcm2835_clock_hsm_data);
+> -       clks[BCM2835_CLOCK_EMMC] =3D
+> -               bcm2835_register_clock(cprman, &bcm2835_clock_emmc_data);
+> +       /* now register */
+> +       for (i =3D 0; i < ARRAY_SIZE(bcm2835_register_clocks); i++) {
+> +               if (clks[bcm2835_register_clocks[i].index])
+> +                       bcm2835_register_duplicate_index(
+> +                               dev, &bcm2835_register_clocks[i],
+> +                               clks[bcm2835_register_clocks[i].index]);
+
+Why is this necessary? When do you have duplicate indices?
+
+Regards,
+Mike
+
+> +               else
+> +                       clks[bcm2835_register_clocks[i].index] =3D
+> +                               bcm2835_register_pllclock(
+> +                                       dev, cprman,
+> +                                       &bcm2835_register_clocks[i]);
+> +       }
+> =
+
+>         /*
+>          * CM_PERIICTL (and CM_PERIACTL, CM_SYSCTL and CM_VPUCTL if
+> @@ -1594,9 +1683,6 @@ static int bcm2835_clk_probe(struct platform_device=
+ *pdev)
+>                                   cprman->regs + CM_PERIICTL, CM_GATE_BIT,
+>                                   0, &cprman->regs_lock);
+> =
+
+> -       clks[BCM2835_CLOCK_PWM] =3D
+> -               bcm2835_register_clock(cprman, &bcm2835_clock_pwm_data);
+> -
+>         return of_clk_add_provider(dev->of_node, of_clk_src_onecell_get,
+>                                    &cprman->onecell);
+>  }
+> diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/cl=
+ock/bcm2835.h
+> index 61f1d20..87235ac 100644
+> --- a/include/dt-bindings/clock/bcm2835.h
+> +++ b/include/dt-bindings/clock/bcm2835.h
+> @@ -44,5 +44,3 @@
+>  #define BCM2835_CLOCK_EMMC             28
+>  #define BCM2835_CLOCK_PERI_IMAGE       29
+>  #define BCM2835_CLOCK_PWM              30
+> -
+> -#define BCM2835_CLOCK_COUNT            31
+> --
+> 1.7.10.4
+>=20
