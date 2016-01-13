@@ -1,54 +1,67 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL] clk fixes for 4.5
-Date: Sun, 17 Jan 2016 20:07:01 +0100
-Message-ID: <1578308.XWWZ6XYns5@phil>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Wed, 13 Jan 2016 18:10:20 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Rhyland Klein <rklein@nvidia.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: tegra: Use definition for pll_u override bit
+Message-ID: <20160113171020.GQ2588@ulmo>
+References: <1450702592-7755-1-git-send-email-jonathanh@nvidia.com>
+ <1450702592-7755-2-git-send-email-jonathanh@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="pwWdILMQNxDD/Cps"
+In-Reply-To: <1450702592-7755-2-git-send-email-jonathanh@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike, Stephen,
 
-based on the clk-for-linus-4.5 tag that got merged into mainline
-some asorted fixes for Rockchip clocks.
+--pwWdILMQNxDD/Cps
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-So, please pull
+On Mon, Dec 21, 2015 at 12:56:32PM +0000, Jon Hunter wrote:
+> The definition, PLLU_BASE_OVERRIDE, for the pll_u OVERRIDE bit is defined
+> but not used and when the OVERRIDE bit is cleared in tegra210_pll_init()
+> the code directly uses the bit number. Therefore, use the definition,
+> PLLU_BASE_OVERRIDE when clearing the OVERRIDE bit.
+>=20
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra210.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
+Applied with the now redundant comment removed.
 
-Thanks
-Heiko
+Thanks,
+Thierry
 
-The following changes since commit 3da834e3e5a4a5d26882955298b55a9ed37a00bc:
+--pwWdILMQNxDD/Cps
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  clk: remove duplicated COMMON_CLK_NXP record from clk/Kconfig (2016-01-13 18:09:52 -0800)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-are available in the git repository at:
+iQIcBAABCAAGBQJWloT7AAoJEN0jrNd/PrOh9mEP/A3pwCEICN+5oUq69jGkXd12
+D4NEJoMCysg6gDpJnrSOeapvsyw1WUJT2hlaW47PxJIa/f36pKvgnrbuJIQSKnKE
+/Em59mf8Zlxe4wanIhMGGhea2gohNXKnaSFkkGuRJLltzoe9xRPdg1qh0maPQV5/
+XPK9IoIqz5EKwSu2hZgotBmNZ9K5S1/AzD/LhTiO1uv6XLQaCmTjdxiaqYlF21Is
+JynUuInQtWd2jFGZBbIbe8jJz1UEyE1hweFFQQahmV6RXMKGJHHUHD0Q+qf8qS84
+cPPMw5l6zgIjy2M+OQskMPmI/mKYfFovVak5pedQHwPGuHMkDYSEjTURp5WjLI0L
+LNHerSvZnqjzM4M4TILiyZDLvrjkj0oXQd7+U1ym1NkK47NrILWEaJd/8QJxoFcu
+Fb5R6RVtvWbXd8QvjYaihpG5l4lUmpeULLCbCtTiHECB/Rf+Lcdhhnx9RFJOfvvX
+QN9E00ovUzy+HIRmD+WGfF1sj4y/5xJy7ygidoI7m5W3XyGZNwJXAL53hfDr3feh
+oM8dcNxFK9ZQz7Qz7EE5CF7paXx0wwrqa2m3aGniODqpGiVjOKQMxDzaVDmmSRyZ
+ZHyxLwu/ixtmQ5KEPFl2aYtqf1UC8PlF5y4Je513/p8+W0TRpz57bN9fxDoklFm/
+PAesiS2VC3EH4ne5IXqw
+=juXP
+-----END PGP SIGNATURE-----
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.5-rockchip-clkfixes1
-
-for you to fetch changes up to 8931f8e02979e4180566907019d432527c80abf7:
-
-  clk: rockchip: rk3368: fix some clock gates (2016-01-16 16:01:21 +0100)
-
-----------------------------------------------------------------
-Fixes for wrong register offsets in both rk3036 and rk3368.
-Also rename the external input for the emac on rk3036, which
-should still be ok to do, as that binding was only introduced
-during this merge-window.
-
-----------------------------------------------------------------
-Jianqun xu (1):
-      clk: rockchip: rk3368: fix some clock gates
-
-Xing Zheng (4):
-      clk: rockchip: rk3036: fix the FLAGs for clock mux
-      clk: rockchip: rk3036: fix uarts clock error
-      clk: rockchip: rk3036: fix the div offset for emac clock
-      clk: rockchip: rk3036: rename emac ext source clock
-
- .../bindings/clock/rockchip,rk3036-cru.txt         |  2 +-
- drivers/clk/rockchip/clk-rk3036.c                  | 26 +++++++++++-----------
- drivers/clk/rockchip/clk-rk3368.c                  | 26 +++++++++++-----------
- 3 files changed, 27 insertions(+), 27 deletions(-)
+--pwWdILMQNxDD/Cps--
