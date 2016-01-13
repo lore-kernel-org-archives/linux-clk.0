@@ -1,95 +1,77 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=UTF-8
-Message-id: <56A96D7B.7080505@samsung.com>
-Date: Thu, 28 Jan 2016 10:23:07 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Kukjin Kim <kgene@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will.deacon@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
- Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v4 2/3] clk: samsung: Don't build ARMv8 clock drivers on
- ARMv7
-References: <1453941324-15742-1-git-send-email-k.kozlowski@samsung.com>
- <1453941324-15742-3-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1453941324-15742-3-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Wed, 13 Jan 2016 15:00:13 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>,
+	Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Mark Kuo <mkuo@nvidia.com>
+Subject: Re: [PATCH 8/9] clk: tegra: pll: Fix PLLE SS config
+Message-ID: <20160113140013.GA15782@ulmo>
+References: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
+ <1452278714-10751-9-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
+In-Reply-To: <1452278714-10751-9-git-send-email-rklein@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2016년 01월 28일 09:35, Krzysztof Kozlowski wrote:
-> Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
-> so it is built also on ARMv7. This does not bring any kind of benefit.
-> There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
-> multi_v7 for ARMv7).
-> 
-> Instead build clock drivers only for respective SoC's architecture.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
-> ---
-> 
-> Changes since v3:
-> 1. Rebase on next-20160127.
-> 
-> Changes since v2:
-> 1. Follow Arnd's advice making EXYNOS_ARM64_COMMON_CLK user-visible when
->    COMPILE_TEST is enabled.
-> 2. Dropped accumulated tags because the logic is now different.
-> 
-> Changes since v1:
-> 1. Use one Kconfig symbol for clocks of all ARM64 SoCs (after
->    discussion): EXYNOS_ARM64_COMMON_CLK.
-> 2. Minor cleanups after Tomasz's comments.
-> 3. Added tags: Chanwoo's, Sylwester's, Alim's and Tomasz's (the tags
->    were given for v1 but assuming that change from 1. is not major
->    enough to require re-tagging).
-> ---
->  drivers/clk/samsung/Kconfig  | 5 +++++
->  drivers/clk/samsung/Makefile | 4 ++--
->  2 files changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-> index dd6093a33f84..5fd982d9f4d9 100644
-> --- a/drivers/clk/samsung/Kconfig
-> +++ b/drivers/clk/samsung/Kconfig
-> @@ -23,3 +23,8 @@ config S3C2443_COMMON_CLK
->  	bool "Samsung S3C2443 clock controller support" if COMPILE_TEST
->  	select COMMON_CLK_SAMSUNG
->  
-> +# ARM64 SoCs (e.g. Exynos5433, Exynos7):
-> +config EXYNOS_ARM64_COMMON_CLK
-> +	bool "Samsung Exynos ARMv8-family clock controller support" if COMPILE_TEST
-> +	default ARM64 && COMMON_CLK_SAMSUNG
-> +	depends on (ARM64 && COMMON_CLK_SAMSUNG) || COMPILE_TEST
-> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-> index 5f6833ea355d..fc367d4b2902 100644
-> --- a/drivers/clk/samsung/Makefile
-> +++ b/drivers/clk/samsung/Makefile
-> @@ -10,11 +10,11 @@ obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
->  obj-$(CONFIG_SOC_EXYNOS5260)	+= clk-exynos5260.o
->  obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
->  obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
-> -obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos5433.o
-> +obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos5433.o
->  obj-$(CONFIG_SOC_EXYNOS5440)	+= clk-exynos5440.o
->  obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-audss.o
->  obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-clkout.o
-> -obj-$(CONFIG_ARCH_EXYNOS7)	+= clk-exynos7.o
-> +obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos7.o
->  obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
->  obj-$(CONFIG_S3C2410_COMMON_DCLK)+= clk-s3c2410-dclk.o
->  obj-$(CONFIG_S3C2412_COMMON_CLK)+= clk-s3c2412.o
-> 
 
-Looks good to me. 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+--cNdxnHkX5QqsyA0e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best Regards,
-Chanwoo Choi
+On Fri, Jan 08, 2016 at 01:45:13PM -0500, Rhyland Klein wrote:
+> From: Mark Kuo <mkuo@nvidia.com>
+>=20
+> Fix PLLE spread spectrum configuration so it aligns with downstream
+> kernel.
+>=20
+> Signed-off-by: Mark Kuo <mkuo@nvidia.com>
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-pll.c | 22 ++++++++++++++--------
+>  1 file changed, 14 insertions(+), 8 deletions(-)
+
+Can we have a better description for this. Merely saying that this is
+meant to align things with downstream isn't really helpful for anyone
+who doesn't have the downstream kernel to check against.
+
+I also see some potential for splitting this up into several logical
+changes, since for example it seems to fix a typo (?) where some bits
+were being set that should really be cleared, and in other hunks it
+splits up the SS coefficients by SoC generation. Splitting it up into
+logical changes might make it easier to write accurate commit
+descriptions rather than this kind of blanket commit message.
+
+Thierry
+
+--cNdxnHkX5QqsyA0e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJWllhrAAoJEN0jrNd/PrOheQUQAINeqKI44/qaYw125AoiNJVM
+QTPHzlqsYVXTFVsBXDxNpPA6PKFPO3NAbQxAhVzkCL7/ahww74Py4o9SQJO02XWm
+1V+OXPFIZEX8NivF85J7SsszPiRrVOgeSPODAlLirRZcAW+uzJAD5fvjylTurdUq
+uNdYxtyt10Pp6Grr4Sc7URFibqLXzJ9ggUFe1+LgH53wBRKRJuUdGDhOqeo+oiKy
+klWlNjCabISOdb5nNTwPfO2C4inUbY9Eox9ENsqMbbSrZ/A1FIBtW4U+OPIihM63
+iyqFyfPgYJ6SWHl2mRhvCW6IrrZHZhiNw88BZ+VBCcY9+LIPWQEqNBW+ZXk1GjGy
+Uv4DCxoYgNqz9ErizadS7RQF0KnuxMMCQ0/l8/CJY2P+BNMH73o2KL4gnJ4cdlEt
+A7iMdEvDMvPpFU/92E6rG+lsi1fB4GT3YYDk19shL2+ihnFvwyoR1vOttTeaNssx
+aPRQlZ5ZKa/LLa0wYym2pNvM3JV53HDKJ1U5PdqsUCrylQB4MXij/zl27JGs+5li
+KJzSDoImnBKN+XozrlVJ2vL8Fsy3MCHnGCggKMabHxRvy8qBFiCkS8YbXQsKmROI
+o0XO81w3IHImHd0wTCuQTa0LwJXubNTwH1sDk0PCklEkat0Lq02RSI9H0mvW7aAM
+fPXEwsuoQTCdim7GJgKX
+=BpQQ
+-----END PGP SIGNATURE-----
+
+--cNdxnHkX5QqsyA0e--
