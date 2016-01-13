@@ -1,174 +1,88 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-Subject: Re: [PATCH v7 1/6] clk: hisilicon: add CRG driver for hi3519 soc
-To: Paul Bolle <pebolle@tiscali.nl>
-References: <1453690883-31220-1-git-send-email-xuejiancheng@huawei.com>
- <1453690883-31220-2-git-send-email-xuejiancheng@huawei.com>
- <1453771063.17181.56.camel@tiscali.nl>
-CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <p.zabel@pengutronix.de>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
-        <mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
-        <galak@codeaurora.org>, <linux@arm.linux.org.uk>, <khilman@linaro.org>,
-        <arnd@arndb.de>, <olof@lixom.net>, <xuwei5@hisilicon.com>,
-        <haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-        <bintian.wang@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-        <yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-        <raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
-        <gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
-        <xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>
-From: xuejiancheng <xuejiancheng@huawei.com>
-Message-ID: <56A8394E.2040207@huawei.com>
-Date: Wed, 27 Jan 2016 11:28:14 +0800
-MIME-Version: 1.0
-In-Reply-To: <1453771063.17181.56.camel@tiscali.nl>
+Return-Path: <mturquette@baylibre.com>
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+From: Michael Turquette <mturquette@baylibre.com>
+To: =?utf-8?q?Lothar_Wa=C3=9Fmann?= <LW@KARO-electronics.de>,
+ Anson Huang" <b20788@freescale.com>, "Arnd Bergmann" <arnd@arndb.de>,
+ "Bai Ping" <b51503@freescale.com>,
+ "Fabio Estevam" <fabio.estevam@freescale.com>,
+ "Frank Li" <Frank.Li@freescale.com>, "Fugang Duan" <B38611@freescale.com>,
+ "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
+ "Jaroslav Kysela" <perex@perex.cz>, "Kumar Gala" <galak@codeaurora.org>,
+ "Liam Girdwood" <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>,
+ "Mark Rutland" <mark.rutland@arm.com>,
+ "Nicolin Chen" <nicoleotsuka@gmail.com>, "Pawel Moll" <pawel.moll@arm.com>,
+ "Rob Herring" <robh+dt@kernel.org>, "Russell King" <linux@arm.linux.org.uk>,
+ "Sascha Hauer" <kernel@pengutronix.de>, "Shawn Guo" <shawnguo@kernel.org>,
+ "Stephen Boyd" <sboyd@codeaurora.org>, "Takashi Iwai" <tiwai@suse.com>,
+ "Timur Tabi" <timur@tabi.org>, "Xiubo Li" <Xiubo.Lee@gmail.com>,
+ alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ =?utf-8?q?=22_Lothar_Wa=C3=9Fmann?= <LW@KARO-electronics.de>
+References: <1452619759-14474-1-git-send-email-LW@KARO-electronics.de>
+ <1452619759-14474-2-git-send-email-LW@KARO-electronics.de>
+ <1452619759-14474-3-git-send-email-LW@KARO-electronics.de>
+In-Reply-To: <1452619759-14474-3-git-send-email-LW@KARO-electronics.de>
+Message-ID: <20160113193200.1168.36072@quark.deferred.io>
+Subject: Re: [PATCH 2/2] clk: imx: add kpp clock for i.MX6UL
+Date: Wed, 13 Jan 2016 11:32:00 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Paul Bolle，
-   Thank you for your reply.
+Quoting Lothar Wa=C3=9Fmann (2016-01-12 09:29:19)
+> Add the necessary clock to use the KPP interface on i.MX6UL.
+> =
 
-On 2016/1/26 9:17, Paul Bolle wrote:
-> On ma, 2016-01-25 at 11:01 +0800, Jiancheng Xue wrote:
->> --- a/drivers/clk/hisilicon/Kconfig
->> +++ b/drivers/clk/hisilicon/Kconfig
-> 
->> +config COMMON_CLK_HI3519
->> +	bool "Hi3519 Clock Driver"
->> +	depends on ARCH_HISI
->> +	default y
->> +	help
->> +	  Build the clock driver for hi3519.
-> 
->> --- a/drivers/clk/hisilicon/Makefile
->> +++ b/drivers/clk/hisilicon/Makefile
-> 
->> +obj-$(CONFIG_COMMON_CLK_HI3519)	+= clk-hi3519.o
-> 
-> If I parsed the above correctly clk-hi3519.o can only be built-in,
-> right?
-> 
-Yes. You are right.
+> Signed-off-by: Lothar Wa=C3=9Fmann <LW@KARO-electronics.de>
 
-But this clock driver should be able to be compiled as a module.
-Even though it is preferred to be built-in.
-
-I'll fix it in next version. Thank you.
+Looks good.
 
 Regards,
+Mike
 
-Jiancheng
+> ---
+>  drivers/clk/imx/clk-imx6ul.c             | 1 +
+>  include/dt-bindings/clock/imx6ul-clock.h | 3 ++-
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+> =
 
->> --- /dev/null
->> +++ b/drivers/clk/hisilicon/clk-hi3519.c
-> 
->> +#include <linux/module.h>
-> 
-> So is this include actually needed?
-> 
->> +static int hi3519_clk_probe(struct platform_device *pdev)
->> +{
->> +       struct device_node *np = pdev->dev.of_node;
->> +       struct hisi_clock_data *clk_data;
->> +
->> +       clk_data = hisi_clk_init(np, HI3519_NR_CLKS);
->> +       if (!clk_data)
->> +               return -ENODEV;
->> +
->> +       hisi_clk_register_fixed_rate(hi3519_fixed_rate_clks,
->> +                                   
->> ARRAY_SIZE(hi3519_fixed_rate_clks),
->> +                                    clk_data);
->> +       hisi_clk_register_mux(hi3519_mux_clks,
->> ARRAY_SIZE(hi3519_mux_clks),
->> +                                       clk_data);
->> +       hisi_clk_register_gate(hi3519_gate_clks,
->> +                       ARRAY_SIZE(hi3519_gate_clks), clk_data);
->> +
->> +       return hisi_reset_init(np);
->> +}
-> 
-> (evolution 3.16.5 makes replying to code quite a challenge.)
-> 
->> +static const struct of_device_id hi3519_clk_match_table[] = {
->> +	{ .compatible = "hisilicon,hi3519-crg" },
->> +	{ }
->> +};
->> +MODULE_DEVICE_TABLE(of, hi3519_clk_match_table);
-> 
-> Last time I checked MODULE_DEVICE_TABLE is preprocessed away for built
-> -in code.
-> 
->> +static void __exit hi3519_clk_exit(void)
->> +{
->> +	platform_driver_unregister(&hi3519_clk_driver);
->> +}
->> +module_exit(hi3519_clk_exit);
-> 
-> Not needed for built-in only code.
-> 
->> +MODULE_DESCRIPTION("HiSilicon Hi3519 Clock Driver");
-> 
-> Ditto.
-> 
->> --- a/drivers/clk/hisilicon/clk.c
->> +++ b/drivers/clk/hisilicon/clk.c
-> 
->> +EXPORT_SYMBOL(hisi_clk_init);
-> 
-> What module uses this export?
->  
->> +EXPORT_SYMBOL(hisi_clk_register_fixed_rate);
-> 
-> Ditto.
-> 
->> +EXPORT_SYMBOL(hisi_clk_register_fixed_factor);
-> 
-> Ditto.
->  
->> +EXPORT_SYMBOL(hisi_clk_register_mux);
-> 
-> Ditto.
-> 
->> +EXPORT_SYMBOL(hisi_clk_register_divider);
-> 
-> Ditto.
-> 
->> +EXPORT_SYMBOL(hisi_clk_register_gate);
-> 
-> Ditto.
-> 
->> +EXPORT_SYMBOL(hisi_clk_register_gate_sep);
-> 
-> Ditto.
-> 
->> --- /dev/null
->> +++ b/drivers/clk/hisilicon/reset.c
-> 
->> +int hisi_reset_init(struct device_node *np)
->> +{
->> +	[...]
->> +}
->> +EXPORT_SYMBOL(hisi_reset_init);
-> 
-> Ditto.
-> 
->> --- /dev/null
->> +++ b/drivers/clk/hisilicon/reset.h
-> 
->> +#ifdef CONFIG_RESET_CONTROLLER
->> +int hisi_reset_init(struct device_node *np);
->> +#else
->> +static inline int hisi_reset_init(struct device_node *np)
->> +{
->> +	return 0;
->> +}
->> +#endif
-> 
-> Thanks,
-> 
-> 
-> Paul Bolle
-> 
-> .
-> 
+> diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+> index 3e31ec0..1ee28d3 100644
+> --- a/drivers/clk/imx/clk-imx6ul.c
+> +++ b/drivers/clk/imx/clk-imx6ul.c
+> @@ -365,6 +365,7 @@ static void __init imx6ul_clocks_init(struct device_n=
+ode *ccm_node)
+>         /* CCGR5 */
+>         clks[IMX6UL_CLK_ROM]            =3D imx_clk_gate2("rom",         =
+ "ahb",          base + 0x7c,    0);
+>         clks[IMX6UL_CLK_SDMA]           =3D imx_clk_gate2("sdma",        =
+ "ahb",          base + 0x7c,    6);
+> +       clks[IMX6UL_CLK_KPP]            =3D imx_clk_gate2("kpp",         =
+ "ipg",          base + 0x7c,    8);
+>         clks[IMX6UL_CLK_WDOG2]          =3D imx_clk_gate2("wdog2",       =
+ "ipg",          base + 0x7c,    10);
+>         clks[IMX6UL_CLK_SPBA]           =3D imx_clk_gate2("spba",        =
+ "ipg",          base + 0x7c,    12);
+>         clks[IMX6UL_CLK_SPDIF]          =3D imx_clk_gate2_shared("spdif",=
+         "spdif_podf",   base + 0x7c,    14, &share_count_audio);
+> diff --git a/include/dt-bindings/clock/imx6ul-clock.h b/include/dt-bindin=
+gs/clock/imx6ul-clock.h
+> index 08ce4a7..fd8aee8 100644
+> --- a/include/dt-bindings/clock/imx6ul-clock.h
+> +++ b/include/dt-bindings/clock/imx6ul-clock.h
+> @@ -234,7 +234,8 @@
+>  #define IMX6UL_CLK_CSI_SEL             221
+>  #define IMX6UL_CLK_CSI_PODF            222
+>  #define IMX6UL_CLK_PLL3_120M           223
+> +#define IMX6UL_CLK_KPP                 224
+>  =
+
+> -#define IMX6UL_CLK_END                 224
+> +#define IMX6UL_CLK_END                 225
+>  =
+
+>  #endif /* __DT_BINDINGS_CLOCK_IMX6UL_H */
+> -- =
+
+> 2.1.4
+>=20
