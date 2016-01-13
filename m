@@ -1,255 +1,115 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Wed, 13 Jan 2016 18:10:00 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
 	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH V3 4/6] clk: bcm2835: remove use of BCM2835_CLOCK_COUNT in driver
-Date: Thu, 14 Jan 2016 13:45:39 +0000
-Message-Id: <1452779142-20615-5-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1452779142-20615-1-git-send-email-kernel@martin.sperl.org>
-References: <1452779142-20615-1-git-send-email-kernel@martin.sperl.org>
+	Alexandre Courbot <gnurou@gmail.com>,
+	Rhyland Klein <rklein@nvidia.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: tegra: Fix warning caused by pll_u failing to
+ lock
+Message-ID: <20160113171000.GP2588@ulmo>
+References: <1450702592-7755-1-git-send-email-jonathanh@nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="uGrbifh0UoBBidu/"
+In-Reply-To: <1450702592-7755-1-git-send-email-jonathanh@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
 
-As the use of BCM2835_CLOCK_COUNT in
-include/dt-bindings/clock/bcm2835.h is frowned upon as
-it needs to get modified every time a new clock gets introduced
-this patch changes the clk-bcm2835 driver to use a different
-scheme for registration of clocks and pll, so that there
-is no more need for BCM2835_CLOCK_COUNT to be defined.
+--uGrbifh0UoBBidu/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c       |  167 ++++++++++++++++++++---------------
- include/dt-bindings/clock/bcm2835.h |    2 -
- 2 files changed, 94 insertions(+), 75 deletions(-)
+On Mon, Dec 21, 2015 at 12:56:31PM +0000, Jon Hunter wrote:
+> If the pll_u is not configured by the bootloader, then on kernel boot the
+> following warning is seen:
+>=20
+>  clk_pll_wait_for_lock: Timed out waiting for pll pll_u_vco lock
+>  tegra_init_from_table: Failed to enable pll_u_out1
+>  ------------[ cut here ]------------
+>  WARNING: at drivers/clk/tegra/clk.c:269
+>  Modules linked in:
+>=20
+>  CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.4.0-rc4-next-20151214+ #1
+>  Hardware name: NVIDIA Tegra210 P2371 reference board (E.1) (DT)
+>  task: ffffffc0bc0a0000 ti: ffffffc0bc0a8000 task.ti: ffffffc0bc0a8000
+>  PC is at tegra_init_from_table+0x140/0x164
+>  LR is at tegra_init_from_table+0x140/0x164
+>  pc : [<ffffffc0008fee78>] lr : [<ffffffc0008fee78>] pstate: 80000045
+>  sp : ffffffc0bc0abd50
+>  x29: ffffffc0bc0abd50 x28: ffffffc00090b8a8
+>  x27: ffffffc000a06000 x26: ffffffc0bc019780
+>  x25: ffffffc00086a708 x24: ffffffc00086a790
+>  x23: ffffffc0006d7188 x22: ffffffc0bc010000
+>  x21: 000000000000016e x20: ffffffc0bc00d100
+>  x19: ffffffc000944178 x18: 0000000000000007
+>  x17: 000000000000000e x16: 0000000000000001
+>  x15: 0000000000000007 x14: 000000000000000e
+>  x13: 0000000000000013 x12: 000000000000001a
+>  x11: 000000000000004d x10: 0000000000000750
+>  x9 : ffffffc0bc0a8000 x8 : ffffffc0bc0a07b0
+>  x7 : 0000000000000001 x6 : 0000000002d5f0f8
+>  x5 : 0000000000000000 x4 : 0000000000000000
+>  x3 : 0000000000000002 x2 : ffffffc000996724
+>  x1 : 0000000000000000 x0 : 0000000000000032
+>=20
+>  ---[ end trace cbd20ae519e92ced ]---
+>  Call trace:
+>  [<ffffffc0008fee78>] tegra_init_from_table+0x140/0x164
+>  [<ffffffc000900ac8>] tegra210_clock_apply_init_table+0x20/0x28
+>  [<ffffffc0008fec40>] tegra_clocks_apply_init_table+0x18/0x24
+>  [<ffffffc00008291c>] do_one_initcall+0x90/0x194
+>  [<ffffffc0008cfab0>] kernel_init_freeable+0x148/0x1e8
+>  [<ffffffc000636bb0>] kernel_init+0x10/0xdc
+>  [<ffffffc000085cd0>] ret_from_fork+0x10/0x40
+>  clk_pll_wait_for_lock: Timed out waiting for pll pll_u_vco lock
+>  tegra_init_from_table: Failed to enable pll_u_out2
+>  ------------[ cut here ]------------
+>=20
+> pll_u can be either controlled by software or hardware and this is
+> selected via the OVERRIDE bit in the pll_u base register. In the function
+> tegra210_pll_init(), the OVERRIDE bit for pll_u is cleared, which selects
+> hardware control of the pll. However, at the same time the pll_u clocks
+> are populated in the init_table for tegra210 and so software will try to
+> configure the pll_u if it is not already configured and hence, the above
+> warning is seen when the pll fails to lock. Remove the pll_u clocks from
+> the init_table so that software does not try to configure this pll on
+> boot.
+>=20
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra210.c | 2 --
+>  1 file changed, 2 deletions(-)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index f5d483e..6b0ebf7 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -329,7 +329,7 @@ struct bcm2835_cprman {
- 	const char *osc_name;
+Applied, thanks.
+Thierry
 
- 	struct clk_onecell_data onecell;
--	struct clk *clks[BCM2835_CLOCK_COUNT];
-+	struct clk *clks[];
- };
+--uGrbifh0UoBBidu/
+Content-Type: application/pgp-signature; name="signature.asc"
 
- static inline void cprman_write(struct bcm2835_cprman *cprman, u32 reg, u32 val)
-@@ -860,6 +860,25 @@ static const struct bcm2835_clock_data bcm2835_clock_pwm_data = {
- 	.frac_bits = 12,
- };
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-+struct bcm2835_gate_data {
-+	const char *name;
-+	const char *parent;
-+
-+	u32 ctl_reg;
-+};
-+
-+/*
-+ * CM_PERIICTL (and CM_PERIACTL, CM_SYSCTL and CM_VPUCTL if
-+ * you have the debug bit set in the power manager, which we
-+ * don't bother exposing) are individual gates off of the
-+ * non-stop vpu clock.
-+ */
-+static const struct bcm2835_gate_data bcm2835_clock_peri_image_data = {
-+	.name = "peri_image",
-+	.parent = "vpu",
-+	.ctl_reg = CM_PERIICTL,
-+};
-+
- struct bcm2835_pll {
- 	struct clk_hw hw;
- 	struct bcm2835_cprman *cprman;
-@@ -1600,14 +1619,81 @@ static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
- 	return devm_clk_register(cprman->dev, &clock->hw);
- }
+iQIcBAABCAAGBQJWloToAAoJEN0jrNd/PrOhJToQAJew95si8lfu12Pk+eZ1mJGI
+9WSyWJFnmhboL/01FW7iAlTRZhkrTvTzcsGE7SoLJhdo4871NiSsUmBChVzNJCSo
+7M1v0ams51MoZTO38WDPPoOljLOPmchL0frbdOPwJPnVSgqgzMUGs0AHk+IkVJjI
+HiuyL3KQBhWnK4oi6sz/v49zrH+xnYiAjk2w+mpN4fMHye7ddWKYo4q5zbud09E4
+Xu+MWa1Zdq1dOpxBaJp5pV0iNwBqPsVfEsqNgsmM2/aJPqznVkeDZTHNsR+fxr18
+z3+dkiL13w/Ai4JXpFYPCmauKyv3qtNignEloptzQH8XW55p2uekNDlblQGd9AT0
+cxNIzXJyuM1J7F/XVy7UtJj4EBZONmE7+7iEgVjir/D5hl3YeHmdtWGbziqnefh7
+iDuXt8XwtVIa8M8bfc9KcxK2Ikzf/gqmLXi6DmorvUFXmphKWCOyeta2U7tM2pc/
+5/POgkiNs/UwEOfB239rCN144ilWELZIzG4X5UKP2OcTl9CCQ83v0L7qfjUGyFva
+QsM2lPSIH1ekHx4L3s4V37JnKCx62VkcygcMPxiW1UufcmCPf7UtklXS+yDjtH1I
+YrPXWXV44xXshwGV88z0FxB9MM5rBaNMzROhmuAgQdW4+6tgZAFr6n9l7JK/qsQj
+TmHZt6vXsEdfOsNeLar0
+=n4Wm
+-----END PGP SIGNATURE-----
 
-+static struct clk *bcm2835_register_gate(struct bcm2835_cprman *cprman,
-+					 const struct bcm2835_gate_data *data)
-+{
-+	return clk_register_gate(cprman->dev, data->name, data->parent,
-+				 CLK_IGNORE_UNUSED | CLK_SET_RATE_GATE,
-+				 cprman->regs + data->ctl_reg,
-+				 CM_GATE_BIT, 0, &cprman->regs_lock);
-+}
-+
-+typedef struct clk *(*bcm2835_clk_register)(struct bcm2835_cprman *cprman,
-+					    const void *data);
-+struct bcm2835_clk_desc {
-+	bcm2835_clk_register clk_register;
-+	const void *data;
-+};
-+
-+#define _REGISTER(f, d) { .clk_register = (bcm2835_clk_register)f, \
-+			  .data = d }
-+#define REGISTER_PLL(d)		_REGISTER(&bcm2835_register_pll, d)
-+#define REGISTER_PLL_DIV(d)	_REGISTER(&bcm2835_register_pll_divider, d)
-+#define REGISTER_CLK(d)		_REGISTER(&bcm2835_register_clock, d)
-+#define REGISTER_GATE(d)	_REGISTER(&bcm2835_register_gate, d)
-+
-+static const struct bcm2835_clk_desc clk_desc_array[] = {
-+	/* register PLL */
-+	[BCM2835_PLLA]		= REGISTER_PLL(&bcm2835_plla_data),
-+	[BCM2835_PLLB]		= REGISTER_PLL(&bcm2835_pllb_data),
-+	[BCM2835_PLLC]		= REGISTER_PLL(&bcm2835_pllc_data),
-+	[BCM2835_PLLD]		= REGISTER_PLL(&bcm2835_plld_data),
-+	[BCM2835_PLLH]		= REGISTER_PLL(&bcm2835_pllh_data),
-+	/* the PLL dividers */
-+	[BCM2835_PLLA_CORE]	= REGISTER_PLL_DIV(&bcm2835_plla_core_data),
-+	[BCM2835_PLLA_PER]	= REGISTER_PLL_DIV(&bcm2835_plla_per_data),
-+	[BCM2835_PLLC_CORE0]	= REGISTER_PLL_DIV(&bcm2835_pllc_core0_data),
-+	[BCM2835_PLLC_CORE1]	= REGISTER_PLL_DIV(&bcm2835_pllc_core1_data),
-+	[BCM2835_PLLC_CORE2]	= REGISTER_PLL_DIV(&bcm2835_pllc_core2_data),
-+	[BCM2835_PLLC_PER]	= REGISTER_PLL_DIV(&bcm2835_pllc_per_data),
-+	[BCM2835_PLLD_CORE]	= REGISTER_PLL_DIV(&bcm2835_plld_core_data),
-+	[BCM2835_PLLD_PER]	= REGISTER_PLL_DIV(&bcm2835_plld_per_data),
-+	[BCM2835_PLLH_RCAL]	= REGISTER_PLL_DIV(&bcm2835_pllh_rcal_data),
-+	[BCM2835_PLLH_AUX]	= REGISTER_PLL_DIV(&bcm2835_pllh_aux_data),
-+	[BCM2835_PLLH_PIX]	= REGISTER_PLL_DIV(&bcm2835_pllh_pix_data),
-+	/* the clocks */
-+	[BCM2835_CLOCK_TIMER]	= REGISTER_CLK(&bcm2835_clock_timer_data),
-+	[BCM2835_CLOCK_OTP]	= REGISTER_CLK(&bcm2835_clock_otp_data),
-+	[BCM2835_CLOCK_TSENS]	= REGISTER_CLK(&bcm2835_clock_tsens_data),
-+	[BCM2835_CLOCK_VPU]	= REGISTER_CLK(&bcm2835_clock_vpu_data),
-+	[BCM2835_CLOCK_V3D]	= REGISTER_CLK(&bcm2835_clock_v3d_data),
-+	[BCM2835_CLOCK_ISP]	= REGISTER_CLK(&bcm2835_clock_isp_data),
-+	[BCM2835_CLOCK_H264]	= REGISTER_CLK(&bcm2835_clock_h264_data),
-+	[BCM2835_CLOCK_V3D]	= REGISTER_CLK(&bcm2835_clock_v3d_data),
-+	[BCM2835_CLOCK_SDRAM]	= REGISTER_CLK(&bcm2835_clock_sdram_data),
-+	[BCM2835_CLOCK_UART]	= REGISTER_CLK(&bcm2835_clock_uart_data),
-+	[BCM2835_CLOCK_VEC]	= REGISTER_CLK(&bcm2835_clock_vec_data),
-+	[BCM2835_CLOCK_HSM]	= REGISTER_CLK(&bcm2835_clock_hsm_data),
-+	[BCM2835_CLOCK_EMMC]	= REGISTER_CLK(&bcm2835_clock_emmc_data),
-+	[BCM2835_CLOCK_PWM]	= REGISTER_CLK(&bcm2835_clock_pwm_data),
-+	/* the gates */
-+	[BCM2835_CLOCK_PERI_IMAGE] = REGISTER_GATE(
-+		&bcm2835_clock_peri_image_data),
-+};
-+
- static int bcm2835_clk_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct clk **clks;
- 	struct bcm2835_cprman *cprman;
- 	struct resource *res;
-+	const struct bcm2835_clk_desc *desc;
-+	const size_t asize = ARRAY_SIZE(clk_desc_array);
-+	size_t i;
-
--	cprman = devm_kzalloc(dev, sizeof(*cprman), GFP_KERNEL);
-+	cprman = devm_kzalloc(dev,
-+			      sizeof(*cprman) + asize * sizeof(*clks),
-+			      GFP_KERNEL);
- 	if (!cprman)
- 		return -ENOMEM;
-
-@@ -1624,80 +1710,15 @@ static int bcm2835_clk_probe(struct platform_device *pdev)
-
- 	platform_set_drvdata(pdev, cprman);
-
--	cprman->onecell.clk_num = BCM2835_CLOCK_COUNT;
-+	cprman->onecell.clk_num = asize;
- 	cprman->onecell.clks = cprman->clks;
- 	clks = cprman->clks;
-
--	clks[BCM2835_PLLA] = bcm2835_register_pll(cprman, &bcm2835_plla_data);
--	clks[BCM2835_PLLB] = bcm2835_register_pll(cprman, &bcm2835_pllb_data);
--	clks[BCM2835_PLLC] = bcm2835_register_pll(cprman, &bcm2835_pllc_data);
--	clks[BCM2835_PLLD] = bcm2835_register_pll(cprman, &bcm2835_plld_data);
--	clks[BCM2835_PLLH] = bcm2835_register_pll(cprman, &bcm2835_pllh_data);
--
--	clks[BCM2835_PLLA_CORE] =
--		bcm2835_register_pll_divider(cprman, &bcm2835_plla_core_data);
--	clks[BCM2835_PLLA_PER] =
--		bcm2835_register_pll_divider(cprman, &bcm2835_plla_per_data);
--	clks[BCM2835_PLLC_CORE0] =
--		bcm2835_register_pll_divider(cprman, &bcm2835_pllc_core0_data);
--	clks[BCM2835_PLLC_CORE1] =
--		bcm2835_register_pll_divider(cprman, &bcm2835_pllc_core1_data);
--	clks[BCM2835_PLLC_CORE2] =
--		bcm2835_register_pll_divider(cprman, &bcm2835_pllc_core2_data);
--	clks[BCM2835_PLLC_PER] =
--		bcm2835_register_pll_divider(cprman, &bcm2835_pllc_per_data);
--	clks[BCM2835_PLLD_CORE] =
--		bcm2835_register_pll_divider(cprman, &bcm2835_plld_core_data);
--	clks[BCM2835_PLLD_PER] =
--		bcm2835_register_pll_divider(cprman, &bcm2835_plld_per_data);
--	clks[BCM2835_PLLH_RCAL] =
--		bcm2835_register_pll_divider(cprman, &bcm2835_pllh_rcal_data);
--	clks[BCM2835_PLLH_AUX] =
--		bcm2835_register_pll_divider(cprman, &bcm2835_pllh_aux_data);
--	clks[BCM2835_PLLH_PIX] =
--		bcm2835_register_pll_divider(cprman, &bcm2835_pllh_pix_data);
--
--	clks[BCM2835_CLOCK_TIMER] =
--		bcm2835_register_clock(cprman, &bcm2835_clock_timer_data);
--	clks[BCM2835_CLOCK_OTP] =
--		bcm2835_register_clock(cprman, &bcm2835_clock_otp_data);
--	clks[BCM2835_CLOCK_TSENS] =
--		bcm2835_register_clock(cprman, &bcm2835_clock_tsens_data);
--	clks[BCM2835_CLOCK_VPU] =
--		bcm2835_register_clock(cprman, &bcm2835_clock_vpu_data);
--	clks[BCM2835_CLOCK_V3D] =
--		bcm2835_register_clock(cprman, &bcm2835_clock_v3d_data);
--	clks[BCM2835_CLOCK_ISP] =
--		bcm2835_register_clock(cprman, &bcm2835_clock_isp_data);
--	clks[BCM2835_CLOCK_H264] =
--		bcm2835_register_clock(cprman, &bcm2835_clock_h264_data);
--	clks[BCM2835_CLOCK_V3D] =
--		bcm2835_register_clock(cprman, &bcm2835_clock_v3d_data);
--	clks[BCM2835_CLOCK_SDRAM] =
--		bcm2835_register_clock(cprman, &bcm2835_clock_sdram_data);
--	clks[BCM2835_CLOCK_UART] =
--		bcm2835_register_clock(cprman, &bcm2835_clock_uart_data);
--	clks[BCM2835_CLOCK_VEC] =
--		bcm2835_register_clock(cprman, &bcm2835_clock_vec_data);
--	clks[BCM2835_CLOCK_HSM] =
--		bcm2835_register_clock(cprman, &bcm2835_clock_hsm_data);
--	clks[BCM2835_CLOCK_EMMC] =
--		bcm2835_register_clock(cprman, &bcm2835_clock_emmc_data);
--
--	/*
--	 * CM_PERIICTL (and CM_PERIACTL, CM_SYSCTL and CM_VPUCTL if
--	 * you have the debug bit set in the power manager, which we
--	 * don't bother exposing) are individual gates off of the
--	 * non-stop vpu clock.
--	 */
--	clks[BCM2835_CLOCK_PERI_IMAGE] =
--		clk_register_gate(dev, "peri_image", "vpu",
--				  CLK_IGNORE_UNUSED | CLK_SET_RATE_GATE,
--				  cprman->regs + CM_PERIICTL, CM_GATE_BIT,
--				  0, &cprman->regs_lock);
--
--	clks[BCM2835_CLOCK_PWM] =
--		bcm2835_register_clock(cprman, &bcm2835_clock_pwm_data);
-+	for (i = 0; i < asize; i++) {
-+		desc = &clk_desc_array[i];
-+		if (desc)
-+			clks[i] = desc->clk_register(cprman, desc->data);
-+	}
-
- 	return of_clk_add_provider(dev->of_node, of_clk_src_onecell_get,
- 				   &cprman->onecell);
-diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
-index 61f1d20..87235ac 100644
---- a/include/dt-bindings/clock/bcm2835.h
-+++ b/include/dt-bindings/clock/bcm2835.h
-@@ -44,5 +44,3 @@
- #define BCM2835_CLOCK_EMMC		28
- #define BCM2835_CLOCK_PERI_IMAGE	29
- #define BCM2835_CLOCK_PWM		30
--
--#define BCM2835_CLOCK_COUNT		31
---
-1.7.10.4
+--uGrbifh0UoBBidu/--
