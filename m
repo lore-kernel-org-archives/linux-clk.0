@@ -1,83 +1,127 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mark Kuo <mkuo@nvidia.com>,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [Patch V2 9/9] clk: tegra: pll: Fix PLLE SS coefficients val
-Date: Thu, 14 Jan 2016 14:26:42 -0500
-Message-ID: <1452799602-14847-1-git-send-email-rklein@nvidia.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+To: Fabio Estevam <festevam@gmail.com>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1452531716-12149-1-git-send-email-festevam@gmail.com>
+Cc: sboyd@codeaurora.org, shawnguo@kernel.org, kernel@pengutronix.de,
+ csotoalonso@gmail.com, linux-clk@vger.kernel.org,
+ "Fabio Estevam" <fabio.estevam@nxp.com>, stable@vger.kernel.org
+References: <1452531716-12149-1-git-send-email-festevam@gmail.com>
+Message-ID: <20160113201704.1168.94040@quark.deferred.io>
+Subject: Re: [PATCH] clk: clk-imx25: Force LCDC IPG clock to be disabled
+Date: Wed, 13 Jan 2016 12:17:04 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mark Kuo <mkuo@nvidia.com>
+Hi Fabio & company,
 
-The PLLE_SS_COEFFICIENTS_VAL should be different for Tegra210
-from Tegra114. Add SoC generation specific versions for Tegra114
-and Tegra210 and use those in their respective plle_enable functions.
+Quoting Fabio Estevam (2016-01-11 09:01:56)
+> From: Fabio Estevam <fabio.estevam@nxp.com>
+> =
 
-Signed-off-by: Mark Kuo <mkuo@nvidia.com>
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+> Currently when we boot the kernel on a mx25pdk the LCDC controller
+> does not show the Linux logo on boot.
+> =
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index cb28130e6c0a..6ac3f843e7ca 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -86,15 +86,21 @@
- #define PLLE_SS_DISABLE (PLLE_SS_CNTL_BYPASS_SS | PLLE_SS_CNTL_INTERP_RESET |\
- 				PLLE_SS_CNTL_SSC_BYP)
- #define PLLE_SS_MAX_MASK 0x1ff
--#define PLLE_SS_MAX_VAL 0x25
-+#define PLLE_SS_MAX_VAL_TEGRA114 0x25
-+#define PLLE_SS_MAX_VAL_TEGRA210 0x21
- #define PLLE_SS_INC_MASK (0xff << 16)
- #define PLLE_SS_INC_VAL (0x1 << 16)
- #define PLLE_SS_INCINTRV_MASK (0x3f << 24)
--#define PLLE_SS_INCINTRV_VAL (0x20 << 24)
-+#define PLLE_SS_INCINTRV_VAL_TEGRA114 (0x20 << 24)
-+#define PLLE_SS_INCINTRV_VAL_TEGRA210 (0x23 << 24)
- #define PLLE_SS_COEFFICIENTS_MASK \
- 	(PLLE_SS_MAX_MASK | PLLE_SS_INC_MASK | PLLE_SS_INCINTRV_MASK)
--#define PLLE_SS_COEFFICIENTS_VAL \
--	(PLLE_SS_MAX_VAL | PLLE_SS_INC_VAL | PLLE_SS_INCINTRV_VAL)
-+#define PLLE_SS_COEFFICIENTS_VAL_TEGRA114 \
-+	(PLLE_SS_MAX_VAL_TEGRA114 | PLLE_SS_INC_VAL |\
-+	 PLLE_SS_INCINTRV_VAL_TEGRA114)
-+#define PLLE_SS_COEFFICIENTS_VAL_TEGRA210 \
-+	(PLLE_SS_MAX_VAL_TEGRA210 | PLLE_SS_INC_VAL |\
-+	 PLLE_SS_INCINTRV_VAL_TEGRA210)
- 
- #define PLLE_AUX_PLLP_SEL	BIT(2)
- #define PLLE_AUX_USE_LOCKDET	BIT(3)
-@@ -1428,7 +1434,7 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
- 	val = pll_readl(PLLE_SS_CTRL, pll);
- 	val &= ~(PLLE_SS_CNTL_CENTER | PLLE_SS_CNTL_INVERT);
- 	val &= ~PLLE_SS_COEFFICIENTS_MASK;
--	val |= PLLE_SS_COEFFICIENTS_VAL;
-+	val |= PLLE_SS_COEFFICIENTS_VAL_TEGRA114;
- 	pll_writel(val, PLLE_SS_CTRL, pll);
- 	val &= ~(PLLE_SS_CNTL_SSC_BYP | PLLE_SS_CNTL_BYPASS_SS);
- 	pll_writel(val, PLLE_SS_CTRL, pll);
-@@ -2065,7 +2071,7 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	val = pll_readl(PLLE_SS_CTRL, pll);
- 	val &= ~(PLLE_SS_CNTL_CENTER | PLLE_SS_CNTL_INVERT);
- 	val &= ~PLLE_SS_COEFFICIENTS_MASK;
--	val |= PLLE_SS_COEFFICIENTS_VAL;
-+	val |= PLLE_SS_COEFFICIENTS_VAL_TEGRA210;
- 	pll_writel(val, PLLE_SS_CTRL, pll);
- 	val &= ~(PLLE_SS_CNTL_SSC_BYP | PLLE_SS_CNTL_BYPASS_SS);
- 	pll_writel(val, PLLE_SS_CTRL, pll);
--- 
-1.9.1
+> This problem is well explained by Sascha Hauer:
+> =
+
+> "Unfortunately this LCD controller does not have an enable bit. The
+> controller starts directly when the clocks are enabled. If the clocks
+> are enabled when the controller is not yet programmed with proper
+> register values then it just goes into some undefined state. What I
+> suspect is that the clocks already were enabled before driver probe,
+> presumably by the bootloader, so the controller is already in undefined
+> state when entering Linux. Now by dis/enabling the ipg clock you
+> effectively reset the controller. Since you have programmed it with
+> valid register values in the mean time it starts working after this
+> reset."
+> =
+
+> So let's guarantee that the clock driver disables LCDC IPG clock at
+> the beggining, so that we don't need to rely on the state the
+> bootloader left this clock.
+> =
+
+> With this change the Linux logo can be seen on boot on a mx25pdk.
+> =
+
+> Cc: <stable@vger.kernel.org>
+> Suggested-by: Sascha Hauer <s.hauer@pengutronix.de>
+> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+
+A couple of thoughts on this:
+
+1) should you have a reset controller thingy for the LCDC? That might be
+a better way to model what's going on.
+
+2) is "resetting" the clock signal something generic that people need?
+We could introduce a flag like CLK_RESET_AT_BOOT that calls uses the
+top-level API to enable and then disable the clock at registration-time.
+
+Of the two ideas, I prefer #1, so that you can reset the device at
+boot-time using the reset framework.
+
+Regards,
+Mike
+
+> ---
+>  drivers/clk/imx/clk-imx25.c | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> =
+
+> diff --git a/drivers/clk/imx/clk-imx25.c b/drivers/clk/imx/clk-imx25.c
+> index c4c141c..f8619bb 100644
+> --- a/drivers/clk/imx/clk-imx25.c
+> +++ b/drivers/clk/imx/clk-imx25.c
+> @@ -53,6 +53,8 @@
+>  =
+
+>  #define ccm(x) (ccm_base + (x))
+>  =
+
+> +#define LCDC_IPG       BIT(29)
+> +
+>  static struct clk_onecell_data clk_data;
+>  =
+
+>  static const char *cpu_sel_clks[] =3D { "mpll", "mpll_cpu_3_4", };
+> @@ -99,6 +101,7 @@ static struct clk ** const uart_clks[] __initconst =3D=
+ {
+>  static int __init __mx25_clocks_init(unsigned long osc_rate,
+>                                      void __iomem *ccm_base)
+>  {
+> +       unsigned int reg;
+>         BUG_ON(!ccm_base);
+>  =
+
+>         clk[dummy] =3D imx_clk_fixed("dummy", 0);
+> @@ -232,6 +235,20 @@ static int __init __mx25_clocks_init(unsigned long o=
+sc_rate,
+>  =
+
+>         imx_check_clocks(clk, ARRAY_SIZE(clk));
+>  =
+
+> +       /*
+> +        * The LCDC controller does not have an enable bit. The
+> +        * controller starts directly when the clocks are enabled.
+> +        * If the clocks are enabled when the controller is not yet
+> +        * programmed with proper register values (enabled at the
+> +        * bootloader, for example) then it just goes into some undefined
+> +        * state.
+> +        * To avoid this issue, let's directly access CGCR1 register
+> +        * and disable the LCDC IPG clock.
+> +        */
+> +       reg =3D readl(ccm_base + CCM_CGCR1);
+> +       reg &=3D ~LCDC_IPG;
+> +       writel(reg, ccm_base + CCM_CGCR1);
+> +
+>         clk_prepare_enable(clk[emi_ahb]);
+>  =
+
+>         /* Clock source for gpt must be derived from AHB */
+> -- =
+
+> 1.9.1
+>=20
