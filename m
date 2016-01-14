@@ -1,481 +1,175 @@
-Return-Path: <wxt@rock-chips.com>
-Subject: Re: [PATCH v2 00/12] Add the family patches to support for kylin
- board
-To: Heiko Stuebner <heiko@sntech.de>
-References: <1452155155-16232-1-git-send-email-wxt@rock-chips.com>
- <1759945.VO3mCQb2oc@phil>
-Cc: Caesar Wang <wxt@rock-chips.com>, Mark Rutland <mark.rutland@arm.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- linux-clk@vger.kernel.org, Russell King <linux@arm.linux.org.uk>,
- linux-rockchip@lists.infradead.org,
- Javier Martinez Canillas <javier@osg.samsung.com>,
- NeilBrown <neil@brown.name>, devicetree@vger.kernel.org,
- Pawel Moll <pawel.moll@arm.com>, Ian Campbell
- <ijc+devicetree@hellion.org.uk>, keescook@google.com,
- Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>,
- linux-arm-kernel@lists.infradead.org, Andreas Fenkart <afenkart@gmail.com>,
- linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, leecam@google.com,
- Kumar Gala <galak@codeaurora.org>, leozwang@google.com
-From: Caesar Wang <wxt@rock-chips.com>
-Message-ID: <568F7B0F.8030009@rock-chips.com>
-Date: Fri, 8 Jan 2016 17:02:07 +0800
-MIME-Version: 1.0
-In-Reply-To: <1759945.VO3mCQb2oc@phil>
-Content-Type: multipart/alternative;
- boundary="------------010808020105050202000804"
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Wynter Woods <wynter@nextthing.co>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 15/26] drm/modes: Support modes names on the command line
+Date: Thu, 14 Jan 2016 16:24:58 +0100
+Message-Id: <1452785109-6172-16-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is a multi-part message in MIME format.
---------------010808020105050202000804
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+The drm subsystem also uses the video= kernel parameter, and in the
+documentation refers to the fbdev documentation for that parameter.
 
-Hi Heiko,
+However, that documentation also says that instead of giving the mode using
+its resolution we can also give a name. However, DRM doesn't handle that
+case at the moment. Even though in most case it shouldn't make any
+difference, it might be useful for analog modes, where different standards
+might have the same resolution, but still have a few different parameters
+that are not encoded in the modes (NTSC vs NTSC-J vs PAL-M for example).
 
-Thanks for pointing out.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/gpu/drm/drm_crtc.c      |  3 ++-
+ drivers/gpu/drm/drm_fb_helper.c |  4 ++++
+ drivers/gpu/drm/drm_modes.c     | 49 ++++++++++++++++++++++++++++-------------
+ include/drm/drm_modes.h         |  1 +
+ 4 files changed, 41 insertions(+), 16 deletions(-)
 
-在 2016年01月07日 18:44, Heiko Stuebner 写道:
-> Hi Caesar,
->
-> Am Donnerstag, 7. Januar 2016, 16:25:43 schrieb Caesar Wang:
->> Hi all,
->>
->> Happy new year! :)
->> Let's go on working for happy.
-> please make sure to split your patch-series at appropriate points for future
-> versions to only address relevant people. For example I don't think Ulf
-> really cares about getting the audio-related or general devicetree patches.
-
-Okay.
-That's seem the patman tool to send patches automatically.
-
-Ahem!
-Series-to: email / alias to ulf for emmc patches that will send all 
-patches for him.
-
->
-> Heiko
->
->> This series patches are based on kernel version 4.4.0-rc8+
->> (Linux version 4.4.0-rc8+ (wxt@ubuntu)...#142 SMP Thu Jan 7 12:38:40 CST
->> 2016)
->>
->> This series pacthes are verified on the following github:
->> https://github.com/Caesar-github/rockchip/commits/kylin-develop4.4
->>
->> This series has 12 patches: (12--->1)
->> bbd1a01 ARM: dts: Add pl330-broken-no-flushp quirk for rk3036 SoCs
->> fb8c1fd ARM: dts: rockchip: add the lcdc and hdmi node for rk3036
->> 1aeb49d ARM: dts: rockchip: add the sdmmc for kylin board
->> 3e19128 ARM: dts: rockchip: enable the uart0 for kylin board
->> e7de154 ARM: dts: rockchip: add the wifi/bt regulator for kylin board
->> 8699698 ARM: dts: rockchip: enable the high speed on sdio for kylin board
->> 21eded4 mmc: pwrseq: add support for power-on sequencing through DT
->> cdf3a7e mmc: pwrseq: Document optional exteral vcc for the simple power
->> sequence 131c249 clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag
->> for sclk_i2s_out b7ff8e1 ARM: dts: rockchip: override the clocks in i2s
->> for kylin board 5f56af4 ARM: dts: rockchip: add the sound codec for kylin
->> board
->> 914d9c0 ARM: dts: rockchip: set the pinctrl default setting for rk3036 i2s
->> ..
->>
->> This series patches have the following decriptions:
->>
->> PATCH[1/12-4/12]:====> Support rt5616 codec for kylin board
->> 914d9c0 ARM: dts: rockchip: set the pinctrl default setting for rk3036 i2s
->> 5f56af4 ARM: dts: rockchip: add the sound codec for kylin board
->> b7ff8e1 ARM: dts: rockchip: override the clocks in i2s for kylin board
->> 131c249 clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for
->> sclk_i2s_out
->>
->> This patches is working for codec rt5616 on kylin board. (RK3036 SoCs)
->>
->> That's needed the following rt5616 driver from Mark Brown Branch.
->> (cherry picked from git.kernel.org broonie/sound.git for-next)
->>
->> cf94b7a UPSTREAM: ASoC: rt5616: rename some alsa control names
->> 86f561d UPSTREAM: ASoC: rt5616: add devicetree document for rt5616
->> 0e0f5f8 UPSTREAM: ASoC: rt5616: add an of_match table
->> 263a330 UPSTREAM: ASoC: rt5616: Return error if device ID mismatch
->> 0094139 UPSTREAM: ASoC: rt5616: add rt5616 codec driver
->>
->> Notes:
->> I'm run it with the ubuntu 15.04 to set the configure.
->> ./amixer "HP Playback Switch" 1
->> ./amixer "HP Playback Volume" 20
->> ./amixer "HPO MIX DAC1 Switch" 1
->> ./amixer "OUT MIXR DAC R1 Switch" 1
->> ./amixer "OUT MIXL DAC L1 Switch" 1
->> ./amixer "Stereo DAC MIXR DAC R1 Switch" 1
->> ./amixer "Stereo DAC MIXL DAC L1 Switch" 1
->>
->> root@linaro-alip:/media/aplay# ./aplay pcm.wav
->> Playing sample: 2 ch, 48000 hz, 16 bit
->> ..
->> That can be normal playing the music.
->> ----
->>
->> PATCH[5/12-9/12]: ====> Support wifi/bt module for kylin board
->> cdf3a7e mmc: pwrseq: Document optional exteral vcc for the simple power
->> sequence 21eded4 mmc: pwrseq: add support for power-on sequencing through
->> DT 8699698 ARM: dts: rockchip: enable the high speed on sdio for kylin
->> board e7de154 ARM: dts: rockchip: add the wifi/bt regulator for kylin
->> board 3e19128 ARM: dts: rockchip: enable the uart0 for kylin board
->>
->> The wifi/bt driver hasn't land in mainline, the driver is in here:
->> https://github.com/Caesar-github/rockchip/commit/1912ef4c0e358677904b0a0bb
->> b83f9745066f0ec
->>
->> wpa_supplicant -Dnl80211 -c /etc/wifi/wpa_supplicant.conf -i wlan0 -B
->> wpa_cli add_network
->> wpa_cli set_network 1 ssid \"wxt\"
->> wpa_cli set_network 1 psk \"123456789\"
->> wpa_cli select_network 1
->> wpa_cli save_config
->>
->> ifconfig wlan0 192.168.1.105
->> route add default gw 192.168.1.1
->>
->> root@linaro-alip:/# ping 192.168.1.1
->> PING 192.168.1.1 (192.168.1.1) 56(84) bytes of data.
->> 64 bytes from 192.168.1.1: icmp_seq=1 ttl=64 time=6.83 ms
->> 64 bytes from 192.168.1.1: icmp_seq=2 ttl=64 time=184 ms
->> 64 bytes from 192.168.1.1: icmp_seq=3 ttl=64 time=9.21 ms
->> 64 bytes from 192.168.1.1: icmp_seq=4 ttl=64 time=6.84 ms
->> 64 bytes from 192.168.1.1: icmp_seq=5 ttl=64 time=11.2 ms
->> 64 bytes from 192.168.1.1: icmp_seq=6 ttl=64 time=9.24 ms
->> 64 bytes from 192.168.1.1: icmp_seq=7 ttl=64 time=12.9 ms
->> 64 bytes from 192.168.1.1: icmp_seq=8 ttl=64 time=7.02 ms
->> 64 bytes from 192.168.1.1: icmp_seq=9 ttl=64 time=24.3 ms
->> 64 bytes from 192.168.1.1: icmp_seq=10 ttl=64 time=13.6 ms
->> 64 bytes from 192.168.1.1: icmp_seq=11 ttl=64 time=3.87 m
->> ...
->>
->> The wifi throughput:
->>
->> iperf -s -i 1
->> ...
->> [  4] 116.0-117.0 sec  2.88 MBytes  24.1 Mbits/sec
->> [  4] 117.0-118.0 sec  2.99 MBytes  25.0 Mbits/sec
->> [  4] 118.0-119.0 sec  3.01 MBytes  25.2 Mbits/sec
->> [  4] 119.0-120.0 sec  2.89 MBytes  24.2 Mbits/sec
->> [  4]  0.0-120.4 sec   332 MBytes  23.1 Mbits/sec
->> ----
->>
->> PATCH[10/12]: ====> sdmmc patch for kylin board
->> ARM: dts: rockchip: add the sdmmc for kylin board
->>
->> You should mark it "oaky" if you want to use the sdmmc.
->> This patch default is disabing the sdmmc since the sdmmc and
->> uart2(debug port) is reusing pin.
->> ----
->>
->> PATCH[11/12]: ====> hdmi/lcdc diaply patch for rk3036 dts
->> ARM: dts: rockchip: add the lcdc and hdmi node for rk3036
->>
->> We can add this patch to support it since the Mark Yao has land
->> your vop support.
->> https://github.com/markyzq/kernel-drm-rockchip/commits/drm-rockchip-next-2
->> 015-12-28 ----
->>
->> PATCH[12/12]:====> DMA Patchs
->> ARM: dts: Add pl330-broken-no-flushp quirk for rk3036 SoCs
->>
->> In order to be better read/write for emmc.
->> This patch is based on the following:(Fix broken DMAFLUSHP on Rockchips
->> platform)
->>
->> 3055695 FROMLIST: DMA: dmaengine: expose max burst capability to clientmZ
->> (am from https://patchwork.kernel.org/patch/7399361/)
->> ed56bee FROMLIST: DMA: pl330: add quirk for broken no flushp
->> (am from https://patchwork.kernel.org/patch/7399371/)
->> 0c43bc3 FROMLIST: Documentation: arm-pl330: add description of arm,
->> pl330-broken-no-flushp (am from
->> https://patchwork.kernel.org/patch/7399371/)
->> 623a699 FROMLIST: DMA: pl330: support burst mode for dev-to-mem and
->> mem-to-dev transmit (am from https://patchwork.kernel.org/patch/7399381/)
->> ----
->>
->>
->> Changes in v2:
->> - modify the commit.
->> - fix the mclk-fs as the 256.
->> - This fix inmmc-power-sequences, as Heiko comment on
->>    https://patchwork.kernel.org/patch/7903161/
->> - As Heiko comment, modify it to fit the simple-mmc-sequence.
->> - Add the uart0 commit content.
->>
->> Caesar Wang (12):
->>    ARM: dts: rockchip: set the pinctrl default setting for rk3036 i2s
->>    ARM: dts: rockchip: add the sound codec for kylin board
->>    ARM: dts: rockchip: override the clocks in i2s for kylin board
->>    clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for
->>      sclk_i2s_out
->>    mmc: pwrseq: Document optional exteral vcc for the simple power
->>      sequence
->>    mmc: pwrseq: add support for power-on sequencing through DT
->>    ARM: dts: rockchip: enable the high speed on sdio for kylin board
->>    ARM: dts: rockchip: add the wifi/bt regulator for kylin board
->>    ARM: dts: rockchip: enable the uart0 for kylin board
->>    ARM: dts: rockchip: add the sdmmc for kylin board
->>    ARM: dts: rockchip: add the lcdc and hdmi node for rk3036
->>    ARM: dts: Add pl330-broken-no-flushp quirk for rk3036 SoCs
->>
->>   .../devicetree/bindings/mmc/mmc-pwrseq-simple.txt  |   9 ++
->>   arch/arm/boot/dts/rk3036-kylin.dts                 | 119
->> +++++++++++++++++++++ arch/arm/boot/dts/rk3036.dtsi
->> |  74 +++++++++++-- drivers/clk/rockchip/clk-rk3036.c                  |
->>   2 +-
->>   drivers/mmc/core/pwrseq_simple.c                   |  16 +++
->>   5 files changed, 213 insertions(+), 7 deletions(-)
->
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
-
-
+diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
+index 24c5434abd1c..c3267d695e4e 100644
+--- a/drivers/gpu/drm/drm_crtc.c
++++ b/drivers/gpu/drm/drm_crtc.c
+@@ -846,8 +846,9 @@ static void drm_connector_get_cmdline_mode(struct drm_connector *connector)
+ 		connector->force = mode->force;
+ 	}
+ 
+-	DRM_DEBUG_KMS("cmdline mode for connector %s %dx%d@%dHz%s%s%s\n",
++	DRM_DEBUG_KMS("cmdline mode for connector %s %s %dx%d@%dHz%s%s%s\n",
+ 		      connector->name,
++		      mode->name ? mode->name : "",
+ 		      mode->xres, mode->yres,
+ 		      mode->refresh_specified ? mode->refresh : 60,
+ 		      mode->rb ? " reduced blanking" : "",
+diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+index 69cbab5e5c81..fcb7ba796202 100644
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -1649,6 +1649,10 @@ struct drm_display_mode *drm_pick_cmdline_mode(struct drm_fb_helper_connector *f
+ 	prefer_non_interlace = !cmdline_mode->interlace;
+ again:
+ 	list_for_each_entry(mode, &fb_helper_conn->connector->modes, head) {
++		/* Check (optional) mode name first */
++		if (!strcmp(mode->name, cmdline_mode->name))
++			return mode;
++
+ 		/* check width/height */
+ 		if (mode->hdisplay != cmdline_mode->xres ||
+ 		    mode->vdisplay != cmdline_mode->yres)
+diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
+index 5b1921b22dd6..bbb23000eb5b 100644
+--- a/drivers/gpu/drm/drm_modes.c
++++ b/drivers/gpu/drm/drm_modes.c
+@@ -1351,7 +1351,7 @@ bool drm_mode_parse_command_line_for_connector(const char *mode_option,
+ 					       struct drm_cmdline_mode *mode)
+ {
+ 	const char *name;
+-	bool parse_extras = false;
++	bool named_mode = false, parse_extras = false;
+ 	unsigned int bpp_off = 0, refresh_off = 0;
+ 	unsigned int mode_end = 0;
+ 	char *bpp_ptr = NULL, *refresh_ptr = NULL, *extra_ptr = NULL;
+@@ -1370,8 +1370,14 @@ bool drm_mode_parse_command_line_for_connector(const char *mode_option,
+ 
+ 	name = mode_option;
+ 
++	/*
++	 * If the first character is not a digit, then it means that
++	 * we have a named mode.
++	 */
+ 	if (!isdigit(name[0]))
+-		return false;
++		named_mode = true;
++	else
++		named_mode = false;
+ 
+ 	/* Try to locate the bpp and refresh specifiers, if any */
+ 	bpp_ptr = strchr(name, '-');
+@@ -1398,12 +1404,16 @@ bool drm_mode_parse_command_line_for_connector(const char *mode_option,
+ 		parse_extras = true;
+ 	}
+ 
+-	ret = drm_mode_parse_cmdline_res_mode(name, mode_end,
+-					      parse_extras,
+-					      connector,
+-					      mode);
+-	if (ret)
+-		return false;
++	if (named_mode) {
++		strncpy(mode->name, name, mode_end);
++	} else {
++		ret = drm_mode_parse_cmdline_res_mode(name, mode_end,
++						      parse_extras,
++						      connector,
++						      mode);
++		if (ret)
++			return false;
++	}
+ 	mode->specified = true;
+ 
+ 	if (bpp_ptr) {
+@@ -1431,14 +1441,23 @@ bool drm_mode_parse_command_line_for_connector(const char *mode_option,
+ 		extra_ptr = refresh_end_ptr;
+ 
+ 	if (extra_ptr) {
+-		int remaining = strlen(name) - (extra_ptr - name);
++		if (!named_mode) {
++			int len = strlen(name) - (extra_ptr - name);
+ 
+-		/*
+-		 * We still have characters to process, while
+-		 * we shouldn't have any
+-		 */
+-		if (remaining > 0)
+-			return false;
++			ret = drm_mode_parse_cmdline_extra(extra_ptr, len,
++							   connector, mode);
++			if (ret)
++				return false;
++		} else {
++			int remaining = strlen(name) - (extra_ptr - name);
++
++			/*
++			 * We still have characters to process, while
++			 * we shouldn't have any
++			 */
++			if (remaining > 0)
++				return false;
++		}
+ 	}
+ 
+ 	return true;
+diff --git a/include/drm/drm_modes.h b/include/drm/drm_modes.h
+index 08a8cac9e555..709d43f3515e 100644
+--- a/include/drm/drm_modes.h
++++ b/include/drm/drm_modes.h
+@@ -151,6 +151,7 @@ struct drm_display_mode {
+ 
+ /* mode specified on the command line */
+ struct drm_cmdline_mode {
++	char name[DRM_DISPLAY_MODE_LEN];
+ 	bool specified;
+ 	bool refresh_specified;
+ 	bool bpp_specified;
 -- 
-caesar wang | software engineer | wxt@rock-chip.com
-
-
---------------010808020105050202000804
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-<html>
-  <head>
-    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
-  </head>
-  <body text="#000000" bgcolor="#FFFFFF">
-    <small><big>Hi Heiko,</big><br>
-      <br>
-      Thanks for pointing out.<br>
-    </small><br>
-    <div class="moz-cite-prefix">在 2016年01月07日 18:44, Heiko Stuebner 写道:<br>
-    </div>
-    <blockquote cite="mid:1759945.VO3mCQb2oc@phil" type="cite">
-      <pre wrap="">Hi Caesar,
-
-Am Donnerstag, 7. Januar 2016, 16:25:43 schrieb Caesar Wang:
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">Hi all,
-
-Happy new year! :)
-Let's go on working for happy.
-</pre>
-      </blockquote>
-      <pre wrap="">
-please make sure to split your patch-series at appropriate points for future 
-versions to only address relevant people. For example I don't think Ulf 
-really cares about getting the audio-related or general devicetree patches.
-</pre>
-    </blockquote>
-    <br>
-    Okay.  <br>
-    That's seem the patman tool to send patches automatically.<br>
-    <br>
-    Ahem!<br>
-    Series-to: email / alias to ulf for emmc patches that will send all
-    patches for him.<br>
-    <br>
-    <blockquote cite="mid:1759945.VO3mCQb2oc@phil" type="cite">
-      <pre wrap="">
-
-Heiko
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">This series patches are based on kernel version 4.4.0-rc8+
-(Linux version 4.4.0-rc8+ (wxt@ubuntu)...#142 SMP Thu Jan 7 12:38:40 CST
-2016)
-
-This series pacthes are verified on the following github:
-<a class="moz-txt-link-freetext" href="https://github.com/Caesar-github/rockchip/commits/kylin-develop4.4">https://github.com/Caesar-github/rockchip/commits/kylin-develop4.4</a>
-
-This series has 12 patches: (12---&gt;1)
-bbd1a01 ARM: dts: Add pl330-broken-no-flushp quirk for rk3036 SoCs
-fb8c1fd ARM: dts: rockchip: add the lcdc and hdmi node for rk3036
-1aeb49d ARM: dts: rockchip: add the sdmmc for kylin board
-3e19128 ARM: dts: rockchip: enable the uart0 for kylin board
-e7de154 ARM: dts: rockchip: add the wifi/bt regulator for kylin board
-8699698 ARM: dts: rockchip: enable the high speed on sdio for kylin board
-21eded4 mmc: pwrseq: add support for power-on sequencing through DT
-cdf3a7e mmc: pwrseq: Document optional exteral vcc for the simple power
-sequence 131c249 clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag
-for sclk_i2s_out b7ff8e1 ARM: dts: rockchip: override the clocks in i2s
-for kylin board 5f56af4 ARM: dts: rockchip: add the sound codec for kylin
-board
-914d9c0 ARM: dts: rockchip: set the pinctrl default setting for rk3036 i2s
-..
-
-This series patches have the following decriptions:
-
-PATCH[1/12-4/12]:====&gt; Support rt5616 codec for kylin board
-914d9c0 ARM: dts: rockchip: set the pinctrl default setting for rk3036 i2s
-5f56af4 ARM: dts: rockchip: add the sound codec for kylin board
-b7ff8e1 ARM: dts: rockchip: override the clocks in i2s for kylin board
-131c249 clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for
-sclk_i2s_out
-
-This patches is working for codec rt5616 on kylin board. (RK3036 SoCs)
-
-That's needed the following rt5616 driver from Mark Brown Branch.
-(cherry picked from git.kernel.org broonie/sound.git for-next)
-
-cf94b7a UPSTREAM: ASoC: rt5616: rename some alsa control names
-86f561d UPSTREAM: ASoC: rt5616: add devicetree document for rt5616
-0e0f5f8 UPSTREAM: ASoC: rt5616: add an of_match table
-263a330 UPSTREAM: ASoC: rt5616: Return error if device ID mismatch
-0094139 UPSTREAM: ASoC: rt5616: add rt5616 codec driver
-
-Notes:
-I'm run it with the ubuntu 15.04 to set the configure.
-./amixer "HP Playback Switch" 1
-./amixer "HP Playback Volume" 20
-./amixer "HPO MIX DAC1 Switch" 1
-./amixer "OUT MIXR DAC R1 Switch" 1
-./amixer "OUT MIXL DAC L1 Switch" 1
-./amixer "Stereo DAC MIXR DAC R1 Switch" 1
-./amixer "Stereo DAC MIXL DAC L1 Switch" 1
-
-root@linaro-alip:/media/aplay# ./aplay pcm.wav
-Playing sample: 2 ch, 48000 hz, 16 bit
-..
-That can be normal playing the music.
-----
-
-PATCH[5/12-9/12]: ====&gt; Support wifi/bt module for kylin board
-cdf3a7e mmc: pwrseq: Document optional exteral vcc for the simple power
-sequence 21eded4 mmc: pwrseq: add support for power-on sequencing through
-DT 8699698 ARM: dts: rockchip: enable the high speed on sdio for kylin
-board e7de154 ARM: dts: rockchip: add the wifi/bt regulator for kylin
-board 3e19128 ARM: dts: rockchip: enable the uart0 for kylin board
-
-The wifi/bt driver hasn't land in mainline, the driver is in here:
-<a class="moz-txt-link-freetext" href="https://github.com/Caesar-github/rockchip/commit/1912ef4c0e358677904b0a0bb">https://github.com/Caesar-github/rockchip/commit/1912ef4c0e358677904b0a0bb</a>
-b83f9745066f0ec
-
-wpa_supplicant -Dnl80211 -c /etc/wifi/wpa_supplicant.conf -i wlan0 -B
-wpa_cli add_network
-wpa_cli set_network 1 ssid \"wxt\"
-wpa_cli set_network 1 psk \"123456789\"
-wpa_cli select_network 1
-wpa_cli save_config
-
-ifconfig wlan0 192.168.1.105
-route add default gw 192.168.1.1
-
-root@linaro-alip:/# ping 192.168.1.1
-PING 192.168.1.1 (192.168.1.1) 56(84) bytes of data.
-64 bytes from 192.168.1.1: icmp_seq=1 ttl=64 time=6.83 ms
-64 bytes from 192.168.1.1: icmp_seq=2 ttl=64 time=184 ms
-64 bytes from 192.168.1.1: icmp_seq=3 ttl=64 time=9.21 ms
-64 bytes from 192.168.1.1: icmp_seq=4 ttl=64 time=6.84 ms
-64 bytes from 192.168.1.1: icmp_seq=5 ttl=64 time=11.2 ms
-64 bytes from 192.168.1.1: icmp_seq=6 ttl=64 time=9.24 ms
-64 bytes from 192.168.1.1: icmp_seq=7 ttl=64 time=12.9 ms
-64 bytes from 192.168.1.1: icmp_seq=8 ttl=64 time=7.02 ms
-64 bytes from 192.168.1.1: icmp_seq=9 ttl=64 time=24.3 ms
-64 bytes from 192.168.1.1: icmp_seq=10 ttl=64 time=13.6 ms
-64 bytes from 192.168.1.1: icmp_seq=11 ttl=64 time=3.87 m
-...
-
-The wifi throughput:
-
-iperf -s -i 1
-...
-[  4] 116.0-117.0 sec  2.88 MBytes  24.1 Mbits/sec
-[  4] 117.0-118.0 sec  2.99 MBytes  25.0 Mbits/sec
-[  4] 118.0-119.0 sec  3.01 MBytes  25.2 Mbits/sec
-[  4] 119.0-120.0 sec  2.89 MBytes  24.2 Mbits/sec
-[  4]  0.0-120.4 sec   332 MBytes  23.1 Mbits/sec
-----
-
-PATCH[10/12]: ====&gt; sdmmc patch for kylin board
-ARM: dts: rockchip: add the sdmmc for kylin board
-
-You should mark it "oaky" if you want to use the sdmmc.
-This patch default is disabing the sdmmc since the sdmmc and
-uart2(debug port) is reusing pin.
-----
-
-PATCH[11/12]: ====&gt; hdmi/lcdc diaply patch for rk3036 dts
-ARM: dts: rockchip: add the lcdc and hdmi node for rk3036
-
-We can add this patch to support it since the Mark Yao has land
-your vop support.
-<a class="moz-txt-link-freetext" href="https://github.com/markyzq/kernel-drm-rockchip/commits/drm-rockchip-next-2">https://github.com/markyzq/kernel-drm-rockchip/commits/drm-rockchip-next-2</a>
-015-12-28 ----
-
-PATCH[12/12]:====&gt; DMA Patchs
-ARM: dts: Add pl330-broken-no-flushp quirk for rk3036 SoCs
-
-In order to be better read/write for emmc.
-This patch is based on the following:(Fix broken DMAFLUSHP on Rockchips
-platform)
-
-3055695 FROMLIST: DMA: dmaengine: expose max burst capability to clientmZ
-(am from <a class="moz-txt-link-freetext" href="https://patchwork.kernel.org/patch/7399361/">https://patchwork.kernel.org/patch/7399361/</a>)
-ed56bee FROMLIST: DMA: pl330: add quirk for broken no flushp
-(am from <a class="moz-txt-link-freetext" href="https://patchwork.kernel.org/patch/7399371/">https://patchwork.kernel.org/patch/7399371/</a>)
-0c43bc3 FROMLIST: Documentation: arm-pl330: add description of arm,
-pl330-broken-no-flushp (am from
-<a class="moz-txt-link-freetext" href="https://patchwork.kernel.org/patch/7399371/">https://patchwork.kernel.org/patch/7399371/</a>)
-623a699 FROMLIST: DMA: pl330: support burst mode for dev-to-mem and
-mem-to-dev transmit (am from <a class="moz-txt-link-freetext" href="https://patchwork.kernel.org/patch/7399381/">https://patchwork.kernel.org/patch/7399381/</a>)
-----
-
-
-Changes in v2:
-- modify the commit.
-- fix the mclk-fs as the 256.
-- This fix inmmc-power-sequences, as Heiko comment on
-  <a class="moz-txt-link-freetext" href="https://patchwork.kernel.org/patch/7903161/">https://patchwork.kernel.org/patch/7903161/</a>
-- As Heiko comment, modify it to fit the simple-mmc-sequence.
-- Add the uart0 commit content.
-
-Caesar Wang (12):
-  ARM: dts: rockchip: set the pinctrl default setting for rk3036 i2s
-  ARM: dts: rockchip: add the sound codec for kylin board
-  ARM: dts: rockchip: override the clocks in i2s for kylin board
-  clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for
-    sclk_i2s_out
-  mmc: pwrseq: Document optional exteral vcc for the simple power
-    sequence
-  mmc: pwrseq: add support for power-on sequencing through DT
-  ARM: dts: rockchip: enable the high speed on sdio for kylin board
-  ARM: dts: rockchip: add the wifi/bt regulator for kylin board
-  ARM: dts: rockchip: enable the uart0 for kylin board
-  ARM: dts: rockchip: add the sdmmc for kylin board
-  ARM: dts: rockchip: add the lcdc and hdmi node for rk3036
-  ARM: dts: Add pl330-broken-no-flushp quirk for rk3036 SoCs
-
- .../devicetree/bindings/mmc/mmc-pwrseq-simple.txt  |   9 ++
- arch/arm/boot/dts/rk3036-kylin.dts                 | 119
-+++++++++++++++++++++ arch/arm/boot/dts/rk3036.dtsi                     
-|  74 +++++++++++-- drivers/clk/rockchip/clk-rk3036.c                  | 
- 2 +-
- drivers/mmc/core/pwrseq_simple.c                   |  16 +++
- 5 files changed, 213 insertions(+), 7 deletions(-)
-</pre>
-      </blockquote>
-      <pre wrap="">
-
-_______________________________________________
-Linux-rockchip mailing list
-<a class="moz-txt-link-abbreviated" href="mailto:Linux-rockchip@lists.infradead.org">Linux-rockchip@lists.infradead.org</a>
-<a class="moz-txt-link-freetext" href="http://lists.infradead.org/mailman/listinfo/linux-rockchip">http://lists.infradead.org/mailman/listinfo/linux-rockchip</a>
-</pre>
-    </blockquote>
-    <br>
-    <br>
-    <pre class="moz-signature" cols="72">-- 
-caesar wang | software engineer | <a class="moz-txt-link-abbreviated" href="mailto:wxt@rock-chip.com">wxt@rock-chip.com</a></pre>
-  </body>
-</html>
-
---------------010808020105050202000804--
+2.6.4
