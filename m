@@ -1,76 +1,401 @@
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com, Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>, Boris Brezillon <boris.brezillon@free-electrons.com>, Wynter Woods <wynter@nextthing.co>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>
-Subject: Re: [PATCH v2 13/26] drm/fb_cma_helper: Remove implicit call to disable_unused_functions
-Date: Mon, 25 Jan 2016 21:02:14 +0200
-Message-ID: <4816141.nXxRuEqaX5@avalon>
-In-Reply-To: <20160125072938.GI11240@phenom.ffwll.local>
-References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com> <1484612.l42nGNbAu5@avalon> <20160125072938.GI11240@phenom.ffwll.local>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Wynter Woods <wynter@nextthing.co>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 14/26] drm/modes: Rewrite the command line parser
+Date: Thu, 14 Jan 2016 16:24:57 +0100
+Message-Id: <1452785109-6172-15-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Daniel,
+Rewrite the command line parser in order to get away from the state machine
+parsing the video mode lines.
 
-On Monday 25 January 2016 08:29:38 Daniel Vetter wrote:
-> On Mon, Jan 25, 2016 at 12:19:27AM +0200, Laurent Pinchart wrote:
-> > On Friday 15 January 2016 11:17:30 Daniel Vetter wrote:
-> >> On Fri, Jan 15, 2016 at 01:13:05AM +0200, Laurent Pinchart wrote:
-> >>> On Thursday 14 January 2016 16:24:56 Maxime Ripard wrote:
-> >>>> The drm_fbdev_cma_init function always calls the
-> >>>> drm_helper_disable_unused_functions. Since it's part of the usual
-> >>>> probe process, all the drivers using that helper will end up having
-> >>>> their encoder and CRTC disable functions called at probe if their
-> >>>> device has not been reported as enabled.
-> >>>> 
-> >>>> This could be fixed by reading out from the registers the current
-> >>>> state of the device if it is enabled, but even that will not handle
-> >>>> the case where the device is actually disabled.
-> >>>> 
-> >>>> Moreover, the drivers using the atomic modesetting expect that their
-> >>>> enable and disable callback to be called when the device is already
-> >>>> enabled or disabled (respectively).
-> >>>> 
-> >>>> We can however fix this issue by moving the call to
-> >>>> drm_helper_disable_unused_functions out of drm_fbdev_cma_init and
-> >>>> make the drivers needing it (all the drivers calling
-> >>>> drm_fbdev_cma_init and not using the atomic modesetting) explicitly
-> >>>> call it.
-> >>> 
-> >>> I'd rather add it to all drivers that call drm_fbdev_cma_init(). All
-> >>> the atomic ones must have special code to cope with it that could be
-> >>> rendered useless by the removal of the
-> >>> drm_helper_disable_unused_functions() call. That code should be
-> >>> removed too, and it would be easier to check drivers one by one and
-> >>> fixing them individually (outside of this patch series, unless you
-> >>> insist ;-)) when removing the explicit
-> >>> drm_helper_disable_unused_functions() call.
-> >> 
-> >> I had the same thought, but figured there's really no good reason ever
-> >> to do this. I suspect most of that disable_unused_function stuff we have
-> >> all over is supreme cargo-cult anyway ;-)
-> > 
-> > I'm not sure you got my point. Yes, the
-> > drm_helper_disable_unused_functions() call should be removed from atomic
-> > drivers, but that will leave support code added for the sole reason of
-> > avoiding the crash in the drivers. That code will likely not be noticed
-> > and will stay there rotting. If we added
-> > drm_helper_disable_unused_functions() calls to all atomic drivers then
-> > driver authors will hopefully check carefully if there's any support code
-> > that can be removed when removing the function call. It would act as a
-> > kind of FIXME reminder.
-> 
-> drm_helper_disable_unused_functions() already prefers the ->disable
-> callbacks over dpms, like atomic helpers. I don't think there's any dead
-> code due to this change. The problem was that driver/hw blew up since it
-> was disabled when the hw was off already.
+Hopefully, this will allow to extend it more easily to support named modes
+and / or properties set directly on the command line.
 
-The rcar-du-drm driver keeps an internal CRTC enabled state for just this 
-purpose. I expect other drivers to implement something similar that can be 
-removed after dropping the drm_helper_disable_unused_functions() calls.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/gpu/drm/drm_modes.c | 308 +++++++++++++++++++++++++++-----------------
+ 1 file changed, 191 insertions(+), 117 deletions(-)
 
+diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
+index cd74a0953f42..5b1921b22dd6 100644
+--- a/drivers/gpu/drm/drm_modes.c
++++ b/drivers/gpu/drm/drm_modes.c
+@@ -30,6 +30,7 @@
+  * authorization from the copyright holder(s) and author(s).
+  */
+ 
++#include <linux/ctype.h>
+ #include <linux/list.h>
+ #include <linux/list_sort.h>
+ #include <linux/export.h>
+@@ -1199,6 +1200,131 @@ void drm_mode_connector_list_update(struct drm_connector *connector,
+ }
+ EXPORT_SYMBOL(drm_mode_connector_list_update);
+ 
++static int drm_mode_parse_cmdline_bpp(const char *str, char **end_ptr,
++				      struct drm_cmdline_mode *mode)
++{
++	if (str[0] != '-')
++		return -EINVAL;
++
++	mode->bpp = simple_strtol(str + 1, end_ptr, 10);
++	mode->bpp_specified = true;
++
++	return 0;
++}
++
++static int drm_mode_parse_cmdline_refresh(const char *str, char **end_ptr,
++					  struct drm_cmdline_mode *mode)
++{
++	if (str[0] != '@')
++		return -EINVAL;
++
++	mode->refresh = simple_strtol(str + 1, end_ptr, 10);
++	mode->refresh_specified = true;
++
++	return 0;
++}
++
++static int drm_mode_parse_cmdline_extra(const char *str, int length,
++					struct drm_connector *connector,
++					struct drm_cmdline_mode *mode)
++{
++	int i;
++
++	for (i = 0; i < length; i++) {
++		switch (str[i]) {
++		case 'i':
++			mode->interlace = true;
++			break;
++		case 'm':
++			mode->margins = true;
++			break;
++		case 'D':
++			if (mode->force != DRM_FORCE_UNSPECIFIED)
++				return -EINVAL;
++
++			if ((connector->connector_type != DRM_MODE_CONNECTOR_DVII) &&
++			    (connector->connector_type != DRM_MODE_CONNECTOR_HDMIB))
++				mode->force = DRM_FORCE_ON;
++			else
++				mode->force = DRM_FORCE_ON_DIGITAL;
++			break;
++		case 'd':
++			if (mode->force != DRM_FORCE_UNSPECIFIED)
++				return -EINVAL;
++
++			mode->force = DRM_FORCE_OFF;
++			break;
++		case 'e':
++			if (mode->force != DRM_FORCE_UNSPECIFIED)
++				return -EINVAL;
++
++			mode->force = DRM_FORCE_ON;
++			break;
++		default:
++			return -EINVAL;
++		}
++	}
++
++	return 0;
++}
++
++static int drm_mode_parse_cmdline_res_mode(const char *str, unsigned int length,
++					   bool extras,
++					   struct drm_connector *connector,
++					   struct drm_cmdline_mode *mode)
++{
++	bool rb = false, cvt = false;
++	int xres = 0, yres = 0;
++	int remaining, i;
++	char *end_ptr;
++
++	xres = simple_strtol(str, &end_ptr, 10);
++
++	if (end_ptr[0] != 'x')
++		return -EINVAL;
++	end_ptr++;
++
++	yres = simple_strtol(end_ptr, &end_ptr, 10);
++
++	remaining = length - (end_ptr - str);
++	if (remaining < 0)
++		return -EINVAL;
++
++	for (i = 0; i < remaining; i++) {
++		switch (end_ptr[i]) {
++		case 'M':
++			cvt = true;
++			break;
++		case 'R':
++			rb = true;
++			break;
++		default:
++			/*
++			 * Try to pass that to our extras parsing
++			 * function to handle the case where the
++			 * extras are directly after the resolution
++			 */
++			if (extras) {
++				int ret = drm_mode_parse_cmdline_extra(end_ptr + i,
++								       1,
++								       connector,
++								       mode);
++				if (ret)
++					return ret;
++			} else {
++				return -EINVAL;
++			}
++		}
++	}
++
++	mode->xres = xres;
++	mode->yres = yres;
++	mode->cvt = cvt;
++	mode->rb = rb;
++
++	return 0;
++}
++
+ /**
+  * drm_mode_parse_command_line_for_connector - parse command line modeline for connector
+  * @mode_option: optional per connector mode option
+@@ -1225,13 +1351,12 @@ bool drm_mode_parse_command_line_for_connector(const char *mode_option,
+ 					       struct drm_cmdline_mode *mode)
+ {
+ 	const char *name;
+-	unsigned int namelen;
+-	bool res_specified = false, bpp_specified = false, refresh_specified = false;
+-	unsigned int xres = 0, yres = 0, bpp = 32, refresh = 0;
+-	bool yres_specified = false, cvt = false, rb = false;
+-	bool interlace = false, margins = false, was_digit = false;
+-	int i;
+-	enum drm_connector_force force = DRM_FORCE_UNSPECIFIED;
++	bool parse_extras = false;
++	unsigned int bpp_off = 0, refresh_off = 0;
++	unsigned int mode_end = 0;
++	char *bpp_ptr = NULL, *refresh_ptr = NULL, *extra_ptr = NULL;
++	char *bpp_end_ptr = NULL, *refresh_end_ptr = NULL;
++	int ret;
+ 
+ #ifdef CONFIG_FB
+ 	if (!mode_option)
+@@ -1244,128 +1369,77 @@ bool drm_mode_parse_command_line_for_connector(const char *mode_option,
+ 	}
+ 
+ 	name = mode_option;
+-	namelen = strlen(name);
+-	for (i = namelen-1; i >= 0; i--) {
+-		switch (name[i]) {
+-		case '@':
+-			if (!refresh_specified && !bpp_specified &&
+-			    !yres_specified && !cvt && !rb && was_digit) {
+-				refresh = simple_strtol(&name[i+1], NULL, 10);
+-				refresh_specified = true;
+-				was_digit = false;
+-			} else
+-				goto done;
+-			break;
+-		case '-':
+-			if (!bpp_specified && !yres_specified && !cvt &&
+-			    !rb && was_digit) {
+-				bpp = simple_strtol(&name[i+1], NULL, 10);
+-				bpp_specified = true;
+-				was_digit = false;
+-			} else
+-				goto done;
+-			break;
+-		case 'x':
+-			if (!yres_specified && was_digit) {
+-				yres = simple_strtol(&name[i+1], NULL, 10);
+-				yres_specified = true;
+-				was_digit = false;
+-			} else
+-				goto done;
+-			break;
+-		case '0' ... '9':
+-			was_digit = true;
+-			break;
+-		case 'M':
+-			if (yres_specified || cvt || was_digit)
+-				goto done;
+-			cvt = true;
+-			break;
+-		case 'R':
+-			if (yres_specified || cvt || rb || was_digit)
+-				goto done;
+-			rb = true;
+-			break;
+-		case 'm':
+-			if (cvt || yres_specified || was_digit)
+-				goto done;
+-			margins = true;
+-			break;
+-		case 'i':
+-			if (cvt || yres_specified || was_digit)
+-				goto done;
+-			interlace = true;
+-			break;
+-		case 'e':
+-			if (yres_specified || bpp_specified || refresh_specified ||
+-			    was_digit || (force != DRM_FORCE_UNSPECIFIED))
+-				goto done;
+ 
+-			force = DRM_FORCE_ON;
+-			break;
+-		case 'D':
+-			if (yres_specified || bpp_specified || refresh_specified ||
+-			    was_digit || (force != DRM_FORCE_UNSPECIFIED))
+-				goto done;
++	if (!isdigit(name[0]))
++		return false;
+ 
+-			if ((connector->connector_type != DRM_MODE_CONNECTOR_DVII) &&
+-			    (connector->connector_type != DRM_MODE_CONNECTOR_HDMIB))
+-				force = DRM_FORCE_ON;
+-			else
+-				force = DRM_FORCE_ON_DIGITAL;
+-			break;
+-		case 'd':
+-			if (yres_specified || bpp_specified || refresh_specified ||
+-			    was_digit || (force != DRM_FORCE_UNSPECIFIED))
+-				goto done;
++	/* Try to locate the bpp and refresh specifiers, if any */
++	bpp_ptr = strchr(name, '-');
++	if (bpp_ptr) {
++		bpp_off = bpp_ptr - name;
++		mode->bpp_specified = true;
++	}
+ 
+-			force = DRM_FORCE_OFF;
+-			break;
+-		default:
+-			goto done;
+-		}
++	refresh_ptr = strchr(name, '@');
++	if (refresh_ptr) {
++		refresh_off = refresh_ptr - name;
++		mode->refresh_specified = true;
+ 	}
+ 
+-	if (i < 0 && yres_specified) {
+-		char *ch;
+-		xres = simple_strtol(name, &ch, 10);
+-		if ((ch != NULL) && (*ch == 'x'))
+-			res_specified = true;
+-		else
+-			i = ch - name;
+-	} else if (!yres_specified && was_digit) {
+-		/* catch mode that begins with digits but has no 'x' */
+-		i = 0;
++	/* Locate the end of the name / resolution, and parse it */
++	if (bpp_ptr && refresh_ptr) {
++		mode_end = min(bpp_off, refresh_off);
++	} else if (bpp_ptr) {
++		mode_end = bpp_off;
++	} else if (refresh_ptr) {
++		mode_end = refresh_off;
++	} else {
++		mode_end = strlen(name);
++		parse_extras = true;
+ 	}
+-done:
+-	if (i >= 0) {
+-		printk(KERN_WARNING
+-			"parse error at position %i in video mode '%s'\n",
+-			i, name);
+-		mode->specified = false;
++
++	ret = drm_mode_parse_cmdline_res_mode(name, mode_end,
++					      parse_extras,
++					      connector,
++					      mode);
++	if (ret)
+ 		return false;
+-	}
++	mode->specified = true;
+ 
+-	if (res_specified) {
+-		mode->specified = true;
+-		mode->xres = xres;
+-		mode->yres = yres;
++	if (bpp_ptr) {
++		ret = drm_mode_parse_cmdline_bpp(bpp_ptr, &bpp_end_ptr, mode);
++		if (ret)
++			return false;
+ 	}
+ 
+-	if (refresh_specified) {
+-		mode->refresh_specified = true;
+-		mode->refresh = refresh;
++	if (refresh_ptr) {
++		ret = drm_mode_parse_cmdline_refresh(refresh_ptr,
++						     &refresh_end_ptr, mode);
++		if (ret)
++			return false;
+ 	}
+ 
+-	if (bpp_specified) {
+-		mode->bpp_specified = true;
+-		mode->bpp = bpp;
++	/*
++	 * Locate the end of the bpp / refresh, and parse the extras
++	 * if relevant
++	 */
++	if (bpp_ptr && refresh_ptr)
++		extra_ptr = max(bpp_end_ptr, refresh_end_ptr);
++	else if (bpp_ptr)
++		extra_ptr = bpp_end_ptr;
++	else if (refresh_ptr)
++		extra_ptr = refresh_end_ptr;
++
++	if (extra_ptr) {
++		int remaining = strlen(name) - (extra_ptr - name);
++
++		/*
++		 * We still have characters to process, while
++		 * we shouldn't have any
++		 */
++		if (remaining > 0)
++			return false;
+ 	}
+-	mode->rb = rb;
+-	mode->cvt = cvt;
+-	mode->interlace = interlace;
+-	mode->margins = margins;
+-	mode->force = force;
+ 
+ 	return true;
+ }
+@@ -1491,4 +1565,4 @@ int drm_mode_convert_umode(struct drm_display_mode *out,
+ 
+ out:
+ 	return ret;
+-}
+\ No newline at end of file
++}
 -- 
-Regards,
-
-Laurent Pinchart
+2.6.4
