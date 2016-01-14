@@ -1,67 +1,166 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-Message-ID: <1453355375.5384.41.camel@mtksdaap41>
-Subject: Re: [PATCH v3 1/6] clk: mediatek: Refine the makefile to support
- multiple clock drivers
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Yingjoe Chen <yingjoe.chen@mediatek.com>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "John
- Crispin" <blogic@openwrt.org>, <devicetree@vger.kernel.org>, Sascha Hauer
-	<kernel@pengutronix.de>, <srv_heupstream@mediatek.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	"Shunli Wang" <shunli.wang@mediatek.com>, Philipp Zabel
-	<p.zabel@pengutronix.de>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Date: Thu, 21 Jan 2016 13:49:35 +0800
-In-Reply-To: <1453343300.28078.6.camel@mtksdaap41>
-References: <1452587470-61506-1-git-send-email-jamesjj.liao@mediatek.com>
-	 <1452587470-61506-2-git-send-email-jamesjj.liao@mediatek.com>
-	 <1453343300.28078.6.camel@mtksdaap41>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Return-Path: jamesjj.liao@mediatek.com
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Wynter Woods <wynter@nextthing.co>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 06/26] clk: sunxi: Add PLL3 clock
+Date: Thu, 14 Jan 2016 16:24:49 +0100
+Message-Id: <1452785109-6172-7-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Yingjoe,
+The A10 SoCs and relatives have a PLL controller to drive the PLL3 and
+PLL7, clocked from a 3MHz oscillator, that drives the display related
+clocks (GPU, display engine, TCON, etc.)
 
-On Thu, 2016-01-21 at 10:28 +0800, Yingjoe Chen wrote:
-> On Tue, 2016-01-12 at 16:31 +0800, James Liao wrote:
-> > Add a Kconfig to define clock configuration for each SoC, and
-> > modify the Makefile to build drivers that only selected in config.
-> > 
-> > Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-> > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> > ---
-> >  drivers/clk/Kconfig           |  1 +
-> >  drivers/clk/mediatek/Kconfig  | 23 +++++++++++++++++++++++
-> >  drivers/clk/mediatek/Makefile |  6 +++---
-> >  3 files changed, 27 insertions(+), 3 deletions(-)
-> >  create mode 100644 drivers/clk/mediatek/Kconfig
-> > 
-> > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> > index c3e3a02..b7a37dc 100644
-> > --- a/drivers/clk/Kconfig
-> > +++ b/drivers/clk/Kconfig
-> > @@ -198,3 +198,4 @@ source "drivers/clk/mvebu/Kconfig"
-> >  
-> >  source "drivers/clk/samsung/Kconfig"
-> >  source "drivers/clk/tegra/Kconfig"
-> > +source "drivers/clk/mediatek/Kconfig"
-> 
-> 
-> Hi James,
-> 
-> drivers/clk/mediatek/Kconfig add user selectable options, menuconfig
-> will list them outside of "Common Clock Framework" sub-menu if you
-> source the file here. Kconfig for samsung & tegra doesn't have any, so
-> it is OK for them to stay here.
-> 
-> Please move it inside the menu, also it seems the source lines are
-> sorted now, so let's keep them sorted.
+Add a driver for it.
 
-OK. I'll move mediatek/Kconfig into menu section in next patch.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+ drivers/clk/sunxi/Makefile                        |  1 +
+ drivers/clk/sunxi/clk-sun4i-pll3.c                | 90 +++++++++++++++++++++++
+ 3 files changed, 92 insertions(+)
+ create mode 100644 drivers/clk/sunxi/clk-sun4i-pll3.c
 
-
-Best regards,
-
-James
+diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
+index 5360554a7d3f..bb9fb78dcff8 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+@@ -10,6 +10,7 @@ Required properties:
+ 	"allwinner,sun4i-a10-pll1-clk" - for the main PLL clock and PLL4
+ 	"allwinner,sun6i-a31-pll1-clk" - for the main PLL clock on A31
+ 	"allwinner,sun8i-a23-pll1-clk" - for the main PLL clock on A23
++	"allwinner,sun4i-a10-pll3-clk" - for the video PLL clock on A10
+ 	"allwinner,sun9i-a80-pll4-clk" - for the peripheral PLLs on A80
+ 	"allwinner,sun4i-a10-pll5-clk" - for the PLL5 clock
+ 	"allwinner,sun4i-a10-pll6-clk" - for the PLL6 clock
+diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+index a991cd8ca509..40c32ffd912c 100644
+--- a/drivers/clk/sunxi/Makefile
++++ b/drivers/clk/sunxi/Makefile
+@@ -11,6 +11,7 @@ obj-y += clk-a20-gmac.o
+ obj-y += clk-mod0.o
+ obj-y += clk-simple-gates.o
+ obj-y += clk-sun4i-display.o
++obj-y += clk-sun4i-pll3.o
+ obj-y += clk-sun8i-mbus.o
+ obj-y += clk-sun9i-core.o
+ obj-y += clk-sun9i-mmc.o
+diff --git a/drivers/clk/sunxi/clk-sun4i-pll3.c b/drivers/clk/sunxi/clk-sun4i-pll3.c
+new file mode 100644
+index 000000000000..6c9c2210b6b2
+--- /dev/null
++++ b/drivers/clk/sunxi/clk-sun4i-pll3.c
+@@ -0,0 +1,90 @@
++/*
++ * Copyright 2015 Maxime Ripard
++ *
++ * Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++
++#define SUN4I_A10_PLL3_GATE_BIT	31
++#define SUN4I_A10_PLL3_DIV_WIDTH	7
++#define SUN4I_A10_PLL3_DIV_SHIFT	0
++
++static DEFINE_SPINLOCK(sun4i_a10_pll3_lock);
++
++static void __init sun4i_a10_pll3_setup(struct device_node *node)
++{
++	const char *clk_name = node->name, *parent;
++	struct clk_multiplier *mult;
++	struct clk_gate *gate;
++	void __iomem *reg;
++	struct clk *clk;
++	int ret;
++
++	of_property_read_string(node, "clock-output-names", &clk_name);
++	parent = of_clk_get_parent_name(node, 0);
++
++	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
++	if (IS_ERR(reg)) {
++		pr_err("%s: Could not map the clock registers\n", clk_name);
++		return;
++	}
++
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		return;
++
++	gate->reg = reg;
++	gate->bit_idx = SUN4I_A10_PLL3_GATE_BIT;
++	gate->lock = &sun4i_a10_pll3_lock;
++
++	mult = kzalloc(sizeof(*mult), GFP_KERNEL);
++	if (!mult)
++		goto err_free_gate;
++
++	mult->reg = reg;
++	mult->shift = SUN4I_A10_PLL3_DIV_SHIFT;
++	mult->width = SUN4I_A10_PLL3_DIV_WIDTH;
++	mult->lock = &sun4i_a10_pll3_lock;
++
++	clk = clk_register_composite(NULL, clk_name,
++				     &parent, 1,
++				     NULL, NULL,
++				     &mult->hw, &clk_multiplier_ops,
++				     &gate->hw, &clk_gate_ops,
++				     0);
++	if (IS_ERR(clk)) {
++		pr_err("%s: Couldn't register the clock\n", clk_name);
++		goto err_free_mult;
++	}
++
++	ret = of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	if (WARN_ON(ret))
++		goto err_clk_unregister;
++
++	return;
++
++err_clk_unregister:
++	clk_unregister_composite(clk);
++err_free_mult:
++	kfree(mult);
++err_free_gate:
++	kfree(gate);
++}
++
++CLK_OF_DECLARE(sun4i_a10_pll3, "allwinner,sun4i-a10-pll3-clk",
++	       sun4i_a10_pll3_setup);
+-- 
+2.6.4
