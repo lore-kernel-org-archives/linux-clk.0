@@ -1,50 +1,154 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH v4 2/3] clk: samsung: Don't build ARMv8 clock drivers on
- ARMv7
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Kukjin Kim <kgene@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will.deacon@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1453941324-15742-1-git-send-email-k.kozlowski@samsung.com>
- <1453941324-15742-3-git-send-email-k.kozlowski@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
- Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <56AA68D6.50500@osg.samsung.com>
-Date: Thu, 28 Jan 2016 16:15:34 -0300
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1453941324-15742-3-git-send-email-k.kozlowski@samsung.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+From: Michael Turquette <mturquette@baylibre.com>
+To: Martin Sperl <kernel@martin.sperl.org>, "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Stephen Warren" <swarren@wwwdotorg.org>, "Lee Jones" <lee@kernel.org>,
+ "Eric Anholt" <eric@anholt.net>, "Remi Pommarel" <repk@triplefau.lt>,
+ linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+References: <1452542157-2387-1-git-send-email-kernel@martin.sperl.org>
+ <1452542157-2387-2-git-send-email-kernel@martin.sperl.org>
+ <20160113200012.1168.74515@quark.deferred.io>
+ <20160114001358.1168.5768@quark.deferred.io>
+ <56979056.6010407@martin.sperl.org>
+In-Reply-To: <56979056.6010407@martin.sperl.org>
+Message-ID: <20160114202330.1942.96295@quark.deferred.io>
+Subject: Re: [PATCH V2 1/4] clk: bcm2835: avoid the use of BCM2835_CLOCK_COUNT in
+ clk-bcm2835
+Date: Thu, 14 Jan 2016 12:23:30 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Krzysztof,
+Quoting Martin Sperl (2016-01-14 04:11:02)
+> =
 
-On 01/27/2016 09:35 PM, Krzysztof Kozlowski wrote:
-> Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
-> so it is built also on ARMv7. This does not bring any kind of benefit.
-> There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
-> multi_v7 for ARMv7).
->
-> Instead build clock drivers only for respective SoC's architecture.
->
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->
+> =
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> On 14.01.2016 01:13, Michael Turquette wrote:
+> > Quoting Michael Turquette (2016-01-13 12:00:12)
+> >> Hi Martin,
+> >>
+> >> Quoting kernel@martin.sperl.org (2016-01-11 11:55:53)
+> >>>   static int bcm2835_clk_probe(struct platform_device *pdev)
+> >>>   {
+> >>>          struct device *dev =3D &pdev->dev;
+> >>>          struct clk **clks;
+> >>> +       size_t clk_cnt;
+> >>>          struct bcm2835_cprman *cprman;
+> >>>          struct resource *res;
+> >>> +       size_t i;
+> >>> +
+> >>> +       /* find the max clock index */
+> >>> +       clk_cnt =3D BCM2835_CLOCK_PERI_IMAGE; /* see below */
+> >>> +       for (i =3D 0; i < ARRAY_SIZE(bcm2835_register_clocks); i++)
+> >>> +               clk_cnt =3D max(clk_cnt, bcm2835_register_clocks[i].i=
+ndex);
+> >>> +       clk_cnt +=3D 1;
+> >>
+> >> I'm not sure how this solution is better than using CLOCK_COUNT. Some
+> >> other bindings use a max value, NR_CLKS or other sentinel.
+> >>
+> >> Why did you not choose to set clk_cnt equal to BCM2835_CLOCK_PWM? Why
+> >> not initialize it to zero?
+> >
+> > OK, I just caught up on the asoc/bcm2835 thread.
+> >
+> > Really the best solution would be to have an array of all of the clks in
+> > the driver and just use ARRAY_SIZE on it.
+> >
+> > For your driver, could you make an array of clk_hw pointers and call
+> > devm_clk_register on all of them in a loop? This gets rid of the big
+> > pile of explicit calls in bcm2835_clk_probe.
+> >
+> > You can also get rid of stuff like bcm2835_plla_core_data by just
+> > stuffing that data into a single struct initialization. Here is a
+> > snippet for how the qcom clk drivers do it:
+> >
+> > static struct clk_pll gpll0 =3D {
+> >       .l_reg =3D 0x0004,
+> >       .m_reg =3D 0x0008,
+> >       .n_reg =3D 0x000c,
+> >       .config_reg =3D 0x0014,
+> >       .mode_reg =3D 0x0000,
+> >       .status_reg =3D 0x001c,
+> >       .status_bit =3D 17,
+> >       .clkr.hw.init =3D &(struct clk_init_data){
+> >               .name =3D "gpll0",
+> >               .parent_names =3D (const char *[]){ "xo" },
+> >               .num_parents =3D 1,
+> >               .ops =3D &clk_pll_ops,
+> >       },
+> > };
+> =
 
-Also checked that for example clk-exynos5433 is not built anymore for
-exynos_defconfig but it is built for allyesconfig.
+> I did not know you could do that - that could make life easier...
+> =
 
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> But a quick look shows that this approach probably would require a
+> major rewrite of all the methods.
+> =
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+> > static int bcm2835_clk_probe(struct platform_device *pdev)
+> > {
+> >       ...
+> >       for (i =3D 0; i < num_clks; i++) {
+> >               clk =3D devm_clk_register(dev, array_of_clks[i].hw)
+> >       ...
+> > }
+> =
+
+> I guess I can use a slightly different approach that does not
+> require as many changes, that looks like this:
+> =
+
+> static const struct bcm2835_clk_desc clk_desc_array[] =3D {
+>         /* register PLL */
+>         [BCM2835_PLLA]          =3D REGISTER_PLL(&bcm2835_plla_data),
+>         ...
+> };
+> ...
+> static int bcm2835_clk_probe(struct platform_device *pdev)
+> {
+>         const size_t asize =3D ARRAY_SIZE(clk_desc_array);
+>         ...
+>         for (i =3D 0; i < asize; i++) {
+>                 desc =3D &clk_desc_array[i];
+>                 if (desc)
+>                         clks[i] =3D desc->clk_register(cprman,
+>                                                      desc->data);
+
+Interesting. I have been playing with the idea of putting a .register()
+callback into struct clk_init_data. Then it would be called by a new
+clk_register_desc() top-level registration function.
+
+You've done that here, but you've put the registration function in your
+machine-specific struct. Nothing wrong with that.
+
+Do you actually need a machine-specific registration function? Many clk
+drivers only use their machine-specific registration functions to
+allocate a stuct clk_hw and populate the contents of struct
+clk_init_data, which can be done by the framework and reduce duplicate
+code in drivers.
+
+(they do this because the basic clk types like clk-divider, clk-gate,
+etc do it, and everyone loves to copy/paste that code)
+
+bcm2835 seems to register two clks in the PLL registration function (one
+of which is a fixed factor divider), but you could just add those
+post-PLL dividers to your array of clk data?
+
+>         }
+>         ...
+> }
+> =
+
+> If we need to order the initialization then we can add some
+> priority field to clk_desc_array and iterate over all the priority
+> values.
+
+I guess that you can order them in your array? Just start with the root
+clocks at the beginning of the array (regardless of "clk type") and walk
+through the array registering them.
+
+Regards,
+Mike
