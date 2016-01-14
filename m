@@ -1,61 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from pandora.arm.linux.org.uk ([78.32.30.218]:49108 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755234AbcAHPIw (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2016 10:08:52 -0500
-Date: Fri, 8 Jan 2016 15:08:28 +0000
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-To: Jiancheng Xue <xuejiancheng@huawei.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
-	p.zabel@pengutronix.de, robh+dt@kernel.org, pawel.moll@arm.com,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, khilman@linaro.org, arnd@arndb.de,
-	olof@lixom.net, xuwei5@hisilicon.com, haojian.zhuang@linaro.org,
-	zhangfei.gao@linaro.org, bintian.wang@huawei.com,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	yanhaifeng@hisilicon.com, yanghongwei@hisilicon.com,
-	suwenping@hisilicon.com, ml.yang@hisilicon.com,
-	gaofei@hisilicon.com, zhangzhenxing@hisilicon.com,
-	xuejiancheng@hisilicon.com
-Subject: Re: [PATCH v5 4/6] ARM: debug: add hi3519 debug uart
-Message-ID: <20160108150828.GM19062@n2100.arm.linux.org.uk>
-References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
- <1452219400-32478-5-git-send-email-xuejiancheng@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1452219400-32478-5-git-send-email-xuejiancheng@huawei.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Wynter Woods <wynter@nextthing.co>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 24/26] devicetree: Add olimex vendor prefix
+Date: Thu, 14 Jan 2016 16:25:07 +0100
+Message-Id: <1452785109-6172-25-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jan 08, 2016 at 10:16:38AM +0800, Jiancheng Xue wrote:
-> @@ -1449,6 +1457,7 @@ config DEBUG_UART_PHYS
->  	default 0xf7fc9000 if DEBUG_BERLIN_UART
->  	default 0xf8b00000 if DEBUG_HIX5HD2_UART
->  	default 0xf991e000 if DEBUG_QCOM_UARTDM
-> +	default 0x12100000 if DEBUG_HI3519_UART
->  	default 0xfcb00000 if DEBUG_HI3620_UART
->  	default 0xfd883000 if DEBUG_ALPINE_UART0
->  	default 0xfe800000 if ARCH_IOP32X
+Olimex is an open source hardware boards vendors based in Bulgaria.
 
-Please insert at the appropriate location - examination of the list
-of defaults will show that it's sorted numerically, please keep this
-sorted numerically.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-> @@ -1529,6 +1538,7 @@ config DEBUG_UART_VIRT
->  	default 0xfe230000 if DEBUG_PICOXCELL_UART
->  	default 0xfe300000 if DEBUG_BCM_KONA_UART
->  	default 0xfe800000 if ARCH_IOP32X
-> +	default 0xfef00000 if DEBUG_HI3519_UART
->  	default 0xfeb00000 if DEBUG_HI3620_UART || DEBUG_HIX5HD2_UART
->  	default 0xfeb24000 if DEBUG_RK3X_UART0
->  	default 0xfeb26000 if DEBUG_RK3X_UART1
-
-Same for here.
-
-Thanks.
-
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index 55df1d444e9f..de4eb72b3adc 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -161,6 +161,7 @@ nuvoton	Nuvoton Technology Corporation
+ nvidia	NVIDIA
+ nxp	NXP Semiconductors
+ okaya	Okaya Electric America, Inc.
++olimex	Olimex
+ onnn	ON Semiconductor Corp.
+ opencores	OpenCores.org
+ option	Option NV
 -- 
-RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+2.6.4
