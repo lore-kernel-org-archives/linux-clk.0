@@ -1,290 +1,57 @@
-Return-Path: <antonynpavlov@gmail.com>
-Return-Path: <antonynpavlov@gmail.com>
-Date: Mon, 1 Feb 2016 03:23:34 +0300
-From: Antony Pavlov <antonynpavlov@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-mips@linux-mips.org, Alban Bedel <albeu@free.fr>, Michael
- Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [RFC v3 01/14] WIP: clk: add Atheros AR724X/AR913X/AR933X SoCs
- clock driver
-Message-Id: <20160201032334.bdaed0e5de613c63b7205df3@gmail.com>
-In-Reply-To: <20160130002734.GX12841@codeaurora.org>
-References: <1453580251-2341-1-git-send-email-antonynpavlov@gmail.com>
-	<1453580251-2341-2-git-send-email-antonynpavlov@gmail.com>
-	<20160130002734.GX12841@codeaurora.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>
+CC: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [Patch V2 6/9] clk: tegra210: fix pllx dyn step calculation
+Date: Thu, 14 Jan 2016 14:24:35 -0500
+Message-ID: <1452799478-14791-7-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
+References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 29 Jan 2016 16:27:34 -0800
-Stephen Boyd <sboyd@codeaurora.org> wrote:
+The logic for calculating the input rate used when figuring out
+the proper dynamic steps for pllx was incorrect. It is supposed to
+be calculated using parent_rate / m but it was just using the parent
+rate directly, therefore using the wrong step values.
 
-> On 01/23, Antony Pavlov wrote:
-> > TODO: get pll registers base address from devicetree node
-> >=20
-> > Signed-off-by: Antony Pavlov <antonynpavlov@gmail.com>
-> > Cc: Alban Bedel <albeu@free.fr>
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > Cc: Rob Herring <robh+dt@kernel.org>
-> > Cc: linux-clk@vger.kernel.org
-> > Cc: linux-mips@linux-mips.org
-> > Cc: devicetree@vger.kernel.org
-> > ---
->=20
-> Is there a binding document for this?
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Yes, there is the binding document: Documentation/devicetree/bindings/clock=
-/qca,ath79-pll.txt
-Anyway I suppose I have to update it in RFCv5.
-
-> >  drivers/clk/Makefile                  |   1 +
-> >  drivers/clk/clk-ath79.c               | 193 ++++++++++++++++++++++++++=
-++++++++
-> >  include/dt-bindings/clock/ath79-clk.h |  22 ++++
-> >  3 files changed, 216 insertions(+)
-> >=20
-> > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> > index 820714c..5101763 100644
-> > --- a/drivers/clk/Makefile
-> > +++ b/drivers/clk/Makefile
-> > diff --git a/drivers/clk/clk-ath79.c b/drivers/clk/clk-ath79.c
-> > new file mode 100644
-> > index 0000000..75338a7
-> > --- /dev/null
-> > +++ b/drivers/clk/clk-ath79.c
-> > @@ -0,0 +1,193 @@
-> > +/*
-> > + */
-> > +
-> > +#include <linux/clk.h>
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/clkdev.h>
-> > +#include <linux/of.h>
-> > +#include <linux/of_address.h>
-> > +#include "clk.h"
->=20
-> Don't include this header.
-
-Ok, I'll try to drop it in RFC v5.
-
-
-> > +
-> > +#include <dt-bindings/clock/ath79-clk.h>
-> > +
-> > +#include "asm/mach-ath79/ar71xx_regs.h"
-> > +#include "asm/mach-ath79/ath79.h"
->=20
-> Can we get away without including these headers?
-
-I have dropped ath79.h and ath79-clk.h in RFCv4.
-
-> > +
-> > +#define MHZ (1000 * 1000)
-> > +
-> > +#define AR724X_BASE_FREQ	(40 * MHZ)
-> > +
-> > +static struct clk *ath79_clks[ATH79_CLK_END];
-> > +
-> > +static struct clk_onecell_data clk_data =3D {
-> > +	.clks =3D ath79_clks,
-> > +	.clk_num =3D ARRAY_SIZE(ath79_clks),
-> > +};
-> > +
-> > +static struct clk *__init ath79_add_sys_clkdev(
-> > +	const char *id, unsigned long rate)
-> > +{
-> > +	struct clk *clk;
-> > +	int err;
-> > +
-> > +	clk =3D clk_register_fixed_rate(NULL, id, NULL, CLK_IS_ROOT, rate);
-> > +	if (!clk)
-> > +		panic("failed to allocate %s clock structure", id);
-> > +
-> > +	err =3D clk_register_clkdev(clk, id, NULL);
->=20
-> Why are we using clkdev? Can't we use DT lookups?
-
-Hmm, I have just reused legacy ath79_add_sys_clkdev() function.
-I'll try to see how to use DT lookups.
-
-> > +	if (err)
-> > +		panic("unable to register %s clock device", id);
-> > +
-> > +	return clk;
-> > +}
-> > +
-> > +static void __init ar724x_clk_init(struct device_node *np)
-> > +{
-> > +	struct clk *ref_clk;
-> > +	unsigned long of_ref_rate;
-> > +	unsigned long ref_rate;
-> > +	unsigned long cpu_rate;
-> > +	unsigned long ddr_rate;
-> > +	unsigned long ahb_rate;
-> > +	u32 pll;
-> > +	u32 freq;
-> > +	u32 div;
-> > +
-> > +	ref_clk =3D of_clk_get(np, 0);
-> > +	if (IS_ERR(ref_clk)) {
-> > +		pr_err("%s: of_clk_get failed\n", np->full_name);
-> > +		return;
-> > +	}
-> > +
-> > +	of_ref_rate =3D clk_get_rate(ref_clk);
-> > +
-> > +	ref_rate =3D AR724X_BASE_FREQ;
-> > +
-> > +	if (of_ref_rate !=3D ref_rate) {
-> > +		pr_err("ref_rate !=3D of_ref_rate\n");
-> > +		ref_rate =3D of_ref_rate;
-> > +	}
-> > +
-> > +	pll =3D ath79_pll_rr(AR724X_PLL_REG_CPU_CONFIG);
-> > +
-> > +	div =3D ((pll >> AR724X_PLL_FB_SHIFT) & AR724X_PLL_FB_MASK);
-> > +	freq =3D div * ref_rate;
-> > +
-> > +	div =3D ((pll >> AR724X_PLL_REF_DIV_SHIFT) & AR724X_PLL_REF_DIV_MASK)=
- * 2;
-> > +	freq /=3D div;
-> > +
-> > +	cpu_rate =3D freq;
-> > +
-> > +	div =3D ((pll >> AR724X_DDR_DIV_SHIFT) & AR724X_DDR_DIV_MASK) + 1;
-> > +	ddr_rate =3D freq / div;
-> > +
-> > +	div =3D (((pll >> AR724X_AHB_DIV_SHIFT) & AR724X_AHB_DIV_MASK) + 1) *=
- 2;
-> > +	ahb_rate =3D cpu_rate / div;
-> > +
-> > +	ath79_clks[ATH79_CLK_REF] =3D ath79_add_sys_clkdev("ref", ref_rate);
-> > +	ath79_clks[ATH79_CLK_CPU] =3D ath79_add_sys_clkdev("cpu", cpu_rate);
-> > +	ath79_clks[ATH79_CLK_DDR] =3D ath79_add_sys_clkdev("ddr", ddr_rate);
-> > +	ath79_clks[ATH79_CLK_AHB] =3D ath79_add_sys_clkdev("ahb", ahb_rate);
-> > +	ath79_clks[ATH79_CLK_WDT] =3D ath79_add_sys_clkdev("wdt", ahb_rate);
-> > +	ath79_clks[ATH79_CLK_UART] =3D ath79_add_sys_clkdev("uart", ahb_rate);
-> > +
-> > +	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
->=20
-> What if this fails?
-
-Ok, I'll add return code result checks as drivers/clk/ingenic/cgu.c does.
-=20
-> > +}
-> > +
-> > +static void __init ar933x_clk_init(struct device_node *np)
-> > +{
-> > +	struct clk *ref_clk;
-> > +	unsigned long of_ref_rate;
-> > +	unsigned long ref_rate;
-> > +	unsigned long cpu_rate;
-> > +	unsigned long ddr_rate;
-> > +	unsigned long ahb_rate;
-> > +	u32 clock_ctrl;
-> > +	u32 cpu_config;
-> > +	u32 freq;
-> > +	u32 t;
-> > +
-> > +	ref_clk =3D of_clk_get(np, 0);
-> > +	if (IS_ERR(ref_clk)) {
-> > +		pr_err("%s: of_clk_get failed\n", np->full_name);
-> > +		return;
-> > +	}
-> > +
-> > +	of_ref_rate =3D clk_get_rate(ref_clk);
-> > +
-> > +	t =3D ath79_reset_rr(AR933X_RESET_REG_BOOTSTRAP);
-> > +	if (t & AR933X_BOOTSTRAP_REF_CLK_40)
-> > +		ref_rate =3D 40 * MHZ;
-> > +	else
-> > +		ref_rate =3D 25 * MHZ;
-> > +
-> > +	if (ref_rate !=3D of_ref_rate) {
->=20
-> Does this happen? I'd prefer we find a way to avoid calling
-> of_clk_get() and clk_get_rate() in this driver.
->=20
-> > +		pr_err("ref_rate !=3D of_ref_rate\n");
-> > +		ref_rate =3D of_ref_rate;
-> > +	}
-> > +
-> > +	clock_ctrl =3D ath79_pll_rr(AR933X_PLL_CLOCK_CTRL_REG);
-> > +	if (clock_ctrl & AR933X_PLL_CLOCK_CTRL_BYPASS) {
-> > +		cpu_rate =3D ref_rate;
-> > +		ahb_rate =3D ref_rate;
-> > +		ddr_rate =3D ref_rate;
->=20
-> So if it's in bypass, why not register fixed factor clocks of
-> 1/1 and set the parent to ref_clk?
-
-I suppose that realising clocks as "real clocks with clk_ops" will be more =
-simple
-solution.
-
-> > +	} else {
-> > +		cpu_config =3D ath79_pll_rr(AR933X_PLL_CPU_CONFIG_REG);
-> > +
-> > +		t =3D (cpu_config >> AR933X_PLL_CPU_CONFIG_REFDIV_SHIFT) &
-> > +		    AR933X_PLL_CPU_CONFIG_REFDIV_MASK;
-> > +		freq =3D ref_rate / t;
-> > +
-> > +		t =3D (cpu_config >> AR933X_PLL_CPU_CONFIG_NINT_SHIFT) &
-> > +		    AR933X_PLL_CPU_CONFIG_NINT_MASK;
-> > +		freq *=3D t;
-> > +
-> > +		t =3D (cpu_config >> AR933X_PLL_CPU_CONFIG_OUTDIV_SHIFT) &
-> > +		    AR933X_PLL_CPU_CONFIG_OUTDIV_MASK;
-> > +		if (t =3D=3D 0)
-> > +			t =3D 1;
-> > +
-> > +		freq >>=3D t;
-> > +
-> > +		t =3D ((clock_ctrl >> AR933X_PLL_CLOCK_CTRL_CPU_DIV_SHIFT) &
-> > +		     AR933X_PLL_CLOCK_CTRL_CPU_DIV_MASK) + 1;
-> > +		cpu_rate =3D freq / t;
-> > +
-> > +		t =3D ((clock_ctrl >> AR933X_PLL_CLOCK_CTRL_DDR_DIV_SHIFT) &
-> > +		      AR933X_PLL_CLOCK_CTRL_DDR_DIV_MASK) + 1;
-> > +		ddr_rate =3D freq / t;
-> > +
-> > +		t =3D ((clock_ctrl >> AR933X_PLL_CLOCK_CTRL_AHB_DIV_SHIFT) &
-> > +		     AR933X_PLL_CLOCK_CTRL_AHB_DIV_MASK) + 1;
-> > +		ahb_rate =3D freq / t;
->=20
-> These look like something we could implement as real clocks with
-> clk_ops. The parent still looks like ref_clk, but we would be
-> reading hardware in recalc_rate to figure out what the rate is.
-
-Hmm. I have already realized this solution in 2014 for barebox
-please see http://lists.infradead.org/pipermail/barebox/2014-March/018414.h=
-tml
-
-Current RFC v3 driver is based on arch/mips/ath79/clock.c, but
-I suppose I have to use barebox driver as a base for RFC v5 driver.
-
-> > +	}
-> > +
-> > +	ath79_clks[ATH79_CLK_REF] =3D ath79_add_sys_clkdev("ref", ref_rate);
-> > +	ath79_clks[ATH79_CLK_CPU] =3D ath79_add_sys_clkdev("cpu", cpu_rate);
-> > +	ath79_clks[ATH79_CLK_DDR] =3D ath79_add_sys_clkdev("ddr", ddr_rate);
-> > +	ath79_clks[ATH79_CLK_AHB] =3D ath79_add_sys_clkdev("ahb", ahb_rate);
-> > +	ath79_clks[ATH79_CLK_WDT] =3D ath79_add_sys_clkdev("wdt", ahb_rate);
-> > +	ath79_clks[ATH79_CLK_UART] =3D ath79_add_sys_clkdev("uart", ref_rate);
-> > +
-> > +	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
-> > +}
-> > +CLK_OF_DECLARE(ar9130_clk, "qca,ar9130-pll", ar724x_clk_init);
-> > +CLK_OF_DECLARE(ar933x_clk, "qca,ar9330-pll", ar933x_clk_init);
->=20
-> Is there a reason this isn't a platform driver?
-
-We already have legacy platform driver arch/mips/ath79/clock.c.
-I'm trying to realize modern clk driver and then adapt it to use with legac=
-y code.
-
---=A0
-Best regards,
-=A0 Antony Pavlov
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 2a7faa357130..5d8fac7052f2 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -780,13 +780,13 @@ static void pllx_get_dyn_steps(struct clk_hw *hw, u32 *step_a, u32 *step_b)
+ {
+ 	unsigned long input_rate;
+ 
+-	if (!IS_ERR_OR_NULL(hw->clk)) {
++	/* cf rate */
++	if (!IS_ERR_OR_NULL(hw->clk))
+ 		input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+-		/* cf rate */
+-		input_rate /= tegra_pll_get_fixed_mdiv(hw, input_rate);
+-	} else {
++	else
+ 		input_rate = 38400000;
+-	}
++
++	input_rate /= tegra_pll_get_fixed_mdiv(hw, input_rate);
+ 
+ 	switch (input_rate) {
+ 	case 12000000:
+-- 
+1.9.1
