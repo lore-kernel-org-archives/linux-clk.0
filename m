@@ -1,84 +1,133 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Rob Herring <robh+dt@kernel.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Remi Pommarel <repk@triplefau.lt>,
-	devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [RFC 8/9] dt-bindings: bcm2835: document optional per clock dt-nodes
-Date: Tue, 19 Jan 2016 14:51:39 +0000
-Message-Id: <1453215100-2382-9-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1453215100-2382-1-git-send-email-kernel@martin.sperl.org>
-References: <1453215100-2382-1-git-send-email-kernel@martin.sperl.org>
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Wynter Woods <wynter@nextthing.co>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 11/26] ARM: sun5i: Add DRAM gates
+Date: Thu, 14 Jan 2016 16:24:54 +0100
+Message-Id: <1452785109-6172-12-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+The DRAM gates control whether the image / display devices on the SoC have
+access to the DRAM clock or not.
 
-Document how to modify per clock default behaviour
-via the device-tree.
+Enable it.
 
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- .../bindings/clock/brcm,bcm2835-cprman.txt         |   33 ++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ arch/arm/boot/dts/sun5i-a10s.dtsi |  7 ++++---
+ arch/arm/boot/dts/sun5i-a13.dtsi  |  2 +-
+ arch/arm/boot/dts/sun5i-r8.dtsi   |  2 +-
+ arch/arm/boot/dts/sun5i.dtsi      | 19 +++++++++++++++++++
+ 4 files changed, 25 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt b/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
-index e56a1df..794c4ac 100644
---- a/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
-+++ b/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
-@@ -17,6 +17,26 @@ Required properties:
- 		  found in include/dt-bindings/clock/bcm2835.h
- - reg:		Specifies base physical address and size of the registers
- - clocks:	The external oscillator clock phandle
-+- #address-cells number of cells required to define a clock
-+- #size-cells    Should be 0
-+
-+Subnodes:
-+
-+It is possible to apply optional settings per clock to modify clock
-+selection behaviour.
-+For each clock there may be a subnode that may contain the following:
-+
-+Required properties:
-+- reg                 -  clock id
-+
-+Optional properties:
-+- parent-clock-names  - list of parrent-clock names
-+  		        this list is validated againt the default list
-+		        of parent clocks and is used in this order.
-+- brcm,clock-selector - the clock selector to use
-+- brcm,mash-max-order - the maximum order of the fractional divider
-+- brcm,min-fract-div  - the minimum divider required when using
-+  		      	the fractional divider
+diff --git a/arch/arm/boot/dts/sun5i-a10s.dtsi b/arch/arm/boot/dts/sun5i-a10s.dtsi
+index bddd0de88af6..52d2c79cb37b 100644
+--- a/arch/arm/boot/dts/sun5i-a10s.dtsi
++++ b/arch/arm/boot/dts/sun5i-a10s.dtsi
+@@ -66,7 +66,7 @@
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_be0-lcd0-hdmi";
+ 			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 43>,
+-				 <&ahb_gates 44>;
++				 <&ahb_gates 44>, <&dram_gates 26>;
+ 			status = "disabled";
+ 		};
  
- Example:
+@@ -74,7 +74,8 @@
+ 			compatible = "allwinner,simple-framebuffer",
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_be0-lcd0";
+-			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 44>;
++			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 44>,
++				 <&dram_gates 26>;
+ 			status = "disabled";
+ 		};
  
-@@ -33,6 +53,19 @@ Example:
- 		#clock-cells = <1>;
- 		reg = <0x7e101000 0x2000>;
- 		clocks = <&clk_osc>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		/* custom settings for the PCM clock */
-+		clock@BCM2835_CLOCK_PCM {
-+			 reg = <BCM2835_CLOCK_PCM>;
-+			 parent-clock-names = "xosc", "plld_per";
-+			 brcm,clock-selector =
-+				  <BCM2835_CHOOSE_CLOCK_INTEGER_THEN_FRAC>;
-+			 brcm,mash-max-order = <BCM2835_MASH_ORDER_3>;
-+			 brcm,min-fract-div = <20>;
-+		};
+@@ -83,7 +84,7 @@
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_be0-lcd0-tve0";
+ 			clocks = <&pll5 1>, <&ahb_gates 34>, <&ahb_gates 36>,
+-				 <&ahb_gates 44>;
++				 <&ahb_gates 44>, <&dram_gates 26>;
+ 			status = "disabled";
+ 		};
  	};
+diff --git a/arch/arm/boot/dts/sun5i-a13.dtsi b/arch/arm/boot/dts/sun5i-a13.dtsi
+index 9669b03f20f3..f29163650ca8 100644
+--- a/arch/arm/boot/dts/sun5i-a13.dtsi
++++ b/arch/arm/boot/dts/sun5i-a13.dtsi
+@@ -62,7 +62,7 @@
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_be0-lcd0";
+ 			clocks = <&ahb_gates 36>, <&ahb_gates 44>, <&de_be_clk>,
+-				 <&tcon_ch0_clk>;
++				 <&tcon_ch0_clk>, <&dram_gates 26>;
+ 			status = "disabled";
+ 		};
+ 	};
+diff --git a/arch/arm/boot/dts/sun5i-r8.dtsi b/arch/arm/boot/dts/sun5i-r8.dtsi
+index b1e4e0170d51..691d3de75b35 100644
+--- a/arch/arm/boot/dts/sun5i-r8.dtsi
++++ b/arch/arm/boot/dts/sun5i-r8.dtsi
+@@ -53,7 +53,7 @@
+ 			allwinner,pipeline = "de_be0-lcd0-tve0";
+ 			clocks = <&ahb_gates 34>, <&ahb_gates 36>,
+ 				 <&ahb_gates 44>, <&de_be_clk>,
+-				 <&tcon_ch1_clk>;
++				 <&tcon_ch1_clk>, <&dram_gates 26>;
+ 			status = "disabled";
+ 		};
+ 	};
+diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
+index 0840612b5ed6..c72d94228915 100644
+--- a/arch/arm/boot/dts/sun5i.dtsi
++++ b/arch/arm/boot/dts/sun5i.dtsi
+@@ -338,6 +338,25 @@
+ 			clock-output-names = "usb_ohci0", "usb_phy";
+ 		};
  
- 	i2c0: i2c@7e205000 {
++		dram_gates: clk@01c20100 {
++			#clock-cells = <1>;
++			compatible = "allwinner,sun5i-a13-dram-gates-clk";
++			reg = <0x01c20100 0x4>;
++			clocks = <&pll5 0>;
++			clock-indices = <0>,
++					<1>,
++					<25>,
++					<26>,
++					<29>,
++					<31>;
++			clock-output-names = "dram_ve",
++					     "dram_csi",
++					     "dram_de_fe",
++					     "dram_de_be",
++					     "dram_ace",
++					     "dram_iep";
++		};
++
+ 		codec_clk: clk@01c20140 {
+ 			#clock-cells = <0>;
+ 			compatible = "allwinner,sun4i-a10-codec-clk";
 -- 
-1.7.10.4
+2.6.4
