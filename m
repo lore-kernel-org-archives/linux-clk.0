@@ -1,56 +1,47 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, James Hogan <james.hogan@imgtec.com>, Zhang Qing <zhangqing@rock-chips.com>
-Subject: [PATCH v2] clk-divider: make sure read-only dividers do not write to their register
-Date: Wed, 20 Jan 2016 20:51:06 +0100
-Message-ID: <3578615.iBrKplh45Q@phil>
-In-Reply-To: <8710207.gKyLbM2bKY@phil>
-References: <8710207.gKyLbM2bKY@phil>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>
+CC: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [Patch V2 4/9] clk: tegra: Fix the misnaming of nvenc from msenc
+Date: Thu, 14 Jan 2016 14:24:33 -0500
+Message-ID: <1452799478-14791-5-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
+References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Commit e6d5e7d90be9 ("clk-divider: Fix READ_ONLY when divider > 1") removed
-the special ops struct for read-only clocks and instead opted to handle
-them regularly.
+When adding the nvenc clock, it was partially named msenc in
+the code. Since the msenc clk isn't present in T210 where the nvenc
+clk is, its misleading to see it present. Therefore, properly
+rename it.
 
-On the rk3368 this results in breakage as aclkm now gets set a value.
-While it is the same divider value, the A53 core still doesn't like it,
-which can result in the cpu ending up in a hang.
-The reason being that "ACLKENMasserts one clock cycle before the rising
-edge of ACLKM" and the clock should only be touched when STANDBYWFIL2
-is asserted.
-
-So make sure read-only clocks don't touch the clock-register at all
-even if only writing the same value, as even writing the same value
-may not be safe in all cases.
-
-Fixes: e6d5e7d90be9 ("clk-divider: Fix READ_ONLY when divider > 1")
-Reported-by: Zhang Qing <zhangqing@rock-chips.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Reviewed-by: James Hogan <james.hogan@imgtec.com>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
-changes in v2:
-- emphasize that even setting the same divider may be unsafe
+ drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/clk/clk-divider.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index ded3ff4..6dfe261 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -391,6 +391,10 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 	unsigned long flags = 0;
- 	u32 val;
- 
-+	/* don't do writes in read-only case, as it may be unsafe */
-+	if (divider->flags & CLK_DIVIDER_READ_ONLY)
-+		return 0;
-+
- 	value = divider_get_val(rate, parent_rate, divider->table,
- 				divider->width, divider->flags);
- 
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 105405ca85ab..1860df1862dd 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -773,7 +773,7 @@ static struct tegra_periph_init_data periph_clks[] = {
+ 	XUSB("xusb_dev_src", mux_clkm_pllp_pllc_pllre, CLK_SOURCE_XUSB_DEV_SRC, 95, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_xusb_dev_src),
+ 	XUSB("xusb_dev_src", mux_clkm_pllp_pllre, CLK_SOURCE_XUSB_DEV_SRC, 95, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_xusb_dev_src_8),
+ 	MUX8("dbgapb", mux_pllp_clkm_2, CLK_SOURCE_DBGAPB, 185, TEGRA_PERIPH_NO_RESET, tegra_clk_dbgapb),
+-	MUX8("msenc", mux_pllc2_c_c3_pllp_plla1_clkm, CLK_SOURCE_NVENC, 219, 0, tegra_clk_nvenc),
++	MUX8("nvenc", mux_pllc2_c_c3_pllp_plla1_clkm, CLK_SOURCE_NVENC, 219, 0, tegra_clk_nvenc),
+ 	MUX8("nvdec", mux_pllc2_c_c3_pllp_plla1_clkm, CLK_SOURCE_NVDEC, 194, 0, tegra_clk_nvdec),
+ 	MUX8("nvjpg", mux_pllc2_c_c3_pllp_plla1_clkm, CLK_SOURCE_NVJPG, 195, 0, tegra_clk_nvjpg),
+ 	MUX8("ape", mux_plla_pllc4_out0_pllc_pllc4_out1_pllp_pllc4_out2_clkm, CLK_SOURCE_APE, 198, TEGRA_PERIPH_ON_APB, tegra_clk_ape),
 -- 
-2.6.4
+1.9.1
