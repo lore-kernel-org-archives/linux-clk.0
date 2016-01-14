@@ -1,43 +1,73 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: keescook@google.com,
-	leozwang@google.com,
-	linux-rockchip@lists.infradead.org,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/5] clk: rockchip: rk3036: rename emac ext source clock
-Date: Thu,  7 Jan 2016 20:17:36 +0800
-Message-Id: <1452169057-24467-5-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1452169057-24467-1-git-send-email-zhengxing@rock-chips.com>
-References: <1452169057-24467-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Vladimir Zapolskiy <vz@mleia.com>, "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1452136027-32076-1-git-send-email-vz@mleia.com>
+Cc: "Joachim Eastwood" <manabian@gmail.com>,  linux-clk@vger.kernel.org
+References: <1452136027-32076-1-git-send-email-vz@mleia.com>
+Message-ID: <20160114021026.1942.82169@quark.deferred.io>
+Subject: Re: [PATCH] clk: remove duplicated COMMON_CLK_NXP record from clk/Kconfig
+Date: Wed, 13 Jan 2016 18:10:26 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-There is only support rmii in the RK3036, so we should use the correct
-ext clock name.
+Quoting Vladimir Zapolskiy (2016-01-06 19:07:07)
+> Presumably the second COMMON_CLK_NXP config option in
+> drivers/clk/Kconfig appeared after a merge conflict resolution, remove
+> the wrong record of two.
+> =
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
----
+> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
 
- drivers/clk/rockchip/clk-rk3036.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied.
 
-diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
-index 1f00fab..bc7fbac 100644
---- a/drivers/clk/rockchip/clk-rk3036.c
-+++ b/drivers/clk/rockchip/clk-rk3036.c
-@@ -133,7 +133,7 @@ PNAME(mux_spdif_p)	= { "spdif_src", "spdif_frac", "xin12m" };
- PNAME(mux_uart0_p)	= { "uart0_src", "uart0_frac", "xin24m" };
- PNAME(mux_uart1_p)	= { "uart1_src", "uart1_frac", "xin24m" };
- PNAME(mux_uart2_p)	= { "uart2_src", "uart2_frac", "xin24m" };
--PNAME(mux_mac_p)	= { "mac_pll_src", "ext_gmac" };
-+PNAME(mux_mac_p)	= { "mac_pll_src", "rmii_clkin" };
- PNAME(mux_dclk_p)	= { "dclk_lcdc", "dclk_cru" };
- 
- static struct rockchip_pll_clock rk3036_pll_clks[] __initdata = {
--- 
-1.7.9.5
+Regards,
+Mike
+
+> ---
+> Hi Mike, Stephen,
+> =
+
+> I've found this issue in clk-next while working on something else,
+> please consider to include this change to clk-next, no objections if
+> it is squashed with f7c82a60ba2 ("clk: lpc32xx: add common clock
+> framework driver").
+> =
+
+> In fact it is a revert of 8a896310a7e ("clk: lpc18xx: add NXP specific
+> COMMON_CLK_NXP configuration symbol"), but this preparatory change is
+> good as is.
+> =
+
+> The original change doesn't have this kind of a problem (see
+> http://www.spinics.net/lists/devicetree/msg105709.html), so I
+> believe it is caused by a merge conflict, probably after done
+> alphabetical sorting.
+> =
+
+>  drivers/clk/Kconfig | 5 -----
+>  1 file changed, 5 deletions(-)
+> =
+
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 41f6c7f..eca8e01 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -187,11 +187,6 @@ config COMMON_CLK_PWM
+>           Adapter driver so that any PWM output can be (mis)used as clock=
+ signal
+>           at 50% duty cycle.
+>  =
+
+> -config COMMON_CLK_NXP
+> -       def_bool COMMON_CLK && ARCH_LPC18XX
+> -       ---help---
+> -         Support for clock providers on NXP platforms.
+> -
+>  config COMMON_CLK_PXA
+>         def_bool COMMON_CLK && ARCH_PXA
+>         ---help---
+> -- =
+
+> 2.1.4
+>=20
