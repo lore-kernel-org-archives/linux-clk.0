@@ -1,125 +1,187 @@
-Return-Path: <tomeu@tomeuvizoso.net>
-Return-Path: <tomeu@tomeuvizoso.net>
-MIME-Version: 1.0
-In-Reply-To: <CAD=FV=Une-DJ+0zV6Hmx5EmKXCEApb2Zx1FuJaUQf7MT9OPsug@mail.gmail.com>
-References: <1415087559-19444-1-git-send-email-kever.yang@rock-chips.com>
- <48806799.thBSifdUp8@diego> <54647142.4080800@rock-chips.com>
- <CAD=FV=Vzec3Qm-kc6zZ4VxSREoZbzVkWbzp-noHYdcEVrLYYSw@mail.gmail.com>
- <CAAObsKChYN5nmcm5OWnAzNRGDi_QGSoKvN+0FizhjeT-3mmeXQ@mail.gmail.com>
- <CAD=FV=Wgu=xQ9PcVqfzcedXVU3Rh-HKbBVxHuqgV9OZJEYhYvg@mail.gmail.com>
- <CAAObsKC1v--mZwkiG-c7P2Bwi2-_txbeqaW4Vd5h-noAVNbhjA@mail.gmail.com>
- <CAD=FV=VB93wYigRJ8wa8YL6P+Q+-fRokPiCB-Fo1pC_zAdh2oA@mail.gmail.com>
- <CAAObsKCMh3Bk_oNJdLbU2F9b7jrnFZOp2uFR_oPqUoJ3W1gfaQ@mail.gmail.com>
- <CAD=FV=W=LCJk4m049hBnm7BOYudnVe=oa3jdcSrrZZUU9rFtog@mail.gmail.com>
- <CAAObsKBS45kbvdmdvFxwSo=B9GXRLoX2g7WQYVmZJ0KFnwSejw@mail.gmail.com> <CAD=FV=Une-DJ+0zV6Hmx5EmKXCEApb2Zx1FuJaUQf7MT9OPsug@mail.gmail.com>
-From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Date: Wed, 27 Jan 2016 11:20:35 +0100
-Message-ID: <CAAObsKDsJgUA9dL+1Fdc616ofLdMqaUOwHhDkBWz7MV5_LJu9Q@mail.gmail.com>
-Subject: Re: [PATCH 0/5] clk: rockchip: add full support for HDMI clock on rk3288
-To: Doug Anderson <dianders@chromium.org>
-Cc: Kever Yang <kever.yang@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	Sonny Rao <sonnyrao@chromium.org>, Addy Ke <addy.ke@rock-chips.com>,
-	Eddie Cai <cf@rock-chips.com>, ZhenFu Fang <fzf@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>,
-	=?UTF-8?B?5aea5pm65oOF?= <yzq@rock-chips.com>,
-	=?UTF-8?B?5oi05YWL6ZyWIChKYWNrKQ==?= <dkl@rock-chips.com>,
-	Tao Huang <huangtao@rock-chips.com>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Wynter Woods <wynter@nextthing.co>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 22/26] ARM: sun5i: r8: Add display blocks to the DTSI
+Date: Thu, 14 Jan 2016 16:25:05 +0100
+Message-Id: <1452785109-6172-23-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 26 January 2016 at 17:32, Doug Anderson <dianders@chromium.org> wrote:
-> Tomeu,
->
-> On Tue, Jan 26, 2016 at 12:28 AM, Tomeu Vizoso <tomeu@tomeuvizoso.net> wrote:
->> On 22 January 2016 at 18:07, Doug Anderson <dianders@chromium.org> wrote:
->>> Tomeu,
->>>
->>> On Fri, Jan 22, 2016 at 6:00 AM, Tomeu Vizoso <tomeu@tomeuvizoso.net> wrote:
->>>> On 21 January 2016 at 21:11, Doug Anderson <dianders@chromium.org> wrote:
->>>>> Hi,
->>>>>
->>>>> On Thu, Jan 21, 2016 at 1:03 AM, Tomeu Vizoso <tomeu@tomeuvizoso.net> wrote:
->>>>>> So we have a mechanism for detecting a conflict in the clock
->>>>>> hierarchy, and a mechanism to solve it, but we are missing a way for
->>>>>> userspace to communicate policy regarding which clocks should be given
->>>>>> priority when solving such a conflict?
->>>>>
->>>>> Hrmmm, I guess it could be userspace that makes the decision.  It does
->>>>> seem a little odd to force it to userspace in all cases, though.  For
->>>>> a particular laptop that is designed with a specific panel connected
->>>>> up eDP it seems less than ideal to push this into userspace.  If the
->>>>> kernel could just work in the expected sane way (or at least work that
->>>>> way by default) it would be ideal.
->>>>
->>>> Ah, I was wrongly assuming that the kernel didn't have enough
->>>> information to make an informed decision in this case, sorry.
->>>>
->>>> Guess the per-user rate limits don't help here because the consumer
->>>> with higher priority could work with frequencies other than the ideal.
->>>>
->>>> And we cannot have a consumer listening for PRE_RATE_CHANGE and
->>>> aborting unwanted changes or rerouting the ancestors of the clocks of
->>>> other consumers because that would be a massive violation of
->>>> separation of concerns.
->>>>
->>>> If we were to rearrange the clock topology from within the CCF, then
->>>> consumers need to have a way to communicate to the core that they are
->>>> more important than other consumers. clk_set_important(clk, true)
->>>> could be enough in this case, but would be insufficient in more
->>>> complex cases where more than two clocks could use the same PLL.
->>>
->>> With something like the above I'd still expect some complexity
->>> depending on the probe order.  If a less important device grabs the
->>> clock first, it might be forced to re-think its clocks later.  That
->>> might be disconcerting.
->>
->> How much disconcerting do you think this could be? Hopefully those
->> devices should probe quite close to each other, right?
->
-> Probe: probably, though with defers it could be several seconds.
->
-> ...but remember that display interfaces tend to be hotplug.  That
-> might mean that the HDMI interface won't try to set the clock until
-> much, much later.
+The TCON, tv-encoder and display engine backends and frontends are combined
+to create our display pipeline.
 
-I'm still having trouble grasping what's the impact to users. Is it
-that if HDMI gets the contended clock first and the internal panel
-device only probes after a second or so, then the user may notice a
-change in frequency in the HDMI screen when the panel lights up?
+Add them to the R8 DTSI. It's supposed to be perfectly compatible with the
+A10s and A13, but since we haven't tested it on them yet, it's safer to
+just enable it on the R8. Eventually, it should be moved to sun5i.dtsi
 
-Though in that particular case I'm not sure if the impact is that big
-for the user, wonder if such rearranging of the clock hierarchy can
-cause bigger problems in other situations.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ arch/arm/boot/dts/sun5i-r8.dtsi | 134 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 134 insertions(+)
 
-The on-demand probing series could help here because a downstream that
-cared about these issues could just rearrange the contents of the DT
-(maybe with a script as part of the build process) so that the panel
-is always probed first, but well, that one collided with an iceberg.
-
->>> OK, so I was just involved in a change recently that made me realize
->>> that maybe our original problems were tied to the fact that our
->>> builtin panels were trying to specify a clock that was impossible to
->>> achieve with CPLL / GPLL.  It was a known problem that the request
->>> would be denied and the CCF would just pick the closest rate it could.
->>> Probably the right thing is to solve _that_ problem first.  If using
->>> simple panel you could do a change like
->>> <https://chromium-review.googlesource.com/#/c/323211/> (though
->>> presumably you'd have to handle people using the same panel in other
->>> laptops).  You might also be able to do funny things to fixup the mode
->>> like dbehr tried to do in
->>> <https://chromium-review.googlesource.com/#/c/270017/>.  By doing this
->>> and making sure that
->>
->> Are we missing something here?
->
-> Eh?
-
-The sentence above seemed to have been cut in the middle and I was
-wondering if there's something relevant I'm missing because of it.
-
-Thanks,
-
-Tomeu
+diff --git a/arch/arm/boot/dts/sun5i-r8.dtsi b/arch/arm/boot/dts/sun5i-r8.dtsi
+index 691d3de75b35..b3bf91516a80 100644
+--- a/arch/arm/boot/dts/sun5i-r8.dtsi
++++ b/arch/arm/boot/dts/sun5i-r8.dtsi
+@@ -57,4 +57,138 @@
+ 			status = "disabled";
+ 		};
+ 	};
++
++	soc@01c00000 {
++		tve0: tv-encoder@01c0a000 {
++			compatible = "allwinner,sun4i-a10-tv-encoder";
++			reg = <0x01c0a000 0x1000>;
++			clocks = <&ahb_gates 34>;
++			status = "disabled";
++
++			port {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				tve0_in_tcon0: endpoint@0 {
++					reg = <0>;
++					remote-endpoint = <&tcon0_out_tve0>;
++				};
++			};
++		};
++
++		tcon0: lcd-controller@01c0c000 {
++			compatible = "allwinner,sun4i-a10-tcon";
++			reg = <0x01c0c000 0x1000>;
++			interrupts = <44>;
++			clocks = <&ahb_gates 36>,
++				 <&tcon_ch0_clk>,
++				 <&tcon_ch1_clk>;
++			clock-names = "ahb",
++				      "tcon-ch0",
++				      "tcon-ch1";
++			clock-output-names = "tcon-pixel-clock";
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				tcon0_in: port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++
++					tcon0_in_be0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&be0_out_tcon0>;
++					};
++				};
++
++				tcon0_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++
++					tcon0_out_tve0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&tve0_in_tcon0>;
++					};
++				};
++			};
++		};
++
++		fe0: display-frontend@01e00000 {
++			compatible = "allwinner,sun5i-a13-display-frontend";
++			reg = <0x01e00000 0x20000>;
++			interrupts = <47>;
++			clocks = <&ahb_gates 46>, <&de_fe_clk>,
++				 <&dram_gates 25>;
++			clock-names = "ahb", "mod",
++				      "ram";
++			resets = <&de_fe_clk>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				fe0_out: port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++
++					fe0_out_be0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&be0_in_fe0>;
++					};
++				};
++			};
++		};
++
++		be0: display-backend@01e60000 {
++			compatible = "allwinner,sun5i-a13-display-backend";
++			reg = <0x01e60000 0x10000>;
++			clocks = <&ahb_gates 44>, <&de_be_clk>,
++				 <&dram_gates 26>;
++			clock-names = "ahb", "mod",
++				      "ram";
++			resets = <&de_be_clk>;
++			status = "disabled";
++
++			assigned-clocks = <&de_be_clk>;
++			assigned-clock-rates = <300000000>;
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				be0_in: port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++
++					be0_in_fe0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&fe0_out_be0>;
++					};
++				};
++
++				be0_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++
++					be0_out_tcon0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&tcon0_in_be0>;
++					};
++				};
++			};
++		};
++	};
++
++	display-engine {
++		compatible = "allwinner,sun5i-a13-display-engine";
++		pipelines = <&be0>;
++	};
+ };
+-- 
+2.6.4
