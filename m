@@ -1,52 +1,67 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <1454008958-12655-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1454008958-12655-1-git-send-email-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 29 Jan 2016 14:18:34 +0800
-Message-ID: <CAGb2v66dbtBPwRQzA3rtP5hu-0rvfaX2ac7KWRiF42wtEiafwg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] clk: sunxi: factors: Add missing recalc pointer copy
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Jens Kuske <jenskuske@gmail.com>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>, Hans de Goede <hdegoede@redhat.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Jean-Francois Moine <moinejf@free.fr>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:62879 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752961AbcANKhN (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jan 2016 05:37:13 -0500
+Subject: Re: [PATCH v2 09/10] dt-bindings: video: exynos5433-decon: add
+ bindings for DECON-TV
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+References: <CAJKOXPfXrEwu1egSnLxwYofu_scskkPRKOjOCskObPFn9yVcJw@mail.gmail.com>
+ <1445860796-23045-1-git-send-email-a.hajda@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Hyungwon Hwang <human.hwang@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Message-id: <56977A3B.8020104@samsung.com>
+Date: Thu, 14 Jan 2016 11:36:43 +0100
+MIME-version: 1.0
+In-reply-to: <1445860796-23045-1-git-send-email-a.hajda@samsung.com>
+Content-type: text/plain; charset=windows-1252
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jan 29, 2016 at 3:22 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Commit 4a9b2abc213e ("clk: sunxi: factors: Support custom formulas") was
-> introducing a custom recalc function. However, the pointer was never
-> filled, which was making the whole thing unused.
+Hi Inki,
+
+It seems this patch and 04/10 did not get picked up yet.
+Could you merge it?
+
+Regards
+Andrzej
+
+On 10/26/2015 12:59 PM, Andrzej Hajda wrote:
+> DECON-TV(Display and Enhancement Controller for TV) is a variation
+> of DECON IP. Its main purpose is to produce video stream for HDMI IP.
 >
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-
-(facepalm)
-
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-
-Can you squash it into the original?
-Thanks
-
-
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 > ---
->  drivers/clk/sunxi/clk-factors.c | 1 +
->  1 file changed, 1 insertion(+)
+> Hi Krzysztof,
 >
-> diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-factors.c
-> index e480a6bcf1f6..6e97f46c0c37 100644
-> --- a/drivers/clk/sunxi/clk-factors.c
-> +++ b/drivers/clk/sunxi/clk-factors.c
-> @@ -212,6 +212,7 @@ struct clk *sunxi_factors_register(struct device_node *node,
->         factors->reg = reg;
->         factors->config = data->table;
->         factors->get_factors = data->getter;
-> +       factors->recalc = data->recalc;
->         factors->lock = lock;
+> I have decided to skip cleanup part as it would require more work,
+> not related to this patchset.
 >
->         /* Add a gate if this factor clock can be gated */
-> --
-> 2.6.4
+> Regards
+> Andrzej
 >
+>  Documentation/devicetree/bindings/video/exynos5433-decon.txt | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/video/exynos5433-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+> index 3dff78b..c9fd7b3 100644
+> --- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+> +++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+> @@ -5,7 +5,8 @@ Exynos series of SoCs which transfers the image data from a video memory
+>  buffer to an external LCD interface.
+>  
+>  Required properties:
+> -- compatible: value should be "samsung,exynos5433-decon";
+> +- compatible: value should be one of:
+> +	"samsung,exynos5433-decon", "samsung,exynos5433-decon-tv";
+>  - reg: physical base address and length of the DECON registers set.
+>  - interrupts: should contain a list of all DECON IP block interrupts in the
+>  	      order: VSYNC, LCD_SYSTEM. The interrupt specifier format
+
