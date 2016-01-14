@@ -1,44 +1,60 @@
-Return-Path: <festevam@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20160103105319.GB5779@n2100.arm.linux.org.uk>
-References: <E1aFJ0A-00086Z-0I@rmk-PC.arm.linux.org.uk>
-	<20160103064749.15239.59588@quark.deferred.io>
-	<20160103105319.GB5779@n2100.arm.linux.org.uk>
-Date: Sun, 3 Jan 2016 21:35:44 -0200
-Message-ID: <CAOMZO5C1zSWtLh-mE5pxZxDYEg3LEJNxnbkBOX69gGByy8=FDQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: fix clk-gpio.c with optional clock= DT property
-From: Fabio Estevam <festevam@gmail.com>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Wynter Woods <wynter@nextthing.co>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 26/26] DO NOT MERGE: ARM: sun5i: chip: Enable the LCD panel
+Date: Thu, 14 Jan 2016 16:25:09 +0100
+Message-Id: <1452785109-6172-27-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Jan 3, 2016 at 8:53 AM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ arch/arm/boot/dts/sun5i-r8-chip.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
->> That patch was merged into the clk tree in June 2015, based on 4.2-rc1.
->
-> Interesting... I guess git describe is buggy then:
->
-> $ git describe --contains 80eeb1f0f757
-
-'git tag --contains' shows the correct response.
-
-$ git tag --contains 80eeb1f0f757
-v4.3
-v4.3-rc1
-v4.3-rc2
-v4.3-rc3
-v4.3-rc4
-v4.3-rc5
-v4.3-rc6
-v4.3-rc7
-v4.4-rc1
-v4.4-rc2
-v4.4-rc3
-v4.4-rc4
-v4.4-rc5
-v4.4-rc6
-v4.4-rc7
+diff --git a/arch/arm/boot/dts/sun5i-r8-chip.dts b/arch/arm/boot/dts/sun5i-r8-chip.dts
+index c26c095b42c6..147c39106f63 100644
+--- a/arch/arm/boot/dts/sun5i-r8-chip.dts
++++ b/arch/arm/boot/dts/sun5i-r8-chip.dts
+@@ -82,6 +82,10 @@
+ 		vin0-supply = <&reg_ldo3>;
+ 		vin1-supply = <&reg_ldo4>;
+ 	};
++
++	panel: panel {
++		compatible = "olimex,lcd-olinuxino-43-ts";
++	};
+ };
+ 
+ &be0 {
+@@ -236,6 +240,7 @@
+ 
+ &tcon0 {
+ 	status = "okay";
++	allwinner,panel = <&panel>;
+ };
+ 
+ &tve0 {
+-- 
+2.6.4
