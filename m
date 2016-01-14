@@ -1,232 +1,70 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>
+CC: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
+	Alexandre Courbot <gnurou@gmail.com>,
 	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Wynter Woods <wynter@nextthing.co>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 07/26] clk: sunxi: Add TCON channel1 clock
-Date: Thu, 14 Jan 2016 16:24:50 +0100
-Message-Id: <1452785109-6172-8-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Bresticker <abrestic@chromium.org>,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [Patch V2 5/9] clk: tegra: pll: Fix potential sleeping-while-atomic
+Date: Thu, 14 Jan 2016 14:24:34 -0500
+Message-ID: <1452799478-14791-6-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
+References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The TCON is a controller generating the timings to output videos signals,
-acting like both a CRTC and an encoder.
+From: Andrew Bresticker <abrestic@chromium.org>
 
-It has two channels depending on the output, each channel being driven by
-its own clock (and own clock controller).
+Since the ->enable() callback is called with a spinlock held, we cannot
+call potentially blocking functions such as clk_get_rate() or
+clk_get_parent(), so use the unlocked versions instead.
 
-Add a driver for the channel 1 clock.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+[rklein: Adapted from ChromeOS patch, removing pllu_enable cleanup as
+it isn't present upstream]
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- Documentation/devicetree/bindings/clock/sunxi.txt |   1 +
- drivers/clk/sunxi/Makefile                        |   1 +
- drivers/clk/sunxi/clk-sun4i-tcon-ch1.c            | 154 ++++++++++++++++++++++
- 3 files changed, 156 insertions(+)
- create mode 100644 drivers/clk/sunxi/clk-sun4i-tcon-ch1.c
+ drivers/clk/tegra/clk-pll.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-index bb9fb78dcff8..fe34fc56e803 100644
---- a/Documentation/devicetree/bindings/clock/sunxi.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-@@ -67,6 +67,7 @@ Required properties:
- 	"allwinner,sun7i-a20-out-clk" - for the external output clocks
- 	"allwinner,sun7i-a20-gmac-clk" - for the GMAC clock module on A20/A31
- 	"allwinner,sun4i-a10-tcon-ch0-clk" - for the TCON channel 0 clock on the A10
-+	"allwinner,sun4i-a10-tcon-ch1-clk" - for the TCON channel 1 clock on the A10
- 	"allwinner,sun4i-a10-usb-clk" - for usb gates + resets on A10 / A20
- 	"allwinner,sun5i-a13-usb-clk" - for usb gates + resets on A13
- 	"allwinner,sun6i-a31-usb-clk" - for usb gates + resets on A31
-diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-index 40c32ffd912c..0a20873cd103 100644
---- a/drivers/clk/sunxi/Makefile
-+++ b/drivers/clk/sunxi/Makefile
-@@ -12,6 +12,7 @@ obj-y += clk-mod0.o
- obj-y += clk-simple-gates.o
- obj-y += clk-sun4i-display.o
- obj-y += clk-sun4i-pll3.o
-+obj-y += clk-sun4i-tcon-ch1.o
- obj-y += clk-sun8i-mbus.o
- obj-y += clk-sun9i-core.o
- obj-y += clk-sun9i-mmc.o
-diff --git a/drivers/clk/sunxi/clk-sun4i-tcon-ch1.c b/drivers/clk/sunxi/clk-sun4i-tcon-ch1.c
-new file mode 100644
-index 000000000000..51ddc38821f7
---- /dev/null
-+++ b/drivers/clk/sunxi/clk-sun4i-tcon-ch1.c
-@@ -0,0 +1,154 @@
-+/*
-+ * Copyright 2015 Maxime Ripard
-+ *
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+
-+#define SUN4I_TCON_CH1_SCLK_NAME_LEN	32
-+
-+#define SUN4I_A10_TCON_CH1_SCLK2_PARENTS	4
-+
-+#define SUN4I_A10_TCON_CH1_SCLK2_GATE_BIT	31
-+#define SUN4I_A10_TCON_CH1_SCLK2_MUX_MASK	3
-+#define SUN4I_A10_TCON_CH1_SCLK2_MUX_SHIFT	24
-+#define SUN4I_A10_TCON_CH1_SCLK2_DIV_WIDTH	4
-+#define SUN4I_A10_TCON_CH1_SCLK2_DIV_SHIFT	0
-+
-+#define SUN4I_A10_TCON_CH1_SCLK1_GATE_BIT	15
-+#define SUN4I_A10_TCON_CH1_SCLK1_DIV_WIDTH	1
-+#define SUN4I_A10_TCON_CH1_SCLK1_DIV_SHIFT	11
-+
-+static DEFINE_SPINLOCK(sun4i_a10_tcon_ch1_lock);
-+
-+static void __init sun4i_a10_tcon_ch1_setup(struct device_node *node)
-+{
-+	const char *sclk2_parents[SUN4I_A10_TCON_CH1_SCLK2_PARENTS];
-+	const char *sclk1_name = node->name;
-+	const char *sclk2_name;
-+	struct clk_divider *sclk1_div, *sclk2_div;
-+	struct clk_gate *sclk1_gate, *sclk2_gate;
-+	struct clk_mux *sclk2_mux;
-+	struct clk *sclk1, *sclk2;
-+	void __iomem *reg;
-+	int i, ret;
-+
-+	of_property_read_string(node, "clock-output-names",
-+				&sclk1_name);
-+
-+	sclk2_name = kasprintf(GFP_KERNEL, "%s2", sclk1_name);
-+	if (!sclk2_name)
-+		return;
-+
-+	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-+	if (IS_ERR(reg)) {
-+		pr_err("%s: Could not map the clock registers\n", sclk2_name);
-+		return;
-+	}
-+
-+	for (i = 0; i < SUN4I_A10_TCON_CH1_SCLK2_PARENTS; i++)
-+		sclk2_parents[i] = of_clk_get_parent_name(node, i);
-+
-+	sclk2_mux = kzalloc(sizeof(*sclk2_mux), GFP_KERNEL);
-+	if (!sclk2_mux)
-+		return;
-+
-+	sclk2_mux->reg = reg;
-+	sclk2_mux->shift = SUN4I_A10_TCON_CH1_SCLK2_MUX_SHIFT;
-+	sclk2_mux->mask = SUN4I_A10_TCON_CH1_SCLK2_MUX_MASK;
-+	sclk2_mux->lock = &sun4i_a10_tcon_ch1_lock;
-+
-+	sclk2_gate = kzalloc(sizeof(*sclk2_gate), GFP_KERNEL);
-+	if (!sclk2_gate)
-+		goto free_sclk2_mux;
-+
-+	sclk2_gate->reg = reg;
-+	sclk2_gate->bit_idx = SUN4I_A10_TCON_CH1_SCLK2_GATE_BIT;
-+	sclk2_gate->lock = &sun4i_a10_tcon_ch1_lock;
-+
-+	sclk2_div = kzalloc(sizeof(*sclk2_div), GFP_KERNEL);
-+	if (!sclk2_div)
-+		goto free_sclk2_gate;
-+
-+	sclk2_div->reg = reg;
-+	sclk2_div->shift = SUN4I_A10_TCON_CH1_SCLK2_DIV_SHIFT;
-+	sclk2_div->width = SUN4I_A10_TCON_CH1_SCLK2_DIV_WIDTH;
-+	sclk2_div->lock = &sun4i_a10_tcon_ch1_lock;
-+
-+	sclk2 = clk_register_composite(NULL, sclk2_name, sclk2_parents,
-+				       SUN4I_A10_TCON_CH1_SCLK2_PARENTS,
-+				       &sclk2_mux->hw, &clk_mux_ops,				       &
-+				       sclk2_div->hw, &clk_divider_ops,
-+				       &sclk2_gate->hw, &clk_gate_ops,
-+				       0);
-+	if (IS_ERR(sclk2)) {
-+		pr_err("%s: Couldn't register the clock\n", sclk2_name);
-+		goto free_sclk2_div;
-+	}
-+
-+	sclk1_div = kzalloc(sizeof(*sclk1_div), GFP_KERNEL);
-+	if (!sclk1_div)
-+		goto free_sclk2;
-+
-+	sclk1_div->reg = reg;
-+	sclk1_div->shift = SUN4I_A10_TCON_CH1_SCLK1_DIV_SHIFT;
-+	sclk1_div->width = SUN4I_A10_TCON_CH1_SCLK1_DIV_WIDTH;
-+	sclk1_div->lock = &sun4i_a10_tcon_ch1_lock;
-+
-+	sclk1_gate = kzalloc(sizeof(*sclk1_gate), GFP_KERNEL);
-+	if (!sclk1_gate)
-+		goto free_sclk1_mux;
-+
-+	sclk1_gate->reg = reg;
-+	sclk1_gate->bit_idx = SUN4I_A10_TCON_CH1_SCLK1_GATE_BIT;
-+	sclk1_gate->lock = &sun4i_a10_tcon_ch1_lock;
-+
-+	sclk1 = clk_register_composite(NULL, sclk1_name, &sclk2_name, 1,
-+				       NULL, NULL,
-+				       &sclk1_div->hw, &clk_divider_ops,
-+				       &sclk1_gate->hw, &clk_gate_ops,
-+				       0);
-+	if (IS_ERR(sclk1)) {
-+		pr_err("%s: Couldn't register the clock\n", sclk1_name);
-+		goto free_sclk1_gate;
-+	}
-+
-+	ret = of_clk_add_provider(node, of_clk_src_simple_get, sclk1);
-+	if (WARN_ON(ret))
-+		goto free_sclk1;
-+
-+	return;
-+
-+free_sclk1:
-+	clk_unregister_composite(sclk1);
-+free_sclk1_gate:
-+	kfree(sclk1_gate);
-+free_sclk1_mux:
-+	kfree(sclk1_div);
-+free_sclk2:
-+	clk_unregister(sclk2);
-+free_sclk2_div:
-+	kfree(sclk2_div);
-+free_sclk2_gate:
-+	kfree(sclk2_gate);
-+free_sclk2_mux:
-+	kfree(sclk2_mux);
-+}
-+
-+CLK_OF_DECLARE(sun4i_a10_tcon_ch1, "allwinner,sun4i-a10-tcon-ch1-clk",
-+	       sun4i_a10_tcon_ch1_setup);
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index a534bfab30b3..65156486889a 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -880,7 +880,7 @@ static int clk_plle_training(struct tegra_clk_pll *pll)
+ static int clk_plle_enable(struct clk_hw *hw)
+ {
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+-	unsigned long input_rate = clk_get_rate(clk_get_parent(hw->clk));
++	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+ 	struct tegra_clk_pll_freq_table sel;
+ 	u32 val;
+ 	int err;
+@@ -1378,7 +1378,7 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
+ 	u32 val;
+ 	int ret;
+ 	unsigned long flags = 0;
+-	unsigned long input_rate = clk_get_rate(clk_get_parent(hw->clk));
++	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+ 
+ 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
+ 		return -EINVAL;
+@@ -2014,7 +2014,7 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
+ 	u32 val;
+ 	int ret;
+ 	unsigned long flags = 0;
+-	unsigned long input_rate = clk_get_rate(clk_get_parent(hw->clk));
++	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+ 
+ 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
+ 		return -EINVAL;
 -- 
-2.6.4
+1.9.1
