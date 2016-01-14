@@ -1,149 +1,94 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: James Liao <jamesjj.liao@mediatek.com>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1452750917.5384.24.camel@mtksdaap41>
-Cc: "Matthias Brugger" <matthias.bgg@gmail.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>,
- "Sascha Hauer" <kernel@pengutronix.de>,
- "Daniel Kurtz" <djkurtz@chromium.org>, srv_heupstream@mediatek.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org
-References: <1452482936-51852-1-git-send-email-jamesjj.liao@mediatek.com>
- <20160114022637.1942.4564@quark.deferred.io>
- <1452750917.5384.24.camel@mtksdaap41>
-Message-ID: <20160114204119.1942.69629@quark.deferred.io>
-Subject: Re: [PATCH v2] clk: mediatek: Allow changing PLL rate when it is off
-Date: Thu, 14 Jan 2016 12:41:19 -0800
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Wynter Woods <wynter@nextthing.co>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 20/26] drm: sun4i: tv: Add PAL output standard
+Date: Thu, 14 Jan 2016 16:25:03 +0100
+Message-Id: <1452785109-6172-21-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting James Liao (2016-01-13 21:55:17)
-> Hi Mike,
-> =
+Now that we have support for the composite output, we can start adding new
+supported standards. Start with PAL, and we will add other eventually.
 
-> On Wed, 2016-01-13 at 18:26 -0800, Michael Turquette wrote:
-> > Hi James,
-> > =
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/gpu/drm/sun4i/sun4i_tv.c | 42 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-> > Quoting James Liao (2016-01-10 19:28:56)
-> > > Some modules may need to change its clock rate before turn on it.
-> > > So changing PLL's rate when it is off should be allowed.
-> > > This patch removes PLL enabled check before set rate, so that
-> > > PLLs can set new frequency even if they are off.
-> > > =
-
-> > > On MT8173 for example, ARMPLL's enable bit can be controlled by
-> > > other HW. That means ARMPLL may be turned on even if we (CPU / SW)
-> > > set ARMPLL's enable bit as 0. In this case, SW may want and can
-> > > still change ARMPLL's rate by changing its pcw and postdiv settings.
-> > > But without this patch, new pcw setting will not be applied because
-> > > its enable bit is 0.
-> > =
-
-> > Must the clock signal be enabled to change the PLL rate? If so, does
-> > ARMPLL set the CLK_SET_RATE_GATE flag?
-> =
-
-> No. The controlling of PLL's rate and enable are independent. So we can
-> change the PLL's rate when it's enabled or disabled.
-
-Thanks for the clarification.
-
-> =
-
-> > > =
-
-> > > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> > > ---
-> > >  drivers/clk/mediatek/clk-pll.c | 9 ++-------
-> > >  1 file changed, 2 insertions(+), 7 deletions(-)
-> > > =
-
-> > > diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/cl=
-k-pll.c
-> > > index 966cab1..8e31fae 100644
-> > > --- a/drivers/clk/mediatek/clk-pll.c
-> > > +++ b/drivers/clk/mediatek/clk-pll.c
-> > > @@ -91,9 +91,6 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pl=
-l *pll, u32 pcw,
-> > >                 int postdiv)
-> > >  {
-> > >         u32 con1, val;
-> > > -       int pll_en;
-> > > -
-> > > -       pll_en =3D readl(pll->base_addr + REG_CON0) & CON0_BASE_EN;
-> > >  =
-
-> > >         /* set postdiv */
-> > >         val =3D readl(pll->pd_addr);
-> > > @@ -114,15 +111,13 @@ static void mtk_pll_set_rate_regs(struct mtk_cl=
-k_pll *pll, u32 pcw,
-> > >  =
-
-> > >         con1 =3D readl(pll->base_addr + REG_CON1);
-> > >  =
-
-> > > -       if (pll_en)
-> > > -               con1 |=3D CON0_PCW_CHG;
-> > > +       con1 |=3D CON0_PCW_CHG;
-> > =
-
-> > This unconditionally enables the PLL whenever clk_set_rate is called,
-> > changing the previous behavior. The clk framework still tracks the
-> > intent of ARMPLLs users with the enable_count. How about something like
-> > the following:
-> =
-
-> Not really. This patch will not enable or disable PLL when we change its
-> rate. The PLL enable bit is bit[0], we didn't change bit[0] in
-> mtk_pll_set_rate_regs(), so its state will not be changed.
-> =
-
-> This patch set CON0_PCW_CHG (bit[31]) no matter the PLL is enabled or
-> not. So we don't need to check the enable bit[0] nor PLL state in the
-> framework before set bit[31].
-
-Ah, I mistakenly thought that CON0_PCW_CHG was the enable bit, since
-setting it was guarded by the pll_en conditional. Your explanation makes
-perfect sense to me.
-
-Acked-by: Michael Turquette <mturuqette@baylibre.com>
-
-Regards,
-Mike
-
-> =
-
-> >       bool pll_en =3D clk_hw_is_enabled(&pll->hw);
-> > =
-
-> >       if (pll_en)
-> >               con1 |=3D CON0_PCW_CHG;
-> > =
-
-> >       writel(con1, pll->base_addr + REG_CON1);
-> >       if (pll->tuner_addr)
-> >               writel(con1 + 1, pll->tuner_addr);
-> > =
-
-> >       if (pll_en)
-> >               udelay(20);
-> > =
-
-> > This does not rely on the hardware to tell us the intent of the user,
-> > but instead on our framework usecounting.
-> =
-
-> =
-
-> Best regards,
-> =
-
-> James
-> =
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tv.c b/drivers/gpu/drm/sun4i/sun4i_tv.c
+index 4f10f8b6b07c..4f369de2a1fc 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tv.c
+@@ -176,7 +176,49 @@ struct sun4i_tv {
+ 	struct sun4i_drv	*drv;
+ };
+ 
++struct video_levels pal_video_levels = {
++	.black = 252,	.blank = 252,
++};
++
++struct burst_levels pal_burst_levels = {
++	.cb = 40,	.cr = 40,
++};
++
++struct color_gains pal_color_gains = {
++	.cb = 224,	.cr = 224,
++};
++
++struct resync_parameters pal_resync_parameters = {
++	.field = true,	.line = 13,	.pixel = 12,
++};
++
+ struct tv_mode tv_modes[] = {
++	{
++		.name		= "PAL",
++		.mode		= SUN4I_TVE_CFG0_RES_576i,
++		.chroma_freq	= 0x2a098acb,
++
++		.back_porch	= 138,
++		.front_porch	= 24,
++		.line_number	= 625,
++
++		.hdisplay	= 720,
++		.hfront_porch	= 3,
++		.hsync_len	= 2,
++		.hback_porch	= 139,
++
++		.vdisplay	= 576,
++		.vfront_porch	= 28,
++		.vsync_len	= 2,
++		.vback_porch	= 19,
++
++		.vblank_level	= 252,
++
++		.color_gains	= &pal_color_gains,
++		.burst_levels	= &pal_burst_levels,
++		.video_levels	= &pal_video_levels,
++		.resync_params	= &pal_resync_parameters,
++	},
+ };
+ 
+ static inline struct sun4i_tv *
+-- 
+2.6.4
