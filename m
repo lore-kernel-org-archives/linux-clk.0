@@ -1,51 +1,98 @@
-Return-Path: <ckeepax@opensource.wolfsonmicro.com>
-Date: Wed, 6 Jan 2016 09:37:52 +0000
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-To: <mturquette@baylibre.com>
-CC: <kbuild-all@01.org>, <mturquette@baylibre.com>, <cw00.choi@samsung.com>,
-        <lee.jones@linaro.org>, <sboyd@codeaurora.org>,
-        <myungjoo.ham@samsung.com>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 3/4] mfd: arizona: Switch to using clock driver for 32k
- clock
-Message-ID: <20160106093752.GC1490@localhost.localdomain>
-References: <1452008502-3749-3-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <201601060012.oyAzKzVL%fengguang.wu@intel.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <201601060012.oyAzKzVL%fengguang.wu@intel.com>
+To: kernel@martin.sperl.org, "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Stephen Warren" <swarren@wwwdotorg.org>, "Lee Jones" <lee@kernel.org>,
+ "Eric Anholt" <eric@anholt.net>, "Remi Pommarel" <repk@triplefau.lt>,
+ linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20160113200012.1168.74515@quark.deferred.io>
+Cc: "Martin Sperl" <kernel@martin.sperl.org>
+References: <1452542157-2387-1-git-send-email-kernel@martin.sperl.org>
+ <1452542157-2387-2-git-send-email-kernel@martin.sperl.org>
+ <20160113200012.1168.74515@quark.deferred.io>
+Message-ID: <20160114001358.1168.5768@quark.deferred.io>
+Subject: Re: [PATCH V2 1/4] clk: bcm2835: avoid the use of BCM2835_CLOCK_COUNT in
+ clk-bcm2835
+Date: Wed, 13 Jan 2016 16:13:58 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jan 06, 2016 at 12:19:56AM +0800, kbuild test robot wrote:
-> Hi Charles,
-> 
-> [auto build test WARNING on clk/clk-next]
-> [also build test WARNING on v4.4-rc8 next-20160105]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improving the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Charles-Keepax/extcon-arizona-Remove-enable-disable-of-32k-clock/20160105-234658
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-> config: x86_64-randconfig-x013-01041832 (attached as .config)
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=x86_64 
-> 
-> All warnings (new ones prefixed by >>):
-> 
-> warning: (MFD_ARIZONA) selects COMMON_CLK_ARIZONA which has unmet direct dependencies (COMMON_CLK && MFD_ARIZONA)
+Quoting Michael Turquette (2016-01-13 12:00:12)
+> Hi Martin,
+> =
 
-Apologies this is caused by the select I put in the MFD Kconfig,
-since it doesn't really make much sense to build the MFD without
-the clock driver.
+> Quoting kernel@martin.sperl.org (2016-01-11 11:55:53)
+> >  static int bcm2835_clk_probe(struct platform_device *pdev)
+> >  {
+> >         struct device *dev =3D &pdev->dev;
+> >         struct clk **clks;
+> > +       size_t clk_cnt;
+> >         struct bcm2835_cprman *cprman;
+> >         struct resource *res;
+> > +       size_t i;
+> > +
+> > +       /* find the max clock index */
+> > +       clk_cnt =3D BCM2835_CLOCK_PERI_IMAGE; /* see below */
+> > +       for (i =3D 0; i < ARRAY_SIZE(bcm2835_register_clocks); i++)
+> > +               clk_cnt =3D max(clk_cnt, bcm2835_register_clocks[i].ind=
+ex);
+> > +       clk_cnt +=3D 1;
+> =
 
-But I think probably the simplest solution is just to drop that,
-otherwise we start kicking off all sorts of exciting circular
-dependencies that Kconfig doesn't like. Its not necessarily a
-sensible config to use but at least it will all build fine.
+> I'm not sure how this solution is better than using CLOCK_COUNT. Some
+> other bindings use a max value, NR_CLKS or other sentinel.
+> =
 
-I will send a version 2 with the other small comment fixed up
-as well.
+> Why did you not choose to set clk_cnt equal to BCM2835_CLOCK_PWM? Why
+> not initialize it to zero?
 
-Thanks,
-Charles
+OK, I just caught up on the asoc/bcm2835 thread.
+
+Really the best solution would be to have an array of all of the clks in
+the driver and just use ARRAY_SIZE on it.
+
+For your driver, could you make an array of clk_hw pointers and call
+devm_clk_register on all of them in a loop? This gets rid of the big
+pile of explicit calls in bcm2835_clk_probe.
+
+You can also get rid of stuff like bcm2835_plla_core_data by just
+stuffing that data into a single struct initialization. Here is a
+snippet for how the qcom clk drivers do it:
+
+static struct clk_pll gpll0 =3D {
+	.l_reg =3D 0x0004,
+	.m_reg =3D 0x0008,
+	.n_reg =3D 0x000c,
+	.config_reg =3D 0x0014,
+	.mode_reg =3D 0x0000,
+	.status_reg =3D 0x001c,
+	.status_bit =3D 17,
+	.clkr.hw.init =3D &(struct clk_init_data){
+		.name =3D "gpll0",
+		.parent_names =3D (const char *[]){ "xo" },
+		.num_parents =3D 1,
+		.ops =3D &clk_pll_ops,
+	},
+};
+
+Then a single array of clks per driver references this:
+
+static struct clk_regmap *gcc_apq8084_clocks[] =3D {
+	[GPLL0] =3D &gpll0.clkr,
+	...
+
+(in your case you won't reference struct clk_regmap, but struct clk_hw)
+
+The actual registration happens in your probe like so:
+
+static int bcm2835_clk_probe(struct platform_device *pdev)
+{
+	...
+	for (i =3D 0; i < num_clks; i++) {
+		clk =3D devm_clk_register(dev, array_of_clks[i].hw)
+	...
+}
+
+Regards,
+Mike
