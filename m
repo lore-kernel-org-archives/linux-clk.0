@@ -1,44 +1,112 @@
-Return-Path: <ckeepax@opensource.wolfsonmicro.com>
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-To: <mturquette@baylibre.com>, <cw00.choi@samsung.com>, <lee.jones@linaro.org>
-CC: <sboyd@codeaurora.org>, <myungjoo.ham@samsung.com>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.wolfsonmicro.com>
-Subject: [PATCH 1/4] extcon: arizona: Remove enable/disable of 32k clock
-Date: Tue, 5 Jan 2016 15:41:39 +0000
-Message-ID: <1452008502-3749-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+To: James Liao <jamesjj.liao@mediatek.com>,
+ "Matthias Brugger" <matthias.bgg@gmail.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1452482936-51852-1-git-send-email-jamesjj.liao@mediatek.com>
+Cc: "Sascha Hauer" <kernel@pengutronix.de>, "Daniel Kurtz" <djkurtz@chromium.org>,
+ srv_heupstream@mediatek.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-clk@vger.kernel.org, "James Liao" <jamesjj.liao@mediatek.com>
+References: <1452482936-51852-1-git-send-email-jamesjj.liao@mediatek.com>
+Message-ID: <20160114022637.1942.4564@quark.deferred.io>
+Subject: Re: [PATCH v2] clk: mediatek: Allow changing PLL rate when it is off
+Date: Wed, 13 Jan 2016 18:26:37 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-The 32k clock is unconditionally enabled by the MFD core so there is no
-need to control it from the extcon device, so this patch removes the
-control of the 32k clock.
+Hi James,
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
----
- drivers/extcon/extcon-arizona.c | 2 --
- 1 file changed, 2 deletions(-)
+Quoting James Liao (2016-01-10 19:28:56)
+> Some modules may need to change its clock rate before turn on it.
+> So changing PLL's rate when it is off should be allowed.
+> This patch removes PLL enabled check before set rate, so that
+> PLLs can set new frequency even if they are off.
+> =
 
-diff --git a/drivers/extcon/extcon-arizona.c b/drivers/extcon/extcon-arizona.c
-index e4890dd..52d041f 100644
---- a/drivers/extcon/extcon-arizona.c
-+++ b/drivers/extcon/extcon-arizona.c
-@@ -1571,7 +1571,6 @@ static int arizona_extcon_probe(struct platform_device *pdev)
- 		goto err_micdet;
- 	}
- 
--	arizona_clk32k_enable(arizona);
- 	regmap_update_bits(arizona->regmap, ARIZONA_JACK_DETECT_DEBOUNCE,
- 			   ARIZONA_JD1_DB, ARIZONA_JD1_DB);
- 	regmap_update_bits(arizona->regmap, ARIZONA_JACK_DETECT_ANALOGUE,
-@@ -1642,7 +1641,6 @@ static int arizona_extcon_remove(struct platform_device *pdev)
- 	cancel_delayed_work_sync(&info->hpdet_work);
- 	regmap_update_bits(arizona->regmap, ARIZONA_JACK_DETECT_ANALOGUE,
- 			   ARIZONA_JD1_ENA, 0);
--	arizona_clk32k_disable(arizona);
- 
- 	return 0;
- }
--- 
-2.1.4
+> On MT8173 for example, ARMPLL's enable bit can be controlled by
+> other HW. That means ARMPLL may be turned on even if we (CPU / SW)
+> set ARMPLL's enable bit as 0. In this case, SW may want and can
+> still change ARMPLL's rate by changing its pcw and postdiv settings.
+> But without this patch, new pcw setting will not be applied because
+> its enable bit is 0.
+
+Must the clock signal be enabled to change the PLL rate? If so, does
+ARMPLL set the CLK_SET_RATE_GATE flag?
+
+> =
+
+> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> ---
+>  drivers/clk/mediatek/clk-pll.c | 9 ++-------
+>  1 file changed, 2 insertions(+), 7 deletions(-)
+> =
+
+> diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pl=
+l.c
+> index 966cab1..8e31fae 100644
+> --- a/drivers/clk/mediatek/clk-pll.c
+> +++ b/drivers/clk/mediatek/clk-pll.c
+> @@ -91,9 +91,6 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *p=
+ll, u32 pcw,
+>                 int postdiv)
+>  {
+>         u32 con1, val;
+> -       int pll_en;
+> -
+> -       pll_en =3D readl(pll->base_addr + REG_CON0) & CON0_BASE_EN;
+>  =
+
+>         /* set postdiv */
+>         val =3D readl(pll->pd_addr);
+> @@ -114,15 +111,13 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pl=
+l *pll, u32 pcw,
+>  =
+
+>         con1 =3D readl(pll->base_addr + REG_CON1);
+>  =
+
+> -       if (pll_en)
+> -               con1 |=3D CON0_PCW_CHG;
+> +       con1 |=3D CON0_PCW_CHG;
+
+This unconditionally enables the PLL whenever clk_set_rate is called,
+changing the previous behavior. The clk framework still tracks the
+intent of ARMPLLs users with the enable_count. How about something like
+the following:
+
+	bool pll_en =3D clk_hw_is_enabled(&pll->hw);
+
+	if (pll_en)
+		con1 |=3D CON0_PCW_CHG;
+
+	writel(con1, pll->base_addr + REG_CON1);
+	if (pll->tuner_addr)
+		writel(con1 + 1, pll->tuner_addr);
+
+	if (pll_en)
+		udelay(20);
+
+This does not rely on the hardware to tell us the intent of the user,
+but instead on our framework usecounting.
+
+Regards,
+Mike
+
+>         writel(con1, pll->base_addr + REG_CON1);
+>         if (pll->tuner_addr)
+>                 writel(con1 + 1, pll->tuner_addr);
+>  =
+
+> -       if (pll_en)
+> -               udelay(20);
+> +       udelay(20);
+>  }
+>  =
+
+>  /*
+> -- =
+
+> 1.9.1
+>=20
