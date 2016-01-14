@@ -1,118 +1,113 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, James Hogan <james.hogan@imgtec.com>, Zhang Qing <zhangqing@rock-chips.com>, Joachim Eastwood <manabian@gmail.com>
-Subject: [PATCH v3] clk-divider: make sure read-only dividers do not write to their register
-Date: Thu, 21 Jan 2016 21:53:09 +0100
-Message-ID: <4666170.lmsMJxAogk@phil>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Wynter Woods <wynter@nextthing.co>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 10/26] ARM: sun5i: a13: Add display and TCON clocks
+Date: Thu, 14 Jan 2016 16:24:53 +0100
+Message-Id: <1452785109-6172-11-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Commit e6d5e7d90be9 ("clk-divider: Fix READ_ONLY when divider > 1") removed
-the special ops struct for read-only clocks and instead opted to handle
-them inside the regular ops.
+Enable the display and TCON (channel 0 and channel 1) clocks that are going
+to be needed to drive the display engine, tcon and TV encoders.
 
-On the rk3368 this results in breakage as aclkm now gets set a value.
-While it is the same divider value, the A53 core still doesn't like it,
-which can result in the cpu ending up in a hang.
-The reason being that "ACLKENMasserts one clock cycle before the rising
-edge of ACLKM" and the clock should only be touched when STANDBYWFIL2
-is asserted.
-
-To fix this, reintroduce the read-only ops but do include the round_rate
-callback. That way no writes that may be unsafe are done to the divider
-register in any case.
-
-The Rockchip use of the clk_divider_ops is adapted to this split again,
-as is the nxp, lpc18xx-ccu driver that was included since the original
-commit. On lpc18xx-ccu the divider seems to always be read-only
-so only uses the new ops now.
-
-Fixes: e6d5e7d90be9 ("clk-divider: Fix READ_ONLY when divider > 1")
-Reported-by: Zhang Qing <zhangqing@rock-chips.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
-changes in v3:
-- instead of bailing out of set_rate, reintroduce the _ro_ops
-  with added round_rate callback, as requested by Stephen
-changes in v2:
-- emphasize that even setting the same divider may be unsafe
+ arch/arm/boot/dts/sun5i-a13.dtsi | 38 +++++++++++++++++++++++++++++++++++++-
+ arch/arm/boot/dts/sun5i-r8.dtsi  |  5 +++--
+ 2 files changed, 40 insertions(+), 3 deletions(-)
 
- drivers/clk/clk-divider.c         | 11 ++++++++++-
- drivers/clk/nxp/clk-lpc18xx-ccu.c |  2 +-
- drivers/clk/rockchip/clk.c        |  4 +++-
- include/linux/clk-provider.h      |  1 +
- 4 files changed, 15 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index ded3ff4..aa1dacd 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -423,6 +423,12 @@ const struct clk_ops clk_divider_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_divider_ops);
- 
-+const struct clk_ops clk_divider_ro_ops = {
-+	.recalc_rate = clk_divider_recalc_rate,
-+	.round_rate = clk_divider_round_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_divider_ro_ops);
+diff --git a/arch/arm/boot/dts/sun5i-a13.dtsi b/arch/arm/boot/dts/sun5i-a13.dtsi
+index d910d3a6c41c..9669b03f20f3 100644
+--- a/arch/arm/boot/dts/sun5i-a13.dtsi
++++ b/arch/arm/boot/dts/sun5i-a13.dtsi
+@@ -61,7 +61,8 @@
+ 			compatible = "allwinner,simple-framebuffer",
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_be0-lcd0";
+-			clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 44>;
++			clocks = <&ahb_gates 36>, <&ahb_gates 44>, <&de_be_clk>,
++				 <&tcon_ch0_clk>;
+ 			status = "disabled";
+ 		};
+ 	};
+@@ -149,6 +150,41 @@
+ 					     "apb1_i2c2", "apb1_uart1",
+ 					     "apb1_uart3";
+ 		};
 +
- static struct clk *_register_divider(struct device *dev, const char *name,
- 		const char *parent_name, unsigned long flags,
- 		void __iomem *reg, u8 shift, u8 width,
-@@ -446,7 +452,10 @@ static struct clk *_register_divider(struct device *dev, const char *name,
- 		return ERR_PTR(-ENOMEM);
++		de_be_clk: clk@01c20104 {
++			#clock-cells = <0>;
++			#reset-cells = <0>;
++			compatible = "allwinner,sun4i-a10-display-clk";
++			reg = <0x01c20104 0x4>;
++			clocks = <&pll3>, <&pll7>, <&pll5 1>;
++			clock-output-names = "de-be";
++		};
++
++		de_fe_clk: clk@01c2010c {
++			#clock-cells = <0>;
++			#reset-cells = <0>;
++			compatible = "allwinner,sun4i-a10-display-clk";
++			reg = <0x01c2010c 0x4>;
++			clocks = <&pll3>, <&pll7>, <&pll5 1>;
++			clock-output-names = "de-fe";
++		};
++
++		tcon_ch0_clk: clk@01c20118 {
++			#clock-cells = <0>;
++			#reset-cells = <1>;
++			compatible = "allwinner,sun4i-a10-tcon-ch0-clk";
++			reg = <0x01c20118 0x4>;
++			clocks = <&pll3>, <&pll7>, <&pll3x2>, <&pll7x2>;
++			clock-output-names = "tcon-ch0-sclk";
++		};
++
++		tcon_ch1_clk: clk@01c2012c {
++			#clock-cells = <0>;
++			compatible = "allwinner,sun4i-a10-tcon-ch1-clk";
++			reg = <0x01c2012c 0x4>;
++			clocks = <&pll3>, <&pll7>, <&pll3x2>, <&pll7x2>;
++			clock-output-names = "tcon-ch1-sclk";
++		};
+ 	};
  
- 	init.name = name;
--	init.ops = &clk_divider_ops;
-+	if (clk_divider_flags & CLK_DIVIDER_READ_ONLY)
-+		init.ops = &clk_divider_ro_ops;
-+	else
-+		init.ops = &clk_divider_ops;
- 	init.flags = flags | CLK_IS_BASIC;
- 	init.parent_names = (parent_name ? &parent_name: NULL);
- 	init.num_parents = (parent_name ? 1 : 0);
-diff --git a/drivers/clk/nxp/clk-lpc18xx-ccu.c b/drivers/clk/nxp/clk-lpc18xx-ccu.c
-index 13aabbb..558da89 100644
---- a/drivers/clk/nxp/clk-lpc18xx-ccu.c
-+++ b/drivers/clk/nxp/clk-lpc18xx-ccu.c
-@@ -222,7 +222,7 @@ static void lpc18xx_ccu_register_branch_gate_div(struct lpc18xx_clk_branch *bran
- 		div->width = 1;
- 
- 		div_hw = &div->hw;
--		div_ops = &clk_divider_ops;
-+		div_ops = &clk_divider_ro_ops;
- 	}
- 
- 	branch->gate.reg = branch->offset + reg_base;
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index d9a0b5d..f7e8693 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -90,7 +90,9 @@ static struct clk *rockchip_clk_register_branch(const char *name,
- 		div->width = div_width;
- 		div->lock = lock;
- 		div->table = div_table;
--		div_ops = &clk_divider_ops;
-+		div_ops = (div_flags & CLK_DIVIDER_READ_ONLY)
-+						? &clk_divider_ro_ops
-+						: &clk_divider_ops;
- 	}
- 
- 	clk = clk_register_composite(NULL, name, parent_names, num_parents,
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 1143e38..408a60d 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -385,6 +385,7 @@ struct clk_divider {
- #define CLK_DIVIDER_MAX_AT_ZERO		BIT(6)
- 
- extern const struct clk_ops clk_divider_ops;
-+extern const struct clk_ops clk_divider_ro_ops;
- 
- unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
- 		unsigned int val, const struct clk_div_table *table,
+ 	soc@01c00000 {
+diff --git a/arch/arm/boot/dts/sun5i-r8.dtsi b/arch/arm/boot/dts/sun5i-r8.dtsi
+index 0ef865601ac9..b1e4e0170d51 100644
+--- a/arch/arm/boot/dts/sun5i-r8.dtsi
++++ b/arch/arm/boot/dts/sun5i-r8.dtsi
+@@ -51,8 +51,9 @@
+ 			compatible = "allwinner,simple-framebuffer",
+ 				     "simple-framebuffer";
+ 			allwinner,pipeline = "de_be0-lcd0-tve0";
+-			clocks = <&pll5 1>, <&ahb_gates 34>, <&ahb_gates 36>,
+-				 <&ahb_gates 44>;
++			clocks = <&ahb_gates 34>, <&ahb_gates 36>,
++				 <&ahb_gates 44>, <&de_be_clk>,
++				 <&tcon_ch1_clk>;
+ 			status = "disabled";
+ 		};
+ 	};
 -- 
 2.6.4
