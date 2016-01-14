@@ -1,33 +1,101 @@
-Return-Path: <robh@kernel.org>
-Date: Wed, 6 Jan 2016 07:15:58 -0600
-From: Rob Herring <robh@kernel.org>
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: mturquette@baylibre.com, cw00.choi@samsung.com, lee.jones@linaro.org,
-	sboyd@codeaurora.org, myungjoo.ham@samsung.com,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
-Subject: Re: [PATCH v2 4/4] mfd: arizona: Add device tree binding
- documentation for new clock driver
-Message-ID: <20160106131558.GA16493@rob-hp-laptop>
-References: <1452083672-3994-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <1452083672-3994-4-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1452083672-3994-4-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Wynter Woods <wynter@nextthing.co>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 25/26] drm/panel: simple: Add timings for the Olimex LCD-OLinuXino-4.3TS
+Date: Thu, 14 Jan 2016 16:25:08 +0100
+Message-Id: <1452785109-6172-26-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jan 06, 2016 at 12:34:32PM +0000, Charles Keepax wrote:
-> Specify the device tree binding for the input clocks to Arizona devices.
-> 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> ---
-> 
-> No changes since v1.
-> 
-> Thanks,
-> Charles
-> 
->  Documentation/devicetree/bindings/mfd/arizona.txt | 7 +++++++
->  1 file changed, 7 insertions(+)
+Add support for the Olimex LCD-OLinuXino-4.3TS panel to the DRM simple
+panel driver.
 
-Acked-by: Rob Herring <robh@kernel.org>
+It is a 480x272 panel connected through a 24-bits RGB interface.
+
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ .../display/panel/olimex,lcd-olinuxino-43-ts.txt   |  7 ++++++
+ drivers/gpu/drm/panel/panel-simple.c               | 26 ++++++++++++++++++++++
+ 2 files changed, 33 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/olimex,lcd-olinuxino-43-ts.txt
+
+diff --git a/Documentation/devicetree/bindings/display/panel/olimex,lcd-olinuxino-43-ts.txt b/Documentation/devicetree/bindings/display/panel/olimex,lcd-olinuxino-43-ts.txt
+new file mode 100644
+index 000000000000..74540a090669
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/olimex,lcd-olinuxino-43-ts.txt
+@@ -0,0 +1,7 @@
++Olimex 4.3" TFT LCD panel
++
++Required properties:
++- compatible: should be "olimex,lcd-olinuxino-43-ts"
++
++This binding is compatible with the simple-panel binding, which is specified
++in simple-panel.txt in this directory.
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index f97b73ec4713..3ae22e0a7f38 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -1003,6 +1003,29 @@ static const struct panel_desc okaya_rs800480t_7x0gp = {
+ 	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
+ };
+ 
++static const struct drm_display_mode olimex_lcd_olinuxino_43ts_mode = {
++	.clock = 9000,
++	.hdisplay = 480,
++	.hsync_start = 480 + 5,
++	.hsync_end = 480 + 5 + 30,
++	.htotal = 480 + 5 + 30 + 10,
++	.vdisplay = 272,
++	.vsync_start = 272 + 8,
++	.vsync_end = 272 + 8 + 5,
++	.vtotal = 272 + 8 + 5 + 3,
++	.vrefresh = 60,
++};
++
++static const struct panel_desc olimex_lcd_olinuxino_43ts = {
++	.modes = &olimex_lcd_olinuxino_43ts_mode,
++	.num_modes = 1,
++	.size = {
++		.width = 105,
++		.height = 67,
++	},
++	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
++};
++
+ static const struct drm_display_mode ortustech_com43h4m85ulc_mode  = {
+ 	.clock = 25000,
+ 	.hdisplay = 480,
+@@ -1179,6 +1202,9 @@ static const struct of_device_id platform_of_match[] = {
+ 		.compatible = "okaya,rs800480t-7x0gp",
+ 		.data = &okaya_rs800480t_7x0gp,
+ 	}, {
++		.compatible = "olimex,lcd-olinuxino-43-ts",
++		.data = &olimex_lcd_olinuxino_43ts,
++	}, {
+ 		.compatible = "ortustech,com43h4m85ulc",
+ 		.data = &ortustech_com43h4m85ulc,
+ 	}, {
+-- 
+2.6.4
