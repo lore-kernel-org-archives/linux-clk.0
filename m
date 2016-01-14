@@ -1,213 +1,68 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: John Crispin <blogic@openwrt.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>, James Liao
-	<jamesjj.liao@mediatek.com>
-Subject: [PATCH v5 2/6] dt-bindings: ARM: Mediatek: Document bindings for MT2701
-Date: Wed, 27 Jan 2016 15:21:00 +0800
-Message-ID: <1453879264-37915-3-git-send-email-jamesjj.liao@mediatek.com>
-In-Reply-To: <1453879264-37915-1-git-send-email-jamesjj.liao@mediatek.com>
-References: <1453879264-37915-1-git-send-email-jamesjj.liao@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jamesjj.liao@mediatek.com
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Wynter Woods <wynter@nextthing.co>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 12/26] ARM: sun5i: Add TV encoder gate to the DTSI
+Date: Thu, 14 Jan 2016 16:24:55 +0100
+Message-Id: <1452785109-6172-13-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds the binding documentation for apmixedsys, bdpsys,
-ethsys, hifsys, imgsys, infracfg, mmsys, pericfg, topckgen and
-vdecsys for Mediatek MT2701.
+It turns out that the A13 / R8 also have a tve encoder block, and a gate
+for it.
 
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-Tested-by: John Crispin <blogic@openwrt.org>
+Add it to the DT.
+
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |  1 +
- .../bindings/arm/mediatek/mediatek,bdpsys.txt      | 22 ++++++++++++++++++++++
- .../bindings/arm/mediatek/mediatek,ethsys.txt      | 22 ++++++++++++++++++++++
- .../bindings/arm/mediatek/mediatek,hifsys.txt      | 22 ++++++++++++++++++++++
- .../bindings/arm/mediatek/mediatek,imgsys.txt      |  1 +
- .../bindings/arm/mediatek/mediatek,infracfg.txt    |  1 +
- .../bindings/arm/mediatek/mediatek,mmsys.txt       |  1 +
- .../bindings/arm/mediatek/mediatek,pericfg.txt     |  1 +
- .../bindings/arm/mediatek/mediatek,topckgen.txt    |  1 +
- .../bindings/arm/mediatek/mediatek,vdecsys.txt     |  1 +
- 10 files changed, 73 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
+ arch/arm/boot/dts/sun5i-a13.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-index 936166f..a701e19 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-@@ -6,6 +6,7 @@ The Mediatek apmixedsys controller provides the PLLs to the system.
- Required Properties:
- 
- - compatible: Should be:
-+	- "mediatek,mt2701-apmixedsys"
- 	- "mediatek,mt8135-apmixedsys"
- 	- "mediatek,mt8173-apmixedsys"
- - #clock-cells: Must be 1
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
-new file mode 100644
-index 0000000..4137196
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
-@@ -0,0 +1,22 @@
-+Mediatek bdpsys controller
-+============================
-+
-+The Mediatek bdpsys controller provides various clocks to the system.
-+
-+Required Properties:
-+
-+- compatible: Should be:
-+	- "mediatek,mt2701-bdpsys", "syscon"
-+- #clock-cells: Must be 1
-+
-+The bdpsys controller uses the common clk binding from
-+Documentation/devicetree/bindings/clock/clock-bindings.txt
-+The available clocks are defined in dt-bindings/clock/mt*-clk.h.
-+
-+Example:
-+
-+bdpsys: clock-controller@1c000000 {
-+	compatible = "mediatek,mt2701-bdpsys", "syscon";
-+	reg = <0 0x1c000000 0 0x1000>;
-+	#clock-cells = <1>;
-+};
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
-new file mode 100644
-index 0000000..768f3a5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
-@@ -0,0 +1,22 @@
-+Mediatek ethsys controller
-+============================
-+
-+The Mediatek ethsys controller provides various clocks to the system.
-+
-+Required Properties:
-+
-+- compatible: Should be:
-+	- "mediatek,mt2701-ethsys", "syscon"
-+- #clock-cells: Must be 1
-+
-+The ethsys controller uses the common clk binding from
-+Documentation/devicetree/bindings/clock/clock-bindings.txt
-+The available clocks are defined in dt-bindings/clock/mt*-clk.h.
-+
-+Example:
-+
-+ethsys: clock-controller@1b000000 {
-+	compatible = "mediatek,mt2701-ethsys", "syscon";
-+	reg = <0 0x1b000000 0 0x1000>;
-+	#clock-cells = <1>;
-+};
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
-new file mode 100644
-index 0000000..b7a39b6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
-@@ -0,0 +1,22 @@
-+Mediatek hifsys controller
-+============================
-+
-+The Mediatek hifsys controller provides various clocks to the system.
-+
-+Required Properties:
-+
-+- compatible: Should be:
-+	- "mediatek,mt2701-hifsys", "syscon"
-+- #clock-cells: Must be 1
-+
-+The hifsys controller uses the common clk binding from
-+Documentation/devicetree/bindings/clock/clock-bindings.txt
-+The available clocks are defined in dt-bindings/clock/mt*-clk.h.
-+
-+Example:
-+
-+hifsys: clock-controller@1a000000 {
-+	compatible = "mediatek,mt2701-hifsys", "syscon";
-+	reg = <0 0x1a000000 0 0x1000>;
-+	#clock-cells = <1>;
-+};
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
-index b1f2ce1..9bda7f7 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
-@@ -6,6 +6,7 @@ The Mediatek imgsys controller provides various clocks to the system.
- Required Properties:
- 
- - compatible: Should be:
-+	- "mediatek,mt2701-imgsys", "syscon"
- 	- "mediatek,mt8173-imgsys", "syscon"
- - #clock-cells: Must be 1
- 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
-index aaf8d14..7e0a12c 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
-@@ -7,6 +7,7 @@ outputs to the system.
- Required Properties:
- 
- - compatible: Should be:
-+	- "mediatek,mt2701-infracfg", "syscon"
- 	- "mediatek,mt8135-infracfg", "syscon"
- 	- "mediatek,mt8173-infracfg", "syscon"
- - #clock-cells: Must be 1
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-index 4385946..c9d9d43 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-@@ -6,6 +6,7 @@ The Mediatek mmsys controller provides various clocks to the system.
- Required Properties:
- 
- - compatible: Should be:
-+	- "mediatek,mt2701-mmsys", "syscon"
- 	- "mediatek,mt8173-mmsys", "syscon"
- - #clock-cells: Must be 1
- 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
-index 2f6ff86..e04cb10 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
-@@ -7,6 +7,7 @@ outputs to the system.
- Required Properties:
- 
- - compatible: Should be:
-+	- "mediatek,mt2701-pericfg", "syscon"
- 	- "mediatek,mt8135-pericfg", "syscon"
- 	- "mediatek,mt8173-pericfg", "syscon"
- - #clock-cells: Must be 1
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
-index f9e9179..602e5bc 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
-@@ -6,6 +6,7 @@ The Mediatek topckgen controller provides various clocks to the system.
- Required Properties:
- 
- - compatible: Should be:
-+	- "mediatek,mt2701-topckgen"
- 	- "mediatek,mt8135-topckgen"
- 	- "mediatek,mt8173-topckgen"
- - #clock-cells: Must be 1
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
-index 1faacf1..f5b1e7d 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
-@@ -6,6 +6,7 @@ The Mediatek vdecsys controller provides various clocks to the system.
- Required Properties:
- 
- - compatible: Should be:
-+	- "mediatek,mt2701-vdecsys", "syscon"
- 	- "mediatek,mt8173-vdecsys", "syscon"
- - #clock-cells: Must be 1
- 
+diff --git a/arch/arm/boot/dts/sun5i-a13.dtsi b/arch/arm/boot/dts/sun5i-a13.dtsi
+index f29163650ca8..618086e0694c 100644
+--- a/arch/arm/boot/dts/sun5i-a13.dtsi
++++ b/arch/arm/boot/dts/sun5i-a13.dtsi
+@@ -111,8 +111,8 @@
+ 					<10>, <13>,
+ 					<14>, <20>,
+ 					<21>, <22>,
+-				        <28>, <32>, <36>,
+-				        <40>, <44>,
++					<28>, <32>, <34>,
++					<36>, <40>, <44>,
+ 					<46>, <51>,
+ 					<52>;
+ 			clock-output-names = "ahb_usbotg", "ahb_ehci",
+@@ -121,8 +121,8 @@
+ 					     "ahb_mmc2", "ahb_nand",
+ 					     "ahb_sdram", "ahb_spi0",
+ 					     "ahb_spi1", "ahb_spi2",
+-					     "ahb_stimer", "ahb_ve", "ahb_lcd",
+-					     "ahb_csi", "ahb_de_be",
++					     "ahb_stimer", "ahb_ve", "ahb_tve",
++					     "ahb_lcd", "ahb_csi", "ahb_de_be",
+ 					     "ahb_de_fe", "ahb_iep",
+ 					     "ahb_mali400";
+ 		};
 -- 
-1.9.1
+2.6.4
