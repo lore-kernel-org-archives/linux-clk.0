@@ -1,80 +1,149 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 25 Jan 2016 13:55:47 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Amitoj Kaur Chawla <amitoj1606@gmail.com>
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, swarren@wwwdotorg.org, gnurou@gmail.com,
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org, julia.lawall@lip6.fr
-Subject: Re: [PATCH] clk: tegra: clk-emc: Add missing of_node_put
-Message-ID: <20160125125547.GO20452@ulmo.nvidia.com>
-References: <20160124151519.GA23923@amitoj-Inspiron-3542>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="UFMLoheMaWcIEZAi"
-In-Reply-To: <20160124151519.GA23923@amitoj-Inspiron-3542>
+To: James Liao <jamesjj.liao@mediatek.com>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1452750917.5384.24.camel@mtksdaap41>
+Cc: "Matthias Brugger" <matthias.bgg@gmail.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Sascha Hauer" <kernel@pengutronix.de>,
+ "Daniel Kurtz" <djkurtz@chromium.org>, srv_heupstream@mediatek.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org
+References: <1452482936-51852-1-git-send-email-jamesjj.liao@mediatek.com>
+ <20160114022637.1942.4564@quark.deferred.io>
+ <1452750917.5384.24.camel@mtksdaap41>
+Message-ID: <20160114204119.1942.69629@quark.deferred.io>
+Subject: Re: [PATCH v2] clk: mediatek: Allow changing PLL rate when it is off
+Date: Thu, 14 Jan 2016 12:41:19 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
+Quoting James Liao (2016-01-13 21:55:17)
+> Hi Mike,
+> =
 
---UFMLoheMaWcIEZAi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Wed, 2016-01-13 at 18:26 -0800, Michael Turquette wrote:
+> > Hi James,
+> > =
 
-On Sun, Jan 24, 2016 at 08:45:20PM +0530, Amitoj Kaur Chawla wrote:
-> for_each_child_of_node performs an of_node_get on each iteration, so
-> to break out of the loop an of_node_put is required.
->=20
-> Found using Coccinelle. The semantic patch used for this is as follows:
->=20
-> // <smpl>
-> @@
-> expression e;
-> local idexpression child;
-> @@
->=20
->  for_each_child_of_node(root, child) {
->    ... when !=3D of_node_put(child)
->        when !=3D e =3D child
-> (
->    return child;
-> |
-> +  of_node_put(child);
-> ?  return ...;
-> )
->    ...
->  }
-> // </smpl>
->=20
-> Signed-off-by: Amitoj Kaur Chawla <amitoj1606@gmail.com>
-> ---
->  drivers/clk/tegra/clk-emc.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+> > Quoting James Liao (2016-01-10 19:28:56)
+> > > Some modules may need to change its clock rate before turn on it.
+> > > So changing PLL's rate when it is off should be allowed.
+> > > This patch removes PLL enabled check before set rate, so that
+> > > PLLs can set new frequency even if they are off.
+> > > =
 
-Applied, thanks.
+> > > On MT8173 for example, ARMPLL's enable bit can be controlled by
+> > > other HW. That means ARMPLL may be turned on even if we (CPU / SW)
+> > > set ARMPLL's enable bit as 0. In this case, SW may want and can
+> > > still change ARMPLL's rate by changing its pcw and postdiv settings.
+> > > But without this patch, new pcw setting will not be applied because
+> > > its enable bit is 0.
+> > =
 
-Thierry
+> > Must the clock signal be enabled to change the PLL rate? If so, does
+> > ARMPLL set the CLK_SET_RATE_GATE flag?
+> =
 
---UFMLoheMaWcIEZAi
-Content-Type: application/pgp-signature; name="signature.asc"
+> No. The controlling of PLL's rate and enable are independent. So we can
+> change the PLL's rate when it's enabled or disabled.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Thanks for the clarification.
 
-iQIcBAABCAAGBQJWphtTAAoJEN0jrNd/PrOh4i4QAJDrzpBXqUT6yC5Pg8I8mVBh
-vU22kT5OgMa9WtVZLdBg+0+fZUWAXtyVmsy9T/05CKNyg9khp9+nlPnAZC5B1a7b
-Lb4ubZdTcb09bgca/VoysZqP0HbSKSWBPng85DCAakIcuSFO+5hpJLiKBYvz7U8W
-AeHCsqQ3jUWjFu1c1GG87L7CRBumm9annleRVmIa0xG4nrgUjSqVxuaAzZ30lHrH
-yk51RBxaFM770i329pUWpF4+2phFYstRgwOrDDp8o0Hp6iC+PSLbMpjY87jTbGf2
-yKIVdc3uU130o5ip8EdjhTkTECUvoMhGecmLBqinYA4+z5NsdFbcuPiNt3cjUZWn
-+cbcoHerGn3bitHH9LJSdiBFeH4nSzz9CLbiCc70tlvhhay2FHLfcoElVX/OjUUq
-b9dpMR3Zo0vrvZgjYN5i2BtVmvJE3Iv3n6h3IvRLt+GJDpVC+A+SixeuufKTaegn
-gZPBbST/3faxZr5hCs95uwUArLyO0VQHKAIYT9rS2lg2+W/LJuQfsNk9G0+NhpSF
-DiR767GIgkaPdsxBy6hvvbvZ1QV/OMgOT52omLnEl8zuTeB4nOwfaMUGErKY6TVt
-KJvARSi8jUvFOkacIVERMEMCE4IHbtmqU/0wyvNdRQUkkVnS9AkQEzCSM4ueaVFv
-QnLIckdZZtfX4AWv487/
-=a2ih
------END PGP SIGNATURE-----
+> =
 
---UFMLoheMaWcIEZAi--
+> > > =
+
+> > > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> > > ---
+> > >  drivers/clk/mediatek/clk-pll.c | 9 ++-------
+> > >  1 file changed, 2 insertions(+), 7 deletions(-)
+> > > =
+
+> > > diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/cl=
+k-pll.c
+> > > index 966cab1..8e31fae 100644
+> > > --- a/drivers/clk/mediatek/clk-pll.c
+> > > +++ b/drivers/clk/mediatek/clk-pll.c
+> > > @@ -91,9 +91,6 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pl=
+l *pll, u32 pcw,
+> > >                 int postdiv)
+> > >  {
+> > >         u32 con1, val;
+> > > -       int pll_en;
+> > > -
+> > > -       pll_en =3D readl(pll->base_addr + REG_CON0) & CON0_BASE_EN;
+> > >  =
+
+> > >         /* set postdiv */
+> > >         val =3D readl(pll->pd_addr);
+> > > @@ -114,15 +111,13 @@ static void mtk_pll_set_rate_regs(struct mtk_cl=
+k_pll *pll, u32 pcw,
+> > >  =
+
+> > >         con1 =3D readl(pll->base_addr + REG_CON1);
+> > >  =
+
+> > > -       if (pll_en)
+> > > -               con1 |=3D CON0_PCW_CHG;
+> > > +       con1 |=3D CON0_PCW_CHG;
+> > =
+
+> > This unconditionally enables the PLL whenever clk_set_rate is called,
+> > changing the previous behavior. The clk framework still tracks the
+> > intent of ARMPLLs users with the enable_count. How about something like
+> > the following:
+> =
+
+> Not really. This patch will not enable or disable PLL when we change its
+> rate. The PLL enable bit is bit[0], we didn't change bit[0] in
+> mtk_pll_set_rate_regs(), so its state will not be changed.
+> =
+
+> This patch set CON0_PCW_CHG (bit[31]) no matter the PLL is enabled or
+> not. So we don't need to check the enable bit[0] nor PLL state in the
+> framework before set bit[31].
+
+Ah, I mistakenly thought that CON0_PCW_CHG was the enable bit, since
+setting it was guarded by the pll_en conditional. Your explanation makes
+perfect sense to me.
+
+Acked-by: Michael Turquette <mturuqette@baylibre.com>
+
+Regards,
+Mike
+
+> =
+
+> >       bool pll_en =3D clk_hw_is_enabled(&pll->hw);
+> > =
+
+> >       if (pll_en)
+> >               con1 |=3D CON0_PCW_CHG;
+> > =
+
+> >       writel(con1, pll->base_addr + REG_CON1);
+> >       if (pll->tuner_addr)
+> >               writel(con1 + 1, pll->tuner_addr);
+> > =
+
+> >       if (pll_en)
+> >               udelay(20);
+> > =
+
+> > This does not rely on the hardware to tell us the intent of the user,
+> > but instead on our framework usecounting.
+> =
+
+> =
+
+> Best regards,
+> =
+
+> James
+> =
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
