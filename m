@@ -1,64 +1,72 @@
 Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 27 Jan 2016 18:41:25 +0100
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH RFC 09/11] clk: sunxi: rewrite sun6i-a31-ahb1-clk using
- factors clk with custom recalc
-Message-ID: <20160127174125.GN4317@lukather>
-References: <1453727747-23307-1-git-send-email-wens@csie.org>
- <1453727747-23307-10-git-send-email-wens@csie.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UUMz/kfoogzZ9WLZ"
-In-Reply-To: <1453727747-23307-10-git-send-email-wens@csie.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Wynter Woods <wynter@nextthing.co>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 23/26] ARM: sun5i: chip: Enable the TV Encoder
+Date: Thu, 14 Jan 2016 16:25:06 +0100
+Message-Id: <1452785109-6172-24-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+The CHIP has a composite output available muxed with the microphone in the
+micro-jack plug.
 
---UUMz/kfoogzZ9WLZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Enable the composite output in its DTS.
 
-On Mon, Jan 25, 2016 at 09:15:45PM +0800, Chen-Yu Tsai wrote:
-> The factors clk implementation has been extended to support custom
-> recalc callbacks to support clocks that use one factor for certain
-> parents only, like a pre-divider.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ arch/arm/boot/dts/sun5i-r8-chip.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Applied, thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---UUMz/kfoogzZ9WLZ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWqQFFAAoJEBx+YmzsjxAgSncQAKobVXLzUF0h6fY1hIJxOEcS
-Ps5Pv4TIEsLN/DJT3S7Ebby0ssU9DparTO+hXQdRqzCgIr1+nhqhHk16wlc3ujHu
-KKCFyaI0WZcpsW/cygTb+uP4zslUON3cGPhlDIPIr6ONLoYvlIr9rqVwGQf3lBJK
-7kPFdh3hPulTVndMjF+oZZoBNwHyRwA9lwjgZuvVwlEm6gIO8Rq0yfUhCVbFqj3/
-Clpa5NCkIappDV985Hw3vw1s7IkzhttO/iUpTQMd9cTFz4usppg5oRqAm4A6xKlI
-nCT8EMhdVHezsc4RjjCEGCmmN/FZwXv8uodibCylnpHta4YIQobBJzx6hoccVOMW
-1BVfH08CKeaQ/uFGZt8mymAZ3M/q5mlApztJPnlxSHaX2ce/c3O3YiPIXYKJ/Gpk
-9WjH8s9Jn0F/daDxpNKY935SE20zHZFrY92dDX+Smx5iRQ7Gb9ROMjF9vbMo2X+h
-Cqpni9OEMtDy56tgs79oTxQlkWxhPSDUyENVRtMFUoEdPGLWimX986rxrbcXsGSF
-P21vt/yYCH0Vb9LE0bX8N89Co+pih0ZLCDZNVmv0Ej1mdwMjtGFSe+DWe+kSdSOY
-z8CY1azI4O3f/ShEmzRzSDgxO5WnWa2BKaKTdgC+Z+g/mpv2w8u+p4AMXHER0vW7
-UaofsV0hmb4kgPjCSvCu
-=uuOJ
------END PGP SIGNATURE-----
-
---UUMz/kfoogzZ9WLZ--
+diff --git a/arch/arm/boot/dts/sun5i-r8-chip.dts b/arch/arm/boot/dts/sun5i-r8-chip.dts
+index c976c7618118..c26c095b42c6 100644
+--- a/arch/arm/boot/dts/sun5i-r8-chip.dts
++++ b/arch/arm/boot/dts/sun5i-r8-chip.dts
+@@ -84,6 +84,10 @@
+ 	};
+ };
+ 
++&be0 {
++	status = "okay";
++};
++
+ &codec {
+ 	status = "okay";
+ };
+@@ -230,6 +234,14 @@
+ 	status = "okay";
+ };
+ 
++&tcon0 {
++	status = "okay";
++};
++
++&tve0 {
++	status = "okay";
++};
++
+ &uart1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart1_pins_b>;
+-- 
+2.6.4
