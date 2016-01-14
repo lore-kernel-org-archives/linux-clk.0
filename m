@@ -1,60 +1,56 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 20 Jan 2016 14:16:56 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	James Hogan <james.hogan@imgtec.com>,
-	Zhang Qing <zhangqing@rock-chips.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v2] clk-divider: make sure read-only dividers do not
- write to their register
-Message-ID: <20160120221604.GC12841@codeaurora.org>
-References: <8710207.gKyLbM2bKY@phil>
- <3578615.iBrKplh45Q@phil>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>
+CC: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [Patch V2 8/9] clk: tegra: pll: Fix typos around clearing plle bits during enable
+Date: Thu, 14 Jan 2016 14:24:37 -0500
+Message-ID: <1452799478-14791-9-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
+References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <3578615.iBrKplh45Q@phil>
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/20, Heiko Stuebner wrote:
-> Commit e6d5e7d90be9 ("clk-divider: Fix READ_ONLY when divider > 1") removed
-> the special ops struct for read-only clocks and instead opted to handle
-> them regularly.
-> 
-> On the rk3368 this results in breakage as aclkm now gets set a value.
-> While it is the same divider value, the A53 core still doesn't like it,
-> which can result in the cpu ending up in a hang.
-> The reason being that "ACLKENMasserts one clock cycle before the rising
-> edge of ACLKM" and the clock should only be touched when STANDBYWFIL2
-> is asserted.
-> 
-> So make sure read-only clocks don't touch the clock-register at all
-> even if only writing the same value, as even writing the same value
-> may not be safe in all cases.
-> 
-> Fixes: e6d5e7d90be9 ("clk-divider: Fix READ_ONLY when divider > 1")
-> Reported-by: Zhang Qing <zhangqing@rock-chips.com>
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> Reviewed-by: James Hogan <james.hogan@imgtec.com>
-> ---
+While enabling PLLE on both Tegra114 and Tegra210, we should be clearing
+PLLE_MISC_VREG_BG_CTRL_MASK and PLLE_MISC_VREG_CTRL_MASK not setting
+them. This patch fixes both places where we incorrectly set instead
+of cleared those bits.
 
-Hmph, the same patch[1] has been sitting in my inbox for months
-now but I never got a response to my last question and then
-forgot about it. I'll repeat the question here and hopefully we
-can finish the discussion.
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Maybe it would make more sense to have different ops for read
-only dividers? The clk_set_rate op would be empty, while we would
-have proper recalc_rate and round_rate ops. We can't just flat
-out revert commit e6d5e7d90be9 (clk-divider: Fix READ_ONLY when
-divider > 1, 2014-11-14) because that will introduce the problem
-that it was fixing, but as long as we implement round_rate in
-addition to recalc_rate it should work.
-
-[1] http://lkml.kernel.org/r/1428392806-14538-1-git-send-email-jy0922.shim@samsung.com
-
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index d9c3109b75bd..cb28130e6c0a 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -1401,7 +1401,7 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
+ 	val |= PLLE_MISC_IDDQ_SW_CTRL;
+ 	val &= ~PLLE_MISC_IDDQ_SW_VALUE;
+ 	val |= PLLE_MISC_PLLE_PTS;
+-	val |= PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK;
++	val &= ~(PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK);
+ 	pll_writel_misc(val, pll);
+ 	udelay(5);
+ 
+@@ -2035,7 +2035,7 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
+ 	val |= PLLE_MISC_IDDQ_SW_CTRL;
+ 	val &= ~PLLE_MISC_IDDQ_SW_VALUE;
+ 	val |= PLLE_MISC_PLLE_PTS;
+-	val |= PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK;
++	val &= ~(PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK);
+ 	pll_writel_misc(val, pll);
+ 	udelay(5);
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
