@@ -1,188 +1,247 @@
-Return-Path: <ping.bai@nxp.com>
-From: Ping Bai <ping.bai@nxp.com>
-To: Shawn Guo <shawnguo@kernel.org>
-CC: "kernel@pengutronix.de" <kernel@pengutronix.de>, "pawel.moll@arm.com"
-	<pawel.moll@arm.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
-	<sboyd@codeaurora.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "jacky.baip@gmail.com" <jacky.baip@gmail.com>
-Subject: RE: [PATCH v2 1/5] ARM: dts: imx: Add basic dts support for imx6qp
- SOC
-Date: Thu, 28 Jan 2016 10:38:24 +0000
-Message-ID: <DB4PR04MB53894A836C31750CCDCE04787DA0@DB4PR04MB538.eurprd04.prod.outlook.com>
-References: <1450159673-27314-1-git-send-email-b51503@freescale.com>
- <1450159673-27314-2-git-send-email-b51503@freescale.com>
- <20160128074256.GL9070@tiger>
-In-Reply-To: <20160128074256.GL9070@tiger>
-Content-Type: text/plain; charset="gb2312"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga02-in.huawei.com ([119.145.14.65]:8468 "EHLO
+	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753960AbcANNXv (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jan 2016 08:23:51 -0500
+Subject: Re: [PATCH v5 1/6] clk: hisilicon: add CRG driver for hi3519 soc
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
+ <1452219400-32478-2-git-send-email-xuejiancheng@huawei.com>
+ <20160112221211.GB22188@codeaurora.org> <5695BE65.3070409@huawei.com>
+ <20160113185707.1168.85601@quark.deferred.io>
+CC: <p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
+	<zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>
+From: xuejiancheng <xuejiancheng@huawei.com>
+Message-ID: <56979F9F.5080201@huawei.com>
+Date: Thu, 14 Jan 2016 21:16:15 +0800
 MIME-Version: 1.0
+In-Reply-To: <20160113185707.1168.85601@quark.deferred.io>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU2hhd24gR3VvIFttYWls
-dG86c2hhd25ndW9Aa2VybmVsLm9yZ10NCj4gU2VudDogMjAxNsTqMdTCMjjI1SAxNTo0Mw0KPiBU
-bzogYjUxNTAzQGZyZWVzY2FsZS5jb20NCj4gQ2M6IGtlcm5lbEBwZW5ndXRyb25peC5kZTsgcGF3
-ZWwubW9sbEBhcm0uY29tOyByb2JoK2R0QGtlcm5lbC5vcmc7DQo+IG10dXJxdWV0dGVAYmF5bGli
-cmUuY29tOyBzYm95ZEBjb2RlYXVyb3JhLm9yZzsgbGludXgtYXJtLQ0KPiBrZXJuZWxAbGlzdHMu
-aW5mcmFkZWFkLm9yZzsgbGludXgtY2xrQHZnZXIua2VybmVsLm9yZzsNCj4gZGV2aWNldHJlZUB2
-Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MiAxLzVdIEFSTTogZHRzOiBp
-bXg6IEFkZCBiYXNpYyBkdHMgc3VwcG9ydCBmb3IgaW14NnFwDQo+IFNPQw0KPiANCj4gT24gVHVl
-LCBEZWMgMTUsIDIwMTUgYXQgMDI6MDc6NDlQTSArMDgwMCwgQmFpIFBpbmcgd3JvdGU6DQo+ID4g
-VGhlIGkuTVg2UXVhZCBQbHVzIHByb2Nlc3NvciBpcyBhbiBoaWdoIHBlcmZvcm1hbmNlIFNPQyBv
-ZiBpLk1YNiBmYW1pbHkuDQo+ID4gSXQgaGFzIGVuaGFuY2VkIGdyYXBoaWNzIHBlcmZvcm1hbmNl
-IGFuZCBpbmNyZWFzZWQgb3ZlcmFsbCBtZW1vcnkNCj4gPiBiYW5kd2lkdGggY29tcGFyZWQgdG8g
-aS5NWDZRLiBNb3N0IG9mIHRoZSBkZXNpZ24gYXJlIHNhbWUgYXMNCj4gPiBpLk1YNlF1YWQvRHVh
-bCwgc28gY29kZSBmb3IgaS5NWDZRdWFkIGNhbiBiZSByZXN1ZWQgYnkgdGhpcyBjaGlwLiBUaGUN
-Cj4gPiByZXZpc2lvbiBudW1iZXIgaXMgaWRlbnRpZWQgYXMgaS5NWDZRIFJldjIuMCwgYnV0IGFj
-dHVhbGx5IGl0IGlzIGEgbmV3DQo+ID4gY2hpcCwgYXMgd2UgZGlkIG1hbnkgY2hhbmdlIHRvIHRo
-ZSBvdmVyYWxsIGFyY2hpdGVjdHVyZS4NCj4gPg0KPiA+IFRoaXMgcGF0Y2ggYWRkcyBiYXNpYyBk
-dHNpIGZpbGUgc3VwcG9ydCBmb3IgdGhlIG5ldyBpLk1YNlF1YWQgUGx1cyBwcm9jZXNzb3IuDQo+
-ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBCYWkgUGluZyA8YjUxNTAzQGZyZWVzY2FsZS5jb20+DQo+
-ID4gLS0tDQo+ID4gIGFyY2gvYXJtL2Jvb3QvZHRzL2lteDZxLmR0c2kgICAgICAgICAgICAgIHwg
-ICAyICstDQo+ID4gIGFyY2gvYXJtL2Jvb3QvZHRzL2lteDZxcC5kdHNpICAgICAgICAgICAgIHwg
-MTU3DQo+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+ICBpbmNsdWRlL2R0LWJp
-bmRpbmdzL2Nsb2NrL2lteDZxZGwtY2xvY2suaCB8ICAxNiArKy0NCj4gPiAgMyBmaWxlcyBjaGFu
-Z2VkLCAxNzMgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkgIGNyZWF0ZSBtb2RlDQo+ID4g
-MTAwNjQ0IGFyY2gvYXJtL2Jvb3QvZHRzL2lteDZxcC5kdHNpDQo+ID4NCj4gPiBkaWZmIC0tZ2l0
-IGEvYXJjaC9hcm0vYm9vdC9kdHMvaW14NnEuZHRzaQ0KPiA+IGIvYXJjaC9hcm0vYm9vdC9kdHMv
-aW14NnEuZHRzaSBpbmRleCBhMjY2YTU2Li5lMjZkMGZkIDEwMDY0NA0KPiA+IC0tLSBhL2FyY2gv
-YXJtL2Jvb3QvZHRzL2lteDZxLmR0c2kNCj4gPiArKysgYi9hcmNoL2FybS9ib290L2R0cy9pbXg2
-cS5kdHNpDQo+ID4gQEAgLTIyLDcgKzIyLDcgQEANCj4gPiAgCQkjYWRkcmVzcy1jZWxscyA9IDwx
-PjsNCj4gPiAgCQkjc2l6ZS1jZWxscyA9IDwwPjsNCj4gPg0KPiA+IC0JCWNwdUAwIHsNCj4gPiAr
-CQljcHUwOiBjcHVAMCB7DQo+ID4gIAkJCWNvbXBhdGlibGUgPSAiYXJtLGNvcnRleC1hOSI7DQo+
-ID4gIAkJCWRldmljZV90eXBlID0gImNwdSI7DQo+ID4gIAkJCXJlZyA9IDwwPjsNCj4gPiBkaWZm
-IC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvaW14NnFwLmR0c2kNCj4gPiBiL2FyY2gvYXJtL2Jv
-b3QvZHRzL2lteDZxcC5kdHNpIG5ldyBmaWxlIG1vZGUgMTAwNjQ0IGluZGV4DQo+ID4gMDAwMDAw
-MC4uZTQzNzUxZg0KPiA+IC0tLSAvZGV2L251bGwNCj4gPiArKysgYi9hcmNoL2FybS9ib290L2R0
-cy9pbXg2cXAuZHRzaQ0KPiA+IEBAIC0wLDAgKzEsMTU3IEBADQo+ID4gKy8qDQo+ID4gKyAqIENv
-cHlyaWdodCAyMDE1IEZyZWVzY2FsZSBTZW1pY29uZHVjdG9yLCBJbmMuDQo+ID4gKyAqDQo+ID4g
-KyAqIFRoaXMgcHJvZ3JhbSBpcyBmcmVlIHNvZnR3YXJlOyB5b3UgY2FuIHJlZGlzdHJpYnV0ZSBp
-dCBhbmQvb3INCj4gPiArbW9kaWZ5DQo+ID4gKyAqIGl0IHVuZGVyIHRoZSB0ZXJtcyBvZiB0aGUg
-R05VIEdlbmVyYWwgUHVibGljIExpY2Vuc2UgdmVyc2lvbiAyIGFzDQo+ID4gKyAqIHB1Ymxpc2hl
-ZCBieSB0aGUgRnJlZSBTb2Z0d2FyZSBGb3VuZGF0aW9uLg0KPiANCj4gRm9yIG5ldyBkdHMgZmls
-ZXMsIHdlIHN1Z2dlc3QgdG8gdXNlIEdQTC9YMTEgZHVhbCBsaWNlbnNlIHRvIGNvbnNpZGVyIG5v
-bi1MaW51eA0KPiB1c2Vycy4gIFlvdSBjYW4gZ3JlcCAiZHVhbC1saWNlbnNlZCIgaW4gYXJjaC9h
-cm0vYm9vdC9kdHMgdG8gZmluZCBhIHBsZW50eSBvZg0KPiBleGFtcGxlcy4NCj4gDQoNCm9rLCBJ
-IHdpbGwgZml4IHRoaXMgaW4gcGF0Y2ggVjMuDQoNCj4gPiArICoNCj4gPiArICovDQo+ID4gKw0K
-PiANCj4gRG8geW91IG5vdCBuZWVkIHRvIGluY2x1ZGUgImlteDZxZGwuZHRzaSIgaGVyZT8NCj4g
-DQo+ID4gKy8gew0KPiA+ICsJYWxpYXNlcyB7DQo+ID4gKwkJcHJlMCA9ICZwcmUxOw0KPiA+ICsJ
-CXByZTEgPSAmcHJlMjsNCj4gPiArCQlwcmUyID0gJnByZTM7DQo+ID4gKwkJcHJlMyA9ICZwcmU0
-Ow0KPiA+ICsJCXByZzAgPSAmcHJnMTsNCj4gPiArCQlwcmcxID0gJnByZzI7DQo+ID4gKwl9Ow0K
-PiA+ICsNCj4gPiArCXNvYyB7DQo+ID4gKwkJb2NyYW1fMjogc3JhbUAwMDk0MDAwMCB7DQo+IA0K
-PiBUaGUgbGFiZWwgY2FuIGp1c3QgYmUgb2NyYW0yLg0KPiANCg0Kb2ssIHRoYW5rcyBmb3IgeW91
-IHN1Z2dlc3QuDQoNCj4gPiArCQkJY29tcGF0aWJsZSA9ICJtbWlvLXNyYW0iOw0KPiA+ICsJCQly
-ZWcgPSA8MHgwMDk0MDAwMCAweDIwMDAwPjsNCj4gPiArCQkJY2xvY2tzID0gPCZjbGtzIElNWDZR
-RExfQ0xLX09DUkFNPjsNCj4gPiArCQl9Ow0KPiA+ICsNCj4gPiArCQlvY3JhbV8zOiBzcmFtQDAw
-OTYwMDAwIHsNCj4gDQo+IG9jcmFtMw0KPiANCj4gPiArCQkJY29tcGF0aWJsZSA9ICJtbWlvLXNy
-YW0iOw0KPiA+ICsJCQlyZWcgPSA8MHgwMDk2MDAwMCAweDIwMDAwPjsNCj4gPiArCQkJY2xvY2tz
-ID0gPCZjbGtzIElNWDZRRExfQ0xLX09DUkFNPjsNCj4gPiArCQl9Ow0KPiA+ICsNCj4gPiArCQlw
-Y2llOiBwY2llQDB4MDEwMDAwMDAgew0KPiA+ICsJCQljb21wYXRpYmxlID0gImZzbCxpbXg2cXAt
-cGNpZSIsICJzbnBzLGR3LXBjaWUiOw0KPiA+ICsJCQlyZWcgPSA8MHgwMWZmYzAwMCAweDQwMDA+
-LCA8MHgwMWYwMDAwMCAweDgwMDAwPjsNCj4gPiArCQkJcmVnLW5hbWVzID0gImRiaSIsICJjb25m
-aWciOw0KPiA+ICsJCQkjYWRkcmVzcy1jZWxscyA9IDwzPjsNCj4gPiArCQkJI3NpemUtY2VsbHMg
-PSA8Mj47DQo+ID4gKwkJCWRldmljZV90eXBlID0gInBjaSI7DQo+ID4gKwkJCXJhbmdlcyA9IDww
-eDgxMDAwMDAwIDAgMCAgICAgICAgICAweDAxZjgwMDAwIDAgMHgwMDAxMDAwMA0KPiAvKiBkb3du
-c3RyZWFtIEkvTyAqLw0KPiA+ICsJCQkJICAweDgyMDAwMDAwIDAgMHgwMTAwMDAwMCAweDAxMDAw
-MDAwIDANCj4gMHgwMGYwMDAwMD47IC8qIG5vbi1wcmVmZXRjaGFibGUgbWVtb3J5ICovDQo+ID4g
-KwkJCW51bS1sYW5lcyA9IDwxPjsNCj4gPiArCQkJaW50ZXJydXB0cyA9IDwwIDEyMCBJUlFfVFlQ
-RV9MRVZFTF9ISUdIPjsNCj4gPiArCQkJaW50ZXJydXB0LW5hbWVzID0gIm1zaSI7DQo+ID4gKwkJ
-CSNpbnRlcnJ1cHQtY2VsbHMgPSA8MT47DQo+ID4gKwkJCWludGVycnVwdC1tYXAtbWFzayA9IDww
-IDAgMCAweDc+Ow0KPiA+ICsJCQlpbnRlcnJ1cHQtbWFwID0gPDAgMCAwIDEgJmludGMgMCAxMjMN
-Cj4gSVJRX1RZUEVfTEVWRUxfSElHSD4sDQo+ID4gKwkJCQkJPDAgMCAwIDIgJmludGMgMCAxMjIN
-Cj4gSVJRX1RZUEVfTEVWRUxfSElHSD4sDQo+ID4gKwkJCQkJPDAgMCAwIDMgJmludGMgMCAxMjEN
-Cj4gSVJRX1RZUEVfTEVWRUxfSElHSD4sDQo+ID4gKwkJCQkJPDAgMCAwIDQgJmludGMgMCAxMjAN
-Cj4gSVJRX1RZUEVfTEVWRUxfSElHSD47DQo+ID4gKwkJCWNsb2NrcyA9IDwmY2xrcyBJTVg2UURM
-X0NMS19QQ0lFX1JFRl8xMjVNPiwNCj4gPiArCQkJCSA8JmNsa3MgSU1YNlFETF9DTEtfU0FUQV9S
-RUZfMTAwTT4sDQo+ID4gKwkJCQkgPCZjbGtzIElNWDZRRExfQ0xLX0xWRFMxX0dBVEU+LCA8JmNs
-a3MNCj4gSU1YNlFETF9DTEtfUENJRV9BWEk+Ow0KPiA+ICsJCQljbG9jay1uYW1lcyA9ICJwY2ll
-X3BoeSIsICJyZWZfMTAwbSIsICJwY2llX2J1cyIsDQo+ICJwY2llIjsNCj4gPiArCQkJc3RhdHVz
-ID0gImRpc2FibGVkIjsNCj4gPiArCQl9Ow0KPiA+ICsNCj4gPiArCQlhaXBzLWJ1c0AwMjEwMDAw
-MCB7IC8qIEFJUFMyICovDQo+ID4gKwkJCXByZTE6IHByZUAwMjFjODAwMCB7DQo+ID4gKwkJCQlj
-b21wYXRpYmxlID0gImZzbCxpbXg2cS1wcmUiOw0KPiANCj4gSXMgdGhlcmUgYWxyZWFkeSBhIGRl
-dmljZSB0cmVlIGJpbmRpbmcgYW5kIGRyaXZlciBmb3IgdGhpcyBibG9jayBpbiB1cHN0cmVhbQ0K
-PiBrZXJuZWw/ICBJIGRvIG5vdCBhY2NlcHRlZCBhbnkgdW5lc3RhYmxpc2hlZCBkZXZpY2UuDQo+
-DQoNCk5vIGRyaXZlciBhdmFpbGFibGUgaW4gdXBzdHJlYW0ga2VybmVsLCBJIHdpbGwgcmVtb3Zl
-IHRoZXNlIG5vZGUgaW4gcGF0Y2ggVjMuIA0KDQo+ID4gKwkJCQlyZWcgPSA8MHgwMjFjODAwMCAw
-eDEwMDA+Ow0KPiA+ICsJCQkJY2xvY2tzID0gPCZjbGtzIElNWDZRRExfQ0xLX1BSRTA+Ow0KPiA+
-ICsJCQkJaW50ZXJydXB0cyA9IDwwIDkwIElSUV9UWVBFX0VER0VfUklTSU5HPjsNCj4gPiArCQkJ
-CW9jcmFtID0gPCZvY3JhbV8yPjsNCj4gPiArCQkJCXN0YXR1cyA9ICJkaXNhYmxlZCI7DQo+ID4g
-KwkJCX07DQo+ID4gKw0KPiA+ICsJCQlwcmUyOiBwcmVAMDIxYzkwMDAgew0KPiA+ICsJCQkJY29t
-cGF0aWJsZSA9ICJmc2wsaW14NnEtcHJlIjsNCj4gPiArCQkJCXJlZyA9IDwweDAyMWM5MDAwIDB4
-MTAwMD47DQo+ID4gKwkJCQljbG9ja3MgPSA8JmNsa3MgSU1YNlFETF9DTEtfUFJFMT47DQo+ID4g
-KwkJCQlpbnRlcnJ1cHRzID0gPDAgOTcgSVJRX1RZUEVfRURHRV9SSVNJTkc+Ow0KPiA+ICsJCQkJ
-b2NyYW0gPSA8Jm9jcmFtXzI+Ow0KPiA+ICsJCQkJc3RhdHVzID0gImRpc2FibGVkIjsNCj4gPiAr
-CQkJfTsNCj4gPiArDQo+ID4gKwkJCXByZTM6IHByZUAwMjFjYTAwMCB7DQo+ID4gKwkJCQljb21w
-YXRpYmxlID0gImZzbCxpbXg2cS1wcmUiOw0KPiA+ICsJCQkJcmVnID0gPDB4MDIxY2EwMDAgMHgx
-MDAwPjsNCj4gPiArCQkJCWNsb2NrcyA9IDwmY2xrcyBJTVg2UURMX0NMS19QUkUyPjsNCj4gPiAr
-CQkJCWludGVycnVwdHMgPSA8MCA5OCBJUlFfVFlQRV9FREdFX1JJU0lORz47DQo+ID4gKwkJCQlv
-Y3JhbSA9IDwmb2NyYW1fMz47DQo+ID4gKwkJCQlzdGF0dXMgPSAiZGlzYWJsZWQiOw0KPiA+ICsJ
-CQl9Ow0KPiA+ICsNCj4gPiArCQkJcHJlNDogcHJlQDAyMWNiMDAwIHsNCj4gPiArCQkJCWNvbXBh
-dGlibGUgPSAiZnNsLGlteDZxLXByZSI7DQo+ID4gKwkJCQlyZWcgPSA8MHgwMjFjYjAwMCAweDEw
-MDA+Ow0KPiA+ICsJCQkJY2xvY2tzID0gPCZjbGtzIElNWDZRRExfQ0xLX1BSRTM+Ow0KPiA+ICsJ
-CQkJaW50ZXJydXB0cyA9IDwwIDk5IElSUV9UWVBFX0VER0VfUklTSU5HPjsNCj4gPiArCQkJCW9j
-cmFtID0gPCZvY3JhbV8zPjsNCj4gPiArCQkJCXN0YXR1cyA9ICJkaXNhYmxlZCI7DQo+ID4gKwkJ
-CX07DQo+ID4gKw0KPiA+ICsJCQlwcmcxOiBwcmdAMDIxY2MwMDAgew0KPiA+ICsJCQkJY29tcGF0
-aWJsZSA9ICJmc2wsaW14NnEtcHJnIjsNCj4gDQo+IERpdHRvDQo+IA0KPiA+ICsJCQkJcmVnID0g
-PDB4MDIxY2MwMDAgMHgxMDAwPjsNCj4gPiArCQkJCWNsb2NrcyA9IDwmY2xrcyBJTVg2UURMX0NM
-S19QUkcwX0FYST4sDQo+ID4gKwkJCQkJIDwmY2xrcyBJTVg2UURMX0NMS19QUkcwX0FQQj47DQo+
-ID4gKwkJCQljbG9jay1uYW1lcyA9ICJheGkiLCAiYXBiIjsNCj4gPiArCQkJCWdwciA9IDwmZ3By
-PjsNCj4gPiArCQkJCXN0YXR1cyA9ICJkaXNhYmxlZCI7DQo+ID4gKwkJCX07DQo+ID4gKw0KPiA+
-ICsJCQlwcmcyOiBwcmdAMDIxY2QwMDAgew0KPiA+ICsJCQkJY29tcGF0aWJsZSA9ICJmc2wsaW14
-NnEtcHJnIjsNCj4gPiArCQkJCXJlZyA9IDwweDAyMWNkMDAwIDB4MTAwMD47DQo+ID4gKwkJCQlj
-bG9ja3MgPSA8JmNsa3MgSU1YNlFETF9DTEtfUFJHMV9BWEk+LA0KPiA+ICsJCQkJCSA8JmNsa3Mg
-SU1YNlFETF9DTEtfUFJHMV9BUEI+Ow0KPiA+ICsJCQkJY2xvY2stbmFtZXMgPSAiYXhpIiwgImFw
-YiI7DQo+ID4gKwkJCQlncHIgPSA8Jmdwcj47DQo+ID4gKwkJCQlzdGF0dXMgPSAiZGlzYWJsZWQi
-Ow0KPiA+ICsJCQl9Ow0KPiA+ICsJCX07DQo+ID4gKw0KPiA+ICsJCWlwdTE6IGlwdUAwMjQwMDAw
-MCB7DQo+ID4gKwkJCWNvbXBhdGlibGUgPSAiZnNsLGlteDZxcC1pcHUiLCAiZnNsLGlteDZxLWlw
-dSI7DQo+ID4gKwkJCWNsb2NrcyA9IDwmY2xrcyBJTVg2UURMX0NMS19JUFUxPiwNCj4gPiArCQkJ
-CSA8JmNsa3MgSU1YNlFETF9DTEtfSVBVMV9ESTA+LCA8JmNsa3MNCj4gSU1YNlFETF9DTEtfSVBV
-MV9ESTE+LA0KPiA+ICsJCQkJIDwmY2xrcyBJTVg2UURMX0NMS19JUFUxX0RJMF9TRUw+LCA8JmNs
-a3MNCj4gSU1YNlFETF9DTEtfSVBVMV9ESTFfU0VMPiwNCj4gPiArCQkJCSA8JmNsa3MgSU1YNlFE
-TF9DTEtfTERCX0RJMF9QT0RGPiwgPCZjbGtzDQo+IElNWDZRRExfQ0xLX0xEQl9ESTFfUE9ERj4s
-DQo+ID4gKwkJCQkgPCZjbGtzIElNWDZRRExfQ0xLX1BSRzBfQVBCPjsNCj4gPiArCQkJY2xvY2st
-bmFtZXMgPSAiYnVzIiwNCj4gPiArCQkJCSAgICAgICJkaTAiLCAiZGkxIiwNCj4gPiArCQkJCSAg
-ICAgICJkaTBfc2VsIiwgImRpMV9zZWwiLA0KPiA+ICsJCQkJICAgICAgImxkYl9kaTAiLCAibGRi
-X2RpMSIsICJwcmciOw0KPiA+ICsJCX07DQo+ID4gKw0KPiA+ICsJCWlwdTI6IGlwdUAwMjgwMDAw
-MCB7DQo+ID4gKwkJCWNvbXBhdGlibGUgPSAiZnNsLGlteDZxcC1pcHUiLCAiZnNsLGlteDZxLWlw
-dSI7DQo+ID4gKwkJCWNsb2NrcyA9IDwmY2xrcyBJTVg2UURMX0NMS19JUFUyPiwNCj4gPiArCQkJ
-CSA8JmNsa3MgSU1YNlFETF9DTEtfSVBVMl9ESTA+LCA8JmNsa3MNCj4gSU1YNlFETF9DTEtfSVBV
-Ml9ESTE+LA0KPiA+ICsJCQkJIDwmY2xrcyBJTVg2UURMX0NMS19JUFUyX0RJMF9TRUw+LCA8JmNs
-a3MNCj4gSU1YNlFETF9DTEtfSVBVMl9ESTFfU0VMPiwNCj4gPiArCQkJCSA8JmNsa3MgSU1YNlFE
-TF9DTEtfTERCX0RJMF9QT0RGPiwgPCZjbGtzDQo+IElNWDZRRExfQ0xLX0xEQl9ESTFfUE9ERj4s
-DQo+ID4gKwkJCQkgPCZjbGtzIElNWDZRRExfQ0xLX1BSRzFfQVBCPjsNCj4gPiArCQkJY2xvY2st
-bmFtZXMgPSAiYnVzIiwNCj4gPiArCQkJCSAgICAgICJkaTAiLCAiZGkxIiwNCj4gPiArCQkJCSAg
-ICAgICJkaTBfc2VsIiwgImRpMV9zZWwiLA0KPiA+ICsJCQkJICAgICAgImxkYl9kaTAiLCAibGRi
-X2RpMSIsICJwcmciOw0KPiA+ICsJCX07DQo+ID4gKw0KPiA+ICsJCXNhdGE6IHNhdGFAMDIyMDAw
-MDAgew0KPiA+ICsJCQljb21wYXRpYmxlID0gImZzbCxpbXg2cXAtYWhjaSI7DQo+ID4gKwkJCXJl
-ZyA9IDwweDAyMjAwMDAwIDB4NDAwMD47DQo+ID4gKwkJCWludGVycnVwdHMgPSA8MCAzOSBJUlFf
-VFlQRV9MRVZFTF9ISUdIPjsNCj4gPiArCQkJY2xvY2tzID0gPCZjbGtzIElNWDZRRExfQ0xLX1NB
-VEE+LA0KPiA+ICsJCQkJIDwmY2xrcyBJTVg2UURMX0NMS19TQVRBX1JFRl8xMDBNPiwNCj4gPiAr
-CQkJCSA8JmNsa3MgSU1YNlFETF9DTEtfQUhCPjsNCj4gPiArCQkJY2xvY2stbmFtZXMgPSAic2F0
-YSIsICJzYXRhX3JlZiIsICJhaGIiOw0KPiA+ICsJCQlzdGF0dXMgPSAiZGlzYWJsZWQiOw0KPiA+
-ICsJCX07DQo+ID4gKwl9Ow0KPiA+ICt9Ow0KPiA+ICsNCj4gPiArJmxkYiB7DQo+ID4gKwljb21w
-YXRpYmxlID0gImZzbCxpbXg2cXAtbGRiIiwgImZzbCxpbXg2cS1sZGIiLCAiZnNsLGlteDUzLWxk
-YiI7IH07DQo+ID4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2svaW14NnFk
-bC1jbG9jay5oDQo+ID4gYi9pbmNsdWRlL2R0LWJpbmRpbmdzL2Nsb2NrL2lteDZxZGwtY2xvY2su
-aA0KPiA+IGluZGV4IDc3OTg1Y2MuLjI5MDUwMzMgMTAwNjQ0DQo+ID4gLS0tIGEvaW5jbHVkZS9k
-dC1iaW5kaW5ncy9jbG9jay9pbXg2cWRsLWNsb2NrLmgNCj4gPiArKysgYi9pbmNsdWRlL2R0LWJp
-bmRpbmdzL2Nsb2NrL2lteDZxZGwtY2xvY2suaA0KPiANCj4gVGhpcyBmaWxlIHNob3VsZCBiZSB1
-cGRhdGVkIGluIHRoZSBwYXRjaCB0aGF0IHVwZGF0ZXMgY2xvY2sgZHJpdmVyLg0KPiBPbmx5IGFm
-dGVyIHRoZXNlIG5ldyBjbG9ja3MgZ2V0IHN1cHBvcnRlZCBieSBjbG9jayBkcml2ZXIsIHlvdSBj
-YW4gdXNlIHRoZW0gaW4NCj4gZGV2aWNlIHRyZWUuDQo+IA0KDQpvaywgdGhhbmtzIGZvciB5b3Ug
-cmV2aWV3Lg0KDQo+IFNoYXduDQo+IA0KPiA+IEBAIC0yNTUsNiArMjU1LDIwIEBADQo+ID4gICNk
-ZWZpbmUgSU1YNlFETF9DTEtfQ0FBTV9BQ0xLCQkJMjQyDQo+ID4gICNkZWZpbmUgSU1YNlFETF9D
-TEtfQ0FBTV9JUEcJCQkyNDMNCj4gPiAgI2RlZmluZSBJTVg2UURMX0NMS19TUERJRl9HQ0xLCQkJ
-MjQ0DQo+ID4gLSNkZWZpbmUgSU1YNlFETF9DTEtfRU5ECQkJCTI0NQ0KPiA+ICsjZGVmaW5lIElN
-WDZRRExfQ0xLX1VBUlRfU0VMCQkJMjQ1DQo+ID4gKyNkZWZpbmUgSU1YNlFETF9DTEtfSVBHX1BF
-Ul9TRUwJCQkyNDYNCj4gPiArI2RlZmluZSBJTVg2UURMX0NMS19FQ1NQSV9TRUwJCQkyNDcNCj4g
-PiArI2RlZmluZSBJTVg2UURMX0NMS19DQU5fU0VMCQkJMjQ4DQo+ID4gKyNkZWZpbmUgSU1YNlFE
-TF9DTEtfTU1EQ19DSDFfQVhJX0NHCQkyNDkNCj4gPiArI2RlZmluZSBJTVg2UURMX0NMS19QUkUw
-CQkJMjUwDQo+ID4gKyNkZWZpbmUgSU1YNlFETF9DTEtfUFJFMQkJCTI1MQ0KPiA+ICsjZGVmaW5l
-IElNWDZRRExfQ0xLX1BSRTIJCQkyNTINCj4gPiArI2RlZmluZSBJTVg2UURMX0NMS19QUkUzCQkJ
-MjUzDQo+ID4gKyNkZWZpbmUgSU1YNlFETF9DTEtfUFJHMF9BWEkJCQkyNTQNCj4gPiArI2RlZmlu
-ZSBJTVg2UURMX0NMS19QUkcxX0FYSQkJCTI1NQ0KPiA+ICsjZGVmaW5lIElNWDZRRExfQ0xLX1BS
-RzBfQVBCCQkJMjU2DQo+ID4gKyNkZWZpbmUgSU1YNlFETF9DTEtfUFJHMV9BUEIJCQkyNTcNCj4g
-PiArI2RlZmluZSBJTVg2UURMX0NMS19QUkVfQVhJCQkJMjU4DQo+ID4gKyNkZWZpbmUgSU1YNlFE
-TF9DTEtfRU5ECQkJCTI1OQ0KPiA+DQo+ID4gICNlbmRpZiAvKiBfX0RUX0JJTkRJTkdTX0NMT0NL
-X0lNWDZRRExfSCAqLw0KPiA+IC0tDQo+ID4gMS45LjENCj4gPg0KPiA+DQo=
+Hi Mike,
+
+On 2016/1/14 2:57, Michael Turquette wrote:
+> Quoting xuejiancheng (2016-01-12 19:03:01)
+>> Hi Stephen,
+>>    Thank you very much for your reply.
+>>
+>> On 2016/1/13 6:12, Stephen Boyd wrote:
+>>> On 01/08, Jiancheng Xue wrote:
+>>>> diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
+>>>> index e434854..b6baebf 100644
+>>>> --- a/drivers/clk/hisilicon/Kconfig
+>>>> +++ b/drivers/clk/hisilicon/Kconfig
+>>>> @@ -1,3 +1,10 @@
+>>>> +config COMMON_CLK_HI3519
+>>>> +    tristate "Clock Driver for Hi3519"
+>>>
+>>> It looks like this has to be bool. Otherwise it needs to be a
+>>> platform driver and the hisilicon APIs need to be exported and
+>>> lose their __init markings.
+>>>
+>> Yes,it's a problem. I will fix it in next version. Thank you.
+> 
+> The best solution would be to make this clock driver a real platform
+> driver.
+> 
+Now the work clock of the clocksource timer-sp804 is provided by this driver. So
+it need to be registered early by CLK_OF_DECLARE. If the timer clock is treated
+as a fixed-clock provider, this driver can be implemented as a platform driver.
+Then the crg device must be registered before other clock consumer devices.Accordingly
+the crg device node must be written above all other clock consumer devices node in dts files.
+I think it is also a dependence.
+
+Can you help me understand why it is better to make this driver a platform driver?
+Thank you very much!
+
+> Regards,
+> Mike
+> 
+>>
+>>>> +    depends on ARCH_HISI
+>>>> +    default y
+>>>> +    help
+>>>> +      Build the clock driver for hi3519.
+>>>> +
+>>>>  config COMMON_CLK_HI6220
+>>>>      bool "Hi6220 Clock Driver"
+>>>>      depends on ARCH_HISI || COMPILE_TEST
+>>>> diff --git a/drivers/clk/hisilicon/clk-hi3519.c b/drivers/clk/hisilicon/clk-hi3519.c
+>>>> new file mode 100644
+>>>> index 0000000..72d3a7b0
+>>>> --- /dev/null
+>>>> +++ b/drivers/clk/hisilicon/clk-hi3519.c
+>>>> @@ -0,0 +1,105 @@
+>>>> +
+>>>> +#define HI3519_FIXED_24M    (HI3519_EXT_CLKS + 1)
+>>>> +#define HI3519_FIXED_50M    (HI3519_EXT_CLKS + 2)
+>>>> +#define HI3519_FIXED_75M    (HI3519_EXT_CLKS + 3)
+>>>> +#define HI3519_FIXED_125M   (HI3519_EXT_CLKS + 4)
+>>>> +#define HI3519_FIXED_150M   (HI3519_EXT_CLKS + 5)
+>>>> +#define HI3519_FIXED_200M   (HI3519_EXT_CLKS + 6)
+>>>> +#define HI3519_FIXED_250M   (HI3519_EXT_CLKS + 7)
+>>>> +#define HI3519_FIXED_300M   (HI3519_EXT_CLKS + 8)
+>>>> +#define HI3519_FIXED_400M   (HI3519_EXT_CLKS + 9)
+>>>> +#define HI3519_FMC_MUX              (HI3519_EXT_CLKS + 10)
+>>>> +
+>>>> +#define HI3519_NR_CLKS      128
+>>>
+>>> Is this the same clock provider as the external clocks? I don't
+>>> understand why we're offsetting the clock numbering if we have
+>>> different providers. And if these are truly fixed clocks (except
+>>> for the mux) perhaps they're not even provided by this hardware
+>>> block, and are clocks that come from the board? If that's true
+>>> then I would expect them to be described in DT as fixed rate
+>>> clocks.
+>>>
+>> External clocks mentioned here are used directly as work clocks of other modules.
+>> Clocks defined in this file (internal clocks) are used as parents of external
+>> clocks. Internal clocks won't be referred by dts files and are just used in this driver.
+>> So they are moved here from the header file.
+>>
+>> External clocks and internal clocks are all generated by this CRG block. The input clock
+>> of the CRG block is always connected to a crystal oscillator on the board. So only one
+>> clock provider is defined here.
+>>
+>> Some clocks generated by CRG won't change their rate during the system running. These clocks
+>> are treated as fixed clocks here.
+>>
+>>>> +
+>>>> +static struct hisi_fixed_rate_clock hi3519_fixed_rate_clks[] __initdata = {
+>>>> +    { HI3519_FIXED_3M, "3m", NULL, CLK_IS_ROOT, 3000000, },
+>>>> +    { HI3519_FIXED_24M, "24m", NULL, CLK_IS_ROOT, 24000000, },
+>>>> +    { HI3519_FIXED_50M, "50m", NULL, CLK_IS_ROOT, 50000000, },
+>>>> +    { HI3519_FIXED_75M, "75m", NULL, CLK_IS_ROOT, 75000000, },
+>>>> +    { HI3519_FIXED_125M, "125m", NULL, CLK_IS_ROOT, 125000000, },
+>>>> +    { HI3519_FIXED_150M, "150m", NULL, CLK_IS_ROOT, 150000000, },
+>>>> +    { HI3519_FIXED_200M, "200m", NULL, CLK_IS_ROOT, 200000000, },
+>>>> +    { HI3519_FIXED_250M, "250m", NULL, CLK_IS_ROOT, 250000000, },
+>>>> +    { HI3519_FIXED_300M, "300m", NULL, CLK_IS_ROOT, 300000000, },
+>>>> +    { HI3519_FIXED_400M, "400m", NULL, CLK_IS_ROOT, 400000000, },
+>>>> +};
+>>>> +
+>>>> +static const char *fmc_mux_p[] __initconst = {
+>>>
+>>> const char * const ?
+>>>
+>>
+>> OK.
+>>
+>>>> +            "24m", "75m", "125m", "150m", "200m", "250m", "300m", "400m", };
+>>>> +static u32 fmc_mux_table[] = {0, 1, 2, 3, 4, 5, 6, 7};
+>>>> +
+>>>> +static struct hisi_mux_clock hi3519_mux_clks[] __initdata = {
+>>>> +    { HI3519_FMC_MUX, "fmc_mux", fmc_mux_p, ARRAY_SIZE(fmc_mux_p),
+>>>> +            CLK_SET_RATE_PARENT, 0xc0, 2, 3, 0, fmc_mux_table, },
+>>>> +};
+>>>> +
+>>>> +static struct hisi_gate_clock hi3519_gate_clks[] __initdata = {
+>>>
+>>> We should look into making these things const.
+>>>
+>> OK. I'll add this in next version.
+>>
+>>>> +    /* fmc */
+>>>> +    { HI3519_FMC_CLK, "clk_fmc", "fmc_mux",
+>>>> +            CLK_SET_RATE_PARENT, 0xc0, 1, 0, },
+>>>> +    /* uart */
+>>>> +    { HI3519_UART0_CLK, "clk_uart0", "24m",
+>>>> +            CLK_SET_RATE_PARENT, 0xe4, 20, 0, },
+>>>> +    { HI3519_UART1_CLK, "clk_uart1", "24m",
+>>>> +            CLK_SET_RATE_PARENT, 0xe4, 21, 0, },
+>>>> +    { HI3519_UART2_CLK, "clk_uart2", "24m",
+>>>> +            CLK_SET_RATE_PARENT, 0xe4, 22, 0, },
+>>>> +    { HI3519_UART3_CLK, "clk_uart3", "24m",
+>>>> +            CLK_SET_RATE_PARENT, 0xe4, 23, 0, },
+>>>> +    { HI3519_UART4_CLK, "clk_uart4", "24m",
+>>>> +            CLK_SET_RATE_PARENT, 0xe4, 24, 0, },
+>>>> +    { HI3519_SPI0_CLK, "clk_spi0", "50m",
+>>>> +            CLK_SET_RATE_PARENT, 0xe4, 16, 0, },
+>>>> +    { HI3519_SPI1_CLK, "clk_spi1", "50m",
+>>>> +            CLK_SET_RATE_PARENT, 0xe4, 17, 0, },
+>>>> +    { HI3519_SPI2_CLK, "clk_spi2", "50m",
+>>>> +            CLK_SET_RATE_PARENT, 0xe4, 18, 0, },
+>>>> +};
+>>>> +
+>>>> +static void __init hi3519_clk_init(struct device_node *np)
+>>>> +{
+>>>> +    struct hisi_clock_data *clk_data;
+>>>> +
+>>>> +
+>>>> +    clk_data = hisi_clk_init(np, HI3519_NR_CLKS);
+>>>> +    if (!clk_data)
+>>>> +            return;
+>>>> +
+>>>> +    hisi_clk_register_fixed_rate(hi3519_fixed_rate_clks,
+>>>> +                                 ARRAY_SIZE(hi3519_fixed_rate_clks),
+>>>> +                                 clk_data);
+>>>> +    hisi_clk_register_mux(hi3519_mux_clks, ARRAY_SIZE(hi3519_mux_clks),
+>>>> +                                    clk_data);
+>>>> +    hisi_clk_register_gate(hi3519_gate_clks,
+>>>> +                    ARRAY_SIZE(hi3519_gate_clks), clk_data);
+>>>> +
+>>>> +    hisi_reset_init(np);
+>>>> +}
+>>>> +
+>>>> +CLK_OF_DECLARE(hi3519_clk, "hisilicon,hi3519-crg", hi3519_clk_init);
+>>>> diff --git a/drivers/clk/hisilicon/reset.h b/drivers/clk/hisilicon/reset.h
+>>>> new file mode 100644
+>>>> index 0000000..37856089
+>>>> --- /dev/null
+>>>> +++ b/drivers/clk/hisilicon/reset.h
+>>>> @@ -0,0 +1,32 @@
+>>>> +/*
+>>>> + * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
+>>>> + *
+>>>> + * This program is free software; you can redistribute it and/or modify
+>>>> + * it under the terms of the GNU General Public License as published by
+>>>> + * the Free Software Foundation; either version 2 of the License, or
+>>>> + * (at your option) any later version.
+>>>> + *
+>>>> + * This program is distributed in the hope that it will be useful,
+>>>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>>>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>>>> + * GNU General Public License for more details.
+>>>> + *
+>>>> + * You should have received a copy of the GNU General Public License
+>>>> + * along with this program. If not, see <http://www.gnu.org/licenses/>.
+>>>> + */
+>>>> +
+>>>> +#ifndef     __HISI_RESET_H
+>>>> +#define     __HISI_RESET_H
+>>>> +
+>>>> +#include <linux/of.h>
+>>>
+>>> Drop this include and forward declare struct device_node instead.
+>>>
+>>
+>> OK.
+>>
+>>>> +
+>>>> +#ifdef CONFIG_RESET_CONTROLLER
+>>>> +int __init hisi_reset_init(struct device_node *np);
+>>>
+>>> We don't need __init in header files.
+>>>
+>> OK. I'll remove it. Thank you.
+>>
+>> Jiancheng
+>> .
+>>
+> 
+> .
+> 
+
