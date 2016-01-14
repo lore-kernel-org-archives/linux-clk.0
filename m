@@ -1,46 +1,45 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Subject: Re: [PATCH] [BUG] clk: rockchip: don't mark clock names as initconst
-Date: Fri, 01 Jan 2016 18:06:30 +0100
-Message-ID: <1799610.nrn5HMCSxL@diego>
-In-Reply-To: <2791943.MBZ53mI7Gp@wuerfel>
-References: <2791943.MBZ53mI7Gp@wuerfel>
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>
+CC: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [Patch V2 1/9] clk: tegra: Fix divider on VI_I2C
+Date: Thu, 14 Jan 2016 14:24:30 -0500
+Message-ID: <1452799478-14791-2-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
+References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Arnd,
+VI-I2C has 16 bits available for its divider. Switch the divider
+width to 16 instead of 8 so correct rates can be set.
 
-Am Freitag, 1. Januar 2016, 14:42:52 schrieb Arnd Bergmann:
-> The latest changes to the rockchip clk implementation cause
-> tons of warnings and/or errors (depending on the configuration):
-> 
-> WARNING: vmlinux.o(.data+0x125394): Section mismatch in reference from the
-> variable __compound_literal.125 to the (unknown reference)
-> .init.rodata:(unknown)
-> 
-> The reason is a compount literal in a macro that refers to an
-> object in the .init.rodata section:
-> 
->  #define COMPOSITE_FRACMUX(_id, cname, pname, f, mo, df, go, gs, gf, ch) \
->         {                                                       \
-> 		...
->                 .child          = &(struct rockchip_clk_branch)ch, \
->         }
-> 
-> 'ch' here is placed in .data, and I could find no way to override that
-> using an attribute or pragma because there is no identifier associated
-> with it.
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-"[PATCH] clk: rockchip: fix section mismatches with new child-clocks" [0]
-
-should be in Mike's + Stephen's inbox since last week as well, which moves the 
-offending new elements into separate entities, which can have __initdata 
-attributes again.
-
-
-Heiko
-
-[0] http://www.spinics.net/lists/arm-kernel/msg471295.html
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 6ad381a888a6..105405ca85ab 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -782,7 +782,7 @@ static struct tegra_periph_init_data periph_clks[] = {
+ 	NODIV("sor1", mux_clkm_sor1_brick_sor1_src, CLK_SOURCE_SOR1, 15, MASK(1), 183, 0, tegra_clk_sor1, &sor1_lock),
+ 	MUX8("sdmmc_legacy", mux_pllp_out3_clkm_pllp_pllc4, CLK_SOURCE_SDMMC_LEGACY, 193, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_sdmmc_legacy),
+ 	MUX8("qspi", mux_pllp_pllc_pllc_out1_pllc4_out2_pllc4_out1_clkm_pllc4_out0, CLK_SOURCE_QSPI, 211, TEGRA_PERIPH_ON_APB, tegra_clk_qspi),
+-	MUX("vii2c", mux_pllp_pllc_clkm, CLK_SOURCE_VI_I2C, 208, TEGRA_PERIPH_ON_APB, tegra_clk_vi_i2c),
++	I2C("vii2c", mux_pllp_pllc_clkm, CLK_SOURCE_VI_I2C, 208, tegra_clk_vi_i2c),
+ 	MUX("mipibif", mux_pllp_clkm, CLK_SOURCE_MIPIBIF, 173, TEGRA_PERIPH_ON_APB, tegra_clk_mipibif),
+ 	MUX("uartape", mux_pllp_pllc_clkm, CLK_SOURCE_UARTAPE, 212, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_uartape),
+ 	MUX8("tsecb", mux_pllp_pllc2_c_c3_clkm, CLK_SOURCE_TSECB, 206, 0, tegra_clk_tsecb),
+-- 
+1.9.1
