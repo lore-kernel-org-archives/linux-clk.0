@@ -1,171 +1,68 @@
-Return-Path: <andi.shyti@samsung.com>
-From: Andi Shyti <andi.shyti@samsung.com>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Sangbeom Kim <sbkim73@samsung.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>,
- Andi Shyti <andi@etezian.org>, Yadwinder Singh Brar <yadi.brar01@gmail.com>
-Subject: [PATCH v2 1/3] clk: s2mps11: allocate only one structure for clock init
-Date: Tue, 19 Jan 2016 17:52:30 +0900
-Message-id: <1453193552-4761-2-git-send-email-andi.shyti@samsung.com>
-In-reply-to: <1453193552-4761-1-git-send-email-andi.shyti@samsung.com>
-References: <1453193552-4761-1-git-send-email-andi.shyti@samsung.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Wynter Woods <wynter@nextthing.co>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 01/26] reset: Move DT cell size check to the core
+Date: Thu, 14 Jan 2016 16:24:44 +0100
+Message-Id: <1452785109-6172-2-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The driver allocates three structures for three different clock
-types. They are quite similar and in the clock init data they
-differ only by the name. Only one of these structures is used,
-while the others lie unused in the memory.
+The core currently doesn't check that the DT cell size matches what the
+driver declares, which means that every xlate function needs to duplicate
+that check.
 
-The clock's name, though, is not such a meaningful information
-and by assigning the same name to the initial data we can avoid
-over allocation. The common name chosen will be s2mps11,
-coherently with the device driver name, instead of the clock
-device.
+Make sure that of_reset_control_get checks for this to avoid duplication
+and errors.
 
-Therefore, remove the structures associated to s2mps13 and
-s2mps14 and use only the one referred to s2mps11 for all kind of
-clocks.
-
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- drivers/clk/clk-s2mps11.c | 56 ++++++-----------------------------------------
- 1 file changed, 7 insertions(+), 49 deletions(-)
+ drivers/reset/core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index d266299..22d4df2 100644
---- a/drivers/clk/clk-s2mps11.c
-+++ b/drivers/clk/clk-s2mps11.c
-@@ -99,6 +99,7 @@ static struct clk_ops s2mps11_clk_ops = {
- 	.recalc_rate	= s2mps11_clk_recalc_rate,
- };
- 
-+/* This s2mps11_clks_init tructure is common to s2mps11, s2mps13 and s2mps14 */
- static struct clk_init_data s2mps11_clks_init[S2MPS11_CLKS_NUM] = {
- 	[S2MPS11_CLK_AP] = {
- 		.name = "s2mps11_ap",
-@@ -117,43 +118,11 @@ static struct clk_init_data s2mps11_clks_init[S2MPS11_CLKS_NUM] = {
- 	},
- };
- 
--static struct clk_init_data s2mps13_clks_init[S2MPS11_CLKS_NUM] = {
--	[S2MPS11_CLK_AP] = {
--		.name = "s2mps13_ap",
--		.ops = &s2mps11_clk_ops,
--		.flags = CLK_IS_ROOT,
--	},
--	[S2MPS11_CLK_CP] = {
--		.name = "s2mps13_cp",
--		.ops = &s2mps11_clk_ops,
--		.flags = CLK_IS_ROOT,
--	},
--	[S2MPS11_CLK_BT] = {
--		.name = "s2mps13_bt",
--		.ops = &s2mps11_clk_ops,
--		.flags = CLK_IS_ROOT,
--	},
--};
--
--static struct clk_init_data s2mps14_clks_init[S2MPS11_CLKS_NUM] = {
--	[S2MPS11_CLK_AP] = {
--		.name = "s2mps14_ap",
--		.ops = &s2mps11_clk_ops,
--		.flags = CLK_IS_ROOT,
--	},
--	[S2MPS11_CLK_BT] = {
--		.name = "s2mps14_bt",
--		.ops = &s2mps11_clk_ops,
--		.flags = CLK_IS_ROOT,
--	},
--};
--
- static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev,
- 		struct clk_init_data *clks_init)
+diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+index 7955e00d04d4..d53b2b980bdd 100644
+--- a/drivers/reset/core.c
++++ b/drivers/reset/core.c
+@@ -46,9 +46,6 @@ struct reset_control {
+ static int of_reset_simple_xlate(struct reset_controller_dev *rcdev,
+ 			  const struct of_phandle_args *reset_spec)
  {
- 	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
- 	struct device_node *clk_np;
--	int i;
- 
- 	if (!iodev->dev->of_node)
- 		return ERR_PTR(-EINVAL);
-@@ -164,13 +133,6 @@ static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev,
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
--		if (!clks_init[i].name)
--			continue; /* Skip clocks not present in some devices */
--		of_property_read_string_index(clk_np, "clock-output-names", i,
--				&clks_init[i].name);
--	}
+-	if (WARN_ON(reset_spec->args_count != rcdev->of_reset_n_cells))
+-		return -EINVAL;
 -
- 	return clk_np;
- }
+ 	if (reset_spec->args[0] >= rcdev->nr_resets)
+ 		return -EINVAL;
  
-@@ -179,8 +141,8 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
- 	struct s2mps11_clk *s2mps11_clks, *s2mps11_clk;
- 	unsigned int s2mps11_reg;
--	struct clk_init_data *clks_init;
- 	int i, ret = 0;
-+	enum sec_device_type hwid = platform_get_device_id(pdev)->driver_data;
- 
- 	s2mps11_clks = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
- 				sizeof(*s2mps11_clk), GFP_KERNEL);
-@@ -194,22 +156,18 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 	if (!clk_table)
- 		return -ENOMEM;
- 
--	switch(platform_get_device_id(pdev)->driver_data) {
-+	switch (hwid) {
- 	case S2MPS11X:
- 		s2mps11_reg = S2MPS11_REG_RTC_CTRL;
--		clks_init = s2mps11_clks_init;
- 		break;
- 	case S2MPS13X:
- 		s2mps11_reg = S2MPS13_REG_RTCCTRL;
--		clks_init = s2mps13_clks_init;
- 		break;
- 	case S2MPS14X:
- 		s2mps11_reg = S2MPS14_REG_RTCCTRL;
--		clks_init = s2mps14_clks_init;
- 		break;
- 	case S5M8767X:
- 		s2mps11_reg = S5M8767_REG_CTRL1;
--		clks_init = s2mps11_clks_init;
- 		break;
- 	default:
- 		dev_err(&pdev->dev, "Invalid device type\n");
-@@ -217,15 +175,15 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+@@ -182,6 +179,9 @@ struct reset_control *of_reset_control_get(struct device_node *node,
+ 		return ERR_PTR(-EPROBE_DEFER);
  	}
  
- 	/* Store clocks of_node in first element of s2mps11_clks array */
--	s2mps11_clks->clk_np = s2mps11_clk_parse_dt(pdev, clks_init);
-+	s2mps11_clks->clk_np = s2mps11_clk_parse_dt(pdev, s2mps11_clks_init);
- 	if (IS_ERR(s2mps11_clks->clk_np))
- 		return PTR_ERR(s2mps11_clks->clk_np);
- 
- 	for (i = 0; i < S2MPS11_CLKS_NUM; i++, s2mps11_clk++) {
--		if (!clks_init[i].name)
-+		if (i == S2MPS11_CLK_CP && hwid == S2MPS14X)
- 			continue; /* Skip clocks not present in some devices */
- 		s2mps11_clk->iodev = iodev;
--		s2mps11_clk->hw.init = &clks_init[i];
-+		s2mps11_clk->hw.init = &s2mps11_clks_init[i];
- 		s2mps11_clk->mask = 1 << i;
- 		s2mps11_clk->reg = s2mps11_reg;
- 
-@@ -248,7 +206,7 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 
- 	for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
- 		/* Skip clocks not present on S2MPS14 */
--		if (!clks_init[i].name)
-+		if (i == S2MPS11_CLK_CP && hwid == S2MPS14X)
- 			continue;
- 		clk_table[i] = s2mps11_clks[i].clk;
- 	}
++	if (WARN_ON(args.args_count != rcdev->of_reset_n_cells))
++		return ERR_PTR(-EINVAL);
++
+ 	rstc_id = rcdev->of_xlate(rcdev, &args);
+ 	if (rstc_id < 0) {
+ 		mutex_unlock(&reset_controller_list_mutex);
 -- 
-2.7.0.rc3
+2.6.4
