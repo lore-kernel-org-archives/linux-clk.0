@@ -1,82 +1,111 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga03-in.huawei.com ([119.145.14.66]:2252 "EHLO
-	szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932302AbcAZDMe (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jan 2016 22:12:34 -0500
-Subject: Re: [PATCH v7 4/6] ARM: debug: add hi3519 debug uart
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>
-References: <1453690883-31220-1-git-send-email-xuejiancheng@huawei.com>
- <1453690883-31220-5-git-send-email-xuejiancheng@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
-	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
-	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>
-From: xuejiancheng <xuejiancheng@huawei.com>
-Message-ID: <56A6E2D5.7040104@huawei.com>
-Date: Tue, 26 Jan 2016 11:07:01 +0800
+Received: from mailgw02.mediatek.com ([210.61.82.184]:56122 "EHLO
+	mailgw02.hq.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751028AbcANFzc (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jan 2016 00:55:32 -0500
+Message-ID: <1452750917.5384.24.camel@mtksdaap41>
+Subject: Re: [PATCH v2] clk: mediatek: Allow changing PLL rate when it is off
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Michael Turquette <mturquette@baylibre.com>
+CC: Matthias Brugger <matthias.bgg@gmail.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>,
+	<srv_heupstream@mediatek.com>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>
+Date: Thu, 14 Jan 2016 13:55:17 +0800
+In-Reply-To: <20160114022637.1942.4564@quark.deferred.io>
+References: <1452482936-51852-1-git-send-email-jamesjj.liao@mediatek.com>
+	 <20160114022637.1942.4564@quark.deferred.io>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-In-Reply-To: <1453690883-31220-5-git-send-email-xuejiancheng@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Mike,
 
-
-On 2016/1/25 11:01, Jiancheng Xue wrote:
-> add hi3519 debug uart
+On Wed, 2016-01-13 at 18:26 -0800, Michael Turquette wrote:
+> Hi James,
 > 
-> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
-> ---
->  arch/arm/Kconfig.debug | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+> Quoting James Liao (2016-01-10 19:28:56)
+> > Some modules may need to change its clock rate before turn on it.
+> > So changing PLL's rate when it is off should be allowed.
+> > This patch removes PLL enabled check before set rate, so that
+> > PLLs can set new frequency even if they are off.
+> > 
+> > On MT8173 for example, ARMPLL's enable bit can be controlled by
+> > other HW. That means ARMPLL may be turned on even if we (CPU / SW)
+> > set ARMPLL's enable bit as 0. In this case, SW may want and can
+> > still change ARMPLL's rate by changing its pcw and postdiv settings.
+> > But without this patch, new pcw setting will not be applied because
+> > its enable bit is 0.
 > 
-> diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-> index c6b6175..b02a7c1 100644
-> --- a/arch/arm/Kconfig.debug
-> +++ b/arch/arm/Kconfig.debug
-> @@ -260,6 +260,14 @@ choice
->  		  Say Y here if you want kernel low-level debugging support
->  		  on Cortina Gemini based platforms.
->  
-> +	config DEBUG_HI3519_UART
-> +		bool "Hisilicon HI3519 Debug UART"
-> +		depends on ARCH_HISI
-> +		select DEBUG_UART_PL01X
-> +		help
-> +		  Say Y here if you want kernel low-level debugging support
-> +		  on HI3519 UART.
-> +
->  	config DEBUG_HI3620_UART
->  		bool "Hisilicon HI3620 Debug UART"
->  		depends on ARCH_HI3xxx
-> @@ -1451,6 +1459,7 @@ config DEBUG_UART_PHYS
->  	default 0x11002000 if DEBUG_MT8127_UART0
->  	default 0x11006000 if DEBUG_MT6589_UART0
->  	default 0x11009000 if DEBUG_MT8135_UART3
-> +	default 0x12100000 if DEBUG_HI3519_UART
->  	default 0x16000000 if DEBUG_INTEGRATOR
->  	default 0x18000300 if DEBUG_BCM_5301X
->  	default 0x18010000 if DEBUG_SIRFATLAS7_UART0
-> @@ -1514,6 +1523,7 @@ config DEBUG_UART_PHYS
->  	default 0xfcb00000 if DEBUG_HI3620_UART
->  	default 0xfd883000 if DEBUG_ALPINE_UART0
->  	default 0xfe800000 if ARCH_IOP32X
-> +	default 0xfef00000 if DEBUG_HI3519_UART
+> Must the clock signal be enabled to change the PLL rate? If so, does
+> ARMPLL set the CLK_SET_RATE_GATE flag?
 
-Sorry. This line is put in a wrong place by my mistake. I'll correct it in next version.
+No. The controlling of PLL's rate and enable are independent. So we can
+change the PLL's rate when it's enabled or disabled.
 
->  	default 0xff690000 if DEBUG_RK32_UART2
->  	default 0xffc02000 if DEBUG_SOCFPGA_UART0
->  	default 0xffc02100 if DEBUG_SOCFPGA_UART1
+> > 
+> > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> > ---
+> >  drivers/clk/mediatek/clk-pll.c | 9 ++-------
+> >  1 file changed, 2 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
+> > index 966cab1..8e31fae 100644
+> > --- a/drivers/clk/mediatek/clk-pll.c
+> > +++ b/drivers/clk/mediatek/clk-pll.c
+> > @@ -91,9 +91,6 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
+> >                 int postdiv)
+> >  {
+> >         u32 con1, val;
+> > -       int pll_en;
+> > -
+> > -       pll_en = readl(pll->base_addr + REG_CON0) & CON0_BASE_EN;
+> >  
+> >         /* set postdiv */
+> >         val = readl(pll->pd_addr);
+> > @@ -114,15 +111,13 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
+> >  
+> >         con1 = readl(pll->base_addr + REG_CON1);
+> >  
+> > -       if (pll_en)
+> > -               con1 |= CON0_PCW_CHG;
+> > +       con1 |= CON0_PCW_CHG;
 > 
+> This unconditionally enables the PLL whenever clk_set_rate is called,
+> changing the previous behavior. The clk framework still tracks the
+> intent of ARMPLLs users with the enable_count. How about something like
+> the following:
+
+Not really. This patch will not enable or disable PLL when we change its
+rate. The PLL enable bit is bit[0], we didn't change bit[0] in
+mtk_pll_set_rate_regs(), so its state will not be changed.
+
+This patch set CON0_PCW_CHG (bit[31]) no matter the PLL is enabled or
+not. So we don't need to check the enable bit[0] nor PLL state in the
+framework before set bit[31].
+
+> 	bool pll_en = clk_hw_is_enabled(&pll->hw);
+> 
+> 	if (pll_en)
+> 		con1 |= CON0_PCW_CHG;
+> 
+> 	writel(con1, pll->base_addr + REG_CON1);
+> 	if (pll->tuner_addr)
+> 		writel(con1 + 1, pll->tuner_addr);
+> 
+> 	if (pll_en)
+> 		udelay(20);
+> 
+> This does not rely on the hardware to tell us the intent of the user,
+> but instead on our framework usecounting.
+
+
+Best regards,
+
+James
 
