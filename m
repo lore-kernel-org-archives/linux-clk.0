@@ -1,464 +1,248 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>
+CC: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rhyland Klein <rklein@nvidia.com>
+Subject: [Patch V2 2/9] clk: tegra210: Remove improper flags for lock_enable
+Date: Thu, 14 Jan 2016 14:24:31 -0500
+Message-ID: <1452799478-14791-3-git-send-email-rklein@nvidia.com>
+In-Reply-To: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
+References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-From: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, sboyd@codeaurora.org
-To: torvalds@linux-foundation.org
-Message-ID: <20160115213618.19367.51299@quark.deferred.io>
-Subject: [GIT PULL] clk: changes for 4.5
-Date: Fri, 15 Jan 2016 13:36:18 -0800
+Content-Type: text/plain
+Return-Path: rklein@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The following changes since commit 4ef7675344d687a0ef5b0d7c0cee12da005870c0:
+Most PLL's don't actually have LOCK_ENABLE bits. However, most PLL's
+also had that flag set, which meant that the clk code was trying to
+enable locks, and inadvertantly flipping bits in other fields.
 
-  Linux 4.4-rc6 (2015-12-20 16:06:09 -0800)
+For PLLM, ensure the correct register is used for the misc_register.
+PLL_MISC0 contains the EN_LCKDET bit which should be used for enabling
+the lock, and PLLM_MISC1 shouldn't be used at all.
 
-are available in the git repository at:
+Lastly, remove some of the settings which would point to the EN_LCKDET
+bits for some PLLs. There is no need to enable the locks, and that is
+done as part of the set_defaults logic already.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-=
-linus-4.5
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 42 ++++++++++++++--------------------------
+ 1 file changed, 14 insertions(+), 28 deletions(-)
 
-for you to fetch changes up to 3da834e3e5a4a5d26882955298b55a9ed37a00bc:
-
-  clk: remove duplicated COMMON_CLK_NXP record from clk/Kconfig (2016-01-13=
- 18:09:52 -0800)
-
-----------------------------------------------------------------
-The clk framework and driver changes for 4.5 look pretty typical. The
-bulk of the changes are to clk controller drivers, though some
-improvements to the core and some re-usable blocks/templates also
-received some love. In this past cycle the clk maintainers developed a
-good workflow for handling the common case of patch submissions
-containing a new drivers, new shared Device Tree header and a new Device
-Tree binding description. This requires coordination with the Device
-Tree maintainers and with the architecture maintainers (typically the
-arm-soc tree in our case). This explains the increase in changes to
-include/dt-bindings/... and to
-Documentation/devicetree/bindings/clock/... coming from the clk tree.
-The same commits can be expected to come through those trees on
-occasion, through the use of shared, immutable branches.
-
-----------------------------------------------------------------
-Alexandre Belloni (1):
-      clk: at91: Revert "keep slow clk enabled to prevent system hang"
-
-Andrew Bresticker (1):
-      clk: tegra: pll: Fix issues with rates for VCO PLLs
-
-Andrzej Hajda (1):
-      clk: sunxi: fix handling return value of of_property_match_string
-
-Arnd Bergmann (1):
-      clk: st: avoid uninitialized variable use
-
-Bai Ping (3):
-      clk: imx: add 'is_prepared' clk_ops callback for pllv3 clk
-      clk: imx: Add a virtual arm clk on i.mx7d
-      clk: imx: Replace clk error check with imx_check_clocks()
-
-Bartlomiej Zolnierkiewicz (1):
-      clk: samsung: exynos542x/5800: fix cpu clock configuration data
-
-Bill Huang (8):
-      clk: tegra: pll: Change misc_reg count from 3 to 6
-      clk: tegra: pll: Add code to handle if resets are supported by PLL
-      clk: tegra: pll: Adjust vco_min if SDM present
-      clk: tegra: pll: Add Set_default logic
-      clk: tegra: pll: Add logic for SS
-      clk: tegra: Add Super Gen5 Logic
-      clk: tegra: Fix WARN_ON in PLL_RE registration
-      clk: tegra: Read correct IDDQ register in PLL_SS registration
-
-Brian Norris (1):
-      clk: gpio: handle error codes for of_clk_get_parent_count()
-
-Caesar Wang (1):
-      clk: rockchip: Force rk3368 PWM clock (and its parents) on
-
-Chen-Yu Tsai (5):
-      clk: sunxi: Add sun9i A80 apbs gates support
-      clk: sunxi: Add sun9i A80 cpus (cpu special) clock support
-      clk: sunxi: Add DRAM gates support for sun4i-a10
-      clk: sunxi: Add VE (Video Engine) module clock driver for sun[457]i
-      clk: sunxi: Add CLK_OF_DECLARE support for sun8i-a23-apb0-clk driver
-
-Chris Zhong (3):
-      clk: rockchip: add id for mipidsi sclk on rk3288
-      clk: rockchip: add mipidsi clock on rk3288
-      clk: rockchip: switch PLLs to slow mode before reboot for rk3288
-
-Dan Carpenter (1):
-      clk: sunxi: signedness bug in sun8i_h3_bus_gates_init()
-
-Danny Huang (1):
-      clk: tegra: pll: Update PLLM handling
-
-Eric Anholt (2):
-      clk: bcm2835: Add bindings for the auxiliary peripheral clock gates.
-      clk: bcm2835: Add a driver for the auxiliary peripheral clock gates.
-
-Florian Fainelli (2):
-      clk: iproc: Extend binding to cover BCM63138
-      clk: bcm: Add BCM63138 clock support
-
-Geert Uytterhoeven (7):
-      clk: Use static inline functions instead of macros for dummies
-      clk: Spelling s/derefing/dereferencing/
-      clk: shmobile: rcar-gen2: Spelling/Grammar: dependant of, ouput
-      clk: shmobile: div6: Make clock-output-names optional
-      clk: shmobile: div6: Extract cpg_div6_register()
-      clk: shmobile: Add new CPG/MSSR driver core
-      clk: shmobile: r8a7795: Add new CPG/MSSR driver
-
-Georgi Djakov (1):
-      clk: qcom: msm8916: Move xo and sleep clocks into DT
-
-Heiko Stuebner (8):
-      Merge branch 'v4.5-clk/clkids' into v4.5-clk/next
-      Merge branch 'v4.5-clk/clkids' into v4.5-clk/next
-      clk: rockchip: fix rk3368 cpuclk divider offsets
-      Merge branch 'v4.5-clk/clkids' into v4.5-clk/next
-      clk: rockchip: only enter pll slow-mode directly before reboots on rk=
-3288
-      clk: rockchip: handle mux dependency of fractional dividers
-      clk: rockchip: include downstream muxes into fractional dividers
-      clk: add flag for clocks that need to be enabled on rate changes
-
-Heiko St=C3=BCbner (1):
-      clk: rockchip: fix section mismatches with new child-clocks
-
-Jacob Siverskog (1):
-      clk: si5351: Add PLL soft reset
-
-Jeffy Chen (4):
-      clk: rockchip: allow more than 2 parents for cpuclk
-      clk: rockchip: add dt-binding header for rk3228
-      dt-bindings: add documentation of rk3228 clock controller
-      clk: rockchip: add clock controller for rk3228
-
-Jens Kuske (1):
-      clk: sunxi: Add H3 clocks support
-
-Jianqun xu (1):
-      clk: rockchip: protect rk3368 aclk_bus and aclk_peri clocks
-
-Julia Lawall (1):
-      clk: ti: dra7: constify clk_hw_omap_ops structure
-
-Kuninori Morimoto (1):
-      clk: add CS2000 Fractional-N driver
-
-Loc Ho (1):
-      clk: xgene: Fix divider with non-zero shift value
-
-Magnus Damm (1):
-      clk: shmobile: Rework CONFIG_ARCH_SHMOBILE_MULTI
-
-Marc Gonzalez (1):
-      clk: tango4: clkgen driver for Tango4 platforms
-
-Marek Szyprowski (3):
-      clk: samsung: exynos542x: add missing parent GSCL block clocks
-      clk: samsung: exynos542x: fix MFC clock hierarchy parent
-      clk: exynos: use irqsave version of spin_lock to avoid deadlock with =
-irqs
-
-Markus Pargmann (1):
-      clk: imx25: Remove osc clock from driver
-
-Masahiro Yamada (6):
-      clk: remove redundant negative index check in of_clk_get_parent_name()
-      clk: use IS_ERR_OR_NULL(hw) instead of !hw || IS_ERR(hw)
-      clk: fix a typo in comment block of struct clk_rate_request
-      clk: fix a typo in comment block of clk_notifier_register()
-      clk: let of_clk_get_parent_name() fail for invalid clock-indices
-      clk: fix codying style of if ... else blocks
-
-Michael Trimarchi (1):
-      clk: imx: clk-imx6q: Let OSC to be routed to anaclk2/2b
-
-Michael Turquette (14):
-      Merge branch 'clk-shmobile-for-v4.5' of git://git.kernel.org/.../geer=
-t/renesas-drivers into clk-next
-      Merge tag 'v4.5-rockchip-clk1_1' of git://git.kernel.org/.../mmind/li=
-nux-rockchip into clk-next
-      Merge tag 'imx-clk-v4.5' of git://git.kernel.org/.../shawnguo/linux i=
-nto clk-next
-      Merge commit 'fe5fa8fbd4d47f40a45fa29ee1abdb10cb061ec2' into clk-next
-      Merge tag 'clk-samsung-4.5' of git://linuxtv.org/snawrocki/samsung in=
-to clk-next
-      Merge branch 'clk-dove' into clk-next
-      Merge branch 'clk-bcm2835' into clk-next
-      Merge branch 'clk-rockchip' into clk-next
-      Merge tag 'sunxi-clocks-for-4.5' of https://git.kernel.org/.../mripar=
-d/linux into clk-next
-      Merge branch 'clk-lpc32xx' into clk-next
-      Merge branch 'clk-bcm2835' into clk-next
-      Merge branch 'clk-renesas' into clk-next
-      Merge branch 'clk-rockchip' into clk-next
-      Merge tag 'tegra-for-4.5-clk' of git://git.kernel.org/.../tegra/linux=
- into clk-next
-
-Patrick Br=C3=BCnn (1):
-      clk: imx5: ipu_di_sel clocks can set parent rates
-
-Prasanna Karthik (1):
-      clk: s3c2410: removed unneeded variable in s3c24xx_clkout_set_parent
-
-Reinder de Haan (1):
-      clk: sunxi: Add support for the H3 usb phy clocks
-
-Remi Pommarel (3):
-      clk: bcm2835: add a round up ability to the clock divisor
-      clk: bcm2835: Support for clock parent selection
-      clk: bcm2835: Add PWM clock support
-
-Rhyland Klein (12):
-      clk: tegra: periph: Add new periph clks and muxes for Tegra210
-      clk: tegra: pll: Add tegra_pll_wait_for_lock to clk header
-      clk: tegra: pll: Simplify clk_enable_path
-      clk: tegra: pll: Update warning message
-      clk: tegra: pll: Don't unconditionally set LOCK flags
-      clk: tegra: pll: Add logic for handling SDM data
-      clk: tegra: pll: Add logic for out-of-table rates for T210
-      clk: tegra: pll: Fix _pll_ramp_calc_pll logic and _calc_dynamic_ramp_=
-rate
-      clk: tegra: pll: Add specialized logic for Tegra210
-      clk: tegra: pll: Add support for PLLMB for Tegra210
-      clk: tegra: pll: Add dyn_ramp callback
-      clk: tegra: Add support for Tegra210 clocks
-
-Russell King (2):
-      clk: add Dove PLL divider support for GPU, VMeta and AXI clocks
-      clk: fix clk-gpio.c with optional clock=3D DT property
-
-Sjoerd Simons (1):
-      clk: rockchip: Allow the RK3288 SPDIF clocks to change their parent
-
-Stephen Boyd (11):
-      clk: qcom: common: Add API to register board clocks backwards compati=
-bly
-      clk: qcom: Move cxo/pxo/xo into dt files
-      clk: qcom: Specify LE device endianness
-      Merge branch 'clk-bcm63xx' into clk-next
-      clk: divider: Cap table divider values to 'width' member
-      clk: qcom: Add Alpha PLL support
-      clk: qcom: Add MSM8996 Global Clock Control (GCC) driver
-      clk: qcom: Add gfx3d ping-pong PLL frequency switching
-      clk: qcom: Add MSM8996 Multimedia Clock Controller (MMCC) driver
-      Merge branch 'clk-msm8996' into clk-next
-      Merge branch 'clk-fixes' into clk-next
-
-Sudip Mukherjee (3):
-      clk: versatile: fix memory leak
-      clk: versatile: remove unneeded error message
-      clk: gpio: fix memory leak
-
-Tero Kristo (1):
-      clk: ti: omap5+: dpll: implement errata i810
-
-Thierry Reding (5):
-      clk: tegra: Add Tegra210 device tree binding
-      clk: tegra: Fix 26 MHz oscillator frequency
-      clk: tegra: Miscellaneous coding style cleanups
-      clk: tegra: Format tables consistently
-      clk: tegra: Constify pdiv-to-hw mappings
-
-Thomas Abraham (1):
-      clk: samsung: exynos5420: add cpu clock configuration data and instan=
-tiate cpu clock
-
-Ulrich Hecht (1):
-      clk: shmobile: r8a7795: Add SATA0 clock
-
-Vladimir Zapolskiy (6):
-      dt-bindings: clock: add description of LPC32xx clock controller
-      dt-bindings: clock: add description of LPC32xx USB clock controller
-      dt-bindings: clock: add NXP LPC32xx clock list for consumers
-      clk: lpc18xx: add NXP specific COMMON_CLK_NXP configuration symbol
-      clk: lpc32xx: add common clock framework driver
-      clk: remove duplicated COMMON_CLK_NXP record from clk/Kconfig
-
-Xing Zheng (5):
-      clk: rockchip: add dt-binding header for rk3036
-      dt-bindings: add documentation of rk3036 clock controller
-      clk: rockchip: add new pll-type for rk3036 and similar socs
-      clk: rockchip: add clock controller for rk3036
-      clk: rockchip: rk3036: include downstream muxes into fractional divid=
-ers
-
-Yakir Yang (1):
-      clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for aclk_vio
-
-Zain Wang (2):
-      clk: rockchip: add an id for rk3288 crypto clk
-      clk: rockchip: set the id for crypto clk
-
-ZhengShunQian (2):
-      clk: rockchip: Add the clock ids of rk3288 eFuses
-      clk: rockchip: use rk3288-efuse clock ids
-
- .../bindings/clock/brcm,bcm2835-aux-clock.txt      |   31 +
- .../bindings/clock/brcm,iproc-clocks.txt           |    5 +
- .../devicetree/bindings/clock/cs2000-cp.txt        |   22 +
- .../bindings/clock/nvidia,tegra210-car.txt         |   56 +
- .../devicetree/bindings/clock/nxp,lpc3220-clk.txt  |   30 +
- .../bindings/clock/nxp,lpc3220-usb-clk.txt         |   22 +
- .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
- .../devicetree/bindings/clock/qcom,mmcc.txt        |    1 +
- .../bindings/clock/renesas,cpg-div6-clocks.txt     |    4 +
- .../bindings/clock/rockchip,rk3036-cru.txt         |   56 +
- .../bindings/clock/rockchip,rk3228-cru.txt         |   58 +
- Documentation/devicetree/bindings/clock/sunxi.txt  |   10 +
- .../devicetree/bindings/clock/tango4-clock.txt     |   23 +
- arch/arm/mach-omap2/clock.c                        |    4 +
- drivers/clk/Kconfig                                |   12 +
- drivers/clk/Makefile                               |    5 +-
- drivers/clk/at91/clk-slow.c                        |   29 -
- drivers/clk/bcm/Kconfig                            |   10 +
- drivers/clk/bcm/Makefile                           |    2 +
- drivers/clk/bcm/clk-bcm2835-aux.c                  |   85 +
- drivers/clk/bcm/clk-bcm2835.c                      |  155 +-
- drivers/clk/bcm/clk-bcm63xx.c                      |   22 +
- drivers/clk/clk-cs2000-cp.c                        |  510 +++
- drivers/clk/clk-divider.c                          |    9 +-
- drivers/clk/clk-gpio.c                             |   28 +-
- drivers/clk/clk-mux.c                              |    5 +-
- drivers/clk/clk-si5351.c                           |    7 +
- drivers/clk/clk-tango4.c                           |   61 +
- drivers/clk/clk-xgene.c                            |    3 +-
- drivers/clk/clk.c                                  |   35 +-
- drivers/clk/imx/clk-imx25.c                        |   18 +-
- drivers/clk/imx/clk-imx51-imx53.c                  |    8 +-
- drivers/clk/imx/clk-imx6q.c                        |    3 +-
- drivers/clk/imx/clk-imx6ul.c                       |    4 +-
- drivers/clk/imx/clk-imx7d.c                        |   11 +-
- drivers/clk/imx/clk-pllv3.c                        |   14 +
- drivers/clk/mvebu/Makefile                         |    2 +-
- drivers/clk/mvebu/dove-divider.c                   |  262 ++
- drivers/clk/mvebu/dove-divider.h                   |    6 +
- drivers/clk/mvebu/dove.c                           |    6 +
- drivers/clk/nxp/Makefile                           |    1 +
- drivers/clk/nxp/clk-lpc32xx.c                      | 1569 +++++++++
- drivers/clk/qcom/Kconfig                           |   17 +
- drivers/clk/qcom/Makefile                          |    3 +
- drivers/clk/qcom/clk-alpha-pll.c                   |  355 ++
- drivers/clk/qcom/clk-alpha-pll.h                   |   57 +
- drivers/clk/qcom/clk-rcg.h                         |    1 +
- drivers/clk/qcom/clk-rcg2.c                        |   87 +
- drivers/clk/qcom/common.c                          |   87 +
- drivers/clk/qcom/common.h                          |    4 +
- drivers/clk/qcom/gcc-apq8084.c                     |   17 +-
- drivers/clk/qcom/gcc-ipq806x.c                     |   15 +-
- drivers/clk/qcom/gcc-msm8660.c                     |   16 +-
- drivers/clk/qcom/gcc-msm8916.c                     |   17 +-
- drivers/clk/qcom/gcc-msm8960.c                     |   16 +-
- drivers/clk/qcom/gcc-msm8974.c                     |   18 +-
- drivers/clk/qcom/gcc-msm8996.c                     | 3422 ++++++++++++++++=
-++++
- drivers/clk/qcom/lcc-ipq806x.c                     |    1 +
- drivers/clk/qcom/lcc-msm8960.c                     |    1 +
- drivers/clk/qcom/mmcc-apq8084.c                    |    1 +
- drivers/clk/qcom/mmcc-msm8960.c                    |    2 +
- drivers/clk/qcom/mmcc-msm8974.c                    |    1 +
- drivers/clk/qcom/mmcc-msm8996.c                    | 3217 ++++++++++++++++=
-++
- drivers/clk/rockchip/Makefile                      |    2 +
- drivers/clk/rockchip/clk-cpu.c                     |    4 +-
- drivers/clk/rockchip/clk-pll.c                     |  258 +-
- drivers/clk/rockchip/clk-rk3036.c                  |  493 +++
- drivers/clk/rockchip/clk-rk3188.c                  |  112 +-
- drivers/clk/rockchip/clk-rk3228.c                  |  678 ++++
- drivers/clk/rockchip/clk-rk3288.c                  |  136 +-
- drivers/clk/rockchip/clk-rk3368.c                  |   13 +-
- drivers/clk/rockchip/clk.c                         |  144 +-
- drivers/clk/rockchip/clk.h                         |   62 +-
- drivers/clk/samsung/clk-cpu.c                      |   10 +-
- drivers/clk/samsung/clk-exynos5420.c               |   98 +-
- drivers/clk/samsung/clk-s3c2410-dclk.c             |    3 +-
- drivers/clk/shmobile/Makefile                      |   24 +-
- drivers/clk/shmobile/clk-div6.c                    |  137 +-
- drivers/clk/shmobile/clk-div6.h                    |    7 +
- drivers/clk/shmobile/clk-rcar-gen2.c               |    4 +-
- drivers/clk/shmobile/r8a7795-cpg-mssr.c            |  383 +++
- drivers/clk/shmobile/renesas-cpg-mssr.c            |  596 ++++
- drivers/clk/shmobile/renesas-cpg-mssr.h            |  132 +
- drivers/clk/st/clkgen-fsyn.c                       |   17 +-
- drivers/clk/sunxi/Makefile                         |    5 +
- drivers/clk/sunxi/clk-a10-ve.c                     |  171 +
- drivers/clk/sunxi/clk-simple-gates.c               |   14 +
- drivers/clk/sunxi/clk-sun8i-apb0.c                 |   80 +-
- drivers/clk/sunxi/clk-sun8i-bus-gates.c            |  112 +
- drivers/clk/sunxi/clk-sun9i-cpus.c                 |  240 ++
- drivers/clk/sunxi/clk-sunxi.c                      |    6 +
- drivers/clk/sunxi/clk-usb.c                        |   12 +
- drivers/clk/tegra/Makefile                         |    1 +
- drivers/clk/tegra/clk-id.h                         |   75 +-
- drivers/clk/tegra/clk-pll.c                        |  838 ++++-
- drivers/clk/tegra/clk-tegra-periph.c               |  371 ++-
- drivers/clk/tegra/clk-tegra-super-gen4.c           |  142 +-
- drivers/clk/tegra/clk-tegra114.c                   |  339 +-
- drivers/clk/tegra/clk-tegra124.c                   |  453 +--
- drivers/clk/tegra/clk-tegra20.c                    |  314 +-
- drivers/clk/tegra/clk-tegra210.c                   | 2852 ++++++++++++++++
- drivers/clk/tegra/clk-tegra30.c                    |  426 +--
- drivers/clk/tegra/clk.h                            |  101 +-
- drivers/clk/ti/apll.c                              |    2 +-
- drivers/clk/ti/dpll3xxx.c                          |   25 +-
- drivers/clk/versatile/clk-sp810.c                  |    5 +-
- include/dt-bindings/clock/bcm2835-aux.h            |   17 +
- include/dt-bindings/clock/bcm2835.h                |    3 +-
- include/dt-bindings/clock/exynos5420.h             |    4 +
- include/dt-bindings/clock/imx7d-clock.h            |    3 +-
- include/dt-bindings/clock/lpc32xx-clock.h          |   56 +
- include/dt-bindings/clock/qcom,gcc-msm8996.h       |  339 ++
- include/dt-bindings/clock/qcom,mmcc-msm8996.h      |  285 ++
- include/dt-bindings/clock/rk3036-cru.h             |  193 ++
- include/dt-bindings/clock/rk3228-cru.h             |  220 ++
- include/dt-bindings/clock/rk3288-cru.h             |    4 +
- include/dt-bindings/clock/tegra210-car.h           |  401 +++
- include/linux/clk-provider.h                       |    9 +-
- include/linux/clk/ti.h                             |    1 +
- 119 files changed, 20639 insertions(+), 1353 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm2835-au=
-x-clock.txt
- create mode 100644 Documentation/devicetree/bindings/clock/cs2000-cp.txt
- create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra210=
--car.txt
- create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-clk=
-.txt
- create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-usb=
--clk.txt
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3036=
--cru.txt
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3228=
--cru.txt
- create mode 100644 Documentation/devicetree/bindings/clock/tango4-clock.txt
- create mode 100644 drivers/clk/bcm/clk-bcm2835-aux.c
- create mode 100644 drivers/clk/bcm/clk-bcm63xx.c
- create mode 100644 drivers/clk/clk-cs2000-cp.c
- create mode 100644 drivers/clk/clk-tango4.c
- create mode 100644 drivers/clk/mvebu/dove-divider.c
- create mode 100644 drivers/clk/mvebu/dove-divider.h
- create mode 100644 drivers/clk/nxp/clk-lpc32xx.c
- create mode 100644 drivers/clk/qcom/clk-alpha-pll.c
- create mode 100644 drivers/clk/qcom/clk-alpha-pll.h
- create mode 100644 drivers/clk/qcom/gcc-msm8996.c
- create mode 100644 drivers/clk/qcom/mmcc-msm8996.c
- create mode 100644 drivers/clk/rockchip/clk-rk3036.c
- create mode 100644 drivers/clk/rockchip/clk-rk3228.c
- create mode 100644 drivers/clk/shmobile/clk-div6.h
- create mode 100644 drivers/clk/shmobile/r8a7795-cpg-mssr.c
- create mode 100644 drivers/clk/shmobile/renesas-cpg-mssr.c
- create mode 100644 drivers/clk/shmobile/renesas-cpg-mssr.h
- create mode 100644 drivers/clk/sunxi/clk-a10-ve.c
- create mode 100644 drivers/clk/sunxi/clk-sun8i-bus-gates.c
- create mode 100644 drivers/clk/sunxi/clk-sun9i-cpus.c
- create mode 100644 drivers/clk/tegra/clk-tegra210.c
- create mode 100644 include/dt-bindings/clock/bcm2835-aux.h
- create mode 100644 include/dt-bindings/clock/lpc32xx-clock.h
- create mode 100644 include/dt-bindings/clock/qcom,gcc-msm8996.h
- create mode 100644 include/dt-bindings/clock/qcom,mmcc-msm8996.h
- create mode 100644 include/dt-bindings/clock/rk3036-cru.h
- create mode 100644 include/dt-bindings/clock/rk3228-cru.h
- create mode 100644 include/dt-bindings/clock/tegra210-car.h
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 58514c44ea83..f45c9adf7fb2 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -1386,7 +1386,7 @@ static struct tegra_clk_pll_params pll_c_params = {
+ 	.mdiv_default = 3,
+ 	.div_nmp = &pllc_nmp,
+ 	.freq_table = pll_cx_freq_table,
+-	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
++	.flags = TEGRA_PLL_USE_LOCK,
+ 	.set_defaults = _pllc_set_defaults,
+ 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
+ };
+@@ -1425,7 +1425,7 @@ static struct tegra_clk_pll_params pll_c2_params = {
+ 	.ext_misc_reg[2] = PLLC2_MISC2,
+ 	.ext_misc_reg[3] = PLLC2_MISC3,
+ 	.freq_table = pll_cx_freq_table,
+-	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
++	.flags = TEGRA_PLL_USE_LOCK,
+ 	.set_defaults = _pllc2_set_defaults,
+ 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
+ };
+@@ -1455,7 +1455,7 @@ static struct tegra_clk_pll_params pll_c3_params = {
+ 	.ext_misc_reg[2] = PLLC3_MISC2,
+ 	.ext_misc_reg[3] = PLLC3_MISC3,
+ 	.freq_table = pll_cx_freq_table,
+-	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
++	.flags = TEGRA_PLL_USE_LOCK,
+ 	.set_defaults = _pllc3_set_defaults,
+ 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
+ };
+@@ -1505,7 +1505,6 @@ static struct tegra_clk_pll_params pll_c4_vco_params = {
+ 	.base_reg = PLLC4_BASE,
+ 	.misc_reg = PLLC4_MISC0,
+ 	.lock_mask = PLL_BASE_LOCK,
+-	.lock_enable_bit_idx = PLLSS_MISC_LOCK_ENABLE,
+ 	.lock_delay = 300,
+ 	.max_p = PLL_QLIN_PDIV_MAX,
+ 	.ext_misc_reg[0] = PLLC4_MISC0,
+@@ -1517,8 +1516,7 @@ static struct tegra_clk_pll_params pll_c4_vco_params = {
+ 	.div_nmp = &pllss_nmp,
+ 	.freq_table = pll_c4_vco_freq_table,
+ 	.set_defaults = tegra210_pllc4_set_defaults,
+-	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE |
+-		 TEGRA_PLL_VCO_OUT,
++	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_VCO_OUT,
+ 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
+ };
+ 
+@@ -1559,7 +1557,7 @@ static struct tegra_clk_pll_params pll_m_params = {
+ 	.vco_min = 800000000,
+ 	.vco_max = 1866000000,
+ 	.base_reg = PLLM_BASE,
+-	.misc_reg = PLLM_MISC1,
++	.misc_reg = PLLM_MISC0,
+ 	.lock_mask = PLL_BASE_LOCK,
+ 	.lock_enable_bit_idx = PLLM_MISC_LOCK_ENABLE,
+ 	.lock_delay = 300,
+@@ -1588,7 +1586,6 @@ static struct tegra_clk_pll_params pll_mb_params = {
+ 	.base_reg = PLLMB_BASE,
+ 	.misc_reg = PLLMB_MISC0,
+ 	.lock_mask = PLL_BASE_LOCK,
+-	.lock_enable_bit_idx = PLLMB_MISC_LOCK_ENABLE,
+ 	.lock_delay = 300,
+ 	.iddq_reg = PLLMB_MISC0,
+ 	.iddq_bit_idx = PLLMB_IDDQ_BIT,
+@@ -1598,7 +1595,7 @@ static struct tegra_clk_pll_params pll_mb_params = {
+ 	.pdiv_tohw = pll_qlin_pdiv_to_hw,
+ 	.div_nmp = &pllm_nmp,
+ 	.freq_table = pll_m_freq_table,
+-	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
++	.flags = TEGRA_PLL_USE_LOCK,
+ 	.set_defaults = tegra210_pllmb_set_defaults,
+ 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
+ };
+@@ -1671,7 +1668,6 @@ static struct tegra_clk_pll_params pll_re_vco_params = {
+ 	.base_reg = PLLRE_BASE,
+ 	.misc_reg = PLLRE_MISC0,
+ 	.lock_mask = PLLRE_MISC_LOCK,
+-	.lock_enable_bit_idx = PLLRE_MISC_LOCK_ENABLE,
+ 	.lock_delay = 300,
+ 	.max_p = PLL_QLIN_PDIV_MAX,
+ 	.ext_misc_reg[0] = PLLRE_MISC0,
+@@ -1681,8 +1677,7 @@ static struct tegra_clk_pll_params pll_re_vco_params = {
+ 	.pdiv_tohw = pll_qlin_pdiv_to_hw,
+ 	.div_nmp = &pllre_nmp,
+ 	.freq_table = pll_re_vco_freq_table,
+-	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_LOCK_MISC |
+-		 TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLL_VCO_OUT,
++	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_LOCK_MISC | TEGRA_PLL_VCO_OUT,
+ 	.set_defaults = tegra210_pllre_set_defaults,
+ 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
+ };
+@@ -1712,7 +1707,6 @@ static struct tegra_clk_pll_params pll_p_params = {
+ 	.base_reg = PLLP_BASE,
+ 	.misc_reg = PLLP_MISC0,
+ 	.lock_mask = PLL_BASE_LOCK,
+-	.lock_enable_bit_idx = PLLP_MISC_LOCK_ENABLE,
+ 	.lock_delay = 300,
+ 	.iddq_reg = PLLP_MISC0,
+ 	.iddq_bit_idx = PLLXP_IDDQ_BIT,
+@@ -1721,8 +1715,7 @@ static struct tegra_clk_pll_params pll_p_params = {
+ 	.div_nmp = &pllp_nmp,
+ 	.freq_table = pll_p_freq_table,
+ 	.fixed_rate = 408000000,
+-	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_USE_LOCK |
+-		 TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLL_VCO_OUT,
++	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_USE_LOCK | TEGRA_PLL_VCO_OUT,
+ 	.set_defaults = tegra210_pllp_set_defaults,
+ 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
+ };
+@@ -1750,7 +1743,7 @@ static struct tegra_clk_pll_params pll_a1_params = {
+ 	.ext_misc_reg[2] = PLLA1_MISC2,
+ 	.ext_misc_reg[3] = PLLA1_MISC3,
+ 	.freq_table = pll_cx_freq_table,
+-	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
++	.flags = TEGRA_PLL_USE_LOCK,
+ 	.set_defaults = _plla1_set_defaults,
+ 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
+ };
+@@ -1787,7 +1780,6 @@ static struct tegra_clk_pll_params pll_a_params = {
+ 	.base_reg = PLLA_BASE,
+ 	.misc_reg = PLLA_MISC0,
+ 	.lock_mask = PLL_BASE_LOCK,
+-	.lock_enable_bit_idx = PLLA_MISC_LOCK_ENABLE,
+ 	.lock_delay = 300,
+ 	.round_p_to_pdiv = pll_qlin_p_to_pdiv,
+ 	.pdiv_tohw = pll_qlin_pdiv_to_hw,
+@@ -1802,8 +1794,7 @@ static struct tegra_clk_pll_params pll_a_params = {
+ 	.ext_misc_reg[1] = PLLA_MISC1,
+ 	.ext_misc_reg[2] = PLLA_MISC2,
+ 	.freq_table = pll_a_freq_table,
+-	.flags = TEGRA_PLL_USE_LOCK | TEGRA_MDIV_NEW |
+-		 TEGRA_PLL_HAS_LOCK_ENABLE,
++	.flags = TEGRA_PLL_USE_LOCK | TEGRA_MDIV_NEW,
+ 	.set_defaults = tegra210_plla_set_defaults,
+ 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
+ 	.set_gain = tegra210_clk_pll_set_gain,
+@@ -1836,7 +1827,6 @@ static struct tegra_clk_pll_params pll_d_params = {
+ 	.base_reg = PLLD_BASE,
+ 	.misc_reg = PLLD_MISC0,
+ 	.lock_mask = PLL_BASE_LOCK,
+-	.lock_enable_bit_idx = PLLD_MISC_LOCK_ENABLE,
+ 	.lock_delay = 1000,
+ 	.iddq_reg = PLLD_MISC0,
+ 	.iddq_bit_idx = PLLD_IDDQ_BIT,
+@@ -1850,7 +1840,7 @@ static struct tegra_clk_pll_params pll_d_params = {
+ 	.ext_misc_reg[0] = PLLD_MISC0,
+ 	.ext_misc_reg[1] = PLLD_MISC1,
+ 	.freq_table = pll_d_freq_table,
+-	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
++	.flags = TEGRA_PLL_USE_LOCK,
+ 	.mdiv_default = 1,
+ 	.set_defaults = tegra210_plld_set_defaults,
+ 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
+@@ -1876,7 +1866,6 @@ static struct tegra_clk_pll_params pll_d2_params = {
+ 	.base_reg = PLLD2_BASE,
+ 	.misc_reg = PLLD2_MISC0,
+ 	.lock_mask = PLL_BASE_LOCK,
+-	.lock_enable_bit_idx = PLLSS_MISC_LOCK_ENABLE,
+ 	.lock_delay = 300,
+ 	.iddq_reg = PLLD2_BASE,
+ 	.iddq_bit_idx = PLLSS_IDDQ_BIT,
+@@ -1897,7 +1886,7 @@ static struct tegra_clk_pll_params pll_d2_params = {
+ 	.mdiv_default = 1,
+ 	.freq_table = tegra210_pll_d2_freq_table,
+ 	.set_defaults = tegra210_plld2_set_defaults,
+-	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
++	.flags = TEGRA_PLL_USE_LOCK,
+ 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
+ 	.set_gain = tegra210_clk_pll_set_gain,
+ 	.adjust_vco = tegra210_clk_adjust_vco_min,
+@@ -1920,7 +1909,6 @@ static struct tegra_clk_pll_params pll_dp_params = {
+ 	.base_reg = PLLDP_BASE,
+ 	.misc_reg = PLLDP_MISC,
+ 	.lock_mask = PLL_BASE_LOCK,
+-	.lock_enable_bit_idx = PLLSS_MISC_LOCK_ENABLE,
+ 	.lock_delay = 300,
+ 	.iddq_reg = PLLDP_BASE,
+ 	.iddq_bit_idx = PLLSS_IDDQ_BIT,
+@@ -1941,7 +1929,7 @@ static struct tegra_clk_pll_params pll_dp_params = {
+ 	.mdiv_default = 1,
+ 	.freq_table = pll_dp_freq_table,
+ 	.set_defaults = tegra210_plldp_set_defaults,
+-	.flags = TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE,
++	.flags = TEGRA_PLL_USE_LOCK,
+ 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
+ 	.set_gain = tegra210_clk_pll_set_gain,
+ 	.adjust_vco = tegra210_clk_adjust_vco_min,
+@@ -1973,7 +1961,6 @@ static struct tegra_clk_pll_params pll_u_vco_params = {
+ 	.base_reg = PLLU_BASE,
+ 	.misc_reg = PLLU_MISC0,
+ 	.lock_mask = PLL_BASE_LOCK,
+-	.lock_enable_bit_idx = PLLU_MISC_LOCK_ENABLE,
+ 	.lock_delay = 1000,
+ 	.iddq_reg = PLLU_MISC0,
+ 	.iddq_bit_idx = PLLU_IDDQ_BIT,
+@@ -1983,8 +1970,7 @@ static struct tegra_clk_pll_params pll_u_vco_params = {
+ 	.pdiv_tohw = pll_qlin_pdiv_to_hw,
+ 	.div_nmp = &pllu_nmp,
+ 	.freq_table = pll_u_freq_table,
+-	.flags = TEGRA_PLLU | TEGRA_PLL_USE_LOCK | TEGRA_PLL_HAS_LOCK_ENABLE |
+-		 TEGRA_PLL_VCO_OUT,
++	.flags = TEGRA_PLLU | TEGRA_PLL_USE_LOCK | TEGRA_PLL_VCO_OUT,
+ 	.set_defaults = tegra210_pllu_set_defaults,
+ 	.calc_rate = tegra210_pll_fixed_mdiv_cfg,
+ };
+-- 
+1.9.1
