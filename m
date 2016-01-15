@@ -1,81 +1,31 @@
-Return-Path: <LW@karo-electronics.de>
-From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
-To: Anson Huang <b20788@freescale.com>,
-	Bai Ping <b51503@freescale.com>,
-	Frank Li <Frank.Li@freescale.com>,
-	Fugang Duan <B38611@freescale.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	=?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>,
-	Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 14 Jan 2016 18:04:39 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCHv2 02/16] ARM: dts: imx6ul: move tsc node to appropriate place in the DTB
-Date: Wed, 20 Jan 2016 11:08:55 +0100
-Message-Id: <1453284549-16363-3-git-send-email-LW@KARO-electronics.de>
-In-Reply-To: <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
-References: <1452619291-13625-1-git-send-email-LW@KARO-electronics.de>
- <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 07/13] clk: at91: pmc: move pmc structures to C file
+Message-ID: <20160115020439.GL22188@codeaurora.org>
+References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
+ <1449248628-3486-8-git-send-email-alexandre.belloni@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1449248628-3486-8-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Move the tsc node to keep the nodes sorted in ascending order by unit
-address.
+On 12/04, Alexandre Belloni wrote:
+> pmc.c is now the only user of struct at91_pmc*, move their definition in
+> the C file.
+> 
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> ---
 
-Signed-off-by: Lothar Waßmann <LW@KARO-electronics.de>
----
- arch/arm/boot/dts/imx6ul.dtsi | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
-index 99b6465..7e27d76 100644
---- a/arch/arm/boot/dts/imx6ul.dtsi
-+++ b/arch/arm/boot/dts/imx6ul.dtsi
-@@ -236,6 +236,17 @@
- 				};
- 			};
- 
-+			tsc: tsc@02040000 {
-+				compatible = "fsl,imx6ul-tsc";
-+				reg = <0x02040000 0x4000>, <0x0219c000 0x4000>;
-+				interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6UL_CLK_IPG>,
-+					 <&clks IMX6UL_CLK_ADC2>;
-+				clock-names = "tsc", "adc";
-+				status = "disabled";
-+			};
-+
- 			gpt1: gpt@02098000 {
- 				compatible = "fsl,imx6ul-gpt", "fsl,imx6sx-gpt";
- 				reg = <0x02098000 0x4000>;
-@@ -590,17 +601,6 @@
- 				status = "disabled";
- 			};
- 
--			tsc: tsc@02040000 {
--				compatible = "fsl,imx6ul-tsc";
--				reg = <0x02040000 0x4000>, <0x0219c000 0x4000>;
--				interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
--					     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&clks IMX6UL_CLK_IPG>,
--					 <&clks IMX6UL_CLK_ADC2>;
--				clock-names = "tsc", "adc";
--				status = "disabled";
--			};
--
- 			usdhc1: usdhc@02190000 {
- 				compatible = "fsl,imx6ul-usdhc", "fsl,imx6sx-usdhc";
- 				reg = <0x02190000 0x4000>;
 -- 
-2.1.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
