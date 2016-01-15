@@ -1,401 +1,178 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Wynter Woods <wynter@nextthing.co>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 14/26] drm/modes: Rewrite the command line parser
-Date: Thu, 14 Jan 2016 16:24:57 +0100
-Message-Id: <1452785109-6172-15-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Fri, 15 Jan 2016 10:39:01 +0100
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>, Nicolas Ferre
+ <nicolas.ferre@atmel.com>, Jean-Christophe Plagniol-Villard
+ <plagnioj@jcrosoft.com>, Michael Turquette <mturquette@baylibre.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 04/13] clk: at91: make IRQ optional and register them
+ later
+Message-ID: <20160115103901.1b987f53@bbrezillon>
+In-Reply-To: <20160115020237.GJ22188@codeaurora.org>
+References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
+	<1449248628-3486-5-git-send-email-alexandre.belloni@free-electrons.com>
+	<20160115020237.GJ22188@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Rewrite the command line parser in order to get away from the state machine
-parsing the video mode lines.
+Hi Stephen,
 
-Hopefully, this will allow to extend it more easily to support named modes
-and / or properties set directly on the command line.
+On Thu, 14 Jan 2016 18:02:37 -0800
+Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> On 12/04, Alexandre Belloni wrote:
+> > @@ -686,3 +652,45 @@ static void __init of_at91sam9x5_clk_main_setup(st=
+ruct device_node *np)
+> >  }
+> >  CLK_OF_DECLARE(at91sam9x5_clk_main, "atmel,at91sam9x5-clk-main",
+> >  	       of_at91sam9x5_clk_main_setup);
+> > +
+> > +static const struct of_device_id atmel_clk_main_dt_ids[] =3D {
+> > +	{ .compatible =3D "atmel,at91rm9200-clk-main-osc" },
+> > +	{ .compatible =3D "atmel,at91sam9x5-clk-main-rc-osc" },
+> > +	{ .compatible =3D "atmel,at91sam9x5-clk-main" },
+> > +	{ /* sentinel */ }
+> > +};
+> > +
+> > +static int __init atmel_clk_main_probe(struct platform_device *pdev)
+> > +{
+> > +	struct of_phandle_args clkspec =3D { .np =3D pdev->dev.of_node};
+> > +	struct clk_main *clkmain;
+> > +	struct clk_hw *hw;
+> > +	int ret;
+> > +
+> > +	hw =3D __clk_get_hw(of_clk_get_from_provider(&clkspec));
+> > +	if (!hw)
+> > +		return -ENODEV;
+> > +
+> > +	clkmain =3D to_clk_main(hw);
+> > +	clkmain->irq =3D platform_get_irq(pdev, 0);
+> > +	if (!clkmain->irq)
+> > +		return 0;
+>=20
+> Is there any way to get the irq into this probe function without
+> getting a clk pointer and then unwrapping it to get an irq
+> value out of the clk_hw wrapper structure? That's a pretty
+> convoluted design.
+
+Not sure I get what you're suggesting, but the only solution I see to
+avoid this "get main clk pointer dance" would be to have a global
+variable storing the clk_main instance (or a list of clk_main
+instances).
+The thing is, I'd like to avoid adding new global variables in this
+clk drivers as much as possible. Moreover, the core is already taking
+care of keeping the list of all registered clks, with their associated
+of_node, so, is there a real point in creating a duplicated association
+list in this driver too?
+
+Maybe we could create an of_clk_hw_get_from_provider(), which would
+prevent the creation of this useless per-user clk instance (see the patch
+below).
+
+>=20
+> > +
+> > +	init_waitqueue_head(&clkmain->wait);
+> > +	irq_set_status_flags(clkmain->irq, IRQ_NOAUTOEN);
+> > +	ret =3D devm_request_irq(&pdev->dev, clkmain->irq, clk_main_irq_handl=
+er,
+> > +			       IRQF_TRIGGER_HIGH, __clk_get_name(hw->clk),
+> > +			       clkmain);
+> > +	if (ret)
+> > +		clkmain->irq =3D 0;
+> > +
+
+You should probably call clk_put() on the pointer returned by
+of_clk_get_from_provider(&clkspec).
+
+> > +	return ret;
+> > +}
+> > +
+>=20
+
+Best Regards,
+
+Boris
+
+--- >8 ---
+=46rom a83670d29504e256bdc97c04f0dfd96a7d6842bf Mon Sep 17 00:00:00 2001
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Date: Fri, 15 Jan 2016 10:36:23 +0100
+Subject: [PATCH] clk: add a function to retrieve a clk_hw instance from a
+ clkspec definition
+
+of_clk_hw_get_from_provider() is providing a way to retrieve a clk_hw
+instance from a clkspec definition. Which is usefull in case a clk driver
+wants to get one of its own instance from a clkspec, without allocating a
+new per-user clk struct.
+
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
- drivers/gpu/drm/drm_modes.c | 308 +++++++++++++++++++++++++++-----------------
- 1 file changed, 191 insertions(+), 117 deletions(-)
+ drivers/clk/clk.c            | 36 ++++++++++++++++++++++++++++++++++++
+ include/linux/clk-provider.h |  1 +
+ 2 files changed, 37 insertions(+)
 
-diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
-index cd74a0953f42..5b1921b22dd6 100644
---- a/drivers/gpu/drm/drm_modes.c
-+++ b/drivers/gpu/drm/drm_modes.c
-@@ -30,6 +30,7 @@
-  * authorization from the copyright holder(s) and author(s).
-  */
- 
-+#include <linux/ctype.h>
- #include <linux/list.h>
- #include <linux/list_sort.h>
- #include <linux/export.h>
-@@ -1199,6 +1200,131 @@ void drm_mode_connector_list_update(struct drm_connector *connector,
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index f13c3f4..fbef1b7 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3001,6 +3001,42 @@ void of_clk_del_provider(struct device_node *np)
  }
- EXPORT_SYMBOL(drm_mode_connector_list_update);
- 
-+static int drm_mode_parse_cmdline_bpp(const char *str, char **end_ptr,
-+				      struct drm_cmdline_mode *mode)
+ EXPORT_SYMBOL_GPL(of_clk_del_provider);
+=20
++/**
++ * of_clk_hw_get_from_provider() - Look for a clk_hw instance registered w=
+ith
++ *				   the given clkspec definition.
++ * @clkspec: pointer to a clock specifier data structure
++ *
++ * This function looks up a struct clk_hw from the registered list of clock
++ * providers, an input is a clock specifier data structure as returned
++ * from the of_parse_phandle_with_args() function call.
++ */
++struct clk_hw *of_clk_hw_get_from_provider(struct of_phandle_args *clkspec)
 +{
-+	if (str[0] != '-')
-+		return -EINVAL;
++	struct clk_hw *clk_hw =3D ERR_PTR(-EPROBE_DEFER);
++	struct of_clk_provider *provider;
 +
-+	mode->bpp = simple_strtol(str + 1, end_ptr, 10);
-+	mode->bpp_specified = true;
++	if (!clkspec)
++		return ERR_PTR(-EINVAL);
 +
-+	return 0;
-+}
++	/* Check if we have such a provider in our array */
++	mutex_lock(&of_clk_mutex);
++	list_for_each_entry(provider, &of_clk_providers, link) {
++		struct clk *clk =3D ERR_PTR(-EPROBE_DEFER);
 +
-+static int drm_mode_parse_cmdline_refresh(const char *str, char **end_ptr,
-+					  struct drm_cmdline_mode *mode)
-+{
-+	if (str[0] != '@')
-+		return -EINVAL;
++		if (provider->node =3D=3D clkspec->np)
++			clk =3D provider->get(clkspec, provider->data);
 +
-+	mode->refresh = simple_strtol(str + 1, end_ptr, 10);
-+	mode->refresh_specified = true;
-+
-+	return 0;
-+}
-+
-+static int drm_mode_parse_cmdline_extra(const char *str, int length,
-+					struct drm_connector *connector,
-+					struct drm_cmdline_mode *mode)
-+{
-+	int i;
-+
-+	for (i = 0; i < length; i++) {
-+		switch (str[i]) {
-+		case 'i':
-+			mode->interlace = true;
++		if (!IS_ERR(clk)) {
++			clk_hw =3D __clk_get_hw(clk);
 +			break;
-+		case 'm':
-+			mode->margins = true;
-+			break;
-+		case 'D':
-+			if (mode->force != DRM_FORCE_UNSPECIFIED)
-+				return -EINVAL;
-+
-+			if ((connector->connector_type != DRM_MODE_CONNECTOR_DVII) &&
-+			    (connector->connector_type != DRM_MODE_CONNECTOR_HDMIB))
-+				mode->force = DRM_FORCE_ON;
-+			else
-+				mode->force = DRM_FORCE_ON_DIGITAL;
-+			break;
-+		case 'd':
-+			if (mode->force != DRM_FORCE_UNSPECIFIED)
-+				return -EINVAL;
-+
-+			mode->force = DRM_FORCE_OFF;
-+			break;
-+		case 'e':
-+			if (mode->force != DRM_FORCE_UNSPECIFIED)
-+				return -EINVAL;
-+
-+			mode->force = DRM_FORCE_ON;
-+			break;
-+		default:
-+			return -EINVAL;
 +		}
 +	}
++	mutex_unlock(&of_clk_mutex);
 +
-+	return 0;
++	return clk_hw;
 +}
++EXPORT_SYMBOL_GPL(of_clk_hw_get_from_provider);
 +
-+static int drm_mode_parse_cmdline_res_mode(const char *str, unsigned int length,
-+					   bool extras,
-+					   struct drm_connector *connector,
-+					   struct drm_cmdline_mode *mode)
-+{
-+	bool rb = false, cvt = false;
-+	int xres = 0, yres = 0;
-+	int remaining, i;
-+	char *end_ptr;
-+
-+	xres = simple_strtol(str, &end_ptr, 10);
-+
-+	if (end_ptr[0] != 'x')
-+		return -EINVAL;
-+	end_ptr++;
-+
-+	yres = simple_strtol(end_ptr, &end_ptr, 10);
-+
-+	remaining = length - (end_ptr - str);
-+	if (remaining < 0)
-+		return -EINVAL;
-+
-+	for (i = 0; i < remaining; i++) {
-+		switch (end_ptr[i]) {
-+		case 'M':
-+			cvt = true;
-+			break;
-+		case 'R':
-+			rb = true;
-+			break;
-+		default:
-+			/*
-+			 * Try to pass that to our extras parsing
-+			 * function to handle the case where the
-+			 * extras are directly after the resolution
-+			 */
-+			if (extras) {
-+				int ret = drm_mode_parse_cmdline_extra(end_ptr + i,
-+								       1,
-+								       connector,
-+								       mode);
-+				if (ret)
-+					return ret;
-+			} else {
-+				return -EINVAL;
-+			}
-+		}
-+	}
-+
-+	mode->xres = xres;
-+	mode->yres = yres;
-+	mode->cvt = cvt;
-+	mode->rb = rb;
-+
-+	return 0;
-+}
-+
- /**
-  * drm_mode_parse_command_line_for_connector - parse command line modeline for connector
-  * @mode_option: optional per connector mode option
-@@ -1225,13 +1351,12 @@ bool drm_mode_parse_command_line_for_connector(const char *mode_option,
- 					       struct drm_cmdline_mode *mode)
+ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
+ 				       const char *dev_id, const char *con_id)
  {
- 	const char *name;
--	unsigned int namelen;
--	bool res_specified = false, bpp_specified = false, refresh_specified = false;
--	unsigned int xres = 0, yres = 0, bpp = 32, refresh = 0;
--	bool yres_specified = false, cvt = false, rb = false;
--	bool interlace = false, margins = false, was_digit = false;
--	int i;
--	enum drm_connector_force force = DRM_FORCE_UNSPECIFIED;
-+	bool parse_extras = false;
-+	unsigned int bpp_off = 0, refresh_off = 0;
-+	unsigned int mode_end = 0;
-+	char *bpp_ptr = NULL, *refresh_ptr = NULL, *extra_ptr = NULL;
-+	char *bpp_end_ptr = NULL, *refresh_end_ptr = NULL;
-+	int ret;
- 
- #ifdef CONFIG_FB
- 	if (!mode_option)
-@@ -1244,128 +1369,77 @@ bool drm_mode_parse_command_line_for_connector(const char *mode_option,
- 	}
- 
- 	name = mode_option;
--	namelen = strlen(name);
--	for (i = namelen-1; i >= 0; i--) {
--		switch (name[i]) {
--		case '@':
--			if (!refresh_specified && !bpp_specified &&
--			    !yres_specified && !cvt && !rb && was_digit) {
--				refresh = simple_strtol(&name[i+1], NULL, 10);
--				refresh_specified = true;
--				was_digit = false;
--			} else
--				goto done;
--			break;
--		case '-':
--			if (!bpp_specified && !yres_specified && !cvt &&
--			    !rb && was_digit) {
--				bpp = simple_strtol(&name[i+1], NULL, 10);
--				bpp_specified = true;
--				was_digit = false;
--			} else
--				goto done;
--			break;
--		case 'x':
--			if (!yres_specified && was_digit) {
--				yres = simple_strtol(&name[i+1], NULL, 10);
--				yres_specified = true;
--				was_digit = false;
--			} else
--				goto done;
--			break;
--		case '0' ... '9':
--			was_digit = true;
--			break;
--		case 'M':
--			if (yres_specified || cvt || was_digit)
--				goto done;
--			cvt = true;
--			break;
--		case 'R':
--			if (yres_specified || cvt || rb || was_digit)
--				goto done;
--			rb = true;
--			break;
--		case 'm':
--			if (cvt || yres_specified || was_digit)
--				goto done;
--			margins = true;
--			break;
--		case 'i':
--			if (cvt || yres_specified || was_digit)
--				goto done;
--			interlace = true;
--			break;
--		case 'e':
--			if (yres_specified || bpp_specified || refresh_specified ||
--			    was_digit || (force != DRM_FORCE_UNSPECIFIED))
--				goto done;
- 
--			force = DRM_FORCE_ON;
--			break;
--		case 'D':
--			if (yres_specified || bpp_specified || refresh_specified ||
--			    was_digit || (force != DRM_FORCE_UNSPECIFIED))
--				goto done;
-+	if (!isdigit(name[0]))
-+		return false;
- 
--			if ((connector->connector_type != DRM_MODE_CONNECTOR_DVII) &&
--			    (connector->connector_type != DRM_MODE_CONNECTOR_HDMIB))
--				force = DRM_FORCE_ON;
--			else
--				force = DRM_FORCE_ON_DIGITAL;
--			break;
--		case 'd':
--			if (yres_specified || bpp_specified || refresh_specified ||
--			    was_digit || (force != DRM_FORCE_UNSPECIFIED))
--				goto done;
-+	/* Try to locate the bpp and refresh specifiers, if any */
-+	bpp_ptr = strchr(name, '-');
-+	if (bpp_ptr) {
-+		bpp_off = bpp_ptr - name;
-+		mode->bpp_specified = true;
-+	}
- 
--			force = DRM_FORCE_OFF;
--			break;
--		default:
--			goto done;
--		}
-+	refresh_ptr = strchr(name, '@');
-+	if (refresh_ptr) {
-+		refresh_off = refresh_ptr - name;
-+		mode->refresh_specified = true;
- 	}
- 
--	if (i < 0 && yres_specified) {
--		char *ch;
--		xres = simple_strtol(name, &ch, 10);
--		if ((ch != NULL) && (*ch == 'x'))
--			res_specified = true;
--		else
--			i = ch - name;
--	} else if (!yres_specified && was_digit) {
--		/* catch mode that begins with digits but has no 'x' */
--		i = 0;
-+	/* Locate the end of the name / resolution, and parse it */
-+	if (bpp_ptr && refresh_ptr) {
-+		mode_end = min(bpp_off, refresh_off);
-+	} else if (bpp_ptr) {
-+		mode_end = bpp_off;
-+	} else if (refresh_ptr) {
-+		mode_end = refresh_off;
-+	} else {
-+		mode_end = strlen(name);
-+		parse_extras = true;
- 	}
--done:
--	if (i >= 0) {
--		printk(KERN_WARNING
--			"parse error at position %i in video mode '%s'\n",
--			i, name);
--		mode->specified = false;
-+
-+	ret = drm_mode_parse_cmdline_res_mode(name, mode_end,
-+					      parse_extras,
-+					      connector,
-+					      mode);
-+	if (ret)
- 		return false;
--	}
-+	mode->specified = true;
- 
--	if (res_specified) {
--		mode->specified = true;
--		mode->xres = xres;
--		mode->yres = yres;
-+	if (bpp_ptr) {
-+		ret = drm_mode_parse_cmdline_bpp(bpp_ptr, &bpp_end_ptr, mode);
-+		if (ret)
-+			return false;
- 	}
- 
--	if (refresh_specified) {
--		mode->refresh_specified = true;
--		mode->refresh = refresh;
-+	if (refresh_ptr) {
-+		ret = drm_mode_parse_cmdline_refresh(refresh_ptr,
-+						     &refresh_end_ptr, mode);
-+		if (ret)
-+			return false;
- 	}
- 
--	if (bpp_specified) {
--		mode->bpp_specified = true;
--		mode->bpp = bpp;
-+	/*
-+	 * Locate the end of the bpp / refresh, and parse the extras
-+	 * if relevant
-+	 */
-+	if (bpp_ptr && refresh_ptr)
-+		extra_ptr = max(bpp_end_ptr, refresh_end_ptr);
-+	else if (bpp_ptr)
-+		extra_ptr = bpp_end_ptr;
-+	else if (refresh_ptr)
-+		extra_ptr = refresh_end_ptr;
-+
-+	if (extra_ptr) {
-+		int remaining = strlen(name) - (extra_ptr - name);
-+
-+		/*
-+		 * We still have characters to process, while
-+		 * we shouldn't have any
-+		 */
-+		if (remaining > 0)
-+			return false;
- 	}
--	mode->rb = rb;
--	mode->cvt = cvt;
--	mode->interlace = interlace;
--	mode->margins = margins;
--	mode->force = force;
- 
- 	return true;
- }
-@@ -1491,4 +1565,4 @@ int drm_mode_convert_umode(struct drm_display_mode *out,
- 
- out:
- 	return ret;
--}
-\ No newline at end of file
-+}
--- 
-2.6.4
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index c56988a..bb62517 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -645,6 +645,7 @@ void devm_clk_unregister(struct device *dev, struct clk=
+ *clk);
+ const char *__clk_get_name(const struct clk *clk);
+ const char *clk_hw_get_name(const struct clk_hw *hw);
+ struct clk_hw *__clk_get_hw(struct clk *clk);
++struct clk_hw *of_clk_hw_get_from_provider(struct of_phandle_args *clkspec=
+);
+ unsigned int clk_hw_get_num_parents(const struct clk_hw *hw);
+ struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw);
+ struct clk_hw *clk_hw_get_parent_by_index(const struct clk_hw *hw,
