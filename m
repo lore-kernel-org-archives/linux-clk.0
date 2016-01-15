@@ -1,33 +1,44 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: James Liao <jamesjj.liao@mediatek.com>
-Cc: linux-arm-kernel@lists.infradead.org, kbuild test robot <lkp@intel.com>, srv_heupstream@mediatek.com, devicetree@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, kbuild-all@01.org, Sascha Hauer <kernel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: Move vendor's Kconfig into CCF menu section
-Date: Wed, 27 Jan 2016 11:32:29 +0100
-Message-ID: <6167008.u8jfFpmfhy@wuerfel>
-In-Reply-To: <1453888578.28646.7.camel@mtksdaap41>
-References: <201601271708.gQUxXACW%fengguang.wu@intel.com> <4711589.Ig064LES4c@wuerfel> <1453888578.28646.7.camel@mtksdaap41>
+Return-Path: <robh@kernel.org>
+Date: Thu, 14 Jan 2016 21:04:00 -0600
+From: Rob Herring <robh@kernel.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Wynter Woods <wynter@nextthing.co>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2 08/26] clk: sun5i: add DRAM gates
+Message-ID: <20160115030400.GA19274@rob-hp-laptop>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1452785109-6172-9-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1452785109-6172-9-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wednesday 27 January 2016 17:56:18 James Liao wrote:
-> > 
-> > I think you should include this change in your patch, or as a preparation.
-> > All other samsung platforms already select COMMON_CLK through ARCH_MULTIPLATFORM,
-> > and all SoCs that are part of ARCH_S3C24XX individually select a symbol that
-> > selects COMMON_CLK.
+On Thu, Jan 14, 2016 at 04:24:51PM +0100, Maxime Ripard wrote:
+> The Allwinner SoCs have a gate controller to gate the access to the DRAM
+> clock to the some devices that need to access the DRAM directly (mostly
+> display / image related IPs).
 > 
-> Oops, I didn't notice there are warnings after moving these Kconfigs
-> into menu section.
+> Use a simple gates driver to support the one found in the A13 / R8 SoCs.
 > 
-> The original motivation of this patch is preventing new clk drivers
-> include their Kconfig in a wrong place, so it's not critical. Do you
-> think we should apply this patch (with your changes below) or drop this
-> patch directly?
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Acked-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  Documentation/devicetree/bindings/clock/sunxi.txt | 1 +
 
+Acked-by: Rob Herring <robh@kernel.org>
 
-I think your patch is good, we just need to fix S3C24xx, which is doing
-things in a strange way for historic reasons.
-
-	Arnd
+>  drivers/clk/sunxi/clk-simple-gates.c              | 2 ++
+>  2 files changed, 3 insertions(+)
