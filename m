@@ -1,66 +1,127 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 25 Jan 2016 13:46:48 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mark Kuo <mkuo@nvidia.com>
-Subject: Re: [Patch V2 7/9] clk: tegra: pll: Do not disable PLLE when under
- HW control
-Message-ID: <20160125124648.GK20452@ulmo.nvidia.com>
-References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
- <1452799478-14791-8-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ZG5hGh9V5E9QzVHS"
-In-Reply-To: <1452799478-14791-8-git-send-email-rklein@nvidia.com>
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Remi Pommarel <repk@triplefau.lt>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH V4 7/7] clk: bcm2835: apply limits on dividers to MASH mode.
+Date: Fri, 15 Jan 2016 14:21:06 +0000
+Message-Id: <1452867667-2447-8-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org>
+References: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Martin Sperl <kernel@martin.sperl.org>
 
---ZG5hGh9V5E9QzVHS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There are several limits on the divider as well as effective frequency
+that apply when a fractional divider with higher order MASH is used.
 
-On Thu, Jan 14, 2016 at 02:24:36PM -0500, Rhyland Klein wrote:
-> From: Mark Kuo <mkuo@nvidia.com>
->=20
-> SW should not disable PLLE if PLLE is already put under HW control.
->=20
-> Signed-off-by: Mark Kuo <mkuo@nvidia.com>
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-pll.c | 22 +++++++++++++++-------
->  1 file changed, 15 insertions(+), 7 deletions(-)
+This patch applies all the information about limits that is available
+at this time and all of which has been tested empirically by
+Mathias Reichl using primarily the pcm clock.
 
-Applied, thanks.
+The patch tries to use the "highest" order of MASH support and when it
+fails it reduces MASH order and retries the test - fall back all the way
+to integer divide if necessary, where "normal" clamping of limits
+happens.
 
-Thierry
+Note that http://www.aholme.co.uk/Frac2/Mash.htm
+contains a description of MASH, the author - allegedly - was
+working for Broadcom at that time.
 
---ZG5hGh9V5E9QzVHS
-Content-Type: application/pgp-signature; name="signature.asc"
+Suggested-by: Mathias Reichl <hias@horus.com>
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c |   52 ++++++++++++++++++++++++++++++++---------
+ 1 file changed, 41 insertions(+), 11 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 545c21a..637f8ae 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -300,6 +300,7 @@
 
-iQIcBAABCAAGBQJWphk4AAoJEN0jrNd/PrOhK6IQAKh8U5OFIuZF7JUE15gQc3qt
-Q0dZjbJxH8PON/AvWn4hL9Af+ukkq/nex42AlYc19LKCiCO7VjBSgPOYlpqaCb7z
-+qW3RUxBg+Ktq/rh8G8K2fFgk1hBb968GlIw/P5Pp9k5Y10YjFixhG5vU/wAjmh8
-wqQubnGIPnFeqvlL4yA9A2RFheH2rrYxLCk7Hrf8zqkJuNkt2vwOEGLKzMdtJhBQ
-X50fBxNxZZwIJrlc5Fzeieyjd8DdhU1+LecY9ye1oBxvIxBUAUsKBDxZT4AaeaLu
-41PjEx5GsL5FjPrWJRLgwoM9kNk4/KPb5fK0o3xbBiE3zk6dRLbQ8QLAWlLfZ6jo
-lTGE/1/NNRUISYboXvup+gnoVvD6I+lO4SleXqCWiDxpCyqZ20O8Fem+Q/gmR1m/
-A1SbsGRvbb4q5TfMyz0C+BFSDHKBwyDdZwauQeXIbC4DMVpLQz4JYozAwW3D0A7I
-3Ej7UAzte+WwLaPgaUZvOVmeDFzw1Zd3MA+bw8Gt6PuNfMsea/mb9VsMt79JBi6W
-gbba+EvNN5hiW9mtsBrTOSyZLLi16qIV9LKS5NmsgQg0P7RdLSgUiD2t3ufmhR9s
-S5N+R6J8CbkNSXvrluqd89wb9l+Cjuu/Gm7USR7BIQ3Itpxl87KJv6AIwP5Eijso
-ywy1thhjiE+iS2FIOL/8
-=gjC3
------END PGP SIGNATURE-----
+ #define LOCK_TIMEOUT_NS		100000000
+ #define BCM2835_MAX_FB_RATE	1750000000u
++#define BCM2835_MASH_MAX_FREQ	25000000u
 
---ZG5hGh9V5E9QzVHS--
+ enum bcm2835_clock_mash_type {
+ 	MASH_NONE = 0,
+@@ -1489,7 +1490,9 @@ static divmash bcm2835_clock_choose_div(struct clk_hw *hw,
+ 	u64 temp = (u64)parent_rate << CM_DIV_FRAC_BITS;
+ 	enum bcm2835_clock_mash_type mash = MASH_NONE;
+ 	u64 rem;
+-	u32 div;
++	u32 div, divi, divf;
++	const u32 divi_max = BIT(data->int_bits) - 1;
++	const u32 divi_min = 2;
+
+ 	rem = do_div(temp, rate);
+ 	div = temp;
+@@ -1499,20 +1502,47 @@ static divmash bcm2835_clock_choose_div(struct clk_hw *hw,
+ 		div += unused_frac_mask + 1;
+ 	div &= ~unused_frac_mask;
+
+-	/* Clamp to the limits. */
++	divi = div >> CM_DIV_FRAC_BITS;
++	divf = div & GENMASK(CM_DIV_FRAC_BITS - 1, 0);
+
+-	/* divider must be >= 2 */
+-	div = max_t(u32, div, (2 << CM_DIV_FRAC_BITS));
++	/* select mash mode */
++	if (data->frac_bits && divf)
++		mash = data->mash ? data->mash : MASH_FRAC;
+
+-	/* clamp to max divider allowed - max is integer divider */
+-	div = min_t(u32, div, GENMASK(data->int_bits + CM_DIV_FRAC_BITS - 1,
+-				      CM_DIV_FRAC_BITS));
++	/*
++	 * handle possible limits for different mash levels with fall-tru
++	 * For offset values see page 105 table 6-32 in
++	 * BCM2835-ARM-Peripherials as well as the errata at:
++	 *   http://elinux.org/BCM2835_datasheet_errata#p105_table
++	 */
++	switch (mash) {
++	case MASH_3RD_ORDER:
++		if ((divi >= divi_min + 3) &&
++		    (divi + 4 <= divi_max) &&
++		    (parent_rate / (divi - 3) <= BCM2835_MASH_MAX_FREQ))
++			return divmash_calc(MASH_3RD_ORDER, div);
++		/* fall tru if not in bounds */
++	case MASH_2ND_ORDER:
++		if ((divi >= divi_min + 1) &&
++		    (divi + 2 <= divi_max) &&
++		    (parent_rate / (divi - 1) <= BCM2835_MASH_MAX_FREQ))
++			return divmash_calc(MASH_2ND_ORDER, div);
++		/* fall tru if not in bounds */
++	case MASH_FRAC:
++		if ((divi >= divi_min) &&
++		    (divi + 1 <= divi_max))
++			return divmash_calc(MASH_FRAC, div);
++		/* fall tru if not in bounds */
++	case MASH_NONE:
++	default:
++		break;
++	}
+
+-	/* set mash if necessary */
+-	if (data->frac_bits && (div & GENMASK(CM_DIV_FRAC_BITS - 1, 0)))
+-		mash = data->mash ? data->mash : MASH_FRAC;
++	/* we apply standard clamping based on divi alone */
++	divi = max(divi, divi_min);
++	divi = min(divi, divi_max);
+
+-	return divmash_calc(mash, div);
++	return divmash_calc(MASH_NONE, divi << CM_DIV_FRAC_BITS);
+ }
+
+ static long bcm2835_clock_rate_from_divisor(struct bcm2835_clock *clock,
+--
+1.7.10.4
