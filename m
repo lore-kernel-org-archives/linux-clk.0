@@ -1,70 +1,34 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:33591 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750781AbcAUASX (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2016 19:18:23 -0500
-Subject: Re: [PATCH v3 0/4] s2mps11 clock driver refactoring
-To: Andi Shyti <andi.shyti@samsung.com>,
-	linux-samsung-soc@vger.kernel.org
-References: <1453284864-8082-1-git-send-email-andi.shyti@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 14 Jan 2016 18:05:02 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Andi Shyti <andi@etezian.org>,
-	Yadwinder Singh Brar <yadi.brar01@gmail.com>,
-	Jaehoon Chung <jh80.chung@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <56A023CC.6@samsung.com>
-Date: Thu, 21 Jan 2016 09:18:20 +0900
-MIME-version: 1.0
-In-reply-to: <1453284864-8082-1-git-send-email-andi.shyti@samsung.com>
-Content-type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 05/13] clk: at91: only disable available IRQs
+Message-ID: <20160115020502.GN22188@codeaurora.org>
+References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
+ <1449248628-3486-6-git-send-email-alexandre.belloni@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1449248628-3486-6-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 20.01.2016 19:14, Andi Shyti wrote:
-> Hi,
+On 12/04, Alexandre Belloni wrote:
+> From: Boris Brezillon <boris.brezillon@free-electrons.com>
 > 
-> This patchset contains some code refactoring on the s2mps11 clock
-> device driver. The main goal is to remove some dead code and
-> improve its readability.
+> Only disable available IRQs in case writing to a reserved bit has a harmful
+> effect.
 > 
-> At any iteration the patchset is getting a patch more, so that
-> this time there are four patches :)
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> ---
 
-Which means that if I have more comments now, you will send a v5 with 5
-patches inside? Oh...
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-BR,
-Krzysztof
-
-> 
-> Thanks to Krzysztof for his review, the changset is coming from
-> his suggestions:
-> 
-> V1 -> V2
->  - the order of the patches has changed
->  - the second patch has been added and it merges a for loop
->    inside
->    a previous one
->  - the 3rd patch (which in the first version was the 1st)
->    contains some more redundant variables removal.
-> 
-> V2 -> V3
->  - The "merge two for loops in one" has been moved as first patch
->  - removed the global variable clk_data
-> 
-> The patches have been applied on next-20160120 and tested on
-> Odroid Xu4.
-> 
-> Andi Shyti (4):
->   clk: s2mps11: merge two for loops in one
->   clk: s2mps11: allocate only one structure for clock init
->   clk: s2mps11: remove redundant static variables declaration
->   clk: s2mps11: remove redundant code
-> 
->  drivers/clk/clk-s2mps11.c | 108 +++++++++++++---------------------------------
->  1 file changed, 31 insertions(+), 77 deletions(-)
-> 
-
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
