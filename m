@@ -1,67 +1,103 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:62879 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752961AbcANKhN (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jan 2016 05:37:13 -0500
-Subject: Re: [PATCH v2 09/10] dt-bindings: video: exynos5433-decon: add
- bindings for DECON-TV
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-References: <CAJKOXPfXrEwu1egSnLxwYofu_scskkPRKOjOCskObPFn9yVcJw@mail.gmail.com>
- <1445860796-23045-1-git-send-email-a.hajda@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Hyungwon Hwang <human.hwang@samsung.com>
-From: Andrzej Hajda <a.hajda@samsung.com>
-Message-id: <56977A3B.8020104@samsung.com>
-Date: Thu, 14 Jan 2016 11:36:43 +0100
-MIME-version: 1.0
-In-reply-to: <1445860796-23045-1-git-send-email-a.hajda@samsung.com>
-Content-type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <5698C5E8.4040107@de.bosch.com>
+References: <1450951761-3160-1-git-send-email-dirk.behme@gmail.com>
+	<5690ABCC.3090909@gmail.com>
+	<CAMuHMdXa4qdrqu-RjPuxAHQwBJ5LZ+JsfWH83vcvp6EQ+M1-aA@mail.gmail.com>
+	<5698C5E8.4040107@de.bosch.com>
+Date: Fri, 15 Jan 2016 11:20:12 +0100
+Message-ID: <CAMuHMdWb-mQ=Q53Bzr7wwYtvg6iA2xoVecTTnJj18Sp428r-jw@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: shmobile: r8a7795: Add SDHI clocks
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: Dirk Behme <dirk.behme@gmail.com>, Linux-sh list <linux-sh@vger.kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms+renesas@verge.net.au>,
+	Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Inki,
+Hi Dirk,
 
-It seems this patch and 04/10 did not get picked up yet.
-Could you merge it?
+On Fri, Jan 15, 2016 at 11:11 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+> On 14.01.2016 19:24, Geert Uytterhoeven wrote:
+>> On Sat, Jan 9, 2016 at 7:42 AM, Dirk Behme <dirk.behme@gmail.com> wrote:
+>>> On 24.12.2015 11:09, Dirk Behme wrote:
+>>>> Add R8A7795 SDHI clocks.
+>>>> Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
+>>>> ---
+>>>> Changes in v2: Add the missing *H clocks and correct the dividers.
+>>>>
+>>>> This replaces v1
+>>>>
+>>>> http://www.spinics.net/lists/linux-sh/msg47464.html
+>>>>
+>>>>    drivers/clk/shmobile/r8a7795-cpg-mssr.c | 13 ++++++++++++-
+>>>>    1 file changed, 12 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/clk/shmobile/r8a7795-cpg-mssr.c
+>>>> b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
+>>>> index 05479e6..f30ed32 100644
+>>>> --- a/drivers/clk/shmobile/r8a7795-cpg-mssr.c
+>>>> +++ b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
+>>>> @@ -100,8 +100,15 @@ static const struct cpg_core_clk
+>>>> r8a7795_core_clks[]
+>>>> __initconst = {
+>>>>          DEF_FIXED("s3d2",       R8A7795_CLK_S3D2,  CLK_S3,         2,
+>>>> 1),
+>>>>          DEF_FIXED("s3d4",       R8A7795_CLK_S3D4,  CLK_S3,         4,
+>>>> 1),
+>>>>          DEF_FIXED("cl",         R8A7795_CLK_CL,    CLK_PLL1_DIV2, 48,
+>>>> 1),
+>>>> +       DEF_FIXED("sd0h",       R8A7795_CLK_SD0H,  CLK_PLL1_DIV2,  2,
+>>>> 1),
+>>>> +       DEF_FIXED("sd0",        R8A7795_CLK_SD0,   CLK_PLL1_DIV2,  8,
+>>>> 1),
+>>>> +       DEF_FIXED("sd1h",       R8A7795_CLK_SD1H,  CLK_PLL1_DIV2,  2,
+>>>> 1),
+>>>> +       DEF_FIXED("sd1",        R8A7795_CLK_SD1,   CLK_PLL1_DIV2,  8,
+>>>> 1),
+>>>> +       DEF_FIXED("sd2h",       R8A7795_CLK_SD2H,  CLK_PLL1_DIV2,  2,
+>>>> 1),
+>>>> +       DEF_FIXED("sd2",        R8A7795_CLK_SD2,   CLK_PLL1_DIV2,  8,
+>>>> 1),
+>>>> +       DEF_FIXED("sd3h",       R8A7795_CLK_SD3H,  CLK_PLL1_DIV2,  2,
+>>>> 1),
+>>>> +       DEF_FIXED("sd3",        R8A7795_CLK_SD3,   CLK_PLL1_DIV2,  8,
+>>>> 1),
+>>
+>>
+>> The dividers for these clocks are not fixed, they are controlled by the
+>> SDnCKCR registers.
+>>
+>> Unfortunately the register layout is more complicated than on R-Car Gen2,
+>> so
+>> you can no longer use clk_register_divider_table(), but have to write a
+>> custom
+>> clock driver.
+>>
+>> For an initial version, a simple "read-only" version that just calls
+>> clk_register_fixed_factor() with divider values read from the hardware
+>> registers may be good enough. But for full support, you need a driver that
+>> can program the registers, too.
+>
+>
+>
+> Anything like
+>
+> https://git.kernel.org/cgit/linux/kernel/git/horms/renesas-bsp.git/commit/drivers/clk/shmobile/clk-rcar-gen3.c?h=v4.2/rcar-3.0.x&id=cd10385afc15cef6bfbaea4aa5da41193b24fe82
+>
+> ?
 
-Regards
-Andrzej
+Yes.
 
-On 10/26/2015 12:59 PM, Andrzej Hajda wrote:
-> DECON-TV(Display and Enhancement Controller for TV) is a variation
-> of DECON IP. Its main purpose is to produce video stream for HDMI IP.
->
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
-> Hi Krzysztof,
->
-> I have decided to skip cleanup part as it would require more work,
-> not related to this patchset.
->
-> Regards
-> Andrzej
->
->  Documentation/devicetree/bindings/video/exynos5433-decon.txt | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/video/exynos5433-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
-> index 3dff78b..c9fd7b3 100644
-> --- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
-> +++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
-> @@ -5,7 +5,8 @@ Exynos series of SoCs which transfers the image data from a video memory
->  buffer to an external LCD interface.
->  
->  Required properties:
-> -- compatible: value should be "samsung,exynos5433-decon";
-> +- compatible: value should be one of:
-> +	"samsung,exynos5433-decon", "samsung,exynos5433-decon-tv";
->  - reg: physical base address and length of the DECON registers set.
->  - interrupts: should contain a list of all DECON IP block interrupts in the
->  	      order: VSYNC, LCD_SYSTEM. The interrupt specifier format
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
