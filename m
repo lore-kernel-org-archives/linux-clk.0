@@ -1,85 +1,61 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
- Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v4 2/3] clk: samsung: Don't build ARMv8 clock drivers on ARMv7
-Date: Thu, 28 Jan 2016 09:35:23 +0900
-Message-id: <1453941324-15742-3-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1453941324-15742-1-git-send-email-k.kozlowski@samsung.com>
-References: <1453941324-15742-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <moinejf@free.fr>
+Message-Id: <cover.1452876522.git.moinejf@free.fr>
+From: Jean-Francois Moine <moinejf@free.fr>
+Date: Fri, 15 Jan 2016 17:48:42 +0100
+Subject: [PATCH v2 0/2] Add a DRM display driver to the Allwinner H3
+To: Dave Airlie <airlied@linux.ie>,
+    Chen-Yu Tsai <wens@csie.org>,
+    Emilio López <emilio@elopez.com.ar>,
+    Maxime Ripard <maxime.ripard@free-electrons.com>,
+    Michael Turquette <mturquette@baylibre.com>,
+    Stephen Boyd <sboyd@codeaurora.org>
+Cc: dri-devel@lists.freedesktop.org,
+    linux-arm-kernel@lists.infradead.org,
+    linux-clk@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
-so it is built also on ARMv7. This does not bring any kind of benefit.
-There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
-multi_v7 for ARMv7).
+The proposed DRM driver works on a Orange PI 2 with a kernel 4.4.0
+and the H3 patches found in Hans de Goede's GIT repository.
 
-Instead build clock drivers only for respective SoC's architecture.
+As there is no documentation about the HDMI of the H3,
+the associated encoder/connector driver has not been included
+in this patch series.
+For tests, it may be built as a out-of-tree driver from the tarball:
+	http://moinejf.free.fr/opi2/h3-hdmi.tar.gz
+and the DT files:
+	http://moinejf.free.fr/opi2/sun8i-h3.dtsi
+	http://moinejf.free.fr/opi2/sun8i-h3-orangepi-plus.dts
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Jean-Francois Moine (2):
+  clk: sunxi: Add sun6i/8i video support
+  drm: sunxi: Add a basic DRM driver for Allwinner DE2
 
----
+ Documentation/devicetree/bindings/clock/sunxi.txt  |   2 +
+ .../devicetree/bindings/display/sunxi.txt          |  81 ++++
+ drivers/clk/sunxi/clk-sun6i-display.c              | 106 +++++
+ drivers/clk/sunxi/clk-sun6i-pll3.c                 | 174 ++++++++
+ drivers/gpu/drm/Kconfig                            |   2 +
+ drivers/gpu/drm/Makefile                           |   1 +
+ drivers/gpu/drm/sunxi/Kconfig                      |  20 +
+ drivers/gpu/drm/sunxi/Makefile                     |   7 +
+ drivers/gpu/drm/sunxi/de2_crtc.c                   | 425 +++++++++++++++++++
+ drivers/gpu/drm/sunxi/de2_crtc.h                   |  43 ++
+ drivers/gpu/drm/sunxi/de2_de.c                     | 461 +++++++++++++++++++++
+ drivers/gpu/drm/sunxi/de2_drm.h                    |  55 +++
+ drivers/gpu/drm/sunxi/de2_drv.c                    | 376 +++++++++++++++++
+ drivers/gpu/drm/sunxi/de2_plane.c                  | 114 +++++
+ 14 files changed, 1867 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/sunxi.txt
+ create mode 100644 drivers/clk/sunxi/clk-sun6i-display.c
+ create mode 100644 drivers/clk/sunxi/clk-sun6i-pll3.c
+ create mode 100644 drivers/gpu/drm/sunxi/Kconfig
+ create mode 100644 drivers/gpu/drm/sunxi/Makefile
+ create mode 100644 drivers/gpu/drm/sunxi/de2_crtc.c
+ create mode 100644 drivers/gpu/drm/sunxi/de2_crtc.h
+ create mode 100644 drivers/gpu/drm/sunxi/de2_de.c
+ create mode 100644 drivers/gpu/drm/sunxi/de2_drm.h
+ create mode 100644 drivers/gpu/drm/sunxi/de2_drv.c
+ create mode 100644 drivers/gpu/drm/sunxi/de2_plane.c
 
-Changes since v3:
-1. Rebase on next-20160127.
-
-Changes since v2:
-1. Follow Arnd's advice making EXYNOS_ARM64_COMMON_CLK user-visible when
-   COMPILE_TEST is enabled.
-2. Dropped accumulated tags because the logic is now different.
-
-Changes since v1:
-1. Use one Kconfig symbol for clocks of all ARM64 SoCs (after
-   discussion): EXYNOS_ARM64_COMMON_CLK.
-2. Minor cleanups after Tomasz's comments.
-3. Added tags: Chanwoo's, Sylwester's, Alim's and Tomasz's (the tags
-   were given for v1 but assuming that change from 1. is not major
-   enough to require re-tagging).
----
- drivers/clk/samsung/Kconfig  | 5 +++++
- drivers/clk/samsung/Makefile | 4 ++--
- 2 files changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-index dd6093a33f84..5fd982d9f4d9 100644
---- a/drivers/clk/samsung/Kconfig
-+++ b/drivers/clk/samsung/Kconfig
-@@ -23,3 +23,8 @@ config S3C2443_COMMON_CLK
- 	bool "Samsung S3C2443 clock controller support" if COMPILE_TEST
- 	select COMMON_CLK_SAMSUNG
- 
-+# ARM64 SoCs (e.g. Exynos5433, Exynos7):
-+config EXYNOS_ARM64_COMMON_CLK
-+	bool "Samsung Exynos ARMv8-family clock controller support" if COMPILE_TEST
-+	default ARM64 && COMMON_CLK_SAMSUNG
-+	depends on (ARM64 && COMMON_CLK_SAMSUNG) || COMPILE_TEST
-diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-index 5f6833ea355d..fc367d4b2902 100644
---- a/drivers/clk/samsung/Makefile
-+++ b/drivers/clk/samsung/Makefile
-@@ -10,11 +10,11 @@ obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
- obj-$(CONFIG_SOC_EXYNOS5260)	+= clk-exynos5260.o
- obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
- obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
--obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos5433.o
-+obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos5433.o
- obj-$(CONFIG_SOC_EXYNOS5440)	+= clk-exynos5440.o
- obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-audss.o
- obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-clkout.o
--obj-$(CONFIG_ARCH_EXYNOS7)	+= clk-exynos7.o
-+obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos7.o
- obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
- obj-$(CONFIG_S3C2410_COMMON_DCLK)+= clk-s3c2410-dclk.o
- obj-$(CONFIG_S3C2412_COMMON_CLK)+= clk-s3c2412.o
 -- 
-1.9.1
+2.7.0
