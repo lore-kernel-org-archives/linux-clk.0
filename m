@@ -1,128 +1,237 @@
-Return-Path: <tomeu@tomeuvizoso.net>
-Return-Path: <tomeu@tomeuvizoso.net>
-MIME-Version: 1.0
-In-Reply-To: <CAD=FV=W=LCJk4m049hBnm7BOYudnVe=oa3jdcSrrZZUU9rFtog@mail.gmail.com>
-References: <1415087559-19444-1-git-send-email-kever.yang@rock-chips.com>
- <48806799.thBSifdUp8@diego> <54647142.4080800@rock-chips.com>
- <CAD=FV=Vzec3Qm-kc6zZ4VxSREoZbzVkWbzp-noHYdcEVrLYYSw@mail.gmail.com>
- <CAAObsKChYN5nmcm5OWnAzNRGDi_QGSoKvN+0FizhjeT-3mmeXQ@mail.gmail.com>
- <CAD=FV=Wgu=xQ9PcVqfzcedXVU3Rh-HKbBVxHuqgV9OZJEYhYvg@mail.gmail.com>
- <CAAObsKC1v--mZwkiG-c7P2Bwi2-_txbeqaW4Vd5h-noAVNbhjA@mail.gmail.com>
- <CAD=FV=VB93wYigRJ8wa8YL6P+Q+-fRokPiCB-Fo1pC_zAdh2oA@mail.gmail.com>
- <CAAObsKCMh3Bk_oNJdLbU2F9b7jrnFZOp2uFR_oPqUoJ3W1gfaQ@mail.gmail.com> <CAD=FV=W=LCJk4m049hBnm7BOYudnVe=oa3jdcSrrZZUU9rFtog@mail.gmail.com>
-From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Date: Tue, 26 Jan 2016 09:28:48 +0100
-Message-ID: <CAAObsKBS45kbvdmdvFxwSo=B9GXRLoX2g7WQYVmZJ0KFnwSejw@mail.gmail.com>
-Subject: Re: [PATCH 0/5] clk: rockchip: add full support for HDMI clock on rk3288
-To: Doug Anderson <dianders@chromium.org>
-Cc: Kever Yang <kever.yang@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	Sonny Rao <sonnyrao@chromium.org>, Addy Ke <addy.ke@rock-chips.com>,
-	Eddie Cai <cf@rock-chips.com>, ZhenFu Fang <fzf@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>,
-	=?UTF-8?B?5aea5pm65oOF?= <yzq@rock-chips.com>,
-	=?UTF-8?B?5oi05YWL6ZyWIChKYWNrKQ==?= <dkl@rock-chips.com>,
-	Tao Huang <huangtao@rock-chips.com>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Remi Pommarel <repk@triplefau.lt>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH V4 6/7] clk: bcm2835: enable fractional and mash support
+Date: Fri, 15 Jan 2016 14:21:05 +0000
+Message-Id: <1452867667-2447-7-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org>
+References: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 22 January 2016 at 18:07, Doug Anderson <dianders@chromium.org> wrote:
-> Tomeu,
->
-> On Fri, Jan 22, 2016 at 6:00 AM, Tomeu Vizoso <tomeu@tomeuvizoso.net> wrote:
->> On 21 January 2016 at 21:11, Doug Anderson <dianders@chromium.org> wrote:
->>> Hi,
->>>
->>> On Thu, Jan 21, 2016 at 1:03 AM, Tomeu Vizoso <tomeu@tomeuvizoso.net> wrote:
->>>> So we have a mechanism for detecting a conflict in the clock
->>>> hierarchy, and a mechanism to solve it, but we are missing a way for
->>>> userspace to communicate policy regarding which clocks should be given
->>>> priority when solving such a conflict?
->>>
->>> Hrmmm, I guess it could be userspace that makes the decision.  It does
->>> seem a little odd to force it to userspace in all cases, though.  For
->>> a particular laptop that is designed with a specific panel connected
->>> up eDP it seems less than ideal to push this into userspace.  If the
->>> kernel could just work in the expected sane way (or at least work that
->>> way by default) it would be ideal.
->>
->> Ah, I was wrongly assuming that the kernel didn't have enough
->> information to make an informed decision in this case, sorry.
->>
->> Guess the per-user rate limits don't help here because the consumer
->> with higher priority could work with frequencies other than the ideal.
->>
->> And we cannot have a consumer listening for PRE_RATE_CHANGE and
->> aborting unwanted changes or rerouting the ancestors of the clocks of
->> other consumers because that would be a massive violation of
->> separation of concerns.
->>
->> If we were to rearrange the clock topology from within the CCF, then
->> consumers need to have a way to communicate to the core that they are
->> more important than other consumers. clk_set_important(clk, true)
->> could be enough in this case, but would be insufficient in more
->> complex cases where more than two clocks could use the same PLL.
->
-> With something like the above I'd still expect some complexity
-> depending on the probe order.  If a less important device grabs the
-> clock first, it might be forced to re-think its clocks later.  That
-> might be disconcerting.
+From: Martin Sperl <kernel@martin.sperl.org>
 
-How much disconcerting do you think this could be? Hopefully those
-devices should probe quite close to each other, right?
+The clk-bcm2835 driver right now does the correct calculation
+of the fractional clock divider, but it does not set the FRAC
+bit.
 
-> OK, so I was just involved in a change recently that made me realize
-> that maybe our original problems were tied to the fact that our
-> builtin panels were trying to specify a clock that was impossible to
-> achieve with CPLL / GPLL.  It was a known problem that the request
-> would be denied and the CCF would just pick the closest rate it could.
-> Probably the right thing is to solve _that_ problem first.  If using
-> simple panel you could do a change like
-> <https://chromium-review.googlesource.com/#/c/323211/> (though
-> presumably you'd have to handle people using the same panel in other
-> laptops).  You might also be able to do funny things to fixup the mode
-> like dbehr tried to do in
-> <https://chromium-review.googlesource.com/#/c/270017/>.  By doing this
-> and making sure that
+This patch enables FRAC for all clocks with frac_bits > 0
+but allows to define the selection of a higher-order MASH
+support instead of just FRAC by assigning .mash in the
+clock description structure.
 
-Are we missing something here?
+Right now there are no limits imposed on maximum frequencies
+or additional restrictions on min/max divider when MASH/FRAC
+is enabled and used.
 
-> With that being said, how about this as a solution:
->
-> 1. Figure some way (presumably some type of device tree property?) to
-> make sure that the builtin panel chose a clock that was achievable by
-> dividing CPLL / GPLL on rk3288.  If you have eDP but no builtin panel
-> you wouldn't specify this and you'd just let the system pick whatever
-> it wanted.
->
-> 2. We use "assigned-clocks" to (by default) make NPLL something silly
-> and unattractive.  This will keep the common clock framework from
-> picking it to use as the source if the clock could be made just as
-> well from CPLL / GPLL (or find some other way to make NPLL a lower
-> priority muxing option).
->
-> 3. We use the "dibs" rule in that the first display driver to claim
-> NPLL blocks anyone else from changing things.
->
->
-> In the above on a laptop with a builtin panel and an HDMI port you'd
-> get the panel using CPLL / GPLL and HDMI getting CPLL, GPLL or NPLL
-> (and it would be able to change NPLL if needed).
->
->
-> In the above on a dev board with a lot of ports then the first device
-> probed would get the most flexibility.  Future devices would be
-> limited in their choices.
+The way that implementation is done the top 8 bits of the divider
+are used to signify the mash level used for this divider.
+This has been wrapped in a new type mashtype with some helper
+functions that allows extraction of the divider information.
+typedef is used to minimize the amount of change.
+(note also that the top 8 bit are not used by the clock registers
+besides requireing some magic when setting the register)
 
-Not sure of this, sounds a bit ad-hoc and may be avoiding to address
-limitations in the CCF that need to be solved anyway? So far it still
-looks to me like the CCF needs to get better at allocating limited
-resources.
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c |  111 ++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 104 insertions(+), 7 deletions(-)
 
-Mike, Stephen, what do you think?
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 1640288..545c21a 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -51,6 +51,7 @@
+ #define CM_GNRICCTL		0x000
+ #define CM_GNRICDIV		0x004
+ # define CM_DIV_FRAC_BITS	12
++# define CM_DIV_INT_BITS	12
 
-Thanks,
+ #define CM_VPUCTL		0x008
+ #define CM_VPUDIV		0x00c
+@@ -130,6 +131,10 @@
+ # define CM_GATE			BIT(CM_GATE_BIT)
+ # define CM_BUSY			BIT(7)
+ # define CM_BUSYD			BIT(8)
++# define CM_MASH_BITS			2
++# define CM_MASH_SHIFT			9
++# define CM_MASH_MASK			GENMASK(10, 9)
++# define CM_MASH(v)			((v << CM_MASH_SHIFT) & CM_MASH_MASK)
+ # define CM_SRC_SHIFT			0
+ # define CM_SRC_BITS			4
+ # define CM_SRC_MASK			0xf
+@@ -296,6 +301,63 @@
+ #define LOCK_TIMEOUT_NS		100000000
+ #define BCM2835_MAX_FB_RATE	1750000000u
 
-Tomeu
++enum bcm2835_clock_mash_type {
++	MASH_NONE = 0,
++	MASH_FRAC = 1,
++	MASH_2ND_ORDER = 2,
++	MASH_3RD_ORDER = 3
++};
++
++/*
++ * mashdiv - Helper type packed in u32 that contains
++ *   integer divider (bits 12-23)
++ *   integer divider (bits 11-0)
++ *   mash type       (bits 25-24)
++ * this also includes some helperfunctions to calc the compound u32
++ * as well as extracting the individual data from the compound u32.
++ */
++typedef u32 divmash;
++
++/* define the lowes/highest bits for a field and masks */
++#define DIVMASH_DIVF_LO_BIT 0
++#define DIVMASH_DIVF_HI_BIT (CM_DIV_FRAC_BITS - 1)
++#define DIVMASH_DIVF_MASK GENMASK(DIVMASH_DIVF_HI_BIT, DIVMASH_DIVF_LO_BIT)
++#define DIVMASH_DIVI_LO_BIT (DIVMASH_DIVF_HI_BIT + 1)
++#define DIVMASH_DIVI_HI_BIT (CM_DIV_INT_BITS + CM_DIV_FRAC_BITS - 1)
++#define DIVMASH_DIVI_MASK GENMASK(DIVMASH_DIVI_HI_BIT, DIVMASH_DIVI_LO_BIT)
++#define DIVMASH_DIV_LO_BIT DIVMASH_DIVF_LO_BIT
++#define DIVMASH_DIV_MASK (DIVMASH_DIVI_MASK | DIVMASH_DIVF_MASK)
++#define DIVMASH_MASH_LO_BIT (DIVMASH_DIVI_HI_BIT + 1)
++#define DIVMASH_MASH_HI_BIT (DIVMASH_MASH_LO_BIT + 1)
++#define DIVMASH_MASH_MASK GENMASK(DIVMASH_MASH_HI_BIT, DIVMASH_MASH_LO_BIT)
++
++static inline divmash divmash_calc(enum bcm2835_clock_mash_type mash,
++				   u32 div)
++{
++	return ((div << DIVMASH_DIV_LO_BIT)   & DIVMASH_DIV_MASK) |
++	       ((mash << DIVMASH_MASH_LO_BIT) & DIVMASH_MASH_MASK);
++}
++
++static inline enum bcm2835_clock_mash_type divmash_get_mash(divmash dm)
++{
++	return (dm & DIVMASH_MASH_MASK) >> DIVMASH_MASH_LO_BIT;
++}
++
++static inline u32 divmash_get_div(divmash dm)
++{
++	return (dm & DIVMASH_DIV_MASK) >> DIVMASH_DIV_LO_BIT;
++}
++
++static inline u32 divmash_get_divi(divmash dm)
++{
++	return (dm & DIVMASH_DIVI_MASK) >> DIVMASH_DIVI_LO_BIT;
++}
++
++static inline u32 divmash_get_divf(divmash dm)
++{
++	return (dm & DIVMASH_DIVF_MASK) >> DIVMASH_DIVF_LO_BIT;
++}
++
+ struct bcm2835_cprman {
+ 	struct device *dev;
+ 	void __iomem *regs;
+@@ -647,6 +709,8 @@ struct bcm2835_clock_data {
+ 	u32 int_bits;
+ 	/* Number of fractional bits in the divider */
+ 	u32 frac_bits;
++	/* the mash value to use - see CM_MASH */
++	enum bcm2835_clock_mash_type mash;
+
+ 	bool is_vpu_clock;
+ };
+@@ -1413,16 +1477,17 @@ static int bcm2835_clock_is_on(struct clk_hw *hw)
+ 	return (cprman_read(cprman, data->ctl_reg) & CM_ENABLE) != 0;
+ }
+
+-static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
+-				    unsigned long rate,
+-				    unsigned long parent_rate,
+-				    bool round_up)
++static divmash bcm2835_clock_choose_div(struct clk_hw *hw,
++					unsigned long rate,
++					unsigned long parent_rate,
++					bool round_up)
+ {
+ 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
+ 	const struct bcm2835_clock_data *data = clock->data;
+ 	u32 unused_frac_mask =
+ 		GENMASK(CM_DIV_FRAC_BITS - data->frac_bits, 0) >> 1;
+ 	u64 temp = (u64)parent_rate << CM_DIV_FRAC_BITS;
++	enum bcm2835_clock_mash_type mash = MASH_NONE;
+ 	u64 rem;
+ 	u32 div;
+
+@@ -1443,7 +1508,11 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
+ 	div = min_t(u32, div, GENMASK(data->int_bits + CM_DIV_FRAC_BITS - 1,
+ 				      CM_DIV_FRAC_BITS));
+
+-	return div;
++	/* set mash if necessary */
++	if (data->frac_bits && (div & GENMASK(CM_DIV_FRAC_BITS - 1, 0)))
++		mash = data->mash ? data->mash : MASH_FRAC;
++
++	return divmash_calc(mash, div);
+ }
+
+ static long bcm2835_clock_rate_from_divisor(struct bcm2835_clock *clock,
+@@ -1534,10 +1603,36 @@ static int bcm2835_clock_set_rate(struct clk_hw *hw,
+ 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
+ 	struct bcm2835_cprman *cprman = clock->cprman;
+ 	const struct bcm2835_clock_data *data = clock->data;
+-	u32 div = bcm2835_clock_choose_div(hw, rate, parent_rate, false);
++	divmash dm = bcm2835_clock_choose_div(hw, rate, parent_rate, false);
++	u32 div = divmash_get_div(dm);
++	enum bcm2835_clock_mash_type mash = divmash_get_mash(dm);
++	u32 ctl;
++
++	spin_lock(&cprman->regs_lock);
+
++	/* if div and mash are identical, then there is nothing to do */
++	ctl = cprman_read(cprman, data->ctl_reg);
++	if ((div == cprman_read(cprman, data->div_reg)) &&
++	    (CM_MASH(mash) == (ctl & CM_MASH_MASK)))
++		goto unlock_exit;
++
++	/*
++	 * Setting up mash type
++	 *
++	 * In principle it is recommended to stop/start the clock first,
++	 * but as we set CLK_SET_RATE_GATE during registration of the
++	 * clock this requirement should be take care of by the
++	 * clk-framework.
++	 */
++	cprman_write(cprman, data->ctl_reg,
++		     (ctl & ~CM_MASH_MASK) | CM_MASH(mash));
++
++	/* and set div */
+ 	cprman_write(cprman, data->div_reg, div);
+
++unlock_exit:
++	spin_unlock(&cprman->regs_lock);
++
+ 	return 0;
+ }
+
+@@ -1549,6 +1644,7 @@ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
+ 	unsigned long rate, best_rate = 0;
+ 	unsigned long prate, best_prate = 0;
+ 	size_t i;
++	divmash dm;
+ 	u32 div;
+
+ 	/*
+@@ -1559,7 +1655,8 @@ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
+ 		if (!parent)
+ 			continue;
+ 		prate = clk_hw_get_rate(parent);
+-		div = bcm2835_clock_choose_div(hw, req->rate, prate, true);
++		dm = bcm2835_clock_choose_div(hw, req->rate, prate, true);
++		div = divmash_get_div(dm);
+ 		rate = bcm2835_clock_rate_from_divisor(clock, prate, div);
+ 		if (rate > best_rate && rate <= req->rate) {
+ 			best_parent = parent;
+--
+1.7.10.4
