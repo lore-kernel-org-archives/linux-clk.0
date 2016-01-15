@@ -1,48 +1,53 @@
-Return-Path: <robh@kernel.org>
-Date: Thu, 14 Jan 2016 21:03:04 -0600
-From: Rob Herring <robh@kernel.org>
+Return-Path: <p.zabel@pengutronix.de>
+Message-ID: <1452873018.6067.79.camel@pengutronix.de>
+Subject: Re: [PATCH v2 02/26] reset: Make reset_control_ops const
+From: Philipp Zabel <p.zabel@pengutronix.de>
 To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	devicetree@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Wynter Woods <wynter@nextthing.co>, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Hans de Goede <hdegoede@redhat.com>, linux-sunxi@googlegroups.com,
-	Rob Clark <robdclark@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Alexander Kaplan <alex@nextthing.co>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 07/26] clk: sunxi: Add TCON channel1 clock
-Message-ID: <20160115030304.GA18853@rob-hp-laptop>
-References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
- <1452785109-6172-8-git-send-email-maxime.ripard@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1452785109-6172-8-git-send-email-maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, David Airlie <airlied@linux.ie>, Thierry Reding
+ <thierry.reding@gmail.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-sunxi@googlegroups.com, Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>, Hans de
+ Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>, Boris
+ Brezillon <boris.brezillon@free-electrons.com>, Wynter Woods
+ <wynter@nextthing.co>,  Thomas Petazzoni
+ <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>
+Date: Fri, 15 Jan 2016 16:50:18 +0100
+In-Reply-To: <1452785109-6172-3-git-send-email-maxime.ripard@free-electrons.com>
+References: 
+	<1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+	 <1452785109-6172-3-git-send-email-maxime.ripard@free-electrons.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 14, 2016 at 04:24:50PM +0100, Maxime Ripard wrote:
-> The TCON is a controller generating the timings to output videos signals,
-> acting like both a CRTC and an encoder.
-> 
-> It has two channels depending on the output, each channel being driven by
-> its own clock (and own clock controller).
-> 
-> Add a driver for the channel 1 clock.
+Am Donnerstag, den 14.01.2016, 16:24 +0100 schrieb Maxime Ripard:
+> The ops pointer is holding a pointer to a structure that is usually not
+> modified. Make it const.
 > 
 > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 > ---
->  Documentation/devicetree/bindings/clock/sunxi.txt |   1 +
+>  include/linux/reset-controller.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/reset-controller.h b/include/linux/reset-controller.h
+> index ce6b962ffed4..a3a5bcdb1d02 100644
+> --- a/include/linux/reset-controller.h
+> +++ b/include/linux/reset-controller.h
+> @@ -38,7 +38,7 @@ struct of_phandle_args;
+>   * @nr_resets: number of reset controls in this reset controller device
+>   */
+>  struct reset_controller_dev {
+> -	struct reset_control_ops *ops;
+> +	const struct reset_control_ops *ops;
+>  	struct module *owner;
+>  	struct list_head list;
+>  	struct device_node *of_node;
 
-Acked-by: Rob Herring <robh@kernel.org>
+Applied, thanks.
 
->  drivers/clk/sunxi/Makefile                        |   1 +
->  drivers/clk/sunxi/clk-sun4i-tcon-ch1.c            | 154 ++++++++++++++++++++++
->  3 files changed, 156 insertions(+)
->  create mode 100644 drivers/clk/sunxi/clk-sun4i-tcon-ch1.c
+regards
+Philipp
