@@ -1,1465 +1,464 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-CC: Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, <srv_heupstream@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, Shunli Wang <shunli.wang@mediatek.com>, James
- Liao <jamesjj.liao@mediatek.com>
-Subject: [PATCH v2 4/6] clk: mediatek: Add MT2701 clock support
-Date: Tue, 5 Jan 2016 14:30:20 +0800
-Message-ID: <1451975422-31174-5-git-send-email-jamesjj.liao@mediatek.com>
-In-Reply-To: <1451975422-31174-1-git-send-email-jamesjj.liao@mediatek.com>
-References: <1451975422-31174-1-git-send-email-jamesjj.liao@mediatek.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jamesjj.liao@mediatek.com
+From: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, sboyd@codeaurora.org
+To: torvalds@linux-foundation.org
+Message-ID: <20160115213618.19367.51299@quark.deferred.io>
+Subject: [GIT PULL] clk: changes for 4.5
+Date: Fri, 15 Jan 2016 13:36:18 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shunli Wang <shunli.wang@mediatek.com>
+The following changes since commit 4ef7675344d687a0ef5b0d7c0cee12da005870c0:
 
-Add MT2701 clock support, include topckgen, apmixedsys,
-infracfg, pericfg and subsystem clocks.
+  Linux 4.4-rc6 (2015-12-20 16:06:09 -0800)
 
-Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
----
- drivers/clk/mediatek/Kconfig      |    8 +
- drivers/clk/mediatek/Makefile     |    1 +
- drivers/clk/mediatek/clk-gate.c   |   56 ++
- drivers/clk/mediatek/clk-gate.h   |    2 +
- drivers/clk/mediatek/clk-mt2701.c | 1210 +++++++++++++++++++++++++++++++++++++
- drivers/clk/mediatek/clk-mtk.c    |   25 +
- drivers/clk/mediatek/clk-mtk.h    |   35 +-
- 7 files changed, 1334 insertions(+), 3 deletions(-)
- create mode 100644 drivers/clk/mediatek/clk-mt2701.c
+are available in the git repository at:
 
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index dc224e6..6c7cdc0 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -6,6 +6,14 @@ config COMMON_CLK_MEDIATEK
- 	---help---
- 	  Mediatek SoCs' clock support.
- 
-+config COMMON_CLK_MT2701
-+	bool "Clock driver for Mediatek MT2701 and MT7623"
-+	depends on COMMON_CLK
-+	select COMMON_CLK_MEDIATEK
-+	default ARCH_MEDIATEK
-+	---help---
-+	  This driver supports Mediatek MT2701 and MT7623 clocks.
-+
- config COMMON_CLK_MT8135
- 	bool "Clock driver for Mediatek MT8135"
- 	depends on COMMON_CLK
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 32e7222..5b2b91b 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -1,4 +1,5 @@
- obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
- obj-$(CONFIG_RESET_CONTROLLER) += reset.o
-+obj-$(CONFIG_COMMON_CLK_MT2701) += clk-mt2701.o
- obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135.o
- obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173.o
-diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
-index 576bdb7..38badb4 100644
---- a/drivers/clk/mediatek/clk-gate.c
-+++ b/drivers/clk/mediatek/clk-gate.c
-@@ -61,6 +61,26 @@ static void mtk_cg_clr_bit(struct clk_hw *hw)
- 	regmap_write(cg->regmap, cg->clr_ofs, BIT(cg->bit));
- }
- 
-+static void mtk_cg_set_bit_no_setclr(struct clk_hw *hw)
-+{
-+	struct mtk_clk_gate *cg = to_clk_gate(hw);
-+	u32 val;
-+
-+	regmap_read(cg->regmap, cg->sta_ofs, &val);
-+	val |= BIT(cg->bit);
-+	regmap_write(cg->regmap, cg->sta_ofs, val);
-+}
-+
-+static void mtk_cg_clr_bit_no_setclr(struct clk_hw *hw)
-+{
-+	struct mtk_clk_gate *cg = to_clk_gate(hw);
-+	u32 val;
-+
-+	regmap_read(cg->regmap, cg->sta_ofs, &val);
-+	val &= ~(BIT(cg->bit));
-+	regmap_write(cg->regmap, cg->sta_ofs, val);
-+}
-+
- static int mtk_cg_enable(struct clk_hw *hw)
- {
- 	mtk_cg_clr_bit(hw);
-@@ -85,6 +105,30 @@ static void mtk_cg_disable_inv(struct clk_hw *hw)
- 	mtk_cg_clr_bit(hw);
- }
- 
-+static int mtk_cg_enable_no_setclr(struct clk_hw *hw)
-+{
-+	mtk_cg_clr_bit_no_setclr(hw);
-+
-+	return 0;
-+}
-+
-+static void mtk_cg_disable_no_setclr(struct clk_hw *hw)
-+{
-+	mtk_cg_set_bit_no_setclr(hw);
-+}
-+
-+static int mtk_cg_enable_inv_no_setclr(struct clk_hw *hw)
-+{
-+	mtk_cg_set_bit_no_setclr(hw);
-+
-+	return 0;
-+}
-+
-+static void mtk_cg_disable_inv_no_setclr(struct clk_hw *hw)
-+{
-+	mtk_cg_clr_bit_no_setclr(hw);
-+}
-+
- const struct clk_ops mtk_clk_gate_ops_setclr = {
- 	.is_enabled	= mtk_cg_bit_is_cleared,
- 	.enable		= mtk_cg_enable,
-@@ -97,6 +141,18 @@ const struct clk_ops mtk_clk_gate_ops_setclr_inv = {
- 	.disable	= mtk_cg_disable_inv,
- };
- 
-+const struct clk_ops mtk_clk_gate_ops_no_setclr = {
-+	.is_enabled	= mtk_cg_bit_is_cleared,
-+	.enable		= mtk_cg_enable_no_setclr,
-+	.disable	= mtk_cg_disable_no_setclr,
-+};
-+
-+const struct clk_ops mtk_clk_gate_ops_no_setclr_inv = {
-+	.is_enabled	= mtk_cg_bit_is_set,
-+	.enable		= mtk_cg_enable_inv_no_setclr,
-+	.disable	= mtk_cg_disable_inv_no_setclr,
-+};
-+
- struct clk * __init mtk_clk_register_gate(
- 		const char *name,
- 		const char *parent_name,
-diff --git a/drivers/clk/mediatek/clk-gate.h b/drivers/clk/mediatek/clk-gate.h
-index 11e25c9..7f7ef34 100644
---- a/drivers/clk/mediatek/clk-gate.h
-+++ b/drivers/clk/mediatek/clk-gate.h
-@@ -36,6 +36,8 @@ static inline struct mtk_clk_gate *to_clk_gate(struct clk_hw *hw)
- 
- extern const struct clk_ops mtk_clk_gate_ops_setclr;
- extern const struct clk_ops mtk_clk_gate_ops_setclr_inv;
-+extern const struct clk_ops mtk_clk_gate_ops_no_setclr;
-+extern const struct clk_ops mtk_clk_gate_ops_no_setclr_inv;
- 
- struct clk *mtk_clk_register_gate(
- 		const char *name,
-diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
-new file mode 100644
-index 0000000..2f521f4
---- /dev/null
-+++ b/drivers/clk/mediatek/clk-mt2701.c
-@@ -0,0 +1,1210 @@
-+/*
-+ * Copyright (c) 2014 MediaTek Inc.
-+ * Author: Shunli Wang <shunli.wang@mediatek.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+
-+#include "clk-mtk.h"
-+#include "clk-gate.h"
-+
-+#include <dt-bindings/clock/mt2701-clk.h>
-+
-+static DEFINE_SPINLOCK(lock);
-+
-+static const struct mtk_fixed_clk top_fixed_clks[] __initconst = {
-+	FIXED_CLK(CLK_TOP_DPI, "dpi_ck", "clk26m", 108 * MHZ),
-+	FIXED_CLK(CLK_TOP_DMPLL, "dmpll_ck", "clk26m", 400 * MHZ),
-+	FIXED_CLK(CLK_TOP_VENCPLL, "vencpll_ck", "clk26m", 295750000),
-+	FIXED_CLK(CLK_TOP_HDMI_0_PIX340M, "hdmi_0_pix340m", "clk26m", 340 * MHZ),
-+	FIXED_CLK(CLK_TOP_HDMI_0_DEEP340M, "hdmi_0_deep340m", "clk26m", 340 * MHZ),
-+	FIXED_CLK(CLK_TOP_HDMI_0_PLL340M, "hdmi_0_pll340m", "clk26m", 340 * MHZ),
-+	FIXED_CLK(CLK_TOP_HDMITX_CLKDIG_CTS, "hdmitx_dig_cts", "clk26m", 300 * MHZ),
-+	FIXED_CLK(CLK_TOP_HADDS2_FB, "hadds2_fbclk", "clk26m", 27 * MHZ),
-+	FIXED_CLK(CLK_TOP_WBG_DIG_416M, "wbg_dig_ck_416m", "clk26m", 416 * MHZ),
-+};
-+
-+static const struct mtk_fixed_factor top_fixed_divs[] __initconst = {
-+	FACTOR(CLK_TOP_SYSPLL, "syspll_ck", "mainpll", 1, 1),
-+	FACTOR(CLK_TOP_SYSPLL_D2, "syspll_d2", "mainpll", 1, 2),
-+	FACTOR(CLK_TOP_SYSPLL_D3, "syspll_d3", "mainpll", 1, 3),
-+	FACTOR(CLK_TOP_SYSPLL_D5, "syspll_d5", "mainpll", 1, 5),
-+	FACTOR(CLK_TOP_SYSPLL_D7, "syspll_d7", "mainpll", 1, 7),
-+	FACTOR(CLK_TOP_SYSPLL1_D2, "syspll1_d2", "syspll_d2", 1, 2),
-+	FACTOR(CLK_TOP_SYSPLL1_D4, "syspll1_d4", "syspll_d2", 1, 4),
-+	FACTOR(CLK_TOP_SYSPLL1_D8, "syspll1_d8", "syspll_d2", 1, 8),
-+	FACTOR(CLK_TOP_SYSPLL1_D16, "syspll1_d16", "syspll_d2", 1, 16),
-+	FACTOR(CLK_TOP_SYSPLL2_D2, "syspll2_d2", "syspll_d3", 1, 2),
-+	FACTOR(CLK_TOP_SYSPLL2_D4, "syspll2_d4", "syspll_d3", 1, 4),
-+	FACTOR(CLK_TOP_SYSPLL2_D8, "syspll2_d8", "syspll_d3", 1, 8),
-+	FACTOR(CLK_TOP_SYSPLL3_D2, "syspll3_d2", "syspll_d5", 1, 2),
-+	FACTOR(CLK_TOP_SYSPLL3_D4, "syspll3_d4", "syspll_d5", 1, 4),
-+	FACTOR(CLK_TOP_SYSPLL4_D2, "syspll4_d2", "syspll_d7", 1, 2),
-+	FACTOR(CLK_TOP_SYSPLL4_D4, "syspll4_d4", "syspll_d7", 1, 4),
-+
-+	FACTOR(CLK_TOP_UNIVPLL, "univpll_ck", "univpll", 1, 1),
-+	FACTOR(CLK_TOP_UNIVPLL_D2, "univpll_d2", "univpll", 1, 2),
-+	FACTOR(CLK_TOP_UNIVPLL_D3, "univpll_d3", "univpll", 1, 3),
-+	FACTOR(CLK_TOP_UNIVPLL_D5, "univpll_d5", "univpll", 1, 5),
-+	FACTOR(CLK_TOP_UNIVPLL_D7, "univpll_d7", "univpll", 1, 7),
-+	FACTOR(CLK_TOP_UNIVPLL_D26, "univpll_d26", "univpll", 1, 26),
-+	FACTOR(CLK_TOP_UNIVPLL_D52, "univpll_d52", "univpll", 1, 52),
-+	FACTOR(CLK_TOP_UNIVPLL_D108, "univpll_d108", "univpll", 1, 108),
-+	FACTOR(CLK_TOP_USB_PHY48M, "USB_PHY48M_CK", "univpll", 1, 26),
-+	FACTOR(CLK_TOP_UNIVPLL1_D2, "univpll1_d2", "univpll_d2", 1, 2),
-+	FACTOR(CLK_TOP_UNIVPLL1_D4, "univpll1_d4", "univpll_d2", 1, 4),
-+	FACTOR(CLK_TOP_UNIVPLL1_D8, "univpll1_d8", "univpll_d2", 1, 8),
-+	FACTOR(CLK_TOP_8BDAC, "8bdac_ck", "univpll_d2", 1, 1),
-+	FACTOR(CLK_TOP_UNIVPLL2_D2, "univpll2_d2", "univpll_d3", 1, 2),
-+	FACTOR(CLK_TOP_UNIVPLL2_D4, "univpll2_d4", "univpll_d3", 1, 4),
-+	FACTOR(CLK_TOP_UNIVPLL2_D8, "univpll2_d8", "univpll_d3", 1, 8),
-+	FACTOR(CLK_TOP_UNIVPLL2_D16, "univpll2_d16", "univpll_d3", 1, 16),
-+	FACTOR(CLK_TOP_UNIVPLL2_D32, "univpll2_d32", "univpll_d3", 1, 32),
-+	FACTOR(CLK_TOP_UNIVPLL3_D2, "univpll3_d2", "univpll_d5", 1, 2),
-+	FACTOR(CLK_TOP_UNIVPLL3_D4, "univpll3_d4", "univpll_d5", 1, 4),
-+	FACTOR(CLK_TOP_UNIVPLL3_D8, "univpll3_d8", "univpll_d5", 1, 8),
-+
-+	FACTOR(CLK_TOP_MSDCPLL, "msdcpll_ck", "msdcpll", 1, 1),
-+	FACTOR(CLK_TOP_MSDCPLL_D2, "msdcpll_d2", "msdcpll", 1, 2),
-+	FACTOR(CLK_TOP_MSDCPLL_D4, "msdcpll_d4", "msdcpll", 1, 4),
-+	FACTOR(CLK_TOP_MSDCPLL_D8, "msdcpll_d8", "msdcpll", 1, 8),
-+
-+	FACTOR(CLK_TOP_MMPLL, "mmpll_ck", "mmpll", 1, 1),
-+	FACTOR(CLK_TOP_MMPLL_D2, "mmpll_d2", "mmpll", 1, 2),
-+
-+	FACTOR(CLK_TOP_DMPLL_D2, "dmpll_d2", "dmpll_ck", 1, 2),
-+	FACTOR(CLK_TOP_DMPLL_D4, "dmpll_d4", "dmpll_ck", 1, 4),
-+	FACTOR(CLK_TOP_DMPLL_X2, "dmpll_x2", "dmpll_ck", 1, 1),
-+
-+	FACTOR(CLK_TOP_TVDPLL, "tvdpll_ck", "tvdpll", 1, 1),
-+	FACTOR(CLK_TOP_TVDPLL_D2, "tvdpll_d2", "tvdpll", 1, 2),
-+	FACTOR(CLK_TOP_TVDPLL_D4, "tvdpll_d4", "tvdpll", 1, 4),
-+
-+	FACTOR(CLK_TOP_VDECPLL, "vdecpll_ck", "vdecpll", 1, 1),
-+	FACTOR(CLK_TOP_TVD2PLL, "tvd2pll_ck", "tvd2pll", 1, 1),
-+	FACTOR(CLK_TOP_TVD2PLL_D2, "tvd2pll_d2", "tvd2pll", 1, 2),
-+
-+	FACTOR(CLK_TOP_MIPIPLL, "mipipll", "dpi_ck", 1, 1),
-+	FACTOR(CLK_TOP_MIPIPLL_D2, "mipipll_d2", "dpi_ck", 1, 2),
-+	FACTOR(CLK_TOP_MIPIPLL_D4, "mipipll_d4", "dpi_ck", 1, 4),
-+
-+	FACTOR(CLK_TOP_HDMIPLL, "hdmipll_ck", "hdmitx_dig_cts", 1, 1),
-+	FACTOR(CLK_TOP_HDMIPLL_D2, "hdmipll_d2", "hdmitx_dig_cts", 1, 2),
-+	FACTOR(CLK_TOP_HDMIPLL_D3, "hdmipll_d3", "hdmitx_dig_cts", 1, 3),
-+
-+	FACTOR(CLK_TOP_ARMPLL_1P3G, "armpll_1p3g_ck", "armpll", 1, 1),
-+
-+	FACTOR(CLK_TOP_AUDPLL, "audpll", "audpll_sel", 1, 1),
-+	FACTOR(CLK_TOP_AUDPLL_D4, "audpll_d4", "audpll_sel", 1, 4),
-+	FACTOR(CLK_TOP_AUDPLL_D8, "audpll_d8", "audpll_sel", 1, 8),
-+	FACTOR(CLK_TOP_AUDPLL_D16, "audpll_d16", "audpll_sel", 1, 16),
-+	FACTOR(CLK_TOP_AUDPLL_D24, "audpll_d24", "audpll_sel", 1, 24),
-+
-+	FACTOR(CLK_TOP_AUD1PLL_98M, "aud1pll_98m_ck", "aud1pll", 1, 3),
-+	FACTOR(CLK_TOP_AUD2PLL_90M, "aud2pll_90m_ck", "aud2pll", 1, 3),
-+	FACTOR(CLK_TOP_HADDS2PLL_98M, "hadds2pll_98m", "hadds2pll", 1, 3),
-+	FACTOR(CLK_TOP_HADDS2PLL_294M, "hadds2pll_294m", "hadds2pll", 1, 1),
-+	FACTOR(CLK_TOP_ETHPLL_500M, "ethpll_500m_ck", "ethpll", 1, 1),
-+	FACTOR(CLK_TOP_CLK26M_D8, "clk26m_d8", "clk26m", 1, 8),
-+	FACTOR(CLK_TOP_32K_INTERNAL, "32k_internal", "clk26m", 1, 793),
-+	FACTOR(CLK_TOP_32K_EXTERNAL, "32k_external", "rtc32k", 1, 1),
-+};
-+
-+static const char * const axi_parents[] __initconst = {
-+	"clk26m",
-+	"syspll1_d2",
-+	"syspll_d5",
-+	"syspll1_d4",
-+	"univpll_d5",
-+	"univpll2_d2",
-+	"mmpll_d2",
-+	"dmpll_d2"
-+};
-+
-+static const char * const mem_parents[] __initconst = {
-+	"clk26m",
-+	"dmpll_ck"
-+};
-+
-+static const char * const ddrphycfg_parents[] __initconst = {
-+	"clk26m",
-+	"syspll1_d8"
-+};
-+
-+static const char * const mm_parents[] __initconst = {
-+	"clk26m",
-+	"vencpll_ck",
-+	"syspll1_d2",
-+	"syspll1_d4",
-+	"univpll_d5",
-+	"univpll1_d2",
-+	"univpll2_d2",
-+	"dmpll_ck"
-+};
-+
-+static const char * const pwm_parents[] __initconst = {
-+	"clk26m",
-+	"univpll2_d4",
-+	"univpll3_d2",
-+	"univpll1_d4",
-+};
-+
-+static const char * const vdec_parents[] __initconst = {
-+	"clk26m",
-+	"vdecpll_ck",
-+	"syspll_d5",
-+	"syspll1_d4",
-+	"univpll_d5",
-+	"univpll2_d2",
-+	"vencpll_ck",
-+	"msdcpll_d2",
-+	"mmpll_d2"
-+};
-+
-+static const char * const mfg_parents[] __initconst = {
-+	"clk26m",
-+	"mmpll_ck",
-+	"dmpll_x2_ck",
-+	"msdcpll_ck",
-+	"clk26m",
-+	"syspll_d3",
-+	"univpll_d3",
-+	"univpll1_d2"
-+};
-+
-+static const char * const camtg_parents[] __initconst = {
-+	"clk26m",
-+	"univpll_d26",
-+	"univpll2_d2",
-+	"syspll3_d2",
-+	"syspll3_d4",
-+	"msdcpll_d2",
-+	"mmpll_d2"
-+};
-+
-+static const char * const uart_parents[] __initconst = {
-+	"clk26m",
-+	"univpll2_d8"
-+};
-+
-+static const char * const spi_parents[] __initconst = {
-+	"clk26m",
-+	"syspll3_d2",
-+	"syspll4_d2",
-+	"univpll2_d4",
-+	"univpll1_d8"
-+};
-+
-+static const char * const usb20_parents[] __initconst = {
-+	"clk26m",
-+	"univpll1_d8",
-+	"univpll3_d4"
-+};
-+
-+static const char * const msdc30_parents[] __initconst = {
-+	"clk26m",
-+	"msdcpll_d2",
-+	"syspll2_d2",
-+	"syspll1_d4",
-+	"univpll1_d4",
-+	"univpll2_d4"
-+};
-+
-+static const char * const audio_parents[] __initconst = {
-+	"clk26m",
-+	"syspll1_d16"
-+};
-+
-+static const char * const aud_intbus_parents[] __initconst = {
-+	"clk26m",
-+	"syspll1_d4",
-+	"syspll3_d2",
-+	"syspll4_d2",
-+	"univpll3_d2",
-+	"univpll2_d4"
-+};
-+
-+static const char * const pmicspi_parents[] __initconst = {
-+	"clk26m",
-+	"syspll1_d8",
-+	"syspll2_d4",
-+	"syspll4_d2",
-+	"syspll3_d4",
-+	"syspll2_d8",
-+	"syspll1_d16",
-+	"univpll3_d4",
-+	"univpll_d26",
-+	"dmpll_d2",
-+	"dmpll_d4"
-+};
-+
-+static const char * const scp_parents[] __initconst = {
-+	"clk26m",
-+	"syspll1_d8",
-+	"dmpll_d2",
-+	"dmpll_d4"
-+};
-+
-+static const char * const dpi0_parents[] __initconst = {
-+	"clk26m",
-+	"mipipll",
-+	"mipipll_d2",
-+	"mipipll_d4",
-+	"clk26m",
-+	"tvdpll_ck",
-+	"tvdpll_d2",
-+	"tvdpll_d4"
-+};
-+
-+static const char * const dpi1_parents[] __initconst = {
-+	"clk26m",
-+	"tvdpll_ck",
-+	"tvdpll_d2",
-+	"tvdpll_d4"
-+};
-+
-+static const char * const tve_parents[] __initconst = {
-+	"clk26m",
-+	"mipipll",
-+	"mipipll_d2",
-+	"mipipll_d4",
-+	"clk26m",
-+	"tvdpll_ck",
-+	"tvdpll_d2",
-+	"tvdpll_d4"
-+};
-+
-+static const char * const hdmi_parents[] __initconst = {
-+	"clk26m",
-+	"hdmipll_ck",
-+	"hdmipll_d2",
-+	"hdmipll_d3"
-+};
-+
-+static const char * const apll_parents[] __initconst = {
-+	"clk26m",
-+	"audpll",
-+	"audpll_d4",
-+	"audpll_d8",
-+	"audpll_d16",
-+	"audpll_d24",
-+	"clk26m",
-+	"clk26m"
-+};
-+
-+static const char * const rtc_parents[] __initconst = {
-+	"32k_internal",
-+	"32k_external",
-+	"clk26m",
-+	"univpll3_d8"
-+};
-+
-+static const char * const nfi2x_parents[] __initconst = {
-+	"clk26m",
-+	"syspll2_d2",
-+	"syspll_d7",
-+	"univpll3_d2",
-+	"syspll2_d4",
-+	"univpll3_d4",
-+	"syspll4_d4",
-+	"clk26m"
-+};
-+
-+static const char * const emmc_hclk_parents[] __initconst = {
-+	"clk26m",
-+	"syspll1_d2",
-+	"syspll1_d4",
-+	"syspll2_d2"
-+};
-+
-+static const char * const flash_parents[] __initconst = {
-+	"clk26m_d8",
-+	"clk26m",
-+	"syspll2_d8",
-+	"syspll3_d4",
-+	"univpll3_d4",
-+	"syspll4_d2",
-+	"syspll2_d4",
-+	"univpll2_d4"
-+};
-+
-+static const char * const di_parents[] __initconst = {
-+	"clk26m",
-+	"tvd2pll_ck",
-+	"tvd2pll_d2",
-+	"clk26m"
-+};
-+
-+static const char * const nr_osd_parents[] __initconst = {
-+	"clk26m",
-+	"vencpll_ck",
-+	"syspll1_d2",
-+	"syspll1_d4",
-+	"univpll_d5",
-+	"univpll1_d2",
-+	"univpll2_d2",
-+	"dmpll_ck"
-+};
-+
-+static const char * const hdmirx_bist_parents[] __initconst = {
-+	"clk26m",
-+	"syspll_d3",
-+	"clk26m",
-+	"syspll1_d16",
-+	"syspll4_d2",
-+	"syspll1_d4",
-+	"vencpll_ck",
-+	"clk26m"
-+};
-+
-+static const char * const intdir_parents[] __initconst = {
-+	"clk26m",
-+	"mmpll_ck",
-+	"syspll_d2",
-+	"univpll_d2"
-+};
-+
-+static const char * const asm_parents[] __initconst = {
-+	"clk26m",
-+	"univpll2_d4",
-+	"univpll2_d2",
-+	"syspll_d5"
-+};
-+
-+static const char * const ms_card_parents[] __initconst = {
-+	"clk26m",
-+	"univpll3_d8",
-+	"syspll4_d4"
-+};
-+
-+static const char * const ethif_parents[] __initconst = {
-+	"clk26m",
-+	"syspll1_d2",
-+	"syspll_d5",
-+	"syspll1_d4",
-+	"univpll_d5",
-+	"univpll1_d2",
-+	"dmpll_ck",
-+	"dmpll_d2"
-+};
-+
-+static const char * const hdmirx_parents[] __initconst = {
-+	"clk26m",
-+	"univpll_d52"
-+};
-+
-+static const char * const cmsys_parents[] __initconst = {
-+	"clk26m",
-+	"syspll1_d2",
-+	"univpll1_d2",
-+	"univpll_d5",
-+	"syspll_d5",
-+	"syspll2_d2",
-+	"syspll1_d4",
-+	"syspll3_d2",
-+	"syspll2_d4",
-+	"syspll1_d8",
-+	"clk26m",
-+	"clk26m",
-+	"clk26m",
-+	"clk26m",
-+	"clk26m"
-+};
-+
-+static const char * const clk_8bdac_parents[] __initconst = {
-+	"clkrtc_int",
-+	"8bdac_ck_pre",
-+	"clk26m",
-+	"clk26m"
-+};
-+
-+static const char * const aud2dvd_parents[] __initconst = {
-+	"a1sys_hp_ck",
-+	"a2sys_hp_ck"
-+};
-+
-+static const char * const padmclk_parents[] __initconst = {
-+	"clk26m",
-+	"univpll_d26",
-+	"univpll_d52",
-+	"univpll_d108",
-+	"univpll2_d8",
-+	"univpll2_d16",
-+	"univpll2_d32"
-+};
-+
-+static const char * const aud_mux_parents[] __initconst = {
-+	"clk26m",
-+	"aud1pll_98m_ck",
-+	"aud2pll_90m_ck",
-+	"hadds2pll_98m",
-+	"audio_ext1_ck",
-+	"audio_ext2_ck"
-+};
-+
-+static const char * const aud_src_parents[] __initconst = {
-+	"aud_mux1_sel",
-+	"aud_mux2_sel"
-+};
-+
-+static const char * const cpu_parents[] __initconst = {
-+	"clk26m",
-+	"armpll",
-+	"mainpll",
-+	"mmpll"
-+};
-+
-+static const struct mtk_composite top_muxes[] __initconst = {
-+	MUX_GATE(CLK_TOP_AXI_SEL, "axi_sel", axi_parents,
-+		0x0040, 0, 3, INVALID_MUX_GATE_BIT),
-+	MUX_GATE(CLK_TOP_MEM_SEL, "mem_sel", mem_parents, 0x0040, 8, 1, 15),
-+	MUX_GATE(CLK_TOP_DDRPHYCFG_SEL, "ddrphycfg_sel", ddrphycfg_parents, 0x0040, 16, 1, 23),
-+	MUX_GATE(CLK_TOP_MM_SEL, "mm_sel", mm_parents, 0x0040, 24, 3, 31),
-+
-+	MUX_GATE(CLK_TOP_PWM_SEL, "pwm_sel", pwm_parents, 0x0050, 0, 2, 7),
-+	MUX_GATE(CLK_TOP_VDEC_SEL, "vdec_sel", vdec_parents, 0x0050, 8, 4, 15),
-+	MUX_GATE(CLK_TOP_MFG_SEL, "mfg_sel", mfg_parents, 0x0050, 16, 3, 23),
-+	MUX_GATE(CLK_TOP_CAMTG_SEL, "camtg_sel", camtg_parents, 0x0050, 24, 3, 31),
-+	MUX_GATE(CLK_TOP_UART_SEL, "uart_sel", uart_parents, 0x0060, 0, 1, 7),
-+
-+	MUX_GATE(CLK_TOP_SPI0_SEL, "spi0_sel", spi_parents, 0x0060, 8, 3, 15),
-+	MUX_GATE(CLK_TOP_USB20_SEL, "usb20_sel", usb20_parents, 0x0060, 16, 2, 23),
-+	MUX_GATE(CLK_TOP_MSDC30_0_SEL, "msdc30_0_sel", msdc30_parents, 0x0060, 24, 3, 31),
-+
-+	MUX_GATE(CLK_TOP_MSDC30_1_SEL, "msdc30_1_sel", msdc30_parents, 0x0070, 0, 3, 7),
-+	MUX_GATE(CLK_TOP_MSDC30_2_SEL, "msdc30_2_sel", msdc30_parents, 0x0070, 8, 3, 15),
-+	MUX_GATE(CLK_TOP_AUDIO_SEL, "audio_sel", msdc30_parents, 0x0070, 16, 1, 23),
-+	MUX_GATE(CLK_TOP_AUDINTBUS_SEL, "aud_intbus_sel", aud_intbus_parents, 0x0070, 24, 3, 31),
-+
-+	MUX_GATE(CLK_TOP_PMICSPI_SEL, "pmicspi_sel", pmicspi_parents, 0x0080, 0, 4, 7),
-+	MUX_GATE(CLK_TOP_SCP_SEL, "scp_sel", scp_parents, 0x0080, 8, 2, 15),
-+	MUX_GATE(CLK_TOP_DPI0_SEL, "dpi0_sel", dpi0_parents, 0x0080, 16, 3, 23),
-+	MUX_GATE(CLK_TOP_DPI1_SEL, "dpi1_sel", dpi1_parents, 0x0080, 24, 2, 31),
-+
-+	MUX_GATE(CLK_TOP_TVE_SEL, "tve_sel", tve_parents, 0x0090, 0, 3, 7),
-+	MUX_GATE(CLK_TOP_HDMI_SEL, "hdmi_sel", hdmi_parents, 0x0090, 8, 2, 15),
-+	MUX_GATE(CLK_TOP_APLL_SEL, "apll_sel", apll_parents, 0x0090, 16, 3, 23),
-+
-+	MUX_GATE(CLK_TOP_RTC_SEL, "rtc_sel", rtc_parents, 0x00A0, 0, 2, 7),
-+	MUX_GATE(CLK_TOP_NFI2X_SEL, "nfi2x_sel", nfi2x_parents, 0x00A0, 8, 3, 15),
-+	MUX_GATE(CLK_TOP_EMMC_HCLK_SEL, "emmc_hclk_sel", emmc_hclk_parents, 0x00A0, 24, 2, 31),
-+
-+	MUX_GATE(CLK_TOP_FLASH_SEL, "flash_sel", flash_parents, 0x00B0, 0, 3, 7),
-+	MUX_GATE(CLK_TOP_DI_SEL, "di_sel", di_parents, 0x00B0, 8, 2, 15),
-+	MUX_GATE(CLK_TOP_NR_SEL, "nr_sel", nr_osd_parents, 0x00B0, 16, 3, 23),
-+	MUX_GATE(CLK_TOP_OSD_SEL, "osd_sel", nr_osd_parents, 0x00B0, 24, 3, 31),
-+
-+	MUX_GATE(CLK_TOP_HDMIRX_BIST_SEL, "hdmirx_bist_sel", hdmirx_bist_parents, 0x00C0, 0, 3, 7),
-+	MUX_GATE(CLK_TOP_INTDIR_SEL, "intdir_sel", intdir_parents, 0x00C0, 8, 2, 15),
-+	MUX_GATE(CLK_TOP_ASM_I_SEL, "asm_i_sel", asm_parents, 0x00C0, 16, 2, 23),
-+	MUX_GATE(CLK_TOP_ASM_M_SEL, "asm_m_sel", asm_parents, 0x00C0, 24, 3, 31),
-+
-+	MUX_GATE(CLK_TOP_ASM_H_SEL, "asm_h_sel", asm_parents, 0x00D0, 0, 2, 7),
-+	MUX_GATE(CLK_TOP_MS_CARD_SEL, "ms_card_sel", ms_card_parents, 0x00D0, 16, 2, 23),
-+	MUX_GATE(CLK_TOP_ETHIF_SEL, "ethif_sel", ethif_parents, 0x00D0, 24, 3, 31),
-+
-+	MUX_GATE(CLK_TOP_HDMIRX26_24_SEL, "hdmirx26_24_sel", hdmirx_parents, 0x00E0, 0, 1, 7),
-+	MUX_GATE(CLK_TOP_MSDC30_3_SEL, "msdc30_3_sel", msdc30_parents, 0x00E0, 8, 3, 15),
-+	MUX_GATE(CLK_TOP_CMSYS_SEL, "cmsys_sel", cmsys_parents, 0x00E0, 16, 4, 23),
-+
-+	MUX_GATE(CLK_TOP_SPI1_SEL, "spi2_sel", spi_parents, 0x00E0, 24, 3, 31),
-+	MUX_GATE(CLK_TOP_SPI2_SEL, "spi1_sel", spi_parents, 0x00F0, 0, 3, 7),
-+	MUX_GATE(CLK_TOP_8BDAC_SEL, "8bdac_sel", clk_8bdac_parents, 0x00F0, 8, 2, 15),
-+	MUX_GATE(CLK_TOP_AUD2DVD_SEL, "aud2dvd_sel", aud2dvd_parents, 0x00F0, 16, 1, 23),
-+
-+	MUX(CLK_TOP_PADMCLK_SEL, "padmclk_sel", padmclk_parents, 0x0100, 0, 3),
-+
-+	MUX(CLK_TOP_AUD_MUX1_SEL, "aud_mux1_sel", aud_mux_parents, 0x012c, 0, 3),
-+	MUX(CLK_TOP_AUD_MUX2_SEL, "aud_mux2_sel", aud_mux_parents, 0x012c, 3, 3),
-+	MUX(CLK_TOP_AUDPLL_MUX_SEL, "audpll_sel", aud_mux_parents, 0x012c, 6, 3),
-+	MUX_GATE(CLK_TOP_AUD_K1_SRC_SEL, "aud_k1_src_sel", aud_src_parents, 0x012c, 15, 1, 23),
-+	MUX_GATE(CLK_TOP_AUD_K2_SRC_SEL, "aud_k2_src_sel", aud_src_parents, 0x012c, 16, 1, 24),
-+	MUX_GATE(CLK_TOP_AUD_K3_SRC_SEL, "aud_k3_src_sel", aud_src_parents, 0x012c, 17, 1, 25),
-+	MUX_GATE(CLK_TOP_AUD_K4_SRC_SEL, "aud_k4_src_sel", aud_src_parents, 0x012c, 18, 1, 26),
-+	MUX_GATE(CLK_TOP_AUD_K5_SRC_SEL, "aud_k5_src_sel", aud_src_parents, 0x012c, 19, 1, 27),
-+	MUX_GATE(CLK_TOP_AUD_K6_SRC_SEL, "aud_k6_src_sel", aud_src_parents, 0x012c, 20, 1, 28),
-+};
-+
-+static const struct mtk_clk_divider top_adj_divs[] __initconst = {
-+	DIV_ADJ(CLK_TOP_AUD_EXTCK1_DIV, "audio_ext1_ck", "aud_ext_ck1", 0x0120, 0, 8),
-+	DIV_ADJ(CLK_TOP_AUD_EXTCK2_DIV, "audio_ext2_ck", "aud_ext_ck2", 0x0120, 8, 8),
-+	DIV_ADJ(CLK_TOP_AUD_MUX1_DIV, "aud_mux1_div", "aud_mux1_sel", 0x0120, 16, 8),
-+	DIV_ADJ(CLK_TOP_AUD_MUX2_DIV, "aud_mux2_div", "aud_mux2_sel", 0x0120, 24, 8),
-+	DIV_ADJ(CLK_TOP_AUD_K1_SRC_DIV, "aud_k1_src_div", "aud_k1_src_sel", 0x0124, 0, 8),
-+	DIV_ADJ(CLK_TOP_AUD_K2_SRC_DIV, "aud_k2_src_div", "aud_k2_src_sel", 0x0124, 8, 8),
-+	DIV_ADJ(CLK_TOP_AUD_K3_SRC_DIV, "aud_k3_src_div", "aud_k3_src_sel", 0x0124, 16, 8),
-+	DIV_ADJ(CLK_TOP_AUD_K4_SRC_DIV, "aud_k4_src_div", "aud_k4_src_sel", 0x0124, 24, 8),
-+	DIV_ADJ(CLK_TOP_AUD_K5_SRC_DIV, "aud_k5_src_div", "aud_k5_src_sel", 0x0128, 0, 8),
-+	DIV_ADJ(CLK_TOP_AUD_K6_SRC_DIV, "aud_k6_src_div", "aud_k6_src_sel", 0x0128, 8, 8),
-+};
-+
-+static const struct mtk_gate_regs top_aud_cg_regs __initconst = {
-+	.sta_ofs = 0x012C,
-+};
-+
-+#define GATE_TOP_AUD(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &top_aud_cg_regs,		\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_ops_no_setclr,	\
-+	}
-+
-+static const struct mtk_gate top_clks[] __initconst = {
-+	GATE_TOP_AUD(CLK_TOP_AUD_48K_TIMING, "a1sys_hp_ck", "aud_mux1_div", 21),
-+	GATE_TOP_AUD(CLK_TOP_AUD_44K_TIMING, "a2sys_hp_ck", "aud_mux2_div", 22),
-+	GATE_TOP_AUD(CLK_TOP_AUD_I2S1_MCLK, "aud_i2s1_mclk", "aud_k1_src_div", 23),
-+	GATE_TOP_AUD(CLK_TOP_AUD_I2S2_MCLK, "aud_i2s2_mclk", "aud_k2_src_div", 24),
-+	GATE_TOP_AUD(CLK_TOP_AUD_I2S3_MCLK, "aud_i2s3_mclk", "aud_k3_src_div", 25),
-+	GATE_TOP_AUD(CLK_TOP_AUD_I2S4_MCLK, "aud_i2s4_mclk", "aud_k4_src_div", 26),
-+	GATE_TOP_AUD(CLK_TOP_AUD_I2S5_MCLK, "aud_i2s5_mclk", "aud_k5_src_div", 27),
-+	GATE_TOP_AUD(CLK_TOP_AUD_I2S6_MCLK, "aud_i2s6_mclk", "aud_k6_src_div", 28),
-+};
-+
-+static void __init mtk_topckgen_init(struct device_node *node)
-+{
-+	struct clk_onecell_data *clk_data;
-+	void __iomem *base;
-+	int r;
-+
-+	base = of_iomap(node, 0);
-+	if (!base) {
-+		pr_err("%s(): ioremap failed\n", __func__);
-+		return;
-+	}
-+
-+	clk_data = mtk_alloc_clk_data(CLK_TOP_NR);
-+
-+	mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks),
-+								clk_data);
-+
-+	mtk_clk_register_factors(top_fixed_divs, ARRAY_SIZE(top_fixed_divs),
-+								clk_data);
-+
-+	mtk_clk_register_composites(top_muxes, ARRAY_SIZE(top_muxes),
-+				base, &lock, clk_data);
-+
-+	mtk_clk_register_dividers(top_adj_divs, ARRAY_SIZE(top_adj_divs),
-+				base, &lock, clk_data);
-+
-+	mtk_clk_register_gates(node, top_clks, ARRAY_SIZE(top_clks),
-+						clk_data);
-+
-+	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	if (r)
-+		pr_err("%s(): could not register clock provider: %d\n",
-+			__func__, r);
-+}
-+CLK_OF_DECLARE(mtk_topckgen, "mediatek,mt2701-topckgen", mtk_topckgen_init);
-+
-+static const struct mtk_gate_regs infra_cg_regs __initconst = {
-+	.set_ofs = 0x0040,
-+	.clr_ofs = 0x0044,
-+	.sta_ofs = 0x0048,
-+};
-+
-+#define GATE_ICG(_id, _name, _parent, _shift) {		\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &infra_cg_regs,			\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_ops_setclr,	\
-+	}
-+
-+static const struct mtk_gate infra_clks[] __initconst = {
-+	GATE_ICG(CLK_INFRA_DBG, "dbgclk", "axi_sel", 0),
-+	GATE_ICG(CLK_INFRA_SMI, "smi_ck", "mm_sel", 1),
-+	GATE_ICG(CLK_INFRA_QAXI_CM4, "cm4_ck", "axi_sel", 2),
-+	GATE_ICG(CLK_INFRA_AUD_SPLIN_B, "audio_splin_bck", "hadds2_294m_ck", 4),
-+	GATE_ICG(CLK_INFRA_AUDIO, "audio_ck", "clk_null", 5),
-+	GATE_ICG(CLK_INFRA_EFUSE, "efuse_ck", "clk26m", 6),
-+	GATE_ICG(CLK_INFRA_L2C_SRAM, "l2c_sram_ck", "mm_sel", 7),
-+	GATE_ICG(CLK_INFRA_M4U, "m4u_ck", "mem_sel", 8),
-+	GATE_ICG(CLK_INFRA_CONNMCU, "connsys_bus", "wbg_dig_ck_416m", 12),
-+	GATE_ICG(CLK_INFRA_TRNG, "trng_ck", "axi_sel", 13),
-+	GATE_ICG(CLK_INFRA_RAMBUFIF, "rambufif_ck", "mem_sel", 14),
-+	GATE_ICG(CLK_INFRA_CPUM, "cpum_ck", "mem_sel", 15),
-+	GATE_ICG(CLK_INFRA_KP, "kp_ck", "axi_sel", 16),
-+	GATE_ICG(CLK_INFRA_CEC, "cec_ck", "rtc_sel", 18),
-+	GATE_ICG(CLK_INFRA_IRRX, "irrx_ck", "axi_sel", 19),
-+	GATE_ICG(CLK_INFRA_PMICSPI, "pmicspi_ck", "pmicspi_sel", 22),
-+	GATE_ICG(CLK_INFRA_PMICWRAP, "pmicwrap_ck", "axi_sel", 23),
-+	GATE_ICG(CLK_INFRA_DDCCI, "ddcci_ck", "axi_sel", 24),
-+};
-+
-+static const struct mtk_fixed_factor infra_fixed_divs[] __initconst = {
-+	FACTOR(CLK_INFRA_CLK_13M, "clk13m", "clk26m", 1, 2),
-+};
-+
-+static void __init mtk_infrasys_init(struct device_node *node)
-+{
-+	struct clk_onecell_data *clk_data;
-+	int r;
-+
-+	clk_data = mtk_alloc_clk_data(CLK_INFRA_NR);
-+
-+	mtk_clk_register_gates(node, infra_clks, ARRAY_SIZE(infra_clks),
-+						clk_data);
-+	mtk_clk_register_factors(infra_fixed_divs, ARRAY_SIZE(infra_fixed_divs),
-+						clk_data);
-+
-+	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	if (r)
-+		pr_err("%s(): could not register clock provider: %d\n",
-+			__func__, r);
-+}
-+CLK_OF_DECLARE(mtk_infrasys, "mediatek,mt2701-infracfg", mtk_infrasys_init);
-+
-+static const struct mtk_gate_regs peri0_cg_regs __initconst = {
-+	.set_ofs = 0x0008,
-+	.clr_ofs = 0x0010,
-+	.sta_ofs = 0x0018,
-+};
-+
-+static const struct mtk_gate_regs peri1_cg_regs __initconst = {
-+	.set_ofs = 0x000c,
-+	.clr_ofs = 0x0014,
-+	.sta_ofs = 0x001c,
-+};
-+
-+#define GATE_PERI0(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &peri0_cg_regs,			\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_ops_setclr,	\
-+	}
-+
-+#define GATE_PERI1(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &peri1_cg_regs,			\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_ops_setclr,	\
-+	}
-+
-+static const struct mtk_gate peri_clks[] __initconst = {
-+	GATE_PERI1(CLK_PERI_USB0_MCU, "usb0_mcu_ck", "axi_sel", 31),
-+	GATE_PERI1(CLK_PERI_ETH, "eth_ck", "clk26m", 30),
-+	GATE_PERI1(CLK_PERI_SPI0, "spi0_ck", "spi0_sel", 29),
-+	GATE_PERI1(CLK_PERI_AUXADC, "auxadc_ck", "clk26m", 28),
-+	GATE_PERI0(CLK_PERI_I2C3, "i2c3_ck", "clk26m", 27),
-+	GATE_PERI0(CLK_PERI_I2C2, "i2c2_ck", "axi_sel", 26),
-+	GATE_PERI0(CLK_PERI_I2C1, "i2c1_ck", "axi_sel", 25),
-+	GATE_PERI0(CLK_PERI_I2C0, "i2c0_ck", "axi_sel", 24),
-+	GATE_PERI0(CLK_PERI_BTIF, "bitif_ck", "axi_sel", 23),
-+	GATE_PERI0(CLK_PERI_UART3, "uart3_ck", "axi_sel", 22),
-+	GATE_PERI0(CLK_PERI_UART2, "uart2_ck", "axi_sel", 21),
-+	GATE_PERI0(CLK_PERI_UART1, "uart1_ck", "axi_sel", 20),
-+	GATE_PERI0(CLK_PERI_UART0, "uart0_ck", "axi_sel", 19),
-+	GATE_PERI0(CLK_PERI_NLI, "nli_ck", "axi_sel", 18),
-+	GATE_PERI0(CLK_PERI_MSDC50_3, "msdc50_3_ck", "emmc_hclk_sel", 17),
-+	GATE_PERI0(CLK_PERI_MSDC30_3, "msdc30_3_ck", "msdc30_3_sel", 16),
-+	GATE_PERI0(CLK_PERI_MSDC30_2, "msdc30_2_ck", "msdc30_2_sel", 15),
-+	GATE_PERI0(CLK_PERI_MSDC30_1, "msdc30_1_ck", "msdc30_1_sel", 14),
-+	GATE_PERI0(CLK_PERI_MSDC30_0, "msdc30_0_ck", "msdc30_0_sel", 13),
-+	GATE_PERI0(CLK_PERI_AP_DMA, "ap_dma_ck", "axi_sel", 12),
-+	GATE_PERI0(CLK_PERI_USB1, "usb1_ck", "usb20_sel", 11),
-+	GATE_PERI0(CLK_PERI_USB0, "usb0_ck", "usb20_sel", 10),
-+	GATE_PERI0(CLK_PERI_PWM, "pwm_ck", "axi_sel", 9),
-+	GATE_PERI0(CLK_PERI_PWM7, "pwm7_ck", "axi_sel", 8),
-+	GATE_PERI0(CLK_PERI_PWM6, "pwm6_ck", "axi_sel", 7),
-+	GATE_PERI0(CLK_PERI_PWM5, "pwm5_ck", "axi_sel", 6),
-+	GATE_PERI0(CLK_PERI_PWM4, "pwm4_ck", "axi_sel", 5),
-+	GATE_PERI0(CLK_PERI_PWM3, "pwm3_ck", "axi_sel", 4),
-+	GATE_PERI0(CLK_PERI_PWM2, "pwm2_ck", "axi_sel", 3),
-+	GATE_PERI0(CLK_PERI_PWM1, "pwm1_ck", "axi_sel", 2),
-+	GATE_PERI0(CLK_PERI_THERM, "therm_ck", "axi_sel", 1),
-+	GATE_PERI0(CLK_PERI_NFI, "nfi_ck", "nfi2x_sel", 0),
-+
-+	GATE_PERI1(CLK_PERI_FCI, "fci_ck", "ms_card", 11),
-+	GATE_PERI1(CLK_PERI_SPI2, "spi2_ck", "spi2_sel", 10),
-+	GATE_PERI1(CLK_PERI_SPI1, "spi1_ck", "spi1_sel", 9),
-+	GATE_PERI1(CLK_PERI_HOST89_DVD, "host89_dvd_ck", "aud2dvd_sel", 8),
-+	GATE_PERI1(CLK_PERI_HOST89_SPI, "host89_spi_ck", "spi0_sel", 7),
-+	GATE_PERI1(CLK_PERI_HOST89_INT, "host89_int_ck", "axi_sel", 6),
-+	GATE_PERI1(CLK_PERI_FLASH, "flash_ck", "nfi2x_sel", 5),
-+	GATE_PERI1(CLK_PERI_NFI_PAD, "nfi_pad_ck", "nfi_sel", 4),
-+	GATE_PERI1(CLK_PERI_NFI_ECC, "nfi_ecc_ck", "nfi_sel", 3),
-+	GATE_PERI1(CLK_PERI_GCPU, "gcpu_ck", "axi_sel", 2),
-+	GATE_PERI1(CLK_PERI_USB_SLV, "usbslv_ck", "axi_sel", 1),
-+	GATE_PERI1(CLK_PERI_USB1_MCU, "usb1_mcu_ck", "axi_sel", 0),
-+};
-+
-+static const char * const uart_ck_sel_parents[] __initconst = {
-+	"clk26m",
-+	"uart_sel",
-+};
-+
-+static const struct mtk_composite peri_muxs[] __initconst = {
-+	MUX(CLK_PERI_UART0_SEL, "uart0_ck_sel", uart_ck_sel_parents, 0x40c, 0, 1),
-+	MUX(CLK_PERI_UART1_SEL, "uart1_ck_sel", uart_ck_sel_parents, 0x40c, 1, 1),
-+	MUX(CLK_PERI_UART2_SEL, "uart2_ck_sel", uart_ck_sel_parents, 0x40c, 2, 1),
-+	MUX(CLK_PERI_UART3_SEL, "uart3_ck_sel", uart_ck_sel_parents, 0x40c, 3, 1),
-+};
-+
-+static void __init mtk_pericfg_init(struct device_node *node)
-+{
-+	struct clk_onecell_data *clk_data;
-+	void __iomem *base;
-+	int r;
-+
-+	base = of_iomap(node, 0);
-+	if (!base) {
-+		pr_err("%s(): ioremap failed\n", __func__);
-+		return;
-+	}
-+
-+	clk_data = mtk_alloc_clk_data(CLK_PERI_NR);
-+
-+	mtk_clk_register_gates(node, peri_clks, ARRAY_SIZE(peri_clks),
-+						clk_data);
-+
-+	mtk_clk_register_composites(peri_muxs, ARRAY_SIZE(peri_muxs), base,
-+			&lock, clk_data);
-+
-+	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	if (r)
-+		pr_err("%s(): could not register clock provider: %d\n",
-+			__func__, r);
-+}
-+CLK_OF_DECLARE(mtk_pericfg, "mediatek,mt2701-pericfg", mtk_pericfg_init);
-+
-+static const struct mtk_gate_regs disp0_cg_regs __initconst = {
-+	.set_ofs = 0x0104,
-+	.clr_ofs = 0x0108,
-+	.sta_ofs = 0x0100,
-+};
-+
-+static const struct mtk_gate_regs disp1_cg_regs __initconst = {
-+	.set_ofs = 0x0114,
-+	.clr_ofs = 0x0118,
-+	.sta_ofs = 0x0110,
-+};
-+
-+#define GATE_DISP0(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &disp0_cg_regs,			\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_ops_setclr,	\
-+	}
-+
-+#define GATE_DISP1(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &disp1_cg_regs,			\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_ops_setclr,	\
-+	}
-+
-+static const struct mtk_gate mm_clks[] __initconst = {
-+	GATE_DISP0(CLK_MM_SMI_COMMON, "mm_smi_comm", "mm_sel", 0),
-+	GATE_DISP0(CLK_MM_SMI_LARB0, "mm_smi_larb0", "mm_sel", 1),
-+	GATE_DISP0(CLK_MM_CMDQ, "mm_cmdq", "mm_sel", 2),
-+	GATE_DISP0(CLK_MM_MUTEX, "mm_mutex", "mm_sel", 3),
-+	GATE_DISP0(CLK_MM_DISP_COLOR, "mm_disp_color", "mm_sel", 4),
-+	GATE_DISP0(CLK_MM_DISP_BLS, "mm_disp_bls", "mm_sel", 5),
-+	GATE_DISP0(CLK_MM_DISP_WDMA, "mm_disp_wdma", "mm_sel", 6),
-+	GATE_DISP0(CLK_MM_DISP_RDMA, "mm_disp_rdma", "mm_sel", 7),
-+	GATE_DISP0(CLK_MM_DISP_OVL, "mm_disp_ovl", "mm_sel", 8),
-+	GATE_DISP0(CLK_MM_MDP_TDSHP, "mm_mdp_tdshp", "mm_sel", 9),
-+	GATE_DISP0(CLK_MM_MDP_WROT, "mm_mdp_wrot", "mm_sel", 10),
-+	GATE_DISP0(CLK_MM_MDP_WDMA, "mm_mdp_wdma", "mm_sel", 11),
-+	GATE_DISP0(CLK_MM_MDP_RSZ1, "mm_mdp_rsz1", "mm_sel", 12),
-+	GATE_DISP0(CLK_MM_MDP_RSZ0, "mm_mdp_rsz0", "mm_sel", 13),
-+	GATE_DISP0(CLK_MM_MDP_RDMA, "mm_mdp_rdma", "mm_sel", 14),
-+	GATE_DISP0(CLK_MM_MDP_BLS_26M, "mm_mdp_bls_26m", "clk26m", 15),
-+	GATE_DISP0(CLK_MM_CAM_MDP, "mm_cam_mdp", "mm_sel", 16),
-+	GATE_DISP0(CLK_MM_FAKE_ENG, "mm_fake_eng", "mm_sel", 17),
-+	GATE_DISP0(CLK_MM_MUTEX_32K, "mm_mutex_32k", "rtc_sel", 18),
-+	GATE_DISP0(CLK_MM_DISP_RDMA1, "mm_disp_rdma1", "mm_sel", 19),
-+	GATE_DISP0(CLK_MM_DISP_UFOE, "mm_disp_ufoe", "mm_sel", 20),
-+	GATE_DISP1(CLK_MM_DSI_ENGINE, "mm_dsi_eng", "mm_sel", 0),
-+	GATE_DISP1(CLK_MM_DSI_DIG, "mm_dsi_dig", "dsio_lntc_dsiclk", 1),
-+	GATE_DISP1(CLK_MM_DPI_DIGL, "mm_dpi_digl", "dpi0_sel", 2),
-+	GATE_DISP1(CLK_MM_DPI_ENGINE, "mm_dpi_eng", "mm_sel", 3),
-+	GATE_DISP1(CLK_MM_DPI1_DIGL, "mm_dpi1_digl", "dpi1_sel", 4),
-+	GATE_DISP1(CLK_MM_DPI1_ENGINE, "mm_dpi1_eng", "mm_sel", 5),
-+	GATE_DISP1(CLK_MM_TVE_OUTPUT, "mm_tve_output", "tve_sel", 6),
-+	GATE_DISP1(CLK_MM_TVE_INPUT, "mm_tve_input", "dpi0_sel", 7),
-+	GATE_DISP1(CLK_MM_HDMI_PIXEL, "mm_hdmi_pixel", "dpi1_sel", 8),
-+	GATE_DISP1(CLK_MM_HDMI_PLL, "mm_hdmi_pll", "hdmi_sel", 9),
-+	GATE_DISP1(CLK_MM_HDMI_AUDIO, "mm_hdmi_audio", "apll_sel", 10),
-+	GATE_DISP1(CLK_MM_HDMI_SPDIF, "mm_hdmi_spdif", "apll_sel", 11),
-+	GATE_DISP1(CLK_MM_TVE_FMM, "mm_tve_fmm", "mm_sel", 14),
-+};
-+
-+static void __init mtk_mmsys_init(struct device_node *node)
-+{
-+	struct clk_onecell_data *clk_data;
-+	int r;
-+
-+	clk_data = mtk_alloc_clk_data(CLK_MM_NR);
-+
-+	mtk_clk_register_gates(node, mm_clks, ARRAY_SIZE(mm_clks),
-+						clk_data);
-+
-+	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	if (r)
-+		pr_err("%s(): could not register clock provider: %d\n",
-+			__func__, r);
-+}
-+CLK_OF_DECLARE(mtk_mmsys, "mediatek,mt2701-mmsys", mtk_mmsys_init);
-+
-+static const struct mtk_gate_regs img_cg_regs __initconst = {
-+	.set_ofs = 0x0004,
-+	.clr_ofs = 0x0008,
-+	.sta_ofs = 0x0000,
-+};
-+
-+#define GATE_IMG(_id, _name, _parent, _shift) {		\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &img_cg_regs,			\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_ops_setclr,	\
-+	}
-+
-+static const struct mtk_gate img_clks[] __initconst = {
-+	GATE_IMG(CLK_IMG_SMI_COMM, "img_smi_comm", "mm_sel", 0),
-+	GATE_IMG(CLK_IMG_RESZ, "img_resz", "mm_sel", 1),
-+	GATE_IMG(CLK_IMG_JPGDEC, "img_jpgdec", "mm_sel", 5),
-+	GATE_IMG(CLK_IMG_VENC_LT, "img_venc_lt", "mm_sel", 8),
-+	GATE_IMG(CLK_IMG_VENC, "img_venc", "mm_sel", 9),
-+};
-+
-+static void __init mtk_imgsys_init(struct device_node *node)
-+{
-+	struct clk_onecell_data *clk_data;
-+	int r;
-+
-+	clk_data = mtk_alloc_clk_data(CLK_IMG_NR);
-+
-+	mtk_clk_register_gates(node, img_clks, ARRAY_SIZE(img_clks),
-+						clk_data);
-+
-+	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	if (r)
-+		pr_err("%s(): could not register clock provider: %d\n",
-+			__func__, r);
-+}
-+CLK_OF_DECLARE(mtk_imgsys, "mediatek,mt2701-imgsys", mtk_imgsys_init);
-+
-+static const struct mtk_gate_regs vdec0_cg_regs __initconst = {
-+	.set_ofs = 0x0000,
-+	.clr_ofs = 0x0004,
-+	.sta_ofs = 0x0000,
-+};
-+
-+static const struct mtk_gate_regs vdec1_cg_regs __initconst = {
-+	.set_ofs = 0x0008,
-+	.clr_ofs = 0x000c,
-+	.sta_ofs = 0x0008,
-+};
-+
-+#define GATE_VDEC0(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &vdec0_cg_regs,			\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_ops_setclr_inv,	\
-+	}
-+
-+#define GATE_VDEC1(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &vdec1_cg_regs,			\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_ops_setclr_inv,	\
-+	}
-+
-+static const struct mtk_gate vdec_clks[] __initconst = {
-+	GATE_VDEC0(CLK_VDEC_CKGEN, "vdec_cken", "vdec_sel", 0),
-+	GATE_VDEC1(CLK_VDEC_LARB, "vdec_larb_cken", "mm_sel", 0),
-+};
-+
-+static void __init mtk_vdecsys_init(struct device_node *node)
-+{
-+	struct clk_onecell_data *clk_data;
-+	int r;
-+
-+	clk_data = mtk_alloc_clk_data(CLK_VDEC_NR);
-+
-+	mtk_clk_register_gates(node, vdec_clks, ARRAY_SIZE(vdec_clks),
-+						clk_data);
-+
-+	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	if (r)
-+		pr_err("%s(): could not register clock provider: %d\n",
-+			__func__, r);
-+}
-+CLK_OF_DECLARE(mtk_vdecsys, "mediatek,mt2701-vdecsys", mtk_vdecsys_init);
-+
-+static const struct mtk_gate_regs hif_cg_regs __initconst = {
-+	.sta_ofs = 0x0008,
-+};
-+
-+#define GATE_HIF(_id, _name, _parent, _shift) {		\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &hif_cg_regs,			\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_ops_no_setclr_inv,	\
-+	}
-+
-+static const struct mtk_gate hif_clks[] __initconst = {
-+	GATE_HIF(CLK_HIFSYS_USB0PHY, "usb0_phy_clk", "ethpll_500m_ck", 21),
-+	GATE_HIF(CLK_HIFSYS_USB1PHY, "usb1_phy_clk", "ethpll_500m_ck", 22),
-+	GATE_HIF(CLK_HIFSYS_PCIE0, "pcie0_clk", "ethpll_500m_ck", 24),
-+	GATE_HIF(CLK_HIFSYS_PCIE1, "pcie1_clk", "ethpll_500m_ck", 25),
-+	GATE_HIF(CLK_HIFSYS_PCIE2, "pcie2_clk", "ethpll_500m_ck", 26),
-+};
-+
-+static void __init mtk_hifsys_init(struct device_node *node)
-+{
-+	struct clk_onecell_data *clk_data;
-+	int r;
-+
-+	clk_data = mtk_alloc_clk_data(CLK_HIFSYS_NR);
-+
-+	mtk_clk_register_gates(node, hif_clks, ARRAY_SIZE(hif_clks),
-+						clk_data);
-+
-+	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	if (r)
-+		pr_err("%s(): could not register clock provider: %d\n",
-+			__func__, r);
-+}
-+CLK_OF_DECLARE(mtk_hifsys, "mediatek,mt2701-hifsys", mtk_hifsys_init);
-+
-+static const struct mtk_gate_regs eth_cg_regs __initconst = {
-+	.sta_ofs = 0x0030,
-+};
-+
-+#define GATE_eth(_id, _name, _parent, _shift) {		\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &eth_cg_regs,			\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_ops_no_setclr_inv,	\
-+	}
-+
-+static const struct mtk_gate eth_clks[] __initconst = {
-+	GATE_HIF(CLK_ETHSYS_HSDMA, "hsdma_clk", "ethif_sel", 5),
-+	GATE_HIF(CLK_ETHSYS_ESW, "esw_clk", "ethpll_500m_ck", 6),
-+	GATE_HIF(CLK_ETHSYS_GP2, "gp2_clk", "trgpll", 7),
-+	GATE_HIF(CLK_ETHSYS_GP1, "gp1_clk", "ethpll_500m_ck", 8),
-+	GATE_HIF(CLK_ETHSYS_PCM, "pcm_clk", "ethif_sel", 11),
-+	GATE_HIF(CLK_ETHSYS_GDMA, "gdma_clk", "ethif_sel", 14),
-+	GATE_HIF(CLK_ETHSYS_I2S, "i2s_clk", "ethif_sel", 17),
-+	GATE_HIF(CLK_ETHSYS_CRYPTO, "crypto_clk", "ethif_sel", 29),
-+};
-+
-+static void __init mtk_ethsys_init(struct device_node *node)
-+{
-+	struct clk_onecell_data *clk_data;
-+	int r;
-+
-+	clk_data = mtk_alloc_clk_data(CLK_ETHSYS_NR);
-+
-+	mtk_clk_register_gates(node, eth_clks, ARRAY_SIZE(eth_clks),
-+						clk_data);
-+
-+	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	if (r)
-+		pr_err("%s(): could not register clock provider: %d\n",
-+			__func__, r);
-+}
-+CLK_OF_DECLARE(mtk_ethsys, "mediatek,mt2701-ethsys", mtk_ethsys_init);
-+
-+static const struct mtk_gate_regs bdp0_cg_regs __initconst = {
-+	.set_ofs = 0x0104,
-+	.clr_ofs = 0x0108,
-+	.sta_ofs = 0x0100,
-+};
-+
-+static const struct mtk_gate_regs bdp1_cg_regs __initconst = {
-+	.set_ofs = 0x0114,
-+	.clr_ofs = 0x0118,
-+	.sta_ofs = 0x0110,
-+};
-+
-+#define GATE_BDP0(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &bdp0_cg_regs,			\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_ops_setclr_inv,	\
-+	}
-+
-+#define GATE_BDP1(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &bdp1_cg_regs,			\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_ops_setclr_inv,	\
-+	}
-+
-+static const struct mtk_gate bdp_clks[] __initconst = {
-+	GATE_BDP0(CLK_BDP_BRG_BA, "brg_baclk", "mm_sel", 0),
-+	GATE_BDP0(CLK_BDP_BRG_DRAM, "brg_dram", "mm_sel", 1),
-+	GATE_BDP0(CLK_BDP_LARB_DRAM, "larb_dram", "mm_sel", 2),
-+	GATE_BDP0(CLK_BDP_WR_VDI_PXL, "wr_vdi_pxl", "hdmi_0_deep340m", 3),
-+	GATE_BDP0(CLK_BDP_WR_VDI_DRAM, "wr_vdi_dram", "mm_sel", 4),
-+	GATE_BDP0(CLK_BDP_WR_B, "wr_bclk", "mm_sel", 5),
-+	GATE_BDP0(CLK_BDP_DGI_IN, "dgi_in", "dpi1_sel", 6),
-+	GATE_BDP0(CLK_BDP_DGI_OUT, "dgi_out", "dpi_sel", 7),
-+	GATE_BDP0(CLK_BDP_FMT_MAST_27, "fmt_mast_27", "dpi1_sel", 8),
-+	GATE_BDP0(CLK_BDP_FMT_B, "fmt_bclk", "mm_sel", 9),
-+	GATE_BDP0(CLK_BDP_OSD_B, "osd_bclk", "mm_sel", 10),
-+	GATE_BDP0(CLK_BDP_OSD_DRAM, "osd_dram", "mm_sel", 11),
-+	GATE_BDP0(CLK_BDP_OSD_AGENT, "osd_agent", "osd_sel", 12),
-+	GATE_BDP0(CLK_BDP_OSD_PXL, "osd_pxl", "dpi1_sel", 13),
-+	GATE_BDP0(CLK_BDP_RLE_B, "rle_bclk", "mm_sel", 14),
-+	GATE_BDP0(CLK_BDP_RLE_AGENT, "rle_agent", "mm_sel", 15),
-+	GATE_BDP0(CLK_BDP_RLE_DRAM, "rle_dram", "mm_sel", 16),
-+	GATE_BDP0(CLK_BDP_F27M, "f27m", "di_sel", 17),
-+	GATE_BDP0(CLK_BDP_F27M_VDOUT, "f27m_vdout", "di_sel", 18),
-+	GATE_BDP0(CLK_BDP_F27_74_74, "f27_74_74", "di_sel", 19),
-+	GATE_BDP0(CLK_BDP_F2FS, "f2fs", "di_sel", 20),
-+	GATE_BDP0(CLK_BDP_F2FS74_148, "f2fs74_148", "di_sel", 21),
-+	GATE_BDP0(CLK_BDP_FB, "fbclk", "mm_sel", 22),
-+	GATE_BDP0(CLK_BDP_VDO_DRAM, "vdo_dram", "mm_sel", 23),
-+	GATE_BDP0(CLK_BDP_VDO_2FS, "vdo_2fs", "di_sel", 24),
-+	GATE_BDP0(CLK_BDP_VDO_B, "vdo_bclk", "mm_sel", 25),
-+	GATE_BDP0(CLK_BDP_WR_DI_PXL, "wr_di_pxl", "di_sel", 26),
-+	GATE_BDP0(CLK_BDP_WR_DI_DRAM, "wr_di_dram", "mm_sel", 27),
-+	GATE_BDP0(CLK_BDP_WR_DI_B, "wr_di_bclk", "mm_sel", 28),
-+	GATE_BDP0(CLK_BDP_NR_PXL, "nr_pxl", "nr_sel", 29),
-+	GATE_BDP0(CLK_BDP_NR_DRAM, "nr_dram", "mm_sel", 30),
-+	GATE_BDP0(CLK_BDP_NR_B, "nr_bclk", "mm_sel", 31),
-+	GATE_BDP1(CLK_BDP_RX_F, "rx_fclk", "hadds2_fbclk", 0),
-+	GATE_BDP1(CLK_BDP_RX_X, "rx_xclk", "clk26m", 1),
-+	GATE_BDP1(CLK_BDP_RXPDT, "rxpdtclk", "hdmi_0_pix340m", 2),
-+	GATE_BDP1(CLK_BDP_RX_CSCL_N, "rx_cscl_n", "clk26m", 3),
-+	GATE_BDP1(CLK_BDP_RX_CSCL, "rx_cscl", "clk26m", 4),
-+	GATE_BDP1(CLK_BDP_RX_DDCSCL_N, "rx_ddcscl_n", "hdmi_scl_rx", 5),
-+	GATE_BDP1(CLK_BDP_RX_DDCSCL, "rx_ddcscl", "hdmi_scl_rx", 6),
-+	GATE_BDP1(CLK_BDP_RX_VCO, "rx_vcoclk", "hadds2pll_294m", 7),
-+	GATE_BDP1(CLK_BDP_RX_DP, "rx_dpclk", "hdmi_0_pll340m", 8),
-+	GATE_BDP1(CLK_BDP_RX_P, "rx_pclk", "hdmi_0_pll340m", 9),
-+	GATE_BDP1(CLK_BDP_RX_M, "rx_mclk", "hadds2pll_294m", 10),
-+	GATE_BDP1(CLK_BDP_RX_PLL, "rx_pllclk", "hdmi_0_pix340m", 11),
-+	GATE_BDP1(CLK_BDP_BRG_RT_B, "brg_rt_bclk", "mm_sel", 12),
-+	GATE_BDP1(CLK_BDP_BRG_RT_DRAM, "brg_rt_dram", "mm_sel", 13),
-+	GATE_BDP1(CLK_BDP_LARBRT_DRAM, "larbrt_dram", "mm_sel", 14),
-+	GATE_BDP1(CLK_BDP_TMDS_SYN, "tmds_syn", "hdmi_0_pll340m", 15),
-+	GATE_BDP1(CLK_BDP_HDMI_MON, "hdmi_mon", "hdmi_0_mon", 16),
-+};
-+
-+static void __init mtk_bdpsys_init(struct device_node *node)
-+{
-+	struct clk_onecell_data *clk_data;
-+	int r;
-+
-+	clk_data = mtk_alloc_clk_data(CLK_BDP_NR);
-+
-+	mtk_clk_register_gates(node, bdp_clks, ARRAY_SIZE(bdp_clks),
-+						clk_data);
-+
-+	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	if (r)
-+		pr_err("%s(): could not register clock provider: %d\n",
-+			__func__, r);
-+}
-+CLK_OF_DECLARE(mtk_bdpsys, "mediatek,mt2701-bdpsys", mtk_bdpsys_init);
-+
-+#define MT8590_PLL_FMAX		(2000 * MHZ)
-+#define CON0_MT8590_RST_BAR	BIT(27)
-+
-+#define PLL(_id, _name, _reg, _pwr_reg, _en_mask, _flags, _pcwbits, _pd_reg, \
-+			_pd_shift, _tuner_reg, _pcw_reg, _pcw_shift) {	\
-+		.id = _id,						\
-+		.name = _name,						\
-+		.reg = _reg,						\
-+		.pwr_reg = _pwr_reg,					\
-+		.en_mask = _en_mask,					\
-+		.flags = _flags,					\
-+		.rst_bar_mask = CON0_MT8590_RST_BAR,			\
-+		.fmax = MT8590_PLL_FMAX,				\
-+		.pcwbits = _pcwbits,					\
-+		.pd_reg = _pd_reg,					\
-+		.pd_shift = _pd_shift,					\
-+		.tuner_reg = _tuner_reg,				\
-+		.pcw_reg = _pcw_reg,					\
-+		.pcw_shift = _pcw_shift,				\
-+	}
-+
-+static const struct mtk_pll_data apmixed_plls[] = {
-+	PLL(CLK_APMIXED_ARMPLL, "armpll", 0x200, 0x20c, 0x80000001, 0,
-+				21, 0x204, 24, 0x0, 0x204, 0),
-+	PLL(CLK_APMIXED_MAINPLL, "mainpll", 0x210, 0x21c, 0xf0000001,
-+		  HAVE_RST_BAR, 21, 0x210, 4, 0x0, 0x214, 0),
-+	PLL(CLK_APMIXED_UNIVPLL, "univpll", 0x220, 0x22c, 0xf3000001,
-+		  HAVE_RST_BAR, 7, 0x220, 4, 0x0, 0x224, 14),
-+	PLL(CLK_APMIXED_MMPLL, "mmpll", 0x230, 0x23c, 0x00000001, 0,
-+				21, 0x230, 4, 0x0, 0x234, 0),
-+	PLL(CLK_APMIXED_MSDCPLL, "msdcpll", 0x240, 0x24c, 0x00000001, 0,
-+				21, 0x240, 4, 0x0, 0x244, 0),
-+	PLL(CLK_APMIXED_TVDPLL, "tvdpll", 0x250, 0x25c, 0x00000001, 0,
-+				21, 0x250, 4, 0x0, 0x254, 0),
-+	PLL(CLK_APMIXED_AUD1PLL, "aud1pll", 0x270, 0x27c, 0x00000001, 0,
-+				31, 0x270, 4, 0x0, 0x274, 0),
-+	PLL(CLK_APMIXED_TRGPLL, "trgpll", 0x280, 0x28c, 0x00000001, 0,
-+				31, 0x280, 4, 0x0, 0x284, 0),
-+	PLL(CLK_APMIXED_ETHPLL, "ethpll", 0x290, 0x29c, 0x00000001, 0,
-+				31, 0x290, 4, 0x0, 0x294, 0),
-+	PLL(CLK_APMIXED_VDECPLL, "vdecpll", 0x2a0, 0x2ac, 0x00000001, 0,
-+				31, 0x2a0, 4, 0x0, 0x2a4, 0),
-+	PLL(CLK_APMIXED_HADDS2PLL, "hadds2pll", 0x2b0, 0x2bc, 0x00000001, 0,
-+				31, 0x2b0, 4, 0x0, 0x2b4, 0),
-+	PLL(CLK_APMIXED_AUD2PLL, "aud2pll", 0x2c0, 0x2cc, 0x00000001, 0,
-+				31, 0x2c0, 4, 0x0, 0x2c4, 0),
-+	PLL(CLK_APMIXED_TVD2PLL, "tvd2pll", 0x2d0, 0x2dc, 0x00000001, 0,
-+				21, 0x2d0, 4, 0x0, 0x2d4, 0),
-+};
-+
-+static void __init mtk_apmixedsys_init(struct device_node *node)
-+{
-+	struct clk_onecell_data *clk_data;
-+	int r;
-+
-+	clk_data = mtk_alloc_clk_data(ARRAY_SIZE(apmixed_plls));
-+	if (!clk_data)
-+		return;
-+
-+	mtk_clk_register_plls(node, apmixed_plls, ARRAY_SIZE(apmixed_plls),
-+								clk_data);
-+
-+	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	if (r)
-+		pr_err("%s(): could not register clock provider: %d\n",
-+			__func__, r);
-+}
-+CLK_OF_DECLARE(mtk_apmixedsys, "mediatek,mt2701-apmixedsys",
-+							mtk_apmixedsys_init);
-diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-index cf08db6..be19a41 100644
---- a/drivers/clk/mediatek/clk-mtk.c
-+++ b/drivers/clk/mediatek/clk-mtk.c
-@@ -242,3 +242,28 @@ void __init mtk_clk_register_composites(const struct mtk_composite *mcs,
- 			clk_data->clks[mc->id] = clk;
- 	}
- }
-+
-+void __init mtk_clk_register_dividers(const struct mtk_clk_divider *mcds,
-+			int num, void __iomem *base, spinlock_t *lock,
-+				struct clk_onecell_data *clk_data)
-+{
-+	struct clk *clk;
-+	int i;
-+
-+	for (i = 0; i <  num; i++) {
-+		const struct mtk_clk_divider *mcd = &mcds[i];
-+
-+		clk = clk_register_divider(NULL, mcd->name, mcd->parent_name,
-+			mcd->flags, base +  mcd->div_reg, mcd->div_shift,
-+			mcd->div_width, mcd->clk_divider_flags, lock);
-+
-+		if (IS_ERR(clk)) {
-+			pr_err("Failed to register clk %s: %ld\n",
-+				mcd->name, PTR_ERR(clk));
-+			continue;
-+		}
-+
-+		if (clk_data)
-+			clk_data->clks[mcd->id] = clk;
-+	}
-+}
-diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index 32d2e45..60701e8 100644
---- a/drivers/clk/mediatek/clk-mtk.h
-+++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -110,7 +110,8 @@ struct mtk_composite {
- 		.flags = CLK_SET_RATE_PARENT,				\
- 	}
- 
--#define DIV_GATE(_id, _name, _parent, _gate_reg, _gate_shift, _div_reg, _div_width, _div_shift) {	\
-+#define DIV_GATE(_id, _name, _parent, _gate_reg, _gate_shift, _div_reg,	\
-+					_div_width, _div_shift) {	\
- 		.id = _id,						\
- 		.parent = _parent,					\
- 		.name = _name,						\
-@@ -145,8 +146,36 @@ struct mtk_gate {
- 	const struct clk_ops *ops;
- };
- 
--int mtk_clk_register_gates(struct device_node *node, const struct mtk_gate *clks,
--		int num, struct clk_onecell_data *clk_data);
-+int mtk_clk_register_gates(struct device_node *node,
-+			const struct mtk_gate *clks, int num,
-+			struct clk_onecell_data *clk_data);
-+
-+struct mtk_clk_divider {
-+	int id;
-+	const char *name;
-+	const char *parent_name;
-+	unsigned long flags;
-+
-+	uint32_t div_reg;
-+	unsigned char div_shift;
-+	unsigned char div_width;
-+	unsigned char clk_divider_flags;
-+	const struct clk_div_table *clk_div_table;
-+};
-+
-+#define DIV_ADJ(_id, _name, _parent, _reg, _shift, _width) {	\
-+		.id = _id,					\
-+		.name = _name,					\
-+		.parent_name = _parent,				\
-+		.flags = CLK_SET_RATE_PARENT,			\
-+		.div_reg = _reg,				\
-+		.div_shift = _shift,				\
-+		.div_width = _width,				\
-+}
-+
-+void mtk_clk_register_dividers(const struct mtk_clk_divider *mcds,
-+			int num, void __iomem *base, spinlock_t *lock,
-+				struct clk_onecell_data *clk_data);
- 
- struct clk_onecell_data *mtk_alloc_clk_data(unsigned int clk_num);
- 
--- 
-1.9.1
+  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-=
+linus-4.5
+
+for you to fetch changes up to 3da834e3e5a4a5d26882955298b55a9ed37a00bc:
+
+  clk: remove duplicated COMMON_CLK_NXP record from clk/Kconfig (2016-01-13=
+ 18:09:52 -0800)
+
+----------------------------------------------------------------
+The clk framework and driver changes for 4.5 look pretty typical. The
+bulk of the changes are to clk controller drivers, though some
+improvements to the core and some re-usable blocks/templates also
+received some love. In this past cycle the clk maintainers developed a
+good workflow for handling the common case of patch submissions
+containing a new drivers, new shared Device Tree header and a new Device
+Tree binding description. This requires coordination with the Device
+Tree maintainers and with the architecture maintainers (typically the
+arm-soc tree in our case). This explains the increase in changes to
+include/dt-bindings/... and to
+Documentation/devicetree/bindings/clock/... coming from the clk tree.
+The same commits can be expected to come through those trees on
+occasion, through the use of shared, immutable branches.
+
+----------------------------------------------------------------
+Alexandre Belloni (1):
+      clk: at91: Revert "keep slow clk enabled to prevent system hang"
+
+Andrew Bresticker (1):
+      clk: tegra: pll: Fix issues with rates for VCO PLLs
+
+Andrzej Hajda (1):
+      clk: sunxi: fix handling return value of of_property_match_string
+
+Arnd Bergmann (1):
+      clk: st: avoid uninitialized variable use
+
+Bai Ping (3):
+      clk: imx: add 'is_prepared' clk_ops callback for pllv3 clk
+      clk: imx: Add a virtual arm clk on i.mx7d
+      clk: imx: Replace clk error check with imx_check_clocks()
+
+Bartlomiej Zolnierkiewicz (1):
+      clk: samsung: exynos542x/5800: fix cpu clock configuration data
+
+Bill Huang (8):
+      clk: tegra: pll: Change misc_reg count from 3 to 6
+      clk: tegra: pll: Add code to handle if resets are supported by PLL
+      clk: tegra: pll: Adjust vco_min if SDM present
+      clk: tegra: pll: Add Set_default logic
+      clk: tegra: pll: Add logic for SS
+      clk: tegra: Add Super Gen5 Logic
+      clk: tegra: Fix WARN_ON in PLL_RE registration
+      clk: tegra: Read correct IDDQ register in PLL_SS registration
+
+Brian Norris (1):
+      clk: gpio: handle error codes for of_clk_get_parent_count()
+
+Caesar Wang (1):
+      clk: rockchip: Force rk3368 PWM clock (and its parents) on
+
+Chen-Yu Tsai (5):
+      clk: sunxi: Add sun9i A80 apbs gates support
+      clk: sunxi: Add sun9i A80 cpus (cpu special) clock support
+      clk: sunxi: Add DRAM gates support for sun4i-a10
+      clk: sunxi: Add VE (Video Engine) module clock driver for sun[457]i
+      clk: sunxi: Add CLK_OF_DECLARE support for sun8i-a23-apb0-clk driver
+
+Chris Zhong (3):
+      clk: rockchip: add id for mipidsi sclk on rk3288
+      clk: rockchip: add mipidsi clock on rk3288
+      clk: rockchip: switch PLLs to slow mode before reboot for rk3288
+
+Dan Carpenter (1):
+      clk: sunxi: signedness bug in sun8i_h3_bus_gates_init()
+
+Danny Huang (1):
+      clk: tegra: pll: Update PLLM handling
+
+Eric Anholt (2):
+      clk: bcm2835: Add bindings for the auxiliary peripheral clock gates.
+      clk: bcm2835: Add a driver for the auxiliary peripheral clock gates.
+
+Florian Fainelli (2):
+      clk: iproc: Extend binding to cover BCM63138
+      clk: bcm: Add BCM63138 clock support
+
+Geert Uytterhoeven (7):
+      clk: Use static inline functions instead of macros for dummies
+      clk: Spelling s/derefing/dereferencing/
+      clk: shmobile: rcar-gen2: Spelling/Grammar: dependant of, ouput
+      clk: shmobile: div6: Make clock-output-names optional
+      clk: shmobile: div6: Extract cpg_div6_register()
+      clk: shmobile: Add new CPG/MSSR driver core
+      clk: shmobile: r8a7795: Add new CPG/MSSR driver
+
+Georgi Djakov (1):
+      clk: qcom: msm8916: Move xo and sleep clocks into DT
+
+Heiko Stuebner (8):
+      Merge branch 'v4.5-clk/clkids' into v4.5-clk/next
+      Merge branch 'v4.5-clk/clkids' into v4.5-clk/next
+      clk: rockchip: fix rk3368 cpuclk divider offsets
+      Merge branch 'v4.5-clk/clkids' into v4.5-clk/next
+      clk: rockchip: only enter pll slow-mode directly before reboots on rk=
+3288
+      clk: rockchip: handle mux dependency of fractional dividers
+      clk: rockchip: include downstream muxes into fractional dividers
+      clk: add flag for clocks that need to be enabled on rate changes
+
+Heiko St=C3=BCbner (1):
+      clk: rockchip: fix section mismatches with new child-clocks
+
+Jacob Siverskog (1):
+      clk: si5351: Add PLL soft reset
+
+Jeffy Chen (4):
+      clk: rockchip: allow more than 2 parents for cpuclk
+      clk: rockchip: add dt-binding header for rk3228
+      dt-bindings: add documentation of rk3228 clock controller
+      clk: rockchip: add clock controller for rk3228
+
+Jens Kuske (1):
+      clk: sunxi: Add H3 clocks support
+
+Jianqun xu (1):
+      clk: rockchip: protect rk3368 aclk_bus and aclk_peri clocks
+
+Julia Lawall (1):
+      clk: ti: dra7: constify clk_hw_omap_ops structure
+
+Kuninori Morimoto (1):
+      clk: add CS2000 Fractional-N driver
+
+Loc Ho (1):
+      clk: xgene: Fix divider with non-zero shift value
+
+Magnus Damm (1):
+      clk: shmobile: Rework CONFIG_ARCH_SHMOBILE_MULTI
+
+Marc Gonzalez (1):
+      clk: tango4: clkgen driver for Tango4 platforms
+
+Marek Szyprowski (3):
+      clk: samsung: exynos542x: add missing parent GSCL block clocks
+      clk: samsung: exynos542x: fix MFC clock hierarchy parent
+      clk: exynos: use irqsave version of spin_lock to avoid deadlock with =
+irqs
+
+Markus Pargmann (1):
+      clk: imx25: Remove osc clock from driver
+
+Masahiro Yamada (6):
+      clk: remove redundant negative index check in of_clk_get_parent_name()
+      clk: use IS_ERR_OR_NULL(hw) instead of !hw || IS_ERR(hw)
+      clk: fix a typo in comment block of struct clk_rate_request
+      clk: fix a typo in comment block of clk_notifier_register()
+      clk: let of_clk_get_parent_name() fail for invalid clock-indices
+      clk: fix codying style of if ... else blocks
+
+Michael Trimarchi (1):
+      clk: imx: clk-imx6q: Let OSC to be routed to anaclk2/2b
+
+Michael Turquette (14):
+      Merge branch 'clk-shmobile-for-v4.5' of git://git.kernel.org/.../geer=
+t/renesas-drivers into clk-next
+      Merge tag 'v4.5-rockchip-clk1_1' of git://git.kernel.org/.../mmind/li=
+nux-rockchip into clk-next
+      Merge tag 'imx-clk-v4.5' of git://git.kernel.org/.../shawnguo/linux i=
+nto clk-next
+      Merge commit 'fe5fa8fbd4d47f40a45fa29ee1abdb10cb061ec2' into clk-next
+      Merge tag 'clk-samsung-4.5' of git://linuxtv.org/snawrocki/samsung in=
+to clk-next
+      Merge branch 'clk-dove' into clk-next
+      Merge branch 'clk-bcm2835' into clk-next
+      Merge branch 'clk-rockchip' into clk-next
+      Merge tag 'sunxi-clocks-for-4.5' of https://git.kernel.org/.../mripar=
+d/linux into clk-next
+      Merge branch 'clk-lpc32xx' into clk-next
+      Merge branch 'clk-bcm2835' into clk-next
+      Merge branch 'clk-renesas' into clk-next
+      Merge branch 'clk-rockchip' into clk-next
+      Merge tag 'tegra-for-4.5-clk' of git://git.kernel.org/.../tegra/linux=
+ into clk-next
+
+Patrick Br=C3=BCnn (1):
+      clk: imx5: ipu_di_sel clocks can set parent rates
+
+Prasanna Karthik (1):
+      clk: s3c2410: removed unneeded variable in s3c24xx_clkout_set_parent
+
+Reinder de Haan (1):
+      clk: sunxi: Add support for the H3 usb phy clocks
+
+Remi Pommarel (3):
+      clk: bcm2835: add a round up ability to the clock divisor
+      clk: bcm2835: Support for clock parent selection
+      clk: bcm2835: Add PWM clock support
+
+Rhyland Klein (12):
+      clk: tegra: periph: Add new periph clks and muxes for Tegra210
+      clk: tegra: pll: Add tegra_pll_wait_for_lock to clk header
+      clk: tegra: pll: Simplify clk_enable_path
+      clk: tegra: pll: Update warning message
+      clk: tegra: pll: Don't unconditionally set LOCK flags
+      clk: tegra: pll: Add logic for handling SDM data
+      clk: tegra: pll: Add logic for out-of-table rates for T210
+      clk: tegra: pll: Fix _pll_ramp_calc_pll logic and _calc_dynamic_ramp_=
+rate
+      clk: tegra: pll: Add specialized logic for Tegra210
+      clk: tegra: pll: Add support for PLLMB for Tegra210
+      clk: tegra: pll: Add dyn_ramp callback
+      clk: tegra: Add support for Tegra210 clocks
+
+Russell King (2):
+      clk: add Dove PLL divider support for GPU, VMeta and AXI clocks
+      clk: fix clk-gpio.c with optional clock=3D DT property
+
+Sjoerd Simons (1):
+      clk: rockchip: Allow the RK3288 SPDIF clocks to change their parent
+
+Stephen Boyd (11):
+      clk: qcom: common: Add API to register board clocks backwards compati=
+bly
+      clk: qcom: Move cxo/pxo/xo into dt files
+      clk: qcom: Specify LE device endianness
+      Merge branch 'clk-bcm63xx' into clk-next
+      clk: divider: Cap table divider values to 'width' member
+      clk: qcom: Add Alpha PLL support
+      clk: qcom: Add MSM8996 Global Clock Control (GCC) driver
+      clk: qcom: Add gfx3d ping-pong PLL frequency switching
+      clk: qcom: Add MSM8996 Multimedia Clock Controller (MMCC) driver
+      Merge branch 'clk-msm8996' into clk-next
+      Merge branch 'clk-fixes' into clk-next
+
+Sudip Mukherjee (3):
+      clk: versatile: fix memory leak
+      clk: versatile: remove unneeded error message
+      clk: gpio: fix memory leak
+
+Tero Kristo (1):
+      clk: ti: omap5+: dpll: implement errata i810
+
+Thierry Reding (5):
+      clk: tegra: Add Tegra210 device tree binding
+      clk: tegra: Fix 26 MHz oscillator frequency
+      clk: tegra: Miscellaneous coding style cleanups
+      clk: tegra: Format tables consistently
+      clk: tegra: Constify pdiv-to-hw mappings
+
+Thomas Abraham (1):
+      clk: samsung: exynos5420: add cpu clock configuration data and instan=
+tiate cpu clock
+
+Ulrich Hecht (1):
+      clk: shmobile: r8a7795: Add SATA0 clock
+
+Vladimir Zapolskiy (6):
+      dt-bindings: clock: add description of LPC32xx clock controller
+      dt-bindings: clock: add description of LPC32xx USB clock controller
+      dt-bindings: clock: add NXP LPC32xx clock list for consumers
+      clk: lpc18xx: add NXP specific COMMON_CLK_NXP configuration symbol
+      clk: lpc32xx: add common clock framework driver
+      clk: remove duplicated COMMON_CLK_NXP record from clk/Kconfig
+
+Xing Zheng (5):
+      clk: rockchip: add dt-binding header for rk3036
+      dt-bindings: add documentation of rk3036 clock controller
+      clk: rockchip: add new pll-type for rk3036 and similar socs
+      clk: rockchip: add clock controller for rk3036
+      clk: rockchip: rk3036: include downstream muxes into fractional divid=
+ers
+
+Yakir Yang (1):
+      clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for aclk_vio
+
+Zain Wang (2):
+      clk: rockchip: add an id for rk3288 crypto clk
+      clk: rockchip: set the id for crypto clk
+
+ZhengShunQian (2):
+      clk: rockchip: Add the clock ids of rk3288 eFuses
+      clk: rockchip: use rk3288-efuse clock ids
+
+ .../bindings/clock/brcm,bcm2835-aux-clock.txt      |   31 +
+ .../bindings/clock/brcm,iproc-clocks.txt           |    5 +
+ .../devicetree/bindings/clock/cs2000-cp.txt        |   22 +
+ .../bindings/clock/nvidia,tegra210-car.txt         |   56 +
+ .../devicetree/bindings/clock/nxp,lpc3220-clk.txt  |   30 +
+ .../bindings/clock/nxp,lpc3220-usb-clk.txt         |   22 +
+ .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
+ .../devicetree/bindings/clock/qcom,mmcc.txt        |    1 +
+ .../bindings/clock/renesas,cpg-div6-clocks.txt     |    4 +
+ .../bindings/clock/rockchip,rk3036-cru.txt         |   56 +
+ .../bindings/clock/rockchip,rk3228-cru.txt         |   58 +
+ Documentation/devicetree/bindings/clock/sunxi.txt  |   10 +
+ .../devicetree/bindings/clock/tango4-clock.txt     |   23 +
+ arch/arm/mach-omap2/clock.c                        |    4 +
+ drivers/clk/Kconfig                                |   12 +
+ drivers/clk/Makefile                               |    5 +-
+ drivers/clk/at91/clk-slow.c                        |   29 -
+ drivers/clk/bcm/Kconfig                            |   10 +
+ drivers/clk/bcm/Makefile                           |    2 +
+ drivers/clk/bcm/clk-bcm2835-aux.c                  |   85 +
+ drivers/clk/bcm/clk-bcm2835.c                      |  155 +-
+ drivers/clk/bcm/clk-bcm63xx.c                      |   22 +
+ drivers/clk/clk-cs2000-cp.c                        |  510 +++
+ drivers/clk/clk-divider.c                          |    9 +-
+ drivers/clk/clk-gpio.c                             |   28 +-
+ drivers/clk/clk-mux.c                              |    5 +-
+ drivers/clk/clk-si5351.c                           |    7 +
+ drivers/clk/clk-tango4.c                           |   61 +
+ drivers/clk/clk-xgene.c                            |    3 +-
+ drivers/clk/clk.c                                  |   35 +-
+ drivers/clk/imx/clk-imx25.c                        |   18 +-
+ drivers/clk/imx/clk-imx51-imx53.c                  |    8 +-
+ drivers/clk/imx/clk-imx6q.c                        |    3 +-
+ drivers/clk/imx/clk-imx6ul.c                       |    4 +-
+ drivers/clk/imx/clk-imx7d.c                        |   11 +-
+ drivers/clk/imx/clk-pllv3.c                        |   14 +
+ drivers/clk/mvebu/Makefile                         |    2 +-
+ drivers/clk/mvebu/dove-divider.c                   |  262 ++
+ drivers/clk/mvebu/dove-divider.h                   |    6 +
+ drivers/clk/mvebu/dove.c                           |    6 +
+ drivers/clk/nxp/Makefile                           |    1 +
+ drivers/clk/nxp/clk-lpc32xx.c                      | 1569 +++++++++
+ drivers/clk/qcom/Kconfig                           |   17 +
+ drivers/clk/qcom/Makefile                          |    3 +
+ drivers/clk/qcom/clk-alpha-pll.c                   |  355 ++
+ drivers/clk/qcom/clk-alpha-pll.h                   |   57 +
+ drivers/clk/qcom/clk-rcg.h                         |    1 +
+ drivers/clk/qcom/clk-rcg2.c                        |   87 +
+ drivers/clk/qcom/common.c                          |   87 +
+ drivers/clk/qcom/common.h                          |    4 +
+ drivers/clk/qcom/gcc-apq8084.c                     |   17 +-
+ drivers/clk/qcom/gcc-ipq806x.c                     |   15 +-
+ drivers/clk/qcom/gcc-msm8660.c                     |   16 +-
+ drivers/clk/qcom/gcc-msm8916.c                     |   17 +-
+ drivers/clk/qcom/gcc-msm8960.c                     |   16 +-
+ drivers/clk/qcom/gcc-msm8974.c                     |   18 +-
+ drivers/clk/qcom/gcc-msm8996.c                     | 3422 ++++++++++++++++=
+++++
+ drivers/clk/qcom/lcc-ipq806x.c                     |    1 +
+ drivers/clk/qcom/lcc-msm8960.c                     |    1 +
+ drivers/clk/qcom/mmcc-apq8084.c                    |    1 +
+ drivers/clk/qcom/mmcc-msm8960.c                    |    2 +
+ drivers/clk/qcom/mmcc-msm8974.c                    |    1 +
+ drivers/clk/qcom/mmcc-msm8996.c                    | 3217 ++++++++++++++++=
+++
+ drivers/clk/rockchip/Makefile                      |    2 +
+ drivers/clk/rockchip/clk-cpu.c                     |    4 +-
+ drivers/clk/rockchip/clk-pll.c                     |  258 +-
+ drivers/clk/rockchip/clk-rk3036.c                  |  493 +++
+ drivers/clk/rockchip/clk-rk3188.c                  |  112 +-
+ drivers/clk/rockchip/clk-rk3228.c                  |  678 ++++
+ drivers/clk/rockchip/clk-rk3288.c                  |  136 +-
+ drivers/clk/rockchip/clk-rk3368.c                  |   13 +-
+ drivers/clk/rockchip/clk.c                         |  144 +-
+ drivers/clk/rockchip/clk.h                         |   62 +-
+ drivers/clk/samsung/clk-cpu.c                      |   10 +-
+ drivers/clk/samsung/clk-exynos5420.c               |   98 +-
+ drivers/clk/samsung/clk-s3c2410-dclk.c             |    3 +-
+ drivers/clk/shmobile/Makefile                      |   24 +-
+ drivers/clk/shmobile/clk-div6.c                    |  137 +-
+ drivers/clk/shmobile/clk-div6.h                    |    7 +
+ drivers/clk/shmobile/clk-rcar-gen2.c               |    4 +-
+ drivers/clk/shmobile/r8a7795-cpg-mssr.c            |  383 +++
+ drivers/clk/shmobile/renesas-cpg-mssr.c            |  596 ++++
+ drivers/clk/shmobile/renesas-cpg-mssr.h            |  132 +
+ drivers/clk/st/clkgen-fsyn.c                       |   17 +-
+ drivers/clk/sunxi/Makefile                         |    5 +
+ drivers/clk/sunxi/clk-a10-ve.c                     |  171 +
+ drivers/clk/sunxi/clk-simple-gates.c               |   14 +
+ drivers/clk/sunxi/clk-sun8i-apb0.c                 |   80 +-
+ drivers/clk/sunxi/clk-sun8i-bus-gates.c            |  112 +
+ drivers/clk/sunxi/clk-sun9i-cpus.c                 |  240 ++
+ drivers/clk/sunxi/clk-sunxi.c                      |    6 +
+ drivers/clk/sunxi/clk-usb.c                        |   12 +
+ drivers/clk/tegra/Makefile                         |    1 +
+ drivers/clk/tegra/clk-id.h                         |   75 +-
+ drivers/clk/tegra/clk-pll.c                        |  838 ++++-
+ drivers/clk/tegra/clk-tegra-periph.c               |  371 ++-
+ drivers/clk/tegra/clk-tegra-super-gen4.c           |  142 +-
+ drivers/clk/tegra/clk-tegra114.c                   |  339 +-
+ drivers/clk/tegra/clk-tegra124.c                   |  453 +--
+ drivers/clk/tegra/clk-tegra20.c                    |  314 +-
+ drivers/clk/tegra/clk-tegra210.c                   | 2852 ++++++++++++++++
+ drivers/clk/tegra/clk-tegra30.c                    |  426 +--
+ drivers/clk/tegra/clk.h                            |  101 +-
+ drivers/clk/ti/apll.c                              |    2 +-
+ drivers/clk/ti/dpll3xxx.c                          |   25 +-
+ drivers/clk/versatile/clk-sp810.c                  |    5 +-
+ include/dt-bindings/clock/bcm2835-aux.h            |   17 +
+ include/dt-bindings/clock/bcm2835.h                |    3 +-
+ include/dt-bindings/clock/exynos5420.h             |    4 +
+ include/dt-bindings/clock/imx7d-clock.h            |    3 +-
+ include/dt-bindings/clock/lpc32xx-clock.h          |   56 +
+ include/dt-bindings/clock/qcom,gcc-msm8996.h       |  339 ++
+ include/dt-bindings/clock/qcom,mmcc-msm8996.h      |  285 ++
+ include/dt-bindings/clock/rk3036-cru.h             |  193 ++
+ include/dt-bindings/clock/rk3228-cru.h             |  220 ++
+ include/dt-bindings/clock/rk3288-cru.h             |    4 +
+ include/dt-bindings/clock/tegra210-car.h           |  401 +++
+ include/linux/clk-provider.h                       |    9 +-
+ include/linux/clk/ti.h                             |    1 +
+ 119 files changed, 20639 insertions(+), 1353 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm2835-au=
+x-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/cs2000-cp.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra210=
+-car.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-clk=
+.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-usb=
+-clk.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3036=
+-cru.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3228=
+-cru.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/tango4-clock.txt
+ create mode 100644 drivers/clk/bcm/clk-bcm2835-aux.c
+ create mode 100644 drivers/clk/bcm/clk-bcm63xx.c
+ create mode 100644 drivers/clk/clk-cs2000-cp.c
+ create mode 100644 drivers/clk/clk-tango4.c
+ create mode 100644 drivers/clk/mvebu/dove-divider.c
+ create mode 100644 drivers/clk/mvebu/dove-divider.h
+ create mode 100644 drivers/clk/nxp/clk-lpc32xx.c
+ create mode 100644 drivers/clk/qcom/clk-alpha-pll.c
+ create mode 100644 drivers/clk/qcom/clk-alpha-pll.h
+ create mode 100644 drivers/clk/qcom/gcc-msm8996.c
+ create mode 100644 drivers/clk/qcom/mmcc-msm8996.c
+ create mode 100644 drivers/clk/rockchip/clk-rk3036.c
+ create mode 100644 drivers/clk/rockchip/clk-rk3228.c
+ create mode 100644 drivers/clk/shmobile/clk-div6.h
+ create mode 100644 drivers/clk/shmobile/r8a7795-cpg-mssr.c
+ create mode 100644 drivers/clk/shmobile/renesas-cpg-mssr.c
+ create mode 100644 drivers/clk/shmobile/renesas-cpg-mssr.h
+ create mode 100644 drivers/clk/sunxi/clk-a10-ve.c
+ create mode 100644 drivers/clk/sunxi/clk-sun8i-bus-gates.c
+ create mode 100644 drivers/clk/sunxi/clk-sun9i-cpus.c
+ create mode 100644 drivers/clk/tegra/clk-tegra210.c
+ create mode 100644 include/dt-bindings/clock/bcm2835-aux.h
+ create mode 100644 include/dt-bindings/clock/lpc32xx-clock.h
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-msm8996.h
+ create mode 100644 include/dt-bindings/clock/qcom,mmcc-msm8996.h
+ create mode 100644 include/dt-bindings/clock/rk3036-cru.h
+ create mode 100644 include/dt-bindings/clock/rk3228-cru.h
+ create mode 100644 include/dt-bindings/clock/tegra210-car.h
