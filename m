@@ -1,90 +1,59 @@
-Return-Path: <anholt@eliezer.anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Michael Turquette <mturquette@baylibre.com>, Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>
-Cc: Olof Johansson <olof@lixom.net>, linux-clk <linux-clk@vger.kernel.org>, "Stephen Boyd \<sboyd\@codeaurora.org\>\, Emilio Lopez \<emilio\@elopez.com.ar\>\, Hans de Goede \<hdegoede\@redhat.com\>\, linux-clk \<linux-clk\@vger.kernel.org\>\, linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>, linux-rpi-kernel@lists.infradead.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, "devicetree\@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2 1/3] clk: bcm2835: Add bindings for the auxiliary peripheral clock gates.
-In-Reply-To: <20151231001859.19557.99512@quark.deferred.io>
-References: <1450222559-22461-1-git-send-email-eric@anholt.net> <20151228223935.25842.28675@quark.deferred.io> <CAL_JsqLu7=66jEuaezesEuoPsBBhRAT0UQcLVNOLVwkEvQacRA@mail.gmail.com> <1477432.fTm0GUZ57A@wuerfel> <20151231001859.19557.99512@quark.deferred.io>
-Date: Sat, 02 Jan 2016 10:14:37 -0800
-Message-ID: <87h9ivonle.fsf@eliezer.anholt.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Remi Pommarel <repk@triplefau.lt>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH V4 2/7] clk: bcm2835: clamp clock divider to highest integer only
+Date: Fri, 15 Jan 2016 14:21:01 +0000
+Message-Id: <1452867667-2447-3-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org>
+References: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+From: Martin Sperl <kernel@martin.sperl.org>
 
-Michael Turquette <mturquette@baylibre.com> writes:
+The clock divider calculation right now clamps the
+divider to the highest possible fractional divider.
+So typically (BIT(div_int_bits) - 1) + 4095 / 4096.
 
-> Hi Arnd,
->
-> Quoting Arnd Bergmann (2015-12-30 01:29:02)
->> It's also ok to merge the header file and binding with either the dts fi=
-le
->> changes or the driver and then do the other part the following release.
->>=20
->> In the past, we've worked around the issue by merging the driver through
->> arm-soc, or by merging the dts changes through a driver tree, with the
->> appropriate Acks in each case. Both of those approaches work of course,
->> but the former always feels awkward to me as we are not using the right
->> maintainer path, and the latter approach tends to cause merge conflicts,
->> especially when multiple headers for different subsystems get added or
->> the dts files are added at the same time.
->>=20
->> Having a shared branch for the header file is another way to do it, and
->> we can do that in some cases, but I'd prefer not to make it the default.
->
-> Well, I'm thinking that an immutable branch isn't such a bad idea given
-> that both you and Rob are OK with subsystems merging headers and binding
-> descriptions.
->
-> A while back Stephen Boyd and I started to use topic branches for every
-> driver, all based on -rc1 and merging those into clk-next. This makes it
-> trivial for us to push a shareable branch with minimal dependencies.
->
-> So at least for the clk tree, how do you feel about us merging driver +
-> header + binding description and then sharing our topic branch as-needed
-> with arm-soc? We could even push our topic branches by default to cut
-> down on coordinating over email back-and-forth.
->
-> As an example, patch #1 from the Hi3519 series[0] includes the clk
-> driver, binding description and a shared header. Any objection to me
-> taking that patch as-is, based on -rc1, and pushing out that topic
-> branch as clk-hi3519 to the clk git tree with the expectation that
-> you'll just merge that if you need to?
->
-> You can let me know if you've pulled it in, and then I won't rebase
-> without consulting with the arm-soc folks first.
->
-> Does this workflow agreement Solve All the Problems?
->
-> (Note that the patch I referenced is still under review so the branch
-> name I mentioned above doesn't exist yet. It is just an example)
+As the fractional clock divider is alterating between
+(Fosc / div_int) and (Fosc / (div_int + 1))
+the divider will overflow for the (div_int + 1) case.
+As with the "underflow" case we have seen for (div < 2),
+we can assume that the same applies on the upper limit
+as well.
 
-For what it's worth, this is a nice workflow for me as a driver
-developer.  I have a couple of .dts patches that ended up waiting this
-cycle because I didn't have the shareable branches necessary.
+So this patch will instead clamp to the divider to the
+max of (BIT(div_int_bits) - 1)
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBCgAGBQJWiBONAAoJELXWKTbR/J7oDt8QAJ11Gjl+2QcSAWbRS7d8DNpY
-lrYpxvy93o67BwWs+8BmyQLxXBV8y1VtbbbeXSl2NmdlzWdB+IM7wl6XEnODXjwf
-gz+W0FpyLzEMdZhud16T0j0fTMJynAmQUQMDacjFFcXXtgCOk1vocqkbwcLQBLO/
-qS2Z6LaiNZkgRShXWUJyMwJ3agGyMH+FNrS+9gvK6ikWFBuo5RSweqLQZUU5IX3y
-xJ+uNfZ+wfCGr1ksPF+dpRQ4u9MVaZM8HhCfI5JD7mWuq6fMFV4yfYQjiHoS2H6+
-r8v9cfHufdQPGa3kuF+WxEiIFCR1m07GfI5YxT78vwT6V5J2ZbIsJJ7SbjR2dHrP
-0WybQp3aB6eEGkSdoyXDePD8IhB9JPRddOzSa17Epx7oghosXF+I7up0o98jBY+2
-BCHydOdQCIi56G+aQE/0QPkce93od5/euNO3YyyR20x4JB0YpG82GpxwXhqBJQi0
-N0g9Fbk4LEYcLV3q66cfL+YvUsfz8D59co76Tuw/kxm9idcf/nb4NaWAkWRvLiQa
-z2l6TqSvlZnxgHKkhehRm0kinXfHrXKSn51VogQRc7Tat/EgrOYLTnqcy3jVZAPf
-KFYValscqdOavqrZAXgSXaRcurvfp+kL75NIpN+yvOfEdiLi27q0CfTW/Gna1gzM
-iEZVN58/ttabOfzmquuf
-=VcSv
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 10e97b7..3d6490f 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1182,9 +1182,9 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
+ 	/* divider must be >= 2 */
+ 	div = max_t(u32, div, (2 << CM_DIV_FRAC_BITS));
+ 
+-	/* clamp to max divider allowed */
++	/* clamp to max divider allowed - max is integer divider */
+ 	div = min_t(u32, div, GENMASK(data->int_bits + CM_DIV_FRAC_BITS - 1,
+-				      CM_DIV_FRAC_BITS - data->frac_bits));
++				      CM_DIV_FRAC_BITS));
+ 
+ 	return div;
+ }
+-- 
+1.7.10.4
