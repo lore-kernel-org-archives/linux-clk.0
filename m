@@ -1,89 +1,59 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: John Crispin <blogic@openwrt.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>, James Liao
-	<jamesjj.liao@mediatek.com>, Shunli Wang <shunli.wang@mediatek.com>
-Subject: [PATCH v5 1/6] clk: mediatek: Refine the makefile to support multiple clock drivers
-Date: Wed, 27 Jan 2016 15:20:59 +0800
-Message-ID: <1453879264-37915-2-git-send-email-jamesjj.liao@mediatek.com>
-In-Reply-To: <1453879264-37915-1-git-send-email-jamesjj.liao@mediatek.com>
-References: <1453879264-37915-1-git-send-email-jamesjj.liao@mediatek.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.24]:57514 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751240AbcAOGmm (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 15 Jan 2016 01:42:42 -0500
+Date: Fri, 15 Jan 2016 07:41:35 +0100 (CET)
+From: Stefan Wahren <stefan.wahren@i2se.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Rob Herring <robh@kernel.org>
+Cc: linux-clk@vger.kernel.org, Rob Clark <robdclark@gmail.com>,
+	Wynter Woods <wynter@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	linux-sunxi@googlegroups.com, David Airlie <airlied@linux.ie>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org
+Message-ID: <1957693252.53435.d0a9f334-1bed-484f-886a-05dfab0e0dfa.open-xchange@email.1und1.de>
+In-Reply-To: <20160115031543.GA25640@rob-hp-laptop>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1452785109-6172-25-git-send-email-maxime.ripard@free-electrons.com>
+ <20160115031543.GA25640@rob-hp-laptop>
+Subject: Re: [PATCH v2 24/26] devicetree: Add olimex vendor prefix
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jamesjj.liao@mediatek.com
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a Kconfig to define clock configuration for each SoC, and
-modify the Makefile to build drivers that only selected in config.
 
-Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-Tested-by: John Crispin <blogic@openwrt.org>
----
- drivers/clk/Kconfig           |  1 +
- drivers/clk/mediatek/Kconfig  | 23 +++++++++++++++++++++++
- drivers/clk/mediatek/Makefile |  6 +++---
- 3 files changed, 27 insertions(+), 3 deletions(-)
- create mode 100644 drivers/clk/mediatek/Kconfig
+> Rob Herring <robh@kernel.org> hat am 15. Januar 2016 um 04:15 geschrieben:
+>
+>
+> On Thu, Jan 14, 2016 at 04:25:07PM +0100, Maxime Ripard wrote:
+> > Olimex is an open source hardware boards vendors based in Bulgaria.
+> >
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > ---
+> > Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+> > 1 file changed, 1 insertion(+)
+>
+> Acked-by: Rob Herring <robh@kernel.org>
+>
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index eca8e01..57cfcae7 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -202,6 +202,7 @@ config COMMON_CLK_CDCE706
- 
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
-+source "drivers/clk/mediatek/Kconfig"
- source "drivers/clk/qcom/Kconfig"
- 
- endmenu
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-new file mode 100644
-index 0000000..dc224e6
---- /dev/null
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -0,0 +1,23 @@
-+#
-+# MediaTek SoC drivers
-+#
-+config COMMON_CLK_MEDIATEK
-+	bool
-+	---help---
-+	  Mediatek SoCs' clock support.
-+
-+config COMMON_CLK_MT8135
-+	bool "Clock driver for Mediatek MT8135"
-+	depends on COMMON_CLK
-+	select COMMON_CLK_MEDIATEK
-+	default ARCH_MEDIATEK
-+	---help---
-+	  This driver supports Mediatek MT8135 clocks.
-+
-+config COMMON_CLK_MT8173
-+	bool "Clock driver for Mediatek MT8173"
-+	depends on COMMON_CLK
-+	select COMMON_CLK_MEDIATEK
-+	default ARCH_MEDIATEK
-+	---help---
-+	  This driver supports Mediatek MT8173 clocks.
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 95fdfac..32e7222 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -1,4 +1,4 @@
--obj-y += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
-+obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
- obj-$(CONFIG_RESET_CONTROLLER) += reset.o
--obj-y += clk-mt8135.o
--obj-y += clk-mt8173.o
-+obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135.o
-+obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173.o
--- 
-1.9.1
+I don't think we need this twice.
+
+It's already committed:
+
+2193377bdade ("DT: add Olimex to vendor prefixes")
+
+Regards
+Stefan
