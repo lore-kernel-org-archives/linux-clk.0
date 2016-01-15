@@ -1,275 +1,297 @@
-Return-Path: <antonynpavlov@gmail.com>
-Return-Path: <antonynpavlov@gmail.com>
-From: Antony Pavlov <antonynpavlov@gmail.com>
-To: linux-mips@linux-mips.org
-Cc: Antony Pavlov <antonynpavlov@gmail.com>,
-	Alban Bedel <albeu@free.fr>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <robh@kernel.org>
+Date: Thu, 14 Jan 2016 21:15:15 -0600
+From: Rob Herring <robh@kernel.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [RFC v3 01/14] WIP: clk: add Atheros AR724X/AR913X/AR933X SoCs clock driver
-Date: Sat, 23 Jan 2016 23:17:18 +0300
-Message-Id: <1453580251-2341-2-git-send-email-antonynpavlov@gmail.com>
-In-Reply-To: <1453580251-2341-1-git-send-email-antonynpavlov@gmail.com>
-References: <1453580251-2341-1-git-send-email-antonynpavlov@gmail.com>
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Wynter Woods <wynter@nextthing.co>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2 17/26] drm: sun4i: Add DT bindings documentation
+Message-ID: <20160115031515.GA19797@rob-hp-laptop>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1452785109-6172-18-git-send-email-maxime.ripard@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1452785109-6172-18-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-TODO: get pll registers base address from devicetree node
+On Thu, Jan 14, 2016 at 04:25:00PM +0100, Maxime Ripard wrote:
+> The display pipeline of the Allwinner A10 is involving several loosely
+> coupled components.
+> 
+> Add a documentation for the bindings.
+> 
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  .../bindings/display/sunxi/sun4i-drm.txt           | 228 +++++++++++++++++++++
 
-Signed-off-by: Antony Pavlov <antonynpavlov@gmail.com>
-Cc: Alban Bedel <albeu@free.fr>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-mips@linux-mips.org
-Cc: devicetree@vger.kernel.org
----
- drivers/clk/Makefile                  |   1 +
- drivers/clk/clk-ath79.c               | 193 ++++++++++++++++++++++++++++++++++
- include/dt-bindings/clock/ath79-clk.h |  22 ++++
- 3 files changed, 216 insertions(+)
+drm is a linuxism. It shouldn't be used for binding doc.
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 820714c..5101763 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -18,6 +18,7 @@ endif
- # hardware specific clock types
- # please keep this section sorted lexicographically by file/directory path name
- obj-$(CONFIG_MACH_ASM9260)		+= clk-asm9260.o
-+obj-$(CONFIG_ATH79)			+= clk-ath79.o
- obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+= clk-axi-clkgen.o
- obj-$(CONFIG_ARCH_AXXIA)		+= clk-axm5516.o
- obj-$(CONFIG_COMMON_CLK_CDCE706)	+= clk-cdce706.o
-diff --git a/drivers/clk/clk-ath79.c b/drivers/clk/clk-ath79.c
-new file mode 100644
-index 0000000..75338a7
---- /dev/null
-+++ b/drivers/clk/clk-ath79.c
-@@ -0,0 +1,193 @@
-+/*
-+ * Clock driver for Atheros AR724X/AR913X/AR933X SoCs
-+ *
-+ * Copyright (C) 2010-2011 Jaiganesh Narayanan <jnarayanan@atheros.com>
-+ * Copyright (C) 2011 Gabor Juhos <juhosg@openwrt.org>
-+ * Copyright (C) 2015 Alban Bedel <albeu@free.fr>
-+ * Copyright (C) 2016 Antony Pavlov <antonynpavlov@gmail.com>
-+ *
-+ * Parts of this file are based on Atheros' 2.6.15/2.6.31 BSP
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include "clk.h"
-+
-+#include <dt-bindings/clock/ath79-clk.h>
-+
-+#include "asm/mach-ath79/ar71xx_regs.h"
-+#include "asm/mach-ath79/ath79.h"
-+
-+#define MHZ (1000 * 1000)
-+
-+#define AR724X_BASE_FREQ	(40 * MHZ)
-+
-+static struct clk *ath79_clks[ATH79_CLK_END];
-+
-+static struct clk_onecell_data clk_data = {
-+	.clks = ath79_clks,
-+	.clk_num = ARRAY_SIZE(ath79_clks),
-+};
-+
-+static struct clk *__init ath79_add_sys_clkdev(
-+	const char *id, unsigned long rate)
-+{
-+	struct clk *clk;
-+	int err;
-+
-+	clk = clk_register_fixed_rate(NULL, id, NULL, CLK_IS_ROOT, rate);
-+	if (!clk)
-+		panic("failed to allocate %s clock structure", id);
-+
-+	err = clk_register_clkdev(clk, id, NULL);
-+	if (err)
-+		panic("unable to register %s clock device", id);
-+
-+	return clk;
-+}
-+
-+static void __init ar724x_clk_init(struct device_node *np)
-+{
-+	struct clk *ref_clk;
-+	unsigned long of_ref_rate;
-+	unsigned long ref_rate;
-+	unsigned long cpu_rate;
-+	unsigned long ddr_rate;
-+	unsigned long ahb_rate;
-+	u32 pll;
-+	u32 freq;
-+	u32 div;
-+
-+	ref_clk = of_clk_get(np, 0);
-+	if (IS_ERR(ref_clk)) {
-+		pr_err("%s: of_clk_get failed\n", np->full_name);
-+		return;
-+	}
-+
-+	of_ref_rate = clk_get_rate(ref_clk);
-+
-+	ref_rate = AR724X_BASE_FREQ;
-+
-+	if (of_ref_rate != ref_rate) {
-+		pr_err("ref_rate != of_ref_rate\n");
-+		ref_rate = of_ref_rate;
-+	}
-+
-+	pll = ath79_pll_rr(AR724X_PLL_REG_CPU_CONFIG);
-+
-+	div = ((pll >> AR724X_PLL_FB_SHIFT) & AR724X_PLL_FB_MASK);
-+	freq = div * ref_rate;
-+
-+	div = ((pll >> AR724X_PLL_REF_DIV_SHIFT) & AR724X_PLL_REF_DIV_MASK) * 2;
-+	freq /= div;
-+
-+	cpu_rate = freq;
-+
-+	div = ((pll >> AR724X_DDR_DIV_SHIFT) & AR724X_DDR_DIV_MASK) + 1;
-+	ddr_rate = freq / div;
-+
-+	div = (((pll >> AR724X_AHB_DIV_SHIFT) & AR724X_AHB_DIV_MASK) + 1) * 2;
-+	ahb_rate = cpu_rate / div;
-+
-+	ath79_clks[ATH79_CLK_REF] = ath79_add_sys_clkdev("ref", ref_rate);
-+	ath79_clks[ATH79_CLK_CPU] = ath79_add_sys_clkdev("cpu", cpu_rate);
-+	ath79_clks[ATH79_CLK_DDR] = ath79_add_sys_clkdev("ddr", ddr_rate);
-+	ath79_clks[ATH79_CLK_AHB] = ath79_add_sys_clkdev("ahb", ahb_rate);
-+	ath79_clks[ATH79_CLK_WDT] = ath79_add_sys_clkdev("wdt", ahb_rate);
-+	ath79_clks[ATH79_CLK_UART] = ath79_add_sys_clkdev("uart", ahb_rate);
-+
-+	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
-+}
-+
-+static void __init ar933x_clk_init(struct device_node *np)
-+{
-+	struct clk *ref_clk;
-+	unsigned long of_ref_rate;
-+	unsigned long ref_rate;
-+	unsigned long cpu_rate;
-+	unsigned long ddr_rate;
-+	unsigned long ahb_rate;
-+	u32 clock_ctrl;
-+	u32 cpu_config;
-+	u32 freq;
-+	u32 t;
-+
-+	ref_clk = of_clk_get(np, 0);
-+	if (IS_ERR(ref_clk)) {
-+		pr_err("%s: of_clk_get failed\n", np->full_name);
-+		return;
-+	}
-+
-+	of_ref_rate = clk_get_rate(ref_clk);
-+
-+	t = ath79_reset_rr(AR933X_RESET_REG_BOOTSTRAP);
-+	if (t & AR933X_BOOTSTRAP_REF_CLK_40)
-+		ref_rate = 40 * MHZ;
-+	else
-+		ref_rate = 25 * MHZ;
-+
-+	if (ref_rate != of_ref_rate) {
-+		pr_err("ref_rate != of_ref_rate\n");
-+		ref_rate = of_ref_rate;
-+	}
-+
-+	clock_ctrl = ath79_pll_rr(AR933X_PLL_CLOCK_CTRL_REG);
-+	if (clock_ctrl & AR933X_PLL_CLOCK_CTRL_BYPASS) {
-+		cpu_rate = ref_rate;
-+		ahb_rate = ref_rate;
-+		ddr_rate = ref_rate;
-+	} else {
-+		cpu_config = ath79_pll_rr(AR933X_PLL_CPU_CONFIG_REG);
-+
-+		t = (cpu_config >> AR933X_PLL_CPU_CONFIG_REFDIV_SHIFT) &
-+		    AR933X_PLL_CPU_CONFIG_REFDIV_MASK;
-+		freq = ref_rate / t;
-+
-+		t = (cpu_config >> AR933X_PLL_CPU_CONFIG_NINT_SHIFT) &
-+		    AR933X_PLL_CPU_CONFIG_NINT_MASK;
-+		freq *= t;
-+
-+		t = (cpu_config >> AR933X_PLL_CPU_CONFIG_OUTDIV_SHIFT) &
-+		    AR933X_PLL_CPU_CONFIG_OUTDIV_MASK;
-+		if (t == 0)
-+			t = 1;
-+
-+		freq >>= t;
-+
-+		t = ((clock_ctrl >> AR933X_PLL_CLOCK_CTRL_CPU_DIV_SHIFT) &
-+		     AR933X_PLL_CLOCK_CTRL_CPU_DIV_MASK) + 1;
-+		cpu_rate = freq / t;
-+
-+		t = ((clock_ctrl >> AR933X_PLL_CLOCK_CTRL_DDR_DIV_SHIFT) &
-+		      AR933X_PLL_CLOCK_CTRL_DDR_DIV_MASK) + 1;
-+		ddr_rate = freq / t;
-+
-+		t = ((clock_ctrl >> AR933X_PLL_CLOCK_CTRL_AHB_DIV_SHIFT) &
-+		     AR933X_PLL_CLOCK_CTRL_AHB_DIV_MASK) + 1;
-+		ahb_rate = freq / t;
-+	}
-+
-+	ath79_clks[ATH79_CLK_REF] = ath79_add_sys_clkdev("ref", ref_rate);
-+	ath79_clks[ATH79_CLK_CPU] = ath79_add_sys_clkdev("cpu", cpu_rate);
-+	ath79_clks[ATH79_CLK_DDR] = ath79_add_sys_clkdev("ddr", ddr_rate);
-+	ath79_clks[ATH79_CLK_AHB] = ath79_add_sys_clkdev("ahb", ahb_rate);
-+	ath79_clks[ATH79_CLK_WDT] = ath79_add_sys_clkdev("wdt", ahb_rate);
-+	ath79_clks[ATH79_CLK_UART] = ath79_add_sys_clkdev("uart", ref_rate);
-+
-+	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
-+}
-+CLK_OF_DECLARE(ar9130_clk, "qca,ar9130-pll", ar724x_clk_init);
-+CLK_OF_DECLARE(ar933x_clk, "qca,ar9330-pll", ar933x_clk_init);
-diff --git a/include/dt-bindings/clock/ath79-clk.h b/include/dt-bindings/clock/ath79-clk.h
-new file mode 100644
-index 0000000..1c6fb04
---- /dev/null
-+++ b/include/dt-bindings/clock/ath79-clk.h
-@@ -0,0 +1,22 @@
-+/*
-+ * Copyright (C) 2014, 2016 Antony Pavlov <antonynpavlov@gmail.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ */
-+
-+#ifndef __DT_BINDINGS_ATH79_CLK_H
-+#define __DT_BINDINGS_ATH79_CLK_H
-+
-+#define ATH79_CLK_REF		0
-+#define ATH79_CLK_CPU		1
-+#define ATH79_CLK_DDR		2
-+#define ATH79_CLK_AHB		3
-+#define ATH79_CLK_WDT		4
-+#define ATH79_CLK_UART		5
-+
-+#define ATH79_CLK_END		6
-+
-+#endif /* __DT_BINDINGS_ATH79_CLK_H */
--- 
-2.6.2
+>  1 file changed, 228 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> new file mode 100644
+> index 000000000000..061bc87147a3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> @@ -0,0 +1,228 @@
+> +Allwinner A10 Display Pipeline
+> +==============================
+> +
+> +The Allwinner A10 Display pipeline is composed of several components
+> +that are going to be documented below:
+> +
+> +TV Encoder
+> +----------
+> +
+> +The TV Encoder supports the composite and VGA output. It is one end of
+> +the pipeline.
+> +
+> +Required properties:
+> + - compatible: value should be "allwinner,sun4i-a10-tv-encoder".
+> + - reg: base address and size of memory-mapped region
+> + - clocks: the clocks driving the TV encoder
+> +
+> +- ports: A ports node with endpoint definitions as defined in
+> +  Documentation/devicetree/bindings/media/video-interfaces.txt. The
+> +  first port should be the input endpoint.
+> +
+> +TCON
+> +----
+> +
+> +The TCON acts as a timing controller for RGB, LVDS and TV interfaces.
+> +
+> +Required properties:
+> + - compatible: value should be "allwinner,sun4i-a10-tcon".
+> + - reg: base address and size of memory-mapped region
+> + - interrupts: interrupt associated to this IP
+> + - clocks: phandles to the clocks feeding the TCON. Three are needed:
+> +   - 'ahb': the interface clocks
+> +   - 'tcon-ch0': The clock driving the TCON channel 0
+> +   - 'tcon-ch1': The clock driving the TCON channel 1
+> +
+> + - clock-names: the clock names mentioned above
+> + - clock-output-names: Name of the pixel clock created
+> +
+> +- ports: A ports node with endpoint definitions as defined in
+> +  Documentation/devicetree/bindings/media/video-interfaces.txt. The
+> +  first port should be the input endpoint, the second one the output
+> +
+> +Optional properties:
+> +  - allwinner,panel: phandle to the panel used in our RGB interface
+> +
+> +
+> +Display Engine Backend
+> +----------------------
+> +
+> +The display engine backend exposes layers and sprites to the
+> +system.
+> +
+> +Required properties:
+> +  - compatible: value must be one of:
+> +    * allwinner,sun5i-a13-display-backend
+> +  - reg: base address and size of the memory-mapped region.
+> +  - clocks: phandles to the clocks feeding the frontend and backend
+> +    * ahb: the backend interface clock
+> +    * mod: the backend module clock
+> +    * ram: the backend DRAM clock
+> +  - clock-names: the clock names mentioned above
+> +  - resets: phandles to the reset controllers driving the backend
+> +
+> +- ports: A ports node with endpoint definitions as defined in
+> +  Documentation/devicetree/bindings/media/video-interfaces.txt. The
+> +  first port should be the input endpoints, the second one the output
+> +
+> +Display Engine Frontend
+> +-----------------------
+> +
+> +The display engine frontend does formats conversion, scaling,
+> +deinterlacing and color space conversion.
+> +
+> +Required properties:
+> +  - compatible: value must be one of:
+> +    * allwinner,sun5i-a13-display-frontend
+> +  - reg: base address and size of the memory-mapped region.
+> +  - interrupts: interrupt associated to this IP
+> +  - clocks: phandles to the clocks feeding the frontend and backend
+
+> +    * ahb: the backend interface clock
+> +    * mod: the backend module clock
+> +    * ram: the backend DRAM clock
+
+should be frontend?
+
+> +  - clock-names: the clock names mentioned above
+> +  - resets: phandles to the reset controllers driving the backend
+
+ditto
+
+> +
+> +Display Engine Pipeline
+> +-----------------------
+> +
+> +The display engine pipeline (and its entry point, since it can be
+> +either directly the backend or the frontend) is represented as an
+> +extra node.
+> +
+> +Required properties:
+> +  - compatible: value must be one of:
+> +    * allwinner,sun5i-a13-display-engine
+> +  - allwinner,pipelines: list of phandle to the entry points of the
+> +    pipelines (either to the frontend or backend)
+> +
+> +Example:
+> +
+> +panel: panel {
+> +	compatible = "olimex,lcd-olinuxino-43-ts";
+
+This should either be a child of what it is attached to or use of-graph.
+
+> +};
+> +
+> +tve0: tv-encoder@01c0a000 {
+> +	compatible = "allwinner,sun4i-a10-tv-encoder";
+> +	reg = <0x01c0a000 0x1000>;
+> +	clocks = <&ahb_gates 34>;
+> +
+> +	port {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		tve0_in_tcon0: endpoint@0 {
+> +			reg = <0>;
+
+I would drop the reg where you only have 1 node for ports or endpoints.
+
+> +			remote-endpoint = <&tcon0_out_tve0>;
+> +		};
+> +	};
+> +};
+> +
+> +tcon0: lcd-controller@01c0c000 {
+> +	compatible = "allwinner,sun4i-a10-tcon";
+> +	reg = <0x01c0c000 0x1000>;
+> +	interrupts = <44>;
+> +	clocks = <&ahb_gates 36>,
+> +		 <&tcon_ch0_clk>,
+> +		 <&tcon_ch1_clk>;
+> +	clock-names = "ahb",
+> +		      "tcon-ch0",
+> +		      "tcon-ch1";
+> +	clock-output-names = "tcon-pixel-clock";
+> +	allwinner,panel = <&panel>;
+> +
+> +	ports {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		tcon0_in: port@0 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <0>;
+> +
+> +			tcon0_in_be0: endpoint@0 {
+> +				reg = <0>;
+> +				remote-endpoint = <&be0_out_tcon0>;
+> +			};
+> +		};
+> +
+> +		tcon0_out: port@1 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <1>;
+> +
+> +			tcon0_out_tve0: endpoint@0 {
+> +				reg = <0>;
+> +				remote-endpoint = <&tve0_in_tcon0>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +fe0: display-frontend@01e00000 {
+> +	compatible = "allwinner,sun5i-a13-display-frontend";
+> +	reg = <0x01e00000 0x20000>;
+> +	interrupts = <47>;
+> +	clocks = <&ahb_gates 46>, <&de_fe_clk>,
+> +		 <&dram_gates 25>;
+> +	clock-names = "ahb", "mod",
+> +		      "ram";
+> +	resets = <&de_fe_clk>;
+> +
+> +	ports {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		fe0_out: port@0 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <0>;
+> +
+> +			fe0_out_be0: endpoint@0 {
+> +				reg = <0>;
+> +				remote-endpoint = <&be0_in_fe0>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +be0: display-backend@01e60000 {
+> +	compatible = "allwinner,sun5i-a13-display-backend";
+> +	reg = <0x01e60000 0x10000>;
+> +	clocks = <&ahb_gates 44>, <&de_be_clk>,
+> +		 <&dram_gates 26>;
+> +	clock-names = "ahb", "mod",
+> +		      "ram";
+> +	resets = <&de_be_clk>;
+> +
+> +	ports {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		be0_in: port@0 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <0>;
+> +
+> +			be0_in_fe0: endpoint@0 {
+> +				reg = <0>;
+> +				remote-endpoint = <&fe0_out_be0>;
+> +			};
+> +		};
+> +
+> +		be0_out: port@1 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <1>;
+> +
+> +			be0_out_tcon0: endpoint@0 {
+> +				reg = <0>;
+> +				remote-endpoint = <&tcon0_in_be0>;
+> +		};
+> +	};
+> +};
+> +
+> +display-engine {
+> +	compatible = "allwinner,sun5i-a13-display-engine";
+> +	pipelines = <&be0>;
+> +};
+> -- 
+> 2.6.4
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
