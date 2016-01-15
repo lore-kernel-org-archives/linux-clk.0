@@ -1,323 +1,392 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Daniel Mack <daniel@zonque.org>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Remi Pommarel <repk@triplefau.lt>,
 	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: [PATCH 1/9] ARM: pxa: define clock registers as __iomem
-Date: Fri, 29 Jan 2016 15:06:25 +0100
-Message-Id: <1454076396-3563101-2-git-send-email-arnd@arndb.de>
-In-Reply-To: <1454076396-3563101-1-git-send-email-arnd@arndb.de>
-References: <1454076396-3563101-1-git-send-email-arnd@arndb.de>
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH V4 5/7] clk: bcm2835: add missing 22 HW-clocks.
+Date: Fri, 15 Jan 2016 14:21:04 +0000
+Message-Id: <1452867667-2447-6-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org>
+References: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-We should not dereference registers as pointers, so use readl/writel
-instead for these registers.
+From: Martin Sperl <kernel@martin.sperl.org>
 
-The clock registers are accessed in multiple files, so we have to
-change them all at once.
+There were 22 HW clocks missing from the clock driver.
 
-I stumbled over these registers while looking at something unrelated.
-There are in fact other registers with the same problem, but I did
-not try to address those at this point.
+These have been included and int_bits and frac_bits
+have been set correctly based on information extracted
+from the broadcom videocore headers
+(http://www.broadcom.com/docs/support/videocore/Brcm_Android_ICS_Graphics_Stack.tar.gz)
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+For an extracted view of the registers please see:
+https://github.com/msperl/rpi-registers/blob/master/md/Region_CM.md
+
+bcm2835_clock_per_parents has been assigned as the parent
+clock for all new clocks, but this may not be correct
+in all cases - documentation on this is not publicly
+available, so some modifications may be needed in the
+future.
+
+There are a 3 more clocks that possibly could get implemented
+as gates instead of clocks:
+
+
+There are comments to indicate those.
+
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
 ---
- arch/arm/mach-pxa/gumstix.c                  |  6 ++---
- arch/arm/mach-pxa/include/mach/pxa2xx-regs.h |  8 +++----
- arch/arm/mach-pxa/include/mach/pxa3xx-regs.h |  2 +-
- arch/arm/mach-pxa/zeus.c                     |  2 +-
- drivers/clk/pxa/clk-pxa25x.c                 | 12 +++++-----
- drivers/clk/pxa/clk-pxa27x.c                 | 34 ++++++++++++++--------------
- drivers/clk/pxa/clk-pxa3xx.c                 |  3 +--
- drivers/cpufreq/pxa2xx-cpufreq.c             |  2 +-
- 8 files changed, 34 insertions(+), 35 deletions(-)
+ drivers/clk/bcm/clk-bcm2835.c       |  260 ++++++++++++++++++++++++++++++++++-
+ include/dt-bindings/clock/bcm2835.h |   22 +++
+ 2 files changed, 276 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/mach-pxa/gumstix.c b/arch/arm/mach-pxa/gumstix.c
-index 6815a9357774..9c5b2fb054f9 100644
---- a/arch/arm/mach-pxa/gumstix.c
-+++ b/arch/arm/mach-pxa/gumstix.c
-@@ -139,14 +139,14 @@ static void gumstix_setup_bt_clock(void)
- {
- 	int timeout = 500;
- 
--	if (!(OSCC & OSCC_OOK))
-+	if (!(readl(OSCC) & OSCC_OOK))
- 		pr_warn("32kHz clock was not on. Bootloader may need to be updated\n");
- 	else
- 		return;
- 
--	OSCC |= OSCC_OON;
-+	writel(readl(OSCC) | OSCC_OON, OSCC);
- 	do {
--		if (OSCC & OSCC_OOK)
-+		if (readl(OSCC) & OSCC_OOK)
- 			break;
- 		udelay(1);
- 	} while (--timeout);
-diff --git a/arch/arm/mach-pxa/include/mach/pxa2xx-regs.h b/arch/arm/mach-pxa/include/mach/pxa2xx-regs.h
-index f1dd62946b36..5537d5601d70 100644
---- a/arch/arm/mach-pxa/include/mach/pxa2xx-regs.h
-+++ b/arch/arm/mach-pxa/include/mach/pxa2xx-regs.h
-@@ -134,10 +134,10 @@
- /*
-  * PXA2xx specific Core clock definitions
-  */
--#define CCCR		__REG(0x41300000)  /* Core Clock Configuration Register */
--#define CCSR		__REG(0x4130000C)  /* Core Clock Status Register */
--#define CKEN		__REG(0x41300004)  /* Clock Enable Register */
--#define OSCC		__REG(0x41300008)  /* Oscillator Configuration Register */
-+#define CCCR		io_p2v(0x41300000)  /* Core Clock Configuration Register */
-+#define CCSR		io_p2v(0x4130000C)  /* Core Clock Status Register */
-+#define CKEN		io_p2v(0x41300004)  /* Clock Enable Register */
-+#define OSCC		io_p2v(0x41300008)  /* Oscillator Configuration Register */
- 
- #define CCCR_N_MASK	0x0380	/* Run Mode Frequency to Turbo Mode Frequency Multiplier */
- #define CCCR_M_MASK	0x0060	/* Memory Frequency to Run Mode Frequency Multiplier */
-diff --git a/arch/arm/mach-pxa/include/mach/pxa3xx-regs.h b/arch/arm/mach-pxa/include/mach/pxa3xx-regs.h
-index f4d48d20754e..888bf7ade15a 100644
---- a/arch/arm/mach-pxa/include/mach/pxa3xx-regs.h
-+++ b/arch/arm/mach-pxa/include/mach/pxa3xx-regs.h
-@@ -18,7 +18,7 @@
- /*
-  * Oscillator Configuration Register (OSCC)
-  */
--#define OSCC           __REG(0x41350000)  /* Oscillator Configuration Register */
-+#define OSCC           io_p2v(0x41350000)  /* Oscillator Configuration Register */
- 
- #define OSCC_PEN       (1 << 11)       /* 13MHz POUT */
- 
-diff --git a/arch/arm/mach-pxa/zeus.c b/arch/arm/mach-pxa/zeus.c
-index 515b7ddda8aa..3b94ecfb9426 100644
---- a/arch/arm/mach-pxa/zeus.c
-+++ b/arch/arm/mach-pxa/zeus.c
-@@ -910,7 +910,7 @@ static void __init zeus_map_io(void)
- 	PMCR = PSPR = 0;
- 
- 	/* enable internal 32.768Khz oscillator (ignore OSCC_OOK) */
--	OSCC |= OSCC_OON;
-+	writel(readl(OSCC) | OSCC_OON, OSCC);
- 
- 	/* Some clock cycles later (from OSCC_ON), programme PCFR (OPDE...).
- 	 * float chip selects and PCMCIA */
-diff --git a/drivers/clk/pxa/clk-pxa25x.c b/drivers/clk/pxa/clk-pxa25x.c
-index b7747229db9a..a9353cd4ce17 100644
---- a/drivers/clk/pxa/clk-pxa25x.c
-+++ b/drivers/clk/pxa/clk-pxa25x.c
-@@ -84,7 +84,7 @@ unsigned int pxa25x_get_clk_frequency_khz(int info)
- static unsigned long clk_pxa25x_memory_get_rate(struct clk_hw *hw,
- 						unsigned long parent_rate)
- {
--	unsigned long cccr = CCCR;
-+	unsigned long cccr = readl(CCCR);
- 	unsigned int m = M_clk_mult[(cccr >> 5) & 0x03];
- 
- 	return parent_rate / m;
-@@ -99,7 +99,7 @@ PARENTS(pxa25x_osc3) = { "osc_3_6864mhz", "osc_3_6864mhz" };
- #define PXA25X_CKEN(dev_id, con_id, parents, mult, div,			\
- 		    bit, is_lp, flags)					\
- 	PXA_CKEN(dev_id, con_id, bit, parents, mult, div, mult, div,	\
--		 is_lp,  &CKEN, CKEN_ ## bit, flags)
-+		 is_lp,  CKEN, CKEN_ ## bit, flags)
- #define PXA25X_PBUS95_CKEN(dev_id, con_id, bit, mult_hp, div_hp, delay)	\
- 	PXA25X_CKEN(dev_id, con_id, pxa25x_pbus95_parents, mult_hp,	\
- 		    div_hp, bit, NULL, 0)
-@@ -112,10 +112,10 @@ PARENTS(pxa25x_osc3) = { "osc_3_6864mhz", "osc_3_6864mhz" };
- 
- #define PXA25X_CKEN_1RATE(dev_id, con_id, bit, parents, delay)		\
- 	PXA_CKEN_1RATE(dev_id, con_id, bit, parents,			\
--		       &CKEN, CKEN_ ## bit, 0)
-+		       CKEN, CKEN_ ## bit, 0)
- #define PXA25X_CKEN_1RATE_AO(dev_id, con_id, bit, parents, delay)	\
- 	PXA_CKEN_1RATE(dev_id, con_id, bit, parents,			\
--		       &CKEN, CKEN_ ## bit, CLK_IGNORE_UNUSED)
-+		       CKEN, CKEN_ ## bit, CLK_IGNORE_UNUSED)
- 
- static struct desc_clk_cken pxa25x_clocks[] __initdata = {
- 	PXA25X_PBUS95_CKEN("pxa2xx-mci.0", NULL, MMC, 1, 5, 0),
-@@ -162,7 +162,7 @@ MUX_RO_RATE_RO_OPS(clk_pxa25x_core, "core");
- static unsigned long clk_pxa25x_run_get_rate(struct clk_hw *hw,
- 					     unsigned long parent_rate)
- {
--	unsigned long cccr = CCCR;
-+	unsigned long cccr = readl(CCCR);
- 	unsigned int n2 = N2_clk_mult[(cccr >> 7) & 0x07];
- 
- 	return (parent_rate / n2) * 2;
-@@ -173,7 +173,7 @@ RATE_RO_OPS(clk_pxa25x_run, "run");
- static unsigned long clk_pxa25x_cpll_get_rate(struct clk_hw *hw,
- 	unsigned long parent_rate)
- {
--	unsigned long clkcfg, cccr = CCCR;
-+	unsigned long clkcfg, cccr = readl(CCCR);
- 	unsigned int l, m, n2, t;
- 
- 	asm("mrc\tp14, 0, %0, c6, c0, 0" : "=r" (clkcfg));
-diff --git a/drivers/clk/pxa/clk-pxa27x.c b/drivers/clk/pxa/clk-pxa27x.c
-index 5b82d30baf9f..fc2abf97edd7 100644
---- a/drivers/clk/pxa/clk-pxa27x.c
-+++ b/drivers/clk/pxa/clk-pxa27x.c
-@@ -85,7 +85,7 @@ unsigned int pxa27x_get_clk_frequency_khz(int info)
- 
- bool pxa27x_is_ppll_disabled(void)
- {
--	unsigned long ccsr = CCSR;
-+	unsigned long ccsr = readl(CCSR);
- 
- 	return ccsr & (1 << CCCR_PPDIS_BIT);
- }
-@@ -93,7 +93,7 @@ bool pxa27x_is_ppll_disabled(void)
- #define PXA27X_CKEN(dev_id, con_id, parents, mult_hp, div_hp,		\
- 		    bit, is_lp, flags)					\
- 	PXA_CKEN(dev_id, con_id, bit, parents, 1, 1, mult_hp, div_hp,	\
--		 is_lp,  &CKEN, CKEN_ ## bit, flags)
-+		 is_lp,  CKEN, CKEN_ ## bit, flags)
- #define PXA27X_PBUS_CKEN(dev_id, con_id, bit, mult_hp, div_hp, delay)	\
- 	PXA27X_CKEN(dev_id, con_id, pxa27x_pbus_parents, mult_hp,	\
- 		    div_hp, bit, pxa27x_is_ppll_disabled, 0)
-@@ -106,10 +106,10 @@ PARENTS(pxa27x_membus) = { "lcd_base", "lcd_base" };
- 
- #define PXA27X_CKEN_1RATE(dev_id, con_id, bit, parents, delay)		\
- 	PXA_CKEN_1RATE(dev_id, con_id, bit, parents,			\
--		       &CKEN, CKEN_ ## bit, 0)
-+		       CKEN, CKEN_ ## bit, 0)
- #define PXA27X_CKEN_1RATE_AO(dev_id, con_id, bit, parents, delay)	\
- 	PXA_CKEN_1RATE(dev_id, con_id, bit, parents,			\
--		       &CKEN, CKEN_ ## bit, CLK_IGNORE_UNUSED)
-+		       CKEN, CKEN_ ## bit, CLK_IGNORE_UNUSED)
- 
- static struct desc_clk_cken pxa27x_clocks[] __initdata = {
- 	PXA27X_PBUS_CKEN("pxa2xx-uart.0", NULL, FFUART, 2, 42, 1),
-@@ -151,7 +151,7 @@ static unsigned long clk_pxa27x_cpll_get_rate(struct clk_hw *hw,
- 	unsigned long clkcfg;
- 	unsigned int t, ht;
- 	unsigned int l, L, n2, N;
--	unsigned long ccsr = CCSR;
-+	unsigned long ccsr = readl(CCSR);
- 
- 	asm("mrc\tp14, 0, %0, c6, c0, 0" : "=r" (clkcfg));
- 	t  = clkcfg & (1 << 0);
-@@ -171,8 +171,8 @@ static unsigned long clk_pxa27x_lcd_base_get_rate(struct clk_hw *hw,
- 						  unsigned long parent_rate)
- {
- 	unsigned int l, osc_forced;
--	unsigned long ccsr = CCSR;
--	unsigned long cccr = CCCR;
-+	unsigned long ccsr = readl(CCSR);
-+	unsigned long cccr = readl(CCCR);
- 
- 	l  = ccsr & CCSR_L_MASK;
- 	osc_forced = ccsr & (1 << CCCR_CPDIS_BIT);
-@@ -193,7 +193,7 @@ static unsigned long clk_pxa27x_lcd_base_get_rate(struct clk_hw *hw,
- static u8 clk_pxa27x_lcd_base_get_parent(struct clk_hw *hw)
- {
- 	unsigned int osc_forced;
--	unsigned long ccsr = CCSR;
-+	unsigned long ccsr = readl(CCSR);
- 
- 	osc_forced = ccsr & (1 << CCCR_CPDIS_BIT);
- 	if (osc_forced)
-@@ -222,7 +222,7 @@ static unsigned long clk_pxa27x_core_get_rate(struct clk_hw *hw,
- {
- 	unsigned long clkcfg;
- 	unsigned int t, ht, b, osc_forced;
--	unsigned long ccsr = CCSR;
-+	unsigned long ccsr = readl(CCSR);
- 
- 	osc_forced = ccsr & (1 << CCCR_CPDIS_BIT);
- 	asm("mrc\tp14, 0, %0, c6, c0, 0" : "=r" (clkcfg));
-@@ -242,7 +242,7 @@ static u8 clk_pxa27x_core_get_parent(struct clk_hw *hw)
- {
- 	unsigned long clkcfg;
- 	unsigned int t, ht, b, osc_forced;
--	unsigned long ccsr = CCSR;
-+	unsigned long ccsr = readl(CCSR);
- 
- 	osc_forced = ccsr & (1 << CCCR_CPDIS_BIT);
- 	if (osc_forced)
-@@ -263,7 +263,7 @@ MUX_RO_RATE_RO_OPS(clk_pxa27x_core, "core");
- static unsigned long clk_pxa27x_run_get_rate(struct clk_hw *hw,
- 					     unsigned long parent_rate)
- {
--	unsigned long ccsr = CCSR;
-+	unsigned long ccsr = readl(CCSR);
- 	unsigned int n2 = (ccsr & CCSR_N2_MASK) >> CCSR_N2_SHIFT;
- 
- 	return (parent_rate / n2) * 2;
-@@ -285,7 +285,7 @@ static unsigned long clk_pxa27x_system_bus_get_rate(struct clk_hw *hw,
- {
- 	unsigned long clkcfg;
- 	unsigned int b, osc_forced;
--	unsigned long ccsr = CCSR;
-+	unsigned long ccsr = readl(CCSR);
- 
- 	osc_forced = ccsr & (1 << CCCR_CPDIS_BIT);
- 	asm("mrc\tp14, 0, %0, c6, c0, 0" : "=r" (clkcfg));
-@@ -302,7 +302,7 @@ static unsigned long clk_pxa27x_system_bus_get_rate(struct clk_hw *hw,
- static u8 clk_pxa27x_system_bus_get_parent(struct clk_hw *hw)
- {
- 	unsigned int osc_forced;
--	unsigned long ccsr = CCSR;
-+	unsigned long ccsr = readl(CCSR);
- 
- 	osc_forced = ccsr & (1 << CCCR_CPDIS_BIT);
- 	if (osc_forced)
-@@ -318,8 +318,8 @@ static unsigned long clk_pxa27x_memory_get_rate(struct clk_hw *hw,
- 						unsigned long parent_rate)
- {
- 	unsigned int a, l, osc_forced;
--	unsigned long cccr = CCCR;
--	unsigned long ccsr = CCSR;
-+	unsigned long cccr = readl(CCCR);
-+	unsigned long ccsr = readl(CCSR);
- 
- 	osc_forced = ccsr & (1 << CCCR_CPDIS_BIT);
- 	a = cccr & (1 << CCCR_A_BIT);
-@@ -337,8 +337,8 @@ static unsigned long clk_pxa27x_memory_get_rate(struct clk_hw *hw,
- static u8 clk_pxa27x_memory_get_parent(struct clk_hw *hw)
- {
- 	unsigned int osc_forced, a;
--	unsigned long cccr = CCCR;
--	unsigned long ccsr = CCSR;
-+	unsigned long cccr = readl(CCCR);
-+	unsigned long ccsr = readl(CCSR);
- 
- 	osc_forced = ccsr & (1 << CCCR_CPDIS_BIT);
- 	a = cccr & (1 << CCCR_A_BIT);
-diff --git a/drivers/clk/pxa/clk-pxa3xx.c b/drivers/clk/pxa/clk-pxa3xx.c
-index 4af4eed5f89f..ea679718601c 100644
---- a/drivers/clk/pxa/clk-pxa3xx.c
-+++ b/drivers/clk/pxa/clk-pxa3xx.c
-@@ -334,8 +334,7 @@ static void __init pxa3xx_base_clocks_init(void)
- 	clk_register_clk_pxa3xx_system_bus();
- 	clk_register_clk_pxa3xx_ac97();
- 	clk_register_clk_pxa3xx_smemc();
--	clk_register_gate(NULL, "CLK_POUT", "osc_13mhz", 0,
--			  (void __iomem *)&OSCC, 11, 0, NULL);
-+	clk_register_gate(NULL, "CLK_POUT", "osc_13mhz", 0, OSCC, 11, 0, NULL);
- 	clkdev_pxa_register(CLK_OSTIMER, "OSTIMER0", NULL,
- 			    clk_register_fixed_factor(NULL, "os-timer0",
- 						      "osc_13mhz", 0, 1, 4));
-diff --git a/drivers/cpufreq/pxa2xx-cpufreq.c b/drivers/cpufreq/pxa2xx-cpufreq.c
-index 096377232747..46fee1539cc8 100644
---- a/drivers/cpufreq/pxa2xx-cpufreq.c
-+++ b/drivers/cpufreq/pxa2xx-cpufreq.c
-@@ -319,7 +319,7 @@ static int pxa_set_target(struct cpufreq_policy *policy, unsigned int idx)
- 	local_irq_save(flags);
- 
- 	/* Set new the CCCR and prepare CCLKCFG */
--	CCCR = pxa_freq_settings[idx].cccr;
-+	writel(pxa_freq_settings[idx].cccr, CCCR);
- 	cclkcfg = pxa_freq_settings[idx].cclkcfg;
- 
- 	asm volatile("							\n\
--- 
-2.7.0
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 8bc0a76..1640288 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -92,8 +92,18 @@
+ #define CM_PCMDIV		0x09c
+ #define CM_PWMCTL		0x0a0
+ #define CM_PWMDIV		0x0a4
++#define CM_SLIMCTL		0x0a8
++#define CM_SLIMDIV		0x0ac
+ #define CM_SMICTL		0x0b0
+ #define CM_SMIDIV		0x0b4
++#define CM_TCNTCTL		0x0c0
++#define CM_TCNTDIV		0x0c4
++#define CM_TECCTL		0x0c8
++#define CM_TECDIV		0x0cc
++#define CM_TD0CTL		0x0d0
++#define CM_TD0DIV		0x0d4
++#define CM_TD1CTL		0x0d8
++#define CM_TD1DIV		0x0dc
+ #define CM_TSENSCTL		0x0e0
+ #define CM_TSENSDIV		0x0e4
+ #define CM_TIMERCTL		0x0e8
+@@ -107,6 +117,9 @@
+ #define CM_SDCCTL		0x1a8
+ #define CM_SDCDIV		0x1ac
+ #define CM_ARMCTL		0x1b0
++#define CM_ARMDIV		0x1b4
++#define CM_AVEOCTL		0x1b8
++#define CM_AVEODIV		0x1bc
+ #define CM_EMMCCTL		0x1c0
+ #define CM_EMMCDIV		0x1c4
+
+@@ -829,6 +842,219 @@ static const struct bcm2835_clock_data bcm2835_clock_pcm_data = {
+ 	.frac_bits = 12,
+ };
+
++static const struct bcm2835_clock_data bcm2835_clock_aveo_data = {
++	.name = "aveo",
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
++	.parents = bcm2835_clock_per_parents,
++	.ctl_reg = CM_AVEOCTL,
++	.div_reg = CM_AVEODIV,
++	.int_bits = 4,
++	.frac_bits = 12,
++};
++
++static const struct bcm2835_clock_data bcm2835_clock_cam0_data = {
++	.name = "cam0",
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
++	.parents = bcm2835_clock_per_parents,
++	.ctl_reg = CM_CAM0CTL,
++	.div_reg = CM_CAM0DIV,
++	.int_bits = 4,
++	.frac_bits = 8,
++};
++
++static const struct bcm2835_clock_data bcm2835_clock_cam1_data = {
++	.name = "cam1",
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
++	.parents = bcm2835_clock_per_parents,
++	.ctl_reg = CM_CAM1CTL,
++	.div_reg = CM_CAM1DIV,
++	.int_bits = 4,
++	.frac_bits = 8,
++};
++
++static const struct bcm2835_clock_data bcm2835_clock_ccp2_data = {
++	/* this is possibly a gate */
++	.name = "ccp2",
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
++	.parents = bcm2835_clock_per_parents,
++	.ctl_reg = CM_CCP2CTL,
++	.div_reg = CM_CCP2DIV,
++	.int_bits = 1,
++	.frac_bits = 0,
++};
++
++static const struct bcm2835_clock_data bcm2835_clock_dft_data = {
++	.name = "dft",
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
++	.parents = bcm2835_clock_per_parents,
++	.ctl_reg = CM_DFTCTL,
++	.div_reg = CM_DFTDIV,
++	.int_bits = 5,
++	.frac_bits = 0,
++};
++
++static const struct bcm2835_clock_data bcm2835_clock_dpi_data = {
++	.name = "dpi",
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
++	.parents = bcm2835_clock_per_parents,
++	.ctl_reg = CM_DPICTL,
++	.div_reg = CM_DPIDIV,
++	.int_bits = 4,
++	.frac_bits = 8,
++};
++
++static const struct bcm2835_clock_data bcm2835_clock_dsi0e_data = {
++	.name = "dsi0e",
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
++	.parents = bcm2835_clock_per_parents,
++	.ctl_reg = CM_DSI0ECTL,
++	.div_reg = CM_DSI0EDIV,
++	.int_bits = 4,
++	.frac_bits = 8,
++};
++
++static const struct bcm2835_clock_data bcm2835_clock_dsi0p_data = {
++	/* this is possibly a gate */
++	.name = "dsi0p",
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
++	.parents = bcm2835_clock_per_parents,
++	.ctl_reg = CM_DSI0PCTL,
++	.div_reg = CM_DSI0PDIV,
++	.int_bits = 1,
++	.frac_bits = 0,
++};
++
++static const struct bcm2835_clock_data bcm2835_clock_dsi1e_data = {
++	.name = "dsi1e",
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
++	.parents = bcm2835_clock_per_parents,
++	.ctl_reg = CM_DSI1ECTL,
++	.div_reg = CM_DSI1EDIV,
++	.int_bits = 4,
++	.frac_bits = 8,
++};
++
++static const struct bcm2835_clock_data bcm2835_clock_dsi1p_data = {
++	/* this is possibly a gate */
++	.name = "dsi1p",
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
++	.parents = bcm2835_clock_per_parents,
++	.ctl_reg = CM_DSI1PCTL,
++	.div_reg = CM_DSI1PDIV,
++	.int_bits = 1,
++	.frac_bits = 0,
++};
++
++static const struct bcm2835_clock_data bcm2835_clock_gnric_data = {
++	.name = "gnric",
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
++	.parents = bcm2835_clock_per_parents,
++	.ctl_reg = CM_GNRICCTL,
++	.div_reg = CM_GNRICDIV,
++	.int_bits = 12,
++	.frac_bits = 12,
++};
++
++static const struct bcm2835_clock_data bcm2835_clock_gp0_data = {
++	.name = "gp0",
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
++	.parents = bcm2835_clock_per_parents,
++	.ctl_reg = CM_GP0CTL,
++	.div_reg = CM_GP0DIV,
++	.int_bits = 12,
++	.frac_bits = 12,
++};
++
++static const struct bcm2835_clock_data bcm2835_clock_gp1_data = {
++	.name = "gp1",
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
++	.parents = bcm2835_clock_per_parents,
++	.ctl_reg = CM_GP1CTL,
++	.div_reg = CM_GP1DIV,
++	.int_bits = 12,
++	.frac_bits = 12,
++};
++
++static const struct bcm2835_clock_data bcm2835_clock_gp2_data = {
++	.name = "gp2",
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
++	.parents = bcm2835_clock_per_parents,
++	.ctl_reg = CM_GP2CTL,
++	.div_reg = CM_GP2DIV,
++	.int_bits = 12,
++	.frac_bits = 12,
++};
++
++static const struct bcm2835_clock_data bcm2835_clock_peria_data = {
++	.name = "peria",
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
++	.parents = bcm2835_clock_per_parents,
++	.ctl_reg = CM_PERIACTL,
++	.div_reg = CM_PERIADIV,
++	.int_bits = 12,
++	.frac_bits = 12,
++};
++
++static const struct bcm2835_clock_data bcm2835_clock_pulse_data = {
++	.name = "pulse",
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
++	.parents = bcm2835_clock_per_parents,
++	.ctl_reg = CM_PULSECTL,
++	.div_reg = CM_PULSEDIV,
++	.int_bits = 12,
++	.frac_bits = 0,
++};
++
++static const struct bcm2835_clock_data bcm2835_clock_slim_data = {
++	.name = "slim",
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
++	.parents = bcm2835_clock_per_parents,
++	.ctl_reg = CM_SLIMCTL,
++	.div_reg = CM_SLIMDIV,
++	.int_bits = 12,
++	.frac_bits = 12,
++};
++
++static const struct bcm2835_clock_data bcm2835_clock_smi_data = {
++	.name = "smi",
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
++	.parents = bcm2835_clock_per_parents,
++	.ctl_reg = CM_SMICTL,
++	.div_reg = CM_SMIDIV,
++	.int_bits = 4,
++	.frac_bits = 8,
++};
++
++static const struct bcm2835_clock_data bcm2835_clock_td0_data = {
++	.name = "td0",
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
++	.parents = bcm2835_clock_per_parents,
++	.ctl_reg = CM_TD0CTL,
++	.div_reg = CM_TD0DIV,
++	.int_bits = 12,
++	.frac_bits = 12,
++};
++
++static const struct bcm2835_clock_data bcm2835_clock_td1_data = {
++	.name = "td1",
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
++	.parents = bcm2835_clock_per_parents,
++	.ctl_reg = CM_TD1CTL,
++	.div_reg = CM_TD1DIV,
++	.int_bits = 12,
++	.frac_bits = 12,
++};
++
++static const struct bcm2835_clock_data bcm2835_clock_tec_data = {
++	.name = "tec",
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
++	.parents = bcm2835_clock_per_parents,
++	.ctl_reg = CM_TECCTL,
++	.div_reg = CM_TECDIV,
++	.int_bits = 6,
++	.frac_bits = 0,
++};
++
+ struct bcm2835_gate_data {
+ 	const char *name;
+ 	const char *parent;
+@@ -836,18 +1062,18 @@ struct bcm2835_gate_data {
+ 	u32 ctl_reg;
+ };
+
+-/*
+- * CM_PERIICTL (and CM_PERIACTL, CM_SYSCTL and CM_VPUCTL if
+- * you have the debug bit set in the power manager, which we
+- * don't bother exposing) are individual gates off of the
+- * non-stop vpu clock.
+- */
+ static const struct bcm2835_gate_data bcm2835_clock_peri_image_data = {
+ 	.name = "peri_image",
+ 	.parent = "vpu",
+ 	.ctl_reg = CM_PERIICTL,
+ };
+
++static const struct bcm2835_gate_data bcm2835_clock_sys_data = {
++	.name = "sys",
++	.parent = "vpu",
++	.ctl_reg = CM_SYSCTL,
++};
++
+ struct bcm2835_pll {
+ 	struct clk_hw hw;
+ 	struct bcm2835_cprman *cprman;
+@@ -1591,9 +1817,31 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 	[BCM2835_CLOCK_EMMC]	= REGISTER_CLK(&bcm2835_clock_emmc_data),
+ 	[BCM2835_CLOCK_PWM]	= REGISTER_CLK(&bcm2835_clock_pwm_data),
+ 	[BCM2835_CLOCK_PCM]	= REGISTER_CLK(&bcm2835_clock_pcm_data),
++	[BCM2835_CLOCK_AVEO]	= REGISTER_CLK(&bcm2835_clock_aveo_data),
++	[BCM2835_CLOCK_CAM0]	= REGISTER_CLK(&bcm2835_clock_cam0_data),
++	[BCM2835_CLOCK_CAM1]	= REGISTER_CLK(&bcm2835_clock_cam1_data),
++	[BCM2835_CLOCK_CCP2]	= REGISTER_CLK(&bcm2835_clock_ccp2_data),
++	[BCM2835_CLOCK_DFT]	= REGISTER_CLK(&bcm2835_clock_dft_data),
++	[BCM2835_CLOCK_DPI]	= REGISTER_CLK(&bcm2835_clock_dpi_data),
++	[BCM2835_CLOCK_DSI0E]	= REGISTER_CLK(&bcm2835_clock_dsi0e_data),
++	[BCM2835_CLOCK_DSI0P]	= REGISTER_CLK(&bcm2835_clock_dsi0p_data),
++	[BCM2835_CLOCK_DSI1E]	= REGISTER_CLK(&bcm2835_clock_dsi1e_data),
++	[BCM2835_CLOCK_DSI1P]	= REGISTER_CLK(&bcm2835_clock_dsi1p_data),
++	[BCM2835_CLOCK_GNRIC]	= REGISTER_CLK(&bcm2835_clock_gnric_data),
++	[BCM2835_CLOCK_GP0]	= REGISTER_CLK(&bcm2835_clock_gp0_data),
++	[BCM2835_CLOCK_GP1]	= REGISTER_CLK(&bcm2835_clock_gp1_data),
++	[BCM2835_CLOCK_GP2]	= REGISTER_CLK(&bcm2835_clock_gp2_data),
++	[BCM2835_CLOCK_PERIA]	= REGISTER_CLK(&bcm2835_clock_peria_data),
++	[BCM2835_CLOCK_PULSE]	= REGISTER_CLK(&bcm2835_clock_pulse_data),
++	[BCM2835_CLOCK_SLIM]	= REGISTER_CLK(&bcm2835_clock_slim_data),
++	[BCM2835_CLOCK_SMI]	= REGISTER_CLK(&bcm2835_clock_smi_data),
++	[BCM2835_CLOCK_TD0]	= REGISTER_CLK(&bcm2835_clock_td0_data),
++	[BCM2835_CLOCK_TD1]	= REGISTER_CLK(&bcm2835_clock_td1_data),
++	[BCM2835_CLOCK_TEC]	= REGISTER_CLK(&bcm2835_clock_tec_data),
+ 	/* the gates */
+ 	[BCM2835_CLOCK_PERI_IMAGE] = REGISTER_GATE(
+ 		&bcm2835_clock_peri_image_data),
++	[BCM2835_CLOCK_SYS]	= REGISTER_GATE(&bcm2835_clock_sys_data),
+ };
+
+ static int bcm2835_clk_probe(struct platform_device *pdev)
+diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
+index 9a7b4a5..d29f181 100644
+--- a/include/dt-bindings/clock/bcm2835.h
++++ b/include/dt-bindings/clock/bcm2835.h
+@@ -45,3 +45,25 @@
+ #define BCM2835_CLOCK_PERI_IMAGE	29
+ #define BCM2835_CLOCK_PWM		30
+ #define BCM2835_CLOCK_PCM		31
++#define BCM2835_CLOCK_AVEO		32
++#define BCM2835_CLOCK_CAM0		33
++#define BCM2835_CLOCK_CAM1		34
++#define BCM2835_CLOCK_CCP2		35
++#define BCM2835_CLOCK_DFT		36
++#define BCM2835_CLOCK_DPI		37
++#define BCM2835_CLOCK_DSI0E		38
++#define BCM2835_CLOCK_DSI0P		39
++#define BCM2835_CLOCK_DSI1E		40
++#define BCM2835_CLOCK_DSI1P		41
++#define BCM2835_CLOCK_GNRIC		42
++#define BCM2835_CLOCK_GP0		43
++#define BCM2835_CLOCK_GP1		44
++#define BCM2835_CLOCK_GP2		45
++#define BCM2835_CLOCK_PERIA		46
++#define BCM2835_CLOCK_PULSE		47
++#define BCM2835_CLOCK_SLIM		48
++#define BCM2835_CLOCK_SMI		49
++#define BCM2835_CLOCK_SYS		50
++#define BCM2835_CLOCK_TD0		51
++#define BCM2835_CLOCK_TD1		52
++#define BCM2835_CLOCK_TEC		53
+--
+1.7.10.4
