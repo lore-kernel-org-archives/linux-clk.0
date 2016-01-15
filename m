@@ -1,117 +1,98 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wenyou Yang <wenyou.yang@atmel.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Russell King <linux@arm.linux.org.uk>
-CC: <linux-clk@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>
-Subject: [PATCH 4/4] Documentation: atmel-at91: add DT bindings for fast startup
-Date: Thu, 28 Jan 2016 18:19:16 +0800
-Message-ID: <1453976356-24391-5-git-send-email-wenyou.yang@atmel.com>
-In-Reply-To: <1453976356-24391-1-git-send-email-wenyou.yang@atmel.com>
-References: <1453976356-24391-1-git-send-email-wenyou.yang@atmel.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Fri, 15 Jan 2016 09:05:03 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
+	Rob Clark <robdclark@gmail.com>, Wynter Woods <wynter@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	linux-sunxi@googlegroups.com, David Airlie <airlied@linux.ie>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 24/26] devicetree: Add olimex vendor prefix
+Message-ID: <20160115080503.GA11036@lukather>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1452785109-6172-25-git-send-email-maxime.ripard@free-electrons.com>
+ <20160115031543.GA25640@rob-hp-laptop>
+ <1957693252.53435.d0a9f334-1bed-484f-886a-05dfab0e0dfa.open-xchange@email.1und1.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="MGYHOYXEY6WxJCY8"
+In-Reply-To: <1957693252.53435.d0a9f334-1bed-484f-886a-05dfab0e0dfa.open-xchange@email.1und1.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add DT bindings to configurate the PMC_FSMR and PMC_FSPR registers
-to trigger a fast restart signal to PMC.
 
-Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
----
+--MGYHOYXEY6WxJCY8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- .../devicetree/bindings/arm/atmel-pmc.txt          |   74 ++++++++++++++++++++
- 1 file changed, 74 insertions(+)
+Hi,
 
-diff --git a/Documentation/devicetree/bindings/arm/atmel-pmc.txt b/Documentation/devicetree/bindings/arm/atmel-pmc.txt
-index 795cc78..8d45ff9f 100644
---- a/Documentation/devicetree/bindings/arm/atmel-pmc.txt
-+++ b/Documentation/devicetree/bindings/arm/atmel-pmc.txt
-@@ -12,3 +12,77 @@ Examples:
- 		compatible = "atmel,at91rm9200-pmc";
- 		reg = <0xfffffc00 0x100>;
- 	};
-+
-+PMC Fast Startup Signals
-+
-+The PMC Fast Start Signals are used as the wake up source to trigger the PMC
-+to wake up the system from the ULP1 mode.
-+
-+required properties:
-+- compatible: Should be "atmel,sama5d2-pmc-fast-startup".
-+
-+optional properties:
-+- atmel,fast-startup-wake-up: boolean to enable the WKUP pin to trigger
-+  a fast restart signal to the PMC.
-+- atmel,fast-startup-secumod: boolean to enable the Security Mode to trigger
-+  a fast restart signal to the PMC.
-+- atmel,fast-startup-piobu0: boolean to enable the PIOBU0 Input to trigger
-+  a fast restart signal to the PMC.
-+- atmel,fast-startup-piobu1: boolean to enable the PIOBU1 Input to trigger
-+  a fast restart signal to the PMC.
-+- atmel,fast-startup-piobu2: boolean to enable the PIOBU2 Input to trigger
-+  a fast restart signal to the PMC.
-+- atmel,fast-startup-piobu3: boolean to enable the PIOBU3 Input to trigger
-+  a fast restart signal to the PMC.
-+- atmel,fast-startup-piobu4: boolean to enable the PIOBU4 Input to trigger
-+  a fast restart signal to the PMC.
-+- atmel,fast-startup-piobu5: boolean to enable the PIOBU5 Input to trigger
-+  a fast restart signal to the PMC.
-+- atmel,fast-startup-piobu6: boolean to enable the PIOBU6 Input to trigger
-+  a fast restart signal to the PMC.
-+- atmel,fast-startup-piobu7: boolean to enable the PIOBU7 Input to trigger
-+  a fast restart signal to the PMC.
-+- atmel,fast-startup-gmac-wol: boolean to enable the GMAC Wake-up On LAN
-+  to trigger a fast restart signal to the PMC.
-+- atmel,fast-startup-rtc-alarm: boolean to enable the RTC Alarm to trigger
-+  a fast restart signal to the PMC.
-+- atmel,fast-startup-usb-resume: boolean to enable the USB Resume to trigger
-+  a fast restart signal to the PMC.
-+- atmel,fast-startup-sdmmc-cd: boolean to enable the SDMMC Card Detect
-+  to trigger a fast restart signal to the PMC.
-+- atmel,fast-startup-rxlp-match: boolean to enable the Backuo UART Receive
-+  Match Condition to trigger a fast restart signal to the PMC.
-+- atmel,fast-startup-acc-comparison: boolean to enable the Analog Comparator
-+  Controller (ACC) Comparison to to trigger a fast restart signal to the PMC.
-+
-+- atmel,fast-startup-wkup-pin-high: boolean to indicate if the WKUP Pin is
-+  in the high level to trigger fast restart signal, otherwise low level.
-+- atmel,fast-startup-piobu0-high: boolean to indicate if the PIOBU0 Pin is
-+  in the high level to trigger fast restart signal, otherwise low level.
-+- atmel,fast-startup-piobu1-high: boolean to indicate if the PIOBU1 Pin is
-+  in the high level to trigger fast restart signal, otherwise low level.
-+- atmel,fast-startup-piobu2-high: boolean to indicate if the PIOBU2 Pin is
-+  in the high level to trigger fast restart signal, otherwise low level.
-+- atmel,fast-startup-piobu3-high: boolean to indicate if the PIOBU3 Pin is
-+  in the high level to trigger fast restart signal, otherwise low level.
-+- atmel,fast-startup-piobu4-high: boolean to indicate if the PIOBU4 Pin is
-+  in the high level to trigger fast restart signal, otherwise low level.
-+- atmel,fast-startup-piobu5-high: boolean to indicate if the PIOBU5 Pin is
-+  in the high level to trigger fast restart signal, otherwise low level.
-+- atmel,fast-startup-piobu6-high: boolean to indicate if the PIOBU6 Pin is
-+  in the high level to trigger fast restart signal, otherwise low level.
-+- atmel,fast-startup-piobu7-high: boolean to indicate if the PIOBU7 Pin is
-+  in the high level to trigger fast restart signal, otherwise low level.
-+
-+Example:
-+
-+	pmc: pmc@f0014000 {
-+		compatible = "atmel,sama5d2-pmc";
-+		reg = <0xf0014000 0x160>;
-+
-+		pmc_fast_restart {
-+			compatible = "atmel,sama5d2-pmc-fast-startup";
-+			atmel,fast-startup-wake-up;
-+			atmel,fast-startup-rtc-alarm;
-+		};
-+	};
--- 
-1.7.9.5
+On Fri, Jan 15, 2016 at 07:41:35AM +0100, Stefan Wahren wrote:
+>=20
+> > Rob Herring <robh@kernel.org> hat am 15. Januar 2016 um 04:15 geschrieb=
+en:
+> >
+> >
+> > On Thu, Jan 14, 2016 at 04:25:07PM +0100, Maxime Ripard wrote:
+> > > Olimex is an open source hardware boards vendors based in Bulgaria.
+> > >
+> > > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > > ---
+> > > Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+> > > 1 file changed, 1 insertion(+)
+> >
+> > Acked-by: Rob Herring <robh@kernel.org>
+> >
+>=20
+> I don't think we need this twice.
+>=20
+> It's already committed:
+>=20
+> 2193377bdade ("DT: add Olimex to vendor prefixes")
+
+Hmm, indeed.
+
+Sorry for the noise, I'll drop the commit.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--MGYHOYXEY6WxJCY8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWmKgvAAoJEBx+YmzsjxAgo1sP/1vo5NPTMAOyfTe3uINKd/I1
+Xm8xtUH7J7VAKTyI/t6z1o5K8fPdYrTchFSQVd6JRyZmZJ3SO2qYPNTR2+DwCoK1
+B1kUuG83kP0f3XZvbR0J5f5ya7nL7DBOOqtHZkBXcMyOYvuxP94wKJecATTvvS62
+uGtHhnro6gYu26W99bnLOICuBzcg9s1onaa/BcKclpP3TJKTSwwmBaXb4Het1y7y
+sLdhcDL2YSZ1oSYF5SzwiqeM60iJBsO08acCeO+fQHjuJwZqSFm1zVPoIgyYFojV
+x8/aMYojZqRTPbjqbLzw/q8WhfQsrFIAEdcD4Mp+VHcQBNFv4Q8f0v+GCE99M+QC
+NQQbuJbDLvZIVh+ANksKr0d4eQ8AiXtSDzUlsM6oMeUJnwjFyU0vApQBt1lhXMT4
+W3b24sHINUjNjSjhwd5ASf9PY3V+jTJVbF4D/f1FonEArLHtPVYbpgoJpCXdLnUR
+cyZNR1PByMsZy0g4tSZMch6pl6Qs+BtdsSEQX8GALaQt23OiRvAGhki306LUJokI
+509Jyub27B54eqq2zJ5VRfuWMcdY5gosMzYpsLZkffFg55EC8Iu1u5ufmwsYv+pV
+z68LzR+Ttc1njGSyrCvAZaVVEidtO8Scy50Vv8tFM4nA3uxGuypHpAx5LXWGptHf
+04h07zR7+eRuLt6fSRM6
+=UbRI
+-----END PGP SIGNATURE-----
+
+--MGYHOYXEY6WxJCY8--
