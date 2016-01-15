@@ -1,100 +1,45 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Wed, 13 Jan 2016 18:28:56 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
+Return-Path: <robh@kernel.org>
+Date: Thu, 14 Jan 2016 21:02:16 -0600
+From: Rob Herring <robh@kernel.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>,
-	Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 9/9] clk: tegra210: Initialize PLL_D2 to a sane rate
-Message-ID: <20160113172856.GT2588@ulmo>
-References: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
- <1452278714-10751-10-git-send-email-rklein@nvidia.com>
- <20160113140309.GB15782@ulmo>
- <56967ADD.8090904@nvidia.com>
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Wynter Woods <wynter@nextthing.co>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2 06/26] clk: sunxi: Add PLL3 clock
+Message-ID: <20160115030216.GA18411@rob-hp-laptop>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1452785109-6172-7-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="owPIoVL9FiqC4k42"
-In-Reply-To: <56967ADD.8090904@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1452785109-6172-7-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On Thu, Jan 14, 2016 at 04:24:49PM +0100, Maxime Ripard wrote:
+> The A10 SoCs and relatives have a PLL controller to drive the PLL3 and
+> PLL7, clocked from a 3MHz oscillator, that drives the display related
+> clocks (GPU, display engine, TCON, etc.)
+> 
+> Add a driver for it.
+> 
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
 
---owPIoVL9FiqC4k42
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Rob Herring <robh@kernel.org>
 
-On Wed, Jan 13, 2016 at 11:27:09AM -0500, Rhyland Klein wrote:
-> On 1/13/2016 9:03 AM, Thierry Reding wrote:
-> > * PGP Signed by an unknown key
-> >=20
-> > On Fri, Jan 08, 2016 at 01:45:14PM -0500, Rhyland Klein wrote:
-> >> Initialize PLL_D2 to a sane rate at the start of the day.
-> >>
-> >> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-> >> ---
-> >>  drivers/clk/tegra/clk-tegra210.c | 1 +
-> >>  1 file changed, 1 insertion(+)
-> >=20
-> > There are a lot of assumptions in this commit message. I'm asking myself
-> > why does it need to be initialized to any rate at all? Isn't it up to
-> > the user driver to set the PLL to whatever it knows to be a sane rate?
-> > Why is 594 MHz a sane rate?
-> >=20
-> > A good commit message should answer those questions.
-> >=20
->=20
-> Thanks. This patch came about in response to some work with
-> suspend/resume logic in the ChromeOS kernel. In the suspend/resume patch
-> there, it reads all clk rates and caches them in suspend, then re-sets
-> them on resume. We hadn't been using pll_d2 at all, and its rate (when
-> read in suspend()) came back as 0. Then in resume, we would tr to set
-> it, clk_set_rate(pll_d2, 0) and would generate a warning/error that 0
-> wasn't a valid rate.
->=20
-> As for the specific rate I chose, I simply took one off the table of
-> supported frequencies in the clk-tegra210 code, so that it was non-zero.
->=20
-> Since we don't support suspend/resume right now in the clk drivers, I
-> don't think its urgent to merge this patch. I can drop in in the next
-> rev if thats easier.
-
-Yes, that would be my preference as well. Once suspend/resume support
-gets added we should run into this again. Setting the rate so some sane
-value (the meaning of which is highly dependent on the use-case) sounds
-to me more like a workaround rather than a real fix.
-
-pll_d2 is used for display, so I don't quite understand why we'd have
-to restore the rate on resume, since DRM/KMS would set it to whatever
-it needs at a higher level anyway. Perhaps this will turn out to be a
-non-issue upstream.
-
-Thierry
-
---owPIoVL9FiqC4k42
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJWlolYAAoJEN0jrNd/PrOhF2kP/15C3am/AlBMXROEY3y0JQYr
-uSQY22y0IWmlgGr6a2pB3NMI3jep8lx2Iq1Xfd/Ha+ku0D5zbi9OuQtFxnlSNSW4
-oWhWOhAZsxZ3jaVS70GIViwD20AR3xU1fxCBAmHzjTmTOwlPdV5oYZSiyb5/kKD9
-D2Sjhy1HP9+KdeCC5bXwdfQpG3t+SBw9i1bH57LiaRglJZpy3/qB95Wz4UpDYv4Q
-vyF+zx+IKQHiNbJm4Uz8RT7AfQbxjjhIyQAWGOac9AN8a0Np0y9ivmB5u4Rj3NKY
-9KBEIZs2k5P0w9RMeEf5jblQp8QoVwdO2F5GFmqTSpvGVVFLb+omXG7+UBR4iiA3
-Ax8D0aVtV11R5IL4mBXx8zZmSyUZmkXAXXNnBO7oDvS0lzp93e9bRU5PxR1ULn87
-K1DtLQ6M93ubZxxoCFlhsSipkbRNIL4pncmnTk1YjXcY3/6o13zxjIQ3WqDAHTSL
-+JklaAXbFJxwj9P+7H+Rp9KCM1R9e7UN4BuCjUeht23gqpEREvpt951MfpWXDY2s
-bzZW9XQPKcPw1heaudzEO4DASeA7v+bpe9vdrGOTBkRPzRuN+rmeK4TMRUVJVrsz
-i6Z8JMNFODlb4DLzQp6UfmL4pd5vfiyZgkTZLSzMybLAHUs66xSwsvaMGQEfNJ/o
-Se6XpNdZQ4Ujut8IYc0R
-=IrGt
------END PGP SIGNATURE-----
-
---owPIoVL9FiqC4k42--
+>  drivers/clk/sunxi/Makefile                        |  1 +
+>  drivers/clk/sunxi/clk-sun4i-pll3.c                | 90 +++++++++++++++++++++++
+>  3 files changed, 92 insertions(+)
+>  create mode 100644 drivers/clk/sunxi/clk-sun4i-pll3.c
