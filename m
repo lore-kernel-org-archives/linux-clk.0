@@ -1,82 +1,49 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Mon, 11 Jan 2016 08:55:55 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: xuejiancheng <xuejiancheng@huawei.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, p.zabel@pengutronix.de,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	linux@arm.linux.org.uk, khilman@linaro.org, arnd@arndb.de,
-	olof@lixom.net, xuwei5@hisilicon.com, haojian.zhuang@linaro.org,
-	zhangfei.gao@linaro.org, bintian.wang@huawei.com,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	yanhaifeng@hisilicon.com, yanghongwei@hisilicon.com,
-	suwenping@hisilicon.com, ml.yang@hisilicon.com,
-	gaofei@hisilicon.com, zhangzhenxing@hisilicon.com,
-	xuejiancheng@hisilicon.com
-Subject: Re: [PATCH v5 5/6] mfd: dt-bindings: add device tree bindings for
- Hi3519 sysctrl
-Message-ID: <20160111085555.GE14104@x1>
-References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
- <1452219400-32478-6-git-send-email-xuejiancheng@huawei.com>
- <20160111054846.GD3331@x1>
- <56935EA8.4060801@huawei.com>
+Return-Path: <robh@kernel.org>
+Date: Thu, 14 Jan 2016 21:01:33 -0600
+From: Rob Herring <robh@kernel.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	devicetree@vger.kernel.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Wynter Woods <wynter@nextthing.co>, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Hans de Goede <hdegoede@redhat.com>, linux-sunxi@googlegroups.com,
+	Rob Clark <robdclark@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Alexander Kaplan <alex@nextthing.co>, Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 05/26] clk: sunxi: Add display and TCON0 clocks driver
+Message-ID: <20160115030133.GA17174@rob-hp-laptop>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1452785109-6172-6-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <56935EA8.4060801@huawei.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1452785109-6172-6-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 11 Jan 2016, xuejiancheng wrote:
-> On 2016/1/11 13:48, Lee Jones wrote:
-> > On Fri, 08 Jan 2016, Jiancheng Xue wrote:
-> > 
-> >> Add device tree bindings for Hi3519 system controller.
-> >>
-> >> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
-> >> ---
-> >>  Documentation/devicetree/bindings/mfd/hi3519.txt | 14 ++++++++++++++
-> >>  1 file changed, 14 insertions(+)
-> >>  create mode 100644 Documentation/devicetree/bindings/mfd/hi3519.txt
-> > 
-> > I have this patch, but none of the others in the set, thus I am
-> > lacking context.
-> > 
-> I can forward other patches in the set to you. Thank you.
+On Thu, Jan 14, 2016 at 04:24:48PM +0100, Maxime Ripard wrote:
+> The A10 SoCs and its relatives has a special clock controller to drive the
+> display engines (both frontend and backend), that have a lot in common with
+> the clock to drive the first TCON channel.
 > 
-> >> diff --git a/Documentation/devicetree/bindings/mfd/hi3519.txt b/Documentation/devicetree/bindings/mfd/hi3519.txt
-> >> new file mode 100644
-> >> index 0000000..115c5be
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/mfd/hi3519.txt
-> >> @@ -0,0 +1,14 @@
-> >> +* Hisilicon Hi3519 System Controller Block
-> >> +
-> >> +This bindings use the following binding:
-> >> +Documentation/devicetree/bindings/mfd/syscon.txt
-> >> +
-> >> +Required properties:
-> >> +- compatible: "hisilicon,hi3519-sysctrl".
-> >> +- reg: the register region of this block
-> >> +
-> >> +Examples:
-> >> +sysctrl: system-controller@12010000 {
-> >> +	compatible = "hisilicon,hi3519-sysctrl", "syscon";
-> >> +	reg = <0x12010000 0x1000>;
-> >> +};
-> > 
-> > There is no requirement (nor want) for binding documents where the
-> > given device is simply using highly generic bindings.  This just
-> > amounts to churn.
-> > 
-> This block is specific for Hi3519 SOC, and may has its own driver.
+> Add a driver to support both.
+> 
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  Documentation/devicetree/bindings/clock/sunxi.txt |   2 +
 
-Does it have its own driver currently?
+Can't someone read the datasheet and add these compatible strings in one 
+pass instead of one at a time?
 
-> So I think it's better to keep this binding.
+Acked-by: Rob Herring <robh@kernel.org>
 
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+>  drivers/clk/sunxi/Makefile                        |   1 +
+>  drivers/clk/sunxi/clk-sun4i-display.c             | 241 ++++++++++++++++++++++
+>  3 files changed, 244 insertions(+)
+>  create mode 100644 drivers/clk/sunxi/clk-sun4i-display.c
