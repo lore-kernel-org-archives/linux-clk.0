@@ -1,35 +1,31 @@
-Return-Path: <p.zabel@pengutronix.de>
-Message-ID: <1452594124.4292.16.camel@pengutronix.de>
-Subject: Re: [PATCH v3 5/6] reset: mediatek: Add MT2701 reset controller
- dt-binding file
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: James Liao <jamesjj.liao@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, John
- Crispin <blogic@openwrt.org>, Sascha Hauer <kernel@pengutronix.de>, Daniel
- Kurtz <djkurtz@chromium.org>, srv_heupstream@mediatek.com,
- devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org,  linux-mediatek@lists.infradead.org,
- linux-clk@vger.kernel.org, Shunli Wang <shunli.wang@mediatek.com>
-Date: Tue, 12 Jan 2016 11:22:04 +0100
-In-Reply-To: <1452587470-61506-6-git-send-email-jamesjj.liao@mediatek.com>
-References: <1452587470-61506-1-git-send-email-jamesjj.liao@mediatek.com>
-	 <1452587470-61506-6-git-send-email-jamesjj.liao@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 14 Jan 2016 18:07:39 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 13/13] clk: at91: pmc: drop at91_pmc_base
+Message-ID: <20160115020739.GP22188@codeaurora.org>
+References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
+ <1449248628-3486-14-git-send-email-alexandre.belloni@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1449248628-3486-14-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, den 12.01.2016, 16:31 +0800 schrieb James Liao:
-> From: Shunli Wang <shunli.wang@mediatek.com>
+On 12/04, Alexandre Belloni wrote:
+> at91_pmc_base is not used anymore, remove it along with at91_pmc_read and
+> at91_pmc_write.
 > 
-> Dt-binding file about reset controller is used to provide
-> kinds of definition, which is referenced by dts file and
-> IC-specified reset controller driver code.
-> 
-> Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> ---
 
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-regards
-Philipp
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
