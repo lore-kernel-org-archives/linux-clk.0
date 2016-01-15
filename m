@@ -1,98 +1,44 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <p.zabel@pengutronix.de>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
-        <mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
-        <galak@codeaurora.org>, <linux@arm.linux.org.uk>, <khilman@linaro.org>,
-        <arnd@arndb.de>, <olof@lixom.net>, <xuwei5@hisilicon.com>,
-        <haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-        <bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
-        <suwenping@hisilicon.com>, <raojun@hisilicon.com>,
-        <ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
-        <zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>,
-        <lidongpo@hisilicon.com>, Jiancheng Xue
-	<xuejiancheng@huawei.com>
-Subject: [PATCH v7 0/6] ARM: hisi: Add initial support including clock driver for Hi3519 soc.
-Date: Mon, 25 Jan 2016 11:01:17 +0800
-Message-ID: <1453690883-31220-1-git-send-email-xuejiancheng@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.133]:38073 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751593AbcAOLya (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 15 Jan 2016 06:54:30 -0500
+From: Yakir Yang <ykk@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Yakir Yang <ykk@rock-chips.com>
+Subject: [PATCH] clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for hclk_vio_bus
+Date: Fri, 15 Jan 2016 19:54:14 +0800
+Message-Id: <1452858854-841-1-git-send-email-ykk@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+HCLK_VIO_BUS is the noc bus controller clock for display module,
+due to it shouldn't belong to any driver, but we need it enabled,
+so just mark it as the CLK_IGNORE_UNUSED flag.
 
-Hi3519 soc is mainly used for ip camera and sport DV solutions. This patchset adds initial support
-for Hi3519 soc. It includes clock driver, arch configuration, debug uart configuration and device tree.
-It has been tested on hi3519 reference board.
+Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+---
+ drivers/clk/rockchip/clk-rk3036.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Any comments will be appreciated!
-
-Thanks!
-
-Change Log
-----------
-v7:
---Rebase to v4.5-rc1
-
-v6:
--Change clock driver to a real platform driver
-
-v5:
--Adjust clock and reset controller driver code
-
-v4:
--Rebase to v4.4-rc7
--Divide patches according to Rob's comments
--Add spi nodes in hi3519-demb.dts
-
-v3:
--Rebase to v4.4-rc4
--Adjust according to Arnd's comments
--Remove ARCH_HI3519, using ARCH_HISI directly
-
-v2:
--Rebase to v4.4-rc3
--Put dt-binding doc and header file in a separate patch.
--Delete unused clocks definitions.
--Adjust the ARCH_xxx order in Kconfig file
--Rename ARCH_HI3xxx to ARCH_36xx
-
-Jiancheng Xue (6):
-  clk: hisilicon: add CRG driver for hi3519 soc
-  ARM: hisi: add compatible string for Hi3519 soc
-  ARM: config: hisi: enable CONFIG_RESET_CONTROLLER
-  ARM: debug: add hi3519 debug uart
-  ARM: dt-bindings: add device tree bindings for Hi3519 sysctrl
-  ARM: dts: add dts files for Hi3519
-
- .../bindings/arm/hisilicon/hi3519-sysctrl.txt      |  14 ++
- .../devicetree/bindings/clock/hi3519-crg.txt       |  46 +++++
- arch/arm/Kconfig.debug                             |  10 ++
- arch/arm/boot/dts/Makefile                         |   2 +
- arch/arm/boot/dts/hi3519-demb.dts                  |  42 +++++
- arch/arm/boot/dts/hi3519.dtsi                      | 187 +++++++++++++++++++++
- arch/arm/configs/hisi_defconfig                    |   1 +
- arch/arm/mach-hisi/hisilicon.c                     |  23 +--
- drivers/clk/hisilicon/Kconfig                      |   7 +
- drivers/clk/hisilicon/Makefile                     |   2 +
- drivers/clk/hisilicon/clk-hi3519.c                 | 132 +++++++++++++++
- drivers/clk/hisilicon/clk.c                        |  23 ++-
- drivers/clk/hisilicon/clk.h                        |  14 +-
- drivers/clk/hisilicon/reset.c                      | 130 ++++++++++++++
- drivers/clk/hisilicon/reset.h                      |  32 ++++
- include/dt-bindings/clock/hi3519-clock.h           |  40 +++++
- 16 files changed, 671 insertions(+), 34 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
- create mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
- create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
- create mode 100644 arch/arm/boot/dts/hi3519.dtsi
- create mode 100644 drivers/clk/hisilicon/clk-hi3519.c
- create mode 100644 drivers/clk/hisilicon/reset.c
- create mode 100644 drivers/clk/hisilicon/reset.h
- create mode 100644 include/dt-bindings/clock/hi3519-clock.h
-
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
+index 484de46..00fac21 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -379,7 +379,7 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
+ 	GATE(ACLK_VIO, "aclk_vio", "aclk_disp1_pre", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(6), 13, GFLAGS),
+ 	GATE(ACLK_LCDC, "aclk_lcdc", "aclk_disp1_pre", 0, RK2928_CLKGATE_CON(9), 6, GFLAGS),
+ 
+-	GATE(HCLK_VIO_BUS, "hclk_vio_bus", "hclk_disp_pre", 0, RK2928_CLKGATE_CON(6), 12, GFLAGS),
++	GATE(HCLK_VIO_BUS, "hclk_vio_bus", "hclk_disp_pre", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(6), 12, GFLAGS),
+ 	GATE(HCLK_LCDC, "hclk_lcdc", "hclk_disp_pre", 0, RK2928_CLKGATE_CON(9), 5, GFLAGS),
+ 
+ 	/* hclk_video gates */
 -- 
 1.9.1
+
+
