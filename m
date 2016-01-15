@@ -1,36 +1,103 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH] clk: rockchip: fix some clock gates for rk3368
-To: Heiko Stuebner <heiko@sntech.de>, Caesar Wang <wxt@rock-chips.com>
-References: <1452158287-18742-1-git-send-email-wxt@rock-chips.com>
- <1873444.tpQzgfaHRN@phil>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 14 Jan 2016 18:04:21 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org
-From: Jianqun Xu <jay.xu@rock-chips.com>
-Message-ID: <5692F820.6030500@rock-chips.com>
-Date: Mon, 11 Jan 2016 08:32:32 +0800
+Subject: Re: [PATCH v3 09/13] ARM: at91: pm: find and remap the pmc
+Message-ID: <20160115020421.GK22188@codeaurora.org>
+References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
+ <1449248628-3486-10-git-send-email-alexandre.belloni@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <1873444.tpQzgfaHRN@phil>
-Content-Type: text/plain; charset=gbk; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1449248628-3486-10-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Thanks
+On 12/04, Alexandre Belloni wrote:
+> diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
+> index 5c2b60c5a2a1..38e93174031d 100644
+> --- a/arch/arm/mach-at91/pm.c
+> +++ b/arch/arm/mach-at91/pm.c
+> @@ -35,6 +35,8 @@
+>  #include "generic.h"
+>  #include "pm.h"
+>  
+> +void __iomem *pmc;
 
-ÔÚ 10/01/2016 06:26, Heiko Stuebner Ð´µÀ:
-> Am Donnerstag, 7. Januar 2016, 17:18:07 schrieb Caesar Wang:
->> From: Jianqun xu <jay.xu@rock-chips.com>
->>
->> Reference to the Rockchip RK3368 TRM v1.1, some clock
->> gates need to be updated.
->>
->> Signed-off-by: Jianqun xu <jay.xu@rock-chips.com>
->> Signed-off-by: Caesar Wang <wxt@rock-chips.com>
-> applied to my clk-fixes branch for 4.5
->
->
-> Thanks
-> Heiko
->
->
->
+static?
+
+> +
+>  /*
+>   * FIXME: this is needed to communicate between the pinctrl driver and
+>   * the PM implementation in the machine. Possibly part of the PM
+> @@ -85,7 +87,7 @@ static int at91_pm_verify_clocks(void)
+>  	unsigned long scsr;
+>  	int i;
+>  
+> -	scsr = at91_pmc_read(AT91_PMC_SCSR);
+> +	scsr = readl(pmc + AT91_PMC_SCSR);
+>  
+>  	/* USB must not be using PLLB */
+>  	if ((scsr & at91_pm_data.uhp_udp_mask) != 0) {
+> @@ -99,8 +101,7 @@ static int at91_pm_verify_clocks(void)
+>  
+>  		if ((scsr & (AT91_PMC_PCK0 << i)) == 0)
+>  			continue;
+> -
+> -		css = at91_pmc_read(AT91_PMC_PCKR(i)) & AT91_PMC_CSS;
+> +		css = readl(pmc + AT91_PMC_PCKR(i)) & AT91_PMC_CSS;
+>  		if (css != AT91_PMC_CSS_SLOW) {
+>  			pr_err("AT91: PM - Suspend-to-RAM with PCK%d src %d\n", i, css);
+>  			return 0;
+> @@ -143,8 +144,8 @@ static void at91_pm_suspend(suspend_state_t state)
+>  	flush_cache_all();
+>  	outer_disable();
+>  
+> -	at91_suspend_sram_fn(at91_pmc_base, at91_ramc_base[0],
+> -				at91_ramc_base[1], pm_data);
+> +	at91_suspend_sram_fn(pmc, at91_ramc_base[0],
+> +			     at91_ramc_base[1], pm_data);
+>  
+>  	outer_resume();
+>  }
+> @@ -394,13 +395,33 @@ static void __init at91_pm_sram_init(void)
+>  			&at91_pm_suspend_in_sram, at91_pm_suspend_in_sram_sz);
+>  }
+>  
+> +static const struct of_device_id atmel_pmc_ids[] = {
+
+__initconst?
+
+> +	{ .compatible = "atmel,at91rm9200-pmc"  },
+> +	{ .compatible = "atmel,at91sam9260-pmc" },
+> +	{ .compatible = "atmel,at91sam9g45-pmc" },
+> +	{ .compatible = "atmel,at91sam9n12-pmc" },
+> +	{ .compatible = "atmel,at91sam9x5-pmc" },
+> +	{ .compatible = "atmel,sama5d3-pmc" },
+> +	{ .compatible = "atmel,sama5d2-pmc" },
+> +	{ /* sentinel */ },
+> +};
+> +
+>  static void __init at91_pm_init(void)
+>  {
+> -	at91_pm_sram_init();
+> +	struct device_node *pmc_np;
+>  
+>  	if (at91_cpuidle_device.dev.platform_data)
+>  		platform_device_register(&at91_cpuidle_device);
+>  
+> +	pmc_np = of_find_matching_node(NULL, atmel_pmc_ids);
+> +	pmc = of_iomap(pmc_np, 0);
+> +	if (!pmc) {
+> +		pr_info("AT91: PM not supported, PMC not found\n");
+
+pr_err?
+
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
