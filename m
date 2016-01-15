@@ -1,53 +1,73 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 28 Jan 2016 00:36:56 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: James Liao <jamesjj.liao@mediatek.com>,
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Remi Pommarel <repk@triplefau.lt>,
+	linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org,
-	kbuild test robot <lkp@intel.com>, srv_heupstream@mediatek.com,
-	devicetree@vger.kernel.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	kbuild-all@01.org, Sascha Hauer <kernel@pengutronix.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: Move vendor's Kconfig into CCF menu section
-Message-ID: <20160128083656.GM12841@codeaurora.org>
-References: <201601271708.gQUxXACW%fengguang.wu@intel.com>
- <4711589.Ig064LES4c@wuerfel>
- <1453888578.28646.7.camel@mtksdaap41>
- <6167008.u8jfFpmfhy@wuerfel>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <6167008.u8jfFpmfhy@wuerfel>
+	devicetree@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [PATCH V4 0/7] clk: bcm2835: add clocks and add MASH support
+Date: Fri, 15 Jan 2016 14:20:59 +0000
+Message-Id: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/27, Arnd Bergmann wrote:
-> On Wednesday 27 January 2016 17:56:18 James Liao wrote:
-> > > 
-> > > I think you should include this change in your patch, or as a preparation.
-> > > All other samsung platforms already select COMMON_CLK through ARCH_MULTIPLATFORM,
-> > > and all SoCs that are part of ARCH_S3C24XX individually select a symbol that
-> > > selects COMMON_CLK.
-> > 
-> > Oops, I didn't notice there are warnings after moving these Kconfigs
-> > into menu section.
-> > 
-> > The original motivation of this patch is preventing new clk drivers
-> > include their Kconfig in a wrong place, so it's not critical. Do you
-> > think we should apply this patch (with your changes below) or drop this
-> > patch directly?
-> 
-> 
-> I think your patch is good, we just need to fix S3C24xx, which is doing
-> things in a strange way for historic reasons.
+From: Martin Sperl <kernel@martin.sperl.org>
 
-So far we've taken the approach of not caring if they include
-their Kconfig outside the common clk menu when all the configs
-inside the Kconfig file are hidden. Of course, when they aren't
-hidden this becomes a problem, but that isn't the case unless
-something changed recently.
+The clk-bcm2835 driver right now relies on BCM2835_CLOCK_COUNT defined
+in include/dt-binding/clocks/bcm2835.h
+With every new clock introduced this value needs to increase,
+which is not what should happen for bindings.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+So we reorganize the driver so that it is no longer necessary
+to define BCM2835_CLOCK_COUNT.
+
+Also the driver calculates fractional clock dividers correctly,
+but it does not enable the bit to enable support in the register.
+As a minimal extension we now can also define higher order MASH
+support when defining the clocks.
+
+There is also an issue when the clock divider is < 2 - in that
+case no clock-output is generate. The clamping code has been
+enhanced to handle this as well.
+
+Similarly there is also the clamping of the highest divider now
+limited to the highest possible integer divider instead of the
+highest possible fractional diviver.
+
+Finally we add all the 23 different HW clocks that have not been
+configured in the driver.
+
+Changelog:
+	V1 -> V2: split the asoc/sound patches from the clock patches
+	      	  enable frac/mash support
+	V2 -> V3: clamp clock divider to be >= 2
+		  clamp max clock divider to be integer (not fractional)
+		  added additional limit checks for divider selection
+		    allowing fallback to lower mash levels.
+		  use a newer probing mechanism based on a single array
+	V3 -> V4: fixed bad NULL pointer check in init
+	      	  fixed (mash) limit checks
+		  separated basic mash support from limits checks
+		  really tested with I2S device (unfortunately V3 was
+		  not well tested in this respect)
+
+Martin Sperl (7):
+  clk: bcm2835: the minimum clock divider is 2
+  clk: bcm2835: clamp clock divider to highest integer only
+  clk: bcm2835: remove use of BCM2835_CLOCK_COUNT in driver
+  clk: bcm2835: enable management of PCM clock
+  clk: bcm2835: add missing 22 HW-clocks.
+  clk: bcm2835: enable fractional and mash support
+  clk: bcm2835: apply limits on dividers to MASH mode.
+
+ drivers/clk/bcm/clk-bcm2835.c       |  583 ++++++++++++++++++++++++++++++-----
+ include/dt-bindings/clock/bcm2835.h |   25 +-
+ 2 files changed, 521 insertions(+), 87 deletions(-)
+
+--
+1.7.10.4
