@@ -1,40 +1,121 @@
-Return-Path: <yadi.brar01@gmail.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <569D87E0.6020001@samsung.com>
-References: <1453105525-31506-1-git-send-email-andi.shyti@samsung.com>
-	<1453105525-31506-3-git-send-email-andi.shyti@samsung.com>
-	<CAKew6eX4WZa4595ZUhiX+Ndc_WCzBNJBh5ejzxaJVkCnAskCYw@mail.gmail.com>
-	<569D87E0.6020001@samsung.com>
-Date: Mon, 18 Jan 2016 17:11:23 -0800
-Message-ID: <CAKew6eVNWB+VB1yUxuKELPW_n63H5kaFrcj8+Ormd2RKKDL_Cw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: s2mps11: allocate only one structure for clock init
-From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Andi Shyti <andi.shyti@samsung.com>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sangbeom Kim <sbkim73@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	Andi Shyti <andi@etezian.org>
+In-Reply-To: <1452785109-6172-11-git-send-email-maxime.ripard@free-electrons.com>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1452785109-6172-11-git-send-email-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sun, 17 Jan 2016 01:06:07 +0800
+Message-ID: <CAGb2v67fqMUQsG-+zVxfgE3UzY7uyomBkwxgNHeXbqA1pwM8pA@mail.gmail.com>
+Subject: Re: [PATCH v2 10/26] ARM: sun5i: a13: Add display and TCON clocks
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>, Wynter Woods <wynter@nextthing.co>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
->>
->> IMHO, with all these modifications, it will leave driver with some extra
->> checks and reduced readability, perhaps will make it complex to add
->> support for similar clocks but with different clk_ops, if next version or
->>  any similar mfd chip comes up in future.
+Hi,
+
+On Thu, Jan 14, 2016 at 11:24 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Enable the display and TCON (channel 0 and channel 1) clocks that are going
+> to be needed to drive the display engine, tcon and TV encoders.
 >
-> There is no evidence that some future chip will require clk_ops. All of
-> them are so far exactly the same. Even the newly added S2MPS15 is the same.
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  arch/arm/boot/dts/sun5i-a13.dtsi | 38 +++++++++++++++++++++++++++++++++++++-
+>  arch/arm/boot/dts/sun5i-r8.dtsi  |  5 +++--
+>  2 files changed, 40 insertions(+), 3 deletions(-)
 >
+> diff --git a/arch/arm/boot/dts/sun5i-a13.dtsi b/arch/arm/boot/dts/sun5i-a13.dtsi
+> index d910d3a6c41c..9669b03f20f3 100644
+> --- a/arch/arm/boot/dts/sun5i-a13.dtsi
+> +++ b/arch/arm/boot/dts/sun5i-a13.dtsi
+> @@ -61,7 +61,8 @@
+>                         compatible = "allwinner,simple-framebuffer",
+>                                      "simple-framebuffer";
+>                         allwinner,pipeline = "de_be0-lcd0";
+> -                       clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 44>;
+> +                       clocks = <&ahb_gates 36>, <&ahb_gates 44>, <&de_be_clk>,
+> +                                <&tcon_ch0_clk>;
+>                         status = "disabled";
+>                 };
+>         };
+> @@ -149,6 +150,41 @@
+>                                              "apb1_i2c2", "apb1_uart1",
+>                                              "apb1_uart3";
+>                 };
+> +
+> +               de_be_clk: clk@01c20104 {
+> +                       #clock-cells = <0>;
+> +                       #reset-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-display-clk";
+> +                       reg = <0x01c20104 0x4>;
+> +                       clocks = <&pll3>, <&pll7>, <&pll5 1>;
+> +                       clock-output-names = "de-be";
+> +               };
+> +
+> +               de_fe_clk: clk@01c2010c {
+> +                       #clock-cells = <0>;
+> +                       #reset-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-display-clk";
+> +                       reg = <0x01c2010c 0x4>;
+> +                       clocks = <&pll3>, <&pll7>, <&pll5 1>;
+> +                       clock-output-names = "de-fe";
+> +               };
+> +
+> +               tcon_ch0_clk: clk@01c20118 {
+> +                       #clock-cells = <0>;
+> +                       #reset-cells = <1>;
 
-Can we guaranty about future chips?
-Even we didn't expect there will be one less clock in case of s2mps14.
+You got it right here...
 
-> This really should be simplified.
+> +                       compatible = "allwinner,sun4i-a10-tcon-ch0-clk";
+> +                       reg = <0x01c20118 0x4>;
+> +                       clocks = <&pll3>, <&pll7>, <&pll3x2>, <&pll7x2>;
+> +                       clock-output-names = "tcon-ch0-sclk";
+> +               };
+> +
+> +               tcon_ch1_clk: clk@01c2012c {
+> +                       #clock-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-tcon-ch1-clk";
+> +                       reg = <0x01c2012c 0x4>;
+> +                       clocks = <&pll3>, <&pll7>, <&pll3x2>, <&pll7x2>;
+> +                       clock-output-names = "tcon-ch1-sclk";
+> +               };
+
+I suggest moving these to sun5i.dtsi, as they are shared amongst them.
+
+ChenYu
+
+>         };
 >
-
-IMO, it is just reduction of LoC.
-
-Regards,
-Yadwinder
+>         soc@01c00000 {
+> diff --git a/arch/arm/boot/dts/sun5i-r8.dtsi b/arch/arm/boot/dts/sun5i-r8.dtsi
+> index 0ef865601ac9..b1e4e0170d51 100644
+> --- a/arch/arm/boot/dts/sun5i-r8.dtsi
+> +++ b/arch/arm/boot/dts/sun5i-r8.dtsi
+> @@ -51,8 +51,9 @@
+>                         compatible = "allwinner,simple-framebuffer",
+>                                      "simple-framebuffer";
+>                         allwinner,pipeline = "de_be0-lcd0-tve0";
+> -                       clocks = <&pll5 1>, <&ahb_gates 34>, <&ahb_gates 36>,
+> -                                <&ahb_gates 44>;
+> +                       clocks = <&ahb_gates 34>, <&ahb_gates 36>,
+> +                                <&ahb_gates 44>, <&de_be_clk>,
+> +                                <&tcon_ch1_clk>;
+>                         status = "disabled";
+>                 };
+>         };
+> --
+> 2.6.4
+>
