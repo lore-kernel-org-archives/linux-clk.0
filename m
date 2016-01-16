@@ -1,211 +1,65 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, John Crispin
-	<blogic@openwrt.org>
-CC: Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, <srv_heupstream@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, James Liao <jamesjj.liao@mediatek.com>
-Subject: [PATCH v3 2/6] dt-bindings: ARM: Mediatek: Document bindings for MT2701
-Date: Tue, 12 Jan 2016 16:31:06 +0800
-Message-ID: <1452587470-61506-3-git-send-email-jamesjj.liao@mediatek.com>
-In-Reply-To: <1452587470-61506-1-git-send-email-jamesjj.liao@mediatek.com>
-References: <1452587470-61506-1-git-send-email-jamesjj.liao@mediatek.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 15 Jan 2016 17:26:12 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 04/13] clk: at91: make IRQ optional and register them
+ later
+Message-ID: <20160116012612.GA20466@codeaurora.org>
+References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
+ <1449248628-3486-5-git-send-email-alexandre.belloni@free-electrons.com>
+ <20160115020237.GJ22188@codeaurora.org>
+ <20160115103901.1b987f53@bbrezillon>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jamesjj.liao@mediatek.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160115103901.1b987f53@bbrezillon>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds the binding documentation for apmixedsys, bdpsys,
-ethsys, hifsys, imgsys, infracfg, mmsys, pericfg, topckgen and
-vdecsys for Mediatek MT2701.
+On 01/15, Boris Brezillon wrote:
+> Hi Stephen,
+> 
+> On Thu, 14 Jan 2016 18:02:37 -0800
+> Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > 
+> > Is there any way to get the irq into this probe function without
+> > getting a clk pointer and then unwrapping it to get an irq
+> > value out of the clk_hw wrapper structure? That's a pretty
+> > convoluted design.
+> 
+> Not sure I get what you're suggesting, but the only solution I see to
+> avoid this "get main clk pointer dance" would be to have a global
+> variable storing the clk_main instance (or a list of clk_main
+> instances).
+> The thing is, I'd like to avoid adding new global variables in this
+> clk drivers as much as possible. Moreover, the core is already taking
+> care of keeping the list of all registered clks, with their associated
+> of_node, so, is there a real point in creating a duplicated association
+> list in this driver too?
 
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
----
- .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |  1 +
- .../bindings/arm/mediatek/mediatek,bdpsys.txt      | 22 ++++++++++++++++++++++
- .../bindings/arm/mediatek/mediatek,ethsys.txt      | 22 ++++++++++++++++++++++
- .../bindings/arm/mediatek/mediatek,hifsys.txt      | 22 ++++++++++++++++++++++
- .../bindings/arm/mediatek/mediatek,imgsys.txt      |  1 +
- .../bindings/arm/mediatek/mediatek,infracfg.txt    |  1 +
- .../bindings/arm/mediatek/mediatek,mmsys.txt       |  1 +
- .../bindings/arm/mediatek/mediatek,pericfg.txt     |  1 +
- .../bindings/arm/mediatek/mediatek,topckgen.txt    |  1 +
- .../bindings/arm/mediatek/mediatek,vdecsys.txt     |  1 +
- 10 files changed, 73 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
+Ok I have to admit I'm a little confused. I thought we were
+getting the irq from the clkmain structure so that we could
+request it here in the probe function. But we're really assigning
+the irq so that we can enable/disable/free it later on?
 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-index 936166f..a701e19 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-@@ -6,6 +6,7 @@ The Mediatek apmixedsys controller provides the PLLs to the system.
- Required Properties:
- 
- - compatible: Should be:
-+	- "mediatek,mt2701-apmixedsys"
- 	- "mediatek,mt8135-apmixedsys"
- 	- "mediatek,mt8173-apmixedsys"
- - #clock-cells: Must be 1
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
-new file mode 100644
-index 0000000..4137196
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
-@@ -0,0 +1,22 @@
-+Mediatek bdpsys controller
-+============================
-+
-+The Mediatek bdpsys controller provides various clocks to the system.
-+
-+Required Properties:
-+
-+- compatible: Should be:
-+	- "mediatek,mt2701-bdpsys", "syscon"
-+- #clock-cells: Must be 1
-+
-+The bdpsys controller uses the common clk binding from
-+Documentation/devicetree/bindings/clock/clock-bindings.txt
-+The available clocks are defined in dt-bindings/clock/mt*-clk.h.
-+
-+Example:
-+
-+bdpsys: clock-controller@1c000000 {
-+	compatible = "mediatek,mt2701-bdpsys", "syscon";
-+	reg = <0 0x1c000000 0 0x1000>;
-+	#clock-cells = <1>;
-+};
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
-new file mode 100644
-index 0000000..768f3a5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
-@@ -0,0 +1,22 @@
-+Mediatek ethsys controller
-+============================
-+
-+The Mediatek ethsys controller provides various clocks to the system.
-+
-+Required Properties:
-+
-+- compatible: Should be:
-+	- "mediatek,mt2701-ethsys", "syscon"
-+- #clock-cells: Must be 1
-+
-+The ethsys controller uses the common clk binding from
-+Documentation/devicetree/bindings/clock/clock-bindings.txt
-+The available clocks are defined in dt-bindings/clock/mt*-clk.h.
-+
-+Example:
-+
-+ethsys: clock-controller@1b000000 {
-+	compatible = "mediatek,mt2701-ethsys", "syscon";
-+	reg = <0 0x1b000000 0 0x1000>;
-+	#clock-cells = <1>;
-+};
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
-new file mode 100644
-index 0000000..b7a39b6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
-@@ -0,0 +1,22 @@
-+Mediatek hifsys controller
-+============================
-+
-+The Mediatek hifsys controller provides various clocks to the system.
-+
-+Required Properties:
-+
-+- compatible: Should be:
-+	- "mediatek,mt2701-hifsys", "syscon"
-+- #clock-cells: Must be 1
-+
-+The hifsys controller uses the common clk binding from
-+Documentation/devicetree/bindings/clock/clock-bindings.txt
-+The available clocks are defined in dt-bindings/clock/mt*-clk.h.
-+
-+Example:
-+
-+hifsys: clock-controller@1a000000 {
-+	compatible = "mediatek,mt2701-hifsys", "syscon";
-+	reg = <0 0x1a000000 0 0x1000>;
-+	#clock-cells = <1>;
-+};
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
-index b1f2ce1..9bda7f7 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
-@@ -6,6 +6,7 @@ The Mediatek imgsys controller provides various clocks to the system.
- Required Properties:
- 
- - compatible: Should be:
-+	- "mediatek,mt2701-imgsys", "syscon"
- 	- "mediatek,mt8173-imgsys", "syscon"
- - #clock-cells: Must be 1
- 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
-index f6cd3e4..2f11a69 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
-@@ -7,6 +7,7 @@ outputs to the system.
- Required Properties:
- 
- - compatible: Should be:
-+	- "mediatek,mt2701-infracfg", "syscon"
- 	- "mediatek,mt8135-infracfg", "syscon"
- 	- "mediatek,mt8173-infracfg", "syscon"
- - #clock-cells: Must be 1
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-index 4385946..c9d9d43 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-@@ -6,6 +6,7 @@ The Mediatek mmsys controller provides various clocks to the system.
- Required Properties:
- 
- - compatible: Should be:
-+	- "mediatek,mt2701-mmsys", "syscon"
- 	- "mediatek,mt8173-mmsys", "syscon"
- - #clock-cells: Must be 1
- 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
-index f25b854..d3454cd 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
-@@ -7,6 +7,7 @@ outputs to the system.
- Required Properties:
- 
- - compatible: Should be:
-+	- "mediatek,mt2701-pericfg", "syscon"
- 	- "mediatek,mt8135-pericfg", "syscon"
- 	- "mediatek,mt8173-pericfg", "syscon"
- - #clock-cells: Must be 1
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
-index f9e9179..602e5bc 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
-@@ -6,6 +6,7 @@ The Mediatek topckgen controller provides various clocks to the system.
- Required Properties:
- 
- - compatible: Should be:
-+	- "mediatek,mt2701-topckgen"
- 	- "mediatek,mt8135-topckgen"
- 	- "mediatek,mt8173-topckgen"
- - #clock-cells: Must be 1
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
-index 1faacf1..f5b1e7d 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
-@@ -6,6 +6,7 @@ The Mediatek vdecsys controller provides various clocks to the system.
- Required Properties:
- 
- - compatible: Should be:
-+	- "mediatek,mt2701-vdecsys", "syscon"
- 	- "mediatek,mt8173-vdecsys", "syscon"
- - #clock-cells: Must be 1
- 
+So my new question is if we can register the clocks at the same
+time as the "platform device" (really a clock) probes. The
+correct design was probably to have pmc be a big platform device
+and have it register clocks that it knows exist inside it based
+on the compatible string. And it would also know which irqs (or
+enforce some ordering of irqs) to assign to which clocks.
+
+It looks like we totally missed that though.... so now we have
+many DT nodes that are also platform devices. So if we can do it
+at the same time as irq requests then we're good and the clk_hw
+structure is in the same scope. If not, then we should probably
+just let of_clk_hw_get_from_provider() happen (and it needs to
+happen for other reasons anyway) and call it a day.
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
