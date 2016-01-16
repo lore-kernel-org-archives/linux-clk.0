@@ -1,57 +1,48 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <56A89457.2050501@rock-chips.com>
-Date: Wed, 27 Jan 2016 17:56:39 +0800
-From: Xing Zheng <zhengxing@rock-chips.com>
-MIME-Version: 1.0
-To: Shawn Lin <shawn.lin@rock-chips.com>
-CC: Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Jeffy Chen <jeffy.chen@rock-chips.com>
-Subject: Re: [PATCH] clk: rockchip: fix wrong mmc phase shift for rk3228
-References: <1453779018-30666-1-git-send-email-shawn.lin@rock-chips.com>
-In-Reply-To: <1453779018-30666-1-git-send-email-shawn.lin@rock-chips.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33977 "EHLO
+	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751891AbcAPOXe (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sat, 16 Jan 2016 09:23:34 -0500
+From: Dirk Behme <dirk.behme@gmail.com>
+To: linux-sh@vger.kernel.org, geert+renesas@glider.be
+Cc: horms@verge.net.au, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Dirk Behme <dirk.behme@gmail.com>
+Subject: [PATCH v3] clk: shmobile: r8a7795: Add SDHI clocks
+Date: Sat, 16 Jan 2016 15:23:29 +0100
+Message-Id: <1452954209-5282-1-git-send-email-dirk.behme@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Shawn,
-Reviewed-by: Xing Zheng <zhengxing@rock-chips.com>
+Add R8A7795 SDHI clocks.
 
-Thanks.
+Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
+---
+Changes in v3: Drop the DEF_FIXED as these clocks are not fixed. I'll
+have a look to
 
-On 2016年01月26日 11:30, Shawn Lin wrote:
-> mmc sample shift is 0 for rk3228 refer to user manaul.
-> So it's broken if we enable mmc tuning for rk3228.
->
-> Fixes: 307a2e9ac ("clk: rockchip: add clock controller for rk3228")
-> Cc: Xing Zheng<zhengxing@rock-chips.com>
-> Cc: Jeffy Chen<jeffy.chen@rock-chips.com>
-> Signed-off-by: Shawn Lin<shawn.lin@rock-chips.com>
-> ---
->
->   drivers/clk/rockchip/clk-rk3228.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
-> index 981a502..97f49aa 100644
-> --- a/drivers/clk/rockchip/clk-rk3228.c
-> +++ b/drivers/clk/rockchip/clk-rk3228.c
-> @@ -605,13 +605,13 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
->
->   	/* PD_MMC */
->   	MMC(SCLK_SDMMC_DRV,    "sdmmc_drv",    "sclk_sdmmc", RK3228_SDMMC_CON0, 1),
-> -	MMC(SCLK_SDMMC_SAMPLE, "sdmmc_sample", "sclk_sdmmc", RK3228_SDMMC_CON1, 1),
-> +	MMC(SCLK_SDMMC_SAMPLE, "sdmmc_sample", "sclk_sdmmc", RK3228_SDMMC_CON1, 0),
->
->   	MMC(SCLK_SDIO_DRV,     "sdio_drv",     "sclk_sdio",  RK3228_SDIO_CON0,  1),
-> -	MMC(SCLK_SDIO_SAMPLE,  "sdio_sample",  "sclk_sdio",  RK3228_SDIO_CON1,  1),
-> +	MMC(SCLK_SDIO_SAMPLE,  "sdio_sample",  "sclk_sdio",  RK3228_SDIO_CON1,  0),
->
->   	MMC(SCLK_EMMC_DRV,     "emmc_drv",     "sclk_emmc",  RK3228_EMMC_CON0,  1),
-> -	MMC(SCLK_EMMC_SAMPLE,  "emmc_sample",  "sclk_emmc",  RK3228_EMMC_CON1,  1),
-> +	MMC(SCLK_EMMC_SAMPLE,  "emmc_sample",  "sclk_emmc",  RK3228_EMMC_CON1,  0),
->   };
->
->   static const char *const rk3228_critical_clocks[] __initconst = {
+https://git.kernel.org/cgit/linux/kernel/git/horms/renesas-bsp.git/commit/drivers/clk/shmobile/clk-rcar-gen3.c?h=v4.2/rcar-3.0.x&id=cd10385afc15cef6bfbaea4aa5da41193b24fe82
+
+and see how this could be ported.
+
+ drivers/clk/shmobile/r8a7795-cpg-mssr.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/clk/shmobile/r8a7795-cpg-mssr.c b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
+index 23e98fe..c66645f 100644
+--- a/drivers/clk/shmobile/r8a7795-cpg-mssr.c
++++ b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
+@@ -120,6 +120,10 @@ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
+ 	DEF_MOD("sys-dmac1",		 218,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("sys-dmac0",		 219,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("scif2",		 310,	R8A7795_CLK_S3D4),
++	DEF_MOD("sdif3",	       	 311,	R8A7795_CLK_SD3),
++	DEF_MOD("sdif2",	       	 312,	R8A7795_CLK_SD2),
++	DEF_MOD("sdif1",	      	 313,	R8A7795_CLK_SD1),
++	DEF_MOD("sdif0",	     	 314,	R8A7795_CLK_SD0),
+ 	DEF_MOD("pcie1",		 318,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("pcie0",		 319,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("intc-ap",		 408,	R8A7795_CLK_S3D1),
+-- 
+2.7.0
+
