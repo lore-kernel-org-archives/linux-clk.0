@@ -1,39 +1,176 @@
-Return-Path: <lho@apm.com>
-Return-Path: <lho@apm.com>
-From: Loc Ho <lho@apm.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	patches@apm.com,
-	Loc Ho <lho@apm.com>
-Subject: [PATCH v2 1/3] Documentation: Update APM X-Gene clock binding for v2 hardware
-Date: Tue, 19 Jan 2016 19:27:41 -0700
-Message-Id: <1453256863-15092-2-git-send-email-lho@apm.com>
-In-Reply-To: <1453256863-15092-1-git-send-email-lho@apm.com>
-References: <1453256863-15092-1-git-send-email-lho@apm.com>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <1452785109-6172-7-git-send-email-maxime.ripard@free-electrons.com>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1452785109-6172-7-git-send-email-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sun, 17 Jan 2016 00:05:06 +0800
+Message-ID: <CAGb2v64pj5Ga4-QaF7RpExUSyYntyMU2dQ87TPsm5WbNeAXMOQ@mail.gmail.com>
+Subject: Re: [PATCH v2 06/26] clk: sunxi: Add PLL3 clock
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>, Wynter Woods <wynter@nextthing.co>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Update APM X-Gene clock binding documentation for SoC and
-PCP PLL for v2 hardware.
+Hi,
 
-Signed-off-by: Loc Ho <lho@apm.com>
----
- Documentation/devicetree/bindings/clock/xgene.txt |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+On Thu, Jan 14, 2016 at 11:24 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> The A10 SoCs and relatives have a PLL controller to drive the PLL3 and
+> PLL7, clocked from a 3MHz oscillator, that drives the display related
+> clocks (GPU, display engine, TCON, etc.)
+>
+> Add a driver for it.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+>  drivers/clk/sunxi/Makefile                        |  1 +
+>  drivers/clk/sunxi/clk-sun4i-pll3.c                | 90 +++++++++++++++++++++++
+>  3 files changed, 92 insertions(+)
+>  create mode 100644 drivers/clk/sunxi/clk-sun4i-pll3.c
+>
+> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
+> index 5360554a7d3f..bb9fb78dcff8 100644
+> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
+> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+> @@ -10,6 +10,7 @@ Required properties:
+>         "allwinner,sun4i-a10-pll1-clk" - for the main PLL clock and PLL4
+>         "allwinner,sun6i-a31-pll1-clk" - for the main PLL clock on A31
+>         "allwinner,sun8i-a23-pll1-clk" - for the main PLL clock on A23
+> +       "allwinner,sun4i-a10-pll3-clk" - for the video PLL clock on A10
+>         "allwinner,sun9i-a80-pll4-clk" - for the peripheral PLLs on A80
+>         "allwinner,sun4i-a10-pll5-clk" - for the PLL5 clock
+>         "allwinner,sun4i-a10-pll6-clk" - for the PLL6 clock
+> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+> index a991cd8ca509..40c32ffd912c 100644
+> --- a/drivers/clk/sunxi/Makefile
+> +++ b/drivers/clk/sunxi/Makefile
+> @@ -11,6 +11,7 @@ obj-y += clk-a20-gmac.o
+>  obj-y += clk-mod0.o
+>  obj-y += clk-simple-gates.o
+>  obj-y += clk-sun4i-display.o
+> +obj-y += clk-sun4i-pll3.o
+>  obj-y += clk-sun8i-mbus.o
+>  obj-y += clk-sun9i-core.o
+>  obj-y += clk-sun9i-mmc.o
+> diff --git a/drivers/clk/sunxi/clk-sun4i-pll3.c b/drivers/clk/sunxi/clk-sun4i-pll3.c
+> new file mode 100644
+> index 000000000000..6c9c2210b6b2
+> --- /dev/null
+> +++ b/drivers/clk/sunxi/clk-sun4i-pll3.c
+> @@ -0,0 +1,90 @@
+> +/*
+> + * Copyright 2015 Maxime Ripard
+> + *
+> + * Maxime Ripard <maxime.ripard@free-electrons.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/slab.h>
+> +#include <linux/spinlock.h>
+> +
+> +#define SUN4I_A10_PLL3_GATE_BIT        31
+> +#define SUN4I_A10_PLL3_DIV_WIDTH       7
+> +#define SUN4I_A10_PLL3_DIV_SHIFT       0
+> +
+> +static DEFINE_SPINLOCK(sun4i_a10_pll3_lock);
+> +
+> +static void __init sun4i_a10_pll3_setup(struct device_node *node)
+> +{
+> +       const char *clk_name = node->name, *parent;
+> +       struct clk_multiplier *mult;
+> +       struct clk_gate *gate;
+> +       void __iomem *reg;
+> +       struct clk *clk;
+> +       int ret;
+> +
+> +       of_property_read_string(node, "clock-output-names", &clk_name);
+> +       parent = of_clk_get_parent_name(node, 0);
+> +
+> +       reg = of_io_request_and_map(node, 0, of_node_full_name(node));
+> +       if (IS_ERR(reg)) {
+> +               pr_err("%s: Could not map the clock registers\n", clk_name);
+> +               return;
+> +       }
+> +
+> +       gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+> +       if (!gate)
+> +               return;
+> +
+> +       gate->reg = reg;
+> +       gate->bit_idx = SUN4I_A10_PLL3_GATE_BIT;
+> +       gate->lock = &sun4i_a10_pll3_lock;
+> +
+> +       mult = kzalloc(sizeof(*mult), GFP_KERNEL);
+> +       if (!mult)
+> +               goto err_free_gate;
+> +
+> +       mult->reg = reg;
+> +       mult->shift = SUN4I_A10_PLL3_DIV_SHIFT;
+> +       mult->width = SUN4I_A10_PLL3_DIV_WIDTH;
+> +       mult->lock = &sun4i_a10_pll3_lock;
+> +
+> +       clk = clk_register_composite(NULL, clk_name,
+> +                                    &parent, 1,
+> +                                    NULL, NULL,
+> +                                    &mult->hw, &clk_multiplier_ops,
+> +                                    &gate->hw, &clk_gate_ops,
+> +                                    0);
+> +       if (IS_ERR(clk)) {
+> +               pr_err("%s: Couldn't register the clock\n", clk_name);
+> +               goto err_free_mult;
+> +       }
+> +
+> +       ret = of_clk_add_provider(node, of_clk_src_simple_get, clk);
+> +       if (WARN_ON(ret))
 
-diff --git a/Documentation/devicetree/bindings/clock/xgene.txt b/Documentation/devicetree/bindings/clock/xgene.txt
-index 1c4ef77..3fe3169 100644
---- a/Documentation/devicetree/bindings/clock/xgene.txt
-+++ b/Documentation/devicetree/bindings/clock/xgene.txt
-@@ -9,6 +9,8 @@ Required properties:
- 	"apm,xgene-socpll-clock" - for a X-Gene SoC PLL clock
- 	"apm,xgene-pcppll-clock" - for a X-Gene PCP PLL clock
- 	"apm,xgene-device-clock" - for a X-Gene device clock
-+	"apm,xgene-socpll-v2-clock" - for a X-Gene SoC PLL v2 clock
-+	"apm,xgene-pcppll-v2-clock" - for a X-Gene PCP PLL v2 clock
- 
- Required properties for SoC or PCP PLL clocks:
- - reg : shall be the physical PLL register address for the pll clock.
--- 
-1.7.1
+Any particular reason for WARN_ON instead of pr_err like above?
+
+> +               goto err_clk_unregister;
+> +
+> +       return;
+> +
+> +err_clk_unregister:
+> +       clk_unregister_composite(clk);
+> +err_free_mult:
+> +       kfree(mult);
+> +err_free_gate:
+> +       kfree(gate);
+
+Clean up after of_io_request_and_map(), otherwise
+
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+
+Thanks!
+
+> +}
+> +
+> +CLK_OF_DECLARE(sun4i_a10_pll3, "allwinner,sun4i-a10-pll3-clk",
+> +              sun4i_a10_pll3_setup);
+> --
+> 2.6.4
+>
