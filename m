@@ -1,74 +1,24 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <p.zabel@pengutronix.de>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
-        <mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
-        <galak@codeaurora.org>, <linux@arm.linux.org.uk>, <khilman@linaro.org>,
-        <arnd@arndb.de>, <olof@lixom.net>, <xuwei5@hisilicon.com>,
-        <haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-        <bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
-        <suwenping@hisilicon.com>, <raojun@hisilicon.com>,
-        <ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
-        <zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>,
-        <lidongpo@hisilicon.com>, Jiancheng Xue
-	<xuejiancheng@huawei.com>
-Subject: [PATCH v7 2/6] ARM: hisi: add compatible string for Hi3519 soc
-Date: Mon, 25 Jan 2016 11:01:19 +0800
-Message-ID: <1453690883-31220-3-git-send-email-xuejiancheng@huawei.com>
-In-Reply-To: <1453690883-31220-1-git-send-email-xuejiancheng@huawei.com>
-References: <1453690883-31220-1-git-send-email-xuejiancheng@huawei.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Yakir Yang <ykk@rock-chips.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for hclk_vio_bus
+Date: Sun, 17 Jan 2016 20:14:07 +0100
+Message-ID: <1816378.OnNVlMiORS@phil>
+In-Reply-To: <1452858854-841-1-git-send-email-ykk@rock-chips.com>
+References: <1452858854-841-1-git-send-email-ykk@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-add compatible string for Hi3519 soc.
+Am Freitag, 15. Januar 2016, 19:54:14 schrieb Yakir Yang:
+> HCLK_VIO_BUS is the noc bus controller clock for display module,
+> due to it shouldn't belong to any driver, but we need it enabled,
+> so just mark it as the CLK_IGNORE_UNUSED flag.
+> 
+> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
----
- arch/arm/mach-hisi/hisilicon.c | 23 ++++-------------------
- 1 file changed, 4 insertions(+), 19 deletions(-)
+applied to my clk-branch for 4.6
 
-diff --git a/arch/arm/mach-hisi/hisilicon.c b/arch/arm/mach-hisi/hisilicon.c
-index 8cc6215..00dae89 100644
---- a/arch/arm/mach-hisi/hisilicon.c
-+++ b/arch/arm/mach-hisi/hisilicon.c
-@@ -54,30 +54,15 @@ DT_MACHINE_START(HI3620, "Hisilicon Hi3620 (Flattened Device Tree)")
- 	.dt_compat	= hi3xxx_compat,
- MACHINE_END
- 
--static const char *const hix5hd2_compat[] __initconst = {
-+static const char *const hisilicon_compat[] __initconst = {
- 	"hisilicon,hix5hd2",
--	NULL,
--};
--
--DT_MACHINE_START(HIX5HD2_DT, "Hisilicon HIX5HD2 (Flattened Device Tree)")
--	.dt_compat	= hix5hd2_compat,
--MACHINE_END
--
--static const char *const hip04_compat[] __initconst = {
- 	"hisilicon,hip04-d01",
--	NULL,
--};
--
--DT_MACHINE_START(HIP04, "Hisilicon HiP04 (Flattened Device Tree)")
--	.dt_compat	= hip04_compat,
--MACHINE_END
--
--static const char *const hip01_compat[] __initconst = {
- 	"hisilicon,hip01",
- 	"hisilicon,hip01-ca9x2",
-+	"hisilicon,hi3519",
- 	NULL,
- };
- 
--DT_MACHINE_START(HIP01, "Hisilicon HIP01 (Flattened Device Tree)")
--	.dt_compat      = hip01_compat,
-+DT_MACHINE_START(HISILICON_DT, "HiSilicon Soc")
-+	.dt_compat	= hisilicon_compat,
- MACHINE_END
--- 
-1.9.1
+Thanks
+Heiko
