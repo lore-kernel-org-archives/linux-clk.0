@@ -1,109 +1,54 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [RFC 6/9] clk: ti: add support for omap4 module clocks
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <1450447141-29936-1-git-send-email-t-kristo@ti.com>
- <1450447141-29936-7-git-send-email-t-kristo@ti.com>
- <20160101054815.21738.79820@quark.deferred.io> <568A20E5.6040005@ti.com>
- <CAMuHMdUZMUSYC1XHydVQHRibWtHw2=T-7nXe=5Pf4UCcb=mKTQ@mail.gmail.com>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        "linux-omap@vger.kernel.org"
-	<linux-omap@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Tony
- Lindgren <tony@atomide.com>, Stephen Boyd <sboyd@codeaurora.org>,
-        "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <568A735D.2060309@ti.com>
-Date: Mon, 4 Jan 2016 15:27:57 +0200
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [GIT PULL] clk fixes for 4.5
+Date: Sun, 17 Jan 2016 20:07:01 +0100
+Message-ID: <1578308.XWWZ6XYns5@phil>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUZMUSYC1XHydVQHRibWtHw2=T-7nXe=5Pf4UCcb=mKTQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/04/2016 12:21 PM, Geert Uytterhoeven wrote:
-> Hi Tero,
->
-> On Mon, Jan 4, 2016 at 8:36 AM, Tero Kristo <t-kristo@ti.com> wrote:
->> On 01/01/2016 07:48 AM, Michael Turquette wrote:
->>> Quoting Tero Kristo (2015-12-18 05:58:58)
->>>> +static int _omap4_hwmod_clk_enable(struct clk_hw *hw)
->>>> +{
->>>> +       struct clk_hw_omap *clk = to_clk_hw_omap(hw);
->>>> +       u32 val;
->>>> +       int timeout = 0;
->>>> +       int ret;
->>>> +
->>>> +       if (!clk->enable_bit)
->>>> +               return 0;
->>>> +
->>>> +       if (clk->clkdm) {
->>>> +               ret = ti_clk_ll_ops->clkdm_clk_enable(clk->clkdm,
->>>> hw->clk);
->>>> +               if (ret) {
->>>> +                       WARN(1,
->>>> +                            "%s: could not enable %s's clockdomain %s:
->>>> %d\n",
->>>> +                            __func__, clk_hw_get_name(hw),
->>>> +                            clk->clkdm_name, ret);
->>>> +                       return ret;
->>>> +               }
->>>> +       }
->>>> +
->>>> +       val = ti_clk_ll_ops->clk_readl(clk->enable_reg);
->>>> +
->>>> +       val &= ~OMAP4_MODULEMODE_MASK;
->>>> +       val |= clk->enable_bit;
->>>> +
->>>> +       ti_clk_ll_ops->clk_writel(val, clk->enable_reg);
->>>> +
->>>> +       /* Wait until module is enabled */
->>>> +       while (!_omap4_is_ready(val)) {
->>>> +               udelay(1);
->>>
->>> This should really be a .prepare callback if you plan to keep the delays
->>> in there.
->>
->> If this is changed to a .prepare, then all OMAP power management is
->> effectively ruined as all clocks are going to be enabled all the time. hwmod
->> core doesn't support .prepare/.enable at the moment that well, and changing
->> that is going to be a big burden (educated guess, haven't checked this
->> yet)... The call chain that comes here is:
->>
->> device driver -> pm_runtime -> hwmod_core -> hwmod_clk_enable / disable.
->>
->> The delay within this function should usually be pretty short, just to wait
->> that the module comes up from idle.
->
-> Does it take multiple µs? Perhaps even one µs is much longer than needed?
->
->> I recall the discussions regarding the udelays within clk_enable/disable
->> calls, but what is the preferred approach then? Typically clk_enable/disable
->> just becomes a NOP if it is not allowed to wait for hardware to complete
->> transitioning before exiting the function.
->
-> FWIW, there are small loops with just a cpu_relax() in various clock drivers
-> under drivers/clk/shmobile/.
+Hi Mike, Stephen,
 
-Just did a quick profiling round, and the clk_enable/disable delay loops 
-take anything from 0...1500ns, most typically consuming some 400-600ns. 
-So, based on this, dropping the udelay and adding cpu_relax instead 
-looks like a good change. I just verified that changing the udelay to 
-cpu_relax works fine also, I just need to change the bail-out period to 
-be something sane.
+based on the clk-for-linus-4.5 tag that got merged into mainline
+some asorted fixes for Rockchip clocks.
 
--Tero
+So, please pull
 
 
+Thanks
+Heiko
 
->
-> Gr{oetje,eeting}s,
->
->                          Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                  -- Linus Torvalds
->
+The following changes since commit 3da834e3e5a4a5d26882955298b55a9ed37a00bc:
+
+  clk: remove duplicated COMMON_CLK_NXP record from clk/Kconfig (2016-01-13 18:09:52 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.5-rockchip-clkfixes1
+
+for you to fetch changes up to 8931f8e02979e4180566907019d432527c80abf7:
+
+  clk: rockchip: rk3368: fix some clock gates (2016-01-16 16:01:21 +0100)
+
+----------------------------------------------------------------
+Fixes for wrong register offsets in both rk3036 and rk3368.
+Also rename the external input for the emac on rk3036, which
+should still be ok to do, as that binding was only introduced
+during this merge-window.
+
+----------------------------------------------------------------
+Jianqun xu (1):
+      clk: rockchip: rk3368: fix some clock gates
+
+Xing Zheng (4):
+      clk: rockchip: rk3036: fix the FLAGs for clock mux
+      clk: rockchip: rk3036: fix uarts clock error
+      clk: rockchip: rk3036: fix the div offset for emac clock
+      clk: rockchip: rk3036: rename emac ext source clock
+
+ .../bindings/clock/rockchip,rk3036-cru.txt         |  2 +-
+ drivers/clk/rockchip/clk-rk3036.c                  | 26 +++++++++++-----------
+ drivers/clk/rockchip/clk-rk3368.c                  | 26 +++++++++++-----------
+ 3 files changed, 27 insertions(+), 27 deletions(-)
