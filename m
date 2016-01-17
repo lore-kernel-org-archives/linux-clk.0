@@ -1,198 +1,104 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: linux-rockchip@lists.infradead.org, keescook@google.com, leozwang@google.com, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: rockchip: Add support for multiple clock providers
-Date: Thu, 21 Jan 2016 00:38:30 +0100
-Message-ID: <3395528.oy9qVuyESf@phil>
-In-Reply-To: <1453280809-3120-1-git-send-email-zhengxing@rock-chips.com>
-References: <1453280809-3120-1-git-send-email-zhengxing@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from plaes.org ([188.166.43.21]:43486 "EHLO plaes.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751369AbcAQM6s (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Sun, 17 Jan 2016 07:58:48 -0500
+Message-ID: <1453035519.13209.1.camel@plaes.org>
+Subject: Re: [linux-sunxi] [PATCH v2 16/26] drm: Add Allwinner A10 Display
+ Engine support
+From: Priit Laes <plaes@plaes.org>
+To: maxime.ripard@free-electrons.com,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Wynter Woods <wynter@nextthing.co>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Date: Sun, 17 Jan 2016 14:58:39 +0200
+In-Reply-To: <1452957104.12419.12.camel@plaes.org>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+	 <1452785109-6172-17-git-send-email-maxime.ripard@free-electrons.com>
+	 <1452957104.12419.12.camel@plaes.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Sat, 2016-01-16 at 17:11 +0200, Priit Laes wrote:
+> On Thu, 2016-01-14 at 16:24 +0100, Maxime Ripard wrote:
+> > The Allwinner A10 and subsequent SoCs share the same display
+> > pipeline, with
+> > variations in the number of controllers (1 or 2), or the presence
+> > or not of
+> > some output (HDMI, TV, VGA) or not.
+[...]
+> > diff --git a/drivers/gpu/drm/sun4i/sun4i_framebuffer.c
+> > b/drivers/gpu/drm/sun4i/sun4i_framebuffer.c
+> > new file mode 100644
+> > index 000000000000..68072b8cddab
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/sun4i/sun4i_framebuffer.c
+> > @@ -0,0 +1,54 @@
+> > +/*
+> > + * Copyright (C) 2015 Free Electrons
+> > + * Copyright (C) 2015 NextThing Co
+> > + *
+> > + * Maxime Ripard <maxime.ripard@free-electrons.com>
+> > + *
+> > + * This program is free software; you can redistribute it and/or
+> > + * modify it under the terms of the GNU General Public License as
+> > + * published by the Free Software Foundation; either version 2 of
+> > + * the License, or (at your option) any later version.
+> > + */
+> > +
+> > +#include <drm/drm_fb_cma_helper.h>
+> > +#include <drm/drm_atomic_helper.h>
+> > +#include <drm/drmP.h>
+> > +
+> > +#include "sun4i_drv.h"
+> > +
+> > +static void sun4i_de_output_poll_changed(struct drm_device *drm)
+> > +{
+> > +	struct sun4i_drv *drv = drm->dev_private;
+> > +
+> > +	if (drv->fbdev)
+> > +		drm_fbdev_cma_hotplug_event(drv->fbdev);
+> > +}
+> > +
+> > +static const struct drm_mode_config_funcs
+> > sun4i_de_mode_config_funcs
+> > = {
+> > +	.output_poll_changed	=
+> > sun4i_de_output_poll_changed,
+> > +	.atomic_check		= drm_atomic_helper_check,
+> > +	.atomic_commit		= drm_atomic_helper_commit,
+> > +	.fb_create		= drm_fb_cma_create,
+> > +};
+> > +
+> > +struct drm_fbdev_cma *sun4i_framebuffer_init(struct drm_device
+> > *drm)
+> > +{
+> > +	drm_mode_config_reset(drm);
+> > +
+> > +	drm->mode_config.max_width = 8192;
+> > +	drm->mode_config.max_height = 8192;
+> 
+> Shouldn't these be 1920 x 1080 as per A10 User manual?
 
-Am Mittwoch, 20. Januar 2016, 17:06:49 schrieb Xing Zheng:
-> There are need to support Multi-CRUs probability in future, but
-> it is not supported on the current Rockchip Clock Framework.
-> 
-> Therefore, this patch add support a provider as the parameter
-> handler when we call the clock register functions for per CRU.
-> 
-> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+I was wrong here. 8192x8192 it is.
 
-overall this looks really nice. Thanks for following up on our talk so 
-quickly :-) .
+>
 
-
-> ---
-> 
-> Changes in v2:
-> - Fix missed to call rockchip_clk_common_cru_init when SoCs clock init.
-> 
->  drivers/clk/rockchip/clk-rk3036.c |   15 +++--
->  drivers/clk/rockchip/clk-rk3188.c |   40 ++++++++-----
->  drivers/clk/rockchip/clk-rk3228.c |   15 +++--
->  drivers/clk/rockchip/clk-rk3288.c |   17 ++++--
->  drivers/clk/rockchip/clk-rk3368.c |   19 +++---
->  drivers/clk/rockchip/clk.c        |  120
-> +++++++++++++++++++++++-------------- drivers/clk/rockchip/clk.h        |
->   35 ++++++++---
->  7 files changed, 170 insertions(+), 91 deletions(-)
-> 
-> diff --git a/drivers/clk/rockchip/clk-rk3036.c
-> b/drivers/clk/rockchip/clk-rk3036.c index 483913b..050ad13 100644
-> --- a/drivers/clk/rockchip/clk-rk3036.c
-> +++ b/drivers/clk/rockchip/clk-rk3036.c
-> @@ -434,6 +434,7 @@ static const char *const rk3036_critical_clocks[]
-> __initconst = {
-> 
->  static void __init rk3036_clk_init(struct device_node *np)
->  {
-> +	struct rockchip_clk_provider *ctx;
->  	void __iomem *reg_base;
->  	struct clk *clk;
-> 
-> @@ -443,7 +444,9 @@ static void __init rk3036_clk_init(struct device_node
-> *np) return;
->  	}
-> 
-> -	rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
-> +	ctx = rockchip_clk_init(reg_base, CLK_NR_CLKS);
-> +
-> +	rockchip_clk_common_cru_init(np);
-> 
->  	/* xin12m is created by an cru-internal divider */
->  	clk = clk_register_fixed_factor(NULL, "xin12m", "xin24m", 0, 1, 2);
-> @@ -473,15 +476,15 @@ static void __init rk3036_clk_init(struct
-> device_node *np) pr_warn("%s: could not register clock sclk_macref_out:
-> %ld\n", __func__, PTR_ERR(clk));
-> 
-> -	rockchip_clk_register_plls(rk3036_pll_clks,
-> +	rockchip_clk_register_plls(ctx, rk3036_pll_clks,
->  				   ARRAY_SIZE(rk3036_pll_clks),
->  				   RK3036_GRF_SOC_STATUS0);
-> -	rockchip_clk_register_branches(rk3036_clk_branches,
-> +	rockchip_clk_register_branches(ctx, rk3036_clk_branches,
->  				  ARRAY_SIZE(rk3036_clk_branches));
->  	rockchip_clk_protect_critical(rk3036_critical_clocks,
->  				      ARRAY_SIZE(rk3036_critical_clocks));
-> 
-> -	rockchip_clk_register_armclk(ARMCLK, "armclk",
-> +	rockchip_clk_register_armclk(ctx, ARMCLK, "armclk",
->  			mux_armclk_p, ARRAY_SIZE(mux_armclk_p),
->  			&rk3036_cpuclk_data, rk3036_cpuclk_rates,
->  			ARRAY_SIZE(rk3036_cpuclk_rates));
-> @@ -489,6 +492,8 @@ static void __init rk3036_clk_init(struct device_node
-> *np) rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0),
-> ROCKCHIP_SOFTRST_HIWORD_MASK);
-> 
-> -	rockchip_register_restart_notifier(RK2928_GLB_SRST_FST, NULL);
-> +	rockchip_register_restart_notifier(ctx, RK2928_GLB_SRST_FST, NULL);
-> +
-> +	rockchip_clk_of_add_provider(np, ctx);
->  }
->  CLK_OF_DECLARE(rk3036_cru, "rockchip,rk3036-cru", rk3036_clk_init);
-> diff --git a/drivers/clk/rockchip/clk-rk3188.c
-> b/drivers/clk/rockchip/clk-rk3188.c index 7f7444c..338a22e 100644
-> --- a/drivers/clk/rockchip/clk-rk3188.c
-> +++ b/drivers/clk/rockchip/clk-rk3188.c
-> @@ -750,18 +750,19 @@ static const char *const rk3188_critical_clocks[]
-> __initconst = { "pclk_peri",
->  };
-> 
-> -static void __init rk3188_common_clk_init(struct device_node *np)
-> +static struct rockchip_clk_provider *__init rk3188_common_clk_init(struct
-> device_node *np) {
-> +	struct rockchip_clk_provider *ctx;
->  	void __iomem *reg_base;
->  	struct clk *clk;
-> 
->  	reg_base = of_iomap(np, 0);
-> -	if (!reg_base) {
-> -		pr_err("%s: could not map cru region\n", __func__);
-> -		return;
-> -	}
-> +	if (!reg_base)
-> +		panic("%s: could not map cru region\n", __func__);
-
-I don't believe in doing panics everywhere :-), please do
-	return ERR_PTR(-ENOMEM);
-here and in similar locations and let the top-most caller handle errors.
-
-
-
-> @@ -260,27 +261,49 @@ static struct clk
-> *rockchip_clk_register_frac_branch(const char *name, return clk;
->  }
-> 
-> -static DEFINE_SPINLOCK(clk_lock);
-> -static struct clk **clk_table;
-> -static void __iomem *reg_base;
-> -static struct clk_onecell_data clk_data;
->  static struct device_node *cru_node;
-
-please also include the devicetree node into the ctx struct. That way we can 
-keep track of all of them (when there are multiple).
-
-
->  static struct regmap *grf;
-> 
-> -void __init rockchip_clk_init(struct device_node *np, void __iomem *base,
-> -			      unsigned long nr_clks)
-> +struct rockchip_clk_provider *__init rockchip_clk_init(
-> +			void __iomem *base, unsigned long nr_clks)
->  {
-> -	reg_base = base;
-> -	cru_node = np;
-> -	grf = ERR_PTR(-EPROBE_DEFER);
-> +	struct rockchip_clk_provider *ctx;
-> +	struct clk **clk_table;
-> +	int i;
-> +
-> +	ctx = kzalloc(sizeof(struct rockchip_clk_provider), GFP_KERNEL);
-> +	if (!ctx)
-> +		panic("could not allocate clock provider context.\n");
-
-as I wrote above, please return a real error here. Especially when there are 
-multiple clock controllers, it might actually get a bit farther in cases 
-when only one of them fails, which might help in debugging underlying issues 
-in such cases.
-
-
-> 
->  	clk_table = kcalloc(nr_clks, sizeof(struct clk *), GFP_KERNEL);
->  	if (!clk_table)
-> -		pr_err("%s: could not allocate clock lookup table\n", __func__);
-> +		panic("could not allocate clock lookup table\n");
-
-same here (and kfree the ctx from above before returning)
-
-
-> +
-> +	for (i = 0; i < nr_clks; ++i)
-> +		clk_table[i] = ERR_PTR(-ENOENT);
-> +
-> +	ctx->reg_base = base;
-> +	ctx->clk_data.clks = clk_table;
-> +	ctx->clk_data.clk_num = nr_clks;
-> +	spin_lock_init(&ctx->lock);
-> +
-> +	return ctx;
-> +}
-> 
-> -	clk_data.clks = clk_table;
-> -	clk_data.clk_num = nr_clks;
-> -	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
-> +void __init rockchip_clk_common_cru_init(struct device_node *np)
-> +{
-> +	cru_node = np;
-> +	grf = ERR_PTR(-EPROBE_DEFER);
-
-I'm not sure why this is a separate function. Setting the node pointer (into 
-the new struct as written above) can still happen in rockchip_clk_init, and 
-initializing the global grf pointer as well.
-
-
-Heiko
+Päikest,
+Priit Laes :)
