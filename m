@@ -1,54 +1,44 @@
-Return-Path: <emilio.lopez@collabora.co.uk>
-From: =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio.lopez@collabora.co.uk>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	heiko@sntech.de
-Cc: linux-clk@vger.kernel.org,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.133]:41784 "EHLO
+	lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753970AbcARKoV (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jan 2016 05:44:21 -0500
+Subject: Re: [PATCH] clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag
+ for hclk_vio_bus
+To: Heiko Stuebner <heiko@sntech.de>
+References: <1452858854-841-1-git-send-email-ykk@rock-chips.com>
+ <1816378.OnNVlMiORS@phil>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio.lopez@collabora.co.uk>
-Subject: [PATCH 0/2] defer clk_gets on orphan clocks
-Date: Thu, 21 Jan 2016 11:10:37 -0300
-Message-Id: <1453385439-10154-1-git-send-email-emilio.lopez@collabora.co.uk>
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Yakir Yang <ykk@rock-chips.com>
+Message-ID: <569CC200.1050504@rock-chips.com>
+Date: Mon, 18 Jan 2016 18:44:16 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1816378.OnNVlMiORS@phil>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
 
-This is mostly a resend of Heiko's patch from [0] together with a fix for
-the breakage seen on sunxi when it was applied.
 
-Ideally we would move off our own protected clocks thing to the CCF
-implementation when it is merged and solve this nicely. Meanwhile, we
-can solve this non-intrusively by delaying the clock protection a bit.
-This way the rk people can enjoy the happiness brought by working sensors
-and WiFi[1] while sunxi boards still boot and operate just fine.
+On 01/18/2016 03:14 AM, Heiko Stuebner wrote:
+> Am Freitag, 15. Januar 2016, 19:54:14 schrieb Yakir Yang:
+>> HCLK_VIO_BUS is the noc bus controller clock for display module,
+>> due to it shouldn't belong to any driver, but we need it enabled,
+>> so just mark it as the CLK_IGNORE_UNUSED flag.
+>>
+>> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
+> applied to my clk-branch for 4.6
 
-I have tested this on a Cubieboard 1 (A10) and A10S OLinuXino Micro (A10S)
-as well as remotely boot-tested a Radxa Rock2 Square (rk3288)
+Thanks  ;)
 
-As always, all comments welcome :)
+- Yakir
+> Thanks
+> Heiko
+>
+>
+>
 
-Thanks!
-Emilio
 
-[0] http://www.spinics.net/lists/arm-kernel/msg462821.html
-[1] http://www.spinics.net/lists/arm-kernel/msg473236.html
-
-Emilio López (1):
-  clk: sunxi: delay protected clocks until arch initcall
-
-Heiko Stuebner (1):
-  clk: defer clk_gets on orphan clocks
-
- drivers/clk/clk-conf.c        |  5 +++--
- drivers/clk/clk.c             | 48 ++++++++++++++++++++++++++++++++++---------
- drivers/clk/clk.h             | 10 ++++++---
- drivers/clk/clkdev.c          |  4 ++--
- drivers/clk/sunxi/clk-sunxi.c | 22 ++++++++++++++++----
- 5 files changed, 68 insertions(+), 21 deletions(-)
-
--- 
-2.7.0
