@@ -1,66 +1,66 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 27 Jan 2016 18:49:32 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH RFC 11/11] clk: sunxi: rewrite sun8i-a23-mbus-clk using
- the simpler composite clk
-Message-ID: <20160127174932.GP4317@lukather>
-References: <1453727747-23307-1-git-send-email-wens@csie.org>
- <1453727747-23307-12-git-send-email-wens@csie.org>
+Return-Path: <rnayak@codeaurora.org>
+Message-ID: <569C69A8.4080308@codeaurora.org>
+Date: Mon, 18 Jan 2016 09:57:20 +0530
+From: Rajendra Nayak <rnayak@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="0lsrIB+s628ok5gC"
-In-Reply-To: <1453727747-23307-12-git-send-email-wens@csie.org>
+To: sboyd@codeaurora.org, mturquette@baylibre.com
+CC: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 0/6] Add support for MSM8996 GDSCs
+References: <1448986336-16846-1-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1448986336-16846-1-git-send-email-rnayak@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
 
---0lsrIB+s628ok5gC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 12/01/2015 09:42 PM, Rajendra Nayak wrote:
+> Changes since v1:
+> * For votable gdscs which are 'on' at boot, put an explicit vote
+> * Added a delay post disable for votable gdscs
+> * Added back the status check after timeout
+> * rearranged some patch ordering to avoid bisect issues
 
-On Mon, Jan 25, 2016 at 09:15:47PM +0800, Chen-Yu Tsai wrote:
-> sun8i-a23-mbus-clk used sunxi's factors clk, which is nice for very
-> complicated clocks, but is not really needed here.
->=20
-> Convert sun8i-a23-mbus-clk to use clk_composite, as it is a gate + mux
-> + divider. This makes the code easier to understand.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Stephen, Did you get a chance to look at this series?
 
-Applied, thanks!
-Maxime
+> 
+> This series adds support for GDSCs' which are part of gcc and mmcc
+> in QCOM msm8996 SoC. Series applies on top of clk-next
+> 
+> There are many more cases of gdscs within gdscs (hierarchical power
+> domains) in msm8996 (msm8974 has one such instance which is supported
+> upstream) and hence the series adds support within gdsc driver to
+> handle this.
+> 
+> Also msm8996 has gdscs with gds hw controllers within, for ensuring
+> slave device idleness before gdscs are powered off, hence the series
+> also adds support for gdscs with gds hw controllers.
+> 
+> ToDo: Series does not yet add support for gpu gdscs which are part
+> of mmcc
+> 
+> Tested on apq8096 dragonboards to make sure all modelled gdscs can
+> be turned on/off successfully
+> 
+> Rajendra Nayak (6):
+>   clk: qcom: gdsc: Add support for hierarchical power domains
+>   clk: qcom: gdsc: Add support for gdscs with gds hw controller
+>   clk: qcom: gdsc: Add support for votable gdscs
+>   clk: qcom: gdsc: Add GDSCs in msm8996 GCC
+>   clk: qcom: gdsc: Add mmcc gdscs for msm8996 family
+>   clk: qcom: mmcc8974: Use gdscs .parent and remove genpd calls
+> 
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi         |   2 +
+>  drivers/clk/qcom/common.c                     |  14 ++-
+>  drivers/clk/qcom/gcc-msm8996.c                |  92 +++++++++++++++
+>  drivers/clk/qcom/gdsc.c                       |  89 +++++++++++----
+>  drivers/clk/qcom/gdsc.h                       |  34 ++++--
+>  drivers/clk/qcom/mmcc-msm8974.c               |  14 +--
+>  drivers/clk/qcom/mmcc-msm8996.c               | 157 ++++++++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,gcc-msm8996.h  |  11 ++
+>  include/dt-bindings/clock/qcom,mmcc-msm8996.h |  17 +++
+>  9 files changed, 382 insertions(+), 48 deletions(-)
+> 
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---0lsrIB+s628ok5gC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWqQMsAAoJEBx+YmzsjxAgOS0P/2zEmFe87JKBYLQjf8/t8iAS
-7YFWYUK0cz4yKrSaT9t/S7nStnT+wa83ei7CcBIffBGK9+YqrzppNs9JxP515DHa
-XB4FU6IivOUjoTXkk+ndGNuiJ5ejC46uW07zLTASvJiNrQ4DxRB9xtrFU4SHiaix
-WS9fGayAQrLwj+3xd/CfxWoQphmREhNZNW9WkzneSekZgevld9TWYOWGvzmEdjAv
-oAAKupD3fIX8Ynw0env4QsFG2rtN5NGGPz6Ep0XJu94myQ/8L1XkEaJqkpr/r7iN
-9/EK4bbYn7INC+RxlRG5gwuwtc4zl/un4yEGGS1wZki+e/vQsZSo7tXyXFpx1khX
-ws8RiNVAhRljgz+u1Pfxn/GE/wHSOiMr8qrwvMMLhYwzLh33bPOgfU4tigj7bZCF
-TTA8J/HNex4QDwsVHVYfRWM2RQWVAFWYwHwDJ+UKg5T+1HD6Fu44aJW8RrjWlcs0
-sZ1XX14Bf+HufWPSK9EJvz/pX3VxCWqtcklmNJWRSeZLk/cTh4+Vl5P352S5ROKX
-hTjniUPq22g/qcmuitFaolfH0A5viQmVvZVsLVkcN6Bitfo6MJpf77HLsPq/VkaR
-0yv10P5D4Rij4h5+AJCrlJ0QVMpXGG69BYbYqo42MSVtKyVkx0UeZGJ4yq/fgrNL
-tDDQRQLkzY/uMHo1CeUU
-=jmlI
------END PGP SIGNATURE-----
-
---0lsrIB+s628ok5gC--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
