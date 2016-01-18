@@ -1,69 +1,49 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-Date: Mon, 25 Jan 2016 23:28:45 +0100
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 04/13] clk: at91: make IRQ optional and register them
- later
-Message-ID: <20160125222845.GC11740@piout.net>
-References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
- <1449248628-3486-5-git-send-email-alexandre.belloni@free-electrons.com>
- <20160122154034.GA20020@breakpoint.cc>
+Return-Path: <dunlapg@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20160122154034.GA20020@breakpoint.cc>
+Sender: dunlapg@gmail.com
+In-Reply-To: <1452921760-21294-1-git-send-email-van.freenix@gmail.com>
+References: <1452921760-21294-1-git-send-email-van.freenix@gmail.com>
+Date: Mon, 18 Jan 2016 11:22:44 +0000
+Message-ID: <CAFLBxZa9W6At5M_fFy17u__C_AGHRAdYHebOzymnb1su715jzA@mail.gmail.com>
+Subject: Re: [Xen-devel] [RFC/WIP] xen: clk: introudce pvclk for device passthrough
+From: George Dunlap <George.Dunlap@eu.citrix.com>
+To: Peng Fan <van.freenix@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	xen-devel <xen-devel@lists.xenproject.org>, Ian Campbell <ian.campbell@citrix.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Julien Grall <julien.grall@citrix.com>, David Vrabel <david.vrabel@citrix.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Sat, Jan 16, 2016 at 5:22 AM, Peng Fan <van.freenix@gmail.com> wrote:
+> This patch was just a initial patch, not sure whether this way
+> is ok from you side for handlding clk when doing platform device
+> passhthrough. Any comments are appreciated, and your comments may
+> give me a better direction.
 
-On 22/01/2016 at 16:40:35 +0100, Sebastian Andrzej Siewior wrote :
-> On 2015-12-04 18:03:39 [+0100], Alexandre Belloni wrote:
-> > diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-> > index 295b17b9c689..296d20a29c6c 100644
-> > --- a/drivers/clk/at91/pmc.c
-> > +++ b/drivers/clk/at91/pmc.c
-> > @@ -20,6 +20,9 @@
-> …
-> > +	pmc->irqdomain = irq_domain_add_linear(pdev->dev.of_node, 32,
-> > +					       &pmc_irq_ops, pmc);
-> > +	if (!pmc->irqdomain)
-> > +		return 0;
-> >  
-> > -static void __init of_at91sam9n12_pmc_setup(struct device_node *np)
-> > -{
-> > -	of_at91_pmc_setup(np, &at91sam9n12_caps);
-> > -}
-> > -CLK_OF_DECLARE(at91sam9n12_clk_pmc, "atmel,at91sam9n12-pmc",
-> > -	       of_at91sam9n12_pmc_setup);
-> > +	regmap_write(pmc->regmap, AT91_PMC_IDR, 0xffffffff);
-> > +	ret = request_irq(pmc->virq, pmc_irq_handler,
-> > +			  IRQF_SHARED | IRQF_COND_SUSPEND, "pmc", pmc);
-> 
-> You need IRQF_NOTHREAD here becuase pmc_irq_handler() is demuxing
-> interrupts / invoking generic_handle_irq().
-> However regmap_read() inside pmc_irq_handler() is taking a sleeping lock
-> on -RT so this is not going to fly. So either get rid regmap_read() in
-> the handler or use handle_nested_irq() instead.
-> 
+Hey Peng,
 
-So, using handle_nested_irq() is actually quite impractical because it
-has to be called from a threaded irq handler. So we either need to use
-IRQF_ONESHOT which is not possible because the IRQ is shared
-with the PIT (unless we take Thomas' IRQF_COND_ONESHOT patch).
+Just speaking from the perspective of a Xen dev who's not an ARM dev:
+a few more words on the relationship between pvclk and
+device-passthrough would be helpful to set the context.  It sounds
+like:
 
-I think we may as well stay simple and remove the whole irq handling and
-only do polling on the status register. As the series is done right now,
-this only has an impact during the clocks prepare(). As in that case it
-would not be sleeping anymore, we can also transform those prepare() in
-enable().
+* On ARM, passing through a device requires a clocksource (at least
+for many devices)
 
+* dom0 has the hardware clocksource, but at the moment domUs don't
+have a suitable clocksource
 
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+* This patch implements pvclk front/backend suitable for such devices
+
+Is that right?  In which case something like the following would be helpful:
+
+"This patch introduces pvclk, a paravirtualized clock source suitable
+for devices to use when passing through to domUs on ARM systems."
+
+(Obviously change it as necessary to make it accurate.)
+
+Thanks,
+ -George
