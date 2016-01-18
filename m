@@ -1,80 +1,104 @@
-Return-Path: <LW@karo-electronics.de>
-From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
-To: Anson Huang <b20788@freescale.com>,
-	Bai Ping <b51503@freescale.com>,
-	Frank Li <Frank.Li@freescale.com>,
-	Fugang Duan <B38611@freescale.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	=?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCHv2 06/16] ARM: dts: imx6ul: disable PWMs by default
-Date: Wed, 20 Jan 2016 11:08:59 +0100
-Message-Id: <1453284549-16363-7-git-send-email-LW@KARO-electronics.de>
-In-Reply-To: <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
-References: <1452619291-13625-1-git-send-email-LW@KARO-electronics.de>
- <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <andi.shyti@samsung.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Sangbeom Kim <sbkim73@samsung.com>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>,
+ Andi Shyti <andi@etezian.org>
+Subject: [PATCH 1/2] clk: s2mps11: remove redundant variable
+Date: Mon, 18 Jan 2016 17:25:24 +0900
+Message-id: <1453105525-31506-2-git-send-email-andi.shyti@samsung.com>
+In-reply-to: <1453105525-31506-1-git-send-email-andi.shyti@samsung.com>
+References: <1453105525-31506-1-git-send-email-andi.shyti@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Since PWMs are only useful if they are actually connected to an output pin,
-let users enable them explicitly in their device trees where they should
-also set up the pin configuration. This is in sync with a recent change
-(commit e2675266b39b "ARM: dts: imx6qdl: disable PWMs by default")
-to other i.MX SoCs.
+In the probe function the s2mps11_clk pointer is used only to
+iterate through the s2mps11_clks. The naming itself brings
+confusion and the readability is not improved.
 
-Signed-off-by: Lothar Waßmann <LW@KARO-electronics.de>
+Remove it, save some memory and headaches due to name similarity.
+
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
 ---
- arch/arm/boot/dts/imx6ul.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/clk/clk-s2mps11.c | 36 +++++++++++++++++-------------------
+ 1 file changed, 17 insertions(+), 19 deletions(-)
 
-diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
-index 3aba0bb..863777e 100644
---- a/arch/arm/boot/dts/imx6ul.dtsi
-+++ b/arch/arm/boot/dts/imx6ul.dtsi
-@@ -512,6 +512,7 @@
- 					 <&clks IMX6UL_CLK_PWM5>;
- 				clock-names = "ipg", "per";
- 				#pwm-cells = <2>;
-+				status = "disabled";
- 			};
+diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+index d266299..ccb12f1 100644
+--- a/drivers/clk/clk-s2mps11.c
++++ b/drivers/clk/clk-s2mps11.c
+@@ -28,7 +28,7 @@
+ #include <linux/mfd/samsung/s5m8767.h>
+ #include <linux/mfd/samsung/core.h>
  
- 			pwm6: pwm@020f4000 {
-@@ -522,6 +523,7 @@
- 					 <&clks IMX6UL_CLK_PWM6>;
- 				clock-names = "ipg", "per";
- 				#pwm-cells = <2>;
-+				status = "disabled";
- 			};
+-#define s2mps11_name(a) (a->hw.init->name)
++#define s2mps11_name(a) (a.hw.init->name)
  
- 			pwm7: pwm@020f8000 {
-@@ -532,6 +534,7 @@
- 					 <&clks IMX6UL_CLK_PWM7>;
- 				clock-names = "ipg", "per";
- 				#pwm-cells = <2>;
-+				status = "disabled";
- 			};
+ static struct clk **clk_table;
+ static struct clk_onecell_data clk_data;
+@@ -177,18 +177,16 @@ static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev,
+ static int s2mps11_clk_probe(struct platform_device *pdev)
+ {
+ 	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+-	struct s2mps11_clk *s2mps11_clks, *s2mps11_clk;
++	struct s2mps11_clk *s2mps11_clks;
+ 	unsigned int s2mps11_reg;
+ 	struct clk_init_data *clks_init;
+ 	int i, ret = 0;
  
- 			pwm8: pwm@020fc000 {
-@@ -542,6 +545,7 @@
- 					 <&clks IMX6UL_CLK_PWM8>;
- 				clock-names = "ipg", "per";
- 				#pwm-cells = <2>;
-+				status = "disabled";
- 			};
- 		};
+ 	s2mps11_clks = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
+-				sizeof(*s2mps11_clk), GFP_KERNEL);
++				sizeof(*s2mps11_clks), GFP_KERNEL);
+ 	if (!s2mps11_clks)
+ 		return -ENOMEM;
  
+-	s2mps11_clk = s2mps11_clks;
+-
+ 	clk_table = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
+ 				sizeof(struct clk *), GFP_KERNEL);
+ 	if (!clk_table)
+@@ -221,26 +219,26 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+ 	if (IS_ERR(s2mps11_clks->clk_np))
+ 		return PTR_ERR(s2mps11_clks->clk_np);
+ 
+-	for (i = 0; i < S2MPS11_CLKS_NUM; i++, s2mps11_clk++) {
++	for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
+ 		if (!clks_init[i].name)
+ 			continue; /* Skip clocks not present in some devices */
+-		s2mps11_clk->iodev = iodev;
+-		s2mps11_clk->hw.init = &clks_init[i];
+-		s2mps11_clk->mask = 1 << i;
+-		s2mps11_clk->reg = s2mps11_reg;
+-
+-		s2mps11_clk->clk = devm_clk_register(&pdev->dev,
+-							&s2mps11_clk->hw);
+-		if (IS_ERR(s2mps11_clk->clk)) {
++		s2mps11_clks[i].iodev = iodev;
++		s2mps11_clks[i].hw.init = &clks_init[i];
++		s2mps11_clks[i].mask = 1 << i;
++		s2mps11_clks[i].reg = s2mps11_reg;
++
++		s2mps11_clks[i].clk = devm_clk_register(&pdev->dev,
++							&s2mps11_clks[i].hw);
++		if (IS_ERR(s2mps11_clks[i].clk)) {
+ 			dev_err(&pdev->dev, "Fail to register : %s\n",
+-						s2mps11_name(s2mps11_clk));
+-			ret = PTR_ERR(s2mps11_clk->clk);
++						s2mps11_name(s2mps11_clks[i]));
++			ret = PTR_ERR(s2mps11_clks[i].clk);
+ 			goto err_reg;
+ 		}
+ 
+-		s2mps11_clk->lookup = clkdev_create(s2mps11_clk->clk,
+-					s2mps11_name(s2mps11_clk), NULL);
+-		if (!s2mps11_clk->lookup) {
++		s2mps11_clks[i].lookup = clkdev_create(s2mps11_clks[i].clk,
++					s2mps11_name(s2mps11_clks[i]), NULL);
++		if (!s2mps11_clks[i].lookup) {
+ 			ret = -ENOMEM;
+ 			goto err_reg;
+ 		}
 -- 
-2.1.4
+2.6.4
