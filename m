@@ -1,66 +1,115 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 27 Jan 2016 18:32:46 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH RFC 07/11] clk: sunxi: factors: Support custom formulas
-Message-ID: <20160127173246.GL4317@lukather>
-References: <1453727747-23307-1-git-send-email-wens@csie.org>
- <1453727747-23307-8-git-send-email-wens@csie.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="5mZBmBd1ZkdwT1ny"
-In-Reply-To: <1453727747-23307-8-git-send-email-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:57577 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754427AbcARJyv (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jan 2016 04:54:51 -0500
+MIME-version: 1.0
+Content-type: text/plain; charset=utf-8
+Message-id: <569CB664.3090806@samsung.com>
+Date: Mon, 18 Jan 2016 18:54:44 +0900
+From: Inki Dae <inki.dae@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Andrzej Hajda <a.hajda@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Hyungwon Hwang <human.hwang@samsung.com>,
+	Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v2 09/10] dt-bindings: video: exynos5433-decon: add
+ bindings for DECON-TV
+References: <CAJKOXPfXrEwu1egSnLxwYofu_scskkPRKOjOCskObPFn9yVcJw@mail.gmail.com>
+ <1445860796-23045-1-git-send-email-a.hajda@samsung.com>
+ <56977A3B.8020104@samsung.com> <56977D42.2050904@samsung.com>
+ <569C279D.1020705@samsung.com>
+In-reply-to: <569C279D.1020705@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
---5mZBmBd1ZkdwT1ny
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 25, 2016 at 09:15:43PM +0800, Chen-Yu Tsai wrote:
-> Some clocks cannot be modelled using the standard factors clk formula,
-> such as clocks with special pre-dividers on one parent, or clocks
-> with all power-of-two dividers.
->=20
-> Add support for a custom .recalc callback for factors clk. Also pass
-> the current parent index to the .get_factor and .recalc callbacks.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+2016년 01월 18일 08:45에 Krzysztof Kozlowski 이(가) 쓴 글:
+> On 14.01.2016 19:49, Inki Dae wrote:
+>> + Rob Herring
+>>
+>> 2016년 01월 14일 19:36에 Andrzej Hajda 이(가) 쓴 글:
+>>> Hi Inki,
+>>>
+>>> It seems this patch and 04/10 did not get picked up yet.
+>>> Could you merge it?
+>>
+>> Yes, I can. However, 04/10 is required for acked-by from dt or SoC maintainer.
+>> Krzysztof and Rob, could you give me acked-by?
+>>
+>> Thanks,
+>> Inki Dae
+> 
+> My ack is really not required, because this is a binding for a specific
+> driver from video subsystem. It does not fall into the arm/mach-exynos
+> nor the dts/*exynos*.
+> 
+> Anyway I reviewed the patch on 28th of October and Rob acked it on 13th
+> of November.
 
-Applied, thanks!
-Maxime
+I meant 04/10 not 09/10 patch. :)
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Thanks,
+Inki Dae
 
---5mZBmBd1ZkdwT1ny
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWqP8+AAoJEBx+YmzsjxAgH8IP/jnw7o5KLzaJ3dTuWpbKuReS
-Hp5km9o/+tIo7xO9d61MUNq8+q5zQXWM1eZzWEbCqR6Uw6CqmTwCmn4FU7xQVQz9
-MRUNHE/3M5QSUyTPKAzaQ7Lc33ZDXHXS15/VmH6o3EglAvO6eJFYpVQuoONIIaT5
-EzNxiG9lmwb+ftS85gNJlYZ18m7B1zLyoVTKqr3ycmhqIhp94oJMED9enLQ55RHL
-K2xfoFBnQ4cr1dVJ4p2F232iwwg7ysNuMFM6TqjOQ0xhBT+I23Zh5v5sodI+J7y3
-u2FqxQiEOvXwAuiiXfE+2rC7noA/zzYBxudqAzJLV1xW+F5VLDvccq+Axkt9F5AW
-0bVjSuOT7NlPMCAqY1AyRz0daz0VZTTX0HAu9rkz0ATaB28cdA7OAkUmJ0WBmkNc
-de6jDLR7NFN+bdytWwH92stxwUBuGXkw/YO87zsGb2ZhQDVXJYKCUDuQWnDYlrHU
-hgCn3Oj838ohPRma9uhl0F7qr5IMFDAnxrsUKiT6WGvKEQ8fwtHvxtNkBP5UGDzZ
-kGH37YDD8UIDkdfLNUA/MPC+3IVHDKmUmpJCoh6ZpZkJ8bxc0LK6ZOvp2qC2RW9a
-MKMqQt5OkT7FGOG3fKQ4nUI30MEi7bMvoNxD/EVqWH5iH7/UVcA7aOIlQJIRUcu7
-njPSy8LHOWrNYwJxAWAH
-=Bxv+
------END PGP SIGNATURE-----
-
---5mZBmBd1ZkdwT1ny--
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
+>>>
+>>> Regards
+>>> Andrzej
+>>>
+>>> On 10/26/2015 12:59 PM, Andrzej Hajda wrote:
+>>>> DECON-TV(Display and Enhancement Controller for TV) is a variation
+>>>> of DECON IP. Its main purpose is to produce video stream for HDMI IP.
+>>>>
+>>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>>>> ---
+>>>> Hi Krzysztof,
+>>>>
+>>>> I have decided to skip cleanup part as it would require more work,
+>>>> not related to this patchset.
+>>>>
+>>>> Regards
+>>>> Andrzej
+>>>>
+>>>>  Documentation/devicetree/bindings/video/exynos5433-decon.txt | 3 ++-
+>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/video/exynos5433-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+>>>> index 3dff78b..c9fd7b3 100644
+>>>> --- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+>>>> +++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+>>>> @@ -5,7 +5,8 @@ Exynos series of SoCs which transfers the image data from a video memory
+>>>>  buffer to an external LCD interface.
+>>>>  
+>>>>  Required properties:
+>>>> -- compatible: value should be "samsung,exynos5433-decon";
+>>>> +- compatible: value should be one of:
+>>>> +	"samsung,exynos5433-decon", "samsung,exynos5433-decon-tv";
+>>>>  - reg: physical base address and length of the DECON registers set.
+>>>>  - interrupts: should contain a list of all DECON IP block interrupts in the
+>>>>  	      order: VSYNC, LCD_SYSTEM. The interrupt specifier format
+>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>
+>>>
+>>
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
