@@ -1,41 +1,84 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <1452785109-6172-13-git-send-email-maxime.ripard@free-electrons.com>
-References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
- <1452785109-6172-13-git-send-email-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sun, 17 Jan 2016 01:12:37 +0800
-Message-ID: <CAGb2v64Ae0bUgFZ2q21-n67sUNFfMtxruMiEE1R18xw+Lp-Gqw@mail.gmail.com>
-Subject: Re: [PATCH v2 12/26] ARM: sun5i: Add TV encoder gate to the DTSI
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>, Wynter Woods <wynter@nextthing.co>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Rob Herring <robh+dt@kernel.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Remi Pommarel <repk@triplefau.lt>,
+	devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [RFC 8/9] dt-bindings: bcm2835: document optional per clock dt-nodes
+Date: Tue, 19 Jan 2016 14:51:39 +0000
+Message-Id: <1453215100-2382-9-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1453215100-2382-1-git-send-email-kernel@martin.sperl.org>
+References: <1453215100-2382-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 14, 2016 at 11:24 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> It turns out that the A13 / R8 also have a tve encoder block, and a gate
-> for it.
->
-> Add it to the DT.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+From: Martin Sperl <kernel@martin.sperl.org>
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Document how to modify per clock default behaviour
+via the device-tree.
 
-> ---
->  arch/arm/boot/dts/sun5i-a13.dtsi | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ .../bindings/clock/brcm,bcm2835-cprman.txt         |   33 ++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-[...]
+diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt b/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
+index e56a1df..794c4ac 100644
+--- a/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
++++ b/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
+@@ -17,6 +17,26 @@ Required properties:
+ 		  found in include/dt-bindings/clock/bcm2835.h
+ - reg:		Specifies base physical address and size of the registers
+ - clocks:	The external oscillator clock phandle
++- #address-cells number of cells required to define a clock
++- #size-cells    Should be 0
++
++Subnodes:
++
++It is possible to apply optional settings per clock to modify clock
++selection behaviour.
++For each clock there may be a subnode that may contain the following:
++
++Required properties:
++- reg                 -  clock id
++
++Optional properties:
++- parent-clock-names  - list of parrent-clock names
++  		        this list is validated againt the default list
++		        of parent clocks and is used in this order.
++- brcm,clock-selector - the clock selector to use
++- brcm,mash-max-order - the maximum order of the fractional divider
++- brcm,min-fract-div  - the minimum divider required when using
++  		      	the fractional divider
+ 
+ Example:
+ 
+@@ -33,6 +53,19 @@ Example:
+ 		#clock-cells = <1>;
+ 		reg = <0x7e101000 0x2000>;
+ 		clocks = <&clk_osc>;
++
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		/* custom settings for the PCM clock */
++		clock@BCM2835_CLOCK_PCM {
++			 reg = <BCM2835_CLOCK_PCM>;
++			 parent-clock-names = "xosc", "plld_per";
++			 brcm,clock-selector =
++				  <BCM2835_CHOOSE_CLOCK_INTEGER_THEN_FRAC>;
++			 brcm,mash-max-order = <BCM2835_MASH_ORDER_3>;
++			 brcm,min-fract-div = <20>;
++		};
+ 	};
+ 
+ 	i2c0: i2c@7e205000 {
+-- 
+1.7.10.4
