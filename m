@@ -1,49 +1,139 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lb0-f195.google.com ([209.85.217.195]:36657 "EHLO
-	mail-lb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965414AbcAZNeM (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2016 08:34:12 -0500
-From: Alexander Kochetkov <al.kochet@gmail.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: stable@vger.kernel.org, Alexander Kochetkov <al.kochet@gmail.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: rockchip: add hclk_cpubus to the list of rk3188 critical clocks
-Date: Tue, 26 Jan 2016 16:34:00 +0300
-Message-Id: <1453815240-15354-1-git-send-email-al.kochet@gmail.com>
+Received: from mailout1.samsung.com ([203.254.224.24]:39653 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757324AbcASGec (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 19 Jan 2016 01:34:32 -0500
+MIME-version: 1.0
+Content-type: text/plain; charset=utf-8
+Message-id: <569DD8EF.90703@samsung.com>
+Date: Tue, 19 Jan 2016 15:34:23 +0900
+From: Inki Dae <inki.dae@samsung.com>
+To: Andrzej Hajda <a.hajda@samsung.com>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Hyungwon Hwang <human.hwang@samsung.com>,
+	Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v2 09/10] dt-bindings: video: exynos5433-decon: add
+ bindings for DECON-TV
+References: <CAJKOXPfXrEwu1egSnLxwYofu_scskkPRKOjOCskObPFn9yVcJw@mail.gmail.com>
+ <1445860796-23045-1-git-send-email-a.hajda@samsung.com>
+ <56977A3B.8020104@samsung.com> <56977D42.2050904@samsung.com>
+ <569C279D.1020705@samsung.com> <569CB664.3090806@samsung.com>
+ <569CBA70.8000107@samsung.com>
+In-reply-to: <569CBA70.8000107@samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-hclk_cpubus needs to keep running because it is needed for devices like
-the rom, i2s0 or spdif to be accessible via cpu. Without that all
-accesses to devices (readl/writel) return wrong data. So add it
-to the list of critical clocks.
 
-Fixes: 78eaf6095cc763c ("clk: rockchip: disable unused clocks")
 
-Signed-off-by: Alexander Kochetkov <al.kochet@gmail.com>
+2016년 01월 18일 19:12에 Andrzej Hajda 이(가) 쓴 글:
+> Hi Inki,
+> 
+> On 01/18/2016 10:54 AM, Inki Dae wrote:
+>>
+>> 2016년 01월 18일 08:45에 Krzysztof Kozlowski 이(가) 쓴 글:
+>>> On 14.01.2016 19:49, Inki Dae wrote:
+>>>> + Rob Herring
+>>>>
+>>>> 2016년 01월 14일 19:36에 Andrzej Hajda 이(가) 쓴 글:
+>>>>> Hi Inki,
+>>>>>
+>>>>> It seems this patch and 04/10 did not get picked up yet.
+>>>>> Could you merge it?
+>>>> Yes, I can. However, 04/10 is required for acked-by from dt or SoC maintainer.
+>>>> Krzysztof and Rob, could you give me acked-by?
+>>>>
+>>>> Thanks,
+>>>> Inki Dae
+>>> My ack is really not required, because this is a binding for a specific
+>>> driver from video subsystem. It does not fall into the arm/mach-exynos
+>>> nor the dts/*exynos*.
+>>>
+>>> Anyway I reviewed the patch on 28th of October and Rob acked it on 13th
+>>> of November.
+>> I meant 04/10 not 09/10 patch. :)
+> 
+> There is document in kernel with clear explanation about the subject:
+> Documentation/devicetree/bindings/submitting-patches.txt.
+> See especially paragraph II.2 [1].
+> 
+> [1]: Documentation/devicetree/bindings/submitting-patches.txt#L50
 
-CC: linux-clk@vger.kernel.org
-CC: linux-arm-kernel@lists.infradead.org
-CC: linux-rockchip@lists.infradead.org
-CC: linux-kernel@vger.kernel.org
-CC: stable@vger.kernel.org # 4.1.x-
----
- drivers/clk/rockchip/clk-rk3188.c |    1 +
- 1 file changed, 1 insertion(+)
+Got it. The document says,
+"For driver (not subsystem) bindings: If you are comfortable with the
+ binding, and it hasn't received an Acked-by from the devicetree
+ maintainers after a few weeks, go ahead and take it."
 
-diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-index abb4760..fe728f8 100644
---- a/drivers/clk/rockchip/clk-rk3188.c
-+++ b/drivers/clk/rockchip/clk-rk3188.c
-@@ -718,6 +718,7 @@ static const char *const rk3188_critical_clocks[] __initconst = {
- 	"hclk_peri",
- 	"pclk_cpu",
- 	"pclk_peri",
-+	"hclk_cpubus"
- };
- 
- static void __init rk3188_common_clk_init(struct device_node *np)
--- 
-1.7.9.5
+Thanks,
+Inki Dae
 
+> 
+> Regards
+> Andrzej
+> 
+>>
+>> Thanks,
+>> Inki Dae
+>>
+>>> Best regards,
+>>> Krzysztof
+>>>
+>>>
+>>>>> Regards
+>>>>> Andrzej
+>>>>>
+>>>>> On 10/26/2015 12:59 PM, Andrzej Hajda wrote:
+>>>>>> DECON-TV(Display and Enhancement Controller for TV) is a variation
+>>>>>> of DECON IP. Its main purpose is to produce video stream for HDMI IP.
+>>>>>>
+>>>>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>>>>>> ---
+>>>>>> Hi Krzysztof,
+>>>>>>
+>>>>>> I have decided to skip cleanup part as it would require more work,
+>>>>>> not related to this patchset.
+>>>>>>
+>>>>>> Regards
+>>>>>> Andrzej
+>>>>>>
+>>>>>>  Documentation/devicetree/bindings/video/exynos5433-decon.txt | 3 ++-
+>>>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/video/exynos5433-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+>>>>>> index 3dff78b..c9fd7b3 100644
+>>>>>> --- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+>>>>>> +++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
+>>>>>> @@ -5,7 +5,8 @@ Exynos series of SoCs which transfers the image data from a video memory
+>>>>>>  buffer to an external LCD interface.
+>>>>>>  
+>>>>>>  Required properties:
+>>>>>> -- compatible: value should be "samsung,exynos5433-decon";
+>>>>>> +- compatible: value should be one of:
+>>>>>> +	"samsung,exynos5433-decon", "samsung,exynos5433-decon-tv";
+>>>>>>  - reg: physical base address and length of the DECON registers set.
+>>>>>>  - interrupts: should contain a list of all DECON IP block interrupts in the
+>>>>>>  	      order: VSYNC, LCD_SYSTEM. The interrupt specifier format
+>>>>> --
+>>>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>>>>> the body of a message to majordomo@vger.kernel.org
+>>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>>>
+>>>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>
+>>>
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
