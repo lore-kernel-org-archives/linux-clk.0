@@ -1,95 +1,222 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: kernel@martin.sperl.org, "Stephen Boyd" <sboyd@codeaurora.org>,
- "Stephen Warren" <swarren@wwwdotorg.org>, "Lee Jones" <lee@kernel.org>,
- "Eric Anholt" <eric@anholt.net>, "Remi Pommarel" <repk@triplefau.lt>,
- linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1452542157-2387-4-git-send-email-kernel@martin.sperl.org>
-Cc: "Martin Sperl" <kernel@martin.sperl.org>
-References: <1452542157-2387-1-git-send-email-kernel@martin.sperl.org>
- <1452542157-2387-4-git-send-email-kernel@martin.sperl.org>
-Message-ID: <20160113201115.1168.91766@quark.deferred.io>
-Subject: Re: [PATCH V2 3/4] clk: bcm2835: enable management of PCM clock
-Date: Wed, 13 Jan 2016 12:11:15 -0800
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Rob Herring <robh+dt@kernel.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Remi Pommarel <repk@triplefau.lt>,
+	devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [RFC 7/9] clk: bcm2835: allow clock choosing mechanims to be selected in DT
+Date: Tue, 19 Jan 2016 14:51:38 +0000
+Message-Id: <1453215100-2382-8-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1453215100-2382-1-git-send-email-kernel@martin.sperl.org>
+References: <1453215100-2382-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting kernel@martin.sperl.org (2016-01-11 11:55:55)
-> From: Martin Sperl <kernel@martin.sperl.org>
-> =
+From: Martin Sperl <kernel@martin.sperl.org>
 
-> Enable the PCM clock in the SOC, which is used by the
-> bcm2835-i2s driver.
-> =
+Allow the clock choosing mechanism to be selected in the
+devicetree.
 
-> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+There are 3 options that can get selected right now:
+* BCM2835_CHOOSE_CLOCK_INTEGER
+  - only integer dividers are used (fails otherwise)
+* BCM2835_CHOOSE_CLOCK_CLOSEST
+  - choose the clock that is closest to the target rate
+* BCM2835_CHOOSE_CLOCK_INTEGER_THEN_FRAC
+  - integer dividers are preferred,
+    otherwise uses the clock that is closest to
+    the target rate
+  - this is the default implementation used
 
-Looks OK to me.
+If there is a need for a different policy, then that can
+get implemented and selected using this mechanism.
 
-Regards,
-Mike
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c       |   92 ++++++++++++++++++++++++++---------
+ include/dt-bindings/clock/bcm2835.h |    6 +++
+ 2 files changed, 74 insertions(+), 24 deletions(-)
 
-> ---
->  drivers/clk/bcm/clk-bcm2835.c       |   13 +++++++++++++
->  include/dt-bindings/clock/bcm2835.h |    1 +
->  2 files changed, 14 insertions(+)
-> =
-
-> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-> index 7c782d3..573b5b1 100644
-> --- a/drivers/clk/bcm/clk-bcm2835.c
-> +++ b/drivers/clk/bcm/clk-bcm2835.c
-> @@ -88,6 +88,8 @@
->  #define CM_HSMDIV              0x08c
->  #define CM_OTPCTL              0x090
->  #define CM_OTPDIV              0x094
-> +#define CM_PCMCTL              0x098
-> +#define CM_PCMDIV              0x09c
->  #define CM_PWMCTL              0x0a0
->  #define CM_PWMDIV              0x0a4
->  #define CM_SMICTL              0x0b0
-> @@ -826,6 +828,16 @@ static const struct bcm2835_clock_data bcm2835_clock=
-_pwm_data =3D {
->         .frac_bits =3D 12,
->  };
->  =
-
-> +static const struct bcm2835_clock_data bcm2835_clock_pcm_data =3D {
-> +       .name =3D "pcm",
-> +       .num_mux_parents =3D ARRAY_SIZE(bcm2835_clock_per_parents),
-> +       .parents =3D bcm2835_clock_per_parents,
-> +       .ctl_reg =3D CM_PCMCTL,
-> +       .div_reg =3D CM_PCMDIV,
-> +       .int_bits =3D 12,
-> +       .frac_bits =3D 12,
-> +};
-> +
->  struct bcm2835_pll {
->         struct clk_hw hw;
->         struct bcm2835_cprman *cprman;
-> @@ -1616,6 +1628,7 @@ static const struct bcm2835_register_clock bcm2835_=
-register_clocks[] =3D {
->         REGISTER_CLOCK(BCM2835_CLOCK_HSM, &bcm2835_clock_hsm_data),
->         REGISTER_CLOCK(BCM2835_CLOCK_EMMC, &bcm2835_clock_emmc_data),
->         REGISTER_CLOCK(BCM2835_CLOCK_PWM, &bcm2835_clock_pwm_data),
-> +       REGISTER_CLOCK(BCM2835_CLOCK_PCM, &bcm2835_clock_pcm_data),
->  };
->  =
-
->  void bcm2835_register_duplicate_index(
-> diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/cl=
-ock/bcm2835.h
-> index 87235ac..9a7b4a5 100644
-> --- a/include/dt-bindings/clock/bcm2835.h
-> +++ b/include/dt-bindings/clock/bcm2835.h
-> @@ -44,3 +44,4 @@
->  #define BCM2835_CLOCK_EMMC             28
->  #define BCM2835_CLOCK_PERI_IMAGE       29
->  #define BCM2835_CLOCK_PWM              30
-> +#define BCM2835_CLOCK_PCM              31
-> -- =
-
-> 1.7.10.4
->=20
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 7048ca5..c381cb1 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -697,6 +697,14 @@ static const struct bcm2835_pll_divider_data bcm2835_pllh_pix_data = {
+ 	.fixed_divider = 10,
+ };
+ 
++struct bcm2835_rates {
++	struct clk_hw *parent;
++	unsigned long rate;
++	unsigned long prate;
++	u32 div;
++	divmash dmash;
++};
++
+ struct bcm2835_clock_data {
+ 	const char *name;
+ 
+@@ -718,6 +726,12 @@ struct bcm2835_clock_data {
+ 	bool mash_forced;
+ 
+ 	bool is_vpu_clock;
++
++	/* the determine rate function */
++	int (*choose_clock)(struct clk_hw *hw,
++			    struct clk_rate_request *req,
++			    struct bcm2835_rates *rates,
++			    size_t rate_cnt);
+ };
+ 
+ static const char *const bcm2835_clock_per_parents[] = {
+@@ -1670,14 +1684,6 @@ unlock_exit:
+ 	return 0;
+ }
+ 
+-struct bcm2835_rates {
+-	struct clk_hw *parent;
+-	unsigned long rate;
+-	unsigned long prate;
+-	u32 div;
+-	divmash dmash;
+-};
+-
+ static int bcm2835_clock_determine_rate_set(struct clk_rate_request *req,
+ 					    struct bcm2835_rates *best)
+ {
+@@ -1688,10 +1694,10 @@ static int bcm2835_clock_determine_rate_set(struct clk_rate_request *req,
+ 	return 0;
+ }
+ 
+-static int bcm2835_clock_determine_integer_rate(struct clk_hw *hw,
+-						struct clk_rate_request *req,
+-						struct bcm2835_rates *rates,
+-						size_t rate_cnt)
++static int bcm2835_clock_choose_integer_div(struct clk_hw *hw,
++					    struct clk_rate_request *req,
++					    struct bcm2835_rates *rates,
++					    size_t rate_cnt)
+ {
+ 	size_t i;
+ 
+@@ -1706,10 +1712,10 @@ static int bcm2835_clock_determine_integer_rate(struct clk_hw *hw,
+ 	return -EINVAL;
+ }
+ 
+-static int bcm2835_clock_determine_closest_rate(struct clk_hw *hw,
+-						struct clk_rate_request *req,
+-						struct bcm2835_rates *rates,
+-						size_t rate_cnt)
++static int bcm2835_clock_choose_closest_rate(struct clk_hw *hw,
++					     struct clk_rate_request *req,
++					     struct bcm2835_rates *rates,
++					     size_t rate_cnt)
+ {
+ 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
+ 	const struct bcm2835_clock_data *data = clock->data;
+@@ -1750,14 +1756,30 @@ static int bcm2835_clock_determine_closest_rate(struct clk_hw *hw,
+ 	return -EINVAL;
+ }
+ 
++static int bcm2835_clock_choose_int_then_frac(struct clk_hw *hw,
++					      struct clk_rate_request *req,
++					      struct bcm2835_rates *rates,
++					      size_t rate_cnt)
++{
++	int err;
++
++	/* find integer rates with preference */
++	err = bcm2835_clock_choose_integer_div(hw, req, rates, rate_cnt);
++	if (!err)
++		return 0;
++
++	/* find the closest rate */
++	return bcm2835_clock_choose_closest_rate(hw, req, rates, rate_cnt);
++}
++
+ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
+ 					struct clk_rate_request *req)
+ {
+ 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
++	const struct bcm2835_clock_data *data = clock->data;
+ 	struct bcm2835_rates rates[BIT(CM_SRC_BITS)];
+ 	size_t i, rate_cnt = 0;
+ 	divmash dm;
+-	int err;
+ 
+ 	/* fill in rates */
+ 	for (i = 0; i < clk_hw_get_num_parents(hw); ++i) {
+@@ -1774,14 +1796,12 @@ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
+ 		rate_cnt++;
+ 	}
+ 
+-	/* find integer rates with preference */
+-	err = bcm2835_clock_determine_integer_rate(hw, req, rates, rate_cnt);
+-	if (!err)
+-		return 0;
++	/* if we have a custom rate selection , then use that one */
++	if (data->choose_clock)
++		return data->choose_clock(hw, req, rates, rate_cnt);
+ 
+-	/* otherwise choose the "closest" one */
+-	return bcm2835_clock_determine_closest_rate(hw, req, rates,
+-						    rate_cnt);
++	/* otherwise choose the "int-then-frac" one */
++	return bcm2835_clock_choose_int_then_frac(hw, req, rates, rate_cnt);
+ }
+ 
+ static int _bcm2835_clk_set_parent(struct bcm2835_cprman *cprman,
+@@ -2108,6 +2128,30 @@ static const struct bcm2835_clock_data *bcm2835_register_clock_of(
+ 	err = of_property_read_u32(nc, "brcm,min-fract-div", &value);
+ 	if (!err)
+ 		data->min_frac_div = value << CM_DIV_FRAC_BITS;
++	/* choose alternate clock selector */
++	err = of_property_read_u32(nc, "brcm,clock-selector", &value);
++	if (!err) {
++		switch (value) {
++		case BCM2835_CHOOSE_CLOCK_DEFAULT:
++		case BCM2835_CHOOSE_CLOCK_INTEGER_THEN_FRAC:
++			data->choose_clock =
++				bcm2835_clock_choose_int_then_frac;
++			break;
++		case BCM2835_CHOOSE_CLOCK_INTEGER:
++			data->choose_clock =
++				bcm2835_clock_choose_integer_div;
++			break;
++		case BCM2835_CHOOSE_CLOCK_CLOSEST:
++			data->choose_clock =
++				bcm2835_clock_choose_closest_rate;
++			break;
++		default:
++			dev_err(dev,
++				"clock %s: undefined clock-selector: %d\n",
++				data->name, value);
++			break;
++		}
++	}
+ 
+ 	/* and return the result */
+ 	return data;
+diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
+index eb73380..b00880e 100644
+--- a/include/dt-bindings/clock/bcm2835.h
++++ b/include/dt-bindings/clock/bcm2835.h
+@@ -76,3 +76,9 @@
+ 
+ #define BCM2835_MASH_INTEGER		BCM2835_MASH_NONE
+ #define BCM2835_MASH_FRAC		BCM2835_MASH_ORDER_1
++
++/* the possible clock selectors */
++#define BCM2835_CHOOSE_CLOCK_DEFAULT		0
++#define BCM2835_CHOOSE_CLOCK_INTEGER		1
++#define BCM2835_CHOOSE_CLOCK_INTEGER_THEN_FRAC	2
++#define BCM2835_CHOOSE_CLOCK_CLOSEST		3
+-- 
+1.7.10.4
