@@ -1,75 +1,84 @@
-Return-Path: <rklein@nvidia.com>
-Subject: Re: [PATCH 2/2] clk: tegra: Use definition for pll_u override bit
-To: Thierry Reding <thierry.reding@gmail.com>
-References: <1450702592-7755-1-git-send-email-jonathanh@nvidia.com>
- <1450702592-7755-2-git-send-email-jonathanh@nvidia.com>
- <20160113160833.GK2588@ulmo> <5696770D.2050007@nvidia.com>
- <20160113161931.GN2588@ulmo>
-CC: Jon Hunter <jonathanh@nvidia.com>, Peter De Schrijver
-	<pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-From: Rhyland Klein <rklein@nvidia.com>
-Message-ID: <56967B18.9070209@nvidia.com>
-Date: Wed, 13 Jan 2016 11:28:08 -0500
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 19 Jan 2016 16:38:16 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Priit Laes <plaes@plaes.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Wynter Woods <wynter@nextthing.co>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [linux-sunxi] [PATCH v2 16/26] drm: Add Allwinner A10 Display
+ Engine support
+Message-ID: <20160119153816.GV4581@lukather>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1452785109-6172-17-git-send-email-maxime.ripard@free-electrons.com>
+ <1452957104.12419.12.camel@plaes.org>
 MIME-Version: 1.0
-In-Reply-To: <20160113161931.GN2588@ulmo>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: rklein@nvidia.com
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Er97KPJOrxRt+yKZ"
+In-Reply-To: <1452957104.12419.12.camel@plaes.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 1/13/2016 11:19 AM, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Wed, Jan 13, 2016 at 11:10:53AM -0500, Rhyland Klein wrote:
->> On 1/13/2016 11:08 AM, Thierry Reding wrote:
->>>> Old Signed by an unknown key
->>>
->>> On Mon, Dec 21, 2015 at 12:56:32PM +0000, Jon Hunter wrote:
->>>> The definition, PLLU_BASE_OVERRIDE, for the pll_u OVERRIDE bit is defined
->>>> but not used and when the OVERRIDE bit is cleared in tegra210_pll_init()
->>>> the code directly uses the bit number. Therefore, use the definition,
->>>> PLLU_BASE_OVERRIDE when clearing the OVERRIDE bit.
->>>>
->>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->>>> ---
->>>>  drivers/clk/tegra/clk-tegra210.c | 2 +-
->>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
->>>> index 791215747863..6f043c5e2394 100644
->>>> --- a/drivers/clk/tegra/clk-tegra210.c
->>>> +++ b/drivers/clk/tegra/clk-tegra210.c
->>>> @@ -2520,7 +2520,7 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
->>>>  
->>>>  	/* PLLU_VCO */
->>>>  	val = readl(clk_base + pll_u_vco_params.base_reg);
->>>> -	val &= ~BIT(24); /* disable PLLU_OVERRIDE */
->>>> +	val &= ~PLLU_BASE_OVERRIDE; /* disable PLLU_OVERRIDE */
->>>>  	writel(val, clk_base + pll_u_vco_params.base_reg);
->>>>  
->>>>  	clk = tegra_clk_register_pllre("pll_u_vco", "pll_ref", clk_base, pmc,
->>>
->>> I think the comment is now redundant, given that the code says pretty
->>> much the same thing. No need to respin for that, I can remove the
->>> comment when I apply the patch. That is, unless anyone feels strongly
->>> about keeping the comment.
->>
->> I agree its redundant. If I am going to post a new version to address
->> other concerns, I can just roll this in while doing so.
-> 
-> This looks like a good fix, or cleanup, on its own. So no need for
-> anyone to carry this forward, I can pick it up into a fixes branch
-> for v4.5.
-> 
 
-Sure thing.
+--Er97KPJOrxRt+yKZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Rhyland
+Hi,
 
+On Sat, Jan 16, 2016 at 05:11:44PM +0200, Priit Laes wrote:
+> > +struct drm_fbdev_cma *sun4i_framebuffer_init(struct drm_device *drm)
+> > +{
+> > +	drm_mode_config_reset(drm);
+> > +
+> > +	drm->mode_config.max_width =3D 8192;
+> > +	drm->mode_config.max_height =3D 8192;
+>=20
+> Shouldn't these be 1920 x 1080 as per A10 User manual?
 
--- 
-nvpublic
+1080p is what the SoC can output. However, to create its output, it
+uses a combination of planes of 8192x8192, that you'll obviously have
+to crop. This is the size of the plane that we are exposing here, not
+what we can output (which is listed in the various connectors).
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--Er97KPJOrxRt+yKZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWnlhoAAoJEBx+YmzsjxAgrk0P+wXi5H3SxRcAc3DzhtpqS5+Z
+YHj0TjDAmwoTdzv9gu3evZwYGMvzSSp9yG2HfLnfErweLZdBhK6mGCKuNQblxTGi
+tXXSjHl2VDdziiMdhUKAu4H+MC86YfPrDgI6QPiBZoxZzhOv/Cfws3j2CyiHZnTv
+AK0yvsmgpXzRTje3lfLYiEyMtApjPeeMBBznmiKpgQwDHNydsOjKGKIUlJK4Syno
+i10EEvrav8ExjkYyDKcBDxvJYbjkxsKaD6vBvQTTMLFYaEj2TFrWevZ6l1ZhO9Af
++GWL26iHFXIOYJAE8l0OcrEYHmsjy2PJnp12QLEVG+agE3/+GiC9qPfDFf6zlMpm
+fdWVHOieLy4zZ4sWmxyTbd7XWvXt3jSQGcQvhXLfYEzhAk1lzPC1kCGwcYzD04oL
+nnyjr9XEteColNclIbVodXWVKH/ZfSG3ENoOa5aYDnH8xbKiUBF/regMQCeO6Dxf
+ZmTagx4MBsZb0+vp2s2Q90wNtVQbM0/rHqS5q4/QRvIJlZ4+jUx11ITEswJB1qQu
+AljdpKQEz4n/a5GmxuA8ZjG7lXt+29+Aq9aIxDeXsXuiBr14SikPk23WtNc7OATQ
+Khe0N4PkTzMfcydlDGIMcbtDKGRuF8WG/ZJG8tMqeDVBv7dfATb4VFoNW3rOP3Sh
+d5ekLS84y1QOJZraW3lF
+=34EX
+-----END PGP SIGNATURE-----
+
+--Er97KPJOrxRt+yKZ--
