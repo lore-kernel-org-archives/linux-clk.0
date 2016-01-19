@@ -1,139 +1,292 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:39653 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757324AbcASGec (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 19 Jan 2016 01:34:32 -0500
-MIME-version: 1.0
-Content-type: text/plain; charset=utf-8
-Message-id: <569DD8EF.90703@samsung.com>
-Date: Tue, 19 Jan 2016 15:34:23 +0900
-From: Inki Dae <inki.dae@samsung.com>
-To: Andrzej Hajda <a.hajda@samsung.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Hyungwon Hwang <human.hwang@samsung.com>,
-	Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v2 09/10] dt-bindings: video: exynos5433-decon: add
- bindings for DECON-TV
-References: <CAJKOXPfXrEwu1egSnLxwYofu_scskkPRKOjOCskObPFn9yVcJw@mail.gmail.com>
- <1445860796-23045-1-git-send-email-a.hajda@samsung.com>
- <56977A3B.8020104@samsung.com> <56977D42.2050904@samsung.com>
- <569C279D.1020705@samsung.com> <569CB664.3090806@samsung.com>
- <569CBA70.8000107@samsung.com>
-In-reply-to: <569CBA70.8000107@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <xuejiancheng@hisilicon.com>
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <p.zabel@pengutronix.de>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
+        <mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
+        <galak@codeaurora.org>, <linux@arm.linux.org.uk>, <khilman@linaro.org>,
+        <arnd@arndb.de>, <olof@lixom.net>, <xuwei5@hisilicon.com>,
+        <haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+        <bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
+        <suwenping@hisilicon.com>, <raojun@hisilicon.com>,
+        <ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
+        <zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>,
+        Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v6 6/6] ARM: dts: add dts files for Hi3519
+Date: Tue, 19 Jan 2016 10:38:31 +0800
+Message-ID: <1453171111-21921-7-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1453171111-21921-1-git-send-email-xuejiancheng@huawei.com>
+References: <1453171111-21921-1-git-send-email-xuejiancheng@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+add dts files for Hi3519
 
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+---
+ arch/arm/boot/dts/Makefile        |   2 +
+ arch/arm/boot/dts/hi3519-demb.dts |  42 +++++++++
+ arch/arm/boot/dts/hi3519.dtsi     | 187 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 231 insertions(+)
+ create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
+ create mode 100644 arch/arm/boot/dts/hi3519.dtsi
 
-2016년 01월 18일 19:12에 Andrzej Hajda 이(가) 쓴 글:
-> Hi Inki,
-> 
-> On 01/18/2016 10:54 AM, Inki Dae wrote:
->>
->> 2016년 01월 18일 08:45에 Krzysztof Kozlowski 이(가) 쓴 글:
->>> On 14.01.2016 19:49, Inki Dae wrote:
->>>> + Rob Herring
->>>>
->>>> 2016년 01월 14일 19:36에 Andrzej Hajda 이(가) 쓴 글:
->>>>> Hi Inki,
->>>>>
->>>>> It seems this patch and 04/10 did not get picked up yet.
->>>>> Could you merge it?
->>>> Yes, I can. However, 04/10 is required for acked-by from dt or SoC maintainer.
->>>> Krzysztof and Rob, could you give me acked-by?
->>>>
->>>> Thanks,
->>>> Inki Dae
->>> My ack is really not required, because this is a binding for a specific
->>> driver from video subsystem. It does not fall into the arm/mach-exynos
->>> nor the dts/*exynos*.
->>>
->>> Anyway I reviewed the patch on 28th of October and Rob acked it on 13th
->>> of November.
->> I meant 04/10 not 09/10 patch. :)
-> 
-> There is document in kernel with clear explanation about the subject:
-> Documentation/devicetree/bindings/submitting-patches.txt.
-> See especially paragraph II.2 [1].
-> 
-> [1]: Documentation/devicetree/bindings/submitting-patches.txt#L50
-
-Got it. The document says,
-"For driver (not subsystem) bindings: If you are comfortable with the
- binding, and it hasn't received an Acked-by from the devicetree
- maintainers after a few weeks, go ahead and take it."
-
-Thanks,
-Inki Dae
-
-> 
-> Regards
-> Andrzej
-> 
->>
->> Thanks,
->> Inki Dae
->>
->>> Best regards,
->>> Krzysztof
->>>
->>>
->>>>> Regards
->>>>> Andrzej
->>>>>
->>>>> On 10/26/2015 12:59 PM, Andrzej Hajda wrote:
->>>>>> DECON-TV(Display and Enhancement Controller for TV) is a variation
->>>>>> of DECON IP. Its main purpose is to produce video stream for HDMI IP.
->>>>>>
->>>>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->>>>>> ---
->>>>>> Hi Krzysztof,
->>>>>>
->>>>>> I have decided to skip cleanup part as it would require more work,
->>>>>> not related to this patchset.
->>>>>>
->>>>>> Regards
->>>>>> Andrzej
->>>>>>
->>>>>>  Documentation/devicetree/bindings/video/exynos5433-decon.txt | 3 ++-
->>>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/video/exynos5433-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
->>>>>> index 3dff78b..c9fd7b3 100644
->>>>>> --- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
->>>>>> +++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
->>>>>> @@ -5,7 +5,8 @@ Exynos series of SoCs which transfers the image data from a video memory
->>>>>>  buffer to an external LCD interface.
->>>>>>  
->>>>>>  Required properties:
->>>>>> -- compatible: value should be "samsung,exynos5433-decon";
->>>>>> +- compatible: value should be one of:
->>>>>> +	"samsung,exynos5433-decon", "samsung,exynos5433-decon-tv";
->>>>>>  - reg: physical base address and length of the DECON registers set.
->>>>>>  - interrupts: should contain a list of all DECON IP block interrupts in the
->>>>>>  	      order: VSYNC, LCD_SYSTEM. The interrupt specifier format
->>>>> --
->>>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->>>>> the body of a message to majordomo@vger.kernel.org
->>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>>>
->>>>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
->>>
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 30bbc37..1ff3ed9 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -135,6 +135,8 @@ dtb-$(CONFIG_ARCH_EXYNOS5) += \
+ 	exynos5800-peach-pi.dtb
+ dtb-$(CONFIG_ARCH_HI3xxx) += \
+ 	hi3620-hi4511.dtb
++dtb-$(CONFIG_ARCH_HISI) += \
++	hi3519-demb.dtb
+ dtb-$(CONFIG_ARCH_HIX5HD2) += \
+ 	hisi-x5hd2-dkb.dtb
+ dtb-$(CONFIG_ARCH_HIGHBANK) += \
+diff --git a/arch/arm/boot/dts/hi3519-demb.dts b/arch/arm/boot/dts/hi3519-demb.dts
+new file mode 100644
+index 0000000..6991ab6
+--- /dev/null
++++ b/arch/arm/boot/dts/hi3519-demb.dts
+@@ -0,0 +1,42 @@
++/*
++ * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ */
++
++/dts-v1/;
++#include "hi3519.dtsi"
++
++/ {
++	model = "HiSilicon HI3519 DEMO Board";
++	compatible = "hisilicon,hi3519";
++
++	aliases {
++		serial0 = &uart0;
++	};
++
++	memory {
++		device_type = "memory";
++		reg = <0x80000000 0x40000000>;
++	};
++};
++
++&uart0 {
++	status = "okay";
++};
++
++&dual_timer0 {
++	status = "okay";
++};
+diff --git a/arch/arm/boot/dts/hi3519.dtsi b/arch/arm/boot/dts/hi3519.dtsi
+new file mode 100644
+index 0000000..5729ecf
+--- /dev/null
++++ b/arch/arm/boot/dts/hi3519.dtsi
+@@ -0,0 +1,187 @@
++/*
++ * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ */
++
++#include <dt-bindings/clock/hi3519-clock.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++/ {
++	#address-cells = <1>;
++	#size-cells = <1>;
++	chosen { };
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <0>;
++		};
++	};
++
++	gic: interrupt-controller@10300000 {
++		compatible = "arm,cortex-a7-gic";
++		#interrupt-cells = <3>;
++		interrupt-controller;
++		reg = <0x10301000 0x1000>, <0x10302000 0x1000>;
++	};
++
++	clk_3m: clk_3m {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <3000000>;
++	};
++
++	crg: clock-reset-controller@12010000 {
++		compatible = "hisilicon,hi3519-crg";
++		#clock-cells = <1>;
++		#reset-cells = <2>;
++		reg = <0x12010000 0x10000>;
++	};
++
++	soc {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "simple-bus";
++		interrupt-parent = <&gic>;
++		ranges;
++
++		uart0: serial@12100000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12100000 0x1000>;
++			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_UART0_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		uart1: serial@12101000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12101000 0x1000>;
++			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_UART1_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		uart2: serial@12102000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12102000 0x1000>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_UART2_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		uart3: serial@12103000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12103000 0x1000>;
++			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_UART3_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		uart4: serial@12104000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12104000 0x1000>;
++			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_UART4_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		dual_timer0: timer@12000000 {
++			compatible = "arm,sp804", "arm,primecell";
++			interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0x12000000 0x1000>;
++			clocks = <&clk_3m>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		dual_timer1: timer@12001000 {
++			compatible = "arm,sp804", "arm,primecell";
++			interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0x12001000 0x1000>;
++			clocks = <&clk_3m>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		dual_timer2: timer@12002000 {
++			compatible = "arm,sp804", "arm,primecell";
++			interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0x12002000 0x1000>;
++			clocks = <&clk_3m>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		spi_bus0: spi@12120000 {
++			compatible = "arm,pl022", "arm,primecell";
++			reg = <0x12120000 0x1000>;
++			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_SPI0_CLK>;
++			clock-names = "apb_pclk";
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disable";
++		};
++
++		spi_bus1: spi@12121000 {
++			compatible = "arm,pl022", "arm,primecell";
++			reg = <0x12121000 0x1000>;
++			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_SPI1_CLK>;
++			clock-names = "apb_pclk";
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disable";
++		};
++
++		spi_bus2: spi@12122000 {
++			compatible = "arm,pl022", "arm,primecell";
++			reg = <0x12122000 0x1000>;
++			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_SPI2_CLK>;
++			clock-names = "apb_pclk";
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disable";
++		};
++
++		sysctrl: system-controller@12020000 {
++			compatible = "hisilicon,hi3519-sysctrl", "syscon";
++			reg = <0x12020000 0x1000>;
++		};
++
++		reboot {
++			compatible = "syscon-reboot";
++			regmap = <&sysctrl>;
++			offset = <0x4>;
++			mask = <0xdeadbeef>;
++		};
++	};
++};
+-- 
+1.9.1
