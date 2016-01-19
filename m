@@ -1,105 +1,234 @@
-Return-Path: <dianders@google.com>
+Return-Path: <prvs=8191aee2d=Ian.Campbell@citrix.com>
+Message-ID: <1453197968.6020.233.camel@citrix.com>
+Subject: Re: [Xen-devel] [RFC/WIP] xen: clk: introudce pvclk for device
+ passthrough
+From: Ian Campbell <ian.campbell@citrix.com>
+To: Peng Fan <van.freenix@gmail.com>
+CC: David Vrabel <david.vrabel@citrix.com>, <linux-kernel@vger.kernel.org>,
+	<xen-devel@lists.xenproject.org>, Michael Turquette
+	<mturquette@baylibre.com>, Stefano Stabellini
+	<stefano.stabellini@eu.citrix.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Julien Grall <julien.grall@citrix.com>, Boris Ostrovsky
+	<boris.ostrovsky@oracle.com>, <linux-clk@vger.kernel.org>
+Date: Tue, 19 Jan 2016 10:06:08 +0000
+In-Reply-To: <20160119024307.GC12932@linux-7smt.suse>
+References: <1452921760-21294-1-git-send-email-van.freenix@gmail.com>
+	 <569CCB58.5040904@citrix.com> <1453120919.6020.142.camel@citrix.com>
+	 <20160119024307.GC12932@linux-7smt.suse>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Sender: dianders@google.com
-In-Reply-To: <CAAObsKBS45kbvdmdvFxwSo=B9GXRLoX2g7WQYVmZJ0KFnwSejw@mail.gmail.com>
-References: <1415087559-19444-1-git-send-email-kever.yang@rock-chips.com>
-	<48806799.thBSifdUp8@diego>
-	<54647142.4080800@rock-chips.com>
-	<CAD=FV=Vzec3Qm-kc6zZ4VxSREoZbzVkWbzp-noHYdcEVrLYYSw@mail.gmail.com>
-	<CAAObsKChYN5nmcm5OWnAzNRGDi_QGSoKvN+0FizhjeT-3mmeXQ@mail.gmail.com>
-	<CAD=FV=Wgu=xQ9PcVqfzcedXVU3Rh-HKbBVxHuqgV9OZJEYhYvg@mail.gmail.com>
-	<CAAObsKC1v--mZwkiG-c7P2Bwi2-_txbeqaW4Vd5h-noAVNbhjA@mail.gmail.com>
-	<CAD=FV=VB93wYigRJ8wa8YL6P+Q+-fRokPiCB-Fo1pC_zAdh2oA@mail.gmail.com>
-	<CAAObsKCMh3Bk_oNJdLbU2F9b7jrnFZOp2uFR_oPqUoJ3W1gfaQ@mail.gmail.com>
-	<CAD=FV=W=LCJk4m049hBnm7BOYudnVe=oa3jdcSrrZZUU9rFtog@mail.gmail.com>
-	<CAAObsKBS45kbvdmdvFxwSo=B9GXRLoX2g7WQYVmZJ0KFnwSejw@mail.gmail.com>
-Date: Tue, 26 Jan 2016 08:32:07 -0800
-Message-ID: <CAD=FV=Une-DJ+0zV6Hmx5EmKXCEApb2Zx1FuJaUQf7MT9OPsug@mail.gmail.com>
-Subject: Re: [PATCH 0/5] clk: rockchip: add full support for HDMI clock on rk3288
-From: Doug Anderson <dianders@chromium.org>
-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Cc: Kever Yang <kever.yang@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	Sonny Rao <sonnyrao@chromium.org>, Addy Ke <addy.ke@rock-chips.com>,
-	Eddie Cai <cf@rock-chips.com>, ZhenFu Fang <fzf@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>,
-	=?UTF-8?B?5aea5pm65oOF?= <yzq@rock-chips.com>,
-	=?UTF-8?B?5oi05YWL6ZyWIChKYWNrKQ==?= <dkl@rock-chips.com>,
-	Tao Huang <huangtao@rock-chips.com>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: ian.campbell@citrix.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Tomeu,
+On Tue, 2016-01-19 at 10:43 +0800, Peng Fan wrote:
+> Hello Ian,
+>=20
+> On Mon, Jan 18, 2016 at 12:41:59PM +0000, Ian Campbell wrote:
+> > On Mon, 2016-01-18 at 11:24 +0000, David Vrabel wrote:
+> > > On 16/01/16 05:22, Peng Fan wrote:
+> > > > This patch was just a initial patch, not sure whether this way
+> > > > is ok from you side for handlding clk when doing platform device
+> > > > passhthrough. Any comments are appreciated, and your comments may
+> > > > give me a better direction.
+> > >=20
+> > > There's no documentation on the interface, which makes it difficult
+> > > to
+> > > review.=C2=A0=C2=A0At a first look it looks very specific to the part=
+icular
+> > > Linux
+> > > implementation of a clk subsystem.
+> > >=20
+> > > > --- /dev/null
+> > > > +++ b/include/xen/interface/io/clkif.h
+> > > > @@ -0,0 +1,41 @@
+> > > > +/*
+> > > > + * The code contained herein is licensed under the GNU General
+> > > > Public
+> > > > + * License. You may obtain a copy of the GNU General Public
+> > > > License
+> > > > + * Version 2 or later at the following locations:
+> > > > + *
+> > > > + * http://www.opensource.org/licenses/gpl-license.html
+> > > > + * http://www.gnu.org/copyleft/gpl.html
+> > > > + */
+> > >=20
+> > > ABIs should be under a more permissive license so they can be used by
+> > > other (non-GPLv2) operating systems.
+> >=20
+> > ... along the same lines proposals for new ABIs should be made in the
+> > form
+> > of patches to xen.git:xen/include/public/io/ before being submitted as
+> > an
+> > implementation for one particular os.
+>=20
+> I had no idea about this before. Do you mean that before I implement
+> pvclk for linux, I need to first post the clkif part to xen devel?
+>=20
+> If it is, I'll split the interface part and send this part to
+> xen-devel@lists.xenproject.org for review.
 
-On Tue, Jan 26, 2016 at 12:28 AM, Tomeu Vizoso <tomeu@tomeuvizoso.net> wrote:
-> On 22 January 2016 at 18:07, Doug Anderson <dianders@chromium.org> wrote:
->> Tomeu,
->>
->> On Fri, Jan 22, 2016 at 6:00 AM, Tomeu Vizoso <tomeu@tomeuvizoso.net> wrote:
->>> On 21 January 2016 at 21:11, Doug Anderson <dianders@chromium.org> wrote:
->>>> Hi,
->>>>
->>>> On Thu, Jan 21, 2016 at 1:03 AM, Tomeu Vizoso <tomeu@tomeuvizoso.net> wrote:
->>>>> So we have a mechanism for detecting a conflict in the clock
->>>>> hierarchy, and a mechanism to solve it, but we are missing a way for
->>>>> userspace to communicate policy regarding which clocks should be given
->>>>> priority when solving such a conflict?
->>>>
->>>> Hrmmm, I guess it could be userspace that makes the decision.  It does
->>>> seem a little odd to force it to userspace in all cases, though.  For
->>>> a particular laptop that is designed with a specific panel connected
->>>> up eDP it seems less than ideal to push this into userspace.  If the
->>>> kernel could just work in the expected sane way (or at least work that
->>>> way by default) it would be ideal.
->>>
->>> Ah, I was wrongly assuming that the kernel didn't have enough
->>> information to make an informed decision in this case, sorry.
->>>
->>> Guess the per-user rate limits don't help here because the consumer
->>> with higher priority could work with frequencies other than the ideal.
->>>
->>> And we cannot have a consumer listening for PRE_RATE_CHANGE and
->>> aborting unwanted changes or rerouting the ancestors of the clocks of
->>> other consumers because that would be a massive violation of
->>> separation of concerns.
->>>
->>> If we were to rearrange the clock topology from within the CCF, then
->>> consumers need to have a way to communicate to the core that they are
->>> more important than other consumers. clk_set_important(clk, true)
->>> could be enough in this case, but would be insufficient in more
->>> complex cases where more than two clocks could use the same PLL.
->>
->> With something like the above I'd still expect some complexity
->> depending on the probe order.  If a less important device grabs the
->> clock first, it might be forced to re-think its clocks later.  That
->> might be disconcerting.
->
-> How much disconcerting do you think this could be? Hopefully those
-> devices should probe quite close to each other, right?
+Yes, please.
 
-Probe: probably, though with defers it could be several seconds.
+xen.git contains the canonical definition of all Xen PV protocols, copies
+are then taking into OSes for implementation purposes.
 
-...but remember that display interfaces tend to be hotplug.  That
-might mean that the HDMI interface won't try to set the clock until
-much, much later.
+>=20
+> >=20
+> >=20
+> > > > +	unsigned long rate;
+> > > > +	char clk_name[32];
+> > >=20
+> > > Where does the frontend get these names from?=C2=A0=C2=A031 character=
+ names
+> > > seems
+> > > rather limiting.
+> >=20
+> > Indeed.
+> >=20
+> > At a guess I would assume they come from the device-tree given to the
+> > guest
+> > and tie into the host device tree.
+>=20
+> Yeah. the clk_name is got from DomU dts, and in Dom0 there is also a same
+> name.
+>=20
+> >=20
+> > I think a better model might be for each clk to have it's own
+> > subdirectory
+> > under the overall clock bus node, e.g. something like:
+> >=20
+> > /local/domain/<...>/clk/0/nr-clks =3D 4
+> > /local/domain/<...>/clk/0/clk-0/ ...
+> > /local/domain/<...>/clk/0/clk-1/ ...
+> > /lo
+> > cal/domain/<...>/clk/0/clk-2/ ...
+> > /local/domain/<...>/clk/0/clk-3/ ...
+> >=20
+> > and for each subdirectory to contain the a node containing the
+> > corresponding firmware table identifier (so path in the DT case), which
+> > the toolstack knows, so it can setup the f/e and b/e to correspond as
+> > necessary, and the f/e device needn't necessarily use the same name as
+> > the backend/host).
+> >=20
+> > The request would then include the index and not the name (and as David
+> > observes the response only needs the id).
+>=20
+> For now, I have not began the userspace libxl part for pvclk, I use the
+> libxl pvusb code for test (:
 
+Sure, but eventually this will need implementing in the toolstack and the
+protocol design should be what is most suitable for the usecase, not what
+happens to be most convenient for testing via some quick hack.
 
->> OK, so I was just involved in a change recently that made me realize
->> that maybe our original problems were tied to the fact that our
->> builtin panels were trying to specify a clock that was impossible to
->> achieve with CPLL / GPLL.  It was a known problem that the request
->> would be denied and the CCF would just pick the closest rate it could.
->> Probably the right thing is to solve _that_ problem first.  If using
->> simple panel you could do a change like
->> <https://chromium-review.googlesource.com/#/c/323211/> (though
->> presumably you'd have to handle people using the same panel in other
->> laptops).  You might also be able to do funny things to fixup the mode
->> like dbehr tried to do in
->> <https://chromium-review.googlesource.com/#/c/270017/>.  By doing this
->> and making sure that
->
-> Are we missing something here?
+> The id acctually means what operation is needed, such as CLK_PREPARE,
+> CLK_UNPREPARE, CLK_SET_RATE, CLK_GET_RATE. I'll add more text to document
+> this in V2.
 
-Eh?
+Ah, then for consistency with other PV protocols I would suggest renaming
+your "id" as "cmd" and adding an "id" field which is simply echoed in the
+response to allow the frontend to match responses to requests.
+
+Note however that the important thing in my paragraphs above was the
+decoupling of the naming from the f/e and b/e and avoiding the use of the
+DT specific path in the ring requests.
+
+The PV protocol should ideally be independent of DT (lets assume we will
+want to use it for e.g. ACPI too), although there would probably in this
+case need to be a binding from the DT world to the pvclk world to allow the
+guest DT to remain consistent (i.e. so devices have something they can
+point at which can be resolved into a pvclk).
+
+> >=20
+> > I'd also like to see a description of the DT bindings, which I assume
+> > must be needed such that the devices clocks property has something to
+> > refer to. For example maybe it doesn't make sense for xenstore to
+> > contain the path, but for the pvclk node in xenstore to contain the
+> > index.
+>=20
+> The DT bindings for xen pvclk, I use this:
+> "
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0clks: clks {
+> 			compatible =3D "xen,xen-clk";
+> 			#clock-cells =3D <1>;
+> 			clock-output-names =3D "uart2_root_clk";
+> 		};
+> "
+> the clock-output-names will be parsed and be registered as clk root. The
+> device will use index to refer to the clk, as the following:
+> "
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0clocks =3D <&clks 0>, <&clks 0>;
+> 	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0clock-names =3D "ipg", "=
+per";
+> "
+> 0 means the first one in clock-output-names.
+
+This binding should be defined in Documentation/devicetree/Bindings in the
+usual way.
+
+>=20
+> To the xenstore part, I am not sure whether need to expose the clock
+> relate info to xenstore. I just want to store the clock names in xenstore
+> to let
+> user know what clocks are now handled by DomU.
+>=20
+> How about the following?
+>=20
+> doamin1:
+> /local/domain/1/device/vclk/nr-clks
+> /local/domain/1/device/vclk/clk-0/name
+> /local/domain/1/device/vclk/clk-1/name
+
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0^/0
+
+>=20
+> domain2:
+> /local/domain/2/device/vclk/nr-clks
+> /local/domain/2/device/vclk/clk-0/name
+> /local/domain/2/device/vclk/clk-1/name
+
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0^/0
+
+>=20
+> domain0:
+> /local/domain/0/backend/vclk/1/0/nr-clks
+> /local/domain/0/backend/vclk/1/0/clk-0/name
+> /local/domain/0/backend/vclk/1/0/clk-1/name
+
+Correct.
+
+> /local/domain/0/backend/vclk/1/1/nr-clks
+> /local/domain/0/backend/vclk/1/1/clk-0/name
+> /local/domain/0/backend/vclk/1/1/clk-1/name
+
+Should be:
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /2/0
+
+In /local/domain/*/device/vclk/<N> the <N> is the devid or bus number
+(better to think of it as the latter in this case).
+
+In /local/domain/<X>/backend/vclk/<Y>/<Z>/ you have:
+    X -- the backend domid (may not be 0 in all cases, needs to be planned
+    for but not necessarily implemented)
+    Y -- the frontend domain
+    Z -- the devid/bus within frontend domain
+
+> Or do not store the name and nr-clks in domain0?
+
+The f/e directory should contain the identifier which the frontend needs to
+=C2=A0do the lookup from the firmware tables into pvclk space -- i.e. the n=
+ame
+given in the f/e device tree node (maybe call it dt-name?).
+
+The b/e directory should contain the name of the clock from the backend
+(i.e. host) pov i.e. the thing which needs to be looked up in the host
+firmware tables.
+
+The two names are not necessarily the same, just as a thought experiment
+consider a DT using domU on an ACPI host or vice versa.
+
+Ian.
