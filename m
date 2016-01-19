@@ -1,23 +1,47 @@
-Return-Path: <stillcompiling@gmail.com>
-Return-Path: <stillcompiling@gmail.com>
-Date: Fri, 29 Jan 2016 15:35:21 -0800
-From: Joshua Clayton <stillcompiling@gmail.com>
-To: Stefan Agner <stefan@agner.ch>
-Cc: shawnguo@kernel.org, kernel@pengutronix.de, mturquette@baylibre.com,
- sboyd@codeaurora.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
-Message-ID: <20160129153521.3deee49c@jclayton-pc>
-In-Reply-To: <1454107764-19876-1-git-send-email-stefan@agner.ch>
-References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Rob Herring <robh+dt@kernel.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Remi Pommarel <repk@triplefau.lt>,
+	devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [RFC 0/9] Allow modifications of specific clocks via DT and more
+Date: Tue, 19 Jan 2016 14:51:31 +0000
+Message-Id: <1453215100-2382-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 29 Jan 2016 14:49:23 -0800
-Stefan Agner <stefan@agner.ch> wrote:
+From: Martin Sperl <kernel@martin.sperl.org>
 
-> If a clock gets enabled early during boot time, it can lead to a PLL
-> startup. The wait_lock function makes sure that the PLL is really
-> stareted up before it gets used. However, the function sleeps which
-s/stareted/started/
+This patch series (which requires the patch-series-v4 of
+"clk: bcm2835: add clocks and add MASH support") allows to configure
+specific aspects (mostly with regards to clock selection) of individual
+clocks to get configured via the device-tree.
+
+Also - for debug purposes - a patch has been added that exposes the
+raw clock registers read-only via debugfs.
+
+Martin Sperl (9):
+  clk: bcm2835: add basic device tree support for per clock settings
+  clk: bcm2835: add support for parent selection in DT
+  clk: bcm2835: add ability to control mash level via device-tree
+  clk: bcm2835: reorganize bcm2835_clock_determine_rate
+  clk: bcm2835: prefer clocks that use integer dividers
+  clk: bcm2835: allow to define a minimum fractional divider in DT
+  clk: bcm2835: allow clock choosing mechanims to be selected in DT
+  dt-bindings: bcm2835: document optional per clock dt-nodes
+  clk: bcm2835: expose raw clock-registers via debugfs
+
+ .../bindings/clock/brcm,bcm2835-cprman.txt         |   33 ++
+ drivers/clk/bcm/clk-bcm2835.c                      |  508 ++++++++++++++++++--
+ include/dt-bindings/clock/bcm2835.h                |   15 +
+ 3 files changed, 512 insertions(+), 44 deletions(-)
+
+-- 
+1.7.10.4
