@@ -1,68 +1,30 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 29 Jan 2016 17:06:01 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: axi-clkgen: Add multi-parent support
-Message-ID: <20160130010601.GC4848@codeaurora.org>
-References: <1448902496-21218-1-git-send-email-lars@metafoo.de>
- <1448902496-21218-2-git-send-email-lars@metafoo.de>
+Return-Path: <festevam@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1448902496-21218-2-git-send-email-lars@metafoo.de>
+In-Reply-To: <20160113201704.1168.94040@quark.deferred.io>
+References: <1452531716-12149-1-git-send-email-festevam@gmail.com>
+	<20160113201704.1168.94040@quark.deferred.io>
+Date: Tue, 19 Jan 2016 11:12:44 -0200
+Message-ID: <CAOMZO5D7qspC=j0nuYqJR2S+vOuR13JZm2z0SL-QraUMzpHdSQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: clk-imx25: Force LCDC IPG clock to be disabled
+From: Fabio Estevam <festevam@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>, Carlos Soto <csotoalonso@gmail.com>, linux-clk@vger.kernel.org,
+	Fabio Estevam <fabio.estevam@nxp.com>, stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/30, Lars-Peter Clausen wrote:
-> The clock generator has two clock inputs that can be used as the reference
-> clock. Add support for switching between them at runtime.
-> 
-> Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
-> ---
+Hi Mike,
 
-Applied to clk-next
+On Wed, Jan 13, 2016 at 6:17 PM, Michael Turquette
+<mturquette@baylibre.com> wrote:
 
->  .../devicetree/bindings/clock/axi-clkgen.txt       |  5 ++-
->  drivers/clk/clk-axi-clkgen.c                       | 40 ++++++++++++++++++----
->  2 files changed, 38 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
-> index 8dedc60..9a0744c 100644
-> --- a/drivers/clk/clk-axi-clkgen.c
-> +++ b/drivers/clk/clk-axi-clkgen.c
-> @@ -349,12 +350,33 @@ static void axi_clkgen_disable(struct clk_hw *clk_hw)
-> @@ -370,10 +392,11 @@ static int axi_clkgen_probe(struct platform_device *pdev)
->  	const struct of_device_id *id;
->  	struct axi_clkgen *axi_clkgen;
->  	struct clk_init_data init;
-> -	const char *parent_name;
-> +	const char *parent_names[2];
->  	const char *clk_name;
->  	struct resource *mem;
->  	struct clk *clk;
-> +	unsigned int i;
->  
->  	if (!pdev->dev.of_node)
->  		return -ENODEV;
-> @@ -391,19 +414,24 @@ static int axi_clkgen_probe(struct platform_device *pdev)
->  	if (IS_ERR(axi_clkgen->base))
->  		return PTR_ERR(axi_clkgen->base);
->  
-> -	parent_name = of_clk_get_parent_name(pdev->dev.of_node, 0);
-> -	if (!parent_name)
-> +	init.num_parents = of_clk_get_parent_count(pdev->dev.of_node);
-> +	if (init.num_parents < 1 || init.num_parents > 2)
->  		return -EINVAL;
->  
-> +	for (i = 0; i < init.num_parents; i++) {
-> +		parent_names[i] = of_clk_get_parent_name(pdev->dev.of_node, i);
-> +		if (!parent_names[i])
-> +			return -EINVAL;
-> +	}
+> A couple of thoughts on this:
+>
+> 1) should you have a reset controller thingy for the LCDC? That might be
+> a better way to model what's going on.
 
-This can be of_clk_parent_fill(). Feel free to send a cleanup. I
-would have asked for one, but you've been waiting two months.
+Ok, just sent a patch forcing a reset to the controller by
+enabling/disabling the IPG clock.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks
