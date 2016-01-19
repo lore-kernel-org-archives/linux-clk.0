@@ -1,109 +1,63 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: Kukjin Kim <kgene@kernel.org>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
- Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v4 3/3] arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into
- ARCH_EXYNOS
-Date: Thu, 28 Jan 2016 09:35:24 +0900
-Message-id: <1453941324-15742-4-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1453941324-15742-1-git-send-email-k.kozlowski@samsung.com>
-References: <1453941324-15742-1-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga02-in.huawei.com ([119.145.14.65]:21298 "EHLO
+	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756882AbcASDBW (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jan 2016 22:01:22 -0500
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+	<xuejiancheng@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v6 5/6] ARM: dt-bindings: add device tree bindings for Hi3519 sysctrl
+Date: Tue, 19 Jan 2016 10:38:30 +0800
+Message-ID: <1453171111-21921-6-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1453171111-21921-1-git-send-email-xuejiancheng@huawei.com>
+References: <1453171111-21921-1-git-send-email-xuejiancheng@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The ARMv8 Exynos family SoCs in Linux kernel are currently:
- - Exynos5433 (controlled by ARCH_EXYNOS),
- - Exynos7 (controlled by ARCH_EXYNOS7).
+Add device tree bindings for Hi3519 system controller.
 
-It duplicates Kconfig symbols unnecessarily, so consolidate them into
-one ARCH_EXYNOS. Future SoCs could fall also under the ARCH_EXYNOS
-symbol.
-
-The commit should not bring any visible functional change.
-
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
-Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
-
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
 ---
+ .../devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt   | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
 
-Changes since v3:
-1. Rebase on next-20160127.
-
-Changes since v2:
-1. None
-
-Changes since v1:
-1. Minor cleanups after Tomasz's comments.
-2. Added tags: Chanwoo's, Pankaj's, Alim's and Tomasz's.
----
- arch/arm64/Kconfig.platforms        | 11 ++---------
- arch/arm64/boot/dts/exynos/Makefile |  2 +-
- arch/arm64/configs/defconfig        |  2 +-
- 3 files changed, 4 insertions(+), 11 deletions(-)
-
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 83ac9316a432..36e1233493d6 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -14,22 +14,15 @@ config ARCH_BERLIN
- 	  This enables support for Marvell Berlin SoC Family
- 
- config ARCH_EXYNOS
--	bool
--	help
--	  This enables support for Samsung Exynos SoC family
--
--config ARCH_EXYNOS7
--	bool "ARMv8 based Samsung Exynos7"
--	select ARCH_EXYNOS
-+	bool "ARMv8 based Samsung Exynos SoC family"
- 	select COMMON_CLK
- 	select COMMON_CLK_SAMSUNG
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
- 	select HAVE_S3C_RTC if RTC_CLASS
- 	select PINCTRL
- 	select PINCTRL_EXYNOS
--
- 	help
--	  This enables support for Samsung Exynos7 SoC family
-+	  This enables support for ARMv8 based Samsung Exynos SoC family.
- 
- config ARCH_LAYERSCAPE
- 	bool "ARMv8 based Freescale Layerscape SoC family"
-diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-index 20310e5b6d6f..50c9b9383cfa 100644
---- a/arch/arm64/boot/dts/exynos/Makefile
-+++ b/arch/arm64/boot/dts/exynos/Makefile
-@@ -1,4 +1,4 @@
--dtb-$(CONFIG_ARCH_EXYNOS7) += exynos7-espresso.dtb
-+dtb-$(CONFIG_ARCH_EXYNOS) += exynos7-espresso.dtb
- 
- always		:= $(dtb-y)
- subdir-y	:= $(dts-dirs)
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 18ca9fb9e65f..331a843cf122 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -33,7 +33,7 @@ CONFIG_MODULE_UNLOAD=y
- # CONFIG_IOSCHED_DEADLINE is not set
- CONFIG_ARCH_BCM_IPROC=y
- CONFIG_ARCH_BERLIN=y
--CONFIG_ARCH_EXYNOS7=y
-+CONFIG_ARCH_EXYNOS=y
- CONFIG_ARCH_LAYERSCAPE=y
- CONFIG_ARCH_HISI=y
- CONFIG_ARCH_MEDIATEK=y
+diff --git a/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt b/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
+new file mode 100644
+index 0000000..115c5be
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
+@@ -0,0 +1,14 @@
++* Hisilicon Hi3519 System Controller Block
++
++This bindings use the following binding:
++Documentation/devicetree/bindings/mfd/syscon.txt
++
++Required properties:
++- compatible: "hisilicon,hi3519-sysctrl".
++- reg: the register region of this block
++
++Examples:
++sysctrl: system-controller@12010000 {
++	compatible = "hisilicon,hi3519-sysctrl", "syscon";
++	reg = <0x12010000 0x1000>;
++};
 -- 
 1.9.1
+
