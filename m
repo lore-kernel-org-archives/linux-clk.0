@@ -1,66 +1,181 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:19182 "EHLO
-	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752128AbcAELpA (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jan 2016 06:45:00 -0500
-Date: Tue, 5 Jan 2016 14:44:52 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: vz@mleia.com
-Cc: linux-clk@vger.kernel.org
-Subject: re: clk: lpc32xx: add common clock framework driver
-Message-ID: <20160105114452.GA31494@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2 1/3] clk: s2mps11: allocate only one structure for clock
+ init
+To: Andi Shyti <andi.shyti@samsung.com>, linux-samsung-soc@vger.kernel.org
+References: <1453193552-4761-1-git-send-email-andi.shyti@samsung.com>
+ <1453193552-4761-2-git-send-email-andi.shyti@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Andi Shyti <andi@etezian.org>,
+ Yadwinder Singh Brar <yadi.brar01@gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <569EC840.1030702@samsung.com>
+Date: Wed, 20 Jan 2016 08:35:28 +0900
+MIME-version: 1.0
+In-reply-to: <1453193552-4761-2-git-send-email-andi.shyti@samsung.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Vladimir Zapolskiy (and other clk devs as well),
+On 19.01.2016 17:52, Andi Shyti wrote:
+> The driver allocates three structures for three different clock
+> types. They are quite similar and in the clock init data they
+> differ only by the name. Only one of these structures is used,
+> while the others lie unused in the memory.
+> 
+> The clock's name, though, is not such a meaningful information
+> and by assigning the same name to the initial data we can avoid
+> over allocation. The common name chosen will be s2mps11,
+> coherently with the device driver name, instead of the clock
+> device.
+> 
+> Therefore, remove the structures associated to s2mps13 and
+> s2mps14 and use only the one referred to s2mps11 for all kind of
+> clocks.
+> 
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  drivers/clk/clk-s2mps11.c | 56 ++++++-----------------------------------------
+>  1 file changed, 7 insertions(+), 49 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+> index d266299..22d4df2 100644
+> --- a/drivers/clk/clk-s2mps11.c
+> +++ b/drivers/clk/clk-s2mps11.c
+> @@ -99,6 +99,7 @@ static struct clk_ops s2mps11_clk_ops = {
+>  	.recalc_rate	= s2mps11_clk_recalc_rate,
+>  };
+>  
+> +/* This s2mps11_clks_init tructure is common to s2mps11, s2mps13 and s2mps14 */
+>  static struct clk_init_data s2mps11_clks_init[S2MPS11_CLKS_NUM] = {
+>  	[S2MPS11_CLK_AP] = {
+>  		.name = "s2mps11_ap",
+> @@ -117,43 +118,11 @@ static struct clk_init_data s2mps11_clks_init[S2MPS11_CLKS_NUM] = {
+>  	},
+>  };
+>  
+> -static struct clk_init_data s2mps13_clks_init[S2MPS11_CLKS_NUM] = {
+> -	[S2MPS11_CLK_AP] = {
+> -		.name = "s2mps13_ap",
+> -		.ops = &s2mps11_clk_ops,
+> -		.flags = CLK_IS_ROOT,
+> -	},
+> -	[S2MPS11_CLK_CP] = {
+> -		.name = "s2mps13_cp",
+> -		.ops = &s2mps11_clk_ops,
+> -		.flags = CLK_IS_ROOT,
+> -	},
+> -	[S2MPS11_CLK_BT] = {
+> -		.name = "s2mps13_bt",
+> -		.ops = &s2mps11_clk_ops,
+> -		.flags = CLK_IS_ROOT,
+> -	},
+> -};
+> -
+> -static struct clk_init_data s2mps14_clks_init[S2MPS11_CLKS_NUM] = {
+> -	[S2MPS11_CLK_AP] = {
+> -		.name = "s2mps14_ap",
+> -		.ops = &s2mps11_clk_ops,
+> -		.flags = CLK_IS_ROOT,
+> -	},
+> -	[S2MPS11_CLK_BT] = {
+> -		.name = "s2mps14_bt",
+> -		.ops = &s2mps11_clk_ops,
+> -		.flags = CLK_IS_ROOT,
+> -	},
+> -};
+> -
+>  static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev,
+>  		struct clk_init_data *clks_init)
+>  {
+>  	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+>  	struct device_node *clk_np;
+> -	int i;
+>  
+>  	if (!iodev->dev->of_node)
+>  		return ERR_PTR(-EINVAL);
+> @@ -164,13 +133,6 @@ static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev,
+>  		return ERR_PTR(-EINVAL);
+>  	}
+>  
+> -	for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
+> -		if (!clks_init[i].name)
+> -			continue; /* Skip clocks not present in some devices */
+> -		of_property_read_string_index(clk_np, "clock-output-names", i,
+> -				&clks_init[i].name);
+> -	}
+> -
 
-The patch f7c82a60ba26: "clk: lpc32xx: add common clock framework
-driver" from Dec 6, 2015, leads to the following static checker
-warning:
+The commit description does not mention anything about removal of
+"clock-output-names". Why you are removing this?
 
-	drivers/clk/nxp/clk-lpc32xx.c:1019 clk_mux_get_parent()
-	warn: signedness bug returning '(-22)'
+Best regards,
+Krzysztof
 
-drivers/clk/nxp/clk-lpc32xx.c
-  1003  static u8 clk_mux_get_parent(struct clk_hw *hw)
-               ^^
-  1004  {
-  1005          struct lpc32xx_clk_mux *mux = to_lpc32xx_mux(hw);
-  1006          u32 num_parents = clk_hw_get_num_parents(hw);
-  1007          u32 val;
-  1008  
-  1009          regmap_read(clk_regmap, mux->reg, &val);
-  1010          val >>= mux->shift;
-  1011          val &= mux->mask;
-  1012  
-  1013          if (mux->table) {
-  1014                  u32 i;
-  1015  
-  1016                  for (i = 0; i < num_parents; i++)
-  1017                          if (mux->table[i] == val)
-  1018                                  return i;
-  1019                  return -EINVAL;
-                        ^^^^^^^^^^^^^^
-  1020          }
-  1021  
-  1022          if (val >= num_parents)
-  1023                  return -EINVAL;
-                        ^^^^^^^^^^^^^^
-This obviously doesn't work since this is a u8 function.
-
-I looked at how this was called to see what we should return on error.
-This is called from __clk_init().  It tests for negative error codes.
-Ooops.  Also there is no static checker warning for that but I will
-create one.  I'm not sure what to do here.  I bet the correct thing is
-to convert all the get_parent() function to return int.  Another option
-might be to add documentation, but I feel like in the kernel int returns
-are self documenting and that's the best option.
-
-  1024  
-  1025          return val;
-  1026  }
-
-regards,
-dan carpenter
+>  	return clk_np;
+>  }
+>  
+> @@ -179,8 +141,8 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+>  	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+>  	struct s2mps11_clk *s2mps11_clks, *s2mps11_clk;
+>  	unsigned int s2mps11_reg;
+> -	struct clk_init_data *clks_init;
+>  	int i, ret = 0;
+> +	enum sec_device_type hwid = platform_get_device_id(pdev)->driver_data;
+>  
+>  	s2mps11_clks = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
+>  				sizeof(*s2mps11_clk), GFP_KERNEL);
+> @@ -194,22 +156,18 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+>  	if (!clk_table)
+>  		return -ENOMEM;
+>  
+> -	switch(platform_get_device_id(pdev)->driver_data) {
+> +	switch (hwid) {
+>  	case S2MPS11X:
+>  		s2mps11_reg = S2MPS11_REG_RTC_CTRL;
+> -		clks_init = s2mps11_clks_init;
+>  		break;
+>  	case S2MPS13X:
+>  		s2mps11_reg = S2MPS13_REG_RTCCTRL;
+> -		clks_init = s2mps13_clks_init;
+>  		break;
+>  	case S2MPS14X:
+>  		s2mps11_reg = S2MPS14_REG_RTCCTRL;
+> -		clks_init = s2mps14_clks_init;
+>  		break;
+>  	case S5M8767X:
+>  		s2mps11_reg = S5M8767_REG_CTRL1;
+> -		clks_init = s2mps11_clks_init;
+>  		break;
+>  	default:
+>  		dev_err(&pdev->dev, "Invalid device type\n");
+> @@ -217,15 +175,15 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	/* Store clocks of_node in first element of s2mps11_clks array */
+> -	s2mps11_clks->clk_np = s2mps11_clk_parse_dt(pdev, clks_init);
+> +	s2mps11_clks->clk_np = s2mps11_clk_parse_dt(pdev, s2mps11_clks_init);
+>  	if (IS_ERR(s2mps11_clks->clk_np))
+>  		return PTR_ERR(s2mps11_clks->clk_np);
+>  
+>  	for (i = 0; i < S2MPS11_CLKS_NUM; i++, s2mps11_clk++) {
+> -		if (!clks_init[i].name)
+> +		if (i == S2MPS11_CLK_CP && hwid == S2MPS14X)
+>  			continue; /* Skip clocks not present in some devices */
+>  		s2mps11_clk->iodev = iodev;
+> -		s2mps11_clk->hw.init = &clks_init[i];
+> +		s2mps11_clk->hw.init = &s2mps11_clks_init[i];
+>  		s2mps11_clk->mask = 1 << i;
+>  		s2mps11_clk->reg = s2mps11_reg;
+>  
+> @@ -248,7 +206,7 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+>  
+>  	for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
+>  		/* Skip clocks not present on S2MPS14 */
+> -		if (!clks_init[i].name)
+> +		if (i == S2MPS11_CLK_CP && hwid == S2MPS14X)
+>  			continue;
+>  		clk_table[i] = s2mps11_clks[i].clk;
+>  	}
+> 
