@@ -1,133 +1,228 @@
-Return-Path: <van.freenix@gmail.com>
-Return-Path: <van.freenix@gmail.com>
-Date: Tue, 19 Jan 2016 09:33:11 +0800
-From: Peng Fan <van.freenix@gmail.com>
-To: David Vrabel <david.vrabel@citrix.com>
-Cc: linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-	Ian Campbell <ian.campbell@citrix.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stefano Stabellini <stefano.stabellini@eu.citrix.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Julien Grall <julien.grall@citrix.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [Xen-devel] [RFC/WIP] xen: clk: introudce pvclk for device
- passthrough
-Message-ID: <20160119013310.GB12932@linux-7smt.suse>
-References: <1452921760-21294-1-git-send-email-van.freenix@gmail.com>
- <569CCB58.5040904@citrix.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <569CCB58.5040904@citrix.com>
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 2/2] clk: s2mps11: allocate only one structure for clock
+ init
+To: Yadwinder Singh Brar <yadi.brar01@gmail.com>,
+ Andi Shyti <andi.shyti@samsung.com>
+References: <1453105525-31506-1-git-send-email-andi.shyti@samsung.com>
+ <1453105525-31506-3-git-send-email-andi.shyti@samsung.com>
+ <CAKew6eX4WZa4595ZUhiX+Ndc_WCzBNJBh5ejzxaJVkCnAskCYw@mail.gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+ Sangbeom Kim <sbkim73@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+ Andi Shyti <andi@etezian.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <569D87E0.6020001@samsung.com>
+Date: Tue, 19 Jan 2016 09:48:32 +0900
+MIME-version: 1.0
+In-reply-to: 
+ <CAKew6eX4WZa4595ZUhiX+Ndc_WCzBNJBh5ejzxaJVkCnAskCYw@mail.gmail.com>
+Content-type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello David,
+On 19.01.2016 09:42, Yadwinder Singh Brar wrote:
+> Hello Andi Shyti,
+> 
+> On Mon, Jan 18, 2016 at 12:25 AM, Andi Shyti <andi.shyti@samsung.com
+> <mailto:andi.shyti@samsung.com>> wrote:
+> 
+>     The driver allocates three structures for three different clock
+>     types. They are quite similar and in the clock init data they
+>     differ only by the name. Only one of these structure is used,
+>     while the others lie unused in the memory.
+> 
+> 
+> If you are worried about memory, they can be made __initdata by
+> creating a copy during probe.
 
-On Mon, Jan 18, 2016 at 11:24:08AM +0000, David Vrabel wrote:
->On 16/01/16 05:22, Peng Fan wrote:
->> This patch was just a initial patch, not sure whether this way
->> is ok from you side for handlding clk when doing platform device
->> passhthrough. Any comments are appreciated, and your comments may
->> give me a better direction.
->
->There's no documentation on the interface, which makes it difficult to
->review.  At a first look it looks very specific to the particular Linux
->implementation of a clk subsystem.
+Which would add small delay (need to allocate memory and copy the data)
+during the boot.
 
-My bad. I'll add more text in commit log or cover letter in V2 to describe
-the interface.
+>  
+> 
+> 
+>     The clock's name, though, is not such a meaningful information
+> 
+> 
+> I think it can be meaningful in debugging.
 
->
->> --- /dev/null
->> +++ b/include/xen/interface/io/clkif.h
->> @@ -0,0 +1,41 @@
->> +/*
->> + * The code contained herein is licensed under the GNU General Public
->> + * License. You may obtain a copy of the GNU General Public License
->> + * Version 2 or later at the following locations:
->> + *
->> + * http://www.opensource.org/licenses/gpl-license.html
->> + * http://www.gnu.org/copyleft/gpl.html
->> + */
->
->ABIs should be under a more permissive license so they can be used by
->other (non-GPLv2) operating systems.
+What kind of meaning? The name is still present... It is easy to find
+the type of device (e.g. compatible).
 
-ok. I'll change this.
+>  
+> 
+>     and by assigning the same name to the initial data we can avoid
+>     over allocation. The common name chosen will be s2mps11,
+>     coherently with the device driver name, instead of the clock
+>     device.
+> 
+>     Therefore, remove the structures associated to s2mps13 and
+>     s2mps14 and use only the one referred to s2mps11 for all kind of
+>     clocks.
+> 
+> 
+> IMHO, with all these modifications, it will leave driver with some extra
+> checks and reduced readability, perhaps will make it complex to add
+> support for similar clocks but with different clk_ops, if next version or
+>  any similar mfd chip comes up in future.
 
->
->> +
->> +#ifndef __XEN_PUBLIC_IO_CLKIF_H__
->> +#define __XEN_PUBLIC_IO_CLKIF_H__
->> +
->> +#include <xen/interface/io/ring.h>
->> +#include <xen/interface/grant_table.h>
->> +
->> +/**/
->> +enum {
->> +	XENCLK_PREPARE,		/* clk_prepare_enable */
->> +	XENCLK_UNPREPARE,	/* clk_unprepare_disable */
->> +	XENCLK_GET_RATE,	/* clk_get_rate */
->> +	XENCLK_SET_RATE,	/* clk_set_rate */
->> +	XENCLK_END,
->> +};
->> +
->> +struct xen_clkif_request {
->> +	int id;
->
->You should use fixed width types so the ABI is the same on 32-bit and
->64-bit guests.
+There is no evidence that some future chip will require clk_ops. All of
+them are so far exactly the same. Even the newly added S2MPS15 is the same.
 
-Will fix in V2.
+This really should be simplified.
 
->
->> +	unsigned long rate;
->> +	char clk_name[32];
->
->Where does the frontend get these names from?  31 character names seems
->rather limiting.
-
-The clk_name is got from DomU device tree. In the commit log, I wrote this:
-"
-                clks: clks {
-			compatible = "xen,xen-clk";
-			#clock-cells = <1>;
-			clock-output-names = "uart2_root_clk";
-		};
-"
-The clk_name is one of the entry from clock-output-names, clk_name will
-be passed to Dom0, Dom0 will use the clk_name to find the clk structure using
-__clk_lookup.
+Best regards,
+Krzysztof
 
 
->
->> +};
->> +
->> +struct xen_clkif_response {
->> +	int id;
->> +	int success;
->> +	unsigned long rate;
->> +	char clk_name[32];
->> +};
->
->I don't think you need to the name in the response.  The id will tie the
->response to the request.
-
-My original idea is to  use id and clk_name to check whether the response is for the requester.
-You can see in the patch:
-" if ((id == comp->id) && !strncmp(name, comp->clk_name, sizeof(comp->clk_name)))"
-
-Maybe clk_name is redundant here. I will remove it in V2.
-
-Thanks for your comments.
-
-Peng.
-
->
->> +
->> +DEFINE_RING_TYPES(xen_clkif, struct xen_clkif_request, struct xen_clkif_response);
->> +#define XEN_CLK_RING_SIZE __CONST_RING_SIZE(xen_clkif, PAGE_SIZE)
->> +
->> +#endif
->> 
->
+> 
+> 
+> Regards,
+> Yadwinder
+>  
+> 
+> 
+>     Signed-off-by: Andi Shyti <andi.shyti@samsung.com
+>     <mailto:andi.shyti@samsung.com>>
+>     Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com
+>     <mailto:k.kozlowski@samsung.com>>
+>     ---
+>      drivers/clk/clk-s2mps11.c | 48
+>     +++++++----------------------------------------
+>      1 file changed, 7 insertions(+), 41 deletions(-)
+> 
+>     diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+>     index ccb12f1..dce9753 100644
+>     --- a/drivers/clk/clk-s2mps11.c
+>     +++ b/drivers/clk/clk-s2mps11.c
+>     @@ -99,6 +99,7 @@ static struct clk_ops s2mps11_clk_ops = {
+>             .recalc_rate    = s2mps11_clk_recalc_rate,
+>      };
+> 
+>     +/* This ss2mps11_clks_init tructure is common to s2mps11, s2mps13
+>     and s2mps14 */
+>      static struct clk_init_data s2mps11_clks_init[S2MPS11_CLKS_NUM] = {
+>             [S2MPS11_CLK_AP] = {
+>                     .name = "s2mps11_ap",
+>     @@ -117,37 +118,6 @@ static struct clk_init_data
+>     s2mps11_clks_init[S2MPS11_CLKS_NUM] = {
+>             },
+>      };
+> 
+>     -static struct clk_init_data s2mps13_clks_init[S2MPS11_CLKS_NUM] = {
+>     -       [S2MPS11_CLK_AP] = {
+>     -               .name = "s2mps13_ap",
+>     -               .ops = &s2mps11_clk_ops,
+>     -               .flags = CLK_IS_ROOT,
+>     -       },
+>     -       [S2MPS11_CLK_CP] = {
+>     -               .name = "s2mps13_cp",
+>     -               .ops = &s2mps11_clk_ops,
+>     -               .flags = CLK_IS_ROOT,
+>     -       },
+>     -       [S2MPS11_CLK_BT] = {
+>     -               .name = "s2mps13_bt",
+>     -               .ops = &s2mps11_clk_ops,
+>     -               .flags = CLK_IS_ROOT,
+>     -       },
+>     -};
+>     -
+>     -static struct clk_init_data s2mps14_clks_init[S2MPS11_CLKS_NUM] = {
+>     -       [S2MPS11_CLK_AP] = {
+>     -               .name = "s2mps14_ap",
+>     -               .ops = &s2mps11_clk_ops,
+>     -               .flags = CLK_IS_ROOT,
+>     -       },
+>     -       [S2MPS11_CLK_BT] = {
+>     -               .name = "s2mps14_bt",
+>     -               .ops = &s2mps11_clk_ops,
+>     -               .flags = CLK_IS_ROOT,
+>     -       },
+>     -};
+>     -
+>      static struct device_node *s2mps11_clk_parse_dt(struct
+>     platform_device *pdev,
+>                     struct clk_init_data *clks_init)
+>      {
+>     @@ -179,8 +149,8 @@ static int s2mps11_clk_probe(struct
+>     platform_device *pdev)
+>             struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+>             struct s2mps11_clk *s2mps11_clks;
+>             unsigned int s2mps11_reg;
+>     -       struct clk_init_data *clks_init;
+>             int i, ret = 0;
+>     +       enum sec_device_type hwid =
+>     platform_get_device_id(pdev)->driver_data;
+> 
+>             s2mps11_clks = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
+>                                     sizeof(*s2mps11_clks), GFP_KERNEL);
+>     @@ -192,22 +162,18 @@ static int s2mps11_clk_probe(struct
+>     platform_device *pdev)
+>             if (!clk_table)
+>                     return -ENOMEM;
+> 
+>     -       switch(platform_get_device_id(pdev)->driver_data) {
+>     +       switch (hwid) {
+>             case S2MPS11X:
+>                     s2mps11_reg = S2MPS11_REG_RTC_CTRL;
+>     -               clks_init = s2mps11_clks_init;
+>                     break;
+>             case S2MPS13X:
+>                     s2mps11_reg = S2MPS13_REG_RTCCTRL;
+>     -               clks_init = s2mps13_clks_init;
+>                     break;
+>             case S2MPS14X:
+>                     s2mps11_reg = S2MPS14_REG_RTCCTRL;
+>     -               clks_init = s2mps14_clks_init;
+>                     break;
+>             case S5M8767X:
+>                     s2mps11_reg = S5M8767_REG_CTRL1;
+>     -               clks_init = s2mps11_clks_init;
+>                     break;
+>             default:
+>                     dev_err(&pdev->dev, "Invalid device type\n");
+>     @@ -215,15 +181,15 @@ static int s2mps11_clk_probe(struct
+>     platform_device *pdev)
+>             }
+> 
+>             /* Store clocks of_node in first element of s2mps11_clks
+>     array */
+>     -       s2mps11_clks->clk_np = s2mps11_clk_parse_dt(pdev, clks_init);
+>     +       s2mps11_clks->clk_np = s2mps11_clk_parse_dt(pdev,
+>     s2mps11_clks_init);
+>             if (IS_ERR(s2mps11_clks->clk_np))
+>                     return PTR_ERR(s2mps11_clks->clk_np);
+> 
+>             for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
+>     -               if (!clks_init[i].name)
+>     +               if (i == S2MPS11_CLK_CP && hwid == S2MPS14X)
+>                             continue; /* Skip clocks not present in some
+>     devices */
+>                     s2mps11_clks[i].iodev = iodev;
+>     -               s2mps11_clks[i].hw.init = &clks_init[i];
+>     +               s2mps11_clks[i].hw.init = &s2mps11_clks_init[i];
+>                     s2mps11_clks[i].mask = 1 << i;
+>                     s2mps11_clks[i].reg = s2mps11_reg;
+> 
+>     @@ -246,7 +212,7 @@ static int s2mps11_clk_probe(struct
+>     platform_device *pdev)
+> 
+>             for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
+>                     /* Skip clocks not present on S2MPS14 */
+>     -               if (!clks_init[i].name)
+>     +               if (i == S2MPS11_CLK_CP && hwid == S2MPS14X)
+>                             continue;
+>                     clk_table[i] = s2mps11_clks[i].clk;
+>             }
+>     --
+>     2.6.4
+> 
+>     --
+>     To unsubscribe from this list: send the line "unsubscribe
+>     linux-samsung-soc" in
+>     the body of a message to majordomo@vger.kernel.org
+>     <mailto:majordomo@vger.kernel.org>
+>     More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
