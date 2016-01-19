@@ -1,37 +1,43 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH] clk: ti: omap3+: dpll: use non-locking version of clk_get_rate
-Date: Thu, 28 Jan 2016 13:37:47 +0200
-Message-ID: <1453981067-8618-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <andi.shyti@samsung.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Sangbeom Kim <sbkim73@samsung.com>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>,
+ Andi Shyti <andi@etezian.org>, Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Subject: [PATCH v2 2/3] clk: s2mps11: merge two for loop in one
+Date: Tue, 19 Jan 2016 17:52:31 +0900
+Message-id: <1453193552-4761-3-git-send-email-andi.shyti@samsung.com>
+In-reply-to: <1453193552-4761-1-git-send-email-andi.shyti@samsung.com>
+References: <1453193552-4761-1-git-send-email-andi.shyti@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-As the code in this file is being executed within irq context in some
-cases, we must avoid the clk_get_rate which uses mutex internally.
-Switch the code to use clk_hw_get_rate instead which is non-locking.
+the driver already loops once, there is no reason to loop again
+for a different purpose. Merge the second loop into the first.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
 ---
- drivers/clk/ti/dpll3xxx.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/clk-s2mps11.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
-index f4dec00..7ed24bc 100644
---- a/drivers/clk/ti/dpll3xxx.c
-+++ b/drivers/clk/ti/dpll3xxx.c
-@@ -437,7 +437,8 @@ int omap3_noncore_dpll_enable(struct clk_hw *hw)
+diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+index 22d4df2..cae92fc 100644
+--- a/drivers/clk/clk-s2mps11.c
++++ b/drivers/clk/clk-s2mps11.c
+@@ -202,12 +202,6 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+ 			ret = -ENOMEM;
+ 			goto err_reg;
+ 		}
+-	}
+-
+-	for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
+-		/* Skip clocks not present on S2MPS14 */
+-		if (i == S2MPS11_CLK_CP && hwid == S2MPS14X)
+-			continue;
+ 		clk_table[i] = s2mps11_clks[i].clk;
+ 	}
  
- 	parent = clk_hw_get_parent(hw);
- 
--	if (clk_hw_get_rate(hw) == clk_get_rate(dd->clk_bypass)) {
-+	if (clk_hw_get_rate(hw) ==
-+	    clk_hw_get_rate(__clk_get_hw(dd->clk_bypass))) {
- 		WARN_ON(parent != __clk_get_hw(dd->clk_bypass));
- 		r = _omap3_noncore_dpll_bypass(clk);
- 	} else {
 -- 
-1.7.9.5
+2.7.0.rc3
