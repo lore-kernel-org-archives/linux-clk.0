@@ -1,69 +1,102 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 27 Jan 2016 18:29:55 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH RFC 06/11] clk: sunxi: factors: Consolidate get_factors
- parameters into a struct
-Message-ID: <20160127172955.GK4317@lukather>
-References: <1453727747-23307-1-git-send-email-wens@csie.org>
- <1453727747-23307-7-git-send-email-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga02-in.huawei.com ([119.145.14.65]:18691 "EHLO
+	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756882AbcASC5e (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jan 2016 21:57:34 -0500
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+	<xuejiancheng@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v6 0/6] ARM: hisi: Add initial support including clock driver for Hi3519 soc. 
+Date: Tue, 19 Jan 2016 10:38:25 +0800
+Message-ID: <1453171111-21921-1-git-send-email-xuejiancheng@huawei.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="JsihDCElWRmQcbOr"
-In-Reply-To: <1453727747-23307-7-git-send-email-wens@csie.org>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Hello,
 
---JsihDCElWRmQcbOr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi3519 soc is mainly used for ip camera and sport DV solutions. This patchset adds initial support
+for Hi3519 soc. It includes clock driver, arch configuration, debug uart configuration and device tree.
+It has been tested on hi3519 reference board.
 
-On Mon, Jan 25, 2016 at 09:15:42PM +0800, Chen-Yu Tsai wrote:
-> The .get_factors callback of factors_clk has 6 parameters. To extend
-> factors_clk in any way that requires adding parameters to .get_factors
-> would make that list even longer, not to mention changing all the
-> function declarations.
->=20
-> Do this once now and consolidate all the parameters into a struct.
-> Also drop the space before function pointer arguments, since checkpatch
-> complains.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Any comments will be appreciated!
 
-Applied, thanks!
-Maxime
+Thanks!
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Change Log
+----------
+v6:
+-Change clock driver to a real platform driver
 
---JsihDCElWRmQcbOr
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+v5:
+-Adjust clock and reset controller driver code
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+v4:
+-Rebase to v4.4-rc7
+-Divide patches according to Rob's comments
+-Add spi nodes in hi3519-demb.dts
 
-iQIcBAEBAgAGBQJWqP6TAAoJEBx+YmzsjxAg/0AP/1+XHJzMuZOqBgZjGRpnU/hb
-xq8u/FknfpaRg3chvYOJhjuTcJvUWJ4Ex6SmXwJZp/3vG+x09f/qF20K+iZn4dal
-9kn8ZlIgIb0rkVySPfa80c0JMQVbByGehSvP1J1UOpFfvtpUnOUzRfsGndGBc0ld
-+bu8a2e4pCLrKA/KQ43pE1qLuHVf9ruIbub19rFtefSTOyJU/1Qu+iyF0rCbs2i2
-Yt98AynsYdDT8su0H8urh3U288ilFkARM2YgvAHmkHocrjvthE+Bv0jGT36we23g
-NIi+Kr4i76ePybpM/ooO0QYWmBXHuHhkG42egReZbMKNbvpznLMtO/1Y5SWcPMzx
-DELJ4pNarCwQFNO5pu/CugPHtPEIOUu4585vglZbdoVcXcGkuLeCoI/XA8pIuz36
-M6Ptwb+KobdQJO0B1HESvXPnKHvt3Cl719Z5CcBtNSh72vbBZjyjfZ0+whaX6/FD
-bVhCjcAFNMR/2K5TlUFb1oFMTiRW+xvSBv3FzGYWB87CIvY87Fr22ZJtzM5ZOKpV
-G+OGtCfbhdlj8DbNoGSfEY5VYPE44zT38w604tBOa+0lJYbowGjT2mrP0czHCCod
-ax7m49NPMG46cPOX4NOfauvTTFoMp1DCraskLxDnzKBRuKZZc9zedtX0EFpMGj8q
-OzxTCe2bPlzFoURzC5wf
-=G28G
------END PGP SIGNATURE-----
+v3:
+-Rebase to v4.4-rc4
+-Adjust according to Arnd's comments
+-Remove ARCH_HI3519, using ARCH_HISI directly
 
---JsihDCElWRmQcbOr--
+v2:
+-Rebase to v4.4-rc3
+-Put dt-binding doc and header file in a separate patch.
+-Delete unused clocks definitions.
+-Adjust the ARCH_xxx order in Kconfig file
+-Rename ARCH_HI3xxx to ARCH_36xx
+
+Jiancheng Xue (6):
+  clk: hisilicon: add CRG driver for hi3519 soc
+  ARM: hisi: add compatible string for Hi3519 soc
+  ARM: config: hisi: enable CONFIG_RESET_CONTROLLER
+  ARM: debug: add hi3519 debug uart
+  ARM: dt-bindings: add device tree bindings for Hi3519 sysctrl
+  ARM: dts: add dts files for Hi3519
+
+ .../bindings/arm/hisilicon/hi3519-sysctrl.txt      |  14 ++
+ .../devicetree/bindings/clock/hi3519-crg.txt       |  46 +++++
+ arch/arm/Kconfig.debug                             |  10 ++
+ arch/arm/boot/dts/Makefile                         |   2 +
+ arch/arm/boot/dts/hi3519-demb.dts                  |  42 +++++
+ arch/arm/boot/dts/hi3519.dtsi                      | 187 +++++++++++++++++++++
+ arch/arm/configs/hisi_defconfig                    |   1 +
+ arch/arm/mach-hisi/hisilicon.c                     |  23 +--
+ drivers/clk/hisilicon/Kconfig                      |   7 +
+ drivers/clk/hisilicon/Makefile                     |   2 +
+ drivers/clk/hisilicon/clk-hi3519.c                 | 132 +++++++++++++++
+ drivers/clk/hisilicon/clk.c                        |  23 ++-
+ drivers/clk/hisilicon/clk.h                        |  14 +-
+ drivers/clk/hisilicon/reset.c                      | 130 ++++++++++++++
+ drivers/clk/hisilicon/reset.h                      |  32 ++++
+ include/dt-bindings/clock/hi3519-clock.h           |  40 +++++
+ 16 files changed, 671 insertions(+), 34 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
+ create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
+ create mode 100644 arch/arm/boot/dts/hi3519.dtsi
+ create mode 100644 drivers/clk/hisilicon/clk-hi3519.c
+ create mode 100644 drivers/clk/hisilicon/reset.c
+ create mode 100644 drivers/clk/hisilicon/reset.h
+ create mode 100644 include/dt-bindings/clock/hi3519-clock.h
+
+-- 
+1.9.1
+
