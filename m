@@ -1,81 +1,51 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-Subject: Re: [PATCH v5 5/6] mfd: dt-bindings: add device tree bindings for
- Hi3519 sysctrl
-To: Arnd Bergmann <arnd@arndb.de>
-References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
- <20160112083946.GN19803@x1> <5694C725.6010502@huawei.com>
- <5675031.hi9rRCqFXs@wuerfel>
-CC: Lee Jones <lee.jones@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-        <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-        <linux@arm.linux.org.uk>, <khilman@linaro.org>, <olof@lixom.net>,
-        <xuwei5@hisilicon.com>, <haojian.zhuang@linaro.org>,
-        <zhangfei.gao@linaro.org>, <bintian.wang@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
-        <suwenping@hisilicon.com>, <ml.yang@hisilicon.com>,
-        <gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
-        <xuejiancheng@hisilicon.com>
-From: xuejiancheng <xuejiancheng@huawei.com>
-Message-ID: <56961404.1000602@huawei.com>
-Date: Wed, 13 Jan 2016 17:08:20 +0800
+Return-Path: <robh@kernel.org>
+Date: Tue, 19 Jan 2016 12:23:17 -0600
+From: Rob Herring <robh@kernel.org>
+To: Jiancheng Xue <xuejiancheng@huawei.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, p.zabel@pengutronix.de,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	linux@arm.linux.org.uk, khilman@linaro.org, arnd@arndb.de,
+	olof@lixom.net, xuwei5@hisilicon.com, haojian.zhuang@linaro.org,
+	zhangfei.gao@linaro.org, bintian.wang@huawei.com,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	yanhaifeng@hisilicon.com, yanghongwei@hisilicon.com,
+	suwenping@hisilicon.com, raojun@hisilicon.com,
+	ml.yang@hisilicon.com, gaofei@hisilicon.com,
+	zhangzhenxing@hisilicon.com, xuejiancheng@hisilicon.com
+Subject: Re: [PATCH v6 1/6] clk: hisilicon: add CRG driver for hi3519 soc
+Message-ID: <20160119182317.GA3681@rob-hp-laptop>
+References: <1453171111-21921-1-git-send-email-xuejiancheng@huawei.com>
+ <1453171111-21921-2-git-send-email-xuejiancheng@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <5675031.hi9rRCqFXs@wuerfel>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1453171111-21921-2-git-send-email-xuejiancheng@huawei.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Arnd,
+On Tue, Jan 19, 2016 at 10:38:26AM +0800, Jiancheng Xue wrote:
+> The CRG(Clock and Reset Generator) block provides clock
+> and reset signals for other modules in hi3519 soc.
+> 
+> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+> ---
+>  .../devicetree/bindings/clock/hi3519-crg.txt       |  46 +++++++
 
-On 2016/1/13 6:51, Arnd Bergmann wrote:
-> On Tuesday 12 January 2016 17:28:05 xuejiancheng wrote:
->>>>>>>
->>>>>> Not yet.
->>>>>> Arnd Bergmann and Rob Herring all suggested adding a specific compatible string
->>>>>> with the SOC name. This binding is just used for describing the compatible string now.
->>>>>> When more functions on hi3519 SOC are added later, the specific driver will be also
->>>>>> needed.
->>>>>
->>>>> Save this binding until it has more functionality.  We here "I'll add
->>>>> to this later" all too often.
->>>>>
->>>>
->>>> In the hi3519.dtsi file, there is a system-controller device node described like below:
->>>> sysctrl: system-controller@12010000 {
->>>>      compatible = "hisilicon,hi3519-sysctrl", "syscon";
->>>>      reg = <0x12010000 0x1000>;
->>>> };
->>>> Do you mean that I should remove "hisilicon,hi3519-sysctrl" and just use "syscon" as the
->>>> compatible string?　
->>>
->>> Where is this compatible string _used_?
->>>
->>>> If I want to add "hisilicon,hi3519-sysctrl" for hi3519. where should I put this binding?
->>>> Could you give some suggestions?  Thank you very much!
->>>
->>> If you're not using the compatible i.e. the device doesn't have its
->>> own driver yet, then there is no need to supply the binding at all, is
->>> there?
->>>
->>
->> OK. Thank you.
->>
-> 
-> Sorry for stepping in late here. I still think that every syscon device should
-> come with a specific compatible string, so we have the option of creating a
-> driver later on, and I'd like to see a binding document that lists those strings
-> (which I believe exists here).
-> 
-> It's really hard to add compatible strings later on, anything else we can
-> work around by keying off that string and adding a workaround in the kernel.
-> 
+I already acked this. Please add ack's when posting new versions.
 
-Is it OK if I put this binding document into the directory "Documentation/devicetree/bindings/arm/hisilicon"?
+Acked-by: Rob Herring <robh@kernel.org>
 
-Thank you.
-
-> 	Arnd
-> 
-> .
-> 
+>  drivers/clk/hisilicon/Kconfig                      |   7 ++
+>  drivers/clk/hisilicon/Makefile                     |   2 +
+>  drivers/clk/hisilicon/clk-hi3519.c                 | 132 +++++++++++++++++++++
+>  drivers/clk/hisilicon/clk.c                        |  23 ++--
+>  drivers/clk/hisilicon/clk.h                        |  14 +--
+>  drivers/clk/hisilicon/reset.c                      | 130 ++++++++++++++++++++
+>  drivers/clk/hisilicon/reset.h                      |  32 +++++
+>  include/dt-bindings/clock/hi3519-clock.h           |  40 +++++++
+>  9 files changed, 411 insertions(+), 15 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
+>  create mode 100644 drivers/clk/hisilicon/clk-hi3519.c
+>  create mode 100644 drivers/clk/hisilicon/reset.c
+>  create mode 100644 drivers/clk/hisilicon/reset.h
+>  create mode 100644 include/dt-bindings/clock/hi3519-clock.h
