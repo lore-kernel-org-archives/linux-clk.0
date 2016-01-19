@@ -1,56 +1,67 @@
-Return-Path: <LW@karo-electronics.de>
-From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
-To: Anson Huang <b20788@freescale.com>,
-	Bai Ping <b51503@freescale.com>,
-	Frank Li <Frank.Li@freescale.com>,
-	Fugang Duan <B38611@freescale.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	=?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>,
-	Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <van.freenix@gmail.com>
+Return-Path: <van.freenix@gmail.com>
+Date: Tue, 19 Jan 2016 09:18:08 +0800
+From: Peng Fan <van.freenix@gmail.com>
+To: George Dunlap <George.Dunlap@eu.citrix.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	xen-devel <xen-devel@lists.xenproject.org>,
+	Ian Campbell <ian.campbell@citrix.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
+	Stefano Stabellini <stefano.stabellini@eu.citrix.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCHv2 04/16] ARM: dts: imx6ul: specify proper clocks for GPT node
-Date: Wed, 20 Jan 2016 11:08:57 +0100
-Message-Id: <1453284549-16363-5-git-send-email-LW@KARO-electronics.de>
-In-Reply-To: <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
-References: <1452619291-13625-1-git-send-email-LW@KARO-electronics.de>
- <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
+	Julien Grall <julien.grall@citrix.com>,
+	David Vrabel <david.vrabel@citrix.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: [Xen-devel] [RFC/WIP] xen: clk: introudce pvclk for device
+ passthrough
+Message-ID: <20160119011806.GA12932@linux-7smt.suse>
+References: <1452921760-21294-1-git-send-email-van.freenix@gmail.com>
+ <CAFLBxZa9W6At5M_fFy17u__C_AGHRAdYHebOzymnb1su715jzA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAFLBxZa9W6At5M_fFy17u__C_AGHRAdYHebOzymnb1su715jzA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The i.MX6UL GPT unit requires real clocks. Define the appropriate
-clocks to make it work.
+Hello George,
 
-Signed-off-by: Lothar Waßmann <LW@KARO-electronics.de>
----
- arch/arm/boot/dts/imx6ul.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Mon, Jan 18, 2016 at 11:22:44AM +0000, George Dunlap wrote:
+>On Sat, Jan 16, 2016 at 5:22 AM, Peng Fan <van.freenix@gmail.com> wrote:
+>> This patch was just a initial patch, not sure whether this way
+>> is ok from you side for handlding clk when doing platform device
+>> passhthrough. Any comments are appreciated, and your comments may
+>> give me a better direction.
+>
+>Hey Peng,
+>
+>Just speaking from the perspective of a Xen dev who's not an ARM dev:
+>a few more words on the relationship between pvclk and
+>device-passthrough would be helpful to set the context.  It sounds
+>like:
+>
+>* On ARM, passing through a device requires a clocksource (at least
+>for many devices)
+>
+>* dom0 has the hardware clocksource, but at the moment domUs don't
+>have a suitable clocksource
+>
+>* This patch implements pvclk front/backend suitable for such devices
+>
+>Is that right?  In which case something like the following would be helpful:
 
-diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
-index e4c3a80..e6e3e54 100644
---- a/arch/arm/boot/dts/imx6ul.dtsi
-+++ b/arch/arm/boot/dts/imx6ul.dtsi
-@@ -499,8 +499,8 @@
- 				compatible = "fsl,imx6ul-gpt", "fsl,imx6sx-gpt";
- 				reg = <0x020e8000 0x4000>;
- 				interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&clks IMX6UL_CLK_DUMMY>,
--					 <&clks IMX6UL_CLK_DUMMY>;
-+				clocks = <&clks IMX6UL_CLK_GPT2_BUS>,
-+					 <&clks IMX6UL_CLK_GPT2_SERIAL>;
- 				clock-names = "ipg", "per";
- 			};
- 
--- 
-2.1.4
+Yeah. right. You have a better explaination than me :)
+
+>
+>"This patch introduces pvclk, a paravirtualized clock source suitable
+>for devices to use when passing through to domUs on ARM systems."
+>
+>(Obviously change it as necessary to make it accurate.)
+
+I'll add your words into the commit log.
+
+Thanks,
+Peng.
+
+>
+>Thanks,
+> -George
