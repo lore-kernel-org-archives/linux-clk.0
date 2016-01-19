@@ -1,111 +1,40 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v5 07/13] ARM: at91: pm: find and remap the pmc
-Date: Wed, 27 Jan 2016 17:17:05 +0100
-Message-Id: <1453911425-30090-1-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1453911072-23608-8-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1453911072-23608-8-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <yadi.brar01@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <569D87E0.6020001@samsung.com>
+References: <1453105525-31506-1-git-send-email-andi.shyti@samsung.com>
+	<1453105525-31506-3-git-send-email-andi.shyti@samsung.com>
+	<CAKew6eX4WZa4595ZUhiX+Ndc_WCzBNJBh5ejzxaJVkCnAskCYw@mail.gmail.com>
+	<569D87E0.6020001@samsung.com>
+Date: Mon, 18 Jan 2016 17:11:23 -0800
+Message-ID: <CAKew6eVNWB+VB1yUxuKELPW_n63H5kaFrcj8+Ormd2RKKDL_Cw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: s2mps11: allocate only one structure for clock init
+From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Andi Shyti <andi.shyti@samsung.com>,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sangbeom Kim <sbkim73@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	Andi Shyti <andi@etezian.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-To avoid relying on at91_pmc_read(), find the pmc node and remap it
-locally.
+>>
+>> IMHO, with all these modifications, it will leave driver with some extra
+>> checks and reduced readability, perhaps will make it complex to add
+>> support for similar clocks but with different clk_ops, if next version or
+>>  any similar mfd chip comes up in future.
+>
+> There is no evidence that some future chip will require clk_ops. All of
+> them are so far exactly the same. Even the newly added S2MPS15 is the same.
+>
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
+Can we guaranty about future chips?
+Even we didn't expect there will be one less clock in case of s2mps14.
 
-Changes in v5:
- - properly use __initconst
+> This really should be simplified.
+>
 
- arch/arm/mach-at91/pm.c | 33 +++++++++++++++++++++++++++------
- 1 file changed, 27 insertions(+), 6 deletions(-)
+IMO, it is just reduction of LoC.
 
-diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
-index db32bf846cef..8923efbfa7fa 100644
---- a/arch/arm/mach-at91/pm.c
-+++ b/arch/arm/mach-at91/pm.c
-@@ -35,6 +35,8 @@
- #include "generic.h"
- #include "pm.h"
- 
-+static void __iomem *pmc;
-+
- /*
-  * FIXME: this is needed to communicate between the pinctrl driver and
-  * the PM implementation in the machine. Possibly part of the PM
-@@ -87,7 +89,7 @@ static int at91_pm_verify_clocks(void)
- 	unsigned long scsr;
- 	int i;
- 
--	scsr = at91_pmc_read(AT91_PMC_SCSR);
-+	scsr = readl(pmc + AT91_PMC_SCSR);
- 
- 	/* USB must not be using PLLB */
- 	if ((scsr & at91_pm_data.uhp_udp_mask) != 0) {
-@@ -101,8 +103,7 @@ static int at91_pm_verify_clocks(void)
- 
- 		if ((scsr & (AT91_PMC_PCK0 << i)) == 0)
- 			continue;
--
--		css = at91_pmc_read(AT91_PMC_PCKR(i)) & AT91_PMC_CSS;
-+		css = readl(pmc + AT91_PMC_PCKR(i)) & AT91_PMC_CSS;
- 		if (css != AT91_PMC_CSS_SLOW) {
- 			pr_err("AT91: PM - Suspend-to-RAM with PCK%d src %d\n", i, css);
- 			return 0;
-@@ -145,8 +146,8 @@ static void at91_pm_suspend(suspend_state_t state)
- 	flush_cache_all();
- 	outer_disable();
- 
--	at91_suspend_sram_fn(at91_pmc_base, at91_ramc_base[0],
--				at91_ramc_base[1], pm_data);
-+	at91_suspend_sram_fn(pmc, at91_ramc_base[0],
-+			     at91_ramc_base[1], pm_data);
- 
- 	outer_resume();
- }
-@@ -399,13 +400,33 @@ static void __init at91_pm_sram_init(void)
- 			&at91_pm_suspend_in_sram, at91_pm_suspend_in_sram_sz);
- }
- 
-+static const struct of_device_id atmel_pmc_ids[] __initconst = {
-+	{ .compatible = "atmel,at91rm9200-pmc"  },
-+	{ .compatible = "atmel,at91sam9260-pmc" },
-+	{ .compatible = "atmel,at91sam9g45-pmc" },
-+	{ .compatible = "atmel,at91sam9n12-pmc" },
-+	{ .compatible = "atmel,at91sam9x5-pmc" },
-+	{ .compatible = "atmel,sama5d3-pmc" },
-+	{ .compatible = "atmel,sama5d2-pmc" },
-+	{ /* sentinel */ },
-+};
-+
- static void __init at91_pm_init(void)
- {
--	at91_pm_sram_init();
-+	struct device_node *pmc_np;
- 
- 	if (at91_cpuidle_device.dev.platform_data)
- 		platform_device_register(&at91_cpuidle_device);
- 
-+	pmc_np = of_find_matching_node(NULL, atmel_pmc_ids);
-+	pmc = of_iomap(pmc_np, 0);
-+	if (!pmc) {
-+		pr_err("AT91: PM not supported, PMC not found\n");
-+		return;
-+	}
-+
-+	at91_pm_sram_init();
-+
- 	if (at91_suspend_sram_fn)
- 		suspend_set_ops(&at91_pm_ops);
- 	else
--- 
-2.5.0
+Regards,
+Yadwinder
