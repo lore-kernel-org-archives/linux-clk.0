@@ -1,98 +1,83 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 15 Jan 2016 09:05:03 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
-	Rob Clark <robdclark@gmail.com>, Wynter Woods <wynter@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	linux-sunxi@googlegroups.com, David Airlie <airlied@linux.ie>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 24/26] devicetree: Add olimex vendor prefix
-Message-ID: <20160115080503.GA11036@lukather>
-References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
- <1452785109-6172-25-git-send-email-maxime.ripard@free-electrons.com>
- <20160115031543.GA25640@rob-hp-laptop>
- <1957693252.53435.d0a9f334-1bed-484f-886a-05dfab0e0dfa.open-xchange@email.1und1.de>
+Return-Path: <robh+dt@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="MGYHOYXEY6WxJCY8"
-In-Reply-To: <1957693252.53435.d0a9f334-1bed-484f-886a-05dfab0e0dfa.open-xchange@email.1und1.de>
+In-Reply-To: <5698A650.5010600@huawei.com>
+References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
+ <1452219400-32478-2-git-send-email-xuejiancheng@huawei.com>
+ <20160112221211.GB22188@codeaurora.org> <5695BE65.3070409@huawei.com>
+ <20160113185707.1168.85601@quark.deferred.io> <56979F9F.5080201@huawei.com> <5698A650.5010600@huawei.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Tue, 19 Jan 2016 12:20:46 -0600
+Message-ID: <CAL_JsqJPcPgS=cKNqv9j5Ch3ZHbUmci1LRedBWV1gV=5kCz68Q@mail.gmail.com>
+Subject: Re: [PATCH v5 1/6] clk: hisilicon: add CRG driver for hi3519 soc
+To: xuejiancheng <xuejiancheng@huawei.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>,
+	Kevin Hilman <khilman@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+	Wei Xu <xuwei5@hisilicon.com>, Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Zhangfei Gao <zhangfei.gao@linaro.org>, Bintian Wang <bintian.wang@huawei.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, yanhaifeng@hisilicon.com,
+	yanghongwei@hisilicon.com, suwenping@hisilicon.com, ml.yang@hisilicon.com,
+	gaofei@hisilicon.com, zhangzhenxing@hisilicon.com, xuejiancheng@hisilicon.com
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+On Fri, Jan 15, 2016 at 1:57 AM, xuejiancheng <xuejiancheng@huawei.com> wrote:
+>
+> On 2016/1/14 21:16, xuejiancheng wrote:
+>> Hi Mike,
+>>
+>> On 2016/1/14 2:57, Michael Turquette wrote:
+>>> Quoting xuejiancheng (2016-01-12 19:03:01)
+>>>> Hi Stephen,
+>>>>    Thank you very much for your reply.
+>>>>
+>>>> On 2016/1/13 6:12, Stephen Boyd wrote:
+>>>>> On 01/08, Jiancheng Xue wrote:
+>>>>>> diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
+>>>>>> index e434854..b6baebf 100644
+>>>>>> --- a/drivers/clk/hisilicon/Kconfig
+>>>>>> +++ b/drivers/clk/hisilicon/Kconfig
+>>>>>> @@ -1,3 +1,10 @@
+>>>>>> +config COMMON_CLK_HI3519
+>>>>>> +    tristate "Clock Driver for Hi3519"
+>>>>>
+>>>>> It looks like this has to be bool. Otherwise it needs to be a
+>>>>> platform driver and the hisilicon APIs need to be exported and
+>>>>> lose their __init markings.
+>>>>>
+>>>> Yes,it's a problem. I will fix it in next version. Thank you.
+>>>
+>>> The best solution would be to make this clock driver a real platform
+>>> driver.
+>>>
+>> Now the work clock of the clocksource timer-sp804 is provided by this driver. So
+>> it need to be registered early by CLK_OF_DECLARE. If the timer clock is treated
+>> as a fixed-clock provider, this driver can be implemented as a platform driver.
+>> Then the crg device must be registered before other clock consumer devices.Accordingly
+>> the crg device node must be written above all other clock consumer devices node in dts files.
+>> I think it is also a dependence.
+>>
+>> Can you help me understand why it is better to make this driver a platform driver?
+>> Thank you very much!
+>>
+> arch_initcall(customize_machine)
+> -->of_platform_populate
+>    -->of_platform_bus_create
+>      -->of_amba_device_create
+>         -->amba_device_add
+>            -->amba_get_enable_pclk
+> The call sequence above shows that the clock of the amba device must be registered before
+> amba_device_add. The clock of "arm,pl011" uart is registered in the probe function of the
+> platform driver "hi3519-crg". So the platform device "hi3519-crg" must be created before
+> the amba device "arm,pl011" uart.
 
---MGYHOYXEY6WxJCY8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It is a problem, but Tomeu had a fix to support deferred probes here.
+That was part of the on-demand probing series, but maybe it needs to
+be applied separately if we are moving clock drivers to platform
+drivers.
 
-Hi,
-
-On Fri, Jan 15, 2016 at 07:41:35AM +0100, Stefan Wahren wrote:
->=20
-> > Rob Herring <robh@kernel.org> hat am 15. Januar 2016 um 04:15 geschrieb=
-en:
-> >
-> >
-> > On Thu, Jan 14, 2016 at 04:25:07PM +0100, Maxime Ripard wrote:
-> > > Olimex is an open source hardware boards vendors based in Bulgaria.
-> > >
-> > > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > > ---
-> > > Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
-> > > 1 file changed, 1 insertion(+)
-> >
-> > Acked-by: Rob Herring <robh@kernel.org>
-> >
->=20
-> I don't think we need this twice.
->=20
-> It's already committed:
->=20
-> 2193377bdade ("DT: add Olimex to vendor prefixes")
-
-Hmm, indeed.
-
-Sorry for the noise, I'll drop the commit.
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---MGYHOYXEY6WxJCY8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWmKgvAAoJEBx+YmzsjxAgo1sP/1vo5NPTMAOyfTe3uINKd/I1
-Xm8xtUH7J7VAKTyI/t6z1o5K8fPdYrTchFSQVd6JRyZmZJ3SO2qYPNTR2+DwCoK1
-B1kUuG83kP0f3XZvbR0J5f5ya7nL7DBOOqtHZkBXcMyOYvuxP94wKJecATTvvS62
-uGtHhnro6gYu26W99bnLOICuBzcg9s1onaa/BcKclpP3TJKTSwwmBaXb4Het1y7y
-sLdhcDL2YSZ1oSYF5SzwiqeM60iJBsO08acCeO+fQHjuJwZqSFm1zVPoIgyYFojV
-x8/aMYojZqRTPbjqbLzw/q8WhfQsrFIAEdcD4Mp+VHcQBNFv4Q8f0v+GCE99M+QC
-NQQbuJbDLvZIVh+ANksKr0d4eQ8AiXtSDzUlsM6oMeUJnwjFyU0vApQBt1lhXMT4
-W3b24sHINUjNjSjhwd5ASf9PY3V+jTJVbF4D/f1FonEArLHtPVYbpgoJpCXdLnUR
-cyZNR1PByMsZy0g4tSZMch6pl6Qs+BtdsSEQX8GALaQt23OiRvAGhki306LUJokI
-509Jyub27B54eqq2zJ5VRfuWMcdY5gosMzYpsLZkffFg55EC8Iu1u5ufmwsYv+pV
-z68LzR+Ttc1njGSyrCvAZaVVEidtO8Scy50Vv8tFM4nA3uxGuypHpAx5LXWGptHf
-04h07zR7+eRuLt6fSRM6
-=UbRI
------END PGP SIGNATURE-----
-
---MGYHOYXEY6WxJCY8--
+Rob
