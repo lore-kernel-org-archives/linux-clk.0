@@ -1,35 +1,156 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:56069 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751091AbcAZUVl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Tue, 26 Jan 2016 15:21:41 -0500
-From: Heiko Stuebner <heiko@sntech.de>
-To: Alexander Kochetkov <al.kochet@gmail.com>
-Cc: stable@vger.kernel.org, linux-clk@vger.kernel.org,
+Return-Path: <kernel@martin.sperl.org>
+From: kernel@martin.sperl.org
+To: Rob Herring <robh+dt@kernel.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Remi Pommarel <repk@triplefau.lt>,
+	devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: rockchip: add hclk_cpubus to the list of rk3188 critical clocks
-Date: Tue, 26 Jan 2016 21:21:38 +0100
-Message-ID: <12983946.PGshY20RJE@phil>
-In-Reply-To: <1453815240-15354-1-git-send-email-al.kochet@gmail.com>
-References: <1453815240-15354-1-git-send-email-al.kochet@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+	linux-clk@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: [RFC 4/9] clk: bcm2835: reorganize bcm2835_clock_determine_rate
+Date: Tue, 19 Jan 2016 14:51:35 +0000
+Message-Id: <1453215100-2382-5-git-send-email-kernel@martin.sperl.org>
+In-Reply-To: <1453215100-2382-1-git-send-email-kernel@martin.sperl.org>
+References: <1453215100-2382-1-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 26. Januar 2016, 16:34:00 schrieb Alexander Kochetkov:
-> hclk_cpubus needs to keep running because it is needed for devices like
-> the rom, i2s0 or spdif to be accessible via cpu. Without that all
-> accesses to devices (readl/writel) return wrong data. So add it
-> to the list of critical clocks.
-> 
-> Fixes: 78eaf6095cc763c ("clk: rockchip: disable unused clocks")
-> 
-> Signed-off-by: Alexander Kochetkov <al.kochet@gmail.com>
+From: Martin Sperl <kernel@martin.sperl.org>
 
-applied to my clk-branch for 4.6
+Reorganize bcm2835_clock_determine_rate so that the per
+clock frequency calculation is separated from the
+selection logic.
 
+This allows for different clock selection policies
+to be use while keeping code common.
 
-Thanks
-Heiko
+Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+---
+ drivers/clk/bcm/clk-bcm2835.c |   98 +++++++++++++++++++++++++++++------------
+ 1 file changed, 70 insertions(+), 28 deletions(-)
+
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 48c1ad0..f1ab525 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1668,44 +1668,86 @@ unlock_exit:
+ 	return 0;
+ }
+ 
+-static int bcm2835_clock_determine_rate(struct clk_hw *hw,
+-		struct clk_rate_request *req)
++struct bcm2835_rates {
++	struct clk_hw *parent;
++	unsigned long rate;
++	unsigned long prate;
++	u32 div;
++	divmash dmash;
++};
++
++static int bcm2835_clock_determine_rate_set(struct clk_rate_request *req,
++					    struct bcm2835_rates *best)
+ {
+-	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
+-	struct clk_hw *parent, *best_parent = NULL;
+-	unsigned long rate, best_rate = 0;
+-	unsigned long prate, best_prate = 0;
++	req->best_parent_hw = best->parent;
++	req->best_parent_rate = best->prate;
++	req->rate = best->rate;
++
++	return 0;
++}
++
++static int bcm2835_clock_determine_closest_rate(struct clk_hw *hw,
++						struct clk_rate_request *req,
++						struct bcm2835_rates *rates,
++						size_t rate_cnt)
++{
++	struct bcm2835_rates *best = NULL;
+ 	size_t i;
+-	divmash dm;
+-	u32 div;
+ 
+-	/*
+-	 * Select parent clock that results in the closest but lower rate
+-	 */
+-	for (i = 0; i < clk_hw_get_num_parents(hw); ++i) {
+-		parent = clk_hw_get_parent_by_index(hw, i);
+-		if (!parent)
++	/* find best matching */
++	for (i = 0; i < rate_cnt; i++) {
++		if (rates[i].rate > req->rate)
++			continue;
++		if (!best) {
++			best = &rates[i];
++			continue;
++		}
++		/* find the closest */
++		if (rates[i].rate > best->rate) {
++			best = &rates[i];
++			continue;
++		}
++		/* if identical then use highest divider */
++		if ((rates[i].rate == best->rate) &&
++		    (rates[i].div > best->div)) {
++			best = &rates[i];
+ 			continue;
+-		prate = clk_hw_get_rate(parent);
+-		dm = bcm2835_clock_choose_div(hw, req->rate, prate, true);
+-		div = divmash_get_div(dm);
+-		rate = bcm2835_clock_rate_from_divisor(clock, prate, div);
+-		if (rate > best_rate && rate <= req->rate) {
+-			best_parent = parent;
+-			best_prate = prate;
+-			best_rate = rate;
+ 		}
+ 	}
+ 
+-	if (!best_parent)
+-		return -EINVAL;
++	if (best)
++		return bcm2835_clock_determine_rate_set(req, best);
++
++	/* nothing found */
++	return -EINVAL;
++}
+ 
+-	req->best_parent_hw = best_parent;
+-	req->best_parent_rate = best_prate;
++static int bcm2835_clock_determine_rate(struct clk_hw *hw,
++					struct clk_rate_request *req)
++{
++	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
++	struct bcm2835_rates rates[BIT(CM_SRC_BITS)];
++	size_t i, rate_cnt = 0;
++	divmash dm;
+ 
+-	req->rate = best_rate;
++	/* fill in rates */
++	for (i = 0; i < clk_hw_get_num_parents(hw); ++i) {
++		rates[rate_cnt].parent = clk_hw_get_parent_by_index(hw, i);
++		if (!rates[rate_cnt].parent)
++			continue;
++		rates[rate_cnt].prate = clk_hw_get_rate(
++			rates[rate_cnt].parent);
++		dm = bcm2835_clock_choose_div(
++			hw, req->rate, rates[rate_cnt].prate, true);
++		rates[rate_cnt].div =  divmash_get_div(dm);
++		rates[rate_cnt].rate = bcm2835_clock_rate_from_divisor(
++			clock, rates[rate_cnt].prate, rates[rate_cnt].div);
++		rate_cnt++;
++	}
+ 
+-	return 0;
++	/* choose the "closest" one */
++	return bcm2835_clock_determine_closest_rate(hw, req, rates,
++						    rate_cnt);
+ }
+ 
+ static int _bcm2835_clk_set_parent(struct bcm2835_cprman *cprman,
+-- 
+1.7.10.4
