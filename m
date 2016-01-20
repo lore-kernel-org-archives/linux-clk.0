@@ -1,45 +1,62 @@
-Return-Path: <sha@pengutronix.de>
-Date: Thu, 21 Jan 2016 09:26:42 +0100
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: kernel@martin.sperl.org
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
+Return-Path: <LW@karo-electronics.de>
+From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
+To: Anson Huang <b20788@freescale.com>,
+	Bai Ping <b51503@freescale.com>,
+	Frank Li <Frank.Li@freescale.com>,
+	Fugang Duan <B38611@freescale.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	=?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>,
+	Mark Rutland <mark.rutland@arm.com>,
 	Michael Turquette <mturquette@baylibre.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Remi Pommarel <repk@triplefau.lt>, devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [RFC 2/9] clk: bcm2835: add support for parent selection in DT
-Message-ID: <20160121082642.GB13237@pengutronix.de>
-References: <1453215100-2382-1-git-send-email-kernel@martin.sperl.org>
- <1453215100-2382-3-git-send-email-kernel@martin.sperl.org>
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCHv2 11/16] ARM: dts: imx6ul: add lcdif support
+Date: Wed, 20 Jan 2016 11:09:04 +0100
+Message-Id: <1453284549-16363-12-git-send-email-LW@KARO-electronics.de>
+In-Reply-To: <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
+References: <1452619291-13625-1-git-send-email-LW@KARO-electronics.de>
+ <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1453215100-2382-3-git-send-email-kernel@martin.sperl.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Martin,
+Add the device node for the i.MX6UL eLCDIF interface.
 
-On Tue, Jan 19, 2016 at 02:51:33PM +0000, kernel@martin.sperl.org wrote:
-> From: Martin Sperl <kernel@martin.sperl.org>
-> 
-> Allow for a per clock custom selection of clocks in the device tree.
-> 
-> Basic setup in dt looks like this:
->   clock@BCM2835_CLOCK_PCM {
->     reg = <BCM2835_CLOCK_PCM>;
->     parent-clock-names = "xosc", "plld_per", "plla_per", "pll_aux_per";
->   };
+Signed-off-by: Lothar Waßmann <LW@KARO-electronics.de>
+---
+ arch/arm/boot/dts/imx6ul.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Isn't this the same as the already existing assigned-clock-parents property?
-If yes, that should be used.
-
-Sascha
-
-
+diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
+index e1fda39e..985c1b1 100644
+--- a/arch/arm/boot/dts/imx6ul.dtsi
++++ b/arch/arm/boot/dts/imx6ul.dtsi
+@@ -798,6 +798,17 @@
+ 				reg = <0x021b0000 0x4000>;
+ 			};
+ 
++			lcdif: lcdif@021c8000 {
++				compatible = "fsl,imx6ul-lcdif", "fsl,imx28-lcdif";
++				reg = <0x021c8000 0x4000>;
++				interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6UL_CLK_LCDIF_PIX>,
++					 <&clks IMX6UL_CLK_LCDIF_APB>,
++					 <&clks IMX6UL_CLK_DUMMY>;
++				clock-names = "pix", "axi", "disp_axi";
++				status = "disabled";
++			};
++
+ 			qspi: qspi@021e0000 {
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.1.4
