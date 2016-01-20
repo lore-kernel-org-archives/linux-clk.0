@@ -1,75 +1,43 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.132]:42071 "EHLO
-	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752988AbcAGMR5 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jan 2016 07:17:57 -0500
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: keescook@google.com, leozwang@google.com,
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/5] clk: rockchip: rk3036: fix the FLAGs for clock mux
-Date: Thu,  7 Jan 2016 20:17:33 +0800
-Message-Id: <1452169057-24467-2-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1452169057-24467-1-git-send-email-zhengxing@rock-chips.com>
-References: <1452169057-24467-1-git-send-email-zhengxing@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+	xf@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 1/4] clk: rockchip: fix cpuclk mux bit of big cpu-cluster
+Date: Wed, 20 Jan 2016 22:49:17 +0100
+Message-Id: <1453326560-20475-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-The DFLAGS are used for the clock dividers, the CLKSEL_CON flags
-of COMPOSITE_NODIV type should be MFLAGS.
+Both clusters have their mux bit in bit 7 of their respective register.
+For whatever reason the big cluster currently lists bit 15 which is
+definitly wrong.
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Fixes: 3536c97a52db ("clk: rockchip: add rk3368 clock controller")
+Reported-by: Zhang Qing <zhangqing@rock-chips.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
+I plan to include them into my clk-fixes branch, so posted for reference
+and possible objections ;-)
 
- drivers/clk/rockchip/clk-rk3036.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/clk/rockchip/clk-rk3368.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
-index ebce980..7e3b41c 100644
---- a/drivers/clk/rockchip/clk-rk3036.c
-+++ b/drivers/clk/rockchip/clk-rk3036.c
-@@ -224,16 +224,16 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
- 			RK2928_CLKGATE_CON(2), 2, GFLAGS),
+diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
+index 21f3ea9..f6667b8 100644
+--- a/drivers/clk/rockchip/clk-rk3368.c
++++ b/drivers/clk/rockchip/clk-rk3368.c
+@@ -165,7 +165,7 @@ static const struct rockchip_cpuclk_reg_data rk3368_cpuclkb_data = {
+ 	.core_reg = RK3368_CLKSEL_CON(0),
+ 	.div_core_shift = 0,
+ 	.div_core_mask = 0x1f,
+-	.mux_core_shift = 15,
++	.mux_core_shift = 7,
+ };
  
- 	COMPOSITE_NODIV(SCLK_TIMER0, "sclk_timer0", mux_timer_p, CLK_IGNORE_UNUSED,
--			RK2928_CLKSEL_CON(2), 4, 1, DFLAGS,
-+			RK2928_CLKSEL_CON(2), 4, 1, MFLAGS,
- 			RK2928_CLKGATE_CON(1), 0, GFLAGS),
- 	COMPOSITE_NODIV(SCLK_TIMER1, "sclk_timer1", mux_timer_p, CLK_IGNORE_UNUSED,
--			RK2928_CLKSEL_CON(2), 5, 1, DFLAGS,
-+			RK2928_CLKSEL_CON(2), 5, 1, MFLAGS,
- 			RK2928_CLKGATE_CON(1), 1, GFLAGS),
- 	COMPOSITE_NODIV(SCLK_TIMER2, "sclk_timer2", mux_timer_p, CLK_IGNORE_UNUSED,
--			RK2928_CLKSEL_CON(2), 6, 1, DFLAGS,
-+			RK2928_CLKSEL_CON(2), 6, 1, MFLAGS,
- 			RK2928_CLKGATE_CON(2), 4, GFLAGS),
- 	COMPOSITE_NODIV(SCLK_TIMER3, "sclk_timer3", mux_timer_p, CLK_IGNORE_UNUSED,
--			RK2928_CLKSEL_CON(2), 7, 1, DFLAGS,
-+			RK2928_CLKSEL_CON(2), 7, 1, MFLAGS,
- 			RK2928_CLKGATE_CON(2), 5, GFLAGS),
- 
- 	MUX(0, "uart_pll_clk", mux_pll_src_apll_dpll_gpll_usb480m_p, 0,
-@@ -279,13 +279,13 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
- 			RK2928_CLKGATE_CON(3), 2, GFLAGS),
- 
- 	COMPOSITE_NODIV(0, "sclk_sdmmc_src", mux_mmc_src_p, 0,
--			RK2928_CLKSEL_CON(12), 8, 2, DFLAGS,
-+			RK2928_CLKSEL_CON(12), 8, 2, MFLAGS,
- 			RK2928_CLKGATE_CON(2), 11, GFLAGS),
- 	DIV(SCLK_SDMMC, "sclk_sdmmc", "sclk_sdmmc_src", 0,
- 			RK2928_CLKSEL_CON(11), 0, 7, DFLAGS),
- 
- 	COMPOSITE_NODIV(0, "sclk_sdio_src", mux_mmc_src_p, 0,
--			RK2928_CLKSEL_CON(12), 10, 2, DFLAGS,
-+			RK2928_CLKSEL_CON(12), 10, 2, MFLAGS,
- 			RK2928_CLKGATE_CON(2), 13, GFLAGS),
- 	DIV(SCLK_SDIO, "sclk_sdio", "sclk_sdio_src", 0,
- 			RK2928_CLKSEL_CON(11), 8, 7, DFLAGS),
+ static const struct rockchip_cpuclk_reg_data rk3368_cpuclkl_data = {
 -- 
-1.7.9.5
-
-
+2.6.4
