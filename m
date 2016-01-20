@@ -1,54 +1,56 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Remi Pommarel <repk@triplefau.lt>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH V4 1/7] clk: bcm2835: the minimum clock divider is 2
-Date: Fri, 15 Jan 2016 14:21:00 +0000
-Message-Id: <1452867667-2447-2-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org>
-References: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, James Hogan <james.hogan@imgtec.com>, Zhang Qing <zhangqing@rock-chips.com>
+Subject: [PATCH v2] clk-divider: make sure read-only dividers do not write to their register
+Date: Wed, 20 Jan 2016 20:51:06 +0100
+Message-ID: <3578615.iBrKplh45Q@phil>
+In-Reply-To: <8710207.gKyLbM2bKY@phil>
+References: <8710207.gKyLbM2bKY@phil>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+Commit e6d5e7d90be9 ("clk-divider: Fix READ_ONLY when divider > 1") removed
+the special ops struct for read-only clocks and instead opted to handle
+them regularly.
 
-Testing with different clock divider values has shown
-that (at least for the PCM clock) the clock divider
-has to be at least 2, otherwise the clock will not
-output a signal.
+On the rk3368 this results in breakage as aclkm now gets set a value.
+While it is the same divider value, the A53 core still doesn't like it,
+which can result in the cpu ending up in a hang.
+The reason being that "ACLKENMasserts one clock cycle before the rising
+edge of ACLKM" and the clock should only be touched when STANDBYWFIL2
+is asserted.
 
-So the clamping has changed from 1 to 2 and comments
-about the kind of clamping applied have been added.
+So make sure read-only clocks don't touch the clock-register at all
+even if only writing the same value, as even writing the same value
+may not be safe in all cases.
 
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+Fixes: e6d5e7d90be9 ("clk-divider: Fix READ_ONLY when divider > 1")
+Reported-by: Zhang Qing <zhangqing@rock-chips.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Reviewed-by: James Hogan <james.hogan@imgtec.com>
 ---
- drivers/clk/bcm/clk-bcm2835.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+changes in v2:
+- emphasize that even setting the same divider may be unsafe
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 015e687..10e97b7 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1178,7 +1178,11 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
- 	div &= ~unused_frac_mask;
+ drivers/clk/clk-divider.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index ded3ff4..6dfe261 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -391,6 +391,10 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	unsigned long flags = 0;
+ 	u32 val;
  
- 	/* Clamp to the limits. */
--	div = max(div, unused_frac_mask + 1);
++	/* don't do writes in read-only case, as it may be unsafe */
++	if (divider->flags & CLK_DIVIDER_READ_ONLY)
++		return 0;
 +
-+	/* divider must be >= 2 */
-+	div = max_t(u32, div, (2 << CM_DIV_FRAC_BITS));
-+
-+	/* clamp to max divider allowed */
- 	div = min_t(u32, div, GENMASK(data->int_bits + CM_DIV_FRAC_BITS - 1,
- 				      CM_DIV_FRAC_BITS - data->frac_bits));
+ 	value = divider_get_val(rate, parent_rate, divider->table,
+ 				divider->width, divider->flags);
  
 -- 
-1.7.10.4
+2.6.4
