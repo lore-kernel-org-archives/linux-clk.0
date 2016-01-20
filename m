@@ -1,45 +1,32 @@
-Return-Path: <rjui@broadcom.com>
-From: Ray Jui <rjui@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<bcm-kernel-feedback-list@broadcom.com>, Simran Rai <ssimran@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>
-Subject: [PATCH RESEND v2 0/4] Add Cygnus audio clock support
-Date: Tue, 26 Jan 2016 17:18:37 -0800
-Message-ID: <1453857521-8804-1-git-send-email-rjui@broadcom.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, xf@rock-chips.com, zhangqing@rock-chips.com
+Subject: Re: [PATCH 1/4] clk: rockchip: fix cpuclk mux bit of big cpu-cluster
+Date: Wed, 20 Jan 2016 23:25:57 +0100
+Message-ID: <2048998.GeQnePRN87@phil>
+In-Reply-To: <56A004E3.5000309@codeaurora.org>
+References: <1453326560-20475-1-git-send-email-heiko@sntech.de> <56A004E3.5000309@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rjui@broadcom.com
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series adds support for the Cygnus audio clock based on existing
-iProc clock support
+Am Mittwoch, 20. Januar 2016, 14:06:27 schrieb Stephen Boyd:
+> On 01/20/2016 01:49 PM, Heiko Stuebner wrote:
+> > Both clusters have their mux bit in bit 7 of their respective register.
+> > For whatever reason the big cluster currently lists bit 15 which is
+> > definitly wrong.
+> > 
+> > Fixes: 3536c97a52db ("clk: rockchip: add rk3368 clock controller")
+> > Reported-by: Zhang Qing <zhangqing@rock-chips.com>
+> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > ---
+> > I plan to include them into my clk-fixes branch, so posted for reference
+> > and possible objections ;-)
+> 
+> None of these patches are fixes to regressions introduced in the merge
+> window for v4.5, so we wouldn't be considering them for clk-fixes. We
+> can certainly queue them up in clk-next for v4.6 and let stable process
+> funnel them to the right stable trees though.
 
-I re-applied this patch series to v4.5-rc1. Full kernel tree is available from
-GITHUB:
-repo: https://github.com/Broadcom/cygnus-linux.git
-branch: cygnus-audio-clk-v2
-
-Changes from v1:
- - Remove function prototype of a non-exist function 'iproc_audiopll_clk_setup'
- - Remove __init macros from all functions prototypes in iproc-clk.h
-
-Ray Jui (1):
-  clk: iproc: Remove __init from header
-
-Simran Rai (3):
-  Documentation: dt-bindings: Add DT bindings for Cygnus audio clock
-  clk: iproc: Add support for Cygnus audio clocks
-  ARM: dts: enable audio clock support for Cygnus
-
- .../bindings/clock/brcm,iproc-clocks.txt           |  6 +++
- arch/arm/boot/dts/bcm-cygnus-clock.dtsi            |  9 ++++
- drivers/clk/bcm/clk-cygnus.c                       | 59 ++++++++++++++++++++++
- drivers/clk/bcm/clk-iproc-pll.c                    | 41 +++++++++++++--
- drivers/clk/bcm/clk-iproc.h                        | 43 ++++++++++++----
- include/dt-bindings/clock/bcm-cygnus.h             |  6 +++
- 6 files changed, 148 insertions(+), 16 deletions(-)
-
--- 
-1.9.1
+ok, I'll move them over to that part then :-)
