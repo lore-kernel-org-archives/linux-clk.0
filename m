@@ -1,76 +1,45 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
-	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
-	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [PATCH v8 2/6] ARM: hisi: add compatible string for Hi3519 soc
-Date: Fri, 29 Jan 2016 15:42:08 +0800
-Message-ID: <1454053332-3218-3-git-send-email-xuejiancheng@huawei.com>
-In-Reply-To: <1454053332-3218-1-git-send-email-xuejiancheng@huawei.com>
-References: <1454053332-3218-1-git-send-email-xuejiancheng@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	xf@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 3/4] clk: rockchip: rk3368: fix parents of video encoder/decoder
+Date: Wed, 20 Jan 2016 22:49:19 +0100
+Message-Id: <1453326560-20475-3-git-send-email-heiko@sntech.de>
+In-Reply-To: <1453326560-20475-1-git-send-email-heiko@sntech.de>
+References: <1453326560-20475-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-add compatible string for Hi3519 soc.
+The vdpu and vepu clocks can also be parented to the npll and current
+parent list also is wrong as it would use the npll as "usbphy" source,
+so adapt the parent to the correct one.
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+Fixes: 3536c97a52db ("clk: rockchip: add rk3368 clock controller")
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- arch/arm/mach-hisi/hisilicon.c | 23 ++++-------------------
- 1 file changed, 4 insertions(+), 19 deletions(-)
+ drivers/clk/rockchip/clk-rk3368.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-hisi/hisilicon.c b/arch/arm/mach-hisi/hisilicon.c
-index 8cc6215..00dae89 100644
---- a/arch/arm/mach-hisi/hisilicon.c
-+++ b/arch/arm/mach-hisi/hisilicon.c
-@@ -54,30 +54,15 @@ DT_MACHINE_START(HI3620, "Hisilicon Hi3620 (Flattened Device Tree)")
- 	.dt_compat	= hi3xxx_compat,
- MACHINE_END
+diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
+index 3c9733e..6037beb 100644
+--- a/drivers/clk/rockchip/clk-rk3368.c
++++ b/drivers/clk/rockchip/clk-rk3368.c
+@@ -384,10 +384,10 @@ static struct rockchip_clk_branch rk3368_clk_branches[] __initdata = {
+ 	 * Clock-Architecture Diagram 3
+ 	 */
  
--static const char *const hix5hd2_compat[] __initconst = {
-+static const char *const hisilicon_compat[] __initconst = {
- 	"hisilicon,hix5hd2",
--	NULL,
--};
--
--DT_MACHINE_START(HIX5HD2_DT, "Hisilicon HIX5HD2 (Flattened Device Tree)")
--	.dt_compat	= hix5hd2_compat,
--MACHINE_END
--
--static const char *const hip04_compat[] __initconst = {
- 	"hisilicon,hip04-d01",
--	NULL,
--};
--
--DT_MACHINE_START(HIP04, "Hisilicon HiP04 (Flattened Device Tree)")
--	.dt_compat	= hip04_compat,
--MACHINE_END
--
--static const char *const hip01_compat[] __initconst = {
- 	"hisilicon,hip01",
- 	"hisilicon,hip01-ca9x2",
-+	"hisilicon,hi3519",
- 	NULL,
- };
+-	COMPOSITE(0, "aclk_vepu", mux_pll_src_cpll_gpll_usb_p, 0,
++	COMPOSITE(0, "aclk_vepu", mux_pll_src_cpll_gpll_npll_usb_p, 0,
+ 			RK3368_CLKSEL_CON(15), 6, 2, MFLAGS, 0, 5, DFLAGS,
+ 			RK3368_CLKGATE_CON(4), 6, GFLAGS),
+-	COMPOSITE(0, "aclk_vdpu", mux_pll_src_cpll_gpll_usb_p, 0,
++	COMPOSITE(0, "aclk_vdpu", mux_pll_src_cpll_gpll_npll_usb_p, 0,
+ 			RK3368_CLKSEL_CON(15), 14, 2, MFLAGS, 8, 5, DFLAGS,
+ 			RK3368_CLKGATE_CON(4), 7, GFLAGS),
  
--DT_MACHINE_START(HIP01, "Hisilicon HIP01 (Flattened Device Tree)")
--	.dt_compat      = hip01_compat,
-+DT_MACHINE_START(HISILICON_DT, "HiSilicon Soc")
-+	.dt_compat	= hisilicon_compat,
- MACHINE_END
 -- 
-1.9.1
+2.6.4
