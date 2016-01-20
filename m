@@ -1,61 +1,96 @@
-Return-Path: <p.zabel@pengutronix.de>
-Message-ID: <1451988742.3391.22.camel@pengutronix.de>
-Subject: Re: [PATCH v4 5/6] mfd: dt-bindings: add device tree bindings for
- Hi3519 sysctrl
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Jiancheng Xue <xuejiancheng@huawei.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
- pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
- galak@codeaurora.org, linux@arm.linux.org.uk, khilman@linaro.org,
- arnd@arndb.de,  olof@lixom.net, xuwei5@hisilicon.com,
- haojian.zhuang@linaro.org,  zhangfei.gao@linaro.org,
- bintian.wang@huawei.com, suwenping@hisilicon.com,
- devicetree@vger.kernel.org, yanhaifeng@hisilicon.com,
- linux-kernel@vger.kernel.org, gaofei@hisilicon.com, ml.yang@hisilicon.com,
- yanghongwei@hisilicon.com, zhangzhenxing@hisilicon.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Date: Tue, 05 Jan 2016 11:12:22 +0100
-In-Reply-To: <1451439832-13927-6-git-send-email-xuejiancheng@huawei.com>
-References: <1451439832-13927-1-git-send-email-xuejiancheng@huawei.com>
-	 <1451439832-13927-6-git-send-email-xuejiancheng@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <LW@karo-electronics.de>
+From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
+To: Anson Huang <b20788@freescale.com>,
+	Bai Ping <b51503@freescale.com>,
+	Frank Li <Frank.Li@freescale.com>,
+	Fugang Duan <B38611@freescale.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	=?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCHv2 10/16] ARM: dts: imx6ul: add sai support
+Date: Wed, 20 Jan 2016 11:09:03 +0100
+Message-Id: <1453284549-16363-11-git-send-email-LW@KARO-electronics.de>
+In-Reply-To: <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
+References: <1452619291-13625-1-git-send-email-LW@KARO-electronics.de>
+ <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Mittwoch, den 30.12.2015, 09:43 +0800 schrieb Jiancheng Xue:
-> Add device tree bindings for Hi3519 system controller.
-> 
-> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
-> ---
->  Documentation/devicetree/bindings/mfd/hi3519.txt | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/hi3519.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/hi3519.txt b/Documentation/devicetree/bindings/mfd/hi3519.txt
-> new file mode 100644
-> index 0000000..2536edc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/hi3519.txt
-> @@ -0,0 +1,14 @@
-> +* Hisilicon Hi3519 System Controller Block
-> +
-> +This bindings use the following binding:
-> +Dcumentation/devicetree/bindings/clock/clock-bindings.txt
+Add device nodes for the i.MX6UL synchronous audio interfaces (SAI).
 
-Typo: "Documentation"
-- but I don't see the clock bindings being used here at all.
-Maybe just drop this sentence?
+Signed-off-by: Lothar Waßmann <LW@KARO-electronics.de>
+---
+ arch/arm/boot/dts/imx6ul.dtsi | 45 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-> +
-> +Required properties:
-> +- compatible: "hisilicon,hi3519-sysctrl".
-> +- reg: the register region of this block
-> +
-> +Examples:
-> +sysctrl: system-controller@12010000 {
-> +	compatible = "hisilicon,hi3519-sysctrl", "syscon";
-> +	reg = <0x12010000 0x1000>;
-> +};
-
-regards
-Philipp
+diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
+index 9c873a6..e1fda39e 100644
+--- a/arch/arm/boot/dts/imx6ul.dtsi
++++ b/arch/arm/boot/dts/imx6ul.dtsi
+@@ -235,6 +235,51 @@
+ 					clock-names = "ipg", "per";
+ 					status = "disabled";
+ 				};
++
++				sai1: sai@02028000 {
++					#sound-dai-cells = <0>;
++					compatible = "fsl,imx6ul-sai", "fsl,imx6sx-sai";
++					reg = <0x02028000 0x4000>;
++					interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
++					clocks = <&clks IMX6UL_CLK_SAI1_IPG>,
++						 <&clks IMX6UL_CLK_SAI1>,
++						 <&clks IMX6UL_CLK_DUMMY>, <&clks IMX6UL_CLK_DUMMY>;
++					clock-names = "bus", "mclk1", "mclk2", "mclk3";
++					dmas = <&sdma 35 24 0>,
++					       <&sdma 36 24 0>;
++					dma-names = "rx", "tx";
++					status = "disabled";
++				};
++
++				sai2: sai@0202c000 {
++					#sound-dai-cells = <0>;
++					compatible = "fsl,imx6ul-sai", "fsl,imx6sx-sai";
++					reg = <0x0202c000 0x4000>;
++					interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
++					clocks = <&clks IMX6UL_CLK_SAI2_IPG>,
++						 <&clks IMX6UL_CLK_SAI2>,
++						 <&clks IMX6UL_CLK_DUMMY>, <&clks IMX6UL_CLK_DUMMY>;
++					clock-names = "bus", "mclk1", "mclk2", "mclk3";
++					dmas = <&sdma 37 24 0>,
++					       <&sdma 38 24 0>;
++					dma-names = "rx", "tx";
++					status = "disabled";
++				};
++
++				sai3: sai@02030000 {
++					#sound-dai-cells = <0>;
++					compatible = "fsl,imx6ul-sai", "fsl,imx6sx-sai";
++					reg = <0x02030000 0x4000>;
++					interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
++					clocks = <&clks IMX6UL_CLK_SAI3_IPG>,
++						 <&clks IMX6UL_CLK_SAI3>,
++						 <&clks IMX6UL_CLK_DUMMY>, <&clks IMX6UL_CLK_DUMMY>;
++					clock-names = "bus", "mclk1", "mclk2", "mclk3";
++					dmas = <&sdma 39 24 0>,
++					       <&sdma 40 24 0>;
++					dma-names = "rx", "tx";
++					status = "disabled";
++				};
+ 			};
+ 
+ 			tsc: tsc@02040000 {
+-- 
+2.1.4
