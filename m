@@ -1,70 +1,39 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 14 Jan 2016 18:02:37 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 04/13] clk: at91: make IRQ optional and register them
- later
-Message-ID: <20160115020237.GJ22188@codeaurora.org>
-References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
- <1449248628-3486-5-git-send-email-alexandre.belloni@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1449248628-3486-5-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <lho@apm.com>
+Return-Path: <lho@apm.com>
+From: Loc Ho <lho@apm.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	patches@apm.com,
+	Loc Ho <lho@apm.com>
+Subject: [PATCH v2 1/3] Documentation: Update APM X-Gene clock binding for v2 hardware
+Date: Tue, 19 Jan 2016 19:27:41 -0700
+Message-Id: <1453256863-15092-2-git-send-email-lho@apm.com>
+In-Reply-To: <1453256863-15092-1-git-send-email-lho@apm.com>
+References: <1453256863-15092-1-git-send-email-lho@apm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/04, Alexandre Belloni wrote:
-> @@ -686,3 +652,45 @@ static void __init of_at91sam9x5_clk_main_setup(struct device_node *np)
->  }
->  CLK_OF_DECLARE(at91sam9x5_clk_main, "atmel,at91sam9x5-clk-main",
->  	       of_at91sam9x5_clk_main_setup);
-> +
-> +static const struct of_device_id atmel_clk_main_dt_ids[] = {
-> +	{ .compatible = "atmel,at91rm9200-clk-main-osc" },
-> +	{ .compatible = "atmel,at91sam9x5-clk-main-rc-osc" },
-> +	{ .compatible = "atmel,at91sam9x5-clk-main" },
-> +	{ /* sentinel */ }
-> +};
-> +
-> +static int __init atmel_clk_main_probe(struct platform_device *pdev)
-> +{
-> +	struct of_phandle_args clkspec = { .np = pdev->dev.of_node};
-> +	struct clk_main *clkmain;
-> +	struct clk_hw *hw;
-> +	int ret;
-> +
-> +	hw = __clk_get_hw(of_clk_get_from_provider(&clkspec));
-> +	if (!hw)
-> +		return -ENODEV;
-> +
-> +	clkmain = to_clk_main(hw);
-> +	clkmain->irq = platform_get_irq(pdev, 0);
-> +	if (!clkmain->irq)
-> +		return 0;
+Update APM X-Gene clock binding documentation for SoC and
+PCP PLL for v2 hardware.
 
-Is there any way to get the irq into this probe function without
-getting a clk pointer and then unwrapping it to get an irq
-value out of the clk_hw wrapper structure? That's a pretty
-convoluted design.
+Signed-off-by: Loc Ho <lho@apm.com>
+---
+ Documentation/devicetree/bindings/clock/xgene.txt |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-> +
-> +	init_waitqueue_head(&clkmain->wait);
-> +	irq_set_status_flags(clkmain->irq, IRQ_NOAUTOEN);
-> +	ret = devm_request_irq(&pdev->dev, clkmain->irq, clk_main_irq_handler,
-> +			       IRQF_TRIGGER_HIGH, __clk_get_name(hw->clk),
-> +			       clkmain);
-> +	if (ret)
-> +		clkmain->irq = 0;
-> +
-> +	return ret;
-> +}
-> +
-
+diff --git a/Documentation/devicetree/bindings/clock/xgene.txt b/Documentation/devicetree/bindings/clock/xgene.txt
+index 1c4ef77..3fe3169 100644
+--- a/Documentation/devicetree/bindings/clock/xgene.txt
++++ b/Documentation/devicetree/bindings/clock/xgene.txt
+@@ -9,6 +9,8 @@ Required properties:
+ 	"apm,xgene-socpll-clock" - for a X-Gene SoC PLL clock
+ 	"apm,xgene-pcppll-clock" - for a X-Gene PCP PLL clock
+ 	"apm,xgene-device-clock" - for a X-Gene device clock
++	"apm,xgene-socpll-v2-clock" - for a X-Gene SoC PLL v2 clock
++	"apm,xgene-pcppll-v2-clock" - for a X-Gene PCP PLL v2 clock
+ 
+ Required properties for SoC or PCP PLL clocks:
+ - reg : shall be the physical PLL register address for the pll clock.
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.1
