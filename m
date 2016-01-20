@@ -1,33 +1,67 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH] clk: axi-clkgen: Remove sometimes impossible check
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>
-References: <1454116408-28866-1-git-send-email-sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-From: Lars-Peter Clausen <lars@metafoo.de>
-Message-ID: <56ACCFD9.3080300@metafoo.de>
-Date: Sat, 30 Jan 2016 15:59:37 +0100
+Return-Path: <LW@karo-electronics.de>
+From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
+To: Anson Huang <b20788@freescale.com>,
+	Bai Ping <b51503@freescale.com>,
+	Frank Li <Frank.Li@freescale.com>,
+	Fugang Duan <B38611@freescale.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	=?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCHv2 03/16] ARM: dts: imx6ul: move dt-bindings/input/input.h include to dtsi file
+Date: Wed, 20 Jan 2016 11:08:56 +0100
+Message-Id: <1453284549-16363-4-git-send-email-LW@KARO-electronics.de>
+In-Reply-To: <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
+References: <1452619291-13625-1-git-send-email-LW@KARO-electronics.de>
+ <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
 MIME-Version: 1.0
-In-Reply-To: <1454116408-28866-1-git-send-email-sboyd@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/30/2016 02:13 AM, Stephen Boyd wrote:
-> The size of unsigned long on 64-bit architectures is equal to the
-> size of u64, so this check is impossible there. This throws off
-> static checkers:
-> 
-> drivers/clk/clk-axi-clkgen.c:331 axi_clkgen_recalc_rate() warn:
-> impossible condition '(tmp > (~0)) => (0-u64max > u64max)'
-> 
-> Let's change this code to use min_t() instead so that we
-> get the same effect on architectures where sizeof(unsigned long)
-> doesn't equal sizeof(u64).
-> 
-> Cc: Lars-Peter Clausen <lars@metafoo.de>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+imx6ul.dtsi references the macro 'KEY_POWER' from
+dt-bindings/input/input.h. Thus, move the include statement for this
+file from imx6ul-14x14-evk.dts to imx6ul.dtsi itself.
 
-Thanks.
+Signed-off-by: Lothar Waßmann <LW@KARO-electronics.de>
+---
+ arch/arm/boot/dts/imx6ul-14x14-evk.dts | 1 -
+ arch/arm/boot/dts/imx6ul.dtsi          | 1 +
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Lars-Peter Clausen <lars@metafoo.de>
+diff --git a/arch/arm/boot/dts/imx6ul-14x14-evk.dts b/arch/arm/boot/dts/imx6ul-14x14-evk.dts
+index 6aaa5ec..a6f459a 100644
+--- a/arch/arm/boot/dts/imx6ul-14x14-evk.dts
++++ b/arch/arm/boot/dts/imx6ul-14x14-evk.dts
+@@ -8,7 +8,6 @@
+ 
+ /dts-v1/;
+ 
+-#include <dt-bindings/input/input.h>
+ #include "imx6ul.dtsi"
+ 
+ / {
+diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
+index 7e27d76..e4c3a80 100644
+--- a/arch/arm/boot/dts/imx6ul.dtsi
++++ b/arch/arm/boot/dts/imx6ul.dtsi
+@@ -8,6 +8,7 @@
+ 
+ #include <dt-bindings/clock/imx6ul-clock.h>
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include "imx6ul-pinfunc.h"
+ #include "skeleton.dtsi"
+-- 
+2.1.4
