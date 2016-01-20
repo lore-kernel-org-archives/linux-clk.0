@@ -1,67 +1,86 @@
-Return-Path: <LW@karo-electronics.de>
-From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
-To: Anson Huang <b20788@freescale.com>,
-	Bai Ping <b51503@freescale.com>,
-	Frank Li <Frank.Li@freescale.com>,
-	Fugang Duan <B38611@freescale.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	=?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCHv2 14/16] clk: imx: add kpp clock for i.MX6UL
-Date: Wed, 20 Jan 2016 11:09:07 +0100
-Message-Id: <1453284549-16363-15-git-send-email-LW@KARO-electronics.de>
-In-Reply-To: <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
-References: <1452619291-13625-1-git-send-email-LW@KARO-electronics.de>
- <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
+Return-Path: <jamesjj.liao@mediatek.com>
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, John Crispin
+	<blogic@openwrt.org>, Rob Herring <robh@kernel.org>
+CC: Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, <srv_heupstream@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, James Liao <jamesjj.liao@mediatek.com>, Shunli
+ Wang <shunli.wang@mediatek.com>
+Subject: [PATCH v4 1/6] clk: mediatek: Refine the makefile to support multiple clock drivers
+Date: Wed, 20 Jan 2016 14:35:42 +0800
+Message-ID: <1453271747-57397-2-git-send-email-jamesjj.liao@mediatek.com>
+In-Reply-To: <1453271747-57397-1-git-send-email-jamesjj.liao@mediatek.com>
+References: <1453271747-57397-1-git-send-email-jamesjj.liao@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the necessary clock to use the KPP interface on i.MX6UL.
+Add a Kconfig to define clock configuration for each SoC, and
+modify the Makefile to build drivers that only selected in config.
 
-Signed-off-by: Lothar Waßmann <LW@KARO-electronics.de>
+Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Tested-by: John Crispin <blogic@openwrt.org>
 ---
- drivers/clk/imx/clk-imx6ul.c             | 1 +
- include/dt-bindings/clock/imx6ul-clock.h | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/clk/Kconfig           |  1 +
+ drivers/clk/mediatek/Kconfig  | 23 +++++++++++++++++++++++
+ drivers/clk/mediatek/Makefile |  6 +++---
+ 3 files changed, 27 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/clk/mediatek/Kconfig
 
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index 3e31ec0..1ee28d3 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -365,6 +365,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	/* CCGR5 */
- 	clks[IMX6UL_CLK_ROM]		= imx_clk_gate2("rom",		"ahb",		base + 0x7c,	0);
- 	clks[IMX6UL_CLK_SDMA]		= imx_clk_gate2("sdma",		"ahb",		base + 0x7c,	6);
-+	clks[IMX6UL_CLK_KPP]		= imx_clk_gate2("kpp",		"ipg",		base + 0x7c,	8);
- 	clks[IMX6UL_CLK_WDOG2]		= imx_clk_gate2("wdog2",	"ipg",		base + 0x7c,	10);
- 	clks[IMX6UL_CLK_SPBA]		= imx_clk_gate2("spba",		"ipg",		base + 0x7c,	12);
- 	clks[IMX6UL_CLK_SPDIF]		= imx_clk_gate2_shared("spdif",		"spdif_podf",	base + 0x7c,	14, &share_count_audio);
-diff --git a/include/dt-bindings/clock/imx6ul-clock.h b/include/dt-bindings/clock/imx6ul-clock.h
-index 08ce4a7..fd8aee8 100644
---- a/include/dt-bindings/clock/imx6ul-clock.h
-+++ b/include/dt-bindings/clock/imx6ul-clock.h
-@@ -234,7 +234,8 @@
- #define IMX6UL_CLK_CSI_SEL		221
- #define IMX6UL_CLK_CSI_PODF		222
- #define IMX6UL_CLK_PLL3_120M		223
-+#define IMX6UL_CLK_KPP			224
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index c3e3a02..b7a37dc 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -198,3 +198,4 @@ source "drivers/clk/mvebu/Kconfig"
  
--#define IMX6UL_CLK_END			224
-+#define IMX6UL_CLK_END			225
- 
- #endif /* __DT_BINDINGS_CLOCK_IMX6UL_H */
+ source "drivers/clk/samsung/Kconfig"
+ source "drivers/clk/tegra/Kconfig"
++source "drivers/clk/mediatek/Kconfig"
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+new file mode 100644
+index 0000000..dc224e6
+--- /dev/null
++++ b/drivers/clk/mediatek/Kconfig
+@@ -0,0 +1,23 @@
++#
++# MediaTek SoC drivers
++#
++config COMMON_CLK_MEDIATEK
++	bool
++	---help---
++	  Mediatek SoCs' clock support.
++
++config COMMON_CLK_MT8135
++	bool "Clock driver for Mediatek MT8135"
++	depends on COMMON_CLK
++	select COMMON_CLK_MEDIATEK
++	default ARCH_MEDIATEK
++	---help---
++	  This driver supports Mediatek MT8135 clocks.
++
++config COMMON_CLK_MT8173
++	bool "Clock driver for Mediatek MT8173"
++	depends on COMMON_CLK
++	select COMMON_CLK_MEDIATEK
++	default ARCH_MEDIATEK
++	---help---
++	  This driver supports Mediatek MT8173 clocks.
+diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+index 95fdfac..32e7222 100644
+--- a/drivers/clk/mediatek/Makefile
++++ b/drivers/clk/mediatek/Makefile
+@@ -1,4 +1,4 @@
+-obj-y += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
++obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
+ obj-$(CONFIG_RESET_CONTROLLER) += reset.o
+-obj-y += clk-mt8135.o
+-obj-y += clk-mt8173.o
++obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135.o
++obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173.o
 -- 
-2.1.4
+1.9.1
