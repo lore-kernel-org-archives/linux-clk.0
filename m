@@ -1,50 +1,99 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: heiko@sntech.de
-Cc: keescook@google.com,
-	leozwang@google.com,
-	linux-rockchip@lists.infradead.org,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/5] clk: rockchip: rk3036: fix the div offset for emac clock
-Date: Thu,  7 Jan 2016 20:17:35 +0800
-Message-Id: <1452169057-24467-4-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1452169057-24467-1-git-send-email-zhengxing@rock-chips.com>
-References: <1452169057-24467-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <James.Hogan@imgtec.com>
+Date: Wed, 20 Jan 2016 14:57:31 +0000
+From: James Hogan <james.hogan@imgtec.com>
+To: Heiko Stuebner <heiko@sntech.de>
+CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>, <linux-rockchip@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, Zhang Qing <zhangqing@rock-chips.com>
+Subject: Re: [PATCH] clk-divider: make sure read-only dividers do not write
+ to their register
+Message-ID: <20160120145731.GA6864@jhogan-linux.le.imgtec.org>
+References: <8710207.gKyLbM2bKY@phil>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
+In-Reply-To: <8710207.gKyLbM2bKY@phil>
 List-ID: <linux-clk.vger.kernel.org>
 
-Due to reference to old version TRM, there are incorrect emac clock node.
-The SEL_21_9 is used for the parent div, the SEL_21_4 is used for the
-child div.
+--XsQoSWH+UP9D9v3l
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
----
+On Wed, Jan 20, 2016 at 03:42:54PM +0100, Heiko Stuebner wrote:
+> Commit e6d5e7d90be9 ("clk-divider: Fix READ_ONLY when divider > 1") remov=
+ed
+> the special ops struct for read-only clocks and instead opted to handle
+> them regularly.
+>=20
+> On the rk3368 this results in breakage as aclkm now gets set a value.
+> While it is the same divider, the A53 core still doesn't like it.
+> The reason being that "ACLKENMasserts one clock cycle before the rising
+> edge of ACLKM" and the clock should only be touched when STANDBYWFIL2
+> is asserted.
+>=20
+> So make sure, read-only clocks don't touch the clock-register at all
+> even if only writing the same value.
+>=20
+> Fixes: e6d5e7d90be9 ("clk-divider: Fix READ_ONLY when divider > 1")
+> Reported-by: Zhang Qing <zhangqing@rock-chips.com>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 
- drivers/clk/rockchip/clk-rk3036.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+It wouldn't hurt to clarify in the comment that this isn't just an
+optimisation, and that even writing the same value to the hardware may
+not be safe.
 
-diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
-index 04b5249..1f00fab 100644
---- a/drivers/clk/rockchip/clk-rk3036.c
-+++ b/drivers/clk/rockchip/clk-rk3036.c
-@@ -344,12 +344,12 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
- 			RK2928_CLKGATE_CON(10), 5, GFLAGS),
- 
- 	COMPOSITE_NOGATE(0, "mac_pll_src", mux_pll_src_3plls_p, 0,
--			RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 4, 5, DFLAGS),
-+			RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 9, 5, DFLAGS),
- 	MUX(SCLK_MACREF, "mac_clk_ref", mux_mac_p, CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(21), 3, 1, MFLAGS),
- 
- 	COMPOSITE_NOMUX(SCLK_MAC, "mac_clk", "mac_clk_ref", 0,
--			RK2928_CLKSEL_CON(21), 9, 5, DFLAGS,
-+			RK2928_CLKSEL_CON(21), 4, 5, DFLAGS,
- 			RK2928_CLKGATE_CON(2), 6, GFLAGS),
- 
- 	MUX(SCLK_HDMI, "dclk_hdmi", mux_dclk_p, 0,
--- 
-1.7.9.5
+In any case
+Reviewed-by: James Hogan <james.hogan@imgtec.com>
+
+Cheers
+James
+
+> ---
+>  drivers/clk/clk-divider.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>=20
+> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+> index ded3ff4..6dfe261 100644
+> --- a/drivers/clk/clk-divider.c
+> +++ b/drivers/clk/clk-divider.c
+> @@ -391,6 +391,10 @@ static int clk_divider_set_rate(struct clk_hw *hw, u=
+nsigned long rate,
+>  	unsigned long flags =3D 0;
+>  	u32 val;
+> =20
+> +	/* don't do writes in read-only case */
+> +	if (divider->flags & CLK_DIVIDER_READ_ONLY)
+> +		return 0;
+> +
+>  	value =3D divider_get_val(rate, parent_rate, divider->table,
+>  				divider->width, divider->flags);
+> =20
+> --=20
+> 2.6.4
+>=20
+>=20
+
+--XsQoSWH+UP9D9v3l
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJWn6BbAAoJEGwLaZPeOHZ6SwAP+wWc+6xqXEyBVRY2MSg85FpB
+ZEpXvIxWXyfd1C08bEMuxdTml6nyyuE5m6+KjH0zUrcpekSRUtsyfdq5BHw67yif
+KpAJGKrDzcXUkT+fCLnBgs5upsEq8gGkhTY1tacErL0yhIaAhFVqoPyUPa2Xi1tM
+4NuKvQSbfRlmGDnaAjPse8GTumjcxSqXj0h6e+9Mptm3HY6xlJeMa8BznjWu+Plt
+UdyX0GuPy31cCRz7ohusAuJI/Y4QpQM+AYcY5RcD0BoFJsw5dyeS0P3o9bbsyIby
+o49NJ5XO5m0JExlPKEFRCIapzwmBUpjRmDCDSGeJ6g/ugi85Cx/c90A3HL7yWZfP
+AZ1gpJHq61/G0jkYIcXpRHk5hszlfcY4qX3THEk4lmaZ4lFGaPkBge7WnJOUTEze
+0UYuNhN8SVtVbfc/bddbCB/TXGppflEshnYVBBAKI250hFDLMJbUD54TnQsHpF/o
+sPRiY5PZS+Vtg6gVcpy8TaefjxAaIRCzrfJtbIJtbarHjzw7kT/XiBx+bClNrH4J
+KyT2jyod5U/uB5tM0jyeqDkhz4l+jiQOQRkhXDmN+Qc61ZWDCxrzSKhIpThKZA8f
+Wx6DqUxxQeA7UStN63e+oUejNIMSB3xwdvfZD2Cx6znHHPGx2S/BSggJ2UqXgeJs
+iPdjQy3hwzRuiJzh3ZfE
+=2Hyq
+-----END PGP SIGNATURE-----
+
+--XsQoSWH+UP9D9v3l--
