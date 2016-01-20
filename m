@@ -1,107 +1,198 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.140]:36548 "EHLO
-	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751658AbcAFNGN (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jan 2016 08:06:13 -0500
-Message-ID: <568D1134.9010305@rock-chips.com>
-Date: Wed, 06 Jan 2016 21:05:56 +0800
-From: Xing Zheng <zhengxing@rock-chips.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Xing Zheng <zhengxing@rock-chips.com>
+Cc: linux-rockchip@lists.infradead.org, keescook@google.com, leozwang@google.com, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: rockchip: Add support for multiple clock providers
+Date: Thu, 21 Jan 2016 00:38:30 +0100
+Message-ID: <3395528.oy9qVuyESf@phil>
+In-Reply-To: <1453280809-3120-1-git-send-email-zhengxing@rock-chips.com>
+References: <1453280809-3120-1-git-send-email-zhengxing@rock-chips.com>
 MIME-Version: 1.0
-To: =?GB2312?B?SGVpa28gU3SouWJuZXI=?= <heiko@sntech.de>
-CC: Yakir Yang <ykk@rock-chips.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	Rob Herring <robh+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, keescook@google.com,
-	linux-clk@vger.kernel.org, leozwang@google.com,
-	xing.zheng@rock-chips.com
-Subject: Re: [RESEND PATCH v1 4/4] clk: rockchip: rk3036: fix and add node
- id for emac clock
-References: <1451293433-32392-1-git-send-email-zhengxing@rock-chips.com> <5681E8E4.2010303@rock-chips.com> <5681F121.3070307@rock-chips.com> <1562268.fb58QJ4jV7@diego> <01110793-A349-4006-82A2-4489CE832B19@rock-chips.com>
-In-Reply-To: <01110793-A349-4006-82A2-4489CE832B19@rock-chips.com>
-Content-Type: text/plain; charset=GB2312
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Heiko,
+Hi,
 
-On 2016年01月02日 10:34, Xing Zheng wrote:
-> Hi Heiko,
->     Thank you for your patch, I will apply and test it later.
->
-> Thanks.
->
->> 在 2016年1月2日，06:10，Heiko Stübner <heiko@sntech.de> 写道：
->>
->> Hi Xing,
->>
->> Am Dienstag, 29. Dezember 2015, 10:34:09 schrieb Xing Zheng:
->>> On 2015年12月29日 09:59, Yakir Yang wrote:
->>>> On 12/28/2015 08:41 PM, Heiko Stübner wrote:
->>>>> Am Montag, 28. Dezember 2015, 17:03:53 schrieb Xing Zheng:
->>>>>> Due to referred old version TRM, there is incorrect emac clock node,
->>>>>> we should fix it. The SEL_21_9 is the parent of SEL_21_4.
->>>>>>
->>>>>> In the emac driver, we need to refer HCLK_MAC, and because There are
->>>>>> only 3PLLs (APLL/GPLL/DPLL) on the rk3036, most clock are under the
->>>>>> GPLL, and it is unable to provide the accurate rate for mac_ref which
->>>>>> need to 50MHz probability, we should let it under the APLL and are
->>>>>> able to set the freq which integer multiples of 50MHz, so we add these
->>>>>> emac node for reference.
->>>>> I don't really follow here. While I do understand that the emac needs
->>>>> 50MHz, I
->>>>> don't think using the APLL as source is helpful.
->>>>>
->>>>> The APLL is the main clocksource for the cpu-cores, including frequency
->>>>> scaling, and while it currently only lists 816MHz as sole frequency,
->>>>> you're
->>>>> pretty much guaranteed to not get your correct multiple of 50MHz from
->>>>> there
->>>>> either. And limiting the cpu to just do 600MHz to get the mac working
->>>>> sounds
->>>>> pretty bad ;-) .
->>>>>
->>>>>
->>>>> In the rk3036 cru-node the gpll gets set to 594MHz. Is there a
->>>>> special reason
->>>>> why it needs to be 594MHz and cannot be a round 600MHz? Because that
->>>>> would
->>>>> also provide your 50MHz-multiple nicely.
->>>> Yes, this magic 594MHz would help to support the standard HDMI
->>>> resolutions, here are the math:
->>>>
->>>> 1920x1080-60Hz DCLK = 148.5MHz = 594MHz / 4
->>>> 1280x720-60Hz DCLK = 74.25MHz = 594MHz / 8
->>>> 720x480-60Hz DCLK = 27MHz = 594MHz / 22
->>>>
->>>> Thanks,
->>>> - Yakir
->>> Thanks Yakir.
->>>
->>> Hi Heiko,
->>> From the above, do you have better idea for the RK3036's emac without
->>> ext-oscillator?
->> During the last days I did play a bit with the clock framework. As I don't 
->> have a Kylin (or any rk3036) board, I did build a test-case with pclk_cpu on 
->> the rk3188 (which can be affected by the armclk if not reparented to the 
->> gpll), which got sucessfully adapted to get back to (or near) the originally 
->> requested frequency.
->>
->> So ideally you could roll back your mux/div split here and try the attached 
->> diff. In theory it should help :-) .
->> As can be seen by the FIXMEs, not fully finished, but I'd like to determine if 
->> it fixes the issue at least.
->>
->>
->> Heiko
->> <clk-keep-req-rate.diff>
+Am Mittwoch, 20. Januar 2016, 17:06:49 schrieb Xing Zheng:
+> There are need to support Multi-CRUs probability in future, but
+> it is not supported on the current Rockchip Clock Framework.
+> 
+> Therefore, this patch add support a provider as the parameter
+> handler when we call the clock register functions for per CRU.
+> 
+> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 
-I tested your patch just now, it seems to work well. I will do more tests.
+overall this looks really nice. Thanks for following up on our talk so 
+quickly :-) .
 
-Thank you. :-)
 
+> ---
+> 
+> Changes in v2:
+> - Fix missed to call rockchip_clk_common_cru_init when SoCs clock init.
+> 
+>  drivers/clk/rockchip/clk-rk3036.c |   15 +++--
+>  drivers/clk/rockchip/clk-rk3188.c |   40 ++++++++-----
+>  drivers/clk/rockchip/clk-rk3228.c |   15 +++--
+>  drivers/clk/rockchip/clk-rk3288.c |   17 ++++--
+>  drivers/clk/rockchip/clk-rk3368.c |   19 +++---
+>  drivers/clk/rockchip/clk.c        |  120
+> +++++++++++++++++++++++-------------- drivers/clk/rockchip/clk.h        |
+>   35 ++++++++---
+>  7 files changed, 170 insertions(+), 91 deletions(-)
+> 
+> diff --git a/drivers/clk/rockchip/clk-rk3036.c
+> b/drivers/clk/rockchip/clk-rk3036.c index 483913b..050ad13 100644
+> --- a/drivers/clk/rockchip/clk-rk3036.c
+> +++ b/drivers/clk/rockchip/clk-rk3036.c
+> @@ -434,6 +434,7 @@ static const char *const rk3036_critical_clocks[]
+> __initconst = {
+> 
+>  static void __init rk3036_clk_init(struct device_node *np)
+>  {
+> +	struct rockchip_clk_provider *ctx;
+>  	void __iomem *reg_base;
+>  	struct clk *clk;
+> 
+> @@ -443,7 +444,9 @@ static void __init rk3036_clk_init(struct device_node
+> *np) return;
+>  	}
+> 
+> -	rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
+> +	ctx = rockchip_clk_init(reg_base, CLK_NR_CLKS);
+> +
+> +	rockchip_clk_common_cru_init(np);
+> 
+>  	/* xin12m is created by an cru-internal divider */
+>  	clk = clk_register_fixed_factor(NULL, "xin12m", "xin24m", 0, 1, 2);
+> @@ -473,15 +476,15 @@ static void __init rk3036_clk_init(struct
+> device_node *np) pr_warn("%s: could not register clock sclk_macref_out:
+> %ld\n", __func__, PTR_ERR(clk));
+> 
+> -	rockchip_clk_register_plls(rk3036_pll_clks,
+> +	rockchip_clk_register_plls(ctx, rk3036_pll_clks,
+>  				   ARRAY_SIZE(rk3036_pll_clks),
+>  				   RK3036_GRF_SOC_STATUS0);
+> -	rockchip_clk_register_branches(rk3036_clk_branches,
+> +	rockchip_clk_register_branches(ctx, rk3036_clk_branches,
+>  				  ARRAY_SIZE(rk3036_clk_branches));
+>  	rockchip_clk_protect_critical(rk3036_critical_clocks,
+>  				      ARRAY_SIZE(rk3036_critical_clocks));
+> 
+> -	rockchip_clk_register_armclk(ARMCLK, "armclk",
+> +	rockchip_clk_register_armclk(ctx, ARMCLK, "armclk",
+>  			mux_armclk_p, ARRAY_SIZE(mux_armclk_p),
+>  			&rk3036_cpuclk_data, rk3036_cpuclk_rates,
+>  			ARRAY_SIZE(rk3036_cpuclk_rates));
+> @@ -489,6 +492,8 @@ static void __init rk3036_clk_init(struct device_node
+> *np) rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0),
+> ROCKCHIP_SOFTRST_HIWORD_MASK);
+> 
+> -	rockchip_register_restart_notifier(RK2928_GLB_SRST_FST, NULL);
+> +	rockchip_register_restart_notifier(ctx, RK2928_GLB_SRST_FST, NULL);
+> +
+> +	rockchip_clk_of_add_provider(np, ctx);
+>  }
+>  CLK_OF_DECLARE(rk3036_cru, "rockchip,rk3036-cru", rk3036_clk_init);
+> diff --git a/drivers/clk/rockchip/clk-rk3188.c
+> b/drivers/clk/rockchip/clk-rk3188.c index 7f7444c..338a22e 100644
+> --- a/drivers/clk/rockchip/clk-rk3188.c
+> +++ b/drivers/clk/rockchip/clk-rk3188.c
+> @@ -750,18 +750,19 @@ static const char *const rk3188_critical_clocks[]
+> __initconst = { "pclk_peri",
+>  };
+> 
+> -static void __init rk3188_common_clk_init(struct device_node *np)
+> +static struct rockchip_clk_provider *__init rk3188_common_clk_init(struct
+> device_node *np) {
+> +	struct rockchip_clk_provider *ctx;
+>  	void __iomem *reg_base;
+>  	struct clk *clk;
+> 
+>  	reg_base = of_iomap(np, 0);
+> -	if (!reg_base) {
+> -		pr_err("%s: could not map cru region\n", __func__);
+> -		return;
+> -	}
+> +	if (!reg_base)
+> +		panic("%s: could not map cru region\n", __func__);
+
+I don't believe in doing panics everywhere :-), please do
+	return ERR_PTR(-ENOMEM);
+here and in similar locations and let the top-most caller handle errors.
+
+
+
+> @@ -260,27 +261,49 @@ static struct clk
+> *rockchip_clk_register_frac_branch(const char *name, return clk;
+>  }
+> 
+> -static DEFINE_SPINLOCK(clk_lock);
+> -static struct clk **clk_table;
+> -static void __iomem *reg_base;
+> -static struct clk_onecell_data clk_data;
+>  static struct device_node *cru_node;
+
+please also include the devicetree node into the ctx struct. That way we can 
+keep track of all of them (when there are multiple).
+
+
+>  static struct regmap *grf;
+> 
+> -void __init rockchip_clk_init(struct device_node *np, void __iomem *base,
+> -			      unsigned long nr_clks)
+> +struct rockchip_clk_provider *__init rockchip_clk_init(
+> +			void __iomem *base, unsigned long nr_clks)
+>  {
+> -	reg_base = base;
+> -	cru_node = np;
+> -	grf = ERR_PTR(-EPROBE_DEFER);
+> +	struct rockchip_clk_provider *ctx;
+> +	struct clk **clk_table;
+> +	int i;
+> +
+> +	ctx = kzalloc(sizeof(struct rockchip_clk_provider), GFP_KERNEL);
+> +	if (!ctx)
+> +		panic("could not allocate clock provider context.\n");
+
+as I wrote above, please return a real error here. Especially when there are 
+multiple clock controllers, it might actually get a bit farther in cases 
+when only one of them fails, which might help in debugging underlying issues 
+in such cases.
+
+
+> 
+>  	clk_table = kcalloc(nr_clks, sizeof(struct clk *), GFP_KERNEL);
+>  	if (!clk_table)
+> -		pr_err("%s: could not allocate clock lookup table\n", __func__);
+> +		panic("could not allocate clock lookup table\n");
+
+same here (and kfree the ctx from above before returning)
+
+
+> +
+> +	for (i = 0; i < nr_clks; ++i)
+> +		clk_table[i] = ERR_PTR(-ENOENT);
+> +
+> +	ctx->reg_base = base;
+> +	ctx->clk_data.clks = clk_table;
+> +	ctx->clk_data.clk_num = nr_clks;
+> +	spin_lock_init(&ctx->lock);
+> +
+> +	return ctx;
+> +}
+> 
+> -	clk_data.clks = clk_table;
+> -	clk_data.clk_num = nr_clks;
+> -	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+> +void __init rockchip_clk_common_cru_init(struct device_node *np)
+> +{
+> +	cru_node = np;
+> +	grf = ERR_PTR(-EPROBE_DEFER);
+
+I'm not sure why this is a separate function. Setting the node pointer (into 
+the new struct as written above) can still happen in rockchip_clk_init, and 
+initializing the global grf pointer as well.
+
+
+Heiko
