@@ -1,171 +1,97 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v4 12/13] clk: at91: pmc: remove useless capacities handling
-Date: Wed, 27 Jan 2016 17:11:11 +0100
-Message-Id: <1453911072-23608-13-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <tomeu.vizoso@gmail.com>
+MIME-Version: 1.0
+Sender: tomeu.vizoso@gmail.com
+In-Reply-To: <CAL_JsqJPcPgS=cKNqv9j5Ch3ZHbUmci1LRedBWV1gV=5kCz68Q@mail.gmail.com>
+References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
+ <1452219400-32478-2-git-send-email-xuejiancheng@huawei.com>
+ <20160112221211.GB22188@codeaurora.org> <5695BE65.3070409@huawei.com>
+ <20160113185707.1168.85601@quark.deferred.io> <56979F9F.5080201@huawei.com>
+ <5698A650.5010600@huawei.com> <CAL_JsqJPcPgS=cKNqv9j5Ch3ZHbUmci1LRedBWV1gV=5kCz68Q@mail.gmail.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Date: Wed, 20 Jan 2016 07:38:13 +0100
+Message-ID: <CAAObsKBbUaGi-ZWg+Y-OCq=xVOgBJroMTVsqP2JpVHPQWcM4=w@mail.gmail.com>
+Subject: Re: [PATCH v5 1/6] clk: hisilicon: add CRG driver for hi3519 soc
+To: Rob Herring <robh+dt@kernel.org>
+Cc: xuejiancheng <xuejiancheng@huawei.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>, Kevin Hilman <khilman@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Wei Xu <xuwei5@hisilicon.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>, Zhangfei Gao <zhangfei.gao@linaro.org>,
+	Bintian Wang <bintian.wang@huawei.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, yanhaifeng@hisilicon.com,
+	yanghongwei@hisilicon.com, suwenping@hisilicon.com, ml.yang@hisilicon.com,
+	gaofei@hisilicon.com, zhangzhenxing@hisilicon.com, xuejiancheng@hisilicon.com
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Capacities only handles interrupts and they are not use anymore. Remove the
-whole initialisation.
+On 19 January 2016 at 19:20, Rob Herring <robh+dt@kernel.org> wrote:
+> On Fri, Jan 15, 2016 at 1:57 AM, xuejiancheng <xuejiancheng@huawei.com> wrote:
+>>
+>> On 2016/1/14 21:16, xuejiancheng wrote:
+>>> Hi Mike,
+>>>
+>>> On 2016/1/14 2:57, Michael Turquette wrote:
+>>>> Quoting xuejiancheng (2016-01-12 19:03:01)
+>>>>> Hi Stephen,
+>>>>>    Thank you very much for your reply.
+>>>>>
+>>>>> On 2016/1/13 6:12, Stephen Boyd wrote:
+>>>>>> On 01/08, Jiancheng Xue wrote:
+>>>>>>> diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
+>>>>>>> index e434854..b6baebf 100644
+>>>>>>> --- a/drivers/clk/hisilicon/Kconfig
+>>>>>>> +++ b/drivers/clk/hisilicon/Kconfig
+>>>>>>> @@ -1,3 +1,10 @@
+>>>>>>> +config COMMON_CLK_HI3519
+>>>>>>> +    tristate "Clock Driver for Hi3519"
+>>>>>>
+>>>>>> It looks like this has to be bool. Otherwise it needs to be a
+>>>>>> platform driver and the hisilicon APIs need to be exported and
+>>>>>> lose their __init markings.
+>>>>>>
+>>>>> Yes,it's a problem. I will fix it in next version. Thank you.
+>>>>
+>>>> The best solution would be to make this clock driver a real platform
+>>>> driver.
+>>>>
+>>> Now the work clock of the clocksource timer-sp804 is provided by this driver. So
+>>> it need to be registered early by CLK_OF_DECLARE. If the timer clock is treated
+>>> as a fixed-clock provider, this driver can be implemented as a platform driver.
+>>> Then the crg device must be registered before other clock consumer devices.Accordingly
+>>> the crg device node must be written above all other clock consumer devices node in dts files.
+>>> I think it is also a dependence.
+>>>
+>>> Can you help me understand why it is better to make this driver a platform driver?
+>>> Thank you very much!
+>>>
+>> arch_initcall(customize_machine)
+>> -->of_platform_populate
+>>    -->of_platform_bus_create
+>>      -->of_amba_device_create
+>>         -->amba_device_add
+>>            -->amba_get_enable_pclk
+>> The call sequence above shows that the clock of the amba device must be registered before
+>> amba_device_add. The clock of "arm,pl011" uart is registered in the probe function of the
+>> platform driver "hi3519-crg". So the platform device "hi3519-crg" must be created before
+>> the amba device "arm,pl011" uart.
+>
+> It is a problem, but Tomeu had a fix to support deferred probes here.
+> That was part of the on-demand probing series, but maybe it needs to
+> be applied separately if we are moving clock drivers to platform
+> drivers.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
----
- drivers/clk/at91/pmc.c | 128 -------------------------------------------------
- 1 file changed, 128 deletions(-)
+Hi,
 
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index dce285549de2..526df5ba042d 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -19,15 +19,6 @@
- 
- #include "pmc.h"
- 
--struct at91_pmc_caps {
--	u32 available_irqs;
--};
--
--struct at91_pmc {
--	struct regmap *regmap;
--	const struct at91_pmc_caps *caps;
--};
--
- int of_at91_get_clk_range(struct device_node *np, const char *propname,
- 			  struct clk_range *range)
- {
-@@ -50,122 +41,3 @@ int of_at91_get_clk_range(struct device_node *np, const char *propname,
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(of_at91_get_clk_range);
--
--static const struct at91_pmc_caps at91rm9200_caps = {
--	.available_irqs = AT91_PMC_MOSCS | AT91_PMC_LOCKA | AT91_PMC_LOCKB |
--			  AT91_PMC_MCKRDY | AT91_PMC_PCK0RDY |
--			  AT91_PMC_PCK1RDY | AT91_PMC_PCK2RDY |
--			  AT91_PMC_PCK3RDY,
--};
--
--static const struct at91_pmc_caps at91sam9260_caps = {
--	.available_irqs = AT91_PMC_MOSCS | AT91_PMC_LOCKA | AT91_PMC_LOCKB |
--			  AT91_PMC_MCKRDY | AT91_PMC_PCK0RDY |
--			  AT91_PMC_PCK1RDY,
--};
--
--static const struct at91_pmc_caps at91sam9g45_caps = {
--	.available_irqs = AT91_PMC_MOSCS | AT91_PMC_LOCKA | AT91_PMC_MCKRDY |
--			  AT91_PMC_LOCKU | AT91_PMC_PCK0RDY |
--			  AT91_PMC_PCK1RDY,
--};
--
--static const struct at91_pmc_caps at91sam9n12_caps = {
--	.available_irqs = AT91_PMC_MOSCS | AT91_PMC_LOCKA | AT91_PMC_LOCKB |
--			  AT91_PMC_MCKRDY | AT91_PMC_PCK0RDY |
--			  AT91_PMC_PCK1RDY | AT91_PMC_MOSCSELS |
--			  AT91_PMC_MOSCRCS | AT91_PMC_CFDEV,
--};
--
--static const struct at91_pmc_caps at91sam9x5_caps = {
--	.available_irqs = AT91_PMC_MOSCS | AT91_PMC_LOCKA | AT91_PMC_MCKRDY |
--			  AT91_PMC_LOCKU | AT91_PMC_PCK0RDY |
--			  AT91_PMC_PCK1RDY | AT91_PMC_MOSCSELS |
--			  AT91_PMC_MOSCRCS | AT91_PMC_CFDEV,
--};
--
--static const struct at91_pmc_caps sama5d2_caps = {
--	.available_irqs = AT91_PMC_MOSCS | AT91_PMC_LOCKA | AT91_PMC_MCKRDY |
--			  AT91_PMC_LOCKU | AT91_PMC_PCK0RDY |
--			  AT91_PMC_PCK1RDY | AT91_PMC_PCK2RDY |
--			  AT91_PMC_MOSCSELS | AT91_PMC_MOSCRCS |
--			  AT91_PMC_CFDEV | AT91_PMC_GCKRDY,
--};
--
--static const struct at91_pmc_caps sama5d3_caps = {
--	.available_irqs = AT91_PMC_MOSCS | AT91_PMC_LOCKA | AT91_PMC_MCKRDY |
--			  AT91_PMC_LOCKU | AT91_PMC_PCK0RDY |
--			  AT91_PMC_PCK1RDY | AT91_PMC_PCK2RDY |
--			  AT91_PMC_MOSCSELS | AT91_PMC_MOSCRCS |
--			  AT91_PMC_CFDEV,
--};
--
--static void __init of_at91_pmc_setup(struct device_node *np,
--				     const struct at91_pmc_caps *caps)
--{
--	struct at91_pmc *pmc;
--	struct regmap *regmap;
--
--	regmap = syscon_node_to_regmap(np);
--	if (IS_ERR(regmap))
--		panic("Could not retrieve syscon regmap");
--
--	pmc = kzalloc(sizeof(*pmc), GFP_KERNEL);
--	if (!pmc)
--		return;
--
--	pmc->regmap = regmap;
--	pmc->caps = caps;
--
--	regmap_write(pmc->regmap, AT91_PMC_IDR, 0xffffffff);
--
--}
--
--static void __init of_at91rm9200_pmc_setup(struct device_node *np)
--{
--	of_at91_pmc_setup(np, &at91rm9200_caps);
--}
--CLK_OF_DECLARE(at91rm9200_clk_pmc, "atmel,at91rm9200-pmc",
--	       of_at91rm9200_pmc_setup);
--
--static void __init of_at91sam9260_pmc_setup(struct device_node *np)
--{
--	of_at91_pmc_setup(np, &at91sam9260_caps);
--}
--CLK_OF_DECLARE(at91sam9260_clk_pmc, "atmel,at91sam9260-pmc",
--	       of_at91sam9260_pmc_setup);
--
--static void __init of_at91sam9g45_pmc_setup(struct device_node *np)
--{
--	of_at91_pmc_setup(np, &at91sam9g45_caps);
--}
--CLK_OF_DECLARE(at91sam9g45_clk_pmc, "atmel,at91sam9g45-pmc",
--	       of_at91sam9g45_pmc_setup);
--
--static void __init of_at91sam9n12_pmc_setup(struct device_node *np)
--{
--	of_at91_pmc_setup(np, &at91sam9n12_caps);
--}
--CLK_OF_DECLARE(at91sam9n12_clk_pmc, "atmel,at91sam9n12-pmc",
--	       of_at91sam9n12_pmc_setup);
--
--static void __init of_at91sam9x5_pmc_setup(struct device_node *np)
--{
--	of_at91_pmc_setup(np, &at91sam9x5_caps);
--}
--CLK_OF_DECLARE(at91sam9x5_clk_pmc, "atmel,at91sam9x5-pmc",
--	       of_at91sam9x5_pmc_setup);
--
--static void __init of_sama5d2_pmc_setup(struct device_node *np)
--{
--	of_at91_pmc_setup(np, &sama5d2_caps);
--}
--CLK_OF_DECLARE(sama5d2_clk_pmc, "atmel,sama5d2-pmc",
--	       of_sama5d2_pmc_setup);
--
--static void __init of_sama5d3_pmc_setup(struct device_node *np)
--{
--	of_at91_pmc_setup(np, &sama5d3_caps);
--}
--CLK_OF_DECLARE(sama5d3_clk_pmc, "atmel,sama5d3-pmc",
--	       of_sama5d3_pmc_setup);
--- 
-2.5.0
+Marek Szyprowski has kindly taken those two patches as part of a series of him:
+
+http://lkml.kernel.org/g/1450868368-5650-1-git-send-email-m.szyprowski@samsung.com
+
+I think it would be great if you could test them and report.
+
+Thanks,
+
+Tomeu
