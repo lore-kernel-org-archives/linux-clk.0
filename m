@@ -1,54 +1,53 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga03-in.huawei.com ([119.145.14.66]:8043 "EHLO
-	szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752145AbcAYDPR (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 24 Jan 2016 22:15:17 -0500
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
-	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
-	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [PATCH v7 3/6] ARM: config: hisi: enable CONFIG_RESET_CONTROLLER
-Date: Mon, 25 Jan 2016 11:01:20 +0800
-Message-ID: <1453690883-31220-4-git-send-email-xuejiancheng@huawei.com>
-In-Reply-To: <1453690883-31220-1-git-send-email-xuejiancheng@huawei.com>
-References: <1453690883-31220-1-git-send-email-xuejiancheng@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <andi.shyti@samsung.com>
+From: Andi Shyti <andi.shyti@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Sangbeom Kim <sbkim73@samsung.com>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>,
+ Andi Shyti <andi@etezian.org>, Yadwinder Singh Brar <yadi.brar01@gmail.com>,
+ Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [PATCH v3 0/4] s2mps11 clock driver refactoring
+Date: Wed, 20 Jan 2016 19:14:20 +0900
+Message-id: <1453284864-8082-1-git-send-email-andi.shyti@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-enable CONFIG_RESET_CONTROLLER in hisi_defconfig
+Hi,
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
----
- arch/arm/configs/hisi_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+This patchset contains some code refactoring on the s2mps11 clock
+device driver. The main goal is to remove some dead code and
+improve its readability.
 
-diff --git a/arch/arm/configs/hisi_defconfig b/arch/arm/configs/hisi_defconfig
-index b2e340b..ba62c07 100644
---- a/arch/arm/configs/hisi_defconfig
-+++ b/arch/arm/configs/hisi_defconfig
-@@ -75,6 +75,7 @@ CONFIG_DMADEVICES=y
- CONFIG_DW_DMAC=y
- CONFIG_PL330_DMA=y
- CONFIG_PWM=y
-+CONFIG_RESET_CONTROLLER=y
- CONFIG_PHY_HIX5HD2_SATA=y
- CONFIG_EXT4_FS=y
- CONFIG_TMPFS=y
+At any iteration the patchset is getting a patch more, so that
+this time there are four patches :)
+
+Thanks to Krzysztof for his review, the changset is coming from
+his suggestions:
+
+V1 -> V2
+ - the order of the patches has changed
+ - the second patch has been added and it merges a for loop
+   inside
+   a previous one
+ - the 3rd patch (which in the first version was the 1st)
+   contains some more redundant variables removal.
+
+V2 -> V3
+ - The "merge two for loops in one" has been moved as first patch
+ - removed the global variable clk_data
+
+The patches have been applied on next-20160120 and tested on
+Odroid Xu4.
+
+Andi Shyti (4):
+  clk: s2mps11: merge two for loops in one
+  clk: s2mps11: allocate only one structure for clock init
+  clk: s2mps11: remove redundant static variables declaration
+  clk: s2mps11: remove redundant code
+
+ drivers/clk/clk-s2mps11.c | 108 +++++++++++++---------------------------------
+ 1 file changed, 31 insertions(+), 77 deletions(-)
+
 -- 
-1.9.1
-
+2.7.0.rc3
