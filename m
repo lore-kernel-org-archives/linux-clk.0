@@ -1,58 +1,59 @@
-Return-Path: <rjui@broadcom.com>
-Subject: Re: [PATCH RESEND v2 4/4] ARM: dts: enable audio clock support for
- Cygnus
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-References: <1453857521-8804-1-git-send-email-rjui@broadcom.com>
- <1453857521-8804-5-git-send-email-rjui@broadcom.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<bcm-kernel-feedback-list@broadcom.com>, Simran Rai <ssimran@broadcom.com>
-From: Ray Jui <rjui@broadcom.com>
-Message-ID: <56AC06E1.1040903@broadcom.com>
-Date: Fri, 29 Jan 2016 16:42:09 -0800
-MIME-Version: 1.0
-In-Reply-To: <1453857521-8804-5-git-send-email-rjui@broadcom.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Return-Path: rjui@broadcom.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.133]:33611 "EHLO
+	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753283AbcATIh2 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2016 03:37:28 -0500
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: linux-rockchip@lists.infradead.org
+Cc: keescook@google.com, leozwang@google.com, heiko@sntech.de,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: rockchip: rk3036: Add apll as the critical clock
+Date: Wed, 20 Jan 2016 16:37:17 +0800
+Message-Id: <1453279037-23971-1-git-send-email-zhengxing@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Florian,
+The apll may be closed if there are some child clock nodes below
+it when the device startup. Therefore, the apll should be keep
+critical.
 
-With Stephen merging the first 3 patches into the clk tree, could you 
-please take this DT patch now?
+The apll tree like this:
+    pll_apll
+       apll
+          armclk
+             pclk_dbg
+             aclk_core_pre
+          aclk_hvec
+          uart_pll_clk
+             uart2_src
+                uart2_frac
+             uart1_src
+                uart1_frac
+             uart0_src
+                uart0_frac
 
-Thanks,
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
-Ray
+ drivers/clk/rockchip/clk-rk3036.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-On 1/26/2016 5:18 PM, Ray Jui wrote:
-> From: Simran Rai <ssimran@broadcom.com>
->
-> Add audio clock to the existing Broadcom Cygnus clock DT
->
-> Signed-off-by: Simran Rai <ssimran@broadcom.com>
-> Reviewed-by: Ray Jui <rjui@broadcom.com>
-> Reviewed-by: Scott Branden <sbranden@broadcom.com>
-> ---
->   arch/arm/boot/dts/bcm-cygnus-clock.dtsi | 9 +++++++++
->   1 file changed, 9 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/bcm-cygnus-clock.dtsi b/arch/arm/boot/dts/bcm-cygnus-clock.dtsi
-> index 32bcd45..80b6ba4 100644
-> --- a/arch/arm/boot/dts/bcm-cygnus-clock.dtsi
-> +++ b/arch/arm/boot/dts/bcm-cygnus-clock.dtsi
-> @@ -121,4 +121,13 @@ clocks {
->   		clocks = <&osc>;
->   		clock-output-names = "keypad", "adc/touch", "pwm";
->   	};
-> +
-> +	audiopll: audiopll {
-> +		#clock-cells = <1>;
-> +		compatible = "brcm,cygnus-audiopll";
-> +		reg = <0x180aeb00 0x68>;
-> +		clocks = <&osc>;
-> +		clock-output-names = "audiopll", "ch0_audio",
-> +					"ch1_audio", "ch2_audio";
-> +	};
->   };
->
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
+index ebce980..483913b 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -425,6 +425,7 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
+ };
+ 
+ static const char *const rk3036_critical_clocks[] __initconst = {
++	"apll",
+ 	"aclk_cpu",
+ 	"aclk_peri",
+ 	"hclk_peri",
+-- 
+1.7.9.5
+
+
