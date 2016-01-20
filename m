@@ -1,536 +1,1188 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <LW@karo-electronics.de>
+From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
+To: Anson Huang <b20788@freescale.com>,
+	Bai Ping <b51503@freescale.com>,
+	Frank Li <Frank.Li@freescale.com>,
+	Fugang Duan <B38611@freescale.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	=?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCHv2 16/16] ARM: dts: imx6ul: add support for Ka-Ro electronics TXUL modules
+Date: Wed, 20 Jan 2016 11:09:09 +0100
+Message-Id: <1453284549-16363-17-git-send-email-LW@KARO-electronics.de>
+In-Reply-To: <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
+References: <1452619291-13625-1-git-send-email-LW@KARO-electronics.de>
+ <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
 MIME-Version: 1.0
-To: James Liao <jamesjj.liao@mediatek.com>,
- "Matthias Brugger" <matthias.bgg@gmail.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>, "John Crispin" <blogic@openwrt.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1452587470-61506-4-git-send-email-jamesjj.liao@mediatek.com>
-Cc: "Sascha Hauer" <kernel@pengutronix.de>, "Daniel Kurtz" <djkurtz@chromium.org>,
- "Philipp Zabel" <p.zabel@pengutronix.de>, srv_heupstream@mediatek.com,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-clk@vger.kernel.org, "Shunli Wang" <shunli.wang@mediatek.com>,
- "James Liao" <jamesjj.liao@mediatek.com>
-References: <1452587470-61506-1-git-send-email-jamesjj.liao@mediatek.com>
- <1452587470-61506-4-git-send-email-jamesjj.liao@mediatek.com>
-Message-ID: <20160113192943.1168.24214@quark.deferred.io>
-Subject: Re: [PATCH v3 3/6] clk: mediatek: Add dt-bindings for MT2701 clocks
-Date: Wed, 13 Jan 2016 11:29:43 -0800
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting James Liao (2016-01-12 00:31:07)
-> From: Shunli Wang <shunli.wang@mediatek.com>
-> =
+The TXUL-0010/-0011 modules are Computers On Module manufactured by
+  Ka-Ro electronics GmbH with the following characteristics:
+  Processor    Freescale i.MX 6UltraLite MCIMX6G2, 528 MHz
+  RAM          256MB 16-bit DDR3 SDRAM
+  ROM          128MB NAND Flash (TXUL-0010) / 4GB eMMC (TXUL-0011)
+  Power supply Single 3.3 to 5V
+  Size         26mm SO-DIMM
+  Temp. Range  -40°C to 85°C
 
-> Add MT2701 clock dt-bindings, include topckgen, apmixedsys,
-> infracfg, pericfg and subsystem clocks.
-> =
 
-> Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Signed-off-by: Lothar Waßmann <LW@KARO-electronics.de>
+---
+ arch/arm/boot/dts/Makefile             |   4 +-
+ arch/arm/boot/dts/imx6ul-txul-0010.dts |  54 ++
+ arch/arm/boot/dts/imx6ul-txul-0011.dts |  85 +++
+ arch/arm/boot/dts/imx6ul-txul.dtsi     | 962 +++++++++++++++++++++++++++++++++
+ 4 files changed, 1104 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/imx6ul-txul-0010.dts
+ create mode 100644 arch/arm/boot/dts/imx6ul-txul-0011.dts
+ create mode 100644 arch/arm/boot/dts/imx6ul-txul.dtsi
 
-Looks good to me.
-
-Regards,
-Mike
-
-> ---
->  include/dt-bindings/clock/mt2701-clk.h | 481 +++++++++++++++++++++++++++=
-++++++
->  1 file changed, 481 insertions(+)
->  create mode 100644 include/dt-bindings/clock/mt2701-clk.h
-> =
-
-> diff --git a/include/dt-bindings/clock/mt2701-clk.h b/include/dt-bindings=
-/clock/mt2701-clk.h
-> new file mode 100644
-> index 0000000..50972d1
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/mt2701-clk.h
-> @@ -0,0 +1,481 @@
-> +/*
-> + * Copyright (c) 2014 MediaTek Inc.
-> + * Author: Shunli Wang <shunli.wang@mediatek.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_MT2701_H
-> +#define _DT_BINDINGS_CLK_MT2701_H
-> +
-> +/* TOPCKGEN */
-> +#define CLK_TOP_SYSPLL                         1
-> +#define CLK_TOP_SYSPLL_D2                      2
-> +#define CLK_TOP_SYSPLL_D3                      3
-> +#define CLK_TOP_SYSPLL_D5                      4
-> +#define CLK_TOP_SYSPLL_D7                      5
-> +#define CLK_TOP_SYSPLL1_D2                     6
-> +#define CLK_TOP_SYSPLL1_D4                     7
-> +#define CLK_TOP_SYSPLL1_D8                     8
-> +#define CLK_TOP_SYSPLL1_D16                    9
-> +#define CLK_TOP_SYSPLL2_D2                     10
-> +#define CLK_TOP_SYSPLL2_D4                     11
-> +#define CLK_TOP_SYSPLL2_D8                     12
-> +#define CLK_TOP_SYSPLL3_D2                     13
-> +#define CLK_TOP_SYSPLL3_D4                     14
-> +#define CLK_TOP_SYSPLL4_D2                     15
-> +#define CLK_TOP_SYSPLL4_D4                     16
-> +#define CLK_TOP_UNIVPLL                                17
-> +#define CLK_TOP_UNIVPLL_D2                     18
-> +#define CLK_TOP_UNIVPLL_D3                     19
-> +#define CLK_TOP_UNIVPLL_D5                     20
-> +#define CLK_TOP_UNIVPLL_D7                     21
-> +#define CLK_TOP_UNIVPLL_D26                    22
-> +#define CLK_TOP_UNIVPLL_D52                    23
-> +#define CLK_TOP_UNIVPLL_D108                   24
-> +#define CLK_TOP_USB_PHY48M                     25
-> +#define CLK_TOP_UNIVPLL1_D2                    26
-> +#define CLK_TOP_UNIVPLL1_D4                    27
-> +#define CLK_TOP_UNIVPLL1_D8                    28
-> +#define CLK_TOP_UNIVPLL2_D2                    29
-> +#define CLK_TOP_UNIVPLL2_D4                    30
-> +#define CLK_TOP_UNIVPLL2_D8                    31
-> +#define CLK_TOP_UNIVPLL2_D16                   32
-> +#define CLK_TOP_UNIVPLL2_D32                   33
-> +#define CLK_TOP_UNIVPLL3_D2                    34
-> +#define CLK_TOP_UNIVPLL3_D4                    35
-> +#define CLK_TOP_UNIVPLL3_D8                    36
-> +#define CLK_TOP_MSDCPLL                                37
-> +#define CLK_TOP_MSDCPLL_D2                     38
-> +#define CLK_TOP_MSDCPLL_D4                     39
-> +#define CLK_TOP_MSDCPLL_D8                     40
-> +#define CLK_TOP_MMPLL                          41
-> +#define CLK_TOP_MMPLL_D2                       42
-> +#define CLK_TOP_DMPLL                          43
-> +#define CLK_TOP_DMPLL_D2                       44
-> +#define CLK_TOP_DMPLL_D4                       45
-> +#define CLK_TOP_DMPLL_X2                       46
-> +#define CLK_TOP_TVDPLL                         47
-> +#define CLK_TOP_TVDPLL_D2                      48
-> +#define CLK_TOP_TVDPLL_D4                      49
-> +#define CLK_TOP_TVD2PLL                                50
-> +#define CLK_TOP_TVD2PLL_D2                     51
-> +#define CLK_TOP_HADDS2PLL_98M                  52
-> +#define CLK_TOP_HADDS2PLL_294M                 53
-> +#define CLK_TOP_HADDS2_FB                      54
-> +#define CLK_TOP_MIPIPLL_D2                     55
-> +#define CLK_TOP_MIPIPLL_D4                     56
-> +#define CLK_TOP_HDMIPLL                                57
-> +#define CLK_TOP_HDMIPLL_D2                     58
-> +#define CLK_TOP_HDMIPLL_D3                     59
-> +#define CLK_TOP_HDMI_SCL_RX                    60
-> +#define CLK_TOP_HDMI_0_PIX340M                 61
-> +#define CLK_TOP_HDMI_0_DEEP340M                        62
-> +#define CLK_TOP_HDMI_0_PLL340M                 63
-> +#define CLK_TOP_AUD1PLL_98M                    64
-> +#define CLK_TOP_AUD2PLL_90M                    65
-> +#define CLK_TOP_AUDPLL                         66
-> +#define CLK_TOP_AUDPLL_D4                      67
-> +#define CLK_TOP_AUDPLL_D8                      68
-> +#define CLK_TOP_AUDPLL_D16                     69
-> +#define CLK_TOP_AUDPLL_D24                     70
-> +#define CLK_TOP_ETHPLL_500M                    71
-> +#define CLK_TOP_VDECPLL                                72
-> +#define CLK_TOP_VENCPLL                                73
-> +#define CLK_TOP_MIPIPLL                                74
-> +#define CLK_TOP_ARMPLL_1P3G                    75
-> +
-> +#define CLK_TOP_MM_SEL                         76
-> +#define CLK_TOP_DDRPHYCFG_SEL                  77
-> +#define CLK_TOP_MEM_SEL                                78
-> +#define CLK_TOP_AXI_SEL                                79
-> +#define CLK_TOP_CAMTG_SEL                      80
-> +#define CLK_TOP_MFG_SEL                                81
-> +#define CLK_TOP_VDEC_SEL                       82
-> +#define CLK_TOP_PWM_SEL                                83
-> +#define CLK_TOP_MSDC30_0_SEL                   84
-> +#define CLK_TOP_USB20_SEL                      85
-> +#define CLK_TOP_SPI0_SEL                       86
-> +#define CLK_TOP_UART_SEL                       87
-> +#define CLK_TOP_AUDINTBUS_SEL                  88
-> +#define CLK_TOP_AUDIO_SEL                      89
-> +#define CLK_TOP_MSDC30_2_SEL                   90
-> +#define CLK_TOP_MSDC30_1_SEL                   91
-> +#define CLK_TOP_DPI1_SEL                       92
-> +#define CLK_TOP_DPI0_SEL                       93
-> +#define CLK_TOP_SCP_SEL                                94
-> +#define CLK_TOP_PMICSPI_SEL                    95
-> +#define CLK_TOP_APLL_SEL                       96
-> +#define CLK_TOP_HDMI_SEL                       97
-> +#define CLK_TOP_TVE_SEL                                98
-> +#define CLK_TOP_EMMC_HCLK_SEL                  99
-> +#define CLK_TOP_NFI2X_SEL                      100
-> +#define CLK_TOP_RTC_SEL                                101
-> +#define CLK_TOP_OSD_SEL                                102
-> +#define CLK_TOP_NR_SEL                         103
-> +#define CLK_TOP_DI_SEL                         104
-> +#define CLK_TOP_FLASH_SEL                      105
-> +#define CLK_TOP_ASM_M_SEL                      106
-> +#define CLK_TOP_ASM_I_SEL                      107
-> +#define CLK_TOP_INTDIR_SEL                     108
-> +#define CLK_TOP_HDMIRX_BIST_SEL                        109
-> +#define CLK_TOP_ETHIF_SEL                      110
-> +#define CLK_TOP_MS_CARD_SEL                    111
-> +#define CLK_TOP_ASM_H_SEL                      112
-> +#define CLK_TOP_SPI1_SEL                       113
-> +#define CLK_TOP_CMSYS_SEL                      114
-> +#define CLK_TOP_MSDC30_3_SEL                   115
-> +#define CLK_TOP_HDMIRX26_24_SEL                        116
-> +#define CLK_TOP_AUD2DVD_SEL                    117
-> +#define CLK_TOP_8BDAC_SEL                      118
-> +#define CLK_TOP_SPI2_SEL                       119
-> +#define CLK_TOP_AUD_MUX1_SEL                   120
-> +#define CLK_TOP_AUD_MUX2_SEL                   121
-> +#define CLK_TOP_AUDPLL_MUX_SEL                 122
-> +#define CLK_TOP_AUD_K1_SRC_SEL                 123
-> +#define CLK_TOP_AUD_K2_SRC_SEL                 124
-> +#define CLK_TOP_AUD_K3_SRC_SEL                 125
-> +#define CLK_TOP_AUD_K4_SRC_SEL                 126
-> +#define CLK_TOP_AUD_K5_SRC_SEL                 127
-> +#define CLK_TOP_AUD_K6_SRC_SEL                 128
-> +#define CLK_TOP_PADMCLK_SEL                    129
-> +#define CLK_TOP_AUD_EXTCK1_DIV                 130
-> +#define CLK_TOP_AUD_EXTCK2_DIV                 131
-> +#define CLK_TOP_AUD_MUX1_DIV                   132
-> +#define CLK_TOP_AUD_MUX2_DIV                   133
-> +#define CLK_TOP_AUD_K1_SRC_DIV                 134
-> +#define CLK_TOP_AUD_K2_SRC_DIV                 135
-> +#define CLK_TOP_AUD_K3_SRC_DIV                 136
-> +#define CLK_TOP_AUD_K4_SRC_DIV                 137
-> +#define CLK_TOP_AUD_K5_SRC_DIV                 138
-> +#define CLK_TOP_AUD_K6_SRC_DIV                 139
-> +#define CLK_TOP_AUD_I2S1_MCLK                  140
-> +#define CLK_TOP_AUD_I2S2_MCLK                  141
-> +#define CLK_TOP_AUD_I2S3_MCLK                  142
-> +#define CLK_TOP_AUD_I2S4_MCLK                  143
-> +#define CLK_TOP_AUD_I2S5_MCLK                  144
-> +#define CLK_TOP_AUD_I2S6_MCLK                  145
-> +#define CLK_TOP_AUD_48K_TIMING                 146
-> +#define CLK_TOP_AUD_44K_TIMING                 147
-> +
-> +#define CLK_TOP_32K_INTERNAL                   148
-> +#define CLK_TOP_32K_EXTERNAL                   149
-> +#define CLK_TOP_CLK26M_D8                      150
-> +#define CLK_TOP_8BDAC                          151
-> +#define CLK_TOP_WBG_DIG_416M                   152
-> +#define CLK_TOP_DPI                            153
-> +#define CLK_TOP_HDMITX_CLKDIG_CTS              154
-> +#define CLK_TOP_NR                             155
-> +
-> +/* APMIXEDSYS */
-> +
-> +#define CLK_APMIXED_ARMPLL                     1
-> +#define CLK_APMIXED_MAINPLL                    2
-> +#define CLK_APMIXED_UNIVPLL                    3
-> +#define CLK_APMIXED_MMPLL                      4
-> +#define CLK_APMIXED_MSDCPLL                    5
-> +#define CLK_APMIXED_TVDPLL                     6
-> +#define CLK_APMIXED_AUD1PLL                    7
-> +#define CLK_APMIXED_TRGPLL                     8
-> +#define CLK_APMIXED_ETHPLL                     9
-> +#define CLK_APMIXED_VDECPLL                    10
-> +#define CLK_APMIXED_HADDS2PLL                  11
-> +#define CLK_APMIXED_AUD2PLL                    12
-> +#define CLK_APMIXED_TVD2PLL                    13
-> +#define CLK_APMIXED_NR                         14
-> +
-> +/* DDRPHY */
-> +
-> +#define CLK_DDRPHY_VENCPLL                     1
-> +#define CLK_DDRPHY_NR                          2
-> +
-> +/* INFRACFG */
-> +
-> +#define CLK_INFRA_DBG                          1
-> +#define CLK_INFRA_SMI                          2
-> +#define CLK_INFRA_QAXI_CM4                     3
-> +#define CLK_INFRA_AUD_SPLIN_B                  4
-> +#define CLK_INFRA_AUDIO                                5
-> +#define CLK_INFRA_EFUSE                                6
-> +#define CLK_INFRA_L2C_SRAM                     7
-> +#define CLK_INFRA_M4U                          8
-> +#define CLK_INFRA_CONNMCU                      9
-> +#define CLK_INFRA_TRNG                         10
-> +#define CLK_INFRA_RAMBUFIF                     11
-> +#define CLK_INFRA_CPUM                         12
-> +#define CLK_INFRA_KP                           13
-> +#define CLK_INFRA_CEC                          14
-> +#define CLK_INFRA_IRRX                         15
-> +#define CLK_INFRA_PMICSPI                      16
-> +#define CLK_INFRA_PMICWRAP                     17
-> +#define CLK_INFRA_DDCCI                                18
-> +#define CLK_INFRA_CLK_13M                       19
-> +#define CLK_INFRA_NR                           20
-> +
-> +/* PERICFG */
-> +
-> +#define CLK_PERI_NFI                           1
-> +#define CLK_PERI_THERM                         2
-> +#define CLK_PERI_PWM1                          3
-> +#define CLK_PERI_PWM2                          4
-> +#define CLK_PERI_PWM3                          5
-> +#define CLK_PERI_PWM4                          6
-> +#define CLK_PERI_PWM5                          7
-> +#define CLK_PERI_PWM6                          8
-> +#define CLK_PERI_PWM7                          9
-> +#define CLK_PERI_PWM                           10
-> +#define CLK_PERI_USB0                          11
-> +#define CLK_PERI_USB1                          12
-> +#define CLK_PERI_AP_DMA                                13
-> +#define CLK_PERI_MSDC30_0                      14
-> +#define CLK_PERI_MSDC30_1                      15
-> +#define CLK_PERI_MSDC30_2                      16
-> +#define CLK_PERI_MSDC30_3                      17
-> +#define CLK_PERI_MSDC50_3                      18
-> +#define CLK_PERI_NLI                           19
-> +#define CLK_PERI_UART0                         20
-> +#define CLK_PERI_UART1                         21
-> +#define CLK_PERI_UART2                         22
-> +#define CLK_PERI_UART3                         23
-> +#define CLK_PERI_BTIF                          24
-> +#define CLK_PERI_I2C0                          25
-> +#define CLK_PERI_I2C1                          26
-> +#define CLK_PERI_I2C2                          27
-> +#define CLK_PERI_I2C3                          28
-> +#define CLK_PERI_AUXADC                                29
-> +#define CLK_PERI_SPI0                          30
-> +#define CLK_PERI_ETH                           31
-> +#define CLK_PERI_USB0_MCU                      32
-> +
-> +#define CLK_PERI_USB1_MCU                      33
-> +#define CLK_PERI_USB_SLV                       34
-> +#define CLK_PERI_GCPU                          35
-> +#define CLK_PERI_NFI_ECC                       36
-> +#define CLK_PERI_NFI_PAD                       37
-> +#define CLK_PERI_FLASH                         38
-> +#define CLK_PERI_HOST89_INT                    39
-> +#define CLK_PERI_HOST89_SPI                    40
-> +#define CLK_PERI_HOST89_DVD                    41
-> +#define CLK_PERI_SPI1                          42
-> +#define CLK_PERI_SPI2                          43
-> +#define CLK_PERI_FCI                           44
-> +
-> +#define CLK_PERI_UART0_SEL                     45
-> +#define CLK_PERI_UART1_SEL                     46
-> +#define CLK_PERI_UART2_SEL                     47
-> +#define CLK_PERI_UART3_SEL                     48
-> +#define CLK_PERI_NR                            49
-> +
-> +/* AUDIO */
-> +
-> +#define CLK_AUD_AFE                            1
-> +#define CLK_AUD_LRCK_DETECT                    2
-> +#define CLK_AUD_I2S                            3
-> +#define CLK_AUD_APLL_TUNER                     4
-> +#define CLK_AUD_HDMI                           5
-> +#define CLK_AUD_SPDF                           6
-> +#define CLK_AUD_SPDF2                          7
-> +#define CLK_AUD_APLL                           8
-> +#define CLK_AUD_TML                            9
-> +#define CLK_AUD_AHB_IDLE_EXT                   10
-> +#define CLK_AUD_AHB_IDLE_INT                   11
-> +
-> +#define CLK_AUD_I2SIN1                         12
-> +#define CLK_AUD_I2SIN2                         13
-> +#define CLK_AUD_I2SIN3                         14
-> +#define CLK_AUD_I2SIN4                         15
-> +#define CLK_AUD_I2SIN5                         16
-> +#define CLK_AUD_I2SIN6                         17
-> +#define CLK_AUD_I2SO1                          18
-> +#define CLK_AUD_I2SO2                          19
-> +#define CLK_AUD_I2SO3                          20
-> +#define CLK_AUD_I2SO4                          21
-> +#define CLK_AUD_I2SO5                          22
-> +#define CLK_AUD_I2SO6                          23
-> +#define CLK_AUD_ASRCI1                         24
-> +#define CLK_AUD_ASRCI2                         25
-> +#define CLK_AUD_ASRCO1                         26
-> +#define CLK_AUD_ASRCO2                         27
-> +#define CLK_AUD_ASRC11                         28
-> +#define CLK_AUD_ASRC12                         29
-> +#define CLK_AUD_HDMIRX                         30
-> +#define CLK_AUD_INTDIR                         31
-> +#define CLK_AUD_A1SYS                          32
-> +#define CLK_AUD_A2SYS                          33
-> +#define CLK_AUD_AFE_CONN                       34
-> +#define CLK_AUD_AFE_PCMIF                      35
-> +#define CLK_AUD_AFE_MRGIF                      36
-> +
-> +#define CLK_AUD_MMIF_UL1                       37
-> +#define CLK_AUD_MMIF_UL2                       38
-> +#define CLK_AUD_MMIF_UL3                       39
-> +#define CLK_AUD_MMIF_UL4                       40
-> +#define CLK_AUD_MMIF_UL5                       41
-> +#define CLK_AUD_MMIF_UL6                       42
-> +#define CLK_AUD_MMIF_DL1                       43
-> +#define CLK_AUD_MMIF_DL2                       44
-> +#define CLK_AUD_MMIF_DL3                       45
-> +#define CLK_AUD_MMIF_DL4                       46
-> +#define CLK_AUD_MMIF_DL5                       47
-> +#define CLK_AUD_MMIF_DL6                       48
-> +#define CLK_AUD_MMIF_DLMCH                     49
-> +#define CLK_AUD_MMIF_ARB1                      50
-> +#define CLK_AUD_MMIF_AWB1                      51
-> +#define CLK_AUD_MMIF_AWB2                      52
-> +#define CLK_AUD_MMIF_DAI                       53
-> +
-> +#define CLK_AUD_DMIC1                          54
-> +#define CLK_AUD_DMIC2                          55
-> +#define CLK_AUD_ASRCI3                         56
-> +#define CLK_AUD_ASRCI4                         57
-> +#define CLK_AUD_ASRCI5                         58
-> +#define CLK_AUD_ASRCI6                         59
-> +#define CLK_AUD_ASRCO3                         60
-> +#define CLK_AUD_ASRCO4                         61
-> +#define CLK_AUD_ASRCO5                         62
-> +#define CLK_AUD_ASRCO6                         63
-> +#define CLK_AUD_MEM_ASRC1                      64
-> +#define CLK_AUD_MEM_ASRC2                      65
-> +#define CLK_AUD_MEM_ASRC3                      66
-> +#define CLK_AUD_MEM_ASRC4                      67
-> +#define CLK_AUD_MEM_ASRC5                      68
-> +#define CLK_AUD_DSD_ENC                                69
-> +#define CLK_AUD_ASRC_BRG                       70
-> +#define CLK_AUD_NR                             71
-> +
-> +/* MMSYS */
-> +
-> +#define CLK_MM_SMI_COMMON                      1
-> +#define CLK_MM_SMI_LARB0                       2
-> +#define CLK_MM_CMDQ                            3
-> +#define CLK_MM_MUTEX                           4
-> +#define CLK_MM_DISP_COLOR                      5
-> +#define CLK_MM_DISP_BLS                                6
-> +#define CLK_MM_DISP_WDMA                       7
-> +#define CLK_MM_DISP_RDMA                       8
-> +#define CLK_MM_DISP_OVL                                9
-> +#define CLK_MM_MDP_TDSHP                       10
-> +#define CLK_MM_MDP_WROT                                11
-> +#define CLK_MM_MDP_WDMA                                12
-> +#define CLK_MM_MDP_RSZ1                                13
-> +#define CLK_MM_MDP_RSZ0                                14
-> +#define CLK_MM_MDP_RDMA                                15
-> +#define CLK_MM_MDP_BLS_26M                     16
-> +#define CLK_MM_CAM_MDP                         17
-> +#define CLK_MM_FAKE_ENG                                18
-> +#define CLK_MM_MUTEX_32K                       19
-> +#define CLK_MM_DISP_RDMA1                      20
-> +#define CLK_MM_DISP_UFOE                       21
-> +
-> +#define CLK_MM_DSI_ENGINE                      22
-> +#define CLK_MM_DSI_DIG                         23
-> +#define CLK_MM_DPI_DIGL                                24
-> +#define CLK_MM_DPI_ENGINE                      25
-> +#define CLK_MM_DPI1_DIGL                       26
-> +#define CLK_MM_DPI1_ENGINE                     27
-> +#define CLK_MM_TVE_OUTPUT                      28
-> +#define CLK_MM_TVE_INPUT                       29
-> +#define CLK_MM_HDMI_PIXEL                      30
-> +#define CLK_MM_HDMI_PLL                                31
-> +#define CLK_MM_HDMI_AUDIO                      32
-> +#define CLK_MM_HDMI_SPDIF                      33
-> +#define CLK_MM_TVE_FMM                         34
-> +#define CLK_MM_NR                              35
-> +
-> +/* IMGSYS */
-> +
-> +#define CLK_IMG_SMI_COMM                       1
-> +#define CLK_IMG_RESZ                           2
-> +#define CLK_IMG_JPGDEC                         3
-> +#define CLK_IMG_VENC_LT                                4
-> +#define CLK_IMG_VENC                           5
-> +#define CLK_IMG_NR                             6
-> +
-> +/* VDEC */
-> +
-> +#define CLK_VDEC_CKGEN                         1
-> +#define CLK_VDEC_LARB                          2
-> +#define CLK_VDEC_NR                            3
-> +
-> +/* HIFSYS */
-> +
-> +#define CLK_HIFSYS_USB0PHY                     1
-> +#define CLK_HIFSYS_USB1PHY                     2
-> +#define CLK_HIFSYS_PCIE0                       3
-> +#define CLK_HIFSYS_PCIE1                       4
-> +#define CLK_HIFSYS_PCIE2                       5
-> +#define CLK_HIFSYS_NR                          6
-> +
-> +/* ETHSYS */
-> +#define CLK_ETHSYS_HSDMA                       1
-> +#define CLK_ETHSYS_ESW                         2
-> +#define CLK_ETHSYS_GP2                         3
-> +#define CLK_ETHSYS_GP1                         4
-> +#define CLK_ETHSYS_PCM                         5
-> +#define CLK_ETHSYS_GDMA                                6
-> +#define CLK_ETHSYS_I2S                         7
-> +#define CLK_ETHSYS_CRYPTO                      8
-> +#define CLK_ETHSYS_NR                          9
-> +
-> +/* BDP */
-> +
-> +#define CLK_BDP_BRG_BA                         1
-> +#define CLK_BDP_BRG_DRAM                       2
-> +#define CLK_BDP_LARB_DRAM                      3
-> +#define CLK_BDP_WR_VDI_PXL                     4
-> +#define CLK_BDP_WR_VDI_DRAM                    5
-> +#define CLK_BDP_WR_B                           6
-> +#define CLK_BDP_DGI_IN                         7
-> +#define CLK_BDP_DGI_OUT                                8
-> +#define CLK_BDP_FMT_MAST_27                    9
-> +#define CLK_BDP_FMT_B                          10
-> +#define CLK_BDP_OSD_B                          11
-> +#define CLK_BDP_OSD_DRAM                       12
-> +#define CLK_BDP_OSD_AGENT                      13
-> +#define CLK_BDP_OSD_PXL                                14
-> +#define CLK_BDP_RLE_B                          15
-> +#define CLK_BDP_RLE_AGENT                      16
-> +#define CLK_BDP_RLE_DRAM                       17
-> +#define CLK_BDP_F27M                           18
-> +#define CLK_BDP_F27M_VDOUT                     19
-> +#define CLK_BDP_F27_74_74                      20
-> +#define CLK_BDP_F2FS                           21
-> +#define CLK_BDP_F2FS74_148                     22
-> +#define CLK_BDP_FB                             23
-> +#define CLK_BDP_VDO_DRAM                       24
-> +#define CLK_BDP_VDO_2FS                                25
-> +#define CLK_BDP_VDO_B                          26
-> +#define CLK_BDP_WR_DI_PXL                      27
-> +#define CLK_BDP_WR_DI_DRAM                     28
-> +#define CLK_BDP_WR_DI_B                                29
-> +#define CLK_BDP_NR_PXL                         30
-> +#define CLK_BDP_NR_DRAM                                31
-> +#define CLK_BDP_NR_B                           32
-> +
-> +#define CLK_BDP_RX_F                           33
-> +#define CLK_BDP_RX_X                           34
-> +#define CLK_BDP_RXPDT                          35
-> +#define CLK_BDP_RX_CSCL_N                      36
-> +#define CLK_BDP_RX_CSCL                                37
-> +#define CLK_BDP_RX_DDCSCL_N                    38
-> +#define CLK_BDP_RX_DDCSCL                      39
-> +#define CLK_BDP_RX_VCO                         40
-> +#define CLK_BDP_RX_DP                          41
-> +#define CLK_BDP_RX_P                           42
-> +#define CLK_BDP_RX_M                           43
-> +#define CLK_BDP_RX_PLL                         44
-> +#define CLK_BDP_BRG_RT_B                       45
-> +#define CLK_BDP_BRG_RT_DRAM                    46
-> +#define CLK_BDP_LARBRT_DRAM                    47
-> +#define CLK_BDP_TMDS_SYN                       48
-> +#define CLK_BDP_HDMI_MON                       49
-> +#define CLK_BDP_NR                             50
-> +
-> +#endif /* _DT_BINDINGS_CLK_MT2701_H */
-> -- =
-
-> 1.9.1
->=20
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index a4a6d70..f993e7d 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -358,7 +358,9 @@ dtb-$(CONFIG_SOC_IMX6SX) += \
+ 	imx6sx-sdb-reva.dtb \
+ 	imx6sx-sdb.dtb
+ dtb-$(CONFIG_SOC_IMX6UL) += \
+-	imx6ul-14x14-evk.dtb
++	imx6ul-14x14-evk.dtb \
++	imx6ul-txul-0010.dtb \
++	imx6ul-txul-0011.dtb
+ dtb-$(CONFIG_SOC_IMX7D) += \
+ 	imx7d-cl-som-imx7.dtb \
+ 	imx7d-sbc-imx7.dtb \
+diff --git a/arch/arm/boot/dts/imx6ul-txul-0010.dts b/arch/arm/boot/dts/imx6ul-txul-0010.dts
+new file mode 100644
+index 0000000..5e0b09f
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6ul-txul-0010.dts
+@@ -0,0 +1,54 @@
++/*
++ * Copyright 2015 Lothar Waßmann <LW@KARO-electronics.de>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License
++ *     version 2 as published by the Free Software Foundation.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++/dts-v1/;
++#include "imx6ul.dtsi"
++#include "imx6ul-txul.dtsi"
++
++/ {
++	model = "Ka-Ro electronics TXUL-0010 Module";
++	compatible = "karo,imx6ul-tx6ul", "fsl,imx6ul";
++
++	aliases {
++		mmc0 = &usdhc1;
++		/delete-property/ mmc1;
++	};
++};
+diff --git a/arch/arm/boot/dts/imx6ul-txul-0011.dts b/arch/arm/boot/dts/imx6ul-txul-0011.dts
+new file mode 100644
+index 0000000..dd3055b
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6ul-txul-0011.dts
+@@ -0,0 +1,85 @@
++/*
++ * Copyright 2015 Lothar Waßmann <LW@KARO-electronics.de>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License
++ *     version 2 as published by the Free Software Foundation.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++/dts-v1/;
++#include "imx6ul.dtsi"
++#include "imx6ul-txul.dtsi"
++
++/ {
++	model = "Ka-Ro electronics TXUL-0011 Module";
++	compatible = "karo,imx6ul-tx6ul", "fsl,imx6ul";
++
++	aliases {
++		mmc0 = &usdhc2;
++		mmc1 = &usdhc1;
++	};
++};
++
++&gpmi {
++	status = "disabled";
++};
++
++&iomuxc {
++	imx6ul-txul {
++		pinctrl_usdhc2: usdhc2grp {
++			fsl,pins = <
++				MX6UL_PAD_NAND_WE_B__USDHC2_CMD		0x070b1
++				MX6UL_PAD_NAND_RE_B__USDHC2_CLK		0x070b1
++				MX6UL_PAD_NAND_DATA00__USDHC2_DATA0	0x070b1
++				MX6UL_PAD_NAND_DATA01__USDHC2_DATA1	0x070b1
++				MX6UL_PAD_NAND_DATA02__USDHC2_DATA2	0x070b1
++				MX6UL_PAD_NAND_DATA03__USDHC2_DATA3	0x070b1
++				/* eMMC RESET */
++				MX6UL_PAD_NAND_ALE__USDHC2_RESET_B	0x170b0
++			>;
++		};
++	};
++};
++
++&usdhc2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_usdhc2>;
++	bus-width = <4>;
++	no-1-8-v;
++	non-removable;
++	fsl,wp-controller;
++	status = "okay";
++};
+diff --git a/arch/arm/boot/dts/imx6ul-txul.dtsi b/arch/arm/boot/dts/imx6ul-txul.dtsi
+new file mode 100644
+index 0000000..12dff96
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6ul-txul.dtsi
+@@ -0,0 +1,962 @@
++/*
++ * Copyright 2015 Lothar Waßmann <LW@KARO-electronics.de>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License
++ *     version 2 as published by the Free Software Foundation.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/pwm/pwm.h>
++
++/ {
++	aliases {
++		can0 = &can2;
++		can1 = &can1;
++		display = &display;
++		i2c0 = &i2c_gpio;
++		i2c1 = &i2c2;
++		lcdif_23bit_pins_a = &pinctrl_disp0_1;
++		lcdif_24bit_pins_a = &pinctrl_disp0_2;
++		pwm0 = &pwm5;
++		reg_can_xcvr = &reg_can_xcvr;
++		serial2 = &uart5;
++		serial4 = &uart3;
++		spi0 = &ecspi2;
++		spi1 = &spi_gpio;
++		stk5led = &user_led;
++		usbh1 = &usbotg2;
++		usbotg = &usbotg1;
++	};
++
++	chosen {
++		stdout-path = &uart1;
++	};
++
++	memory {
++		reg = <0 0>; /* will be filled by U-Boot */
++	};
++
++	clocks {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		mclk: clock@0 {
++			compatible = "fixed-clock";
++			reg = <0>;
++			#clock-cells = <0>;
++			clock-frequency = <26000000>;
++		};
++	};
++
++	backlight: backlight {
++		compatible = "pwm-backlight";
++		pwms = <&pwm5 0 500000 PWM_POLARITY_INVERTED>;
++		power-supply = <&reg_3v3>;
++		/*
++		 * a poor man's way to create a 1:1 relationship between
++		 * the PWM value and the actual duty cycle
++		 */
++		brightness-levels = < 0  1  2  3  4  5  6  7  8  9
++				     10 11 12 13 14 15 16 17 18 19
++				     20 21 22 23 24 25 26 27 28 29
++				     30 31 32 33 34 35 36 37 38 39
++				     40 41 42 43 44 45 46 47 48 49
++				     50 51 52 53 54 55 56 57 58 59
++				     60 61 62 63 64 65 66 67 68 69
++				     70 71 72 73 74 75 76 77 78 79
++				     80 81 82 83 84 85 86 87 88 89
++				     90 91 92 93 94 95 96 97 98 99
++				    100>;
++		default-brightness-level = <50>;
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++	};
++
++	i2c_gpio: i2c-gpio {
++		compatible = "i2c-gpio";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_i2c_gpio>;
++		gpios = <
++			&gpio5 1 GPIO_ACTIVE_HIGH /* SDA */
++			&gpio5 0 GPIO_ACTIVE_HIGH /* SCL */
++		>;
++		clock-frequency = <400000>;
++		status = "okay";
++
++		ds1339: rtc@68 {
++			compatible = "dallas,ds1339";
++			reg = <0x68>;
++			status = "disabled";
++		};
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		user_led: user {
++			label = "Heartbeat";
++			gpios = <&gpio5 9 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "heartbeat";
++		};
++	};
++
++	regulators {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		reg_3v3_etn: regulator@0 {
++			compatible = "regulator-fixed";
++			reg = <0>;
++			regulator-name = "3V3_ETN";
++			regulator-min-microvolt = <3300000>;
++			regulator-max-microvolt = <3300000>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_etnphy_power>;
++			gpio = <&gpio5 7 GPIO_ACTIVE_HIGH>;
++			enable-active-high;
++		};
++
++		reg_2v5: regulator@1 {
++			compatible = "regulator-fixed";
++			reg = <1>;
++			regulator-name = "2V5";
++			regulator-min-microvolt = <2500000>;
++			regulator-max-microvolt = <2500000>;
++			regulator-always-on;
++		};
++
++		reg_3v3: regulator@2 {
++			compatible = "regulator-fixed";
++			reg = <2>;
++			regulator-name = "3V3";
++			regulator-min-microvolt = <3300000>;
++			regulator-max-microvolt = <3300000>;
++			regulator-always-on;
++		};
++
++		reg_can_xcvr: regulator@3 {
++			compatible = "regulator-fixed";
++			reg = <3>;
++			regulator-name = "CAN XCVR";
++			regulator-min-microvolt = <3300000>;
++			regulator-max-microvolt = <3300000>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_flexcan_xcvr>;
++			gpio = <&gpio3 5 GPIO_ACTIVE_HIGH>;
++			enable-active-low;
++		};
++
++		reg_lcd_pwr: regulator@5 {
++			compatible = "regulator-fixed";
++			reg = <5>;
++			regulator-name = "LCD POWER";
++			regulator-min-microvolt = <3300000>;
++			regulator-max-microvolt = <3300000>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_lcd_pwr>;
++			gpio = <&gpio5 4 GPIO_ACTIVE_HIGH>;
++			enable-active-high;
++			regulator-boot-on;
++			regulator-always-on;
++		};
++
++		reg_lcd_reset: regulator@6 {
++			compatible = "regulator-fixed";
++			reg = <6>;
++			regulator-name = "LCD RESET";
++			regulator-min-microvolt = <3300000>;
++			regulator-max-microvolt = <3300000>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_lcd_reset>;
++			gpio = <&gpio3 4 GPIO_ACTIVE_HIGH>;
++			enable-active-high;
++			regulator-boot-on;
++			regulator-always-on;
++		};
++
++		reg_usbh1_vbus: regulator@7 {
++			compatible = "regulator-fixed";
++			reg = <7>;
++			regulator-name = "usbh1_vbus";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_usbh1_vbus &pinctrl_usbh1_oc>;
++			gpio = <&gpio1 2 GPIO_ACTIVE_HIGH>;
++			enable-active-high;
++		};
++
++		reg_usbotg_vbus: regulator@8 {
++			compatible = "regulator-fixed";
++			reg = <8>;
++			regulator-name = "usbotg_vbus";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_usbotg_vbus &pinctrl_usbotg_oc>;
++			gpio = <&gpio1 26 GPIO_ACTIVE_HIGH>;
++			enable-active-high;
++		};
++	};
++
++	spi_gpio: spi-gpio {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "spi-gpio";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_spi_gpio>;
++		gpio-mosi = <&gpio1 30 GPIO_ACTIVE_HIGH>;
++		gpio-miso = <&gpio1 31 GPIO_ACTIVE_HIGH>;
++		gpio-sck = <&gpio1 28 GPIO_ACTIVE_HIGH>;
++		num-chipselects = <2>;
++		cs-gpios = <
++			&gpio1 29 GPIO_ACTIVE_HIGH
++			&gpio1 10 GPIO_ACTIVE_HIGH
++		>;
++		status = "disabled";
++
++		spi@0 {
++			compatible = "spidev";
++			reg = <0>;
++			spi-max-frequency = <660000>;
++		};
++
++		spi@1 {
++			compatible = "spidev";
++			reg = <1>;
++			spi-max-frequency = <660000>;
++		};
++	};
++
++	sound {
++		compatible = "karo,imx6ul-tx6ul-sgtl5000",
++			     "simple-audio-card";
++		simple-audio-card,name = "imx6ul-tx6ul-sgtl5000-audio";
++		simple-audio-card,format = "i2s";
++		simple-audio-card,bitclock-master = <&codec_dai>;
++		simple-audio-card,frame-master = <&codec_dai>;
++		simple-audio-card,widgets =
++			"Microphone", "Mic Jack",
++			"Line", "Line In",
++			"Line", "Line Out",
++			"Headphone", "Headphone Jack";
++		simple-audio-card,routing =
++			"MIC_IN", "Mic Jack",
++			"Mic Jack", "Mic Bias",
++			"Headphone Jack", "HP_OUT";
++
++		cpu_dai: simple-audio-card,cpu {
++			sound-dai = <&sai2>;
++		};
++
++		codec_dai: simple-audio-card,codec {
++			sound-dai = <&sgtl5000>;
++		};
++	};
++};
++
++&can1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_flexcan1>;
++	xceiver-supply = <&reg_can_xcvr>;
++	status = "okay";
++};
++
++&can2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_flexcan2>;
++	xceiver-supply = <&reg_can_xcvr>;
++	status = "okay";
++};
++
++&ecspi2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_ecspi2>;
++	fsl,spi-num-chipselects = <2>;
++	cs-gpios = <
++		&gpio1 29 GPIO_ACTIVE_HIGH
++		&gpio1 10 GPIO_ACTIVE_HIGH
++	>;
++	status = "disabled";
++
++	spi@0 {
++		compatible = "spidev";
++		reg = <0>;
++		spi-max-frequency = <60000000>;
++	};
++
++	spi@1 {
++		compatible = "spidev";
++		reg = <1>;
++		spi-max-frequency = <60000000>;
++	};
++};
++
++&fec1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_enet1 &pinctrl_enet_mdio>;
++	phy-mode = "rmii";
++	phy-reset-gpios = <&gpio5 6 GPIO_ACTIVE_HIGH>;
++	phy-supply = <&reg_3v3_etn>;
++	phy-handle = <&etnphy0>;
++	status = "okay";
++
++	mdio {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		etnphy0: ethernet-phy@0 {
++			compatible = "ethernet-phy-ieee802.3-c22";
++			reg = <0>;
++			interrupt-parent = <&gpio5>;
++			interrupts = <5>;
++			status = "okay";
++		};
++
++		etnphy1: ethernet-phy@1 {
++			compatible = "ethernet-phy-ieee802.3-c22";
++			reg = <1>;
++			status = "okay";
++		};
++	};
++};
++
++&fec2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_enet2>;
++	phy-mode = "rmii";
++	phy-supply = <&reg_3v3_etn>;
++	phy-handle = <&etnphy1>;
++	status = "disabled";
++};
++
++&gpmi {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_gpmi_nand>;
++	nand-on-flash-bbt;
++	fsl,no-blockmark-swap;
++	status = "okay";
++};
++
++&i2c2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_i2c2>;
++	clock-frequency = <400000>;
++	status = "okay";
++
++	sgtl5000: sgtl5000@0a {
++		#sound-dai-cells = <0>;
++		compatible = "fsl,sgtl5000";
++		reg = <0x0a>;
++		VDDA-supply = <&reg_2v5>;
++		VDDIO-supply = <&reg_3v3>;
++		clocks = <&mclk>;
++	};
++
++	polytouch: edt-ft5x06@38 {
++		compatible = "edt,edt-ft5x06";
++		reg = <0x38>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_edt_ft5x06>;
++		interrupt-parent = <&gpio5>;
++		interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
++		reset-gpios = <&gpio5 3 GPIO_ACTIVE_LOW>;
++		wake-gpios = <&gpio5 8 GPIO_ACTIVE_HIGH>;
++		linux,wakeup;
++	};
++
++	touchscreen: tsc2007@48 {
++		compatible = "ti,tsc2007";
++		reg = <0x48>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_tsc2007>;
++		interrupt-parent = <&gpio3>;
++		interrupts = <26 IRQ_TYPE_NONE>;
++		gpios = <&gpio3 26 GPIO_ACTIVE_LOW>;
++		ti,x-plate-ohms = <660>;
++		linux,wakeup;
++	};
++};
++
++&iomuxc {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_hog>;
++
++	imx6ul-txul {
++		pinctrl_hog: hoggrp {
++			fsl,pins = <
++				MX6UL_PAD_SNVS_TAMPER9__GPIO5_IO09	0x0b0b0 /* LED */
++				MX6UL_PAD_SNVS_TAMPER6__GPIO5_IO06	0x0b0b0 /* ETN PHY RESET */
++				MX6UL_PAD_SNVS_TAMPER5__GPIO5_IO05	0x0b0b0 /* ETN PHY INT */
++			>;
++		};
++
++		pinctrl_disp0_1: disp0grp-1 {
++			fsl,pins = <
++				MX6UL_PAD_LCD_CLK__LCDIF_CLK		0x10 /* LSCLK */
++				MX6UL_PAD_LCD_ENABLE__LCDIF_ENABLE	0x10 /* OE_ACD */
++				MX6UL_PAD_LCD_HSYNC__LCDIF_HSYNC		0x10 /* HSYNC */
++				MX6UL_PAD_LCD_VSYNC__LCDIF_VSYNC		0x10 /* VSYNC */
++				/* PAD DISP0_DAT0 is used for the Flexcan transceiver control */
++				MX6UL_PAD_LCD_DATA01__LCDIF_DATA01	0x10
++				MX6UL_PAD_LCD_DATA02__LCDIF_DATA02	0x10
++				MX6UL_PAD_LCD_DATA03__LCDIF_DATA03	0x10
++				MX6UL_PAD_LCD_DATA04__LCDIF_DATA04	0x10
++				MX6UL_PAD_LCD_DATA05__LCDIF_DATA05	0x10
++				MX6UL_PAD_LCD_DATA06__LCDIF_DATA06	0x10
++				MX6UL_PAD_LCD_DATA07__LCDIF_DATA07	0x10
++				MX6UL_PAD_LCD_DATA08__LCDIF_DATA08	0x10
++				MX6UL_PAD_LCD_DATA09__LCDIF_DATA09	0x10
++				MX6UL_PAD_LCD_DATA10__LCDIF_DATA10	0x10
++				MX6UL_PAD_LCD_DATA11__LCDIF_DATA11	0x10
++				MX6UL_PAD_LCD_DATA12__LCDIF_DATA12	0x10
++				MX6UL_PAD_LCD_DATA13__LCDIF_DATA13	0x10
++				MX6UL_PAD_LCD_DATA14__LCDIF_DATA14	0x10
++				MX6UL_PAD_LCD_DATA15__LCDIF_DATA15	0x10
++				MX6UL_PAD_LCD_DATA16__LCDIF_DATA16	0x10
++				MX6UL_PAD_LCD_DATA17__LCDIF_DATA17	0x10
++				MX6UL_PAD_LCD_DATA18__LCDIF_DATA18	0x10
++				MX6UL_PAD_LCD_DATA19__LCDIF_DATA19	0x10
++				MX6UL_PAD_LCD_DATA20__LCDIF_DATA20	0x10
++				MX6UL_PAD_LCD_DATA21__LCDIF_DATA21	0x10
++				MX6UL_PAD_LCD_DATA22__LCDIF_DATA22	0x10
++				MX6UL_PAD_LCD_DATA23__LCDIF_DATA23	0x10
++			>;
++		};
++
++		pinctrl_disp0_2: disp0grp-2 {
++			fsl,pins = <
++				MX6UL_PAD_LCD_CLK__LCDIF_CLK		0x10 /* LSCLK */
++				MX6UL_PAD_LCD_ENABLE__LCDIF_ENABLE	0x10 /* OE_ACD */
++				MX6UL_PAD_LCD_HSYNC__LCDIF_HSYNC	0x10 /* HSYNC */
++				MX6UL_PAD_LCD_VSYNC__LCDIF_VSYNC	0x10 /* VSYNC */
++				MX6UL_PAD_LCD_DATA00__LCDIF_DATA00	0x10
++				MX6UL_PAD_LCD_DATA01__LCDIF_DATA01	0x10
++				MX6UL_PAD_LCD_DATA02__LCDIF_DATA02	0x10
++				MX6UL_PAD_LCD_DATA03__LCDIF_DATA03	0x10
++				MX6UL_PAD_LCD_DATA04__LCDIF_DATA04	0x10
++				MX6UL_PAD_LCD_DATA05__LCDIF_DATA05	0x10
++				MX6UL_PAD_LCD_DATA06__LCDIF_DATA06	0x10
++				MX6UL_PAD_LCD_DATA07__LCDIF_DATA07	0x10
++				MX6UL_PAD_LCD_DATA08__LCDIF_DATA08	0x10
++				MX6UL_PAD_LCD_DATA09__LCDIF_DATA09	0x10
++				MX6UL_PAD_LCD_DATA10__LCDIF_DATA10	0x10
++				MX6UL_PAD_LCD_DATA11__LCDIF_DATA11	0x10
++				MX6UL_PAD_LCD_DATA12__LCDIF_DATA12	0x10
++				MX6UL_PAD_LCD_DATA13__LCDIF_DATA13	0x10
++				MX6UL_PAD_LCD_DATA14__LCDIF_DATA14	0x10
++				MX6UL_PAD_LCD_DATA15__LCDIF_DATA15	0x10
++				MX6UL_PAD_LCD_DATA16__LCDIF_DATA16	0x10
++				MX6UL_PAD_LCD_DATA17__LCDIF_DATA17	0x10
++				MX6UL_PAD_LCD_DATA18__LCDIF_DATA18	0x10
++				MX6UL_PAD_LCD_DATA19__LCDIF_DATA19	0x10
++				MX6UL_PAD_LCD_DATA20__LCDIF_DATA20	0x10
++				MX6UL_PAD_LCD_DATA21__LCDIF_DATA21	0x10
++				MX6UL_PAD_LCD_DATA22__LCDIF_DATA22	0x10
++				MX6UL_PAD_LCD_DATA23__LCDIF_DATA23	0x10
++			>;
++		};
++
++		pinctrl_ecspi2: ecspi2grp {
++			fsl,pins = <
++				MX6UL_PAD_UART4_RX_DATA__GPIO1_IO29	0x0b0b0 /* CSPI_SS */
++				MX6UL_PAD_JTAG_MOD__GPIO1_IO10		0x0b0b0 /* CSPI_SS */
++				MX6UL_PAD_UART5_TX_DATA__ECSPI2_MOSI	0x0b0b0 /* CSPI_MOSI */
++				MX6UL_PAD_UART5_RX_DATA__ECSPI2_MISO	0x0b0b0 /* CSPI_MISO */
++				MX6UL_PAD_UART4_TX_DATA__ECSPI2_SCLK	0x0b0b0 /* CSPI_SCLK */
++			>;
++		};
++
++		pinctrl_edt_ft5x06: edt-ft5x06grp {
++			fsl,pins = <
++				MX6UL_PAD_SNVS_TAMPER2__GPIO5_IO02	0x1b0b0 /* Interrupt */
++				MX6UL_PAD_SNVS_TAMPER3__GPIO5_IO03	0x1b0b0 /* Reset */
++				MX6UL_PAD_SNVS_TAMPER8__GPIO5_IO08	0x1b0b0 /* Wake */
++			>;
++		};
++
++		pinctrl_enet1: enet1grp {
++			fsl,pins = <
++				MX6UL_PAD_ENET1_RX_DATA0__ENET1_RDATA00	0x0b0b0
++				MX6UL_PAD_ENET1_RX_DATA1__ENET1_RDATA01	0x0b0b0
++				MX6UL_PAD_ENET1_RX_ER__ENET1_RX_ER	0x0b0b0
++				MX6UL_PAD_ENET1_TX_EN__ENET1_TX_EN	0x0b0b0
++				MX6UL_PAD_ENET1_TX_DATA0__ENET1_TDATA00	0x0b0b0
++				MX6UL_PAD_ENET1_TX_DATA1__ENET1_TDATA01	0x0b0b0
++				MX6UL_PAD_ENET1_RX_EN__ENET1_RX_EN	0x0b0b0
++				MX6UL_PAD_ENET1_TX_CLK__ENET1_REF_CLK1	0x40000031
++			>;
++		};
++
++		pinctrl_enet2: enet2grp {
++			fsl,pins = <
++				MX6UL_PAD_ENET2_RX_DATA0__ENET2_RDATA00	0x0b0b0
++				MX6UL_PAD_ENET2_RX_DATA1__ENET2_RDATA01	0x0b0b0
++				MX6UL_PAD_ENET2_RX_ER__ENET2_RX_ER	0x0b0b0
++				MX6UL_PAD_ENET2_TX_EN__ENET2_TX_EN	0x0b0b0
++				MX6UL_PAD_ENET2_TX_DATA0__ENET2_TDATA00	0x0b0b0
++				MX6UL_PAD_ENET2_TX_DATA1__ENET2_TDATA01	0x0b0b0
++				MX6UL_PAD_ENET2_RX_EN__ENET2_RX_EN	0x0b0b0
++				MX6UL_PAD_ENET2_TX_CLK__ENET2_REF_CLK2	0x40000031
++			>;
++		};
++
++		pinctrl_enet_mdio: enet-mdiogrp {
++			fsl,pins = <
++				MX6UL_PAD_GPIO1_IO07__ENET1_MDC		0x0b0b0
++				MX6UL_PAD_GPIO1_IO06__ENET1_MDIO	0x1b0b0
++			>;
++		};
++
++		pinctrl_etnphy_power: etnphy-pwrgrp {
++			fsl,pins = <
++				MX6UL_PAD_SNVS_TAMPER7__GPIO5_IO07	0x0b0b0 /* ETN PHY POWER */
++			>;
++		};
++
++		pinctrl_flexcan1: flexcan1grp {
++			fsl,pins = <
++				MX6UL_PAD_UART3_CTS_B__FLEXCAN1_TX	0x1b0b0
++				MX6UL_PAD_UART3_RTS_B__FLEXCAN1_RX	0x1b0b0
++			>;
++		};
++
++		pinctrl_flexcan2: flexcan2grp {
++			fsl,pins = <
++				MX6UL_PAD_UART2_CTS_B__FLEXCAN2_TX	0x1b0b0
++				MX6UL_PAD_UART2_RTS_B__FLEXCAN2_RX	0x1b0b0
++			>;
++		};
++
++		pinctrl_flexcan_xcvr: flexcan-xcvrgrp {
++			fsl,pins = <
++				MX6UL_PAD_LCD_DATA00__GPIO3_IO05	0x0b0b0 /* Flexcan XCVR enable */
++			>;
++		};
++
++		pinctrl_gpmi_nand: gpminandgrp {
++			fsl,pins = <
++				MX6UL_PAD_NAND_CLE__RAWNAND_CLE		0x0b0b1
++				MX6UL_PAD_NAND_ALE__RAWNAND_ALE		0x0b0b1
++				MX6UL_PAD_NAND_WP_B__RAWNAND_WP_B	0x0b0b1
++				MX6UL_PAD_NAND_READY_B__RAWNAND_READY_B	0x0b000
++				MX6UL_PAD_NAND_CE0_B__RAWNAND_CE0_B	0x0b0b1
++				MX6UL_PAD_NAND_RE_B__RAWNAND_RE_B	0x0b0b1
++				MX6UL_PAD_NAND_WE_B__RAWNAND_WE_B	0x0b0b1
++				MX6UL_PAD_NAND_DATA00__RAWNAND_DATA00	0x0b0b1
++				MX6UL_PAD_NAND_DATA01__RAWNAND_DATA01	0x0b0b1
++				MX6UL_PAD_NAND_DATA02__RAWNAND_DATA02	0x0b0b1
++				MX6UL_PAD_NAND_DATA03__RAWNAND_DATA03	0x0b0b1
++				MX6UL_PAD_NAND_DATA04__RAWNAND_DATA04	0x0b0b1
++				MX6UL_PAD_NAND_DATA05__RAWNAND_DATA05	0x0b0b1
++				MX6UL_PAD_NAND_DATA06__RAWNAND_DATA06	0x0b0b1
++				MX6UL_PAD_NAND_DATA07__RAWNAND_DATA07	0x0b0b1
++			>;
++		};
++
++		pinctrl_i2c_gpio: i2c-gpiogrp {
++			fsl,pins = <
++				MX6UL_PAD_SNVS_TAMPER0__GPIO5_IO00	0x4001b8b1 /* I2C SCL */
++				MX6UL_PAD_SNVS_TAMPER1__GPIO5_IO01	0x4001b8b1 /* I2C SDA */
++			>;
++		};
++
++		pinctrl_i2c2: i2c2grp {
++			fsl,pins = <
++				MX6UL_PAD_GPIO1_IO00__I2C2_SCL		0x4001b8b1
++				MX6UL_PAD_GPIO1_IO01__I2C2_SDA		0x4001b8b1
++			>;
++		};
++
++		pinctrl_kpp: kppgrp {
++			fsl,pins = <
++				MX6UL_PAD_ENET2_RX_DATA1__KPP_COL04	0x1b0b0
++				MX6UL_PAD_ENET2_TX_DATA0__KPP_COL05	0x1b0b0
++				MX6UL_PAD_ENET2_TX_EN__KPP_COL06	0x1b0b0
++				MX6UL_PAD_ENET2_RX_ER__KPP_COL07	0x1b0b0
++				MX6UL_PAD_ENET2_RX_DATA0__KPP_ROW04	0x1b0b0
++				MX6UL_PAD_ENET2_RX_EN__KPP_ROW05	0x1b0b0
++				MX6UL_PAD_ENET2_TX_DATA1__KPP_ROW06	0x1b0b0
++				MX6UL_PAD_ENET2_TX_CLK__KPP_ROW07	0x1b0b0
++			>;
++		};
++
++		pinctrl_lcd_pwr: lcd-pwrgrp {
++			fsl,pins = <
++				MX6UL_PAD_SNVS_TAMPER4__GPIO5_IO04	0x0b0b0 /* LCD Power Enable */
++			>;
++		};
++
++		pinctrl_lcd_reset: lcd-resetgrp {
++			fsl,pins = <
++				MX6UL_PAD_LCD_RESET__GPIO3_IO04		0x0b0b0 /* LCD RESET */
++			>;
++		};
++
++		pinctrl_pwm5: pwm5grp {
++			fsl,pins = <
++				MX6UL_PAD_NAND_DQS__PWM5_OUT		0x0b0b0
++			>;
++		};
++
++		pinctrl_sai2: sai2grp {
++			fsl,pins = <
++				MX6UL_PAD_JTAG_TCK__SAI2_RX_DATA	0x0b0b0 /* SSI1_RXD */
++				MX6UL_PAD_JTAG_TRST_B__SAI2_TX_DATA	0x0b0b0 /* SSI1_TXD */
++				MX6UL_PAD_JTAG_TDI__SAI2_TX_BCLK	0x0b0b0 /* SSI1_CLK */
++				MX6UL_PAD_JTAG_TDO__SAI2_TX_SYNC	0x0b0b0 /* SSI1_FS */
++			>;
++		};
++
++		pinctrl_spi_gpio: spi-gpiogrp {
++			fsl,pins = <
++				MX6UL_PAD_UART4_RX_DATA__GPIO1_IO29	0x0b0b0 /* CSPI_SS */
++				MX6UL_PAD_JTAG_MOD__GPIO1_IO10		0x0b0b0 /* CSPI_SS */
++				MX6UL_PAD_UART5_TX_DATA__GPIO1_IO30	0x0b0b0 /* CSPI_MOSI */
++				MX6UL_PAD_UART5_RX_DATA__GPIO1_IO31	0x0b0b0 /* CSPI_MISO */
++				MX6UL_PAD_UART4_TX_DATA__GPIO1_IO28	0x0b0b0 /* CSPI_SCLK */
++			>;
++		};
++
++		pinctrl_tsc2007: tsc2007grp {
++			fsl,pins = <
++				MX6UL_PAD_JTAG_TMS__GPIO1_IO11		0x1b0b0 /* Interrupt */
++			>;
++		};
++
++		pinctrl_uart1: uart1grp {
++			fsl,pins = <
++				MX6UL_PAD_UART1_TX_DATA__UART1_DCE_TX	0x0b0b0
++				MX6UL_PAD_UART1_RX_DATA__UART1_DCE_RX	0x0b0b0
++			>;
++		};
++
++		pinctrl_uart1_rtscts: uart1_rtsctsgrp {
++			fsl,pins = <
++				MX6UL_PAD_UART1_RTS_B__UART1_DCE_RTS	0x0b0b0
++				MX6UL_PAD_UART1_CTS_B__UART1_DCE_CTS	0x0b0b0
++			>;
++		};
++
++		pinctrl_uart2: uart2grp {
++			fsl,pins = <
++				MX6UL_PAD_UART2_TX_DATA__UART2_DCE_TX	0x0b0b0
++				MX6UL_PAD_UART2_RX_DATA__UART2_DCE_RX	0x0b0b0
++			>;
++		};
++
++		pinctrl_uart2_rtscts: uart2_rtsctsgrp {
++			fsl,pins = <
++				MX6UL_PAD_UART3_RX_DATA__UART2_DCE_RTS	0x0b0b0
++				MX6UL_PAD_UART3_TX_DATA__UART2_DCE_CTS	0x0b0b0
++			>;
++		};
++
++		pinctrl_uart5: uart5grp {
++			fsl,pins = <
++				MX6UL_PAD_GPIO1_IO04__UART5_DCE_TX	0x0b0b0
++				MX6UL_PAD_GPIO1_IO05__UART5_DCE_RX	0x0b0b0
++			>;
++		};
++
++		pinctrl_uart5_rtscts: uart5_rtsctsgrp {
++			fsl,pins = <
++				MX6UL_PAD_GPIO1_IO08__UART5_DCE_RTS	0x0b0b0
++				MX6UL_PAD_GPIO1_IO09__UART5_DCE_CTS	0x0b0b0
++			>;
++		};
++
++		pinctrl_usbh1_oc: usbh1-ocgrp {
++			fsl,pins = <
++				MX6UL_PAD_GPIO1_IO03__GPIO1_IO03	0x17059 /* USBH1_OC */
++			>;
++		};
++
++		pinctrl_usbh1_vbus: usbh1-vbusgrp {
++			fsl,pins = <
++				MX6UL_PAD_GPIO1_IO02__GPIO1_IO02	0x0b0b0 /* USBH1_VBUSEN */
++			>;
++		};
++
++		pinctrl_usbotg_oc: usbotg-ocgrp {
++			fsl,pins = <
++				MX6UL_PAD_UART3_RTS_B__GPIO1_IO27	0x17059 /* USBOTG_OC */
++			>;
++		};
++
++		pinctrl_usbotg_vbus: usbotg-vbusgrp {
++			fsl,pins = <
++				MX6UL_PAD_UART3_CTS_B__GPIO1_IO26	0x1b0b0 /* USBOTG_VBUSEN */
++			>;
++		};
++
++		pinctrl_usdhc1: usdhc1grp {
++			fsl,pins = <
++				MX6UL_PAD_SD1_CMD__USDHC1_CMD		0x070b1
++				MX6UL_PAD_SD1_CLK__USDHC1_CLK		0x07099
++				MX6UL_PAD_SD1_DATA0__USDHC1_DATA0	0x070b1
++				MX6UL_PAD_SD1_DATA1__USDHC1_DATA1	0x070b1
++				MX6UL_PAD_SD1_DATA2__USDHC1_DATA2	0x070b1
++				MX6UL_PAD_SD1_DATA3__USDHC1_DATA3	0x070b1
++				/* SD1 CD */
++				MX6UL_PAD_NAND_CE1_B__GPIO4_IO14	0x170b0 /* SD1 CD */
++			>;
++		};
++		pinctrl_usdhc2: usdhc2grp {
++			fsl,pins = <
++				MX6UL_PAD_NAND_WE_B__USDHC2_CMD		0x070b1
++				MX6UL_PAD_NAND_RE_B__USDHC2_CLK		0x070b1
++				MX6UL_PAD_NAND_DATA00__USDHC2_DATA0	0x070b1
++				MX6UL_PAD_NAND_DATA01__USDHC2_DATA1	0x070b1
++				MX6UL_PAD_NAND_DATA02__USDHC2_DATA2	0x070b1
++				MX6UL_PAD_NAND_DATA03__USDHC2_DATA3	0x070b1
++				/* eMMC RESET */
++				MX6UL_PAD_NAND_ALE__USDHC2_RESET_B	0x170b0
++			>;
++		};
++	};
++};
++
++&kpp {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_kpp>;
++	/* sample keymap */
++	/* row/col 0..3 are mapped to KPP row/col 4..7 */
++	linux,keymap = <
++		MATRIX_KEY(4, 4, KEY_POWER)
++		MATRIX_KEY(4, 5, KEY_KP0)
++		MATRIX_KEY(4, 6, KEY_KP1)
++		MATRIX_KEY(4, 7, KEY_KP2)
++		MATRIX_KEY(5, 4, KEY_KP3)
++		MATRIX_KEY(5, 5, KEY_KP4)
++		MATRIX_KEY(5, 6, KEY_KP5)
++		MATRIX_KEY(5, 7, KEY_KP6)
++		MATRIX_KEY(6, 4, KEY_KP7)
++		MATRIX_KEY(6, 5, KEY_KP8)
++		MATRIX_KEY(6, 6, KEY_KP9)
++	>;
++	status = "okay";
++};
++
++&lcdif {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_disp0_1>;
++	lcd-supply = <&reg_lcd_pwr>;
++	display = <&display>;
++	status = "okay";
++
++	display: display@di0 {
++		bits-per-pixel = <32>;
++		bus-width = <24>;
++		status = "okay";
++
++		display-timings {
++			VGA {
++				clock-frequency = <25200000>;
++				hactive = <640>;
++				vactive = <480>;
++				hback-porch = <48>;
++				hsync-len = <96>;
++				hfront-porch = <16>;
++				vback-porch = <31>;
++				vsync-len = <2>;
++				vfront-porch = <12>;
++				hsync-active = <0>;
++				vsync-active = <0>;
++				de-active = <1>;
++				pixelclk-active = <1>;
++			};
++
++			ETV570 {
++				clock-frequency = <25200000>;
++				hactive = <640>;
++				vactive = <480>;
++				hback-porch = <114>;
++				hsync-len = <30>;
++				hfront-porch = <16>;
++				vback-porch = <32>;
++				vsync-len = <3>;
++				vfront-porch = <10>;
++				hsync-active = <0>;
++				vsync-active = <0>;
++				de-active = <1>;
++				pixelclk-active = <1>;
++			};
++
++			ET0350 {
++				clock-frequency = <6413760>;
++				hactive = <320>;
++				vactive = <240>;
++				hback-porch = <34>;
++				hsync-len = <34>;
++				hfront-porch = <20>;
++				vback-porch = <15>;
++				vsync-len = <3>;
++				vfront-porch = <4>;
++				hsync-active = <0>;
++				vsync-active = <0>;
++				de-active = <1>;
++				pixelclk-active = <1>;
++			};
++
++			ET0430 {
++				clock-frequency = <9009000>;
++				hactive = <480>;
++				vactive = <272>;
++				hback-porch = <2>;
++				hsync-len = <41>;
++				hfront-porch = <2>;
++				vback-porch = <2>;
++				vsync-len = <10>;
++				vfront-porch = <2>;
++				hsync-active = <0>;
++				vsync-active = <0>;
++				de-active = <1>;
++				pixelclk-active = <0>;
++			};
++
++			ET0500 {
++				clock-frequency = <33264000>;
++				hactive = <800>;
++				vactive = <480>;
++				hback-porch = <88>;
++				hsync-len = <128>;
++				hfront-porch = <40>;
++				vback-porch = <33>;
++				vsync-len = <2>;
++				vfront-porch = <10>;
++				hsync-active = <0>;
++				vsync-active = <0>;
++				de-active = <1>;
++				pixelclk-active = <1>;
++			};
++
++			ET0700 { /* same as ET0500 */
++				clock-frequency = <33264000>;
++				hactive = <800>;
++				vactive = <480>;
++				hback-porch = <88>;
++				hsync-len = <128>;
++				hfront-porch = <40>;
++				vback-porch = <33>;
++				vsync-len = <2>;
++				vfront-porch = <10>;
++				hsync-active = <0>;
++				vsync-active = <0>;
++				de-active = <1>;
++				pixelclk-active = <1>;
++			};
++
++			ETQ570 {
++				clock-frequency = <6596040>;
++				hactive = <320>;
++				vactive = <240>;
++				hback-porch = <38>;
++				hsync-len = <30>;
++				hfront-porch = <30>;
++				vback-porch = <16>;
++				vsync-len = <3>;
++				vfront-porch = <4>;
++				hsync-active = <0>;
++				vsync-active = <0>;
++				de-active = <1>;
++				pixelclk-active = <1>;
++			};
++		};
++	};
++};
++
++&pwm5 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_pwm5>;
++	#pwm-cells = <3>;
++	status = "okay";
++};
++
++&sai2 {
++	#sound-dai-cells = <0>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_sai2>;
++	status = "okay";
++};
++
++&uart1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart1 &pinctrl_uart1_rtscts>;
++	status = "okay";
++};
++
++&uart2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart2 &pinctrl_uart2_rtscts>;
++	status = "okay";
++};
++
++&uart5 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart5 &pinctrl_uart5_rtscts>;
++	status = "okay";
++};
++
++&usbotg2 {
++	vbus-supply = <&reg_usbh1_vbus>;
++	dr_mode = "host";
++	disable-over-current;
++	status = "okay";
++};
++
++&usbotg1 {
++	vbus-supply = <&reg_usbotg_vbus>;
++	dr_mode = "peripheral";
++	disable-over-current;
++	status = "okay";
++};
++
++&usdhc1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_usdhc1>;
++	bus-width = <4>;
++	no-1-8-v;
++	cd-gpios = <&gpio4 14 GPIO_ACTIVE_LOW>;
++	fsl,wp-controller;
++	status = "okay";
++};
+-- 
+2.1.4
