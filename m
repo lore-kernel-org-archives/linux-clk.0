@@ -1,83 +1,34 @@
-Return-Path: <kernel@martin.sperl.org>
-Content-Type: text/plain; charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2104\))
-Subject: Re: [PATCH 2/5] clk: bcm2835: enable management of PCM clock
-From: Martin Sperl <kernel@martin.sperl.org>
-In-Reply-To: <20160110115858.GV6588@sirena.org.uk>
-Date: Sun, 10 Jan 2016 13:17:17 +0100
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
- Arnd Bergmann <arnd@arndb.de>,
- Stephen Warren <swarren@wwwdotorg.org>,
- Lee Jones <lee@kernel.org>,
- Eric Anholt <eric@anholt.net>,
- Russell King <linux@arm.linux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>,
- Remi Pommarel <repk@triplefau.lt>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- linux-rpi-kernel@lists.infradead.org,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- linux-clk <linux-clk@vger.kernel.org>,
- ALSA Development Mailing List <alsa-devel@alsa-project.org>,
- Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>,
- Matthias Reichl <hias@horus.com>,
- lFlorian Meier <florian.meier@koalo.de>
-Message-Id: <39E8C95F-C7DC-46C3-B29A-93A865485942@martin.sperl.org>
-References: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org> <1452331558-2520-3-git-send-email-kernel@martin.sperl.org> <4332640.jBKM55TPAo@wuerfel> <CAMuHMdWOt4aCzu8Ode0ZrQ-c80nqAhwD5dd17nhgVbLrRYT5og@mail.gmail.com> <4B891DE1-6340-4D3D-BEE3-F61D9A5D289B@martin.sperl.org> <20160110115858.GV6588@sirena.org.uk>
-To: Mark Brown <broonie@kernel.org>
+Return-Path: <Marc_Gonzalez@sigmadesigns.com>
+Return-Path: <Marc_Gonzalez@sigmadesigns.com>
+Subject: Re: [PATCH] clk: tango4: rename ARCH_TANGOX to ARCH_TANGO
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: linux-clk <linux-clk@vger.kernel.org>
+References: <5698F34D.20101@sigmadesigns.com>
+From: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
+Message-ID: <569F7A01.4060700@sigmadesigns.com>
+Date: Wed, 20 Jan 2016 13:13:53 +0100
+MIME-Version: 1.0
+In-Reply-To: <5698F34D.20101@sigmadesigns.com>
+Content-Type: text/plain; charset="ISO-8859-15"
 List-ID: <linux-clk.vger.kernel.org>
 
+On 15/01/2016 14:25, Marc Gonzalez wrote:
 
-> On 10.01.2016, at 12:58, Mark Brown <broonie@kernel.org> wrote:
->=20
-> On Sun, Jan 10, 2016 at 11:55:48AM +0100, Martin Sperl wrote:
->=20
->> So if someone with a better idea how to keep those dt-binding =
-includes
->> synchronized with the definitions used by the code step forward and
->> propose a better solution how to get that implemented?
->=20
->> I guess there will be a few more occurrences of clocks that are
->> currently not defined, which will need to get introduced in the =
-future
->> PWM and PCM were just the last in this series.
->=20
-> Presumably just making the code not rely on having a define for the
-> number of clocks would deal with the problem (eg, using ARRAY_SIZE
-> internally).
-ARRAY_SIZE would work fine, but the code is:=20
+> Requested by arm-soc maintainer Kevin Hilman in v9 review.
+> http://article.gmane.org/gmane.linux.ports.arm.kernel/456331
+> 
+> Signed-off-by: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
+> ---
+>  drivers/clk/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-#include <dt-bindings/clock/bcm2835.h>
-...
-struct bcm2835_cprman {
-	struct device *dev;
-	void __iomem *regs;
-	spinlock_t regs_lock;
-	const char *osc_name;
+If I understand correctly, Linux maintainers are currently busy
+pushing their trees into 4.5-rc1 ?
 
-	struct clk_onecell_data onecell;
-	struct clk *clks[BCM2835_CLOCK_COUNT];
-};
-...
-static int bcm2835_clk_probe(struct platform_device *pdev)
-{
-...
-	clks[BCM2835_PLLA_CORE] =3D
-		bcm2835_register_pll_divider(cprman, =
-&bcm2835_plla_core_data);
-...
-        clks[BCM2835_CLOCK_PCM] =3D
-                bcm2835_register_clock(cprman, &bcm2835_clock_pcm_data);
-...
-}
+Can this trivial fix be included in 4.5-rc2 in order to match the
+platform code that will go in 4.5-rc1 ?
 
-So the Array size is defined by the dt-bindings.
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/arch/arm/mach-tango/Kconfig
 
-What you propose is a major change to the clock framework, so I would
-hope that Eric (the original author of this clock-driver) would address
-it.
-
-Maybe someone has a better idea for a pattern to use to achieve=20
-the required while maintaining =E2=80=9Csynchronization=E2=80=9D between =
-defines
-inside the dt-binding and the driver.
+Regards.
