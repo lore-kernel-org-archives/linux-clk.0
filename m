@@ -1,94 +1,71 @@
-Return-Path: <blogic@openwrt.org>
-Subject: Re: [PATCH v3 0/6] Add clock support for Mediatek MT2701
-To: James Liao <jamesjj.liao@mediatek.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-References: <1452587470-61506-1-git-send-email-jamesjj.liao@mediatek.com>
-Cc: devicetree@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>,
- srv_heupstream@mediatek.com, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, Philipp Zabel <p.zabel@pengutronix.de>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-From: John Crispin <blogic@openwrt.org>
-Message-ID: <5694D106.2030009@openwrt.org>
-Date: Tue, 12 Jan 2016 11:10:14 +0100
+Return-Path: <LW@karo-electronics.de>
+From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
+To: Anson Huang <b20788@freescale.com>,
+	Bai Ping <b51503@freescale.com>,
+	Frank Li <Frank.Li@freescale.com>,
+	Fugang Duan <B38611@freescale.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	=?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCHv2 09/16] ARM: dts: imx6ul: add flexcan support
+Date: Wed, 20 Jan 2016 11:09:02 +0100
+Message-Id: <1453284549-16363-10-git-send-email-LW@KARO-electronics.de>
+In-Reply-To: <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
+References: <1452619291-13625-1-git-send-email-LW@KARO-electronics.de>
+ <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
 MIME-Version: 1.0
-In-Reply-To: <1452587470-61506-1-git-send-email-jamesjj.liao@mediatek.com>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi James,
+Add device nodes for the i.MX6UL flexcan interfaces.
 
-On 12/01/2016 09:31, James Liao wrote:
-> This patchset is based on 4.4-rc7, add clock and reset controller support
-> for Mediatek MT2701.
-> 
-> This patchset also refined makefile and Kconfig to support configurable
-> multiple SoC clock support.
-> 
-> changes since v2:
-> - Fix ethsys definition.
-> - Replace read-modify-write with regmap_update_bits() in clock operations.
-> - Move mt2701-resets.h to include/dt-bindings/reset/.
-> - Add hifsys reset patch from John Crispin.
+Signed-off-by: Lothar Waßmann <LW@KARO-electronics.de>
+---
+ arch/arm/boot/dts/imx6ul.dtsi | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-thanks for folding the fixup.
-
-i have been testing your V2 on MT7623 for several days now and updated
-to V3 this morning which works just as well. feel free to add
-
-Tested-by: John Crispin <blogic@openwrt.org>
-
-
-	John
-
-
-> changes since v1:
-> - Document MT2701 compatible strings.
-> 
-> James Liao (2):
->   clk: mediatek: Refine the makefile to support multiple clock drivers
->   dt-bindings: ARM: Mediatek: Document bindings for MT2701
-> 
-> Shunli Wang (4):
->   clk: mediatek: Add dt-bindings for MT2701 clocks
->   clk: mediatek: Add MT2701 clock support
->   reset: mediatek: Add MT2701 reset controller dt-binding file
->   reset: mediatek: Add MT2701 reset driver
-> 
->  .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
->  .../bindings/arm/mediatek/mediatek,bdpsys.txt      |   22 +
->  .../bindings/arm/mediatek/mediatek,ethsys.txt      |   22 +
->  .../bindings/arm/mediatek/mediatek,hifsys.txt      |   22 +
->  .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
->  .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
->  .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
->  .../bindings/arm/mediatek/mediatek,pericfg.txt     |    1 +
->  .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
->  .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
->  drivers/clk/Kconfig                                |    1 +
->  drivers/clk/mediatek/Kconfig                       |   31 +
->  drivers/clk/mediatek/Makefile                      |    7 +-
->  drivers/clk/mediatek/clk-gate.c                    |   52 +
->  drivers/clk/mediatek/clk-gate.h                    |    2 +
->  drivers/clk/mediatek/clk-mt2701.c                  | 1216 ++++++++++++++++++++
->  drivers/clk/mediatek/clk-mtk.c                     |   25 +
->  drivers/clk/mediatek/clk-mtk.h                     |   35 +-
->  include/dt-bindings/clock/mt2701-clk.h             |  481 ++++++++
->  include/dt-bindings/reset/mt2701-resets.h          |   83 ++
->  20 files changed, 2000 insertions(+), 6 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
->  create mode 100644 drivers/clk/mediatek/Kconfig
->  create mode 100644 drivers/clk/mediatek/clk-mt2701.c
->  create mode 100644 include/dt-bindings/clock/mt2701-clk.h
->  create mode 100644 include/dt-bindings/reset/mt2701-resets.h
-> 
-> --
-> 1.9.1
-> 
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
-> 
+diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
+index 9c719b2..9c873a6 100644
+--- a/arch/arm/boot/dts/imx6ul.dtsi
++++ b/arch/arm/boot/dts/imx6ul.dtsi
+@@ -292,6 +292,26 @@
+ 				status = "disabled";
+ 			};
+ 
++			can1: flexcan@02090000 {
++				compatible = "fsl,imx6ul-flexcan", "fsl,imx6q-flexcan";
++				reg = <0x02090000 0x4000>;
++				interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6UL_CLK_CAN1_IPG>,
++					 <&clks IMX6UL_CLK_CAN1_SERIAL>;
++				clock-names = "ipg", "per";
++				status = "disabled";
++			};
++
++			can2: flexcan@02094000 {
++				compatible = "fsl,imx6ul-flexcan", "fsl,imx6q-flexcan";
++				reg = <0x02094000 0x4000>;
++				interrupts = <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6UL_CLK_CAN2_IPG>,
++					 <&clks IMX6UL_CLK_CAN2_SERIAL>;
++				clock-names = "ipg", "per";
++				status = "disabled";
++			};
++
+ 			gpt1: gpt@02098000 {
+ 				compatible = "fsl,imx6ul-gpt", "fsl,imx6sx-gpt";
+ 				reg = <0x02098000 0x4000>;
+-- 
+2.1.4
