@@ -1,61 +1,81 @@
-Return-Path: <moinejf@free.fr>
-Message-Id: <cover.1452876522.git.moinejf@free.fr>
-From: Jean-Francois Moine <moinejf@free.fr>
-Date: Fri, 15 Jan 2016 17:48:42 +0100
-Subject: [PATCH v2 0/2] Add a DRM display driver to the Allwinner H3
-To: Dave Airlie <airlied@linux.ie>,
-    Chen-Yu Tsai <wens@csie.org>,
-    Emilio López <emilio@elopez.com.ar>,
-    Maxime Ripard <maxime.ripard@free-electrons.com>,
-    Michael Turquette <mturquette@baylibre.com>,
-    Stephen Boyd <sboyd@codeaurora.org>
-Cc: dri-devel@lists.freedesktop.org,
-    linux-arm-kernel@lists.infradead.org,
-    linux-clk@vger.kernel.org
+Return-Path: <LW@karo-electronics.de>
+From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
+To: Anson Huang <b20788@freescale.com>,
+	Bai Ping <b51503@freescale.com>,
+	Frank Li <Frank.Li@freescale.com>,
+	Fugang Duan <B38611@freescale.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	=?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCHv2 02/16] ARM: dts: imx6ul: move tsc node to appropriate place in the DTB
+Date: Wed, 20 Jan 2016 11:08:55 +0100
+Message-Id: <1453284549-16363-3-git-send-email-LW@KARO-electronics.de>
+In-Reply-To: <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
+References: <1452619291-13625-1-git-send-email-LW@KARO-electronics.de>
+ <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The proposed DRM driver works on a Orange PI 2 with a kernel 4.4.0
-and the H3 patches found in Hans de Goede's GIT repository.
+Move the tsc node to keep the nodes sorted in ascending order by unit
+address.
 
-As there is no documentation about the HDMI of the H3,
-the associated encoder/connector driver has not been included
-in this patch series.
-For tests, it may be built as a out-of-tree driver from the tarball:
-	http://moinejf.free.fr/opi2/h3-hdmi.tar.gz
-and the DT files:
-	http://moinejf.free.fr/opi2/sun8i-h3.dtsi
-	http://moinejf.free.fr/opi2/sun8i-h3-orangepi-plus.dts
+Signed-off-by: Lothar Waßmann <LW@KARO-electronics.de>
+---
+ arch/arm/boot/dts/imx6ul.dtsi | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-Jean-Francois Moine (2):
-  clk: sunxi: Add sun6i/8i video support
-  drm: sunxi: Add a basic DRM driver for Allwinner DE2
-
- Documentation/devicetree/bindings/clock/sunxi.txt  |   2 +
- .../devicetree/bindings/display/sunxi.txt          |  81 ++++
- drivers/clk/sunxi/clk-sun6i-display.c              | 106 +++++
- drivers/clk/sunxi/clk-sun6i-pll3.c                 | 174 ++++++++
- drivers/gpu/drm/Kconfig                            |   2 +
- drivers/gpu/drm/Makefile                           |   1 +
- drivers/gpu/drm/sunxi/Kconfig                      |  20 +
- drivers/gpu/drm/sunxi/Makefile                     |   7 +
- drivers/gpu/drm/sunxi/de2_crtc.c                   | 425 +++++++++++++++++++
- drivers/gpu/drm/sunxi/de2_crtc.h                   |  43 ++
- drivers/gpu/drm/sunxi/de2_de.c                     | 461 +++++++++++++++++++++
- drivers/gpu/drm/sunxi/de2_drm.h                    |  55 +++
- drivers/gpu/drm/sunxi/de2_drv.c                    | 376 +++++++++++++++++
- drivers/gpu/drm/sunxi/de2_plane.c                  | 114 +++++
- 14 files changed, 1867 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/sunxi.txt
- create mode 100644 drivers/clk/sunxi/clk-sun6i-display.c
- create mode 100644 drivers/clk/sunxi/clk-sun6i-pll3.c
- create mode 100644 drivers/gpu/drm/sunxi/Kconfig
- create mode 100644 drivers/gpu/drm/sunxi/Makefile
- create mode 100644 drivers/gpu/drm/sunxi/de2_crtc.c
- create mode 100644 drivers/gpu/drm/sunxi/de2_crtc.h
- create mode 100644 drivers/gpu/drm/sunxi/de2_de.c
- create mode 100644 drivers/gpu/drm/sunxi/de2_drm.h
- create mode 100644 drivers/gpu/drm/sunxi/de2_drv.c
- create mode 100644 drivers/gpu/drm/sunxi/de2_plane.c
-
+diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
+index 99b6465..7e27d76 100644
+--- a/arch/arm/boot/dts/imx6ul.dtsi
++++ b/arch/arm/boot/dts/imx6ul.dtsi
+@@ -236,6 +236,17 @@
+ 				};
+ 			};
+ 
++			tsc: tsc@02040000 {
++				compatible = "fsl,imx6ul-tsc";
++				reg = <0x02040000 0x4000>, <0x0219c000 0x4000>;
++				interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6UL_CLK_IPG>,
++					 <&clks IMX6UL_CLK_ADC2>;
++				clock-names = "tsc", "adc";
++				status = "disabled";
++			};
++
+ 			gpt1: gpt@02098000 {
+ 				compatible = "fsl,imx6ul-gpt", "fsl,imx6sx-gpt";
+ 				reg = <0x02098000 0x4000>;
+@@ -590,17 +601,6 @@
+ 				status = "disabled";
+ 			};
+ 
+-			tsc: tsc@02040000 {
+-				compatible = "fsl,imx6ul-tsc";
+-				reg = <0x02040000 0x4000>, <0x0219c000 0x4000>;
+-				interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
+-					     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
+-				clocks = <&clks IMX6UL_CLK_IPG>,
+-					 <&clks IMX6UL_CLK_ADC2>;
+-				clock-names = "tsc", "adc";
+-				status = "disabled";
+-			};
+-
+ 			usdhc1: usdhc@02190000 {
+ 				compatible = "fsl,imx6ul-usdhc", "fsl,imx6sx-usdhc";
+ 				reg = <0x02190000 0x4000>;
 -- 
-2.7.0
+2.1.4
