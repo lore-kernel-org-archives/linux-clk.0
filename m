@@ -1,59 +1,60 @@
-Return-Path: <LW@karo-electronics.de>
-From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
-To: Anson Huang <b20788@freescale.com>,
-	Bai Ping <b51503@freescale.com>,
-	Frank Li <Frank.Li@freescale.com>,
-	Fugang Duan <B38611@freescale.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	=?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	devicetree@vger.kernel.org,
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 20 Jan 2016 14:16:56 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCHv2 15/16] ARM: dts: imx6ul: add kpp support
-Date: Wed, 20 Jan 2016 11:09:08 +0100
-Message-Id: <1453284549-16363-16-git-send-email-LW@KARO-electronics.de>
-In-Reply-To: <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
-References: <1452619291-13625-1-git-send-email-LW@KARO-electronics.de>
- <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
+	James Hogan <james.hogan@imgtec.com>,
+	Zhang Qing <zhangqing@rock-chips.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH v2] clk-divider: make sure read-only dividers do not
+ write to their register
+Message-ID: <20160120221604.GC12841@codeaurora.org>
+References: <8710207.gKyLbM2bKY@phil>
+ <3578615.iBrKplh45Q@phil>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <3578615.iBrKplh45Q@phil>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds the device node for the i.MX6UL keypad controller.
+On 01/20, Heiko Stuebner wrote:
+> Commit e6d5e7d90be9 ("clk-divider: Fix READ_ONLY when divider > 1") removed
+> the special ops struct for read-only clocks and instead opted to handle
+> them regularly.
+> 
+> On the rk3368 this results in breakage as aclkm now gets set a value.
+> While it is the same divider value, the A53 core still doesn't like it,
+> which can result in the cpu ending up in a hang.
+> The reason being that "ACLKENMasserts one clock cycle before the rising
+> edge of ACLKM" and the clock should only be touched when STANDBYWFIL2
+> is asserted.
+> 
+> So make sure read-only clocks don't touch the clock-register at all
+> even if only writing the same value, as even writing the same value
+> may not be safe in all cases.
+> 
+> Fixes: e6d5e7d90be9 ("clk-divider: Fix READ_ONLY when divider > 1")
+> Reported-by: Zhang Qing <zhangqing@rock-chips.com>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> Reviewed-by: James Hogan <james.hogan@imgtec.com>
+> ---
 
-Signed-off-by: Lothar Waßmann <LW@KARO-electronics.de>
----
- arch/arm/boot/dts/imx6ul.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Hmph, the same patch[1] has been sitting in my inbox for months
+now but I never got a response to my last question and then
+forgot about it. I'll repeat the question here and hopefully we
+can finish the discussion.
 
-diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
-index 8499b3d..7177899 100644
---- a/arch/arm/boot/dts/imx6ul.dtsi
-+++ b/arch/arm/boot/dts/imx6ul.dtsi
-@@ -471,6 +471,14 @@
- 				status = "disabled";
- 			};
- 
-+			kpp: kpp@020b8000 {
-+				compatible = "fsl,imx6ul-kpp", "fsl,imx6q-kpp", "fsl,imx21-kpp";
-+				reg = <0x020b8000 0x4000>;
-+				interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6UL_CLK_KPP>;
-+				status = "disabled";
-+			};
-+
- 			wdog1: wdog@020bc000 {
- 				compatible = "fsl,imx6ul-wdt", "fsl,imx21-wdt";
- 				reg = <0x020bc000 0x4000>;
+Maybe it would make more sense to have different ops for read
+only dividers? The clk_set_rate op would be empty, while we would
+have proper recalc_rate and round_rate ops. We can't just flat
+out revert commit e6d5e7d90be9 (clk-divider: Fix READ_ONLY when
+divider > 1, 2014-11-14) because that will introduce the problem
+that it was fixing, but as long as we implement round_rate in
+addition to recalc_rate it should work.
+
+[1] http://lkml.kernel.org/r/1428392806-14538-1-git-send-email-jy0922.shim@samsung.com
+
 -- 
-2.1.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
