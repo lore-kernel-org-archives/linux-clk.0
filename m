@@ -1,56 +1,40 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lb0-f195.google.com ([209.85.217.195]:34426 "EHLO
-	mail-lb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964799AbcAZMon (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2016 07:44:43 -0500
-From: Alexander Kochetkov <al.kochet@gmail.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: stable@vger.kernel.org, Alexander Kochetkov <al.kochet@gmail.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: rockchip: Reparent hclk_rom, hclk_i2s0 and hclk_spdif to hclk_cpubus on RK3066/RK3188
-Date: Tue, 26 Jan 2016 15:44:10 +0300
-Message-Id: <1453812250-11819-1-git-send-email-al.kochet@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	xf@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 4/4] clk: rockchip: rk3368: fix hdmi_cec gate-register
+Date: Wed, 20 Jan 2016 22:49:20 +0100
+Message-Id: <1453326560-20475-4-git-send-email-heiko@sntech.de>
+In-Reply-To: <1453326560-20475-1-git-send-email-heiko@sntech.de>
+References: <1453326560-20475-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-In order to make peripherals (rom, i2s0 or spdif) accessible via cpu,
-hclk_cpubus gate must be opened. Without that all accesses (readl/writel)
-return wrong data.
+Fix a typo making the sclk_hdmi_cec access a wrong register to handle
+its gate.
 
-The patch fixes regression introduced by recent clock code.
-
-Fixes: 78eaf6095cc763c ("clk: rockchip: disable unused clocks")
-
-Signed-off-by: Alexander Kochetkov <al.kochet@gmail.com>
-
-CC: linux-clk@vger.kernel.org
-CC: linux-arm-kernel@lists.infradead.org
-CC: linux-rockchip@lists.infradead.org
-CC: linux-kernel@vger.kernel.org
-CC: stable@vger.kernel.org # 4.1.x-
+Fixes: 3536c97a52db ("clk: rockchip: add rk3368 clock controller")
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- drivers/clk/rockchip/clk-rk3188.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/rockchip/clk-rk3368.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-index abb4760..54b88a6 100644
---- a/drivers/clk/rockchip/clk-rk3188.c
-+++ b/drivers/clk/rockchip/clk-rk3188.c
-@@ -429,10 +429,10 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
- 	GATE(0, "aclk_strc_sys", "aclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(4), 10, GFLAGS),
+diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
+index 6037beb..57acb62 100644
+--- a/drivers/clk/rockchip/clk-rk3368.c
++++ b/drivers/clk/rockchip/clk-rk3368.c
+@@ -442,7 +442,7 @@ static struct rockchip_clk_branch rk3368_clk_branches[] __initdata = {
+ 	GATE(SCLK_HDMI_HDCP, "sclk_hdmi_hdcp", "xin24m", 0,
+ 			RK3368_CLKGATE_CON(4), 13, GFLAGS),
+ 	GATE(SCLK_HDMI_CEC, "sclk_hdmi_cec", "xin32k", 0,
+-			RK3368_CLKGATE_CON(5), 12, GFLAGS),
++			RK3368_CLKGATE_CON(4), 12, GFLAGS),
  
- 	/* hclk_cpu gates */
--	GATE(HCLK_ROM, "hclk_rom", "hclk_cpu", 0, RK2928_CLKGATE_CON(5), 6, GFLAGS),
--	GATE(HCLK_I2S0, "hclk_i2s0", "hclk_cpu", 0, RK2928_CLKGATE_CON(7), 2, GFLAGS),
--	GATE(HCLK_SPDIF, "hclk_spdif", "hclk_cpu", 0, RK2928_CLKGATE_CON(7), 1, GFLAGS),
- 	GATE(0, "hclk_cpubus", "hclk_cpu", 0, RK2928_CLKGATE_CON(4), 8, GFLAGS),
-+	GATE(HCLK_ROM, "hclk_rom", "hclk_cpubus", 0, RK2928_CLKGATE_CON(5), 6, GFLAGS),
-+	GATE(HCLK_I2S0, "hclk_i2s0", "hclk_cpubus", 0, RK2928_CLKGATE_CON(7), 2, GFLAGS),
-+	GATE(HCLK_SPDIF, "hclk_spdif", "hclk_cpubus", 0, RK2928_CLKGATE_CON(7), 1, GFLAGS),
- 	/* hclk_ahb2apb is part of a clk branch */
- 	GATE(0, "hclk_vio_bus", "hclk_cpu", 0, RK2928_CLKGATE_CON(6), 12, GFLAGS),
- 	GATE(HCLK_LCDC0, "hclk_lcdc0", "hclk_cpu", 0, RK2928_CLKGATE_CON(6), 1, GFLAGS),
+ 	COMPOSITE_NODIV(0, "vip_src", mux_pll_src_cpll_gpll_p, 0,
+ 			RK3368_CLKSEL_CON(21), 15, 1, MFLAGS,
 -- 
-1.7.9.5
-
+2.6.4
