@@ -1,88 +1,59 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: xuejiancheng <xuejiancheng@huawei.com>, mturquette@baylibre.com,
-	sboyd@codeaurora.org, p.zabel@pengutronix.de, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	linux@arm.linux.org.uk, khilman@linaro.org, olof@lixom.net,
-	xuwei5@hisilicon.com, haojian.zhuang@linaro.org,
-	zhangfei.gao@linaro.org, bintian.wang@huawei.com,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	yanhaifeng@hisilicon.com, yanghongwei@hisilicon.com,
-	suwenping@hisilicon.com, ml.yang@hisilicon.com,
-	gaofei@hisilicon.com, zhangzhenxing@hisilicon.com,
-	xuejiancheng@hisilicon.com
-Subject: Re: [PATCH v5 5/6] mfd: dt-bindings: add device tree bindings for Hi3519 sysctrl
-Date: Mon, 25 Jan 2016 15:45:38 +0100
-Message-ID: <2693576.UgmARKQTGm@wuerfel>
-In-Reply-To: <20160125142609.GR3368@x1>
-References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com> <5675031.hi9rRCqFXs@wuerfel> <20160125142609.GR3368@x1>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, James Hogan <james.hogan@imgtec.com>, Zhang Qing <zhangqing@rock-chips.com>, Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH v2] clk-divider: make sure read-only dividers do not write to their register
+Date: Wed, 20 Jan 2016 23:29:56 +0100
+Message-ID: <2694181.qDMgtzpC9k@phil>
+In-Reply-To: <20160120221604.GC12841@codeaurora.org>
+References: <8710207.gKyLbM2bKY@phil> <3578615.iBrKplh45Q@phil> <20160120221604.GC12841@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday 25 January 2016 14:26:09 Lee Jones wrote:
-> On Tue, 12 Jan 2016, Arnd Bergmann wrote:
-> 
-> > On Tuesday 12 January 2016 17:28:05 xuejiancheng wrote:
-> > > >>>>>
-> > > >>>> Not yet.
-> > > >>>> Arnd Bergmann and Rob Herring all suggested adding a specific compatible string
-> > > >>>> with the SOC name. This binding is just used for describing the compatible string now.
-> > > >>>> When more functions on hi3519 SOC are added later, the specific driver will be also
-> > > >>>> needed.
-> > > >>>
-> > > >>> Save this binding until it has more functionality.  We here "I'll add
-> > > >>> to this later" all too often.
-> > > >>>
-> > > >>
-> > > >> In the hi3519.dtsi file, there is a system-controller device node described like below:
-> > > >> sysctrl: system-controller@12010000 {
-> > > >>      compatible = "hisilicon,hi3519-sysctrl", "syscon";
-> > > >>      reg = <0x12010000 0x1000>;
-> > > >> };
-> > > >> Do you mean that I should remove "hisilicon,hi3519-sysctrl" and just use "syscon" as the
-> > > >> compatible string?　
-> > > > 
-> > > > Where is this compatible string _used_?
-> > > > 
-> > > >> If I want to add "hisilicon,hi3519-sysctrl" for hi3519. where should I put this binding?
-> > > >> Could you give some suggestions?  Thank you very much!
-> > > > 
-> > > > If you're not using the compatible i.e. the device doesn't have its
-> > > > own driver yet, then there is no need to supply the binding at all, is
-> > > > there?
-> > > > 
-> > > 
-> > > OK. Thank you.
-> > > 
+Am Mittwoch, 20. Januar 2016, 14:16:56 schrieb Stephen Boyd:
+> On 01/20, Heiko Stuebner wrote:
+> > Commit e6d5e7d90be9 ("clk-divider: Fix READ_ONLY when divider > 1")
+> > removed the special ops struct for read-only clocks and instead opted
+> > to handle them regularly.
 > > 
-> > Sorry for stepping in late here. I still think that every syscon device should
-> > come with a specific compatible string, so we have the option of creating a
-> > driver later on, and I'd like to see a binding document that lists those strings
-> > (which I believe exists here).
+> > On the rk3368 this results in breakage as aclkm now gets set a value.
+> > While it is the same divider value, the A53 core still doesn't like it,
+> > which can result in the cpu ending up in a hang.
+> > The reason being that "ACLKENMasserts one clock cycle before the rising
+> > edge of ACLKM" and the clock should only be touched when STANDBYWFIL2
+> > is asserted.
 > > 
-> > It's really hard to add compatible strings later on, anything else we can
-> > work around by keying off that string and adding a workaround in the kernel.
+> > So make sure read-only clocks don't touch the clock-register at all
+> > even if only writing the same value, as even writing the same value
+> > may not be safe in all cases.
+> > 
+> > Fixes: e6d5e7d90be9 ("clk-divider: Fix READ_ONLY when divider > 1")
+> > Reported-by: Zhang Qing <zhangqing@rock-chips.com>
+> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > Reviewed-by: James Hogan <james.hogan@imgtec.com>
+> > ---
 > 
-> Why is it more difficult (or any different) to add a compatible string
-> later (when it is used) over now (when it is not used)?
+> Hmph, the same patch[1] has been sitting in my inbox for months
+> now but I never got a response to my last question and then
+> forgot about it. I'll repeat the question here and hopefully we
+> can finish the discussion.
+> 
+> Maybe it would make more sense to have different ops for read
+> only dividers? The clk_set_rate op would be empty, while we would
+> have proper recalc_rate and round_rate ops. We can't just flat
+> out revert commit e6d5e7d90be9 (clk-divider: Fix READ_ONLY when
+> divider > 1, 2014-11-14) because that will introduce the problem
+> that it was fixing, but as long as we implement round_rate in
+> addition to recalc_rate it should work.
+> 
+> [1]
+> http://lkml.kernel.org/r/1428392806-14538-1-git-send-email-jy0922.shim@sa
+> msung.com
 
-There are many reasons why it can be hard to change a DT binary or source
-file later on. Sometimes the dtb is shipped with the firmware, sometimes
-someone has a slightly different platform that is not yet upstreamed,
-and they need to know about the change when forward-porting to a newer
-kernel.
+Sorry for the second submission then. That really is from quite a while ago. 
+Reintroducing a secondary ops-struct with a round-rate sounds fine for my 
+side - I'll give that a shot tomorrow.
 
-Either way, you always want to be able to run a newer kernel on an older
-dtb file without loss of functionality, so all "compatible" strings should
-generally be as specific as possible (with fallbacks to more generic
-strings). We do this even for devices that we think are identical, e.g.
-when multiple SoC vendors integrate the same IP block, but in this case,
-we already *know* that they are incompatible, so we should never have
-the same string as the most specific ID.
 
-	Arnd
+Heiko
