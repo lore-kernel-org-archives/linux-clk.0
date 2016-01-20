@@ -1,125 +1,85 @@
-Return-Path: <Dirk.Behme@de.bosch.com>
-Subject: Re: [PATCH v2] clk: shmobile: r8a7795: Add SDHI clocks
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Wolfram Sang
-	<wsa@the-dreams.de>
-References: <1450951761-3160-1-git-send-email-dirk.behme@gmail.com>
- <5690ABCC.3090909@gmail.com>
- <CAMuHMdXa4qdrqu-RjPuxAHQwBJ5LZ+JsfWH83vcvp6EQ+M1-aA@mail.gmail.com>
- <5698C5E8.4040107@de.bosch.com>
- <CAMuHMdWb-mQ=Q53Bzr7wwYtvg6iA2xoVecTTnJj18Sp428r-jw@mail.gmail.com>
- <569B631B.80708@gmail.com>
- <CAMuHMdU+8QCje=C98neja31yjMR4H6Bz-_hN0ihk3WC=JXdVuQ@mail.gmail.com>
-CC: Dirk Behme <dirk.behme@gmail.com>, Linux-sh list
-	<linux-sh@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>, Michael Turquette
-	<mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>
-From: Dirk Behme <dirk.behme@de.bosch.com>
-Message-ID: <56A220ED.9090208@de.bosch.com>
-Date: Fri, 22 Jan 2016 13:30:37 +0100
+Return-Path: <LW@karo-electronics.de>
+From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
+To: Anson Huang <b20788@freescale.com>,
+	Bai Ping <b51503@freescale.com>,
+	Frank Li <Frank.Li@freescale.com>,
+	Fugang Duan <B38611@freescale.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	=?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCHv2 12/16] ARM: dts: imx6ul: add gpmi support
+Date: Wed, 20 Jan 2016 11:09:05 +0100
+Message-Id: <1453284549-16363-13-git-send-email-LW@KARO-electronics.de>
+In-Reply-To: <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
+References: <1452619291-13625-1-git-send-email-LW@KARO-electronics.de>
+ <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdU+8QCje=C98neja31yjMR4H6Bz-_hN0ihk3WC=JXdVuQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 20.01.2016 09:16, Geert Uytterhoeven wrote:
-> Hi Dirk,
->
-> On Sun, Jan 17, 2016 at 10:47 AM, Dirk Behme <dirk.behme@gmail.com> wrote:
->> On 15.01.2016 11:20, Geert Uytterhoeven wrote:
->>> On Fri, Jan 15, 2016 at 11:11 AM, Dirk Behme <dirk.behme@de.bosch.com>
->>> wrote:
->>>> On 14.01.2016 19:24, Geert Uytterhoeven wrote:
->>>>> On Sat, Jan 9, 2016 at 7:42 AM, Dirk Behme <dirk.behme@gmail.com> wrote:
->>>>>> On 24.12.2015 11:09, Dirk Behme wrote:
->>>>>>> Add R8A7795 SDHI clocks.
->>>>>>> Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
->>>>>>> ---
->>>>>>> Changes in v2: Add the missing *H clocks and correct the dividers.
->
->>>>> The dividers for these clocks are not fixed, they are controlled by the
->>>>> SDnCKCR registers.
->>>>>
->>>>> Unfortunately the register layout is more complicated than on R-Car
->>>>> Gen2,
->>>>> so
->>>>> you can no longer use clk_register_divider_table(), but have to write a
->>>>> custom
->>>>> clock driver.
->>>>>
->>>>> For an initial version, a simple "read-only" version that just calls
->>>>> clk_register_fixed_factor() with divider values read from the hardware
->>>>> registers may be good enough. But for full support, you need a driver
->>>>> that
->>>>> can program the registers, too.
->>>>
->>>> Anything like
->>>>
->>>> https://git.kernel.org/cgit/linux/kernel/git/horms/renesas-bsp.git/commit/drivers/clk/shmobile/clk-rcar-gen3.c?h=v4.2/rcar-3.0.x&id=cd10385afc15cef6bfbaea4aa5da41193b24fe82
->>
->> I've had a look to that.
->>
->> I think we can pick all the functions
->>
->> +static const struct clk_ops cpg_sd_clock_ops = {
->> +       .enable = cpg_sd_clock_enable,
->> +       .disable = cpg_sd_clock_disable,
->> +       .is_enabled = cpg_sd_clock_is_enabled,
->> +       .recalc_rate = cpg_sd_clock_recalc_rate,
->> +       .round_rate = cpg_sd_clock_round_rate,
->> +       .set_rate = cpg_sd_clock_set_rate,
->> +};
->>
->> unchanged from that patch.
->>
->> However, I'm not sure how to interface this to cpg_mssr_probe()? It's
->> similar to cpg_mssr_register_mod_clk(), but not identical so that this could
->> be reused.
->>
->> We could extend r8a7795_cpg_mssr_info by anything like an additional
->>
->> /* Dynamic clocks */
->> .dyn_clks = /* Add an array allowing to pass various clk_ops structs */
->> ...
->>
->> ?
->>
->> Or we could hard code it like
->>
->> https://git.kernel.org/cgit/linux/kernel/git/horms/renesas-bsp.git/commit/drivers/clk/shmobile/clk-rcar-gen3.c?h=v4.2/rcar-3.0.x&id=cd10385afc15cef6bfbaea4aa5da41193b24fe82
->>
->> is doing it with
->>
->> +       } else if (!strcmp(name, "sd0")) {
->> +               return cpg_sd_clk_register(name, cpg->reg + CPG_SD0CKCR,
->> np);
->> +       } else if (!strcmp(name, "sd1")) {
->> +               return cpg_sd_clk_register(name, cpg->reg + CPG_SD1CKCR,
->> np);
->> +       } else if (!strcmp(name, "sd2")) {
->> +               return cpg_sd_clk_register(name, cpg->reg + CPG_SD2CKCR,
->> np);
->> +       } else if (!strcmp(name, "sd3")) {
->> +               return cpg_sd_clk_register(name, cpg->reg + CPG_SD3CKCR,
->> np);
->>
->> and add this to e.g. r8a7795_cpg_clk_register(). But, hmm.
->>
->>
->> What do you think? Opinions? Examples?
->
-> Please extend enum r8a7795_clk_types, and handle them in
-> r8a7795_cpg_clk_register() based on the enum values.
->
-> You can find an (old) example in the prototype I did for r8a7791:
-> https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git/tree/drivers/clk/shmobile/clk-r8a7791-cpg-mssr.c?h=topic/cpg-mssr-v4
+Add the device node for the i.MX6UL GPMI interface and the related
+APBH DMA which is necessary for the GPMI to work properly.
 
+Signed-off-by: Lothar Waßmann <LW@KARO-electronics.de>
+---
+ arch/arm/boot/dts/imx6ul.dtsi | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-Whats about anything like
-
-http://marc.info/?l=linux-sh&m=145346559429931
-
-?
-
-Best regards
-
-Dirk
+diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
+index 985c1b1..8499b3d 100644
+--- a/arch/arm/boot/dts/imx6ul.dtsi
++++ b/arch/arm/boot/dts/imx6ul.dtsi
+@@ -141,6 +141,39 @@
+ 			reg = <0x00900000 0x20000>;
+ 		};
+ 
++		dma_apbh: dma-apbh@01804000 {
++			compatible = "fsl,imx6q-dma-apbh", "fsl,imx28-dma-apbh";
++			reg = <0x01804000 0x2000>;
++			interrupts = <0 13 IRQ_TYPE_LEVEL_HIGH>,
++				     <0 13 IRQ_TYPE_LEVEL_HIGH>,
++				     <0 13 IRQ_TYPE_LEVEL_HIGH>,
++				     <0 13 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "gpmi0", "gpmi1", "gpmi2", "gpmi3";
++			#dma-cells = <1>;
++			dma-channels = <4>;
++			clocks = <&clks IMX6UL_CLK_APBHDMA>;
++		};
++
++		gpmi: gpmi-nand@01806000         {
++			compatible = "fsl,imx6q-gpmi-nand";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			reg = <0x01806000 0x2000>, <0x01808000 0x2000>;
++			reg-names = "gpmi-nand", "bch";
++			interrupts = <0 15 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "bch";
++			clocks = <&clks IMX6UL_CLK_GPMI_IO>,
++				 <&clks IMX6UL_CLK_GPMI_APB>,
++				 <&clks IMX6UL_CLK_GPMI_BCH>,
++				 <&clks IMX6UL_CLK_GPMI_BCH_APB>,
++				 <&clks IMX6UL_CLK_PER_BCH>;
++			clock-names = "gpmi_io", "gpmi_apb", "gpmi_bch",
++				      "gpmi_bch_apb", "per1_bch";
++			dmas = <&dma_apbh 0>;
++			dma-names = "rx-tx";
++			status = "disabled";
++		};
++
+ 		aips1: aips-bus@02000000 {
+ 			compatible = "fsl,aips-bus", "simple-bus";
+ 			#address-cells = <1>;
+-- 
+2.1.4
