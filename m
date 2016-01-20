@@ -1,42 +1,59 @@
-Return-Path: <robh@kernel.org>
-Date: Fri, 8 Jan 2016 15:04:57 -0600
-From: Rob Herring <robh@kernel.org>
-To: Jiancheng Xue <xuejiancheng@huawei.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, p.zabel@pengutronix.de,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	linux@arm.linux.org.uk, khilman@linaro.org, arnd@arndb.de,
-	olof@lixom.net, xuwei5@hisilicon.com, haojian.zhuang@linaro.org,
-	zhangfei.gao@linaro.org, bintian.wang@huawei.com,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	yanhaifeng@hisilicon.com, yanghongwei@hisilicon.com,
-	suwenping@hisilicon.com, ml.yang@hisilicon.com,
-	gaofei@hisilicon.com, zhangzhenxing@hisilicon.com,
-	xuejiancheng@hisilicon.com
-Subject: Re: [PATCH v5 5/6] mfd: dt-bindings: add device tree bindings for
- Hi3519 sysctrl
-Message-ID: <20160108210457.GA24079@rob-hp-laptop>
-References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
- <1452219400-32478-6-git-send-email-xuejiancheng@huawei.com>
+Return-Path: <LW@karo-electronics.de>
+From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
+To: Anson Huang <b20788@freescale.com>,
+	Bai Ping <b51503@freescale.com>,
+	Frank Li <Frank.Li@freescale.com>,
+	Fugang Duan <B38611@freescale.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	=?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCHv2 15/16] ARM: dts: imx6ul: add kpp support
+Date: Wed, 20 Jan 2016 11:09:08 +0100
+Message-Id: <1453284549-16363-16-git-send-email-LW@KARO-electronics.de>
+In-Reply-To: <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
+References: <1452619291-13625-1-git-send-email-LW@KARO-electronics.de>
+ <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1452219400-32478-6-git-send-email-xuejiancheng@huawei.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jan 08, 2016 at 10:16:39AM +0800, Jiancheng Xue wrote:
-> Add device tree bindings for Hi3519 system controller.
-> 
-> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
-> ---
->  Documentation/devicetree/bindings/mfd/hi3519.txt | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/hi3519.txt
+This patch adds the device node for the i.MX6UL keypad controller.
 
-This seems like it could be combined with other HiSi system controller 
-bindings if the compatible string is the only difference. But it is fine 
-like this:
+Signed-off-by: Lothar Waßmann <LW@KARO-electronics.de>
+---
+ arch/arm/boot/dts/imx6ul.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Acked-by: Rob Herring <robh@kernel.org>
-
-Rob
+diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
+index 8499b3d..7177899 100644
+--- a/arch/arm/boot/dts/imx6ul.dtsi
++++ b/arch/arm/boot/dts/imx6ul.dtsi
+@@ -471,6 +471,14 @@
+ 				status = "disabled";
+ 			};
+ 
++			kpp: kpp@020b8000 {
++				compatible = "fsl,imx6ul-kpp", "fsl,imx6q-kpp", "fsl,imx21-kpp";
++				reg = <0x020b8000 0x4000>;
++				interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6UL_CLK_KPP>;
++				status = "disabled";
++			};
++
+ 			wdog1: wdog@020bc000 {
+ 				compatible = "fsl,imx6ul-wdt", "fsl,imx21-wdt";
+ 				reg = <0x020bc000 0x4000>;
+-- 
+2.1.4
