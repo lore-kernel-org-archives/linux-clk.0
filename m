@@ -1,96 +1,87 @@
-Return-Path: <LW@karo-electronics.de>
-From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
-To: Anson Huang <b20788@freescale.com>,
-	Bai Ping <b51503@freescale.com>,
-	Frank Li <Frank.Li@freescale.com>,
-	Fugang Duan <B38611@freescale.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	=?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCHv2 07/16] ARM: dts: imx6ul: add pwm[1-4] nodes
-Date: Wed, 20 Jan 2016 11:09:00 +0100
-Message-Id: <1453284549-16363-8-git-send-email-LW@KARO-electronics.de>
-In-Reply-To: <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
-References: <1452619291-13625-1-git-send-email-LW@KARO-electronics.de>
- <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	xf@rock-chips.com,
+	zhangqing@rock-chips.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 2/4] clk: rockchip: fix rk3368 cpuclk core dividers
+Date: Wed, 20 Jan 2016 22:49:18 +0100
+Message-Id: <1453326560-20475-2-git-send-email-heiko@sntech.de>
+In-Reply-To: <1453326560-20475-1-git-send-email-heiko@sntech.de>
+References: <1453326560-20475-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device nodes for the PWM uinits 1..4 which were missing in the
-original commit for i.MX6UL support.
+Similar to commit 9880d4277f6a ("clk: rockchip: fix rk3288 cpuclk core
+dividers") it seems the cpuclk dividers are one to high on the rk3368
+as well.
 
-Signed-off-by: Lothar Waßmann <LW@KARO-electronics.de>
+And again similar to the previous fix, we opt to make the divider list
+contain the values to be written to use the same paradigm for them on all
+supported socs.
+
+Fixes: 3536c97a52db ("clk: rockchip: add rk3368 clock controller")
+Reported-by: Zhang Qing <zhangqing@rock-chips.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- arch/arm/boot/dts/imx6ul.dtsi | 44 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ drivers/clk/rockchip/clk-rk3368.c | 40 +++++++++++++++++++--------------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
-diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
-index 863777e..40ea5f0 100644
---- a/arch/arm/boot/dts/imx6ul.dtsi
-+++ b/arch/arm/boot/dts/imx6ul.dtsi
-@@ -248,6 +248,50 @@
- 				status = "disabled";
- 			};
+diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
+index f6667b8..3c9733e 100644
+--- a/drivers/clk/rockchip/clk-rk3368.c
++++ b/drivers/clk/rockchip/clk-rk3368.c
+@@ -218,29 +218,29 @@ static const struct rockchip_cpuclk_reg_data rk3368_cpuclkl_data = {
+ 	}
  
-+			pwm1: pwm@02080000 {
-+				compatible = "fsl,imx6ul-pwm", "fsl,imx27-pwm";
-+				reg = <0x02080000 0x4000>;
-+				interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6UL_CLK_PWM1>,
-+					 <&clks IMX6UL_CLK_PWM1>;
-+				clock-names = "ipg", "per";
-+				#pwm-cells = <2>;
-+				status = "disabled";
-+			};
-+
-+			pwm2: pwm@02084000 {
-+				compatible = "fsl,imx6ul-pwm", "fsl,imx27-pwm";
-+				reg = <0x02084000 0x4000>;
-+				interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6UL_CLK_PWM2>,
-+					 <&clks IMX6UL_CLK_PWM2>;
-+				clock-names = "ipg", "per";
-+				#pwm-cells = <2>;
-+				status = "disabled";
-+			};
-+
-+			pwm3: pwm@02088000 {
-+				compatible = "fsl,imx6ul-pwm", "fsl,imx27-pwm";
-+				reg = <0x02088000 0x4000>;
-+				interrupts = <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6UL_CLK_PWM3>,
-+					 <&clks IMX6UL_CLK_PWM3>;
-+				clock-names = "ipg", "per";
-+				#pwm-cells = <2>;
-+				status = "disabled";
-+			};
-+
-+			pwm4: pwm@0208c000 {
-+				compatible = "fsl,imx6ul-pwm", "fsl,imx27-pwm";
-+				reg = <0x0208c000 0x4000>;
-+				interrupts = <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6UL_CLK_PWM4>,
-+					 <&clks IMX6UL_CLK_PWM4>;
-+				clock-names = "ipg", "per";
-+				#pwm-cells = <2>;
-+				status = "disabled";
-+			};
-+
- 			gpt1: gpt@02098000 {
- 				compatible = "fsl,imx6ul-gpt", "fsl,imx6sx-gpt";
- 				reg = <0x02098000 0x4000>;
+ static struct rockchip_cpuclk_rate_table rk3368_cpuclkb_rates[] __initdata = {
+-	RK3368_CPUCLKB_RATE(1512000000, 2, 6, 6),
+-	RK3368_CPUCLKB_RATE(1488000000, 2, 5, 5),
+-	RK3368_CPUCLKB_RATE(1416000000, 2, 5, 5),
+-	RK3368_CPUCLKB_RATE(1200000000, 2, 4, 4),
+-	RK3368_CPUCLKB_RATE(1008000000, 2, 4, 4),
+-	RK3368_CPUCLKB_RATE( 816000000, 2, 3, 3),
+-	RK3368_CPUCLKB_RATE( 696000000, 2, 3, 3),
+-	RK3368_CPUCLKB_RATE( 600000000, 2, 2, 2),
+-	RK3368_CPUCLKB_RATE( 408000000, 2, 2, 2),
+-	RK3368_CPUCLKB_RATE( 312000000, 2, 2, 2),
++	RK3368_CPUCLKB_RATE(1512000000, 1, 5, 5),
++	RK3368_CPUCLKB_RATE(1488000000, 1, 4, 4),
++	RK3368_CPUCLKB_RATE(1416000000, 1, 4, 4),
++	RK3368_CPUCLKB_RATE(1200000000, 1, 3, 3),
++	RK3368_CPUCLKB_RATE(1008000000, 1, 3, 3),
++	RK3368_CPUCLKB_RATE( 816000000, 1, 2, 2),
++	RK3368_CPUCLKB_RATE( 696000000, 1, 2, 2),
++	RK3368_CPUCLKB_RATE( 600000000, 1, 1, 1),
++	RK3368_CPUCLKB_RATE( 408000000, 1, 1, 1),
++	RK3368_CPUCLKB_RATE( 312000000, 1, 1, 1),
+ };
+ 
+ static struct rockchip_cpuclk_rate_table rk3368_cpuclkl_rates[] __initdata = {
+-	RK3368_CPUCLKL_RATE(1512000000, 2, 7, 7),
+-	RK3368_CPUCLKL_RATE(1488000000, 2, 6, 6),
+-	RK3368_CPUCLKL_RATE(1416000000, 2, 6, 6),
+-	RK3368_CPUCLKL_RATE(1200000000, 2, 5, 5),
+-	RK3368_CPUCLKL_RATE(1008000000, 2, 5, 5),
+-	RK3368_CPUCLKL_RATE( 816000000, 2, 4, 4),
+-	RK3368_CPUCLKL_RATE( 696000000, 2, 3, 3),
+-	RK3368_CPUCLKL_RATE( 600000000, 2, 3, 3),
+-	RK3368_CPUCLKL_RATE( 408000000, 2, 2, 2),
+-	RK3368_CPUCLKL_RATE( 312000000, 2, 2, 2),
++	RK3368_CPUCLKL_RATE(1512000000, 1, 6, 6),
++	RK3368_CPUCLKL_RATE(1488000000, 1, 5, 5),
++	RK3368_CPUCLKL_RATE(1416000000, 1, 5, 5),
++	RK3368_CPUCLKL_RATE(1200000000, 1, 4, 4),
++	RK3368_CPUCLKL_RATE(1008000000, 1, 4, 4),
++	RK3368_CPUCLKL_RATE( 816000000, 1, 3, 3),
++	RK3368_CPUCLKL_RATE( 696000000, 1, 2, 2),
++	RK3368_CPUCLKL_RATE( 600000000, 1, 2, 2),
++	RK3368_CPUCLKL_RATE( 408000000, 1, 1, 1),
++	RK3368_CPUCLKL_RATE( 312000000, 1, 1, 1),
+ };
+ 
+ static struct rockchip_clk_branch rk3368_clk_branches[] __initdata = {
 -- 
-2.1.4
+2.6.4
