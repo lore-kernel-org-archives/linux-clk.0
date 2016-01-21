@@ -1,89 +1,223 @@
-Return-Path: <yadi.brar01@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20160119024316.GA3793@samsunx.samsung>
-References: <1453105525-31506-1-git-send-email-andi.shyti@samsung.com>
-	<1453105525-31506-3-git-send-email-andi.shyti@samsung.com>
-	<CAKew6eX4WZa4595ZUhiX+Ndc_WCzBNJBh5ejzxaJVkCnAskCYw@mail.gmail.com>
-	<20160119024316.GA3793@samsunx.samsung>
-Date: Tue, 19 Jan 2016 00:00:52 -0800
-Message-ID: <CAKew6eWRev=U_4LeptMGjhz1-zNG1djiZJx4NLf0LoLQMNHQTg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: s2mps11: allocate only one structure for clock init
-From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sangbeom Kim <sbkim73@samsung.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org, Andi Shyti <andi@etezian.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <emilio.lopez@collabora.co.uk>
+From: =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio.lopez@collabora.co.uk>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	heiko@sntech.de
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 2/2] clk: defer clk_gets on orphan clocks
+Date: Thu, 21 Jan 2016 11:19:18 -0300
+Message-Id: <1453385958-11366-1-git-send-email-emilio.lopez@collabora.co.uk>
+In-Reply-To: <1453385439-10154-1-git-send-email-emilio.lopez@collabora.co.uk>
+References: <1453385439-10154-1-git-send-email-emilio.lopez@collabora.co.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jan 18, 2016 at 6:43 PM, Andi Shyti <andi.shyti@samsung.com> wrote:
-> Hi Yadwinder,
->
->>     The driver allocates three structures for three different clock
->>     types. They are quite similar and in the clock init data they
->>     differ only by the name. Only one of these structure is used,
->>     while the others lie unused in the memory.
->>
->>
->> If you are worried about memory, they can be made __initdata by
->> creating a copy during probe.
->
-> mmmhhh... allocating in boot time as much as we want and then copy
-> what we need? It doesn't look that pretty to me.
->
+From: Heiko Stuebner <heiko.stuebner@collabora.com>
 
-I think its not a new practice and I don't see any issue with it.
+Orphan clocks or children of orphan clocks don't have rate information at
+all and can produce strange results if they're allowed to be used and the
+parent becomes available later on.
 
->>     The clock's name, though, is not such a meaningful information
->>
->>
->> I think it can be meaningful in debugging.
->
-> Can you explain what's the use of the naming other than
-> debugging?
->
+This change, based on one from Stephen Boyd defers __clk_create_clk()
+calls on orphan clocks in all regular cases.
 
-Isn't debugging important enough ?  :)
+One special case that gets handled, is accessing such orphan clocks when
+handling assigned-clocks configurations. In the boot-defaults it may be
+the case that a clock is connected to an orphan parent which then might
+be needed to get reparented to an actually usable clock using
+assigned-clock-parents. In this case even orphaned clocks should be
+usable, but only for the set-parent case.
 
-I had misunderstood your below statement.
-Looking at code, it seems its still using different names for different clocks.
+The added of_clk_get_from_provider_with_orphans() is only available
+to ccf internal parts to prevent abuse.
 
->>     and by assigning the same name to the initial data we can avoid
->>     over allocation. The common name chosen will be s2mps11,
->>     coherently with the device driver name, instead of the clock
->>     device.
->>
->>     Therefore, remove the structures associated to s2mps13 and
->>     s2mps14 and use only the one referred to s2mps11 for all kind of
->>     clocks.
->>
->>
->> IMHO, with all these modifications, it will leave driver with some extra
->> checks and reduced readability, perhaps will make it complex to add
->> support for similar clocks but with different clk_ops, if next version or
->>  any similar mfd chip comes up in future.
->
-> In that case, when the new chip will come, we would need to
-> figure out something,
+Signed-off-by: Heiko Stuebner <heiko.stuebner@collabora.com>
+---
+ drivers/clk/clk-conf.c |  5 +++--
+ drivers/clk/clk.c      | 48 ++++++++++++++++++++++++++++++++++++++----------
+ drivers/clk/clk.h      | 10 +++++++---
+ drivers/clk/clkdev.c   |  4 ++--
+ 4 files changed, 50 insertions(+), 17 deletions(-)
 
-Different structures were introduced to handle such cases and keep
-driver simple and clean by keeping keep no. of if() checks as limited
-as possible.
-
-> but for sure I don't see it as a good idea
-> to leave allocated unused structures.
->
-
-Even a single unused structure isn't a good idea, in case where this driver
-doesn't get probed. :)
-
-Regards,
-Yadwinder
-
-> Thanks,
-> Andi
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
+index 43a218f..60ebfd9 100644
+--- a/drivers/clk/clk-conf.c
++++ b/drivers/clk/clk-conf.c
+@@ -13,6 +13,7 @@
+ #include <linux/device.h>
+ #include <linux/of.h>
+ #include <linux/printk.h>
++#include "clk.h"
+ 
+ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
+ {
+@@ -38,7 +39,7 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
+ 		}
+ 		if (clkspec.np == node && !clk_supplier)
+ 			return 0;
+-		pclk = of_clk_get_from_provider(&clkspec);
++		pclk = of_clk_get_from_provider_with_orphans(&clkspec);
+ 		if (IS_ERR(pclk)) {
+ 			pr_warn("clk: couldn't get parent clock %d for %s\n",
+ 				index, node->full_name);
+@@ -53,7 +54,7 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
+ 			rc = 0;
+ 			goto err;
+ 		}
+-		clk = of_clk_get_from_provider(&clkspec);
++		clk = of_clk_get_from_provider_with_orphans(&clkspec);
+ 		if (IS_ERR(clk)) {
+ 			pr_warn("clk: couldn't get parent clock %d for %s\n",
+ 				index, node->full_name);
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index b4db67a..36fe1a0 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2494,15 +2494,11 @@ out:
+ 	return ret;
+ }
+ 
+-struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
+-			     const char *con_id)
++struct clk *clk_hw_create_clk(struct clk_hw *hw, const char *dev_id,
++			      const char *con_id)
+ {
+ 	struct clk *clk;
+ 
+-	/* This is to allow this function to be chained to others */
+-	if (IS_ERR_OR_NULL(hw))
+-		return (struct clk *) hw;
+-
+ 	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
+ 	if (!clk)
+ 		return ERR_PTR(-ENOMEM);
+@@ -2519,6 +2515,19 @@ struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
+ 	return clk;
+ }
+ 
++struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
++			     const char *con_id, bool with_orphans)
++{
++	/* This is to allow this function to be chained to others */
++	if (IS_ERR_OR_NULL(hw))
++		return (struct clk *) hw;
++
++	if (hw->core->orphan && !with_orphans)
++		return ERR_PTR(-EPROBE_DEFER);
++
++	return clk_hw_create_clk(hw, dev_id, con_id);
++}
++
+ void __clk_free_clk(struct clk *clk)
+ {
+ 	clk_prepare_lock();
+@@ -2587,7 +2596,7 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+ 
+ 	INIT_HLIST_HEAD(&core->clks);
+ 
+-	hw->clk = __clk_create_clk(hw, NULL, NULL);
++	hw->clk = clk_hw_create_clk(hw, NULL, NULL);
+ 	if (IS_ERR(hw->clk)) {
+ 		ret = PTR_ERR(hw->clk);
+ 		goto fail_parent_names_copy;
+@@ -3019,7 +3028,8 @@ void of_clk_del_provider(struct device_node *np)
+ EXPORT_SYMBOL_GPL(of_clk_del_provider);
+ 
+ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
+-				       const char *dev_id, const char *con_id)
++				       const char *dev_id, const char *con_id,
++				       bool with_orphans)
+ {
+ 	struct of_clk_provider *provider;
+ 	struct clk *clk = ERR_PTR(-EPROBE_DEFER);
+@@ -3034,7 +3044,7 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
+ 			clk = provider->get(clkspec, provider->data);
+ 		if (!IS_ERR(clk)) {
+ 			clk = __clk_create_clk(__clk_get_hw(clk), dev_id,
+-					       con_id);
++					       con_id, with_orphans);
+ 
+ 			if (!IS_ERR(clk) && !__clk_get(clk)) {
+ 				__clk_free_clk(clk);
+@@ -3059,7 +3069,25 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
+  */
+ struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
+ {
+-	return __of_clk_get_from_provider(clkspec, NULL, __func__);
++	return __of_clk_get_from_provider(clkspec, NULL, __func__, false);
++}
++
++/**
++ * of_clk_get_from_provider_with_orphans() - Lookup clock from a clock provider
++ * @clkspec: pointer to a clock specifier data structure
++ *
++ * This function looks up a struct clk from the registered list of clock
++ * providers, an input is a clock specifier data structure as returned
++ * from the of_parse_phandle_with_args() function call.
++ *
++ * The difference to of_clk_get_from_provider() is that this function will
++ * also successfully lookup orphan-clocks, as it in some cases may be
++ * necessary to access such orphan-clocks as well.
++ */
++struct clk *
++of_clk_get_from_provider_with_orphans(struct of_phandle_args *clkspec)
++{
++	return __of_clk_get_from_provider(clkspec, NULL, __func__, true);
+ }
+ 
+ int of_clk_get_parent_count(struct device_node *np)
+diff --git a/drivers/clk/clk.h b/drivers/clk/clk.h
+index 00b35a1..5a70f09 100644
+--- a/drivers/clk/clk.h
++++ b/drivers/clk/clk.h
+@@ -13,17 +13,21 @@ struct clk_hw;
+ 
+ #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
+ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
+-				       const char *dev_id, const char *con_id);
++				       const char *dev_id, const char *con_id,
++				       bool with_orphans);
++struct clk *
++of_clk_get_from_provider_with_orphans(struct of_phandle_args *clkspec);
+ #endif
+ 
+ #ifdef CONFIG_COMMON_CLK
+ struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
+-			     const char *con_id);
++			     const char *con_id, bool with_orphans);
+ void __clk_free_clk(struct clk *clk);
+ #else
+ /* All these casts to avoid ifdefs in clkdev... */
+ static inline struct clk *
+-__clk_create_clk(struct clk_hw *hw, const char *dev_id, const char *con_id)
++__clk_create_clk(struct clk_hw *hw, const char *dev_id, const char *con_id,
++		 bool with_orphans)
+ {
+ 	return (struct clk *)hw;
+ }
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index 779b6ff..eda20c2 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -43,7 +43,7 @@ static struct clk *__of_clk_get(struct device_node *np, int index,
+ 	if (rc)
+ 		return ERR_PTR(rc);
+ 
+-	clk = __of_clk_get_from_provider(&clkspec, dev_id, con_id);
++	clk = __of_clk_get_from_provider(&clkspec, dev_id, con_id, false);
+ 	of_node_put(clkspec.np);
+ 
+ 	return clk;
+@@ -177,7 +177,7 @@ struct clk *clk_get_sys(const char *dev_id, const char *con_id)
+ 	if (!cl)
+ 		goto out;
+ 
+-	clk = __clk_create_clk(cl->clk_hw, dev_id, con_id);
++	clk = __clk_create_clk(cl->clk_hw, dev_id, con_id, false);
+ 	if (IS_ERR(clk))
+ 		goto out;
+ 
+-- 
+2.7.0
