@@ -1,65 +1,66 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH] clk: sunxi: usb: Sort clk providers by chip family and name
-Date: Mon, 25 Jan 2016 13:55:00 +0800
-Message-Id: <1453701300-28241-1-git-send-email-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-yk0-f179.google.com ([209.85.160.179]:35216 "EHLO
+	mail-yk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751103AbcAUULC (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jan 2016 15:11:02 -0500
+Received: by mail-yk0-f179.google.com with SMTP id s126so36794254ykf.2
+        for <linux-clk@vger.kernel.org>; Thu, 21 Jan 2016 12:11:01 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <CAAObsKC1v--mZwkiG-c7P2Bwi2-_txbeqaW4Vd5h-noAVNbhjA@mail.gmail.com>
+References: <1415087559-19444-1-git-send-email-kever.yang@rock-chips.com>
+	<48806799.thBSifdUp8@diego>
+	<54647142.4080800@rock-chips.com>
+	<CAD=FV=Vzec3Qm-kc6zZ4VxSREoZbzVkWbzp-noHYdcEVrLYYSw@mail.gmail.com>
+	<CAAObsKChYN5nmcm5OWnAzNRGDi_QGSoKvN+0FizhjeT-3mmeXQ@mail.gmail.com>
+	<CAD=FV=Wgu=xQ9PcVqfzcedXVU3Rh-HKbBVxHuqgV9OZJEYhYvg@mail.gmail.com>
+	<CAAObsKC1v--mZwkiG-c7P2Bwi2-_txbeqaW4Vd5h-noAVNbhjA@mail.gmail.com>
+Date: Thu, 21 Jan 2016 12:11:00 -0800
+Message-ID: <CAD=FV=VB93wYigRJ8wa8YL6P+Q+-fRokPiCB-Fo1pC_zAdh2oA@mail.gmail.com>
+Subject: Re: [PATCH 0/5] clk: rockchip: add full support for HDMI clock on rk3288
+From: Doug Anderson <dianders@chromium.org>
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Cc: Kever Yang <kever.yang@rock-chips.com>,
+	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	Mike Turquette <mturquette@linaro.org>,
+	Sonny Rao <sonnyrao@chromium.org>,
+	Addy Ke <addy.ke@rock-chips.com>,
+	Eddie Cai <cf@rock-chips.com>,
+	ZhenFu Fang <fzf@rock-chips.com>,
+	Yakir Yang <ykk@rock-chips.com>,
+	=?UTF-8?B?5aea5pm65oOF?= <yzq@rock-chips.com>,
+	=?UTF-8?B?5oi05YWL6ZyWIChKYWNrKQ==?= <dkl@rock-chips.com>,
+	Tao Huang <huangtao@rock-chips.com>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The latest addition of H3 USB clocks placed them at the bottom. Move it
-before A80 (sun9i), so they are sorted by SoC family then name.
+Hi,
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi/clk-usb.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+On Thu, Jan 21, 2016 at 1:03 AM, Tomeu Vizoso <tomeu@tomeuvizoso.net> wrote:
+> So we have a mechanism for detecting a conflict in the clock
+> hierarchy, and a mechanism to solve it, but we are missing a way for
+> userspace to communicate policy regarding which clocks should be given
+> priority when solving such a conflict?
 
-diff --git a/drivers/clk/sunxi/clk-usb.c b/drivers/clk/sunxi/clk-usb.c
-index 67b8e38f4ee9..5432b1c198a4 100644
---- a/drivers/clk/sunxi/clk-usb.c
-+++ b/drivers/clk/sunxi/clk-usb.c
-@@ -216,6 +216,18 @@ static void __init sun8i_a23_usb_setup(struct device_node *node)
- }
- CLK_OF_DECLARE(sun8i_a23_usb, "allwinner,sun8i-a23-usb-clk", sun8i_a23_usb_setup);
- 
-+static const struct usb_clk_data sun8i_h3_usb_clk_data __initconst = {
-+	.clk_mask =  BIT(19) | BIT(18) | BIT(17) | BIT(16) |
-+		     BIT(11) | BIT(10) | BIT(9) | BIT(8),
-+	.reset_mask = BIT(3) | BIT(2) | BIT(1) | BIT(0),
-+};
-+
-+static void __init sun8i_h3_usb_setup(struct device_node *node)
-+{
-+	sunxi_usb_clk_setup(node, &sun8i_h3_usb_clk_data, &sun4i_a10_usb_lock);
-+}
-+CLK_OF_DECLARE(sun8i_h3_usb, "allwinner,sun8i-h3-usb-clk", sun8i_h3_usb_setup);
-+
- static const struct usb_clk_data sun9i_a80_usb_mod_data __initconst = {
- 	.clk_mask = BIT(6) | BIT(5) | BIT(4) | BIT(3) | BIT(2) | BIT(1),
- 	.reset_mask = BIT(19) | BIT(18) | BIT(17),
-@@ -243,15 +255,3 @@ static void __init sun9i_a80_usb_phy_setup(struct device_node *node)
- 	sunxi_usb_clk_setup(node, &sun9i_a80_usb_phy_data, &a80_usb_phy_lock);
- }
- CLK_OF_DECLARE(sun9i_a80_usb_phy, "allwinner,sun9i-a80-usb-phy-clk", sun9i_a80_usb_phy_setup);
--
--static const struct usb_clk_data sun8i_h3_usb_clk_data __initconst = {
--	.clk_mask =  BIT(19) | BIT(18) | BIT(17) | BIT(16) |
--		     BIT(11) | BIT(10) | BIT(9) | BIT(8),
--	.reset_mask = BIT(3) | BIT(2) | BIT(1) | BIT(0),
--};
--
--static void __init sun8i_h3_usb_setup(struct device_node *node)
--{
--	sunxi_usb_clk_setup(node, &sun8i_h3_usb_clk_data, &sun4i_a10_usb_lock);
--}
--CLK_OF_DECLARE(sun8i_h3_usb, "allwinner,sun8i-h3-usb-clk", sun8i_h3_usb_setup);
--- 
-2.7.0
+Hrmmm, I guess it could be userspace that makes the decision.  It does
+seem a little odd to force it to userspace in all cases, though.  For
+a particular laptop that is designed with a specific panel connected
+up eDP it seems less than ideal to push this into userspace.  If the
+kernel could just work in the expected sane way (or at least work that
+way by default) it would be ideal.
+
+If the kernel doesn't try to do anything sane by default then you're
+creating a requirement for everyone's userspace to somehow figure this
+out.  Do you expect there to be UI here, or that this would be
+something that would be figured out by the Linux distribution?
+Certainly exposing UI on something like a laptop with a builtin panel
+wouldn't make any sense to me, but it might make sense if you had an
+eval board with different display connectors on it.  If there's no UI,
+would the Linux distribution need to somehow identify which board we
+were on and then have a big lookup table about how to configure
+things?
