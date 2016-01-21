@@ -1,53 +1,100 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga01-in.huawei.com ([58.251.152.64]:32130 "EHLO
-	szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753800AbcAHCc5 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jan 2016 21:32:57 -0500
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
-	<zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [PATCH v5 3/6] ARM: config: hisi: enable CONFIG_RESET_CONTROLLER
-Date: Fri, 8 Jan 2016 10:16:37 +0800
-Message-ID: <1452219400-32478-4-git-send-email-xuejiancheng@huawei.com>
-In-Reply-To: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
-References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
+Received: from regular2.263xmail.com ([211.157.152.3]:55398 "EHLO
+	regular2.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751327AbcAUBqO (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2016 20:46:14 -0500
+Received: from regular1.263xmail.com (unknown [192.168.165.231])
+	by regular2.263xmail.com (Postfix) with ESMTP id 460B71DD0C
+	for <linux-clk@vger.kernel.org>; Thu, 21 Jan 2016 09:46:10 +0800 (CST)
+Message-ID: <56A0A812.5090803@rock-chips.com>
+Date: Thu, 21 Jan 2016 01:42:42 -0800
+From: zhangqing <zhangqing@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com,
+	sboyd@codeaurora.org
+CC: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	xf@rock-chips.com
+Subject: Re: [PATCH 2/4] clk: rockchip: fix rk3368 cpuclk core dividers
+References: <1453326560-20475-1-git-send-email-heiko@sntech.de> <1453326560-20475-2-git-send-email-heiko@sntech.de>
+In-Reply-To: <1453326560-20475-2-git-send-email-heiko@sntech.de>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-enable CONFIG_RESET_CONTROLLER in hisi_defconfig
+hi:
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
----
- arch/arm/configs/hisi_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+On 01/20/2016 01:49 PM, Heiko Stuebner wrote:
+> Similar to commit 9880d4277f6a ("clk: rockchip: fix rk3288 cpuclk core
+> dividers") it seems the cpuclk dividers are one to high on the rk3368
+> as well.
+>
+> And again similar to the previous fix, we opt to make the divider list
+> contain the values to be written to use the same paradigm for them on all
+> supported socs.
+>
+> Fixes: 3536c97a52db ("clk: rockchip: add rk3368 clock controller")
+> Reported-by: Zhang Qing <zhangqing@rock-chips.com>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 
-diff --git a/arch/arm/configs/hisi_defconfig b/arch/arm/configs/hisi_defconfig
-index b2e340b..ba62c07 100644
---- a/arch/arm/configs/hisi_defconfig
-+++ b/arch/arm/configs/hisi_defconfig
-@@ -75,6 +75,7 @@ CONFIG_DMADEVICES=y
- CONFIG_DW_DMAC=y
- CONFIG_PL330_DMA=y
- CONFIG_PWM=y
-+CONFIG_RESET_CONTROLLER=y
- CONFIG_PHY_HIX5HD2_SATA=y
- CONFIG_EXT4_FS=y
- CONFIG_TMPFS=y
--- 
-1.9.1
+Reviewed-by: zhangqing <zhangqing@rock-chips.com>
+
+> ---
+>   drivers/clk/rockchip/clk-rk3368.c | 40 +++++++++++++++++++--------------------
+>   1 file changed, 20 insertions(+), 20 deletions(-)
+>
+> diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
+> index f6667b8..3c9733e 100644
+> --- a/drivers/clk/rockchip/clk-rk3368.c
+> +++ b/drivers/clk/rockchip/clk-rk3368.c
+> @@ -218,29 +218,29 @@ static const struct rockchip_cpuclk_reg_data rk3368_cpuclkl_data = {
+>   	}
+>
+>   static struct rockchip_cpuclk_rate_table rk3368_cpuclkb_rates[] __initdata = {
+> -	RK3368_CPUCLKB_RATE(1512000000, 2, 6, 6),
+> -	RK3368_CPUCLKB_RATE(1488000000, 2, 5, 5),
+> -	RK3368_CPUCLKB_RATE(1416000000, 2, 5, 5),
+> -	RK3368_CPUCLKB_RATE(1200000000, 2, 4, 4),
+> -	RK3368_CPUCLKB_RATE(1008000000, 2, 4, 4),
+> -	RK3368_CPUCLKB_RATE( 816000000, 2, 3, 3),
+> -	RK3368_CPUCLKB_RATE( 696000000, 2, 3, 3),
+> -	RK3368_CPUCLKB_RATE( 600000000, 2, 2, 2),
+> -	RK3368_CPUCLKB_RATE( 408000000, 2, 2, 2),
+> -	RK3368_CPUCLKB_RATE( 312000000, 2, 2, 2),
+> +	RK3368_CPUCLKB_RATE(1512000000, 1, 5, 5),
+> +	RK3368_CPUCLKB_RATE(1488000000, 1, 4, 4),
+> +	RK3368_CPUCLKB_RATE(1416000000, 1, 4, 4),
+> +	RK3368_CPUCLKB_RATE(1200000000, 1, 3, 3),
+> +	RK3368_CPUCLKB_RATE(1008000000, 1, 3, 3),
+> +	RK3368_CPUCLKB_RATE( 816000000, 1, 2, 2),
+> +	RK3368_CPUCLKB_RATE( 696000000, 1, 2, 2),
+> +	RK3368_CPUCLKB_RATE( 600000000, 1, 1, 1),
+> +	RK3368_CPUCLKB_RATE( 408000000, 1, 1, 1),
+> +	RK3368_CPUCLKB_RATE( 312000000, 1, 1, 1),
+>   };
+>
+>   static struct rockchip_cpuclk_rate_table rk3368_cpuclkl_rates[] __initdata = {
+> -	RK3368_CPUCLKL_RATE(1512000000, 2, 7, 7),
+> -	RK3368_CPUCLKL_RATE(1488000000, 2, 6, 6),
+> -	RK3368_CPUCLKL_RATE(1416000000, 2, 6, 6),
+> -	RK3368_CPUCLKL_RATE(1200000000, 2, 5, 5),
+> -	RK3368_CPUCLKL_RATE(1008000000, 2, 5, 5),
+> -	RK3368_CPUCLKL_RATE( 816000000, 2, 4, 4),
+> -	RK3368_CPUCLKL_RATE( 696000000, 2, 3, 3),
+> -	RK3368_CPUCLKL_RATE( 600000000, 2, 3, 3),
+> -	RK3368_CPUCLKL_RATE( 408000000, 2, 2, 2),
+> -	RK3368_CPUCLKL_RATE( 312000000, 2, 2, 2),
+> +	RK3368_CPUCLKL_RATE(1512000000, 1, 6, 6),
+> +	RK3368_CPUCLKL_RATE(1488000000, 1, 5, 5),
+> +	RK3368_CPUCLKL_RATE(1416000000, 1, 5, 5),
+> +	RK3368_CPUCLKL_RATE(1200000000, 1, 4, 4),
+> +	RK3368_CPUCLKL_RATE(1008000000, 1, 4, 4),
+> +	RK3368_CPUCLKL_RATE( 816000000, 1, 3, 3),
+> +	RK3368_CPUCLKL_RATE( 696000000, 1, 2, 2),
+> +	RK3368_CPUCLKL_RATE( 600000000, 1, 2, 2),
+> +	RK3368_CPUCLKL_RATE( 408000000, 1, 1, 1),
+> +	RK3368_CPUCLKL_RATE( 312000000, 1, 1, 1),
+>   };
+>
+>   static struct rockchip_clk_branch rk3368_clk_branches[] __initdata = {
+>
 
