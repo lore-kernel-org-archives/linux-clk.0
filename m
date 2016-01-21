@@ -1,63 +1,104 @@
-Return-Path: <stefan@agner.ch>
-From: Stefan Agner <stefan@agner.ch>
-To: shawnguo@kernel.org,
-	kernel@pengutronix.de,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 2/2] clk: imx: return correct frequency for Ethernet PLL
-Date: Fri, 29 Jan 2016 14:49:24 -0800
-Message-Id: <1454107764-19876-2-git-send-email-stefan@agner.ch>
-In-Reply-To: <1454107764-19876-1-git-send-email-stefan@agner.ch>
-References: <1454107764-19876-1-git-send-email-stefan@agner.ch>
+Return-Path: <jamesjj.liao@mediatek.com>
+Message-ID: <1453353537.5384.33.camel@mtksdaap41>
+Subject: Re: [PATCH v4 2/6] dt-bindings: ARM: Mediatek: Document bindings
+ for MT2701
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Rob Herring <robh@kernel.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "John
+ Crispin" <blogic@openwrt.org>, Sascha Hauer <kernel@pengutronix.de>, "Daniel
+ Kurtz" <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>
+Date: Thu, 21 Jan 2016 13:18:57 +0800
+In-Reply-To: <20160120163236.GA21035@rob-hp-laptop>
+References: <1453271747-57397-1-git-send-email-jamesjj.liao@mediatek.com>
+	 <1453271747-57397-3-git-send-email-jamesjj.liao@mediatek.com>
+	 <20160120163236.GA21035@rob-hp-laptop>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The i.MX 7 designs Ethernet PLL provides a 1000MHz reference clock.
-Store the reference clock in the clk_pllv3 structure according to
-the PLL type.
+Hi Rob,
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- drivers/clk/imx/clk-pllv3.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+On Wed, 2016-01-20 at 10:32 -0600, Rob Herring wrote:
+> On Wed, Jan 20, 2016 at 02:35:43PM +0800, James Liao wrote:
+> > This patch adds the binding documentation for apmixedsys, bdpsys,
+> > ethsys, hifsys, imgsys, infracfg, mmsys, pericfg, topckgen and
+> > vdecsys for Mediatek MT2701.
+> > 
+> > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> > Tested-by: John Crispin <blogic@openwrt.org>
+> > ---
+> >  .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |  1 +
+> >  .../bindings/arm/mediatek/mediatek,bdpsys.txt      | 22 ++++++++++++++++++++++
+> >  .../bindings/arm/mediatek/mediatek,ethsys.txt      | 22 ++++++++++++++++++++++
+> >  .../bindings/arm/mediatek/mediatek,hifsys.txt      | 22 ++++++++++++++++++++++
+> >  .../bindings/arm/mediatek/mediatek,imgsys.txt      |  1 +
+> >  .../bindings/arm/mediatek/mediatek,infracfg.txt    |  1 +
+> >  .../bindings/arm/mediatek/mediatek,mmsys.txt       |  1 +
+> >  .../bindings/arm/mediatek/mediatek,pericfg.txt     |  1 +
+> >  .../bindings/arm/mediatek/mediatek,topckgen.txt    |  1 +
+> >  .../bindings/arm/mediatek/mediatek,vdecsys.txt     |  1 +
+> >  10 files changed, 73 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
+> >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
+> >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+> > index 936166f..a701e19 100644
+> > --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+> > @@ -6,6 +6,7 @@ The Mediatek apmixedsys controller provides the PLLs to the system.
+> >  Required Properties:
+> >  
+> >  - compatible: Should be:
+> > +	- "mediatek,mt2701-apmixedsys"
+> >  	- "mediatek,mt8135-apmixedsys"
+> >  	- "mediatek,mt8173-apmixedsys"
+> >  - #clock-cells: Must be 1
+> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
+> > new file mode 100644
+> > index 0000000..4137196
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
+> > @@ -0,0 +1,22 @@
+> > +Mediatek bdpsys controller
+> > +============================
+> > +
+> > +The Mediatek bdpsys controller provides various clocks to the system.
+> 
+> As you clarified these blocks provide more that just clocks. Please list 
+> all the functions here and on the others.
 
-diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-index b5ff561..c344ae6 100644
---- a/drivers/clk/imx/clk-pllv3.c
-+++ b/drivers/clk/imx/clk-pllv3.c
-@@ -44,6 +44,7 @@ struct clk_pllv3 {
- 	u32		powerdown;
- 	u32		div_mask;
- 	u32		div_shift;
-+	unsigned long	ref_clock;
- };
- 
- #define to_clk_pllv3(_hw) container_of(_hw, struct clk_pllv3, hw)
-@@ -289,7 +290,9 @@ static const struct clk_ops clk_pllv3_av_ops = {
- static unsigned long clk_pllv3_enet_recalc_rate(struct clk_hw *hw,
- 						unsigned long parent_rate)
- {
--	return 500000000;
-+	struct clk_pllv3 *pll = to_clk_pllv3(hw);
-+
-+	return pll->ref_clock;
- }
- 
- static const struct clk_ops clk_pllv3_enet_ops = {
-@@ -329,7 +332,11 @@ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
- 		break;
- 	case IMX_PLLV3_ENET_IMX7:
- 		pll->powerdown = IMX7_ENET_PLL_POWER;
-+		pll->ref_clock = 1000000000;
-+		ops = &clk_pllv3_enet_ops;
-+		break;
- 	case IMX_PLLV3_ENET:
-+		pll->ref_clock = 500000000;
- 		ops = &clk_pllv3_enet_ops;
- 		break;
- 	default:
--- 
-2.7.0
+Some blocks may provide clock and reset controller at the same time. But
+most of them will not provide functions directly. Instead, some DT
+blocks which provide specific functions may refer to these controller
+nodes due to it need to access the same register space.
+
+For example, scpsys (the power domain provider) refers to infracfg
+because it need to control infracfg registers when power on/off domains:
+
+	scpsys: scpsys@10006000 {
+		compatible = "mediatek,mt2701-scpsys";
+		#power-domain-cells = <1>;
+		reg = <0 0x10006000 0 0x1000>;
+		infracfg = <&infracfg>;
+	};
+
+So I think it should not need to list all functions for each blocks
+here.
+
+> > +
+> > +Required Properties:
+> > +
+> > +- compatible: Should be:
+> > +	- "mediatek,mt2701-bdpsys", "syscon"
+> > +- #clock-cells: Must be 1
+> > +
+> > +The bdpsys controller uses the common clk binding from
+> > +Documentation/devicetree/bindings/clock/clock-bindings.txt
+> > +The available clocks are defined in dt-bindings/clock/mt*-clk.h.
+> > +
