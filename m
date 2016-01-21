@@ -1,64 +1,45 @@
-Return-Path: <ralf@linux-mips.org>
-Date: Thu, 14 Jan 2016 12:12:13 +0100
-From: Ralf Baechle <ralf@linux-mips.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Joshua Henderson <joshua.henderson@microchip.com>,
-        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
-        Cristian Birsan <cristian.birsan@microchip.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Purna Chandra Mandal <purna.mandal@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org,
-        Andrei Pistirica <andrei.pistirica@microchip.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        linux-api@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-        Jean Delvare <jdelvare@suse.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Corneliu Doban <cdoban@broadcom.com>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Luis de Bethencourt <luisbg@osg.samsung.com>,
-        Weijun Yang <Weijun.Yang@csr.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Vincent Yang <vincent.yang.fujitsu@gmail.com>,
-        Chaotian Jing <chaotian.jing@mediatek.com>,
-        "ludovic.desroches@atmel.com" <ludovic.desroches@atmel.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        yangbo lu <yangbo.lu@freescale.com>,
-        Kevin Hao <haokexin@gmail.com>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: Re: [PATCH v5 02/14] irqchip: irq-pic32-evic: Add support for PIC32
- interrupt controller
-Message-ID: <20160114111213.GC28942@linux-mips.org>
-References: <1452734299-460-1-git-send-email-joshua.henderson@microchip.com>
- <1452734299-460-3-git-send-email-joshua.henderson@microchip.com>
- <alpine.DEB.2.11.1601140901210.3575@nanos>
+Return-Path: <sha@pengutronix.de>
+Date: Thu, 21 Jan 2016 09:26:42 +0100
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: kernel@martin.sperl.org
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Remi Pommarel <repk@triplefau.lt>, devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [RFC 2/9] clk: bcm2835: add support for parent selection in DT
+Message-ID: <20160121082642.GB13237@pengutronix.de>
+References: <1453215100-2382-1-git-send-email-kernel@martin.sperl.org>
+ <1453215100-2382-3-git-send-email-kernel@martin.sperl.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <alpine.DEB.2.11.1601140901210.3575@nanos>
+In-Reply-To: <1453215100-2382-3-git-send-email-kernel@martin.sperl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 14, 2016 at 09:10:09AM +0100, Thomas Gleixner wrote:
+Martin,
 
-> I like that approach.
+On Tue, Jan 19, 2016 at 02:51:33PM +0000, kernel@martin.sperl.org wrote:
+> From: Martin Sperl <kernel@martin.sperl.org>
 > 
-> So except for the nit in pic32_set_type_edge() this looks good. It's pretty
-> clear now what the code does and how the hardware works.
+> Allow for a per clock custom selection of clocks in the device tree.
 > 
-> Thanks for following up!
+> Basic setup in dt looks like this:
+>   clock@BCM2835_CLOCK_PCM {
+>     reg = <BCM2835_CLOCK_PCM>;
+>     parent-clock-names = "xosc", "plld_per", "plla_per", "pll_aux_per";
+>   };
 
-So I take that for an ack.  I still haven't seen any acks or comments for
-the patches:
+Isn't this the same as the already existing assigned-clock-parents property?
+If yes, that should be used.
 
-     4/14      drivers/clk
-     8/14      drivers/pinctrl
-    10/14      drivers/serial
-    12/14      drivers/mmc
+Sascha
 
-Of this series.  Ping?
 
-  Ralf
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
