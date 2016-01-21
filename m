@@ -1,110 +1,72 @@
-Return-Path: <p.zabel@pengutronix.de>
-Message-ID: <1451986201.3391.3.camel@pengutronix.de>
-Subject: Re: [PATCH v2 4/6] clk: mediatek: Add MT2701 clock support
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: James Liao <jamesjj.liao@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	 <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	devicetree@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>,
-	srv_heupstream@mediatek.com, linux-kernel@vger.kernel.org, Daniel Kurtz
-	 <djkurtz@chromium.org>, linux-mediatek@lists.infradead.org, Shunli Wang
-	 <shunli.wang@mediatek.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Date: Tue, 05 Jan 2016 10:30:01 +0100
-In-Reply-To: <1451975422-31174-5-git-send-email-jamesjj.liao@mediatek.com>
-References: <1451975422-31174-1-git-send-email-jamesjj.liao@mediatek.com>
-	 <1451975422-31174-5-git-send-email-jamesjj.liao@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <jamesjj.liao@mediatek.com>
+Message-ID: <1453355444.5384.43.camel@mtksdaap41>
+Subject: Re: [PATCH v3 1/6] clk: mediatek: Refine the makefile to support
+ multiple clock drivers
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Yingjoe Chen <yingjoe.chen@mediatek.com>
+CC: <devicetree@vger.kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<srv_heupstream@mediatek.com>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, Shunli Wang <shunli.wang@mediatek.com>,
+	Sascha Hauer <kernel@pengutronix.de>, "Matthias Brugger"
+	<matthias.bgg@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, John Crispin <blogic@openwrt.org>
+Date: Thu, 21 Jan 2016 13:50:44 +0800
+In-Reply-To: <1453344325.28078.9.camel@mtksdaap41>
+References: <1452587470-61506-1-git-send-email-jamesjj.liao@mediatek.com>
+	 <1452587470-61506-2-git-send-email-jamesjj.liao@mediatek.com>
+	 <1453343300.28078.6.camel@mtksdaap41> <1453344325.28078.9.camel@mtksdaap41>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi James,
+Hi Yingjoe,
 
-Am Dienstag, den 05.01.2016, 14:30 +0800 schrieb James Liao:
-> From: Shunli Wang <shunli.wang@mediatek.com>
+On Thu, 2016-01-21 at 10:45 +0800, Yingjoe Chen wrote:
+> On Thu, 2016-01-21 at 10:28 +0800, Yingjoe Chen wrote:
+> > On Tue, 2016-01-12 at 16:31 +0800, James Liao wrote:
+> > > Add a Kconfig to define clock configuration for each SoC, and
+> > > modify the Makefile to build drivers that only selected in config.
+> > > 
+> > > Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+> > > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> > > ---
+> > >  drivers/clk/Kconfig           |  1 +
+> > >  drivers/clk/mediatek/Kconfig  | 23 +++++++++++++++++++++++
+> > >  drivers/clk/mediatek/Makefile |  6 +++---
+> > >  3 files changed, 27 insertions(+), 3 deletions(-)
+> > >  create mode 100644 drivers/clk/mediatek/Kconfig
+> > > 
+> > > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> > > index c3e3a02..b7a37dc 100644
+> > > --- a/drivers/clk/Kconfig
+> > > +++ b/drivers/clk/Kconfig
+> > > @@ -198,3 +198,4 @@ source "drivers/clk/mvebu/Kconfig"
+> > >  
+> > >  source "drivers/clk/samsung/Kconfig"
+> > >  source "drivers/clk/tegra/Kconfig"
+> > > +source "drivers/clk/mediatek/Kconfig"
+> > 
+> > 
+> > Hi James,
+> > 
+> > drivers/clk/mediatek/Kconfig add user selectable options, menuconfig
+> > will list them outside of "Common Clock Framework" sub-menu if you
+> > source the file here. Kconfig for samsung & tegra doesn't have any, so
+> > it is OK for them to stay here.
+> > 
+> > Please move it inside the menu, also it seems the source lines are
+> > sorted now, so let's keep them sorted.
 > 
-> Add MT2701 clock support, include topckgen, apmixedsys,
-> infracfg, pericfg and subsystem clocks.
 > 
-> Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> ---
->  drivers/clk/mediatek/Kconfig      |    8 +
->  drivers/clk/mediatek/Makefile     |    1 +
->  drivers/clk/mediatek/clk-gate.c   |   56 ++
->  drivers/clk/mediatek/clk-gate.h   |    2 +
->  drivers/clk/mediatek/clk-mt2701.c | 1210 +++++++++++++++++++++++++++++++++++++
->  drivers/clk/mediatek/clk-mtk.c    |   25 +
->  drivers/clk/mediatek/clk-mtk.h    |   35 +-
->  7 files changed, 1334 insertions(+), 3 deletions(-)
->  create mode 100644 drivers/clk/mediatek/clk-mt2701.c
-> 
-> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-> index dc224e6..6c7cdc0 100644
-> --- a/drivers/clk/mediatek/Kconfig
-> +++ b/drivers/clk/mediatek/Kconfig
-> @@ -6,6 +6,14 @@ config COMMON_CLK_MEDIATEK
->  	---help---
->  	  Mediatek SoCs' clock support.
->  
-> +config COMMON_CLK_MT2701
-> +	bool "Clock driver for Mediatek MT2701 and MT7623"
-> +	depends on COMMON_CLK
-> +	select COMMON_CLK_MEDIATEK
-> +	default ARCH_MEDIATEK
-> +	---help---
-> +	  This driver supports Mediatek MT2701 and MT7623 clocks.
-> +
->  config COMMON_CLK_MT8135
->  	bool "Clock driver for Mediatek MT8135"
->  	depends on COMMON_CLK
-> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-> index 32e7222..5b2b91b 100644
-> --- a/drivers/clk/mediatek/Makefile
-> +++ b/drivers/clk/mediatek/Makefile
-> @@ -1,4 +1,5 @@
->  obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
->  obj-$(CONFIG_RESET_CONTROLLER) += reset.o
-> +obj-$(CONFIG_COMMON_CLK_MT2701) += clk-mt2701.o
->  obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135.o
->  obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173.o
-> diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
-> index 576bdb7..38badb4 100644
-> --- a/drivers/clk/mediatek/clk-gate.c
-> +++ b/drivers/clk/mediatek/clk-gate.c
-> @@ -61,6 +61,26 @@ static void mtk_cg_clr_bit(struct clk_hw *hw)
->  	regmap_write(cg->regmap, cg->clr_ofs, BIT(cg->bit));
->  }
->  
-> +static void mtk_cg_set_bit_no_setclr(struct clk_hw *hw)
-> +{
-> +	struct mtk_clk_gate *cg = to_clk_gate(hw);
-> +	u32 val;
-> +
-> +	regmap_read(cg->regmap, cg->sta_ofs, &val);
-> +	val |= BIT(cg->bit);
-> +	regmap_write(cg->regmap, cg->sta_ofs, val);
+> After looking at drivers/clk/Kconfig history, it seems we have similar
+> issue before. I think we should move all sources under clk menu to
+> prevent this from happening.
 
-You can use regmap_update_bits here:
+I may provide a separated patch to move other Kconfig into menu section.
 
-	u32 bit = BIT(cg->bit);
-	regmap_update_bits(cg->regmap, cg->sta_ofs, bit, bit);
 
-> +}
-> +
-> +static void mtk_cg_clr_bit_no_setclr(struct clk_hw *hw)
-> +{
-> +	struct mtk_clk_gate *cg = to_clk_gate(hw);
-> +	u32 val;
-> +
-> +	regmap_read(cg->regmap, cg->sta_ofs, &val);
-> +	val &= ~(BIT(cg->bit));
-> +	regmap_write(cg->regmap, cg->sta_ofs, val);
+Best regards,
 
-and here:
-
-	u32 bit = BIT(cg->bit);
-	regmap_update_bits(cg->regmap, cg->sta_ofs, bit, 0);
-
-best regards
-Philipp
+James
