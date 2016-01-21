@@ -1,103 +1,53 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular2.263xmail.com ([211.157.152.3]:55433 "EHLO
+	regular2.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751327AbcAUBru (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2016 20:47:50 -0500
+Received: from regular1.263xmail.com (unknown [192.168.165.231])
+	by regular2.263xmail.com (Postfix) with ESMTP id 552981E1C4
+	for <linux-clk@vger.kernel.org>; Thu, 21 Jan 2016 09:47:47 +0800 (CST)
+Message-ID: <56A0A87A.10409@rock-chips.com>
+Date: Thu, 21 Jan 2016 01:44:26 -0800
+From: zhangqing <zhangqing@rock-chips.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <5698C5E8.4040107@de.bosch.com>
-References: <1450951761-3160-1-git-send-email-dirk.behme@gmail.com>
-	<5690ABCC.3090909@gmail.com>
-	<CAMuHMdXa4qdrqu-RjPuxAHQwBJ5LZ+JsfWH83vcvp6EQ+M1-aA@mail.gmail.com>
-	<5698C5E8.4040107@de.bosch.com>
-Date: Fri, 15 Jan 2016 11:20:12 +0100
-Message-ID: <CAMuHMdWb-mQ=Q53Bzr7wwYtvg6iA2xoVecTTnJj18Sp428r-jw@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: shmobile: r8a7795: Add SDHI clocks
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Dirk Behme <dirk.behme@de.bosch.com>
-Cc: Dirk Behme <dirk.behme@gmail.com>, Linux-sh list <linux-sh@vger.kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms+renesas@verge.net.au>,
-	Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com,
+	sboyd@codeaurora.org
+CC: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	xf@rock-chips.com
+Subject: Re: [PATCH 4/4] clk: rockchip: rk3368: fix hdmi_cec gate-register
+References: <1453326560-20475-1-git-send-email-heiko@sntech.de> <1453326560-20475-4-git-send-email-heiko@sntech.de>
+In-Reply-To: <1453326560-20475-4-git-send-email-heiko@sntech.de>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Dirk,
+hi:
 
-On Fri, Jan 15, 2016 at 11:11 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
-> On 14.01.2016 19:24, Geert Uytterhoeven wrote:
->> On Sat, Jan 9, 2016 at 7:42 AM, Dirk Behme <dirk.behme@gmail.com> wrote:
->>> On 24.12.2015 11:09, Dirk Behme wrote:
->>>> Add R8A7795 SDHI clocks.
->>>> Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
->>>> ---
->>>> Changes in v2: Add the missing *H clocks and correct the dividers.
->>>>
->>>> This replaces v1
->>>>
->>>> http://www.spinics.net/lists/linux-sh/msg47464.html
->>>>
->>>>    drivers/clk/shmobile/r8a7795-cpg-mssr.c | 13 ++++++++++++-
->>>>    1 file changed, 12 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/clk/shmobile/r8a7795-cpg-mssr.c
->>>> b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
->>>> index 05479e6..f30ed32 100644
->>>> --- a/drivers/clk/shmobile/r8a7795-cpg-mssr.c
->>>> +++ b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
->>>> @@ -100,8 +100,15 @@ static const struct cpg_core_clk
->>>> r8a7795_core_clks[]
->>>> __initconst = {
->>>>          DEF_FIXED("s3d2",       R8A7795_CLK_S3D2,  CLK_S3,         2,
->>>> 1),
->>>>          DEF_FIXED("s3d4",       R8A7795_CLK_S3D4,  CLK_S3,         4,
->>>> 1),
->>>>          DEF_FIXED("cl",         R8A7795_CLK_CL,    CLK_PLL1_DIV2, 48,
->>>> 1),
->>>> +       DEF_FIXED("sd0h",       R8A7795_CLK_SD0H,  CLK_PLL1_DIV2,  2,
->>>> 1),
->>>> +       DEF_FIXED("sd0",        R8A7795_CLK_SD0,   CLK_PLL1_DIV2,  8,
->>>> 1),
->>>> +       DEF_FIXED("sd1h",       R8A7795_CLK_SD1H,  CLK_PLL1_DIV2,  2,
->>>> 1),
->>>> +       DEF_FIXED("sd1",        R8A7795_CLK_SD1,   CLK_PLL1_DIV2,  8,
->>>> 1),
->>>> +       DEF_FIXED("sd2h",       R8A7795_CLK_SD2H,  CLK_PLL1_DIV2,  2,
->>>> 1),
->>>> +       DEF_FIXED("sd2",        R8A7795_CLK_SD2,   CLK_PLL1_DIV2,  8,
->>>> 1),
->>>> +       DEF_FIXED("sd3h",       R8A7795_CLK_SD3H,  CLK_PLL1_DIV2,  2,
->>>> 1),
->>>> +       DEF_FIXED("sd3",        R8A7795_CLK_SD3,   CLK_PLL1_DIV2,  8,
->>>> 1),
->>
->>
->> The dividers for these clocks are not fixed, they are controlled by the
->> SDnCKCR registers.
->>
->> Unfortunately the register layout is more complicated than on R-Car Gen2,
->> so
->> you can no longer use clk_register_divider_table(), but have to write a
->> custom
->> clock driver.
->>
->> For an initial version, a simple "read-only" version that just calls
->> clk_register_fixed_factor() with divider values read from the hardware
->> registers may be good enough. But for full support, you need a driver that
->> can program the registers, too.
+On 01/20/2016 01:49 PM, Heiko Stuebner wrote:
+> Fix a typo making the sclk_hdmi_cec access a wrong register to handle
+> its gate.
 >
+> Fixes: 3536c97a52db ("clk: rockchip: add rk3368 clock controller")
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+
+Reviewed-by: zhangqing <zhangqing@rock-chips.com>
+
+> ---
+>   drivers/clk/rockchip/clk-rk3368.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 >
+> diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
+> index 6037beb..57acb62 100644
+> --- a/drivers/clk/rockchip/clk-rk3368.c
+> +++ b/drivers/clk/rockchip/clk-rk3368.c
+> @@ -442,7 +442,7 @@ static struct rockchip_clk_branch rk3368_clk_branches[] __initdata = {
+>   	GATE(SCLK_HDMI_HDCP, "sclk_hdmi_hdcp", "xin24m", 0,
+>   			RK3368_CLKGATE_CON(4), 13, GFLAGS),
+>   	GATE(SCLK_HDMI_CEC, "sclk_hdmi_cec", "xin32k", 0,
+> -			RK3368_CLKGATE_CON(5), 12, GFLAGS),
+> +			RK3368_CLKGATE_CON(4), 12, GFLAGS),
 >
-> Anything like
+>   	COMPOSITE_NODIV(0, "vip_src", mux_pll_src_cpll_gpll_p, 0,
+>   			RK3368_CLKSEL_CON(21), 15, 1, MFLAGS,
 >
-> https://git.kernel.org/cgit/linux/kernel/git/horms/renesas-bsp.git/commit/drivers/clk/shmobile/clk-rcar-gen3.c?h=v4.2/rcar-3.0.x&id=cd10385afc15cef6bfbaea4aa5da41193b24fe82
->
-> ?
 
-Yes.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
