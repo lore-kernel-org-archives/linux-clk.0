@@ -1,297 +1,54 @@
-Return-Path: <robh@kernel.org>
-Date: Thu, 14 Jan 2016 21:15:15 -0600
-From: Rob Herring <robh@kernel.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Wynter Woods <wynter@nextthing.co>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v2 17/26] drm: sun4i: Add DT bindings documentation
-Message-ID: <20160115031515.GA19797@rob-hp-laptop>
-References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
- <1452785109-6172-18-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <emilio.lopez@collabora.co.uk>
+From: =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio.lopez@collabora.co.uk>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	heiko@sntech.de
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio.lopez@collabora.co.uk>
+Subject: [PATCH 0/2] defer clk_gets on orphan clocks
+Date: Thu, 21 Jan 2016 11:10:37 -0300
+Message-Id: <1453385439-10154-1-git-send-email-emilio.lopez@collabora.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1452785109-6172-18-git-send-email-maxime.ripard@free-electrons.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 14, 2016 at 04:25:00PM +0100, Maxime Ripard wrote:
-> The display pipeline of the Allwinner A10 is involving several loosely
-> coupled components.
-> 
-> Add a documentation for the bindings.
-> 
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  .../bindings/display/sunxi/sun4i-drm.txt           | 228 +++++++++++++++++++++
+Hi everyone,
 
-drm is a linuxism. It shouldn't be used for binding doc.
+This is mostly a resend of Heiko's patch from [0] together with a fix for
+the breakage seen on sunxi when it was applied.
 
->  1 file changed, 228 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> new file mode 100644
-> index 000000000000..061bc87147a3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> @@ -0,0 +1,228 @@
-> +Allwinner A10 Display Pipeline
-> +==============================
-> +
-> +The Allwinner A10 Display pipeline is composed of several components
-> +that are going to be documented below:
-> +
-> +TV Encoder
-> +----------
-> +
-> +The TV Encoder supports the composite and VGA output. It is one end of
-> +the pipeline.
-> +
-> +Required properties:
-> + - compatible: value should be "allwinner,sun4i-a10-tv-encoder".
-> + - reg: base address and size of memory-mapped region
-> + - clocks: the clocks driving the TV encoder
-> +
-> +- ports: A ports node with endpoint definitions as defined in
-> +  Documentation/devicetree/bindings/media/video-interfaces.txt. The
-> +  first port should be the input endpoint.
-> +
-> +TCON
-> +----
-> +
-> +The TCON acts as a timing controller for RGB, LVDS and TV interfaces.
-> +
-> +Required properties:
-> + - compatible: value should be "allwinner,sun4i-a10-tcon".
-> + - reg: base address and size of memory-mapped region
-> + - interrupts: interrupt associated to this IP
-> + - clocks: phandles to the clocks feeding the TCON. Three are needed:
-> +   - 'ahb': the interface clocks
-> +   - 'tcon-ch0': The clock driving the TCON channel 0
-> +   - 'tcon-ch1': The clock driving the TCON channel 1
-> +
-> + - clock-names: the clock names mentioned above
-> + - clock-output-names: Name of the pixel clock created
-> +
-> +- ports: A ports node with endpoint definitions as defined in
-> +  Documentation/devicetree/bindings/media/video-interfaces.txt. The
-> +  first port should be the input endpoint, the second one the output
-> +
-> +Optional properties:
-> +  - allwinner,panel: phandle to the panel used in our RGB interface
-> +
-> +
-> +Display Engine Backend
-> +----------------------
-> +
-> +The display engine backend exposes layers and sprites to the
-> +system.
-> +
-> +Required properties:
-> +  - compatible: value must be one of:
-> +    * allwinner,sun5i-a13-display-backend
-> +  - reg: base address and size of the memory-mapped region.
-> +  - clocks: phandles to the clocks feeding the frontend and backend
-> +    * ahb: the backend interface clock
-> +    * mod: the backend module clock
-> +    * ram: the backend DRAM clock
-> +  - clock-names: the clock names mentioned above
-> +  - resets: phandles to the reset controllers driving the backend
-> +
-> +- ports: A ports node with endpoint definitions as defined in
-> +  Documentation/devicetree/bindings/media/video-interfaces.txt. The
-> +  first port should be the input endpoints, the second one the output
-> +
-> +Display Engine Frontend
-> +-----------------------
-> +
-> +The display engine frontend does formats conversion, scaling,
-> +deinterlacing and color space conversion.
-> +
-> +Required properties:
-> +  - compatible: value must be one of:
-> +    * allwinner,sun5i-a13-display-frontend
-> +  - reg: base address and size of the memory-mapped region.
-> +  - interrupts: interrupt associated to this IP
-> +  - clocks: phandles to the clocks feeding the frontend and backend
+Ideally we would move off our own protected clocks thing to the CCF
+implementation when it is merged and solve this nicely. Meanwhile, we
+can solve this non-intrusively by delaying the clock protection a bit.
+This way the rk people can enjoy the happiness brought by working sensors
+and WiFi[1] while sunxi boards still boot and operate just fine.
 
-> +    * ahb: the backend interface clock
-> +    * mod: the backend module clock
-> +    * ram: the backend DRAM clock
+I have tested this on a Cubieboard 1 (A10) and A10S OLinuXino Micro (A10S)
+as well as remotely boot-tested a Radxa Rock2 Square (rk3288)
 
-should be frontend?
+As always, all comments welcome :)
 
-> +  - clock-names: the clock names mentioned above
-> +  - resets: phandles to the reset controllers driving the backend
+Thanks!
+Emilio
 
-ditto
+[0] http://www.spinics.net/lists/arm-kernel/msg462821.html
+[1] http://www.spinics.net/lists/arm-kernel/msg473236.html
 
-> +
-> +Display Engine Pipeline
-> +-----------------------
-> +
-> +The display engine pipeline (and its entry point, since it can be
-> +either directly the backend or the frontend) is represented as an
-> +extra node.
-> +
-> +Required properties:
-> +  - compatible: value must be one of:
-> +    * allwinner,sun5i-a13-display-engine
-> +  - allwinner,pipelines: list of phandle to the entry points of the
-> +    pipelines (either to the frontend or backend)
-> +
-> +Example:
-> +
-> +panel: panel {
-> +	compatible = "olimex,lcd-olinuxino-43-ts";
+Emilio López (1):
+  clk: sunxi: delay protected clocks until arch initcall
 
-This should either be a child of what it is attached to or use of-graph.
+Heiko Stuebner (1):
+  clk: defer clk_gets on orphan clocks
 
-> +};
-> +
-> +tve0: tv-encoder@01c0a000 {
-> +	compatible = "allwinner,sun4i-a10-tv-encoder";
-> +	reg = <0x01c0a000 0x1000>;
-> +	clocks = <&ahb_gates 34>;
-> +
-> +	port {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		tve0_in_tcon0: endpoint@0 {
-> +			reg = <0>;
+ drivers/clk/clk-conf.c        |  5 +++--
+ drivers/clk/clk.c             | 48 ++++++++++++++++++++++++++++++++++---------
+ drivers/clk/clk.h             | 10 ++++++---
+ drivers/clk/clkdev.c          |  4 ++--
+ drivers/clk/sunxi/clk-sunxi.c | 22 ++++++++++++++++----
+ 5 files changed, 68 insertions(+), 21 deletions(-)
 
-I would drop the reg where you only have 1 node for ports or endpoints.
-
-> +			remote-endpoint = <&tcon0_out_tve0>;
-> +		};
-> +	};
-> +};
-> +
-> +tcon0: lcd-controller@01c0c000 {
-> +	compatible = "allwinner,sun4i-a10-tcon";
-> +	reg = <0x01c0c000 0x1000>;
-> +	interrupts = <44>;
-> +	clocks = <&ahb_gates 36>,
-> +		 <&tcon_ch0_clk>,
-> +		 <&tcon_ch1_clk>;
-> +	clock-names = "ahb",
-> +		      "tcon-ch0",
-> +		      "tcon-ch1";
-> +	clock-output-names = "tcon-pixel-clock";
-> +	allwinner,panel = <&panel>;
-> +
-> +	ports {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		tcon0_in: port@0 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <0>;
-> +
-> +			tcon0_in_be0: endpoint@0 {
-> +				reg = <0>;
-> +				remote-endpoint = <&be0_out_tcon0>;
-> +			};
-> +		};
-> +
-> +		tcon0_out: port@1 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <1>;
-> +
-> +			tcon0_out_tve0: endpoint@0 {
-> +				reg = <0>;
-> +				remote-endpoint = <&tve0_in_tcon0>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +fe0: display-frontend@01e00000 {
-> +	compatible = "allwinner,sun5i-a13-display-frontend";
-> +	reg = <0x01e00000 0x20000>;
-> +	interrupts = <47>;
-> +	clocks = <&ahb_gates 46>, <&de_fe_clk>,
-> +		 <&dram_gates 25>;
-> +	clock-names = "ahb", "mod",
-> +		      "ram";
-> +	resets = <&de_fe_clk>;
-> +
-> +	ports {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		fe0_out: port@0 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <0>;
-> +
-> +			fe0_out_be0: endpoint@0 {
-> +				reg = <0>;
-> +				remote-endpoint = <&be0_in_fe0>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +be0: display-backend@01e60000 {
-> +	compatible = "allwinner,sun5i-a13-display-backend";
-> +	reg = <0x01e60000 0x10000>;
-> +	clocks = <&ahb_gates 44>, <&de_be_clk>,
-> +		 <&dram_gates 26>;
-> +	clock-names = "ahb", "mod",
-> +		      "ram";
-> +	resets = <&de_be_clk>;
-> +
-> +	ports {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		be0_in: port@0 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <0>;
-> +
-> +			be0_in_fe0: endpoint@0 {
-> +				reg = <0>;
-> +				remote-endpoint = <&fe0_out_be0>;
-> +			};
-> +		};
-> +
-> +		be0_out: port@1 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <1>;
-> +
-> +			be0_out_tcon0: endpoint@0 {
-> +				reg = <0>;
-> +				remote-endpoint = <&tcon0_in_be0>;
-> +		};
-> +	};
-> +};
-> +
-> +display-engine {
-> +	compatible = "allwinner,sun5i-a13-display-engine";
-> +	pipelines = <&be0>;
-> +};
-> -- 
-> 2.6.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+2.7.0
