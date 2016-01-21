@@ -1,48 +1,58 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Lars-Peter Clausen <lars@metafoo.de>
-Subject: [PATCH] clk: axi-clkgen: Remove sometimes impossible check
-Date: Fri, 29 Jan 2016 17:13:28 -0800
-Message-Id: <1454116408-28866-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular2.263xmail.com ([211.157.152.4]:39565 "EHLO
+	regular2.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751987AbcAUBsV (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2016 20:48:21 -0500
+Received: from regular1.263xmail.com (unknown [192.168.165.185])
+	by regular2.263xmail.com (Postfix) with ESMTP id A48E118EA35
+	for <linux-clk@vger.kernel.org>; Thu, 21 Jan 2016 09:48:18 +0800 (CST)
+Message-ID: <56A0A899.9080908@rock-chips.com>
+Date: Thu, 21 Jan 2016 01:44:57 -0800
+From: zhangqing <zhangqing@rock-chips.com>
+MIME-Version: 1.0
+To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com,
+	sboyd@codeaurora.org
+CC: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	xf@rock-chips.com
+Subject: Re: [PATCH 1/4] clk: rockchip: fix cpuclk mux bit of big cpu-cluster
+References: <1453326560-20475-1-git-send-email-heiko@sntech.de>
+In-Reply-To: <1453326560-20475-1-git-send-email-heiko@sntech.de>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The size of unsigned long on 64-bit architectures is equal to the
-size of u64, so this check is impossible there. This throws off
-static checkers:
+hi:
 
-drivers/clk/clk-axi-clkgen.c:331 axi_clkgen_recalc_rate() warn:
-impossible condition '(tmp > (~0)) => (0-u64max > u64max)'
+On 01/20/2016 01:49 PM, Heiko Stuebner wrote:
+> Both clusters have their mux bit in bit 7 of their respective register.
+> For whatever reason the big cluster currently lists bit 15 which is
+> definitly wrong.
+>
+> Fixes: 3536c97a52db ("clk: rockchip: add rk3368 clock controller")
+> Reported-by: Zhang Qing <zhangqing@rock-chips.com>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 
-Let's change this code to use min_t() instead so that we
-get the same effect on architectures where sizeof(unsigned long)
-doesn't equal sizeof(u64).
+Reviewed-by: zhangqing <zhangqing@rock-chips.com>
 
-Cc: Lars-Peter Clausen <lars@metafoo.de>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk-axi-clkgen.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+> ---
+> I plan to include them into my clk-fixes branch, so posted for reference
+> and possible objections ;-)
+>
+>   drivers/clk/rockchip/clk-rk3368.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
+> index 21f3ea9..f6667b8 100644
+> --- a/drivers/clk/rockchip/clk-rk3368.c
+> +++ b/drivers/clk/rockchip/clk-rk3368.c
+> @@ -165,7 +165,7 @@ static const struct rockchip_cpuclk_reg_data rk3368_cpuclkb_data = {
+>   	.core_reg = RK3368_CLKSEL_CON(0),
+>   	.div_core_shift = 0,
+>   	.div_core_mask = 0x1f,
+> -	.mux_core_shift = 15,
+> +	.mux_core_shift = 7,
+>   };
+>
+>   static const struct rockchip_cpuclk_reg_data rk3368_cpuclkl_data = {
+>
 
-diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
-index 9a0744c9947c..3294db3b4e4e 100644
---- a/drivers/clk/clk-axi-clkgen.c
-+++ b/drivers/clk/clk-axi-clkgen.c
-@@ -328,10 +328,7 @@ static unsigned long axi_clkgen_recalc_rate(struct clk_hw *clk_hw,
- 	tmp = (unsigned long long)(parent_rate / d) * m;
- 	do_div(tmp, dout);
- 
--	if (tmp > ULONG_MAX)
--		return ULONG_MAX;
--
--	return tmp;
-+	return min_t(unsigned long long, tmp, ULONG_MAX);
- }
- 
- static int axi_clkgen_enable(struct clk_hw *clk_hw)
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
