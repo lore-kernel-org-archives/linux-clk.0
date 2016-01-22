@@ -1,136 +1,149 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from conssluserg004.nifty.com ([202.248.44.42]:29920 "EHLO
-	conssluserg004-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752018AbcAGLd4 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jan 2016 06:33:56 -0500
-Received: from mail-yk0-f177.google.com (mail-yk0-f177.google.com [209.85.160.177]) (authenticated)
-	by conssluserg004-v.nifty.com with ESMTP id u07BXpR9031458
-	for <linux-clk@vger.kernel.org>; Thu, 7 Jan 2016 20:33:52 +0900
-Received: by mail-yk0-f177.google.com with SMTP id v14so243111124ykd.3
-        for <linux-clk@vger.kernel.org>; Thu, 07 Jan 2016 03:33:52 -0800 (PST)
+Return-Path: <tomeu.vizoso@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <568E419E.4080404@mleia.com>
-References: <1452136568-478-1-git-send-email-vz@mleia.com>
-	<1452136568-478-4-git-send-email-vz@mleia.com>
-	<CAK7LNASpWdpmK4xKkOV1cbKxFckKV7bZHA=fNVDYhR2e4VZzYA@mail.gmail.com>
-	<568E419E.4080404@mleia.com>
-Date: Thu, 7 Jan 2016 20:33:51 +0900
-Message-ID: <CAK7LNATiHJa8XwigMj6dWFauUC9TV-_Ypw-i_agn5hCD_6Yb4g@mail.gmail.com>
-Subject: Re: [PATCH 3/3] clk: remove redundant clock parents lookup table allocations
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Sender: tomeu.vizoso@gmail.com
+In-Reply-To: <56A1ED53.60309@huawei.com>
+References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
+ <1452219400-32478-2-git-send-email-xuejiancheng@huawei.com>
+ <20160112221211.GB22188@codeaurora.org> <5695BE65.3070409@huawei.com>
+ <20160113185707.1168.85601@quark.deferred.io> <56979F9F.5080201@huawei.com>
+ <5698A650.5010600@huawei.com> <CAL_JsqJPcPgS=cKNqv9j5Ch3ZHbUmci1LRedBWV1gV=5kCz68Q@mail.gmail.com>
+ <CAAObsKBbUaGi-ZWg+Y-OCq=xVOgBJroMTVsqP2JpVHPQWcM4=w@mail.gmail.com> <56A1ED53.60309@huawei.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Date: Fri, 22 Jan 2016 10:55:45 +0100
+Message-ID: <CAAObsKAdd_M_Kjmc=c=MbVB29hDFpxCaE6cjrsyWGOLXz7++1g@mail.gmail.com>
+Subject: Re: [PATCH v5 1/6] clk: hisilicon: add CRG driver for hi3519 soc
+To: xuejiancheng <xuejiancheng@huawei.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>, Kevin Hilman <khilman@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Wei Xu <xuwei5@hisilicon.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>, Zhangfei Gao <zhangfei.gao@linaro.org>,
+	Bintian Wang <bintian.wang@huawei.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, yanhaifeng@hisilicon.com,
+	yanghongwei@hisilicon.com, suwenping@hisilicon.com, ml.yang@hisilicon.com,
+	gaofei@hisilicon.com, zhangzhenxing@hisilicon.com, xuejiancheng@hisilicon.com,
+	Marek Szyprowski <m.szyprowski@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Vladimir,
-
-2016-01-07 19:44 GMT+09:00 Vladimir Zapolskiy <vz@mleia.com>:
-> Hi Masahiro,
+On 22 January 2016 at 09:50, xuejiancheng <xuejiancheng@huawei.com> wrote:
+> On 2016/1/20 14:38, Tomeu Vizoso wrote:
+>> On 19 January 2016 at 19:20, Rob Herring <robh+dt@kernel.org> wrote:
+>>> On Fri, Jan 15, 2016 at 1:57 AM, xuejiancheng <xuejiancheng@huawei.com>=
+ wrote:
+>>>>
+>>>> On 2016/1/14 21:16, xuejiancheng wrote:
+>>>>> Hi Mike,
+>>>>>
+>>>>> On 2016/1/14 2:57, Michael Turquette wrote:
+>>>>>> Quoting xuejiancheng (2016-01-12 19:03:01)
+>>>>>>> Hi Stephen,
+>>>>>>>    Thank you very much for your reply.
+>>>>>>>
+>>>>>>> On 2016/1/13 6:12, Stephen Boyd wrote:
+>>>>>>>> On 01/08, Jiancheng Xue wrote:
+>>>>>>>>> diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilico=
+n/Kconfig
+>>>>>>>>> index e434854..b6baebf 100644
+>>>>>>>>> --- a/drivers/clk/hisilicon/Kconfig
+>>>>>>>>> +++ b/drivers/clk/hisilicon/Kconfig
+>>>>>>>>> @@ -1,3 +1,10 @@
+>>>>>>>>> +config COMMON_CLK_HI3519
+>>>>>>>>> +    tristate "Clock Driver for Hi3519"
+>>>>>>>>
+>>>>>>>> It looks like this has to be bool. Otherwise it needs to be a
+>>>>>>>> platform driver and the hisilicon APIs need to be exported and
+>>>>>>>> lose their __init markings.
+>>>>>>>>
+>>>>>>> Yes,it's a problem. I will fix it in next version. Thank you.
+>>>>>>
+>>>>>> The best solution would be to make this clock driver a real platform
+>>>>>> driver.
+>>>>>>
+>>>>> Now the work clock of the clocksource timer-sp804 is provided by this=
+ driver. So
+>>>>> it need to be registered early by CLK_OF_DECLARE. If the timer clock =
+is treated
+>>>>> as a fixed-clock provider, this driver can be implemented as a platfo=
+rm driver.
+>>>>> Then the crg device must be registered before other clock consumer de=
+vices.Accordingly
+>>>>> the crg device node must be written above all other clock consumer de=
+vices node in dts files.
+>>>>> I think it is also a dependence.
+>>>>>
+>>>>> Can you help me understand why it is better to make this driver a pla=
+tform driver?
+>>>>> Thank you very much!
+>>>>>
+>>>> arch_initcall(customize_machine)
+>>>> -->of_platform_populate
+>>>>    -->of_platform_bus_create
+>>>>      -->of_amba_device_create
+>>>>         -->amba_device_add
+>>>>            -->amba_get_enable_pclk
+>>>> The call sequence above shows that the clock of the amba device must b=
+e registered before
+>>>> amba_device_add. The clock of "arm,pl011" uart is registered in the pr=
+obe function of the
+>>>> platform driver "hi3519-crg". So the platform device "hi3519-crg" must=
+ be created before
+>>>> the amba device "arm,pl011" uart.
+>>>
+>>> It is a problem, but Tomeu had a fix to support deferred probes here.
+>>> That was part of the on-demand probing series, but maybe it needs to
+>>> be applied separately if we are moving clock drivers to platform
+>>> drivers.
+>>
+>> Hi,
+>>
+>> Marek Szyprowski has kindly taken those two patches as part of a series =
+of him:
+>>
+>> http://lkml.kernel.org/g/1450868368-5650-1-git-send-email-m.szyprowski@s=
+amsung.com
+>>
+>> I think it would be great if you could test them and report.
+>>
+> Hi Tomeu,
 >
-> On 07.01.2016 11:00, Masahiro Yamada wrote:
->> Hi Vladimir,
->>
->>
->> 2016-01-07 12:16 GMT+09:00 Vladimir Zapolskiy <vz@mleia.com>:
->>> Since clock parents lookup table for clocks with multiple parent
->>> clocks is always allocated during clock registration, remove similar
->>> allocations from __clk_init_parent() and clk_fetch_parent_index().
->>>
->>> The change also corrects a pointer type of a single lookup table
->>> entry on calculation of the lookup table size.
->>>
->>> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
->>> ---
->>>  drivers/clk/clk.c | 20 +++-----------------
->>>  1 file changed, 3 insertions(+), 17 deletions(-)
->>>
->>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->>> index 2fb0dae..f8872f9 100644
->>> --- a/drivers/clk/clk.c
->>> +++ b/drivers/clk/clk.c
->>> @@ -1067,13 +1067,6 @@ static int clk_fetch_parent_index(struct clk_core *core,
->>>  {
->>>         int i;
->>>
->>> -       if (!core->parents) {
->>> -               core->parents = kcalloc(core->num_parents,
->>> -                                       sizeof(struct clk *), GFP_KERNEL);
->>> -               if (!core->parents)
->>> -                       return -ENOMEM;
->>> -       }
->>> -
->>>         /*
->>>          * find index of new parent clock using cached parent ptrs,
->>>          * or if not yet cached, use string name comparison and cache
->>> @@ -1711,18 +1704,11 @@ static struct clk_core *__clk_init_parent(struct clk_core *core)
->>>         }
->>>
->>>         /*
->>> -        * Do our best to cache parent clocks in core->parents.  This prevents
->>> -        * unnecessary and expensive lookups.  We don't set core->parent here;
->>> -        * that is done by the calling function.
->>> +        * We don't set core->parent here; that is done by the calling function.
->>>          */
->>>
->>>         index = core->ops->get_parent(core->hw);
->>>
->>> -       if (!core->parents)
->>> -               core->parents =
->>> -                       kcalloc(core->num_parents, sizeof(struct clk *),
->>> -                                       GFP_KERNEL);
->>> -
->>>         ret = clk_core_get_parent_by_index(core, index);
->>>
->>>  out:
->>> @@ -2374,8 +2360,8 @@ static int __clk_init(struct device *dev, struct clk *clk_user)
->>>          * look-ups of clk's possible parents.
->>>          */
->>>         if (core->num_parents > 1) {
->>> -               core->parents = kcalloc(core->num_parents, sizeof(struct clk *),
->>> -                                       GFP_KERNEL);
->>> +               core->parents = kcalloc(core->num_parents,
->>> +                                       sizeof(struct clk_core *), GFP_KERNEL);
->>>                 if (!core->parents) {
->>>                         ret = -ENOMEM;
->>>                         goto out;
->>
->>
->> You are doing the similar thing as mine.
->>
->> See
->> https://patchwork.kernel.org/patch/7925571/
+> I have applied the patch "https://lkml.org/lkml/2015/12/23/105" and teste=
+d on my hi3519-demb board.
+> It works even if the apb_pclk is registered later than the amba-pl011 dev=
+ice being registered.
 >
-> Ok, I was not aware of your work, unfortunately.
+> But I think it is a problem if amba_read_periphid() returns -ENOMEM or -E=
+NODEV when apb_pclk is available.
+> In this condition=EF=BC=8Camba_match() returns a non zero value which mea=
+ns the driver and device matches
+> and the amba_probe() will be called, but amba_device->periphid remains as=
+ 0. Then amba_lookup() called in
+> amba_probe() will return a null id pointer.The null pointer will be passe=
+d to amba_driver->probe() and
+> this may cause a segment fault.
+
+But, have you applied the other patches in the series? There's one
+that should handle the other error codes.
+
+In any case, any feedback you have on that series should be given in
+the other thread.
+
+Regards,
+
+Tomeu
+
+> Regards,
 >
+> Jiancheng
+>
+>> Thanks,
 >>
->> This series gives a big conflict with my clean-up series,
->> which Michael said he would apply after v4.5-rc1.
+>> Tomeu
 >>
->> See
->> http://www.serverphorums.com/read.php?12,1376630
->>
+>> .
 >>
 >
-> No problem, of course your work goes first.
->
-> Obviously I have to review your changes more carefully, but do you
-> have something similar to my 1/3? If no, then it is a regression.
-
-
-No.
-
-I solved the problem in a different way.
-https://patchwork.kernel.org/patch/7925571/
-
-In my way, core->parents is always allocated.
-1/3 is not needed.
-
-If I am wrong, please point out.
-
-
--- 
-Best Regards
-Masahiro Yamada
