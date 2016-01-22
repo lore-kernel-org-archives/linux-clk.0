@@ -1,84 +1,53 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-CC: Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, <srv_heupstream@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, James Liao <jamesjj.liao@mediatek.com>, Shunli
- Wang <shunli.wang@mediatek.com>
-Subject: [PATCH v2 1/6] clk: mediatek: Refine the makefile to support multiple clock drivers
-Date: Tue, 5 Jan 2016 14:30:17 +0800
-Message-ID: <1451975422-31174-2-git-send-email-jamesjj.liao@mediatek.com>
-In-Reply-To: <1451975422-31174-1-git-send-email-jamesjj.liao@mediatek.com>
-References: <1451975422-31174-1-git-send-email-jamesjj.liao@mediatek.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jamesjj.liao@mediatek.com
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1453456949-9840-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1453456949-9840-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Date: Fri, 22 Jan 2016 11:51:52 +0100
+Message-ID: <CAMuHMdWi3ZCvo9CVdn-7Tboxkwv9F_x+1LrJ1ozGQ_gJEM7bgg@mail.gmail.com>
+Subject: Re: [PATCH] clk: shmobile: r8a7795: Add USB3.0 clocks
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a Kconfig to define clock configuration for each SoC, and
-modify the Makefile to build drivers that only selected in config.
+Hi Shimoda-san,
 
-Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
----
- drivers/clk/Kconfig           |  1 +
- drivers/clk/mediatek/Kconfig  | 23 +++++++++++++++++++++++
- drivers/clk/mediatek/Makefile |  6 +++---
- 3 files changed, 27 insertions(+), 3 deletions(-)
- create mode 100644 drivers/clk/mediatek/Kconfig
+On Fri, Jan 22, 2016 at 11:02 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  This patch is based on the latest clk.git / clk-next branch.
+>  (commit id = 3da834e3e5a4a5d26882955298b55a9ed37a00bc)
+>
+>  drivers/clk/shmobile/r8a7795-cpg-mssr.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/clk/shmobile/r8a7795-cpg-mssr.c b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
+> index 13e9947..fc260b3 100644
+> --- a/drivers/clk/shmobile/r8a7795-cpg-mssr.c
+> +++ b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
+> @@ -122,6 +122,8 @@ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
+>         DEF_MOD("scif2",                 310,   R8A7795_CLK_S3D4),
+>         DEF_MOD("pcie1",                 318,   R8A7795_CLK_S3D1),
+>         DEF_MOD("pcie0",                 319,   R8A7795_CLK_S3D1),
+> +       DEF_MOD("usb3-if1",              327,   R8A7795_CLK_S3D1),
+> +       DEF_MOD("usb3-if0",              328,   R8A7795_CLK_S3D1),
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index c3e3a02..b7a37dc 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -198,3 +198,4 @@ source "drivers/clk/mvebu/Kconfig"
- 
- source "drivers/clk/samsung/Kconfig"
- source "drivers/clk/tegra/Kconfig"
-+source "drivers/clk/mediatek/Kconfig"
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-new file mode 100644
-index 0000000..dc224e6
---- /dev/null
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -0,0 +1,23 @@
-+#
-+# MediaTek SoC drivers
-+#
-+config COMMON_CLK_MEDIATEK
-+	bool
-+	---help---
-+	  Mediatek SoCs' clock support.
-+
-+config COMMON_CLK_MT8135
-+	bool "Clock driver for Mediatek MT8135"
-+	depends on COMMON_CLK
-+	select COMMON_CLK_MEDIATEK
-+	default ARCH_MEDIATEK
-+	---help---
-+	  This driver supports Mediatek MT8135 clocks.
-+
-+config COMMON_CLK_MT8173
-+	bool "Clock driver for Mediatek MT8173"
-+	depends on COMMON_CLK
-+	select COMMON_CLK_MEDIATEK
-+	default ARCH_MEDIATEK
-+	---help---
-+	  This driver supports Mediatek MT8173 clocks.
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 95fdfac..32e7222 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -1,4 +1,4 @@
--obj-y += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
-+obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
- obj-$(CONFIG_RESET_CONTROLLER) += reset.o
--obj-y += clk-mt8135.o
--obj-y += clk-mt8173.o
-+obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135.o
-+obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173.o
--- 
-1.9.1
+Thank you, looks fine! Note that I couldn't verify the parent clock.
+
+Will queue for next renesas-drivers and v4.6.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
