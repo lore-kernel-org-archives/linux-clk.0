@@ -1,66 +1,52 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 25 Jan 2016 13:45:40 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mark Kuo <mkuo@nvidia.com>
-Subject: Re: [Patch V2 7/9] clk: tegra: pll: Do not disable PLLE when under
- HW control
-Message-ID: <20160125124540.GJ20452@ulmo.nvidia.com>
-References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
- <1452799478-14791-8-git-send-email-rklein@nvidia.com>
+Return-Path: <sebastian@breakpoint.cc>
+Date: Fri, 22 Jan 2016 16:40:35 +0100
+From: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 04/13] clk: at91: make IRQ optional and register them
+ later
+Message-ID: <20160122154034.GA20020@breakpoint.cc>
+References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
+ <1449248628-3486-5-git-send-email-alexandre.belloni@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="pMCBjikF2xGw87uL"
-In-Reply-To: <1452799478-14791-8-git-send-email-rklein@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1449248628-3486-5-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 2015-12-04 18:03:39 [+0100], Alexandre Belloni wrote:
+> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+> index 295b17b9c689..296d20a29c6c 100644
+> --- a/drivers/clk/at91/pmc.c
+> +++ b/drivers/clk/at91/pmc.c
+> @@ -20,6 +20,9 @@
+=E2=80=A6
+> +	pmc->irqdomain =3D irq_domain_add_linear(pdev->dev.of_node, 32,
+> +					       &pmc_irq_ops, pmc);
+> +	if (!pmc->irqdomain)
+> +		return 0;
+> =20
+> -static void __init of_at91sam9n12_pmc_setup(struct device_node *np)
+> -{
+> -	of_at91_pmc_setup(np, &at91sam9n12_caps);
+> -}
+> -CLK_OF_DECLARE(at91sam9n12_clk_pmc, "atmel,at91sam9n12-pmc",
+> -	       of_at91sam9n12_pmc_setup);
+> +	regmap_write(pmc->regmap, AT91_PMC_IDR, 0xffffffff);
+> +	ret =3D request_irq(pmc->virq, pmc_irq_handler,
+> +			  IRQF_SHARED | IRQF_COND_SUSPEND, "pmc", pmc);
 
---pMCBjikF2xGw87uL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+You need IRQF_NOTHREAD here becuase pmc_irq_handler() is demuxing
+interrupts / invoking generic_handle_irq().
+However regmap_read() inside pmc_irq_handler() is taking a sleeping lock
+on -RT so this is not going to fly. So either get rid regmap_read() in
+the handler or use handle_nested_irq() instead.
 
-On Thu, Jan 14, 2016 at 02:24:36PM -0500, Rhyland Klein wrote:
-> From: Mark Kuo <mkuo@nvidia.com>
->=20
-> SW should not disable PLLE if PLLE is already put under HW control.
->=20
-> Signed-off-by: Mark Kuo <mkuo@nvidia.com>
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-pll.c | 22 +++++++++++++++-------
->  1 file changed, 15 insertions(+), 7 deletions(-)
+> +	if (ret)
+> +		return ret;
 
-Applied, thanks.
-
-Thierry
-
---pMCBjikF2xGw87uL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJWphjzAAoJEN0jrNd/PrOhxbcP/1LN+sq5qq7fPFkiF//b5b5n
-p8RiljusJi8fHmWjS5wYUOfg58I1r/67X7f85EL5sLcnyvlvjMN9yI5TRwJgYPuo
-mH1u+JmRrHmubV6jlZtUydNapLKSedojeoTa4TVdDvJZoXm6aSxQjIZQ2cCF4GKJ
-QpzFtRGvTA6RjQyJYSISa3l2rZVqN3Hopt5sPtoeDYFAA0OtGDbUSDAkycz/I3t6
-RhTcUkm2RCz4PTtbNWzkN8xKKHIOJvhvM504L6jHaOjoJ9y2FkoVQHtQGjv5emp2
-sf6faBI+iHfD930LwYW5RJnRYX1OVpUFU4pom4dr8IJsiWkbwkfS/AKLegwYCj37
-SWwXNleIbGwu+gjgvJOZ1Ps2UO6xllG+iOoa8Rpni1fjPAOBN0baSoiwLuttw963
-NwlmFhpqnA3qpm+mdyTLQnrcbVwz097NGV7jzpRFVflQvuaoRu8gb5PMrRTK6YRk
-mHHy3qqLqSAuCkl8Ehxk++WS1IPrP3IYiX1wJ6x5AgUc/j64miS2CzVo38C3D/dd
-3lF8ydNVqTCfAjFHcWb9Aqsu8rgLpqTpMpw5L0GNnzFph/owxisEs4IIpfujGIZ6
-kUYtB9WZm1R5ejP2w//QPAE+zNBKJI3UixzkFgJcqwIWYlcrhnr/3UEiB0m4jKF9
-gRASrwKjczTRpuJ0B35n
-=cNhn
------END PGP SIGNATURE-----
-
---pMCBjikF2xGw87uL--
+Sebastian
