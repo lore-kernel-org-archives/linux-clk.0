@@ -1,75 +1,108 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 25 Jan 2016 13:34:12 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [Patch V2 2/9] clk: tegra210: Remove improper flags for
- lock_enable
-Message-ID: <20160125123412.GE20452@ulmo.nvidia.com>
-References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
- <1452799478-14791-3-git-send-email-rklein@nvidia.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.139]:50597 "EHLO
+	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751408AbcAVHtY (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 22 Jan 2016 02:49:24 -0500
+Message-ID: <56A1DEF4.2070409@rock-chips.com>
+Date: Fri, 22 Jan 2016 15:49:08 +0800
+From: Xing Zheng <zhengxing@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ffoCPvUAPMgSXi6H"
-In-Reply-To: <1452799478-14791-3-git-send-email-rklein@nvidia.com>
+To: Heiko Stuebner <heiko@sntech.de>
+CC: linux-rockchip@lists.infradead.org, keescook@google.com,
+	leozwang@google.com, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: rockchip: rk3036: Add apll as the critical clock
+References: <1453279037-23971-1-git-send-email-zhengxing@rock-chips.com> <7538210.fX6mmzZ75v@phil>
+In-Reply-To: <7538210.fX6mmzZ75v@phil>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Heiko,
 
---ffoCPvUAPMgSXi6H
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2016年01月21日 17:21, Heiko Stuebner wrote:
+> Hi Xing,
+>
+> Am Mittwoch, 20. Januar 2016, 16:37:17 schrieb Xing Zheng:
+>> The apll may be closed if there are some child clock nodes below
+>> it when the device startup. Therefore, the apll should be keep
+>> critical.
+>>
+>> The apll tree like this:
+>>      pll_apll
+>>         apll
+>>            armclk
+>>               pclk_dbg
+>>               aclk_core_pre
+>>            aclk_hvec
+>>            uart_pll_clk
+>>               uart2_src
+>>                  uart2_frac
+>>               uart1_src
+>>                  uart1_frac
+>>               uart0_src
+>>                  uart0_frac
+> can you find out which of those clocks does cause your hang?
+> Because things like the uart-clocks for example should be handled by their
+> driver already, at the time the clk_disable_unused runs(). So I'd really
+> like the critical clock to be the actually needed clock.
+>
+> Thanks
+> Heiko
 
-On Thu, Jan 14, 2016 at 02:24:31PM -0500, Rhyland Klein wrote:
-> Most PLL's don't actually have LOCK_ENABLE bits. However, most PLL's
-> also had that flag set, which meant that the clk code was trying to
-> enable locks, and inadvertantly flipping bits in other fields.
->=20
-> For PLLM, ensure the correct register is used for the misc_register.
-> PLL_MISC0 contains the EN_LCKDET bit which should be used for enabling
-> the lock, and PLLM_MISC1 shouldn't be used at all.
->=20
-> Lastly, remove some of the settings which would point to the EN_LCKDET
-> bits for some PLLs. There is no need to enable the locks, and that is
-> done as part of the set_defaults logic already.
->=20
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 42 ++++++++++++++--------------------=
-------
->  1 file changed, 14 insertions(+), 28 deletions(-)
+It looks like that we call the rockchip_rk3036_pll_disable cause the 
+apll is diabled.
+I think the diabled tracing like this:
+1. All of uart0_frac~uart2_frac are branch_fraction_divider type, they 
+have CLK_SET_RATE_UNGATE flag,
+2. I enable cpufreq configs on the rk3036_defconfig, the default cpu 
+freq is 600MHz durning loader, when startup it is 816MHz with default DTS.
+Therefore, cpu freq will be change rate 600MHz to 816MHz then call 
+clk_change_rate.
+3. With the flag CLK_SET_RATE_UNGATE, triggering call clk_core_disable. 
+In here, it will recursively close all of uart gates, finally, to call 
+the root
+parent diable callback that is rockchip_rk3036_pll_disable.
 
-It seems like this could've been split into several patches given the
-three different changes above. However since they all seem to relate to
-the lock enable behaviour I've gone and applied this as is.
+The disble log:
+[ 1.074186] clk_change_rate -- CLK_SET_RATE_UNGATE name: uart2_frac, 
+parent: uart2_src, core->flags = 0x00000424
+[ 1.105722] clk_gate_endisable -- name: uart2_frac, parent: uart2_src, 
+enable = 0
+[ 1.110125] clk_gate_endisable -- name: uart2_src, parent: uart_pll_clk, 
+enable = 0
+[ 2.604445] rockchip_rk3036_pll_disable -- name: pll_apll, parent: xin24m
 
-Thierry
+Therefore, I am considering uart_pll_clk hang onto gpll, or add it into 
+the critical clock replace using apll...
 
---ffoCPvUAPMgSXi6H
-Content-Type: application/pgp-signature; name="signature.asc"
+If there are some mistake, please correct me. :-)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Thanks.
 
-iQIcBAABCAAGBQJWphZEAAoJEN0jrNd/PrOhppkP/1l+BZDc28KuhziBSZOdb78Z
-XPladFFOulXksTGqP9ian9vVpfdcFL9iAS3s+eVF5wDyJwVcjwEAihs2hJKrjogh
-WUgIGjUksbg3amFoXDc6MZbGfHp/mZUCDd/qU4/Dk5q5iJugMA2KB8RGmgRXR67v
-iSboVwMxEfxf/oAWTBRxNuo/F+9JMqxZ9G8oiBfIiFCocAu+joWzgtfkAgCc8pX4
-BrvgWHwkON8TKswiIpFVoYOUGiQww8wAtnCHyGKHAOUgxCMeU6OIQEHpVMaAcdVa
-9oejrjbG5laQlpZ/g6qTWZDTwdWmzEWQi0JNbHexWlekE5NT7xrnHDAMIPBGlKi5
-zMOabFFv5lRZGc8RYwqY+ugS0SfOvqIs1dzccbC6wxiATRXYGg1X5/MdtVQDnB01
-4NniX48fCOzW3rD8bjyiS3oq0wI8nSo0peyuvvAOEln3prM8EtlKkxFuibY7yksf
-/11Gu8Rya4OkskwrQsTFfICSWoZpjqFT9bzJFKDHF0ujEKJ7pwf+SHXiX0IbUQUt
-rgAwmWzgpuw9ZTohkhSzVycZNNZDrKYSkga1Pb0D5yNk9NkQhD7E99AaW6HOsjPt
-zS5x+g0ixnNKfW/nTwCi/blaWKqT9WMZgviEu8sXyPXwpiMWb68r/Mtw4vHqYiz8
-h7emxlcvWm+VxjsJ92vP
-=a2KY
------END PGP SIGNATURE-----
+>
+>
+>> Signed-off-by: Xing Zheng<zhengxing@rock-chips.com>
+>> ---
+>>
+>>   drivers/clk/rockchip/clk-rk3036.c |    1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/clk/rockchip/clk-rk3036.c
+>> b/drivers/clk/rockchip/clk-rk3036.c index ebce980..483913b 100644
+>> --- a/drivers/clk/rockchip/clk-rk3036.c
+>> +++ b/drivers/clk/rockchip/clk-rk3036.c
+>> @@ -425,6 +425,7 @@ static struct rockchip_clk_branch
+>> rk3036_clk_branches[] __initdata = { };
+>>
+>>   static const char *const rk3036_critical_clocks[] __initconst = {
+>> +	"apll",
+>>   	"aclk_cpu",
+>>   	"aclk_peri",
+>>   	"hclk_peri",
+>
+>
+>
 
---ffoCPvUAPMgSXi6H--
+
