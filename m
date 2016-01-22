@@ -1,78 +1,82 @@
-Return-Path: <LW@karo-electronics.de>
-From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
-To: Anson Huang <b20788@freescale.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Bai Ping <b51503@freescale.com>,
-	Fabio Estevam <fabio.estevam@freescale.com>,
-	Frank Li <Frank.Li@freescale.com>,
-	Fugang Duan <B38611@freescale.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Kumar Gala <galak@codeaurora.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Nicolin Chen <nicoleotsuka@gmail.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Takashi Iwai <tiwai@suse.com>,
-	Timur Tabi <timur@tabi.org>,
-	Xiubo Li <Xiubo.Lee@gmail.com>,
-	alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	=?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
-Subject: [PATCH 2/2] clk: imx: add kpp clock for i.MX6UL
-Date: Tue, 12 Jan 2016 18:29:19 +0100
-Message-Id: <1452619759-14474-3-git-send-email-LW@KARO-electronics.de>
-In-Reply-To: <1452619759-14474-2-git-send-email-LW@KARO-electronics.de>
-References: <1452619759-14474-1-git-send-email-LW@KARO-electronics.de>
- <1452619759-14474-2-git-send-email-LW@KARO-electronics.de>
+Return-Path: <tomeu@tomeuvizoso.net>
+Return-Path: <tomeu@tomeuvizoso.net>
 MIME-Version: 1.0
+In-Reply-To: <CAD=FV=VB93wYigRJ8wa8YL6P+Q+-fRokPiCB-Fo1pC_zAdh2oA@mail.gmail.com>
+References: <1415087559-19444-1-git-send-email-kever.yang@rock-chips.com>
+ <48806799.thBSifdUp8@diego> <54647142.4080800@rock-chips.com>
+ <CAD=FV=Vzec3Qm-kc6zZ4VxSREoZbzVkWbzp-noHYdcEVrLYYSw@mail.gmail.com>
+ <CAAObsKChYN5nmcm5OWnAzNRGDi_QGSoKvN+0FizhjeT-3mmeXQ@mail.gmail.com>
+ <CAD=FV=Wgu=xQ9PcVqfzcedXVU3Rh-HKbBVxHuqgV9OZJEYhYvg@mail.gmail.com>
+ <CAAObsKC1v--mZwkiG-c7P2Bwi2-_txbeqaW4Vd5h-noAVNbhjA@mail.gmail.com> <CAD=FV=VB93wYigRJ8wa8YL6P+Q+-fRokPiCB-Fo1pC_zAdh2oA@mail.gmail.com>
+From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Date: Fri, 22 Jan 2016 15:00:27 +0100
+Message-ID: <CAAObsKCMh3Bk_oNJdLbU2F9b7jrnFZOp2uFR_oPqUoJ3W1gfaQ@mail.gmail.com>
+Subject: Re: [PATCH 0/5] clk: rockchip: add full support for HDMI clock on rk3288
+To: Doug Anderson <dianders@chromium.org>
+Cc: Kever Yang <kever.yang@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	Sonny Rao <sonnyrao@chromium.org>, Addy Ke <addy.ke@rock-chips.com>,
+	Eddie Cai <cf@rock-chips.com>, ZhenFu Fang <fzf@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>,
+	=?UTF-8?B?5aea5pm65oOF?= <yzq@rock-chips.com>,
+	=?UTF-8?B?5oi05YWL6ZyWIChKYWNrKQ==?= <dkl@rock-chips.com>,
+	Tao Huang <huangtao@rock-chips.com>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the necessary clock to use the KPP interface on i.MX6UL.
+On 21 January 2016 at 21:11, Doug Anderson <dianders@chromium.org> wrote:
+> Hi,
+>
+> On Thu, Jan 21, 2016 at 1:03 AM, Tomeu Vizoso <tomeu@tomeuvizoso.net> wrote:
+>> So we have a mechanism for detecting a conflict in the clock
+>> hierarchy, and a mechanism to solve it, but we are missing a way for
+>> userspace to communicate policy regarding which clocks should be given
+>> priority when solving such a conflict?
+>
+> Hrmmm, I guess it could be userspace that makes the decision.  It does
+> seem a little odd to force it to userspace in all cases, though.  For
+> a particular laptop that is designed with a specific panel connected
+> up eDP it seems less than ideal to push this into userspace.  If the
+> kernel could just work in the expected sane way (or at least work that
+> way by default) it would be ideal.
 
-Signed-off-by: Lothar Waßmann <LW@KARO-electronics.de>
----
- drivers/clk/imx/clk-imx6ul.c             | 1 +
- include/dt-bindings/clock/imx6ul-clock.h | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+Ah, I was wrongly assuming that the kernel didn't have enough
+information to make an informed decision in this case, sorry.
 
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index 3e31ec0..1ee28d3 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -365,6 +365,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	/* CCGR5 */
- 	clks[IMX6UL_CLK_ROM]		= imx_clk_gate2("rom",		"ahb",		base + 0x7c,	0);
- 	clks[IMX6UL_CLK_SDMA]		= imx_clk_gate2("sdma",		"ahb",		base + 0x7c,	6);
-+	clks[IMX6UL_CLK_KPP]		= imx_clk_gate2("kpp",		"ipg",		base + 0x7c,	8);
- 	clks[IMX6UL_CLK_WDOG2]		= imx_clk_gate2("wdog2",	"ipg",		base + 0x7c,	10);
- 	clks[IMX6UL_CLK_SPBA]		= imx_clk_gate2("spba",		"ipg",		base + 0x7c,	12);
- 	clks[IMX6UL_CLK_SPDIF]		= imx_clk_gate2_shared("spdif",		"spdif_podf",	base + 0x7c,	14, &share_count_audio);
-diff --git a/include/dt-bindings/clock/imx6ul-clock.h b/include/dt-bindings/clock/imx6ul-clock.h
-index 08ce4a7..fd8aee8 100644
---- a/include/dt-bindings/clock/imx6ul-clock.h
-+++ b/include/dt-bindings/clock/imx6ul-clock.h
-@@ -234,7 +234,8 @@
- #define IMX6UL_CLK_CSI_SEL		221
- #define IMX6UL_CLK_CSI_PODF		222
- #define IMX6UL_CLK_PLL3_120M		223
-+#define IMX6UL_CLK_KPP			224
- 
--#define IMX6UL_CLK_END			224
-+#define IMX6UL_CLK_END			225
- 
- #endif /* __DT_BINDINGS_CLOCK_IMX6UL_H */
--- 
-2.1.4
+Guess the per-user rate limits don't help here because the consumer
+with higher priority could work with frequencies other than the ideal.
+
+And we cannot have a consumer listening for PRE_RATE_CHANGE and
+aborting unwanted changes or rerouting the ancestors of the clocks of
+other consumers because that would be a massive violation of
+separation of concerns.
+
+If we were to rearrange the clock topology from within the CCF, then
+consumers need to have a way to communicate to the core that they are
+more important than other consumers. clk_set_important(clk, true)
+could be enough in this case, but would be insufficient in more
+complex cases where more than two clocks could use the same PLL.
+
+> If the kernel doesn't try to do anything sane by default then you're
+> creating a requirement for everyone's userspace to somehow figure this
+> out.  Do you expect there to be UI here, or that this would be
+> something that would be figured out by the Linux distribution?
+> Certainly exposing UI on something like a laptop with a builtin panel
+> wouldn't make any sense to me, but it might make sense if you had an
+> eval board with different display connectors on it.  If there's no UI,
+> would the Linux distribution need to somehow identify which board we
+> were on and then have a big lookup table about how to configure
+> things?
+
+If we don't actually need input from userspace for this use case, I
+wouldn't go this way right now, because it seems to me like it could
+be a really big timesink for little gain.
+
+Once someone comes with a situation in which feedback from userspace
+is really needed, that person can propose such an interface ;)
+
+Regards,
+
+Tomeu
