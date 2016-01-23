@@ -1,45 +1,93 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:61886 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750732AbcA1WIa (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jan 2016 17:08:30 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Russell King <linux@arm.linux.org.uk>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Linus Walleij <linus.ml.walleij@gmail.com>
-Subject: Re: [PATCH] ARM: Use generic clkdev.h header
-Date: Thu, 28 Jan 2016 23:07:58 +0100
-Message-ID: <7387260.8XnD1ditcY@wuerfel>
-In-Reply-To: <20160128201238.GN12841@codeaurora.org>
-References: <1453932702-6930-1-git-send-email-sboyd@codeaurora.org> <6141409.WI4q6BtOxa@wuerfel> <20160128201238.GN12841@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Received: from mail-lb0-f172.google.com ([209.85.217.172]:35899 "EHLO
+	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755177AbcAWURs (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sat, 23 Jan 2016 15:17:48 -0500
+From: Antony Pavlov <antonynpavlov@gmail.com>
+To: linux-mips@linux-mips.org
+Cc: Antony Pavlov <antonynpavlov@gmail.com>,
+	Alban Bedel <albeu@free.fr>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [RFC v3 04/14] MIPS: dts: qca: ar9132: make extosc-related description shorter
+Date: Sat, 23 Jan 2016 23:17:21 +0300
+Message-Id: <1453580251-2341-5-git-send-email-antonynpavlov@gmail.com>
+In-Reply-To: <1453580251-2341-1-git-send-email-antonynpavlov@gmail.com>
+References: <1453580251-2341-1-git-send-email-antonynpavlov@gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thursday 28 January 2016 12:12:38 Stephen Boyd wrote:
-> From: Stephen Boyd <sboyd@codeaurora.org>
-> Subject: [PATCH] ARM: plat-versatile: Remove unused clock.c file
-> 
-> This file isn't compiled anymore because PLAT_VERSATILE_CLOCK is
-> never selected. Remove the file and the config.
-> 
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->  arch/arm/plat-versatile/Kconfig  |  3 --
->  arch/arm/plat-versatile/Makefile |  1 -
->  arch/arm/plat-versatile/clock.c  | 74 ----------------------------------------
->  3 files changed, 78 deletions(-)
->  delete mode 100644 arch/arm/plat-versatile/clock.c
-> 
+Signed-off-by: Antony Pavlov <antonynpavlov@gmail.com>
+Cc: Alban Bedel <albeu@free.fr>
+Cc: linux-mips@linux-mips.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+---
+ arch/mips/boot/dts/qca/ar9132.dtsi               |  9 ++++++++-
+ arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts | 14 ++++----------
+ 2 files changed, 12 insertions(+), 11 deletions(-)
 
-Looks good, I've added it to my todo list for arm-soc in 4.6.
+diff --git a/arch/mips/boot/dts/qca/ar9132.dtsi b/arch/mips/boot/dts/qca/ar9132.dtsi
+index 4a537ea..cd1602f 100644
+--- a/arch/mips/boot/dts/qca/ar9132.dtsi
++++ b/arch/mips/boot/dts/qca/ar9132.dtsi
+@@ -28,6 +28,13 @@
+ 					<&ddr_ctrl 0>, <&ddr_ctrl 1>;
+ 	};
+ 
++	extosc: oscillator {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++
++		/* The board must provide the extosc clock frequency */
++	};
++
+ 	ahb {
+ 		compatible = "simple-bus";
+ 		ranges;
+@@ -89,8 +96,8 @@
+ 						"qca,ar9130-pll";
+ 				reg = <0x18050000 0x20>;
+ 
++				clocks = <&extosc>;
+ 				clock-names = "ref";
+-				/* The board must provides the ref clock */
+ 
+ 				#clock-cells = <1>;
+ 				clock-output-names = "cpu", "ddr", "ahb";
+diff --git a/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts b/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
+index 003015a..53057ca 100644
+--- a/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
++++ b/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
+@@ -18,21 +18,11 @@
+ 		reg = <0x0 0x2000000>;
+ 	};
+ 
+-	extosc: oscillator {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <40000000>;
+-	};
+-
+ 	ahb {
+ 		apb {
+ 			uart@18020000 {
+ 				status = "okay";
+ 			};
+-
+-			pll-controller@18050000 {
+-				clocks = <&extosc>;
+-			};
+ 		};
+ 
+ 		spi@1f000000 {
+@@ -110,3 +100,7 @@
+ 		};
+ 	};
+ };
++
++&extosc {
++	clock-frequency = <40000000>;
++};
+-- 
+2.6.2
 
-I think Linus Walleij has some related work pending, so I'll 
-let him Ack this patch or pick it up in his tree if he prefers.
-
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-
-	Arnd
