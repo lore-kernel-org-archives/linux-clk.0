@@ -1,89 +1,83 @@
-Return-Path: <kernel@martin.sperl.org>
-Content-Type: text/plain; charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2104\))
-Subject: Re: [PATCH 2/5] clk: bcm2835: enable management of PCM clock
-From: Martin Sperl <kernel@martin.sperl.org>
-In-Reply-To: <4412078.STjb1rKkbV@wuerfel>
-Date: Mon, 11 Jan 2016 14:53:36 +0100
-Cc: Mark Brown <broonie@kernel.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- Stephen Warren <swarren@wwwdotorg.org>,
- Lee Jones <lee@kernel.org>,
- Eric Anholt <eric@anholt.net>,
- Russell King <linux@arm.linux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>,
- Remi Pommarel <repk@triplefau.lt>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- linux-rpi-kernel@lists.infradead.org,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- linux-clk <linux-clk@vger.kernel.org>,
- ALSA Development Mailing List <alsa-devel@alsa-project.org>,
- Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>,
- Matthias Reichl <hias@horus.com>,
- lFlorian Meier <florian.meier@koalo.de>
-Message-Id: <A156F37A-76CF-4ECF-8C85-162A71877EC5@martin.sperl.org>
-References: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org> <20160110115858.GV6588@sirena.org.uk> <39E8C95F-C7DC-46C3-B29A-93A865485942@martin.sperl.org> <4412078.STjb1rKkbV@wuerfel>
-To: Arnd Bergmann <arnd@arndb.de>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Heiko Stuebner <heiko@sntech.de>,  sboyd@codeaurora.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1578308.XWWZ6XYns5@phil>
+Cc: linux-clk@vger.kernel.org,  linux-rockchip@lists.infradead.org
+References: <1578308.XWWZ6XYns5@phil>
+Message-ID: <20160123000043.19367.6646@quark.deferred.io>
+Subject: Re: [GIT PULL] clk fixes for 4.5
+Date: Fri, 22 Jan 2016 16:00:43 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
+Quoting Heiko Stuebner (2016-01-17 11:07:01)
+> Hi Mike, Stephen,
+> =
 
-> On 11.01.2016, at 14:38, Arnd Bergmann <arnd@arndb.de> wrote:
->=20
-> On Sunday 10 January 2016 13:17:17 Martin Sperl wrote:
->>=20
->> What you propose is a major change to the clock framework, so I would
->> hope that Eric (the original author of this clock-driver) would =
-address
->> it.
->>=20
->> Maybe someone has a better idea for a pattern to use to achieve=20
->> the required while maintaining =E2=80=9Csynchronization=E2=80=9D =
-between defines
->> inside the dt-binding and the driver.
->=20
-> It's funny to look at the register list:
->=20
-> #define CM_VPUCTL               0x008
-> #define CM_VPUDIV               0x00c
-> #define CM_SYSCTL               0x010
-> #define CM_SYSDIV               0x014
-> #define CM_PERIACTL             0x018
-> #define CM_PERIADIV             0x01c
-> #define CM_PERIICTL             0x020
-> #define CM_PERIIDIV             0x024
-> #define CM_H264CTL              0x028
-> #define CM_H264DIV              0x02c
->=20
-> This one seems completely regular, there is always a pair of CTL and =
-DIV
-> registers, so I would have guessed that we could just take the index
-> of that to completely avoid the need for the header file and just have
-> a lookup table of each index.
->=20
-> I can see two possible ways forward:
->=20
-> a) deprecate the existing binding and write a new simpler driver to
->   replace it with one that does not need the header. We probably need
->   to keep both drivers around indefinitely though to deal with people
->   that have their own dtb files, so this is a bit awkward.
-I was thinking about this as well, but am concerned about the =
-dt-changes.
+> based on the clk-for-linus-4.5 tag that got merged into mainline
+> some asorted fixes for Rockchip clocks.
+> =
 
-Also initialization order may be an issue, so I have avoided that.
+> So, please pull
 
-> b) look at all the holes in the table and define new numbers for them
->   now, then remove the count as the driver can simply hardcode the
->   maximum number as it knows it will never change.
-There are clocks for most of them - See my patch I sent some time ago.
+Pulled.
 
-Right now I have got a working version with the following patches:
-817176d clk: bcm2835: add missing clocks
-8f74701 clk: bcm2835: enable management of PCM clock
-62a7d94 clk: bcm2835: move to a different initialization scheme.
+Regards,
+Mike
 
-There is one more thing that I would like to do before submitting those
-as a patch-set: enable the fractual divider, because right now
-we calculate the fractual divider value correctly, but we do not set
-the flag to enable it, so we are actually running too fast most
-of the times...
+> =
+
+> =
+
+> Thanks
+> Heiko
+> =
+
+> The following changes since commit 3da834e3e5a4a5d26882955298b55a9ed37a00=
+bc:
+> =
+
+>   clk: remove duplicated COMMON_CLK_NXP record from clk/Kconfig (2016-01-=
+13 18:09:52 -0800)
+> =
+
+> are available in the git repository at:
+> =
+
+>   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git =
+tags/v4.5-rockchip-clkfixes1
+> =
+
+> for you to fetch changes up to 8931f8e02979e4180566907019d432527c80abf7:
+> =
+
+>   clk: rockchip: rk3368: fix some clock gates (2016-01-16 16:01:21 +0100)
+> =
+
+> ----------------------------------------------------------------
+> Fixes for wrong register offsets in both rk3036 and rk3368.
+> Also rename the external input for the emac on rk3036, which
+> should still be ok to do, as that binding was only introduced
+> during this merge-window.
+> =
+
+> ----------------------------------------------------------------
+> Jianqun xu (1):
+>       clk: rockchip: rk3368: fix some clock gates
+> =
+
+> Xing Zheng (4):
+>       clk: rockchip: rk3036: fix the FLAGs for clock mux
+>       clk: rockchip: rk3036: fix uarts clock error
+>       clk: rockchip: rk3036: fix the div offset for emac clock
+>       clk: rockchip: rk3036: rename emac ext source clock
+> =
+
+>  .../bindings/clock/rockchip,rk3036-cru.txt         |  2 +-
+>  drivers/clk/rockchip/clk-rk3036.c                  | 26 +++++++++++-----=
+------
+>  drivers/clk/rockchip/clk-rk3368.c                  | 26 +++++++++++-----=
+------
+>  3 files changed, 27 insertions(+), 27 deletions(-)
+>=20
