@@ -1,87 +1,80 @@
-Return-Path: <vz@mleia.com>
-From: Vladimir Zapolskiy <vz@mleia.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Subject: [PATCH 2/3] clk: simplify array allocation of clock parents for lookup
-Date: Thu,  7 Jan 2016 05:16:07 +0200
-Message-Id: <1452136568-478-3-git-send-email-vz@mleia.com>
-In-Reply-To: <1452136568-478-1-git-send-email-vz@mleia.com>
-References: <1452136568-478-1-git-send-email-vz@mleia.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lb0-f182.google.com ([209.85.217.182]:33658 "EHLO
+	mail-lb0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754934AbcAWURr (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sat, 23 Jan 2016 15:17:47 -0500
+From: Antony Pavlov <antonynpavlov@gmail.com>
+To: linux-mips@linux-mips.org
+Cc: Antony Pavlov <antonynpavlov@gmail.com>,
+	Alban Bedel <albeu@free.fr>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [RFC v3 03/14] MIPS: dts: qca: ar9132: use dt-bindings/clock/ath79-clk.h macros
+Date: Sat, 23 Jan 2016 23:17:20 +0300
+Message-Id: <1453580251-2341-4-git-send-email-antonynpavlov@gmail.com>
+In-Reply-To: <1453580251-2341-1-git-send-email-antonynpavlov@gmail.com>
+References: <1453580251-2341-1-git-send-email-antonynpavlov@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The change intends to centralize allocation of clock's clk_core
-parents array on clock registration, originally is done from multiple
-places:
-* __clk_init()
-* __clk_init_parent()
-* clk_fetch_parent_index()
+The old ar9132 clk implementation (see arch/mips/ath79/clock.c)
+have had only 3 devicetree clks (cpu, ddr, ahb). Two additional
+clocks (wdt and uart) have realized as aliases for ahb clock.
+In the old ar9132 clk implementation the wdt and uart clocks
+were inaccessible via devicetree so index "2" used for reference
+to ahb clock instead, e.g.
 
-The original approach historically was needed, but at the moment
-all assumptions supporting it are wrong:
+    clocks = <&pll 2>;
 
-1) GFP_KERNEL heap is available at the time of a clock registration,
-   for example it is used to dynamically allocate struct clk_core,
-   clock name and clock parent names, if allocation fails, return
-   -ENOMEM as usual instead of repeating attempts to allocate the
-   array in future,
+In the new ar9132 clk implementation (see drivers/clk/clk-ath79.c)
+the wdt and uart clks are accessible via devicetree
+so appropriate ATH79_CLK_WDT and ATH79_CLK_UART are used in ar9132.dtsi.
 
-2) due to the layering scheme clk_core parents can not be defined
-   statically by the drivers, instead the drivers provide string
-   arrays of clock parent names and clock parents for a lookup array
-   are always obtained from that data.
-
-To ensure that there is no need to check for allocated status of the
-parent lookup table and/or allocate the table from other places within
-the common clock framework, don't register a clock, if there is no
-enough memory.
-
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+Signed-off-by: Antony Pavlov <antonynpavlov@gmail.com>
+Cc: Alban Bedel <albeu@free.fr>
+Cc: linux-mips@linux-mips.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
 ---
- drivers/clk/clk.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+ arch/mips/boot/dts/qca/ar9132.dtsi | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 129ac0a..2fb0dae 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2371,27 +2371,25 @@ static int __clk_init(struct device *dev, struct clk *clk_user)
- 
- 	/*
- 	 * Allocate an array of struct clk *'s to avoid unnecessary string
--	 * look-ups of clk's possible parents.  This can fail for clocks passed
--	 * in to clk_init during early boot; thus any access to core->parents[]
--	 * must always check for a NULL pointer and try to populate it if
--	 * necessary.
--	 *
--	 * If core->parents is not NULL we skip this entire block.  This allows
--	 * for clock drivers to statically initialize core->parents.
-+	 * look-ups of clk's possible parents.
- 	 */
--	if (core->num_parents > 1 && !core->parents) {
-+	if (core->num_parents > 1) {
- 		core->parents = kcalloc(core->num_parents, sizeof(struct clk *),
- 					GFP_KERNEL);
-+		if (!core->parents) {
-+			ret = -ENOMEM;
-+			goto out;
-+		}
+diff --git a/arch/mips/boot/dts/qca/ar9132.dtsi b/arch/mips/boot/dts/qca/ar9132.dtsi
+index 13d0439..4a537ea 100644
+--- a/arch/mips/boot/dts/qca/ar9132.dtsi
++++ b/arch/mips/boot/dts/qca/ar9132.dtsi
+@@ -1,3 +1,5 @@
++#include <dt-bindings/clock/ath79-clk.h>
 +
- 		/*
- 		 * clk_core_lookup returns NULL for parents that have not been
- 		 * clk_init'd; thus any access to clk->parents[] must check
- 		 * for a NULL pointer.  We can always perform lazy lookups for
- 		 * missing parents later on.
- 		 */
--		if (core->parents)
--			for (i = 0; i < core->num_parents; i++)
--				core->parents[i] =
--					clk_core_lookup(core->parent_names[i]);
-+		for (i = 0; i < core->num_parents; i++)
-+			core->parents[i] =
-+				clk_core_lookup(core->parent_names[i]);
- 	}
+ / {
+ 	compatible = "qca,ar9132";
  
- 	core->parent = __clk_init_parent(core);
+@@ -57,7 +59,7 @@
+ 				reg = <0x18020000 0x20>;
+ 				interrupts = <3>;
+ 
+-				clocks = <&pll 2>;
++				clocks = <&pll ATH79_CLK_UART>;
+ 				clock-names = "uart";
+ 
+ 				reg-io-width = <4>;
+@@ -100,7 +102,7 @@
+ 
+ 				interrupts = <4>;
+ 
+-				clocks = <&pll 2>;
++				clocks = <&pll ATH79_CLK_WDT>;
+ 				clock-names = "wdt";
+ 			};
+ 
+@@ -129,7 +131,7 @@
+ 			compatible = "qca,ar9132-spi", "qca,ar7100-spi";
+ 			reg = <0x1f000000 0x10>;
+ 
+-			clocks = <&pll 2>;
++			clocks = <&pll ATH79_CLK_AHB>;
+ 			clock-names = "ahb";
+ 
+ 			status = "disabled";
 -- 
-2.1.4
+2.6.2
+
