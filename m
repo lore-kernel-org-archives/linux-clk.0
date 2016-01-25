@@ -1,91 +1,70 @@
-Return-Path: <festevam@gmail.com>
-Return-Path: <festevam@gmail.com>
-From: Fabio Estevam <festevam@gmail.com>
-To: mturquette@baylibre.com
-Cc: sboyd@codeaurora.org,
-	shawnguo@kernel.org,
-	kernel@pengutronix.de,
-	csotoalonso@gmail.com,
-	linux-clk@vger.kernel.org,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	<stable@vger.kernel.org>
-Subject: [PATCH] clk: clk-imx25: Force LCDC IPG clock to be disabled
-Date: Mon, 11 Jan 2016 15:01:56 -0200
-Message-Id: <1452531716-12149-1-git-send-email-festevam@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 25 Jan 2016 13:40:04 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Bresticker <abrestic@chromium.org>
+Subject: Re: [Patch V2 5/9] clk: tegra: pll: Fix potential
+ sleeping-while-atomic
+Message-ID: <20160125124004.GH20452@ulmo.nvidia.com>
+References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
+ <1452799478-14791-6-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="k+G3HLlWI7eRTl+h"
+In-Reply-To: <1452799478-14791-6-git-send-email-rklein@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Fabio Estevam <fabio.estevam@nxp.com>
 
-Currently when we boot the kernel on a mx25pdk the LCDC controller
-does not show the Linux logo on boot.
+--k+G3HLlWI7eRTl+h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This problem is well explained by Sascha Hauer:
+On Thu, Jan 14, 2016 at 02:24:34PM -0500, Rhyland Klein wrote:
+> From: Andrew Bresticker <abrestic@chromium.org>
+>=20
+> Since the ->enable() callback is called with a spinlock held, we cannot
+> call potentially blocking functions such as clk_get_rate() or
+> clk_get_parent(), so use the unlocked versions instead.
+>=20
+> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+> [rklein: Adapted from ChromeOS patch, removing pllu_enable cleanup as
+> it isn't present upstream]
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-pll.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-"Unfortunately this LCD controller does not have an enable bit. The
-controller starts directly when the clocks are enabled. If the clocks
-are enabled when the controller is not yet programmed with proper
-register values then it just goes into some undefined state. What I
-suspect is that the clocks already were enabled before driver probe,
-presumably by the bootloader, so the controller is already in undefined
-state when entering Linux. Now by dis/enabling the ipg clock you
-effectively reset the controller. Since you have programmed it with
-valid register values in the mean time it starts working after this
-reset."
+Applied, thanks.
 
-So let's guarantee that the clock driver disables LCDC IPG clock at
-the beggining, so that we don't need to rely on the state the
-bootloader left this clock.
+Thierry
 
-With this change the Linux logo can be seen on boot on a mx25pdk.
+--k+G3HLlWI7eRTl+h
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Cc: <stable@vger.kernel.org>
-Suggested-by: Sascha Hauer <s.hauer@pengutronix.de>
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
----
- drivers/clk/imx/clk-imx25.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-diff --git a/drivers/clk/imx/clk-imx25.c b/drivers/clk/imx/clk-imx25.c
-index c4c141c..f8619bb 100644
---- a/drivers/clk/imx/clk-imx25.c
-+++ b/drivers/clk/imx/clk-imx25.c
-@@ -53,6 +53,8 @@
- 
- #define ccm(x)	(ccm_base + (x))
- 
-+#define LCDC_IPG	BIT(29)
-+
- static struct clk_onecell_data clk_data;
- 
- static const char *cpu_sel_clks[] = { "mpll", "mpll_cpu_3_4", };
-@@ -99,6 +101,7 @@ static struct clk ** const uart_clks[] __initconst = {
- static int __init __mx25_clocks_init(unsigned long osc_rate,
- 				     void __iomem *ccm_base)
- {
-+	unsigned int reg;
- 	BUG_ON(!ccm_base);
- 
- 	clk[dummy] = imx_clk_fixed("dummy", 0);
-@@ -232,6 +235,20 @@ static int __init __mx25_clocks_init(unsigned long osc_rate,
- 
- 	imx_check_clocks(clk, ARRAY_SIZE(clk));
- 
-+	/*
-+	 * The LCDC controller does not have an enable bit. The
-+	 * controller starts directly when the clocks are enabled.
-+	 * If the clocks are enabled when the controller is not yet
-+	 * programmed with proper register values (enabled at the
-+	 * bootloader, for example) then it just goes into some undefined
-+	 * state.
-+	 * To avoid this issue, let's directly access CGCR1 register
-+	 * and disable the LCDC IPG clock.
-+	 */
-+	reg = readl(ccm_base + CCM_CGCR1);
-+	reg &= ~LCDC_IPG;
-+	writel(reg, ccm_base + CCM_CGCR1);
-+
- 	clk_prepare_enable(clk[emi_ahb]);
- 
- 	/* Clock source for gpt must be derived from AHB */
--- 
-1.9.1
+iQIcBAABCAAGBQJWphekAAoJEN0jrNd/PrOhXlsQAJCkU+FneOsQzZZXHPqyVfC8
+WBtoO1Lsnc6AwmzGQbbjS54gku4TptEKrEbxz6h2AXilhmGZIEav9bu6J6hhBkpU
+2npLKPpfQGq1+D4B2uxX9Np/IsqCQtIkraHmawVjy3Zo4ww3tSw3RJg8VeBTK6wZ
+oGblDnXVPXD6oKQJx2hGg8soUTjHFuBR2HTYAWMOrPXDwjbw7P8bWthQo6fsK/e0
+8+8Rs2sXLAQ1VPAV0lw3whTs9w9QqAIn6ioxpIk4pl3U5jenFSm1DcFLNDFDm35o
+W3zwbax1Smt9ypA+4jbtBT3qmJDhMD8gejan9oZI9hWZvB2+SJZh4lEA7w/JS21A
+OES/0eZXAKU5BBKHmUStMdGc7IUsAYKRvIXCCcA2NY7HIjQeFzPdxsw2uX4iiaHX
+c7DwNCBqLxDMccRnlIM9KPNaKmwdVF1mvHo+14OKiYEXFPa3QoW8rbRa3O9azlts
+VYs8z74zbGYnbBxFhm6e66vslAMSLS2MJTrORWej5sFr5m8Mw+bJQrwQJuENayyo
+TmoZ97it1bZkFOtgr73fNPkYhmf0yAn2ROgN49xvMzmfxdG2dQYI97AALdgYrGhI
+2XK6/LQZLkcedj9j8A0/mYIuYT19w16Jo0W5ko4Axa3rwN2KR35dcf3aJ4Dm4o1e
+Q9KiCVHQvbrMBjb2Rd4/
+=IBtp
+-----END PGP SIGNATURE-----
+
+--k+G3HLlWI7eRTl+h--
