@@ -1,39 +1,69 @@
-Return-Path: <lho@apm.com>
-Return-Path: <lho@apm.com>
-From: Loc Ho <lho@apm.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	patches@apm.com,
-	Loc Ho <lho@apm.com>
-Subject: [PATCH v2 3/3] arm64: Update Merlin DT PCP PLL clock node for v2 hardware
-Date: Tue, 19 Jan 2016 19:27:43 -0700
-Message-Id: <1453256863-15092-4-git-send-email-lho@apm.com>
-In-Reply-To: <1453256863-15092-1-git-send-email-lho@apm.com>
-References: <1453256863-15092-1-git-send-email-lho@apm.com>
+Return-Path: <alexandre.belloni@free-electrons.com>
+Date: Mon, 25 Jan 2016 23:28:45 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 04/13] clk: at91: make IRQ optional and register them
+ later
+Message-ID: <20160125222845.GC11740@piout.net>
+References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
+ <1449248628-3486-5-git-send-email-alexandre.belloni@free-electrons.com>
+ <20160122154034.GA20020@breakpoint.cc>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20160122154034.GA20020@breakpoint.cc>
 List-ID: <linux-clk.vger.kernel.org>
 
-Update Merlin DT PCP PLL clock node to reflect compatible
-string change to reflect v2 hardware.
+Hi,
 
-Signed-off-by: Loc Ho <lho@apm.com>
----
- arch/arm64/boot/dts/apm/apm-shadowcat.dtsi |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+On 22/01/2016 at 16:40:35 +0100, Sebastian Andrzej Siewior wrote :
+> On 2015-12-04 18:03:39 [+0100], Alexandre Belloni wrote:
+> > diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+> > index 295b17b9c689..296d20a29c6c 100644
+> > --- a/drivers/clk/at91/pmc.c
+> > +++ b/drivers/clk/at91/pmc.c
+> > @@ -20,6 +20,9 @@
+> …
+> > +	pmc->irqdomain = irq_domain_add_linear(pdev->dev.of_node, 32,
+> > +					       &pmc_irq_ops, pmc);
+> > +	if (!pmc->irqdomain)
+> > +		return 0;
+> >  
+> > -static void __init of_at91sam9n12_pmc_setup(struct device_node *np)
+> > -{
+> > -	of_at91_pmc_setup(np, &at91sam9n12_caps);
+> > -}
+> > -CLK_OF_DECLARE(at91sam9n12_clk_pmc, "atmel,at91sam9n12-pmc",
+> > -	       of_at91sam9n12_pmc_setup);
+> > +	regmap_write(pmc->regmap, AT91_PMC_IDR, 0xffffffff);
+> > +	ret = request_irq(pmc->virq, pmc_irq_handler,
+> > +			  IRQF_SHARED | IRQF_COND_SUSPEND, "pmc", pmc);
+> 
+> You need IRQF_NOTHREAD here becuase pmc_irq_handler() is demuxing
+> interrupts / invoking generic_handle_irq().
+> However regmap_read() inside pmc_irq_handler() is taking a sleeping lock
+> on -RT so this is not going to fly. So either get rid regmap_read() in
+> the handler or use handle_nested_irq() instead.
+> 
 
-diff --git a/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi b/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
-index 5d87a3d..83d293e 100644
---- a/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
-+++ b/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
-@@ -224,7 +224,7 @@
- 			};
- 
- 			socpll: socpll@17000120 {
--				compatible = "apm,xgene-socpll-clock";
-+				compatible = "apm,xgene-socpll-v2-clock";
- 				#clock-cells = <1>;
- 				clocks = <&refclk 0>;
- 				reg = <0x0 0x17000120 0x0 0x1000>;
+So, using handle_nested_irq() is actually quite impractical because it
+has to be called from a threaded irq handler. So we either need to use
+IRQF_ONESHOT which is not possible because the IRQ is shared
+with the PIT (unless we take Thomas' IRQF_COND_ONESHOT patch).
+
+I think we may as well stay simple and remove the whole irq handling and
+only do polling on the status register. As the series is done right now,
+this only has an impact during the clocks prepare(). As in that case it
+would not be sleeping anymore, we can also transform those prepare() in
+enable().
+
+
 -- 
-1.7.1
+Alexandre Belloni, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
