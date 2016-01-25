@@ -1,51 +1,66 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 25 Jan 2016 13:45:40 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Mark Kuo <mkuo@nvidia.com>
+Subject: Re: [Patch V2 7/9] clk: tegra: pll: Do not disable PLLE when under
+ HW control
+Message-ID: <20160125124540.GJ20452@ulmo.nvidia.com>
+References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
+ <1452799478-14791-8-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-To: kernel@martin.sperl.org, "Stephen Boyd" <sboyd@codeaurora.org>,
- "Stephen Warren" <swarren@wwwdotorg.org>, "Lee Jones" <lee@kernel.org>,
- "Eric Anholt" <eric@anholt.net>, "Remi Pommarel" <repk@triplefau.lt>,
- linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1452542157-2387-3-git-send-email-kernel@martin.sperl.org>
-Cc: "Martin Sperl" <kernel@martin.sperl.org>
-References: <1452542157-2387-1-git-send-email-kernel@martin.sperl.org>
- <1452542157-2387-3-git-send-email-kernel@martin.sperl.org>
-Message-ID: <20160113200755.1168.19225@quark.deferred.io>
-Subject: Re: [PATCH V2 2/4] clk: bcm2835: enable fractional and mash support
-Date: Wed, 13 Jan 2016 12:07:55 -0800
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="pMCBjikF2xGw87uL"
+In-Reply-To: <1452799478-14791-8-git-send-email-rklein@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Martin,
 
-Quoting kernel@martin.sperl.org (2016-01-11 11:55:54)
-> @@ -1274,9 +1283,50 @@ static int bcm2835_clock_set_rate(struct clk_hw *h=
-w,
->         struct bcm2835_cprman *cprman =3D clock->cprman;
->         const struct bcm2835_clock_data *data =3D clock->data;
->         u32 div =3D bcm2835_clock_choose_div(hw, rate, parent_rate, false=
-);
-> +       u32 ctl, mash;
-> +       bool enabled;
-> =
+--pMCBjikF2xGw87uL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +       spin_lock(&cprman->regs_lock);
-> +       /* check if divider is identical, then return */
-> +       if (div =3D=3D cprman_read(cprman, data->div_reg))
-> +               goto unlock;
-> +
-> +       /* it is recommended to only set clock registers when disabled */
-> +       ctl =3D cprman_read(cprman, data->ctl_reg);
-> +       enabled =3D ctl & CM_ENABLE;
-> +       if (enabled) {
-> +               /* disable clock */
-> +               cprman_write(cprman, data->ctl_reg, ctl);
+On Thu, Jan 14, 2016 at 02:24:36PM -0500, Rhyland Klein wrote:
+> From: Mark Kuo <mkuo@nvidia.com>
+>=20
+> SW should not disable PLLE if PLLE is already put under HW control.
+>=20
+> Signed-off-by: Mark Kuo <mkuo@nvidia.com>
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-pll.c | 22 +++++++++++++++-------
+>  1 file changed, 15 insertions(+), 7 deletions(-)
 
-This seems unsafe to me. Any IP block consuming this signal will have
-its clock cut without warning!
+Applied, thanks.
 
-If you need to enforce this behavior we provide the CLK_SET_RATE_GATE
-flag to handle it at the framework level.
+Thierry
 
-Regards,
-Mike
+--pMCBjikF2xGw87uL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJWphjzAAoJEN0jrNd/PrOhxbcP/1LN+sq5qq7fPFkiF//b5b5n
+p8RiljusJi8fHmWjS5wYUOfg58I1r/67X7f85EL5sLcnyvlvjMN9yI5TRwJgYPuo
+mH1u+JmRrHmubV6jlZtUydNapLKSedojeoTa4TVdDvJZoXm6aSxQjIZQ2cCF4GKJ
+QpzFtRGvTA6RjQyJYSISa3l2rZVqN3Hopt5sPtoeDYFAA0OtGDbUSDAkycz/I3t6
+RhTcUkm2RCz4PTtbNWzkN8xKKHIOJvhvM504L6jHaOjoJ9y2FkoVQHtQGjv5emp2
+sf6faBI+iHfD930LwYW5RJnRYX1OVpUFU4pom4dr8IJsiWkbwkfS/AKLegwYCj37
+SWwXNleIbGwu+gjgvJOZ1Ps2UO6xllG+iOoa8Rpni1fjPAOBN0baSoiwLuttw963
+NwlmFhpqnA3qpm+mdyTLQnrcbVwz097NGV7jzpRFVflQvuaoRu8gb5PMrRTK6YRk
+mHHy3qqLqSAuCkl8Ehxk++WS1IPrP3IYiX1wJ6x5AgUc/j64miS2CzVo38C3D/dd
+3lF8ydNVqTCfAjFHcWb9Aqsu8rgLpqTpMpw5L0GNnzFph/owxisEs4IIpfujGIZ6
+kUYtB9WZm1R5ejP2w//QPAE+zNBKJI3UixzkFgJcqwIWYlcrhnr/3UEiB0m4jKF9
+gRASrwKjczTRpuJ0B35n
+=cNhn
+-----END PGP SIGNATURE-----
+
+--pMCBjikF2xGw87uL--
