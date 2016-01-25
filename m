@@ -1,46 +1,37 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lb0-f196.google.com ([209.85.217.196]:34684 "EHLO
-	mail-lb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752101AbcA0MYs (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jan 2016 07:24:48 -0500
-From: Alexander Kochetkov <al.kochet@gmail.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Alexander Kochetkov <al.kochet@gmail.com>
-Subject: [PATCH] clk: rockchip: Allow sclk_i2s0 and i2s0_frac to change their parents rate on rk3188
-Date: Wed, 27 Jan 2016 15:24:29 +0300
-Message-Id: <1453897469-2134-1-git-send-email-al.kochet@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Zhang Qing <zhangqing@rock-chips.com>
+Cc: zhengxing@rock-chips.com, xf@rock-chips.com, mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, huangtao@rock-chips.com, zyw@rock-chips.com, jay.xu@rock-chips.com, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/3] clk: rockchip: rk3368: fix some error for rk3368 clk
+Date: Mon, 25 Jan 2016 11:14:28 +0100
+Message-ID: <1616798.0SYvlcg7vJ@diego>
+In-Reply-To: <1453740962-8556-1-git-send-email-zhangqing@rock-chips.com>
+References: <1453740962-8556-1-git-send-email-zhangqing@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Allow sclk_i2s0 and i2s0_frac to change their parents rate as
-that the upstream dividers are purely there to feed sclk_i2s0
+Hi,
 
-Tested on radxarock-lite.
+Am Montag, 25. Januar 2016, 08:55:59 schrieb Zhang Qing:
+> From: zhangqing <zhangqing@rock-chips.com>
+> 
+> modify edp_24m parent select bit.
+> enable CLK_SET_RATE_PARENT flag for spdif_8ch and i2s_2ch.
+> 
+> zhangqing (3):
+>   clk: rockchip: rk3368: fix edp_24m parent
+>   clk: rockchip: rk3368: enable the CLK_SET_RATE_PARENT flag for
+>     spdif_8ch
+>   clk: rockchip: rk3368: enable the CLK_SET_RATE_PARENT flag for i2s_2ch
 
-Signed-off-by: Alexander Kochetkov <al.kochet@gmail.com>
----
- drivers/clk/rockchip/clk-rk3188.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+applied all 3 to my clk branch for 4.6.
 
-diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-index fe728f8..50e3eee 100644
---- a/drivers/clk/rockchip/clk-rk3188.c
-+++ b/drivers/clk/rockchip/clk-rk3188.c
-@@ -691,10 +691,10 @@ static struct rockchip_clk_branch rk3188_clk_branches[] __initdata = {
- 	COMPOSITE_NOMUX(0, "i2s0_pre", "i2s_src", 0,
- 			RK2928_CLKSEL_CON(3), 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(0), 9, GFLAGS),
--	COMPOSITE_FRAC(0, "i2s0_frac", "i2s0_pre", 0,
-+	COMPOSITE_FRAC(0, "i2s0_frac", "i2s0_pre", CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(7), 0,
- 			RK2928_CLKGATE_CON(0), 10, GFLAGS),
--	MUX(SCLK_I2S0, "sclk_i2s0", mux_sclk_i2s0_p, 0,
-+	MUX(SCLK_I2S0, "sclk_i2s0", mux_sclk_i2s0_p, CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(3), 8, 2, MFLAGS),
- 
- 	GATE(0, "hclk_imem0", "hclk_cpu", 0, RK2928_CLKGATE_CON(4), 14, GFLAGS),
--- 
-1.7.9.5
+I've modified patches 2+3 to keep the line-alingment (= move the CLK_SET_PARENT 
+to the line above). In the clock trees I really like to keep the structure 
+identical over all clocks (and thus ignore the 80 column limit in parts) to 
+make reading the large lists easier, as now everything always is in the same 
+place.
 
+
+Heiko
