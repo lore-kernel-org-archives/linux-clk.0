@@ -1,58 +1,43 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH V3 2/6] clk: bcm2835: clamp clock divider to highest integer only
-Date: Thu, 14 Jan 2016 13:45:37 +0000
-Message-Id: <1452779142-20615-3-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1452779142-20615-1-git-send-email-kernel@martin.sperl.org>
-References: <1452779142-20615-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Zhang Qing <zhangqing@rock-chips.com>
+To: heiko@sntech.de, zhengxing@rock-chips.com, xf@rock-chips.com
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	huangtao@rock-chips.com, zyw@rock-chips.com, jay.xu@rock-chips.com,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	zhangqing <zhangqing@rock-chips.com>
+Subject: [PATCH v1 1/3] clk: rockchip: rk3368: fix edp_24m parent
+Date: Mon, 25 Jan 2016 08:56:00 -0800
+Message-Id: <1453740962-8556-2-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1453740962-8556-1-git-send-email-zhangqing@rock-chips.com>
+References: <1453740962-8556-1-git-send-email-zhangqing@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+From: zhangqing <zhangqing@rock-chips.com>
 
-The clock divider calculation right now clamps the
-divider to the highest possible fractional divider.
-So typically (BIT(div_int_bits) - 1) + 4095 / 4096.
+The edp_24m parent select bit define is:
+1'b0:xin24m
+1'b1:1'b0(dummy)
+so adapt the parent sel bit to the currect one.
 
-As the fractional clock divider is alterating between
-(Fosc / div_int) and (Fosc / (div_int + 1))
-the divider will overflow for the (div_int + 1) case.
-As with the "underflow" case we have seen for (div < 2),
-we can assume that the same applies on the upper limit
-as well.
-
-So this patch will instead clamp to the divider to
-(BIT(div_int_bits) - 1)
-
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+Signed-off-by: zhangqing <zhangqing@rock-chips.com>
 ---
- drivers/clk/bcm/clk-bcm2835.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/rockchip/clk-rk3368.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 10e97b7..3d6490f 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1182,9 +1182,9 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
- 	/* divider must be >= 2 */
- 	div = max_t(u32, div, (2 << CM_DIV_FRAC_BITS));
-
--	/* clamp to max divider allowed */
-+	/* clamp to max divider allowed - max is integer divider */
- 	div = min_t(u32, div, GENMASK(data->int_bits + CM_DIV_FRAC_BITS - 1,
--				      CM_DIV_FRAC_BITS - data->frac_bits));
-+				      CM_DIV_FRAC_BITS));
-
- 	return div;
- }
---
-1.7.10.4
+diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
+index be0ede5..4885e6b 100644
+--- a/drivers/clk/rockchip/clk-rk3368.c
++++ b/drivers/clk/rockchip/clk-rk3368.c
+@@ -121,7 +121,7 @@ PNAME(mux_i2s_2ch_p)		= { "i2s_2ch_src", "i2s_2ch_frac",
+ 				    "dummy", "xin12m" };
+ PNAME(mux_spdif_8ch_p)		= { "spdif_8ch_pre", "spdif_8ch_frac",
+ 				    "ext_i2s", "xin12m" };
+-PNAME(mux_edp_24m_p)		= { "dummy", "xin24m" };
++PNAME(mux_edp_24m_p)		= { "xin24m", "dummy" };
+ PNAME(mux_vip_out_p)		= { "vip_src", "xin24m" };
+ PNAME(mux_usbphy480m_p)		= { "usbotg_out", "xin24m" };
+ PNAME(mux_hsic_usbphy480m_p)	= { "usbotg_out", "dummy" };
+-- 
+1.9.1
