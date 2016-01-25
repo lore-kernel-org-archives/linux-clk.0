@@ -1,80 +1,63 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Remi Pommarel <repk@triplefau.lt>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH V4 4/7] clk: bcm2835: enable management of PCM clock
-Date: Fri, 15 Jan 2016 14:21:03 +0000
-Message-Id: <1452867667-2447-5-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org>
-References: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Mon, 25 Jan 2016 10:26:15 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH] clk: sunxi: usb: Sort clk providers by chip family and
+ name
+Message-ID: <20160125092615.GJ7908@lukather>
+References: <1453701300-28241-1-git-send-email-wens@csie.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="wRtZRu2mMGBZ6YQ7"
+In-Reply-To: <1453701300-28241-1-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
 
-Enable the PCM clock in the SOC, which is used by the
-bcm2835-i2s driver.
+--wRtZRu2mMGBZ6YQ7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c       |   13 +++++++++++++
- include/dt-bindings/clock/bcm2835.h |    1 +
- 2 files changed, 14 insertions(+)
+On Mon, Jan 25, 2016 at 01:55:00PM +0800, Chen-Yu Tsai wrote:
+> The latest addition of H3 USB clocks placed them at the bottom. Move it
+> before A80 (sun9i), so they are sorted by SoC family then name.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 567c265..8bc0a76 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -88,6 +88,8 @@
- #define CM_HSMDIV		0x08c
- #define CM_OTPCTL		0x090
- #define CM_OTPDIV		0x094
-+#define CM_PCMCTL		0x098
-+#define CM_PCMDIV		0x09c
- #define CM_PWMCTL		0x0a0
- #define CM_PWMDIV		0x0a4
- #define CM_SMICTL		0x0b0
-@@ -817,6 +819,16 @@ static const struct bcm2835_clock_data bcm2835_clock_pwm_data = {
- 	.frac_bits = 12,
- };
- 
-+static const struct bcm2835_clock_data bcm2835_clock_pcm_data = {
-+	.name = "pcm",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_PCMCTL,
-+	.div_reg = CM_PCMDIV,
-+	.int_bits = 12,
-+	.frac_bits = 12,
-+};
-+
- struct bcm2835_gate_data {
- 	const char *name;
- 	const char *parent;
-@@ -1578,6 +1590,7 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 	[BCM2835_CLOCK_HSM]	= REGISTER_CLK(&bcm2835_clock_hsm_data),
- 	[BCM2835_CLOCK_EMMC]	= REGISTER_CLK(&bcm2835_clock_emmc_data),
- 	[BCM2835_CLOCK_PWM]	= REGISTER_CLK(&bcm2835_clock_pwm_data),
-+	[BCM2835_CLOCK_PCM]	= REGISTER_CLK(&bcm2835_clock_pcm_data),
- 	/* the gates */
- 	[BCM2835_CLOCK_PERI_IMAGE] = REGISTER_GATE(
- 		&bcm2835_clock_peri_image_data),
-diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
-index 87235ac..9a7b4a5 100644
---- a/include/dt-bindings/clock/bcm2835.h
-+++ b/include/dt-bindings/clock/bcm2835.h
-@@ -44,3 +44,4 @@
- #define BCM2835_CLOCK_EMMC		28
- #define BCM2835_CLOCK_PERI_IMAGE	29
- #define BCM2835_CLOCK_PWM		30
-+#define BCM2835_CLOCK_PCM		31
--- 
-1.7.10.4
+Applied, thanks!
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--wRtZRu2mMGBZ6YQ7
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWpeo3AAoJEBx+YmzsjxAgNAoP/0QVEVeVz4GV3Jh3d5hPseDl
+zxZpdFTEhluXn1GCTRsDwEPuZ0w+EPYSoZVrrgd2cWzXB2mZBWgwZylpbzCt5YOY
+WZWglD/KDs/gd2YbhbOc4OPHbD++QvrWN8JziN3cjHmrumgM/VcbXW+/n+le7Kw+
+gGPRZg1Kv7OWmLsXrFB5QjAhFSzxrlgyTd26wnWicxl/R3F4VzlTVCoirfui2q1W
+WI9iWfP0kodaWuaAfJD+EYO6WHancoRC9/sUF31JRjzqe6Uj1VXz2hMhWfbSN7Kk
+H5FfVdPSmEpwD9NAUPM4/WqA2Qfq6fscz8ZmqEBsLk0T0ZttbH0X7zjvUF6O5XEz
+OrSa/3dy/oIwfFNqHGx6tZVlFzKojBrqxVUMkrB76xbsrEwp0LSeb9sy8Blkh8Ge
+iSFCCLij+LNvOOoayE0sgaben8GT0sKfAoYcNPyyeWEvY5z5v+/bOnJ/LfKU3pav
+CaxC4z28ccc2k2iTSGVuQfGfQP2XRsxcjNT326o0E1F8VRGTCDaB8UHcL91x1Xb9
+N0xb9OcrJMBAmsqWJgV8c9FoN8ZBYIlET3RkPyAL/QNcd6OmdGhzD4Q/ndJ3Teyl
+admbWtP2cY58SNQzSPm3Ore5mmT+SXn5C7ALF9HQX4YJGirQZtJj6evJCQx4aEJ1
+Q9l82n9jvncm13eXvcQt
+=/abF
+-----END PGP SIGNATURE-----
+
+--wRtZRu2mMGBZ6YQ7--
