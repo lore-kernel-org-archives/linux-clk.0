@@ -1,50 +1,55 @@
-Return-Path: <ckeepax@opensource.wolfsonmicro.com>
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-To: <mturquette@baylibre.com>, <cw00.choi@samsung.com>, <lee.jones@linaro.org>
-CC: <sboyd@codeaurora.org>, <myungjoo.ham@samsung.com>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.wolfsonmicro.com>
-Subject: [PATCH v2 1/4] extcon: arizona: Remove enable/disable of 32k clock
-Date: Wed, 6 Jan 2016 12:34:29 +0000
-Message-ID: <1452083672-3994-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>,
+ Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
+ Kevin Hilman <khilman@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [RESEND v2 0/2] arm64: EXYNOS: Consolidate Exynos7 symbol
+Date: Mon, 25 Jan 2016 09:50:19 +0900
+Message-id: <1453683021-6998-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The 32k clock is unconditionally enabled by the MFD core so there is no
-need to control it from the extcon device, so this patch removes the
-control of the 32k clock.
+Dear Michael and Stephen,
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
----
 
-No changes since v1.
+Patch 2 *depends* on patch 1. I was thinking about merging this through
+arm-soc tree after getting your acks.
 
-Thanks,
-Charles
+Can you look at patch 1 here and share your comments?
 
- drivers/extcon/extcon-arizona.c | 2 --
- 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/extcon/extcon-arizona.c b/drivers/extcon/extcon-arizona.c
-index e4890dd..52d041f 100644
---- a/drivers/extcon/extcon-arizona.c
-+++ b/drivers/extcon/extcon-arizona.c
-@@ -1571,7 +1571,6 @@ static int arizona_extcon_probe(struct platform_device *pdev)
- 		goto err_micdet;
- 	}
- 
--	arizona_clk32k_enable(arizona);
- 	regmap_update_bits(arizona->regmap, ARIZONA_JACK_DETECT_DEBOUNCE,
- 			   ARIZONA_JD1_DB, ARIZONA_JD1_DB);
- 	regmap_update_bits(arizona->regmap, ARIZONA_JACK_DETECT_ANALOGUE,
-@@ -1642,7 +1641,6 @@ static int arizona_extcon_remove(struct platform_device *pdev)
- 	cancel_delayed_work_sync(&info->hpdet_work);
- 	regmap_update_bits(arizona->regmap, ARIZONA_JACK_DETECT_ANALOGUE,
- 			   ARIZONA_JD1_ENA, 0);
--	arizona_clk32k_disable(arizona);
- 
- 	return 0;
- }
+
+Short introduction
+==================
+We don't need ARCH_EXYNOS7 symbol because all ARMv8 platforms should
+fall under generic ARCH_EXYNOS. In the same time there is no sense
+in building clocks for these ARMv8 SoCs on ARMv7 builds. In future
+this will also influence PMU [1] driver.
+
+
+Best regards,
+Krzysztof
+
+[1] https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg48090.html
+
+
+Krzysztof Kozlowski (2):
+  clk: samsung: Don't build ARMv8 clock drivers on ARMv7
+  arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS
+
+ arch/arm64/Kconfig.platforms        | 11 ++---------
+ arch/arm64/boot/dts/exynos/Makefile |  2 +-
+ arch/arm64/configs/defconfig        |  2 +-
+ drivers/clk/samsung/Kconfig         |  6 ++++++
+ drivers/clk/samsung/Makefile        |  4 ++--
+ 5 files changed, 12 insertions(+), 13 deletions(-)
+
 -- 
-2.1.4
+1.9.1
