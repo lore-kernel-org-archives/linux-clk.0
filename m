@@ -1,80 +1,98 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Arnd Bergmann
-	<arnd@arndb.de>
-CC: Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
-	<srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>, James Liao
-	<jamesjj.liao@mediatek.com>
-Subject: [PATCH v2] clk: Move vendor's Kconfig into CCF menu section
-Date: Thu, 28 Jan 2016 16:58:57 +0800
-Message-ID: <1453971537-5510-1-git-send-email-jamesjj.liao@mediatek.com>
+Return-Path: <xuejiancheng@hisilicon.com>
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <p.zabel@pengutronix.de>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
+        <mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
+        <galak@codeaurora.org>, <linux@arm.linux.org.uk>, <khilman@linaro.org>,
+        <arnd@arndb.de>, <olof@lixom.net>, <xuwei5@hisilicon.com>,
+        <haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+        <bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
+        <suwenping@hisilicon.com>, <raojun@hisilicon.com>,
+        <ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
+        <zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>,
+        <lidongpo@hisilicon.com>, Jiancheng Xue
+	<xuejiancheng@huawei.com>
+Subject: [PATCH v7 0/6] ARM: hisi: Add initial support including clock driver for Hi3519 soc.
+Date: Mon, 25 Jan 2016 11:01:17 +0800
+Message-ID: <1453690883-31220-1-git-send-email-xuejiancheng@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Move all vendor's Kconfig into CCF menu section to prevent
-new drivers putting their Kconfig files in a wrong place.
+Hello,
 
-Some Kconigs need to modify at the same time to avoid build
-warnings.
+Hi3519 soc is mainly used for ip camera and sport DV solutions. This patchset adds initial support
+for Hi3519 soc. It includes clock driver, arch configuration, debug uart configuration and device tree.
+It has been tested on hi3519 reference board.
 
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
----
-This patch is based on v4.5-rc1.
+Any comments will be appreciated!
 
-changes since v1:
-- Modify s3c24xx and samsung's Kconfig to avoid build warngings.
+Thanks!
 
- arch/arm/mach-s3c24xx/Kconfig | 1 +
- drivers/clk/Kconfig           | 8 +++-----
- drivers/clk/samsung/Kconfig   | 1 -
- 3 files changed, 4 insertions(+), 6 deletions(-)
+Change Log
+----------
+v7:
+--Rebase to v4.5-rc1
 
-diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
-index ef68ecb..f02495f 100644
---- a/arch/arm/mach-s3c24xx/Kconfig
-+++ b/arch/arm/mach-s3c24xx/Kconfig
-@@ -15,6 +15,7 @@ config PLAT_S3C24XX
- 	select NO_IOPORT_MAP
- 	select S3C_DEV_NAND
- 	select IRQ_DOMAIN
-+	select COMMON_CLK
- 	help
- 	  Base platform code for any Samsung S3C24XX device
- 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index eca8e01..de707b2 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -202,11 +202,9 @@ config COMMON_CLK_CDCE706
- 
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
--source "drivers/clk/qcom/Kconfig"
--
--endmenu
--
- source "drivers/clk/mvebu/Kconfig"
--
-+source "drivers/clk/qcom/Kconfig"
- source "drivers/clk/samsung/Kconfig"
- source "drivers/clk/tegra/Kconfig"
-+
-+endmenu
-diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-index 84196ec..b3fe5cb 100644
---- a/drivers/clk/samsung/Kconfig
-+++ b/drivers/clk/samsung/Kconfig
-@@ -1,6 +1,5 @@
- config COMMON_CLK_SAMSUNG
- 	bool
--	select COMMON_CLK
- 
- config S3C2410_COMMON_CLK
- 	bool
+v6:
+-Change clock driver to a real platform driver
+
+v5:
+-Adjust clock and reset controller driver code
+
+v4:
+-Rebase to v4.4-rc7
+-Divide patches according to Rob's comments
+-Add spi nodes in hi3519-demb.dts
+
+v3:
+-Rebase to v4.4-rc4
+-Adjust according to Arnd's comments
+-Remove ARCH_HI3519, using ARCH_HISI directly
+
+v2:
+-Rebase to v4.4-rc3
+-Put dt-binding doc and header file in a separate patch.
+-Delete unused clocks definitions.
+-Adjust the ARCH_xxx order in Kconfig file
+-Rename ARCH_HI3xxx to ARCH_36xx
+
+Jiancheng Xue (6):
+  clk: hisilicon: add CRG driver for hi3519 soc
+  ARM: hisi: add compatible string for Hi3519 soc
+  ARM: config: hisi: enable CONFIG_RESET_CONTROLLER
+  ARM: debug: add hi3519 debug uart
+  ARM: dt-bindings: add device tree bindings for Hi3519 sysctrl
+  ARM: dts: add dts files for Hi3519
+
+ .../bindings/arm/hisilicon/hi3519-sysctrl.txt      |  14 ++
+ .../devicetree/bindings/clock/hi3519-crg.txt       |  46 +++++
+ arch/arm/Kconfig.debug                             |  10 ++
+ arch/arm/boot/dts/Makefile                         |   2 +
+ arch/arm/boot/dts/hi3519-demb.dts                  |  42 +++++
+ arch/arm/boot/dts/hi3519.dtsi                      | 187 +++++++++++++++++++++
+ arch/arm/configs/hisi_defconfig                    |   1 +
+ arch/arm/mach-hisi/hisilicon.c                     |  23 +--
+ drivers/clk/hisilicon/Kconfig                      |   7 +
+ drivers/clk/hisilicon/Makefile                     |   2 +
+ drivers/clk/hisilicon/clk-hi3519.c                 | 132 +++++++++++++++
+ drivers/clk/hisilicon/clk.c                        |  23 ++-
+ drivers/clk/hisilicon/clk.h                        |  14 +-
+ drivers/clk/hisilicon/reset.c                      | 130 ++++++++++++++
+ drivers/clk/hisilicon/reset.h                      |  32 ++++
+ include/dt-bindings/clock/hi3519-clock.h           |  40 +++++
+ 16 files changed, 671 insertions(+), 34 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
+ create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
+ create mode 100644 arch/arm/boot/dts/hi3519.dtsi
+ create mode 100644 drivers/clk/hisilicon/clk-hi3519.c
+ create mode 100644 drivers/clk/hisilicon/reset.c
+ create mode 100644 drivers/clk/hisilicon/reset.h
+ create mode 100644 include/dt-bindings/clock/hi3519-clock.h
+
 -- 
 1.9.1
