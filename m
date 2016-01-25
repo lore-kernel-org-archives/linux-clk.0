@@ -1,70 +1,54 @@
-Return-Path: <ping.bai@nxp.com>
-From: Ping Bai <ping.bai@nxp.com>
-To: Shawn Guo <shawnguo@kernel.org>
-CC: "kernel@pengutronix.de" <kernel@pengutronix.de>, "pawel.moll@arm.com"
-	<pawel.moll@arm.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
-	<sboyd@codeaurora.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "jacky.baip@gmail.com" <jacky.baip@gmail.com>
-Subject: RE: [PATCH v2 5/5] ARM: imx: Add msl code support for imx6qp
-Date: Thu, 28 Jan 2016 10:45:09 +0000
-Message-ID: <DB4PR04MB538330DB5505E84CA55A91187DA0@DB4PR04MB538.eurprd04.prod.outlook.com>
-References: <1450159673-27314-1-git-send-email-b51503@freescale.com>
- <1450159673-27314-6-git-send-email-b51503@freescale.com>
- <20160128081040.GO9070@tiger>
-In-Reply-To: <20160128081040.GO9070@tiger>
-Content-Type: text/plain; charset="gb2312"
-MIME-Version: 1.0
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [RESEND v2 1/2] clk: samsung: Don't build ARMv8 clock drivers on
+ ARMv7
+To: Arnd Bergmann <arnd@arndb.de>
+References: <1453683021-6998-1-git-send-email-k.kozlowski@samsung.com>
+ <1453683021-6998-2-git-send-email-k.kozlowski@samsung.com>
+ <4282078.QlIpNj3Oa6@wuerfel>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>,
+ linux-arm-kernel@lists.infradead.org, Kevin Hilman <khilman@kernel.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <56A5E687.3060209@samsung.com>
+Date: Mon, 25 Jan 2016 18:10:31 +0900
+MIME-version: 1.0
+In-reply-to: <4282078.QlIpNj3Oa6@wuerfel>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU2hhd24gR3VvIFttYWls
-dG86c2hhd25ndW9Aa2VybmVsLm9yZ10NCj4gU2VudDogMjAxNsTqMdTCMjjI1SAxNjoxMQ0KPiBU
-bzogYjUxNTAzQGZyZWVzY2FsZS5jb20NCj4gQ2M6IGtlcm5lbEBwZW5ndXRyb25peC5kZTsgcGF3
-ZWwubW9sbEBhcm0uY29tOyByb2JoK2R0QGtlcm5lbC5vcmc7DQo+IG10dXJxdWV0dGVAYmF5bGli
-cmUuY29tOyBzYm95ZEBjb2RlYXVyb3JhLm9yZzsgbGludXgtYXJtLQ0KPiBrZXJuZWxAbGlzdHMu
-aW5mcmFkZWFkLm9yZzsgbGludXgtY2xrQHZnZXIua2VybmVsLm9yZzsNCj4gZGV2aWNldHJlZUB2
-Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MiA1LzVdIEFSTTogaW14OiBB
-ZGQgbXNsIGNvZGUgc3VwcG9ydCBmb3IgaW14NnFwDQo+IA0KPiBPbiBUdWUsIERlYyAxNSwgMjAx
-NSBhdCAwMjowNzo1M1BNICswODAwLCBCYWkgUGluZyB3cm90ZToNCj4gPiBUaGUgaS5NWDZRUCBp
-cyBhIGRpZmZlcmVudCBTT0MsIGJ1dCBpbnRlcm5hbGx5IHdlIHRyZWF0ZSBpdCBhcyBpLk1YNlEN
-Cj4gPiBSZXZfMi4wIHRvIG1heGltdW0gdGhlIGNvZGUgcmV1c2FiaWxpdHkuIFRoZSBjaGlwIHNp
-bGljb24gbnVtYmVyIHdlDQo+ID4gcmVhZCBmcm9tIHRoZSBBTkFESUdfRElHUFJPRyBpcyAweDYz
-MDEwMC4gVGhpcyBwYXRjaCBhZGQgY29kZSB0bw0KPiA+IGlkZW50aWZ5IGl0IGFzIGkuTVg2UVAg
-UmV2XzEuMCB3aGVuIHByaW50IG91dCB0aGUgc2lsaWNvbiB2ZXJzaW9uLg0KPiA+DQo+ID4gU2ln
-bmVkLW9mZi1ieTogQmFpIFBpbmcgPGI1MTUwM0BmcmVlc2NhbGUuY29tPg0KPiA+IC0tLQ0KPiA+
-ICBhcmNoL2FybS9tYWNoLWlteC9hbmF0b3AuYyAgICAgfCA1ICsrKystDQo+ID4gIGFyY2gvYXJt
-L21hY2gtaW14L21hY2gtaW14NnEuYyB8IDggKysrKysrLS0NCj4gPiAgMiBmaWxlcyBjaGFuZ2Vk
-LCAxMCBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBh
-L2FyY2gvYXJtL21hY2gtaW14L2FuYXRvcC5jIGIvYXJjaC9hcm0vbWFjaC1pbXgvYW5hdG9wLmMN
-Cj4gPiBpbmRleCAyMzFiYjI1Li45NjIyNzYzIDEwMDY0NA0KPiA+IC0tLSBhL2FyY2gvYXJtL21h
-Y2gtaW14L2FuYXRvcC5jDQo+ID4gKysrIGIvYXJjaC9hcm0vbWFjaC1pbXgvYW5hdG9wLmMNCj4g
-PiBAQCAtMTI5LDcgKzEyOSwxMCBAQCB2b2lkIF9faW5pdCBpbXhfaW5pdF9yZXZpc2lvbl9mcm9t
-X2FuYXRvcCh2b2lkKQ0KPiA+DQo+ID4gIAlzd2l0Y2ggKGRpZ3Byb2cgJiAweGZmKSB7DQo+ID4g
-IAljYXNlIDA6DQo+ID4gLQkJcmV2aXNpb24gPSBJTVhfQ0hJUF9SRVZJU0lPTl8xXzA7DQo+ID4g
-KwkJaWYgKGRpZ3Byb2cgPj4gOCAmIDB4MDEpDQo+ID4gKwkJCXJldmlzaW9uID0gSU1YX0NISVBf
-UkVWSVNJT05fMl8wOw0KPiA+ICsJCWVsc2UNCj4gPiArCQkJcmV2aXNpb24gPSBJTVhfQ0hJUF9S
-RVZJU0lPTl8xXzA7DQo+IA0KPiBQbGVhc2UgYXQgbGVhc3QgYWRkIHNvbWUgY29tbWVudCBoZXJl
-IHRvIGhlbHAgdXMgcmVtZW1iZXIgdGhhdCB0aGlzIGlzIGEgdHJpY2sNCj4gd2UgcGxheSBmb3Ig
-aS5NWDZRUC4NCj4gDQogDQpXaWxsIGFkZHJlc3MgdGhpcyBpbiBwYXRjaCBWMy4gVGhhbmtzIGZv
-ciB5b3VyIHJldmlldy4NCg0KPiBTaGF3bg0KPiANCj4gPiAgCQlicmVhazsNCj4gPiAgCWNhc2Ug
-MToNCj4gPiAgCQlyZXZpc2lvbiA9IElNWF9DSElQX1JFVklTSU9OXzFfMTsNCj4gPiBkaWZmIC0t
-Z2l0IGEvYXJjaC9hcm0vbWFjaC1pbXgvbWFjaC1pbXg2cS5jDQo+ID4gYi9hcmNoL2FybS9tYWNo
-LWlteC9tYWNoLWlteDZxLmMgaW5kZXggMzg3ODQ5NGIuLmNiMjdkNTYgMTAwNjQ0DQo+ID4gLS0t
-IGEvYXJjaC9hcm0vbWFjaC1pbXgvbWFjaC1pbXg2cS5jDQo+ID4gKysrIGIvYXJjaC9hcm0vbWFj
-aC1pbXgvbWFjaC1pbXg2cS5jDQo+ID4gQEAgLTI2Niw4ICsyNjYsMTEgQEAgc3RhdGljIHZvaWQg
-X19pbml0IGlteDZxX2luaXRfbWFjaGluZSh2b2lkKSAgew0KPiA+ICAJc3RydWN0IGRldmljZSAq
-cGFyZW50Ow0KPiA+DQo+ID4gLQlpbXhfcHJpbnRfc2lsaWNvbl9yZXYoY3B1X2lzX2lteDZkbCgp
-ID8gImkuTVg2REwiIDogImkuTVg2USIsDQo+ID4gLQkJCSAgICAgIGlteF9nZXRfc29jX3Jldmlz
-aW9uKCkpOw0KPiA+ICsJaWYgKGNwdV9pc19pbXg2cSgpICYmIGlteF9nZXRfc29jX3JldmlzaW9u
-KCkgPT0NCj4gSU1YX0NISVBfUkVWSVNJT05fMl8wKQ0KPiA+ICsJCWlteF9wcmludF9zaWxpY29u
-X3JldigiaS5NWDZRUCIsIElNWF9DSElQX1JFVklTSU9OXzFfMCk7DQo+ID4gKwllbHNlDQo+ID4g
-KwkJaW14X3ByaW50X3NpbGljb25fcmV2KGNwdV9pc19pbXg2ZGwoKSA/ICJpLk1YNkRMIiA6ICJp
-Lk1YNlEiLA0KPiA+ICsJCQkJaW14X2dldF9zb2NfcmV2aXNpb24oKSk7DQo+ID4NCj4gPiAgCXBh
-cmVudCA9IGlteF9zb2NfZGV2aWNlX2luaXQoKTsNCj4gPiAgCWlmIChwYXJlbnQgPT0gTlVMTCkN
-Cj4gPiBAQCAtMzk5LDYgKzQwMiw3IEBAIHN0YXRpYyB2b2lkIF9faW5pdCBpbXg2cV9pbml0X2ly
-cSh2b2lkKSAgc3RhdGljDQo+ID4gY29uc3QgY2hhciAqIGNvbnN0IGlteDZxX2R0X2NvbXBhdFtd
-IF9faW5pdGNvbnN0ID0gew0KPiA+ICAJImZzbCxpbXg2ZGwiLA0KPiA+ICAJImZzbCxpbXg2cSIs
-DQo+ID4gKwkiZnNsLGlteDZxcCIsDQo+ID4gIAlOVUxMLA0KPiA+ICB9Ow0KPiA+DQo+ID4gLS0N
-Cj4gPiAxLjkuMQ0KPiA+DQo+ID4NCg==
+On 25.01.2016 17:59, Arnd Bergmann wrote:
+> On Monday 25 January 2016 09:50:20 Krzysztof Kozlowski wrote:
+>>
+>> +# ARM64 SoCs (e.g. Exynos5433, Exynos7):
+>> +config EXYNOS_ARM64_COMMON_CLK
+>> +       def_bool ARCH_EXYNOS
+>> +       depends on ARM64 || COMPILE_TEST
+>> +       select COMMON_CLK_SAMSUNG
+>>
+> 
+> So you always enable it on ARM64 when ARCH_EXYNOS is enabled, but
+> enable it silently on ARM32 when COMPILE_TEST is set?
+
+Hmm... indeed it would better to make it toggle-able when COMPILE_TEST.
+
+> That sounds wrong. How about
+> 
+> config EXYNOS_ARM64_COMMON_CLK
+> 	bool "EXYNOS 64-bit clock support" if COMPILE_TEST
+> 	default ARM64 && ARCH_EXYNOS
+> 	depends on (ARM64 && ARCH_EXYNOS) || COMPILE_TEST
+> 	select COMMON_CLK_SAMSUNG
+
+Although this looks more complicated but it does the trick. Thanks for
+the hint. Only one (not related directly to this change) issue - with
+COMPILE_TEST the "EXYNOS 64-bit clock support" option goes above the
+common clock framework (up to drivers section) because it is not part of
+the Clocks menu. I'll fix it in v3.
+
+Best regards,
+Krzysztof
