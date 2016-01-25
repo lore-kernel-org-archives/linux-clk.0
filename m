@@ -1,167 +1,48 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 2/2] clk: s2mps11: allocate only one structure for clock
- init
-To: Andi Shyti <andi.shyti@samsung.com>, linux-samsung-soc@vger.kernel.org
-References: <1453105525-31506-1-git-send-email-andi.shyti@samsung.com>
- <1453105525-31506-3-git-send-email-andi.shyti@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Andi Shyti <andi@etezian.org>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <569D78E2.2000001@samsung.com>
-Date: Tue, 19 Jan 2016 08:44:34 +0900
-MIME-version: 1.0
-In-reply-to: <1453105525-31506-3-git-send-email-andi.shyti@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <zhangqing@rock-chips.com>
+From: Zhang Qing <zhangqing@rock-chips.com>
+To: heiko@sntech.de,
+	zhengxing@rock-chips.com,
+	xf@rock-chips.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	huangtao@rock-chips.com,
+	zyw@rock-chips.com,
+	jay.xu@rock-chips.com,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	zhangqing <zhangqing@rock-chips.com>
+Subject: [PATCH v1 3/3] clk: rockchip: rk3368: enable the CLK_SET_RATE_PARENT flag for i2s_2ch
+Date: Mon, 25 Jan 2016 08:56:02 -0800
+Message-Id: <1453740962-8556-4-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1453740962-8556-1-git-send-email-zhangqing@rock-chips.com>
+References: <1453740962-8556-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 18.01.2016 17:25, Andi Shyti wrote:
-> The driver allocates three structures for three different clock
-> types. They are quite similar and in the clock init data they
-> differ only by the name. Only one of these structure is used,
+From: zhangqing <zhangqing@rock-chips.com>
 
-s/structure/structures/
+I2S_2CH set freq need to select parent and calculate parent freq.
+so just mark it as the CLK_SET_RATE_PARENT flag.
 
-> while the others lie unused in the memory.
-> 
-> The clock's name, though, is not such a meaningful information
-> and by assigning the same name to the initial data we can avoid
-> over allocation. The common name chosen will be s2mps11,
-> coherently with the device driver name, instead of the clock
-> device.
-> 
-> Therefore, remove the structures associated to s2mps13 and
-> s2mps14 and use only the one referred to s2mps11 for all kind of
-> clocks.
-> 
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->  drivers/clk/clk-s2mps11.c | 48 +++++++----------------------------------------
->  1 file changed, 7 insertions(+), 41 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-> index ccb12f1..dce9753 100644
-> --- a/drivers/clk/clk-s2mps11.c
-> +++ b/drivers/clk/clk-s2mps11.c
-> @@ -99,6 +99,7 @@ static struct clk_ops s2mps11_clk_ops = {
->  	.recalc_rate	= s2mps11_clk_recalc_rate,
->  };
->  
-> +/* This ss2mps11_clks_init tructure is common to s2mps11, s2mps13 and s2mps14 */
+Signed-off-by: zhangqing <zhangqing@rock-chips.com>
+---
+ drivers/clk/rockchip/clk-rk3368.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-s/ss2mps11_clks_init/s2mps11_clks_init/
-
->  static struct clk_init_data s2mps11_clks_init[S2MPS11_CLKS_NUM] = {
->  	[S2MPS11_CLK_AP] = {
->  		.name = "s2mps11_ap",
-> @@ -117,37 +118,6 @@ static struct clk_init_data s2mps11_clks_init[S2MPS11_CLKS_NUM] = {
->  	},
->  };
->  
-> -static struct clk_init_data s2mps13_clks_init[S2MPS11_CLKS_NUM] = {
-> -	[S2MPS11_CLK_AP] = {
-> -		.name = "s2mps13_ap",
-> -		.ops = &s2mps11_clk_ops,
-> -		.flags = CLK_IS_ROOT,
-> -	},
-> -	[S2MPS11_CLK_CP] = {
-> -		.name = "s2mps13_cp",
-> -		.ops = &s2mps11_clk_ops,
-> -		.flags = CLK_IS_ROOT,
-> -	},
-> -	[S2MPS11_CLK_BT] = {
-> -		.name = "s2mps13_bt",
-> -		.ops = &s2mps11_clk_ops,
-> -		.flags = CLK_IS_ROOT,
-> -	},
-> -};
-> -
-> -static struct clk_init_data s2mps14_clks_init[S2MPS11_CLKS_NUM] = {
-> -	[S2MPS11_CLK_AP] = {
-> -		.name = "s2mps14_ap",
-> -		.ops = &s2mps11_clk_ops,
-> -		.flags = CLK_IS_ROOT,
-> -	},
-> -	[S2MPS11_CLK_BT] = {
-> -		.name = "s2mps14_bt",
-> -		.ops = &s2mps11_clk_ops,
-> -		.flags = CLK_IS_ROOT,
-> -	},
-> -};
-> -
->  static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev,
->  		struct clk_init_data *clks_init)
->  {
-
-The check if (!clks_init[i].name) in this function is meaningless now.
-How will device with S2MPS14 behave?
-
-Best regards,
-Krzysztof
-
-
-> @@ -179,8 +149,8 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
->  	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
->  	struct s2mps11_clk *s2mps11_clks;
->  	unsigned int s2mps11_reg;
-> -	struct clk_init_data *clks_init;
->  	int i, ret = 0;
-> +	enum sec_device_type hwid = platform_get_device_id(pdev)->driver_data;
->  
->  	s2mps11_clks = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
->  				sizeof(*s2mps11_clks), GFP_KERNEL);
-> @@ -192,22 +162,18 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
->  	if (!clk_table)
->  		return -ENOMEM;
->  
-> -	switch(platform_get_device_id(pdev)->driver_data) {
-> +	switch (hwid) {
->  	case S2MPS11X:
->  		s2mps11_reg = S2MPS11_REG_RTC_CTRL;
-> -		clks_init = s2mps11_clks_init;
->  		break;
->  	case S2MPS13X:
->  		s2mps11_reg = S2MPS13_REG_RTCCTRL;
-> -		clks_init = s2mps13_clks_init;
->  		break;
->  	case S2MPS14X:
->  		s2mps11_reg = S2MPS14_REG_RTCCTRL;
-> -		clks_init = s2mps14_clks_init;
->  		break;
->  	case S5M8767X:
->  		s2mps11_reg = S5M8767_REG_CTRL1;
-> -		clks_init = s2mps11_clks_init;
->  		break;
->  	default:
->  		dev_err(&pdev->dev, "Invalid device type\n");
-> @@ -215,15 +181,15 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
->  	}
->  
->  	/* Store clocks of_node in first element of s2mps11_clks array */
-> -	s2mps11_clks->clk_np = s2mps11_clk_parse_dt(pdev, clks_init);
-> +	s2mps11_clks->clk_np = s2mps11_clk_parse_dt(pdev, s2mps11_clks_init);
->  	if (IS_ERR(s2mps11_clks->clk_np))
->  		return PTR_ERR(s2mps11_clks->clk_np);
->  
->  	for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
-> -		if (!clks_init[i].name)
-> +		if (i == S2MPS11_CLK_CP && hwid == S2MPS14X)
->  			continue; /* Skip clocks not present in some devices */
->  		s2mps11_clks[i].iodev = iodev;
-> -		s2mps11_clks[i].hw.init = &clks_init[i];
-> +		s2mps11_clks[i].hw.init = &s2mps11_clks_init[i];
->  		s2mps11_clks[i].mask = 1 << i;
->  		s2mps11_clks[i].reg = s2mps11_reg;
->  
-> @@ -246,7 +212,7 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
->  
->  	for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
->  		/* Skip clocks not present on S2MPS14 */
-> -		if (!clks_init[i].name)
-> +		if (i == S2MPS11_CLK_CP && hwid == S2MPS14X)
->  			continue;
->  		clk_table[i] = s2mps11_clks[i].clk;
->  	}
-> 
+diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
+index 58ef08b..5ceb536 100644
+--- a/drivers/clk/rockchip/clk-rk3368.c
++++ b/drivers/clk/rockchip/clk-rk3368.c
+@@ -363,7 +363,8 @@ static struct rockchip_clk_branch rk3368_clk_branches[] __initdata = {
+ 	COMPOSITE_FRAC(0, "i2s_2ch_frac", "i2s_2ch_src", CLK_SET_RATE_PARENT,
+ 			RK3368_CLKSEL_CON(54), 0,
+ 			RK3368_CLKGATE_CON(5), 14, GFLAGS),
+-	COMPOSITE_NODIV(SCLK_I2S_2CH, "sclk_i2s_2ch", mux_i2s_2ch_p, 0,
++	COMPOSITE_NODIV(SCLK_I2S_2CH, "sclk_i2s_2ch", mux_i2s_2ch_p,
++			CLK_SET_RATE_PARENT,
+ 			RK3368_CLKSEL_CON(53), 8, 2, MFLAGS,
+ 			RK3368_CLKGATE_CON(5), 15, GFLAGS),
+ 
+-- 
+1.9.1
