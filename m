@@ -1,57 +1,65 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@linaro.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>,
-	Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 6/9] clk: tegra210: fix pllx dyn step calculation
-Date: Fri, 8 Jan 2016 13:37:08 -0500
-Message-ID: <1452278231-9546-7-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1452278231-9546-1-git-send-email-rklein@nvidia.com>
-References: <1452278231-9546-1-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <cw00.choi@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=UTF-8
+Message-id: <56A5BF8D.8070807@samsung.com>
+Date: Mon, 25 Jan 2016 15:24:13 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+ mturquette@baylibre.com, lee.jones@linaro.org
+Cc: sboyd@codeaurora.org, myungjoo.ham@samsung.com, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ patches@opensource.wolfsonmicro.com
+Subject: Re: [PATCH v3 1/4] extcon: arizona: Remove enable/disable of 32k clock
+References: 
+ <1452252582-20834-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+In-reply-to: 
+ <1452252582-20834-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The logic for calculating the input rate used when figuring out
-the proper dynamic steps for pllx was incorrect. It is supposed to
-be calculated using parent_rate / m but it was just using the parent
-rate directly, therefore using the wrong step values.
+On 2016=EB=85=84 01=EC=9B=94 08=EC=9D=BC 20:29, Charles Keepax wrote:
+> The 32k clock is unconditionally enabled by the MFD core so there is no
+> need to control it from the extcon device, so this patch removes the
+> control of the 32k clock.
+> 
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> ---
+> 
+> No changes since v2.
+> 
+> Thanks,
+> Charles
+> 
+>  drivers/extcon/extcon-arizona.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/extcon/extcon-arizona.c b/drivers/extcon/extcon-arizona.c
+> index e4890dd..52d041f 100644
+> --- a/drivers/extcon/extcon-arizona.c
+> +++ b/drivers/extcon/extcon-arizona.c
+> @@ -1571,7 +1571,6 @@ static int arizona_extcon_probe(struct platform_device *pdev)
+>  		goto err_micdet;
+>  	}
+>  
+> -	arizona_clk32k_enable(arizona);
+>  	regmap_update_bits(arizona->regmap, ARIZONA_JACK_DETECT_DEBOUNCE,
+>  			   ARIZONA_JD1_DB, ARIZONA_JD1_DB);
+>  	regmap_update_bits(arizona->regmap, ARIZONA_JACK_DETECT_ANALOGUE,
+> @@ -1642,7 +1641,6 @@ static int arizona_extcon_remove(struct platform_device *pdev)
+>  	cancel_delayed_work_sync(&info->hpdet_work);
+>  	regmap_update_bits(arizona->regmap, ARIZONA_JACK_DETECT_ANALOGUE,
+>  			   ARIZONA_JD1_ENA, 0);
+> -	arizona_clk32k_disable(arizona);
+>  
+>  	return 0;
+>  }
+> 
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk-tegra210.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 2a7faa357130..5d8fac7052f2 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -780,13 +780,13 @@ static void pllx_get_dyn_steps(struct clk_hw *hw, u32 *step_a, u32 *step_b)
- {
- 	unsigned long input_rate;
- 
--	if (!IS_ERR_OR_NULL(hw->clk)) {
-+	/* cf rate */
-+	if (!IS_ERR_OR_NULL(hw->clk))
- 		input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
--		/* cf rate */
--		input_rate /= tegra_pll_get_fixed_mdiv(hw, input_rate);
--	} else {
-+	else
- 		input_rate = 38400000;
--	}
-+
-+	input_rate /= tegra_pll_get_fixed_mdiv(hw, input_rate);
- 
- 	switch (input_rate) {
- 	case 12000000:
--- 
-1.9.1
+If I apply only this patch on extcon tree,
+the kernel build error will happen on other tree.
+I think that this patch will go on clk tree and
+then send pull request of immutable branch.
+
+Thanks,
+Chanwoo Choi
