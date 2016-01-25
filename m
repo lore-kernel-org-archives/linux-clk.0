@@ -1,68 +1,88 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: John Crispin <blogic@openwrt.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>, Shunli
- Wang <shunli.wang@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>
-Subject: [PATCH v5 6/6] reset: mediatek: Add MT2701 reset driver
-Date: Wed, 27 Jan 2016 15:21:04 +0800
-Message-ID: <1453879264-37915-7-git-send-email-jamesjj.liao@mediatek.com>
-In-Reply-To: <1453879264-37915-1-git-send-email-jamesjj.liao@mediatek.com>
-References: <1453879264-37915-1-git-send-email-jamesjj.liao@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jamesjj.liao@mediatek.com
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>,
+ Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
+ Kevin Hilman <khilman@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [RESEND v2 1/2] clk: samsung: Don't build ARMv8 clock drivers on ARMv7
+Date: Mon, 25 Jan 2016 09:50:20 +0900
+Message-id: <1453683021-6998-2-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1453683021-6998-1-git-send-email-k.kozlowski@samsung.com>
+References: <1453683021-6998-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shunli Wang <shunli.wang@mediatek.com>
+Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
+so it is built also on ARMv7. This does not bring any kind of benefit.
+There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
+multi_v7 for ARMv7).
 
-In infrasys and perifsys, there are many reset
-control bits for kinds of modules. These bits are
-used as actual reset controllers to be registered
-into kernel's generic reset controller framework.
+Instead build clock drivers only for respective SoC's architecture.
 
-Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-Tested-by: John Crispin <blogic@openwrt.org>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+
 ---
- drivers/clk/mediatek/clk-mt2701.c | 6 ++++++
- 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
-index 0ac45fc..01722e0 100644
---- a/drivers/clk/mediatek/clk-mt2701.c
-+++ b/drivers/clk/mediatek/clk-mt2701.c
-@@ -665,6 +665,8 @@ static void __init mtk_infrasys_init(struct device_node *node)
- 	if (r)
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
-+
-+	mtk_register_reset_controller(node, 2, 0x30);
- }
- CLK_OF_DECLARE(mtk_infrasys, "mediatek,mt2701-infracfg", mtk_infrasys_init);
+Changes since v1:
+1. Use one Kconfig symbol for clocks of all ARM64 SoCs (after
+   discussion): EXYNOS_ARM64_COMMON_CLK.
+2. Minor cleanups after Tomasz's comments.
+3. Added tags: Chanwoo's, Sylwester's, Alim's and Tomasz's (the tags
+   were given for v1 but assuming that change from 1. is not major
+   enough to require re-tagging).
+---
+ drivers/clk/samsung/Kconfig  | 6 ++++++
+ drivers/clk/samsung/Makefile | 4 ++--
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+index 84196ecdaa12..3a2c032965e6 100644
+--- a/drivers/clk/samsung/Kconfig
++++ b/drivers/clk/samsung/Kconfig
+@@ -2,6 +2,7 @@ config COMMON_CLK_SAMSUNG
+ 	bool
+ 	select COMMON_CLK
  
-@@ -782,6 +784,8 @@ static void __init mtk_pericfg_init(struct device_node *node)
- 	if (r)
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
-+
-+	mtk_register_reset_controller(node, 2, 0x0);
- }
- CLK_OF_DECLARE(mtk_pericfg, "mediatek,mt2701-pericfg", mtk_pericfg_init);
++# ARM SoCs:
+ config S3C2410_COMMON_CLK
+ 	bool
+ 	select COMMON_CLK_SAMSUNG
+@@ -24,3 +25,8 @@ config S3C2443_COMMON_CLK
+ 	bool
+ 	select COMMON_CLK_SAMSUNG
  
-@@ -997,6 +1001,8 @@ static void __init mtk_hifsys_init(struct device_node *node)
- 	if (r)
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
-+
-+	mtk_register_reset_controller(node, 1, 0x34);
- }
- CLK_OF_DECLARE(mtk_hifsys, "mediatek,mt2701-hifsys", mtk_hifsys_init);
- 
++# ARM64 SoCs (e.g. Exynos5433, Exynos7):
++config EXYNOS_ARM64_COMMON_CLK
++	def_bool ARCH_EXYNOS
++	depends on ARM64 || COMPILE_TEST
++	select COMMON_CLK_SAMSUNG
+diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
+index 5f6833ea355d..fc367d4b2902 100644
+--- a/drivers/clk/samsung/Makefile
++++ b/drivers/clk/samsung/Makefile
+@@ -10,11 +10,11 @@ obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
+ obj-$(CONFIG_SOC_EXYNOS5260)	+= clk-exynos5260.o
+ obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
+ obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
+-obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos5433.o
++obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos5433.o
+ obj-$(CONFIG_SOC_EXYNOS5440)	+= clk-exynos5440.o
+ obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-audss.o
+ obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-clkout.o
+-obj-$(CONFIG_ARCH_EXYNOS7)	+= clk-exynos7.o
++obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos7.o
+ obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
+ obj-$(CONFIG_S3C2410_COMMON_DCLK)+= clk-s3c2410-dclk.o
+ obj-$(CONFIG_S3C2412_COMMON_CLK)+= clk-s3c2412.o
 -- 
 1.9.1
