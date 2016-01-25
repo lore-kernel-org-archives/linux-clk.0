@@ -1,208 +1,300 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from nasmtp01.atmel.com ([192.199.1.245]:13870 "EHLO
-	DVREDG01.corp.atmel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S934437AbcA1KXK (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jan 2016 05:23:10 -0500
-From: Wenyou Yang <wenyou.yang@atmel.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Russell King <linux@arm.linux.org.uk>
-CC: <linux-clk@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>
-Subject: [PATCH 3/4] ARM: at91: pm: configure PMC fast startup signals
-Date: Thu, 28 Jan 2016 18:19:15 +0800
-Message-ID: <1453976356-24391-4-git-send-email-wenyou.yang@atmel.com>
-In-Reply-To: <1453976356-24391-1-git-send-email-wenyou.yang@atmel.com>
-References: <1453976356-24391-1-git-send-email-wenyou.yang@atmel.com>
+Received: from szxga03-in.huawei.com ([119.145.14.66]:8096 "EHLO
+	szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754244AbcAYDPT (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 24 Jan 2016 22:15:19 -0500
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v7 6/6] ARM: dts: add dts files for Hi3519
+Date: Mon, 25 Jan 2016 11:01:23 +0800
+Message-ID: <1453690883-31220-7-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1453690883-31220-1-git-send-email-xuejiancheng@huawei.com>
+References: <1453690883-31220-1-git-send-email-xuejiancheng@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The fast startup signal is used as wake up sources for ULP1 mode.
-As soon as a fast startup signal is asserted, the embedded 12 MHz
-RC oscillator restarts automatically.
+add dts files for Hi3519
 
-This patch is to configure the fast startup signals, which signal
-is enabled to trigger the PMC to wake up the system from ULP1 mode
-should be configured via the DT.
-
-Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
 ---
+ arch/arm/boot/dts/Makefile        |   2 +
+ arch/arm/boot/dts/hi3519-demb.dts |  42 +++++++++
+ arch/arm/boot/dts/hi3519.dtsi     | 187 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 231 insertions(+)
+ create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
+ create mode 100644 arch/arm/boot/dts/hi3519.dtsi
 
- arch/arm/mach-at91/pm.c      |   96 ++++++++++++++++++++++++++++++++++++++++++
- include/linux/clk/at91_pmc.h |   32 ++++++++++++++
- 2 files changed, 128 insertions(+)
-
-diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
-index a7aec35..2c424b3 100644
---- a/arch/arm/mach-at91/pm.c
-+++ b/arch/arm/mach-at91/pm.c
-@@ -24,6 +24,8 @@
- #include <linux/platform_device.h>
- #include <linux/io.h>
- #include <linux/clk/at91_pmc.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/regmap.h>
- 
- #include <asm/irq.h>
- #include <linux/atomic.h>
-@@ -425,6 +427,98 @@ static void __init at91_pm_sram_init(void)
- 			&at91_pm_suspend_in_sram, at91_pm_suspend_in_sram_sz);
- }
- 
-+static int __init at91_pmc_fast_startup_init(void)
-+{
-+	struct device_node *np;
-+	struct regmap *regmap;
-+	u32 mode = 0, polarity = 0;
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index a4a6d70..3ce36ff 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -141,6 +141,8 @@ dtb-$(CONFIG_ARCH_EXYNOS5) += \
+ 	exynos5800-peach-pi.dtb
+ dtb-$(CONFIG_ARCH_HI3xxx) += \
+ 	hi3620-hi4511.dtb
++dtb-$(CONFIG_ARCH_HISI) += \
++	hi3519-demb.dtb
+ dtb-$(CONFIG_ARCH_HIX5HD2) += \
+ 	hisi-x5hd2-dkb.dtb
+ dtb-$(CONFIG_ARCH_HIGHBANK) += \
+diff --git a/arch/arm/boot/dts/hi3519-demb.dts b/arch/arm/boot/dts/hi3519-demb.dts
+new file mode 100644
+index 0000000..6991ab6
+--- /dev/null
++++ b/arch/arm/boot/dts/hi3519-demb.dts
+@@ -0,0 +1,42 @@
++/*
++ * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ */
 +
-+	np = of_find_compatible_node(NULL, NULL,
-+				     "atmel,sama5d2-pmc-fast-startup");
-+	if (!np)
-+		return -ENODEV;
++/dts-v1/;
++#include "hi3519.dtsi"
 +
-+	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	if (IS_ERR(regmap)) {
-+		pr_info("AT91: failed to find PMC fast startup\n");
-+		return PTR_ERR(regmap);
-+	}
++/ {
++	model = "HiSilicon HI3519 DEMO Board";
++	compatible = "hisilicon,hi3519";
 +
-+	mode |= of_property_read_bool(np, "atmel,fast-startup-wake-up") ?
-+		AT91_PMC_FSTT0 : 0;
-+	mode |= of_property_read_bool(np, "atmel,fast-startup-secumod") ?
-+		AT91_PMC_FSTT1 : 0;
-+	mode |= of_property_read_bool(np, "atmel,fast-startup-piobu0") ?
-+		AT91_PMC_FSTT2 : 0;
-+	mode |= of_property_read_bool(np, "atmel,fast-startup-piobu1") ?
-+		AT91_PMC_FSTT3 : 0;
-+	mode |= of_property_read_bool(np, "atmel,fast-startup-piobu2") ?
-+		AT91_PMC_FSTT4 : 0;
-+	mode |= of_property_read_bool(np, "atmel,fast-startup-piobu3") ?
-+		AT91_PMC_FSTT5 : 0;
-+	mode |= of_property_read_bool(np, "atmel,fast-startup-piobu4") ?
-+		AT91_PMC_FSTT6 : 0;
-+	mode |= of_property_read_bool(np, "atmel,fast-startup-piobu5") ?
-+		AT91_PMC_FSTT7 : 0;
-+	mode |= of_property_read_bool(np, "atmel,fast-startup-piobu6") ?
-+		AT91_PMC_FSTT8 : 0;
-+	mode |= of_property_read_bool(np, "atmel,fast-startup-piobu7") ?
-+		AT91_PMC_FSTT9 : 0;
-+	mode |= of_property_read_bool(np, "atmel,fast-startup-gmac-wol") ?
-+		AT91_PMC_FSTT10 : 0;
-+	mode |= of_property_read_bool(np, "atmel,fast-startup-rtc-alarm") ?
-+		AT91_PMC_RTCAL : 0;
-+	mode |= of_property_read_bool(np, "atmel,fast-startup-usb-resume") ?
-+		AT91_PMC_USBAL : 0;
-+	mode |= of_property_read_bool(np, "atmel,fast-startup-sdmmc-cd") ?
-+		AT91_PMC_SDMMC_CD : 0;
-+	mode |= of_property_read_bool(np, "atmel,fast-startup-rxlp-match") ?
-+		AT91_PMC_RXLP_MCE : 0;
-+	mode |= of_property_read_bool(np, "atmel,fast-startup-acc-comparison") ?
-+		AT91_PMC_ACC_CE : 0;
++	aliases {
++		serial0 = &uart0;
++	};
 +
-+	polarity |= of_property_read_bool(np,
-+		"atmel,fast-startup-wkup-pin-high") ? AT91_PMC_FSTP0 : 0;
++	memory {
++		device_type = "memory";
++		reg = <0x80000000 0x40000000>;
++	};
++};
 +
-+	if (mode & AT91_PMC_FSTT1)
-+		polarity |= AT91_PMC_FSTP1;
++&uart0 {
++	status = "okay";
++};
 +
-+	polarity |= of_property_read_bool(np,
-+		"atmel,fast-startup-piobu0-high") ? AT91_PMC_FSTP2 : 0;
++&dual_timer0 {
++	status = "okay";
++};
+diff --git a/arch/arm/boot/dts/hi3519.dtsi b/arch/arm/boot/dts/hi3519.dtsi
+new file mode 100644
+index 0000000..5729ecf
+--- /dev/null
++++ b/arch/arm/boot/dts/hi3519.dtsi
+@@ -0,0 +1,187 @@
++/*
++ * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ */
 +
-+	polarity |= of_property_read_bool(np,
-+		"atmel,fast-startup-piobu1-high") ? AT91_PMC_FSTP3 : 0;
++#include <dt-bindings/clock/hi3519-clock.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++/ {
++	#address-cells = <1>;
++	#size-cells = <1>;
++	chosen { };
 +
-+	polarity |= of_property_read_bool(np,
-+		"atmel,fast-startup-piobu2-high") ? AT91_PMC_FSTP4 : 0;
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+	polarity |= of_property_read_bool(np,
-+		"atmel,fast-startup-piobu3-high") ? AT91_PMC_FSTP5 : 0;
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <0>;
++		};
++	};
 +
-+	polarity |= of_property_read_bool(np,
-+		"atmel,fast-startup-piobu4-high") ? AT91_PMC_FSTP6 : 0;
++	gic: interrupt-controller@10300000 {
++		compatible = "arm,cortex-a7-gic";
++		#interrupt-cells = <3>;
++		interrupt-controller;
++		reg = <0x10301000 0x1000>, <0x10302000 0x1000>;
++	};
 +
-+	polarity |= of_property_read_bool(np,
-+		"atmel,fast-startup-piobu5-high") ? AT91_PMC_FSTP7 : 0;
++	clk_3m: clk_3m {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <3000000>;
++	};
 +
-+	polarity |= of_property_read_bool(np,
-+		"atmel,fast-startup-piobu6-high") ? AT91_PMC_FSTP8 : 0;
++	crg: clock-reset-controller@12010000 {
++		compatible = "hisilicon,hi3519-crg";
++		#clock-cells = <1>;
++		#reset-cells = <2>;
++		reg = <0x12010000 0x10000>;
++	};
 +
-+	polarity |= of_property_read_bool(np,
-+		"atmel,fast-startup-piobu7-high") ? AT91_PMC_FSTP9 : 0;
++	soc {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "simple-bus";
++		interrupt-parent = <&gic>;
++		ranges;
 +
-+	if (mode & AT91_PMC_FSTT10)
-+		polarity |= AT91_PMC_FSTP10;
++		uart0: serial@12100000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12100000 0x1000>;
++			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_UART0_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
 +
-+	regmap_write(regmap, AT91_PMC_FSMR, mode);
++		uart1: serial@12101000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12101000 0x1000>;
++			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_UART1_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
 +
-+	regmap_write(regmap, AT91_PMC_FSPR, polarity);
++		uart2: serial@12102000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12102000 0x1000>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_UART2_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
 +
-+	of_node_put(np);
++		uart3: serial@12103000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12103000 0x1000>;
++			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_UART3_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
 +
-+	return 0;
-+}
++		uart4: serial@12104000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12104000 0x1000>;
++			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_UART4_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
 +
- static const struct of_device_id atmel_pmc_ids[] = {
- 	{ .compatible = "atmel,at91rm9200-pmc"  },
- 	{ .compatible = "atmel,at91sam9260-pmc" },
-@@ -509,4 +603,6 @@ void __init sama5_pm_init(void)
- 
- 	if (readl(pmc + AT91_PMC_VERSION) >= SAMA5D2_PMC_VERSION)
- 		at91_pm_data.ulp_mode = ULP1_MODE;
++		dual_timer0: timer@12000000 {
++			compatible = "arm,sp804", "arm,primecell";
++			interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0x12000000 0x1000>;
++			clocks = <&clk_3m>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
 +
-+	at91_pmc_fast_startup_init();
- }
-diff --git a/include/linux/clk/at91_pmc.h b/include/linux/clk/at91_pmc.h
-index 4afd891..683580e 100644
---- a/include/linux/clk/at91_pmc.h
-+++ b/include/linux/clk/at91_pmc.h
-@@ -168,6 +168,38 @@
- #define		AT91_PMC_WPVS		(0x1  <<  0)		/* Write Protect Violation Status */
- #define		AT91_PMC_WPVSRC		(0xffff  <<  8)		/* Write Protect Violation Source */
- 
-+#define AT91_PMC_FSMR		0x70		/* Fast Startup Mode Register */
-+#define AT91_PMC_FSTT0		BIT(0)		/* WKUP Pin Enable */
-+#define AT91_PMC_FSTT1		BIT(1)		/* Security Module Enable */
-+#define AT91_PMC_FSTT2		BIT(2)		/* PIOBU0 Input Enable */
-+#define AT91_PMC_FSTT3		BIT(3)		/* PIOBU1 Input Enable */
-+#define AT91_PMC_FSTT4		BIT(4)		/* PIOBU2 Input Enable */
-+#define AT91_PMC_FSTT5		BIT(5)		/* PIOBU3 Input Enable */
-+#define AT91_PMC_FSTT6		BIT(6)		/* PIOBU4 Input Enable */
-+#define AT91_PMC_FSTT7		BIT(7)		/* PIOBU5 Input Enable */
-+#define AT91_PMC_FSTT8		BIT(8)		/* PIOBU6 Input Enable */
-+#define AT91_PMC_FSTT9		BIT(9)		/* PIOBU7 Input Enable */
-+#define AT91_PMC_FSTT10		BIT(10)		/* GMAC Wake-up On LAN Enable */
-+#define AT91_PMC_RTCAL		BIT(17)		/* RTC Alarm Enable */
-+#define AT91_PMC_USBAL		BIT(18)		/* USB Resume Enable */
-+#define AT91_PMC_SDMMC_CD	BIT(19)		/* SDMMC Card Detect Enable */
-+#define AT91_PMC_LPM		BIT(20)		/* Low-power Mode */
-+#define AT91_PMC_RXLP_MCE	BIT(24)		/* Backup UART Receive Enable */
-+#define AT91_PMC_ACC_CE		BIT(25)		/* ACC Enable */
++		dual_timer1: timer@12001000 {
++			compatible = "arm,sp804", "arm,primecell";
++			interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0x12001000 0x1000>;
++			clocks = <&clk_3m>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
 +
-+#define AT91_PMC_FSPR		0x74		/* Fast Startup Polarity Reg */
-+#define AT91_PMC_FSTP0		BIT(0)		/* WKUP Pin Polarity */
-+#define AT91_PMC_FSTP1		BIT(1)		/* Security Module Polarity */
-+#define AT91_PMC_FSTP2		BIT(2)		/* PIOBU0 Pin Polarity */
-+#define AT91_PMC_FSTP3		BIT(3)		/* PIOBU1 Pin Polarity */
-+#define AT91_PMC_FSTP4		BIT(4)		/* PIOBU2 Pin Polarity */
-+#define AT91_PMC_FSTP5		BIT(5)		/* PIOBU3 Pin Polarity */
-+#define AT91_PMC_FSTP6		BIT(6)		/* PIOBU4 Pin Polarity */
-+#define AT91_PMC_FSTP7		BIT(7)		/* PIOBU5 Pin Polarity */
-+#define AT91_PMC_FSTP8		BIT(8)		/* PIOBU6 Pin Polarity */
-+#define AT91_PMC_FSTP9		BIT(9)		/* PIOBU7 Pin Polarity */
-+#define AT91_PMC_FSTP10		BIT(10)		/* Wake-up On LAN Polarity */
++		dual_timer2: timer@12002000 {
++			compatible = "arm,sp804", "arm,primecell";
++			interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0x12002000 0x1000>;
++			clocks = <&clk_3m>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
 +
- #define AT91_PMC_VERSION	0xfc
- 
- #define AT91_PMC_PCER1		0x100			/* Peripheral Clock Enable Register 1 [SAMA5 only]*/
++		spi_bus0: spi@12120000 {
++			compatible = "arm,pl022", "arm,primecell";
++			reg = <0x12120000 0x1000>;
++			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_SPI0_CLK>;
++			clock-names = "apb_pclk";
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disable";
++		};
++
++		spi_bus1: spi@12121000 {
++			compatible = "arm,pl022", "arm,primecell";
++			reg = <0x12121000 0x1000>;
++			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_SPI1_CLK>;
++			clock-names = "apb_pclk";
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disable";
++		};
++
++		spi_bus2: spi@12122000 {
++			compatible = "arm,pl022", "arm,primecell";
++			reg = <0x12122000 0x1000>;
++			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_SPI2_CLK>;
++			clock-names = "apb_pclk";
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disable";
++		};
++
++		sysctrl: system-controller@12020000 {
++			compatible = "hisilicon,hi3519-sysctrl", "syscon";
++			reg = <0x12020000 0x1000>;
++		};
++
++		reboot {
++			compatible = "syscon-reboot";
++			regmap = <&sysctrl>;
++			offset = <0x4>;
++			mask = <0xdeadbeef>;
++		};
++	};
++};
 -- 
-1.7.9.5
+1.9.1
 
