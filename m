@@ -1,388 +1,75 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 25 Jan 2016 13:34:12 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Mike Turquette <mturquette@baylibre.com>,
 	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH V3 6/6] clk: bcm2835: add missing 22 HW-clocks.
-Date: Thu, 14 Jan 2016 13:45:41 +0000
-Message-Id: <1452779142-20615-7-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1452779142-20615-1-git-send-email-kernel@martin.sperl.org>
-References: <1452779142-20615-1-git-send-email-kernel@martin.sperl.org>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [Patch V2 2/9] clk: tegra210: Remove improper flags for
+ lock_enable
+Message-ID: <20160125123412.GE20452@ulmo.nvidia.com>
+References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
+ <1452799478-14791-3-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ffoCPvUAPMgSXi6H"
+In-Reply-To: <1452799478-14791-3-git-send-email-rklein@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
 
-There were 22 HW clocks missing from the clock driver.
+--ffoCPvUAPMgSXi6H
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-These have been included and int_bits and frac_bits
-have been set correctly based on information extracted
-from the broadcom videocore headers
-(http://www.broadcom.com/docs/support/videocore/Brcm_Android_ICS_Graphics_Stack.tar.gz)
+On Thu, Jan 14, 2016 at 02:24:31PM -0500, Rhyland Klein wrote:
+> Most PLL's don't actually have LOCK_ENABLE bits. However, most PLL's
+> also had that flag set, which meant that the clk code was trying to
+> enable locks, and inadvertantly flipping bits in other fields.
+>=20
+> For PLLM, ensure the correct register is used for the misc_register.
+> PLL_MISC0 contains the EN_LCKDET bit which should be used for enabling
+> the lock, and PLLM_MISC1 shouldn't be used at all.
+>=20
+> Lastly, remove some of the settings which would point to the EN_LCKDET
+> bits for some PLLs. There is no need to enable the locks, and that is
+> done as part of the set_defaults logic already.
+>=20
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra210.c | 42 ++++++++++++++--------------------=
+------
+>  1 file changed, 14 insertions(+), 28 deletions(-)
 
-For an extracted view of the registers please see:
-https://github.com/msperl/rpi-registers/blob/master/md/Region_CM.md
+It seems like this could've been split into several patches given the
+three different changes above. However since they all seem to relate to
+the lock enable behaviour I've gone and applied this as is.
 
-bcm2835_clock_per_parents has been assigned as the parent
-clock for all new clocks, but this may not be correct
-in all cases - documentation on this is not publicly
-available, so some modifications may be needed in the
-future.
+Thierry
 
-There are a 3 more clocks that possibly could get implemented
-as gates.
+--ffoCPvUAPMgSXi6H
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c       |  260 ++++++++++++++++++++++++++++++++++-
- include/dt-bindings/clock/bcm2835.h |   22 +++
- 2 files changed, 276 insertions(+), 6 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 7bbe310..77bef0c 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -93,8 +93,18 @@
- #define CM_PCMDIV		0x09c
- #define CM_PWMCTL		0x0a0
- #define CM_PWMDIV		0x0a4
-+#define CM_SLIMCTL		0x0a8
-+#define CM_SLIMDIV		0x0ac
- #define CM_SMICTL		0x0b0
- #define CM_SMIDIV		0x0b4
-+#define CM_TCNTCTL		0x0c0
-+#define CM_TCNTDIV		0x0c4
-+#define CM_TECCTL		0x0c8
-+#define CM_TECDIV		0x0cc
-+#define CM_TD0CTL		0x0d0
-+#define CM_TD0DIV		0x0d4
-+#define CM_TD1CTL		0x0d8
-+#define CM_TD1DIV		0x0dc
- #define CM_TSENSCTL		0x0e0
- #define CM_TSENSDIV		0x0e4
- #define CM_TIMERCTL		0x0e8
-@@ -108,6 +118,9 @@
- #define CM_SDCCTL		0x1a8
- #define CM_SDCDIV		0x1ac
- #define CM_ARMCTL		0x1b0
-+#define CM_ARMDIV		0x1b4
-+#define CM_AVEOCTL		0x1b8
-+#define CM_AVEODIV		0x1bc
- #define CM_EMMCCTL		0x1c0
- #define CM_EMMCDIV		0x1c4
+iQIcBAABCAAGBQJWphZEAAoJEN0jrNd/PrOhppkP/1l+BZDc28KuhziBSZOdb78Z
+XPladFFOulXksTGqP9ian9vVpfdcFL9iAS3s+eVF5wDyJwVcjwEAihs2hJKrjogh
+WUgIGjUksbg3amFoXDc6MZbGfHp/mZUCDd/qU4/Dk5q5iJugMA2KB8RGmgRXR67v
+iSboVwMxEfxf/oAWTBRxNuo/F+9JMqxZ9G8oiBfIiFCocAu+joWzgtfkAgCc8pX4
+BrvgWHwkON8TKswiIpFVoYOUGiQww8wAtnCHyGKHAOUgxCMeU6OIQEHpVMaAcdVa
+9oejrjbG5laQlpZ/g6qTWZDTwdWmzEWQi0JNbHexWlekE5NT7xrnHDAMIPBGlKi5
+zMOabFFv5lRZGc8RYwqY+ugS0SfOvqIs1dzccbC6wxiATRXYGg1X5/MdtVQDnB01
+4NniX48fCOzW3rD8bjyiS3oq0wI8nSo0peyuvvAOEln3prM8EtlKkxFuibY7yksf
+/11Gu8Rya4OkskwrQsTFfICSWoZpjqFT9bzJFKDHF0ujEKJ7pwf+SHXiX0IbUQUt
+rgAwmWzgpuw9ZTohkhSzVycZNNZDrKYSkga1Pb0D5yNk9NkQhD7E99AaW6HOsjPt
+zS5x+g0ixnNKfW/nTwCi/blaWKqT9WMZgviEu8sXyPXwpiMWb68r/Mtw4vHqYiz8
+h7emxlcvWm+VxjsJ92vP
+=a2KY
+-----END PGP SIGNATURE-----
 
-@@ -872,6 +885,219 @@ static const struct bcm2835_clock_data bcm2835_clock_pcm_data = {
- 	.frac_bits = 12,
- };
-
-+static const struct bcm2835_clock_data bcm2835_clock_aveo_data = {
-+	.name = "aveo",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_AVEOCTL,
-+	.div_reg = CM_AVEODIV,
-+	.int_bits = 4,
-+	.frac_bits = 12,
-+};
-+
-+static const struct bcm2835_clock_data bcm2835_clock_cam0_data = {
-+	.name = "cam0",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_CAM0CTL,
-+	.div_reg = CM_CAM0DIV,
-+	.int_bits = 4,
-+	.frac_bits = 8,
-+};
-+
-+static const struct bcm2835_clock_data bcm2835_clock_cam1_data = {
-+	.name = "cam1",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_CAM1CTL,
-+	.div_reg = CM_CAM1DIV,
-+	.int_bits = 4,
-+	.frac_bits = 8,
-+};
-+
-+static const struct bcm2835_clock_data bcm2835_clock_ccp2_data = {
-+	/* this is possibly a gate */
-+	.name = "ccp2",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_CCP2CTL,
-+	.div_reg = CM_CCP2DIV,
-+	.int_bits = 1,
-+	.frac_bits = 0,
-+};
-+
-+static const struct bcm2835_clock_data bcm2835_clock_dft_data = {
-+	.name = "dft",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_DFTCTL,
-+	.div_reg = CM_DFTDIV,
-+	.int_bits = 5,
-+	.frac_bits = 0,
-+};
-+
-+static const struct bcm2835_clock_data bcm2835_clock_dpi_data = {
-+	.name = "dpi",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_DPICTL,
-+	.div_reg = CM_DPIDIV,
-+	.int_bits = 4,
-+	.frac_bits = 8,
-+};
-+
-+static const struct bcm2835_clock_data bcm2835_clock_dsi0e_data = {
-+	.name = "dsi0e",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_DSI0ECTL,
-+	.div_reg = CM_DSI0EDIV,
-+	.int_bits = 4,
-+	.frac_bits = 8,
-+};
-+
-+static const struct bcm2835_clock_data bcm2835_clock_dsi0p_data = {
-+	/* this is possibly a gate */
-+	.name = "dsi0p",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_DSI0PCTL,
-+	.div_reg = CM_DSI0PDIV,
-+	.int_bits = 1,
-+	.frac_bits = 0,
-+};
-+
-+static const struct bcm2835_clock_data bcm2835_clock_dsi1e_data = {
-+	.name = "dsi1e",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_DSI1ECTL,
-+	.div_reg = CM_DSI1EDIV,
-+	.int_bits = 4,
-+	.frac_bits = 8,
-+};
-+
-+static const struct bcm2835_clock_data bcm2835_clock_dsi1p_data = {
-+	/* this is possibly a gate */
-+	.name = "dsi1p",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_DSI1PCTL,
-+	.div_reg = CM_DSI1PDIV,
-+	.int_bits = 1,
-+	.frac_bits = 0,
-+};
-+
-+static const struct bcm2835_clock_data bcm2835_clock_gnric_data = {
-+	.name = "gnric",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_GNRICCTL,
-+	.div_reg = CM_GNRICDIV,
-+	.int_bits = 12,
-+	.frac_bits = 12,
-+};
-+
-+static const struct bcm2835_clock_data bcm2835_clock_gp0_data = {
-+	.name = "gp0",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_GP0CTL,
-+	.div_reg = CM_GP0DIV,
-+	.int_bits = 12,
-+	.frac_bits = 12,
-+};
-+
-+static const struct bcm2835_clock_data bcm2835_clock_gp1_data = {
-+	.name = "gp1",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_GP1CTL,
-+	.div_reg = CM_GP1DIV,
-+	.int_bits = 12,
-+	.frac_bits = 12,
-+};
-+
-+static const struct bcm2835_clock_data bcm2835_clock_gp2_data = {
-+	.name = "gp2",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_GP2CTL,
-+	.div_reg = CM_GP2DIV,
-+	.int_bits = 12,
-+	.frac_bits = 12,
-+};
-+
-+static const struct bcm2835_clock_data bcm2835_clock_peria_data = {
-+	.name = "peria",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_PERIACTL,
-+	.div_reg = CM_PERIADIV,
-+	.int_bits = 12,
-+	.frac_bits = 12,
-+};
-+
-+static const struct bcm2835_clock_data bcm2835_clock_pulse_data = {
-+	.name = "pulse",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_PULSECTL,
-+	.div_reg = CM_PULSEDIV,
-+	.int_bits = 12,
-+	.frac_bits = 0,
-+};
-+
-+static const struct bcm2835_clock_data bcm2835_clock_slim_data = {
-+	.name = "slim",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_SLIMCTL,
-+	.div_reg = CM_SLIMDIV,
-+	.int_bits = 12,
-+	.frac_bits = 12,
-+};
-+
-+static const struct bcm2835_clock_data bcm2835_clock_smi_data = {
-+	.name = "smi",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_SMICTL,
-+	.div_reg = CM_SMIDIV,
-+	.int_bits = 4,
-+	.frac_bits = 8,
-+};
-+
-+static const struct bcm2835_clock_data bcm2835_clock_td0_data = {
-+	.name = "td0",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_TD0CTL,
-+	.div_reg = CM_TD0DIV,
-+	.int_bits = 12,
-+	.frac_bits = 12,
-+};
-+
-+static const struct bcm2835_clock_data bcm2835_clock_td1_data = {
-+	.name = "td1",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_TD1CTL,
-+	.div_reg = CM_TD1DIV,
-+	.int_bits = 12,
-+	.frac_bits = 12,
-+};
-+
-+static const struct bcm2835_clock_data bcm2835_clock_tec_data = {
-+	.name = "tec",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_TECCTL,
-+	.div_reg = CM_TECDIV,
-+	.int_bits = 6,
-+	.frac_bits = 0,
-+};
-+
- struct bcm2835_gate_data {
- 	const char *name;
- 	const char *parent;
-@@ -879,18 +1105,18 @@ struct bcm2835_gate_data {
- 	u32 ctl_reg;
- };
-
--/*
-- * CM_PERIICTL (and CM_PERIACTL, CM_SYSCTL and CM_VPUCTL if
-- * you have the debug bit set in the power manager, which we
-- * don't bother exposing) are individual gates off of the
-- * non-stop vpu clock.
-- */
- static const struct bcm2835_gate_data bcm2835_clock_peri_image_data = {
- 	.name = "peri_image",
- 	.parent = "vpu",
- 	.ctl_reg = CM_PERIICTL,
- };
-
-+static const struct bcm2835_gate_data bcm2835_clock_sys_data = {
-+	.name = "sys",
-+	.parent = "vpu",
-+	.ctl_reg = CM_SYSCTL,
-+};
-+
- struct bcm2835_pll {
- 	struct clk_hw hw;
- 	struct bcm2835_cprman *cprman;
-@@ -1689,9 +1915,31 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 	[BCM2835_CLOCK_EMMC]	= REGISTER_CLK(&bcm2835_clock_emmc_data),
- 	[BCM2835_CLOCK_PWM]	= REGISTER_CLK(&bcm2835_clock_pwm_data),
- 	[BCM2835_CLOCK_PCM]	= REGISTER_CLK(&bcm2835_clock_pcm_data),
-+	[BCM2835_CLOCK_AVEO]	= REGISTER_CLK(&bcm2835_clock_aveo_data),
-+	[BCM2835_CLOCK_CAM0]	= REGISTER_CLK(&bcm2835_clock_cam0_data),
-+	[BCM2835_CLOCK_CAM1]	= REGISTER_CLK(&bcm2835_clock_cam1_data),
-+	[BCM2835_CLOCK_CCP2]	= REGISTER_CLK(&bcm2835_clock_ccp2_data),
-+	[BCM2835_CLOCK_DFT]	= REGISTER_CLK(&bcm2835_clock_dft_data),
-+	[BCM2835_CLOCK_DPI]	= REGISTER_CLK(&bcm2835_clock_dpi_data),
-+	[BCM2835_CLOCK_DSI0E]	= REGISTER_CLK(&bcm2835_clock_dsi0e_data),
-+	[BCM2835_CLOCK_DSI0P]	= REGISTER_CLK(&bcm2835_clock_dsi0p_data),
-+	[BCM2835_CLOCK_DSI1E]	= REGISTER_CLK(&bcm2835_clock_dsi1e_data),
-+	[BCM2835_CLOCK_DSI1P]	= REGISTER_CLK(&bcm2835_clock_dsi1p_data),
-+	[BCM2835_CLOCK_GNRIC]	= REGISTER_CLK(&bcm2835_clock_gnric_data),
-+	[BCM2835_CLOCK_GP0]	= REGISTER_CLK(&bcm2835_clock_gp0_data),
-+	[BCM2835_CLOCK_GP1]	= REGISTER_CLK(&bcm2835_clock_gp1_data),
-+	[BCM2835_CLOCK_GP2]	= REGISTER_CLK(&bcm2835_clock_gp2_data),
-+	[BCM2835_CLOCK_PERIA]	= REGISTER_CLK(&bcm2835_clock_peria_data),
-+	[BCM2835_CLOCK_PULSE]	= REGISTER_CLK(&bcm2835_clock_pulse_data),
-+	[BCM2835_CLOCK_SLIM]	= REGISTER_CLK(&bcm2835_clock_slim_data),
-+	[BCM2835_CLOCK_SMI]	= REGISTER_CLK(&bcm2835_clock_smi_data),
-+	[BCM2835_CLOCK_TD0]	= REGISTER_CLK(&bcm2835_clock_td0_data),
-+	[BCM2835_CLOCK_TD1]	= REGISTER_CLK(&bcm2835_clock_td1_data),
-+	[BCM2835_CLOCK_TEC]	= REGISTER_CLK(&bcm2835_clock_tec_data),
- 	/* the gates */
- 	[BCM2835_CLOCK_PERI_IMAGE] = REGISTER_GATE(
- 		&bcm2835_clock_peri_image_data),
-+	[BCM2835_CLOCK_SYS]	= REGISTER_GATE(&bcm2835_clock_sys_data),
- };
-
- static int bcm2835_clk_probe(struct platform_device *pdev)
-diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
-index 9a7b4a5..d29f181 100644
---- a/include/dt-bindings/clock/bcm2835.h
-+++ b/include/dt-bindings/clock/bcm2835.h
-@@ -45,3 +45,25 @@
- #define BCM2835_CLOCK_PERI_IMAGE	29
- #define BCM2835_CLOCK_PWM		30
- #define BCM2835_CLOCK_PCM		31
-+#define BCM2835_CLOCK_AVEO		32
-+#define BCM2835_CLOCK_CAM0		33
-+#define BCM2835_CLOCK_CAM1		34
-+#define BCM2835_CLOCK_CCP2		35
-+#define BCM2835_CLOCK_DFT		36
-+#define BCM2835_CLOCK_DPI		37
-+#define BCM2835_CLOCK_DSI0E		38
-+#define BCM2835_CLOCK_DSI0P		39
-+#define BCM2835_CLOCK_DSI1E		40
-+#define BCM2835_CLOCK_DSI1P		41
-+#define BCM2835_CLOCK_GNRIC		42
-+#define BCM2835_CLOCK_GP0		43
-+#define BCM2835_CLOCK_GP1		44
-+#define BCM2835_CLOCK_GP2		45
-+#define BCM2835_CLOCK_PERIA		46
-+#define BCM2835_CLOCK_PULSE		47
-+#define BCM2835_CLOCK_SLIM		48
-+#define BCM2835_CLOCK_SMI		49
-+#define BCM2835_CLOCK_SYS		50
-+#define BCM2835_CLOCK_TD0		51
-+#define BCM2835_CLOCK_TD1		52
-+#define BCM2835_CLOCK_TEC		53
---
-1.7.10.4
+--ffoCPvUAPMgSXi6H--
