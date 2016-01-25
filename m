@@ -1,66 +1,64 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-yk0-f179.google.com ([209.85.160.179]:35216 "EHLO
-	mail-yk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751103AbcAUULC (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jan 2016 15:11:02 -0500
-Received: by mail-yk0-f179.google.com with SMTP id s126so36794254ykf.2
-        for <linux-clk@vger.kernel.org>; Thu, 21 Jan 2016 12:11:01 -0800 (PST)
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 25 Jan 2016 13:47:08 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [Patch V2 6/9] clk: tegra210: fix pllx dyn step calculation
+Message-ID: <20160125124708.GL20452@ulmo.nvidia.com>
+References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
+ <1452799478-14791-7-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <CAAObsKC1v--mZwkiG-c7P2Bwi2-_txbeqaW4Vd5h-noAVNbhjA@mail.gmail.com>
-References: <1415087559-19444-1-git-send-email-kever.yang@rock-chips.com>
-	<48806799.thBSifdUp8@diego>
-	<54647142.4080800@rock-chips.com>
-	<CAD=FV=Vzec3Qm-kc6zZ4VxSREoZbzVkWbzp-noHYdcEVrLYYSw@mail.gmail.com>
-	<CAAObsKChYN5nmcm5OWnAzNRGDi_QGSoKvN+0FizhjeT-3mmeXQ@mail.gmail.com>
-	<CAD=FV=Wgu=xQ9PcVqfzcedXVU3Rh-HKbBVxHuqgV9OZJEYhYvg@mail.gmail.com>
-	<CAAObsKC1v--mZwkiG-c7P2Bwi2-_txbeqaW4Vd5h-noAVNbhjA@mail.gmail.com>
-Date: Thu, 21 Jan 2016 12:11:00 -0800
-Message-ID: <CAD=FV=VB93wYigRJ8wa8YL6P+Q+-fRokPiCB-Fo1pC_zAdh2oA@mail.gmail.com>
-Subject: Re: [PATCH 0/5] clk: rockchip: add full support for HDMI clock on rk3288
-From: Doug Anderson <dianders@chromium.org>
-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Cc: Kever Yang <kever.yang@rock-chips.com>,
-	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	Mike Turquette <mturquette@linaro.org>,
-	Sonny Rao <sonnyrao@chromium.org>,
-	Addy Ke <addy.ke@rock-chips.com>,
-	Eddie Cai <cf@rock-chips.com>,
-	ZhenFu Fang <fzf@rock-chips.com>,
-	Yakir Yang <ykk@rock-chips.com>,
-	=?UTF-8?B?5aea5pm65oOF?= <yzq@rock-chips.com>,
-	=?UTF-8?B?5oi05YWL6ZyWIChKYWNrKQ==?= <dkl@rock-chips.com>,
-	Tao Huang <huangtao@rock-chips.com>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="lHuqAdgBYNjQz/wy"
+In-Reply-To: <1452799478-14791-7-git-send-email-rklein@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
 
-On Thu, Jan 21, 2016 at 1:03 AM, Tomeu Vizoso <tomeu@tomeuvizoso.net> wrote:
-> So we have a mechanism for detecting a conflict in the clock
-> hierarchy, and a mechanism to solve it, but we are missing a way for
-> userspace to communicate policy regarding which clocks should be given
-> priority when solving such a conflict?
+--lHuqAdgBYNjQz/wy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hrmmm, I guess it could be userspace that makes the decision.  It does
-seem a little odd to force it to userspace in all cases, though.  For
-a particular laptop that is designed with a specific panel connected
-up eDP it seems less than ideal to push this into userspace.  If the
-kernel could just work in the expected sane way (or at least work that
-way by default) it would be ideal.
+On Thu, Jan 14, 2016 at 02:24:35PM -0500, Rhyland Klein wrote:
+> The logic for calculating the input rate used when figuring out
+> the proper dynamic steps for pllx was incorrect. It is supposed to
+> be calculated using parent_rate / m but it was just using the parent
+> rate directly, therefore using the wrong step values.
+>=20
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra210.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 
-If the kernel doesn't try to do anything sane by default then you're
-creating a requirement for everyone's userspace to somehow figure this
-out.  Do you expect there to be UI here, or that this would be
-something that would be figured out by the Linux distribution?
-Certainly exposing UI on something like a laptop with a builtin panel
-wouldn't make any sense to me, but it might make sense if you had an
-eval board with different display connectors on it.  If there's no UI,
-would the Linux distribution need to somehow identify which board we
-were on and then have a big lookup table about how to configure
-things?
+Applied, thanks.
+
+Thierry
+
+--lHuqAdgBYNjQz/wy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJWphlLAAoJEN0jrNd/PrOhyZYP/0yddyYV+buh6VbBumkAQFGd
+I2bKW+Txr5eVwokcYGmHTJtTpCHoH6qxbJw3kNR+xneAVi99t4h/NmqvMkCCjI0t
+vbib4ktX7ZlwFtViTjQPWeD2oM/1u6r+kbDzL9bVT7Jb9Np8S+/8rnW6weWFAv6U
+gyuU9ILVkqNg6NeUWe6eZZmhxmxGPtX3nlnPWOffalK7hrqlC1ciq6bwgzvugM02
+Ewh+1I7h/vYHjfdTMFjUB2rUEekCujx4j67dQFb1czQ3kF7BqAlLjKinhsibycKW
+A9m55bHv5Q5CUEDf76QRkq7hPCked7HF7lY8tx3d/VxfxL+Qcr5WHaahIlFO3swe
+3Mz/18BHxl2GpLaPc+EnD3SDxns1oWYHMBus2UKZU+RZb8PQMP7Br5TAUKKKXiwJ
+zwUqhftyFr2+06JBPI+1P/Q/1LLsjb2QnlTKeaU3kmOaRpSgSNNw0zHhevBtd3Vw
+iSd7DPnHYqocd1JbtVvaq6TiNDG3DFwcbwb8ml3zRyakWwM7w55s3uaDare4Pl0o
+q/k5wHMw1IYK1cWf+GavArAWANxPVpypuGUMHDua4Ri6bfvZOMXNnJ0T2/xVYvjX
+u8sr/N4F5Ffg+14riqtOx7Yjiop9pOM9DnC4cwvpwfrQfY7PWgDszYpeyY04SBFc
+9RO2EtRvOkj6xmTCzILg
+=uCGd
+-----END PGP SIGNATURE-----
+
+--lHuqAdgBYNjQz/wy--
