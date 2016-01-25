@@ -1,74 +1,101 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, John Crispin
-	<blogic@openwrt.org>
-CC: Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, <srv_heupstream@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>
-Subject: [PATCH v3 0/6] Add clock support for Mediatek MT2701
-Date: Tue, 12 Jan 2016 16:31:04 +0800
-Message-ID: <1452587470-61506-1-git-send-email-jamesjj.liao@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jamesjj.liao@mediatek.com
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>,
+ Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
+ Kevin Hilman <khilman@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [RESEND v2 2/2] arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into
+ ARCH_EXYNOS
+Date: Mon, 25 Jan 2016 09:50:21 +0900
+Message-id: <1453683021-6998-3-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1453683021-6998-1-git-send-email-k.kozlowski@samsung.com>
+References: <1453683021-6998-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset is based on 4.4-rc7, add clock and reset controller support
-for Mediatek MT2701.
+The ARMv8 Exynos family SoCs in Linux kernel are currently:
+ - Exynos5433 (controlled by ARCH_EXYNOS),
+ - Exynos7 (controlled by ARCH_EXYNOS7).
 
-This patchset also refined makefile and Kconfig to support configurable
-multiple SoC clock support.
+It duplicates Kconfig symbols unnecessarily, so consolidate them into
+one ARCH_EXYNOS. Future SoCs could fall also under the ARCH_EXYNOS
+symbol.
 
-changes since v2:
-- Fix ethsys definition.
-- Replace read-modify-write with regmap_update_bits() in clock operations.
-- Move mt2701-resets.h to include/dt-bindings/reset/.
-- Add hifsys reset patch from John Crispin.
+The commit should not bring any visible functional change.
 
-changes since v1:
-- Document MT2701 compatible strings.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
+Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-James Liao (2):
-  clk: mediatek: Refine the makefile to support multiple clock drivers
-  dt-bindings: ARM: Mediatek: Document bindings for MT2701
+---
 
-Shunli Wang (4):
-  clk: mediatek: Add dt-bindings for MT2701 clocks
-  clk: mediatek: Add MT2701 clock support
-  reset: mediatek: Add MT2701 reset controller dt-binding file
-  reset: mediatek: Add MT2701 reset driver
+Changes since v1:
+1. Minor cleanups after Tomasz's comments.
+2. Added tags: Chanwoo's, Pankaj's, Alim's and Tomasz's.
+---
+ arch/arm64/Kconfig.platforms        | 11 ++---------
+ arch/arm64/boot/dts/exynos/Makefile |  2 +-
+ arch/arm64/configs/defconfig        |  2 +-
+ 3 files changed, 4 insertions(+), 11 deletions(-)
 
- .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
- .../bindings/arm/mediatek/mediatek,bdpsys.txt      |   22 +
- .../bindings/arm/mediatek/mediatek,ethsys.txt      |   22 +
- .../bindings/arm/mediatek/mediatek,hifsys.txt      |   22 +
- .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
- .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
- .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
- .../bindings/arm/mediatek/mediatek,pericfg.txt     |    1 +
- .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
- .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
- drivers/clk/Kconfig                                |    1 +
- drivers/clk/mediatek/Kconfig                       |   31 +
- drivers/clk/mediatek/Makefile                      |    7 +-
- drivers/clk/mediatek/clk-gate.c                    |   52 +
- drivers/clk/mediatek/clk-gate.h                    |    2 +
- drivers/clk/mediatek/clk-mt2701.c                  | 1216 ++++++++++++++++++++
- drivers/clk/mediatek/clk-mtk.c                     |   25 +
- drivers/clk/mediatek/clk-mtk.h                     |   35 +-
- include/dt-bindings/clock/mt2701-clk.h             |  481 ++++++++
- include/dt-bindings/reset/mt2701-resets.h          |   83 ++
- 20 files changed, 2000 insertions(+), 6 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
- create mode 100644 drivers/clk/mediatek/Kconfig
- create mode 100644 drivers/clk/mediatek/clk-mt2701.c
- create mode 100644 include/dt-bindings/clock/mt2701-clk.h
- create mode 100644 include/dt-bindings/reset/mt2701-resets.h
-
---
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 4043c35962cc..64f1116640bc 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -13,21 +13,14 @@ config ARCH_BERLIN
+ 	  This enables support for Marvell Berlin SoC Family
+ 
+ config ARCH_EXYNOS
+-	bool
+-	help
+-	  This enables support for Samsung Exynos SoC family
+-
+-config ARCH_EXYNOS7
+-	bool "ARMv8 based Samsung Exynos7"
+-	select ARCH_EXYNOS
++	bool "ARMv8 based Samsung Exynos SoC family"
+ 	select COMMON_CLK_SAMSUNG
+ 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+ 	select HAVE_S3C_RTC if RTC_CLASS
+ 	select PINCTRL
+ 	select PINCTRL_EXYNOS
+-
+ 	help
+-	  This enables support for Samsung Exynos7 SoC family
++	  This enables support for ARMv8 based Samsung Exynos SoC family.
+ 
+ config ARCH_LAYERSCAPE
+ 	bool "ARMv8 based Freescale Layerscape SoC family"
+diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+index 20310e5b6d6f..50c9b9383cfa 100644
+--- a/arch/arm64/boot/dts/exynos/Makefile
++++ b/arch/arm64/boot/dts/exynos/Makefile
+@@ -1,4 +1,4 @@
+-dtb-$(CONFIG_ARCH_EXYNOS7) += exynos7-espresso.dtb
++dtb-$(CONFIG_ARCH_EXYNOS) += exynos7-espresso.dtb
+ 
+ always		:= $(dtb-y)
+ subdir-y	:= $(dts-dirs)
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index bdd7aa358d2a..a396fa7c69a5 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -33,7 +33,7 @@ CONFIG_MODULE_UNLOAD=y
+ # CONFIG_IOSCHED_DEADLINE is not set
+ CONFIG_ARCH_BCM_IPROC=y
+ CONFIG_ARCH_BERLIN=y
+-CONFIG_ARCH_EXYNOS7=y
++CONFIG_ARCH_EXYNOS=y
+ CONFIG_ARCH_LAYERSCAPE=y
+ CONFIG_ARCH_HISI=y
+ CONFIG_ARCH_MEDIATEK=y
+-- 
 1.9.1
