@@ -1,74 +1,58 @@
-Return-Path: <amitoj1606@gmail.com>
-Return-Path: <amitoj1606@gmail.com>
-Date: Sun, 24 Jan 2016 20:45:20 +0530
-From: Amitoj Kaur Chawla <amitoj1606@gmail.com>
-To: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, swarren@wwwdotorg.org,
-	thierry.reding@gmail.com, gnurou@gmail.com,
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Gabriel Fernandez <gabriel.fernandez@linaro.org>,
+	Pankaj Dev <pankaj.dev@st.com>,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: julia.lawall@lip6.fr
-Subject: [PATCH] clk: tegra: clk-emc: Add missing of_node_put
-Message-ID: <20160124151519.GA23923@amitoj-Inspiron-3542>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Subject: [PATCH] clk: st: avoid uninitialized variable use
+Date: Mon, 25 Jan 2016 16:54:04 +0100
+Message-Id: <1453737255-1959849-1-git-send-email-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-for_each_child_of_node performs an of_node_get on each iteration, so
-to break out of the loop an of_node_put is required.
+My previous patch fixed some warnings about printing a couple
+of variables that are always uninitialized in quadfs_pll_fs660c32_set_rate(),
+but I now got a warning that only shows up in some configurations (i.e.
+without gcc -Os) about the params.ndiv being used uninitialized in the
+error case:
 
-Found using Coccinelle. The semantic patch used for this is as follows:
+drivers/clk/st/clkgen-fsyn.c: In function 'quadfs_pll_fs660c32_set_rate':
+drivers/clk/st/clkgen-fsyn.c:584:75: warning: 'params.ndiv' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/clk/st/clkgen-fsyn.c:574:16: note: 'params.ndiv' was declared here
 
-// <smpl>
-@@
-expression e;
-local idexpression child;
-@@
+This changes the error handling so we bail for invalid arguments rather
+than continuing with uninitialized data.
 
- for_each_child_of_node(root, child) {
-   ... when != of_node_put(child)
-       when != e = child
-(
-   return child;
-|
-+  of_node_put(child);
-?  return ...;
-)
-   ...
- }
-// </smpl>
-
-Signed-off-by: Amitoj Kaur Chawla <amitoj1606@gmail.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/clk/tegra/clk-emc.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/clk/st/clkgen-fsyn.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
-index 138a94b..6aaccf9 100644
---- a/drivers/clk/tegra/clk-emc.c
-+++ b/drivers/clk/tegra/clk-emc.c
-@@ -450,8 +450,10 @@ static int load_timings_from_dt(struct tegra_clk_emc *tegra,
- 		struct emc_timing *timing = tegra->timings + (i++);
+diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
+index ccb324d97160..dec4eaaecc00 100644
+--- a/drivers/clk/st/clkgen-fsyn.c
++++ b/drivers/clk/st/clkgen-fsyn.c
+@@ -574,12 +574,16 @@ static int quadfs_pll_fs660c32_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct stm_fs params;
+ 	long hwrate = 0;
+ 	unsigned long flags = 0;
++	int ret;
  
- 		err = load_one_timing_from_dt(tegra, timing, child);
--		if (err)
-+		if (err) {
-+			of_node_put(child);
- 			return err;
-+		}
+ 	if (!rate || !parent_rate)
+ 		return -EINVAL;
  
- 		timing->ram_code = ram_code;
- 	}
-@@ -501,9 +503,9 @@ struct clk *tegra_clk_register_emc(void __iomem *base, struct device_node *np,
- 		 * fuses until the apbmisc driver is loaded.
- 		 */
- 		err = load_timings_from_dt(tegra, node, node_ram_code);
-+		of_node_put(node);
- 		if (err)
- 			return ERR_PTR(err);
--		of_node_put(node);
- 		break;
- 	}
+-	if (!clk_fs660c32_vco_get_params(parent_rate, rate, &params))
+-		clk_fs660c32_vco_get_rate(parent_rate, &params, &hwrate);
++	ret = clk_fs660c32_vco_get_params(parent_rate, rate, &params);
++	if (ret)
++		return ret;
++
++	clk_fs660c32_vco_get_rate(parent_rate, &params, &hwrate);
  
+ 	pr_debug("%s: %s new rate %ld [ndiv=0x%x]\n",
+ 		 __func__, clk_hw_get_name(hw),
 -- 
-1.9.1
+2.7.0
