@@ -1,146 +1,66 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 25 Jan 2016 13:46:48 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Mark Kuo <mkuo@nvidia.com>
+Subject: Re: [Patch V2 7/9] clk: tegra: pll: Do not disable PLLE when under
+ HW control
+Message-ID: <20160125124648.GK20452@ulmo.nvidia.com>
+References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
+ <1452799478-14791-8-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-To: Russell King <rmk+kernel@arm.linux.org.uk>,
- "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <E1aFJ0A-00086Z-0I@rmk-PC.arm.linux.org.uk>
-Cc: linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org
-References: <E1aFJ0A-00086Z-0I@rmk-PC.arm.linux.org.uk>
-Message-ID: <20160103064749.15239.59588@quark.deferred.io>
-Subject: Re: [PATCH] clk: fix clk-gpio.c with optional clock= DT property
-Date: Sat, 02 Jan 2016 22:47:49 -0800
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ZG5hGh9V5E9QzVHS"
+In-Reply-To: <1452799478-14791-8-git-send-email-rklein@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Russell,
 
-Quoting Russell King (2016-01-02 02:01:34)
-> When the clock DT property is not given, of_clk_get_parent_count()
-> returns -ENOENT, which then tries to allocate -2 x 4 bytes of memory,
-> which of course fails, causing the whole driver to fail to create
-> the clock.
-> =
+--ZG5hGh9V5E9QzVHS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> This causes the SolidRun platforms to fail probing the SDHCI1 interface
-> which is connected to the WiFi.
-> =
-
-> Fix this by detecting errno codes, skipping the allocation, and fixing
-> of_clk_gpio_gate_delayed_register_get() to handle a NULL parent_names
-> array.
-
-Thanks for the fix. Applied to clk-next manually.
-
-> =
-
-> Fixes: 80eeb1f0f757 ("clk: add gpio controlled clock multiplexer")
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+On Thu, Jan 14, 2016 at 02:24:36PM -0500, Rhyland Klein wrote:
+> From: Mark Kuo <mkuo@nvidia.com>
+>=20
+> SW should not disable PLLE if PLLE is already put under HW control.
+>=20
+> Signed-off-by: Mark Kuo <mkuo@nvidia.com>
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 > ---
-> This goes all the way back to 80eeb1f0f757 ("clk: add gpio controlled
-> clock multiplexer") introduced in June in v4.3-rc2 - which raises the
-> question why _development_ work in clk is being merged outside of the
-> merge window.
+>  drivers/clk/tegra/clk-pll.c | 22 +++++++++++++++-------
+>  1 file changed, 15 insertions(+), 7 deletions(-)
 
-That patch was merged into the clk tree in June 2015, based on 4.2-rc1.
+Applied, thanks.
 
-v4.2 was release on Sunday, August 30, 2015. My pull request to Linus
-containing this patch was sent on Monday, August 31, 2015. Thread
-archived here:
+Thierry
 
-http://lkml.kernel.org/r/<20150831192125.11508.92473@quantum>
+--ZG5hGh9V5E9QzVHS
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Looks like it was merged in 4.3-rc1 as well:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-$ git log v4.3-rc1..clk-for-linus-4.3
-$
+iQIcBAABCAAGBQJWphk4AAoJEN0jrNd/PrOhK6IQAKh8U5OFIuZF7JUE15gQc3qt
+Q0dZjbJxH8PON/AvWn4hL9Af+ukkq/nex42AlYc19LKCiCO7VjBSgPOYlpqaCb7z
++qW3RUxBg+Ktq/rh8G8K2fFgk1hBb968GlIw/P5Pp9k5Y10YjFixhG5vU/wAjmh8
+wqQubnGIPnFeqvlL4yA9A2RFheH2rrYxLCk7Hrf8zqkJuNkt2vwOEGLKzMdtJhBQ
+X50fBxNxZZwIJrlc5Fzeieyjd8DdhU1+LecY9ye1oBxvIxBUAUsKBDxZT4AaeaLu
+41PjEx5GsL5FjPrWJRLgwoM9kNk4/KPb5fK0o3xbBiE3zk6dRLbQ8QLAWlLfZ6jo
+lTGE/1/NNRUISYboXvup+gnoVvD6I+lO4SleXqCWiDxpCyqZ20O8Fem+Q/gmR1m/
+A1SbsGRvbb4q5TfMyz0C+BFSDHKBwyDdZwauQeXIbC4DMVpLQz4JYozAwW3D0A7I
+3Ej7UAzte+WwLaPgaUZvOVmeDFzw1Zd3MA+bw8Gt6PuNfMsea/mb9VsMt79JBi6W
+gbba+EvNN5hiW9mtsBrTOSyZLLi16qIV9LKS5NmsgQg0P7RdLSgUiD2t3ufmhR9s
+S5N+R6J8CbkNSXvrluqd89wb9l+Cjuu/Gm7USR7BIQ3Itpxl87KJv6AIwP5Eijso
+ywy1thhjiE+iS2FIOL/8
+=gjC3
+-----END PGP SIGNATURE-----
 
-> =
-
-> A rewrite of this patch will be necessary to apply to v4.3 kernels.
-> =
-
-> This applies on top of v4.4-rc6.
-
-Alternatively we can send f66541ba02d5 "clk: gpio: Get parent clk names
-in of_gpio_clk_setup()" along with your fix.
-
-Below is the modified version of your patch.
-
-Regards,
-Mike
-
-
-
-commit 60f7e5a537f367d3be7cff2bce13c91c10bdf451
-Author: Russell King <rmk+kernel@arm.linux.org.uk>
-Date:   Sat Jan 2 10:01:34 2016 +0000
-
-    clk: fix clk-gpio.c with optional clock=3D DT property
-    =
-
-    When the clock DT property is not given, of_clk_get_parent_count()
-    returns -ENOENT, which then tries to allocate -2 x 4 bytes of memory,
-    which of course fails, causing the whole driver to fail to create
-    the clock.
-    =
-
-    This causes the SolidRun platforms to fail probing the SDHCI1 interface
-    which is connected to the WiFi.
-    =
-
-    Fix this by detecting errno codes, skipping the allocation, and fixing
-    of_clk_gpio_gate_delayed_register_get() to handle a NULL parent_names
-    array.
-    =
-
-    Fixes: 80eeb1f0f757 ("clk: add gpio controlled clock multiplexer")
-    Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-    Signed-off-by: Michael Turquette <mturquette@baylibre.com>
-
-diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
-index 1767b9e..19fed65 100644
---- a/drivers/clk/clk-gpio.c
-+++ b/drivers/clk/clk-gpio.c
-@@ -264,8 +264,8 @@ static struct clk *of_clk_gpio_gate_delayed_register_ge=
-t(const char *name,
- 		const char * const *parent_names, u8 num_parents,
- 		unsigned gpio, bool active_low)
- {
--	return clk_register_gpio_gate(NULL, name, parent_names[0],
--			gpio, active_low, 0);
-+	return clk_register_gpio_gate(NULL, name, parent_names ?
-+			parent_names[0] : NULL, gpio, active_low, 0);
- }
- =
-
- static struct clk *of_clk_gpio_mux_delayed_register_get(const char *name,
-@@ -295,15 +295,19 @@ static void __init of_gpio_clk_setup(struct device_no=
-de *node,
- 	if (!data)
- 		return;
- =
-
--	parent_names =3D kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
--	if (!parent_names) {
--		kfree(data);
--		return;
-+	if (num_parents) {
-+		parent_names =3D kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
-+		if (!parent_names) {
-+			kfree(data);
-+			return;
-+		}
-+
-+		for (i =3D 0; i < num_parents; i++)
-+			parent_names[i] =3D of_clk_get_parent_name(node, i);
-+	} else {
-+		parent_names =3D NULL;
- 	}
- =
-
--	for (i =3D 0; i < num_parents; i++)
--		parent_names[i] =3D of_clk_get_parent_name(node, i);
--
- 	data->num_parents =3D num_parents;
- 	data->parent_names =3D parent_names;
- 	data->node =3D node;
+--ZG5hGh9V5E9QzVHS--
