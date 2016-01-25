@@ -1,64 +1,39 @@
-Return-Path: <yingjoe.chen@mediatek.com>
-Message-ID: <1453344325.28078.9.camel@mtksdaap41>
-Subject: Re: [PATCH v3 1/6] clk: mediatek: Refine the makefile to support
- multiple clock drivers
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-To: James Liao <jamesjj.liao@mediatek.com>
-CC: <devicetree@vger.kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<srv_heupstream@mediatek.com>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, Shunli Wang <shunli.wang@mediatek.com>,
-	Sascha Hauer <kernel@pengutronix.de>, "Matthias Brugger"
-	<matthias.bgg@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, John Crispin <blogic@openwrt.org>
-Date: Thu, 21 Jan 2016 10:45:25 +0800
-In-Reply-To: <1453343300.28078.6.camel@mtksdaap41>
-References: <1452587470-61506-1-git-send-email-jamesjj.liao@mediatek.com>
-	 <1452587470-61506-2-git-send-email-jamesjj.liao@mediatek.com>
-	 <1453343300.28078.6.camel@mtksdaap41>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Return-Path: yingjoe.chen@mediatek.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular2.263xmail.com ([211.157.152.3]:51253 "EHLO
+	regular2.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755672AbcAYJAY (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jan 2016 04:00:24 -0500
+Received: from regular1.263xmail.com (unknown [192.168.165.230])
+	by regular2.263xmail.com (Postfix) with ESMTP id E1A451E812
+	for <linux-clk@vger.kernel.org>; Mon, 25 Jan 2016 17:00:19 +0800 (CST)
+From: Zhang Qing <zhangqing@rock-chips.com>
+To: heiko@sntech.de, zhengxing@rock-chips.com, xf@rock-chips.com
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	huangtao@rock-chips.com, zyw@rock-chips.com, jay.xu@rock-chips.com,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	zhangqing <zhangqing@rock-chips.com>
+Subject: [PATCH v1 0/3] clk: rockchip: rk3368: fix some error for rk3368 clk
+Date: Mon, 25 Jan 2016 08:55:59 -0800
+Message-Id: <1453740962-8556-1-git-send-email-zhangqing@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2016-01-21 at 10:28 +0800, Yingjoe Chen wrote:
-> On Tue, 2016-01-12 at 16:31 +0800, James Liao wrote:
-> > Add a Kconfig to define clock configuration for each SoC, and
-> > modify the Makefile to build drivers that only selected in config.
-> > 
-> > Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-> > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> > ---
-> >  drivers/clk/Kconfig           |  1 +
-> >  drivers/clk/mediatek/Kconfig  | 23 +++++++++++++++++++++++
-> >  drivers/clk/mediatek/Makefile |  6 +++---
-> >  3 files changed, 27 insertions(+), 3 deletions(-)
-> >  create mode 100644 drivers/clk/mediatek/Kconfig
-> > 
-> > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> > index c3e3a02..b7a37dc 100644
-> > --- a/drivers/clk/Kconfig
-> > +++ b/drivers/clk/Kconfig
-> > @@ -198,3 +198,4 @@ source "drivers/clk/mvebu/Kconfig"
-> >  
-> >  source "drivers/clk/samsung/Kconfig"
-> >  source "drivers/clk/tegra/Kconfig"
-> > +source "drivers/clk/mediatek/Kconfig"
-> 
-> 
-> Hi James,
-> 
-> drivers/clk/mediatek/Kconfig add user selectable options, menuconfig
-> will list them outside of "Common Clock Framework" sub-menu if you
-> source the file here. Kconfig for samsung & tegra doesn't have any, so
-> it is OK for them to stay here.
-> 
-> Please move it inside the menu, also it seems the source lines are
-> sorted now, so let's keep them sorted.
+From: zhangqing <zhangqing@rock-chips.com>
+
+modify edp_24m parent select bit.
+enable CLK_SET_RATE_PARENT flag for spdif_8ch and i2s_2ch.
+
+zhangqing (3):
+  clk: rockchip: rk3368: fix edp_24m parent
+  clk: rockchip: rk3368: enable the CLK_SET_RATE_PARENT flag for
+    spdif_8ch
+  clk: rockchip: rk3368: enable the CLK_SET_RATE_PARENT flag for i2s_2ch
+
+ drivers/clk/rockchip/clk-rk3368.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+-- 
+1.9.1
 
 
-After looking at drivers/clk/Kconfig history, it seems we have similar
-issue before. I think we should move all sources under clk menu to
-prevent this from happening.
-
-Joe.C
