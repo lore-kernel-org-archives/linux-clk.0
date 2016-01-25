@@ -1,56 +1,62 @@
-Return-Path: <moinejf@free.fr>
-Date: Sat, 30 Jan 2016 18:57:14 +0100
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Jens Kuske <jenskuske@gmail.com>,
- Vishnu Patekar <vishnupatekar0510@gmail.com>, Hans de Goede
- <hdegoede@redhat.com>, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] clk: sunxi: Refactor A31 PLL6 so that it can be
- reused
-Message-Id: <20160130185714.7abcf1de9ef8108c2f48c7fe@free.fr>
-In-Reply-To: <1454008958-12655-2-git-send-email-maxime.ripard@free-electrons.com>
-References: <1454008958-12655-1-git-send-email-maxime.ripard@free-electrons.com>
-	<1454008958-12655-2-git-send-email-maxime.ripard@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 25 Jan 2016 13:30:57 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [Patch V2 1/9] clk: tegra: Fix divider on VI_I2C
+Message-ID: <20160125123057.GD20452@ulmo.nvidia.com>
+References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
+ <1452799478-14791-2-git-send-email-rklein@nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="wULyF7TL5taEdwHz"
+In-Reply-To: <1452799478-14791-2-git-send-email-rklein@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 28 Jan 2016 20:22:38 +0100
-Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
 
-> Remove the fixed dividers from the PLL6 driver to be able to have a
-> reusable driver that can be used across several SoCs that share the same
-> controller, but don't have the same set of dividers for this clock, and to
-> also be reused multiple times in the same SoC, since we're droping the
-> clock name.
+--wULyF7TL5taEdwHz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Jan 14, 2016 at 02:24:30PM -0500, Rhyland Klein wrote:
+> VI-I2C has 16 bits available for its divider. Switch the divider
+> width to 16 instead of 8 so correct rates can be set.
 >=20
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 > ---
-> Changes from v2
->   - Rebased and converted over to the new factors refactoring. Fixed the
->     retrieved rate
->=20
->  arch/arm/boot/dts/sun6i-a31.dtsi     | 36 ++++++++++++++++++------------=
-------
->  arch/arm/boot/dts/sun8i-a23-a33.dtsi | 25 +++++++++++++++++--------
->  arch/arm/boot/dts/sun8i-a23.dtsi     |  2 +-
->  arch/arm/boot/dts/sun8i-a33.dtsi     |  4 ++--
->  arch/arm/boot/dts/sun8i-h3.dtsi      | 36 ++++++++++++++++++------------=
-------
->  drivers/clk/sunxi/clk-sunxi.c        | 32 ++++++++++++++++--------------=
---
->  6 files changed, 72 insertions(+), 63 deletions(-)
+>  drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hi Maxime,
+Applied, thanks.
 
-Do you know that the DT definitions cannot be changed when they are in
-the mainline kernel?
+Thierry
 
-Also, for the H3 PLL periph1 (aka PLL8), why didn't you create a
-'pll8x2' clock with 'pll8' as a divider?
+--wULyF7TL5taEdwHz
+Content-Type: application/pgp-signature; name="signature.asc"
 
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJWphWAAAoJEN0jrNd/PrOhDXsP/2d0Bcr6tfkePb9iFKYVyaQQ
+oFVAHHRjxNGz0WmZvfASN5XeV66Kqp4yHvQivb9K33O59uJy4HYTx9BKsY/ah6dz
+KjEWwl/0yTJYQ2sLHukbwERecZyDwamEkZ1KlNu6tdomsweVzK9MuK/60gvYY4kY
+p2jnCZ/C5n0sSPIPWqpaGPSpOoKvqKMzo26hng9d9Q8qk++3fXaMAjWM7gBDnZod
+FFpByrNWtWuMmK0wSEbR0iGCvgWOm+mS17qRIm/oMEL4IjisW/8ZlLoCq8qShASb
+5B+R+OYBOUuiNw/6bKup2ajofMmKJsaIAx3s+Xs3h+fZHyBNC03tFZ3giXy6MAj4
+xlIUEzoD9r3TWAoq7AOxDHZBnU/KlPW6cMWKrskdbdGfgYgEh7YSBOlPS7sjTufb
+/vkuq8yVUdDt92R2oyBYfd+NY6FGW6m76U7WxiV533Nzmyye2DMbxQekuqchGje0
+FEpONhz/h3v4wIJ9+T4NyUbFGPOQubuwTv+paKVqVTV8ZHDNObqKFx0RThYGOJIe
+LRcoIhlM6pcLJPid1RJ2hyu2mTjnvXvOHw0asOxppfUmr3SItcTAT0+PK8FsVLgS
+a16+Rh3sieFKk1bSzMRuqFdoL+Ouht9XVqJrffj15tanchxiShfVYQZcnB+IBY6p
+pziDwUEII8+JXnjPKtmF
+=iIvJ
+-----END PGP SIGNATURE-----
+
+--wULyF7TL5taEdwHz--
