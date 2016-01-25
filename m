@@ -1,73 +1,64 @@
-Return-Path: <olof@lixom.net>
-Return-Path: <olof@lixom.net>
-Date: Thu, 7 Jan 2016 06:06:49 +0100
-From: Olof Johansson <olof@lixom.net>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: k.kozlowski.k@gmail.com, devicetree@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, arm@kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org,
-	Kevin Hilman <khilman@linaro.org>, Kukjin Kim <kgene@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 25 Jan 2016 13:36:02 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [GIT PULL 6/9] ARM: EXYNOS: clk: Another clock dependency,
- ARMv7, for v4.5
-Message-ID: <20160107050649.GB26875@localhost>
-References: <1449020386-20250-1-git-send-email-k.kozlowski@samsung.com>
- <1449020386-20250-7-git-send-email-k.kozlowski@samsung.com>
- <20151222045135.GG30172@localhost>
- <567A7D8F.3010209@samsung.com>
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [Patch V2 3/9] clk: tegra210: Fix naming of MISC registers
+Message-ID: <20160125123602.GF20452@ulmo.nvidia.com>
+References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
+ <1452799478-14791-4-git-send-email-rklein@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <567A7D8F.3010209@samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="i3lJ51RuaGWuFYNw"
+In-Reply-To: <1452799478-14791-4-git-send-email-rklein@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Dec 23, 2015 at 07:55:11PM +0900, Krzysztof Kozlowski wrote:
-> W dniu 22.12.2015 o 13:51, Olof Johansson pisze:
-> > On Wed, Dec 02, 2015 at 10:39:43AM +0900, Krzysztof Kozlowski wrote:
-> >> Hi Kukjin,
-> >>
-> >> This is also clock dependency. I put it in separate tag in case clock
-> >> folks want to pull it also.
-> >>
-> >> Best regards,
-> >> Krzysztof
-> >>
-> >>
-> >> The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
-> >>
-> >>   Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
-> >>
-> >> are available in the git repository at:
-> >>
-> >>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-exynos4-4.5
-> >>
-> >> for you to fetch changes up to 94af7a3c310f5877dc6f756179b92f24f89a9b08:
-> >>
-> >>   clk: samsung: exynos4: Add SSS gate clock (2015-11-18 22:02:02 +0900)
-> > 
-> > Again, this should probably go through the clk maintainer (or have an ack).
-> > It's just two one-line changes though, so if they're slow to respond we can
-> > take it as a fallback. Resend if that's the case.
-> > 
-> 
-> Wait, I am missing something. This contains only one patch which has the
-> Stephen's Boyd ack:
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-October/379230.html
-> (this is in commit message already)
-> 
-> What kind of ack do you expect here? Ack for pull-request?
 
-Yeah, looks good. I likely mixed up branch contents when I replied to this one.
+--i3lJ51RuaGWuFYNw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'll merge it into drivers. Still, for patches that only touches clock
-subsystem, the default of merging through those subsystem maintainers is
-preferred. Complications, of course, are when there's dependencies.
+On Thu, Jan 14, 2016 at 02:24:32PM -0500, Rhyland Klein wrote:
+> Some register for PLLM and PLLMB were named MISC0 but according to the
+> TRM, they have different names. Sync up the names to make it easier to
+> understand which register they are really referring to.
+>=20
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra210.c | 36 ++++++++++++++++++----------------=
+--
+>  1 file changed, 18 insertions(+), 18 deletions(-)
 
+Applied, thanks.
 
--Olof
+Thierry
+
+--i3lJ51RuaGWuFYNw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJWphayAAoJEN0jrNd/PrOh7ZEQAInNP4jVF/YD+SdPdGAE3z3t
+XTMd1tUv7jLQKyJh1VT4NPo0VScn2fQsR5H06HoMCmQEoW3kTwJMaVBptQlEnfmm
+tSBC6MPBZyoqDEo4OiAYHgmAsvSn2LbnHBUgJotRowxSMlPwZWlHEAN2MInywkOo
+q90D1eY8q4LZMx5py5z9N2Mo+fbThQX9KydpgDchjePvjaAtwX4a6kQSGK7RDVNU
+oZ1aTB2DtgvqUnlY3pLP6EHw132A9St+FzfY5N0f+pdPZwFP6hsnTtZtZq5TcnGG
+589+AmD8WSI+J3eIMh1HKLV3VhfeBjdPhZzSxtu94+UJU6qJRn1Z+ZKLjbafF94P
+huMe+7uEv79QzKy5beTNnu2mUWHhizQae7s3pkoZhHmfhQrGk38NA8mzjr97NAaY
+gCQ1OozbOtycLNYXH4CzLqBrbst1so3ImhlYWxu/G2KokdotcwSrJjJSOXZt6daX
++FGDugBh3R9tt5vDuxlsF4RSq/oJd2/wPZFbzeQKBc7nIr4Yun4HvvxMrPU36kR3
+TUwuwjAbGCjylp+GKb7yCe7JL6nsny1/VsLynbHYPm+l73JXNqQ91TT+M8FEaA7o
+9zyGWpGTqOiaHPMg9TJdjvnT5gZTx6ujKM+QVgtU22hM7KwiQb71lTefzr7WO2Yd
+iQXCJ7OzJ/vsgkjn/FAv
+=iuLk
+-----END PGP SIGNATURE-----
+
+--i3lJ51RuaGWuFYNw--
