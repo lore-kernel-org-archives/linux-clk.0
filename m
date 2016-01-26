@@ -1,112 +1,56 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: James Liao <jamesjj.liao@mediatek.com>,
- "Matthias Brugger" <matthias.bgg@gmail.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1452482936-51852-1-git-send-email-jamesjj.liao@mediatek.com>
-Cc: "Sascha Hauer" <kernel@pengutronix.de>, "Daniel Kurtz" <djkurtz@chromium.org>,
- srv_heupstream@mediatek.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-clk@vger.kernel.org, "James Liao" <jamesjj.liao@mediatek.com>
-References: <1452482936-51852-1-git-send-email-jamesjj.liao@mediatek.com>
-Message-ID: <20160114022637.1942.4564@quark.deferred.io>
-Subject: Re: [PATCH v2] clk: mediatek: Allow changing PLL rate when it is off
-Date: Wed, 13 Jan 2016 18:26:37 -0800
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lb0-f195.google.com ([209.85.217.195]:34426 "EHLO
+	mail-lb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964799AbcAZMon (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2016 07:44:43 -0500
+From: Alexander Kochetkov <al.kochet@gmail.com>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: stable@vger.kernel.org, Alexander Kochetkov <al.kochet@gmail.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: rockchip: Reparent hclk_rom, hclk_i2s0 and hclk_spdif to hclk_cpubus on RK3066/RK3188
+Date: Tue, 26 Jan 2016 15:44:10 +0300
+Message-Id: <1453812250-11819-1-git-send-email-al.kochet@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi James,
+In order to make peripherals (rom, i2s0 or spdif) accessible via cpu,
+hclk_cpubus gate must be opened. Without that all accesses (readl/writel)
+return wrong data.
 
-Quoting James Liao (2016-01-10 19:28:56)
-> Some modules may need to change its clock rate before turn on it.
-> So changing PLL's rate when it is off should be allowed.
-> This patch removes PLL enabled check before set rate, so that
-> PLLs can set new frequency even if they are off.
-> =
+The patch fixes regression introduced by recent clock code.
 
-> On MT8173 for example, ARMPLL's enable bit can be controlled by
-> other HW. That means ARMPLL may be turned on even if we (CPU / SW)
-> set ARMPLL's enable bit as 0. In this case, SW may want and can
-> still change ARMPLL's rate by changing its pcw and postdiv settings.
-> But without this patch, new pcw setting will not be applied because
-> its enable bit is 0.
+Fixes: 78eaf6095cc763c ("clk: rockchip: disable unused clocks")
 
-Must the clock signal be enabled to change the PLL rate? If so, does
-ARMPLL set the CLK_SET_RATE_GATE flag?
+Signed-off-by: Alexander Kochetkov <al.kochet@gmail.com>
 
-> =
+CC: linux-clk@vger.kernel.org
+CC: linux-arm-kernel@lists.infradead.org
+CC: linux-rockchip@lists.infradead.org
+CC: linux-kernel@vger.kernel.org
+CC: stable@vger.kernel.org # 4.1.x-
+---
+ drivers/clk/rockchip/clk-rk3188.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> ---
->  drivers/clk/mediatek/clk-pll.c | 9 ++-------
->  1 file changed, 2 insertions(+), 7 deletions(-)
-> =
+diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
+index abb4760..54b88a6 100644
+--- a/drivers/clk/rockchip/clk-rk3188.c
++++ b/drivers/clk/rockchip/clk-rk3188.c
+@@ -429,10 +429,10 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
+ 	GATE(0, "aclk_strc_sys", "aclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(4), 10, GFLAGS),
+ 
+ 	/* hclk_cpu gates */
+-	GATE(HCLK_ROM, "hclk_rom", "hclk_cpu", 0, RK2928_CLKGATE_CON(5), 6, GFLAGS),
+-	GATE(HCLK_I2S0, "hclk_i2s0", "hclk_cpu", 0, RK2928_CLKGATE_CON(7), 2, GFLAGS),
+-	GATE(HCLK_SPDIF, "hclk_spdif", "hclk_cpu", 0, RK2928_CLKGATE_CON(7), 1, GFLAGS),
+ 	GATE(0, "hclk_cpubus", "hclk_cpu", 0, RK2928_CLKGATE_CON(4), 8, GFLAGS),
++	GATE(HCLK_ROM, "hclk_rom", "hclk_cpubus", 0, RK2928_CLKGATE_CON(5), 6, GFLAGS),
++	GATE(HCLK_I2S0, "hclk_i2s0", "hclk_cpubus", 0, RK2928_CLKGATE_CON(7), 2, GFLAGS),
++	GATE(HCLK_SPDIF, "hclk_spdif", "hclk_cpubus", 0, RK2928_CLKGATE_CON(7), 1, GFLAGS),
+ 	/* hclk_ahb2apb is part of a clk branch */
+ 	GATE(0, "hclk_vio_bus", "hclk_cpu", 0, RK2928_CLKGATE_CON(6), 12, GFLAGS),
+ 	GATE(HCLK_LCDC0, "hclk_lcdc0", "hclk_cpu", 0, RK2928_CLKGATE_CON(6), 1, GFLAGS),
+-- 
+1.7.9.5
 
-> diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pl=
-l.c
-> index 966cab1..8e31fae 100644
-> --- a/drivers/clk/mediatek/clk-pll.c
-> +++ b/drivers/clk/mediatek/clk-pll.c
-> @@ -91,9 +91,6 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *p=
-ll, u32 pcw,
->                 int postdiv)
->  {
->         u32 con1, val;
-> -       int pll_en;
-> -
-> -       pll_en =3D readl(pll->base_addr + REG_CON0) & CON0_BASE_EN;
->  =
-
->         /* set postdiv */
->         val =3D readl(pll->pd_addr);
-> @@ -114,15 +111,13 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pl=
-l *pll, u32 pcw,
->  =
-
->         con1 =3D readl(pll->base_addr + REG_CON1);
->  =
-
-> -       if (pll_en)
-> -               con1 |=3D CON0_PCW_CHG;
-> +       con1 |=3D CON0_PCW_CHG;
-
-This unconditionally enables the PLL whenever clk_set_rate is called,
-changing the previous behavior. The clk framework still tracks the
-intent of ARMPLLs users with the enable_count. How about something like
-the following:
-
-	bool pll_en =3D clk_hw_is_enabled(&pll->hw);
-
-	if (pll_en)
-		con1 |=3D CON0_PCW_CHG;
-
-	writel(con1, pll->base_addr + REG_CON1);
-	if (pll->tuner_addr)
-		writel(con1 + 1, pll->tuner_addr);
-
-	if (pll_en)
-		udelay(20);
-
-This does not rely on the hardware to tell us the intent of the user,
-but instead on our framework usecounting.
-
-Regards,
-Mike
-
->         writel(con1, pll->base_addr + REG_CON1);
->         if (pll->tuner_addr)
->                 writel(con1 + 1, pll->tuner_addr);
->  =
-
-> -       if (pll_en)
-> -               udelay(20);
-> +       udelay(20);
->  }
->  =
-
->  /*
-> -- =
-
-> 1.9.1
->=20
