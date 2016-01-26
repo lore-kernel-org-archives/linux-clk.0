@@ -1,38 +1,82 @@
-Return-Path: <andi.shyti@samsung.com>
-From: Andi Shyti <andi.shyti@samsung.com>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Sangbeom Kim <sbkim73@samsung.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>,
- Andi Shyti <andi@etezian.org>
-Subject: [PATCH 0/2] s2mps11 code refactoring
-Date: Mon, 18 Jan 2016 17:25:23 +0900
-Message-id: <1453105525-31506-1-git-send-email-andi.shyti@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga03-in.huawei.com ([119.145.14.66]:2252 "EHLO
+	szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932302AbcAZDMe (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jan 2016 22:12:34 -0500
+Subject: Re: [PATCH v7 4/6] ARM: debug: add hi3519 debug uart
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+References: <1453690883-31220-1-git-send-email-xuejiancheng@huawei.com>
+ <1453690883-31220-5-git-send-email-xuejiancheng@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>
+From: xuejiancheng <xuejiancheng@huawei.com>
+Message-ID: <56A6E2D5.7040104@huawei.com>
+Date: Tue, 26 Jan 2016 11:07:01 +0800
+MIME-Version: 1.0
+In-Reply-To: <1453690883-31220-5-git-send-email-xuejiancheng@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
 
-the two patches are related to some refactoring of the s2mps11
-device driver.
 
-The first patch is quite trivial, but it removes a variable which
-I consider redundant and doesn't improve any readability.
+On 2016/1/25 11:01, Jiancheng Xue wrote:
+> add hi3519 debug uart
+> 
+> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+> ---
+>  arch/arm/Kconfig.debug | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+> index c6b6175..b02a7c1 100644
+> --- a/arch/arm/Kconfig.debug
+> +++ b/arch/arm/Kconfig.debug
+> @@ -260,6 +260,14 @@ choice
+>  		  Say Y here if you want kernel low-level debugging support
+>  		  on Cortina Gemini based platforms.
+>  
+> +	config DEBUG_HI3519_UART
+> +		bool "Hisilicon HI3519 Debug UART"
+> +		depends on ARCH_HISI
+> +		select DEBUG_UART_PL01X
+> +		help
+> +		  Say Y here if you want kernel low-level debugging support
+> +		  on HI3519 UART.
+> +
+>  	config DEBUG_HI3620_UART
+>  		bool "Hisilicon HI3620 Debug UART"
+>  		depends on ARCH_HI3xxx
+> @@ -1451,6 +1459,7 @@ config DEBUG_UART_PHYS
+>  	default 0x11002000 if DEBUG_MT8127_UART0
+>  	default 0x11006000 if DEBUG_MT6589_UART0
+>  	default 0x11009000 if DEBUG_MT8135_UART3
+> +	default 0x12100000 if DEBUG_HI3519_UART
+>  	default 0x16000000 if DEBUG_INTEGRATOR
+>  	default 0x18000300 if DEBUG_BCM_5301X
+>  	default 0x18010000 if DEBUG_SIRFATLAS7_UART0
+> @@ -1514,6 +1523,7 @@ config DEBUG_UART_PHYS
+>  	default 0xfcb00000 if DEBUG_HI3620_UART
+>  	default 0xfd883000 if DEBUG_ALPINE_UART0
+>  	default 0xfe800000 if ARCH_IOP32X
+> +	default 0xfef00000 if DEBUG_HI3519_UART
 
-The second patch is removing some structures which will be never
-used in the kernel. The structure removed are merged in a single
-more generic structure.
+Sorry. This line is put in a wrong place by my mistake. I'll correct it in next version.
 
-Thanks,
-Andi
+>  	default 0xff690000 if DEBUG_RK32_UART2
+>  	default 0xffc02000 if DEBUG_SOCFPGA_UART0
+>  	default 0xffc02100 if DEBUG_SOCFPGA_UART1
+> 
 
-Andi Shyti (2):
-  clk: s2mps11: remove redundant variable
-  clk: s2mps11: allocate only one structure for clock init
-
- drivers/clk/clk-s2mps11.c | 82 +++++++++++++----------------------------------
- 1 file changed, 23 insertions(+), 59 deletions(-)
-
--- 
-2.6.4
