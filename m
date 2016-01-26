@@ -1,32 +1,25 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, xf@rock-chips.com, zhangqing@rock-chips.com
-Subject: Re: [PATCH 1/4] clk: rockchip: fix cpuclk mux bit of big cpu-cluster
-Date: Wed, 20 Jan 2016 23:25:57 +0100
-Message-ID: <2048998.GeQnePRN87@phil>
-In-Reply-To: <56A004E3.5000309@codeaurora.org>
-References: <1453326560-20475-1-git-send-email-heiko@sntech.de> <56A004E3.5000309@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 9.2 \(3112\))
+Subject: Re: [PATCH] clk: rockchip: Reparent hclk_rom, hclk_i2s0 and hclk_spdif to hclk_cpubus on RK3066/RK3188
+From: Alexander Kochetkov <al.kochet@gmail.com>
+In-Reply-To: <18195479.b78tX8z5U3@diego>
+Date: Tue, 26 Jan 2016 16:16:57 +0300
+Cc: stable@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Message-Id: <0F6CFF20-C3D2-4A4D-83D5-1DE6014BB75D@gmail.com>
+References: <1453812250-11819-1-git-send-email-al.kochet@gmail.com> <18195479.b78tX8z5U3@diego>
+To: =?utf-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Mittwoch, 20. Januar 2016, 14:06:27 schrieb Stephen Boyd:
-> On 01/20/2016 01:49 PM, Heiko Stuebner wrote:
-> > Both clusters have their mux bit in bit 7 of their respective register.
-> > For whatever reason the big cluster currently lists bit 15 which is
-> > definitly wrong.
-> > 
-> > Fixes: 3536c97a52db ("clk: rockchip: add rk3368 clock controller")
-> > Reported-by: Zhang Qing <zhangqing@rock-chips.com>
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > ---
-> > I plan to include them into my clk-fixes branch, so posted for reference
-> > and possible objections ;-)
-> 
-> None of these patches are fixes to regressions introduced in the merge
-> window for v4.5, so we wouldn't be considering them for clk-fixes. We
-> can certainly queue them up in clk-next for v4.6 and let stable process
-> funnel them to the right stable trees though.
 
-ok, I'll move them over to that part then :-)
+> 26 янв. 2016 г., в 16:04, Heiko Stübner <heiko@sntech.de> написал(а):
+> 
+> Can you instead try to add hclk_cpubus to the critical clock list please?
+
+Yes, adding hclk_cpubus to rk3188_critical_clocks also fixes problem.
+So, I’ll send another patch now.
+
+Thank, you.
