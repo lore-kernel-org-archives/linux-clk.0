@@ -1,503 +1,153 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Jens Kuske <jenskuske@gmail.com>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Jean-Francois Moine <moinejf@free.fr>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v3 2/2] clk: sunxi: Refactor A31 PLL6 so that it can be reused
-Date: Thu, 28 Jan 2016 20:22:38 +0100
-Message-Id: <1454008958-12655-2-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1454008958-12655-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1454008958-12655-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <pebolle@tiscali.nl>
+Message-ID: <1453771063.17181.56.camel@tiscali.nl>
+Subject: Re: [PATCH v7 1/6] clk: hisilicon: add CRG driver for hi3519 soc
+From: Paul Bolle <pebolle@tiscali.nl>
+To: Jiancheng Xue <xuejiancheng@huawei.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, p.zabel@pengutronix.de,
+ robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+ ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+ linux@arm.linux.org.uk,  khilman@linaro.org, arnd@arndb.de, olof@lixom.net,
+ xuwei5@hisilicon.com,  haojian.zhuang@linaro.org, zhangfei.gao@linaro.org,
+ bintian.wang@huawei.com,  linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org,  devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,  yanhaifeng@hisilicon.com,
+ yanghongwei@hisilicon.com, suwenping@hisilicon.com,  raojun@hisilicon.com,
+ ml.yang@hisilicon.com, gaofei@hisilicon.com,  zhangzhenxing@hisilicon.com,
+ xuejiancheng@hisilicon.com, lidongpo@hisilicon.com
+Date: Tue, 26 Jan 2016 02:17:43 +0100
+In-Reply-To: <1453690883-31220-2-git-send-email-xuejiancheng@huawei.com>
+References: <1453690883-31220-1-git-send-email-xuejiancheng@huawei.com>
+	 <1453690883-31220-2-git-send-email-xuejiancheng@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Remove the fixed dividers from the PLL6 driver to be able to have a
-reusable driver that can be used across several SoCs that share the same
-controller, but don't have the same set of dividers for this clock, and to
-also be reused multiple times in the same SoC, since we're droping the
-clock name.
+On ma, 2016-01-25 at 11:01 +0800, Jiancheng Xue wrote:
+> --- a/drivers/clk/hisilicon/Kconfig
+> +++ b/drivers/clk/hisilicon/Kconfig
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
-Changes from v2
-  - Rebased and converted over to the new factors refactoring. Fixed the
-    retrieved rate
+> +config COMMON_CLK_HI3519
+> +	bool "Hi3519 Clock Driver"
+> +	depends on ARCH_HISI
+> +	default y
+> +	help
+> +	  Build the clock driver for hi3519.
 
- arch/arm/boot/dts/sun6i-a31.dtsi     | 36 ++++++++++++++++++------------------
- arch/arm/boot/dts/sun8i-a23-a33.dtsi | 25 +++++++++++++++++--------
- arch/arm/boot/dts/sun8i-a23.dtsi     |  2 +-
- arch/arm/boot/dts/sun8i-a33.dtsi     |  4 ++--
- arch/arm/boot/dts/sun8i-h3.dtsi      | 36 ++++++++++++++++++------------------
- drivers/clk/sunxi/clk-sunxi.c        | 32 ++++++++++++++++----------------
- 6 files changed, 72 insertions(+), 63 deletions(-)
+> --- a/drivers/clk/hisilicon/Makefile
+> +++ b/drivers/clk/hisilicon/Makefile
 
-diff --git a/arch/arm/boot/dts/sun6i-a31.dtsi b/arch/arm/boot/dts/sun6i-a31.dtsi
-index b6ad7850fac6..05fe3d1aa328 100644
---- a/arch/arm/boot/dts/sun6i-a31.dtsi
-+++ b/arch/arm/boot/dts/sun6i-a31.dtsi
-@@ -65,7 +65,7 @@
- 			compatible = "allwinner,simple-framebuffer",
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "de_be0-lcd0-hdmi";
--			clocks = <&pll6 0>;
-+			clocks = <&pll6>;
- 			status = "disabled";
- 		};
+> +obj-$(CONFIG_COMMON_CLK_HI3519)	+= clk-hi3519.o
+
+If I parsed the above correctly clk-hi3519.o can only be built-in,
+right?
+
+> --- /dev/null
+> +++ b/drivers/clk/hisilicon/clk-hi3519.c
+
+> +#include <linux/module.h>
+
+So is this include actually needed?
+
+> +static int hi3519_clk_probe(struct platform_device *pdev)
+> +{
+> +       struct device_node *np = pdev->dev.of_node;
+> +       struct hisi_clock_data *clk_data;
+> +
+> +       clk_data = hisi_clk_init(np, HI3519_NR_CLKS);
+> +       if (!clk_data)
+> +               return -ENODEV;
+> +
+> +       hisi_clk_register_fixed_rate(hi3519_fixed_rate_clks,
+> +                                   
+> ARRAY_SIZE(hi3519_fixed_rate_clks),
+> +                                    clk_data);
+> +       hisi_clk_register_mux(hi3519_mux_clks,
+> ARRAY_SIZE(hi3519_mux_clks),
+> +                                       clk_data);
+> +       hisi_clk_register_gate(hi3519_gate_clks,
+> +                       ARRAY_SIZE(hi3519_gate_clks), clk_data);
+> +
+> +       return hisi_reset_init(np);
+> +}
+
+(evolution 3.16.5 makes replying to code quite a challenge.)
+
+> +static const struct of_device_id hi3519_clk_match_table[] = {
+> +	{ .compatible = "hisilicon,hi3519-crg" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, hi3519_clk_match_table);
+
+Last time I checked MODULE_DEVICE_TABLE is preprocessed away for built
+-in code.
+
+> +static void __exit hi3519_clk_exit(void)
+> +{
+> +	platform_driver_unregister(&hi3519_clk_driver);
+> +}
+> +module_exit(hi3519_clk_exit);
+
+Not needed for built-in only code.
+
+> +MODULE_DESCRIPTION("HiSilicon Hi3519 Clock Driver");
+
+Ditto.
+
+> --- a/drivers/clk/hisilicon/clk.c
+> +++ b/drivers/clk/hisilicon/clk.c
+
+> +EXPORT_SYMBOL(hisi_clk_init);
+
+What module uses this export?
  
-@@ -73,7 +73,7 @@
- 			compatible = "allwinner,simple-framebuffer",
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "de_be0-lcd0";
--			clocks = <&pll6 0>;
-+			clocks = <&pll6>;
- 			status = "disabled";
- 		};
- 	};
-@@ -201,11 +201,11 @@
- 		};
+> +EXPORT_SYMBOL(hisi_clk_register_fixed_rate);
+
+Ditto.
+
+> +EXPORT_SYMBOL(hisi_clk_register_fixed_factor);
+
+Ditto.
  
- 		pll6: clk@01c20028 {
--			#clock-cells = <1>;
-+			#clock-cells = <0>;
- 			compatible = "allwinner,sun6i-a31-pll6-clk";
- 			reg = <0x01c20028 0x4>;
- 			clocks = <&osc24M>;
--			clock-output-names = "pll6", "pll6x2";
-+			clock-output-names = "pll6";
- 		};
- 
- 		cpu: cpu@01c20050 {
-@@ -235,7 +235,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun6i-a31-ahb1-clk";
- 			reg = <0x01c20054 0x4>;
--			clocks = <&osc32k>, <&osc24M>, <&axi>, <&pll6 0>;
-+			clocks = <&osc32k>, <&osc24M>, <&axi>, <&pll6>;
- 			clock-output-names = "ahb1";
- 
- 			/*
-@@ -244,7 +244,7 @@
- 			 * controller requires AHB1 clocked from PLL6.
- 			 */
- 			assigned-clocks = <&ahb1>;
--			assigned-clock-parents = <&pll6 0>;
-+			assigned-clock-parents = <&pll6>;
- 		};
- 
- 		ahb1_gates: clk@01c20060 {
-@@ -307,7 +307,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-apb1-clk";
- 			reg = <0x01c20058 0x4>;
--			clocks = <&osc32k>, <&osc24M>, <&pll6 0>, <&pll6 0>;
-+			clocks = <&osc32k>, <&osc24M>, <&pll6>, <&pll6>;
- 			clock-output-names = "apb2";
- 		};
- 
-@@ -331,7 +331,7 @@
- 			#clock-cells = <1>;
- 			compatible = "allwinner,sun4i-a10-mmc-clk";
- 			reg = <0x01c20088 0x4>;
--			clocks = <&osc24M>, <&pll6 0>;
-+			clocks = <&osc24M>, <&pll6>;
- 			clock-output-names = "mmc0",
- 					     "mmc0_output",
- 					     "mmc0_sample";
-@@ -341,7 +341,7 @@
- 			#clock-cells = <1>;
- 			compatible = "allwinner,sun4i-a10-mmc-clk";
- 			reg = <0x01c2008c 0x4>;
--			clocks = <&osc24M>, <&pll6 0>;
-+			clocks = <&osc24M>, <&pll6>;
- 			clock-output-names = "mmc1",
- 					     "mmc1_output",
- 					     "mmc1_sample";
-@@ -351,7 +351,7 @@
- 			#clock-cells = <1>;
- 			compatible = "allwinner,sun4i-a10-mmc-clk";
- 			reg = <0x01c20090 0x4>;
--			clocks = <&osc24M>, <&pll6 0>;
-+			clocks = <&osc24M>, <&pll6>;
- 			clock-output-names = "mmc2",
- 					     "mmc2_output",
- 					     "mmc2_sample";
-@@ -361,7 +361,7 @@
- 			#clock-cells = <1>;
- 			compatible = "allwinner,sun4i-a10-mmc-clk";
- 			reg = <0x01c20094 0x4>;
--			clocks = <&osc24M>, <&pll6 0>;
-+			clocks = <&osc24M>, <&pll6>;
- 			clock-output-names = "mmc3",
- 					     "mmc3_output",
- 					     "mmc3_sample";
-@@ -371,7 +371,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-mod0-clk";
- 			reg = <0x01c2009c 0x4>;
--			clocks = <&osc24M>, <&pll6 0>;
-+			clocks = <&osc24M>, <&pll6>;
- 			clock-output-names = "ss";
- 		};
- 
-@@ -379,7 +379,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-mod0-clk";
- 			reg = <0x01c200a0 0x4>;
--			clocks = <&osc24M>, <&pll6 0>;
-+			clocks = <&osc24M>, <&pll6>;
- 			clock-output-names = "spi0";
- 		};
- 
-@@ -387,7 +387,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-mod0-clk";
- 			reg = <0x01c200a4 0x4>;
--			clocks = <&osc24M>, <&pll6 0>;
-+			clocks = <&osc24M>, <&pll6>;
- 			clock-output-names = "spi1";
- 		};
- 
-@@ -395,7 +395,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-mod0-clk";
- 			reg = <0x01c200a8 0x4>;
--			clocks = <&osc24M>, <&pll6 0>;
-+			clocks = <&osc24M>, <&pll6>;
- 			clock-output-names = "spi2";
- 		};
- 
-@@ -403,7 +403,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-mod0-clk";
- 			reg = <0x01c200ac 0x4>;
--			clocks = <&osc24M>, <&pll6 0>;
-+			clocks = <&osc24M>, <&pll6>;
- 			clock-output-names = "spi3";
- 		};
- 
-@@ -1042,8 +1042,8 @@
- 			ar100: ar100_clk {
- 				compatible = "allwinner,sun6i-a31-ar100-clk";
- 				#clock-cells = <0>;
--				clocks = <&osc32k>, <&osc24M>, <&pll6 0>,
--					 <&pll6 0>;
-+				clocks = <&osc32k>, <&osc24M>, <&pll6>,
-+					 <&pll6>;
- 				clock-output-names = "ar100";
- 			};
- 
-diff --git a/arch/arm/boot/dts/sun8i-a23-a33.dtsi b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-index 6f88fb0ddbc7..edc85eeaf365 100644
---- a/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-@@ -60,7 +60,7 @@
- 			compatible = "allwinner,simple-framebuffer",
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "de_be0-lcd0";
--			clocks = <&pll6 0>;
-+			clocks = <&pll6>;
- 			status = "disabled";
- 		};
- 	};
-@@ -129,11 +129,20 @@
- 		};
- 
- 		pll6: clk@01c20028 {
--			#clock-cells = <1>;
-+			#clock-cells = <0>;
- 			compatible = "allwinner,sun6i-a31-pll6-clk";
- 			reg = <0x01c20028 0x4>;
- 			clocks = <&osc24M>;
--			clock-output-names = "pll6", "pll6x2";
-+			clock-output-names = "pll6";
-+		};
-+
-+                pll6x2: pll6x2_clk {
-+			compatible = "fixed-factor-clock";
-+			#clock-cells = <0>;
-+			clock-div = <1>;
-+			clock-mult = <2>;
-+			clocks = <&pll6>;
-+			clock-output-names = "pll6-2x";
- 		};
- 
- 		cpu: cpu_clk@01c20050 {
-@@ -163,7 +172,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun6i-a31-ahb1-clk";
- 			reg = <0x01c20054 0x4>;
--			clocks = <&osc32k>, <&osc24M>, <&axi>, <&pll6 0>;
-+			clocks = <&osc32k>, <&osc24M>, <&axi>, <&pll6>;
- 			clock-output-names = "ahb1";
- 		};
- 
-@@ -190,7 +199,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-apb1-clk";
- 			reg = <0x01c20058 0x4>;
--			clocks = <&osc32k>, <&osc24M>, <&pll6 0>, <&pll6 0>;
-+			clocks = <&osc32k>, <&osc24M>, <&pll6>, <&pll6>;
- 			clock-output-names = "apb2";
- 		};
- 
-@@ -213,7 +222,7 @@
- 			#clock-cells = <1>;
- 			compatible = "allwinner,sun4i-a10-mmc-clk";
- 			reg = <0x01c20088 0x4>;
--			clocks = <&osc24M>, <&pll6 0>;
-+			clocks = <&osc24M>, <&pll6>;
- 			clock-output-names = "mmc0",
- 					     "mmc0_output",
- 					     "mmc0_sample";
-@@ -223,7 +232,7 @@
- 			#clock-cells = <1>;
- 			compatible = "allwinner,sun4i-a10-mmc-clk";
- 			reg = <0x01c2008c 0x4>;
--			clocks = <&osc24M>, <&pll6 0>;
-+			clocks = <&osc24M>, <&pll6>;
- 			clock-output-names = "mmc1",
- 					     "mmc1_output",
- 					     "mmc1_sample";
-@@ -233,7 +242,7 @@
- 			#clock-cells = <1>;
- 			compatible = "allwinner,sun4i-a10-mmc-clk";
- 			reg = <0x01c20090 0x4>;
--			clocks = <&osc24M>, <&pll6 0>;
-+			clocks = <&osc24M>, <&pll6>;
- 			clock-output-names = "mmc2",
- 					     "mmc2_output",
- 					     "mmc2_sample";
-diff --git a/arch/arm/boot/dts/sun8i-a23.dtsi b/arch/arm/boot/dts/sun8i-a23.dtsi
-index 92e6616979ea..5e589c1ddda9 100644
---- a/arch/arm/boot/dts/sun8i-a23.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a23.dtsi
-@@ -79,7 +79,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun8i-a23-mbus-clk";
- 			reg = <0x01c2015c 0x4>;
--			clocks = <&osc24M>, <&pll6 1>, <&pll5>;
-+			clocks = <&osc24M>, <&pll6x2>, <&pll5>;
- 			clock-output-names = "mbus";
- 		};
- 	};
-diff --git a/arch/arm/boot/dts/sun8i-a33.dtsi b/arch/arm/boot/dts/sun8i-a33.dtsi
-index 001d8402ca18..f3eb618bcfa7 100644
---- a/arch/arm/boot/dts/sun8i-a33.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a33.dtsi
-@@ -103,7 +103,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-mod0-clk";
- 			reg = <0x01c2009c 0x4>;
--			clocks = <&osc24M>, <&pll6 0>;
-+			clocks = <&osc24M>, <&pll6>;
- 			clock-output-names = "ss";
- 		};
- 
-@@ -111,7 +111,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun8i-a23-mbus-clk";
- 			reg = <0x01c2015c 0x4>;
--			clocks = <&osc24M>, <&pll6 1>, <&pll5>, <&pll11>;
-+			clocks = <&osc24M>, <&pll6x2>, <&pll5>, <&pll11>;
- 			clock-output-names = "mbus";
- 		};
- 	};
-diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
-index 1524130e43c9..19aadf47027d 100644
---- a/arch/arm/boot/dts/sun8i-h3.dtsi
-+++ b/arch/arm/boot/dts/sun8i-h3.dtsi
-@@ -121,27 +121,27 @@
- 		};
- 
- 		pll6: clk@01c20028 {
--			#clock-cells = <1>;
-+			#clock-cells = <0>;
- 			compatible = "allwinner,sun6i-a31-pll6-clk";
- 			reg = <0x01c20028 0x4>;
- 			clocks = <&osc24M>;
--			clock-output-names = "pll6", "pll6x2";
-+			clock-output-names = "pll6";
- 		};
- 
--		pll6d2: pll6d2_clk {
-+		pll6x2: pll6x2_clk {
- 			#clock-cells = <0>;
- 			compatible = "fixed-factor-clock";
--			clock-div = <2>;
--			clock-mult = <1>;
--			clocks = <&pll6 0>;
--			clock-output-names = "pll6d2";
-+			clock-div = <1>;
-+			clock-mult = <2>;
-+			clocks = <&pll6>;
-+			clock-output-names = "pll6-2x";
- 		};
- 
--		/* dummy clock until pll6 can be reused */
--		pll8: pll8_clk {
-+		pll8: clk@01c20044 {
- 			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <1>;
-+			compatible = "allwinner,sun6i-a31-pll6-clk";
-+			reg = <0x01c20044 0x4>;
-+			clocks = <&osc24M>;
- 			clock-output-names = "pll8";
- 		};
- 
-@@ -165,7 +165,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun6i-a31-ahb1-clk";
- 			reg = <0x01c20054 0x4>;
--			clocks = <&osc32k>, <&osc24M>, <&axi>, <&pll6 0>;
-+			clocks = <&osc32k>, <&osc24M>, <&axi>, <&pll6>;
- 			clock-output-names = "ahb1";
- 		};
- 
-@@ -173,7 +173,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun8i-h3-ahb2-clk";
- 			reg = <0x01c2005c 0x4>;
--			clocks = <&ahb1>, <&pll6d2>;
-+			clocks = <&ahb1>, <&pll6>;
- 			clock-output-names = "ahb2";
- 		};
- 
-@@ -189,7 +189,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-apb1-clk";
- 			reg = <0x01c20058 0x4>;
--			clocks = <&osc32k>, <&osc24M>, <&pll6 0>, <&pll6 0>;
-+			clocks = <&osc32k>, <&osc24M>, <&pll6>, <&pll6>;
- 			clock-output-names = "apb2";
- 		};
- 
-@@ -243,7 +243,7 @@
- 			#clock-cells = <1>;
- 			compatible = "allwinner,sun4i-a10-mmc-clk";
- 			reg = <0x01c20088 0x4>;
--			clocks = <&osc24M>, <&pll6 0>, <&pll8>;
-+			clocks = <&osc24M>, <&pll6>, <&pll8>;
- 			clock-output-names = "mmc0",
- 					     "mmc0_output",
- 					     "mmc0_sample";
-@@ -253,7 +253,7 @@
- 			#clock-cells = <1>;
- 			compatible = "allwinner,sun4i-a10-mmc-clk";
- 			reg = <0x01c2008c 0x4>;
--			clocks = <&osc24M>, <&pll6 0>, <&pll8>;
-+			clocks = <&osc24M>, <&pll6>, <&pll8>;
- 			clock-output-names = "mmc1",
- 					     "mmc1_output",
- 					     "mmc1_sample";
-@@ -263,7 +263,7 @@
- 			#clock-cells = <1>;
- 			compatible = "allwinner,sun4i-a10-mmc-clk";
- 			reg = <0x01c20090 0x4>;
--			clocks = <&osc24M>, <&pll6 0>, <&pll8>;
-+			clocks = <&osc24M>, <&pll6>, <&pll8>;
- 			clock-output-names = "mmc2",
- 					     "mmc2_output",
- 					     "mmc2_sample";
-@@ -273,7 +273,7 @@
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun8i-a23-mbus-clk";
- 			reg = <0x01c2015c 0x4>;
--			clocks = <&osc24M>, <&pll6 1>, <&pll5>;
-+			clocks = <&osc24M>, <&pll6x2>, <&pll5>;
- 			clock-output-names = "mbus";
- 		};
- 	};
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index da15f2b12ab2..4de800e379d3 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -227,9 +227,9 @@ static void sun4i_get_pll5_factors(struct factors_request *req)
- }
- 
- /**
-- * sun6i_a31_get_pll6_factors() - calculates n, k factors for A31 PLL6x2
-- * PLL6x2 rate is calculated as follows
-- * rate = parent_rate * (n + 1) * (k + 1)
-+ * sun6i_a31_get_pll6_factors() - calculates n, k factors for A31 PLL6
-+ * PLL6 rate is calculated as follows
-+ * rate = parent_rate * (n + 1) * (k + 1) / 2
-  * parent_rate is always 24Mhz
-  */
- 
-@@ -238,8 +238,8 @@ static void sun6i_a31_get_pll6_factors(struct factors_request *req)
- 	u8 div;
- 
- 	/* Normalize value to a parent_rate multiple (24M) */
--	div = req->rate / req->parent_rate;
--	req->rate = req->parent_rate * div;
-+	div = req->rate / (req->parent_rate / 2);
-+	req->rate = (req->parent_rate / 2) * div;
- 
- 	req->k = div / 32;
- 	if (req->k > 3)
-@@ -248,6 +248,15 @@ static void sun6i_a31_get_pll6_factors(struct factors_request *req)
- 	req->n = DIV_ROUND_UP(div, (req->k + 1)) - 1;
- }
- 
-+static void sun6i_a31_pll6_recalc(struct factors_request *req)
-+{
-+	req->rate = req->parent_rate;
-+
-+	req->rate *= req->n + 1;
-+	req->rate *= req->k + 1;
-+	req->rate /= 2;
-+}
-+
- /**
-  * sun5i_a13_get_ahb_factors() - calculates m, p factors for AHB
-  * AHB rate is calculated as follows
-@@ -537,7 +546,7 @@ static const struct factors_data sun6i_a31_pll6_data __initconst = {
- 	.enable = 31,
- 	.table = &sun6i_a31_pll6_config,
- 	.getter = sun6i_a31_get_pll6_factors,
--	.name = "pll6x2",
-+	.recalc = sun6i_a31_pll6_recalc,
- };
- 
- static const struct factors_data sun5i_a13_ahb_data __initconst = {
-@@ -788,15 +797,6 @@ static const struct divs_data pll6_divs_data __initconst = {
- 	}
- };
- 
--static const struct divs_data sun6i_a31_pll6_divs_data __initconst = {
--	.factors = &sun6i_a31_pll6_data,
--	.ndivs = 2,
--	.div = {
--		{ .fixed = 2 }, /* normal output */
--		{ .self = 1 }, /* base factor clock, 2x */
--	}
--};
--
- /**
-  * sunxi_divs_clk_setup() - Setup function for leaf divisors on clocks
-  *
-@@ -938,6 +938,7 @@ free_clkdata:
- static const struct of_device_id clk_factors_match[] __initconst = {
- 	{.compatible = "allwinner,sun4i-a10-pll1-clk", .data = &sun4i_pll1_data,},
- 	{.compatible = "allwinner,sun6i-a31-pll1-clk", .data = &sun6i_a31_pll1_data,},
-+	{.compatible = "allwinner,sun6i-a31-pll6-clk", .data = &sun6i_a31_pll6_data,},
- 	{.compatible = "allwinner,sun8i-a23-pll1-clk", .data = &sun8i_a23_pll1_data,},
- 	{.compatible = "allwinner,sun7i-a20-pll4-clk", .data = &sun7i_a20_pll4_data,},
- 	{.compatible = "allwinner,sun5i-a13-ahb-clk", .data = &sun5i_a13_ahb_data,},
-@@ -959,7 +960,6 @@ static const struct of_device_id clk_div_match[] __initconst = {
- static const struct of_device_id clk_divs_match[] __initconst = {
- 	{.compatible = "allwinner,sun4i-a10-pll5-clk", .data = &pll5_divs_data,},
- 	{.compatible = "allwinner,sun4i-a10-pll6-clk", .data = &pll6_divs_data,},
--	{.compatible = "allwinner,sun6i-a31-pll6-clk", .data = &sun6i_a31_pll6_divs_data,},
- 	{}
- };
- 
--- 
-2.6.4
+> +EXPORT_SYMBOL(hisi_clk_register_mux);
+
+Ditto.
+
+> +EXPORT_SYMBOL(hisi_clk_register_divider);
+
+Ditto.
+
+> +EXPORT_SYMBOL(hisi_clk_register_gate);
+
+Ditto.
+
+> +EXPORT_SYMBOL(hisi_clk_register_gate_sep);
+
+Ditto.
+
+> --- /dev/null
+> +++ b/drivers/clk/hisilicon/reset.c
+
+> +int hisi_reset_init(struct device_node *np)
+> +{
+> +	[...]
+> +}
+> +EXPORT_SYMBOL(hisi_reset_init);
+
+Ditto.
+
+> --- /dev/null
+> +++ b/drivers/clk/hisilicon/reset.h
+
+> +#ifdef CONFIG_RESET_CONTROLLER
+> +int hisi_reset_init(struct device_node *np);
+> +#else
+> +static inline int hisi_reset_init(struct device_node *np)
+> +{
+> +	return 0;
+> +}
+> +#endif
+
+Thanks,
+
+
+Paul Bolle
