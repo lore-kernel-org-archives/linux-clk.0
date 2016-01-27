@@ -1,59 +1,48 @@
-Return-Path: <caesar.upstream@gmail.com>
-Return-Path: <caesar.upstream@gmail.com>
-Subject: Re: [PATCH v2 04/12] clk: rockchip: rk3036: enable the
- CLK_IGNORE_UNUSED flag for sclk_i2s_out
-To: Heiko Stuebner <heiko@sntech.de>
-References: <1452155155-16232-1-git-send-email-wxt@rock-chips.com>
- <1452155155-16232-5-git-send-email-wxt@rock-chips.com>
- <290434099.8XFZ9qmNRz@phil>
-Cc: Caesar Wang <wxt@rock-chips.com>, Ulf Hansson <ulf.hansson@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, leecam@google.com,
- linux-arm-kernel@lists.infradead.org, keescook@google.com,
- linux-clk@vger.kernel.org, leozwang@google.com
-From: Caesar Wang <caesar.upstream@gmail.com>
-Message-ID: <568F80BA.6060209@gmail.com>
-Date: Fri, 8 Jan 2016 17:26:18 +0800
+Return-Path: <rjui@broadcom.com>
+From: Ray Jui <rjui@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>, Simran Rai <ssimran@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>
+Subject: [PATCH RESEND v2 4/4] ARM: dts: enable audio clock support for Cygnus
+Date: Tue, 26 Jan 2016 17:18:41 -0800
+Message-ID: <1453857521-8804-5-git-send-email-rjui@broadcom.com>
+In-Reply-To: <1453857521-8804-1-git-send-email-rjui@broadcom.com>
+References: <1453857521-8804-1-git-send-email-rjui@broadcom.com>
 MIME-Version: 1.0
-In-Reply-To: <290434099.8XFZ9qmNRz@phil>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain
+Return-Path: rjui@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Heiko,
+From: Simran Rai <ssimran@broadcom.com>
 
-在 2016年01月07日 18:05, Heiko Stuebner 写道:
-> Hi Caesar,
->
-> Am Donnerstag, 7. Januar 2016, 16:25:47 schrieb Caesar Wang:
->> SCLk_I2S_OUT is the noc bus clock for i2s module, this clock is used by
->> extra codecs.
->>
->> Due to it shouldn't belong to any driver, but we need it enabled,
->> so just mark it as the CLK_IGNORE_UNUSED flag.
-> What makes you think it shouldn't belong to any driver?
->
-> In most schematics I have, i2s_clkout is going to some clock-input of the
-> audio codec - probably the MCLK input on your rt5616. And while the new
-> rt5616 driver does not seem to do clock handling, it should just handle the
-> clock using the normal APIs.
+Add audio clock to the existing Broadcom Cygnus clock DT
 
-You are right,  that's seem has to find the root cause.
-I'm wonder that the codec/i2s is working in kernel v4.1 patch without it.
+Signed-off-by: Simran Rai <ssimran@broadcom.com>
+Reviewed-by: Ray Jui <rjui@broadcom.com>
+Reviewed-by: Scott Branden <sbranden@broadcom.com>
+---
+ arch/arm/boot/dts/bcm-cygnus-clock.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-In general,  the MLCK will be handled in i2s driver if the cpu side is 
-master.
-
->
->
-> Heiko
->
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
-
-
+diff --git a/arch/arm/boot/dts/bcm-cygnus-clock.dtsi b/arch/arm/boot/dts/bcm-cygnus-clock.dtsi
+index 32bcd45..80b6ba4 100644
+--- a/arch/arm/boot/dts/bcm-cygnus-clock.dtsi
++++ b/arch/arm/boot/dts/bcm-cygnus-clock.dtsi
+@@ -121,4 +121,13 @@ clocks {
+ 		clocks = <&osc>;
+ 		clock-output-names = "keypad", "adc/touch", "pwm";
+ 	};
++
++	audiopll: audiopll {
++		#clock-cells = <1>;
++		compatible = "brcm,cygnus-audiopll";
++		reg = <0x180aeb00 0x68>;
++		clocks = <&osc>;
++		clock-output-names = "audiopll", "ch0_audio",
++					"ch1_audio", "ch2_audio";
++	};
+ };
 -- 
-Thanks,
-Caesar
+1.9.1
