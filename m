@@ -1,158 +1,94 @@
-Return-Path: <andi.shyti@samsung.com>
-From: Andi Shyti <andi.shyti@samsung.com>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Sangbeom Kim <sbkim73@samsung.com>,
- Krzysztof Kozlowski <k.kozlowski@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Andi Shyti <andi.shyti@samsung.com>,
- Andi Shyti <andi@etezian.org>, Yadwinder Singh Brar <yadi.brar01@gmail.com>,
- Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [PATCH v3 2/4] clk: s2mps11: allocate only one structure for clock init
-Date: Wed, 20 Jan 2016 19:14:22 +0900
-Message-id: <1453284864-8082-3-git-send-email-andi.shyti@samsung.com>
-In-reply-to: <1453284864-8082-1-git-send-email-andi.shyti@samsung.com>
-References: <1453284864-8082-1-git-send-email-andi.shyti@samsung.com>
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH v4 10/13] usb: gadget: atmel: access the PMC using regmap
+Date: Wed, 27 Jan 2016 17:11:09 +0100
+Message-Id: <1453911072-23608-11-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The driver allocates three structures, s2mpsxx_clk_init, for
-three different clock types (s2mps11, s2mps13 and s2mps14). They
-are quite similar but they differ only by the name. Only one of
-these structures is used, while the others lie unused in the
-memory.
+Use regmap to access the PMC to avoid using at91_pmc_read and
+at91_pmc_write.
 
-The clock's name, though, is not such a meaningful information
-and by assigning the same name to the initial data we can avoid
-over allocation. The common name chosen will be s2mps11,
-coherently with the device driver name, instead of the clock
-device.
-
-Therefore, remove the structures associated to s2mps13 and
-s2mps14 and use only the one referred to s2mps11 for all kind of
-clocks.
-
-Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Acked-by: Felipe Balbi <balbi@ti.com>
 ---
- drivers/clk/clk-s2mps11.c | 51 +++++++----------------------------------------
- 1 file changed, 7 insertions(+), 44 deletions(-)
+ drivers/usb/gadget/udc/atmel_usba_udc.c | 20 ++++++++++----------
+ drivers/usb/gadget/udc/atmel_usba_udc.h |  2 ++
+ 2 files changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index e7b97f4..3ff2162 100644
---- a/drivers/clk/clk-s2mps11.c
-+++ b/drivers/clk/clk-s2mps11.c
-@@ -99,6 +99,7 @@ static struct clk_ops s2mps11_clk_ops = {
- 	.recalc_rate	= s2mps11_clk_recalc_rate,
- };
- 
-+/* This s2mps11_clks_init tructure is common to s2mps11, s2mps13 and s2mps14 */
- static struct clk_init_data s2mps11_clks_init[S2MPS11_CLKS_NUM] = {
- 	[S2MPS11_CLK_AP] = {
- 		.name = "s2mps11_ap",
-@@ -117,37 +118,6 @@ static struct clk_init_data s2mps11_clks_init[S2MPS11_CLKS_NUM] = {
- 	},
- };
- 
--static struct clk_init_data s2mps13_clks_init[S2MPS11_CLKS_NUM] = {
--	[S2MPS11_CLK_AP] = {
--		.name = "s2mps13_ap",
--		.ops = &s2mps11_clk_ops,
--		.flags = CLK_IS_ROOT,
--	},
--	[S2MPS11_CLK_CP] = {
--		.name = "s2mps13_cp",
--		.ops = &s2mps11_clk_ops,
--		.flags = CLK_IS_ROOT,
--	},
--	[S2MPS11_CLK_BT] = {
--		.name = "s2mps13_bt",
--		.ops = &s2mps11_clk_ops,
--		.flags = CLK_IS_ROOT,
--	},
--};
--
--static struct clk_init_data s2mps14_clks_init[S2MPS11_CLKS_NUM] = {
--	[S2MPS11_CLK_AP] = {
--		.name = "s2mps14_ap",
--		.ops = &s2mps11_clk_ops,
--		.flags = CLK_IS_ROOT,
--	},
--	[S2MPS11_CLK_BT] = {
--		.name = "s2mps14_bt",
--		.ops = &s2mps11_clk_ops,
--		.flags = CLK_IS_ROOT,
--	},
--};
--
- static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev,
- 		struct clk_init_data *clks_init)
+diff --git a/drivers/usb/gadget/udc/atmel_usba_udc.c b/drivers/usb/gadget/udc/atmel_usba_udc.c
+index 8755b2c2aada..04265de885a9 100644
+--- a/drivers/usb/gadget/udc/atmel_usba_udc.c
++++ b/drivers/usb/gadget/udc/atmel_usba_udc.c
+@@ -17,7 +17,9 @@
+ #include <linux/device.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/list.h>
++#include <linux/mfd/syscon.h>
+ #include <linux/platform_device.h>
++#include <linux/regmap.h>
+ #include <linux/usb/ch9.h>
+ #include <linux/usb/gadget.h>
+ #include <linux/usb/atmel_usba_udc.h>
+@@ -1888,20 +1890,15 @@ static int atmel_usba_stop(struct usb_gadget *gadget)
+ #ifdef CONFIG_OF
+ static void at91sam9rl_toggle_bias(struct usba_udc *udc, int is_on)
  {
-@@ -164,12 +134,9 @@ static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev,
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	for (i = 0; i < S2MPS11_CLKS_NUM; i++) {
--		if (!clks_init[i].name)
--			continue; /* Skip clocks not present in some devices */
-+	for (i = 0; i < S2MPS11_CLKS_NUM; i++)
- 		of_property_read_string_index(clk_np, "clock-output-names", i,
- 				&clks_init[i].name);
--	}
- 
- 	return clk_np;
+-	unsigned int uckr = at91_pmc_read(AT91_CKGR_UCKR);
+-
+-	if (is_on)
+-		at91_pmc_write(AT91_CKGR_UCKR, uckr | AT91_PMC_BIASEN);
+-	else
+-		at91_pmc_write(AT91_CKGR_UCKR, uckr & ~(AT91_PMC_BIASEN));
++	regmap_update_bits(udc->pmc, AT91_CKGR_UCKR, AT91_PMC_BIASEN,
++			   is_on ? AT91_PMC_BIASEN : 0);
  }
-@@ -179,8 +146,8 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
- 	struct s2mps11_clk *s2mps11_clks, *s2mps11_clk;
- 	unsigned int s2mps11_reg;
--	struct clk_init_data *clks_init;
- 	int i, ret = 0;
-+	enum sec_device_type hwid = platform_get_device_id(pdev)->driver_data;
  
- 	s2mps11_clks = devm_kcalloc(&pdev->dev, S2MPS11_CLKS_NUM,
- 				sizeof(*s2mps11_clk), GFP_KERNEL);
-@@ -194,22 +161,18 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 	if (!clk_table)
- 		return -ENOMEM;
+ static void at91sam9g45_pulse_bias(struct usba_udc *udc)
+ {
+-	unsigned int uckr = at91_pmc_read(AT91_CKGR_UCKR);
+-
+-	at91_pmc_write(AT91_CKGR_UCKR, uckr & ~(AT91_PMC_BIASEN));
+-	at91_pmc_write(AT91_CKGR_UCKR, uckr | AT91_PMC_BIASEN);
++	regmap_update_bits(udc->pmc, AT91_CKGR_UCKR, AT91_PMC_BIASEN, 0);
++	regmap_update_bits(udc->pmc, AT91_CKGR_UCKR, AT91_PMC_BIASEN,
++			   AT91_PMC_BIASEN);
+ }
  
--	switch(platform_get_device_id(pdev)->driver_data) {
-+	switch (hwid) {
- 	case S2MPS11X:
- 		s2mps11_reg = S2MPS11_REG_RTC_CTRL;
--		clks_init = s2mps11_clks_init;
- 		break;
- 	case S2MPS13X:
- 		s2mps11_reg = S2MPS13_REG_RTCCTRL;
--		clks_init = s2mps13_clks_init;
- 		break;
- 	case S2MPS14X:
- 		s2mps11_reg = S2MPS14_REG_RTCCTRL;
--		clks_init = s2mps14_clks_init;
- 		break;
- 	case S5M8767X:
- 		s2mps11_reg = S5M8767_REG_CTRL1;
--		clks_init = s2mps11_clks_init;
- 		break;
- 	default:
- 		dev_err(&pdev->dev, "Invalid device type\n");
-@@ -217,15 +180,15 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 	}
+ static const struct usba_udc_errata at91sam9rl_errata = {
+@@ -1938,6 +1935,9 @@ static struct usba_ep * atmel_udc_of_init(struct platform_device *pdev,
+ 		return ERR_PTR(-EINVAL);
  
- 	/* Store clocks of_node in first element of s2mps11_clks array */
--	s2mps11_clks->clk_np = s2mps11_clk_parse_dt(pdev, clks_init);
-+	s2mps11_clks->clk_np = s2mps11_clk_parse_dt(pdev, s2mps11_clks_init);
- 	if (IS_ERR(s2mps11_clks->clk_np))
- 		return PTR_ERR(s2mps11_clks->clk_np);
+ 	udc->errata = match->data;
++	udc->pmc = syscon_regmap_lookup_by_compatible("atmel,at91sam9g45-pmc");
++	if (udc->errata && IS_ERR(udc->pmc))
++		return ERR_CAST(udc->pmc);
  
- 	for (i = 0; i < S2MPS11_CLKS_NUM; i++, s2mps11_clk++) {
--		if (!clks_init[i].name)
-+		if (i == S2MPS11_CLK_CP && hwid == S2MPS14X)
- 			continue; /* Skip clocks not present in some devices */
- 		s2mps11_clk->iodev = iodev;
--		s2mps11_clk->hw.init = &clks_init[i];
-+		s2mps11_clk->hw.init = &s2mps11_clks_init[i];
- 		s2mps11_clk->mask = 1 << i;
- 		s2mps11_clk->reg = s2mps11_reg;
+ 	udc->num_ep = 0;
  
+diff --git a/drivers/usb/gadget/udc/atmel_usba_udc.h b/drivers/usb/gadget/udc/atmel_usba_udc.h
+index ea448a344767..3e1c9d589dfa 100644
+--- a/drivers/usb/gadget/udc/atmel_usba_udc.h
++++ b/drivers/usb/gadget/udc/atmel_usba_udc.h
+@@ -354,6 +354,8 @@ struct usba_udc {
+ 	struct dentry *debugfs_root;
+ 	struct dentry *debugfs_regs;
+ #endif
++
++	struct regmap *pmc;
+ };
+ 
+ static inline struct usba_ep *to_usba_ep(struct usb_ep *ep)
 -- 
-2.7.0.rc3
+2.5.0
