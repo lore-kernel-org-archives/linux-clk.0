@@ -1,155 +1,45 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 04/14] clk: sunxi: add ahb1 clock for A83T
-Date: Sun, 31 Jan 2016 09:20:56 +0800
-Message-Id: <1454203266-4450-5-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <rjui@broadcom.com>
+From: Ray Jui <rjui@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>, Simran Rai <ssimran@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>
+Subject: [PATCH RESEND v2 0/4] Add Cygnus audio clock support
+Date: Tue, 26 Jan 2016 17:18:37 -0800
+Message-ID: <1453857521-8804-1-git-send-email-rjui@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: rjui@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-AHB1 on A83T is similar to ahb1 on A31, except parents are different.
-clock index 0b1x is PLL6.
+This patch series adds support for the Cygnus audio clock based on existing
+iProc clock support
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
----
- Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
- drivers/clk/sunxi/clk-sunxi.c                     | 75 +++++++++++++++++++++++
- 2 files changed, 76 insertions(+)
+I re-applied this patch series to v4.5-rc1. Full kernel tree is available from
+GITHUB:
+repo: https://github.com/Broadcom/cygnus-linux.git
+branch: cygnus-audio-clk-v2
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-index 4514d77..bfd82f1 100644
---- a/Documentation/devicetree/bindings/clock/sunxi.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-@@ -29,6 +29,7 @@ Required properties:
- 	"allwinner,sun6i-a31-ar100-clk" - for the AR100 on A31
- 	"allwinner,sun9i-a80-cpus-clk" - for the CPUS on A80
- 	"allwinner,sun6i-a31-ahb1-clk" - for the AHB1 clock on A31
-+	"allwinner,sun8i-a83t-ahb1-clk" - for the AHB1 clock on A83T
- 	"allwinner,sun8i-h3-ahb2-clk" - for the AHB2 clock on H3
- 	"allwinner,sun6i-a31-ahb1-gates-clk" - for the AHB1 gates on A31
- 	"allwinner,sun8i-a23-ahb1-gates-clk" - for the AHB1 gates on A23
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index e460a6b..02bbdf6 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -344,6 +344,67 @@ static void sun6i_ahb1_recalc(struct factors_request *req)
- 	req->rate >>= req->p;
- }
- 
-+
-+#define SUN8I_A83T_AHB1_PARENT_PLL6	2
-+/**
-+ * sun8i_a83t_get_ahb_factors() - calculates m, p factors for AHB
-+ * AHB rate is calculated as follows
-+ * rate = parent_rate >> p
-+ *
-+ * if parent is pll6, then
-+ * parent_rate = pll6 rate / (m + 1)
-+ */
-+
-+static void sun8i_a83t_get_ahb1_factors(struct factors_request *req)
-+{
-+	u8 div, calcp, calcm = 1;
-+
-+	/*
-+	 * clock can only divide, so we will never be able to achieve
-+	 * frequencies higher than the parent frequency
-+	 */
-+	if (req->parent_rate && req->rate > req->parent_rate)
-+		req->rate = req->parent_rate;
-+
-+	div = DIV_ROUND_UP(req->parent_rate, req->rate);
-+
-+	/* calculate pre-divider if parent is pll6 */
-+	if (req->parent_index >= SUN8I_A83T_AHB1_PARENT_PLL6) {
-+		if (div < 4)
-+			calcp = 0;
-+		else if (div / 2 < 4)
-+			calcp = 1;
-+		else if (div / 4 < 4)
-+			calcp = 2;
-+		else
-+			calcp = 3;
-+
-+		calcm = DIV_ROUND_UP(div, 1 << calcp);
-+	} else {
-+		calcp = __roundup_pow_of_two(div);
-+		calcp = calcp > 3 ? 3 : calcp;
-+	}
-+
-+	req->rate = (req->parent_rate / calcm) >> calcp;
-+	req->p = calcp;
-+	req->m = calcm - 1;
-+}
-+
-+/**
-+ * sun8i_a83t_ahb1_recalc() - calculates AHB clock rate from m, p factors and
-+ *			 parent index
-+ */
-+static void sun8i_a83t_ahb1_recalc(struct factors_request *req)
-+{
-+	req->rate = req->parent_rate;
-+
-+	/* apply pre-divider first if parent is pll6 */
-+	if (req->parent_index >= SUN6I_AHB1_PARENT_PLL6)
-+		req->rate /= req->m + 1;
-+
-+	/* clk divider */
-+	req->rate >>= req->p;
-+}
- /**
-  * sun4i_get_apb1_factors() - calculates m, p factors for APB1
-  * APB1 rate is calculated as follows
-@@ -555,6 +616,14 @@ static const struct factors_data sun6i_ahb1_data __initconst = {
- 	.recalc = sun6i_ahb1_recalc,
- };
- 
-+static const struct factors_data sun8i_a83t_ahb1_data __initconst = {
-+	.mux = 12,
-+	.muxmask = BIT(1) | BIT(0),
-+	.table = &sun6i_ahb1_config,
-+	.getter = sun8i_a83t_get_ahb1_factors,
-+	.recalc = sun8i_a83t_ahb1_recalc,
-+};
-+
- static const struct factors_data sun4i_apb1_data __initconst = {
- 	.mux = 24,
- 	.muxmask = BIT(1) | BIT(0),
-@@ -592,6 +661,12 @@ static void __init sun6i_ahb1_clk_setup(struct device_node *node)
- CLK_OF_DECLARE(sun6i_a31_ahb1, "allwinner,sun6i-a31-ahb1-clk",
- 	       sun6i_ahb1_clk_setup);
- 
-+static void __init sun8i_a83t_ahb1_clk_setup(struct device_node *node)
-+{
-+	sunxi_factors_clk_setup(node, &sun8i_a83t_ahb1_data);
-+}
-+CLK_OF_DECLARE(sun8i_a83t_ahb1, "allwinner,sun8i-a83t-ahb1-clk",
-+	       sun8i_a83t_ahb1_clk_setup);
- 
- /**
-  * sunxi_mux_clk_setup() - Setup function for muxes
+Changes from v1:
+ - Remove function prototype of a non-exist function 'iproc_audiopll_clk_setup'
+ - Remove __init macros from all functions prototypes in iproc-clk.h
+
+Ray Jui (1):
+  clk: iproc: Remove __init from header
+
+Simran Rai (3):
+  Documentation: dt-bindings: Add DT bindings for Cygnus audio clock
+  clk: iproc: Add support for Cygnus audio clocks
+  ARM: dts: enable audio clock support for Cygnus
+
+ .../bindings/clock/brcm,iproc-clocks.txt           |  6 +++
+ arch/arm/boot/dts/bcm-cygnus-clock.dtsi            |  9 ++++
+ drivers/clk/bcm/clk-cygnus.c                       | 59 ++++++++++++++++++++++
+ drivers/clk/bcm/clk-iproc-pll.c                    | 41 +++++++++++++--
+ drivers/clk/bcm/clk-iproc.h                        | 43 ++++++++++++----
+ include/dt-bindings/clock/bcm-cygnus.h             |  6 +++
+ 6 files changed, 148 insertions(+), 16 deletions(-)
+
 -- 
 1.9.1
