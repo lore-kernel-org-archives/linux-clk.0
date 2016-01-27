@@ -1,113 +1,63 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 27 Jan 2016 16:51:41 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH RFC 03/11] clk: sunxi: factors: Add clk cleanup in
+ sunxi_factors_register() error path
+Message-ID: <20160127155141.GG4317@lukather>
+References: <1453727747-23307-1-git-send-email-wens@csie.org>
+ <1453727747-23307-4-git-send-email-wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=Vzec3Qm-kc6zZ4VxSREoZbzVkWbzp-noHYdcEVrLYYSw@mail.gmail.com>
-References: <1415087559-19444-1-git-send-email-kever.yang@rock-chips.com>
- <48806799.thBSifdUp8@diego> <54647142.4080800@rock-chips.com> <CAD=FV=Vzec3Qm-kc6zZ4VxSREoZbzVkWbzp-noHYdcEVrLYYSw@mail.gmail.com>
-From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Date: Tue, 19 Jan 2016 13:02:34 +0100
-Message-ID: <CAAObsKChYN5nmcm5OWnAzNRGDi_QGSoKvN+0FizhjeT-3mmeXQ@mail.gmail.com>
-Subject: Re: [PATCH 0/5] clk: rockchip: add full support for HDMI clock on rk3288
-To: Doug Anderson <dianders@chromium.org>
-Cc: Kever Yang <kever.yang@rock-chips.com>,
-	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	Mike Turquette <mturquette@linaro.org>,
-	Sonny Rao <sonnyrao@chromium.org>,
-	Addy Ke <addy.ke@rock-chips.com>,
-	Eddie Cai <cf@rock-chips.com>,
-	ZhenFu Fang <fzf@rock-chips.com>,
-	Yakir Yang <ykk@rock-chips.com>,
-	=?UTF-8?B?5aea5pm65oOF?= <yzq@rock-chips.com>,
-	=?UTF-8?B?5oi05YWL6ZyWIChKYWNrKQ==?= <dkl@rock-chips.com>,
-	Tao Huang <huangtao@rock-chips.com>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Cgrdyab2wu3Akvjd"
+In-Reply-To: <1453727747-23307-4-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 13 November 2014 at 23:59, Doug Anderson <dianders@chromium.org> wrote:
-> Hi,
->
-> On Thu, Nov 13, 2014 at 12:52 AM, Kever Yang <kever.yang@rock-chips.com> wrote:
->> Hi Heiko,
->>
->> On 11/07/2014 05:06 AM, Heiko Stübner wrote:
->>>
->>> Hi Kever,
->>>
->>> Am Dienstag, 4. November 2014, 15:52:34 schrieb Kever Yang:
->>>>
->>>> we are going to make a clock usage solution for rk3288:
->>>> 1. CPLL and GPLL always not change after assign init;
->>>> 2. NPLL default as 500MHz, may used for most scene;
->>>> 3. NPLL may be changed by VOP(HDMI) clock for some special
->>>>     frequency requirement.
->>>>
->>>>      I test it with rk3288 evb on top of Heiko's clk-for-next
->>>
->>> In general I'm not really sure if allowing one component to arbitarily
->>> change
->>> a shared clock wouldn't result in trouble.
->>>
->>> At the moment only dclk_vop0 is included in your series, while the hdmi
->>> controller can connect to both vop0 and vop1.
->>> And as Doug mentioned the gpu also has the npll as one possible source.
->>
->> I think the problem GPU HANGs with 480MHz clock from usbphy has
->> been fixed with my patch to gerrit:
->> https://chromium-review.googlesource.com/#/c/229554/
->>>
->>>
->>> Looking through the clock-tree there are a lot more components possibly
->>> using
->>> (or wanting to use) the npll: of course the VOPs, the edp, hdmi, isp,
->>> hevc,
->>> gpu, tsp uart0 and gmac. So I'm slightly uncomfortable with somehow
->>> reserving
->>> the npll for VOP0 alone.
->>
->> It's true that I customized the usage of npll for VOP0 when we need some
->> very special frequency, but it doesn't means other modules can't use the
->> npll, it will always decided by clock core for module clocks that which
->> parent
->> is the best.
->
-> We will just need to be very careful.  As I've mentioned in the past
-> we'll need to think about what happens to other clocks that happen to
-> be parented by NPLL whenever we change it.
->
-> So if we do this:
->
-> 1. NPLL happens to be 500MHz.
-> 2. We set GPU to be 500MHz and it picks NPLL.
-> 3. We change NPLL to a different speed (like 600MHz).
->
-> ...I believe in this scenario the GPU would start running at 600MHz
-> immediately.  We'd need to add special code to watch out for this and
-> pick an alternate clock for the GPU (like the USB 480) before the NPLL
-> change.  If NPLL later changes back to 500MHz and the GPU still wanted
-> 500MHz, we'd have to decide what to do.
->
-> The summary is: it's pretty complicated
 
-Hello,
+--Cgrdyab2wu3Akvjd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I have heard that this is still an issue in RK3288 support in mainline
-so have given a look and wonder if you have considered having the
-consumers of a shared clock (which could be a child clock) use
-PRE_RATE_CHANGE notifications to adapt to changes in a parent's rate,
-or to abort them if that's not possible.
+On Mon, Jan 25, 2016 at 09:15:39PM +0800, Chen-Yu Tsai wrote:
+> sunxi_factors_register() does not check for failures or cleanup after
+> clk_register_composite() or other clk-related calls.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-Alternatively, a consumer can set min and max constraints if it
-doesn't want for others to mess with its provider, and let the other
-consumer deal with failed rate changes (probably by choosing another
-provider).
+Applied, thanks!
+Maxime
 
-Have I missed any problems with that?
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
-Thanks,
+--Cgrdyab2wu3Akvjd
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Tomeu
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWqOeNAAoJEBx+YmzsjxAgsRwP/RXkXYGOWAdM32Dqi3WoCy7R
+FFoZNakZRHWzf+iAQWdw2POJXNr3wKMjuGNUgALAKTGwrsIp0dQycZuYnJHnPDPB
+o+Ksao+g/5sHSNTwz4jF5CB5OIQLItjYGhK1hFOEtcslrA5jJgzGRjynPMnWNb/h
+0Vd7TPOI2JVR6XPMFycUiM3vIgLZwz2MMq/38+mGruQkARXNS5LuF2HutuPLKVD0
+/vJVbmW1okg4Ptpr1zZdgarQRAdPFYDI1GXNcr6ddZS3IxsXdCooRUIF357DJJQa
+2gNNoArwPOfswGcFkcjybtIPHbXU5LMmCmHbwW6cMO2C8dT/a/M/NIp0MdeLGhE5
+epcDFIyw3z12eNE9PDjJUYPmMdCObZWqgPZRSxUjGKBKIQyxrb8wICURDRJ8stn2
+YEZFnzm2cgfqJDX93FOMx07wgIiW0E8GUIskAsajpYfxJJ+cHJjWf+bTNm3YCs/1
+MHFySAB+qZvlyYLNfGC6dFE3ejYPrRN1nGLUfH4pixF1nwRUiMJeRC3L6xyjfKXX
+dgnouiU0hnCPNOk4MsGzfBVv50vOSsaD93L3UoglgNGPVdA42ooMxLq/elB/nMek
+CVvy6HUgL5LDMDJK2nkPKrDT5pEGEByrrC6PQA+ea1q+tNM9YMkXxlp75HdwyRNU
+Dw/oliDiInloG0LTUA9K
+=hWgv
+-----END PGP SIGNATURE-----
+
+--Cgrdyab2wu3Akvjd--
