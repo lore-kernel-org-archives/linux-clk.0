@@ -1,80 +1,171 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lb0-f182.google.com ([209.85.217.182]:33658 "EHLO
-	mail-lb0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754934AbcAWURr (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sat, 23 Jan 2016 15:17:47 -0500
-From: Antony Pavlov <antonynpavlov@gmail.com>
-To: linux-mips@linux-mips.org
-Cc: Antony Pavlov <antonynpavlov@gmail.com>,
-	Alban Bedel <albeu@free.fr>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [RFC v3 03/14] MIPS: dts: qca: ar9132: use dt-bindings/clock/ath79-clk.h macros
-Date: Sat, 23 Jan 2016 23:17:20 +0300
-Message-Id: <1453580251-2341-4-git-send-email-antonynpavlov@gmail.com>
-In-Reply-To: <1453580251-2341-1-git-send-email-antonynpavlov@gmail.com>
-References: <1453580251-2341-1-git-send-email-antonynpavlov@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH v4 12/13] clk: at91: pmc: remove useless capacities handling
+Date: Wed, 27 Jan 2016 17:11:11 +0100
+Message-Id: <1453911072-23608-13-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The old ar9132 clk implementation (see arch/mips/ath79/clock.c)
-have had only 3 devicetree clks (cpu, ddr, ahb). Two additional
-clocks (wdt and uart) have realized as aliases for ahb clock.
-In the old ar9132 clk implementation the wdt and uart clocks
-were inaccessible via devicetree so index "2" used for reference
-to ahb clock instead, e.g.
+Capacities only handles interrupts and they are not use anymore. Remove the
+whole initialisation.
 
-    clocks = <&pll 2>;
-
-In the new ar9132 clk implementation (see drivers/clk/clk-ath79.c)
-the wdt and uart clks are accessible via devicetree
-so appropriate ATH79_CLK_WDT and ATH79_CLK_UART are used in ar9132.dtsi.
-
-Signed-off-by: Antony Pavlov <antonynpavlov@gmail.com>
-Cc: Alban Bedel <albeu@free.fr>
-Cc: linux-mips@linux-mips.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 ---
- arch/mips/boot/dts/qca/ar9132.dtsi | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/clk/at91/pmc.c | 128 -------------------------------------------------
+ 1 file changed, 128 deletions(-)
 
-diff --git a/arch/mips/boot/dts/qca/ar9132.dtsi b/arch/mips/boot/dts/qca/ar9132.dtsi
-index 13d0439..4a537ea 100644
---- a/arch/mips/boot/dts/qca/ar9132.dtsi
-+++ b/arch/mips/boot/dts/qca/ar9132.dtsi
-@@ -1,3 +1,5 @@
-+#include <dt-bindings/clock/ath79-clk.h>
-+
- / {
- 	compatible = "qca,ar9132";
+diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+index dce285549de2..526df5ba042d 100644
+--- a/drivers/clk/at91/pmc.c
++++ b/drivers/clk/at91/pmc.c
+@@ -19,15 +19,6 @@
  
-@@ -57,7 +59,7 @@
- 				reg = <0x18020000 0x20>;
- 				interrupts = <3>;
+ #include "pmc.h"
  
--				clocks = <&pll 2>;
-+				clocks = <&pll ATH79_CLK_UART>;
- 				clock-names = "uart";
- 
- 				reg-io-width = <4>;
-@@ -100,7 +102,7 @@
- 
- 				interrupts = <4>;
- 
--				clocks = <&pll 2>;
-+				clocks = <&pll ATH79_CLK_WDT>;
- 				clock-names = "wdt";
- 			};
- 
-@@ -129,7 +131,7 @@
- 			compatible = "qca,ar9132-spi", "qca,ar7100-spi";
- 			reg = <0x1f000000 0x10>;
- 
--			clocks = <&pll 2>;
-+			clocks = <&pll ATH79_CLK_AHB>;
- 			clock-names = "ahb";
- 
- 			status = "disabled";
+-struct at91_pmc_caps {
+-	u32 available_irqs;
+-};
+-
+-struct at91_pmc {
+-	struct regmap *regmap;
+-	const struct at91_pmc_caps *caps;
+-};
+-
+ int of_at91_get_clk_range(struct device_node *np, const char *propname,
+ 			  struct clk_range *range)
+ {
+@@ -50,122 +41,3 @@ int of_at91_get_clk_range(struct device_node *np, const char *propname,
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(of_at91_get_clk_range);
+-
+-static const struct at91_pmc_caps at91rm9200_caps = {
+-	.available_irqs = AT91_PMC_MOSCS | AT91_PMC_LOCKA | AT91_PMC_LOCKB |
+-			  AT91_PMC_MCKRDY | AT91_PMC_PCK0RDY |
+-			  AT91_PMC_PCK1RDY | AT91_PMC_PCK2RDY |
+-			  AT91_PMC_PCK3RDY,
+-};
+-
+-static const struct at91_pmc_caps at91sam9260_caps = {
+-	.available_irqs = AT91_PMC_MOSCS | AT91_PMC_LOCKA | AT91_PMC_LOCKB |
+-			  AT91_PMC_MCKRDY | AT91_PMC_PCK0RDY |
+-			  AT91_PMC_PCK1RDY,
+-};
+-
+-static const struct at91_pmc_caps at91sam9g45_caps = {
+-	.available_irqs = AT91_PMC_MOSCS | AT91_PMC_LOCKA | AT91_PMC_MCKRDY |
+-			  AT91_PMC_LOCKU | AT91_PMC_PCK0RDY |
+-			  AT91_PMC_PCK1RDY,
+-};
+-
+-static const struct at91_pmc_caps at91sam9n12_caps = {
+-	.available_irqs = AT91_PMC_MOSCS | AT91_PMC_LOCKA | AT91_PMC_LOCKB |
+-			  AT91_PMC_MCKRDY | AT91_PMC_PCK0RDY |
+-			  AT91_PMC_PCK1RDY | AT91_PMC_MOSCSELS |
+-			  AT91_PMC_MOSCRCS | AT91_PMC_CFDEV,
+-};
+-
+-static const struct at91_pmc_caps at91sam9x5_caps = {
+-	.available_irqs = AT91_PMC_MOSCS | AT91_PMC_LOCKA | AT91_PMC_MCKRDY |
+-			  AT91_PMC_LOCKU | AT91_PMC_PCK0RDY |
+-			  AT91_PMC_PCK1RDY | AT91_PMC_MOSCSELS |
+-			  AT91_PMC_MOSCRCS | AT91_PMC_CFDEV,
+-};
+-
+-static const struct at91_pmc_caps sama5d2_caps = {
+-	.available_irqs = AT91_PMC_MOSCS | AT91_PMC_LOCKA | AT91_PMC_MCKRDY |
+-			  AT91_PMC_LOCKU | AT91_PMC_PCK0RDY |
+-			  AT91_PMC_PCK1RDY | AT91_PMC_PCK2RDY |
+-			  AT91_PMC_MOSCSELS | AT91_PMC_MOSCRCS |
+-			  AT91_PMC_CFDEV | AT91_PMC_GCKRDY,
+-};
+-
+-static const struct at91_pmc_caps sama5d3_caps = {
+-	.available_irqs = AT91_PMC_MOSCS | AT91_PMC_LOCKA | AT91_PMC_MCKRDY |
+-			  AT91_PMC_LOCKU | AT91_PMC_PCK0RDY |
+-			  AT91_PMC_PCK1RDY | AT91_PMC_PCK2RDY |
+-			  AT91_PMC_MOSCSELS | AT91_PMC_MOSCRCS |
+-			  AT91_PMC_CFDEV,
+-};
+-
+-static void __init of_at91_pmc_setup(struct device_node *np,
+-				     const struct at91_pmc_caps *caps)
+-{
+-	struct at91_pmc *pmc;
+-	struct regmap *regmap;
+-
+-	regmap = syscon_node_to_regmap(np);
+-	if (IS_ERR(regmap))
+-		panic("Could not retrieve syscon regmap");
+-
+-	pmc = kzalloc(sizeof(*pmc), GFP_KERNEL);
+-	if (!pmc)
+-		return;
+-
+-	pmc->regmap = regmap;
+-	pmc->caps = caps;
+-
+-	regmap_write(pmc->regmap, AT91_PMC_IDR, 0xffffffff);
+-
+-}
+-
+-static void __init of_at91rm9200_pmc_setup(struct device_node *np)
+-{
+-	of_at91_pmc_setup(np, &at91rm9200_caps);
+-}
+-CLK_OF_DECLARE(at91rm9200_clk_pmc, "atmel,at91rm9200-pmc",
+-	       of_at91rm9200_pmc_setup);
+-
+-static void __init of_at91sam9260_pmc_setup(struct device_node *np)
+-{
+-	of_at91_pmc_setup(np, &at91sam9260_caps);
+-}
+-CLK_OF_DECLARE(at91sam9260_clk_pmc, "atmel,at91sam9260-pmc",
+-	       of_at91sam9260_pmc_setup);
+-
+-static void __init of_at91sam9g45_pmc_setup(struct device_node *np)
+-{
+-	of_at91_pmc_setup(np, &at91sam9g45_caps);
+-}
+-CLK_OF_DECLARE(at91sam9g45_clk_pmc, "atmel,at91sam9g45-pmc",
+-	       of_at91sam9g45_pmc_setup);
+-
+-static void __init of_at91sam9n12_pmc_setup(struct device_node *np)
+-{
+-	of_at91_pmc_setup(np, &at91sam9n12_caps);
+-}
+-CLK_OF_DECLARE(at91sam9n12_clk_pmc, "atmel,at91sam9n12-pmc",
+-	       of_at91sam9n12_pmc_setup);
+-
+-static void __init of_at91sam9x5_pmc_setup(struct device_node *np)
+-{
+-	of_at91_pmc_setup(np, &at91sam9x5_caps);
+-}
+-CLK_OF_DECLARE(at91sam9x5_clk_pmc, "atmel,at91sam9x5-pmc",
+-	       of_at91sam9x5_pmc_setup);
+-
+-static void __init of_sama5d2_pmc_setup(struct device_node *np)
+-{
+-	of_at91_pmc_setup(np, &sama5d2_caps);
+-}
+-CLK_OF_DECLARE(sama5d2_clk_pmc, "atmel,sama5d2-pmc",
+-	       of_sama5d2_pmc_setup);
+-
+-static void __init of_sama5d3_pmc_setup(struct device_node *np)
+-{
+-	of_at91_pmc_setup(np, &sama5d3_caps);
+-}
+-CLK_OF_DECLARE(sama5d3_clk_pmc, "atmel,sama5d3-pmc",
+-	       of_sama5d3_pmc_setup);
 -- 
-2.6.2
-
+2.5.0
