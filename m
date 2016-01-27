@@ -1,111 +1,126 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:56122 "EHLO
-	mailgw02.hq.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751028AbcANFzc (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jan 2016 00:55:32 -0500
-Message-ID: <1452750917.5384.24.camel@mtksdaap41>
-Subject: Re: [PATCH v2] clk: mediatek: Allow changing PLL rate when it is off
+Return-Path: <jamesjj.liao@mediatek.com>
 From: James Liao <jamesjj.liao@mediatek.com>
-To: Michael Turquette <mturquette@baylibre.com>
-CC: Matthias Brugger <matthias.bgg@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>,
-	<srv_heupstream@mediatek.com>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>
-Date: Thu, 14 Jan 2016 13:55:17 +0800
-In-Reply-To: <20160114022637.1942.4564@quark.deferred.io>
-References: <1452482936-51852-1-git-send-email-jamesjj.liao@mediatek.com>
-	 <20160114022637.1942.4564@quark.deferred.io>
-Content-Type: text/plain; charset="us-ascii"
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: John Crispin <blogic@openwrt.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>, Shunli
+ Wang <shunli.wang@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>
+Subject: [PATCH v5 5/6] reset: mediatek: Add MT2701 reset controller dt-binding file
+Date: Wed, 27 Jan 2016 15:21:03 +0800
+Message-ID: <1453879264-37915-6-git-send-email-jamesjj.liao@mediatek.com>
+In-Reply-To: <1453879264-37915-1-git-send-email-jamesjj.liao@mediatek.com>
+References: <1453879264-37915-1-git-send-email-jamesjj.liao@mediatek.com>
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
+From: Shunli Wang <shunli.wang@mediatek.com>
 
-On Wed, 2016-01-13 at 18:26 -0800, Michael Turquette wrote:
-> Hi James,
-> 
-> Quoting James Liao (2016-01-10 19:28:56)
-> > Some modules may need to change its clock rate before turn on it.
-> > So changing PLL's rate when it is off should be allowed.
-> > This patch removes PLL enabled check before set rate, so that
-> > PLLs can set new frequency even if they are off.
-> > 
-> > On MT8173 for example, ARMPLL's enable bit can be controlled by
-> > other HW. That means ARMPLL may be turned on even if we (CPU / SW)
-> > set ARMPLL's enable bit as 0. In this case, SW may want and can
-> > still change ARMPLL's rate by changing its pcw and postdiv settings.
-> > But without this patch, new pcw setting will not be applied because
-> > its enable bit is 0.
-> 
-> Must the clock signal be enabled to change the PLL rate? If so, does
-> ARMPLL set the CLK_SET_RATE_GATE flag?
+Dt-binding file about reset controller is used to provide
+kinds of definition, which is referenced by dts file and
+IC-specified reset controller driver code.
 
-No. The controlling of PLL's rate and enable are independent. So we can
-change the PLL's rate when it's enabled or disabled.
+Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Tested-by: John Crispin <blogic@openwrt.org>
+---
+ include/dt-bindings/reset/mt2701-resets.h | 83 +++++++++++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
+ create mode 100644 include/dt-bindings/reset/mt2701-resets.h
 
-> > 
-> > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> > ---
-> >  drivers/clk/mediatek/clk-pll.c | 9 ++-------
-> >  1 file changed, 2 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-> > index 966cab1..8e31fae 100644
-> > --- a/drivers/clk/mediatek/clk-pll.c
-> > +++ b/drivers/clk/mediatek/clk-pll.c
-> > @@ -91,9 +91,6 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
-> >                 int postdiv)
-> >  {
-> >         u32 con1, val;
-> > -       int pll_en;
-> > -
-> > -       pll_en = readl(pll->base_addr + REG_CON0) & CON0_BASE_EN;
-> >  
-> >         /* set postdiv */
-> >         val = readl(pll->pd_addr);
-> > @@ -114,15 +111,13 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
-> >  
-> >         con1 = readl(pll->base_addr + REG_CON1);
-> >  
-> > -       if (pll_en)
-> > -               con1 |= CON0_PCW_CHG;
-> > +       con1 |= CON0_PCW_CHG;
-> 
-> This unconditionally enables the PLL whenever clk_set_rate is called,
-> changing the previous behavior. The clk framework still tracks the
-> intent of ARMPLLs users with the enable_count. How about something like
-> the following:
-
-Not really. This patch will not enable or disable PLL when we change its
-rate. The PLL enable bit is bit[0], we didn't change bit[0] in
-mtk_pll_set_rate_regs(), so its state will not be changed.
-
-This patch set CON0_PCW_CHG (bit[31]) no matter the PLL is enabled or
-not. So we don't need to check the enable bit[0] nor PLL state in the
-framework before set bit[31].
-
-> 	bool pll_en = clk_hw_is_enabled(&pll->hw);
-> 
-> 	if (pll_en)
-> 		con1 |= CON0_PCW_CHG;
-> 
-> 	writel(con1, pll->base_addr + REG_CON1);
-> 	if (pll->tuner_addr)
-> 		writel(con1 + 1, pll->tuner_addr);
-> 
-> 	if (pll_en)
-> 		udelay(20);
-> 
-> This does not rely on the hardware to tell us the intent of the user,
-> but instead on our framework usecounting.
-
-
-Best regards,
-
-James
-
+diff --git a/include/dt-bindings/reset/mt2701-resets.h b/include/dt-bindings/reset/mt2701-resets.h
+new file mode 100644
+index 0000000..aaf0305
+--- /dev/null
++++ b/include/dt-bindings/reset/mt2701-resets.h
+@@ -0,0 +1,83 @@
++/*
++ * Copyright (c) 2015 MediaTek, Shunli Wang <shunli.wang@mediatek.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _DT_BINDINGS_RESET_CONTROLLER_MT2701
++#define _DT_BINDINGS_RESET_CONTROLLER_MT2701
++
++/* INFRACFG resets */
++#define MT2701_INFRA_EMI_REG_RST		0
++#define MT2701_INFRA_DRAMC0_A0_RST		1
++#define MT2701_INFRA_FHCTL_RST			2
++#define MT2701_INFRA_APCIRQ_EINT_RST		3
++#define MT2701_INFRA_APXGPT_RST			4
++#define MT2701_INFRA_SCPSYS_RST			5
++#define MT2701_INFRA_KP_RST			6
++#define MT2701_INFRA_PMIC_WRAP_RST		7
++#define MT2701_INFRA_MIPI_RST			8
++#define MT2701_INFRA_IRRX_RST			9
++#define MT2701_INFRA_CEC_RST			10
++#define MT2701_INFRA_EMI_RST			32
++#define MT2701_INFRA_DRAMC0_RST			34
++#define MT2701_INFRA_TRNG_RST			37
++#define MT2701_INFRA_SYSIRQ_RST			38
++
++/*  PERICFG resets */
++#define MT2701_PERI_UART0_SW_RST		0
++#define MT2701_PERI_UART1_SW_RST		1
++#define MT2701_PERI_UART2_SW_RST		2
++#define MT2701_PERI_UART3_SW_RST		3
++#define MT2701_PERI_GCPU_SW_RST			5
++#define MT2701_PERI_BTIF_SW_RST			6
++#define MT2701_PERI_PWM_SW_RST			8
++#define MT2701_PERI_AUXADC_SW_RST		10
++#define MT2701_PERI_DMA_SW_RST			11
++#define MT2701_PERI_NFI_SW_RST			14
++#define MT2701_PERI_NLI_SW_RST			15
++#define MT2701_PERI_THERM_SW_RST		16
++#define MT2701_PERI_MSDC2_SW_RST		17
++#define MT2701_PERI_MSDC0_SW_RST		19
++#define MT2701_PERI_MSDC1_SW_RST		20
++#define MT2701_PERI_I2C0_SW_RST			22
++#define MT2701_PERI_I2C1_SW_RST			23
++#define MT2701_PERI_I2C2_SW_RST			24
++#define MT2701_PERI_I2C3_SW_RST			25
++#define MT2701_PERI_USB_SW_RST			28
++#define MT2701_PERI_ETH_SW_RST			29
++#define MT2701_PERI_SPI0_SW_RST			33
++
++/* TOPRGU resets */
++#define MT2701_TOPRGU_INFRA_RST			0
++#define MT2701_TOPRGU_MM_RST			1
++#define MT2701_TOPRGU_MFG_RST			2
++#define MT2701_TOPRGU_ETHDMA_RST		3
++#define MT2701_TOPRGU_VDEC_RST			4
++#define MT2701_TOPRGU_VENC_IMG_RST		5
++#define MT2701_TOPRGU_DDRPHY_RST		6
++#define MT2701_TOPRGU_MD_RST			7
++#define MT2701_TOPRGU_INFRA_AO_RST		8
++#define MT2701_TOPRGU_CONN_RST			9
++#define MT2701_TOPRGU_APMIXED_RST		10
++#define MT2701_TOPRGU_HIFSYS_RST		11
++#define MT2701_TOPRGU_CONN_MCU_RST		12
++#define MT2701_TOPRGU_BDP_DISP_RST		13
++
++/* HIFSYS resets */
++#define MT2701_HIFSYS_UHOST0_RST		3
++#define MT2701_HIFSYS_UHOST1_RST		4
++#define MT2701_HIFSYS_UPHY0_RST			21
++#define MT2701_HIFSYS_UPHY1_RST			22
++#define MT2701_HIFSYS_PCIE0_RST			24
++#define MT2701_HIFSYS_PCIE1_RST			25
++#define MT2701_HIFSYS_PCIE2_RST			26
++
++#endif  /* _DT_BINDINGS_RESET_CONTROLLER_MT2701 */
+-- 
+1.9.1
