@@ -1,74 +1,65 @@
-Return-Path: <caesar.upstream@gmail.com>
-Return-Path: <caesar.upstream@gmail.com>
-From: Caesar Wang <wxt@rock-chips.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	heiko@sntech.de
-Cc: linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	wxt@rock-chips.com,
-	Jianqun xu <jay.xu@rock-chips.com>
-Subject: [PATCH] clk: rockchip: fix some clock gates for rk3368
-Date: Thu,  7 Jan 2016 17:18:07 +0800
-Message-Id: <1452158287-18742-1-git-send-email-wxt@rock-chips.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 27 Jan 2016 18:33:11 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH RFC 08/11] clk: sunxi: factors: Drop round_rate from clk
+ ops
+Message-ID: <20160127173311.GM4317@lukather>
+References: <1453727747-23307-1-git-send-email-wens@csie.org>
+ <1453727747-23307-9-git-send-email-wens@csie.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="FnOKg9Ah4tDwTfQS"
+In-Reply-To: <1453727747-23307-9-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jianqun xu <jay.xu@rock-chips.com>
 
-Reference to the Rockchip RK3368 TRM v1.1, some clock
-gates need to be updated.
+--FnOKg9Ah4tDwTfQS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Jianqun xu <jay.xu@rock-chips.com>
-Signed-off-by: Caesar Wang <wxt@rock-chips.com>
----
+On Mon, Jan 25, 2016 at 09:15:44PM +0800, Chen-Yu Tsai wrote:
+> The common clock framework requires either determine_rate or round_rate
+> to be implemented. We use determine_rate so we can pass the parent index
+> to the get_factors callback. This cannot be done easily with round_rate,
+> so just drop it.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
- drivers/clk/rockchip/clk-rk3368.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+Applied, thanks!
+Maxime
 
-diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
-index be0ede5..21f3ea9 100644
---- a/drivers/clk/rockchip/clk-rk3368.c
-+++ b/drivers/clk/rockchip/clk-rk3368.c
-@@ -780,13 +780,13 @@ static struct rockchip_clk_branch rk3368_clk_branches[] __initdata = {
- 	GATE(PCLK_TSADC, "pclk_tsadc", "pclk_peri", 0, RK3368_CLKGATE_CON(20), 0, GFLAGS),
- 
- 	/* pclk_pd_alive gates */
--	GATE(PCLK_TIMER1, "pclk_timer1", "pclk_pd_alive", 0, RK3368_CLKGATE_CON(14), 8, GFLAGS),
--	GATE(PCLK_TIMER0, "pclk_timer0", "pclk_pd_alive", 0, RK3368_CLKGATE_CON(14), 7, GFLAGS),
--	GATE(0, "pclk_alive_niu", "pclk_pd_alive", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(14), 12, GFLAGS),
--	GATE(PCLK_GRF, "pclk_grf", "pclk_pd_alive", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(14), 11, GFLAGS),
--	GATE(PCLK_GPIO3, "pclk_gpio3", "pclk_pd_alive", 0, RK3368_CLKGATE_CON(14), 3, GFLAGS),
--	GATE(PCLK_GPIO2, "pclk_gpio2", "pclk_pd_alive", 0, RK3368_CLKGATE_CON(14), 2, GFLAGS),
--	GATE(PCLK_GPIO1, "pclk_gpio1", "pclk_pd_alive", 0, RK3368_CLKGATE_CON(14), 1, GFLAGS),
-+	GATE(PCLK_TIMER1, "pclk_timer1", "pclk_pd_alive", 0, RK3368_CLKGATE_CON(22), 13, GFLAGS),
-+	GATE(PCLK_TIMER0, "pclk_timer0", "pclk_pd_alive", 0, RK3368_CLKGATE_CON(22), 12, GFLAGS),
-+	GATE(0, "pclk_alive_niu", "pclk_pd_alive", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(22), 9, GFLAGS),
-+	GATE(PCLK_GRF, "pclk_grf", "pclk_pd_alive", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(22), 8, GFLAGS),
-+	GATE(PCLK_GPIO3, "pclk_gpio3", "pclk_pd_alive", 0, RK3368_CLKGATE_CON(22), 3, GFLAGS),
-+	GATE(PCLK_GPIO2, "pclk_gpio2", "pclk_pd_alive", 0, RK3368_CLKGATE_CON(22), 2, GFLAGS),
-+	GATE(PCLK_GPIO1, "pclk_gpio1", "pclk_pd_alive", 0, RK3368_CLKGATE_CON(22), 1, GFLAGS),
- 
- 	/*
- 	 * pclk_vio gates
-@@ -796,12 +796,12 @@ static struct rockchip_clk_branch rk3368_clk_branches[] __initdata = {
- 	GATE(0, "pclk_dphytx", "hclk_vio", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(14), 8, GFLAGS),
- 
- 	/* pclk_pd_pmu gates */
--	GATE(PCLK_PMUGRF, "pclk_pmugrf", "pclk_pd_pmu", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(17), 0, GFLAGS),
--	GATE(PCLK_GPIO0, "pclk_gpio0", "pclk_pd_pmu", 0, RK3368_CLKGATE_CON(17), 4, GFLAGS),
--	GATE(PCLK_SGRF, "pclk_sgrf", "pclk_pd_pmu", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(17), 3, GFLAGS),
--	GATE(0, "pclk_pmu_noc", "pclk_pd_pmu", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(17), 2, GFLAGS),
--	GATE(0, "pclk_intmem1", "pclk_pd_pmu", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(17), 1, GFLAGS),
--	GATE(PCLK_PMU, "pclk_pmu", "pclk_pd_pmu", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(17), 2, GFLAGS),
-+	GATE(PCLK_PMUGRF, "pclk_pmugrf", "pclk_pd_pmu", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(23), 5, GFLAGS),
-+	GATE(PCLK_GPIO0, "pclk_gpio0", "pclk_pd_pmu", 0, RK3368_CLKGATE_CON(23), 4, GFLAGS),
-+	GATE(PCLK_SGRF, "pclk_sgrf", "pclk_pd_pmu", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(23), 3, GFLAGS),
-+	GATE(0, "pclk_pmu_noc", "pclk_pd_pmu", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(23), 2, GFLAGS),
-+	GATE(0, "pclk_intmem1", "pclk_pd_pmu", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(23), 1, GFLAGS),
-+	GATE(PCLK_PMU, "pclk_pmu", "pclk_pd_pmu", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(23), 0, GFLAGS),
- 
- 	/* timer gates */
- 	GATE(0, "sclk_timer15", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 11, GFLAGS),
--- 
-1.9.1
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--FnOKg9Ah4tDwTfQS
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWqP9XAAoJEBx+YmzsjxAg/UsP/0tXf9hUGVRm6mxaRpnSm4dj
+LPHnlyP75xxOCuzwRcbjc111s34PETcPsiJEFBbIpetSCehCQxHJqWh9PiHQNiMb
+kQqx5S0TZcgd1R8J3gk3jBrj6FTTmCbfzO69i/LCcXXYBp92+1UV0I3MPcqcjjeV
+JWC3IpoU3apeJoSKVdiNqHJS7bZoyYglkeRoZ3jgCrOoSiTy3vkTTObdOrzBI0kv
+gG+fg8MDsYznu18TihQrzyY0fthnecFntmOq8NLL3BybAeB3aQuf08CPDmRqLAxG
+7KWVKQXCxGxRAPGOuDo2ezRxsk+KPO+meIU+KFJZGsMxZsv1sM+YMBsFk4OfO9LB
+wvj6wFI5Ungv0uqNOuFKZ0hIXmKUPNKt8rpSu7Htn7KpI8b25ogNTb3rfwMtk8o0
+4Cf0DVznkNSSSYdm71ZQhtZjPGnkXz/2qEf+XccvmOowCrKxbU/4vO00dynJJInO
+/GzkzPAlyMD3aC7B26suaaTmjorZ/zEHSBCdlTZjAdlJyhZzRCyPfNGVKaQTBH3U
+oDs74pWt343hs6B+vvPq2xxyp2BUzm/dk0LBRGTjFMjXgUkF9hcTfqLGvNT8LjFF
+c0YMhawVNa+aopMnW3G3byqC7Mw62SQIcyFDDE7Djdu04TyR6m9owReopjC1nBIP
+8bAJirdDvycCncmqDFFd
+=SmeG
+-----END PGP SIGNATURE-----
+
+--FnOKg9Ah4tDwTfQS--
