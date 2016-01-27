@@ -1,65 +1,58 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=UTF-8
-Message-id: <56A5BF8D.8070807@samsung.com>
-Date: Mon, 25 Jan 2016 15:24:13 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
- mturquette@baylibre.com, lee.jones@linaro.org
-Cc: sboyd@codeaurora.org, myungjoo.ham@samsung.com, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- patches@opensource.wolfsonmicro.com
-Subject: Re: [PATCH v3 1/4] extcon: arizona: Remove enable/disable of 32k clock
-References: 
- <1452252582-20834-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-In-reply-to: 
- <1452252582-20834-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Return-Path: <rjui@broadcom.com>
+From: Ray Jui <rjui@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>, Simran Rai <ssimran@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>
+Subject: [PATCH RESEND v2 3/4] clk: iproc: Remove __init from header
+Date: Tue, 26 Jan 2016 17:18:40 -0800
+Message-ID: <1453857521-8804-4-git-send-email-rjui@broadcom.com>
+In-Reply-To: <1453857521-8804-1-git-send-email-rjui@broadcom.com>
+References: <1453857521-8804-1-git-send-email-rjui@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: rjui@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2016=EB=85=84 01=EC=9B=94 08=EC=9D=BC 20:29, Charles Keepax wrote:
-> The 32k clock is unconditionally enabled by the MFD core so there is no
-> need to control it from the extcon device, so this patch removes the
-> control of the 32k clock.
-> 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> ---
-> 
-> No changes since v2.
-> 
-> Thanks,
-> Charles
-> 
->  drivers/extcon/extcon-arizona.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/extcon/extcon-arizona.c b/drivers/extcon/extcon-arizona.c
-> index e4890dd..52d041f 100644
-> --- a/drivers/extcon/extcon-arizona.c
-> +++ b/drivers/extcon/extcon-arizona.c
-> @@ -1571,7 +1571,6 @@ static int arizona_extcon_probe(struct platform_device *pdev)
->  		goto err_micdet;
->  	}
->  
-> -	arizona_clk32k_enable(arizona);
->  	regmap_update_bits(arizona->regmap, ARIZONA_JACK_DETECT_DEBOUNCE,
->  			   ARIZONA_JD1_DB, ARIZONA_JD1_DB);
->  	regmap_update_bits(arizona->regmap, ARIZONA_JACK_DETECT_ANALOGUE,
-> @@ -1642,7 +1641,6 @@ static int arizona_extcon_remove(struct platform_device *pdev)
->  	cancel_delayed_work_sync(&info->hpdet_work);
->  	regmap_update_bits(arizona->regmap, ARIZONA_JACK_DETECT_ANALOGUE,
->  			   ARIZONA_JD1_ENA, 0);
-> -	arizona_clk32k_disable(arizona);
->  
->  	return 0;
->  }
-> 
+Remove __init macro from all function prototypes in clk-iproc.h
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Ray Jui <rjui@broadcom.com>
+---
+ drivers/clk/bcm/clk-iproc.h | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-If I apply only this patch on extcon tree,
-the kernel build error will happen on other tree.
-I think that this patch will go on clk tree and
-then send pull request of immutable branch.
-
-Thanks,
-Chanwoo Choi
+diff --git a/drivers/clk/bcm/clk-iproc.h b/drivers/clk/bcm/clk-iproc.h
+index febae11..2148b4e 100644
+--- a/drivers/clk/bcm/clk-iproc.h
++++ b/drivers/clk/bcm/clk-iproc.h
+@@ -204,16 +204,16 @@ struct iproc_asiu_div {
+ 	unsigned int low_width;
+ };
+ 
+-void __init iproc_armpll_setup(struct device_node *node);
+-void __init iproc_pll_clk_setup(struct device_node *node,
+-				const struct iproc_pll_ctrl *pll_ctrl,
+-				const struct iproc_pll_vco_param *vco,
+-				unsigned int num_vco_entries,
+-				const struct iproc_clk_ctrl *clk_ctrl,
+-				unsigned int num_clks);
+-void __init iproc_asiu_setup(struct device_node *node,
+-			     const struct iproc_asiu_div *div,
+-			     const struct iproc_asiu_gate *gate,
+-			     unsigned int num_clks);
++void iproc_armpll_setup(struct device_node *node);
++void iproc_pll_clk_setup(struct device_node *node,
++			 const struct iproc_pll_ctrl *pll_ctrl,
++			 const struct iproc_pll_vco_param *vco,
++			 unsigned int num_vco_entries,
++			 const struct iproc_clk_ctrl *clk_ctrl,
++			 unsigned int num_clks);
++void iproc_asiu_setup(struct device_node *node,
++		      const struct iproc_asiu_div *div,
++		      const struct iproc_asiu_gate *gate,
++		      unsigned int num_clks);
+ 
+ #endif /* _CLK_IPROC_H */
+-- 
+1.9.1
