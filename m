@@ -1,128 +1,129 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Thu, 28 Jan 2016 15:57:21 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Bai Ping <b51503@freescale.com>
-Cc: kernel@pengutronix.de, pawel.moll@arm.com, robh+dt@kernel.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] ARM: dts: imx: Add basic dts support for
- imx6qp-sabreauto
-Message-ID: <20160128075721.GN9070@tiger>
-References: <1450159673-27314-1-git-send-email-b51503@freescale.com>
- <1450159673-27314-4-git-send-email-b51503@freescale.com>
+Return-Path: <emilio.lopez@collabora.co.uk>
+Subject: Re: [PATCH 1/2] clk: sunxi: delay protected clocks until arch
+ initcall
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+References: <1453385439-10154-1-git-send-email-emilio.lopez@collabora.co.uk>
+ <1453385439-10154-2-git-send-email-emilio.lopez@collabora.co.uk>
+ <20160127153722.GC4317@lukather>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, wens@csie.org,
+ heiko@sntech.de, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+From: =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio.lopez@collabora.co.uk>
+Message-ID: <56A91245.3090706@collabora.co.uk>
+Date: Wed, 27 Jan 2016 15:53:57 -0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1450159673-27314-4-git-send-email-b51503@freescale.com>
+In-Reply-To: <20160127153722.GC4317@lukather>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Dec 15, 2015 at 02:07:51PM +0800, Bai Ping wrote:
-> This patch adds basic dts file for imx6qp-sabreauto board.
-> 
-> Signed-off-by: Bai Ping <b51503@freescale.com>
-> ---
->  arch/arm/boot/dts/Makefile             |  1 +
->  arch/arm/boot/dts/imx6qp-sabreauto.dts | 67 ++++++++++++++++++++++++++++++++++
->  2 files changed, 68 insertions(+)
->  create mode 100644 arch/arm/boot/dts/imx6qp-sabreauto.dts
-> 
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index dfba765..7996a51 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -329,6 +329,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
->  	imx6q-phytec-pbab01.dtb \
->  	imx6q-rex-pro.dtb \
->  	imx6q-sabreauto.dtb \
-> +	imx6qp-sabreauto.dtb \
+Hi Maxime,
 
-This order is incorrect either.
+El 27/01/16 a las 12:37, Maxime Ripard escribió:
+> Hi Emilio,
+>
+> On Thu, Jan 21, 2016 at 11:10:38AM -0300, Emilio López wrote:
+>> Clocks are registered early on, and unused clocks get disabled on
+>> late initcall, so we can delay protecting important clocks a bit.
+>> If we do this too early, it may happen that some clocks are orphans
+>> and therefore enabling them may not work as intended. If we do this
+>> too late, a driver may reparent some clock and cause another important
+>> clock to be disabled as a byproduct.
+>>
+>> arch_initcall should be a good spot to do this, as clock drivers using
+>> the OF mechanisms will be all registered by then, and drivers won't
+>> have started probing yet.
+>>
+>> Signed-off-by: Emilio López <emilio.lopez@collabora.co.uk>
+>> ---
+>>   drivers/clk/sunxi/clk-sunxi.c | 22 ++++++++++++++++++----
+>>   1 file changed, 18 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+>> index 5ba2188..285e8ee 100644
+>> --- a/drivers/clk/sunxi/clk-sunxi.c
+>> +++ b/drivers/clk/sunxi/clk-sunxi.c
+>> @@ -1153,10 +1153,12 @@ static void __init of_sunxi_table_clock_setup(const struct of_device_id *clk_mat
+>>   	}
+>>   }
+>>
+>> +/* By default, don't protect any clocks */
+>> +static const char **protected_clocks __initdata;
+>> +static int protected_clocks_nr __initdata;
+>> +
+>>   static void __init sunxi_init_clocks(const char *clocks[], int nclocks)
+>>   {
+>> -	unsigned int i;
+>> -
+>>   	/* Register divided output clocks */
+>>   	of_sunxi_table_clock_setup(clk_divs_match, sunxi_divs_clk_setup);
+>>
+>> @@ -1169,14 +1171,26 @@ static void __init sunxi_init_clocks(const char *clocks[], int nclocks)
+>>   	/* Register mux clocks */
+>>   	of_sunxi_table_clock_setup(clk_mux_match, sunxi_mux_clk_setup);
+>>
+>> +	/* We shall protect these clocks when everything is ready */
+>> +	protected_clocks = clocks;
+>> +	protected_clocks_nr = nclocks;
+>> +}
+>> +
+>> +static int __init sunxi_init_clock_protection(void)
+>> +{
+>> +	unsigned int i;
+>> +
+>>   	/* Protect the clocks that needs to stay on */
+>> -	for (i = 0; i < nclocks; i++) {
+>> -		struct clk *clk = clk_get(NULL, clocks[i]);
+>> +	for (i = 0; i < protected_clocks_nr; i++) {
+>> +		struct clk *clk = clk_get(NULL, protected_clocks[i]);
+>>
+>>   		if (!IS_ERR(clk))
+>>   			clk_prepare_enable(clk);
+>>   	}
+>> +
+>> +	return 0;
+>>   }
+>> +arch_initcall(sunxi_init_clock_protection);
+>
+> You also need to filter that by the machine compatible in case you're
+> running it on a !sunxi SoC.
 
->  	imx6q-sabrelite.dtb \
->  	imx6q-sabresd.dtb \
->  	imx6q-sbc6x.dtb \
-> diff --git a/arch/arm/boot/dts/imx6qp-sabreauto.dts b/arch/arm/boot/dts/imx6qp-sabreauto.dts
-> new file mode 100644
-> index 0000000..b24aae6
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/imx6qp-sabreauto.dts
-> @@ -0,0 +1,67 @@
-> +/*
-> + * Copyright (C) 2015 Freescale Semiconductor, Inc.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
+protected_clocks_nr will be 0 on a !sunxi machine, so this is 
+effectively a noop there.
 
-GPL/X11 dual license please.
+> Overall, I'm a bit skeptical about the approach. It doesn't really fix
+> everything, just hides it behind a curtain, and I'm pretty sure the
+> clocks not registered by this code would still be broken (the mod0
+> clocks for example).
 
-> + */
-> +
-> +#include "imx6q-sabreauto.dts"
-> +#include "imx6qp.dtsi"
-> +
-> +/ {
-> +	model = "Freescale i.MX6 Quad Plus SABRE Automotive Board";
-> +	compatible = "fsl,imx6qp-sabreauto", "fsl,imx6qp";
-> +};
-> +
-> +
-> +&fec {
-> +	pinctrl-assert-gpios = <&max7322 0 GPIO_ACTIVE_HIGH>;
+This is only meant to solve the problems observed when trying to grab 
+critical clocks before letting all the basic/OF clock types register. 
+The actual clock trees are complete once all the built-in clock 
+compatibles are probed, so this just pushes the protection after that 
+point in time. The plan on the long term should be to use the 
+CCF-built-in clock protection, once it's finished and merged, but it's 
+not here yet.
 
-Upstream kernel doesn't have this property.
+Regarding your example, I'm not aware of any critical mod0 clocks (not 
+that it should matter, as they won't be orphans either).
 
-Shawn
+> The real fix would be to make sure we don't have any orphan clock in
+> the first place, by using CLK_OF_DECLARE everywhere. I did submit a
+> patch doing just that when the clocks broke, but I never got any
+> answer to it.
 
-> +};
-> +
-> +&i2c2 {
-> +	max7322: gpio@68 {
-> +		compatible = "maxim,max7322";
-> +		reg = <0x68>;
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +	};
-> +};
-> +
-> +&iomuxc {
-> +	imx6qdl-sabreauto {
-> +		pinctrl_enet: enetgrp {
-> +			fsl,pins = <
-> +				MX6QDL_PAD_KEY_COL1__ENET_MDIO          0x1b0b0
-> +				MX6QDL_PAD_KEY_COL2__ENET_MDC           0x1b0b0
-> +				MX6QDL_PAD_RGMII_TXC__RGMII_TXC         0x1b018
-> +				MX6QDL_PAD_RGMII_TD0__RGMII_TD0         0x1b018
-> +				MX6QDL_PAD_RGMII_TD1__RGMII_TD1         0x1b018
-> +				MX6QDL_PAD_RGMII_TD2__RGMII_TD2         0x1b018
-> +				MX6QDL_PAD_RGMII_TD3__RGMII_TD3         0x1b018
-> +				MX6QDL_PAD_RGMII_TX_CTL__RGMII_TX_CTL   0x1b018
-> +				MX6QDL_PAD_RGMII_RXC__RGMII_RXC         0x1b018
-> +				MX6QDL_PAD_RGMII_RD0__RGMII_RD0         0x1b018
-> +				MX6QDL_PAD_RGMII_RD1__RGMII_RD1         0x1b018
-> +				MX6QDL_PAD_RGMII_RD2__RGMII_RD2         0x1b018
-> +				MX6QDL_PAD_RGMII_RD3__RGMII_RD3         0x1b018
-> +				MX6QDL_PAD_RGMII_RX_CTL__RGMII_RX_CTL   0x1b018
-> +				MX6QDL_PAD_GPIO_16__ENET_REF_CLK        0x4001b0a8
-> +				MX6QDL_PAD_GPIO_6__ENET_IRQ		0x000b1
-> +			>;
-> +		};
-> +	};
-> +};
-> +
-> +&pcie {
-> +	reset-gpio = <&max7310_c 5 GPIO_ACTIVE_LOW>;
-> +	status = "okay";
-> +};
-> +
-> +&sata {
-> +	status = "okay";
-> +};
-> +
-> +&vgen3_reg {
-> +	regulator-always-on;
-> +};
-> -- 
-> 1.9.1
-> 
-> 
+As I said, there shouldn't be any after all the built in clocks are probed.
+
+That patch also moved the clock protection to arch_initcall btw :) You 
+could say this is a subset of your patch. Moving everything to 
+OF_CLK_DECLARE is unnecessary in my opinion, and it will also probably 
+be slower (I see a bunch of extra of_match_nodes being run for every 
+compatible)
+
+> I thought the patches were simply dropped and the
+> rockchip people just took another approach.
+
+As far as I know, rockchip SoCs are still suffering the breakage this 
+set aims to fix :)
+
+Thanks for the review!
+Emilio
