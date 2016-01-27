@@ -1,54 +1,76 @@
-Return-Path: <vz@mleia.com>
-From: Vladimir Zapolskiy <vz@mleia.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Joachim Eastwood <manabian@gmail.com>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: remove duplicated COMMON_CLK_NXP record from clk/Kconfig
-Date: Thu,  7 Jan 2016 05:07:07 +0200
-Message-Id: <1452136027-32076-1-git-send-email-vz@mleia.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:49074 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934363AbcA0WXj (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jan 2016 17:23:39 -0500
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-mips@linux-mips.org
+Subject: [PATCH] MIPS: Use generic clkdev.h header
+Date: Wed, 27 Jan 2016 14:23:36 -0800
+Message-Id: <1453933416-9714-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Presumably the second COMMON_CLK_NXP config option in
-drivers/clk/Kconfig appeared after a merge conflict resolution, remove
-the wrong record of two.
+The generic header file is equivalent to the MIPS one, so use the
+generic one instead.
 
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
-Hi Mike, Stephen,
 
-I've found this issue in clk-next while working on something else,
-please consider to include this change to clk-next, no objections if
-it is squashed with f7c82a60ba2 ("clk: lpc32xx: add common clock
-framework driver").
+Not compiled, just made from visual inspection.
 
-In fact it is a revert of 8a896310a7e ("clk: lpc18xx: add NXP specific
-COMMON_CLK_NXP configuration symbol"), but this preparatory change is
-good as is.
+ arch/mips/include/asm/Kbuild   |  1 +
+ arch/mips/include/asm/clkdev.h | 27 ---------------------------
+ 2 files changed, 1 insertion(+), 27 deletions(-)
+ delete mode 100644 arch/mips/include/asm/clkdev.h
 
-The original change doesn't have this kind of a problem (see
-http://www.spinics.net/lists/devicetree/msg105709.html), so I
-believe it is caused by a merge conflict, probably after done
-alphabetical sorting.
-
- drivers/clk/Kconfig | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 41f6c7f..eca8e01 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -187,11 +187,6 @@ config COMMON_CLK_PWM
- 	  Adapter driver so that any PWM output can be (mis)used as clock signal
- 	  at 50% duty cycle.
- 
--config COMMON_CLK_NXP
--	def_bool COMMON_CLK && ARCH_LPC18XX
--	---help---
--	  Support for clock providers on NXP platforms.
+diff --git a/arch/mips/include/asm/Kbuild b/arch/mips/include/asm/Kbuild
+index c7fe4d01e79c..9740066cc631 100644
+--- a/arch/mips/include/asm/Kbuild
++++ b/arch/mips/include/asm/Kbuild
+@@ -1,5 +1,6 @@
+ # MIPS headers
+ generic-(CONFIG_GENERIC_CSUM) += checksum.h
++generic-y += clkdev.h
+ generic-y += cputime.h
+ generic-y += current.h
+ generic-y += dma-contiguous.h
+diff --git a/arch/mips/include/asm/clkdev.h b/arch/mips/include/asm/clkdev.h
+deleted file mode 100644
+index 1b3ad7b09dc1..000000000000
+--- a/arch/mips/include/asm/clkdev.h
++++ /dev/null
+@@ -1,27 +0,0 @@
+-/*
+- *  based on arch/arm/include/asm/clkdev.h
+- *
+- *  Copyright (C) 2008 Russell King.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- * Helper for the clk API to assist looking up a struct clk.
+- */
+-#ifndef __ASM_CLKDEV_H
+-#define __ASM_CLKDEV_H
 -
- config COMMON_CLK_PXA
- 	def_bool COMMON_CLK && ARCH_PXA
- 	---help---
+-#include <linux/slab.h>
+-
+-#ifndef CONFIG_COMMON_CLK
+-#define __clk_get(clk)	({ 1; })
+-#define __clk_put(clk)	do { } while (0)
+-#endif
+-
+-static inline struct clk_lookup_alloc *__clkdev_alloc(size_t size)
+-{
+-	return kzalloc(size, GFP_KERNEL);
+-}
+-
+-#endif
 -- 
-2.1.4
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
