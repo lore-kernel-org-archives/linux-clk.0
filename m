@@ -1,47 +1,90 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2] clk: Move vendor's Kconfig into CCF menu section
-To: James Liao <jamesjj.liao@mediatek.com>, Stephen Boyd <sboyd@codeaurora.org>
-References: <1453971537-5510-1-git-send-email-jamesjj.liao@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
- Mike Turquette <mturquette@baylibre.com>, Arnd Bergmann <arnd@arndb.de>,
- Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
- srv_heupstream@mediatek.com, devicetree@vger.kernel.org,
+Return-Path: <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v3 0/3] arm64/clk: EXYNOS: Consolidate Exynos7 symbol
+To: Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>,
+ Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <56AA1032.70001@samsung.com>
-Date: Thu, 28 Jan 2016 13:57:22 +0100
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <1453795504-12302-1-git-send-email-k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Message-id: <56A88998.5040602@samsung.com>
+Date: Wed, 27 Jan 2016 18:10:48 +0900
 MIME-version: 1.0
-In-reply-to: <1453971537-5510-1-git-send-email-jamesjj.liao@mediatek.com>
+In-reply-to: <1453795504-12302-1-git-send-email-k.kozlowski@samsung.com>
 Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 28/01/16 09:58, James Liao wrote:
-> Move all vendor's Kconfig into CCF menu section to prevent
-> new drivers putting their Kconfig files in a wrong place.
+On 26.01.2016 17:05, Krzysztof Kozlowski wrote:
+> Hi,
 > 
-> Some Kconigs need to modify at the same time to avoid build
-
-"Some Kconfigs need to be modified..." ?
-
-> warnings.
+> Third attempt to remove ARCH_EXYNOS7 symbol.
 > 
-> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> ---
-> This patch is based on v4.5-rc1.
+> Patches cannot be cherry-picked. I was thinking about merging this
+> through arm-soc tree after getting needed acks (clk, arm-soc?).
+
+The patchset was rebased on quite old linux-next. Rebasing on current
+code makes only one difference - the s3c64xx gained multiplatform support.
+
+I don't want to spam the lists so, I'll respin everything tomorrow after
+proper rebasing.
+
+Best regards,
+Krzysztof
+
+
 > 
-> changes since v1:
-> - Modify s3c24xx and samsung's Kconfig to avoid build warngings.
+> Changes since v2:
+> =================
+> 1. Follow Arnd's advice about not enabling silently the newly added
+>    EXYNOS_ARM64_COMMON_CLK, when COMPILE_TEST is enabled. This was
+>    also a trigger for some changes in placement of Samsung clocks
+>    Kconfig entries...
+> 2. ... which lead to introducing patch 1.
 > 
->  arch/arm/mach-s3c24xx/Kconfig | 1 +
->  drivers/clk/Kconfig           | 8 +++-----
->  drivers/clk/samsung/Kconfig   | 1 -
->  3 files changed, 4 insertions(+), 6 deletions(-)
-
-For the samsung code changes:
-
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-
--- 
-Thanks,
-Sylwester
+> 
+> Logic:
+> ======
+> Now the clock selection algorithm works like:
+> 1. For Exynos ARMv7 and ARMv8 the platforms select COMMON_CLK
+>    and COMMON_CLK_SAMSUNG.
+> 2. As before: clock drivers for Exynos ARMv7 will be selected by
+>    respective SOC/ARCH_EXYNOS_XXX symbol.
+> 3. For Exynos ARMv8 the clock drivers will be enabled by default
+>    by EXYNOS_ARM64_COMMON_CLK symbol.
+> 
+> Rationale:
+> ==========
+> We don't need ARCH_EXYNOS7 symbol because all ARMv8 platforms should
+> fall under generic ARCH_EXYNOS. In the same time there is no sense
+> in building clocks for these ARMv8 SoCs on ARMv7 builds. In future
+> this will also influence PMU [1] driver.
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
+> [1] https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg48090.html
+> 
+> 
+> Krzysztof Kozlowski (3):
+>   clk: samsung: Enable COMPILE_TEST for Samsung clocks
+>   clk: samsung: Don't build ARMv8 clock drivers on ARMv7
+>   arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS
+> 
+>  arch/arm/Kconfig                    |  1 +
+>  arch/arm/mach-exynos/Kconfig        |  1 +
+>  arch/arm/mach-s3c24xx/Kconfig       |  8 ++++++++
+>  arch/arm/mach-s5pv210/Kconfig       |  1 +
+>  arch/arm64/Kconfig.platforms        | 12 +++---------
+>  arch/arm64/boot/dts/exynos/Makefile |  2 +-
+>  arch/arm64/configs/defconfig        |  2 +-
+>  drivers/clk/Kconfig                 |  2 +-
+>  drivers/clk/samsung/Kconfig         | 14 +++++++++-----
+>  drivers/clk/samsung/Makefile        |  4 ++--
+>  10 files changed, 28 insertions(+), 19 deletions(-)
+> 
