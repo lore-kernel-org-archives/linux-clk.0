@@ -1,53 +1,88 @@
-Return-Path: <sboyd@codeaurora.org>
-Subject: Re: [PATCH v2 3/5] clk: qcom: Add MSM8996 Global Clock Control (GCC)
- driver
-To: Rajendra Nayak <rnayak@codeaurora.org>,
- Mike Turquette <mturquette@baylibre.com>
-References: <1448933502-11944-1-git-send-email-sboyd@codeaurora.org>
- <1448933502-11944-4-git-send-email-sboyd@codeaurora.org>
- <568DF4C4.2080504@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-From: Stephen Boyd <sboyd@codeaurora.org>
-Message-ID: <568EFAF5.50507@codeaurora.org>
-Date: Thu, 7 Jan 2016 15:55:33 -0800
-MIME-Version: 1.0
-In-Reply-To: <568DF4C4.2080504@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH v4 11/13] clk: at91: pmc: drop at91_pmc_base
+Date: Wed, 27 Jan 2016 17:11:10 +0100
+Message-Id: <1453911072-23608-12-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/06/16 21:16, Rajendra Nayak wrote:
-> Stephen,
->
-> On 12/01/2015 07:01 AM, Stephen Boyd wrote:
->> Add support for the global clock controller found on MSM8996
->> based devices. This should allow most non-multimedia device
->> drivers to probe and control their clocks.
-> On my 8096 board I see the following orphan clocks,
->
-> /sys/kernel/debug/clk # cat clk_orphan_summary
->    clock                         enable_cnt  prepare_cnt        rate   accuracy   phase
-> ---------------------------------------------------------------------------------------                                                                                                                        -
->  gcc_ufs_rx_symbol_1_clk                  0            0           0          0 0
->  gcc_ufs_rx_symbol_0_clk                  0            0           0          0 0
->  gcc_ufs_tx_symbol_0_clk                  0            0           0          0 0
->  gcc_pcie_2_pipe_clk                      0            0           0          0 0
->  gcc_pcie_1_pipe_clk                      0            0           0          0 0
->  gcc_pcie_0_pipe_clk                      0            0           0          0 0
->  gcc_usb3_phy_pipe_clk                    0            0           0          0 0
->
-> I was looking at some ufs clocks which lead me to this. something that needs to be fixed?
->
+at91_pmc_base is not used anymore, remove it along with at91_pmc_read and
+at91_pmc_write.
 
-Hmm yes. This was a "TODO" because the data says there are parents for
-these clocks, but they don't seem to exist in the global clock
-controller. Perhaps they come from the phys? If my suspicion is right,
-then those phy drivers need to register the source clocks and give them
-some rate so that these clocks here aren't orphans. In the downstream
-code they mark these clocks as root clocks, which doesn't seem right,
-but I suppose that also works given that we don't seem to care about
-rates, just on/off. It just feels hacky, so I left them as orphans for now.
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/at91/pmc.c       |  7 -------
+ include/linux/clk/at91_pmc.h | 12 ------------
+ 2 files changed, 19 deletions(-)
 
+diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+index 361ea0c1d3c9..dce285549de2 100644
+--- a/drivers/clk/at91/pmc.c
++++ b/drivers/clk/at91/pmc.c
+@@ -12,7 +12,6 @@
+ #include <linux/clkdev.h>
+ #include <linux/clk/at91_pmc.h>
+ #include <linux/of.h>
+-#include <linux/of_address.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/regmap.h>
+ 
+@@ -29,9 +28,6 @@ struct at91_pmc {
+ 	const struct at91_pmc_caps *caps;
+ };
+ 
+-void __iomem *at91_pmc_base;
+-EXPORT_SYMBOL_GPL(at91_pmc_base);
+-
+ int of_at91_get_clk_range(struct device_node *np, const char *propname,
+ 			  struct clk_range *range)
+ {
+@@ -108,11 +104,8 @@ static void __init of_at91_pmc_setup(struct device_node *np,
+ 				     const struct at91_pmc_caps *caps)
+ {
+ 	struct at91_pmc *pmc;
+-	void __iomem *regbase = of_iomap(np, 0);
+ 	struct regmap *regmap;
+ 
+-	at91_pmc_base = regbase;
+-
+ 	regmap = syscon_node_to_regmap(np);
+ 	if (IS_ERR(regmap))
+ 		panic("Could not retrieve syscon regmap");
+diff --git a/include/linux/clk/at91_pmc.h b/include/linux/clk/at91_pmc.h
+index 1e6932222e11..17f413bbbedf 100644
+--- a/include/linux/clk/at91_pmc.h
++++ b/include/linux/clk/at91_pmc.h
+@@ -16,18 +16,6 @@
+ #ifndef AT91_PMC_H
+ #define AT91_PMC_H
+ 
+-#ifndef __ASSEMBLY__
+-extern void __iomem *at91_pmc_base;
+-
+-#define at91_pmc_read(field) \
+-	readl_relaxed(at91_pmc_base + field)
+-
+-#define at91_pmc_write(field, value) \
+-	writel_relaxed(value, at91_pmc_base + field)
+-#else
+-.extern at91_pmc_base
+-#endif
+-
+ #define	AT91_PMC_SCER		0x00			/* System Clock Enable Register */
+ #define	AT91_PMC_SCDR		0x04			/* System Clock Disable Register */
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.5.0
