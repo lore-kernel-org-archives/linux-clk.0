@@ -1,64 +1,87 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Russell King <linux@arm.linux.org.uk>,
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Remi Pommarel <repk@triplefau.lt>,
-	devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Matthias Reichl <hias@horus.com>,
-	lFlorian Meier <florian.meier@koalo.de>
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 0/5] ASOC: bcm2835: move bcm2835-i2s to use clock framework
-Date: Sat,  9 Jan 2016 09:25:52 +0000
-Message-Id: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org>
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH v4 04/13] clk: at91: pmc: merge at91_pmc_init in atmel_pmc_probe
+Date: Wed, 27 Jan 2016 17:11:03 +0100
+Message-Id: <1453911072-23608-5-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+at91_pmc_init() doesn't do much anymore, merge it in atmel_pmc_probe().
 
-This patchset enables the bcm2835-i2s driver to use the clock
-framework which was introduced with commit 94cb7f76caa0b337
-("Switch to using the new clock driver support").
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/at91/pmc.c | 34 +++++++++-------------------------
+ 1 file changed, 9 insertions(+), 25 deletions(-)
 
-This commit resulted in the fact that the bcm2835-i2s driver was
-no longer working due to some register addresses used by 2 drivers
-(clk-bcm2835 and bcm2835-i2s).
-
-To make it all possible this also required the introduction
-of the PCM clock into the clk-bcm2835 driver. This patchset
-relies on the patch by Remi Pommarel <repk@triplefau.lt>
-that introduces the ability to set parent clocks
-("clk: bcm2835: Support for clock parent selection"), which is
-(as far as I understood) in clk-next and slated for 4.5.
-
-Note that there is one regression: the clk-bcm2835 does not yet
-support the mash functionality which the SOC-Hw supports, this
-may result in slightly more "audiable noise" than the original
-driver. But as this is more about making the driver functional
-again, this is - I believe - a drawback we can accept for now.
-
-Martin Sperl (5):
-  ASoC: bcm2835: cleanup includes by ordering them alphabetically
-  clk: bcm2835: enable management of PCM clock
-  ASoC: bcm2835: move to use the clock framework
-  ARM: bcm2835: I2S: use new register-range and clock framework
-  dt-bindings: bsm2835: fix bindings documentation to use new clock
-    framework
-
- .../devicetree/bindings/sound/brcm,bcm2835-i2s.txt |    7 +-
- arch/arm/boot/dts/bcm2835.dtsi                     |    5 +-
- drivers/clk/bcm/clk-bcm2835.c                      |   15 +
- include/dt-bindings/clock/bcm2835.h                |    3 +-
- sound/soc/bcm/bcm2835-i2s.c                        |  293 +++++---------------
- 5 files changed, 91 insertions(+), 232 deletions(-)
-
---
-1.7.10.4
+diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+index f17a2a1f1e85..01d049d4248a 100644
+--- a/drivers/clk/at91/pmc.c
++++ b/drivers/clk/at91/pmc.c
+@@ -110,30 +110,6 @@ static const struct at91_pmc_caps sama5d3_caps = {
+ 			  AT91_PMC_CFDEV,
+ };
+ 
+-static struct at91_pmc *__init at91_pmc_init(struct device_node *np,
+-					     struct regmap *regmap,
+-					     void __iomem *regbase,
+-					     const struct at91_pmc_caps *caps)
+-{
+-	struct at91_pmc *pmc;
+-
+-	if (!regbase || !caps)
+-		return NULL;
+-
+-	at91_pmc_base = regbase;
+-
+-	pmc = kzalloc(sizeof(*pmc), GFP_KERNEL);
+-	if (!pmc)
+-		return NULL;
+-
+-	pmc->regmap = regmap;
+-	pmc->caps = caps;
+-
+-	regmap_write(pmc->regmap, AT91_PMC_IDR, 0xffffffff);
+-
+-	return pmc;
+-}
+-
+ static void __init of_at91_pmc_setup(struct device_node *np,
+ 				     const struct at91_pmc_caps *caps)
+ {
+@@ -141,13 +117,21 @@ static void __init of_at91_pmc_setup(struct device_node *np,
+ 	void __iomem *regbase = of_iomap(np, 0);
+ 	struct regmap *regmap;
+ 
++	at91_pmc_base = regbase;
++
+ 	regmap = syscon_node_to_regmap(np);
+ 	if (IS_ERR(regmap))
+ 		panic("Could not retrieve syscon regmap");
+ 
+-	pmc = at91_pmc_init(np, regmap, regbase, caps);
++	pmc = kzalloc(sizeof(*pmc), GFP_KERNEL);
+ 	if (!pmc)
+ 		return;
++
++	pmc->regmap = regmap;
++	pmc->caps = caps;
++
++	regmap_write(pmc->regmap, AT91_PMC_IDR, 0xffffffff);
++
+ }
+ 
+ static void __init of_at91rm9200_pmc_setup(struct device_node *np)
+-- 
+2.5.0
