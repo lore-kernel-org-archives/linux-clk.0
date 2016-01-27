@@ -1,98 +1,135 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>,
-	Jim Lin <jilin@nvidia.com>,
-	Benson Leung <bleung@chromium.org>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mark Kuo <mkuo@nvidia.com>,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 7/9] clk: tegra: pll: Do not disable PLLE when under HW control
-Date: Fri, 8 Jan 2016 13:45:12 -0500
-Message-ID: <1452278714-10751-8-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
-References: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 27 Jan 2016 16:37:22 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Emilio =?iso-8859-1?Q?L=F3pez?= <emilio.lopez@collabora.co.uk>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, wens@csie.org,
+	heiko@sntech.de, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] clk: sunxi: delay protected clocks until arch
+ initcall
+Message-ID: <20160127153722.GC4317@lukather>
+References: <1453385439-10154-1-git-send-email-emilio.lopez@collabora.co.uk>
+ <1453385439-10154-2-git-send-email-emilio.lopez@collabora.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="wxDdMuZNg1r63Hyj"
+In-Reply-To: <1453385439-10154-2-git-send-email-emilio.lopez@collabora.co.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mark Kuo <mkuo@nvidia.com>
 
-SW should not disable PLLE if PLLE is already put under HW control.
+--wxDdMuZNg1r63Hyj
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Mark Kuo <mkuo@nvidia.com>
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+Hi Emilio,
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 65156486889a..d9c3109b75bd 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -2012,7 +2012,7 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
- 	struct tegra_clk_pll_freq_table sel;
- 	u32 val;
--	int ret;
-+	int ret = 0;
- 	unsigned long flags = 0;
- 	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
- 
-@@ -2022,16 +2022,14 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
- 
-+	val = pll_readl(pll->params->aux_reg, pll);
-+	if (val & PLLE_AUX_SEQ_ENABLE)
-+		goto out;
-+
- 	val = pll_readl_base(pll);
- 	val &= ~BIT(30); /* Disable lock override */
- 	pll_writel_base(val, pll);
- 
--	val = pll_readl(pll->params->aux_reg, pll);
--	val |= PLLE_AUX_ENABLE_SWCTL;
--	val &= ~PLLE_AUX_SEQ_ENABLE;
--	pll_writel(val, pll->params->aux_reg, pll);
--	udelay(1);
--
- 	val = pll_readl_misc(pll);
- 	val |= PLLE_MISC_LOCK_ENABLE;
- 	val |= PLLE_MISC_IDDQ_SW_CTRL;
-@@ -2104,15 +2102,25 @@ static void clk_plle_tegra210_disable(struct clk_hw *hw)
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
- 
-+	/* If PLLE HW sequencer is enabled, SW should not disable PLLE */
-+	val = pll_readl(pll->params->aux_reg, pll);
-+	if (val & PLLE_AUX_SEQ_ENABLE)
-+		goto out;
-+
- 	val = pll_readl_base(pll);
- 	val &= ~PLLE_BASE_ENABLE;
- 	pll_writel_base(val, pll);
- 
-+	val = pll_readl(pll->params->aux_reg, pll);
-+	val |= PLLE_AUX_ENABLE_SWCTL | PLLE_AUX_SS_SWCTL;
-+	pll_writel(val, pll->params->aux_reg, pll);
-+
- 	val = pll_readl_misc(pll);
- 	val |= PLLE_MISC_IDDQ_SW_CTRL | PLLE_MISC_IDDQ_SW_VALUE;
- 	pll_writel_misc(val, pll);
- 	udelay(1);
- 
-+out:
- 	if (pll->lock)
- 		spin_unlock_irqrestore(pll->lock, flags);
- }
--- 
-1.9.1
+On Thu, Jan 21, 2016 at 11:10:38AM -0300, Emilio L=F3pez wrote:
+> Clocks are registered early on, and unused clocks get disabled on
+> late initcall, so we can delay protecting important clocks a bit.
+> If we do this too early, it may happen that some clocks are orphans
+> and therefore enabling them may not work as intended. If we do this
+> too late, a driver may reparent some clock and cause another important
+> clock to be disabled as a byproduct.
+>=20
+> arch_initcall should be a good spot to do this, as clock drivers using
+> the OF mechanisms will be all registered by then, and drivers won't
+> have started probing yet.
+>=20
+> Signed-off-by: Emilio L=F3pez <emilio.lopez@collabora.co.uk>
+> ---
+>  drivers/clk/sunxi/clk-sunxi.c | 22 ++++++++++++++++++----
+>  1 file changed, 18 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+> index 5ba2188..285e8ee 100644
+> --- a/drivers/clk/sunxi/clk-sunxi.c
+> +++ b/drivers/clk/sunxi/clk-sunxi.c
+> @@ -1153,10 +1153,12 @@ static void __init of_sunxi_table_clock_setup(con=
+st struct of_device_id *clk_mat
+>  	}
+>  }
+> =20
+> +/* By default, don't protect any clocks */
+> +static const char **protected_clocks __initdata;
+> +static int protected_clocks_nr __initdata;
+> +
+>  static void __init sunxi_init_clocks(const char *clocks[], int nclocks)
+>  {
+> -	unsigned int i;
+> -
+>  	/* Register divided output clocks */
+>  	of_sunxi_table_clock_setup(clk_divs_match, sunxi_divs_clk_setup);
+> =20
+> @@ -1169,14 +1171,26 @@ static void __init sunxi_init_clocks(const char *=
+clocks[], int nclocks)
+>  	/* Register mux clocks */
+>  	of_sunxi_table_clock_setup(clk_mux_match, sunxi_mux_clk_setup);
+> =20
+> +	/* We shall protect these clocks when everything is ready */
+> +	protected_clocks =3D clocks;
+> +	protected_clocks_nr =3D nclocks;
+> +}
+> +
+> +static int __init sunxi_init_clock_protection(void)
+> +{
+> +	unsigned int i;
+> +
+>  	/* Protect the clocks that needs to stay on */
+> -	for (i =3D 0; i < nclocks; i++) {
+> -		struct clk *clk =3D clk_get(NULL, clocks[i]);
+> +	for (i =3D 0; i < protected_clocks_nr; i++) {
+> +		struct clk *clk =3D clk_get(NULL, protected_clocks[i]);
+> =20
+>  		if (!IS_ERR(clk))
+>  			clk_prepare_enable(clk);
+>  	}
+> +
+> +	return 0;
+>  }
+> +arch_initcall(sunxi_init_clock_protection);
+
+You also need to filter that by the machine compatible in case you're
+running it on a !sunxi SoC.
+
+Overall, I'm a bit skeptical about the approach. It doesn't really fix
+everything, just hides it behind a curtain, and I'm pretty sure the
+clocks not registered by this code would still be broken (the mod0
+clocks for example).
+
+The real fix would be to make sure we don't have any orphan clock in
+the first place, by using CLK_OF_DECLARE everywhere. I did submit a
+patch doing just that when the clocks broke, but I never got any
+answer to it. I thought the patches were simply dropped and the
+rockchip people just took another approach.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--wxDdMuZNg1r63Hyj
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWqOQyAAoJEBx+YmzsjxAgjXcP/18Wrz0u5aqOOFqZc3gGZoY3
+UAb6vGwKCtH/QH6ZcnQ+tHeQ4MLiFD5PAj4NcOzGbDmpT+BP6R/Lb7RAzDW/u0sM
+od4r/V9N5nmmzptFd87DC8EDNKzU4kOMuz/1/GrFcjG4SFf9SqqYkMrc4HDbF7m9
+0ZkJ/sXUMmOf2YXqVkKho0Ge/IvdewbkWqVTr4bq7tAzNLdzWyuzPdg2MTeE8wQb
+NjoMevIFaJeQ84QIZh1ach5AhuCbGYiyKtlBI7mM1mU4mkDHOhhBU4zNVeqDIGnZ
+LMuSsjqvmeRf4J3PMilxwcRbD8Cy2n+xwYIzwAMEk7rYV50rzxkk32erSLWBOT1j
+alWHIk508nAyvZL7BYK0fJfI4UITMWf8ArGhrT8iUu8NCeeEGXRZk1mmQBiL37aL
+vshiD5Kxg4dpnN1zEAbl9cKmOltF8ZMBJfv/9sG8U/rvL2vo0KnaA8BWrs5gSoAA
+6OyhHx+r0DMjvibUKXLlcER9Wx8GDlufeqQqYkLh8MRSvwjPiztOdhqBk6T2Oudm
+Gi6Esa0vK6Su/h3C539NJcoU3P5YUqavowopa6W5NlD0q1cGmsTP8FlcxDk33dQd
+no65FmKg+GxSxRclwKvgSQyQJpM/3wZpBnkdRoYZ2pSoTZzqyUYJ7ZZcYkqu2PP8
+AXiDCDjTe0E0xXmmsXUy
+=GoGR
+-----END PGP SIGNATURE-----
+
+--wxDdMuZNg1r63Hyj--
