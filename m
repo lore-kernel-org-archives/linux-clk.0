@@ -1,34 +1,68 @@
-Return-Path: <kernel@martin.sperl.org>
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2104\))
-Subject: Re: [PATCH V3 4/6] clk: bcm2835: remove use of BCM2835_CLOCK_COUNT in driver
-From: Martin Sperl <kernel@martin.sperl.org>
-In-Reply-To: <1452779142-20615-5-git-send-email-kernel@martin.sperl.org>
-Date: Thu, 14 Jan 2016 16:16:46 +0100
-Message-Id: <6E590181-FFFB-4396-8B8A-61F277ED27B7@martin.sperl.org>
-References: <1452779142-20615-1-git-send-email-kernel@martin.sperl.org> <1452779142-20615-5-git-send-email-kernel@martin.sperl.org>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Stephen Warren <swarren@wwwdotorg.org>,
- Lee Jones <lee@kernel.org>,
- Eric Anholt <eric@anholt.net>,
- linux-clk@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org
+Return-Path: <jamesjj.liao@mediatek.com>
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: John Crispin <blogic@openwrt.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>, Shunli
+ Wang <shunli.wang@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>
+Subject: [PATCH v5 6/6] reset: mediatek: Add MT2701 reset driver
+Date: Wed, 27 Jan 2016 15:21:04 +0800
+Message-ID: <1453879264-37915-7-git-send-email-jamesjj.liao@mediatek.com>
+In-Reply-To: <1453879264-37915-1-git-send-email-jamesjj.liao@mediatek.com>
+References: <1453879264-37915-1-git-send-email-jamesjj.liao@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Shunli Wang <shunli.wang@mediatek.com>
 
-> On 14.01.2016, at 14:45, kernel@martin.sperl.org wrote:
-> 
-> -
-> -	clks[BCM2835_CLOCK_PWM] =
-> -		bcm2835_register_clock(cprman, &bcm2835_clock_pwm_data);
-> +	for (i = 0; i < asize; i++) {
-> +		desc = &clk_desc_array[i];
-> +		if (desc)
-		if (desc->data && desc->clk_register)
-> +			clks[i] = desc->clk_register(cprman, desc->data);
-> +	}
+In infrasys and perifsys, there are many reset
+control bits for kinds of modules. These bits are
+used as actual reset controllers to be registered
+into kernel's generic reset controller framework.
 
-I will wait for other feedback before sending V4, which would fix this...
+Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Tested-by: John Crispin <blogic@openwrt.org>
+---
+ drivers/clk/mediatek/clk-mt2701.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
+index 0ac45fc..01722e0 100644
+--- a/drivers/clk/mediatek/clk-mt2701.c
++++ b/drivers/clk/mediatek/clk-mt2701.c
+@@ -665,6 +665,8 @@ static void __init mtk_infrasys_init(struct device_node *node)
+ 	if (r)
+ 		pr_err("%s(): could not register clock provider: %d\n",
+ 			__func__, r);
++
++	mtk_register_reset_controller(node, 2, 0x30);
+ }
+ CLK_OF_DECLARE(mtk_infrasys, "mediatek,mt2701-infracfg", mtk_infrasys_init);
+ 
+@@ -782,6 +784,8 @@ static void __init mtk_pericfg_init(struct device_node *node)
+ 	if (r)
+ 		pr_err("%s(): could not register clock provider: %d\n",
+ 			__func__, r);
++
++	mtk_register_reset_controller(node, 2, 0x0);
+ }
+ CLK_OF_DECLARE(mtk_pericfg, "mediatek,mt2701-pericfg", mtk_pericfg_init);
+ 
+@@ -997,6 +1001,8 @@ static void __init mtk_hifsys_init(struct device_node *node)
+ 	if (r)
+ 		pr_err("%s(): could not register clock provider: %d\n",
+ 			__func__, r);
++
++	mtk_register_reset_controller(node, 1, 0x34);
+ }
+ CLK_OF_DECLARE(mtk_hifsys, "mediatek,mt2701-hifsys", mtk_hifsys_init);
+ 
+-- 
+1.9.1
