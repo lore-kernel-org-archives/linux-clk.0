@@ -1,65 +1,71 @@
-Return-Path: <linux+mturquette=baylibre.com@arm.linux.org.uk>
-Date: Sun, 3 Jan 2016 10:53:19 +0000
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: fix clk-gpio.c with optional clock= DT property
-Message-ID: <20160103105319.GB5779@n2100.arm.linux.org.uk>
-References: <E1aFJ0A-00086Z-0I@rmk-PC.arm.linux.org.uk>
- <20160103064749.15239.59588@quark.deferred.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160103064749.15239.59588@quark.deferred.io>
-Sender: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH v4 05/13] clk: at91: pmc: move pmc structures to C file
+Date: Wed, 27 Jan 2016 17:11:04 +0100
+Message-Id: <1453911072-23608-6-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Jan 02, 2016 at 10:47:49PM -0800, Michael Turquette wrote:
-> Hi Russell,
-> 
-> Quoting Russell King (2016-01-02 02:01:34)
-> > When the clock DT property is not given, of_clk_get_parent_count()
-> > returns -ENOENT, which then tries to allocate -2 x 4 bytes of memory,
-> > which of course fails, causing the whole driver to fail to create
-> > the clock.
-> > 
-> > This causes the SolidRun platforms to fail probing the SDHCI1 interface
-> > which is connected to the WiFi.
-> > 
-> > Fix this by detecting errno codes, skipping the allocation, and fixing
-> > of_clk_gpio_gate_delayed_register_get() to handle a NULL parent_names
-> > array.
-> 
-> Thanks for the fix. Applied to clk-next manually.
+pmc.c is now the only user of struct at91_pmc*, move their definition in
+the C file.
 
-Thanks.
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/at91/pmc.c | 9 +++++++++
+ drivers/clk/at91/pmc.h | 9 ---------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-> > This goes all the way back to 80eeb1f0f757 ("clk: add gpio controlled
-> > clock multiplexer") introduced in June in v4.3-rc2 - which raises the
-> > question why _development_ work in clk is being merged outside of the
-> > merge window.
-> 
-> That patch was merged into the clk tree in June 2015, based on 4.2-rc1.
-
-Interesting... I guess git describe is buggy then:
-
-$ git describe --contains 80eeb1f0f757
-v4.3-rc2~4^2~124
-$ git log v4.3-rc1..v4.3-rc2 | grep 80eeb1f0f757
-$ git log v4.2..v4.3-rc1 | grep 80eeb1f0f757
-commit 80eeb1f0f757c790b020d9f425bb0e824973d49c
-$ git describe --help
-...
-       --contains
-           Instead of finding the tag that predates the commit, find the tag
-           that comes after the commit, and thus contains it. Automatically
-           implies --tags.
-
-> Below is the modified version of your patch.
-
-Looks fine, thanks.
-
+diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+index 01d049d4248a..0b255e7fc718 100644
+--- a/drivers/clk/at91/pmc.c
++++ b/drivers/clk/at91/pmc.c
+@@ -20,6 +20,15 @@
+ 
+ #include "pmc.h"
+ 
++struct at91_pmc_caps {
++	u32 available_irqs;
++};
++
++struct at91_pmc {
++	struct regmap *regmap;
++	const struct at91_pmc_caps *caps;
++};
++
+ void __iomem *at91_pmc_base;
+ EXPORT_SYMBOL_GPL(at91_pmc_base);
+ 
+diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+index b06a332b056a..5771fff0ee3f 100644
+--- a/drivers/clk/at91/pmc.h
++++ b/drivers/clk/at91/pmc.h
+@@ -26,15 +26,6 @@ struct clk_range {
+ 
+ #define CLK_RANGE(MIN, MAX) {.min = MIN, .max = MAX,}
+ 
+-struct at91_pmc_caps {
+-	u32 available_irqs;
+-};
+-
+-struct at91_pmc {
+-	struct regmap *regmap;
+-	const struct at91_pmc_caps *caps;
+-};
+-
+ int of_at91_get_clk_range(struct device_node *np, const char *propname,
+ 			  struct clk_range *range);
+ 
 -- 
-RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+2.5.0
