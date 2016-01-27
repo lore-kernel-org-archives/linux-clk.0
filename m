@@ -1,60 +1,69 @@
-Return-Path: <rklein@nvidia.com>
-Subject: Re: [PATCH 9/9] clk: tegra210: Initialize PLL_D2 to a sane rate
-To: Thierry Reding <thierry.reding@gmail.com>
-References: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
- <1452278714-10751-10-git-send-email-rklein@nvidia.com>
- <20160113140309.GB15782@ulmo>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen
- Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Bill Huang
-	<bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>, Benson Leung
-	<bleung@chromium.org>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: Rhyland Klein <rklein@nvidia.com>
-Message-ID: <56967ADD.8090904@nvidia.com>
-Date: Wed, 13 Jan 2016 11:27:09 -0500
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 27 Jan 2016 16:52:36 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH RFC 05/11] clk: sunxi: unmap registers in
+ sunxi_factors_clk_setup if register call fails
+Message-ID: <20160127155236.GI4317@lukather>
+References: <1453727747-23307-1-git-send-email-wens@csie.org>
+ <1453727747-23307-6-git-send-email-wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <20160113140309.GB15782@ulmo>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: rklein@nvidia.com
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="v2/QI0iRXglpx0hK"
+In-Reply-To: <1453727747-23307-6-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 1/13/2016 9:03 AM, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Fri, Jan 08, 2016 at 01:45:14PM -0500, Rhyland Klein wrote:
->> Initialize PLL_D2 to a sane rate at the start of the day.
->>
->> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
->> ---
->>  drivers/clk/tegra/clk-tegra210.c | 1 +
->>  1 file changed, 1 insertion(+)
-> 
-> There are a lot of assumptions in this commit message. I'm asking myself
-> why does it need to be initialized to any rate at all? Isn't it up to
-> the user driver to set the PLL to whatever it knows to be a sane rate?
-> Why is 594 MHz a sane rate?
-> 
-> A good commit message should answer those questions.
-> 
 
-Thanks. This patch came about in response to some work with
-suspend/resume logic in the ChromeOS kernel. In the suspend/resume patch
-there, it reads all clk rates and caches them in suspend, then re-sets
-them on resume. We hadn't been using pll_d2 at all, and its rate (when
-read in suspend()) came back as 0. Then in resume, we would tr to set
-it, clk_set_rate(pll_d2, 0) and would generate a warning/error that 0
-wasn't a valid rate.
+--v2/QI0iRXglpx0hK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-As for the specific rate I chose, I simply took one off the table of
-supported frequencies in the clk-tegra210 code, so that it was non-zero.
+On Mon, Jan 25, 2016 at 09:15:41PM +0800, Chen-Yu Tsai wrote:
+> sunxi_factors_clk_setup() does not unmap registers when
+> sunxi_factors_register() fails.
+>=20
+> This patch adds proper error handling, and also an error message
+> when sunxi_factors_register() fails. Also use the full DT node name
+> in error messages, as the node name is often just "clk", which is
+> useless.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-Since we don't support suspend/resume right now in the clk drivers, I
-don't think its urgent to merge this patch. I can drop in in the next
-rev if thats easier.
+APplied, thanks!
 
--rhyland
+Maxime
 
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
--- 
-nvpublic
+--v2/QI0iRXglpx0hK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWqOfEAAoJEBx+YmzsjxAgDEUQAKYvMARDefMTWsvgSNE0tlfL
+ndZMfGNoHImcZZCGs/SiMLtZ2VlgvSN4Pv89lFthlFxgaYQwpXjMfbtd+CCrm6iE
+q27FNUirdaRCYIlrqW2Gij1eRRwjqX8W3JndqN4JIG6mm6NTJmdSTuUjoJbtvTE5
+bG4iBRoAlGKnB+WTSgii5yGf/Z1XakQ78JOd6y2no/AX0rN5wnJiSds2+C0yMpWM
+35SRpF/qv9cJwSQiPQwyIYKD+E1vM7c5XhjRduUtiW2XbuNuDqRmRzh+Q9PJyk1U
+mfn3cY73CQ0fq+fXeLtajfSJFPMdLrjEOqP1CzbRspoYn+tYS733AwwBO/22HWP9
++W99td+0hpqEJWnrs4l6Uk6l3kmm/KBkyPZQl01efa/oIzqjItd0OO9tNuwo/ztr
+0Nfopj092kQ4m7hViIZdjt6ti9Uzp0UocHA6Mwvc0IK7Ymv1PCHZniLejiEkiIE+
+IJ+Ky6n5DyImzwp7ySopuEYfnnJxlM+HItdZmhDpuVUvdDvcFlvm6+GPSzWdbMD6
+afckJi5fJNwTAy34LdMunvwiLVhfFqaiPQGgkR+buqW1uWVxdx57pkX0eF1jKuwp
+hOCheyIIIj7nOJbkSQfi4Lp0aESdwDA6zyXR96nYupbCr4SoeFLxxyBwMno39DsQ
+CZbCUX18eje/nk1JtjoZ
+=2VhC
+-----END PGP SIGNATURE-----
+
+--v2/QI0iRXglpx0hK--
