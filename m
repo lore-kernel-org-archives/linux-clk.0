@@ -1,39 +1,89 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:38129 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750894AbcAUAUt (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2016 19:20:49 -0500
-Subject: Re: [PATCH v3 1/4] clk: s2mps11: merge two for loops in one
-To: Andi Shyti <andi.shyti@samsung.com>,
-	linux-samsung-soc@vger.kernel.org
-References: <1453284864-8082-1-git-send-email-andi.shyti@samsung.com>
- <1453284864-8082-2-git-send-email-andi.shyti@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Andi Shyti <andi@etezian.org>,
-	Yadwinder Singh Brar <yadi.brar01@gmail.com>,
-	Jaehoon Chung <jh80.chung@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <56A02460.2000402@samsung.com>
-Date: Thu, 21 Jan 2016 09:20:48 +0900
-MIME-version: 1.0
-In-reply-to: <1453284864-8082-2-git-send-email-andi.shyti@samsung.com>
-Content-type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jamesjj.liao@mediatek.com>
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: John Crispin <blogic@openwrt.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>, James Liao
+	<jamesjj.liao@mediatek.com>, Shunli Wang <shunli.wang@mediatek.com>
+Subject: [PATCH v5 1/6] clk: mediatek: Refine the makefile to support multiple clock drivers
+Date: Wed, 27 Jan 2016 15:20:59 +0800
+Message-ID: <1453879264-37915-2-git-send-email-jamesjj.liao@mediatek.com>
+In-Reply-To: <1453879264-37915-1-git-send-email-jamesjj.liao@mediatek.com>
+References: <1453879264-37915-1-git-send-email-jamesjj.liao@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 20.01.2016 19:14, Andi Shyti wrote:
-> the driver already loops once, there is no reason to loop again
+Add a Kconfig to define clock configuration for each SoC, and
+modify the Makefile to build drivers that only selected in config.
 
-I pointed this at v2:
-s/the/The/
+Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Tested-by: John Crispin <blogic@openwrt.org>
+---
+ drivers/clk/Kconfig           |  1 +
+ drivers/clk/mediatek/Kconfig  | 23 +++++++++++++++++++++++
+ drivers/clk/mediatek/Makefile |  6 +++---
+ 3 files changed, 27 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/clk/mediatek/Kconfig
 
-Apart from that:
-
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Best regards,
-Krzysztof
-
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index eca8e01..57cfcae7 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -202,6 +202,7 @@ config COMMON_CLK_CDCE706
+ 
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
++source "drivers/clk/mediatek/Kconfig"
+ source "drivers/clk/qcom/Kconfig"
+ 
+ endmenu
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+new file mode 100644
+index 0000000..dc224e6
+--- /dev/null
++++ b/drivers/clk/mediatek/Kconfig
+@@ -0,0 +1,23 @@
++#
++# MediaTek SoC drivers
++#
++config COMMON_CLK_MEDIATEK
++	bool
++	---help---
++	  Mediatek SoCs' clock support.
++
++config COMMON_CLK_MT8135
++	bool "Clock driver for Mediatek MT8135"
++	depends on COMMON_CLK
++	select COMMON_CLK_MEDIATEK
++	default ARCH_MEDIATEK
++	---help---
++	  This driver supports Mediatek MT8135 clocks.
++
++config COMMON_CLK_MT8173
++	bool "Clock driver for Mediatek MT8173"
++	depends on COMMON_CLK
++	select COMMON_CLK_MEDIATEK
++	default ARCH_MEDIATEK
++	---help---
++	  This driver supports Mediatek MT8173 clocks.
+diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+index 95fdfac..32e7222 100644
+--- a/drivers/clk/mediatek/Makefile
++++ b/drivers/clk/mediatek/Makefile
+@@ -1,4 +1,4 @@
+-obj-y += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
++obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
+ obj-$(CONFIG_RESET_CONTROLLER) += reset.o
+-obj-y += clk-mt8135.o
+-obj-y += clk-mt8173.o
++obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135.o
++obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173.o
+-- 
+1.9.1
