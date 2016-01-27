@@ -1,55 +1,46 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-Date: Thu, 28 Jan 2016 09:38:22 +0100
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 07/13] ARM: at91: pm: find and remap the pmc
-Message-ID: <20160128083822.GB20165@piout.net>
-References: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
- <1453911072-23608-8-git-send-email-alexandre.belloni@free-electrons.com>
- <20160128083347.GL12841@codeaurora.org>
+Return-Path: <jamesjj.liao@mediatek.com>
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+CC: Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
+	<srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>, James Liao
+	<jamesjj.liao@mediatek.com>
+Subject: [PATCH] clk: Move vendor's Kconfig into CCF menu section
+Date: Wed, 27 Jan 2016 15:26:03 +0800
+Message-ID: <1453879563-39500-1-git-send-email-jamesjj.liao@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160128083347.GL12841@codeaurora.org>
+Content-Type: text/plain
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 28/01/2016 at 00:33:47 -0800, Stephen Boyd wrote :
-> On 01/27, Alexandre Belloni wrote:
-> > @@ -399,13 +400,33 @@ static void __init at91_pm_sram_init(void)
-> >  			&at91_pm_suspend_in_sram, at91_pm_suspend_in_sram_sz);
-> >  }
-> >  
-> > +static __initconst struct of_device_id atmel_pmc_ids[] = {
-> 
-> The kbuild error is weird, but __initconst should come right
-> before the equals sign (=). Plus it should actually be const.
-> 
+Move all vendor's Kconfig into CCF menu section to prevent
+new drivers putting their Kconfig files in a wrong place.
 
-Yeah, I sent v5, right after v4. I had that change but forgot to squash
-it.
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+---
+ drivers/clk/Kconfig | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-> > +	{ .compatible = "atmel,at91rm9200-pmc"  },
-> > +	{ .compatible = "atmel,at91sam9260-pmc" },
-> > +	{ .compatible = "atmel,at91sam9g45-pmc" },
-> > +	{ .compatible = "atmel,at91sam9n12-pmc" },
-> > +	{ .compatible = "atmel,at91sam9x5-pmc" },
-> > +	{ .compatible = "atmel,sama5d3-pmc" },
-> > +	{ .compatible = "atmel,sama5d2-pmc" },
-> > +	{ /* sentinel */ },
-> > +};
-> > +
-> >  static void __init at91_pm_init(void)
-> 
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index eca8e01..de707b2 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -202,11 +202,9 @@ config COMMON_CLK_CDCE706
+ 
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
+-source "drivers/clk/qcom/Kconfig"
+-
+-endmenu
+-
+ source "drivers/clk/mvebu/Kconfig"
+-
++source "drivers/clk/qcom/Kconfig"
+ source "drivers/clk/samsung/Kconfig"
+ source "drivers/clk/tegra/Kconfig"
++
++endmenu
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+1.9.1
