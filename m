@@ -1,66 +1,125 @@
-Return-Path: <rnayak@codeaurora.org>
-Message-ID: <569C69A8.4080308@codeaurora.org>
-Date: Mon, 18 Jan 2016 09:57:20 +0530
-From: Rajendra Nayak <rnayak@codeaurora.org>
+Return-Path: <tomeu@tomeuvizoso.net>
+Return-Path: <tomeu@tomeuvizoso.net>
 MIME-Version: 1.0
-To: sboyd@codeaurora.org, mturquette@baylibre.com
-CC: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] Add support for MSM8996 GDSCs
-References: <1448986336-16846-1-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1448986336-16846-1-git-send-email-rnayak@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <CAD=FV=Une-DJ+0zV6Hmx5EmKXCEApb2Zx1FuJaUQf7MT9OPsug@mail.gmail.com>
+References: <1415087559-19444-1-git-send-email-kever.yang@rock-chips.com>
+ <48806799.thBSifdUp8@diego> <54647142.4080800@rock-chips.com>
+ <CAD=FV=Vzec3Qm-kc6zZ4VxSREoZbzVkWbzp-noHYdcEVrLYYSw@mail.gmail.com>
+ <CAAObsKChYN5nmcm5OWnAzNRGDi_QGSoKvN+0FizhjeT-3mmeXQ@mail.gmail.com>
+ <CAD=FV=Wgu=xQ9PcVqfzcedXVU3Rh-HKbBVxHuqgV9OZJEYhYvg@mail.gmail.com>
+ <CAAObsKC1v--mZwkiG-c7P2Bwi2-_txbeqaW4Vd5h-noAVNbhjA@mail.gmail.com>
+ <CAD=FV=VB93wYigRJ8wa8YL6P+Q+-fRokPiCB-Fo1pC_zAdh2oA@mail.gmail.com>
+ <CAAObsKCMh3Bk_oNJdLbU2F9b7jrnFZOp2uFR_oPqUoJ3W1gfaQ@mail.gmail.com>
+ <CAD=FV=W=LCJk4m049hBnm7BOYudnVe=oa3jdcSrrZZUU9rFtog@mail.gmail.com>
+ <CAAObsKBS45kbvdmdvFxwSo=B9GXRLoX2g7WQYVmZJ0KFnwSejw@mail.gmail.com> <CAD=FV=Une-DJ+0zV6Hmx5EmKXCEApb2Zx1FuJaUQf7MT9OPsug@mail.gmail.com>
+From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Date: Wed, 27 Jan 2016 11:20:35 +0100
+Message-ID: <CAAObsKDsJgUA9dL+1Fdc616ofLdMqaUOwHhDkBWz7MV5_LJu9Q@mail.gmail.com>
+Subject: Re: [PATCH 0/5] clk: rockchip: add full support for HDMI clock on rk3288
+To: Doug Anderson <dianders@chromium.org>
+Cc: Kever Yang <kever.yang@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	Sonny Rao <sonnyrao@chromium.org>, Addy Ke <addy.ke@rock-chips.com>,
+	Eddie Cai <cf@rock-chips.com>, ZhenFu Fang <fzf@rock-chips.com>, Yakir Yang <ykk@rock-chips.com>,
+	=?UTF-8?B?5aea5pm65oOF?= <yzq@rock-chips.com>,
+	=?UTF-8?B?5oi05YWL6ZyWIChKYWNrKQ==?= <dkl@rock-chips.com>,
+	Tao Huang <huangtao@rock-chips.com>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+On 26 January 2016 at 17:32, Doug Anderson <dianders@chromium.org> wrote:
+> Tomeu,
+>
+> On Tue, Jan 26, 2016 at 12:28 AM, Tomeu Vizoso <tomeu@tomeuvizoso.net> wrote:
+>> On 22 January 2016 at 18:07, Doug Anderson <dianders@chromium.org> wrote:
+>>> Tomeu,
+>>>
+>>> On Fri, Jan 22, 2016 at 6:00 AM, Tomeu Vizoso <tomeu@tomeuvizoso.net> wrote:
+>>>> On 21 January 2016 at 21:11, Doug Anderson <dianders@chromium.org> wrote:
+>>>>> Hi,
+>>>>>
+>>>>> On Thu, Jan 21, 2016 at 1:03 AM, Tomeu Vizoso <tomeu@tomeuvizoso.net> wrote:
+>>>>>> So we have a mechanism for detecting a conflict in the clock
+>>>>>> hierarchy, and a mechanism to solve it, but we are missing a way for
+>>>>>> userspace to communicate policy regarding which clocks should be given
+>>>>>> priority when solving such a conflict?
+>>>>>
+>>>>> Hrmmm, I guess it could be userspace that makes the decision.  It does
+>>>>> seem a little odd to force it to userspace in all cases, though.  For
+>>>>> a particular laptop that is designed with a specific panel connected
+>>>>> up eDP it seems less than ideal to push this into userspace.  If the
+>>>>> kernel could just work in the expected sane way (or at least work that
+>>>>> way by default) it would be ideal.
+>>>>
+>>>> Ah, I was wrongly assuming that the kernel didn't have enough
+>>>> information to make an informed decision in this case, sorry.
+>>>>
+>>>> Guess the per-user rate limits don't help here because the consumer
+>>>> with higher priority could work with frequencies other than the ideal.
+>>>>
+>>>> And we cannot have a consumer listening for PRE_RATE_CHANGE and
+>>>> aborting unwanted changes or rerouting the ancestors of the clocks of
+>>>> other consumers because that would be a massive violation of
+>>>> separation of concerns.
+>>>>
+>>>> If we were to rearrange the clock topology from within the CCF, then
+>>>> consumers need to have a way to communicate to the core that they are
+>>>> more important than other consumers. clk_set_important(clk, true)
+>>>> could be enough in this case, but would be insufficient in more
+>>>> complex cases where more than two clocks could use the same PLL.
+>>>
+>>> With something like the above I'd still expect some complexity
+>>> depending on the probe order.  If a less important device grabs the
+>>> clock first, it might be forced to re-think its clocks later.  That
+>>> might be disconcerting.
+>>
+>> How much disconcerting do you think this could be? Hopefully those
+>> devices should probe quite close to each other, right?
+>
+> Probe: probably, though with defers it could be several seconds.
+>
+> ...but remember that display interfaces tend to be hotplug.  That
+> might mean that the HDMI interface won't try to set the clock until
+> much, much later.
 
-On 12/01/2015 09:42 PM, Rajendra Nayak wrote:
-> Changes since v1:
-> * For votable gdscs which are 'on' at boot, put an explicit vote
-> * Added a delay post disable for votable gdscs
-> * Added back the status check after timeout
-> * rearranged some patch ordering to avoid bisect issues
+I'm still having trouble grasping what's the impact to users. Is it
+that if HDMI gets the contended clock first and the internal panel
+device only probes after a second or so, then the user may notice a
+change in frequency in the HDMI screen when the panel lights up?
 
-Stephen, Did you get a chance to look at this series?
+Though in that particular case I'm not sure if the impact is that big
+for the user, wonder if such rearranging of the clock hierarchy can
+cause bigger problems in other situations.
 
-> 
-> This series adds support for GDSCs' which are part of gcc and mmcc
-> in QCOM msm8996 SoC. Series applies on top of clk-next
-> 
-> There are many more cases of gdscs within gdscs (hierarchical power
-> domains) in msm8996 (msm8974 has one such instance which is supported
-> upstream) and hence the series adds support within gdsc driver to
-> handle this.
-> 
-> Also msm8996 has gdscs with gds hw controllers within, for ensuring
-> slave device idleness before gdscs are powered off, hence the series
-> also adds support for gdscs with gds hw controllers.
-> 
-> ToDo: Series does not yet add support for gpu gdscs which are part
-> of mmcc
-> 
-> Tested on apq8096 dragonboards to make sure all modelled gdscs can
-> be turned on/off successfully
-> 
-> Rajendra Nayak (6):
->   clk: qcom: gdsc: Add support for hierarchical power domains
->   clk: qcom: gdsc: Add support for gdscs with gds hw controller
->   clk: qcom: gdsc: Add support for votable gdscs
->   clk: qcom: gdsc: Add GDSCs in msm8996 GCC
->   clk: qcom: gdsc: Add mmcc gdscs for msm8996 family
->   clk: qcom: mmcc8974: Use gdscs .parent and remove genpd calls
-> 
->  arch/arm64/boot/dts/qcom/msm8996.dtsi         |   2 +
->  drivers/clk/qcom/common.c                     |  14 ++-
->  drivers/clk/qcom/gcc-msm8996.c                |  92 +++++++++++++++
->  drivers/clk/qcom/gdsc.c                       |  89 +++++++++++----
->  drivers/clk/qcom/gdsc.h                       |  34 ++++--
->  drivers/clk/qcom/mmcc-msm8974.c               |  14 +--
->  drivers/clk/qcom/mmcc-msm8996.c               | 157 ++++++++++++++++++++++++++
->  include/dt-bindings/clock/qcom,gcc-msm8996.h  |  11 ++
->  include/dt-bindings/clock/qcom,mmcc-msm8996.h |  17 +++
->  9 files changed, 382 insertions(+), 48 deletions(-)
-> 
+The on-demand probing series could help here because a downstream that
+cared about these issues could just rearrange the contents of the DT
+(maybe with a script as part of the build process) so that the panel
+is always probed first, but well, that one collided with an iceberg.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+>>> OK, so I was just involved in a change recently that made me realize
+>>> that maybe our original problems were tied to the fact that our
+>>> builtin panels were trying to specify a clock that was impossible to
+>>> achieve with CPLL / GPLL.  It was a known problem that the request
+>>> would be denied and the CCF would just pick the closest rate it could.
+>>> Probably the right thing is to solve _that_ problem first.  If using
+>>> simple panel you could do a change like
+>>> <https://chromium-review.googlesource.com/#/c/323211/> (though
+>>> presumably you'd have to handle people using the same panel in other
+>>> laptops).  You might also be able to do funny things to fixup the mode
+>>> like dbehr tried to do in
+>>> <https://chromium-review.googlesource.com/#/c/270017/>.  By doing this
+>>> and making sure that
+>>
+>> Are we missing something here?
+>
+> Eh?
+
+The sentence above seemed to have been cut in the middle and I was
+wondering if there's something relevant I'm missing because of it.
+
+Thanks,
+
+Tomeu
