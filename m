@@ -1,72 +1,143 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-Message-ID: <1453355444.5384.43.camel@mtksdaap41>
-Subject: Re: [PATCH v3 1/6] clk: mediatek: Refine the makefile to support
- multiple clock drivers
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Yingjoe Chen <yingjoe.chen@mediatek.com>
-CC: <devicetree@vger.kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<srv_heupstream@mediatek.com>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, Shunli Wang <shunli.wang@mediatek.com>,
-	Sascha Hauer <kernel@pengutronix.de>, "Matthias Brugger"
-	<matthias.bgg@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, John Crispin <blogic@openwrt.org>
-Date: Thu, 21 Jan 2016 13:50:44 +0800
-In-Reply-To: <1453344325.28078.9.camel@mtksdaap41>
-References: <1452587470-61506-1-git-send-email-jamesjj.liao@mediatek.com>
-	 <1452587470-61506-2-git-send-email-jamesjj.liao@mediatek.com>
-	 <1453343300.28078.6.camel@mtksdaap41> <1453344325.28078.9.camel@mtksdaap41>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Return-Path: jamesjj.liao@mediatek.com
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH v4 01/13] clk: at91: make use of syscon to share PMC registers in several drivers
+Date: Wed, 27 Jan 2016 17:11:00 +0100
+Message-Id: <1453911072-23608-2-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Yingjoe,
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-On Thu, 2016-01-21 at 10:45 +0800, Yingjoe Chen wrote:
-> On Thu, 2016-01-21 at 10:28 +0800, Yingjoe Chen wrote:
-> > On Tue, 2016-01-12 at 16:31 +0800, James Liao wrote:
-> > > Add a Kconfig to define clock configuration for each SoC, and
-> > > modify the Makefile to build drivers that only selected in config.
-> > > 
-> > > Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-> > > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> > > ---
-> > >  drivers/clk/Kconfig           |  1 +
-> > >  drivers/clk/mediatek/Kconfig  | 23 +++++++++++++++++++++++
-> > >  drivers/clk/mediatek/Makefile |  6 +++---
-> > >  3 files changed, 27 insertions(+), 3 deletions(-)
-> > >  create mode 100644 drivers/clk/mediatek/Kconfig
-> > > 
-> > > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> > > index c3e3a02..b7a37dc 100644
-> > > --- a/drivers/clk/Kconfig
-> > > +++ b/drivers/clk/Kconfig
-> > > @@ -198,3 +198,4 @@ source "drivers/clk/mvebu/Kconfig"
-> > >  
-> > >  source "drivers/clk/samsung/Kconfig"
-> > >  source "drivers/clk/tegra/Kconfig"
-> > > +source "drivers/clk/mediatek/Kconfig"
-> > 
-> > 
-> > Hi James,
-> > 
-> > drivers/clk/mediatek/Kconfig add user selectable options, menuconfig
-> > will list them outside of "Common Clock Framework" sub-menu if you
-> > source the file here. Kconfig for samsung & tegra doesn't have any, so
-> > it is OK for them to stay here.
-> > 
-> > Please move it inside the menu, also it seems the source lines are
-> > sorted now, so let's keep them sorted.
-> 
-> 
-> After looking at drivers/clk/Kconfig history, it seems we have similar
-> issue before. I think we should move all sources under clk menu to
-> prevent this from happening.
+The PMC block is providing several functionnalities:
+ - system clk management
+ - cpuidle
+ - platform suspend
 
-I may provide a separated patch to move other Kconfig into menu section.
+Replace the void __iomem *regs field by a regmap (retrieved using syscon)
+so that we can later share the regmap across several drivers without
+exporting a new specific API or a global void __iomem * variable.
 
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ arch/arm/mach-at91/Kconfig |  1 +
+ drivers/clk/at91/pmc.c     | 12 ++++++++----
+ drivers/clk/at91/pmc.h     | 11 ++++++++---
+ 3 files changed, 17 insertions(+), 7 deletions(-)
 
-Best regards,
-
-James
+diff --git a/arch/arm/mach-at91/Kconfig b/arch/arm/mach-at91/Kconfig
+index 23be2e433097..08047afdf38e 100644
+--- a/arch/arm/mach-at91/Kconfig
++++ b/arch/arm/mach-at91/Kconfig
+@@ -104,6 +104,7 @@ config HAVE_AT91_USB_CLK
+ config COMMON_CLK_AT91
+ 	bool
+ 	select COMMON_CLK
++	select MFD_SYSCON
+ 
+ config HAVE_AT91_SMD
+ 	bool
+diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+index 8476b570779b..481146029b2e 100644
+--- a/drivers/clk/at91/pmc.c
++++ b/drivers/clk/at91/pmc.c
+@@ -19,6 +19,7 @@
+ #include <linux/irqchip/chained_irq.h>
+ #include <linux/irqdomain.h>
+ #include <linux/of_irq.h>
++#include <linux/mfd/syscon.h>
+ 
+ #include <asm/proc-fns.h>
+ 
+@@ -223,6 +224,7 @@ static const struct at91_pmc_caps sama5d3_caps = {
+ };
+ 
+ static struct at91_pmc *__init at91_pmc_init(struct device_node *np,
++					     struct regmap *regmap,
+ 					     void __iomem *regbase, int virq,
+ 					     const struct at91_pmc_caps *caps)
+ {
+@@ -238,7 +240,7 @@ static struct at91_pmc *__init at91_pmc_init(struct device_node *np,
+ 		return NULL;
+ 
+ 	spin_lock_init(&pmc->lock);
+-	pmc->regbase = regbase;
++	pmc->regmap = regmap;
+ 	pmc->virq = virq;
+ 	pmc->caps = caps;
+ 
+@@ -394,16 +396,18 @@ static void __init of_at91_pmc_setup(struct device_node *np,
+ 	void (*clk_setup)(struct device_node *, struct at91_pmc *);
+ 	const struct of_device_id *clk_id;
+ 	void __iomem *regbase = of_iomap(np, 0);
++	struct regmap *regmap;
+ 	int virq;
+ 
+-	if (!regbase)
+-		return;
++	regmap = syscon_node_to_regmap(np);
++	if (IS_ERR(regmap))
++		panic("Could not retrieve syscon regmap");
+ 
+ 	virq = irq_of_parse_and_map(np, 0);
+ 	if (!virq)
+ 		return;
+ 
+-	pmc = at91_pmc_init(np, regbase, virq, caps);
++	pmc = at91_pmc_init(np, regmap, regbase, virq, caps);
+ 	if (!pmc)
+ 		return;
+ 	for_each_child_of_node(np, childnp) {
+diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+index f65739272779..e1fc0b0e1d8c 100644
+--- a/drivers/clk/at91/pmc.h
++++ b/drivers/clk/at91/pmc.h
+@@ -14,6 +14,7 @@
+ 
+ #include <linux/io.h>
+ #include <linux/irqdomain.h>
++#include <linux/regmap.h>
+ #include <linux/spinlock.h>
+ 
+ struct clk_range {
+@@ -28,7 +29,7 @@ struct at91_pmc_caps {
+ };
+ 
+ struct at91_pmc {
+-	void __iomem *regbase;
++	struct regmap *regmap;
+ 	int virq;
+ 	spinlock_t lock;
+ 	const struct at91_pmc_caps *caps;
+@@ -48,12 +49,16 @@ static inline void pmc_unlock(struct at91_pmc *pmc)
+ 
+ static inline u32 pmc_read(struct at91_pmc *pmc, int offset)
+ {
+-	return readl(pmc->regbase + offset);
++	unsigned int ret = 0;
++
++	regmap_read(pmc->regmap, offset, &ret);
++
++	return ret;
+ }
+ 
+ static inline void pmc_write(struct at91_pmc *pmc, int offset, u32 value)
+ {
+-	writel(value, pmc->regbase + offset);
++	regmap_write(pmc->regmap, offset, value);
+ }
+ 
+ int of_at91_get_clk_range(struct device_node *np, const char *propname,
+-- 
+2.5.0
