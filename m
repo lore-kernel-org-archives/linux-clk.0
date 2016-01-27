@@ -1,102 +1,83 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 29 Jan 2016 11:54:55 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Emilio =?iso-8859-1?Q?L=F3pez?= <emilio.lopez@collabora.co.uk>,
-	mturquette@baylibre.com, maxime.ripard@free-electrons.com,
-	wens@csie.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] clk: defer clk_gets on orphan clocks
-Message-ID: <20160129195455.GQ12841@codeaurora.org>
-References: <1453385439-10154-1-git-send-email-emilio.lopez@collabora.co.uk>
- <1453385958-11366-1-git-send-email-emilio.lopez@collabora.co.uk>
- <20160128082324.GG12841@codeaurora.org>
- <7262598.5pX8AAxUPK@diego>
+Return-Path: <jamesjj.liao@mediatek.com>
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: John Crispin <blogic@openwrt.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH v5 0/6] Add clock support for Mediatek MT2701 
+Date: Wed, 27 Jan 2016 15:20:58 +0800
+Message-ID: <1453879264-37915-1-git-send-email-jamesjj.liao@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <7262598.5pX8AAxUPK@diego>
+Content-Type: text/plain
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/28, Heiko Stübner wrote:
-> Am Donnerstag, 28. Januar 2016, 00:23:24 schrieb Stephen Boyd:
-> > On 01/21, Emilio López wrote:
-> > > @@ -3059,7 +3069,25 @@ struct clk *__of_clk_get_from_provider(struct
-> > > of_phandle_args *clkspec,> 
-> > >   */
-> > >  
-> > >  struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
-> > >  {
-> > > 
-> > > -	return __of_clk_get_from_provider(clkspec, NULL, __func__);
-> > > +	return __of_clk_get_from_provider(clkspec, NULL, __func__, false);
-> > > +}
-> > > +
-> > > +/**
-> > > + * of_clk_get_from_provider_with_orphans() - Lookup clock from a clock
-> > > provider + * @clkspec: pointer to a clock specifier data structure
-> > > + *
-> > > + * This function looks up a struct clk from the registered list of clock
-> > > + * providers, an input is a clock specifier data structure as returned
-> > > + * from the of_parse_phandle_with_args() function call.
-> > > + *
-> > > + * The difference to of_clk_get_from_provider() is that this function
-> > > will
-> > > + * also successfully lookup orphan-clocks, as it in some cases may be
-> > > + * necessary to access such orphan-clocks as well.
-> > > + */
-> > > +struct clk *
-> > > +of_clk_get_from_provider_with_orphans(struct of_phandle_args *clkspec)
-> > 
-> > Dislike. In fact, the whole clk conf approach is odd here. When
-> > we're doing of_clk_init() we do a best effort loop around
-> > parent_ready(), waiting for clk providers to register as long as
-> > we have a clocks property in our provider node. We should do
-> > something similar in the non of_clk_init() case too, because
-> > of_clk_init() isn't special.
-> 
-> At least to me being able to reparent orphan clocks when knowing that they 
-> won't ever get supplied is special.
-> 
-> The Rockchip clock controller has quite a number of clocks that can either be 
-> supplied by some external source. xin32k supplied by some i2c chip being the 
-> most prominent. But while this one will get supplied eventually, there are 
-> others who will never get a supply and stay orphans forever.
-> 
-> Example:
-> rk3288 sclk_edp_24m can get supplied by either the general 24MHz oscillator or 
-> some separate clock input connected some chip pin. Reset-default seems to be 
-> the external supply, but on all boards I've seen so far doesn't get connected.
-> 
-> So we know on a per-board level if this is connected and want to move away 
-> from the non-existent source. Which is why the limit of this new function is 
-> limited to be ccf internal and the assigned-clock-parents path.
+This series is based on 4.5-rc1, add clock and reset controller
+support for Mediatek MT2701.
 
-Right, this problem isn't limited to clk-conf though. If some
-clock is orphaned by its reset default, then consumers that want
-to reparent them to something else will never be able to get the
-clocks without some sort of clk_get_ignore_orphan() API. We can't
-rely on DTS files telling us to do the reparent. This is a whole
-other problem to be dealt with before we can defer clk_get()
-orphans.
+This series also refined makefile and Kconfig to support configurable
+multiple SoC clock support.
 
-In this case, I wonder why we haven't specified some sort of
-"ground" clock that has a rate of 0? In the example above, I
-would imagine that we have our dts file specify a fixed rate
-clock with frequency of 0 that's named whatever the external
-supply clock is named when that pin isn't connected.
+changes since v4:
+- Rebase to v4.5-rc1.
+- Remove CLK_SET_RATE_PARENT from divider flags.
+- Add img_jpgdec_smi clock.
+- Move clk/mediatek/Kconfig into menu section in clk/Kconfig.
 
-> 
-> 
-> I guess if you really dislike that approach the other option would be 
-> reparenting all the time in the clock-controller driver and then let the 
-> board-dts reparent back if needed. Which would also work for that clock, but 
-> may cause other glitches down the road when it affects some pre-setup things.
-> 
-> 
+changes since v3:
+- Change the parent of mm_mdp_bls_26m from clk26m to pwm_sel.
 
-For all we know that could cause some audio pop on a speaker 
-something. Let's avoid this if we can.
+changes since v2:
+- Fix ethsys definition.
+- Replace read-modify-write with regmap_update_bits() in clock operations.
+- Move mt2701-resets.h to include/dt-bindings/reset/.
+- Add hifsys reset patch from John Crispin.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+changes since v1:
+- Document MT2701 compatible strings.
+
+James Liao (2):
+  clk: mediatek: Refine the makefile to support multiple clock drivers
+  dt-bindings: ARM: Mediatek: Document bindings for MT2701
+
+Shunli Wang (4):
+  clk: mediatek: Add dt-bindings for MT2701 clocks
+  clk: mediatek: Add MT2701 clock support
+  reset: mediatek: Add MT2701 reset controller dt-binding file
+  reset: mediatek: Add MT2701 reset driver
+
+ .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
+ .../bindings/arm/mediatek/mediatek,bdpsys.txt      |   22 +
+ .../bindings/arm/mediatek/mediatek,ethsys.txt      |   22 +
+ .../bindings/arm/mediatek/mediatek,hifsys.txt      |   22 +
+ .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
+ .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
+ .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
+ .../bindings/arm/mediatek/mediatek,pericfg.txt     |    1 +
+ .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
+ .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
+ drivers/clk/Kconfig                                |    1 +
+ drivers/clk/mediatek/Kconfig                       |   31 +
+ drivers/clk/mediatek/Makefile                      |    7 +-
+ drivers/clk/mediatek/clk-gate.c                    |   52 +
+ drivers/clk/mediatek/clk-gate.h                    |    2 +
+ drivers/clk/mediatek/clk-mt2701.c                  | 1217 ++++++++++++++++++++
+ drivers/clk/mediatek/clk-mtk.c                     |   25 +
+ drivers/clk/mediatek/clk-mtk.h                     |   34 +-
+ include/dt-bindings/clock/mt2701-clk.h             |  482 ++++++++
+ include/dt-bindings/reset/mt2701-resets.h          |   83 ++
+ 20 files changed, 2001 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
+ create mode 100644 drivers/clk/mediatek/Kconfig
+ create mode 100644 drivers/clk/mediatek/clk-mt2701.c
+ create mode 100644 include/dt-bindings/clock/mt2701-clk.h
+ create mode 100644 include/dt-bindings/reset/mt2701-resets.h
+
+--
+1.9.1
