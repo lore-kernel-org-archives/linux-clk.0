@@ -1,55 +1,65 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Caesar Wang <caesar.upstream@gmail.com>
-Cc: Caesar Wang <wxt@rock-chips.com>, Ulf Hansson <ulf.hansson@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, leecam@google.com, linux-arm-kernel@lists.infradead.org, keescook@google.com, linux-clk@vger.kernel.org, leozwang@google.com
-Subject: Re: [PATCH v2 04/12] clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for sclk_i2s_out
-Date: Fri, 08 Jan 2016 10:46:26 +0100
-Message-ID: <20757797.djuaztrzGE@phil>
-In-Reply-To: <568F80BA.6060209@gmail.com>
-References: <1452155155-16232-1-git-send-email-wxt@rock-chips.com> <290434099.8XFZ9qmNRz@phil> <568F80BA.6060209@gmail.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 27 Jan 2016 16:52:10 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH RFC 04/11] clk: sunxi: factors: Add unregister function
+Message-ID: <20160127155210.GH4317@lukather>
+References: <1453727747-23307-1-git-send-email-wens@csie.org>
+ <1453727747-23307-5-git-send-email-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="EemXnrF2ob+xzFeB"
+In-Reply-To: <1453727747-23307-5-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Caesar,
 
-Am Freitag, 8. Januar 2016, 17:26:18 schrieb Caesar Wang:
-> =E5=9C=A8 2016=E5=B9=B401=E6=9C=8807=E6=97=A5 18:05, Heiko Stuebner =E5=
-=86=99=E9=81=93:
-> > Am Donnerstag, 7. Januar 2016, 16:25:47 schrieb Caesar Wang:
-> >> SCLk_I2S_OUT is the noc bus clock for i2s module, this clock is us=
-ed by
-> >> extra codecs.
-> >>=20
-> >> Due to it shouldn't belong to any driver, but we need it enabled,
-> >> so just mark it as the CLK_IGNORE_UNUSED flag.
-> >=20
-> > What makes you think it shouldn't belong to any driver?
-> >=20
-> > In most schematics I have, i2s_clkout is going to some clock-input =
-of
-> > the
-> > audio codec - probably the MCLK input on your rt5616. And while the=
- new
-> > rt5616 driver does not seem to do clock handling, it should just ha=
-ndle
-> > the clock using the normal APIs.
+--EemXnrF2ob+xzFeB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jan 25, 2016 at 09:15:40PM +0800, Chen-Yu Tsai wrote:
+> sunxi's factors clk did not have an unregister function. This means
+> multiple structs were leaked whenever a factors clk was unregistered.
 >=20
-> You are right,  that's seem has to find the root cause.
-> I'm wonder that the codec/i2s is working in kernel v4.1 patch without=
- it.
+> Add an unregister function for it. Also keep pointers to the mux and
+> gate structs so they can be freed.
 >=20
-> In general,  the MLCK will be handled in i2s driver if the cpu side i=
-s
-> master.
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-looking at the rt5616 datasheet, that would be BCLK1 instead I think. T=
-his=20
-one does differentiate between being master/slave.
+Applied, thanks!
+Maxime
 
-The master/sysclk (mclk) is also handled in other drivers in all cases.=
-=20
-(da7213.c, da7219.c, max98090.c, max98095.c, probably more)
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
+--EemXnrF2ob+xzFeB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Heiko
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWqOeqAAoJEBx+YmzsjxAgUHQP/Ax4s1hQ7X6kZpAhgrdKiOp6
+VadcMucoN/ttJr+c6Pf6tS7FxQmf/aYxAF5DsVO3kqwtBeEbNXiF4GhgpVaY8jgO
++NjPeX2jXvF99sysfDw1EP8X3oXYfCv4myTLdBRBCDbE30qgQB4UyK8s+7z2rMfP
+GdhTWw8UjMn2k8fNNVY+dcCn3/47gxfgDUuRFq2lLuHBbLAny/o3ZIXE/yFiVuU3
+023/N8stJk3Xf3tPmBdALYRt6t4h0hcnhjUe9cm0RrJA9Q7gSOr95YjarnkWu2Hz
+ykOJjMZkg+QSl9v2IIJ68J/1BsfOItbmLxvkDY8fPzb9HWDdxE8RwKScvvcpDsYR
+gcG9h8otP4BH1RfrG3C3bpPGnfbOVheE8PjfeABtALcv8VvvS1+7/L9hMhaNp06p
+Bgx5jz1N++lE+qT8T630w2nHeHn3UTdv/Abrh21LS0Vne7rQnEx34frj/8CSBZ6Z
+2rN5qM1pdaenb02n5YoMjrOMSLaXnoxzLZJlZ/CVvDfqShysMGLJDz9vHe3fJPmf
+uvc8VPE0Mfa/uktFeTCd9s8DmnfYrw8WEFeaiipGGwGEnjHayewZAkis2VMpf09N
+vTho4zWCH+9KlPxUQWfiKbVNnPfUGwxDk3EKegsUSL/1l/RbL1yjrHr+68MJRl2C
+U5PgDl8xVzR1AY60ogTu
+=8ff5
+-----END PGP SIGNATURE-----
+
+--EemXnrF2ob+xzFeB--
