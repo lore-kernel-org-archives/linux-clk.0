@@ -1,119 +1,85 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-Message-ID: <1451987940.19662.0.camel@mtksdaap41>
-Subject: Re: [PATCH v2 4/6] clk: mediatek: Add MT2701 clock support
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	<devicetree@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	<srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>, Daniel Kurtz
-	<djkurtz@chromium.org>, <linux-mediatek@lists.infradead.org>, Shunli Wang
-	<shunli.wang@mediatek.com>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Date: Tue, 5 Jan 2016 17:59:00 +0800
-In-Reply-To: <1451986201.3391.3.camel@pengutronix.de>
-References: <1451975422-31174-1-git-send-email-jamesjj.liao@mediatek.com>
-	 <1451975422-31174-5-git-send-email-jamesjj.liao@mediatek.com>
-	 <1451986201.3391.3.camel@pengutronix.de>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 27 Jan 2016 21:38:16 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: Emilio =?iso-8859-1?Q?L=F3pez?= <emilio.lopez@collabora.co.uk>,
+	mturquette@baylibre.com, sboyd@codeaurora.org, wens@csie.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] clk: sunxi: delay protected clocks until arch
+ initcall
+Message-ID: <20160127203816.GU4317@lukather>
+References: <1453385439-10154-1-git-send-email-emilio.lopez@collabora.co.uk>
+ <1453385439-10154-2-git-send-email-emilio.lopez@collabora.co.uk>
+ <20160127153722.GC4317@lukather>
+ <7334994.mKnQpNNMP2@diego>
 MIME-Version: 1.0
-Return-Path: jamesjj.liao@mediatek.com
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="tbn31orTZdSAVHoc"
+In-Reply-To: <7334994.mKnQpNNMP2@diego>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Philipp,
 
-On Tue, 2016-01-05 at 10:30 +0100, Philipp Zabel wrote:
-> Hi James,
-> 
-> Am Dienstag, den 05.01.2016, 14:30 +0800 schrieb James Liao:
-> > From: Shunli Wang <shunli.wang@mediatek.com>
-> > 
-> > Add MT2701 clock support, include topckgen, apmixedsys,
-> > infracfg, pericfg and subsystem clocks.
-> > 
-> > Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-> > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> > ---
-> >  drivers/clk/mediatek/Kconfig      |    8 +
-> >  drivers/clk/mediatek/Makefile     |    1 +
-> >  drivers/clk/mediatek/clk-gate.c   |   56 ++
-> >  drivers/clk/mediatek/clk-gate.h   |    2 +
-> >  drivers/clk/mediatek/clk-mt2701.c | 1210 +++++++++++++++++++++++++++++++++++++
-> >  drivers/clk/mediatek/clk-mtk.c    |   25 +
-> >  drivers/clk/mediatek/clk-mtk.h    |   35 +-
-> >  7 files changed, 1334 insertions(+), 3 deletions(-)
-> >  create mode 100644 drivers/clk/mediatek/clk-mt2701.c
-> > 
-> > diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-> > index dc224e6..6c7cdc0 100644
-> > --- a/drivers/clk/mediatek/Kconfig
-> > +++ b/drivers/clk/mediatek/Kconfig
-> > @@ -6,6 +6,14 @@ config COMMON_CLK_MEDIATEK
-> >  	---help---
-> >  	  Mediatek SoCs' clock support.
-> >  
-> > +config COMMON_CLK_MT2701
-> > +	bool "Clock driver for Mediatek MT2701 and MT7623"
-> > +	depends on COMMON_CLK
-> > +	select COMMON_CLK_MEDIATEK
-> > +	default ARCH_MEDIATEK
-> > +	---help---
-> > +	  This driver supports Mediatek MT2701 and MT7623 clocks.
-> > +
-> >  config COMMON_CLK_MT8135
-> >  	bool "Clock driver for Mediatek MT8135"
-> >  	depends on COMMON_CLK
-> > diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-> > index 32e7222..5b2b91b 100644
-> > --- a/drivers/clk/mediatek/Makefile
-> > +++ b/drivers/clk/mediatek/Makefile
-> > @@ -1,4 +1,5 @@
-> >  obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
-> >  obj-$(CONFIG_RESET_CONTROLLER) += reset.o
-> > +obj-$(CONFIG_COMMON_CLK_MT2701) += clk-mt2701.o
-> >  obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135.o
-> >  obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173.o
-> > diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
-> > index 576bdb7..38badb4 100644
-> > --- a/drivers/clk/mediatek/clk-gate.c
-> > +++ b/drivers/clk/mediatek/clk-gate.c
-> > @@ -61,6 +61,26 @@ static void mtk_cg_clr_bit(struct clk_hw *hw)
-> >  	regmap_write(cg->regmap, cg->clr_ofs, BIT(cg->bit));
-> >  }
-> >  
-> > +static void mtk_cg_set_bit_no_setclr(struct clk_hw *hw)
-> > +{
-> > +	struct mtk_clk_gate *cg = to_clk_gate(hw);
-> > +	u32 val;
-> > +
-> > +	regmap_read(cg->regmap, cg->sta_ofs, &val);
-> > +	val |= BIT(cg->bit);
-> > +	regmap_write(cg->regmap, cg->sta_ofs, val);
-> 
-> You can use regmap_update_bits here:
-> 
-> 	u32 bit = BIT(cg->bit);
-> 	regmap_update_bits(cg->regmap, cg->sta_ofs, bit, bit);
-> 
-> > +}
-> > +
-> > +static void mtk_cg_clr_bit_no_setclr(struct clk_hw *hw)
-> > +{
-> > +	struct mtk_clk_gate *cg = to_clk_gate(hw);
-> > +	u32 val;
-> > +
-> > +	regmap_read(cg->regmap, cg->sta_ofs, &val);
-> > +	val &= ~(BIT(cg->bit));
-> > +	regmap_write(cg->regmap, cg->sta_ofs, val);
-> 
-> and here:
-> 
-> 	u32 bit = BIT(cg->bit);
-> 	regmap_update_bits(cg->regmap, cg->sta_ofs, bit, 0);
+--tbn31orTZdSAVHoc
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-OK. I'll change it in next patch. Thanks.
+Hi,
 
+On Wed, Jan 27, 2016 at 05:14:17PM +0100, Heiko St=FCbner wrote:
+> Hi,
+>=20
+> Am Mittwoch, 27. Januar 2016, 16:37:22 schrieb Maxime Ripard:
+> > I thought the patches were simply dropped and the
+> > rockchip people just took another approach.
+>=20
+> nope still on track ... especially as it was Stephen's believe that orpha=
+ns=20
+> shouldn't even be usable to general clock users :-).
+>=20
+> I just remember that the proposed general solution was based on Mike's=20
+> upcoming generic critical clock handling (the handoff thingy), which woul=
+d=20
+> move critical clock handling out of architecture-specific code, so I've b=
+een=20
+> prodding Mike mainly.
+>=20
+> Another option might be to allow clock-controllers to handle orphans and =
+only=20
+> deny orphan usage to outside clock users, maybe expanding on what I did w=
+ith=20
+> the clock-conf part in patch2.
 
-Best regards,
+I'm not sure that would solve anything in our case. All our clocks
+drivers are different ones, so I'm not sure how we could handle that.
 
-James
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--tbn31orTZdSAVHoc
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWqSq4AAoJEBx+YmzsjxAgznAP/0myL+n1jum+3RbNL1J0VU3B
+YHpNdXO7AaRoT+MFD8TfvsoESiLeYy2Z5VSAqxT8UIE9ng33gaCcKHYfgUxk3rQm
+J8ROWFgXAiaah3sxYjGncGCfixL+cRvYon+hLBYzfZ+FhE/oUqyzhdfyYu4FPXw3
+CLOsSLOWwTwaQXbDh/lqDAlMCRo5XgWAdfTtBsexUuEBHhys2iXdePvcIVJRJ7t6
+3VT6KWq83VhFlWcDwvwOZ/3K38H+Cyz5YapDq8hS0dCboZ0J5z7/AFc7WMKykeLk
+xr/CJY6xySDalDEYdM7hfDxn/9HruXeOV1+boPLT6I2W7K52JY7VQfIbyQHggBpS
+524R7FkUS0NXHh6kSmbSYjNXqF7nJXT7n0JP+OPK4w7awuKHD0turf1C5TCdNQxU
+UzayF0QwFPSM9N8suzV+PZIeMnWfgBONS692I4jtpJUGUHhMth61sm5Umi3j7k15
+TZAJNUSFeKwGd+7h/5R1qtoyb3Us0ILfoTyx5/y58wswYz6L1tLgahmm4KtsrZN4
+ZgtEvafW3UJJwsHxoGsH62LMOObea6P+usoQS6zxM83V+CFbsue7uTnsnQK5YGkG
+e7grmYj3gAZ6N+RDVEazqpWQ+irVNjHW3V4TEplE7wH3DMngfC9eMusOkCd6x7r/
+v4r8fhIdoVzDBZCusnLk
+=v2+w
+-----END PGP SIGNATURE-----
+
+--tbn31orTZdSAVHoc--
