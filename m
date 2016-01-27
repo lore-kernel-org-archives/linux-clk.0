@@ -1,51 +1,174 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [Patch V2 0/9] Tegra CLK Fixes
-Date: Thu, 14 Jan 2016 14:24:29 -0500
-Message-ID: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
+Return-Path: <xuejiancheng@hisilicon.com>
+Subject: Re: [PATCH v7 1/6] clk: hisilicon: add CRG driver for hi3519 soc
+To: Paul Bolle <pebolle@tiscali.nl>
+References: <1453690883-31220-1-git-send-email-xuejiancheng@huawei.com>
+ <1453690883-31220-2-git-send-email-xuejiancheng@huawei.com>
+ <1453771063.17181.56.camel@tiscali.nl>
+CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <p.zabel@pengutronix.de>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
+        <mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
+        <galak@codeaurora.org>, <linux@arm.linux.org.uk>, <khilman@linaro.org>,
+        <arnd@arndb.de>, <olof@lixom.net>, <xuwei5@hisilicon.com>,
+        <haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+        <bintian.wang@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+        <yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+        <raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+        <gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+        <xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>
+From: xuejiancheng <xuejiancheng@huawei.com>
+Message-ID: <56A8394E.2040207@huawei.com>
+Date: Wed, 27 Jan 2016 11:28:14 +0800
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+In-Reply-To: <1453771063.17181.56.camel@tiscali.nl>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch set fixes some issues found with the Tegra CLK drivers
-in testing. There are also a few patches which clean up the code
-and fix some naming issues.
+Hi Paul Bolle，
+   Thank you for your reply.
 
-v2:
- - Dropped "Initialize PLL_D2 to a sane rate" patch as it was not needed
- - Split "Fix PLLE SS config" patch into 2 more descriptive and better
-   logically broken up patches.
+On 2016/1/26 9:17, Paul Bolle wrote:
+> On ma, 2016-01-25 at 11:01 +0800, Jiancheng Xue wrote:
+>> --- a/drivers/clk/hisilicon/Kconfig
+>> +++ b/drivers/clk/hisilicon/Kconfig
+> 
+>> +config COMMON_CLK_HI3519
+>> +	bool "Hi3519 Clock Driver"
+>> +	depends on ARCH_HISI
+>> +	default y
+>> +	help
+>> +	  Build the clock driver for hi3519.
+> 
+>> --- a/drivers/clk/hisilicon/Makefile
+>> +++ b/drivers/clk/hisilicon/Makefile
+> 
+>> +obj-$(CONFIG_COMMON_CLK_HI3519)	+= clk-hi3519.o
+> 
+> If I parsed the above correctly clk-hi3519.o can only be built-in,
+> right?
+> 
+Yes. You are right.
 
-Andrew Bresticker (1):
-  clk: tegra: pll: Fix potential sleeping-while-atomic
+But this clock driver should be able to be compiled as a module.
+Even though it is preferred to be built-in.
 
-Mark Kuo (2):
-  clk: tegra: pll: Do not disable PLLE when under HW control
-  clk: tegra: pll: Fix PLLE SS coefficients val
+I'll fix it in next version. Thank you.
 
-Rhyland Klein (6):
-  clk: tegra: Fix divider on VI_I2C
-  clk: tegra210: Remove improper flags for lock_enable
-  clk: tegra210: Fix naming of MISC registers
-  clk: tegra: Fix the misnaming of nvenc from msenc
-  clk: tegra210: fix pllx dyn step calculation
-  clk: tegra: pll: Fix typos around clearing plle bits during enable
+Regards,
 
- drivers/clk/tegra/clk-pll.c          | 50 +++++++++++++--------
- drivers/clk/tegra/clk-tegra-periph.c |  4 +-
- drivers/clk/tegra/clk-tegra210.c     | 86 +++++++++++++++---------------------
- 3 files changed, 70 insertions(+), 70 deletions(-)
+Jiancheng
 
--- 
-1.9.1
+>> --- /dev/null
+>> +++ b/drivers/clk/hisilicon/clk-hi3519.c
+> 
+>> +#include <linux/module.h>
+> 
+> So is this include actually needed?
+> 
+>> +static int hi3519_clk_probe(struct platform_device *pdev)
+>> +{
+>> +       struct device_node *np = pdev->dev.of_node;
+>> +       struct hisi_clock_data *clk_data;
+>> +
+>> +       clk_data = hisi_clk_init(np, HI3519_NR_CLKS);
+>> +       if (!clk_data)
+>> +               return -ENODEV;
+>> +
+>> +       hisi_clk_register_fixed_rate(hi3519_fixed_rate_clks,
+>> +                                   
+>> ARRAY_SIZE(hi3519_fixed_rate_clks),
+>> +                                    clk_data);
+>> +       hisi_clk_register_mux(hi3519_mux_clks,
+>> ARRAY_SIZE(hi3519_mux_clks),
+>> +                                       clk_data);
+>> +       hisi_clk_register_gate(hi3519_gate_clks,
+>> +                       ARRAY_SIZE(hi3519_gate_clks), clk_data);
+>> +
+>> +       return hisi_reset_init(np);
+>> +}
+> 
+> (evolution 3.16.5 makes replying to code quite a challenge.)
+> 
+>> +static const struct of_device_id hi3519_clk_match_table[] = {
+>> +	{ .compatible = "hisilicon,hi3519-crg" },
+>> +	{ }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, hi3519_clk_match_table);
+> 
+> Last time I checked MODULE_DEVICE_TABLE is preprocessed away for built
+> -in code.
+> 
+>> +static void __exit hi3519_clk_exit(void)
+>> +{
+>> +	platform_driver_unregister(&hi3519_clk_driver);
+>> +}
+>> +module_exit(hi3519_clk_exit);
+> 
+> Not needed for built-in only code.
+> 
+>> +MODULE_DESCRIPTION("HiSilicon Hi3519 Clock Driver");
+> 
+> Ditto.
+> 
+>> --- a/drivers/clk/hisilicon/clk.c
+>> +++ b/drivers/clk/hisilicon/clk.c
+> 
+>> +EXPORT_SYMBOL(hisi_clk_init);
+> 
+> What module uses this export?
+>  
+>> +EXPORT_SYMBOL(hisi_clk_register_fixed_rate);
+> 
+> Ditto.
+> 
+>> +EXPORT_SYMBOL(hisi_clk_register_fixed_factor);
+> 
+> Ditto.
+>  
+>> +EXPORT_SYMBOL(hisi_clk_register_mux);
+> 
+> Ditto.
+> 
+>> +EXPORT_SYMBOL(hisi_clk_register_divider);
+> 
+> Ditto.
+> 
+>> +EXPORT_SYMBOL(hisi_clk_register_gate);
+> 
+> Ditto.
+> 
+>> +EXPORT_SYMBOL(hisi_clk_register_gate_sep);
+> 
+> Ditto.
+> 
+>> --- /dev/null
+>> +++ b/drivers/clk/hisilicon/reset.c
+> 
+>> +int hisi_reset_init(struct device_node *np)
+>> +{
+>> +	[...]
+>> +}
+>> +EXPORT_SYMBOL(hisi_reset_init);
+> 
+> Ditto.
+> 
+>> --- /dev/null
+>> +++ b/drivers/clk/hisilicon/reset.h
+> 
+>> +#ifdef CONFIG_RESET_CONTROLLER
+>> +int hisi_reset_init(struct device_node *np);
+>> +#else
+>> +static inline int hisi_reset_init(struct device_node *np)
+>> +{
+>> +	return 0;
+>> +}
+>> +#endif
+> 
+> Thanks,
+> 
+> 
+> Paul Bolle
+> 
+> .
+> 
