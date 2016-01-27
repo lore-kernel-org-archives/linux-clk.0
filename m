@@ -1,79 +1,56 @@
-Return-Path: <Dirk.Behme@de.bosch.com>
-Subject: Re: [PATCH v2] clk: shmobile: r8a7795: Add SDHI clocks
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <1450951761-3160-1-git-send-email-dirk.behme@gmail.com>
- <5690ABCC.3090909@gmail.com>
- <CAMuHMdXa4qdrqu-RjPuxAHQwBJ5LZ+JsfWH83vcvp6EQ+M1-aA@mail.gmail.com>
-CC: Dirk Behme <dirk.behme@gmail.com>, Linux-sh list
-	<linux-sh@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>, Michael Turquette
-	<mturquette@baylibre.com>, <linux-clk@vger.kernel.org>
-From: Dirk Behme <dirk.behme@de.bosch.com>
-Message-ID: <5698C5E8.4040107@de.bosch.com>
-Date: Fri, 15 Jan 2016 11:11:52 +0100
+Return-Path: <rjui@broadcom.com>
+From: Ray Jui <rjui@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>, Simran Rai <ssimran@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>
+Subject: [PATCH RESEND v2 1/4] Documentation: dt-bindings: Add DT bindings for Cygnus audio clock
+Date: Tue, 26 Jan 2016 17:18:38 -0800
+Message-ID: <1453857521-8804-2-git-send-email-rjui@broadcom.com>
+In-Reply-To: <1453857521-8804-1-git-send-email-rjui@broadcom.com>
+References: <1453857521-8804-1-git-send-email-rjui@broadcom.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXa4qdrqu-RjPuxAHQwBJ5LZ+JsfWH83vcvp6EQ+M1-aA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain
+Return-Path: rjui@broadcom.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 14.01.2016 19:24, Geert Uytterhoeven wrote:
-> Hi Dirk,
->
-> On Sat, Jan 9, 2016 at 7:42 AM, Dirk Behme <dirk.behme@gmail.com> wrote:
->> On 24.12.2015 11:09, Dirk Behme wrote:
->>> Add R8A7795 SDHI clocks.
->
-> Thanks for your patch!
->
->>> Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
->>> ---
->>> Changes in v2: Add the missing *H clocks and correct the dividers.
->>>
->>> This replaces v1
->>>
->>> http://www.spinics.net/lists/linux-sh/msg47464.html
->>>
->>>    drivers/clk/shmobile/r8a7795-cpg-mssr.c | 13 ++++++++++++-
->>>    1 file changed, 12 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/clk/shmobile/r8a7795-cpg-mssr.c
->>> b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
->>> index 05479e6..f30ed32 100644
->>> --- a/drivers/clk/shmobile/r8a7795-cpg-mssr.c
->>> +++ b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
->>> @@ -100,8 +100,15 @@ static const struct cpg_core_clk r8a7795_core_clks[]
->>> __initconst = {
->>>          DEF_FIXED("s3d2",       R8A7795_CLK_S3D2,  CLK_S3,         2, 1),
->>>          DEF_FIXED("s3d4",       R8A7795_CLK_S3D4,  CLK_S3,         4, 1),
->>>          DEF_FIXED("cl",         R8A7795_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
->>> +       DEF_FIXED("sd0h",       R8A7795_CLK_SD0H,  CLK_PLL1_DIV2,  2, 1),
->>> +       DEF_FIXED("sd0",        R8A7795_CLK_SD0,   CLK_PLL1_DIV2,  8, 1),
->>> +       DEF_FIXED("sd1h",       R8A7795_CLK_SD1H,  CLK_PLL1_DIV2,  2, 1),
->>> +       DEF_FIXED("sd1",        R8A7795_CLK_SD1,   CLK_PLL1_DIV2,  8, 1),
->>> +       DEF_FIXED("sd2h",       R8A7795_CLK_SD2H,  CLK_PLL1_DIV2,  2, 1),
->>> +       DEF_FIXED("sd2",        R8A7795_CLK_SD2,   CLK_PLL1_DIV2,  8, 1),
->>> +       DEF_FIXED("sd3h",       R8A7795_CLK_SD3H,  CLK_PLL1_DIV2,  2, 1),
->>> +       DEF_FIXED("sd3",        R8A7795_CLK_SD3,   CLK_PLL1_DIV2,  8, 1),
->
-> The dividers for these clocks are not fixed, they are controlled by the
-> SDnCKCR registers.
->
-> Unfortunately the register layout is more complicated than on R-Car Gen2, so
-> you can no longer use clk_register_divider_table(), but have to write a custom
-> clock driver.
->
-> For an initial version, a simple "read-only" version that just calls
-> clk_register_fixed_factor() with divider values read from the hardware
-> registers may be good enough. But for full support, you need a driver that
-> can program the registers, too.
+From: Simran Rai <ssimran@broadcom.com>
 
+This patch adds audio clock device tree binding documentation to an
+existing Cygnus clock DT bindings document.
 
-Anything like
+Signed-off-by: Simran Rai <ssimran@broadcom.com>
+Reviewed-by: Ray Jui <rjui@broadcom.com>
+Reviewed-by: Lori Hikichi <lhikichi@broadcom.com>
+Reviewed-by: Scott Branden <sbranden@broadcom.com>
+---
+ Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-https://git.kernel.org/cgit/linux/kernel/git/horms/renesas-bsp.git/commit/drivers/clk/shmobile/clk-rcar-gen3.c?h=v4.2/rcar-3.0.x&id=cd10385afc15cef6bfbaea4aa5da41193b24fe82
-
-?
-
-Best regards
-
-Dirk
+diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+index 0b35e71..6f66e9a 100644
+--- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+@@ -92,6 +92,7 @@ PLL and leaf clock compatible strings for Cygnus are:
+     "brcm,cygnus-lcpll0"
+     "brcm,cygnus-mipipll"
+     "brcm,cygnus-asiu-clk"
++    "brcm,cygnus-audiopll"
+ 
+ The following table defines the set of PLL/clock index and ID for Cygnus.
+ These clock IDs are defined in:
+@@ -131,6 +132,11 @@ These clock IDs are defined in:
+     ch4_unused mipipll          5       BCM_CYGNUS_MIPIPLL_CH4_UNUSED
+     ch5_unused mipipll          6       BCM_CYGNUS_MIPIPLL_CH5_UNUSED
+ 
++    audiopll   crystal          0       BCM_CYGNUS_AUDIOPLL
++    ch0_audio  audiopll         1       BCM_CYGNUS_AUDIOPLL_CH0
++    ch1_audio  audiopll         2       BCM_CYGNUS_AUDIOPLL_CH1
++    ch2_audio  audiopll         3       BCM_CYGNUS_AUDIOPLL_CH2
++
+ Northstar and Northstar Plus
+ ------
+ PLL and leaf clock compatible strings for Northstar and Northstar Plus are:
+-- 
+1.9.1
