@@ -1,292 +1,81 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <p.zabel@pengutronix.de>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
-        <mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
-        <galak@codeaurora.org>, <linux@arm.linux.org.uk>, <khilman@linaro.org>,
-        <arnd@arndb.de>, <olof@lixom.net>, <xuwei5@hisilicon.com>,
-        <haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-        <bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
-        <suwenping@hisilicon.com>, <raojun@hisilicon.com>,
-        <ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
-        <zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>,
-        Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [PATCH v6 6/6] ARM: dts: add dts files for Hi3519
-Date: Tue, 19 Jan 2016 10:38:31 +0800
-Message-ID: <1453171111-21921-7-git-send-email-xuejiancheng@huawei.com>
-In-Reply-To: <1453171111-21921-1-git-send-email-xuejiancheng@huawei.com>
-References: <1453171111-21921-1-git-send-email-xuejiancheng@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Ralf Baechle <ralf@linux-mips.org>,
+	linux-mips@linux-mips.org
+Subject: [PATCH] clk: Get rid of HAVE_MACH_CLKDEV
+Date: Wed, 27 Jan 2016 14:17:00 -0800
+Message-Id: <1453933020-8577-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-add dts files for Hi3519
+This config was used for the ARM port so that it could use a
+machine specific clkdev.h include, but those are all gone now.
+The MIPS architecture is the last user, and from what I can tell
+it doesn't actually use it anyway, so let's remove the config all
+together.
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: <linux-mips@linux-mips.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- arch/arm/boot/dts/Makefile        |   2 +
- arch/arm/boot/dts/hi3519-demb.dts |  42 +++++++++
- arch/arm/boot/dts/hi3519.dtsi     | 187 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 231 insertions(+)
- create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
- create mode 100644 arch/arm/boot/dts/hi3519.dtsi
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 30bbc37..1ff3ed9 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -135,6 +135,8 @@ dtb-$(CONFIG_ARCH_EXYNOS5) += \
- 	exynos5800-peach-pi.dtb
- dtb-$(CONFIG_ARCH_HI3xxx) += \
- 	hi3620-hi4511.dtb
-+dtb-$(CONFIG_ARCH_HISI) += \
-+	hi3519-demb.dtb
- dtb-$(CONFIG_ARCH_HIX5HD2) += \
- 	hisi-x5hd2-dkb.dtb
- dtb-$(CONFIG_ARCH_HIGHBANK) += \
-diff --git a/arch/arm/boot/dts/hi3519-demb.dts b/arch/arm/boot/dts/hi3519-demb.dts
-new file mode 100644
-index 0000000..6991ab6
---- /dev/null
-+++ b/arch/arm/boot/dts/hi3519-demb.dts
-@@ -0,0 +1,42 @@
-+/*
-+ * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ *
-+ */
-+
-+/dts-v1/;
-+#include "hi3519.dtsi"
-+
-+/ {
-+	model = "HiSilicon HI3519 DEMO Board";
-+	compatible = "hisilicon,hi3519";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	memory {
-+		device_type = "memory";
-+		reg = <0x80000000 0x40000000>;
-+	};
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
-+
-+&dual_timer0 {
-+	status = "okay";
-+};
-diff --git a/arch/arm/boot/dts/hi3519.dtsi b/arch/arm/boot/dts/hi3519.dtsi
-new file mode 100644
-index 0000000..5729ecf
---- /dev/null
-+++ b/arch/arm/boot/dts/hi3519.dtsi
-@@ -0,0 +1,187 @@
-+/*
-+ * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ *
-+ */
-+
-+#include <dt-bindings/clock/hi3519-clock.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+/ {
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	chosen { };
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0>;
-+		};
-+	};
-+
-+	gic: interrupt-controller@10300000 {
-+		compatible = "arm,cortex-a7-gic";
-+		#interrupt-cells = <3>;
-+		interrupt-controller;
-+		reg = <0x10301000 0x1000>, <0x10302000 0x1000>;
-+	};
-+
-+	clk_3m: clk_3m {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <3000000>;
-+	};
-+
-+	crg: clock-reset-controller@12010000 {
-+		compatible = "hisilicon,hi3519-crg";
-+		#clock-cells = <1>;
-+		#reset-cells = <2>;
-+		reg = <0x12010000 0x10000>;
-+	};
-+
-+	soc {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+		ranges;
-+
-+		uart0: serial@12100000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0x12100000 0x1000>;
-+			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg HI3519_UART0_CLK>;
-+			clock-names = "apb_pclk";
-+			status = "disable";
-+		};
-+
-+		uart1: serial@12101000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0x12101000 0x1000>;
-+			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg HI3519_UART1_CLK>;
-+			clock-names = "apb_pclk";
-+			status = "disable";
-+		};
-+
-+		uart2: serial@12102000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0x12102000 0x1000>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg HI3519_UART2_CLK>;
-+			clock-names = "apb_pclk";
-+			status = "disable";
-+		};
-+
-+		uart3: serial@12103000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0x12103000 0x1000>;
-+			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg HI3519_UART3_CLK>;
-+			clock-names = "apb_pclk";
-+			status = "disable";
-+		};
-+
-+		uart4: serial@12104000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0x12104000 0x1000>;
-+			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg HI3519_UART4_CLK>;
-+			clock-names = "apb_pclk";
-+			status = "disable";
-+		};
-+
-+		dual_timer0: timer@12000000 {
-+			compatible = "arm,sp804", "arm,primecell";
-+			interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
-+			reg = <0x12000000 0x1000>;
-+			clocks = <&clk_3m>;
-+			clock-names = "apb_pclk";
-+			status = "disable";
-+		};
-+
-+		dual_timer1: timer@12001000 {
-+			compatible = "arm,sp804", "arm,primecell";
-+			interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
-+			reg = <0x12001000 0x1000>;
-+			clocks = <&clk_3m>;
-+			clock-names = "apb_pclk";
-+			status = "disable";
-+		};
-+
-+		dual_timer2: timer@12002000 {
-+			compatible = "arm,sp804", "arm,primecell";
-+			interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			reg = <0x12002000 0x1000>;
-+			clocks = <&clk_3m>;
-+			clock-names = "apb_pclk";
-+			status = "disable";
-+		};
-+
-+		spi_bus0: spi@12120000 {
-+			compatible = "arm,pl022", "arm,primecell";
-+			reg = <0x12120000 0x1000>;
-+			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg HI3519_SPI0_CLK>;
-+			clock-names = "apb_pclk";
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disable";
-+		};
-+
-+		spi_bus1: spi@12121000 {
-+			compatible = "arm,pl022", "arm,primecell";
-+			reg = <0x12121000 0x1000>;
-+			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg HI3519_SPI1_CLK>;
-+			clock-names = "apb_pclk";
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disable";
-+		};
-+
-+		spi_bus2: spi@12122000 {
-+			compatible = "arm,pl022", "arm,primecell";
-+			reg = <0x12122000 0x1000>;
-+			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg HI3519_SPI2_CLK>;
-+			clock-names = "apb_pclk";
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disable";
-+		};
-+
-+		sysctrl: system-controller@12020000 {
-+			compatible = "hisilicon,hi3519-sysctrl", "syscon";
-+			reg = <0x12020000 0x1000>;
-+		};
-+
-+		reboot {
-+			compatible = "syscon-reboot";
-+			regmap = <&sysctrl>;
-+			offset = <0x4>;
-+			mask = <0xdeadbeef>;
-+		};
-+	};
-+};
+I don't see a problem if this goes through the MIPS tree or the clk tree.
+Let me know and I can take it through clk.
+
+ arch/mips/Kconfig       | 2 --
+ arch/mips/pic32/Kconfig | 1 -
+ drivers/clk/Kconfig     | 3 ---
+ 3 files changed, 6 deletions(-)
+
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 56f57816613e..8e1be2889af3 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -328,7 +328,6 @@ config LANTIQ
+ 	select ARCH_REQUIRE_GPIOLIB
+ 	select SWAP_IO_SPACE
+ 	select BOOT_RAW
+-	select HAVE_MACH_CLKDEV
+ 	select CLKDEV_LOOKUP
+ 	select USE_OF
+ 	select PINCTRL
+@@ -590,7 +589,6 @@ config RALINK
+ 	select SYS_SUPPORTS_LITTLE_ENDIAN
+ 	select SYS_SUPPORTS_MIPS16
+ 	select SYS_HAS_EARLY_PRINTK
+-	select HAVE_MACH_CLKDEV
+ 	select CLKDEV_LOOKUP
+ 	select ARCH_HAS_RESET_CONTROLLER
+ 	select RESET_CONTROLLER
+diff --git a/arch/mips/pic32/Kconfig b/arch/mips/pic32/Kconfig
+index fde56a8b85ca..1985971b9890 100644
+--- a/arch/mips/pic32/Kconfig
++++ b/arch/mips/pic32/Kconfig
+@@ -15,7 +15,6 @@ config PIC32MZDA
+ 	select SYS_SUPPORTS_32BIT_KERNEL
+ 	select SYS_SUPPORTS_LITTLE_ENDIAN
+ 	select ARCH_REQUIRE_GPIOLIB
+-	select HAVE_MACH_CLKDEV
+ 	select COMMON_CLK
+ 	select CLKDEV_LOOKUP
+ 	select LIBFDT
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index eca8e019e005..35cbde8449a0 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -6,9 +6,6 @@ config CLKDEV_LOOKUP
+ config HAVE_CLK_PREPARE
+ 	bool
+ 
+-config HAVE_MACH_CLKDEV
+-	bool
+-
+ config COMMON_CLK
+ 	bool
+ 	select HAVE_CLK_PREPARE
 -- 
-1.9.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
