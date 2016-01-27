@@ -1,237 +1,58 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Remi Pommarel <repk@triplefau.lt>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH V4 6/7] clk: bcm2835: enable fractional and mash support
-Date: Fri, 15 Jan 2016 14:21:05 +0000
-Message-Id: <1452867667-2447-7-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org>
-References: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org>
+	linux-clk@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH v4 06/13] ARM: at91: pm: simply call at91_pm_init
+Date: Wed, 27 Jan 2016 17:11:05 +0100
+Message-Id: <1453911072-23608-7-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+at91_pm_init() doesn't return a value, as is the case for its callers,
+simply call it instead of returning its non-existent return value.
 
-The clk-bcm2835 driver right now does the correct calculation
-of the fractional clock divider, but it does not set the FRAC
-bit.
-
-This patch enables FRAC for all clocks with frac_bits > 0
-but allows to define the selection of a higher-order MASH
-support instead of just FRAC by assigning .mash in the
-clock description structure.
-
-Right now there are no limits imposed on maximum frequencies
-or additional restrictions on min/max divider when MASH/FRAC
-is enabled and used.
-
-The way that implementation is done the top 8 bits of the divider
-are used to signify the mash level used for this divider.
-This has been wrapped in a new type mashtype with some helper
-functions that allows extraction of the divider information.
-typedef is used to minimize the amount of change.
-(note also that the top 8 bit are not used by the clock registers
-besides requireing some magic when setting the register)
-
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
- drivers/clk/bcm/clk-bcm2835.c |  111 ++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 104 insertions(+), 7 deletions(-)
+ arch/arm/mach-at91/pm.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 1640288..545c21a 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -51,6 +51,7 @@
- #define CM_GNRICCTL		0x000
- #define CM_GNRICDIV		0x004
- # define CM_DIV_FRAC_BITS	12
-+# define CM_DIV_INT_BITS	12
-
- #define CM_VPUCTL		0x008
- #define CM_VPUDIV		0x00c
-@@ -130,6 +131,10 @@
- # define CM_GATE			BIT(CM_GATE_BIT)
- # define CM_BUSY			BIT(7)
- # define CM_BUSYD			BIT(8)
-+# define CM_MASH_BITS			2
-+# define CM_MASH_SHIFT			9
-+# define CM_MASH_MASK			GENMASK(10, 9)
-+# define CM_MASH(v)			((v << CM_MASH_SHIFT) & CM_MASH_MASK)
- # define CM_SRC_SHIFT			0
- # define CM_SRC_BITS			4
- # define CM_SRC_MASK			0xf
-@@ -296,6 +301,63 @@
- #define LOCK_TIMEOUT_NS		100000000
- #define BCM2835_MAX_FB_RATE	1750000000u
-
-+enum bcm2835_clock_mash_type {
-+	MASH_NONE = 0,
-+	MASH_FRAC = 1,
-+	MASH_2ND_ORDER = 2,
-+	MASH_3RD_ORDER = 3
-+};
-+
-+/*
-+ * mashdiv - Helper type packed in u32 that contains
-+ *   integer divider (bits 12-23)
-+ *   integer divider (bits 11-0)
-+ *   mash type       (bits 25-24)
-+ * this also includes some helperfunctions to calc the compound u32
-+ * as well as extracting the individual data from the compound u32.
-+ */
-+typedef u32 divmash;
-+
-+/* define the lowes/highest bits for a field and masks */
-+#define DIVMASH_DIVF_LO_BIT 0
-+#define DIVMASH_DIVF_HI_BIT (CM_DIV_FRAC_BITS - 1)
-+#define DIVMASH_DIVF_MASK GENMASK(DIVMASH_DIVF_HI_BIT, DIVMASH_DIVF_LO_BIT)
-+#define DIVMASH_DIVI_LO_BIT (DIVMASH_DIVF_HI_BIT + 1)
-+#define DIVMASH_DIVI_HI_BIT (CM_DIV_INT_BITS + CM_DIV_FRAC_BITS - 1)
-+#define DIVMASH_DIVI_MASK GENMASK(DIVMASH_DIVI_HI_BIT, DIVMASH_DIVI_LO_BIT)
-+#define DIVMASH_DIV_LO_BIT DIVMASH_DIVF_LO_BIT
-+#define DIVMASH_DIV_MASK (DIVMASH_DIVI_MASK | DIVMASH_DIVF_MASK)
-+#define DIVMASH_MASH_LO_BIT (DIVMASH_DIVI_HI_BIT + 1)
-+#define DIVMASH_MASH_HI_BIT (DIVMASH_MASH_LO_BIT + 1)
-+#define DIVMASH_MASH_MASK GENMASK(DIVMASH_MASH_HI_BIT, DIVMASH_MASH_LO_BIT)
-+
-+static inline divmash divmash_calc(enum bcm2835_clock_mash_type mash,
-+				   u32 div)
-+{
-+	return ((div << DIVMASH_DIV_LO_BIT)   & DIVMASH_DIV_MASK) |
-+	       ((mash << DIVMASH_MASH_LO_BIT) & DIVMASH_MASH_MASK);
-+}
-+
-+static inline enum bcm2835_clock_mash_type divmash_get_mash(divmash dm)
-+{
-+	return (dm & DIVMASH_MASH_MASK) >> DIVMASH_MASH_LO_BIT;
-+}
-+
-+static inline u32 divmash_get_div(divmash dm)
-+{
-+	return (dm & DIVMASH_DIV_MASK) >> DIVMASH_DIV_LO_BIT;
-+}
-+
-+static inline u32 divmash_get_divi(divmash dm)
-+{
-+	return (dm & DIVMASH_DIVI_MASK) >> DIVMASH_DIVI_LO_BIT;
-+}
-+
-+static inline u32 divmash_get_divf(divmash dm)
-+{
-+	return (dm & DIVMASH_DIVF_MASK) >> DIVMASH_DIVF_LO_BIT;
-+}
-+
- struct bcm2835_cprman {
- 	struct device *dev;
- 	void __iomem *regs;
-@@ -647,6 +709,8 @@ struct bcm2835_clock_data {
- 	u32 int_bits;
- 	/* Number of fractional bits in the divider */
- 	u32 frac_bits;
-+	/* the mash value to use - see CM_MASH */
-+	enum bcm2835_clock_mash_type mash;
-
- 	bool is_vpu_clock;
- };
-@@ -1413,16 +1477,17 @@ static int bcm2835_clock_is_on(struct clk_hw *hw)
- 	return (cprman_read(cprman, data->ctl_reg) & CM_ENABLE) != 0;
+diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
+index 23726fb31741..db32bf846cef 100644
+--- a/arch/arm/mach-at91/pm.c
++++ b/arch/arm/mach-at91/pm.c
+@@ -432,7 +432,7 @@ void __init at91sam9260_pm_init(void)
+ 	at91_dt_ramc();
+ 	at91_pm_data.memctrl = AT91_MEMCTRL_SDRAMC;
+ 	at91_pm_data.uhp_udp_mask = AT91SAM926x_PMC_UHP | AT91SAM926x_PMC_UDP;
+-	return at91_pm_init();
++	at91_pm_init();
  }
-
--static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
--				    unsigned long rate,
--				    unsigned long parent_rate,
--				    bool round_up)
-+static divmash bcm2835_clock_choose_div(struct clk_hw *hw,
-+					unsigned long rate,
-+					unsigned long parent_rate,
-+					bool round_up)
- {
- 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
- 	const struct bcm2835_clock_data *data = clock->data;
- 	u32 unused_frac_mask =
- 		GENMASK(CM_DIV_FRAC_BITS - data->frac_bits, 0) >> 1;
- 	u64 temp = (u64)parent_rate << CM_DIV_FRAC_BITS;
-+	enum bcm2835_clock_mash_type mash = MASH_NONE;
- 	u64 rem;
- 	u32 div;
-
-@@ -1443,7 +1508,11 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
- 	div = min_t(u32, div, GENMASK(data->int_bits + CM_DIV_FRAC_BITS - 1,
- 				      CM_DIV_FRAC_BITS));
-
--	return div;
-+	/* set mash if necessary */
-+	if (data->frac_bits && (div & GENMASK(CM_DIV_FRAC_BITS - 1, 0)))
-+		mash = data->mash ? data->mash : MASH_FRAC;
-+
-+	return divmash_calc(mash, div);
+ 
+ void __init at91sam9g45_pm_init(void)
+@@ -440,7 +440,7 @@ void __init at91sam9g45_pm_init(void)
+ 	at91_dt_ramc();
+ 	at91_pm_data.uhp_udp_mask = AT91SAM926x_PMC_UHP;
+ 	at91_pm_data.memctrl = AT91_MEMCTRL_DDRSDR;
+-	return at91_pm_init();
++	at91_pm_init();
  }
-
- static long bcm2835_clock_rate_from_divisor(struct bcm2835_clock *clock,
-@@ -1534,10 +1603,36 @@ static int bcm2835_clock_set_rate(struct clk_hw *hw,
- 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
- 	struct bcm2835_cprman *cprman = clock->cprman;
- 	const struct bcm2835_clock_data *data = clock->data;
--	u32 div = bcm2835_clock_choose_div(hw, rate, parent_rate, false);
-+	divmash dm = bcm2835_clock_choose_div(hw, rate, parent_rate, false);
-+	u32 div = divmash_get_div(dm);
-+	enum bcm2835_clock_mash_type mash = divmash_get_mash(dm);
-+	u32 ctl;
-+
-+	spin_lock(&cprman->regs_lock);
-
-+	/* if div and mash are identical, then there is nothing to do */
-+	ctl = cprman_read(cprman, data->ctl_reg);
-+	if ((div == cprman_read(cprman, data->div_reg)) &&
-+	    (CM_MASH(mash) == (ctl & CM_MASH_MASK)))
-+		goto unlock_exit;
-+
-+	/*
-+	 * Setting up mash type
-+	 *
-+	 * In principle it is recommended to stop/start the clock first,
-+	 * but as we set CLK_SET_RATE_GATE during registration of the
-+	 * clock this requirement should be take care of by the
-+	 * clk-framework.
-+	 */
-+	cprman_write(cprman, data->ctl_reg,
-+		     (ctl & ~CM_MASH_MASK) | CM_MASH(mash));
-+
-+	/* and set div */
- 	cprman_write(cprman, data->div_reg, div);
-
-+unlock_exit:
-+	spin_unlock(&cprman->regs_lock);
-+
- 	return 0;
+ 
+ void __init at91sam9x5_pm_init(void)
+@@ -448,5 +448,5 @@ void __init at91sam9x5_pm_init(void)
+ 	at91_dt_ramc();
+ 	at91_pm_data.uhp_udp_mask = AT91SAM926x_PMC_UHP | AT91SAM926x_PMC_UDP;
+ 	at91_pm_data.memctrl = AT91_MEMCTRL_DDRSDR;
+-	return at91_pm_init();
++	at91_pm_init();
  }
-
-@@ -1549,6 +1644,7 @@ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
- 	unsigned long rate, best_rate = 0;
- 	unsigned long prate, best_prate = 0;
- 	size_t i;
-+	divmash dm;
- 	u32 div;
-
- 	/*
-@@ -1559,7 +1655,8 @@ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
- 		if (!parent)
- 			continue;
- 		prate = clk_hw_get_rate(parent);
--		div = bcm2835_clock_choose_div(hw, req->rate, prate, true);
-+		dm = bcm2835_clock_choose_div(hw, req->rate, prate, true);
-+		div = divmash_get_div(dm);
- 		rate = bcm2835_clock_rate_from_divisor(clock, prate, div);
- 		if (rate > best_rate && rate <= req->rate) {
- 			best_parent = parent;
---
-1.7.10.4
+-- 
+2.5.0
