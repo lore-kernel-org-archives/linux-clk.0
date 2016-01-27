@@ -1,67 +1,64 @@
-Return-Path: <van.freenix@gmail.com>
-Return-Path: <van.freenix@gmail.com>
-Date: Tue, 19 Jan 2016 09:18:08 +0800
-From: Peng Fan <van.freenix@gmail.com>
-To: George Dunlap <George.Dunlap@eu.citrix.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	xen-devel <xen-devel@lists.xenproject.org>,
-	Ian Campbell <ian.campbell@citrix.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stefano Stabellini <stefano.stabellini@eu.citrix.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Julien Grall <julien.grall@citrix.com>,
-	David Vrabel <david.vrabel@citrix.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [Xen-devel] [RFC/WIP] xen: clk: introudce pvclk for device
- passthrough
-Message-ID: <20160119011806.GA12932@linux-7smt.suse>
-References: <1452921760-21294-1-git-send-email-van.freenix@gmail.com>
- <CAFLBxZa9W6At5M_fFy17u__C_AGHRAdYHebOzymnb1su715jzA@mail.gmail.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 27 Jan 2016 18:41:25 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH RFC 09/11] clk: sunxi: rewrite sun6i-a31-ahb1-clk using
+ factors clk with custom recalc
+Message-ID: <20160127174125.GN4317@lukather>
+References: <1453727747-23307-1-git-send-email-wens@csie.org>
+ <1453727747-23307-10-git-send-email-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAFLBxZa9W6At5M_fFy17u__C_AGHRAdYHebOzymnb1su715jzA@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="UUMz/kfoogzZ9WLZ"
+In-Reply-To: <1453727747-23307-10-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello George,
 
-On Mon, Jan 18, 2016 at 11:22:44AM +0000, George Dunlap wrote:
->On Sat, Jan 16, 2016 at 5:22 AM, Peng Fan <van.freenix@gmail.com> wrote:
->> This patch was just a initial patch, not sure whether this way
->> is ok from you side for handlding clk when doing platform device
->> passhthrough. Any comments are appreciated, and your comments may
->> give me a better direction.
->
->Hey Peng,
->
->Just speaking from the perspective of a Xen dev who's not an ARM dev:
->a few more words on the relationship between pvclk and
->device-passthrough would be helpful to set the context.  It sounds
->like:
->
->* On ARM, passing through a device requires a clocksource (at least
->for many devices)
->
->* dom0 has the hardware clocksource, but at the moment domUs don't
->have a suitable clocksource
->
->* This patch implements pvclk front/backend suitable for such devices
->
->Is that right?  In which case something like the following would be helpful:
+--UUMz/kfoogzZ9WLZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yeah. right. You have a better explaination than me :)
+On Mon, Jan 25, 2016 at 09:15:45PM +0800, Chen-Yu Tsai wrote:
+> The factors clk implementation has been extended to support custom
+> recalc callbacks to support clocks that use one factor for certain
+> parents only, like a pre-divider.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
->
->"This patch introduces pvclk, a paravirtualized clock source suitable
->for devices to use when passing through to domUs on ARM systems."
->
->(Obviously change it as necessary to make it accurate.)
+Applied, thanks!
+Maxime
 
-I'll add your words into the commit log.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
-Thanks,
-Peng.
+--UUMz/kfoogzZ9WLZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
->
->Thanks,
-> -George
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWqQFFAAoJEBx+YmzsjxAgSncQAKobVXLzUF0h6fY1hIJxOEcS
+Ps5Pv4TIEsLN/DJT3S7Ebby0ssU9DparTO+hXQdRqzCgIr1+nhqhHk16wlc3ujHu
+KKCFyaI0WZcpsW/cygTb+uP4zslUON3cGPhlDIPIr6ONLoYvlIr9rqVwGQf3lBJK
+7kPFdh3hPulTVndMjF+oZZoBNwHyRwA9lwjgZuvVwlEm6gIO8Rq0yfUhCVbFqj3/
+Clpa5NCkIappDV985Hw3vw1s7IkzhttO/iUpTQMd9cTFz4usppg5oRqAm4A6xKlI
+nCT8EMhdVHezsc4RjjCEGCmmN/FZwXv8uodibCylnpHta4YIQobBJzx6hoccVOMW
+1BVfH08CKeaQ/uFGZt8mymAZ3M/q5mlApztJPnlxSHaX2ce/c3O3YiPIXYKJ/Gpk
+9WjH8s9Jn0F/daDxpNKY935SE20zHZFrY92dDX+Smx5iRQ7Gb9ROMjF9vbMo2X+h
+Cqpni9OEMtDy56tgs79oTxQlkWxhPSDUyENVRtMFUoEdPGLWimX986rxrbcXsGSF
+P21vt/yYCH0Vb9LE0bX8N89Co+pih0ZLCDZNVmv0Ej1mdwMjtGFSe+DWe+kSdSOY
+z8CY1azI4O3f/ShEmzRzSDgxO5WnWa2BKaKTdgC+Z+g/mpv2w8u+p4AMXHER0vW7
+UaofsV0hmb4kgPjCSvCu
+=uuOJ
+-----END PGP SIGNATURE-----
+
+--UUMz/kfoogzZ9WLZ--
