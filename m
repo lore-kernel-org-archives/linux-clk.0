@@ -1,42 +1,46 @@
-Return-Path: <Marc_Gonzalez@sigmadesigns.com>
-Return-Path: <Marc_Gonzalez@sigmadesigns.com>
-From: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
-Subject: [PATCH] clk: tango4: rename ARCH_TANGOX to ARCH_TANGO
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: linux-clk <linux-clk@vger.kernel.org>
-Message-ID: <56AB721A.1000609@sigmadesigns.com>
-Date: Fri, 29 Jan 2016 15:07:22 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-15"
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH v4 09/13] ARM: at91: remove useless includes and function prototypes
+Date: Wed, 27 Jan 2016 17:11:08 +0100
+Message-Id: <1453911072-23608-10-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Requested by arm-soc maintainer Kevin Hilman in v9 review.
-http://article.gmane.org/gmane.linux.ports.arm.kernel/456331
+Remove leftover from the previous cleanup
 
-Signed-off-by: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
-IIUC, the merge window is now closed, but this patch might be
-accepted in the clk-fixes branch, so that the corresponding
-platform code successfully builds its clk driver.
+ arch/arm/mach-at91/generic.h | 7 -------
+ 1 file changed, 7 deletions(-)
 
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/arch/arm/mach-tango
----
- drivers/clk/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index f4165bb9a270..f50cb257e0ba 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -42,7 +42,7 @@ obj-$(CONFIG_COMMON_CLK_SI514)		+= clk-si514.o
- obj-$(CONFIG_COMMON_CLK_SI570)		+= clk-si570.o
- obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
- obj-$(CONFIG_ARCH_STM32)		+= clk-stm32f4.o
--obj-$(CONFIG_ARCH_TANGOX)		+= clk-tango4.o
-+obj-$(CONFIG_ARCH_TANGO)		+= clk-tango4.o
- obj-$(CONFIG_CLK_TWL6040)		+= clk-twl6040.o
- obj-$(CONFIG_ARCH_U300)			+= clk-u300.o
- obj-$(CONFIG_ARCH_VT8500)		+= clk-vt8500.o
+diff --git a/arch/arm/mach-at91/generic.h b/arch/arm/mach-at91/generic.h
+index d224e195706a..28ca57a2060f 100644
+--- a/arch/arm/mach-at91/generic.h
++++ b/arch/arm/mach-at91/generic.h
+@@ -11,13 +11,6 @@
+ #ifndef _AT91_GENERIC_H
+ #define _AT91_GENERIC_H
+ 
+-#include <linux/of.h>
+-#include <linux/reboot.h>
+-
+- /* Map io */
+-extern void __init at91_map_io(void);
+-extern void __init at91_alt_map_io(void);
+-
+ #ifdef CONFIG_PM
+ extern void __init at91rm9200_pm_init(void);
+ extern void __init at91sam9260_pm_init(void);
 -- 
-2.6.3
+2.5.0
