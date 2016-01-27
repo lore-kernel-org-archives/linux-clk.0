@@ -1,129 +1,111 @@
-Return-Path: <emilio.lopez@collabora.co.uk>
-Subject: Re: [PATCH 1/2] clk: sunxi: delay protected clocks until arch
- initcall
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-References: <1453385439-10154-1-git-send-email-emilio.lopez@collabora.co.uk>
- <1453385439-10154-2-git-send-email-emilio.lopez@collabora.co.uk>
- <20160127153722.GC4317@lukather>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, wens@csie.org,
- heiko@sntech.de, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-From: =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio.lopez@collabora.co.uk>
-Message-ID: <56A91245.3090706@collabora.co.uk>
-Date: Wed, 27 Jan 2016 15:53:57 -0300
-MIME-Version: 1.0
-In-Reply-To: <20160127153722.GC4317@lukather>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <alexandre.belloni@free-electrons.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH v5 07/13] ARM: at91: pm: find and remap the pmc
+Date: Wed, 27 Jan 2016 17:17:05 +0100
+Message-Id: <1453911425-30090-1-git-send-email-alexandre.belloni@free-electrons.com>
+In-Reply-To: <1453911072-23608-8-git-send-email-alexandre.belloni@free-electrons.com>
+References: <1453911072-23608-8-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Maxime,
+To avoid relying on at91_pmc_read(), find the pmc node and remap it
+locally.
 
-El 27/01/16 a las 12:37, Maxime Ripard escribió:
-> Hi Emilio,
->
-> On Thu, Jan 21, 2016 at 11:10:38AM -0300, Emilio López wrote:
->> Clocks are registered early on, and unused clocks get disabled on
->> late initcall, so we can delay protecting important clocks a bit.
->> If we do this too early, it may happen that some clocks are orphans
->> and therefore enabling them may not work as intended. If we do this
->> too late, a driver may reparent some clock and cause another important
->> clock to be disabled as a byproduct.
->>
->> arch_initcall should be a good spot to do this, as clock drivers using
->> the OF mechanisms will be all registered by then, and drivers won't
->> have started probing yet.
->>
->> Signed-off-by: Emilio López <emilio.lopez@collabora.co.uk>
->> ---
->>   drivers/clk/sunxi/clk-sunxi.c | 22 ++++++++++++++++++----
->>   1 file changed, 18 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
->> index 5ba2188..285e8ee 100644
->> --- a/drivers/clk/sunxi/clk-sunxi.c
->> +++ b/drivers/clk/sunxi/clk-sunxi.c
->> @@ -1153,10 +1153,12 @@ static void __init of_sunxi_table_clock_setup(const struct of_device_id *clk_mat
->>   	}
->>   }
->>
->> +/* By default, don't protect any clocks */
->> +static const char **protected_clocks __initdata;
->> +static int protected_clocks_nr __initdata;
->> +
->>   static void __init sunxi_init_clocks(const char *clocks[], int nclocks)
->>   {
->> -	unsigned int i;
->> -
->>   	/* Register divided output clocks */
->>   	of_sunxi_table_clock_setup(clk_divs_match, sunxi_divs_clk_setup);
->>
->> @@ -1169,14 +1171,26 @@ static void __init sunxi_init_clocks(const char *clocks[], int nclocks)
->>   	/* Register mux clocks */
->>   	of_sunxi_table_clock_setup(clk_mux_match, sunxi_mux_clk_setup);
->>
->> +	/* We shall protect these clocks when everything is ready */
->> +	protected_clocks = clocks;
->> +	protected_clocks_nr = nclocks;
->> +}
->> +
->> +static int __init sunxi_init_clock_protection(void)
->> +{
->> +	unsigned int i;
->> +
->>   	/* Protect the clocks that needs to stay on */
->> -	for (i = 0; i < nclocks; i++) {
->> -		struct clk *clk = clk_get(NULL, clocks[i]);
->> +	for (i = 0; i < protected_clocks_nr; i++) {
->> +		struct clk *clk = clk_get(NULL, protected_clocks[i]);
->>
->>   		if (!IS_ERR(clk))
->>   			clk_prepare_enable(clk);
->>   	}
->> +
->> +	return 0;
->>   }
->> +arch_initcall(sunxi_init_clock_protection);
->
-> You also need to filter that by the machine compatible in case you're
-> running it on a !sunxi SoC.
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
 
-protected_clocks_nr will be 0 on a !sunxi machine, so this is 
-effectively a noop there.
+Changes in v5:
+ - properly use __initconst
 
-> Overall, I'm a bit skeptical about the approach. It doesn't really fix
-> everything, just hides it behind a curtain, and I'm pretty sure the
-> clocks not registered by this code would still be broken (the mod0
-> clocks for example).
+ arch/arm/mach-at91/pm.c | 33 +++++++++++++++++++++++++++------
+ 1 file changed, 27 insertions(+), 6 deletions(-)
 
-This is only meant to solve the problems observed when trying to grab 
-critical clocks before letting all the basic/OF clock types register. 
-The actual clock trees are complete once all the built-in clock 
-compatibles are probed, so this just pushes the protection after that 
-point in time. The plan on the long term should be to use the 
-CCF-built-in clock protection, once it's finished and merged, but it's 
-not here yet.
-
-Regarding your example, I'm not aware of any critical mod0 clocks (not 
-that it should matter, as they won't be orphans either).
-
-> The real fix would be to make sure we don't have any orphan clock in
-> the first place, by using CLK_OF_DECLARE everywhere. I did submit a
-> patch doing just that when the clocks broke, but I never got any
-> answer to it.
-
-As I said, there shouldn't be any after all the built in clocks are probed.
-
-That patch also moved the clock protection to arch_initcall btw :) You 
-could say this is a subset of your patch. Moving everything to 
-OF_CLK_DECLARE is unnecessary in my opinion, and it will also probably 
-be slower (I see a bunch of extra of_match_nodes being run for every 
-compatible)
-
-> I thought the patches were simply dropped and the
-> rockchip people just took another approach.
-
-As far as I know, rockchip SoCs are still suffering the breakage this 
-set aims to fix :)
-
-Thanks for the review!
-Emilio
+diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
+index db32bf846cef..8923efbfa7fa 100644
+--- a/arch/arm/mach-at91/pm.c
++++ b/arch/arm/mach-at91/pm.c
+@@ -35,6 +35,8 @@
+ #include "generic.h"
+ #include "pm.h"
+ 
++static void __iomem *pmc;
++
+ /*
+  * FIXME: this is needed to communicate between the pinctrl driver and
+  * the PM implementation in the machine. Possibly part of the PM
+@@ -87,7 +89,7 @@ static int at91_pm_verify_clocks(void)
+ 	unsigned long scsr;
+ 	int i;
+ 
+-	scsr = at91_pmc_read(AT91_PMC_SCSR);
++	scsr = readl(pmc + AT91_PMC_SCSR);
+ 
+ 	/* USB must not be using PLLB */
+ 	if ((scsr & at91_pm_data.uhp_udp_mask) != 0) {
+@@ -101,8 +103,7 @@ static int at91_pm_verify_clocks(void)
+ 
+ 		if ((scsr & (AT91_PMC_PCK0 << i)) == 0)
+ 			continue;
+-
+-		css = at91_pmc_read(AT91_PMC_PCKR(i)) & AT91_PMC_CSS;
++		css = readl(pmc + AT91_PMC_PCKR(i)) & AT91_PMC_CSS;
+ 		if (css != AT91_PMC_CSS_SLOW) {
+ 			pr_err("AT91: PM - Suspend-to-RAM with PCK%d src %d\n", i, css);
+ 			return 0;
+@@ -145,8 +146,8 @@ static void at91_pm_suspend(suspend_state_t state)
+ 	flush_cache_all();
+ 	outer_disable();
+ 
+-	at91_suspend_sram_fn(at91_pmc_base, at91_ramc_base[0],
+-				at91_ramc_base[1], pm_data);
++	at91_suspend_sram_fn(pmc, at91_ramc_base[0],
++			     at91_ramc_base[1], pm_data);
+ 
+ 	outer_resume();
+ }
+@@ -399,13 +400,33 @@ static void __init at91_pm_sram_init(void)
+ 			&at91_pm_suspend_in_sram, at91_pm_suspend_in_sram_sz);
+ }
+ 
++static const struct of_device_id atmel_pmc_ids[] __initconst = {
++	{ .compatible = "atmel,at91rm9200-pmc"  },
++	{ .compatible = "atmel,at91sam9260-pmc" },
++	{ .compatible = "atmel,at91sam9g45-pmc" },
++	{ .compatible = "atmel,at91sam9n12-pmc" },
++	{ .compatible = "atmel,at91sam9x5-pmc" },
++	{ .compatible = "atmel,sama5d3-pmc" },
++	{ .compatible = "atmel,sama5d2-pmc" },
++	{ /* sentinel */ },
++};
++
+ static void __init at91_pm_init(void)
+ {
+-	at91_pm_sram_init();
++	struct device_node *pmc_np;
+ 
+ 	if (at91_cpuidle_device.dev.platform_data)
+ 		platform_device_register(&at91_cpuidle_device);
+ 
++	pmc_np = of_find_matching_node(NULL, atmel_pmc_ids);
++	pmc = of_iomap(pmc_np, 0);
++	if (!pmc) {
++		pr_err("AT91: PM not supported, PMC not found\n");
++		return;
++	}
++
++	at91_pm_sram_init();
++
+ 	if (at91_suspend_sram_fn)
+ 		suspend_set_ops(&at91_pm_ops);
+ 	else
+-- 
+2.5.0
