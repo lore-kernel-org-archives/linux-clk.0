@@ -1,85 +1,94 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 27 Jan 2016 21:38:16 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Emilio =?iso-8859-1?Q?L=F3pez?= <emilio.lopez@collabora.co.uk>,
-	mturquette@baylibre.com, sboyd@codeaurora.org, wens@csie.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] clk: sunxi: delay protected clocks until arch
- initcall
-Message-ID: <20160127203816.GU4317@lukather>
-References: <1453385439-10154-1-git-send-email-emilio.lopez@collabora.co.uk>
- <1453385439-10154-2-git-send-email-emilio.lopez@collabora.co.uk>
- <20160127153722.GC4317@lukather>
- <7334994.mKnQpNNMP2@diego>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 27 Jan 2016 23:56:21 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Wynter Woods <wynter@nextthing.co>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [PATCH v2 03/26] clk: Add regmap support
+Message-ID: <20160128075621.GF12841@codeaurora.org>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1452785109-6172-4-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tbn31orTZdSAVHoc"
-In-Reply-To: <7334994.mKnQpNNMP2@diego>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1452785109-6172-4-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 01/14, Maxime Ripard wrote:
+> From: Matthias Brugger <matthias.bgg@gmail.com>
+> 
+> Some devices like SoCs from Mediatek need to use the clock
+> through a regmap interface.
+> This patch adds regmap support for the simple multiplexer clock,
+> the divider clock and the clock gate code.
+> 
+> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
---tbn31orTZdSAVHoc
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Nak.
 
-Hi,
+The whole anonymous union thing and clk-io.c file is not
+appealing at all. I'd prefer we remove clk_readl/writel, not add
+to it. Plus we're bloating the basic clock types and adding a
+bunch of parallel registration APIs to assign a regmap pointer.
+Really, let's stop adding stuff to the basic clock types, it's
+getting out of hand.
 
-On Wed, Jan 27, 2016 at 05:14:17PM +0100, Heiko St=FCbner wrote:
-> Hi,
->=20
-> Am Mittwoch, 27. Januar 2016, 16:37:22 schrieb Maxime Ripard:
-> > I thought the patches were simply dropped and the
-> > rockchip people just took another approach.
->=20
-> nope still on track ... especially as it was Stephen's believe that orpha=
-ns=20
-> shouldn't even be usable to general clock users :-).
->=20
-> I just remember that the proposed general solution was based on Mike's=20
-> upcoming generic critical clock handling (the handoff thingy), which woul=
-d=20
-> move critical clock handling out of architecture-specific code, so I've b=
-een=20
-> prodding Mike mainly.
->=20
-> Another option might be to allow clock-controllers to handle orphans and =
-only=20
-> deny orphan usage to outside clock users, maybe expanding on what I did w=
-ith=20
-> the clock-conf part in patch2.
+To move forward on making regmap clks generic for everyone, let's
+make sure that regmap clk code is a library that any driver can
+use. No OF_CLK_DECLARE should exist because it doesn't make any
+sense. No clk_register_regmap_{div,mux,gate}() functions, just a
+clk_register_regmap() function to assign the regmap pointer from
+the device. Drivers that want to use the code should need to
+select a Kconfig symbol, so that we don't compile in support for
+regmap clocks unless we really need them.
 
-I'm not sure that would solve anything in our case. All our clocks
-drivers are different ones, so I'm not sure how we could handle that.
+If we had a clk_regmap structure with a regmap pointer and a
+clk_hw inside it I think that's all we would need. Once we had
+that, we could let driver writers wrap that in their own
+structures for dividers, muxes, gates, etc. and then have them
+call library functions from their clk_ops that takes a regmap (or
+clk_regmap struct), and offset to do the get_div/set_div,
+get_parent/set_parent, enable/disable stuff.
 
-Maxime
+The policy part can be shared with the basic clock types, because
+we've already started libifying them. For example, we can ask the
+divider code what the hardware value should be for a particular
+divider type and it will tell us without writing any registers.
+I had a patch for libifying muxes, not sure where it went. The
+point being to leave the I/O part to the regmap code without
+putting it behind another layer of indirection buried inside the
+basic types. Make things flat and easy to follow.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+I haven't thought through making new structs to hold the data for
+offsets, masks, etc. but I guess we would want those so that we
+could assign functions directly to clk_ops and not require any
+boiler plate clk_ops implementations in drivers. There are a few
+approaches here: different regmap structs for different basic
+types, one mega struct that combines all the needs of the basic
+types, or some private void pointer inside struct clk_regmap that
+points to different basic type structs. Let's see how that goes.
 
---tbn31orTZdSAVHoc
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Maybe we can lift drivers/clk/qcom/clk-regmap.c up into the
+drivers/clk/ directory too. In the qcom design I put the
+enable/disable bits (gate functionality) directly into the
+clk_regmap structure. That may need some more thought if it was
+the right idea to force enable/disable on every regmap clock
+though. If we remove that and introduce a clk_regmap_gate things
+should turn out alright.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWqSq4AAoJEBx+YmzsjxAgznAP/0myL+n1jum+3RbNL1J0VU3B
-YHpNdXO7AaRoT+MFD8TfvsoESiLeYy2Z5VSAqxT8UIE9ng33gaCcKHYfgUxk3rQm
-J8ROWFgXAiaah3sxYjGncGCfixL+cRvYon+hLBYzfZ+FhE/oUqyzhdfyYu4FPXw3
-CLOsSLOWwTwaQXbDh/lqDAlMCRo5XgWAdfTtBsexUuEBHhys2iXdePvcIVJRJ7t6
-3VT6KWq83VhFlWcDwvwOZ/3K38H+Cyz5YapDq8hS0dCboZ0J5z7/AFc7WMKykeLk
-xr/CJY6xySDalDEYdM7hfDxn/9HruXeOV1+boPLT6I2W7K52JY7VQfIbyQHggBpS
-524R7FkUS0NXHh6kSmbSYjNXqF7nJXT7n0JP+OPK4w7awuKHD0turf1C5TCdNQxU
-UzayF0QwFPSM9N8suzV+PZIeMnWfgBONS692I4jtpJUGUHhMth61sm5Umi3j7k15
-TZAJNUSFeKwGd+7h/5R1qtoyb3Us0ILfoTyx5/y58wswYz6L1tLgahmm4KtsrZN4
-ZgtEvafW3UJJwsHxoGsH62LMOObea6P+usoQS6zxM83V+CFbsue7uTnsnQK5YGkG
-e7grmYj3gAZ6N+RDVEazqpWQ+irVNjHW3V4TEplE7wH3DMngfC9eMusOkCd6x7r/
-v4r8fhIdoVzDBZCusnLk
-=v2+w
------END PGP SIGNATURE-----
-
---tbn31orTZdSAVHoc--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
