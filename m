@@ -1,88 +1,144 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v4 11/13] clk: at91: pmc: drop at91_pmc_base
-Date: Wed, 27 Jan 2016 17:11:10 +0100
-Message-Id: <1453911072-23608-12-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <shawnguo@kernel.org>
+Date: Thu, 28 Jan 2016 15:54:08 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Bai Ping <b51503@freescale.com>
+Cc: kernel@pengutronix.de, devicetree@vger.kernel.org, pawel.moll@arm.com,
+	mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/5] ARM: dts: imx: Add basic dts support for
+ imx6qp-sabresd
+Message-ID: <20160128075408.GM9070@tiger>
+References: <1450159673-27314-1-git-send-email-b51503@freescale.com>
+ <1450159673-27314-3-git-send-email-b51503@freescale.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1450159673-27314-3-git-send-email-b51503@freescale.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-at91_pmc_base is not used anymore, remove it along with at91_pmc_read and
-at91_pmc_write.
+On Tue, Dec 15, 2015 at 02:07:50PM +0800, Bai Ping wrote:
+> The patch adds dts file for imx6qp-sabresd board.
+> 
+> Signed-off-by: Bai Ping <b51503@freescale.com>
+> ---
+>  arch/arm/boot/dts/Makefile             |  1 +
+>  arch/arm/boot/dts/imx6qdl-sabresd.dtsi |  1 +
+>  arch/arm/boot/dts/imx6qp-sabresd.dts   | 59 ++++++++++++++++++++++++++++++++++
+>  3 files changed, 61 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/imx6qp-sabresd.dts
+> 
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index 36d8133..dfba765 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -302,6 +302,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
+>  	imx6dl-sabreauto.dtb \
+>  	imx6dl-sabrelite.dtb \
+>  	imx6dl-sabresd.dtb \
+> +	imx6qp-sabresd.dtb \
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/at91/pmc.c       |  7 -------
- include/linux/clk/at91_pmc.h | 12 ------------
- 2 files changed, 19 deletions(-)
+Please keep the list sort alphabetically.  That said,
+imx6qp-sabresd.dtb should be added after imx6q-* ones.
 
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 361ea0c1d3c9..dce285549de2 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -12,7 +12,6 @@
- #include <linux/clkdev.h>
- #include <linux/clk/at91_pmc.h>
- #include <linux/of.h>
--#include <linux/of_address.h>
- #include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
- 
-@@ -29,9 +28,6 @@ struct at91_pmc {
- 	const struct at91_pmc_caps *caps;
- };
- 
--void __iomem *at91_pmc_base;
--EXPORT_SYMBOL_GPL(at91_pmc_base);
--
- int of_at91_get_clk_range(struct device_node *np, const char *propname,
- 			  struct clk_range *range)
- {
-@@ -108,11 +104,8 @@ static void __init of_at91_pmc_setup(struct device_node *np,
- 				     const struct at91_pmc_caps *caps)
- {
- 	struct at91_pmc *pmc;
--	void __iomem *regbase = of_iomap(np, 0);
- 	struct regmap *regmap;
- 
--	at91_pmc_base = regbase;
--
- 	regmap = syscon_node_to_regmap(np);
- 	if (IS_ERR(regmap))
- 		panic("Could not retrieve syscon regmap");
-diff --git a/include/linux/clk/at91_pmc.h b/include/linux/clk/at91_pmc.h
-index 1e6932222e11..17f413bbbedf 100644
---- a/include/linux/clk/at91_pmc.h
-+++ b/include/linux/clk/at91_pmc.h
-@@ -16,18 +16,6 @@
- #ifndef AT91_PMC_H
- #define AT91_PMC_H
- 
--#ifndef __ASSEMBLY__
--extern void __iomem *at91_pmc_base;
--
--#define at91_pmc_read(field) \
--	readl_relaxed(at91_pmc_base + field)
--
--#define at91_pmc_write(field, value) \
--	writel_relaxed(value, at91_pmc_base + field)
--#else
--.extern at91_pmc_base
--#endif
--
- #define	AT91_PMC_SCER		0x00			/* System Clock Enable Register */
- #define	AT91_PMC_SCDR		0x04			/* System Clock Disable Register */
- 
--- 
-2.5.0
+>  	imx6dl-tx6dl-comtft.dtb \
+>  	imx6dl-tx6u-801x.dtb \
+>  	imx6dl-tx6u-811x.dtb \
+> diff --git a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
+> index a6d445c..f65f57b 100644
+> --- a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
+> +++ b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
+> @@ -238,6 +238,7 @@
+>  				regulator-max-microvolt = <3300000>;
+>  				regulator-boot-on;
+>  				regulator-always-on;
+> +				regulator-ramp-delay = <6250>;
+
+So this change applies to imx6q and imx6dl sabresd as well?
+
+>  			};
+>  
+>  			sw3a_reg: sw3a {
+> diff --git a/arch/arm/boot/dts/imx6qp-sabresd.dts b/arch/arm/boot/dts/imx6qp-sabresd.dts
+> new file mode 100644
+> index 0000000..c3ab2b6
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx6qp-sabresd.dts
+> @@ -0,0 +1,59 @@
+> +/*
+> + * Copyright (C) 2015 Freescale Semiconductor, Inc.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include "imx6q-sabresd.dts"
+> +#include "imx6qp.dtsi"
+
+Ah, that's why you do not include "imx6qdl.dtsi" in imx6qp.dtsi.  I have
+a question with this approach.  How people should write his imx6qp board
+dts file, if his board never has an imx6q version?
+
+> +
+> +/ {
+> +	model = "Freescale i.MX6 Quad Plus SABRE Smart Device Board";
+> +	compatible = "fsl,imx6qp-sabresd", "fsl,imx6qp";
+> +};
+> +
+> +&cpu0 {
+> +	arm-supply = <&sw2_reg>;
+> +};
+> +
+> +&iomuxc {
+> +	imx6qdl-sabresd {
+
+Since commit 5fcdf6a7ed95 (pinctrl: imx: Allow parsing DT without
+function nodes), this additional container node can just be saved.
+
+Shawn
+
+> +		pinctrl_usdhc2: usdhc2grp {
+> +			fsl,pins = <
+> +				MX6QDL_PAD_SD2_CMD__SD2_CMD		0x17059
+> +				MX6QDL_PAD_SD2_CLK__SD2_CLK		0x10071
+> +				MX6QDL_PAD_SD2_DAT0__SD2_DATA0		0x17059
+> +				MX6QDL_PAD_SD2_DAT1__SD2_DATA1		0x17059
+> +				MX6QDL_PAD_SD2_DAT2__SD2_DATA2		0x17059
+> +				MX6QDL_PAD_SD2_DAT3__SD2_DATA3		0x17059
+> +				MX6QDL_PAD_NANDF_D4__SD2_DATA4		0x17059
+> +				MX6QDL_PAD_NANDF_D5__SD2_DATA5		0x17059
+> +				MX6QDL_PAD_NANDF_D6__SD2_DATA6		0x17059
+> +				MX6QDL_PAD_NANDF_D7__SD2_DATA7		0x17059
+> +			>;
+> +		};
+> +
+> +		pinctrl_usdhc3: usdhc3grp {
+> +			fsl,pins = <
+> +				MX6QDL_PAD_SD3_CMD__SD3_CMD		0x17059
+> +				MX6QDL_PAD_SD3_CLK__SD3_CLK		0x10071
+> +				MX6QDL_PAD_SD3_DAT0__SD3_DATA0		0x17059
+> +				MX6QDL_PAD_SD3_DAT1__SD3_DATA1		0x17059
+> +				MX6QDL_PAD_SD3_DAT2__SD3_DATA2		0x17059
+> +				MX6QDL_PAD_SD3_DAT3__SD3_DATA3		0x17059
+> +				MX6QDL_PAD_SD3_DAT4__SD3_DATA4		0x17059
+> +				MX6QDL_PAD_SD3_DAT5__SD3_DATA5		0x17059
+> +				MX6QDL_PAD_SD3_DAT6__SD3_DATA6		0x17059
+> +				MX6QDL_PAD_SD3_DAT7__SD3_DATA7		0x17059
+> +			>;
+> +		};
+> +	};
+> +};
+> +
+> +&pcie {
+> +	power-on-gpio = <&gpio3 19 0>;
+> +	reset-gpio = <&gpio7 12 0>;
+> +	status = "okay";
+> +};
+> -- 
+> 1.9.1
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
