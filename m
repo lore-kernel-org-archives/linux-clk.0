@@ -1,48 +1,46 @@
-Return-Path: <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v3 2/4] clk: s2mps11: allocate only one structure for clock
- init
-To: Andi Shyti <andi.shyti@samsung.com>, linux-samsung-soc@vger.kernel.org
-References: <1453284864-8082-1-git-send-email-andi.shyti@samsung.com>
- <1453284864-8082-3-git-send-email-andi.shyti@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Andi Shyti <andi@etezian.org>,
- Yadwinder Singh Brar <yadi.brar01@gmail.com>,
- Jaehoon Chung <jh80.chung@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <56A02519.4050207@samsung.com>
-Date: Thu, 21 Jan 2016 09:23:53 +0900
-MIME-version: 1.0
-In-reply-to: <1453284864-8082-3-git-send-email-andi.shyti@samsung.com>
-Content-type: text/plain; charset=windows-1252
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH] clk: ti: omap3+: dpll: use non-locking version of
+ clk_get_rate
+To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+References: <1453981067-8618-1-git-send-email-t-kristo@ti.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <56A9FED1.3090903@ti.com>
+Date: Thu, 28 Jan 2016 13:43:13 +0200
+MIME-Version: 1.0
+In-Reply-To: <1453981067-8618-1-git-send-email-t-kristo@ti.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 20.01.2016 19:14, Andi Shyti wrote:
-> The driver allocates three structures, s2mpsxx_clk_init, for
-> three different clock types (s2mps11, s2mps13 and s2mps14). They
-> are quite similar but they differ only by the name. Only one of
-> these structures is used, while the others lie unused in the
-> memory.
-> 
-> The clock's name, though, is not such a meaningful information
-> and by assigning the same name to the initial data we can avoid
-> over allocation. The common name chosen will be s2mps11,
-> coherently with the device driver name, instead of the clock
-> device.
-> 
-> Therefore, remove the structures associated to s2mps13 and
-> s2mps14 and use only the one referred to s2mps11 for all kind of
-> clocks.
-> 
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+On 01/28/2016 01:37 PM, Tero Kristo wrote:
+> As the code in this file is being executed within irq context in some
+> cases, we must avoid the clk_get_rate which uses mutex internally.
+> Switch the code to use clk_hw_get_rate instead which is non-locking.
+>
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+
+Ooops, sorry. Sent wrong version (read: old) of this patch, please 
+ignore this one. Will re-send the correct version in a bit.
+
+-Tero
+
 > ---
->  drivers/clk/clk-s2mps11.c | 51 +++++++----------------------------------------
->  1 file changed, 7 insertions(+), 44 deletions(-)
-> 
-
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Best regards,
-Krzysztof
+>   drivers/clk/ti/dpll3xxx.c |    3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
+> index f4dec00..7ed24bc 100644
+> --- a/drivers/clk/ti/dpll3xxx.c
+> +++ b/drivers/clk/ti/dpll3xxx.c
+> @@ -437,7 +437,8 @@ int omap3_noncore_dpll_enable(struct clk_hw *hw)
+>
+>   	parent = clk_hw_get_parent(hw);
+>
+> -	if (clk_hw_get_rate(hw) == clk_get_rate(dd->clk_bypass)) {
+> +	if (clk_hw_get_rate(hw) ==
+> +	    clk_hw_get_rate(__clk_get_hw(dd->clk_bypass))) {
+>   		WARN_ON(parent != __clk_get_hw(dd->clk_bypass));
+>   		r = _omap3_noncore_dpll_bypass(clk);
+>   	} else {
+>
