@@ -1,58 +1,35 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	Pankaj Dev <pankaj.dev@st.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: st: avoid uninitialized variable use
-Date: Mon, 25 Jan 2016 16:54:04 +0100
-Message-Id: <1453737255-1959849-1-git-send-email-arnd@arndb.de>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 28 Jan 2016 00:31:12 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 03/13] clk: at91: remove IRQ handling and use polling
+Message-ID: <20160128083112.GJ12841@codeaurora.org>
+References: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
+ <1453911072-23608-4-git-send-email-alexandre.belloni@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1453911072-23608-4-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-My previous patch fixed some warnings about printing a couple
-of variables that are always uninitialized in quadfs_pll_fs660c32_set_rate(),
-but I now got a warning that only shows up in some configurations (i.e.
-without gcc -Os) about the params.ndiv being used uninitialized in the
-error case:
+On 01/27, Alexandre Belloni wrote:
+> The AT91 clock drivers make use of IRQs to avoid polling when waiting for
+> some clocks to be enabled. Unfortunately, this leads to a crash when those
+> IRQs are threaded (which happens when using preempt-rt) because they are
+> registered before thread creation is possible.
+> 
+> Use polling on those clocks instead to avoid the problem.
+> 
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> ---
 
-drivers/clk/st/clkgen-fsyn.c: In function 'quadfs_pll_fs660c32_set_rate':
-drivers/clk/st/clkgen-fsyn.c:584:75: warning: 'params.ndiv' may be used uninitialized in this function [-Wmaybe-uninitialized]
-drivers/clk/st/clkgen-fsyn.c:574:16: note: 'params.ndiv' was declared here
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-This changes the error handling so we bail for invalid arguments rather
-than continuing with uninitialized data.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/clk/st/clkgen-fsyn.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
-index ccb324d97160..dec4eaaecc00 100644
---- a/drivers/clk/st/clkgen-fsyn.c
-+++ b/drivers/clk/st/clkgen-fsyn.c
-@@ -574,12 +574,16 @@ static int quadfs_pll_fs660c32_set_rate(struct clk_hw *hw, unsigned long rate,
- 	struct stm_fs params;
- 	long hwrate = 0;
- 	unsigned long flags = 0;
-+	int ret;
- 
- 	if (!rate || !parent_rate)
- 		return -EINVAL;
- 
--	if (!clk_fs660c32_vco_get_params(parent_rate, rate, &params))
--		clk_fs660c32_vco_get_rate(parent_rate, &params, &hwrate);
-+	ret = clk_fs660c32_vco_get_params(parent_rate, rate, &params);
-+	if (ret)
-+		return ret;
-+
-+	clk_fs660c32_vco_get_rate(parent_rate, &params, &hwrate);
- 
- 	pr_debug("%s: %s new rate %ld [ndiv=0x%x]\n",
- 		 __func__, clk_hw_get_name(hw),
 -- 
-2.7.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
