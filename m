@@ -1,46 +1,40 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v4 09/13] ARM: at91: remove useless includes and function prototypes
-Date: Wed, 27 Jan 2016 17:11:08 +0100
-Message-Id: <1453911072-23608-10-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:42367 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1161505AbcA1RBK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Thu, 28 Jan 2016 12:01:10 -0500
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Alexander Kochetkov <al.kochet@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: rockchip: Allow sclk_i2s0 and i2s0_frac to change their parents rate on rk3188
+Date: Thu, 28 Jan 2016 18:01:08 +0100
+Message-ID: <1687954.9WCMHmWDJQ@diego>
+In-Reply-To: <1453897469-2134-1-git-send-email-al.kochet@gmail.com>
+References: <1453897469-2134-1-git-send-email-al.kochet@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Remove leftover from the previous cleanup
+Hi Alexander,
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- arch/arm/mach-at91/generic.h | 7 -------
- 1 file changed, 7 deletions(-)
+Am Mittwoch, 27. Januar 2016, 15:24:29 schrieb Alexander Kochetkov:
+> Allow sclk_i2s0 and i2s0_frac to change their parents rate as
+> that the upstream dividers are purely there to feed sclk_i2s0
+> 
+> Tested on radxarock-lite.
+> 
+> Signed-off-by: Alexander Kochetkov <al.kochet@gmail.com>
 
-diff --git a/arch/arm/mach-at91/generic.h b/arch/arm/mach-at91/generic.h
-index d224e195706a..28ca57a2060f 100644
---- a/arch/arm/mach-at91/generic.h
-+++ b/arch/arm/mach-at91/generic.h
-@@ -11,13 +11,6 @@
- #ifndef _AT91_GENERIC_H
- #define _AT91_GENERIC_H
- 
--#include <linux/of.h>
--#include <linux/reboot.h>
--
-- /* Map io */
--extern void __init at91_map_io(void);
--extern void __init at91_alt_map_io(void);
--
- #ifdef CONFIG_PM
- extern void __init at91rm9200_pm_init(void);
- extern void __init at91sam9260_pm_init(void);
--- 
-2.5.0
+doesn't apply due to the fractional divider change going into 4.5
+
+please respin on top of 4.5-rc1 (or my clock-branch for 4.6 [0],
+but should be the same in that regard).
+
+
+Thanks
+Heiko
+
+[0] https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.git/log/?h=v4.6-clk/next
+
