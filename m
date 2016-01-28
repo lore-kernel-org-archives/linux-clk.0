@@ -1,70 +1,81 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Bresticker <abrestic@chromium.org>,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [Patch V2 5/9] clk: tegra: pll: Fix potential sleeping-while-atomic
-Date: Thu, 14 Jan 2016 14:24:34 -0500
-Message-ID: <1452799478-14791-6-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
-References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+ Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v4 0/3] arm64/clk: EXYNOS: Consolidate Exynos7 symbol
+Date: Thu, 28 Jan 2016 09:35:21 +0900
+Message-id: <1453941324-15742-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Andrew Bresticker <abrestic@chromium.org>
+Hi,
 
-Since the ->enable() callback is called with a spinlock held, we cannot
-call potentially blocking functions such as clk_get_rate() or
-clk_get_parent(), so use the unlocked versions instead.
+Patchset attempts to remove the ARCH_EXYNOS7 symbol.
 
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-[rklein: Adapted from ChromeOS patch, removing pllu_enable cleanup as
-it isn't present upstream]
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+All patches depend on previous ones so no cherry-picked.
+I was thinking about merging this through arm-soc tree after getting
+needed acks (clk, arm-soc?).
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index a534bfab30b3..65156486889a 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -880,7 +880,7 @@ static int clk_plle_training(struct tegra_clk_pll *pll)
- static int clk_plle_enable(struct clk_hw *hw)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
--	unsigned long input_rate = clk_get_rate(clk_get_parent(hw->clk));
-+	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
- 	struct tegra_clk_pll_freq_table sel;
- 	u32 val;
- 	int err;
-@@ -1378,7 +1378,7 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
- 	u32 val;
- 	int ret;
- 	unsigned long flags = 0;
--	unsigned long input_rate = clk_get_rate(clk_get_parent(hw->clk));
-+	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
- 
- 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
- 		return -EINVAL;
-@@ -2014,7 +2014,7 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	u32 val;
- 	int ret;
- 	unsigned long flags = 0;
--	unsigned long input_rate = clk_get_rate(clk_get_parent(hw->clk));
-+	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
- 
- 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
- 		return -EINVAL;
+
+Changes since v3:
+=================
+1. Rebase on next-20160127 (s3c64xx became multiplatform).
+
+Changes since v2:
+=================
+1. Follow Arnd's advice about not enabling silently the newly added
+   EXYNOS_ARM64_COMMON_CLK, when COMPILE_TEST is enabled. This was
+   also a trigger for some changes in placement of Samsung clocks
+   Kconfig entries...
+2. ... which lead to introducing patch 1.
+
+
+Logic:
+======
+Now the clock selection algorithm works like:
+1. For Exynos ARMv7 and ARMv8 the platforms select COMMON_CLK
+   and COMMON_CLK_SAMSUNG.
+2. As before: clock drivers for Exynos ARMv7 will be selected by
+   respective SOC/ARCH_EXYNOS_XXX symbol.
+3. For Exynos ARMv8 the clock drivers will be enabled by default
+   by EXYNOS_ARM64_COMMON_CLK symbol.
+
+Rationale:
+==========
+We don't need ARCH_EXYNOS7 symbol because all ARMv8 platforms should
+fall under generic ARCH_EXYNOS. In the same time there is no sense
+in building clocks for these ARMv8 SoCs on ARMv7 builds.
+
+
+Best regards,
+Krzysztof
+
+
+Krzysztof Kozlowski (3):
+  clk: samsung: Enable COMPILE_TEST for Samsung clocks
+  clk: samsung: Don't build ARMv8 clock drivers on ARMv7
+  arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into ARCH_EXYNOS
+
+ arch/arm/mach-exynos/Kconfig        |  1 +
+ arch/arm/mach-s3c24xx/Kconfig       |  8 ++++++++
+ arch/arm/mach-s3c64xx/Kconfig       |  1 +
+ arch/arm/mach-s5pv210/Kconfig       |  1 +
+ arch/arm64/Kconfig.platforms        | 12 +++---------
+ arch/arm64/boot/dts/exynos/Makefile |  2 +-
+ arch/arm64/configs/defconfig        |  2 +-
+ drivers/clk/Kconfig                 |  2 +-
+ drivers/clk/samsung/Kconfig         | 14 +++++++++-----
+ drivers/clk/samsung/Makefile        |  4 ++--
+ 10 files changed, 28 insertions(+), 19 deletions(-)
+
 -- 
 1.9.1
