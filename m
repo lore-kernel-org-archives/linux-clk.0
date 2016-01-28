@@ -1,139 +1,82 @@
-Return-Path: <wens@csie.org>
+Return-Path: <shawnguo@kernel.org>
+Date: Thu, 28 Jan 2016 16:10:40 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Bai Ping <b51503@freescale.com>
+Cc: kernel@pengutronix.de, pawel.moll@arm.com, robh+dt@kernel.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] ARM: imx: Add msl code support for imx6qp
+Message-ID: <20160128081040.GO9070@tiger>
+References: <1450159673-27314-1-git-send-email-b51503@freescale.com>
+ <1450159673-27314-6-git-send-email-b51503@freescale.com>
 MIME-Version: 1.0
-In-Reply-To: <1452785109-6172-12-git-send-email-maxime.ripard@free-electrons.com>
-References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
- <1452785109-6172-12-git-send-email-maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sun, 17 Jan 2016 01:10:02 +0800
-Message-ID: <CAGb2v65gCieH2-WS+1WeBNCVqRyw8fOxODdSC5xeKf-hkfgs6A@mail.gmail.com>
-Subject: Re: [PATCH v2 11/26] ARM: sun5i: Add DRAM gates
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>, Wynter Woods <wynter@nextthing.co>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1450159673-27314-6-git-send-email-b51503@freescale.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 14, 2016 at 11:24 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The DRAM gates control whether the image / display devices on the SoC have
-> access to the DRAM clock or not.
->
-> Enable it.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+On Tue, Dec 15, 2015 at 02:07:53PM +0800, Bai Ping wrote:
+> The i.MX6QP is a different SOC, but internally we treate
+> it as i.MX6Q Rev_2.0 to maximum the code reusability. The chip
+> silicon number we read from the ANADIG_DIGPROG is 0x630100. This
+> patch add code to identify it as i.MX6QP Rev_1.0 when print out the
+> silicon version.
+> 
+> Signed-off-by: Bai Ping <b51503@freescale.com>
 > ---
->  arch/arm/boot/dts/sun5i-a10s.dtsi |  7 ++++---
->  arch/arm/boot/dts/sun5i-a13.dtsi  |  2 +-
->  arch/arm/boot/dts/sun5i-r8.dtsi   |  2 +-
->  arch/arm/boot/dts/sun5i.dtsi      | 19 +++++++++++++++++++
->  4 files changed, 25 insertions(+), 5 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/sun5i-a10s.dtsi b/arch/arm/boot/dts/sun5i-a10s.dtsi
-> index bddd0de88af6..52d2c79cb37b 100644
-> --- a/arch/arm/boot/dts/sun5i-a10s.dtsi
-> +++ b/arch/arm/boot/dts/sun5i-a10s.dtsi
-> @@ -66,7 +66,7 @@
->                                      "simple-framebuffer";
->                         allwinner,pipeline = "de_be0-lcd0-hdmi";
->                         clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 43>,
-> -                                <&ahb_gates 44>;
-> +                                <&ahb_gates 44>, <&dram_gates 26>;
->                         status = "disabled";
->                 };
->
-> @@ -74,7 +74,8 @@
->                         compatible = "allwinner,simple-framebuffer",
->                                      "simple-framebuffer";
->                         allwinner,pipeline = "de_be0-lcd0";
-> -                       clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 44>;
-> +                       clocks = <&pll5 1>, <&ahb_gates 36>, <&ahb_gates 44>,
-> +                                <&dram_gates 26>;
->                         status = "disabled";
->                 };
->
-> @@ -83,7 +84,7 @@
->                                      "simple-framebuffer";
->                         allwinner,pipeline = "de_be0-lcd0-tve0";
->                         clocks = <&pll5 1>, <&ahb_gates 34>, <&ahb_gates 36>,
-> -                                <&ahb_gates 44>;
-> +                                <&ahb_gates 44>, <&dram_gates 26>;
->                         status = "disabled";
->                 };
->         };
-> diff --git a/arch/arm/boot/dts/sun5i-a13.dtsi b/arch/arm/boot/dts/sun5i-a13.dtsi
-> index 9669b03f20f3..f29163650ca8 100644
-> --- a/arch/arm/boot/dts/sun5i-a13.dtsi
-> +++ b/arch/arm/boot/dts/sun5i-a13.dtsi
-> @@ -62,7 +62,7 @@
->                                      "simple-framebuffer";
->                         allwinner,pipeline = "de_be0-lcd0";
->                         clocks = <&ahb_gates 36>, <&ahb_gates 44>, <&de_be_clk>,
-> -                                <&tcon_ch0_clk>;
-> +                                <&tcon_ch0_clk>, <&dram_gates 26>;
->                         status = "disabled";
->                 };
->         };
-> diff --git a/arch/arm/boot/dts/sun5i-r8.dtsi b/arch/arm/boot/dts/sun5i-r8.dtsi
-> index b1e4e0170d51..691d3de75b35 100644
-> --- a/arch/arm/boot/dts/sun5i-r8.dtsi
-> +++ b/arch/arm/boot/dts/sun5i-r8.dtsi
-> @@ -53,7 +53,7 @@
->                         allwinner,pipeline = "de_be0-lcd0-tve0";
->                         clocks = <&ahb_gates 34>, <&ahb_gates 36>,
->                                  <&ahb_gates 44>, <&de_be_clk>,
-> -                                <&tcon_ch1_clk>;
-> +                                <&tcon_ch1_clk>, <&dram_gates 26>;
->                         status = "disabled";
->                 };
->         };
-> diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
-> index 0840612b5ed6..c72d94228915 100644
-> --- a/arch/arm/boot/dts/sun5i.dtsi
-> +++ b/arch/arm/boot/dts/sun5i.dtsi
-> @@ -338,6 +338,25 @@
->                         clock-output-names = "usb_ohci0", "usb_phy";
->                 };
->
-> +               dram_gates: clk@01c20100 {
-> +                       #clock-cells = <1>;
-> +                       compatible = "allwinner,sun5i-a13-dram-gates-clk";
-> +                       reg = <0x01c20100 0x4>;
-> +                       clocks = <&pll5 0>;
-> +                       clock-indices = <0>,
-> +                                       <1>,
+>  arch/arm/mach-imx/anatop.c     | 5 ++++-
+>  arch/arm/mach-imx/mach-imx6q.c | 8 ++++++--
+>  2 files changed, 10 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm/mach-imx/anatop.c b/arch/arm/mach-imx/anatop.c
+> index 231bb25..9622763 100644
+> --- a/arch/arm/mach-imx/anatop.c
+> +++ b/arch/arm/mach-imx/anatop.c
+> @@ -129,7 +129,10 @@ void __init imx_init_revision_from_anatop(void)
+>  
+>  	switch (digprog & 0xff) {
+>  	case 0:
+> -		revision = IMX_CHIP_REVISION_1_0;
+> +		if (digprog >> 8 & 0x01)
+> +			revision = IMX_CHIP_REVISION_2_0;
+> +		else
+> +			revision = IMX_CHIP_REVISION_1_0;
 
-According to A10s manual, bit 3 is DRAM clock for TS (transport stream
-decoder), while bit 5 is for the TV encoder.
+Please at least add some comment here to help us remember that this is
+a trick we play for i.MX6QP.
 
-The others look good.
+Shawn
 
-ChenYu
-
-> +                                       <25>,
-> +                                       <26>,
-> +                                       <29>,
-> +                                       <31>;
-> +                       clock-output-names = "dram_ve",
-> +                                            "dram_csi",
-> +                                            "dram_de_fe",
-> +                                            "dram_de_be",
-> +                                            "dram_ace",
-> +                                            "dram_iep";
-> +               };
-> +
->                 codec_clk: clk@01c20140 {
->                         #clock-cells = <0>;
->                         compatible = "allwinner,sun4i-a10-codec-clk";
-> --
-> 2.6.4
->
+>  		break;
+>  	case 1:
+>  		revision = IMX_CHIP_REVISION_1_1;
+> diff --git a/arch/arm/mach-imx/mach-imx6q.c b/arch/arm/mach-imx/mach-imx6q.c
+> index 3878494b..cb27d56 100644
+> --- a/arch/arm/mach-imx/mach-imx6q.c
+> +++ b/arch/arm/mach-imx/mach-imx6q.c
+> @@ -266,8 +266,11 @@ static void __init imx6q_init_machine(void)
+>  {
+>  	struct device *parent;
+>  
+> -	imx_print_silicon_rev(cpu_is_imx6dl() ? "i.MX6DL" : "i.MX6Q",
+> -			      imx_get_soc_revision());
+> +	if (cpu_is_imx6q() && imx_get_soc_revision() == IMX_CHIP_REVISION_2_0)
+> +		imx_print_silicon_rev("i.MX6QP", IMX_CHIP_REVISION_1_0);
+> +	else
+> +		imx_print_silicon_rev(cpu_is_imx6dl() ? "i.MX6DL" : "i.MX6Q",
+> +				imx_get_soc_revision());
+>  
+>  	parent = imx_soc_device_init();
+>  	if (parent == NULL)
+> @@ -399,6 +402,7 @@ static void __init imx6q_init_irq(void)
+>  static const char * const imx6q_dt_compat[] __initconst = {
+>  	"fsl,imx6dl",
+>  	"fsl,imx6q",
+> +	"fsl,imx6qp",
+>  	NULL,
+>  };
+>  
+> -- 
+> 1.9.1
+> 
+> 
