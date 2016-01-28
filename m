@@ -1,166 +1,70 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Wynter Woods <wynter@nextthing.co>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 06/26] clk: sunxi: Add PLL3 clock
-Date: Thu, 14 Jan 2016 16:24:49 +0100
-Message-Id: <1452785109-6172-7-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <ping.bai@nxp.com>
+From: Ping Bai <ping.bai@nxp.com>
+To: Shawn Guo <shawnguo@kernel.org>
+CC: "kernel@pengutronix.de" <kernel@pengutronix.de>, "pawel.moll@arm.com"
+	<pawel.moll@arm.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
+	<sboyd@codeaurora.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "jacky.baip@gmail.com" <jacky.baip@gmail.com>
+Subject: RE: [PATCH v2 5/5] ARM: imx: Add msl code support for imx6qp
+Date: Thu, 28 Jan 2016 10:45:09 +0000
+Message-ID: <DB4PR04MB538330DB5505E84CA55A91187DA0@DB4PR04MB538.eurprd04.prod.outlook.com>
+References: <1450159673-27314-1-git-send-email-b51503@freescale.com>
+ <1450159673-27314-6-git-send-email-b51503@freescale.com>
+ <20160128081040.GO9070@tiger>
+In-Reply-To: <20160128081040.GO9070@tiger>
+Content-Type: text/plain; charset="gb2312"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-The A10 SoCs and relatives have a PLL controller to drive the PLL3 and
-PLL7, clocked from a 3MHz oscillator, that drives the display related
-clocks (GPU, display engine, TCON, etc.)
-
-Add a driver for it.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
- drivers/clk/sunxi/Makefile                        |  1 +
- drivers/clk/sunxi/clk-sun4i-pll3.c                | 90 +++++++++++++++++++++++
- 3 files changed, 92 insertions(+)
- create mode 100644 drivers/clk/sunxi/clk-sun4i-pll3.c
-
-diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-index 5360554a7d3f..bb9fb78dcff8 100644
---- a/Documentation/devicetree/bindings/clock/sunxi.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-@@ -10,6 +10,7 @@ Required properties:
- 	"allwinner,sun4i-a10-pll1-clk" - for the main PLL clock and PLL4
- 	"allwinner,sun6i-a31-pll1-clk" - for the main PLL clock on A31
- 	"allwinner,sun8i-a23-pll1-clk" - for the main PLL clock on A23
-+	"allwinner,sun4i-a10-pll3-clk" - for the video PLL clock on A10
- 	"allwinner,sun9i-a80-pll4-clk" - for the peripheral PLLs on A80
- 	"allwinner,sun4i-a10-pll5-clk" - for the PLL5 clock
- 	"allwinner,sun4i-a10-pll6-clk" - for the PLL6 clock
-diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-index a991cd8ca509..40c32ffd912c 100644
---- a/drivers/clk/sunxi/Makefile
-+++ b/drivers/clk/sunxi/Makefile
-@@ -11,6 +11,7 @@ obj-y += clk-a20-gmac.o
- obj-y += clk-mod0.o
- obj-y += clk-simple-gates.o
- obj-y += clk-sun4i-display.o
-+obj-y += clk-sun4i-pll3.o
- obj-y += clk-sun8i-mbus.o
- obj-y += clk-sun9i-core.o
- obj-y += clk-sun9i-mmc.o
-diff --git a/drivers/clk/sunxi/clk-sun4i-pll3.c b/drivers/clk/sunxi/clk-sun4i-pll3.c
-new file mode 100644
-index 000000000000..6c9c2210b6b2
---- /dev/null
-+++ b/drivers/clk/sunxi/clk-sun4i-pll3.c
-@@ -0,0 +1,90 @@
-+/*
-+ * Copyright 2015 Maxime Ripard
-+ *
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+
-+#define SUN4I_A10_PLL3_GATE_BIT	31
-+#define SUN4I_A10_PLL3_DIV_WIDTH	7
-+#define SUN4I_A10_PLL3_DIV_SHIFT	0
-+
-+static DEFINE_SPINLOCK(sun4i_a10_pll3_lock);
-+
-+static void __init sun4i_a10_pll3_setup(struct device_node *node)
-+{
-+	const char *clk_name = node->name, *parent;
-+	struct clk_multiplier *mult;
-+	struct clk_gate *gate;
-+	void __iomem *reg;
-+	struct clk *clk;
-+	int ret;
-+
-+	of_property_read_string(node, "clock-output-names", &clk_name);
-+	parent = of_clk_get_parent_name(node, 0);
-+
-+	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
-+	if (IS_ERR(reg)) {
-+		pr_err("%s: Could not map the clock registers\n", clk_name);
-+		return;
-+	}
-+
-+	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+	if (!gate)
-+		return;
-+
-+	gate->reg = reg;
-+	gate->bit_idx = SUN4I_A10_PLL3_GATE_BIT;
-+	gate->lock = &sun4i_a10_pll3_lock;
-+
-+	mult = kzalloc(sizeof(*mult), GFP_KERNEL);
-+	if (!mult)
-+		goto err_free_gate;
-+
-+	mult->reg = reg;
-+	mult->shift = SUN4I_A10_PLL3_DIV_SHIFT;
-+	mult->width = SUN4I_A10_PLL3_DIV_WIDTH;
-+	mult->lock = &sun4i_a10_pll3_lock;
-+
-+	clk = clk_register_composite(NULL, clk_name,
-+				     &parent, 1,
-+				     NULL, NULL,
-+				     &mult->hw, &clk_multiplier_ops,
-+				     &gate->hw, &clk_gate_ops,
-+				     0);
-+	if (IS_ERR(clk)) {
-+		pr_err("%s: Couldn't register the clock\n", clk_name);
-+		goto err_free_mult;
-+	}
-+
-+	ret = of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	if (WARN_ON(ret))
-+		goto err_clk_unregister;
-+
-+	return;
-+
-+err_clk_unregister:
-+	clk_unregister_composite(clk);
-+err_free_mult:
-+	kfree(mult);
-+err_free_gate:
-+	kfree(gate);
-+}
-+
-+CLK_OF_DECLARE(sun4i_a10_pll3, "allwinner,sun4i-a10-pll3-clk",
-+	       sun4i_a10_pll3_setup);
--- 
-2.6.4
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU2hhd24gR3VvIFttYWls
+dG86c2hhd25ndW9Aa2VybmVsLm9yZ10NCj4gU2VudDogMjAxNsTqMdTCMjjI1SAxNjoxMQ0KPiBU
+bzogYjUxNTAzQGZyZWVzY2FsZS5jb20NCj4gQ2M6IGtlcm5lbEBwZW5ndXRyb25peC5kZTsgcGF3
+ZWwubW9sbEBhcm0uY29tOyByb2JoK2R0QGtlcm5lbC5vcmc7DQo+IG10dXJxdWV0dGVAYmF5bGli
+cmUuY29tOyBzYm95ZEBjb2RlYXVyb3JhLm9yZzsgbGludXgtYXJtLQ0KPiBrZXJuZWxAbGlzdHMu
+aW5mcmFkZWFkLm9yZzsgbGludXgtY2xrQHZnZXIua2VybmVsLm9yZzsNCj4gZGV2aWNldHJlZUB2
+Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MiA1LzVdIEFSTTogaW14OiBB
+ZGQgbXNsIGNvZGUgc3VwcG9ydCBmb3IgaW14NnFwDQo+IA0KPiBPbiBUdWUsIERlYyAxNSwgMjAx
+NSBhdCAwMjowNzo1M1BNICswODAwLCBCYWkgUGluZyB3cm90ZToNCj4gPiBUaGUgaS5NWDZRUCBp
+cyBhIGRpZmZlcmVudCBTT0MsIGJ1dCBpbnRlcm5hbGx5IHdlIHRyZWF0ZSBpdCBhcyBpLk1YNlEN
+Cj4gPiBSZXZfMi4wIHRvIG1heGltdW0gdGhlIGNvZGUgcmV1c2FiaWxpdHkuIFRoZSBjaGlwIHNp
+bGljb24gbnVtYmVyIHdlDQo+ID4gcmVhZCBmcm9tIHRoZSBBTkFESUdfRElHUFJPRyBpcyAweDYz
+MDEwMC4gVGhpcyBwYXRjaCBhZGQgY29kZSB0bw0KPiA+IGlkZW50aWZ5IGl0IGFzIGkuTVg2UVAg
+UmV2XzEuMCB3aGVuIHByaW50IG91dCB0aGUgc2lsaWNvbiB2ZXJzaW9uLg0KPiA+DQo+ID4gU2ln
+bmVkLW9mZi1ieTogQmFpIFBpbmcgPGI1MTUwM0BmcmVlc2NhbGUuY29tPg0KPiA+IC0tLQ0KPiA+
+ICBhcmNoL2FybS9tYWNoLWlteC9hbmF0b3AuYyAgICAgfCA1ICsrKystDQo+ID4gIGFyY2gvYXJt
+L21hY2gtaW14L21hY2gtaW14NnEuYyB8IDggKysrKysrLS0NCj4gPiAgMiBmaWxlcyBjaGFuZ2Vk
+LCAxMCBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBh
+L2FyY2gvYXJtL21hY2gtaW14L2FuYXRvcC5jIGIvYXJjaC9hcm0vbWFjaC1pbXgvYW5hdG9wLmMN
+Cj4gPiBpbmRleCAyMzFiYjI1Li45NjIyNzYzIDEwMDY0NA0KPiA+IC0tLSBhL2FyY2gvYXJtL21h
+Y2gtaW14L2FuYXRvcC5jDQo+ID4gKysrIGIvYXJjaC9hcm0vbWFjaC1pbXgvYW5hdG9wLmMNCj4g
+PiBAQCAtMTI5LDcgKzEyOSwxMCBAQCB2b2lkIF9faW5pdCBpbXhfaW5pdF9yZXZpc2lvbl9mcm9t
+X2FuYXRvcCh2b2lkKQ0KPiA+DQo+ID4gIAlzd2l0Y2ggKGRpZ3Byb2cgJiAweGZmKSB7DQo+ID4g
+IAljYXNlIDA6DQo+ID4gLQkJcmV2aXNpb24gPSBJTVhfQ0hJUF9SRVZJU0lPTl8xXzA7DQo+ID4g
+KwkJaWYgKGRpZ3Byb2cgPj4gOCAmIDB4MDEpDQo+ID4gKwkJCXJldmlzaW9uID0gSU1YX0NISVBf
+UkVWSVNJT05fMl8wOw0KPiA+ICsJCWVsc2UNCj4gPiArCQkJcmV2aXNpb24gPSBJTVhfQ0hJUF9S
+RVZJU0lPTl8xXzA7DQo+IA0KPiBQbGVhc2UgYXQgbGVhc3QgYWRkIHNvbWUgY29tbWVudCBoZXJl
+IHRvIGhlbHAgdXMgcmVtZW1iZXIgdGhhdCB0aGlzIGlzIGEgdHJpY2sNCj4gd2UgcGxheSBmb3Ig
+aS5NWDZRUC4NCj4gDQogDQpXaWxsIGFkZHJlc3MgdGhpcyBpbiBwYXRjaCBWMy4gVGhhbmtzIGZv
+ciB5b3VyIHJldmlldy4NCg0KPiBTaGF3bg0KPiANCj4gPiAgCQlicmVhazsNCj4gPiAgCWNhc2Ug
+MToNCj4gPiAgCQlyZXZpc2lvbiA9IElNWF9DSElQX1JFVklTSU9OXzFfMTsNCj4gPiBkaWZmIC0t
+Z2l0IGEvYXJjaC9hcm0vbWFjaC1pbXgvbWFjaC1pbXg2cS5jDQo+ID4gYi9hcmNoL2FybS9tYWNo
+LWlteC9tYWNoLWlteDZxLmMgaW5kZXggMzg3ODQ5NGIuLmNiMjdkNTYgMTAwNjQ0DQo+ID4gLS0t
+IGEvYXJjaC9hcm0vbWFjaC1pbXgvbWFjaC1pbXg2cS5jDQo+ID4gKysrIGIvYXJjaC9hcm0vbWFj
+aC1pbXgvbWFjaC1pbXg2cS5jDQo+ID4gQEAgLTI2Niw4ICsyNjYsMTEgQEAgc3RhdGljIHZvaWQg
+X19pbml0IGlteDZxX2luaXRfbWFjaGluZSh2b2lkKSAgew0KPiA+ICAJc3RydWN0IGRldmljZSAq
+cGFyZW50Ow0KPiA+DQo+ID4gLQlpbXhfcHJpbnRfc2lsaWNvbl9yZXYoY3B1X2lzX2lteDZkbCgp
+ID8gImkuTVg2REwiIDogImkuTVg2USIsDQo+ID4gLQkJCSAgICAgIGlteF9nZXRfc29jX3Jldmlz
+aW9uKCkpOw0KPiA+ICsJaWYgKGNwdV9pc19pbXg2cSgpICYmIGlteF9nZXRfc29jX3JldmlzaW9u
+KCkgPT0NCj4gSU1YX0NISVBfUkVWSVNJT05fMl8wKQ0KPiA+ICsJCWlteF9wcmludF9zaWxpY29u
+X3JldigiaS5NWDZRUCIsIElNWF9DSElQX1JFVklTSU9OXzFfMCk7DQo+ID4gKwllbHNlDQo+ID4g
+KwkJaW14X3ByaW50X3NpbGljb25fcmV2KGNwdV9pc19pbXg2ZGwoKSA/ICJpLk1YNkRMIiA6ICJp
+Lk1YNlEiLA0KPiA+ICsJCQkJaW14X2dldF9zb2NfcmV2aXNpb24oKSk7DQo+ID4NCj4gPiAgCXBh
+cmVudCA9IGlteF9zb2NfZGV2aWNlX2luaXQoKTsNCj4gPiAgCWlmIChwYXJlbnQgPT0gTlVMTCkN
+Cj4gPiBAQCAtMzk5LDYgKzQwMiw3IEBAIHN0YXRpYyB2b2lkIF9faW5pdCBpbXg2cV9pbml0X2ly
+cSh2b2lkKSAgc3RhdGljDQo+ID4gY29uc3QgY2hhciAqIGNvbnN0IGlteDZxX2R0X2NvbXBhdFtd
+IF9faW5pdGNvbnN0ID0gew0KPiA+ICAJImZzbCxpbXg2ZGwiLA0KPiA+ICAJImZzbCxpbXg2cSIs
+DQo+ID4gKwkiZnNsLGlteDZxcCIsDQo+ID4gIAlOVUxMLA0KPiA+ICB9Ow0KPiA+DQo+ID4gLS0N
+Cj4gPiAxLjkuMQ0KPiA+DQo+ID4NCg==
