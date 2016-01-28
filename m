@@ -1,107 +1,67 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-Subject: Re: [PATCH v5 5/6] mfd: dt-bindings: add device tree bindings for
- Hi3519 sysctrl
-To: Lee Jones <lee.jones@linaro.org>
-References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
- <1452219400-32478-6-git-send-email-xuejiancheng@huawei.com>
- <20160111054846.GD3331@x1> <56935EA8.4060801@huawei.com>
- <20160111085555.GE14104@x1> <5694584D.7040301@huawei.com>
- <20160112074107.GK19803@x1>
-CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <p.zabel@pengutronix.de>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
-        <mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
-        <galak@codeaurora.org>, <linux@arm.linux.org.uk>, <khilman@linaro.org>,
-        <arnd@arndb.de>, <olof@lixom.net>, <xuwei5@hisilicon.com>,
-        <haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-        <bintian.wang@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-        <yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-        <ml.yang@hisilicon.com>, <gaofei@hisilicon.com>,
-        <zhangzhenxing@hisilicon.com>, <xuejiancheng@hisilicon.com>
-From: xuejiancheng <xuejiancheng@huawei.com>
-Message-ID: <5694B68A.6040300@huawei.com>
-Date: Tue, 12 Jan 2016 16:17:14 +0800
+Return-Path: <tony@atomide.com>
+Date: Thu, 28 Jan 2016 11:19:49 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: ti: omap3+: dpll: use non-locking version of
+ clk_get_rate
+Message-ID: <20160128191949.GK19432@atomide.com>
+References: <1453981067-8618-1-git-send-email-t-kristo@ti.com>
+ <56A9FED1.3090903@ti.com>
+ <20160128172215.GD19432@atomide.com>
+ <56AA6261.7030503@ti.com>
+ <20160128190026.GI19432@atomide.com>
+ <56AA6775.5090302@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20160112074107.GK19803@x1>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <56AA6775.5090302@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Lee,
+* Tero Kristo <t-kristo@ti.com> [160128 11:10]:
+> On 01/28/2016 09:00 PM, Tony Lindgren wrote:
+> >* Tero Kristo <t-kristo@ti.com> [160128 10:48]:
+> >>On 01/28/2016 07:22 PM, Tony Lindgren wrote:
+> >>>* Tero Kristo <t-kristo@ti.com> [160128 03:44]:
+> >>>>On 01/28/2016 01:37 PM, Tero Kristo wrote:
+> >>>>>As the code in this file is being executed within irq context in some
+> >>>>>cases, we must avoid the clk_get_rate which uses mutex internally.
+> >>>>>Switch the code to use clk_hw_get_rate instead which is non-locking.
+> >>>>>
+> >>>>>Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> >>>>
+> >>>>Ooops, sorry. Sent wrong version (read: old) of this patch, please ignore
+> >>>>this one. Will re-send the correct version in a bit.
+> >>>
+> >>>I think this is still needed as a fix for -rc cycle with cc: stable
+> >>>as otherwise we have omap4 and 5 hang if PM runtime is enabled before
+> >>>a suspend/resume cycle?
+> >>
+> >>Look at the other patch I sent, it should accomplish the same thing, and
+> >>more.
+> >>
+> >>https://www.spinics.net/lists/linux-clk/msg06094.html
+> >
+> >Right.. But is that suitable for the -rc cycle with cc stable?
+> 
+> Hmm yea, thats a good question, we may need to resurrect this patch after
+> all.
 
-On 2016/1/12 15:41, Lee Jones wrote:
-> On Tue, 12 Jan 2016, xuejiancheng wrote:
-> 
->>
->>
->> On 2016/1/11 16:55, Lee Jones wrote:
->>> On Mon, 11 Jan 2016, xuejiancheng wrote:
->>>> On 2016/1/11 13:48, Lee Jones wrote:
->>>>> On Fri, 08 Jan 2016, Jiancheng Xue wrote:
->>>>>
->>>>>> Add device tree bindings for Hi3519 system controller.
->>>>>>
->>>>>> Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
->>>>>> ---
->>>>>>  Documentation/devicetree/bindings/mfd/hi3519.txt | 14 ++++++++++++++
->>>>>>  1 file changed, 14 insertions(+)
->>>>>>  create mode 100644 Documentation/devicetree/bindings/mfd/hi3519.txt
->>>>>
->>>>> I have this patch, but none of the others in the set, thus I am
->>>>> lacking context.
->>>>>
->>>> I can forward other patches in the set to you. Thank you.
->>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/mfd/hi3519.txt b/Documentation/devicetree/bindings/mfd/hi3519.txt
->>>>>> new file mode 100644
->>>>>> index 0000000..115c5be
->>>>>> --- /dev/null
->>>>>> +++ b/Documentation/devicetree/bindings/mfd/hi3519.txt
->>>>>> @@ -0,0 +1,14 @@
->>>>>> +* Hisilicon Hi3519 System Controller Block
->>>>>> +
->>>>>> +This bindings use the following binding:
->>>>>> +Documentation/devicetree/bindings/mfd/syscon.txt
->>>>>> +
->>>>>> +Required properties:
->>>>>> +- compatible: "hisilicon,hi3519-sysctrl".
->>>>>> +- reg: the register region of this block
->>>>>> +
->>>>>> +Examples:
->>>>>> +sysctrl: system-controller@12010000 {
->>>>>> +	compatible = "hisilicon,hi3519-sysctrl", "syscon";
->>>>>> +	reg = <0x12010000 0x1000>;
->>>>>> +};
->>>>>
->>>>> There is no requirement (nor want) for binding documents where the
->>>>> given device is simply using highly generic bindings.  This just
->>>>> amounts to churn.
->>>>>
->>>> This block is specific for Hi3519 SOC, and may has its own driver.
->>>
->>> Does it have its own driver currently?
->>>
->> Not yet.
->> Arnd Bergmann and Rob Herring all suggested adding a specific compatible string
->> with the SOC name. This binding is just used for describing the compatible string now.
->> When more functions on hi3519 SOC are added later, the specific driver will be also
->> needed.
-> 
-> Save this binding until it has more functionality.  We here "I'll add
-> to this later" all too often.
-> 
+Yes a minimal fix first with cc stable, then the rest of the changes
+can be done for v4.6?
 
-In the hi3519.dtsi file, there is a system-controller device node described like below:
-sysctrl: system-controller@12010000 {
-	compatible = "hisilicon,hi3519-sysctrl", "syscon";
-	reg = <0x12010000 0x1000>;
-};
-Do you mean that I should remove "hisilicon,hi3519-sysctrl" and just use "syscon" as the
-compatible string?　
-If I want to add "hisilicon,hi3519-sysctrl" for hi3519. where should I put this binding?
-Could you give some suggestions?  Thank you very much!
-
->>>> So I think it's better to keep this binding.
->>>
->>
+> >You should also describe the bug it causes in the change log.
+> >Something like:
+> >
+> >This fixes an issue where PM runtime will hang the system if
+> >enabled with a serial console before a suspend-resume cycle.
 > 
+> Yea I can add this to the desc if we want to keep this version of the patch.
+
+Yes please. It seems the fix should be cc stable for several merge
+windows.
+
+Regards,
+
+Tony
