@@ -1,40 +1,38 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:42367 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1161505AbcA1RBK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 28 Jan 2016 12:01:10 -0500
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Alexander Kochetkov <al.kochet@gmail.com>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: rockchip: Allow sclk_i2s0 and i2s0_frac to change their parents rate on rk3188
-Date: Thu, 28 Jan 2016 18:01:08 +0100
-Message-ID: <1687954.9WCMHmWDJQ@diego>
-In-Reply-To: <1453897469-2134-1-git-send-email-al.kochet@gmail.com>
-References: <1453897469-2134-1-git-send-email-al.kochet@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 28 Jan 2016 00:31:50 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 02/13] clk: at91: make use of syscon/regmap internally
+Message-ID: <20160128083150.GK12841@codeaurora.org>
+References: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
+ <1453911072-23608-3-git-send-email-alexandre.belloni@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1453911072-23608-3-git-send-email-alexandre.belloni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Alexander,
-
-Am Mittwoch, 27. Januar 2016, 15:24:29 schrieb Alexander Kochetkov:
-> Allow sclk_i2s0 and i2s0_frac to change their parents rate as
-> that the upstream dividers are purely there to feed sclk_i2s0
+On 01/27, Alexandre Belloni wrote:
+> From: Boris Brezillon <boris.brezillon@free-electrons.com>
 > 
-> Tested on radxarock-lite.
+> Use the regmap coming from syscon to access the registers instead of using
+> pmc_read/pmc_write. This allows to avoid passing the at91_pmc structure to
+> the child nodes of the PMC.
 > 
-> Signed-off-by: Alexander Kochetkov <al.kochet@gmail.com>
+> The final benefit is to have each clock register itself instead of having
+> to iterate over the children.
+> 
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> ---
 
-doesn't apply due to the fractional divider change going into 4.5
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-please respin on top of 4.5-rc1 (or my clock-branch for 4.6 [0],
-but should be the same in that regard).
-
-
-Thanks
-Heiko
-
-[0] https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.git/log/?h=v4.6-clk/next
-
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
