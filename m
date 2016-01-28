@@ -1,47 +1,40 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Rob Herring <robh+dt@kernel.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Remi Pommarel <repk@triplefau.lt>,
-	devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
+	Jens Kuske <jenskuske@gmail.com>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [RFC 0/9] Allow modifications of specific clocks via DT and more
-Date: Tue, 19 Jan 2016 14:51:31 +0000
-Message-Id: <1453215100-2382-1-git-send-email-kernel@martin.sperl.org>
+	linux-clk@vger.kernel.org,
+	Jean-Francois Moine <moinejf@free.fr>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v3 1/2] clk: sunxi: factors: Add missing recalc pointer copy
+Date: Thu, 28 Jan 2016 20:22:37 +0100
+Message-Id: <1454008958-12655-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+Commit 4a9b2abc213e ("clk: sunxi: factors: Support custom formulas") was
+introducing a custom recalc function. However, the pointer was never
+filled, which was making the whole thing unused.
 
-This patch series (which requires the patch-series-v4 of
-"clk: bcm2835: add clocks and add MASH support") allows to configure
-specific aspects (mostly with regards to clock selection) of individual
-clocks to get configured via the device-tree.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi/clk-factors.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Also - for debug purposes - a patch has been added that exposes the
-raw clock registers read-only via debugfs.
-
-Martin Sperl (9):
-  clk: bcm2835: add basic device tree support for per clock settings
-  clk: bcm2835: add support for parent selection in DT
-  clk: bcm2835: add ability to control mash level via device-tree
-  clk: bcm2835: reorganize bcm2835_clock_determine_rate
-  clk: bcm2835: prefer clocks that use integer dividers
-  clk: bcm2835: allow to define a minimum fractional divider in DT
-  clk: bcm2835: allow clock choosing mechanims to be selected in DT
-  dt-bindings: bcm2835: document optional per clock dt-nodes
-  clk: bcm2835: expose raw clock-registers via debugfs
-
- .../bindings/clock/brcm,bcm2835-cprman.txt         |   33 ++
- drivers/clk/bcm/clk-bcm2835.c                      |  508 ++++++++++++++++++--
- include/dt-bindings/clock/bcm2835.h                |   15 +
- 3 files changed, 512 insertions(+), 44 deletions(-)
-
+diff --git a/drivers/clk/sunxi/clk-factors.c b/drivers/clk/sunxi/clk-factors.c
+index e480a6bcf1f6..6e97f46c0c37 100644
+--- a/drivers/clk/sunxi/clk-factors.c
++++ b/drivers/clk/sunxi/clk-factors.c
+@@ -212,6 +212,7 @@ struct clk *sunxi_factors_register(struct device_node *node,
+ 	factors->reg = reg;
+ 	factors->config = data->table;
+ 	factors->get_factors = data->getter;
++	factors->recalc = data->recalc;
+ 	factors->lock = lock;
+ 
+ 	/* Add a gate if this factor clock can be gated */
 -- 
-1.7.10.4
+2.6.4
