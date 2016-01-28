@@ -1,48 +1,35 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-Subject: Re: [PATCH v5 6/6] ARM: dts: add dts files for Hi3519
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-References: <1452219400-32478-1-git-send-email-xuejiancheng@huawei.com>
- <1452219400-32478-7-git-send-email-xuejiancheng@huawei.com>
- <20160108151058.GN19062@n2100.arm.linux.org.uk>
-CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <p.zabel@pengutronix.de>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
-        <mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
-        <galak@codeaurora.org>, <khilman@linaro.org>, <arnd@arndb.de>,
-        <olof@lixom.net>, <xuwei5@hisilicon.com>, <haojian.zhuang@linaro.org>,
-        <zhangfei.gao@linaro.org>, <bintian.wang@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <yanhaifeng@hisilicon.com>, <yanghongwei@hisilicon.com>,
-        <suwenping@hisilicon.com>, <ml.yang@hisilicon.com>,
-        <gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
-        <xuejiancheng@hisilicon.com>
-From: xuejiancheng <xuejiancheng@huawei.com>
-Message-ID: <56930E05.1050009@huawei.com>
-Date: Mon, 11 Jan 2016 10:05:57 +0800
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.134]:50014 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932638AbcA1MdR (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jan 2016 07:33:17 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] ARM: Use generic clkdev.h header
+Date: Thu, 28 Jan 2016 13:32:45 +0100
+Message-ID: <6141409.WI4q6BtOxa@wuerfel>
+In-Reply-To: <1453932702-6930-1-git-send-email-sboyd@codeaurora.org>
+References: <1453932702-6930-1-git-send-email-sboyd@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20160108151058.GN19062@n2100.arm.linux.org.uk>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Russell,
-
-On 2016/1/8 23:10, Russell King - ARM Linux wrote:
-> On Fri, Jan 08, 2016 at 10:16:40AM +0800, Jiancheng Xue wrote:
->> +		uart0: serial@12100000 {
->> +			compatible = "arm,pl011", "arm,primecell";
->> +			reg = <0x12100000 0x1000>;
->> +			interrupts = <0 4 4>;
+On Wednesday 27 January 2016 14:11:42 Stephen Boyd wrote:
+> Get rid of the clkdev.h file in the ARM port and use the generic
+> one because we've gotten rid of all the machine specific
+> mach/clkdev.h files.
 > 
-> Should the last digit there be IRQ_TYPE_LEVEL_HIGH (and same for the
-> other interrupts= after this?)
-> 
-> Thanks.
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 > 
 
-I'll include <dt-bindings/interrupt-controller/arm-gic.h> and use
-IRQ_TYPE_LEVEL_HIGH instead. The interrupts specifier will be wrote
-like this "interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;".
+Ah, nice! I had not even noticed it was the last one.
 
-Thank you.
+The file is still also referenced by arch/arm/plat-versatile/clock.c,
+but we don't build that file any more and should remove it as well.
 
-Jiancheng
+	Arnd
