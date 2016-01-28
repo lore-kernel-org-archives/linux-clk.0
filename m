@@ -1,96 +1,104 @@
-Return-Path: <LW@karo-electronics.de>
-From: =?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>
-To: Anson Huang <b20788@freescale.com>,
-	Bai Ping <b51503@freescale.com>,
-	Frank Li <Frank.Li@freescale.com>,
-	Fugang Duan <B38611@freescale.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	=?UTF-8?q?Lothar=20Wa=C3=9Fmann?= <LW@KARO-electronics.de>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
+Return-Path: <caesar.upstream@gmail.com>
+Return-Path: <caesar.upstream@gmail.com>
+From: Caesar Wang <wxt@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCHv2 10/16] ARM: dts: imx6ul: add sai support
-Date: Wed, 20 Jan 2016 11:09:03 +0100
-Message-Id: <1453284549-16363-11-git-send-email-LW@KARO-electronics.de>
-In-Reply-To: <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
-References: <1452619291-13625-1-git-send-email-LW@KARO-electronics.de>
- <1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Cc: hl@rock-chips.com,
+	jay.xu@rock-chips.com,
+	jeffy.chen@rock-chips.com,
+	linux-rockchip@lists.infradead.org,
+	keescook@google.com,
+	cf@rock-chips.com,
+	sonnyrao@chromium.org,
+	leozwang@google.com,
+	zhengxing <zhengxing@rock-chips.com>,
+	Caesar Wang <wxt@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kumar Gala <galak@codeaurora.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4 3/9] clk: rockchip: rk3036: fix and add node id for emac clock
+Date: Thu, 28 Jan 2016 16:43:32 +0800
+Message-Id: <1453970618-4383-4-git-send-email-wxt@rock-chips.com>
+In-Reply-To: <1453970618-4383-1-git-send-email-wxt@rock-chips.com>
+References: <1453970618-4383-1-git-send-email-wxt@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device nodes for the i.MX6UL synchronous audio interfaces (SAI).
+From: zhengxing <zhengxing@rock-chips.com>
 
-Signed-off-by: Lothar Waßmann <LW@KARO-electronics.de>
+In the emac driver, we need to refer HCLK_MAC since there are
+only 3PLLs (APLL/GPLL/DPLL) on the rk3036, most clock are under the
+GPLL, and it is unable to provide the accurate rate for mac_ref which
+need to 50MHz probability, we should let it under the DPLL and are
+able to set the freq which integer multiples of 50MHz, so we add these
+emac node for reference.
+
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+
 ---
- arch/arm/boot/dts/imx6ul.dtsi | 45 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
 
-diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
-index 9c873a6..e1fda39e 100644
---- a/arch/arm/boot/dts/imx6ul.dtsi
-+++ b/arch/arm/boot/dts/imx6ul.dtsi
-@@ -235,6 +235,51 @@
- 					clock-names = "ipg", "per";
- 					status = "disabled";
- 				};
-+
-+				sai1: sai@02028000 {
-+					#sound-dai-cells = <0>;
-+					compatible = "fsl,imx6ul-sai", "fsl,imx6sx-sai";
-+					reg = <0x02028000 0x4000>;
-+					interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
-+					clocks = <&clks IMX6UL_CLK_SAI1_IPG>,
-+						 <&clks IMX6UL_CLK_SAI1>,
-+						 <&clks IMX6UL_CLK_DUMMY>, <&clks IMX6UL_CLK_DUMMY>;
-+					clock-names = "bus", "mclk1", "mclk2", "mclk3";
-+					dmas = <&sdma 35 24 0>,
-+					       <&sdma 36 24 0>;
-+					dma-names = "rx", "tx";
-+					status = "disabled";
-+				};
-+
-+				sai2: sai@0202c000 {
-+					#sound-dai-cells = <0>;
-+					compatible = "fsl,imx6ul-sai", "fsl,imx6sx-sai";
-+					reg = <0x0202c000 0x4000>;
-+					interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
-+					clocks = <&clks IMX6UL_CLK_SAI2_IPG>,
-+						 <&clks IMX6UL_CLK_SAI2>,
-+						 <&clks IMX6UL_CLK_DUMMY>, <&clks IMX6UL_CLK_DUMMY>;
-+					clock-names = "bus", "mclk1", "mclk2", "mclk3";
-+					dmas = <&sdma 37 24 0>,
-+					       <&sdma 38 24 0>;
-+					dma-names = "rx", "tx";
-+					status = "disabled";
-+				};
-+
-+				sai3: sai@02030000 {
-+					#sound-dai-cells = <0>;
-+					compatible = "fsl,imx6ul-sai", "fsl,imx6sx-sai";
-+					reg = <0x02030000 0x4000>;
-+					interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-+					clocks = <&clks IMX6UL_CLK_SAI3_IPG>,
-+						 <&clks IMX6UL_CLK_SAI3>,
-+						 <&clks IMX6UL_CLK_DUMMY>, <&clks IMX6UL_CLK_DUMMY>;
-+					clock-names = "bus", "mclk1", "mclk2", "mclk3";
-+					dmas = <&sdma 39 24 0>,
-+					       <&sdma 40 24 0>;
-+					dma-names = "rx", "tx";
-+					status = "disabled";
-+				};
- 			};
+Changes in v4:
+- fix the commit, pick up from the
+  https://patchwork.kernel.org/patch/7976631/.
+- The emac parent shouldn't depend on the APLL. instead of DPLL.
+
+ drivers/clk/rockchip/clk-rk3036.c      | 9 ++++++---
+ include/dt-bindings/clock/rk3036-cru.h | 2 ++
+ 2 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
+index be71a41..701f702 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -343,8 +343,11 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
+ 			RK2928_CLKSEL_CON(16), 0, 2, MFLAGS, 2, 5, DFLAGS,
+ 			RK2928_CLKGATE_CON(10), 5, GFLAGS),
  
- 			tsc: tsc@02040000 {
+-	COMPOSITE_NOGATE(0, "mac_pll_src", mux_pll_src_3plls_p, 0,
+-			RK2928_CLKSEL_CON(21), 0, 2, MFLAGS, 9, 5, DFLAGS),
++	MUX(SCLK_MACPLL, "mac_pll_pre", mux_pll_src_3plls_p, 0,
++			RK2928_CLKSEL_CON(21), 0, 2, MFLAGS),
++	DIV(0, "mac_pll_src", "mac_pll_pre", 0,
++			RK2928_CLKSEL_CON(21), 9, 5, DFLAGS),
++
+ 	MUX(SCLK_MACREF, "mac_clk_ref", mux_mac_p, CLK_SET_RATE_PARENT,
+ 			RK2928_CLKSEL_CON(21), 3, 1, MFLAGS),
+ 
+@@ -404,7 +407,7 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
+ 	GATE(HCLK_OTG1, "hclk_otg1", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(7), 3, GFLAGS),
+ 	GATE(HCLK_I2S, "hclk_i2s", "hclk_peri", 0, RK2928_CLKGATE_CON(7), 2, GFLAGS),
+ 	GATE(0, "hclk_sfc", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 14, GFLAGS),
+-	GATE(0, "hclk_mac", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(3), 15, GFLAGS),
++	GATE(HCLK_MAC, "hclk_mac", "hclk_peri", 0, RK2928_CLKGATE_CON(3), 5, GFLAGS),
+ 
+ 	/* pclk_peri gates */
+ 	GATE(0, "pclk_peri_matrix", "pclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(4), 1, GFLAGS),
+diff --git a/include/dt-bindings/clock/rk3036-cru.h b/include/dt-bindings/clock/rk3036-cru.h
+index ebc7a7b..de44109 100644
+--- a/include/dt-bindings/clock/rk3036-cru.h
++++ b/include/dt-bindings/clock/rk3036-cru.h
+@@ -54,6 +54,7 @@
+ #define SCLK_PVTM_VIDEO		125
+ #define SCLK_MAC		151
+ #define SCLK_MACREF		152
++#define SCLK_MACPLL		153
+ #define SCLK_SFC		160
+ 
+ /* aclk gates */
+@@ -92,6 +93,7 @@
+ #define HCLK_SDMMC		456
+ #define HCLK_SDIO		457
+ #define HCLK_EMMC		459
++#define HCLK_MAC		460
+ #define HCLK_I2S		462
+ #define HCLK_LCDC		465
+ #define HCLK_ROM		467
 -- 
-2.1.4
+1.9.1
