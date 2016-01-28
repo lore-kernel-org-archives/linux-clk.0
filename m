@@ -1,76 +1,55 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
-	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
-	<xuejiancheng@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [PATCH v6 2/6] ARM: hisi: add compatible string for Hi3519 soc
-Date: Tue, 19 Jan 2016 10:38:27 +0800
-Message-ID: <1453171111-21921-3-git-send-email-xuejiancheng@huawei.com>
-In-Reply-To: <1453171111-21921-1-git-send-email-xuejiancheng@huawei.com>
-References: <1453171111-21921-1-git-send-email-xuejiancheng@huawei.com>
+Return-Path: <alexandre.belloni@free-electrons.com>
+Date: Thu, 28 Jan 2016 09:38:22 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 07/13] ARM: at91: pm: find and remap the pmc
+Message-ID: <20160128083822.GB20165@piout.net>
+References: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
+ <1453911072-23608-8-git-send-email-alexandre.belloni@free-electrons.com>
+ <20160128083347.GL12841@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160128083347.GL12841@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-add compatible string for Hi3519 soc.
+On 28/01/2016 at 00:33:47 -0800, Stephen Boyd wrote :
+> On 01/27, Alexandre Belloni wrote:
+> > @@ -399,13 +400,33 @@ static void __init at91_pm_sram_init(void)
+> >  			&at91_pm_suspend_in_sram, at91_pm_suspend_in_sram_sz);
+> >  }
+> >  
+> > +static __initconst struct of_device_id atmel_pmc_ids[] = {
+> 
+> The kbuild error is weird, but __initconst should come right
+> before the equals sign (=). Plus it should actually be const.
+> 
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
----
- arch/arm/mach-hisi/hisilicon.c | 23 ++++-------------------
- 1 file changed, 4 insertions(+), 19 deletions(-)
+Yeah, I sent v5, right after v4. I had that change but forgot to squash
+it.
 
-diff --git a/arch/arm/mach-hisi/hisilicon.c b/arch/arm/mach-hisi/hisilicon.c
-index 8cc6215..00dae89 100644
---- a/arch/arm/mach-hisi/hisilicon.c
-+++ b/arch/arm/mach-hisi/hisilicon.c
-@@ -54,30 +54,15 @@ DT_MACHINE_START(HI3620, "Hisilicon Hi3620 (Flattened Device Tree)")
- 	.dt_compat	= hi3xxx_compat,
- MACHINE_END
- 
--static const char *const hix5hd2_compat[] __initconst = {
-+static const char *const hisilicon_compat[] __initconst = {
- 	"hisilicon,hix5hd2",
--	NULL,
--};
--
--DT_MACHINE_START(HIX5HD2_DT, "Hisilicon HIX5HD2 (Flattened Device Tree)")
--	.dt_compat	= hix5hd2_compat,
--MACHINE_END
--
--static const char *const hip04_compat[] __initconst = {
- 	"hisilicon,hip04-d01",
--	NULL,
--};
--
--DT_MACHINE_START(HIP04, "Hisilicon HiP04 (Flattened Device Tree)")
--	.dt_compat	= hip04_compat,
--MACHINE_END
--
--static const char *const hip01_compat[] __initconst = {
- 	"hisilicon,hip01",
- 	"hisilicon,hip01-ca9x2",
-+	"hisilicon,hi3519",
- 	NULL,
- };
- 
--DT_MACHINE_START(HIP01, "Hisilicon HIP01 (Flattened Device Tree)")
--	.dt_compat      = hip01_compat,
-+DT_MACHINE_START(HISILICON_DT, "HiSilicon Soc")
-+	.dt_compat	= hisilicon_compat,
- MACHINE_END
+> > +	{ .compatible = "atmel,at91rm9200-pmc"  },
+> > +	{ .compatible = "atmel,at91sam9260-pmc" },
+> > +	{ .compatible = "atmel,at91sam9g45-pmc" },
+> > +	{ .compatible = "atmel,at91sam9n12-pmc" },
+> > +	{ .compatible = "atmel,at91sam9x5-pmc" },
+> > +	{ .compatible = "atmel,sama5d3-pmc" },
+> > +	{ .compatible = "atmel,sama5d2-pmc" },
+> > +	{ /* sentinel */ },
+> > +};
+> > +
+> >  static void __init at91_pm_init(void)
+> 
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+
 -- 
-1.9.1
+Alexandre Belloni, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
