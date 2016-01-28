@@ -1,57 +1,40 @@
-Return-Path: <wens@csie.org>
+Return-Path: <stefan@agner.ch>
 MIME-Version: 1.0
-In-Reply-To: <20160130185714.7abcf1de9ef8108c2f48c7fe@free.fr>
-References: <1454008958-12655-1-git-send-email-maxime.ripard@free-electrons.com>
- <1454008958-12655-2-git-send-email-maxime.ripard@free-electrons.com> <20160130185714.7abcf1de9ef8108c2f48c7fe@free.fr>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sun, 31 Jan 2016 20:08:40 +0800
-Message-ID: <CAGb2v67S9mhr1hbmM3nuLO+wTGA3ff2vUhBgm+PTnd_5vGS3ng@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] clk: sunxi: Refactor A31 PLL6 so that it can be reused
-To: Jean-Francois Moine <moinejf@free.fr>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
-	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Jens Kuske <jenskuske@gmail.com>, Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Date: Wed, 27 Jan 2016 17:52:44 -0800
+From: Stefan Agner <stefan@agner.ch>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: galak@codeaurora.org, ijc+devicetree@hellion.org.uk,
+ mark.rutland@arm.com, pawel.moll@arm.com, robh+dt@kernel.org,
+ Li.Xiubo@freescale.com, zidan.wang@freescale.com,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@pengutronix.de, mturquette@baylibre.com, sboyd@codeaurora.org
+Subject: Re: [PATCH 3/3] ARM: dts: vf610: add remaining SAI instaces
+In-Reply-To: <20160128015308.GB9070@tiger>
+References: <1445141122-14183-1-git-send-email-stefan@agner.ch>
+ <1445141122-14183-3-git-send-email-stefan@agner.ch>
+ <7c3b0b28706f2bf1cf656c7dc2daf31d@agner.ch> <20160128015308.GB9070@tiger>
+Message-ID: <fd9163e75d15ef9b21d8d06ff359c4b9@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Jan 31, 2016 at 1:57 AM, Jean-Francois Moine <moinejf@free.fr> wrote:
-> On Thu, 28 Jan 2016 20:22:38 +0100
-> Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
->
->> Remove the fixed dividers from the PLL6 driver to be able to have a
->> reusable driver that can be used across several SoCs that share the same
->> controller, but don't have the same set of dividers for this clock, and to
->> also be reused multiple times in the same SoC, since we're droping the
->> clock name.
+On 2016-01-27 17:53, Shawn Guo wrote:
+> On Wed, Jan 27, 2016 at 04:31:48PM -0800, Stefan Agner wrote:
+>> Hi Shawn,
 >>
->> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
->> ---
->> Changes from v2
->>   - Rebased and converted over to the new factors refactoring. Fixed the
->>     retrieved rate
->>
->>  arch/arm/boot/dts/sun6i-a31.dtsi     | 36 ++++++++++++++++++------------------
->>  arch/arm/boot/dts/sun8i-a23-a33.dtsi | 25 +++++++++++++++++--------
->>  arch/arm/boot/dts/sun8i-a23.dtsi     |  2 +-
->>  arch/arm/boot/dts/sun8i-a33.dtsi     |  4 ++--
->>  arch/arm/boot/dts/sun8i-h3.dtsi      | 36 ++++++++++++++++++------------------
->>  drivers/clk/sunxi/clk-sunxi.c        | 32 ++++++++++++++++----------------
->>  6 files changed, 72 insertions(+), 63 deletions(-)
->
-> Hi Maxime,
->
-> Do you know that the DT definitions cannot be changed when they are in
-> the mainline kernel?
+>> The rest of the patchset has been applied during rc phase of v4.4, I
+>> guess this one was scheduled for the next release (v4.5). However, I
+>> just realized that this seemed to have slipped through...
+> 
+> Sorry, Stefan.  If I can get a ping from you before v4.5 merge window
+> closes, we might be able to catch up with v4.5.
 
-This rule varies depending on who you talk to. :)
+Sure, no problem. Not really a mission critical patch :-)
 
-> Also, for the H3 PLL periph1 (aka PLL8), why didn't you create a
-> 'pll8x2' clock with 'pll8' as a divider?
+> 
+> Queued it up for v4.6.
 
-If it's used, it can be added later. No need to bloat the DT.
+Thanks
 
-
-ChenYu
+--
+Stefan
