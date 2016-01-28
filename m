@@ -1,77 +1,261 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-Return-Path: <srinivas.kandagatla@linaro.org>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	georgi.djakov@linaro.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v2] clk:gcc-msm8916: add missing mss_q6_bimc_axi clock
-Date: Mon,  4 Jan 2016 11:01:53 +0000
-Message-Id: <1451905313-6461-1-git-send-email-srinivas.kandagatla@linaro.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH] clk: ti: dpll: convert DPLL support code to use clk_hw instead of clk ptrs
+Date: Thu, 28 Jan 2016 13:44:11 +0200
+Message-ID: <1453981451-9054-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This clock is required for loading the qdsp firmware.
+Convert DPLL support code to use clk_hw pointers for reference and bypass
+clocks. This allows us to use clk_hw_* APIs for accessing any required
+parameters for these clocks, avoiding some locking problems at least with
+DPLL enable code; this used clk_get_rate which uses mutex but isn't
+good under clk_enable / clk_disable.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
-Changes since v1:
-	fixed parent name as spotted by Georgi
+ drivers/clk/ti/apll.c      |   20 ++++++++++++++++----
+ drivers/clk/ti/clkt_dpll.c |    6 +++---
+ drivers/clk/ti/dpll.c      |   26 ++++++++++++++++++++------
+ drivers/clk/ti/dpll3xxx.c  |   16 ++++++++--------
+ drivers/clk/ti/dpll44xx.c  |    8 ++++----
+ include/linux/clk/ti.h     |    8 ++++----
+ 6 files changed, 55 insertions(+), 29 deletions(-)
 
- drivers/clk/qcom/gcc-msm8916.c               | 18 ++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-msm8916.h |  1 +
- 2 files changed, 19 insertions(+)
-
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index e643944..89fe930 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -2590,6 +2590,23 @@ static struct clk_branch gcc_mss_cfg_ahb_clk = {
- 	},
- };
+diff --git a/drivers/clk/ti/apll.c b/drivers/clk/ti/apll.c
+index b336a8c..6411e13 100644
+--- a/drivers/clk/ti/apll.c
++++ b/drivers/clk/ti/apll.c
+@@ -140,11 +140,21 @@ static void __init omap_clk_register_apll(struct clk_hw *hw,
+ 	struct dpll_data *ad = clk_hw->dpll_data;
+ 	struct clk *clk;
  
-+static struct clk_branch gcc_mss_q6_bimc_axi_clk = {
-+	.halt_reg = 0x49004,
-+	.clkr = {
-+		.enable_reg = 0x49004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_mss_q6_bimc_axi_clk",
-+			.parent_names = (const char *[]){
-+				"bimc_ddr_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
+-	ad->clk_ref = of_clk_get(node, 0);
+-	ad->clk_bypass = of_clk_get(node, 1);
++	clk = of_clk_get(node, 0);
++	if (IS_ERR(clk)) {
++		pr_debug("clk-ref for %s not ready, retry\n",
++			 node->name);
++		if (!ti_clk_retry_init(node, hw, omap_clk_register_apll))
++			return;
 +
- static struct clk_branch gcc_oxili_ahb_clk = {
- 	.halt_reg = 0x59028,
- 	.clkr = {
-@@ -3228,6 +3245,7 @@ static struct clk_regmap *gcc_msm8916_clocks[] = {
- 	[GCC_ULTAUDIO_LPAIF_SEC_I2S_CLK] = &gcc_ultaudio_lpaif_sec_i2s_clk.clkr,
- 	[GCC_ULTAUDIO_LPAIF_AUX_I2S_CLK] = &gcc_ultaudio_lpaif_aux_i2s_clk.clkr,
- 	[GCC_CODEC_DIGCODEC_CLK] = &gcc_codec_digcodec_clk.clkr,
-+	[GCC_MSS_Q6_BIMC_AXI_CLK] = &gcc_mss_q6_bimc_axi_clk.clkr,
- };
++		goto cleanup;
++	}
  
- static struct gdsc *gcc_msm8916_gdscs[] = {
-diff --git a/include/dt-bindings/clock/qcom,gcc-msm8916.h b/include/dt-bindings/clock/qcom,gcc-msm8916.h
-index 257e2fb..28a27a4 100644
---- a/include/dt-bindings/clock/qcom,gcc-msm8916.h
-+++ b/include/dt-bindings/clock/qcom,gcc-msm8916.h
-@@ -174,6 +174,7 @@
- #define GCC_ULTAUDIO_LPAIF_SEC_I2S_CLK		157
- #define GCC_ULTAUDIO_LPAIF_AUX_I2S_CLK		158
- #define GCC_CODEC_DIGCODEC_CLK			159
-+#define GCC_MSS_Q6_BIMC_AXI_CLK			160
+-	if (IS_ERR(ad->clk_ref) || IS_ERR(ad->clk_bypass)) {
+-		pr_debug("clk-ref or clk-bypass for %s not ready, retry\n",
++	ad->clk_ref = __clk_get_hw(clk);
++
++	clk = of_clk_get(node, 1);
++	if (IS_ERR(clk)) {
++		pr_debug("clk-bypass for %s not ready, retry\n",
+ 			 node->name);
+ 		if (!ti_clk_retry_init(node, hw, omap_clk_register_apll))
+ 			return;
+@@ -152,6 +162,8 @@ static void __init omap_clk_register_apll(struct clk_hw *hw,
+ 		goto cleanup;
+ 	}
  
- /* Indexes for GDSCs */
- #define BIMC_GDSC				0
++	ad->clk_bypass = __clk_get_hw(clk);
++
+ 	clk = clk_register(NULL, &clk_hw->hw);
+ 	if (!IS_ERR(clk)) {
+ 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
+diff --git a/drivers/clk/ti/clkt_dpll.c b/drivers/clk/ti/clkt_dpll.c
+index b5cc6f6..032c658 100644
+--- a/drivers/clk/ti/clkt_dpll.c
++++ b/drivers/clk/ti/clkt_dpll.c
+@@ -254,7 +254,7 @@ unsigned long omap2_get_dpll_rate(struct clk_hw_omap *clk)
+ 	v >>= __ffs(dd->enable_mask);
+ 
+ 	if (_omap2_dpll_is_in_bypass(v))
+-		return clk_get_rate(dd->clk_bypass);
++		return clk_hw_get_rate(dd->clk_bypass);
+ 
+ 	v = ti_clk_ll_ops->clk_readl(dd->mult_div1_reg);
+ 	dpll_mult = v & dd->mult_mask;
+@@ -262,7 +262,7 @@ unsigned long omap2_get_dpll_rate(struct clk_hw_omap *clk)
+ 	dpll_div = v & dd->div1_mask;
+ 	dpll_div >>= __ffs(dd->div1_mask);
+ 
+-	dpll_clk = (u64)clk_get_rate(dd->clk_ref) * dpll_mult;
++	dpll_clk = (u64)clk_hw_get_rate(dd->clk_ref) * dpll_mult;
+ 	do_div(dpll_clk, dpll_div + 1);
+ 
+ 	return dpll_clk;
+@@ -301,7 +301,7 @@ long omap2_dpll_round_rate(struct clk_hw *hw, unsigned long target_rate,
+ 
+ 	dd = clk->dpll_data;
+ 
+-	ref_rate = clk_get_rate(dd->clk_ref);
++	ref_rate = clk_hw_get_rate(dd->clk_ref);
+ 	clk_name = clk_hw_get_name(hw);
+ 	pr_debug("clock: %s: starting DPLL round_rate, target rate %lu\n",
+ 		 clk_name, target_rate);
+diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
+index 5519b38..cd99962 100644
+--- a/drivers/clk/ti/dpll.c
++++ b/drivers/clk/ti/dpll.c
+@@ -147,11 +147,22 @@ static void __init _register_dpll(struct clk_hw *hw,
+ 	struct dpll_data *dd = clk_hw->dpll_data;
+ 	struct clk *clk;
+ 
+-	dd->clk_ref = of_clk_get(node, 0);
+-	dd->clk_bypass = of_clk_get(node, 1);
++	clk = of_clk_get(node, 0);
++	if (IS_ERR(clk)) {
++		pr_debug("clk-ref missing for %s, retry later\n",
++			 node->name);
++		if (!ti_clk_retry_init(node, hw, _register_dpll))
++			return;
+ 
+-	if (IS_ERR(dd->clk_ref) || IS_ERR(dd->clk_bypass)) {
+-		pr_debug("clk-ref or clk-bypass missing for %s, retry later\n",
++		goto cleanup;
++	}
++
++	dd->clk_ref = __clk_get_hw(clk);
++
++	clk = of_clk_get(node, 1);
++
++	if (IS_ERR(clk)) {
++		pr_debug("clk-bypass missing for %s, retry later\n",
+ 			 node->name);
+ 		if (!ti_clk_retry_init(node, hw, _register_dpll))
+ 			return;
+@@ -159,6 +171,8 @@ static void __init _register_dpll(struct clk_hw *hw,
+ 		goto cleanup;
+ 	}
+ 
++	dd->clk_bypass = __clk_get_hw(clk);
++
+ 	/* register the clock */
+ 	clk = clk_register(NULL, &clk_hw->hw);
+ 
+@@ -251,8 +265,8 @@ struct clk *ti_clk_register_dpll(struct ti_clk *setup)
+ 	dd->recal_en_bit = dpll->recal_en_bit;
+ 	dd->recal_st_bit = dpll->recal_st_bit;
+ 
+-	dd->clk_ref = clk_ref;
+-	dd->clk_bypass = clk_bypass;
++	dd->clk_ref = __clk_get_hw(clk_ref);
++	dd->clk_bypass = __clk_get_hw(clk_bypass);
+ 
+ 	if (dpll->flags & CLKF_CORE)
+ 		ops = &omap3_dpll_core_ck_ops;
+diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
+index 1c30038..88f2ce8 100644
+--- a/drivers/clk/ti/dpll3xxx.c
++++ b/drivers/clk/ti/dpll3xxx.c
+@@ -98,7 +98,7 @@ static u16 _omap3_dpll_compute_freqsel(struct clk_hw_omap *clk, u8 n)
+ 	unsigned long fint;
+ 	u16 f = 0;
+ 
+-	fint = clk_get_rate(clk->dpll_data->clk_ref) / n;
++	fint = clk_hw_get_rate(clk->dpll_data->clk_ref) / n;
+ 
+ 	pr_debug("clock: fint is %lu\n", fint);
+ 
+@@ -460,11 +460,11 @@ int omap3_noncore_dpll_enable(struct clk_hw *hw)
+ 
+ 	parent = clk_hw_get_parent(hw);
+ 
+-	if (clk_hw_get_rate(hw) == clk_get_rate(dd->clk_bypass)) {
+-		WARN_ON(parent != __clk_get_hw(dd->clk_bypass));
++	if (clk_hw_get_rate(hw) == clk_hw_get_rate(dd->clk_bypass)) {
++		WARN_ON(parent != dd->clk_bypass);
+ 		r = _omap3_noncore_dpll_bypass(clk);
+ 	} else {
+-		WARN_ON(parent != __clk_get_hw(dd->clk_ref));
++		WARN_ON(parent != dd->clk_ref);
+ 		r = _omap3_noncore_dpll_lock(clk);
+ 	}
+ 
+@@ -512,13 +512,13 @@ int omap3_noncore_dpll_determine_rate(struct clk_hw *hw,
+ 	if (!dd)
+ 		return -EINVAL;
+ 
+-	if (clk_get_rate(dd->clk_bypass) == req->rate &&
++	if (clk_hw_get_rate(dd->clk_bypass) == req->rate &&
+ 	    (dd->modes & (1 << DPLL_LOW_POWER_BYPASS))) {
+-		req->best_parent_hw = __clk_get_hw(dd->clk_bypass);
++		req->best_parent_hw = dd->clk_bypass;
+ 	} else {
+ 		req->rate = omap2_dpll_round_rate(hw, req->rate,
+ 					  &req->best_parent_rate);
+-		req->best_parent_hw = __clk_get_hw(dd->clk_ref);
++		req->best_parent_hw = dd->clk_ref;
+ 	}
+ 
+ 	req->best_parent_rate = req->rate;
+@@ -576,7 +576,7 @@ int omap3_noncore_dpll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (!dd)
+ 		return -EINVAL;
+ 
+-	if (clk_hw_get_parent(hw) != __clk_get_hw(dd->clk_ref))
++	if (clk_hw_get_parent(hw) != dd->clk_ref)
+ 		return -EINVAL;
+ 
+ 	if (dd->last_rounded_rate == 0)
+diff --git a/drivers/clk/ti/dpll44xx.c b/drivers/clk/ti/dpll44xx.c
+index 660d743..82c05b5 100644
+--- a/drivers/clk/ti/dpll44xx.c
++++ b/drivers/clk/ti/dpll44xx.c
+@@ -94,7 +94,7 @@ static void omap4_dpll_lpmode_recalc(struct dpll_data *dd)
+ {
+ 	long fint, fout;
+ 
+-	fint = clk_get_rate(dd->clk_ref) / (dd->last_rounded_n + 1);
++	fint = clk_hw_get_rate(dd->clk_ref) / (dd->last_rounded_n + 1);
+ 	fout = fint * dd->last_rounded_m;
+ 
+ 	if ((fint < OMAP4_DPLL_LP_FINT_MAX) && (fout < OMAP4_DPLL_LP_FOUT_MAX))
+@@ -212,13 +212,13 @@ int omap4_dpll_regm4xen_determine_rate(struct clk_hw *hw,
+ 	if (!dd)
+ 		return -EINVAL;
+ 
+-	if (clk_get_rate(dd->clk_bypass) == req->rate &&
++	if (clk_hw_get_rate(dd->clk_bypass) == req->rate &&
+ 	    (dd->modes & (1 << DPLL_LOW_POWER_BYPASS))) {
+-		req->best_parent_hw = __clk_get_hw(dd->clk_bypass);
++		req->best_parent_hw = dd->clk_bypass;
+ 	} else {
+ 		req->rate = omap4_dpll_regm4xen_round_rate(hw, req->rate,
+ 						&req->best_parent_rate);
+-		req->best_parent_hw = __clk_get_hw(dd->clk_ref);
++		req->best_parent_hw = dd->clk_ref;
+ 	}
+ 
+ 	req->best_parent_rate = req->rate;
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index 75205df..751b772 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -23,8 +23,8 @@
+  * @mult_div1_reg: register containing the DPLL M and N bitfields
+  * @mult_mask: mask of the DPLL M bitfield in @mult_div1_reg
+  * @div1_mask: mask of the DPLL N bitfield in @mult_div1_reg
+- * @clk_bypass: struct clk pointer to the clock's bypass clock input
+- * @clk_ref: struct clk pointer to the clock's reference clock input
++ * @clk_bypass: struct clk_hw pointer to the clock's bypass clock input
++ * @clk_ref: struct clk_hw pointer to the clock's reference clock input
+  * @control_reg: register containing the DPLL mode bitfield
+  * @enable_mask: mask of the DPLL mode bitfield in @control_reg
+  * @last_rounded_rate: cache of the last rate result of omap2_dpll_round_rate()
+@@ -69,8 +69,8 @@ struct dpll_data {
+ 	void __iomem		*mult_div1_reg;
+ 	u32			mult_mask;
+ 	u32			div1_mask;
+-	struct clk		*clk_bypass;
+-	struct clk		*clk_ref;
++	struct clk_hw		*clk_bypass;
++	struct clk_hw		*clk_ref;
+ 	void __iomem		*control_reg;
+ 	u32			enable_mask;
+ 	unsigned long		last_rounded_rate;
 -- 
-1.9.1
+1.7.9.5
