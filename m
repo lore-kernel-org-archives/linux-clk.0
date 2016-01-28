@@ -1,37 +1,47 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 29 Jan 2016 16:34:12 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Andi Shyti <andi@etezian.org>,
-	Yadwinder Singh Brar <yadi.brar01@gmail.com>,
-	Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH v3 4/4] clk: s2mps11: remove redundant code
-Message-ID: <20160130003412.GK12841@codeaurora.org>
-References: <1453284864-8082-1-git-send-email-andi.shyti@samsung.com>
- <1453284864-8082-5-git-send-email-andi.shyti@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1453284864-8082-5-git-send-email-andi.shyti@samsung.com>
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2] clk: Move vendor's Kconfig into CCF menu section
+To: James Liao <jamesjj.liao@mediatek.com>, Stephen Boyd <sboyd@codeaurora.org>
+References: <1453971537-5510-1-git-send-email-jamesjj.liao@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+ Mike Turquette <mturquette@baylibre.com>, Arnd Bergmann <arnd@arndb.de>,
+ Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
+ srv_heupstream@mediatek.com, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <56AA1032.70001@samsung.com>
+Date: Thu, 28 Jan 2016 13:57:22 +0100
+MIME-version: 1.0
+In-reply-to: <1453971537-5510-1-git-send-email-jamesjj.liao@mediatek.com>
+Content-type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/20, Andi Shyti wrote:
-> The definition of s2mps11_name is meant to resolve the name of a
-> given clock. Remove it because the clocks have the same name we
-> can get it directly from the s2mps11_clks_init structure.
+On 28/01/16 09:58, James Liao wrote:
+> Move all vendor's Kconfig into CCF menu section to prevent
+> new drivers putting their Kconfig files in a wrong place.
 > 
-> While in the probe function the s2mps11_clks is used only to
-> iterate through the s2mps11_clks. The naming itself brings
-> confusion and the readability does not improve much.
-> 
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> ---
+> Some Kconigs need to modify at the same time to avoid build
 
-Applied to clk-next
+"Some Kconfigs need to be modified..." ?
+
+> warnings.
+> 
+> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> ---
+> This patch is based on v4.5-rc1.
+> 
+> changes since v1:
+> - Modify s3c24xx and samsung's Kconfig to avoid build warngings.
+> 
+>  arch/arm/mach-s3c24xx/Kconfig | 1 +
+>  drivers/clk/Kconfig           | 8 +++-----
+>  drivers/clk/samsung/Kconfig   | 1 -
+>  3 files changed, 4 insertions(+), 6 deletions(-)
+
+For the samsung code changes:
+
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks,
+Sylwester
