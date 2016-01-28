@@ -1,75 +1,56 @@
-Return-Path: <vz@mleia.com>
-From: Vladimir Zapolskiy <vz@mleia.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org
-Subject: [PATCH 3/3] clk: remove redundant clock parents lookup table allocations
-Date: Thu,  7 Jan 2016 05:16:08 +0200
-Message-Id: <1452136568-478-4-git-send-email-vz@mleia.com>
-In-Reply-To: <1452136568-478-1-git-send-email-vz@mleia.com>
-References: <1452136568-478-1-git-send-email-vz@mleia.com>
+Return-Path: <tony@atomide.com>
+Date: Thu, 28 Jan 2016 09:22:16 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: ti: omap3+: dpll: use non-locking version of
+ clk_get_rate
+Message-ID: <20160128172215.GD19432@atomide.com>
+References: <1453981067-8618-1-git-send-email-t-kristo@ti.com>
+ <56A9FED1.3090903@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <56A9FED1.3090903@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Since clock parents lookup table for clocks with multiple parent
-clocks is always allocated during clock registration, remove similar
-allocations from __clk_init_parent() and clk_fetch_parent_index().
+* Tero Kristo <t-kristo@ti.com> [160128 03:44]:
+> On 01/28/2016 01:37 PM, Tero Kristo wrote:
+> >As the code in this file is being executed within irq context in some
+> >cases, we must avoid the clk_get_rate which uses mutex internally.
+> >Switch the code to use clk_hw_get_rate instead which is non-locking.
+> >
+> >Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> 
+> Ooops, sorry. Sent wrong version (read: old) of this patch, please ignore
+> this one. Will re-send the correct version in a bit.
 
-The change also corrects a pointer type of a single lookup table
-entry on calculation of the lookup table size.
+I think this is still needed as a fix for -rc cycle with cc: stable
+as otherwise we have omap4 and 5 hang if PM runtime is enabled before
+a suspend/resume cycle?
 
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
----
- drivers/clk/clk.c | 20 +++-----------------
- 1 file changed, 3 insertions(+), 17 deletions(-)
+Regards,
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 2fb0dae..f8872f9 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1067,13 +1067,6 @@ static int clk_fetch_parent_index(struct clk_core *core,
- {
- 	int i;
- 
--	if (!core->parents) {
--		core->parents = kcalloc(core->num_parents,
--					sizeof(struct clk *), GFP_KERNEL);
--		if (!core->parents)
--			return -ENOMEM;
--	}
--
- 	/*
- 	 * find index of new parent clock using cached parent ptrs,
- 	 * or if not yet cached, use string name comparison and cache
-@@ -1711,18 +1704,11 @@ static struct clk_core *__clk_init_parent(struct clk_core *core)
- 	}
- 
- 	/*
--	 * Do our best to cache parent clocks in core->parents.  This prevents
--	 * unnecessary and expensive lookups.  We don't set core->parent here;
--	 * that is done by the calling function.
-+	 * We don't set core->parent here; that is done by the calling function.
- 	 */
- 
- 	index = core->ops->get_parent(core->hw);
- 
--	if (!core->parents)
--		core->parents =
--			kcalloc(core->num_parents, sizeof(struct clk *),
--					GFP_KERNEL);
--
- 	ret = clk_core_get_parent_by_index(core, index);
- 
- out:
-@@ -2374,8 +2360,8 @@ static int __clk_init(struct device *dev, struct clk *clk_user)
- 	 * look-ups of clk's possible parents.
- 	 */
- 	if (core->num_parents > 1) {
--		core->parents = kcalloc(core->num_parents, sizeof(struct clk *),
--					GFP_KERNEL);
-+		core->parents = kcalloc(core->num_parents,
-+					sizeof(struct clk_core *), GFP_KERNEL);
- 		if (!core->parents) {
- 			ret = -ENOMEM;
- 			goto out;
--- 
-2.1.4
+Tony
+
+
+> >  drivers/clk/ti/dpll3xxx.c |    3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> >diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
+> >index f4dec00..7ed24bc 100644
+> >--- a/drivers/clk/ti/dpll3xxx.c
+> >+++ b/drivers/clk/ti/dpll3xxx.c
+> >@@ -437,7 +437,8 @@ int omap3_noncore_dpll_enable(struct clk_hw *hw)
+> >
+> >  	parent = clk_hw_get_parent(hw);
+> >
+> >-	if (clk_hw_get_rate(hw) == clk_get_rate(dd->clk_bypass)) {
+> >+	if (clk_hw_get_rate(hw) ==
+> >+	    clk_hw_get_rate(__clk_get_hw(dd->clk_bypass))) {
+> >  		WARN_ON(parent != __clk_get_hw(dd->clk_bypass));
+> >  		r = _omap3_noncore_dpll_bypass(clk);
+> >  	} else {
+> >
+> 
