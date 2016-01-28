@@ -1,73 +1,160 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Alexander Kochetkov <al.kochet@gmail.com>
-Cc: stable@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: rockchip: Reparent hclk_rom, hclk_i2s0 and hclk_spdif to hclk_cpubus on RK3066/RK3188
-Date: Tue, 26 Jan 2016 14:04:58 +0100
-Message-ID: <18195479.b78tX8z5U3@diego>
-In-Reply-To: <1453812250-11819-1-git-send-email-al.kochet@gmail.com>
-References: <1453812250-11819-1-git-send-email-al.kochet@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:36479 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755714AbcA1UMl (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jan 2016 15:12:41 -0500
+Date: Thu, 28 Jan 2016 12:12:38 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Russell King <linux@arm.linux.org.uk>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] ARM: Use generic clkdev.h header
+Message-ID: <20160128201238.GN12841@codeaurora.org>
+References: <1453932702-6930-1-git-send-email-sboyd@codeaurora.org>
+ <6141409.WI4q6BtOxa@wuerfel>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <6141409.WI4q6BtOxa@wuerfel>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Alexander,
-
-Am Dienstag, 26. Januar 2016, 15:44:10 schrieb Alexander Kochetkov:
-> In order to make peripherals (rom, i2s0 or spdif) accessible via cpu,
-> hclk_cpubus gate must be opened. Without that all accesses (readl/writel)
-> return wrong data.
-
-The clock hierarchy does reflect the hardware structure. What you're 
-introducing are software constraints. Meaning hclk_cpubus is most likely part 
-of the interconnect allowing these peripherals to talk to other parts of the 
-system, but the relevant clocks are _not_ children of hclk_cpubus.
-
-Can you instead try to add hclk_cpubus to the critical clock list please?
-
-
-Thanks
-Heiko
-
-
+On 01/28, Arnd Bergmann wrote:
+> On Wednesday 27 January 2016 14:11:42 Stephen Boyd wrote:
+> > Get rid of the clkdev.h file in the ARM port and use the generic
+> > one because we've gotten rid of all the machine specific
+> > mach/clkdev.h files.
+> > 
+> > Cc: Arnd Bergmann <arnd@arndb.de>
+> > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> > 
 > 
-> The patch fixes regression introduced by recent clock code.
+> Ah, nice! I had not even noticed it was the last one.
 > 
-> Fixes: 78eaf6095cc763c ("clk: rockchip: disable unused clocks")
+> The file is still also referenced by arch/arm/plat-versatile/clock.c,
+> but we don't build that file any more and should remove it as well.
 > 
-> Signed-off-by: Alexander Kochetkov <al.kochet@gmail.com>
-> 
-> CC: linux-clk@vger.kernel.org
-> CC: linux-arm-kernel@lists.infradead.org
-> CC: linux-rockchip@lists.infradead.org
-> CC: linux-kernel@vger.kernel.org
-> CC: stable@vger.kernel.org # 4.1.x-
-> ---
->  drivers/clk/rockchip/clk-rk3188.c |    6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/rockchip/clk-rk3188.c
-> b/drivers/clk/rockchip/clk-rk3188.c index abb4760..54b88a6 100644
-> --- a/drivers/clk/rockchip/clk-rk3188.c
-> +++ b/drivers/clk/rockchip/clk-rk3188.c
-> @@ -429,10 +429,10 @@ static struct rockchip_clk_branch
-> common_clk_branches[] __initdata = { GATE(0, "aclk_strc_sys", "aclk_cpu",
-> CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(4), 10, GFLAGS),
-> 
->  	/* hclk_cpu gates */
-> -	GATE(HCLK_ROM, "hclk_rom", "hclk_cpu", 0, RK2928_CLKGATE_CON(5), 6,
-> GFLAGS), -	GATE(HCLK_I2S0, "hclk_i2s0", "hclk_cpu", 0,
-> RK2928_CLKGATE_CON(7), 2, GFLAGS), -	GATE(HCLK_SPDIF, "hclk_spdif",
-> "hclk_cpu", 0, RK2928_CLKGATE_CON(7), 1, GFLAGS), GATE(0, "hclk_cpubus",
-> "hclk_cpu", 0, RK2928_CLKGATE_CON(4), 8, GFLAGS), +	GATE(HCLK_ROM,
-> "hclk_rom", "hclk_cpubus", 0, RK2928_CLKGATE_CON(5), 6, GFLAGS),
-> +	GATE(HCLK_I2S0, "hclk_i2s0", "hclk_cpubus", 0, RK2928_CLKGATE_CON(7), 2,
-> GFLAGS), +	GATE(HCLK_SPDIF, "hclk_spdif", "hclk_cpubus", 0,
-> RK2928_CLKGATE_CON(7), 1, GFLAGS), /* hclk_ahb2apb is part of a clk branch
-> */
->  	GATE(0, "hclk_vio_bus", "hclk_cpu", 0, RK2928_CLKGATE_CON(6), 12, GFLAGS),
-> GATE(HCLK_LCDC0, "hclk_lcdc0", "hclk_cpu", 0, RK2928_CLKGATE_CON(6), 1,
-> GFLAGS),
+
+Good catch. Here's that patch too.
+
+---8<----
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH] ARM: plat-versatile: Remove unused clock.c file
+
+This file isn't compiled anymore because PLAT_VERSATILE_CLOCK is
+never selected. Remove the file and the config.
+
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ arch/arm/plat-versatile/Kconfig  |  3 --
+ arch/arm/plat-versatile/Makefile |  1 -
+ arch/arm/plat-versatile/clock.c  | 74 ----------------------------------------
+ 3 files changed, 78 deletions(-)
+ delete mode 100644 arch/arm/plat-versatile/clock.c
+
+diff --git a/arch/arm/plat-versatile/Kconfig b/arch/arm/plat-versatile/Kconfig
+index 49b8ef91584a..98b9b8e9f698 100644
+--- a/arch/arm/plat-versatile/Kconfig
++++ b/arch/arm/plat-versatile/Kconfig
+@@ -1,8 +1,5 @@
+ if PLAT_VERSATILE
+ 
+-config PLAT_VERSATILE_CLOCK
+-	bool
+-
+ config PLAT_VERSATILE_SCHED_CLOCK
+ 	bool
+ 
+diff --git a/arch/arm/plat-versatile/Makefile b/arch/arm/plat-versatile/Makefile
+index 03c4900ac3f4..bff3ba889882 100644
+--- a/arch/arm/plat-versatile/Makefile
++++ b/arch/arm/plat-versatile/Makefile
+@@ -1,5 +1,4 @@
+ ccflags-$(CONFIG_ARCH_MULTIPLATFORM) := -I$(srctree)/$(src)/include
+ 
+-obj-$(CONFIG_PLAT_VERSATILE_CLOCK) += clock.o
+ obj-$(CONFIG_PLAT_VERSATILE_SCHED_CLOCK) += sched-clock.o
+ obj-$(CONFIG_SMP) += headsmp.o platsmp.o
+diff --git a/arch/arm/plat-versatile/clock.c b/arch/arm/plat-versatile/clock.c
+deleted file mode 100644
+index 5c8b6564fdc2..000000000000
+--- a/arch/arm/plat-versatile/clock.c
++++ /dev/null
+@@ -1,74 +0,0 @@
+-/*
+- *  linux/arch/arm/plat-versatile/clock.c
+- *
+- *  Copyright (C) 2004 ARM Limited.
+- *  Written by Deep Blue Solutions Limited.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-#include <linux/module.h>
+-#include <linux/kernel.h>
+-#include <linux/errno.h>
+-#include <linux/clk.h>
+-#include <linux/mutex.h>
+-
+-#include <asm/hardware/icst.h>
+-
+-#include <mach/clkdev.h>
+-
+-int clk_enable(struct clk *clk)
+-{
+-	return 0;
+-}
+-EXPORT_SYMBOL(clk_enable);
+-
+-void clk_disable(struct clk *clk)
+-{
+-}
+-EXPORT_SYMBOL(clk_disable);
+-
+-unsigned long clk_get_rate(struct clk *clk)
+-{
+-	return clk->rate;
+-}
+-EXPORT_SYMBOL(clk_get_rate);
+-
+-long clk_round_rate(struct clk *clk, unsigned long rate)
+-{
+-	long ret = -EIO;
+-	if (clk->ops && clk->ops->round)
+-		ret = clk->ops->round(clk, rate);
+-	return ret;
+-}
+-EXPORT_SYMBOL(clk_round_rate);
+-
+-int clk_set_rate(struct clk *clk, unsigned long rate)
+-{
+-	int ret = -EIO;
+-	if (clk->ops && clk->ops->set)
+-		ret = clk->ops->set(clk, rate);
+-	return ret;
+-}
+-EXPORT_SYMBOL(clk_set_rate);
+-
+-long icst_clk_round(struct clk *clk, unsigned long rate)
+-{
+-	struct icst_vco vco;
+-	vco = icst_hz_to_vco(clk->params, rate);
+-	return icst_hz(clk->params, vco);
+-}
+-EXPORT_SYMBOL(icst_clk_round);
+-
+-int icst_clk_set(struct clk *clk, unsigned long rate)
+-{
+-	struct icst_vco vco;
+-
+-	vco = icst_hz_to_vco(clk->params, rate);
+-	clk->rate = icst_hz(clk->params, vco);
+-	clk->ops->setvco(clk, vco);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(icst_clk_set);
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
