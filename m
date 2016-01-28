@@ -1,48 +1,53 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <shawnguo@kernel.org>
+Date: Thu, 28 Jan 2016 14:32:13 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Carlos Soto <csotoalonso@gmail.com>
+Cc: Sascha Hauer <kernel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Remi Pommarel <repk@triplefau.lt>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH V2 0/4] clk: bcm2835: add additinal clocks and add frac support
-Date: Mon, 11 Jan 2016 19:55:52 +0000
-Message-Id: <1452542157-2387-1-git-send-email-kernel@martin.sperl.org>
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] imx25: Fix LCD pixelclock configuration
+Message-ID: <20160128063213.GJ9070@tiger>
+References: <1450902610-27224-1-git-send-email-csotoalonso@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1450902610-27224-1-git-send-email-csotoalonso@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+On Wed, Dec 23, 2015 at 09:30:10PM +0100, Carlos Soto wrote:
+> Set LCDC base clock (per_7) parent clock to UPLL clock.
+> This is needed to allow finer resolution in pixelclock
+> 
+> Signed-off-by: Carlos Soto <csotoalonso@gmail.com>
+> ---
+>  drivers/clk/imx/clk-imx25.c |    6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/clk/imx/clk-imx25.c b/drivers/clk/imx/clk-imx25.c
+> index c4c141c..656340e 100644
+> --- a/drivers/clk/imx/clk-imx25.c
+> +++ b/drivers/clk/imx/clk-imx25.c
+> @@ -238,6 +238,12 @@ static int __init __mx25_clocks_init(unsigned long osc_rate,
+>  	clk_set_parent(clk[per5_sel], clk[ahb]);
+>  
+>  	/*
+> +	 * set LCDC base clock (per 7) to highest possible frequency (UPLL)
+> +	 * to get best resolution for pixel clock
+> +	 */
+> +	clk_set_parent(clk[per7_sel], clk[upll]);
 
-The clk-bcm2835 driver right now relies on BCM2835_CLOCK_COUNT defined
-in include/dt-binding/clocks/bcm2835.h
-With every new clock introduced this value needs to increase,
-which is not what should happen for bindings.
+This can be done in device tree via assigned-clock-parents without the
+need of touching kernel.
 
-So we reorganize the driver so that it is no longer necessary
-to define BCM2835_CLOCK_COUNT.
+Shawn
 
-Also the driver calculates fractional clock dividers correctly,
-but it does not enable the bit to enable support in the register.
-As a minimal extension we now can also define higher order MASH
-support when defining the clocks.
-
-Finally we add all the 23 different HW clocks that have not been
-configured in the driver.
-
-Martin Sperl (4):
-  clk: bcm2835: avoid the use of BCM2835_CLOCK_COUNT in clk-bcm2835
-  clk: bcm2835: enable fractional and mash support
-  clk: bcm2835: enable management of PCM clock
-  clk: bcm2835: add missing 22 HW-clocks.
-
- drivers/clk/bcm/clk-bcm2835.c       |  527 +++++++++++++++++++++++++++++++----
- include/dt-bindings/clock/bcm2835.h |   25 +-
- 2 files changed, 489 insertions(+), 63 deletions(-)
-
---
-1.7.10.4
+> +
+> +	/*
+>  	 * Let's initially set up CLKO parent as ipg, since this configuration
+>  	 * is used on some imx25 board designs to clock the audio codec.
+>  	 */
+> -- 
+> 1.7.10.4
+> 
+> 
