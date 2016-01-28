@@ -1,65 +1,109 @@
-Return-Path: <vz@mleia.com>
-Message-ID: <5693930C.3050402@mleia.com>
-Date: Mon, 11 Jan 2016 13:33:32 +0200
-From: Vladimir Zapolskiy <vz@mleia.com>
-MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-CC: Joachim Eastwood <manabian@gmail.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: remove duplicated COMMON_CLK_NXP record from clk/Kconfig
-References: <1452136027-32076-1-git-send-email-vz@mleia.com>
-In-Reply-To: <1452136027-32076-1-git-send-email-vz@mleia.com>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>,
+ Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+ Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v4 3/3] arm64: EXYNOS: Consolidate ARCH_EXYNOS7 symbol into
+ ARCH_EXYNOS
+Date: Thu, 28 Jan 2016 09:35:24 +0900
+Message-id: <1453941324-15742-4-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1453941324-15742-1-git-send-email-k.kozlowski@samsung.com>
+References: <1453941324-15742-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike, Stephen,
+The ARMv8 Exynos family SoCs in Linux kernel are currently:
+ - Exynos5433 (controlled by ARCH_EXYNOS),
+ - Exynos7 (controlled by ARCH_EXYNOS7).
 
-On 07.01.2016 05:07, Vladimir Zapolskiy wrote:
-> Presumably the second COMMON_CLK_NXP config option in
-> drivers/clk/Kconfig appeared after a merge conflict resolution, remove
-> the wrong record of two.
-> 
-> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
-> ---
-> Hi Mike, Stephen,
-> 
-> I've found this issue in clk-next while working on something else,
-> please consider to include this change to clk-next, no objections if
-> it is squashed with f7c82a60ba2 ("clk: lpc32xx: add common clock
-> framework driver").
-> 
-> In fact it is a revert of 8a896310a7e ("clk: lpc18xx: add NXP specific
-> COMMON_CLK_NXP configuration symbol"), but this preparatory change is
-> good as is.
-> 
-> The original change doesn't have this kind of a problem (see
-> http://www.spinics.net/lists/devicetree/msg105709.html), so I
-> believe it is caused by a merge conflict, probably after done
-> alphabetical sorting.
+It duplicates Kconfig symbols unnecessarily, so consolidate them into
+one ARCH_EXYNOS. Future SoCs could fall also under the ARCH_EXYNOS
+symbol.
 
-please consider to include this change before sending a pull request
-this merge window.
+The commit should not bring any visible functional change.
 
-With best wishes,
-Vladimir
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
+Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
 
->  drivers/clk/Kconfig | 5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 41f6c7f..eca8e01 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -187,11 +187,6 @@ config COMMON_CLK_PWM
->  	  Adapter driver so that any PWM output can be (mis)used as clock signal
->  	  at 50% duty cycle.
->  
-> -config COMMON_CLK_NXP
-> -	def_bool COMMON_CLK && ARCH_LPC18XX
-> -	---help---
-> -	  Support for clock providers on NXP platforms.
-> -
->  config COMMON_CLK_PXA
->  	def_bool COMMON_CLK && ARCH_PXA
->  	---help---
-> 
+---
+
+Changes since v3:
+1. Rebase on next-20160127.
+
+Changes since v2:
+1. None
+
+Changes since v1:
+1. Minor cleanups after Tomasz's comments.
+2. Added tags: Chanwoo's, Pankaj's, Alim's and Tomasz's.
+---
+ arch/arm64/Kconfig.platforms        | 11 ++---------
+ arch/arm64/boot/dts/exynos/Makefile |  2 +-
+ arch/arm64/configs/defconfig        |  2 +-
+ 3 files changed, 4 insertions(+), 11 deletions(-)
+
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 83ac9316a432..36e1233493d6 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -14,22 +14,15 @@ config ARCH_BERLIN
+ 	  This enables support for Marvell Berlin SoC Family
+ 
+ config ARCH_EXYNOS
+-	bool
+-	help
+-	  This enables support for Samsung Exynos SoC family
+-
+-config ARCH_EXYNOS7
+-	bool "ARMv8 based Samsung Exynos7"
+-	select ARCH_EXYNOS
++	bool "ARMv8 based Samsung Exynos SoC family"
+ 	select COMMON_CLK
+ 	select COMMON_CLK_SAMSUNG
+ 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+ 	select HAVE_S3C_RTC if RTC_CLASS
+ 	select PINCTRL
+ 	select PINCTRL_EXYNOS
+-
+ 	help
+-	  This enables support for Samsung Exynos7 SoC family
++	  This enables support for ARMv8 based Samsung Exynos SoC family.
+ 
+ config ARCH_LAYERSCAPE
+ 	bool "ARMv8 based Freescale Layerscape SoC family"
+diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+index 20310e5b6d6f..50c9b9383cfa 100644
+--- a/arch/arm64/boot/dts/exynos/Makefile
++++ b/arch/arm64/boot/dts/exynos/Makefile
+@@ -1,4 +1,4 @@
+-dtb-$(CONFIG_ARCH_EXYNOS7) += exynos7-espresso.dtb
++dtb-$(CONFIG_ARCH_EXYNOS) += exynos7-espresso.dtb
+ 
+ always		:= $(dtb-y)
+ subdir-y	:= $(dts-dirs)
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 18ca9fb9e65f..331a843cf122 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -33,7 +33,7 @@ CONFIG_MODULE_UNLOAD=y
+ # CONFIG_IOSCHED_DEADLINE is not set
+ CONFIG_ARCH_BCM_IPROC=y
+ CONFIG_ARCH_BERLIN=y
+-CONFIG_ARCH_EXYNOS7=y
++CONFIG_ARCH_EXYNOS=y
+ CONFIG_ARCH_LAYERSCAPE=y
+ CONFIG_ARCH_HISI=y
+ CONFIG_ARCH_MEDIATEK=y
+-- 
+1.9.1
