@@ -1,77 +1,40 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga03-in.huawei.com ([119.145.14.66]:25201 "EHLO
-	szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752271AbcA2HzP (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 29 Jan 2016 02:55:15 -0500
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
-	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
-	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [PATCH v8 4/6] ARM: debug: add hi3519 debug uart
-Date: Fri, 29 Jan 2016 15:42:10 +0800
-Message-ID: <1454053332-3218-5-git-send-email-xuejiancheng@huawei.com>
-In-Reply-To: <1454053332-3218-1-git-send-email-xuejiancheng@huawei.com>
-References: <1454053332-3218-1-git-send-email-xuejiancheng@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	zhengxing@rock-chips.com,
+	zhangqing@rock-chips.com,
+	wxt@rock-chips.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 1/3] clk: rockchip: rk3036: fix parent of hclk_vcodec
+Date: Thu, 28 Jan 2016 01:01:44 +0100
+Message-Id: <1453939306-984-2-git-send-email-heiko@sntech.de>
+In-Reply-To: <1453939306-984-1-git-send-email-heiko@sntech.de>
+References: <1453939306-984-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-add hi3519 debug uart
+hclk_vcodec is a child of aclk_vcodec with the fixed factor clock
+hclk_vcodec_pre in between and not a child of hclk_disp_pre.
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- arch/arm/Kconfig.debug | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/clk/rockchip/clk-rk3036.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index c6b6175..edd3fbe 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -260,6 +260,14 @@ choice
- 		  Say Y here if you want kernel low-level debugging support
- 		  on Cortina Gemini based platforms.
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
+index 9c317a3..38139dc 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -380,7 +380,7 @@ static struct rockchip_clk_branch rk3036_clk_branches[] __initdata = {
+ 	GATE(HCLK_LCDC, "hclk_lcdc", "hclk_disp_pre", 0, RK2928_CLKGATE_CON(9), 5, GFLAGS),
  
-+	config DEBUG_HI3519_UART
-+		bool "Hisilicon HI3519 Debug UART"
-+		depends on ARCH_HISI
-+		select DEBUG_UART_PL01X
-+		help
-+		  Say Y here if you want kernel low-level debugging support
-+		  on HI3519 UART.
-+
- 	config DEBUG_HI3620_UART
- 		bool "Hisilicon HI3620 Debug UART"
- 		depends on ARCH_HI3xxx
-@@ -1451,6 +1459,7 @@ config DEBUG_UART_PHYS
- 	default 0x11002000 if DEBUG_MT8127_UART0
- 	default 0x11006000 if DEBUG_MT6589_UART0
- 	default 0x11009000 if DEBUG_MT8135_UART3
-+	default 0x12100000 if DEBUG_HI3519_UART
- 	default 0x16000000 if DEBUG_INTEGRATOR
- 	default 0x18000300 if DEBUG_BCM_5301X
- 	default 0x18010000 if DEBUG_SIRFATLAS7_UART0
-@@ -1619,6 +1628,7 @@ config DEBUG_UART_VIRT
- 	default 0xfee20000 if DEBUG_NSPIRE_CLASSIC_UART || DEBUG_NSPIRE_CX_UART
- 	default 0xfee82340 if ARCH_IOP13XX
- 	default 0xfef00000 if ARCH_IXP4XX && !CPU_BIG_ENDIAN
-+	default 0xfef00000 if DEBUG_HI3519_UART
- 	default 0xfef00003 if ARCH_IXP4XX && CPU_BIG_ENDIAN
- 	default 0xfef36000 if DEBUG_HIGHBANK_UART
- 	default 0xfefb0000 if DEBUG_OMAP1UART1 || DEBUG_OMAP7XXUART1
+ 	/* hclk_video gates */
+-	GATE(HCLK_VCODEC, "hclk_vcodec", "hclk_disp_pre", 0, RK2928_CLKGATE_CON(3), 12, GFLAGS),
++	GATE(HCLK_VCODEC, "hclk_vcodec", "hclk_vcodec_pre", 0, RK2928_CLKGATE_CON(3), 12, GFLAGS),
+ 
+ 	/* xin24m gates */
+ 	GATE(SCLK_PVTM_CORE, "sclk_pvtm_core", "xin24m", 0, RK2928_CLKGATE_CON(10), 0, GFLAGS),
 -- 
-1.9.1
-
+2.6.4
