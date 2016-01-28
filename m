@@ -1,47 +1,40 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 29 Jan 2016 16:34:04 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Andi Shyti <andi@etezian.org>,
-	Yadwinder Singh Brar <yadi.brar01@gmail.com>,
-	Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH v3 2/4] clk: s2mps11: allocate only one structure for
- clock init
-Message-ID: <20160130003404.GI12841@codeaurora.org>
-References: <1453284864-8082-1-git-send-email-andi.shyti@samsung.com>
- <1453284864-8082-3-git-send-email-andi.shyti@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1453284864-8082-3-git-send-email-andi.shyti@samsung.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	zhengxing@rock-chips.com,
+	zhangqing@rock-chips.com,
+	wxt@rock-chips.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 0/3] clk: rockchip: introduce a clock type for factor clocks
+Date: Thu, 28 Jan 2016 01:01:43 +0100
+Message-Id: <1453939306-984-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/20, Andi Shyti wrote:
-> The driver allocates three structures, s2mpsxx_clk_init, for
-> three different clock types (s2mps11, s2mps13 and s2mps14). They
-> are quite similar but they differ only by the name. Only one of
-> these structures is used, while the others lie unused in the
-> memory.
-> 
-> The clock's name, though, is not such a meaningful information
-> and by assigning the same name to the initial data we can avoid
-> over allocation. The common name chosen will be s2mps11,
-> coherently with the device driver name, instead of the clock
-> device.
-> 
-> Therefore, remove the structures associated to s2mps13 and
-> s2mps14 and use only the one referred to s2mps11 for all kind of
-> clocks.
-> 
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
+We're currently creating factor clocks manually during clock init.
+That worked well in the beginning, but since the rk3288 we also see
+combined gate-factor clocks and the overall number of factor clocks
+we create manually seems to be rising. And also sometimes created
+artificial separations that do not come from the clock hirarchy.
 
-Applied to clk-next
+So I finished something I started some 6 months ago to finally be
+able to model factor clocks inside the clock-tree where they belong.
+
+Heiko Stuebner (3):
+  clk: rockchip: rk3036: fix parent of hclk_vcodec
+  clk: rockchip: add a factor clock type
+  clk: rockchip: convert manually created factor clocks to the new type
+
+ drivers/clk/rockchip/clk-rk3036.c | 32 ++++++-----------------
+ drivers/clk/rockchip/clk-rk3188.c | 10 +++-----
+ drivers/clk/rockchip/clk-rk3228.c | 33 +++++-------------------
+ drivers/clk/rockchip/clk-rk3288.c | 23 +++++------------
+ drivers/clk/rockchip/clk-rk3368.c | 29 ++++++---------------
+ drivers/clk/rockchip/clk.c        | 53 +++++++++++++++++++++++++++++++++++++++
+ drivers/clk/rockchip/clk.h        | 28 +++++++++++++++++++++
+ 7 files changed, 110 insertions(+), 98 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.6.4
