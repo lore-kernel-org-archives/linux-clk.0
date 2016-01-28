@@ -1,159 +1,50 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Rob Herring <robh+dt@kernel.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Remi Pommarel <repk@triplefau.lt>,
-	devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [RFC 1/9] clk: bcm2835: add basic device tree support for per clock settings
-Date: Tue, 19 Jan 2016 14:51:32 +0000
-Message-Id: <1453215100-2382-2-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1453215100-2382-1-git-send-email-kernel@martin.sperl.org>
-References: <1453215100-2382-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH v4 2/3] clk: samsung: Don't build ARMv8 clock drivers on
+ ARMv7
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Kukjin Kim <kgene@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will.deacon@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1453941324-15742-1-git-send-email-k.kozlowski@samsung.com>
+ <1453941324-15742-3-git-send-email-k.kozlowski@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+ Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <56AA68D6.50500@osg.samsung.com>
+Date: Thu, 28 Jan 2016 16:15:34 -0300
+MIME-Version: 1.0
+In-Reply-To: <1453941324-15742-3-git-send-email-k.kozlowski@samsung.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+Hello Krzysztof,
 
-Add basic device tree support for per clock settings taken from the
-device tree.
+On 01/27/2016 09:35 PM, Krzysztof Kozlowski wrote:
+> Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
+> so it is built also on ARMv7. This does not bring any kind of benefit.
+> There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
+> multi_v7 for ARMv7).
+>
+> Instead build clock drivers only for respective SoC's architecture.
+>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>
 
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c |   72 +++++++++++++++++++++++++++++++++++++----
- 1 file changed, 66 insertions(+), 6 deletions(-)
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 637f8ae..1c714d0 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1757,8 +1757,38 @@ static const struct clk_ops bcm2835_vpu_clock_clk_ops = {
- 	.get_parent = bcm2835_clock_get_parent,
- };
- 
-+static struct device_node *bcm2835_find_dt_node(
-+	struct bcm2835_cprman *cprman, int id)
-+{
-+	struct device *dev = cprman->dev;
-+	struct device_node *nc, *ncp = dev->of_node;
-+	u32 value;
-+	int err;
-+
-+	/* if no dt, then use the constant version */
-+	if (!ncp)
-+		return NULL;
-+
-+	/* try to find the devicetree with the id */
-+	for_each_available_child_of_node(ncp, nc) {
-+		/* get reg value */
-+		err = of_property_read_u32(nc, "reg", &value);
-+		if (err) {
-+			dev_err(dev, "%s has no valid 'reg' property (%d)\n",
-+				nc->full_name, err);
-+		} else {
-+			if (value == id)
-+				return nc;
-+		}
-+	}
-+
-+	/* not found */
-+	return NULL;
-+}
-+
- static struct clk *bcm2835_register_pll(struct bcm2835_cprman *cprman,
--					const struct bcm2835_pll_data *data)
-+					const struct bcm2835_pll_data *data,
-+					size_t id)
- {
- 	struct bcm2835_pll *pll;
- 	struct clk_init_data init;
-@@ -1785,7 +1815,8 @@ static struct clk *bcm2835_register_pll(struct bcm2835_cprman *cprman,
- 
- static struct clk *
- bcm2835_register_pll_divider(struct bcm2835_cprman *cprman,
--			     const struct bcm2835_pll_divider_data *data)
-+			     const struct bcm2835_pll_divider_data *data,
-+			     size_t id)
- {
- 	struct bcm2835_pll_divider *divider;
- 	struct clk_init_data init;
-@@ -1843,14 +1874,42 @@ bcm2835_register_pll_divider(struct bcm2835_cprman *cprman,
- 	return clk;
- }
- 
-+static const struct bcm2835_clock_data *bcm2835_register_clock_of(
-+	struct bcm2835_cprman *cprman,
-+	const struct bcm2835_clock_data *data_orig,
-+	size_t id)
-+{
-+	struct device *dev = cprman->dev;
-+	struct device_node *nc;
-+	struct bcm2835_clock_data *data;
-+
-+	/* find the corresponding dt-node */
-+	nc = bcm2835_find_dt_node(cprman, id);
-+	if (!nc)
-+		return data_orig;
-+
-+	/* create a copy of data */
-+	data = devm_kmalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return data_orig;
-+	memcpy(data, data_orig, sizeof(*data));
-+
-+	/* and return the result */
-+	return data;
-+}
-+
- static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
--					  const struct bcm2835_clock_data *data)
-+					  const struct bcm2835_clock_data *data,
-+					  size_t id)
- {
- 	struct bcm2835_clock *clock;
- 	struct clk_init_data init;
- 	const char *parents[1 << CM_SRC_BITS];
- 	size_t i;
- 
-+	/* update default values from the device_tree */
-+	data = bcm2835_register_clock_of(cprman, data, id);
-+
- 	/*
- 	 * Replace our "xosc" references with the oscillator's
- 	 * actual name.
-@@ -1887,7 +1946,8 @@ static struct clk *bcm2835_register_clock(struct bcm2835_cprman *cprman,
- }
- 
- static struct clk *bcm2835_register_gate(struct bcm2835_cprman *cprman,
--					 const struct bcm2835_gate_data *data)
-+					 const struct bcm2835_gate_data *data,
-+					 size_t id)
- {
- 	return clk_register_gate(cprman->dev, data->name, data->parent,
- 				 CLK_IGNORE_UNUSED | CLK_SET_RATE_GATE,
-@@ -1896,7 +1956,7 @@ static struct clk *bcm2835_register_gate(struct bcm2835_cprman *cprman,
- }
- 
- typedef struct clk *(*bcm2835_clk_register)(struct bcm2835_cprman *cprman,
--					    const void *data);
-+					    const void *data, size_t id);
- struct bcm2835_clk_desc {
- 	bcm2835_clk_register clk_register;
- 	const void *data;
-@@ -2007,7 +2067,7 @@ static int bcm2835_clk_probe(struct platform_device *pdev)
- 	for (i = 0; i < asize; i++) {
- 		desc = &clk_desc_array[i];
- 		if (desc->clk_register && desc->data)
--			clks[i] = desc->clk_register(cprman, desc->data);
-+			clks[i] = desc->clk_register(cprman, desc->data, i);
- 	}
- 
- 	return of_clk_add_provider(dev->of_node, of_clk_src_onecell_get,
+Also checked that for example clk-exynos5433 is not built anymore for
+exynos_defconfig but it is built for allyesconfig.
+
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
 -- 
-1.7.10.4
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
