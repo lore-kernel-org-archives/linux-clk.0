@@ -1,211 +1,95 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 01/14] pinctrl: sunxi: Add A83T R_PIO controller support
-Date: Sun, 31 Jan 2016 09:20:53 +0800
-Message-Id: <1454203266-4450-2-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <cw00.choi@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=UTF-8
+Message-id: <56A96D7B.7080505@samsung.com>
+Date: Thu, 28 Jan 2016 10:23:07 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Kukjin Kim <kgene@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will.deacon@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+ Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v4 2/3] clk: samsung: Don't build ARMv8 clock drivers on
+ ARMv7
+References: <1453941324-15742-1-git-send-email-k.kozlowski@samsung.com>
+ <1453941324-15742-3-git-send-email-k.kozlowski@samsung.com>
+In-reply-to: <1453941324-15742-3-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The A83T has R_PIO pin controller, it's same as A23, execpt A83T
-interrupt bit is 6th and A83T has one extra pin PL12.
+On 2016년 01월 28일 09:35, Krzysztof Kozlowski wrote:
+> Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
+> so it is built also on ARMv7. This does not bring any kind of benefit.
+> There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
+> multi_v7 for ARMv7).
+> 
+> Instead build clock drivers only for respective SoC's architecture.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
+> ---
+> 
+> Changes since v3:
+> 1. Rebase on next-20160127.
+> 
+> Changes since v2:
+> 1. Follow Arnd's advice making EXYNOS_ARM64_COMMON_CLK user-visible when
+>    COMPILE_TEST is enabled.
+> 2. Dropped accumulated tags because the logic is now different.
+> 
+> Changes since v1:
+> 1. Use one Kconfig symbol for clocks of all ARM64 SoCs (after
+>    discussion): EXYNOS_ARM64_COMMON_CLK.
+> 2. Minor cleanups after Tomasz's comments.
+> 3. Added tags: Chanwoo's, Sylwester's, Alim's and Tomasz's (the tags
+>    were given for v1 but assuming that change from 1. is not major
+>    enough to require re-tagging).
+> ---
+>  drivers/clk/samsung/Kconfig  | 5 +++++
+>  drivers/clk/samsung/Makefile | 4 ++--
+>  2 files changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+> index dd6093a33f84..5fd982d9f4d9 100644
+> --- a/drivers/clk/samsung/Kconfig
+> +++ b/drivers/clk/samsung/Kconfig
+> @@ -23,3 +23,8 @@ config S3C2443_COMMON_CLK
+>  	bool "Samsung S3C2443 clock controller support" if COMPILE_TEST
+>  	select COMMON_CLK_SAMSUNG
+>  
+> +# ARM64 SoCs (e.g. Exynos5433, Exynos7):
+> +config EXYNOS_ARM64_COMMON_CLK
+> +	bool "Samsung Exynos ARMv8-family clock controller support" if COMPILE_TEST
+> +	default ARM64 && COMMON_CLK_SAMSUNG
+> +	depends on (ARM64 && COMMON_CLK_SAMSUNG) || COMPILE_TEST
+> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
+> index 5f6833ea355d..fc367d4b2902 100644
+> --- a/drivers/clk/samsung/Makefile
+> +++ b/drivers/clk/samsung/Makefile
+> @@ -10,11 +10,11 @@ obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
+>  obj-$(CONFIG_SOC_EXYNOS5260)	+= clk-exynos5260.o
+>  obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
+>  obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
+> -obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos5433.o
+> +obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos5433.o
+>  obj-$(CONFIG_SOC_EXYNOS5440)	+= clk-exynos5440.o
+>  obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-audss.o
+>  obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-clkout.o
+> -obj-$(CONFIG_ARCH_EXYNOS7)	+= clk-exynos7.o
+> +obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos7.o
+>  obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
+>  obj-$(CONFIG_S3C2410_COMMON_DCLK)+= clk-s3c2410-dclk.o
+>  obj-$(CONFIG_S3C2412_COMMON_CLK)+= clk-s3c2412.o
+> 
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
----
- .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
- drivers/pinctrl/sunxi/Kconfig                      |   5 +
- drivers/pinctrl/sunxi/Makefile                     |   1 +
- drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c       | 119 +++++++++++++++++++++
- 4 files changed, 126 insertions(+)
- create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c
+Looks good to me. 
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-index 9213b27..f9ff10b 100644
---- a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-@@ -20,6 +20,7 @@ Required properties:
-   "allwinner,sun9i-a80-pinctrl"
-   "allwinner,sun9i-a80-r-pinctrl"
-   "allwinner,sun8i-a83t-pinctrl"
-+  "allwinner,sun8i-a83t-r-pinctrl"
-   "allwinner,sun8i-h3-pinctrl"
- 
- - reg: Should contain the register physical address and length for the
-diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
-index f8dbc8b..c0e4a8b 100644
---- a/drivers/pinctrl/sunxi/Kconfig
-+++ b/drivers/pinctrl/sunxi/Kconfig
-@@ -46,6 +46,11 @@ config PINCTRL_SUN8I_A83T
- 	def_bool MACH_SUN8I
- 	select PINCTRL_SUNXI_COMMON
- 
-+config PINCTRL_SUN8I_A83T_R
-+	def_bool MACH_SUN8I
-+	depends on RESET_CONTROLLER
-+	select PINCTRL_SUNXI_COMMON
-+
- config PINCTRL_SUN8I_A23_R
- 	def_bool MACH_SUN8I
- 	depends on RESET_CONTROLLER
-diff --git a/drivers/pinctrl/sunxi/Makefile b/drivers/pinctrl/sunxi/Makefile
-index ef82f22..bfd4fa0 100644
---- a/drivers/pinctrl/sunxi/Makefile
-+++ b/drivers/pinctrl/sunxi/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_PINCTRL_SUN8I_A23)		+= pinctrl-sun8i-a23.o
- obj-$(CONFIG_PINCTRL_SUN8I_A23_R)	+= pinctrl-sun8i-a23-r.o
- obj-$(CONFIG_PINCTRL_SUN8I_A33)		+= pinctrl-sun8i-a33.o
- obj-$(CONFIG_PINCTRL_SUN8I_A83T)	+= pinctrl-sun8i-a83t.o
-+obj-$(CONFIG_PINCTRL_SUN8I_A83T_R)	+= pinctrl-sun8i-a83t-r.o
- obj-$(CONFIG_PINCTRL_SUN8I_H3)		+= pinctrl-sun8i-h3.o
- obj-$(CONFIG_PINCTRL_SUN9I_A80)		+= pinctrl-sun9i-a80.o
- obj-$(CONFIG_PINCTRL_SUN9I_A80_R)	+= pinctrl-sun9i-a80-r.o
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c
-new file mode 100644
-index 0000000..11787894
---- /dev/null
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c
-@@ -0,0 +1,119 @@
-+/*
-+ * Allwinner A83T SoCs special pins pinctrl driver.
-+ *
-+ * Copyright (C) 2016 Vishnu Patekar
-+ * Vishnu Patekar <vishnupatekar0510@gmail.com>
-+ *
-+ * Based on pinctrl-sun8i-a23.c, which is:
-+ * Copyright (C) 2014 Chen-Yu Tsai <wens@csie.org>
-+ * Copyright (C) 2014 Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This file is licensed under the terms of the GNU General Public
-+ * License version 2.  This program is licensed "as is" without any
-+ * warranty of any kind, whether express or implied.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/reset.h>
-+
-+#include "pinctrl-sunxi.h"
-+
-+static const struct sunxi_desc_pin sun8i_a83t_r_pins[] = {
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 0),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_rsb"),		/* SCK */
-+		  SUNXI_FUNCTION(0x3, "s_twi"),		/* SCK */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 0)),	/* PL_EINT0 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 1),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_rsb"),		/* SDA */
-+		  SUNXI_FUNCTION(0x3, "s_twi"),		/* SDA */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 1)),	/* PL_EINT1 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 2),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_uart"),	/* TX */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 2)),	/* PL_EINT2 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 3),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_uart"),	/* RX */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 3)),	/* PL_EINT3 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 4),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* MS */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 4)),	/* PL_EINT4 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 5),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* CK */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 5)),	/* PL_EINT5 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 6),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* DO */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 6)),	/* PL_EINT6 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 7),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* DI */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 7)),	/* PL_EINT7 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 8),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_twi"),		/* SCK */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 8)),	/* PL_EINT8 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 9),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_twi"),		/* SDA */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 9)),	/* PL_EINT9 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 10),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_pwm"),
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 10)),	/* PL_EINT10 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 11),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 11)),	/* PL_EINT11 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 12),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_cir"),		/* RX */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 11)),	/* PL_EINT12 */
-+};
-+
-+static const struct sunxi_pinctrl_desc sun8i_a83t_r_pinctrl_data = {
-+	.pins = sun8i_a83t_r_pins,
-+	.npins = ARRAY_SIZE(sun8i_a83t_r_pins),
-+	.pin_base = PL_BASE,
-+	.irq_banks = 1,
-+};
-+
-+static int sun8i_a83t_r_pinctrl_probe(struct platform_device *pdev)
-+{
-+	return sunxi_pinctrl_init(pdev, &sun8i_a83t_r_pinctrl_data);
-+}
-+
-+static const struct of_device_id sun8i_a83t_r_pinctrl_match[] = {
-+	{ .compatible = "allwinner,sun8i-a83t-r-pinctrl", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, sun8i_a83t_r_pinctrl_match);
-+
-+static struct platform_driver sun8i_a83t_r_pinctrl_driver = {
-+	.probe	= sun8i_a83t_r_pinctrl_probe,
-+	.driver	= {
-+		.name		= "sun8i-a83t-r-pinctrl",
-+		.of_match_table	= sun8i_a83t_r_pinctrl_match,
-+	},
-+};
-+module_platform_driver(sun8i_a83t_r_pinctrl_driver);
--- 
-1.9.1
+Best Regards,
+Chanwoo Choi
