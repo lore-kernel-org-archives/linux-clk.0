@@ -1,120 +1,111 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:29646 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754133AbcARKMd (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jan 2016 05:12:33 -0500
-MIME-version: 1.0
-Content-type: text/plain; charset=utf-8
-Subject: Re: [PATCH v2 09/10] dt-bindings: video: exynos5433-decon: add
- bindings for DECON-TV
-To: Inki Dae <inki.dae@samsung.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>
-References: <CAJKOXPfXrEwu1egSnLxwYofu_scskkPRKOjOCskObPFn9yVcJw@mail.gmail.com>
- <1445860796-23045-1-git-send-email-a.hajda@samsung.com>
- <56977A3B.8020104@samsung.com> <56977D42.2050904@samsung.com>
- <569C279D.1020705@samsung.com> <569CB664.3090806@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Hyungwon Hwang <human.hwang@samsung.com>,
-	Rob Herring <robh+dt@kernel.org>
-From: Andrzej Hajda <a.hajda@samsung.com>
-Message-id: <569CBA70.8000107@samsung.com>
-Date: Mon, 18 Jan 2016 11:12:00 +0100
-In-reply-to: <569CB664.3090806@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <ping.bai@nxp.com>
+From: Ping Bai <ping.bai@nxp.com>
+To: Shawn Guo <shawnguo@kernel.org>
+CC: "kernel@pengutronix.de" <kernel@pengutronix.de>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"pawel.moll@arm.com" <pawel.moll@arm.com>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "jacky.baip@gmail.com"
+	<jacky.baip@gmail.com>
+Subject: RE: [PATCH v2 2/5] ARM: dts: imx: Add basic dts support for
+ imx6qp-sabresd
+Date: Thu, 28 Jan 2016 10:43:01 +0000
+Message-ID: <DB4PR04MB53807A99AAED4F18A6B383987DA0@DB4PR04MB538.eurprd04.prod.outlook.com>
+References: <1450159673-27314-1-git-send-email-b51503@freescale.com>
+ <1450159673-27314-3-git-send-email-b51503@freescale.com>
+ <20160128075408.GM9070@tiger>
+In-Reply-To: <20160128075408.GM9070@tiger>
+Content-Type: text/plain; charset="gb2312"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Inki,
-
-On 01/18/2016 10:54 AM, Inki Dae wrote:
->
-> 2016년 01월 18일 08:45에 Krzysztof Kozlowski 이(가) 쓴 글:
->> On 14.01.2016 19:49, Inki Dae wrote:
->>> + Rob Herring
->>>
->>> 2016년 01월 14일 19:36에 Andrzej Hajda 이(가) 쓴 글:
->>>> Hi Inki,
->>>>
->>>> It seems this patch and 04/10 did not get picked up yet.
->>>> Could you merge it?
->>> Yes, I can. However, 04/10 is required for acked-by from dt or SoC maintainer.
->>> Krzysztof and Rob, could you give me acked-by?
->>>
->>> Thanks,
->>> Inki Dae
->> My ack is really not required, because this is a binding for a specific
->> driver from video subsystem. It does not fall into the arm/mach-exynos
->> nor the dts/*exynos*.
->>
->> Anyway I reviewed the patch on 28th of October and Rob acked it on 13th
->> of November.
-> I meant 04/10 not 09/10 patch. :)
-
-There is document in kernel with clear explanation about the subject:
-Documentation/devicetree/bindings/submitting-patches.txt.
-See especially paragraph II.2 [1].
-
-[1]: Documentation/devicetree/bindings/submitting-patches.txt#L50
-
-Regards
-Andrzej
-
->
-> Thanks,
-> Inki Dae
->
->> Best regards,
->> Krzysztof
->>
->>
->>>> Regards
->>>> Andrzej
->>>>
->>>> On 10/26/2015 12:59 PM, Andrzej Hajda wrote:
->>>>> DECON-TV(Display and Enhancement Controller for TV) is a variation
->>>>> of DECON IP. Its main purpose is to produce video stream for HDMI IP.
->>>>>
->>>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->>>>> ---
->>>>> Hi Krzysztof,
->>>>>
->>>>> I have decided to skip cleanup part as it would require more work,
->>>>> not related to this patchset.
->>>>>
->>>>> Regards
->>>>> Andrzej
->>>>>
->>>>>  Documentation/devicetree/bindings/video/exynos5433-decon.txt | 3 ++-
->>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/video/exynos5433-decon.txt b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
->>>>> index 3dff78b..c9fd7b3 100644
->>>>> --- a/Documentation/devicetree/bindings/video/exynos5433-decon.txt
->>>>> +++ b/Documentation/devicetree/bindings/video/exynos5433-decon.txt
->>>>> @@ -5,7 +5,8 @@ Exynos series of SoCs which transfers the image data from a video memory
->>>>>  buffer to an external LCD interface.
->>>>>  
->>>>>  Required properties:
->>>>> -- compatible: value should be "samsung,exynos5433-decon";
->>>>> +- compatible: value should be one of:
->>>>> +	"samsung,exynos5433-decon", "samsung,exynos5433-decon-tv";
->>>>>  - reg: physical base address and length of the DECON registers set.
->>>>>  - interrupts: should contain a list of all DECON IP block interrupts in the
->>>>>  	      order: VSYNC, LCD_SYSTEM. The interrupt specifier format
->>>> --
->>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->>>> the body of a message to majordomo@vger.kernel.org
->>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>>
->>>>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->>
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU2hhd24gR3VvIFttYWls
+dG86c2hhd25ndW9Aa2VybmVsLm9yZ10NCj4gU2VudDogMjAxNsTqMdTCMjjI1SAxNTo1NA0KPiBU
+bzogYjUxNTAzQGZyZWVzY2FsZS5jb20NCj4gQ2M6IGtlcm5lbEBwZW5ndXRyb25peC5kZTsgZGV2
+aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7DQo+IHBhd2VsLm1vbGxAYXJtLmNvbTsgbXR1cnF1ZXR0
+ZUBiYXlsaWJyZS5jb207IHNib3lkQGNvZGVhdXJvcmEub3JnOw0KPiByb2JoK2R0QGtlcm5lbC5v
+cmc7IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFybS0NCj4ga2VybmVsQGxpc3Rz
+LmluZnJhZGVhZC5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MiAyLzVdIEFSTTogZHRzOiBp
+bXg6IEFkZCBiYXNpYyBkdHMgc3VwcG9ydCBmb3IgaW14NnFwLQ0KPiBzYWJyZXNkDQo+IA0KPiBP
+biBUdWUsIERlYyAxNSwgMjAxNSBhdCAwMjowNzo1MFBNICswODAwLCBCYWkgUGluZyB3cm90ZToN
+Cj4gPiBUaGUgcGF0Y2ggYWRkcyBkdHMgZmlsZSBmb3IgaW14NnFwLXNhYnJlc2QgYm9hcmQuDQo+
+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBCYWkgUGluZyA8YjUxNTAzQGZyZWVzY2FsZS5jb20+DQo+
+ID4gLS0tDQo+ID4gIGFyY2gvYXJtL2Jvb3QvZHRzL01ha2VmaWxlICAgICAgICAgICAgIHwgIDEg
+Kw0KPiA+ICBhcmNoL2FybS9ib290L2R0cy9pbXg2cWRsLXNhYnJlc2QuZHRzaSB8ICAxICsNCj4g
+PiAgYXJjaC9hcm0vYm9vdC9kdHMvaW14NnFwLXNhYnJlc2QuZHRzICAgfCA1OQ0KPiArKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ID4gIDMgZmlsZXMgY2hhbmdlZCwgNjEgaW5z
+ZXJ0aW9ucygrKQ0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgYXJjaC9hcm0vYm9vdC9kdHMvaW14
+NnFwLXNhYnJlc2QuZHRzDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMv
+TWFrZWZpbGUgYi9hcmNoL2FybS9ib290L2R0cy9NYWtlZmlsZQ0KPiA+IGluZGV4IDM2ZDgxMzMu
+LmRmYmE3NjUgMTAwNjQ0DQo+ID4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvTWFrZWZpbGUNCj4g
+PiArKysgYi9hcmNoL2FybS9ib290L2R0cy9NYWtlZmlsZQ0KPiA+IEBAIC0zMDIsNiArMzAyLDcg
+QEAgZHRiLSQoQ09ORklHX1NPQ19JTVg2USkgKz0gXA0KPiA+ICAJaW14NmRsLXNhYnJlYXV0by5k
+dGIgXA0KPiA+ICAJaW14NmRsLXNhYnJlbGl0ZS5kdGIgXA0KPiA+ICAJaW14NmRsLXNhYnJlc2Qu
+ZHRiIFwNCj4gPiArCWlteDZxcC1zYWJyZXNkLmR0YiBcDQo+IA0KPiBQbGVhc2Uga2VlcCB0aGUg
+bGlzdCBzb3J0IGFscGhhYmV0aWNhbGx5LiAgVGhhdCBzYWlkLCBpbXg2cXAtc2FicmVzZC5kdGIg
+c2hvdWxkDQo+IGJlIGFkZGVkIGFmdGVyIGlteDZxLSogb25lcy4NCj4gDQo+ID4gIAlpbXg2ZGwt
+dHg2ZGwtY29tdGZ0LmR0YiBcDQo+ID4gIAlpbXg2ZGwtdHg2dS04MDF4LmR0YiBcDQo+ID4gIAlp
+bXg2ZGwtdHg2dS04MTF4LmR0YiBcDQo+ID4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRz
+L2lteDZxZGwtc2FicmVzZC5kdHNpDQo+ID4gYi9hcmNoL2FybS9ib290L2R0cy9pbXg2cWRsLXNh
+YnJlc2QuZHRzaQ0KPiA+IGluZGV4IGE2ZDQ0NWMuLmY2NWY1N2IgMTAwNjQ0DQo+ID4gLS0tIGEv
+YXJjaC9hcm0vYm9vdC9kdHMvaW14NnFkbC1zYWJyZXNkLmR0c2kNCj4gPiArKysgYi9hcmNoL2Fy
+bS9ib290L2R0cy9pbXg2cWRsLXNhYnJlc2QuZHRzaQ0KPiA+IEBAIC0yMzgsNiArMjM4LDcgQEAN
+Cj4gPiAgCQkJCXJlZ3VsYXRvci1tYXgtbWljcm92b2x0ID0gPDMzMDAwMDA+Ow0KPiA+ICAJCQkJ
+cmVndWxhdG9yLWJvb3Qtb247DQo+ID4gIAkJCQlyZWd1bGF0b3ItYWx3YXlzLW9uOw0KPiA+ICsJ
+CQkJcmVndWxhdG9yLXJhbXAtZGVsYXkgPSA8NjI1MD47DQo+IA0KPiBTbyB0aGlzIGNoYW5nZSBh
+cHBsaWVzIHRvIGlteDZxIGFuZCBpbXg2ZGwgc2FicmVzZCBhcyB3ZWxsPw0KPiANCg0KWWVzLCB0
+aGlzIGNoYW5nZSBhcHBsaWVzIHRvIGlteDZxIGFuZCBpbXg2ZGwgc2FicmVzZC4NCg0KPiA+ICAJ
+CQl9Ow0KPiA+DQo+ID4gIAkJCXN3M2FfcmVnOiBzdzNhIHsNCj4gPiBkaWZmIC0tZ2l0IGEvYXJj
+aC9hcm0vYm9vdC9kdHMvaW14NnFwLXNhYnJlc2QuZHRzDQo+ID4gYi9hcmNoL2FybS9ib290L2R0
+cy9pbXg2cXAtc2FicmVzZC5kdHMNCj4gPiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPiA+IGluZGV4
+IDAwMDAwMDAuLmMzYWIyYjYNCj4gPiAtLS0gL2Rldi9udWxsDQo+ID4gKysrIGIvYXJjaC9hcm0v
+Ym9vdC9kdHMvaW14NnFwLXNhYnJlc2QuZHRzDQo+ID4gQEAgLTAsMCArMSw1OSBAQA0KPiA+ICsv
+Kg0KPiA+ICsgKiBDb3B5cmlnaHQgKEMpIDIwMTUgRnJlZXNjYWxlIFNlbWljb25kdWN0b3IsIElu
+Yy4NCj4gPiArICoNCj4gPiArICogVGhpcyBwcm9ncmFtIGlzIGZyZWUgc29mdHdhcmU7IHlvdSBj
+YW4gcmVkaXN0cmlidXRlIGl0IGFuZC9vcg0KPiA+ICttb2RpZnkNCj4gPiArICogaXQgdW5kZXIg
+dGhlIHRlcm1zIG9mIHRoZSBHTlUgR2VuZXJhbCBQdWJsaWMgTGljZW5zZSB2ZXJzaW9uIDIgYXMN
+Cj4gPiArICogcHVibGlzaGVkIGJ5IHRoZSBGcmVlIFNvZnR3YXJlIEZvdW5kYXRpb24uDQo+ID4g
+KyAqLw0KPiA+ICsNCj4gPiArI2luY2x1ZGUgImlteDZxLXNhYnJlc2QuZHRzIg0KPiA+ICsjaW5j
+bHVkZSAiaW14NnFwLmR0c2kiDQo+IA0KPiBBaCwgdGhhdCdzIHdoeSB5b3UgZG8gbm90IGluY2x1
+ZGUgImlteDZxZGwuZHRzaSIgaW4gaW14NnFwLmR0c2kuICBJIGhhdmUgYQ0KPiBxdWVzdGlvbiB3
+aXRoIHRoaXMgYXBwcm9hY2guICBIb3cgcGVvcGxlIHNob3VsZCB3cml0ZSBoaXMgaW14NnFwIGJv
+YXJkIGR0cyBmaWxlLA0KPiBpZiBoaXMgYm9hcmQgbmV2ZXIgaGFzIGFuIGlteDZxIHZlcnNpb24/
+DQo+IA0KIA0KU3VyZSwgaXQgaXMgYSBwcm9ibGVtLCBpbmNsdWRlIHRoZSBpbXg2cWRsLmR0c2kg
+aW4gaW14NnFwLmR0c2kgaXMgbW9yZSByZWFzb25hYmxlLg0KDQo+ID4gKw0KPiA+ICsvIHsNCj4g
+PiArCW1vZGVsID0gIkZyZWVzY2FsZSBpLk1YNiBRdWFkIFBsdXMgU0FCUkUgU21hcnQgRGV2aWNl
+IEJvYXJkIjsNCj4gPiArCWNvbXBhdGlibGUgPSAiZnNsLGlteDZxcC1zYWJyZXNkIiwgImZzbCxp
+bXg2cXAiOyB9Ow0KPiA+ICsNCj4gPiArJmNwdTAgew0KPiA+ICsJYXJtLXN1cHBseSA9IDwmc3cy
+X3JlZz47DQo+ID4gK307DQo+ID4gKw0KPiA+ICsmaW9tdXhjIHsNCj4gPiArCWlteDZxZGwtc2Fi
+cmVzZCB7DQo+IA0KPiBTaW5jZSBjb21taXQgNWZjZGY2YTdlZDk1IChwaW5jdHJsOiBpbXg6IEFs
+bG93IHBhcnNpbmcgRFQgd2l0aG91dCBmdW5jdGlvbg0KPiBub2RlcyksIHRoaXMgYWRkaXRpb25h
+bCBjb250YWluZXIgbm9kZSBjYW4ganVzdCBiZSBzYXZlZC4NCj4gDQo+IFNoYXduDQo+IA0KPiA+
+ICsJCXBpbmN0cmxfdXNkaGMyOiB1c2RoYzJncnAgew0KPiA+ICsJCQlmc2wscGlucyA9IDwNCj4g
+PiArCQkJCU1YNlFETF9QQURfU0QyX0NNRF9fU0QyX0NNRA0KPiAJMHgxNzA1OQ0KPiA+ICsJCQkJ
+TVg2UURMX1BBRF9TRDJfQ0xLX19TRDJfQ0xLDQo+IAkweDEwMDcxDQo+ID4gKwkJCQlNWDZRRExf
+UEFEX1NEMl9EQVQwX19TRDJfREFUQTANCj4gCTB4MTcwNTkNCj4gPiArCQkJCU1YNlFETF9QQURf
+U0QyX0RBVDFfX1NEMl9EQVRBMQ0KPiAJMHgxNzA1OQ0KPiA+ICsJCQkJTVg2UURMX1BBRF9TRDJf
+REFUMl9fU0QyX0RBVEEyDQo+IAkweDE3MDU5DQo+ID4gKwkJCQlNWDZRRExfUEFEX1NEMl9EQVQz
+X19TRDJfREFUQTMNCj4gCTB4MTcwNTkNCj4gPiArCQkJCU1YNlFETF9QQURfTkFOREZfRDRfX1NE
+Ml9EQVRBNA0KPiAJMHgxNzA1OQ0KPiA+ICsJCQkJTVg2UURMX1BBRF9OQU5ERl9ENV9fU0QyX0RB
+VEE1DQo+IAkweDE3MDU5DQo+ID4gKwkJCQlNWDZRRExfUEFEX05BTkRGX0Q2X19TRDJfREFUQTYN
+Cj4gCTB4MTcwNTkNCj4gPiArCQkJCU1YNlFETF9QQURfTkFOREZfRDdfX1NEMl9EQVRBNw0KPiAJ
+MHgxNzA1OQ0KPiA+ICsJCQk+Ow0KPiA+ICsJCX07DQo+ID4gKw0KPiA+ICsJCXBpbmN0cmxfdXNk
+aGMzOiB1c2RoYzNncnAgew0KPiA+ICsJCQlmc2wscGlucyA9IDwNCj4gPiArCQkJCU1YNlFETF9Q
+QURfU0QzX0NNRF9fU0QzX0NNRA0KPiAJMHgxNzA1OQ0KPiA+ICsJCQkJTVg2UURMX1BBRF9TRDNf
+Q0xLX19TRDNfQ0xLDQo+IAkweDEwMDcxDQo+ID4gKwkJCQlNWDZRRExfUEFEX1NEM19EQVQwX19T
+RDNfREFUQTANCj4gCTB4MTcwNTkNCj4gPiArCQkJCU1YNlFETF9QQURfU0QzX0RBVDFfX1NEM19E
+QVRBMQ0KPiAJMHgxNzA1OQ0KPiA+ICsJCQkJTVg2UURMX1BBRF9TRDNfREFUMl9fU0QzX0RBVEEy
+DQo+IAkweDE3MDU5DQo+ID4gKwkJCQlNWDZRRExfUEFEX1NEM19EQVQzX19TRDNfREFUQTMNCj4g
+CTB4MTcwNTkNCj4gPiArCQkJCU1YNlFETF9QQURfU0QzX0RBVDRfX1NEM19EQVRBNA0KPiAJMHgx
+NzA1OQ0KPiA+ICsJCQkJTVg2UURMX1BBRF9TRDNfREFUNV9fU0QzX0RBVEE1DQo+IAkweDE3MDU5
+DQo+ID4gKwkJCQlNWDZRRExfUEFEX1NEM19EQVQ2X19TRDNfREFUQTYNCj4gCTB4MTcwNTkNCj4g
+PiArCQkJCU1YNlFETF9QQURfU0QzX0RBVDdfX1NEM19EQVRBNw0KPiAJMHgxNzA1OQ0KPiA+ICsJ
+CQk+Ow0KPiA+ICsJCX07DQo+ID4gKwl9Ow0KPiA+ICt9Ow0KPiA+ICsNCj4gPiArJnBjaWUgew0K
+PiA+ICsJcG93ZXItb24tZ3BpbyA9IDwmZ3BpbzMgMTkgMD47DQo+ID4gKwlyZXNldC1ncGlvID0g
+PCZncGlvNyAxMiAwPjsNCj4gPiArCXN0YXR1cyA9ICJva2F5IjsNCj4gPiArfTsNCj4gPiAtLQ0K
+PiA+IDEuOS4xDQo+ID4NCj4gPg0KPiA+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fDQo+ID4gbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QNCj4gPiBs
+aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcNCj4gPiBodHRwOi8vbGlzdHMuaW5m
+cmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwNCj4gPg0K
