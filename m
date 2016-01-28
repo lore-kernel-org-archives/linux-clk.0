@@ -1,49 +1,73 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 29 Jan 2016 12:43:21 -0800
+Date: Thu, 28 Jan 2016 00:23:24 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Pankaj Dubey <pankaj.dubey@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v4 1/3] clk: samsung: Enable COMPILE_TEST for Samsung
- clocks
-Message-ID: <20160129204321.GS12841@codeaurora.org>
-References: <1453941324-15742-1-git-send-email-k.kozlowski@samsung.com>
- <1453941324-15742-2-git-send-email-k.kozlowski@samsung.com>
+To: Emilio =?iso-8859-1?Q?L=F3pez?= <emilio.lopez@collabora.co.uk>
+Cc: mturquette@baylibre.com, maxime.ripard@free-electrons.com,
+	wens@csie.org, heiko@sntech.de, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/2] clk: defer clk_gets on orphan clocks
+Message-ID: <20160128082324.GG12841@codeaurora.org>
+References: <1453385439-10154-1-git-send-email-emilio.lopez@collabora.co.uk>
+ <1453385958-11366-1-git-send-email-emilio.lopez@collabora.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1453941324-15742-2-git-send-email-k.kozlowski@samsung.com>
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1453385958-11366-1-git-send-email-emilio.lopez@collabora.co.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/28, Krzysztof Kozlowski wrote:
-> Enable the COMPILE_TEST to get build coverage of some of Samsung clock
-> controller drivers. Still some of them will be built only if
-> appropriate SoC is chosen (like SOC_EXYNOS4415 or ARCH_S3C64XX).
-> 
-> Anyway in case of COMPILE_TEST the Samsung clocks would show up in main
-> drivers section because they are not inside the "Common Clock Framework"
-> menu item. Move them under the "Common Clock Framework".
-> 
-> This changes the logic of selecting Samsung clocks from specific
-> architectures. Now the COMMON_CLK should be selected before selecting
-> specific clock (like S3C2410_COMMON_CLK or COMMON_CLK_SAMSUNG).
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
-> ---
+On 01/21, Emilio López wrote:
+> @@ -3059,7 +3069,25 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
+>   */
+>  struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
+>  {
+> -	return __of_clk_get_from_provider(clkspec, NULL, __func__);
+> +	return __of_clk_get_from_provider(clkspec, NULL, __func__, false);
+> +}
+> +
+> +/**
+> + * of_clk_get_from_provider_with_orphans() - Lookup clock from a clock provider
+> + * @clkspec: pointer to a clock specifier data structure
+> + *
+> + * This function looks up a struct clk from the registered list of clock
+> + * providers, an input is a clock specifier data structure as returned
+> + * from the of_parse_phandle_with_args() function call.
+> + *
+> + * The difference to of_clk_get_from_provider() is that this function will
+> + * also successfully lookup orphan-clocks, as it in some cases may be
+> + * necessary to access such orphan-clocks as well.
+> + */
+> +struct clk *
+> +of_clk_get_from_provider_with_orphans(struct of_phandle_args *clkspec)
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Dislike. In fact, the whole clk conf approach is odd here. When
+we're doing of_clk_init() we do a best effort loop around
+parent_ready(), waiting for clk providers to register as long as
+we have a clocks property in our provider node. We should do
+something similar in the non of_clk_init() case too, because
+of_clk_init() isn't special.
+
+Furthermore, the assigned parents and rates feature doesn't need
+the clocks that we're assigning parents and rates to to even be
+provided or consumed by the provider that's probing, so I'm lost
+why we're checking the provider's node for a clocks property. It
+would be better to check the assigned-clocks and assigned-parents
+properties and make sure that those are all non-orphans. If
+they're orphaned, we should delay until another clk provider is
+registered. Eventually we'll unstick the orphans and then the
+tree can be configured. Running the configuration at the end of
+of_clk_init() even if we still can't get the clocks doesn't make
+any sense to me.
+
+To be really nice, we could build up a set of configuration
+actions (set this parent, set this rate), and run those actions
+when we drop the orphan flag. If some clock is orphaned that
+we're trying to configure, we can attach the action to a list in
+the clk_core structure. Otherwise we'll run the action
+immediately. This way, we do a best effort to run as much of the
+configuration as possible when the provider is registered the
+first time and skip the overhead of cycling through a potentially
+long list of provider actions to see if we can run them now. This
+last part may be over-engineered though. I'm not sure if we
+really have any such scenario today.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
