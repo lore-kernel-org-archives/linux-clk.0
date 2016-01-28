@@ -1,116 +1,55 @@
-Return-Path: <kernel@martin.sperl.org>
-Subject: Re: [PATCH V2 1/4] clk: bcm2835: avoid the use of BCM2835_CLOCK_COUNT
- in clk-bcm2835
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
- Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>,
- Remi Pommarel <repk@triplefau.lt>, linux-clk@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org
-References: <1452542157-2387-1-git-send-email-kernel@martin.sperl.org>
- <1452542157-2387-2-git-send-email-kernel@martin.sperl.org>
- <20160113200012.1168.74515@quark.deferred.io>
- <20160114001358.1168.5768@quark.deferred.io>
-From: Martin Sperl <kernel@martin.sperl.org>
-Message-ID: <56979056.6010407@martin.sperl.org>
-Date: Thu, 14 Jan 2016 13:11:02 +0100
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH v4 1/3] clk: samsung: Enable COMPILE_TEST for Samsung
+ clocks
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+ Kukjin Kim <kgene@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will.deacon@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1453941324-15742-1-git-send-email-k.kozlowski@samsung.com>
+ <1453941324-15742-2-git-send-email-k.kozlowski@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+ Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <56AA6829.8050900@osg.samsung.com>
+Date: Thu, 28 Jan 2016 16:12:41 -0300
 MIME-Version: 1.0
-In-Reply-To: <20160114001358.1168.5768@quark.deferred.io>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1453941324-15742-2-git-send-email-k.kozlowski@samsung.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
+Hello Krzysztof,
 
-
-On 14.01.2016 01:13, Michael Turquette wrote:
-> Quoting Michael Turquette (2016-01-13 12:00:12)
->> Hi Martin,
->>
->> Quoting kernel@martin.sperl.org (2016-01-11 11:55:53)
->>>   static int bcm2835_clk_probe(struct platform_device *pdev)
->>>   {
->>>          struct device *dev = &pdev->dev;
->>>          struct clk **clks;
->>> +       size_t clk_cnt;
->>>          struct bcm2835_cprman *cprman;
->>>          struct resource *res;
->>> +       size_t i;
->>> +
->>> +       /* find the max clock index */
->>> +       clk_cnt = BCM2835_CLOCK_PERI_IMAGE; /* see below */
->>> +       for (i = 0; i < ARRAY_SIZE(bcm2835_register_clocks); i++)
->>> +               clk_cnt = max(clk_cnt, bcm2835_register_clocks[i].index);
->>> +       clk_cnt += 1;
->>
->> I'm not sure how this solution is better than using CLOCK_COUNT. Some
->> other bindings use a max value, NR_CLKS or other sentinel.
->>
->> Why did you not choose to set clk_cnt equal to BCM2835_CLOCK_PWM? Why
->> not initialize it to zero?
+On 01/27/2016 09:35 PM, Krzysztof Kozlowski wrote:
+> Enable the COMPILE_TEST to get build coverage of some of Samsung clock
+> controller drivers. Still some of them will be built only if
+> appropriate SoC is chosen (like SOC_EXYNOS4415 or ARCH_S3C64XX).
 >
-> OK, I just caught up on the asoc/bcm2835 thread.
+> Anyway in case of COMPILE_TEST the Samsung clocks would show up in main
+> drivers section because they are not inside the "Common Clock Framework"
+> menu item. Move them under the "Common Clock Framework".
 >
-> Really the best solution would be to have an array of all of the clks in
-> the driver and just use ARRAY_SIZE on it.
+> This changes the logic of selecting Samsung clocks from specific
+> architectures. Now the COMMON_CLK should be selected before selecting
+> specific clock (like S3C2410_COMMON_CLK or COMMON_CLK_SAMSUNG).
 >
-> For your driver, could you make an array of clk_hw pointers and call
-> devm_clk_register on all of them in a loop? This gets rid of the big
-> pile of explicit calls in bcm2835_clk_probe.
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 >
-> You can also get rid of stuff like bcm2835_plla_core_data by just
-> stuffing that data into a single struct initialization. Here is a
-> snippet for how the qcom clk drivers do it:
->
-> static struct clk_pll gpll0 = {
-> 	.l_reg = 0x0004,
-> 	.m_reg = 0x0008,
-> 	.n_reg = 0x000c,
-> 	.config_reg = 0x0014,
-> 	.mode_reg = 0x0000,
-> 	.status_reg = 0x001c,
-> 	.status_bit = 17,
-> 	.clkr.hw.init = &(struct clk_init_data){
-> 		.name = "gpll0",
-> 		.parent_names = (const char *[]){ "xo" },
-> 		.num_parents = 1,
-> 		.ops = &clk_pll_ops,
-> 	},
-> };
 
-I did not know you could do that - that could make life easier...
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-But a quick look shows that this approach probably would require a
-major rewrite of all the methods.
+I have also verified that more samsung clocks drivers are built for
+allyesconfig (where COMPILE_TEST is enabled) when make M=drivers/clk
 
-> static int bcm2835_clk_probe(struct platform_device *pdev)
-> {
-> 	...
-> 	for (i = 0; i < num_clks; i++) {
-> 		clk = devm_clk_register(dev, array_of_clks[i].hw)
-> 	...
-> }
+Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-I guess I can use a slightly different approach that does not
-require as many changes, that looks like this:
-
-static const struct bcm2835_clk_desc clk_desc_array[] = {
-	/* register PLL */
-	[BCM2835_PLLA]          = REGISTER_PLL(&bcm2835_plla_data),
-	...
-};
-...
-static int bcm2835_clk_probe(struct platform_device *pdev)
-{
-	const size_t asize = ARRAY_SIZE(clk_desc_array);
-	...
-	for (i = 0; i < asize; i++) {
-		desc = &clk_desc_array[i];
-		if (desc)
-			clks[i] = desc->clk_register(cprman,
-						     desc->data);
-	}
-	...
-}
-
-If we need to order the initialization then we can add some
-priority field to clk_desc_array and iterate over all the priority
-values.
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
