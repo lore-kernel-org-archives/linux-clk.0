@@ -1,66 +1,149 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 25 Jan 2016 13:49:12 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mark Kuo <mkuo@nvidia.com>
-Subject: Re: [Patch V2 9/9] clk: tegra: pll: Fix PLLE SS coefficients val
-Message-ID: <20160125124912.GN20452@ulmo.nvidia.com>
-References: <1452799602-14847-1-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="MSd2ShuMixI0uVaZ"
-In-Reply-To: <1452799602-14847-1-git-send-email-rklein@nvidia.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	zhengxing@rock-chips.com,
+	zhangqing@rock-chips.com,
+	wxt@rock-chips.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 2/3] clk: rockchip: add a factor clock type
+Date: Thu, 28 Jan 2016 01:01:45 +0100
+Message-Id: <1453939306-984-3-git-send-email-heiko@sntech.de>
+In-Reply-To: <1453939306-984-1-git-send-email-heiko@sntech.de>
+References: <1453939306-984-1-git-send-email-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
+Add a clock type for fixed factor clocks. This allows us to define fixed
+factor clocks where they appear in the clock hierarchy instead of in the
+init function.
 
---MSd2ShuMixI0uVaZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The additional factor_gate type, finally allows us to model some last
+parts of the clock tree correctly.
 
-On Thu, Jan 14, 2016 at 02:26:42PM -0500, Rhyland Klein wrote:
-> From: Mark Kuo <mkuo@nvidia.com>
->=20
-> The PLLE_SS_COEFFICIENTS_VAL should be different for Tegra210
-> from Tegra114. Add SoC generation specific versions for Tegra114
-> and Tegra210 and use those in their respective plle_enable functions.
->=20
-> Signed-off-by: Mark Kuo <mkuo@nvidia.com>
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-pll.c | 18 ++++++++++++------
->  1 file changed, 12 insertions(+), 6 deletions(-)
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/clk/rockchip/clk.c | 53 ++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/rockchip/clk.h | 28 ++++++++++++++++++++++++
+ 2 files changed, 81 insertions(+)
 
-Applied, thanks.
-
-Thierry
-
---MSd2ShuMixI0uVaZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJWphnIAAoJEN0jrNd/PrOhS88P/3XCFntNJJQoOjfmcB8puJYf
-DIZF3xO74Xa0EeBiupYV4IjdamD5hMYgrYrkcJHkctBDs5YgDQW8EN5OiYEceAxr
-pqh/rRHyWaDmX9IIIfAbmPzJjgp8VyowJhyRg4ZgUFwcqJ304cOcJ+PNmCK+h0lm
-Geih/7T/5M/I6T/Nuxpfac5jxpofkRAwIUBAURq7nHOe5ap8JQnSaxtc/wT9eifl
-7pWki2EoZCxDWzjIj57JTMFL+W+NpST+ZewqIEyjsedbcxTdyC74255e1zp+MSuy
-Y1Paz9G7zUApE/Yna/dHihpJu6hujw32rnTXJ1R6duaPErP5tj1sWiX1wmIxfno8
-NHYKH8euXfyFsg/kohkahxWVapv/FvT+/Yo4RbwcCL/JuG0Ydaqa58Jg2pwLjcxm
-6g1CKQllQeNT8N8ZGDwQ7zS1jaHsANvXj1JfD08COGjQiJ6UrSPVdZnTcsFw6CJ8
-6R/xSmsNthp4yyNch5Fte+Rhl1dgRNVE35uqkkIQsOoIyBezyjb186nz/e3T0hNN
-QbTE/Ul1MzNpe407YHEoZoINfvcJH6WfznweyB4IOJsHZjeGWu2mA4rYW1qlWClt
-lAtlMtbnaSaaC4j8F9fKs1c76SxMEqHXU8HDDIjNn4I2PnnENsnqcc9d1xAhCHAy
-YZY86LKoXrG8wNoqXETx
-=2F+Y
------END PGP SIGNATURE-----
-
---MSd2ShuMixI0uVaZ--
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index d9a0b5d..f66e277 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -260,6 +260,49 @@ static struct clk *rockchip_clk_register_frac_branch(const char *name,
+ 	return clk;
+ }
+ 
++static struct clk *rockchip_clk_register_factor_branch(const char *name,
++		const char *const *parent_names, u8 num_parents,
++		void __iomem *base, unsigned int mult, unsigned int div,
++		int gate_offset, u8 gate_shift, u8 gate_flags,
++		unsigned long flags, spinlock_t *lock)
++{
++	struct clk *clk;
++	struct clk_gate *gate = NULL;
++	struct clk_fixed_factor *fix = NULL;
++
++	/* without gate, register a simple factor clock */
++	if (gate_offset == 0) {
++		return clk_register_fixed_factor(NULL, name,
++				parent_names[0], flags, mult,
++				div);
++	}
++
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		return ERR_PTR(-ENOMEM);
++
++	gate->flags = gate_flags;
++	gate->reg = base + gate_offset;
++	gate->bit_idx = gate_shift;
++	gate->lock = lock;
++
++	fix = kzalloc(sizeof(*fix), GFP_KERNEL);
++	if (!fix) {
++		kfree(gate);
++		return ERR_PTR(-ENOMEM);
++	}
++
++	fix->mult = mult;
++	fix->div = div;
++
++	clk = clk_register_composite(NULL, name, parent_names, num_parents,
++				     NULL, NULL,
++				     &fix->hw, &clk_fixed_factor_ops,
++				     &gate->hw, &clk_gate_ops, flags);
++
++	return clk;
++}
++
+ static DEFINE_SPINLOCK(clk_lock);
+ static struct clk **clk_table;
+ static void __iomem *reg_base;
+@@ -395,6 +438,16 @@ void __init rockchip_clk_register_branches(
+ 				reg_base + list->muxdiv_offset,
+ 				list->div_shift, list->div_flags, &clk_lock);
+ 			break;
++		case branch_factor:
++			flags |= CLK_SET_RATE_PARENT;
++
++			clk = rockchip_clk_register_factor_branch(
++				list->name, list->parent_names,
++				list->num_parents, reg_base,
++				list->div_shift, list->div_width,
++				list->gate_offset, list->gate_shift,
++				list->gate_flags, flags, &clk_lock);
++			break;
+ 		}
+ 
+ 		/* none of the cases above matched */
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index ff8bd23..39c198b 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -254,6 +254,7 @@ enum rockchip_clk_branch_type {
+ 	branch_gate,
+ 	branch_mmc,
+ 	branch_inverter,
++	branch_factor,
+ };
+ 
+ struct rockchip_clk_branch {
+@@ -508,6 +509,33 @@ struct rockchip_clk_branch {
+ 		.div_flags	= if,				\
+ 	}
+ 
++#define FACTOR(_id, cname, pname,  f, fm, fd)			\
++	{							\
++		.id		= _id,				\
++		.branch_type	= branch_factor,		\
++		.name		= cname,			\
++		.parent_names	= (const char *[]){ pname },	\
++		.num_parents	= 1,				\
++		.flags		= f,				\
++		.div_shift	= fm,				\
++		.div_width	= fd,				\
++	}
++
++#define FACTOR_GATE(_id, cname, pname,  f, fm, fd, go, gb, gf)	\
++	{							\
++		.id		= _id,				\
++		.branch_type	= branch_factor,		\
++		.name		= cname,			\
++		.parent_names	= (const char *[]){ pname },	\
++		.num_parents	= 1,				\
++		.flags		= f,				\
++		.div_shift	= fm,				\
++		.div_width	= fd,				\
++		.gate_offset	= go,				\
++		.gate_shift	= gb,				\
++		.gate_flags	= gf,				\
++	}
++
+ void rockchip_clk_init(struct device_node *np, void __iomem *base,
+ 		       unsigned long nr_clks);
+ struct regmap *rockchip_clk_get_grf(void);
+-- 
+2.6.4
