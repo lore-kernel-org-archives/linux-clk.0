@@ -1,65 +1,100 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 27 Jan 2016 18:33:11 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH RFC 08/11] clk: sunxi: factors: Drop round_rate from clk
- ops
-Message-ID: <20160127173311.GM4317@lukather>
-References: <1453727747-23307-1-git-send-email-wens@csie.org>
- <1453727747-23307-9-git-send-email-wens@csie.org>
+Return-Path: <stefan@agner.ch>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="FnOKg9Ah4tDwTfQS"
-In-Reply-To: <1453727747-23307-9-git-send-email-wens@csie.org>
+Content-Type: text/plain; charset=US-ASCII
+Date: Wed, 27 Jan 2016 16:31:48 -0800
+From: Stefan Agner <stefan@agner.ch>
+To: shawnguo@kernel.org
+Cc: galak@codeaurora.org, ijc+devicetree@hellion.org.uk,
+ mark.rutland@arm.com, pawel.moll@arm.com, robh+dt@kernel.org,
+ Li.Xiubo@freescale.com, zidan.wang@freescale.com,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@pengutronix.de, mturquette@baylibre.com, sboyd@codeaurora.org
+Subject: Re: [PATCH 3/3] ARM: dts: vf610: add remaining SAI instaces
+In-Reply-To: <1445141122-14183-3-git-send-email-stefan@agner.ch>
+References: <1445141122-14183-1-git-send-email-stefan@agner.ch>
+ <1445141122-14183-3-git-send-email-stefan@agner.ch>
+Message-ID: <7c3b0b28706f2bf1cf656c7dc2daf31d@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Shawn,
 
---FnOKg9Ah4tDwTfQS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The rest of the patchset has been applied during rc phase of v4.4, I
+guess this one was scheduled for the next release (v4.5). However, I
+just realized that this seemed to have slipped through...
 
-On Mon, Jan 25, 2016 at 09:15:44PM +0800, Chen-Yu Tsai wrote:
-> The common clock framework requires either determine_rate or round_rate
-> to be implemented. We use determine_rate so we can pass the parent index
-> to the get_factors callback. This cannot be done easily with round_rate,
-> so just drop it.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+--
+Stefan
 
-Applied, thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---FnOKg9Ah4tDwTfQS
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWqP9XAAoJEBx+YmzsjxAg/UsP/0tXf9hUGVRm6mxaRpnSm4dj
-LPHnlyP75xxOCuzwRcbjc111s34PETcPsiJEFBbIpetSCehCQxHJqWh9PiHQNiMb
-kQqx5S0TZcgd1R8J3gk3jBrj6FTTmCbfzO69i/LCcXXYBp92+1UV0I3MPcqcjjeV
-JWC3IpoU3apeJoSKVdiNqHJS7bZoyYglkeRoZ3jgCrOoSiTy3vkTTObdOrzBI0kv
-gG+fg8MDsYznu18TihQrzyY0fthnecFntmOq8NLL3BybAeB3aQuf08CPDmRqLAxG
-7KWVKQXCxGxRAPGOuDo2ezRxsk+KPO+meIU+KFJZGsMxZsv1sM+YMBsFk4OfO9LB
-wvj6wFI5Ungv0uqNOuFKZ0hIXmKUPNKt8rpSu7Htn7KpI8b25ogNTb3rfwMtk8o0
-4Cf0DVznkNSSSYdm71ZQhtZjPGnkXz/2qEf+XccvmOowCrKxbU/4vO00dynJJInO
-/GzkzPAlyMD3aC7B26suaaTmjorZ/zEHSBCdlTZjAdlJyhZzRCyPfNGVKaQTBH3U
-oDs74pWt343hs6B+vvPq2xxyp2BUzm/dk0LBRGTjFMjXgUkF9hcTfqLGvNT8LjFF
-c0YMhawVNa+aopMnW3G3byqC7Mw62SQIcyFDDE7Djdu04TyR6m9owReopjC1nBIP
-8bAJirdDvycCncmqDFFd
-=SmeG
------END PGP SIGNATURE-----
-
---FnOKg9Ah4tDwTfQS--
+On 2015-10-17 21:05, Stefan Agner wrote:
+> This adds the remaining SAI instances SAI0, SAI1 and SAI3. All
+> instances are very similar, except that the DMA channel of SAI3
+> is available on MUX1 (compared to MUX0 for SAI0-SAI2). Also,
+> SAI3 has a slightly different memory map due to a deeper FIFO,
+> however in practice the current driver works for SAI3 fine.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>  arch/arm/boot/dts/vfxxx.dtsi | 42 ++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/vfxxx.dtsi b/arch/arm/boot/dts/vfxxx.dtsi
+> index c2a4d1c..b45bc81 100644
+> --- a/arch/arm/boot/dts/vfxxx.dtsi
+> +++ b/arch/arm/boot/dts/vfxxx.dtsi
+> @@ -174,6 +174,34 @@
+>  				status = "disabled";
+>  			};
+>  
+> +			sai0: sai@4002f000 {
+> +				compatible = "fsl,vf610-sai";
+> +				reg = <0x4002f000 0x1000>;
+> +				interrupts = <84 IRQ_TYPE_LEVEL_HIGH>;
+> +				clocks = <&clks VF610_CLK_SAI0>,
+> +					<&clks VF610_CLK_SAI0_DIV>,
+> +					<&clks 0>, <&clks 0>;
+> +				clock-names = "bus", "mclk1", "mclk2", "mclk3";
+> +				dma-names = "tx", "rx";
+> +				dmas = <&edma0 0 17>,
+> +					<&edma0 0 16>;
+> +				status = "disabled";
+> +			};
+> +
+> +			sai1: sai@40030000 {
+> +				compatible = "fsl,vf610-sai";
+> +				reg = <0x40030000 0x1000>;
+> +				interrupts = <85 IRQ_TYPE_LEVEL_HIGH>;
+> +				clocks = <&clks VF610_CLK_SAI1>,
+> +					<&clks VF610_CLK_SAI1_DIV>,
+> +					<&clks 0>, <&clks 0>;
+> +				clock-names = "bus", "mclk1", "mclk2", "mclk3";
+> +				dma-names = "tx", "rx";
+> +				dmas = <&edma0 0 19>,
+> +					<&edma0 0 18>;
+> +				status = "disabled";
+> +			};
+> +
+>  			sai2: sai@40031000 {
+>  				compatible = "fsl,vf610-sai";
+>  				reg = <0x40031000 0x1000>;
+> @@ -188,6 +216,20 @@
+>  				status = "disabled";
+>  			};
+>  
+> +			sai3: sai@40032000 {
+> +				compatible = "fsl,vf610-sai";
+> +				reg = <0x40032000 0x1000>;
+> +				interrupts = <87 IRQ_TYPE_LEVEL_HIGH>;
+> +				clocks = <&clks VF610_CLK_SAI3>,
+> +					<&clks VF610_CLK_SAI3_DIV>,
+> +					<&clks 0>, <&clks 0>;
+> +				clock-names = "bus", "mclk1", "mclk2", "mclk3";
+> +				dma-names = "tx", "rx";
+> +				dmas = <&edma0 1 9>,
+> +					<&edma0 1 8>;
+> +				status = "disabled";
+> +			};
+> +
+>  			pit: pit@40037000 {
+>  				compatible = "fsl,vf610-pit";
+>  				reg = <0x40037000 0x1000>;
