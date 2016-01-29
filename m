@@ -1,35 +1,46 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.134]:50014 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932638AbcA1MdR (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jan 2016 07:33:17 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] ARM: Use generic clkdev.h header
-Date: Thu, 28 Jan 2016 13:32:45 +0100
-Message-ID: <6141409.WI4q6BtOxa@wuerfel>
-In-Reply-To: <1453932702-6930-1-git-send-email-sboyd@codeaurora.org>
-References: <1453932702-6930-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1454008958-12655-2-git-send-email-maxime.ripard@free-electrons.com>
+References: <1454008958-12655-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1454008958-12655-2-git-send-email-maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 29 Jan 2016 17:56:09 +0800
+Message-ID: <CAGb2v677CEsr49P0xC_3hQYNfMoxRS-B7ptL8_dWsAUX-wPsUQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] clk: sunxi: Refactor A31 PLL6 so that it can be reused
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Jens Kuske <jenskuske@gmail.com>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>, Hans de Goede <hdegoede@redhat.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Jean-Francois Moine <moinejf@free.fr>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wednesday 27 January 2016 14:11:42 Stephen Boyd wrote:
-> Get rid of the clkdev.h file in the ARM port and use the generic
-> one because we've gotten rid of all the machine specific
-> mach/clkdev.h files.
-> 
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> 
+On Fri, Jan 29, 2016 at 3:22 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Remove the fixed dividers from the PLL6 driver to be able to have a
+> reusable driver that can be used across several SoCs that share the same
+> controller, but don't have the same set of dividers for this clock, and to
+> also be reused multiple times in the same SoC, since we're droping the
+> clock name.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+> Changes from v2
+>   - Rebased and converted over to the new factors refactoring. Fixed the
+>     retrieved rate
+>
+>  arch/arm/boot/dts/sun6i-a31.dtsi     | 36 ++++++++++++++++++------------------
+>  arch/arm/boot/dts/sun8i-a23-a33.dtsi | 25 +++++++++++++++++--------
+>  arch/arm/boot/dts/sun8i-a23.dtsi     |  2 +-
+>  arch/arm/boot/dts/sun8i-a33.dtsi     |  4 ++--
+>  arch/arm/boot/dts/sun8i-h3.dtsi      | 36 ++++++++++++++++++------------------
+>  drivers/clk/sunxi/clk-sunxi.c        | 32 ++++++++++++++++----------------
+>  6 files changed, 72 insertions(+), 63 deletions(-)
 
-Ah, nice! I had not even noticed it was the last one.
+Please also update the #clock-cells section of
+Documentation/devicetree/bindings/clock/sunxi.txt
 
-The file is still also referenced by arch/arm/plat-versatile/clock.c,
-but we don't build that file any more and should remove it as well.
+Otherwise,
 
-	Arnd
+Acked-by: Chen-Yu Tsai <wens@csie.org>
