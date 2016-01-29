@@ -1,45 +1,108 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	xf@rock-chips.com,
-	zhangqing@rock-chips.com,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 3/4] clk: rockchip: rk3368: fix parents of video encoder/decoder
-Date: Wed, 20 Jan 2016 22:49:19 +0100
-Message-Id: <1453326560-20475-3-git-send-email-heiko@sntech.de>
-In-Reply-To: <1453326560-20475-1-git-send-email-heiko@sntech.de>
-References: <1453326560-20475-1-git-send-email-heiko@sntech.de>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <56AB38C6.2010909@gmail.com>
+References: <1454008958-12655-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1454008958-12655-2-git-send-email-maxime.ripard@free-electrons.com> <56AB38C6.2010909@gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 29 Jan 2016 18:14:48 +0800
+Message-ID: <CAGb2v67v6-BCPp2u7vieCGnCAsHFv4XjnRXvfT1vZNHc_Ok0UA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] clk: sunxi: Refactor A31 PLL6 so that it can be reused
+To: Jens Kuske <jenskuske@gmail.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>, Hans de Goede <hdegoede@redhat.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Jean-Francois Moine <moinejf@free.fr>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The vdpu and vepu clocks can also be parented to the npll and current
-parent list also is wrong as it would use the npll as "usbphy" source,
-so adapt the parent to the correct one.
+On Fri, Jan 29, 2016 at 6:02 PM, Jens Kuske <jenskuske@gmail.com> wrote:
+> Hi,
+>
+> On 28/01/16 20:22, Maxime Ripard wrote:
+>> Remove the fixed dividers from the PLL6 driver to be able to have a
+>> reusable driver that can be used across several SoCs that share the same
+>> controller, but don't have the same set of dividers for this clock, and to
+>> also be reused multiple times in the same SoC, since we're droping the
+>> clock name.
+>>
+>> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>> ---
+>> Changes from v2
+>>   - Rebased and converted over to the new factors refactoring. Fixed the
+>>     retrieved rate
+>>
+>>  arch/arm/boot/dts/sun6i-a31.dtsi     | 36 ++++++++++++++++++------------------
+>>  arch/arm/boot/dts/sun8i-a23-a33.dtsi | 25 +++++++++++++++++--------
+>>  arch/arm/boot/dts/sun8i-a23.dtsi     |  2 +-
+>>  arch/arm/boot/dts/sun8i-a33.dtsi     |  4 ++--
+>>  arch/arm/boot/dts/sun8i-h3.dtsi      | 36 ++++++++++++++++++------------------
+>>  drivers/clk/sunxi/clk-sunxi.c        | 32 ++++++++++++++++----------------
+>>  6 files changed, 72 insertions(+), 63 deletions(-)
+>>
+> [...]
+>> diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
+>> index 1524130e43c9..19aadf47027d 100644
+>> --- a/arch/arm/boot/dts/sun8i-h3.dtsi
+>> +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+>> @@ -121,27 +121,27 @@
+>>               };
+>>
+>>               pll6: clk@01c20028 {
+>> -                     #clock-cells = <1>;
+>> +                     #clock-cells = <0>;
+>>                       compatible = "allwinner,sun6i-a31-pll6-clk";
+>>                       reg = <0x01c20028 0x4>;
+>>                       clocks = <&osc24M>;
+>> -                     clock-output-names = "pll6", "pll6x2";
+>> +                     clock-output-names = "pll6";
+>>               };
+>>
+>> -             pll6d2: pll6d2_clk {
+>> +             pll6x2: pll6x2_clk {
+>>                       #clock-cells = <0>;
+>>                       compatible = "fixed-factor-clock";
+>> -                     clock-div = <2>;
+>> -                     clock-mult = <1>;
+>> -                     clocks = <&pll6 0>;
+>> -                     clock-output-names = "pll6d2";
+>> +                     clock-div = <1>;
+>> +                     clock-mult = <2>;
+>> +                     clocks = <&pll6>;
+>> +                     clock-output-names = "pll6-2x";
+>>               };
+>>
+>> -             /* dummy clock until pll6 can be reused */
+>> -             pll8: pll8_clk {
+>> +             pll8: clk@01c20044 {
+>>                       #clock-cells = <0>;
+>> -                     compatible = "fixed-clock";
+>> -                     clock-frequency = <1>;
+>> +                     compatible = "allwinner,sun6i-a31-pll6-clk";
+>> +                     reg = <0x01c20044 0x4>;
+>> +                     clocks = <&osc24M>;
+>>                       clock-output-names = "pll8";
+>>               };
+>>
+>> @@ -165,7 +165,7 @@
+>>                       #clock-cells = <0>;
+>>                       compatible = "allwinner,sun6i-a31-ahb1-clk";
+>>                       reg = <0x01c20054 0x4>;
+>> -                     clocks = <&osc32k>, <&osc24M>, <&axi>, <&pll6 0>;
+>> +                     clocks = <&osc32k>, <&osc24M>, <&axi>, <&pll6>;
+>>                       clock-output-names = "ahb1";
+>>               };
+>>
+>> @@ -173,7 +173,7 @@
+>>                       #clock-cells = <0>;
+>>                       compatible = "allwinner,sun8i-h3-ahb2-clk";
+>>                       reg = <0x01c2005c 0x4>;
+>> -                     clocks = <&ahb1>, <&pll6d2>;
+>> +                     clocks = <&ahb1>, <&pll6>;
+>
+> According to the datasheet AHB2 really has PLL6 / 2 as parent, not PLL6
+> directly.
 
-Fixes: 3536c97a52db ("clk: rockchip: add rk3368 clock controller")
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/clk/rockchip/clk-rk3368.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks for the save. So we should keep pll6d2_clk.
 
-diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
-index 3c9733e..6037beb 100644
---- a/drivers/clk/rockchip/clk-rk3368.c
-+++ b/drivers/clk/rockchip/clk-rk3368.c
-@@ -384,10 +384,10 @@ static struct rockchip_clk_branch rk3368_clk_branches[] __initdata = {
- 	 * Clock-Architecture Diagram 3
- 	 */
- 
--	COMPOSITE(0, "aclk_vepu", mux_pll_src_cpll_gpll_usb_p, 0,
-+	COMPOSITE(0, "aclk_vepu", mux_pll_src_cpll_gpll_npll_usb_p, 0,
- 			RK3368_CLKSEL_CON(15), 6, 2, MFLAGS, 0, 5, DFLAGS,
- 			RK3368_CLKGATE_CON(4), 6, GFLAGS),
--	COMPOSITE(0, "aclk_vdpu", mux_pll_src_cpll_gpll_usb_p, 0,
-+	COMPOSITE(0, "aclk_vdpu", mux_pll_src_cpll_gpll_npll_usb_p, 0,
- 			RK3368_CLKSEL_CON(15), 14, 2, MFLAGS, 8, 5, DFLAGS,
- 			RK3368_CLKGATE_CON(4), 7, GFLAGS),
- 
--- 
-2.6.4
+ChenYu
