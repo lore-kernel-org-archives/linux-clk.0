@@ -1,34 +1,108 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Thu, 28 Jan 2016 09:53:08 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Stefan Agner <stefan@agner.ch>
-Cc: galak@codeaurora.org, ijc+devicetree@hellion.org.uk,
-	mark.rutland@arm.com, pawel.moll@arm.com, robh+dt@kernel.org,
-	Li.Xiubo@freescale.com, zidan.wang@freescale.com,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de, mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Subject: Re: [PATCH 3/3] ARM: dts: vf610: add remaining SAI instaces
-Message-ID: <20160128015308.GB9070@tiger>
-References: <1445141122-14183-1-git-send-email-stefan@agner.ch>
- <1445141122-14183-3-git-send-email-stefan@agner.ch>
- <7c3b0b28706f2bf1cf656c7dc2daf31d@agner.ch>
+Return-Path: <jenskuske@gmail.com>
+Return-Path: <jenskuske@gmail.com>
+Subject: Re: [PATCH v3 2/2] clk: sunxi: Refactor A31 PLL6 so that it can be
+ reused
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>
+References: <1454008958-12655-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1454008958-12655-2-git-send-email-maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Vishnu Patekar <vishnupatekar0510@gmail.com>,
+ Hans de Goede <hdegoede@redhat.com>, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, Jean-Francois Moine <moinejf@free.fr>
+From: Jens Kuske <jenskuske@gmail.com>
+Message-ID: <56AB38C6.2010909@gmail.com>
+Date: Fri, 29 Jan 2016 11:02:46 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <7c3b0b28706f2bf1cf656c7dc2daf31d@agner.ch>
+In-Reply-To: <1454008958-12655-2-git-send-email-maxime.ripard@free-electrons.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jan 27, 2016 at 04:31:48PM -0800, Stefan Agner wrote:
-> Hi Shawn,
+Hi,
+
+On 28/01/16 20:22, Maxime Ripard wrote:
+> Remove the fixed dividers from the PLL6 driver to be able to have a
+> reusable driver that can be used across several SoCs that share the same
+> controller, but don't have the same set of dividers for this clock, and to
+> also be reused multiple times in the same SoC, since we're droping the
+> clock name.
 > 
-> The rest of the patchset has been applied during rc phase of v4.4, I
-> guess this one was scheduled for the next release (v4.5). However, I
-> just realized that this seemed to have slipped through...
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+> Changes from v2
+>   - Rebased and converted over to the new factors refactoring. Fixed the
+>     retrieved rate
+> 
+>  arch/arm/boot/dts/sun6i-a31.dtsi     | 36 ++++++++++++++++++------------------
+>  arch/arm/boot/dts/sun8i-a23-a33.dtsi | 25 +++++++++++++++++--------
+>  arch/arm/boot/dts/sun8i-a23.dtsi     |  2 +-
+>  arch/arm/boot/dts/sun8i-a33.dtsi     |  4 ++--
+>  arch/arm/boot/dts/sun8i-h3.dtsi      | 36 ++++++++++++++++++------------------
+>  drivers/clk/sunxi/clk-sunxi.c        | 32 ++++++++++++++++----------------
+>  6 files changed, 72 insertions(+), 63 deletions(-)
+> 
+[...]
+> diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
+> index 1524130e43c9..19aadf47027d 100644
+> --- a/arch/arm/boot/dts/sun8i-h3.dtsi
+> +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+> @@ -121,27 +121,27 @@
+>  		};
+>  
+>  		pll6: clk@01c20028 {
+> -			#clock-cells = <1>;
+> +			#clock-cells = <0>;
+>  			compatible = "allwinner,sun6i-a31-pll6-clk";
+>  			reg = <0x01c20028 0x4>;
+>  			clocks = <&osc24M>;
+> -			clock-output-names = "pll6", "pll6x2";
+> +			clock-output-names = "pll6";
+>  		};
+>  
+> -		pll6d2: pll6d2_clk {
+> +		pll6x2: pll6x2_clk {
+>  			#clock-cells = <0>;
+>  			compatible = "fixed-factor-clock";
+> -			clock-div = <2>;
+> -			clock-mult = <1>;
+> -			clocks = <&pll6 0>;
+> -			clock-output-names = "pll6d2";
+> +			clock-div = <1>;
+> +			clock-mult = <2>;
+> +			clocks = <&pll6>;
+> +			clock-output-names = "pll6-2x";
+>  		};
+>  
+> -		/* dummy clock until pll6 can be reused */
+> -		pll8: pll8_clk {
+> +		pll8: clk@01c20044 {
+>  			#clock-cells = <0>;
+> -			compatible = "fixed-clock";
+> -			clock-frequency = <1>;
+> +			compatible = "allwinner,sun6i-a31-pll6-clk";
+> +			reg = <0x01c20044 0x4>;
+> +			clocks = <&osc24M>;
+>  			clock-output-names = "pll8";
+>  		};
+>  
+> @@ -165,7 +165,7 @@
+>  			#clock-cells = <0>;
+>  			compatible = "allwinner,sun6i-a31-ahb1-clk";
+>  			reg = <0x01c20054 0x4>;
+> -			clocks = <&osc32k>, <&osc24M>, <&axi>, <&pll6 0>;
+> +			clocks = <&osc32k>, <&osc24M>, <&axi>, <&pll6>;
+>  			clock-output-names = "ahb1";
+>  		};
+>  
+> @@ -173,7 +173,7 @@
+>  			#clock-cells = <0>;
+>  			compatible = "allwinner,sun8i-h3-ahb2-clk";
+>  			reg = <0x01c2005c 0x4>;
+> -			clocks = <&ahb1>, <&pll6d2>;
+> +			clocks = <&ahb1>, <&pll6>;
 
-Sorry, Stefan.  If I can get a ping from you before v4.5 merge window
-closes, we might be able to catch up with v4.5.
+According to the datasheet AHB2 really has PLL6 / 2 as parent, not PLL6
+directly.
 
-Queued it up for v4.6.
-
-Shawn
+Jens
