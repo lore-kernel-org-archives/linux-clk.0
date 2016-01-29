@@ -1,159 +1,37 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v4 13/13] clk: at91: remove useless includes
-Date: Wed, 27 Jan 2016 17:11:12 +0100
-Message-Id: <1453911072-23608-14-git-send-email-alexandre.belloni@free-electrons.com>
-In-Reply-To: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
-References: <1453911072-23608-1-git-send-email-alexandre.belloni@free-electrons.com>
+Return-Path: <andi.shyti@samsung.com>
+Date: Fri, 29 Jan 2016 10:13:03 +0900
+From: Andi Shyti <andi.shyti@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will.deacon@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+ Kevin Hilman <khilman@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Pankaj Dubey <pankaj.dubey@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v4 0/3] arm64/clk: EXYNOS: Consolidate Exynos7 symbol
+Message-id: <20160129011303.GC23584@samsunx.samsung>
+References: <1453941324-15742-1-git-send-email-k.kozlowski@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
+In-reply-to: <1453941324-15742-1-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Over time, some includes were copy pasted from other clocks drivers but are
-not necessary.
+Hi Krzysztof,
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
----
- drivers/clk/at91/clk-generated.c    | 2 --
- drivers/clk/at91/clk-h32mx.c        | 8 --------
- drivers/clk/at91/clk-peripheral.c   | 2 --
- drivers/clk/at91/clk-plldiv.c       | 2 --
- drivers/clk/at91/clk-programmable.c | 4 ----
- drivers/clk/at91/clk-slow.c         | 8 --------
- drivers/clk/at91/clk-smd.c          | 2 --
- drivers/clk/at91/clk-usb.c          | 2 --
- 8 files changed, 30 deletions(-)
+> Patchset attempts to remove the ARCH_EXYNOS7 symbol.
+> 
+> All patches depend on previous ones so no cherry-picked.
+> I was thinking about merging this through arm-soc tree after getting
+> needed acks (clk, arm-soc?).
 
-diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-index 5866684a6657..4ad3298eb372 100644
---- a/drivers/clk/at91/clk-generated.c
-+++ b/drivers/clk/at91/clk-generated.c
-@@ -15,8 +15,6 @@
- #include <linux/clkdev.h>
- #include <linux/clk/at91_pmc.h>
- #include <linux/of.h>
--#include <linux/of_address.h>
--#include <linux/io.h>
- #include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
- 
-diff --git a/drivers/clk/at91/clk-h32mx.c b/drivers/clk/at91/clk-h32mx.c
-index 3fd59b129f92..819f5842fa66 100644
---- a/drivers/clk/at91/clk-h32mx.c
-+++ b/drivers/clk/at91/clk-h32mx.c
-@@ -15,15 +15,7 @@
- #include <linux/clk-provider.h>
- #include <linux/clkdev.h>
- #include <linux/clk/at91_pmc.h>
--#include <linux/delay.h>
- #include <linux/of.h>
--#include <linux/of_address.h>
--#include <linux/of_irq.h>
--#include <linux/io.h>
--#include <linux/interrupt.h>
--#include <linux/irq.h>
--#include <linux/sched.h>
--#include <linux/wait.h>
- #include <linux/regmap.h>
- #include <linux/mfd/syscon.h>
- 
-diff --git a/drivers/clk/at91/clk-peripheral.c b/drivers/clk/at91/clk-peripheral.c
-index 33c31d43dd8d..fd160728e990 100644
---- a/drivers/clk/at91/clk-peripheral.c
-+++ b/drivers/clk/at91/clk-peripheral.c
-@@ -12,8 +12,6 @@
- #include <linux/clkdev.h>
- #include <linux/clk/at91_pmc.h>
- #include <linux/of.h>
--#include <linux/of_address.h>
--#include <linux/io.h>
- #include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
- 
-diff --git a/drivers/clk/at91/clk-plldiv.c b/drivers/clk/at91/clk-plldiv.c
-index f43e93738a99..2bed26481027 100644
---- a/drivers/clk/at91/clk-plldiv.c
-+++ b/drivers/clk/at91/clk-plldiv.c
-@@ -12,8 +12,6 @@
- #include <linux/clkdev.h>
- #include <linux/clk/at91_pmc.h>
- #include <linux/of.h>
--#include <linux/of_address.h>
--#include <linux/io.h>
- #include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
- 
-diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-programmable.c
-index 78814ba448c4..bc0be629671b 100644
---- a/drivers/clk/at91/clk-programmable.c
-+++ b/drivers/clk/at91/clk-programmable.c
-@@ -12,10 +12,6 @@
- #include <linux/clkdev.h>
- #include <linux/clk/at91_pmc.h>
- #include <linux/of.h>
--#include <linux/of_address.h>
--#include <linux/io.h>
--#include <linux/wait.h>
--#include <linux/sched.h>
- #include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
- 
-diff --git a/drivers/clk/at91/clk-slow.c b/drivers/clk/at91/clk-slow.c
-index 1f76113db889..911e941f8318 100644
---- a/drivers/clk/at91/clk-slow.c
-+++ b/drivers/clk/at91/clk-slow.c
-@@ -12,19 +12,11 @@
- 
- #include <linux/clk-provider.h>
- #include <linux/clkdev.h>
--#include <linux/slab.h>
- #include <linux/clk/at91_pmc.h>
- #include <linux/delay.h>
- #include <linux/of.h>
--#include <linux/of_address.h>
--#include <linux/of_irq.h>
--#include <linux/io.h>
--#include <linux/interrupt.h>
--#include <linux/irq.h>
- #include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
--#include <linux/sched.h>
--#include <linux/wait.h>
- 
- #include "pmc.h"
- #include "sckc.h"
-diff --git a/drivers/clk/at91/clk-smd.c b/drivers/clk/at91/clk-smd.c
-index 0f6e8d67e630..e6948a52005a 100644
---- a/drivers/clk/at91/clk-smd.c
-+++ b/drivers/clk/at91/clk-smd.c
-@@ -12,8 +12,6 @@
- #include <linux/clkdev.h>
- #include <linux/clk/at91_pmc.h>
- #include <linux/of.h>
--#include <linux/of_address.h>
--#include <linux/io.h>
- #include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
- 
-diff --git a/drivers/clk/at91/clk-usb.c b/drivers/clk/at91/clk-usb.c
-index 617e24f6ef76..650ca45892c0 100644
---- a/drivers/clk/at91/clk-usb.c
-+++ b/drivers/clk/at91/clk-usb.c
-@@ -12,8 +12,6 @@
- #include <linux/clkdev.h>
- #include <linux/clk/at91_pmc.h>
- #include <linux/of.h>
--#include <linux/of_address.h>
--#include <linux/io.h>
- #include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
- 
--- 
-2.5.0
+I like this patchset and reviewed it. Now it even applies on my
+branch :)
+
+Feel free to add Reviewed-by: Andi Shyti <andi.shyti@samsung.com>
+
+Andi
