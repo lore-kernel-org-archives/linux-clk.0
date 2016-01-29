@@ -1,522 +1,614 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, John Crispin
-	<blogic@openwrt.org>
-CC: Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, <srv_heupstream@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, Shunli Wang <shunli.wang@mediatek.com>, James
- Liao <jamesjj.liao@mediatek.com>
-Subject: [PATCH v3 3/6] clk: mediatek: Add dt-bindings for MT2701 clocks
-Date: Tue, 12 Jan 2016 16:31:07 +0800
-Message-ID: <1452587470-61506-4-git-send-email-jamesjj.liao@mediatek.com>
-In-Reply-To: <1452587470-61506-1-git-send-email-jamesjj.liao@mediatek.com>
-References: <1452587470-61506-1-git-send-email-jamesjj.liao@mediatek.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v8 1/6] clk: hisilicon: add CRG driver for hi3519 soc
+Date: Fri, 29 Jan 2016 15:42:07 +0800
+Message-ID: <1454053332-3218-2-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1454053332-3218-1-git-send-email-xuejiancheng@huawei.com>
+References: <1454053332-3218-1-git-send-email-xuejiancheng@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: jamesjj.liao@mediatek.com
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shunli Wang <shunli.wang@mediatek.com>
+The CRG(Clock and Reset Generator) block provides clock
+and reset signals for other modules in hi3519 soc.
 
-Add MT2701 clock dt-bindings, include topckgen, apmixedsys,
-infracfg, pericfg and subsystem clocks.
-
-Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- include/dt-bindings/clock/mt2701-clk.h | 481 +++++++++++++++++++++++++++++++++
- 1 file changed, 481 insertions(+)
- create mode 100644 include/dt-bindings/clock/mt2701-clk.h
+ .../devicetree/bindings/clock/hi3519-crg.txt       |  46 +++++++
+This binding file is already acked by Rob Herring.
+ drivers/clk/hisilicon/Kconfig                      |   7 ++
+ drivers/clk/hisilicon/Makefile                     |   2 +
+ drivers/clk/hisilicon/clk-hi3519.c                 | 133 +++++++++++++++++++++
+ drivers/clk/hisilicon/clk.c                        |  23 ++--
+ drivers/clk/hisilicon/clk.h                        |  14 +--
+ drivers/clk/hisilicon/reset.c                      | 130 ++++++++++++++++++++
+ drivers/clk/hisilicon/reset.h                      |  32 +++++
+ include/dt-bindings/clock/hi3519-clock.h           |  40 +++++++
+ 9 files changed, 412 insertions(+), 15 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
+ create mode 100644 drivers/clk/hisilicon/clk-hi3519.c
+ create mode 100644 drivers/clk/hisilicon/reset.c
+ create mode 100644 drivers/clk/hisilicon/reset.h
+ create mode 100644 include/dt-bindings/clock/hi3519-clock.h
 
-diff --git a/include/dt-bindings/clock/mt2701-clk.h b/include/dt-bindings/clock/mt2701-clk.h
+diff --git a/Documentation/devicetree/bindings/clock/hi3519-crg.txt b/Documentation/devicetree/bindings/clock/hi3519-crg.txt
 new file mode 100644
-index 0000000..50972d1
+index 0000000..2d23950
 --- /dev/null
-+++ b/include/dt-bindings/clock/mt2701-clk.h
-@@ -0,0 +1,481 @@
++++ b/Documentation/devicetree/bindings/clock/hi3519-crg.txt
+@@ -0,0 +1,46 @@
++* Hisilicon Hi3519 Clock and Reset Generator(CRG)
++
++The Hi3519 CRG module provides clock and reset signals to various
++controllers within the SoC.
++
++This binding uses the following bindings:
++    Documentation/devicetree/bindings/clock/clock-bindings.txt
++    Documentation/devicetree/bindings/reset/reset.txt
++
++Required Properties:
++
++- compatible: should be one of the following.
++  - "hisilicon,hi3519-crg" - controller compatible with Hi3519 SoC.
++
++- reg: physical base address of the controller and length of memory mapped
++  region.
++
++- #clock-cells: should be 1.
++
++Each clock is assigned an identifier and client nodes use this identifier
++to specify the clock which they consume.
++
++All these identifier could be found in <dt-bindings/clock/hi3519-clock.h>.
++
++- #reset-cells: should be 2.
++
++A reset signal can be controlled by writing a bit register in the CRG module.
++The reset specifier consists of two cells. The first cell represents the
++register offset relative to the base address. The second cell represents the
++bit index in the register.
++
++Example: CRG nodes
++CRG: clock-reset-controller@12010000 {
++	compatible = "hisilicon,hi3519-crg";
++        reg = <0x12010000 0x10000>;
++        #clock-cells = <1>;
++        #reset-cells = <2>;
++};
++
++Example: consumer nodes
++i2c0: i2c@12110000 {
++	compatible = "hisilicon,hi3519-i2c";
++        reg = <0x12110000 0x1000>;
++        clocks = <&CRG HI3519_I2C0_RST>;*/
++        resets = <&CRG 0xe4 0>;
++};
+diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
+index e434854..2128899 100644
+--- a/drivers/clk/hisilicon/Kconfig
++++ b/drivers/clk/hisilicon/Kconfig
+@@ -1,3 +1,10 @@
++config COMMON_CLK_HI3519
++	tristate "Hi3519 Clock Driver"
++	depends on ARCH_HISI
++	default y
++	help
++	  Build the clock driver for hi3519.
++
+ config COMMON_CLK_HI6220
+ 	bool "Hi6220 Clock Driver"
+ 	depends on ARCH_HISI || COMPILE_TEST
+diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makefile
+index 74dba31..3f57b09 100644
+--- a/drivers/clk/hisilicon/Makefile
++++ b/drivers/clk/hisilicon/Makefile
+@@ -4,8 +4,10 @@
+ 
+ obj-y	+= clk.o clkgate-separated.o clkdivider-hi6220.o
+ 
++obj-$(CONFIG_RESET_CONTROLLER)	+= reset.o
+ obj-$(CONFIG_ARCH_HI3xxx)	+= clk-hi3620.o
+ obj-$(CONFIG_ARCH_HIP04)	+= clk-hip04.o
+ obj-$(CONFIG_ARCH_HIX5HD2)	+= clk-hix5hd2.o
+ obj-$(CONFIG_COMMON_CLK_HI6220)	+= clk-hi6220.o
+ obj-$(CONFIG_STUB_CLK_HI6220)	+= clk-hi6220-stub.o
++obj-$(CONFIG_COMMON_CLK_HI3519)	+= clk-hi3519.o
+diff --git a/drivers/clk/hisilicon/clk-hi3519.c b/drivers/clk/hisilicon/clk-hi3519.c
+new file mode 100644
+index 0000000..ed983af
+--- /dev/null
++++ b/drivers/clk/hisilicon/clk-hi3519.c
+@@ -0,0 +1,133 @@
 +/*
-+ * Copyright (c) 2014 MediaTek Inc.
-+ * Author: Shunli Wang <shunli.wang@mediatek.com>
++ * Hi3519 Clock Driver
++ *
++ * Copyright (c) 2015-2016 HiSilicon Technologies Co., Ltd.
 + *
 + * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
 + *
 + * This program is distributed in the hope that it will be useful,
 + * but WITHOUT ANY WARRANTY; without even the implied warranty of
 + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 + * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program. If not, see <http://www.gnu.org/licenses/>.
 + */
 +
-+#ifndef _DT_BINDINGS_CLK_MT2701_H
-+#define _DT_BINDINGS_CLK_MT2701_H
++#include <dt-bindings/clock/hi3519-clock.h>
++#include <linux/delay.h>
++#include <linux/module.h>
++#include <linux/of_address.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++#include "clk.h"
++#include "reset.h"
 +
-+/* TOPCKGEN */
-+#define CLK_TOP_SYSPLL				1
-+#define CLK_TOP_SYSPLL_D2			2
-+#define CLK_TOP_SYSPLL_D3			3
-+#define CLK_TOP_SYSPLL_D5			4
-+#define CLK_TOP_SYSPLL_D7			5
-+#define CLK_TOP_SYSPLL1_D2			6
-+#define CLK_TOP_SYSPLL1_D4			7
-+#define CLK_TOP_SYSPLL1_D8			8
-+#define CLK_TOP_SYSPLL1_D16			9
-+#define CLK_TOP_SYSPLL2_D2			10
-+#define CLK_TOP_SYSPLL2_D4			11
-+#define CLK_TOP_SYSPLL2_D8			12
-+#define CLK_TOP_SYSPLL3_D2			13
-+#define CLK_TOP_SYSPLL3_D4			14
-+#define CLK_TOP_SYSPLL4_D2			15
-+#define CLK_TOP_SYSPLL4_D4			16
-+#define CLK_TOP_UNIVPLL				17
-+#define CLK_TOP_UNIVPLL_D2			18
-+#define CLK_TOP_UNIVPLL_D3			19
-+#define CLK_TOP_UNIVPLL_D5			20
-+#define CLK_TOP_UNIVPLL_D7			21
-+#define CLK_TOP_UNIVPLL_D26			22
-+#define CLK_TOP_UNIVPLL_D52			23
-+#define CLK_TOP_UNIVPLL_D108			24
-+#define CLK_TOP_USB_PHY48M			25
-+#define CLK_TOP_UNIVPLL1_D2			26
-+#define CLK_TOP_UNIVPLL1_D4			27
-+#define CLK_TOP_UNIVPLL1_D8			28
-+#define CLK_TOP_UNIVPLL2_D2			29
-+#define CLK_TOP_UNIVPLL2_D4			30
-+#define CLK_TOP_UNIVPLL2_D8			31
-+#define CLK_TOP_UNIVPLL2_D16			32
-+#define CLK_TOP_UNIVPLL2_D32			33
-+#define CLK_TOP_UNIVPLL3_D2			34
-+#define CLK_TOP_UNIVPLL3_D4			35
-+#define CLK_TOP_UNIVPLL3_D8			36
-+#define CLK_TOP_MSDCPLL				37
-+#define CLK_TOP_MSDCPLL_D2			38
-+#define CLK_TOP_MSDCPLL_D4			39
-+#define CLK_TOP_MSDCPLL_D8			40
-+#define CLK_TOP_MMPLL				41
-+#define CLK_TOP_MMPLL_D2			42
-+#define CLK_TOP_DMPLL				43
-+#define CLK_TOP_DMPLL_D2			44
-+#define CLK_TOP_DMPLL_D4			45
-+#define CLK_TOP_DMPLL_X2			46
-+#define CLK_TOP_TVDPLL				47
-+#define CLK_TOP_TVDPLL_D2			48
-+#define CLK_TOP_TVDPLL_D4			49
-+#define CLK_TOP_TVD2PLL				50
-+#define CLK_TOP_TVD2PLL_D2			51
-+#define CLK_TOP_HADDS2PLL_98M			52
-+#define CLK_TOP_HADDS2PLL_294M			53
-+#define CLK_TOP_HADDS2_FB			54
-+#define CLK_TOP_MIPIPLL_D2			55
-+#define CLK_TOP_MIPIPLL_D4			56
-+#define CLK_TOP_HDMIPLL				57
-+#define CLK_TOP_HDMIPLL_D2			58
-+#define CLK_TOP_HDMIPLL_D3			59
-+#define CLK_TOP_HDMI_SCL_RX			60
-+#define CLK_TOP_HDMI_0_PIX340M			61
-+#define CLK_TOP_HDMI_0_DEEP340M			62
-+#define CLK_TOP_HDMI_0_PLL340M			63
-+#define CLK_TOP_AUD1PLL_98M			64
-+#define CLK_TOP_AUD2PLL_90M			65
-+#define CLK_TOP_AUDPLL				66
-+#define CLK_TOP_AUDPLL_D4			67
-+#define CLK_TOP_AUDPLL_D8			68
-+#define CLK_TOP_AUDPLL_D16			69
-+#define CLK_TOP_AUDPLL_D24			70
-+#define CLK_TOP_ETHPLL_500M			71
-+#define CLK_TOP_VDECPLL				72
-+#define CLK_TOP_VENCPLL				73
-+#define CLK_TOP_MIPIPLL				74
-+#define CLK_TOP_ARMPLL_1P3G			75
++#define HI3519_INNER_CLK_OFFSET	64
++#define HI3519_FIXED_24M	65
++#define HI3519_FIXED_50M	66
++#define HI3519_FIXED_75M	67
++#define HI3519_FIXED_125M	68
++#define HI3519_FIXED_150M	69
++#define HI3519_FIXED_200M	70
++#define HI3519_FIXED_250M	71
++#define HI3519_FIXED_300M	72
++#define HI3519_FIXED_400M	73
++#define HI3519_FMC_MUX		74
 +
-+#define CLK_TOP_MM_SEL				76
-+#define CLK_TOP_DDRPHYCFG_SEL			77
-+#define CLK_TOP_MEM_SEL				78
-+#define CLK_TOP_AXI_SEL				79
-+#define CLK_TOP_CAMTG_SEL			80
-+#define CLK_TOP_MFG_SEL				81
-+#define CLK_TOP_VDEC_SEL			82
-+#define CLK_TOP_PWM_SEL				83
-+#define CLK_TOP_MSDC30_0_SEL			84
-+#define CLK_TOP_USB20_SEL			85
-+#define CLK_TOP_SPI0_SEL			86
-+#define CLK_TOP_UART_SEL			87
-+#define CLK_TOP_AUDINTBUS_SEL			88
-+#define CLK_TOP_AUDIO_SEL			89
-+#define CLK_TOP_MSDC30_2_SEL			90
-+#define CLK_TOP_MSDC30_1_SEL			91
-+#define CLK_TOP_DPI1_SEL			92
-+#define CLK_TOP_DPI0_SEL			93
-+#define CLK_TOP_SCP_SEL				94
-+#define CLK_TOP_PMICSPI_SEL			95
-+#define CLK_TOP_APLL_SEL			96
-+#define CLK_TOP_HDMI_SEL			97
-+#define CLK_TOP_TVE_SEL				98
-+#define CLK_TOP_EMMC_HCLK_SEL			99
-+#define CLK_TOP_NFI2X_SEL			100
-+#define CLK_TOP_RTC_SEL				101
-+#define CLK_TOP_OSD_SEL				102
-+#define CLK_TOP_NR_SEL				103
-+#define CLK_TOP_DI_SEL				104
-+#define CLK_TOP_FLASH_SEL			105
-+#define CLK_TOP_ASM_M_SEL			106
-+#define CLK_TOP_ASM_I_SEL			107
-+#define CLK_TOP_INTDIR_SEL			108
-+#define CLK_TOP_HDMIRX_BIST_SEL			109
-+#define CLK_TOP_ETHIF_SEL			110
-+#define CLK_TOP_MS_CARD_SEL			111
-+#define CLK_TOP_ASM_H_SEL			112
-+#define CLK_TOP_SPI1_SEL			113
-+#define CLK_TOP_CMSYS_SEL			114
-+#define CLK_TOP_MSDC30_3_SEL			115
-+#define CLK_TOP_HDMIRX26_24_SEL			116
-+#define CLK_TOP_AUD2DVD_SEL			117
-+#define CLK_TOP_8BDAC_SEL			118
-+#define CLK_TOP_SPI2_SEL			119
-+#define CLK_TOP_AUD_MUX1_SEL			120
-+#define CLK_TOP_AUD_MUX2_SEL			121
-+#define CLK_TOP_AUDPLL_MUX_SEL			122
-+#define CLK_TOP_AUD_K1_SRC_SEL			123
-+#define CLK_TOP_AUD_K2_SRC_SEL			124
-+#define CLK_TOP_AUD_K3_SRC_SEL			125
-+#define CLK_TOP_AUD_K4_SRC_SEL			126
-+#define CLK_TOP_AUD_K5_SRC_SEL			127
-+#define CLK_TOP_AUD_K6_SRC_SEL			128
-+#define CLK_TOP_PADMCLK_SEL			129
-+#define CLK_TOP_AUD_EXTCK1_DIV			130
-+#define CLK_TOP_AUD_EXTCK2_DIV			131
-+#define CLK_TOP_AUD_MUX1_DIV			132
-+#define CLK_TOP_AUD_MUX2_DIV			133
-+#define CLK_TOP_AUD_K1_SRC_DIV			134
-+#define CLK_TOP_AUD_K2_SRC_DIV			135
-+#define CLK_TOP_AUD_K3_SRC_DIV			136
-+#define CLK_TOP_AUD_K4_SRC_DIV			137
-+#define CLK_TOP_AUD_K5_SRC_DIV			138
-+#define CLK_TOP_AUD_K6_SRC_DIV			139
-+#define CLK_TOP_AUD_I2S1_MCLK			140
-+#define CLK_TOP_AUD_I2S2_MCLK			141
-+#define CLK_TOP_AUD_I2S3_MCLK			142
-+#define CLK_TOP_AUD_I2S4_MCLK			143
-+#define CLK_TOP_AUD_I2S5_MCLK			144
-+#define CLK_TOP_AUD_I2S6_MCLK			145
-+#define CLK_TOP_AUD_48K_TIMING			146
-+#define CLK_TOP_AUD_44K_TIMING			147
++#define HI3519_NR_CLKS		128
 +
-+#define CLK_TOP_32K_INTERNAL			148
-+#define CLK_TOP_32K_EXTERNAL			149
-+#define CLK_TOP_CLK26M_D8			150
-+#define CLK_TOP_8BDAC				151
-+#define CLK_TOP_WBG_DIG_416M			152
-+#define CLK_TOP_DPI				153
-+#define CLK_TOP_HDMITX_CLKDIG_CTS		154
-+#define CLK_TOP_NR				155
++static const struct hisi_fixed_rate_clock hi3519_fixed_rate_clks[] = {
++	{ HI3519_FIXED_24M, "24m", NULL, CLK_IS_ROOT, 24000000, },
++	{ HI3519_FIXED_50M, "50m", NULL, CLK_IS_ROOT, 50000000, },
++	{ HI3519_FIXED_75M, "75m", NULL, CLK_IS_ROOT, 75000000, },
++	{ HI3519_FIXED_125M, "125m", NULL, CLK_IS_ROOT, 125000000, },
++	{ HI3519_FIXED_150M, "150m", NULL, CLK_IS_ROOT, 150000000, },
++	{ HI3519_FIXED_200M, "200m", NULL, CLK_IS_ROOT, 200000000, },
++	{ HI3519_FIXED_250M, "250m", NULL, CLK_IS_ROOT, 250000000, },
++	{ HI3519_FIXED_300M, "300m", NULL, CLK_IS_ROOT, 300000000, },
++	{ HI3519_FIXED_400M, "400m", NULL, CLK_IS_ROOT, 400000000, },
++};
 +
-+/* APMIXEDSYS */
++static const char *const fmc_mux_p[] = {
++		"24m", "75m", "125m", "150m", "200m", "250m", "300m", "400m", };
++static u32 fmc_mux_table[] = {0, 1, 2, 3, 4, 5, 6, 7};
 +
-+#define CLK_APMIXED_ARMPLL			1
-+#define CLK_APMIXED_MAINPLL			2
-+#define CLK_APMIXED_UNIVPLL			3
-+#define CLK_APMIXED_MMPLL			4
-+#define CLK_APMIXED_MSDCPLL			5
-+#define CLK_APMIXED_TVDPLL			6
-+#define CLK_APMIXED_AUD1PLL			7
-+#define CLK_APMIXED_TRGPLL			8
-+#define CLK_APMIXED_ETHPLL			9
-+#define CLK_APMIXED_VDECPLL			10
-+#define CLK_APMIXED_HADDS2PLL			11
-+#define CLK_APMIXED_AUD2PLL			12
-+#define CLK_APMIXED_TVD2PLL			13
-+#define CLK_APMIXED_NR				14
++static const struct hisi_mux_clock hi3519_mux_clks[] = {
++	{ HI3519_FMC_MUX, "fmc_mux", fmc_mux_p, ARRAY_SIZE(fmc_mux_p),
++		CLK_SET_RATE_PARENT, 0xc0, 2, 3, 0, fmc_mux_table, },
++};
 +
-+/* DDRPHY */
++static const struct hisi_gate_clock hi3519_gate_clks[] = {
++	{ HI3519_FMC_CLK, "clk_fmc", "fmc_mux",
++		CLK_SET_RATE_PARENT, 0xc0, 1, 0, },
++	{ HI3519_UART0_CLK, "clk_uart0", "24m",
++		CLK_SET_RATE_PARENT, 0xe4, 20, 0, },
++	{ HI3519_UART1_CLK, "clk_uart1", "24m",
++		CLK_SET_RATE_PARENT, 0xe4, 21, 0, },
++	{ HI3519_UART2_CLK, "clk_uart2", "24m",
++		CLK_SET_RATE_PARENT, 0xe4, 22, 0, },
++	{ HI3519_UART3_CLK, "clk_uart3", "24m",
++		CLK_SET_RATE_PARENT, 0xe4, 23, 0, },
++	{ HI3519_UART4_CLK, "clk_uart4", "24m",
++		CLK_SET_RATE_PARENT, 0xe4, 24, 0, },
++	{ HI3519_SPI0_CLK, "clk_spi0", "50m",
++		CLK_SET_RATE_PARENT, 0xe4, 16, 0, },
++	{ HI3519_SPI1_CLK, "clk_spi1", "50m",
++		CLK_SET_RATE_PARENT, 0xe4, 17, 0, },
++	{ HI3519_SPI2_CLK, "clk_spi2", "50m",
++		CLK_SET_RATE_PARENT, 0xe4, 18, 0, },
++};
 +
-+#define CLK_DDRPHY_VENCPLL			1
-+#define CLK_DDRPHY_NR				2
++static int hi3519_clk_probe(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++	struct hisi_clock_data *clk_data;
 +
-+/* INFRACFG */
++	clk_data = hisi_clk_init(np, HI3519_NR_CLKS);
++	if (!clk_data)
++		return -ENODEV;
 +
-+#define CLK_INFRA_DBG				1
-+#define CLK_INFRA_SMI				2
-+#define CLK_INFRA_QAXI_CM4			3
-+#define CLK_INFRA_AUD_SPLIN_B			4
-+#define CLK_INFRA_AUDIO				5
-+#define CLK_INFRA_EFUSE				6
-+#define CLK_INFRA_L2C_SRAM			7
-+#define CLK_INFRA_M4U				8
-+#define CLK_INFRA_CONNMCU			9
-+#define CLK_INFRA_TRNG				10
-+#define CLK_INFRA_RAMBUFIF			11
-+#define CLK_INFRA_CPUM				12
-+#define CLK_INFRA_KP				13
-+#define CLK_INFRA_CEC				14
-+#define CLK_INFRA_IRRX				15
-+#define CLK_INFRA_PMICSPI			16
-+#define CLK_INFRA_PMICWRAP			17
-+#define CLK_INFRA_DDCCI				18
-+#define CLK_INFRA_CLK_13M                       19
-+#define CLK_INFRA_NR				20
++	hisi_clk_register_fixed_rate(hi3519_fixed_rate_clks,
++				     ARRAY_SIZE(hi3519_fixed_rate_clks),
++				     clk_data);
++	hisi_clk_register_mux(hi3519_mux_clks, ARRAY_SIZE(hi3519_mux_clks),
++					clk_data);
++	hisi_clk_register_gate(hi3519_gate_clks,
++			ARRAY_SIZE(hi3519_gate_clks), clk_data);
 +
-+/* PERICFG */
++	return hisi_reset_init(np);
++}
 +
-+#define CLK_PERI_NFI				1
-+#define CLK_PERI_THERM				2
-+#define CLK_PERI_PWM1				3
-+#define CLK_PERI_PWM2				4
-+#define CLK_PERI_PWM3				5
-+#define CLK_PERI_PWM4				6
-+#define CLK_PERI_PWM5				7
-+#define CLK_PERI_PWM6				8
-+#define CLK_PERI_PWM7				9
-+#define CLK_PERI_PWM				10
-+#define CLK_PERI_USB0				11
-+#define CLK_PERI_USB1				12
-+#define CLK_PERI_AP_DMA				13
-+#define CLK_PERI_MSDC30_0			14
-+#define CLK_PERI_MSDC30_1			15
-+#define CLK_PERI_MSDC30_2			16
-+#define CLK_PERI_MSDC30_3			17
-+#define CLK_PERI_MSDC50_3			18
-+#define CLK_PERI_NLI				19
-+#define CLK_PERI_UART0				20
-+#define CLK_PERI_UART1				21
-+#define CLK_PERI_UART2				22
-+#define CLK_PERI_UART3				23
-+#define CLK_PERI_BTIF				24
-+#define CLK_PERI_I2C0				25
-+#define CLK_PERI_I2C1				26
-+#define CLK_PERI_I2C2				27
-+#define CLK_PERI_I2C3				28
-+#define CLK_PERI_AUXADC				29
-+#define CLK_PERI_SPI0				30
-+#define CLK_PERI_ETH				31
-+#define CLK_PERI_USB0_MCU			32
++static const struct of_device_id hi3519_clk_match_table[] = {
++	{ .compatible = "hisilicon,hi3519-crg" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, hi3519_clk_match_table);
 +
-+#define CLK_PERI_USB1_MCU			33
-+#define CLK_PERI_USB_SLV			34
-+#define CLK_PERI_GCPU				35
-+#define CLK_PERI_NFI_ECC			36
-+#define CLK_PERI_NFI_PAD			37
-+#define CLK_PERI_FLASH				38
-+#define CLK_PERI_HOST89_INT			39
-+#define CLK_PERI_HOST89_SPI			40
-+#define CLK_PERI_HOST89_DVD			41
-+#define CLK_PERI_SPI1				42
-+#define CLK_PERI_SPI2				43
-+#define CLK_PERI_FCI				44
++static struct platform_driver hi3519_clk_driver = {
++	.probe          = hi3519_clk_probe,
++	.driver         = {
++		.name   = "hi3519-clk",
++		.of_match_table = hi3519_clk_match_table,
++	},
++};
 +
-+#define CLK_PERI_UART0_SEL			45
-+#define CLK_PERI_UART1_SEL			46
-+#define CLK_PERI_UART2_SEL			47
-+#define CLK_PERI_UART3_SEL			48
-+#define CLK_PERI_NR				49
++static int __init hi3519_clk_init(void)
++{
++	return platform_driver_register(&hi3519_clk_driver);
++}
++core_initcall(hi3519_clk_init);
 +
-+/* AUDIO */
++static void __exit hi3519_clk_exit(void)
++{
++	platform_driver_unregister(&hi3519_clk_driver);
++}
++module_exit(hi3519_clk_exit);
 +
-+#define CLK_AUD_AFE				1
-+#define CLK_AUD_LRCK_DETECT			2
-+#define CLK_AUD_I2S				3
-+#define CLK_AUD_APLL_TUNER			4
-+#define CLK_AUD_HDMI				5
-+#define CLK_AUD_SPDF				6
-+#define CLK_AUD_SPDF2				7
-+#define CLK_AUD_APLL				8
-+#define CLK_AUD_TML				9
-+#define CLK_AUD_AHB_IDLE_EXT			10
-+#define CLK_AUD_AHB_IDLE_INT			11
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("HiSilicon Hi3519 Clock Driver");
+diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
+index 9f8e766..06ec3fe 100644
+--- a/drivers/clk/hisilicon/clk.c
++++ b/drivers/clk/hisilicon/clk.c
+@@ -37,7 +37,7 @@
+ 
+ static DEFINE_SPINLOCK(hisi_clk_lock);
+ 
+-struct hisi_clock_data __init *hisi_clk_init(struct device_node *np,
++struct hisi_clock_data *hisi_clk_init(struct device_node *np,
+ 					     int nr_clks)
+ {
+ 	struct hisi_clock_data *clk_data;
+@@ -71,8 +71,9 @@ err_data:
+ err:
+ 	return NULL;
+ }
++EXPORT_SYMBOL(hisi_clk_init);
+ 
+-void __init hisi_clk_register_fixed_rate(struct hisi_fixed_rate_clock *clks,
++void hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *clks,
+ 					 int nums, struct hisi_clock_data *data)
+ {
+ 	struct clk *clk;
+@@ -91,8 +92,9 @@ void __init hisi_clk_register_fixed_rate(struct hisi_fixed_rate_clock *clks,
+ 		data->clk_data.clks[clks[i].id] = clk;
+ 	}
+ }
++EXPORT_SYMBOL(hisi_clk_register_fixed_rate);
+ 
+-void __init hisi_clk_register_fixed_factor(struct hisi_fixed_factor_clock *clks,
++void hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *clks,
+ 					   int nums,
+ 					   struct hisi_clock_data *data)
+ {
+@@ -112,8 +114,9 @@ void __init hisi_clk_register_fixed_factor(struct hisi_fixed_factor_clock *clks,
+ 		data->clk_data.clks[clks[i].id] = clk;
+ 	}
+ }
++EXPORT_SYMBOL(hisi_clk_register_fixed_factor);
+ 
+-void __init hisi_clk_register_mux(struct hisi_mux_clock *clks,
++void hisi_clk_register_mux(const struct hisi_mux_clock *clks,
+ 				  int nums, struct hisi_clock_data *data)
+ {
+ 	struct clk *clk;
+@@ -141,8 +144,9 @@ void __init hisi_clk_register_mux(struct hisi_mux_clock *clks,
+ 		data->clk_data.clks[clks[i].id] = clk;
+ 	}
+ }
++EXPORT_SYMBOL(hisi_clk_register_mux);
+ 
+-void __init hisi_clk_register_divider(struct hisi_divider_clock *clks,
++void hisi_clk_register_divider(const struct hisi_divider_clock *clks,
+ 				      int nums, struct hisi_clock_data *data)
+ {
+ 	struct clk *clk;
+@@ -170,8 +174,9 @@ void __init hisi_clk_register_divider(struct hisi_divider_clock *clks,
+ 		data->clk_data.clks[clks[i].id] = clk;
+ 	}
+ }
++EXPORT_SYMBOL(hisi_clk_register_divider);
+ 
+-void __init hisi_clk_register_gate(struct hisi_gate_clock *clks,
++void hisi_clk_register_gate(const struct hisi_gate_clock *clks,
+ 				       int nums, struct hisi_clock_data *data)
+ {
+ 	struct clk *clk;
+@@ -198,8 +203,9 @@ void __init hisi_clk_register_gate(struct hisi_gate_clock *clks,
+ 		data->clk_data.clks[clks[i].id] = clk;
+ 	}
+ }
++EXPORT_SYMBOL(hisi_clk_register_gate);
+ 
+-void __init hisi_clk_register_gate_sep(struct hisi_gate_clock *clks,
++void hisi_clk_register_gate_sep(const struct hisi_gate_clock *clks,
+ 				       int nums, struct hisi_clock_data *data)
+ {
+ 	struct clk *clk;
+@@ -226,8 +232,9 @@ void __init hisi_clk_register_gate_sep(struct hisi_gate_clock *clks,
+ 		data->clk_data.clks[clks[i].id] = clk;
+ 	}
+ }
++EXPORT_SYMBOL(hisi_clk_register_gate_sep);
+ 
+-void __init hi6220_clk_register_divider(struct hi6220_divider_clock *clks,
++void __init hi6220_clk_register_divider(const struct hi6220_divider_clock *clks,
+ 					int nums, struct hisi_clock_data *data)
+ {
+ 	struct clk *clk;
+diff --git a/drivers/clk/hisilicon/clk.h b/drivers/clk/hisilicon/clk.h
+index b56fbc1..20d64af 100644
+--- a/drivers/clk/hisilicon/clk.h
++++ b/drivers/clk/hisilicon/clk.h
+@@ -111,18 +111,18 @@ struct clk *hi6220_register_clkdiv(struct device *dev, const char *name,
+ 	u8 shift, u8 width, u32 mask_bit, spinlock_t *lock);
+ 
+ struct hisi_clock_data *hisi_clk_init(struct device_node *, int);
+-void hisi_clk_register_fixed_rate(struct hisi_fixed_rate_clock *,
++void hisi_clk_register_fixed_rate(const struct hisi_fixed_rate_clock *,
+ 				int, struct hisi_clock_data *);
+-void hisi_clk_register_fixed_factor(struct hisi_fixed_factor_clock *,
++void hisi_clk_register_fixed_factor(const struct hisi_fixed_factor_clock *,
+ 				int, struct hisi_clock_data *);
+-void hisi_clk_register_mux(struct hisi_mux_clock *, int,
++void hisi_clk_register_mux(const struct hisi_mux_clock *, int,
+ 				struct hisi_clock_data *);
+-void hisi_clk_register_divider(struct hisi_divider_clock *,
++void hisi_clk_register_divider(const struct hisi_divider_clock *,
+ 				int, struct hisi_clock_data *);
+-void hisi_clk_register_gate(struct hisi_gate_clock *,
++void hisi_clk_register_gate(const struct hisi_gate_clock *,
+ 				int, struct hisi_clock_data *);
+-void hisi_clk_register_gate_sep(struct hisi_gate_clock *,
++void hisi_clk_register_gate_sep(const struct hisi_gate_clock *,
+ 				int, struct hisi_clock_data *);
+-void hi6220_clk_register_divider(struct hi6220_divider_clock *,
++void hi6220_clk_register_divider(const struct hi6220_divider_clock *,
+ 				int, struct hisi_clock_data *);
+ #endif	/* __HISI_CLK_H */
+diff --git a/drivers/clk/hisilicon/reset.c b/drivers/clk/hisilicon/reset.c
+new file mode 100644
+index 0000000..4fc7c8f
+--- /dev/null
++++ b/drivers/clk/hisilicon/reset.c
+@@ -0,0 +1,130 @@
++/*
++ * Hisilicon Reset Controller Driver
++ *
++ * Copyright (c) 2015-2016 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program. If not, see <http://www.gnu.org/licenses/>.
++ */
 +
-+#define CLK_AUD_I2SIN1				12
-+#define CLK_AUD_I2SIN2				13
-+#define CLK_AUD_I2SIN3				14
-+#define CLK_AUD_I2SIN4				15
-+#define CLK_AUD_I2SIN5				16
-+#define CLK_AUD_I2SIN6				17
-+#define CLK_AUD_I2SO1				18
-+#define CLK_AUD_I2SO2				19
-+#define CLK_AUD_I2SO3				20
-+#define CLK_AUD_I2SO4				21
-+#define CLK_AUD_I2SO5				22
-+#define CLK_AUD_I2SO6				23
-+#define CLK_AUD_ASRCI1				24
-+#define CLK_AUD_ASRCI2				25
-+#define CLK_AUD_ASRCO1				26
-+#define CLK_AUD_ASRCO2				27
-+#define CLK_AUD_ASRC11				28
-+#define CLK_AUD_ASRC12				29
-+#define CLK_AUD_HDMIRX				30
-+#define CLK_AUD_INTDIR				31
-+#define CLK_AUD_A1SYS				32
-+#define CLK_AUD_A2SYS				33
-+#define CLK_AUD_AFE_CONN			34
-+#define CLK_AUD_AFE_PCMIF			35
-+#define CLK_AUD_AFE_MRGIF			36
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/reset-controller.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++#include <linux/types.h>
 +
-+#define CLK_AUD_MMIF_UL1			37
-+#define CLK_AUD_MMIF_UL2			38
-+#define CLK_AUD_MMIF_UL3			39
-+#define CLK_AUD_MMIF_UL4			40
-+#define CLK_AUD_MMIF_UL5			41
-+#define CLK_AUD_MMIF_UL6			42
-+#define CLK_AUD_MMIF_DL1			43
-+#define CLK_AUD_MMIF_DL2			44
-+#define CLK_AUD_MMIF_DL3			45
-+#define CLK_AUD_MMIF_DL4			46
-+#define CLK_AUD_MMIF_DL5			47
-+#define CLK_AUD_MMIF_DL6			48
-+#define CLK_AUD_MMIF_DLMCH			49
-+#define CLK_AUD_MMIF_ARB1			50
-+#define CLK_AUD_MMIF_AWB1			51
-+#define CLK_AUD_MMIF_AWB2			52
-+#define CLK_AUD_MMIF_DAI			53
++#define	HISI_RESET_BIT_MASK	0x1f
++#define	HISI_RESET_OFFSET_SHIFT	8
++#define	HISI_RESET_OFFSET_MASK	0xffff00
 +
-+#define CLK_AUD_DMIC1				54
-+#define CLK_AUD_DMIC2				55
-+#define CLK_AUD_ASRCI3				56
-+#define CLK_AUD_ASRCI4				57
-+#define CLK_AUD_ASRCI5				58
-+#define CLK_AUD_ASRCI6				59
-+#define CLK_AUD_ASRCO3				60
-+#define CLK_AUD_ASRCO4				61
-+#define CLK_AUD_ASRCO5				62
-+#define CLK_AUD_ASRCO6				63
-+#define CLK_AUD_MEM_ASRC1			64
-+#define CLK_AUD_MEM_ASRC2			65
-+#define CLK_AUD_MEM_ASRC3			66
-+#define CLK_AUD_MEM_ASRC4			67
-+#define CLK_AUD_MEM_ASRC5			68
-+#define CLK_AUD_DSD_ENC				69
-+#define CLK_AUD_ASRC_BRG			70
-+#define CLK_AUD_NR				71
++struct hisi_reset_controller {
++	spinlock_t	lock;
++	void __iomem	*membase;
++	struct reset_controller_dev	rcdev;
++};
 +
-+/* MMSYS */
 +
-+#define CLK_MM_SMI_COMMON			1
-+#define CLK_MM_SMI_LARB0			2
-+#define CLK_MM_CMDQ				3
-+#define CLK_MM_MUTEX				4
-+#define CLK_MM_DISP_COLOR			5
-+#define CLK_MM_DISP_BLS				6
-+#define CLK_MM_DISP_WDMA			7
-+#define CLK_MM_DISP_RDMA			8
-+#define CLK_MM_DISP_OVL				9
-+#define CLK_MM_MDP_TDSHP			10
-+#define CLK_MM_MDP_WROT				11
-+#define CLK_MM_MDP_WDMA				12
-+#define CLK_MM_MDP_RSZ1				13
-+#define CLK_MM_MDP_RSZ0				14
-+#define CLK_MM_MDP_RDMA				15
-+#define CLK_MM_MDP_BLS_26M			16
-+#define CLK_MM_CAM_MDP				17
-+#define CLK_MM_FAKE_ENG				18
-+#define CLK_MM_MUTEX_32K			19
-+#define CLK_MM_DISP_RDMA1			20
-+#define CLK_MM_DISP_UFOE			21
++#define to_hisi_reset_controller(rcdev)  \
++	container_of(rcdev, struct hisi_reset_controller, rcdev)
 +
-+#define CLK_MM_DSI_ENGINE			22
-+#define CLK_MM_DSI_DIG				23
-+#define CLK_MM_DPI_DIGL				24
-+#define CLK_MM_DPI_ENGINE			25
-+#define CLK_MM_DPI1_DIGL			26
-+#define CLK_MM_DPI1_ENGINE			27
-+#define CLK_MM_TVE_OUTPUT			28
-+#define CLK_MM_TVE_INPUT			29
-+#define CLK_MM_HDMI_PIXEL			30
-+#define CLK_MM_HDMI_PLL				31
-+#define CLK_MM_HDMI_AUDIO			32
-+#define CLK_MM_HDMI_SPDIF			33
-+#define CLK_MM_TVE_FMM				34
-+#define CLK_MM_NR				35
++static int hisi_reset_of_xlate(struct reset_controller_dev *rcdev,
++			const struct of_phandle_args *reset_spec)
++{
++	u32 offset;
++	u8 bit;
 +
-+/* IMGSYS */
++	if (WARN_ON(reset_spec->args_count != rcdev->of_reset_n_cells))
++		return -EINVAL;
 +
-+#define CLK_IMG_SMI_COMM			1
-+#define CLK_IMG_RESZ				2
-+#define CLK_IMG_JPGDEC				3
-+#define CLK_IMG_VENC_LT				4
-+#define CLK_IMG_VENC				5
-+#define CLK_IMG_NR				6
++	offset = (reset_spec->args[0] << HISI_RESET_OFFSET_SHIFT)
++		& HISI_RESET_OFFSET_MASK;
++	bit = reset_spec->args[1] & HISI_RESET_BIT_MASK;
++	return (offset | bit);
++}
 +
-+/* VDEC */
++static int hisi_reset_assert(struct reset_controller_dev *rcdev,
++			      unsigned long id)
++{
++	struct hisi_reset_controller *rstc = to_hisi_reset_controller(rcdev);
++	unsigned long flags;
++	u32 offset, reg;
++	u8 bit;
 +
-+#define CLK_VDEC_CKGEN				1
-+#define CLK_VDEC_LARB				2
-+#define CLK_VDEC_NR				3
++	offset = (id & HISI_RESET_OFFSET_MASK) >> HISI_RESET_OFFSET_SHIFT;
++	bit = id & HISI_RESET_BIT_MASK;
 +
-+/* HIFSYS */
++	spin_lock_irqsave(&rstc->lock, flags);
 +
-+#define CLK_HIFSYS_USB0PHY			1
-+#define CLK_HIFSYS_USB1PHY			2
-+#define CLK_HIFSYS_PCIE0			3
-+#define CLK_HIFSYS_PCIE1			4
-+#define CLK_HIFSYS_PCIE2			5
-+#define CLK_HIFSYS_NR				6
++	reg = readl(rstc->membase + offset);
++	writel(reg | BIT(bit), rstc->membase + offset);
 +
-+/* ETHSYS */
-+#define CLK_ETHSYS_HSDMA			1
-+#define CLK_ETHSYS_ESW				2
-+#define CLK_ETHSYS_GP2				3
-+#define CLK_ETHSYS_GP1				4
-+#define CLK_ETHSYS_PCM				5
-+#define CLK_ETHSYS_GDMA				6
-+#define CLK_ETHSYS_I2S				7
-+#define CLK_ETHSYS_CRYPTO			8
-+#define CLK_ETHSYS_NR				9
++	spin_unlock_irqrestore(&rstc->lock, flags);
 +
-+/* BDP */
++	return 0;
++}
 +
-+#define CLK_BDP_BRG_BA				1
-+#define CLK_BDP_BRG_DRAM			2
-+#define CLK_BDP_LARB_DRAM			3
-+#define CLK_BDP_WR_VDI_PXL			4
-+#define CLK_BDP_WR_VDI_DRAM			5
-+#define CLK_BDP_WR_B				6
-+#define CLK_BDP_DGI_IN				7
-+#define CLK_BDP_DGI_OUT				8
-+#define CLK_BDP_FMT_MAST_27			9
-+#define CLK_BDP_FMT_B				10
-+#define CLK_BDP_OSD_B				11
-+#define CLK_BDP_OSD_DRAM			12
-+#define CLK_BDP_OSD_AGENT			13
-+#define CLK_BDP_OSD_PXL				14
-+#define CLK_BDP_RLE_B				15
-+#define CLK_BDP_RLE_AGENT			16
-+#define CLK_BDP_RLE_DRAM			17
-+#define CLK_BDP_F27M				18
-+#define CLK_BDP_F27M_VDOUT			19
-+#define CLK_BDP_F27_74_74			20
-+#define CLK_BDP_F2FS				21
-+#define CLK_BDP_F2FS74_148			22
-+#define CLK_BDP_FB				23
-+#define CLK_BDP_VDO_DRAM			24
-+#define CLK_BDP_VDO_2FS				25
-+#define CLK_BDP_VDO_B				26
-+#define CLK_BDP_WR_DI_PXL			27
-+#define CLK_BDP_WR_DI_DRAM			28
-+#define CLK_BDP_WR_DI_B				29
-+#define CLK_BDP_NR_PXL				30
-+#define CLK_BDP_NR_DRAM				31
-+#define CLK_BDP_NR_B				32
++static int hisi_reset_deassert(struct reset_controller_dev *rcdev,
++				unsigned long id)
++{
++	struct hisi_reset_controller *rstc = to_hisi_reset_controller(rcdev);
++	unsigned long flags;
++	u32 offset, reg;
++	u8 bit;
 +
-+#define CLK_BDP_RX_F				33
-+#define CLK_BDP_RX_X				34
-+#define CLK_BDP_RXPDT				35
-+#define CLK_BDP_RX_CSCL_N			36
-+#define CLK_BDP_RX_CSCL				37
-+#define CLK_BDP_RX_DDCSCL_N			38
-+#define CLK_BDP_RX_DDCSCL			39
-+#define CLK_BDP_RX_VCO				40
-+#define CLK_BDP_RX_DP				41
-+#define CLK_BDP_RX_P				42
-+#define CLK_BDP_RX_M				43
-+#define CLK_BDP_RX_PLL				44
-+#define CLK_BDP_BRG_RT_B			45
-+#define CLK_BDP_BRG_RT_DRAM			46
-+#define CLK_BDP_LARBRT_DRAM			47
-+#define CLK_BDP_TMDS_SYN			48
-+#define CLK_BDP_HDMI_MON			49
-+#define CLK_BDP_NR				50
++	offset = (id & HISI_RESET_OFFSET_MASK) >> HISI_RESET_OFFSET_SHIFT;
++	bit = id & HISI_RESET_BIT_MASK;
 +
-+#endif /* _DT_BINDINGS_CLK_MT2701_H */
++	spin_lock_irqsave(&rstc->lock, flags);
++
++	reg = readl(rstc->membase + offset);
++	writel(reg & ~BIT(bit), rstc->membase + offset);
++
++	spin_unlock_irqrestore(&rstc->lock, flags);
++
++	return 0;
++}
++
++static struct reset_control_ops hisi_reset_ops = {
++	.assert		= hisi_reset_assert,
++	.deassert	= hisi_reset_deassert,
++};
++
++int hisi_reset_init(struct device_node *np)
++{
++	struct hisi_reset_controller *rstc;
++
++	rstc = kzalloc(sizeof(*rstc), GFP_KERNEL);
++	if (!rstc)
++		return -ENOMEM;
++
++	rstc->membase = of_iomap(np, 0);
++	if (!rstc->membase)
++		return -EINVAL;
++
++	spin_lock_init(&rstc->lock);
++
++	rstc->rcdev.owner = THIS_MODULE;
++	rstc->rcdev.ops = &hisi_reset_ops;
++	rstc->rcdev.of_node = np;
++	rstc->rcdev.of_reset_n_cells = 2;
++	rstc->rcdev.of_xlate = hisi_reset_of_xlate;
++
++	return reset_controller_register(&rstc->rcdev);
++}
++EXPORT_SYMBOL(hisi_reset_init);
+diff --git a/drivers/clk/hisilicon/reset.h b/drivers/clk/hisilicon/reset.h
+new file mode 100644
+index 0000000..ffad4d7
+--- /dev/null
++++ b/drivers/clk/hisilicon/reset.h
+@@ -0,0 +1,32 @@
++/*
++ * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program. If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifndef	__HISI_RESET_H
++#define	__HISI_RESET_H
++
++struct device_node;
++
++#ifdef CONFIG_RESET_CONTROLLER
++int hisi_reset_init(struct device_node *np);
++#else
++static inline int hisi_reset_init(struct device_node *np)
++{
++	return 0;
++}
++#endif
++
++#endif	/* __HISI_RESET_H */
+diff --git a/include/dt-bindings/clock/hi3519-clock.h b/include/dt-bindings/clock/hi3519-clock.h
+new file mode 100644
+index 0000000..4989c80
+--- /dev/null
++++ b/include/dt-bindings/clock/hi3519-clock.h
+@@ -0,0 +1,40 @@
++/*
++ * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program. If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifndef __DTS_HI3519_CLOCK_H
++#define __DTS_HI3519_CLOCK_H
++
++#define HI3519_FMC_CLK			1
++#define HI3519_USB2_BUS_CLK		2
++#define HI3519_USB2_PORT_CLK		3
++#define HI3519_USB3_CLK			4
++#define HI3519_ETH_PHY_CLK		5
++#define HI3519_ETH_MAC_CLK		6
++#define HI3519_ETH_MACIF_CLK		7
++#define HI3519_PWM_CLK			8
++#define HI3519_DMA_CLK			9
++#define HI3519_SPI0_CLK			10
++#define HI3519_SPI1_CLK			11
++#define HI3519_SPI2_CLK			12
++#define HI3519_IR_CLK			13
++#define HI3519_UART0_CLK		14
++#define HI3519_UART1_CLK		15
++#define HI3519_UART2_CLK		16
++#define HI3519_UART3_CLK		17
++#define HI3519_UART4_CLK		18
++
++#endif	/* __DTS_HI3519_CLOCK_H */
 -- 
 1.9.1
