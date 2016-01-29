@@ -1,66 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:49013 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964843AbcA0WWX (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jan 2016 17:22:23 -0500
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 29 Jan 2016 12:58:20 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Steven Miao <realmz6@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	adi-buildroot-devel@lists.sourceforge.net
-Subject: [PATCH] blackfin: Use generic clkdev.h header
-Date: Wed, 27 Jan 2016 14:22:21 -0800
-Message-Id: <1453933341-9443-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+To: Loc Ho <lho@apm.com>
+Cc: mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, patches@apm.com
+Subject: Re: [PATCH v2 2/3] clk: xgene: Add SoC and PMD PLL clocks with v2
+ hardware
+Message-ID: <20160129205820.GU12841@codeaurora.org>
+References: <1453256863-15092-1-git-send-email-lho@apm.com>
+ <1453256863-15092-3-git-send-email-lho@apm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1453256863-15092-3-git-send-email-lho@apm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The generic header file is equivalent to the blackfin version, so
-just use the generic one.
+On 01/19, Loc Ho wrote:
+> Add X-Gene SoC and PMD PLL clocks support for v2 hardware.
+> X-Gene SoC v2 and above use an slightly different SoC
+> and PMD PLL hardware logic.
+> 
+> Signed-off-by: Loc Ho <lho@apm.com>
+> ---
 
+It's not from this patch, but I notice that we have a return
+inside a void function in this file...
+
+---8<---
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH] clk: xgene: Remove return from void function
+
+This function doesn't return anything because it's void. Drop the
+return statement.
+
+Cc: Loc Ho <lho@apm.com>
 Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
+ drivers/clk/clk-xgene.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Not compile tested, just done with visual inspection.
-
- arch/blackfin/include/asm/Kbuild   |  1 +
- arch/blackfin/include/asm/clkdev.h | 16 ----------------
- 2 files changed, 1 insertion(+), 16 deletions(-)
- delete mode 100644 arch/blackfin/include/asm/clkdev.h
-
-diff --git a/arch/blackfin/include/asm/Kbuild b/arch/blackfin/include/asm/Kbuild
-index 91d49c0a3118..9413b3c54970 100644
---- a/arch/blackfin/include/asm/Kbuild
-+++ b/arch/blackfin/include/asm/Kbuild
-@@ -2,6 +2,7 @@
- generic-y += auxvec.h
- generic-y += bitsperlong.h
- generic-y += bugs.h
-+generic-y += clkdev.h
- generic-y += cputime.h
- generic-y += current.h
- generic-y += device.h
-diff --git a/arch/blackfin/include/asm/clkdev.h b/arch/blackfin/include/asm/clkdev.h
-deleted file mode 100644
-index 7ac2436856a5..000000000000
---- a/arch/blackfin/include/asm/clkdev.h
-+++ /dev/null
-@@ -1,16 +0,0 @@
--#ifndef __ASM_CLKDEV__H_
--#define __ASM_CLKDEV__H_
--
--#include <linux/slab.h>
--
--static inline struct clk_lookup_alloc *__clkdev_alloc(size_t size)
--{
--	return kzalloc(size, GFP_KERNEL);
--}
--
--#ifndef CONFIG_COMMON_CLK
--#define __clk_put(clk)
--#define __clk_get(clk) ({ 1; })
--#endif
--
--#endif
+diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
+index 266d573b9134..bd7156baa08b 100644
+--- a/drivers/clk/clk-xgene.c
++++ b/drivers/clk/clk-xgene.c
+@@ -50,7 +50,7 @@ static inline u32 xgene_clk_read(void __iomem *csr)
+ 
+ static inline void xgene_clk_write(u32 data, void __iomem *csr)
+ {
+-	return writel_relaxed(data, csr);
++	writel_relaxed(data, csr);
+ }
+ 
+ /* PLL Clock */
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
-
