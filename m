@@ -1,109 +1,59 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Wynter Woods <wynter@nextthing.co>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 13/26] drm/fb_cma_helper: Remove implicit call to disable_unused_functions
-Date: Thu, 14 Jan 2016 16:24:56 +0100
-Message-Id: <1452785109-6172-14-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v8 5/6] ARM: dt-bindings: add device tree bindings for Hi3519 sysctrl
+Date: Fri, 29 Jan 2016 15:42:11 +0800
+Message-ID: <1454053332-3218-6-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1454053332-3218-1-git-send-email-xuejiancheng@huawei.com>
+References: <1454053332-3218-1-git-send-email-xuejiancheng@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The drm_fbdev_cma_init function always calls the
-drm_helper_disable_unused_functions. Since it's part of the usual probe
-process, all the drivers using that helper will end up having their encoder
-and CRTC disable functions called at probe if their device has not been
-reported as enabled.
+Add device tree bindings for Hi3519 system controller.
 
-This could be fixed by reading out from the registers the current state of
-the device if it is enabled, but even that will not handle the case where
-the device is actually disabled.
-
-Moreover, the drivers using the atomic modesetting expect that their enable
-and disable callback to be called when the device is already enabled or
-disabled (respectively).
-
-We can however fix this issue by moving the call to
-drm_helper_disable_unused_functions out of drm_fbdev_cma_init and make the
-drivers needing it (all the drivers calling drm_fbdev_cma_init and not
-using the atomic modesetting) explicitly call it.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/gpu/drm/drm_fb_cma_helper.c | 3 ---
- drivers/gpu/drm/imx/imx-drm-core.c  | 1 +
- drivers/gpu/drm/sti/sti_drv.c       | 1 +
- drivers/gpu/drm/tilcdc/tilcdc_drv.c | 1 +
- 4 files changed, 3 insertions(+), 3 deletions(-)
+ .../devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt   | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
 
-diff --git a/drivers/gpu/drm/drm_fb_cma_helper.c b/drivers/gpu/drm/drm_fb_cma_helper.c
-index c19a62561183..daa98d881142 100644
---- a/drivers/gpu/drm/drm_fb_cma_helper.c
-+++ b/drivers/gpu/drm/drm_fb_cma_helper.c
-@@ -348,9 +348,6 @@ struct drm_fbdev_cma *drm_fbdev_cma_init(struct drm_device *dev,
- 
- 	}
- 
--	/* disable all the possible outputs/crtcs before entering KMS mode */
--	drm_helper_disable_unused_functions(dev);
--
- 	ret = drm_fb_helper_initial_config(helper, preferred_bpp);
- 	if (ret < 0) {
- 		dev_err(dev->dev, "Failed to set initial hw configuration.\n");
-diff --git a/drivers/gpu/drm/imx/imx-drm-core.c b/drivers/gpu/drm/imx/imx-drm-core.c
-index 7b990b4e96d2..e1db57791fc9 100644
---- a/drivers/gpu/drm/imx/imx-drm-core.c
-+++ b/drivers/gpu/drm/imx/imx-drm-core.c
-@@ -312,6 +312,7 @@ static int imx_drm_driver_load(struct drm_device *drm, unsigned long flags)
- 		dev_warn(drm->dev, "Invalid legacyfb_depth.  Defaulting to 16bpp\n");
- 		legacyfb_depth = 16;
- 	}
-+	drm_helper_disable_unused_functions(drm);
- 	imxdrm->fbhelper = drm_fbdev_cma_init(drm, legacyfb_depth,
- 				drm->mode_config.num_crtc, MAX_CRTC);
- 	if (IS_ERR(imxdrm->fbhelper)) {
-diff --git a/drivers/gpu/drm/sti/sti_drv.c b/drivers/gpu/drm/sti/sti_drv.c
-index 1469987949d8..506b5626f3ed 100644
---- a/drivers/gpu/drm/sti/sti_drv.c
-+++ b/drivers/gpu/drm/sti/sti_drv.c
-@@ -160,6 +160,7 @@ static int sti_load(struct drm_device *dev, unsigned long flags)
- 
- 	drm_mode_config_reset(dev);
- 
-+	drm_helper_disable_unused_functions(dev);
- 	drm_fbdev_cma_init(dev, 32,
- 			   dev->mode_config.num_crtc,
- 			   dev->mode_config.num_connector);
-diff --git a/drivers/gpu/drm/tilcdc/tilcdc_drv.c b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-index 876cad58b1f9..24be31d69701 100644
---- a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-+++ b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-@@ -294,6 +294,7 @@ static int tilcdc_load(struct drm_device *dev, unsigned long flags)
- 			break;
- 	}
- 
-+	drm_helper_disable_unused_functions(dev);
- 	priv->fbdev = drm_fbdev_cma_init(dev, bpp,
- 			dev->mode_config.num_crtc,
- 			dev->mode_config.num_connector);
+diff --git a/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt b/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
+new file mode 100644
+index 0000000..115c5be
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
+@@ -0,0 +1,14 @@
++* Hisilicon Hi3519 System Controller Block
++
++This bindings use the following binding:
++Documentation/devicetree/bindings/mfd/syscon.txt
++
++Required properties:
++- compatible: "hisilicon,hi3519-sysctrl".
++- reg: the register region of this block
++
++Examples:
++sysctrl: system-controller@12010000 {
++	compatible = "hisilicon,hi3519-sysctrl", "syscon";
++	reg = <0x12010000 0x1000>;
++};
 -- 
-2.6.4
+1.9.1
