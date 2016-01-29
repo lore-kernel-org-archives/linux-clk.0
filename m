@@ -1,41 +1,33 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 29 Jan 2016 10:31:48 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Robert Jarzmik <robert.jarzmik@free.fr>,
-	linux-arm-kernel@lists.infradead.org,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Daniel Mack <daniel@zonque.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH 1/9] ARM: pxa: define clock registers as __iomem
-Message-ID: <20160129183148.GP12841@codeaurora.org>
-References: <1454076396-3563101-1-git-send-email-arnd@arndb.de>
- <1454076396-3563101-2-git-send-email-arnd@arndb.de>
+Return-Path: <lho@apm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1454076396-3563101-2-git-send-email-arnd@arndb.de>
+In-Reply-To: <20160129205841.GV12841@codeaurora.org>
+References: <1453256863-15092-1-git-send-email-lho@apm.com>
+	<1453256863-15092-4-git-send-email-lho@apm.com>
+	<20160129205841.GV12841@codeaurora.org>
+Date: Fri, 29 Jan 2016 13:46:46 -0800
+Message-ID: <CAPw-ZTno1FTONDyzRBZS5BRw5sK3OTDib98uJUUi4EOEh8Gxfw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] arm64: Update Merlin DT PCP PLL clock node for v2 hardware
+From: Loc Ho <lho@apm.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, Duc Dang <dhdang@apm.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+	"patches@apm.com" <patches@apm.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/29, Arnd Bergmann wrote:
-> We should not dereference registers as pointers, so use readl/writel
-> instead for these registers.
-> 
-> The clock registers are accessed in multiple files, so we have to
-> change them all at once.
-> 
-> I stumbled over these registers while looking at something unrelated.
-> There are in fact other registers with the same problem, but I did
-> not try to address those at this point.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
+Hi Stephen,
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+On Fri, Jan 29, 2016 at 12:58 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 01/19, Loc Ho wrote:
+>> Update Merlin DT PCP PLL clock node to reflect compatible
+>> string change to reflect v2 hardware.
+>>
+>> Signed-off-by: Loc Ho <lho@apm.com>
+>> ---
+>
+> Please take this through arm-soc.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I will ask Duc Dang to put this into APM xgene-next GIT for Arnd or
+Olof next pull.
+
+-Loc
