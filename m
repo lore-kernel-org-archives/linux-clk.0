@@ -1,115 +1,295 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Wed, 13 Jan 2016 18:10:00 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Rhyland Klein <rklein@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: tegra: Fix warning caused by pll_u failing to
- lock
-Message-ID: <20160113171000.GP2588@ulmo>
-References: <1450702592-7755-1-git-send-email-jonathanh@nvidia.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v8 6/6] ARM: dts: add dts files for Hi3519
+Date: Fri, 29 Jan 2016 15:42:12 +0800
+Message-ID: <1454053332-3218-7-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1454053332-3218-1-git-send-email-xuejiancheng@huawei.com>
+References: <1454053332-3218-1-git-send-email-xuejiancheng@huawei.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="uGrbifh0UoBBidu/"
-In-Reply-To: <1450702592-7755-1-git-send-email-jonathanh@nvidia.com>
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+add dts files for Hi3519
 
---uGrbifh0UoBBidu/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+---
+ arch/arm/boot/dts/Makefile        |   2 +
+ arch/arm/boot/dts/hi3519-demb.dts |  42 +++++++++
+ arch/arm/boot/dts/hi3519.dtsi     | 187 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 231 insertions(+)
+ create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
+ create mode 100644 arch/arm/boot/dts/hi3519.dtsi
 
-On Mon, Dec 21, 2015 at 12:56:31PM +0000, Jon Hunter wrote:
-> If the pll_u is not configured by the bootloader, then on kernel boot the
-> following warning is seen:
->=20
->  clk_pll_wait_for_lock: Timed out waiting for pll pll_u_vco lock
->  tegra_init_from_table: Failed to enable pll_u_out1
->  ------------[ cut here ]------------
->  WARNING: at drivers/clk/tegra/clk.c:269
->  Modules linked in:
->=20
->  CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.4.0-rc4-next-20151214+ #1
->  Hardware name: NVIDIA Tegra210 P2371 reference board (E.1) (DT)
->  task: ffffffc0bc0a0000 ti: ffffffc0bc0a8000 task.ti: ffffffc0bc0a8000
->  PC is at tegra_init_from_table+0x140/0x164
->  LR is at tegra_init_from_table+0x140/0x164
->  pc : [<ffffffc0008fee78>] lr : [<ffffffc0008fee78>] pstate: 80000045
->  sp : ffffffc0bc0abd50
->  x29: ffffffc0bc0abd50 x28: ffffffc00090b8a8
->  x27: ffffffc000a06000 x26: ffffffc0bc019780
->  x25: ffffffc00086a708 x24: ffffffc00086a790
->  x23: ffffffc0006d7188 x22: ffffffc0bc010000
->  x21: 000000000000016e x20: ffffffc0bc00d100
->  x19: ffffffc000944178 x18: 0000000000000007
->  x17: 000000000000000e x16: 0000000000000001
->  x15: 0000000000000007 x14: 000000000000000e
->  x13: 0000000000000013 x12: 000000000000001a
->  x11: 000000000000004d x10: 0000000000000750
->  x9 : ffffffc0bc0a8000 x8 : ffffffc0bc0a07b0
->  x7 : 0000000000000001 x6 : 0000000002d5f0f8
->  x5 : 0000000000000000 x4 : 0000000000000000
->  x3 : 0000000000000002 x2 : ffffffc000996724
->  x1 : 0000000000000000 x0 : 0000000000000032
->=20
->  ---[ end trace cbd20ae519e92ced ]---
->  Call trace:
->  [<ffffffc0008fee78>] tegra_init_from_table+0x140/0x164
->  [<ffffffc000900ac8>] tegra210_clock_apply_init_table+0x20/0x28
->  [<ffffffc0008fec40>] tegra_clocks_apply_init_table+0x18/0x24
->  [<ffffffc00008291c>] do_one_initcall+0x90/0x194
->  [<ffffffc0008cfab0>] kernel_init_freeable+0x148/0x1e8
->  [<ffffffc000636bb0>] kernel_init+0x10/0xdc
->  [<ffffffc000085cd0>] ret_from_fork+0x10/0x40
->  clk_pll_wait_for_lock: Timed out waiting for pll pll_u_vco lock
->  tegra_init_from_table: Failed to enable pll_u_out2
->  ------------[ cut here ]------------
->=20
-> pll_u can be either controlled by software or hardware and this is
-> selected via the OVERRIDE bit in the pll_u base register. In the function
-> tegra210_pll_init(), the OVERRIDE bit for pll_u is cleared, which selects
-> hardware control of the pll. However, at the same time the pll_u clocks
-> are populated in the init_table for tegra210 and so software will try to
-> configure the pll_u if it is not already configured and hence, the above
-> warning is seen when the pll fails to lock. Remove the pll_u clocks from
-> the init_table so that software does not try to configure this pll on
-> boot.
->=20
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 2 --
->  1 file changed, 2 deletions(-)
-
-Applied, thanks.
-Thierry
-
---uGrbifh0UoBBidu/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJWloToAAoJEN0jrNd/PrOhJToQAJew95si8lfu12Pk+eZ1mJGI
-9WSyWJFnmhboL/01FW7iAlTRZhkrTvTzcsGE7SoLJhdo4871NiSsUmBChVzNJCSo
-7M1v0ams51MoZTO38WDPPoOljLOPmchL0frbdOPwJPnVSgqgzMUGs0AHk+IkVJjI
-HiuyL3KQBhWnK4oi6sz/v49zrH+xnYiAjk2w+mpN4fMHye7ddWKYo4q5zbud09E4
-Xu+MWa1Zdq1dOpxBaJp5pV0iNwBqPsVfEsqNgsmM2/aJPqznVkeDZTHNsR+fxr18
-z3+dkiL13w/Ai4JXpFYPCmauKyv3qtNignEloptzQH8XW55p2uekNDlblQGd9AT0
-cxNIzXJyuM1J7F/XVy7UtJj4EBZONmE7+7iEgVjir/D5hl3YeHmdtWGbziqnefh7
-iDuXt8XwtVIa8M8bfc9KcxK2Ikzf/gqmLXi6DmorvUFXmphKWCOyeta2U7tM2pc/
-5/POgkiNs/UwEOfB239rCN144ilWELZIzG4X5UKP2OcTl9CCQ83v0L7qfjUGyFva
-QsM2lPSIH1ekHx4L3s4V37JnKCx62VkcygcMPxiW1UufcmCPf7UtklXS+yDjtH1I
-YrPXWXV44xXshwGV88z0FxB9MM5rBaNMzROhmuAgQdW4+6tgZAFr6n9l7JK/qsQj
-TmHZt6vXsEdfOsNeLar0
-=n4Wm
------END PGP SIGNATURE-----
-
---uGrbifh0UoBBidu/--
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index a4a6d70..3ce36ff 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -141,6 +141,8 @@ dtb-$(CONFIG_ARCH_EXYNOS5) += \
+ 	exynos5800-peach-pi.dtb
+ dtb-$(CONFIG_ARCH_HI3xxx) += \
+ 	hi3620-hi4511.dtb
++dtb-$(CONFIG_ARCH_HISI) += \
++	hi3519-demb.dtb
+ dtb-$(CONFIG_ARCH_HIX5HD2) += \
+ 	hisi-x5hd2-dkb.dtb
+ dtb-$(CONFIG_ARCH_HIGHBANK) += \
+diff --git a/arch/arm/boot/dts/hi3519-demb.dts b/arch/arm/boot/dts/hi3519-demb.dts
+new file mode 100644
+index 0000000..6991ab6
+--- /dev/null
++++ b/arch/arm/boot/dts/hi3519-demb.dts
+@@ -0,0 +1,42 @@
++/*
++ * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ */
++
++/dts-v1/;
++#include "hi3519.dtsi"
++
++/ {
++	model = "HiSilicon HI3519 DEMO Board";
++	compatible = "hisilicon,hi3519";
++
++	aliases {
++		serial0 = &uart0;
++	};
++
++	memory {
++		device_type = "memory";
++		reg = <0x80000000 0x40000000>;
++	};
++};
++
++&uart0 {
++	status = "okay";
++};
++
++&dual_timer0 {
++	status = "okay";
++};
+diff --git a/arch/arm/boot/dts/hi3519.dtsi b/arch/arm/boot/dts/hi3519.dtsi
+new file mode 100644
+index 0000000..5729ecf
+--- /dev/null
++++ b/arch/arm/boot/dts/hi3519.dtsi
+@@ -0,0 +1,187 @@
++/*
++ * Copyright (c) 2015 HiSilicon Technologies Co., Ltd.
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ */
++
++#include <dt-bindings/clock/hi3519-clock.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++/ {
++	#address-cells = <1>;
++	#size-cells = <1>;
++	chosen { };
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <0>;
++		};
++	};
++
++	gic: interrupt-controller@10300000 {
++		compatible = "arm,cortex-a7-gic";
++		#interrupt-cells = <3>;
++		interrupt-controller;
++		reg = <0x10301000 0x1000>, <0x10302000 0x1000>;
++	};
++
++	clk_3m: clk_3m {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <3000000>;
++	};
++
++	crg: clock-reset-controller@12010000 {
++		compatible = "hisilicon,hi3519-crg";
++		#clock-cells = <1>;
++		#reset-cells = <2>;
++		reg = <0x12010000 0x10000>;
++	};
++
++	soc {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "simple-bus";
++		interrupt-parent = <&gic>;
++		ranges;
++
++		uart0: serial@12100000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12100000 0x1000>;
++			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_UART0_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		uart1: serial@12101000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12101000 0x1000>;
++			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_UART1_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		uart2: serial@12102000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12102000 0x1000>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_UART2_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		uart3: serial@12103000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12103000 0x1000>;
++			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_UART3_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		uart4: serial@12104000 {
++			compatible = "arm,pl011", "arm,primecell";
++			reg = <0x12104000 0x1000>;
++			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_UART4_CLK>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		dual_timer0: timer@12000000 {
++			compatible = "arm,sp804", "arm,primecell";
++			interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0x12000000 0x1000>;
++			clocks = <&clk_3m>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		dual_timer1: timer@12001000 {
++			compatible = "arm,sp804", "arm,primecell";
++			interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0x12001000 0x1000>;
++			clocks = <&clk_3m>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		dual_timer2: timer@12002000 {
++			compatible = "arm,sp804", "arm,primecell";
++			interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++			reg = <0x12002000 0x1000>;
++			clocks = <&clk_3m>;
++			clock-names = "apb_pclk";
++			status = "disable";
++		};
++
++		spi_bus0: spi@12120000 {
++			compatible = "arm,pl022", "arm,primecell";
++			reg = <0x12120000 0x1000>;
++			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_SPI0_CLK>;
++			clock-names = "apb_pclk";
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disable";
++		};
++
++		spi_bus1: spi@12121000 {
++			compatible = "arm,pl022", "arm,primecell";
++			reg = <0x12121000 0x1000>;
++			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_SPI1_CLK>;
++			clock-names = "apb_pclk";
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disable";
++		};
++
++		spi_bus2: spi@12122000 {
++			compatible = "arm,pl022", "arm,primecell";
++			reg = <0x12122000 0x1000>;
++			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&crg HI3519_SPI2_CLK>;
++			clock-names = "apb_pclk";
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disable";
++		};
++
++		sysctrl: system-controller@12020000 {
++			compatible = "hisilicon,hi3519-sysctrl", "syscon";
++			reg = <0x12020000 0x1000>;
++		};
++
++		reboot {
++			compatible = "syscon-reboot";
++			regmap = <&sysctrl>;
++			offset = <0x4>;
++			mask = <0xdeadbeef>;
++		};
++	};
++};
+-- 
+1.9.1
