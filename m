@@ -1,59 +1,59 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, James Hogan <james.hogan@imgtec.com>, Zhang Qing <zhangqing@rock-chips.com>, Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v2] clk-divider: make sure read-only dividers do not write to their register
-Date: Wed, 20 Jan 2016 23:29:56 +0100
-Message-ID: <2694181.qDMgtzpC9k@phil>
-In-Reply-To: <20160120221604.GC12841@codeaurora.org>
-References: <8710207.gKyLbM2bKY@phil> <3578615.iBrKplh45Q@phil> <20160120221604.GC12841@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:36545 "EHLO
+	mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752550AbcA2H6I (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 29 Jan 2016 02:58:08 -0500
+From: Alexander Kochetkov <al.kochet@gmail.com>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Alexander Kochetkov <al.kochet@gmail.com>
+Subject: [PATCH v2] clk: rockchip: Allow sclk_i2s0 and i2s0_frac to change their parents rate on rk3188
+Date: Fri, 29 Jan 2016 10:58:02 +0300
+Message-Id: <1454054282-16303-1-git-send-email-al.kochet@gmail.com>
+In-Reply-To: <1453897469-2134-1-git-send-email-al.kochet@gmail.com>
+References: <1453897469-2134-1-git-send-email-al.kochet@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Mittwoch, 20. Januar 2016, 14:16:56 schrieb Stephen Boyd:
-> On 01/20, Heiko Stuebner wrote:
-> > Commit e6d5e7d90be9 ("clk-divider: Fix READ_ONLY when divider > 1")
-> > removed the special ops struct for read-only clocks and instead opted
-> > to handle them regularly.
-> > 
-> > On the rk3368 this results in breakage as aclkm now gets set a value.
-> > While it is the same divider value, the A53 core still doesn't like it,
-> > which can result in the cpu ending up in a hang.
-> > The reason being that "ACLKENMasserts one clock cycle before the rising
-> > edge of ACLKM" and the clock should only be touched when STANDBYWFIL2
-> > is asserted.
-> > 
-> > So make sure read-only clocks don't touch the clock-register at all
-> > even if only writing the same value, as even writing the same value
-> > may not be safe in all cases.
-> > 
-> > Fixes: e6d5e7d90be9 ("clk-divider: Fix READ_ONLY when divider > 1")
-> > Reported-by: Zhang Qing <zhangqing@rock-chips.com>
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > Reviewed-by: James Hogan <james.hogan@imgtec.com>
-> > ---
-> 
-> Hmph, the same patch[1] has been sitting in my inbox for months
-> now but I never got a response to my last question and then
-> forgot about it. I'll repeat the question here and hopefully we
-> can finish the discussion.
-> 
-> Maybe it would make more sense to have different ops for read
-> only dividers? The clk_set_rate op would be empty, while we would
-> have proper recalc_rate and round_rate ops. We can't just flat
-> out revert commit e6d5e7d90be9 (clk-divider: Fix READ_ONLY when
-> divider > 1, 2014-11-14) because that will introduce the problem
-> that it was fixing, but as long as we implement round_rate in
-> addition to recalc_rate it should work.
-> 
-> [1]
-> http://lkml.kernel.org/r/1428392806-14538-1-git-send-email-jy0922.shim@sa
-> msung.com
+Allow sclk_i2s0 and i2s0_frac to change their parents rate as
+that the upstream dividers are purely there to feed sclk_i2s0
 
-Sorry for the second submission then. That really is from quite a while ago. 
-Reintroducing a secondary ops-struct with a round-rate sounds fine for my 
-side - I'll give that a shot tomorrow.
+Tested on radxarock-lite.
 
+Signed-off-by: Alexander Kochetkov <al.kochet@gmail.com>
 
-Heiko
+Changes in v2:
+Rebased on top of 4.5-rc1 of branch[1]
+
+[1] https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.git/log/?h=v4.6-clk/next
+
+---
+ drivers/clk/rockchip/clk-rk3188.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
+index cc1d09d..629c65d 100644
+--- a/drivers/clk/rockchip/clk-rk3188.c
++++ b/drivers/clk/rockchip/clk-rk3188.c
+@@ -666,7 +666,7 @@ PNAME(mux_hsicphy_p)		= { "sclk_otgphy0_480m", "sclk_otgphy1_480m",
+ 				    "gpll", "cpll" };
+ 
+ static struct rockchip_clk_branch rk3188_i2s0_fracmux __initdata =
+-	MUX(SCLK_I2S0, "sclk_i2s0", mux_sclk_i2s0_p, 0,
++	MUX(SCLK_I2S0, "sclk_i2s0", mux_sclk_i2s0_p, CLK_SET_RATE_PARENT,
+ 			RK2928_CLKSEL_CON(3), 8, 2, MFLAGS);
+ 
+ static struct rockchip_clk_branch rk3188_clk_branches[] __initdata = {
+@@ -722,7 +722,7 @@ static struct rockchip_clk_branch rk3188_clk_branches[] __initdata = {
+ 	COMPOSITE_NOMUX(0, "i2s0_pre", "i2s_src", 0,
+ 			RK2928_CLKSEL_CON(3), 0, 7, DFLAGS,
+ 			RK2928_CLKGATE_CON(0), 9, GFLAGS),
+-	COMPOSITE_FRACMUX(0, "i2s0_frac", "i2s0_pre", 0,
++	COMPOSITE_FRACMUX(0, "i2s0_frac", "i2s0_pre", CLK_SET_RATE_PARENT,
+ 			RK2928_CLKSEL_CON(7), 0,
+ 			RK2928_CLKGATE_CON(0), 10, GFLAGS,
+ 			&rk3188_i2s0_fracmux),
+-- 
+1.7.9.5
+
