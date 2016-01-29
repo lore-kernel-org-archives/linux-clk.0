@@ -1,175 +1,77 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Wynter Woods <wynter@nextthing.co>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 15/26] drm/modes: Support modes names on the command line
-Date: Thu, 14 Jan 2016 16:24:58 +0100
-Message-Id: <1452785109-6172-16-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga03-in.huawei.com ([119.145.14.66]:25201 "EHLO
+	szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752271AbcA2HzP (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 29 Jan 2016 02:55:15 -0500
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v8 4/6] ARM: debug: add hi3519 debug uart
+Date: Fri, 29 Jan 2016 15:42:10 +0800
+Message-ID: <1454053332-3218-5-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1454053332-3218-1-git-send-email-xuejiancheng@huawei.com>
+References: <1454053332-3218-1-git-send-email-xuejiancheng@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The drm subsystem also uses the video= kernel parameter, and in the
-documentation refers to the fbdev documentation for that parameter.
+add hi3519 debug uart
 
-However, that documentation also says that instead of giving the mode using
-its resolution we can also give a name. However, DRM doesn't handle that
-case at the moment. Even though in most case it shouldn't make any
-difference, it might be useful for analog modes, where different standards
-might have the same resolution, but still have a few different parameters
-that are not encoded in the modes (NTSC vs NTSC-J vs PAL-M for example).
-
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
 ---
- drivers/gpu/drm/drm_crtc.c      |  3 ++-
- drivers/gpu/drm/drm_fb_helper.c |  4 ++++
- drivers/gpu/drm/drm_modes.c     | 49 ++++++++++++++++++++++++++++-------------
- include/drm/drm_modes.h         |  1 +
- 4 files changed, 41 insertions(+), 16 deletions(-)
+ arch/arm/Kconfig.debug | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
-index 24c5434abd1c..c3267d695e4e 100644
---- a/drivers/gpu/drm/drm_crtc.c
-+++ b/drivers/gpu/drm/drm_crtc.c
-@@ -846,8 +846,9 @@ static void drm_connector_get_cmdline_mode(struct drm_connector *connector)
- 		connector->force = mode->force;
- 	}
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index c6b6175..edd3fbe 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -260,6 +260,14 @@ choice
+ 		  Say Y here if you want kernel low-level debugging support
+ 		  on Cortina Gemini based platforms.
  
--	DRM_DEBUG_KMS("cmdline mode for connector %s %dx%d@%dHz%s%s%s\n",
-+	DRM_DEBUG_KMS("cmdline mode for connector %s %s %dx%d@%dHz%s%s%s\n",
- 		      connector->name,
-+		      mode->name ? mode->name : "",
- 		      mode->xres, mode->yres,
- 		      mode->refresh_specified ? mode->refresh : 60,
- 		      mode->rb ? " reduced blanking" : "",
-diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-index 69cbab5e5c81..fcb7ba796202 100644
---- a/drivers/gpu/drm/drm_fb_helper.c
-+++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -1649,6 +1649,10 @@ struct drm_display_mode *drm_pick_cmdline_mode(struct drm_fb_helper_connector *f
- 	prefer_non_interlace = !cmdline_mode->interlace;
- again:
- 	list_for_each_entry(mode, &fb_helper_conn->connector->modes, head) {
-+		/* Check (optional) mode name first */
-+		if (!strcmp(mode->name, cmdline_mode->name))
-+			return mode;
++	config DEBUG_HI3519_UART
++		bool "Hisilicon HI3519 Debug UART"
++		depends on ARCH_HISI
++		select DEBUG_UART_PL01X
++		help
++		  Say Y here if you want kernel low-level debugging support
++		  on HI3519 UART.
 +
- 		/* check width/height */
- 		if (mode->hdisplay != cmdline_mode->xres ||
- 		    mode->vdisplay != cmdline_mode->yres)
-diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
-index 5b1921b22dd6..bbb23000eb5b 100644
---- a/drivers/gpu/drm/drm_modes.c
-+++ b/drivers/gpu/drm/drm_modes.c
-@@ -1351,7 +1351,7 @@ bool drm_mode_parse_command_line_for_connector(const char *mode_option,
- 					       struct drm_cmdline_mode *mode)
- {
- 	const char *name;
--	bool parse_extras = false;
-+	bool named_mode = false, parse_extras = false;
- 	unsigned int bpp_off = 0, refresh_off = 0;
- 	unsigned int mode_end = 0;
- 	char *bpp_ptr = NULL, *refresh_ptr = NULL, *extra_ptr = NULL;
-@@ -1370,8 +1370,14 @@ bool drm_mode_parse_command_line_for_connector(const char *mode_option,
- 
- 	name = mode_option;
- 
-+	/*
-+	 * If the first character is not a digit, then it means that
-+	 * we have a named mode.
-+	 */
- 	if (!isdigit(name[0]))
--		return false;
-+		named_mode = true;
-+	else
-+		named_mode = false;
- 
- 	/* Try to locate the bpp and refresh specifiers, if any */
- 	bpp_ptr = strchr(name, '-');
-@@ -1398,12 +1404,16 @@ bool drm_mode_parse_command_line_for_connector(const char *mode_option,
- 		parse_extras = true;
- 	}
- 
--	ret = drm_mode_parse_cmdline_res_mode(name, mode_end,
--					      parse_extras,
--					      connector,
--					      mode);
--	if (ret)
--		return false;
-+	if (named_mode) {
-+		strncpy(mode->name, name, mode_end);
-+	} else {
-+		ret = drm_mode_parse_cmdline_res_mode(name, mode_end,
-+						      parse_extras,
-+						      connector,
-+						      mode);
-+		if (ret)
-+			return false;
-+	}
- 	mode->specified = true;
- 
- 	if (bpp_ptr) {
-@@ -1431,14 +1441,23 @@ bool drm_mode_parse_command_line_for_connector(const char *mode_option,
- 		extra_ptr = refresh_end_ptr;
- 
- 	if (extra_ptr) {
--		int remaining = strlen(name) - (extra_ptr - name);
-+		if (!named_mode) {
-+			int len = strlen(name) - (extra_ptr - name);
- 
--		/*
--		 * We still have characters to process, while
--		 * we shouldn't have any
--		 */
--		if (remaining > 0)
--			return false;
-+			ret = drm_mode_parse_cmdline_extra(extra_ptr, len,
-+							   connector, mode);
-+			if (ret)
-+				return false;
-+		} else {
-+			int remaining = strlen(name) - (extra_ptr - name);
-+
-+			/*
-+			 * We still have characters to process, while
-+			 * we shouldn't have any
-+			 */
-+			if (remaining > 0)
-+				return false;
-+		}
- 	}
- 
- 	return true;
-diff --git a/include/drm/drm_modes.h b/include/drm/drm_modes.h
-index 08a8cac9e555..709d43f3515e 100644
---- a/include/drm/drm_modes.h
-+++ b/include/drm/drm_modes.h
-@@ -151,6 +151,7 @@ struct drm_display_mode {
- 
- /* mode specified on the command line */
- struct drm_cmdline_mode {
-+	char name[DRM_DISPLAY_MODE_LEN];
- 	bool specified;
- 	bool refresh_specified;
- 	bool bpp_specified;
+ 	config DEBUG_HI3620_UART
+ 		bool "Hisilicon HI3620 Debug UART"
+ 		depends on ARCH_HI3xxx
+@@ -1451,6 +1459,7 @@ config DEBUG_UART_PHYS
+ 	default 0x11002000 if DEBUG_MT8127_UART0
+ 	default 0x11006000 if DEBUG_MT6589_UART0
+ 	default 0x11009000 if DEBUG_MT8135_UART3
++	default 0x12100000 if DEBUG_HI3519_UART
+ 	default 0x16000000 if DEBUG_INTEGRATOR
+ 	default 0x18000300 if DEBUG_BCM_5301X
+ 	default 0x18010000 if DEBUG_SIRFATLAS7_UART0
+@@ -1619,6 +1628,7 @@ config DEBUG_UART_VIRT
+ 	default 0xfee20000 if DEBUG_NSPIRE_CLASSIC_UART || DEBUG_NSPIRE_CX_UART
+ 	default 0xfee82340 if ARCH_IOP13XX
+ 	default 0xfef00000 if ARCH_IXP4XX && !CPU_BIG_ENDIAN
++	default 0xfef00000 if DEBUG_HI3519_UART
+ 	default 0xfef00003 if ARCH_IXP4XX && CPU_BIG_ENDIAN
+ 	default 0xfef36000 if DEBUG_HIGHBANK_UART
+ 	default 0xfefb0000 if DEBUG_OMAP1UART1 || DEBUG_OMAP7XXUART1
 -- 
-2.6.4
+1.9.1
+
