@@ -1,47 +1,76 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [Patch V2 4/9] clk: tegra: Fix the misnaming of nvenc from msenc
-Date: Thu, 14 Jan 2016 14:24:33 -0500
-Message-ID: <1452799478-14791-5-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
-References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v8 2/6] ARM: hisi: add compatible string for Hi3519 soc
+Date: Fri, 29 Jan 2016 15:42:08 +0800
+Message-ID: <1454053332-3218-3-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1454053332-3218-1-git-send-email-xuejiancheng@huawei.com>
+References: <1454053332-3218-1-git-send-email-xuejiancheng@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-When adding the nvenc clock, it was partially named msenc in
-the code. Since the msenc clk isn't present in T210 where the nvenc
-clk is, its misleading to see it present. Therefore, properly
-rename it.
+add compatible string for Hi3519 soc.
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
 ---
- drivers/clk/tegra/clk-tegra-periph.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-hisi/hisilicon.c | 23 ++++-------------------
+ 1 file changed, 4 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index 105405ca85ab..1860df1862dd 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -773,7 +773,7 @@ static struct tegra_periph_init_data periph_clks[] = {
- 	XUSB("xusb_dev_src", mux_clkm_pllp_pllc_pllre, CLK_SOURCE_XUSB_DEV_SRC, 95, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_xusb_dev_src),
- 	XUSB("xusb_dev_src", mux_clkm_pllp_pllre, CLK_SOURCE_XUSB_DEV_SRC, 95, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_xusb_dev_src_8),
- 	MUX8("dbgapb", mux_pllp_clkm_2, CLK_SOURCE_DBGAPB, 185, TEGRA_PERIPH_NO_RESET, tegra_clk_dbgapb),
--	MUX8("msenc", mux_pllc2_c_c3_pllp_plla1_clkm, CLK_SOURCE_NVENC, 219, 0, tegra_clk_nvenc),
-+	MUX8("nvenc", mux_pllc2_c_c3_pllp_plla1_clkm, CLK_SOURCE_NVENC, 219, 0, tegra_clk_nvenc),
- 	MUX8("nvdec", mux_pllc2_c_c3_pllp_plla1_clkm, CLK_SOURCE_NVDEC, 194, 0, tegra_clk_nvdec),
- 	MUX8("nvjpg", mux_pllc2_c_c3_pllp_plla1_clkm, CLK_SOURCE_NVJPG, 195, 0, tegra_clk_nvjpg),
- 	MUX8("ape", mux_plla_pllc4_out0_pllc_pllc4_out1_pllp_pllc4_out2_clkm, CLK_SOURCE_APE, 198, TEGRA_PERIPH_ON_APB, tegra_clk_ape),
+diff --git a/arch/arm/mach-hisi/hisilicon.c b/arch/arm/mach-hisi/hisilicon.c
+index 8cc6215..00dae89 100644
+--- a/arch/arm/mach-hisi/hisilicon.c
++++ b/arch/arm/mach-hisi/hisilicon.c
+@@ -54,30 +54,15 @@ DT_MACHINE_START(HI3620, "Hisilicon Hi3620 (Flattened Device Tree)")
+ 	.dt_compat	= hi3xxx_compat,
+ MACHINE_END
+ 
+-static const char *const hix5hd2_compat[] __initconst = {
++static const char *const hisilicon_compat[] __initconst = {
+ 	"hisilicon,hix5hd2",
+-	NULL,
+-};
+-
+-DT_MACHINE_START(HIX5HD2_DT, "Hisilicon HIX5HD2 (Flattened Device Tree)")
+-	.dt_compat	= hix5hd2_compat,
+-MACHINE_END
+-
+-static const char *const hip04_compat[] __initconst = {
+ 	"hisilicon,hip04-d01",
+-	NULL,
+-};
+-
+-DT_MACHINE_START(HIP04, "Hisilicon HiP04 (Flattened Device Tree)")
+-	.dt_compat	= hip04_compat,
+-MACHINE_END
+-
+-static const char *const hip01_compat[] __initconst = {
+ 	"hisilicon,hip01",
+ 	"hisilicon,hip01-ca9x2",
++	"hisilicon,hi3519",
+ 	NULL,
+ };
+ 
+-DT_MACHINE_START(HIP01, "Hisilicon HIP01 (Flattened Device Tree)")
+-	.dt_compat      = hip01_compat,
++DT_MACHINE_START(HISILICON_DT, "HiSilicon Soc")
++	.dt_compat	= hisilicon_compat,
+ MACHINE_END
 -- 
 1.9.1
