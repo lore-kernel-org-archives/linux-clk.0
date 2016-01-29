@@ -1,34 +1,54 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 29 Jan 2016 16:33:22 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Ray Jui <rjui@broadcom.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-	Simran Rai <ssimran@broadcom.com>
-Subject: Re: [PATCH RESEND v2 1/4] Documentation: dt-bindings: Add DT
- bindings for Cygnus audio clock
-Message-ID: <20160130003321.GC12841@codeaurora.org>
-References: <1453857521-8804-1-git-send-email-rjui@broadcom.com>
- <1453857521-8804-2-git-send-email-rjui@broadcom.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga03-in.huawei.com ([119.145.14.66]:25169 "EHLO
+	szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752179AbcA2HzO (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 29 Jan 2016 02:55:14 -0500
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [PATCH v8 3/6] ARM: config: hisi: enable CONFIG_RESET_CONTROLLER
+Date: Fri, 29 Jan 2016 15:42:09 +0800
+Message-ID: <1454053332-3218-4-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1454053332-3218-1-git-send-email-xuejiancheng@huawei.com>
+References: <1454053332-3218-1-git-send-email-xuejiancheng@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1453857521-8804-2-git-send-email-rjui@broadcom.com>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/26, Ray Jui wrote:
-> From: Simran Rai <ssimran@broadcom.com>
-> 
-> This patch adds audio clock device tree binding documentation to an
-> existing Cygnus clock DT bindings document.
-> 
-> Signed-off-by: Simran Rai <ssimran@broadcom.com>
-> Reviewed-by: Ray Jui <rjui@broadcom.com>
-> Reviewed-by: Lori Hikichi <lhikichi@broadcom.com>
-> Reviewed-by: Scott Branden <sbranden@broadcom.com>
-> ---
+enable CONFIG_RESET_CONTROLLER in hisi_defconfig
 
-Applied to clk-iproc
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+---
+ arch/arm/configs/hisi_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/arch/arm/configs/hisi_defconfig b/arch/arm/configs/hisi_defconfig
+index b2e340b..ba62c07 100644
+--- a/arch/arm/configs/hisi_defconfig
++++ b/arch/arm/configs/hisi_defconfig
+@@ -75,6 +75,7 @@ CONFIG_DMADEVICES=y
+ CONFIG_DW_DMAC=y
+ CONFIG_PL330_DMA=y
+ CONFIG_PWM=y
++CONFIG_RESET_CONTROLLER=y
+ CONFIG_PHY_HIX5HD2_SATA=y
+ CONFIG_EXT4_FS=y
+ CONFIG_TMPFS=y
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
+
