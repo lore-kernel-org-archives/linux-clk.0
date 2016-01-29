@@ -1,47 +1,50 @@
-Return-Path: <stefan@agner.ch>
-From: Stefan Agner <stefan@agner.ch>
-To: shawnguo@kernel.org,
-	kernel@pengutronix.de,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 1/2] clk: imx: do not sleep if IRQ's are still disabled
-Date: Fri, 29 Jan 2016 14:49:23 -0800
-Message-Id: <1454107764-19876-1-git-send-email-stefan@agner.ch>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 29 Jan 2016 12:43:21 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Pankaj Dubey <pankaj.dubey@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v4 1/3] clk: samsung: Enable COMPILE_TEST for Samsung
+ clocks
+Message-ID: <20160129204321.GS12841@codeaurora.org>
+References: <1453941324-15742-1-git-send-email-k.kozlowski@samsung.com>
+ <1453941324-15742-2-git-send-email-k.kozlowski@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1453941324-15742-2-git-send-email-k.kozlowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-If a clock gets enabled early during boot time, it can lead to a PLL
-startup. The wait_lock function makes sure that the PLL is really
-stareted up before it gets used. However, the function sleeps which
-leads to scheduling and an error:
-bad: scheduling from the idle thread!
-...
+On 01/28, Krzysztof Kozlowski wrote:
+> Enable the COMPILE_TEST to get build coverage of some of Samsung clock
+> controller drivers. Still some of them will be built only if
+> appropriate SoC is chosen (like SOC_EXYNOS4415 or ARCH_S3C64XX).
+> 
+> Anyway in case of COMPILE_TEST the Samsung clocks would show up in main
+> drivers section because they are not inside the "Common Clock Framework"
+> menu item. Move them under the "Common Clock Framework".
+> 
+> This changes the logic of selecting Samsung clocks from specific
+> architectures. Now the COMMON_CLK should be selected before selecting
+> specific clock (like S3C2410_COMMON_CLK or COMMON_CLK_SAMSUNG).
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
+> ---
 
-Use udelay in case IRQ's are still disabled.
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- drivers/clk/imx/clk-pllv3.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-index c05c43d..b5ff561 100644
---- a/drivers/clk/imx/clk-pllv3.c
-+++ b/drivers/clk/imx/clk-pllv3.c
-@@ -63,7 +63,10 @@ static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
- 			break;
- 		if (time_after(jiffies, timeout))
- 			break;
--		usleep_range(50, 500);
-+		if (unlikely(irqs_disabled()))
-+			udelay(50);
-+		else
-+			usleep_range(50, 500);
- 	} while (1);
- 
- 	return readl_relaxed(pll->base) & BM_PLL_LOCK ? 0 : -ETIMEDOUT;
 -- 
-2.7.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
