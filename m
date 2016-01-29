@@ -1,135 +1,102 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wenyou Yang <wenyou.yang@atmel.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Russell King <linux@arm.linux.org.uk>
-CC: <linux-clk@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>
-Subject: [PATCH 1/4] ARM: at91: pm: create a separate procedure for the ULP0 mode
-Date: Thu, 28 Jan 2016 18:19:13 +0800
-Message-ID: <1453976356-24391-2-git-send-email-wenyou.yang@atmel.com>
-In-Reply-To: <1453976356-24391-1-git-send-email-wenyou.yang@atmel.com>
-References: <1453976356-24391-1-git-send-email-wenyou.yang@atmel.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 29 Jan 2016 11:54:55 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: Emilio =?iso-8859-1?Q?L=F3pez?= <emilio.lopez@collabora.co.uk>,
+	mturquette@baylibre.com, maxime.ripard@free-electrons.com,
+	wens@csie.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/2] clk: defer clk_gets on orphan clocks
+Message-ID: <20160129195455.GQ12841@codeaurora.org>
+References: <1453385439-10154-1-git-send-email-emilio.lopez@collabora.co.uk>
+ <1453385958-11366-1-git-send-email-emilio.lopez@collabora.co.uk>
+ <20160128082324.GG12841@codeaurora.org>
+ <7262598.5pX8AAxUPK@diego>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <7262598.5pX8AAxUPK@diego>
 List-ID: <linux-clk.vger.kernel.org>
 
-To make the code more legible and prepare to add the ULP1 mode
-support in the future, create a separate procedure for the ULP0 mode.
+On 01/28, Heiko Stübner wrote:
+> Am Donnerstag, 28. Januar 2016, 00:23:24 schrieb Stephen Boyd:
+> > On 01/21, Emilio López wrote:
+> > > @@ -3059,7 +3069,25 @@ struct clk *__of_clk_get_from_provider(struct
+> > > of_phandle_args *clkspec,> 
+> > >   */
+> > >  
+> > >  struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
+> > >  {
+> > > 
+> > > -	return __of_clk_get_from_provider(clkspec, NULL, __func__);
+> > > +	return __of_clk_get_from_provider(clkspec, NULL, __func__, false);
+> > > +}
+> > > +
+> > > +/**
+> > > + * of_clk_get_from_provider_with_orphans() - Lookup clock from a clock
+> > > provider + * @clkspec: pointer to a clock specifier data structure
+> > > + *
+> > > + * This function looks up a struct clk from the registered list of clock
+> > > + * providers, an input is a clock specifier data structure as returned
+> > > + * from the of_parse_phandle_with_args() function call.
+> > > + *
+> > > + * The difference to of_clk_get_from_provider() is that this function
+> > > will
+> > > + * also successfully lookup orphan-clocks, as it in some cases may be
+> > > + * necessary to access such orphan-clocks as well.
+> > > + */
+> > > +struct clk *
+> > > +of_clk_get_from_provider_with_orphans(struct of_phandle_args *clkspec)
+> > 
+> > Dislike. In fact, the whole clk conf approach is odd here. When
+> > we're doing of_clk_init() we do a best effort loop around
+> > parent_ready(), waiting for clk providers to register as long as
+> > we have a clocks property in our provider node. We should do
+> > something similar in the non of_clk_init() case too, because
+> > of_clk_init() isn't special.
+> 
+> At least to me being able to reparent orphan clocks when knowing that they 
+> won't ever get supplied is special.
+> 
+> The Rockchip clock controller has quite a number of clocks that can either be 
+> supplied by some external source. xin32k supplied by some i2c chip being the 
+> most prominent. But while this one will get supplied eventually, there are 
+> others who will never get a supply and stay orphans forever.
+> 
+> Example:
+> rk3288 sclk_edp_24m can get supplied by either the general 24MHz oscillator or 
+> some separate clock input connected some chip pin. Reset-default seems to be 
+> the external supply, but on all boards I've seen so far doesn't get connected.
+> 
+> So we know on a per-board level if this is connected and want to move away 
+> from the non-existent source. Which is why the limit of this new function is 
+> limited to be ccf internal and the assigned-clock-parents path.
 
-Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
----
+Right, this problem isn't limited to clk-conf though. If some
+clock is orphaned by its reset default, then consumers that want
+to reparent them to something else will never be able to get the
+clocks without some sort of clk_get_ignore_orphan() API. We can't
+rely on DTS files telling us to do the reparent. This is a whole
+other problem to be dealt with before we can defer clk_get()
+orphans.
 
- arch/arm/mach-at91/pm_suspend.S |   65 ++++++++++++++++++++++++---------------
- 1 file changed, 40 insertions(+), 25 deletions(-)
+In this case, I wonder why we haven't specified some sort of
+"ground" clock that has a rate of 0? In the example above, I
+would imagine that we have our dts file specify a fixed rate
+clock with frequency of 0 that's named whatever the external
+supply clock is named when that pin isn't connected.
 
-diff --git a/arch/arm/mach-at91/pm_suspend.S b/arch/arm/mach-at91/pm_suspend.S
-index a25defd..5fcffdc 100644
---- a/arch/arm/mach-at91/pm_suspend.S
-+++ b/arch/arm/mach-at91/pm_suspend.S
-@@ -107,7 +107,7 @@ ENTRY(at91_pm_suspend_in_sram)
- 
- 	ldr	r0, .pm_mode
- 	tst	r0, #AT91_PM_SLOW_CLOCK
--	beq	skip_disable_main_clock
-+	beq	standby_mode
- 
- 	ldr	pmc, .pmc_base
- 
-@@ -131,32 +131,13 @@ ENTRY(at91_pm_suspend_in_sram)
- 	orr	tmp1, tmp1, #(1 << 29)		/* bit 29 always set */
- 	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
- 
--	/* Turn off the main oscillator */
--	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
--	bic	tmp1, tmp1, #AT91_PMC_MOSCEN
--	orr	tmp1, tmp1, #AT91_PMC_KEY
--	str	tmp1, [pmc, #AT91_CKGR_MOR]
--
--skip_disable_main_clock:
--	ldr	pmc, .pmc_base
--
--	/* Wait for interrupt */
--	at91_cpu_idle
--
--	ldr	r0, .pm_mode
--	tst	r0, #AT91_PM_SLOW_CLOCK
--	beq	skip_enable_main_clock
-+ulp0_mode:
-+	bl	at91_pm_ulp0_mode
-+	b	ulp_exit
- 
-+ulp_exit:
- 	ldr	pmc, .pmc_base
- 
--	/* Turn on the main oscillator */
--	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
--	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
--	orr	tmp1, tmp1, #AT91_PMC_KEY
--	str	tmp1, [pmc, #AT91_CKGR_MOR]
--
--	wait_moscrdy
--
- 	/* Restore PLLA setting */
- 	ldr	tmp1, .saved_pllar
- 	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
-@@ -177,7 +158,15 @@ skip_disable_main_clock:
- 
- 	wait_mckrdy
- 
--skip_enable_main_clock:
-+	b	pm_exit
-+
-+standby_mode:
-+	ldr	pmc, .pmc_base
-+
-+	/* Wait for interrupt */
-+	at91_cpu_idle
-+
-+pm_exit:
- 	/* Exit the self-refresh mode */
- 	mov	r0, #SRAMC_SELF_FRESH_EXIT
- 	bl	at91_sramc_self_refresh
-@@ -311,6 +300,32 @@ exit_sramc_sf:
- 	mov	pc, lr
- ENDPROC(at91_sramc_self_refresh)
- 
-+/*
-+ * void at91_pm_ulp0_mode(void)
-+ */
-+ENTRY(at91_pm_ulp0_mode)
-+	ldr	pmc, .pmc_base
-+
-+	/* Turn off the crystal oscillator */
-+	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
-+	bic	tmp1, tmp1, #AT91_PMC_MOSCEN
-+	orr	tmp1, tmp1, #AT91_PMC_KEY
-+	str	tmp1, [pmc, #AT91_CKGR_MOR]
-+
-+	/* Wait for interrupt */
-+	at91_cpu_idle
-+
-+	/* Turn on the crystal oscillator */
-+	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
-+	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
-+	orr	tmp1, tmp1, #AT91_PMC_KEY
-+	str	tmp1, [pmc, #AT91_CKGR_MOR]
-+
-+	wait_moscrdy
-+
-+	mov	pc, lr
-+ENDPROC(at91_pm_ulp0_mode)
-+
- .pmc_base:
- 	.word 0
- .sramc_base:
+> 
+> 
+> I guess if you really dislike that approach the other option would be 
+> reparenting all the time in the clock-controller driver and then let the 
+> board-dts reparent back if needed. Which would also work for that clock, but 
+> may cause other glitches down the road when it affects some pre-setup things.
+> 
+> 
+
+For all we know that could cause some audio pop on a speaker 
+something. Let's avoid this if we can.
+
 -- 
-1.7.9.5
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
