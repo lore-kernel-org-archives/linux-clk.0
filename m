@@ -1,41 +1,39 @@
-Return-Path: <paweljarosz3691@gmail.com>
-Return-Path: <paweljarosz3691@gmail.com>
-From: =?UTF-8?q?Pawe=C5=82=20Jarosz?= <paweljarosz3691@gmail.com>
-To: heiko@sntech.de,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: =?UTF-8?q?Pawe=C5=82=20Jarosz?= <paweljarosz3691@gmail.com>
-Subject: [PATCH 2/3] clk: rockchip: add tsadc clock on rk3066
-Date: Tue, 19 Jan 2016 13:09:20 +0100
-Message-Id: <1453205361-27267-3-git-send-email-paweljarosz3691@gmail.com>
-In-Reply-To: <1453205361-27267-1-git-send-email-paweljarosz3691@gmail.com>
-References: <1453205361-27267-1-git-send-email-paweljarosz3691@gmail.com>
+Return-Path: <sudeep.holla@arm.com>
+Subject: Re: clk: scpi: Fix checking return value of
+ platform_device_register_simple()
+To: Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>
+References: <1449211896.14226.2.camel@ingics.com> <56616311.9050208@arm.com>
+Cc: Axel Lin <axel.lin@ingics.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ linux-clk@vger.kernel.org,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <56ABB291.9080802@arm.com>
+Date: Fri, 29 Jan 2016 18:42:25 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <56616311.9050208@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Set clock id for sclk_tsadc gating clock of tsadc in rk3066
+Hi Stephen, Mike,
 
-Signed-off-by: Paweł Jarosz <paweljarosz3691@gmail.com>
----
- drivers/clk/rockchip/clk-rk3188.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 04/12/15 09:55, Sudeep Holla wrote:
+> Hi Stephen, Mike,
+>
+> Can you pick up this fix for your next pull request ?
+>
 
-diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-index 7f7444c..fda4e77 100644
---- a/drivers/clk/rockchip/clk-rk3188.c
-+++ b/drivers/clk/rockchip/clk-rk3188.c
-@@ -605,7 +605,7 @@ static struct rockchip_clk_branch rk3066a_clk_branches[] __initdata = {
- 	GATE(SCLK_TIMER2, "timer2", "xin24m", 0,
- 			RK2928_CLKGATE_CON(3), 2, GFLAGS),
- 
--	COMPOSITE_NOMUX(0, "sclk_tsadc", "xin24m", 0,
-+	COMPOSITE_NOMUX(SCLK_TSADC, "sclk_tsadc", "xin24m", 0,
- 			RK2928_CLKSEL_CON(34), 0, 16, DFLAGS,
- 			RK2928_CLKGATE_CON(2), 15, GFLAGS),
- 
+This seem to have got lost in the noise during holidays, can you please
+pick this up ?
+
+> On 04/12/15 06:51, Axel Lin wrote:
+>> platform_device_register_simple() returns ERR_PTR on error.
+>>
+>> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+>
+> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+>
+
 -- 
-1.9.1
+Regards,
+Sudeep
