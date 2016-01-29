@@ -1,109 +1,62 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Wynter Woods <wynter@nextthing.co>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 09/26] ARM: sun5i: dt: Add pll3 and pll7 clocks
-Date: Thu, 14 Jan 2016 16:24:52 +0100
-Message-Id: <1452785109-6172-10-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-Path: <lho@apm.com>
+MIME-Version: 1.0
+In-Reply-To: <20160129205820.GU12841@codeaurora.org>
+References: <1453256863-15092-1-git-send-email-lho@apm.com>
+	<1453256863-15092-3-git-send-email-lho@apm.com>
+	<20160129205820.GU12841@codeaurora.org>
+Date: Fri, 29 Jan 2016 13:44:21 -0800
+Message-ID: <CAPw-ZT=mxyGUzvhWBZ8TA32THiQPNoKFwrU4X9J1y2MwzTm-zA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] clk: xgene: Add SoC and PMD PLL clocks with v2 hardware
+From: Loc Ho <lho@apm.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+	"patches@apm.com" <patches@apm.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable the pll3 and pll7 clocks in the DT that are used to drive the
-display-related clocks.
+Hi Stephen & All,
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
----
- arch/arm/boot/dts/sun5i.dtsi | 43 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
+On Fri, Jan 29, 2016 at 12:58 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 01/19, Loc Ho wrote:
+>> Add X-Gene SoC and PMD PLL clocks support for v2 hardware.
+>> X-Gene SoC v2 and above use an slightly different SoC
+>> and PMD PLL hardware logic.
+>>
+>> Signed-off-by: Loc Ho <lho@apm.com>
+>> ---
+>
+> It's not from this patch, but I notice that we have a return
+> inside a void function in this file...
+>
+> ---8<---
+> From: Stephen Boyd <sboyd@codeaurora.org>
+> Subject: [PATCH] clk: xgene: Remove return from void function
+>
+> This function doesn't return anything because it's void. Drop the
+> return statement.
+>
+> Cc: Loc Ho <lho@apm.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>  drivers/clk/clk-xgene.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
+> index 266d573b9134..bd7156baa08b 100644
+> --- a/drivers/clk/clk-xgene.c
+> +++ b/drivers/clk/clk-xgene.c
+> @@ -50,7 +50,7 @@ static inline u32 xgene_clk_read(void __iomem *csr)
+>
+>  static inline void xgene_clk_write(u32 data, void __iomem *csr)
+>  {
+> -       return writel_relaxed(data, csr);
+> +       writel_relaxed(data, csr);
+>  }
+>
+>  /* PLL Clock */
 
-diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
-index 59a9426e3bd4..0840612b5ed6 100644
---- a/arch/arm/boot/dts/sun5i.dtsi
-+++ b/arch/arm/boot/dts/sun5i.dtsi
-@@ -88,6 +88,15 @@
- 			clock-output-names = "osc24M";
- 		};
- 
-+		osc3M: osc3M_clk {
-+			compatible = "fixed-factor-clock";
-+			#clock-cells = <0>;
-+			clock-div = <8>;
-+			clock-mult = <1>;
-+			clocks = <&osc24M>;
-+			clock-output-names = "osc3M";
-+		};
-+
- 		osc32k: clk@0 {
- 			#clock-cells = <0>;
- 			compatible = "fixed-clock";
-@@ -112,6 +121,23 @@
- 					     "pll2-4x", "pll2-8x";
- 		};
- 
-+		pll3: clk@01c20010 {
-+			#clock-cells = <0>;
-+			compatible = "allwinner,sun4i-a10-pll3-clk";
-+			reg = <0x01c20010 0x4>;
-+			clocks = <&osc3M>;
-+			clock-output-names = "pll3";
-+		};
-+
-+		pll3x2: pll3x2_clk {
-+			compatible = "fixed-factor-clock";
-+			#clock-cells = <0>;
-+			clock-div = <1>;
-+			clock-mult = <2>;
-+			clocks = <&pll3>;
-+			clock-output-names = "pll3-2x";
-+		};
-+
- 		pll4: clk@01c20018 {
- 			#clock-cells = <0>;
- 			compatible = "allwinner,sun4i-a10-pll1-clk";
-@@ -136,6 +162,23 @@
- 			clock-output-names = "pll6_sata", "pll6_other", "pll6";
- 		};
- 
-+		pll7: clk@01c20030 {
-+			#clock-cells = <0>;
-+			compatible = "allwinner,sun4i-a10-pll3-clk";
-+			reg = <0x01c20030 0x4>;
-+			clocks = <&osc3M>;
-+			clock-output-names = "pll7";
-+		};
-+
-+		pll7x2: pll7x2_clk {
-+			compatible = "fixed-factor-clock";
-+			#clock-cells = <0>;
-+			clock-div = <1>;
-+			clock-mult = <2>;
-+			clocks = <&pll7>;
-+			clock-output-names = "pll7-2x";
-+		};
-+
- 		/* dummy is 200M */
- 		cpu: cpu@01c20054 {
- 			#clock-cells = <0>;
--- 
-2.6.4
+Thanks for spotting this. Was my original patch for v2 X-Gene HW
+pulled in an specify GIT tree? I don't see it in the clk GIT master.
+
+-Loc
