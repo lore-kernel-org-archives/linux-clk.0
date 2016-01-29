@@ -1,50 +1,42 @@
-Return-Path: <paweljarosz3691@gmail.com>
-Return-Path: <paweljarosz3691@gmail.com>
-From: =?UTF-8?q?Pawe=C5=82=20Jarosz?= <paweljarosz3691@gmail.com>
-To: heiko@sntech.de,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: =?UTF-8?q?Pawe=C5=82=20Jarosz?= <paweljarosz3691@gmail.com>
-Subject: [PATCH 3/3] ARM: dts: rockchip: add tsadc node
-Date: Tue, 19 Jan 2016 13:09:21 +0100
-Message-Id: <1453205361-27267-4-git-send-email-paweljarosz3691@gmail.com>
-In-Reply-To: <1453205361-27267-1-git-send-email-paweljarosz3691@gmail.com>
-References: <1453205361-27267-1-git-send-email-paweljarosz3691@gmail.com>
+Return-Path: <Marc_Gonzalez@sigmadesigns.com>
+Return-Path: <Marc_Gonzalez@sigmadesigns.com>
+From: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
+Subject: [PATCH] clk: tango4: rename ARCH_TANGOX to ARCH_TANGO
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: linux-clk <linux-clk@vger.kernel.org>
+Message-ID: <56AB721A.1000609@sigmadesigns.com>
+Date: Fri, 29 Jan 2016 15:07:22 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="ISO-8859-15"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the device node for the TSADC found on rk3066.
+Requested by arm-soc maintainer Kevin Hilman in v9 review.
+http://article.gmane.org/gmane.linux.ports.arm.kernel/456331
 
-Signed-off-by: Paweł Jarosz <paweljarosz3691@gmail.com>
+Signed-off-by: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
 ---
- arch/arm/boot/dts/rk3066a.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+IIUC, the merge window is now closed, but this patch might be
+accepted in the clk-fixes branch, so that the corresponding
+platform code successfully builds its clk driver.
 
-diff --git a/arch/arm/boot/dts/rk3066a.dtsi b/arch/arm/boot/dts/rk3066a.dtsi
-index 58bac50..adb0258 100644
---- a/arch/arm/boot/dts/rk3066a.dtsi
-+++ b/arch/arm/boot/dts/rk3066a.dtsi
-@@ -188,6 +188,17 @@
- 		clock-names = "timer", "pclk";
- 	};
- 
-+	tsadc: tsadc@20060000 {
-+		compatible = "rockchip,rk3066-tsadc";
-+		reg = <0x20060000 0x100>;
-+		interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-+		#io-channel-cells = <1>;
-+		clocks = <&cru SCLK_TSADC>, <&cru PCLK_TSADC>;
-+		clock-names = "saradc", "apb_pclk";
-+		vref-supply = <&vcc_io>;
-+		status = "disabled";
-+	};
-+
- 	usbphy: phy {
- 		compatible = "rockchip,rk3066a-usb-phy", "rockchip,rk3288-usb-phy";
- 		rockchip,grf = <&grf>;
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/arch/arm/mach-tango
+---
+ drivers/clk/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index f4165bb9a270..f50cb257e0ba 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -42,7 +42,7 @@ obj-$(CONFIG_COMMON_CLK_SI514)		+= clk-si514.o
+ obj-$(CONFIG_COMMON_CLK_SI570)		+= clk-si570.o
+ obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
+ obj-$(CONFIG_ARCH_STM32)		+= clk-stm32f4.o
+-obj-$(CONFIG_ARCH_TANGOX)		+= clk-tango4.o
++obj-$(CONFIG_ARCH_TANGO)		+= clk-tango4.o
+ obj-$(CONFIG_CLK_TWL6040)		+= clk-twl6040.o
+ obj-$(CONFIG_ARCH_U300)			+= clk-u300.o
+ obj-$(CONFIG_ARCH_VT8500)		+= clk-vt8500.o
 -- 
-1.9.1
+2.6.3
