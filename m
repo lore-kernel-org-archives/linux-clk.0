@@ -1,45 +1,56 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 29 Jan 2016 12:43:32 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Pankaj Dubey <pankaj.dubey@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v4 2/3] clk: samsung: Don't build ARMv8 clock drivers on
- ARMv7
-Message-ID: <20160129204332.GT12841@codeaurora.org>
-References: <1453941324-15742-1-git-send-email-k.kozlowski@samsung.com>
- <1453941324-15742-3-git-send-email-k.kozlowski@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1453941324-15742-3-git-send-email-k.kozlowski@samsung.com>
+Return-Path: <moinejf@free.fr>
+Date: Sat, 30 Jan 2016 18:57:14 +0100
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Jens Kuske <jenskuske@gmail.com>,
+ Vishnu Patekar <vishnupatekar0510@gmail.com>, Hans de Goede
+ <hdegoede@redhat.com>, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] clk: sunxi: Refactor A31 PLL6 so that it can be
+ reused
+Message-Id: <20160130185714.7abcf1de9ef8108c2f48c7fe@free.fr>
+In-Reply-To: <1454008958-12655-2-git-send-email-maxime.ripard@free-electrons.com>
+References: <1454008958-12655-1-git-send-email-maxime.ripard@free-electrons.com>
+	<1454008958-12655-2-git-send-email-maxime.ripard@free-electrons.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/28, Krzysztof Kozlowski wrote:
-> Currently the Exynos5433 (ARMv8 SoC) clock driver depends on ARCH_EXYNOS
-> so it is built also on ARMv7. This does not bring any kind of benefit.
-> There won't be a single kernel image for ARMv7 and ARMv8 SoCs (like
-> multi_v7 for ARMv7).
-> 
-> Instead build clock drivers only for respective SoC's architecture.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
+On Thu, 28 Jan 2016 20:22:38 +0100
+Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+
+> Remove the fixed dividers from the PLL6 driver to be able to have a
+> reusable driver that can be used across several SoCs that share the same
+> controller, but don't have the same set of dividers for this clock, and to
+> also be reused multiple times in the same SoC, since we're droping the
+> clock name.
+>=20
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 > ---
+> Changes from v2
+>   - Rebased and converted over to the new factors refactoring. Fixed the
+>     retrieved rate
+>=20
+>  arch/arm/boot/dts/sun6i-a31.dtsi     | 36 ++++++++++++++++++------------=
+------
+>  arch/arm/boot/dts/sun8i-a23-a33.dtsi | 25 +++++++++++++++++--------
+>  arch/arm/boot/dts/sun8i-a23.dtsi     |  2 +-
+>  arch/arm/boot/dts/sun8i-a33.dtsi     |  4 ++--
+>  arch/arm/boot/dts/sun8i-h3.dtsi      | 36 ++++++++++++++++++------------=
+------
+>  drivers/clk/sunxi/clk-sunxi.c        | 32 ++++++++++++++++--------------=
+--
+>  6 files changed, 72 insertions(+), 63 deletions(-)
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Hi Maxime,
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Do you know that the DT definitions cannot be changed when they are in
+the mainline kernel?
+
+Also, for the H3 PLL periph1 (aka PLL8), why didn't you create a
+'pll8x2' clock with 'pll8' as a divider?
+
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
