@@ -1,35 +1,24 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 29 Jan 2016 17:20:43 -0800
+Date: Fri, 29 Jan 2016 16:33:45 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Gabriel Fernandez <gabriel.fernandez@linaro.org>,
-	Pankaj Dev <pankaj.dev@st.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: st: avoid uninitialized variable use
-Message-ID: <20160130012040.GE4848@codeaurora.org>
-References: <1453737255-1959849-1-git-send-email-arnd@arndb.de>
+To: Loc Ho <lho@apm.com>
+Cc: mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, patches@apm.com
+Subject: Re: [PATCH v2 1/3] Documentation: Update APM X-Gene clock binding
+ for v2 hardware
+Message-ID: <20160130003345.GF12841@codeaurora.org>
+References: <1453256863-15092-1-git-send-email-lho@apm.com>
+ <1453256863-15092-2-git-send-email-lho@apm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1453737255-1959849-1-git-send-email-arnd@arndb.de>
+In-Reply-To: <1453256863-15092-2-git-send-email-lho@apm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/25, Arnd Bergmann wrote:
-> My previous patch fixed some warnings about printing a couple
-> of variables that are always uninitialized in quadfs_pll_fs660c32_set_rate(),
-> but I now got a warning that only shows up in some configurations (i.e.
-> without gcc -Os) about the params.ndiv being used uninitialized in the
-> error case:
+On 01/19, Loc Ho wrote:
+> Update APM X-Gene clock binding documentation for SoC and
+> PCP PLL for v2 hardware.
 > 
-> drivers/clk/st/clkgen-fsyn.c: In function 'quadfs_pll_fs660c32_set_rate':
-> drivers/clk/st/clkgen-fsyn.c:584:75: warning: 'params.ndiv' may be used uninitialized in this function [-Wmaybe-uninitialized]
-> drivers/clk/st/clkgen-fsyn.c:574:16: note: 'params.ndiv' was declared here
-> 
-> This changes the error handling so we bail for invalid arguments rather
-> than continuing with uninitialized data.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Loc Ho <lho@apm.com>
 > ---
 
 Applied to clk-next
