@@ -1,57 +1,27 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [Patch V2 6/9] clk: tegra210: fix pllx dyn step calculation
-Date: Thu, 14 Jan 2016 14:24:35 -0500
-Message-ID: <1452799478-14791-7-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
-References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 29 Jan 2016 16:45:34 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: optimize the divider walk in clk_divider_bestdiv()
+Message-ID: <20160130004533.GP12841@codeaurora.org>
+References: <1451965421-28227-1-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1451965421-28227-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The logic for calculating the input rate used when figuring out
-the proper dynamic steps for pllx was incorrect. It is supposed to
-be calculated using parent_rate / m but it was just using the parent
-rate directly, therefore using the wrong step values.
+On 01/05, Masahiro Yamada wrote:
+> Because _next_div() returns a valid divider, there is no need to
+> consult _is_valid_div() for the validity of the divider in every
+> iteration.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk-tegra210.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Applied to clk-next
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 2a7faa357130..5d8fac7052f2 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -780,13 +780,13 @@ static void pllx_get_dyn_steps(struct clk_hw *hw, u32 *step_a, u32 *step_b)
- {
- 	unsigned long input_rate;
- 
--	if (!IS_ERR_OR_NULL(hw->clk)) {
-+	/* cf rate */
-+	if (!IS_ERR_OR_NULL(hw->clk))
- 		input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
--		/* cf rate */
--		input_rate /= tegra_pll_get_fixed_mdiv(hw, input_rate);
--	} else {
-+	else
- 		input_rate = 38400000;
--	}
-+
-+	input_rate /= tegra_pll_get_fixed_mdiv(hw, input_rate);
- 
- 	switch (input_rate) {
- 	case 12000000:
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
