@@ -1,67 +1,68 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-CC: Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
-	<srv_heupstream@mediatek.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, James Liao <jamesjj.liao@mediatek.com>
-Subject: [PATCH v2] clk: mediatek: Allow changing PLL rate when it is off
-Date: Mon, 11 Jan 2016 11:28:56 +0800
-Message-ID: <1452482936-51852-1-git-send-email-jamesjj.liao@mediatek.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 29 Jan 2016 17:06:01 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: axi-clkgen: Add multi-parent support
+Message-ID: <20160130010601.GC4848@codeaurora.org>
+References: <1448902496-21218-1-git-send-email-lars@metafoo.de>
+ <1448902496-21218-2-git-send-email-lars@metafoo.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jamesjj.liao@mediatek.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1448902496-21218-2-git-send-email-lars@metafoo.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some modules may need to change its clock rate before turn on it.
-So changing PLL's rate when it is off should be allowed.
-This patch removes PLL enabled check before set rate, so that
-PLLs can set new frequency even if they are off.
+On 11/30, Lars-Peter Clausen wrote:
+> The clock generator has two clock inputs that can be used as the reference
+> clock. Add support for switching between them at runtime.
+> 
+> Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+> ---
 
-On MT8173 for example, ARMPLL's enable bit can be controlled by
-other HW. That means ARMPLL may be turned on even if we (CPU / SW)
-set ARMPLL's enable bit as 0. In this case, SW may want and can
-still change ARMPLL's rate by changing its pcw and postdiv settings.
-But without this patch, new pcw setting will not be applied because
-its enable bit is 0.
+Applied to clk-next
 
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
----
- drivers/clk/mediatek/clk-pll.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+>  .../devicetree/bindings/clock/axi-clkgen.txt       |  5 ++-
+>  drivers/clk/clk-axi-clkgen.c                       | 40 ++++++++++++++++++----
+>  2 files changed, 38 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
+> index 8dedc60..9a0744c 100644
+> --- a/drivers/clk/clk-axi-clkgen.c
+> +++ b/drivers/clk/clk-axi-clkgen.c
+> @@ -349,12 +350,33 @@ static void axi_clkgen_disable(struct clk_hw *clk_hw)
+> @@ -370,10 +392,11 @@ static int axi_clkgen_probe(struct platform_device *pdev)
+>  	const struct of_device_id *id;
+>  	struct axi_clkgen *axi_clkgen;
+>  	struct clk_init_data init;
+> -	const char *parent_name;
+> +	const char *parent_names[2];
+>  	const char *clk_name;
+>  	struct resource *mem;
+>  	struct clk *clk;
+> +	unsigned int i;
+>  
+>  	if (!pdev->dev.of_node)
+>  		return -ENODEV;
+> @@ -391,19 +414,24 @@ static int axi_clkgen_probe(struct platform_device *pdev)
+>  	if (IS_ERR(axi_clkgen->base))
+>  		return PTR_ERR(axi_clkgen->base);
+>  
+> -	parent_name = of_clk_get_parent_name(pdev->dev.of_node, 0);
+> -	if (!parent_name)
+> +	init.num_parents = of_clk_get_parent_count(pdev->dev.of_node);
+> +	if (init.num_parents < 1 || init.num_parents > 2)
+>  		return -EINVAL;
+>  
+> +	for (i = 0; i < init.num_parents; i++) {
+> +		parent_names[i] = of_clk_get_parent_name(pdev->dev.of_node, i);
+> +		if (!parent_names[i])
+> +			return -EINVAL;
+> +	}
 
-diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-index 966cab1..8e31fae 100644
---- a/drivers/clk/mediatek/clk-pll.c
-+++ b/drivers/clk/mediatek/clk-pll.c
-@@ -91,9 +91,6 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
- 		int postdiv)
- {
- 	u32 con1, val;
--	int pll_en;
--
--	pll_en = readl(pll->base_addr + REG_CON0) & CON0_BASE_EN;
- 
- 	/* set postdiv */
- 	val = readl(pll->pd_addr);
-@@ -114,15 +111,13 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
- 
- 	con1 = readl(pll->base_addr + REG_CON1);
- 
--	if (pll_en)
--		con1 |= CON0_PCW_CHG;
-+	con1 |= CON0_PCW_CHG;
- 
- 	writel(con1, pll->base_addr + REG_CON1);
- 	if (pll->tuner_addr)
- 		writel(con1 + 1, pll->tuner_addr);
- 
--	if (pll_en)
--		udelay(20);
-+	udelay(20);
- }
- 
- /*
+This can be of_clk_parent_fill(). Feel free to send a cleanup. I
+would have asked for one, but you've been waiting two months.
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
