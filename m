@@ -1,85 +1,27 @@
-Return-Path: <emilio.lopez@collabora.co.uk>
-From: =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio.lopez@collabora.co.uk>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	heiko@sntech.de
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio.lopez@collabora.co.uk>
-Subject: [PATCH 1/2] clk: sunxi: delay protected clocks until arch initcall
-Date: Thu, 21 Jan 2016 11:10:38 -0300
-Message-Id: <1453385439-10154-2-git-send-email-emilio.lopez@collabora.co.uk>
-In-Reply-To: <1453385439-10154-1-git-send-email-emilio.lopez@collabora.co.uk>
-References: <1453385439-10154-1-git-send-email-emilio.lopez@collabora.co.uk>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 29 Jan 2016 16:35:30 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk:gcc-msm8916: add missing mss_q6_bimc_axi clock
+Message-ID: <20160130003530.GL12841@codeaurora.org>
+References: <1451905313-6461-1-git-send-email-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1451905313-6461-1-git-send-email-srinivas.kandagatla@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Clocks are registered early on, and unused clocks get disabled on
-late initcall, so we can delay protecting important clocks a bit.
-If we do this too early, it may happen that some clocks are orphans
-and therefore enabling them may not work as intended. If we do this
-too late, a driver may reparent some clock and cause another important
-clock to be disabled as a byproduct.
+On 01/04, Srinivas Kandagatla wrote:
+> This clock is required for loading the qdsp firmware.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
 
-arch_initcall should be a good spot to do this, as clock drivers using
-the OF mechanisms will be all registered by then, and drivers won't
-have started probing yet.
+Applied to clk-next
 
-Signed-off-by: Emilio López <emilio.lopez@collabora.co.uk>
----
- drivers/clk/sunxi/clk-sunxi.c | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 5ba2188..285e8ee 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -1153,10 +1153,12 @@ static void __init of_sunxi_table_clock_setup(const struct of_device_id *clk_mat
- 	}
- }
- 
-+/* By default, don't protect any clocks */
-+static const char **protected_clocks __initdata;
-+static int protected_clocks_nr __initdata;
-+
- static void __init sunxi_init_clocks(const char *clocks[], int nclocks)
- {
--	unsigned int i;
--
- 	/* Register divided output clocks */
- 	of_sunxi_table_clock_setup(clk_divs_match, sunxi_divs_clk_setup);
- 
-@@ -1169,14 +1171,26 @@ static void __init sunxi_init_clocks(const char *clocks[], int nclocks)
- 	/* Register mux clocks */
- 	of_sunxi_table_clock_setup(clk_mux_match, sunxi_mux_clk_setup);
- 
-+	/* We shall protect these clocks when everything is ready */
-+	protected_clocks = clocks;
-+	protected_clocks_nr = nclocks;
-+}
-+
-+static int __init sunxi_init_clock_protection(void)
-+{
-+	unsigned int i;
-+
- 	/* Protect the clocks that needs to stay on */
--	for (i = 0; i < nclocks; i++) {
--		struct clk *clk = clk_get(NULL, clocks[i]);
-+	for (i = 0; i < protected_clocks_nr; i++) {
-+		struct clk *clk = clk_get(NULL, protected_clocks[i]);
- 
- 		if (!IS_ERR(clk))
- 			clk_prepare_enable(clk);
- 	}
-+
-+	return 0;
- }
-+arch_initcall(sunxi_init_clock_protection);
- 
- static const char *sun4i_a10_critical_clocks[] __initdata = {
- 	"pll5_ddr",
 -- 
-2.7.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
