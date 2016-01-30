@@ -1,51 +1,29 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Bill Huang <bilhuang@nvidia.com>,
-	Jim Lin <jilin@nvidia.com>,
-	Benson Leung <bleung@chromium.org>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 0/9 REPOST] Tegra CLK Fixes
-Date: Fri, 8 Jan 2016 13:45:05 -0500
-Message-ID: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 29 Jan 2016 16:33:51 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Loc Ho <lho@apm.com>
+Cc: mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, patches@apm.com
+Subject: Re: [PATCH v2 2/3] clk: xgene: Add SoC and PMD PLL clocks with v2
+ hardware
+Message-ID: <20160130003351.GG12841@codeaurora.org>
+References: <1453256863-15092-1-git-send-email-lho@apm.com>
+ <1453256863-15092-3-git-send-email-lho@apm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1453256863-15092-3-git-send-email-lho@apm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch set fixes some issues found with the Tegra CLK drivers
-in testing. There are also a few patches which clean up the code
-and fix some naming issues.
+On 01/19, Loc Ho wrote:
+> Add X-Gene SoC and PMD PLL clocks support for v2 hardware.
+> X-Gene SoC v2 and above use an slightly different SoC
+> and PMD PLL hardware logic.
+> 
+> Signed-off-by: Loc Ho <lho@apm.com>
+> ---
 
-Resending with correct email address for Mike Turquette.
-
-Andrew Bresticker (1):
-  clk: tegra: pll: Fix potential sleeping-while-atomic
-
-Mark Kuo (2):
-  clk: tegra: pll: Do not disable PLLE when under HW control
-  clk: tegra: pll: Fix PLLE SS config
-
-Rhyland Klein (6):
-  clk: tegra: Fix divider on VI_I2C
-  clk: tegra210: Remove improper flags for lock_enable
-  clk: tegra210: Fix naming of MISC registers
-  clk: tegra: Fix the misnaming of nvenc from msenc
-  clk: tegra210: fix pllx dyn step calculation
-  clk: tegra210: Initialize PLL_D2 to a sane rate
-
- drivers/clk/tegra/clk-pll.c          | 50 +++++++++++++--------
- drivers/clk/tegra/clk-tegra-periph.c |  4 +-
- drivers/clk/tegra/clk-tegra210.c     | 87 +++++++++++++++---------------------
- 3 files changed, 71 insertions(+), 70 deletions(-)
+Applied to clk-next
 
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
