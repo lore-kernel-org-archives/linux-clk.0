@@ -1,48 +1,31 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Zhang Qing <zhangqing@rock-chips.com>
-To: heiko@sntech.de,
-	zhengxing@rock-chips.com,
-	xf@rock-chips.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	huangtao@rock-chips.com,
-	zyw@rock-chips.com,
-	jay.xu@rock-chips.com,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	zhangqing <zhangqing@rock-chips.com>
-Subject: [PATCH v1 2/3] clk: rockchip: rk3368: enable the CLK_SET_RATE_PARENT flag for spdif_8ch
-Date: Mon, 25 Jan 2016 08:56:01 -0800
-Message-Id: <1453740962-8556-3-git-send-email-zhangqing@rock-chips.com>
-In-Reply-To: <1453740962-8556-1-git-send-email-zhangqing@rock-chips.com>
-References: <1453740962-8556-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:35998 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753756AbcA3A3S (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Fri, 29 Jan 2016 19:29:18 -0500
+Date: Fri, 29 Jan 2016 16:29:17 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] clk: tango4: rename ARCH_TANGOX to ARCH_TANGO
+Message-ID: <20160130002917.GZ12841@codeaurora.org>
+References: <56AB721A.1000609@sigmadesigns.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <56AB721A.1000609@sigmadesigns.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: zhangqing <zhangqing@rock-chips.com>
+On 01/29, Marc Gonzalez wrote:
+> Requested by arm-soc maintainer Kevin Hilman in v9 review.
+> http://article.gmane.org/gmane.linux.ports.arm.kernel/456331
+> 
+> Signed-off-by: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
+> ---
 
-SPDIF_8CH set freq need to select parent and calculate parent freq.
-so just mark it as the CLK_SET_RATE_PARENT flag.
+Applied to clk-fixes
 
-Signed-off-by: zhangqing <zhangqing@rock-chips.com>
----
- drivers/clk/rockchip/clk-rk3368.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
-index 4885e6b..58ef08b 100644
---- a/drivers/clk/rockchip/clk-rk3368.c
-+++ b/drivers/clk/rockchip/clk-rk3368.c
-@@ -353,7 +353,8 @@ static struct rockchip_clk_branch rk3368_clk_branches[] __initdata = {
- 	COMPOSITE_FRAC(0, "spdif_8ch_frac", "spdif_8ch_src", CLK_SET_RATE_PARENT,
- 			RK3368_CLKSEL_CON(32), 0,
- 			RK3368_CLKGATE_CON(6), 5, GFLAGS),
--	COMPOSITE_NODIV(SCLK_SPDIF_8CH, "sclk_spdif_8ch", mux_spdif_8ch_p, 0,
-+	COMPOSITE_NODIV(SCLK_SPDIF_8CH, "sclk_spdif_8ch", mux_spdif_8ch_p,
-+			CLK_SET_RATE_PARENT,
- 			RK3368_CLKSEL_CON(31), 8, 2, MFLAGS,
- 			RK3368_CLKGATE_CON(6), 6, GFLAGS),
- 	COMPOSITE(0, "i2s_2ch_src", mux_pll_src_cpll_gpll_p, 0,
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
