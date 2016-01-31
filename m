@@ -1,79 +1,69 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH V3 5/6] clk: bcm2835: enable management of PCM clock
-Date: Thu, 14 Jan 2016 13:45:40 +0000
-Message-Id: <1452779142-20615-6-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1452779142-20615-1-git-send-email-kernel@martin.sperl.org>
-References: <1452779142-20615-1-git-send-email-kernel@martin.sperl.org>
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 02/14] clk: sunxi: Add apb0 gates for A83T
+Date: Sun, 31 Jan 2016 09:20:54 +0800
+Message-Id: <1454203266-4450-3-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+APB0 is part of PRCM, and is compatible with earlier SOCs.
+apb0 gates controls R_PIO, R_UART, R_RSB, etc clocks.
+This patch adds support for APB0 gates for A83T.
 
-Enable the PCM clock in the SOC, which is used by the
-bcm2835-i2s driver.
-
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
 ---
- drivers/clk/bcm/clk-bcm2835.c       |   13 +++++++++++++
- include/dt-bindings/clock/bcm2835.h |    1 +
- 2 files changed, 14 insertions(+)
+ Documentation/devicetree/bindings/clock/sunxi.txt | 1 +
+ drivers/clk/sunxi/clk-simple-gates.c              | 2 ++
+ 2 files changed, 3 insertions(+)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 6b0ebf7..7bbe310 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -89,6 +89,8 @@
- #define CM_HSMDIV		0x08c
- #define CM_OTPCTL		0x090
- #define CM_OTPDIV		0x094
-+#define CM_PCMCTL		0x098
-+#define CM_PCMDIV		0x09c
- #define CM_PWMCTL		0x0a0
- #define CM_PWMDIV		0x0a4
- #define CM_SMICTL		0x0b0
-@@ -860,6 +862,16 @@ static const struct bcm2835_clock_data bcm2835_clock_pwm_data = {
- 	.frac_bits = 12,
- };
- 
-+static const struct bcm2835_clock_data bcm2835_clock_pcm_data = {
-+	.name = "pcm",
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_per_parents),
-+	.parents = bcm2835_clock_per_parents,
-+	.ctl_reg = CM_PCMCTL,
-+	.div_reg = CM_PCMDIV,
-+	.int_bits = 12,
-+	.frac_bits = 12,
-+};
-+
- struct bcm2835_gate_data {
- 	const char *name;
- 	const char *parent;
-@@ -1676,6 +1688,7 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 	[BCM2835_CLOCK_HSM]	= REGISTER_CLK(&bcm2835_clock_hsm_data),
- 	[BCM2835_CLOCK_EMMC]	= REGISTER_CLK(&bcm2835_clock_emmc_data),
- 	[BCM2835_CLOCK_PWM]	= REGISTER_CLK(&bcm2835_clock_pwm_data),
-+	[BCM2835_CLOCK_PCM]	= REGISTER_CLK(&bcm2835_clock_pcm_data),
- 	/* the gates */
- 	[BCM2835_CLOCK_PERI_IMAGE] = REGISTER_GATE(
- 		&bcm2835_clock_peri_image_data),
-diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
-index 87235ac..9a7b4a5 100644
---- a/include/dt-bindings/clock/bcm2835.h
-+++ b/include/dt-bindings/clock/bcm2835.h
-@@ -44,3 +44,4 @@
- #define BCM2835_CLOCK_EMMC		28
- #define BCM2835_CLOCK_PERI_IMAGE	29
- #define BCM2835_CLOCK_PWM		30
-+#define BCM2835_CLOCK_PCM		31
+diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
+index e59f57b..7f19ef5 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+@@ -39,6 +39,7 @@ Required properties:
+ 	"allwinner,sun6i-a31-apb0-clk" - for the APB0 clock on A31
+ 	"allwinner,sun8i-a23-apb0-clk" - for the APB0 clock on A23
+ 	"allwinner,sun9i-a80-apb0-clk" - for the APB0 bus clock on A80
++	"allwinner,sun8i-a83t-apb0-gates-clk" - for the APB0 gates on A83T
+ 	"allwinner,sun4i-a10-apb0-gates-clk" - for the APB0 gates on A10
+ 	"allwinner,sun5i-a13-apb0-gates-clk" - for the APB0 gates on A13
+ 	"allwinner,sun5i-a10s-apb0-gates-clk" - for the APB0 gates on A10s
+diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/clk-simple-gates.c
+index f4da52b..2cfc5a8 100644
+--- a/drivers/clk/sunxi/clk-simple-gates.c
++++ b/drivers/clk/sunxi/clk-simple-gates.c
+@@ -130,6 +130,8 @@ CLK_OF_DECLARE(sun8i_a23_apb2, "allwinner,sun8i-a23-apb2-gates-clk",
+ 	       sunxi_simple_gates_init);
+ CLK_OF_DECLARE(sun8i_a33_ahb1, "allwinner,sun8i-a33-ahb1-gates-clk",
+ 	       sunxi_simple_gates_init);
++CLK_OF_DECLARE(sun8i_a83t_apb0, "allwinner,sun8i-a83t-apb0-gates-clk",
++	       sunxi_simple_gates_init);
+ CLK_OF_DECLARE(sun9i_a80_ahb0, "allwinner,sun9i-a80-ahb0-gates-clk",
+ 	       sunxi_simple_gates_init);
+ CLK_OF_DECLARE(sun9i_a80_ahb1, "allwinner,sun9i-a80-ahb1-gates-clk",
 -- 
-1.7.10.4
+1.9.1
