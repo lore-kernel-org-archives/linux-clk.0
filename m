@@ -1,44 +1,80 @@
-Return-Path: <robh@kernel.org>
-Date: Thu, 14 Jan 2016 21:04:00 -0600
-From: Rob Herring <robh@kernel.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
 	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Wynter Woods <wynter@nextthing.co>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v2 08/26] clk: sun5i: add DRAM gates
-Message-ID: <20160115030400.GA19274@rob-hp-laptop>
-References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
- <1452785109-6172-9-git-send-email-maxime.ripard@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1452785109-6172-9-git-send-email-maxime.ripard@free-electrons.com>
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 13/14] ARM: dts: sun8i: enable mmc for H8Homlet Board.
+Date: Sun, 31 Jan 2016 09:21:05 +0800
+Message-Id: <1454203266-4450-14-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 14, 2016 at 04:24:51PM +0100, Maxime Ripard wrote:
-> The Allwinner SoCs have a gate controller to gate the access to the DRAM
-> clock to the some devices that need to access the DRAM directly (mostly
-> display / image related IPs).
-> 
-> Use a simple gates driver to support the one found in the A13 / R8 SoCs.
-> 
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Acked-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  Documentation/devicetree/bindings/clock/sunxi.txt | 1 +
+This enables mmc0.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Tested-by: LABBE Corentin <clabbe.montjoie@gmail.com>
+---
+ .../boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts    | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
->  drivers/clk/sunxi/clk-simple-gates.c              | 2 ++
->  2 files changed, 3 insertions(+)
+diff --git a/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts b/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
+index 342e1d3..6c1f598 100644
+--- a/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
++++ b/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
+@@ -43,6 +43,7 @@
+ 
+ /dts-v1/;
+ #include "sun8i-a83t.dtsi"
++#include "sunxi-common-regulators.dtsi"
+ 
+ / {
+ 	model = "Allwinner A83T H8Homlet Proto Dev Board v2.0";
+@@ -57,6 +58,25 @@
+ 	};
+ };
+ 
++&pio {
++	mmc0_cd_pin_h8homlet: mmc0_cd_pin@0 {
++		allwinner,pins = "PF6";
++		allwinner,function = "gpio_in";
++		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
++		allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
++	};
++};
++
++&mmc0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin_h8homlet>;
++	vmmc-supply = <&reg_vcc3v0>;
++	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
++	bus-width = <4>;
++	cd-inverted;
++	status = "okay";
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_b>;
+-- 
+1.9.1
