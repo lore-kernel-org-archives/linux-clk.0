@@ -1,62 +1,83 @@
-Return-Path: <rklein@nvidia.com>
-Subject: Re: [PATCH 2/2] clk: tegra: Use definition for pll_u override bit
-To: Thierry Reding <thierry.reding@gmail.com>, Jon Hunter
-	<jonathanh@nvidia.com>
-References: <1450702592-7755-1-git-send-email-jonathanh@nvidia.com>
- <1450702592-7755-2-git-send-email-jonathanh@nvidia.com>
- <20160113160833.GK2588@ulmo>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: Rhyland Klein <rklein@nvidia.com>
-Message-ID: <5696770D.2050007@nvidia.com>
-Date: Wed, 13 Jan 2016 11:10:53 -0500
-MIME-Version: 1.0
-In-Reply-To: <20160113160833.GK2588@ulmo>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: rklein@nvidia.com
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 08/14] ARM: dts: sun8i-a83t: add mmc clock nodes
+Date: Sun, 31 Jan 2016 09:21:00 +0800
+Message-Id: <1454203266-4450-9-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 1/13/2016 11:08 AM, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Mon, Dec 21, 2015 at 12:56:32PM +0000, Jon Hunter wrote:
->> The definition, PLLU_BASE_OVERRIDE, for the pll_u OVERRIDE bit is defined
->> but not used and when the OVERRIDE bit is cleared in tegra210_pll_init()
->> the code directly uses the bit number. Therefore, use the definition,
->> PLLU_BASE_OVERRIDE when clearing the OVERRIDE bit.
->>
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->> ---
->>  drivers/clk/tegra/clk-tegra210.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
->> index 791215747863..6f043c5e2394 100644
->> --- a/drivers/clk/tegra/clk-tegra210.c
->> +++ b/drivers/clk/tegra/clk-tegra210.c
->> @@ -2520,7 +2520,7 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
->>  
->>  	/* PLLU_VCO */
->>  	val = readl(clk_base + pll_u_vco_params.base_reg);
->> -	val &= ~BIT(24); /* disable PLLU_OVERRIDE */
->> +	val &= ~PLLU_BASE_OVERRIDE; /* disable PLLU_OVERRIDE */
->>  	writel(val, clk_base + pll_u_vco_params.base_reg);
->>  
->>  	clk = tegra_clk_register_pllre("pll_u_vco", "pll_ref", clk_base, pmc,
-> 
-> I think the comment is now redundant, given that the code says pretty
-> much the same thing. No need to respin for that, I can remove the
-> comment when I apply the patch. That is, unless anyone feels strongly
-> about keeping the comment.
+mmc clocks are compatible with that of earlier sun8i socs.
+This adds mmc0, mmc1, and mmc2 clock nodes for A83T.
 
-I agree its redundant. If I am going to post a new version to address
-other concerns, I can just roll this in while doing so.
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
--rhyland
-
-
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 568d6fb..b8c8b60 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -238,6 +238,36 @@
+ 					     "bus_uart2", "bus_uart3",
+ 					     "bus_uart4";
+ 		};
++
++		mmc0_clk: clk@01c20088 {
++			#clock-cells = <1>;
++			compatible = "allwinner,sun4i-a10-mmc-clk";
++			reg = <0x01c20088 0x4>;
++			clocks = <&osc24M>, <&pll6>;
++			clock-output-names = "mmc0",
++					     "mmc0_output",
++					     "mmc0_sample";
++		};
++
++		mmc1_clk: clk@01c2008c {
++			#clock-cells = <1>;
++			compatible = "allwinner,sun4i-a10-mmc-clk";
++			reg = <0x01c2008c 0x4>;
++			clocks = <&osc24M>, <&pll6>;
++			clock-output-names = "mmc1",
++					     "mmc1_output",
++					     "mmc1_sample";
++		};
++
++		mmc2_clk: clk@01c20090 {
++			#clock-cells = <1>;
++			compatible = "allwinner,sun4i-a10-mmc-clk";
++			reg = <0x01c20090 0x4>;
++			clocks = <&osc24M>, <&pll6>;
++			clock-output-names = "mmc2",
++					     "mmc2_output",
++					     "mmc2_sample";
++		};
+ 	};
+ 
+ 	soc {
 -- 
-nvpublic
+1.9.1
