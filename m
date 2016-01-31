@@ -1,113 +1,91 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-CC: Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, <srv_heupstream@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, Shunli Wang <shunli.wang@mediatek.com>
-Subject: [PATCH v2 5/6] reset: mediatek: mt2701 reset controller dt-binding file
-Date: Tue, 5 Jan 2016 14:30:21 +0800
-Message-ID: <1451975422-31174-6-git-send-email-jamesjj.liao@mediatek.com>
-In-Reply-To: <1451975422-31174-1-git-send-email-jamesjj.liao@mediatek.com>
-References: <1451975422-31174-1-git-send-email-jamesjj.liao@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jamesjj.liao@mediatek.com
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 05/14] clk: sunxi: Add APB1 clock for A83T
+Date: Sun, 31 Jan 2016 09:20:57 +0800
+Message-Id: <1454203266-4450-6-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shunli Wang <shunli.wang@mediatek.com>
+APB1 is similar to sun4i-a10-apb0-clk, except different dividers.
 
-Dt-binding file about reset controller is used to provide
-kinds of definition, which is referenced by dts file and
-IC-specified reset controller driver code.
+This adds support for apb1 on A83T.
 
-Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
 ---
- .../dt-bindings/reset-controller/mt2701-resets.h   | 74 ++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
- create mode 100644 include/dt-bindings/reset-controller/mt2701-resets.h
+ Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+ drivers/clk/sunxi/clk-sunxi.c                     | 17 +++++++++++++++++
+ 2 files changed, 18 insertions(+)
 
-diff --git a/include/dt-bindings/reset-controller/mt2701-resets.h b/include/dt-bindings/reset-controller/mt2701-resets.h
-new file mode 100644
-index 0000000..00efeb0
---- /dev/null
-+++ b/include/dt-bindings/reset-controller/mt2701-resets.h
-@@ -0,0 +1,74 @@
-+/*
-+ * Copyright (c) 2015 MediaTek, Shunli Wang <shunli.wang@mediatek.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
+diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
+index bfd82f1..10637e7 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+@@ -49,6 +49,7 @@ Required properties:
+ 	"allwinner,sun8i-a23-apb0-gates-clk" - for the APB0 gates on A23
+ 	"allwinner,sun9i-a80-apb0-gates-clk" - for the APB0 gates on A80
+ 	"allwinner,sun4i-a10-apb1-clk" - for the APB1 clock
++	"allwinner,sun8i-a83t-apb1-clk" - for the APB1 clock on A83T
+ 	"allwinner,sun9i-a80-apb1-clk" - for the APB1 bus clock on A80
+ 	"allwinner,sun4i-a10-apb1-gates-clk" - for the APB1 gates on A10
+ 	"allwinner,sun5i-a13-apb1-gates-clk" - for the APB1 gates on A13
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index 02bbdf6..6510b0e 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -772,6 +772,22 @@ static const struct div_data sun4i_apb0_data __initconst = {
+ 	.table	= sun4i_apb0_table,
+ };
+ 
 +
-+#ifndef _DT_BINDINGS_RESET_CONTROLLER_MT2701
-+#define _DT_BINDINGS_RESET_CONTROLLER_MT2701
++static const struct clk_div_table sun8i_a83t_apb1_table[] __initconst = {
++	{ .val = 0, .div = 1 },
++	{ .val = 1, .div = 2 },
++	{ .val = 2, .div = 3 },
++	{ .val = 3, .div = 4 },
++	{ } /* sentinel */
++};
 +
-+/* INFRACFG resets */
-+#define MT2701_INFRA_EMI_REG_RST		0
-+#define MT2701_INFRA_DRAMC0_A0_RST		1
-+#define MT2701_INFRA_FHCTL_RST			2
-+#define MT2701_INFRA_APCIRQ_EINT_RST		3
-+#define MT2701_INFRA_APXGPT_RST			4
-+#define MT2701_INFRA_SCPSYS_RST			5
-+#define MT2701_INFRA_KP_RST			6
-+#define MT2701_INFRA_PMIC_WRAP_RST		7
-+#define MT2701_INFRA_MIPI_RST			8
-+#define MT2701_INFRA_IRRX_RST			9
-+#define MT2701_INFRA_CEC_RST			10
-+#define MT2701_INFRA_EMI_RST			32
-+#define MT2701_INFRA_DRAMC0_RST			34
-+#define MT2701_INFRA_TRNG_RST			37
-+#define MT2701_INFRA_SYSIRQ_RST			38
++static const struct div_data sun8i_a83t_apb1_data __initconst = {
++	.shift	= 8,
++	.pow	= 0,
++	.width	= 2,
++	.table	= sun8i_a83t_apb1_table,
++};
 +
-+/*  PERICFG resets */
-+#define MT2701_PERI_UART0_SW_RST		0
-+#define MT2701_PERI_UART1_SW_RST		1
-+#define MT2701_PERI_UART2_SW_RST		2
-+#define MT2701_PERI_UART3_SW_RST		3
-+#define MT2701_PERI_GCPU_SW_RST			5
-+#define MT2701_PERI_BTIF_SW_RST			6
-+#define MT2701_PERI_PWM_SW_RST			8
-+#define MT2701_PERI_AUXADC_SW_RST		10
-+#define MT2701_PERI_DMA_SW_RST			11
-+#define MT2701_PERI_NFI_SW_RST			14
-+#define MT2701_PERI_NLI_SW_RST			15
-+#define MT2701_PERI_THERM_SW_RST		16
-+#define MT2701_PERI_MSDC2_SW_RST		17
-+#define MT2701_PERI_MSDC0_SW_RST		19
-+#define MT2701_PERI_MSDC1_SW_RST		20
-+#define MT2701_PERI_I2C0_SW_RST			22
-+#define MT2701_PERI_I2C1_SW_RST			23
-+#define MT2701_PERI_I2C2_SW_RST			24
-+#define MT2701_PERI_I2C3_SW_RST			25
-+#define MT2701_PERI_USB_SW_RST			28
-+#define MT2701_PERI_ETH_SW_RST			29
-+#define MT2701_PERI_SPI0_SW_RST			33
-+
-+/* TOPRGU resets */
-+#define MT2701_TOPRGU_INFRA_RST			0
-+#define MT2701_TOPRGU_MM_RST			1
-+#define MT2701_TOPRGU_MFG_RST			2
-+#define MT2701_TOPRGU_ETHDMA_RST		3
-+#define MT2701_TOPRGU_VDEC_RST			4
-+#define MT2701_TOPRGU_VENC_IMG_RST		5
-+#define MT2701_TOPRGU_DDRPHY_RST		6
-+#define MT2701_TOPRGU_MD_RST			7
-+#define MT2701_TOPRGU_INFRA_AO_RST		8
-+#define MT2701_TOPRGU_CONN_RST			9
-+#define MT2701_TOPRGU_APMIXED_RST		10
-+#define MT2701_TOPRGU_HIFSYS_RST		11
-+#define MT2701_TOPRGU_CONN_MCU_RST		12
-+#define MT2701_TOPRGU_BDP_DISP_RST		13
-+
-+#endif  /* _DT_BINDINGS_RESET_CONTROLLER_MT2701 */
+ static void __init sunxi_divider_clk_setup(struct device_node *node,
+ 					   struct div_data *data)
+ {
+@@ -1027,6 +1043,7 @@ static const struct of_device_id clk_div_match[] __initconst = {
+ 	{.compatible = "allwinner,sun8i-a23-axi-clk", .data = &sun8i_a23_axi_data,},
+ 	{.compatible = "allwinner,sun4i-a10-ahb-clk", .data = &sun4i_ahb_data,},
+ 	{.compatible = "allwinner,sun4i-a10-apb0-clk", .data = &sun4i_apb0_data,},
++	{.compatible = "allwinner,sun8i-a83t-apb1-clk", .data = &sun8i_a83t_apb1_data,},
+ 	{}
+ };
+ 
 -- 
 1.9.1
