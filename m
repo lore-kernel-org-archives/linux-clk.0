@@ -1,63 +1,111 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga02-in.huawei.com ([119.145.14.65]:21298 "EHLO
-	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756882AbcASDBW (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jan 2016 22:01:22 -0500
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
-	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
-	<xuejiancheng@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [PATCH v6 5/6] ARM: dt-bindings: add device tree bindings for Hi3519 sysctrl
-Date: Tue, 19 Jan 2016 10:38:30 +0800
-Message-ID: <1453171111-21921-6-git-send-email-xuejiancheng@huawei.com>
-In-Reply-To: <1453171111-21921-1-git-send-email-xuejiancheng@huawei.com>
-References: <1453171111-21921-1-git-send-email-xuejiancheng@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 00/14] Add A83T clk, r_pio, mmc rsb support
+Date: Sun, 31 Jan 2016 09:20:52 +0800
+Message-Id: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree bindings for Hi3519 system controller.
+Hello,
+This series adds further support for A83T, mainly adds clock support.
+Also adds R_PIO, PRCM related clocks, mmc, rsb support.
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
----
- .../devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt   | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
+A83T difference in short:
+R_PIO is slightly different from A23 r_pio. AHB1 has different parents as
+compared to a31-ahb1, APB1 has different dividers.Bus gates are similar to H3,
+apb0 gates are different.mmc and rsb are compatible with earlier sunxi socs.
 
-diff --git a/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt b/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
-new file mode 100644
-index 0000000..115c5be
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
-@@ -0,0 +1,14 @@
-+* Hisilicon Hi3519 System Controller Block
-+
-+This bindings use the following binding:
-+Documentation/devicetree/bindings/mfd/syscon.txt
-+
-+Required properties:
-+- compatible: "hisilicon,hi3519-sysctrl".
-+- reg: the register region of this block
-+
-+Examples:
-+sysctrl: system-controller@12010000 {
-+	compatible = "hisilicon,hi3519-sysctrl", "syscon";
-+	reg = <0x12010000 0x1000>;
-+};
+Patch 1: adds support for r_pio pin controller.
+
+patch 2: adds PRCM apb0 clock gates, it controls prcm related clocks.
+
+patch 3: adds bus gates which are similar to h3, it's not clearly known which
+clocks belongs to which parent.
+
+patch 4: adds ahb1 clock support, 0b1x is pll6 parent otherwise it's same as a31
+ahb1.
+
+patch 5: adds apb1 clock support, apb1 has different dividers compared to a10 
+apb0 clock.
+
+patch 6: this patch is form wens, a83t has 16M internal oscillator, to get 
+aproximately 32k clock, it's divided by 512.
+
+patch 7: adds basics clocks nodes to dtsi, pll6, ahb1, ahb2, apb1, apb2,
+bus gates, and resets.
+
+patch 8-9: adds mmc and it's clock nodes.
+
+patch 10: adds A83T PRCM related clocks, clock resets.
+
+patch 11: adds r_pio pin controller nodes to dtsi
+
+patch 12: adds RSB nodes to dtsi
+
+patch 13: enables mmc0 support for h8homlet board, tested by LABBE Corentin.
+
+patch 14: This patch adds support for Sinovoip BPI-M3 A83T based board, it has 
+2GB LPDDR3, u-boot support is added recently for this board.
+
+
+Regards,
+Vishnu
+
+Chen-Yu Tsai (1):
+  ARM: dts: sun8i-a83t: Correct low speed oscillator clocks
+
+Vishnu Patekar (13):
+  pinctrl: sunxi: Add A83T R_PIO controller support
+  clk: sunxi: Add apb0 gates for A83T
+  clk: sunxi: add bus gates for A83T
+  clk: sunxi: add ahb1 clock for A83T
+  clk: sunxi: Add APB1 clock for A83T
+  ARM: dts: sun8i-a83t: Add basic clocks and resets
+  ARM: dts: sun8i-a83t: add mmc clock nodes
+  ARM: dts: sun8i-a83t: Add mmc controller nodes
+  ARM: dts: sun8i-a83t: Add PRCM related clocks and resets
+  ARM: dts: sun8i-a83t: Add R_PIO controller node to the dtsi
+  ARM: dts: sun8i-a83t: Add RSB nodes to dtsi
+  ARM: dts: sun8i: enable mmc for H8Homlet Board.
+  ARM: dts: sun8i: Add A83T based Sinovoip Bpi-M3 Board
+
+ Documentation/devicetree/bindings/clock/sunxi.txt  |   4 +
+ .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ .../boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts  |  20 ++
+ ...omlet-v2.dts => sun8i-a83t-sinovoip-bpi-m3.dts} |  28 +-
+ arch/arm/boot/dts/sun8i-a83t.dtsi                  | 314 ++++++++++++++++++++-
+ drivers/clk/sunxi/clk-simple-gates.c               |   2 +
+ drivers/clk/sunxi/clk-sun8i-bus-gates.c            |   2 +
+ drivers/clk/sunxi/clk-sunxi.c                      |  92 ++++++
+ drivers/pinctrl/sunxi/Kconfig                      |   5 +
+ drivers/pinctrl/sunxi/Makefile                     |   1 +
+ drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c       | 119 ++++++++
+ 12 files changed, 582 insertions(+), 7 deletions(-)
+ copy arch/arm/boot/dts/{sun8i-a83t-allwinner-h8homlet-v2.dts => sun8i-a83t-sinovoip-bpi-m3.dts} (79%)
+ create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c
+
 -- 
 1.9.1
-
