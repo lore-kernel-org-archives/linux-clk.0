@@ -1,75 +1,66 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Russell King <linux@arm.linux.org.uk>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] ARM: Use generic clkdev.h header
-Date: Wed, 27 Jan 2016 14:11:42 -0800
-Message-Id: <1453932702-6930-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 12/14] ARM: dts: sun8i-a83t: Add RSB nodes to dtsi
+Date: Sun, 31 Jan 2016 09:21:04 +0800
+Message-Id: <1454203266-4450-13-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Get rid of the clkdev.h file in the ARM port and use the generic
-one because we've gotten rid of all the machine specific
-mach/clkdev.h files.
+This adds support for RSB
+A83T RSB is compatible with A23 rsb.
 
-Cc: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
 ---
- arch/arm/include/asm/Kbuild   |  1 +
- arch/arm/include/asm/clkdev.h | 31 -------------------------------
- 2 files changed, 1 insertion(+), 31 deletions(-)
- delete mode 100644 arch/arm/include/asm/clkdev.h
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm/include/asm/Kbuild b/arch/arm/include/asm/Kbuild
-index 16da6380eb85..43cd07708cf9 100644
---- a/arch/arm/include/asm/Kbuild
-+++ b/arch/arm/include/asm/Kbuild
-@@ -1,6 +1,7 @@
- 
- 
- generic-y += bitsperlong.h
-+generic-y += clkdev.h
- generic-y += cputime.h
- generic-y += current.h
- generic-y += early_ioremap.h
-diff --git a/arch/arm/include/asm/clkdev.h b/arch/arm/include/asm/clkdev.h
-deleted file mode 100644
-index 4e8a4b27d7c7..000000000000
---- a/arch/arm/include/asm/clkdev.h
-+++ /dev/null
-@@ -1,31 +0,0 @@
--/*
-- *  arch/arm/include/asm/clkdev.h
-- *
-- *  Copyright (C) 2008 Russell King.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * Helper for the clk API to assist looking up a struct clk.
-- */
--#ifndef __ASM_CLKDEV_H
--#define __ASM_CLKDEV_H
--
--#include <linux/slab.h>
--
--#ifndef CONFIG_COMMON_CLK
--#ifdef CONFIG_HAVE_MACH_CLKDEV
--#include <mach/clkdev.h>
--#else
--#define __clk_get(clk)	({ 1; })
--#define __clk_put(clk)	do { } while (0)
--#endif
--#endif
--
--static inline struct clk_lookup_alloc *__clkdev_alloc(size_t size)
--{
--	return kzalloc(size, GFP_KERNEL);
--}
--
--#endif
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 11be9e1..8c67c85 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -499,5 +499,19 @@
+ 				allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
+ 			};
+ 		};
++
++		r_rsb: i2c@01f03400 {
++			compatible = "allwinner,sun8i-a23-rsb";
++			reg = <0x01f03400 0x400>;
++			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&apb0_gates 3>;
++			clock-frequency = <3000000>;
++			resets = <&apb0_reset 3>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&r_rsb_pins>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
+ 	};
+ };
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
