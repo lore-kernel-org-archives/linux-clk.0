@@ -1,65 +1,203 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 15 Jan 2016 17:26:12 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
 	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 04/13] clk: at91: make IRQ optional and register them
- later
-Message-ID: <20160116012612.GA20466@codeaurora.org>
-References: <1449248628-3486-1-git-send-email-alexandre.belloni@free-electrons.com>
- <1449248628-3486-5-git-send-email-alexandre.belloni@free-electrons.com>
- <20160115020237.GJ22188@codeaurora.org>
- <20160115103901.1b987f53@bbrezillon>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160115103901.1b987f53@bbrezillon>
+Subject: [PATCH 07/14] ARM: dts: sun8i-a83t: Add basic clocks and resets
+Date: Sun, 31 Jan 2016 09:20:59 +0800
+Message-Id: <1454203266-4450-8-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/15, Boris Brezillon wrote:
-> Hi Stephen,
-> 
-> On Thu, 14 Jan 2016 18:02:37 -0800
-> Stephen Boyd <sboyd@codeaurora.org> wrote:
-> > 
-> > Is there any way to get the irq into this probe function without
-> > getting a clk pointer and then unwrapping it to get an irq
-> > value out of the clk_hw wrapper structure? That's a pretty
-> > convoluted design.
-> 
-> Not sure I get what you're suggesting, but the only solution I see to
-> avoid this "get main clk pointer dance" would be to have a global
-> variable storing the clk_main instance (or a list of clk_main
-> instances).
-> The thing is, I'd like to avoid adding new global variables in this
-> clk drivers as much as possible. Moreover, the core is already taking
-> care of keeping the list of all registered clks, with their associated
-> of_node, so, is there a real point in creating a duplicated association
-> list in this driver too?
+This adds A83T system bus clocks, bus gates, and clock resets.
 
-Ok I have to admit I'm a little confused. I thought we were
-getting the irq from the clkmain structure so that we could
-request it here in the probe function. But we're really assigning
-the irq so that we can enable/disable/free it later on?
+For ahb1 and ahb2, it's not clear which reset belongs to ahb1
+or ahb2; so named as ahb_reset0, ahb_reset1, ahb_reset2.
 
-So my new question is if we can register the clocks at the same
-time as the "platform device" (really a clock) probes. The
-correct design was probably to have pmc be a big platform device
-and have it register clocks that it knows exist inside it based
-on the compatible string. And it would also know which irqs (or
-enforce some ordering of irqs) to assign to which clocks.
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 127 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 125 insertions(+), 2 deletions(-)
 
-It looks like we totally missed that though.... so now we have
-many DT nodes that are also platform devices. So if we can do it
-at the same time as irq requests then we're good and the clk_hw
-structure is in the same scope. If not, then we should probably
-just let of_clk_hw_get_from_provider() happen (and it needs to
-happen for other reasons anyway) and call it a day.
-
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 45b725c..568d6fb 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -146,6 +146,98 @@
+ 			clocks = <&osc16M>;
+ 			clock-output-names = "osc16Md512";
+ 		};
++
++
++		pll6: clk@01c20028 {
++			#clock-cells = <0>;
++			compatible = "allwinner,sun9i-a80-pll4-clk";
++			reg = <0x01c20028 0x4>;
++			clocks = <&osc24M>;
++			clock-output-names = "pll6";
++		};
++
++		pll6d2: pll6d2_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clock-div = <2>;
++			clock-mult = <1>;
++			clocks = <&pll6>;
++			clock-output-names = "pll6d2";
++		};
++
++		ahb1: ahb1_clk@01c20054 {
++			#clock-cells = <0>;
++			compatible = "allwinner,sun8i-a83t-ahb1-clk";
++			reg = <0x01c20054 0x4>;
++			clocks = <&osc16Md512>, <&osc24M>, <&pll6>, <&pll6>;
++			clock-output-names = "ahb1";
++		};
++
++		ahb2: ahb2_clk@01c2005c {
++			#clock-cells = <0>;
++			compatible = "allwinner,sun8i-h3-ahb2-clk";
++			reg = <0x01c2005c 0x4>;
++			clocks = <&ahb1>, <&pll6d2>;
++			clock-output-names = "ahb2";
++		};
++
++		apb1: apb1_clk@01c20054 {
++			#clock-cells = <0>;
++			compatible = "allwinner,sun8i-a83t-apb1-clk";
++			reg = <0x01c20054 0x4>;
++			clocks = <&ahb1>;
++			clock-output-names = "apb1";
++		};
++
++		apb2: clk@01c20058 {
++			#clock-cells = <0>;
++			compatible = "allwinner,sun4i-a10-apb1-clk";
++			reg = <0x01c20058 0x4>;
++			clocks = <&osc16Md512>, <&osc24M>, <&pll6>, <&pll6>;
++			clock-output-names = "apb2";
++		};
++
++		bus_gates: clk@01c20060 {
++			#clock-cells = <1>;
++			compatible = "allwinner,sun8i-a83t-bus-gates-clk";
++			reg = <0x01c20060 0x10>;
++			clocks = <&ahb1>, <&ahb2>, <&apb1>, <&apb2>;
++			clock-names = "ahb1", "ahb2", "apb1", "apb2";
++			clock-indices = <1>, <5>, <6>,
++					<8>, <9>, <10>,
++					<13>, <14>, <17>,
++					<19>, <20>,
++					<21>, <24>,
++					<26>, <27>,
++					<29>, <32>,
++					<36>, <37>,
++					<40>, <43>,
++					<44>, <52>, <53>,
++					<54>, <65>,
++					<69>, <76>, <77>,
++					<78>, <79>, <96>,
++					<97>, <98>,
++					<112>, <113>,
++					<114>, <115>,
++					<116>;
++			clock-output-names = "bus_mipidsi", "bus_ss", "bus_dma",
++					     "bus_mmc0", "bus_mmc1", "bus_mmc2",
++					     "bus_nand", "bus_sdram", "bus_emac",
++					     "bus_hstimer", "bus_spi0",
++					     "bus_spi1", "bus_usb_drd",
++					     "bus_ehci0", "bus_ehci1",
++					     "bus_ohci0", "bus_ve",
++					     "bus_lcd0", "bus_lcd1",
++					     "bus_csi", "bus_hdmi",
++					     "bus_de", "bus_gpu", "bus_msgbox",
++					     "bus_spinlock", "bus_owa",
++					     "bus_pio", "bus_i2s0", "bus_i2s1",
++					     "bus_i2s2", "bus_tdm", "bus_i2c0",
++					     "bus_i2c1", "bus_i2c2",
++					     "bus_uart0", "bus_uart1",
++					     "bus_uart2", "bus_uart3",
++					     "bus_uart4";
++		};
+ 	};
+ 
+ 	soc {
+@@ -160,7 +252,7 @@
+ 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg = <0x01c20800 0x400>;
+-			clocks = <&osc24M>;
++			clocks = <&bus_gates 69>;
+ 			gpio-controller;
+ 			interrupt-controller;
+ 			#interrupt-cells = <3>;
+@@ -189,6 +281,36 @@
+ 			};
+ 		};
+ 
++		ahb_reset0: reset@01c202c0 {
++			reg = <0x01c202c0 0x4>;
++			compatible = "allwinner,sun6i-a31-clock-reset";
++			#reset-cells = <1>;
++		};
++
++		ahb_reset1: reset@01c202c4 {
++			reg	 = <0x01c202c4 0x4>;
++			compatible = "allwinner,sun6i-a31-clock-reset";
++			#reset-cells = <1>;
++		};
++
++		ahb_reset2: reset@01c202c8 {
++			reg = <0x01c202c8 0x4>;
++			compatible = "allwinner,sun6i-a31-clock-reset";
++			#reset-cells = <1>;
++		};
++
++		apb1_reset: reset@01c202d0 {
++			reg = <0x01c202d0 0x4>;
++			compatible = "allwinner,sun6i-a31-clock-reset";
++			#reset-cells = <1>;
++		};
++
++		apb2_reset: reset@01c202d8 {
++			reg = <0x01c202d8 0x4>;
++			compatible = "allwinner,sun6i-a31-clock-reset";
++			#reset-cells = <1>;
++		};
++
+ 		timer@01c20c00 {
+ 			compatible = "allwinner,sun4i-a10-timer";
+ 			reg = <0x01c20c00 0xa0>;
+@@ -210,7 +332,8 @@
+ 			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&osc24M>;
++			clocks = <&bus_gates 112>;
++			resets = <&apb2_reset 16>;
+ 			status = "disabled";
+ 		};
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
