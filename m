@@ -1,82 +1,73 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	David Airlie <airlied@linux.ie>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: devicetree@vger.kernel.org,
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
 	linux-sunxi@googlegroups.com,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Kaplan <alex@nextthing.co>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Wynter Woods <wynter@nextthing.co>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 04/26] clk: composite: Add unregister function
-Date: Thu, 14 Jan 2016 16:24:47 +0100
-Message-Id: <1452785109-6172-5-git-send-email-maxime.ripard@free-electrons.com>
-In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
-References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 11/14] ARM: dts: sun8i-a83t: Add R_PIO controller node to the dtsi
+Date: Sun, 31 Jan 2016 09:21:03 +0800
+Message-Id: <1454203266-4450-12-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The composite clock didn't have any unregistration function, which forced
-us to use clk_unregister directly on it.
+Now that we have a driver for the R_PIO controller,
+add the corresponding device node to the dtsi.
 
-While it was already not great from an API point of view, it also meant
-that we were leaking the clk_composite structure allocated in
-clk_register_composite.
-
-Add a clk_unregister_composite function to fix this.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
 ---
- drivers/clk/clk-composite.c  | 15 +++++++++++++++
- include/linux/clk-provider.h |  1 +
- 2 files changed, 16 insertions(+)
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
-index 4735de0660cc..f4c38f209594 100644
---- a/drivers/clk/clk-composite.c
-+++ b/drivers/clk/clk-composite.c
-@@ -288,3 +288,18 @@ err:
- 	kfree(composite);
- 	return clk;
- }
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 5ea20ff..11be9e1 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -478,5 +478,26 @@
+ 			compatible = "allwinner,sun6i-a31-clock-reset";
+ 			#reset-cells = <1>;
+ 		};
 +
-+void clk_unregister_composite(struct clk *clk)
-+{
-+	struct clk_composite *composite;
-+	struct clk_hw *hw;
++		r_pio: pinctrl@01f02c00 {
++			compatible = "allwinner,sun8i-a83t-r-pinctrl";
++			reg = <0x01f02c00 0x400>;
++			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&apb0_gates 0>;
++			resets = <&apb0_reset 0>;
++			gpio-controller;
++			interrupt-controller;
++			#interrupt-cells = <3>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			#gpio-cells = <3>;
 +
-+	hw = __clk_get_hw(clk);
-+	if (!hw)
-+		return;
-+
-+	composite = to_clk_composite(hw);
-+
-+	clk_unregister(clk);
-+	kfree(composite);
-+}
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 0c55a37cf8f7..76c34a9622db 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -632,6 +632,7 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
- 		struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
- 		struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
- 		unsigned long flags);
-+void clk_unregister_composite(struct clk *clk);
- 
- /***
-  * struct clk_gpio_gate - gpio gated clock
++			r_rsb_pins: r_rsb {
++				allwinner,pins = "PL0", "PL1";
++				allwinner,function = "s_rsb";
++				allwinner,drive = <SUN4I_PINCTRL_20_MA>;
++				allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
++			};
++		};
+ 	};
+ };
 -- 
-2.6.4
+1.9.1
