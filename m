@@ -1,125 +1,202 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Remi Pommarel <repk@triplefau.lt>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH V2 2/4] clk: bcm2835: enable fractional and mash support
-Date: Mon, 11 Jan 2016 19:55:54 +0000
-Message-Id: <1452542157-2387-3-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1452542157-2387-1-git-send-email-kernel@martin.sperl.org>
-References: <1452542157-2387-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <antonynpavlov@gmail.com>
+Return-Path: <antonynpavlov@gmail.com>
+Date: Sun, 31 Jan 2016 23:41:55 +0300
+From: Antony Pavlov <antonynpavlov@gmail.com>
+To: Alban <albeu@free.fr>
+Cc: linux-mips@linux-mips.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [RFC v3 01/14] WIP: clk: add Atheros AR724X/AR913X/AR933X SoCs
+ clock driver
+Message-Id: <20160131234155.eee918745880878963c044aa@gmail.com>
+In-Reply-To: <20160125232156.35c0ce3f@tock>
+References: <1453580251-2341-1-git-send-email-antonynpavlov@gmail.com>
+	<1453580251-2341-2-git-send-email-antonynpavlov@gmail.com>
+	<20160125232156.35c0ce3f@tock>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+On Mon, 25 Jan 2016 23:21:56 +0100
+Alban <albeu@free.fr> wrote:
 
-The clk-bcm2835 driver right now does the correct calculation
-of the fractional clock divider, but it does not set the FRAC
-bit to enable the fractual clock divider in HW
+> On Sat, 23 Jan 2016 23:17:18 +0300
+> Antony Pavlov <antonynpavlov@gmail.com> wrote:
+>=20
+> > TODO: get pll registers base address from devicetree node
+> >=20
+> > Signed-off-by: Antony Pavlov <antonynpavlov@gmail.com>
+> > Cc: Alban Bedel <albeu@free.fr>
+> > Cc: Michael Turquette <mturquette@baylibre.com>
+> > Cc: Stephen Boyd <sboyd@codeaurora.org>
+> > Cc: Rob Herring <robh+dt@kernel.org>
+> > Cc: linux-clk@vger.kernel.org
+> > Cc: linux-mips@linux-mips.org
+> > Cc: devicetree@vger.kernel.org
+> > ---
+> >  drivers/clk/Makefile                  |   1 +
+> >  drivers/clk/clk-ath79.c               | 193 ++++++++++++++++++++++++++=
+++++++++
+> >  include/dt-bindings/clock/ath79-clk.h |  22 ++++
+> >  3 files changed, 216 insertions(+)
+> >=20
+> > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> > index 820714c..5101763 100644
+> > --- a/drivers/clk/Makefile
+> > +++ b/drivers/clk/Makefile
+> > @@ -18,6 +18,7 @@ endif
+> >  # hardware specific clock types
+> >  # please keep this section sorted lexicographically by file/directory =
+path name
+> >  obj-$(CONFIG_MACH_ASM9260)		+=3D clk-asm9260.o
+> > +obj-$(CONFIG_ATH79)			+=3D clk-ath79.o
+> >  obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+=3D clk-axi-clkgen.o
+> >  obj-$(CONFIG_ARCH_AXXIA)		+=3D clk-axm5516.o
+> >  obj-$(CONFIG_COMMON_CLK_CDCE706)	+=3D clk-cdce706.o
+> > diff --git a/drivers/clk/clk-ath79.c b/drivers/clk/clk-ath79.c
+> > new file mode 100644
+> > index 0000000..75338a7
+> > --- /dev/null
+> > +++ b/drivers/clk/clk-ath79.c
+> > @@ -0,0 +1,193 @@
+> > +/*
+> > + * Clock driver for Atheros AR724X/AR913X/AR933X SoCs
+> > + *
+> > + * Copyright (C) 2010-2011 Jaiganesh Narayanan <jnarayanan@atheros.com>
+> > + * Copyright (C) 2011 Gabor Juhos <juhosg@openwrt.org>
+> > + * Copyright (C) 2015 Alban Bedel <albeu@free.fr>
+> > + * Copyright (C) 2016 Antony Pavlov <antonynpavlov@gmail.com>
+> > + *
+> > + * Parts of this file are based on Atheros' 2.6.15/2.6.31 BSP
+> > + *
+> > + * This program is free software; you can redistribute it and/or
+> > + * modify it under the terms of the GNU General Public License as
+> > + * published by the Free Software Foundation; either version 2 of
+> > + * the License, or (at your option) any later version.
+> > + *
+> > + * This program is distributed in the hope that it will be useful,
+> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> > + * GNU General Public License for more details.
+> > + */
+> > +
+> > +#include <linux/clk.h>
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/clkdev.h>
+> > +#include <linux/of.h>
+> > +#include <linux/of_address.h>
+> > +#include "clk.h"
+> > +
+> > +#include <dt-bindings/clock/ath79-clk.h>
+> > +
+> > +#include "asm/mach-ath79/ar71xx_regs.h"
+> > +#include "asm/mach-ath79/ath79.h"
+> > +
+> > +#define MHZ (1000 * 1000)
+> > +
+> > +#define AR724X_BASE_FREQ	(40 * MHZ)
+> > +
+> > +static struct clk *ath79_clks[ATH79_CLK_END];
+> > +
+> > +static struct clk_onecell_data clk_data =3D {
+> > +	.clks =3D ath79_clks,
+> > +	.clk_num =3D ARRAY_SIZE(ath79_clks),
+> > +};
+> > +
+> > +static struct clk *__init ath79_add_sys_clkdev(
+> > +	const char *id, unsigned long rate)
+> > +{
+> > +	struct clk *clk;
+> > +	int err;
+> > +
+> > +	clk =3D clk_register_fixed_rate(NULL, id, NULL, CLK_IS_ROOT, rate);
+> > +	if (!clk)
+> > +		panic("failed to allocate %s clock structure", id);
+> > +
+> > +	err =3D clk_register_clkdev(clk, id, NULL);
+> > +	if (err)
+> > +		panic("unable to register %s clock device", id);
+> > +
+> > +	return clk;
+> > +}
+> >
+> > +static void __init ar724x_clk_init(struct device_node *np)
+> > +{
+> > +	struct clk *ref_clk;
+> > +	unsigned long of_ref_rate;
+> > +	unsigned long ref_rate;
+> > +	unsigned long cpu_rate;
+> > +	unsigned long ddr_rate;
+> > +	unsigned long ahb_rate;
+> > +	u32 pll;
+> > +	u32 freq;
+> > +	u32 div;
+> > +
+> > +	ref_clk =3D of_clk_get(np, 0);
+> > +	if (IS_ERR(ref_clk)) {
+> > +		pr_err("%s: of_clk_get failed\n", np->full_name);
+> > +		return;
+> > +	}
+>=20
+> It would be better to have this function take the ref clock as
+> argument, to allow using it for both OF and legacy platforms.
 
-This patch enables FRAC for all clocks with frac_bits > 0
-but allows to define the selection of a higher-order MASH
-support instead of just FRAC.
+I'll try to use this idea in v5 patch version.
 
-Right now there are no limits imposed on maximum frequencies
-when using MASH/FRAC is enabled.
+> > +	of_ref_rate =3D clk_get_rate(ref_clk);
+> > +
+> > +	ref_rate =3D AR724X_BASE_FREQ;
+> > +
+> > +	if (of_ref_rate !=3D ref_rate) {
+> > +		pr_err("ref_rate !=3D of_ref_rate\n");
+> > +		ref_rate =3D of_ref_rate;
+> > +	}
+>=20
+> I don't think that this test is really useful.
 
-There is a documented limit of 25MHz for MASH, but it is not
-stated if this also applies to clock dividers that only support
-FRAC and not MASH.
+Yes, I can make this check optional.
 
-As for how higher order MASH works the following may give
-some insight: http://www.aholme.co.uk/Frac2/Mash.htm
+> > +	pll =3D ath79_pll_rr(AR724X_PLL_REG_CPU_CONFIG);
+> > +
+> > +	div =3D ((pll >> AR724X_PLL_FB_SHIFT) & AR724X_PLL_FB_MASK);
+> > +	freq =3D div * ref_rate;
+> > +
+> > +	div =3D ((pll >> AR724X_PLL_REF_DIV_SHIFT) & AR724X_PLL_REF_DIV_MASK)=
+ * 2;
+> > +	freq /=3D div;
+> > +
+> > +	cpu_rate =3D freq;
+> > +
+> > +	div =3D ((pll >> AR724X_DDR_DIV_SHIFT) & AR724X_DDR_DIV_MASK) + 1;
+> > +	ddr_rate =3D freq / div;
+> > +
+> > +	div =3D (((pll >> AR724X_AHB_DIV_SHIFT) & AR724X_AHB_DIV_MASK) + 1) *=
+ 2;
+> > +	ahb_rate =3D cpu_rate / div;
+>=20
+> For a new driver it would make sense to use clk_register_divider() and
+> similar generic building blocks.
+>=20
+> > +	ath79_clks[ATH79_CLK_REF] =3D ath79_add_sys_clkdev("ref", ref_rate);
+> > +	ath79_clks[ATH79_CLK_CPU] =3D ath79_add_sys_clkdev("cpu", cpu_rate);
+> > +	ath79_clks[ATH79_CLK_DDR] =3D ath79_add_sys_clkdev("ddr", ddr_rate);
+> > +	ath79_clks[ATH79_CLK_AHB] =3D ath79_add_sys_clkdev("ahb", ahb_rate);
+> > +	ath79_clks[ATH79_CLK_WDT] =3D ath79_add_sys_clkdev("wdt", ahb_rate);
+> > +	ath79_clks[ATH79_CLK_UART] =3D ath79_add_sys_clkdev("uart", ahb_rate);
+>=20
+> You shouldn't add ref, wdt and uart, they are not needed and make the
+> driver incompatible with the current DT bindings.
 
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c |   50 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+Please describe the situation then this incompatibility does matter.
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 759202a..7c782d3 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -115,6 +115,13 @@
- # define CM_GATE			BIT(CM_GATE_BIT)
- # define CM_BUSY			BIT(7)
- # define CM_BUSYD			BIT(8)
-+# define CM_MASH_BITS			2
-+# define CM_MASH_SHIFT			9
-+# define CM_MASH_MASK			GENMASK(10, 9)
-+# define CM_MASH(v)			((v << CM_MASH_SHIFT) & CM_MASH_MASK)
-+# define CM_MASH_FRAC			CM_MASH(1)
-+# define CM_MASH_2ND_ORDER		CM_MASH(2)
-+# define CM_MASH_3RD_ORDER		CM_MASH(3)
- # define CM_SRC_SHIFT			0
- # define CM_SRC_BITS			4
- # define CM_SRC_MASK			0xf
-@@ -632,6 +639,8 @@ struct bcm2835_clock_data {
- 	u32 int_bits;
- 	/* Number of fractional bits in the divider */
- 	u32 frac_bits;
-+	/* the mash value to use - see CM_MASH and CM_MASH_FRAC/ORDER */
-+	u32 mash;
+Current ath79 dt support is very preliminary and the only dt user
+is 5-years old TP-Link WR1043ND so it's near impossible to break somethink.
 
- 	bool is_vpu_clock;
- };
-@@ -1274,9 +1283,50 @@ static int bcm2835_clock_set_rate(struct clk_hw *hw,
- 	struct bcm2835_cprman *cprman = clock->cprman;
- 	const struct bcm2835_clock_data *data = clock->data;
- 	u32 div = bcm2835_clock_choose_div(hw, rate, parent_rate, false);
-+	u32 ctl, mash;
-+	bool enabled;
+Anyway current ath79 dt binding is somewhat broken (see __your__ message 'R=
+e: [RFC 1/4] WIP: MIPS: ath79: make ar933x clks more devicetree-friendly' f=
+rom 'Thu, 21 Jan 2016 12:03:20 +0100').
 
-+	spin_lock(&cprman->regs_lock);
-+	/* check if divider is identical, then return */
-+	if (div == cprman_read(cprman, data->div_reg))
-+		goto unlock;
-+
-+	/* it is recommended to only set clock registers when disabled */
-+	ctl = cprman_read(cprman, data->ctl_reg);
-+	enabled = ctl & CM_ENABLE;
-+	if (enabled) {
-+		/* disable clock */
-+		cprman_write(cprman, data->ctl_reg, ctl);
-+
-+		/* release lock while busy waiting */
-+		spin_unlock(&cprman->regs_lock);
-+		bcm2835_clock_wait_busy(clock);
-+		spin_lock(&cprman->regs_lock);
-+
-+		/* read the register again */
-+		ctl = cprman_read(cprman, data->ctl_reg);
-+	}
-+
-+	/* set the divider */
- 	cprman_write(cprman, data->div_reg, div);
 
-+	/* set frac/mash if necessarry */
-+	mash = 0;
-+	if ((data->frac_bits) && (div & GENMASK(CM_DIV_FRAC_BITS, 0)))
-+		mash = (data->mash) ? data->mash : CM_MASH_FRAC;
-+
-+	/* set mash to the selected value */
-+	ctl &= ~CM_MASH_MASK;
-+	ctl |= mash & CM_MASH_MASK;
-+	cprman_write(cprman, data->ctl_reg, ctl);
-+
-+	/* re-enable the clock */
-+	if (enabled)
-+		cprman_write(cprman, data->ctl_reg, ctl | CM_ENABLE);
-+
-+unlock:
-+	spin_unlock(&cprman->regs_lock);
-+
- 	return 0;
- }
-
---
-1.7.10.4
+--=A0
+Best regards,
+=A0 Antony Pavlov
