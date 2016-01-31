@@ -1,62 +1,106 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <4332640.jBKM55TPAo@wuerfel>
-References: <1452331558-2520-1-git-send-email-kernel@martin.sperl.org>
-	<1452331558-2520-3-git-send-email-kernel@martin.sperl.org>
-	<4332640.jBKM55TPAo@wuerfel>
-Date: Sun, 10 Jan 2016 10:30:33 +0100
-Message-ID: <CAMuHMdWOt4aCzu8Ode0ZrQ-c80nqAhwD5dd17nhgVbLrRYT5og@mail.gmail.com>
-Subject: Re: [PATCH 2/5] clk: bcm2835: enable management of PCM clock
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Martin Sperl <kernel@martin.sperl.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Russell King <linux@arm.linux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>, Remi Pommarel <repk@triplefau.lt>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-rpi-kernel@lists.infradead.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	ALSA Development Mailing List <alsa-devel@alsa-project.org>, Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Matthias Reichl <hias@horus.com>,
-	lFlorian Meier <florian.meier@koalo.de>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 10/14] ARM: dts: sun8i-a83t: Add PRCM related clocks and resets
+Date: Sun, 31 Jan 2016 09:21:02 +0800
+Message-Id: <1454203266-4450-11-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Arnd,
+This adds A83T PRCM related clocks, clock resets.
 
-On Sat, Jan 9, 2016 at 9:56 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Saturday 09 January 2016 09:25:54 kernel@martin.sperl.org wrote:
->> --- a/include/dt-bindings/clock/bcm2835.h
->> +++ b/include/dt-bindings/clock/bcm2835.h
->> @@ -44,5 +44,6 @@
->>  #define BCM2835_CLOCK_EMMC             28
->>  #define BCM2835_CLOCK_PERI_IMAGE       29
->>  #define BCM2835_CLOCK_PWM              30
->> +#define BCM2835_CLOCK_PCM              31
->>
->> -#define BCM2835_CLOCK_COUNT            31
->> +#define BCM2835_CLOCK_COUNT            32
->
-> The last line contains an incompatible change, please don't do that.
-> If you have to add another clock, do that after the BCM2835_CLOCK_COUNT
-> definition to avoid changing dts files that use that number.
+As a83t apb0 gates clock support is added earlier, this enables it.
+Apart from apb0 gates, other added clocks are compatible with
+earlier sun8i socs.
 
-While I agree this changes dts files (in an unexpected way?), not updating
-BCM2835_CLOCK_COUNT makes it definition useless. Which teaches that
-having such definitions in DT headers is not a good idea in the first place...
+Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 44 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-Hence it can better be replaced (it seems to be unused in dts files, but you
-can keep the definition to be 100% sure) by an ARRAY_SIZE() in the C driver.
-This requires changing the driver to e.g. initialize clks[] in
-bcm2835_clk_probe() based on a table instead of explicit code.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index ac96aa1..5ea20ff 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -268,6 +268,44 @@
+ 					     "mmc2_output",
+ 					     "mmc2_sample";
+ 		};
++
++		cpus_clk: clk@01f01400 {
++			compatible = "allwinner,sun9i-a80-cpus-clk";
++			reg = <0x01f01400 0x4>;
++			#clock-cells = <0>;
++			clocks = <&osc16Md512>, <&osc24M>, <&pll6>, <&osc16M>;
++			clock-output-names = "cpus";
++		};
++
++		ahb0: ahb0_clk {
++			compatible = "fixed-factor-clock";
++			#clock-cells = <0>;
++			clock-div = <1>;
++			clock-mult = <1>;
++			clocks = <&cpus_clk>;
++			clock-output-names = "ahb0";
++		};
++
++		apb0: clk@01f0140c {
++			compatible = "allwinner,sun8i-a23-apb0-clk";
++			reg = <0x01f0140c 0x4>;
++			#clock-cells = <0>;
++			clocks = <&ahb0>;
++			clock-output-names = "apb0";
++		};
++
++		apb0_gates: clk@01f01428 {
++			compatible = "allwinner,sun8i-a83t-apb0-gates-clk";
++			reg = <0x01f01428 0x4>;
++			#clock-cells = <1>;
++			clocks = <&apb0>;
++			clock-indices = <0>, <1>,
++					<2>, <3>,
++					<4>, <6>, <7>;
++			clock-output-names = "apb0_pio", "apb0_ir",
++					"apb0_timer", "apb0_rsb",
++					"apb0_uart", "apb0_i2c0", "apb0_twd";
++		};
+ 	};
+ 
+ 	soc {
+@@ -434,5 +472,11 @@
+ 			#interrupt-cells = <3>;
+ 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
+ 		};
++
++		apb0_reset: reset@01f014b0 {
++			reg = <0x01f014b0 0x4>;
++			compatible = "allwinner,sun6i-a31-clock-reset";
++			#reset-cells = <1>;
++		};
+ 	};
+ };
+-- 
+1.9.1
