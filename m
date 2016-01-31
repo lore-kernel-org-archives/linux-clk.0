@@ -1,74 +1,87 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 28 Jan 2016 00:23:24 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Emilio =?iso-8859-1?Q?L=F3pez?= <emilio.lopez@collabora.co.uk>
-Cc: mturquette@baylibre.com, maxime.ripard@free-electrons.com,
-	wens@csie.org, heiko@sntech.de, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] clk: defer clk_gets on orphan clocks
-Message-ID: <20160128082324.GG12841@codeaurora.org>
-References: <1453385439-10154-1-git-send-email-emilio.lopez@collabora.co.uk>
- <1453385958-11366-1-git-send-email-emilio.lopez@collabora.co.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1453385958-11366-1-git-send-email-emilio.lopez@collabora.co.uk>
+Return-Path: <vishnupatekar0510@gmail.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+To: robh+dt@kernel.org,
+	corbet@lwn.net,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	linux@arm.linux.org.uk,
+	emilio@elopez.com.ar
+Cc: jenskuske@gmail.com,
+	hdegoede@redhat.com,
+	wens@csie.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 06/14] ARM: dts: sun8i-a83t: Correct low speed oscillator clocks
+Date: Sun, 31 Jan 2016 09:20:58 +0800
+Message-Id: <1454203266-4450-7-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/21, Emilio López wrote:
-> @@ -3059,7 +3069,25 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
->   */
->  struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
->  {
-> -	return __of_clk_get_from_provider(clkspec, NULL, __func__);
-> +	return __of_clk_get_from_provider(clkspec, NULL, __func__, false);
-> +}
-> +
-> +/**
-> + * of_clk_get_from_provider_with_orphans() - Lookup clock from a clock provider
-> + * @clkspec: pointer to a clock specifier data structure
-> + *
-> + * This function looks up a struct clk from the registered list of clock
-> + * providers, an input is a clock specifier data structure as returned
-> + * from the of_parse_phandle_with_args() function call.
-> + *
-> + * The difference to of_clk_get_from_provider() is that this function will
-> + * also successfully lookup orphan-clocks, as it in some cases may be
-> + * necessary to access such orphan-clocks as well.
-> + */
-> +struct clk *
-> +of_clk_get_from_provider_with_orphans(struct of_phandle_args *clkspec)
+From: Chen-Yu Tsai <wens@csie.org>
 
-Dislike. In fact, the whole clk conf approach is odd here. When
-we're doing of_clk_init() we do a best effort loop around
-parent_ready(), waiting for clk providers to register as long as
-we have a clocks property in our provider node. We should do
-something similar in the non of_clk_init() case too, because
-of_clk_init() isn't special.
+The A83T does not have a 32.768 kHz low speed oscillator, either as
+an external crystal or input. It has a 16 MHz RC-based (inaccurate)
+internal oscillator, which is then divided by 512 for a clock close
+to 32 kHz.
 
-Furthermore, the assigned parents and rates feature doesn't need
-the clocks that we're assigning parents and rates to to even be
-provided or consumed by the provider that's probing, so I'm lost
-why we're checking the provider's node for a clocks property. It
-would be better to check the assigned-clocks and assigned-parents
-properties and make sure that those are all non-orphans. If
-they're orphaned, we should delay until another clk provider is
-registered. Eventually we'll unstick the orphans and then the
-tree can be configured. Running the configuration at the end of
-of_clk_init() even if we still can't get the clocks doesn't make
-any sense to me.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
-To be really nice, we could build up a set of configuration
-actions (set this parent, set this rate), and run those actions
-when we drop the orphan flag. If some clock is orphaned that
-we're trying to configure, we can attach the action to a list in
-the clk_core structure. Otherwise we'll run the action
-immediately. This way, we do a best effort to run as much of the
-configuration as possible when the provider is registered the
-first time and skip the overhead of cycling through a potentially
-long list of provider actions to see if we can run them now. This
-last part may be over-engineered though. I'm not sure if we
-really have any such scenario today.
-
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 8d27b63..45b725c 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -118,6 +118,7 @@
+ 		#size-cells = <1>;
+ 		ranges;
+ 
++		/* TODO: PRCM block has a mux for this. */
+ 		osc24M: osc24M_clk {
+ 			#clock-cells = <0>;
+ 			compatible = "fixed-clock";
+@@ -125,11 +126,25 @@
+ 			clock-output-names = "osc24M";
+ 		};
+ 
+-		osc32k: osc32k_clk {
++		/*
++		 * This is called "internal OSC" in some places.
++		 * It is an internal RC-based oscillator.
++		 * TODO: Its controls are in the PRCM block.
++		 */
++		osc16M: osc16M_clk {
+ 			#clock-cells = <0>;
+ 			compatible = "fixed-clock";
+-			clock-frequency = <32768>;
+-			clock-output-names = "osc32k";
++			clock-frequency = <16000000>;
++			clock-output-names = "osc16M";
++		};
++
++		osc16Md512: osc16Md512_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-factor-clock";
++			clock-div = <512>;
++			clock-mult = <1>;
++			clocks = <&osc16M>;
++			clock-output-names = "osc16Md512";
+ 		};
+ 	};
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
