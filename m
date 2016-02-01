@@ -1,159 +1,105 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH v5 13/20] clk: bcm2835: expose current divider, parent and mash via debugfs
-Date: Sun, 28 Feb 2016 15:37:04 +0000
-Message-Id: <1456673831-2408-14-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
-References: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <robh@kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1453353537.5384.33.camel@mtksdaap41>
+References: <1453271747-57397-1-git-send-email-jamesjj.liao@mediatek.com>
+ <1453271747-57397-3-git-send-email-jamesjj.liao@mediatek.com>
+ <20160120163236.GA21035@rob-hp-laptop> <1453353537.5384.33.camel@mtksdaap41>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 1 Feb 2016 09:55:53 -0600
+Message-ID: <CAL_JsqLJVLDbPqynmD9-Yc=JVGH4iLPfb2keA5G7c2fjitAsSQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/6] dt-bindings: ARM: Mediatek: Document bindings for MT2701
+To: James Liao <jamesjj.liao@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, John Crispin <blogic@openwrt.org>,
+	Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, srv_heupstream@mediatek.com,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-mediatek@lists.infradead.org,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+On Wed, Jan 20, 2016 at 11:18 PM, James Liao <jamesjj.liao@mediatek.com> wrote:
+> Hi Rob,
+>
+> On Wed, 2016-01-20 at 10:32 -0600, Rob Herring wrote:
+>> On Wed, Jan 20, 2016 at 02:35:43PM +0800, James Liao wrote:
+>> > This patch adds the binding documentation for apmixedsys, bdpsys,
+>> > ethsys, hifsys, imgsys, infracfg, mmsys, pericfg, topckgen and
+>> > vdecsys for Mediatek MT2701.
+>> >
+>> > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+>> > Tested-by: John Crispin <blogic@openwrt.org>
+>> > ---
+>> >  .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |  1 +
+>> >  .../bindings/arm/mediatek/mediatek,bdpsys.txt      | 22 ++++++++++++++++++++++
+>> >  .../bindings/arm/mediatek/mediatek,ethsys.txt      | 22 ++++++++++++++++++++++
+>> >  .../bindings/arm/mediatek/mediatek,hifsys.txt      | 22 ++++++++++++++++++++++
+>> >  .../bindings/arm/mediatek/mediatek,imgsys.txt      |  1 +
+>> >  .../bindings/arm/mediatek/mediatek,infracfg.txt    |  1 +
+>> >  .../bindings/arm/mediatek/mediatek,mmsys.txt       |  1 +
+>> >  .../bindings/arm/mediatek/mediatek,pericfg.txt     |  1 +
+>> >  .../bindings/arm/mediatek/mediatek,topckgen.txt    |  1 +
+>> >  .../bindings/arm/mediatek/mediatek,vdecsys.txt     |  1 +
+>> >  10 files changed, 73 insertions(+)
+>> >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
+>> >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
+>> >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
+>> >
+>> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+>> > index 936166f..a701e19 100644
+>> > --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+>> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+>> > @@ -6,6 +6,7 @@ The Mediatek apmixedsys controller provides the PLLs to the system.
+>> >  Required Properties:
+>> >
+>> >  - compatible: Should be:
+>> > +   - "mediatek,mt2701-apmixedsys"
+>> >     - "mediatek,mt8135-apmixedsys"
+>> >     - "mediatek,mt8173-apmixedsys"
+>> >  - #clock-cells: Must be 1
+>> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
+>> > new file mode 100644
+>> > index 0000000..4137196
+>> > --- /dev/null
+>> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
+>> > @@ -0,0 +1,22 @@
+>> > +Mediatek bdpsys controller
+>> > +============================
+>> > +
+>> > +The Mediatek bdpsys controller provides various clocks to the system.
+>>
+>> As you clarified these blocks provide more that just clocks. Please list
+>> all the functions here and on the others.
+>
+> Some blocks may provide clock and reset controller at the same time. But
 
-For each clock expose the following values via debugfs:
-* current_parent - the currently selected parent
-* current_divi - the integer portion of the currently set divider
-* current_divf - the fractional portion of the currently set divider
-* current_frac - the current frac/mash settings for the divider
+Then say the block provides clocks and resets is all I'm asking for.
 
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c |  101 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 101 insertions(+)
+> most of them will not provide functions directly. Instead, some DT
+> blocks which provide specific functions may refer to these controller
+> nodes due to it need to access the same register space.
+>
+> For example, scpsys (the power domain provider) refers to infracfg
+> because it need to control infracfg registers when power on/off domains:
+>
+>         scpsys: scpsys@10006000 {
+>                 compatible = "mediatek,mt2701-scpsys";
+>                 #power-domain-cells = <1>;
+>                 reg = <0 0x10006000 0 0x1000>;
+>                 infracfg = <&infracfg>;
+>         };
+>
+> So I think it should not need to list all functions for each blocks
+> here.
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 366f975..b67147b 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -129,6 +129,10 @@
- # define CM_BUSY			BIT(7)
- # define CM_BUSYD			BIT(8)
- # define CM_FRAC			BIT(9)
-+# define CM_MASH0			BIT(9)
-+# define CM_MASH1			BIT(10)
-+# define CM_MASH_MASK			(CM_MASH0 | CM_MASH1)
-+# define CM_MASH_SHIFT			9
- # define CM_SRC_SHIFT			0
- # define CM_SRC_BITS			4
- # define CM_SRC_MASK			0xf
-@@ -1045,6 +1049,90 @@ static u8 bcm2835_clock_get_parent(struct clk_hw *hw)
- 	return (src & CM_SRC_MASK) >> CM_SRC_SHIFT;
- }
- 
-+static const char *bcm2835_clock_get_parent_name(struct clk_hw *hw)
-+{
-+	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
-+	const struct bcm2835_clock_data *data = clock->data;
-+	u8 id = bcm2835_clock_get_parent(hw);
-+
-+	return (id < data->num_mux_parents) ?
-+		data->parents[id] : "unknown";
-+}
-+
-+static int bcm2835_clock_debug_current_parent_open(struct inode *inode,
-+						   struct file *file)
-+{
-+	const char *parent = bcm2835_clock_get_parent_name(inode->i_private);
-+
-+	file->private_data = kstrdup(parent, GFP_KERNEL);
-+	return 0;
-+}
-+
-+static ssize_t bcm2835_clock_debug_current_parent_read(struct file *file,
-+						       char __user *buf,
-+						       size_t len,
-+						       loff_t *ppos)
-+{
-+	const char *parent = file->private_data;
-+	size_t size = strlen(parent);
-+
-+	return simple_read_from_buffer(buf, len, ppos, parent, size);
-+}
-+
-+static const struct file_operations bcm2835_clock_debug_current_parent_fops = {
-+	.owner   = THIS_MODULE,
-+	.open    = bcm2835_clock_debug_current_parent_open,
-+	.release = simple_attr_release,
-+	.read    = bcm2835_clock_debug_current_parent_read,
-+	.llseek  = generic_file_llseek,
-+};
-+
-+static int bcm2835_clock_debug_current_divi_get(void *hw, u64 *val)
-+{
-+	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
-+	struct bcm2835_cprman *cprman = clock->cprman;
-+	const struct bcm2835_clock_data *data = clock->data;
-+	u32 div = cprman_read(cprman, data->div_reg);
-+
-+	*val = div >> CM_DIV_FRAC_BITS;
-+	return 0;
-+}
-+DEFINE_SIMPLE_ATTRIBUTE(bcm2835_clock_debug_current_divi_fops,
-+			bcm2835_clock_debug_current_divi_get,
-+			NULL, "%llu\n");
-+
-+static int bcm2835_clock_debug_current_divf_get(void *hw, u64 *val)
-+{
-+	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
-+	struct bcm2835_cprman *cprman = clock->cprman;
-+	const struct bcm2835_clock_data *data = clock->data;
-+	u32 div = cprman_read(cprman, data->div_reg);
-+
-+	*val = div & CM_DIV_FRAC_MASK;
-+	return 0;
-+}
-+DEFINE_SIMPLE_ATTRIBUTE(bcm2835_clock_debug_current_divf_fops,
-+			bcm2835_clock_debug_current_divf_get,
-+			NULL, "%llu\n");
-+
-+static int bcm2835_clock_debug_current_frac_get(void *hw, u64 *val)
-+{
-+	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
-+	struct bcm2835_cprman *cprman = clock->cprman;
-+	const struct bcm2835_clock_data *data = clock->data;
-+	u32 ctl = cprman_read(cprman, data->ctl_reg);
-+
-+	if (data->is_mash_clock)
-+		*val = (ctl & CM_MASH_MASK) >> CM_MASH_SHIFT;
-+	else
-+		*val = ctl & CM_FRAC ? 1 : 0;
-+
-+	return 0;
-+}
-+DEFINE_SIMPLE_ATTRIBUTE(bcm2835_clock_debug_current_frac_fops,
-+			bcm2835_clock_debug_current_frac_get,
-+			NULL, "%llu\n");
-+
- static struct debugfs_reg32 bcm2835_debugfs_clock_reg32[] = {
- 	{
- 		.name = "ctl",
-@@ -1063,6 +1151,19 @@ static int bcm2835_clock_debug_init(struct clk_hw *hw,
- 	struct bcm2835_cprman *cprman = clock->cprman;
- 	const struct bcm2835_clock_data *data = clock->data;
- 
-+	/* expose the current parrent */
-+	debugfs_create_file("current_parent", S_IRUGO, dentry, hw,
-+			    &bcm2835_clock_debug_current_parent_fops);
-+
-+	/* expose the current divider components */
-+	debugfs_create_file("current_divi", S_IRUGO, dentry, hw,
-+			    &bcm2835_clock_debug_current_divi_fops);
-+	debugfs_create_file("current_divf", S_IRUGO, dentry, hw,
-+			    &bcm2835_clock_debug_current_divf_fops);
-+	debugfs_create_file("current_frac", S_IRUGO, dentry, hw,
-+			    &bcm2835_clock_debug_current_frac_fops);
-+
-+	/* add the regset */
- 	return bcm2835_debugfs_regset(
- 		cprman, data->ctl_reg,
- 		bcm2835_debugfs_clock_reg32,
--- 
-1.7.10.4
+Sorry, but you do need to describe what functions the blocks provide.
+
+Also, if you are accessing the infracfg regs directly to modify clock
+registers outside of the clock driver, that is very bad design. The
+clock driver could assume that register values are not changing behind
+its back and it bypasses any locks around register accesses. I can see
+why it is needed though, but we really need a proper interface.
+
+Rob
