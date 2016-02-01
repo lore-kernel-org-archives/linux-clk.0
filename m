@@ -1,55 +1,35 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from exsmtp03.microchip.com ([198.175.253.49]:25558 "EHLO
-	email.microchip.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1426749AbcBSQ0A (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Fri, 19 Feb 2016 11:26:00 -0500
-From: Joshua Henderson <joshua.henderson@microchip.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <linux-mips@linux-mips.org>, <ralf@linux-mips.org>,
-	Joshua Henderson <joshua.henderson@microchip.com>,
-	<devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	Paul Thacker <paul.thacker@microchip.com>,
-	Purna Chandra Mandal <purna.mandal@microchip.com>,
-	Sandeep Sheriker <sandeepsheriker.mallikarjun@microchip.com>
-Subject: [PATCH v7 0/3] PIC32MZDA Clock Driver
-Date: Fri, 19 Feb 2016 09:25:33 -0700
-Message-ID: <1455899179-14097-1-git-send-email-joshua.henderson@microchip.com>
+Return-Path: <robh@kernel.org>
+Date: Mon, 1 Feb 2016 09:02:18 -0600
+From: Rob Herring <robh@kernel.org>
+To: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Cc: corbet@lwn.net, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	maxime.ripard@free-electrons.com, linux@arm.linux.org.uk,
+	emilio@elopez.com.ar, jenskuske@gmail.com, hdegoede@redhat.com,
+	wens@csie.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com, linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org, mturquette@baylibre.com,
+	sboyd@codeaurora.org, patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 02/14] clk: sunxi: Add apb0 gates for A83T
+Message-ID: <20160201150218.GA4290@rob-hp-laptop>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1454203266-4450-3-git-send-email-vishnupatekar0510@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1454203266-4450-3-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock bindings got acked and then essentially unacked, while the clock
-driver never made it upstream. In the meantime, the initial DTS file
-made it upstream. This latest patch series includes a patch to go back
-and correct the DTS files to reflect the new clock bindings in this
-patch series.
+On Sun, Jan 31, 2016 at 09:20:54AM +0800, Vishnu Patekar wrote:
+> APB0 is part of PRCM, and is compatible with earlier SOCs.
+> apb0 gates controls R_PIO, R_UART, R_RSB, etc clocks.
+> This patch adds support for APB0 gates for A83T.
+> 
+> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/clock/sunxi.txt | 1 +
+>  drivers/clk/sunxi/clk-simple-gates.c              | 2 ++
+>  2 files changed, 3 insertions(+)
 
-Purna Chandra Mandal (3):
-  dt/bindings: Add PIC32 clock binding documentation
-  clk: clk-pic32: Add PIC32 clock driver
-  MIPS: dts: pic32: Update dts to reflect new PIC32MZDA clk binding
-
- .../devicetree/bindings/clock/microchip,pic32.txt  |   39 +
- arch/mips/boot/dts/pic32/pic32mzda-clk.dtsi        |  236 -----
- arch/mips/boot/dts/pic32/pic32mzda.dtsi            |   63 +-
- arch/mips/boot/dts/pic32/pic32mzda_sk.dts          |    5 +-
- drivers/clk/Kconfig                                |    3 +
- drivers/clk/Makefile                               |    1 +
- drivers/clk/microchip/Makefile                     |    2 +
- drivers/clk/microchip/clk-core.c                   |  955 ++++++++++++++++++++
- drivers/clk/microchip/clk-core.h                   |   78 ++
- drivers/clk/microchip/clk-pic32mzda.c              |  214 +++++
- include/dt-bindings/clock/microchip,pic32-clock.h  |   42 +
- 11 files changed, 1379 insertions(+), 259 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/microchip,pic32.txt
- delete mode 100644 arch/mips/boot/dts/pic32/pic32mzda-clk.dtsi
- create mode 100644 drivers/clk/microchip/Makefile
- create mode 100644 drivers/clk/microchip/clk-core.c
- create mode 100644 drivers/clk/microchip/clk-core.h
- create mode 100644 drivers/clk/microchip/clk-pic32mzda.c
- create mode 100644 include/dt-bindings/clock/microchip,pic32-clock.h
-
---
-1.7.9.5
-
+Acked-by: Rob Herring <robh@kernel.org>
