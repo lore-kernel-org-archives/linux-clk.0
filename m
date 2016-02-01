@@ -1,76 +1,36 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
-	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
-	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [RESEND PATCH v8 2/6] ARM: hisi: add compatible string for Hi3519 soc
-Date: Fri, 5 Feb 2016 10:31:08 +0800
-Message-ID: <1454639472-17373-3-git-send-email-xuejiancheng@huawei.com>
-In-Reply-To: <1454639472-17373-1-git-send-email-xuejiancheng@huawei.com>
-References: <1454639472-17373-1-git-send-email-xuejiancheng@huawei.com>
+Return-Path: <robh@kernel.org>
+Date: Mon, 1 Feb 2016 08:50:05 -0600
+From: Rob Herring <robh@kernel.org>
+To: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Cc: corbet@lwn.net, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	maxime.ripard@free-electrons.com, linux@arm.linux.org.uk,
+	emilio@elopez.com.ar, jenskuske@gmail.com, hdegoede@redhat.com,
+	wens@csie.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com, linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org, mturquette@baylibre.com,
+	sboyd@codeaurora.org, patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 05/14] clk: sunxi: Add APB1 clock for A83T
+Message-ID: <20160201145005.GA29776@rob-hp-laptop>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1454203266-4450-6-git-send-email-vishnupatekar0510@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1454203266-4450-6-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-add compatible string for Hi3519 soc.
+On Sun, Jan 31, 2016 at 09:20:57AM +0800, Vishnu Patekar wrote:
+> APB1 is similar to sun4i-a10-apb0-clk, except different dividers.
+> 
+> This adds support for apb1 on A83T.
+> 
+> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
----
- arch/arm/mach-hisi/hisilicon.c | 23 ++++-------------------
- 1 file changed, 4 insertions(+), 19 deletions(-)
+Acked-by: Rob Herring <robh@kernel.org>
 
-diff --git a/arch/arm/mach-hisi/hisilicon.c b/arch/arm/mach-hisi/hisilicon.c
-index 8cc6215..00dae89 100644
---- a/arch/arm/mach-hisi/hisilicon.c
-+++ b/arch/arm/mach-hisi/hisilicon.c
-@@ -54,30 +54,15 @@ DT_MACHINE_START(HI3620, "Hisilicon Hi3620 (Flattened Device Tree)")
- 	.dt_compat	= hi3xxx_compat,
- MACHINE_END
- 
--static const char *const hix5hd2_compat[] __initconst = {
-+static const char *const hisilicon_compat[] __initconst = {
- 	"hisilicon,hix5hd2",
--	NULL,
--};
--
--DT_MACHINE_START(HIX5HD2_DT, "Hisilicon HIX5HD2 (Flattened Device Tree)")
--	.dt_compat	= hix5hd2_compat,
--MACHINE_END
--
--static const char *const hip04_compat[] __initconst = {
- 	"hisilicon,hip04-d01",
--	NULL,
--};
--
--DT_MACHINE_START(HIP04, "Hisilicon HiP04 (Flattened Device Tree)")
--	.dt_compat	= hip04_compat,
--MACHINE_END
--
--static const char *const hip01_compat[] __initconst = {
- 	"hisilicon,hip01",
- 	"hisilicon,hip01-ca9x2",
-+	"hisilicon,hi3519",
- 	NULL,
- };
- 
--DT_MACHINE_START(HIP01, "Hisilicon HIP01 (Flattened Device Tree)")
--	.dt_compat      = hip01_compat,
-+DT_MACHINE_START(HISILICON_DT, "HiSilicon Soc")
-+	.dt_compat	= hisilicon_compat,
- MACHINE_END
--- 
-1.9.1
+>  drivers/clk/sunxi/clk-sunxi.c                     | 17 +++++++++++++++++
+>  2 files changed, 18 insertions(+)
