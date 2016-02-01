@@ -1,72 +1,71 @@
-Return-Path: <akinobu.mita@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20160217212415.2278.61232@quark.deferred.io>
-References: <1455547251-4944-1-git-send-email-akinobu.mita@gmail.com>
-	<20160215230252.2278.43532@quark.deferred.io>
-	<CAC5umyhFucgW2Yv73T0ePurxH4O396+OcM3oRQ-poEFYUQUdSw@mail.gmail.com>
-	<20160217212415.2278.61232@quark.deferred.io>
-Date: Thu, 18 Feb 2016 23:09:46 +0900
-Message-ID: <CAC5umyiYhE=xGhN9yHEMfgxkdK9rdoMcVcqBwRinuFB+Whg_kQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: add userspace clock consumer
-From: Akinobu Mita <akinobu.mita@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <andre.przywara@arm.com>
+From: Andre Przywara <andre.przywara@arm.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 08/11] clk: sunxi: improve error reporting for the mux clock
+Date: Mon,  1 Feb 2016 17:39:27 +0000
+Message-Id: <1454348370-3816-9-git-send-email-andre.przywara@arm.com>
+In-Reply-To: <1454348370-3816-1-git-send-email-andre.przywara@arm.com>
+References: <1454348370-3816-1-git-send-email-andre.przywara@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-02-18 6:24 GMT+09:00 Michael Turquette <mturquette@baylibre.com>:
-> Quoting Akinobu Mita (2016-02-17 05:18:41)
->> 2016-02-16 8:02 GMT+09:00 Michael Turquette <mturquette@baylibre.com>:
->> > Hello Akinobu Mita,
->> >
->> > Quoting Akinobu Mita (2016-02-15 06:40:51)
->> >> This adds userspace consumer for common clock.
->> >>
->> >> This driver is inspired from Userspace regulator consumer
->> >> (REGULATOR_USERSPACE_CONSUMER) and it is useful for test purposes and
->> >> some classes of devices that are controlled entirely from user space.
->> >
->> > Thanks for submitting the patch. Your implementation looks OK, but I
->> > generally do not like to expose clock hardware controls to userspace
->> > (and have a NAK'd a lot of patches trying to do this in the past). It
->> > can be quite dangerous for the system to allow userspace to control
->> > clocks.
->>
->> I understand your concern.  I'll happily add the features and
->> documentation for this module to avoid misuses and abuses.
->>
->> > Can you explain your use case more? If your main concern is testing,
->>
->> I can use this for my own electrical circuit.  But mainly it's
->> useful for testing.  When I tried to add clock provider for DS3231
->> clkout, I wrote very ad hoc kernel code for testing it.  I think
->> other people also have been trying something similar.
->>
->> > should COMMON_CLK_USERSPACE_CONSUMER be hidden behind CONFIG_DEBUG_FS?
->>
->> But this driver does not use debugfs.  Instead of that, I have no
->> problem moving this driver to lib/ and add config option to
->> lib/Kconfig.debug.  (under "Kernel hacking" in menuconfig)
->
-> Hiding it behind some sort of debug option sounds good to me. Taking a
-> quick look through lib/Kconfig.debug, it seems that there are no other
-> examples of debug options from drivers/* in there.
->
-> I'm wondering what is the best way to do it? Just create a
-> CONFIG_COMMON_CLK_DEBUG symbol and source drivers/clk/Kconfig.debug
-> conditionally?
+clk_register_mux returns a pointer wrapped error value in case of
+failure, so a simple NULL check is not sufficient to catch errors.
+Fix that and elaborate on the failure reason on the way. The whole
+function does not return any error value, so silently failing may
+leave users scratching their heads because the kernel does not
+provide any clues on what's wrong.
 
-How about just add that to drivers/clk/Kconfig like below?
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+---
+ drivers/clk/sunxi/clk-sunxi.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
-config COMMON_CLK_DEBUG
-        bool "Clock driver debugging support"
-        depends on DEBUG_KERNEL
-        ...
-
-config COMMON_CLK_USERSPACE_CONSUMER
-        tristate "Userspace clock consumer support"
-        depends on COMMON_CLK_DEBUG
-        ...
-
-
-We can add COMMON_CLK_DEBUG_FS for /sys/kernel/debug/clk/ if preferred.
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index efcce85..9416e0f3 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -627,17 +627,29 @@ static void __init sunxi_mux_clk_setup(struct device_node *node,
+ 	reg = of_iomap(node, 0);
+ 
+ 	i = of_clk_parent_fill(node, parents, SUNXI_MAX_PARENTS);
+-	of_property_read_string(node, "clock-output-names", &clk_name);
++	if (of_property_read_string(node, "clock-output-names", &clk_name)) {
++		pr_warn("%s: could not read clock-output-names for \"%s\"\n",
++			__func__, clk_name);
++		goto out_unmap;
++	}
+ 
+ 	clk = clk_register_mux(NULL, clk_name, parents, i,
+ 			       CLK_SET_RATE_PARENT, reg,
+ 			       data->shift, SUNXI_MUX_GATE_WIDTH,
+ 			       0, &clk_lock);
+ 
+-	if (clk) {
+-		of_clk_add_provider(node, of_clk_src_simple_get, clk);
+-		clk_register_clkdev(clk, clk_name, NULL);
++	if (IS_ERR(clk)) {
++		pr_warn("%s: failed to register mux clock %s: %ld\n", __func__,
++			clk_name, PTR_ERR(clk));
++		goto out_unmap;
+ 	}
++
++	of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	clk_register_clkdev(clk, clk_name, NULL);
++	return;
++
++out_unmap:
++	iounmap(reg);
+ }
+ 
+ 
+-- 
+2.6.4
