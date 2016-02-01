@@ -1,70 +1,54 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:48294 "EHLO
+	smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752319AbcBAPLr (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 1 Feb 2016 10:11:47 -0500
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20160213011403.GI4847@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, lee.jones@linaro.org,
- maxime.ripard@free-electrons.com, maxime.coquelin@st.com,
- geert@linux-m68k.org, heiko@sntech.de, andre.przywara@arm.com,
- rklein@nvidia.com, linux-kernel@vger.kernel.org
-References: <1455225554-13267-1-git-send-email-mturquette@baylibre.com>
- <1455225554-13267-2-git-send-email-mturquette@baylibre.com>
- <20160213011403.GI4847@codeaurora.org>
-Message-ID: <20160215202734.2278.91610@quark.deferred.io>
-Subject: Re: [PATCH v42 1/6] clk: Allow clocks to be marked as CRITICAL
-Date: Mon, 15 Feb 2016 12:27:34 -0800
+In-Reply-To: <20160201150218.GA4290@rob-hp-laptop>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1454203266-4450-3-git-send-email-vishnupatekar0510@gmail.com> <20160201150218.GA4290@rob-hp-laptop>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 1 Feb 2016 23:11:23 +0800
+Message-ID: <CAGb2v64VjfDVDMSO_ov0mJfXTbgB7ffehGu4N8tCTs8Kt00fRg@mail.gmail.com>
+Subject: Re: [PATCH 02/14] clk: sunxi: Add apb0 gates for A83T
+To: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	Jens Kuske <jenskuske@gmail.com>,
+	Hans De Goede <hdegoede@redhat.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Reinder de Haan <patchesrdh@mveas.com>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Stephen Boyd (2016-02-12 17:14:03)
-> On 02/11, Michael Turquette wrote:
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index b4db67a..993f775 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -2484,6 +2484,11 @@ static int __clk_init(struct device *dev, struct=
- clk *clk_user)
-> >       if (core->ops->init)
-> >               core->ops->init(core->hw);
-> >  =
+On Mon, Feb 1, 2016 at 11:02 PM, Rob Herring <robh@kernel.org> wrote:
+> On Sun, Jan 31, 2016 at 09:20:54AM +0800, Vishnu Patekar wrote:
+>> APB0 is part of PRCM, and is compatible with earlier SOCs.
+>> apb0 gates controls R_PIO, R_UART, R_RSB, etc clocks.
+>> This patch adds support for APB0 gates for A83T.
+>>
+>> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+>> ---
+>>  Documentation/devicetree/bindings/clock/sunxi.txt | 1 +
+>>  drivers/clk/sunxi/clk-simple-gates.c              | 2 ++
+>>  2 files changed, 3 insertions(+)
+>
+> Acked-by: Rob Herring <robh@kernel.org>
 
-> > +     if (core->flags & CLK_IS_CRITICAL) {
-> > +             clk_core_prepare(core);
-> > +             clk_core_enable(core);
-> > +     }
-> =
-
-> What do we do if this is an orphan clk? From what I can tell
-> we're not going to increment the ref count on the parents that
-> may or may not appear at some later time when this flag is set.
-
-I don't see how this is any different than any other orphan clock.
-__clk_set_parent_before and __clk_set_parent_after should still handle
-migration and propagation of the {prepare,enable}_count when it is
-finally re-parented.
-
-(as an aside, that code conditionally calls clk_prepare AND clk_enable
-based solely on the prepare refcount, which seems weird to me...)
-
-> Furthermore, do we want to propagate the CLK_IS_CRITICAL flag up
-> to all the parent clocks so that the warning mechanism spits out
-> errors for parent clocks? I suppose that may not be very useful
-> assuming refcounts are correct, but it may be useful to know
-> which clocks are critical and which ones aren't during debug.
-
-No, propagating flags is a bad idea. Existing prepare/enable ref counts
-should do the job for us.
-
-Regarding debug, propagating the flag will hurt debug-ability. We
-already expose the clk_core->flags in sysfs, and debuggers can grep for
-the CRITICAL flag there to find any spuriously enabled clocks.
-
-Regards,
-Mike
-
-> =
-
-> -- =
-
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+Acked-by: Chen-Yu Tsai <wens@csie.org>
