@@ -1,33 +1,64 @@
-Return-Path: <linux+mturquette=baylibre.com@arm.linux.org.uk>
-Date: Fri, 19 Feb 2016 16:48:44 +0000
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: gpio: Really allow an optional clock= DT property
-Message-ID: <20160219164844.GA19428@n2100.arm.linux.org.uk>
-References: <20160219030731.GS4847@codeaurora.org>
- <1455851525-18972-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <yoshihiro.shimoda.uh@renesas.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, "Geert
+ Uytterhoeven" <geert+renesas@glider.be>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] clk: shmobile: r8a7795: Add USB-DMAC clocks
+Date: Mon, 1 Feb 2016 11:06:31 +0000
+Message-ID: <SG2PR06MB0919563D4CD793A18AC3D839D8DE0@SG2PR06MB0919.apcprd06.prod.outlook.com>
+References: <1454322472-6696-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdX7HBvGzeqsCVw6bUXBvXa5uMdiZ8GJD75bGezVz2WOxA@mail.gmail.com>
+In-Reply-To: <CAMuHMdX7HBvGzeqsCVw6bUXBvXa5uMdiZ8GJD75bGezVz2WOxA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1455851525-18972-1-git-send-email-sboyd@codeaurora.org>
-Sender: Russell King - ARM Linux <linux@arm.linux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Feb 18, 2016 at 07:12:05PM -0800, Stephen Boyd wrote:
-> We mis-merged the original patch from Russell here and so the
-> patch went almost all the way, except that we still failed to
-> probe when there wasn't a clocks property in the DT node. Allow
-> that case by making a negative value from
-> of_clk_get_parent_count() into "no parents", like the original
-> patch did.
-
-NAK.  I'm not testing this patch, when I've already spent more than
-enough time (a) developing the original patch and testing that, and
-(b) re-diagnosing what's going wrong, and re-fixing the fuck up,
-and testing that fix.
-
--- 
-RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IGdlZXJ0LnV5dHRlcmhvZXZlbkBnbWFpbC5jb20gW21h
+aWx0bzpnZWVydC51eXR0ZXJob2V2ZW5AZ21haWwuY29tXSBPbiBCZWhhbGYgT2YgR2VlcnQgVXl0
+dGVyaG9ldmVuDQo+IFNlbnQ6IE1vbmRheSwgRmVicnVhcnkgMDEsIDIwMTYgNzo0MSBQTQ0KPiAN
+Cj4gSGkgU2hpbW9kYS1zYW4sDQo+IA0KPiBPbiBNb24sIEZlYiAxLCAyMDE2IGF0IDExOjI3IEFN
+LCBZb3NoaWhpcm8gU2hpbW9kYQ0KPiA8eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+
+IHdyb3RlOg0KPiA+IFNpZ25lZC1vZmYtYnk6IFlvc2hpaGlybyBTaGltb2RhIDx5b3NoaWhpcm8u
+c2hpbW9kYS51aEByZW5lc2FzLmNvbT4NCj4gDQo+IFRoYW5rcyBmb3IgeW91ciBwYXRjaCENCj4g
+DQo+ID4gLS0tDQo+ID4gIFRoaXMgcGF0Y2ggaXMgYmFzZWQgb24gdGhlIHJlbmVzYXMtZHJpdmVy
+cy5naXQgLw0KPiA+ICByZW5lc2FzLWRldmVsLTIwMTYwMTI2LXY0LjUtcmMxIHRhZy4NCj4gPiAg
+KGNvbW1pdCBpZCA9IGY4MzQ5NTVlYTU1ZTRiZWQwMWQ1NTMzOWE0NDI4ZWVmMjE5ZTgzMTMpDQo+
+ID4NCj4gPiAgUmVmZXJlbmNlOg0KPiA+ICBodHRwOi8vdGhyZWFkLmdtYW5lLm9yZy9nbWFuZS5s
+aW51eC5rZXJuZWwuY2xrLzMzMzcvZm9jdXM9MTg0DQo+ID4NCj4gPiAgZHJpdmVycy9jbGsvc2ht
+b2JpbGUvcjhhNzc5NS1jcGctbXNzci5jIHwgMiArKw0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMiBp
+bnNlcnRpb25zKCspDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvc2htb2JpbGUv
+cjhhNzc5NS1jcGctbXNzci5jIGIvZHJpdmVycy9jbGsvc2htb2JpbGUvcjhhNzc5NS1jcGctbXNz
+ci5jDQo+ID4gaW5kZXggZmMyNjBiMy4uMTNkNTlkMSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJz
+L2Nsay9zaG1vYmlsZS9yOGE3Nzk1LWNwZy1tc3NyLmMNCj4gPiArKysgYi9kcml2ZXJzL2Nsay9z
+aG1vYmlsZS9yOGE3Nzk1LWNwZy1tc3NyLmMNCj4gPiBAQCAtMTI0LDYgKzEyNCw4IEBAIHN0YXRp
+YyBjb25zdCBzdHJ1Y3QgbXNzcl9tb2RfY2xrIHI4YTc3OTVfbW9kX2Nsa3NbXSBfX2luaXRjb25z
+dCA9IHsNCj4gPiAgICAgICAgIERFRl9NT0QoInBjaWUwIiwgICAgICAgICAgICAgICAgIDMxOSwg
+ICBSOEE3Nzk1X0NMS19TM0QxKSwNCj4gPiAgICAgICAgIERFRl9NT0QoInVzYjMtaWYxIiwgICAg
+ICAgICAgICAgIDMyNywgICBSOEE3Nzk1X0NMS19TM0QxKSwNCj4gPiAgICAgICAgIERFRl9NT0Qo
+InVzYjMtaWYwIiwgICAgICAgICAgICAgIDMyOCwgICBSOEE3Nzk1X0NMS19TM0QxKSwNCj4gPiAr
+ICAgICAgIERFRl9NT0QoInVzYi1kbWFjMCIsICAgICAgICAgICAgIDMzMCwgICBSOEE3Nzk1X0NM
+S19TM0QyKSwNCj4gPiArICAgICAgIERFRl9NT0QoInVzYi1kbWFjMSIsICAgICAgICAgICAgIDMz
+MSwgICBSOEE3Nzk1X0NMS19TM0QyKSwNCj4gDQo+IFRoZSBkYXRhc2hlZXQgaXMgbm90IHZlcnkg
+Y2xlYXIgYWJvdXQgd2hldGhlciB0aGUgbW9kdWxlIGNsb2NrIGlzIGJhc2VkIG9mIHMzZDENCj4g
+KDI2NiBNSHopIG9yIHMzZDIgKDEzMyBNSHopLCBidXQgZ2l2ZW4gdGhlIGNvbW1lbnQgIi4uLiBp
+dCBpcyByZWNvbW1lbmRlZCB0bw0KPiBhbGxvdyBzZXZlcmFsIHRlbnMgb2YgY2xvY2tzIGlmIG9w
+ZXJhdGluZyBhdCAyNjAgTUh6IC4uLiIgaW4gc2VjdGlvbiA3NS4yLjINCj4gIkRNQTAvMSBTb2Z0
+d2FyZSBSZXNldCBSZWdpc3RlciIgb2YgdGhlIGRhdGFzaGVldCwgSSdtIGluY2xpbmVkIHRvIGJl
+bGlldmUgczNkMQ0KPiB3b3VsZCBiZSBjb3JyZWN0Lg0KDQpBY2NvcmRpbmcgdG8gdGhlIEhXIHRl
+YW0gKGluIGNhc2Ugb2YgZ2VuMiB0aG91Z2gpOg0KDQpJbiBnZW4yIChJbiBnZW4zIEkgYXNzdW1l
+ZCkNCiBaUyAoUzNEMSkgICAgIDogRm9yIHVzaW5nIERSQU0gYWNjZXNzDQogSFAgKFMzRDIpICAg
+ICA6IEZvciB1c2luZyByZWdpc3RlciBhY2Nlc3MNCiA0OE1IeiAoNTBNSHopIDogRm9yIHVzaW5n
+IFVTQiB0cmFuc2Zlcg0KDQpTbywgSSBhbHNvIHRoaW5rIHRoYXQgczNkMSB3b3VsZCBiZSBjb3Jy
+ZWN0Lg0KV2hhdCBkbyB5b3UgdGhpbms/DQoNCj4gSSBkb24ndCB0aGluayBpdCBtYXR0ZXJzIG11
+Y2ggdGhvdWdoLCBhcyB3ZSdyZSBub3QgaW50ZXJlc3RlZCBpbiB0aGUgYWN0dWFsDQo+IHJhdGUg
+b2YgdGhlIG1vZHVsZSBjbG9jaywgYW5kIGJvdGggczNkMSBhbmQgczNkMiBjYW5ub3QgYmUgZ2F0
+ZWQuDQoNCkkgYWdyZWUgd2l0aCB5b3UuDQoNCkJlc3QgcmVnYXJkcywNCllvc2hpaGlybyBTaGlt
+b2RhDQoNCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+IA0KPiAgICAgICAgICAgICAgICAgICAgICAg
+ICBHZWVydA0KPiANCj4gLS0NCj4gR2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBv
+ZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51eC1tNjhrLm9yZw0KPiANCj4gSW4gcGVy
+c29uYWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYg
+YSBoYWNrZXIuIEJ1dA0KPiB3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBz
+YXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgLS0gTGludXMgVG9ydmFsZHMNCg==
