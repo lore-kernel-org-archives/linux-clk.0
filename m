@@ -1,83 +1,80 @@
-Return-Path: <manabian@gmail.com>
-Return-Path: <manabian@gmail.com>
-From: Joachim Eastwood <manabian@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: Joachim Eastwood <manabian@gmail.com>,
+Return-Path: <andre.przywara@arm.com>
+From: Andre Przywara <andre.przywara@arm.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-clk@vger.kernel.org,
+	Jens Kuske <jenskuske@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
 	devicetree@vger.kernel.org
-Subject: [PATCH v4 2/2] doc: dt: add documentation for lpc1850-creg-clk driver
-Date: Wed, 24 Feb 2016 23:04:20 +0100
-Message-Id: <1456351460-15483-3-git-send-email-manabian@gmail.com>
-In-Reply-To: <1456351460-15483-1-git-send-email-manabian@gmail.com>
-References: <1456351460-15483-1-git-send-email-manabian@gmail.com>
+Subject: [PATCH 07/11] clk: sunxi: add generic allwinner,sunxi name
+Date: Mon,  1 Feb 2016 17:39:26 +0000
+Message-Id: <1454348370-3816-8-git-send-email-andre.przywara@arm.com>
+In-Reply-To: <1454348370-3816-1-git-send-email-andre.przywara@arm.com>
+References: <1454348370-3816-1-git-send-email-andre.przywara@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add DT binding documentation for lpc1850-creg-clk driver.
+The only difference between the different compatible matches at the
+end of clk-sunxi.c are the critical clocks. Two SoCs get away so far
+without any, so there is no reason to enumerate those SoCs in here
+explicitly, though we have to keep them in for compatibility reasons.
 
-Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+Rename the init function to highlight this generic feature and add a
+new, generic DT compatible string which can be used as a fallback value
+in the future should a particular SoC don't need any special treatment.
+
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 ---
- .../devicetree/bindings/clock/lpc1850-creg-clk.txt | 52 ++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
+ Documentation/devicetree/bindings/arm/sunxi.txt |  4 ++++
+ drivers/clk/sunxi/clk-sunxi.c                   | 14 ++++++--------
+ 2 files changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt b/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
-new file mode 100644
-index 000000000000..4e13586d083c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
-@@ -0,0 +1,52 @@
-+* NXP LPC1850 CREG clocks
+diff --git a/Documentation/devicetree/bindings/arm/sunxi.txt b/Documentation/devicetree/bindings/arm/sunxi.txt
+index 7e79fcc..980e065 100644
+--- a/Documentation/devicetree/bindings/arm/sunxi.txt
++++ b/Documentation/devicetree/bindings/arm/sunxi.txt
+@@ -14,3 +14,7 @@ using one of the following compatible strings:
+   allwinner,sun8i-a83t
+   allwinner,sun8i-h3
+   allwinner,sun9i-a80
 +
-+The NXP LPC18xx/43xx CREG (Configuration Registers) block contains
-+control registers for two low speed clocks. One of the clocks is a
-+32 kHz oscillator driver with power up/down and clock gating. Next
-+is a fixed divider that creates a 1 kHz clock from the 32 kHz osc.
-+
-+These clocks are used by the RTC and the Event Router peripherials.
-+The 32 kHz can also be routed to other peripherials to enable low
-+power modes.
-+
-+This binding uses the common clock binding:
-+    Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+Required properties:
-+- compatible:
-+	Should be "nxp,lpc1850-creg-clk"
-+- #clock-cells:
-+	Shall have value <1>.
-+- clocks:
-+	Shall contain a phandle to the fixed 32 kHz crystall.
-+
-+The creg-clk node must be a child of the creg syscon node.
-+
-+The following clocks are available from the clock node.
-+
-+Clock ID	Name
-+   0		 1 kHz clock
-+   1		32 kHz Oscillator
-+
-+Example:
-+soc {
-+	creg: syscon@40043000 {
-+		compatible = "nxp,lpc1850-creg", "syscon", "simple-mfd";
-+		reg = <0x40043000 0x1000>;
-+
-+		creg_clk: clock-controller {
-+			compatible = "nxp,lpc1850-creg-clk";
-+			clocks = <&xtal32>;
-+			#clock-cells = <1>;
-+		};
-+
-+		...
-+	};
-+
-+	rtc: rtc@40046000 {
-+		...
-+		clocks = <&creg_clk 0>, <&ccu1 CLK_CPU_BUS>;
-+		clock-names = "rtc", "reg";
-+		...
-+	};
-+};
++For Allwinner SoCs without any specific needs the generic fallback value of:
++  allwinner,sunxi
++can be used.
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index e460a6b..efcce85 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -1052,14 +1052,12 @@ CLK_OF_DECLARE(sun8i_a23_clk_init, "allwinner,sun8i-a23", sun6i_init_clocks);
+ CLK_OF_DECLARE(sun8i_a33_clk_init, "allwinner,sun8i-a33", sun6i_init_clocks);
+ CLK_OF_DECLARE(sun8i_h3_clk_init, "allwinner,sun8i-h3", sun6i_init_clocks);
+ 
+-static void __init sun8i_a83t_init_clocks(struct device_node *node)
++static void __init sunxi_generic_init_clocks(struct device_node *node)
+ {
+ 	sunxi_init_clocks(NULL, 0);
+ }
+-CLK_OF_DECLARE(sun8i_a83t_clk_init, "allwinner,sun8i-a83t", sun8i_a83t_init_clocks);
+-
+-static void __init sun9i_init_clocks(struct device_node *node)
+-{
+-	sunxi_init_clocks(NULL, 0);
+-}
+-CLK_OF_DECLARE(sun9i_a80_clk_init, "allwinner,sun9i-a80", sun9i_init_clocks);
++CLK_OF_DECLARE(sun8i_a83t_clk_init, "allwinner,sun8i-a83t",
++	       sunxi_generic_init_clocks);
++CLK_OF_DECLARE(sun9i_a80_clk_init, "allwinner,sun9i-a80",
++	       sunxi_generic_init_clocks);
++CLK_OF_DECLARE(sunxi_clk_init, "allwinner,sunxi", sunxi_generic_init_clocks);
 -- 
-1.8.0
+2.6.4
