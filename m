@@ -1,94 +1,43 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <robh@kernel.org>
+Date: Mon, 1 Feb 2016 09:03:44 -0600
+From: Rob Herring <robh@kernel.org>
+To: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Cc: corbet@lwn.net, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	maxime.ripard@free-electrons.com, linux@arm.linux.org.uk,
+	emilio@elopez.com.ar, jenskuske@gmail.com, hdegoede@redhat.com,
+	wens@csie.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com, linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org, mturquette@baylibre.com,
+	sboyd@codeaurora.org, patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 03/14] clk: sunxi: add bus gates for A83T
+Message-ID: <20160201150344.GA4947@rob-hp-laptop>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1454203266-4450-4-git-send-email-vishnupatekar0510@gmail.com>
 MIME-Version: 1.0
-To: Akinobu Mita <akinobu.mita@gmail.com>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <CAC5umyiYhE=xGhN9yHEMfgxkdK9rdoMcVcqBwRinuFB+Whg_kQ@mail.gmail.com>
-Cc: linux-clk@vger.kernel.org, "Stephen Boyd" <sboyd@codeaurora.org>
-References: <1455547251-4944-1-git-send-email-akinobu.mita@gmail.com>
- <20160215230252.2278.43532@quark.deferred.io>
- <CAC5umyhFucgW2Yv73T0ePurxH4O396+OcM3oRQ-poEFYUQUdSw@mail.gmail.com>
- <20160217212415.2278.61232@quark.deferred.io>
- <CAC5umyiYhE=xGhN9yHEMfgxkdK9rdoMcVcqBwRinuFB+Whg_kQ@mail.gmail.com>
-Message-ID: <20160218193424.2278.3229@quark.deferred.io>
-Subject: Re: [PATCH] clk: add userspace clock consumer
-Date: Thu, 18 Feb 2016 11:34:24 -0800
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1454203266-4450-4-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Akinobu Mita (2016-02-18 06:09:46)
-> 2016-02-18 6:24 GMT+09:00 Michael Turquette <mturquette@baylibre.com>:
-> > Quoting Akinobu Mita (2016-02-17 05:18:41)
-> >> 2016-02-16 8:02 GMT+09:00 Michael Turquette <mturquette@baylibre.com>:
-> >> > Hello Akinobu Mita,
-> >> >
-> >> > Quoting Akinobu Mita (2016-02-15 06:40:51)
-> >> >> This adds userspace consumer for common clock.
-> >> >>
-> >> >> This driver is inspired from Userspace regulator consumer
-> >> >> (REGULATOR_USERSPACE_CONSUMER) and it is useful for test purposes a=
-nd
-> >> >> some classes of devices that are controlled entirely from user spac=
-e.
-> >> >
-> >> > Thanks for submitting the patch. Your implementation looks OK, but I
-> >> > generally do not like to expose clock hardware controls to userspace
-> >> > (and have a NAK'd a lot of patches trying to do this in the past). It
-> >> > can be quite dangerous for the system to allow userspace to control
-> >> > clocks.
-> >>
-> >> I understand your concern.  I'll happily add the features and
-> >> documentation for this module to avoid misuses and abuses.
-> >>
-> >> > Can you explain your use case more? If your main concern is testing,
-> >>
-> >> I can use this for my own electrical circuit.  But mainly it's
-> >> useful for testing.  When I tried to add clock provider for DS3231
-> >> clkout, I wrote very ad hoc kernel code for testing it.  I think
-> >> other people also have been trying something similar.
-> >>
-> >> > should COMMON_CLK_USERSPACE_CONSUMER be hidden behind CONFIG_DEBUG_F=
-S?
-> >>
-> >> But this driver does not use debugfs.  Instead of that, I have no
-> >> problem moving this driver to lib/ and add config option to
-> >> lib/Kconfig.debug.  (under "Kernel hacking" in menuconfig)
-> >
-> > Hiding it behind some sort of debug option sounds good to me. Taking a
-> > quick look through lib/Kconfig.debug, it seems that there are no other
-> > examples of debug options from drivers/* in there.
-> >
-> > I'm wondering what is the best way to do it? Just create a
-> > CONFIG_COMMON_CLK_DEBUG symbol and source drivers/clk/Kconfig.debug
-> > conditionally?
-> =
+On Sun, Jan 31, 2016 at 09:20:55AM +0800, Vishnu Patekar wrote:
+> A83T has similar bus gates that of H3, including single gating register has
+> different clock parent.
+> 
+> As per H3 and A83T datasheet, usbhost is under AHB2.
+> 
+> However,below shows allwinner source code assignment:
+> bits: 26 (ehci0), 27 (ehci1), 29 (ohci0) => AHB1 for A83T.
+> bits: 26 (ehci0), 27 (ehci1) => AHB1 for H3
+> bits  29, 30, 31(ohci0,1,2) => AHB2 for H3.
+> 
+> until, this confusion is cleared keep it H3 way.
+> 
+> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/clock/sunxi.txt | 1 +
+>  drivers/clk/sunxi/clk-sun8i-bus-gates.c           | 2 ++
+>  2 files changed, 3 insertions(+)
 
-> How about just add that to drivers/clk/Kconfig like below?
-> =
-
-> config COMMON_CLK_DEBUG
->         bool "Clock driver debugging support"
->         depends on DEBUG_KERNEL
->         ...
-
-Looks good. If this symbol is selected then we will source
-drivers/clk/Kconfig.debug.
-
-> =
-
-> config COMMON_CLK_USERSPACE_CONSUMER
->         tristate "Userspace clock consumer support"
->         depends on COMMON_CLK_DEBUG
->         ...
-
-This should go into drivers/clk/Kconfig.debug. There are some clk tests
-that I've been slowly working on and they will end up in the file as
-well at some point in the future.
-
-Regards,
-Mike
-
-> =
-
-> =
-
-> We can add COMMON_CLK_DEBUG_FS for /sys/kernel/debug/clk/ if preferred.
+Acked-by: Rob Herring <robh@kernel.org>
