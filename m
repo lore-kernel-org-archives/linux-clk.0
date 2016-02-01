@@ -1,49 +1,58 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Joshua Henderson <joshua.henderson@microchip.com>,
- linux-kernel@vger.kernel.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1455899179-14097-3-git-send-email-joshua.henderson@microchip.com>
-Cc: linux-mips@linux-mips.org, ralf@linux-mips.org,
- "Purna Chandra Mandal" <purna.mandal@microchip.com>,
- "Joshua Henderson" <joshua.henderson@microchip.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-References: <1455899179-14097-1-git-send-email-joshua.henderson@microchip.com>
- <1455899179-14097-3-git-send-email-joshua.henderson@microchip.com>
-Message-ID: <20160219201615.2278.2909@quark.deferred.io>
-Subject: Re: [PATCH v7 2/3] clk: clk-pic32: Add PIC32 clock driver
-Date: Fri, 19 Feb 2016 12:16:15 -0800
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org
+Cc: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v5 0/3] Add support for Qualcomm A53 CPU clock
+Date: Mon,  1 Feb 2016 17:07:48 +0200
+Message-Id: <1454339271-643-1-git-send-email-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Joshua Henderson (2016-02-19 08:25:35)
-> +const struct clk_ops pic32_roclk_ops =3D {
-> +       .enable                 =3D roclk_enable,
-> +       .disable                =3D roclk_disable,
-> +       .is_enabled             =3D roclk_is_enabled,
-> +       .get_parent             =3D roclk_get_parent,
-> +       .set_parent             =3D roclk_set_parent,
-> +       .determine_rate         =3D roclk_determine_rate,
-> +       .recalc_rate            =3D roclk_recalc_rate,
-> +       .round_rate             =3D roclk_round_rate,
-> +       .set_rate_and_parent    =3D roclk_set_rate_and_parent,
-> +       .set_rate               =3D roclk_set_rate,
-> +       .init                   =3D roclk_init,
-> +};
 
-You can remove .round_rate and only use .determine_rate.
+This patchset adds support for the A53 CPU clock and allows scaling
+of the CPU frequency on msm8916 based platforms.
 
-...
-> +CLK_OF_DECLARE(pic32mzda_clk, "microchip,pic32mzda-clk", pic32mzda_clock=
-_init);
+Changes since v4 (https://lkml.org/lkml/2015/12/14/367)
+ * Convert to builtin drivers as now __clk_lookup() is used
 
-Can you make this a platform_driver instead of using CLK_OF_DECLARE? I
-asked this in v6 but there was no response.
+Changes since v3 (https://lkml.org/lkml/2015/8/12/585)
+ * Split driver into two parts - and separate A53 PLL and
+   A53 clock controller drivers.
+ * Drop the safe switch hook patch. Add a clock notifier in
+   the clock provider to handle switching via safe mux and
+   divider configuration.
 
-Regards,
-Mike
+Changes since v2 (https://lkml.org/lkml/2015/7/24/526)
+ * Drop gpll0_vote patch.
+ * Switch to the new clk_hw_* APIs.
+ * Rebase to the current clk-next.
 
-> -- =
+Changes since v1 (https://lkml.org/lkml/2015/6/12/193)
+ * Drop SR2 PLL patch, as it is already applied.
+ * Add gpll0_vote rate propagation patch.
+ * Update/rebase patches to the current clk-next.
 
-> 1.7.9.5
->=20
+Georgi Djakov (3):
+  clk: qcom: Add A53 PLL support
+  clk: qcom: Add regmap mux-div clocks support
+  clk: qcom: Add A53 clock driver
+
+ .../devicetree/bindings/clock/qcom,a53-pll.txt     |   17 ++
+ .../devicetree/bindings/clock/qcom,a53cc.txt       |   22 ++
+ drivers/clk/qcom/Kconfig                           |   17 ++
+ drivers/clk/qcom/Makefile                          |    3 +
+ drivers/clk/qcom/a53-pll.c                         |   95 ++++++++
+ drivers/clk/qcom/a53cc.c                           |  162 +++++++++++++
+ drivers/clk/qcom/clk-regmap-mux-div.c              |  254 ++++++++++++++++++++
+ drivers/clk/qcom/clk-regmap-mux-div.h              |   58 +++++
+ 8 files changed, 628 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53-pll.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53cc.txt
+ create mode 100644 drivers/clk/qcom/a53-pll.c
+ create mode 100644 drivers/clk/qcom/a53cc.c
+ create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.c
+ create mode 100644 drivers/clk/qcom/clk-regmap-mux-div.h
