@@ -1,84 +1,65 @@
-Return-Path: <robh@kernel.org>
-Date: Tue, 23 Feb 2016 14:43:07 -0600
-From: Rob Herring <robh@kernel.org>
-To: Lars Persson <lars.persson@axis.com>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org, pawel.moll@arm.com,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, linux-kernel@vger.kernel.org,
-	Lars Persson <larper@axis.com>
-Subject: Re: [PATCH v2 1/2] clk: add device tree binding for Artpec-6 clock
- controller
-Message-ID: <20160223204307.GA19883@rob-hp-laptop>
-References: <cover.1455891890.git.larper@axis.com>
- <fd330ff1346758966260cb2bcddd8d3fbff49704.1455891890.git.larper@axis.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <fd330ff1346758966260cb2bcddd8d3fbff49704.1455891890.git.larper@axis.com>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1454322472-6696-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1454322472-6696-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Date: Mon, 1 Feb 2016 11:41:05 +0100
+Message-ID: <CAMuHMdX7HBvGzeqsCVw6bUXBvXa5uMdiZ8GJD75bGezVz2WOxA@mail.gmail.com>
+Subject: Re: [PATCH] clk: shmobile: r8a7795: Add USB-DMAC clocks
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Feb 19, 2016 at 03:30:14PM +0100, Lars Persson wrote:
-> Add device tree documentation for the main clock controller in the
-> Artpec-6 SoC.
-> 
-> Signed-off-by: Lars Persson <larper@axis.com>
+Hi Shimoda-san,
+
+On Mon, Feb 1, 2016 at 11:27 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+
+Thanks for your patch!
+
 > ---
->  .../devicetree/bindings/clock/artpec6.txt          | 41 ++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/artpec6.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/artpec6.txt b/Documentation/devicetree/bindings/clock/artpec6.txt
-> new file mode 100644
-> index 0000000..76e3e7f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/artpec6.txt
-> @@ -0,0 +1,41 @@
-> +* Clock bindings for Axis ARTPEC-6 chip
-> +
-> +The bindings are based on the clock provider binding in
-> +Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +
-> +External clocks:
-> +----------------
-> +
-> +There are two external inputs to the main clock controller which should be
-> +provided using the common clock bindings.
-> +- "sys_refclk": External 50 Mhz oscillator (required)
-> +- "i2s_refclk": Alternate audio reference clock (optional).
-> +
-> +Main clock controller
-> +---------------------
-> +
-> +Required properties:
-> +- #clock-cells: Should be <1>
-> +  See dt-bindings/clock/axis,artpec6-clkctrl.h for the list of valid identifiers.
+>  This patch is based on the renesas-drivers.git /
+>  renesas-devel-20160126-v4.5-rc1 tag.
+>  (commit id = f834955ea55e4bed01d55339a4428eef219e8313)
+>
+>  Reference:
+>  http://thread.gmane.org/gmane.linux.kernel.clk/3337/focus=184
+>
+>  drivers/clk/shmobile/r8a7795-cpg-mssr.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/clk/shmobile/r8a7795-cpg-mssr.c b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
+> index fc260b3..13d59d1 100644
+> --- a/drivers/clk/shmobile/r8a7795-cpg-mssr.c
+> +++ b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
+> @@ -124,6 +124,8 @@ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
+>         DEF_MOD("pcie0",                 319,   R8A7795_CLK_S3D1),
+>         DEF_MOD("usb3-if1",              327,   R8A7795_CLK_S3D1),
+>         DEF_MOD("usb3-if0",              328,   R8A7795_CLK_S3D1),
+> +       DEF_MOD("usb-dmac0",             330,   R8A7795_CLK_S3D2),
+> +       DEF_MOD("usb-dmac1",             331,   R8A7795_CLK_S3D2),
 
-This header should be part of this patch. Otherwise:
+The datasheet is not very clear about whether the module clock is based of s3d1
+(266 MHz) or s3d2 (133 MHz), but given the comment "... it is recommended to
+allow several tens of clocks if operating at 260 MHz ..." in section 75.2.2
+"DMA0/1 Software Reset Register" of the datasheet, I'm inclined to believe s3d1
+would be correct.
 
-Acked-by: Rob Herring <robh@kernel.org>
+I don't think it matters much though, as we're not interested in the actual
+rate of the module clock, and both s3d1 and s3d2 cannot be gated.
 
-> +- compatible: Should be "axis,artpec6-clkctrl"
-> +- reg: Must contain the base address and length of the system controller
-> +- clocks:  Must contain a phandle entry for each clock in clock-names
-> +- clock-names: Must include the external oscillator ("sys_refclk"). Optional
-> +  ones are the audio reference clock ("i2s_refclk") and the audio fractional
-> +  divider ("frac_clk").
-> +
-> +Examples:
-> +
-> +ext_clk: ext_clk {
-> +	#clock-cells = <0>;
-> +	compatible = "fixed-clock";
-> +	clock-frequency = <50000000>;
-> +};
-> +
-> +clkctrl: clkctrl {
-> +	#clock-cells = <1>;
-> +	compatible = "axis,artpec6-clkctrl";
-> +	reg = <0xf8000000 0x48>;
-> +	clocks = <&ext_clk>;
-> +	clock-names = "sys_refclk";
-> +};
-> -- 
-> 2.1.4
-> 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
