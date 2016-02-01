@@ -1,65 +1,55 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 24 Feb 2016 11:15:22 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Georgi Djakov <georgi.djakov@linaro.org>, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v7 1/2] clk: qcom: Add support for SMD-RPM Clocks
-Message-ID: <20160224191522.GE4847@codeaurora.org>
-References: <1456243999-22652-1-git-send-email-georgi.djakov@linaro.org>
- <1456243999-22652-2-git-send-email-georgi.djakov@linaro.org>
- <56CD835A.1010608@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <56CD835A.1010608@linaro.org>
+Return-Path: <moinejf@free.fr>
+Date: Mon, 1 Feb 2016 19:40:00 +0100
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai
+ <wens@csie.org>, linux-sunxi@googlegroups.com, Arnd Bergmann
+ <arnd@arndb.de>, Emilio =?ISO-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, Jens Kuske
+ <jenskuske@gmail.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 06/11] clk: sunxi: add generic multi-parent bus clock
+ gates driver
+Message-Id: <20160201194000.282a253b14a2ab35df8b8cc7@free.fr>
+In-Reply-To: <1454348370-3816-7-git-send-email-andre.przywara@arm.com>
+References: <1454348370-3816-1-git-send-email-andre.przywara@arm.com>
+	<1454348370-3816-7-git-send-email-andre.przywara@arm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/24, Srinivas Kandagatla wrote:
-> 
-> 
-> On 23/02/16 16:13, Georgi Djakov wrote:
-> >+/* msm8916 */
-> >+#define RPM_XO_CLK_SRC				0
-> >+#define RPM_XO_A_CLK_SRC			1
-> >+#define RPM_PCNOC_CLK				2
-> >+#define RPM_PCNOC_A_CLK				3
-> >+#define RPM_SNOC_CLK				4
-> >+#define RPM_SNOC_A_CLK				5
-> >+#define RPM_BIMC_CLK				6
-> >+#define RPM_BIMC_A_CLK				7
-> >+#define RPM_QDSS_CLK				8
-> >+#define RPM_QDSS_A_CLK				9
-> >+#define RPM_BB_CLK1				10
-> >+#define RPM_BB_CLK1_A				11
-> >+#define RPM_BB_CLK2				12
-> >+#define RPM_BB_CLK2_A				13
-> >+#define RPM_RF_CLK1				14
-> >+#define RPM_RF_CLK1_A				15
-> >+#define RPM_RF_CLK2				16
-> >+#define RPM_RF_CLK2_A				17
-> >+#define RPM_BB_CLK1_PIN				18
-> >+#define RPM_BB_CLK1_A_PIN			19
-> >+#define RPM_BB_CLK2_PIN				20
-> >+#define RPM_BB_CLK2_A_PIN			21
-> >+#define RPM_RF_CLK1_PIN				22
-> >+#define RPM_RF_CLK1_A_PIN			23
-> >+#define RPM_RF_CLK2_PIN				24
-> >+#define RPM_RF_CLK2_A_PIN			25
-> >+
-> 
-> These names are more generic, and offsets are specific to the 8916
-> chip, adding soc prefix to these would make more sense and also set
-> a rule for the next soc support patches too.
-> 
+On Mon,  1 Feb 2016 17:39:25 +0000
+Andre Przywara <andre.przywara@arm.com> wrote:
 
-Do these ever change though? Maybe we should remove the msm8916
-specificness and let the rpm clk consumers choose the clks they
-want to use. Combine all the different SoCs into the same "RPM
-clk" numberspace so that we don't have a handful of different
-headers and different RPM clk definitions in the driver when
-they're almost the same across chips.
+> The Allwinner H3 SoC introduced bus clock gates with potentially
+> different parents per clock gate. The H3 driver chose to hardcode the
+> actual parent clock relation in the code.
+> Add a new driver (which has the potential to drive the H3 and also
+> the simple clock gates as well) which uses the power of DT to describe
+> this relationship in an elegant and flexible way.
+> Using one subnode for every parent clock we get away with a single
+> DT compatible match, which can be used as a fallback value in the
+> actual DTs without the need to add specific compatible strings to the
+> code.  This avoids adding a new driver or function for every new SoC.
+>=20
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> ---
+> Changelog RFC .. v1:
+> - fix IRQ muxes to cover the three banks of the SoC
+> - amend naming of PCM pins
+>=20
+>  drivers/clk/sunxi/Makefile          |   1 +
+>  drivers/clk/sunxi/clk-multi-gates.c | 105 ++++++++++++++++++++++++++++++=
+++++++
+>  2 files changed, 106 insertions(+)
+>  create mode 100644 drivers/clk/sunxi/clk-multi-gates.c
+	[snip]
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Glad to see that things are moving to the right way. Thanks.
+
+Acked-by: Jean-Francois Moine <moinejf@free.fr>
+
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
