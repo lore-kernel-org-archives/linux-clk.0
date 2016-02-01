@@ -1,67 +1,64 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Tue, 16 Feb 2016 13:42:33 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
-	Jyri Sarha <jsarha@ti.com>, linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Kristo, Tero" <t-kristo@ti.com>
-Message-ID: <20160216134233.GN18327@sirena.org.uk>
-References: <1455545495-20292-1-git-send-email-peter.ujfalusi@ti.com>
- <1455545495-20292-5-git-send-email-peter.ujfalusi@ti.com>
- <20160215152635.GN18988@sirena.org.uk>
- <56C2F00C.8080809@ti.com>
+Return-Path: <andre.przywara@arm.com>
+From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
+Subject: Re: [PATCH 06/11] clk: sunxi: add generic multi-parent bus clock
+ gates driver
+To: Jean-Francois Moine <moinejf@free.fr>
+References: <1454348370-3816-1-git-send-email-andre.przywara@arm.com>
+ <1454348370-3816-7-git-send-email-andre.przywara@arm.com>
+ <20160201194000.282a253b14a2ab35df8b8cc7@free.fr>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+ Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Emilio_L=c3=b3pez?=
+ <emilio@elopez.com.ar>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+ Jens Kuske <jenskuske@gmail.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Message-ID: <56AFE3D8.1000701@arm.com>
+Date: Mon, 1 Feb 2016 23:01:44 +0000
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="qYrsQHciA3Wqs7Iv"
-In-Reply-To: <56C2F00C.8080809@ti.com>
-Subject: Re: [PATCH 4/4] ASoC: simple-card: Support for selecting system
- clocks by ID
+In-Reply-To: <20160201194000.282a253b14a2ab35df8b8cc7@free.fr>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
+On 01/02/16 18:40, Jean-Francois Moine wrote:
+> On Mon,  1 Feb 2016 17:39:25 +0000
+> Andre Przywara <andre.przywara@arm.com> wrote:
+> 
+>> The Allwinner H3 SoC introduced bus clock gates with potentially
+>> different parents per clock gate. The H3 driver chose to hardcode the
+>> actual parent clock relation in the code.
+>> Add a new driver (which has the potential to drive the H3 and also
+>> the simple clock gates as well) which uses the power of DT to describe
+>> this relationship in an elegant and flexible way.
+>> Using one subnode for every parent clock we get away with a single
+>> DT compatible match, which can be used as a fallback value in the
+>> actual DTs without the need to add specific compatible strings to the
+>> code.  This avoids adding a new driver or function for every new SoC.
+>>
+>> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+>> ---
+>> Changelog RFC .. v1:
+>> - fix IRQ muxes to cover the three banks of the SoC
+>> - amend naming of PCM pins
 
---qYrsQHciA3Wqs7Iv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Just got embarrassed with seeing that this changelog here actually
+belongs into the previous patch :$
 
-On Tue, Feb 16, 2016 at 11:46:52AM +0200, Peter Ujfalusi wrote:
+>>
+>>  drivers/clk/sunxi/Makefile          |   1 +
+>>  drivers/clk/sunxi/clk-multi-gates.c | 105 ++++++++++++++++++++++++++++++++++++
+>>  2 files changed, 106 insertions(+)
+>>  create mode 100644 drivers/clk/sunxi/clk-multi-gates.c
+> 	[snip]
+> 
+> Glad to see that things are moving to the right way. Thanks.
 
-> As for codecs, tlv320aic3106 is also pretty simple device from the outside, it
-> can receive it's reference clock via:
-> MCLK pin, GPIO2 pin or it can use the BCLK from the bus. Based on the incoming
-> frequency it can use it directly or it needs to use the internal PLL to
-> generate the cocks.
-> It can output generated clock via GPIO1
+> Acked-by: Jean-Francois Moine <moinejf@free.fr>
 
-That already sounds like there is room for configuration and hooking
-into a wider clock tree - we've got three different source options and
-an output plus a PLL that can presumably take in non-audio rates.
+Thanks! I am relived to hear that (and hope that others agree as well
+;-) If people are Ok with that approach I can do patches to move all
+existing clock gates into one driver, but I guess this would be part of
+a later series.
 
-> I don't think it will bring any clarity or features we miss right now if we
-> try to move CPU and codec drivers to clk API. IMHO.
-
-You happen to be looking at a particularly simple system but things do
-scale up and there's not a clear cutoff point which would allow us to
-make a clear distinction between things that might get used in a simple
-system and things that might need something more complex.  This seems
-particularly important when we're adding things to simple-card, we want
-it to be usable with as many different devices as possible.
-
---qYrsQHciA3Wqs7Iv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWwydIAAoJECTWi3JdVIfQXAIIAIPmQaUWJVAUbw82rp0vXDYk
-/S7WYLF1u9HhJSbwozaC9y8wsBF2k1Xhgepr+aUjEi9eY2A/8s27BSQidnfE2PxM
-HDUEWO/wfJHBNqGfYh4+3IWzQ3RZsuxDzDhPRQ+cxhkPWtwv3qxOH2IE8uT3BVcB
-MCmzDX/VYmh/W8iXZ/il4dSFlH1PTdm+ihSr9QJR1bTF7Fseg6EzUWjCn13StYnk
-zszqF3k7LwXIwrpylS0BkxoMQUDZf9w2Ny8gJ6wkXK4TUq9TECi+6Xgfv+rXD/y6
-sZ71fLero+zEvDY3XEtUNimSGH9zP5u2F1asBmJLxm5lWpuIREn+Cl4HZT7m3Bs=
-=clV+
------END PGP SIGNATURE-----
-
---qYrsQHciA3Wqs7Iv--
+Cheers,
+Andre.
