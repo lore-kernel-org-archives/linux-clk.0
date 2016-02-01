@@ -1,49 +1,38 @@
-Return-Path: <andre.przywara@arm.com>
-From: Andre Przywara <andre.przywara@arm.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 0/3] clk: sunxi: error checking on clock setup
-Date: Fri, 12 Feb 2016 15:11:50 +0000
-Message-Id: <1455289913-29514-1-git-send-email-andre.przywara@arm.com>
+Return-Path: <robh@kernel.org>
+Date: Mon, 1 Feb 2016 09:00:58 -0600
+From: Rob Herring <robh@kernel.org>
+To: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Cc: corbet@lwn.net, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	maxime.ripard@free-electrons.com, linux@arm.linux.org.uk,
+	emilio@elopez.com.ar, jenskuske@gmail.com, hdegoede@redhat.com,
+	wens@csie.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com, linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org, mturquette@baylibre.com,
+	sboyd@codeaurora.org, patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 01/14] pinctrl: sunxi: Add A83T R_PIO controller support
+Message-ID: <20160201150058.GA3209@rob-hp-laptop>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1454203266-4450-2-git-send-email-vishnupatekar0510@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1454203266-4450-2-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Since I promised to do this some days ago:
+On Sun, Jan 31, 2016 at 09:20:53AM +0800, Vishnu Patekar wrote:
+> The A83T has R_PIO pin controller, it's same as A23, execpt A83T
+> interrupt bit is 6th and A83T has one extra pin PL12.
+> 
+> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+> ---
+>  .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
 
-Setting up the clocks properly is quite critical to the system's
-operation, but currently our error handling is not very verbose.
-This series adds error handling and reporting to the sunxi clocks,
-so that any errors are correctly detected and reported. Also previous
-actions are rolled back in case something went wrong.
-This proves to be helpful in debugging clock tree issues,
-especially when adding support for new SoCs.
-I tested this on a BananaPi by deliberately misspelling
-"clock-output-names". The resulting kernel crash in
-sun4i_timer_interrupt is totally misleading, but now there is a line
-in the dmesg before saying:
-=======
-sunxi_divider_clk_setup: could not read clock-output-names for "apb0"
-=======
+Acked-by: Rob Herring <robh@kernel.org>
 
-This applies on top of Maxime's sunxi/for-next branch.
-
-Please have a look (and apply, if you like it).
-
-Cheers,
-Andre.
-
-Andre Przywara (3):
-  clk: sunxi: improve mux_clk error handling and reporting
-  clk: sunxi: improve divider_clk error handling and reporting
-  clk: sunxi: Improve divs_clk error handling and reporting
-
- drivers/clk/sunxi/clk-sunxi.c | 68 +++++++++++++++++++++++++++++++++++--------
- 1 file changed, 56 insertions(+), 12 deletions(-)
-
--- 
-2.6.4
+>  drivers/pinctrl/sunxi/Kconfig                      |   5 +
+>  drivers/pinctrl/sunxi/Makefile                     |   1 +
+>  drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c       | 119 +++++++++++++++++++++
+>  4 files changed, 126 insertions(+)
+>  create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c
