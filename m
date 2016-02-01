@@ -1,53 +1,41 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH V3 1/6] clk: bcm2835: the minimum clock divider is 2
-Date: Thu, 14 Jan 2016 13:45:36 +0000
-Message-Id: <1452779142-20615-2-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1452779142-20615-1-git-send-email-kernel@martin.sperl.org>
-References: <1452779142-20615-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+Subject: Re: [PATCH RESEND v2 4/4] ARM: dts: enable audio clock support for
+ Cygnus
+To: Ray Jui <rjui@broadcom.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+References: <1453857521-8804-1-git-send-email-rjui@broadcom.com>
+ <1453857521-8804-5-git-send-email-rjui@broadcom.com>
+ <56AC06E1.1040903@broadcom.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bcm-kernel-feedback-list@broadcom.com, Simran Rai <ssimran@broadcom.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <56AEA5BD.8010407@gmail.com>
+Date: Sun, 31 Jan 2016 16:24:29 -0800
+MIME-Version: 1.0
+In-Reply-To: <56AC06E1.1040903@broadcom.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+Le 29/01/2016 16:42, Ray Jui a écrit :
+> Hi Florian,
+> 
+> With Stephen merging the first 3 patches into the clk tree, could you
+> please take this DT patch now?
+> 
+> Thanks,
+> 
+> Ray
+> 
+> On 1/26/2016 5:18 PM, Ray Jui wrote:
+>> From: Simran Rai <ssimran@broadcom.com>
+>>
+>> Add audio clock to the existing Broadcom Cygnus clock DT
+>>
+>> Signed-off-by: Simran Rai <ssimran@broadcom.com>
+>> Reviewed-by: Ray Jui <rjui@broadcom.com>
+>> Reviewed-by: Scott Branden <sbranden@broadcom.com>
 
-Testing with different clock divider values has shown
-that (at least for the PCM clock) the clock divider
-has to be at least 2, otherwise the clock will not
-output a signal.
-
-So the clamping has changed from 1 to 2 and comments
-about the kind of clamping applied have been added.
-
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 015e687..10e97b7 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1178,7 +1178,11 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
- 	div &= ~unused_frac_mask;
- 
- 	/* Clamp to the limits. */
--	div = max(div, unused_frac_mask + 1);
-+
-+	/* divider must be >= 2 */
-+	div = max_t(u32, div, (2 << CM_DIV_FRAC_BITS));
-+
-+	/* clamp to max divider allowed */
- 	div = min_t(u32, div, GENMASK(data->int_bits + CM_DIV_FRAC_BITS - 1,
- 				      CM_DIV_FRAC_BITS - data->frac_bits));
- 
+Applied to devicetree/next, thanks everyone!
 -- 
-1.7.10.4
+Florian
