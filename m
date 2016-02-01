@@ -1,98 +1,104 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] Revert "clk: avoid circular clock topology"
-Date: Mon, 22 Feb 2016 15:19:23 -0800
-Message-Id: <1456183163-13595-1-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <CAK7LNARhh0o8t_qLHc4_+yyZE6Hx6cwL2XEKbFsHZJmeHndzyA@mail.gmail.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Mon, 1 Feb 2016 21:17:54 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Jean-Francois Moine <moinejf@free.fr>
+Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Jens Kuske <jenskuske@gmail.com>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] clk: sunxi: Refactor A31 PLL6 so that it can be
+ reused
+Message-ID: <20160201201754.GI4652@lukather>
+References: <1454008958-12655-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1454008958-12655-2-git-send-email-maxime.ripard@free-electrons.com>
+ <20160130185714.7abcf1de9ef8108c2f48c7fe@free.fr>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7SrMUQONj8Rl9QNG"
+In-Reply-To: <20160130185714.7abcf1de9ef8108c2f48c7fe@free.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-This reverts commit 858d5881564026cbc4e6f5e25ae878a27df5d4c9.
 
-Joachim reports that this commit breaks lpc18xx boot. This is
-because the hardware has circular clk topology where PLLs can
-feed into dividers and the same dividers can feed into the PLLs.
-The hardware is designed this way so that you can choose to put
-the divider before the PLL or after the PLL depending on what you
-configure to be the parent of the divider and what you configure
-to be the parent of the PLL.
+--7SrMUQONj8Rl9QNG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-So let's drop this patch for now because we have hardware that
-actually has loops. A future patch could check for circular
-parents when we change parents and fail the switch, but that's
-probably best left to some debugging Kconfig option so that we
-don't suffer the sanity checking cost all the time.
+Hi,
 
-Reported-by: Joachim Eastwood <manabian@gmail.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk.c | 40 ----------------------------------------
- 1 file changed, 40 deletions(-)
+On Sat, Jan 30, 2016 at 06:57:14PM +0100, Jean-Francois Moine wrote:
+> On Thu, 28 Jan 2016 20:22:38 +0100
+> Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+>=20
+> > Remove the fixed dividers from the PLL6 driver to be able to have a
+> > reusable driver that can be used across several SoCs that share the same
+> > controller, but don't have the same set of dividers for this clock, and=
+ to
+> > also be reused multiple times in the same SoC, since we're droping the
+> > clock name.
+> >=20
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > ---
+> > Changes from v2
+> >   - Rebased and converted over to the new factors refactoring. Fixed the
+> >     retrieved rate
+> >=20
+> >  arch/arm/boot/dts/sun6i-a31.dtsi     | 36 ++++++++++++++++++----------=
+--------
+> >  arch/arm/boot/dts/sun8i-a23-a33.dtsi | 25 +++++++++++++++++--------
+> >  arch/arm/boot/dts/sun8i-a23.dtsi     |  2 +-
+> >  arch/arm/boot/dts/sun8i-a33.dtsi     |  4 ++--
+> >  arch/arm/boot/dts/sun8i-h3.dtsi      | 36 ++++++++++++++++++----------=
+--------
+> >  drivers/clk/sunxi/clk-sunxi.c        | 32 ++++++++++++++++------------=
+----
+> >  6 files changed, 72 insertions(+), 63 deletions(-)
+>=20
+> Hi Maxime,
+>=20
+> Do you know that the DT definitions cannot be changed when they are in
+> the mainline kernel?
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 58ef3dab894a..51d673370d42 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2242,38 +2242,6 @@ static inline void clk_debug_unregister(struct clk_core *core)
- #endif
- 
- /**
-- * __clk_is_ancestor - check if a clk_core is a possible ancestor of another
-- * @core: clock core
-- * @ancestor: ancestor clock core
-- *
-- * Returns true if there is a possibility that @ancestor can be an ancestor
-- * of @core, false otherwise.
-- *
-- * This function can be used against @core or @ancestor that has not been
-- * registered yet.
-- */
--static bool __clk_is_ancestor(struct clk_core *core, struct clk_core *ancestor)
--{
--	struct clk_core *parent;
--	int i;
--
--	for (i = 0; i < core->num_parents; i++) {
--		parent = clk_core_get_parent_by_index(core, i);
--		/*
--		 * If ancestor has not been added to clk_{root,orphan}_list
--		 * yet, clk_core_lookup() cannot find it.  If parent is NULL,
--		 * compare the name strings, too.
--		 */
--		if ((parent && (parent == ancestor ||
--				__clk_is_ancestor(parent, ancestor))) ||
--		    (!parent && !strcmp(core->parent_names[i], ancestor->name)))
--			return true;
--	}
--
--	return false;
--}
--
--/**
-  * __clk_core_init - initialize the data structures in a struct clk_core
-  * @core:	clk_core being initialized
-  *
-@@ -2338,14 +2306,6 @@ static int __clk_core_init(struct clk_core *core)
- 				"%s: invalid NULL in %s's .parent_names\n",
- 				__func__, core->name);
- 
--	/* If core is an ancestor of itself, it would make a loop. */
--	if (__clk_is_ancestor(core, core)) {
--		pr_err("%s: %s would create circular parent\n", __func__,
--		       core->name);
--		ret = -EINVAL;
--		goto out;
--	}
--
- 	core->parent = __clk_init_parent(core);
- 
- 	/*
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+AFAIK, the only ARM platform that ever had such a policy was mvebu,
+and they finally gave up on it. So, as far as I'm concerned, the DT
+ABI simply doesn't exist.
+
+> Also, for the H3 PLL periph1 (aka PLL8), why didn't you create a
+> 'pll8x2' clock with 'pll8' as a divider?
+
+No one seems to use it. We can always add it later in a separate
+patch when someone will.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--7SrMUQONj8Rl9QNG
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWr71yAAoJEBx+YmzsjxAgoBYQAIJRlt2R/GpUIZHy67nimDyK
+ZvS9s68mLTW3TqNrIK4cMIatLauQEXJPfN05aATMhuD+T6KkteG5NDc6+LozoFB1
+Q9gQUqrP63diGK7EjTBsdMzlAZo1AzSAnIHleGnPApZOMSOuO4Lo2LP9fScmG18s
+puMQm0m79owLiyN/H3FBCYWH9bxL+pGe1ZyVHnMRVBAzUDmftTul3CFqByKIynZS
+EtXyGE+JxroZNQz7NMWe74wMeadLIEahG7Ema/oUbzB3XSGgVUR5UxixyskgxDYO
+HMkxNmf4dx+R/TGAFWZC9DJXk+FfeF+ngFzIFeEYu7VurzfYJG8v4IRvW7GYs4cn
+SJAAgU54Nfx6UmPXeSKFNzsdFttUSEceONtpBM4l0K2/si0V003E/cFwmSMD1OFT
+jzEofkNPuM0qTe3JhS4hLKGyuhbjTQlZP6WkoMsbpZk/2/PmGyC6qxmd6Fv2vDYI
+ncPJGcRzCtOIXh7VpGJv3E70aJ4k7rzy8SySUuIsg0XY+05hjZicZC+PjPvYfzKN
+8Ka3Qbfz9C+oI0aqHtWzt2QaciVxU9e60GJlSwudrDv7/7Rri4aQw06cLL4Um972
+k7Hu/OD0YQJIcCWI0tUjywUuYdacRJMAQfitlaxUZVZMZDjkL+Zn0IU0JPoZFt/V
+3leDLLeRNe5Yc6ZqyZqi
+=g+mK
+-----END PGP SIGNATURE-----
+
+--7SrMUQONj8Rl9QNG--
