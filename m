@@ -1,186 +1,167 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Joachim  Eastwood <manabian@gmail.com>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <CAGhQ9VzB_WgB8b4_c3Z17W+K2MC7Fq7SD9zEvZUN_UJVGDZ3Wg@mail.gmail.com>
-Cc: devicetree@vger.kernel.org, "Stephen Boyd" <sboyd@codeaurora.org>,
- linux-clk@vger.kernel.org, "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>
-References: <1436651307-24098-1-git-send-email-manabian@gmail.com>
- <1436651307-24098-2-git-send-email-manabian@gmail.com>
- <20150811204127.31346.16729@quantum>
- <CAGhQ9VwZaM_iWTkQYVTuTiyb6gCG2y6s8WFVySCHt7YHE1qbcA@mail.gmail.com>
- <20150818002604.31346.18322@quantum>
- <CAGhQ9VzOYbHsFZQxM8823OiWpGB6vLEwX8LfvjC=DnL1iqK_qQ@mail.gmail.com>
- <20160217005629.2278.90197@quark.deferred.io>
- <CAGhQ9VzB_WgB8b4_c3Z17W+K2MC7Fq7SD9zEvZUN_UJVGDZ3Wg@mail.gmail.com>
-Message-ID: <20160217202824.2278.25956@quark.deferred.io>
-Subject: Re: [PATCH 1/2] clk: add lpc18xx creg clk driver
-Date: Wed, 17 Feb 2016 12:28:24 -0800
+Return-Path: <andre.przywara@arm.com>
+From: Andre Przywara <andre.przywara@arm.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-sunxi@googlegroups.com
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Jens Kuske <jenskuske@gmail.com>
+Subject: [PATCH 06/11] clk: sunxi: add generic multi-parent bus clock gates driver
+Date: Mon,  1 Feb 2016 17:39:25 +0000
+Message-Id: <1454348370-3816-7-git-send-email-andre.przywara@arm.com>
+In-Reply-To: <1454348370-3816-1-git-send-email-andre.przywara@arm.com>
+References: <1454348370-3816-1-git-send-email-andre.przywara@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Joachim Eastwood (2016-02-17 10:24:12)
-> On 17 February 2016 at 01:56, Michael Turquette <mturquette@baylibre.com>=
- wrote:
-> > Quoting Joachim Eastwood (2016-02-13 06:38:45)
-> >> Hi Mike,
-> >>
-> >> Seems your reply got lost in my mailbox and I didn't notice it before
-> >> Stephen replied on the cover letter. Sorry about that.
-> >>
-> >> On 18 August 2015 at 02:26, Michael Turquette <mturquette@baylibre.com=
-> wrote:
-> >> > Quoting Joachim Eastwood (2015-08-13 13:43:11)
-> >> >> On 11 August 2015 at 22:41, Michael Turquette <mturquette@baylibre.=
-com> wrote:
-> >> >> > Hi Joachim,
-> >> >> >
-> >> >> > Quoting Joachim Eastwood (2015-07-11 14:48:26)
-> >> >> >> +static void __init lpc18xx_creg_clk_init(struct device_node *np)
-> >> >> >> +{
-> >> >> >> +       const char *clk_32khz_parent;
-> >> >> >> +       struct regmap *syscon;
-> >> >> >> +
-> >> >> >> +       syscon =3D syscon_node_to_regmap(np->parent);
-> >> >> >> +       if (IS_ERR(syscon)) {
-> >> >> >> +               pr_err("%s: syscon lookup failed\n", __func__);
-> >> >> >> +               return;
-> >> >> >> +       }
-> >> >> >> +
-> >> >> >> +       clk_32khz_parent =3D of_clk_get_parent_name(np, 0);
-> >> >> >> +
-> >> >> >> +       clk_creg[CREG_CLK_32KHZ] =3D
-> >> >> >> +               clk_register_creg_clk(&clk_creg_clocks[CREG_CLK_=
-32KHZ],
-> >> >> >> +                                     &clk_32khz_parent, syscon);
-> >> >> >> +
-> >> >> >> +       clk_creg[CREG_CLK_1KHZ] =3D
-> >> >> >> +               clk_register_creg_clk(&clk_creg_clocks[CREG_CLK_=
-1KHZ],
-> >> >> >> +                                     &clk_creg_clocks[CREG_CLK_=
-32KHZ].name,
-> >> >> >> +                                     syscon);
-> >> >> >> +
-> >> >> >> +       of_clk_add_provider(np, of_clk_src_onecell_get, &clk_bas=
-e_data);
-> >> >> >> +}
-> >> >> >> +CLK_OF_DECLARE(lpc18xx_creg_clk, "nxp,lpc1850-creg-clk", lpc18x=
-x_creg_clk_init);
-> >> >> >
-> >> >> > I'll ask the same question that Stephen asked in your CCU/CGU dri=
-ver
-> >> >> > series: is it necessary to use CLK_OF_DECLARE here or can you use=
- the
-> >> >> > platform device model?
-> >> >>
-> >> >> The 32 kHz clock from the CREG block is a clock parent to the CGU
-> >> >> block so it's possible that it will required early. This is all
-> >> >> depends on how the boot loader initially configures the CGU.
-> >> >>
-> >> >> Currently in the DTS for lpc18xx cgu it has:
-> >> >> clocks =3D <&xtal>, <&xtal32>, <...>;
-> >> >> xtal32 is just a temporary placeholder until the CREG clock is in p=
-lace.
-> >> >
-> >> > Well that seems wrong. Is it just a matter of probe order where you =
-try
-> >> > to probe the cgu driver before the creg driver?
-> >>
-> >> The ideal probe order for the clk drivers on the lpc18xx platform
-> >> would be; creg-clk, cgu and ccu.
-> >> If the 32k clk is used by any of timers we need creg-clk to enable the
-> >> 32k clock and determine the rate.
-> >>
-> >> Note that the cgu and ccu driver is using CLK_OF_DECLARE now.
-> >>
-> >>
-> >> I have tired to create an overview of the lpc18xx clock system here:
-> >> https://github.com/manabian/linux-lpc/wiki/LPC18xx-LPC43xx-clocks
-> >
-> > That's great, thanks a lot for the link and the nice documentation.
-> >
-> > It's been a while since I've looked at this thread. Do any of the
-> > creg-clk, cgu or ccu clock drivers need to use CLK_OF_DECLARE? If they
-> > were platform_drivers then you could use -EPROBE_DEFER to solve your
-> > ordering issue.
-> =
+The Allwinner H3 SoC introduced bus clock gates with potentially
+different parents per clock gate. The H3 driver chose to hardcode the
+actual parent clock relation in the code.
+Add a new driver (which has the potential to drive the H3 and also
+the simple clock gates as well) which uses the power of DT to describe
+this relationship in an elegant and flexible way.
+Using one subnode for every parent clock we get away with a single
+DT compatible match, which can be used as a fallback value in the
+actual DTs without the need to add specific compatible strings to the
+code.  This avoids adding a new driver or function for every new SoC.
 
-> The clock for the clocksource/timer
-> (drivers/clocksource/time-lpc32xx.c) comes from cgu/ccu and can also
-> come from creg-clk. So afaik they must use CLK_OF_DECLARE. Or is there
-> something I am missing?
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+---
+Changelog RFC .. v1:
+- fix IRQ muxes to cover the three banks of the SoC
+- amend naming of PCM pins
 
-No, you're not missing anything. What I want is for clock provider
-drivers to actually be real Linux device drivers. Right now the drivers
-that only call CLK_OF_DECLARE are essentially just initcall hacks, and
-this causes problems down the road when you decide you want your clk
-provider driver to have suspend/resume ops, etc. Also I feel that having
-proper drivers will be important as runtime pm and the generic power
-domains stuff matures.
+ drivers/clk/sunxi/Makefile          |   1 +
+ drivers/clk/sunxi/clk-multi-gates.c | 105 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 106 insertions(+)
+ create mode 100644 drivers/clk/sunxi/clk-multi-gates.c
 
-> Isn't true that most SoC system clock drivers must use CLK_OF_DECLARE
-> because the system timer require clocks early? I thought this was the
-> whole point.
-
-On ARMv8, mandatory use of architected timers removes the need for the
-clk framework to be involved with timer init, so it's definitely not
-true for all platforms.
-
-On QCOM's 32-bit platforms they have an always-on clock with a known
-fixed rate, so they can either put the fixed-rate clock in DT, or even
-just put the frequency as a property into the timer node with no need to
-involve the clk framework (which is what they do today). That is also a
-bit hacky, but it is why you won't find CLK_OF_DECLARE in
-drivers/clk/qcom and all of their drivers are proper platform_drivers.
-
-> =
-
-> Since it is possible that the 32k clock from creg-clk can be use as a
-> parent clock for the timer doesn't this mean it also must use
-> CLK_OF_DECLARE?
-
-Right, if your 32k clock is a fixed-clock, and if it is provided on the
-board (e.g. external extal -> lpc timer) then you could just put the
-fixed-rate clock into DT (which uses CLK_OF_DECLARE) and reference that
-from your timer node. The rest of the clocks could be registered later
-through a platform_driver.
-
-Sounds like your timer clocking scheme is more complicated than that
-however.
-
-> If it wasn't possible for creg-clk to be used as a parent clock for
-> the timer it could have been a platform device.
-> =
-
-> =
-
-> The lpc18xx clock configuration that require creg-clk early would be:
-> 32k - > PLL0 -> BASE_M3/M4_CLK -> CLK_M3/M4_TIMER0. See second figure
-> on the webpage. Note that this is probably not a common configuration,
-> but it is a valid one. (PLL0 accepts input down to 14 kHz)
-
-I was just discussing this with Stephen and we're both curious to know
-if the same "nxp,lpc1850-creg-clk" compatible string can be used with
-CLK_OF_DECLARE for registering the bare minimum early clks, and also
-with a platform_driver using a different table of clocks for late
-registration.
-
-The compat string could be the same, and the driver would have different
-tables/setup functions to keep from re-registering the same clocks
-twice.
-
-I know that nobody likes to be the guinea pig for this type of stuff,
-but the lack of participation in the Linux driver model for clk drivers
-needs to curbed. Do you think the above proposed scheme could work for
-your clock provider drivers?
-
-Regards,
-Mike
-
-> =
-
-> =
-
-> regards,
-> Joachim Eastwood
+diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+index 3fd7901..3a9dc31 100644
+--- a/drivers/clk/sunxi/Makefile
++++ b/drivers/clk/sunxi/Makefile
+@@ -11,6 +11,7 @@ obj-y += clk-a10-ve.o
+ obj-y += clk-a20-gmac.o
+ obj-y += clk-mod0.o
+ obj-y += clk-simple-gates.o
++obj-y += clk-multi-gates.o
+ obj-y += clk-sun8i-bus-gates.o
+ obj-y += clk-sun8i-mbus.o
+ obj-y += clk-sun9i-core.o
+diff --git a/drivers/clk/sunxi/clk-multi-gates.c b/drivers/clk/sunxi/clk-multi-gates.c
+new file mode 100644
+index 0000000..76e715a
+--- /dev/null
++++ b/drivers/clk/sunxi/clk-multi-gates.c
+@@ -0,0 +1,105 @@
++/*
++ * Copyright (C) 2016 ARM Ltd.
++ *
++ * Based on clk-sun8i-bus-gates.c, which is:
++ *  Copyright (C) 2015 Jens Kuske <jenskuske@gmail.com>
++ * Based on clk-simple-gates.c, which is:
++ *  Copyright 2015 Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++
++static DEFINE_SPINLOCK(gates_lock);
++
++static void __init sunxi_parse_parent(struct device_node *node,
++				      struct clk_onecell_data *clk_data,
++				      void __iomem *reg)
++{
++	const char *parent = of_clk_get_parent_name(node, 0);
++	const char *clk_name;
++	struct property *prop;
++	struct clk *clk;
++	const __be32 *p;
++	int index, i = 0;
++
++	of_property_for_each_u32(node, "clock-indices", prop, p, index) {
++		of_property_read_string_index(node, "clock-output-names",
++					      i, &clk_name);
++
++		clk = clk_register_gate(NULL, clk_name, parent, 0,
++					reg + 4 * (index / 32), index % 32,
++					0, &gates_lock);
++		i++;
++		if (IS_ERR(clk)) {
++			pr_warn("could not register gate clock \"%s\"\n",
++				clk_name);
++			continue;
++		}
++		if (clk_data->clks[index])
++			pr_warn("bus-gate clock %s: index #%d already registered as %s\n",
++				clk_name, index, "?");
++		else
++			clk_data->clks[index] = clk;
++	}
++}
++
++static void __init sunxi_multi_bus_gates_init(struct device_node *node)
++{
++	struct clk_onecell_data *clk_data;
++	struct device_node *child;
++	struct property *prop;
++	struct resource res;
++	void __iomem *reg;
++	const __be32 *p;
++	int number = 0;
++	int index;
++
++	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
++	if (IS_ERR(reg))
++		return;
++
++	clk_data = kmalloc(sizeof(struct clk_onecell_data), GFP_KERNEL);
++	if (!clk_data)
++		goto err_unmap;
++
++	for_each_child_of_node(node, child)
++		of_property_for_each_u32(child, "clock-indices", prop, p, index)
++			number = max(number, index);
++
++	clk_data->clks = kcalloc(number + 1, sizeof(struct clk *), GFP_KERNEL);
++	if (!clk_data->clks)
++		goto err_free_data;
++
++	for_each_child_of_node(node, child)
++		sunxi_parse_parent(child, clk_data, reg);
++
++	clk_data->clk_num = number + 1;
++	if (of_clk_add_provider(node, of_clk_src_onecell_get, clk_data))
++		pr_err("registering bus-gate clock %s failed\n", node->name);
++
++	return;
++
++err_free_data:
++	kfree(clk_data);
++err_unmap:
++	iounmap(reg);
++	of_address_to_resource(node, 0, &res);
++	release_mem_region(res.start, resource_size(&res));
++}
++
++CLK_OF_DECLARE(sunxi_multi_bus_gates, "allwinner,sunxi-multi-bus-gates-clk",
++	       sunxi_multi_bus_gates_init);
+-- 
+2.6.4
