@@ -1,60 +1,58 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Sun, 21 Feb 2016 20:54:17 -0600
-From: Rob Herring <robh@kernel.org>
-To: Wenyou Yang <wenyou.yang@atmel.com>
-Subject: Re: [PATCH v3 4/4] Documentation: atmel-pmc: add DT bindings for
- fast startup
-Message-ID: <20160222025417.GH15973@rob-hp-laptop>
-References: <1455507630-29592-1-git-send-email-wenyou.yang@atmel.com>
- <1455507630-29592-5-git-send-email-wenyou.yang@atmel.com>
+Return-Path: <yoshihiro.shimoda.uh@renesas.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, "Geert
+ Uytterhoeven" <geert+renesas@glider.be>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] clk: shmobile: r8a7795: Add USB-DMAC clocks
+Date: Mon, 1 Feb 2016 11:18:45 +0000
+Message-ID: <SG2PR06MB0919CFD5EAB2E4F24106137FD8DE0@SG2PR06MB0919.apcprd06.prod.outlook.com>
+References: <1454322472-6696-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+	<CAMuHMdX7HBvGzeqsCVw6bUXBvXa5uMdiZ8GJD75bGezVz2WOxA@mail.gmail.com>
+	<SG2PR06MB0919563D4CD793A18AC3D839D8DE0@SG2PR06MB0919.apcprd06.prod.outlook.com>
+ <CAMuHMdUr-nrP3z4qXiSwnwP-Exjcy3=fOh0NVgPBDmuF94fAQw@mail.gmail.com>
+In-Reply-To: <CAMuHMdUr-nrP3z4qXiSwnwP-Exjcy3=fOh0NVgPBDmuF94fAQw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1455507630-29592-5-git-send-email-wenyou.yang@atmel.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, Russell King <linux@arm.linux.org.uk>,
- Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Nicolas Ferre <nicolas.ferre@atmel.com>, linux-kernel@vger.kernel.org,
- Mark Brown <broonie@kernel.org>,
- Alexandre Belloni <alexandre.belloni@free-electrons.com>,
- Kumar Gala <galak@codeaurora.org>,
- Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Feb 15, 2016 at 11:40:30AM +0800, Wenyou Yang wrote:
-> Add DT bindings to configurate the PMC_FSMR and PMC_FSPR registers
-> to trigger a fast restart signal to PMC.
-> 
-> Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
-> Document: binding
-> 
-> ---
-> 
-> Changes in v3:
->  - update the property description.
-
-This is not helpful. Assume I don't remember what I told you and you 
-need to jog my memory what exactly changed so I don't have to go look it 
-up.
-
-> 
-> Changes in v2:
->  - change the property name and property description.
-> 
->  .../devicetree/bindings/arm/atmel-pmc.txt          |   63 ++++++++++++++++++++
->  1 file changed, 63 insertions(+)
-
-Acked-by: Rob Herring <robh@kernel.org>
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IGdlZXJ0LnV5dHRlcmhvZXZlbkBnbWFpbC5jb20gW21h
+aWx0bzpnZWVydC51eXR0ZXJob2V2ZW5AZ21haWwuY29tXSBPbiBCZWhhbGYgT2YgR2VlcnQgVXl0
+dGVyaG9ldmVuDQo+IFNlbnQ6IE1vbmRheSwgRmVicnVhcnkgMDEsIDIwMTYgODoxNiBQTQ0KPiAN
+Cj4gSGkgU2hpbW9kYS1zYW4sDQo+IA0KPiBPbiBNb24sIEZlYiAxLCAyMDE2IGF0IDEyOjA2IFBN
+LCBZb3NoaWhpcm8gU2hpbW9kYQ0KPiA8eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+
+IHdyb3RlOg0KPiA+PiBGcm9tOiBnZWVydC51eXR0ZXJob2V2ZW5AZ21haWwuY29tIFttYWlsdG86
+Z2VlcnQudXl0dGVyaG9ldmVuQGdtYWlsLmNvbV0gT24gQmVoYWxmIE9mIEdlZXJ0IFV5dHRlcmhv
+ZXZlbg0KPiA+PiA+IC0tLSBhL2RyaXZlcnMvY2xrL3NobW9iaWxlL3I4YTc3OTUtY3BnLW1zc3Iu
+Yw0KPiA+PiA+ICsrKyBiL2RyaXZlcnMvY2xrL3NobW9iaWxlL3I4YTc3OTUtY3BnLW1zc3IuYw0K
+PiA+PiA+IEBAIC0xMjQsNiArMTI0LDggQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBtc3NyX21vZF9j
+bGsgcjhhNzc5NV9tb2RfY2xrc1tdIF9faW5pdGNvbnN0ID0gew0KPiA+PiA+ICAgICAgICAgREVG
+X01PRCgicGNpZTAiLCAgICAgICAgICAgICAgICAgMzE5LCAgIFI4QTc3OTVfQ0xLX1MzRDEpLA0K
+PiA+PiA+ICAgICAgICAgREVGX01PRCgidXNiMy1pZjEiLCAgICAgICAgICAgICAgMzI3LCAgIFI4
+QTc3OTVfQ0xLX1MzRDEpLA0KPiA+PiA+ICAgICAgICAgREVGX01PRCgidXNiMy1pZjAiLCAgICAg
+ICAgICAgICAgMzI4LCAgIFI4QTc3OTVfQ0xLX1MzRDEpLA0KPiA+PiA+ICsgICAgICAgREVGX01P
+RCgidXNiLWRtYWMwIiwgICAgICAgICAgICAgMzMwLCAgIFI4QTc3OTVfQ0xLX1MzRDIpLA0KPiA+
+PiA+ICsgICAgICAgREVGX01PRCgidXNiLWRtYWMxIiwgICAgICAgICAgICAgMzMxLCAgIFI4QTc3
+OTVfQ0xLX1MzRDIpLA0KPiA+Pg0KPiA+PiBUaGUgZGF0YXNoZWV0IGlzIG5vdCB2ZXJ5IGNsZWFy
+IGFib3V0IHdoZXRoZXIgdGhlIG1vZHVsZSBjbG9jayBpcyBiYXNlZCBvZiBzM2QxDQo+ID4+ICgy
+NjYgTUh6KSBvciBzM2QyICgxMzMgTUh6KSwgYnV0IGdpdmVuIHRoZSBjb21tZW50ICIuLi4gaXQg
+aXMgcmVjb21tZW5kZWQgdG8NCj4gPj4gYWxsb3cgc2V2ZXJhbCB0ZW5zIG9mIGNsb2NrcyBpZiBv
+cGVyYXRpbmcgYXQgMjYwIE1IeiAuLi4iIGluIHNlY3Rpb24gNzUuMi4yDQo+ID4+ICJETUEwLzEg
+U29mdHdhcmUgUmVzZXQgUmVnaXN0ZXIiIG9mIHRoZSBkYXRhc2hlZXQsIEknbSBpbmNsaW5lZCB0
+byBiZWxpZXZlIHMzZDENCj4gPj4gd291bGQgYmUgY29ycmVjdC4NCj4gPg0KPiA+IEFjY29yZGlu
+ZyB0byB0aGUgSFcgdGVhbSAoaW4gY2FzZSBvZiBnZW4yIHRob3VnaCk6DQo+ID4NCj4gPiBJbiBn
+ZW4yIChJbiBnZW4zIEkgYXNzdW1lZCkNCj4gPiAgWlMgKFMzRDEpICAgICA6IEZvciB1c2luZyBE
+UkFNIGFjY2Vzcw0KPiA+ICBIUCAoUzNEMikgICAgIDogRm9yIHVzaW5nIHJlZ2lzdGVyIGFjY2Vz
+cw0KPiA+ICA0OE1IeiAoNTBNSHopIDogRm9yIHVzaW5nIFVTQiB0cmFuc2Zlcg0KPiA+DQo+ID4g
+U28sIEkgYWxzbyB0aGluayB0aGF0IHMzZDEgd291bGQgYmUgY29ycmVjdC4NCj4gPiBXaGF0IGRv
+IHlvdSB0aGluaz8NCj4gDQo+IFRoYW5rcywgdGhhdCBtYWtlcyB0d28gb2YgdXMgOi0pDQo+IEhl
+bmNlIHBsZWFzZSB1c2UgczNkMS4NCg0KVGhhbmsgeW91IGZvciB0aGUgY29tbWVudCA6KQ0KSSB3
+aWxsIHN1Ym1pdCB2MiBwYXRjaCBzb29uLg0KDQpCZXN0IHJlZ2FyZHMsDQpZb3NoaWhpcm8gU2hp
+bW9kYQ0KDQo+IEdye29ldGplLGVldGluZ31zLA0KPiANCj4gICAgICAgICAgICAgICAgICAgICAg
+ICAgR2VlcnQNCj4gDQo+IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMg
+b2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5vcmcNCj4gDQo+IEluIHBl
+cnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxm
+IGEgaGFja2VyLiBCdXQNCj4gd2hlbiBJJ20gdGFsa2luZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qg
+c2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcgbGlrZSB0aGF0Lg0KPiAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZhbGRzDQo=
