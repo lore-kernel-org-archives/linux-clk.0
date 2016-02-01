@@ -1,95 +1,80 @@
-Return-Path: <rklein@nvidia.com>
-From: Rhyland Klein <rklein@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>
-CC: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mark Kuo <mkuo@nvidia.com>,
-	Rhyland Klein <rklein@nvidia.com>
-Subject: [Patch V2 7/9] clk: tegra: pll: Do not disable PLLE when under HW control
-Date: Thu, 14 Jan 2016 14:24:36 -0500
-Message-ID: <1452799478-14791-8-git-send-email-rklein@nvidia.com>
-In-Reply-To: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
-References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: rklein@nvidia.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:36510 "EHLO
+	mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932748AbcBAAKy (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 31 Jan 2016 19:10:54 -0500
+From: Antony Pavlov <antonynpavlov@gmail.com>
+To: linux-mips@linux-mips.org
+Cc: Antony Pavlov <antonynpavlov@gmail.com>,
+	Alban Bedel <albeu@free.fr>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [RFC v4 04/15] MIPS: dts: qca: ar9132: use dt-bindings/clock/ath79-clk.h macros
+Date: Mon,  1 Feb 2016 03:10:29 +0300
+Message-Id: <1454285440-18916-5-git-send-email-antonynpavlov@gmail.com>
+In-Reply-To: <1454285440-18916-1-git-send-email-antonynpavlov@gmail.com>
+References: <1454285440-18916-1-git-send-email-antonynpavlov@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mark Kuo <mkuo@nvidia.com>
+The old ar9132 clk implementation (see arch/mips/ath79/clock.c)
+have had only 3 devicetree clks (cpu, ddr, ahb). Two additional
+clocks (wdt and uart) have realized as aliases for ahb clock.
+In the old ar9132 clk implementation the wdt and uart clocks
+were inaccessible via devicetree so index "2" used for reference
+to ahb clock instead, e.g.
 
-SW should not disable PLLE if PLLE is already put under HW control.
+    clocks = <&pll 2>;
 
-Signed-off-by: Mark Kuo <mkuo@nvidia.com>
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+In the new ar9132 clk implementation (see drivers/clk/clk-ath79.c)
+the wdt and uart clks are accessible via devicetree
+so appropriate ATH79_CLK_WDT and ATH79_CLK_UART are used in ar9132.dtsi.
+
+Signed-off-by: Antony Pavlov <antonynpavlov@gmail.com>
+Cc: Alban Bedel <albeu@free.fr>
+Cc: linux-mips@linux-mips.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
 ---
- drivers/clk/tegra/clk-pll.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+ arch/mips/boot/dts/qca/ar9132.dtsi | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 65156486889a..d9c3109b75bd 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -2012,7 +2012,7 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
- 	struct tegra_clk_pll_freq_table sel;
- 	u32 val;
--	int ret;
-+	int ret = 0;
- 	unsigned long flags = 0;
- 	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
- 
-@@ -2022,16 +2022,14 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
- 
-+	val = pll_readl(pll->params->aux_reg, pll);
-+	if (val & PLLE_AUX_SEQ_ENABLE)
-+		goto out;
+diff --git a/arch/mips/boot/dts/qca/ar9132.dtsi b/arch/mips/boot/dts/qca/ar9132.dtsi
+index 3ad4ba9..a1b4fa1 100644
+--- a/arch/mips/boot/dts/qca/ar9132.dtsi
++++ b/arch/mips/boot/dts/qca/ar9132.dtsi
+@@ -1,3 +1,5 @@
++#include <dt-bindings/clock/ath79-clk.h>
 +
- 	val = pll_readl_base(pll);
- 	val &= ~BIT(30); /* Disable lock override */
- 	pll_writel_base(val, pll);
+ / {
+ 	compatible = "qca,ar9132";
  
--	val = pll_readl(pll->params->aux_reg, pll);
--	val |= PLLE_AUX_ENABLE_SWCTL;
--	val &= ~PLLE_AUX_SEQ_ENABLE;
--	pll_writel(val, pll->params->aux_reg, pll);
--	udelay(1);
--
- 	val = pll_readl_misc(pll);
- 	val |= PLLE_MISC_LOCK_ENABLE;
- 	val |= PLLE_MISC_IDDQ_SW_CTRL;
-@@ -2104,15 +2102,25 @@ static void clk_plle_tegra210_disable(struct clk_hw *hw)
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
+@@ -57,7 +59,7 @@
+ 				reg = <0x18020000 0x20>;
+ 				interrupts = <3>;
  
-+	/* If PLLE HW sequencer is enabled, SW should not disable PLLE */
-+	val = pll_readl(pll->params->aux_reg, pll);
-+	if (val & PLLE_AUX_SEQ_ENABLE)
-+		goto out;
-+
- 	val = pll_readl_base(pll);
- 	val &= ~PLLE_BASE_ENABLE;
- 	pll_writel_base(val, pll);
+-				clocks = <&pll 2>;
++				clocks = <&pll ATH79_CLK_UART>;
+ 				clock-names = "uart";
  
-+	val = pll_readl(pll->params->aux_reg, pll);
-+	val |= PLLE_AUX_ENABLE_SWCTL | PLLE_AUX_SS_SWCTL;
-+	pll_writel(val, pll->params->aux_reg, pll);
-+
- 	val = pll_readl_misc(pll);
- 	val |= PLLE_MISC_IDDQ_SW_CTRL | PLLE_MISC_IDDQ_SW_VALUE;
- 	pll_writel_misc(val, pll);
- 	udelay(1);
+ 				reg-io-width = <4>;
+@@ -100,7 +102,7 @@
  
-+out:
- 	if (pll->lock)
- 		spin_unlock_irqrestore(pll->lock, flags);
- }
+ 				interrupts = <4>;
+ 
+-				clocks = <&pll 2>;
++				clocks = <&pll ATH79_CLK_WDT>;
+ 				clock-names = "wdt";
+ 			};
+ 
+@@ -144,7 +146,7 @@
+ 			compatible = "qca,ar9132-spi", "qca,ar7100-spi";
+ 			reg = <0x1f000000 0x10>;
+ 
+-			clocks = <&pll 2>;
++			clocks = <&pll ATH79_CLK_AHB>;
+ 			clock-names = "ahb";
+ 
+ 			status = "disabled";
 -- 
-1.9.1
+2.7.0
+
