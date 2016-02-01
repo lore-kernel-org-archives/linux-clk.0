@@ -1,62 +1,35 @@
-Return-Path: <horms@verge.net.au>
-Date: Tue, 23 Feb 2016 18:10:06 +0900
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] clk: shmobile: Remove ARCH_SHMOBILE_MULTI
-Message-ID: <20160223091000.GA18694@verge.net.au>
-References: <1456189051-519-1-git-send-email-horms+renesas@verge.net.au>
- <CAMuHMdVDneo95F3JyFuvGZ_Bk4dL=ve41XONHj4b8DC4X7NMcQ@mail.gmail.com>
+Return-Path: <robh@kernel.org>
+Date: Mon, 1 Feb 2016 08:49:23 -0600
+From: Rob Herring <robh@kernel.org>
+To: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Cc: corbet@lwn.net, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	maxime.ripard@free-electrons.com, linux@arm.linux.org.uk,
+	emilio@elopez.com.ar, jenskuske@gmail.com, hdegoede@redhat.com,
+	wens@csie.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com, linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org, mturquette@baylibre.com,
+	sboyd@codeaurora.org, patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 04/14] clk: sunxi: add ahb1 clock for A83T
+Message-ID: <20160201144923.GA29286@rob-hp-laptop>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1454203266-4450-5-git-send-email-vishnupatekar0510@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAMuHMdVDneo95F3JyFuvGZ_Bk4dL=ve41XONHj4b8DC4X7NMcQ@mail.gmail.com>
+In-Reply-To: <1454203266-4450-5-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Feb 23, 2016 at 09:19:27AM +0100, Geert Uytterhoeven wrote:
-> CC The New Mike ;-)
+On Sun, Jan 31, 2016 at 09:20:56AM +0800, Vishnu Patekar wrote:
+> AHB1 on A83T is similar to ahb1 on A31, except parents are different.
+> clock index 0b1x is PLL6.
 > 
-> On Tue, Feb 23, 2016 at 1:57 AM, Simon Horman
-> <horms+renesas@verge.net.au> wrote:
-> > As of 9b5ba0df4ea4 ("ARM: shmobile: Introduce ARCH_RENESAS") all platforms
-> > that use Renesas clock drivers now select ARCH_RENESAS. As it is present in
-> > drivers/clk/Makefile ARCH_SHMOBILE_MULTI may now be removed.
-> >
-> > This is part of an ongoing process to migrate from ARCH_SHMOBILE to
-> > ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
-> > appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
-> >
-> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> 
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> > ---
-> >  drivers/clk/Makefile | 1 -
-> >  1 file changed, 1 deletion(-)
-> >
-> >  Based on clk-next
-> >
-> > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> > index bae4be6501df..b19af449d2f3 100644
-> > --- a/drivers/clk/Makefile
-> > +++ b/drivers/clk/Makefile
-> > @@ -70,7 +70,6 @@ obj-$(CONFIG_COMMON_CLK_PXA)          += pxa/
-> >  obj-$(CONFIG_COMMON_CLK_QCOM)          += qcom/
-> >  obj-$(CONFIG_ARCH_ROCKCHIP)            += rockchip/
-> >  obj-$(CONFIG_COMMON_CLK_SAMSUNG)       += samsung/
-> > -obj-$(CONFIG_ARCH_SHMOBILE_MULTI)      += shmobile/
-> 
-> Should we rename clk/shmobile/ to clk/renesas/?
-> Or is that too much of a hassle?
+> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
 
-I think it is a good idea.  And I suspect it shouldn't be too difficult if
-we coordinate things with Mike to handle any in-flight patches for that
-directory.
+Acked-by: Rob Herring <robh@kernel.org>
 
-> >  obj-$(CONFIG_ARCH_RENESAS)             += shmobile/
-> >  obj-$(CONFIG_ARCH_SIRF)                        += sirf/
-> >  obj-$(CONFIG_ARCH_SOCFPGA)             += socfpga/
+>  drivers/clk/sunxi/clk-sunxi.c                     | 75 +++++++++++++++++++++++
+>  2 files changed, 76 insertions(+)
