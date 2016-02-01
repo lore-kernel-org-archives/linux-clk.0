@@ -1,94 +1,43 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Kevin Smith <kevin.smith@elecsyscorp.com>
-Cc: "linux-clk\@vger.kernel.org" <linux-clk@vger.kernel.org>,  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCH v3 2/2] clk: mvebu: Move corediv config to mvebu config
-References: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
-	<1455209620-6125-1-git-send-email-kevin.smith@elecsyscorp.com>
-	<1455209620-6125-2-git-send-email-kevin.smith@elecsyscorp.com>
-Date: Fri, 12 Feb 2016 17:28:37 +0100
-In-Reply-To: <1455209620-6125-2-git-send-email-kevin.smith@elecsyscorp.com>
-	(Kevin Smith's message of "Thu, 11 Feb 2016 16:54:00 +0000")
-Message-ID: <87r3ghx58q.fsf@free-electrons.com>
+Return-Path: <>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>
+CC: <geert+renesas@glider.be>, <linux-renesas-soc@vger.kernel.org>, Yoshihiro
+ Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2] clk: shmobile: r8a7795: Add USB-DMAC clocks
+Date: Mon, 1 Feb 2016 20:29:05 +0900
+Message-ID: <1454326145-4008-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Kevin,
-=20
- On jeu., f=C3=A9vr. 11 2016, Kevin Smith <kevin.smith@elecsyscorp.com> wro=
-te:
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ This patch is based on the renesas-drivers.git /
+ renesas-devel-20160126-v4.5-rc1 tag.
+ (commit id = f834955ea55e4bed01d55339a4428eef219e8313)
 
-> The core clock does not depend on corediv, so enabling corediv
-> based on the clock is not really correct.  Move the corediv
-> config option from the clock driver Kconfig to the mvebu Kconfig
-> so that it can be enabled by the MACH option instead.
->
-> This also enables corediv on Armada 375 and 38X, which was
-> previously missing.
->
-> Signed-off-by: Kevin Smith <kevin.smith@elecsyscorp.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+ Reference:
+ http://thread.gmane.org/gmane.linux.kernel.clk/3337/focus=184
 
-Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+ Changes from v1:
+  - Use R8A7795_CLK_S3D1 instead of R8A7795_CLK_S3D2.
 
-Thanks,
+ drivers/clk/shmobile/r8a7795-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Gregory
-
-> ---
->  arch/arm/mach-mvebu/Kconfig | 3 +++
->  drivers/clk/mvebu/Kconfig   | 1 -
->  2 files changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm/mach-mvebu/Kconfig b/arch/arm/mach-mvebu/Kconfig
-> index 64e3d2c..71e97da 100644
-> --- a/arch/arm/mach-mvebu/Kconfig
-> +++ b/arch/arm/mach-mvebu/Kconfig
-> @@ -32,6 +32,7 @@ config MACH_ARMADA_370
->  	select CPU_PJ4B
->  	select MACH_MVEBU_V7
->  	select PINCTRL_ARMADA_370
-> +	select MVEBU_CLK_COREDIV
->  	help
->  	  Say 'Y' here if you want your kernel to support boards based
->  	  on the Marvell Armada 370 SoC with device tree.
-> @@ -48,6 +49,7 @@ config MACH_ARMADA_375
->  	select HAVE_SMP
->  	select MACH_MVEBU_V7
->  	select PINCTRL_ARMADA_375
-> +	select MVEBU_CLK_COREDIV
->  	help
->  	  Say 'Y' here if you want your kernel to support boards based
->  	  on the Marvell Armada 375 SoC with device tree.
-> @@ -64,6 +66,7 @@ config MACH_ARMADA_38X
->  	select HAVE_SMP
->  	select MACH_MVEBU_V7
->  	select PINCTRL_ARMADA_38X
-> +	select MVEBU_CLK_COREDIV
->  	help
->  	  Say 'Y' here if you want your kernel to support boards based
->  	  on the Marvell Armada 380/385 SoC with device tree.
-> diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
-> index e1bc567..eaee8f0 100644
-> --- a/drivers/clk/mvebu/Kconfig
-> +++ b/drivers/clk/mvebu/Kconfig
-> @@ -11,7 +11,6 @@ config ARMADA_370_CLK
->  	bool
->  	select MVEBU_CLK_COMMON
->  	select MVEBU_CLK_CPU
-> -	select MVEBU_CLK_COREDIV
->=20=20
->  config ARMADA_375_CLK
->  	bool
-> --=20
-> 2.4.6
-
---=20
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+diff --git a/drivers/clk/shmobile/r8a7795-cpg-mssr.c b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
+index fc260b3..7bcfe89 100644
+--- a/drivers/clk/shmobile/r8a7795-cpg-mssr.c
++++ b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
+@@ -124,6 +124,8 @@ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
+ 	DEF_MOD("pcie0",		 319,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("usb3-if1",		 327,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("usb3-if0",		 328,	R8A7795_CLK_S3D1),
++	DEF_MOD("usb-dmac0",		 330,	R8A7795_CLK_S3D1),
++	DEF_MOD("usb-dmac1",		 331,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("intc-ap",		 408,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("audmac0",		 502,	R8A7795_CLK_S3D4),
+ 	DEF_MOD("audmac1",		 501,	R8A7795_CLK_S3D4),
+-- 
+1.9.1
