@@ -1,154 +1,39 @@
-Return-Path: <robh@kernel.org>
-Date: Tue, 2 Feb 2016 15:50:36 -0600
-From: Rob Herring <robh@kernel.org>
-To: Jean-Francois Moine <moinejf@free.fr>
-Cc: Dave Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-	Emilio Lopez <emilio@elopez.com.ar>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] drm: sunxi: Add a basic DRM driver for Allwinner
- DE2
-Message-ID: <20160202215036.GA25521@rob-hp-laptop>
-References: <cover.1454435944.git.moinejf@free.fr>
- <76ae5b406ad64b2717c0b1c62c3005a62b2715b8.1454435944.git.moinejf@free.fr>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <76ae5b406ad64b2717c0b1c62c3005a62b2715b8.1454435944.git.moinejf@free.fr>
+In-Reply-To: <20160201144923.GA29286@rob-hp-laptop>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1454203266-4450-5-git-send-email-vishnupatekar0510@gmail.com> <20160201144923.GA29286@rob-hp-laptop>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 1 Feb 2016 22:54:16 +0800
+Message-ID: <CAGb2v65zMGEagqML+2Y27M1hbdEWpMj96i0Dr5Ak67jnTcwhyw@mail.gmail.com>
+Subject: Re: [PATCH 04/14] clk: sunxi: add ahb1 clock for A83T
+To: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
+	Jens Kuske <jenskuske@gmail.com>, Hans De Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Reinder de Haan <patchesrdh@mveas.com>, linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Feb 02, 2016 at 04:25:51PM +0100, Jean-Francois Moine wrote:
-> In recent SoCs, as the H3, Allwinner uses a new display interface, DE2.
-> This patch adds a DRM video driver for this interface.
-> 
-> Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
-> ---
-> v4: (no change)
-> v3:
-> 	- add the hardware cursor
-> 	- simplify and fix the DE2 init sequences
-> 	- generation for all SUNXI SoCs (Andre Przywara)
-> v2:
-> 	- remarks from Russell King
-> 	- DT documentation added
-> 	- working resolution change with xrandr
-> 	- removal of the HDMI driver
-> ---
->  .../devicetree/bindings/display/sunxi.txt          |  81 ++++
->  drivers/gpu/drm/Kconfig                            |   2 +
->  drivers/gpu/drm/Makefile                           |   1 +
->  drivers/gpu/drm/sunxi/Kconfig                      |  20 +
->  drivers/gpu/drm/sunxi/Makefile                     |   7 +
->  drivers/gpu/drm/sunxi/de2_crtc.c                   | 421 +++++++++++++++++
->  drivers/gpu/drm/sunxi/de2_crtc.h                   |  61 +++
->  drivers/gpu/drm/sunxi/de2_de.c                     | 505 +++++++++++++++++++++
->  drivers/gpu/drm/sunxi/de2_drm.h                    |  40 ++
->  drivers/gpu/drm/sunxi/de2_drv.c                    | 377 +++++++++++++++
->  drivers/gpu/drm/sunxi/de2_plane.c                  |  91 ++++
->  11 files changed, 1606 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/sunxi.txt
->  create mode 100644 drivers/gpu/drm/sunxi/Kconfig
->  create mode 100644 drivers/gpu/drm/sunxi/Makefile
->  create mode 100644 drivers/gpu/drm/sunxi/de2_crtc.c
->  create mode 100644 drivers/gpu/drm/sunxi/de2_crtc.h
->  create mode 100644 drivers/gpu/drm/sunxi/de2_de.c
->  create mode 100644 drivers/gpu/drm/sunxi/de2_drm.h
->  create mode 100644 drivers/gpu/drm/sunxi/de2_drv.c
->  create mode 100644 drivers/gpu/drm/sunxi/de2_plane.c
-> 
-> diff --git a/Documentation/devicetree/bindings/display/sunxi.txt b/Documentation/devicetree/bindings/display/sunxi.txt
-> new file mode 100644
-> index 0000000..35f9763
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/sunxi.txt
-> @@ -0,0 +1,81 @@
-> +Allwinner sunxi display subsystem
-> +=================================
-> +
-> +The sunxi display subsystems contain a display controller (DE),
-> +one or two LCD controllers (TCON) and their external interfaces.
-> +
-> +Display controller
-> +==================
-> +
-> +Required properties:
-> +
-> +- compatible: value should be one of the following
-> +		"allwinner,sun8i-h3-display-engine"
-> +
-> +- clocks: must include clock specifiers corresponding to entries in the
-> +		clock-names property.
-> +
-> +- clock-names: must contain
-> +		gate: for DE activation
-> +		clock: DE clock
-> +
-> +- resets: phandle to the reset of the device
-> +
-> +- ports: phandle's to the LCD ports
-> +
-> +LCD controller
-> +==============
-> +
-> +Required properties:
-> +
-> +- compatible: value should be one of the following
-> +		"allwinner,sun8i-h3-lcd"
-> +
-> +- clocks: must include clock specifiers corresponding to entries in the
-> +		clock-names property.
-> +
-> +- clock-names: must contain
-> +		gate: for LCD activation
-> +		clock: pixel clock
-> +
-> +- resets: phandle to the reset of the device
-> +
-> +- port: port node with endpoint definitions as defined in
-> +	Documentation/devicetree/bindings/media/video-interfaces.txt
+On Mon, Feb 1, 2016 at 10:49 PM, Rob Herring <robh@kernel.org> wrote:
+> On Sun, Jan 31, 2016 at 09:20:56AM +0800, Vishnu Patekar wrote:
+>> AHB1 on A83T is similar to ahb1 on A31, except parents are different.
+>> clock index 0b1x is PLL6.
+>>
+>> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+>> ---
+>>  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+>
+> Acked-by: Rob Herring <robh@kernel.org>
+>
+>>  drivers/clk/sunxi/clk-sunxi.c                     | 75 +++++++++++++++++++++++
+>>  2 files changed, 76 insertions(+)
 
-Define how many ports and endpoints.
-
-> +
-> +Example:
-> +
-> +	de: de-controller@01000000 {
-> +		compatible = "allwinner,sun8i-h3-display-engine";
-> +		...
-> +		clocks = <&bus_gates 44>, <&de_clk>;
-> +		clock-names = "gate", "clock";
-> +		resets = <&ahb_rst 44>;
-> +		ports = <&lcd0_p>;
-
-This is pointless if you only have one item in ports. Is this really a 
-separate h/w block? Can't you move all this into the node below?
-
-> +	};
-> +
-> +	lcd0: lcd-controller@01c0c000 {
-> +		compatible = "allwinner,sun8i-h3-lcd";
-> +		...
-> +		clocks = <&bus_gates 35>, <&tcon0_clk>;
-> +		clock-names = "gate", "clock";
-> +		resets = <&ahb_rst 35>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		lcd0_p: port {
-> +			lcd0_ep: endpoint {
-> +				remote-endpoint = <&hdmi_ep>;
-> +			};
-> +		};
-> +	};
-> +
-> +	hdmi: hdmi@01ee0000 {
-> +		...
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		port {
-> +			hdmi_ep: endpoint {
-> +				remote-endpoint = <&lcd0_ep>;
-> +			};
-> +		};
-> +	};
+Acked-by: Chen-Yu Tsai <wens@csie.org>
