@@ -1,165 +1,76 @@
-Return-Path: <hdegoede@redhat.com>
-Subject: Re: [linux-sunxi] (Still) breaking DT compatibility
-To: Andre Przywara <andre.przywara@arm.com>
-References: <1455300000-18723-1-git-send-email-andre.przywara@arm.com>
- <56BE29A1.3060107@redhat.com> <56C1A590.6030500@arm.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Chen-Yu Tsai <wens@csie.org>, Stephen Boyd <sboyd@codeaurora.org>,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-arm-kernel@lists.infradead.org,
-        Rob Herring <rob.herring@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        Grant Likely <grant.likely@linaro.org>,
-        Frank Rowand <frowand.list@gmail.com>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <56C1C7BB.1040602@redhat.com>
-Date: Mon, 15 Feb 2016 13:42:35 +0100
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Mon, 1 Feb 2016 20:46:26 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Jens Kuske <jenskuske@gmail.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Jean-Francois Moine <moinejf@free.fr>
+Subject: Re: [PATCH v3 2/2] clk: sunxi: Refactor A31 PLL6 so that it can be
+ reused
+Message-ID: <20160201194626.GH4652@lukather>
+References: <1454008958-12655-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1454008958-12655-2-git-send-email-maxime.ripard@free-electrons.com>
+ <56AB38C6.2010909@gmail.com>
+ <CAGb2v67v6-BCPp2u7vieCGnCAsHFv4XjnRXvfT1vZNHc_Ok0UA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <56C1A590.6030500@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Q6STzHxy03qt/hK9"
+In-Reply-To: <CAGb2v67v6-BCPp2u7vieCGnCAsHFv4XjnRXvfT1vZNHc_Ok0UA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
 
-On 15-02-16 11:16, Andre Przywara wrote:
-> On 12/02/16 18:51, Hans de Goede wrote:
->> Hi,
->>
->> So far I've stayed out of this discussion, but now I feel I have to
->> weigh in:
->>
->> There is no need for this series, device-tree compatibility for
->> sunxi devices is a non issue. No devices ship with dtb files as
->> part of the bootloader / firmware (the vendor kernels do not
->> use dtb at all).
->
-> I think you are barking in the wrong thread here.
-> I deliberately sent some code to bring this discussion back to a more
-> technical level.
->
-> But anyway...
->
->> So we always are using a dtb from the kernel tree, and both Fedora
->> and Debian (AFAIK), the 2 distros which ship with more or less official
->> sunxi support package things
->
-> Actually I am trying to help that it doesn't need to stay this way. I
-> don't see a real reason why a distribution should support a particular
-> platform, they certainly don't for x86, for instance.
-> I think a stable DT would help to overcome this limited support that we
-> see here and would allow distributions to not need to care about sunxi
-> in particular.
+--Q6STzHxy03qt/hK9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Only if board vendors would start to actually ship things that way.
+On Fri, Jan 29, 2016 at 06:14:48PM +0800, Chen-Yu Tsai wrote:
+> >> @@ -173,7 +173,7 @@
+> >>                       #clock-cells =3D <0>;
+> >>                       compatible =3D "allwinner,sun8i-h3-ahb2-clk";
+> >>                       reg =3D <0x01c2005c 0x4>;
+> >> -                     clocks =3D <&ahb1>, <&pll6d2>;
+> >> +                     clocks =3D <&ahb1>, <&pll6>;
+> >
+> > According to the datasheet AHB2 really has PLL6 / 2 as parent, not PLL6
+> > directly.
+>=20
+> Thanks for the save. So we should keep pll6d2_clk.
 
-> There should be one good DT for all kernels - it may be updated
-> (especially if new features get supported), but should never break.
-> Also please note that the DT is not only for Linux, BSDs for instance
-> use it too - for instance FreeBSD on ARM64.
->
->> so that each kernel version uses the dtb
->> files compiled from the dts shipped with that exact kernel version,
->> (through the ftddir directive in extlinux.conf, which is per menu
->> entry / kernel version) even if multiple kernel versions are installed.
->
-> That there are technical ways to mitigate the problem doesn't count as
-> an excuse to break DT.
->
-> To make this clear: The original PLL6 clock _binding_ is actually fine:
-> it describes the clock as per the manual with two clock outputs.
-> It's just the driver that is ignoring the clock-output-names that causes
-> the issue.
-> So we can happily keep the binding, fix the driver and re-use that very
-> binding for PLL8, as well.
-> This fix series here was the easiest approach in terms of changed code.
-> I can make some patches that implement the proper solution - if you
-> promise to not shoot down 0/x again easily.
->
-> I see that good DT bindings are not easy to come up with. Yes, we are
-> not perfect and especially for sunxi with it's bad original
-> documentation we won't create perfect DTs from the beginning.
-> But I think we should at least _try_ to make a DT what's is meant:
-> describing the hardware, part of the firmware and OS agnostic - which
-> implies compatibility.
->
->> So there is no reason, no reason at all to worry too much about dtb
->> compatibility for sunxi devices.
->
-> I think this argument has been discussed quite a bit in the
-> other thread.
-> What I am really worried about is that this now creeps into the arm64 world.
-> Yes, I see your point that it was a no-brainer so far, but that doesn't
-> mean that it has to stay this way. For the A64 for instance there are
-> more devices with eMMC in the pipe (Remix Mini PC and the Olimex board),
-> so we can just put our firmware bits and the boot loader on there and
-> distributions don't need to ship those.
+Indeed thanks for the review. Will fix for v4.
 
-Note that putting a proper version of uboot / the bootloader on the device
-is somewhat orthogonal to the whole DT compatibility discussion, the only
-thing the bootloader has to do with the dtb when using extlinux booting
-is that it has coded which specific dtb file to load for the board,
-currently it loads the actual dtb from ftddir/<name-coded-in-u-boot>.dtb
-where ftddir gets set by the extlinux.conf entry. I realize that this
-will not work when trying to boot a new board with a kernel which does
-not have a dtb for this board, and in this case having some sort of
-fallback ftddir with a dtb would be interesting, and yes this would
-require stable bindings.
+Maxime
 
-I'm not arguing that stable bindings may not be useful but currently
-no-one is doing the above. So currently there is no reason to worry
-too much about stability. If someone had shipped such a board I would
-certainly be in favor of this series. But currently the stability
-problem is a hypothetical problem and I do not think that carrying
-extra code to fix a hypothetical problem is a good idea.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
->> As for compatibility with u-boot, u-boot ships with its own embedded
->> dtb copy, which is based on dts files from the kernel (the u-boot copies
->> get synced regularly), and even if this dtb were to somehow be replaced
->> by a new "incompatible" dtb from a newer kernel there would still not
->> be a problem as u-boot does not (currently) use the clk definitions
->> from the dtb. Note I'm the u-boot sunxi custodian and I'm fine with
->> the proposed changes.
->>
->> TL;DR: NACK for this series.
->
-> Seriously?
+--Q6STzHxy03qt/hK9
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Yes seriously, because you're fixing a hypothetical problem. I'm all
-for not randomly breaking devicetree compatibility and so far on
-sunxi this has only be done 2 or 3 times over the years, but in the
-end it is a balancing act between wishing to keep compatibility and
-wishing to keep clean code.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-As soon as we actually see boards shipping with dtb-s encoded in their
-bootloader, then this balancing act stops and dt compatibility will
-become a hard requirement, but IMHO for now sometimes it is better to
-break compat when this helps to keep things clean.
+iQIcBAEBAgAGBQJWr7YSAAoJEBx+YmzsjxAgL+QP/3rbtYu/x5swAamLGnYZ1Bc2
+HYI4yOzYBWFKY7BKhdKy+ztQFKB88QmHF1apC8J/k96xXiRAjVpHuZ7gKMvrNqK9
+AwOfdrjVQOV4JbvYRkGld9UlkwUdEMJkYX/ZoimsRrJv5Q1heNZL6W8BMvBIGrLu
+BEn456fdWgqnDM9SQ/05Ur69cFSU41tEuk3TEMHV4+2K515k4VIXnyyAORKIpQaR
+Ugav/OlgyqCeKdCxkMacyExVKeHOQUuUTkaDz9mbHq1ETwtCK0o8H1x0JX24fA0s
+NSzAqSdE+ZWIxe44ssmSBPU/HfeiT4qK/vACDO0O1hEtF/TO4J4kf+MtG8pDYVQn
+Z9xcESEJe8RTUBcW3t/jpmOLjIkD5G//ABQKk0Ehdiaq2lcf6CNynWzWq0RTbVG0
+Xq1sjJjqVbfgC+Q10r0pErR2dNIkQlXF7JCl49/E470gUK0Et0qVPlZSRElEFP81
+MjgB2i1CgIl4zrOJtEUl/YZ5zkeHavJKPnXVF7Qr+aTJD3jB37p8EwjvZFiD8n2x
+sk+3RkoerU0jDa8iXBY/MWsH9Mwav6YBd4nKkfrq1u33F8yLmUoOHuqG6ayyz8db
+Tsd3Nkb6mn4dWQXY//wjvwUmoPWSyKr4Dt+V1HSYIWxw7Nwr6ff+0bw5M5qx6yIT
+/s+Dgu4b6XEOHbGVC01T
+=CDhR
+-----END PGP SIGNATURE-----
 
-> I would prefer if you would save your NACKs for patches that break
-> something instead.
->
-> If you are concerned that this fix is too involved, that's mostly due to
-> the reason that I couldn't revert the original patch easily due to
-> conflicts in subsequent patches, so I did a bit more for the rollback.
-> The actual core fix is pretty easy.
->
-> So I hope we can come to a conclusion about this one before I prepare
-> the next set of patches.
-
-I think that the conclusion is that most people are ok with the break,
-as is, since it is known to not cause any real world problems.
-
-But in the end this is Maxime's call.
-
-Regards,
-
-Hans
-
-p.s.
-
-I love the work you've been doing on the A64, I've not had a chance
-to try it out yet though. Have you made any progress with getting
-the mmc slot to work ?  If not maybe I can make some time I've
-prior experience in bringing up the mmc slot on other Allwinner SoCs
+--Q6STzHxy03qt/hK9--
