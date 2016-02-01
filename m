@@ -1,61 +1,93 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] clk: add clk_unregister_fixed_factor()
-Date: Wed,  6 Jan 2016 13:25:09 +0900
-Message-Id: <1452054310-12935-2-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1452054310-12935-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1452054310-12935-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:34733 "EHLO
+	mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932845AbcBAAKz (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Sun, 31 Jan 2016 19:10:55 -0500
+From: Antony Pavlov <antonynpavlov@gmail.com>
+To: linux-mips@linux-mips.org
+Cc: Antony Pavlov <antonynpavlov@gmail.com>,
+	Alban Bedel <albeu@free.fr>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [RFC v4 05/15] MIPS: dts: qca: ar9132: make extosc-related description shorter
+Date: Mon,  1 Feb 2016 03:10:30 +0300
+Message-Id: <1454285440-18916-6-git-send-email-antonynpavlov@gmail.com>
+In-Reply-To: <1454285440-18916-1-git-send-email-antonynpavlov@gmail.com>
+References: <1454285440-18916-1-git-send-email-antonynpavlov@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Allow to unregister fixed factor clock.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Antony Pavlov <antonynpavlov@gmail.com>
+Cc: Alban Bedel <albeu@free.fr>
+Cc: linux-mips@linux-mips.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
 ---
+ arch/mips/boot/dts/qca/ar9132.dtsi               |  9 ++++++++-
+ arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts | 14 ++++----------
+ 2 files changed, 12 insertions(+), 11 deletions(-)
 
- drivers/clk/clk-fixed-factor.c | 13 +++++++++++++
- include/linux/clk-provider.h   |  1 +
- 2 files changed, 14 insertions(+)
-
-diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-index 83de57a..f9c80e3 100644
---- a/drivers/clk/clk-fixed-factor.c
-+++ b/drivers/clk/clk-fixed-factor.c
-@@ -102,6 +102,19 @@ struct clk *clk_register_fixed_factor(struct device *dev, const char *name,
- }
- EXPORT_SYMBOL_GPL(clk_register_fixed_factor);
+diff --git a/arch/mips/boot/dts/qca/ar9132.dtsi b/arch/mips/boot/dts/qca/ar9132.dtsi
+index a1b4fa1..e6baa1e 100644
+--- a/arch/mips/boot/dts/qca/ar9132.dtsi
++++ b/arch/mips/boot/dts/qca/ar9132.dtsi
+@@ -28,6 +28,13 @@
+ 					<&ddr_ctrl 0>, <&ddr_ctrl 1>;
+ 	};
  
-+void clk_unregister_fixed_factor(struct clk *clk)
-+{
-+	struct clk_hw *hw;
++	extosc: oscillator {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
 +
-+	hw = __clk_get_hw(clk);
-+	if (!hw)
-+		return;
++		/* The board must provide the extosc clock frequency */
++	};
 +
-+	clk_unregister(clk);
-+	kfree(to_clk_fixed_factor(hw));
-+}
-+EXPORT_SYMBOL_GPL(clk_unregister_fixed_factor);
-+
- #ifdef CONFIG_OF
- /**
-  * of_fixed_factor_clk_setup() - Setup function for simple fixed factor clock
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index e7bd710..39edfd7 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -486,6 +486,7 @@ extern const struct clk_ops clk_fixed_factor_ops;
- struct clk *clk_register_fixed_factor(struct device *dev, const char *name,
- 		const char *parent_name, unsigned long flags,
- 		unsigned int mult, unsigned int div);
-+void clk_unregister_fixed_factor(struct clk *clk);
+ 	ahb {
+ 		compatible = "simple-bus";
+ 		ranges;
+@@ -89,8 +96,8 @@
+ 						"qca,ar9130-pll";
+ 				reg = <0x18050000 0x20>;
  
- /**
-  * struct clk_fractional_divider - adjustable fractional divider clock
++				clocks = <&extosc>;
+ 				clock-names = "ref";
+-				/* The board must provides the ref clock */
+ 
+ 				#clock-cells = <1>;
+ 				clock-output-names = "cpu", "ddr", "ahb";
+diff --git a/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts b/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
+index e535ee3..9b4132f 100644
+--- a/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
++++ b/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
+@@ -18,21 +18,11 @@
+ 		reg = <0x0 0x2000000>;
+ 	};
+ 
+-	extosc: oscillator {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <40000000>;
+-	};
+-
+ 	ahb {
+ 		apb {
+ 			uart@18020000 {
+ 				status = "okay";
+ 			};
+-
+-			pll-controller@18050000 {
+-				clocks = <&extosc>;
+-			};
+ 		};
+ 
+ 		usb@1b000100 {
+@@ -118,3 +108,7 @@
+ 		};
+ 	};
+ };
++
++&extosc {
++	clock-frequency = <40000000>;
++};
 -- 
-1.9.1
+2.7.0
+
