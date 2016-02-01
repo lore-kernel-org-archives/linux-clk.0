@@ -1,63 +1,32 @@
+Return-Path: <robh@kernel.org>
+Date: Mon, 1 Feb 2016 08:57:49 -0600
+From: Rob Herring <robh@kernel.org>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: sunxi: Add support for A80 APBS clock
+Message-ID: <20160201145749.GA31544@rob-hp-laptop>
+References: <1454337769-4130-1-git-send-email-wens@csie.org>
+ <1454337769-4130-2-git-send-email-wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <1455851525-18972-1-git-send-email-sboyd@codeaurora.org>
-References: <20160219030731.GS4847@codeaurora.org>
-	<1455851525-18972-1-git-send-email-sboyd@codeaurora.org>
-Date: Fri, 19 Feb 2016 08:18:50 -0800
-Message-ID: <CAEG3pNAee6e7nnnCB334zecADV58yfcJ5azUjALHaDP40B_pLQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: gpio: Really allow an optional clock= DT property
-From: Michael Turquette <mturquette@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>, linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>,
-	Russell King <rmk+kernel@arm.linux.org.uk>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1454337769-4130-2-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Feb 18, 2016 at 7:12 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
->
-> We mis-merged the original patch from Russell here and so the
-> patch went almost all the way, except that we still failed to
-> probe when there wasn't a clocks property in the DT node. Allow
-> that case by making a negative value from
-> of_clk_get_parent_count() into "no parents", like the original
-> patch did.
->
-> Fixes: 7ed88aa2efa5 ("clk: fix clk-gpio.c with optional clock= DT property")
-> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-
-Ack.
-
-Regards,
-Mike
-
+On Mon, Feb 01, 2016 at 10:42:48PM +0800, Chen-Yu Tsai wrote:
+> A80's APBS clock is not the same as the APB0 clock on A23. The A80's
+> is a zero-based divider, while the A23's is a power-of-two divider.
+> 
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 > ---
->  drivers/clk/clk-gpio.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
-> index 19fed65587e8..7b09a265d79f 100644
-> --- a/drivers/clk/clk-gpio.c
-> +++ b/drivers/clk/clk-gpio.c
-> @@ -289,7 +289,7 @@ static void __init of_gpio_clk_setup(struct device_node *node,
->
->         num_parents = of_clk_get_parent_count(node);
->         if (num_parents < 0)
-> -               return;
-> +               num_parents = 0;
->
->         data = kzalloc(sizeof(*data), GFP_KERNEL);
->         if (!data)
-> --
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
->
+>  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
 
+Acked-by: Rob Herring <robh@kernel.org>
 
-
--- 
-Michael Turquette
-CEO
-BayLibre - At the Heart of Embedded Linux
-http://baylibre.com/
+>  drivers/clk/sunxi/Makefile                        |  2 +-
+>  drivers/clk/sunxi/clk-sun9i-apbs.c                | 64 +++++++++++++++++++++++
+>  3 files changed, 66 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clk/sunxi/clk-sun9i-apbs.c
