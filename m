@@ -1,69 +1,56 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v2 12/13] ARM: dts: sun8i: Add A83T based Sinovoip Bpi-M3 Board
-Date: Sun, 28 Feb 2016 23:18:57 +0800
-Message-Id: <1456672738-4993-13-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <ping.bai@nxp.com>
+From: Bai Ping <ping.bai@nxp.com>
+To: <shawnguo@kernel.org>, <kernel@pengutronix.de>
+CC: <pawel.moll@arm.com>, <robh+dt@kernel.org>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<jacky.baip@gmail.com>
+Subject: [PATCH V3 4/5] ARM: dts: imx: Add basic dts support for imx6qp-sabresd
+Date: Tue, 2 Feb 2016 18:01:37 +0800
+Message-ID: <1454407298-15545-4-git-send-email-ping.bai@nxp.com>
+In-Reply-To: <1454407298-15545-1-git-send-email-ping.bai@nxp.com>
+References: <1454407298-15545-1-git-send-email-ping.bai@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: ping.bai@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds support for Sinovoip BPI-M3 A83T based board.
+This patch adds dts file for imx6qp-sabresd board.
 
-It has 2G LPDDR3, UART, ethernet, USB, HDMI, USB Sata, MIPI DSI,
-mic, AP6212 Wifi, etc on it.
-It is paired with AXP813 PMIC which is almost same as AXP818.
-
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Signed-off-by: Bai Ping <ping.bai@nxp.com>
 ---
- arch/arm/boot/dts/Makefile                       |  1 +
- arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts | 79 ++++++++++++++++++++++++
- 2 files changed, 80 insertions(+)
- create mode 100644 arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts
+
+change for V3:
+-- update the copyright header
+-- add the dtb in alphabet order
+
+ arch/arm/boot/dts/Makefile           |  3 +-
+ arch/arm/boot/dts/imx6qp-sabresd.dts | 93 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 95 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/imx6qp-sabresd.dts
 
 diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 58e461a..c0dd016 100644
+index 3801cbd..0ad5061 100644
 --- a/arch/arm/boot/dts/Makefile
 +++ b/arch/arm/boot/dts/Makefile
-@@ -694,6 +694,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
- 	sun8i-a33-sinlinx-sina33.dtb \
- 	sun8i-a83t-allwinner-h8homlet-v2.dtb \
- 	sun8i-a83t-cubietruck-plus.dtb \
-+	sun8i-a83t-sinovoip-bpi-m3.dtb \
- 	sun8i-h3-orangepi-plus.dtb
- dtb-$(CONFIG_MACH_SUN9I) += \
- 	sun9i-a80-optimus.dtb \
-diff --git a/arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts b/arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts
+@@ -353,7 +353,8 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
+ 	imx6q-udoo.dtb \
+ 	imx6q-wandboard.dtb \
+ 	imx6q-wandboard-revb1.dtb \
+-	imx6qp-sabreauto.dtb
++	imx6qp-sabreauto.dtb \
++	imx6qp-sabresd.dtb
+ dtb-$(CONFIG_SOC_IMX6SL) += \
+ 	imx6sl-evk.dtb \
+ 	imx6sl-warp.dtb
+diff --git a/arch/arm/boot/dts/imx6qp-sabresd.dts b/arch/arm/boot/dts/imx6qp-sabresd.dts
 new file mode 100644
-index 0000000..7744b63
+index 0000000..b234580
 --- /dev/null
-+++ b/arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts
-@@ -0,0 +1,79 @@
++++ b/arch/arm/boot/dts/imx6qp-sabresd.dts
+@@ -0,0 +1,93 @@
 +/*
-+ * Copyright 2016 Vishnu Patekar
-+ * Vishnu Patekar <vishnupatekar0510@gmail.com>
++ * Copyright 2016 Freescale Semiconductor, Inc.
 + *
 + * This file is dual-licensed: you can use it either under the terms
 + * of the GPL or the X11 license, at your option. Note that this dual
@@ -105,40 +92,55 @@ index 0000000..7744b63
 + */
 +
 +/dts-v1/;
-+#include "sun8i-a83t.dtsi"
-+#include "sunxi-common-regulators.dtsi"
++
++#include "imx6qp.dtsi"
++#include "imx6qdl-sabresd.dtsi"
 +
 +/ {
-+	model = "Sinovoip BananaPi M3 v1.2";
-+	compatible = "sinovoip,bpi-m3", "allwinner,sun8i-a83t";
++	model = "Freescale i.MX6 Quad Plus SABRE Smart Device Board";
++	compatible = "fsl,imx6qp-sabresd", "fsl,imx6qp";
++};
 +
-+	aliases {
-+		serial0 = &uart0;
++&cpu0 {
++	arm-supply = <&sw2_reg>;
++};
++
++&iomuxc {
++	imx6qdl-sabresd {
++		pinctrl_usdhc2: usdhc2grp {
++			fsl,pins = <
++				MX6QDL_PAD_SD2_CMD__SD2_CMD		0x17059
++				MX6QDL_PAD_SD2_CLK__SD2_CLK		0x10071
++				MX6QDL_PAD_SD2_DAT0__SD2_DATA0		0x17059
++				MX6QDL_PAD_SD2_DAT1__SD2_DATA1		0x17059
++				MX6QDL_PAD_SD2_DAT2__SD2_DATA2		0x17059
++				MX6QDL_PAD_SD2_DAT3__SD2_DATA3		0x17059
++				MX6QDL_PAD_NANDF_D4__SD2_DATA4		0x17059
++				MX6QDL_PAD_NANDF_D5__SD2_DATA5		0x17059
++				MX6QDL_PAD_NANDF_D6__SD2_DATA6		0x17059
++				MX6QDL_PAD_NANDF_D7__SD2_DATA7		0x17059
++			>;
++		};
++
++		pinctrl_usdhc3: usdhc3grp {
++			fsl,pins = <
++				MX6QDL_PAD_SD3_CMD__SD3_CMD		0x17059
++				MX6QDL_PAD_SD3_CLK__SD3_CLK		0x10071
++				MX6QDL_PAD_SD3_DAT0__SD3_DATA0		0x17059
++				MX6QDL_PAD_SD3_DAT1__SD3_DATA1		0x17059
++				MX6QDL_PAD_SD3_DAT2__SD3_DATA2		0x17059
++				MX6QDL_PAD_SD3_DAT3__SD3_DATA3		0x17059
++				MX6QDL_PAD_SD3_DAT4__SD3_DATA4		0x17059
++				MX6QDL_PAD_SD3_DAT5__SD3_DATA5		0x17059
++				MX6QDL_PAD_SD3_DAT6__SD3_DATA6		0x17059
++				MX6QDL_PAD_SD3_DAT7__SD3_DATA7		0x17059
++			>;
++		};
 +	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
 +};
 +
-+&mmc0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin_reference_design>;
-+	vmmc-supply = <&reg_vcc3v0>;
-+	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
-+	bus-width = <4>;
-+	cd-inverted;
-+	status = "okay";
-+};
-+
-+&r_rsb {
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_pins_b>;
-+	status = "okay";
++&pcie {
++	status = "disabled";
 +};
 -- 
 1.9.1
