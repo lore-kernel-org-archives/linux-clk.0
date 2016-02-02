@@ -1,85 +1,101 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from utopia.booyaka.com ([74.50.51.50]:47254 "EHLO
-	utopia.booyaka.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1947229AbcBRRV3 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 18 Feb 2016 12:21:29 -0500
-Date: Thu, 18 Feb 2016 17:21:28 +0000 (UTC)
-From: Paul Walmsley <paul@pwsan.com>
-To: "Franklin S Cooper Jr." <fcooper@ti.com>
-cc: "R, Vignesh" <vigneshr@ti.com>, Tero Kristo <t-kristo@ti.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Benoit Cousson <bcousson@baylibre.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	Mike Turquette <mturquette@linaro.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] ARM: OMAP2+: DRA7: Add hwmod entries for PWMSS
-In-Reply-To: <56C5E466.2030002@ti.com>
-Message-ID: <alpine.DEB.2.02.1602181718560.4792@utopia.booyaka.com>
-References: <1433332284-10766-1-git-send-email-vigneshr@ti.com> <1433332284-10766-3-git-send-email-vigneshr@ti.com> <alpine.DEB.2.02.1507152029460.32764@utopia.booyaka.com> <55A7CE59.6010600@ti.com> <alpine.DEB.2.02.1508121700500.7154@utopia.booyaka.com>
- <56C4DB37.9090802@ti.com> <alpine.DEB.2.02.1602180652380.4792@utopia.booyaka.com> <56C5E466.2030002@ti.com>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	heiko@sntech.de,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andre Przywara <andre.przywara@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 1/5] clk: sunxi: Make clocks setup functions return their clock
+Date: Tue,  2 Feb 2016 09:47:10 +0100
+Message-Id: <1454402834-6385-2-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Franklin, 
+The clocks registration code in clk-sunxi was most of the time not
+returning the struct clk (or struct clk array) that was registered,
+preventing the users of such functions to manipulate it, for example to
+protect it.
 
-On Thu, 18 Feb 2016, Franklin S Cooper Jr. wrote:
+Make them return it so that we can start using it.
 
-> On 02/18/2016 12:58 AM, Paul Walmsley wrote:
->
-> > OK I'm not sure I understand what's going on, particularly the part about 
-> > locking and unlocking.  Are you saying that the pwm_bl driver calls into 
-> > the pwm_tiecap module to write to the PWMSS_CLKCONFIG registers to ungate 
-> > the ECAP clock, and then the hardware silently ignores the write?  If 
-> > that's the case, shouldn't we be seeing some warning messages from a 
-> > failure to ungate the clock from a subsequent PWMSS_CLKSTATUS poll?  Or am 
-> > I misunderstanding what's going on here?
-> Pwm-tipwmss.c exports a function
-> pwmss_submodule_state_change which interacts with
-> PWMSS_CLKCONFIG and PWMSS_CLKSTATUS registers. Both
-> pwm-tiehrpwm.c and pwm-tiecap.c calls this exported function
-> to unlock the gate at probe time and lock the gate when the
-> driver is removed.
-> 
-> So when the gate fails to be unlocked after it previously is
-> locked there isn't a way to know this via the
-> PWMSS_CLKSTATUS registers.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi/clk-sunxi.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-OK I understand now.  Sounds like the gating -> ungating transition is 
-effectively a one-time operation, and once the ungating -> gating 
-transition is done, there's no way to reverse it.  Please correct me if 
-I've got it wrong.
-
->  So the driver "believes" that the gate is unlocked and when pwm_bl runs 
-> it calls the set_polarity function. Set_polarity in the case of AM437x 
-> gp evm maps to the ecap's ecap_pwm_set_polarity function call. This call 
-> then attempts to write to the ecap registers which results in the 
-> external abort since the clock to the ecap is still gated.
->
-> When the ecap and tihrpwm driver request to unlock the clock
-> gate it already checks the XXX_CLK_EN_ACK bitfields within
-> CLKSTATUS and it shows that the clocks "should" be unlocked.
-> So there is an issue with the IP.
-
-OK
-
-> Yes, I plan on addressing the change Vignesh acknowledged
-> regarding changing RESETSTATUS to SOFTRESET. For your other
-> comments I believe he already explained why it has to be set
-> in that particular way. If there is anything that I missed
-> or something that isn't clear please let me know.
-
-Perfect, thanks for the good description and the followup.
-
-
-- Paul
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index e460a6b0068c..67ef94948544 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -615,8 +615,8 @@ static const struct mux_data sun8i_h3_ahb2_mux_data __initconst = {
+ 	.shift = 0,
+ };
+ 
+-static void __init sunxi_mux_clk_setup(struct device_node *node,
+-				       struct mux_data *data)
++static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
++					       struct mux_data *data)
+ {
+ 	struct clk *clk;
+ 	const char *clk_name = node->name;
+@@ -638,6 +638,8 @@ static void __init sunxi_mux_clk_setup(struct device_node *node,
+ 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
+ 		clk_register_clkdev(clk, clk_name, NULL);
+ 	}
++
++	return clk;
+ }
+ 
+ 
+@@ -722,7 +724,6 @@ static void __init sunxi_divider_clk_setup(struct device_node *node,
+ }
+ 
+ 
+-
+ /**
+  * sunxi_gates_clk_setup() - Setup function for leaf gates on clocks
+  */
+@@ -808,8 +809,8 @@ static const struct divs_data sun6i_a31_pll6_divs_data __initconst = {
+  *           |________________________|
+  */
+ 
+-static void __init sunxi_divs_clk_setup(struct device_node *node,
+-					struct divs_data *data)
++static struct clk ** __init sunxi_divs_clk_setup(struct device_node *node,
++						 struct divs_data *data)
+ {
+ 	struct clk_onecell_data *clk_data;
+ 	const char *parent;
+@@ -836,7 +837,7 @@ static void __init sunxi_divs_clk_setup(struct device_node *node,
+ 
+ 	clk_data = kmalloc(sizeof(struct clk_onecell_data), GFP_KERNEL);
+ 	if (!clk_data)
+-		return;
++		return NULL;
+ 
+ 	clks = kcalloc(ndivs, sizeof(*clks), GFP_KERNEL);
+ 	if (!clks)
+@@ -922,7 +923,7 @@ static void __init sunxi_divs_clk_setup(struct device_node *node,
+ 
+ 	of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+ 
+-	return;
++	return clks;
+ 
+ free_gate:
+ 	kfree(gate);
+@@ -930,6 +931,7 @@ free_clks:
+ 	kfree(clks);
+ free_clkdata:
+ 	kfree(clk_data);
++	return NULL;
+ }
+ 
+ 
+-- 
+2.6.4
