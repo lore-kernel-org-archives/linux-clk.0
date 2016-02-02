@@ -1,265 +1,245 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, linux-arm-kernel@lists.infradead.org, Tony Prisk <linux@prisktech.co.nz>, Roman Volkov <v1ron@mail.ru>
-Subject: [PATCH] clk: vt8500: don't return possibly uninitialized data
-Date: Mon, 01 Feb 2016 11:19:10 +0100
-Message-ID: <4790407.6zgSQCdsSB@wuerfel>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	heiko@sntech.de,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andre Przywara <andre.przywara@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 3/5] clk: sunxi: convert current clocks registration to CLK_OF_DECLARE
+Date: Tue,  2 Feb 2016 09:47:12 +0100
+Message-Id: <1454402834-6385-4-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The clk-vt8500.c driver would previously enter an endless loop
-when invalid settings got requested, this was now fixed. However,
-the driver will now return uninitialized data for a subset of those
-cases instead, as the gcc correctly warns:
+The current clock registration and protection code has a few drawbacks, the
+two main ones being that we create a lot of orphans clock in the
+registration phase, which will be troublesome when we will start being less
+relaxed about them.
 
-clk/clk-vt8500.c: In function 'wm8650_find_pll_bits':
-clk/clk-vt8500.c:423:12: error: 'best_div2' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-  *divisor2 = best_div2;
-            ^
-clk/clk-vt8500.c:422:12: error: 'best_div1' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-  *divisor1 = best_div1;
-            ^
-clk/clk-vt8500.c:421:14: error: 'best_mul' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-  *multiplier = best_mul;
+The protection code also relies on clkdev, which we don't really use but
+for this particular case.
 
-This reworks the error handling in the driver so we now return
--EINVAL from clk_round_rate() and clk_set_rate() when we get
-impossible inputs.
+Fix both at the same time by moving everyone to the CLK_OF_DECLARE that
+will probe our clock tree in the right and thus avoid orphans, and by
+protecting directly the clock returned by our registration function.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Fixes: 090341b0a95d ("clk: vt8500: fix sign of possible PLL values")
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi/clk-sunxi.c | 150 +++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 133 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/clk/clk-vt8500.c b/drivers/clk/clk-vt8500.c
-index 98c4492d2c0d..b0f76a84f1e9 100644
---- a/drivers/clk/clk-vt8500.c
-+++ b/drivers/clk/clk-vt8500.c
-@@ -355,7 +355,7 @@ CLK_OF_DECLARE(vt8500_device, "via,vt8500-device-clock", vtwm_device_clk_init);
- #define WM8850_BITS_TO_VAL(m, d1, d2)					\
- 		((((m / 2) - 1) << 16) | ((d1 - 1) << 8) | d2)
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index a3d706f5b21c..da6c1bc763d1 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -585,6 +585,41 @@ static struct clk * __init sunxi_factors_clk_setup(struct device_node *node,
+ 	return sunxi_factors_register(node, data, &clk_lock, reg);
+ }
  
--static void vt8500_find_pll_bits(unsigned long rate, unsigned long parent_rate,
-+static int vt8500_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- 				u32 *multiplier, u32 *prediv)
++static void __init sun4i_pll1_clk_setup(struct device_node *node)
++{
++	sunxi_factors_clk_setup(node, &sun4i_pll1_data);
++}
++CLK_OF_DECLARE(sun4i_pll1, "allwinner,sun4i-a10-pll1-clk",
++	       sun4i_pll1_clk_setup);
++
++static void __init sun6i_pll1_clk_setup(struct device_node *node)
++{
++	sunxi_factors_clk_setup(node, &sun6i_a31_pll1_data);
++}
++CLK_OF_DECLARE(sun6i_pll1, "allwinner,sun6i-a31-pll1-clk",
++	       sun6i_pll1_clk_setup);
++
++static void __init sun8i_pll1_clk_setup(struct device_node *node)
++{
++	sunxi_factors_clk_setup(node, &sun8i_a23_pll1_data);
++}
++CLK_OF_DECLARE(sun8i_pll1, "allwinner,sun8i-a23-pll1-clk",
++	       sun8i_pll1_clk_setup);
++
++static void __init sun7i_pll4_clk_setup(struct device_node *node)
++{
++	sunxi_factors_clk_setup(node, &sun7i_a20_pll4_data);
++}
++CLK_OF_DECLARE(sun7i_pll4, "allwinner,sun7i-a20-pll4-clk",
++	       sun7i_pll4_clk_setup);
++
++static void __init sun5i_ahb_clk_setup(struct device_node *node)
++{
++	sunxi_factors_clk_setup(node, &sun5i_a13_ahb_data);
++}
++CLK_OF_DECLARE(sun5i_ahb, "allwinner,sun5i-a13-ahb-clk",
++	       sun5i_ahb_clk_setup);
++
+ static void __init sun6i_ahb1_clk_setup(struct device_node *node)
  {
- 	unsigned long tclk;
-@@ -365,7 +365,7 @@ static void vt8500_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- 		pr_err("%s: requested rate out of range\n", __func__);
- 		*multiplier = 0;
- 		*prediv = 1;
--		return;
-+		return -EINVAL;
+ 	sunxi_factors_clk_setup(node, &sun6i_ahb1_data);
+@@ -592,6 +627,20 @@ static void __init sun6i_ahb1_clk_setup(struct device_node *node)
+ CLK_OF_DECLARE(sun6i_a31_ahb1, "allwinner,sun6i-a31-ahb1-clk",
+ 	       sun6i_ahb1_clk_setup);
+ 
++static void __init sun4i_apb1_clk_setup(struct device_node *node)
++{
++	sunxi_factors_clk_setup(node, &sun4i_apb1_data);
++}
++CLK_OF_DECLARE(sun4i_apb1, "allwinner,sun4i-a10-apb1-clk",
++	       sun4i_apb1_clk_setup);
++
++static void __init sun7i_out_clk_setup(struct device_node *node)
++{
++	sunxi_factors_clk_setup(node, &sun7i_a20_out_data);
++}
++CLK_OF_DECLARE(sun7i_out, "allwinner,sun7i-a20-out-clk",
++	       sun7i_out_clk_setup);
++
+ 
+ /**
+  * sunxi_mux_clk_setup() - Setup function for muxes
+@@ -642,6 +691,34 @@ static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
+ 	return clk;
+ }
+ 
++static void __init sun4i_cpu_clk_setup(struct device_node *node)
++{
++	struct clk *clk;
++
++	clk = sunxi_mux_clk_setup(node, &sun4i_cpu_mux_data);
++	if (!clk)
++		return;
++
++	/* Protect CPU clock */
++	__clk_get(clk);
++	clk_prepare_enable(clk);
++}
++CLK_OF_DECLARE(sun4i_cpu, "allwinner,sun4i-a10-cpu-clk",
++	       sun4i_cpu_clk_setup);
++
++static void __init sun6i_ahb1_mux_clk_setup(struct device_node *node)
++{
++	sunxi_mux_clk_setup(node, &sun6i_a31_ahb1_mux_data);
++}
++CLK_OF_DECLARE(sun6i_ahb1_mux, "allwinner,sun6i-a31-ahb1-mux-clk",
++	       sun6i_ahb1_mux_clk_setup);
++
++static void __init sun8i_ahb2_clk_setup(struct device_node *node)
++{
++	sunxi_mux_clk_setup(node, &sun8i_h3_ahb2_mux_data);
++}
++CLK_OF_DECLARE(sun8i_ahb2, "allwinner,sun8i-a31-ahb2-clk",
++	       sun8i_ahb2_clk_setup);
+ 
+ 
+ /**
+@@ -723,6 +800,34 @@ static void __init sunxi_divider_clk_setup(struct device_node *node,
  	}
- 	if (rate <= parent_rate * 31)
- 		/* use the prediv to double the resolution */
-@@ -379,9 +379,11 @@ static void vt8500_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- 	if (tclk != rate)
- 		pr_warn("%s: requested rate %lu, found rate %lu\n", __func__,
- 								rate, tclk);
-+
-+	return 0;
  }
  
--static void wm8650_find_pll_bits(unsigned long rate, unsigned long parent_rate,
-+static int wm8650_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- 				u32 *multiplier, u32 *divisor1, u32 *divisor2)
- {
- 	u32 mul, div1;
-@@ -404,7 +406,7 @@ static void wm8650_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- 					*multiplier = mul;
- 					*divisor1 = div1;
- 					*divisor2 = div2;
--					return;
-+					return 0;
- 				}
- 
- 				if (rate_err < best_err) {
-@@ -415,12 +417,19 @@ static void wm8650_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- 				}
- 			}
- 
-+	if (best_err == (unsigned long)-1) {
-+		pr_warn("%s: impossible rate %lu\n", __func__, rate);
-+		return -EINVAL;
-+	}
++static void __init sun4i_ahb_clk_setup(struct device_node *node)
++{
++	sunxi_divider_clk_setup(node, &sun4i_ahb_data);
++}
++CLK_OF_DECLARE(sun4i_ahb, "allwinner,sun4i-a10-ahb-clk",
++	       sun4i_ahb_clk_setup);
 +
- 	/* if we got here, it wasn't an exact match */
- 	pr_warn("%s: requested rate %lu, found rate %lu\n", __func__, rate,
- 							rate - best_err);
- 	*multiplier = best_mul;
- 	*divisor1 = best_div1;
- 	*divisor2 = best_div2;
++static void __init sun4i_apb0_clk_setup(struct device_node *node)
++{
++	sunxi_divider_clk_setup(node, &sun4i_apb0_data);
++}
++CLK_OF_DECLARE(sun4i_apb0, "allwinner,sun4i-a10-apb0-clk",
++	       sun4i_apb0_clk_setup);
 +
-+	return 0;
++static void __init sun4i_axi_clk_setup(struct device_node *node)
++{
++	sunxi_divider_clk_setup(node, &sun4i_axi_data);
++}
++CLK_OF_DECLARE(sun4i_axi, "allwinner,sun4i-a10-axi-clk",
++	       sun4i_axi_clk_setup);
++
++static void __init sun8i_axi_clk_setup(struct device_node *node)
++{
++	sunxi_divider_clk_setup(node, &sun8i_a23_axi_data);
++}
++CLK_OF_DECLARE(sun8i_axi, "allwinner,sun8i-a23-axi-clk",
++	       sun8i_axi_clk_setup);
++
+ 
+ /**
+  * sunxi_gates_clk_setup() - Setup function for leaf gates on clocks
+@@ -934,42 +1039,53 @@ free_clkdata:
+ 	return NULL;
  }
  
- static u32 wm8750_get_filter(u32 parent_rate, u32 divisor1)
-@@ -450,7 +459,7 @@ static u32 wm8750_get_filter(u32 parent_rate, u32 divisor1)
- 	return 0;
- }
- 
--static void wm8750_find_pll_bits(unsigned long rate, unsigned long parent_rate,
-+static int wm8750_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- 				u32 *filter, u32 *multiplier, u32 *divisor1, u32 *divisor2)
- {
- 	u32 mul;
-@@ -474,7 +483,7 @@ static void wm8750_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- 					*multiplier = mul;
- 					*divisor1 = div1;
- 					*divisor2 = div2;
--					return;
-+					return 0;
- 				}
- 
- 				if (rate_err < best_err) {
-@@ -485,6 +494,11 @@ static void wm8750_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- 				}
- 			}
- 
-+	if (best_err == (unsigned long)-1) {
-+		pr_warn("%s: impossible rate %lu\n", __func__, rate);
-+		return -EINVAL;
-+	}
++static void __init sun4i_pll5_clk_setup(struct device_node *node)
++{
++	struct clk **clks;
 +
- 	/* if we got here, it wasn't an exact match */
- 	pr_warn("%s: requested rate %lu, found rate %lu\n", __func__, rate,
- 							rate - best_err);
-@@ -493,9 +507,11 @@ static void wm8750_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- 	*multiplier = best_mul;
- 	*divisor1 = best_div1;
- 	*divisor2 = best_div2;
++	clks = sunxi_divs_clk_setup(node, &pll5_divs_data);
++	if (!clks)
++		return;
 +
-+	return 0;
- }
- 
--static void wm8850_find_pll_bits(unsigned long rate, unsigned long parent_rate,
-+static int wm8850_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- 				u32 *multiplier, u32 *divisor1, u32 *divisor2)
- {
- 	u32 mul;
-@@ -519,7 +535,7 @@ static void wm8850_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- 					*multiplier = mul;
- 					*divisor1 = div1;
- 					*divisor2 = div2;
--					return;
-+					return 0;
- 				}
- 
- 				if (rate_err < best_err) {
-@@ -530,6 +546,11 @@ static void wm8850_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- 				}
- 			}
- 
-+	if (best_err == (unsigned long)-1) {
-+		pr_warn("%s: impossible rate %lu\n", __func__, rate);
-+		return -EINVAL;
-+	}
++	/* Protect PLL5_DDR */
++	__clk_get(clks[0]);
++	clk_prepare_enable(clks[0]);
++}
++CLK_OF_DECLARE(sun4i_pll5, "allwinner,sun4i-a10-pll5-clk",
++	       sun4i_pll5_clk_setup);
 +
- 	/* if we got here, it wasn't an exact match */
- 	pr_warn("%s: requested rate %lu, found rate %lu\n", __func__, rate,
- 							rate - best_err);
-@@ -537,6 +558,8 @@ static void wm8850_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- 	*multiplier = best_mul;
- 	*divisor1 = best_div1;
- 	*divisor2 = best_div2;
++static void __init sun4i_pll6_clk_setup(struct device_node *node)
++{
++	sunxi_divs_clk_setup(node, &pll6_divs_data);
++}
++CLK_OF_DECLARE(sun4i_pll6, "allwinner,sun4i-a10-pll6-clk",
++	       sun4i_pll6_clk_setup);
 +
-+	return 0;
- }
++static void __init sun6i_pll6_clk_setup(struct device_node *node)
++{
++	sunxi_divs_clk_setup(node, &sun6i_a31_pll6_divs_data);
++}
++CLK_OF_DECLARE(sun6i_pll6, "allwinner,sun6i-a31-pll6-clk",
++	       sun6i_pll6_clk_setup);
  
- static int vtwm_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -546,31 +569,39 @@ static int vtwm_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	u32 filter, mul, div1, div2;
- 	u32 pll_val;
- 	unsigned long flags = 0;
-+	int ret;
  
- 	/* sanity check */
+ /* Matches for factors clocks */
+ static const struct of_device_id clk_factors_match[] __initconst = {
+-	{.compatible = "allwinner,sun4i-a10-pll1-clk", .data = &sun4i_pll1_data,},
+-	{.compatible = "allwinner,sun6i-a31-pll1-clk", .data = &sun6i_a31_pll1_data,},
+-	{.compatible = "allwinner,sun8i-a23-pll1-clk", .data = &sun8i_a23_pll1_data,},
+-	{.compatible = "allwinner,sun7i-a20-pll4-clk", .data = &sun7i_a20_pll4_data,},
+-	{.compatible = "allwinner,sun5i-a13-ahb-clk", .data = &sun5i_a13_ahb_data,},
+-	{.compatible = "allwinner,sun4i-a10-apb1-clk", .data = &sun4i_apb1_data,},
+-	{.compatible = "allwinner,sun7i-a20-out-clk", .data = &sun7i_a20_out_data,},
+ 	{}
+ };
  
- 	switch (pll->type) {
- 	case PLL_TYPE_VT8500:
--		vt8500_find_pll_bits(rate, parent_rate, &mul, &div1);
--		pll_val = VT8500_BITS_TO_VAL(mul, div1);
-+		ret = vt8500_find_pll_bits(rate, parent_rate, &mul, &div1);
-+		if (!ret)
-+			pll_val = VT8500_BITS_TO_VAL(mul, div1);
- 		break;
- 	case PLL_TYPE_WM8650:
--		wm8650_find_pll_bits(rate, parent_rate, &mul, &div1, &div2);
--		pll_val = WM8650_BITS_TO_VAL(mul, div1, div2);
-+		ret = wm8650_find_pll_bits(rate, parent_rate, &mul, &div1, &div2);
-+		if (!ret)
-+			pll_val = WM8650_BITS_TO_VAL(mul, div1, div2);
- 		break;
- 	case PLL_TYPE_WM8750:
--		wm8750_find_pll_bits(rate, parent_rate, &filter, &mul, &div1, &div2);
--		pll_val = WM8750_BITS_TO_VAL(filter, mul, div1, div2);
-+		ret = wm8750_find_pll_bits(rate, parent_rate, &filter, &mul, &div1, &div2);
-+		if (!ret)
-+			pll_val = WM8750_BITS_TO_VAL(filter, mul, div1, div2);
- 		break;
- 	case PLL_TYPE_WM8850:
--		wm8850_find_pll_bits(rate, parent_rate, &mul, &div1, &div2);
--		pll_val = WM8850_BITS_TO_VAL(mul, div1, div2);
-+		ret = wm8850_find_pll_bits(rate, parent_rate, &mul, &div1, &div2);
-+		if (!ret)
-+			pll_val = WM8850_BITS_TO_VAL(mul, div1, div2);
- 		break;
- 	default:
- 		pr_err("%s: invalid pll type\n", __func__);
--		return 0;
-+		ret = -EINVAL;
- 	}
+ /* Matches for divider clocks */
+ static const struct of_device_id clk_div_match[] __initconst = {
+-	{.compatible = "allwinner,sun4i-a10-axi-clk", .data = &sun4i_axi_data,},
+-	{.compatible = "allwinner,sun8i-a23-axi-clk", .data = &sun8i_a23_axi_data,},
+-	{.compatible = "allwinner,sun4i-a10-ahb-clk", .data = &sun4i_ahb_data,},
+-	{.compatible = "allwinner,sun4i-a10-apb0-clk", .data = &sun4i_apb0_data,},
+ 	{}
+ };
  
-+	if (ret)
-+		return ret;
-+
- 	spin_lock_irqsave(pll->lock, flags);
+ /* Matches for divided outputs */
+ static const struct of_device_id clk_divs_match[] __initconst = {
+-	{.compatible = "allwinner,sun4i-a10-pll5-clk", .data = &pll5_divs_data,},
+-	{.compatible = "allwinner,sun4i-a10-pll6-clk", .data = &pll6_divs_data,},
+-	{.compatible = "allwinner,sun6i-a31-pll6-clk", .data = &sun6i_a31_pll6_divs_data,},
+ 	{}
+ };
  
- 	vt8500_pmc_wait_busy();
-@@ -588,28 +619,36 @@ static long vtwm_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	struct clk_pll *pll = to_clk_pll(hw);
- 	u32 filter, mul, div1, div2;
- 	long round_rate;
-+	int ret;
+ /* Matches for mux clocks */
+ static const struct of_device_id clk_mux_match[] __initconst = {
+-	{.compatible = "allwinner,sun4i-a10-cpu-clk", .data = &sun4i_cpu_mux_data,},
+-	{.compatible = "allwinner,sun6i-a31-ahb1-mux-clk", .data = &sun6i_a31_ahb1_mux_data,},
+-	{.compatible = "allwinner,sun8i-h3-ahb2-clk", .data = &sun8i_h3_ahb2_mux_data,},
+ 	{}
+ };
  
- 	switch (pll->type) {
- 	case PLL_TYPE_VT8500:
--		vt8500_find_pll_bits(rate, *prate, &mul, &div1);
--		round_rate = VT8500_BITS_TO_FREQ(*prate, mul, div1);
-+		ret = vt8500_find_pll_bits(rate, *prate, &mul, &div1);
-+		if (!ret)
-+			round_rate = VT8500_BITS_TO_FREQ(*prate, mul, div1);
- 		break;
- 	case PLL_TYPE_WM8650:
--		wm8650_find_pll_bits(rate, *prate, &mul, &div1, &div2);
--		round_rate = WM8650_BITS_TO_FREQ(*prate, mul, div1, div2);
-+		ret = wm8650_find_pll_bits(rate, *prate, &mul, &div1, &div2);
-+		if (!ret)
-+			round_rate = WM8650_BITS_TO_FREQ(*prate, mul, div1, div2);
- 		break;
- 	case PLL_TYPE_WM8750:
--		wm8750_find_pll_bits(rate, *prate, &filter, &mul, &div1, &div2);
--		round_rate = WM8750_BITS_TO_FREQ(*prate, mul, div1, div2);
-+		ret = wm8750_find_pll_bits(rate, *prate, &filter, &mul, &div1, &div2);
-+		if (!ret)
-+			round_rate = WM8750_BITS_TO_FREQ(*prate, mul, div1, div2);
- 		break;
- 	case PLL_TYPE_WM8850:
--		wm8850_find_pll_bits(rate, *prate, &mul, &div1, &div2);
--		round_rate = WM8850_BITS_TO_FREQ(*prate, mul, div1, div2);
-+		ret = wm8850_find_pll_bits(rate, *prate, &mul, &div1, &div2);
-+		if (!ret)
-+			round_rate = WM8850_BITS_TO_FREQ(*prate, mul, div1, div2);
- 		break;
- 	default:
--		round_rate = 0;
-+		ret = -EINVAL;
- 	}
- 
-+	if (ret)
-+		return ret;
-+
- 	return round_rate;
- }
- 
+-- 
+2.6.4
