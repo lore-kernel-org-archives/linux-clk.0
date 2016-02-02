@@ -1,114 +1,55 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, linux-arm-kernel@lists.infradead.org, Tony Prisk <linux@prisktech.co.nz>, Roman Volkov <v1ron@mail.ru>
+Subject: Re: [PATCH] clk: vt8500: don't return possibly uninitialized data
+Date: Tue, 02 Feb 2016 13:49:56 +0100
+Message-ID: <2210116.QsPesySkh0@wuerfel>
+In-Reply-To: <20160202011545.GG4848@codeaurora.org>
+References: <4790407.6zgSQCdsSB@wuerfel> <20160202011545.GG4848@codeaurora.org>
 MIME-Version: 1.0
-To: Joachim  Eastwood <manabian@gmail.com>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <CAGhQ9VzOYbHsFZQxM8823OiWpGB6vLEwX8LfvjC=DnL1iqK_qQ@mail.gmail.com>
-Cc: devicetree@vger.kernel.org, "Stephen Boyd" <sboyd@codeaurora.org>,
- linux-clk@vger.kernel.org, "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>
-References: <1436651307-24098-1-git-send-email-manabian@gmail.com>
- <1436651307-24098-2-git-send-email-manabian@gmail.com>
- <20150811204127.31346.16729@quantum>
- <CAGhQ9VwZaM_iWTkQYVTuTiyb6gCG2y6s8WFVySCHt7YHE1qbcA@mail.gmail.com>
- <20150818002604.31346.18322@quantum>
- <CAGhQ9VzOYbHsFZQxM8823OiWpGB6vLEwX8LfvjC=DnL1iqK_qQ@mail.gmail.com>
-Message-ID: <20160217005629.2278.90197@quark.deferred.io>
-Subject: Re: [PATCH 1/2] clk: add lpc18xx creg clk driver
-Date: Tue, 16 Feb 2016 16:56:29 -0800
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Joachim Eastwood (2016-02-13 06:38:45)
-> Hi Mike,
-> =
+On Monday 01 February 2016 17:15:45 Stephen Boyd wrote:
+> My compiler still gets warnings even after this patch is applied.
+>=20
+> drivers/clk/clk-vt8500.c: In function =E2=80=98wm8750_find_pll_bits=E2=
+=80=99:
+> drivers/clk/clk-vt8500.c:509:12: warning: =E2=80=98best_div2=E2=80=99=
+ may be used uninitialized in this function [-Wmaybe-uninitialized]
+> drivers/clk/clk-vt8500.c:508:12: warning: =E2=80=98best_div1=E2=80=99=
+ may be used uninitialized in this function [-Wmaybe-uninitialized]
+> drivers/clk/clk-vt8500.c:507:14: warning: =E2=80=98best_mul=E2=80=99 =
+may be used uninitialized in this function [-Wmaybe-uninitialized]
+> drivers/clk/clk-vt8500.c: In function =E2=80=98wm8650_find_pll_bits=E2=
+=80=99:
+> drivers/clk/clk-vt8500.c:430:12: warning: =E2=80=98best_div2=E2=80=99=
+ may be used uninitialized in this function [-Wmaybe-uninitialized]
+> drivers/clk/clk-vt8500.c:429:12: warning: =E2=80=98best_div1=E2=80=99=
+ may be used uninitialized in this function [-Wmaybe-uninitialized]
+> drivers/clk/clk-vt8500.c:428:14: warning: =E2=80=98best_mul=E2=80=99 =
+may be used uninitialized in this function [-Wmaybe-uninitialized]
+> drivers/clk/clk-vt8500.c: In function =E2=80=98wm8850_find_pll_bits=E2=
+=80=99:
+> drivers/clk/clk-vt8500.c:560:12: warning: =E2=80=98best_div2=E2=80=99=
+ may be used uninitialized in this function [-Wmaybe-uninitialized]
+> drivers/clk/clk-vt8500.c:559:12: warning: =E2=80=98best_div1=E2=80=99=
+ may be used uninitialized in this function [-Wmaybe-uninitialized]
+> drivers/clk/clk-vt8500.c:558:14: warning: =E2=80=98best_mul=E2=80=99 =
+may be used uninitialized in this function [-Wmaybe-uninitialized]
+>=20
 
-> Seems your reply got lost in my mailbox and I didn't notice it before
-> Stephen replied on the cover letter. Sorry about that.
-> =
+I see what you mean now. I checked different gcc versions, and with my =
+patch I get
+the warnings for 4.6 through 4.9, but not for 5.x.
 
-> On 18 August 2015 at 02:26, Michael Turquette <mturquette@baylibre.com> w=
-rote:
-> > Quoting Joachim Eastwood (2015-08-13 13:43:11)
-> >> On 11 August 2015 at 22:41, Michael Turquette <mturquette@baylibre.com=
-> wrote:
-> >> > Hi Joachim,
-> >> >
-> >> > Quoting Joachim Eastwood (2015-07-11 14:48:26)
-> >> >> +static void __init lpc18xx_creg_clk_init(struct device_node *np)
-> >> >> +{
-> >> >> +       const char *clk_32khz_parent;
-> >> >> +       struct regmap *syscon;
-> >> >> +
-> >> >> +       syscon =3D syscon_node_to_regmap(np->parent);
-> >> >> +       if (IS_ERR(syscon)) {
-> >> >> +               pr_err("%s: syscon lookup failed\n", __func__);
-> >> >> +               return;
-> >> >> +       }
-> >> >> +
-> >> >> +       clk_32khz_parent =3D of_clk_get_parent_name(np, 0);
-> >> >> +
-> >> >> +       clk_creg[CREG_CLK_32KHZ] =3D
-> >> >> +               clk_register_creg_clk(&clk_creg_clocks[CREG_CLK_32K=
-HZ],
-> >> >> +                                     &clk_32khz_parent, syscon);
-> >> >> +
-> >> >> +       clk_creg[CREG_CLK_1KHZ] =3D
-> >> >> +               clk_register_creg_clk(&clk_creg_clocks[CREG_CLK_1KH=
-Z],
-> >> >> +                                     &clk_creg_clocks[CREG_CLK_32K=
-HZ].name,
-> >> >> +                                     syscon);
-> >> >> +
-> >> >> +       of_clk_add_provider(np, of_clk_src_onecell_get, &clk_base_d=
-ata);
-> >> >> +}
-> >> >> +CLK_OF_DECLARE(lpc18xx_creg_clk, "nxp,lpc1850-creg-clk", lpc18xx_c=
-reg_clk_init);
-> >> >
-> >> > I'll ask the same question that Stephen asked in your CCU/CGU driver
-> >> > series: is it necessary to use CLK_OF_DECLARE here or can you use the
-> >> > platform device model?
-> >>
-> >> The 32 kHz clock from the CREG block is a clock parent to the CGU
-> >> block so it's possible that it will required early. This is all
-> >> depends on how the boot loader initially configures the CGU.
-> >>
-> >> Currently in the DTS for lpc18xx cgu it has:
-> >> clocks =3D <&xtal>, <&xtal32>, <...>;
-> >> xtal32 is just a temporary placeholder until the CREG clock is in plac=
-e.
-> >
-> > Well that seems wrong. Is it just a matter of probe order where you try
-> > to probe the cgu driver before the creg driver?
-> =
+In general, I tried to only address warnings I still see with newer gcc=
+ version,
+as they are better about false positives. Do you think it's ok to take =
+the
+patch as is then? Otherwise we probably have to add fake initialization=
+s which
+would shut up the warnings but not help with the code quality.
 
-> The ideal probe order for the clk drivers on the lpc18xx platform
-> would be; creg-clk, cgu and ccu.
-> If the 32k clk is used by any of timers we need creg-clk to enable the
-> 32k clock and determine the rate.
-> =
-
-> Note that the cgu and ccu driver is using CLK_OF_DECLARE now.
-> =
-
-> =
-
-> I have tired to create an overview of the lpc18xx clock system here:
-> https://github.com/manabian/linux-lpc/wiki/LPC18xx-LPC43xx-clocks
-
-That's great, thanks a lot for the link and the nice documentation.
-
-It's been a while since I've looked at this thread. Do any of the
-creg-clk, cgu or ccu clock drivers need to use CLK_OF_DECLARE? If they
-were platform_drivers then you could use -EPROBE_DEFER to solve your
-ordering issue.
-
-Regards,
-Mike
-
-> =
-
-> =
-
-> regards,
-> Joachim Eastwood
+=09Arnd
