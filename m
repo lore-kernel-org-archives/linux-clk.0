@@ -1,58 +1,74 @@
-Return-Path: <anholt@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: kernel@martin.sperl.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: Re: [PATCH 2/6] clk: bcm2835: add locking to pll*_on/off methods
-In-Reply-To: <1456745963-2403-3-git-send-email-kernel@martin.sperl.org>
-References: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org> <1456745963-2403-3-git-send-email-kernel@martin.sperl.org>
-Date: Mon, 29 Feb 2016 12:06:28 -0800
-Message-ID: <87y4a35liz.fsf@eliezer.anholt.net>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 2 Feb 2016 14:19:47 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Cc: robh+dt@kernel.org, corbet@lwn.net, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, linux@arm.linux.org.uk, emilio@elopez.com.ar,
+	jenskuske@gmail.com, hdegoede@redhat.com, wens@csie.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+	linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org, patchesrdh@mveas.com,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 06/14] ARM: dts: sun8i-a83t: Correct low speed oscillator
+ clocks
+Message-ID: <20160202131947.GS4652@lukather>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1454203266-4450-7-git-send-email-vishnupatekar0510@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="gXx2FYK2AghGE4Yq"
+In-Reply-To: <1454203266-4450-7-git-send-email-vishnupatekar0510@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
 
-kernel@martin.sperl.org writes:
+--gXx2FYK2AghGE4Yq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> From: Martin Sperl <kernel@martin.sperl.org>
->
-> Add missing locking to:
-> * bcm2835_pll_divider_on
-> * bcm2835_pll_divider_off
-> to protect the read modify write cycle for the
-> register access protecting both cm_ctl and a2w_ctl
-> registers.
+On Sun, Jan 31, 2016 at 09:20:58AM +0800, Vishnu Patekar wrote:
+> From: Chen-Yu Tsai <wens@csie.org>
+>=20
+> The A83T does not have a 32.768 kHz low speed oscillator, either as
+> an external crystal or input. It has a 16 MHz RC-based (inaccurate)
+> internal oscillator, which is then divided by 512 for a clock close
+> to 32 kHz.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-s/ctl/reg/ in the commit message
+You should have your SoB here.
 
-bcm2835_pll_divider_set_rate() also does an RMW on cm_reg, why was it
-left out?
+Is it ok to add it?
 
-Since the a2w reg is only modified by _on and _off, and the core holds
-the prepare lock across those, I think it was already safe and doesn't
-need to be mentioned here.
+Maxime
 
---=-=-=
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--gXx2FYK2AghGE4Yq
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBCgAGBQJW1KTEAAoJELXWKTbR/J7oTDkP/0HumzgSo6V19ectuNSj1FVe
-CeSBizPbRLuhFu9X6FWrIYRq1LPwC9VZ2o31D6t6edFhNb99inMg+AmAoc9BJJoD
-Ly+R0qtbQnNEyBZm6XsHMWVsjzdHbRsCkNh05HPjBUEyvChcihqv3BDArbn2qOEf
-mE0LmQQZMvichkngN1ppHZGgFdoKieRuDGIr2zILdcrDiP+LtQEgsCrTkS8Y2NZV
-2Hh4TK/zppeGa9edMa/IYaVIvCbZmbqacOyVtttjIe4PDAQDI6DSRZeD6rZLBfou
-TIMBaZ/K+/Bfu0+54IxExjddUdGIAACGa+kLjlNlbp/xAEj7cZWadW5ceo7J+olF
-UKNIfHSCFzSg0I5w0wwcwWW4Qlfr90jEulQRPC3lXNYDLL64N5SAhZfdOLi1JobL
-OM2yLrqWZci1ZrriPacDyejk0Ytr51dsV8dxIOv6k8I0OwgcnQE0avLpKzz2hTea
-XEEtWmIF/B99mD+HHGknnp62OO+sEC1M2NYnIzJ54zJ8gqA8QNh78CzgdIaWqbf2
-OpQZnVZoSBD008cYmjt5vZeGctE/d5SGPcx21eudm+lR90QiggHLNwpYwnY+2xIA
-WvOrtrLdHUwLqWfQsm8D9L1GrpfYmhllMtX/Hdre0T/LP0zDasYErXzws+mocOv6
-+gg6PD61wpn9/xQQiOR9
-=J0J8
+iQIcBAEBAgAGBQJWsKzzAAoJEBx+YmzsjxAgVbsQAIrgvDLhc9G7FHuWIjknKcbV
+Wa9uwHLTHr3TACcm0eUD8zjDxVKdRqYAZ2JDvwfPGN3Q62AZOtrIHJr8CnQcs+sa
+0ebCCBkBHsOo2sioydT9b6qpP1dUUOL19LXUIpJceNZfirPiJzkIZ40CNKLdwHsX
+K6m1W79sXyKM89zqvzVpsTUv/OeOgJwBE/t4AAVNPmt07gjN599PJ1NkChYaVYzi
+yVLBKBpi1Z3WPMZa3T7+zZHiCoROHzvnIgsxaCi9KKOlKrghg+ztKuWaKI+bPS5+
+n6INtuKFm/9wlL/Vek8yOHawMzO3a66rEEdfIvJFapzHIEIHqBy9yuM8OQOBwAjo
+mkgeKe66e/WzJ1cpuEeDgC+trgjXMPPFmhcZmnOMt6DrgMYZQ7cNxU/9iApC0fWA
+OxnkZ8yvBDc6FqJZDHi0bSllVo25O0ETQ3q8+rPcOGHJLQXghZs5ENfcYFSnS9o3
+QxJ1m9NiiYGPoJc2kGcwq6dliQ4AFP/htaZipHnz+qF/AmqFogycj3fEnjpmPy2i
+2TzhVKirt0dYDLGnHpph3HGe4NARMvMfn3NkdDExpZxfSmh6vizLKJApsmpSQCu6
+xFIotNzv3uFDo0qUn1j3qI5S10T4KaWaO+voZYn/g79z+LcQB5SnAtjAjZ3Q61A1
+8zM8qW4bqE6Y5ojRH7yQ
+=VPel
 -----END PGP SIGNATURE-----
---=-=-=--
+
+--gXx2FYK2AghGE4Yq--
