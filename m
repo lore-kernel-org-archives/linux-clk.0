@@ -1,45 +1,30 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Lars Persson <lars.persson@axis.com>
-To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	linux-kernel@vger.kernel.org, Lars Persson <larper@axis.com>
-Subject: [PATCH v2 7/8] arm: multi_v7_defconfig: add MACH_ARTPEC6
-Date: Thu, 11 Feb 2016 15:04:41 +0100
-Message-Id: <59ff2b8e89d207ffb14e5c77803280c5586a893f.1455198819.git.larper@axis.com>
-In-Reply-To: <cover.1455198819.git.larper@axis.com>
-References: <cover.1455198819.git.larper@axis.com>
-In-Reply-To: <cover.1455198819.git.larper@axis.com>
-References: <cover.1455198819.git.larper@axis.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 1 Feb 2016 17:07:46 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH v2 07/16] clk: simplify
+ clk_core_get_parent_by_index()
+Message-ID: <20160202010746.GV4848@codeaurora.org>
+References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
+ <1451298191-30815-8-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1451298191-30815-8-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Lars Persson <larper@axis.com>
----
- arch/arm/configs/multi_v7_defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+On 12/28, Masahiro Yamada wrote:
+> Drop the "if (!core->parents)" case and refactor the function a bit
+> because core->parents is always allocated.  (Strictly speaking, it is
+> ZERO_SIZE_PTR if core->num_parents == 0, but such a case is omitted
+> by the if-conditional above.)
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 8e8b2ac..1149642 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -16,6 +16,8 @@ CONFIG_ARCH_MULTI_V7=y
- # CONFIG_ARCH_MULTI_V4 is not set
- CONFIG_ARCH_VIRT=y
- CONFIG_ARCH_ALPINE=y
-+CONFIG_ARCH_ARTPEC=y
-+CONFIG_MACH_ARTPEC6=y
- CONFIG_ARCH_MVEBU=y
- CONFIG_MACH_ARMADA_370=y
- CONFIG_MACH_ARMADA_375=y
-@@ -227,6 +229,7 @@ CONFIG_R8169=y
- CONFIG_SH_ETH=y
- CONFIG_SMSC911X=y
- CONFIG_STMMAC_ETH=y
-+CONFIG_SYNOPSYS_DWC_ETH_QOS=y
- CONFIG_TI_CPSW=y
- CONFIG_XILINX_EMACLITE=y
- CONFIG_AT803X_PHY=y
+Applied to clk-next
+
 -- 
-2.1.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
