@@ -1,63 +1,53 @@
-Return-Path: <v1ron@mail.ru>
-Date: Wed, 3 Feb 2016 11:36:26 +0300
-From: Roman Volkov <v1ron@mail.ru>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, Stephen Boyd
- <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
- linux-kernel@vger.kernel.org, Tony Prisk <linux@prisktech.co.nz>, Andrzej
- Hajda <a.hajda@samsung.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: vt8500: don't return possibly uninitialized data
-Message-ID: <20160203113626.4a3f4f8a@v1ron-s7>
-In-Reply-To: <2326140.nrZ9Ej2PSt@wuerfel>
-References: <4790407.6zgSQCdsSB@wuerfel>
-	<2210116.QsPesySkh0@wuerfel>
-	<20160202194713.GN4848@codeaurora.org>
-	<2326140.nrZ9Ej2PSt@wuerfel>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: sunxi: don't mark sun6i_ar100_data __initconst
+Date: Tue,  2 Feb 2016 16:55:30 +0100
+Message-Id: <1454428571-4040607-1-git-send-email-arnd@arndb.de>
+In-Reply-To: <1453727747-23307-11-git-send-email-wens@csie.org>
+References: <1453727747-23307-11-git-send-email-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-=D0=92 Tue, 02 Feb 2016 21:00:29 +0100
-Arnd Bergmann <arnd@arndb.de> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+The clk-sun6i-ar100 clk driver is a platform driver that may use
+deferred probing, so its probe function must not access
+__init symbols. Kbuild warns about this:
 
-> On Tuesday 02 February 2016 11:47:13 Stephen Boyd wrote:
-> > On 02/02, Arnd Bergmann wrote: =20
-> > > On Monday 01 February 2016 17:15:45 Stephen Boyd wrote:
-> > >=20
-> > > I see what you mean now. I checked different gcc versions, and
-> > > with my patch I get the warnings for 4.6 through 4.9, but not for
-> > > 5.x.
-> > >=20
-> > > In general, I tried to only address warnings I still see with
-> > > newer gcc version, as they are better about false positives. Do
-> > > you think it's ok to take the patch as is then? Otherwise we
-> > > probably have to add fake initializations which would shut up the
-> > > warnings but not help with the code quality.=20
-> >=20
-> > Sure. I was hoping something could be done to restructure the
-> > code to make it easier for the compiler to figure out the
-> > variables would be initialized. But you're the one who's sending
-> > the patch to silence them so if you're satisfied I'm not going to
-> > spend too much time on this.
-> >  =20
->=20
-> Ok, thanks!
->=20
-> Note that this one patch was for a real bug involving undefined
-> behavior that is now fixed.
->=20
-> 	Arnd
+WARNING: drivers/clk/sunxi/built-in.o(.text+0x15f0): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
+The function sun6i_a31_ar100_clk_probe() references
+the (unknown reference) __initconst (unknown).
+This is often because sun6i_a31_ar100_clk_probe lacks a __initconst
+annotation or the annotation of (unknown) is wrong.
 
-Hi Arnd,
+Removing the __initconst annotation avoids the warning and makes
+deferred probing work.
 
-Thanks for fixing this code! Did someone reproduce this bug, or this
-is something theoretical, based on the code analysis? I just never
-heard about the issue. I can look into the code on the weekends too, I
-have WM8505\WM8650 machines to test.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 3ca2377b6fed ("clk: sunxi: rewrite sun6i-ar100 using factors clk")
+---
+ drivers/clk/sunxi/clk-sun6i-ar100.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Is it enough to run the regular kernel build for WM8650 to see the
-warnings, or there are special options in the kernel to run the compiler
-test?
-
-Regards
-Roman
+diff --git a/drivers/clk/sunxi/clk-sun6i-ar100.c b/drivers/clk/sunxi/clk-sun6i-ar100.c
+index a7f5777834eb..84a187e55360 100644
+--- a/drivers/clk/sunxi/clk-sun6i-ar100.c
++++ b/drivers/clk/sunxi/clk-sun6i-ar100.c
+@@ -60,7 +60,7 @@ static const struct clk_factors_config sun6i_ar100_config = {
+ 	.pshift = 4,
+ };
+ 
+-static const struct factors_data sun6i_ar100_data __initconst = {
++static const struct factors_data sun6i_ar100_data = {
+ 	.mux = 16,
+ 	.muxmask = GENMASK(1, 0),
+ 	.table = &sun6i_ar100_config,
+-- 
+2.7.0
