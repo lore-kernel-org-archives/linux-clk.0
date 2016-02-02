@@ -1,66 +1,84 @@
-Return-Path: <anholt@eliezer.anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: kernel@martin.sperl.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Remi Pommarel <repk@triplefau.lt>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: Re: [PATCH V4 1/7] clk: bcm2835: the minimum clock divider is 2
-In-Reply-To: <87oac03tuz.fsf@eliezer.anholt.net>
-References: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org> <1452867667-2447-2-git-send-email-kernel@martin.sperl.org> <87oac03tuz.fsf@eliezer.anholt.net>
-Date: Mon, 01 Feb 2016 17:52:56 -0800
-Message-ID: <87egcv5153.fsf@eliezer.anholt.net>
+Return-Path: <andre.przywara@arm.com>
+Subject: Re: [PATCH 3/5] clk: sunxi: convert current clocks registration to
+ CLK_OF_DECLARE
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+References: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1454402834-6385-4-git-send-email-maxime.ripard@free-electrons.com>
+ <56B0BA56.10500@arm.com> <20160202170037.GZ4652@lukather>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+   Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>,
+   heiko@sntech.de, Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+   linux-arm-kernel@lists.infradead.org
+From: Andre Przywara <andre.przywara@arm.com>
+Message-ID: <56B0E182.9000207@arm.com>
+Date: Tue, 2 Feb 2016 17:04:02 +0000
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+In-Reply-To: <20160202170037.GZ4652@lukather>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
+Hi,
 
-Eric Anholt <eric@anholt.net> writes:
-
-> kernel@martin.sperl.org writes:
->
->> From: Martin Sperl <kernel@martin.sperl.org>
+On 02/02/16 17:00, Maxime Ripard wrote:
+> Hi,
+> 
+> On Tue, Feb 02, 2016 at 02:16:54PM +0000, Andre Przywara wrote:
+>> Hi Maxime,
 >>
->> Testing with different clock divider values has shown
->> that (at least for the PCM clock) the clock divider
->> has to be at least 2, otherwise the clock will not
->> output a signal.
->
-> For a MASH clock (PWM, PCM, SLIMBUS, but not the others), the minimum
-> integer component of the divider is:
->
-> mash 0: 1
-> mash 1: 2
-> mash 2: 3
-> mash 3: 5
+>> On 02/02/16 08:47, Maxime Ripard wrote:
+>>> The current clock registration and protection code has a few drawbacks, the
+>>> two main ones being that we create a lot of orphans clock in the
+>>> registration phase, which will be troublesome when we will start being less
+>>> relaxed about them.
+>>>
+>>> The protection code also relies on clkdev, which we don't really use but
+>>> for this particular case.
+>>>
+>>> Fix both at the same time by moving everyone to the CLK_OF_DECLARE that
+>>> will probe our clock tree in the right and thus avoid orphans, and by
+>>> protecting directly the clock returned by our registration function.
+>>
+>> I very much appreciate this cleanup and like the idea. Any chance we can
+>> have this rather quickly, so that I can rebase the A64 support series on it?
+> 
+> I actually count on that :)
 
-More specific MASH list:
+Great!
 
-GP0
-GP1
-(*not* gp2)
-PCM
-PWM
-SLIM
+> I wasn't really happy about your allwinner,sunxi compatible,
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+Me neither, honestly, but I didn't dare to touch clk-sunxi.c even more ;-)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+> so I just
+> gave you an easier way out ;)
 
-iQIcBAEBCgAGBQJWsAv5AAoJELXWKTbR/J7oAssP/iu+jhkHebDtLFUQqBpO6kQH
-i6WP8noJIjiTVeUTPzNq0bOaESDr3qU5IKSSH0mhGNQlC6rrYfZpvmFDXZlISWzC
-tKn0RzwTQiaGguW+SvRqgrkoTaMNWBUwgloOuzW3ufPNmjz4q3Zia1SdzEtrOw56
-d27rTkfcQICCr9SPBeqmNQKnpG8Vr4Y6bgexxVwXdLw2Vu4OIYIFbbnAHAOHEE4Q
-AVH/IoO9WXh2pfOacJZw7fwSw2c7YzckQwgpWkf/DsOtFh3IU3eXQ5QtJvkfxwgO
-XhqbrZhPj6ZUVDcimugi9GXLdzhQEUgANVv6ZizZp49+bYAnPXj/Br9Siq7dKGBr
-Pc4leYEvHdkQgQ+9z9vjmIePdibTODjGPHvRN4l6Un+P5yHzCPGE7E3rQdnMMLla
-BkCrpahnTxICH5w4z1cjrgxD33sy7Vev4dw5oKJrWtd+416GHhLUchas1fhbIIyc
-+mr423eVaUGPgEUDXnXGKtn25b3NFgcr68liTI9O03JOmPrdUYfgfNlxqN+heiYd
-42IMWYYJyn/0uvfshajouz016iRjnHL66qsvsnKeDX0YLW1IDIgxQQ7oBv2ZRXLJ
-xDIwe45xh6TrS4KTxvnLFl1DXbDt++HvLn0Cp0uXWDm0q1xLhnXXIJ4B8v+NpVbp
-129kSno9B77QnwZpcCM0
-=OHg8
------END PGP SIGNATURE-----
---=-=-=--
+Appreciated!
+
+> 
+>>> +static void __init sun8i_ahb2_clk_setup(struct device_node *node)
+>>> +{
+>>> +	sunxi_mux_clk_setup(node, &sun8i_h3_ahb2_mux_data);
+>>> +}
+>>> +CLK_OF_DECLARE(sun8i_ahb2, "allwinner,sun8i-a31-ahb2-clk",
+>>> +	       sun8i_ahb2_clk_setup);
+>>
+>> I don't find this clock in my tree (which is mripard/sunxi/for-next).
+>> Instead I only have "allwinner,sun8i-h3-ahb2-clk", as mentioned below.
+>> But as you remove this clock below from the old code and instead
+>> instantiate this new clock here, this looks somehow wrong to me. Can you
+>> confirm this or am I utterly confused?
+> 
+> Damn, you're right, it's just a silly copy-paste issue, I'll fix it.
+
+I am sure you left it in to see if somebody actually checks it ;-)
+
+Merci!
+Andre
+
+>> Apart from that I checked each and every clock mentioned in this patch
+>> and can confirm that the transformation is correct. So if you fix this,
+>> I can send a Reviewed-by.
+> 
+> Thanks,
+> Maxime
+> 
