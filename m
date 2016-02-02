@@ -1,169 +1,80 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 11 Feb 2016 11:16:21 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Rob Herring <rob.herring@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Grant Likely <grant.likely@linaro.org>,
-	Frank Rowand <frowand.list@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
-	Jean-Francois Moine <moinejf@free.fr>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Jens Kuske <jenskuske@gmail.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: breaking DT compatibility
-Message-ID: <20160211101621.GL31506@lukather>
-References: <1454358000-13594-1-git-send-email-maxime.ripard@free-electrons.com>
- <56B4E2FB.3050703@arm.com>
- <56BB2D79.6090402@arm.com>
- <CABGGiswOKztmRT40w4t_7BD729WgM8ueLtOD-UF_wgMbmcg4cg@mail.gmail.com>
- <20160210143755.GE31506@lukather>
- <56BB61EA.1030805@arm.com>
+Return-Path: <ping.bai@nxp.com>
+From: Bai Ping <ping.bai@nxp.com>
+To: <shawnguo@kernel.org>, <kernel@pengutronix.de>
+CC: <pawel.moll@arm.com>, <robh+dt@kernel.org>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<jacky.baip@gmail.com>
+Subject: [PATCH V3 5/5] ARM: imx: Add msl code support for imx6qp
+Date: Tue, 2 Feb 2016 18:01:38 +0800
+Message-ID: <1454407298-15545-5-git-send-email-ping.bai@nxp.com>
+In-Reply-To: <1454407298-15545-1-git-send-email-ping.bai@nxp.com>
+References: <1454407298-15545-1-git-send-email-ping.bai@nxp.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="USsYc9q7w7YyGvrs"
-In-Reply-To: <56BB61EA.1030805@arm.com>
+Content-Type: text/plain
+Return-Path: ping.bai@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
+The i.MX6QP is a different SOC, but internally we treate it as i.MX6Q
+Rev_2.0 to maximum the code reusability. The chip silicon number we
+read from the ANADIG_DIGPROG is 0x630100. This patch add code to
+identify it as i.MX6QP Rev_1.0 when print out the silicon version.
 
---USsYc9q7w7YyGvrs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Bai Ping <ping.bai@nxp.com>
+---
 
-On Wed, Feb 10, 2016 at 04:14:34PM +0000, Andre Przywara wrote:
-> > On Wed, Feb 10, 2016 at 07:42:02AM -0600, Rob Herring wrote:
-> >> On Wed, Feb 10, 2016 at 6:30 AM, Andre Przywara <andre.przywara@arm.co=
-m> wrote:
-> >>> Hi,
-> >>>
-> >>> just a ping:
-> >>>
-> >>> Are we really OK with breaking existing DTs in 4.6? (per the code in
-> >>> -next: f7d372ba54ea04d528a291b8dbe34716507bb60b, which is this patch).
-> >>
-> >> I only warn and make sure people are aware of the issue. I leave that
-> >> up to platform maintainers to decide. It depends on the maturity of
-> >> the platform and users.
-> >=20
-> > The impacted SoCs support is really partial. For the most supported
-> > one, big things like display or sound are totally missing, and we
-> > still update them on a regular basis to add support for new
-> > devices. As such, users are very likely to upgrade the DT from one
-> > version to another just because there's new devices available to
-> > them. And the newest SoC impacted just got introduced in 4.5, and only
-> > has the UART and MMC devices available.
->=20
-> But I still don't see why we have to break things - can't we just
-> improve support _without_ breaking compatibility? For instance keeping
-> the old behaviour around? I can dig out my old x86 hat and find a
-> _compatible_ solution for this, if you prefer ;-)
-> Actually doesn't Jean-Francois' patch fixes the PLL8 issue without
-> breaking anything?
+change for V3:
+-- add comment for the revision trick code
 
-Are you convinced that merging code that is not going to be used or
-tested (and thus maintained) by anyone is a good idea?
+ arch/arm/mach-imx/anatop.c     | 9 ++++++++-
+ arch/arm/mach-imx/mach-imx6q.c | 8 ++++++--
+ 2 files changed, 14 insertions(+), 3 deletions(-)
 
-Using X86 as an example is quite funny, since I remember on a few
-occasions having to reflash my BIOS/UEFI to fix some issues in Linux
-(and as it turns out, the last occurence was two weeks ago).
-
-> Also were do you want to draw the line for "partial support"? The
-> sun6i-a31.dtsi is around since 3.12, which was released more than 2
-> years ago.
-> If we want to wait for "stabilization", we will probably wait forever. I
-> find discussions about DT stabilization going back to the very beginning
-> of DT for ARM - as well as the request for moving the DT bindings out of
-> the kernel (which I think we should really eventually do now).
-
-I'd say when we have merged everything that makes it work as it was
-intented to?
-
-In this case, it's a multimedia SoCs. So I'd draw the line at once we
-had display, sound and VPU. Display is coming, sound seems to be
-gaining traction lately, so that doesn't sound that far off.
-
-> Frankly I don't care so much about these particular boards, but just
-> want avoid to set a bad example for the future - in particular sneaking
-> this behaviour into the arm64 world, where DTs _really_ come with the
-> board or are even generated by the (UEFI-)firmware.
-
-Ok, that's a good thing to know, and we'll make sure it won't
-happen. What's the policy when the provided DT comes from a vendor in
-that case?
-
-> U-Boot already can embed a device tree, sounds like a perfect place to
-> have it stored for me - as long as there is _one_ best version of it.
-
-So far, they've been using their own, with some custom properties that
-were rejected last time they were submitted.
-
-http://lists.infradead.org/pipermail/linux-rpi-kernel/2015-August/002122.ht=
-ml
-
-So I'm a bit pessimistic about that.
-
-> >> If people complain about it then it's their mess. For platforms
-> >> supported in distros such as debian or fedora, I would strongly
-> >> recommend against breaking compatibility.
-> >=20
-> > None of them are officially supported:
-> > https://www.debian.org/releases/stable/armhf/ch02s01.html.en
-> > https://fedoraproject.org/wiki/Architectures/ARM#Fedora_23
-> >=20
-> > Only the older one are, and they are not affected by this patch.
-> >=20
-> >> They do ship dtbs, but it's a chicken and egg problem. If dtbs were
-> >> stable and provided by firmware, then they wouldn't have to provide
-> >> them. If dtbs are unstable, then they have no choice.
-> >=20
-> > And while it might work great on platforms that have all the needed
-> > documentation, or a perfect one, which is our case. Almost each
-> > release, we discover that something is not working as it was
-> > documented, when it was documented in the first place.
->=20
-> I understand that it's not an ideal situation for those Allwinner
-> chips - but nevertheless I would like us to at least _try_ to comply
-> with this idea. As said before: this patch is a nice rework/cleanup
-> - but definitely not a good reason to break compatibility.
-
-To be fair, I really want to tend to keep a DT ABI as stable as
-possible. I just don't want to commit to it. If it comes in the way of
-a nice rework/cleanup, then it shouldn't matter.
-
-But that doesn't make me want to break everything every kernel release
-either.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---USsYc9q7w7YyGvrs
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWvF91AAoJEBx+YmzsjxAgDusQAIAb/ixpeJ4SSrRZ+wH/+9UY
-+6hqaDXfBY6QcaTwP6+5B07AMnOzaJLW9hNn3CQMV6XnxASoMBuXnr3TLDvcgfEc
-3VdNsUgUAUYh8E3Q2L3A6LP5XjDTJnA3XwHzeHnswOaXAWxjYrWY/K5vut1wuX5v
-Nql3GCgTfvwXEVbEMRAjqr7aLHLnC5S9SOkuxEjFJYcwTKc5VYnaV8zrFcIkgb5U
-WMHIm31XbYY/2bQ5J9R00az8DD3brMmWhlN7dT2maDTM28/i38pApIXELMDjrk8A
-VjitA1XJkQ1yQ8QUjXFbEuqDeaiW5pRXwSDBRHlpEPskibeiOE+82WkLyLNa0+sI
-xJu6StX9CHEuplNL46BMkA8qjAVuFoqKV4d0Pxfh60BXNuUzv3c81pvGNUAeH1AW
-izwMIeGhWSc+Mo/6iMFuSVyLjmi1FBuwVPv49FnUWW8F6Kd4DdH3xKIyez3fU8nN
-EcLVsahnHCJpo2mPxxjkLmTNX57Qn5Lng08EZn/Kr5u1D1NRNuBIblLPT3g0H0Sa
-quhmq1lmXULBx+d713n70diB87ncl2cRhpSn4wwSMoT7X71dNdi20jjoZEc6QcIU
-2cD80WFiPxvr+gAc4QGnZ7fHtckR3d8heSXI5NTmR+q3T2LfbbfJ3fElrahFu4ur
-ytXP/amHtCD7mIMWM9gH
-=yUjr
------END PGP SIGNATURE-----
-
---USsYc9q7w7YyGvrs--
+diff --git a/arch/arm/mach-imx/anatop.c b/arch/arm/mach-imx/anatop.c
+index 231bb25..0f624d1 100644
+--- a/arch/arm/mach-imx/anatop.c
++++ b/arch/arm/mach-imx/anatop.c
+@@ -129,7 +129,14 @@ void __init imx_init_revision_from_anatop(void)
+ 
+ 	switch (digprog & 0xff) {
+ 	case 0:
+-		revision = IMX_CHIP_REVISION_1_0;
++		/*
++		 * For i.MX6QP, most of the code for i.MX6Q can be resued,
++		 * so internally, we identify it as i.MX6Q Rev 2.0
++		 */
++		if (digprog >> 8 & 0x01)
++			revision = IMX_CHIP_REVISION_2_0;
++		else
++			revision = IMX_CHIP_REVISION_1_0;
+ 		break;
+ 	case 1:
+ 		revision = IMX_CHIP_REVISION_1_1;
+diff --git a/arch/arm/mach-imx/mach-imx6q.c b/arch/arm/mach-imx/mach-imx6q.c
+index 3878494b..cb27d56 100644
+--- a/arch/arm/mach-imx/mach-imx6q.c
++++ b/arch/arm/mach-imx/mach-imx6q.c
+@@ -266,8 +266,11 @@ static void __init imx6q_init_machine(void)
+ {
+ 	struct device *parent;
+ 
+-	imx_print_silicon_rev(cpu_is_imx6dl() ? "i.MX6DL" : "i.MX6Q",
+-			      imx_get_soc_revision());
++	if (cpu_is_imx6q() && imx_get_soc_revision() == IMX_CHIP_REVISION_2_0)
++		imx_print_silicon_rev("i.MX6QP", IMX_CHIP_REVISION_1_0);
++	else
++		imx_print_silicon_rev(cpu_is_imx6dl() ? "i.MX6DL" : "i.MX6Q",
++				imx_get_soc_revision());
+ 
+ 	parent = imx_soc_device_init();
+ 	if (parent == NULL)
+@@ -399,6 +402,7 @@ static void __init imx6q_init_irq(void)
+ static const char * const imx6q_dt_compat[] __initconst = {
+ 	"fsl,imx6dl",
+ 	"fsl,imx6q",
++	"fsl,imx6qp",
+ 	NULL,
+ };
+ 
+-- 
+1.9.1
