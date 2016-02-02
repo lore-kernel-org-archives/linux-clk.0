@@ -1,106 +1,135 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
-	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
-	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [PATCH v9 0/6] ARM: hisi: Add initial support including clock driver for Hi3519 soc.
-Date: Mon, 22 Feb 2016 15:47:54 +0800
-Message-ID: <1456127280-23275-1-git-send-email-xuejiancheng@huawei.com>
+Return-Path: <andre.przywara@arm.com>
+Subject: Re: [PATCH 1/5] clk: sunxi: Make clocks setup functions return their
+ clock
+To: Chen-Yu Tsai <wens@csie.org>,
+   Maxime Ripard <maxime.ripard@free-electrons.com>
+References: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1454402834-6385-2-git-send-email-maxime.ripard@free-electrons.com>
+ <CAGb2v66CyhkM0vabbede43eAaf7WVg0Lm8w_OUKwqHnFO182uw@mail.gmail.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+   Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>,
+   =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+   linux-clk <linux-clk@vger.kernel.org>,
+   linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+From: Andre Przywara <andre.przywara@arm.com>
+Message-ID: <56B093CD.6000806@arm.com>
+Date: Tue, 2 Feb 2016 11:32:29 +0000
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <CAGb2v66CyhkM0vabbede43eAaf7WVg0Lm8w_OUKwqHnFO182uw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Hi Maxime,
 
-Hi3519 soc is mainly used for ip camera and sport DV solutions. This patchset adds initial support
-for Hi3519 soc. It includes clock driver, arch configuration, debug uart configuration and device tree.
-It has been tested on hi3519 reference board.
+On 02/02/16 10:35, Chen-Yu Tsai wrote:
+> On Tue, Feb 2, 2016 at 4:47 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+>> The clocks registration code in clk-sunxi was most of the time not
+>> returning the struct clk (or struct clk array) that was registered,
+>> preventing the users of such functions to manipulate it, for example to
+>> protect it.
+>>
+>> Make them return it so that we can start using it.
+> 
+> Should they return error codes as well? So the CLK_OF_DECLARE setup functions
+> can report errors. Or make these helper functions report errors directly?
 
-Any comments will be appreciated!
+Yeah, I was about the reply the same.
+It looks like we can use the ERR_PTR facility to achieve this, as it's
+already used in other parts of the clk framework.
 
-Thanks!
+For instance ...
 
-Change Log
-----------
-v9:
---Fixed issues pointed by Michael Turquette.
+> ChenYu
+> 
+>> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>> ---
+>>  drivers/clk/sunxi/clk-sunxi.c | 16 +++++++++-------
+>>  1 file changed, 9 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+>> index e460a6b0068c..67ef94948544 100644
+>> --- a/drivers/clk/sunxi/clk-sunxi.c
+>> +++ b/drivers/clk/sunxi/clk-sunxi.c
+>> @@ -615,8 +615,8 @@ static const struct mux_data sun8i_h3_ahb2_mux_data __initconst = {
+>>         .shift = 0,
+>>  };
+>>
+>> -static void __init sunxi_mux_clk_setup(struct device_node *node,
+>> -                                      struct mux_data *data)
+>> +static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
+>> +                                              struct mux_data *data)
+>>  {
+>>         struct clk *clk;
+>>         const char *clk_name = node->name;
+>> @@ -638,6 +638,8 @@ static void __init sunxi_mux_clk_setup(struct device_node *node,
+>>                 of_clk_add_provider(node, of_clk_src_simple_get, clk);
+>>                 clk_register_clkdev(clk, clk_name, NULL);
 
-v8:
---Made hi3519 clock driver can be compiled as a module
---Fixed an issue in arch/arm/Kconfig.debug
+... here we have two functions that could fail and actually return an
+error code.
+This whole clock tree is quite complex already, so having clock
+initialisations fail without any error message is not really helping.
+Doing: "if (ret) {pr_warn(...); return ERR_PTR(ret);}" should be doable,
+I think. Or we do it in the upper layers, when we have the error reason.
 
-v7:
---Rebased to v4.5-rc1
+Otherwise I like the approach!
 
-v6:
--Changed clock driver to a real platform driver
+Cheers,
+Andre.
 
-v5:
--Adjusted clock and reset controller driver code
-
-v4:
--Rebased to v4.4-rc7
--Divided patches according to Rob's comments
--Added spi nodes in hi3519-demb.dts
-
-v3:
--Rebased to v4.4-rc4
--Adjusted according to Arnd's comments
--Removed ARCH_HI3519, using ARCH_HISI directly
-
-v2:
--Rebased to v4.4-rc3
--Put dt-binding doc and header file in a separate patch.
--Deleted unused clocks definitions.
--Adjusted the ARCH_xxx order in Kconfig file
--Renamed ARCH_HI3xxx to ARCH_36xx
-
-Jiancheng Xue (6):
-  clk: hisilicon: export some hisilicon APIs to modules
-  clk: hisilicon: add CRG driver for hi3519 soc
-  ARM: hisi: add compatible string for Hi3519 soc
-  ARM: debug: add hi3519 debug uart
-  ARM: dt-bindings: add device tree bindings for Hi3519 sysctrl
-  ARM: dts: add dts files for Hi3519
-
- .../bindings/arm/hisilicon/hi3519-sysctrl.txt      |  14 ++
- .../devicetree/bindings/clock/hi3519-crg.txt       |  46 +++++
- arch/arm/Kconfig.debug                             |  10 ++
- arch/arm/boot/dts/Makefile                         |   2 +
- arch/arm/boot/dts/hi3519-demb.dts                  |  42 +++++
- arch/arm/boot/dts/hi3519.dtsi                      | 187 +++++++++++++++++++++
- arch/arm/mach-hisi/hisilicon.c                     |  23 +--
- drivers/clk/hisilicon/Kconfig                      |  15 ++
- drivers/clk/hisilicon/Makefile                     |   2 +
- drivers/clk/hisilicon/clk-hi3519.c                 | 129 ++++++++++++++
- drivers/clk/hisilicon/clk.c                        |  23 ++-
- drivers/clk/hisilicon/clk.h                        |  14 +-
- drivers/clk/hisilicon/reset.c                      | 124 ++++++++++++++
- drivers/clk/hisilicon/reset.h                      |  32 ++++
- include/dt-bindings/clock/hi3519-clock.h           |  40 +++++
- 15 files changed, 669 insertions(+), 34 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
- create mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
- create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
- create mode 100644 arch/arm/boot/dts/hi3519.dtsi
- create mode 100644 drivers/clk/hisilicon/clk-hi3519.c
- create mode 100644 drivers/clk/hisilicon/reset.c
- create mode 100644 drivers/clk/hisilicon/reset.h
- create mode 100644 include/dt-bindings/clock/hi3519-clock.h
-
--- 
-1.9.1
+>>         }
+>> +
+>> +       return clk;
+>>  }
+>>
+>>
+>> @@ -722,7 +724,6 @@ static void __init sunxi_divider_clk_setup(struct device_node *node,
+>>  }
+>>
+>>
+>> -
+>>  /**
+>>   * sunxi_gates_clk_setup() - Setup function for leaf gates on clocks
+>>   */
+>> @@ -808,8 +809,8 @@ static const struct divs_data sun6i_a31_pll6_divs_data __initconst = {
+>>   *           |________________________|
+>>   */
+>>
+>> -static void __init sunxi_divs_clk_setup(struct device_node *node,
+>> -                                       struct divs_data *data)
+>> +static struct clk ** __init sunxi_divs_clk_setup(struct device_node *node,
+>> +                                                struct divs_data *data)
+>>  {
+>>         struct clk_onecell_data *clk_data;
+>>         const char *parent;
+>> @@ -836,7 +837,7 @@ static void __init sunxi_divs_clk_setup(struct device_node *node,
+>>
+>>         clk_data = kmalloc(sizeof(struct clk_onecell_data), GFP_KERNEL);
+>>         if (!clk_data)
+>> -               return;
+>> +               return NULL;
+>>
+>>         clks = kcalloc(ndivs, sizeof(*clks), GFP_KERNEL);
+>>         if (!clks)
+>> @@ -922,7 +923,7 @@ static void __init sunxi_divs_clk_setup(struct device_node *node,
+>>
+>>         of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+>>
+>> -       return;
+>> +       return clks;
+>>
+>>  free_gate:
+>>         kfree(gate);
+>> @@ -930,6 +931,7 @@ free_clks:
+>>         kfree(clks);
+>>  free_clkdata:
+>>         kfree(clk_data);
+>> +       return NULL;
+>>  }
+>>
+>>
+>> --
+>> 2.6.4
+>>
+> 
