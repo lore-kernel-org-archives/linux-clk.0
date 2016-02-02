@@ -1,258 +1,146 @@
-Return-Path: <plaes@plaes.org>
-Message-ID: <1455975941.10551.3.camel@plaes.org>
-Subject: Re: [linux-sunxi] [PATCH v2 00/26] drm: Add Allwinner A10 display
- engine support
-From: Priit Laes <plaes@plaes.org>
-To: maxime.ripard@free-electrons.com, Mike Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>, David
- Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com, Laurent
- Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>,
- Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>,
- Boris Brezillon <boris.brezillon@free-electrons.com>, Wynter Woods
- <wynter@nextthing.co>,  Thomas Petazzoni
- <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>
-Date: Sat, 20 Feb 2016 15:45:41 +0200
-In-Reply-To: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
-References: 
-	<1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <ping.bai@nxp.com>
+From: Bai Ping <ping.bai@nxp.com>
+To: <shawnguo@kernel.org>, <kernel@pengutronix.de>
+CC: <pawel.moll@arm.com>, <robh+dt@kernel.org>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<jacky.baip@gmail.com>
+Subject: [PATCH V3 3/5] ARM: dts: imx: Add basic dts support for imx6qp-sabreauto
+Date: Tue, 2 Feb 2016 18:01:36 +0800
+Message-ID: <1454407298-15545-3-git-send-email-ping.bai@nxp.com>
+In-Reply-To: <1454407298-15545-1-git-send-email-ping.bai@nxp.com>
+References: <1454407298-15545-1-git-send-email-ping.bai@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: ping.bai@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2016-01-14 at 16:24 +0100, Maxime Ripard wrote:
-> Hi everyone,
-> 
-> The Allwinner SoCs (except for the very latest ones) all share the
-> same set of controllers, loosely coupled together to form the display
-> pipeline.
-> 
-> Depending on the SoC, the number of instances of the controller will
-> change (2 instances of each in the A10, only one in the A13, for
-> example), and the output availables will change too (HDMI, composite,
-> VGA on the A20, none of them on the A13).
-> 
-> On most featured SoCs, it looks like that:
-> 
->  +--------------------------------------------+
->  |                    RAM                     |
->  +--------------------------------------------+
->        |            |      |            |
->        v            |      |            v
->  +----------------+ |      | +----------------+
->  |    Frontend    | |      | |    Frontend    |
->  +----------------+ |      | +----------------+
->          |          |      |         |
->          v          |      |         v
->  +----------------+ |      | +----------------+
->  |    Backend     |<+      +>|    Backend     |
->  +----------------+          +----------------+
->          |                           |
->          v                           v
->  +----------------+          +----------------+---> LVDS
->  |      TCON      |          |      TCON      |---> RGB
->  +----------------+          +----------------+
->        |       +---+       +---+          |
->        |           |       |              |
->        v           v       v              v
->  +------------+  +------------+  +------------+---> VGA
->  | TV Encoder |  |    HDMI    |  | TV Encoder |---> Composite
->  +------------+  +------------+  +------------+
-> 
-> The current code only assumes that there is a single instance of all
-> the controllers. It also supports only the RGB and Composite
-> interfaces.
+This patch adds basic dts file for i.MX6QP-Sbreauto board.
 
-I found some time to play with it (with intention to get it running
-also on sun7i and sun4i) and ran into this when trying to build
-sun4i_drm as module:
+Signed-off-by: Bai Ping <ping.bai@nxp.com>
+---
 
-ERROR: "sun4i_tcon1_mode_set" [drivers/gpu/drm/sun4i/sun4i_tv.ko] undefined!
-ERROR: "sun4i_backend_apply_color_correction" [drivers/gpu/drm/sun4i/sun4i_tv.ko] undefined!
-ERROR: "sun4i_tcon_channel_disable" [drivers/gpu/drm/sun4i/sun4i_tv.ko] undefined!
-ERROR: "sun4i_tcon_channel_enable" [drivers/gpu/drm/sun4i/sun4i_tv.ko] undefined!
-ERROR: "clk_unregister_composite" [drivers/gpu/drm/sun4i/sun4i_tcon.ko] undefined!
-ERROR: "sun4i_rgb_init" [drivers/gpu/drm/sun4i/sun4i_tcon.ko] undefined!
-ERROR: "clk_register_composite" [drivers/gpu/drm/sun4i/sun4i_tcon.ko] undefined!
-ERROR: "sun4i_backend_update_layer_coord" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
-ERROR: "sun4i_backend_update_layer_formats" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
-ERROR: "sun4i_tcon_channel_disable" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
-ERROR: "sun4i_tcon_enable_vblank" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
-ERROR: "sun4i_backend_update_layer_buffer" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
-ERROR: "sun4i_backend_layer_enable" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
-ERROR: "sun4i_tcon_channel_enable" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
-ERROR: "sun4i_tcon_enable" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
-ERROR: "sun4i_tcon_disable" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
-ERROR: "sun4i_tcon0_mode_set" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
-ERROR: "sun4i_backend_commit" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
-scripts/Makefile.modpost:91: recipe for target '__modpost' failed
+change for V3:
+-- correct the dts list in alphabet order
+-- update the copyright header for double license
 
+ arch/arm/boot/dts/Makefile             |  3 +-
+ arch/arm/boot/dts/imx6qp-sabreauto.dts | 93 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 95 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/imx6qp-sabreauto.dts
 
-
-> 
-> Let me know what you think,
-> Maxime
-> 
-> Changes from v1:
->   - Rebased on top of 4.4
-> 
->   - Merged the clock drivers for the display and TCON channel 0
-> clocks
->   - Replaced the container_of calls in the display reset clocks to an
->     inline function
->   - Checked the return code of of_clk_parent_fill in the clocks
->     drivers
->   - Checked the return code of of_clk_add_provider in the tcon-ch1
-> and
->     PLL3 clocks
->   - Added missing clocks headers
->   - Created a composite clock unregister function
-> 
->   - Moved the binding documentation to
->     Documentation/devicetree/bindings/display
->   - Added the clocks binding documentation
->   - Added the Olimex vendor to the list of DT vendors
->   - Moved to the OF graph representation and the component framework
-> 
->   - Moved the reset cells count check into the reset framework to
->     avoid duplicating the code in every xlate implementation.
->   - Made the reset_ops const
-> 
->   - Reworked the DRM cmdline mode parsing code to allow named mode
->   - Fixed the TV mode lookup when the mode name is not present (for
->     example because it was given by the userspace)
-> 
->   - Made the driver outputs optional (to avoid crashing when a board
->     doesn't have either a panel or a composite output enabled)
->   - Added multiple plane support with transparency
->   - Moved the backend registers writes commit in the CRTC
-> atomic_flush
->     callback
->   - Removed the load / unload functions
->   - Removed the enabled booleans in my private structure and removed
->     the implicit call to disable_unused_functions in the DRM core to
->     push it in the drivers.
->   - Fixed a few bitmasks on some bitfields definition
->   - Fixed the RGB connector mode validation that was not testing the
->     right values
-> 
-> Matthias Brugger (1):
->   clk: Add regmap support
-> 
-> Maxime Ripard (25):
->   reset: Move DT cell size check to the core
->   reset: Make reset_control_ops const
->   clk: composite: Add unregister function
->   clk: sunxi: Add display and TCON0 clocks driver
->   clk: sunxi: Add PLL3 clock
->   clk: sunxi: Add TCON channel1 clock
->   clk: sun5i: add DRAM gates
->   ARM: sun5i: dt: Add pll3 and pll7 clocks
->   ARM: sun5i: a13: Add display and TCON clocks
->   ARM: sun5i: Add DRAM gates
->   ARM: sun5i: Add TV encoder gate to the DTSI
->   drm/fb_cma_helper: Remove implicit call to disable_unused_functions
->   drm/modes: Rewrite the command line parser
->   drm/modes: Support modes names on the command line
->   drm: Add Allwinner A10 Display Engine support
->   drm: sun4i: Add DT bindings documentation
->   drm: sun4i: Add RGB output
->   drm: sun4i: Add composite output
->   drm: sun4i: tv: Add PAL output standard
->   drm: sun4i: tv: Add NTSC output standard
->   ARM: sun5i: r8: Add display blocks to the DTSI
->   ARM: sun5i: chip: Enable the TV Encoder
->   devicetree: Add olimex vendor prefix
->   drm/panel: simple: Add timings for the Olimex LCD-OLinuXino-4.3TS
->   DO NOT MERGE: ARM: sun5i: chip: Enable the LCD panel
-> 
->  Documentation/devicetree/bindings/clock/sunxi.txt  |   5 +
->  .../display/panel/olimex,lcd-olinuxino-43-ts.txt   |   7 +
->  .../bindings/display/sunxi/sun4i-drm.txt           | 228 +++++++
->  .../devicetree/bindings/vendor-prefixes.txt        |   1 +
->  arch/arm/boot/dts/sun5i-a10s.dtsi                  |   7 +-
->  arch/arm/boot/dts/sun5i-a13.dtsi                   |  46 +-
->  arch/arm/boot/dts/sun5i-r8-chip.dts                |  17 +
->  arch/arm/boot/dts/sun5i-r8.dtsi                    | 139 ++++-
->  arch/arm/boot/dts/sun5i.dtsi                       |  62 ++
->  drivers/clk/Makefile                               |   1 +
->  drivers/clk/clk-composite.c                        |  15 +
->  drivers/clk/clk-divider.c                          |  68 ++-
->  drivers/clk/clk-gate.c                             |  54 +-
->  drivers/clk/clk-io.c                               |  48 ++
->  drivers/clk/clk-io.h                               |  22 +
->  drivers/clk/clk-mux.c                              |  94 ++-
->  drivers/clk/sunxi/Makefile                         |   3 +
->  drivers/clk/sunxi/clk-simple-gates.c               |   2 +
->  drivers/clk/sunxi/clk-sun4i-display.c              | 241 ++++++++
->  drivers/clk/sunxi/clk-sun4i-pll3.c                 |  90 +++
->  drivers/clk/sunxi/clk-sun4i-tcon-ch1.c             | 154 +++++
->  drivers/gpu/drm/Kconfig                            |   2 +
->  drivers/gpu/drm/Makefile                           |   3 +-
->  drivers/gpu/drm/drm_crtc.c                         |   3 +-
->  drivers/gpu/drm/drm_fb_cma_helper.c                |   3 -
->  drivers/gpu/drm/drm_fb_helper.c                    |   4 +
->  drivers/gpu/drm/drm_modes.c                        | 327 ++++++----
->  drivers/gpu/drm/imx/imx-drm-core.c                 |   1 +
->  drivers/gpu/drm/panel/panel-simple.c               |  26 +
->  drivers/gpu/drm/sti/sti_drv.c                      |   1 +
->  drivers/gpu/drm/sun4i/Kconfig                      |  14 +
->  drivers/gpu/drm/sun4i/Makefile                     |  12 +
->  drivers/gpu/drm/sun4i/sun4i_backend.c              | 321 ++++++++++
->  drivers/gpu/drm/sun4i/sun4i_backend.h              | 160 +++++
->  drivers/gpu/drm/sun4i/sun4i_crtc.c                 | 120 ++++
->  drivers/gpu/drm/sun4i/sun4i_crtc.h                 |  30 +
->  drivers/gpu/drm/sun4i/sun4i_drv.c                  | 325 ++++++++++
->  drivers/gpu/drm/sun4i/sun4i_drv.h                  |  30 +
->  drivers/gpu/drm/sun4i/sun4i_framebuffer.c          |  54 ++
->  drivers/gpu/drm/sun4i/sun4i_framebuffer.h          |  19 +
->  drivers/gpu/drm/sun4i/sun4i_layer.c                | 160 +++++
->  drivers/gpu/drm/sun4i/sun4i_layer.h                |  30 +
->  drivers/gpu/drm/sun4i/sun4i_rgb.c                  | 229 +++++++
->  drivers/gpu/drm/sun4i/sun4i_rgb.h                  |  18 +
->  drivers/gpu/drm/sun4i/sun4i_tcon.c                 | 521
-> ++++++++++++++++
->  drivers/gpu/drm/sun4i/sun4i_tcon.h                 | 177 ++++++
->  drivers/gpu/drm/sun4i/sun4i_tv.c                   | 675
-> +++++++++++++++++++++
->  drivers/gpu/drm/tilcdc/tilcdc_drv.c                |   1 +
->  drivers/reset/core.c                               |   6 +-
->  include/drm/drm_modes.h                            |   1 +
->  include/linux/clk-provider.h                       |  55 +-
->  include/linux/reset-controller.h                   |   2 +-
->  52 files changed, 4455 insertions(+), 179 deletions(-)
->  create mode 100644
-> Documentation/devicetree/bindings/display/panel/olimex,lcd-olinuxino-
-> 43-ts.txt
->  create mode 100644
-> Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
->  create mode 100644 drivers/clk/clk-io.c
->  create mode 100644 drivers/clk/clk-io.h
->  create mode 100644 drivers/clk/sunxi/clk-sun4i-display.c
->  create mode 100644 drivers/clk/sunxi/clk-sun4i-pll3.c
->  create mode 100644 drivers/clk/sunxi/clk-sun4i-tcon-ch1.c
->  create mode 100644 drivers/gpu/drm/sun4i/Kconfig
->  create mode 100644 drivers/gpu/drm/sun4i/Makefile
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_backend.c
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_backend.h
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_crtc.c
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_crtc.h
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_drv.c
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_drv.h
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_framebuffer.c
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_framebuffer.h
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_layer.c
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_layer.h
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_rgb.c
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_rgb.h
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_tcon.c
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_tcon.h
->  create mode 100644 drivers/gpu/drm/sun4i/sun4i_tv.c
-> 
-> -- 
-> 2.6.4
-> 
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index c4f42a78..3801cbd 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -352,7 +352,8 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
+ 	imx6q-tx6q-1110.dtb \
+ 	imx6q-udoo.dtb \
+ 	imx6q-wandboard.dtb \
+-	imx6q-wandboard-revb1.dtb
++	imx6q-wandboard-revb1.dtb \
++	imx6qp-sabreauto.dtb
+ dtb-$(CONFIG_SOC_IMX6SL) += \
+ 	imx6sl-evk.dtb \
+ 	imx6sl-warp.dtb
+diff --git a/arch/arm/boot/dts/imx6qp-sabreauto.dts b/arch/arm/boot/dts/imx6qp-sabreauto.dts
+new file mode 100644
+index 0000000..5ce3840
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6qp-sabreauto.dts
+@@ -0,0 +1,93 @@
++/*
++ * Copyright 2016 Freescale Semiconductor, Inc.
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++/dts-v1/;
++
++#include "imx6qp.dtsi"
++#include "imx6qdl-sabreauto.dtsi"
++
++/ {
++	model = "Freescale i.MX6 Quad Plus SABRE Automotive Board";
++	compatible = "fsl,imx6qp-sabreauto", "fsl,imx6qp";
++};
++
++&i2c2 {
++	max7322: gpio@68 {
++		compatible = "maxim,max7322";
++		reg = <0x68>;
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++};
++
++&iomuxc {
++	imx6qdl-sabreauto {
++		pinctrl_enet: enetgrp {
++			fsl,pins = <
++				MX6QDL_PAD_KEY_COL1__ENET_MDIO          0x1b0b0
++				MX6QDL_PAD_KEY_COL2__ENET_MDC           0x1b0b0
++				MX6QDL_PAD_RGMII_TXC__RGMII_TXC         0x1b018
++				MX6QDL_PAD_RGMII_TD0__RGMII_TD0         0x1b018
++				MX6QDL_PAD_RGMII_TD1__RGMII_TD1         0x1b018
++				MX6QDL_PAD_RGMII_TD2__RGMII_TD2         0x1b018
++				MX6QDL_PAD_RGMII_TD3__RGMII_TD3         0x1b018
++				MX6QDL_PAD_RGMII_TX_CTL__RGMII_TX_CTL   0x1b018
++				MX6QDL_PAD_RGMII_RXC__RGMII_RXC         0x1b018
++				MX6QDL_PAD_RGMII_RD0__RGMII_RD0         0x1b018
++				MX6QDL_PAD_RGMII_RD1__RGMII_RD1         0x1b018
++				MX6QDL_PAD_RGMII_RD2__RGMII_RD2         0x1b018
++				MX6QDL_PAD_RGMII_RD3__RGMII_RD3         0x1b018
++				MX6QDL_PAD_RGMII_RX_CTL__RGMII_RX_CTL   0x1b018
++				MX6QDL_PAD_GPIO_16__ENET_REF_CLK        0x4001b0a8
++				MX6QDL_PAD_GPIO_6__ENET_IRQ		0x000b1
++			>;
++		};
++	};
++};
++
++&pcie {
++	status = "disabled";
++};
++
++&vgen3_reg {
++	regulator-always-on;
++};
+-- 
+1.9.1
