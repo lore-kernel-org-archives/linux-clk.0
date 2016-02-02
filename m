@@ -1,43 +1,43 @@
-Return-Path: <lho@apm.com>
-Return-Path: <lho@apm.com>
-From: Loc Ho <lho@apm.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	patches@apm.com,
-	luis.henriques@canonical.com,
-	kamal@canonical.com,
-	Loc Ho <lho@apm.com>
-Subject: [PATCH] clk: xgene: Add missing parenthesis when clearing divider value
-Date: Mon, 29 Feb 2016 14:15:43 -0700
-Message-Id: <1456780543-13770-1-git-send-email-lho@apm.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 1 Feb 2016 17:07:38 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH v2 06/16] clk: move core->parents allocation to
+ clk_register()
+Message-ID: <20160202010738.GU4848@codeaurora.org>
+References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
+ <1451298191-30815-7-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1451298191-30815-7-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-In the initial fix for non-zero divider shift value, the parenthesis
-was missing after the negate operation. This patch adds the required
-parenthesis. Otherwise, lower bits may be cleared unintentionally.
+On 12/28, Masahiro Yamada wrote:
+> Currently, __clk_core_init() allows failure of the kcalloc() for the
+> core->parents.  So, clk_fetch_parent_index() and __clk_init_parent()
+> also try to allocate core->parents in case it has not been allocated
+> yet.  Scattering memory allocation here and there makes things
+> complicated.
+> 
+> Like other clk_core members, allocate core->parents in clk_register()
+> and let it fail in case of memory shortage.  If we cannot allocate
+> such a small piece of memory, the system is already insane.  There is
+> no point to postpone the memory allocation.
+> 
+> Also, allocate core->parents regardless of core->num_parents.  We want
+> it even if core->num_parents == 1 because clk_fetch_parent_index()
+> might be called against the clk_core with a single parent.
+> 
+> If core->num_parents == 0, core->parents is set to ZERO_SIZE_PTR. It
+> is harmless because no access happens to core->parents in such a case.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-Signed-off-by: Loc Ho <lho@apm.com>
-Acked-by: Toan Le <toanle@apm.com>
----
- drivers/clk/clk-xgene.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+Applied to clk-next
 
-diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
-index bd7156b..d73450b 100644
---- a/drivers/clk/clk-xgene.c
-+++ b/drivers/clk/clk-xgene.c
-@@ -376,8 +376,8 @@ static int xgene_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 		/* Set new divider */
- 		data = xgene_clk_read(pclk->param.divider_reg +
- 				pclk->param.reg_divider_offset);
--		data &= ~((1 << pclk->param.reg_divider_width) - 1)
--				<< pclk->param.reg_divider_shift;
-+		data &= ~(((1 << pclk->param.reg_divider_width) - 1)
-+				<< pclk->param.reg_divider_shift);
- 		data |= divider;
- 		xgene_clk_write(data, pclk->param.divider_reg +
- 					pclk->param.reg_divider_offset);
 -- 
-1.7.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
