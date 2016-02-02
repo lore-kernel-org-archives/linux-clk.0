@@ -1,56 +1,90 @@
-Return-Path: <wens@csie.org>
+Return-Path: <yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-In-Reply-To: <20160206103751.eb21edf56ddc6ef7c27907f0@free.fr>
-References: <cover.1454435944.git.moinejf@free.fr> <3c0e2cdea659e9e682f80ecf42b252c740095f15.1454435944.git.moinejf@free.fr>
- <20160205093915.GF1139@lukather> <20160206103751.eb21edf56ddc6ef7c27907f0@free.fr>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 6 Feb 2016 17:56:00 +0800
-Message-ID: <CAGb2v640YWtdT7Rhz2jP7gnQ1U6HJe9POU40HCp==7GrZxDz0A@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] clk: sunxi: Add sun6i/8i video support
-To: Jean-Francois Moine <moinejf@free.fr>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Dave Airlie <airlied@linux.ie>,
-	Chen-Yu Tsai <wens@csie.org>, Emilio Lopez <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	devicetree <devicetree@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>
+In-Reply-To: <20160202023922.GL4848@codeaurora.org>
+References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
+	<1451298191-30815-11-git-send-email-yamada.masahiro@socionext.com>
+	<20160202005051.GO4848@codeaurora.org>
+	<CAK7LNASGzvbGAOnMRBH6SuZOz9O_=r3B3MdqhhkxoWzCcn9gUw@mail.gmail.com>
+	<20160202023922.GL4848@codeaurora.org>
+Date: Tue, 2 Feb 2016 11:48:07 +0900
+Message-ID: <CAK7LNAQb-y-j46O1v6iFRHUR9Dqjzi53-nAYsYAEKmPs_PFO0w@mail.gmail.com>
+Subject: Re: [RESEND PATCH v2 10/16] clk: move checking .git_parent to __clk_core_init()
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Feb 6, 2016 at 5:37 PM, Jean-Francois Moine <moinejf@free.fr> wrote:
-> On Fri, 5 Feb 2016 10:39:15 +0100
-> Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
->
->> > +CLK_OF_DECLARE(sun6i_display, "allwinner,sun6i-display-clk", sun6i_display_setup);
+2016-02-02 11:39 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+> On 02/02, Masahiro Yamada wrote:
+>> 2016-02-02 9:50 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+>> > On 12/28, Masahiro Yamada wrote:
+>> >> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+>> >> index e6e10f5..4ad0a36 100644
+>> >> --- a/drivers/clk/clk.c
+>> >> +++ b/drivers/clk/clk.c
+>> >> @@ -1677,13 +1677,6 @@ static struct clk_core *__clk_init_parent(struct clk_core *core)
+>> >>               goto out;
+>> >>       }
+>> >>
+>> >> -     if (!core->ops->get_parent) {
+>> >> -             WARN(!core->ops->get_parent,
+>> >> -                     "%s: multi-parent clocks must implement .get_parent\n",
+>> >> -                     __func__);
+>> >> -             goto out;
+>> >> -     }
+>> >> -
+>> >>       /*
+>> >>        * Do our best to cache parent clocks in core->parents.  This prevents
+>> >>        * unnecessary and expensive lookups.  We don't set core->parent here;
+>> >> @@ -2315,6 +2308,11 @@ static int __clk_core_init(struct clk_core *core)
+>> >>               goto out;
+>> >>       }
+>> >>
+>> >> +     if (core->num_parents > 1 && !core->ops->get_parent) {
+>> >> +             pr_err("%s: %s must implement .get_parent as it has multi parents\n",
+>> >> +                    __func__, core->name);
+>> >> +     }
+>> >> +
+>> >
+>> > This would seem to allow a case where we may deref a null
+>> > get_parent op if it isn't set and we call __clk_init_parent().
+>> > The next patch removes that case by restructuring
+>> > __clk_init_parent(), so we should just combine these two patches
+>> > together and that theoretical problem goes away.
+>> >
 >>
->> Please use the display driver from my DRM serie, it covers everything
->> you need here.
->
-> If you give me a pointer, I will have a look.
->
->> > +CLK_OF_DECLARE(sun6i_pll3, "allwinner,sun6i-pll3-clk", sun6i_pll3_setup);
+>> I think the case never happens.
 >>
->> And please use the clk-factors code here.
+>> __clk_init_parent() is a static function that is only called from
+>> __clk_core_init().
+>> So, the null pointer for .get_parent() has been already checked before
+>> __clk_init_parent().
+>>
 >
-> I don't see how I can get direct 297MHz and 270MHz in fractional mode
-> with that code.
+> Right, this patch moves the check to __clk_core_init(), and it
+> will print an error and then keep going (because we lost the goto
+> out part). Once we keep going in __clk_core_init() we'll call
+> __clk_init_parent() and NULL pointer deref.
+>
 
-clk-factors now supports a custom .recalc callback. Along with get_factors,
-you can support pretty much any clock that has four variables, not including
-the mux and clock gate.
+Ah, I missed that.
 
-So for this you'd have the div as factor m, and the integer mode bit as p,
-and the fraction bit as n, and recalc would be somewhat like this:
+We need
 
-if (p) {
-        rate = parent_rate / (m + 1);
-} else if (n) {
-        rate = 297000000;
-} else {
-        rate = 270000000;
-}
+   ret = -EINVAL;
+   goto out;
 
-get_factors should be easy enough to figure out.
+here, I think.
 
-Regards
-ChenYu
+Shall I send the v3 for 08/16?
+
+Or, if it is too late, shall I send a fix-up patch?
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
