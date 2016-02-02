@@ -1,251 +1,66 @@
-Return-Path: <stefan.wahren@i2se.com>
-Date: Wed, 17 Feb 2016 21:01:52 +0100 (CET)
-From: Stefan Wahren <stefan.wahren@i2se.com>
-To: Lee Jones <lee@kernel.org>, linux-clk@vger.kernel.org,
-	Martin Sperl <kernel@martin.sperl.org>,
-	Eric Anholt <eric@anholt.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	Remi Pommarel <repk@triplefau.lt>, devicetree@vger.kernel.org
-Message-ID: <704229577.519481.7acc7698-e68b-4f4b-8da5-f03a550266a8.open-xchange@email.1und1.de>
-In-Reply-To: <A977D3F2-1F64-41C8-B8ED-EB9F0B3554B9@martin.sperl.org>
-References: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org>
- <1452867667-2447-6-git-send-email-kernel@martin.sperl.org>
- <87h9hr517u.fsf@eliezer.anholt.net> <56B8782C.4060107@martin.sperl.org>
- <A977D3F2-1F64-41C8-B8ED-EB9F0B3554B9@martin.sperl.org>
-Subject: Re: [PATCH V4 5/7] clk: bcm2835: add missing 22 HW-clocks.
+Return-Path: <anholt@eliezer.anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: kernel@martin.sperl.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Remi Pommarel <repk@triplefau.lt>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Subject: Re: [PATCH V4 1/7] clk: bcm2835: the minimum clock divider is 2
+In-Reply-To: <87oac03tuz.fsf@eliezer.anholt.net>
+References: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org> <1452867667-2447-2-git-send-email-kernel@martin.sperl.org> <87oac03tuz.fsf@eliezer.anholt.net>
+Date: Mon, 01 Feb 2016 17:52:56 -0800
+Message-ID: <87egcv5153.fsf@eliezer.anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
+--=-=-=
+Content-Type: text/plain
 
-> Martin Sperl <kernel@martin.sperl.org> hat am 17. Februar 2016 um 19:25
-> geschrieben:
->
-> As I am trying to complete the list of clocks here my =E2=80=9Cbest=E2=80=
-=9D summary
-> so far of the clock tree for the bcm2835 taken from various sources:
-> * Datasheet
-> * broadcom provided VC4 headers (via https://github.com/msperl/rpi-regist=
-ers)
-> * mailing list
->
-> And I have come up with the following description that
-> you can put in graphviz or http://www.webgraphviz.com/
->
-> --- cut here ---
-> digraph clocks {
-> graph [ordering=3D"out"];
->
-> subgraph cluster_osc {
-> label =3D "Oscillators";
->
-> "GND";
-> "OSC";
-> "testdebug0";
-> "testdebug1";
-> }
->
-> subgraph cluster_pll {
-> label =3D "PLLs";
->
-> subgraph cluster_plla {
-> label =3D "PLLA";
->
-> OSC -> PLLA;
->
-> PLLA -> PLLA_core;
-> PLLA -> PLLA_per;
-> PLLA -> PLLA_dsi0;
-> PLLA -> PLLA_ccp2;
-> }
->
-> subgraph cluster_pllb {
-> label =3D "PLLB";
->
-> OSC -> PLLB;
->
-> PLLB -> PLLB_ARM;
-> PLLB -> PLLB_SP0;
-> PLLB -> PLLB_SP1;
-> PLLB -> PLLB_SP2;
-> }
->
-> subgraph cluster_pllc {
-> label =3D "PLLC";
->
-> OSC -> PLLC;
->
-> PLLC -> PLLC_core0;
-> PLLC -> PLLC_core1;
-> PLLC -> PLLC_core2;
-> PLLC -> PLLC_per;
-> }
->
-> subgraph cluster_plld {
-> label =3D "PLLD";
->
-> OSC -> PLLD;
->
-> PLLD -> PLLD_core;
-> PLLD -> PLLD_per;
-> PLLD -> PLLD_dsi0;
-> PLLD -> PLLD_dsi1;
-> }
->
-> subgraph cluster_pllh {
-> label =3D "PLLH";
->
-> OSC -> PLLH;
->
-> PLLH -> PLLH_aux;
-> PLLH -> PLLH_pix;
-> PLLH -> PLLH_rcal;
-> }
-> }
->
-> subgraph cluster_mux {
-> label =3D "clocks";
->
-> subgraph cluster_vpu_clocks {
-> label =3D "VPU-clocks";
->
-> subgraph cluster_vpu_mux {
-> label =3D "VPU-mux";
->
-> vGND [label=3D"0: GND"];
-> vOSC [label=3D"1: OSC"];
-> vtestdebug0 [label=3D"2: testdebug0"];
-> vtestdebug1 [label=3D"3: testdebug1"];
-> vPLLA_core [label=3D"4: PLLA_core"];
-> vPLLC_core0 [label=3D"5: PLLC_core0"];
-> vPLLD_core [label=3D"6: PLLD_core"];
-> vPLLH_aux [label=3D"7: PLLH_aux"];
-> vPLLC_core1 [label=3D"8: PLLC_core1"];
-> vPLLC_core2 [label=3D"9: PLLC_core2"];
->
-> GND -> vGND -> vpu_mux;
-> OSC -> vOSC -> vpu_mux;
-> testdebug0 -> vtestdebug0 -> vpu_mux;
-> testdebug1 -> vtestdebug1 -> vpu_mux;
-> PLLA_core -> vPLLA_core -> vpu_mux;
-> PLLC_core0 -> vPLLC_core1 -> vpu_mux;
-> PLLD_core -> vPLLD_core -> vpu_mux;
-> PLLH_aux -> vPLLH_aux -> vpu_mux;
-> PLLC_core1 -> vPLLC_core1 -> vpu_mux;
-> PLLC_core2 -> vPLLC_core2 -> vpu_mux;
-> }
->
-> vpu_mux -> vpu;
-> vpu_mux -> v3d;
-> vpu_mux -> isp;
-> vpu_mux -> h264;
-> vpu_mux -> sdram;
-> }
->
-> subgraph cluster_per_clocks {
-> label =3D "Periperial-clocks";
->
-> subgraph cluster_per_mux {
-> label =3D "Periperal-mux";
->
-> pGND [label=3D"0: GND"];
-> pOSC [label=3D"1: OSC"];
-> ptestdebug0 [label=3D"2: testdebug0"];
-> ptestdebug1 [label=3D"3: testdebug1"];
-> pPLLA_per [label=3D"4: PLLA_per"];
-> pPLLC_per [label=3D"5: PLLC_per"];
-> pPLLD_per [label=3D"5: PLLD_per"];
-> pPLLH_aux [label=3D"5: PLLH_aux"];
->
-> GND -> pGND -> per_mux;
-> OSC -> pOSC -> per_mux;
-> testdebug0 -> ptestdebug0 -> per_mux;
-> testdebug1 -> ptestdebug1 -> per_mux;
-> PLLA_per -> pPLLA_per -> per_mux;
-> PLLC_per -> pPLLC_per -> per_mux;
-> PLLD_per -> pPLLD_per -> per_mux;
-> PLLH_aux -> pPLLH_aux -> per_mux;
-> }
->
-> per_mux -> vec;
-> per_mux -> uart;
-> per_mux -> hsm;
-> per_mux -> emmc;
-> per_mux -> pwm;
-> per_mux -> pcm;
-> per_mux -> aveo;
-> per_mux -> cam0;
-> per_mux -> cam1;
-> per_mux -> dft;
-> per_mux -> dpi;
-> per_mux -> dsi0e;
-> per_mux -> dsi1e;
-> per_mux -> gp0;
-> per_mux -> gp1;
-> per_mux -> gp2;
-> per_mux -> slim;
-> per_mux -> smi;
-> }
->
-> subgraph cluster_osc_clocks {
-> label =3D "osc-clocks";
->
-> subgraph cluster_osc_mux {
-> label =3D "osc-mux";
->
-> oGND [label=3D"0: GND"];
-> oOSC [label=3D"1: OSC"];
-> otestdebug0 [label=3D"2: testdebug0"];
-> otestdebug1 [label=3D"3: testdebug1"];
->
-> GND -> oGND -> osc_mux;
-> OSC -> oOSC -> osc_mux;
-> testdebug0 -> otestdebug0 -> osc_mux;
-> testdebug1 -> otestdebug1 -> osc_mux;
-> }
->
-> osc_mux -> tsens;
-> osc_mux -> tec;
-> osc_mux -> otp;
-> }
->
-> subgraph cluster_unknown_mux_clocks {
-> label =3D "unknown-parent-mux-clocks";
->
-> ukn_mux -> ccp2;
-> ukn_mux -> dsi0pix;
-> ukn_mux -> dsi1pix;
-> ukn_mux -> pulse;
-> ukn_mux -> td0;
-> ukn_mux -> td1;
-> }
->
-> subgraph cluster_debug_clocks {
-> label =3D "debug-clocks";
->
-> debug_mux -> peria;
-> debug_mux -> sys;
-> }
-> }
->
-> subgraph cluster_aux {
-> label =3D =E2=80=9Cauxiliar-clocks";
->
-> vpu -> spi1;
-> vpu -> spi2;
-> vpu -> uart1;
-> }
-> }
-> --- cut here ---
->
-> I have no idea where we could put this information
-> in the kernel tree - maybe this would help.
->
+Eric Anholt <eric@anholt.net> writes:
 
-Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt should be a=
- good
-place.
+> kernel@martin.sperl.org writes:
+>
+>> From: Martin Sperl <kernel@martin.sperl.org>
+>>
+>> Testing with different clock divider values has shown
+>> that (at least for the PCM clock) the clock divider
+>> has to be at least 2, otherwise the clock will not
+>> output a signal.
+>
+> For a MASH clock (PWM, PCM, SLIMBUS, but not the others), the minimum
+> integer component of the divider is:
+>
+> mash 0: 1
+> mash 1: 2
+> mash 2: 3
+> mash 3: 5
+
+More specific MASH list:
+
+GP0
+GP1
+(*not* gp2)
+PCM
+PWM
+SLIM
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJWsAv5AAoJELXWKTbR/J7oAssP/iu+jhkHebDtLFUQqBpO6kQH
+i6WP8noJIjiTVeUTPzNq0bOaESDr3qU5IKSSH0mhGNQlC6rrYfZpvmFDXZlISWzC
+tKn0RzwTQiaGguW+SvRqgrkoTaMNWBUwgloOuzW3ufPNmjz4q3Zia1SdzEtrOw56
+d27rTkfcQICCr9SPBeqmNQKnpG8Vr4Y6bgexxVwXdLw2Vu4OIYIFbbnAHAOHEE4Q
+AVH/IoO9WXh2pfOacJZw7fwSw2c7YzckQwgpWkf/DsOtFh3IU3eXQ5QtJvkfxwgO
+XhqbrZhPj6ZUVDcimugi9GXLdzhQEUgANVv6ZizZp49+bYAnPXj/Br9Siq7dKGBr
+Pc4leYEvHdkQgQ+9z9vjmIePdibTODjGPHvRN4l6Un+P5yHzCPGE7E3rQdnMMLla
+BkCrpahnTxICH5w4z1cjrgxD33sy7Vev4dw5oKJrWtd+416GHhLUchas1fhbIIyc
++mr423eVaUGPgEUDXnXGKtn25b3NFgcr68liTI9O03JOmPrdUYfgfNlxqN+heiYd
+42IMWYYJyn/0uvfshajouz016iRjnHL66qsvsnKeDX0YLW1IDIgxQQ7oBv2ZRXLJ
+xDIwe45xh6TrS4KTxvnLFl1DXbDt++HvLn0Cp0uXWDm0q1xLhnXXIJ4B8v+NpVbp
+129kSno9B77QnwZpcCM0
+=OHg8
+-----END PGP SIGNATURE-----
+--=-=-=--
