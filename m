@@ -1,60 +1,63 @@
-Return-Path: <anholt@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: kernel@martin.sperl.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: Re: [PATCH 1/2] clk: bcm2835: expose raw clock-registers via debugfs
-In-Reply-To: <1456755616-2472-2-git-send-email-kernel@martin.sperl.org>
-References: <1456755616-2472-1-git-send-email-kernel@martin.sperl.org> <1456755616-2472-2-git-send-email-kernel@martin.sperl.org>
-Date: Mon, 29 Feb 2016 12:39:18 -0800
-Message-ID: <87k2ln5k09.fsf@eliezer.anholt.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Return-Path: <moinejf@free.fr>
+Message-Id: <cover.1454427223.git.moinejf@free.fr>
+From: Jean-Francois Moine <moinejf@free.fr>
+Date: Tue, 2 Feb 2016 16:33:43 +0100
+Subject: [PATCH v3 0/2] Add a DRM display driver to the Allwinner H3
+To: Dave Airlie <airlied@linux.ie>,
+    Chen-Yu Tsai <wens@csie.org>,
+    Emilio Lopez <emilio@elopez.com.ar>,
+    Maxime Ripard <maxime.ripard@free-electrons.com>,
+    Michael Turquette <mturquette@baylibre.com>,
+    Stephen Boyd <sboyd@codeaurora.org>
+Cc: devicetree@vger.kernel.org,
+    dri-devel@lists.freedesktop.org,
+    linux-arm-kernel@lists.infradead.org,
+    linux-clk@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
+The proposed DRM driver works on a Orange PI 2 with a kernel 4.5.0-rc1
+and some H3 patches found in Hans de Goede's GIT repository.
 
-kernel@martin.sperl.org writes:
+As there is no documentation about the HDMI of the H3,
+the associated encoder/connector driver has not been included
+in this patch series.
+For test purpose, it may be built as a out-of-tree driver
+from the tarball:
+	http://moinejf.free.fr/opi2/h3-hdmi.tar.gz
+and the DT files:
+	http://moinejf.free.fr/opi2/sun8i-h3.dtsi
+	http://moinejf.free.fr/opi2/sun8i-h3-orangepi-plus.dts
 
-> From: Martin Sperl <kernel@martin.sperl.org>
->
-> For debugging purposes under some circumstance
-> it helps to be able to see the actual clock registers.
->
-> E.g: when looking at the clock divider it is helpful to
-> see what the actual clock divider is.
->
-> This patch exposes all the clock registers specific to each
-> clock/pll/pll-divider via debugfs.
->
-> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+Jean-Francois Moine (2):
+  clk: sunxi: Add sun6i/8i video support
+  drm: sunxi: Add a basic DRM driver for Allwinner DE2
 
-This one definitely seems useful to me.  I think the debugfs bits need
-to be under #ifdef CONFIG_DEBUG_FS though.
+ Documentation/devicetree/bindings/clock/sunxi.txt  |   2 +
+ .../devicetree/bindings/display/sunxi.txt          |  81 ++++
+ drivers/clk/sunxi/clk-sun6i-display.c              | 106 +++++
+ drivers/clk/sunxi/clk-sun6i-pll3.c                 | 174 +++++++
+ drivers/gpu/drm/Kconfig                            |   2 +
+ drivers/gpu/drm/Makefile                           |   1 +
+ drivers/gpu/drm/sunxi/Kconfig                      |  20 +
+ drivers/gpu/drm/sunxi/Makefile                     |   7 +
+ drivers/gpu/drm/sunxi/de2_crtc.c                   | 421 +++++++++++++++++
+ drivers/gpu/drm/sunxi/de2_crtc.h                   |  61 +++
+ drivers/gpu/drm/sunxi/de2_de.c                     | 505 +++++++++++++++++++++
+ drivers/gpu/drm/sunxi/de2_drm.h                    |  40 ++
+ drivers/gpu/drm/sunxi/de2_drv.c                    | 377 +++++++++++++++
+ drivers/gpu/drm/sunxi/de2_plane.c                  |  91 ++++
+ 14 files changed, 1888 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/sunxi.txt
+ create mode 100644 drivers/clk/sunxi/clk-sun6i-display.c
+ create mode 100644 drivers/clk/sunxi/clk-sun6i-pll3.c
+ create mode 100644 drivers/gpu/drm/sunxi/Kconfig
+ create mode 100644 drivers/gpu/drm/sunxi/Makefile
+ create mode 100644 drivers/gpu/drm/sunxi/de2_crtc.c
+ create mode 100644 drivers/gpu/drm/sunxi/de2_crtc.h
+ create mode 100644 drivers/gpu/drm/sunxi/de2_de.c
+ create mode 100644 drivers/gpu/drm/sunxi/de2_drm.h
+ create mode 100644 drivers/gpu/drm/sunxi/de2_drv.c
+ create mode 100644 drivers/gpu/drm/sunxi/de2_plane.c
 
-With that fixed,
-
-Acked-by: Eric Anholt <eric@anholt.net>
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBCgAGBQJW1Kx2AAoJELXWKTbR/J7oh7YP/ijhsor8TWdoTopbYqpuIJbs
-F6RQWKm2kL/TpWE+8Df2g/1sBXeNUOUDxr0gTFDzWm22I2rjFW34lv6QSV7HYApA
-bJSF7mBmLlhm6m/R3yZYpdphI+Do7fzLKhHhBINLvcyu49RJNkW+MDx2B4pD4EAo
-ynmPDwU5em7A+RD+ZtSUpzG9WFDfB6RR/Ngibuph2cQJS10h4h56wkTb+JHyY46q
-GW33aHQVRDGx379C6LNPhVkDXNf35G8rXdso3HDmhVGK6xEHZcDPTQmmMetwNy9F
-8F5VRWq3K9tWmDOXJNnV3jce2SxE9YMqnp1nF3O5LbHQpnRaTPzhRz7pXZch7+9Y
-sc0YhgzPZajlg75sUkMu949waXU+QvvSoubHZhdFYd1JxTWNhlbrcuHdF/hXYLiM
-7vjyW6uhWvuK2MHHoj3uxalvKBvV84PYT0fLGZYkhebFoPHupS5x8FFme28UCTIR
-Grw7gJGSIQ9R42iPE1pyCg4CX2e5x1b/3EO+1DWi9rWngcSUKIPhIHMdW+vfQjSQ
-3awZi2la565QdDdbd3Oa9LS3RlX3o1445YN0R8+T8fzi5YUKYO6vYJL3WgTNgjGV
-pDsRbBEFzCSqO5G8Q17PuVCXBj77e/GLyEEr2UwoH7FOT51+IG5uPntkEVKGrmj1
-aIayADU2GCRfHg//EXJ/
-=VsZl
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+2.7.0
