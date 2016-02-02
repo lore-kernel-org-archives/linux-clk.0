@@ -1,124 +1,72 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-Subject: Re: [PATCH v4 2/6] dt-bindings: ARM: Mediatek: Document bindings for
- MT2701
-To: Rob Herring <robh@kernel.org>, James Liao <jamesjj.liao@mediatek.com>
-References: <1453271747-57397-1-git-send-email-jamesjj.liao@mediatek.com>
- <1453271747-57397-3-git-send-email-jamesjj.liao@mediatek.com>
- <20160120163236.GA21035@rob-hp-laptop> <1453353537.5384.33.camel@mtksdaap41>
- <CAL_JsqLJVLDbPqynmD9-Yc=JVGH4iLPfb2keA5G7c2fjitAsSQ@mail.gmail.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, John Crispin <blogic@openwrt.org>,
- Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, srv_heupstream@mediatek.com,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- linux-mediatek@lists.infradead.org, linux-clk <linux-clk@vger.kernel.org>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <56AF9D6E.80305@gmail.com>
-Date: Mon, 1 Feb 2016 19:01:18 +0100
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 1 Feb 2016 18:39:22 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RESEND PATCH v2 10/16] clk: move checking .git_parent to
+ __clk_core_init()
+Message-ID: <20160202023922.GL4848@codeaurora.org>
+References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
+ <1451298191-30815-11-git-send-email-yamada.masahiro@socionext.com>
+ <20160202005051.GO4848@codeaurora.org>
+ <CAK7LNASGzvbGAOnMRBH6SuZOz9O_=r3B3MdqhhkxoWzCcn9gUw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqLJVLDbPqynmD9-Yc=JVGH4iLPfb2keA5G7c2fjitAsSQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAK7LNASGzvbGAOnMRBH6SuZOz9O_=r3B3MdqhhkxoWzCcn9gUw@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 02/02, Masahiro Yamada wrote:
+> 2016-02-02 9:50 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+> > On 12/28, Masahiro Yamada wrote:
+> >> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> >> index e6e10f5..4ad0a36 100644
+> >> --- a/drivers/clk/clk.c
+> >> +++ b/drivers/clk/clk.c
+> >> @@ -1677,13 +1677,6 @@ static struct clk_core *__clk_init_parent(struct clk_core *core)
+> >>               goto out;
+> >>       }
+> >>
+> >> -     if (!core->ops->get_parent) {
+> >> -             WARN(!core->ops->get_parent,
+> >> -                     "%s: multi-parent clocks must implement .get_parent\n",
+> >> -                     __func__);
+> >> -             goto out;
+> >> -     }
+> >> -
+> >>       /*
+> >>        * Do our best to cache parent clocks in core->parents.  This prevents
+> >>        * unnecessary and expensive lookups.  We don't set core->parent here;
+> >> @@ -2315,6 +2308,11 @@ static int __clk_core_init(struct clk_core *core)
+> >>               goto out;
+> >>       }
+> >>
+> >> +     if (core->num_parents > 1 && !core->ops->get_parent) {
+> >> +             pr_err("%s: %s must implement .get_parent as it has multi parents\n",
+> >> +                    __func__, core->name);
+> >> +     }
+> >> +
+> >
+> > This would seem to allow a case where we may deref a null
+> > get_parent op if it isn't set and we call __clk_init_parent().
+> > The next patch removes that case by restructuring
+> > __clk_init_parent(), so we should just combine these two patches
+> > together and that theoretical problem goes away.
+> >
+> 
+> I think the case never happens.
+> 
+> __clk_init_parent() is a static function that is only called from
+> __clk_core_init().
+> So, the null pointer for .get_parent() has been already checked before
+> __clk_init_parent().
+> 
 
+Right, this patch moves the check to __clk_core_init(), and it
+will print an error and then keep going (because we lost the goto
+out part). Once we keep going in __clk_core_init() we'll call
+__clk_init_parent() and NULL pointer deref.
 
-On 01/02/16 16:55, Rob Herring wrote:
-> On Wed, Jan 20, 2016 at 11:18 PM, James Liao <jamesjj.liao@mediatek.com> wrote:
->> Hi Rob,
->>
->> On Wed, 2016-01-20 at 10:32 -0600, Rob Herring wrote:
->>> On Wed, Jan 20, 2016 at 02:35:43PM +0800, James Liao wrote:
->>>> This patch adds the binding documentation for apmixedsys, bdpsys,
->>>> ethsys, hifsys, imgsys, infracfg, mmsys, pericfg, topckgen and
->>>> vdecsys for Mediatek MT2701.
->>>>
->>>> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
->>>> Tested-by: John Crispin <blogic@openwrt.org>
->>>> ---
->>>>   .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |  1 +
->>>>   .../bindings/arm/mediatek/mediatek,bdpsys.txt      | 22 ++++++++++++++++++++++
->>>>   .../bindings/arm/mediatek/mediatek,ethsys.txt      | 22 ++++++++++++++++++++++
->>>>   .../bindings/arm/mediatek/mediatek,hifsys.txt      | 22 ++++++++++++++++++++++
->>>>   .../bindings/arm/mediatek/mediatek,imgsys.txt      |  1 +
->>>>   .../bindings/arm/mediatek/mediatek,infracfg.txt    |  1 +
->>>>   .../bindings/arm/mediatek/mediatek,mmsys.txt       |  1 +
->>>>   .../bindings/arm/mediatek/mediatek,pericfg.txt     |  1 +
->>>>   .../bindings/arm/mediatek/mediatek,topckgen.txt    |  1 +
->>>>   .../bindings/arm/mediatek/mediatek,vdecsys.txt     |  1 +
->>>>   10 files changed, 73 insertions(+)
->>>>   create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
->>>>   create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
->>>>   create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
->>>> index 936166f..a701e19 100644
->>>> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
->>>> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
->>>> @@ -6,6 +6,7 @@ The Mediatek apmixedsys controller provides the PLLs to the system.
->>>>   Required Properties:
->>>>
->>>>   - compatible: Should be:
->>>> +   - "mediatek,mt2701-apmixedsys"
->>>>      - "mediatek,mt8135-apmixedsys"
->>>>      - "mediatek,mt8173-apmixedsys"
->>>>   - #clock-cells: Must be 1
->>>> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
->>>> new file mode 100644
->>>> index 0000000..4137196
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
->>>> @@ -0,0 +1,22 @@
->>>> +Mediatek bdpsys controller
->>>> +============================
->>>> +
->>>> +The Mediatek bdpsys controller provides various clocks to the system.
->>>
->>> As you clarified these blocks provide more that just clocks. Please list
->>> all the functions here and on the others.
->>
->> Some blocks may provide clock and reset controller at the same time. But
->
-> Then say the block provides clocks and resets is all I'm asking for.
->
->> most of them will not provide functions directly. Instead, some DT
->> blocks which provide specific functions may refer to these controller
->> nodes due to it need to access the same register space.
->>
->> For example, scpsys (the power domain provider) refers to infracfg
->> because it need to control infracfg registers when power on/off domains:
->>
->>          scpsys: scpsys@10006000 {
->>                  compatible = "mediatek,mt2701-scpsys";
->>                  #power-domain-cells = <1>;
->>                  reg = <0 0x10006000 0 0x1000>;
->>                  infracfg = <&infracfg>;
->>          };
->>
->> So I think it should not need to list all functions for each blocks
->> here.
->
-> Sorry, but you do need to describe what functions the blocks provide.
->
-> Also, if you are accessing the infracfg regs directly to modify clock
-> registers outside of the clock driver, that is very bad design. The
-> clock driver could assume that register values are not changing behind
-> its back and it bypasses any locks around register accesses. I can see
-> why it is needed though, but we really need a proper interface.
->
-
-Some of the register blocks like infracfg is a potpourri of different 
-functions. Clocks and power domains are some of them. In the drivers 
-this is isolated, but there are many blocks which are not used at the 
-moment and therefor are not documented in bindings description (e.g. 
-debug control for the very same block, not sure if that will be 
-implemented one day).
-
-Would it be ok for you, if James just lists the blocks which already 
-have an implementation and leaving apart the rest of it?
-
-Regards,
-Matthias
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
