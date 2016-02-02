@@ -1,37 +1,24 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 25 Feb 2016 16:07:48 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: kernel@martin.sperl.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>, linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: bcm2835: added missing clock register definitions
-Message-ID: <20160226000748.GP28849@codeaurora.org>
-References: <1450815189-3342-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH] clk: rockchip: free memory for error handle
+Date: Tue, 02 Feb 2016 22:11:54 +0100
+Message-ID: <1720574.6lM2zyED9Z@diego>
+In-Reply-To: <1454384270-20018-1-git-send-email-shawn.lin@rock-chips.com>
+References: <1454384270-20018-1-git-send-email-shawn.lin@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1450815189-3342-1-git-send-email-kernel@martin.sperl.org>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/22, kernel@martin.sperl.org wrote:
-> From: Martin Sperl <kernel@martin.sperl.org>
+Am Dienstag, 2. Februar 2016, 11:37:50 schrieb Shawn Lin:
+> Add free memeory if rockchip_clk_register_branch
+> failed.
 > 
-> Added missing CTRL and DIV clock register definitions for:
-> PCM, SLIM, TCNT, TEC, TD0, TD1
-> 
-> Register information taken from:
-> https://rawgit.com/msperl/rpi-registers/master/rpi-registers.html#CM
-> which extracted the information from the header files shared by
-> Broadcom/rpi foundation in this file:
-> http://www.broadcom.com/docs/support/videocore/Brcm_Android_ICS_Graphics_Stack.tar.gz
-> 
-> Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
-> ---
+> Fixes: a245fecbb806 ("clk: rockchip: add basic infrastructure...")
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 
-Applied to clk-next
+applied to my clk-branch for 4.6
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks
+Heiko
