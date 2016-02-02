@@ -1,48 +1,57 @@
-Return-Path: <robh@kernel.org>
-Date: Mon, 8 Feb 2016 13:24:28 -0600
-From: Rob Herring <robh@kernel.org>
-To: James Liao <jamesjj.liao@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, srv_heupstream@mediatek.com,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v6 2/7] dt-bindings: ARM: Mediatek: Document bindings for
- MT2701
-Message-ID: <20160208192428.GA26367@rob-hp-laptop>
-References: <1454665050-37776-1-git-send-email-jamesjj.liao@mediatek.com>
- <1454665050-37776-3-git-send-email-jamesjj.liao@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1454665050-37776-3-git-send-email-jamesjj.liao@mediatek.com>
+Return-Path: <moinejf@free.fr>
+Date: Tue, 2 Feb 2016 20:02:21 +0100
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Dave Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>, Emilio
+ =?ISO-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>, Maxime Ripard
+ <maxime.ripard@free-electrons.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] drm: sunxi: Add a basic DRM driver for Allwinner
+ DE2
+Message-Id: <20160202200221.514518980dcd1a75c262355f@free.fr>
+In-Reply-To: <56B0E6B5.5040708@arm.com>
+References: <cover.1452876522.git.moinejf@free.fr>
+	<4c40052b27f74df1342e631cb0f9ed5993861a54.1452876522.git.moinejf@free.fr>
+	<569F6C1E.8000006@arm.com>
+	<20160202181949.d59e84a040a980abcdd69d32@free.fr>
+	<56B0E6B5.5040708@arm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Feb 05, 2016 at 05:37:25PM +0800, James Liao wrote:
-> This patch adds the binding documentation for apmixedsys, bdpsys,
-> ethsys, hifsys, imgsys, infracfg, mmsys, pericfg, topckgen and
-> vdecsys for Mediatek MT2701.
-> 
-> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> Tested-by: John Crispin <blogic@openwrt.org>
-> ---
->  .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |  3 ++-
->  .../bindings/arm/mediatek/mediatek,bdpsys.txt      | 22 ++++++++++++++++++++
->  .../bindings/arm/mediatek/mediatek,ethsys.txt      | 22 ++++++++++++++++++++
->  .../bindings/arm/mediatek/mediatek,hifsys.txt      | 24 ++++++++++++++++++++++
->  .../bindings/arm/mediatek/mediatek,imgsys.txt      |  3 ++-
->  .../bindings/arm/mediatek/mediatek,infracfg.txt    |  3 ++-
->  .../bindings/arm/mediatek/mediatek,mmsys.txt       |  3 ++-
->  .../bindings/arm/mediatek/mediatek,pericfg.txt     |  3 ++-
->  .../bindings/arm/mediatek/mediatek,topckgen.txt    |  3 ++-
->  .../bindings/arm/mediatek/mediatek,vdecsys.txt     |  3 ++-
->  10 files changed, 82 insertions(+), 7 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
+On Tue, 2 Feb 2016 17:26:13 +0000
+Andre Przywara <andre.przywara@arm.com> wrote:
 
-Acked-by: Rob Herring <robh@kernel.org>
+> Can you sketch (or point me to) what I need to do? Just a
+> simple-framebuffer DT node?
+> I take it that the driver does not depend on any kind of U-Boot
+> initialisation, but instead takes care of this itself?
+>=20
+> And would this pave the way for fbturbo also?
+
+In my site (http://moinejf.free.fr/opi2/), you may find:
+- the HDMI driver - to be built out of tree
+- the DT files (sun8i-h3.dtsi and sun8i-h3-orangepi-plus.dts)
+  which should be close enough to the A64
+- my .config (config-4.5.txt)
+
+The driver has no video overlay and no acceleration.
+The frame buffer (console) works (with a blinking cursor!).
+X11 works fine with the standard modesetting driver (default).
+
+There is just a problem with the HDMI driver.
+For unknown reason, sometimes, the EDID cannot be read (timeout -
+this problem also exists with the kernel 3.4).
+The remedy is power off / power on (of the board, not of the screen!).
+
+I am using the u-boot from Allwinner. This one activates the video
+engine, but everything is reset at kernel start time.
+
+About the GPU/VPU, I have no need of them, so I will let this job to
+specialists and, instead, have a look at audio...
+
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
