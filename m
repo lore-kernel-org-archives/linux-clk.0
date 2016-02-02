@@ -1,62 +1,49 @@
-Return-Path: <slash.tmp@free.fr>
-Subject: Re: Common/typical fractional divider HW API
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- linux-clk <linux-clk@vger.kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Sebastian Frias <sf84@laposte.net>,
- Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <56B4B67D.2080707@free.fr>
- <1454684758.31169.77.camel@linux.intel.com> <56B4C775.50808@free.fr>
- <1454688729.31169.87.camel@linux.intel.com>
-From: Mason <slash.tmp@free.fr>
-Message-ID: <56B4CDEF.3080606@free.fr>
-Date: Fri, 5 Feb 2016 17:29:35 +0100
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 2 Feb 2016 12:43:37 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RESEND PATCH v2 10/16] clk: move checking .git_parent to
+ __clk_core_init()
+Message-ID: <20160202204337.GO4848@codeaurora.org>
+References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
+ <1451298191-30815-11-git-send-email-yamada.masahiro@socionext.com>
+ <20160202005051.GO4848@codeaurora.org>
+ <CAK7LNASGzvbGAOnMRBH6SuZOz9O_=r3B3MdqhhkxoWzCcn9gUw@mail.gmail.com>
+ <20160202023922.GL4848@codeaurora.org>
+ <CAK7LNAQb-y-j46O1v6iFRHUR9Dqjzi53-nAYsYAEKmPs_PFO0w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1454688729.31169.87.camel@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAK7LNAQb-y-j46O1v6iFRHUR9Dqjzi53-nAYsYAEKmPs_PFO0w@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/02/2016 17:12, Andy Shevchenko wrote:
-
-> On Fri, 2016-02-05 at 17:01 +0100, Mason wrote:
+On 02/02, Masahiro Yamada wrote:
+> 2016-02-02 11:39 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+> >
+> > Right, this patch moves the check to __clk_core_init(), and it
+> > will print an error and then keep going (because we lost the goto
+> > out part). Once we keep going in __clk_core_init() we'll call
+> > __clk_init_parent() and NULL pointer deref.
+> >
 > 
->> So, do you agree that
->>
->>   DIV = 2^I * (1 + F/256)
->>
->> gives a more useful DIV distribution than
->>
->>   DIV = I + F/16
+> Ah, I missed that.
 > 
-> If you can change hardware why not to use any existing approach which
-> suits better to your device?
-
-Sorry, I don't understand the question.
-
-In this part of my message, I was trying to argue that one HW API
-"2^I * (1 + F/256)" seemed better than another one "I + F/16" on
-any hardware.
-
-> I don't remember any existing, though I didn't check much, divider
-> register which takes something like that.
-
-IIUC, you are saying that you've never seen hardware use the
-"2^I * (1 + F/256)" formula, is that correct?
-
->> I'm not sure how to parse that. I'm using the divider driver
->> for a CPU clock, to do D(V)FS in cpufreq.
+> We need
 > 
-> If you are using custom stuff for custom hardware, I hope it's okay.
-> But if we are talking about generic solutions (like clk-fractional-
-> divider), I would suggest to consider existing users / hardware.
+>    ret = -EINVAL;
+>    goto out;
+> 
+> here, I think.
+> 
+> Shall I send the v3 for 08/16?
+> 
+> Or, if it is too late, shall I send a fix-up patch?
+> 
 
-Are you saying that I could use the clk-fractional-divider with
-hardware that computes "I + F/16" ?
+I'll split the patch out again and squash in those two lines.
+Nothing more to do. Thanks.
 
-Maybe the clk-fractional-divider could be made more generic by having
-the register update part done in a call-back function?
-
-Regards.
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
