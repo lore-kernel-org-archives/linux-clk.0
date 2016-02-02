@@ -1,85 +1,76 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: Nadav Haklai <nadavh@marvell.com>,
-	Lior Amsalem <alior@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v2 3/6] dt-bindings: clock: add DT bindings for AP806 ring clocks
-Date: Wed, 24 Feb 2016 16:14:23 +0100
-Message-Id: <1456326866-30854-4-git-send-email-thomas.petazzoni@free-electrons.com>
-In-Reply-To: <1456326866-30854-1-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1456326866-30854-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <moinejf@free.fr>
+Message-Id: <cover.1454435944.git.moinejf@free.fr>
+From: Jean-Francois Moine <moinejf@free.fr>
+Date: Tue, 2 Feb 2016 18:59:04 +0100
+Subject: [PATCH v4 0/2] Add a DRM display driver to the Allwinner H3
+To: Dave Airlie <airlied@linux.ie>,
+    Chen-Yu Tsai <wens@csie.org>,
+    Emilio Lopez <emilio@elopez.com.ar>,
+    Maxime Ripard <maxime.ripard@free-electrons.com>,
+    Michael Turquette <mturquette@baylibre.com>,
+    Stephen Boyd <sboyd@codeaurora.org>
+Cc: devicetree@vger.kernel.org,
+    dri-devel@lists.freedesktop.org,
+    linux-arm-kernel@lists.infradead.org,
+    linux-clk@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adds the Device Tree binding description for the AP806
-ring clocks, used on Marvell Armada 7K/8K SOCs.
+The proposed DRM driver works on a Orange PI 2 with a kernel 4.5.0-rc1
+and some H3 patches found in Hans de Goede's GIT repository.
 
-Since the AP806 ring clocks register is part of the "DFX Server"
-register area, the DT binding is meant to be used as a sub-node of the
-DFX Server DT binding, which is described separately.
+As there is no documentation about the HDMI of the H3,
+the associated encoder/connector driver has not been included
+in this patch series.
+For test purpose, it may be built as a out-of-tree driver
+from the tarball:
+	http://moinejf.free.fr/opi2/h3-hdmi.tar.gz
+and the DT files:
+	http://moinejf.free.fr/opi2/sun8i-h3.dtsi
+	http://moinejf.free.fr/opi2/sun8i-h3-orangepi-plus.dts
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Jean-Francois Moine (2):
+  clk: sunxi: Add sun6i/8i video support
+  drm: sunxi: Add a basic DRM driver for Allwinner DE2
+
 ---
- .../clock/mvebu-armada-ap806-ring-clock.txt        | 36 ++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/mvebu-armada-ap806-ring-clock.txt
+v4: 
+	- drivers/clk/sunxi/Makefile was missing (Emil Velikov)
+v3:
+	- add the hardware cursor
+	- simplify and fix the DE2 init sequences
+	- generation for all SUNXI SoCs (Andre Przywara)
+v2:
+	- remarks from Chen-Yu Tsai and Russell King
+	- DT documentation added
+---
 
-diff --git a/Documentation/devicetree/bindings/clock/mvebu-armada-ap806-ring-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-armada-ap806-ring-clock.txt
-new file mode 100644
-index 0000000..8c8030a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/mvebu-armada-ap806-ring-clock.txt
-@@ -0,0 +1,36 @@
-+* Clock bindings for Marvell MVEBU AP806 Ring clocks
-+
-+The Marvell MVEBU Armada 7K/8K SoCs contain a block called AP806,
-+hosting the CPU and other core components of the CPU. This Device Tree
-+binding allows to describe the ring clocks of the AP806, which are
-+derived from the Ring Core clock, after a dividing factor.
-+
-+The register giving the dividing factors is part of the DFX server
-+register area, covered by the DT binding described at
-+Documentation/devicetree/bindings/arm/marvell/marvell,ap806-dfx-server.txt. Therefore,
-+the DT node for the AP806 Ring clocks must appear as a child node of
-+the DFX server Device Tree node.
-+
-+The following is a list of provided IDs and clock names on Armada
-+AP806 RING dividers:
-+
-+ 0 = Ring 0
-+ 1 = Ring 2
-+ 2 = Ring 3
-+ 3 = Ring 4
-+ 4 = Ring 5
-+
-+Required properties:
-+- compatible: must be one of the following:
-+	"marvell,armada-ap806-ring-clock"
-+- #clock-cells : from common clock binding; shall be set to 1
-+- clock-output-names: name of the output clocks
-+
-+Example:
-+
-+	ringclk: clk@250 {
-+		compatible = "marvell,armada-ap806-ring-clock";
-+		#clock-cells = <1>;
-+		clock-output-names = "ring-0", "ring-2", "ring-3", "ring-4", "ring-5";
-+		clocks = <&coreclk 1>;
-+	};
+ Documentation/devicetree/bindings/clock/sunxi.txt  |   2 +
+ .../devicetree/bindings/display/sunxi.txt          |  81 ++++
+ drivers/clk/sunxi/Makefile                         |   2 +
+ drivers/clk/sunxi/clk-sun6i-display.c              | 106 +++++
+ drivers/clk/sunxi/clk-sun6i-pll3.c                 | 174 +++++++
+ drivers/gpu/drm/Kconfig                            |   2 +
+ drivers/gpu/drm/Makefile                           |   1 +
+ drivers/gpu/drm/sunxi/Kconfig                      |  20 +
+ drivers/gpu/drm/sunxi/Makefile                     |   7 +
+ drivers/gpu/drm/sunxi/de2_crtc.c                   | 421 +++++++++++++++++
+ drivers/gpu/drm/sunxi/de2_crtc.h                   |  61 +++
+ drivers/gpu/drm/sunxi/de2_de.c                     | 505 +++++++++++++++++++++
+ drivers/gpu/drm/sunxi/de2_drm.h                    |  40 ++
+ drivers/gpu/drm/sunxi/de2_drv.c                    | 377 +++++++++++++++
+ drivers/gpu/drm/sunxi/de2_plane.c                  |  91 ++++
+ 15 files changed, 1890 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/sunxi.txt
+ create mode 100644 drivers/clk/sunxi/clk-sun6i-display.c
+ create mode 100644 drivers/clk/sunxi/clk-sun6i-pll3.c
+ create mode 100644 drivers/gpu/drm/sunxi/Kconfig
+ create mode 100644 drivers/gpu/drm/sunxi/Makefile
+ create mode 100644 drivers/gpu/drm/sunxi/de2_crtc.c
+ create mode 100644 drivers/gpu/drm/sunxi/de2_crtc.h
+ create mode 100644 drivers/gpu/drm/sunxi/de2_de.c
+ create mode 100644 drivers/gpu/drm/sunxi/de2_drm.h
+ create mode 100644 drivers/gpu/drm/sunxi/de2_drv.c
+ create mode 100644 drivers/gpu/drm/sunxi/de2_plane.c
+
 -- 
-2.6.4
+2.7.0
