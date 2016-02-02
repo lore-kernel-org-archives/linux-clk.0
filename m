@@ -1,263 +1,158 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.133]:63664 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751188AbcBMKCB (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sat, 13 Feb 2016 05:02:01 -0500
-Date: Sat, 13 Feb 2016 11:01:20 +0100 (CET)
-From: Stefan Wahren <stefan.wahren@i2se.com>
-To: Martin Sperl <kernel@martin.sperl.org>
-Cc: linux-serial@vger.kernel.org,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
-	linux-arm-kernel@lists.infradead.org
-Message-ID: <470852136.382408.76a8faee-9235-4ee0-9fd1-e25a1e9f0bb3.open-xchange@email.1und1.de>
-In-Reply-To: <6CD3FC59-BA17-43D9-897C-A2D122D26EF8@martin.sperl.org>
-References: <A5F427B7-9B78-4892-9722-69418C4D0C10@martin.sperl.org>
- <56BC895E.2010108@sperl.org>
- <1617009200.323700.219000a8-c162-4594-aacc-a7e9894518b2.open-xchange@email.1und1.de>
- <662D2FB2-B088-4CFC-8416-A4F35BBAD7DD@sperl.org>
- <F7A2533A-D64C-4187-ABD4-416C446D1637@martin.sperl.org>
- <6CD3FC59-BA17-43D9-897C-A2D122D26EF8@martin.sperl.org>
-Subject: Re: serial: clk: bcm2835: Strange effects when using aux-uart in
- console
+Return-Path: <jamesjj.liao@mediatek.com>
+Message-ID: <1454400427.2847.41.camel@mtksdaap41>
+Subject: Re: [PATCH v4 2/6] dt-bindings: ARM: Mediatek: Document bindings
+ for MT2701
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Rob Herring <robh@kernel.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "John
+ Crispin" <blogic@openwrt.org>, Sascha Hauer <kernel@pengutronix.de>, "Daniel
+ Kurtz" <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<srv_heupstream@mediatek.com>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Date: Tue, 2 Feb 2016 16:07:07 +0800
+In-Reply-To: <CAL_JsqLJVLDbPqynmD9-Yc=JVGH4iLPfb2keA5G7c2fjitAsSQ@mail.gmail.com>
+References: <1453271747-57397-1-git-send-email-jamesjj.liao@mediatek.com>
+	 <1453271747-57397-3-git-send-email-jamesjj.liao@mediatek.com>
+	 <20160120163236.GA21035@rob-hp-laptop>
+	 <1453353537.5384.33.camel@mtksdaap41>
+	 <CAL_JsqLJVLDbPqynmD9-Yc=JVGH4iLPfb2keA5G7c2fjitAsSQ@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Martin,
+Hi Rob,
 
-> Martin Sperl <kernel@martin.sperl.org> hat am 12. Februar 2016 um 20:44
-> geschrieben:
->
-> So the issue is triggered as soon as the plld_per
-> pll divider gets disabled/reenabled.
->
-> This happens because the clk_hw.core.prepare_count
-> drops down to 0 and then unprepare is called.
->
-> So we need to increase the ref-count for the pll
-> and pll_dividers to at least 1 so that these never
-> get disabled - at least for now until we can come
-> up with a better contract with the firmware.
->
-> Obviously this may impact other drivers as well
-> where a pll is used for the first time - if nothing
-> else uses it and the clock gets released, then
-> the clock would trigger a unprepare of the whole
-> branch of the clock tree.
->
-> The question is: how can we solve it in an acceptable
-> manner?
->
-> Do we need a driver that just holds a reference to
-> those clocks? Or should we just prepare the clock
-> after registering it in clk-bcm2835.c?
->
-> As for why does this not show up when compiled in?
-> It seems that in that case the amba_pl011 driver
-> never gets removed and then probed again.
->
-> This is possibly related to the optional use of DMA,
-> with the amba-pl011 driver that retries the install,
-> which is not supported on the bcm2835 - at least that
-> is what the datasheet says. And DMA is (probably) not
-> enabled during the early boot stages, so it does not
-> fail once when it tries to register DMA.
->
-> Thanks,
-> Martin
->
+On Mon, 2016-02-01 at 09:55 -0600, Rob Herring wrote:
+> On Wed, Jan 20, 2016 at 11:18 PM, James Liao <jamesjj.liao@mediatek.com> wrote:
+> > On Wed, 2016-01-20 at 10:32 -0600, Rob Herring wrote:
+> >> On Wed, Jan 20, 2016 at 02:35:43PM +0800, James Liao wrote:
+> >> > This patch adds the binding documentation for apmixedsys, bdpsys,
+> >> > ethsys, hifsys, imgsys, infracfg, mmsys, pericfg, topckgen and
+> >> > vdecsys for Mediatek MT2701.
+> >> >
+> >> > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> >> > Tested-by: John Crispin <blogic@openwrt.org>
+> >> > ---
+> >> >  .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |  1 +
+> >> >  .../bindings/arm/mediatek/mediatek,bdpsys.txt      | 22 ++++++++++++++++++++++
+> >> >  .../bindings/arm/mediatek/mediatek,ethsys.txt      | 22 ++++++++++++++++++++++
+> >> >  .../bindings/arm/mediatek/mediatek,hifsys.txt      | 22 ++++++++++++++++++++++
+> >> >  .../bindings/arm/mediatek/mediatek,imgsys.txt      |  1 +
+> >> >  .../bindings/arm/mediatek/mediatek,infracfg.txt    |  1 +
+> >> >  .../bindings/arm/mediatek/mediatek,mmsys.txt       |  1 +
+> >> >  .../bindings/arm/mediatek/mediatek,pericfg.txt     |  1 +
+> >> >  .../bindings/arm/mediatek/mediatek,topckgen.txt    |  1 +
+> >> >  .../bindings/arm/mediatek/mediatek,vdecsys.txt     |  1 +
+> >> >  10 files changed, 73 insertions(+)
+> >> >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
+> >> >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
+> >> >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
+> >> >
+> >> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+> >> > index 936166f..a701e19 100644
+> >> > --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+> >> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+> >> > @@ -6,6 +6,7 @@ The Mediatek apmixedsys controller provides the PLLs to the system.
+> >> >  Required Properties:
+> >> >
+> >> >  - compatible: Should be:
+> >> > +   - "mediatek,mt2701-apmixedsys"
+> >> >     - "mediatek,mt8135-apmixedsys"
+> >> >     - "mediatek,mt8173-apmixedsys"
+> >> >  - #clock-cells: Must be 1
+> >> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
+> >> > new file mode 100644
+> >> > index 0000000..4137196
+> >> > --- /dev/null
+> >> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
+> >> > @@ -0,0 +1,22 @@
+> >> > +Mediatek bdpsys controller
+> >> > +============================
+> >> > +
+> >> > +The Mediatek bdpsys controller provides various clocks to the system.
+> >>
+> >> As you clarified these blocks provide more that just clocks. Please list
+> >> all the functions here and on the others.
+> >
+> > Some blocks may provide clock and reset controller at the same time. But
+> 
+> Then say the block provides clocks and resets is all I'm asking for.
 
-i think i must correct myself. The fixed apb should stay since there is no
-dynamic replacement and a proper disabling of plld shouldn't cause this freeze.
+infracfg and pericfg had mentioned they would provide clock and reset
+controllers. I'll add the same description into hifsys.
 
-I have the suspicion the freeze is caused by a clock glitch or lock-up.
+> > most of them will not provide functions directly. Instead, some DT
+> > blocks which provide specific functions may refer to these controller
+> > nodes due to it need to access the same register space.
+> >
+> > For example, scpsys (the power domain provider) refers to infracfg
+> > because it need to control infracfg registers when power on/off domains:
+> >
+> >         scpsys: scpsys@10006000 {
+> >                 compatible = "mediatek,mt2701-scpsys";
+> >                 #power-domain-cells = <1>;
+> >                 reg = <0 0x10006000 0 0x1000>;
+> >                 infracfg = <&infracfg>;
+> >         };
+> >
+> > So I think it should not need to list all functions for each blocks
+> > here.
+> 
+> Sorry, but you do need to describe what functions the blocks provide.
 
-Could you please revert your changes and apply the attached patch? Maybe we can
-see more.
+infracfg for example, this DT node provides only clock and reset
+controllers.
 
-------------------------------8<-----------------------------------------
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 637f8ae..03d95c1 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -364,6 +364,7 @@ struct bcm2835_cprman {
- 	void __iomem *regs;
- 	spinlock_t regs_lock;
- 	const char *osc_name;
-+	int func_code;
- 
- 	struct clk_onecell_data onecell;
- 	struct clk *clks[];
-@@ -1222,8 +1223,13 @@ static void bcm2835_pll_off(struct clk_hw *hw)
- 	struct bcm2835_cprman *cprman = pll->cprman;
- 	const struct bcm2835_pll_data *data = pll->data;
- 
-+	if (!(cprman_read(cprman, CM_LOCK) & data->lock_mask))
-+		pr_warn("%s: PLL still locked from %d\n", __func__, cprman->func_code);
-+
- 	cprman_write(cprman, data->cm_ctrl_reg, CM_PLL_ANARST);
- 	cprman_write(cprman, data->a2w_ctrl_reg, A2W_PLL_CTRL_PWRDN);
-+
-+	cprman->func_code = 1;
- }
- 
- static int bcm2835_pll_on(struct clk_hw *hw)
-@@ -1233,10 +1239,15 @@ static int bcm2835_pll_on(struct clk_hw *hw)
- 	const struct bcm2835_pll_data *data = pll->data;
- 	ktime_t timeout;
- 
-+	if (!(cprman_read(cprman, CM_LOCK) & data->lock_mask))
-+		pr_warn("%s: PLL still locked from %d\n", __func__, cprman->func_code);
-+
- 	/* Take the PLL out of reset. */
- 	cprman_write(cprman, data->cm_ctrl_reg,
- 		     cprman_read(cprman, data->cm_ctrl_reg) & ~CM_PLL_ANARST);
- 
-+	cprman->func_code = 2;
-+
- 	/* Wait for the PLL to lock. */
- 	timeout = ktime_add_ns(ktime_get(), LOCK_TIMEOUT_NS);
- 	while (!(cprman_read(cprman, CM_LOCK) & data->lock_mask)) {
-@@ -1267,6 +1278,8 @@ bcm2835_pll_write_ana(struct bcm2835_cprman *cprman, u32
-ana_reg_base, u32 *ana)
- 	 */
- 	for (i = 3; i >= 0; i--)
- 		cprman_write(cprman, ana_reg_base + i * 4, ana[i]);
-+
-+	cprman->func_code = 3;
- }
- 
- static int bcm2835_pll_set_rate(struct clk_hw *hw,
-@@ -1339,6 +1352,8 @@ static int bcm2835_pll_set_rate(struct clk_hw *hw,
- 	if (!do_ana_setup_first)
- 		bcm2835_pll_write_ana(cprman, data->ana_reg_base, ana);
- 
-+	cprman->func_code = 4;
-+
- 	return 0;
- }
- 
-@@ -1404,6 +1419,8 @@ static void bcm2835_pll_divider_off(struct clk_hw *hw)
- 		     (cprman_read(cprman, data->cm_reg) &
- 		      ~data->load_mask) | data->hold_mask);
- 	cprman_write(cprman, data->a2w_reg, A2W_PLL_CHANNEL_DISABLE);
-+
-+	cprman->func_code = 5;
- }
- 
- static int bcm2835_pll_divider_on(struct clk_hw *hw)
-@@ -1419,6 +1436,8 @@ static int bcm2835_pll_divider_on(struct clk_hw *hw)
- 	cprman_write(cprman, data->cm_reg,
- 		     cprman_read(cprman, data->cm_reg) & ~data->hold_mask);
- 
-+	cprman->func_code = 6;
-+
- 	return 0;
- }
- 
-@@ -1440,6 +1459,8 @@ static int bcm2835_pll_divider_set_rate(struct clk_hw *hw,
- 	cprman_write(cprman, data->cm_reg, cm | data->load_mask);
- 	cprman_write(cprman, data->cm_reg, cm & ~data->load_mask);
- 
-+	cprman->func_code = 7;
-+
- 	return 0;
- }
- 
-@@ -1588,7 +1609,7 @@ static void bcm2835_clock_wait_busy(struct bcm2835_clock
-*clock)
- 
- 	while (cprman_read(cprman, data->ctl_reg) & CM_BUSY) {
- 		if (ktime_after(ktime_get(), timeout)) {
--			dev_err(cprman->dev, "%s: couldn't lock PLL\n",
-+			dev_err(cprman->dev, "%s: clk busy timeout\n",
- 				clk_hw_get_name(&clock->hw));
- 			return;
- 		}
-@@ -1602,6 +1623,9 @@ static void bcm2835_clock_off(struct clk_hw *hw)
- 	struct bcm2835_cprman *cprman = clock->cprman;
- 	const struct bcm2835_clock_data *data = clock->data;
- 
-+	if (cprman_read(cprman, data->ctl_reg) & CM_BUSY)
-+		pr_warn("%s: clk still busy from %d\n", __func__, cprman->func_code);
-+
- 	spin_lock(&cprman->regs_lock);
- 	cprman_write(cprman, data->ctl_reg,
- 		     cprman_read(cprman, data->ctl_reg) & ~CM_ENABLE);
-@@ -1609,6 +1633,11 @@ static void bcm2835_clock_off(struct clk_hw *hw)
- 
- 	/* BUSY will remain high until the divider completes its cycle. */
- 	bcm2835_clock_wait_busy(clock);
-+
-+	cprman->func_code = 8;
-+
-+	if (cprman_read(cprman, data->ctl_reg) & CM_BUSY)
-+		pr_warn("%s: clk now busy from %d\n", __func__, cprman->func_code);
- }
- 
- static int bcm2835_clock_on(struct clk_hw *hw)
-@@ -1617,6 +1646,9 @@ static int bcm2835_clock_on(struct clk_hw *hw)
- 	struct bcm2835_cprman *cprman = clock->cprman;
- 	const struct bcm2835_clock_data *data = clock->data;
- 
-+	if (cprman_read(cprman, data->ctl_reg) & CM_BUSY)
-+		pr_warn("%s: clk still busy from %d\n", __func__, cprman->func_code);
-+
- 	spin_lock(&cprman->regs_lock);
- 	cprman_write(cprman, data->ctl_reg,
- 		     cprman_read(cprman, data->ctl_reg) |
-@@ -1624,6 +1656,11 @@ static int bcm2835_clock_on(struct clk_hw *hw)
- 		     CM_GATE);
- 	spin_unlock(&cprman->regs_lock);
- 
-+	cprman->func_code = 9;
-+
-+	if (cprman_read(cprman, data->ctl_reg) & CM_BUSY)
-+		pr_warn("%s: clk now busy from %d\n", __func__, cprman->func_code);
-+
- 	return 0;
- }
- 
-@@ -1638,6 +1675,9 @@ static int bcm2835_clock_set_rate(struct clk_hw *hw,
- 	enum bcm2835_clock_mash_type mash = divmash_get_mash(dm);
- 	u32 ctl;
- 
-+	if (cprman_read(cprman, data->ctl_reg) & CM_BUSY)
-+		pr_warn("%s: clk still busy from %d\n", __func__, cprman->func_code);
-+
- 	spin_lock(&cprman->regs_lock);
- 
- 	/* if div and mash are identical, then there is nothing to do */
-@@ -1663,6 +1703,11 @@ static int bcm2835_clock_set_rate(struct clk_hw *hw,
- unlock_exit:
- 	spin_unlock(&cprman->regs_lock);
- 
-+	cprman->func_code = 10;
-+
-+	if (cprman_read(cprman, data->ctl_reg) & CM_BUSY)
-+		pr_warn("%s: clk now busy from %d\n", __func__, cprman->func_code);
-+
- 	return 0;
- }
- 
-@@ -1713,7 +1758,16 @@ static int bcm2835_clock_set_parent(struct clk_hw *hw, u8
-index)
- 	const struct bcm2835_clock_data *data = clock->data;
- 	u8 src = (index << CM_SRC_SHIFT) & CM_SRC_MASK;
- 
-+	if (cprman_read(cprman, data->ctl_reg) & CM_BUSY)
-+		pr_warn("%s: clk still busy from %d\n", __func__, cprman->func_code);
-+
- 	cprman_write(cprman, data->ctl_reg, src);
-+
-+	cprman->func_code = 11;
-+
-+	if (cprman_read(cprman, data->ctl_reg) & CM_BUSY)
-+		pr_warn("%s: clk now busy from %d\n", __func__, cprman->func_code);
-+
- 	return 0;
- }
- 
+	infracfg: power-controller@10001000 {
+		compatible = "mediatek,mt2701-infracfg", "syscon";
+		reg = <0 0x10001000 0 0x1000>;
+		#clock-cells = <1>;
+		#reset-cells = <1>;
+	};
+
+It mapped register space 0x10001000 ~ 0x10001fff. The clock and reset
+controllers only use partial registers in this space. Some other
+functions, such as bus protection and DCM, use registers in 0x10001000 ~
+0x10001fff. But these functions are not provided by this node. Instead,
+these function may be implemented by other nodes, such as scpsys. That's
+why we only list clock and reset controllers in infracfg document.
+
+> Also, if you are accessing the infracfg regs directly to modify clock
+> registers outside of the clock driver, that is very bad design. The
+> clock driver could assume that register values are not changing behind
+> its back and it bypasses any locks around register accesses. I can see
+> why it is needed though, but we really need a proper interface.
+
+No, we won't modify clock registers directly outside of clock driver.
+All drivers that need to control clocks must use standard CCF APIs to
+lookup and operate clocks.
+
+Scpsys for example, it need to enable/disable clocks and bus protections
+when power domain on/off. Scpsys will control clocks through CCF, and
+control bus protections through regmap to access infracfg's registers.
+Of course, the registers of clocks and bus protection are different.
+
+	scpsys: scpsys@10006000 {
+		compatible = "mediatek,mt8173-scpsys";
+		#power-domain-cells = <1>;
+		reg = <0 0x10006000 0 0x1000>;
+		clocks = <&clk26m>,
+			 <&topckgen CLK_TOP_MM_SEL>,
+			 <&topckgen CLK_TOP_VENC_SEL>,
+			 <&topckgen CLK_TOP_VENC_LT_SEL>;
+		clock-names = "mfg", "mm", "venc", "venc_lt";
+		infracfg = <&infracfg>;
+	};
+
+Here is MT8173's scpsys DT node. And you can see it refers clocks
+provided by topckeng, and infracfg register space.
+
+
+Best regards,
+
+James
