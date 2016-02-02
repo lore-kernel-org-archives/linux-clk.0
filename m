@@ -1,178 +1,159 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 2/9] clk: at91: Remove impossible checks for of_clk_get_parent_count()
-Date: Mon, 22 Feb 2016 12:54:40 -0800
-Message-Id: <1456174487-28397-3-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1456174487-28397-1-git-send-email-sboyd@codeaurora.org>
-References: <1456174487-28397-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <ping.bai@nxp.com>
+From: Bai Ping <ping.bai@nxp.com>
+To: <shawnguo@kernel.org>, <kernel@pengutronix.de>
+CC: <pawel.moll@arm.com>, <robh+dt@kernel.org>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<jacky.baip@gmail.com>
+Subject: [PATCH V3 2/5] ARM: dts: imx: Add basic dts support for imx6qp SOC
+Date: Tue, 2 Feb 2016 18:01:35 +0800
+Message-ID: <1454407298-15545-2-git-send-email-ping.bai@nxp.com>
+In-Reply-To: <1454407298-15545-1-git-send-email-ping.bai@nxp.com>
+References: <1454407298-15545-1-git-send-email-ping.bai@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: ping.bai@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-These checks for < 0 are impossible now that
-of_clk_get_parent_count() returns an unsigned int. Change the
-checks for == 0 and update the type.
+The i.MX6Quad Plus processor is an high performance SOC of i.MX6 family.
+It has enhanced graphics performance and increased overall memory bandwidth
+compared to i.MX6Q. Most of the design are same as i.MX6Quad/Dual, so code
+for i.MX6Quad can be resued by this chip. The revision number is identied as
+i.MX6Q Rev2.0, but actually it is a new chip, as we did many change to the
+overall architecture.
 
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+This patch adds basic dtsi file support for the new i.MX6Quad Plus processor.
+
+Signed-off-by: Bai Ping <ping.bai@nxp.com>
 ---
- drivers/clk/at91/clk-generated.c    | 4 ++--
- drivers/clk/at91/clk-main.c         | 4 ++--
- drivers/clk/at91/clk-master.c       | 4 ++--
- drivers/clk/at91/clk-programmable.c | 4 ++--
- drivers/clk/at91/clk-slow.c         | 6 +++---
- drivers/clk/at91/clk-smd.c          | 4 ++--
- drivers/clk/at91/clk-usb.c          | 4 ++--
- 7 files changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-index abc80949e1dd..f82b16a65dee 100644
---- a/drivers/clk/at91/clk-generated.c
-+++ b/drivers/clk/at91/clk-generated.c
-@@ -268,13 +268,13 @@ void __init of_sama5d2_clk_generated_setup(struct device_node *np,
- 	u32 id;
- 	const char *name;
- 	struct clk *clk;
--	int num_parents;
-+	unsigned int num_parents;
- 	const char *parent_names[GENERATED_SOURCE_MAX];
- 	struct device_node *gcknp;
- 	struct clk_range range = CLK_RANGE(0, 0);
+change for V3:
+--remove some device node that the driver is not ready or stable in upstream
+-- update the copyright header
+
+
+ arch/arm/boot/dts/imx6q.dtsi           |  2 +-
+ arch/arm/boot/dts/imx6qdl-sabresd.dtsi |  1 +
+ arch/arm/boot/dts/imx6qp.dtsi          | 86 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 88 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/imx6qp.dtsi
+
+diff --git a/arch/arm/boot/dts/imx6q.dtsi b/arch/arm/boot/dts/imx6q.dtsi
+index 0d93c0e..ddcb37b 100644
+--- a/arch/arm/boot/dts/imx6q.dtsi
++++ b/arch/arm/boot/dts/imx6q.dtsi
+@@ -22,7 +22,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
  
- 	num_parents = of_clk_get_parent_count(np);
--	if (num_parents <= 0 || num_parents > GENERATED_SOURCE_MAX)
-+	if (num_parents == 0 || num_parents > GENERATED_SOURCE_MAX)
- 		return;
+-		cpu@0 {
++		cpu0: cpu@0 {
+ 			compatible = "arm,cortex-a9";
+ 			device_type = "cpu";
+ 			reg = <0>;
+diff --git a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
+index a6d445c..f65f57b 100644
+--- a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
+@@ -238,6 +238,7 @@
+ 				regulator-max-microvolt = <3300000>;
+ 				regulator-boot-on;
+ 				regulator-always-on;
++				regulator-ramp-delay = <6250>;
+ 			};
  
- 	of_clk_parent_fill(np, parent_names, num_parents);
-diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
-index fd7247deabdc..b85f43529396 100644
---- a/drivers/clk/at91/clk-main.c
-+++ b/drivers/clk/at91/clk-main.c
-@@ -611,12 +611,12 @@ void __init of_at91sam9x5_clk_main_setup(struct device_node *np,
- {
- 	struct clk *clk;
- 	const char *parent_names[2];
--	int num_parents;
-+	unsigned int num_parents;
- 	unsigned int irq;
- 	const char *name = np->name;
- 
- 	num_parents = of_clk_get_parent_count(np);
--	if (num_parents <= 0 || num_parents > 2)
-+	if (num_parents == 0 || num_parents > 2)
- 		return;
- 
- 	of_clk_parent_fill(np, parent_names, num_parents);
-diff --git a/drivers/clk/at91/clk-master.c b/drivers/clk/at91/clk-master.c
-index 620ea323356b..016fe110b5ba 100644
---- a/drivers/clk/at91/clk-master.c
-+++ b/drivers/clk/at91/clk-master.c
-@@ -221,14 +221,14 @@ of_at91_clk_master_setup(struct device_node *np, struct at91_pmc *pmc,
- 			 const struct clk_master_layout *layout)
- {
- 	struct clk *clk;
--	int num_parents;
-+	unsigned int num_parents;
- 	unsigned int irq;
- 	const char *parent_names[MASTER_SOURCE_MAX];
- 	const char *name = np->name;
- 	struct clk_master_characteristics *characteristics;
- 
- 	num_parents = of_clk_get_parent_count(np);
--	if (num_parents <= 0 || num_parents > MASTER_SOURCE_MAX)
-+	if (num_parents == 0 || num_parents > MASTER_SOURCE_MAX)
- 		return;
- 
- 	of_clk_parent_fill(np, parent_names, num_parents);
-diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-programmable.c
-index 14b270b85fec..b955fb81876f 100644
---- a/drivers/clk/at91/clk-programmable.c
-+++ b/drivers/clk/at91/clk-programmable.c
-@@ -232,13 +232,13 @@ of_at91_clk_prog_setup(struct device_node *np, struct at91_pmc *pmc,
- 	int num;
- 	u32 id;
- 	struct clk *clk;
--	int num_parents;
-+	unsigned int num_parents;
- 	const char *parent_names[PROG_SOURCE_MAX];
- 	const char *name;
- 	struct device_node *progclknp;
- 
- 	num_parents = of_clk_get_parent_count(np);
--	if (num_parents <= 0 || num_parents > PROG_SOURCE_MAX)
-+	if (num_parents == 0 || num_parents > PROG_SOURCE_MAX)
- 		return;
- 
- 	of_clk_parent_fill(np, parent_names, num_parents);
-diff --git a/drivers/clk/at91/clk-slow.c b/drivers/clk/at91/clk-slow.c
-index 6f99a530ead6..67b304726d06 100644
---- a/drivers/clk/at91/clk-slow.c
-+++ b/drivers/clk/at91/clk-slow.c
-@@ -366,11 +366,11 @@ void __init of_at91sam9x5_clk_slow_setup(struct device_node *np,
- {
- 	struct clk *clk;
- 	const char *parent_names[2];
--	int num_parents;
-+	unsigned int num_parents;
- 	const char *name = np->name;
- 
- 	num_parents = of_clk_get_parent_count(np);
--	if (num_parents <= 0 || num_parents > 2)
-+	if (num_parents == 0 || num_parents > 2)
- 		return;
- 
- 	of_clk_parent_fill(np, parent_names, num_parents);
-@@ -437,7 +437,7 @@ void __init of_at91sam9260_clk_slow_setup(struct device_node *np,
- {
- 	struct clk *clk;
- 	const char *parent_names[2];
--	int num_parents;
-+	unsigned int num_parents;
- 	const char *name = np->name;
- 
- 	num_parents = of_clk_get_parent_count(np);
-diff --git a/drivers/clk/at91/clk-smd.c b/drivers/clk/at91/clk-smd.c
-index a7f8501cfa05..f525830ed5a1 100644
---- a/drivers/clk/at91/clk-smd.c
-+++ b/drivers/clk/at91/clk-smd.c
-@@ -145,12 +145,12 @@ void __init of_at91sam9x5_clk_smd_setup(struct device_node *np,
- 					struct at91_pmc *pmc)
- {
- 	struct clk *clk;
--	int num_parents;
-+	unsigned int num_parents;
- 	const char *parent_names[SMD_SOURCE_MAX];
- 	const char *name = np->name;
- 
- 	num_parents = of_clk_get_parent_count(np);
--	if (num_parents <= 0 || num_parents > SMD_SOURCE_MAX)
-+	if (num_parents == 0 || num_parents > SMD_SOURCE_MAX)
- 		return;
- 
- 	of_clk_parent_fill(np, parent_names, num_parents);
-diff --git a/drivers/clk/at91/clk-usb.c b/drivers/clk/at91/clk-usb.c
-index 8ab8502778a2..be1c7f531837 100644
---- a/drivers/clk/at91/clk-usb.c
-+++ b/drivers/clk/at91/clk-usb.c
-@@ -373,12 +373,12 @@ void __init of_at91sam9x5_clk_usb_setup(struct device_node *np,
- 					struct at91_pmc *pmc)
- {
- 	struct clk *clk;
--	int num_parents;
-+	unsigned int num_parents;
- 	const char *parent_names[USB_SOURCE_MAX];
- 	const char *name = np->name;
- 
- 	num_parents = of_clk_get_parent_count(np);
--	if (num_parents <= 0 || num_parents > USB_SOURCE_MAX)
-+	if (num_parents == 0 || num_parents > USB_SOURCE_MAX)
- 		return;
- 
- 	of_clk_parent_fill(np, parent_names, num_parents);
+ 			sw3a_reg: sw3a {
+diff --git a/arch/arm/boot/dts/imx6qp.dtsi b/arch/arm/boot/dts/imx6qp.dtsi
+new file mode 100644
+index 0000000..1ada714
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6qp.dtsi
+@@ -0,0 +1,86 @@
++/*
++ * Copyright 2016 Freescale Semiconductor, Inc.
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++#include "imx6q.dtsi"
++
++/ {
++	soc {
++		ocram2: sram@00940000 {
++			compatible = "mmio-sram";
++			reg = <0x00940000 0x20000>;
++			clocks = <&clks IMX6QDL_CLK_OCRAM>;
++		};
++
++		ocram3: sram@00960000 {
++			compatible = "mmio-sram";
++			reg = <0x00960000 0x20000>;
++			clocks = <&clks IMX6QDL_CLK_OCRAM>;
++		};
++
++		ipu1: ipu@02400000 {
++			compatible = "fsl,imx6qp-ipu", "fsl,imx6q-ipu";
++			clocks = <&clks IMX6QDL_CLK_IPU1>,
++				 <&clks IMX6QDL_CLK_IPU1_DI0>, <&clks IMX6QDL_CLK_IPU1_DI1>,
++				 <&clks IMX6QDL_CLK_IPU1_DI0_SEL>, <&clks IMX6QDL_CLK_IPU1_DI1_SEL>,
++				 <&clks IMX6QDL_CLK_LDB_DI0_PODF>, <&clks IMX6QDL_CLK_LDB_DI1_PODF>,
++				 <&clks IMX6QDL_CLK_PRG0_APB>;
++			clock-names = "bus",
++				      "di0", "di1",
++				      "di0_sel", "di1_sel",
++				      "ldb_di0", "ldb_di1", "prg";
++		};
++
++		ipu2: ipu@02800000 {
++			compatible = "fsl,imx6qp-ipu", "fsl,imx6q-ipu";
++			clocks = <&clks IMX6QDL_CLK_IPU2>,
++				 <&clks IMX6QDL_CLK_IPU2_DI0>, <&clks IMX6QDL_CLK_IPU2_DI1>,
++				 <&clks IMX6QDL_CLK_IPU2_DI0_SEL>, <&clks IMX6QDL_CLK_IPU2_DI1_SEL>,
++				 <&clks IMX6QDL_CLK_LDB_DI0_PODF>, <&clks IMX6QDL_CLK_LDB_DI1_PODF>,
++				 <&clks IMX6QDL_CLK_PRG1_APB>;
++			clock-names = "bus",
++				      "di0", "di1",
++				      "di0_sel", "di1_sel",
++				      "ldb_di0", "ldb_di1", "prg";
++		};
++
++	};
++};
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
