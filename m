@@ -1,21 +1,51 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/6] clk: rockchip: fix coding style for clk-cpu.c
-Date: Mon, 15 Feb 2016 23:42:24 +0100
-Message-ID: <1551462.HZJRzxyFeP@phil>
-In-Reply-To: <1455507230-13120-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1455507153-12914-1-git-send-email-shawn.lin@rock-chips.com> <1455507230-13120-1-git-send-email-shawn.lin@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	heiko@sntech.de,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andre Przywara <andre.przywara@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 0/5] clk: sunxi: Rework the clocks code to deal with orphans
+Date: Tue,  2 Feb 2016 09:47:09 +0100
+Message-Id: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Montag, 15. Februar 2016, 11:33:50 schrieb Shawn Lin:
-> Fix the issue reported by checkpatch:
-> ERROR: space prohibited before that ',' (ctx:WxW)
-> +               writel(clksel->val , cpuclk->reg_base + clksel->reg);
-> 
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+Hi everyone,
 
-applied to my clk-branch for 4.6
+Here is an attempt at making the whole clk-sunxi code register the
+clocks without creating any orphans by relying on CLK_OF_DECLARE.
+
+This also has the net benefit of not having to add the SoC compatible
+to the list of compatibles that trigger the clock registration, which
+has started to be a pain.
+
+I tested this on an A13 (R8 actually), everything seems to be working
+just fine. I also tested it both with and without Heiko's patch to
+defer clk_get if the clock is orphan, and previously broke everything.
+
+Let me know what you think,
+Maxime
+
+Maxime Ripard (5):
+  clk: sunxi: Make clocks setup functions return their clock
+  clk: sunxi: Make clocks setup functions take const pointer
+  clk: sunxi: convert current clocks registration to CLK_OF_DECLARE
+  clk: sunxi: Remove old probe and protection code
+  clk: sunxi: Remove clk_register_clkdev calls
+
+ drivers/clk/sunxi/clk-a10-hosc.c         |   3 +-
+ drivers/clk/sunxi/clk-a20-gmac.c         |   2 -
+ drivers/clk/sunxi/clk-factors.c          |   7 -
+ drivers/clk/sunxi/clk-factors.h          |   1 -
+ drivers/clk/sunxi/clk-mod0.c             |   1 +
+ drivers/clk/sunxi/clk-sun6i-apb0-gates.c |   2 -
+ drivers/clk/sunxi/clk-sun9i-core.c       |   1 +
+ drivers/clk/sunxi/clk-sunxi.c            | 263 ++++++++++++++++---------------
+ 8 files changed, 135 insertions(+), 145 deletions(-)
+
+-- 
+2.6.4
