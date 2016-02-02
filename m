@@ -1,64 +1,37 @@
-Return-Path: <kevin.smith@elecsyscorp.com>
-From: Kevin Smith <kevin.smith@elecsyscorp.com>
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Gregory
- CLEMENT" <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH v2 2/2] clk: mvebu: Move corediv config to mvebu config
-Date: Thu, 11 Feb 2016 16:10:44 +0000
-Message-ID: <56BCB28A.6000808@elecsyscorp.com>
-References: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
-	<1455147596-16078-1-git-send-email-kevin.smith@elecsyscorp.com>
-	<1455147596-16078-2-git-send-email-kevin.smith@elecsyscorp.com>
-	<20160211091651.765cd91c@free-electrons.com>
-	<56BCB043.5040909@elecsyscorp.com>
- <20160211170448.7dbc872a@free-electrons.com>
-In-Reply-To: <20160211170448.7dbc872a@free-electrons.com>
-Content-Type: text/plain; charset="Windows-1252"
-MIME-Version: 1.0
+Return-Path: <moinejf@free.fr>
+Date: Tue, 2 Feb 2016 18:19:49 +0100
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Dave Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>, Emilio
+ =?ISO-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>, Maxime Ripard
+ <maxime.ripard@free-electrons.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] drm: sunxi: Add a basic DRM driver for Allwinner
+ DE2
+Message-Id: <20160202181949.d59e84a040a980abcdd69d32@free.fr>
+In-Reply-To: <569F6C1E.8000006@arm.com>
+References: <cover.1452876522.git.moinejf@free.fr>
+	<4c40052b27f74df1342e631cb0f9ed5993861a54.1452876522.git.moinejf@free.fr>
+	<569F6C1E.8000006@arm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/11/2016 10:04 AM, Thomas Petazzoni wrote:
-> Kevin,
->
-> On Thu, 11 Feb 2016 16:01:03 +0000, Kevin Smith wrote:
->
->>>> diff --git a/arch/arm/mach-mvebu/Kconfig b/arch/arm/mach-mvebu/Kconfig
->>>> index 64e3d2c..794e7c5 100644
->>>> --- a/arch/arm/mach-mvebu/Kconfig
->>>> +++ b/arch/arm/mach-mvebu/Kconfig
->>>> @@ -32,6 +32,7 @@ config MACH_ARMADA_370
->>>>    	select CPU_PJ4B
->>>>    	select MACH_MVEBU_V7
->>>>    	select PINCTRL_ARMADA_370
->>>> +	select MVEBU_CLK_COREDIV if MTD_NAND_PXA3xx
->>> Thanks for the new iteration. I know the corediv clock is only used for
->>> the NAND, but I'm wondering if it's really worth doing this "if
->>> MTD_NAND_PXA3xx.
->>>
->>> Thomas
->> Maybe I misunderstood.  In your previous e-mail you said "building
->> ARMADA_38X_CLK or ARMADA_375_CLK does not require building
->> clk-corediv.c, it only needs common.c.  So maybe instead we should
->> change arch/arm/mach-mvebu/Kconfig to have MACH_ARMADA_xxx select
->> MVEBU_CLK_COREDIV when needed."  I thought you meant only when a
->> peripheral depended on the coreclk.
->>
->> Should I remove the conditional and just have MACH_ARMADA_XXX always
->> enable MVEBU_CLK_COREDIV for platforms that have it?
-> Yes, at least, this is what my comment was suggesting to do. Sorry if
-> it was unclear, but my point is that the clock is there regardless of
-> whether the NAND driver is available/used.
->
-> Anyway, it's not a big deal because the defconfig has the pxa3xx_nand
-> driver enabled, so most people are very likely going to have this
-> driver enabled on Marvell platforms.
->
-> Best regards,
->
-> Thomas
-Ah, thanks for the clarification.  This sounds good to me.  v3 on the=20
-way.  :)
+On Wed, 20 Jan 2016 11:14:38 +0000
+Andre Przywara <andre.przywara@arm.com> wrote:
 
-Thank you,
-Kevin=
+> I haven't looked at it in detail yet, I just tried to compile it for
+> ARM64 to prepare for a test on the Allwinner A64.
+>=20
+> So just two things I spotted below:
+
+Hi Andr=E9,
+
+I fixed them in the v3 patch request.
+Have you succeeded to get video on the A64?
+
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
