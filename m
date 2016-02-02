@@ -1,46 +1,269 @@
-Return-Path: <tony@atomide.com>
-From: Tony Lindgren <tony@atomide.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Brian Hutchinson <b.hutchman@gmail.com>,
-	Delio Brignoli <dbrignoli@audioscience.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Matthijs van Duin <matthijsvanduin@gmail.com>,
-	Philipp Rosenberger <ilu@linutronix.de>,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: [PATCHv5 0/2] Clock driver for dm814x and dra62x ADPLL
-Date: Fri, 12 Feb 2016 13:20:07 -0800
-Message-Id: <1455312009-808-1-git-send-email-tony@atomide.com>
+Return-Path: <andre.przywara@arm.com>
+Subject: Re: [PATCH 3/5] clk: sunxi: convert current clocks registration to
+ CLK_OF_DECLARE
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+   Mike Turquette <mturquette@baylibre.com>,
+   Stephen Boyd
+ <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>,
+   heiko@sntech.de, Chen-Yu Tsai <wens@csie.org>
+References: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1454402834-6385-4-git-send-email-maxime.ripard@free-electrons.com>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Andre Przywara <andre.przywara@arm.com>
+Message-ID: <56B0BA56.10500@arm.com>
+Date: Tue, 2 Feb 2016 14:16:54 +0000
+MIME-Version: 1.0
+In-Reply-To: <1454402834-6385-4-git-send-email-maxime.ripard@free-electrons.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Hi Maxime,
 
-Here's a clock driver for the ADPLL on dm814x and dra62x. It's still
-in read-only mode for the PLL, but is already usable with the gates
-and dividers and allows us to add devices like MMC and USB.
+On 02/02/16 08:47, Maxime Ripard wrote:
+> The current clock registration and protection code has a few drawbacks, the
+> two main ones being that we create a lot of orphans clock in the
+> registration phase, which will be troublesome when we will start being less
+> relaxed about them.
+> 
+> The protection code also relies on clkdev, which we don't really use but
+> for this particular case.
+> 
+> Fix both at the same time by moving everyone to the CLK_OF_DECLARE that
+> will probe our clock tree in the right and thus avoid orphans, and by
+> protecting directly the clock returned by our registration function.
 
-Regards,
+I very much appreciate this cleanup and like the idea. Any chance we can
+have this rather quickly, so that I can rebase the A64 support series on it?
 
-Tony
+One issue below, though:
 
-Tony Lindgren (2):
-  dt-bindings: clock: adpll: Add binding documentation for TI adpll
-  clk: ti: Add support for dm814x ADPLL
+...
 
- .../devicetree/bindings/clock/ti/adpll.txt         |  43 +
- drivers/clk/Kconfig                                |   1 +
- drivers/clk/ti/Kconfig                             |   6 +
- drivers/clk/ti/Makefile                            |   2 +
- drivers/clk/ti/adpll.c                             | 983 +++++++++++++++++++++
- drivers/clk/ti/clk-814x.c                          |  53 ++
- 6 files changed, 1088 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/ti/adpll.txt
- create mode 100644 drivers/clk/ti/Kconfig
- create mode 100644 drivers/clk/ti/adpll.c
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/clk/sunxi/clk-sunxi.c | 150 +++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 133 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+> index a3d706f5b21c..da6c1bc763d1 100644
+> --- a/drivers/clk/sunxi/clk-sunxi.c
+> +++ b/drivers/clk/sunxi/clk-sunxi.c
+> @@ -585,6 +585,41 @@ static struct clk * __init sunxi_factors_clk_setup(struct device_node *node,
+>  	return sunxi_factors_register(node, data, &clk_lock, reg);
+>  }
+>  
+> +static void __init sun4i_pll1_clk_setup(struct device_node *node)
+> +{
+> +	sunxi_factors_clk_setup(node, &sun4i_pll1_data);
+> +}
+> +CLK_OF_DECLARE(sun4i_pll1, "allwinner,sun4i-a10-pll1-clk",
+> +	       sun4i_pll1_clk_setup);
+> +
+> +static void __init sun6i_pll1_clk_setup(struct device_node *node)
+> +{
+> +	sunxi_factors_clk_setup(node, &sun6i_a31_pll1_data);
+> +}
+> +CLK_OF_DECLARE(sun6i_pll1, "allwinner,sun6i-a31-pll1-clk",
+> +	       sun6i_pll1_clk_setup);
+> +
+> +static void __init sun8i_pll1_clk_setup(struct device_node *node)
+> +{
+> +	sunxi_factors_clk_setup(node, &sun8i_a23_pll1_data);
+> +}
+> +CLK_OF_DECLARE(sun8i_pll1, "allwinner,sun8i-a23-pll1-clk",
+> +	       sun8i_pll1_clk_setup);
+> +
+> +static void __init sun7i_pll4_clk_setup(struct device_node *node)
+> +{
+> +	sunxi_factors_clk_setup(node, &sun7i_a20_pll4_data);
+> +}
+> +CLK_OF_DECLARE(sun7i_pll4, "allwinner,sun7i-a20-pll4-clk",
+> +	       sun7i_pll4_clk_setup);
+> +
+> +static void __init sun5i_ahb_clk_setup(struct device_node *node)
+> +{
+> +	sunxi_factors_clk_setup(node, &sun5i_a13_ahb_data);
+> +}
+> +CLK_OF_DECLARE(sun5i_ahb, "allwinner,sun5i-a13-ahb-clk",
+> +	       sun5i_ahb_clk_setup);
+> +
+>  static void __init sun6i_ahb1_clk_setup(struct device_node *node)
+>  {
+>  	sunxi_factors_clk_setup(node, &sun6i_ahb1_data);
+> @@ -592,6 +627,20 @@ static void __init sun6i_ahb1_clk_setup(struct device_node *node)
+>  CLK_OF_DECLARE(sun6i_a31_ahb1, "allwinner,sun6i-a31-ahb1-clk",
+>  	       sun6i_ahb1_clk_setup);
+>  
+> +static void __init sun4i_apb1_clk_setup(struct device_node *node)
+> +{
+> +	sunxi_factors_clk_setup(node, &sun4i_apb1_data);
+> +}
+> +CLK_OF_DECLARE(sun4i_apb1, "allwinner,sun4i-a10-apb1-clk",
+> +	       sun4i_apb1_clk_setup);
+> +
+> +static void __init sun7i_out_clk_setup(struct device_node *node)
+> +{
+> +	sunxi_factors_clk_setup(node, &sun7i_a20_out_data);
+> +}
+> +CLK_OF_DECLARE(sun7i_out, "allwinner,sun7i-a20-out-clk",
+> +	       sun7i_out_clk_setup);
+> +
+>  
+>  /**
+>   * sunxi_mux_clk_setup() - Setup function for muxes
+> @@ -642,6 +691,34 @@ static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
+>  	return clk;
+>  }
+>  
+> +static void __init sun4i_cpu_clk_setup(struct device_node *node)
+> +{
+> +	struct clk *clk;
+> +
+> +	clk = sunxi_mux_clk_setup(node, &sun4i_cpu_mux_data);
+> +	if (!clk)
+> +		return;
+> +
+> +	/* Protect CPU clock */
+> +	__clk_get(clk);
+> +	clk_prepare_enable(clk);
+> +}
+> +CLK_OF_DECLARE(sun4i_cpu, "allwinner,sun4i-a10-cpu-clk",
+> +	       sun4i_cpu_clk_setup);
+> +
+> +static void __init sun6i_ahb1_mux_clk_setup(struct device_node *node)
+> +{
+> +	sunxi_mux_clk_setup(node, &sun6i_a31_ahb1_mux_data);
+> +}
+> +CLK_OF_DECLARE(sun6i_ahb1_mux, "allwinner,sun6i-a31-ahb1-mux-clk",
+> +	       sun6i_ahb1_mux_clk_setup);
+> +
+> +static void __init sun8i_ahb2_clk_setup(struct device_node *node)
+> +{
+> +	sunxi_mux_clk_setup(node, &sun8i_h3_ahb2_mux_data);
+> +}
+> +CLK_OF_DECLARE(sun8i_ahb2, "allwinner,sun8i-a31-ahb2-clk",
+> +	       sun8i_ahb2_clk_setup);
 
--- 
-2.7.0
+I don't find this clock in my tree (which is mripard/sunxi/for-next).
+Instead I only have "allwinner,sun8i-h3-ahb2-clk", as mentioned below.
+But as you remove this clock below from the old code and instead
+instantiate this new clock here, this looks somehow wrong to me. Can you
+confirm this or am I utterly confused?
+
+Apart from that I checked each and every clock mentioned in this patch
+and can confirm that the transformation is correct. So if you fix this,
+I can send a Reviewed-by.
+
+Cheers,
+Andre.
+
+>  
+>  
+>  /**
+> @@ -723,6 +800,34 @@ static void __init sunxi_divider_clk_setup(struct device_node *node,
+>  	}
+>  }
+>  
+> +static void __init sun4i_ahb_clk_setup(struct device_node *node)
+> +{
+> +	sunxi_divider_clk_setup(node, &sun4i_ahb_data);
+> +}
+> +CLK_OF_DECLARE(sun4i_ahb, "allwinner,sun4i-a10-ahb-clk",
+> +	       sun4i_ahb_clk_setup);
+> +
+> +static void __init sun4i_apb0_clk_setup(struct device_node *node)
+> +{
+> +	sunxi_divider_clk_setup(node, &sun4i_apb0_data);
+> +}
+> +CLK_OF_DECLARE(sun4i_apb0, "allwinner,sun4i-a10-apb0-clk",
+> +	       sun4i_apb0_clk_setup);
+> +
+> +static void __init sun4i_axi_clk_setup(struct device_node *node)
+> +{
+> +	sunxi_divider_clk_setup(node, &sun4i_axi_data);
+> +}
+> +CLK_OF_DECLARE(sun4i_axi, "allwinner,sun4i-a10-axi-clk",
+> +	       sun4i_axi_clk_setup);
+> +
+> +static void __init sun8i_axi_clk_setup(struct device_node *node)
+> +{
+> +	sunxi_divider_clk_setup(node, &sun8i_a23_axi_data);
+> +}
+> +CLK_OF_DECLARE(sun8i_axi, "allwinner,sun8i-a23-axi-clk",
+> +	       sun8i_axi_clk_setup);
+> +
+>  
+>  /**
+>   * sunxi_gates_clk_setup() - Setup function for leaf gates on clocks
+> @@ -934,42 +1039,53 @@ free_clkdata:
+>  	return NULL;
+>  }
+>  
+> +static void __init sun4i_pll5_clk_setup(struct device_node *node)
+> +{
+> +	struct clk **clks;
+> +
+> +	clks = sunxi_divs_clk_setup(node, &pll5_divs_data);
+> +	if (!clks)
+> +		return;
+> +
+> +	/* Protect PLL5_DDR */
+> +	__clk_get(clks[0]);
+> +	clk_prepare_enable(clks[0]);
+> +}
+> +CLK_OF_DECLARE(sun4i_pll5, "allwinner,sun4i-a10-pll5-clk",
+> +	       sun4i_pll5_clk_setup);
+> +
+> +static void __init sun4i_pll6_clk_setup(struct device_node *node)
+> +{
+> +	sunxi_divs_clk_setup(node, &pll6_divs_data);
+> +}
+> +CLK_OF_DECLARE(sun4i_pll6, "allwinner,sun4i-a10-pll6-clk",
+> +	       sun4i_pll6_clk_setup);
+> +
+> +static void __init sun6i_pll6_clk_setup(struct device_node *node)
+> +{
+> +	sunxi_divs_clk_setup(node, &sun6i_a31_pll6_divs_data);
+> +}
+> +CLK_OF_DECLARE(sun6i_pll6, "allwinner,sun6i-a31-pll6-clk",
+> +	       sun6i_pll6_clk_setup);
+>  
+>  
+>  /* Matches for factors clocks */
+>  static const struct of_device_id clk_factors_match[] __initconst = {
+> -	{.compatible = "allwinner,sun4i-a10-pll1-clk", .data = &sun4i_pll1_data,},
+> -	{.compatible = "allwinner,sun6i-a31-pll1-clk", .data = &sun6i_a31_pll1_data,},
+> -	{.compatible = "allwinner,sun8i-a23-pll1-clk", .data = &sun8i_a23_pll1_data,},
+> -	{.compatible = "allwinner,sun7i-a20-pll4-clk", .data = &sun7i_a20_pll4_data,},
+> -	{.compatible = "allwinner,sun5i-a13-ahb-clk", .data = &sun5i_a13_ahb_data,},
+> -	{.compatible = "allwinner,sun4i-a10-apb1-clk", .data = &sun4i_apb1_data,},
+> -	{.compatible = "allwinner,sun7i-a20-out-clk", .data = &sun7i_a20_out_data,},
+>  	{}
+>  };
+>  
+>  /* Matches for divider clocks */
+>  static const struct of_device_id clk_div_match[] __initconst = {
+> -	{.compatible = "allwinner,sun4i-a10-axi-clk", .data = &sun4i_axi_data,},
+> -	{.compatible = "allwinner,sun8i-a23-axi-clk", .data = &sun8i_a23_axi_data,},
+> -	{.compatible = "allwinner,sun4i-a10-ahb-clk", .data = &sun4i_ahb_data,},
+> -	{.compatible = "allwinner,sun4i-a10-apb0-clk", .data = &sun4i_apb0_data,},
+>  	{}
+>  };
+>  
+>  /* Matches for divided outputs */
+>  static const struct of_device_id clk_divs_match[] __initconst = {
+> -	{.compatible = "allwinner,sun4i-a10-pll5-clk", .data = &pll5_divs_data,},
+> -	{.compatible = "allwinner,sun4i-a10-pll6-clk", .data = &pll6_divs_data,},
+> -	{.compatible = "allwinner,sun6i-a31-pll6-clk", .data = &sun6i_a31_pll6_divs_data,},
+>  	{}
+>  };
+>  
+>  /* Matches for mux clocks */
+>  static const struct of_device_id clk_mux_match[] __initconst = {
+> -	{.compatible = "allwinner,sun4i-a10-cpu-clk", .data = &sun4i_cpu_mux_data,},
+> -	{.compatible = "allwinner,sun6i-a31-ahb1-mux-clk", .data = &sun6i_a31_ahb1_mux_data,},
+> -	{.compatible = "allwinner,sun8i-h3-ahb2-clk", .data = &sun8i_h3_ahb2_mux_data,},
+>  	{}
+>  };
+>  
+> 
