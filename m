@@ -1,50 +1,60 @@
-Return-Path: <manabian@gmail.com>
-Return-Path: <manabian@gmail.com>
-From: Joachim Eastwood <manabian@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: Joachim Eastwood <manabian@gmail.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 0/2] CREG clk driver for NXP LPC18xx family
-Date: Sat, 20 Feb 2016 19:53:35 +0100
-Message-Id: <1455994417-4471-1-git-send-email-manabian@gmail.com>
+Return-Path: <shawn.lin@rock-chips.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH] clk: rockchip: free memory for error handle
+Date: Tue,  2 Feb 2016 11:37:50 +0800
+Message-Id: <1454384270-20018-1-git-send-email-shawn.lin@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch set adds a clk driver for the low power clocks found in
-the CREG block on lpc18xx. CREG is a collection of miscellaneous
-configuration registers that can be accessed through a syscon
-regmap interface. The clk driver makes it possible to setup and
-enabled these two clocks.
+Add free memeory if rockchip_clk_register_branch
+failed.
 
-This need to support peripherals like the internal RTC on the
-lpc18xx platform.
+Fixes: a245fecbb806 ("clk: rockchip: add basic infrastructure...")
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+---
 
-Mike/Stephen is this what you envisioned?
-It seems to work, but I currently don't have a setup that requires
-the 32khz clock early so that part isn't really tested.
+ drivers/clk/rockchip/clk.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-The probe deferral seems to work for the RTC:
-[    3.386861] lpc24xx-rtc 40046000.rtc: error getting rtc clock
-[    6.737615] lpc24xx-rtc 40046000.rtc: rtc core: registered lpc24xx-rtc as rtc0
-
-
-Changes since v1:
- - Split driver with one early init and one platform driver
-   probe.
-
-Based on v4.5-rc1.
-
-Joachim Eastwood (2):
-  clk: add lpc18xx creg clk driver
-  doc: dt: add documentation for lpc1850-creg-clk driver
-
- .../devicetree/bindings/clock/lpc1850-creg-clk.txt |  52 ++++++
- drivers/clk/nxp/Makefile                           |   1 +
- drivers/clk/nxp/clk-lpc18xx-creg.c                 | 205 +++++++++++++++++++++
- 3 files changed, 258 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
- create mode 100644 drivers/clk/nxp/clk-lpc18xx-creg.c
-
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index d9a0b5d..62fbe2c 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -70,7 +70,7 @@ static struct clk *rockchip_clk_register_branch(const char *name,
+ 	if (gate_offset >= 0) {
+ 		gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+ 		if (!gate)
+-			return ERR_PTR(-ENOMEM);
++			goto err_gate;
+ 
+ 		gate->flags = gate_flags;
+ 		gate->reg = base + gate_offset;
+@@ -82,7 +82,7 @@ static struct clk *rockchip_clk_register_branch(const char *name,
+ 	if (div_width > 0) {
+ 		div = kzalloc(sizeof(*div), GFP_KERNEL);
+ 		if (!div)
+-			return ERR_PTR(-ENOMEM);
++			goto err_div;
+ 
+ 		div->flags = div_flags;
+ 		div->reg = base + muxdiv_offset;
+@@ -100,6 +100,11 @@ static struct clk *rockchip_clk_register_branch(const char *name,
+ 				     flags);
+ 
+ 	return clk;
++err_div:
++	kfree(gate);
++err_gate:
++	kfree(mux);
++	return ERR_PTR(-ENOMEM);
+ }
+ 
+ struct rockchip_clk_frac {
 -- 
-1.8.0
+2.3.7
