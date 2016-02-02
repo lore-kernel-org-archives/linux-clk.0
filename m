@@ -1,58 +1,106 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 2 Feb 2016 18:00:37 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: Nadav Haklai <nadavh@marvell.com>,
-	Lior Amsalem <alior@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v2 4/6] clk: unconditionally recurse into clk/mvebu/
-Date: Wed, 24 Feb 2016 16:14:24 +0100
-Message-Id: <1456326866-30854-5-git-send-email-thomas.petazzoni@free-electrons.com>
-In-Reply-To: <1456326866-30854-1-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1456326866-30854-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	Emilio Lopez <emilio@elopez.com.ar>, heiko@sntech.de,
+	Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 3/5] clk: sunxi: convert current clocks registration to
+ CLK_OF_DECLARE
+Message-ID: <20160202170037.GZ4652@lukather>
+References: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1454402834-6385-4-git-send-email-maxime.ripard@free-electrons.com>
+ <56B0BA56.10500@arm.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="O/sh2HmV2lEgPixT"
+In-Reply-To: <56B0BA56.10500@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The drivers/clk/mvebu directory is only being built when
-CONFIG_PLAT_ORION=y. As we are going to support additional mvebu
-platforms in drivers/clk/mvebu, which don't have CONFIG_PLAT_ORION=y,
-we need to recurse into this directory regardless of the value of
-CONFIG_PLAT_ORION.
 
-Since all files in drivers/clk/mvebu/ are already conditionally
-compiled depending on various Kconfig options, we can recurse
-unconditionally into drivers/clk/mvebu without any other change.
+--O/sh2HmV2lEgPixT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
----
- drivers/clk/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi,
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index b038e36..e08bb0e 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -61,7 +61,7 @@ obj-$(CONFIG_ARCH_MEDIATEK)		+= mediatek/
- ifeq ($(CONFIG_COMMON_CLK), y)
- obj-$(CONFIG_ARCH_MMP)			+= mmp/
- endif
--obj-$(CONFIG_PLAT_ORION)		+= mvebu/
-+obj-y					+= mvebu/
- obj-$(CONFIG_ARCH_MESON)		+= meson/
- obj-$(CONFIG_ARCH_MXS)			+= mxs/
- obj-$(CONFIG_MACH_PISTACHIO)		+= pistachio/
--- 
-2.6.4
+On Tue, Feb 02, 2016 at 02:16:54PM +0000, Andre Przywara wrote:
+> Hi Maxime,
+>=20
+> On 02/02/16 08:47, Maxime Ripard wrote:
+> > The current clock registration and protection code has a few drawbacks,=
+ the
+> > two main ones being that we create a lot of orphans clock in the
+> > registration phase, which will be troublesome when we will start being =
+less
+> > relaxed about them.
+> >=20
+> > The protection code also relies on clkdev, which we don't really use but
+> > for this particular case.
+> >=20
+> > Fix both at the same time by moving everyone to the CLK_OF_DECLARE that
+> > will probe our clock tree in the right and thus avoid orphans, and by
+> > protecting directly the clock returned by our registration function.
+>=20
+> I very much appreciate this cleanup and like the idea. Any chance we can
+> have this rather quickly, so that I can rebase the A64 support series on =
+it?
+
+I actually count on that :)
+
+I wasn't really happy about your allwinner,sunxi compatible, so I just
+gave you an easier way out ;)
+
+> > +static void __init sun8i_ahb2_clk_setup(struct device_node *node)
+> > +{
+> > +	sunxi_mux_clk_setup(node, &sun8i_h3_ahb2_mux_data);
+> > +}
+> > +CLK_OF_DECLARE(sun8i_ahb2, "allwinner,sun8i-a31-ahb2-clk",
+> > +	       sun8i_ahb2_clk_setup);
+>=20
+> I don't find this clock in my tree (which is mripard/sunxi/for-next).
+> Instead I only have "allwinner,sun8i-h3-ahb2-clk", as mentioned below.
+> But as you remove this clock below from the old code and instead
+> instantiate this new clock here, this looks somehow wrong to me. Can you
+> confirm this or am I utterly confused?
+
+Damn, you're right, it's just a silly copy-paste issue, I'll fix it.
+
+> Apart from that I checked each and every clock mentioned in this patch
+> and can confirm that the transformation is correct. So if you fix this,
+> I can send a Reviewed-by.
+
+Thanks,
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--O/sh2HmV2lEgPixT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWsOC1AAoJEBx+YmzsjxAgvpgQAJuVwURGo4lyxMs8GPzFMIaa
+cPVL4NRDCH8PBKB59/gj2vmxYqubbCtq7iJMSTm5cPm21EIWrnQazMr/dCTDD4zZ
+Bn5qqBpGPaGbPTzf+2bqqkwNxo75XF0P/uLGwCmsM0aWmnruX6OiTXjfnQhUYucR
+5PtVTuxy0l2AW4kQlwQ4Gk2RwF3AYBx/9XxsvuO9tFX1GEMThrNBY+njukaKDn/a
+rZDdhO6yvYVKLn9v/95eyyTu4O9ZSTzbDRuQvtKXDl7vBTXp+eL1oWHBQAkJsMjZ
+/dr87n9GaAhgFoL4DrsYYL1+dfpzHmtvtHESZyBtldHodImY94HVOm8GIB97mPyv
+ZP7vEBSJlechtXhmP+j7BCoPzMyBWBLjf6iosmTHVFukAzJ0A1c4u9eTvrWYcGqc
+nug7THeaRxKyGlSzfvuALqrdLdiYJ6KQaBRSyfv5i0q0rtf1IFoC2qOSn1dxYEBc
+pqZwwHaDqycgUMNUWl81emWR5ccHbMDbs6UBD6KfJKEd8e3rm2VRw7SE/pULds8x
+vwxFKjCwHP11MgDAPiu9CglHLKcZYESRObfyWK6yuyeJ0/ZLM+iBtN4uHr07i3gI
+SE2+cx65efcRg5zY6ZH9rdL/m9BUsRpm1JPR+IOfCl903947Q0d8wIeVS/JGWTYj
+GxTtWyttXfbj7OJD605p
+=MHsO
+-----END PGP SIGNATURE-----
+
+--O/sh2HmV2lEgPixT--
