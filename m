@@ -1,76 +1,43 @@
-Return-Path: <moinejf@free.fr>
-Message-Id: <cover.1454435944.git.moinejf@free.fr>
-From: Jean-Francois Moine <moinejf@free.fr>
-Date: Tue, 2 Feb 2016 18:59:04 +0100
-Subject: [PATCH v4 0/2] Add a DRM display driver to the Allwinner H3
-To: Dave Airlie <airlied@linux.ie>,
-    Chen-Yu Tsai <wens@csie.org>,
-    Emilio Lopez <emilio@elopez.com.ar>,
-    Maxime Ripard <maxime.ripard@free-electrons.com>,
-    Michael Turquette <mturquette@baylibre.com>,
-    Stephen Boyd <sboyd@codeaurora.org>
-Cc: devicetree@vger.kernel.org,
-    dri-devel@lists.freedesktop.org,
-    linux-arm-kernel@lists.infradead.org,
-    linux-clk@vger.kernel.org
+Return-Path: <andre.przywara@arm.com>
+Subject: Re: [PATCH 08/11] clk: sunxi: improve error reporting for the mux
+ clock
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+References: <1454348370-3816-1-git-send-email-andre.przywara@arm.com>
+ <1454348370-3816-9-git-send-email-andre.przywara@arm.com>
+ <20160202180227.GC4652@lukather>
+Cc: Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+   Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
+   linux-kernel@vger.kernel.org,
+   =?UTF-8?Q?Emilio_L=c3=b3pez?=
+ <emilio@elopez.com.ar>,
+   Michael Turquette <mturquette@baylibre.com>,
+   Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+From: Andre Przywara <andre.przywara@arm.com>
+Message-ID: <56B0EFFD.8070900@arm.com>
+Date: Tue, 2 Feb 2016 18:05:49 +0000
+MIME-Version: 1.0
+In-Reply-To: <20160202180227.GC4652@lukather>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-The proposed DRM driver works on a Orange PI 2 with a kernel 4.5.0-rc1
-and some H3 patches found in Hans de Goede's GIT repository.
+Salut,
 
-As there is no documentation about the HDMI of the H3,
-the associated encoder/connector driver has not been included
-in this patch series.
-For test purpose, it may be built as a out-of-tree driver
-from the tarball:
-	http://moinejf.free.fr/opi2/h3-hdmi.tar.gz
-and the DT files:
-	http://moinejf.free.fr/opi2/sun8i-h3.dtsi
-	http://moinejf.free.fr/opi2/sun8i-h3-orangepi-plus.dts
+On 02/02/16 18:02, Maxime Ripard wrote:
+> On Mon, Feb 01, 2016 at 05:39:27PM +0000, Andre Przywara wrote:
+>> clk_register_mux returns a pointer wrapped error value in case of
+>> failure, so a simple NULL check is not sufficient to catch errors.
+>> Fix that and elaborate on the failure reason on the way. The whole
+>> function does not return any error value, so silently failing may
+>> leave users scratching their heads because the kernel does not
+>> provide any clues on what's wrong.
+>>
+>> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> 
+> Applied, thanks.
+> 
+> Any chance you do that for the other functions? :)
 
-Jean-Francois Moine (2):
-  clk: sunxi: Add sun6i/8i video support
-  drm: sunxi: Add a basic DRM driver for Allwinner DE2
+Sure, that was actually a test balloon ;-)
 
----
-v4: 
-	- drivers/clk/sunxi/Makefile was missing (Emil Velikov)
-v3:
-	- add the hardware cursor
-	- simplify and fix the DE2 init sequences
-	- generation for all SUNXI SoCs (Andre Przywara)
-v2:
-	- remarks from Chen-Yu Tsai and Russell King
-	- DT documentation added
----
-
- Documentation/devicetree/bindings/clock/sunxi.txt  |   2 +
- .../devicetree/bindings/display/sunxi.txt          |  81 ++++
- drivers/clk/sunxi/Makefile                         |   2 +
- drivers/clk/sunxi/clk-sun6i-display.c              | 106 +++++
- drivers/clk/sunxi/clk-sun6i-pll3.c                 | 174 +++++++
- drivers/gpu/drm/Kconfig                            |   2 +
- drivers/gpu/drm/Makefile                           |   1 +
- drivers/gpu/drm/sunxi/Kconfig                      |  20 +
- drivers/gpu/drm/sunxi/Makefile                     |   7 +
- drivers/gpu/drm/sunxi/de2_crtc.c                   | 421 +++++++++++++++++
- drivers/gpu/drm/sunxi/de2_crtc.h                   |  61 +++
- drivers/gpu/drm/sunxi/de2_de.c                     | 505 +++++++++++++++++++++
- drivers/gpu/drm/sunxi/de2_drm.h                    |  40 ++
- drivers/gpu/drm/sunxi/de2_drv.c                    | 377 +++++++++++++++
- drivers/gpu/drm/sunxi/de2_plane.c                  |  91 ++++
- 15 files changed, 1890 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/sunxi.txt
- create mode 100644 drivers/clk/sunxi/clk-sun6i-display.c
- create mode 100644 drivers/clk/sunxi/clk-sun6i-pll3.c
- create mode 100644 drivers/gpu/drm/sunxi/Kconfig
- create mode 100644 drivers/gpu/drm/sunxi/Makefile
- create mode 100644 drivers/gpu/drm/sunxi/de2_crtc.c
- create mode 100644 drivers/gpu/drm/sunxi/de2_crtc.h
- create mode 100644 drivers/gpu/drm/sunxi/de2_de.c
- create mode 100644 drivers/gpu/drm/sunxi/de2_drm.h
- create mode 100644 drivers/gpu/drm/sunxi/de2_drv.c
- create mode 100644 drivers/gpu/drm/sunxi/de2_plane.c
-
--- 
-2.7.0
+Cheers,
+Andre
