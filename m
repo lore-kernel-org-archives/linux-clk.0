@@ -1,167 +1,150 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-Message-ID: <1456280773.22545.1.camel@mtksdaap41>
-Subject: Re: [PATCH v6 7/7] clk: mediatek: Enable critical clocks for MT2701
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Michael Turquette <mturquette@baylibre.com>
-CC: Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	Arnd Bergmann <arnd@arndb.de>, <devicetree@vger.kernel.org>, Stephen Boyd
-	<sboyd@codeaurora.org>, <linux-kernel@vger.kernel.org>,
-	<srv_heupstream@mediatek.com>, <linux-mediatek@lists.infradead.org>, "Sascha
- Hauer" <kernel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, "John
- Crispin" <blogic@openwrt.org>
-Date: Wed, 24 Feb 2016 10:26:13 +0800
-In-Reply-To: <1455529857.29688.36.camel@mtksdaap41>
-References: <1454665050-37776-1-git-send-email-jamesjj.liao@mediatek.com>
-	 <1454665050-37776-8-git-send-email-jamesjj.liao@mediatek.com>
-	 <20160211213542.26445.82983@quark.deferred.io>
-	 <1455529857.29688.36.camel@mtksdaap41>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Return-Path: jamesjj.liao@mediatek.com
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>,
+	heiko@sntech.de,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Andre Przywara <andre.przywara@arm.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 4/5] clk: sunxi: Remove old probe and protection code
+Date: Tue,  2 Feb 2016 09:47:13 +0100
+Message-Id: <1454402834-6385-5-git-send-email-maxime.ripard@free-electrons.com>
+In-Reply-To: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
+References: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
+Now that we don't have any user left for the old registration code, we can
+remove it.
 
-On Mon, 2016-02-15 at 17:50 +0800, James Liao wrote:
-> On Thu, 2016-02-11 at 13:35 -0800, Michael Turquette wrote:
-> > Hi James,
-> > 
-> > Quoting James Liao (2016-02-05 01:37:30)
-> > > Some system clocks should be turned on by default on MT2701.
-> > > This patch enable these clocks when related clocks have
-> > > been registered.
-> > > 
-> > > Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> > > ---
-> > >  drivers/clk/mediatek/clk-mt2701.c | 23 +++++++++++++++++++++--
-> > >  1 file changed, 21 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
-> > > index 01722e0..f7b4d52 100644
-> > > --- a/drivers/clk/mediatek/clk-mt2701.c
-> > > +++ b/drivers/clk/mediatek/clk-mt2701.c
-> > > @@ -573,6 +573,21 @@ static const struct mtk_gate top_clks[] __initconst = {
-> > >         GATE_TOP_AUD(CLK_TOP_AUD_I2S6_MCLK, "aud_i2s6_mclk", "aud_k6_src_div", 28),
-> > >  };
-> > >  
-> > > +static struct clk_onecell_data *top_clk_data __initdata;
-> > > +static struct clk_onecell_data *pll_clk_data __initdata;
-> > > +
-> > > +static void __init mtk_clk_enable_critical(void)
-> > > +{
-> > > +       if (!top_clk_data || !pll_clk_data)
-> > > +               return;
-> > > +
-> > > +       clk_prepare_enable(pll_clk_data->clks[CLK_APMIXED_ARMPLL]);
-> > > +       clk_prepare_enable(top_clk_data->clks[CLK_TOP_AXI_SEL]);
-> > > +       clk_prepare_enable(top_clk_data->clks[CLK_TOP_MEM_SEL]);
-> > > +       clk_prepare_enable(top_clk_data->clks[CLK_TOP_DDRPHYCFG_SEL]);
-> > > +       clk_prepare_enable(top_clk_data->clks[CLK_TOP_RTC_SEL]);
-> > > +}
-> > 
-> > I think we're close to having a better solution. Please see this patch
-> > series[0] and let me know if it provides a better way for you to enable
-> > these critical clocks instead of the open-coded solution.
-> > 
-> > [0] http://lkml.kernel.org/r/<1455225554-13267-1-git-send-email-mturquette@baylibre.com>
-> > 
-> 
-> I took a quick view of this patchset, CLK_ENABLE_HAND_OFF is not
-> suitable for these critical clocks. I'm not sure CLK_IS_CRITICAL
-> suitable or not. A clock with CLK_IS_CRITICAL will be prepare_enable
-> when it is registered. But if its parent is not registered into CCF, it
-> will not be enabled even the parent clock register into CCF later.
-> 
-> > > +
-> > >  static void __init mtk_topckgen_init(struct device_node *node)
-> > >  {
-> > >         struct clk_onecell_data *clk_data;
-> > > @@ -585,7 +600,7 @@ static void __init mtk_topckgen_init(struct device_node *node)
-> > >                 return;
-> > >         }
-> > >  
-> > > -       clk_data = mtk_alloc_clk_data(CLK_TOP_NR);
-> > > +       top_clk_data = clk_data = mtk_alloc_clk_data(CLK_TOP_NR);
-> > >  
-> > >         mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks),
-> > >                                                                 clk_data);
-> > > @@ -606,6 +621,8 @@ static void __init mtk_topckgen_init(struct device_node *node)
-> > >         if (r)
-> > >                 pr_err("%s(): could not register clock provider: %d\n",
-> > >                         __func__, r);
-> > > +
-> > > +       mtk_clk_enable_critical();
-> > 
-> > So you call the function here, and ...
-> > >  }
-> > >  CLK_OF_DECLARE(mtk_topckgen, "mediatek,mt2701-topckgen", mtk_topckgen_init);
-> > >  
-> > > @@ -1201,7 +1218,7 @@ static void __init mtk_apmixedsys_init(struct device_node *node)
-> > >         struct clk_onecell_data *clk_data;
-> > >         int r;
-> > >  
-> > > -       clk_data = mtk_alloc_clk_data(ARRAY_SIZE(apmixed_plls));
-> > > +       pll_clk_data = clk_data = mtk_alloc_clk_data(ARRAY_SIZE(apmixed_plls));
-> > >         if (!clk_data)
-> > >                 return;
-> > >  
-> > > @@ -1212,6 +1229,8 @@ static void __init mtk_apmixedsys_init(struct device_node *node)
-> > >         if (r)
-> > >                 pr_err("%s(): could not register clock provider: %d\n",
-> > >                         __func__, r);
-> > > +
-> > > +       mtk_clk_enable_critical();
-> > 
-> > ... here as well. So the prepare_count and enable_count will be 2? I'm
-> > not sure that this makes sense. If you have different clocks that need
-> > to be enabled at different times (due to the split registration scheme
-> > that you employ in this driver) then why not pass an array of those
-> > clocks into mtk_clk_enable_critical?
-> 
-> No. After topckgen and apmixedsys initialized, critical clocks'
-> reference count will be 1.
-> 
-> There is a guard at the beginning of mtk_clk_enable_critical():
-> 
-> 	if (!top_clk_data || !pll_clk_data)
-> 		return;
-> 
-> So this function will be only executed when topckgen and apmixedsys init
-> done.
-> 
-> We need to enable critical clocks:
-> 
-> 1. As early as possible.
-> 2. After critical clocks and their parents are registered into CCF.
-> 
-> We need to wait all necessary clock providers because parents of
-> critical clocks must be enabled at the same time. For example,
-> CLK_TOP_AXI_SEL may have different parent on different platforms. We
-> also need to keep new parent clock on if CLK_TOP_AXI_SEL change its
-> parent dynamically.
-> 
-> Because we can't ensure the init ordering of clock providers, we can
-> only check all necessary providers are registered or not in each init
-> function.
-> 
-> > Anyways, like I mentioned above I think we're close to a solution to
-> > handle this in the framework.
-> > 
-> > One question: do you ever want these critical clocks to be gated by a
-> > driver, or do you want them always on, forever?
-> 
-> In this patch, these clocks should be always on (in SW view) even if
-> there are other drivers controlling them.
-> 
-> If these is a common way to keep critical clocks and their parents on, I
-> would like to use the common way. But the solution in your patch series
-> [0] looks not handle parent clocks well. What's your suggestion to
-> implement critical clocks base on [0]?
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi/clk-sunxi.c | 114 ------------------------------------------
+ 1 file changed, 114 deletions(-)
 
-Do you have comments for this patch series?
-
-
-Best regards,
-
-James
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index da6c1bc763d1..5f2f3e0408bd 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -1067,117 +1067,3 @@ static void __init sun6i_pll6_clk_setup(struct device_node *node)
+ }
+ CLK_OF_DECLARE(sun6i_pll6, "allwinner,sun6i-a31-pll6-clk",
+ 	       sun6i_pll6_clk_setup);
+-
+-
+-/* Matches for factors clocks */
+-static const struct of_device_id clk_factors_match[] __initconst = {
+-	{}
+-};
+-
+-/* Matches for divider clocks */
+-static const struct of_device_id clk_div_match[] __initconst = {
+-	{}
+-};
+-
+-/* Matches for divided outputs */
+-static const struct of_device_id clk_divs_match[] __initconst = {
+-	{}
+-};
+-
+-/* Matches for mux clocks */
+-static const struct of_device_id clk_mux_match[] __initconst = {
+-	{}
+-};
+-
+-
+-static void __init of_sunxi_table_clock_setup(const struct of_device_id *clk_match,
+-					      void *function)
+-{
+-	struct device_node *np;
+-	const struct div_data *data;
+-	const struct of_device_id *match;
+-	void (*setup_function)(struct device_node *, const void *) = function;
+-
+-	for_each_matching_node_and_match(np, clk_match, &match) {
+-		data = match->data;
+-		setup_function(np, data);
+-	}
+-}
+-
+-static void __init sunxi_init_clocks(const char *clocks[], int nclocks)
+-{
+-	unsigned int i;
+-
+-	/* Register divided output clocks */
+-	of_sunxi_table_clock_setup(clk_divs_match, sunxi_divs_clk_setup);
+-
+-	/* Register factor clocks */
+-	of_sunxi_table_clock_setup(clk_factors_match, sunxi_factors_clk_setup);
+-
+-	/* Register divider clocks */
+-	of_sunxi_table_clock_setup(clk_div_match, sunxi_divider_clk_setup);
+-
+-	/* Register mux clocks */
+-	of_sunxi_table_clock_setup(clk_mux_match, sunxi_mux_clk_setup);
+-
+-	/* Protect the clocks that needs to stay on */
+-	for (i = 0; i < nclocks; i++) {
+-		struct clk *clk = clk_get(NULL, clocks[i]);
+-
+-		if (!IS_ERR(clk))
+-			clk_prepare_enable(clk);
+-	}
+-}
+-
+-static const char *sun4i_a10_critical_clocks[] __initdata = {
+-	"pll5_ddr",
+-};
+-
+-static void __init sun4i_a10_init_clocks(struct device_node *node)
+-{
+-	sunxi_init_clocks(sun4i_a10_critical_clocks,
+-			  ARRAY_SIZE(sun4i_a10_critical_clocks));
+-}
+-CLK_OF_DECLARE(sun4i_a10_clk_init, "allwinner,sun4i-a10", sun4i_a10_init_clocks);
+-
+-static const char *sun5i_critical_clocks[] __initdata = {
+-	"cpu",
+-	"pll5_ddr",
+-};
+-
+-static void __init sun5i_init_clocks(struct device_node *node)
+-{
+-	sunxi_init_clocks(sun5i_critical_clocks,
+-			  ARRAY_SIZE(sun5i_critical_clocks));
+-}
+-CLK_OF_DECLARE(sun5i_a10s_clk_init, "allwinner,sun5i-a10s", sun5i_init_clocks);
+-CLK_OF_DECLARE(sun5i_a13_clk_init, "allwinner,sun5i-a13", sun5i_init_clocks);
+-CLK_OF_DECLARE(sun5i_r8_clk_init, "allwinner,sun5i-r8", sun5i_init_clocks);
+-CLK_OF_DECLARE(sun7i_a20_clk_init, "allwinner,sun7i-a20", sun5i_init_clocks);
+-
+-static const char *sun6i_critical_clocks[] __initdata = {
+-	"cpu",
+-};
+-
+-static void __init sun6i_init_clocks(struct device_node *node)
+-{
+-	sunxi_init_clocks(sun6i_critical_clocks,
+-			  ARRAY_SIZE(sun6i_critical_clocks));
+-}
+-CLK_OF_DECLARE(sun6i_a31_clk_init, "allwinner,sun6i-a31", sun6i_init_clocks);
+-CLK_OF_DECLARE(sun6i_a31s_clk_init, "allwinner,sun6i-a31s", sun6i_init_clocks);
+-CLK_OF_DECLARE(sun8i_a23_clk_init, "allwinner,sun8i-a23", sun6i_init_clocks);
+-CLK_OF_DECLARE(sun8i_a33_clk_init, "allwinner,sun8i-a33", sun6i_init_clocks);
+-CLK_OF_DECLARE(sun8i_h3_clk_init, "allwinner,sun8i-h3", sun6i_init_clocks);
+-
+-static void __init sun8i_a83t_init_clocks(struct device_node *node)
+-{
+-	sunxi_init_clocks(NULL, 0);
+-}
+-CLK_OF_DECLARE(sun8i_a83t_clk_init, "allwinner,sun8i-a83t", sun8i_a83t_init_clocks);
+-
+-static void __init sun9i_init_clocks(struct device_node *node)
+-{
+-	sunxi_init_clocks(NULL, 0);
+-}
+-CLK_OF_DECLARE(sun9i_a80_clk_init, "allwinner,sun9i-a80", sun9i_init_clocks);
+-- 
+2.6.4
