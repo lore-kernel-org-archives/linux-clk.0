@@ -1,34 +1,43 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 22 Feb 2016 13:47:00 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: dinguyen@opensource.altera.com
-Cc: dinh.linux@gmail.com, mturquette@baylibre.com,
-	mgerlach@opensource.altera.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: socfpga: allow for multiple parents on Arria10
- periph clocks
-Message-ID: <20160222214700.GV4847@codeaurora.org>
-References: <1456170791-22718-1-git-send-email-dinguyen@opensource.altera.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1456170791-22718-1-git-send-email-dinguyen@opensource.altera.com>
+Return-Path: <moinejf@free.fr>
+Date: Tue, 2 Feb 2016 19:13:52 +0100
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Emil Velikov <emil.l.velikov@gmail.com>
+Cc: Dave Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>, Emilio
+ Lopez <emilio@elopez.com.ar>, Maxime Ripard
+ <maxime.ripard@free-electrons.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, devicetree
+ <devicetree@vger.kernel.org>, LAKML <linux-arm-kernel@lists.infradead.org>,
+ ML dri-devel <dri-devel@lists.freedesktop.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] clk: sunxi: Add sun6i/8i video support
+Message-Id: <20160202191352.2b21ae1c5de288e008841b1f@free.fr>
+In-Reply-To: <CACvgo53f8Sr_dEAx_mcvjXciK01mY7TUDguOJ-HzNur-PpmMZw@mail.gmail.com>
+References: <cover.1454427223.git.moinejf@free.fr>
+	<8fdfe5fe7715f19416d654964e55721b30237b38.1454427224.git.moinejf@free.fr>
+	<CACvgo53f8Sr_dEAx_mcvjXciK01mY7TUDguOJ-HzNur-PpmMZw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/22, dinguyen@opensource.altera.com wrote:
-> From: Dinh Nguyen <dinguyen@opensource.altera.com>
-> 
-> There are some Arria10 clocks of type "altr,socfpga-a10-perip-clk" that can
-> have multiple parents. Fix up the __socfpga_periph_init() to call
-> of_clk_parent_fill() that will return the appropriate number of parents.
-> 
-> Also, update __socfpga_gate_init() to call of_clk_parent_fill() helper
-> function.
-> 
-> Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
-> ---
+On Tue, 2 Feb 2016 17:19:15 +0000
+Emil Velikov <emil.l.velikov@gmail.com> wrote:
 
-Applied to clk-next
+> > ---
+> >  Documentation/devicetree/bindings/clock/sunxi.txt |   2 +
+> >  drivers/clk/sunxi/clk-sun6i-display.c             | 106 +++++++++++++
+> >  drivers/clk/sunxi/clk-sun6i-pll3.c                | 174 ++++++++++++++=
+++++++++
+> >  3 files changed, 282 insertions(+)
+> >  create mode 100644 drivers/clk/sunxi/clk-sun6i-display.c
+> >  create mode 100644 drivers/clk/sunxi/clk-sun6i-pll3.c
+> >
+> Something is missing here - namely the changes to the Makefile. Does
+> this series work or did you simply forget git add ?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Yes, the series works. I just forgot the Makefile which contains other
+changes for my kernel (thermal clock).
+
+Thanks. I sent an new request.
+
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
