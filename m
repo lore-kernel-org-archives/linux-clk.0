@@ -1,64 +1,71 @@
-Return-Path: <yoshihiro.shimoda.uh@renesas.com>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, "Geert
- Uytterhoeven" <geert+renesas@glider.be>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] clk: shmobile: r8a7795: Add USB-DMAC clocks
-Date: Mon, 1 Feb 2016 11:06:31 +0000
-Message-ID: <SG2PR06MB0919563D4CD793A18AC3D839D8DE0@SG2PR06MB0919.apcprd06.prod.outlook.com>
-References: <1454322472-6696-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdX7HBvGzeqsCVw6bUXBvXa5uMdiZ8GJD75bGezVz2WOxA@mail.gmail.com>
-In-Reply-To: <CAMuHMdX7HBvGzeqsCVw6bUXBvXa5uMdiZ8GJD75bGezVz2WOxA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <robh@kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20160203195919.GB3327@lukather>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1452785109-6172-18-git-send-email-maxime.ripard@free-electrons.com>
+ <20160115031515.GA19797@rob-hp-laptop> <20160203195919.GB3327@lukather>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 3 Feb 2016 14:19:31 -0600
+Message-ID: <CAL_JsqLLvK0L+PaOxesgr9u_3hb6EWbb9w2-yw80D8sUqiohTA@mail.gmail.com>
+Subject: Re: [PATCH v2 17/26] drm: sun4i: Add DT bindings documentation
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>,
+	Hans de Goede <hdegoede@redhat.com>, Alexander Kaplan <alex@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>, Wynter Woods <wynter@nextthing.co>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Clark <robdclark@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IGdlZXJ0LnV5dHRlcmhvZXZlbkBnbWFpbC5jb20gW21h
-aWx0bzpnZWVydC51eXR0ZXJob2V2ZW5AZ21haWwuY29tXSBPbiBCZWhhbGYgT2YgR2VlcnQgVXl0
-dGVyaG9ldmVuDQo+IFNlbnQ6IE1vbmRheSwgRmVicnVhcnkgMDEsIDIwMTYgNzo0MSBQTQ0KPiAN
-Cj4gSGkgU2hpbW9kYS1zYW4sDQo+IA0KPiBPbiBNb24sIEZlYiAxLCAyMDE2IGF0IDExOjI3IEFN
-LCBZb3NoaWhpcm8gU2hpbW9kYQ0KPiA8eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+
-IHdyb3RlOg0KPiA+IFNpZ25lZC1vZmYtYnk6IFlvc2hpaGlybyBTaGltb2RhIDx5b3NoaWhpcm8u
-c2hpbW9kYS51aEByZW5lc2FzLmNvbT4NCj4gDQo+IFRoYW5rcyBmb3IgeW91ciBwYXRjaCENCj4g
-DQo+ID4gLS0tDQo+ID4gIFRoaXMgcGF0Y2ggaXMgYmFzZWQgb24gdGhlIHJlbmVzYXMtZHJpdmVy
-cy5naXQgLw0KPiA+ICByZW5lc2FzLWRldmVsLTIwMTYwMTI2LXY0LjUtcmMxIHRhZy4NCj4gPiAg
-KGNvbW1pdCBpZCA9IGY4MzQ5NTVlYTU1ZTRiZWQwMWQ1NTMzOWE0NDI4ZWVmMjE5ZTgzMTMpDQo+
-ID4NCj4gPiAgUmVmZXJlbmNlOg0KPiA+ICBodHRwOi8vdGhyZWFkLmdtYW5lLm9yZy9nbWFuZS5s
-aW51eC5rZXJuZWwuY2xrLzMzMzcvZm9jdXM9MTg0DQo+ID4NCj4gPiAgZHJpdmVycy9jbGsvc2ht
-b2JpbGUvcjhhNzc5NS1jcGctbXNzci5jIHwgMiArKw0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMiBp
-bnNlcnRpb25zKCspDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvc2htb2JpbGUv
-cjhhNzc5NS1jcGctbXNzci5jIGIvZHJpdmVycy9jbGsvc2htb2JpbGUvcjhhNzc5NS1jcGctbXNz
-ci5jDQo+ID4gaW5kZXggZmMyNjBiMy4uMTNkNTlkMSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJz
-L2Nsay9zaG1vYmlsZS9yOGE3Nzk1LWNwZy1tc3NyLmMNCj4gPiArKysgYi9kcml2ZXJzL2Nsay9z
-aG1vYmlsZS9yOGE3Nzk1LWNwZy1tc3NyLmMNCj4gPiBAQCAtMTI0LDYgKzEyNCw4IEBAIHN0YXRp
-YyBjb25zdCBzdHJ1Y3QgbXNzcl9tb2RfY2xrIHI4YTc3OTVfbW9kX2Nsa3NbXSBfX2luaXRjb25z
-dCA9IHsNCj4gPiAgICAgICAgIERFRl9NT0QoInBjaWUwIiwgICAgICAgICAgICAgICAgIDMxOSwg
-ICBSOEE3Nzk1X0NMS19TM0QxKSwNCj4gPiAgICAgICAgIERFRl9NT0QoInVzYjMtaWYxIiwgICAg
-ICAgICAgICAgIDMyNywgICBSOEE3Nzk1X0NMS19TM0QxKSwNCj4gPiAgICAgICAgIERFRl9NT0Qo
-InVzYjMtaWYwIiwgICAgICAgICAgICAgIDMyOCwgICBSOEE3Nzk1X0NMS19TM0QxKSwNCj4gPiAr
-ICAgICAgIERFRl9NT0QoInVzYi1kbWFjMCIsICAgICAgICAgICAgIDMzMCwgICBSOEE3Nzk1X0NM
-S19TM0QyKSwNCj4gPiArICAgICAgIERFRl9NT0QoInVzYi1kbWFjMSIsICAgICAgICAgICAgIDMz
-MSwgICBSOEE3Nzk1X0NMS19TM0QyKSwNCj4gDQo+IFRoZSBkYXRhc2hlZXQgaXMgbm90IHZlcnkg
-Y2xlYXIgYWJvdXQgd2hldGhlciB0aGUgbW9kdWxlIGNsb2NrIGlzIGJhc2VkIG9mIHMzZDENCj4g
-KDI2NiBNSHopIG9yIHMzZDIgKDEzMyBNSHopLCBidXQgZ2l2ZW4gdGhlIGNvbW1lbnQgIi4uLiBp
-dCBpcyByZWNvbW1lbmRlZCB0bw0KPiBhbGxvdyBzZXZlcmFsIHRlbnMgb2YgY2xvY2tzIGlmIG9w
-ZXJhdGluZyBhdCAyNjAgTUh6IC4uLiIgaW4gc2VjdGlvbiA3NS4yLjINCj4gIkRNQTAvMSBTb2Z0
-d2FyZSBSZXNldCBSZWdpc3RlciIgb2YgdGhlIGRhdGFzaGVldCwgSSdtIGluY2xpbmVkIHRvIGJl
-bGlldmUgczNkMQ0KPiB3b3VsZCBiZSBjb3JyZWN0Lg0KDQpBY2NvcmRpbmcgdG8gdGhlIEhXIHRl
-YW0gKGluIGNhc2Ugb2YgZ2VuMiB0aG91Z2gpOg0KDQpJbiBnZW4yIChJbiBnZW4zIEkgYXNzdW1l
-ZCkNCiBaUyAoUzNEMSkgICAgIDogRm9yIHVzaW5nIERSQU0gYWNjZXNzDQogSFAgKFMzRDIpICAg
-ICA6IEZvciB1c2luZyByZWdpc3RlciBhY2Nlc3MNCiA0OE1IeiAoNTBNSHopIDogRm9yIHVzaW5n
-IFVTQiB0cmFuc2Zlcg0KDQpTbywgSSBhbHNvIHRoaW5rIHRoYXQgczNkMSB3b3VsZCBiZSBjb3Jy
-ZWN0Lg0KV2hhdCBkbyB5b3UgdGhpbms/DQoNCj4gSSBkb24ndCB0aGluayBpdCBtYXR0ZXJzIG11
-Y2ggdGhvdWdoLCBhcyB3ZSdyZSBub3QgaW50ZXJlc3RlZCBpbiB0aGUgYWN0dWFsDQo+IHJhdGUg
-b2YgdGhlIG1vZHVsZSBjbG9jaywgYW5kIGJvdGggczNkMSBhbmQgczNkMiBjYW5ub3QgYmUgZ2F0
-ZWQuDQoNCkkgYWdyZWUgd2l0aCB5b3UuDQoNCkJlc3QgcmVnYXJkcywNCllvc2hpaGlybyBTaGlt
-b2RhDQoNCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+IA0KPiAgICAgICAgICAgICAgICAgICAgICAg
-ICBHZWVydA0KPiANCj4gLS0NCj4gR2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBv
-ZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51eC1tNjhrLm9yZw0KPiANCj4gSW4gcGVy
-c29uYWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYg
-YSBoYWNrZXIuIEJ1dA0KPiB3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBz
-YXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgLS0gTGludXMgVG9ydmFsZHMNCg==
+On Wed, Feb 3, 2016 at 1:59 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Hi Rob,
+>
+> On Thu, Jan 14, 2016 at 09:15:15PM -0600, Rob Herring wrote:
+>> On Thu, Jan 14, 2016 at 04:25:00PM +0100, Maxime Ripard wrote:
+>> > The display pipeline of the Allwinner A10 is involving several loosely
+>> > coupled components.
+>> >
+>> > Add a documentation for the bindings.
+>> >
+>> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>> > ---
+>> >  .../bindings/display/sunxi/sun4i-drm.txt           | 228 +++++++++++++++++++++
+
+[...]
+
+>> > +Required properties:
+>> > +  - compatible: value must be one of:
+>> > +    * allwinner,sun5i-a13-display-engine
+>> > +  - allwinner,pipelines: list of phandle to the entry points of the
+>> > +    pipelines (either to the frontend or backend)
+>> > +
+>> > +Example:
+>> > +
+>> > +panel: panel {
+>> > +   compatible = "olimex,lcd-olinuxino-43-ts";
+>>
+>> This should either be a child of what it is attached to or use of-graph.
+>
+> You had a similar discussion with Thierry last time I sent it, and it
+> seemed to settle on keeping that property:
+>
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-October/382115.html
+>
+> Has that changed?
+
+No, I still disagree. We already have 2 ways to describe panels: as a
+child node of its controller or with of-graph. We don't need a 3rd way
+even if it is simple. The problem with of-graph today is too much of
+the parsing is left to the individual drivers. We need to fix that and
+make it be handled by common code.
+
+Rob
