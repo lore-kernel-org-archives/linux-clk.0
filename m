@@ -1,28 +1,63 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 1 Feb 2016 17:07:24 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v2 02/16] clk: change the argument of __clk_init()
- into pointer to clk_core
-Message-ID: <20160202010724.GQ4848@codeaurora.org>
-References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
- <1451298191-30815-3-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <v1ron@mail.ru>
+Date: Wed, 3 Feb 2016 11:36:26 +0300
+From: Roman Volkov <v1ron@mail.ru>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, Stephen Boyd
+ <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
+ linux-kernel@vger.kernel.org, Tony Prisk <linux@prisktech.co.nz>, Andrzej
+ Hajda <a.hajda@samsung.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: vt8500: don't return possibly uninitialized data
+Message-ID: <20160203113626.4a3f4f8a@v1ron-s7>
+In-Reply-To: <2326140.nrZ9Ej2PSt@wuerfel>
+References: <4790407.6zgSQCdsSB@wuerfel>
+	<2210116.QsPesySkh0@wuerfel>
+	<20160202194713.GN4848@codeaurora.org>
+	<2326140.nrZ9Ej2PSt@wuerfel>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1451298191-30815-3-git-send-email-yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/28, Masahiro Yamada wrote:
-> The argument clk_user is used only for the clk_user->core.  The rest
-> of this function only takes care of clk_core.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+=D0=92 Tue, 02 Feb 2016 21:00:29 +0100
+Arnd Bergmann <arnd@arndb.de> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 
-Applied to clk-next
+> On Tuesday 02 February 2016 11:47:13 Stephen Boyd wrote:
+> > On 02/02, Arnd Bergmann wrote: =20
+> > > On Monday 01 February 2016 17:15:45 Stephen Boyd wrote:
+> > >=20
+> > > I see what you mean now. I checked different gcc versions, and
+> > > with my patch I get the warnings for 4.6 through 4.9, but not for
+> > > 5.x.
+> > >=20
+> > > In general, I tried to only address warnings I still see with
+> > > newer gcc version, as they are better about false positives. Do
+> > > you think it's ok to take the patch as is then? Otherwise we
+> > > probably have to add fake initializations which would shut up the
+> > > warnings but not help with the code quality.=20
+> >=20
+> > Sure. I was hoping something could be done to restructure the
+> > code to make it easier for the compiler to figure out the
+> > variables would be initialized. But you're the one who's sending
+> > the patch to silence them so if you're satisfied I'm not going to
+> > spend too much time on this.
+> >  =20
+>=20
+> Ok, thanks!
+>=20
+> Note that this one patch was for a real bug involving undefined
+> behavior that is now fixed.
+>=20
+> 	Arnd
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Hi Arnd,
+
+Thanks for fixing this code! Did someone reproduce this bug, or this
+is something theoretical, based on the code analysis? I just never
+heard about the issue. I can look into the code on the weekends too, I
+have WM8505\WM8650 machines to test.
+
+Is it enough to run the regular kernel build for WM8650 to see the
+warnings, or there are special options in the kernel to run the compiler
+test?
+
+Regards
+Roman
