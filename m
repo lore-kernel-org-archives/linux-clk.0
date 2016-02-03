@@ -1,107 +1,176 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.10]:61314 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751229AbcBMUpz convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sat, 13 Feb 2016 15:45:55 -0500
-Date: Sat, 13 Feb 2016 21:45:12 +0100 (CET)
-From: Stefan Wahren <stefan.wahren@i2se.com>
-To: Martin Sperl <kernel@martin.sperl.org>
-Cc: linux-serial@vger.kernel.org,
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 3 Feb 2016 21:36:16 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
 	linux-clk <linux-clk@vger.kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
-	linux-arm-kernel@lists.infradead.org
-Message-ID: <359843746.379810.6eb6c2f5-8282-417a-83d1-1fa79425ff73.open-xchange@email.1und1.de>
-In-Reply-To: <EE05C090-EB8A-41E8-B9C3-8CCC79F15FE9@martin.sperl.org>
-References: <A5F427B7-9B78-4892-9722-69418C4D0C10@martin.sperl.org>
- <56BC895E.2010108@sperl.org>
- <1617009200.323700.219000a8-c162-4594-aacc-a7e9894518b2.open-xchange@email.1und1.de>
- <662D2FB2-B088-4CFC-8416-A4F35BBAD7DD@sperl.org>
- <F7A2533A-D64C-4187-ABD4-416C446D1637@martin.sperl.org>
- <6CD3FC59-BA17-43D9-897C-A2D122D26EF8@martin.sperl.org>
- <470852136.382408.76a8faee-9235-4ee0-9fd1-e25a1e9f0bb3.open-xchange@email.1und1.de>
- <EE05C090-EB8A-41E8-B9C3-8CCC79F15FE9@martin.sperl.org>
-Subject: Re: serial: clk: bcm2835: Strange effects when using aux-uart in
- console
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Wynter Woods <wynter@nextthing.co>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2 11/26] ARM: sun5i: Add DRAM gates
+Message-ID: <20160203203616.GG3327@lukather>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1452785109-6172-12-git-send-email-maxime.ripard@free-electrons.com>
+ <CAGb2v65gCieH2-WS+1WeBNCVqRyw8fOxODdSC5xeKf-hkfgs6A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="iJXiJc/TAIT2rh2r"
+In-Reply-To: <CAGb2v65gCieH2-WS+1WeBNCVqRyw8fOxODdSC5xeKf-hkfgs6A@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Martin,
 
-> Martin Sperl <kernel@martin.sperl.org> hat am 13. Februar 2016 um 12:53
-> geschrieben:
->
->
-> Seems as if you apply it on top of (parts of) my patchset - not on top of a
-> clean 4.5-rc3.
+--iJXiJc/TAIT2rh2r
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-sorry about that. I took the wrong directory.
+On Sun, Jan 17, 2016 at 01:10:02AM +0800, Chen-Yu Tsai wrote:
+> On Thu, Jan 14, 2016 at 11:24 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > The DRAM gates control whether the image / display devices on the SoC h=
+ave
+> > access to the DRAM clock or not.
+> >
+> > Enable it.
+> >
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > ---
+> >  arch/arm/boot/dts/sun5i-a10s.dtsi |  7 ++++---
+> >  arch/arm/boot/dts/sun5i-a13.dtsi  |  2 +-
+> >  arch/arm/boot/dts/sun5i-r8.dtsi   |  2 +-
+> >  arch/arm/boot/dts/sun5i.dtsi      | 19 +++++++++++++++++++
+> >  4 files changed, 25 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/arch/arm/boot/dts/sun5i-a10s.dtsi b/arch/arm/boot/dts/sun5=
+i-a10s.dtsi
+> > index bddd0de88af6..52d2c79cb37b 100644
+> > --- a/arch/arm/boot/dts/sun5i-a10s.dtsi
+> > +++ b/arch/arm/boot/dts/sun5i-a10s.dtsi
+> > @@ -66,7 +66,7 @@
+> >                                      "simple-framebuffer";
+> >                         allwinner,pipeline =3D "de_be0-lcd0-hdmi";
+> >                         clocks =3D <&pll5 1>, <&ahb_gates 36>, <&ahb_ga=
+tes 43>,
+> > -                                <&ahb_gates 44>;
+> > +                                <&ahb_gates 44>, <&dram_gates 26>;
+> >                         status =3D "disabled";
+> >                 };
+> >
+> > @@ -74,7 +74,8 @@
+> >                         compatible =3D "allwinner,simple-framebuffer",
+> >                                      "simple-framebuffer";
+> >                         allwinner,pipeline =3D "de_be0-lcd0";
+> > -                       clocks =3D <&pll5 1>, <&ahb_gates 36>, <&ahb_ga=
+tes 44>;
+> > +                       clocks =3D <&pll5 1>, <&ahb_gates 36>, <&ahb_ga=
+tes 44>,
+> > +                                <&dram_gates 26>;
+> >                         status =3D "disabled";
+> >                 };
+> >
+> > @@ -83,7 +84,7 @@
+> >                                      "simple-framebuffer";
+> >                         allwinner,pipeline =3D "de_be0-lcd0-tve0";
+> >                         clocks =3D <&pll5 1>, <&ahb_gates 34>, <&ahb_ga=
+tes 36>,
+> > -                                <&ahb_gates 44>;
+> > +                                <&ahb_gates 44>, <&dram_gates 26>;
+> >                         status =3D "disabled";
+> >                 };
+> >         };
+> > diff --git a/arch/arm/boot/dts/sun5i-a13.dtsi b/arch/arm/boot/dts/sun5i=
+-a13.dtsi
+> > index 9669b03f20f3..f29163650ca8 100644
+> > --- a/arch/arm/boot/dts/sun5i-a13.dtsi
+> > +++ b/arch/arm/boot/dts/sun5i-a13.dtsi
+> > @@ -62,7 +62,7 @@
+> >                                      "simple-framebuffer";
+> >                         allwinner,pipeline =3D "de_be0-lcd0";
+> >                         clocks =3D <&ahb_gates 36>, <&ahb_gates 44>, <&=
+de_be_clk>,
+> > -                                <&tcon_ch0_clk>;
+> > +                                <&tcon_ch0_clk>, <&dram_gates 26>;
+> >                         status =3D "disabled";
+> >                 };
+> >         };
+> > diff --git a/arch/arm/boot/dts/sun5i-r8.dtsi b/arch/arm/boot/dts/sun5i-=
+r8.dtsi
+> > index b1e4e0170d51..691d3de75b35 100644
+> > --- a/arch/arm/boot/dts/sun5i-r8.dtsi
+> > +++ b/arch/arm/boot/dts/sun5i-r8.dtsi
+> > @@ -53,7 +53,7 @@
+> >                         allwinner,pipeline =3D "de_be0-lcd0-tve0";
+> >                         clocks =3D <&ahb_gates 34>, <&ahb_gates 36>,
+> >                                  <&ahb_gates 44>, <&de_be_clk>,
+> > -                                <&tcon_ch1_clk>;
+> > +                                <&tcon_ch1_clk>, <&dram_gates 26>;
+> >                         status =3D "disabled";
+> >                 };
+> >         };
+> > diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
+> > index 0840612b5ed6..c72d94228915 100644
+> > --- a/arch/arm/boot/dts/sun5i.dtsi
+> > +++ b/arch/arm/boot/dts/sun5i.dtsi
+> > @@ -338,6 +338,25 @@
+> >                         clock-output-names =3D "usb_ohci0", "usb_phy";
+> >                 };
+> >
+> > +               dram_gates: clk@01c20100 {
+> > +                       #clock-cells =3D <1>;
+> > +                       compatible =3D "allwinner,sun5i-a13-dram-gates-=
+clk";
+> > +                       reg =3D <0x01c20100 0x4>;
+> > +                       clocks =3D <&pll5 0>;
+> > +                       clock-indices =3D <0>,
+> > +                                       <1>,
+>=20
+> According to A10s manual, bit 3 is DRAM clock for TS (transport stream
+> decoder), while bit 5 is for the TV encoder.
+>=20
+> The others look good.
 
->
-> Anyway - after some fixing I get the following outputs -
-> the amba-pl011 driver is still patched with debug messages:
->
-> After boot with aux-uart as tty:
-> root@raspcm:~# dmesg | grep bcm2835
-> [ 0.018172] bcm2835: system timer (irq = 27)
-> [ 0.711388] bcm2835-aux-uart 20215040.serial: could not get clk: -517
-> [ 1.649124] bcm2835-rng 20104000.rng: hwrng registered
-> [ 2.051190] bcm2835_clock_on: clk still busy from 6
-> [ 2.056159] bcm2835_clock_on: clk now busy from 9
+I'll fix that, thanks!
 
-I get the same output here. It belongs to mmc clock.
+Maxime
 
-> [ 8.062743] bcm2835-wdt 20100000.watchdog: Broadcom BCM2835 watchdog timer
-> [ 12.042105] bcm2835-i2s 20203000.i2s: can't request region for resource [mem
-> 0x20101098-0x20101099]
-> [ 12.191701] bcm2835-i2s: probe of 20203000.i2s failed with error -16
->
-> Loading the module:
-> root@raspcm:~# modprobe amba-pl011
-> [ 106.685812] Serial: AMBA PL011 UART driver
-> [ 106.693702] uart-pl011 20201000.uart: pl011_setup_port: f0201000 20201000
-> [ 106.702109] 20201000.uart: ttyAMA0 at MMIO 0x20201000 (irq = 81, base_baud =
-> 0) is a PL011 rev2
-> root@raspcm:~#
->
-> and starting getty:
-> root@raspcm:~# /sbin/getty -a root -L ttyAMA0 115200 vt100
-> [ 137.851123] pl011_startup - start
-> [ 137.854538] pl011_hwinit - prepare-enable
-> [ 137.858772] bcm2835_clock_on: clk still busy from 6
-> [ 137.863755] bcm2835_clock_on: clk now busy from 9
-> [ 137.868590] pl011_hwinit - prepare-enable - ret = 0
-> [ 137.875249] uart-pl011 20201000.uart: no DMA platform data
-> [ 137.880940] pl011_startup - exit
-> [ 137.888840] pl011_shutdown - start
-> [ 137.892360] pl011_shutdown - disable_unprepare
-> [ 137.896933] bcm2835_clock_off: clk still busy from 9
-> [ 137.902112] pl011_shutdown - exit
-> [ 137.907233] pl011_startup - start
-> [ 137.910713] pl011_hwinit - prepare-enable
-> [ 137.914808] bcm2835_pll_on: PLL still locked from 1
-> [ 138.019876] bcm2835-clk 20101000.cprman: plld: couldn't lock PLL
-> [ 138.026000] pl011_hwinit - prepare-enable - ret = -110
-> [ 138.031266] pl011_startup - error = -110 - disable_unprepare
-> [ 138.037048] ------------[ cut here ]------------
-> [ 138.041777] WARNING: CPU: 0 PID: 2377 at drivers/clk/clk.c:680
-> clk_core_disable+0x34/0xf0()
-> [ 138.051063] ---[ end trace dd2f225b2af4c32c ]---
-> [ 138.055859] ------------[ cut here ]------------
-> [ 138.060627] WARNING: CPU: 0 PID: 2377 at drivers/clk/clk.c:575
-> clk_core_unprepare+0x34/0x110()
-> [ 138.070321] ---[ end trace dd2f225b2af4c32d ]---
->
-> No HDMI output - this time no “flashing” - just no signal.
-> Machine is crashed - the attached AXIS USB network card (0b95:772b)
-> just transmits identical packets on the network without stopping…
->
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
-According to the datasheet busy bit shouldn't be set while changing the clock.
-So this isn't good. I hope this could be fixed, too.
+--iJXiJc/TAIT2rh2r
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Regards
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
->
+iQIcBAEBAgAGBQJWsmTAAAoJEBx+YmzsjxAg9tAP/i+aB3buXM5KB0nBGprNY1nC
+fr/XVAoAc6TmDNbksh7mtqRrUxfgzeruxXuDR88TeKM2xb2pjPiEDXwHhQOcJs9P
+E2AlulKkSJ4v5P1AtPdiD2QQ+VtB0hVrjHEH6u/Ip/bu+15nCTicUL9I5yAzgq5s
+5M1Mqje8XlRq2OaBshCE2+1Aluyw0YtcfwiA0Fkxtb5vVobExYVD14kcNiVkp1Ci
+0Eq+17UUzMWJvHpj4nSJ5H+QBPhTPuafOY13nGe/qWlEerniUlbjOu0wE8dK1OF5
+7JpCk6x9MdNxMMkGoxTNyvdbUrEPc/ajSRVdLt4YLP5K7G0lI0Egg3l4qLFdGNfB
+i99HOnvTI0evWphe7P8qwyimmuNseN79CpCRgfya5vJbdk3EQfEVc+oi5aGPvols
+WiZhuEXjuHwZYGW0ON3nGM1/JA+5wrAIO/WsmrXSfiQyZPj0njejyA2xGflXew9r
+ljIzkRkO39335pqzhK+eNwWJwSfiCJcBoREwv9z0aJJzvxCaP6f46BJgwvPtM4FW
+/mQRQ6VRRZtHN7g2liJAtIZB0IDYGXb3yx8J7bAZzVzTW5uMh8FOYLc/7VgeHwI1
+H8efuG5IBVUGXRF2oRXIGV7vwEuRe+bgQo+bIsv3o7JDOEJL4/k+Yn5l+OwW0zkE
+3NdHeMfjo9WHO9g5tV8f
+=BoOY
+-----END PGP SIGNATURE-----
+
+--iJXiJc/TAIT2rh2r--
