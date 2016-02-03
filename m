@@ -1,59 +1,58 @@
-Return-Path: <djkurtz@google.com>
+Return-Path: <yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Sender: djkurtz@google.com
-In-Reply-To: <20151217090628.GA317@quark.deferred.io>
-References: <1442230072-31593-1-git-send-email-pi-cheng.chen@linaro.org>
- <CAGS+omCkYTPyjMk6QaoxGAL4QVU8VcpWyFqWhST+iP2EFRcRYg@mail.gmail.com>
- <CALx668XVnhhLJWs7RBxvaX=SU=S9=wFVT9HMDP2edqiH4Jio4A@mail.gmail.com> <20151217090628.GA317@quark.deferred.io>
-From: Daniel Kurtz <djkurtz@chromium.org>
-Date: Mon, 15 Feb 2016 11:28:42 +0800
-Message-ID: <CAGS+omCV-90OsBk1c1Xj9_20yC5CmPNtMb+K9R7=mOiTg3sAJw@mail.gmail.com>
-Subject: Re: [PATCH v6] clk: mediatek: Export CPU mux clocks for CPU frequency control
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Pi-Cheng Chen <pi-cheng.chen@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	James Liao <jamesjj.liao@mediatek.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>, linux-clk@vger.kernel.org,
-	"moderated list:ARM/Mediatek SoC..." <linux-mediatek@lists.infradead.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Linaro Kernel Mailman List <linaro-kernel@lists.linaro.org>
+In-Reply-To: <20160202204337.GO4848@codeaurora.org>
+References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
+	<1451298191-30815-11-git-send-email-yamada.masahiro@socionext.com>
+	<20160202005051.GO4848@codeaurora.org>
+	<CAK7LNASGzvbGAOnMRBH6SuZOz9O_=r3B3MdqhhkxoWzCcn9gUw@mail.gmail.com>
+	<20160202023922.GL4848@codeaurora.org>
+	<CAK7LNAQb-y-j46O1v6iFRHUR9Dqjzi53-nAYsYAEKmPs_PFO0w@mail.gmail.com>
+	<20160202204337.GO4848@codeaurora.org>
+Date: Wed, 3 Feb 2016 11:09:33 +0900
+Message-ID: <CAK7LNARGPDN2RfnnHA89Ekk4xcVFRQSMi5ZoPA=GK4tU_NEUGg@mail.gmail.com>
+Subject: Re: [RESEND PATCH v2 10/16] clk: move checking .git_parent to __clk_core_init()
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike, Pi-Cheng,
+Hi Stephen,
 
-On Thu, Dec 17, 2015 at 5:06 PM, Michael Turquette
-<mturquette@baylibre.com> wrote:
-> On 12/01, Pi-Cheng Chen wrote:
->> On Mon, Nov 30, 2015 at 11:48 AM, Daniel Kurtz <djkurtz@chromium.org> wrote:
->> > Hi Pi-Cheng and Michael,
+
+2016-02-03 5:43 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+> On 02/02, Masahiro Yamada wrote:
+>> 2016-02-02 11:39 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
 >> >
->> > On Mon, Sep 14, 2015 at 7:27 PM, Pi-Cheng Chen <pi-cheng.chen@linaro.org> wrote:
->> >> From: "pi-cheng.chen" <pi-cheng.chen@linaro.org>
->> >>
->> >> This patch adds CPU mux clocks which are used by Mediatek cpufreq driver
->> >> for intermediate clock source switching.
+>> > Right, this patch moves the check to __clk_core_init(), and it
+>> > will print an error and then keep going (because we lost the goto
+>> > out part). Once we keep going in __clk_core_init() we'll call
+>> > __clk_init_parent() and NULL pointer deref.
 >> >
->> > It looks like this patch was never picked up.
->> > It is required for MT8173 cpufreq.
->> >
->> > What is the plan to get this one merged?
 >>
->> Hi Dan,
->> Mike is working on a new CCF feature called "coordinated clock rate changes"
->> which would help to migrate mt8173-cpufreq driver to generic cpufreq-dt
->> driver, and I am working with him to port MT8173 clock driver on the new
->> feature. So I think that's why this patch was not picked since it will
->> be migrated to new implementation once the new feature's ready.
+>> Ah, I missed that.
 >>
->> @Mike:
->> Are you plannig to post those patches on the mailing list ?
->> Or is it fine for you to take this first and then I will refine it for
->> the new feature later?
+>> We need
+>>
+>>    ret = -EINVAL;
+>>    goto out;
+>>
+>> here, I think.
+>>
+>> Shall I send the v3 for 08/16?
+>>
+>> Or, if it is too late, shall I send a fix-up patch?
+>>
 >
-> I plan to post those patches next week.
+> I'll split the patch out again and squash in those two lines.
+> Nothing more to do. Thanks.
 
-Were these patches ever posted?
-I'm not really sure what patch set I am looking for.
 
-Thanks,
--Dan
+Thank you very much for taking care of all of them!
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
