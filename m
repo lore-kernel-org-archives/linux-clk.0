@@ -1,106 +1,44 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 25 Feb 2016 15:42:15 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jiancheng Xue <xuejiancheng@huawei.com>
-Cc: mturquette@baylibre.com, p.zabel@pengutronix.de, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	linux@arm.linux.org.uk, khilman@linaro.org, arnd@arndb.de,
-	olof@lixom.net, xuwei5@hisilicon.com, haojian.zhuang@linaro.org,
-	zhangfei.gao@linaro.org, bintian.wang@huawei.com,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	yanhaifeng@hisilicon.com, yanghongwei@hisilicon.com,
-	suwenping@hisilicon.com, raojun@hisilicon.com,
-	ml.yang@hisilicon.com, gaofei@hisilicon.com,
-	zhangzhenxing@hisilicon.com, xuejiancheng@hisilicon.com,
-	lidongpo@hisilicon.com
-Subject: Re: [PATCH v9 2/6] clk: hisilicon: add CRG driver for hi3519 soc
-Message-ID: <20160225234215.GK28849@codeaurora.org>
-References: <1456127280-23275-1-git-send-email-xuejiancheng@huawei.com>
- <1456127280-23275-3-git-send-email-xuejiancheng@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1456127280-23275-3-git-send-email-xuejiancheng@huawei.com>
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] clk: versatile: mask VCO bits before writing
+Date: Wed,  3 Feb 2016 14:47:08 +0100
+Message-Id: <1454507228-14718-1-git-send-email-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/22, Jiancheng Xue wrote:
-> diff --git a/Documentation/devicetree/bindings/clock/hi3519-crg.txt b/Documentation/devicetree/bindings/clock/hi3519-crg.txt
-> new file mode 100644
-> index 0000000..2d23950
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/hi3519-crg.txt
-> @@ -0,0 +1,46 @@
-> +Example: CRG nodes
-> +CRG: clock-reset-controller@12010000 {
-> +	compatible = "hisilicon,hi3519-crg";
+The Versatile syscon ICST driver OR:s the bits into place but
+forgets to mask the previous value, making the code only work
+if the register is zero or giving haphazard results. Mask the
+19 bits used by the Versatile syscon interface register.
 
-Indentation is off here.
+Regression caused and now fixed by yours truly.
 
-> +        reg = <0x12010000 0x10000>;
-> +        #clock-cells = <1>;
-> +        #reset-cells = <2>;
-> +};
-> +
-> +Example: consumer nodes
-> +i2c0: i2c@12110000 {
-> +	compatible = "hisilicon,hi3519-i2c";
-> +        reg = <0x12110000 0x1000>;
-> +        clocks = <&CRG HI3519_I2C0_RST>;*/
-> +        resets = <&CRG 0xe4 0>;
-> +};
-> diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
-> index e434854..296371f 100644
-> --- a/drivers/clk/hisilicon/Kconfig
-> +++ b/drivers/clk/hisilicon/Kconfig
-> @@ -1,3 +1,11 @@
-> +config COMMON_CLK_HI3519
-> +	tristate "Hi3519 Clock Driver"
-> +	depends on ARCH_HISI || COMPILE_TEST
-> +	select RESET_HISI
-> +	default y
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Fixes: 179c8fb3c2a6 ("clk: versatile-icst: convert to use regmap")
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/clk/versatile/clk-icst.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-default ARCH_HISI
-
-> +	help
-> +	  Build the clock driver for hi3519.
-> +
-> diff --git a/drivers/clk/hisilicon/reset.c b/drivers/clk/hisilicon/reset.c
-> new file mode 100644
-> index 0000000..50e00e7
-> --- /dev/null
-> +++ b/drivers/clk/hisilicon/reset.c
-> +
-> +int hisi_reset_init(struct device_node *np)
-> +{
-> +	struct hisi_reset_controller *rstc;
-> +
-> +	rstc = kzalloc(sizeof(*rstc), GFP_KERNEL);
-> +	if (!rstc)
-> +		return -ENOMEM;
-> +
-> +	rstc->membase = of_iomap(np, 0);
-
-Any reason why we can't pass the platform device here and map the
-register space with platform device APIs?
-
-> +	if (!rstc->membase)
-> +		return -EINVAL;
-> +
-> +	spin_lock_init(&rstc->lock);
-> +
-> +	rstc->rcdev.owner = THIS_MODULE;
-> +	rstc->rcdev.ops = &hisi_reset_ops;
-> +	rstc->rcdev.of_node = np;
-> +	rstc->rcdev.of_reset_n_cells = 2;
-> +	rstc->rcdev.of_xlate = hisi_reset_of_xlate;
-> +
-> +	return reset_controller_register(&rstc->rcdev);
-> +}
-> +EXPORT_SYMBOL(hisi_reset_init);
-
-Why not GPL?
-
+diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
+index e62f8cb2c9b5..3bca438ecd19 100644
+--- a/drivers/clk/versatile/clk-icst.c
++++ b/drivers/clk/versatile/clk-icst.c
+@@ -78,6 +78,9 @@ static int vco_set(struct clk_icst *icst, struct icst_vco vco)
+ 	ret = regmap_read(icst->map, icst->vcoreg_off, &val);
+ 	if (ret)
+ 		return ret;
++
++	/* Mask the 18 bits used by the VCO */
++	val &= ~0x7ffff;
+ 	val |= vco.v | (vco.r << 9) | (vco.s << 16);
+ 
+ 	/* This magic unlocks the VCO so it can be controlled */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.4.3
