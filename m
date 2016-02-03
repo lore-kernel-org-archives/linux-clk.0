@@ -1,97 +1,238 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53138 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932269AbcBXEO2 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Tue, 23 Feb 2016 23:14:28 -0500
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org, linux-clk@vger.kernel.org,
-	Pawel Moll <pawel.moll@arm.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Russell King <rmk+kernel@arm.linux.org.uk>
-Subject: [PATCH 4.4 072/137] ARM: 8517/1: ICST: avoid arithmetic overflow in icst_hz()
-Date: Tue, 23 Feb 2016 19:33:23 -0800
-Message-Id: <20160224033419.570203913@linuxfoundation.org>
-In-Reply-To: <20160224033417.270530882@linuxfoundation.org>
-References: <20160224033417.270530882@linuxfoundation.org>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 3 Feb 2016 20:59:19 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	David Airlie <airlied@linux.ie>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+	Alexander Kaplan <alex@nextthing.co>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Wynter Woods <wynter@nextthing.co>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2 17/26] drm: sun4i: Add DT bindings documentation
+Message-ID: <20160203195919.GB3327@lukather>
+References: <1452785109-6172-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1452785109-6172-18-git-send-email-maxime.ripard@free-electrons.com>
+ <20160115031515.GA19797@rob-hp-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="4bRzO86E/ozDv8r1"
+In-Reply-To: <20160115031515.GA19797@rob-hp-laptop>
 List-ID: <linux-clk.vger.kernel.org>
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
 
-------------------
+--4bRzO86E/ozDv8r1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-From: Linus Walleij <linus.walleij@linaro.org>
+Hi Rob,
 
-commit 5070fb14a0154f075c8b418e5bc58a620ae85a45 upstream.
+On Thu, Jan 14, 2016 at 09:15:15PM -0600, Rob Herring wrote:
+> On Thu, Jan 14, 2016 at 04:25:00PM +0100, Maxime Ripard wrote:
+> > The display pipeline of the Allwinner A10 is involving several loosely
+> > coupled components.
+> >=20
+> > Add a documentation for the bindings.
+> >=20
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > ---
+> >  .../bindings/display/sunxi/sun4i-drm.txt           | 228 +++++++++++++=
+++++++++
+>=20
+> drm is a linuxism. It shouldn't be used for binding doc.
 
-When trying to set the ICST 307 clock to 25174000 Hz I ran into
-this arithmetic error: the icst_hz_to_vco() correctly figure out
-DIVIDE=2, RDW=100 and VDW=99 yielding a frequency of
-25174000 Hz out of the VCO. (I replicated the icst_hz() function
-in a spreadsheet to verify this.)
+Ack
 
-However, when I called icst_hz() on these VCO settings it would
-instead return 4122709 Hz. This causes an error in the common
-clock driver for ICST as the common clock framework will call
-.round_rate() on the clock which will utilize icst_hz_to_vco()
-followed by icst_hz() suggesting the erroneous frequency, and
-then the clock gets set to this.
+> >  1 file changed, 228 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/display/sunxi/sun=
+4i-drm.txt
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.=
+txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > new file mode 100644
+> > index 000000000000..061bc87147a3
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > @@ -0,0 +1,228 @@
+> > +Allwinner A10 Display Pipeline
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+> > +
+> > +The Allwinner A10 Display pipeline is composed of several components
+> > +that are going to be documented below:
+> > +
+> > +TV Encoder
+> > +----------
+> > +
+> > +The TV Encoder supports the composite and VGA output. It is one end of
+> > +the pipeline.
+> > +
+> > +Required properties:
+> > + - compatible: value should be "allwinner,sun4i-a10-tv-encoder".
+> > + - reg: base address and size of memory-mapped region
+> > + - clocks: the clocks driving the TV encoder
+> > +
+> > +- ports: A ports node with endpoint definitions as defined in
+> > +  Documentation/devicetree/bindings/media/video-interfaces.txt. The
+> > +  first port should be the input endpoint.
+> > +
+> > +TCON
+> > +----
+> > +
+> > +The TCON acts as a timing controller for RGB, LVDS and TV interfaces.
+> > +
+> > +Required properties:
+> > + - compatible: value should be "allwinner,sun4i-a10-tcon".
+> > + - reg: base address and size of memory-mapped region
+> > + - interrupts: interrupt associated to this IP
+> > + - clocks: phandles to the clocks feeding the TCON. Three are needed:
+> > +   - 'ahb': the interface clocks
+> > +   - 'tcon-ch0': The clock driving the TCON channel 0
+> > +   - 'tcon-ch1': The clock driving the TCON channel 1
+> > +
+> > + - clock-names: the clock names mentioned above
+> > + - clock-output-names: Name of the pixel clock created
+> > +
+> > +- ports: A ports node with endpoint definitions as defined in
+> > +  Documentation/devicetree/bindings/media/video-interfaces.txt. The
+> > +  first port should be the input endpoint, the second one the output
+> > +
+> > +Optional properties:
+> > +  - allwinner,panel: phandle to the panel used in our RGB interface
+> > +
+> > +
+> > +Display Engine Backend
+> > +----------------------
+> > +
+> > +The display engine backend exposes layers and sprites to the
+> > +system.
+> > +
+> > +Required properties:
+> > +  - compatible: value must be one of:
+> > +    * allwinner,sun5i-a13-display-backend
+> > +  - reg: base address and size of the memory-mapped region.
+> > +  - clocks: phandles to the clocks feeding the frontend and backend
+> > +    * ahb: the backend interface clock
+> > +    * mod: the backend module clock
+> > +    * ram: the backend DRAM clock
+> > +  - clock-names: the clock names mentioned above
+> > +  - resets: phandles to the reset controllers driving the backend
+> > +
+> > +- ports: A ports node with endpoint definitions as defined in
+> > +  Documentation/devicetree/bindings/media/video-interfaces.txt. The
+> > +  first port should be the input endpoints, the second one the output
+> > +
+> > +Display Engine Frontend
+> > +-----------------------
+> > +
+> > +The display engine frontend does formats conversion, scaling,
+> > +deinterlacing and color space conversion.
+> > +
+> > +Required properties:
+> > +  - compatible: value must be one of:
+> > +    * allwinner,sun5i-a13-display-frontend
+> > +  - reg: base address and size of the memory-mapped region.
+> > +  - interrupts: interrupt associated to this IP
+> > +  - clocks: phandles to the clocks feeding the frontend and backend
+>=20
+> > +    * ahb: the backend interface clock
+> > +    * mod: the backend module clock
+> > +    * ram: the backend DRAM clock
+>=20
+> should be frontend?
 
-The error did not manifest in the old clock framework since
-this high frequency was only used by the CLCD, which calls
-clk_set_rate() without first calling clk_round_rate() and since
-the old clock framework would not call clk_round_rate() before
-setting the frequency, the correct values propagated into
-the VCO.
+Yeah, stupid copy/paste mistake :/
 
-After some experimenting I figured out that it was due to a simple
-arithmetic overflow: the divisor for 24Mhz reference frequency
-as reference becomes 24000000*2*(99+8)=0x132212400 and the "1"
-in bit 32 overflows and is lost.
+>=20
+> > +  - clock-names: the clock names mentioned above
+> > +  - resets: phandles to the reset controllers driving the backend
+>=20
+> ditto
+>=20
+> > +
+> > +Display Engine Pipeline
+> > +-----------------------
+> > +
+> > +The display engine pipeline (and its entry point, since it can be
+> > +either directly the backend or the frontend) is represented as an
+> > +extra node.
+> > +
+> > +Required properties:
+> > +  - compatible: value must be one of:
+> > +    * allwinner,sun5i-a13-display-engine
+> > +  - allwinner,pipelines: list of phandle to the entry points of the
+> > +    pipelines (either to the frontend or backend)
+> > +
+> > +Example:
+> > +
+> > +panel: panel {
+> > +	compatible =3D "olimex,lcd-olinuxino-43-ts";
+>=20
+> This should either be a child of what it is attached to or use of-graph.
 
-But introducing an explicit 64-by-32 bit do_div() and casting
-the divisor into (u64) we get the right frequency back, and the
-right frequency gets set.
+You had a similar discussion with Thierry last time I sent it, and it
+seemed to settle on keeping that property:
 
-Tested on the ARM Versatile.
+http://lists.infradead.org/pipermail/linux-arm-kernel/2015-October/382115.h=
+tml
 
-Cc: linux-clk@vger.kernel.org
-Cc: Pawel Moll <pawel.moll@arm.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Has that changed?
 
----
- arch/arm/common/icst.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+> > +};
+> > +
+> > +tve0: tv-encoder@01c0a000 {
+> > +	compatible =3D "allwinner,sun4i-a10-tv-encoder";
+> > +	reg =3D <0x01c0a000 0x1000>;
+> > +	clocks =3D <&ahb_gates 34>;
+> > +
+> > +	port {
+> > +		#address-cells =3D <1>;
+> > +		#size-cells =3D <0>;
+> > +
+> > +		tve0_in_tcon0: endpoint@0 {
+> > +			reg =3D <0>;
+>=20
+> I would drop the reg where you only have 1 node for ports or endpoints.
 
---- a/arch/arm/common/icst.c
-+++ b/arch/arm/common/icst.c
-@@ -16,7 +16,7 @@
-  */
- #include <linux/module.h>
- #include <linux/kernel.h>
--
-+#include <asm/div64.h>
- #include <asm/hardware/icst.h>
- 
- /*
-@@ -29,7 +29,11 @@ EXPORT_SYMBOL(icst525_s2div);
- 
- unsigned long icst_hz(const struct icst_params *p, struct icst_vco vco)
- {
--	return p->ref * 2 * (vco.v + 8) / ((vco.r + 2) * p->s2div[vco.s]);
-+	u64 dividend = p->ref * 2 * (u64)(vco.v + 8);
-+	u32 divisor = (vco.r + 2) * p->s2div[vco.s];
-+
-+	do_div(dividend, divisor);
-+	return (unsigned long)dividend;
- }
- 
- EXPORT_SYMBOL(icst_hz);
+Ok
 
+Thanks!
+Maxime
 
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--4bRzO86E/ozDv8r1
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWslwWAAoJEBx+YmzsjxAgbtoP/A5eHfuhnBzvoZi0T4rhWEUB
+ebqbHUUO16XgNEcXZZNliMGDa2ORmeBHAgIwFCz0MOteI/Fr3ZsbnNvG8qsuT2MN
+eZV+gwB60iJFmUXKLT7wqkjvnp/jHfoW9SmL+OZ9AM/a567rOXjFcokm4AW75hg2
+Ehgp/7YONUFUDo1apgG8ueovfCP7isysN608/BExammbiivcPXrxrYQF7E8vI4ET
+T7goS6XrLYyjWqdgEZjtdqdoEMySa3tX+/4yVoGf3hsRsTFroiX7ibjVi+Wenjnd
+m8Dwjm59M23bNckPvIpltHKNv0p0ACDKLKixyngakoxIRRBXNPDfKXG4up0pvXhf
+dsXN+QnsS+B9CK+DMInmzmpt2R3effdI0XQqQ/yTlk9U0Vi2wU7ek1ENnTAW/TbQ
+Gpssyp6j9TeFzpuhBLad6c3fGze9kyKhlVXgeQsdpTvGJNv96t+x18E3yoY/UGi2
+DitWVJXCFfo4WiF7vU45kZE+1suDIOXqGpNuKCZVBItm8lVkN6M5DoY1ZtR/UTIV
+snS52wT5Ntwav+sCx41AxBh2q3Qr5sAUVIy1ZgotdKEeKadT6D2NX/U4nmI/OEuA
+RdoGIegTtC3V9SfOe0TeiekLt9PwvK4UakTD2JMmGUhlazzcfJIZ9X+9nRfvHL+M
+0v6t+gW/KQVT70gg31Z4
+=bWsD
+-----END PGP SIGNATURE-----
+
+--4bRzO86E/ozDv8r1--
