@@ -1,128 +1,104 @@
-Return-Path: <moinejf@free.fr>
-Date: Thu, 4 Feb 2016 12:11:07 +0100
-From: Jean-Francois Moine <moinejf@free.fr>
-To: Rob Herring <robh@kernel.org>
-Cc: Dave Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>, Emilio
- Lopez <emilio@elopez.com.ar>, Maxime Ripard
- <maxime.ripard@free-electrons.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] drm: sunxi: Add a basic DRM driver for Allwinner
- DE2
-Message-Id: <20160204121107.2fa6d12c161ce37a3901f118@free.fr>
-In-Reply-To: <20160202215036.GA25521@rob-hp-laptop>
-References: <cover.1454435944.git.moinejf@free.fr>
-	<76ae5b406ad64b2717c0b1c62c3005a62b2715b8.1454435944.git.moinejf@free.fr>
-	<20160202215036.GA25521@rob-hp-laptop>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Return-Path: <caesar.upstream@gmail.com>
+Return-Path: <caesar.upstream@gmail.com>
+From: Caesar Wang <wxt@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	edubezval@gmail.com
+Cc: huangtao@rock-chips.com,
+	linux-rockchip@lists.infradead.org,
+	zhangqing@rock-chips.com,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Caesar Wang <wxt@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-pm@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kumar Gala <galak@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Rob Herring <robh+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Pawel Moll <pawel.moll@arm.com>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	linux-clk@vger.kernel.org,
+	Jeffy Chen <jeffy.chen@rock-chips.com>
+Subject: [PATCH 0/8] Support and fixes the rk3228 SoCS for thermal
+Date: Wed,  3 Feb 2016 12:12:39 +0800
+Message-Id: <1454472767-5767-1-git-send-email-wxt@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2 Feb 2016 15:50:36 -0600
-Rob Herring <robh@kernel.org> wrote:
+Hello Eduardo, Heiko, Michael & Stephen:
 
-> > diff --git a/Documentation/devicetree/bindings/display/sunxi.txt b/Docu=
-mentation/devicetree/bindings/display/sunxi.txt
-> > new file mode 100644
-> > index 0000000..35f9763
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/display/sunxi.txt
-> > @@ -0,0 +1,81 @@
-> > +Allwinner sunxi display subsystem
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +The sunxi display subsystems contain a display controller (DE),
-> > +one or two LCD controllers (TCON) and their external interfaces.
-> > +
-> > +Display controller
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +Required properties:
-> > +
-> > +- compatible: value should be one of the following
-> > +		"allwinner,sun8i-h3-display-engine"
-> > +
-> > +- clocks: must include clock specifiers corresponding to entries in the
-> > +		clock-names property.
-> > +
-> > +- clock-names: must contain
-> > +		gate: for DE activation
-> > +		clock: DE clock
-> > +
-> > +- resets: phandle to the reset of the device
-> > +
-> > +- ports: phandle's to the LCD ports
-> > +
-> > +LCD controller
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +Required properties:
-> > +
-> > +- compatible: value should be one of the following
-> > +		"allwinner,sun8i-h3-lcd"
-> > +
-> > +- clocks: must include clock specifiers corresponding to entries in the
-> > +		clock-names property.
-> > +
-> > +- clock-names: must contain
-> > +		gate: for LCD activation
-> > +		clock: pixel clock
-> > +
-> > +- resets: phandle to the reset of the device
-> > +
-> > +- port: port node with endpoint definitions as defined in
-> > +	Documentation/devicetree/bindings/media/video-interfaces.txt
->=20
-> Define how many ports and endpoints.
+This series pacthes to support the rk3228 SoCs thermal.
 
-As told in some other mail, such a video binding should be generic.
-The number of ports depends on the hardware. Most SoCs have only one
-port per LCD, but some other have many ports as the A83T (3 ports from
-the LCD0).
+They have the following patches to work on rk3228 SoCs.
 
-> > +
-> > +Example:
-> > +
-> > +	de: de-controller@01000000 {
-> > +		compatible =3D "allwinner,sun8i-h3-display-engine";
-> > +		...
-> > +		clocks =3D <&bus_gates 44>, <&de_clk>;
-> > +		clock-names =3D "gate", "clock";
-> > +		resets =3D <&ahb_rst 44>;
-> > +		ports =3D <&lcd0_p>;
->=20
-> This is pointless if you only have one item in ports. Is this really a=20
-> separate h/w block? Can't you move all this into the node below?
+bdc79c0 ARM: dts: rockchip: add the thermal main info found on rk3228
+22ea3c3 ARM: dts: rockchip: enable the tsadc for rk3228 evb
+b907b75 thermal: rockchip: fix the tsadc sequence output on rk3228/rk3399
+fb11fbd thermal: rockchip: the rename compatibles for rockchip SoCs
+df9c1bd thermal: rockchip: fix calculation error for code_to_temp
+bd2720c thermal: rockchip: fix a impossible condition caused by the warning
+8cf2d1b clk: rockchip: add the tsadc clocks found on rk3228 SoCs
+1a6f334 clk: rockchip: add id of the tsadc clock found on rk3228 SoCs
 
-Well, this example is extracted from the H3 where the DE and LCDs have
-different clocks, I/O resources and functions (the DE builds the video
-frames while the LCDs - TCONs - convert them to video flows).
+Verified on https://github.com/Caesar-github/rockchip/tree/rk3228-thermal-tests.
+This series patches are based on
+Linux version 4.5.0-rc1+ (wxt@ubuntu) (...) #186 SMP Tue Feb 2 17:11:48 CST 2016
 
-The example is not complete because there are 2 LCDs in the H3:
-		ports =3D <&lcd0_p>,		/* HDMI */
-			<&lcd1_p>;		/* TV (CVBS) */
-But, for SoCs with only one LCD, the description would be the same.
+---
 
-> > +	};
-> > +
-> > +	lcd0: lcd-controller@01c0c000 {
-> > +		compatible =3D "allwinner,sun8i-h3-lcd";
-> > +		...
-> > +		clocks =3D <&bus_gates 35>, <&tcon0_clk>;
-> > +		clock-names =3D "gate", "clock";
-> > +		resets =3D <&ahb_rst 35>;
-> > +		#address-cells =3D <1>;
-> > +		#size-cells =3D <0>;
-> > +		lcd0_p: port {
-> > +			lcd0_ep: endpoint {
-> > +				remote-endpoint =3D <&hdmi_ep>;
-> > +			};
-> > +		};
-> > +	};
+Hi Michael,Stephen
+PATCH[1/8-2/8]:
+Add the tsadc needed clocks for rk3228 SoCs
+
+Hi Eduardo,
+PATCH[3/8]:
+To fix a build warning came from Dan Carpenter report smatch check,
+Thanks.
+As the patch exists in https://patchwork.kernel.org/patch/7757311/
+
+PATCH[4/8]:
+fix calculation error for code_to_temp
+That's a error since the copy causes.
+
+PATCH[5/8]:
+the rename compatibles for rockchip SoCs
+As the more and more rockchip SOCs are supported in thermal driver. this pacth
+supposed to be compatible for better.
+
+PATCH[6/8]:
+fix the tsadc sequence output on rk3228/rk3399
+Fixes the tsadc sequence output since the rk3228/rk3399 SoCs design.
+
+Hi Heiko,
+PATCH[7/8-8/8]: thermal DTS
+1) add the thermal main info found on rk3228
+2) enable the tsadc for rk3228 evb
+
+I'd appreciate if someone have free time to review that. :)
 
 
---=20
-Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+
+Caesar Wang (7):
+  clk: rockchip: add id of the tsadc clock found on rk3228 SoCs
+  clk: rockchip: add the tsadc clocks found on rk3228 SoCs
+  thermal: rockchip: fix a impossible condition caused by the warning
+  thermal: rockchip: the rename compatibles for rockchip SoCs
+  thermal: rockchip: fix the tsadc sequence output on rk3228/rk3399
+  ARM: dts: rockchip: enable the tsadc for rk3228 evb
+  ARM: dts: rockchip: add the thermal main info found on rk3228
+
+Elaine Zhang (1):
+  thermal: rockchip: fix calculation error for code_to_temp
+
+ arch/arm/boot/dts/rk3228-evb.dts       |   7 +
+ arch/arm/boot/dts/rk3228.dtsi          |  69 ++++++++++
+ drivers/clk/rockchip/clk-rk3228.c      |   4 +-
+ drivers/thermal/rockchip_thermal.c     | 239 +++++++++++++++++++--------------
+ include/dt-bindings/clock/rk3228-cru.h |   2 +
+ 5 files changed, 216 insertions(+), 105 deletions(-)
+
+-- 
+1.9.1
