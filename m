@@ -1,175 +1,54 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <CAGb2v65BwAcT8920WXt7dBjNx4zjycw2Ea+sNZrm0aM_3JA8pA@mail.gmail.com>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
- <1454203266-4450-15-git-send-email-vishnupatekar0510@gmail.com> <CAGb2v65BwAcT8920WXt7dBjNx4zjycw2Ea+sNZrm0aM_3JA8pA@mail.gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Date: Thu, 4 Feb 2016 12:25:14 +0800
-Message-ID: <CAEzqOZtwyk2oChsSvfxWwqc=bKn3dT0eLDzcgAXi--N0W=cMuA@mail.gmail.com>
-Subject: Re: [PATCH 14/14] ARM: dts: sun8i: Add A83T based Sinovoip Bpi-M3 Board
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
-	Jens Kuske <jenskuske@gmail.com>, Hans De Goede <hdegoede@redhat.com>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Reinder de Haan <patchesrdh@mveas.com>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <caesar.upstream@gmail.com>
+Return-Path: <caesar.upstream@gmail.com>
+From: Caesar Wang <wxt@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	edubezval@gmail.com
+Cc: huangtao@rock-chips.com,
+	linux-rockchip@lists.infradead.org,
+	zhangqing@rock-chips.com,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Caesar Wang <wxt@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 2/8] clk: rockchip: add the tsadc clocks found on rk3228 SoCs
+Date: Wed,  3 Feb 2016 12:12:41 +0800
+Message-Id: <1454472767-5767-3-git-send-email-wxt@rock-chips.com>
+In-Reply-To: <1454472767-5767-1-git-send-email-wxt@rock-chips.com>
+References: <1454472767-5767-1-git-send-email-wxt@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Wens,
+This patch adds the needed clocks for rk3228 tsadc.
 
+Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+---
 
+ drivers/clk/rockchip/clk-rk3228.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Tue, Feb 2, 2016 at 3:37 PM, Chen-Yu Tsai <wens@csie.org> wrote:
->
-> On Sun, Jan 31, 2016 at 9:21 AM, Vishnu Patekar
-> <vishnupatekar0510@gmail.com> wrote:
-> > This patch adds support for Sinovoip BPI-M3 A83T based board.
-> >
-> > It has 2G LPDDR3, UART, ethernet, USB, HDMI, USB Sata, MIPI DSI,
-> > mic, AP6212 Wifi, etc on it.
-> > It is paired with AXP813 PMIC which is almost same as AXP818.
-> >
-> > Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-> > ---
-> >  arch/arm/boot/dts/Makefile                       |  1 +
-> >  arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts | 88 ++++++++++++++++++++++++
-> >  2 files changed, 89 insertions(+)
-> >  create mode 100644 arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts
-> >
-> > diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> > index 58e461a..c0dd016 100644
-> > --- a/arch/arm/boot/dts/Makefile
-> > +++ b/arch/arm/boot/dts/Makefile
-> > @@ -694,6 +694,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
-> >         sun8i-a33-sinlinx-sina33.dtb \
-> >         sun8i-a83t-allwinner-h8homlet-v2.dtb \
-> >         sun8i-a83t-cubietruck-plus.dtb \
-> > +       sun8i-a83t-sinovoip-bpi-m3.dtb \
-> >         sun8i-h3-orangepi-plus.dtb
-> >  dtb-$(CONFIG_MACH_SUN9I) += \
-> >         sun9i-a80-optimus.dtb \
-> > diff --git a/arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts b/arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts
-> > new file mode 100644
-> > index 0000000..fecc7dc
-> > --- /dev/null
-> > +++ b/arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts
-> > @@ -0,0 +1,88 @@
-> > +/*
-> > + * Copyright 2015 Vishnu Patekar
->
-> 2016?
->
-> > + * Vishnu Patekar <vishnupatekar0510@gmail.com>
-> > + *
-> > + * This file is dual-licensed: you can use it either under the terms
-> > + * of the GPL or the X11 license, at your option. Note that this dual
-> > + * licensing only applies to this file, and not this project as a
-> > + * whole.
-> > + *
-> > + *  a) This file is free software; you can redistribute it and/or
-> > + *     modify it under the terms of the GNU General Public License as
-> > + *     published by the Free Software Foundation; either version 2 of the
-> > + *     License, or (at your option) any later version.
-> > + *
-> > + *     This file is distributed in the hope that it will be useful,
-> > + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-> > + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > + *     GNU General Public License for more details.
-> > + *
-> > + * Or, alternatively,
-> > + *
-> > + *  b) Permission is hereby granted, free of charge, to any person
-> > + *     obtaining a copy of this software and associated documentation
-> > + *     files (the "Software"), to deal in the Software without
-> > + *     restriction, including without limitation the rights to use,
-> > + *     copy, modify, merge, publish, distribute, sublicense, and/or
-> > + *     sell copies of the Software, and to permit persons to whom the
-> > + *     Software is furnished to do so, subject to the following
-> > + *     conditions:
-> > + *
-> > + *     The above copyright notice and this permission notice shall be
-> > + *     included in all copies or substantial portions of the Software.
-> > + *
-> > + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-> > + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-> > + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-> > + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-> > + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-> > + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-> > + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-> > + *     OTHER DEALINGS IN THE SOFTWARE.
-> > + */
-> > +
-> > +/dts-v1/;
-> > +#include "sun8i-a83t.dtsi"
-> > +#include "sunxi-common-regulators.dtsi"
-> > +
-> > +/ {
-> > +       model = "Sinovoip BananaPi M3 v1.2";
-> > +       compatible = "sinovoip,bpi-m3", "allwinner,sun8i-a83t";
-> > +
-> > +       aliases {
-> > +               serial0 = &uart0;
-> > +       };
-> > +
-> > +       chosen {
-> > +               stdout-path = "serial0:115200n8";
-> > +       };
-> > +};
-> > +
-> > +&pio {
-> > +       mmc0_cd_pin_bpi_m3: mmc0_cd_pin@0 {
-> > +               allwinner,pins = "PF6";
-> > +               allwinner,function = "gpio_in";
-> > +               allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-> > +               allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
-> > +       };
->
-> Maybe we should just put this in the .dtsi and call it
-> "mmc0_cd_pin_reference_design"?
->
-> We have something similar for sun4i-a10.
-Yes, I'll modify it.
->
-> > +};
-> > +
-> > +&mmc0 {
-> > +       pinctrl-names = "default";
-> > +       pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin_bpi_m3>;
-> > +       vmmc-supply = <&reg_vcc3v0>;
-> > +       cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
-> > +       bus-width = <4>;
-> > +       cd-inverted;
-> > +       status = "okay";
-> > +};
-> > +
-> > +&uart0 {
-> > +       pinctrl-names = "default";
-> > +       pinctrl-0 = <&uart0_pins_b>;
-> > +       status = "okay";
-> > +};
-> > +
-> > +&r_rsb {
->
-> This goes before uart0.
-Okie.
->
-> > +       status = "okay";
-> > +};
->
-> What about eMMC?
-I've not yet tried the emmc.
->
->
-> Thanks!
-> ChenYu
-
-Regards,
-Vishnu
+diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
+index 981a502..6374fef 100644
+--- a/drivers/clk/rockchip/clk-rk3228.c
++++ b/drivers/clk/rockchip/clk-rk3228.c
+@@ -422,7 +422,7 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
+ 	GATE(0, "sclk_otgphy1", "xin24m", 0,
+ 			RK2928_CLKGATE_CON(1), 6, GFLAGS),
+ 
+-	COMPOSITE_NOMUX(0, "sclk_tsadc", "xin24m", 0,
++	COMPOSITE_NOMUX(SCLK_TSADC, "sclk_tsadc", "xin24m", 0,
+ 			RK2928_CLKSEL_CON(24), 6, 10, DFLAGS,
+ 			RK2928_CLKGATE_CON(2), 8, GFLAGS),
+ 
+@@ -582,7 +582,7 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
+ 	GATE(PCLK_UART0, "pclk_uart0", "pclk_cpu", 0, RK2928_CLKGATE_CON(9), 12, GFLAGS),
+ 	GATE(PCLK_UART1, "pclk_uart1", "pclk_cpu", 0, RK2928_CLKGATE_CON(9), 13, GFLAGS),
+ 	GATE(PCLK_UART2, "pclk_uart2", "pclk_cpu", 0, RK2928_CLKGATE_CON(9), 14, GFLAGS),
+-	GATE(0, "pclk_tsadc", "pclk_cpu", 0, RK2928_CLKGATE_CON(9), 15, GFLAGS),
++	GATE(PCLK_TSADC, "pclk_tsadc", "pclk_cpu", 0, RK2928_CLKGATE_CON(9), 15, GFLAGS),
+ 	GATE(PCLK_GRF, "pclk_grf", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(10), 0, GFLAGS),
+ 	GATE(0, "pclk_cru", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(10), 1, GFLAGS),
+ 	GATE(0, "pclk_sgrf", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(10), 2, GFLAGS),
+-- 
+1.9.1
