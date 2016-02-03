@@ -1,89 +1,29 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <festevam@gmail.com>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-	"Linus Walleij" <linus.walleij@linaro.org>,
-	linux-clk@vger.kernel.org, "Pawel Moll" <pawel.moll@arm.com>,
-	"Russell King" <rmk+kernel@arm.linux.org.uk>
-Date: Tue, 23 Feb 2016 21:42:03 +0000
-Message-ID: <lsq.1456263723.930555686@decadent.org.uk>
-Subject: [PATCH 3.2 54/67] ARM: 8517/1: ICST: avoid arithmetic overflow in
- icst_hz()
-In-Reply-To: <lsq.1456263722.390955919@decadent.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
+Date: Wed, 3 Feb 2016 15:04:07 -0200
+Message-ID: <CAOMZO5AZbe2PKysy353Q-3w_+WY0HQD4EYtq24SzwadoQ4ikeA@mail.gmail.com>
+Subject: Keeping a clock enabled during suspend
+From: Fabio Estevam <festevam@gmail.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, peter.chen@nxp.com,
+	Lee Jones <lee.jones@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-3.2.78-rc1 review patch.  If anyone has any objections, please let me know.
+Hi,
 
-------------------
+I am trying to implement a workaround for a mx25 USB erratum issue
+(ENGcm08333), where I need to keep the USB clock turned on when the
+system enters in suspend.
 
-From: Linus Walleij <linus.walleij@linaro.org>
+Is it possible to indicate that a clock needs to be kept enabled in
+suspend with the current clock framework?
 
-commit 5070fb14a0154f075c8b418e5bc58a620ae85a45 upstream.
+I saw this attempt from Lee Jones:
+https://lkml.org/lkml/2015/4/8/9
 
-When trying to set the ICST 307 clock to 25174000 Hz I ran into
-this arithmetic error: the icst_hz_to_vco() correctly figure out
-DIVIDE=2, RDW=100 and VDW=99 yielding a frequency of
-25174000 Hz out of the VCO. (I replicated the icst_hz() function
-in a spreadsheet to verify this.)
+Any suggestions?
 
-However, when I called icst_hz() on these VCO settings it would
-instead return 4122709 Hz. This causes an error in the common
-clock driver for ICST as the common clock framework will call
-.round_rate() on the clock which will utilize icst_hz_to_vco()
-followed by icst_hz() suggesting the erroneous frequency, and
-then the clock gets set to this.
+Thanks,
 
-The error did not manifest in the old clock framework since
-this high frequency was only used by the CLCD, which calls
-clk_set_rate() without first calling clk_round_rate() and since
-the old clock framework would not call clk_round_rate() before
-setting the frequency, the correct values propagated into
-the VCO.
-
-After some experimenting I figured out that it was due to a simple
-arithmetic overflow: the divisor for 24Mhz reference frequency
-as reference becomes 24000000*2*(99+8)=0x132212400 and the "1"
-in bit 32 overflows and is lost.
-
-But introducing an explicit 64-by-32 bit do_div() and casting
-the divisor into (u64) we get the right frequency back, and the
-right frequency gets set.
-
-Tested on the ARM Versatile.
-
-Cc: linux-clk@vger.kernel.org
-Cc: Pawel Moll <pawel.moll@arm.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- arch/arm/common/icst.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
---- a/arch/arm/common/icst.c
-+++ b/arch/arm/common/icst.c
-@@ -16,7 +16,7 @@
-  */
- #include <linux/module.h>
- #include <linux/kernel.h>
--
-+#include <asm/div64.h>
- #include <asm/hardware/icst.h>
- 
- /*
-@@ -29,7 +29,11 @@ EXPORT_SYMBOL(icst525_s2div);
- 
- unsigned long icst_hz(const struct icst_params *p, struct icst_vco vco)
- {
--	return p->ref * 2 * (vco.v + 8) / ((vco.r + 2) * p->s2div[vco.s]);
-+	u64 dividend = p->ref * 2 * (u64)(vco.v + 8);
-+	u32 divisor = (vco.r + 2) * p->s2div[vco.s];
-+
-+	do_div(dividend, divisor);
-+	return (unsigned long)dividend;
- }
- 
- EXPORT_SYMBOL(icst_hz);
+Fabio Estevam
