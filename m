@@ -1,66 +1,239 @@
-Return-Path: <andre.przywara@arm.com>
-From: Andre Przywara <andre.przywara@arm.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-sunxi@googlegroups.com
-Cc: Arnd Bergmann <arnd@arndb.de>,
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-clk@vger.kernel.org,
-	Jens Kuske <jenskuske@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	devicetree@vger.kernel.org
-Subject: [PATCH v3 05/10] DT: clk: sunxi: add binding doc for the multi-bus-gates clock
-Date: Mon, 22 Feb 2016 18:20:50 +0000
-Message-Id: <1456165255-31013-6-git-send-email-andre.przywara@arm.com>
-In-Reply-To: <1456165255-31013-1-git-send-email-andre.przywara@arm.com>
-References: <1456165255-31013-1-git-send-email-andre.przywara@arm.com>
+	Jyri Sarha <jsarha@ti.com>,
+	Sergej Sawazki <ce3a@gmx.de>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	Fabio Estevam <fabio.estevam@freescale.com>,
+	Jon Nettleton <jon@solid-run.com>,
+	Shawn Guo <shawn.guo@linaro.org>
+Subject: [PATCH] clk: gpio: Make into a platform driver
+Date: Tue,  2 Feb 2016 17:22:00 -0800
+Message-Id: <1454462520-20787-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Recent Allwinner SoCs introduced a bus gates clock which can have
-different parents for individual gates.
-For the time being we encoded this relation in the driver.
-This commit specifies a new binding which allows to encode this in
-the DT by using a child node for each parent clock used. This allows
-to specify any kind of relation efficiently and also keeps the very
-same kernel driver for all SoCs at the same time.
+clk_get() for DT based clks already returns EPROBE_DEFER when the
+OF clk provider is not present. So having all this code in the
+clk provider to return EPROBE_DEFER when the gpio isn't ready yet
+can be replaced with a platform driver that doesn't add the clk
+provider until the gpio can be requested. Get rid of the
+OF_CLK_DECLARE and convert this to a platform driver instead.
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Cc: Jyri Sarha <jsarha@ti.com>
+Cc: Sergej Sawazki <ce3a@gmx.de>
+Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: Fabio Estevam <fabio.estevam@freescale.com>
+Cc: Jon Nettleton <jon@solid-run.com>
+Cc: Shawn Guo <shawn.guo@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- Documentation/devicetree/bindings/clock/sunxi.txt | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/clk/clk-gpio.c | 168 ++++++++++++++++---------------------------------
+ 1 file changed, 54 insertions(+), 114 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-index c09f59b..323af8e 100644
---- a/Documentation/devicetree/bindings/clock/sunxi.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-@@ -79,6 +79,7 @@ Required properties:
- 	"allwinner,sun9i-a80-usb-mod-clk" - for usb gates + resets on A80
- 	"allwinner,sun9i-a80-usb-phy-clk" - for usb phy gates + resets on A80
- 	"allwinner,sun4i-a10-ve-clk" - for the Video Engine clock
-+	"allwinner,sunxi-multi-bus-gates-clk" - for the multi-parent bus gates
+diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+index cbbea2985cc9..7252ea7dfe0d 100644
+--- a/drivers/clk/clk-gpio.c
++++ b/drivers/clk/clk-gpio.c
+@@ -20,6 +20,8 @@
+ #include <linux/of_gpio.h>
+ #include <linux/err.h>
+ #include <linux/device.h>
++#include <linux/platform_device.h>
++#include <linux/of_device.h>
  
- Required properties for all clocks:
- - reg : shall be the control register address for the clock.
-@@ -119,6 +120,11 @@ For "allwinner,sun6i-a31-pll6-clk", there are 2 outputs. The first output
- is the normal PLL6 output, or "pll6". The second output is rate doubled
- PLL6, or "pll6x2".
+ /**
+  * DOC: basic gpio gated clock which can be enabled and disabled
+@@ -199,134 +201,72 @@ struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
+ }
+ EXPORT_SYMBOL_GPL(clk_register_gpio_mux);
  
-+The "allwinner,sunxi-multi-bus-gates-clk" holds the actual clocks in
-+child nodes, where each one specifies the parent clock that the particular
-+gates are depending from. The child nodes each follow the common clock
-+binding as described in this document.
+-#ifdef CONFIG_OF
+-/**
+- * clk_register_get() has to be delayed, because -EPROBE_DEFER
+- * can not be handled properly at of_clk_init() call time.
+- */
+-
+-struct clk_gpio_delayed_register_data {
+-	const char *gpio_name;
+-	int num_parents;
+-	const char **parent_names;
+-	struct device_node *node;
+-	struct mutex lock;
+-	struct clk *clk;
+-	struct clk *(*clk_register_get)(const char *name,
+-			const char * const *parent_names, u8 num_parents,
+-			unsigned gpio, bool active_low);
+-};
+-
+-static struct clk *of_clk_gpio_delayed_register_get(
+-		struct of_phandle_args *clkspec, void *_data)
++static int gpio_clk_driver_probe(struct platform_device *pdev)
+ {
+-	struct clk_gpio_delayed_register_data *data = _data;
+-	struct clk *clk;
+-	int gpio;
++	struct device_node *node = pdev->dev.of_node;
++	const char **parent_names, *gpio_name;
++	int num_parents, gpio;
+ 	enum of_gpio_flags of_flags;
++	struct clk *clk;
++	bool active_low, is_mux;
 +
- The "allwinner,*-mmc-clk" clocks have three different outputs: the
- main clock, with the ID 0, and the output and sample clocks, with the
- IDs 1 and 2, respectively.
++	num_parents = of_clk_get_parent_count(node);
++	if (num_parents < 0)
++		return -EINVAL;
+ 
+-	mutex_lock(&data->lock);
++	if (num_parents) {
++		parent_names = devm_kcalloc(&pdev->dev, num_parents,
++					    sizeof(char *), GFP_KERNEL);
++		if (!parent_names)
++			return -ENOMEM;
+ 
+-	if (data->clk) {
+-		mutex_unlock(&data->lock);
+-		return data->clk;
++		of_clk_parent_fill(node, parent_names, num_parents);
++	} else {
++		parent_names = NULL;
+ 	}
+ 
+-	gpio = of_get_named_gpio_flags(data->node, data->gpio_name, 0,
+-			&of_flags);
++	is_mux = of_device_is_compatible(node, "gpio-mux-clock");
++
++	gpio_name = is_mux ? "select-gpios" : "enable-gpios";
++	gpio = of_get_named_gpio_flags(node, gpio_name, 0, &of_flags);
+ 	if (gpio < 0) {
+-		mutex_unlock(&data->lock);
+ 		if (gpio == -EPROBE_DEFER)
+ 			pr_debug("%s: %s: GPIOs not yet available, retry later\n",
+-					data->node->name, __func__);
++					node->name, __func__);
+ 		else
+ 			pr_err("%s: %s: Can't get '%s' DT property\n",
+-					data->node->name, __func__,
+-					data->gpio_name);
+-		return ERR_PTR(gpio);
++					node->name, __func__,
++					gpio_name);
++		return gpio;
+ 	}
+ 
+-	clk = data->clk_register_get(data->node->name, data->parent_names,
+-			data->num_parents, gpio, of_flags & OF_GPIO_ACTIVE_LOW);
+-	if (IS_ERR(clk))
+-		goto out;
+-
+-	data->clk = clk;
+-out:
+-	mutex_unlock(&data->lock);
+-
+-	return clk;
+-}
+-
+-static struct clk *of_clk_gpio_gate_delayed_register_get(const char *name,
+-		const char * const *parent_names, u8 num_parents,
+-		unsigned gpio, bool active_low)
+-{
+-	return clk_register_gpio_gate(NULL, name, parent_names ?
+-			parent_names[0] : NULL, gpio, active_low, 0);
+-}
++	active_low = of_flags & OF_GPIO_ACTIVE_LOW;
+ 
+-static struct clk *of_clk_gpio_mux_delayed_register_get(const char *name,
+-		const char * const *parent_names, u8 num_parents, unsigned gpio,
+-		bool active_low)
+-{
+-	return clk_register_gpio_mux(NULL, name, parent_names, num_parents,
+-			gpio, active_low, 0);
+-}
+-
+-static void __init of_gpio_clk_setup(struct device_node *node,
+-		const char *gpio_name,
+-		struct clk *(*clk_register_get)(const char *name,
+-				const char * const *parent_names,
+-				u8 num_parents,
+-				unsigned gpio, bool active_low))
+-{
+-	struct clk_gpio_delayed_register_data *data;
+-	const char **parent_names;
+-	int i, num_parents;
+-
+-	num_parents = of_clk_get_parent_count(node);
+-	if (num_parents < 0)
+-		return;
+-
+-	data = kzalloc(sizeof(*data), GFP_KERNEL);
+-	if (!data)
+-		return;
+-
+-	if (num_parents) {
+-		parent_names = kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
+-		if (!parent_names) {
+-			kfree(data);
+-			return;
+-		}
+-
+-		for (i = 0; i < num_parents; i++)
+-			parent_names[i] = of_clk_get_parent_name(node, i);
+-	} else {
+-		parent_names = NULL;
+-	}
+-
+-	data->num_parents = num_parents;
+-	data->parent_names = parent_names;
+-	data->node = node;
+-	data->gpio_name = gpio_name;
+-	data->clk_register_get = clk_register_get;
+-	mutex_init(&data->lock);
++	if (is_mux)
++		clk = clk_register_gpio_mux(&pdev->dev, node->name,
++				parent_names, num_parents, gpio, active_low, 0);
++	else
++		clk = clk_register_gpio_gate(&pdev->dev, node->name,
++				parent_names ?  parent_names[0] : NULL, gpio,
++				active_low, 0);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
+ 
+-	of_clk_add_provider(node, of_clk_gpio_delayed_register_get, data);
++	return of_clk_add_provider(node, of_clk_src_simple_get, clk);
+ }
+ 
+-static void __init of_gpio_gate_clk_setup(struct device_node *node)
+-{
+-	of_gpio_clk_setup(node, "enable-gpios",
+-		of_clk_gpio_gate_delayed_register_get);
+-}
+-CLK_OF_DECLARE(gpio_gate_clk, "gpio-gate-clock", of_gpio_gate_clk_setup);
+-
+-void __init of_gpio_mux_clk_setup(struct device_node *node)
+-{
+-	of_gpio_clk_setup(node, "select-gpios",
+-		of_clk_gpio_mux_delayed_register_get);
+-}
+-CLK_OF_DECLARE(gpio_mux_clk, "gpio-mux-clock", of_gpio_mux_clk_setup);
+-#endif
++static const struct of_device_id gpio_clk_match_table[] = {
++	{ .compatible = "gpio-mux-clock" },
++	{ .compatible = "gpio-gate-clock" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, gpio_clk_match_table);
++
++static struct platform_driver gpio_clk_driver = {
++	.probe		= gpio_clk_driver_probe,
++	.driver		= {
++		.name	= "gpio-clk",
++		.of_match_table = gpio_clk_match_table,
++	},
++};
++builtin_platform_driver(gpio_clk_driver);
 -- 
-2.6.4
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
