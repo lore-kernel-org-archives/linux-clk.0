@@ -1,55 +1,128 @@
-Return-Path: <carlo.caione@gmail.com>
-MIME-Version: 1.0
-Sender: carlo.caione@gmail.com
-In-Reply-To: <1454879583-27036-1-git-send-email-afaerber@suse.de>
-References: <1454879583-27036-1-git-send-email-afaerber@suse.de>
-Date: Mon, 8 Feb 2016 09:34:19 +0100
-Message-ID: <CAOQ7t2YwHa7cJdqv4m8rPx50ZnFZJJzcU2AjtE=Q2AYEAf84hg@mail.gmail.com>
-Subject: Re: [PATCH] clk: meson: Fix meson_clk_register_clks() signature type mismatch
-From: Carlo Caione <carlo@caione.org>
-To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Carlo Caione <carlo@caione.org>,
-	Matthias Brugger <mbrugger@suse.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <moinejf@free.fr>
+Date: Thu, 4 Feb 2016 12:11:07 +0100
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Rob Herring <robh@kernel.org>
+Cc: Dave Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>, Emilio
+ Lopez <emilio@elopez.com.ar>, Maxime Ripard
+ <maxime.ripard@free-electrons.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] drm: sunxi: Add a basic DRM driver for Allwinner
+ DE2
+Message-Id: <20160204121107.2fa6d12c161ce37a3901f118@free.fr>
+In-Reply-To: <20160202215036.GA25521@rob-hp-laptop>
+References: <cover.1454435944.git.moinejf@free.fr>
+	<76ae5b406ad64b2717c0b1c62c3005a62b2715b8.1454435944.git.moinejf@free.fr>
+	<20160202215036.GA25521@rob-hp-laptop>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Feb 7, 2016 at 10:13 PM, Andreas F=C3=A4rber <afaerber@suse.de> wro=
-te:
-> As preparation for arm64 based mesongxbb, which pulls in this code once
-> enabling ARCH_MESON, fix a size_t vs. unsigned int type mismatch.
-> The loop uses a local unsigned int variable, so adopt that type,
-> matching the header.
->
-> Fixes: 7a29a869434e ("clk: meson: Add support for Meson clock controller"=
-)
-> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
-> ---
->  drivers/clk/meson/clkc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/meson/clkc.c b/drivers/clk/meson/clkc.c
-> index c83ae1367abc..d920d410b51d 100644
-> --- a/drivers/clk/meson/clkc.c
-> +++ b/drivers/clk/meson/clkc.c
-> @@ -198,7 +198,7 @@ meson_clk_register_fixed_rate(const struct clk_conf *=
-clk_conf,
->  }
->
->  void __init meson_clk_register_clks(const struct clk_conf *clk_confs,
-> -                                   size_t nr_confs,
-> +                                   unsigned int nr_confs,
->                                     void __iomem *clk_base)
->  {
->         unsigned int i;
+On Tue, 2 Feb 2016 15:50:36 -0600
+Rob Herring <robh@kernel.org> wrote:
 
-Nit: I'd prefer to fix declaration in drivers/clk/meson/clkc.h with
-size_t since we are going to use it for array indexing.
+> > diff --git a/Documentation/devicetree/bindings/display/sunxi.txt b/Docu=
+mentation/devicetree/bindings/display/sunxi.txt
+> > new file mode 100644
+> > index 0000000..35f9763
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/display/sunxi.txt
+> > @@ -0,0 +1,81 @@
+> > +Allwinner sunxi display subsystem
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +
+> > +The sunxi display subsystems contain a display controller (DE),
+> > +one or two LCD controllers (TCON) and their external interfaces.
+> > +
+> > +Display controller
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +
+> > +Required properties:
+> > +
+> > +- compatible: value should be one of the following
+> > +		"allwinner,sun8i-h3-display-engine"
+> > +
+> > +- clocks: must include clock specifiers corresponding to entries in the
+> > +		clock-names property.
+> > +
+> > +- clock-names: must contain
+> > +		gate: for DE activation
+> > +		clock: DE clock
+> > +
+> > +- resets: phandle to the reset of the device
+> > +
+> > +- ports: phandle's to the LCD ports
+> > +
+> > +LCD controller
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +
+> > +Required properties:
+> > +
+> > +- compatible: value should be one of the following
+> > +		"allwinner,sun8i-h3-lcd"
+> > +
+> > +- clocks: must include clock specifiers corresponding to entries in the
+> > +		clock-names property.
+> > +
+> > +- clock-names: must contain
+> > +		gate: for LCD activation
+> > +		clock: pixel clock
+> > +
+> > +- resets: phandle to the reset of the device
+> > +
+> > +- port: port node with endpoint definitions as defined in
+> > +	Documentation/devicetree/bindings/media/video-interfaces.txt
+>=20
+> Define how many ports and endpoints.
 
-Also please, CC linux-meson@googlegroups.com on meson related patches.
+As told in some other mail, such a video binding should be generic.
+The number of ports depends on the hardware. Most SoCs have only one
+port per LCD, but some other have many ports as the A83T (3 ports from
+the LCD0).
 
-Thanks!
+> > +
+> > +Example:
+> > +
+> > +	de: de-controller@01000000 {
+> > +		compatible =3D "allwinner,sun8i-h3-display-engine";
+> > +		...
+> > +		clocks =3D <&bus_gates 44>, <&de_clk>;
+> > +		clock-names =3D "gate", "clock";
+> > +		resets =3D <&ahb_rst 44>;
+> > +		ports =3D <&lcd0_p>;
+>=20
+> This is pointless if you only have one item in ports. Is this really a=20
+> separate h/w block? Can't you move all this into the node below?
+
+Well, this example is extracted from the H3 where the DE and LCDs have
+different clocks, I/O resources and functions (the DE builds the video
+frames while the LCDs - TCONs - convert them to video flows).
+
+The example is not complete because there are 2 LCDs in the H3:
+		ports =3D <&lcd0_p>,		/* HDMI */
+			<&lcd1_p>;		/* TV (CVBS) */
+But, for SoCs with only one LCD, the description would be the same.
+
+> > +	};
+> > +
+> > +	lcd0: lcd-controller@01c0c000 {
+> > +		compatible =3D "allwinner,sun8i-h3-lcd";
+> > +		...
+> > +		clocks =3D <&bus_gates 35>, <&tcon0_clk>;
+> > +		clock-names =3D "gate", "clock";
+> > +		resets =3D <&ahb_rst 35>;
+> > +		#address-cells =3D <1>;
+> > +		#size-cells =3D <0>;
+> > +		lcd0_p: port {
+> > +			lcd0_ep: endpoint {
+> > +				remote-endpoint =3D <&hdmi_ep>;
+> > +			};
+> > +		};
+> > +	};
+
 
 --=20
-Carlo Caione
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
