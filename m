@@ -1,82 +1,232 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from eusmtp01.atmel.com ([212.144.249.242]:39422 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750981AbcBDHll (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 4 Feb 2016 02:41:41 -0500
+From: Wenyou Yang <wenyou.yang@atmel.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Russell King <linux@arm.linux.org.uk>
+CC: <linux-clk@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>
+Subject: [PATCH v2 3/4] ARM: at91: pm: configure PMC fast startup signals
+Date: Thu, 4 Feb 2016 15:37:50 +0800
+Message-ID: <1454571471-4434-4-git-send-email-wenyou.yang@atmel.com>
+In-Reply-To: <1454571471-4434-1-git-send-email-wenyou.yang@atmel.com>
+References: <1454571471-4434-1-git-send-email-wenyou.yang@atmel.com>
 MIME-Version: 1.0
-To: Mark Brown <broonie@kernel.org>, "Peter Ujfalusi" <peter.ujfalusi@ti.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20160216134233.GN18327@sirena.org.uk>
-Cc: "Stephen Boyd" <sboyd@codeaurora.org>, "Liam Girdwood" <lgirdwood@gmail.com>,
- alsa-devel@alsa-project.org, "Jyri Sarha" <jsarha@ti.com>,
- linux-clk@vger.kernel.org,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Kristo,
- Tero" <t-kristo@ti.com>
-References: <1455545495-20292-1-git-send-email-peter.ujfalusi@ti.com>
- <1455545495-20292-5-git-send-email-peter.ujfalusi@ti.com>
- <20160215152635.GN18988@sirena.org.uk> <56C2F00C.8080809@ti.com>
- <20160216134233.GN18327@sirena.org.uk>
-Message-ID: <20160216191346.2278.725@quark.deferred.io>
-Subject: Re: [PATCH 4/4] ASoC: simple-card: Support for selecting system clocks by ID
-Date: Tue, 16 Feb 2016 11:13:46 -0800
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Mark Brown (2016-02-16 05:42:33)
-> On Tue, Feb 16, 2016 at 11:46:52AM +0200, Peter Ujfalusi wrote:
-> =
+The fast startup signal is used as wake up sources for ULP1 mode.
+As soon as a fast startup signal is asserted, the embedded 12 MHz
+RC oscillator restarts automatically.
 
-> > As for codecs, tlv320aic3106 is also pretty simple device from the outs=
-ide, it
-> > can receive it's reference clock via:
-> > MCLK pin, GPIO2 pin or it can use the BCLK from the bus. Based on the i=
-ncoming
-> > frequency it can use it directly or it needs to use the internal PLL to
-> > generate the cocks.
-> > It can output generated clock via GPIO1
-> =
+This patch is to configure the fast startup signals, which signal
+is enabled to trigger the PMC to wake up the system from ULP1 mode
+should be configured via the DT.
 
-> That already sounds like there is room for configuration and hooking
-> into a wider clock tree - we've got three different source options and
-> an output plus a PLL that can presumably take in non-audio rates.
+Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
+---
 
-+1
+Changes in v2:
+ - shorten the pmc-fast-startup property's name.
+ - use the value property, instead of bool property for high
+   or low triggered.
 
-It is quite easy for existing drivers to become clock providers. Please
-see struct isp_xclk in:
+ arch/arm/mach-at91/pm.c      |  115 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk/at91_pmc.h |   32 ++++++++++++
+ 2 files changed, 147 insertions(+)
 
-drivers/media/platform/omap3isp/isp.h
-drivers/media/platform/omap3isp/isp.c
+diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
+index a7aec35..6763de8 100644
+--- a/arch/arm/mach-at91/pm.c
++++ b/arch/arm/mach-at91/pm.c
+@@ -24,6 +24,8 @@
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
+ #include <linux/clk/at91_pmc.h>
++#include <linux/mfd/syscon.h>
++#include <linux/regmap.h>
+ 
+ #include <asm/irq.h>
+ #include <linux/atomic.h>
+@@ -425,6 +427,117 @@ static void __init at91_pm_sram_init(void)
+ 			&at91_pm_suspend_in_sram, at91_pm_suspend_in_sram_sz);
+ }
+ 
++static int __init at91_pmc_fast_startup_init(void)
++{
++	struct device_node *np;
++	struct regmap *regmap;
++	const char *pm;
++	u32 mode = 0, polarity = 0;
++
++	np = of_find_compatible_node(NULL, NULL,
++				     "atmel,sama5d2-pmc-fast-startup");
++	if (!np)
++		return -ENODEV;
++
++	regmap = syscon_node_to_regmap(of_get_parent(np));
++	if (IS_ERR(regmap)) {
++		pr_info("AT91: failed to find PMC fast startup\n");
++		return PTR_ERR(regmap);
++	}
++
++	mode |= of_property_read_bool(np, "atmel,wkup-trigger") ?
++		AT91_PMC_FSTT0 : 0;
++	mode |= of_property_read_bool(np, "atmel,secumod-trigger") ?
++		AT91_PMC_FSTT1 : 0;
++	mode |= of_property_read_bool(np, "atmel,piobu0-trigger") ?
++		AT91_PMC_FSTT2 : 0;
++	mode |= of_property_read_bool(np, "atmel,piobu1-trigger") ?
++		AT91_PMC_FSTT3 : 0;
++	mode |= of_property_read_bool(np, "atmel,piobu2-trigger") ?
++		AT91_PMC_FSTT4 : 0;
++	mode |= of_property_read_bool(np, "atmel,piobu3-trigger") ?
++		AT91_PMC_FSTT5 : 0;
++	mode |= of_property_read_bool(np, "atmel,piobu4-trigger") ?
++		AT91_PMC_FSTT6 : 0;
++	mode |= of_property_read_bool(np, "atmel,piobu5-trigger") ?
++		AT91_PMC_FSTT7 : 0;
++	mode |= of_property_read_bool(np, "atmel,piobu6-trigger") ?
++		AT91_PMC_FSTT8 : 0;
++	mode |= of_property_read_bool(np, "atmel,piobu7-trigger") ?
++		AT91_PMC_FSTT9 : 0;
++	mode |= of_property_read_bool(np, "atmel,gmac-wol-trigger") ?
++		AT91_PMC_FSTT10 : 0;
++	mode |= of_property_read_bool(np, "atmel,rtc-alarm-trigger") ?
++		AT91_PMC_RTCAL : 0;
++	mode |= of_property_read_bool(np, "atmel,usb-resume-trigger") ?
++		AT91_PMC_USBAL : 0;
++	mode |= of_property_read_bool(np, "atmel,sdmmc-cd-trigger") ?
++		AT91_PMC_SDMMC_CD : 0;
++	mode |= of_property_read_bool(np, "atmel,rxlp-match-trigger") ?
++		AT91_PMC_RXLP_MCE : 0;
++	mode |= of_property_read_bool(np, "atmel,acc-comparison-trigger") ?
++		AT91_PMC_ACC_CE : 0;
++
++	if (!of_property_read_string(np, "atmel,wkup-trigger-level", &pm)) {
++		if (!strcasecmp(pm, "high"))
++			polarity |= AT91_PMC_FSTP0;
++	}
++
++	if (mode & AT91_PMC_FSTT1)
++		polarity |= AT91_PMC_FSTP1;
++
++	if (!of_property_read_string(np, "atmel,piobu0-trigger-level", &pm)) {
++		if (!strcasecmp(pm, "high"))
++			polarity |= AT91_PMC_FSTP2;
++	}
++
++	if (!of_property_read_string(np, "atmel,piobu1-trigger-level", &pm)) {
++		if (!strcasecmp(pm, "high"))
++			polarity |= AT91_PMC_FSTP3;
++	}
++
++	if (!of_property_read_string(np, "atmel,piobu2-trigger-level", &pm)) {
++		if (!strcasecmp(pm, "high"))
++			polarity |= AT91_PMC_FSTP4;
++	}
++
++	if (!of_property_read_string(np, "atmel,piobu3-trigger-level", &pm)) {
++		if (!strcasecmp(pm, "high"))
++			polarity |= AT91_PMC_FSTP5;
++	}
++
++	if (!of_property_read_string(np, "atmel,piobu4-trigger-level", &pm)) {
++		if (!strcasecmp(pm, "high"))
++			polarity |= AT91_PMC_FSTP6;
++	}
++
++	if (!of_property_read_string(np, "atmel,piobu5-trigger-level", &pm)) {
++		if (!strcasecmp(pm, "high"))
++			polarity |= AT91_PMC_FSTP7;
++	}
++
++	if (!of_property_read_string(np, "atmel,piobu6-trigger-level", &pm)) {
++		if (!strcasecmp(pm, "high"))
++			polarity |= AT91_PMC_FSTP8;
++	}
++
++	if (!of_property_read_string(np, "atmel,piobu7-trigger-level", &pm)) {
++		if (!strcasecmp(pm, "high"))
++			polarity |= AT91_PMC_FSTP9;
++	}
++
++	if (mode & AT91_PMC_FSTT10)
++		polarity |= AT91_PMC_FSTP10;
++
++	regmap_write(regmap, AT91_PMC_FSMR, mode);
++
++	regmap_write(regmap, AT91_PMC_FSPR, polarity);
++
++	of_node_put(np);
++
++	return 0;
++}
++
+ static const struct of_device_id atmel_pmc_ids[] = {
+ 	{ .compatible = "atmel,at91rm9200-pmc"  },
+ 	{ .compatible = "atmel,at91sam9260-pmc" },
+@@ -509,4 +622,6 @@ void __init sama5_pm_init(void)
+ 
+ 	if (readl(pmc + AT91_PMC_VERSION) >= SAMA5D2_PMC_VERSION)
+ 		at91_pm_data.ulp_mode = ULP1_MODE;
++
++	at91_pmc_fast_startup_init();
+ }
+diff --git a/include/linux/clk/at91_pmc.h b/include/linux/clk/at91_pmc.h
+index 4afd891..683580e 100644
+--- a/include/linux/clk/at91_pmc.h
++++ b/include/linux/clk/at91_pmc.h
+@@ -168,6 +168,38 @@
+ #define		AT91_PMC_WPVS		(0x1  <<  0)		/* Write Protect Violation Status */
+ #define		AT91_PMC_WPVSRC		(0xffff  <<  8)		/* Write Protect Violation Source */
+ 
++#define AT91_PMC_FSMR		0x70		/* Fast Startup Mode Register */
++#define AT91_PMC_FSTT0		BIT(0)		/* WKUP Pin Enable */
++#define AT91_PMC_FSTT1		BIT(1)		/* Security Module Enable */
++#define AT91_PMC_FSTT2		BIT(2)		/* PIOBU0 Input Enable */
++#define AT91_PMC_FSTT3		BIT(3)		/* PIOBU1 Input Enable */
++#define AT91_PMC_FSTT4		BIT(4)		/* PIOBU2 Input Enable */
++#define AT91_PMC_FSTT5		BIT(5)		/* PIOBU3 Input Enable */
++#define AT91_PMC_FSTT6		BIT(6)		/* PIOBU4 Input Enable */
++#define AT91_PMC_FSTT7		BIT(7)		/* PIOBU5 Input Enable */
++#define AT91_PMC_FSTT8		BIT(8)		/* PIOBU6 Input Enable */
++#define AT91_PMC_FSTT9		BIT(9)		/* PIOBU7 Input Enable */
++#define AT91_PMC_FSTT10		BIT(10)		/* GMAC Wake-up On LAN Enable */
++#define AT91_PMC_RTCAL		BIT(17)		/* RTC Alarm Enable */
++#define AT91_PMC_USBAL		BIT(18)		/* USB Resume Enable */
++#define AT91_PMC_SDMMC_CD	BIT(19)		/* SDMMC Card Detect Enable */
++#define AT91_PMC_LPM		BIT(20)		/* Low-power Mode */
++#define AT91_PMC_RXLP_MCE	BIT(24)		/* Backup UART Receive Enable */
++#define AT91_PMC_ACC_CE		BIT(25)		/* ACC Enable */
++
++#define AT91_PMC_FSPR		0x74		/* Fast Startup Polarity Reg */
++#define AT91_PMC_FSTP0		BIT(0)		/* WKUP Pin Polarity */
++#define AT91_PMC_FSTP1		BIT(1)		/* Security Module Polarity */
++#define AT91_PMC_FSTP2		BIT(2)		/* PIOBU0 Pin Polarity */
++#define AT91_PMC_FSTP3		BIT(3)		/* PIOBU1 Pin Polarity */
++#define AT91_PMC_FSTP4		BIT(4)		/* PIOBU2 Pin Polarity */
++#define AT91_PMC_FSTP5		BIT(5)		/* PIOBU3 Pin Polarity */
++#define AT91_PMC_FSTP6		BIT(6)		/* PIOBU4 Pin Polarity */
++#define AT91_PMC_FSTP7		BIT(7)		/* PIOBU5 Pin Polarity */
++#define AT91_PMC_FSTP8		BIT(8)		/* PIOBU6 Pin Polarity */
++#define AT91_PMC_FSTP9		BIT(9)		/* PIOBU7 Pin Polarity */
++#define AT91_PMC_FSTP10		BIT(10)		/* Wake-up On LAN Polarity */
++
+ #define AT91_PMC_VERSION	0xfc
+ 
+ #define AT91_PMC_PCER1		0x100			/* Peripheral Clock Enable Register 1 [SAMA5 only]*/
+-- 
+1.7.9.5
 
-CCF is intentionally designed as a library, meaning that you don't need
-to create a new struct device to register clocks. Feel free to BYOD
-(bring your own device).
-
-Then your IP block clocks (McASP in this case) can hook into the
-system-wide clock tree (e.g. where some of the parent clocks come from).
-
-> =
-
-> > I don't think it will bring any clarity or features we miss right now i=
-f we
-> > try to move CPU and codec drivers to clk API. IMHO.
-
-CPU drivers? Peter, you wrote the CCF clock provider driver for DRA7
-ATL, so I'm not sure what you mean here.
-
-> =
-
-> You happen to be looking at a particularly simple system but things do
-> scale up and there's not a clear cutoff point which would allow us to
-> make a clear distinction between things that might get used in a simple
-> system and things that might need something more complex.  This seems
-> particularly important when we're adding things to simple-card, we want
-> it to be usable with as many different devices as possible.
-
-The original patches didn't hit my inbox, only the last two replies. Can
-someone fill me in on the DT side of this discussion? Why are DT
-bindings needed here? Are other devices besides McASP consuming the
-clocks provided by McASP?
-
-DT can also be a good candidate for doing per-board (or per-use case)
-clock configuration via the assigned-clocks, assigned-clock-rates, and
-assigned-clock-parents properties.
-
-Regards,
-Mike
