@@ -1,65 +1,64 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 4 Feb 2016 13:17:13 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>, heiko@sntech.de,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Andre Przywara <andre.przywara@arm.com>
+Subject: Re: [PATCH 5/5] clk: sunxi: Remove clk_register_clkdev calls
+Message-ID: <20160204121713.GH4270@lukather>
+References: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1454402834-6385-6-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1454322472-6696-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1454322472-6696-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Date: Mon, 1 Feb 2016 11:41:05 +0100
-Message-ID: <CAMuHMdX7HBvGzeqsCVw6bUXBvXa5uMdiZ8GJD75bGezVz2WOxA@mail.gmail.com>
-Subject: Re: [PATCH] clk: shmobile: r8a7795: Add USB-DMAC clocks
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Dx9iWuMxHO1cCoFc"
+In-Reply-To: <1454402834-6385-6-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Shimoda-san,
 
-On Mon, Feb 1, 2016 at 11:27 AM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+--Dx9iWuMxHO1cCoFc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for your patch!
+On Tue, Feb 02, 2016 at 09:47:14AM +0100, Maxime Ripard wrote:
+> Now that our protection code doesn't use the global name lookup anymore, =
+we
+> can remove the clkdev registrations.
+>=20
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-> ---
->  This patch is based on the renesas-drivers.git /
->  renesas-devel-20160126-v4.5-rc1 tag.
->  (commit id = f834955ea55e4bed01d55339a4428eef219e8313)
->
->  Reference:
->  http://thread.gmane.org/gmane.linux.kernel.clk/3337/focus=184
->
->  drivers/clk/shmobile/r8a7795-cpg-mssr.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/clk/shmobile/r8a7795-cpg-mssr.c b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
-> index fc260b3..13d59d1 100644
-> --- a/drivers/clk/shmobile/r8a7795-cpg-mssr.c
-> +++ b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
-> @@ -124,6 +124,8 @@ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
->         DEF_MOD("pcie0",                 319,   R8A7795_CLK_S3D1),
->         DEF_MOD("usb3-if1",              327,   R8A7795_CLK_S3D1),
->         DEF_MOD("usb3-if0",              328,   R8A7795_CLK_S3D1),
-> +       DEF_MOD("usb-dmac0",             330,   R8A7795_CLK_S3D2),
-> +       DEF_MOD("usb-dmac1",             331,   R8A7795_CLK_S3D2),
+Applied.
 
-The datasheet is not very clear about whether the module clock is based of s3d1
-(266 MHz) or s3d2 (133 MHz), but given the comment "... it is recommended to
-allow several tens of clocks if operating at 260 MHz ..." in section 75.2.2
-"DMA0/1 Software Reset Register" of the datasheet, I'm inclined to believe s3d1
-would be correct.
+Maxime
 
-I don't think it matters much though, as we're not interested in the actual
-rate of the module clock, and both s3d1 and s3d2 cannot be gated.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
-Gr{oetje,eeting}s,
+--Dx9iWuMxHO1cCoFc
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-                        Geert
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+iQIcBAEBAgAGBQJWs0FJAAoJEBx+YmzsjxAgQIEQAJyYOwqR/t4+64PhQRuXbKtP
+nYVAn1Fu9afG6hgO/cAIESoYIxQTFks5snKiSIjNFafk0643GgpmokmugWLQNyIi
+l9Qz4SYIzB7sLF3umWvJizCILYin/pkrRGeyviMAfX6nCNq6MKf/rukMUG6TMMZv
+fSljFuh1udgIbWgI8PPiAjp387KEjX8dQctwYwqm1Qz4HlQvnA+gYUoXO4Jnkgr0
+oCm8GsWj0Cnbwgc/w4jHIcFvyL4XTtQ7khPc+0zGD5HdqjBe1TsUpA8QogVzMCrL
+nIfXujcYn7Z7bxYND+nzkA56WzXhUg7D+S7JcwHNswh0TLVznnCkEAWEW6gD2fUu
+wiVoO/t5tT2SZVUS2OS0BZvcCW8KX8QD7nf1zTMrgVaZDIdcUZ7tdqduu1VP+fds
+yRrnoxfFLYUI7cNR/4r6UMa3ye+lAAahPRoMo+jZweVzRGNVPtI83x2uZhP3YLWi
+HLzaX1bWmJS6fN4AgYDF2xjkUHybzE+9Q4kvpfo0AyTSaT1rRx2F5ssPTBdHDr/7
+YzToaUazXmFuvFBuhovi2xDAflUrMyEaOZCPxGJaz3s5ssTMGEDmGLqhSTnoYQUw
+v62tTEQv22SJEbRfZOx5BMQ2GMT8feahSjv18Q56t6RsBuEngkkiB6iEQFUNCxqr
+JI5HlY0xElXrHqV/Z3dO
+=+1cf
+-----END PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--Dx9iWuMxHO1cCoFc--
