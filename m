@@ -1,38 +1,114 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.9]:47505 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030261AbcBQSro (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 17 Feb 2016 13:47:44 -0500
-From: Anatolij Gustschin <agust@denx.de>
-To: linux-clk@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] clk: imx: correct pwm7 clock name in driver for i.MX6UL
-Date: Wed, 17 Feb 2016 19:48:19 +0100
-Message-Id: <1455734900-1913-1-git-send-email-agust@denx.de>
+Received: from eusmtp01.atmel.com ([212.144.249.242]:39598 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751666AbcBDHmd (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 4 Feb 2016 02:42:33 -0500
+From: Wenyou Yang <wenyou.yang@atmel.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Russell King <linux@arm.linux.org.uk>
+CC: <linux-clk@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>
+Subject: [PATCH v2 4/4] Documentation: atmel-pmc: add DT bindings for fast startup
+Date: Thu, 4 Feb 2016 15:37:51 +0800
+Message-ID: <1454571471-4434-5-git-send-email-wenyou.yang@atmel.com>
+In-Reply-To: <1454571471-4434-1-git-send-email-wenyou.yang@atmel.com>
+References: <1454571471-4434-1-git-send-email-wenyou.yang@atmel.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Don't capitalize p in the pwm7 clock name.
+Add DT bindings to configurate the PMC_FSMR and PMC_FSPR registers
+to trigger a fast restart signal to PMC.
 
-Signed-off-by: Anatolij Gustschin <agust@denx.de>
+Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
 ---
- drivers/clk/imx/clk-imx6ul.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index 01718d0..15f2ac8 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -394,7 +394,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6UL_CLK_I2C4]		= imx_clk_gate2("i2c4",		"perclk", 	 base + 0x80,	24);
- 	clks[IMX6UL_CLK_PWM5]		= imx_clk_gate2("pwm5",		"perclk",	 base + 0x80,	26);
- 	clks[IMX6UL_CLK_PWM6]		= imx_clk_gate2("pwm6",		"perclk",	 base +	0x80,	28);
--	clks[IMX6UL_CLK_PWM7]		= imx_clk_gate2("Pwm7",		"perclk",	 base + 0x80,	30);
-+	clks[IMX6UL_CLK_PWM7]		= imx_clk_gate2("pwm7",		"perclk",	 base + 0x80,	30);
- 
- 	/* mask handshake of mmdc */
- 	writel_relaxed(BM_CCM_CCDR_MMDC_CH0_MASK, base + CCDR);
+Changes in v2:
+ - change the property name and property description.
+
+ .../devicetree/bindings/arm/atmel-pmc.txt          |   63 ++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/atmel-pmc.txt b/Documentation/devicetree/bindings/arm/atmel-pmc.txt
+index 795cc78..1b3833b 100644
+--- a/Documentation/devicetree/bindings/arm/atmel-pmc.txt
++++ b/Documentation/devicetree/bindings/arm/atmel-pmc.txt
+@@ -12,3 +12,66 @@ Examples:
+ 		compatible = "atmel,at91rm9200-pmc";
+ 		reg = <0xfffffc00 0x100>;
+ 	};
++
++PMC Fast Startup Signals
++
++The PMC Fast Start Signals are used as the wake up source to trigger the PMC
++to wake up the system from the ULP1 mode.
++
++required properties:
++- compatible: Should be "atmel,sama5d2-pmc-fast-startup".
++
++optional properties:
++- atmel,wkup-trigger: boolean, WKUP input can trigger a fast restart signal.
++- atmel,secumod-trigger: boolean, SECUMOD can trigger a fast restart signal.
++- atmel,piobu0-trigger: boolean, PIOBU0 input can trigger a fast restart signal.
++- atmel,piobu1-trigger: boolean, PIOBU1 input can trigger a fast restart signal.
++- atmel,piobu2-trigger: boolean, PIOBU2 input can trigger a fast restart signal.
++- atmel,piobu3-trigger: boolean, PIOBU3 input can trigger a fast restart signal.
++- atmel,piobu4-trigger: boolean, PIOBU4 input can trigger a fast restart signal.
++- atmel,piobu5-trigger: boolean, PIOBU5 input can trigger a fast restart signal.
++- atmel,piobu6-trigger: boolean, PIOBU6 input can trigger a fast restart signal.
++- atmel,piobu7-trigger: boolean, PIOBU7 input can trigger a fast restart signal.
++- atmel,gmac-wol-trigger: boolean, GMAC_WOL can trigger a fast restart signal.
++- atmel,rtc-alarm-trigger: boolean, RTC alarm can trigger a fast restart signal.
++- atmel,usb-resume-trigger: boolean, USB resume can trigger a fast restart
++  signal.
++- atmel,sdmmc-cd-trigger: boolean, SDMMC card detect can trigger a fast
++  restart signal.
++- atmel,rxlp-match-trigger: boolean, Matching condition on RXLP can trigger
++  a fast restart signal.
++- atmel,acc-comparison-trigger: boolean, ACC comparison can trigger a fast
++  restart signal.
++
++- atmel,wkup-trigger-level: string, defines the active polarity of the wake-up
++  input. Supported values are: "high" or "low".
++- atmel,piobu0-trigger-level: string, defines the active polarity of
++  the corresponding PIOBU0 input. Supported values are: "high" or "low".
++- atmel,piobu1-trigger-level: string, defines the active polarity of
++  the corresponding PIOBU1 input. Supported values are: "high" or "low".
++- atmel,piobu2-trigger-level: string, defines the active polarity of
++  the corresponding PIOBU2 input. Supported values are: "high" or "low".
++- atmel,piobu3-trigger-level: string, defines the active polarity of
++  the corresponding PIOBU3 input. Supported values are: "high" or "low".
++- atmel,piobu4-trigger-level: string, defines the active polarity of
++  the corresponding PIOBU4 input. Supported values are: "high" or "low".
++- atmel,piobu5-trigger-level: string, defines the active polarity of
++  the corresponding PIOBU5 input. Supported values are: "high" or "low".
++- atmel,piobu6-trigger-level: string, defines the active polarity of
++  the corresponding PIOBU6 input. Supported values are: "high" or "low".
++- atmel,piobu7-trigger-level: string, defines the active polarity of
++  the corresponding PIOBU7 input. Supported values are: "high" or "low".
++
++Example:
++
++	pmc: pmc@f0014000 {
++		compatible = "atmel,sama5d2-pmc";
++		reg = <0xf0014000 0x160>;
++
++		pmc_fast_restart {
++			compatible = "atmel,sama5d2-pmc-fast-startup";
++			atmel,wkup-trigger;
++			atmel,rtc-alarm-trigger;
++			atmel,wkup-trigger-level = "low";
++		};
++	};
 -- 
 1.7.9.5
 
