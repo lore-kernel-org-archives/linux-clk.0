@@ -1,81 +1,70 @@
-Return-Path: <hdegoede@redhat.com>
-Subject: Re: [linux-sunxi] Allwinner A64 MMC support
-To: Andre Przywara <andre.przywara@arm.com>
-References: <1455300000-18723-1-git-send-email-andre.przywara@arm.com>
- <56BE29A1.3060107@redhat.com> <56C1A590.6030500@arm.com>
- <56C1C7BB.1040602@redhat.com> <56C1D9C0.6020601@arm.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Chen-Yu Tsai <wens@csie.org>, Stephen Boyd <sboyd@codeaurora.org>,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-arm-kernel@lists.infradead.org,
-        Rob Herring <rob.herring@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        Grant Likely <grant.likely@linaro.org>,
-        Frank Rowand <frowand.list@gmail.com>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <56C1F446.9020801@redhat.com>
-Date: Mon, 15 Feb 2016 16:52:38 +0100
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:59805 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751093AbcBDTap (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+	Thu, 4 Feb 2016 14:30:45 -0500
+Date: Thu, 4 Feb 2016 20:30:37 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Dirk Behme <dirk.behme@gmail.com>
+Cc: linux-sh@vger.kernel.org, geert+renesas@glider.be,
+	wsa+renesas@sang-engineering.com, linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
+	linux-arm-kernel@lists.infradead.org,
+	Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+	Dirk Behme <dirk.behme@de.bosch.com>
+Subject: Re: [PATCH v2] clk: shmobile: r8a7795: Add SD divider support
+Message-ID: <20160204193036.GA1958@tetsubishi>
+References: <1454135639-4102-1-git-send-email-dirk.behme@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <56C1D9C0.6020601@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="2oS5YaxWCcQjTEyO"
+In-Reply-To: <1454135639-4102-1-git-send-email-dirk.behme@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
 
-On 15-02-16 14:59, Andre Przywara wrote:
-> Hi Hans,
->
-> ....
->
->>
->> p.s.
->>
->> I love the work you've been doing on the A64, I've not had a chance
->> to try it out yet though. Have you made any progress with getting
->> the mmc slot to work ?  If not maybe I can make some time I've
->> prior experience in bringing up the mmc slot on other Allwinner SoCs
->
-> Thanks for that!
->
-> So we made some progress on the weekend (with the help of #linux-sunxi):
-> 1) The regulator node was stupidly put by me into a separate child node
-> without putting address and size cells into. So I just moved it into
-> /soc directly now and that seems to fixed the missing regulator.
-> 2) The reset node is a allwinner,sun6i-a31-ahb1-reset, which does not
-> get registered automatically, but by an explicit call from mach-sunxi/.
-> I wonder why we do this (yes, I saw that comment, but still...) and if
-> it would work with a normal MODULE_DEVICE_TABLE() declaration.
-> There is and will be no equivalent to the mach- directory on arm64.
-> 3) As Jens pointed out, the MMC IP block isn't really compatible.
-> Changing the clocks is easy (done already), but we need to come up with
-> code to cover the new phase setting registers in the A64 MMC register block.
->
-> Interestingly somehow hacking this (pretending it is compatible) seems
-> to work, though I got reports from people about mysterious kernel
-> crashes, so I'm inclined to leave MMC out of the first patch series.
->
-> So if you could take a look at the new registers (starting at offset
-> 0x140) and work out what we actually need to do here, that would be
-> great. I have no real clue about what they actually do and how they
-> relate to the current output and sample clock phase.
-> To me it looks like we might get away with just triggering the automatic
-> calibration and the hardware does the rest for us - keep your fingers
-> crossed ;-)
+--2oS5YaxWCcQjTEyO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Just triggering the automatic calibration sounds good, this likely will
-result in better values then the magic values we are currently using for
-older SoCs.
+On Sat, Jan 30, 2016 at 07:33:59AM +0100, Dirk Behme wrote:
+> This patch adds SD[0..3] clock divider support for R-Car Gen3 SoC.
+>=20
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
 
-As for the meaning of those registers, what we've been doing with the phase
-registers so far pretty much boils down to look at what Allwinner BSP kernel
-sources do, and then do the same in u-boot / the mainline driver since
-the mmc controller documentation is very limited.
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Do you have a git tree with your wip mmc support somewhere ? Then I or
-maybe Chen-Yu can take a look when we've time.
+Since we don't have UHS support currently, changing the clock is not
+really exercised; but the code looks good and if it needs fixing, we can
+do it incrementally IMO. What is currently needed works fine on my
+Salvator-X for the exposed SD interfaces.
 
-Regards,
+Thanks,
 
-Hans
+   Wolfram
+
+
+--2oS5YaxWCcQjTEyO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWs6bcAAoJEBQN5MwUoCm2zYMP/2OYrmWjiqqkLqqm5Lle5lmh
+XvVWZ/qRKH5ixDP5E6FpRUUC7R7wG9VhdBs1rAYrmypaeibhJNkI8hVQGvwoEi+X
+bMi4fncoCShS1VIgmailH0f3Rn6tjZwjvECLfA2qMOs6IOPlXsX1cdUK79a0XvBu
+icsWXEecNj8h12kqx0CL2TNL5hpVsOoWPwtCi4/NlAcbsXggJFzQuQr2ytpfP0JP
+vIe3iXqk+vOV5C+9lWJpCoVz573q9F7P62dMWaoLxHScb9tMeeEap1OXSoWKHy+M
+qRXueYpMltkQTSp+zBFnx3XWDRAtn95WqHqNduaBGZnNsgr3L1tt36sRnQ6CQzq6
+bDBhTAhHH5OmuvxcVKebupvC5EeF3opF+ANlSH7LqX+5Yoq868iM8vl9lmzidW9m
+bbYSmayQTGNaQApYkl0g3fojXGnpoc9hQF4n1GpE+SHz/9XUKq0N+Qp2KKrUBKMb
+LcWzWWWVXVAB33pZTluvnBb4CsAcrmoy/KPbAVLVYB1bBno+h8bmdx0x0WB+Nyy7
+OQiMUv8gKgd5e9rCyeo5Dbq8biOGApKF0swt7yBF9QZFvnIe8a5quTwn8VryCdHi
+41s4VldOBl+yKRItIUnEMkKOwpfyQjxavpDvRNDeHthCflS5ITeIPDcjDMV8gScp
+SzW7E0lMNKz5vYTKYEZT
+=1waK
+-----END PGP SIGNATURE-----
+
+--2oS5YaxWCcQjTEyO--
