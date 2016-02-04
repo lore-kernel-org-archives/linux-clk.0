@@ -1,60 +1,58 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 1 Feb 2016 16:50:51 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v2 10/16] clk: move checking .git_parent to
- __clk_core_init()
-Message-ID: <20160202005051.GO4848@codeaurora.org>
-References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
- <1451298191-30815-11-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Wenyou Yang <wenyou.yang@atmel.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Russell King <linux@arm.linux.org.uk>
+CC: <linux-clk@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>
+Subject: [PATCH v2 0/4] ARM: at91: pm: add ULP1 mode support
+Date: Thu, 4 Feb 2016 15:37:47 +0800
+Message-ID: <1454571471-4434-1-git-send-email-wenyou.yang@atmel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1451298191-30815-11-git-send-email-yamada.masahiro@socionext.com>
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/28, Masahiro Yamada wrote:
-> The .git_parent is mandatory for multi-parent clocks.  Move the check
+The ULP1 (Ultra Low-power mode 1) is introduced by SAMA5D2.
 
-s/git/get/
+In order to achieve the lowest power consumption, in the ULP1 mode,
+all the clocks are shut off, inclusive the embedded 12MHz RC oscillator.
 
-Same for the subject.
+The fast startup signal is used as a wake up source for ULP1 mode.
+As soon as the wake up event is asserted, the embedded 12MHz RC
+oscillator restarts automatically, which fast startup signal
+to trigger the PMC to wake up the system from the ULP1 mode can be
+configured via DT.
 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index e6e10f5..4ad0a36 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1677,13 +1677,6 @@ static struct clk_core *__clk_init_parent(struct clk_core *core)
->  		goto out;
->  	}
->  
-> -	if (!core->ops->get_parent) {
-> -		WARN(!core->ops->get_parent,
-> -			"%s: multi-parent clocks must implement .get_parent\n",
-> -			__func__);
-> -		goto out;
-> -	}
-> -
->  	/*
->  	 * Do our best to cache parent clocks in core->parents.  This prevents
->  	 * unnecessary and expensive lookups.  We don't set core->parent here;
-> @@ -2315,6 +2308,11 @@ static int __clk_core_init(struct clk_core *core)
->  		goto out;
->  	}
->  
-> +	if (core->num_parents > 1 && !core->ops->get_parent) {
-> +		pr_err("%s: %s must implement .get_parent as it has multi parents\n",
-> +		       __func__, core->name);
-> +	}
-> +
+It is based on the following patch set:
+	http://lists.infradead.org/pipermail/linux-arm-kernel/2015-December/390954.html
 
-This would seem to allow a case where we may deref a null
-get_parent op if it isn't set and we call __clk_init_parent().
-The next patch removes that case by restructuring
-__clk_init_parent(), so we should just combine these two patches
-together and that theoretical problem goes away.
+Changes in v2:
+ - fix label pm_exit to ulp_exit.
+ - shorten the pmc-fast-startup property's name.
+ - use the value property, instead of bool property for high
+   or low triggered.
+ - change the property name and property description.
+
+Wenyou Yang (4):
+  ARM: at91: pm: create a separate procedure for the ULP0 mode
+  ARM: at91: pm: add ULP1 mode support
+  ARM: at91: pm: configure PMC fast startup signals
+  Documentation: atmel-pmc: add DT bindings for fast startup
+
+ .../devicetree/bindings/arm/atmel-pmc.txt          |   63 ++++++++
+ arch/arm/mach-at91/pm.c                            |  131 +++++++++++++++-
+ arch/arm/mach-at91/pm.h                            |    7 +
+ arch/arm/mach-at91/pm_suspend.S                    |  158 +++++++++++++++++---
+ include/linux/clk/at91_pmc.h                       |   36 +++++
+ 5 files changed, 370 insertions(+), 25 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
