@@ -1,80 +1,51 @@
-Return-Path: <lars.persson@axis.com>
-From: Lars Persson <lars.persson@axis.com>
-To: devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	linux-kernel@vger.kernel.org,
-	Lars Persson <larper@axis.com>
-Subject: [PATCH v2 1/2] clk: add device tree binding for Artpec-6 clock controller
-Date: Fri, 19 Feb 2016 15:30:14 +0100
-Message-Id: <fd330ff1346758966260cb2bcddd8d3fbff49704.1455891890.git.larper@axis.com>
-In-Reply-To: <cover.1455891890.git.larper@axis.com>
-References: <cover.1455891890.git.larper@axis.com>
-In-Reply-To: <cover.1455891890.git.larper@axis.com>
-References: <cover.1455891890.git.larper@axis.com>
+Return-Path: <vishnupatekar0510@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20160202131947.GS4652@lukather>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1454203266-4450-7-git-send-email-vishnupatekar0510@gmail.com> <20160202131947.GS4652@lukather>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Date: Thu, 4 Feb 2016 16:51:06 +0800
+Message-ID: <CAEzqOZvcy58T_uxvymGxuQXh_Goj3yHmgkmL4VL+x2_bycMgNg@mail.gmail.com>
+Subject: Re: [PATCH 06/14] ARM: dts: sun8i-a83t: Correct low speed oscillator clocks
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: "robh+dt@kernel.org" <robh+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	"pawel.moll@arm.com" <pawel.moll@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
+	"linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
+	Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>, linux-gpio@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree documentation for the main clock controller in the
-Artpec-6 SoC.
+Hello Maxime,
 
-Signed-off-by: Lars Persson <larper@axis.com>
----
- .../devicetree/bindings/clock/artpec6.txt          | 41 ++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/artpec6.txt
 
-diff --git a/Documentation/devicetree/bindings/clock/artpec6.txt b/Documentation/devicetree/bindings/clock/artpec6.txt
-new file mode 100644
-index 0000000..76e3e7f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/artpec6.txt
-@@ -0,0 +1,41 @@
-+* Clock bindings for Axis ARTPEC-6 chip
-+
-+The bindings are based on the clock provider binding in
-+Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+External clocks:
-+----------------
-+
-+There are two external inputs to the main clock controller which should be
-+provided using the common clock bindings.
-+- "sys_refclk": External 50 Mhz oscillator (required)
-+- "i2s_refclk": Alternate audio reference clock (optional).
-+
-+Main clock controller
-+---------------------
-+
-+Required properties:
-+- #clock-cells: Should be <1>
-+  See dt-bindings/clock/axis,artpec6-clkctrl.h for the list of valid identifiers.
-+- compatible: Should be "axis,artpec6-clkctrl"
-+- reg: Must contain the base address and length of the system controller
-+- clocks:  Must contain a phandle entry for each clock in clock-names
-+- clock-names: Must include the external oscillator ("sys_refclk"). Optional
-+  ones are the audio reference clock ("i2s_refclk") and the audio fractional
-+  divider ("frac_clk").
-+
-+Examples:
-+
-+ext_clk: ext_clk {
-+	#clock-cells = <0>;
-+	compatible = "fixed-clock";
-+	clock-frequency = <50000000>;
-+};
-+
-+clkctrl: clkctrl {
-+	#clock-cells = <1>;
-+	compatible = "axis,artpec6-clkctrl";
-+	reg = <0xf8000000 0x48>;
-+	clocks = <&ext_clk>;
-+	clock-names = "sys_refclk";
-+};
--- 
-2.1.4
+On Tue, Feb 2, 2016 at 9:19 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> On Sun, Jan 31, 2016 at 09:20:58AM +0800, Vishnu Patekar wrote:
+>> From: Chen-Yu Tsai <wens@csie.org>
+>>
+>> The A83T does not have a 32.768 kHz low speed oscillator, either as
+>> an external crystal or input. It has a 16 MHz RC-based (inaccurate)
+>> internal oscillator, which is then divided by 512 for a clock close
+>> to 32 kHz.
+>>
+>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>
+> You should have your SoB here.
+>
+> Is it ok to add it?
+Yes, please add.
+>
+> Maxime
+>
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
