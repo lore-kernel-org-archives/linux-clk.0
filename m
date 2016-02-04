@@ -1,74 +1,71 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Fri, 12 Feb 2016 08:06:20 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-	maxime.ripard@free-electrons.com, maxime.coquelin@st.com,
-	geert@linux-m68k.org, heiko@sntech.de, andre.przywara@arm.com,
-	rklein@nvidia.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v42 0/6] critical clocks and handoff clocks
-Message-ID: <20160212080620.GM20693@x1>
-References: <1455225554-13267-1-git-send-email-mturquette@baylibre.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 4 Feb 2016 13:07:38 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Emilio Lopez <emilio@elopez.com.ar>, heiko@sntech.de,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Andre Przywara <andre.przywara@arm.com>
+Subject: Re: [PATCH 1/5] clk: sunxi: Make clocks setup functions return their
+ clock
+Message-ID: <20160204120738.GD4270@lukather>
+References: <1454402834-6385-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1454402834-6385-2-git-send-email-maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1455225554-13267-1-git-send-email-mturquette@baylibre.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="PHCdUe6m4AxPMzOu"
+In-Reply-To: <1454402834-6385-2-git-send-email-maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 11 Feb 2016, Michael Turquette wrote:
 
-> This series combines Lee's critical clock patches[0] plus some small
-> fixes and changes with a repost of my handoff clock patches[1]. Both
-> features are enabled by setting new flags on static clock data within
-> clock provider drivers.
-> 
-> In addition, there is a new function for setting the CLK_IS_CRITICAL
-> flag based on the presence of the clock-critical Device Tree property.
-> This DT property is not a part of the common-clock binding and must be
-> enabled on a per-binding basis (including adding that property to the
-> machine-specific binding description). Likewise the new function,
-> of_clk_detect_critical() must be called by either the clock provider
-> driver's probe or OF_CLK_DECLARE setup function.
-> 
-> [0] https://lkml.org/lkml/2016/1/18/272
-> [1] http://www.gossamer-threads.com/lists/linux/kernel/2234337
-> 
-> Lee Jones (3):
->   clk: Allow clocks to be marked as CRITICAL
->   clk: WARN_ON about to disable a critical clock
->   clk: Provide OF helper to mark clocks as CRITICAL
+--PHCdUe6m4AxPMzOu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-One small issue which I've commented on already, but appart from that:
+On Tue, Feb 02, 2016 at 09:47:10AM +0100, Maxime Ripard wrote:
+> The clocks registration code in clk-sunxi was most of the time not
+> returning the struct clk (or struct clk array) that was registered,
+> preventing the users of such functions to manipulate it, for example to
+> protect it.
+>=20
+> Make them return it so that we can start using it.
+>=20
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
+After discussing it with Chen-Yu on IRC, the error logging will be
+done as a subsequent patch.
 
-W00t, finally!  I'm so happy I could kiss you (but I can't due to that
-legal injunction you have out on me that says I can't come within 100m
-of you). ;)
+Applied.
 
-Let's get this sucker in. :)
+Maxime
 
-> Michael Turquette (3):
->   clk: per-user clk prepare & enable ref counts
->   clk: clk_put WARNs if user has not disabled clk
->   clk: introduce CLK_ENABLE_HAND_OFF flag
-> 
->  drivers/clk/clk.c            | 127 +++++++++++++++++++++++++++++++++++++++++--
->  include/linux/clk-provider.h |  12 +++-
->  2 files changed, 134 insertions(+), 5 deletions(-)
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
+--PHCdUe6m4AxPMzOu
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWsz8KAAoJEBx+YmzsjxAgAgAP/1PW5mKZ7/EaNcoLGye9ErNS
+qDObAMZwjG38uf9Szj5SFeUMuV2iV9/ZdMhUuV+fijSBmXB/u0LVdF67X2W9wnrq
+9u3X34jUfuZ9AjJyB24zXYEYPtWeTS/MyUiqYJ+e2TTKSHLh2uSk562iG9sc6Ax6
+0BrE0ecAM3WCSsu5SYVISs4VfP0XM6oDqwxdb3Bz2YE3FYfaL+g0fRdKG7W+BXKI
+LB11j/d1xNBkHwTT9T6lX3ey5e8MUkA1cCocwAIVATSoITpQYN9B3q5IXrDMdnqw
+/acybitdWQ9FMtRIDYds6FY/R8PRKlblvX1A3PgnWfQ0inYfrG7vamLWqscwlYc/
+i5McziIgPVA03JwyZijmXmpeMEX48dHXclN/TA0jNY1ZvfpO2Y+tY1p/F+Ca/LYE
+vD+DIOW2jvxIMAqKrrH8fpmpApM7zqyxvBYBrfnp857XR9VcxqhmiNB4+kir7KvL
+/q1hMGBeVE8rI3upCHVcBAigkE8KdlKAYOSYa9icyxG8jg4snSwt3AOU3J2Z+Nw5
+iOtzf15oRDmr2hm3zgfB8/hCfH7EWYlJvoPXcFzi4dzKua65DHLU9DOnRwC4mNFM
+4c+7RPDUoY2nemyDE3DEDsdkoo1Dv1LeNjWooZBc/PMso14tpBbaLFZkpEPJGuWY
+2oP02wzhlC0mpe2EAbWN
+=VaXh
+-----END PGP SIGNATURE-----
+
+--PHCdUe6m4AxPMzOu--
