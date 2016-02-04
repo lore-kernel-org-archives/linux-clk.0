@@ -1,175 +1,142 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from bes.se.axis.com ([195.60.68.10]:44668 "EHLO bes.se.axis.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751681AbcBKOFH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-	Thu, 11 Feb 2016 09:05:07 -0500
-From: Lars Persson <lars.persson@axis.com>
-To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	linux-kernel@vger.kernel.org, Lars Persson <larper@axis.com>
-Subject: [PATCH v2 6/8] arm: initial machine port for artpec-6 SoC
-Date: Thu, 11 Feb 2016 15:04:40 +0100
-Message-Id: <326c3d195bd2011e08509fe8bdcc32e48df13b86.1455198819.git.larper@axis.com>
-In-Reply-To: <cover.1455198819.git.larper@axis.com>
-References: <cover.1455198819.git.larper@axis.com>
-In-Reply-To: <cover.1455198819.git.larper@axis.com>
-References: <cover.1455198819.git.larper@axis.com>
+Received: from eusmtp01.atmel.com ([212.144.249.242]:39219 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752570AbcBDHkm (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 4 Feb 2016 02:40:42 -0500
+From: Wenyou Yang <wenyou.yang@atmel.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Russell King <linux@arm.linux.org.uk>
+CC: <linux-clk@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	Wenyou Yang <wenyou.yang@atmel.com>
+Subject: [PATCH v2 1/4] ARM: at91: pm: create a separate procedure for the ULP0 mode
+Date: Thu, 4 Feb 2016 15:37:48 +0800
+Message-ID: <1454571471-4434-2-git-send-email-wenyou.yang@atmel.com>
+In-Reply-To: <1454571471-4434-1-git-send-email-wenyou.yang@atmel.com>
+References: <1454571471-4434-1-git-send-email-wenyou.yang@atmel.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Basic machine port for the Artpec-6 SoC from Axis
-Communications.
+To make the code more legible and prepare to add the ULP1 mode
+support in the future, create a separate procedure for the ULP0 mode.
 
-Signed-off-by: Lars Persson <larper@axis.com>
+Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
 ---
- arch/arm/Kconfig                     |  2 +
- arch/arm/Makefile                    |  1 +
- arch/arm/mach-artpec/Kconfig         | 20 ++++++++++
- arch/arm/mach-artpec/Makefile        |  1 +
- arch/arm/mach-artpec/board-artpec6.c | 72 ++++++++++++++++++++++++++++++++++++
- 5 files changed, 96 insertions(+)
- create mode 100644 arch/arm/mach-artpec/Kconfig
- create mode 100644 arch/arm/mach-artpec/Makefile
- create mode 100644 arch/arm/mach-artpec/board-artpec6.c
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 4f799e5..e1565dd 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -724,6 +724,8 @@ source "arch/arm/mach-mvebu/Kconfig"
+Changes in v2: None
+
+ arch/arm/mach-at91/pm_suspend.S |   65 ++++++++++++++++++++++++---------------
+ 1 file changed, 40 insertions(+), 25 deletions(-)
+
+diff --git a/arch/arm/mach-at91/pm_suspend.S b/arch/arm/mach-at91/pm_suspend.S
+index a25defd..5fcffdc 100644
+--- a/arch/arm/mach-at91/pm_suspend.S
++++ b/arch/arm/mach-at91/pm_suspend.S
+@@ -107,7 +107,7 @@ ENTRY(at91_pm_suspend_in_sram)
  
- source "arch/arm/mach-alpine/Kconfig"
+ 	ldr	r0, .pm_mode
+ 	tst	r0, #AT91_PM_SLOW_CLOCK
+-	beq	skip_disable_main_clock
++	beq	standby_mode
  
-+source "arch/arm/mach-artpec/Kconfig"
-+
- source "arch/arm/mach-asm9260/Kconfig"
+ 	ldr	pmc, .pmc_base
  
- source "arch/arm/mach-at91/Kconfig"
-diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-index fe25410..4eb24c6 100644
---- a/arch/arm/Makefile
-+++ b/arch/arm/Makefile
-@@ -154,6 +154,7 @@ textofs-$(CONFIG_ARCH_AXXIA) := 0x00308000
- # Machine directory name.  This list is sorted alphanumerically
- # by CONFIG_* macro name.
- machine-$(CONFIG_ARCH_ALPINE)		+= alpine
-+machine-$(CONFIG_ARCH_ARTPEC)		+= artpec
- machine-$(CONFIG_ARCH_AT91)		+= at91
- machine-$(CONFIG_ARCH_AXXIA)		+= axxia
- machine-$(CONFIG_ARCH_BCM)		+= bcm
-diff --git a/arch/arm/mach-artpec/Kconfig b/arch/arm/mach-artpec/Kconfig
-new file mode 100644
-index 0000000..6cbe5a2
---- /dev/null
-+++ b/arch/arm/mach-artpec/Kconfig
-@@ -0,0 +1,20 @@
-+menuconfig ARCH_ARTPEC
-+	bool "Axis Communications ARM based ARTPEC SoCs"
-+	depends on ARCH_MULTI_V7
+@@ -131,32 +131,13 @@ ENTRY(at91_pm_suspend_in_sram)
+ 	orr	tmp1, tmp1, #(1 << 29)		/* bit 29 always set */
+ 	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
+ 
+-	/* Turn off the main oscillator */
+-	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
+-	bic	tmp1, tmp1, #AT91_PMC_MOSCEN
+-	orr	tmp1, tmp1, #AT91_PMC_KEY
+-	str	tmp1, [pmc, #AT91_CKGR_MOR]
+-
+-skip_disable_main_clock:
+-	ldr	pmc, .pmc_base
+-
+-	/* Wait for interrupt */
+-	at91_cpu_idle
+-
+-	ldr	r0, .pm_mode
+-	tst	r0, #AT91_PM_SLOW_CLOCK
+-	beq	skip_enable_main_clock
++ulp0_mode:
++	bl	at91_pm_ulp0_mode
++	b	ulp_exit
+ 
++ulp_exit:
+ 	ldr	pmc, .pmc_base
+ 
+-	/* Turn on the main oscillator */
+-	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
+-	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
+-	orr	tmp1, tmp1, #AT91_PMC_KEY
+-	str	tmp1, [pmc, #AT91_CKGR_MOR]
+-
+-	wait_moscrdy
+-
+ 	/* Restore PLLA setting */
+ 	ldr	tmp1, .saved_pllar
+ 	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
+@@ -177,7 +158,15 @@ skip_disable_main_clock:
+ 
+ 	wait_mckrdy
+ 
+-skip_enable_main_clock:
++	b	pm_exit
 +
-+if ARCH_ARTPEC
++standby_mode:
++	ldr	pmc, .pmc_base
 +
-+config MACH_ARTPEC6
-+	bool "Axis ARTPEC-6 ARM Cortex A9 Platform"
-+	depends on ARCH_MULTI_V7
-+	select ARM_AMBA
-+	select ARM_GIC
-+	select ARM_GLOBAL_TIMER
-+	select ARM_PSCI
-+	select HAVE_ARM_ARCH_TIMER
-+	select HAVE_ARM_SCU
-+	select HAVE_ARM_TWD if SMP
-+	help
-+	  Support for Axis ARTPEC-6 ARM Cortex A9 Platform
++	/* Wait for interrupt */
++	at91_cpu_idle
 +
-+endif
-diff --git a/arch/arm/mach-artpec/Makefile b/arch/arm/mach-artpec/Makefile
-new file mode 100644
-index 0000000..78325f0
---- /dev/null
-+++ b/arch/arm/mach-artpec/Makefile
-@@ -0,0 +1 @@
-+obj-$(CONFIG_MACH_ARTPEC6)		:= board-artpec6.o
-diff --git a/arch/arm/mach-artpec/board-artpec6.c b/arch/arm/mach-artpec/board-artpec6.c
-new file mode 100644
-index 0000000..d486217
---- /dev/null
-+++ b/arch/arm/mach-artpec/board-artpec6.c
-@@ -0,0 +1,72 @@
++pm_exit:
+ 	/* Exit the self-refresh mode */
+ 	mov	r0, #SRAMC_SELF_FRESH_EXIT
+ 	bl	at91_sramc_self_refresh
+@@ -311,6 +300,32 @@ exit_sramc_sf:
+ 	mov	pc, lr
+ ENDPROC(at91_sramc_self_refresh)
+ 
 +/*
-+ * ARTPEC-6 device support.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
++ * void at91_pm_ulp0_mode(void)
 + */
++ENTRY(at91_pm_ulp0_mode)
++	ldr	pmc, .pmc_base
 +
-+#include <linux/amba/bus.h>
-+#include <linux/clocksource.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/io.h>
-+#include <linux/irqchip.h>
-+#include <linux/irqchip/arm-gic.h>
-+#include <linux/of_platform.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/clk-provider.h>
-+#include <linux/smp.h>
-+#include <asm/smp_scu.h>
-+#include <asm/mach/arch.h>
-+#include <asm/mach/map.h>
-+#include <asm/psci.h>
-+#include <linux/arm-smccc.h>
++	/* Turn off the crystal oscillator */
++	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
++	bic	tmp1, tmp1, #AT91_PMC_MOSCEN
++	orr	tmp1, tmp1, #AT91_PMC_KEY
++	str	tmp1, [pmc, #AT91_CKGR_MOR]
 +
-+#define ARTPEC6_DMACFG_UARTS_BURST 0xff
++	/* Wait for interrupt */
++	at91_cpu_idle
 +
-+#define SECURE_OP_L2C_WRITEREG 0xb4000001
++	/* Turn on the crystal oscillator */
++	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
++	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
++	orr	tmp1, tmp1, #AT91_PMC_KEY
++	str	tmp1, [pmc, #AT91_CKGR_MOR]
 +
-+static void __init artpec6_init_machine(void)
-+{
-+	void __iomem *dmacfg;
-+	struct device_node *np;
++	wait_moscrdy
 +
-+	np = of_find_compatible_node(NULL, NULL, "axis,artpec6-dmacfg");
-+	if (np) {
-+		/* Use PL011 DMA Burst Request signal instead of DMA
-+		 *  Single Request
-+		 */
-+		dmacfg = of_iomap(np, 0);
-+		BUG_ON(!dmacfg);
++	mov	pc, lr
++ENDPROC(at91_pm_ulp0_mode)
 +
-+		writel(ARTPEC6_DMACFG_UARTS_BURST, dmacfg);
-+		iounmap(dmacfg);
-+		of_node_put(np);
-+	};
-+
-+	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
-+}
-+
-+static void artpec6_l2c310_write_sec(unsigned long val, unsigned reg)
-+{
-+	struct arm_smccc_res res;
-+
-+	arm_smccc_smc(SECURE_OP_L2C_WRITEREG, reg, val, 0,
-+		      0, 0, 0, 0, &res);
-+
-+	WARN_ON(res.a0);
-+}
-+
-+static const char * const artpec6_dt_match[] = {
-+	"axis,artpec6",
-+	NULL
-+};
-+
-+DT_MACHINE_START(ARTPEC6, "Axis ARTPEC-6 Platform")
-+	.l2c_aux_val	= 0x0C000000,
-+	.l2c_aux_mask	= 0xF3FFFFFF,
-+	.l2c_write_sec  = artpec6_l2c310_write_sec,
-+	.init_machine	= artpec6_init_machine,
-+	.dt_compat	= artpec6_dt_match,
-+MACHINE_END
+ .pmc_base:
+ 	.word 0
+ .sramc_base:
 -- 
-2.1.4
+1.7.9.5
 
