@@ -1,82 +1,104 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 22 Feb 2016 13:58:12 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: slemieux.tyco@gmail.com, mturquette@baylibre.com, stigge@antcom.de,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: lpc32xx: fix compilation warning
-Message-ID: <20160222215812.GY4847@codeaurora.org>
-References: <1456166940-30268-1-git-send-email-slemieux.tyco@gmail.com>
- <56CB7594.2040605@mleia.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <56CB7594.2040605@mleia.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1454463733-25281-1-git-send-email-sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+References: <1454463733-25281-1-git-send-email-sboyd@codeaurora.org>
+Message-ID: <20160204054803.32018.95106@quark.deferred.io>
+Subject: Re: [PATCH] clk: Deprecate CLK_IS_ROOT
+Date: Wed, 03 Feb 2016 21:48:03 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/22, Vladimir Zapolskiy wrote:
-> Hi Sylvain,
-> 
-> On 22.02.2016 20:49, slemieux.tyco@gmail.com wrote:
-> > From: Sylvain Lemieux <slemieux@tycoint.com>
-> > 
-> > This patch remove the following compilation warning:
-> > - drivers/clk/nxp/clk-lpc32xx.c: In function 'lpc32xx_clk_register':
-> >   warning: 'hw' may be used uninitialized in this function [-Wmaybe-uninitialized]
-> > - drivers/clk/nxp/clk-lpc32xx.c: In function 'clk_hclk_pll_round_rate':
-> >   warning: 'p' may be used uninitialized in this function [-Wmaybe-uninitialized]
-> >   warning: 'n' may be used uninitialized in this function [-Wmaybe-uninitialized]
-> >   warning: 'm' may be used uninitialized in this function [-Wmaybe-uninitialized]
-> 
-> All warnings are false positives, please explicitly mention this in the commit message.
-> 
-> > Tested using gcc version 4.7.3.
-> > 
-> > Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
-> > ---
-> >  drivers/clk/nxp/clk-lpc32xx.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
-> > index 48b3a11..331f91b 100644
-> > --- a/drivers/clk/nxp/clk-lpc32xx.c
-> > +++ b/drivers/clk/nxp/clk-lpc32xx.c
-> > @@ -13,6 +13,7 @@
-> >  #include <linux/clk-provider.h>
-> >  #include <linux/of_address.h>
-> >  #include <linux/regmap.h>
-> > +#include <linux/compiler-gcc.h>
-> >  
-> >  #include <dt-bindings/clock/lpc32xx-clock.h>
-> >  
-> > @@ -588,7 +589,8 @@ static long clk_hclk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-> >  				    unsigned long *parent_rate)
-> >  {
-> >  	struct lpc32xx_pll_clk *clk = to_lpc32xx_pll_clk(hw);
-> > -	u64 m_i, m, n, p, o = rate, i = *parent_rate, d = (u64)rate << 6;
-> > +	u64 m_i, o = rate, i = *parent_rate, d = (u64)rate << 6;
-> > +	u64 uninitialized_var(m), uninitialized_var(n), uninitialized_var(p);
-> 
-> I think that dummy initialization is good enough here, i.e. assigning
-> the variables to 0, AFAIU that's a common way to deal with compiler's false
-> positives, usage of uninitialized_var() looks exotic.
-> 
-> >  	int p_i, n_i;
-> >  
-> >  	pr_debug("%s: %lu/%lu\n", clk_hw_get_name(hw), *parent_rate, rate);
-> > @@ -1414,7 +1416,7 @@ static struct clk * __init lpc32xx_clk_register(u32 id)
-> >  			.flags = lpc32xx_clk->flags,
-> >  			.ops = clk_hw->hw0.ops,
-> >  		};
-> > -		struct clk_hw *hw;
-> > +		struct clk_hw *uninitialized_var(hw);
-> 
-> Same as above, struct clk_hw *hw = NULL would be good enough here.
-> 
+Quoting Stephen Boyd (2016-02-02 17:42:13)
+> We don't use CLK_IS_ROOT but in a few places in the common clk
+> framework core. Let's replace those checks with a check for the
+> number of parents a clk has instead of the flag, freeing up one
+> flag for something else. We don't remove the flag yet so that
+> things keep building, but we'll remove it once all drivers have
+> removed their flag usage.
+> =
 
-Or return an error pointer in the if/else after this if the type
-doesn't match. We'd like to avoid real uninitialized usage from
-creeping in due to the use of uninitialized_var.
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Looks good to me.
+
+Regards,
+Mike
+
+> ---
+> =
+
+> A bunch of patches to remove CLK_IS_ROOT are coming...
+> =
+
+>  drivers/clk/clk.c            | 6 +++---
+>  include/linux/clk-provider.h | 2 +-
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+> =
+
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index bb01ed6cc63e..cd8382c83f48 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -385,7 +385,7 @@ static unsigned long clk_core_get_rate_nolock(struct =
+clk_core *core)
+>  =
+
+>         ret =3D core->rate;
+>  =
+
+> -       if (core->flags & CLK_IS_ROOT)
+> +       if (!core->num_parents)
+>                 goto out;
+>  =
+
+>         if (!core->parent)
+> @@ -2351,7 +2351,7 @@ static int __clk_core_init(struct clk_core *core)
+>         /*
+>          * Populate core->parent if parent has already been __clk_init'd.=
+  If
+>          * parent has not yet been __clk_init'd then place clk in the orp=
+han
+> -        * list.  If clk has set the CLK_IS_ROOT flag then place it in th=
+e root
+> +        * list.  If clk doesn't have any parents then place it in the ro=
+ot
+>          * clk list.
+>          *
+>          * Every time a new clk is clk_init'd then we walk the list of or=
+phan
+> @@ -2362,7 +2362,7 @@ static int __clk_core_init(struct clk_core *core)
+>                 hlist_add_head(&core->child_node,
+>                                 &core->parent->children);
+>                 core->orphan =3D core->parent->orphan;
+> -       } else if (core->flags & CLK_IS_ROOT) {
+> +       } else if (!core->num_parents) {
+>                 hlist_add_head(&core->child_node, &clk_root_list);
+>                 core->orphan =3D false;
+>         } else {
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index fabe5bedbba6..9c3a18c1a984 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -25,7 +25,7 @@
+>  #define CLK_SET_PARENT_GATE    BIT(1) /* must be gated across re-parent =
+*/
+>  #define CLK_SET_RATE_PARENT    BIT(2) /* propagate rate change up one le=
+vel */
+>  #define CLK_IGNORE_UNUSED      BIT(3) /* do not gate even if unused */
+> -#define CLK_IS_ROOT            BIT(4) /* root clk, has no parent */
+> +#define CLK_IS_ROOT            BIT(4) /* Deprecated: Don't use */
+>  #define CLK_IS_BASIC           BIT(5) /* Basic clk, can't do a to_clk_fo=
+o() */
+>  #define CLK_GET_RATE_NOCACHE   BIT(6) /* do not use the cached clk rate =
+*/
+>  #define CLK_SET_RATE_NO_REPARENT BIT(7) /* don't re-parent on rate chang=
+e */
+> -- =
+
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+>=20
