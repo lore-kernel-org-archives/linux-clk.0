@@ -1,39 +1,55 @@
-Return-Path: <>
-From: "Andrew F. Davis" <afd@ti.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Andrew F.
- Davis" <afd@ti.com>
-Subject: [PATCH] clk: Make of_clk_get_from_provider() available to modules
-Date: Fri, 12 Feb 2016 12:50:16 -0600
-Message-ID: <1455303016-8997-1-git-send-email-afd@ti.com>
+Return-Path: <vishnupatekar0510@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20160202131725.GQ4652@lukather>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1454203266-4450-5-git-send-email-vishnupatekar0510@gmail.com> <20160202131725.GQ4652@lukather>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Date: Thu, 4 Feb 2016 14:06:45 +0800
+Message-ID: <CAEzqOZuBz2jexvZvvtkvjbE8UtzUMKL9nT5JJ9JcvMPmzEKTcQ@mail.gmail.com>
+Subject: Re: [PATCH 04/14] clk: sunxi: add ahb1 clock for A83T
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: "robh+dt@kernel.org" <robh+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	"pawel.moll@arm.com" <pawel.moll@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
+	"linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>,
+	Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>, linux-gpio@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Export symbol of_clk_get_from_provider so it can be used in
-loadable kernel modules
+Hello Maxime,
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
----
-We will be pushing stuff that needs this next cycle.
 
- drivers/clk/clk.c | 1 +
- 1 file changed, 1 insertion(+)
+On Tue, Feb 2, 2016 at 9:17 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Hi,
+>
+> On Sun, Jan 31, 2016 at 09:20:56AM +0800, Vishnu Patekar wrote:
+>> AHB1 on A83T is similar to ahb1 on A31, except parents are different.
+>> clock index 0b1x is PLL6.
+>>
+>> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+>
+> If the clock is the same but the parents are different, then we don't
+> need to duplicate all the logic. Simply add the number of parents to
+> mux_data, and you're all set.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index b4db67a..0a24736 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3061,6 +3061,7 @@ struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
- {
- 	return __of_clk_get_from_provider(clkspec, NULL, __func__);
- }
-+EXPORT_SYMBOL_GPL(of_clk_get_from_provider);
- 
- int of_clk_get_parent_count(struct device_node *np)
- {
--- 
-2.7.1
+Problem here is: parent 0b10 for A31 ahb1 is AXI, 0b11 is pll6/pre_div.
+0b10 and 0b11 is pll6/pre_div.
+So, just adding number of parents to mux_data will not solve problem.
+
+Regards,
+Vishnu
+>
+> Maxime
+>
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
