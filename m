@@ -1,125 +1,76 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Jonathan Corbet <corbet@lwn.net>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	linux-doc@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 2/8] clk: bcm2835: add missing PLL clock divider
-Date: Mon, 29 Feb 2016 15:43:56 +0000
-Message-Id: <1456760642-2412-3-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org>
-References: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [RESEND PATCH v8 2/6] ARM: hisi: add compatible string for Hi3519 soc
+Date: Fri, 5 Feb 2016 10:31:08 +0800
+Message-ID: <1454639472-17373-3-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1454639472-17373-1-git-send-email-xuejiancheng@huawei.com>
+References: <1454639472-17373-1-git-send-email-xuejiancheng@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+add compatible string for Hi3519 soc.
 
-Add the missing pll clock divider definitions.
-
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
 ---
- drivers/clk/bcm/clk-bcm2835.c       |   50 +++++++++++++++++++++++++++++++++++
- include/dt-bindings/clock/bcm2835.h |    8 ++++++
- 2 files changed, 58 insertions(+)
+ arch/arm/mach-hisi/hisilicon.c | 23 ++++-------------------
+ 1 file changed, 4 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 01a48cb..710cf15 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1497,6 +1497,22 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.load_mask = CM_PLLA_LOADPER,
- 		.hold_mask = CM_PLLA_HOLDPER,
- 		.fixed_divider = 1),
-+	[BCM2835_PLLA_DSI0]	= REGISTER_PLL_DIV(
-+		.name = "plla_dsi0",
-+		.source_pll = "plla",
-+		.cm_reg = CM_PLLA,
-+		.a2w_reg = A2W_PLLA_DSI0,
-+		.load_mask = CM_PLLA_LOADDSI0,
-+		.hold_mask = CM_PLLA_HOLDDSI0,
-+		.fixed_divider = 1),
-+	[BCM2835_PLLA_CCP2]	= REGISTER_PLL_DIV(
-+		.name = "plla_ccp2",
-+		.source_pll = "plla",
-+		.cm_reg = CM_PLLA,
-+		.a2w_reg = A2W_PLLA_DSI0,
-+		.load_mask = CM_PLLA_LOADCCP2,
-+		.hold_mask = CM_PLLA_HOLDCCP2,
-+		.fixed_divider = 1),
-
- 	/* PLLB is used for the ARM's clock. */
- 	[BCM2835_PLLB]		= REGISTER_PLL(
-@@ -1521,6 +1537,24 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.load_mask = CM_PLLB_LOADARM,
- 		.hold_mask = CM_PLLB_HOLDARM,
- 		.fixed_divider = 1),
-+	[BCM2835_PLLB_SP0]	= REGISTER_PLL_DIV(
-+		.name = "pllb_sp0",
-+		.source_pll = "pllb",
-+		.cm_reg = CM_PLLB,
-+		.a2w_reg = A2W_PLLB_SP0,
-+		.fixed_divider = 1),
-+	[BCM2835_PLLB_SP1]	= REGISTER_PLL_DIV(
-+		.name = "pllb_sp1",
-+		.source_pll = "pllb",
-+		.cm_reg = CM_PLLB,
-+		.a2w_reg = A2W_PLLB_SP1,
-+		.fixed_divider = 1),
-+	[BCM2835_PLLB_SP2]	= REGISTER_PLL_DIV(
-+		.name = "pllb_sp2",
-+		.source_pll = "pllb",
-+		.cm_reg = CM_PLLB,
-+		.a2w_reg = A2W_PLLB_SP2,
-+		.fixed_divider = 1),
-
- 	/*
- 	 * PLLC is the core PLL, used to drive the core VPU clock.
-@@ -1611,6 +1645,22 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.load_mask = CM_PLLD_LOADPER,
- 		.hold_mask = CM_PLLD_HOLDPER,
- 		.fixed_divider = 1),
-+	[BCM2835_PLLD_DSI0]	= REGISTER_PLL_DIV(
-+		.name = "plld_dsi0",
-+		.source_pll = "plld",
-+		.cm_reg = CM_PLLD,
-+		.a2w_reg = A2W_PLLD_DSI0,
-+		.load_mask = CM_PLLD_LOADDSI0,
-+		.hold_mask = CM_PLLD_HOLDDSI0,
-+		.fixed_divider = 1),
-+	[BCM2835_PLLD_DSI1]	= REGISTER_PLL_DIV(
-+		.name = "plld_dsi1",
-+		.source_pll = "plld",
-+		.cm_reg = CM_PLLD,
-+		.a2w_reg = A2W_PLLD_DSI1,
-+		.load_mask = CM_PLLD_LOADDSI1,
-+		.hold_mask = CM_PLLD_HOLDDSI1,
-+		.fixed_divider = 1),
-
- 	/*
- 	 * PLLH is used to supply the pixel clock or the AUX clock for the
-diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
-index 9a7b4a5..9689812 100644
---- a/include/dt-bindings/clock/bcm2835.h
-+++ b/include/dt-bindings/clock/bcm2835.h
-@@ -45,3 +45,11 @@
- #define BCM2835_CLOCK_PERI_IMAGE	29
- #define BCM2835_CLOCK_PWM		30
- #define BCM2835_CLOCK_PCM		31
-+
-+#define BCM2835_PLLA_DSI0		32
-+#define BCM2835_PLLA_CCP2		33
-+#define BCM2835_PLLB_SP0		34
-+#define BCM2835_PLLB_SP1		35
-+#define BCM2835_PLLB_SP2		36
-+#define BCM2835_PLLD_DSI0		37
-+#define BCM2835_PLLD_DSI1		38
---
-1.7.10.4
+diff --git a/arch/arm/mach-hisi/hisilicon.c b/arch/arm/mach-hisi/hisilicon.c
+index 8cc6215..00dae89 100644
+--- a/arch/arm/mach-hisi/hisilicon.c
++++ b/arch/arm/mach-hisi/hisilicon.c
+@@ -54,30 +54,15 @@ DT_MACHINE_START(HI3620, "Hisilicon Hi3620 (Flattened Device Tree)")
+ 	.dt_compat	= hi3xxx_compat,
+ MACHINE_END
+ 
+-static const char *const hix5hd2_compat[] __initconst = {
++static const char *const hisilicon_compat[] __initconst = {
+ 	"hisilicon,hix5hd2",
+-	NULL,
+-};
+-
+-DT_MACHINE_START(HIX5HD2_DT, "Hisilicon HIX5HD2 (Flattened Device Tree)")
+-	.dt_compat	= hix5hd2_compat,
+-MACHINE_END
+-
+-static const char *const hip04_compat[] __initconst = {
+ 	"hisilicon,hip04-d01",
+-	NULL,
+-};
+-
+-DT_MACHINE_START(HIP04, "Hisilicon HiP04 (Flattened Device Tree)")
+-	.dt_compat	= hip04_compat,
+-MACHINE_END
+-
+-static const char *const hip01_compat[] __initconst = {
+ 	"hisilicon,hip01",
+ 	"hisilicon,hip01-ca9x2",
++	"hisilicon,hi3519",
+ 	NULL,
+ };
+ 
+-DT_MACHINE_START(HIP01, "Hisilicon HIP01 (Flattened Device Tree)")
+-	.dt_compat      = hip01_compat,
++DT_MACHINE_START(HISILICON_DT, "HiSilicon Soc")
++	.dt_compat	= hisilicon_compat,
+ MACHINE_END
+-- 
+1.9.1
