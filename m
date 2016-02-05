@@ -1,127 +1,109 @@
-Return-Path: <LW@karo-electronics.de>
-Date: Mon, 29 Feb 2016 12:21:39 +0100
-From: Lothar =?UTF-8?B?V2HDn21hbm4=?= <LW@KARO-electronics.de>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Anson Huang <b20788@freescale.com>, Bai Ping <b51503@freescale.com>,
- Frank Li <Frank.Li@freescale.com>, Fugang Duan <B38611@freescale.com>, Ian
- Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala
- <galak@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>, Michael
- Turquette <mturquette@baylibre.com>, Pawel Moll <pawel.moll@arm.com>, Rob
- Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>, Sascha
- Hauer <kernel@pengutronix.de>, Stephen Boyd <sboyd@codeaurora.org>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 16/16] ARM: dts: imx6ul: add support for Ka-Ro
- electronics TXUL modules
-Message-ID: <20160229122139.6a560304@ipc1.ka-ro>
-In-Reply-To: <20160228064326.GG22051@tiger>
-References: <1452619291-13625-1-git-send-email-LW@KARO-electronics.de>
-	<1453284549-16363-1-git-send-email-LW@KARO-electronics.de>
-	<1453284549-16363-17-git-send-email-LW@KARO-electronics.de>
-	<20160228064326.GG22051@tiger>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga02-in.huawei.com ([119.145.14.65]:2847 "EHLO
+	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751036AbcBECo1 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 4 Feb 2016 21:44:27 -0500
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [RESEND PATCH v8 0/6] ARM: hisi: Add initial support including clock driver for Hi3519 soc.
+Date: Fri, 5 Feb 2016 10:31:06 +0800
+Message-ID: <1454639472-17373-1-git-send-email-xuejiancheng@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Hello,
 
-On Sun, 28 Feb 2016 14:43:26 +0800 Shawn Guo wrote:
-> On Wed, Jan 20, 2016 at 11:09:09AM +0100, Lothar Wa=C3=9Fmann wrote:
-[...]
-> > +/dts-v1/;
-> > +#include "imx6ul.dtsi"
-> > +#include "imx6ul-txul.dtsi"
-> > +
-> > +/ {
-> > +	model =3D "Ka-Ro electronics TXUL-0010 Module";
-> > +	compatible =3D "karo,imx6ul-tx6ul", "fsl,imx6ul";
-> > +
-> > +	aliases {
-> > +		mmc0 =3D &usdhc1;
-> > +		/delete-property/ mmc1;
->=20
-> Why is this deletion of mmc1 needed?
->=20
-Its not actually necessary, but for convenience of U-Boot users who may
-want to enable/disable the mmc interface dynamically. Since the
-USDHC2 interface is not available on this module, I prefer not to have
-a dangling alias that points to an interface that is not actually
-useable.
+Hi3519 soc is mainly used for ip camera and sport DV solutions. This patchset adds initial support
+for Hi3519 soc. It includes clock driver, arch configuration, debug uart configuration and device tree.
+It has been tested on hi3519 reference board.
 
-> > diff --git a/arch/arm/boot/dts/imx6ul-txul-0011.dts b/arch/arm/boot/dts=
-/imx6ul-txul-0011.dts
-> > new file mode 100644
-> > index 0000000..dd3055b
-> > --- /dev/null
-> > +++ b/arch/arm/boot/dts/imx6ul-txul-0011.dts
-> > @@ -0,0 +1,85 @@
-> > +/*
-> > + * Copyright 2015 Lothar Wa=C3=9Fmann <LW@KARO-electronics.de>
-> > + *
-> > + * This file is dual-licensed: you can use it either under the terms
-> > + * of the GPL or the X11 license, at your option. Note that this dual
-> > + * licensing only applies to this file, and not this project as a
-> > + * whole.
-> > + *
-> > + *  a) This file is free software; you can redistribute it and/or
-> > + *     modify it under the terms of the GNU General Public License
-> > + *     version 2 as published by the Free Software Foundation.
-> > + *
-> > + *     This file is distributed in the hope that it will be useful,
-> > + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-> > + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > + *     GNU General Public License for more details.
-> > + *
-> > + * Or, alternatively,
-> > + *
-> > + *  b) Permission is hereby granted, free of charge, to any person
-> > + *     obtaining a copy of this software and associated documentation
-> > + *     files (the "Software"), to deal in the Software without
-> > + *     restriction, including without limitation the rights to use,
-> > + *     copy, modify, merge, publish, distribute, sublicense, and/or
-> > + *     sell copies of the Software, and to permit persons to whom the
-> > + *     Software is furnished to do so, subject to the following
-> > + *     conditions:
-> > + *
-> > + *     The above copyright notice and this permission notice shall be
-> > + *     included in all copies or substantial portions of the Software.
-> > + *
-> > + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-> > + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-> > + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-> > + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-> > + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-> > + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-> > + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-> > + *     OTHER DEALINGS IN THE SOFTWARE.
-> > + */
-> > +
-> > +/dts-v1/;
-> > +#include "imx6ul.dtsi"
-> > +#include "imx6ul-txul.dtsi"
-> > +
-> > +/ {
-> > +	model =3D "Ka-Ro electronics TXUL-0011 Module";
-> > +	compatible =3D "karo,imx6ul-tx6ul", "fsl,imx6ul";
-> > +
-> > +	aliases {
-> > +		mmc0 =3D &usdhc2;
-> > +		mmc1 =3D &usdhc1;
-> > +	};
-> > +};
-> > +
-> > +&gpmi {
-> > +	status =3D "disabled";
-> > +};
-> > +
-> > +&iomuxc {
-> > +	imx6ul-txul {
->=20
-> Since commit 5fcdf6a7ed95 (pinctrl: imx: Allow parsing DT without
-> function nodes), we can save this container node.
->=20
-I already reworked the file in the meantime, so that this and your
-remaining comments are addressed.
+Any comments will be appreciated!
 
+Thanks!
 
-Lothar Wa=C3=9Fmann
+Change Log
+----------
+v8:
+--Made hi3519 clock driver can be compiled as a module
+--Fixed an issue in arch/arm/Kconfig.debug
+
+v7:
+--Rebase to v4.5-rc1
+
+v6:
+-Change clock driver to a real platform driver
+
+v5:
+-Adjust clock and reset controller driver code
+
+v4:
+-Rebase to v4.4-rc7
+-Divide patches according to Rob's comments
+-Add spi nodes in hi3519-demb.dts
+
+v3:
+-Rebase to v4.4-rc4
+-Adjust according to Arnd's comments
+-Remove ARCH_HI3519, using ARCH_HISI directly
+
+v2:
+-Rebase to v4.4-rc3
+-Put dt-binding doc and header file in a separate patch.
+-Delete unused clocks definitions.
+-Adjust the ARCH_xxx order in Kconfig file
+-Rename ARCH_HI3xxx to ARCH_36xx
+
+Jiancheng Xue (6):
+  clk: hisilicon: add CRG driver for hi3519 soc
+  ARM: hisi: add compatible string for Hi3519 soc
+  ARM: config: hisi: enable CONFIG_RESET_CONTROLLER
+  ARM: debug: add hi3519 debug uart
+  ARM: dt-bindings: add device tree bindings for Hi3519 sysctrl
+  ARM: dts: add dts files for Hi3519
+
+ .../bindings/arm/hisilicon/hi3519-sysctrl.txt      |  14 ++
+ .../devicetree/bindings/clock/hi3519-crg.txt       |  46 +++++
+ arch/arm/Kconfig.debug                             |  10 ++
+ arch/arm/boot/dts/Makefile                         |   2 +
+ arch/arm/boot/dts/hi3519-demb.dts                  |  42 +++++
+ arch/arm/boot/dts/hi3519.dtsi                      | 187 +++++++++++++++++++++
+ arch/arm/configs/hisi_defconfig                    |   1 +
+ arch/arm/mach-hisi/hisilicon.c                     |  23 +--
+ drivers/clk/hisilicon/Kconfig                      |   7 +
+ drivers/clk/hisilicon/Makefile                     |   2 +
+ drivers/clk/hisilicon/clk-hi3519.c                 | 133 +++++++++++++++
+ drivers/clk/hisilicon/clk.c                        |  23 ++-
+ drivers/clk/hisilicon/clk.h                        |  14 +-
+ drivers/clk/hisilicon/reset.c                      | 130 ++++++++++++++
+ drivers/clk/hisilicon/reset.h                      |  32 ++++
+ include/dt-bindings/clock/hi3519-clock.h           |  40 +++++
+ 16 files changed, 672 insertions(+), 34 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/hi3519-crg.txt
+ create mode 100644 arch/arm/boot/dts/hi3519-demb.dts
+ create mode 100644 arch/arm/boot/dts/hi3519.dtsi
+ create mode 100644 drivers/clk/hisilicon/clk-hi3519.c
+ create mode 100644 drivers/clk/hisilicon/reset.c
+ create mode 100644 drivers/clk/hisilicon/reset.h
+ create mode 100644 include/dt-bindings/clock/hi3519-clock.h
+
+-- 
+1.9.1
+
