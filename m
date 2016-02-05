@@ -1,62 +1,55 @@
-MIME-Version: 1.0
-In-Reply-To: <56C3C9FB.8090301@samsung.com>
-References: <201602170850.V9nmoMr3%fengguang.wu@intel.com>
-	<56C3C9FB.8090301@samsung.com>
-Date: Tue, 16 Feb 2016 17:37:22 -0800
-Message-ID: <CAEG3pNAGKRavxOC2aDGuJ4S_RU0DsjmXQiy54MTmkO=qrRE6JQ@mail.gmail.com>
-Subject: Re: [clk:clk-samsung-kconfig 1/2] drivers/clk/samsung/clk.h:29:26:
- error: field 'clk_data' has incomplete type
-From: Michael Turquette <mturquette@baylibre.com>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: kbuild test robot <fengguang.wu@intel.com>, kbuild-all@01.org,
-	"Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>, linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>, Andi Shyti <andi.shyti@samsung.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <andriy.shevchenko@linux.intel.com>
+Message-ID: <1454688729.31169.87.camel@linux.intel.com>
+Subject: Re: Common/typical fractional divider HW API
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mason <slash.tmp@free.fr>, linux-clk <linux-clk@vger.kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
+ <mturquette@baylibre.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Heikki
+ Krogerus <heikki.krogerus@linux.intel.com>, Sebastian Frias
+ <sf84@laposte.net>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Date: Fri, 05 Feb 2016 18:12:09 +0200
+In-Reply-To: <56B4C775.50808@free.fr>
+References: <56B4B67D.2080707@free.fr>
+	 <1454684758.31169.77.camel@linux.intel.com> <56B4C775.50808@free.fr>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Feb 16, 2016 at 5:16 PM, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
->
-> On 17.02.2016 09:01, kbuild test robot wrote:
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-samsung-kconfig
-> > head:   e83cb468452c25597e868d1ed778fa73fdaeca4c
-> > commit: 89e08b1b13374a336dfd1d500ebc70aa545579ab [1/2] clk: samsung: Enable COMPILE_TEST for Samsung clocks
-> > config: ia64-allmodconfig (attached as .config)
-> > reproduce:
-> >         wget https://git.kernel.org/cgit/linux/kernel/git/wfg/lkp-tests.git/plain/sbin/make.cross -O ~/bin/make.cross
-> >         chmod +x ~/bin/make.cross
-> >         git checkout 89e08b1b13374a336dfd1d500ebc70aa545579ab
-> >         # save the attached .config to linux build tree
-> >         make.cross ARCH=ia64
-> >
->
-> I think the error is a result of missing one patch in the branch - the
-> "clk: Move vendor's Kconfig into CCF menu section":
-> https://git.kernel.org/cgit/linux/kernel/git/clk/linux.git/commit/?h=clk-next&id=b9e65ebc654dffeb77d8ef878bd6b2da30c55a94
+On Fri, 2016-02-05 at 17:01 +0100, Mason wrote:
 
-OK, I have rebased the clk-samsung branch on top of b9e65ebc654d. This
-means the immutable branch will pull in about a dozen unrelated
-patches, but I don't want to rebase the whole clk tree just to pull
-out James' patch.
+> So, do you agree that
+> 
+>   DIV = 2^I * (1 + F/256)
+> 
+> gives a more useful DIV distribution than
+> 
+>   DIV = I + F/16
 
-Regards,
-Mike
+If you can change hardware why not to use any existing approach which
+suits better to your device?
 
->
-> With mentioned patch these Samsung clocks depends on COMMON_CLK so they
-> should not be selectable on IA64.
->
-> However I don't have IA64 cross compiler to verify this.
->
-> Best regards,
-> Krzysztof
+I don't remember any existing, though I didn't check much, divider
+register which takes something like that.
 
+> > Also it's possible to convert clock providers for, e.g., UARTs to
+> > use
+> > this kind of divider.
+> 
+> I'm not sure how to parse that. I'm using the divider driver
+> for a CPU clock, to do D(V)FS in cpufreq.
 
+If you are using custom stuff for custom hardware, I hope it's okay.
+But if we are talking about generic solutions (like clk-fractional-
+divider), I would suggest to consider existing users / hardware.
 
+What I saw is mostly about
+
+I [0 .. 2^n - 1]
+F [0 .. 2^k - 1]
+n + k < 32
+
+And I + 1 / (2^k - F) as a formula.
 
 -- 
-Michael Turquette
-CEO
-BayLibre - At the Heart of Embedded Linux
-http://baylibre.com/
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
