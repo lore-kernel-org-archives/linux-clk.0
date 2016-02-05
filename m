@@ -1,55 +1,77 @@
-Return-Path: <albeu@free.fr>
-Date: Mon, 1 Feb 2016 12:03:00 +0100
-From: Alban <albeu@free.fr>
-To: Antony Pavlov <antonynpavlov@gmail.com>
-Cc: Aban Bedel <albeu@free.fr>, linux-mips@linux-mips.org, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
- <robh+dt@kernel.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [RFC v3 01/14] WIP: clk: add Atheros AR724X/AR913X/AR933X SoCs
- clock driver
-Message-ID: <20160201120300.3d6fd1b3@tock>
-In-Reply-To: <20160131234155.eee918745880878963c044aa@gmail.com>
-References: <1453580251-2341-1-git-send-email-antonynpavlov@gmail.com>
-	<1453580251-2341-2-git-send-email-antonynpavlov@gmail.com>
-	<20160125232156.35c0ce3f@tock>
-	<20160131234155.eee918745880878963c044aa@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga01-in.huawei.com ([58.251.152.64]:11476 "EHLO
+	szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750821AbcBECna (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 4 Feb 2016 21:43:30 -0500
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [RESEND PATCH v8 4/6] ARM: debug: add hi3519 debug uart
+Date: Fri, 5 Feb 2016 10:31:10 +0800
+Message-ID: <1454639472-17373-5-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1454639472-17373-1-git-send-email-xuejiancheng@huawei.com>
+References: <1454639472-17373-1-git-send-email-xuejiancheng@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, 31 Jan 2016 23:41:55 +0300
-Antony Pavlov <antonynpavlov@gmail.com> wrote:
+add hi3519 debug uart
 
-> > > +	ath79_clks[ATH79_CLK_REF] = ath79_add_sys_clkdev("ref", ref_rate);
-> > > +	ath79_clks[ATH79_CLK_CPU] = ath79_add_sys_clkdev("cpu", cpu_rate);
-> > > +	ath79_clks[ATH79_CLK_DDR] = ath79_add_sys_clkdev("ddr", ddr_rate);
-> > > +	ath79_clks[ATH79_CLK_AHB] = ath79_add_sys_clkdev("ahb", ahb_rate);
-> > > +	ath79_clks[ATH79_CLK_WDT] = ath79_add_sys_clkdev("wdt", ahb_rate);
-> > > +	ath79_clks[ATH79_CLK_UART] = ath79_add_sys_clkdev("uart", ahb_rate);  
-> > 
-> > You shouldn't add ref, wdt and uart, they are not needed and make the
-> > driver incompatible with the current DT bindings.  
-> 
-> Please describe the situation then this incompatibility does matter.
-> 
-> Current ath79 dt support is very preliminary and the only dt user
-> is 5-years old TP-Link WR1043ND so it's near impossible to break somethink.
-> 
-> Anyway current ath79 dt binding is somewhat broken (see __your__ message
-> 'Re: [RFC 1/4] WIP: MIPS: ath79: make ar933x clks more
-> devicetree-friendly' from 'Thu, 21 Jan 2016 12:03:20 +0100').
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+---
+ arch/arm/Kconfig.debug | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-The point is that DT is about describing the hardware in a consistent
-and OS independent manner. It shouldn't be modeled just to suit some
-existing code. So it is no big deal if the code doesn't use all the
-informations provided by the DT, like here where the input clock is not
-*yet* used by the code. However it is a no-go to extend the binding to
-add things that don't exists in the hardware just to suit some old code.
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index c6b6175..edd3fbe 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -260,6 +260,14 @@ choice
+ 		  Say Y here if you want kernel low-level debugging support
+ 		  on Cortina Gemini based platforms.
+ 
++	config DEBUG_HI3519_UART
++		bool "Hisilicon HI3519 Debug UART"
++		depends on ARCH_HISI
++		select DEBUG_UART_PL01X
++		help
++		  Say Y here if you want kernel low-level debugging support
++		  on HI3519 UART.
++
+ 	config DEBUG_HI3620_UART
+ 		bool "Hisilicon HI3620 Debug UART"
+ 		depends on ARCH_HI3xxx
+@@ -1451,6 +1459,7 @@ config DEBUG_UART_PHYS
+ 	default 0x11002000 if DEBUG_MT8127_UART0
+ 	default 0x11006000 if DEBUG_MT6589_UART0
+ 	default 0x11009000 if DEBUG_MT8135_UART3
++	default 0x12100000 if DEBUG_HI3519_UART
+ 	default 0x16000000 if DEBUG_INTEGRATOR
+ 	default 0x18000300 if DEBUG_BCM_5301X
+ 	default 0x18010000 if DEBUG_SIRFATLAS7_UART0
+@@ -1619,6 +1628,7 @@ config DEBUG_UART_VIRT
+ 	default 0xfee20000 if DEBUG_NSPIRE_CLASSIC_UART || DEBUG_NSPIRE_CX_UART
+ 	default 0xfee82340 if ARCH_IOP13XX
+ 	default 0xfef00000 if ARCH_IXP4XX && !CPU_BIG_ENDIAN
++	default 0xfef00000 if DEBUG_HI3519_UART
+ 	default 0xfef00003 if ARCH_IXP4XX && CPU_BIG_ENDIAN
+ 	default 0xfef36000 if DEBUG_HIGHBANK_UART
+ 	default 0xfefb0000 if DEBUG_OMAP1UART1 || DEBUG_OMAP7XXUART1
+-- 
+1.9.1
 
-I agree we might need to clear a few things regarding the UART clock in
-the newer SoC, in particular if the UART use the output of the PLL
-pre-divider or something similar. Then we would need to rework the DT
-binding for the those SoC. However with the current knowledge I don't
-see any need to change the biding yet.
-
-Alban
