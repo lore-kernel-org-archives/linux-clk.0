@@ -1,51 +1,64 @@
-Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <slash.tmp@free.fr>
+To: linux-clk <linux-clk@vger.kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Sebastian Frias <sf84@laposte.net>,
+ Linux ARM <linux-arm-kernel@lists.infradead.org>
+From: Mason <slash.tmp@free.fr>
+Subject: Common/typical fractional divider HW API
+Message-ID: <56B4B67D.2080707@free.fr>
+Date: Fri, 5 Feb 2016 15:49:33 +0100
 MIME-Version: 1.0
-Sender: k.kozlowski.k@gmail.com
-In-Reply-To: <1453971537-5510-1-git-send-email-jamesjj.liao@mediatek.com>
-References: <1453971537-5510-1-git-send-email-jamesjj.liao@mediatek.com>
-Date: Tue, 16 Feb 2016 13:59:14 +0900
-Message-ID: <CAJKOXPdA1VeGUmgAtObueXbY5S_X0acrF5m_QnEygzaMOeWPUw@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: Move vendor's Kconfig into CCF menu section
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-To: James Liao <jamesjj.liao@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Arnd Bergmann <arnd@arndb.de>,
-	Sascha Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>,
-	srv_heupstream@mediatek.com, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-15
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-01-28 17:58 GMT+09:00 James Liao <jamesjj.liao@mediatek.com>:
-> Move all vendor's Kconfig into CCF menu section to prevent
-> new drivers putting their Kconfig files in a wrong place.
->
-> Some Kconigs need to modify at the same time to avoid build
-> warnings.
->
-> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-> ---
-> This patch is based on v4.5-rc1.
->
-> changes since v1:
-> - Modify s3c24xx and samsung's Kconfig to avoid build warngings.
->
->  arch/arm/mach-s3c24xx/Kconfig | 1 +
->  drivers/clk/Kconfig           | 8 +++-----
->  drivers/clk/samsung/Kconfig   | 1 -
->  3 files changed, 4 insertions(+), 6 deletions(-)
->
+Hello,
 
-I wish you had used scripts/get_maintainer.pl to get list of people to CC...
-Kukjin Kim <kgene@kernel.org> (maintainer:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES)
-Krzysztof Kozlowski <k.kozlowski@samsung.com> (maintainer:ARM/SAMSUNG
-EXYNOS ARM ARCHITECTURES)
-linux-samsung-soc@vger.kernel.org (moderated list:ARM/SAMSUNG EXYNOS
-ARM ARCHITECTURES)
+AFAICT, the clk-fractional-divider driver implements the following
+hardware API:
 
-Beside the fact that it is just nice and welcomed... it would help me
-to avoid some of duplicated work...
+  M and N are two fields in the same register.
+  DIV = M / N
 
-Best regards,
-Krzysztof
+Is this HW API common/typical in the embedded world?
+in the PC world?
+
+
+My hardware uses a slightly weird (to me) API:
+
+  I = 0-255 (8 bits)
+  F = 0-15  (4 bits)
+
+  I = 0 => DIV = +INF
+  I = 1 => DIV = 1 + F/(32-F)
+  I > 1 => DIV = I + F/16
+
+Is this HW API common/typical in the embedded world?
+(Perhaps just the linear part for I > 1)
+
+I see two downsides to this API:
+
+1) I = 1 is a special case
+2) A lot of the value space is wasted on large values.
+
+For example, when I = 250, we don't really care about 250.0625, 250.125,
+etc, or even nearby integer values, for that matter.
+
+I think it's better to have a distribution with high density in small
+values, and low density in high values (sort of like floating point).
+
+For example:
+
+  I = 0-15  (4 bits)
+  F = 0-255 (8 bits)
+  DIV = 2^I * (1 + F/256)
+
+(We could probably even shave 2-4 bits on F.)
+
+Are there downsides to this HW API?
+Is this HW API common/typical in the embedded world?
+
+Regards.
