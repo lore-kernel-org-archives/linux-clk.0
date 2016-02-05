@@ -1,46 +1,64 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([217.72.192.74]:60191 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750897AbcBJOnK (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2016 09:43:10 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: Lars Persson <lars.persson@axis.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, linux-kernel@vger.kernel.org,
-	Lars Persson <larper@axis.com>
-Subject: Re: [PATCH 7/8] arm: multi_v7_defconfig: add MACH_ARTPEC6
-Date: Wed, 10 Feb 2016 15:42:32 +0100
-Message-ID: <22004657.zNDLNVmTMr@wuerfel>
-In-Reply-To: <36d8a6a0236e08bc7286085018e2fa7a67691b39.1455107681.git.larper@axis.com>
-References: <cover.1455107681.git.larper@axis.com> <36d8a6a0236e08bc7286085018e2fa7a67691b39.1455107681.git.larper@axis.com>
+Received: from szxga01-in.huawei.com ([58.251.152.64]:11478 "EHLO
+	szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750947AbcBECnb (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Thu, 4 Feb 2016 21:43:31 -0500
+From: Jiancheng Xue <xuejiancheng@huawei.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <xuwei5@hisilicon.com>,
+	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
+	<bintian.wang@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
+	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
+	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
+	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
+	Jiancheng Xue <xuejiancheng@huawei.com>
+Subject: [RESEND PATCH v8 5/6] ARM: dt-bindings: add device tree bindings for Hi3519 sysctrl
+Date: Fri, 5 Feb 2016 10:31:11 +0800
+Message-ID: <1454639472-17373-6-git-send-email-xuejiancheng@huawei.com>
+In-Reply-To: <1454639472-17373-1-git-send-email-xuejiancheng@huawei.com>
+References: <1454639472-17373-1-git-send-email-xuejiancheng@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wednesday 10 February 2016 13:41:56 Lars Persson wrote:
-> Signed-off-by: Lars Persson <larper@axis.com>
-> ---
->  arch/arm/configs/multi_v7_defconfig | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-> index 8e8b2ac..bf3840e 100644
-> --- a/arch/arm/configs/multi_v7_defconfig
-> +++ b/arch/arm/configs/multi_v7_defconfig
-> @@ -16,6 +16,8 @@ CONFIG_ARCH_MULTI_V7=y
->  # CONFIG_ARCH_MULTI_V4 is not set
->  CONFIG_ARCH_VIRT=y
->  CONFIG_ARCH_ALPINE=y
-> +CONFIG_ARCH_ARTPEC=y
-> +CONFIG_MACH_ARTPEC6=y
->  CONFIG_ARCH_MVEBU=y
->  CONFIG_MACH_ARMADA_370=y
->  CONFIG_MACH_ARMADA_375=y
-> 
+Add device tree bindings for Hi3519 system controller.
 
-No other drivers that you need here?
+Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt   | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
 
-	Arnd
+diff --git a/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt b/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
+new file mode 100644
+index 0000000..115c5be
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
+@@ -0,0 +1,14 @@
++* Hisilicon Hi3519 System Controller Block
++
++This bindings use the following binding:
++Documentation/devicetree/bindings/mfd/syscon.txt
++
++Required properties:
++- compatible: "hisilicon,hi3519-sysctrl".
++- reg: the register region of this block
++
++Examples:
++sysctrl: system-controller@12010000 {
++	compatible = "hisilicon,hi3519-sysctrl", "syscon";
++	reg = <0x12010000 0x1000>;
++};
+-- 
+1.9.1
+
