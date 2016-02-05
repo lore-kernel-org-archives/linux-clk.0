@@ -1,35 +1,24 @@
-Return-Path: <tony@atomide.com>
-Date: Mon, 22 Feb 2016 08:52:53 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv2] clk: ti: omap3+: dpll: use non-locking version of
- clk_get_rate
-Message-ID: <20160222165252.GF13417@atomide.com>
-References: <1455966777-30576-1-git-send-email-t-kristo@ti.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: mturquette@baylibre.com
+Cc: sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, zhengxing@rock-chips.com, zhangqing@rock-chips.com, wxt@rock-chips.com
+Subject: Re: [PATCH 0/3] clk: rockchip: introduce a clock type for factor clocks
+Date: Fri, 05 Feb 2016 20:05:11 +0100
+Message-ID: <2442476.dtC5zuBlBQ@diego>
+In-Reply-To: <1453939306-984-1-git-send-email-heiko@sntech.de>
+References: <1453939306-984-1-git-send-email-heiko@sntech.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1455966777-30576-1-git-send-email-t-kristo@ti.com>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [160220 03:12]:
-> As the code in this file is being executed within irq context in some
-> cases, we must avoid the clk_get_rate which uses mutex internally.
-> Switch the code to use clk_hw_get_rate instead which is non-locking.
+Am Donnerstag, 28. Januar 2016, 01:01:43 schrieb Heiko Stuebner:
+> We're currently creating factor clocks manually during clock init.
+> That worked well in the beginning, but since the rk3288 we also see
+> combined gate-factor clocks and the overall number of factor clocks
+> we create manually seems to be rising. And also sometimes created
+> artificial separations that do not come from the clock hirarchy.
 > 
-> This fixes an issue where PM runtime will hang the system if enabled
-> with a serial console before a suspend-resume cycle.
+> So I finished something I started some 6 months ago to finally be
+> able to model factor clocks inside the clock-tree where they belong.
 
-Can you please add the "Fixes: " line here?
-
-And when applying, please tag this one Cc stable.
-
-Other than that, please feel free to add:
-
-Tested-by: Tony Lindgren <tony@atomide.com>
-
-Regards,
-
-Tony
+applied all 3 to my clk-branch for 4.6
