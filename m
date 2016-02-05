@@ -1,30 +1,92 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 1 Feb 2016 17:07:31 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v2 04/16] clk: remove unnecessary !core->parents
- conditional
-Message-ID: <20160202010731.GS4848@codeaurora.org>
-References: <1451298191-30815-1-git-send-email-yamada.masahiro@socionext.com>
- <1451298191-30815-5-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <jamesjj.liao@mediatek.com>
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
+ Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, <srv_heupstream@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>
+Subject: [PATCH v6 0/7] Add clock support for Mediatek MT2701
+Date: Fri, 5 Feb 2016 17:37:23 +0800
+Message-ID: <1454665050-37776-1-git-send-email-jamesjj.liao@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1451298191-30815-5-git-send-email-yamada.masahiro@socionext.com>
+Content-Type: text/plain
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/28, Masahiro Yamada wrote:
-> This if-block has been here since the introduction of the common
-> clock framework.  Now no clock drivers are statically initialized.
-> core->parent is always NULL at this point.  Drop the redundant
-> check and the confusing comment.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+This series is based on 4.5-rc1 and [1], add clock and reset controller
+support for Mediatek MT2701.
 
-Applied to clk-next
+This series also refined makefile and Kconfig to support configurable
+multiple SoC clock support.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+changes since v5:
+- Rebase to v4.5-rc1 and [1].
+- Enable critical clocks for MT2701
+- Refine dt-binding documents, add reset controller support for hifsys.
+
+changes since v4:
+- Rebase to v4.5-rc1.
+- Remove CLK_SET_RATE_PARENT from divider flags.
+- Add img_jpgdec_smi clock.
+- Move clk/mediatek/Kconfig into menu section in clk/Kconfig.
+
+changes since v3:
+- Change the parent of mm_mdp_bls_26m from clk26m to pwm_sel.
+
+changes since v2:
+- Fix ethsys definition.
+- Replace read-modify-write with regmap_update_bits() in clock operations.
+- Move mt2701-resets.h to include/dt-bindings/reset/.
+- Add hifsys reset patch from John Crispin.
+
+changes since v1:
+- Document MT2701 compatible strings.
+
+[1] https://patchwork.kernel.org/patch/8147901/
+
+James Liao (3):
+  clk: mediatek: Refine the makefile to support multiple clock drivers
+  dt-bindings: ARM: Mediatek: Document bindings for MT2701
+  clk: mediatek: Enable critical clocks for MT2701
+
+Shunli Wang (4):
+  clk: mediatek: Add dt-bindings for MT2701 clocks
+  clk: mediatek: Add MT2701 clock support
+  reset: mediatek: Add MT2701 reset controller dt-binding file
+  reset: mediatek: Add MT2701 reset driver
+
+ .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    3 +-
+ .../bindings/arm/mediatek/mediatek,bdpsys.txt      |   22 +
+ .../bindings/arm/mediatek/mediatek,ethsys.txt      |   22 +
+ .../bindings/arm/mediatek/mediatek,hifsys.txt      |   24 +
+ .../bindings/arm/mediatek/mediatek,imgsys.txt      |    3 +-
+ .../bindings/arm/mediatek/mediatek,infracfg.txt    |    3 +-
+ .../bindings/arm/mediatek/mediatek,mmsys.txt       |    3 +-
+ .../bindings/arm/mediatek/mediatek,pericfg.txt     |    3 +-
+ .../bindings/arm/mediatek/mediatek,topckgen.txt    |    3 +-
+ .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    3 +-
+ drivers/clk/Kconfig                                |    1 +
+ drivers/clk/mediatek/Kconfig                       |   31 +
+ drivers/clk/mediatek/Makefile                      |    7 +-
+ drivers/clk/mediatek/clk-gate.c                    |   52 +
+ drivers/clk/mediatek/clk-gate.h                    |    2 +
+ drivers/clk/mediatek/clk-mt2701.c                  | 1236 ++++++++++++++++++++
+ drivers/clk/mediatek/clk-mtk.c                     |   25 +
+ drivers/clk/mediatek/clk-mtk.h                     |   34 +-
+ include/dt-bindings/clock/mt2701-clk.h             |  482 ++++++++
+ include/dt-bindings/reset/mt2701-resets.h          |   83 ++
+ 20 files changed, 2029 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
+ create mode 100644 drivers/clk/mediatek/Kconfig
+ create mode 100644 drivers/clk/mediatek/clk-mt2701.c
+ create mode 100644 include/dt-bindings/clock/mt2701-clk.h
+ create mode 100644 include/dt-bindings/reset/mt2701-resets.h
+
+--
+1.9.1
