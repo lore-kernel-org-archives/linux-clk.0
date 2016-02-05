@@ -1,176 +1,80 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Lior Amsalem <alior@marvell.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH 3/3] clk: mvebu: add AP806 ring clock driver
-Date: Mon, 15 Feb 2016 08:34:58 +0100
-Message-Id: <1455521698-7905-4-git-send-email-thomas.petazzoni@free-electrons.com>
-In-Reply-To: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1455521698-7905-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <andriy.shevchenko@linux.intel.com>
+Message-ID: <1454690599.31169.103.camel@linux.intel.com>
+Subject: Re: Common/typical fractional divider HW API
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mason <slash.tmp@free.fr>, linux-clk <linux-clk@vger.kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
+ <mturquette@baylibre.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Heikki
+ Krogerus <heikki.krogerus@linux.intel.com>, Sebastian Frias
+ <sf84@laposte.net>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Date: Fri, 05 Feb 2016 18:43:19 +0200
+In-Reply-To: <56B4CDEF.3080606@free.fr>
+References: <56B4B67D.2080707@free.fr>
+	 <1454684758.31169.77.camel@linux.intel.com> <56B4C775.50808@free.fr>
+	 <1454688729.31169.87.camel@linux.intel.com> <56B4CDEF.3080606@free.fr>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adds a new driver to handle the ring clocks found in the
-AP806 HW block, which is the core block of all Armada 7K and 8K
-Marvell 64-bits processors. Those ring clocks are derived from the
-core ring clock handled by the AP806 core clock driver. The ring
-clocks are used by various peripherals inside the AP806.
+On Fri, 2016-02-05 at 17:29 +0100, Mason wrote:
+> On 05/02/2016 17:12, Andy Shevchenko wrote:
+> 
+> > On Fri, 2016-02-05 at 17:01 +0100, Mason wrote:
+> > 
+> > > So, do you agree that
+> > > 
+> > >   DIV = 2^I * (1 + F/256)
+> > > 
+> > > gives a more useful DIV distribution than
+> > > 
+> > >   DIV = I + F/16
+> > 
+> > If you can change hardware why not to use any existing approach
+> > which
+> > suits better to your device?
+> 
+> Sorry, I don't understand the question.
+> 
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
----
- .../clock/mvebu-armada-ap806-ring-clock.txt        | 32 +++++++++++
- drivers/clk/mvebu/Kconfig                          |  3 +
- drivers/clk/mvebu/Makefile                         |  1 +
- drivers/clk/mvebu/ap806-ring.c                     | 65 ++++++++++++++++++++++
- 4 files changed, 101 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/mvebu-armada-ap806-ring-clock.txt
- create mode 100644 drivers/clk/mvebu/ap806-ring.c
+There are plenty of implementations of the divider. You might consider
+to use one than inventing new one:
 
-diff --git a/Documentation/devicetree/bindings/clock/mvebu-armada-ap806-ring-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-armada-ap806-ring-clock.txt
-new file mode 100644
-index 0000000..5602bdc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/mvebu-armada-ap806-ring-clock.txt
-@@ -0,0 +1,32 @@
-+* Clock bindings for Marvell MVEBU AP806 Ring clocks
-+
-+The Marvell MVEBU Armada 7K/8K SoCs contain a block called AP806,
-+hosting the CPU and other core components of the CPU. This Device Tree
-+binding allows to describe the ring clocks of the AP806, which are
-+derived from the Ring Core clock, after a dividing factor.
-+
-+The following is a list of provided IDs and clock names on Armada
-+AP806 RING dividers:
-+
-+ 0 = Ring 0
-+ 1 = Ring 2
-+ 2 = Ring 3
-+ 3 = Ring 4
-+ 4 = Ring 5
-+
-+Required properties:
-+- compatible: must be one of the following:
-+	"marvell,armada-ap806-ring-clock"
-+- reg: must be the register holding the divider values for ring clocks
-+- #clock-cells : from common clock binding; shall be set to 1
-+- clock-output-names: name of the output clocks
-+
-+Example:
-+
-+	ringclk: clk@0x6F8250 {
-+		compatible = "marvell,armada-ap806-ring-clock";
-+		reg = <0x6F8250 0x04>;
-+		#clock-cells = <1>;
-+		clock-output-names = "ring-0", "ring-2", "ring-3", "ring-4", "ring-5";
-+		clocks = <&coreclk 1>;
-+	};
-diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
-index fd84172..5d30aac 100644
---- a/drivers/clk/mvebu/Kconfig
-+++ b/drivers/clk/mvebu/Kconfig
-@@ -45,3 +45,6 @@ config ORION_CLK
- 
- config ARMADA_AP806_CORE_CLK
- 	bool
-+
-+config ARMADA_AP806_RING_CLK
-+	bool
-diff --git a/drivers/clk/mvebu/Makefile b/drivers/clk/mvebu/Makefile
-index db5c28c..48ca2d3 100644
---- a/drivers/clk/mvebu/Makefile
-+++ b/drivers/clk/mvebu/Makefile
-@@ -6,6 +6,7 @@ obj-$(CONFIG_ARMADA_375_CLK)	+= armada-375.o
- obj-$(CONFIG_ARMADA_38X_CLK)	+= armada-38x.o
- obj-$(CONFIG_ARMADA_39X_CLK)	+= armada-39x.o
- obj-$(CONFIG_ARMADA_AP806_CORE_CLK) += ap806-core.o
-+obj-$(CONFIG_ARMADA_AP806_RING_CLK) += ap806-ring.o
- obj-$(CONFIG_ARMADA_XP_CLK)	+= armada-xp.o
- obj-$(CONFIG_DOVE_CLK)		+= dove.o dove-divider.o
- obj-$(CONFIG_KIRKWOOD_CLK)	+= kirkwood.o
-diff --git a/drivers/clk/mvebu/ap806-ring.c b/drivers/clk/mvebu/ap806-ring.c
-new file mode 100644
-index 0000000..154ee55
---- /dev/null
-+++ b/drivers/clk/mvebu/ap806-ring.c
-@@ -0,0 +1,65 @@
-+/*
-+ * Marvell Armada AP806 ring clocks
-+ *
-+ * Copyright (C) 2016 Marvell
-+ *
-+ * Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-+ *
-+ * This file is licensed under the terms of the GNU General Public
-+ * License version 2.  This program is licensed "as is" without any
-+ * warranty of any kind, whether express or implied.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+
-+#define AP806_RING_DIV_NUM	5
-+
-+static struct clk *ap806_ring_clks[AP806_RING_DIV_NUM];
-+
-+static struct clk_onecell_data ap806_ring_clk_data = {
-+	.clks = ap806_ring_clks,
-+	.clk_num = AP806_RING_DIV_NUM,
-+};
-+
-+static void __init ap806_ring_clk_init(struct device_node *np)
-+{
-+	void __iomem *base;
-+	const char *parent;
-+	u32 reg;
-+	int i;
-+
-+	base = of_iomap(np, 0);
-+	if (WARN_ON(!base))
-+		return;
-+
-+	reg = readl(base);
-+
-+	iounmap(base);
-+
-+	parent = of_clk_get_parent_name(np, 0);
-+
-+	for (i = 0; i < AP806_RING_DIV_NUM; i++) {
-+		unsigned long divider;
-+		const char *name;
-+
-+		/* Each clock is represented by 6 bits */
-+		divider = (reg >> (6 * i)) & 0x3f;
-+
-+		of_property_read_string_index(np, "clock-output-names",
-+					      i, &name);
-+
-+		ap806_ring_clks[i] =
-+			clk_register_fixed_factor(NULL, name, parent,
-+						  0, 1, divider);
-+	}
-+
-+	of_clk_add_provider(np, of_clk_src_onecell_get, &ap806_ring_clk_data);
-+}
-+
-+CLK_OF_DECLARE(ap806_ring_clk, "marvell,armada-ap806-ring-clock",
-+	       ap806_ring_clk_init);
+https://xkcd.com/927/
+
+> In this part of my message, I was trying to argue that one HW API
+> "2^I * (1 + F/256)" seemed better than another one "I + F/16" on
+> any hardware.
+
+I disagree in a part 2^I.
+
+> 
+> > I don't remember any existing, though I didn't check much, divider
+> > register which takes something like that.
+> 
+> IIUC, you are saying that you've never seen hardware use the
+> "2^I * (1 + F/256)" formula, is that correct?
+
+Yep, though it doesn't mean there is no such.
+
+> I'm not sure how to parse that. I'm using the divider driver
+> > > for a CPU clock, to do D(V)FS in cpufreq.
+> > 
+> > If you are using custom stuff for custom hardware, I hope it's
+> > okay.
+> > But if we are talking about generic solutions (like clk-fractional-
+> > divider), I would suggest to consider existing users / hardware.
+> 
+> Are you saying that I could use the clk-fractional-divider with
+> hardware that computes "I + F/16" ?
+
+No.
+
+> Maybe the clk-fractional-divider could be made more generic by having
+> the register update part done in a call-back function?
+
+Why do you need to touch that module at all if your hardware doesn't
+suit it?
+
 -- 
-2.6.4
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
