@@ -1,47 +1,100 @@
-Return-Path: <p.zabel@pengutronix.de>
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Barry Song <baohua@kernel.org>,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-clk@vger.kernel.org,
-	kernel@pengutronix.de,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH 3/7] clk: rockchip: Make reset_control_ops const
-Date: Thu, 25 Feb 2016 10:45:08 +0100
-Message-Id: <1456393512-26602-4-git-send-email-p.zabel@pengutronix.de>
-In-Reply-To: <1456393512-26602-1-git-send-email-p.zabel@pengutronix.de>
-References: <1456393512-26602-1-git-send-email-p.zabel@pengutronix.de>
+Return-Path: <andriy.shevchenko@linux.intel.com>
+Message-ID: <1454684758.31169.77.camel@linux.intel.com>
+Subject: Re: Common/typical fractional divider HW API
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mason <slash.tmp@free.fr>, linux-clk <linux-clk@vger.kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
+ <mturquette@baylibre.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Heikki
+ Krogerus <heikki.krogerus@linux.intel.com>, Sebastian Frias
+ <sf84@laposte.net>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Date: Fri, 05 Feb 2016 17:05:58 +0200
+In-Reply-To: <56B4B67D.2080707@free.fr>
+References: <56B4B67D.2080707@free.fr>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-The rockchip_softrst_ops structure is never modified. Make it const.
+On Fri, 2016-02-05 at 15:49 +0100, Mason wrote:
+> Hello,
+> 
+> AFAICT, the clk-fractional-divider driver implements the following
+> hardware API:
+> 
+>   M and N are two fields in the same register.
+>   DIV = M / N
+> 
+> Is this HW API common/typical in the embedded world?
+> in the PC world?
+> 
 
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
----
- drivers/clk/rockchip/softrst.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+At least all new Intel SoCs have it, besides that there is one more
+user of the struct clk_fractional_divider, but I have no idea if they
+have something similar to this.
 
-diff --git a/drivers/clk/rockchip/softrst.c b/drivers/clk/rockchip/softrst.c
-index 552f7bb..21218987 100644
---- a/drivers/clk/rockchip/softrst.c
-+++ b/drivers/clk/rockchip/softrst.c
-@@ -81,7 +81,7 @@ static int rockchip_softrst_deassert(struct reset_controller_dev *rcdev,
- 	return 0;
- }
- 
--static struct reset_control_ops rockchip_softrst_ops = {
-+static const struct reset_control_ops rockchip_softrst_ops = {
- 	.assert		= rockchip_softrst_assert,
- 	.deassert	= rockchip_softrst_deassert,
- };
+> 
+> My hardware uses a slightly weird (to me) API:
+> 
+>   I = 0-255 (8 bits)
+>   F = 0-15  (4 bits)
+
+This part is okay.
+
+> 
+>   I = 0 => DIV = +INF
+
+On Intel we recognize this as an absence of the divider.
+
+>   I = 1 => DIV = 1 + F/(32-F)
+
+Weird part, indeed. But seems it doubles a precision in a range
+[1 .. 1 + 1/2]
+
+>   I > 1 => DIV = I + F/16
+
+This just normal operation.
+
+> 
+> Is this HW API common/typical in the embedded world?
+> (Perhaps just the linear part for I > 1)
+
+I saw similar approach in few UART drivers, but they do not use CLK
+framework.
+
+So, I could consider this one is more popular / wider, than what we
+have in Intel SoCs.
+
+> 
+> I see two downsides to this API:
+> 
+> 1) I = 1 is a special case
+
+> 2) A lot of the value space is wasted on large values.
+> 
+> For example, when I = 250, we don't really care about 250.0625,
+> 250.125,
+> etc, or even nearby integer values, for that matter.
+> 
+> I think it's better to have a distribution with high density in small
+> values, and low density in high values (sort of like floating point).
+> 
+> For example:
+> 
+>   I = 0-15  (4 bits)
+>   F = 0-255 (8 bits)
+>   DIV = 2^I * (1 + F/256)
+> 
+> (We could probably even shave 2-4 bits on F.)
+> 
+> Are there downsides to this HW API?
+> Is this HW API common/typical in the embedded world?
+
+So, what is your intention? If you would like to use CLK framework you
+might consider existing providers and users and might implement a
+specific one for similar cases.
+
+Also it's possible to convert clock providers for, e.g., UARTs to use
+this kind of divider.
+
 -- 
-2.7.0
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
