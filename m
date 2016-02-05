@@ -1,55 +1,70 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from p01c11o141.mxlogic.net ([208.65.144.64]:54172 "EHLO
-	p01c11o141.mxlogic.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750723AbcBJU6u convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2016 15:58:50 -0500
-From: Kevin Smith <kevin.smith@elecsyscorp.com>
-To: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-CC: Kevin Smith <kevin.smith@elecsyscorp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"Gregory CLEMENT" <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH] clk: mvebu: Require corediv clock for Armada 38x
-Date: Wed, 10 Feb 2016 20:41:13 +0000
-Message-ID: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <jamesjj.liao@mediatek.com>
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh@kernel.org>
+CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
+ Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, <srv_heupstream@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, Shunli Wang <shunli.wang@mediatek.com>, James
+ Liao <jamesjj.liao@mediatek.com>
+Subject: [PATCH v6 6/7] reset: mediatek: Add MT2701 reset driver
+Date: Fri, 5 Feb 2016 17:37:29 +0800
+Message-ID: <1454665050-37776-7-git-send-email-jamesjj.liao@mediatek.com>
+In-Reply-To: <1454665050-37776-1-git-send-email-jamesjj.liao@mediatek.com>
+References: <1454665050-37776-1-git-send-email-jamesjj.liao@mediatek.com>
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The corediv clock driver is required for the pxa3xx_nand driver,
-but is not included in the ARMADA_38X_CLK config.  Add
-MVEBU_CLK_COREDIV as a dependency of ARMADA_38X_CLK.
+From: Shunli Wang <shunli.wang@mediatek.com>
 
-Without the corediv driver, nand initialization fails with the
-message:
+In infrasys and perifsys, there are many reset
+control bits for kinds of modules. These bits are
+used as actual reset controllers to be registered
+into kernel's generic reset controller framework.
 
-pxa3xx-nand f10d0000.flash: failed to get nand clock
-pxa3xx-nand f10d0000.flash: alloc nand resource failed
-
-With corediv enabled, flash is successfully detected.
-
-Signed-off-by: Kevin Smith <kevin.smith@elecsyscorp.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+Tested-by: John Crispin <blogic@openwrt.org>
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
- drivers/clk/mvebu/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/mediatek/clk-mt2701.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
-index 2769625..1107056 100644
---- a/drivers/clk/mvebu/Kconfig
-+++ b/drivers/clk/mvebu/Kconfig
-@@ -20,6 +20,7 @@ config ARMADA_375_CLK
- config ARMADA_38X_CLK
- 	bool
- 	select MVEBU_CLK_COMMON
-+	select MVEBU_CLK_COREDIV
+diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
+index 0ac45fc..01722e0 100644
+--- a/drivers/clk/mediatek/clk-mt2701.c
++++ b/drivers/clk/mediatek/clk-mt2701.c
+@@ -665,6 +665,8 @@ static void __init mtk_infrasys_init(struct device_node *node)
+ 	if (r)
+ 		pr_err("%s(): could not register clock provider: %d\n",
+ 			__func__, r);
++
++	mtk_register_reset_controller(node, 2, 0x30);
+ }
+ CLK_OF_DECLARE(mtk_infrasys, "mediatek,mt2701-infracfg", mtk_infrasys_init);
  
- config ARMADA_39X_CLK
- 	bool
+@@ -782,6 +784,8 @@ static void __init mtk_pericfg_init(struct device_node *node)
+ 	if (r)
+ 		pr_err("%s(): could not register clock provider: %d\n",
+ 			__func__, r);
++
++	mtk_register_reset_controller(node, 2, 0x0);
+ }
+ CLK_OF_DECLARE(mtk_pericfg, "mediatek,mt2701-pericfg", mtk_pericfg_init);
+ 
+@@ -997,6 +1001,8 @@ static void __init mtk_hifsys_init(struct device_node *node)
+ 	if (r)
+ 		pr_err("%s(): could not register clock provider: %d\n",
+ 			__func__, r);
++
++	mtk_register_reset_controller(node, 1, 0x34);
+ }
+ CLK_OF_DECLARE(mtk_hifsys, "mediatek,mt2701-hifsys", mtk_hifsys_init);
+ 
 -- 
-2.4.6
+1.9.1
