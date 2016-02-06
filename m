@@ -1,119 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.242]:10352 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751593AbcBODq6 (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Sun, 14 Feb 2016 22:46:58 -0500
-From: Wenyou Yang <wenyou.yang@atmel.com>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Russell King <linux@arm.linux.org.uk>
-CC: <linux-clk@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	Wenyou Yang <wenyou.yang@atmel.com>
-Subject: [PATCH v3 4/4] Documentation: atmel-pmc: add DT bindings for fast startup
-Date: Mon, 15 Feb 2016 11:40:30 +0800
-Message-ID: <1455507630-29592-5-git-send-email-wenyou.yang@atmel.com>
-In-Reply-To: <1455507630-29592-1-git-send-email-wenyou.yang@atmel.com>
-References: <1455507630-29592-1-git-send-email-wenyou.yang@atmel.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20160206103751.eb21edf56ddc6ef7c27907f0@free.fr>
+References: <cover.1454435944.git.moinejf@free.fr> <3c0e2cdea659e9e682f80ecf42b252c740095f15.1454435944.git.moinejf@free.fr>
+ <20160205093915.GF1139@lukather> <20160206103751.eb21edf56ddc6ef7c27907f0@free.fr>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 6 Feb 2016 17:56:00 +0800
+Message-ID: <CAGb2v640YWtdT7Rhz2jP7gnQ1U6HJe9POU40HCp==7GrZxDz0A@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] clk: sunxi: Add sun6i/8i video support
+To: Jean-Francois Moine <moinejf@free.fr>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Dave Airlie <airlied@linux.ie>,
+	Chen-Yu Tsai <wens@csie.org>, Emilio Lopez <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	devicetree <devicetree@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add DT bindings to configurate the PMC_FSMR and PMC_FSPR registers
-to trigger a fast restart signal to PMC.
+On Sat, Feb 6, 2016 at 5:37 PM, Jean-Francois Moine <moinejf@free.fr> wrote:
+> On Fri, 5 Feb 2016 10:39:15 +0100
+> Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+>
+>> > +CLK_OF_DECLARE(sun6i_display, "allwinner,sun6i-display-clk", sun6i_display_setup);
+>>
+>> Please use the display driver from my DRM serie, it covers everything
+>> you need here.
+>
+> If you give me a pointer, I will have a look.
+>
+>> > +CLK_OF_DECLARE(sun6i_pll3, "allwinner,sun6i-pll3-clk", sun6i_pll3_setup);
+>>
+>> And please use the clk-factors code here.
+>
+> I don't see how I can get direct 297MHz and 270MHz in fractional mode
+> with that code.
 
-Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
-Document: binding
+clk-factors now supports a custom .recalc callback. Along with get_factors,
+you can support pretty much any clock that has four variables, not including
+the mux and clock gate.
 
----
+So for this you'd have the div as factor m, and the integer mode bit as p,
+and the fraction bit as n, and recalc would be somewhat like this:
 
-Changes in v3:
- - update the property description.
+if (p) {
+        rate = parent_rate / (m + 1);
+} else if (n) {
+        rate = 297000000;
+} else {
+        rate = 270000000;
+}
 
-Changes in v2:
- - change the property name and property description.
+get_factors should be easy enough to figure out.
 
- .../devicetree/bindings/arm/atmel-pmc.txt          |   63 ++++++++++++++++++++
- 1 file changed, 63 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/atmel-pmc.txt b/Documentation/devicetree/bindings/arm/atmel-pmc.txt
-index 795cc78..0d2481c 100644
---- a/Documentation/devicetree/bindings/arm/atmel-pmc.txt
-+++ b/Documentation/devicetree/bindings/arm/atmel-pmc.txt
-@@ -12,3 +12,66 @@ Examples:
- 		compatible = "atmel,at91rm9200-pmc";
- 		reg = <0xfffffc00 0x100>;
- 	};
-+
-+PMC Fast Startup Signals
-+
-+The PMC Fast Start Signals are used as the wake up source to trigger the PMC
-+to wake up the system from the ULP1 mode.
-+
-+required properties:
-+- compatible: Should be "atmel,sama5d2-pmc-fast-startup".
-+
-+optional properties:
-+- atmel,wkup-trigger: boolean, WKUP input can trigger a fast restart signal.
-+- atmel,secumod-trigger: boolean, SECUMOD can trigger a fast restart signal.
-+- atmel,piobu0-trigger: boolean, PIOBU0 input can trigger a fast restart signal.
-+- atmel,piobu1-trigger: boolean, PIOBU1 input can trigger a fast restart signal.
-+- atmel,piobu2-trigger: boolean, PIOBU2 input can trigger a fast restart signal.
-+- atmel,piobu3-trigger: boolean, PIOBU3 input can trigger a fast restart signal.
-+- atmel,piobu4-trigger: boolean, PIOBU4 input can trigger a fast restart signal.
-+- atmel,piobu5-trigger: boolean, PIOBU5 input can trigger a fast restart signal.
-+- atmel,piobu6-trigger: boolean, PIOBU6 input can trigger a fast restart signal.
-+- atmel,piobu7-trigger: boolean, PIOBU7 input can trigger a fast restart signal.
-+- atmel,gmac-wol-trigger: boolean, GMAC_WOL can trigger a fast restart signal.
-+- atmel,rtc-alarm-trigger: boolean, RTC alarm can trigger a fast restart signal.
-+- atmel,usb-resume-trigger: boolean, USB resume can trigger a fast restart
-+  signal.
-+- atmel,sdmmc-cd-trigger: boolean, SDMMC card detect can trigger a fast
-+  restart signal.
-+- atmel,rxlp-match-trigger: boolean, Matching condition on RXLP can trigger
-+  a fast restart signal.
-+- atmel,acc-comparison-trigger: boolean, ACC comparison can trigger a fast
-+  restart signal.
-+
-+- atmel,wkup-trigger-level: int, defines the active polarity of the wake-up
-+  input. Supported values are: 1 or 0.
-+- atmel,piobu0-trigger-level: int, defines the active polarity of
-+  the corresponding PIOBU0 input. Supported values are: 1 or 0.
-+- atmel,piobu1-trigger-level: int, defines the active polarity of
-+  the corresponding PIOBU1 input. Supported values are: 1 or 0.
-+- atmel,piobu2-trigger-level: int, defines the active polarity of
-+  the corresponding PIOBU2 input. Supported values are: 1 or 0".
-+- atmel,piobu3-trigger-level: int, defines the active polarity of
-+  the corresponding PIOBU3 input. Supported values are: 1 or 0.
-+- atmel,piobu4-trigger-level: int, defines the active polarity of
-+  the corresponding PIOBU4 input. Supported values are: 1 or 0.
-+- atmel,piobu5-trigger-level: int, defines the active polarity of
-+  the corresponding PIOBU5 input. Supported values are: 1 or 0.
-+- atmel,piobu6-trigger-level: int, defines the active polarity of
-+  the corresponding PIOBU6 input. Supported values are: 1 or 0.
-+- atmel,piobu7-trigger-level: int, defines the active polarity of
-+  the corresponding PIOBU7 input. Supported values are: 1 or 0.
-+
-+Example:
-+
-+	pmc: pmc@f0014000 {
-+		compatible = "atmel,sama5d2-pmc";
-+		reg = <0xf0014000 0x160>;
-+
-+		pmc_fast_restart {
-+			compatible = "atmel,sama5d2-pmc-fast-startup";
-+			atmel,wkup-trigger;
-+			atmel,rtc-alarm-trigger;
-+			atmel,wkup-trigger-level = <0>;
-+		};
-+	};
--- 
-1.7.9.5
-
+Regards
+ChenYu
