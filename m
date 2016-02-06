@@ -1,45 +1,41 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Russell King <rmk+kernel@arm.linux.org.uk>
-Subject: [PATCH] clk: gpio: Really allow an optional clock= DT property
-Date: Thu, 18 Feb 2016 19:12:05 -0800
-Message-Id: <1455851525-18972-1-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <20160219030731.GS4847@codeaurora.org>
+Return-Path: <moinejf@free.fr>
+Date: Sat, 6 Feb 2016 10:37:51 +0100
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Dave Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>, Emilio
+ Lopez <emilio@elopez.com.ar>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] clk: sunxi: Add sun6i/8i video support
+Message-Id: <20160206103751.eb21edf56ddc6ef7c27907f0@free.fr>
+In-Reply-To: <20160205093915.GF1139@lukather>
+References: <cover.1454435944.git.moinejf@free.fr>
+	<3c0e2cdea659e9e682f80ecf42b252c740095f15.1454435944.git.moinejf@free.fr>
+	<20160205093915.GF1139@lukather>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-We mis-merged the original patch from Russell here and so the
-patch went almost all the way, except that we still failed to
-probe when there wasn't a clocks property in the DT node. Allow
-that case by making a negative value from
-of_clk_get_parent_count() into "no parents", like the original
-patch did.
+On Fri, 5 Feb 2016 10:39:15 +0100
+Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
 
-Fixes: 7ed88aa2efa5 ("clk: fix clk-gpio.c with optional clock= DT property")
-Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk-gpio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > +CLK_OF_DECLARE(sun6i_display, "allwinner,sun6i-display-clk", sun6i_dis=
+play_setup);
+>=20
+> Please use the display driver from my DRM serie, it covers everything
+> you need here.
 
-diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
-index 19fed65587e8..7b09a265d79f 100644
---- a/drivers/clk/clk-gpio.c
-+++ b/drivers/clk/clk-gpio.c
-@@ -289,7 +289,7 @@ static void __init of_gpio_clk_setup(struct device_node *node,
- 
- 	num_parents = of_clk_get_parent_count(node);
- 	if (num_parents < 0)
--		return;
-+		num_parents = 0;
- 
- 	data = kzalloc(sizeof(*data), GFP_KERNEL);
- 	if (!data)
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+If you give me a pointer, I will have a look.
+
+> > +CLK_OF_DECLARE(sun6i_pll3, "allwinner,sun6i-pll3-clk", sun6i_pll3_setu=
+p);
+>=20
+> And please use the clk-factors code here.
+
+I don't see how I can get direct 297MHz and 270MHz in fractional mode
+with that code.
+
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
