@@ -1,57 +1,58 @@
-Return-Path: <caesar.upstream@gmail.com>
-Return-Path: <caesar.upstream@gmail.com>
-From: Caesar Wang <wxt@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>,
-	edubezval@gmail.com
-Cc: huangtao@rock-chips.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-pm@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	zhangqing@rock-chips.com,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Jeffy Chen <jeffy.chen@rock-chips.com>,
-	Zhang Rui <rui.zhang@intel.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Caesar Wang <wxt@rock-chips.com>
-Subject: [RESEND PATCH 8/8] ARM: dts: rockchip: enable the tsadc for rk3228 evb
-Date: Mon, 15 Feb 2016 15:33:33 +0800
-Message-Id: <1455521613-27340-9-git-send-email-wxt@rock-chips.com>
-In-Reply-To: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
-References: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
+Return-Path: <jsarha@ti.com>
+Subject: Re: [PATCH] clk: provider: Remove of_gpio_{gate,mux}_clk_setup()
+ prototypes
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Mike Turquette
+	<mturquette@baylibre.com>
+References: <1454830926-10434-1-git-send-email-sboyd@codeaurora.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+From: Jyri Sarha <jsarha@ti.com>
+Message-ID: <56B712E9.3020705@ti.com>
+Date: Sun, 7 Feb 2016 11:48:25 +0200
+MIME-Version: 1.0
+In-Reply-To: <1454830926-10434-1-git-send-email-sboyd@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch enables the tsadc for rk3228 evb board.
+On 02/07/16 09:42, Stephen Boyd wrote:
+> These functions either never existed or were only used in
+> OF_CLK_DECLARE() macros. Remove the dead prototypes.
+>
 
-The rk3228 evb board uses the CRU to reset the chip since it hasn't the
-PMIC to connect it, and TSHUT is low active on evb board.
+Yes, they were used by OF_CLK_DECLARE() macros. I originally made the 
+of_gpio_clk_gate_setup() non static just because the other basic clocks 
+were implemented the same way. Actually I do not follow why the 
+functions needed to be non static in the first place. Surely the 
+declarations can go now after the conversion to a platform driver.
 
-Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+Acked-by: Jyri Sarha <jsarha@ti.com>
 
----
-
- arch/arm/boot/dts/rk3228-evb.dts | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/arch/arm/boot/dts/rk3228-evb.dts b/arch/arm/boot/dts/rk3228-evb.dts
-index e3898b8..c75cc41 100644
---- a/arch/arm/boot/dts/rk3228-evb.dts
-+++ b/arch/arm/boot/dts/rk3228-evb.dts
-@@ -61,6 +61,13 @@
- 	status = "okay";
- };
- 
-+&tsadc {
-+	status = "okay";
-+
-+	rockchip,hw-tshut-mode = <0>; /* tshut mode 0:CRU 1:GPIO */
-+	rockchip,hw-tshut-polarity = <1>; /* tshut polarity 0:LOW 1:HIGH */
-+};
-+
- &uart2 {
- 	status = "okay";
- };
--- 
-1.9.1
+> Cc: Jyri Sarha <jsarha@ti.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>   include/linux/clk-provider.h | 4 ----
+>   1 file changed, 4 deletions(-)
+>
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 9c3a18c1a984..fce7f027f8a7 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -626,8 +626,6 @@ struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
+>   		const char *parent_name, unsigned gpio, bool active_low,
+>   		unsigned long flags);
+>
+> -void of_gpio_clk_gate_setup(struct device_node *node);
+> -
+>   /**
+>    * struct clk_gpio_mux - gpio controlled clock multiplexer
+>    *
+> @@ -643,8 +641,6 @@ struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
+>   		const char * const *parent_names, u8 num_parents, unsigned gpio,Acked-by:
+>   		bool active_low, unsigned long flags);
+>
+> -void of_gpio_mux_clk_setup(struct device_node *node);
+> -
+>   /**
+>    * clk_register - allocate a new clock, register it and return an opaque cookie
+>    * @dev: device that is registering this clock
+>
