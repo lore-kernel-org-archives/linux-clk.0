@@ -1,72 +1,51 @@
-Return-Path: <dinguyen@opensource.altera.com>
-From: <dinguyen@opensource.altera.com>
-To: <sboyd@codeaurora.org>
-CC: <dinh.linux@gmail.com>, <mturquette@baylibre.com>,
-	<mgerlach@opensource.altera.com>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Dinh Nguyen <dinguyen@opensource.altera.com>
-Subject: [PATCH] clk: socfpga: allow for multiple parents on Arria10 periph clocks
-Date: Mon, 22 Feb 2016 13:53:11 -0600
-Message-ID: <1456170791-22718-1-git-send-email-dinguyen@opensource.altera.com>
+Return-Path: <tito.albi@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: dinguyen@opensource.altera.com
+Sender: tito.albi@gmail.com
+In-Reply-To: <20160128063213.GJ9070@tiger>
+References: <1450902610-27224-1-git-send-email-csotoalonso@gmail.com>
+	<20160128063213.GJ9070@tiger>
+Date: Sun, 7 Feb 2016 19:59:56 +0100
+Message-ID: <CAD7j7Q_=QeUGOMC0pPn5AXq50h3+vpabB8vRNV5Ac3YupwPxGQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] imx25: Fix LCD pixelclock configuration
+From: Carlos Soto <csotoalonso@gmail.com>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Dinh Nguyen <dinguyen@opensource.altera.com>
+2016-01-28 7:32 GMT+01:00 Shawn Guo <shawnguo@kernel.org>:
+> On Wed, Dec 23, 2015 at 09:30:10PM +0100, Carlos Soto wrote:
+>> Set LCDC base clock (per_7) parent clock to UPLL clock.
+>> This is needed to allow finer resolution in pixelclock
+>>
+>> Signed-off-by: Carlos Soto <csotoalonso@gmail.com>
+>> ---
+>>  drivers/clk/imx/clk-imx25.c |    6 ++++++
+>>  1 file changed, 6 insertions(+)
+>>
+>> diff --git a/drivers/clk/imx/clk-imx25.c b/drivers/clk/imx/clk-imx25.c
+>> index c4c141c..656340e 100644
+>> --- a/drivers/clk/imx/clk-imx25.c
+>> +++ b/drivers/clk/imx/clk-imx25.c
+>> @@ -238,6 +238,12 @@ static int __init __mx25_clocks_init(unsigned long osc_rate,
+>>       clk_set_parent(clk[per5_sel], clk[ahb]);
+>>
+>>       /*
+>> +      * set LCDC base clock (per 7) to highest possible frequency (UPLL)
+>> +      * to get best resolution for pixel clock
+>> +      */
+>> +     clk_set_parent(clk[per7_sel], clk[upll]);
+>
+> This can be done in device tree via assigned-clock-parents without the
+> need of touching kernel.
+>
+> Shawn
+>
 
-There are some Arria10 clocks of type "altr,socfpga-a10-perip-clk" that can
-have multiple parents. Fix up the __socfpga_periph_init() to call
-of_clk_parent_fill() that will return the appropriate number of parents.
+Sorry, I was not aware of this feature. Already tested and it works fine via DT
 
-Also, update __socfpga_gate_init() to call of_clk_parent_fill() helper
-function.
+Thanks for the help
 
-Signed-off-by: Dinh Nguyen <dinguyen@opensource.altera.com>
----
- drivers/clk/socfpga/clk-gate-a10.c   | 5 +----
- drivers/clk/socfpga/clk-periph-a10.c | 5 ++---
- 2 files changed, 3 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/clk/socfpga/clk-gate-a10.c b/drivers/clk/socfpga/clk-gate-a10.c
-index 1cebf25..0b6ee7b 100644
---- a/drivers/clk/socfpga/clk-gate-a10.c
-+++ b/drivers/clk/socfpga/clk-gate-a10.c
-@@ -167,12 +167,9 @@ static void __init __socfpga_gate_init(struct device_node *node,
- 	init.name = clk_name;
- 	init.ops = ops;
- 	init.flags = 0;
--	while (i < SOCFPGA_MAX_PARENTS && (parent_name[i] =
--			of_clk_get_parent_name(node, i)) != NULL)
--		i++;
- 
-+	init.num_parents = of_clk_parent_fill(node, parent_name, SOCFPGA_MAX_PARENTS);
- 	init.parent_names = parent_name;
--	init.num_parents = i;
- 	socfpga_clk->hw.hw.init = &init;
- 
- 	clk = clk_register(NULL, &socfpga_clk->hw.hw);
-diff --git a/drivers/clk/socfpga/clk-periph-a10.c b/drivers/clk/socfpga/clk-periph-a10.c
-index 1f397cb..2b7e215 100644
---- a/drivers/clk/socfpga/clk-periph-a10.c
-+++ b/drivers/clk/socfpga/clk-periph-a10.c
-@@ -74,7 +74,7 @@ static __init void __socfpga_periph_init(struct device_node *node,
- 	struct clk *clk;
- 	struct socfpga_periph_clk *periph_clk;
- 	const char *clk_name = node->name;
--	const char *parent_name;
-+	const char *parent_name[SOCFPGA_MAX_PARENTS];
- 	struct clk_init_data init;
- 	int rc;
- 	u32 fixed_div;
-@@ -109,8 +109,7 @@ static __init void __socfpga_periph_init(struct device_node *node,
- 	init.ops = ops;
- 	init.flags = 0;
- 
--	parent_name = of_clk_get_parent_name(node, 0);
--	init.num_parents = 1;
-+	init.num_parents = of_clk_parent_fill(node, parent_name, SOCFPGA_MAX_PARENTS);
- 	init.parent_names = &parent_name;
- 
- 	periph_clk->hw.hw.init = &init;
--- 
-2.6.2
+Carlos
