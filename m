@@ -1,63 +1,62 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 1 Feb 2016 18:41:58 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Insu Yun <wuninsu@gmail.com>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, taesoo@gatech.edu,
-	yeongjin.jang@gatech.edu, insu@gatech.edu, changwoo@gatech.edu
-Subject: Re: [PATCH] clk: unlock for handling unregisterd clock
-Message-ID: <20160202024158.GM4848@codeaurora.org>
-References: <1454166724-17374-1-git-send-email-wuninsu@gmail.com>
+Return-Path: <slash.tmp@free.fr>
+Subject: Re: Common/typical fractional divider HW API
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-clk <linux-clk@vger.kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Sebastian Frias <sf84@laposte.net>,
+ Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <56B4B67D.2080707@free.fr>
+ <1454684758.31169.77.camel@linux.intel.com> <56B4C775.50808@free.fr>
+ <1454688729.31169.87.camel@linux.intel.com> <56B4CDEF.3080606@free.fr>
+ <1454690599.31169.103.camel@linux.intel.com>
+From: Mason <slash.tmp@free.fr>
+Message-ID: <56B76B26.4050306@free.fr>
+Date: Sun, 7 Feb 2016 17:04:54 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1454166724-17374-1-git-send-email-wuninsu@gmail.com>
+In-Reply-To: <1454690599.31169.103.camel@linux.intel.com>
+Content-Type: text/plain; charset=ISO-8859-15
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/30, Insu Yun wrote:
-> If clock is already unregistered, it returns with holding lock.
-> It needs to be unlocked.
+On 05/02/2016 17:43, Andy Shevchenko wrote:
+
+> There are plenty of implementations of the divider.
+
+I'd be happy to read an overview on the subject, if you have
+some links to share.
+
+> You might consider to use one than inventing new one
+
+I find it hard to believe that the interface I'm discussing
+has not been used (several times) in the past. (It's merely
+a trivial floating point scheme.)
+
+As a matter of fact, the integer divider driver supports
+"I" and "2^I", so extending 2^I to "2^I * (1 + F/256)"
+is an obvious step.
+
+>> In this part of my message, I was trying to argue that one HW API
+>> "2^I * (1 + F/256)" seemed better than another one "I + F/16" on
+>> any hardware.
 > 
-> Signed-off-by: Insu Yun <wuninsu@gmail.com>
-> ---
+> I disagree in a part 2^I.
 
-Applied to clk-next but I changed it to a goto:
+I don't know what that means. If you speak Russian, maybe you
+can write in Russian, and I'll try to figure it out.
 
----8<---
-From: Insu Yun <wuninsu@gmail.com>
-Subject: [PATCH] clk: unlock for handling unregisterd clock
+>> Maybe the clk-fractional-divider could be made more generic by having
+>> the register update part done in a call-back function?
+> 
+> Why do you need to touch that module at all if your hardware doesn't
+> suit it?
 
-If clock is already unregistered, it returns with holding lock.
-It needs to be unlocked.
+What does it mean "your hardware doesn't suit it" ?
 
-Signed-off-by: Insu Yun <wuninsu@gmail.com>
-[sboyd@codeaurora.org: Use goto instead]
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I am saying that if the register update were moved into a call-back
+function, then any scheme could be supported. Maybe you think this
+is just vague hand-waving. I'll send a patch to illustrate what
+I'm saying.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index fff87b39944f..7d247a26a212 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2639,7 +2639,7 @@ void clk_unregister(struct clk *clk)
- 	if (clk->core->ops == &clk_nodrv_ops) {
- 		pr_err("%s: unregistered clock: %s\n", __func__,
- 		       clk->core->name);
--		return;
-+		goto unlock;
- 	}
- 	/*
- 	 * Assign empty clock ops for consumers that might still hold
-@@ -2665,7 +2665,7 @@ void clk_unregister(struct clk *clk)
- 		pr_warn("%s: unregistering prepared clock: %s\n",
- 					__func__, clk->core->name);
- 	kref_put(&clk->core->ref, __clk_release);
--
-+unlock:
- 	clk_prepare_unlock();
- }
- EXPORT_SYMBOL_GPL(clk_unregister);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Regards.
