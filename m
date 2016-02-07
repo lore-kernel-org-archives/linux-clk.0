@@ -1,55 +1,46 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>,
- "Akinobu Mita" <akinobu.mita@gmail.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20160216004221.GA3310@piout.net>
-Cc: rtc-linux@googlegroups.com, linux-clk@vger.kernel.org,
- "Heiko Stuebner" <heiko@sntech.de>,
- "Alessandro Zummo" <a.zummo@towertech.it>,
- "Stephen Boyd" <sboyd@codeaurora.org>
-References: <1454249410-21449-1-git-send-email-akinobu.mita@gmail.com>
- <20160216004221.GA3310@piout.net>
-Message-ID: <20160216223526.2278.66771@quark.deferred.io>
-Subject: Re: [PATCH] rtc: rtc-ds1307: add clock provider support for DS3231
-Date: Tue, 16 Feb 2016 14:35:26 -0800
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Jyri Sarha <jsarha@ti.com>
+Subject: [PATCH] clk: provider: Remove of_gpio_{gate,mux}_clk_setup() prototypes
+Date: Sat,  6 Feb 2016 23:42:06 -0800
+Message-Id: <1454830926-10434-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Alexandre Belloni (2016-02-15 16:42:21)
-> On 31/01/2016 at 23:10:10 +0900, Akinobu Mita wrote :
-> > DS3231 has programmable square-wave output signal.
-> > This enables to use this feature as a clock provider of
-> > common clock framework.
-> > =
+These functions either never existed or were only used in
+OF_CLK_DECLARE() macros. Remove the dead prototypes.
 
-> > Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-> > Cc: Heiko Stuebner <heiko@sntech.de>
-> > Cc: Alessandro Zummo <a.zummo@towertech.it>
-> > Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > ---
-> >  .../devicetree/bindings/rtc/maxim,ds3231.txt       |  37 +++
-> >  drivers/rtc/rtc-ds1307.c                           | 296 +++++++++++++=
-+++++++-
-> >  2 files changed, 332 insertions(+), 1 deletion(-)
-> >  create mode 100644 Documentation/devicetree/bindings/rtc/maxim,ds3231.=
-txt
-> > =
+Cc: Jyri Sarha <jsarha@ti.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ include/linux/clk-provider.h | 4 ----
+ 1 file changed, 4 deletions(-)
 
-> =
-
-> Applied, thanks.
-
-If it's not too late:
-
-Reviewed-by: Michael Turquette <mturquette@baylibre.com>
-
-> =
-
-> -- =
-
-> Alexandre Belloni, Free Electrons
-> Embedded Linux, Kernel and Android engineering
-> http://free-electrons.com
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 9c3a18c1a984..fce7f027f8a7 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -626,8 +626,6 @@ struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
+ 		const char *parent_name, unsigned gpio, bool active_low,
+ 		unsigned long flags);
+ 
+-void of_gpio_clk_gate_setup(struct device_node *node);
+-
+ /**
+  * struct clk_gpio_mux - gpio controlled clock multiplexer
+  *
+@@ -643,8 +641,6 @@ struct clk *clk_register_gpio_mux(struct device *dev, const char *name,
+ 		const char * const *parent_names, u8 num_parents, unsigned gpio,
+ 		bool active_low, unsigned long flags);
+ 
+-void of_gpio_mux_clk_setup(struct device_node *node);
+-
+ /**
+  * clk_register - allocate a new clock, register it and return an opaque cookie
+  * @dev: device that is registering this clock
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
