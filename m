@@ -1,37 +1,54 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Lars Persson <lars.persson@axis.com>
-To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	linux-kernel@vger.kernel.org, Lars Persson <larper@axis.com>
-Subject: [PATCH 7/8] arm: multi_v7_defconfig: add MACH_ARTPEC6
-Date: Wed, 10 Feb 2016 13:41:56 +0100
-Message-Id: <36d8a6a0236e08bc7286085018e2fa7a67691b39.1455107681.git.larper@axis.com>
-In-Reply-To: <cover.1455107681.git.larper@axis.com>
-References: <cover.1455107681.git.larper@axis.com>
-In-Reply-To: <cover.1455107681.git.larper@axis.com>
-References: <cover.1455107681.git.larper@axis.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-io0-f195.google.com ([209.85.223.195]:32971 "EHLO
+	mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752932AbcBHPcG (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 8 Feb 2016 10:32:06 -0500
+MIME-Version: 1.0
+In-Reply-To: <20160204193036.GA1958@tetsubishi>
+References: <1454135639-4102-1-git-send-email-dirk.behme@gmail.com>
+	<20160204193036.GA1958@tetsubishi>
+Date: Mon, 8 Feb 2016 16:32:06 +0100
+Message-ID: <CAMuHMdW3Cp-Ga9NCb=TgGE7QxUTNp-PbOXsNu47Vvgcf-m0bSw@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: shmobile: r8a7795: Add SD divider support
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Dirk Behme <dirk.behme@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+	Dirk Behme <dirk.behme@de.bosch.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Lars Persson <larper@axis.com>
----
- arch/arm/configs/multi_v7_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+On Thu, Feb 4, 2016 at 8:30 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> On Sat, Jan 30, 2016 at 07:33:59AM +0100, Dirk Behme wrote:
+>> This patch adds SD[0..3] clock divider support for R-Car Gen3 SoC.
+>>
+>> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+>
+> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> Since we don't have UHS support currently, changing the clock is not
+> really exercised; but the code looks good and if it needs fixing, we can
+> do it incrementally IMO. What is currently needed works fine on my
+> Salvator-X for the exposed SD interfaces.
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 8e8b2ac..bf3840e 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -16,6 +16,8 @@ CONFIG_ARCH_MULTI_V7=y
- # CONFIG_ARCH_MULTI_V4 is not set
- CONFIG_ARCH_VIRT=y
- CONFIG_ARCH_ALPINE=y
-+CONFIG_ARCH_ARTPEC=y
-+CONFIG_MACH_ARTPEC6=y
- CONFIG_ARCH_MVEBU=y
- CONFIG_MACH_ARMADA_370=y
- CONFIG_MACH_ARMADA_375=y
--- 
-2.1.4
+Thanks, will queue for next renesas-drivers and v4.6.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
