@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Lars Persson <lars.persson@axis.com>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, mark.rutland@arm.com,
-	pawel.moll@arm.com, ijc+devicetree@hellion.org.uk,
-	Lars Persson <larper@axis.com>, linux-kernel@vger.kernel.org,
-	robh+dt@kernel.org, galak@codeaurora.org
-Subject: Re: [PATCH v2 0/8] arm: Add Artpec-6 SoC
-Date: Thu, 11 Feb 2016 15:17:30 +0100
-Message-ID: <13460858.PmVpFaRWcp@wuerfel>
-In-Reply-To: <cover.1455198819.git.larper@axis.com>
-References: <cover.1455198819.git.larper@axis.com>
+Return-Path: <robh@kernel.org>
+Date: Mon, 8 Feb 2016 13:24:28 -0600
+From: Rob Herring <robh@kernel.org>
+To: James Liao <jamesjj.liao@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Kurtz <djkurtz@chromium.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, srv_heupstream@mediatek.com,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 2/7] dt-bindings: ARM: Mediatek: Document bindings for
+ MT2701
+Message-ID: <20160208192428.GA26367@rob-hp-laptop>
+References: <1454665050-37776-1-git-send-email-jamesjj.liao@mediatek.com>
+ <1454665050-37776-3-git-send-email-jamesjj.liao@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1454665050-37776-3-git-send-email-jamesjj.liao@mediatek.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thursday 11 February 2016 15:04:34 Lars Persson wrote:
-> Basic support for the Axis Artpec-6 ARM SoC. Timers, interrupts, UARTs and
-> ethernet are wired up.
+On Fri, Feb 05, 2016 at 05:37:25PM +0800, James Liao wrote:
+> This patch adds the binding documentation for apmixedsys, bdpsys,
+> ethsys, hifsys, imgsys, infracfg, mmsys, pericfg, topckgen and
+> vdecsys for Mediatek MT2701.
 > 
-> Changes since v1:
-> - Corrected bindings for axis,artpec6-pll1-clock.
-> - Moved the uart aliases to the board dts.
-> - Kconfig cleanup.
-> - Added a device tree binding for the dma configuration.
-> - Added CONFIG_SYNOPSYS_DWC_ETH_QOS to multi_v7_defconfig.
-> - Added binding documentation for axis,artpec6-dev-board.
-> 
-> Lars Persson (8):
->   clk: add device tree binding for artpec-6 pll1 clock
->   clk: add artpec-6 pll1 clock driver
->   arm: add device-tree SoC bindings for Axis Artpec-6
->   arm: dts: add Artpec-6 SoC dtsi file
->   arm: dts: add Artpec-6 development board dts
->   arm: initial machine port for artpec-6 SoC
->   arm: multi_v7_defconfig: add MACH_ARTPEC6
->   arm: mach-artpec: add entry to MAINTAINERS
+> Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
+> Tested-by: John Crispin <blogic@openwrt.org>
+> ---
+>  .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |  3 ++-
+>  .../bindings/arm/mediatek/mediatek,bdpsys.txt      | 22 ++++++++++++++++++++
+>  .../bindings/arm/mediatek/mediatek,ethsys.txt      | 22 ++++++++++++++++++++
+>  .../bindings/arm/mediatek/mediatek,hifsys.txt      | 24 ++++++++++++++++++++++
+>  .../bindings/arm/mediatek/mediatek,imgsys.txt      |  3 ++-
+>  .../bindings/arm/mediatek/mediatek,infracfg.txt    |  3 ++-
+>  .../bindings/arm/mediatek/mediatek,mmsys.txt       |  3 ++-
+>  .../bindings/arm/mediatek/mediatek,pericfg.txt     |  3 ++-
+>  .../bindings/arm/mediatek/mediatek,topckgen.txt    |  3 ++-
+>  .../bindings/arm/mediatek/mediatek,vdecsys.txt     |  3 ++-
+>  10 files changed, 82 insertions(+), 7 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,bdpsys.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,hifsys.txt
 
-Looks good except for the one issue I pointed out in patch 3 (and also 6).
-Once that is resolved, please submit the new platform for inclusion by sending
-it to arm@kernel.org.
-
-The first two patches should get merged through the drivers/clk maintainer tree,
-please submit them separately there.
-
-	Arnd
+Acked-by: Rob Herring <robh@kernel.org>
