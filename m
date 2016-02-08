@@ -1,58 +1,60 @@
 Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 8 Feb 2016 14:35:46 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	linux-fbdev@vger.kernel.org
-Subject: [PATCH 9/9] simplefb: Remove impossible check for of_clk_get_parent_count() < 0
-Date: Mon, 22 Feb 2016 12:54:47 -0800
-Message-Id: <1456174487-28397-10-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1456174487-28397-1-git-send-email-sboyd@codeaurora.org>
-References: <1456174487-28397-1-git-send-email-sboyd@codeaurora.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/2] devm: add helper devm_add_action_or_reset()
+Message-ID: <20160208223546.GA10791@codeaurora.org>
+References: <1450873640-12489-1-git-send-email-sudipm.mukherjee@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1450873640-12489-1-git-send-email-sudipm.mukherjee@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The check for < 0 is impossible now that
-of_clk_get_parent_count() returns an unsigned int. Simplify the
-code and update the types.
+On 12/23, Sudip Mukherjee wrote:
+> Add a helper function devm_add_action_or_reset() which will internally
+> call devm_add_action(). But if devm_add_action() fails then it will
+> execute the action mentioned and return the error code.
+> 
+> Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
+> ---
 
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: <linux-fbdev@vger.kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
+Greg, can I get your ack here to take this through clk-tree?
 
-Please ack so this can go through clk tree along with patch 1.
+> 
+> Next patch of the series will use this helper. And from a first glance
+> more use of this helper will be there.
+> 
+>  include/linux/device.h | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index f627ba2..f2455d0 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -682,6 +682,18 @@ void __iomem *devm_ioremap_resource(struct device *dev, struct resource *res);
+>  int devm_add_action(struct device *dev, void (*action)(void *), void *data);
+>  void devm_remove_action(struct device *dev, void (*action)(void *), void *data);
+>  
+> +static inline int devm_add_action_or_reset(struct device *dev,
+> +					   void (*action)(void *), void *data)
+> +{
+> +	int ret;
+> +
+> +	ret = devm_add_action(dev, action, data);
+> +	if (ret)
+> +		action(data);
+> +
+> +	return ret;
+> +}
+> +
+>  struct device_dma_parameters {
+>  	/*
+>  	 * a low level driver may set these to teach IOMMU code about
 
- drivers/video/fbdev/simplefb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/video/fbdev/simplefb.c b/drivers/video/fbdev/simplefb.c
-index 48ccf6db62a2..e9cf19977285 100644
---- a/drivers/video/fbdev/simplefb.c
-+++ b/drivers/video/fbdev/simplefb.c
-@@ -174,7 +174,7 @@ static int simplefb_parse_pd(struct platform_device *pdev,
- struct simplefb_par {
- 	u32 palette[PSEUDO_PALETTE_SIZE];
- #if defined CONFIG_OF && defined CONFIG_COMMON_CLK
--	int clk_count;
-+	unsigned int clk_count;
- 	struct clk **clks;
- #endif
- #if defined CONFIG_OF && defined CONFIG_REGULATOR
-@@ -213,7 +213,7 @@ static int simplefb_clocks_init(struct simplefb_par *par,
- 		return 0;
- 
- 	par->clk_count = of_clk_get_parent_count(np);
--	if (par->clk_count <= 0)
-+	if (!par->clk_count)
- 		return 0;
- 
- 	par->clks = kcalloc(par->clk_count, sizeof(struct clk *), GFP_KERNEL);
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
