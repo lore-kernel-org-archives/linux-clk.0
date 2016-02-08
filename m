@@ -1,128 +1,62 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Jonathan Corbet <corbet@lwn.net>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	linux-doc@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 4/8] clk: bcm2835: add the camera related clocks cam0, cam1 and ccp2
-Date: Mon, 29 Feb 2016 15:43:58 +0000
-Message-Id: <1456760642-2412-5-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org>
-References: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <afaerber@suse.de>
+Subject: Re: [PATCH] clk: meson: Fix meson_clk_register_clks() signature type
+ mismatch
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1454879583-27036-1-git-send-email-afaerber@suse.de>
+ <20160208221508.GT4848@codeaurora.org>
+Cc: linux-arm-kernel@lists.infradead.org, Carlo Caione <carlo@caione.org>,
+ Matthias Brugger <mbrugger@suse.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ linux-clk <linux-clk@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Message-ID: <56B9150E.5010808@suse.de>
+Date: Mon, 8 Feb 2016 23:22:06 +0100
+MIME-Version: 1.0
+In-Reply-To: <20160208221508.GT4848@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+Am 08.02.2016 um 23:15 schrieb Stephen Boyd:
+> On 02/07, Andreas Färber wrote:
+>> As preparation for arm64 based mesongxbb, which pulls in this code once
+>> enabling ARCH_MESON, fix a size_t vs. unsigned int type mismatch.
+>> The loop uses a local unsigned int variable, so adopt that type,
+>> matching the header.
+>>
+>> Fixes: 7a29a869434e ("clk: meson: Add support for Meson clock controller")
+>> Signed-off-by: Andreas Färber <afaerber@suse.de>
+>> ---
+> 
+> Applied to clk-next. It would have been nice to have the
+> compilation error though
 
-Add the camera related clocks: cam0, cam1 and ccp2
-and the corresponding ccp2 clock mux definition.
+Ask and you shall receive:
 
-Note that the mux definition is incomplete and essentially
-is identical to the osc mux right now. But it should contain
-at least plla_ccp2 in one location.
+  CC      drivers/clk/meson/clkc.o
+drivers/clk/meson/clkc.c:200:13: error: conflicting types for
+'meson_clk_register_clks'
+ void __init meson_clk_register_clks(const struct clk_conf *clk_confs,
+             ^
+In file included from drivers/clk/meson/clkc.c:22:0:
+drivers/clk/meson/clkc.h:180:6: note: previous declaration of
+'meson_clk_register_clks' was here
+ void meson_clk_register_clks(const struct clk_conf *clk_confs,
+      ^
+scripts/Makefile.build:258: recipe for target 'drivers/clk/meson/clkc.o'
+failed
+make[3]: *** [drivers/clk/meson/clkc.o] Error 1
+scripts/Makefile.build:407: recipe for target 'drivers/clk/meson' failed
+make[2]: *** [drivers/clk/meson] Error 2
+scripts/Makefile.build:407: recipe for target 'drivers/clk' failed
+make[1]: *** [drivers/clk] Error 2
+Makefile:959: recipe for target 'drivers' failed
+make: *** [drivers] Error 2
 
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c       |   53 +++++++++++++++++++++++++++++++++++
- include/dt-bindings/clock/bcm2835.h |    3 ++
- 2 files changed, 56 insertions(+)
+Not really telling, is it. ;)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index f43e1ca..aec9b22 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1455,6 +1455,34 @@ static const char *const bcm2835_clock_vpu_parents[] = {
- 	.parents = bcm2835_clock_vpu_parents,				\
- 	__VA_ARGS__)
- 
-+/* ccp2 (camera) parent mux */
-+static const char * const bcm2835_clock_ccp2_parents[] = {
-+	"gnd",
-+	"xosc",
-+	"testdebug0",
-+	"testdebug1",
-+	/*
-+	 * more parent clocks, but unknown at this time
-+	 * the current definition follows the "common" pattern
-+	 * that already applies to all the other parent mux
-+	 * in so far as all the known mux contain gnd, xosc, testdebug0/1
-+	 * as the first 3 entries.
-+	 * The mux should contain "plla_ccp2" at one position.
-+	 * here some possible candidates for the next parents in the list.
-+	 *   plla_ccp2 or ppla_core/per
-+	 *   pllb_core/per
-+	 *   pllc_core/per
-+	 *   plld_core/per
-+	 *   pllh_aux/pix
-+	 * up to 16 different parents
-+	 */
-+};
-+
-+#define REGISTER_CCP2_CLK(...)	REGISTER_CLK(				\
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_ccp2_parents),	\
-+	.parents = bcm2835_clock_ccp2_parents,				\
-+	__VA_ARGS__)
-+
- /*
-  * the real definition of all the pll, pll_dividers and clocks
-  * these make use of the above REGISTER_* macros
-@@ -1804,6 +1832,18 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.div_reg = CM_AVEODIV,
- 		.int_bits = 4,
- 		.frac_bits = 0),
-+	[BCM2835_CLOCK_CAM0]	= REGISTER_PER_CLK(
-+		.name = "cam0",
-+		.ctl_reg = CM_CAM0CTL,
-+		.div_reg = CM_CAM0DIV,
-+		.int_bits = 4,
-+		.frac_bits = 8),
-+	[BCM2835_CLOCK_CAM1]	= REGISTER_PER_CLK(
-+		.name = "cam1",
-+		.ctl_reg = CM_CAM1CTL,
-+		.div_reg = CM_CAM1DIV,
-+		.int_bits = 4,
-+		.frac_bits = 8),
- 	[BCM2835_CLOCK_DFT]	= REGISTER_PER_CLK(
- 		.name = "dft",
- 		.ctl_reg = CM_DFTCTL,
-@@ -1897,6 +1937,19 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.int_bits = 4,
- 		.frac_bits = 0),
- 
-+	/* clocks with ccp2 parent mux */
-+	[BCM2835_CLOCK_CCP2]	= REGISTER_CCP2_CLK(
-+		/*
-+		 * this is possibly a gate of the plla_ccp2 divider
-+		 * but as CTL contains 4 bits for mux selection
-+		 * it must be a mux
-+		 */
-+		.name = "ccp2",
-+		.ctl_reg = CM_CCP2CTL,
-+		.div_reg = CM_CCP2DIV,
-+		.int_bits = 1,
-+		.frac_bits = 0),
-+
- 	/* the gates */
- 
- 	/*
-diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
-index f2e72e7..1d70088 100644
---- a/include/dt-bindings/clock/bcm2835.h
-+++ b/include/dt-bindings/clock/bcm2835.h
-@@ -63,3 +63,6 @@
- #define BCM2835_CLOCK_SLIM		45
- #define BCM2835_CLOCK_SMI		46
- #define BCM2835_CLOCK_TEC		47
-+#define BCM2835_CLOCK_CAM0		48
-+#define BCM2835_CLOCK_CAM1		49
-+#define BCM2835_CLOCK_CCP2		50
+Regards,
+Andreas
+
 -- 
-1.7.10.4
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton; HRB 21284 (AG Nürnberg)
