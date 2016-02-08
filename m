@@ -1,95 +1,65 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 2 Feb 2016 14:13:47 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: robh+dt@kernel.org, corbet@lwn.net, pawel.moll@arm.com,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, linux@arm.linux.org.uk, emilio@elopez.com.ar,
-	jenskuske@gmail.com, hdegoede@redhat.com, wens@csie.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org, patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 03/14] clk: sunxi: add bus gates for A83T
-Message-ID: <20160202131347.GP4652@lukather>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
- <1454203266-4450-4-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <kernel@martin.sperl.org>
+Subject: Re: [PATCH V4 1/7] clk: bcm2835: the minimum clock divider is 2
+To: Eric Anholt <eric@anholt.net>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+ Remi Pommarel <repk@triplefau.lt>, linux-clk@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org
+References: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org>
+ <1452867667-2447-2-git-send-email-kernel@martin.sperl.org>
+ <87oac03tuz.fsf@eliezer.anholt.net> <87egcv5153.fsf@eliezer.anholt.net>
+From: Martin Sperl <kernel@martin.sperl.org>
+Message-ID: <56B87075.8000304@martin.sperl.org>
+Date: Mon, 8 Feb 2016 11:39:49 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/NwG7NuG0/W8LcLh"
-In-Reply-To: <1454203266-4450-4-git-send-email-vishnupatekar0510@gmail.com>
+In-Reply-To: <87egcv5153.fsf@eliezer.anholt.net>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
 
---/NwG7NuG0/W8LcLh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jan 31, 2016 at 09:20:55AM +0800, Vishnu Patekar wrote:
-> A83T has similar bus gates that of H3, including single gating register h=
-as
-> different clock parent.
->=20
-> As per H3 and A83T datasheet, usbhost is under AHB2.
->=20
-> However,below shows allwinner source code assignment:
-> bits: 26 (ehci0), 27 (ehci1), 29 (ohci0) =3D> AHB1 for A83T.
-> bits: 26 (ehci0), 27 (ehci1) =3D> AHB1 for H3
-> bits  29, 30, 31(ohci0,1,2) =3D> AHB2 for H3.
->=20
-> until, this confusion is cleared keep it H3 way.
->=20
-> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-> ---
->  Documentation/devicetree/bindings/clock/sunxi.txt | 1 +
->  drivers/clk/sunxi/clk-sun8i-bus-gates.c           | 2 ++
->  2 files changed, 3 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Document=
-ation/devicetree/bindings/clock/sunxi.txt
-> index 7f19ef5..4514d77 100644
-> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
-> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-> @@ -59,6 +59,7 @@ Required properties:
->  	"allwinner,sun6i-a31-apb2-gates-clk" - for the APB2 gates on A31
->  	"allwinner,sun8i-a23-apb2-gates-clk" - for the APB2 gates on A23
->  	"allwinner,sun8i-h3-bus-gates-clk" - for the bus gates on H3
-> +	"allwinner,sun8i-a83t-bus-gates-clk" - for the bus gates on A83T
+On 02.02.2016 02:52, Eric Anholt wrote:
+> Eric Anholt <eric@anholt.net> writes:
+>
+>> kernel@martin.sperl.org writes:
+>>
+>>> From: Martin Sperl <kernel@martin.sperl.org>
+>>>
+>>> Testing with different clock divider values has shown
+>>> that (at least for the PCM clock) the clock divider
+>>> has to be at least 2, otherwise the clock will not
+>>> output a signal.
+>>
+>> For a MASH clock (PWM, PCM, SLIMBUS, but not the others), the minimum
+>> integer component of the divider is:
+>>
+>> mash 0: 1
+>> mash 1: 2
+>> mash 2: 3
+>> mash 3: 5
+>
+> More specific MASH list:
+>
+> GP0
+> GP1
+> (*not* gp2)
+> PCM
+> PWM
+> SLIM
+>
+I got the list from the broadcom provided headers for the VC4.
+and where CM_*_DIV range does not start at 12 we have a fractional
+divider (also requires if CM_*_FRAC or CM_*_MASH is set)
 
-Please order them alphabetically next time.
+And if CM_*_MASH is set we got a mash enabled clock:
+CM_GNRICCTL_MASH
+CM_GP0CTL_MASH
+CM_GP1CTL_MASH
+CM_PCMCTL_MASH
+CM_PWMCTL_MASH
+CM_SLIMCTL_MASH
 
-Applied with the fix, and the Acked-bys
-
-thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---/NwG7NuG0/W8LcLh
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWsKuLAAoJEBx+YmzsjxAgwP8P/1w03TCL2uPuT1wXayHRo8yW
-5ahpUzgHEEyXxY1pqkh3av03MUSOp8ri1pTDaIMRFMc5VpF/E8pByi4n9W9ZJiKN
-TjiwJH6fhG7wDTSjFOw0pdNgtcykYr61Aic2pBcR1jXdnANB3MKjJ8c0ijL/lEM6
-Z/6TlRpH/V8ZJdgxPmnMiUUzoOzZmRDldRrx6H3BGg2HCH+TBmLNUbqV/cegKnoQ
-/JHCpc+tJKoZcq+2CE3SMsCBs83Gl/FCPz0AAIaWcw56KmrBv2ORxSRfXvQ5BBJF
-fgX73oogWz3RnezWy51DAOv2i54y3Jvz5wNjIJn+VzuJhU3B61uh6hjbakEjNoRy
-Jti8fbL1Z6WU0SdF7RR/A21OG8KpEvivqeKSmkp7y6mBNikJVZR7rIDzfgaeMeuW
-kgZ99+dHK1g3IKg+oGCIJjMhz71UbKEjPdp7rgk1aRKwP1YgSOt86hZ21x98czRy
-qeRgxFrWuhQpbgnOLIdVWCjWSKTIAsWtH0cKK7Egh+Ma6VhwUE+fwvAlKsq1jUlL
-leUBADgdvYLLwkG1SvFarH99+RlxxsPt+7+kDzxrTrUs53BJ73OKCvS3ZYdv4ph1
-BAq6kG76+WkEK4pKfIPU7ahJXv2KLqJYtu2Vik1g7nVRiNwxvKq5dv6fB9HCI7Z9
-NmZb976eOllAKUwk+QBs
-=zg08
------END PGP SIGNATURE-----
-
---/NwG7NuG0/W8LcLh--
+And this is what can get implemented by configuring mash
+in the DT - otherwise only frac (a.k.a. MASH = 1) is
+used for any clock that has .frac_bits > 0.
