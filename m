@@ -1,68 +1,57 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <kernel@martin.sperl.org>
+Subject: Re: [PATCH V4 2/7] clk: bcm2835: clamp clock divider to highest
+ integer only
+To: Eric Anholt <eric@anholt.net>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+ Remi Pommarel <repk@triplefau.lt>, linux-clk@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org
+References: <1452867667-2447-1-git-send-email-kernel@martin.sperl.org>
+ <1452867667-2447-3-git-send-email-kernel@martin.sperl.org>
+ <87k2mo3tnm.fsf@eliezer.anholt.net>
+From: Martin Sperl <kernel@martin.sperl.org>
+Message-ID: <56B887FC.5070001@martin.sperl.org>
+Date: Mon, 8 Feb 2016 13:20:12 +0100
 MIME-Version: 1.0
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>,
- "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20160223113059.GH19428@n2100.arm.linux.org.uk>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20160219030731.GS4847@codeaurora.org>
- <1455851525-18972-1-git-send-email-sboyd@codeaurora.org>
- <20160223113059.GH19428@n2100.arm.linux.org.uk>
-Message-ID: <20160224214706.2278.79643@quark.deferred.io>
-Subject: Re: [PATCH] clk: gpio: Really allow an optional clock= DT property
-Date: Wed, 24 Feb 2016 13:47:06 -0800
+In-Reply-To: <87k2mo3tnm.fsf@eliezer.anholt.net>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Russell,
 
-Quoting Russell King - ARM Linux (2016-02-23 03:30:59)
-> On Thu, Feb 18, 2016 at 07:12:05PM -0800, Stephen Boyd wrote:
-> > We mis-merged the original patch from Russell here and so the
-> > patch went almost all the way, except that we still failed to
-> > probe when there wasn't a clocks property in the DT node. Allow
-> > that case by making a negative value from
-> > of_clk_get_parent_count() into "no parents", like the original
-> > patch did.
-> =
 
-> So you apply it anyway, and ignore all further discussion.  I've
-> no idea what kind of politics is going on here, but it has to stop.
+On 02.02.2016 00:19, Eric Anholt wrote:
+> kernel@martin.sperl.org writes:
+>
+>> From: Martin Sperl <kernel@martin.sperl.org>
+>>
+>> The clock divider calculation right now clamps the
+>> divider to the highest possible fractional divider.
+>> So typically (BIT(div_int_bits) - 1) + 4095 / 4096.
+>>
+>> As the fractional clock divider is alterating between
+>> (Fosc / div_int) and (Fosc / (div_int + 1))
+>> the divider will overflow for the (div_int + 1) case.
+>> As with the "underflow" case we have seen for (div < 2),
+>> we can assume that the same applies on the upper limit
+>> as well.
+>>
+>> So this patch will instead clamp to the divider to the
+>> max of (BIT(div_int_bits) - 1)
+>
+> Looks like this restriction might be necessary, though it's not quite
+> spelled out in the docs.
+>
+> This also needs to be conditional on it being a MASH clock, and the
+> limit on the divider changes in the same way based on the mash number as
+> for the minimum.
+>
+See:
+[PATCH V4 7/7] clk: bcm2835: apply limits on dividers to MASH mode.
+That "downgrades" to lower mash values in case we are out of range.
+Also note that it applies to MASH=1 as well.
 
-Stephen fixed the bug, and I didn't ask you to test because you made it
-clear that you did not have the time (understandable). Stephen
-reproduced the issue locally and insured that his version of the fix
-does actually fix it.
-
-He is an equal co-maintainer so of course I support him to merge the
-fix, plus I find his version more readable.
-
-> =
-
-> I'm also still waiting for that apology from Mike - never apply a
-
-No thematics please. When you wrongly accused me of merging code outside
-of the merge window[0] did I ask for an apology?
-
-> modified patch without stating in the commit log that it was modified.
-> It's basically fraud.
-
-An oversight for which we are both equally guilty. The "change" was the
-resolution of a merge conflict, and I posted the resolved version of the
-patch to the thread[0]. You said, "Looks fine, thanks."
-
-In summary: bugs happen. Let's please just move on and get back to work.
-
-[0] http://lkml.kernel.org/r/<20160103105319.GB5779@n2100.arm.linux.org.uk>
-
-Regards,
-Mike
-
-> =
-
-> -- =
-
-> RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
-> FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-> according to speedtest.net.
+If the other (non mash-supported) clocks support this "better" (if it 
+works), then we can make that change only apply to mash enabled clocks.
+But so far I doubt it works correctly so I have applied those limits to
+all clocks.
