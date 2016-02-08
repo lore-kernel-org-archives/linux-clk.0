@@ -1,184 +1,42 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Jonathan Corbet <corbet@lwn.net>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	linux-doc@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dinh Nguyen <dinguyen@opensource.altera.com>,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 3/8] clk: bcm2835: add missing osc and per clocks
-Date: Mon, 29 Feb 2016 15:43:57 +0000
-Message-Id: <1456760642-2412-4-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org>
-References: <1456760642-2412-1-git-send-email-kernel@martin.sperl.org>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: socfpga: fix __init annotation
+Date: Mon,  8 Feb 2016 15:39:09 +0100
+Message-Id: <1454942356-2783135-1-git-send-email-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+clang found a bug with the __socfpga_pll_init definition:
 
-Add definitions for the following clocks:
-* AVE0
-* DFT
-* GP0
-* GP1
-* GP2
-* PULSE
-* SLIM
-* SMI
-* TEC
+drivers/clk/socfpga/clk-pll-a10.c:77:15: error: '__section__' attribute only applies to functions and
+      global variables
 
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+This moves the __init annotation to the right place so the function
+actually gets discarded.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/clk/bcm/clk-bcm2835.c       |   71 +++++++++++++++++++++++++++++++++++
- include/dt-bindings/clock/bcm2835.h |   10 +++++
- 2 files changed, 81 insertions(+)
+ drivers/clk/socfpga/clk-pll-a10.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 710cf15..f43e1ca 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -118,6 +118,8 @@
- #define CM_SDCCTL		0x1a8
- #define CM_SDCDIV		0x1ac
- #define CM_ARMCTL		0x1b0
-+#define CM_AVEOCTL		0x1b8
-+#define CM_AVEODIV		0x1bc
- #define CM_EMMCCTL		0x1c0
- #define CM_EMMCDIV		0x1c4
+diff --git a/drivers/clk/socfpga/clk-pll-a10.c b/drivers/clk/socfpga/clk-pll-a10.c
+index 402d630bd531..35fabe1a32c3 100644
+--- a/drivers/clk/socfpga/clk-pll-a10.c
++++ b/drivers/clk/socfpga/clk-pll-a10.c
+@@ -74,7 +74,7 @@ static struct clk_ops clk_pll_ops = {
+ 	.get_parent = clk_pll_get_parent,
+ };
  
-@@ -1738,6 +1740,18 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.div_reg = CM_TSENSDIV,
- 		.int_bits = 5,
- 		.frac_bits = 0),
-+	[BCM2835_CLOCK_PULSE]	= REGISTER_OSC_CLK(
-+		.name = "pulse",
-+		.ctl_reg = CM_PULSECTL,
-+		.div_reg = CM_PULSEDIV,
-+		.int_bits = 12,
-+		.frac_bits = 0),
-+	[BCM2835_CLOCK_TEC]	= REGISTER_OSC_CLK(
-+		.name = "tec",
-+		.ctl_reg = CM_TECCTL,
-+		.div_reg = CM_TECDIV,
-+		.int_bits = 6,
-+		.frac_bits = 0),
- 
- 	/* clocks with vpu parent mux */
- 	[BCM2835_CLOCK_H264]	= REGISTER_VPU_CLK(
-@@ -1752,6 +1766,7 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.div_reg = CM_ISPDIV,
- 		.int_bits = 4,
- 		.frac_bits = 8),
-+
- 	/*
- 	 * Secondary SDRAM clock.  Used for low-voltage modes when the PLL
- 	 * in the SDRAM controller can't be used.
-@@ -1783,6 +1798,24 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.is_vpu_clock = true),
- 
- 	/* clocks with per parent mux */
-+	[BCM2835_CLOCK_AVEO]	= REGISTER_PER_CLK(
-+		.name = "aveo",
-+		.ctl_reg = CM_AVEOCTL,
-+		.div_reg = CM_AVEODIV,
-+		.int_bits = 4,
-+		.frac_bits = 0),
-+	[BCM2835_CLOCK_DFT]	= REGISTER_PER_CLK(
-+		.name = "dft",
-+		.ctl_reg = CM_DFTCTL,
-+		.div_reg = CM_DFTDIV,
-+		.int_bits = 5,
-+		.frac_bits = 0),
-+	[BCM2835_CLOCK_DFT]	= REGISTER_PER_CLK(
-+		.name = "dpi",
-+		.ctl_reg = CM_DPICTL,
-+		.div_reg = CM_DPIDIV,
-+		.int_bits = 4,
-+		.frac_bits = 8),
- 
- 	/* Arasan EMMC clock */
- 	[BCM2835_CLOCK_EMMC]	= REGISTER_PER_CLK(
-@@ -1791,6 +1824,30 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.div_reg = CM_EMMCDIV,
- 		.int_bits = 4,
- 		.frac_bits = 8),
-+
-+	/* General purpose (GPIO) clocks */
-+	[BCM2835_CLOCK_GP0]	= REGISTER_PER_CLK(
-+		.name = "gp0",
-+		.ctl_reg = CM_GP0CTL,
-+		.div_reg = CM_GP0DIV,
-+		.int_bits = 12,
-+		.frac_bits = 12,
-+		.is_mash_clock = true),
-+	[BCM2835_CLOCK_GP1]	= REGISTER_PER_CLK(
-+		.name = "gp1",
-+		.ctl_reg = CM_GP1CTL,
-+		.div_reg = CM_GP1DIV,
-+		.int_bits = 12,
-+		.frac_bits = 12,
-+		.is_mash_clock = true),
-+	[BCM2835_CLOCK_GP2]	= REGISTER_PER_CLK(
-+		.name = "gp2",
-+		.ctl_reg = CM_GP2CTL,
-+		.div_reg = CM_GP2DIV,
-+		.int_bits = 12,
-+		.frac_bits = 12,
-+		.is_mash_clock = true),
-+
- 	/* HDMI state machine */
- 	[BCM2835_CLOCK_HSM]	= REGISTER_PER_CLK(
- 		.name = "hsm",
-@@ -1812,12 +1869,26 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.int_bits = 12,
- 		.frac_bits = 12,
- 		.is_mash_clock = true),
-+	[BCM2835_CLOCK_SLIM]	= REGISTER_PER_CLK(
-+		.name = "slim",
-+		.ctl_reg = CM_SLIMCTL,
-+		.div_reg = CM_SLIMDIV,
-+		.int_bits = 12,
-+		.frac_bits = 12,
-+		.is_mash_clock = true),
-+	[BCM2835_CLOCK_SMI]	= REGISTER_PER_CLK(
-+		.name = "smi",
-+		.ctl_reg = CM_SMICTL,
-+		.div_reg = CM_SMIDIV,
-+		.int_bits = 4,
-+		.frac_bits = 8),
- 	[BCM2835_CLOCK_UART]	= REGISTER_PER_CLK(
- 		.name = "uart",
- 		.ctl_reg = CM_UARTCTL,
- 		.div_reg = CM_UARTDIV,
- 		.int_bits = 10,
- 		.frac_bits = 12),
-+
- 	/* TV encoder clock.  Only operating frequency is 108Mhz.  */
- 	[BCM2835_CLOCK_VEC]	= REGISTER_PER_CLK(
- 		.name = "vec",
-diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
-index 9689812..f2e72e7 100644
---- a/include/dt-bindings/clock/bcm2835.h
-+++ b/include/dt-bindings/clock/bcm2835.h
-@@ -53,3 +53,13 @@
- #define BCM2835_PLLB_SP2		36
- #define BCM2835_PLLD_DSI0		37
- #define BCM2835_PLLD_DSI1		38
-+
-+#define BCM2835_CLOCK_AVEO		39
-+#define BCM2835_CLOCK_DFT		40
-+#define BCM2835_CLOCK_GP0		41
-+#define BCM2835_CLOCK_GP1		42
-+#define BCM2835_CLOCK_GP2		43
-+#define BCM2835_CLOCK_PULSE		44
-+#define BCM2835_CLOCK_SLIM		45
-+#define BCM2835_CLOCK_SMI		46
-+#define BCM2835_CLOCK_TEC		47
+-static struct __init clk * __socfpga_pll_init(struct device_node *node,
++static struct clk * __init __socfpga_pll_init(struct device_node *node,
+ 	const struct clk_ops *ops)
+ {
+ 	u32 reg;
 -- 
-1.7.10.4
+2.7.0
