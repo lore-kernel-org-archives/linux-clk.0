@@ -1,60 +1,81 @@
-Return-Path: <shawn.lin@rock-chips.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Shawn Lin <shawn.lin@rock-chips.com>
-Subject: [PATCH] clk: rockchip: free memory for error handle
-Date: Tue,  2 Feb 2016 11:37:50 +0800
-Message-Id: <1454384270-20018-1-git-send-email-shawn.lin@rock-chips.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 8 Feb 2016 11:50:38 -0600
+From: Rob Herring <robh@kernel.org>
+To: Wenyou Yang <wenyou.yang@atmel.com>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	linux-clk@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] Documentation: atmel-pmc: add DT bindings for
+ fast startup
+Message-ID: <20160208175038.GA10074@rob-hp-laptop>
+References: <1454571471-4434-1-git-send-email-wenyou.yang@atmel.com>
+ <1454571471-4434-5-git-send-email-wenyou.yang@atmel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1454571471-4434-5-git-send-email-wenyou.yang@atmel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add free memeory if rockchip_clk_register_branch
-failed.
+On Thu, Feb 04, 2016 at 03:37:51PM +0800, Wenyou Yang wrote:
+> Add DT bindings to configurate the PMC_FSMR and PMC_FSPR registers
+> to trigger a fast restart signal to PMC.
+> 
+> Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
+> ---
+> 
+> Changes in v2:
+>  - change the property name and property description.
+> 
+>  .../devicetree/bindings/arm/atmel-pmc.txt          |   63 ++++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/atmel-pmc.txt b/Documentation/devicetree/bindings/arm/atmel-pmc.txt
+> index 795cc78..1b3833b 100644
+> --- a/Documentation/devicetree/bindings/arm/atmel-pmc.txt
+> +++ b/Documentation/devicetree/bindings/arm/atmel-pmc.txt
+> @@ -12,3 +12,66 @@ Examples:
+>  		compatible = "atmel,at91rm9200-pmc";
+>  		reg = <0xfffffc00 0x100>;
+>  	};
+> +
+> +PMC Fast Startup Signals
+> +
+> +The PMC Fast Start Signals are used as the wake up source to trigger the PMC
+> +to wake up the system from the ULP1 mode.
+> +
+> +required properties:
+> +- compatible: Should be "atmel,sama5d2-pmc-fast-startup".
+> +
+> +optional properties:
+> +- atmel,wkup-trigger: boolean, WKUP input can trigger a fast restart signal.
+> +- atmel,secumod-trigger: boolean, SECUMOD can trigger a fast restart signal.
+> +- atmel,piobu0-trigger: boolean, PIOBU0 input can trigger a fast restart signal.
+> +- atmel,piobu1-trigger: boolean, PIOBU1 input can trigger a fast restart signal.
+> +- atmel,piobu2-trigger: boolean, PIOBU2 input can trigger a fast restart signal.
+> +- atmel,piobu3-trigger: boolean, PIOBU3 input can trigger a fast restart signal.
+> +- atmel,piobu4-trigger: boolean, PIOBU4 input can trigger a fast restart signal.
+> +- atmel,piobu5-trigger: boolean, PIOBU5 input can trigger a fast restart signal.
+> +- atmel,piobu6-trigger: boolean, PIOBU6 input can trigger a fast restart signal.
+> +- atmel,piobu7-trigger: boolean, PIOBU7 input can trigger a fast restart signal.
+> +- atmel,gmac-wol-trigger: boolean, GMAC_WOL can trigger a fast restart signal.
+> +- atmel,rtc-alarm-trigger: boolean, RTC alarm can trigger a fast restart signal.
+> +- atmel,usb-resume-trigger: boolean, USB resume can trigger a fast restart
+> +  signal.
+> +- atmel,sdmmc-cd-trigger: boolean, SDMMC card detect can trigger a fast
+> +  restart signal.
+> +- atmel,rxlp-match-trigger: boolean, Matching condition on RXLP can trigger
+> +  a fast restart signal.
+> +- atmel,acc-comparison-trigger: boolean, ACC comparison can trigger a fast
+> +  restart signal.
+> +
+> +- atmel,wkup-trigger-level: string, defines the active polarity of the wake-up
+> +  input. Supported values are: "high" or "low".
 
-Fixes: a245fecbb806 ("clk: rockchip: add basic infrastructure...")
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
----
-
- drivers/clk/rockchip/clk.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index d9a0b5d..62fbe2c 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -70,7 +70,7 @@ static struct clk *rockchip_clk_register_branch(const char *name,
- 	if (gate_offset >= 0) {
- 		gate = kzalloc(sizeof(*gate), GFP_KERNEL);
- 		if (!gate)
--			return ERR_PTR(-ENOMEM);
-+			goto err_gate;
- 
- 		gate->flags = gate_flags;
- 		gate->reg = base + gate_offset;
-@@ -82,7 +82,7 @@ static struct clk *rockchip_clk_register_branch(const char *name,
- 	if (div_width > 0) {
- 		div = kzalloc(sizeof(*div), GFP_KERNEL);
- 		if (!div)
--			return ERR_PTR(-ENOMEM);
-+			goto err_div;
- 
- 		div->flags = div_flags;
- 		div->reg = base + muxdiv_offset;
-@@ -100,6 +100,11 @@ static struct clk *rockchip_clk_register_branch(const char *name,
- 				     flags);
- 
- 	return clk;
-+err_div:
-+	kfree(gate);
-+err_gate:
-+	kfree(mux);
-+	return ERR_PTR(-ENOMEM);
- }
- 
- struct rockchip_clk_frac {
--- 
-2.3.7
+Use 0 and 1, not strings.
