@@ -1,77 +1,45 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga01-in.huawei.com ([58.251.152.64]:11476 "EHLO
-	szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750821AbcBECna (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 4 Feb 2016 21:43:30 -0500
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
-	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
-	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [RESEND PATCH v8 4/6] ARM: debug: add hi3519 debug uart
-Date: Fri, 5 Feb 2016 10:31:10 +0800
-Message-ID: <1454639472-17373-5-git-send-email-xuejiancheng@huawei.com>
-In-Reply-To: <1454639472-17373-1-git-send-email-xuejiancheng@huawei.com>
-References: <1454639472-17373-1-git-send-email-xuejiancheng@huawei.com>
+Return-Path: <afaerber@suse.de>
+Subject: Re: [PATCH] clk: meson: Fix meson_clk_register_clks() signature type
+ mismatch
+To: Carlo Caione <carlo@caione.org>
+References: <1454879583-27036-1-git-send-email-afaerber@suse.de>
+ <CAOQ7t2YwHa7cJdqv4m8rPx50ZnFZJJzcU2AjtE=Q2AYEAf84hg@mail.gmail.com>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ Matthias Brugger <mbrugger@suse.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, linux-meson@googlegroups.com
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Message-ID: <56B87430.3040804@suse.de>
+Date: Mon, 8 Feb 2016 11:55:44 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <CAOQ7t2YwHa7cJdqv4m8rPx50ZnFZJJzcU2AjtE=Q2AYEAf84hg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-add hi3519 debug uart
+Am 08.02.2016 um 09:34 schrieb Carlo Caione:
+> On Sun, Feb 7, 2016 at 10:13 PM, Andreas Färber <afaerber@suse.de> wrote:
+>> As preparation for arm64 based mesongxbb, which pulls in this code once
+>> enabling ARCH_MESON, fix a size_t vs. unsigned int type mismatch.
+>> The loop uses a local unsigned int variable, so adopt that type,
+>> matching the header.
+>>
+>> Fixes: 7a29a869434e ("clk: meson: Add support for Meson clock controller")
+>> Signed-off-by: Andreas Färber <afaerber@suse.de>
+>> ---
+>>  drivers/clk/meson/clkc.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+[...]
+> Also please, CC linux-meson@googlegroups.com on meson related patches.
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
----
- arch/arm/Kconfig.debug | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+I used scripts/get_maintainer.pl --nogit-fallback on next-20160111. :)
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index c6b6175..edd3fbe 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -260,6 +260,14 @@ choice
- 		  Say Y here if you want kernel low-level debugging support
- 		  on Cortina Gemini based platforms.
- 
-+	config DEBUG_HI3519_UART
-+		bool "Hisilicon HI3519 Debug UART"
-+		depends on ARCH_HISI
-+		select DEBUG_UART_PL01X
-+		help
-+		  Say Y here if you want kernel low-level debugging support
-+		  on HI3519 UART.
-+
- 	config DEBUG_HI3620_UART
- 		bool "Hisilicon HI3620 Debug UART"
- 		depends on ARCH_HI3xxx
-@@ -1451,6 +1459,7 @@ config DEBUG_UART_PHYS
- 	default 0x11002000 if DEBUG_MT8127_UART0
- 	default 0x11006000 if DEBUG_MT6589_UART0
- 	default 0x11009000 if DEBUG_MT8135_UART3
-+	default 0x12100000 if DEBUG_HI3519_UART
- 	default 0x16000000 if DEBUG_INTEGRATOR
- 	default 0x18000300 if DEBUG_BCM_5301X
- 	default 0x18010000 if DEBUG_SIRFATLAS7_UART0
-@@ -1619,6 +1628,7 @@ config DEBUG_UART_VIRT
- 	default 0xfee20000 if DEBUG_NSPIRE_CLASSIC_UART || DEBUG_NSPIRE_CX_UART
- 	default 0xfee82340 if ARCH_IOP13XX
- 	default 0xfef00000 if ARCH_IXP4XX && !CPU_BIG_ENDIAN
-+	default 0xfef00000 if DEBUG_HI3519_UART
- 	default 0xfef00003 if ARCH_IXP4XX && CPU_BIG_ENDIAN
- 	default 0xfef36000 if DEBUG_HIGHBANK_UART
- 	default 0xfefb0000 if DEBUG_OMAP1UART1 || DEBUG_OMAP7XXUART1
+If there is no in-flight patch I've missed, I can send a patch against
+MAINTAINERS to update it with that list address.
+
+Cheers,
+Andreas
+
 -- 
-1.9.1
-
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton; HRB 21284 (AG Nürnberg)
