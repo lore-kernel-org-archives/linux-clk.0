@@ -1,131 +1,104 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Fri, 12 Feb 2016 08:02:54 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-	maxime.ripard@free-electrons.com, maxime.coquelin@st.com,
-	geert@linux-m68k.org, heiko@sntech.de, andre.przywara@arm.com,
-	rklein@nvidia.com, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v42 3/6] clk: Provide OF helper to mark clocks as CRITICAL
-Message-ID: <20160212080254.GK20693@x1>
-References: <1455225554-13267-1-git-send-email-mturquette@baylibre.com>
- <1455225554-13267-4-git-send-email-mturquette@baylibre.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH 07/11] clk: sunxi: add generic allwinner,sunxi name
+To: Rob Herring <robh@kernel.org>
+References: <1454348370-3816-1-git-send-email-andre.przywara@arm.com>
+ <1454348370-3816-8-git-send-email-andre.przywara@arm.com>
+ <20160208155721.GB4677@rob-hp-laptop>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+	Arnd Bergmann <arnd@arndb.de>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	=?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	Jens Kuske <jenskuske@gmail.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org
+From: Andre Przywara <andre.przywara@arm.com>
+Message-ID: <56B8BCF7.4080701@arm.com>
+Date: Mon, 8 Feb 2016 16:06:15 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1455225554-13267-4-git-send-email-mturquette@baylibre.com>
+In-Reply-To: <20160208155721.GB4677@rob-hp-laptop>
+Content-Type: text/plain; charset=windows-1252
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 11 Feb 2016, Michael Turquette wrote:
+Hi,
 
-> From: Lee Jones <lee.jones@linaro.org>
+On 08/02/16 15:57, Rob Herring wrote:
+> On Mon, Feb 01, 2016 at 05:39:26PM +0000, Andre Przywara wrote:
+>> The only difference between the different compatible matches at the
+>> end of clk-sunxi.c are the critical clocks. Two SoCs get away so far
+>> without any, so there is no reason to enumerate those SoCs in here
+>> explicitly, though we have to keep them in for compatibility reasons.
+>>
+>> Rename the init function to highlight this generic feature and add a
+>> new, generic DT compatible string which can be used as a fallback value
+>> in the future should a particular SoC don't need any special treatment.
+>>
+>> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+>> ---
+>>  Documentation/devicetree/bindings/arm/sunxi.txt |  4 ++++
+>>  drivers/clk/sunxi/clk-sunxi.c                   | 14 ++++++--------
+>>  2 files changed, 10 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/sunxi.txt b/Documentation/devicetree/bindings/arm/sunxi.txt
+>> index 7e79fcc..980e065 100644
+>> --- a/Documentation/devicetree/bindings/arm/sunxi.txt
+>> +++ b/Documentation/devicetree/bindings/arm/sunxi.txt
+>> @@ -14,3 +14,7 @@ using one of the following compatible strings:
+>>    allwinner,sun8i-a83t
+>>    allwinner,sun8i-h3
+>>    allwinner,sun9i-a80
+>> +
+>> +For Allwinner SoCs without any specific needs the generic fallback value of:
+>> +  allwinner,sunxi
+>> +can be used.
 > 
-> This call matches clocks which have been marked as critical in DT
-> and sets the appropriate flag.  These flags can then be used to
-> mark the clock core flags appropriately prior to registration.
+> Perhaps "fallback" implies this, but be more specific that it can be 
+> used in addition to a specific string.
+
+Yeah, good point.
+
+But Maxime's latest rework [1] made this patch here actually obsolete,
+so we don't match on a root compatible string anymore to register the
+sunxi clock drivers. Instead each clock is registered and matched on
+it's own compatible string. Much nicer now, IMHO.
+
+Thanks for having a look!
+Andre.
+
+[1]
+https://git.kernel.org/cgit/linux/kernel/git/mripard/linux.git/commit/?h=sunxi/for-next&id=78e3fb4c745114b16a12458036d48aa96ea5b36d
+
+>> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+>> index e460a6b..efcce85 100644
+>> --- a/drivers/clk/sunxi/clk-sunxi.c
+>> +++ b/drivers/clk/sunxi/clk-sunxi.c
+>> @@ -1052,14 +1052,12 @@ CLK_OF_DECLARE(sun8i_a23_clk_init, "allwinner,sun8i-a23", sun6i_init_clocks);
+>>  CLK_OF_DECLARE(sun8i_a33_clk_init, "allwinner,sun8i-a33", sun6i_init_clocks);
+>>  CLK_OF_DECLARE(sun8i_h3_clk_init, "allwinner,sun8i-h3", sun6i_init_clocks);
+>>  
+>> -static void __init sun8i_a83t_init_clocks(struct device_node *node)
+>> +static void __init sunxi_generic_init_clocks(struct device_node *node)
+>>  {
+>>  	sunxi_init_clocks(NULL, 0);
+>>  }
+>> -CLK_OF_DECLARE(sun8i_a83t_clk_init, "allwinner,sun8i-a83t", sun8i_a83t_init_clocks);
+>> -
+>> -static void __init sun9i_init_clocks(struct device_node *node)
+>> -{
+>> -	sunxi_init_clocks(NULL, 0);
+>> -}
+>> -CLK_OF_DECLARE(sun9i_a80_clk_init, "allwinner,sun9i-a80", sun9i_init_clocks);
+>> +CLK_OF_DECLARE(sun8i_a83t_clk_init, "allwinner,sun8i-a83t",
+>> +	       sunxi_generic_init_clocks);
+>> +CLK_OF_DECLARE(sun9i_a80_clk_init, "allwinner,sun9i-a80",
+>> +	       sunxi_generic_init_clocks);
+>> +CLK_OF_DECLARE(sunxi_clk_init, "allwinner,sunxi", sunxi_generic_init_clocks);
+>> -- 
+>> 2.6.4
+>>
 > 
-> Legacy bindings requiring this feature must add the clock-critical
-> property to their binding descriptions, as it is not a part of
-> common-clock binding.
-> 
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> Signed-off-by: Michael Turquette <mturquette@baylibre.com>
-> ---
-> Changed in vWhatever:
->   * Added kerneldoc
->   * Moved to clk.c, removed static inline
->   * s/of_clk_mark_if_critical/of_clk_detect_critical/
-
-Looks like you didn't fold this change in.
-
-Only the kerneldoc is correct.
-
->   * s/critical-clock/clock-critical/
-> 
->  drivers/clk/clk.c            | 35 +++++++++++++++++++++++++++++++++++
->  include/linux/clk-provider.h |  8 +++++++-
->  2 files changed, 42 insertions(+), 1 deletion(-)
-
-Appart from the small aforementioned issue, the changes look good to
-me.
-
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 39f9527..5181a15 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3202,6 +3202,41 @@ static int parent_ready(struct device_node *np)
->  }
->  
->  /**
-> + * of_clk_detect_critical() - set CLK_IS_CRITICAL flag from Device Tree
-> + * @np: Device node pointer associated with clock provider
-> + * @index: clock index
-> + * @flags: pointer to clk_core->flags
-> + *
-> + * Detects if the clock-critical property exists and, if so, sets the
-> + * corresponding CLK_IS_CRITICAL flag.
-> + *
-> + * Do not use this function. It exists only for legacy Device Tree
-> + * bindings, such as the one-clock-per-node style that are outdated.
-> + * Those bindings typically put all clock data into .dts and the Linux
-> + * driver has no clock data, thus making it impossible to set this flag
-> + * correctly from the driver. Only those drivers may call
-> + * of_clk_detect_critical from their setup functions.
-> + *
-> + * Return: error code or zero on success
-> + */
-> +int of_clk_mark_if_critical(struct device_node *np,
-> +					  int index, unsigned long *flags)
-> +{
-> +	struct property *prop;
-> +	const __be32 *cur;
-> +	uint32_t idx;
-> +
-> +	if (!np || !flags)
-> +		return -EINVAL;
-> +
-> +	of_property_for_each_u32(np, "clock-critical", prop, cur, idx)
-> +		if (index == idx)
-> +			*flags |= CLK_IS_CRITICAL;
-> +
-> +	return 0;
-> +}
-> +
-> +/**
->   * of_clk_init() - Scan and init clock providers from the DT
->   * @matches: array of compatible values and init functions for providers.
->   *
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 1d986ea..d15d3cc 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -705,7 +705,8 @@ int of_clk_get_parent_count(struct device_node *np);
->  int of_clk_parent_fill(struct device_node *np, const char **parents,
->  		       unsigned int size);
->  const char *of_clk_get_parent_name(struct device_node *np, int index);
-> -
-> +int of_clk_mark_if_critical(struct device_node *np, int index,
-> +			    unsigned long *flags);
->  void of_clk_init(const struct of_device_id *matches);
->  
->  #else /* !CONFIG_OF */
-> @@ -742,6 +743,11 @@ static inline const char *of_clk_get_parent_name(struct device_node *np,
->  {
->  	return NULL;
->  }
-> +static inline int of_clk_mark_if_critical(struct device_node *np, int index,
-> +					  unsigned long *flags)
-> +{
-> +	return 0;
-> +}
->  static inline void of_clk_init(const struct of_device_id *matches) {}
->  #endif /* CONFIG_OF */
->  
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
