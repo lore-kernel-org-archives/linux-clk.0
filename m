@@ -1,47 +1,29 @@
-Return-Path: <p.zabel@pengutronix.de>
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Barry Song <baohua@kernel.org>,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-clk@vger.kernel.org,
-	kernel@pengutronix.de,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH 2/7] clk: mmp: Make reset_control_ops const
-Date: Thu, 25 Feb 2016 10:45:07 +0100
-Message-Id: <1456393512-26602-3-git-send-email-p.zabel@pengutronix.de>
-In-Reply-To: <1456393512-26602-1-git-send-email-p.zabel@pengutronix.de>
-References: <1456393512-26602-1-git-send-email-p.zabel@pengutronix.de>
+Return-Path: <gregkh@linuxfoundation.org>
+Date: Mon, 8 Feb 2016 15:14:00 -0800
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/2] devm: add helper devm_add_action_or_reset()
+Message-ID: <20160208231400.GA19380@kroah.com>
+References: <1450873640-12489-1-git-send-email-sudipm.mukherjee@gmail.com>
+ <20160208223546.GA10791@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160208223546.GA10791@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The mmp_clk_reset_ops structure is never modified. Make it const.
+On Mon, Feb 08, 2016 at 02:35:46PM -0800, Stephen Boyd wrote:
+> On 12/23, Sudip Mukherjee wrote:
+> > Add a helper function devm_add_action_or_reset() which will internally
+> > call devm_add_action(). But if devm_add_action() fails then it will
+> > execute the action mentioned and return the error code.
+> > 
+> > Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
+> > ---
+> 
+> Greg, can I get your ack here to take this through clk-tree?
 
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
----
- drivers/clk/mmp/reset.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/mmp/reset.c b/drivers/clk/mmp/reset.c
-index b54da1f..b4e4d6a 100644
---- a/drivers/clk/mmp/reset.c
-+++ b/drivers/clk/mmp/reset.c
-@@ -74,7 +74,7 @@ static int mmp_clk_reset_deassert(struct reset_controller_dev *rcdev,
- 	return 0;
- }
- 
--static struct reset_control_ops mmp_clk_reset_ops = {
-+static const struct reset_control_ops mmp_clk_reset_ops = {
- 	.assert		= mmp_clk_reset_assert,
- 	.deassert	= mmp_clk_reset_deassert,
- };
--- 
-2.7.0
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
