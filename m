@@ -1,117 +1,42 @@
-Return-Path: <andre.przywara@arm.com>
-Subject: Re: [PATCH 1/3] clk: sunxi: improve mux_clk error handling and
- reporting
-To: Chen-Yu Tsai <wens@csie.org>
-References: <1455289913-29514-1-git-send-email-andre.przywara@arm.com>
- <1455289913-29514-2-git-send-email-andre.przywara@arm.com>
- <CAGb2v65hxNiY8XAL=yBbV4qazscJd+six432CKWAm+GfM6bd2Q@mail.gmail.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-   =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>,
-   Michael Turquette <mturquette@baylibre.com>,
-   Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-   linux-sunxi <linux-sunxi@googlegroups.com>,
-   linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-From: Andre Przywara <andre.przywara@arm.com>
-Message-ID: <56C2EFD5.5080604@arm.com>
-Date: Tue, 16 Feb 2016 09:45:57 +0000
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGb2v65hxNiY8XAL=yBbV4qazscJd+six432CKWAm+GfM6bd2Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1454326145-4008-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1454326145-4008-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Date: Mon, 8 Feb 2016 16:30:49 +0100
+Message-ID: <CAMuHMdXAuaHW8nu5KczVek=htV-oD-qBpANMui0G+0+nupALow@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: shmobile: r8a7795: Add USB-DMAC clocks
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chen-Yu,
+On Mon, Feb 1, 2016 at 12:29 PM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  This patch is based on the renesas-drivers.git /
+>  renesas-devel-20160126-v4.5-rc1 tag.
+>  (commit id = f834955ea55e4bed01d55339a4428eef219e8313)
+>
+>  Reference:
+>  http://thread.gmane.org/gmane.linux.kernel.clk/3337/focus=184
+>
+>  Changes from v1:
+>   - Use R8A7795_CLK_S3D1 instead of R8A7795_CLK_S3D2.
 
-On 13/02/16 02:44, Chen-Yu Tsai wrote:
-> Hi,
-> 
-> On Fri, Feb 12, 2016 at 11:11 PM, Andre Przywara <andre.przywara@arm.com> wrote:
->> We now catch and report a failing ioremap, also a failure in the final
->> step of the clock registration is now handled and reported.
->> Also warnings are turned into errors.
->>
->> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
->> ---
->>  drivers/clk/sunxi/clk-sunxi.c | 19 +++++++++++++------
->>  1 file changed, 13 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
->> index 49ce283..361f396 100644
->> --- a/drivers/clk/sunxi/clk-sunxi.c
->> +++ b/drivers/clk/sunxi/clk-sunxi.c
->> @@ -690,11 +690,15 @@ static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
->>         int i;
->>
->>         reg = of_iomap(node, 0);
->> +       if (!reg) {
->> +               pr_err("Could not map registers for mux-clk: %s\n", node->name);
-> 
-> of_node_full_name(node->name) is better. node->name is almost always "clk",
-> which is useless. (Unless someone goes through the dts files to replace all
-> of them.)
+Thanks, will queue for next renesas-drivers and v4.6.
 
-Good point. I both fixed the code here as well as amended the node names
-in the A64 DT.
+Gr{oetje,eeting}s,
 
-> 
->> +               return NULL;
->> +       }
->>
->>         i = of_clk_parent_fill(node, parents, SUNXI_MAX_PARENTS);
->>         if (of_property_read_string(node, "clock-output-names", &clk_name)) {
->> -               pr_warn("%s: could not read clock-output-names for \"%s\"\n",
->> -                       __func__, clk_name);
->> +               pr_err("%s: could not read clock-output-names for \"%s\"\n",
->> +                      __func__, clk_name);
-> 
-> Same here. clk_name defaults to node->name. If you could, please replace it.
+                        Geert
 
-Really? Isn't clk_name directly from the DT clock-output-names strings here?
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
->>                 goto out_unmap;
->>         }
->>
->> @@ -704,14 +708,17 @@ static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
->>                                0, &clk_lock);
->>
->>         if (IS_ERR(clk)) {
->> -               pr_warn("%s: failed to register mux clock %s: %ld\n", __func__,
->> -                       clk_name, PTR_ERR(clk));
->> +               pr_err("%s: failed to register mux clock %s: %ld\n", __func__,
->> +                      clk_name, PTR_ERR(clk));
->>                 goto out_unmap;
->>         }
->>
->> -       of_clk_add_provider(node, of_clk_src_simple_get, clk);
->> +       if (!of_clk_add_provider(node, of_clk_src_simple_get, clk))
->> +               return clk;
->> +
->> +       pr_err("%s: failed to add clock provider for %s\n", __func__, clk_name);
->>
->> -       return clk;
-> 
-> I'd have all the error path in ifs, and have the normal return path
-> here for consistency.
-> But I guess this works as well.
-
-Yeah, I wanted to skip that single goto ;-)
-But I changed it now as you said and it indeed looks more reasonable.
-
-I took the freedom of applying the comments to the other patches too.
-
-Will send out a v2 in a minute.
-
-Thanks for looking!
-Andre.
-
-> 
-> Thanks!
-> ChenYu
-> 
->> +       clk_unregister_divider(clk);
->>
->>  out_unmap:
->>         iounmap(reg);
->> --
->> 2.6.4
->>
-> 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
