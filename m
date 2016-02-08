@@ -1,64 +1,84 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:41161 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751458AbcBBBPt (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 1 Feb 2016 20:15:49 -0500
-Date: Mon, 1 Feb 2016 17:15:45 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrzej Hajda <a.hajda@samsung.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Tony Prisk <linux@prisktech.co.nz>,
-	Roman Volkov <v1ron@mail.ru>
-Subject: Re: [PATCH] clk: vt8500: don't return possibly uninitialized data
-Message-ID: <20160202011545.GG4848@codeaurora.org>
-References: <4790407.6zgSQCdsSB@wuerfel>
+Return-Path: <robh@kernel.org>
+Date: Mon, 8 Feb 2016 09:57:21 -0600
+From: Rob Herring <robh@kernel.org>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+	Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	Jens Kuske <jenskuske@gmail.com>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH 07/11] clk: sunxi: add generic allwinner,sunxi name
+Message-ID: <20160208155721.GB4677@rob-hp-laptop>
+References: <1454348370-3816-1-git-send-email-andre.przywara@arm.com>
+ <1454348370-3816-8-git-send-email-andre.przywara@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <4790407.6zgSQCdsSB@wuerfel>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1454348370-3816-8-git-send-email-andre.przywara@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/01, Arnd Bergmann wrote:
-> The clk-vt8500.c driver would previously enter an endless loop
-> when invalid settings got requested, this was now fixed. However,
-> the driver will now return uninitialized data for a subset of those
-> cases instead, as the gcc correctly warns:
+On Mon, Feb 01, 2016 at 05:39:26PM +0000, Andre Przywara wrote:
+> The only difference between the different compatible matches at the
+> end of clk-sunxi.c are the critical clocks. Two SoCs get away so far
+> without any, so there is no reason to enumerate those SoCs in here
+> explicitly, though we have to keep them in for compatibility reasons.
 > 
-> clk/clk-vt8500.c: In function 'wm8650_find_pll_bits':
-> clk/clk-vt8500.c:423:12: error: 'best_div2' may be used uninitialized in this function [-Werror=maybe-uninitialized]
->   *divisor2 = best_div2;
->             ^
-> clk/clk-vt8500.c:422:12: error: 'best_div1' may be used uninitialized in this function [-Werror=maybe-uninitialized]
->   *divisor1 = best_div1;
->             ^
-> clk/clk-vt8500.c:421:14: error: 'best_mul' may be used uninitialized in this function [-Werror=maybe-uninitialized]
->   *multiplier = best_mul;
+> Rename the init function to highlight this generic feature and add a
+> new, generic DT compatible string which can be used as a fallback value
+> in the future should a particular SoC don't need any special treatment.
 > 
-> This reworks the error handling in the driver so we now return
-> -EINVAL from clk_round_rate() and clk_set_rate() when we get
-> impossible inputs.
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> ---
+>  Documentation/devicetree/bindings/arm/sunxi.txt |  4 ++++
+>  drivers/clk/sunxi/clk-sunxi.c                   | 14 ++++++--------
+>  2 files changed, 10 insertions(+), 8 deletions(-)
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Fixes: 090341b0a95d ("clk: vt8500: fix sign of possible PLL values")
+> diff --git a/Documentation/devicetree/bindings/arm/sunxi.txt b/Documentation/devicetree/bindings/arm/sunxi.txt
+> index 7e79fcc..980e065 100644
+> --- a/Documentation/devicetree/bindings/arm/sunxi.txt
+> +++ b/Documentation/devicetree/bindings/arm/sunxi.txt
+> @@ -14,3 +14,7 @@ using one of the following compatible strings:
+>    allwinner,sun8i-a83t
+>    allwinner,sun8i-h3
+>    allwinner,sun9i-a80
+> +
+> +For Allwinner SoCs without any specific needs the generic fallback value of:
+> +  allwinner,sunxi
+> +can be used.
 
-My compiler still gets warnings even after this patch is applied.
+Perhaps "fallback" implies this, but be more specific that it can be 
+used in addition to a specific string.
 
-drivers/clk/clk-vt8500.c: In function ‘wm8750_find_pll_bits’:
-drivers/clk/clk-vt8500.c:509:12: warning: ‘best_div2’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-drivers/clk/clk-vt8500.c:508:12: warning: ‘best_div1’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-drivers/clk/clk-vt8500.c:507:14: warning: ‘best_mul’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-drivers/clk/clk-vt8500.c: In function ‘wm8650_find_pll_bits’:
-drivers/clk/clk-vt8500.c:430:12: warning: ‘best_div2’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-drivers/clk/clk-vt8500.c:429:12: warning: ‘best_div1’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-drivers/clk/clk-vt8500.c:428:14: warning: ‘best_mul’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-drivers/clk/clk-vt8500.c: In function ‘wm8850_find_pll_bits’:
-drivers/clk/clk-vt8500.c:560:12: warning: ‘best_div2’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-drivers/clk/clk-vt8500.c:559:12: warning: ‘best_div1’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-drivers/clk/clk-vt8500.c:558:14: warning: ‘best_mul’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+> index e460a6b..efcce85 100644
+> --- a/drivers/clk/sunxi/clk-sunxi.c
+> +++ b/drivers/clk/sunxi/clk-sunxi.c
+> @@ -1052,14 +1052,12 @@ CLK_OF_DECLARE(sun8i_a23_clk_init, "allwinner,sun8i-a23", sun6i_init_clocks);
+>  CLK_OF_DECLARE(sun8i_a33_clk_init, "allwinner,sun8i-a33", sun6i_init_clocks);
+>  CLK_OF_DECLARE(sun8i_h3_clk_init, "allwinner,sun8i-h3", sun6i_init_clocks);
+>  
+> -static void __init sun8i_a83t_init_clocks(struct device_node *node)
+> +static void __init sunxi_generic_init_clocks(struct device_node *node)
+>  {
+>  	sunxi_init_clocks(NULL, 0);
+>  }
+> -CLK_OF_DECLARE(sun8i_a83t_clk_init, "allwinner,sun8i-a83t", sun8i_a83t_init_clocks);
+> -
+> -static void __init sun9i_init_clocks(struct device_node *node)
+> -{
+> -	sunxi_init_clocks(NULL, 0);
+> -}
+> -CLK_OF_DECLARE(sun9i_a80_clk_init, "allwinner,sun9i-a80", sun9i_init_clocks);
+> +CLK_OF_DECLARE(sun8i_a83t_clk_init, "allwinner,sun8i-a83t",
+> +	       sunxi_generic_init_clocks);
+> +CLK_OF_DECLARE(sun9i_a80_clk_init, "allwinner,sun9i-a80",
+> +	       sunxi_generic_init_clocks);
+> +CLK_OF_DECLARE(sunxi_clk_init, "allwinner,sunxi", sunxi_generic_init_clocks);
+> -- 
+> 2.6.4
+> 
