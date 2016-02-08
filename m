@@ -1,42 +1,31 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dinh Nguyen <dinguyen@opensource.altera.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: socfpga: fix __init annotation
-Date: Mon,  8 Feb 2016 15:39:09 +0100
-Message-Id: <1454942356-2783135-1-git-send-email-arnd@arndb.de>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 8 Feb 2016 14:26:37 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Joachim Eastwood <manabian@gmail.com>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/2] CREG clk driver for NXP LPC18xx family
+Message-ID: <20160208222637.GV4848@codeaurora.org>
+References: <1436651307-24098-1-git-send-email-manabian@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1436651307-24098-1-git-send-email-manabian@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-clang found a bug with the __socfpga_pll_init definition:
+On 07/11, Joachim Eastwood wrote:
+> This patch set adds a clk driver for the low power clocks found in
+> the CREG block on lpc18xx. CREG is a collection of miscellaneous
+> configuration registers that can be accessed through a syscon
+> regmap interface. The clk driver makes it possible to setup and
+> enabled these two clocks.
+> 
+> This need to support peripherals like the internal RTC on the
+> lpc18xx platform.
+> 
 
-drivers/clk/socfpga/clk-pll-a10.c:77:15: error: '__section__' attribute only applies to functions and
-      global variables
+I know this is many months old, but is this driver still
+required? I can apply it to clk-next if so.
 
-This moves the __init annotation to the right place so the function
-actually gets discarded.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/clk/socfpga/clk-pll-a10.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/socfpga/clk-pll-a10.c b/drivers/clk/socfpga/clk-pll-a10.c
-index 402d630bd531..35fabe1a32c3 100644
---- a/drivers/clk/socfpga/clk-pll-a10.c
-+++ b/drivers/clk/socfpga/clk-pll-a10.c
-@@ -74,7 +74,7 @@ static struct clk_ops clk_pll_ops = {
- 	.get_parent = clk_pll_get_parent,
- };
- 
--static struct __init clk * __socfpga_pll_init(struct device_node *node,
-+static struct clk * __init __socfpga_pll_init(struct device_node *node,
- 	const struct clk_ops *ops)
- {
- 	u32 reg;
 -- 
-2.7.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
