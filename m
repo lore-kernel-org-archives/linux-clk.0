@@ -1,64 +1,49 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga01-in.huawei.com ([58.251.152.64]:11478 "EHLO
-	szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750947AbcBECnb (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Thu, 4 Feb 2016 21:43:31 -0500
-From: Jiancheng Xue <xuejiancheng@huawei.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
-	<pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-	<linux@arm.linux.org.uk>, <khilman@linaro.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <xuwei5@hisilicon.com>,
-	<haojian.zhuang@linaro.org>, <zhangfei.gao@linaro.org>,
-	<bintian.wang@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
-	<yanghongwei@hisilicon.com>, <suwenping@hisilicon.com>,
-	<raojun@hisilicon.com>, <ml.yang@hisilicon.com>,
-	<gaofei@hisilicon.com>, <zhangzhenxing@hisilicon.com>,
-	<xuejiancheng@hisilicon.com>, <lidongpo@hisilicon.com>,
-	Jiancheng Xue <xuejiancheng@huawei.com>
-Subject: [RESEND PATCH v8 5/6] ARM: dt-bindings: add device tree bindings for Hi3519 sysctrl
-Date: Fri, 5 Feb 2016 10:31:11 +0800
-Message-ID: <1454639472-17373-6-git-send-email-xuejiancheng@huawei.com>
-In-Reply-To: <1454639472-17373-1-git-send-email-xuejiancheng@huawei.com>
-References: <1454639472-17373-1-git-send-email-xuejiancheng@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <slemieux.tyco@gmail.com>
+Return-Path: <slemieux.tyco@gmail.com>
+From: slemieux.tyco@gmail.com
+To: robh+dt@kernel.org,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: stigge@antcom.de,
+	vz@mleia.com,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 1/2] clk: lpc32xx: add clock frequency output configuration
+Date: Tue,  9 Feb 2016 13:47:49 -0500
+Message-Id: <1455043670-19025-1-git-send-email-slemieux.tyco@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree bindings for Hi3519 system controller.
+From: Sylvain Lemieux <slemieux@tycoint.com>
 
-Signed-off-by: Jiancheng Xue <xuejiancheng@huawei.com>
-Acked-by: Rob Herring <robh@kernel.org>
+This patch add the support to setup the clock frequency output
+using an optional parameter from the device tree.
+
+The previous kernel version did not change the clock frequency
+output setup by the kickstart and/or bootloader;
+this version always setup the clock frequency output to 208MHz.
+
+Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
 ---
- .../devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt   | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
+ drivers/clk/nxp/clk-lpc32xx.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt b/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
-new file mode 100644
-index 0000000..115c5be
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
-@@ -0,0 +1,14 @@
-+* Hisilicon Hi3519 System Controller Block
-+
-+This bindings use the following binding:
-+Documentation/devicetree/bindings/mfd/syscon.txt
-+
-+Required properties:
-+- compatible: "hisilicon,hi3519-sysctrl".
-+- reg: the register region of this block
-+
-+Examples:
-+sysctrl: system-controller@12010000 {
-+	compatible = "hisilicon,hi3519-sysctrl", "syscon";
-+	reg = <0x12010000 0x1000>;
-+};
+diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+index 981ff0d..3ab4481 100644
+--- a/drivers/clk/nxp/clk-lpc32xx.c
++++ b/drivers/clk/nxp/clk-lpc32xx.c
+@@ -1525,9 +1525,12 @@ static void __init lpc32xx_clk_init(struct device_node *np)
+ 	}
+ 
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
++	if (of_property_read_u32(np, "xtal,clock-output-frequency", &i))
++		/* use default value (208MHz) */
++		i = 208000000;
+ 
+ 	/* For 13MHz osc valid output range of PLL is from 156MHz to 266.5MHz */
+-	clk_set_rate(clk[LPC32XX_CLK_HCLK_PLL], 208000000);
++	clk_set_rate(clk[LPC32XX_CLK_HCLK_PLL], i);
+ 
+ 	/* Set 48MHz rate of USB PLL clock */
+ 	clk_set_rate(clk[LPC32XX_CLK_USB_PLL], 48000000);
 -- 
-1.9.1
-
+1.8.3.1
