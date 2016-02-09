@@ -1,44 +1,91 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Franklin S Cooper Jr <fcooper@ti.com>
-To: paul@pwsan.com, t-kristo@ti.com, tony@atomide.com, vigneshr@ti.com,
-	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH v3 4/5] clk: ti: DRA7: Add tbclk data for ehrpwm
-Date: Thu, 25 Feb 2016 16:36:35 -0600
-Message-Id: <1456439796-28546-5-git-send-email-fcooper@ti.com>
-In-Reply-To: <1456439796-28546-1-git-send-email-fcooper@ti.com>
-References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+In-Reply-To: <56B9BB41.3080001@kernel.org>
+References: <56B9507B.9000201@kernel.org>
+	<CAK7LNASSex+Nfpzp-=FGbo7eKCteamvyX_DyZaeRenhpF72ZdQ@mail.gmail.com>
+	<56B9BB41.3080001@kernel.org>
+Date: Tue, 9 Feb 2016 20:21:01 +0900
+Message-ID: <CAK7LNASt2GodpoH7qHu6yU4RxWbi42Qy=TSW=Cr5P0NgSrBdrQ@mail.gmail.com>
+Subject: Re: commit 5146e0b05963 is causing a kernel crash on SoCFPGA
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Dinh Nguyen <dinguyen@kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Vladimir Zapolskiy <vz@mleia.com>,
+        Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Vignesh R <vigneshr@ti.com>
+2016-02-09 19:11 GMT+09:00 Dinh Nguyen <dinguyen@kernel.org>:
+> Hi Masahiro,
+>
+> On 02/08/2016 10:00 PM, Masahiro Yamada wrote:
+>> Hi Dinh,
+>>
+>> Thanks for your report.
+>>
+>>
+>> 2016-02-09 11:35 GMT+09:00 Dinh Nguyen <dinguyen@kernel.org>:
+>>> Hi Stephen,
+>>>
+>>> It appears that commit 5146e0b05966 "clk: simplify __clk_init_parent()"
+>>> that is currently in linux-next is causing the following kernel crash on
+>>> SoCFGPA[1].
+>>>
+>>> I have bisected to this commit and doing a revert of the commit fixes
+>>> the issue.
+>>
+>>
+>> Could you check if the following simple patch fixes your problem?
+>>
+>>
+>> --- a/drivers/clk/clk.c
+>> +++ b/drivers/clk/clk.c
+>> @@ -1662,7 +1662,7 @@ static struct clk_core *__clk_init_parent(struct
+>> clk_core *core)
+>>  {
+>>         u8 index = 0;
+>>
+>> -       if (core->ops->get_parent)
+>> +       if (core->num_parents > 1 && core->ops->get_parent)
+>>                 index = core->ops->get_parent(core->hw);
+>>
+>>         return clk_core_get_parent_by_index(core, index);
+>>
+>>
+>
+> Yes, the above patch fixes the problem and the SoCFPGA board is able to
+> boot.
 
-tbclk is needed by ehrpwm to generate pwm waveforms. Hence, register
-the required clock information.
+Thanks for your testing!
 
-Signed-off-by: Vignesh R <vigneshr@ti.com>
-Acked-by: Michael Turquette <mturquette@baylibre.com>
----
-Version 3 changes:
-None
+I've sent a patch with your Reported-by.
 
- drivers/clk/ti/clk-7xx.c | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
-index a911d7d..7fcf818 100644
---- a/drivers/clk/ti/clk-7xx.c
-+++ b/drivers/clk/ti/clk-7xx.c
-@@ -304,6 +304,9 @@ static struct ti_dt_clk dra7xx_clks[] = {
- 	DT_CLK("4882a000.timer", "timer_sys_ck", "timer_sys_clk_div"),
- 	DT_CLK("4882c000.timer", "timer_sys_ck", "timer_sys_clk_div"),
- 	DT_CLK("4882e000.timer", "timer_sys_ck", "timer_sys_clk_div"),
-+	DT_CLK("4843e200.ehrpwm", "tbclk", "ehrpwm0_tbclk"),
-+	DT_CLK("48440200.ehrpwm", "tbclk", "ehrpwm1_tbclk"),
-+	DT_CLK("48442200.ehrpwm", "tbclk", "ehrpwm2_tbclk"),
- 	DT_CLK(NULL, "sys_clkin", "sys_clkin1"),
- 	DT_CLK(NULL, "dss_deshdcp_clk", "dss_deshdcp_clk"),
- 	{ .node_name = NULL },
+>>
+>>
+>> Let me ask one more question.
+>>
+>> Do SoCFPGA clocks define .get_parent callback even if num_parents <= 1 ?
+>>
+>>
+>> I just skimmed over driver/clk/socfpga/clk-gate.c
+>> and found it defines .get_parent().
+>>
+>> I think a gating clock is usually single-parent (so not need to have
+>> .get_parent),
+>> but I am not sure if this is the case.
+>>
+>
+> Yes, .get_parent call back is define when num_parents = 1. If you take a
+> look at socfpga.dtsi, the main_pll of type "altr,socfpga-pll-clk" only
+> has 1 parent, osc1. But the periph_pll and sdram_pll, also of type
+> "altr,socfpga-pll-clk" has > 1 parents.
+
+
+OK. Then, I understood the cause of the problem.
+
+
+
 -- 
-2.7.0
+Best Regards
+Masahiro Yamada
