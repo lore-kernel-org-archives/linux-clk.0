@@ -1,90 +1,214 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: John Crispin <blogic@openwrt.org>, Arnd Bergmann <arnd@arndb.de>, Sascha
- Hauer <kernel@pengutronix.de>, Daniel Kurtz <djkurtz@chromium.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, <srv_heupstream@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, James Liao <jamesjj.liao@mediatek.com>, Shunli
- Wang <shunli.wang@mediatek.com>
-Subject: [PATCH v6 1/7] clk: mediatek: Refine the makefile to support multiple clock drivers
-Date: Fri, 5 Feb 2016 17:37:24 +0800
-Message-ID: <1454665050-37776-2-git-send-email-jamesjj.liao@mediatek.com>
-In-Reply-To: <1454665050-37776-1-git-send-email-jamesjj.liao@mediatek.com>
-References: <1454665050-37776-1-git-send-email-jamesjj.liao@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jamesjj.liao@mediatek.com
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 14/14] clk: qcom: Migrate to clk_hw based registration and OF APIs
+Date: Mon,  8 Feb 2016 17:45:41 -0800
+Message-Id: <1454982341-22715-15-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
+References: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a Kconfig to define clock configuration for each SoC, and
-modify the Makefile to build drivers that only selected in config.
-
-Signed-off-by: Shunli Wang <shunli.wang@mediatek.com>
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-Tested-by: John Crispin <blogic@openwrt.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/Kconfig           |  1 +
- drivers/clk/mediatek/Kconfig  | 23 +++++++++++++++++++++++
- drivers/clk/mediatek/Makefile |  6 +++---
- 3 files changed, 27 insertions(+), 3 deletions(-)
- create mode 100644 drivers/clk/mediatek/Kconfig
+ drivers/clk/qcom/clk-regmap.c   |  5 ++---
+ drivers/clk/qcom/clk-regmap.h   |  3 +--
+ drivers/clk/qcom/common.c       | 41 +++++++++++++++++++----------------------
+ drivers/clk/qcom/gcc-msm8996.c  |  9 ++++-----
+ drivers/clk/qcom/mmcc-msm8996.c |  9 ++++-----
+ 5 files changed, 30 insertions(+), 37 deletions(-)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index de707b2..d333863 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -202,6 +202,7 @@ config COMMON_CLK_CDCE706
+diff --git a/drivers/clk/qcom/clk-regmap.c b/drivers/clk/qcom/clk-regmap.c
+index a58ba39a900c..1c856d330733 100644
+--- a/drivers/clk/qcom/clk-regmap.c
++++ b/drivers/clk/qcom/clk-regmap.c
+@@ -101,14 +101,13 @@ EXPORT_SYMBOL_GPL(clk_disable_regmap);
+  * clk_regmap struct via this function so that the regmap is initialized
+  * and so that the clock is registered with the common clock framework.
+  */
+-struct clk *devm_clk_register_regmap(struct device *dev,
+-				     struct clk_regmap *rclk)
++int devm_clk_register_regmap(struct device *dev, struct clk_regmap *rclk)
+ {
+ 	if (dev && dev_get_regmap(dev, NULL))
+ 		rclk->regmap = dev_get_regmap(dev, NULL);
+ 	else if (dev && dev->parent)
+ 		rclk->regmap = dev_get_regmap(dev->parent, NULL);
  
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
-+source "drivers/clk/mediatek/Kconfig"
- source "drivers/clk/mvebu/Kconfig"
- source "drivers/clk/qcom/Kconfig"
- source "drivers/clk/samsung/Kconfig"
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-new file mode 100644
-index 0000000..dc224e6
---- /dev/null
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -0,0 +1,23 @@
-+#
-+# MediaTek SoC drivers
-+#
-+config COMMON_CLK_MEDIATEK
-+	bool
-+	---help---
-+	  Mediatek SoCs' clock support.
-+
-+config COMMON_CLK_MT8135
-+	bool "Clock driver for Mediatek MT8135"
-+	depends on COMMON_CLK
-+	select COMMON_CLK_MEDIATEK
-+	default ARCH_MEDIATEK
-+	---help---
-+	  This driver supports Mediatek MT8135 clocks.
-+
-+config COMMON_CLK_MT8173
-+	bool "Clock driver for Mediatek MT8173"
-+	depends on COMMON_CLK
-+	select COMMON_CLK_MEDIATEK
-+	default ARCH_MEDIATEK
-+	---help---
-+	  This driver supports Mediatek MT8173 clocks.
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 95fdfac..32e7222 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -1,4 +1,4 @@
--obj-y += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
-+obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o
- obj-$(CONFIG_RESET_CONTROLLER) += reset.o
--obj-y += clk-mt8135.o
--obj-y += clk-mt8173.o
-+obj-$(CONFIG_COMMON_CLK_MT8135) += clk-mt8135.o
-+obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173.o
+-	return devm_clk_register(dev, &rclk->hw);
++	return devm_clk_hw_register(dev, &rclk->hw);
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_register_regmap);
+diff --git a/drivers/clk/qcom/clk-regmap.h b/drivers/clk/qcom/clk-regmap.h
+index 491a63d537df..90d95cd11ec6 100644
+--- a/drivers/clk/qcom/clk-regmap.h
++++ b/drivers/clk/qcom/clk-regmap.h
+@@ -39,7 +39,6 @@ struct clk_regmap {
+ int clk_is_enabled_regmap(struct clk_hw *hw);
+ int clk_enable_regmap(struct clk_hw *hw);
+ void clk_disable_regmap(struct clk_hw *hw);
+-struct clk *
+-devm_clk_register_regmap(struct device *dev, struct clk_regmap *rclk);
++int devm_clk_register_regmap(struct device *dev, struct clk_regmap *rclk);
+ 
+ #endif
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index c112ebaba70d..16068af45f5d 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -27,8 +27,7 @@
+ 
+ struct qcom_cc {
+ 	struct qcom_reset_controller reset;
+-	struct clk_onecell_data data;
+-	struct clk *clks[];
++	struct clk_hw_onecell_data data;
+ };
+ 
+ const
+@@ -102,8 +101,8 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
+ 	struct device_node *clocks_node;
+ 	struct clk_fixed_factor *factor;
+ 	struct clk_fixed_rate *fixed;
+-	struct clk *clk;
+ 	struct clk_init_data init_data = { };
++	int ret;
+ 
+ 	clocks_node = of_find_node_by_path("/clocks");
+ 	if (clocks_node)
+@@ -122,9 +121,9 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
+ 		init_data.flags = CLK_IS_ROOT;
+ 		init_data.ops = &clk_fixed_rate_ops;
+ 
+-		clk = devm_clk_register(dev, &fixed->hw);
+-		if (IS_ERR(clk))
+-			return PTR_ERR(clk);
++		ret = devm_clk_hw_register(dev, &fixed->hw);
++		if (ret)
++			return ret;
+ 	}
+ 	of_node_put(node);
+ 
+@@ -142,9 +141,9 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
+ 		init_data.flags = 0;
+ 		init_data.ops = &clk_fixed_factor_ops;
+ 
+-		clk = devm_clk_register(dev, &factor->hw);
+-		if (IS_ERR(clk))
+-			return PTR_ERR(clk);
++		ret = devm_clk_hw_register(dev, &factor->hw);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	return 0;
+@@ -180,36 +179,34 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+ {
+ 	int i, ret;
+ 	struct device *dev = &pdev->dev;
+-	struct clk *clk;
+-	struct clk_onecell_data *data;
+-	struct clk **clks;
++	struct clk_hw_onecell_data *data;
++	struct clk_hw **hws;
+ 	struct qcom_reset_controller *reset;
+ 	struct qcom_cc *cc;
+ 	size_t num_clks = desc->num_clks;
+ 	struct clk_regmap **rclks = desc->clks;
+ 
+-	cc = devm_kzalloc(dev, sizeof(*cc) + sizeof(*clks) * num_clks,
++	cc = devm_kzalloc(dev, sizeof(*cc) + sizeof(*hws) * num_clks,
+ 			  GFP_KERNEL);
+ 	if (!cc)
+ 		return -ENOMEM;
+ 
+-	clks = cc->clks;
+ 	data = &cc->data;
+-	data->clks = clks;
+-	data->clk_num = num_clks;
++	data->num = num_clks;
++	hws = data->hws;
+ 
+ 	for (i = 0; i < num_clks; i++) {
+ 		if (!rclks[i]) {
+-			clks[i] = ERR_PTR(-ENOENT);
++			hws[i] = ERR_PTR(-ENOENT);
+ 			continue;
+ 		}
+-		clk = devm_clk_register_regmap(dev, rclks[i]);
+-		if (IS_ERR(clk))
+-			return PTR_ERR(clk);
+-		clks[i] = clk;
++		ret = devm_clk_register_regmap(dev, rclks[i]);
++		if (ret)
++			return ret;
++		hws[i] = &rclks[i]->hw;
+ 	}
+ 
+-	ret = of_clk_add_provider(dev->of_node, of_clk_src_onecell_get, data);
++	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get, data);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+index 16d7c323db49..2cfd55141896 100644
+--- a/drivers/clk/qcom/gcc-msm8996.c
++++ b/drivers/clk/qcom/gcc-msm8996.c
+@@ -3373,9 +3373,8 @@ MODULE_DEVICE_TABLE(of, gcc_msm8996_match_table);
+ 
+ static int gcc_msm8996_probe(struct platform_device *pdev)
+ {
+-	struct clk *clk;
+ 	struct device *dev = &pdev->dev;
+-	int i;
++	int i, ret;
+ 	struct regmap *regmap;
+ 
+ 	regmap = qcom_cc_map(pdev, &gcc_msm8996_desc);
+@@ -3389,9 +3388,9 @@ static int gcc_msm8996_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0x52008, BIT(21), BIT(21));
+ 
+ 	for (i = 0; i < ARRAY_SIZE(gcc_msm8996_hws); i++) {
+-		clk = devm_clk_register(dev, gcc_msm8996_hws[i]);
+-		if (IS_ERR(clk))
+-			return PTR_ERR(clk);
++		ret = devm_clk_hw_register(dev, gcc_msm8996_hws[i]);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	return qcom_cc_really_probe(pdev, &gcc_msm8996_desc, regmap);
+diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
+index 064f3eaa39d0..8460daa6c567 100644
+--- a/drivers/clk/qcom/mmcc-msm8996.c
++++ b/drivers/clk/qcom/mmcc-msm8996.c
+@@ -3180,9 +3180,8 @@ MODULE_DEVICE_TABLE(of, mmcc_msm8996_match_table);
+ 
+ static int mmcc_msm8996_probe(struct platform_device *pdev)
+ {
+-	struct clk *clk;
+ 	struct device *dev = &pdev->dev;
+-	int i;
++	int i, ret;
+ 	struct regmap *regmap;
+ 
+ 	regmap = qcom_cc_map(pdev, &mmcc_msm8996_desc);
+@@ -3195,9 +3194,9 @@ static int mmcc_msm8996_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0x5054, BIT(15), 0);
+ 
+ 	for (i = 0; i < ARRAY_SIZE(mmcc_msm8996_hws); i++) {
+-		clk = devm_clk_register(dev, mmcc_msm8996_hws[i]);
+-		if (IS_ERR(clk))
+-			return PTR_ERR(clk);
++		ret = devm_clk_hw_register(dev, mmcc_msm8996_hws[i]);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	return qcom_cc_really_probe(pdev, &mmcc_msm8996_desc, regmap);
 -- 
-1.9.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
