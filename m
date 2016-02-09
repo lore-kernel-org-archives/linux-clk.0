@@ -1,171 +1,108 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 2 Feb 2016 12:15:41 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: sunxi: Add support for A80 APBS clock
-Message-ID: <20160202111541.GN4652@lukather>
-References: <1454337769-4130-1-git-send-email-wens@csie.org>
- <1454337769-4130-2-git-send-email-wens@csie.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4OpS+d6oOtUQaRm1"
-In-Reply-To: <1454337769-4130-2-git-send-email-wens@csie.org>
+To: Joshua Henderson <joshua.henderson@microchip.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1454966902-15228-2-git-send-email-joshua.henderson@microchip.com>
+Cc: "Purna Chandra Mandal" <purna.mandal@microchip.com>,
+ "Joshua Henderson" <joshua.henderson@microchip.com>,
+ "Ralf Baechle" <ralf@linux-mips.org>, "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Rob Herring" <robh+dt@kernel.org>, "Pawel Moll" <pawel.moll@arm.com>,
+ "Mark Rutland" <mark.rutland@arm.com>,
+ "Ian Campbell" <ijc+devicetree@hellion.org.uk>,
+ "Kumar Gala" <galak@codeaurora.org>, linux-clk@vger.kernel.org
+References: <1454966902-15228-1-git-send-email-joshua.henderson@microchip.com>
+ <1454966902-15228-2-git-send-email-joshua.henderson@microchip.com>
+Message-ID: <20160209010246.26445.78949@quark.deferred.io>
+Subject: Re: [PATCH v6 2/2] clk: clk-pic32: Add PIC32 clock driver
+Date: Mon, 08 Feb 2016 17:02:46 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Joshua,
 
---4OpS+d6oOtUQaRm1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Quoting Joshua Henderson (2016-02-08 13:28:17)
+> +static const struct of_device_id pic32_clk_match[] __initconst =3D {
+> +       {
+> +               .compatible =3D "microchip,pic32mzda-refoclk",
+> +               .data =3D of_refo_clk_setup,
+> +       },
+> +       {
+> +               .compatible =3D "microchip,pic32mzda-pbclk",
+> +               .data =3D of_periph_clk_setup,
+> +       },
+> +       {
+> +               .compatible =3D "microchip,pic32mzda-syspll",
+> +               .data =3D of_sys_pll_setup,
+> +       },
+> +       {
+> +               .compatible =3D "microchip,pic32mzda-sosc",
+> +               .data =3D of_sosc_clk_setup,
+> +       },
+> +       {
+> +               .compatible =3D "microchip,pic32mzda-frcdivclk",
+> +               .data =3D of_frcdiv_setup,
+> +       },
+> +       {
+> +               .compatible =3D "microchip,pic32mzda-sysclk-v2",
+> +               .data =3D of_sys_mux_setup,
+> +       },
+> +       {}
+> +};
 
-Hi Chen-Yu
+As I mentioned in my review of the DT binding, instead of having a bunch
+of compatible strings for stuff that is inside of your SoC, you should
+have clock generator nodes in DT, and put the actual clock data here in
+your driver. You might only need one node, perhaps a second for the
+USBPLL.
 
-On Mon, Feb 01, 2016 at 10:42:48PM +0800, Chen-Yu Tsai wrote:
-> A80's APBS clock is not the same as the APB0 clock on A23. The A80's
-> is a zero-based divider, while the A23's is a power-of-two divider.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
->  drivers/clk/sunxi/Makefile                        |  2 +-
->  drivers/clk/sunxi/clk-sun9i-apbs.c                | 64 +++++++++++++++++=
-++++++
->  3 files changed, 66 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/clk/sunxi/clk-sun9i-apbs.c
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Document=
-ation/devicetree/bindings/clock/sunxi.txt
-> index e59f57b24777..fad81157798c 100644
-> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
-> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-> @@ -58,6 +58,7 @@ Required properties:
->  	"allwinner,sun6i-a31-apb2-gates-clk" - for the APB2 gates on A31
->  	"allwinner,sun8i-a23-apb2-gates-clk" - for the APB2 gates on A23
->  	"allwinner,sun8i-h3-bus-gates-clk" - for the bus gates on H3
-> +	"allwinner,sun9i-a80-apbs-clk" - for the APBS clock on A80
->  	"allwinner,sun9i-a80-apbs-gates-clk" - for the APBS gates on A80
->  	"allwinner,sun4i-a10-dram-gates-clk" - for the DRAM gates on A10
->  	"allwinner,sun5i-a13-mbus-clk" - for the MBUS clock on A13
-> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-> index 3fd7901d48e4..df433b3f789d 100644
-> --- a/drivers/clk/sunxi/Makefile
-> +++ b/drivers/clk/sunxi/Makefile
-> @@ -17,7 +17,7 @@ obj-y +=3D clk-sun9i-core.o
->  obj-y +=3D clk-sun9i-mmc.o
->  obj-y +=3D clk-usb.o
-> =20
-> -obj-$(CONFIG_MACH_SUN9I) +=3D clk-sun8i-apb0.o
-> +obj-$(CONFIG_MACH_SUN9I) +=3D clk-sun9i-apbs.o
->  obj-$(CONFIG_MACH_SUN9I) +=3D clk-sun9i-cpus.o
-> =20
->  obj-$(CONFIG_MFD_SUN6I_PRCM) +=3D \
-> diff --git a/drivers/clk/sunxi/clk-sun9i-apbs.c b/drivers/clk/sunxi/clk-s=
-un9i-apbs.c
-> new file mode 100644
-> index 000000000000..aacb92873621
-> --- /dev/null
-> +++ b/drivers/clk/sunxi/clk-sun9i-apbs.c
-> @@ -0,0 +1,64 @@
-> +/*
-> + * Copyright (C) 2016 Chen-Yu Tsai
-> + * Author: Chen-Yu Tsai <wens@csie.org>
-> + *
-> + * Allwinner A80 APBS clock driver
-> + *
-> + * License Terms: GNU General Public License v2
-> + *
-> + * Based on clk-sun6i-apbs.c
-> + * Allwinner A31 APB0 clock driver
-> + *
-> + * Copyright (C) 2014 Free Electrons
-> + * Author: Boris BREZILLON <boris.brezillon@free-electrons.com>
-> + *
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/platform_device.h>
-> +
-> +static void sun9i_apbs_setup(struct device_node *node)
+In your case this would result in static inits of struct pic32_spll,
+struct pic32_sclk, etc.
+
+I'm guessing you have a lot of derivative chips with slightly different
+clock trees? If so you should create a drivers/clk/pic32 directory. The
+code in this patch could be common code re-used by your derivatives and
+then you could store your clock data as a platform_driver in the same
+directory that inits the static data and uses these common clk_ops
+functions.
+
+Each chip derivative would have a new compatible string, instead of each
+clock node having a compatible string, which makes no sense.
+
+> +static void __init of_pic32_soc_clock_init(struct device_node *np)
 > +{
-> +	const char *name =3D node->name;
-> +	const char *parent;
-> +	struct resource res;
-> +	struct clk *clk;
-> +	void __iomem *reg;
-> +	int ret;
+> +       void (*clk_setup)(struct device_node *);
+> +       const struct of_device_id *clk_id;
+> +       struct device_node *childnp;
 > +
-> +	reg =3D of_io_request_and_map(node, 0, of_node_full_name(node));
-> +	if (IS_ERR(reg)) {
-> +		pr_err("Could not get registers for a80-apbs-clk\n");
-> +		return;
-> +	}
+> +       pic32_clk_regbase =3D of_io_request_and_map(np, 0, of_node_full_n=
+ame(np));
+> +       if (IS_ERR(pic32_clk_regbase))
+> +               panic("pic32-clk: failed to map registers\n");
 > +
-> +	parent =3D of_clk_get_parent_name(node, 0);
-> +	if (!parent)
-> +		return;
+> +       for_each_child_of_node(np, childnp) {
+> +               clk_id =3D of_match_node(pic32_clk_match, childnp);
+> +               if (!clk_id)
+> +                       continue;
+> +               clk_setup =3D clk_id->data;
+> +               clk_setup(childnp);
+> +       }
 > +
-> +	of_property_read_string(node, "clock-output-names", &name);
-> +
-> +	/* The A80 APBS clock is a standard 2 bit wide divider clock */
-> +	clk =3D clk_register_divider(NULL, name, parent, 0, reg, 0, 2, 0, NULL);
-> +	if (IS_ERR(clk)) {
-> +		pr_err("failed to register a80-apbs-clk: %ld\n", PTR_ERR(clk));
-> +		goto err_unmap;
-> +	}
-> +
-> +	ret =3D of_clk_add_provider(node, of_clk_src_simple_get, clk);
-> +	if (ret)
-> +		goto err_unregister;
-> +
-> +	return;
-> +
-> +err_unregister:
-> +	clk_unregister_divider(clk);
-> +err_unmap:
-> +	iounmap(reg);
-> +	of_address_to_resource(node, 0, &res);
-> +	release_mem_region(res.start, resource_size(&res));
+> +       /* register failsafe-clock-monitor NMI */
+> +       register_nmi_notifier(&failsafe_clk_notifier);
 > +}
-> +CLK_OF_DECLARE(sun9i_apbs, "allwinner,sun9i-a80-apbs-clk", sun9i_apbs_se=
-tup);
+> +
+> +CLK_OF_DECLARE(pic32_soc_clk, "microchip,pic32mzda-clk",
+> +              of_pic32_soc_clock_init);
 
-So it's just a different set of flags? Maybe we can simply reuse the
-same driver.
+I hate CLK_OF_DECLARE. Sometimes we absolutely must live with
+it, but most of the time you can create a proper platform_driver that
+gets probed and registers its clocks from within the Linux Driver Model.
 
-Maxime
+Please try to make this into a platform_driver. You requested an example
+in V5, so please see:
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+drivers/clk/qcom/gcc-apq8084.c
 
---4OpS+d6oOtUQaRm1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWsI/dAAoJEBx+YmzsjxAglBIQAIvEQ+XiDsRhDqairF3yaPjt
-plPGeflh8HPBKeUl6w56rIkKvZzOXOknb0H/F7OnDJUGTP5ZG9/1z6qWqJCQ34tK
-tESAjByqPdNkLYyteeV67WXHigw/zWcpOIVFBCPkbz69QFxOMRC+vqMI0eeCcGYf
-6bgAcIfVIh8iT5ZyznnrXHyXfq4zRgKGUvwGmiOjx2sqWr4s6CR3fbbEYRJsXg7x
-631nPhfP2v+PQUS3xwx6C3KN4nkyVgOjA17g+0qXuh/ixypjaLWw2rzj5hSaIavL
-hdW2fprBbJHlIV74m4rQb2Mo+RxFbmYT94PsD773EOwoh1Sfv+mKsoh+R36aa1Gu
-cb1vGRYctuSt0Oe8AieG7Bn9e2o5cDJj/X7XHw8B44VPaHpwfE83as0f8YsnXFCz
-lYfJoO+0H4sU+8B5sIrb7OzMRFGHsXWfRQVfuqKWQRlnvI+kzAdGAyUSnePPFk6D
-gD7oA3fOeobgVIguk7o2Atc4c02rRUHPfYqPQZo037cJlvBmotQ0dfEsTKcdXdmb
-5h+tWlQXxV5BPgx1ZZz64Qzk2uD4fajDO+xG84poGFv8tnHbs97fyLgCsAyFp+lH
-mQ/AiaqrnsU9bsAUOv8UKNr/ZPcyD1AOE5eqZGC9FxR/4XKP5HdPso9L0qsi5Ryl
-WzVE+pM4ucIre879HWXk
-=k3pl
------END PGP SIGNATURE-----
-
---4OpS+d6oOtUQaRm1--
+Best regards,
+Mike
