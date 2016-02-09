@@ -1,37 +1,43 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <manabian@gmail.com>
 MIME-Version: 1.0
-To: Joachim Eastwood <manabian@gmail.com>,  sboyd@codeaurora.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1455994417-4471-2-git-send-email-manabian@gmail.com>
-Cc: "Joachim Eastwood" <manabian@gmail.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <1455994417-4471-1-git-send-email-manabian@gmail.com>
- <1455994417-4471-2-git-send-email-manabian@gmail.com>
-Message-ID: <20160224210553.2278.56679@quark.deferred.io>
-Subject: Re: [PATCH v2 1/2] clk: add lpc18xx creg clk driver
-Date: Wed, 24 Feb 2016 13:05:53 -0800
+In-Reply-To: <20160208222637.GV4848@codeaurora.org>
+References: <1436651307-24098-1-git-send-email-manabian@gmail.com>
+	<20160208222637.GV4848@codeaurora.org>
+Date: Tue, 9 Feb 2016 11:19:57 +0100
+Message-ID: <CAGhQ9Vy14XR+-kgACiqPgs0SPueizD6Gd2q5kaNqM5mGna0V=g@mail.gmail.com>
+Subject: Re: [PATCH 0/2] CREG clk driver for NXP LPC18xx family
+From: Joachim  Eastwood <manabian@gmail.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Joachim Eastwood (2016-02-20 10:53:36)
-> +static const struct clk_ops clk_creg_32k =3D {
-> +       .enable         =3D clk_creg_enable,
-> +       .disable        =3D clk_creg_disable,
+Hi Stephen,
 
-There should be a .is_enabled here.
+On 8 February 2016 at 23:26, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 07/11, Joachim Eastwood wrote:
+>> This patch set adds a clk driver for the low power clocks found in
+>> the CREG block on lpc18xx. CREG is a collection of miscellaneous
+>> configuration registers that can be accessed through a syscon
+>> regmap interface. The clk driver makes it possible to setup and
+>> enabled these two clocks.
+>>
+>> This need to support peripherals like the internal RTC on the
+>> lpc18xx platform.
+>>
+>
+> I know this is many months old, but is this driver still
+> required? I can apply it to clk-next if so.
 
-> +       .prepare        =3D clk_creg_32k_prepare,
-> +       .unprepare      =3D clk_creg_32k_unprepare,
-> +       .is_prepared    =3D clk_creg_32k_is_prepared,
-> +};
-> +
-> +static const struct clk_ops clk_creg_1k =3D {
-> +       .enable         =3D clk_creg_enable,
-> +       .disable        =3D clk_creg_disable,
+It is still needed for the internal RTC (rtc-lpc24xx) on lpc18xx. The
+RTC uses a 1 kHz clock that is controlled in CREG (misc system regs).
 
-Ditto.
+Note; if you apply it you will most likely get a very trivial conflict
+in drivers/clk/nxp/Makefile because clk-lpc32xx.c has been added since
+these patches was sent.
 
-Otherwise patch looks good to me. Thanks a lot for all of the rework.
 
-Regards,
-Mike
+regards,
+Joachim Eastwood
