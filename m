@@ -1,84 +1,30 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 8 Feb 2016 17:07:20 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-clk@vger.kernel.org
-Subject: [PATCH v2 05/13] ARM: dts: sun8i-a83t: add mmc clock nodes
-Date: Sun, 28 Feb 2016 23:18:50 +0800
-Message-Id: <1456672738-4993-6-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
+Subject: Re: [PATCH v2 2/2] clk: qcom: common: check for failure
+Message-ID: <20160209010720.GJ10791@codeaurora.org>
+References: <1450873640-12489-1-git-send-email-sudipm.mukherjee@gmail.com>
+ <1450873640-12489-2-git-send-email-sudipm.mukherjee@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1450873640-12489-2-git-send-email-sudipm.mukherjee@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-mmc clocks are compatible with that of earlier sun8i socs.
-This adds mmc0, mmc1, and mmc2 clock nodes for A83T.
+On 12/23, Sudip Mukherjee wrote:
+> We were not checking the return from devm_add_action() which can fail.
+> Start using the helper and devm_add_action_or_reset() and return
+> directly as we know that the cleanup has been done by this helper.
+> 
+> Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
+> ---
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+Applied to clk-next
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index fa7ded5..d2a9435 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -237,6 +237,36 @@
- 					     "bus_uart2", "bus_uart3",
- 					     "bus_uart4";
- 		};
-+
-+		mmc0_clk: clk@01c20088 {
-+			#clock-cells = <1>;
-+			compatible = "allwinner,sun4i-a10-mmc-clk";
-+			reg = <0x01c20088 0x4>;
-+			clocks = <&osc24M>, <&pll6>;
-+			clock-output-names = "mmc0",
-+					     "mmc0_output",
-+					     "mmc0_sample";
-+		};
-+
-+		mmc1_clk: clk@01c2008c {
-+			#clock-cells = <1>;
-+			compatible = "allwinner,sun4i-a10-mmc-clk";
-+			reg = <0x01c2008c 0x4>;
-+			clocks = <&osc24M>, <&pll6>;
-+			clock-output-names = "mmc1",
-+					     "mmc1_output",
-+					     "mmc1_sample";
-+		};
-+
-+		mmc2_clk: clk@01c20090 {
-+			#clock-cells = <1>;
-+			compatible = "allwinner,sun4i-a10-mmc-clk";
-+			reg = <0x01c20090 0x4>;
-+			clocks = <&osc24M>, <&pll6>;
-+			clock-output-names = "mmc2",
-+					     "mmc2_output",
-+					     "mmc2_sample";
-+		};
- 	};
- 
- 	soc {
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
