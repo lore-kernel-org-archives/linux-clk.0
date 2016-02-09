@@ -1,38 +1,50 @@
-Return-Path: <ramesh.shanmugasundaram@bp.renesas.com>
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: geert+renesas@glider.be,
-	laurent.pinchart@ideasonboard.com,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chris.paterson2@renesas.com,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH 1/3] clk: shmobile: r8a7795: Add CAN peripheral clock
-Date: Thu, 25 Feb 2016 17:05:24 +0000
-Message-Id: <1456419926-8732-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <1456419926-8732-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1456419926-8732-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Return-Path: <slemieux.tyco@gmail.com>
+Return-Path: <slemieux.tyco@gmail.com>
+From: slemieux.tyco@gmail.com
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: stigge@antcom.de,
+	vz@mleia.com,
+	linux-clk@vger.kernel.org
+Subject: [PATCH] clk: lpc32xx: do not prepare clock "0"
+Date: Tue,  9 Feb 2016 13:29:10 -0500
+Message-Id: <1455042550-18766-1-git-send-email-slemieux.tyco@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- drivers/clk/shmobile/r8a7795-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
+From: Sylvain Lemieux <slemieux@tycoint.com>
 
-diff --git a/drivers/clk/shmobile/r8a7795-cpg-mssr.c b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
-index 1f4b21a..b2b9880 100644
---- a/drivers/clk/shmobile/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
-@@ -176,6 +176,8 @@ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
- 	DEF_MOD("gpio2",		 910,	R8A7795_CLK_CP),
- 	DEF_MOD("gpio1",		 911,	R8A7795_CLK_CP),
- 	DEF_MOD("gpio0",		 912,	R8A7795_CLK_CP),
-+	DEF_MOD("can-if1",		 915,	R8A7795_CLK_S3D4),
-+	DEF_MOD("can-if0",		 916,	R8A7795_CLK_S3D4),
- 	DEF_MOD("i2c6",			 918,	R8A7795_CLK_S3D2),
- 	DEF_MOD("i2c5",			 919,	R8A7795_CLK_S3D2),
- 	DEF_MOD("i2c4",			 927,	R8A7795_CLK_S3D2),
+The following errors are display in the console during the power-on:
+[    0.000000] lpc32xx_usb_clk_init: failed to register (null) clock: -12
+[    0.000000] lpc32xx_clk_init: failed to register (null) clock: -12
+
+There is no need to prepare clock "0"; the first clock used is 1;
+
+Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
+---
+ drivers/clk/nxp/clk-lpc32xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+index 10dd0fd..981ff0d 100644
+--- a/drivers/clk/nxp/clk-lpc32xx.c
++++ b/drivers/clk/nxp/clk-lpc32xx.c
+@@ -1515,7 +1515,7 @@ static void __init lpc32xx_clk_init(struct device_node *np)
+ 		return;
+ 	}
+ 
+-	for (i = 0; i < LPC32XX_CLK_MAX; i++) {
++	for (i = 1; i < LPC32XX_CLK_MAX; i++) {
+ 		clk[i] = lpc32xx_clk_register(i);
+ 		if (IS_ERR(clk[i])) {
+ 			pr_err("failed to register %s clock: %ld\n",
+@@ -1555,7 +1555,7 @@ static void __init lpc32xx_usb_clk_init(struct device_node *np)
+ 		return;
+ 	}
+ 
+-	for (i = 0; i < LPC32XX_USB_CLK_MAX; i++) {
++	for (i = 1; i < LPC32XX_USB_CLK_MAX; i++) {
+ 		usb_clk[i] = lpc32xx_clk_register(i + LPC32XX_CLK_USB_OFFSET);
+ 		if (IS_ERR(usb_clk[i])) {
+ 			pr_err("failed to register %s clock: %ld\n",
 -- 
-1.9.1
+1.8.3.1
