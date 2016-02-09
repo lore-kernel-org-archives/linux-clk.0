@@ -1,136 +1,89 @@
-Return-Path: <mark.rutland@arm.com>
-Date: Thu, 11 Feb 2016 11:44:10 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Rob Herring <rob.herring@linaro.org>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Grant Likely <grant.likely@linaro.org>,
-	Frank Rowand <frowand.list@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
-	Jean-Francois Moine <moinejf@free.fr>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Jens Kuske <jenskuske@gmail.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: breaking DT compatibility (was: Re: [PATCH v4] clk: sunxi:
- Refactor A31 PLL6 so that it can be reused)
-Message-ID: <20160211114410.GA32535@leverpostej>
-References: <1454358000-13594-1-git-send-email-maxime.ripard@free-electrons.com>
- <56B4E2FB.3050703@arm.com>
- <56BB2D79.6090402@arm.com>
- <CABGGiswOKztmRT40w4t_7BD729WgM8ueLtOD-UF_wgMbmcg4cg@mail.gmail.com>
- <20160210143755.GE31506@lukather>
- <20160210163001.GG2632@leverpostej>
- <20160211100048.GK31506@lukather>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160211100048.GK31506@lukather>
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Lee Jones <lee.jones@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Russell King <linux@arm.linux.org.uk>
+Subject: [PATCH 01/14] mfd: intel_quark_i2c_gpio: Use clkdev_create()
+Date: Mon,  8 Feb 2016 17:45:28 -0800
+Message-Id: <1454982341-22715-2-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
+References: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Feb 11, 2016 at 11:00:48AM +0100, Maxime Ripard wrote:
-> On Wed, Feb 10, 2016 at 04:30:01PM +0000, Mark Rutland wrote:
-> > On Wed, Feb 10, 2016 at 03:37:55PM +0100, Maxime Ripard wrote:
-> > > Hi Rob,
-> > > 
-> > > On Wed, Feb 10, 2016 at 07:42:02AM -0600, Rob Herring wrote:
-> > > > On Wed, Feb 10, 2016 at 6:30 AM, Andre Przywara <andre.przywara@arm.com> wrote:
-> > > > > Hi,
-> > > > >
-> > > > > just a ping:
-> > > > >
-> > > > > Are we really OK with breaking existing DTs in 4.6? (per the code in
-> > > > > -next: f7d372ba54ea04d528a291b8dbe34716507bb60b, which is this patch).
-> > > > 
-> > > > I only warn and make sure people are aware of the issue. I leave that
-> > > > up to platform maintainers to decide. It depends on the maturity of
-> > > > the platform and users.
-> > > 
-> > > The impacted SoCs support is really partial. For the most supported
-> > > one, big things like display or sound are totally missing, and we
-> > > still update them on a regular basis to add support for new
-> > > devices. As such, users are very likely to upgrade the DT from one
-> > > version to another just because there's new devices available to
-> > > them. And the newest SoC impacted just got introduced in 4.5, and only
-> > > has the UART and MMC devices available.
-> > > 
-> > > > If people complain about it then it's their mess. For platforms
-> > > > supported in distros such as debian or fedora, I would strongly
-> > > > recommend against breaking compatibility.
-> > > 
-> > > None of them are officially supported:
-> > > https://www.debian.org/releases/stable/armhf/ch02s01.html.en
-> > > https://fedoraproject.org/wiki/Architectures/ARM#Fedora_23
-> > > 
-> > > Only the older one are, and they are not affected by this patch.
-> > > 
-> > > > They do ship dtbs, but it's a chicken and egg problem. If dtbs were
-> > > > stable and provided by firmware, then they wouldn't have to provide
-> > > > them. If dtbs are unstable, then they have no choice.
-> > > 
-> > > And while it might work great on platforms that have all the needed
-> > > documentation, or a perfect one, which is our case. Almost each
-> > > release, we discover that something is not working as it was
-> > > documented, when it was documented in the first place.
-> > > 
-> > > It also seems that even on well documented platforms, supported by the
-> > > vendors, the stable ABI dream is not going to happen:
-> > > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/arm/Atmel/README#n105
-> > > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/arm/marvell,berlin.txt#n4
-> > 
-> > To be quite frank, I completely disagree with that stance.
-> > 
-> > It seems like the only reason DT bindings aren't remaining stable is
-> > because people are deliberately ignoring the requirement and reasoning
-> > for doing so.
-> 
-> And for DT maintainers saying on multiple occasions that it's bad but
-> ok to break it and / or that they never actually said that it was a
-> stable ABI...
+Convert this driver to use clkdev_create() instead of
+clk_register_clkdevs(). The latter API is only used by this driver,
+although this driver only allocates one clk to add anyway.
+Furthermore, this driver allocates the clk_lookup structure with
+devm, but clkdev_drop() will free that structure when passed,
+leading to a double free when this driver is removed. Clean it
+all up and pave the way for the removal of clk_register_clkdevs().
 
-Evidently there is a communication failure. Generally, the statement has
-been that old DTBs should continue to work. That's even documented, as
-Andre pointed out:
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/mfd/intel_quark_i2c_gpio.c | 26 +++++++++-----------------
+ 1 file changed, 9 insertions(+), 17 deletions(-)
 
-Documentation/devicetree/bindings/ABI.txt
-
-There are obviously shades of grey, and _rarely_ it might be necessary
-to deliberately break a binding. However, that should be the rare
-last-resort case, rather than a crutch for development.
-
-Saying "bad but ok" underplays the "bad" and overplays the "ok".
-
-> I'm guessing it could be a stable ABI if there was bindings
-> reviews. Rob actually started to review a significant amount of
-> bindings lately, and that's really appreciated, but if you don't
-> review all the bindings, then we're going to make mistakes.
-
-I agree that it is unfortunate that we cannot provide the level of
-review that we want to.
-
-Mistakes will happen even with review; that doesn't necessitate removing
-support for a binding.
-
-> > I agree that it can be painful, and that we cannot predict the future.
-> > There will always be bugs.
-> 
-> In our case, we can't even predict the present.
-> 
-> > Having code in mainline comes with responsibilities. One of those is to
-> > keep said code working for existing users. Otherwise, why bother having
-> > it in mainline at all?
-> 
-> None of our existing users ever complained.
-
-I believe that in this case, Andre was complaining about this particular
-breakage, unless I have misunderstood.
-
-To be clear, I'm arguing for the strategy going forward. If no-one has
-complained about the stuff broken up to this point, let's not waste time
-restoring that.
-
-Going forward we need to keep old DTBs supported.
-
-Thanks,
-Mark.
+diff --git a/drivers/mfd/intel_quark_i2c_gpio.c b/drivers/mfd/intel_quark_i2c_gpio.c
+index 042137465300..bdc5e27222c0 100644
+--- a/drivers/mfd/intel_quark_i2c_gpio.c
++++ b/drivers/mfd/intel_quark_i2c_gpio.c
+@@ -52,8 +52,6 @@
+ /* The Quark I2C controller source clock */
+ #define INTEL_QUARK_I2C_CLK_HZ	33000000
+ 
+-#define INTEL_QUARK_I2C_NCLK	1
+-
+ struct intel_quark_mfd {
+ 	struct pci_dev		*pdev;
+ 	struct clk		*i2c_clk;
+@@ -128,30 +126,24 @@ MODULE_DEVICE_TABLE(pci, intel_quark_mfd_ids);
+ static int intel_quark_register_i2c_clk(struct intel_quark_mfd *quark_mfd)
+ {
+ 	struct pci_dev *pdev = quark_mfd->pdev;
+-	struct clk_lookup *i2c_clk_lookup;
+ 	struct clk *i2c_clk;
+-	int ret;
+-
+-	i2c_clk_lookup = devm_kcalloc(&pdev->dev, INTEL_QUARK_I2C_NCLK,
+-				      sizeof(*i2c_clk_lookup), GFP_KERNEL);
+-	if (!i2c_clk_lookup)
+-		return -ENOMEM;
+-
+-	i2c_clk_lookup[0].dev_id = INTEL_QUARK_I2C_CONTROLLER_CLK;
+ 
+ 	i2c_clk = clk_register_fixed_rate(&pdev->dev,
+ 					  INTEL_QUARK_I2C_CONTROLLER_CLK, NULL,
+ 					  CLK_IS_ROOT, INTEL_QUARK_I2C_CLK_HZ);
++	if (IS_ERR(i2c_clk))
++		return PTR_ERR(i2c_clk);
+ 
+-	quark_mfd->i2c_clk_lookup = i2c_clk_lookup;
+ 	quark_mfd->i2c_clk = i2c_clk;
++	quark_mfd->i2c_clk_lookup = clkdev_create(i2c_clk, NULL,
++						INTEL_QUARK_I2C_CONTROLLER_CLK);
+ 
+-	ret = clk_register_clkdevs(i2c_clk, i2c_clk_lookup,
+-				   INTEL_QUARK_I2C_NCLK);
+-	if (ret)
+-		dev_err(&pdev->dev, "Fixed clk register failed: %d\n", ret);
++	if (!quark_mfd->i2c_clk_lookup) {
++		dev_err(&pdev->dev, "Fixed clk register failed\n");
++		return -ENOMEM;
++	}
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static void intel_quark_unregister_i2c_clk(struct pci_dev *pdev)
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
