@@ -1,40 +1,34 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	uclinux-h8-devel@lists.sourceforge.jp
-Subject: [PATCH] clk: h8300: Properly cast to __iomem pointer
-Date: Mon, 22 Feb 2016 12:58:20 -0800
-Message-Id: <1456174700-30035-1-git-send-email-sboyd@codeaurora.org>
+Return-Path: <slemieux.tyco@gmail.com>
+Return-Path: <slemieux.tyco@gmail.com>
+Subject: Re: [PATCH] clk: lpc32xx: do not prepare clock "0"
+From: Sylvain Lemieux <slemieux.tyco@gmail.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: mturquette@baylibre.com, stigge@antcom.de, vz@mleia.com,
+ linux-clk@vger.kernel.org
+In-Reply-To: <20160209190309.GD31947@codeaurora.org>
+References: <1455042550-18766-1-git-send-email-slemieux.tyco@gmail.com>
+	 <20160209190309.GD31947@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Date: Tue, 09 Feb 2016 15:11:07 -0500
+Message-ID: <1455048667.19294.5.camel@localhost>
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Sparse complains here because we dropped the __iomem annotation
-when casting the aligned address. Add __iomem back so that sparse
-stops complaining.
-
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: <uclinux-h8-devel@lists.sourceforge.jp>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/h8300/clk-div.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/h8300/clk-div.c b/drivers/clk/h8300/clk-div.c
-index 5ecc0664e33c..4bf44a25d950 100644
---- a/drivers/clk/h8300/clk-div.c
-+++ b/drivers/clk/h8300/clk-div.c
-@@ -34,7 +34,7 @@ static void __init h8300_div_clk_setup(struct device_node *node)
- 	}
- 	offset = (unsigned long)divcr & 3;
- 	offset = (3 - offset) * 8;
--	divcr = (void *)((unsigned long)divcr & ~3);
-+	divcr = (void __iomem *)((unsigned long)divcr & ~3);
- 
- 	parent_name = of_clk_get_parent_name(node, 0);
- 	of_property_read_u32(node, "renesas,width", &width);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On Tue, 2016-02-09 at 11:03 -0800, Stephen Boyd wrote:
+> On 02/09, slemieux.tyco@gmail.com wrote:
+> > From: Sylvain Lemieux <slemieux@tycoint.com>
+> > 
+> > The following errors are display in the console during the power-on:
+> > [    0.000000] lpc32xx_usb_clk_init: failed to register (null) clock: -12
+> > [    0.000000] lpc32xx_clk_init: failed to register (null) clock: -12
+> > 
+> > There is no need to prepare clock "0"; the first clock used is 1;
+> > 
+> > Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
+> > ---
+> 
+> Do you mean register instead of prepare? Change looks ok
+> otherwise.
+> 
+Should read register in the description;
+I will submit a new version of the patch tomorrow.
