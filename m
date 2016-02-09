@@ -1,30 +1,40 @@
-Return-Path: <ramesh.shanmugasundaram@bp.renesas.com>
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: geert+renesas@glider.be,
-	laurent.pinchart@ideasonboard.com,
-	linux-renesas-soc@vger.kernel.org,
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 9 Feb 2016 10:18:33 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Dinh Nguyen <dinguyen@kernel.org>
+Cc: Vladimir Zapolskiy <vz@mleia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chris.paterson2@renesas.com,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH 0/3] CAN & CAN FD clk support for r8a7795 SoC
-Date: Thu, 25 Feb 2016 17:05:23 +0000
-Message-Id: <1456419926-8732-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: commit 5146e0b05963 is causing a kernel crash on SoCFPGA
+Message-ID: <20160209181833.GA24167@codeaurora.org>
+References: <56B9507B.9000201@kernel.org>
+ <CAK7LNASSex+Nfpzp-=FGbo7eKCteamvyX_DyZaeRenhpF72ZdQ@mail.gmail.com>
+ <56B9BB41.3080001@kernel.org>
+ <CAK7LNASt2GodpoH7qHu6yU4RxWbi42Qy=TSW=Cr5P0NgSrBdrQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAK7LNASt2GodpoH7qHu6yU4RxWbi42Qy=TSW=Cr5P0NgSrBdrQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch set adds CAN & CAN FD clk support for r8a7795 SoC.
+On 02/09, Masahiro Yamada wrote:
+> 2016-02-09 19:11 GMT+09:00 Dinh Nguyen <dinguyen@kernel.org>:
+> 
+> >
+> > Yes, .get_parent call back is define when num_parents = 1. If you take a
+> > look at socfpga.dtsi, the main_pll of type "altr,socfpga-pll-clk" only
+> > has 1 parent, osc1. But the periph_pll and sdram_pll, also of type
+> > "altr,socfpga-pll-clk" has > 1 parents.
+> 
+> 
+> OK. Then, I understood the cause of the problem.
+> 
 
-This set is based on linux-next repo(tag: next-20160225).
-
-Ramesh Shanmugasundaram (3):
-  clk: shmobile: r8a7795: Add CAN peripheral clock
-  clk: shmobile: r8a7795: Add CANFD clock
-  clk: shmobile: r8a7795: Add CAN FD peripheral clock
-
- drivers/clk/shmobile/r8a7795-cpg-mssr.c | 4 ++++
- 1 file changed, 4 insertions(+)
+The patch looks good as an optimization but is there also going
+to be a fix for the socfpga code? It looks like we've exposed a
+bug in the implementation there.
 
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
