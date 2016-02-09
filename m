@@ -1,31 +1,34 @@
-Return-Path: <alexandre.belloni@free-electrons.com>
-Date: Wed, 17 Feb 2016 00:07:43 +0100
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Akinobu Mita <akinobu.mita@gmail.com>, rtc-linux@googlegroups.com,
-	linux-clk@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH] rtc: rtc-ds1307: add clock provider support for DS3231
-Message-ID: <20160216230743.GD2189@piout.net>
-References: <1454249410-21449-1-git-send-email-akinobu.mita@gmail.com>
- <20160216004221.GA3310@piout.net>
- <20160216223526.2278.66771@quark.deferred.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20160216223526.2278.66771@quark.deferred.io>
+Return-Path: <slemieux.tyco@gmail.com>
+Return-Path: <slemieux.tyco@gmail.com>
+Subject: Re: [PATCH 1/2] clk: lpc32xx: add clock frequency output
+ configuration
+From: Sylvain Lemieux <slemieux.tyco@gmail.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: robh+dt@kernel.org, mturquette@baylibre.com, stigge@antcom.de,
+ vz@mleia.com,  devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+In-Reply-To: <20160209185723.GC31947@codeaurora.org>
+References: <1455043670-19025-1-git-send-email-slemieux.tyco@gmail.com>
+	 <20160209185723.GC31947@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Date: Tue, 09 Feb 2016 15:07:10 -0500
+Message-ID: <1455048430.19294.3.camel@localhost>
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On 16/02/2016 at 14:35:26 -0800, Michael Turquette wrote :
-> If it's not too late:
+On Tue, 2016-02-09 at 10:57 -0800, Stephen Boyd wrote:
+> On 02/09, slemieux.tyco@gmail.com wrote:
+> > From: Sylvain Lemieux <slemieux@tycoint.com>
+> > 
+> > This patch add the support to setup the clock frequency output
+> > using an optional parameter from the device tree.
+> > 
+> > The previous kernel version did not change the clock frequency
+> > output setup by the kickstart and/or bootloader;
+> > this version always setup the clock frequency output to 208MHz.
+> > 
+> > Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
+> > ---
 > 
-> Reviewed-by: Michael Turquette <mturquette@baylibre.com>
+> We have assigned-clock-rates, can you use that instead?
 > 
-
-Added, thanks.
-
-
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+OK, I will submit a new version of the patch tomorrow.
