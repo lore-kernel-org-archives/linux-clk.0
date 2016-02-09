@@ -1,73 +1,158 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Fri, 12 Feb 2016 08:03:25 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-	maxime.ripard@free-electrons.com, maxime.coquelin@st.com,
-	geert@linux-m68k.org, heiko@sntech.de, andre.przywara@arm.com,
-	rklein@nvidia.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v42 1/6] clk: Allow clocks to be marked as CRITICAL
-Message-ID: <20160212080325.GL20693@x1>
-References: <1455225554-13267-1-git-send-email-mturquette@baylibre.com>
- <1455225554-13267-2-git-send-email-mturquette@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1455225554-13267-2-git-send-email-mturquette@baylibre.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:58211 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754401AbcBIBpu (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Mon, 8 Feb 2016 20:45:50 -0500
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 11/14] clk: composite: Add hw based registration APIs
+Date: Mon,  8 Feb 2016 17:45:38 -0800
+Message-Id: <1454982341-22715-12-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
+References: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 11 Feb 2016, Michael Turquette wrote:
+Add registration APIs in the clk composite code to return struct
+clk_hw pointers instead of struct clk pointers. This way we hide
+the struct clk pointer from providers unless they need to use
+consumer facing APIs.
 
-> From: Lee Jones <lee.jones@linaro.org>
-> 
-> Critical clocks are those which must not be gated, else undefined
-> or catastrophic failure would occur.  Here we have chosen to
-> ensure the prepare/enable counts are correctly incremented, so as
-> not to confuse users with enabled clocks with no visible users.
-> 
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> Signed-off-by: Michael Turquette <mturquette@baylibre.com>
-> ---
-> Changes in v42:
->   * Moved code from clk_register into __clk_init
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk-composite.c  | 45 ++++++++++++++++++++++++++++++++------------
+ include/linux/clk-provider.h |  7 +++++++
+ 2 files changed, 40 insertions(+), 12 deletions(-)
 
-I'm happy with this change.  Thanks Mike!
-
->  drivers/clk/clk.c            | 5 +++++
->  include/linux/clk-provider.h | 1 +
->  2 files changed, 6 insertions(+)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index b4db67a..993f775 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2484,6 +2484,11 @@ static int __clk_init(struct device *dev, struct clk *clk_user)
->  	if (core->ops->init)
->  		core->ops->init(core->hw);
->  
-> +	if (core->flags & CLK_IS_CRITICAL) {
-> +		clk_core_prepare(core);
-> +		clk_core_enable(core);
-> +	}
-> +
->  	kref_init(&core->ref);
->  out:
->  	clk_prepare_unlock();
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 1143e38..1d986ea 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -32,6 +32,7 @@
->  #define CLK_GET_ACCURACY_NOCACHE BIT(8) /* do not use the cached clk accuracy */
->  #define CLK_RECALC_NEW_RATES	BIT(9) /* recalc rates after notifications */
->  #define CLK_SET_RATE_UNGATE	BIT(10) /* clock needs to run to set rate */
-> +#define CLK_IS_CRITICAL		BIT(11) /* do not gate, ever */
->  
->  struct clk;
->  struct clk_hw;
-
+diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
+index 4735de0660cc..9c38a3563e8c 100644
+--- a/drivers/clk/clk-composite.c
++++ b/drivers/clk/clk-composite.c
+@@ -186,17 +186,18 @@ static void clk_composite_disable(struct clk_hw *hw)
+ 	gate_ops->disable(gate_hw);
+ }
+ 
+-struct clk *clk_register_composite(struct device *dev, const char *name,
++struct clk_hw *clk_hw_register_composite(struct device *dev, const char *name,
+ 			const char * const *parent_names, int num_parents,
+ 			struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
+ 			struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
+ 			struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
+ 			unsigned long flags)
+ {
+-	struct clk *clk;
++	struct clk_hw *hw;
+ 	struct clk_init_data init;
+ 	struct clk_composite *composite;
+ 	struct clk_ops *clk_composite_ops;
++	int ret;
+ 
+ 	composite = kzalloc(sizeof(*composite), GFP_KERNEL);
+ 	if (!composite)
+@@ -206,12 +207,13 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
+ 	init.flags = flags | CLK_IS_BASIC;
+ 	init.parent_names = parent_names;
+ 	init.num_parents = num_parents;
++	hw = &composite->hw;
+ 
+ 	clk_composite_ops = &composite->ops;
+ 
+ 	if (mux_hw && mux_ops) {
+ 		if (!mux_ops->get_parent) {
+-			clk = ERR_PTR(-EINVAL);
++			hw = ERR_PTR(-EINVAL);
+ 			goto err;
+ 		}
+ 
+@@ -226,7 +228,7 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
+ 
+ 	if (rate_hw && rate_ops) {
+ 		if (!rate_ops->recalc_rate) {
+-			clk = ERR_PTR(-EINVAL);
++			hw = ERR_PTR(-EINVAL);
+ 			goto err;
+ 		}
+ 		clk_composite_ops->recalc_rate = clk_composite_recalc_rate;
+@@ -255,7 +257,7 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
+ 	if (gate_hw && gate_ops) {
+ 		if (!gate_ops->is_enabled || !gate_ops->enable ||
+ 		    !gate_ops->disable) {
+-			clk = ERR_PTR(-EINVAL);
++			hw = ERR_PTR(-EINVAL);
+ 			goto err;
+ 		}
+ 
+@@ -269,22 +271,41 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
+ 	init.ops = clk_composite_ops;
+ 	composite->hw.init = &init;
+ 
+-	clk = clk_register(dev, &composite->hw);
+-	if (IS_ERR(clk))
++	ret = clk_hw_register(dev, hw);
++	if (ret) {
++		hw = ERR_PTR(ret);
+ 		goto err;
++	}
+ 
+ 	if (composite->mux_hw)
+-		composite->mux_hw->clk = clk;
++		composite->mux_hw->clk = hw->clk;
+ 
+ 	if (composite->rate_hw)
+-		composite->rate_hw->clk = clk;
++		composite->rate_hw->clk = hw->clk;
+ 
+ 	if (composite->gate_hw)
+-		composite->gate_hw->clk = clk;
++		composite->gate_hw->clk = hw->clk;
+ 
+-	return clk;
++	return hw;
+ 
+ err:
+ 	kfree(composite);
+-	return clk;
++	return hw;
++}
++
++struct clk *clk_register_composite(struct device *dev, const char *name,
++			const char * const *parent_names, int num_parents,
++			struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
++			struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
++			struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
++			unsigned long flags)
++{
++	struct clk_hw *hw;
++
++	hw = clk_hw_register_composite(dev, name, parent_names, num_parents,
++			mux_hw, mux_ops, rate_hw, rate_ops, gate_hw, gate_ops,
++			flags);
++	if (IS_ERR(hw))
++		return ERR_CAST(hw);
++	return hw->clk;
+ }
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 549ed3844876..64037ab95a31 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -620,6 +620,13 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
+ 		struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
+ 		struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
+ 		unsigned long flags);
++struct clk_hw *clk_hw_register_composite(struct device *dev, const char *name,
++		const char * const *parent_names, int num_parents,
++		struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
++		struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
++		struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
++		unsigned long flags);
++void clk_hw_unregister_composite(struct clk_hw *hw);
+ 
+ /***
+  * struct clk_gpio_gate - gpio gated clock
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
