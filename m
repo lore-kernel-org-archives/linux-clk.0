@@ -1,56 +1,32 @@
-Return-Path: <ykk@rock-chips.com>
-From: Yakir Yang <ykk@rock-chips.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Kumar Gala <galak@codeaurora.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jeffy Chen <jeffy.chen@rock-chips.com>,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH v1 3/4] clk: rockchip: add the new clock ids for RK3228 HDMI
-Date: Wed, 24 Feb 2016 18:14:25 +0800
-Message-Id: <1456308865-30876-1-git-send-email-ykk@rock-chips.com>
-In-Reply-To: <1456308303-29706-1-git-send-email-ykk@rock-chips.com>
-References: <1456308303-29706-1-git-send-email-ykk@rock-chips.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 9 Feb 2016 11:03:09 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: slemieux.tyco@gmail.com
+Cc: mturquette@baylibre.com, stigge@antcom.de, vz@mleia.com,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: lpc32xx: do not prepare clock "0"
+Message-ID: <20160209190309.GD31947@codeaurora.org>
+References: <1455042550-18766-1-git-send-email-slemieux.tyco@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1455042550-18766-1-git-send-email-slemieux.tyco@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
----
- include/dt-bindings/clock/rk3228-cru.h | 4 ++++
- 1 file changed, 4 insertions(+)
+On 02/09, slemieux.tyco@gmail.com wrote:
+> From: Sylvain Lemieux <slemieux@tycoint.com>
+> 
+> The following errors are display in the console during the power-on:
+> [    0.000000] lpc32xx_usb_clk_init: failed to register (null) clock: -12
+> [    0.000000] lpc32xx_clk_init: failed to register (null) clock: -12
+> 
+> There is no need to prepare clock "0"; the first clock used is 1;
+> 
+> Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
+> ---
 
-diff --git a/include/dt-bindings/clock/rk3228-cru.h b/include/dt-bindings/clock/rk3228-cru.h
-index 5656bf6..fda9308 100644
---- a/include/dt-bindings/clock/rk3228-cru.h
-+++ b/include/dt-bindings/clock/rk3228-cru.h
-@@ -50,9 +50,11 @@
- #define SCLK_SDIO_SAMPLE	119
- #define SCLK_EMMC_SAMPLE	121
- #define SCLK_VOP		122
-+#define SCLK_HDMI_HDCP		123
- 
- /* dclk gates */
- #define DCLK_VOP		190
-+#define DCLK_HDMI_PHY		191
- 
- /* aclk gates */
- #define ACLK_DMAC		194
-@@ -76,6 +78,8 @@
- #define PCLK_PWM		350
- #define PCLK_TIMER		353
- #define PCLK_PERI		363
-+#define PCLK_HDMI_CTRL		364
-+#define PCLK_HDMI_PHY		365
- 
- /* hclk gates */
- #define HCLK_VOP		452
+Do you mean register instead of prepare? Change looks ok
+otherwise.
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
