@@ -1,90 +1,66 @@
-Return-Path: <manabian@gmail.com>
+Return-Path: <yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNARhh0o8t_qLHc4_+yyZE6Hx6cwL2XEKbFsHZJmeHndzyA@mail.gmail.com>
-References: <1451297429-21689-1-git-send-email-yamada.masahiro@socionext.com>
-	<1451297429-21689-13-git-send-email-yamada.masahiro@socionext.com>
-	<CAGhQ9VyaG+hcwNfXr7soP84G8Sq7DJmz8oMqZ1ALef6hcc0auw@mail.gmail.com>
-	<CAK7LNARhh0o8t_qLHc4_+yyZE6Hx6cwL2XEKbFsHZJmeHndzyA@mail.gmail.com>
-Date: Tue, 23 Feb 2016 00:32:39 +0100
-Message-ID: <CAGhQ9VzoPp2R_v701zjG=wHN_8Q2FVjr1XAMSaY61dfTE649WA@mail.gmail.com>
-Subject: Re: [PATCH v2 12/16] clk: avoid circular clock topology
-From: Joachim  Eastwood <manabian@gmail.com>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+In-Reply-To: <56B9507B.9000201@kernel.org>
+References: <56B9507B.9000201@kernel.org>
+Date: Tue, 9 Feb 2016 13:00:47 +0900
+Message-ID: <CAK7LNASSex+Nfpzp-=FGbo7eKCteamvyX_DyZaeRenhpF72ZdQ@mail.gmail.com>
+Subject: Re: commit 5146e0b05963 is causing a kernel crash on SoCFPGA
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Dinh Nguyen <dinguyen@kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Vladimir Zapolskiy <vz@mleia.com>,
+        Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 22 February 2016 at 03:29, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> Hi Joachim,
+Hi Dinh,
+
+Thanks for your report.
+
+
+2016-02-09 11:35 GMT+09:00 Dinh Nguyen <dinguyen@kernel.org>:
+> Hi Stephen,
 >
+> It appears that commit 5146e0b05966 "clk: simplify __clk_init_parent()"
+> that is currently in linux-next is causing the following kernel crash on
+> SoCFGPA[1].
 >
-> 2016-02-22 6:39 GMT+09:00 Joachim Eastwood <manabian@gmail.com>:
->> Hi everyone,
->>
->> On 28 December 2015 at 11:10, Masahiro Yamada
->> <yamada.masahiro@socionext.com> wrote:
->>> Currently, clk_register() never checks a circular parent looping,
->>> but clock providers could register such an insane clock topology.
->>> For example, "clk_a" could have "clk_b" as a parent, and vice versa.
->>> In this case, clk_core_reparent() creates a circular parent list
->>> and __clk_recalc_accuracies() calls itself recursively forever.
->>>
->>> The core infrastructure should be kind enough to bail out, showing
->>> an appropriate error message in such a case.  This helps to easily
->>> find a bug in clock providers.  (uh, I made such a silly mistake
->>> when I was implementing my clock providers first.  I was upset
->>> because the kernel did not respond, without any error message.)
->>>
->>> This commit adds a new helper function, __clk_is_ancestor().  It
->>> returns true if the second argument is a possible ancestor of the
->>> first one.  If a clock core is a possible ancestor of itself, it
->>> would make a loop when it were registered.  That should be detected
->>> as an error.
->>
->> This commit breaks lpc18xx boot in next right now. See
->> http://marc.info/?l=linux-arm-kernel&m=145608597106087&w=2
->>
->> The Clock Generation Unit (CGU) on lpc18xx allow for circular parents
->> in hardware. While it is obliviously not a good idea to configure the
->> clocks in that manner there is nothing that stops you either.
->>
->> Please take a look at the second figure on:
->> https://github.com/manabian/linux-lpc/wiki/LPC18xx-LPC43xx-clocks
->> All PLLs can feed clock into the dividers and the dividers can feed
->> clock into the PLLs.
->>
->> The reason why this is made possible in the CGU is because you can
->> then choose where to put your divider; either before the PLL or after.
->>
->
->
-> Sorry for breaking your board.
-
-No worries, that is why we have next so we can catch it before it hits
-mainline :-)
+> I have bisected to this commit and doing a revert of the commit fixes
+> the issue.
 
 
-> I am OK with reverting b58f75aa83fb.
->
->
->
-> I guess your hardware could make clock looping for the best flexibility
-> but you do not make clock looping in actual use cases.
-
-That's right.
+Could you check if the following simple patch fixes your problem?
 
 
-> Maybe, does it make sense to check the parent looping
-> in clk_set_parent() or somewhere, not in clk_register()?
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1662,7 +1662,7 @@ static struct clk_core *__clk_init_parent(struct
+clk_core *core)
+ {
+        u8 index = 0;
 
-I think that would be a nice addition. While the CGU can certainly be
-configured with loops it is indeed something that we should prevent
-from happening.
+-       if (core->ops->get_parent)
++       if (core->num_parents > 1 && core->ops->get_parent)
+                index = core->ops->get_parent(core->hw);
+
+        return clk_core_get_parent_by_index(core, index);
 
 
-regards,
-Joachim Eastwood
+
+
+Let me ask one more question.
+
+Do SoCFPGA clocks define .get_parent callback even if num_parents <= 1 ?
+
+
+I just skimmed over driver/clk/socfpga/clk-gate.c
+and found it defines .get_parent().
+
+I think a gating clock is usually single-parent (so not need to have
+.get_parent),
+but I am not sure if this is the case.
+
+
+-- 
+Best Regards
+Masahiro Yamada
