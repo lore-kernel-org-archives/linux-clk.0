@@ -1,68 +1,47 @@
-Return-Path: <s.nawrocki@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: tomasz.figa@gmail.com, mturquette@baylibre.com, sboyd@codeaurora.org,
- jonghwa3.lee@samsung.com, m.szyprowski@samsung.com,
- Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 1/6] clk: samsung: exynos5433: Fix typos in *_ISP_MPWM clock
- names
-Date: Tue, 23 Feb 2016 13:14:27 +0100
-Message-id: <1456229672-13445-2-git-send-email-s.nawrocki@samsung.com>
-In-reply-to: <1456229672-13445-1-git-send-email-s.nawrocki@samsung.com>
-References: <1456229672-13445-1-git-send-email-s.nawrocki@samsung.com>
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: fix __clk_init_parent() for single parent clocks
+Date: Tue,  9 Feb 2016 20:19:14 +0900
+Message-Id: <1455016754-26006-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This fixes "MPWM" -> "WPWM" typo in 3 *ISP_MWPM clock definitions.
+Before commit b3d192d5121f ("clk: simplify __clk_init_parent()"),
+__clk_init_parent() called .get_parent() only for multi-parent
+clocks.  That commit changed the behavior to call .get_parent()
+if available even for single-parent clocks and root clocks.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+It turned out a problem because there are some single-parent clocks
+that implement .get_parent() callback and return non-zero index.
+The SOCFPGA clock is the case; the commit broke the SOCFPGA boards.
+
+To keep the original behavior, invoke .get_parent() only when
+num_parents is greater than 1.
+
+Fixes: b3d192d5121f ("clk: simplify __clk_init_parent()")
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reported-by: Dinh Nguyen <dinguyen@opensource.altera.com>
 ---
- drivers/clk/samsung/clk-exynos5433.c   | 6 +++---
- include/dt-bindings/clock/exynos5433.h | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index b7f1fb7..982abb7 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -5165,7 +5165,7 @@ static struct samsung_mux_clock cam1_mux_clks[] __initdata = {
+ drivers/clk/clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index e2aa0bc..38515a9 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1662,7 +1662,7 @@ static struct clk_core *__clk_init_parent(struct clk_core *core)
+ {
+ 	u8 index = 0;
  
- static struct samsung_div_clock cam1_div_clks[] __initdata = {
- 	/* DIV_CAM10 */
--	DIV(CLK_DIV_SCLK_ISP_WPWM, "div_sclk_isp_wpwm",
-+	DIV(CLK_DIV_SCLK_ISP_MPWM, "div_sclk_isp_mpwm",
- 			"div_pclk_cam1_83", DIV_CAM10, 16, 2),
- 	DIV(CLK_DIV_PCLK_CAM1_83, "div_pclk_cam1_83",
- 			"mout_aclk_cam1_333_user", DIV_CAM10, 12, 2),
-@@ -5359,7 +5359,7 @@ static struct samsung_gate_clock cam1_gate_clks[] __initdata = {
- 			ENABLE_PCLK_CAM1, 5, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_PCLK_ISP_I2C0, "pclk_isp_i2c0", "div_pclk_cam1_83",
- 			ENABLE_PCLK_CAM1, 4, CLK_IGNORE_UNUSED, 0),
--	GATE(CLK_PCLK_ISP_MPWM, "pclk_isp_wpwm", "div_pclk_cam1_83",
-+	GATE(CLK_PCLK_ISP_MPWM, "pclk_isp_mpwm", "div_pclk_cam1_83",
- 			ENABLE_PCLK_CAM1, 3, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_PCLK_FD, "pclk_fd", "div_pclk_fd",
- 			ENABLE_PCLK_CAM1, 3, CLK_IGNORE_UNUSED, 0),
-@@ -5392,7 +5392,7 @@ static struct samsung_gate_clock cam1_gate_clks[] __initdata = {
- 			ENABLE_SCLK_CAM1, 5, 0, 0),
- 	GATE(CLK_SCLK_ISP_SPI0, "sclk_isp_spi0", "mout_sclk_isp_spi0_user",
- 			ENABLE_SCLK_CAM1, 4, 0, 0),
--	GATE(CLK_SCLK_ISP_MPWM, "sclk_isp_wpwm", "div_sclk_isp_wpwm",
-+	GATE(CLK_SCLK_ISP_MPWM, "sclk_isp_mpwm", "div_sclk_isp_mpwm",
- 			ENABLE_SCLK_CAM1, 3, 0, 0),
- 	GATE(CLK_PCLK_DBG_ISP, "sclk_dbg_isp", "div_pclk_dbg_cam1",
- 			ENABLE_SCLK_CAM1, 2, 0, 0),
-diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
-index 5c2636c..8e024fe 100644
---- a/include/dt-bindings/clock/exynos5433.h
-+++ b/include/dt-bindings/clock/exynos5433.h
-@@ -1303,7 +1303,7 @@
- #define CLK_MOUT_ACLK_LITE_C_B				13
- #define CLK_MOUT_ACLK_LITE_C_A				14
+-	if (core->ops->get_parent)
++	if (core->num_parents > 1 && core->ops->get_parent)
+ 		index = core->ops->get_parent(core->hw);
  
--#define CLK_DIV_SCLK_ISP_WPWM				15
-+#define CLK_DIV_SCLK_ISP_MPWM				15
- #define CLK_DIV_PCLK_CAM1_83				16
- #define CLK_DIV_PCLK_CAM1_166				17
- #define CLK_DIV_PCLK_DBG_CAM1				18
+ 	return clk_core_get_parent_by_index(core, index);
 -- 
 1.9.1
