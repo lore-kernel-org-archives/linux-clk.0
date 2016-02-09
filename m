@@ -1,88 +1,77 @@
-Return-Path: <vishnupatekar0510@gmail.com>
-Return-Path: <vishnupatekar0510@gmail.com>
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-To: robh+dt@kernel.org,
-	corbet@lwn.net,
-	pawel.moll@arm.com,
-	mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org,
-	maxime.ripard@free-electrons.com,
-	linux@arm.linux.org.uk,
-	emilio@elopez.com.ar
-Cc: jenskuske@gmail.com,
-	hdegoede@redhat.com,
-	wens@csie.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	patchesrdh@mveas.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v2 03/13] clk: sunxi: Add APB1 clock for A83T
-Date: Sun, 28 Feb 2016 23:18:48 +0800
-Message-Id: <1456672738-4993-4-git-send-email-vishnupatekar0510@gmail.com>
-In-Reply-To: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
-References: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
+Return-Path: <dinguyen@kernel.org>
+Subject: Re: commit 5146e0b05963 is causing a kernel crash on SoCFPGA
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+References: <56B9507B.9000201@kernel.org>
+ <CAK7LNASSex+Nfpzp-=FGbo7eKCteamvyX_DyZaeRenhpF72ZdQ@mail.gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Vladimir Zapolskiy <vz@mleia.com>,
+ Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-kernel <linux-kernel@vger.kernel.org>
+From: Dinh Nguyen <dinguyen@kernel.org>
+Message-ID: <56B9BB41.3080001@kernel.org>
+Date: Tue, 9 Feb 2016 04:11:13 -0600
+MIME-Version: 1.0
+In-Reply-To: <CAK7LNASSex+Nfpzp-=FGbo7eKCteamvyX_DyZaeRenhpF72ZdQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-APB1 is similar to sun4i-a10-apb0-clk, except different dividers.
+Hi Masahiro,
 
-This adds support for apb1 on A83T.
+On 02/08/2016 10:00 PM, Masahiro Yamada wrote:
+> Hi Dinh,
+> 
+> Thanks for your report.
+> 
+> 
+> 2016-02-09 11:35 GMT+09:00 Dinh Nguyen <dinguyen@kernel.org>:
+>> Hi Stephen,
+>>
+>> It appears that commit 5146e0b05966 "clk: simplify __clk_init_parent()"
+>> that is currently in linux-next is causing the following kernel crash on
+>> SoCFGPA[1].
+>>
+>> I have bisected to this commit and doing a revert of the commit fixes
+>> the issue.
+> 
+> 
+> Could you check if the following simple patch fixes your problem?
+> 
+> 
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1662,7 +1662,7 @@ static struct clk_core *__clk_init_parent(struct
+> clk_core *core)
+>  {
+>         u8 index = 0;
+> 
+> -       if (core->ops->get_parent)
+> +       if (core->num_parents > 1 && core->ops->get_parent)
+>                 index = core->ops->get_parent(core->hw);
+> 
+>         return clk_core_get_parent_by_index(core, index);
+> 
+> 
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
- drivers/clk/sunxi/clk-sunxi.c                     | 13 +++++++++++++
- 2 files changed, 14 insertions(+)
+Yes, the above patch fixes the problem and the SoCFPGA board is able to
+boot.
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-index 2ee7841..dd24772 100644
---- a/Documentation/devicetree/bindings/clock/sunxi.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-@@ -49,6 +49,7 @@ Required properties:
- 	"allwinner,sun8i-a23-apb0-gates-clk" - for the APB0 gates on A23
- 	"allwinner,sun9i-a80-apb0-gates-clk" - for the APB0 gates on A80
- 	"allwinner,sun4i-a10-apb1-clk" - for the APB1 clock
-+	"allwinner,sun8i-a83t-apb1-clk" - for the APB1 clock on A83T
- 	"allwinner,sun9i-a80-apb1-clk" - for the APB1 bus clock on A80
- 	"allwinner,sun4i-a10-apb1-gates-clk" - for the APB1 gates on A10
- 	"allwinner,sun5i-a13-apb1-gates-clk" - for the APB1 gates on A13
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 0ae1f09..987a12d 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -863,6 +863,12 @@ static const struct div_data sun4i_apb0_data __initconst = {
- 	.table	= sun4i_apb0_table,
- };
- 
-+static const struct div_data sun8i_a83t_apb1_data __initconst = {
-+	.shift	= 8,
-+	.pow	= 0,
-+	.width	= 2,
-+};
-+
- static void __init sunxi_divider_clk_setup(struct device_node *node,
- 					   const struct div_data *data)
- {
-@@ -899,6 +905,13 @@ static void __init sun4i_apb0_clk_setup(struct device_node *node)
- CLK_OF_DECLARE(sun4i_apb0, "allwinner,sun4i-a10-apb0-clk",
- 	       sun4i_apb0_clk_setup);
- 
-+static void __init sun8i_a83t_apb1_clk_setup(struct device_node *node)
-+{
-+	sunxi_divider_clk_setup(node, &sun8i_a83t_apb1_data);
-+}
-+CLK_OF_DECLARE(sun8i_a83t_apb1, "allwinner,sun8i-a83t-apb1-clk",
-+	       sun8i_a83t_apb1_clk_setup);
-+
- static void __init sun4i_axi_clk_setup(struct device_node *node)
- {
- 	sunxi_divider_clk_setup(node, &sun4i_axi_data);
--- 
-1.9.1
+> 
+> 
+> Let me ask one more question.
+> 
+> Do SoCFPGA clocks define .get_parent callback even if num_parents <= 1 ?
+> 
+> 
+> I just skimmed over driver/clk/socfpga/clk-gate.c
+> and found it defines .get_parent().
+> 
+> I think a gating clock is usually single-parent (so not need to have
+> .get_parent),
+> but I am not sure if this is the case.
+> 
+
+Yes, .get_parent call back is define when num_parents = 1. If you take a
+look at socfpga.dtsi, the main_pll of type "altr,socfpga-pll-clk" only
+has 1 parent, osc1. But the periph_pll and sdram_pll, also of type
+"altr,socfpga-pll-clk" has > 1 parents.
+
+Dinh
