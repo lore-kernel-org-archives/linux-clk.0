@@ -1,77 +1,200 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Tony Lindgren <tony@atomide.com>, "Stephen Boyd" <sboyd@codeaurora.org>,
- "Tero Kristo" <t-kristo@ti.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1456508703-17390-1-git-send-email-tony@atomide.com>
-Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <1456508703-17390-1-git-send-email-tony@atomide.com>
-Message-ID: <20160229222027.3140.90691@quark.deferred.io>
-Subject: Re: [PATCH] clk: ti: Allow COMPILE_TEST to build selected drivers
-Date: Mon, 29 Feb 2016 14:20:27 -0800
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 06/14] clk: divider: Add hw based registration APIs
+Date: Mon,  8 Feb 2016 17:45:33 -0800
+Message-Id: <1454982341-22715-7-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
+References: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Tony Lindgren (2016-02-26 09:45:03)
-> The arch independent drivers can be build testeed with
-> COMPILE_TEST. Let's allow that for drivers/clk/ti.
-> =
+Add registration APIs in the clk divider code to return struct
+clk_hw pointers instead of struct clk pointers. This way we hide
+the struct clk pointer from providers unless they need to use
+consumer facing APIs.
 
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk-divider.c    | 91 ++++++++++++++++++++++++++++++++++++++++----
+ include/linux/clk-provider.h | 10 +++++
+ 2 files changed, 93 insertions(+), 8 deletions(-)
 
-Applied.
-
-Regards,
-Mike
-
-> ---
->  drivers/clk/Makefile    | 2 +-
->  drivers/clk/ti/Makefile | 4 ++++
->  2 files changed, 5 insertions(+), 1 deletion(-)
-> =
-
-> ---
-> =
-
-> This allows the appll driver to be built with COMPILE_TEST,
-> and this is not currently needed without the adpll driver.
-> =
-
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index b038e36..45939a1 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -78,7 +78,7 @@ obj-$(CONFIG_PLAT_SPEAR)              +=3D spear/
->  obj-$(CONFIG_ARCH_STI)                 +=3D st/
->  obj-$(CONFIG_ARCH_SUNXI)               +=3D sunxi/
->  obj-$(CONFIG_ARCH_TEGRA)               +=3D tegra/
-> -obj-$(CONFIG_ARCH_OMAP2PLUS)           +=3D ti/
-> +obj-y                                  +=3D ti/
->  obj-$(CONFIG_ARCH_U8500)               +=3D ux500/
->  obj-$(CONFIG_COMMON_CLK_VERSATILE)     +=3D versatile/
->  obj-$(CONFIG_X86)                      +=3D x86/
-> diff --git a/drivers/clk/ti/Makefile b/drivers/clk/ti/Makefile
-> index dfe91d7..0deac98 100644
-> --- a/drivers/clk/ti/Makefile
-> +++ b/drivers/clk/ti/Makefile
-> @@ -1,3 +1,5 @@
-> +ifeq ($(CONFIG_ARCH_OMAP2PLUS), y)
-> +
->  obj-y                                  +=3D clk.o autoidle.o clockdomain=
-.o
->  clk-common                             =3D dpll.o composite.o divider.o =
-gate.o \
->                                           fixed-factor.o mux.o apll.o \
-> @@ -19,4 +21,6 @@ ifdef CONFIG_ATAGS
->  obj-$(CONFIG_ARCH_OMAP3)                +=3D clk-3xxx-legacy.o
->  endif
->  =
-
-> +endif  # CONFIG_ARCH_OMAP2PLUS
-> +
->  obj-$(CONFIG_COMMON_CLK_TI_ADPLL)      +=3D adpll.o
-> -- =
-
-> 2.7.0
->=20
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index ded3ff4b91b9..65ea60c32856 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -423,15 +423,16 @@ const struct clk_ops clk_divider_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_divider_ops);
+ 
+-static struct clk *_register_divider(struct device *dev, const char *name,
++static struct clk_hw *_register_divider(struct device *dev, const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 shift, u8 width,
+ 		u8 clk_divider_flags, const struct clk_div_table *table,
+ 		spinlock_t *lock)
+ {
+ 	struct clk_divider *div;
+-	struct clk *clk;
++	struct clk_hw *hw;
+ 	struct clk_init_data init;
++	int ret;
+ 
+ 	if (clk_divider_flags & CLK_DIVIDER_HIWORD_MASK) {
+ 		if (width + shift > 16) {
+@@ -461,12 +462,14 @@ static struct clk *_register_divider(struct device *dev, const char *name,
+ 	div->table = table;
+ 
+ 	/* register the clock */
+-	clk = clk_register(dev, &div->hw);
+-
+-	if (IS_ERR(clk))
++	hw = &div->hw;
++	ret = clk_hw_register(dev, hw);
++	if (ret) {
+ 		kfree(div);
++		hw = ERR_PTR(ret);
++	}
+ 
+-	return clk;
++	return hw;
+ }
+ 
+ /**
+@@ -486,12 +489,39 @@ struct clk *clk_register_divider(struct device *dev, const char *name,
+ 		void __iomem *reg, u8 shift, u8 width,
+ 		u8 clk_divider_flags, spinlock_t *lock)
+ {
+-	return _register_divider(dev, name, parent_name, flags, reg, shift,
++	struct clk_hw *hw;
++
++	hw =  _register_divider(dev, name, parent_name, flags, reg, shift,
+ 			width, clk_divider_flags, NULL, lock);
++	if (IS_ERR(hw))
++		return ERR_CAST(hw);
++	return hw->clk;
+ }
+ EXPORT_SYMBOL_GPL(clk_register_divider);
+ 
+ /**
++ * clk_hw_register_divider - register a divider clock with the clock framework
++ * @dev: device registering this clock
++ * @name: name of this clock
++ * @parent_name: name of clock's parent
++ * @flags: framework-specific flags
++ * @reg: register address to adjust divider
++ * @shift: number of bits to shift the bitfield
++ * @width: width of the bitfield
++ * @clk_divider_flags: divider-specific flags for this clock
++ * @lock: shared register lock for this clock
++ */
++struct clk_hw *clk_hw_register_divider(struct device *dev, const char *name,
++		const char *parent_name, unsigned long flags,
++		void __iomem *reg, u8 shift, u8 width,
++		u8 clk_divider_flags, spinlock_t *lock)
++{
++	return _register_divider(dev, name, parent_name, flags, reg, shift,
++			width, clk_divider_flags, NULL, lock);
++}
++EXPORT_SYMBOL_GPL(clk_hw_register_divider);
++
++/**
+  * clk_register_divider_table - register a table based divider clock with
+  * the clock framework
+  * @dev: device registering this clock
+@@ -511,11 +541,41 @@ struct clk *clk_register_divider_table(struct device *dev, const char *name,
+ 		u8 clk_divider_flags, const struct clk_div_table *table,
+ 		spinlock_t *lock)
+ {
+-	return _register_divider(dev, name, parent_name, flags, reg, shift,
++	struct clk_hw *hw;
++
++	hw =  _register_divider(dev, name, parent_name, flags, reg, shift,
+ 			width, clk_divider_flags, table, lock);
++	if (IS_ERR(hw))
++		return ERR_CAST(hw);
++	return hw->clk;
+ }
+ EXPORT_SYMBOL_GPL(clk_register_divider_table);
+ 
++/**
++ * clk_hw_register_divider_table - register a table based divider clock with
++ * the clock framework
++ * @dev: device registering this clock
++ * @name: name of this clock
++ * @parent_name: name of clock's parent
++ * @flags: framework-specific flags
++ * @reg: register address to adjust divider
++ * @shift: number of bits to shift the bitfield
++ * @width: width of the bitfield
++ * @clk_divider_flags: divider-specific flags for this clock
++ * @table: array of divider/value pairs ending with a div set to 0
++ * @lock: shared register lock for this clock
++ */
++struct clk_hw *clk_hw_register_divider_table(struct device *dev,
++		const char *name, const char *parent_name, unsigned long flags,
++		void __iomem *reg, u8 shift, u8 width,
++		u8 clk_divider_flags, const struct clk_div_table *table,
++		spinlock_t *lock)
++{
++	return _register_divider(dev, name, parent_name, flags, reg, shift,
++			width, clk_divider_flags, table, lock);
++}
++EXPORT_SYMBOL_GPL(clk_hw_register_divider_table);
++
+ void clk_unregister_divider(struct clk *clk)
+ {
+ 	struct clk_divider *div;
+@@ -531,3 +591,18 @@ void clk_unregister_divider(struct clk *clk)
+ 	kfree(div);
+ }
+ EXPORT_SYMBOL_GPL(clk_unregister_divider);
++
++/**
++ * clk_hw_unregister_divider - unregister a clk divider
++ * @hw: hardware-specific clock data to unregister
++ */
++void clk_hw_unregister_divider(struct clk_hw *hw)
++{
++	struct clk_divider *div;
++
++	div = to_clk_divider(hw);
++
++	clk_hw_unregister(hw);
++	kfree(div);
++}
++EXPORT_SYMBOL_GPL(clk_hw_unregister_divider);
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 1af1afae05f8..666462958ef2 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -400,12 +400,22 @@ struct clk *clk_register_divider(struct device *dev, const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 shift, u8 width,
+ 		u8 clk_divider_flags, spinlock_t *lock);
++struct clk_hw *clk_hw_register_divider(struct device *dev, const char *name,
++		const char *parent_name, unsigned long flags,
++		void __iomem *reg, u8 shift, u8 width,
++		u8 clk_divider_flags, spinlock_t *lock);
+ struct clk *clk_register_divider_table(struct device *dev, const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 shift, u8 width,
+ 		u8 clk_divider_flags, const struct clk_div_table *table,
+ 		spinlock_t *lock);
++struct clk_hw *clk_hw_register_divider_table(struct device *dev,
++		const char *name, const char *parent_name, unsigned long flags,
++		void __iomem *reg, u8 shift, u8 width,
++		u8 clk_divider_flags, const struct clk_div_table *table,
++		spinlock_t *lock);
+ void clk_unregister_divider(struct clk *clk);
++void clk_hw_unregister_divider(struct clk_hw *hw);
+ 
+ /**
+  * struct clk_mux - multiplexer clock
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
