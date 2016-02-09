@@ -1,158 +1,37 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:58211 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754401AbcBIBpu (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 8 Feb 2016 20:45:50 -0500
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 9 Feb 2016 10:18:56 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 11/14] clk: composite: Add hw based registration APIs
-Date: Mon,  8 Feb 2016 17:45:38 -0800
-Message-Id: <1454982341-22715-12-git-send-email-sboyd@codeaurora.org>
-In-Reply-To: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
-References: <1454982341-22715-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: fix __clk_init_parent() for single parent clocks
+Message-ID: <20160209181856.GB24167@codeaurora.org>
+References: <1455016754-26006-1-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1455016754-26006-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add registration APIs in the clk composite code to return struct
-clk_hw pointers instead of struct clk pointers. This way we hide
-the struct clk pointer from providers unless they need to use
-consumer facing APIs.
+On 02/09, Masahiro Yamada wrote:
+> Before commit b3d192d5121f ("clk: simplify __clk_init_parent()"),
+> __clk_init_parent() called .get_parent() only for multi-parent
+> clocks.  That commit changed the behavior to call .get_parent()
+> if available even for single-parent clocks and root clocks.
+> 
+> It turned out a problem because there are some single-parent clocks
+> that implement .get_parent() callback and return non-zero index.
+> The SOCFPGA clock is the case; the commit broke the SOCFPGA boards.
+> 
+> To keep the original behavior, invoke .get_parent() only when
+> num_parents is greater than 1.
+> 
+> Fixes: b3d192d5121f ("clk: simplify __clk_init_parent()")
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Reported-by: Dinh Nguyen <dinguyen@opensource.altera.com>
+> ---
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk-composite.c  | 45 ++++++++++++++++++++++++++++++++------------
- include/linux/clk-provider.h |  7 +++++++
- 2 files changed, 40 insertions(+), 12 deletions(-)
+Applied to clk-next
 
-diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
-index 4735de0660cc..9c38a3563e8c 100644
---- a/drivers/clk/clk-composite.c
-+++ b/drivers/clk/clk-composite.c
-@@ -186,17 +186,18 @@ static void clk_composite_disable(struct clk_hw *hw)
- 	gate_ops->disable(gate_hw);
- }
- 
--struct clk *clk_register_composite(struct device *dev, const char *name,
-+struct clk_hw *clk_hw_register_composite(struct device *dev, const char *name,
- 			const char * const *parent_names, int num_parents,
- 			struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
- 			struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
- 			struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
- 			unsigned long flags)
- {
--	struct clk *clk;
-+	struct clk_hw *hw;
- 	struct clk_init_data init;
- 	struct clk_composite *composite;
- 	struct clk_ops *clk_composite_ops;
-+	int ret;
- 
- 	composite = kzalloc(sizeof(*composite), GFP_KERNEL);
- 	if (!composite)
-@@ -206,12 +207,13 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
- 	init.flags = flags | CLK_IS_BASIC;
- 	init.parent_names = parent_names;
- 	init.num_parents = num_parents;
-+	hw = &composite->hw;
- 
- 	clk_composite_ops = &composite->ops;
- 
- 	if (mux_hw && mux_ops) {
- 		if (!mux_ops->get_parent) {
--			clk = ERR_PTR(-EINVAL);
-+			hw = ERR_PTR(-EINVAL);
- 			goto err;
- 		}
- 
-@@ -226,7 +228,7 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
- 
- 	if (rate_hw && rate_ops) {
- 		if (!rate_ops->recalc_rate) {
--			clk = ERR_PTR(-EINVAL);
-+			hw = ERR_PTR(-EINVAL);
- 			goto err;
- 		}
- 		clk_composite_ops->recalc_rate = clk_composite_recalc_rate;
-@@ -255,7 +257,7 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
- 	if (gate_hw && gate_ops) {
- 		if (!gate_ops->is_enabled || !gate_ops->enable ||
- 		    !gate_ops->disable) {
--			clk = ERR_PTR(-EINVAL);
-+			hw = ERR_PTR(-EINVAL);
- 			goto err;
- 		}
- 
-@@ -269,22 +271,41 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
- 	init.ops = clk_composite_ops;
- 	composite->hw.init = &init;
- 
--	clk = clk_register(dev, &composite->hw);
--	if (IS_ERR(clk))
-+	ret = clk_hw_register(dev, hw);
-+	if (ret) {
-+		hw = ERR_PTR(ret);
- 		goto err;
-+	}
- 
- 	if (composite->mux_hw)
--		composite->mux_hw->clk = clk;
-+		composite->mux_hw->clk = hw->clk;
- 
- 	if (composite->rate_hw)
--		composite->rate_hw->clk = clk;
-+		composite->rate_hw->clk = hw->clk;
- 
- 	if (composite->gate_hw)
--		composite->gate_hw->clk = clk;
-+		composite->gate_hw->clk = hw->clk;
- 
--	return clk;
-+	return hw;
- 
- err:
- 	kfree(composite);
--	return clk;
-+	return hw;
-+}
-+
-+struct clk *clk_register_composite(struct device *dev, const char *name,
-+			const char * const *parent_names, int num_parents,
-+			struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
-+			struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
-+			struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
-+			unsigned long flags)
-+{
-+	struct clk_hw *hw;
-+
-+	hw = clk_hw_register_composite(dev, name, parent_names, num_parents,
-+			mux_hw, mux_ops, rate_hw, rate_ops, gate_hw, gate_ops,
-+			flags);
-+	if (IS_ERR(hw))
-+		return ERR_CAST(hw);
-+	return hw->clk;
- }
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 549ed3844876..64037ab95a31 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -620,6 +620,13 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
- 		struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
- 		struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
- 		unsigned long flags);
-+struct clk_hw *clk_hw_register_composite(struct device *dev, const char *name,
-+		const char * const *parent_names, int num_parents,
-+		struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
-+		struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
-+		struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
-+		unsigned long flags);
-+void clk_hw_unregister_composite(struct clk_hw *hw);
- 
- /***
-  * struct clk_gpio_gate - gpio gated clock
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
-
