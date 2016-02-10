@@ -1,80 +1,61 @@
-Return-Path: <andriy.shevchenko@linux.intel.com>
-Message-ID: <1454690599.31169.103.camel@linux.intel.com>
-Subject: Re: Common/typical fractional divider HW API
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mason <slash.tmp@free.fr>, linux-clk <linux-clk@vger.kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
- <mturquette@baylibre.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Heikki
- Krogerus <heikki.krogerus@linux.intel.com>, Sebastian Frias
- <sf84@laposte.net>, Linux ARM <linux-arm-kernel@lists.infradead.org>
-Date: Fri, 05 Feb 2016 18:43:19 +0200
-In-Reply-To: <56B4CDEF.3080606@free.fr>
-References: <56B4B67D.2080707@free.fr>
-	 <1454684758.31169.77.camel@linux.intel.com> <56B4C775.50808@free.fr>
-	 <1454688729.31169.87.camel@linux.intel.com> <56B4CDEF.3080606@free.fr>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Lars Persson <lars.persson@axis.com>
+To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Subject: [PATCH 1/8] clk: add device tree binding for artpec-6 pll1 clock
+Date: Wed, 10 Feb 2016 13:41:50 +0100
+Message-Id: <c092f501a595032f9b76f18fc4bf093503a181c8.1455107681.git.larper@axis.com>
+In-Reply-To: <cover.1455107681.git.larper@axis.com>
+References: <cover.1455107681.git.larper@axis.com>
+In-Reply-To: <cover.1455107681.git.larper@axis.com>
+References: <cover.1455107681.git.larper@axis.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: mark.rutland@arm.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk,
+ Lars Persson <larper@axis.com>, linux-kernel@vger.kernel.org,
+ robh+dt@kernel.org, galak@codeaurora.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2016-02-05 at 17:29 +0100, Mason wrote:
-> On 05/02/2016 17:12, Andy Shevchenko wrote:
-> 
-> > On Fri, 2016-02-05 at 17:01 +0100, Mason wrote:
-> > 
-> > > So, do you agree that
-> > > 
-> > >   DIV = 2^I * (1 + F/256)
-> > > 
-> > > gives a more useful DIV distribution than
-> > > 
-> > >   DIV = I + F/16
-> > 
-> > If you can change hardware why not to use any existing approach
-> > which
-> > suits better to your device?
-> 
-> Sorry, I don't understand the question.
-> 
+Signed-off-by: Lars Persson <larper@axis.com>
+---
+ Documentation/devicetree/bindings/clock/artpec6.txt | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/artpec6.txt
 
-There are plenty of implementations of the divider. You might consider
-to use one than inventing new one:
-
-https://xkcd.com/927/
-
-> In this part of my message, I was trying to argue that one HW API
-> "2^I * (1 + F/256)" seemed better than another one "I + F/16" on
-> any hardware.
-
-I disagree in a part 2^I.
-
-> 
-> > I don't remember any existing, though I didn't check much, divider
-> > register which takes something like that.
-> 
-> IIUC, you are saying that you've never seen hardware use the
-> "2^I * (1 + F/256)" formula, is that correct?
-
-Yep, though it doesn't mean there is no such.
-
-> I'm not sure how to parse that. I'm using the divider driver
-> > > for a CPU clock, to do D(V)FS in cpufreq.
-> > 
-> > If you are using custom stuff for custom hardware, I hope it's
-> > okay.
-> > But if we are talking about generic solutions (like clk-fractional-
-> > divider), I would suggest to consider existing users / hardware.
-> 
-> Are you saying that I could use the clk-fractional-divider with
-> hardware that computes "I + F/16" ?
-
-No.
-
-> Maybe the clk-fractional-divider could be made more generic by having
-> the register update part done in a call-back function?
-
-Why do you need to touch that module at all if your hardware doesn't
-suit it?
-
+diff --git a/Documentation/devicetree/bindings/clock/artpec6.txt b/Documentation/devicetree/bindings/clock/artpec6.txt
+new file mode 100644
+index 0000000..e50f7a5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/artpec6.txt
+@@ -0,0 +1,14 @@
++* Clock bindings for Axis ARTPEC-6 chip
++
++Required properties:
++- compatible: Should be "axis,artpec6-pll1-clock"
++- #clock-cells: Should be <1>
++
++Examples:
++
++pll1_clk: pll1_clk {
++	#clock-cells = <1>;
++	compatible = "axis,artpec6-pll1-clock";
++	clocks = <&ext_clk>;
++	status = "okay";
++};
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.1.4
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
