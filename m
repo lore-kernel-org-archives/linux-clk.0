@@ -1,64 +1,118 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Kevin Smith <kevin.smith@elecsyscorp.com>,  "linux-clk\@vger.kernel.org" <linux-clk@vger.kernel.org>,  "Stephen Boyd" <sboyd@codeaurora.org>
-Subject: Re: [PATCH v3 1/2] clk: mvebu: Remove corediv clock from Armada XP
-References: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
-	<1455209620-6125-1-git-send-email-kevin.smith@elecsyscorp.com>
-	<20160218011630.2278.67415@quark.deferred.io>
-	<20160218091105.4a272bf9@free-electrons.com>
-Date: Thu, 18 Feb 2016 18:54:41 +0100
-In-Reply-To: <20160218091105.4a272bf9@free-electrons.com> (Thomas Petazzoni's
-	message of "Thu, 18 Feb 2016 09:11:05 +0100")
-Message-ID: <87twl5q4ym.fsf@free-electrons.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Lars Persson <lars.persson@axis.com>
+To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Subject: [PATCH 5/8] arm: dts: add Artpec-6 development board dts
+Date: Wed, 10 Feb 2016 13:41:54 +0100
+Message-Id: <a1015afcbd0a726915c674ad58425be951a4158f.1455107681.git.larper@axis.com>
+In-Reply-To: <cover.1455107681.git.larper@axis.com>
+References: <cover.1455107681.git.larper@axis.com>
+In-Reply-To: <cover.1455107681.git.larper@axis.com>
+References: <cover.1455107681.git.larper@axis.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: mark.rutland@arm.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk,
+ Lars Persson <larper@axis.com>, linux-kernel@vger.kernel.org,
+ robh+dt@kernel.org, galak@codeaurora.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,=20
-=20
- On jeu., f=C3=A9vr. 18 2016, Thomas Petazzoni <thomas.petazzoni@free-elect=
-rons.com> wrote:
+Signed-off-by: Lars Persson <larper@axis.com>
+---
+ arch/arm/boot/dts/Makefile             |  2 ++
+ arch/arm/boot/dts/artpec6-devboard.dts | 57 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 59 insertions(+)
+ create mode 100644 arch/arm/boot/dts/artpec6-devboard.dts
 
-> Hello,
->
-> On Wed, 17 Feb 2016 17:16:30 -0800, Michael Turquette wrote:
->> Quoting Kevin Smith (2016-02-11 08:53:52)
->> > There is no corediv clock on Armada XP, so this is unnecessary.
->> >=20
->> > Signed-off-by: Kevin Smith <kevin.smith@elecsyscorp.com>
->> > Cc: Michael Turquette <mturquette@baylibre.com>
->> > Cc: Stephen Boyd <sboyd@codeaurora.org>
->> > Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
->> > Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
->>=20
->> Acked-by: Michael Turquette <mturquette@baylibre.com>
->>=20
->> I'm fine to take both patches through the clk tree, or to have them go
->> through arm-soc. Let me know if you have a preference.
->
-> I'll let Gregory Clement answer on this one. Since there is no build
-> dependency with the stuff planned in arm-soc, I believe it's fine if
-> you take them, but I'll let Greg give you the final answer since he is
-> taking care of the mvebu stuff going to arm-soc.
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index a4a6d70..2ebe99c 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -2,6 +2,8 @@ ifeq ($(CONFIG_OF),y)
+ 
+ dtb-$(CONFIG_ARCH_ALPINE) += \
+ 	alpine-db.dtb
++dtb-$(CONFIG_MACH_ARTPEC6) += \
++	artpec6-devboard.dtb
+ dtb-$(CONFIG_MACH_ASM9260) += \
+ 	alphascale-asm9260-devkit.dtb
+ # Keep at91 dtb files sorted alphabetically for each SoC
+diff --git a/arch/arm/boot/dts/artpec6-devboard.dts b/arch/arm/boot/dts/artpec6-devboard.dts
+new file mode 100644
+index 0000000..f6c5e4f
+--- /dev/null
++++ b/arch/arm/boot/dts/artpec6-devboard.dts
+@@ -0,0 +1,57 @@
++/*
++ * Axis ARTPEC-6 development board.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++/dts-v1/;
++#include "artpec6.dtsi"
++
++/ {
++	model = "ARTPEC-6 development board";
++	compatible = "axis,artpec6-dev-board", "axis,artpec6";
++
++	chosen {
++		stdout-path = "serial3:115200n8";
++	};
++
++	memory {
++		device_type = "memory";
++		reg = <0x0 0x10000000>;
++	};
++};
++
++&uart0 {
++	status = "okay";
++};
++
++&uart1 {
++	status = "okay";
++};
++
++&uart2 {
++	status = "okay";
++};
++
++&uart3 {
++	status = "okay";
++};
++
++&ethernet {
++	status = "okay";
++
++	phy-handle = <&phy1>;
++	phy-mode = "gmii";
++
++	mdio {
++		#address-cells = <0x1>;
++		#size-cells = <0x0>;
++		phy1: phy@0 {
++			compatible = "ethernet-phy-ieee802.3-c22";
++			device_type = "ethernet-phy";
++			reg = <0x0>;
++		};
++	};
++};
+-- 
+2.1.4
 
-Indeed I prefer that you take them in the clock tree.
 
-Thanks,
-
-Gregory
-
->
-> Thanks for the review!
->
-> Thomas
-> --=20
-> Thomas Petazzoni, CTO, Free Electrons
-> Embedded Linux, Kernel and Android engineering
-> http://free-electrons.com
-
---=20
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
