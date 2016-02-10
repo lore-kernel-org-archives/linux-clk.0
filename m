@@ -1,138 +1,91 @@
-Return-Path: <andre.przywara@arm.com>
-Subject: Re: [PATCH 1/3] clk: sunxi: improve mux_clk error handling and
- reporting
-To: Chen-Yu Tsai <wens@csie.org>
-References: <1455289913-29514-1-git-send-email-andre.przywara@arm.com>
- <1455289913-29514-2-git-send-email-andre.przywara@arm.com>
- <CAGb2v65hxNiY8XAL=yBbV4qazscJd+six432CKWAm+GfM6bd2Q@mail.gmail.com>
- <56C2EFD5.5080604@arm.com>
- <CAGb2v658dow+qqPdq_G7NjWz72rvhYE_Bn23Z9xK9cpeBR94-Q@mail.gmail.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-   =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>,
-   Michael Turquette <mturquette@baylibre.com>,
-   Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-   linux-sunxi <linux-sunxi@googlegroups.com>,
-   linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-From: Andre Przywara <andre.przywara@arm.com>
-Message-ID: <56C2F437.8020806@arm.com>
-Date: Tue, 16 Feb 2016 10:04:39 +0000
+Return-Path: <mark.rutland@arm.com>
+Date: Wed, 10 Feb 2016 16:30:01 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Rob Herring <rob.herring@linaro.org>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Grant Likely <grant.likely@linaro.org>,
+	Frank Rowand <frowand.list@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
+	Jean-Francois Moine <moinejf@free.fr>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Jens Kuske <jenskuske@gmail.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: breaking DT compatibility (was: Re: [PATCH v4] clk: sunxi:
+ Refactor A31 PLL6 so that it can be reused)
+Message-ID: <20160210163001.GG2632@leverpostej>
+References: <1454358000-13594-1-git-send-email-maxime.ripard@free-electrons.com>
+ <56B4E2FB.3050703@arm.com>
+ <56BB2D79.6090402@arm.com>
+ <CABGGiswOKztmRT40w4t_7BD729WgM8ueLtOD-UF_wgMbmcg4cg@mail.gmail.com>
+ <20160210143755.GE31506@lukather>
 MIME-Version: 1.0
-In-Reply-To: <CAGb2v658dow+qqPdq_G7NjWz72rvhYE_Bn23Z9xK9cpeBR94-Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160210143755.GE31506@lukather>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-On 16/02/16 09:59, Chen-Yu Tsai wrote:
-> On Tue, Feb 16, 2016 at 5:45 PM, Andre Przywara <andre.przywara@arm.com> wrote:
->> Hi Chen-Yu,
->>
->> On 13/02/16 02:44, Chen-Yu Tsai wrote:
->>> Hi,
->>>
->>> On Fri, Feb 12, 2016 at 11:11 PM, Andre Przywara <andre.przywara@arm.com> wrote:
->>>> We now catch and report a failing ioremap, also a failure in the final
->>>> step of the clock registration is now handled and reported.
->>>> Also warnings are turned into errors.
->>>>
->>>> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
->>>> ---
->>>>  drivers/clk/sunxi/clk-sunxi.c | 19 +++++++++++++------
->>>>  1 file changed, 13 insertions(+), 6 deletions(-)
->>>>
->>>> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
->>>> index 49ce283..361f396 100644
->>>> --- a/drivers/clk/sunxi/clk-sunxi.c
->>>> +++ b/drivers/clk/sunxi/clk-sunxi.c
->>>> @@ -690,11 +690,15 @@ static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
->>>>         int i;
->>>>
->>>>         reg = of_iomap(node, 0);
->>>> +       if (!reg) {
->>>> +               pr_err("Could not map registers for mux-clk: %s\n", node->name);
->>>
->>> of_node_full_name(node->name) is better. node->name is almost always "clk",
->>> which is useless. (Unless someone goes through the dts files to replace all
->>> of them.)
->>
->> Good point. I both fixed the code here as well as amended the node names
->> in the A64 DT.
->>
->>>
->>>> +               return NULL;
->>>> +       }
->>>>
->>>>         i = of_clk_parent_fill(node, parents, SUNXI_MAX_PARENTS);
->>>>         if (of_property_read_string(node, "clock-output-names", &clk_name)) {
->>>> -               pr_warn("%s: could not read clock-output-names for \"%s\"\n",
->>>> -                       __func__, clk_name);
->>>> +               pr_err("%s: could not read clock-output-names for \"%s\"\n",
->>>> +                      __func__, clk_name);
->>>
->>> Same here. clk_name defaults to node->name. If you could, please replace it.
->>
->> Really? Isn't clk_name directly from the DT clock-output-names strings here?
+On Wed, Feb 10, 2016 at 03:37:55PM +0100, Maxime Ripard wrote:
+> Hi Rob,
 > 
-> It fills it from the DT clock-output-names in the of_property_read_string()
-> call in the if here. If that failed, obviously something was wrong with
-> the DT clock-output-names strings. :)
-
-Of course! I shouldn't write stuff that early in the morning ...
-
-Cheers,
-Andre.
-
->>
->>>>                 goto out_unmap;
->>>>         }
->>>>
->>>> @@ -704,14 +708,17 @@ static struct clk * __init sunxi_mux_clk_setup(struct device_node *node,
->>>>                                0, &clk_lock);
->>>>
->>>>         if (IS_ERR(clk)) {
->>>> -               pr_warn("%s: failed to register mux clock %s: %ld\n", __func__,
->>>> -                       clk_name, PTR_ERR(clk));
->>>> +               pr_err("%s: failed to register mux clock %s: %ld\n", __func__,
->>>> +                      clk_name, PTR_ERR(clk));
->>>>                 goto out_unmap;
->>>>         }
->>>>
->>>> -       of_clk_add_provider(node, of_clk_src_simple_get, clk);
->>>> +       if (!of_clk_add_provider(node, of_clk_src_simple_get, clk))
->>>> +               return clk;
->>>> +
->>>> +       pr_err("%s: failed to add clock provider for %s\n", __func__, clk_name);
->>>>
->>>> -       return clk;
->>>
->>> I'd have all the error path in ifs, and have the normal return path
->>> here for consistency.
->>> But I guess this works as well.
->>
->> Yeah, I wanted to skip that single goto ;-)
->> But I changed it now as you said and it indeed looks more reasonable.
->>
->> I took the freedom of applying the comments to the other patches too.
+> On Wed, Feb 10, 2016 at 07:42:02AM -0600, Rob Herring wrote:
+> > On Wed, Feb 10, 2016 at 6:30 AM, Andre Przywara <andre.przywara@arm.com> wrote:
+> > > Hi,
+> > >
+> > > just a ping:
+> > >
+> > > Are we really OK with breaking existing DTs in 4.6? (per the code in
+> > > -next: f7d372ba54ea04d528a291b8dbe34716507bb60b, which is this patch).
+> > 
+> > I only warn and make sure people are aware of the issue. I leave that
+> > up to platform maintainers to decide. It depends on the maturity of
+> > the platform and users.
 > 
-> Thanks!
-> ChenYu
+> The impacted SoCs support is really partial. For the most supported
+> one, big things like display or sound are totally missing, and we
+> still update them on a regular basis to add support for new
+> devices. As such, users are very likely to upgrade the DT from one
+> version to another just because there's new devices available to
+> them. And the newest SoC impacted just got introduced in 4.5, and only
+> has the UART and MMC devices available.
 > 
->>
->> Will send out a v2 in a minute.
->>
->> Thanks for looking!
->> Andre.
->>
->>>
->>> Thanks!
->>> ChenYu
->>>
->>>> +       clk_unregister_divider(clk);
->>>>
->>>>  out_unmap:
->>>>         iounmap(reg);
->>>> --
->>>> 2.6.4
->>>>
->>>
+> > If people complain about it then it's their mess. For platforms
+> > supported in distros such as debian or fedora, I would strongly
+> > recommend against breaking compatibility.
 > 
+> None of them are officially supported:
+> https://www.debian.org/releases/stable/armhf/ch02s01.html.en
+> https://fedoraproject.org/wiki/Architectures/ARM#Fedora_23
+> 
+> Only the older one are, and they are not affected by this patch.
+> 
+> > They do ship dtbs, but it's a chicken and egg problem. If dtbs were
+> > stable and provided by firmware, then they wouldn't have to provide
+> > them. If dtbs are unstable, then they have no choice.
+> 
+> And while it might work great on platforms that have all the needed
+> documentation, or a perfect one, which is our case. Almost each
+> release, we discover that something is not working as it was
+> documented, when it was documented in the first place.
+> 
+> It also seems that even on well documented platforms, supported by the
+> vendors, the stable ABI dream is not going to happen:
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/arm/Atmel/README#n105
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/arm/marvell,berlin.txt#n4
+
+To be quite frank, I completely disagree with that stance.
+
+It seems like the only reason DT bindings aren't remaining stable is
+because people are deliberately ignoring the requirement and reasoning
+for doing so.
+
+I agree that it can be painful, and that we cannot predict the future.
+There will always be bugs.
+
+Having code in mainline comes with responsibilities. One of those is to
+keep said code working for existing users. Otherwise, why bother having
+it in mainline at all?
+
+Mark.
