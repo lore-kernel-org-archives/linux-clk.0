@@ -1,116 +1,54 @@
+Return-Path: <vz@mleia.com>
+Message-ID: <56BA7EE9.8040703@mleia.com>
+Date: Wed, 10 Feb 2016 02:06:01 +0200
+From: Vladimir Zapolskiy <vz@mleia.com>
 MIME-Version: 1.0
-In-Reply-To: <20160217221136.GL19428@n2100.arm.linux.org.uk>
-References: <CA+7w51i3Kf2Jm=AXP5QhDj_8ZmzhUowbwwNEtu8UgiNkWwMYxg@mail.gmail.com>
-	<CAOMZO5DzhVMaE76Y_ZVzRMpCMyovSs4seWXKyCqeA9f=nb2CJg@mail.gmail.com>
-	<20160217211818.GI19428@n2100.arm.linux.org.uk>
-	<CAEG3pNDW6FefMhrgmJAFj+hGcoOZTuFDOx+NaA9sNSfD-ko+dQ@mail.gmail.com>
-	<20160217221136.GL19428@n2100.arm.linux.org.uk>
-Date: Wed, 17 Feb 2016 14:59:14 -0800
-Message-ID: <CAEG3pNC4erD=+qQRvbtsCrrQLYfeTXvQtCVLiOkHt60_EEP3VQ@mail.gmail.com>
-Subject: Re: SDIO wifi card is not detected with 4.5-rc kernels
-From: Michael Turquette <mturquette@baylibre.com>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Fabio Estevam <festevam@gmail.com>, Laszlo Fiat <laszlo.fiat@gmail.com>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To: slemieux.tyco@gmail.com, robh+dt@kernel.org, sboyd@codeaurora.org,
+ mturquette@baylibre.com
+CC: stigge@antcom.de, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/2] dt-bindings: clock: add lpc32xx clock frequency output
+References: <1455043670-19025-2-git-send-email-slemieux.tyco@gmail.com>
+In-Reply-To: <1455043670-19025-2-git-send-email-slemieux.tyco@gmail.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-+ linux-clk
+Hi Sylvain,
 
-On Wed, Feb 17, 2016 at 2:11 PM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> On Wed, Feb 17, 2016 at 02:03:47PM -0800, Michael Turquette wrote:
->> Hi Russell, all,
->>
->> On Wed, Feb 17, 2016 at 1:18 PM, Russell King - ARM Linux
->> <linux@arm.linux.org.uk> wrote:
->> > [   52.175162] match->alloc failed: -517
->> > [   52.178874] sdhci-esdhc-imx 2190000.usdhc: mmc_of_parse failed: -517
->> > [   52.185271] sdhci-esdhc-imx 2190000.usdhc: imx probe failed
->> >
->> > -517 is -EPROBE_DEFER, and looking at what's in the clk_summary
->> > debugfs file, my guess is that the clk_sdio gpio-gate-clock is not
->> > being registered for some unknown reason.  Adding Michael - any
->> > ideas why gpio-gate-clock has stopped working between 4.4 and
->> > present?
->>
->> So you are missing a gpio-gate clk in v4.5-rc1 that is present in v4.4?
->
-> It seems so.
->
-> arch/arm/boot/dts/imx6qdl-microsom.dtsi has:
->
->         clk_sdio: sdio-clock {
->                 compatible = "gpio-gate-clock";
->                 #clock-cells = <0>;
->                 pinctrl-names = "default";
->                 pinctrl-0 = <&pinctrl_microsom_brcm_osc>;
->                 enable-gpios = <&gpio5 5 GPIO_ACTIVE_HIGH>;
->         };
->
-> and if I boot the kernel with that:
->
-> # grep sdio /sys/kernel/debug/clk/clk_summary
-> #
->
-> If I look at a system with v4.4 booted:
->
-> # grep sdio /sys/kernel/debug/clk/clk_summary
->  sdio-clock                               1            1           0          0    0
->
-> So, this appears to be a regression.
->
->> There isn't much to go on here, but mmc_of_parse can fail with
->> mmc_gpiod_request_cd and mmc_gpiod_request_ro, in addition to
->> mmc_pwrseq_alloc. I didn't follow the call chain to see if either of
->> those are capable of spitting out -EPROBE_DEFER.
->
-> Yes, there's other possible failures, but:
->
-> [   52.175162] match->alloc failed: -517
->
-> points to the mmc_pwrseq_alloc stuff - because that message is printed
-> from inside there.  The pwrseq stuff consists of:
->
->         usdhc1_pwrseq: usdhc1_pwrseq {
->                 compatible = "mmc-pwrseq-simple";
->                 reset-gpios = <&gpio5 26 GPIO_ACTIVE_LOW>,
->                               <&gpio6 0 GPIO_ACTIVE_LOW>;
->                 clocks = <&clk_sdio>;
->                 clock-names = "ext_clock";
->         };
->
-> some GPIOs, and that clock - the GPIOs are definitely present, and the
-> sdio clock is clearly missing from clk_summary.
->
->> clk patches affecting the gpio-gate from 4.4 to 4.5-rc1 are:
->>
->> 7ed88aa clk: fix clk-gpio.c with optional clock= DT property
->> 0b2e788 clk: gpio: handle error codes for of_clk_get_parent_count()
->> c76eb11 clk: gpio: fix memory leak
->> f66541b clk: gpio: Get parent clk names in of_gpio_clk_setup()
->>
->> Anyone that can reproduce, care to bisect?
->
-> This isn't -next, this is 4.5-rc4 that I'm seeing the failure on.
-> 4.5-rc4 still has clk-gpio.c with:
->
-> CLK_OF_DECLARE(gpio_gate_clk, "gpio-gate-clock", of_gpio_gate_clk_setup);
+On 09.02.2016 20:47, slemieux.tyco@gmail.com wrote:
+> From: Sylvain Lemieux <slemieux@tycoint.com>
+> 
+> This patch add an optional parameter to setup the
+> xtal clock frequency output.
+> 
+> Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
+> ---
+>  Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
+> index 20cbca3..ce51759 100644
+> --- a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
+> +++ b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
+> @@ -10,6 +10,9 @@ Required properties:
+>  - clock-names: list of external oscillator clock names, must contain
+>    "xtal_32k" and may have optional "xtal"
+>  
+> +Optional properties:
+> +- xtal,clock-output-frequency: define the "xtal" clock frequency output in Hz
+> +
 
-Right, the patches I posted above are v4.4..v4.5-rc1 based on your
-original email stating you saw the regression when rebasing onto -rc1.
-The platform_driver patch was just a random piece of info and it is
-not yet landed in linux-next anyways.
+this one looks wrong in sense that from patch 1/2 the property configures
+a PLL output clock rate, which is not an oscillator (xtal) clock rate.
 
-Probably the best approach is for someone that can reproduce the
-failure to either bisect or try to selectively revert the patches I
-list above. There are multiple potential culprits in that list of
-patches, as several of them touch the setup/registration functions in
-clk-gpio.c.
+I believe switching to "assigned-clock-rates" should make this change
+obsolete.
 
-Regards,
-Mike
+>  Examples:
+>  
+>  	/* System Control Block */
+> 
 
->
-> Annoyingly, it's silent in the boot log about what's going on wrt
-> this clock.
+--
+With best wishes,
+Vladimir
