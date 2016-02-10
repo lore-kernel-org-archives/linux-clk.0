@@ -1,161 +1,43 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Franklin S Cooper Jr <fcooper@ti.com>
-To: paul@pwsan.com, t-kristo@ti.com, tony@atomide.com, vigneshr@ti.com,
-	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH v3 5/5] ARM: dts: DRA7: Add dt nodes for PWMSS
-Date: Thu, 25 Feb 2016 16:36:36 -0600
-Message-Id: <1456439796-28546-6-git-send-email-fcooper@ti.com>
-In-Reply-To: <1456439796-28546-1-git-send-email-fcooper@ti.com>
-References: <1456439796-28546-1-git-send-email-fcooper@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Rob Herring <rob.herring@linaro.org>, Andre Przywara <andre.przywara@arm.com>, Mark Rutland <mark.rutland@arm.com>, Grant Likely <grant.likely@linaro.org>, Frank Rowand <frowand.list@gmail.com>, Chen-Yu Tsai <wens@csie.org>, Jean-Francois Moine <moinejf@free.fr>, Vishnu Patekar <vishnupatekar0510@gmail.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Hans de Goede <hdegoede@redhat.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Jens Kuske <jenskuske@gmail.com>, linux-clk@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: breaking DT compatibility (was: Re: [PATCH v4] clk: sunxi: Refactor A31 PLL6 so that it can be reused)
+Date: Wed, 10 Feb 2016 15:45:01 +0100
+Message-ID: <3703606.9ibfaTDDFx@wuerfel>
+In-Reply-To: <20160210143755.GE31506@lukather>
+References: <1454358000-13594-1-git-send-email-maxime.ripard@free-electrons.com> <CABGGiswOKztmRT40w4t_7BD729WgM8ueLtOD-UF_wgMbmcg4cg@mail.gmail.com> <20160210143755.GE31506@lukather>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Vignesh R <vigneshr@ti.com>
+On Wednesday 10 February 2016 15:37:55 Maxime Ripard wrote:
+> Hi Rob,
+> 
+> On Wed, Feb 10, 2016 at 07:42:02AM -0600, Rob Herring wrote:
+> > On Wed, Feb 10, 2016 at 6:30 AM, Andre Przywara <andre.przywara@arm.com> wrote:
+> > > Hi,
+> > >
+> > > just a ping:
+> > >
+> > > Are we really OK with breaking existing DTs in 4.6? (per the code in
+> > > -next: f7d372ba54ea04d528a291b8dbe34716507bb60b, which is this patch).
+> > 
+> > I only warn and make sure people are aware of the issue. I leave that
+> > up to platform maintainers to decide. It depends on the maturity of
+> > the platform and users.
+> 
+> The impacted SoCs support is really partial. For the most supported
+> one, big things like display or sound are totally missing, and we
+> still update them on a regular basis to add support for new
+> devices. As such, users are very likely to upgrade the DT from one
+> version to another just because there's new devices available to
+> them. And the newest SoC impacted just got introduced in 4.5, and only
+> has the UART and MMC devices available.
+> 
+> 
 
-Add PWMSS device tree nodes for DRA7 SoC family and add documentation
-for dt bindings.
+I think the main problems we had were around people building their
+own boards and maintaining out-of-tree dts files.
 
-Signed-off-by: Vignesh R <vigneshr@ti.com>
----
-Version 3 changes:
-None
-
- .../devicetree/bindings/pwm/pwm-tiehrpwm.txt       |  8 +++
- .../devicetree/bindings/pwm/pwm-tipwmss.txt        | 17 +++++-
- arch/arm/boot/dts/dra7.dtsi                        | 64 ++++++++++++++++++++++
- 3 files changed, 88 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
-index 9c100b2..25d91ae 100644
---- a/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
-+++ b/Documentation/devicetree/bindings/pwm/pwm-tiehrpwm.txt
-@@ -4,6 +4,7 @@ Required properties:
- - compatible: Must be "ti,<soc>-ehrpwm".
-   for am33xx - compatible = "ti,am33xx-ehrpwm";
-   for da850  - compatible = "ti,da850-ehrpwm", "ti,am33xx-ehrpwm";
-+  for dra7xx - compatible = "ti,dra7xx-ehrpwm", "ti,am33xx-ehrpwm";
- - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
-   the cells format. The only third cell flag supported by this binding is
-   PWM_POLARITY_INVERTED.
-@@ -27,3 +28,10 @@ ehrpwm0: ehrpwm@0 { /* EHRPWM on da850 */
- 	#pwm-cells = <3>;
- 	reg = <0x300000 0x2000>;
- };
-+
-+ehrpwm0: ehrpwm@0 { /* EHRPWM on dra7xx */
-+	compatible = "ti,dra7xx-ehrpwm", "ti,am33xx-ehrpwm";
-+	#pwm-cells = <3>;
-+	reg = <0x48440200 0x80>;
-+	ti,hwmods = "ehrpwm0";
-+};
-diff --git a/Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt b/Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt
-index f7eae77..9270ce6 100644
---- a/Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt
-+++ b/Documentation/devicetree/bindings/pwm/pwm-tipwmss.txt
-@@ -1,7 +1,9 @@
- TI SOC based PWM Subsystem
- 
- Required properties:
--- compatible: Must be "ti,am33xx-pwmss";
-+- compatible: Must be "ti,<soc>-pwmss".
-+  for am33xx - compatible = "ti,am33xx-pwmss"
-+  for dra7xx - compatible = "ti,dra7xx-pwmss", "ti,am33xx-pwmss"
- - reg: physical base address and size of the registers map.
- - address-cells: Specify the number of u32 entries needed in child nodes.
- 		  Should set to 1.
-@@ -29,3 +31,16 @@ pwmss0: pwmss@48300000 {
- 
- 	/* child nodes go here */
- };
-+
-+epwmss0: epwmss@4843e000 { /* On DRA7xx */
-+	compatible = "ti,dra7xx-pwmss", "ti,am33xx-pwmss";
-+	reg = <0x4843e000 0x30>;
-+	ti,hwmods = "epwmss0";
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	ranges = <0x4843e100  0x4843e100 0x80	/* ECAP */
-+		  0x4843e180  0x4843e180 0x80	/* EQEP */
-+		  0x4843e200  0x4843e200 0x80>; /* EHRPWM */
-+
-+	/* child nodes go here */
-+};
-diff --git a/arch/arm/boot/dts/dra7.dtsi b/arch/arm/boot/dts/dra7.dtsi
-index c4d9175..9143db0 100644
---- a/arch/arm/boot/dts/dra7.dtsi
-+++ b/arch/arm/boot/dts/dra7.dtsi
-@@ -1597,6 +1597,70 @@
- 				clock-names = "fck", "sys_clk";
- 			};
- 		};
-+
-+		epwmss0: epwmss@4843e000 {
-+			compatible = "ti,dra7xx-pwmss", "ti,am33xx-pwmss";
-+			reg = <0x4843e000 0x30>;
-+			ti,hwmods = "epwmss0";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			status = "disabled";
-+			ranges = <0x4843e100  0x4843e100 0x80  /* ECAP */
-+				  0x4843e180  0x4843e180 0x80  /* EQEP */
-+				  0x4843e200  0x4843e200 0x80>;/* EHRPWM */
-+
-+			ehrpwm0: ehrpwm@4843e200 {
-+				compatible = "ti,dra7xx-ehrpwm",
-+					     "ti,am33xx-ehrpwm";
-+				#pwm-cells = <3>;
-+				reg = <0x4843e200 0x80>;
-+				ti,hwmods = "ehrpwm0";
-+				status = "disabled";
-+			};
-+		};
-+
-+		epwmss1: epwmss@48440000 {
-+			compatible = "ti,dra7xx-pwmss", "ti,am33xx-pwmss";
-+			reg = <0x48440000 0x30>;
-+			ti,hwmods = "epwmss1";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			status = "disabled";
-+			ranges = <0x48440100  0x48440100  0x80   /* ECAP */
-+				  0x48440180  0x48440180  0x80   /* EQEP */
-+				  0x48440200  0x48440200  0x80>; /* EHRPWM */
-+
-+			ehrpwm1: ehrpwm@48440200 {
-+				compatible = "ti,dra7xx-ehrpwm",
-+					     "ti,am33xx-ehrpwm";
-+				#pwm-cells = <3>;
-+				reg = <0x48440200 0x80>;
-+				ti,hwmods = "ehrpwm1";
-+				status = "disabled";
-+			};
-+		};
-+
-+		epwmss2: epwmss@48442000 {
-+			compatible = "ti,dra7xx-pwmss", "ti,am33xx-pwmss";
-+			reg = <0x48442000 0x30>;
-+			ti,hwmods = "epwmss2";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			status = "disabled";
-+
-+			ranges = <0x48442100  0x48442100  0x80   /* ECAP */
-+				  0x48442180  0x48442180  0x80   /* EQEP */
-+				  0x48442200  0x48442200  0x80>; /* EHRPWM */
-+
-+			ehrpwm2: ehrpwm@48442200 {
-+				compatible = "ti,dra7xx-ehrpwm",
-+					     "ti,am33xx-ehrpwm";
-+				#pwm-cells = <3>;
-+				reg = <0x48442200 0x80>;
-+				ti,hwmods = "ehrpwm2";
-+				status = "disabled";
-+			};
-+		};
- 	};
- 
- 	thermal_zones: thermal-zones {
--- 
-2.7.0
+	Arnd
