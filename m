@@ -1,64 +1,48 @@
-Return-Path: <dev@lynxeye.de>
-From: Lucas Stach <dev@lynxeye.de>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	linux-clk@vger.kernel.org ,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH 2/2] clk: tegra30: fix PLL_U post divider and init rate
-Date: Mon, 29 Feb 2016 21:46:07 +0100
-Message-Id: <1456778767-18413-2-git-send-email-dev@lynxeye.de>
-In-Reply-To: <1456778767-18413-1-git-send-email-dev@lynxeye.de>
-References: <1456778767-18413-1-git-send-email-dev@lynxeye.de>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: James Liao <jamesjj.liao@mediatek.com>,
+ "Matthias Brugger" <matthias.bgg@gmail.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>, "Rob Herring" <robh@kernel.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1454665050-37776-5-git-send-email-jamesjj.liao@mediatek.com>
+Cc: "John Crispin" <blogic@openwrt.org>, "Arnd Bergmann" <arnd@arndb.de>,
+ "Sascha Hauer" <kernel@pengutronix.de>,
+ "Daniel Kurtz" <djkurtz@chromium.org>,
+ "Philipp Zabel" <p.zabel@pengutronix.de>, srv_heupstream@mediatek.com,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-clk@vger.kernel.org, "Shunli Wang" <shunli.wang@mediatek.com>,
+ "James Liao" <jamesjj.liao@mediatek.com>
+References: <1454665050-37776-1-git-send-email-jamesjj.liao@mediatek.com>
+ <1454665050-37776-5-git-send-email-jamesjj.liao@mediatek.com>
+Message-ID: <20160210200853.26445.15165@quark.deferred.io>
+Subject: Re: [PATCH v6 4/7] clk: mediatek: Add MT2701 clock support
+Date: Wed, 10 Feb 2016 12:08:53 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-The post divider value in the frequency table is wrong as it
-would lead to the PLL producing a output rate of 960MHz instead
-of the desired 480MHz. This wasn't a problem as nothing used the
-table to actually init the PLL rate, but the bootloader
-configuration was used unaltered.
+Quoting James Liao (2016-02-05 01:37:27)
+> +CLK_OF_DECLARE(mtk_topckgen, "mediatek,mt2701-topckgen", mtk_topckgen_in=
+it);
+> +CLK_OF_DECLARE(mtk_infrasys, "mediatek,mt2701-infracfg", mtk_infrasys_in=
+it);
+> +CLK_OF_DECLARE(mtk_pericfg, "mediatek,mt2701-pericfg", mtk_pericfg_init);
+> +CLK_OF_DECLARE(mtk_mmsys, "mediatek,mt2701-mmsys", mtk_mmsys_init);
+> +CLK_OF_DECLARE(mtk_imgsys, "mediatek,mt2701-imgsys", mtk_imgsys_init);
+> +CLK_OF_DECLARE(mtk_vdecsys, "mediatek,mt2701-vdecsys", mtk_vdecsys_init);
+> +CLK_OF_DECLARE(mtk_hifsys, "mediatek,mt2701-hifsys", mtk_hifsys_init);
+> +CLK_OF_DECLARE(mtk_ethsys, "mediatek,mt2701-ethsys", mtk_ethsys_init);
+> +CLK_OF_DECLARE(mtk_bdpsys, "mediatek,mt2701-bdpsys", mtk_bdpsys_init);
+> +CLK_OF_DECLARE(mtk_apmixedsys, "mediatek,mt2701-apmixedsys",
 
-If the bootloader does not set up the PLL it will fail to come
-when used under Linux. To fix this don't rely on the bootloader,
-but set the correct rate in the clock driver.
+:-/
 
-Signed-off-by: Lucas Stach <dev@lynxeye.de>
----
- drivers/clk/tegra/clk-tegra30.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+This is way too much CLK_OF_DECLARE and not enough Linux Driver Model.
 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 236e2db..9396f49 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -339,11 +339,11 @@ static const struct pdiv_map pllu_p[] = {
- };
- 
- static struct tegra_clk_pll_freq_table pll_u_freq_table[] = {
--	{ 12000000, 480000000, 960, 12, 1, 12 },
--	{ 13000000, 480000000, 960, 13, 1, 12 },
--	{ 16800000, 480000000, 400,  7, 1,  5 },
--	{ 19200000, 480000000, 200,  4, 1,  3 },
--	{ 26000000, 480000000, 960, 26, 1, 12 },
-+	{ 12000000, 480000000, 960, 12, 2, 12 },
-+	{ 13000000, 480000000, 960, 13, 2, 12 },
-+	{ 16800000, 480000000, 400,  7, 2,  5 },
-+	{ 19200000, 480000000, 200,  4, 2,  3 },
-+	{ 26000000, 480000000, 960, 26, 2, 12 },
- 	{        0,         0,   0,  0, 0,  0 },
- };
- 
-@@ -1380,6 +1380,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA30_CLK_GR2D, TEGRA30_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA30_CLK_GR3D, TEGRA30_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA30_CLK_GR3D2, TEGRA30_CLK_PLL_C, 300000000, 0 },
-+	{ TEGRA30_CLK_PLL_U, TEGRA30_CLK_CLK_MAX, 480000000, 0 },
- 	/* must be the last entry */
- 	{ TEGRA30_CLK_CLK_MAX, TEGRA30_CLK_CLK_MAX, 0, 0 },
- };
--- 
-2.5.0
+I understand that some platforms really must initialize some clocks very
+early, but can we please separate those into one table and call
+CLK_OF_DECLARE on only that set, and then register the rest through a
+platform_driver later on?
+
+Best regards,
+Mike
