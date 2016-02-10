@@ -1,59 +1,156 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Wed, 17 Feb 2016 11:31:36 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:60344 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752202AbcBJQOn (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2016 11:14:43 -0500
+Subject: Re: breaking DT compatibility
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Rob Herring <rob.herring@linaro.org>
+References: <1454358000-13594-1-git-send-email-maxime.ripard@free-electrons.com>
+ <56B4E2FB.3050703@arm.com> <56BB2D79.6090402@arm.com>
+ <CABGGiswOKztmRT40w4t_7BD729WgM8ueLtOD-UF_wgMbmcg4cg@mail.gmail.com>
+ <20160210143755.GE31506@lukather>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Grant Likely <grant.likely@linaro.org>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jean-Francois Moine <moinejf@free.fr>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
-	Jyri Sarha <jsarha@ti.com>, linux-clk@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Kristo, Tero" <t-kristo@ti.com>
-Message-ID: <20160217113136.GN7544@sirena.org.uk>
-References: <1455545495-20292-1-git-send-email-peter.ujfalusi@ti.com>
- <1455545495-20292-5-git-send-email-peter.ujfalusi@ti.com>
- <20160215152635.GN18988@sirena.org.uk>
- <56C2F00C.8080809@ti.com>
- <20160216134233.GN18327@sirena.org.uk>
- <20160216191346.2278.725@quark.deferred.io>
+	Hans de Goede <hdegoede@redhat.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Jens Kuske <jenskuske@gmail.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+From: Andre Przywara <andre.przywara@arm.com>
+Message-ID: <56BB61EA.1030805@arm.com>
+Date: Wed, 10 Feb 2016 16:14:34 +0000
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="yklP1rR72f9kjNtc"
-In-Reply-To: <20160216191346.2278.725@quark.deferred.io>
-Subject: Re: [PATCH 4/4] ASoC: simple-card: Support for selecting system
- clocks by ID
+In-Reply-To: <20160210143755.GE31506@lukather>
+Content-Type: text/plain; charset=windows-1252
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi,
 
---yklP1rR72f9kjNtc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 10/02/16 14:37, Maxime Ripard wrote:
+> Hi Rob,
+> 
+> On Wed, Feb 10, 2016 at 07:42:02AM -0600, Rob Herring wrote:
+>> On Wed, Feb 10, 2016 at 6:30 AM, Andre Przywara <andre.przywara@arm.com> wrote:
+>>> Hi,
+>>>
+>>> just a ping:
+>>>
+>>> Are we really OK with breaking existing DTs in 4.6? (per the code in
+>>> -next: f7d372ba54ea04d528a291b8dbe34716507bb60b, which is this patch).
+>>
+>> I only warn and make sure people are aware of the issue. I leave that
+>> up to platform maintainers to decide. It depends on the maturity of
+>> the platform and users.
+> 
+> The impacted SoCs support is really partial. For the most supported
+> one, big things like display or sound are totally missing, and we
+> still update them on a regular basis to add support for new
+> devices. As such, users are very likely to upgrade the DT from one
+> version to another just because there's new devices available to
+> them. And the newest SoC impacted just got introduced in 4.5, and only
+> has the UART and MMC devices available.
 
-On Tue, Feb 16, 2016 at 11:13:46AM -0800, Michael Turquette wrote:
-> Quoting Mark Brown (2016-02-16 05:42:33)
-> > On Tue, Feb 16, 2016 at 11:46:52AM +0200, Peter Ujfalusi wrote:
+But I still don't see why we have to break things - can't we just
+improve support _without_ breaking compatibility? For instance keeping
+the old behaviour around? I can dig out my old x86 hat and find a
+_compatible_ solution for this, if you prefer ;-)
+Actually doesn't Jean-Francois' patch fixes the PLL8 issue without
+breaking anything?
 
-> > > I don't think it will bring any clarity or features we miss right now if we
-> > > try to move CPU and codec drivers to clk API. IMHO.
+Also were do you want to draw the line for "partial support"? The
+sun6i-a31.dtsi is around since 3.12, which was released more than 2
+years ago.
+If we want to wait for "stabilization", we will probably wait forever. I
+find discussions about DT stabilization going back to the very beginning
+of DT for ARM - as well as the request for moving the DT bindings out of
+the kernel (which I think we should really eventually do now).
 
-> CPU drivers? Peter, you wrote the CCF clock provider driver for DRA7
-> ATL, so I'm not sure what you mean here.
+Frankly I don't care so much about these particular boards, but just
+want avoid to set a bad example for the future - in particular sneaking
+this behaviour into the arm64 world, where DTs _really_ come with the
+board or are even generated by the (UEFI-)firmware.
+U-Boot already can embed a device tree, sounds like a perfect place to
+have it stored for me - as long as there is _one_ best version of it.
 
-In this case he's referring to the drivers for the audio IP blocks
-inside the SoC.
+>> If people complain about it then it's their mess. For platforms
+>> supported in distros such as debian or fedora, I would strongly
+>> recommend against breaking compatibility.
+> 
+> None of them are officially supported:
+> https://www.debian.org/releases/stable/armhf/ch02s01.html.en
+> https://fedoraproject.org/wiki/Architectures/ARM#Fedora_23
+> 
+> Only the older one are, and they are not affected by this patch.
+> 
+>> They do ship dtbs, but it's a chicken and egg problem. If dtbs were
+>> stable and provided by firmware, then they wouldn't have to provide
+>> them. If dtbs are unstable, then they have no choice.
+> 
+> And while it might work great on platforms that have all the needed
+> documentation, or a perfect one, which is our case. Almost each
+> release, we discover that something is not working as it was
+> documented, when it was documented in the first place.
 
---yklP1rR72f9kjNtc
-Content-Type: application/pgp-signature; name="signature.asc"
+I understand that it's not an ideal situation for those Allwinner chips
+- but nevertheless I would like us to at least _try_ to comply with this
+idea. As said before: this patch is a nice rework/cleanup - but
+definitely not a good reason to break compatibility.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+> It also seems that even on well documented platforms, supported by the
+> vendors, the stable ABI dream is not going to happen:
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/arm/Atmel/README#n105
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/arm/marvell,berlin.txt#n4
 
-iQEcBAEBCAAGBQJWxFoXAAoJECTWi3JdVIfQxqwH/jFoYdJg840EahFqi9mA6pYg
-j2v8N1/s1qQc5nld1dNLTtt9NG2kEB/rNCLO3Id56D0ofZ52rc07lD/Wl9T7E5z9
-ozzwHo+64omR53Z8nNGOFQrsqraeBPPIiwaHM2bZoquL1VZ2l5+6NADPXIQrVjfV
-q3jKyrTjI3vohsdVVVfZndx90T2noiYYZrZJPbq3wQVz80dAzYDUrNa6/48Bbut+
-2KgSxUHyQz/q6YLnatI0e/Zw/XehjOzbvcoCadwV0pNkEJgXRp6/fngpQnnRDqPy
-gIKJB4ev3i8K+1teVXKJ3pYtjashT3yOz3d+jt4DeUDU6dVqx+IX2Uj/Es32gkc=
-=33Yi
------END PGP SIGNATURE-----
+I find those two statements really unfortunate ...
 
---yklP1rR72f9kjNtc--
+> If it makes things clearer, I can also add such a statement.
+
+and would rather see us referring solely to this document instead:
+	Documentation/devicetree/bindings/ABI.txt
+
+Cheers,
+Andre.
+
+>>> Also I think one needs ACKs from DT maintainers before merging something
+>>> in the respective directories, which I don't see here.
+>>
+>> It can go in with subsystem maintainers ack, but there are problems
+>> with this one regardless of compatibility.
+>>
+>>> As I am somewhat blocked on that patch, I'd like to have some discussion
+>>> on the list.
+>>>
+>>> Thanks,
+>>> Andre.
+>>>
+>>> On 05/02/16 17:59, Andre Przywara wrote:
+>>>> Hi Maxime,
+>>>>
+>>>> just found this while looking at your current git branch, so sorry for
+>>>> the late reply.
+>>>>
+>>>> CC:ing DT people, since you touch both existing DTs(!) and the binding doc.
+>>>>
+>>>> On 01/02/16 20:20, Maxime Ripard wrote:
+>>>>> Remove the fixed dividers from the PLL6 driver to be able to have a
+>>>>> reusable driver that can be used across several SoCs that share the same
+>>>>> controller, but don't have the same set of dividers for this clock, and to
+>>>>> also be reused multiple times in the same SoC, since we're droping the
+>>>>> clock name.
+>>
+>> Removing a compatible name or not has nothing to do with sharing code.
+> 
+> This was not about the compatible name, but the hardcoded name in our
+> structure associated to that compatible. And since we can't register
+> two clocks with the same name, we couldn't use the same compatible
+> several times.
+> 
+> Maxime
+> 
