@@ -1,278 +1,91 @@
-Return-Path: <caesar.upstream@gmail.com>
-Return-Path: <caesar.upstream@gmail.com>
-From: Caesar Wang <wxt@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>,
-	edubezval@gmail.com
-Cc: huangtao@rock-chips.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-pm@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	zhangqing@rock-chips.com,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Jeffy Chen <jeffy.chen@rock-chips.com>,
-	Zhang Rui <rui.zhang@intel.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Caesar Wang <wxt@rock-chips.com>
-Subject: [RESEND PATCH 6/8] thermal: rockchip: fix the tsadc sequence output on rk3228/rk3399
-Date: Mon, 15 Feb 2016 15:33:31 +0800
-Message-Id: <1455521613-27340-7-git-send-email-wxt@rock-chips.com>
-In-Reply-To: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
-References: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
+Return-Path: <slemieux.tyco@gmail.com>
+Return-Path: <slemieux.tyco@gmail.com>
+From: slemieux.tyco@gmail.com
+To: robh+dt@kernel.org,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: stigge@antcom.de,
+	vz@mleia.com,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2] clk: lpc32xx: add HCLK PLL output configuration
+Date: Wed, 10 Feb 2016 13:52:32 -0500
+Message-Id: <1455130352-25860-1-git-send-email-slemieux.tyco@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-As the TRM says, add the tsadc_q_sel to control the temperature-code
-sequence since the rk3228/rk3399 need set this bit (1024 - tsadc_q)
-as output.
+From: Sylvain Lemieux <slemieux@tycoint.com>
 
-Fixes: commit
-b0d7033 "thermal: rockchip: Support the RK3399 SoCs in thermal driver"
-7b02a5e "thermal: rockchip: Support the RK3228 SoCs in thermal driver"
+This patch add the support to setup the HCLK PLL output
+using the "assigned-clock-rates" parameter in the device tree.
 
-Reported-by: Elaine Zhang <zhangqing@rock-chips.com>
-Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+If the option is not use, the clock setup by the kickstart
+and/or bootloader remain unchanged.
+
+The previous kernel version did not change the clock frequency
+output setup by the kickstart and/or bootloader;
+this version always setup the clock frequency output to 208MHz.
+
+Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
 ---
+Changes from v1 to v2:
+- Rename patch title;
+  was "clk: lpc32xx: add clock frequency output configuration"
+- Update the patch as per the feedback received from:
+  Stephen: http://permalink.gmane.org/gmane.linux.kernel.clk/3913
+  Vladimir: http://permalink.gmane.org/gmane.linux.kernel.clk/3921 
 
- drivers/thermal/rockchip_thermal.c | 176 +++++++++++++++++++++----------------
- 1 file changed, 102 insertions(+), 74 deletions(-)
+Note:
+- There is currently an issue in the current driver;
+  if the HCLK PLL output, configured by the kickstart and/or
+  bootloader, is change by the kernel (ex. 266.5MHz to 208MHz),
+  the serial console is no longer outputing properly.
 
-diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchip_thermal.c
-index 9cdef62..233a564 100644
---- a/drivers/thermal/rockchip_thermal.c
-+++ b/drivers/thermal/rockchip_thermal.c
-@@ -155,6 +155,13 @@ struct rockchip_thermal_data {
- #define TSADCV2_AUTO_EN				BIT(0)
- #define TSADCV2_AUTO_SRC_EN(chn)		BIT(4 + (chn))
- #define TSADCV2_AUTO_TSHUT_POLARITY_HIGH	BIT(8)
-+/**
-+ * TSADCV1_AUTO_Q_SEL_EN:
-+ * whether select (1024 - tsadc_q) as output
-+ * 1'b0:use tsadc_q as output(temperature-code is rising sequence)
-+ * 1'b1:use(1024 - tsadc_q) as output (temperature-code is falling sequence)
-+ */
-+#define TSADCV3_AUTO_Q_SEL_EN			BIT(1)
+ drivers/clk/nxp/clk-lpc32xx.c             | 6 +-----
+ include/dt-bindings/clock/lpc32xx-clock.h | 1 +
+ 2 files changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+index 981ff0d..48b3a11 100644
+--- a/drivers/clk/nxp/clk-lpc32xx.c
++++ b/drivers/clk/nxp/clk-lpc32xx.c
+@@ -87,7 +87,7 @@ enum {
  
- #define TSADCV2_INT_SRC_EN(chn)			BIT(chn)
- #define TSADCV2_SHUT_2GPIO_SRC_EN(chn)		BIT(4 + (chn))
-@@ -184,41 +191,42 @@ struct tsadc_table {
-  * Code to Temperature mapping should be updated based on sillcon results.
-  */
- static const struct tsadc_table rk3228_code_table[] = {
--	{TSADCV3_DATA_MASK, -40000},
--	{436, -40000},
--	{431, -35000},
--	{426, -30000},
--	{421, -25000},
--	{416, -20000},
--	{411, -15000},
--	{406, -10000},
--	{401, -5000},
--	{395, 0},
--	{390, 5000},
--	{385, 10000},
--	{380, 15000},
--	{375, 20000},
--	{370, 25000},
--	{364, 30000},
--	{359, 35000},
--	{354, 40000},
--	{349, 45000},
--	{343, 50000},
--	{338, 55000},
--	{333, 60000},
--	{328, 65000},
--	{322, 70000},
--	{317, 75000},
--	{312, 80000},
--	{307, 85000},
--	{301, 90000},
--	{296, 95000},
--	{291, 100000},
--	{286, 105000},
--	{280, 110000},
--	{275, 115000},
--	{270, 120000},
--	{264, 125000},
-+	{0, -40000},
-+	{588, -40000},
-+	{593, -35000},
-+	{598, -30000},
-+	{603, -25000},
-+	{608, -20000},
-+	{613, -15000},
-+	{618, -10000},
-+	{623, -5000},
-+	{629, 0},
-+	{634, 5000},
-+	{639, 10000},
-+	{644, 15000},
-+	{649, 20000},
-+	{654, 25000},
-+	{660, 30000},
-+	{665, 35000},
-+	{670, 40000},
-+	{675, 45000},
-+	{681, 50000},
-+	{686, 55000},
-+	{691, 60000},
-+	{696, 65000},
-+	{702, 70000},
-+	{707, 75000},
-+	{712, 80000},
-+	{717, 85000},
-+	{723, 90000},
-+	{728, 95000},
-+	{733, 100000},
-+	{738, 105000},
-+	{744, 110000},
-+	{749, 115000},
-+	{754, 120000},
-+	{760, 125000},
-+	{TSADCV2_DATA_MASK, 125000},
- };
+ enum {
+ 	/* Start from the last defined clock in dt bindings */
+-	LPC32XX_CLK_ADC_DIV = LPC32XX_CLK_ADC + 1,
++	LPC32XX_CLK_ADC_DIV = LPC32XX_CLK_HCLK_PLL + 1,
+ 	LPC32XX_CLK_ADC_RTC,
+ 	LPC32XX_CLK_TEST1,
+ 	LPC32XX_CLK_TEST2,
+@@ -96,7 +96,6 @@ enum {
+ 	LPC32XX_CLK_OSC,
+ 	LPC32XX_CLK_SYS,
+ 	LPC32XX_CLK_PLL397X,
+-	LPC32XX_CLK_HCLK_PLL,
+ 	LPC32XX_CLK_HCLK_DIV_PERIPH,
+ 	LPC32XX_CLK_HCLK_DIV,
+ 	LPC32XX_CLK_HCLK,
+@@ -1526,9 +1525,6 @@ static void __init lpc32xx_clk_init(struct device_node *np)
  
- static const struct tsadc_table rk3288_code_table[] = {
-@@ -299,41 +307,42 @@ static const struct tsadc_table rk3368_code_table[] = {
- };
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
  
- static const struct tsadc_table rk3399_code_table[] = {
--	{TSADCV3_DATA_MASK, -40000},
--	{431, -40000},
--	{426, -35000},
--	{421, -30000},
--	{415, -25000},
--	{410, -20000},
--	{405, -15000},
--	{399, -10000},
--	{394, -5000},
--	{389, 0},
--	{383, 5000},
--	{378, 10000},
--	{373, 15000},
--	{367, 20000},
--	{362, 25000},
--	{357, 30000},
--	{351, 35000},
--	{346, 40000},
--	{340, 45000},
--	{335, 50000},
--	{330, 55000},
--	{324, 60000},
--	{319, 65000},
--	{313, 70000},
--	{308, 75000},
--	{302, 80000},
--	{297, 85000},
--	{291, 90000},
--	{286, 95000},
--	{281, 100000},
--	{275, 105000},
--	{270, 110000},
--	{264, 115000},
--	{259, 120000},
--	{253, 125000},
-+	{0, -40000},
-+	{593, -40000},
-+	{598, -35000},
-+	{603, -30000},
-+	{609, -25000},
-+	{614, -20000},
-+	{619, -15000},
-+	{625, -10000},
-+	{630, -5000},
-+	{635, 0},
-+	{641, 5000},
-+	{646, 10000},
-+	{651, 15000},
-+	{657, 20000},
-+	{662, 25000},
-+	{667, 30000},
-+	{673, 35000},
-+	{678, 40000},
-+	{684, 45000},
-+	{689, 50000},
-+	{694, 55000},
-+	{700, 60000},
-+	{705, 65000},
-+	{711, 70000},
-+	{716, 75000},
-+	{722, 80000},
-+	{727, 85000},
-+	{733, 90000},
-+	{738, 95000},
-+	{743, 100000},
-+	{749, 105000},
-+	{754, 110000},
-+	{760, 115000},
-+	{765, 120000},
-+	{771, 125000},
-+	{TSADCV3_DATA_MASK, 125000},
- };
+-	/* For 13MHz osc valid output range of PLL is from 156MHz to 266.5MHz */
+-	clk_set_rate(clk[LPC32XX_CLK_HCLK_PLL], 208000000);
+-
+ 	/* Set 48MHz rate of USB PLL clock */
+ 	clk_set_rate(clk[LPC32XX_CLK_USB_PLL], 48000000);
  
- static u32 rk_tsadcv2_temp_to_code(struct chip_tsadc_table table,
-@@ -488,6 +497,25 @@ static void rk_tsadcv2_control(void __iomem *regs, bool enable)
- 	writel_relaxed(val, regs + TSADCV2_AUTO_CON);
- }
+diff --git a/include/dt-bindings/clock/lpc32xx-clock.h b/include/dt-bindings/clock/lpc32xx-clock.h
+index bcb1c9a..d41b6fe 100644
+--- a/include/dt-bindings/clock/lpc32xx-clock.h
++++ b/include/dt-bindings/clock/lpc32xx-clock.h
+@@ -47,6 +47,7 @@
+ #define LPC32XX_CLK_PWM1	32
+ #define LPC32XX_CLK_PWM2	33
+ #define LPC32XX_CLK_ADC		34
++#define LPC32XX_CLK_HCLK_PLL	35
  
-+/**
-+ * @rk_tsadcv3_control:
-+ * TSADC controller works at auto mode, and some SoCs need set the tsadc_q_sel
-+ * bit on TSADCV2_AUTO_CON[1]. The (1024 - tsadc_q) as output adc value if
-+ * setting this bit to enable.
-+ */
-+static void rk_tsadcv3_control(void __iomem *regs, bool enable)
-+{
-+	u32 val;
-+
-+	val = readl_relaxed(regs + TSADCV2_AUTO_CON);
-+	if (enable)
-+		val |= TSADCV2_AUTO_EN | TSADCV3_AUTO_Q_SEL_EN;
-+	else
-+		val &= ~TSADCV2_AUTO_EN;
-+
-+	writel_relaxed(val, regs + TSADCV2_AUTO_CON);
-+}
-+
- static int rk_tsadcv2_get_temp(struct chip_tsadc_table table,
- 			       int chn, void __iomem *regs, int *temp)
- {
-@@ -538,7 +566,7 @@ static const struct rockchip_tsadc_chip rk3228_tsadc_data = {
- 
- 	.initialize = rk_tsadcv2_initialize,
- 	.irq_ack = rk_tsadcv3_irq_ack,
--	.control = rk_tsadcv2_control,
-+	.control = rk_tsadcv3_control,
- 	.get_temp = rk_tsadcv2_get_temp,
- 	.set_tshut_temp = rk_tsadcv2_tshut_temp,
- 	.set_tshut_mode = rk_tsadcv2_tshut_mode,
-@@ -547,7 +575,7 @@ static const struct rockchip_tsadc_chip rk3228_tsadc_data = {
- 		.id = rk3228_code_table,
- 		.length = ARRAY_SIZE(rk3228_code_table),
- 		.data_mask = TSADCV3_DATA_MASK,
--		.mode = ADC_DECREMENT,
-+		.mode = ADC_INCREMENT,
- 	},
- };
- 
-@@ -610,7 +638,7 @@ static const struct rockchip_tsadc_chip rk3399_tsadc_data = {
- 
- 	.initialize = rk_tsadcv2_initialize,
- 	.irq_ack = rk_tsadcv3_irq_ack,
--	.control = rk_tsadcv2_control,
-+	.control = rk_tsadcv3_control,
- 	.get_temp = rk_tsadcv2_get_temp,
- 	.set_tshut_temp = rk_tsadcv2_tshut_temp,
- 	.set_tshut_mode = rk_tsadcv2_tshut_mode,
-@@ -619,7 +647,7 @@ static const struct rockchip_tsadc_chip rk3399_tsadc_data = {
- 		.id = rk3399_code_table,
- 		.length = ARRAY_SIZE(rk3399_code_table),
- 		.data_mask = TSADCV3_DATA_MASK,
--		.mode = ADC_DECREMENT,
-+		.mode = ADC_INCREMENT,
- 	},
- };
- 
+ /* LPC32XX USB clocks */
+ #define LPC32XX_USB_CLK_I2C	1
 -- 
-1.9.1
+1.8.3.1
