@@ -1,62 +1,59 @@
-Return-Path: <afaerber@suse.de>
-Subject: Re: [PATCH] clk: meson: Fix meson_clk_register_clks() signature type
- mismatch
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1454879583-27036-1-git-send-email-afaerber@suse.de>
- <20160208221508.GT4848@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org, Carlo Caione <carlo@caione.org>,
- Matthias Brugger <mbrugger@suse.com>,
- Michael Turquette <mturquette@baylibre.com>,
- linux-clk <linux-clk@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Message-ID: <56B9150E.5010808@suse.de>
-Date: Mon, 8 Feb 2016 23:22:06 +0100
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ob0-f180.google.com ([209.85.214.180]:34982 "EHLO
+	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750725AbcBJIPI (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2016 03:15:08 -0500
+Received: by mail-ob0-f180.google.com with SMTP id xk3so17065409obc.2
+        for <linux-clk@vger.kernel.org>; Wed, 10 Feb 2016 00:15:08 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20160208221508.GT4848@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <7387260.8XnD1ditcY@wuerfel>
+References: <1453932702-6930-1-git-send-email-sboyd@codeaurora.org>
+	<6141409.WI4q6BtOxa@wuerfel>
+	<20160128201238.GN12841@codeaurora.org>
+	<7387260.8XnD1ditcY@wuerfel>
+Date: Wed, 10 Feb 2016 09:15:08 +0100
+Message-ID: <CACRpkdZj8JM+qYYfE4+cF1iMevJS5t-c_KpV-2jjjspFywf+XQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: Use generic clkdev.h header
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org,
+	Linus Walleij <linus.ml.walleij@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am 08.02.2016 um 23:15 schrieb Stephen Boyd:
-> On 02/07, Andreas Färber wrote:
->> As preparation for arm64 based mesongxbb, which pulls in this code once
->> enabling ARCH_MESON, fix a size_t vs. unsigned int type mismatch.
->> The loop uses a local unsigned int variable, so adopt that type,
->> matching the header.
+On Thu, Jan 28, 2016 at 11:07 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Thursday 28 January 2016 12:12:38 Stephen Boyd wrote:
+>> From: Stephen Boyd <sboyd@codeaurora.org>
+>> Subject: [PATCH] ARM: plat-versatile: Remove unused clock.c file
 >>
->> Fixes: 7a29a869434e ("clk: meson: Add support for Meson clock controller")
->> Signed-off-by: Andreas Färber <afaerber@suse.de>
+>> This file isn't compiled anymore because PLAT_VERSATILE_CLOCK is
+>> never selected. Remove the file and the config.
+>>
+>> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 >> ---
-> 
-> Applied to clk-next. It would have been nice to have the
-> compilation error though
+>>  arch/arm/plat-versatile/Kconfig  |  3 --
+>>  arch/arm/plat-versatile/Makefile |  1 -
+>>  arch/arm/plat-versatile/clock.c  | 74 ----------------------------------------
+>>  3 files changed, 78 deletions(-)
+>>  delete mode 100644 arch/arm/plat-versatile/clock.c
+>>
+>
+> Looks good, I've added it to my todo list for arm-soc in 4.6.
+>
+> I think Linus Walleij has some related work pending, so I'll
+> let him Ack this patch or pick it up in his tree if he prefers.
+>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-Ask and you shall receive:
+OK yeah I have a bunch of Versatile family cleanups pending,
+I will put this in the bottom of the pile before the pull request,
+thanks!
 
-  CC      drivers/clk/meson/clkc.o
-drivers/clk/meson/clkc.c:200:13: error: conflicting types for
-'meson_clk_register_clks'
- void __init meson_clk_register_clks(const struct clk_conf *clk_confs,
-             ^
-In file included from drivers/clk/meson/clkc.c:22:0:
-drivers/clk/meson/clkc.h:180:6: note: previous declaration of
-'meson_clk_register_clks' was here
- void meson_clk_register_clks(const struct clk_conf *clk_confs,
-      ^
-scripts/Makefile.build:258: recipe for target 'drivers/clk/meson/clkc.o'
-failed
-make[3]: *** [drivers/clk/meson/clkc.o] Error 1
-scripts/Makefile.build:407: recipe for target 'drivers/clk/meson' failed
-make[2]: *** [drivers/clk/meson] Error 2
-scripts/Makefile.build:407: recipe for target 'drivers/clk' failed
-make[1]: *** [drivers/clk] Error 2
-Makefile:959: recipe for target 'drivers' failed
-make: *** [drivers] Error 2
-
-Not really telling, is it. ;)
-
-Regards,
-Andreas
-
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton; HRB 21284 (AG Nürnberg)
+Yours,
+Linus Walleij
