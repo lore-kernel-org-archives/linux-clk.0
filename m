@@ -1,54 +1,57 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:32971 "EHLO
-	mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752932AbcBHPcG (ORCPT
-	<rfc822;linux-clk@vger.kernel.org>); Mon, 8 Feb 2016 10:32:06 -0500
-MIME-Version: 1.0
-In-Reply-To: <20160204193036.GA1958@tetsubishi>
-References: <1454135639-4102-1-git-send-email-dirk.behme@gmail.com>
-	<20160204193036.GA1958@tetsubishi>
-Date: Mon, 8 Feb 2016 16:32:06 +0100
-Message-ID: <CAMuHMdW3Cp-Ga9NCb=TgGE7QxUTNp-PbOXsNu47Vvgcf-m0bSw@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: shmobile: r8a7795: Add SD divider support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Dirk Behme <dirk.behme@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-	Dirk Behme <dirk.behme@de.bosch.com>
-Content-Type: text/plain; charset=UTF-8
+Received: from bastet.se.axis.com ([195.60.68.11]:40066 "EHLO
+	bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750818AbcBJMm2 (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2016 07:42:28 -0500
+From: Lars Persson <lars.persson@axis.com>
+To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	linux-kernel@vger.kernel.org, Lars Persson <larper@axis.com>
+Subject: [PATCH 0/8] arm: Add Artpec-6 SoC
+Date: Wed, 10 Feb 2016 13:41:49 +0100
+Message-Id: <cover.1455107681.git.larper@axis.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Feb 4, 2016 at 8:30 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> On Sat, Jan 30, 2016 at 07:33:59AM +0100, Dirk Behme wrote:
->> This patch adds SD[0..3] clock divider support for R-Car Gen3 SoC.
->>
->> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
->
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->
-> Since we don't have UHS support currently, changing the clock is not
-> really exercised; but the code looks good and if it needs fixing, we can
-> do it incrementally IMO. What is currently needed works fine on my
-> Salvator-X for the exposed SD interfaces.
+Basic support for the Axis Artpec-6 ARM SoC. Timers, interrupts, UARTs and
+ethernet are wired up.
 
-Thanks, will queue for next renesas-drivers and v4.6.
+Lars Persson (8):
+  clk: add device tree binding for artpec-6 pll1 clock
+  clk: add artpec-6 pll1 clock driver
+  arm: add device-tree SoC bindings for Axis Artpec-6
+  arm: dts: add Artpec-6 soc dtsi file
+  arm: dts: add Artpec-6 development board dts
+  arm: initial machine port for artpec-6 SoC
+  arm: multi_v7_defconfig: add MACH_ARTPEC6
+  arm: mach-artpec: add entry to MAINTAINERS
 
-Gr{oetje,eeting}s,
+ Documentation/devicetree/bindings/arm/axis.txt     |   8 +
+ .../devicetree/bindings/clock/artpec6.txt          |  14 ++
+ MAINTAINERS                                        |  10 +
+ arch/arm/Kconfig                                   |   2 +
+ arch/arm/Makefile                                  |   1 +
+ arch/arm/boot/dts/Makefile                         |   2 +
+ arch/arm/boot/dts/artpec6-devboard.dts             |  57 +++++
+ arch/arm/boot/dts/artpec6.dtsi                     | 238 +++++++++++++++++++++
+ arch/arm/configs/multi_v7_defconfig                |   2 +
+ arch/arm/mach-artpec/Kconfig                       |  22 ++
+ arch/arm/mach-artpec/Makefile                      |   1 +
+ arch/arm/mach-artpec/board-artpec6.c               |  66 ++++++
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-artpec6.c                          |  70 ++++++
+ 14 files changed, 494 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/axis.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/artpec6.txt
+ create mode 100644 arch/arm/boot/dts/artpec6-devboard.dts
+ create mode 100644 arch/arm/boot/dts/artpec6.dtsi
+ create mode 100644 arch/arm/mach-artpec/Kconfig
+ create mode 100644 arch/arm/mach-artpec/Makefile
+ create mode 100644 arch/arm/mach-artpec/board-artpec6.c
+ create mode 100644 drivers/clk/clk-artpec6.c
 
-                        Geert
+-- 
+2.1.4
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
