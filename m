@@ -1,51 +1,41 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Lars Persson <lars.persson@axis.com>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, mark.rutland@arm.com,
+	pawel.moll@arm.com, ijc+devicetree@hellion.org.uk,
+	Lars Persson <larper@axis.com>, linux-kernel@vger.kernel.org,
+	robh+dt@kernel.org, galak@codeaurora.org
+Subject: Re: [PATCH 1/8] clk: add device tree binding for artpec-6 pll1 clock
+Date: Wed, 10 Feb 2016 15:36:03 +0100
+Message-ID: <12746231.crYxCXlbXY@wuerfel>
+In-Reply-To: <c092f501a595032f9b76f18fc4bf093503a181c8.1455107681.git.larper@axis.com>
+References: <cover.1455107681.git.larper@axis.com> <c092f501a595032f9b76f18fc4bf093503a181c8.1455107681.git.larper@axis.com>
 MIME-Version: 1.0
-To: Fabio Estevam <festevam@gmail.com>, "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <CAOMZO5AZbe2PKysy353Q-3w_+WY0HQD4EYtq24SzwadoQ4ikeA@mail.gmail.com>
-Cc: linux-clk@vger.kernel.org, peter.chen@nxp.com,
- "Lee Jones" <lee.jones@linaro.org>
-References: <CAOMZO5AZbe2PKysy353Q-3w_+WY0HQD4EYtq24SzwadoQ4ikeA@mail.gmail.com>
-Message-ID: <20160218013839.2278.23558@quark.deferred.io>
-Subject: Re: Keeping a clock enabled during suspend
-Date: Wed, 17 Feb 2016 17:38:39 -0800
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Fabio Estevam (2016-02-03 09:04:07)
-> Hi,
-> =
+On Wednesday 10 February 2016 13:41:50 Lars Persson wrote:
+> Signed-off-by: Lars Persson <larper@axis.com>
+> ---
 
-> I am trying to implement a workaround for a mx25 USB erratum issue
-> (ENGcm08333), where I need to keep the USB clock turned on when the
-> system enters in suspend.
-> =
+Always write a changelog comment.
 
-> Is it possible to indicate that a clock needs to be kept enabled in
-> suspend with the current clock framework?
-> =
+> +* Clock bindings for Axis ARTPEC-6 chip
+> +
+> +Required properties:
+> +- compatible: Should be "axis,artpec6-pll1-clock"
+> +- #clock-cells: Should be <1>
 
-> I saw this attempt from Lee Jones:
-> https://lkml.org/lkml/2015/4/8/9
+What is the clock cell used for?
 
-That link didn't resolve for me but I'm guessing those are the CRITICAL
-clk patches.
-
-That flag is designed to keep a clock on always, so it may do what you
-want, but I'd like to know more first.
-
-Where does your clock get cut? Is there a clk_disable call in a suspend
-callback that does this to your USB clk?
-
-Regards,
-Mike
-
-> =
-
-> Any suggestions?
-> =
-
-> Thanks,
-> =
-
-> Fabio Estevam
+> +Examples:
+> +
+> +pll1_clk: pll1_clk {
+> +	#clock-cells = <1>;
+> +	compatible = "axis,artpec6-pll1-clock";
+> +	clocks = <&ext_clk>;
+> +	status = "okay";
+> +};
+> 
