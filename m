@@ -1,42 +1,54 @@
-Return-Path: <emil.l.velikov@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 9 Feb 2016 16:19:31 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Sylvain Lemieux <slemieux.tyco@gmail.com>, mturquette@baylibre.com,
+	stigge@antcom.de, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: lpc32xx: do not prepare clock "0"
+Message-ID: <20160210001931.GE30978@codeaurora.org>
+References: <1455042550-18766-1-git-send-email-slemieux.tyco@gmail.com>
+ <20160209190309.GD31947@codeaurora.org>
+ <1455048667.19294.5.camel@localhost>
+ <56BA7A06.4020807@mleia.com>
 MIME-Version: 1.0
-In-Reply-To: <8fdfe5fe7715f19416d654964e55721b30237b38.1454427224.git.moinejf@free.fr>
-References: <cover.1454427223.git.moinejf@free.fr>
-	<8fdfe5fe7715f19416d654964e55721b30237b38.1454427224.git.moinejf@free.fr>
-Date: Tue, 2 Feb 2016 17:19:15 +0000
-Message-ID: <CACvgo53f8Sr_dEAx_mcvjXciK01mY7TUDguOJ-HzNur-PpmMZw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] clk: sunxi: Add sun6i/8i video support
-From: Emil Velikov <emil.l.velikov@gmail.com>
-To: Jean-Francois Moine <moinejf@free.fr>
-Cc: Dave Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>, Emilio Lopez <emilio@elopez.com.ar>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	devicetree <devicetree@vger.kernel.org>, LAKML <linux-arm-kernel@lists.infradead.org>,
-	ML dri-devel <dri-devel@lists.freedesktop.org>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <56BA7A06.4020807@mleia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jean-Francois,
+On 02/10, Vladimir Zapolskiy wrote:
+> Hi Sylvain,
+> 
+> On 09.02.2016 22:11, Sylvain Lemieux wrote:
+> > On Tue, 2016-02-09 at 11:03 -0800, Stephen Boyd wrote:
+> >> On 02/09, slemieux.tyco@gmail.com wrote:
+> >>> From: Sylvain Lemieux <slemieux@tycoint.com>
+> >>>
+> >>> The following errors are display in the console during the power-on:
+> >>> [    0.000000] lpc32xx_usb_clk_init: failed to register (null) clock: -12
+> >>> [    0.000000] lpc32xx_clk_init: failed to register (null) clock: -12
+> >>>
+> >>> There is no need to prepare clock "0"; the first clock used is 1;
+> >>>
+> >>> Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
+> >>> ---
+> >>
+> >> Do you mean register instead of prepare? Change looks ok
+> >> otherwise.
+> >>
+> > Should read register in the description;
+> > I will submit a new version of the patch tomorrow.
+> > 
+> 
+> thanks for catching this leftover after renumbering clocks starting from 1.
+> 
+> Feel free to add to v2
+> 
+> Acked-by: Vladimir Zapolskiy <vz@mleia.com>
+> 
 
-On 1 February 2016 at 07:43, Jean-Francois Moine <moinejf@free.fr> wrote:
-> Add the clock types which are used by the sun6i/8i families for video.
->
-> Signed-off-by: Jean-Francois Moine <moinejf@free.fr>
-> ---
-> v3: (no change)
-> v2:
->         - remarks from Chen-Yu Tsai
->         - DT documentation added
-> ---
->  Documentation/devicetree/bindings/clock/sunxi.txt |   2 +
->  drivers/clk/sunxi/clk-sun6i-display.c             | 106 +++++++++++++
->  drivers/clk/sunxi/clk-sun6i-pll3.c                | 174 ++++++++++++++++++++++
->  3 files changed, 282 insertions(+)
->  create mode 100644 drivers/clk/sunxi/clk-sun6i-display.c
->  create mode 100644 drivers/clk/sunxi/clk-sun6i-pll3.c
->
-Something is missing here - namely the changes to the Makefile. Does
-this series work or did you simply forget git add ?
+I subbed register for prepare and added this ack and pushed to
+clk-next.
 
-Regards,
-Emil
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
