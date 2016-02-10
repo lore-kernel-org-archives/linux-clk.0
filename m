@@ -1,72 +1,166 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 2 Feb 2016 19:02:27 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
-	Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 08/11] clk: sunxi: improve error reporting for the mux
- clock
-Message-ID: <20160202180227.GC4652@lukather>
-References: <1454348370-3816-1-git-send-email-andre.przywara@arm.com>
- <1454348370-3816-9-git-send-email-andre.przywara@arm.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="D8DPajcJO06Q0DF+"
-In-Reply-To: <1454348370-3816-9-git-send-email-andre.przywara@arm.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Lars Persson <lars.persson@axis.com>
+To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	linux-kernel@vger.kernel.org, Lars Persson <larper@axis.com>
+Subject: [PATCH 6/8] arm: initial machine port for artpec-6 SoC
+Date: Wed, 10 Feb 2016 13:41:55 +0100
+Message-Id: <fa3483f1a388e443245084c3b5e9aa1ad2f61392.1455107681.git.larper@axis.com>
+In-Reply-To: <cover.1455107681.git.larper@axis.com>
+References: <cover.1455107681.git.larper@axis.com>
+In-Reply-To: <cover.1455107681.git.larper@axis.com>
+References: <cover.1455107681.git.larper@axis.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Basic machine port for the Artpec-6 SoC from Axis
+Communications.
 
---D8DPajcJO06Q0DF+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Lars Persson <larper@axis.com>
+---
+ arch/arm/Kconfig                     |  2 ++
+ arch/arm/Makefile                    |  1 +
+ arch/arm/mach-artpec/Kconfig         | 22 ++++++++++++
+ arch/arm/mach-artpec/Makefile        |  1 +
+ arch/arm/mach-artpec/board-artpec6.c | 66 ++++++++++++++++++++++++++++++++++++
+ 5 files changed, 92 insertions(+)
+ create mode 100644 arch/arm/mach-artpec/Kconfig
+ create mode 100644 arch/arm/mach-artpec/Makefile
+ create mode 100644 arch/arm/mach-artpec/board-artpec6.c
 
-On Mon, Feb 01, 2016 at 05:39:27PM +0000, Andre Przywara wrote:
-> clk_register_mux returns a pointer wrapped error value in case of
-> failure, so a simple NULL check is not sufficient to catch errors.
-> Fix that and elaborate on the failure reason on the way. The whole
-> function does not return any error value, so silently failing may
-> leave users scratching their heads because the kernel does not
-> provide any clues on what's wrong.
->=20
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-
-Applied, thanks.
-
-Any chance you do that for the other functions? :)
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---D8DPajcJO06Q0DF+
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWsO8zAAoJEBx+YmzsjxAglZQP/iGCTXrwhF95RGuwYbPX/wdc
-cRP0ODvVgCS6JO0JgoxaeoW1t4gXxT0AW2c5NR6J33W5SMToPx6scTPj2JaWfwbR
-QxBK2FVcZF2rDzM3XwMhKK81NXagPJ2fxcJao+s1AXyUDORPf4DaoJdXkOh9Gn0p
-kwtcb0AHhDKGOnDxQXQfv/2ssVFDa4kfQEImydIuIerxDO89xACQAZ5/him9m8Rv
-k/t7vA43RAm/OelWtSncIaDo4ov73HLZIT6Yf5T5R3MKLn+BleYTfhYCqcTNvLZr
-W2uFdHFngJ4R9cSMK+4w539S9NpBiYM1C1+9HUwLvTqhHMVkAFqbFi2Qwbg5UUoj
-WiIAxbL7qJuQ1Na2wTBdHjVWgx/vAhOVPjyudyTSmOseb5pe5bnvmhOvSbOdcg8L
-F+Z9o/faqtSgvjsohCSsfwDCx++G6sINeIqCNZge5q3fedcfMdV9n6HOSBilxR49
-s7h3iaDrnGVuHQJigNKnIu4z5xKR9t+YzQkLSx+c9UvqHBekhIOqQJRWgxMepKDe
-0/8HA8j4X33QsjVmACnGvp0h7ZdWIDTF9jaiIP4aK/oMU37d4EX4bNd7Qy6NEXnz
-SG5fR7IxlrEC1RD94xkxlYXDM4PZ3tkhxE+ejfVEuwblR56/lfvUNpFybZc1cx3D
-2TB77UhlJnQYS8Ei1efH
-=ncGQ
------END PGP SIGNATURE-----
-
---D8DPajcJO06Q0DF+--
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 4f799e5..e1565dd 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -724,6 +724,8 @@ source "arch/arm/mach-mvebu/Kconfig"
+ 
+ source "arch/arm/mach-alpine/Kconfig"
+ 
++source "arch/arm/mach-artpec/Kconfig"
++
+ source "arch/arm/mach-asm9260/Kconfig"
+ 
+ source "arch/arm/mach-at91/Kconfig"
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index fe25410..4eb24c6 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -154,6 +154,7 @@ textofs-$(CONFIG_ARCH_AXXIA) := 0x00308000
+ # Machine directory name.  This list is sorted alphanumerically
+ # by CONFIG_* macro name.
+ machine-$(CONFIG_ARCH_ALPINE)		+= alpine
++machine-$(CONFIG_ARCH_ARTPEC)		+= artpec
+ machine-$(CONFIG_ARCH_AT91)		+= at91
+ machine-$(CONFIG_ARCH_AXXIA)		+= axxia
+ machine-$(CONFIG_ARCH_BCM)		+= bcm
+diff --git a/arch/arm/mach-artpec/Kconfig b/arch/arm/mach-artpec/Kconfig
+new file mode 100644
+index 0000000..eaa73d6
+--- /dev/null
++++ b/arch/arm/mach-artpec/Kconfig
+@@ -0,0 +1,22 @@
++menuconfig ARCH_ARTPEC
++	bool "Axis Communications ARM based ARTPEC SoCs" if ARCH_MULTI_V7
++
++if ARCH_ARTPEC
++
++config MACH_ARTPEC6
++	bool "Axis ARTPEC-6 ARM Cortex A9 Platform" if ARCH_MULTI_V7
++	select ARM_AMBA
++	select ARM_GIC
++	select ARM_GLOBAL_TIMER
++	select ARM_PSCI
++	select COMMON_CLK
++	select GENERIC_CLOCKEVENTS
++	select HAVE_ARM_ARCH_TIMER
++	select HAVE_ARM_SCU
++	select HAVE_ARM_TWD if SMP
++	select SPARSE_IRQ
++	select USE_OF
++	help
++	  Support for Axis ARTPEC-6 ARM Cortex A9 Platform
++
++endif
+diff --git a/arch/arm/mach-artpec/Makefile b/arch/arm/mach-artpec/Makefile
+new file mode 100644
+index 0000000..78325f0
+--- /dev/null
++++ b/arch/arm/mach-artpec/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_MACH_ARTPEC6)		:= board-artpec6.o
+diff --git a/arch/arm/mach-artpec/board-artpec6.c b/arch/arm/mach-artpec/board-artpec6.c
+new file mode 100644
+index 0000000..6d7a59f
+--- /dev/null
++++ b/arch/arm/mach-artpec/board-artpec6.c
+@@ -0,0 +1,66 @@
++/*
++ * ARTPEC-6 device support.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/amba/bus.h>
++#include <linux/clocksource.h>
++#include <linux/dma-mapping.h>
++#include <linux/io.h>
++#include <linux/irqchip.h>
++#include <linux/irqchip/arm-gic.h>
++#include <linux/of_platform.h>
++#include <linux/of.h>
++#include <linux/clk-provider.h>
++#include <linux/smp.h>
++#include <asm/smp_scu.h>
++#include <asm/mach/arch.h>
++#include <asm/mach/map.h>
++#include <asm/psci.h>
++#include <linux/arm-smccc.h>
++
++#define ARTPEC6_DMACFG 0xf8000010
++#define ARTPEC6_DMACFG_UARTS_BURST 0xff
++
++#define SECURE_OP_L2C_WRITEREG 0xb4000001
++
++static void __init artpec6_init_machine(void)
++{
++	void __iomem *dmacfg;
++
++	/* Use PL011 DMA Burst Request signal instead of DMA Single Request */
++	dmacfg = ioremap(ARTPEC6_DMACFG, 4);
++	if (dmacfg) {
++		__raw_writel(ARTPEC6_DMACFG_UARTS_BURST, dmacfg);
++		iounmap(dmacfg);
++	}
++
++	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
++}
++
++static void artpec6_l2c310_write_sec(unsigned long val, unsigned reg)
++{
++	struct arm_smccc_res res;
++
++	arm_smccc_smc(SECURE_OP_L2C_WRITEREG, reg, val, 0,
++		      0, 0, 0, 0, &res);
++
++	WARN_ON(res.a0);
++}
++
++static const char * const artpec6_dt_match[] = {
++	"axis,artpec6",
++	NULL
++};
++
++DT_MACHINE_START(ARTPEC6, "Axis ARTPEC-6 Platform")
++	.l2c_aux_val	= 0x0C000000,
++	.l2c_aux_mask	= 0xF3FFFFFF,
++	.l2c_write_sec  = artpec6_l2c310_write_sec,
++	.init_irq	= irqchip_init,
++	.init_machine	= artpec6_init_machine,
++	.dt_compat	= artpec6_dt_match,
++MACHINE_END
+-- 
+2.1.4
