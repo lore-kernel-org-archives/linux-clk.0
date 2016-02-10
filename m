@@ -1,198 +1,55 @@
-Return-Path: <caesar.upstream@gmail.com>
-Return-Path: <caesar.upstream@gmail.com>
-From: Caesar Wang <wxt@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>,
-	edubezval@gmail.com
-Cc: huangtao@rock-chips.com,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from p01c11o141.mxlogic.net ([208.65.144.64]:54172 "EHLO
+	p01c11o141.mxlogic.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750723AbcBJU6u convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2016 15:58:50 -0500
+From: Kevin Smith <kevin.smith@elecsyscorp.com>
+To: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC: Kevin Smith <kevin.smith@elecsyscorp.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	linux-pm@vger.kernel.org,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	zhangqing@rock-chips.com,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Jeffy Chen <jeffy.chen@rock-chips.com>,
-	Zhang Rui <rui.zhang@intel.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Caesar Wang <wxt@rock-chips.com>
-Subject: [RESEND PATCH 5/8] thermal: rockchip: the rename compatibles for rockchip SoCs
-Date: Mon, 15 Feb 2016 15:33:30 +0800
-Message-Id: <1455521613-27340-6-git-send-email-wxt@rock-chips.com>
-In-Reply-To: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
-References: <1455521613-27340-1-git-send-email-wxt@rock-chips.com>
+	"Gregory CLEMENT" <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH] clk: mvebu: Require corediv clock for Armada 38x
+Date: Wed, 10 Feb 2016 20:41:13 +0000
+Message-ID: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
+Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch renames to be more adapter compatibles since more and more
-SoCs are supported in thermal driver.
+The corediv clock driver is required for the pxa3xx_nand driver,
+but is not included in the ARMADA_38X_CLK config.  Add
+MVEBU_CLK_COREDIV as a dependency of ARMADA_38X_CLK.
 
-Reported-by: Huang,Tao <huangtao@rock-chips.com>
-Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+Without the corediv driver, nand initialization fails with the
+message:
+
+pxa3xx-nand f10d0000.flash: failed to get nand clock
+pxa3xx-nand f10d0000.flash: alloc nand resource failed
+
+With corediv enabled, flash is successfully detected.
+
+Signed-off-by: Kevin Smith <kevin.smith@elecsyscorp.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 ---
+ drivers/clk/mvebu/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
- drivers/thermal/rockchip_thermal.c | 50 +++++++++++++++++++++-----------------
- 1 file changed, 28 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchip_thermal.c
-index 5c58d48..9cdef62 100644
---- a/drivers/thermal/rockchip_thermal.c
-+++ b/drivers/thermal/rockchip_thermal.c
-@@ -58,8 +58,8 @@ enum sensor_id {
+diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
+index 2769625..1107056 100644
+--- a/drivers/clk/mvebu/Kconfig
++++ b/drivers/clk/mvebu/Kconfig
+@@ -20,6 +20,7 @@ config ARMADA_375_CLK
+ config ARMADA_38X_CLK
+ 	bool
+ 	select MVEBU_CLK_COMMON
++	select MVEBU_CLK_COREDIV
  
- /**
-  * The conversion table has the adc value and temperature.
-- * ADC_DECREMENT: the adc value is of diminishing.(e.g. v2_code_table)
-- * ADC_INCREMENT: the adc value is incremental.(e.g. v3_code_table)
-+ * ADC_DECREMENT: the adc value is of diminishing.(e.g. rk3288_code_table)
-+ * ADC_INCREMENT: the adc value is incremental.(e.g. rk3368_code_table)
-  */
- enum adc_sort_mode {
- 	ADC_DECREMENT = 0,
-@@ -135,7 +135,13 @@ struct rockchip_thermal_data {
- 	enum tshut_polarity tshut_polarity;
- };
- 
--/* TSADC Sensor info define: */
-+/**
-+ * TSADC Sensor Register description:
-+ *
-+ * TSADCV2_* are used for RK3288 SoCs, the other chips can reuse it.
-+ * TSADCV3_* are used for newer SoCs than RK3288. (e.g: RK3228, RK3399)
-+ *
-+ */
- #define TSADCV2_AUTO_CON			0x04
- #define TSADCV2_INT_EN				0x08
- #define TSADCV2_INT_PD				0x0c
-@@ -154,8 +160,8 @@ struct rockchip_thermal_data {
- #define TSADCV2_SHUT_2GPIO_SRC_EN(chn)		BIT(4 + (chn))
- #define TSADCV2_SHUT_2CRU_SRC_EN(chn)		BIT(8 + (chn))
- 
--#define TSADCV1_INT_PD_CLEAR_MASK		~BIT(16)
- #define TSADCV2_INT_PD_CLEAR_MASK		~BIT(8)
-+#define TSADCV3_INT_PD_CLEAR_MASK		~BIT(16)
- 
- #define TSADCV2_DATA_MASK			0xfff
- #define TSADCV3_DATA_MASK			0x3ff
-@@ -177,7 +183,7 @@ struct tsadc_table {
-  * linearly interpolated.
-  * Code to Temperature mapping should be updated based on sillcon results.
-  */
--static const struct tsadc_table v1_code_table[] = {
-+static const struct tsadc_table rk3228_code_table[] = {
- 	{TSADCV3_DATA_MASK, -40000},
- 	{436, -40000},
- 	{431, -35000},
-@@ -215,7 +221,7 @@ static const struct tsadc_table v1_code_table[] = {
- 	{264, 125000},
- };
- 
--static const struct tsadc_table v2_code_table[] = {
-+static const struct tsadc_table rk3288_code_table[] = {
- 	{TSADCV2_DATA_MASK, -40000},
- 	{3800, -40000},
- 	{3792, -35000},
-@@ -253,7 +259,7 @@ static const struct tsadc_table v2_code_table[] = {
- 	{3421, 125000},
- };
- 
--static const struct tsadc_table v3_code_table[] = {
-+static const struct tsadc_table rk3368_code_table[] = {
- 	{0, -40000},
- 	{106, -40000},
- 	{108, -35000},
-@@ -292,7 +298,7 @@ static const struct tsadc_table v3_code_table[] = {
- 	{TSADCV3_DATA_MASK, 125000},
- };
- 
--static const struct tsadc_table v4_code_table[] = {
-+static const struct tsadc_table rk3399_code_table[] = {
- 	{TSADCV3_DATA_MASK, -40000},
- 	{431, -40000},
- 	{426, -35000},
-@@ -453,20 +459,20 @@ static void rk_tsadcv2_initialize(void __iomem *regs,
- 		       regs + TSADCV2_HIGHT_TSHUT_DEBOUNCE);
- }
- 
--static void rk_tsadcv1_irq_ack(void __iomem *regs)
-+static void rk_tsadcv2_irq_ack(void __iomem *regs)
- {
- 	u32 val;
- 
- 	val = readl_relaxed(regs + TSADCV2_INT_PD);
--	writel_relaxed(val & TSADCV1_INT_PD_CLEAR_MASK, regs + TSADCV2_INT_PD);
-+	writel_relaxed(val & TSADCV2_INT_PD_CLEAR_MASK, regs + TSADCV2_INT_PD);
- }
- 
--static void rk_tsadcv2_irq_ack(void __iomem *regs)
-+static void rk_tsadcv3_irq_ack(void __iomem *regs)
- {
- 	u32 val;
- 
- 	val = readl_relaxed(regs + TSADCV2_INT_PD);
--	writel_relaxed(val & TSADCV2_INT_PD_CLEAR_MASK, regs + TSADCV2_INT_PD);
-+	writel_relaxed(val & TSADCV3_INT_PD_CLEAR_MASK, regs + TSADCV2_INT_PD);
- }
- 
- static void rk_tsadcv2_control(void __iomem *regs, bool enable)
-@@ -531,15 +537,15 @@ static const struct rockchip_tsadc_chip rk3228_tsadc_data = {
- 	.tshut_temp = 95000,
- 
- 	.initialize = rk_tsadcv2_initialize,
--	.irq_ack = rk_tsadcv1_irq_ack,
-+	.irq_ack = rk_tsadcv3_irq_ack,
- 	.control = rk_tsadcv2_control,
- 	.get_temp = rk_tsadcv2_get_temp,
- 	.set_tshut_temp = rk_tsadcv2_tshut_temp,
- 	.set_tshut_mode = rk_tsadcv2_tshut_mode,
- 
- 	.table = {
--		.id = v1_code_table,
--		.length = ARRAY_SIZE(v1_code_table),
-+		.id = rk3228_code_table,
-+		.length = ARRAY_SIZE(rk3228_code_table),
- 		.data_mask = TSADCV3_DATA_MASK,
- 		.mode = ADC_DECREMENT,
- 	},
-@@ -562,8 +568,8 @@ static const struct rockchip_tsadc_chip rk3288_tsadc_data = {
- 	.set_tshut_mode = rk_tsadcv2_tshut_mode,
- 
- 	.table = {
--		.id = v2_code_table,
--		.length = ARRAY_SIZE(v2_code_table),
-+		.id = rk3288_code_table,
-+		.length = ARRAY_SIZE(rk3288_code_table),
- 		.data_mask = TSADCV2_DATA_MASK,
- 		.mode = ADC_DECREMENT,
- 	},
-@@ -586,8 +592,8 @@ static const struct rockchip_tsadc_chip rk3368_tsadc_data = {
- 	.set_tshut_mode = rk_tsadcv2_tshut_mode,
- 
- 	.table = {
--		.id = v3_code_table,
--		.length = ARRAY_SIZE(v3_code_table),
-+		.id = rk3368_code_table,
-+		.length = ARRAY_SIZE(rk3368_code_table),
- 		.data_mask = TSADCV3_DATA_MASK,
- 		.mode = ADC_INCREMENT,
- 	},
-@@ -603,15 +609,15 @@ static const struct rockchip_tsadc_chip rk3399_tsadc_data = {
- 	.tshut_temp = 95000,
- 
- 	.initialize = rk_tsadcv2_initialize,
--	.irq_ack = rk_tsadcv1_irq_ack,
-+	.irq_ack = rk_tsadcv3_irq_ack,
- 	.control = rk_tsadcv2_control,
- 	.get_temp = rk_tsadcv2_get_temp,
- 	.set_tshut_temp = rk_tsadcv2_tshut_temp,
- 	.set_tshut_mode = rk_tsadcv2_tshut_mode,
- 
- 	.table = {
--		.id = v4_code_table,
--		.length = ARRAY_SIZE(v4_code_table),
-+		.id = rk3399_code_table,
-+		.length = ARRAY_SIZE(rk3399_code_table),
- 		.data_mask = TSADCV3_DATA_MASK,
- 		.mode = ADC_DECREMENT,
- 	},
+ config ARMADA_39X_CLK
+ 	bool
 -- 
-1.9.1
+2.4.6
