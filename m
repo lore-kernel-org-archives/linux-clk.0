@@ -1,35 +1,76 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Wed, 10 Feb 2016 22:28:21 +0100
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Kevin Smith <kevin.smith@elecsyscorp.com>
+Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ "Gregory CLEMENT" <gregory.clement@free-electrons.com>
+Subject: Re: [PATCH] clk: mvebu: Require corediv clock for Armada 38x
+Message-ID: <20160210222821.51cfd91f@free-electrons.com>
+In-Reply-To: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
+References: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1456419926-8732-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1456419926-8732-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-	<1456419926-8732-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-Date: Fri, 26 Feb 2016 09:25:16 +0100
-Message-ID: <CAMuHMdViEFQUsx42bx8g-OmX-CkxjT7XcPOE5LvQg6E3kgLK6Q@mail.gmail.com>
-Subject: Re: [PATCH 2/3] clk: shmobile: r8a7795: Add CANFD clock
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-renesas-soc@vger.kernel.org,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chris Paterson <chris.paterson2@renesas.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Feb 25, 2016 at 6:05 PM, Ramesh Shanmugasundaram
-<ramesh.shanmugasundaram@bp.renesas.com> wrote:
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Dear Kevin Smith,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, 10 Feb 2016 20:41:13 +0000, Kevin Smith wrote:
+> The corediv clock driver is required for the pxa3xx_nand driver,
+> but is not included in the ARMADA_38X_CLK config.  Add
+> MVEBU_CLK_COREDIV as a dependency of ARMADA_38X_CLK.
+> 
+> Without the corediv driver, nand initialization fails with the
+> message:
+> 
+> pxa3xx-nand f10d0000.flash: failed to get nand clock
+> pxa3xx-nand f10d0000.flash: alloc nand resource failed
+> 
+> With corediv enabled, flash is successfully detected.
+> 
+> Signed-off-by: Kevin Smith <kevin.smith@elecsyscorp.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> ---
+>  drivers/clk/mvebu/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
+> index 2769625..1107056 100644
+> --- a/drivers/clk/mvebu/Kconfig
+> +++ b/drivers/clk/mvebu/Kconfig
+> @@ -20,6 +20,7 @@ config ARMADA_375_CLK
+>  config ARMADA_38X_CLK
+>  	bool
+>  	select MVEBU_CLK_COMMON
+> +	select MVEBU_CLK_COREDIV
 
-Gr{oetje,eeting}s,
+Thanks for the patch!
 
-                        Geert
+I believe there are some more issues in this Kconfig file:
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ - The ARMADA_XP_CLK option selects MVEBU_CLK_COREDIV but there is no
+   corediv clock on Armada XP.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+ - The ARMADA_375_CLK should also select MVEBU_CLK_COREDIV.
+
+However, technically speaking, building ARMADA_38X_CLK or
+ARMADA_375_CLK does not require building clk-corediv.c, it only needs
+common.c. So maybe instead we should change arch/arm/mach-mvebu/Kconfig
+to have MACH_ARMADA_xxx select MVEBU_CLK_COREDIV when needed.
+
+But maybe I'm being overly pedantic here, and your solution is good
+enough. I don't have a strong opinion on this.
+
+But if we go with your solution, then I'd like to fix the Armada XP and
+Armada 375 cases as well.
+
+Thanks!
+
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
