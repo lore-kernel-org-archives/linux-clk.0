@@ -1,254 +1,61 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Martin Sperl <kernel@martin.sperl.org>,
- "Stefan Wahren" <stefan.wahren@i2se.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <F7B22AC0-58A7-431D-B203-0C7A9802A040@martin.sperl.org>
-Cc: linux-serial@vger.kernel.org, "linux-clk" <linux-clk@vger.kernel.org>,
- "Eric Anholt" <eric@anholt.net>,
- "linux-rpi-kernel" <linux-rpi-kernel@lists.infradead.org>,
- linux-arm-kernel@lists.infradead.org
-References: <A5F427B7-9B78-4892-9722-69418C4D0C10@martin.sperl.org>
- <56BC895E.2010108@sperl.org>
- <1617009200.323700.219000a8-c162-4594-aacc-a7e9894518b2.open-xchange@email.1und1.de>
- <662D2FB2-B088-4CFC-8416-A4F35BBAD7DD@sperl.org>
- <F7A2533A-D64C-4187-ABD4-416C446D1637@martin.sperl.org>
- <6CD3FC59-BA17-43D9-897C-A2D122D26EF8@martin.sperl.org>
- <470852136.382408.76a8faee-9235-4ee0-9fd1-e25a1e9f0bb3.open-xchange@email.1und1.de>
- <F7B22AC0-58A7-431D-B203-0C7A9802A040@martin.sperl.org>
-Message-ID: <20160216185737.2278.60129@quark.deferred.io>
-Subject: Re: serial: clk: bcm2835: Strange effects when using aux-uart in console
-Date: Tue, 16 Feb 2016 10:57:37 -0800
+Return-Path: <slemieux.tyco@gmail.com>
+Return-Path: <slemieux.tyco@gmail.com>
+Subject: Re: [PATCH 2/2] dt-bindings: clock: add lpc32xx clock frequency
+ output
+From: Sylvain Lemieux <slemieux.tyco@gmail.com>
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: robh+dt@kernel.org, sboyd@codeaurora.org, mturquette@baylibre.com,
+ stigge@antcom.de, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+In-Reply-To: <56BA7EE9.8040703@mleia.com>
+References: <1455043670-19025-2-git-send-email-slemieux.tyco@gmail.com>
+	 <56BA7EE9.8040703@mleia.com>
+Content-Type: text/plain; charset="UTF-8"
+Date: Wed, 10 Feb 2016 12:21:41 -0500
+Message-ID: <1455124901.14667.3.camel@localhost>
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Martin & Stefan,
+On Wed, 2016-02-10 at 02:06 +0200, Vladimir Zapolskiy wrote:
+> Hi Sylvain,
+> 
+> On 09.02.2016 20:47, slemieux.tyco@gmail.com wrote:
+> > From: Sylvain Lemieux <slemieux@tycoint.com>
+> > 
+> > This patch add an optional parameter to setup the
+> > xtal clock frequency output.
+> > 
+> > Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
+> > ---
+> >  Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
+> > index 20cbca3..ce51759 100644
+> > --- a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
+> > +++ b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
+> > @@ -10,6 +10,9 @@ Required properties:
+> >  - clock-names: list of external oscillator clock names, must contain
+> >    "xtal_32k" and may have optional "xtal"
+> >  
+> > +Optional properties:
+> > +- xtal,clock-output-frequency: define the "xtal" clock frequency output in Hz
+> > +
+> 
+> this one looks wrong in sense that from patch 1/2 the property configures
+> a PLL output clock rate, which is not an oscillator (xtal) clock rate.
+> 
+> I believe switching to "assigned-clock-rates" should make this change
+> obsolete.
+> 
+Agreed, this change is not needed;
 
-Quoting Martin Sperl (2016-02-13 03:24:43)
-> =
+Sylvain
 
-> > On 13.02.2016, at 11:01, Stefan Wahren <stefan.wahren@i2se.com> wrote:
-> > =
-
-> > Hi Martin,
-> > =
-
-> >> Martin Sperl <kernel@martin.sperl.org> hat am 12. Februar 2016 um 20:44
-> >> geschrieben:
-> >> =
-
-> >> So the issue is triggered as soon as the plld_per
-> >> pll divider gets disabled/reenabled.
-> >> =
-
-> >> This happens because the clk_hw.core.prepare_count
-> >> drops down to 0 and then unprepare is called.
-> >> =
-
-> >> So we need to increase the ref-count for the pll
-> >> and pll_dividers to at least 1 so that these never
-> >> get disabled - at least for now until we can come
-> >> up with a better contract with the firmware.
-> >> =
-
-> >> Obviously this may impact other drivers as well
-> >> where a pll is used for the first time - if nothing
-> >> else uses it and the clock gets released, then
-> >> the clock would trigger a unprepare of the whole
-> >> branch of the clock tree.
-> >> =
-
-> >> The question is: how can we solve it in an acceptable
-> >> manner?
-> >> =
-
-> >> Do we need a driver that just holds a reference to
-> >> those clocks? Or should we just prepare the clock
-> >> after registering it in clk-bcm2835.c?
-> >> =
-
-> >> As for why does this not show up when compiled in?
-> >> It seems that in that case the amba_pl011 driver
-> >> never gets removed and then probed again.
-> >> =
-
-> >> This is possibly related to the optional use of DMA,
-> >> with the amba-pl011 driver that retries the install,
-> >> which is not supported on the bcm2835 - at least that
-> >> is what the datasheet says. And DMA is (probably) not
-> >> enabled during the early boot stages, so it does not
-> >> fail once when it tries to register DMA.
-> >> =
-
-> >> Thanks,
-> >> Martin
-> >> =
-
-> > =
-
-> > i think i must correct myself. The fixed apb should stay since there is=
- no
-> > dynamic replacement and a proper disabling of plld shouldn't cause this=
- freeze.
-> > =
-
-> > I have the suspicion the freeze is caused by a clock glitch or lock-up.
-> > =
-
-> > Could you please revert your changes and apply the attached patch? Mayb=
-e we can
-> > see more.
-> =
-
-> I will give it a try.
-> =
-
-> But to me it seems as if the disabling of PLLD produces a hickup in the =
-
-> firmware (which relies on PLLD-DIV and thus PLL).
-> =
-
-> This would also explain the 3-4 second bar/blanking pattern seen on HDMI,
-> which I would guess is related to a reset loop...
-> =
-
-> I got a simple fix for now, that just prepares a few clocks/pll/pll_divs
-> during probing, so that they will never get unprepared/fully stopped):
-> =
-
-> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-> index 015e687..fe0c401 100644
-> --- a/drivers/clk/bcm/clk-bcm2835.c
-> +++ b/drivers/clk/bcm/clk-bcm2835.c
-> @@ -37,6 +37,7 @@
->   * generator).
->   */
-> =
-
-> +#include <linux/clk.h>
->  #include <linux/clk-provider.h>
->  #include <linux/clkdev.h>
->  #include <linux/clk/bcm2835.h>
-> @@ -1504,6 +1505,7 @@ static int bcm2835_clk_probe(struct platform_device=
- *pdev)
->         struct clk **clks;
->         struct bcm2835_cprman *cprman;
->         struct resource *res;
-> +       int ret;
-> =
-
->         cprman =3D devm_kzalloc(dev, sizeof(*cprman), GFP_KERNEL);
->         if (!cprman)
-> @@ -1597,6 +1599,37 @@ static int bcm2835_clk_probe(struct platform_devic=
-e *pdev
->         clks[BCM2835_CLOCK_PWM] =3D
->                 bcm2835_register_clock(cprman, &bcm2835_clock_pwm_data);
-> =
-
-> +       /*
-> +        * Several PLLs, PLL-dividers and clocks need to get prepared
-> +        * so that they are never unprepared and released.
-> +        * We run this separately as there may be dependencies that would
-> +        * need to be fullfilled first...
-> +        * Note: Especially unpreparing PLLD_PER will kill the system
-> +        *       (even if it is prepared again almost immediately
-> +        *        the HDMI display will fail)
-> +        */
-> +#define CLK_PREPARE_INITIAL(clkid)                                     \
-> +       if (clks[clkid] && (ret =3D clk_prepare(clks[clkid])))           =
- \
-> +               dev_err(dev, "could not prepare clock %pC - %d\n",      \
-> +                       clks[clkid], ret);
-
-You should not only prepare the clock, but enable it as well, even if
-your .enable callback is no-op. s/clk_prepare/clk_prepare_enable/ should
-do it. But instead of all of this stuff below...
-
-> +       CLK_PREPARE_INITIAL(BCM2835_PLLA);
-> +       CLK_PREPARE_INITIAL(BCM2835_PLLB);
-> +       CLK_PREPARE_INITIAL(BCM2835_PLLC);
-> +       CLK_PREPARE_INITIAL(BCM2835_PLLD);
-> +       CLK_PREPARE_INITIAL(BCM2835_PLLH);
-> +       CLK_PREPARE_INITIAL(BCM2835_PLLA_CORE);
-> +       CLK_PREPARE_INITIAL(BCM2835_PLLA_PER);
-> +       CLK_PREPARE_INITIAL(BCM2835_PLLC_CORE0);
-> +       CLK_PREPARE_INITIAL(BCM2835_PLLC_CORE1);
-> +       CLK_PREPARE_INITIAL(BCM2835_PLLC_CORE2);
-> +       CLK_PREPARE_INITIAL(BCM2835_PLLC_PER);
-> +       CLK_PREPARE_INITIAL(BCM2835_PLLD_CORE);
-> +       CLK_PREPARE_INITIAL(BCM2835_PLLD_PER);
-> +       CLK_PREPARE_INITIAL(BCM2835_PLLH_RCAL);
-> +       CLK_PREPARE_INITIAL(BCM2835_PLLH_AUX);
-> +       CLK_PREPARE_INITIAL(BCM2835_PLLH_PIX);
-> +       CLK_PREPARE_INITIAL(BCM2835_CLOCK_VPU);
-
-... how about using the shiny new HAND_OFF clocks feature? See:
-
-http://lkml.kernel.org/r/<1455225554-13267-1-git-send-email-mturquette@bayl=
-ibre.com>
-
-It seems like you need clocks to remain enabled from the time they are
-registered until a clk consumer driver claims them and Does The Right
-Thing. (e.g. only gates them when it is safe to do so, such as display
-being turned off by user).
-
-Let me know if those patches will help you. The first three patches in
-the series introduce CRITICAL clocks, which never gate. Patches 4-6 are
-a solution that I prefer, allowing the clocks to remain enabled by the
-bootloader, and only gated later on when a consumer driver claims them.
-No changes to clock consumer drivers are required, the framework handles
-the transition of reference counts and the clock provider driver only
-has to set the CLK_ENABLE_HAND_OFF flag for the affected clocks.
-
-Regards,
-Mike
-
-> +
->         return of_clk_add_provider(dev->of_node, of_clk_src_onecell_get,
->                                    &cprman->onecell);
->  }
-> =
-
-> And that resolves the issue and also allows loading/unloading of the
-> amba-pl011 module as well without any hickups.
-> =
-
-> I guess it would be better if we did make this configurable in the DT.
-> (See patch 1 of my RFC patchset, which could get extended to handle this
-> as well - at least a portion thereof).
-> =
-
-> But in more general terms: we need to come up with some agreement
-> on ownership of the clocks between linux and the firmware and how
-> to change them without impacting the other. =
-
-> =
-
-> One example is the =E2=80=9Coverclocking=E2=80=9D that currently happens =
-for
-> downstream kernels in the firmware, which impacts some of the
-> plls and PLLdivs as well as the sram control registers.
-> =
-
-> The reason for this seems to be that for overclocking the SRAM
-> parameters also need to get changed and that can only get done
-> reliably when running the code from L1/L2 caches - and that
-> requirement of not touching SRAM while changing the SRAM parameters
-> is probably hard to achieve cleanly on ARM alone.
-> =
-
-> Ciao,
->         Martin
-> =
-
-> P.s: unloading amba_pl011 gives the following error:
-> root@raspcm:~# rmmod amba_pl011
-> [  142.318263] Trying to free nonexistent resource <0000000020201000-0000=
-000020201fff>
-> but that is an issue not related to clock...
-> =
-
+> >  Examples:
+> >  
+> >  	/* System Control Block */
+> > 
+> 
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> With best wishes,
+> Vladimir
