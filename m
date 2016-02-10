@@ -1,167 +1,137 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.130]:49714 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753197AbcBJRVv (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2016 12:21:51 -0500
+Subject: Re: serial: clk: bcm2835: Strange effects when using aux-uart in
+ console
+To: Martin Sperl <kernel@martin.sperl.org>
+References: <A5F427B7-9B78-4892-9722-69418C4D0C10@martin.sperl.org>
+Cc: linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
+	linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Eric Anholt <eric@anholt.net>
+From: Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <56BB719B.8070007@i2se.com>
+Date: Wed, 10 Feb 2016 18:21:31 +0100
 MIME-Version: 1.0
-To: Tony Lindgren <tony@atomide.com>, "Stephen Boyd" <sboyd@codeaurora.org>,
- "Tero Kristo" <t-kristo@ti.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1455312009-808-3-git-send-email-tony@atomide.com>
-Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- "Brian Hutchinson" <b.hutchman@gmail.com>,
- "Delio Brignoli" <dbrignoli@audioscience.com>,
- "Neil Armstrong" <narmstrong@baylibre.com>,
- "Matthijs van Duin" <matthijsvanduin@gmail.com>,
- "Philipp Rosenberger" <ilu@linutronix.de>,
- "Russell King - ARM Linux" <linux@arm.linux.org.uk>
-References: <1455312009-808-1-git-send-email-tony@atomide.com>
- <1455312009-808-3-git-send-email-tony@atomide.com>
-Message-ID: <20160217011930.2278.38316@quark.deferred.io>
-Subject: Re: [PATCH 2/2] clk: ti: Add support for dm814x ADPLL
-Date: Tue, 16 Feb 2016 17:19:30 -0800
+In-Reply-To: <A5F427B7-9B78-4892-9722-69418C4D0C10@martin.sperl.org>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Tony,
+Hi,
 
-Quoting Tony Lindgren (2016-02-12 13:20:09)
-> On dm814x we have 13 ADPLLs with 3 to 4 outputs on each. The
-> ADPLLs have several dividers and muxes controlled by a shared
-> control register for each PLL.
-> =
+Am 10.02.2016 um 16:12 schrieb Martin Sperl:
+> Hi!
+>
+> I got a strange effect when using the auxiliar UART as the logging console:
+>
+> The kernel is configured for drivers/tty/serial/8250/8250_bcm2835aux.c to
+> get linked into the main kernel (requires also 8250.c to be linked in).
+>
+> As long as I boot using the main UART (PL011) in the kernel parameters:
+>   earlyprintk consoleblank=0 console=ttyAMA0 root=/dev/mmcblk0p2 rootwait
+>
+> Everything works fine - early_printk works and normal logging works as well.
+> Both configured ttys (/dev/ttyAMA0 and /dev/ttyS0) in /etc/initttab
+> work fine.
+>
+> Now when I switch the console to use the auxiliar UART
+> (which right now does not support early_printk) like this:
+>   earlyprintk consoleblank=0 console=ttyS0,115200n1 root=/dev/mmcblk0p2 rootwait
+>
+> I get the situation where:
+> * u-boot starts and writes to the main UART
+> * Kernel boots using early_printk logging to the main UART until we get to:
+>   [    2.657090] bootconsole [earlycon0] disabled
+> * then we see the earlyprintk buffer dumped on the aux-uart
+> * then booting continues and logging happens on the aux-uart:
+>   [    2.657090] bootconsole [earlycon0] disabled
+>   [    2.662673] 20201000.serial: ttyAMA0 at MMIO 0x20201000 (irq = 81, base_baud = 0) is a PL011 rev2
+>   [    2.663793] console [ttyS0] disabled
+>   [    2.663899] 20215040.serial: ttyS0 at MMIO 0x0 (irq = 53, base_baud = 31224999) is a 16550
+>   [    3.384166] console [ttyS0] enabled
+> * everything works fine and I get networking and everything up
+>   [....] Starting NTP server: ntpd. ok
+>   [....] Starting OpenBSD Secure Shell server: sshd. ok
+>   My IP address is 10.10.10.41 ::127.0.0.1
+>
+>   Raspbian GNU/Linux 7 raspcm.intern.sperl.org ttyS0
+> * I can even log in via SSH and networking works.
+>   Note that I have the getty for ttyAMA0 disabled in inittab
+> * when I then enable the tty on the main UART like this:
+>   root@raspcm:~# /sbin/getty -a root -L ttyAMA0 115200 vt100
+> * I get the following:
+>   [   72.962845] uart-pl011 20201000.serial: no DMA platform data
+> * the system freezes…
+> * sometimes I still get the following on the auxiliar UART before the system “crashes":
+>   (at least when starting the tty from inittab)
+>   [   73.072985] bcm2835-clk 20101000.cprman: plld: couldn't lock PLL
+>   [   73.079132] ------------[ cut here ]------------
+>   [   73.083848] WARNING: CPU: 0 PID: 2329 at drivers/clk/clk.c:680 clk_core_disable+0x34/0xf0()
+>   [   73.093067] ---[ end trace 416e78cea88f5fb5 ]---
+>   [   73.097848] ------------[ cut here ]------------
+>   [   73.102616] WARNING: CPU: 0 PID: 2329 at drivers/clk/clk.c:575 clk_core_unprepare+0x34/0x110()
+>   [   73.112219] ---[ end trace 416e78cea88f5fb6 ]---
+>
+> A similar effect I get when using stty: 
+>   root@raspcm:~# stty -F /dev/ttyAMA0
+>   [  128.878127] uart-pl011 20201000.serial: no DMA platform data
+>   speed 9600 baud; line = 0;
+>   -brkint -imaxbel
+> Then the system freezes.
+>
+> As if the plld does not lock - even if it (probably) is already locked.
+>
+> Or the message actually comes from bcm2835_clock_wait_busy which also
+> produces this message - so maybe we should better identify the message.
+>
+> Note that the same also applies if I remove earlyprintk with
+> the only difference being that I do not get the initial boot
+> messages on the main UART.
+> (at that time only: "Uncompressing Linux... done, booting the kernel.”
+> shows on the main uart after u-boot start..)
+>
+> Unfortunately it is only possible to really test this on a
+> rpi-Compute module, as only there we can expose both uarts
+> on distinct GPIOs at the same time:
+>   GPIO 14: level=1 fsel=4 alt=0 func=TXD0
+>   GPIO 15: level=1 fsel=4 alt=0 func=RXD0
+>   GPIO 32: level=1 fsel=2 alt=5 func=TXD1
+>   GPIO 33: level=1 fsel=2 alt=5 func=RXD1
+>
+> Here the commits I have used based on spi/for-next (based on 4.4.0)
+> with the patches (* prefix) for the driver for aux-uart
+> added separately as they are not in the tree I have used:
+> * a96f6c7 serial: bcm2835: add driver for bcm2835-aux-uart
+> * 464e876 clk: bcm2835: Add bindings for the auxiliary peripheral clock gates.
+> * 1af1b28 clk: bcm2835: Add a driver for the auxiliary peripheral clock gates.
+> ece19b8 Merge remote-tracking branch 'spi/fix/loopback' into spi-linus
+> 887e6a3 Merge tag 'spi-v4.5' into spi-linus
+> ebea7c0 spi: fix counting in spi-loopback-test code
+> cabeea9 Merge remote-tracking branches 'spi/topic/sun4i', 'spi/topic/topcliff-pc
+> 4f95307 Merge remote-tracking branches 'spi/topic/overlay', 'spi/topic/pxa2xx',
+> 41d5a70 Merge remote-tracking branches 'spi/topic/lm70llp', 'spi/topic/loopback'
+> 635b9b2 Merge remote-tracking branches 'spi/topic/dw', 'spi/topic/dw-mid', 'spi/
+> 3c27892 Merge remote-tracking branches 'spi/topic/bcm63xx', 'spi/topic/butterfly
+> 9b17e80 Merge remote-tracking branch 'spi/topic/sunxi' into spi-next
+> 174c211 Merge remote-tracking branch 'spi/topic/core' into spi-next
+> f30f072 Merge remote-tracking branch 'spi/fix/mtk' into spi-linus
+> afd2ff9 Linux 4.4
+>
+> Maybe someone has gotten any idea?
 
-> Note that for the clocks to work as device drivers for booting on
-> dm814x, this patch depends on "ARM: OMAP2+: Change core_initcall
-> levels to postcore_initcall".
-> =
+this sounds like an issue i had with the compute module here:
 
-> Also note that this patch does not implement clk_set_rate for the
-> PLL, that will be posted later on when available.
-> =
+http://permalink.gmane.org/gmane.linux.kernel.rpi/2197
 
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Acked-by: Tero Kristo <t-kristo@ti.com>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> ---
-> =
+Unfortunately i don't have the cm anymore.
 
-> Changes since v4:
-> =
+Maybe you can try this downstream patch:
 
-> - Removed ti_adpll_clkout_set_parent() as requested by Tero for his
->   conditional ack
-> =
+https://github.com/raspberrypi/linux/commit/09041f7ccbd1cde792edae91c41266886d5d1382
 
-> - Split the device tree binding into a separate patch as requested
->   by Mike for his conditional ack of the binding
+Regards
 
-Just to make life fun for you, the clk tree is once more merging DT
-bindings descriptions and headers. You don't need to merge the patches,
-it doesn't matter to me, but just as a heads up for the future.
 
-> =
-
-> - Updated dts patch comments about dynamically generated names as
->   suggested by Tero.
-> =
-
-> - Fixed a compiler warning for do_div
-> =
-
-> =
-
->  drivers/clk/Kconfig       |   1 +
->  drivers/clk/ti/Kconfig    |   6 +
->  drivers/clk/ti/Makefile   |   2 +
->  drivers/clk/ti/adpll.c    | 983 ++++++++++++++++++++++++++++++++++++++++=
-++++++
->  drivers/clk/ti/clk-814x.c |  53 +++
->  5 files changed, 1045 insertions(+)
->  create mode 100644 drivers/clk/ti/Kconfig
->  create mode 100644 drivers/clk/ti/adpll.c
-> =
-
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index eca8e01..0b7364a 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -202,6 +202,7 @@ config COMMON_CLK_CDCE706
->  =
-
->  source "drivers/clk/bcm/Kconfig"
->  source "drivers/clk/hisilicon/Kconfig"
-> +source "drivers/clk/ti/Kconfig"
->  source "drivers/clk/qcom/Kconfig"
->  =
-
->  endmenu
-> diff --git a/drivers/clk/ti/Kconfig b/drivers/clk/ti/Kconfig
-> new file mode 100644
-> index 0000000..a9d5474
-> --- /dev/null
-> +++ b/drivers/clk/ti/Kconfig
-> @@ -0,0 +1,6 @@
-> +config COMMON_CLK_TI_ADPLL
-> +       tristate "Clock driver for dm814x ADPLL"
-> +       depends on ARCH_OMAP2PLUS
-> +       default y if SOC_TI81XX
-
-Can we add COMPILE_TEST here?
-
-...
-> +static int ti_adpll_init_inputs(struct ti_adpll_data *d)
-> +{
-> +       const char *error =3D "need at least %i inputs";
-> +       struct clk *clock;
-> +       int nr_inputs;
-> +
-> +       nr_inputs =3D of_clk_get_parent_count(d->np);
-> +       if (nr_inputs < d->c->nr_max_inputs) {
-> +               dev_err(d->dev, error, nr_inputs);
-> +               return -EINVAL;
-> +       }
-> +       of_clk_parent_fill(d->np, d->parent_names, nr_inputs);
-> +
-> +       clock =3D devm_clk_get(d->dev, d->parent_names[0]);
-> +       if (IS_ERR(clock)) {
-> +               dev_err(d->dev, "could not get clkinp\n");
-> +               return PTR_ERR(clock);
-> +       }
-> +       d->parent_clocks[TI_ADPLL_CLKINP] =3D clock;
-> +
-> +       clock =3D devm_clk_get(d->dev, d->parent_names[1]);
-> +       if (IS_ERR(clock)) {
-> +               dev_err(d->dev, "could not get clkinpulow clock\n");
-> +               return PTR_ERR(clock);
-> +       }
-> +       d->parent_clocks[TI_ADPLL_CLKINPULOW] =3D clock;
-
-Are the clock parents known at compile-time? Can we just put that data
-in C instead of whatever is going on here?
-
-...
-> +int __init dm814x_adpll_enable_init_clocks(void)
-> +{
-> +       int i, err;
-> +
-> +       if (!timer_clocks_initialized)
-> +               return -ENODEV;
-> +
-> +       for (i =3D 0; i < ARRAY_SIZE(init_clocks); i++) {
-> +               struct clk *clock;
-> +
-> +               clock =3D clk_get(NULL, init_clocks[i]);
-> +               if (WARN(IS_ERR(clock), "could not find init clock %s\n",
-> +                        init_clocks[i]))
-> +                       continue;
-> +               err =3D clk_prepare_enable(clock);
-> +               if (WARN(err, "could not enable init clock %s\n",
-> +                        init_clocks[i]))
-> +                       continue;
-
-We have a shiny new series that provides a standard way to do this:
-
-http://lkml.kernel.org/r/<1455225554-13267-1-git-send-email-mturquette@bayl=
-ibre.com>
-
-Regards,
-Mike
