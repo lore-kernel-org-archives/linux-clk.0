@@ -1,52 +1,45 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <mark.rutland@arm.com>
+Date: Wed, 10 Feb 2016 18:41:12 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Andre Przywara <andre.przywara@arm.com>, Chen-Yu Tsai <wens@csie.org>,
+	Jean-Francois Moine <moinejf@free.fr>,
+	Vishnu Patekar <vishnupatekar0510@gmail.com>,
+	Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 4/6] clk: bcm2835: divider value has to be 1 or more
-Date: Mon, 29 Feb 2016 11:39:20 +0000
-Message-Id: <1456745963-2403-5-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org>
-References: <1456745963-2403-1-git-send-email-kernel@martin.sperl.org>
+	Hans de Goede <hdegoede@redhat.com>,
+	Jens Kuske <jenskuske@gmail.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Rob Herring <rob.herring@linaro.org>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Grant Likely <grant.likely@linaro.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4] clk: sunxi: Refactor A31 PLL6 so that it can be reused
+Message-ID: <20160210184112.GC28728@leverpostej>
+References: <1454358000-13594-1-git-send-email-maxime.ripard@free-electrons.com>
+ <56B4E2FB.3050703@arm.com>
+ <20160210125936.GD31506@lukather>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20160210125936.GD31506@lukather>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+On Wed, Feb 10, 2016 at 01:59:36PM +0100, Maxime Ripard wrote:
+> > Also this totally ignores any other DT user (U-Boot, FreeBSD, you
+> > name it).
+> 
+> Which all have their own DT copies, with their own bindings, that we
+> (ie Linux) never agreed on.
 
-Current clamping of a normal divider allows a value < 1 to be valid.
+The FreeBSD guys are actually trying to align with the Linux DTs, which
+they periodically import (at least for arm64). From everything I've seen
+the U-Boot guys generally want to align with Linux, and have been
+attempting to some extent to do so (e.g. submitting bindings).
 
-A divider of < 1 would actually only be possible if we had a PLL...
+So if anything, Linux DTs are being used by others who didn't have much
+say on them, rather than the other way around.
 
-So this patch clamps the divider to 1.
+Regardless, the existece of fragmentation is not a good argument for
+more fragmentation.
 
-Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the
-audio domain clocks")
-
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
----
- drivers/clk/bcm/clk-bcm2835.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 1fbb55d..edb1f74 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1194,8 +1194,9 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
- 		div += unused_frac_mask + 1;
- 	div &= ~unused_frac_mask;
-
--	/* Clamp to the limits. */
--	div = max(div, unused_frac_mask + 1);
-+	/* clamp to min divider of 1 */
-+	div = max_t(u32, div, 1 << CM_DIV_FRAC_BITS);
-+	/* clamp to the highest possible fractional divider */
- 	div = min_t(u32, div, GENMASK(data->int_bits + CM_DIV_FRAC_BITS - 1,
- 				      CM_DIV_FRAC_BITS - data->frac_bits));
-
---
-1.7.10.4
+Thanks,
+Mark.
