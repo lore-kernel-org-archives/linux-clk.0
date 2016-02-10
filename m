@@ -1,97 +1,37 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1455872150-7632-1-git-send-email-geert+renesas@glider.be>
-Cc: "Simon Horman" <horms@verge.net.au>, "Magnus Damm" <magnus.damm@gmail.com>,
- "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
- linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- "Geert Uytterhoeven" <geert+renesas@glider.be>
-References: <1455872150-7632-1-git-send-email-geert+renesas@glider.be>
-Message-ID: <20160219201829.2278.41674@quark.deferred.io>
-Subject: Re: [git pull] clk: shmobile: Updates for v4.6
-Date: Fri, 19 Feb 2016 12:18:29 -0800
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Lars Persson <lars.persson@axis.com>
+To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	linux-kernel@vger.kernel.org, Lars Persson <larper@axis.com>
+Subject: [PATCH 7/8] arm: multi_v7_defconfig: add MACH_ARTPEC6
+Date: Wed, 10 Feb 2016 13:41:56 +0100
+Message-Id: <36d8a6a0236e08bc7286085018e2fa7a67691b39.1455107681.git.larper@axis.com>
+In-Reply-To: <cover.1455107681.git.larper@axis.com>
+References: <cover.1455107681.git.larper@axis.com>
+In-Reply-To: <cover.1455107681.git.larper@axis.com>
+References: <cover.1455107681.git.larper@axis.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Geert Uytterhoeven (2016-02-19 00:55:50)
->         Hi Mike, Stephen,
-> =
+Signed-off-by: Lars Persson <larper@axis.com>
+---
+ arch/arm/configs/multi_v7_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f0=
-8d:
-> =
-
->   Linux 4.5-rc1 (2016-01-24 13:06:47 -0800)
-> =
-
-> are available in the git repository at:
-> =
-
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- clk-shmobile-for-v4.6
-
-Pulled.
-
-Regards,
-Mike
-
-> =
-
-> for you to fetch changes up to f099aa075749c6fadb79554ce175fbdc31c45d7a:
-> =
-
->   clk: shmobile: r8a7795: Add INTC-EX clock (2016-02-18 09:01:46 +0100)
-> =
-
-> Summary:
->   - Add more module clocks for R-Car H3,
->   - Update example in DT bindings.
-> =
-
-> Thanks for pulling!
-> =
-
-> ----------------------------------------------------------------
-> Dirk Behme (1):
->       clk: shmobile: r8a7795: Add SD divider support
-> =
-
-> Geert Uytterhoeven (1):
->       clk: shmobile: cpg-mssr: Update serial port clock in example
-> =
-
-> Magnus Damm (1):
->       clk: shmobile: r8a7795: Add INTC-EX clock
-> =
-
-> Yoshihiro Shimoda (2):
->       clk: shmobile: r8a7795: Add USB3.0 clocks
->       clk: shmobile: r8a7795: Add USB-DMAC clocks
-> =
-
->  .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   2 +-
->  drivers/clk/shmobile/r8a7795-cpg-mssr.c            | 235 +++++++++++++++=
-++++++
->  drivers/clk/shmobile/renesas-cpg-mssr.h            |   2 +
->  3 files changed, 238 insertions(+), 1 deletion(-)
-> =
-
-> Gr{oetje,eeting}s,
-> =
-
->                                                 Geert
-> =
-
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
-> =
-
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                                             -- Linus Torv=
-alds
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 8e8b2ac..bf3840e 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -16,6 +16,8 @@ CONFIG_ARCH_MULTI_V7=y
+ # CONFIG_ARCH_MULTI_V4 is not set
+ CONFIG_ARCH_VIRT=y
+ CONFIG_ARCH_ALPINE=y
++CONFIG_ARCH_ARTPEC=y
++CONFIG_MACH_ARTPEC6=y
+ CONFIG_ARCH_MVEBU=y
+ CONFIG_MACH_ARMADA_370=y
+ CONFIG_MACH_ARMADA_375=y
+-- 
+2.1.4
