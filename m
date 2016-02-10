@@ -1,65 +1,48 @@
-Return-Path: <manabian@gmail.com>
-Return-Path: <manabian@gmail.com>
-From: Joachim Eastwood <manabian@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: Joachim Eastwood <manabian@gmail.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v4 0/2] CREG clk driver for NXP LPC18xx family
-Date: Wed, 24 Feb 2016 23:04:18 +0100
-Message-Id: <1456351460-15483-1-git-send-email-manabian@gmail.com>
+Return-Path: <moinejf@free.fr>
+Date: Wed, 10 Feb 2016 18:04:20 +0100
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Jens Kuske <jenskuske@gmail.com>,
+ Vishnu Patekar <vishnupatekar0510@gmail.com>, Hans de Goede
+ <hdegoede@redhat.com>, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4] clk: sunxi: Refactor A31 PLL6 so that it can be
+ reused
+Message-Id: <20160210180420.0968c2018bf5fbe54a28a505@free.fr>
+In-Reply-To: <20160210125333.GC31506@lukather>
+References: <1454358000-13594-1-git-send-email-maxime.ripard@free-electrons.com>
+	<20160204120507.GC4270@lukather>
+	<20160204162545.f806fcb64a826d2c3313985b@free.fr>
+	<20160210125333.GC31506@lukather>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch set adds a clk driver for the low power clocks found in
-the CREG block on lpc18xx. CREG is a collection of miscellaneous
-configuration registers that can be accessed through a syscon
-regmap interface. The clk driver makes it possible to setup and
-enabled these two clocks.
+On Wed, 10 Feb 2016 13:53:33 +0100
+Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
 
-This need to support peripherals like the internal RTC on the
-lpc18xx platform.
+> > I don't agree:
+> > - you changed the DTs of many SoCs without any valid reason,
+>=20
+> I did give you a significant number of reasons [1]. The fact that you
+> chose to ignore them is up to you.
 
-The driver has one early init using CLK_OF_DECLARE and a standard
-platform driver. The early init is used to register the 32KHZ clk
-which may be needed early on. The other clock (1KHZ) is registered
-when the platform driver probe runs.
+Sorry, I don't see any reason for changing the DT definition of the pll6.
+The clock is named "pll6" with "#clock-cells =3D <1>;" in all DTs,
+and it works as it is.
+If you want an other clock as "pll8", with the same HW description,
+you must add new code for this clock.
 
-This version splits clk array into clk_creg_early and clk_creg. I
-think this will work as long as clk_creg_early is _not_ used after
-the clk_creg is registered.
+> Except that it doesn't match the hardware and that the parenthood
+> relationship is inversed. The pll6 output is 24 MHz * n * k / 2, as
+> seen in any datasheet that uses it. Your clock driver doesn't
+> represent that fact.
 
-This seems to work, but I currently don't have a setup that requires
-the 32khz clock early so that part isn't really tested.
+The datasheet says that the pll6x2 output is 24 MHz * n * k, then, if
+I remember correctly my lessons at primary school, defining pll6 as
+(pll6x2 / 2) gives 24 MHz * n * k / 2 as the pll6 output. No?
 
-The probe deferral seems to work for the RTC:
-[    3.386861] lpc24xx-rtc 40046000.rtc: error getting rtc clock
-[    6.737615] lpc24xx-rtc 40046000.rtc: rtc core: registered lpc24xx-rtc as rtc0
-
-
-Changes since v3:
- - Add .is_enabled function to both creg clks.
- - Remove unit address from bindings as requested by Rob Herring.
-
-Changes since v2:
- - Use two clk arrays for registration.
- - Couple of minor cleanups.
-
-Changes since v1:
- - Split driver with one early init and one platform driver
-   probe.
- - Rebase on v4.5-rc1.
-
-Joachim Eastwood (2):
-  clk: add lpc18xx creg clk driver
-  doc: dt: add documentation for lpc1850-creg-clk driver
-
- .../devicetree/bindings/clock/lpc1850-creg-clk.txt |  52 +++++
- drivers/clk/nxp/Makefile                           |   1 +
- drivers/clk/nxp/clk-lpc18xx-creg.c                 | 222 +++++++++++++++++++++
- 3 files changed, 275 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/lpc1850-creg-clk.txt
- create mode 100644 drivers/clk/nxp/clk-lpc18xx-creg.c
-
--- 
-1.8.0
+--=20
+Ken ar c'henta=F1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
