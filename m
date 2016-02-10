@@ -1,54 +1,76 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH v5 01/20] clk: bcm2835: pll_off should only set CM_PLL_ANARST
-Date: Sun, 28 Feb 2016 15:36:52 +0000
-Message-Id: <1456673831-2408-2-git-send-email-kernel@martin.sperl.org>
-In-Reply-To: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
-References: <1456673831-2408-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <kevin.smith@elecsyscorp.com>
+From: Kevin Smith <kevin.smith@elecsyscorp.com>
+To: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC: Kevin Smith <kevin.smith@elecsyscorp.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Gregory
+ CLEMENT" <gregory.clement@free-electrons.com>, Thomas Petazzoni
+	<thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v2 2/2] clk: mvebu: Move corediv config to mvebu config
+Date: Wed, 10 Feb 2016 23:40:26 +0000
+Message-ID: <1455147596-16078-2-git-send-email-kevin.smith@elecsyscorp.com>
+References: <1455136849-7888-1-git-send-email-kevin.smith@elecsyscorp.com>
+ <1455147596-16078-1-git-send-email-kevin.smith@elecsyscorp.com>
+In-Reply-To: <1455147596-16078-1-git-send-email-kevin.smith@elecsyscorp.com>
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+The corediv clock is not required for all builds, only those that
+enable peripherals that need it.  Move the corediv config option
+from the clock driver Kconfig to the mvebu Kconfig and make it
+conditional.
 
-bcm2835_pll_off is currently assigning CM_PLL_ANARST
-to the control register.
+This also enables corediv on Armada 375 and 38X as needed.
 
-This patch only sets the CM_PLL_ANARST bit
-not resetting any of the other bits, which allows
-restoring the register to its original value
-via bcm2834_pll_on.
-
-Signed-off-by: Martin Sperl <kernel@martin.sperl.org>
+Signed-off-by: Kevin Smith <kevin.smith@elecsyscorp.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 ---
- drivers/clk/bcm/clk-bcm2835.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/arm/mach-mvebu/Kconfig | 3 +++
+ drivers/clk/mvebu/Kconfig   | 1 -
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 5747a9d..d3009a6 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -913,8 +913,12 @@ static void bcm2835_pll_off(struct clk_hw *hw)
- 	struct bcm2835_cprman *cprman = pll->cprman;
- 	const struct bcm2835_pll_data *data = pll->data;
- 
--	cprman_write(cprman, data->cm_ctrl_reg, CM_PLL_ANARST);
--	cprman_write(cprman, data->a2w_ctrl_reg, A2W_PLL_CTRL_PWRDN);
-+	cprman_write(cprman, data->cm_ctrl_reg,
-+		     cprman_read(cprman, data->cm_ctrl_reg) |
-+		     CM_PLL_ANARST);
-+	cprman_write(cprman, data->a2w_ctrl_reg,
-+		     cprman_read(cprman, data->a2w_ctrl_reg) |
-+		     A2W_PLL_CTRL_PWRDN);
- }
- 
- static int bcm2835_pll_on(struct clk_hw *hw)
--- 
-1.7.10.4
+diff --git a/arch/arm/mach-mvebu/Kconfig b/arch/arm/mach-mvebu/Kconfig
+index 64e3d2c..794e7c5 100644
+--- a/arch/arm/mach-mvebu/Kconfig
++++ b/arch/arm/mach-mvebu/Kconfig
+@@ -32,6 +32,7 @@ config MACH_ARMADA_370
+ 	select CPU_PJ4B
+ 	select MACH_MVEBU_V7
+ 	select PINCTRL_ARMADA_370
++	select MVEBU_CLK_COREDIV if MTD_NAND_PXA3xx
+ 	help
+ 	  Say 'Y' here if you want your kernel to support boards based
+ 	  on the Marvell Armada 370 SoC with device tree.
+@@ -48,6 +49,7 @@ config MACH_ARMADA_375
+ 	select HAVE_SMP
+ 	select MACH_MVEBU_V7
+ 	select PINCTRL_ARMADA_375
++	select MVEBU_CLK_COREDIV if MTD_NAND_PXA3xx
+ 	help
+ 	  Say 'Y' here if you want your kernel to support boards based
+ 	  on the Marvell Armada 375 SoC with device tree.
+@@ -64,6 +66,7 @@ config MACH_ARMADA_38X
+ 	select HAVE_SMP
+ 	select MACH_MVEBU_V7
+ 	select PINCTRL_ARMADA_38X
++	select MVEBU_CLK_COREDIV if MTD_NAND_PXA3xx
+ 	help
+ 	  Say 'Y' here if you want your kernel to support boards based
+ 	  on the Marvell Armada 380/385 SoC with device tree.
+diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
+index e1bc567..eaee8f0 100644
+--- a/drivers/clk/mvebu/Kconfig
++++ b/drivers/clk/mvebu/Kconfig
+@@ -11,7 +11,6 @@ config ARMADA_370_CLK
+ 	bool
+ 	select MVEBU_CLK_COMMON
+ 	select MVEBU_CLK_CPU
+-	select MVEBU_CLK_COREDIV
+=20
+ config ARMADA_375_CLK
+ 	bool
+--=20
+2.4.6
