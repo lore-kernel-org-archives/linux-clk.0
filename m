@@ -1,46 +1,69 @@
-Return-Path: <kernel@martin.sperl.org>
-From: kernel@martin.sperl.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org
-Cc: Martin Sperl <kernel@martin.sperl.org>
-Subject: [PATCH 0/3] reorganize clock initialization and add PCM clock
-Date: Mon, 29 Feb 2016 12:51:40 +0000
-Message-Id: <1456750304-2424-1-git-send-email-kernel@martin.sperl.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.130]:49433 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750904AbcBJOjZ (ORCPT
+	<rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2016 09:39:25 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: Lars Persson <lars.persson@axis.com>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, linux-kernel@vger.kernel.org,
+	Lars Persson <larper@axis.com>
+Subject: Re: [PATCH 4/8] arm: dts: add Artpec-6 soc dtsi file
+Date: Wed, 10 Feb 2016 15:38:48 +0100
+Message-ID: <2518578.qKxQQXPlfn@wuerfel>
+In-Reply-To: <733065957e9ec67d698870cf832b4641d0da30cb.1455107681.git.larper@axis.com>
+References: <cover.1455107681.git.larper@axis.com> <733065957e9ec67d698870cf832b4641d0da30cb.1455107681.git.larper@axis.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Sperl <kernel@martin.sperl.org>
+On Wednesday 10 February 2016 13:41:53 Lars Persson wrote:
+> Signed-off-by: Lars Persson <larper@axis.com>
+> ---
 
-As changing entries in the dt-bindings header files is frowned upon
-and as we would need to change BCM2835_CLOCK_COUNT for every new
-clock added, this patchset moves away from the use of
-BCM2835_CLOCK_COUNT and removes it from the dt-bindings alltogether.
+Missing changelog
 
-Instead - as recommended by Michael Turquette, Geert Uytterhoeven
-and Remi Pommarel - patch 1 introduces a new initialization
-process in probe that simply uses ARRAY_SIZE on a (sparse) array.
+>  arch/arm/boot/dts/artpec6.dtsi | 238 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 238 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/artpec6.dtsi
+> 
+> diff --git a/arch/arm/boot/dts/artpec6.dtsi b/arch/arm/boot/dts/artpec6.dtsi
+> new file mode 100644
+> index 0000000..c1790d8
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/artpec6.dtsi
+> @@ -0,0 +1,238 @@
+> +/*
+> + * Device Tree Source for the Axis ARTPEC-6 SoC
+> + *
+> + * This file is licensed under the terms of the GNU General Public License
+> + * version 2.  This program is licensed "as is" without any warranty of any
+> + * kind, whether express or implied.
+> + */
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include "skeleton.dtsi"
+> +
+> +/ {
+> +	compatible = "axis,artpec6";
+> +	interrupt-parent = <&intc>;
+> +
+> +	aliases {
+> +		serial0 = &uart0;
+> +		serial1 = &uart1;
+> +		serial2 = &uart2;
+> +		serial3 = &uart3;
+> +	};
 
-With patch 2 the initialization of the array is simplified and
-better grouped together.
+Move the aliases into the board, not all boards might use all four
+uarts, or some board might assign different numbers.
 
-Patch 3 introduces the pcm clock of the bcm2835 soc and already
-shows the simplification at work - the main reason for this patchset.
+> +		uart0: uart@f8036000 {
 
-Martin Sperl (3):
-  clk: bcm2835: remove use of BCM2835_CLOCK_COUNT in driver
-  clk: bcm2835: reorganize bcm2835_clock_array assignment
-  clk: bcm2835: enable management of PCM clock
+make this "serial@f8036000"
 
- drivers/clk/bcm/clk-bcm2835.c       |  918 +++++++++++++++++------------------
- include/dt-bindings/clock/bcm2835.h |    3 +-
- 2 files changed, 441 insertions(+), 480 deletions(-)
+	Arnd
 
---
-1.7.10.4
