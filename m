@@ -1,131 +1,105 @@
-Return-Path: <slash.tmp@free.fr>
-From: Mason <slash.tmp@free.fr>
-Subject: [PATCH RFC] tango4 clk rewrite
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Sebastian Frias <sf84@laposte.net>
-Message-ID: <56BE0F25.2040909@free.fr>
-Date: Fri, 12 Feb 2016 17:58:13 +0100
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [GIT PULL] first bunch of rockchip clock changes for 4.6
+Date: Thu, 11 Feb 2016 14:00:02 +0100
+Message-ID: <3862076.Cf1OAGsbuq@phil>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Hi Mike, Stephen,
 
-I'd like to hear your comments on this rewrite of the clk driver
-for tango4. The main changes are:
+no new clock trees this time, but more clock ids and fixes for issues
+present for a longer time (not introduced during the 4.5-rc1 merge wind=
+ow)
+that Stephen thought should go through the regular process.
 
-1) Flag unsupported setups (to make assumptions explicit)
-2) Drop LEGACY_DIV method
-3) Support two additional clocks (usb and sdio)
+Most "interesting" change might be that we now handle factors correctly=
 
-For the extract method, what is the preferred way:
-A macro or an inline function?
-(Too bad you guys don't like the bit-field approach)
+according to their position in the clock-tree instead of registering th=
+em
+individually during init - which became a clutch.
+
+So if nothing stands out, please pull
 
 
- drivers/clk/clk-tango4.c | 64 ++++++++++++++++++++++++++++++++----------------
- 1 file changed, 43 insertions(+), 21 deletions(-)
+Thanks
+Heiko
 
-diff --git a/drivers/clk/clk-tango4.c b/drivers/clk/clk-tango4.c
-index 004ab7dfcfe3..f8fa3955f9ee 100644
---- a/drivers/clk/clk-tango4.c
-+++ b/drivers/clk/clk-tango4.c
-@@ -4,17 +4,26 @@
- #include <linux/init.h>
- #include <linux/io.h>
- 
--static struct clk *out[2];
--static struct clk_onecell_data clk_data = { out, 2 };
-+#define SYSCLK_DIV	0x20
-+#define CPUCLK_DIV	0x24
- 
--#define SYSCLK_CTRL	0x20
--#define CPUCLK_CTRL	0x24
--#define LEGACY_DIV	0x3c
-+#define FATAL(cond) if (cond) panic("Unsupported clkgen setup!\n")
- 
--#define PLL_N(val)	(((val) >>  0) & 0x7f)
--#define PLL_K(val)	(((val) >> 13) & 0x7)
--#define PLL_M(val)	(((val) >> 16) & 0x7)
--#define DIV_INDEX(val)	(((val) >>  8) & 0xf)
-+#define CLK_COUNT 4 /* cpu_clk, sys_clk, usb_clk, sdio_clk */
-+static struct clk *out[CLK_COUNT];
-+static struct clk_onecell_data clk_data = { out, CLK_COUNT };
-+
-+#define EXTRACT(v,o,w) (((v) >> (o)) & ((1u << (w)) - 1))
-+
-+static inline u32 extract(u32 val, int offset, int width) {
-+	return (val >> offset) & ((1u << width) - 1);
-+}
-+
-+/*** CLKGEN_PLL ***/
-+#define PLL_N(v)	extract(v,  0, 7)
-+#define PLL_K(v)	extract(v, 13, 3)
-+#define PLL_M(v)	extract(v, 16, 3)
-+#define PLL_ISEL(v)	extract(v, 24, 3)
- 
- static void __init make_pll(int idx, const char *parent, void __iomem *base)
- {
-@@ -26,36 +35,49 @@ static void __init make_pll(int idx, const char *parent, void __iomem *base)
- 	mul =  PLL_N(val) + 1;
- 	div = (PLL_M(val) + 1) << PLL_K(val);
- 	clk_register_fixed_factor(NULL, name, parent, 0, mul, div);
-+	FATAL(PLL_ISEL(val) != 1);
- }
- 
--static int __init get_div(void __iomem *base)
-+static void __init make_cd(int idx, void __iomem *base)
- {
--	u8 sysclk_tab[16] = { 2, 4, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4 };
--	int idx = DIV_INDEX(readl_relaxed(base + LEGACY_DIV));
-+	char name[8];
-+	u32 mul, div;
- 
--	return sysclk_tab[idx];
-+	sprintf(name, "cd%d", idx);
-+	mul =  1 << 27;
-+	div = (1 << 28) + readl_relaxed(base + idx*8);
-+	clk_register_fixed_factor(NULL, name, "pll2", 0, mul, div);
- }
- 
- static void __init tango4_clkgen_setup(struct device_node *np)
- {
--	int div, ret;
-+	int i, err;
- 	void __iomem *base = of_iomap(np, 0);
- 	const char *parent = of_clk_get_parent_name(np, 0);
- 
- 	if (!base)
- 		panic("%s: invalid address\n", np->full_name);
- 
-+	FATAL(readl_relaxed(base + CPUCLK_DIV) & BIT(23));
-+	FATAL(readl_relaxed(base + SYSCLK_DIV) & BIT(23));
-+
- 	make_pll(0, parent, base);
- 	make_pll(1, parent, base);
-+	make_pll(2, parent, base);
-+	make_cd(2, base + 0x80);
-+	make_cd(6, base + 0x80);
-+
-+	out[0] = clk_register_divider(NULL, "cpu_clk", "pll0", 0,
-+			base + CPUCLK_DIV, 8, 8, CLK_DIVIDER_ONE_BASED, NULL);
-+	out[1] = clk_register_fixed_factor(NULL, "sys_clk", "pll1", 0, 1, 4);
-+	out[2] = clk_register_fixed_factor(NULL,  "usb_clk", "cd2", 0, 1, 2);
-+	out[3] = clk_register_fixed_factor(NULL, "sdio_clk", "cd6", 0, 1, 2);
- 
--	out[0] = clk_register_divider(NULL, "cpuclk", "pll0", 0,
--			base + CPUCLK_CTRL, 8, 8, CLK_DIVIDER_ONE_BASED, NULL);
-+	err = of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
- 
--	div = readl_relaxed(base + SYSCLK_CTRL) & BIT(23) ? get_div(base) : 4;
--	out[1] = clk_register_fixed_factor(NULL, "sysclk", "pll1", 0, 1, div);
-+	for (i = 0; i < CLK_COUNT; ++i)
-+		if (IS_ERR(out[i])) err = 1;
- 
--	ret = of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
--	if (IS_ERR(out[0]) || IS_ERR(out[1]) || ret < 0)
--		panic("%s: clk registration failed\n", np->full_name);
-+	if (err) panic("%s: clk registration failed\n", np->full_name);
- }
- CLK_OF_DECLARE(tango4_clkgen, "sigma,tango4-clkgen", tango4_clkgen_setup);
+The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04=
+f08d:
+
+  Linux 4.5-rc1 (2016-01-24 13:06:47 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.gi=
+t tags/v4.6-rockchip-clk1
+
+for you to fetch changes up to 36714529f8bbd4f8eaf93b50f4a64c52a24879aa=
+:
+
+  clk: rockchip: convert manually created factor clocks to the new type=
+ (2016-02-04 15:54:20 +0100)
+
+----------------------------------------------------------------
+Introduction of a factor type and a variant containing a gate
+to be able to also declare factor clocks in their correct
+place in the clock tree instead of having to register factor
+clocks in the init callback separately. And as always some more
+clock-ids and non-regression fixes for mistakes introduced in
+past kernel releases.
+
+----------------------------------------------------------------
+Alexander Kochetkov (2):
+      clk: rockchip: add hclk_cpubus to the list of rk3188 critical clo=
+cks
+      clk: rockchip: Allow sclk_i2s0 and i2s0_frac to change their pare=
+nts rate on rk3188
+
+Heiko Stuebner (9):
+      clk: rockchip: rk3368: fix cpuclk mux bit of big cpu-cluster
+      clk: rockchip: rk3368: fix cpuclk core dividers
+      clk: rockchip: rk3368: fix parents of video encoder/decoder
+      clk: rockchip: rk3368: fix hdmi_cec gate-register
+      clk: rockchip: fix usbphy-related clocks
+      Merge branch 'v4.6-shared/clkids' into v4.6-clk/next
+      clk: rockchip: fix parent of hclk_vcodec on rk3036
+      clk: rockchip: add a factor clock type
+      clk: rockchip: convert manually created factor clocks to the new =
+type
+
+Pawe=C5=82 Jarosz (2):
+      clk: rockchip: Add new id for rk3066 tsadc clock
+      clk: rockchip: add tsadc clock on rk3066
+
+Shawn Lin (2):
+      clk: rockchip: fix wrong mmc phase shift for rk3228
+      clk: rockchip: free memory in error cases when registering clock =
+branches
+
+Yakir Yang (1):
+      clk: rockchip: rk3036: enable the CLK_IGNORE_UNUSED flag for hclk=
+_vio_bus
+
+zhangqing (3):
+      clk: rockchip: rk3368: fix edp_24m parent
+      clk: rockchip: rk3368: enable the CLK_SET_RATE_PARENT flag for sp=
+dif_8ch
+      clk: rockchip: rk3368: enable the CLK_SET_RATE_PARENT flag for i2=
+s_2ch
+
+ arch/arm/boot/dts/rk3288-veyron.dtsi          |  2 +-
+ drivers/clk/rockchip/clk-rk3036.c             | 33 +++--------
+ drivers/clk/rockchip/clk-rk3188.c             | 27 +++------
+ drivers/clk/rockchip/clk-rk3228.c             | 38 +++----------
+ drivers/clk/rockchip/clk-rk3288.c             | 38 ++++---------
+ drivers/clk/rockchip/clk-rk3368.c             | 82 +++++++++++--------=
+--------
+ drivers/clk/rockchip/clk.c                    | 64 +++++++++++++++++++=
++-
+ drivers/clk/rockchip/clk.h                    | 28 +++++++++
+ include/dt-bindings/clock/rk3188-cru-common.h |  1 +
+ 9 files changed, 159 insertions(+), 154 deletions(-)
