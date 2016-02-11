@@ -1,43 +1,54 @@
-Return-Path: <shawn.lin@rock-chips.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
+Return-Path: <lars.persson@axis.com>
+From: Lars Persson <lars.persson@axis.com>
+To: devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	pawel.moll@arm.com,
+	mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org,
 	linux-kernel@vger.kernel.org,
-	Shawn Lin <shawn.lin@rock-chips.com>
-Subject: [PATCH 0/6] Some trivial fixes for rockchip clk/pm stuff
-Date: Mon, 15 Feb 2016 11:32:33 +0800
-Message-Id: <1455507153-12914-1-git-send-email-shawn.lin@rock-chips.com>
+	Lars Persson <larper@axis.com>
+Subject: [PATCH 1/2] clk: add device tree binding for artpec-6 pll1 clock
+Date: Thu, 11 Feb 2016 17:01:03 +0100
+Message-Id: <2686b3bbb9ec1c86828b365645bd7f997a9780b4.1455206007.git.larper@axis.com>
+In-Reply-To: <cover.1455206007.git.larper@axis.com>
+References: <cover.1455206007.git.larper@axis.com>
+In-Reply-To: <cover.1455206007.git.larper@axis.com>
+References: <cover.1455206007.git.larper@axis.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Add device tree documentation for the main PLL in the Artpec-6 SoC.
 
-Happy Chinese new year, Rockchipers!
+Signed-off-by: Lars Persson <larper@axis.com>
+---
+ Documentation/devicetree/bindings/clock/artpec6.txt | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/artpec6.txt
 
-This patchset fix some trivial things for rockchip clk/pm
-driver when learning clk stuff which I'm interested in during the
-holiday.
-
-All of them is based on Heiko's tree(master branch):
-git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git
-
-
-
-Shawn Lin (6):
-  clk: rockchip: handle alt_parent in err cases when registering cpuclk
-  clk: rockchip: check grf when waiting pll lock
-  clk: rockchip: don't return NULL when registering inverter fails
-  clk: rockchip: don't return NULL when registering mmc branch fails
-  clk: rockchip: fix coding style for clk-cpu.c
-  soc: rockchip: power-domain: check the existing of regmap
-
- drivers/clk/rockchip/clk-cpu.c       | 8 +++++---
- drivers/clk/rockchip/clk-inverter.c  | 8 ++------
- drivers/clk/rockchip/clk-mmc-phase.c | 8 ++------
- drivers/clk/rockchip/clk-pll.c       | 8 +++++++-
- drivers/soc/rockchip/pm_domains.c    | 4 ++++
- 5 files changed, 20 insertions(+), 16 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/clock/artpec6.txt b/Documentation/devicetree/bindings/clock/artpec6.txt
+new file mode 100644
+index 0000000..521fec8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/artpec6.txt
+@@ -0,0 +1,16 @@
++* Clock bindings for Axis ARTPEC-6 chip
++
++Required properties:
++- #clock-cells: Should be <0>
++- compatible: Should be "axis,artpec6-pll1-clock"
++- reg: Address and length of the DEVSTAT register.
++- clocks: The PLL's input clock.
++
++Examples:
++
++pll1_clk: pll1_clk {
++	#clock-cells = <0>;
++	compatible = "axis,artpec6-pll1-clock";
++	reg = <0xf8000000 4>;
++	clocks = <&ext_clk>;
++};
 -- 
-2.3.7
+2.1.4
