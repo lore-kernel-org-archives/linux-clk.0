@@ -1,441 +1,119 @@
-Return-Path: <antonynpavlov@gmail.com>
-Return-Path: <antonynpavlov@gmail.com>
-From: Antony Pavlov <antonynpavlov@gmail.com>
-To: linux-mips@linux-mips.org
-Cc: Marek Vasut <marex@denx.de>,
-	Wills Wang <wills.wang@live.com>,
-	Daniel Schwierzeck <daniel.schwierzeck@gmail.com>,
-	Alban Bedel <albeu@free.fr>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Paul Burton <paul.burton@imgtec.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [RFC v5 01/15] WIP: clk: add Atheros AR933X SoCs clock driver
-Date: Tue,  9 Feb 2016 11:13:47 +0300
-Message-Id: <1455005641-7079-2-git-send-email-antonynpavlov@gmail.com>
-In-Reply-To: <1455005641-7079-1-git-send-email-antonynpavlov@gmail.com>
-References: <1455005641-7079-1-git-send-email-antonynpavlov@gmail.com>
+Return-Path: <mturquette@baylibre.com>
+From: Michael Turquette <mturquette@baylibre.com>
+To: linux-clk@vger.kernel.org
+Cc: lee.jones@linaro.org,
+	sboyd@codeaurora.org,
+	maxime.ripard@free-electrons.com,
+	maxime.coquelin@st.com,
+	geert@linux-m68k.org,
+	heiko@sntech.de,
+	andre.przywara@arm.com,
+	rklein@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>
+Subject: [PATCH v42 3/6] clk: Provide OF helper to mark clocks as CRITICAL
+Date: Thu, 11 Feb 2016 13:19:11 -0800
+Message-Id: <1455225554-13267-4-git-send-email-mturquette@baylibre.com>
+In-Reply-To: <1455225554-13267-1-git-send-email-mturquette@baylibre.com>
+References: <1455225554-13267-1-git-send-email-mturquette@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This driver can be easely upgraded for other Atheros
-SoCs (e.g. AR724X/AR913X) support.
+From: Lee Jones <lee.jones@linaro.org>
 
-Signed-off-by: Antony Pavlov <antonynpavlov@gmail.com>
-Cc: Alban Bedel <albeu@free.fr>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-mips@linux-mips.org
+This call matches clocks which have been marked as critical in DT
+and sets the appropriate flag.  These flags can then be used to
+mark the clock core flags appropriately prior to registration.
+
+Legacy bindings requiring this feature must add the clock-critical
+property to their binding descriptions, as it is not a part of
+common-clock binding.
+
 Cc: devicetree@vger.kernel.org
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Michael Turquette <mturquette@baylibre.com>
 ---
- drivers/clk/Makefile                  |   1 +
- drivers/clk/clk-ath79.c               | 354 ++++++++++++++++++++++++++++++++++
- include/dt-bindings/clock/ath79-clk.h |  22 +++
- 3 files changed, 377 insertions(+)
+Changed in vWhatever:
+  * Added kerneldoc
+  * Moved to clk.c, removed static inline
+  * s/of_clk_mark_if_critical/of_clk_detect_critical/
+  * s/critical-clock/clock-critical/
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index b038e36..d7ad50e 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -18,6 +18,7 @@ endif
- # hardware specific clock types
- # please keep this section sorted lexicographically by file/directory path name
- obj-$(CONFIG_MACH_ASM9260)		+= clk-asm9260.o
-+obj-$(CONFIG_ATH79)			+= clk-ath79.o
- obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+= clk-axi-clkgen.o
- obj-$(CONFIG_ARCH_AXXIA)		+= clk-axm5516.o
- obj-$(CONFIG_COMMON_CLK_CDCE706)	+= clk-cdce706.o
-diff --git a/drivers/clk/clk-ath79.c b/drivers/clk/clk-ath79.c
-new file mode 100644
-index 0000000..e899d31
---- /dev/null
-+++ b/drivers/clk/clk-ath79.c
-@@ -0,0 +1,354 @@
-+/*
-+ * Clock driver for Atheros AR933X SoCs
+ drivers/clk/clk.c            | 35 +++++++++++++++++++++++++++++++++++
+ include/linux/clk-provider.h |  8 +++++++-
+ 2 files changed, 42 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 39f9527..5181a15 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3202,6 +3202,41 @@ static int parent_ready(struct device_node *np)
+ }
+ 
+ /**
++ * of_clk_detect_critical() - set CLK_IS_CRITICAL flag from Device Tree
++ * @np: Device node pointer associated with clock provider
++ * @index: clock index
++ * @flags: pointer to clk_core->flags
 + *
-+ * Copyright (C) 2016 Antony Pavlov <antonynpavlov@gmail.com>
++ * Detects if the clock-critical property exists and, if so, sets the
++ * corresponding CLK_IS_CRITICAL flag.
 + *
-+ * This driver is based on Ingenic CGU linux driver by Paul Burton
-+ * and AR9331 barebox driver by Antony Pavlov.
++ * Do not use this function. It exists only for legacy Device Tree
++ * bindings, such as the one-clock-per-node style that are outdated.
++ * Those bindings typically put all clock data into .dts and the Linux
++ * driver has no clock data, thus making it impossible to set this flag
++ * correctly from the driver. Only those drivers may call
++ * of_clk_detect_critical from their setup functions.
 + *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
++ * Return: error code or zero on success
 + */
-+
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+
-+#include <dt-bindings/clock/ath79-clk.h>
-+
-+#include "asm/mach-ath79/ar71xx_regs.h"
-+
-+struct ath79_pll_info {
-+	u32 div_shift;
-+	u32 div_mask;
-+};
-+
-+struct ath79_cblk;
-+
-+/**
-+ * struct ath79_clk_info - information about a clock
-+ * @name: name of the clock
-+ * @type: a bitmask formed from ATH79_CLK_* values
-+ * @parents: an index of parent of this clock
-+ *           within the clock_info array, or -1
-+ *           which correspond to no valid parent
-+ * @pll: information valid if type includes ATH79_CLK_PLL
-+ */
-+struct ath79_clk_info {
-+	const char *name;
-+
-+	enum {
-+		ATH79_CLK_NONE		= 0,
-+		ATH79_CLK_EXT		= 1,
-+		ATH79_CLK_PLL		= 2,
-+		ATH79_CLK_ALIAS		= 3,
-+	} type;
-+
-+	struct ath79_cblk *cblk;
-+	int parent;
-+
-+	struct ath79_pll_info pll;
-+};
-+
-+struct ath79_cblk {
-+	struct device_node *np;
-+	void __iomem *base;
-+
-+	const struct ath79_clk_info *clock_info;
-+	struct clk_onecell_data clocks;
-+};
-+
-+/**
-+ * struct ath79_clk - private data for a clock
-+ * @hw: see Documentation/clk.txt
-+ * @cblk: a pointer to the cblk data
-+ * @idx: the index of this clock cblk->clock_info
-+ * @pll: information valid if type includes ATH79_CLK_PLL
-+ */
-+struct ath79_clk {
-+	struct clk_hw hw;
-+	struct ath79_cblk *cblk;
-+	unsigned idx;
-+};
-+
-+#define to_ath79_clk(_hw) container_of(_hw, struct ath79_clk, hw)
-+
-+static const struct ath79_clk_info ar9331_clocks[] = {
-+
-+	/* External clock */
-+	[ATH79_CLK_REF] = { "ref", ATH79_CLK_EXT },
-+
-+	[ATH79_CLK_CPU] = {
-+		"cpu", ATH79_CLK_PLL,
-+		.parent = ATH79_CLK_REF,
-+		.pll = {
-+			.div_shift = AR933X_PLL_CLOCK_CTRL_CPU_DIV_SHIFT,
-+			.div_mask = AR933X_PLL_CLOCK_CTRL_CPU_DIV_MASK,
-+		},
-+	},
-+
-+	[ATH79_CLK_DDR] = {
-+		"ddr", ATH79_CLK_PLL,
-+		.parent = ATH79_CLK_REF,
-+		.pll = {
-+			.div_shift = AR933X_PLL_CLOCK_CTRL_DDR_DIV_SHIFT,
-+			.div_mask = AR933X_PLL_CLOCK_CTRL_DDR_DIV_MASK,
-+		},
-+	},
-+
-+	[ATH79_CLK_AHB] = {
-+		"ahb", ATH79_CLK_PLL,
-+		.parent = ATH79_CLK_REF,
-+		.pll = {
-+			.div_shift = AR933X_PLL_CLOCK_CTRL_AHB_DIV_SHIFT,
-+			.div_mask = AR933X_PLL_CLOCK_CTRL_AHB_DIV_MASK,
-+		},
-+	},
-+
-+	[ATH79_CLK_WDT] = {
-+		"wdt", ATH79_CLK_ALIAS,
-+		.parent = ATH79_CLK_AHB,
-+	},
-+
-+	[ATH79_CLK_UART] = {
-+		"uart", ATH79_CLK_ALIAS,
-+		.parent = ATH79_CLK_REF,
-+	},
-+};
-+
-+struct ath79_cblk *
-+ath79_cblk_new(const struct ath79_clk_info *clock_info,
-+		unsigned num_clocks, struct device_node *np)
++int of_clk_mark_if_critical(struct device_node *np,
++					  int index, unsigned long *flags)
 +{
-+	struct ath79_cblk *cblk;
++	struct property *prop;
++	const __be32 *cur;
++	uint32_t idx;
 +
-+	cblk = kzalloc(sizeof(*cblk), GFP_KERNEL);
-+	if (!cblk)
-+		goto err_out;
++	if (!np || !flags)
++		return -EINVAL;
 +
-+	cblk->base = of_iomap(np, 0);
-+	if (!cblk->base) {
-+		pr_err("%s: failed to map clock block registers\n", __func__);
-+		goto err_out_free;
-+	}
-+
-+	cblk->np = np;
-+	cblk->clock_info = clock_info;
-+	cblk->clocks.clk_num = num_clocks;
-+
-+	return cblk;
-+
-+err_out_free:
-+	kfree(cblk);
-+
-+err_out:
-+	return NULL;
-+}
-+
-+static unsigned long
-+ath79_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-+{
-+	struct ath79_clk *ath79_clk = to_ath79_clk(hw);
-+	struct ath79_cblk *cblk = ath79_clk->cblk;
-+	const struct ath79_clk_info *clk_info = &cblk->clock_info[ath79_clk->idx];
-+	const struct ath79_pll_info *pll_info;
-+	unsigned long rate;
-+	unsigned long freq;
-+	u32 clock_ctrl;
-+	u32 cpu_config;
-+	u32 t;
-+
-+	BUG_ON(clk_info->type != ATH79_CLK_PLL);
-+
-+	clock_ctrl = __raw_readl(cblk->base + AR933X_PLL_CLOCK_CTRL_REG);
-+
-+	if (clock_ctrl & AR933X_PLL_CLOCK_CTRL_BYPASS) {
-+		return parent_rate;
-+	}
-+
-+	cpu_config = __raw_readl(cblk->base + AR933X_PLL_CPU_CONFIG_REG);
-+
-+	t = (cpu_config >> AR933X_PLL_CPU_CONFIG_REFDIV_SHIFT) &
-+	    AR933X_PLL_CPU_CONFIG_REFDIV_MASK;
-+	freq = parent_rate / t;
-+
-+	t = (cpu_config >> AR933X_PLL_CPU_CONFIG_NINT_SHIFT) &
-+	    AR933X_PLL_CPU_CONFIG_NINT_MASK;
-+	freq *= t;
-+
-+	t = (cpu_config >> AR933X_PLL_CPU_CONFIG_OUTDIV_SHIFT) &
-+	    AR933X_PLL_CPU_CONFIG_OUTDIV_MASK;
-+	if (t == 0)
-+		t = 1;
-+
-+	freq >>= t;
-+
-+	pll_info = &clk_info->pll;
-+
-+	t = ((clock_ctrl >> pll_info->div_shift) & pll_info->div_mask) + 1;
-+	rate = freq / t;
-+
-+	return rate;
-+}
-+
-+static const struct clk_ops ath79_pll_clk_ops = {
-+	.recalc_rate = ath79_pll_recalc_rate,
-+};
-+
-+static int ath79_register_clock(struct ath79_cblk *cblk, unsigned idx)
-+{
-+	const struct ath79_clk_info *clk_info = &cblk->clock_info[idx];
-+	const struct ath79_clk_info *parent_clk_info;
-+	struct clk_init_data clk_init;
-+	struct ath79_clk *ath79_clk = NULL;
-+	struct clk *clk;
-+	int err = -EINVAL;
-+
-+	if (clk_info->type == ATH79_CLK_EXT) {
-+		clk = of_clk_get_by_name(cblk->np, clk_info->name);
-+		if (IS_ERR(clk)) {
-+			pr_err("%s: no external clock '%s' provided\n",
-+			       __func__, clk_info->name);
-+			err = -ENODEV;
-+			goto out;
-+		}
-+
-+		err = clk_register_clkdev(clk, clk_info->name, NULL);
-+		if (err) {
-+			clk_put(clk);
-+			goto out;
-+		}
-+
-+		cblk->clocks.clks[idx] = clk;
-+
-+		return 0;
-+	}
-+
-+	parent_clk_info = &cblk->clock_info[clk_info->parent];
-+
-+	if (clk_info->type == ATH79_CLK_ALIAS) {
-+		clk = clk_register_fixed_factor(NULL, clk_info->name,
-+						parent_clk_info->name, 0, 1, 1);
-+		if (IS_ERR(clk)) {
-+			pr_err("%s: failed to register clock '%s'\n", __func__,
-+			       clk_info->name);
-+			err = PTR_ERR(clk);
-+			goto out;
-+		}
-+
-+		cblk->clocks.clks[idx] = clk;
-+
-+		return 0;
-+	}
-+
-+	if (!clk_info->type) {
-+		pr_err("%s: no clock type specified for '%s'\n", __func__,
-+		       clk_info->name);
-+		goto out;
-+	}
-+
-+	ath79_clk = kzalloc(sizeof(*ath79_clk), GFP_KERNEL);
-+	if (!ath79_clk) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+
-+	ath79_clk->hw.init = &clk_init;
-+	ath79_clk->cblk = cblk;
-+	ath79_clk->idx = idx;
-+
-+	clk_init.name = clk_info->name;
-+	clk_init.flags = 0;
-+	clk_init.parent_names = &parent_clk_info->name;
-+	clk_init.num_parents = 1;
-+
-+	if (clk_info->type == ATH79_CLK_PLL) {
-+		clk_init.ops = &ath79_pll_clk_ops;
-+	}
-+
-+	clk = clk_register(NULL, &ath79_clk->hw);
-+	if (IS_ERR(clk)) {
-+		pr_err("%s: failed to register clock '%s'\n", __func__,
-+		       clk_info->name);
-+		err = PTR_ERR(clk);
-+		goto out;
-+	}
-+
-+	err = clk_register_clkdev(clk, clk_info->name, NULL);
-+	if (err)
-+		goto out;
-+
-+	cblk->clocks.clks[idx] = clk;
-+out:
-+	if (err)
-+		kfree(ath79_clk);
-+
-+	return err;
-+}
-+
-+static int ath79_cblk_register_clocks(struct ath79_cblk *cblk)
-+{
-+	unsigned i;
-+	int err;
-+
-+	cblk->clocks.clks = kcalloc(cblk->clocks.clk_num, sizeof(struct clk *),
-+				   GFP_KERNEL);
-+	if (!cblk->clocks.clks) {
-+		err = -ENOMEM;
-+		goto err_out;
-+	}
-+
-+	for (i = 0; i < cblk->clocks.clk_num; i++) {
-+		err = ath79_register_clock(cblk, i);
-+		if (err)
-+			goto err_out_unregister;
-+	}
-+
-+	err = of_clk_add_provider(cblk->np, of_clk_src_onecell_get,
-+				  &cblk->clocks);
-+	if (err)
-+		goto err_out_unregister;
++	of_property_for_each_u32(np, "clock-critical", prop, cur, idx)
++		if (index == idx)
++			*flags |= CLK_IS_CRITICAL;
 +
 +	return 0;
-+
-+err_out_unregister:
-+	for (i = 0; i < cblk->clocks.clk_num; i++) {
-+		if (!cblk->clocks.clks[i])
-+			continue;
-+		if (cblk->clock_info[i].type == ATH79_CLK_EXT)
-+			clk_put(cblk->clocks.clks[i]);
-+		else
-+			clk_unregister(cblk->clocks.clks[i]);
-+	}
-+
-+	kfree(cblk->clocks.clks);
-+
-+err_out:
-+	return err;
 +}
 +
-+static void __init ar9130_init(struct device_node *np)
++/**
+  * of_clk_init() - Scan and init clock providers from the DT
+  * @matches: array of compatible values and init functions for providers.
+  *
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 1d986ea..d15d3cc 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -705,7 +705,8 @@ int of_clk_get_parent_count(struct device_node *np);
+ int of_clk_parent_fill(struct device_node *np, const char **parents,
+ 		       unsigned int size);
+ const char *of_clk_get_parent_name(struct device_node *np, int index);
+-
++int of_clk_mark_if_critical(struct device_node *np, int index,
++			    unsigned long *flags);
+ void of_clk_init(const struct of_device_id *matches);
+ 
+ #else /* !CONFIG_OF */
+@@ -742,6 +743,11 @@ static inline const char *of_clk_get_parent_name(struct device_node *np,
+ {
+ 	return NULL;
+ }
++static inline int of_clk_mark_if_critical(struct device_node *np, int index,
++					  unsigned long *flags)
 +{
-+	int retval;
-+	struct ath79_cblk *cblk;
-+
-+	cblk = ath79_cblk_new(ar9331_clocks, ARRAY_SIZE(ar9331_clocks), np);
-+	if (!cblk) {
-+		pr_err("%s: failed to initialise clk block\n", __func__);
-+		return;
-+	}
-+
-+	retval = ath79_cblk_register_clocks(cblk);
-+	if (retval)
-+		pr_err("%s: failed to register clocks\n", __func__);
++	return 0;
 +}
-+CLK_OF_DECLARE(ar933x_clk, "qca,ar9330-pll", ar9130_init);
-diff --git a/include/dt-bindings/clock/ath79-clk.h b/include/dt-bindings/clock/ath79-clk.h
-new file mode 100644
-index 0000000..1c6fb04
---- /dev/null
-+++ b/include/dt-bindings/clock/ath79-clk.h
-@@ -0,0 +1,22 @@
-+/*
-+ * Copyright (C) 2014, 2016 Antony Pavlov <antonynpavlov@gmail.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ */
-+
-+#ifndef __DT_BINDINGS_ATH79_CLK_H
-+#define __DT_BINDINGS_ATH79_CLK_H
-+
-+#define ATH79_CLK_REF		0
-+#define ATH79_CLK_CPU		1
-+#define ATH79_CLK_DDR		2
-+#define ATH79_CLK_AHB		3
-+#define ATH79_CLK_WDT		4
-+#define ATH79_CLK_UART		5
-+
-+#define ATH79_CLK_END		6
-+
-+#endif /* __DT_BINDINGS_ATH79_CLK_H */
+ static inline void of_clk_init(const struct of_device_id *matches) {}
+ #endif /* CONFIG_OF */
+ 
 -- 
-2.7.0
+2.1.4
